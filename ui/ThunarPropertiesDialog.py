@@ -53,8 +53,11 @@ class ThunarPropertiesDialog(gtk.Dialog):
     label.show()
     table.show()
 
+    row = 0
+
+    ### {
     box = gtk.HBox(False, 6)
-    table.attach(box, 0, 1, 0, 1, gtk.FILL, gtk.FILL)
+    table.attach(box, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     box.show()
 
     image = gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_DIALOG)
@@ -69,18 +72,20 @@ class ThunarPropertiesDialog(gtk.Dialog):
 
     entry = gtk.Entry()
     entry.set_text('foo.mp3')
-    table.attach(entry, 1, 2, 0, 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(entry, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     entry.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>Type:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 1, 2, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     ebox = gtk.EventBox()
     tooltips.set_tip(ebox, 'audio/x-mp3')
-    table.attach(ebox, 1, 2, 1, 2, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(ebox, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     ebox.show()
 
     label = gtk.Label('MP3 audio')
@@ -88,30 +93,49 @@ class ThunarPropertiesDialog(gtk.Dialog):
     label.set_selectable(True)
     ebox.add(label)
     label.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>Size:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 2, 3, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     label = gtk.Label('3.5 MB')
     label.set_alignment(0.0, 0.5)
     label.set_selectable(True)
-    table.attach(label, 1, 2, 2, 3, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     label.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>Location:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 3, 4, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     label = gtk.Label('file:///usr/home/bar')
     label.set_alignment(0.0, 0.5)
     label.set_selectable(True)
-    table.attach(label, 1, 2, 3, 4, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     label.show()
+    row += 1 ### }
+
+#    ### {
+#    label = gtk.Label('<b>Permissions:</b>')
+#    label.set_use_markup(True)
+#    label.set_alignment(1.0, 0.5)
+#    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+#    label.show()
+#
+#    label = gtk.Label('-rw-r--r--')
+#    label.set_alignment(0.0, 0.5)
+#    label.set_selectable(True)
+#    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+#    label.show()
+#    row += 1 ### }
 
 
 
@@ -127,25 +151,30 @@ class ThunarPropertiesDialog(gtk.Dialog):
     label.show()
     table.show()
 
+    row = 0
+
+    ### {
     label = gtk.Label('<b>File Owner:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 0, 1, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     label = gtk.Label('Benedikt Meurer (bmeurer)')
     label.set_alignment(0.0, 0.5)
-    table.attach(label, 1, 4, 0, 1, gtk.FILL, gtk.FILL)
+    table.attach(label, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>File Group:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 1, 2, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     align = gtk.Alignment(0.0, 0.5, 0.0, 0.0)
-    table.attach(align, 1, 4, 1, 2, gtk.FILL, gtk.FILL)
+    table.attach(align, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
     align.show()
 
     combo = gtk.combo_box_new_text()
@@ -156,112 +185,148 @@ class ThunarPropertiesDialog(gtk.Dialog):
     combo.set_active(1)
     align.add(combo)
     combo.show()
+    row += 1 ### }
 
+    ### {
     sep = gtk.HSeparator()
-    table.attach(sep, 0, 4, 2, 3, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     sep.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>Owner:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 3, 4, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     button = gtk.CheckButton('Read')
-    table.attach(button, 1, 2, 3, 4, gtk.FILL, gtk.FILL)
+    table.attach(button, 1, 2, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
 
     button = gtk.CheckButton('Write')
-    table.attach(button, 2, 3, 3, 4, gtk.FILL, gtk.FILL)
+    table.attach(button, 2, 3, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
 
     button = gtk.CheckButton('Execute')
-    table.attach(button, 3, 4, 3, 4, gtk.FILL, gtk.FILL)
+    table.attach(button, 3, 4, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>Group:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 4, 5, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     button = gtk.CheckButton('Read')
-    table.attach(button, 1, 2, 4, 5, gtk.FILL, gtk.FILL)
+    table.attach(button, 1, 2, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
 
     button = gtk.CheckButton('Write')
-    table.attach(button, 2, 3, 4, 5, gtk.FILL, gtk.FILL)
+    table.attach(button, 2, 3, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
 
     button = gtk.CheckButton('Execute')
-    table.attach(button, 3, 4, 4, 5, gtk.FILL, gtk.FILL)
+    table.attach(button, 3, 4, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>Others:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 5, 6, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     button = gtk.CheckButton('Read')
-    table.attach(button, 1, 2, 5, 6, gtk.FILL, gtk.FILL)
+    table.attach(button, 1, 2, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
 
     button = gtk.CheckButton('Write')
-    table.attach(button, 2, 3, 5, 6, gtk.FILL, gtk.FILL)
+    table.attach(button, 2, 3, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
 
     button = gtk.CheckButton('Execute')
-    table.attach(button, 3, 4, 5, 6, gtk.FILL, gtk.FILL)
+    table.attach(button, 3, 4, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
+    row += 1 ### }
 
+    ### {
     sep = gtk.HSeparator()
-    table.attach(sep, 0, 4, 6, 7, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     sep.show()
-
+    row += 1 ### }
+ 
+    ### {
     label = gtk.Label('<b>Special flags:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 7, 8, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     button = gtk.CheckButton('Set user ID')
-    table.attach(button, 1, 4, 7, 8, gtk.FILL, gtk.FILL)
+    table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
+    row += 1 ### }
 
+    ### {
     button = gtk.CheckButton('Set group ID')
-    table.attach(button, 1, 4, 8, 9, gtk.FILL, gtk.FILL)
+    table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
+    row += 1 ### }
 
+    ### {
     button = gtk.CheckButton('Sticky')
-    table.attach(button, 1, 4, 9, 10, gtk.FILL, gtk.FILL)
+    table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
     button.show()
+    row += 1 ### }
 
+    ### {
     sep = gtk.HSeparator()
-    table.attach(sep, 0, 4, 10, 11, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     sep.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>Text view:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 11, 12, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     label = gtk.Label('-rw-r--r--')
     label.set_alignment(0.0, 0.5)
-    table.attach(label, 1, 4, 11, 12, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(label, 1, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     label.show()
+    row += 1 ### }
 
+    ### {
     label = gtk.Label('<b>Number view:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
-    table.attach(label, 0, 1, 12, 13, gtk.FILL, gtk.FILL)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
     label = gtk.Label('0644')
     label.set_alignment(0.0, 0.5)
-    table.attach(label, 1, 4, 12, 13, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    table.attach(label, 1, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     label.show()
+    row += 1 ### }
+
+    ### {
+    label = gtk.Label('<b>Last changed:</b>')
+    label.set_use_markup(True)
+    label.set_alignment(1.0, 0.5)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+    label.show()
+
+    label = gtk.Label('2005-02-15 17:55')
+    label.set_alignment(0.0, 0.5)
+    table.attach(label, 1, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    label.show()
+    row += 1 ### }
 
 
 
