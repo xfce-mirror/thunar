@@ -32,7 +32,6 @@ from ThunarModel import ThunarModel
 from ThunarPathBar import ThunarPathBar
 from ThunarFileInfo import ThunarFileInfo
 from ThunarListView import ThunarListView
-from ThunarColumnsView import ThunarColumnsView
 from ThunarSidePane import ThunarSidePane
 from ThunarPropertiesDialog import ThunarPropertiesDialog
 
@@ -93,7 +92,6 @@ class ThunarWindow(gtk.Window):
         self.action_group.add_radio_actions([
             ('view-as-icons', None, 'View as _Icons', None, None, 1),
             ('view-as-list', None, 'View as _List'),
-            ('view-as-columns', None, 'View as _Columns'),
         ], 1, lambda action, whatever, self: self._action_view_toggled(), self)
         self.action_group.add_actions([
             ('go-menu', None, '_Go'),
@@ -212,10 +210,8 @@ class ThunarWindow(gtk.Window):
         other.destroy()
         if self.action_group.get_action('view-as-icons').get_active():
             self.view = ThunarIconView(self.info)
-        elif self.action_group.get_action('view-as-list').get_active():
-            self.view = ThunarListView(self.info)
         else:
-            self.view = ThunarColumnsView(self.info)
+            self.view = ThunarListView(self.info)
         self.view.connect('context-menu', lambda view: self._context_menu())
         self.view.connect('activated', lambda widget, info: self._action_open_dir(info))
         self.view.connect('selection-changed', lambda widget: self._selection_changed())
