@@ -55,6 +55,15 @@ class ThunarWindow(gtk.Window):
         factory.add('thunar-shortcuts', set)
         factory.add_default()
 
+        try:
+            theme = gtk.icon_theme_get_default()
+            set = gtk.IconSet(theme.load_icon('gnome-fs-trash-empty', 16, 0))
+        except:
+            set = gtk.IconSet()
+        factory = gtk.IconFactory()
+        factory.add('thunar-trash', set)
+        factory.add_default()
+
         self.bookmarks = []
 
         self.info = info
@@ -100,6 +109,7 @@ class ThunarWindow(gtk.Window):
             ('go-back', gtk.STOCK_GO_BACK, '_Back', '<Alt>Left', None, lambda ign, self: self._action_go_back()),
             ('go-forward', gtk.STOCK_GO_FORWARD, '_Forward', '<Alt>Right', None, lambda ign, self: self._action_go_forward()),
             ('go-home', gtk.STOCK_HOME, '_Home Folder', None, None, lambda ign, self: self._action_open_dir(ThunarFileInfo(os.getenv('HOME')))),
+            ('go-trash', 'thunar-trash', '_Trash', None, None),
         ], self)
         self.action_group.add_actions([
             ('bookmarks-menu', None, '_Bookmarks'),
@@ -123,6 +133,7 @@ class ThunarWindow(gtk.Window):
         self.action_group.get_action('preferences').set_property('sensitive', False)
         self.action_group.get_action('go-back').set_property('sensitive', False)
         self.action_group.get_action('go-forward').set_property('sensitive', False)
+        self.action_group.get_action('go-trash').set_property('sensitive', False)
         self.action_group.get_action('contents').set_property('sensitive', False)
         self.action_group.get_action('report-bug').set_property('sensitive', False)
         self.action_group.get_action('about').set_property('sensitive', False)
@@ -231,17 +242,18 @@ class ThunarWindow(gtk.Window):
             bbox.pack_start(label, False, False, 2)
             label.show()
         else:
-            close_button = gtk.Button()
-            close_button.set_relief(gtk.RELIEF_NONE)
-            close_button.set_border_width(0)
-            close_button.set_focus_on_click(False)
-            close_button.connect('clicked', lambda btn: self._location_bar_focus_out()) 
-            lbox.pack_start(close_button, False, False, 0)
-            close_button.show()
+            if True:
+                close_button = gtk.Button()
+                close_button.set_relief(gtk.RELIEF_NONE)
+                close_button.set_border_width(0)
+                close_button.set_focus_on_click(False)
+                close_button.connect('clicked', lambda btn: self._location_bar_focus_out()) 
+                lbox.pack_start(close_button, False, False, 0)
+                close_button.show()
 
-            close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
-            close_button.add(close_image)
-            close_image.show()
+                close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
+                close_button.add(close_image)
+                close_image.show()
 
             label = gtk.Label('Location:')
             lbox.pack_start(label, False, False, 0)
@@ -263,7 +275,7 @@ class ThunarWindow(gtk.Window):
             lbox.pack_start(close_button, False, False, 0)
             close_button.show()
 
-            close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_BUTTON)
+            close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
             close_button.add(close_image)
             close_image.show()
 
