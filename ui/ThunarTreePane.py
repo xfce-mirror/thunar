@@ -47,7 +47,7 @@ class ThunarTreePane(gtk.TreeView):
         # register signals
         global signals_registered
         if not signals_registered:
-            gobject.signal_new('directory-changed', self, gobject.SIGNAL_RUN_LAST, \
+            gobject.signal_new('directory-changed0', self, gobject.SIGNAL_RUN_LAST, \
                                gobject.TYPE_NONE, [ThunarFileInfo])
             signals_registered = True
 
@@ -122,7 +122,7 @@ class ThunarTreePane(gtk.TreeView):
         model, iter = self.get_selection().get_selected()
         if iter:
             info = self.model.get(iter, self.COLUMN_INFO)[0]
-            self.emit('directory-changed', info)
+            self.emit('directory-changed0', info)
         
 
     def select_by_info(self, info):

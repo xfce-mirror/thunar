@@ -31,7 +31,7 @@ import gtk
 from ThunarModel import ThunarModel
 from ThunarFileInfo import ThunarFileInfo
 from ThunarListView import ThunarListView
-from ThunarTreePane import ThunarTreePane
+from ThunarSidePane import ThunarSidePane
 from ThunarPropertiesDialog import ThunarPropertiesDialog
 
 # the icon view requires libexo-0.3
@@ -131,21 +131,12 @@ class ThunarWindow(gtk.Window):
         self.main_vbox.pack_start(self.main_hbox, True, True, 0)
         self.main_hbox.show()
 
-        self.sidepane = gtk.VBox(False, 0)
+        self.sidepane = ThunarSidePane()
+        self.main_hbox.set_position(self.sidepane.size_request()[0])
+        self.sidepane.select_by_info(self.info)
+        self.sidepane_selection_id = self.sidepane.connect('directory-changed', lambda ign, info: self._action_open_dir(info))
         self.main_hbox.add1(self.sidepane)
         self.sidepane.show()
-
-        swin = gtk.ScrolledWindow(None, None)
-        swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.sidepane.pack_start(swin, True, True, 0)
-        swin.show()
-
-        self.treepane = ThunarTreePane()
-        self.main_hbox.set_position(self.treepane.size_request()[0])
-        self.treepane.select_by_info(self.info)
-        self.treepane_selection_id = self.treepane.connect('directory-changed', lambda ign, info: self._action_open_dir(info))
-        swin.add(self.treepane)
-        self.treepane.show()
 
         self.swin = gtk.ScrolledWindow(None, None)
         self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -164,6 +155,7 @@ class ThunarWindow(gtk.Window):
         self.view.connect('activated', lambda widget, info: self._action_open_dir(info))
         self.view.connect('selection-changed', lambda widget: self._selection_changed())
         self.swin.add(self.view)
+        self.view.grab_focus()
         self.view.show()
 
         self.status_bar = gtk.Statusbar()
@@ -247,9 +239,9 @@ class ThunarWindow(gtk.Window):
         self.set_title('Thunar: ' + info.get_visible_name())
         self.set_icon(info.render_icon(48))
 
-        self.treepane.handler_block(self.treepane_selection_id)
-        self.treepane.select_by_info(info)
-        self.treepane.handler_unblock(self.treepane_selection_id)
+        self.sidepane.handler_block(self.sidepane_selection_id)
+        self.sidepane.select_by_info(info)
+        self.sidepane.handler_unblock(self.sidepane_selection_id)
 
         # scroll to (0,0)
         self.swin.get_hadjustment().set_value(0)
