@@ -290,10 +290,10 @@ class ThunarWindow(gtk.Window):
 
     def _action_show_toolbars(self):
         if self.action_group.get_action('view-toolbars').get_active():
-            self.toolbar.show()
+            self.tool_bar.show()
             self.location_bar.show()
         else:
-            self.toolbar.hide()
+            self.tool_bar.hide()
             self.location_bar.hide()
 
 
