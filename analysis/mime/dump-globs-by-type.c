@@ -210,7 +210,7 @@ main (int argc, char **argv)
           bytes += ((strlen (pp->pattern) + 1 + 3) / 4) * 4;
         }
 
-      g_print ("Number of types for the Literal Patterns: %u Bytes\n\n", bytes);
+      g_print ("Number of bytes for the Literal Patterns: %u Bytes\n\n", bytes);
     }
 
   /* calculate the number of nodes for simple patterns */
