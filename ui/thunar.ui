@@ -63,11 +63,15 @@
         <menuitem action="sidebar-disabled" />
       </menu>
 
+      <menu action="view-locationbar-menu">
+        <menuitem action="locationbar-pathbuttons" />
+        <menuitem action="locationbar-entry" />
+        <menuitem action="locationbar-hidden" />
+      </menu>
+
       <separator />
 
       <menuitem action="view-toolbars" />
-      <menuitem action="view-pathbar" />
-      <menuitem action="view-locationbar" />
 
       <separator />
 
@@ -103,8 +107,10 @@
     <toolitem action="go-forward" />
     <separator />
     <toolitem action="reload" />
+    <!--
     <separator />
     <toolitem action="sidebar-tree" />
     <toolitem action="sidebar-shortcuts" />
+    -->
   </toolbar>
 </ui>

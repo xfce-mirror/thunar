@@ -89,6 +89,7 @@ class ThunarWindow(gtk.Window):
         self.action_group.add_actions([
             ('view-menu', None, '_View'),
             ('view-sidebar-menu', None, '_Sidebar'),
+            ('view-locationbar-menu', None, '_Locationbar'),
             ('reload', gtk.STOCK_REFRESH, '_Reload', '<Control>R', None, lambda ign, self: self._internal_open_dir(self.info)),
         ], self)
         self.action_group.add_radio_actions([
@@ -104,9 +105,10 @@ class ThunarWindow(gtk.Window):
             ('view-as-list', None, 'View as _List'),
         ], 1, lambda action, whatever, self: self._action_view_toggled(), self)
         self.action_group.add_radio_actions([
-            ('view-pathbar', None, 'Path Bar', None, None, 1),
-            ('view-locationbar', None, 'Location Bar'),
-        ], 1, lambda action, whatever, self: self._action_bar_toggled(), self)
+            ('locationbar-pathbuttons', None, 'Path Buttons', None, None, 1),
+            ('locationbar-entry', None, 'Entry Widget'),
+            ('locationbar-hidden', None, 'Hidden'),
+        ], 1, lambda action, whatever, self: self._action_locationbar_toggled(), self)
         self.action_group.add_actions([
             ('go-menu', None, '_Go'),
             ('go-up', gtk.STOCK_GO_UP, '_Up', '<Alt>Up', None, lambda ign, self: self._action_open_dir(self.info.get_parent())),
@@ -178,8 +180,8 @@ class ThunarWindow(gtk.Window):
         self.main_hbox.pack2(self.view_vbox, True, False)
         self.view_vbox.show()
 
-        # add the path bar
-        self._action_bar_toggled()
+        # add the location bar
+        self._action_locationbar_toggled()
 
         self.swin = gtk.ScrolledWindow(None, None)
         self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -309,15 +311,18 @@ class ThunarWindow(gtk.Window):
         self.view.show()
 
 
-    def _action_bar_toggled(self):
+    def _action_locationbar_toggled(self):
         try:
             if self.pathbar: self.pathbar.destroy()
         except:
             pass
-        if self.action_group.get_action('view-pathbar').get_active():
+        if self.action_group.get_action('locationbar-pathbuttons').get_active():
             self.pathbar = ThunarPathBar()
-        else:
+        elif self.action_group.get_action('locationbar-entry').get_active():
             self.pathbar = ThunarLocationBar()
+        else:
+            self.pathbar = None
+            return
         self.pathbar.set_info(self.info)
         self.pathbar.connect('directory-changed', lambda history, info: self._action_open_dir(info))
         self.view_vbox.pack_start(self.pathbar, False, False, 0)
@@ -395,7 +400,8 @@ class ThunarWindow(gtk.Window):
         self.sidepane.select_by_info(info)
         self.sidepane.handler_unblock(self.sidepane_selection_id)
 
-        self.pathbar.set_info(info)
+        if self.pathbar:
+            self.pathbar.set_info(info)
 
         # scroll to (0,0)
         self.swin.get_hadjustment().set_value(0)
@@ -457,7 +463,7 @@ class ThunarWindow(gtk.Window):
 
 
     def _action_open_location_other(self):
-        if self.pathbar.__class__ == ThunarLocationBar:
+        if self.pathbar and self.pathbar.__class__ == ThunarLocationBar:
             self.pathbar.focus()
             return
 
