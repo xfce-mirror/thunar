@@ -196,24 +196,44 @@ main (int argc, char **argv)
       g_print ("\n");
     }
 
-  guint count_nodes = 0;
-  const gchar *previous_pattern = "";
-  for (lp = loader.parsed_patterns[PATTERN_SIMPLE]; lp != NULL; lp = lp->next)
+  /* calculate memory consumed by literal patterns */
     {
-      pp = lp->data;
+      guint bytes = 0;
+      for (lp = loader.parsed_patterns[PATTERN_LITERAL]; lp != NULL; lp = lp->next)
+        {
+          pp = lp->data;
 
-      int length = strlen (pp->pattern);
+          /* size required for the two pointers */
+          bytes += sizeof (void *) + sizeof (void *);
 
-      int i;
-      for (i = 0; pp->pattern[i] != '\0' && pp->pattern[i] == previous_pattern[i]; ++i)
-        ;
+          /* size required for the pattern string (including the padding) */
+          bytes += ((strlen (pp->pattern) + 1 + 3) / 4) * 4;
+        }
 
-      count_nodes += length - i;
-
-      previous_pattern = pp->pattern;
+      g_print ("Number of types for the Literal Patterns: %u Bytes\n\n", bytes);
     }
 
-  g_print ("Number of nodes for Simple Patterns: %d (%d Bytes)\n\n", count_nodes, count_nodes * 16);
+  /* calculate the number of nodes for simple patterns */
+    {
+      guint count_nodes = 0;
+      const gchar *previous_pattern = "";
+      for (lp = loader.parsed_patterns[PATTERN_SIMPLE]; lp != NULL; lp = lp->next)
+        {
+          pp = lp->data;
+
+          int length = strlen (pp->pattern);
+
+          int i;
+          for (i = 0; pp->pattern[i] != '\0' && pp->pattern[i] == previous_pattern[i]; ++i)
+            ;
+
+          count_nodes += length - i;
+
+          previous_pattern = pp->pattern;
+        }
+
+      g_print ("Number of nodes for Simple Patterns: %u (%u Bytes)\n\n", count_nodes, count_nodes * 16);
+    }
 
   return 0;
 }

@@ -1,5 +1,10 @@
 2005-03-27	Benedikt Meurer <benny@xfce.org>
 
+	* mime/dump-globs-by-type.c(main): Also calculate the number of bytes
+	  required to store the Literal Patterns in a memory chunk.
+
+2005-03-27	Benedikt Meurer <benny@xfce.org>
+
 	* mime/dump-globs-by-type.c: Use only patterns in the form '*.ext' as
 	  simple patterns, the other '*ext' patterns are considered complex
 	  patterns. This allows for easier tree lookup.
