@@ -35,21 +35,10 @@ from ThunarFileInfo import ThunarFileInfo
 from ThunarModel import ThunarModel
 from ThunarView import ThunarView
 
-signals_registered = False
-
 class ThunarIconView(exo.IconView, ThunarView):
     def __init__(self, dir_info):
         exo.IconView.__init__(self, ThunarModel(dir_info))
         ThunarView.__init__(self)
-
-        # register signals
-        global signals_registered
-        if not signals_registered:
-            gobject.signal_new('activated', self, gobject.SIGNAL_RUN_LAST, \
-                               gobject.TYPE_NONE, [ThunarFileInfo])
-            gobject.signal_new('context-menu', self, gobject.SIGNAL_RUN_LAST, \
-                               gobject.TYPE_NONE, [])
-            signals_registered = True
 
         self.set_text_column(ThunarModel.COLUMN_NAME)
         self.set_pixbuf_column(ThunarModel.COLUMN_ICONHUGE)
@@ -100,3 +89,12 @@ class ThunarIconView(exo.IconView, ThunarView):
                     self.get_toplevel().destroy()
             return True
         return False
+
+
+
+gobject.type_register(ThunarIconView)
+gobject.signal_new('activated', ThunarIconView, gobject.SIGNAL_RUN_LAST, \
+                   gobject.TYPE_NONE, [ThunarFileInfo])
+gobject.signal_new('context-menu', ThunarIconView, gobject.SIGNAL_RUN_LAST, \
+                   gobject.TYPE_NONE, [])
+

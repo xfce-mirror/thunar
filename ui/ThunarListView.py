@@ -39,32 +39,10 @@ try:
 except ImportError:
     exo_supported = False
 
-signals_registered = False
-
 class ThunarListView(gtk.TreeView, ThunarView):
     def __init__(self, dir_info):
         gtk.TreeView.__init__(self)
         ThunarView.__init__(self)
-
-        # register signals
-        global signals_registered
-        if not signals_registered:
-            try:
-                gobject.signal_new('activated', self, gobject.SIGNAL_RUN_LAST, \
-                                   gobject.TYPE_NONE, [ThunarFileInfo])
-            except:
-                pass
-            try:
-                gobject.signal_new('context-menu', self, gobject.SIGNAL_RUN_LAST, \
-                                   gobject.TYPE_NONE, [])
-            except:
-                pass
-            try:
-                gobject.signal_new('selection-changed', self, gobject.SIGNAL_RUN_LAST, \
-                                   gobject.TYPE_NONE, [])
-            except:
-                pass
-            signals_registered = True
 
         self.set_model(ThunarModel(dir_info))
 
@@ -168,3 +146,15 @@ class ThunarListView(gtk.TreeView, ThunarView):
                     self.get_toplevel().destroy()
             return True
         return False
+
+
+
+gobject.type_register(ThunarListView)
+gobject.signal_new('activated', ThunarListView, gobject.SIGNAL_RUN_LAST, \
+                   gobject.TYPE_NONE, [ThunarFileInfo])
+gobject.signal_new('context-menu', ThunarListView, \
+                   gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
+gobject.signal_new('selection-changed', ThunarListView, \
+                   gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
+
+

@@ -83,7 +83,7 @@ class ThunarSidePane(gtk.VBox):
     def set_gtkfilechooser_like(self, value):
         if value:
             self.frame.hide()
-            self.swin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+            self.swin.set_shadow_type(gtk.SHADOW_IN)
         else:
             self.frame.show()
             self.swin.set_shadow_type(gtk.SHADOW_NONE)
