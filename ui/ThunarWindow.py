@@ -56,7 +56,6 @@ class ThunarWindow(gtk.Window):
         factory.add('thunar-shortcuts', set)
         factory.add_default()
 
-
         self.bookmarks = []
 
         self.info = info
@@ -88,8 +87,8 @@ class ThunarWindow(gtk.Window):
             ('sidebar-disabled', None, 'Hidden', None, 'Hide the sidebar', 3),
         ], 2, lambda action, whatever, self: self._action_sidebar_toggled(), self)
         self.action_group.add_toggle_actions([
-            ('view-gtkfilechooser', None, 'GtkFileChooser-like', None, None, lambda ign, self: self._action_gtkfilechooser_like()),
-            ('view-toolbars', None, 'Show Toolbars', None, None, lambda ign, self: self._action_show_toolbars(), True),
+            ('view-gtkfilechooser', None, 'GtkFileChooser-like', None, None, lambda ign, self: self._action_gtkfilechooser_like(), True),
+            ('view-toolbars', None, 'Show Toolbars', None, None, lambda ign, self: self._action_show_toolbars(), False),
         ], self)
         self.action_group.add_radio_actions([
             ('view-as-icons', None, 'View as _Icons', None, None, 1),
@@ -146,15 +145,17 @@ class ThunarWindow(gtk.Window):
         tool_bar = self.ui_manager.get_widget('/main-toolbar')
         tool_bar.set_style(gtk.TOOLBAR_BOTH_HORIZ)
         self.main_vbox.pack_start(tool_bar, False, False, 0)
-        tool_bar.show()
+        tool_bar.hide()
 
         self.main_hbox = gtk.HPaned()
+        self.main_hbox.set_border_width(6)
         self.main_vbox.pack_start(self.main_hbox, True, True, 0)
         self.main_hbox.show()
 
         self.sidepane = ThunarSidePane()
         self.main_hbox.set_position(self.sidepane.size_request()[0])
         self.sidepane.select_by_info(self.info)
+        self.sidepane.set_gtkfilechooser_like(True)
         self.sidepane_selection_id = self.sidepane.connect('directory-changed', lambda ign, info: self._action_open_dir(info))
         self.sidepane_selection_id = self.sidepane.connect('hide-sidepane', lambda ign: self.action_group.get_action('sidebar-disabled').activate())
         self.main_hbox.pack1(self.sidepane, False, False)
@@ -168,7 +169,7 @@ class ThunarWindow(gtk.Window):
         self.history.set_info(self.info)
         self.history.connect('directory-changed', lambda history, info: self._action_open_dir(info))
         vbox.pack_start(self.history, False, False, 0)
-        self.history.hide()
+        self.history.show()
 
         self.swin = gtk.ScrolledWindow(None, None)
         self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
