@@ -29,6 +29,7 @@ pygtk.require('2.0')
 import gtk
 
 from ThunarModel import ThunarModel
+from ThunarLocationBar import ThunarLocationBar
 from ThunarPathBar import ThunarPathBar
 from ThunarFileInfo import ThunarFileInfo
 from ThunarListView import ThunarListView
@@ -71,7 +72,7 @@ class ThunarWindow(gtk.Window):
         self.action_group = gtk.ActionGroup('thunar-window')
         self.action_group.add_actions([
             ('file-menu', None, '_File'),
-            ('open-location', None, 'Open _Location', '<Control>L', None, lambda ign, self: self._action_open_location()),
+            ('open-location', None, 'Open _Location', '<Control>L', None, lambda ign, self: self._action_open_location_other()),
             ('get-info', gtk.STOCK_PROPERTIES, 'Get _Info...', '<Alt>Return', None, lambda ign, self: self._action_get_info()),
             ('close-window', gtk.STOCK_CLOSE, '_Close', '<Control>W', None, lambda ign, self: self.destroy()),
         ], self)
@@ -96,13 +97,16 @@ class ThunarWindow(gtk.Window):
             ('sidebar-disabled', None, 'Hidden', None, 'Hide the sidebar', 3),
         ], 2, lambda action, whatever, self: self._action_sidebar_toggled(), self)
         self.action_group.add_toggle_actions([
-            ('view-gtkfilechooser', None, 'GtkFileChooser-like', None, None, lambda ign, self: self._action_gtkfilechooser_like(), True),
             ('view-toolbars', None, 'Show Toolbars', None, None, lambda ign, self: self._action_show_toolbars(), False),
         ], self)
         self.action_group.add_radio_actions([
             ('view-as-icons', None, 'View as _Icons', None, None, 1),
             ('view-as-list', None, 'View as _List'),
         ], 1, lambda action, whatever, self: self._action_view_toggled(), self)
+        self.action_group.add_radio_actions([
+            ('view-pathbar', None, 'Path Bar', None, None, 1),
+            ('view-locationbar', None, 'Location Bar'),
+        ], 1, lambda action, whatever, self: self._action_bar_toggled(), self)
         self.action_group.add_actions([
             ('go-menu', None, '_Go'),
             ('go-up', gtk.STOCK_GO_UP, '_Up', '<Alt>Up', None, lambda ign, self: self._action_open_dir(self.info.get_parent())),
@@ -170,20 +174,17 @@ class ThunarWindow(gtk.Window):
         self.main_hbox.pack1(self.sidepane, False, False)
         self.sidepane.show()
 
-        vbox = gtk.VBox(False, 6)
-        self.main_hbox.pack2(vbox, True, False)
-        vbox.show()
+        self.view_vbox = gtk.VBox(False, 6)
+        self.main_hbox.pack2(self.view_vbox, True, False)
+        self.view_vbox.show()
 
-        self.pathbar = ThunarPathBar()
-        self.pathbar.set_info(self.info)
-        self.pathbar.connect('directory-changed', lambda history, info: self._action_open_dir(info))
-        vbox.pack_start(self.pathbar, False, False, 0)
-        self.pathbar.show()
+        # add the path bar
+        self._action_bar_toggled()
 
         self.swin = gtk.ScrolledWindow(None, None)
         self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
         self.swin.set_shadow_type(gtk.SHADOW_IN)
-        vbox.pack_start(self.swin, True, True, 0)
+        self.view_vbox.pack_start(self.swin, True, True, 0)
         self.swin.show()
 
         if icon_view_support:
@@ -201,83 +202,83 @@ class ThunarWindow(gtk.Window):
         self.view.grab_focus()
         self.view.show()
 
-        if True:
-            self.location_bar = gtk.Frame()
-            self.location_bar.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-            vbox.pack_start(self.location_bar, False, False, 0)
-            self.location_bar.hide()
-        else:
-            self.location_bar = gtk.VBox(False, 0)
-            self.main_vbox.pack_start(self.location_bar, False, False, 0)
-            self.location_bar.hide()
-
-            separator = gtk.HSeparator()
-            self.location_bar.pack_start(separator, False, False, 0)
-            separator.show()
-
-        lbox = gtk.HBox(False, 6)
-        lbox.set_border_width(2)
-        self.location_bar.add(lbox)
-        lbox.show()
-
-        if False:
-            button = gtk.Button()
-            button.set_relief(gtk.RELIEF_NONE)
-            button.set_border_width(0)
-            button.set_focus_on_click(False)
-            button.connect('clicked', lambda btn: self._location_bar_activate())
-            lbox.pack_start(button, False, False, 0)
-            button.show()
-
-            bbox = gtk.HBox(False, 0)
-            bbox.set_border_width(0)
-            button.add(bbox)
-            bbox.show()
-
-            image = gtk.image_new_from_stock(gtk.STOCK_JUMP_TO, gtk.ICON_SIZE_BUTTON)
-            bbox.pack_start(image, False, False, 2)
-            image.show()
-
-            label = gtk.Label('Go')
-            bbox.pack_start(label, False, False, 2)
-            label.show()
-        else:
-            if True:
-                close_button = gtk.Button()
-                close_button.set_relief(gtk.RELIEF_NONE)
-                close_button.set_border_width(0)
-                close_button.set_focus_on_click(False)
-                close_button.connect('clicked', lambda btn: self._location_bar_focus_out()) 
-                lbox.pack_start(close_button, False, False, 0)
-                close_button.show()
-
-                close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
-                close_button.add(close_image)
-                close_image.show()
-
-            label = gtk.Label('Location:')
-            lbox.pack_start(label, False, False, 0)
-            label.show()
-
-        self.location_entry = gtk.Entry()
-        self.location_entry.connect('focus-out-event', lambda entry, event: self._location_bar_focus_out())
-        self.location_entry.connect('key-press-event', lambda entry, event: self._location_bar_key_press(event))
-        self.location_entry.connect('activate', lambda entry: self._location_bar_activate())
-        lbox.pack_start(self.location_entry, True, True, 0)
-        self.location_entry.show()
-
-        if False:
-            close_button = gtk.Button()
-            close_button.set_relief(gtk.RELIEF_NONE)
-            close_button.set_border_width(0)
-            close_button.set_focus_on_click(False)
-            close_button.connect('clicked', lambda btn: self._location_bar_focus_out()) 
-            lbox.pack_start(close_button, False, False, 0)
-            close_button.show()
-
-            close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
-            close_button.add(close_image)
-            close_image.show()
+#        if True:
+#            self.location_bar = gtk.Frame()
+#            self.location_bar.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+#            vbox.pack_start(self.location_bar, False, False, 0)
+#            self.location_bar.hide()
+#        else:
+#            self.location_bar = gtk.VBox(False, 0)
+#            self.main_vbox.pack_start(self.location_bar, False, False, 0)
+#            self.location_bar.hide()
+#
+#            separator = gtk.HSeparator()
+#            self.location_bar.pack_start(separator, False, False, 0)
+#            separator.show()
+#
+#        lbox = gtk.HBox(False, 6)
+#        lbox.set_border_width(2)
+#        self.location_bar.add(lbox)
+#        lbox.show()
+#
+#        if False:
+#            button = gtk.Button()
+#            button.set_relief(gtk.RELIEF_NONE)
+#            button.set_border_width(0)
+#            button.set_focus_on_click(False)
+#            button.connect('clicked', lambda btn: self._location_bar_activate())
+#            lbox.pack_start(button, False, False, 0)
+#            button.show()
+#
+#            bbox = gtk.HBox(False, 0)
+#            bbox.set_border_width(0)
+#            button.add(bbox)
+#            bbox.show()
+#
+#            image = gtk.image_new_from_stock(gtk.STOCK_JUMP_TO, gtk.ICON_SIZE_BUTTON)
+#            bbox.pack_start(image, False, False, 2)
+#            image.show()
+#
+#            label = gtk.Label('Go')
+#            bbox.pack_start(label, False, False, 2)
+#            label.show()
+#        else:
+#            if True:
+#                close_button = gtk.Button()
+#                close_button.set_relief(gtk.RELIEF_NONE)
+#                close_button.set_border_width(0)
+#                close_button.set_focus_on_click(False)
+#                close_button.connect('clicked', lambda btn: self._location_bar_focus_out()) 
+#                lbox.pack_start(close_button, False, False, 0)
+#                close_button.show()
+#
+#                close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
+#                close_button.add(close_image)
+#                close_image.show()
+#
+#            label = gtk.Label('Location:')
+#            lbox.pack_start(label, False, False, 0)
+#            label.show()
+#
+#        self.location_entry = gtk.Entry()
+#        self.location_entry.connect('focus-out-event', lambda entry, event: self._location_bar_focus_out())
+#        self.location_entry.connect('key-press-event', lambda entry, event: self._location_bar_key_press(event))
+#        self.location_entry.connect('activate', lambda entry: self._location_bar_activate())
+#        lbox.pack_start(self.location_entry, True, True, 0)
+#        self.location_entry.show()
+#
+#        if False:
+#            close_button = gtk.Button()
+#            close_button.set_relief(gtk.RELIEF_NONE)
+#            close_button.set_border_width(0)
+#            close_button.set_focus_on_click(False)
+#            close_button.connect('clicked', lambda btn: self._location_bar_focus_out()) 
+#            lbox.pack_start(close_button, False, False, 0)
+#            close_button.show()
+#
+#            close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
+#            close_button.add(close_image)
+#            close_image.show()
 
         self.status_bar = gtk.Statusbar()
         self.status_id = self.status_bar.get_context_id('Selection state')
@@ -308,15 +309,20 @@ class ThunarWindow(gtk.Window):
         self.view.show()
 
 
-    def _action_gtkfilechooser_like(self):
-        value = self.action_group.get_action('view-gtkfilechooser').get_active()
-        self.sidepane.set_gtkfilechooser_like(value)
-        if value:
-            self.pathbar.show()
-            self.main_hbox.set_border_width(6)
+    def _action_bar_toggled(self):
+        try:
+            if self.pathbar: self.pathbar.destroy()
+        except:
+            pass
+        if self.action_group.get_action('view-pathbar').get_active():
+            self.pathbar = ThunarPathBar()
         else:
-            self.pathbar.hide()
-            self.main_hbox.set_border_width(0)
+            self.pathbar = ThunarLocationBar()
+        self.pathbar.set_info(self.info)
+        self.pathbar.connect('directory-changed', lambda history, info: self._action_open_dir(info))
+        self.view_vbox.pack_start(self.pathbar, False, False, 0)
+        self.view_vbox.reorder_child(self.pathbar, 0)
+        self.pathbar.show()
 
 
     def _action_sidebar_toggled(self):
@@ -378,6 +384,7 @@ class ThunarWindow(gtk.Window):
     def _internal_open_dir(self, info):
         model = ThunarModel(info)
         self.view.set_model(model)
+        self.view.grab_focus()
         self.info = info
         self.action_group.get_action('go-up').set_property('sensitive', (info.get_parent() != None))
         self._selection_changed()
@@ -449,7 +456,11 @@ class ThunarWindow(gtk.Window):
         return False
 
 
-    def _action_open_location_old(self):
+    def _action_open_location_other(self):
+        if self.pathbar.__class__ == ThunarLocationBar:
+            self.pathbar.focus()
+            return
+
         dialog = gtk.Dialog('Open Location', self, gtk.DIALOG_DESTROY_WITH_PARENT | gtk.DIALOG_NO_SEPARATOR | gtk.DIALOG_MODAL, (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         dialog.set_default_response(gtk.RESPONSE_OK)
         dialog.set_default_size(390, 50)
