@@ -40,7 +40,9 @@ class ThunarBookmarksPane(gtk.TreeView):
 
 
     def __init__(self):
-        gtk.TreeView.__init__(self, self._create_model())
+        gtk.TreeView.__init__(self)
+        
+        self.set_model(self._create_model())
 
         column = gtk.TreeViewColumn('Name')
         renderer = gtk.CellRendererPixbuf()
@@ -71,6 +73,12 @@ class ThunarBookmarksPane(gtk.TreeView):
                 self.model.append([info.get_visible_name(), info.render_icon(self.ICON_SIZE), info])
             except:
                 pass
+
+        try:
+            self.set_row_separator_func(lambda model, iter: model.get(iter, self.COLUMN_INFO)[0] == None)
+            self.model.append([None, None, None])
+        except:
+            pass
         
         try:
             fp = file(os.path.join(home, '.gtk-bookmarks'))
@@ -102,7 +110,7 @@ class ThunarBookmarksPane(gtk.TreeView):
         iter = self.model.iter_children(None)
         while iter:
             bm_info = self.model.get(iter, self.COLUMN_INFO)[0]
-            if bm_info.get_path() == info.get_path():
+            if bm_info and bm_info.get_path() == info.get_path():
                 path = self.model.get_path(iter)
                 self.get_selection().select_path(path)
                 return

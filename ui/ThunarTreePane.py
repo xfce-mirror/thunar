@@ -31,8 +31,6 @@ import gtk
 
 from ThunarFileInfo import ThunarFileInfo
 
-signals_registered = False
-
 class ThunarTreePane(gtk.TreeView):
     COLUMN_NAME = 0
     COLUMN_ICON = 1
@@ -43,13 +41,6 @@ class ThunarTreePane(gtk.TreeView):
 
     def __init__(self):
         gtk.TreeView.__init__(self)
-
-        # register signals
-        global signals_registered
-        if not signals_registered:
-            gobject.signal_new('directory-changed0', self, gobject.SIGNAL_RUN_LAST, \
-                               gobject.TYPE_NONE, [ThunarFileInfo])
-            signals_registered = True
 
         self.model = gtk.TreeStore(gobject.TYPE_STRING, gtk.gdk.Pixbuf, gobject.TYPE_INT, ThunarFileInfo)
 
@@ -157,3 +148,9 @@ class ThunarTreePane(gtk.TreeView):
 
         self.get_selection().select_path(tpath)
         self.scroll_to_cell(tpath)
+
+
+gobject.type_register(ThunarTreePane)
+gobject.signal_new('directory-changed0', ThunarTreePane, gobject.SIGNAL_RUN_LAST, \
+                   gobject.TYPE_NONE, [ThunarFileInfo])
+

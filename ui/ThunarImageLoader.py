@@ -52,3 +52,7 @@ class ThunarImageLoader:
             icon = self.__theme.load_icon(name, size, 0)
             self.__cache[key] = icon
         return icon
+
+
+    def has_icon(self, name):
+        return self.__theme.has_icon(name)

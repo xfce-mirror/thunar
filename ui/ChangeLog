@@ -1,3 +1,13 @@
+2005-03-15	Benedikt Meurer <benny@xfce.org>
+
+	* ThunarImageLoader.py, ThunarMimeDatabase.py: Use gnome-fs-directory as
+	  fallback for inode/directory types.
+	* ThunarBookmarksPane.py: Add a separator between the predefined and
+	  the userdefined bookmark items. Only available with Gtk 2.6.
+	* ThunarView.py: Don't inherit from GInterface.
+	* ThunarWindow.py: Add a location bar to the classic view. Make the
+	  classic view the default for now. Play around with spacings.
+
 2005-03-06	Benedikt Meurer <benny@xfce.org>
 
 	* ThunarColumnsView.py, thunar.ui, ThunarWindow.py: Remove the Columns

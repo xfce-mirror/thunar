@@ -30,7 +30,7 @@ import gtk
 from ThunarFileInfo import ThunarFileInfo
 from ThunarModel import ThunarModel
 
-class ThunarView(gobject.GInterface):
+class ThunarView:
     def __init__(self):
         return
 

@@ -86,8 +86,8 @@ class ThunarWindow(gtk.Window):
             ('sidebar-disabled', None, 'Hidden', None, 'Hide the sidebar', 3),
         ], 2, lambda action, whatever, self: self._action_sidebar_toggled(), self)
         self.action_group.add_toggle_actions([
-            ('view-gtkfilechooser', None, 'GtkFileChooser-like', None, None, lambda ign, self: self._action_gtkfilechooser_like(), True),
-            ('view-toolbars', None, 'Show Toolbars', None, None, lambda ign, self: self._action_show_toolbars(), False),
+            ('view-gtkfilechooser', None, 'GtkFileChooser-like', None, None, lambda ign, self: self._action_gtkfilechooser_like(), False),
+            ('view-toolbars', None, 'Show Toolbars', None, None, lambda ign, self: self._action_show_toolbars(), True),
         ], self)
         self.action_group.add_radio_actions([
             ('view-as-icons', None, 'View as _Icons', None, None, 1),
@@ -140,20 +140,68 @@ class ThunarWindow(gtk.Window):
         self.main_vbox.pack_start(menu_bar, False, False, 0)
         menu_bar.show()
 
-        tool_bar = self.ui_manager.get_widget('/main-toolbar')
-        tool_bar.set_style(gtk.TOOLBAR_BOTH_HORIZ)
-        self.main_vbox.pack_start(tool_bar, False, False, 0)
-        tool_bar.hide()
+        self.tool_bar = self.ui_manager.get_widget('/main-toolbar')
+        self.tool_bar.set_style(gtk.TOOLBAR_BOTH_HORIZ)
+        self.main_vbox.pack_start(self.tool_bar, False, False, 0)
+        self.tool_bar.show()
+
+        self.location_bar = gtk.Toolbar()
+        self.main_vbox.pack_start(self.location_bar, False, False, 0)
+        self.location_bar.show()
+
+        item = gtk.SeparatorToolItem()
+        item.set_draw(False)
+        self.location_bar.insert(item, -1)
+        item.show()
+
+        item = gtk.ToolItem()
+        self.location_bar.insert(item, -1)
+        item.show()
+
+        label = gtk.Label('Location:')
+        item.add(label)
+        label.show()
+
+        item = gtk.SeparatorToolItem()
+        item.set_draw(False)
+        self.location_bar.insert(item, -1)
+        item.show()
+
+        item = gtk.ToolItem()
+        item.set_border_width(6)
+        item.set_expand(True)
+        self.location_bar.insert(item, -1)
+        item.show()
+
+        self.location_entry = gtk.Entry()
+        self.location_entry.set_text(info.get_path())
+        self.location_entry.connect('activate', lambda entry: self._action_open_dir(ThunarFileInfo(entry.get_text())))
+        item.add(self.location_entry)
+        self.location_entry.show()
+
+        item = gtk.ToolItem()
+        item.set_border_width(4)
+        self.location_bar.insert(item, -1)
+        item.show()
+
+        self.view_combo = gtk.combo_box_new_text()
+        self.view_combo.append_text('View as Icons')
+        self.view_combo.append_text('View as List')
+        self.view_combo.set_active(int(self.action_group.get_action('view-as-list').get_active()))
+        self.view_combo.connect('changed', lambda combo: (self.action_group.get_action('view-as-icons').set_active(combo.get_active() == 0), self.action_group.get_action('view-as-list').set_active(combo.get_active() == 1)))
+        self.action_group.get_action('view-as-list').connect('toggled', lambda action, combo: combo.set_active(int(action.get_active())), self.view_combo)
+        item.add(self.view_combo)
+        self.view_combo.show()
 
         self.main_hbox = gtk.HPaned()
-        self.main_hbox.set_border_width(6)
+        self.main_hbox.set_border_width(0)
         self.main_vbox.pack_start(self.main_hbox, True, True, 0)
         self.main_hbox.show()
 
         self.sidepane = ThunarSidePane()
         self.main_hbox.set_position(self.sidepane.size_request()[0])
         self.sidepane.select_by_info(self.info)
-        self.sidepane.set_gtkfilechooser_like(True)
+        self.sidepane.set_gtkfilechooser_like(False)
         self.sidepane_selection_id = self.sidepane.connect('directory-changed', lambda ign, info: self._action_open_dir(info))
         self.sidepane_selection_id = self.sidepane.connect('hide-sidepane', lambda ign: self.action_group.get_action('sidebar-disabled').activate())
         self.main_hbox.pack1(self.sidepane, False, False)
@@ -167,7 +215,7 @@ class ThunarWindow(gtk.Window):
         self.pathbar.set_info(self.info)
         self.pathbar.connect('directory-changed', lambda history, info: self._action_open_dir(info))
         vbox.pack_start(self.pathbar, False, False, 0)
-        self.pathbar.show()
+        self.pathbar.hide()
 
         self.swin = gtk.ScrolledWindow(None, None)
         self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -242,9 +290,11 @@ class ThunarWindow(gtk.Window):
 
     def _action_show_toolbars(self):
         if self.action_group.get_action('view-toolbars').get_active():
-            self.ui_manager.get_widget('/main-toolbar').show()
+            self.toolbar.show()
+            self.location_bar.show()
         else:
-            self.ui_manager.get_widget('/main-toolbar').hide()
+            self.toolbar.hide()
+            self.location_bar.hide()
 
 
     def _action_get_info(self):
@@ -296,6 +346,8 @@ class ThunarWindow(gtk.Window):
         self.sidepane.select_by_info(info)
         self.sidepane.handler_unblock(self.sidepane_selection_id)
 
+        self.location_entry.set_text(info.get_path())
+        self.location_entry.set_position(-1)
         self.pathbar.set_info(info)
 
         # scroll to (0,0)

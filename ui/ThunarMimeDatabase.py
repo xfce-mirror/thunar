@@ -89,13 +89,20 @@ class ThunarMimeInfo:
                         name = 'gnome-mime-' + type.split('/')[0]
                         icon = self.__loader.load_icon(name, size)
                     except gobject.GError:
-                        try:
-                            name = 'mime-application:octet-stream'
-                            icon = self.__loader.load_icon(name, size)
-                        except gobject.GError:
+                        if type == 'inode/directory':
                             try:
-                                name = 'gnome-mime-application-octet-stream'
+                                name = 'gnome-fs-directory'
                                 icon = self.__loader.load_icon(name, size)
                             except gobject.GError:
                                 icon = gtk.gdk.pixbuf_new_from_file_at_size('fallback.svg', size, size)
+                        else:
+                            try:
+                                name = 'mime-application:octet-stream'
+                                icon = self.__loader.load_icon(name, size)
+                            except gobject.GError:
+                                try:
+                                    name = 'gnome-mime-application-octet-stream'
+                                    icon = self.__loader.load_icon(name, size)
+                                except gobject.GError:
+                                    icon = gtk.gdk.pixbuf_new_from_file_at_size('fallback.svg', size, size)
         return icon
