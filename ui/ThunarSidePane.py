@@ -33,8 +33,6 @@ from ThunarFileInfo import ThunarFileInfo
 from ThunarTreePane import ThunarTreePane
 from ThunarBookmarksPane import ThunarBookmarksPane
 
-signals_registered = False
-
 class ThunarSidePane(gtk.VBox):
     DISABLED = 0
     TREE = 1
@@ -42,27 +40,17 @@ class ThunarSidePane(gtk.VBox):
 
     def __init__(self):
         gtk.VBox.__init__(self)
+        self.set_spacing(0)
 
-        #self.set_size_request(150, -1)
-
-        # register signals
-        global signals_registered
-        if not signals_registered:
-            gobject.signal_new('directory-changed', self, gobject.SIGNAL_RUN_LAST, \
-                               gobject.TYPE_NONE, [ThunarFileInfo])
-            gobject.signal_new('hide-sidepane', self, gobject.SIGNAL_RUN_LAST, \
-                               gobject.TYPE_NONE, [])
-            signals_registered = True
-
-        frame = gtk.Frame()
-        frame.set_border_width(0)
-        frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-        self.pack_start(frame, False, False, 0)
-        frame.show()
+        self.frame = gtk.Frame()
+        self.frame.set_border_width(0)
+        self.frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.pack_start(self.frame, False, False, 0)
+        self.frame.show()
 
         hbox = gtk.HBox(False, 6)
         hbox.set_border_width(0)
-        frame.add(hbox)
+        self.frame.add(hbox)
         hbox.show()
 
         self.label = gtk.Label('')
@@ -90,6 +78,15 @@ class ThunarSidePane(gtk.VBox):
 
     def _directory_changed(self, info):
         self.emit('directory-changed', info)
+
+
+    def set_gtkfilechooser_like(self, value):
+        if value:
+            self.frame.hide()
+            self.swin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        else:
+            self.frame.show()
+            self.swin.set_shadow_type(gtk.SHADOW_NONE)
 
 
     def set_state(self, state):
@@ -121,4 +118,13 @@ class ThunarSidePane(gtk.VBox):
             self.child.handler_block(self.handler_id)
             self.child.select_by_info(info)
             self.child.handler_unblock(self.handler_id)
+
+
+
+gobject.type_register(ThunarSidePane)
+gobject.signal_new('directory-changed', ThunarSidePane, \
+                   gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, \
+                   [ThunarFileInfo])
+gobject.signal_new('hide-sidepane', ThunarSidePane, \
+                   gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
 

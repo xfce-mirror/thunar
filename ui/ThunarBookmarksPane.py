@@ -31,8 +31,6 @@ import gtk
 
 from ThunarFileInfo import ThunarFileInfo
 
-signals_registered = False
-
 class ThunarBookmarksPane(gtk.TreeView):
     COLUMN_NAME = 0
     COLUMN_ICON = 1
@@ -43,13 +41,6 @@ class ThunarBookmarksPane(gtk.TreeView):
 
     def __init__(self):
         gtk.TreeView.__init__(self, self._create_model())
-
-        # register signals
-        global signals_registered
-        if not signals_registered:
-            gobject.signal_new('directory-changed1', self, gobject.SIGNAL_RUN_LAST, \
-                               gobject.TYPE_NONE, [ThunarFileInfo])
-            signals_registered = True
 
         column = gtk.TreeViewColumn('Name')
         renderer = gtk.CellRendererPixbuf()
@@ -74,7 +65,7 @@ class ThunarBookmarksPane(gtk.TreeView):
 
         home = os.getenv('HOME')
 
-        for path in [home, os.path.join(home, 'Desktop'), '/']:
+        for path in [home, '/']:
             try:
                 info = ThunarFileInfo(path)
                 self.model.append([info.get_visible_name(), info.render_icon(self.ICON_SIZE), info])
@@ -116,3 +107,12 @@ class ThunarBookmarksPane(gtk.TreeView):
                 self.get_selection().select_path(path)
                 return
             iter = self.model.iter_next(iter)
+
+
+
+
+gobject.type_register(ThunarBookmarksPane)
+gobject.signal_new('directory-changed1', ThunarBookmarksPane, \
+                   gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, \
+                   [ThunarFileInfo])
+

@@ -29,6 +29,7 @@ pygtk.require('2.0')
 import gtk
 
 from ThunarModel import ThunarModel
+from ThunarHistory import ThunarHistory
 from ThunarFileInfo import ThunarFileInfo
 from ThunarListView import ThunarListView
 from ThunarSidePane import ThunarSidePane
@@ -85,6 +86,10 @@ class ThunarWindow(gtk.Window):
             ('sidebar-shortcuts', 'thunar-shortcuts', 'Shortcuts', None, 'Display the shortcuts on the left', 2),
             ('sidebar-disabled', None, 'Hidden', None, 'Hide the sidebar', 3),
         ], 2, lambda action, whatever, self: self._action_sidebar_toggled(), self)
+        self.action_group.add_toggle_actions([
+            ('view-gtkfilechooser', None, 'GtkFileChooser-like', None, None, lambda ign, self: self._action_gtkfilechooser_like()),
+            ('view-toolbars', None, 'Show Toolbars', None, None, lambda ign, self: self._action_show_toolbars(), True),
+        ], self)
         self.action_group.add_radio_actions([
             ('view-as-icons', None, 'View as _Icons'),
             ('view-as-list', None, 'View as _List'),
@@ -153,9 +158,20 @@ class ThunarWindow(gtk.Window):
         self.main_hbox.pack1(self.sidepane, False, False)
         self.sidepane.show()
 
+        vbox = gtk.VBox(False, 6)
+        self.main_hbox.pack2(vbox, True, False)
+        vbox.show()
+
+        self.history = ThunarHistory()
+        self.history.set_info(self.info)
+        self.history.connect('directory-changed', lambda history, info: self._action_open_dir(info))
+        vbox.pack_start(self.history, False, False, 0)
+        self.history.hide()
+
         self.swin = gtk.ScrolledWindow(None, None)
         self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.main_hbox.pack2(self.swin, True, False)
+        self.swin.set_shadow_type(gtk.SHADOW_IN)
+        vbox.pack_start(self.swin, True, True, 0)
         self.swin.show()
 
         if icon_view_support:
@@ -202,6 +218,17 @@ class ThunarWindow(gtk.Window):
         self.view.show()
 
 
+    def _action_gtkfilechooser_like(self):
+        value = self.action_group.get_action('view-gtkfilechooser').get_active()
+        self.sidepane.set_gtkfilechooser_like(value)
+        if value:
+            self.history.show()
+            self.main_hbox.set_border_width(6)
+        else:
+            self.history.hide()
+            self.main_hbox.set_border_width(0)
+
+
     def _action_sidebar_toggled(self):
         if self.action_group.get_action('sidebar-tree').get_active():
             self.sidepane.set_state(ThunarSidePane.TREE)
@@ -210,6 +237,13 @@ class ThunarWindow(gtk.Window):
         else:
             self.sidepane.set_state(ThunarSidePane.DISABLED)
         self.sidepane.select_by_info(self.info)
+
+
+    def _action_show_toolbars(self):
+        if self.action_group.get_action('view-toolbars').get_active():
+            self.ui_manager.get_widget('/main-toolbar').show()
+        else:
+            self.ui_manager.get_widget('/main-toolbar').hide()
 
 
     def _action_get_info(self):
@@ -260,6 +294,8 @@ class ThunarWindow(gtk.Window):
         self.sidepane.handler_block(self.sidepane_selection_id)
         self.sidepane.select_by_info(info)
         self.sidepane.handler_unblock(self.sidepane_selection_id)
+
+        self.history.set_info(info)
 
         # scroll to (0,0)
         self.swin.get_hadjustment().set_value(0)

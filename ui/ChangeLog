@@ -1,3 +1,12 @@
+2005-03-04	Benedikt Meurer <benny@xfce.org>
+
+	* ThunarBookmarksPane.py: Do not include Desktop here, as its highly
+	  redundant and useless in the normal window view. Get the GType
+	  handling right.
+	* ThunarSidePane.y: Get The GType handling right.
+	* ThunarHistory.py, ThunarSidePane.py, ThunarWindow.py, thunar.ui: Add
+	  GtkFileChooser-like view, changable using the View-menu.
+
 2005-03-03	Benedikt Meurer <benny@xfce.org>
 
 	* ThunarBookmarksPane.py: Increase the icon size to 32.
@@ -85,3 +94,5 @@
 2005-02-14	Benedikt Meurer <benny@xfce.org>
 
 	* Initial import.
+
+# vi:set ts=8 sw=8 noet ai:
