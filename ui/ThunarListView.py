@@ -81,7 +81,7 @@ class ThunarListView(gtk.TreeView, ThunarView):
         column.set_expand(False)
         self.append_column(column)
 
-        column = gtk.TreeViewColumn('Kind')
+        column = gtk.TreeViewColumn('Type')
         renderer = gtk.CellRendererText()
         column.pack_start(renderer, False)
         column.add_attribute(renderer, 'text', ThunarModel.COLUMN_KIND)

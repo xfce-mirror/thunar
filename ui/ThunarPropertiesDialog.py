@@ -100,7 +100,7 @@ class ThunarPropertiesDialog(gtk.Dialog):
         row += 1 ### }
 
         ### {
-        label = gtk.Label('<b>Kind:</b>')
+        label = gtk.Label('<b>Type:</b>')
         label.set_use_markup(True)
         label.set_alignment(1.0, 0.5)
         table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
