@@ -35,52 +35,90 @@ from ThunarBookmarksPane import ThunarBookmarksPane
 
 signals_registered = False
 
-class ThunarSidePane(gtk.Notebook):
+class ThunarSidePane(gtk.VBox):
+    DISABLED = 0
+    TREE = 1
+    SHORTCUTS = 2
+
     def __init__(self):
-        gtk.Notebook.__init__(self)
+        gtk.VBox.__init__(self)
+
+        #self.set_size_request(150, -1)
 
         # register signals
         global signals_registered
         if not signals_registered:
             gobject.signal_new('directory-changed', self, gobject.SIGNAL_RUN_LAST, \
                                gobject.TYPE_NONE, [ThunarFileInfo])
+            gobject.signal_new('hide-sidepane', self, gobject.SIGNAL_RUN_LAST, \
+                               gobject.TYPE_NONE, [])
             signals_registered = True
 
-        swin = gtk.ScrolledWindow(None, None)
-        swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        label = gtk.Label('Tree')
-        self.append_page(swin, label)
-        label.show()
-        swin.show()
+        frame = gtk.Frame()
+        frame.set_border_width(0)
+        frame.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+        self.pack_start(frame, False, False, 0)
+        frame.show()
 
-        self.tree = ThunarTreePane()
-        self.tree_handler_id = self.tree.connect('directory-changed0', lambda tree, info: self._directory_changed(info))
-        swin.add(self.tree)
-        self.tree.show()
+        hbox = gtk.HBox(False, 6)
+        hbox.set_border_width(0)
+        frame.add(hbox)
+        hbox.show()
 
-        swin = gtk.ScrolledWindow(None, None)
-        swin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-        swin.set_shadow_type(gtk.SHADOW_IN)
-        label = gtk.Label('Bookmarks')
-        self.append_page(swin, label)
-        label.show()
-        swin.show()
+        self.label = gtk.Label('')
+        self.label.set_alignment(0.0, 0.5)
+        hbox.pack_start(self.label, True, True, 0)
+        self.label.show()
 
-        self.bm = ThunarBookmarksPane()
-        self.bm_handler_id = self.bm.connect('directory-changed1', lambda bm, info: self._directory_changed(info))
-        swin.add(self.bm)
-        self.bm.show()
+        button = gtk.Button()
+        button.set_relief(gtk.RELIEF_NONE)
+        button.set_border_width(0)
+        image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_MENU)
+        button.add(image)
+        image.show()
+        button.connect('clicked', lambda btn: self.emit('hide-sidepane'))
+        hbox.pack_start(button, False, False, 0)
+        button.show()
+
+        self.swin = gtk.ScrolledWindow(None, None)
+        self.pack_start(self.swin, True, True, 0)
+        self.swin.show()
+
+        self.child = None
+        self.set_state(self.SHORTCUTS)
 
 
     def _directory_changed(self, info):
         self.emit('directory-changed', info)
 
 
-    def select_by_info(self, info):
-        self.tree.handler_block(self.tree_handler_id)
-        self.tree.select_by_info(info)
-        self.tree.handler_unblock(self.tree_handler_id)
+    def set_state(self, state):
+        if self.child:
+            self.child.destroy()
+            self.child = None
 
-        self.bm.handler_block(self.bm_handler_id)
-        self.bm.select_by_info(info)
-        self.bm.handler_unblock(self.bm_handler_id)
+        if state == self.TREE:
+            self.child = ThunarTreePane()
+            self.handler_id = self.child.connect('directory-changed0', lambda tree, info: self._directory_changed(info))
+            self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
+            self.label.set_label(' Tree')
+        elif state == self.SHORTCUTS:
+            self.child = ThunarBookmarksPane()
+            self.handler_id = self.child.connect('directory-changed1', lambda bm, info: self._directory_changed(info))
+            self.swin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+            self.label.set_label(' Shortcuts')
+        else:
+            self.hide()
+            return
+
+        self.swin.add(self.child)
+        self.child.show()
+        self.show()
+
+
+    def select_by_info(self, info):
+        if self.child:
+            self.child.handler_block(self.handler_id)
+            self.child.select_by_info(info)
+            self.child.handler_unblock(self.handler_id)
+

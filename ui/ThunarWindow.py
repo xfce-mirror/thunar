@@ -46,7 +46,14 @@ class ThunarWindow(gtk.Window):
         gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
         self.set_title('Thunar: ' + info.get_visible_name())
         self.set_icon(info.render_icon(48))
-        self.set_default_size(600,500)
+        self.set_default_size(650,550)
+
+
+        set = gtk.IconSet(gtk.gdk.pixbuf_new_from_file('shortcuts.png'))
+        factory = gtk.IconFactory()
+        factory.add('thunar-shortcuts', set)
+        factory.add_default()
+
 
         self.bookmarks = []
 
@@ -70,11 +77,14 @@ class ThunarWindow(gtk.Window):
         ], self)
         self.action_group.add_actions([
             ('view-menu', None, '_View'),
+            ('view-sidebar-menu', None, '_Sidebar'),
             ('reload', gtk.STOCK_REFRESH, '_Reload', '<Control>R', None, lambda ign, self: self._internal_open_dir(self.info)),
         ], self)
-        self.action_group.add_toggle_actions([
-            ('sidepane', None, '_Side Pane', None, None, lambda ign, self: self._action_show_sidepane(), True),
-        ], self)
+        self.action_group.add_radio_actions([
+            ('sidebar-tree', gtk.STOCK_OPEN, 'Tree', None, 'Display the tree pane on the left', 1),
+            ('sidebar-shortcuts', 'thunar-shortcuts', 'Shortcuts', None, 'Display the shortcuts on the left', 2),
+            ('sidebar-disabled', None, 'Hidden', None, 'Hide the sidebar', 3),
+        ], 2, lambda action, whatever, self: self._action_sidebar_toggled(), self)
         self.action_group.add_radio_actions([
             ('view-as-icons', None, 'View as _Icons'),
             ('view-as-list', None, 'View as _List'),
@@ -98,6 +108,9 @@ class ThunarWindow(gtk.Window):
             ('about', gtk.STOCK_DIALOG_INFO, '_About'),
         ], self)
 
+        self.action_group.get_action('sidebar-tree').set_property('is-important', True)
+        self.action_group.get_action('sidebar-shortcuts').set_property('is-important', True)
+
         self.action_group.get_action('copy-files').set_property('sensitive', False)
         self.action_group.get_action('cut-files').set_property('sensitive', False)
         self.action_group.get_action('paste-files').set_property('sensitive', False)
@@ -119,12 +132,25 @@ class ThunarWindow(gtk.Window):
         self.add(self.main_vbox)
         self.main_vbox.show()
 
+        frame = gtk.Frame()
+        frame.set_shadow_type(gtk.SHADOW_OUT)
+        self.main_vbox.pack_start(frame, False, False, 0)
+        frame.show()
+
         menu_bar = self.ui_manager.get_widget('/main-menu')
-        self.main_vbox.pack_start(menu_bar, False, False, 0)
+        #self.main_vbox.pack_start(menu_bar, False, False, 0)
+        frame.add(menu_bar)
         menu_bar.show()
 
+        frame = gtk.Frame()
+        frame.set_shadow_type(gtk.SHADOW_OUT)
+        self.main_vbox.pack_start(frame, False, False, 0)
+        frame.show()
+
         tool_bar = self.ui_manager.get_widget('/main-toolbar')
-        self.main_vbox.pack_start(tool_bar, False, False, 0)
+        tool_bar.set_style(gtk.TOOLBAR_BOTH_HORIZ)
+        #self.main_vbox.pack_start(tool_bar, False, False, 0)
+        frame.add(tool_bar)
         tool_bar.show()
 
         self.main_hbox = gtk.HPaned()
@@ -135,12 +161,13 @@ class ThunarWindow(gtk.Window):
         self.main_hbox.set_position(self.sidepane.size_request()[0])
         self.sidepane.select_by_info(self.info)
         self.sidepane_selection_id = self.sidepane.connect('directory-changed', lambda ign, info: self._action_open_dir(info))
-        self.main_hbox.add1(self.sidepane)
+        self.sidepane_selection_id = self.sidepane.connect('hide-sidepane', lambda ign: self.action_group.get_action('sidebar-disabled').activate())
+        self.main_hbox.pack1(self.sidepane, True, False)
         self.sidepane.show()
 
         self.swin = gtk.ScrolledWindow(None, None)
         self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
-        self.main_hbox.add2(self.swin)
+        self.main_hbox.pack2(self.swin, True, False)
         self.swin.show()
 
         if icon_view_support:
@@ -187,11 +214,14 @@ class ThunarWindow(gtk.Window):
         self.view.show()
 
 
-    def _action_show_sidepane(self):
-        if self.action_group.get_action('sidepane').get_active():
-            self.sidepane.show()
+    def _action_sidebar_toggled(self):
+        if self.action_group.get_action('sidebar-tree').get_active():
+            self.sidepane.set_state(ThunarSidePane.TREE)
+        elif self.action_group.get_action('sidebar-shortcuts').get_active():
+            self.sidepane.set_state(ThunarSidePane.SHORTCUTS)
         else:
-            self.sidepane.hide()
+            self.sidepane.set_state(ThunarSidePane.DISABLED)
+        self.sidepane.select_by_info(self.info)
 
 
     def _action_get_info(self):

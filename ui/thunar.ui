@@ -54,7 +54,13 @@
       <menuitem action="show-hidden-files" />
 -->
       <separator />
-      <menuitem action="sidepane" />
+
+      <menu action="view-sidebar-menu">
+        <menuitem action="sidebar-tree" />
+        <menuitem action="sidebar-shortcuts" />
+        <menuitem action="sidebar-disabled" />
+      </menu>
+
       <separator />
 
       <menuitem action="view-as-icons" />
@@ -90,6 +96,7 @@
     <separator />
     <toolitem action="reload" />
     <separator />
-    <toolitem action="go-home" />
+    <toolitem action="sidebar-tree" />
+    <toolitem action="sidebar-shortcuts" />
   </toolbar>
 </ui>
