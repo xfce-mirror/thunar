@@ -145,50 +145,6 @@ class ThunarWindow(gtk.Window):
         self.main_vbox.pack_start(self.tool_bar, False, False, 0)
         self.tool_bar.hide()
 
-        self.location_bar = gtk.Toolbar()
-        self.location_bar.set_style(gtk.TOOLBAR_BOTH_HORIZ)
-        self.main_vbox.pack_start(self.location_bar, False, False, 0)
-        self.location_bar.hide()
-
-        item = gtk.SeparatorToolItem()
-        item.set_draw(False)
-        self.location_bar.insert(item, -1)
-        item.show()
-
-        item = gtk.ToolItem()
-        self.location_bar.insert(item, -1)
-        item.show()
-
-        label = gtk.Label('Location:')
-        item.add(label)
-        label.show()
-
-        item = gtk.SeparatorToolItem()
-        item.set_draw(False)
-        self.location_bar.insert(item, -1)
-        item.show()
-
-        item = gtk.ToolItem()
-        item.set_border_width(3)
-        item.set_expand(True)
-        self.location_bar.insert(item, -1)
-        item.show()
-
-        self.location_entry = gtk.Entry()
-        self.location_entry.set_text(info.get_path())
-        self.location_entry.connect('activate', lambda entry: self._action_open_dir(ThunarFileInfo(entry.get_text()), False))
-        item.add(self.location_entry)
-        self.location_entry.show()
-
-        item = gtk.ToolButton()
-        item.set_border_width(0)
-        item.set_stock_id(gtk.STOCK_JUMP_TO)
-        item.set_label('Go')
-        item.set_is_important(True)
-        item.connect('clicked', lambda ign: self.location_entry.activate())
-        self.location_bar.insert(item, -1)
-        item.show()
-
         self.main_hbox = gtk.HPaned()
         self.main_hbox.set_border_width(6)
         self.main_vbox.pack_start(self.main_hbox, True, True, 0)
@@ -233,6 +189,38 @@ class ThunarWindow(gtk.Window):
         self.swin.add(self.view)
         self.view.grab_focus()
         self.view.show()
+
+        self.location_bar = gtk.HBox(False, 6)
+        vbox.pack_start(self.location_bar, False, False, 0)
+        self.location_bar.hide()
+
+        button = gtk.Button()
+        button.set_relief(gtk.RELIEF_NONE)
+        button.set_border_width(0)
+        button.set_focus_on_click(False)
+        self.location_bar.pack_start(button, False, False, 0)
+        button.show()
+
+        bbox = gtk.HBox(False, 0)
+        bbox.set_border_width(0)
+        button.add(bbox)
+        bbox.show()
+
+        image = gtk.image_new_from_stock(gtk.STOCK_JUMP_TO, gtk.ICON_SIZE_BUTTON)
+        bbox.pack_start(image, False, False, 2)
+        image.show()
+
+        label = gtk.Label('Go')
+        bbox.pack_start(label, False, False, 2)
+        label.show()
+
+        self.location_entry = gtk.Entry()
+        button.connect('clicked', lambda btn: self.location_entry.activate())
+        self.location_entry.connect('focus-out-event', lambda entry, event: self._location_bar_focus_out())
+        self.location_entry.connect('key-press-event', lambda entry, event: self._location_bar_key_press(event))
+        self.location_entry.connect('activate', lambda entry: self._location_bar_activate())
+        self.location_bar.pack_start(self.location_entry, True, True, 0)
+        self.location_entry.show()
 
         self.status_bar = gtk.Statusbar()
         self.status_id = self.status_bar.get_context_id('Selection state')
@@ -287,10 +275,8 @@ class ThunarWindow(gtk.Window):
     def _action_show_toolbars(self):
         if self.action_group.get_action('view-toolbars').get_active():
             self.tool_bar.show()
-            self.location_bar.show()
         else:
             self.tool_bar.hide()
-            self.location_bar.hide()
 
 
     def _action_get_info(self):
@@ -345,8 +331,6 @@ class ThunarWindow(gtk.Window):
         self.sidepane.select_by_info(info)
         self.sidepane.handler_unblock(self.sidepane_selection_id)
 
-        self.location_entry.set_text(info.get_path())
-        self.location_entry.set_position(-1)
         self.pathbar.set_info(info)
 
         # scroll to (0,0)
@@ -375,6 +359,40 @@ class ThunarWindow(gtk.Window):
 
 
     def _action_open_location(self):
+        self.location_entry.set_text(self.info.get_path())
+        self.location_entry.set_position(-1)
+        self.location_entry.select_region(0, -1)
+        self.location_bar.show()
+        self.location_entry.grab_focus()
+
+
+    def _location_bar_focus_out(self):
+        self.location_bar.hide()
+        return False
+
+
+    def _location_bar_activate(self):
+        path = self.location_entry.get_text()
+        self.location_bar.hide()
+        try:
+            info = ThunarFileInfo(path)
+            self._action_open_dir(info)
+        except:
+            message = gtk.MessageDialog(self, gtk.DIALOG_MODAL | gtk.DIALOG_DESTROY_WITH_PARENT, gtk.MESSAGE_ERROR, gtk.BUTTONS_CLOSE, 'Unable to open directory %s' % path)
+            message.run()
+            message.destroy()
+        self.view.grab_focus()
+
+
+    def _location_bar_key_press(self, event):
+        if event.type == gtk.gdk.KEY_PRESS and gtk.gdk.keyval_name(event.keyval) == 'Escape':
+            self.location_bar.hide()
+            self.view.grab_focus()
+            return True
+        return False
+
+
+    def _action_open_location_old(self):
         dialog = gtk.Dialog('Open Location', self, gtk.DIALOG_DESTROY_WITH_PARENT | gtk.DIALOG_NO_SEPARATOR | gtk.DIALOG_MODAL, (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OPEN, gtk.RESPONSE_OK))
         dialog.set_default_response(gtk.RESPONSE_OK)
         dialog.set_default_size(390, 50)
