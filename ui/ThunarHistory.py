@@ -37,13 +37,20 @@ class ThunarHistory(gtk.HBox):
         self.set_spacing(2)
 
         self.__info = None
+        self.__rebuild_disabled = False
 
 
-    def get_info(self, info):
-        return self.__info
+    def __clicked(self, info):
+        self.__rebuild(self.__info, info)
+        self.__rebuild_disabled = True
+        self.emit('directory-changed', info)
+        self.__rebuild_disabled = False
 
 
-    def set_info(self, info):
+    def __rebuild(self, info, selected_info):
+        if self.__rebuild_disabled:
+            return
+
         # remove all existing buttons
         self.foreach(lambda child: child.destroy())
 
@@ -56,13 +63,13 @@ class ThunarHistory(gtk.HBox):
 
         self.__info = info
         while info:
-            if info == self.__info:
+            if info.get_path() == selected_info.get_path():
                 button = gtk.ToggleButton()
                 button.set_active(True)
             else:
                 button = gtk.Button()
             button.set_data('thunar-info', info)
-            button.connect('clicked', lambda button: self.emit('directory-changed', button.get_data('thunar-info')))
+            button.connect('clicked', lambda button: self.__clicked(button.get_data('thunar-info')))
             self.pack_start(button, False, False, 0)
             self.reorder_child(button, 0)
             button.show()
@@ -90,10 +97,10 @@ class ThunarHistory(gtk.HBox):
             else:
                 name = info.get_visible_name()
 
-            if info == self.__info:
-                text = '<b>%s</b>' % name
+            if info.get_path() == selected_info.get_path():
+                text = '<b>%s</b>' % name.replace('&', '&amp;')
             else:
-                text = name
+                text = name.replace('&', '&amp;')
 
             label = gtk.Label(text)
             label.set_use_markup(True)
@@ -104,6 +111,14 @@ class ThunarHistory(gtk.HBox):
                 break
 
             info = info.get_parent()
+
+
+    def get_info(self, info):
+        return self.__info
+
+
+    def set_info(self, info):
+        self.__rebuild(info, info)
 
 
 
