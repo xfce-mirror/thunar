@@ -64,7 +64,6 @@ class ThunarBookmarksPane(gtk.TreeView):
         self.get_selection().set_mode(gtk.SELECTION_BROWSE)
         self.get_selection().unselect_all()
         self.get_selection().connect('changed', lambda selection: self._selection_changed())
-        self._selection_changed_called = False
 
         self.set_headers_visible(False)
         self.set_rules_hint(False)
@@ -102,10 +101,6 @@ class ThunarBookmarksPane(gtk.TreeView):
     def _selection_changed(self):
         selection = self.get_selection()
         model, iter = selection.get_selected()
-        if not self._selection_changed_called:
-            self._selection_changed_called = True
-            self.get_selection().unselect_all()
-            return
         if iter:
             info = model.get(iter, self.COLUMN_INFO)[0]
             self.emit('directory-changed1', info)

@@ -162,7 +162,7 @@ class ThunarWindow(gtk.Window):
         self.sidepane.select_by_info(self.info)
         self.sidepane_selection_id = self.sidepane.connect('directory-changed', lambda ign, info: self._action_open_dir(info))
         self.sidepane_selection_id = self.sidepane.connect('hide-sidepane', lambda ign: self.action_group.get_action('sidebar-disabled').activate())
-        self.main_hbox.pack1(self.sidepane, True, False)
+        self.main_hbox.pack1(self.sidepane, False, False)
         self.sidepane.show()
 
         self.swin = gtk.ScrolledWindow(None, None)
