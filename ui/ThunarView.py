@@ -42,6 +42,14 @@ class ThunarView:
         pass
 
 
+    def select_by_pattern(self, pattern):
+        pass
+
+
+    def invert_selection(self):
+        pass
+
+
     def activated(self, info, new_window = False):
         self.emit('activated', info, new_window)
 

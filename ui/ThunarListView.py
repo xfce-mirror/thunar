@@ -113,6 +113,25 @@ class ThunarListView(gtk.TreeView, ThunarView):
         self.get_selection().select_all()
 
 
+    def select_by_pattern(self, pattern):
+        selection = self.get_selection()
+        selection.unselect_all()
+        for iter in self.get_model().match(pattern):
+            selection.select_iter(iter)
+
+
+    def invert_selection(self):
+        selection = self.get_selection()
+        model = self.get_model()
+        iter = model.get_iter_first()
+        while iter:
+            if selection.iter_is_selected(iter):
+                selection.unselect_iter(iter)
+            else:
+                selection.select_iter(iter)
+            iter = model.iter_next(iter)
+
+
     def _activated(self, path):
         iter = self.get_model().get_iter(path)
         info = self.get_model().get(iter, ThunarModel.COLUMN_FILEINFO)[0]

@@ -82,7 +82,8 @@ class ThunarWindow(gtk.Window):
             ('cut-files', gtk.STOCK_CUT, 'Cu_t Files', '<Control>X'),
             ('paste-files', gtk.STOCK_PASTE, '_Paste Files', '<Control>V'),
             ('select-all-files', None, 'Select _All Files', '<Control>S', None, lambda ign, self: self.view.select_all()),
-            ('select-by-pattern', None, 'Select by Pattern', None),
+            ('select-by-pattern', None, 'Select b_y Pattern', None, None, lambda ign, self: self._action_select_by_pattern()),
+            ('invert-selection', None, '_Invert Selection', '<Control>I', None, lambda ign, self: self.view.invert_selection()),
             ('edit-toolbars', None, '_Edit Toolbars...', None),
             ('preferences', gtk.STOCK_PREFERENCES, 'Prefere_nces...', None),
         ], self)
@@ -134,7 +135,6 @@ class ThunarWindow(gtk.Window):
         self.action_group.get_action('copy-files').set_property('sensitive', False)
         self.action_group.get_action('cut-files').set_property('sensitive', False)
         self.action_group.get_action('paste-files').set_property('sensitive', False)
-        self.action_group.get_action('select-by-pattern').set_property('sensitive', False)
         self.action_group.get_action('edit-toolbars').set_property('sensitive', False)
         self.action_group.get_action('preferences').set_property('sensitive', False)
         self.action_group.get_action('go-back').set_property('sensitive', False)
@@ -462,6 +462,33 @@ class ThunarWindow(gtk.Window):
         return False
 
 
+    def _action_select_by_pattern(self):
+        dialog = gtk.Dialog('Select by pattern', self, gtk.DIALOG_DESTROY_WITH_PARENT | gtk.DIALOG_NO_SEPARATOR | gtk.DIALOG_MODAL, (gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL, gtk.STOCK_OK, gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+        dialog.set_default_size(390, 50)
+        dialog.set_border_width(6)
+
+        hbox = gtk.HBox(False, 10)
+        hbox.set_border_width(6)
+        dialog.vbox.pack_start(hbox, True, True, 0)
+        hbox.show()
+
+        label = gtk.Label('Pattern:')
+        hbox.pack_start(label, False, False, 0)
+        label.show()
+
+        entry = gtk.Entry()
+        entry.set_activates_default(True)
+        hbox.pack_start(entry, True, True, 0)
+        entry.show()
+
+        if dialog.run() == gtk.RESPONSE_OK:
+            pattern = entry.get_chars(0, -1)
+            self.view.select_by_pattern(pattern)
+
+        dialog.destroy()
+
+        
     def _action_open_location_other(self):
         if self.pathbar and self.pathbar.__class__ == ThunarLocationBar:
             self.pathbar.focus()

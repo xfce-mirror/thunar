@@ -58,6 +58,25 @@ class ThunarIconView(exo.IconView, ThunarView):
         return list
 
 
+    def select_by_pattern(self, pattern):
+        self.unselect_all()
+        for iter in self.get_model().match(pattern):
+            path = self.get_model().get_path(iter)
+            self.select_path(path)
+
+
+    def invert_selection(self):
+        model = self.get_model()
+        iter = model.get_iter_first()
+        while iter:
+            path = model.get_path(iter)
+            if self.path_is_selected(path):
+                self.unselect_path(path)
+            else:
+                self.select_path(path)
+            iter = model.iter_next(iter)
+
+
     def _activated(self, path):
         iter = self.get_model().get_iter(path)
         info = self.get_model().get(iter, ThunarModel.COLUMN_FILEINFO)[0]

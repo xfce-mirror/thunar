@@ -22,7 +22,7 @@
 # 02111-1307, USA.
 #
 
-import dircache, os
+import dircache, fnmatch, os
 
 import pygtk
 pygtk.require('2.0')
@@ -68,6 +68,17 @@ class ThunarModel(gtk.ListStore):
                 mime_info.get_comment(),
                 file_info
             ])
+
+
+    def match(self, pattern):
+        result = []
+        iter = self.get_iter_first()
+        while iter:
+            info = self.get(iter, self.COLUMN_FILEINFO)[0]
+            if fnmatch.fnmatch(info.get_visible_name(), pattern):
+                result.append(iter)
+            iter = self.iter_next(iter)
+        return result
 
 
     def _compare(self, model, iter1, iter2):
