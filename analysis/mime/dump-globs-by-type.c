@@ -103,12 +103,20 @@ next:
       *p++ = '\0';
 
       /* determine the pattern type */
-      pattern_type = (*p == '*') ? PATTERN_SIMPLE : PATTERN_LITERAL;
+      if (p[0] == '*' && p[1] == '.')
+        pattern_type = PATTERN_SIMPLE;
+      else if (*p == '*' || *p == '?' || *p == '[' || *p == '\\')
+        pattern_type = PATTERN_COMPLEX;
+      else
+        pattern_type = PATTERN_LITERAL;
       for (pattern = p, ++p; !isspace (*p) && *p != '\0'; ++p)
-        if (*p == '*' || *p == '?' || *p == ']')
+        if (*p == '*' || *p == '?' || *p == '[' || *p == '\\')
           pattern_type = PATTERN_COMPLEX;
 
       *p = '\0';
+
+      if (pattern_type == PATTERN_SIMPLE)
+        pattern += 2;
 
       /* check if this pattern is already listed for our type */
       for (lp = loader->parsed_patterns[pattern_type]; lp != NULL; lp = lp->next)
@@ -130,10 +138,18 @@ next:
 
 
 static gint
-ppcmp (gconstpointer a, gconstpointer b)
+ppcmp_length (gconstpointer a, gconstpointer b)
 {
   return strlen (((struct ParsedPattern *) b)->pattern)
        - strlen (((struct ParsedPattern *) a)->pattern);
+}
+
+
+static gint
+ppcmp_string (gconstpointer a, gconstpointer b)
+{
+  return strcmp (((struct ParsedPattern *) a)->pattern,
+                 ((struct ParsedPattern *) b)->pattern);
 }
 
 
@@ -153,8 +169,9 @@ globs_loader_init (GlobsLoader *loader)
     globs_loader_parse_file (loader, files[n]);
   g_strfreev (files);
 
-  for (n = 0; n < NUM_PATTERNS; ++n)
-    loader->parsed_patterns[n] = g_slist_sort (loader->parsed_patterns[n], ppcmp);
+  loader->parsed_patterns[PATTERN_LITERAL] = g_slist_sort (loader->parsed_patterns[PATTERN_LITERAL], ppcmp_length);
+  loader->parsed_patterns[PATTERN_SIMPLE] = g_slist_sort (loader->parsed_patterns[PATTERN_SIMPLE], ppcmp_string);
+  loader->parsed_patterns[PATTERN_COMPLEX] = g_slist_sort (loader->parsed_patterns[PATTERN_COMPLEX], ppcmp_length);
 }
 
 
@@ -178,6 +195,25 @@ main (int argc, char **argv)
         }
       g_print ("\n");
     }
+
+  guint count_nodes = 0;
+  const gchar *previous_pattern = "";
+  for (lp = loader.parsed_patterns[PATTERN_SIMPLE]; lp != NULL; lp = lp->next)
+    {
+      pp = lp->data;
+
+      int length = strlen (pp->pattern);
+
+      int i;
+      for (i = 0; pp->pattern[i] != '\0' && pp->pattern[i] == previous_pattern[i]; ++i)
+        ;
+
+      count_nodes += length - i;
+
+      previous_pattern = pp->pattern;
+    }
+
+  g_print ("Number of nodes for Simple Patterns: %d (%d Bytes)\n\n", count_nodes, count_nodes * 16);
 
   return 0;
 }

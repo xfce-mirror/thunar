@@ -1,3 +1,11 @@
+2005-03-27	Benedikt Meurer <benny@xfce.org>
+
+	* mime/dump-globs-by-type.c: Use only patterns in the form '*.ext' as
+	  simple patterns, the other '*ext' patterns are considered complex
+	  patterns. This allows for easier tree lookup.
+	* mime/dump-globs-by-type.c: Print the number of required tree nodes
+	  for the simple patterns.
+
 2005-03-07	Benedikt Meurer <benny@xfce.org>
 
 	* mime/dump-globs-by-type.c: Use a Memory Chunk for the ParsedPattern
