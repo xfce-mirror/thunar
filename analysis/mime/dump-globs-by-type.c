@@ -50,6 +50,7 @@ struct ParsedPattern
 typedef struct
 {
   GSList *parsed_patterns[NUM_PATTERNS];
+  GMemChunk *pp_chunk;
 } GlobsLoader;
 
 
@@ -118,7 +119,7 @@ next:
         }
 
       /* prepend the new pattern */
-      pp = g_new (struct ParsedPattern, 1);
+      pp = g_chunk_new (struct ParsedPattern, loader->pp_chunk);
       pp->pattern = g_strdup (pattern);
       pp->type = g_strdup (mime_type);
       loader->parsed_patterns[pattern_type] = g_slist_prepend (loader->parsed_patterns[pattern_type], pp);
@@ -141,6 +142,8 @@ globs_loader_init (GlobsLoader *loader)
 {
   gchar **files;
   guint   n;
+
+  loader->pp_chunk = g_mem_chunk_create (struct ParsedPattern, 512, G_ALLOC_ONLY);
 
   for (n = 0; n < NUM_PATTERNS; ++n)
     loader->parsed_patterns[n] = NULL;

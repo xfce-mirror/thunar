@@ -1,5 +1,12 @@
 2005-03-07	Benedikt Meurer <benny@xfce.org>
 
+	* mime/dump-globs-by-type.c: Use a Memory Chunk for the ParsedPattern
+	  structure to avoid heap pollution while parsing the globs files. That
+	  way we can re-use the parser code later for Thunar as well.
+	* .cvsignore, mime/.cvsignore: Add .cvsignore files.
+
+2005-03-07	Benedikt Meurer <benny@xfce.org>
+
 	* mime/mime-type-detection.xmi: Import the MIME-type detection diagram.
 	  Was improved to take into account the case where no magic rules > 80
 	  are present in the MIME database, which is the case by default for
