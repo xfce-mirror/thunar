@@ -34,20 +34,20 @@ from ThunarFileInfo import ThunarFileInfo
 class ThunarPathBar(gtk.HBox):
     def __init__(self):
         gtk.HBox.__init__(self)
-        self.set_spacing(2)
+        self.set_spacing(3)
 
         self.__info = None
         self.__rebuild_disabled = False
 
 
     def __clicked(self, info):
-        self.__rebuild(self.__info, info)
+        self.__rebuild(info)
         self.__rebuild_disabled = True
         self.emit('directory-changed', info)
         self.__rebuild_disabled = False
 
 
-    def __rebuild(self, info, selected_info):
+    def __rebuild(self, info):
         if self.__rebuild_disabled:
             return
 
@@ -63,7 +63,7 @@ class ThunarPathBar(gtk.HBox):
 
         self.__info = info
         while info:
-            if info.get_path() == selected_info.get_path():
+            if info == self.__info:
                 button = gtk.ToggleButton()
                 button.set_active(True)
             else:
@@ -97,7 +97,7 @@ class ThunarPathBar(gtk.HBox):
             else:
                 name = info.get_visible_name()
 
-            if info.get_path() == selected_info.get_path():
+            if info == self.__info:
                 text = '<b>%s</b>' % name.replace('&', '&amp;')
             else:
                 text = name.replace('&', '&amp;')
@@ -118,7 +118,7 @@ class ThunarPathBar(gtk.HBox):
 
 
     def set_info(self, info):
-        self.__rebuild(info, info)
+        self.__rebuild(info)
 
 
 
