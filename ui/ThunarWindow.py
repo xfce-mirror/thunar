@@ -70,7 +70,7 @@ class ThunarWindow(gtk.Window):
         ], self)
         self.action_group.add_actions([
             ('view-menu', None, '_View'),
-            ('reload', gtk.STOCK_REFRESH, '_Reload', '<Control>R', None, lambda ign, self: self._action_open_dir(self.info)),
+            ('reload', gtk.STOCK_REFRESH, '_Reload', '<Control>R', None, lambda ign, self: self._internal_open_dir(self.info)),
         ], self)
         self.action_group.add_toggle_actions([
             ('sidepane', None, '_Side Pane', None, None, lambda ign, self: self._action_show_sidepane(), True),
@@ -82,8 +82,8 @@ class ThunarWindow(gtk.Window):
         self.action_group.add_actions([
             ('go-menu', None, '_Go'),
             ('go-up', gtk.STOCK_GO_UP, '_Up', '<Alt>Up', None, lambda ign, self: self._action_open_dir(self.info.get_parent())),
-            ('go-back', gtk.STOCK_GO_BACK, '_Back', '<Alt>Left'),
-            ('go-forward', gtk.STOCK_GO_FORWARD, '_Forward', '<Alt>Right'),
+            ('go-back', gtk.STOCK_GO_BACK, '_Back', '<Alt>Left', None, lambda ign, self: self._action_go_back()),
+            ('go-forward', gtk.STOCK_GO_FORWARD, '_Forward', '<Alt>Right', None, lambda ign, self: self._action_go_forward()),
             ('go-home', gtk.STOCK_HOME, '_Home Folder', None, None, lambda ign, self: self._action_open_dir(ThunarFileInfo(os.getenv('HOME')))),
             ('go-location', None, '_Location...', '<Control>L', None, lambda ign, self: self._action_open_location()),
         ], self)
@@ -171,6 +171,9 @@ class ThunarWindow(gtk.Window):
         self.main_vbox.pack_start(self.status_bar, False, False, 0)
         self.status_bar.show()
 
+        self.back_list = []
+        self.forward_list = []
+
         # get initial state right
         self._selection_changed()
 
@@ -228,6 +231,14 @@ class ThunarWindow(gtk.Window):
 
 
     def _action_open_dir(self, info):
+        self.back_list.append(self.info)
+        self.forward_list = []
+        self.action_group.get_action('go-back').set_property('sensitive', True)
+        self.action_group.get_action('go-forward').set_property('sensitive', False)
+        self._internal_open_dir(info)
+
+
+    def _internal_open_dir(self, info):
         model = ThunarModel(info)
         self.view.set_model(model)
         self.info = info
@@ -243,6 +254,26 @@ class ThunarWindow(gtk.Window):
         # scroll to (0,0)
         self.swin.get_hadjustment().set_value(0)
         self.swin.get_vadjustment().set_value(0)
+
+
+    def _action_go_back(self):
+        if not self.back_list:
+            return
+        info = self.back_list.pop(len(self.back_list) - 1)
+        self.forward_list.append(self.info)
+        self.action_group.get_action('go-back').set_property('sensitive', (self.back_list != []))
+        self.action_group.get_action('go-forward').set_property('sensitive', True)
+        self._internal_open_dir(info)
+
+
+    def _action_go_forward(self):
+        if not self.forward_list:
+            return
+        info = self.forward_list.pop(len(self.forward_list) - 1)
+        self.back_list.append(self.info)
+        self.action_group.get_action('go-back').set_property('sensitive', True)
+        self.action_group.get_action('go-forward').set_property('sensitive', (self.forward_list != []))
+        self._internal_open_dir(info)
 
 
     def _action_open_location(self):
