@@ -131,19 +131,27 @@ class ThunarListView(gtk.TreeView, ThunarView):
                 self.grab_focus()
                 self.context_menu()
             return True
-        elif (event.button == 1 or event.button == 2) and event.type == gtk.gdk._2BUTTON_PRESS:
+        elif event.button == 2 and event.type == gtk.gdk.BUTTON_PRESS:
             path, column, x, y = self.get_path_at_pos(int(event.x), int(event.y))
             if path:
                 iter = self.get_model().get_iter(path)
-                if event.button == 1:
+                info = self.get_model().get(iter, ThunarModel.COLUMN_FILEINFO)[0]
+                if info.is_directory():
                     selection = self.get_selection()
                     selection.unselect_all()
                     selection.select_path(path)
+                    self.activated(info, True)
+            return True
+        elif event.button == 1 and event.type == gtk.gdk._2BUTTON_PRESS:
+            path, column, x, y = self.get_path_at_pos(int(event.x), int(event.y))
+            if path:
+                iter = self.get_model().get_iter(path)
+                selection = self.get_selection()
+                selection.unselect_all()
+                selection.select_path(path)
                 info = self.get_model().get(iter, ThunarModel.COLUMN_FILEINFO)[0]
                 if info.is_directory():
                     self.activated(info)
-                if event.button == 2 or (event.state & gtk.gdk.SHIFT_MASK) != 0:
-                    self.get_toplevel().destroy()
             return True
         return False
 
@@ -151,7 +159,7 @@ class ThunarListView(gtk.TreeView, ThunarView):
 
 gobject.type_register(ThunarListView)
 gobject.signal_new('activated', ThunarListView, gobject.SIGNAL_RUN_LAST, \
-                   gobject.TYPE_NONE, [ThunarFileInfo])
+                   gobject.TYPE_NONE, [ThunarFileInfo, gobject.TYPE_BOOLEAN])
 gobject.signal_new('context-menu', ThunarListView, \
                    gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, [])
 gobject.signal_new('selection-changed', ThunarListView, \

@@ -42,8 +42,8 @@ class ThunarView:
         pass
 
 
-    def activated(self, info):
-        self.emit('activated', info)
+    def activated(self, info, new_window = False):
+        self.emit('activated', info, new_window)
 
 
     def context_menu(self):

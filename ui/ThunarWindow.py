@@ -146,6 +146,7 @@ class ThunarWindow(gtk.Window):
         self.tool_bar.show()
 
         self.location_bar = gtk.Toolbar()
+        self.location_bar.set_style(gtk.TOOLBAR_BOTH_HORIZ)
         self.main_vbox.pack_start(self.location_bar, False, False, 0)
         self.location_bar.show()
 
@@ -168,30 +169,25 @@ class ThunarWindow(gtk.Window):
         item.show()
 
         item = gtk.ToolItem()
-        item.set_border_width(6)
+        item.set_border_width(3)
         item.set_expand(True)
         self.location_bar.insert(item, -1)
         item.show()
 
         self.location_entry = gtk.Entry()
         self.location_entry.set_text(info.get_path())
-        self.location_entry.connect('activate', lambda entry: self._action_open_dir(ThunarFileInfo(entry.get_text())))
+        self.location_entry.connect('activate', lambda entry: self._action_open_dir(ThunarFileInfo(entry.get_text()), False))
         item.add(self.location_entry)
         self.location_entry.show()
 
-        item = gtk.ToolItem()
-        item.set_border_width(4)
+        item = gtk.ToolButton()
+        item.set_border_width(0)
+        item.set_stock_id(gtk.STOCK_JUMP_TO)
+        item.set_label('Go')
+        item.set_is_important(True)
+        item.connect('clicked', lambda ign: self.location_entry.activate())
         self.location_bar.insert(item, -1)
         item.show()
-
-        self.view_combo = gtk.combo_box_new_text()
-        self.view_combo.append_text('View as Icons')
-        self.view_combo.append_text('View as List')
-        self.view_combo.set_active(int(self.action_group.get_action('view-as-list').get_active()))
-        self.view_combo.connect('changed', lambda combo: (self.action_group.get_action('view-as-icons').set_active(combo.get_active() == 0), self.action_group.get_action('view-as-list').set_active(combo.get_active() == 1)))
-        self.action_group.get_action('view-as-list').connect('toggled', lambda action, combo: combo.set_active(int(action.get_active())), self.view_combo)
-        item.add(self.view_combo)
-        self.view_combo.show()
 
         self.main_hbox = gtk.HPaned()
         self.main_hbox.set_border_width(0)
@@ -232,7 +228,7 @@ class ThunarWindow(gtk.Window):
         if not icon_view_support:
             self.action_group.get_action('view-as-icons').set_property('sensitive', False)
         self.view.connect('context-menu', lambda view: self._context_menu())
-        self.view.connect('activated', lambda widget, info: self._action_open_dir(info))
+        self.view.connect('activated', lambda widget, info, new_window: self._action_open_dir(info, new_window))
         self.view.connect('selection-changed', lambda widget: self._selection_changed())
         self.swin.add(self.view)
         self.view.grab_focus()
@@ -261,7 +257,7 @@ class ThunarWindow(gtk.Window):
         else:
             self.view = ThunarListView(self.info)
         self.view.connect('context-menu', lambda view: self._context_menu())
-        self.view.connect('activated', lambda widget, info: self._action_open_dir(info))
+        self.view.connect('activated', lambda widget, info, new_window: self._action_open_dir(info, new_window))
         self.view.connect('selection-changed', lambda widget: self._selection_changed())
         self.swin.add(self.view)
         self.view.show()
@@ -319,13 +315,16 @@ class ThunarWindow(gtk.Window):
         image = gtk.Image()
         image.set_from_pixbuf(info.render_icon(16))
         item.set_image(image)
-        item.connect('activate', lambda ign: self._action_open_dir(info))
+        item.connect('activate', lambda ign: self._action_open_dir(info, False))
         image.show()
         menu.append(item)
         item.show()
 
 
-    def _action_open_dir(self, info):
+    def _action_open_dir(self, info, new_window = False):
+        if new_window:
+            self._action_open_in_new_window(info)
+            return
         self.back_list.append(self.info)
         self.forward_list = []
         self.action_group.get_action('go-back').set_property('sensitive', True)

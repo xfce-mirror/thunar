@@ -75,7 +75,17 @@ class ThunarIconView(exo.IconView, ThunarView):
                 self.grab_focus()
                 self.context_menu()
             return True
-        elif (event.button == 1 or event.button == 2) and event.type == gtk.gdk._2BUTTON_PRESS:
+        elif event.button == 2 and event.type == gtk.gdk.BUTTON_PRESS:
+            path = self.get_path_at_pos(int(event.x), int(event.y))
+            if path:
+                iter = self.get_model().get_iter(path)
+                info = self.get_model().get(iter, ThunarModel.COLUMN_FILEINFO)[0]
+                if info.is_directory():
+                    self.unselect_all()
+                    self.select_path(path)
+                    self.activated(info, True)
+            return True
+        elif event.button == 1 and event.type == gtk.gdk._2BUTTON_PRESS:
             path = self.get_path_at_pos(int(event.x), int(event.y))
             if path:
                 iter = self.get_model().get_iter(path)
@@ -85,8 +95,6 @@ class ThunarIconView(exo.IconView, ThunarView):
                 info = self.get_model().get(iter, ThunarModel.COLUMN_FILEINFO)[0]
                 if info.is_directory():
                     self.activated(info)
-                if event.button == 2 or (event.state & gtk.gdk.SHIFT_MASK) != 0:
-                    self.get_toplevel().destroy()
             return True
         return False
 
@@ -94,7 +102,6 @@ class ThunarIconView(exo.IconView, ThunarView):
 
 gobject.type_register(ThunarIconView)
 gobject.signal_new('activated', ThunarIconView, gobject.SIGNAL_RUN_LAST, \
-                   gobject.TYPE_NONE, [ThunarFileInfo])
+                   gobject.TYPE_NONE, [ThunarFileInfo, gobject.TYPE_BOOLEAN])
 gobject.signal_new('context-menu', ThunarIconView, gobject.SIGNAL_RUN_LAST, \
                    gobject.TYPE_NONE, [])
-
