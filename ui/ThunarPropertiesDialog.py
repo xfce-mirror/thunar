@@ -85,7 +85,7 @@ class ThunarPropertiesDialog(gtk.Dialog):
     row += 1 ### }
 
     ### {
-    label = gtk.Label('<b>Type:</b>')
+    label = gtk.Label('<b>Kind:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
     table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
@@ -118,13 +118,13 @@ class ThunarPropertiesDialog(gtk.Dialog):
     hbox.pack_start(image, False, False, 0)
     image.show()
 
-    label = gtk.Label('Xfmedia')
+    label = gtk.Label('Xfce Media Player')
     label.set_alignment(0.0, 0.5)
     label.set_selectable(True)
     hbox.pack_start(label, False, True, 0)
     label.show()
 
-    button = gtk.Button('Adjust...')
+    button = gtk.Button('Ch_ange')
     hbox.pack_end(button, False, False, 0)
     button.show()
     row += 1 ### }
