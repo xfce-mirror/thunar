@@ -38,7 +38,7 @@ class ThunarBookmarksPane(gtk.TreeView):
     COLUMN_ICON = 1
     COLUMN_INFO = 2
 
-    ICON_SIZE = 22
+    ICON_SIZE = 32
 
 
     def __init__(self):

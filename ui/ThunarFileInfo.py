@@ -100,14 +100,33 @@ class ThunarFileInfo(gobject.GObject):
             return '-'
         return _humanize_size(self.stat[stat.ST_SIZE])
 
+    def get_full_size(self):
+        result = ''
+        size = self.stat[stat.ST_SIZE]
+        while size > 0:
+            if result != '':
+                result = ',' + result
+            if size > 1000:
+                result = '%03d%s' % ((size % 1000), result)
+            else:
+                result = '%d%s' % ((size % 1000), result)
+            size = size / 1000
+        return '%s (%s Bytes)' % (_humanize_size(self.stat[stat.ST_SIZE]), result)
+
     def get_atime(self):
         return time.strftime('%x %X', time.localtime(self.stat[stat.ST_ATIME]))
+
+    def get_ctime(self):
+        return time.strftime('%x %X', time.localtime(self.stat[stat.ST_CTIME]))
 
     def get_mtime(self):
         return time.strftime('%x %X', time.localtime(self.stat[stat.ST_MTIME]))
 
     def is_directory(self):
         return stat.S_ISDIR(self.stat[stat.ST_MODE])
+
+    def get_permissions_mode(self):
+        return self.stat[stat.ST_MODE]
 
     def get_permissions(self):
         from stat import S_ISDIR, S_IMODE

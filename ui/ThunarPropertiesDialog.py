@@ -147,49 +147,27 @@ class ThunarPropertiesDialog(gtk.Dialog):
         align.show()
         row += 1 ### }
 
-        ### {
-        label = gtk.Label('<b>Location:</b>')
-        label.set_use_markup(True)
-        label.set_alignment(1.0, 0.5)
-        table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
-        label.show()
-
-        if exo_supported:
-            label = exo.EllipsizedLabel(info.get_parent().get_path())
-            label.set_ellipsize(exo.PANGO_ELLIPSIZE_START)
-        else:
-            label = gtk.Label(info.get_parent().get_path())
-            try:
-                label.set_ellipsize(pango.ELLIPSIZE_START)
-            except:
-                pass
-        label.set_alignment(0.0, 0.5)
-        label.set_selectable(True)
-        table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
-        label.show()
-        row += 1 ### }
-
-        if not info.is_directory():
-            ### {
-            label = gtk.Label('<b>Size:</b>')
-            label.set_use_markup(True)
-            label.set_alignment(1.0, 0.5)
-            table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
-            label.show()
-
-            label = gtk.Label(info.get_size())
-            label.set_alignment(0.0, 0.5)
-            label.set_selectable(True)
-            table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
-            label.show()
-            row += 1 ### }
-
-        ### {
-        align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
-        align.set_size_request(-1, 12)
-        table.attach(align, 0, 1, row, row + 1, 0, 0)
-        align.show()
-        row += 1 ### }
+#        ### {
+#        label = gtk.Label('<b>Location:</b>')
+#        label.set_use_markup(True)
+#        label.set_alignment(1.0, 0.5)
+#        table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+#        label.show()
+#
+#        if exo_supported:
+#            label = exo.EllipsizedLabel(info.get_parent().get_path())
+#            label.set_ellipsize(exo.PANGO_ELLIPSIZE_START)
+#        else:
+#            label = gtk.Label(info.get_parent().get_path())
+#            try:
+#                label.set_ellipsize(pango.ELLIPSIZE_START)
+#            except:
+#                pass
+#        label.set_alignment(0.0, 0.5)
+#        label.set_selectable(True)
+#        table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+#        label.show()
+#        row += 1 ### }
 
         ### {
         label = gtk.Label('<b>Modified:</b>')
@@ -218,6 +196,35 @@ class ThunarPropertiesDialog(gtk.Dialog):
         table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
         label.show()
         row += 1 ### }
+
+        ### {
+        align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
+        align.set_size_request(-1, 12)
+        table.attach(align, 0, 1, row, row + 1, 0, 0)
+        align.show()
+        row += 1 ### }
+
+        if not info.is_directory():
+            ### {
+            label = gtk.Label('<b>Size:</b>')
+            label.set_use_markup(True)
+            label.set_alignment(1.0, 0.5)
+            table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+            label.show()
+
+            label = gtk.Label(info.get_full_size())
+            label.set_alignment(0.0, 0.5)
+            label.set_selectable(True)
+            table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+            label.show()
+            row += 1 ### }
+
+            ### {
+            align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
+            align.set_size_request(-1, 12)
+            table.attach(align, 0, 1, row, row + 1, 0, 0)
+            align.show()
+            row += 1 ### }
 
 
 
@@ -270,10 +277,17 @@ class ThunarPropertiesDialog(gtk.Dialog):
         row += 1 ### }
 
         ### {
-        sep = gtk.HSeparator()
-        table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
-        sep.show()
+        align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
+        align.set_size_request(-1, 12)
+        table.attach(align, 0, 4, row, row + 1, 0, 0)
+        align.show()
         row += 1 ### }
+
+#        ### {
+#        sep = gtk.HSeparator()
+#        table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+#        sep.show()
+#        row += 1 ### }
 
         ### {
         label = gtk.Label('<b>Owner:</b>')
@@ -283,14 +297,17 @@ class ThunarPropertiesDialog(gtk.Dialog):
         label.show()
 
         button = gtk.CheckButton('Read')
+        button.set_active(info.get_permissions_mode() & 0400)
         table.attach(button, 1, 2, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
 
         button = gtk.CheckButton('Write')
+        button.set_active(info.get_permissions_mode() & 0200)
         table.attach(button, 2, 3, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
 
         button = gtk.CheckButton('Execute')
+        button.set_active(info.get_permissions_mode() & 0100)
         table.attach(button, 3, 4, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
         row += 1 ### }
@@ -303,14 +320,17 @@ class ThunarPropertiesDialog(gtk.Dialog):
         label.show()
 
         button = gtk.CheckButton('Read')
+        button.set_active(info.get_permissions_mode() & 0040)
         table.attach(button, 1, 2, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
 
         button = gtk.CheckButton('Write')
+        button.set_active(info.get_permissions_mode() & 0020)
         table.attach(button, 2, 3, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
 
         button = gtk.CheckButton('Execute')
+        button.set_active(info.get_permissions_mode() & 0010)
         table.attach(button, 3, 4, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
         row += 1 ### }
@@ -323,23 +343,33 @@ class ThunarPropertiesDialog(gtk.Dialog):
         label.show()
 
         button = gtk.CheckButton('Read')
+        button.set_active(info.get_permissions_mode() & 0004)
         table.attach(button, 1, 2, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
 
         button = gtk.CheckButton('Write')
+        button.set_active(info.get_permissions_mode() & 0002)
         table.attach(button, 2, 3, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
 
         button = gtk.CheckButton('Execute')
+        button.set_active(info.get_permissions_mode() & 0001)
         table.attach(button, 3, 4, row, row + 1, gtk.FILL, gtk.FILL)
         button.show()
         row += 1 ### }
 
         ### {
-        sep = gtk.HSeparator()
-        table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
-        sep.show()
+        align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
+        align.set_size_request(-1, 12)
+        table.attach(align, 0, 4, row, row + 1, 0, 0)
+        align.show()
         row += 1 ### }
+
+#        ### {
+#        sep = gtk.HSeparator()
+#        table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+#        sep.show()
+#        row += 1 ### }
      
 #        ### {
 #        label = gtk.Label('<b>Special flags:</b>')
@@ -391,7 +421,7 @@ class ThunarPropertiesDialog(gtk.Dialog):
         table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
         label.show()
 
-        label = gtk.Label('0644')
+        label = gtk.Label('%04o' % (info.get_permissions_mode() & 0777))
         label.set_alignment(0.0, 0.5)
         table.attach(label, 1, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
         label.show()
@@ -404,8 +434,17 @@ class ThunarPropertiesDialog(gtk.Dialog):
         table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
         label.show()
 
-        label = gtk.Label('2005-02-15 17:55')
+        label = gtk.Label(info.get_ctime())
         label.set_alignment(0.0, 0.5)
         table.attach(label, 1, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
         label.show()
         row += 1 ### }
+
+        ### {
+        align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
+        align.set_size_request(-1, 12)
+        table.attach(align, 0, 4, row, row + 1, 0, 0)
+        align.show()
+        row += 1 ### }
+
+
