@@ -1,5 +1,12 @@
 2005-03-04	Benedikt Meurer <benny@xfce.org>
 
+	* fallback.svg, ThunarMimeDatabase.py: Add fallback icon, so people
+	  with broken icon themes can still run the file manager. Check
+	  standard mime-application:octect-stream before checking for the
+	  GNOME fallback.
+
+2005-03-04	Benedikt Meurer <benny@xfce.org>
+
 	* ThunarSidePane.py: Use SHADOW_IN to be consistent with the main view.
 	* ThunarListView.py, ThunarIconView.py: Get the GType handling right.
 

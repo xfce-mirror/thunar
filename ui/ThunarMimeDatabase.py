@@ -62,6 +62,13 @@ class ThunarMimeInfo:
                         name = 'gnome-mime-' + type.split('/')[0]
                         icon = self.theme.load_icon(name, size, 0)
                     except gobject.GError:
-                        name = 'gnome-mime-application-octet-stream'
-                        icon = self.theme.load_icon(name, size, 0)
+                        try:
+                            name = 'mime-application:octet-stream'
+                            icon = self.theme.load_icon(name, size, 0)
+                        except gobject.GError:
+                            try:
+                                name = 'gnome-mime-application-octet-stream'
+                                icon = self.theme.load_icon(name, size, 0)
+                            except gobject.GError:
+                                icon = gtk.gdk.pixbuf_new_from_file_at_size('fallback.svg', size, size)
         return icon
