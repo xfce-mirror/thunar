@@ -32,6 +32,7 @@ from ThunarModel import ThunarModel
 from ThunarHistory import ThunarHistory
 from ThunarFileInfo import ThunarFileInfo
 from ThunarListView import ThunarListView
+from ThunarColumnsView import ThunarColumnsView
 from ThunarSidePane import ThunarSidePane
 from ThunarPropertiesDialog import ThunarPropertiesDialog
 
@@ -91,9 +92,10 @@ class ThunarWindow(gtk.Window):
             ('view-toolbars', None, 'Show Toolbars', None, None, lambda ign, self: self._action_show_toolbars(), True),
         ], self)
         self.action_group.add_radio_actions([
-            ('view-as-icons', None, 'View as _Icons'),
+            ('view-as-icons', None, 'View as _Icons', None, None, 1),
             ('view-as-list', None, 'View as _List'),
-        ], 0, lambda action, whatever, self: self._action_view_toggled(), self)
+            ('view-as-columns', None, 'View as _Columns'),
+        ], 1, lambda action, whatever, self: self._action_view_toggled(), self)
         self.action_group.add_actions([
             ('go-menu', None, '_Go'),
             ('go-up', gtk.STOCK_GO_UP, '_Up', '<Alt>Up', None, lambda ign, self: self._action_open_dir(self.info.get_parent())),
@@ -209,8 +211,10 @@ class ThunarWindow(gtk.Window):
         other.destroy()
         if self.action_group.get_action('view-as-icons').get_active():
             self.view = ThunarIconView(self.info)
-        else:
+        elif self.action_group.get_action('view-as-list').get_active():
             self.view = ThunarListView(self.info)
+        else:
+            self.view = ThunarColumnsView(self.info)
         self.view.connect('context-menu', lambda view: self._context_menu())
         self.view.connect('activated', lambda widget, info: self._action_open_dir(info))
         self.view.connect('selection-changed', lambda widget: self._selection_changed())

@@ -52,3 +52,4 @@ class ThunarView(gobject.GInterface):
 
     def selection_changed(self):
         self.emit('selection-changed')
+
