@@ -22,15 +22,18 @@
 # 02111-1307, USA.
 #
 
+import os
+
 import pygtk
 pygtk.require('2.0')
 import gtk
 
+from ThunarFileInfo import ThunarFileInfo
 from ThunarWindow import ThunarWindow
 
 class Main:
   def __init__(self):
-    self.window = ThunarWindow()
+    self.window = ThunarWindow(ThunarFileInfo(os.getcwd()))
     self.window.connect('destroy', gtk.main_quit)
 
   def run(self):

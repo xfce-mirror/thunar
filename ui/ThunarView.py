@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# vi:set ts=2 sw=2 et ai nocindent:
+# vi:set ts=4 sw=4 et ai nocindent:
 #
 # $Id$
 #
@@ -27,59 +27,28 @@ pygtk.require('2.0')
 import gobject
 import gtk
 
-class ThunarView(gtk.TreeView):
-  def __init__(self):
-    gtk.TreeView.__init__(self)
-    self.set_model(self.create_model())
+from ThunarFileInfo import ThunarFileInfo
+from ThunarModel import ThunarModel
 
-    column = gtk.TreeViewColumn('Name')
-    renderer = gtk.CellRendererPixbuf()
-    column.pack_start(renderer, False)
-    column.add_attribute(renderer, 'pixbuf', 0)
-    renderer = gtk.CellRendererText()
-    column.pack_start(renderer, True)
-    column.add_attribute(renderer, 'text', 1)
-    self.append_column(column)
-    self.set_expander_column(column)
+class ThunarView(gobject.GInterface):
+    def __init__(self):
+        return
 
-    column = gtk.TreeViewColumn('Size')
-    renderer = gtk.CellRendererText()
-    column.pack_start(renderer, False)
-    column.add_attribute(renderer, 'text', 2)
-    self.append_column(column)
+    def get_selected_files(self):
+        pass
 
-    column = gtk.TreeViewColumn('Owner')
-    renderer = gtk.CellRendererText()
-    column.pack_start(renderer, False)
-    column.add_attribute(renderer, 'text', 3)
-    self.append_column(column)
 
-    column = gtk.TreeViewColumn('Permissions')
-    renderer = gtk.CellRendererText()
-    column.pack_start(renderer, False)
-    column.add_attribute(renderer, 'text', 4)
-    self.append_column(column)
+    def select_all(self):
+        pass
 
-    self.set_rules_hint(True)
-    self.set_headers_clickable(True)
 
-  def create_model(self):
-    model = gtk.ListStore(gtk.gdk.Pixbuf, gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING, gobject.TYPE_STRING)
+    def activated(self, info):
+        self.emit('activated', info)
 
-    model.append([
-      self.render_icon(gtk.STOCK_NEW, gtk.ICON_SIZE_MENU),
-      'test1.txt',
-      '2.0 KB',
-      'Benedikt Meurer',
-      '-rw-r--r--',
-    ])
-    
-    model.append([
-      self.render_icon(gtk.STOCK_NEW, gtk.ICON_SIZE_MENU),
-      'test2.txt',
-      '4.5 KB',
-      'Benedikt Meurer',
-      '-rw-r--r--',
-    ])
 
-    return model
+    def context_menu(self):
+        self.emit('context-menu')
+
+
+    def selection_changed(self):
+        self.emit('selection-changed')
