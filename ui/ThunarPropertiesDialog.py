@@ -45,7 +45,7 @@ class ThunarPropertiesDialog(gtk.Dialog):
     ### General
     ###
     table = gtk.Table(2, 4, False)
-    table.set_col_spacings(10)
+    table.set_col_spacings(12)
     table.set_row_spacings(6)
     table.set_border_width(6)
     label = gtk.Label('General')
@@ -61,7 +61,8 @@ class ThunarPropertiesDialog(gtk.Dialog):
     box.show()
 
     image = gtk.image_new_from_stock(gtk.STOCK_NEW, gtk.ICON_SIZE_DIALOG)
-    box.pack_start(image, False, False, 0)
+    image.set_alignment(0.5, 0.5)
+    box.pack_start(image, False, True, 0)
     image.show()
 
     label = gtk.Label('<b>Name:</b>')
@@ -74,6 +75,13 @@ class ThunarPropertiesDialog(gtk.Dialog):
     entry.set_text('foo.mp3')
     table.attach(entry, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
     entry.show()
+    row += 1 ### }
+
+    ### {
+    align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
+    align.set_size_request(-1, 12)
+    table.attach(align, 0, 1, row, row + 1, 0, 0)
+    align.show()
     row += 1 ### }
 
     ### {
@@ -96,17 +104,36 @@ class ThunarPropertiesDialog(gtk.Dialog):
     row += 1 ### }
 
     ### {
-    label = gtk.Label('<b>Size:</b>')
+    label = gtk.Label('<b>Open With:</b>')
     label.set_use_markup(True)
     label.set_alignment(1.0, 0.5)
     table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
     label.show()
 
-    label = gtk.Label('3.5 MB')
+    hbox = gtk.HBox(False, 6)
+    table.attach(hbox, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    hbox.show()
+
+    image = gtk.image_new_from_stock(gtk.STOCK_CDROM, gtk.ICON_SIZE_MENU)
+    hbox.pack_start(image, False, False, 0)
+    image.show()
+
+    label = gtk.Label('Xfmedia')
     label.set_alignment(0.0, 0.5)
     label.set_selectable(True)
-    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    hbox.pack_start(label, False, True, 0)
     label.show()
+
+    button = gtk.Button('Adjust...')
+    hbox.pack_end(button, False, False, 0)
+    button.show()
+    row += 1 ### }
+
+    ### {
+    align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
+    align.set_size_request(-1, 12)
+    table.attach(align, 0, 1, row, row + 1, 0, 0)
+    align.show()
     row += 1 ### }
 
     ### {
@@ -123,19 +150,68 @@ class ThunarPropertiesDialog(gtk.Dialog):
     label.show()
     row += 1 ### }
 
-#    ### {
-#    label = gtk.Label('<b>Permissions:</b>')
-#    label.set_use_markup(True)
-#    label.set_alignment(1.0, 0.5)
-#    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
-#    label.show()
-#
-#    label = gtk.Label('-rw-r--r--')
-#    label.set_alignment(0.0, 0.5)
-#    label.set_selectable(True)
-#    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
-#    label.show()
-#    row += 1 ### }
+    ### {
+    label = gtk.Label('<b>Size:</b>')
+    label.set_use_markup(True)
+    label.set_alignment(1.0, 0.5)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+    label.show()
+
+    label = gtk.Label('3.5 MB')
+    label.set_alignment(0.0, 0.5)
+    label.set_selectable(True)
+    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    label.show()
+    row += 1 ### }
+
+    ### {
+    label = gtk.Label('<b>Permissions:</b>')
+    label.set_use_markup(True)
+    label.set_alignment(1.0, 0.5)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+    label.show()
+
+    label = gtk.Label('-rw-r--r--')
+    label.set_alignment(0.0, 0.5)
+    label.set_selectable(True)
+    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    label.show()
+    row += 1 ### }
+
+    ### {
+    align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
+    align.set_size_request(-1, 12)
+    table.attach(align, 0, 1, row, row + 1, 0, 0)
+    align.show()
+    row += 1 ### }
+
+    ### {
+    label = gtk.Label('<b>Modified:</b>')
+    label.set_use_markup(True)
+    label.set_alignment(1.0, 0.5)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+    label.show()
+
+    label = gtk.Label('2005-02-16 00:20')
+    label.set_alignment(0.0, 0.5)
+    label.set_selectable(True)
+    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    label.show()
+    row += 1 ### }
+
+    ### {
+    label = gtk.Label('<b>Accessed:</b>')
+    label.set_use_markup(True)
+    label.set_alignment(1.0, 0.5)
+    table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+    label.show()
+
+    label = gtk.Label('2005-02-16 00:20')
+    label.set_alignment(0.0, 0.5)
+    label.set_selectable(True)
+    table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+    label.show()
+    row += 1 ### }
 
 
 
@@ -333,57 +409,57 @@ class ThunarPropertiesDialog(gtk.Dialog):
     ###
     ### Application
     ###
-    vbox = gtk.VBox(False, 6)
-    vbox.set_border_width(6)
-    label = gtk.Label('Application')
-    notebook.append_page(vbox, label)
-    label.show()
-    vbox.show()
-
-    label = gtk.Label('Select an application to open <i>foo.mp3</i> and all other files of type "MP3 audio"')
-    label.set_use_markup(True)
-    label.set_line_wrap(True)
-    vbox.pack_start(label, False, True, 0)
-    label.show()
-
-    model = gtk.ListStore(gobject.TYPE_BOOLEAN, gobject.TYPE_STRING)
-    model.append([True, 'Xfce Media Player'])
-    model.append([False, 'X Multimedia System'])
-    model.append([False, 'beep-media-player'])
-
-    swin = gtk.ScrolledWindow()
-    swin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
-    swin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
-    vbox.pack_start(swin, True, True, 0)
-    swin.show()
-
-    treeview = gtk.TreeView(model)
-    treeview.set_headers_visible(False)
-    swin.add(treeview)
-    treeview.show()
-    
-    column = gtk.TreeViewColumn()
-    renderer = gtk.CellRendererToggle()
-    renderer.set_radio(True)
-    column.pack_start(renderer, False)
-    column.add_attribute(renderer, 'active', 0)
-    renderer = gtk.CellRendererText()
-    column.pack_start(renderer, True)
-    column.add_attribute(renderer, 'text', 1)
-    treeview.append_column(column)
-
-    box = gtk.HButtonBox()
-    box.set_layout(gtk.BUTTONBOX_END)
-    box.set_spacing(6)
-    vbox.pack_start(box, False, False, 6)
-    box.show()
-
-    button = gtk.Button(None, gtk.STOCK_ADD)
-    box.pack_start(button, False, False, 0)
-    button.show()
-
-    button = gtk.Button(None, gtk.STOCK_REMOVE)
-    box.pack_start(button, False, False, 0)
-    button.show()
+#    vbox = gtk.VBox(False, 6)
+#    vbox.set_border_width(6)
+#    label = gtk.Label('Application')
+#    notebook.append_page(vbox, label)
+#    label.show()
+#    vbox.show()
+#
+#    label = gtk.Label('Select an application to open <i>foo.mp3</i> and all other files of type "MP3 audio"')
+#    label.set_use_markup(True)
+#    label.set_line_wrap(True)
+#    vbox.pack_start(label, False, True, 0)
+#    label.show()
+#
+#    model = gtk.ListStore(gobject.TYPE_BOOLEAN, gobject.TYPE_STRING)
+#    model.append([True, 'Xfce Media Player'])
+#    model.append([False, 'X Multimedia System'])
+#    model.append([False, 'beep-media-player'])
+#
+#    swin = gtk.ScrolledWindow()
+#    swin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
+#    swin.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+#    vbox.pack_start(swin, True, True, 0)
+#    swin.show()
+#
+#    treeview = gtk.TreeView(model)
+#    treeview.set_headers_visible(False)
+#    swin.add(treeview)
+#    treeview.show()
+#    
+#    column = gtk.TreeViewColumn()
+#    renderer = gtk.CellRendererToggle()
+#    renderer.set_radio(True)
+#    column.pack_start(renderer, False)
+#    column.add_attribute(renderer, 'active', 0)
+#    renderer = gtk.CellRendererText()
+#    column.pack_start(renderer, True)
+#    column.add_attribute(renderer, 'text', 1)
+#    treeview.append_column(column)
+#
+#    box = gtk.HButtonBox()
+#    box.set_layout(gtk.BUTTONBOX_END)
+#    box.set_spacing(6)
+#    vbox.pack_start(box, False, False, 6)
+#    box.show()
+#
+#    button = gtk.Button(None, gtk.STOCK_ADD)
+#    box.pack_start(button, False, False, 0)
+#    button.show()
+#
+#    button = gtk.Button(None, gtk.STOCK_REMOVE)
+#    box.pack_start(button, False, False, 0)
+#    button.show()
 
 
