@@ -22,7 +22,7 @@
 # 02111-1307, USA.
 #
 
-import dircache, os, stat, time
+import dircache, pwd, os, stat, time
 
 import pygtk
 pygtk.require('2.0')
@@ -47,6 +47,33 @@ class ThunarFileInfo(gobject.GObject):
         self.stat = os.stat(self.path)
 
 
+    def render_icon(self, size):
+        theme = gtk.icon_theme_get_default()
+        icon = None
+        try:
+            if self.is_home(): icon = theme.load_icon('gnome-fs-home', size, 0)
+        except:
+            pass
+        try:
+            if not icon and self.is_desktop(): icon = theme.load_icon('gnome-fs-desktop', size, 0)
+        except:
+            pass
+        try:
+            if not icon and self.path == '/': icon = theme.load_icon('gnome-dev-harddisk', size, 0)
+        except:
+            pass
+        if not icon:
+            icon = self.get_mime_info().render_icon(size)
+        return icon
+
+    def is_home(self):
+        home = pwd.getpwuid(os.getuid()).pw_dir
+        return os.path.samefile(home, self.path)
+
+    def is_desktop(self):
+        home = pwd.getpwuid(os.getuid()).pw_dir
+        return os.path.samefile(os.path.join(home, 'Desktop'), self.path)
+
     def get_mime_info(self):
         return self.mimedb.match(self.path)
 
@@ -66,13 +93,44 @@ class ThunarFileInfo(gobject.GObject):
         return name
 
     def get_size(self):
+        if self.is_directory():
+            return '-'
         return _humanize_size(self.stat[stat.ST_SIZE])
+
+    def get_atime(self):
+        return time.strftime('%x %X', time.localtime(self.stat[stat.ST_ATIME]))
 
     def get_mtime(self):
         return time.strftime('%x %X', time.localtime(self.stat[stat.ST_MTIME]))
 
     def is_directory(self):
         return stat.S_ISDIR(self.stat[stat.ST_MODE])
+
+    def get_permissions(self):
+        from stat import S_ISDIR, S_IMODE
+        mode = self.stat[stat.ST_MODE]
+        if S_ISDIR(mode):   result = 'd'
+        else:               result = '-'
+        mode = S_IMODE(mode)
+        if mode & 0400: result += 'r'
+        else:           result += '-'
+        if mode & 0200: result += 'w'
+        else:           result += '-'
+        if mode & 0100: result += 'x'
+        else:           result += '-'
+        if mode & 0040: result += 'r'
+        else:           result += '-'
+        if mode & 0020: result += 'w'
+        else:           result += '-'
+        if mode & 0010: result += 'x'
+        else:           result += '-'
+        if mode & 0004: result += 'r'
+        else:           result += '-'
+        if mode & 0002: result += 'w'
+        else:           result += '-'
+        if mode & 0001: result += 'x'
+        else:           result += '-'
+        return result
 
     def get_parent(self):
         if self.path == '/':

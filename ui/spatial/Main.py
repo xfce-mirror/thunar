@@ -28,6 +28,8 @@ import pygtk
 pygtk.require('2.0')
 import gtk
 
+import ThunarFolderDatabase
+
 from ThunarFileInfo import ThunarFileInfo
 from ThunarWindow import ThunarWindow
 
@@ -44,3 +46,4 @@ if __name__ == "__main__":
     main = Main()
     main.run()
 
+    ThunarFolderDatabase.get_folder_db().sync()

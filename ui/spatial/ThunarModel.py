@@ -33,19 +33,24 @@ from ThunarFileInfo import ThunarFileInfo
 
 class ThunarModel(gtk.ListStore):
     COLUMN_ICON     = 0
-    COLUMN_NAME     = 1
-    COLUMN_SIZE     = 2
-    COLUMN_MTIME    = 3
-    COLUMN_KIND     = 4
-    COLUMN_FILEINFO = 5
+    COLUMN_ICONHUGE = 1
+    COLUMN_NAME     = 2
+    COLUMN_SIZE     = 3
+    COLUMN_MTIME    = 4
+    COLUMN_KIND     = 5
+    COLUMN_FILEINFO = 6
 
     def __init__(self, dir_info):
         gtk.ListStore.__init__(self, gtk.gdk.Pixbuf,\
+                               gtk.gdk.Pixbuf, \
                                gobject.TYPE_STRING, \
                                gobject.TYPE_STRING, \
                                gobject.TYPE_STRING, \
                                gobject.TYPE_STRING, \
                                ThunarFileInfo)
+
+        self.set_default_sort_func(self._compare)
+        self.set_sort_column_id(-1, gtk.SORT_ASCENDING)
 
         for name in dircache.listdir(dir_info.get_path()):
             if name.startswith('.'):
@@ -55,7 +60,8 @@ class ThunarModel(gtk.ListStore):
             mime_info = file_info.get_mime_info()
 
             self.append([
-                mime_info.render_icon(16),
+                file_info.render_icon(16),
+                file_info.render_icon(48),
                 file_info.get_visible_name(),
                 file_info.get_size(),
                 file_info.get_mtime(),
@@ -64,4 +70,23 @@ class ThunarModel(gtk.ListStore):
             ])
 
 
+    def _compare(self, model, iter1, iter2):
+        info1 = self.get(iter1, self.COLUMN_FILEINFO)[0]
+        info2 = self.get(iter2, self.COLUMN_FILEINFO)[0]
 
+        if info1 and not info2:
+            return -1
+        elif not info1 and info2:
+            return 1
+
+        if info1.is_directory() and not info2.is_directory():
+            return -1
+        elif info2.is_directory() and not info1.is_directory():
+            return 1
+
+        if info1.get_visible_name() < info2.get_visible_name():
+            return -1
+        elif info1.get_visible_name() > info2.get_visible_name():
+            return 1
+
+        return 0

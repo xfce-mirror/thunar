@@ -26,11 +26,21 @@
 <ui>
   <menubar name="main-menu">
     <menu action="file-menu">
+      <menuitem action="open-parent" />
+      <menuitem action="open-location" />
+      <separator />
+      <menuitem action="get-info" />
+      <separator />
       <menuitem action="close-parent-folders" />
+      <menuitem action="close-all-folders" />
       <menuitem action="close-window" />
     </menu>
 
-    <menu action="window-menu">
+    <menu action="view-menu">
+      <menuitem action="select-all" />
+      <separator />
+      <menuitem action="view-as-icons" />
+      <menuitem action="view-as-list" />
     </menu>
 
     <menu action="help-menu">

@@ -39,11 +39,12 @@ class ThunarStatusBar(gtk.Statusbar):
         # register signals
         global signals_registered
         if not signals_registered:
-            gobject.signal_new('selected', self, gobject.SIGNAL_RUN_LAST, \
+            gobject.signal_new('activated', self, gobject.SIGNAL_RUN_LAST, \
                                gobject.TYPE_NONE, [ThunarFileInfo])
             signals_registered = True
 
         frame = gtk.Frame()
+        frame.set_border_width(0)
         shadow_type = self.style_get_property('shadow_type')
         frame.set_property('shadow_type', shadow_type)
         self.pack_start(frame, False, False, 0)
@@ -51,6 +52,6 @@ class ThunarStatusBar(gtk.Statusbar):
         frame.show()
 
         selector = ThunarParentSelector(dir_info)
-        selector.connect('selected', lambda widget, info: self.emit('selected', info))
+        selector.connect('activated', lambda widget, info: self.emit('activated', info))
         frame.add(selector)
         selector.show()

@@ -38,22 +38,23 @@ class ThunarParentSelector(gtk.Button):
         # register signals
         global signals_registered
         if not signals_registered:
-            gobject.signal_new('selected', self, gobject.SIGNAL_RUN_LAST, \
+            gobject.signal_new('activated', self, gobject.SIGNAL_RUN_LAST, \
                                gobject.TYPE_NONE, [ThunarFileInfo])
             signals_registered = True
 
         self.unset_flags(gtk.CAN_FOCUS)
         self.set_relief(gtk.RELIEF_NONE)
-        self.connect('clicked', lambda self: self._selector_clicked())
+        self.connect('pressed', lambda self: self._selector_clicked())
         self.file_info = dir_info
 
         box = gtk.HBox(False, 6)
+        box.set_border_width(0)
         self.add(box)
         box.show()
 
         mime_info = self.file_info.get_mime_info()
         self.image = gtk.Image()
-        self.image.set_from_pixbuf(mime_info.render_icon(16))
+        self.image.set_from_pixbuf(dir_info.render_icon(16))
         box.pack_start(self.image, False, False, 0)
         self.image.show()
 
@@ -86,9 +87,8 @@ class ThunarParentSelector(gtk.Button):
         menu = gtk.Menu()
         file_info = self.file_info
         while file_info:
-            mime_info = file_info.get_mime_info()
             name = file_info.get_visible_name()
-            icon = mime_info.render_icon(16)
+            icon = file_info.render_icon(16)
 
             image = gtk.Image()
             image.set_from_pixbuf(icon)
@@ -96,7 +96,7 @@ class ThunarParentSelector(gtk.Button):
             item = gtk.ImageMenuItem(name)
             item.set_image(image)
             item.set_data('info', file_info)
-            item.connect('activate', lambda item: self.emit('selected', item.get_data('info')))
+            item.connect('activate', lambda item: self.emit('activated', item.get_data('info')))
             menu.prepend(item)
             item.show()
             if not first: first = item
@@ -112,4 +112,4 @@ class ThunarParentSelector(gtk.Button):
         menu.select_item(first)
         loop.run()
         menu.grab_remove()
-
+        self.released()
