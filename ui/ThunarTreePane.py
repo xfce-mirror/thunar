@@ -39,7 +39,7 @@ class ThunarTreePane(gtk.TreeView):
     COLUMN_BOLD = 2
     COLUMN_INFO = 3
 
-    ICON_SIZE = 24
+    ICON_SIZE = 16
 
     def __init__(self):
         gtk.TreeView.__init__(self)
