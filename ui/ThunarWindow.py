@@ -62,6 +62,7 @@ class ThunarWindow(gtk.Window):
         self.action_group = gtk.ActionGroup('thunar-window')
         self.action_group.add_actions([
             ('file-menu', None, '_File'),
+            ('open-location', None, 'Open _Location', '<Control>L', None, lambda ign, self: self._action_open_location()),
             ('get-info', gtk.STOCK_PROPERTIES, 'Get _Info...', '<Alt>Return', None, lambda ign, self: self._action_get_info()),
             ('close-window', gtk.STOCK_CLOSE, '_Close', '<Control>W', None, lambda ign, self: self.destroy()),
         ], self)
@@ -99,7 +100,6 @@ class ThunarWindow(gtk.Window):
             ('go-back', gtk.STOCK_GO_BACK, '_Back', '<Alt>Left', None, lambda ign, self: self._action_go_back()),
             ('go-forward', gtk.STOCK_GO_FORWARD, '_Forward', '<Alt>Right', None, lambda ign, self: self._action_go_forward()),
             ('go-home', gtk.STOCK_HOME, '_Home Folder', None, None, lambda ign, self: self._action_open_dir(ThunarFileInfo(os.getenv('HOME')))),
-            ('go-location', None, '_Location...', '<Control>L', None, lambda ign, self: self._action_open_location()),
         ], self)
         self.action_group.add_actions([
             ('bookmarks-menu', None, '_Bookmarks'),
@@ -190,15 +190,30 @@ class ThunarWindow(gtk.Window):
         self.view.grab_focus()
         self.view.show()
 
-        self.location_bar = gtk.HBox(False, 6)
-        vbox.pack_start(self.location_bar, False, False, 0)
-        self.location_bar.hide()
+        if False:
+            self.location_bar = gtk.Frame()
+            self.location_bar.set_shadow_type(gtk.SHADOW_ETCHED_IN)
+            vbox.pack_start(self.location_bar, False, False, 0)
+            self.location_bar.hide()
+        else:
+            self.location_bar = gtk.VBox(False, 0)
+            self.main_vbox.pack_start(self.location_bar, False, False, 0)
+            self.location_bar.hide()
+
+            separator = gtk.HSeparator()
+            self.location_bar.pack_start(separator, False, False, 0)
+            separator.show()
+
+        lbox = gtk.HBox(False, 6)
+        lbox.set_border_width(0)
+        self.location_bar.add(lbox)
+        lbox.show()
 
         button = gtk.Button()
         button.set_relief(gtk.RELIEF_NONE)
         button.set_border_width(0)
         button.set_focus_on_click(False)
-        self.location_bar.pack_start(button, False, False, 0)
+        lbox.pack_start(button, False, False, 0)
         button.show()
 
         bbox = gtk.HBox(False, 0)
@@ -219,8 +234,20 @@ class ThunarWindow(gtk.Window):
         self.location_entry.connect('focus-out-event', lambda entry, event: self._location_bar_focus_out())
         self.location_entry.connect('key-press-event', lambda entry, event: self._location_bar_key_press(event))
         self.location_entry.connect('activate', lambda entry: self._location_bar_activate())
-        self.location_bar.pack_start(self.location_entry, True, True, 0)
+        lbox.pack_start(self.location_entry, True, True, 0)
         self.location_entry.show()
+
+        close_button = gtk.Button()
+        close_button.set_relief(gtk.RELIEF_NONE)
+        close_button.set_border_width(0)
+        close_button.set_focus_on_click(False)
+        close_button.connect('clicked', lambda btn: self._location_bar_focus_out()) 
+        lbox.pack_start(close_button, False, False, 0)
+        close_button.show()
+
+        close_image = gtk.image_new_from_stock(gtk.STOCK_CLOSE, gtk.ICON_SIZE_BUTTON)
+        close_button.add(close_image)
+        close_image.show()
 
         self.status_bar = gtk.Statusbar()
         self.status_id = self.status_bar.get_context_id('Selection state')
