@@ -26,6 +26,15 @@ import pygtk
 pygtk.require('2.0')
 import gobject
 import gtk
+import pango
+
+try:
+    import pyexo
+    pyexo.require('0.3')
+    import exo
+    exo_supported = True
+except ImportError:
+    exo_supported = False
 
 from ThunarFileInfo import ThunarFileInfo
 
@@ -145,7 +154,15 @@ class ThunarPropertiesDialog(gtk.Dialog):
         table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
         label.show()
 
-        label = gtk.Label(info.get_parent().get_visible_name())
+        if exo_supported:
+            label = exo.EllipsizedLabel(info.get_parent().get_path())
+            label.set_ellipsize(exo.PANGO_ELLIPSIZE_START)
+        else:
+            label = gtk.Label(info.get_parent().get_path())
+            try:
+                label.set_ellipsize(pango.ELLIPSIZE_START)
+            except:
+                pass
         label.set_alignment(0.0, 0.5)
         label.set_selectable(True)
         table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
@@ -166,20 +183,6 @@ class ThunarPropertiesDialog(gtk.Dialog):
             table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
             label.show()
             row += 1 ### }
-
-        ### {
-        label = gtk.Label('<b>Permissions:</b>')
-        label.set_use_markup(True)
-        label.set_alignment(1.0, 0.5)
-        table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
-        label.show()
-
-        label = gtk.Label(info.get_permissions())
-        label.set_alignment(0.0, 0.5)
-        label.set_selectable(True)
-        table.attach(label, 1, 2, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
-        label.show()
-        row += 1 ### }
 
         ### {
         align = gtk.Alignment(1.0, 1.0, 1.0, 1.0)
@@ -338,35 +341,35 @@ class ThunarPropertiesDialog(gtk.Dialog):
         sep.show()
         row += 1 ### }
      
-        ### {
-        label = gtk.Label('<b>Special flags:</b>')
-        label.set_use_markup(True)
-        label.set_alignment(1.0, 0.5)
-        table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
-        label.show()
-
-        button = gtk.CheckButton('Set user ID')
-        table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
-        button.show()
-        row += 1 ### }
-
-        ### {
-        button = gtk.CheckButton('Set group ID')
-        table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
-        button.show()
-        row += 1 ### }
-
-        ### {
-        button = gtk.CheckButton('Sticky')
-        table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
-        button.show()
-        row += 1 ### }
-
-        ### {
-        sep = gtk.HSeparator()
-        table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
-        sep.show()
-        row += 1 ### }
+#        ### {
+#        label = gtk.Label('<b>Special flags:</b>')
+#        label.set_use_markup(True)
+#        label.set_alignment(1.0, 0.5)
+#        table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
+#        label.show()
+#
+#        button = gtk.CheckButton('Set user ID')
+#        table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
+#        button.show()
+#        row += 1 ### }
+#
+#        ### {
+#        button = gtk.CheckButton('Set group ID')
+#        table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
+#        button.show()
+#        row += 1 ### }
+#
+#        ### {
+#        button = gtk.CheckButton('Sticky')
+#        table.attach(button, 1, 4, row, row + 1, gtk.FILL, gtk.FILL)
+#        button.show()
+#        row += 1 ### }
+#
+#        ### {
+#        sep = gtk.HSeparator()
+#        table.attach(sep, 0, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
+#        sep.show()
+#        row += 1 ### }
 
         ### {
         label = gtk.Label('<b>Text view:</b>')

@@ -44,7 +44,7 @@ except ImportError:
 class ThunarWindow(gtk.Window):
     def __init__(self, info):
         gtk.Window.__init__(self, gtk.WINDOW_TOPLEVEL)
-        self.set_title('Thunar: ' + info.get_visible_name())
+        self.set_title(info.get_path())
         self.set_icon(info.render_icon(48))
         self.set_default_size(650,550)
 
@@ -132,25 +132,13 @@ class ThunarWindow(gtk.Window):
         self.add(self.main_vbox)
         self.main_vbox.show()
 
-        frame = gtk.Frame()
-        frame.set_shadow_type(gtk.SHADOW_OUT)
-        self.main_vbox.pack_start(frame, False, False, 0)
-        frame.show()
-
         menu_bar = self.ui_manager.get_widget('/main-menu')
-        #self.main_vbox.pack_start(menu_bar, False, False, 0)
-        frame.add(menu_bar)
+        self.main_vbox.pack_start(menu_bar, False, False, 0)
         menu_bar.show()
-
-        frame = gtk.Frame()
-        frame.set_shadow_type(gtk.SHADOW_OUT)
-        self.main_vbox.pack_start(frame, False, False, 0)
-        frame.show()
 
         tool_bar = self.ui_manager.get_widget('/main-toolbar')
         tool_bar.set_style(gtk.TOOLBAR_BOTH_HORIZ)
-        #self.main_vbox.pack_start(tool_bar, False, False, 0)
-        frame.add(tool_bar)
+        self.main_vbox.pack_start(tool_bar, False, False, 0)
         tool_bar.show()
 
         self.main_hbox = gtk.HPaned()
@@ -266,7 +254,7 @@ class ThunarWindow(gtk.Window):
         self.info = info
         self.action_group.get_action('go-up').set_property('sensitive', (info.get_parent() != None))
         self._selection_changed()
-        self.set_title('Thunar: ' + info.get_visible_name())
+        self.set_title(info.get_path())
         self.set_icon(info.render_icon(48))
 
         self.sidepane.handler_block(self.sidepane_selection_id)

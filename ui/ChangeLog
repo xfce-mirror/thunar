@@ -1,3 +1,15 @@
+2005-03-03	Benedikt Meurer <benny@xfce.org>
+
+	* ThunarWindow.py: Remove the frames around the toolbar and the menubar.
+	  We'll need to fix the Xfce theme instead.
+	* ThunarListView.py: Use ellipsized cell renderer if available. Get
+	  the column sizing right.
+	* ThunarPropertiesDialog.py: Remove the advanced file attributes from
+	  the user interface. Users who want to set this properties will
+	  definetly know how to do it using the command line utitilies.
+	* ThunarPropertiesDialog.py: Remove the Permissions from the General
+	  tab. Display the full location path (ellipsized).
+
 2005-03-02	Benedikt Meurer <benny@xfce.org>
 
 	* ThunarWindow.py: Make sure the sidebar doesn't resize when the

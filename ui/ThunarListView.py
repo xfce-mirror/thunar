@@ -31,6 +31,14 @@ from ThunarFileInfo import ThunarFileInfo
 from ThunarModel import ThunarModel
 from ThunarView import ThunarView
 
+try:
+    import pyexo
+    pyexo.require('0.3')
+    import exo
+    exo_supported = True
+except ImportError:
+    exo_supported = False
+
 signals_registered = False
 
 class ThunarListView(gtk.TreeView, ThunarView):
@@ -64,9 +72,17 @@ class ThunarListView(gtk.TreeView, ThunarView):
         renderer = gtk.CellRendererPixbuf()
         column.pack_start(renderer, False)
         column.add_attribute(renderer, 'pixbuf', ThunarModel.COLUMN_ICON)
-        renderer = gtk.CellRendererText()
+        if exo_supported:
+            renderer = exo.CellRendererEllipsizedText()
+            renderer.set_property('ellipsize', exo.PANGO_ELLIPSIZE_END)
+            renderer.set_property('ellipsize-set', True)
+        else:
+            renderer = gtk.CellRendererText()
         column.pack_start(renderer, True)
         column.add_attribute(renderer, 'text', ThunarModel.COLUMN_NAME)
+        column.set_resizable(True)
+        column.set_expand(True)
+        column.set_sizing(gtk.TREE_VIEW_COLUMN_AUTOSIZE)
         self.append_column(column)
         self.set_expander_column(column)
 
@@ -75,18 +91,24 @@ class ThunarListView(gtk.TreeView, ThunarView):
         renderer.set_property('xalign', 1.0)
         column.pack_start(renderer, True)
         column.add_attribute(renderer, 'text', ThunarModel.COLUMN_SIZE)
+        column.set_resizable(True)
+        column.set_expand(False)
         self.append_column(column)
 
         column = gtk.TreeViewColumn('Modified')
         renderer = gtk.CellRendererText()
         column.pack_start(renderer, False)
         column.add_attribute(renderer, 'text', ThunarModel.COLUMN_MTIME)
+        column.set_resizable(True)
+        column.set_expand(False)
         self.append_column(column)
 
         column = gtk.TreeViewColumn('Kind')
         renderer = gtk.CellRendererText()
         column.pack_start(renderer, False)
         column.add_attribute(renderer, 'text', ThunarModel.COLUMN_KIND)
+        column.set_resizable(True)
+        column.set_expand(False)
         self.append_column(column)
 
         self.set_rules_hint(True)
