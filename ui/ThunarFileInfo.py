@@ -29,12 +29,14 @@ pygtk.require('2.0')
 import gobject
 import gtk
 
-from ThunarMimeDatabase import ThunarMimeDatabase
+import ThunarImageLoader
+
+import ThunarMimeDatabase
 
 class ThunarFileInfo(gobject.GObject):
     def __init__(self, path):
         gobject.GObject.__init__(self)
-        self.mimedb = ThunarMimeDatabase()
+        self.mimedb = ThunarMimeDatabase.get_default()
 
         # build up a normalized path
         self.path = ''
@@ -50,21 +52,34 @@ class ThunarFileInfo(gobject.GObject):
             self.stat = os.lstat(self.path)
 
 
+    def __try_thumbnail(self, size):
+        import md5
+        uri = 'file://' + self.path
+        name = md5.new(uri).hexdigest() + '.png'
+        path = os.path.join(os.getenv('HOME'), '.thumbnails', 'normal', name)
+        return gtk.gdk.pixbuf_new_from_file_at_size(path, size, size)
+
+
     def render_icon(self, size):
-        theme = gtk.icon_theme_get_default()
+        loader = ThunarImageLoader.get_default()
         icon = None
         try:
-            if self.is_home(): icon = theme.load_icon('gnome-fs-home', size, 0)
+            if self.is_home(): icon = loader.load_icon('gnome-fs-home', size)
         except:
             pass
         try:
-            if not icon and self.is_desktop(): icon = theme.load_icon('gnome-fs-desktop', size, 0)
+            if not icon and self.is_desktop(): icon = loader.load_icon('gnome-fs-desktop', size)
         except:
             pass
         try:
-            if not icon and self.path == '/': icon = theme.load_icon('gnome-dev-harddisk', size, 0)
+            if not icon and self.path == '/': icon = loader.load_icon('gnome-dev-harddisk', size)
         except:
             pass
+        if not icon:
+            try:
+                icon = self.__try_thumbnail(size)
+            except:
+                pass
         if not icon:
             icon = self.get_mime_info().render_icon(size)
         return icon

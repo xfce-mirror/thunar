@@ -1,5 +1,18 @@
 2005-03-06	Benedikt Meurer <benny@xfce.org>
 
+	* ThunarFileInfo.py, ThunarImageLoader.py, ThunarMimeDatabase.py: Add
+	  a separate image loader class with caching.
+	* ThunarWindow.py, ThunarPathBar.py: Rename the ThunarHistory class
+	  to ThunarPathBar.
+	* ThunarBookmarksPane.py: Re-Add the 'Desktop' bookmark.
+	* ThunarMimeDatabase.py, ThunarFileInfo.py: Add caching for the MIME
+	  database.
+	* ThunarFileInfo.py: Support loading of existing thumbnails.
+	* ThunarPropertiesDialog.py: Connect the 'Text view' in the
+	  'Permissions' tab.
+
+2005-03-06	Benedikt Meurer <benny@xfce.org>
+
 	* ThunarWindow.py: Make the GtkFileChooser-like layout the default.
 
 2005-03-05	Benedikt Meurer <benny@xfce.org>

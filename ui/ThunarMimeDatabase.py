@@ -29,46 +29,73 @@ import gtk
 
 import rox, rox.mime
 
+import ThunarImageLoader
+
+
+__ALL__ = [ 'get_default' ]
+
+
+default_database = None
+def get_default():
+    global default_database
+    if not default_database:
+        default_database = ThunarMimeDatabase()
+    return default_database
+
+
 
 class ThunarMimeDatabase:
+    def __init__(self):
+        self.__cache = {}
+
+
     def match(self, path):
         type = rox.mime.get_type(path)
-        return ThunarMimeInfo(type)
+        name = '%s' % type
+        if self.__cache.has_key(name):
+            type = self.__cache[name]
+        else:
+            type = ThunarMimeInfo(type)
+            self.__cache[name] = type
+        return type
+
 
 
 class ThunarMimeInfo:
     def __init__(self, type):
-        self.theme = gtk.icon_theme_get_default()
-        self.type = type
+        self.__loader = ThunarImageLoader.get_default()
+        self.__type = type
+
 
     def get_comment(self):
-        return self.type.get_comment()
+        return self.__type.get_comment()
+
 
     def render_icon(self, size):
-        type = '%s' % self.type
+        type = '%s' % self.__type
         try:
             name = 'mime-' + type.replace('/', ':')
-            icon = self.theme.load_icon(name, size, 0)
+            icon = self.__loader.load_icon(name, size)
         except gobject.GError:
             try:
                 name = 'gnome-mime-' + type.replace('/', '-')
-                icon = self.theme.load_icon(name, size, 0)
+                icon = self.__loader.load_icon(name, size)
             except gobject.GError:
                 try:
                     name = 'mime-' + type.split('/')[0]
-                    icon = self.theme.load_icon(name, size, 0)
+                    icon = self.__loader.load_icon(name, size)
                 except gobject.GError:
                     try:
                         name = 'gnome-mime-' + type.split('/')[0]
-                        icon = self.theme.load_icon(name, size, 0)
+                        icon = self.__loader.load_icon(name, size)
                     except gobject.GError:
                         try:
                             name = 'mime-application:octet-stream'
-                            icon = self.theme.load_icon(name, size, 0)
+                            icon = self.__loader.load_icon(name, size)
                         except gobject.GError:
                             try:
                                 name = 'gnome-mime-application-octet-stream'
-                                icon = self.theme.load_icon(name, size, 0)
+                                icon = self.__loader.load_icon(name, size)
                             except gobject.GError:
                                 icon = gtk.gdk.pixbuf_new_from_file_at_size('fallback.svg', size, size)
         return icon

@@ -408,7 +408,7 @@ class ThunarPropertiesDialog(gtk.Dialog):
         table.attach(label, 0, 1, row, row + 1, gtk.FILL, gtk.FILL)
         label.show()
 
-        label = gtk.Label('-rw-r--r--')
+        label = gtk.Label(info.get_permissions())
         label.set_alignment(0.0, 0.5)
         table.attach(label, 1, 4, row, row + 1, gtk.EXPAND | gtk.FILL, gtk.FILL)
         label.show()

@@ -31,7 +31,7 @@ import gtk
 
 from ThunarFileInfo import ThunarFileInfo
 
-class ThunarHistory(gtk.HBox):
+class ThunarPathBar(gtk.HBox):
     def __init__(self):
         gtk.HBox.__init__(self)
         self.set_spacing(2)
@@ -122,8 +122,8 @@ class ThunarHistory(gtk.HBox):
 
 
 
-gobject.type_register(ThunarHistory)
-gobject.signal_new('directory-changed', ThunarHistory, \
+gobject.type_register(ThunarPathBar)
+gobject.signal_new('directory-changed', ThunarPathBar, \
                    gobject.SIGNAL_RUN_LAST, gobject.TYPE_NONE, \
                    [ThunarFileInfo])
 

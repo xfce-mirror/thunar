@@ -29,7 +29,7 @@ pygtk.require('2.0')
 import gtk
 
 from ThunarModel import ThunarModel
-from ThunarHistory import ThunarHistory
+from ThunarPathBar import ThunarPathBar
 from ThunarFileInfo import ThunarFileInfo
 from ThunarListView import ThunarListView
 from ThunarColumnsView import ThunarColumnsView
@@ -165,11 +165,11 @@ class ThunarWindow(gtk.Window):
         self.main_hbox.pack2(vbox, True, False)
         vbox.show()
 
-        self.history = ThunarHistory()
-        self.history.set_info(self.info)
-        self.history.connect('directory-changed', lambda history, info: self._action_open_dir(info))
-        vbox.pack_start(self.history, False, False, 0)
-        self.history.show()
+        self.pathbar = ThunarPathBar()
+        self.pathbar.set_info(self.info)
+        self.pathbar.connect('directory-changed', lambda history, info: self._action_open_dir(info))
+        vbox.pack_start(self.pathbar, False, False, 0)
+        self.pathbar.show()
 
         self.swin = gtk.ScrolledWindow(None, None)
         self.swin.set_policy(gtk.POLICY_AUTOMATIC, gtk.POLICY_AUTOMATIC)
@@ -227,10 +227,10 @@ class ThunarWindow(gtk.Window):
         value = self.action_group.get_action('view-gtkfilechooser').get_active()
         self.sidepane.set_gtkfilechooser_like(value)
         if value:
-            self.history.show()
+            self.pathbar.show()
             self.main_hbox.set_border_width(6)
         else:
-            self.history.hide()
+            self.pathbar.hide()
             self.main_hbox.set_border_width(0)
 
 
@@ -300,7 +300,7 @@ class ThunarWindow(gtk.Window):
         self.sidepane.select_by_info(info)
         self.sidepane.handler_unblock(self.sidepane_selection_id)
 
-        self.history.set_info(info)
+        self.pathbar.set_info(info)
 
         # scroll to (0,0)
         self.swin.get_hadjustment().set_value(0)

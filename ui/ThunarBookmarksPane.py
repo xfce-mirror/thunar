@@ -65,7 +65,7 @@ class ThunarBookmarksPane(gtk.TreeView):
 
         home = os.getenv('HOME')
 
-        for path in [home, '/']:
+        for path in [home, os.path.join(home, 'Desktop'), '/']:
             try:
                 info = ThunarFileInfo(path)
                 self.model.append([info.get_visible_name(), info.render_icon(self.ICON_SIZE), info])
