@@ -93,6 +93,16 @@ class ThunarFileInfo(gobject.GObject):
         return os.path.samefile(os.path.join(home, 'Desktop'), self.path)
 
     def get_mime_info(self):
+        if stat.S_ISDIR(self.stat[stat.ST_MODE]):
+            return self.mimedb.get_info("inode/directory")
+        elif stat.S_ISCHR(self.stat[stat.ST_MODE]):
+            return self.mimedb.get_info("inode/chardevice")
+        elif stat.S_ISBLK(self.stat[stat.ST_MODE]):
+            return self.mimedb.get_info("inode/blockdevice")
+        elif stat.S_ISFIFO(self.stat[stat.ST_MODE]):
+            return self.mimedb.get_info("inode/fifo")
+        elif stat.S_ISSOCK(self.stat[stat.ST_MODE]):
+            return self.mimedb.get_info("inode/socket")
         return self.mimedb.match(self.path)
 
     def get_name(self):

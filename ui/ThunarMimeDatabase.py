@@ -27,9 +27,9 @@ pygtk.require('2.0')
 import gobject
 import gtk
 
-import rox, rox.mime
-
-import ThunarImageLoader
+import pyexo
+pyexo.require('0.3')
+import exo
 
 
 __ALL__ = [ 'get_default' ]
@@ -46,24 +46,21 @@ def get_default():
 
 class ThunarMimeDatabase:
     def __init__(self):
-        self.__cache = {}
+        self.__db = exo.mime_database_get_default()
 
 
     def match(self, path):
-        type = rox.mime.get_type(path)
-        name = '%s' % type
-        if self.__cache.has_key(name):
-            type = self.__cache[name]
-        else:
-            type = ThunarMimeInfo(type)
-            self.__cache[name] = type
-        return type
+        return ThunarMimeInfo(self.__db.get_info_for_file(path))
+
+
+    def get_info(self, type):
+        return ThunarMimeInfo(self.__db.get_info(type))
 
 
 
 class ThunarMimeInfo:
     def __init__(self, type):
-        self.__loader = ThunarImageLoader.get_default()
+        self.__loader = gtk.icon_theme_get_default()
         self.__type = type
 
 
@@ -72,37 +69,8 @@ class ThunarMimeInfo:
 
 
     def render_icon(self, size):
-        type = '%s' % self.__type
-        try:
-            name = 'mime-' + type.replace('/', ':')
-            icon = self.__loader.load_icon(name, size)
-        except gobject.GError:
-            try:
-                name = 'gnome-mime-' + type.replace('/', '-')
-                icon = self.__loader.load_icon(name, size)
-            except gobject.GError:
-                try:
-                    name = 'mime-' + type.split('/')[0]
-                    icon = self.__loader.load_icon(name, size)
-                except gobject.GError:
-                    try:
-                        name = 'gnome-mime-' + type.split('/')[0]
-                        icon = self.__loader.load_icon(name, size)
-                    except gobject.GError:
-                        if type == 'inode/directory':
-                            try:
-                                name = 'gnome-fs-directory'
-                                icon = self.__loader.load_icon(name, size)
-                            except gobject.GError:
-                                icon = gtk.gdk.pixbuf_new_from_file_at_size('fallback.svg', size, size)
-                        else:
-                            try:
-                                name = 'mime-application:octet-stream'
-                                icon = self.__loader.load_icon(name, size)
-                            except gobject.GError:
-                                try:
-                                    name = 'gnome-mime-application-octet-stream'
-                                    icon = self.__loader.load_icon(name, size)
-                                except gobject.GError:
-                                    icon = gtk.gdk.pixbuf_new_from_file_at_size('fallback.svg', size, size)
-        return icon
+        icon = self.__type.lookup_icon(self.__loader, size, 0)
+        if icon:
+            return icon.load_icon()
+        else:
+            return gtk.gdk.pixbuf_new_from_file_at_size('fallback.svg', size, size)
