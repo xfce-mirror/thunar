@@ -1,6 +1,8 @@
 # $Id$
 
 SUBDIRS =								\
+	docs								\
+	thunar-vfs							\
 	thunar
 
 AUTOMAKE_OPTIONS =							\
@@ -17,6 +19,7 @@ rpm: dist
 EXTRA_DIST =								\
 	AUTHORS								\
 	COPYING								\
+	COPYING.LIB							\
 	ChangeLog							\
 	INSTALL								\
 	NEWS								\

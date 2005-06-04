@@ -1,3 +1,44 @@
+2005-06-04	Benedikt Meurer <benny@xfce.org>
+
+	* COPYING.LIB: Add license text for the thunar-vfs library (which is
+	  licensed under the LGPL).
+	* HACKING: Add information for people that plan to hack on Thunar.
+	* AUTHORS: Add Jeff Franks.
+	* THANKS: Import the THANKS template.
+	* README: Add some basic information about Thunar. Needs more details.
+	* docs/design/overview.xmi: Import the current overview diagram for
+	  Thunar.
+	* Makefile.am, configure.in.in, docs/Makefile.am,
+	  docs/design/Makefile.am: Include the docs/ tree with the build
+	  framework.
+	* configure.in.in, thunar/Makefile.am, thunar-vfs/Makefile.am: Link
+	  against GThread (not yet required from what is coded so far).
+	* configure.in.in: Check for several required header files.
+	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-info.{c,h},
+	  thunar-vfs/thunar-vfs-monitor.{c,h},
+	  thunar-vfs/thunar-vfs-uri.{c,h}, thunar-vfs/thunar-vfs-util.{c,h},
+	  thunar-vfs/thunar-vfs.h: Add some experimental source code to
+	  implement parts of the VFS module.
+	* thunar/fallback-icon.h, thunar/fallback-icon.png: Import the
+	  fallback icon.
+	* thunar/thunar-application.{c,h}: Import Jeff's ThunarApplication
+	  boilerplate (adjusting style as required).
+	* thunar/thunar-desktop-view.{c,h}: Boilerplate for the
+	  ThunarDesktopView class with the very basic requirements.
+	* thunar/thunar-file.{c,h}, thunar/thunar-folder.{c,h}: Experimental
+	  implementation of ThunarFile and ThunarFolder based on the
+	  experimental source for the VFS module.
+	* thunar/thunar-list-model.{c,h}: Sample implementation of the
+	  ThunarListModel class, based on an earlier implementation found in
+	  Filer.
+	* thunar/thunar-preferences.{c,h}: Template for the ThunarPreferences
+	  class.
+	* thunar/thunar-window.{c,h}: Quick-and-dirty ThunarWindow
+	  implementation to be able to roughly test the ThunarListModel class.
+	* thunar/main.c: Add code to start a single ThunarWindow.
+	* autogen.sh: Copyright fixes. Substitute date to make it easier to
+	  identify snapshots during the early development stages.
+
 2005-05-30	Benedikt Meurer <benny@xfce.org>
 
 	* Initial import.

@@ -3,9 +3,9 @@
 # $Id: autogen.sh,v 1.7 2005/01/26 22:07:26 benny Exp $
 #
 # Copyright (c) 2002-2005
-#         The Xfce development team. All rights reserved.
+#         The Thunar development team. All rights reserved.
 #
-# Written for Xfce by Benedikt Meurer <benny@xfce.org>.
+# Written for Thunar by Benedikt Meurer <benny@xfce.org>.
 #
 
 (type xdt-autogen) >/dev/null 2>&1 || {
@@ -17,6 +17,9 @@ autogen.sh: You don't seem to have the Xfce development tools installed on
 EOF
   exit 1
 }
+
+# substitute date
+sed "s/@DATE@/`date +%Y%m%d`/g" < "configure.in.in" > "configure.in"
 
 exec xdt-autogen $@
 

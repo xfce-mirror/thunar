@@ -10,14 +10,36 @@ bin_PROGRAMS =								\
 	Thunar
 
 Thunar_SOURCES =							\
-	main.c
+	main.c								\
+	thunar-application.c						\
+	thunar-application.h						\
+	thunar-desktop-view.c						\
+	thunar-desktop-view.h						\
+	thunar-file.c							\
+	thunar-file.h							\
+	thunar-folder.c							\
+	thunar-folder.h							\
+	thunar-list-model.c						\
+	thunar-list-model.h						\
+	thunar-preferences.c						\
+	thunar-preferences.h						\
+	thunar-window.c							\
+	thunar-window.h
 
 Thunar_CFLAGS =								\
-	$(EXO_CFLAGS)
+	$(EXO_CFLAGS)							\
+	$(GTHREAD_CFLAGS)
 
 Thunar_LDFLAGS =							\
 	-no-undefined							\
-	$(EXO_LIBS)
+	$(EXO_LIBS)							\
+	$(GTHREAD_LIBS)
+
+Thunar_LDADD =								\
+	$(top_builddir)/thunar-vfs/libthunar-vfs.la
+
+Thunar_DEPENDENCIES =							\
+	$(top_builddir)/thunar-vfs/libthunar-vfs.la
 
 # install symlink to 'thunar'
 install-data-local:
@@ -26,5 +48,9 @@ install-data-local:
 
 clean-local:
 	rm -f *.core core core.*
+
+EXTRA_DIST =								\
+	fallback-icon.h							\
+	fallback-icon.png
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
