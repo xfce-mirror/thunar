@@ -1,5 +1,13 @@
 2005-06-04	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in: Fix copyright texts.
+	* docs/design/overview.xmi: Add is_local() and is_root() for
+	  ThunarVfsURI, which were missing.
+	* thunar-vfs/thunar-vfs-uri.{c,h}: Implemented the missing
+	  thunar_vfs_uri_is_root() and thunar_vfs_uri_parent() methods.
+
+2005-06-04	Benedikt Meurer <benny@xfce.org>
+
 	* COPYING.LIB: Add license text for the thunar-vfs library (which is
 	  licensed under the LGPL).
 	* HACKING: Add information for people that plan to hack on Thunar.

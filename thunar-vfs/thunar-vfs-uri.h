@@ -40,10 +40,13 @@ GType          thunar_vfs_uri_get_type          (void) G_GNUC_CONST;
 ThunarVfsURI  *thunar_vfs_uri_new_for_path      (const gchar  *path);
 
 gboolean       thunar_vfs_uri_is_local          (ThunarVfsURI *uri);
+gboolean       thunar_vfs_uri_is_root           (ThunarVfsURI *uri);
+
 gchar         *thunar_vfs_uri_get_display_name  (ThunarVfsURI *uri);
 const gchar   *thunar_vfs_uri_get_name          (ThunarVfsURI *uri);
 const gchar   *thunar_vfs_uri_get_path          (ThunarVfsURI *uri);
 
+ThunarVfsURI  *thunar_vfs_uri_parent            (ThunarVfsURI *uri);
 ThunarVfsURI  *thunar_vfs_uri_relative          (ThunarVfsURI *uri,
                                                  const gchar  *name);
 

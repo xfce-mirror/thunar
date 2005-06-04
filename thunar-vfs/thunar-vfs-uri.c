@@ -134,6 +134,24 @@ thunar_vfs_uri_is_local (ThunarVfsURI *uri)
 
 
 /**
+ * thunar_vfs_uri_is_root:
+ * @uri : an #ThunarVfsURI instance.
+ *
+ * Checks whether @uri refers to the root of the file system
+ * scheme described by @uri.
+ *
+ * Return value: %TRUE if @uri is a root element, else %FALSE.
+ **/
+gboolean
+thunar_vfs_uri_is_root (ThunarVfsURI *uri)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
+  return (uri->path[0] == '/' && uri->path[1] == '\0');
+}
+
+
+
+/**
  * thunar_vfs_uri_get_display_name:
  * @uri : an #ThunarVfsURI instance.
  *
@@ -192,9 +210,36 @@ thunar_vfs_uri_get_path (ThunarVfsURI *uri)
 
 
 /**
+ * thunar_vfs_uri_parent:
+ * @uri : an #ThunarVfsURI instance.
+ *
+ * Returns the #ThunarVfsURI object that refers to the parent 
+ * folder of @uri or %NULL if @uri has no parent.
+ *
+ * Return value:
+ **/
+ThunarVfsURI*
+thunar_vfs_uri_parent (ThunarVfsURI *uri)
+{
+  ThunarVfsURI *parent;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+
+  if (thunar_vfs_uri_is_root (uri))
+    return NULL;
+
+  parent = g_object_new (THUNAR_VFS_TYPE_URI, NULL);
+  parent->path = g_path_get_dirname (uri->path);
+
+  return parent;
+}
+
+
+
+/**
  * thunar_vfs_uri_relative:
  * @uri   : an #ThunarVfsURI instance.
- * @name  :
+ * @name  : the relative name.
  *
  * Return value:
  **/
