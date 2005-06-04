@@ -22,6 +22,8 @@
 #include <config.h>
 #endif
 
+#include <exo/exo.h>
+
 #include <thunar-vfs/thunar-vfs-uri.h>
 
 
@@ -84,6 +86,36 @@ thunar_vfs_uri_finalize (GObject *object)
 
 
 /**
+ * thunar_vfs_uri_new:
+ * @identifier : the resource identifier encoded as string.
+ * @error      : return location for errors.
+ *
+ * Return value: the #ThunarVfsURI or %NULL on error.
+ **/
+ThunarVfsURI*
+thunar_vfs_uri_new (const gchar *identifier,
+                    GError     **error)
+{
+  ThunarVfsURI *uri;
+  const gchar  *p;
+
+  g_return_val_if_fail (identifier != NULL, NULL);
+
+  /* allocate the URI instance */
+  uri = g_object_new (THUNAR_VFS_TYPE_URI, NULL);
+  uri->path = g_filename_from_uri (identifier, NULL, error);
+
+  /* determine the basename of the path */
+  for (p = uri->name = uri->path; *p != '\0'; ++p)
+    if (p[0] == '/' && (p[1] != '/' && p[1] != '\0'))
+      uri->name = p + 1;
+
+  return uri;
+}
+
+
+
+/**
  * thunar_vfs_uri_new_for_path:
  * @path  : an absolute path referring to a file accessible via the local
  *          file system implementation.
@@ -112,6 +144,24 @@ thunar_vfs_uri_new_for_path (const gchar *path)
       uri->name = p + 1;
 
   return uri;
+}
+
+
+
+/**
+ * thunar_vfs_uri_is_home:
+ * @uri : an #ThunarVfsURI instance.
+ *
+ * Checks whether @uri refers to the home directory
+ * of the current user.
+ *
+ * Return value: %TRUE if @uri refers to the home directory.
+ **/
+gboolean
+thunar_vfs_uri_is_home (ThunarVfsURI *uri)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
+  return exo_str_is_equal (xfce_get_homedir (), uri->path);
 }
 
 

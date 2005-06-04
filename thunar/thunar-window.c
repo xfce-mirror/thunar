@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-favourites-view.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-window.h>
 
@@ -64,16 +65,37 @@ thunar_window_class_init (ThunarWindowClass *klass)
 static void
 thunar_window_init (ThunarWindow *window)
 {
+  GtkWidget *paned;
+  GtkWidget *side;
   GtkWidget *swin;
 
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
   gtk_window_set_title (GTK_WINDOW (window), _("Thunar"));
   
+  paned = g_object_new (GTK_TYPE_HPANED, "border-width", 6, NULL);
+  gtk_container_add (GTK_CONTAINER (window), paned);
+  gtk_widget_show (paned);
+
+  swin = gtk_scrolled_window_new (NULL, NULL);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin),
+                                  GTK_POLICY_NEVER,
+                                  GTK_POLICY_NEVER);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin),
+                                       GTK_SHADOW_IN);
+  gtk_paned_pack1 (GTK_PANED (paned), swin, FALSE, FALSE);
+  gtk_widget_show (swin);
+
+  side = thunar_favourites_view_new ();
+  gtk_container_add (GTK_CONTAINER (swin), side);
+  gtk_widget_show (side);
+
   swin = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin),
                                   GTK_POLICY_AUTOMATIC,
                                   GTK_POLICY_AUTOMATIC);
-  gtk_container_add (GTK_CONTAINER (window), swin);
+  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin),
+                                       GTK_SHADOW_IN);
+  gtk_paned_pack2 (GTK_PANED (paned), swin, TRUE, FALSE);
   gtk_widget_show (swin);
 
 #if 0

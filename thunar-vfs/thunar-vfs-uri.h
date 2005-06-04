@@ -37,8 +37,11 @@ typedef struct _ThunarVfsURI      ThunarVfsURI;
 
 GType          thunar_vfs_uri_get_type          (void) G_GNUC_CONST;
 
+ThunarVfsURI  *thunar_vfs_uri_new               (const gchar  *identifier,
+                                                 GError      **error);
 ThunarVfsURI  *thunar_vfs_uri_new_for_path      (const gchar  *path);
 
+gboolean       thunar_vfs_uri_is_home           (ThunarVfsURI *uri);
 gboolean       thunar_vfs_uri_is_local          (ThunarVfsURI *uri);
 gboolean       thunar_vfs_uri_is_root           (ThunarVfsURI *uri);
 

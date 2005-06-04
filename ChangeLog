@@ -1,3 +1,25 @@
+2005-06-05	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-uri.{c,h}: Add thunar_vfs_uri_new()
+	  constructor, that creates a new ThunarVfsURI object from a resource
+	  identifier string.
+	* thunar-vfs/thunar-vfs-uri.{c,h}: Add thunar_vfs_uri_is_home(), which
+	  determines whether a given ThunarVfsURI referes to the home
+	  directory of the current user.
+	* thunar/thunar-file.c(thunar_file_load_icon): Pay attention to
+	  special icons for the home folder and the file system root.
+	* thunar/thunar-favourites-model.{c,h},
+	  thunar/thunar-favourites-view.{c,h}: Add experimental
+	  ThunarFavouritesModel and ThunarFavouritesView classes, that will be
+	  used in the implementation of the ThunarFavouritesPane class. Other
+	  than with the mockups, I've skipped the 'Desktop' favourite for now,
+	  as it does not make much sense. The usablity team should evaluate
+	  this at some time.
+	* thunar/thunar-window.c: Add ThunarFavouritesView on the left side
+	  for testing.
+	* thunar/Makefile.am: Add ThunarFavouritesModel and
+	  ThunarFavouritesView to the build system.
+
 2005-06-04	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in: Fix copyright texts.

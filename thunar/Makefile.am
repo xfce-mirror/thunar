@@ -15,6 +15,10 @@ Thunar_SOURCES =							\
 	thunar-application.h						\
 	thunar-desktop-view.c						\
 	thunar-desktop-view.h						\
+	thunar-favourites-model.c					\
+	thunar-favourites-model.h					\
+	thunar-favourites-view.c					\
+	thunar-favourites-view.h					\
 	thunar-file.c							\
 	thunar-file.h							\
 	thunar-folder.c							\

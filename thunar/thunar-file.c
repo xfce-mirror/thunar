@@ -421,6 +421,24 @@ thunar_file_load_icon (ThunarFile *file,
 
   icon_theme = gtk_icon_theme_get_default ();
 
+  /* special icon for the root node */
+  if (thunar_vfs_uri_is_root (file->info.uri))
+    {
+      icon = gtk_icon_theme_load_icon (icon_theme, "gnome-dev-harddisk",
+                                       size, 0, NULL);
+      if (G_LIKELY (icon != NULL))
+        return icon;
+    }
+
+  /* special icon for the home node */
+  if (thunar_vfs_uri_is_home (file->info.uri))
+    {
+      icon = gtk_icon_theme_load_icon (icon_theme, "gnome-fs-home",
+                                       size, 0, NULL);
+      if (G_LIKELY (icon != NULL))
+        return icon;
+    }
+
   mime_info = thunar_file_get_mime_info (file);
   if (G_LIKELY (mime_info != NULL))
     {
