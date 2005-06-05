@@ -34,9 +34,13 @@ typedef struct _ThunarWindow      ThunarWindow;
 #define THUNAR_IS_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_WINDOW))
 #define THUNAR_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_WINDOW, ThunarWindowClass))
 
-GType      thunar_window_get_type        (void) G_GNUC_CONST;
+GType       thunar_window_get_type              (void) G_GNUC_CONST;
 
-GtkWidget *thunar_window_new_with_folder (ThunarFolder *folder);
+GtkWidget  *thunar_window_new                   (void);
+
+ThunarFile *thunar_window_get_current_directory (ThunarWindow *window);
+void        thunar_window_set_current_directory (ThunarWindow *window,
+                                                 ThunarFile   *current_directory);
 
 G_END_DECLS;
 

@@ -1295,6 +1295,31 @@ sort_by_type (ThunarFile *a,
 
 
 /**
+ * thunar_list_model_new:
+ *
+ * Allocates a new #ThunarListModel not associated with
+ * any #ThunarFolder.
+ *
+ * Return value: the newly allocated #ThunarListModel.
+ **/
+ThunarListModel*
+thunar_list_model_new (void)
+{
+  ThunarListModel *store;
+
+  /* allocate the new list model */
+  store = g_object_new (THUNAR_TYPE_LIST_MODEL, NULL);
+
+  /* drop the floating reference */
+  g_object_ref (G_OBJECT (store));
+  gtk_object_sink (GTK_OBJECT (store));
+
+  return store;
+}
+
+
+
+/**
  * thunar_list_model_new_with_folder:
  * @folder : a valid #ThunarFolder object.
  *

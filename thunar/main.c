@@ -36,8 +36,8 @@ int
 main (int argc, char **argv)
 {
   ThunarVfsURI *uri;
-  ThunarFolder *folder;
   const gchar  *path;
+  ThunarFile   *file;
   GtkWidget    *window;
   GError       *error = NULL;
 
@@ -56,10 +56,10 @@ main (int argc, char **argv)
   path = (argc > 1) ? argv[1] : xfce_get_homedir ();
 
   uri = thunar_vfs_uri_new_for_path (path);
-  folder = thunar_folder_get_for_uri (uri, &error);
+  file = thunar_file_get_for_uri (uri, &error);
   g_object_unref (G_OBJECT (uri));
 
-  if (folder == NULL)
+  if (file == NULL)
     {
       fprintf (stderr, "%s: Failed to open `%s': %s\n",
                argv[0], path, error->message);
@@ -67,12 +67,12 @@ main (int argc, char **argv)
       return EXIT_FAILURE;
     }
 
-  window = thunar_window_new_with_folder (folder);
+  window = g_object_new (THUNAR_TYPE_WINDOW, "current-directory", file, NULL);
   g_signal_connect (G_OBJECT (window), "destroy",
                     G_CALLBACK (gtk_main_quit), NULL);
   gtk_widget_show (window);
 
-  g_object_unref (G_OBJECT (folder));
+  g_object_unref (G_OBJECT (file));
 
   gtk_main ();
 

@@ -40,8 +40,11 @@ struct _ThunarViewIface
   ThunarListModel*  (*get_list_model)     (ThunarView      *view);
   void              (*set_list_model)     (ThunarView      *view,
                                            ThunarListModel *model);
-
   const gchar*      (*get_statusbar_text) (ThunarView      *view);
+
+  /* signals */
+  void              (*change_directory)   (ThunarView      *view,
+                                           ThunarFile      *directory);
 };
 
 GType            thunar_view_get_type           (void) G_GNUC_CONST;
@@ -51,6 +54,9 @@ void             thunar_view_set_list_model     (ThunarView      *view,
                                                  ThunarListModel *model);
 
 const gchar     *thunar_view_get_statusbar_text (ThunarView      *view);
+
+void             thunar_view_change_directory   (ThunarView      *view,
+                                                 ThunarFile      *directory);
 
 G_END_DECLS;
 

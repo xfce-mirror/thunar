@@ -54,6 +54,7 @@ typedef enum
 
 GType            thunar_list_model_get_type             (void) G_GNUC_CONST;
 
+ThunarListModel *thunar_list_model_new                  (void);
 ThunarListModel *thunar_list_model_new_with_folder      (ThunarFolder     *folder);
 
 ThunarFolder    *thunar_list_model_get_folder           (ThunarListModel  *store);

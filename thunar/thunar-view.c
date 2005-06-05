@@ -25,7 +25,20 @@
 
 
 
+enum
+{
+  CHANGE_DIRECTORY,
+  LAST_SIGNAL,
+};
+
+
+
+static void thunar_view_base_init  (gpointer klass);
 static void thunar_view_class_init (gpointer klass);
+
+
+
+static guint view_signals[LAST_SIGNAL];
 
 
 
@@ -39,7 +52,7 @@ thunar_view_get_type (void)
       static const GTypeInfo info =
       {
         sizeof (ThunarViewIface),
-        NULL,
+        (GBaseInitFunc) thunar_view_base_init,
         NULL,
         (GClassInitFunc) thunar_view_class_init,
         NULL,
@@ -57,6 +70,37 @@ thunar_view_get_type (void)
     }
 
   return type;
+}
+
+
+
+static void
+thunar_view_base_init (gpointer klass)
+{
+  static gboolean initialized = FALSE;
+
+  if (G_UNLIKELY (!initialized))
+    {
+      /**
+       * ThunarView:change-directory:
+       * @view      : a #ThunarView instance.
+       * @directory : a #ThunarFile referrring to the new directory.
+       *
+       * Invoked by derived classes whenever the user requests to
+       * change the current directory to @directory from within
+       * the @view (e.g. by double-clicking a folder icon).
+       **/
+      view_signals[CHANGE_DIRECTORY] =
+        g_signal_new ("change-directory",
+                      G_TYPE_FROM_INTERFACE (klass),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (ThunarViewIface, change_directory),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__OBJECT,
+                      G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+
+      initialized = TRUE;
+    }
 }
 
 
@@ -150,6 +194,37 @@ thunar_view_get_statusbar_text (ThunarView *view)
   g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
   return THUNAR_VIEW_GET_IFACE (view)->get_statusbar_text (view);
 }
+
+
+
+/**
+ * thunar_view_change_directory:
+ * @view      : a #ThunarView instance.
+ * @directory : a #ThunarFile referring to a directory.
+ *
+ * Emits the "change-directory" signal on @view with the specified
+ * @directory.
+ *
+ * Derived classes should invoke this method whenever the user
+ * selects a new directory from within the @view. The derived
+ * class should not perform any directory changing operations
+ * itself, but leave it up to the #ThunarWindow class to
+ * change the directory.
+ *
+ * It should NEVER ever be called from outside a #ThunarView
+ * implementation, as that may led to unexpected results.
+ **/
+void
+thunar_view_change_directory (ThunarView *view,
+                              ThunarFile *directory)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+  g_return_if_fail (THUNAR_IS_FILE (directory));
+  g_return_if_fail (thunar_file_is_directory (directory));
+
+  g_signal_emit (G_OBJECT (view), view_signals[CHANGE_DIRECTORY], 0, directory);
+}
+
 
 
 

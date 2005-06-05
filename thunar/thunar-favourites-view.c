@@ -26,8 +26,19 @@
 
 
 
+enum
+{
+  FAVOURITE_ACTIVATED,
+  LAST_SIGNAL,
+};
+
+
+
 static void     thunar_favourites_view_class_init     (ThunarFavouritesViewClass *klass);
 static void     thunar_favourites_view_init           (ThunarFavouritesView      *view);
+static void     thunar_favourites_view_row_activated  (GtkTreeView               *tree_view,
+                                                       GtkTreePath               *path,
+                                                       GtkTreeViewColumn         *column);
 #if GTK_CHECK_VERSION(2,6,0)
 static gboolean thunar_favourites_view_separator_func (GtkTreeModel              *model,
                                                        GtkTreeIter               *iter,
@@ -39,12 +50,21 @@ static gboolean thunar_favourites_view_separator_func (GtkTreeModel             
 struct _ThunarFavouritesViewClass
 {
   GtkTreeViewClass __parent__;
+
+  /* signals */
+  void (*favourite_activated) (ThunarFavouritesView *view,
+                               ThunarFile           *file);
 };
 
 struct _ThunarFavouritesView
 {
   GtkTreeView __parent__;
 };
+
+
+
+static GObjectClass *parent_class;
+static guint         view_signals[LAST_SIGNAL];
 
 
 
@@ -55,6 +75,26 @@ G_DEFINE_TYPE (ThunarFavouritesView, thunar_favourites_view, GTK_TYPE_TREE_VIEW)
 static void
 thunar_favourites_view_class_init (ThunarFavouritesViewClass *klass)
 {
+  GtkTreeViewClass *gtktree_view_class;
+
+  parent_class = g_type_class_peek_parent (klass);
+
+  gtktree_view_class = GTK_TREE_VIEW_CLASS (klass);
+  gtktree_view_class->row_activated = thunar_favourites_view_row_activated;
+
+  /**
+   * ThunarFavouritesView:favourite-activated:
+   *
+   * Invoked whenever a favourite is activated by the user.
+   **/
+  view_signals[FAVOURITE_ACTIVATED] =
+    g_signal_new ("favourite-activated",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarFavouritesViewClass, favourite_activated),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__OBJECT,
+                  G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
 }
 
 
@@ -90,6 +130,34 @@ thunar_favourites_view_init (ThunarFavouritesView *view)
 #if GTK_CHECK_VERSION(2,6,0)
   gtk_tree_view_set_row_separator_func (GTK_TREE_VIEW (view), thunar_favourites_view_separator_func, NULL, NULL);
 #endif
+}
+
+
+
+static void
+thunar_favourites_view_row_activated (GtkTreeView       *tree_view,
+                                      GtkTreePath       *path,
+                                      GtkTreeViewColumn *column)
+{
+  ThunarFavouritesView *view = THUNAR_FAVOURITES_VIEW (tree_view);
+  GtkTreeModel         *model;
+  GtkTreeIter           iter;
+  ThunarFile           *file;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_VIEW (view));
+  g_return_if_fail (path != NULL);
+
+  /* determine the iter for the path */
+  model = gtk_tree_view_get_model (tree_view);
+  gtk_tree_model_get_iter (model, &iter, path);
+
+  /* determine the file for the favourite and invoke the signal */
+  file = thunar_favourites_model_file_for_iter (THUNAR_FAVOURITES_MODEL (model), &iter);
+  g_signal_emit (G_OBJECT (view), view_signals[FAVOURITE_ACTIVATED], 0, file);
+
+  /* call the row-activated method in the parent class */
+  if (GTK_TREE_VIEW_CLASS (parent_class)->row_activated != NULL)
+    GTK_TREE_VIEW_CLASS (parent_class)->row_activated (tree_view, path, column);
 }
 
 

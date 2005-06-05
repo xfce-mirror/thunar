@@ -1,5 +1,36 @@
 2005-06-05	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-favourites-model.{c,h}: Add new method
+	  thunar_favourites_model_file_for_iter() to be able to easily
+	  determine the ThunarFile for a given favourite.
+	* thunar/thunar-file.c(thunar_file_class_init): Fix a type in the
+	  "changed" signal definition.
+	* thunar/thunar-file.c(thunar_file_finalize): Fix a bug where the
+	  ThunarVfsURI was freed first, and then an attempt was made to remove
+	  the ThunarFile from the file_cache using the previously freed
+	  ThunarVfsURI as key.
+	* thunar/thunar-view.{c,h}: Add the "change-directory" signal, which
+	  is emitted by ThunarIconView and ThunarListView whenever the user
+	  double clicks a folder (or otherwise requests a directory change
+	  from within the view).
+	* thunar/thunar-list-model.{c,h}: Add a thunar_list_model_new()
+	  default constructor, which does not take a ThunarFolder instance.
+	* thunar/thunar-icon-view.c: Implement the "change-directory" signal
+	  in ThunarView.
+	* thunar/thunar-favourites-view.c, thunar/thunar-favourites-pane.c:
+	  Double-clicking a favourite now opens the associated directory (using
+	  the "current-directory" property, which is linked to the
+	  "current-directory" property of ThunarWindow).
+	* thunar/thunar-window.{c,h}: Add a "current-directory" property,
+	  which describes the directory currently displayed in this window.
+	  Remove the thunar_window_new_with_folder() constructor and replace
+	  it by a default constructor. Automatically synchronize the current
+	  directory with both the view and the side pane.
+	* thunar/main.c(main): ThunarWindow now uses ThunarFile to refer to
+	  the active directory and so we do here as well.
+
+2005-06-05	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Bumped version to 0.0.2.
 	* docs/design/overview.xmi: Fix some issues, see the code changes
 	  below.

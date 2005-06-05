@@ -56,6 +56,9 @@ gboolean               thunar_favourites_model_iter_for_file  (ThunarFavouritesM
                                                                ThunarFile            *file,
                                                                GtkTreeIter           *iter);
 
+ThunarFile            *thunar_favourites_model_file_for_iter  (ThunarFavouritesModel *model,
+                                                               GtkTreeIter           *iter);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_FAVOURITES_MODEL_H__ */

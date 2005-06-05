@@ -125,6 +125,10 @@ thunar_favourites_pane_init (ThunarFavouritesPane *pane)
   pane->view = thunar_favourites_view_new ();
   gtk_container_add (GTK_CONTAINER (pane), pane->view);
   gtk_widget_show (pane->view);
+
+  /* connect the "favourite-activated" signal */
+  g_signal_connect_swapped (G_OBJECT (pane->view), "favourite-activated",
+                            G_CALLBACK (thunar_side_pane_set_current_directory), pane);
 }
 
 

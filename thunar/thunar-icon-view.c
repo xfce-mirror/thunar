@@ -47,6 +47,8 @@ static void             thunar_icon_view_set_property       (GObject            
                                                              guint                prop_id,
                                                              const GValue        *value,
                                                              GParamSpec          *pspec);
+static void             thunar_icon_view_item_activated     (ExoIconView         *view,
+                                                             GtkTreePath         *path);
 static ThunarListModel *thunar_icon_view_get_list_model     (ThunarView          *view);
 static void             thunar_icon_view_set_list_model     (ThunarView          *view,
                                                              ThunarListModel     *model);
@@ -100,6 +102,7 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   gobject_class->set_property = thunar_icon_view_set_property;
 
   exoicon_view_class = EXO_ICON_VIEW_CLASS (klass);
+  exoicon_view_class->item_activated = thunar_icon_view_item_activated;
   exoicon_view_class->selection_changed = thunar_icon_view_selection_changed;
 
   g_object_class_override_property (gobject_class,
@@ -208,6 +211,30 @@ thunar_icon_view_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_icon_view_item_activated (ExoIconView *view,
+                                 GtkTreePath *path)
+{
+  ThunarIconView *icon_view = THUNAR_ICON_VIEW (view);
+  GtkTreeIter     iter;
+  ThunarFile     *file;
+
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (icon_view));
+  g_return_if_fail (THUNAR_IS_LIST_MODEL (icon_view->list_model));
+
+  /* if the user activated a directory, change to that directory */
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (icon_view->list_model), &iter, path);
+  file = thunar_list_model_get_file (icon_view->list_model, &iter);
+  if (thunar_file_is_directory (file))
+    thunar_view_change_directory (THUNAR_VIEW (icon_view), file);
+
+  /* invoke the item_activated method on the parent class */
+  if (EXO_ICON_VIEW_CLASS (parent_class)->item_activated != NULL)
+    EXO_ICON_VIEW_CLASS (parent_class)->item_activated (view, path);
 }
 
 

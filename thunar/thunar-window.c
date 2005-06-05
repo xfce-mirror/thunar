@@ -29,8 +29,25 @@
 
 
 
-static void thunar_window_class_init  (ThunarWindowClass *klass);
-static void thunar_window_init        (ThunarWindow      *window);
+enum
+{
+  PROP_0,
+  PROP_CURRENT_DIRECTORY,
+};
+
+
+
+static void thunar_window_class_init    (ThunarWindowClass  *klass);
+static void thunar_window_init          (ThunarWindow       *window);
+static void thunar_window_dispose       (GObject            *object);
+static void thunar_window_get_property  (GObject            *object,
+                                         guint               prop_id,
+                                         GValue             *value,
+                                         GParamSpec         *pspec);
+static void thunar_window_set_property  (GObject            *object,
+                                         guint               prop_id,
+                                         const GValue       *value,
+                                         GParamSpec         *pspec);
 
 
 
@@ -43,9 +60,11 @@ struct _ThunarWindow
 {
   GtkWindow __parent__;
 
-  GtkWidget *side_pane;
-  GtkWidget *view;
-  GtkWidget *statusbar;
+  GtkWidget   *side_pane;
+  GtkWidget   *view;
+  GtkWidget   *statusbar;
+
+  ThunarFile  *current_directory;
 };
 
 
@@ -61,7 +80,28 @@ G_DEFINE_TYPE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW);
 static void
 thunar_window_class_init (ThunarWindowClass *klass)
 {
+  GObjectClass *gobject_class;
+
   parent_class = g_type_class_peek_parent (klass);
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->dispose = thunar_window_dispose;
+  gobject_class->get_property = thunar_window_get_property;
+  gobject_class->set_property = thunar_window_set_property;
+
+  /**
+   * ThunarWindow:current-directory:
+   *
+   * The directory currently displayed within this #ThunarWindow
+   * or %NULL.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_CURRENT_DIRECTORY,
+                                   g_param_spec_object ("current-directory",
+                                                        _("Current directory"),
+                                                        _("The directory currently displayed within this window"),
+                                                        THUNAR_TYPE_FILE,
+                                                        G_PARAM_READWRITE));
 }
 
 
@@ -69,9 +109,10 @@ thunar_window_class_init (ThunarWindowClass *klass)
 static void
 thunar_window_init (ThunarWindow *window)
 {
-  GtkWidget *vbox;
-  GtkWidget *paned;
-  GtkWidget *swin;
+  ThunarListModel *model;
+  GtkWidget       *vbox;
+  GtkWidget       *paned;
+  GtkWidget       *swin;
 
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
   gtk_window_set_title (GTK_WINDOW (window), _("Thunar"));
@@ -85,6 +126,8 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_show (paned);
 
   window->side_pane = thunar_favourites_pane_new ();
+  exo_mutual_binding_new (G_OBJECT (window), "current-directory",
+                          G_OBJECT (window->side_pane), "current-directory");
   gtk_paned_pack1 (GTK_PANED (paned), window->side_pane, FALSE, FALSE);
   gtk_widget_show (window->side_pane);
 
@@ -97,86 +140,15 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (paned), swin, TRUE, FALSE);
   gtk_widget_show (swin);
 
-#if 0
-  GtkTreeViewColumn *column;
-  GtkTreeSelection  *selection;
-  GtkCellRenderer   *renderer;
-
-  window->view = gtk_tree_view_new ();
-  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (window->view), TRUE);
-  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (window->view), TRUE);
-  gtk_tree_view_set_search_column (GTK_TREE_VIEW (window->view),
-                                   THUNAR_LIST_MODEL_COLUMN_NAME);
-  gtk_container_add (GTK_CONTAINER (swin), window->view);
-  gtk_widget_show (window->view);
-
-  /* first column (icon, name) */
-  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "reorderable", TRUE,
-                         "resizable", TRUE,
-                         "title", _("Name"),
-                         NULL);
-  renderer = gtk_cell_renderer_pixbuf_new ();
-  gtk_tree_view_column_pack_start (column, renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "pixbuf", THUNAR_LIST_MODEL_COLUMN_ICON_SMALL,
-                                       NULL);
-  renderer = gtk_cell_renderer_text_new ();
-  gtk_tree_view_column_pack_start (column, renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_LIST_MODEL_COLUMN_NAME,
-                                       NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_NAME);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (window->view), column);
-
-  /* second column (size) */
-  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "reorderable", TRUE,
-                         "resizable", TRUE,
-                         "title", _("Size"),
-                         NULL);
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
-                           "xalign", 1.0,
-                           NULL);
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_LIST_MODEL_COLUMN_SIZE,
-                                       NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_SIZE);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (window->view), column);
-
-  /* third column (permissions) */
-  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "reorderable", TRUE,
-                         "resizable", TRUE,
-                         "title", _("Permissions"),
-                         NULL);
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
-                           "xalign", 0.0,
-                           NULL);
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_LIST_MODEL_COLUMN_PERMISSIONS,
-                                       NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_PERMISSIONS);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (window->view), column);
-
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->view));
-  gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
-#else
-#if 0
-  window->view = exo_icon_view_new ();
-  exo_icon_view_set_text_column (EXO_ICON_VIEW (window->view), THUNAR_LIST_MODEL_COLUMN_NAME);
-  exo_icon_view_set_pixbuf_column (EXO_ICON_VIEW (window->view), THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL);
-  exo_icon_view_set_selection_mode (EXO_ICON_VIEW (window->view), GTK_SELECTION_MULTIPLE);
-  gtk_container_add (GTK_CONTAINER (swin), window->view);
-  gtk_widget_show (window->view);
-#else
   window->view = thunar_icon_view_new ();
+  g_signal_connect_swapped (G_OBJECT (window->view), "change-directory",
+                            G_CALLBACK (thunar_window_set_current_directory), window);
   gtk_container_add (GTK_CONTAINER (swin), window->view);
   gtk_widget_show (window->view);
-#endif
-#endif
+
+  model = thunar_list_model_new ();
+  thunar_view_set_list_model (THUNAR_VIEW (window->view), model);
+  g_object_unref (G_OBJECT (model));
 
   window->statusbar = thunar_statusbar_new ();
   exo_binding_new (G_OBJECT (window->view), "statusbar-text",
@@ -187,29 +159,182 @@ thunar_window_init (ThunarWindow *window)
 
 
 
+static void
+thunar_window_dispose (GObject *object)
+{
+  ThunarWindow *window = THUNAR_WINDOW (object);
+  thunar_window_set_current_directory (window, NULL);
+  G_OBJECT_CLASS (parent_class)->dispose (object);
+}
+
+
+
+static void
+thunar_window_get_property (GObject    *object,
+                            guint       prop_id,
+                            GValue     *value,
+                            GParamSpec *pspec)
+{
+  ThunarWindow *window = THUNAR_WINDOW (object);
+
+  switch (prop_id)
+    {
+    case PROP_CURRENT_DIRECTORY:
+      g_value_set_object (value, thunar_window_get_current_directory (window));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_window_set_property (GObject            *object,
+                            guint               prop_id,
+                            const GValue       *value,
+                            GParamSpec         *pspec)
+{
+  ThunarWindow *window = THUNAR_WINDOW (object);
+
+  switch (prop_id)
+    {
+    case PROP_CURRENT_DIRECTORY:
+      thunar_window_set_current_directory (window, g_value_get_object (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
 /**
- * thunar_window_new_with_folder:
- * @folder : a #ThunarFolder instance.
+ * thunar_window_new:
+ *
+ * Allocates a new #ThunarWindow instance, which isn't
+ * associated with any directory.
  *
  * Return value: the newly allocated #ThunarWindow instance.
  **/
 GtkWidget*
-thunar_window_new_with_folder (ThunarFolder *folder)
+thunar_window_new (void)
+{
+  return g_object_new (THUNAR_TYPE_WINDOW, NULL);
+}
+
+
+
+/**
+ * thunar_window_get_current_directory:
+ * @window : a #ThunarWindow instance.
+ * 
+ * Queries the #ThunarFile instance, which represents the directory
+ * currently displayed within @window. %NULL is returned if @window
+ * is not currently associated with any directory.
+ *
+ * Return value: the directory currently displayed within @window or %NULL.
+ **/
+ThunarFile*
+thunar_window_get_current_directory (ThunarWindow *window)
+{
+  g_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
+  return window->current_directory;
+}
+
+
+
+/**
+ * thunar_window_set_current_directory:
+ * @window            : a #ThunarWindow instance.
+ * @current_directory : the new directory or %NULL.
+ **/
+void
+thunar_window_set_current_directory (ThunarWindow *window,
+                                     ThunarFile   *current_directory)
 {
   ThunarListModel *model;
-  GtkWidget       *window;
+  ThunarFolder    *folder;
+  GtkWidget       *dialog;
+  GdkPixbuf       *icon;
+  GError          *error = NULL;
 
-  g_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
-  window = g_object_new (THUNAR_TYPE_WINDOW, NULL);
+  // TODO: We need a better error-recovery here!
 
-  model = thunar_list_model_new_with_folder (folder);
-  g_object_set (G_OBJECT (THUNAR_WINDOW (window)->view),
-                "list-model", model, NULL);
-  g_object_unref (G_OBJECT (model));
+  /* check if we already display the requests directory */
+  if (G_UNLIKELY (window->current_directory == current_directory))
+    return;
 
-  thunar_side_pane_set_current_directory (THUNAR_SIDE_PANE (THUNAR_WINDOW (window)->side_pane), thunar_folder_get_corresponding_file (folder));
+  /* disconnect from the previously active directory */
+  if (G_LIKELY (window->current_directory != NULL))
+    g_object_unref (G_OBJECT (window->current_directory));
 
-  return window;
+  window->current_directory = current_directory;
+
+  /* connect to the new directory */
+  if (G_LIKELY (current_directory != NULL))
+    g_object_ref (G_OBJECT (window->current_directory));
+
+  /* set window title/icon to the selected directory */
+  if (G_LIKELY (current_directory != NULL))
+    {
+      icon = thunar_file_load_icon (current_directory, 48);
+      gtk_window_set_icon (GTK_WINDOW (window), icon);
+      gtk_window_set_title (GTK_WINDOW (window),
+                            thunar_file_get_display_name (current_directory));
+      g_object_unref (G_OBJECT (icon));
+    }
+
+  /* setup the folder for the view */
+  model = thunar_view_get_list_model (THUNAR_VIEW (window->view));
+  if (G_LIKELY (current_directory != NULL))
+    {
+      /* try to open the directory */
+      folder = thunar_folder_get_for_file (current_directory, &error);
+      if (G_LIKELY (folder != NULL))
+        {
+          thunar_list_model_set_folder (model, folder);
+          g_object_unref (G_OBJECT (folder));
+        }
+      else
+        {
+          /* error condition, reset the folder */
+          thunar_list_model_set_folder (model, NULL);
+
+          /* make sure the window is shown */
+          gtk_widget_show_now (GTK_WIDGET (window));
+
+          /* display an error dialog */
+          dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+                                           GTK_DIALOG_DESTROY_WITH_PARENT,
+                                           GTK_MESSAGE_ERROR,
+                                           GTK_BUTTONS_CLOSE,
+                                           "Failed to open directory `%s': %s",
+                                           thunar_file_get_display_name (current_directory),
+                                           error->message);
+          gtk_dialog_run (GTK_DIALOG (dialog));
+          gtk_widget_destroy (dialog);
+
+          /* free the error details */
+          g_error_free (error);
+        }
+    }
+  else
+    {
+      /* just reset the folder, so nothing is displayed */
+      thunar_list_model_set_folder (model, NULL);
+    }
+
+  /* tell everybody that we have a new "current-directory" */
+  g_object_notify (G_OBJECT (window), "current-directory");
 }
+
+
 

@@ -667,3 +667,20 @@ thunar_favourites_model_iter_for_file (ThunarFavouritesModel *model,
 
 
 
+/**
+ * thunar_favourites_model_file_for_iter:
+ * @model : a #ThunarFavouritesModel instance.
+ * @iter  : pointer to a valid #GtkTreeIter.
+ *
+ * Return value: the #ThunarFile matching the given @iter.
+ **/
+ThunarFile*
+thunar_favourites_model_file_for_iter (ThunarFavouritesModel *model,
+                                       GtkTreeIter           *iter)
+{
+  g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), NULL);
+  g_return_val_if_fail (iter != NULL && iter->stamp == model->stamp, NULL);
+  return ((ThunarFavourite *) iter->user_data)->file;
+}
+
+

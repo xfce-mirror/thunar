@@ -125,7 +125,7 @@ thunar_file_class_init (ThunarFileClass *klass)
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarFileClass, changed),
                   NULL, NULL,
-                  g_cclosure_marshal_VOID__POINTER,
+                  g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 }
 
@@ -148,6 +148,10 @@ thunar_file_finalize (GObject *object)
 
   g_return_if_fail (THUNAR_IS_FILE (file));
 
+  /* drop this ThunarFile from the cache */
+  if (G_LIKELY (file->info.uri != NULL))
+    g_hash_table_remove (file_cache, file->info.uri);
+
   /* free the mime info */
   if (G_LIKELY (file->mime_info != NULL))
     g_object_unref (G_OBJECT (file->mime_info));
@@ -156,10 +160,6 @@ thunar_file_finalize (GObject *object)
   thunar_vfs_info_reset (&file->info);
 
   g_free (file->display_name);
-
-  /* drop this ThunarFile from the cache */
-  if (G_LIKELY (file->info.uri != NULL))
-    g_hash_table_remove (file_cache, file->info.uri);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
