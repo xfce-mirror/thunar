@@ -397,6 +397,7 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
                                    GValue       *value)
 {
   ThunarFavourite *favourite;
+  const gchar     *name;
   GdkPixbuf       *icon;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (tree_model));
@@ -409,9 +410,12 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_FAVOURITES_MODEL_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
       if (favourite->special_name != NULL)
-        g_value_set_static_string (value, favourite->special_name);
+        name = favourite->special_name;
       else if (favourite->file != NULL)
-        g_value_set_string (value, thunar_file_get_display_name (favourite->file));
+        name = thunar_file_get_display_name (favourite->file);
+      else
+        name = NULL;
+      g_value_set_static_string (value, name);
       break;
 
     case THUNAR_FAVOURITES_MODEL_COLUMN_ICON:
@@ -622,6 +626,43 @@ thunar_favourites_model_get_default (void)
     }
 
   return model;
+}
+
+
+
+/**
+ * thunar_favourites_model_iter_for_file:
+ * @model : a #ThunarFavouritesModel instance.
+ * @file  : a #ThunarFile instance.
+ * @iter  : pointer to a #GtkTreeIter.
+ *
+ * Tries to lookup the #GtkTreeIter, that belongs to a favourite, which
+ * refers to @file and stores it to @iter. If no such #GtkTreeIter was
+ * found, %FALSE will be returned and @iter won't be changed. Else
+ * %TRUE will be returned and @iter will be set appropriately.
+ *
+ * Return value: %TRUE if @file was found, else %FALSE.
+ **/
+gboolean
+thunar_favourites_model_iter_for_file (ThunarFavouritesModel *model,
+                                       ThunarFile            *file,
+                                       GtkTreeIter           *iter)
+{
+  ThunarFavourite *favourite;
+  
+  g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (iter != NULL, FALSE);
+
+  for (favourite = model->favourites; favourite != NULL; favourite = favourite->next)
+    if (favourite->file == file)
+      {
+        iter->stamp = model->stamp;
+        iter->user_data = favourite;
+        return TRUE;
+      }
+
+  return FALSE;
 }
 
 

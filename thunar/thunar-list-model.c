@@ -600,8 +600,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
     {
     case THUNAR_LIST_MODEL_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
-      if (G_LIKELY (row != NULL))
-        g_value_set_string (value, thunar_file_get_display_name (row->file));
+      g_value_set_static_string (value, thunar_file_get_display_name (row->file));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:

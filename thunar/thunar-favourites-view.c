@@ -131,3 +131,35 @@ thunar_favourites_view_new (void)
 }
 
 
+
+/**
+ * thunar_favourites_view_select_by_file:
+ * @view : a #ThunarFavouritesView instance.
+ * @file : a #ThunarFile instance.
+ *
+ * Looks up the first favourite that refers to @file in @view and selects it.
+ * If @file is not present in the underlying #ThunarFavouritesModel, no
+ * favourite will be selected afterwards.
+ **/
+void
+thunar_favourites_view_select_by_file (ThunarFavouritesView *view,
+                                       ThunarFile           *file)
+{
+  GtkTreeSelection *selection;
+  GtkTreeModel     *model;
+  GtkTreeIter       iter;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_VIEW (view));
+  g_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* clear the selection */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+  gtk_tree_selection_unselect_all (selection);
+
+  /* try to lookup a tree iter for the given file */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+  if (thunar_favourites_model_iter_for_file (THUNAR_FAVOURITES_MODEL (model), file, &iter))
+    gtk_tree_selection_select_iter (selection, &iter);
+}
+
+

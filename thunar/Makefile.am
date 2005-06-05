@@ -17,6 +17,8 @@ Thunar_SOURCES =							\
 	thunar-desktop-view.h						\
 	thunar-favourites-model.c					\
 	thunar-favourites-model.h					\
+	thunar-favourites-pane.c					\
+	thunar-favourites-pane.h					\
 	thunar-favourites-view.c					\
 	thunar-favourites-view.h					\
 	thunar-file.c							\
@@ -27,6 +29,8 @@ Thunar_SOURCES =							\
 	thunar-list-model.h						\
 	thunar-preferences.c						\
 	thunar-preferences.h						\
+	thunar-side-pane.c						\
+	thunar-side-pane.h						\
 	thunar-window.c							\
 	thunar-window.h
 

@@ -20,7 +20,7 @@
 #ifndef __THUNAR_FAVOURITES_VIEW_H__
 #define __THUNAR_FAVOURITES_VIEW_H__
 
-#include <gtk/gtk.h>
+#include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
 
@@ -34,9 +34,12 @@ typedef struct _ThunarFavouritesView      ThunarFavouritesView;
 #define THUNAR_IS_FAVOURITES_VIEW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_FAVOURITES_VIEW))
 #define THUNAR_FAVOURITES_VIEW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_FAVOURITES_VIEW, ThunarFavouritesViewClass))
 
-GType      thunar_favourites_view_get_type  (void) G_GNUC_CONST;
+GType      thunar_favourites_view_get_type        (void) G_GNUC_CONST;
 
-GtkWidget *thunar_favourites_view_new       (void);
+GtkWidget *thunar_favourites_view_new             (void);
+
+void       thunar_favourites_view_select_by_file  (ThunarFavouritesView *view,
+                                                   ThunarFile           *file);
 
 G_END_DECLS;
 

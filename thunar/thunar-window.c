@@ -21,7 +21,7 @@
 #include <config.h>
 #endif
 
-#include <thunar/thunar-favourites-view.h>
+#include <thunar/thunar-favourites-pane.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-window.h>
 
@@ -41,6 +41,7 @@ struct _ThunarWindow
 {
   GtkWindow __parent__;
 
+  GtkWidget *side_pane;
   GtkWidget *view;
 };
 
@@ -66,7 +67,6 @@ static void
 thunar_window_init (ThunarWindow *window)
 {
   GtkWidget *paned;
-  GtkWidget *side;
   GtkWidget *swin;
 
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
@@ -76,18 +76,9 @@ thunar_window_init (ThunarWindow *window)
   gtk_container_add (GTK_CONTAINER (window), paned);
   gtk_widget_show (paned);
 
-  swin = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin),
-                                  GTK_POLICY_NEVER,
-                                  GTK_POLICY_NEVER);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin),
-                                       GTK_SHADOW_IN);
-  gtk_paned_pack1 (GTK_PANED (paned), swin, FALSE, FALSE);
-  gtk_widget_show (swin);
-
-  side = thunar_favourites_view_new ();
-  gtk_container_add (GTK_CONTAINER (swin), side);
-  gtk_widget_show (side);
+  window->side_pane = thunar_favourites_pane_new ();
+  gtk_paned_pack1 (GTK_PANED (paned), window->side_pane, FALSE, FALSE);
+  gtk_widget_show (window->side_pane);
 
   swin = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin),
@@ -196,6 +187,8 @@ thunar_window_new_with_folder (ThunarFolder *folder)
   g_object_set (G_OBJECT (THUNAR_WINDOW (window)->view),
                 "model", model, NULL);
   g_object_unref (G_OBJECT (model));
+
+  thunar_side_pane_set_current_directory (THUNAR_SIDE_PANE (THUNAR_WINDOW (window)->side_pane), thunar_folder_get_corresponding_file (folder));
 
   return window;
 }

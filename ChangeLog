@@ -1,5 +1,34 @@
 2005-06-05	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-favourites-model.c(thunar_favourites_model_get_value):
+	  The display_name's of ThunarFile's can be considered static (as the
+	  name cannot change during the ThunarFile's life-time), so we don't
+	  need to take a copy here.
+	* thunar/thunar-list-model.c(thunar_list_model_get_value): Same here,
+	  the ThunarFile's display_name is static.
+	* thunar/thunar-file.c: Add the simple caching on the ThunarFile
+	  level. If a ThunarFile for the same ThunarVfsURI is requested
+	  multiple times, the same ThunarFile instance will be used, instead
+	  of allocating a new one. Future versions will extend this scheme
+	  using a smarter caching mechanism.
+	* thunar/thunar-side-pane.{c,h}: Add implementation for the
+	  ThunarSidePane interface, which is to be implemented by all widgets
+	  that can be placed on the right side. The interface currently
+	  includes only the "current-directory" property, which is the most
+	  important communication mechanism. We'll need some way to pass in
+	  other per-window settings here (e.g. "show-hidden" and such).
+	  Hopefully somebody will pick up the preferences task soon.
+	* thunar/thunar-favourites-model.{c,h},
+	  thunar/thunar-favourites-view.{c,h},
+	  thunar/thunar-favourites-pane.{c,h}: More work on the
+	  ThunarFavourites module. The ThunarFavouritesPane class implements
+	  the ThunarSidePane interface and acts as a bridge to the underlying
+	  ThunarFavouritesView.
+	* thunar/thunar-window.c: Test the new ThunarFavouritesPane class.
+	* thunar/Makefile.am: Add the new classes to the build framework.
+
+2005-06-05	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-uri.{c,h}: Add thunar_vfs_uri_new()
 	  constructor, that creates a new ThunarVfsURI object from a resource
 	  identifier string.

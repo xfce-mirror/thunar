@@ -54,6 +54,7 @@ static void thunar_file_get_property  (GObject          *object,
 
 
 static GObjectClass *parent_class;
+static GHashTable   *file_cache;
 static guint         file_signals[LAST_SIGNAL];
 
 
@@ -152,10 +153,13 @@ thunar_file_finalize (GObject *object)
     g_object_unref (G_OBJECT (file->mime_info));
 
   /* reset the vfs info (freeing the specific data) */
-  //thunar_vfs_info_drop_from_cache (&file->info);
   thunar_vfs_info_reset (&file->info);
 
   g_free (file->display_name);
+
+  /* drop this ThunarFile from the cache */
+  if (G_LIKELY (file->info.uri != NULL))
+    g_hash_table_remove (file_cache, file->info.uri);
 
   G_OBJECT_CLASS (parent_class)->finalize (object);
 }
@@ -216,23 +220,37 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
-  /* allocate the new file object */
-  file = g_object_new (THUNAR_TYPE_FILE, NULL);
-  file->display_name = thunar_vfs_uri_get_display_name (uri);
+  /* allocate the ThunarFile cache on-demand */
+  if (G_UNLIKELY (file_cache == NULL))
+    file_cache = g_hash_table_new (thunar_vfs_uri_hash, thunar_vfs_uri_equal);
 
-  /* drop the floating reference */
-  g_object_ref (G_OBJECT (file));
-  gtk_object_sink (GTK_OBJECT (file));
-
-  /* query the file info */
-  if (!thunar_vfs_info_query (&file->info, uri, error))
+  /* check if we have the corresponding file cached already */
+  file = g_hash_table_lookup (file_cache, uri);
+  if (file == NULL)
     {
-      g_object_unref (G_OBJECT (file));
-      return NULL;
-    }
+      /* allocate the new file object */
+      file = g_object_new (THUNAR_TYPE_FILE, NULL);
+      file->display_name = thunar_vfs_uri_get_display_name (uri);
 
-  /* watch this file for changes */
-  //thunar_vfs_info_add_to_cache (&file->info);
+      /* drop the floating reference */
+      g_object_ref (G_OBJECT (file));
+      gtk_object_sink (GTK_OBJECT (file));
+
+      /* query the file info */
+      if (!thunar_vfs_info_query (&file->info, uri, error))
+        {
+          g_object_unref (G_OBJECT (file));
+          return NULL;
+        }
+
+      /* insert the file into the cache */
+      g_hash_table_insert (file_cache, uri, file);
+    }
+  else
+    {
+      /* take another reference on the cached file */
+      g_object_ref (G_OBJECT (file));
+    }
 
   return file;
 }

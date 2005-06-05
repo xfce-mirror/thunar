@@ -20,7 +20,7 @@
 #ifndef __THUNAR_FAVOURITES_MODEL_H__
 #define __THUNAR_FAVOURITES_MODEL_H__
 
-#include <glib-object.h>
+#include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
 
@@ -48,9 +48,13 @@ typedef enum
   THUNAR_FAVOURITES_MODEL_N_COLUMNS,
 } ThunarFavouritesModelColumn;
 
-GType                  thunar_favourites_model_get_type     (void) G_GNUC_CONST;
+GType                  thunar_favourites_model_get_type       (void) G_GNUC_CONST;
 
-ThunarFavouritesModel *thunar_favourites_model_get_default  (void);
+ThunarFavouritesModel *thunar_favourites_model_get_default    (void);
+
+gboolean               thunar_favourites_model_iter_for_file  (ThunarFavouritesModel *model,
+                                                               ThunarFile            *file,
+                                                               GtkTreeIter           *iter);
 
 G_END_DECLS;
 
