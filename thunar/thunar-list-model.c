@@ -147,6 +147,8 @@ static gint               sort_by_permissions                     (ThunarFile   
                                                                    ThunarFile             *b);
 static gint               sort_by_size                            (ThunarFile             *a,
                                                                    ThunarFile             *b);
+static gint               sort_by_type                            (ThunarFile             *a,
+                                                                   ThunarFile             *b);
 
 
 
@@ -161,7 +163,7 @@ struct _ThunarListModel
 
   guint          stamp;
   Row           *rows;
-  guint          nrows;
+  gint           nrows;
   GSList        *hidden;
   ThunarFolder  *folder;
   gboolean       show_hidden;
@@ -520,6 +522,9 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
 
     case THUNAR_LIST_MODEL_COLUMN_SIZE:
       return G_TYPE_STRING;
+
+    case THUNAR_LIST_MODEL_COLUMN_TYPE:
+      return G_TYPE_STRING;
     }
 
   g_assert_not_reached ();
@@ -588,8 +593,9 @@ thunar_list_model_get_value (GtkTreeModel *model,
                              gint          column,
                              GValue       *value)
 {
-  GdkPixbuf *icon;
-  Row       *row;
+  ExoMimeInfo *mime_info;
+  GdkPixbuf   *icon;
+  Row         *row;
 
   g_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   g_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -646,6 +652,15 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       if (G_LIKELY (row != NULL))
         g_value_take_string (value, thunar_file_get_size_string (row->file));
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_TYPE:
+      g_value_init (value, G_TYPE_STRING);
+      if (G_LIKELY (row != NULL))
+        {
+          mime_info = thunar_file_get_mime_info (row->file);
+          g_value_set_static_string (value, exo_mime_info_get_comment (mime_info));
+        }
       break;
 
     default:
@@ -831,6 +846,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_PERMISSIONS;
   else if (store->sort_func == sort_by_size)
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_SIZE;
+  else if (store->sort_func == sort_by_type)
+    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_TYPE;
   else
     g_assert_not_reached ();
 
@@ -865,6 +882,10 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
     case THUNAR_LIST_MODEL_COLUMN_SIZE:
       store->sort_func = sort_by_size;
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_TYPE:
+      store->sort_func = sort_by_type;
       break;
 
     default:
@@ -1262,6 +1283,17 @@ sort_by_size (ThunarFile *a,
 
 
 
+static gint
+sort_by_type (ThunarFile *a,
+              ThunarFile *b)
+{
+  // TODO: Implement this.
+  g_assert_not_reached ();
+  return 0;
+}
+
+
+
 /**
  * thunar_list_model_new_with_folder:
  * @folder : a valid #ThunarFolder object.
@@ -1622,9 +1654,78 @@ thunar_list_model_get_file (ThunarListModel *store,
  *
  * Return value: ahe number of visible files in @store.
  **/
-guint
+gint
 thunar_list_model_get_num_files (ThunarListModel *store)
 {
   g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), 0);
   return store->nrows;
 }
+
+
+
+/**
+ * thunar_list_model_get_statusbar_text:
+ * @store          : a #ThunarListModel instance.
+ * @selected_items : the list of selected items (as GtkTreePath's).
+ *
+ * Generates the statusbar text for @store with the given
+ * @selected_items.
+ *
+ * This function should be used by both #ThunarIconView and
+ * #ThunarListView to generate the text to be displayed in
+ * the statusbar.
+ *
+ * Return value: the statusbar text for @store with the given
+ *               @selected_items.
+ **/
+gchar*
+thunar_list_model_get_statusbar_text (ThunarListModel *store,
+                                      GList           *selected_items)
+{
+  ThunarVfsFileSize size;
+  GtkTreeIter       iter;
+  GList            *lp;
+  gchar            *name_string;
+  gchar            *size_string;
+  gchar            *type_string;
+  gchar            *text;
+  gint              n;
+
+  g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
+
+  if (selected_items == NULL)
+    text = g_strdup_printf (_("%d items"), store->nrows);
+  else if (selected_items->next == NULL)
+    {
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, selected_items->data);
+      gtk_tree_model_get (GTK_TREE_MODEL (store), &iter,
+                          THUNAR_LIST_MODEL_COLUMN_NAME, &name_string,
+                          THUNAR_LIST_MODEL_COLUMN_SIZE, &size_string,
+                          THUNAR_LIST_MODEL_COLUMN_TYPE, &type_string,
+                          -1);
+      text = g_strdup_printf (_("\"%s\" (%s) %s"), name_string, size_string, type_string);
+      g_free (name_string);
+      g_free (size_string);
+      g_free (type_string);
+    }
+  else
+    {
+      /* sum up all sizes */
+      for (lp = selected_items, n = 0, size = 0; lp != NULL; lp = lp->next, ++n)
+        {
+          gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
+          size += thunar_file_get_size (((Row *) iter.user_data)->file);
+        }
+
+      size_string = thunar_vfs_humanize_size (size, NULL, 0);
+      text = g_strdup_printf (_("%d items selected (%s)"), n, size_string);
+      g_free (size_string);
+    }
+
+  return text;
+}
+
+
+
+
+

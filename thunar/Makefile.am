@@ -25,12 +25,18 @@ Thunar_SOURCES =							\
 	thunar-file.h							\
 	thunar-folder.c							\
 	thunar-folder.h							\
+	thunar-icon-view.c						\
+	thunar-icon-view.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
 	thunar-preferences.c						\
 	thunar-preferences.h						\
 	thunar-side-pane.c						\
 	thunar-side-pane.h						\
+	thunar-statusbar.c						\
+	thunar-statusbar.h						\
+	thunar-view.c							\
+	thunar-view.h							\
 	thunar-window.c							\
 	thunar-window.h
 

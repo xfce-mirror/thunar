@@ -48,6 +48,7 @@ typedef enum
   THUNAR_LIST_MODEL_COLUMN_ICON_LARGE,
   THUNAR_LIST_MODEL_COLUMN_PERMISSIONS,
   THUNAR_LIST_MODEL_COLUMN_SIZE,
+  THUNAR_LIST_MODEL_COLUMN_TYPE,
   THUNAR_LIST_MODEL_N_COLUMNS,
 } ThunarListModelColumn;
 
@@ -70,7 +71,10 @@ void             thunar_list_model_set_show_hidden      (ThunarListModel  *store
 ThunarFile      *thunar_list_model_get_file             (ThunarListModel  *store,
                                                          GtkTreeIter      *iter);
 
-guint            thunar_list_model_get_num_files        (ThunarListModel  *store);
+gint             thunar_list_model_get_num_files        (ThunarListModel  *store);
+
+gchar           *thunar_list_model_get_statusbar_text   (ThunarListModel  *store,
+                                                         GList            *selected_items);
 
 G_END_DECLS;
 

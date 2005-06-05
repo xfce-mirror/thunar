@@ -6,7 +6,7 @@ INCLUDES =								\
 	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"thunar-vfs\"
 
-lib_LTLIBRARIES =							\
+noinst_LTLIBRARIES =							\
 	libthunar-vfs.la
 
 libthunar_vfs_la_SOURCES =						\

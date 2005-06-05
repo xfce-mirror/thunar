@@ -1,5 +1,34 @@
 2005-06-05	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in: Bumped version to 0.0.2.
+	* docs/design/overview.xmi: Fix some issues, see the code changes
+	  below.
+	* thunar-vfs/Makefile.am: Don't install the thunar-vfs library for
+	  now. Makes debugging easier.
+	* thunar/Makefile.am: Add new classes to the build framework.
+	* thunar/thunar-view.{c,h}: Implement first draft for the ThunarView
+	  interface, which is to beimplemented by all views.
+	* thunar/thunar-icon-view.{c,h}: Implement first draft for the
+	  ThunarIconView class, which implements the ThunarView interface to
+	  provide an icon view of the current folder.
+	* thunar/thunar-statusbar.{c,h}: Add basic implementation of the
+	  ThunarStatusbar class. In order to avoid an association between the
+	  ThunarView or ThunarListModel classes and the ThunarStatusbar and in
+	  order to provide more flexibility about what is to be displayed in
+	  the statusbar, we use a write-only property "text" for the
+	  ThunarStatusbar, which can be connected to another string property
+	  using the ExoBindings module.
+	* thunar/thunar-list-model.{c,h}: The number of rows should be a gint
+	  rather than a guint, as that's what GtkTreeModel uses. Add a new
+	  method thunar_list_model_get_statusbar_text(), that will be used by
+	  both ThunarIconView and ThunarListView to determine the proper
+	  statusbar text that should be displayed for a given selection. Add a
+	  new column THUNAR_LIST_MODEL_COLUMN_TYPE, which provides a string
+	  representation of the MIME-Type (using the comment set for the
+	  MIME-Type). The sort function is not yet implemented tho.
+
+2005-06-05	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-favourites-model.c(thunar_favourites_model_get_value):
 	  The display_name's of ThunarFile's can be considered static (as the
 	  name cannot change during the ThunarFile's life-time), so we don't

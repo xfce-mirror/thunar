@@ -22,7 +22,9 @@
 #endif
 
 #include <thunar/thunar-favourites-pane.h>
+#include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-list-model.h>
+#include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-window.h>
 
 
@@ -43,6 +45,7 @@ struct _ThunarWindow
 
   GtkWidget *side_pane;
   GtkWidget *view;
+  GtkWidget *statusbar;
 };
 
 
@@ -66,14 +69,19 @@ thunar_window_class_init (ThunarWindowClass *klass)
 static void
 thunar_window_init (ThunarWindow *window)
 {
+  GtkWidget *vbox;
   GtkWidget *paned;
   GtkWidget *swin;
 
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
   gtk_window_set_title (GTK_WINDOW (window), _("Thunar"));
+
+  vbox = gtk_vbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (window), vbox);
+  gtk_widget_show (vbox);
   
   paned = g_object_new (GTK_TYPE_HPANED, "border-width", 6, NULL);
-  gtk_container_add (GTK_CONTAINER (window), paned);
+  gtk_box_pack_start (GTK_BOX (vbox), paned, TRUE, TRUE, 0);
   gtk_widget_show (paned);
 
   window->side_pane = thunar_favourites_pane_new ();
@@ -156,13 +164,25 @@ thunar_window_init (ThunarWindow *window)
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (window->view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
 #else
+#if 0
   window->view = exo_icon_view_new ();
   exo_icon_view_set_text_column (EXO_ICON_VIEW (window->view), THUNAR_LIST_MODEL_COLUMN_NAME);
   exo_icon_view_set_pixbuf_column (EXO_ICON_VIEW (window->view), THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL);
   exo_icon_view_set_selection_mode (EXO_ICON_VIEW (window->view), GTK_SELECTION_MULTIPLE);
   gtk_container_add (GTK_CONTAINER (swin), window->view);
   gtk_widget_show (window->view);
+#else
+  window->view = thunar_icon_view_new ();
+  gtk_container_add (GTK_CONTAINER (swin), window->view);
+  gtk_widget_show (window->view);
 #endif
+#endif
+
+  window->statusbar = thunar_statusbar_new ();
+  exo_binding_new (G_OBJECT (window->view), "statusbar-text",
+                   G_OBJECT (window->statusbar), "text");
+  gtk_box_pack_start (GTK_BOX (vbox), window->statusbar, FALSE, FALSE, 0);
+  gtk_widget_show (window->statusbar);
 }
 
 
@@ -185,7 +205,7 @@ thunar_window_new_with_folder (ThunarFolder *folder)
 
   model = thunar_list_model_new_with_folder (folder);
   g_object_set (G_OBJECT (THUNAR_WINDOW (window)->view),
-                "model", model, NULL);
+                "list-model", model, NULL);
   g_object_unref (G_OBJECT (model));
 
   thunar_side_pane_set_current_directory (THUNAR_SIDE_PANE (THUNAR_WINDOW (window)->side_pane), thunar_folder_get_corresponding_file (folder));
