@@ -1,5 +1,18 @@
 2005-06-05	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-uri.c: Fix a bug in the thunar_vfs_uri_parent()
+	  and thunar_vfs_uri_relative() methods, where the name attribute of
+	  the newly created objects wasn't initialized properly.
+	* thunar-vfs/thunar-vfs-uri.c(thunar_vfs_uri_equal): Instead of always
+	  comparing the full path of both URIs, a simple optimization was
+	  introduced, which checks the basenames first, if they are equal,
+	  it'll check whether the dirnames have the same length, and as the
+	  last fallback, it'll compare the dirnames char by char. This way we
+	  can optimize the common case - with GHashTable - that two URIs
+	  differ.
+
+2005-06-05	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-favourites-model.{c,h}: Add new method
 	  thunar_favourites_model_file_for_iter() to be able to easily
 	  determine the ThunarFile for a given favourite.

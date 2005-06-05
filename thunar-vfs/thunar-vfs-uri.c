@@ -272,14 +272,21 @@ ThunarVfsURI*
 thunar_vfs_uri_parent (ThunarVfsURI *uri)
 {
   ThunarVfsURI *parent;
+  const gchar  *p;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
   if (thunar_vfs_uri_is_root (uri))
     return NULL;
 
+  /* allocate the new object */
   parent = g_object_new (THUNAR_VFS_TYPE_URI, NULL);
   parent->path = g_path_get_dirname (uri->path);
+
+  /* determine the basename of the path */
+  for (p = parent->name = parent->path; *p != '\0'; ++p)
+    if (p[0] == '/' && (p[1] != '/' && p[1] != '\0'))
+      parent->name = p + 1;
 
   return parent;
 }
@@ -298,12 +305,19 @@ thunar_vfs_uri_relative (ThunarVfsURI *uri,
                          const gchar  *name)
 {
   ThunarVfsURI *relative;
+  const gchar  *p;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (name != NULL, NULL);
 
+  /* allocate the new object */
   relative = g_object_new (THUNAR_VFS_TYPE_URI, NULL);
   relative->path = g_build_filename (uri->path, name, NULL);
+
+  /* determine the basename of the path */
+  for (p = relative->name = relative->path; *p != '\0'; ++p)
+    if (p[0] == '/' && (p[1] != '/' && p[1] != '\0'))
+      relative->name = p + 1;
 
   return relative;
 }
@@ -341,9 +355,42 @@ gboolean
 thunar_vfs_uri_equal (gconstpointer a,
                       gconstpointer b)
 {
+  const gchar *a_name;
+  const gchar *b_name;
+  const gchar *a_path;
+  const gchar *b_path;
+  const gchar *ap;
+  const gchar *bp;
+
   g_return_val_if_fail (THUNAR_VFS_IS_URI (a), FALSE);
   g_return_val_if_fail (THUNAR_VFS_IS_URI (b), FALSE);
-  return g_str_equal (THUNAR_VFS_URI (a)->path, THUNAR_VFS_URI (b)->path);
+
+  a_name = THUNAR_VFS_URI (a)->name;
+  b_name = THUNAR_VFS_URI (b)->name;
+
+  /* compare the names first */
+  for (ap = a_name, bp = b_name; *ap == *bp && *ap != '\0'; ++ap, ++bp)
+    ;
+  if (G_LIKELY (*ap != '\0' || *bp != '\0'))
+    return FALSE;
+
+  a_path = THUNAR_VFS_URI (a)->path;
+  b_path = THUNAR_VFS_URI (b)->path;
+
+  /* check if the dirnames have the same length */
+  if (G_LIKELY ((a_name - a_path) != (b_name - b_path)))
+    return FALSE;
+
+  /* fallback to a full path comparison (excluding
+   * the already compared basename)
+   */
+  for (ap = a_path, bp = b_path; *ap == *bp && ap < a_name; ++ap, ++bp)
+    ;
+
+  g_assert (ap != a_name || bp == b_name);
+  g_assert (bp != b_name || ap == a_name);
+
+  return (ap == a_name);
 }
 
 
