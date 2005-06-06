@@ -52,10 +52,6 @@ struct _ThunarApplication
 
 
 
-static GObjectClass *parent_class;
-
-
-
 G_DEFINE_TYPE (ThunarApplication, thunar_application, G_TYPE_OBJECT);
 
 
@@ -65,8 +61,7 @@ thunar_application_class_init (ThunarApplicationClass *klass)
 {
   GObjectClass *gobject_class;
 
-  parent_class = g_type_class_peek_parent (klass);
-  
+ 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_application_finalize;
 }
@@ -100,7 +95,7 @@ thunar_application_finalize (GObject *object)
   if (G_LIKELY (application->desktop_view != NULL))
     g_object_unref (G_OBJECT (application->desktop_view));
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (thunar_application_parent_class)->finalize (object);
 }
 
 

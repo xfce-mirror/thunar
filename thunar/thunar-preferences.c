@@ -43,10 +43,6 @@ struct _ThunarPreferences
 
 
 
-static GObjectClass *parent_class;
-
-
-
 G_DEFINE_TYPE (ThunarPreferences, thunar_preferences, G_TYPE_OBJECT);
 
 
@@ -55,8 +51,6 @@ static void
 thunar_preferences_class_init (ThunarPreferencesClass *klass)
 {
   GObjectClass *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_preferences_finalize;
@@ -74,7 +68,7 @@ thunar_preferences_init (ThunarPreferences *preferences)
 static void
 thunar_preferences_finalize (GObject *object)
 {
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (thunar_preferences_parent_class)->finalize (object);
 }
 
 

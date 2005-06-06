@@ -57,10 +57,6 @@ struct _ThunarStatusbar
 
 
 
-static GObjectClass *parent_class;
-
-
-
 G_DEFINE_TYPE (ThunarStatusbar, thunar_statusbar, GTK_TYPE_STATUSBAR);
 
 
@@ -69,8 +65,6 @@ static void
 thunar_statusbar_class_init (ThunarStatusbarClass *klass)
 {
   GObjectClass *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->set_property = thunar_statusbar_set_property;

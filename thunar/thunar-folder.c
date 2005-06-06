@@ -82,9 +82,8 @@ struct _ThunarFolder
 
 
 
-static GObjectClass *parent_class;
-static GQuark        folder_quark = 0;
-static guint         folder_signals[LAST_SIGNAL];
+static GQuark folder_quark = 0;
+static guint  folder_signals[LAST_SIGNAL];
 
 
 
@@ -96,8 +95,6 @@ static void
 thunar_folder_class_init (ThunarFolderClass *klass)
 {
   GObjectClass *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_folder_finalize;
@@ -182,7 +179,7 @@ thunar_folder_finalize (GObject *object)
     }
   g_slist_free (folder->files);
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (thunar_folder_parent_class)->finalize (object);
 }
 
 

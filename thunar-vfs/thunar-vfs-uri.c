@@ -80,7 +80,7 @@ thunar_vfs_uri_finalize (GObject *object)
 
   g_free (uri->path);
 
-  G_OBJECT_CLASS (g_type_class_peek_static (G_TYPE_OBJECT))->finalize (object);
+  G_OBJECT_CLASS (thunar_vfs_uri_parent_class)->finalize (object);
 }
 
 

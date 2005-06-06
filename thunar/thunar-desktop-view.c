@@ -65,10 +65,6 @@ struct _ThunarDesktopView
 
 
 
-static GObjectClass *parent_class;
-
-
-
 G_DEFINE_TYPE (ThunarDesktopView, thunar_desktop_view, GTK_TYPE_WIDGET);
 
 
@@ -78,8 +74,6 @@ thunar_desktop_view_class_init (ThunarDesktopViewClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_desktop_view_finalize;
@@ -122,7 +116,7 @@ thunar_desktop_view_finalize (GObject *object)
 
   g_return_if_fail (THUNAR_IS_DESKTOP_VIEW (view));
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (thunar_desktop_view_parent_class)->finalize (object);
 }
 
 

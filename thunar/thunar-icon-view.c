@@ -76,10 +76,6 @@ struct _ThunarIconView
 
 
 
-static GObjectClass *parent_class;
-
-
-
 G_DEFINE_TYPE_WITH_CODE (ThunarIconView,
                          thunar_icon_view,
                          EXO_TYPE_ICON_VIEW,
@@ -93,8 +89,6 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
 {
   ExoIconViewClass *exoicon_view_class;
   GObjectClass     *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_icon_view_finalize;
@@ -157,7 +151,7 @@ thunar_icon_view_finalize (GObject *object)
   /* free the model association */
   thunar_view_set_list_model (THUNAR_VIEW (icon_view), NULL);
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (thunar_icon_view_parent_class)->finalize (object);
 }
 
 
@@ -233,8 +227,8 @@ thunar_icon_view_item_activated (ExoIconView *view,
     thunar_view_change_directory (THUNAR_VIEW (icon_view), file);
 
   /* invoke the item_activated method on the parent class */
-  if (EXO_ICON_VIEW_CLASS (parent_class)->item_activated != NULL)
-    EXO_ICON_VIEW_CLASS (parent_class)->item_activated (view, path);
+  if (EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->item_activated != NULL)
+    EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->item_activated (view, path);
 }
 
 
@@ -326,8 +320,8 @@ thunar_icon_view_selection_changed (ExoIconView *view)
   /* update the status text */
   thunar_icon_view_update (THUNAR_ICON_VIEW (view));
 
-  if (EXO_ICON_VIEW_CLASS (parent_class)->selection_changed != NULL)
-    EXO_ICON_VIEW_CLASS (parent_class)->selection_changed (view);
+  if (EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->selection_changed != NULL)
+    EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->selection_changed (view);
 }
 
 

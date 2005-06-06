@@ -102,10 +102,6 @@ struct _ThunarFavourite
 
 
 
-static GObjectClass *parent_class;
-
-
-
 G_DEFINE_TYPE_WITH_CODE (ThunarFavouritesModel,
                          thunar_favourites_model,
                          G_TYPE_OBJECT,
@@ -120,8 +116,6 @@ static void
 thunar_favourites_model_class_init (ThunarFavouritesModelClass *klass)
 {
   GObjectClass *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_favourites_model_finalize;
@@ -294,7 +288,7 @@ thunar_favourites_model_finalize (GObject *object)
       g_free (current);
     }
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (thunar_favourites_model_parent_class)->finalize (object);
 }
 
 

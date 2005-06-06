@@ -53,9 +53,8 @@ static void thunar_file_get_property  (GObject          *object,
 
 
 
-static GObjectClass *parent_class;
-static GHashTable   *file_cache;
-static guint         file_signals[LAST_SIGNAL];
+static GHashTable *file_cache;
+static guint       file_signals[LAST_SIGNAL];
 
 
 
@@ -67,8 +66,6 @@ static void
 thunar_file_class_init (ThunarFileClass *klass)
 {
   GObjectClass *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_file_finalize;
@@ -161,7 +158,7 @@ thunar_file_finalize (GObject *object)
 
   g_free (file->display_name);
 
-  G_OBJECT_CLASS (parent_class)->finalize (object);
+  G_OBJECT_CLASS (thunar_file_parent_class)->finalize (object);
 }
 
 

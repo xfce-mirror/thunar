@@ -69,10 +69,6 @@ struct _ThunarFavouritesPane
 
 
 
-static GObjectClass *parent_class;
-
-
-
 G_DEFINE_TYPE_WITH_CODE (ThunarFavouritesPane,
                          thunar_favourites_pane,
                          GTK_TYPE_SCROLLED_WINDOW,
@@ -85,8 +81,6 @@ static void
 thunar_favourites_pane_class_init (ThunarFavouritesPaneClass *klass)
 {
   GObjectClass *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_favourites_pane_dispose;
@@ -138,7 +132,7 @@ thunar_favourites_pane_dispose (GObject *object)
 {
   ThunarSidePane *side_pane = THUNAR_SIDE_PANE (object);
   thunar_side_pane_set_current_directory (side_pane, NULL);
-  G_OBJECT_CLASS (parent_class)->dispose (object);
+  G_OBJECT_CLASS (thunar_favourites_pane_parent_class)->dispose (object);
 }
 
 

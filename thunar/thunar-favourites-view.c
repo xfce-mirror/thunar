@@ -63,8 +63,7 @@ struct _ThunarFavouritesView
 
 
 
-static GObjectClass *parent_class;
-static guint         view_signals[LAST_SIGNAL];
+static guint view_signals[LAST_SIGNAL];
 
 
 
@@ -76,8 +75,6 @@ static void
 thunar_favourites_view_class_init (ThunarFavouritesViewClass *klass)
 {
   GtkTreeViewClass *gtktree_view_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gtktree_view_class = GTK_TREE_VIEW_CLASS (klass);
   gtktree_view_class->row_activated = thunar_favourites_view_row_activated;
@@ -156,8 +153,8 @@ thunar_favourites_view_row_activated (GtkTreeView       *tree_view,
   g_signal_emit (G_OBJECT (view), view_signals[FAVOURITE_ACTIVATED], 0, file);
 
   /* call the row-activated method in the parent class */
-  if (GTK_TREE_VIEW_CLASS (parent_class)->row_activated != NULL)
-    GTK_TREE_VIEW_CLASS (parent_class)->row_activated (tree_view, path, column);
+  if (GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated != NULL)
+    GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated (tree_view, path, column);
 }
 
 

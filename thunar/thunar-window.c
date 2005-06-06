@@ -69,10 +69,6 @@ struct _ThunarWindow
 
 
 
-static GObjectClass *parent_class;
-
-
-
 G_DEFINE_TYPE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW);
 
 
@@ -81,8 +77,6 @@ static void
 thunar_window_class_init (ThunarWindowClass *klass)
 {
   GObjectClass *gobject_class;
-
-  parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_window_dispose;
@@ -164,7 +158,7 @@ thunar_window_dispose (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
   thunar_window_set_current_directory (window, NULL);
-  G_OBJECT_CLASS (parent_class)->dispose (object);
+  G_OBJECT_CLASS (thunar_window_parent_class)->dispose (object);
 }
 
 
