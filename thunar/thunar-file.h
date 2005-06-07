@@ -57,6 +57,9 @@ GType          thunar_file_get_type         (void) G_GNUC_CONST;
 ThunarFile    *thunar_file_get_for_uri      (ThunarVfsURI   *uri,
                                              GError        **error);
 
+ThunarFile    *thunar_file_get_parent       (ThunarFile     *file,
+                                             GError        **error);
+
 const gchar   *thunar_file_get_display_name (ThunarFile     *file);
 ExoMimeInfo   *thunar_file_get_mime_info    (ThunarFile     *file);
 ThunarVfsURI  *thunar_file_get_uri          (ThunarFile     *file);

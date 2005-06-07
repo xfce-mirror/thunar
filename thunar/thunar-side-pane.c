@@ -77,7 +77,7 @@ thunar_side_pane_class_init (gpointer klass)
    * and afterwards call #g_object_notify() on the "current-directory"
    * property.
    *
-   * The side pane should also display the current directory set from
+   * The side pane should always display the current directory set from
    * outside (by the window), even if it seems as the user has selected
    * another directory.
    **/

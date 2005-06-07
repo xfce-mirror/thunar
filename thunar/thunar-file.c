@@ -255,6 +255,52 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
 
 
 /**
+ * thunar_file_get_parent:
+ * @file  : a #ThunarFile instance.
+ * @error : return location for errors.
+ *
+ * Queries the parent #ThunarFile (the directory, which includes @file)
+ * for @file. If an error happens, %NULL will be returned and @error
+ * will be set to point to a #GError. Else the #ThunarFile will
+ * be returned. The method will automatically take a reference
+ * on the returned file for the caller, so you'll have to call
+ * #g_object_unref() when you're done with the returned file object.
+ *
+ * There's one special case to take care of: If @file refers to the
+ * root directory ("/"), %NULL will be returned, but @error won't
+ * be set. You'll have to handle this case gracefully.
+ *
+ * Return value: the parent #ThunarFile or %NULL.
+ **/
+ThunarFile*
+thunar_file_get_parent (ThunarFile *file,
+                        GError    **error)
+{
+  ThunarVfsURI *parent_uri;
+  ThunarFile   *parent_file;
+
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  /* lookup the parent's URI */
+  parent_uri = thunar_vfs_uri_parent (thunar_file_get_uri (file));
+  if (G_UNLIKELY (parent_uri == NULL))
+    {
+      /* file has no parent (e.g. "/") */
+      return NULL;
+    }
+
+  /* lookup the file object for the parent_uri */
+  parent_file = thunar_file_get_for_uri (parent_uri, error);
+
+  /* release the reference on the parent_uri */
+  g_object_unref (G_OBJECT (parent_uri));
+
+  return parent_file;
+}
+
+
+
+/**
  * thunar_file_get_display_name:
  * @file  : a #ThunarFile instance.
  *

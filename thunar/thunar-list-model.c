@@ -1424,51 +1424,52 @@ thunar_list_model_set_folder (ThunarListModel *store,
 
       /* sort the files _before_ adding them to the store (reverse order -> prepend below) */
       files = g_slist_copy (thunar_folder_get_files (folder));
-      if (G_UNLIKELY (files == NULL))
-        return;
-      files = g_slist_sort_with_data (files, thunar_list_model_cmp_slist, store);
-
-      /* insert the files */
-      for (lp = files; lp != NULL; lp = lp->next)
+      if (G_LIKELY (files != NULL))
         {
-          /* take a reference on the file */
-          file = THUNAR_FILE (lp->data);
-          g_object_ref (G_OBJECT (file));
+          files = g_slist_sort_with_data (files, thunar_list_model_cmp_slist, store);
 
-          /* check if this file should be shown/hidden */
-          if (!store->show_hidden && thunar_file_is_hidden (file))
+          /* insert the files */
+          for (lp = files; lp != NULL; lp = lp->next)
             {
-              store->hidden = g_slist_prepend (store->hidden, file);
+              /* take a reference on the file */
+              file = THUNAR_FILE (lp->data);
+              g_object_ref (G_OBJECT (file));
+
+              /* check if this file should be shown/hidden */
+              if (!store->show_hidden && thunar_file_is_hidden (file))
+                {
+                  store->hidden = g_slist_prepend (store->hidden, file);
+                }
+              else
+                {
+                  row = g_chunk_new (Row, row_chunk);
+                  row->file = file;
+                  row->changed_id = g_signal_connect (G_OBJECT (file), "changed",
+                                                      G_CALLBACK (thunar_list_model_file_changed), store);
+                  row->destroy_id = g_signal_connect (G_OBJECT (file), "destroy",
+                                                      G_CALLBACK (thunar_list_model_file_destroy), store);
+                  row->next = store->rows;
+
+                  store->rows = row;
+                  store->nrows += 1;
+                }
             }
-          else
+
+          /* notify other parties */
+          path = gtk_tree_path_new ();
+          gtk_tree_path_append_index (path, 0);
+          for (row = store->rows; row != NULL; row = row->next)
             {
-              row = g_chunk_new (Row, row_chunk);
-              row->file = file;
-              row->changed_id = g_signal_connect (G_OBJECT (file), "changed",
-                                                  G_CALLBACK (thunar_list_model_file_changed), store);
-              row->destroy_id = g_signal_connect (G_OBJECT (file), "destroy",
-                                                  G_CALLBACK (thunar_list_model_file_destroy), store);
-              row->next = store->rows;
-
-              store->rows = row;
-              store->nrows += 1;
+              iter.stamp = store->stamp;
+              iter.user_data = row;
+              gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
+              gtk_tree_path_next (path);
             }
-        }
+          gtk_tree_path_free (path);
 
-      /* notify other parties */
-      path = gtk_tree_path_new ();
-      gtk_tree_path_append_index (path, 0);
-      for (row = store->rows; row != NULL; row = row->next)
-        {
-          iter.stamp = store->stamp;
-          iter.user_data = row;
-          gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
-          gtk_tree_path_next (path);
+          /* cleanup */
+          g_slist_free (files);
         }
-      gtk_tree_path_free (path);
-
-      /* cleanup */
-      g_slist_free (files);
 
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "files-added",
