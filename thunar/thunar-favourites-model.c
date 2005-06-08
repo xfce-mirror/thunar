@@ -89,7 +89,7 @@ struct _ThunarFavouritesModel
   GObject __parent__;
 
   guint            stamp;
-  guint            n_favourites;
+  gint             n_favourites;
   ThunarFavourite *favourites;
 };
 
