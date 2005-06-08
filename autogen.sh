@@ -18,8 +18,10 @@ EOF
   exit 1
 }
 
-# substitute date
-sed "s/@DATE@/`date +%Y%m%d`/g" < "configure.in.in" > "configure.in"
+# substitute revision and date
+revision=`svn info autogen.sh|awk '/^Revision: / {printf "%04d\n", $2}'`
+sed -e "s/@DATE@/`date +%Y%m%d`/g" -e "s/@REVISION@/${revision}/g" \
+  < "configure.in.in" > "configure.in"
 
 exec xdt-autogen $@
 
