@@ -17,28 +17,43 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __THUNAR_SIDE_PANE_H__
-#define __THUNAR_SIDE_PANE_H__
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#include <thunar/thunar-navigator.h>
+#include <thunar/thunar-location-bar.h>
 
-G_BEGIN_DECLS;
 
-typedef struct _ThunarSidePaneIface ThunarSidePaneIface;
-typedef struct _ThunarSidePane      ThunarSidePane;
 
-#define THUNAR_TYPE_SIDE_PANE           (thunar_side_pane_get_type ())
-#define THUNAR_SIDE_PANE(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SIDE_PANE, ThunarSidePane))
-#define THUNAR_IS_SIDE_PANE(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SIDE_PANE))
-#define THUNAR_SIDE_PANE_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_SIDE_PANE, ThunarSidePaneIface))
-
-struct _ThunarSidePaneIface
+GType
+thunar_location_bar_get_type (void)
 {
-  GTypeInterface __parent__;
-};
+  static GType type = G_TYPE_INVALID;
 
-GType thunar_side_pane_get_type (void) G_GNUC_CONST;
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarLocationBarIface),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        0,
+        0,
+        NULL,
+      };
 
-G_END_DECLS;
+      type = g_type_register_static (G_TYPE_INTERFACE,
+                                     "ThunarLocationBar",
+                                     &info, 0);
 
-#endif /* !__THUNAR_SIDE_PANE_H__ */
+      g_type_interface_add_prerequisite (type, THUNAR_TYPE_NAVIGATOR);
+    }
+
+  return type;
+}
+
+
+

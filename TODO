@@ -1,0 +1,54 @@
+Important for Thunar 1.0
+========================
+
+ - The layouting code for ThunarLocationButtons is still buggy. Problem shows
+   with paths that include a very long directory; you cannot scroll to the
+   last path component then.
+
+ - A design for the ThunarTreePane framework must be developed and later
+   be implemented.
+
+ - The trash system details are mostly unclear currently.
+
+ - The preferences must be sorted out and a suggestion for both a good
+   set of preferences and a layout for the preferences dialog must be
+   developed and presented.
+
+ - A design for the ThunarDesktopView module must be developed and later
+   be implemented.
+
+ - We need a suite of unit tests and probably high-level tests, that enable
+   us to test parts of the file manager automatically and isolate bugs
+   early.
+
+ - The ThunarListView class must be defined and implemented.
+
+ - View's (and probably models) must be able to add custom actions to
+   the ThunarWindow (e.g. 'Empty trash', etc.).
+
+ - The protocol between the view/model and the ThunarWindow must be
+   defined and implemented.
+
+ - Setup gtk-doc to present developers with the internal API of Thunar
+   to ease development of core modules (and later plugins).
+
+ - Write good user documentation. Must be both precise and complete.
+
+ - Design (UI design this time) the file properties dialog, develop
+   a software design and implement it.
+
+ - We need some easy way to manage diagrams and related developer
+   information, which also includes results from discussions on
+   thunar-dev.
+
+ - The HACKING file must be updated with strict rules about how
+   development of Thunar core modules is to be done, and what
+   material each developer in addition to the source code.
+
+ - The ThunarVfsMonitor framework must be designed and implemented.
+   The list of supported backends for 1.0 is kqueue, fam and
+   the stat-thread. Backend technologies must be thread-safe. If
+   there's a lot of time or manpower in the end, additional
+   backends can be added, as long as they fit into the framework.
+
+ - The ThunarFavourites framework needs drag and drop support.

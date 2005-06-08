@@ -53,6 +53,8 @@ ThunarVfsURI  *thunar_vfs_uri_parent            (ThunarVfsURI *uri);
 ThunarVfsURI  *thunar_vfs_uri_relative          (ThunarVfsURI *uri,
                                                  const gchar  *name);
 
+gchar         *thunar_vfs_uri_to_string         (ThunarVfsURI *uri);
+
 guint          thunar_vfs_uri_hash              (gconstpointer uri);
 gboolean       thunar_vfs_uri_equal             (gconstpointer a,
                                                  gconstpointer b);

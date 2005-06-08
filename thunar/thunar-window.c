@@ -24,6 +24,7 @@
 #include <thunar/thunar-favourites-pane.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-list-model.h>
+#include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-window.h>
 
@@ -61,6 +62,7 @@ struct _ThunarWindow
   GtkWindow __parent__;
 
   GtkWidget   *side_pane;
+  GtkWidget   *location_bar;
   GtkWidget   *view;
   GtkWidget   *statusbar;
 
@@ -107,6 +109,7 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget       *vbox;
   GtkWidget       *paned;
   GtkWidget       *swin;
+  GtkWidget       *box;
 
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
   gtk_window_set_title (GTK_WINDOW (window), _("Thunar"));
@@ -120,10 +123,24 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_show (paned);
 
   window->side_pane = thunar_favourites_pane_new ();
-  exo_mutual_binding_new (G_OBJECT (window), "current-directory",
-                          G_OBJECT (window->side_pane), "current-directory");
+  g_signal_connect_swapped (G_OBJECT (window->side_pane), "change-directory",
+                            G_CALLBACK (thunar_window_set_current_directory), window);
+  exo_binding_new (G_OBJECT (window), "current-directory",
+                   G_OBJECT (window->side_pane), "current-directory");
   gtk_paned_pack1 (GTK_PANED (paned), window->side_pane, FALSE, FALSE);
   gtk_widget_show (window->side_pane);
+
+  box = gtk_vbox_new (FALSE, 6);
+  gtk_paned_pack2 (GTK_PANED (paned), box, TRUE, FALSE);
+  gtk_widget_show (box);
+
+  window->location_bar = thunar_location_buttons_new ();
+  g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory",
+                            G_CALLBACK (thunar_window_set_current_directory), window);
+  exo_binding_new (G_OBJECT (window), "current-directory",
+                   G_OBJECT (window->location_bar), "current-directory");
+  gtk_box_pack_start (GTK_BOX (box), window->location_bar, FALSE, FALSE, 0);
+  gtk_widget_show (window->location_bar);
 
   swin = gtk_scrolled_window_new (NULL, NULL);
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin),
@@ -131,7 +148,7 @@ thunar_window_init (ThunarWindow *window)
                                   GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin),
                                        GTK_SHADOW_IN);
-  gtk_paned_pack2 (GTK_PANED (paned), swin, TRUE, FALSE);
+  gtk_box_pack_start (GTK_BOX (box), swin, TRUE, TRUE, 0);
   gtk_widget_show (swin);
 
   window->view = thunar_icon_view_new ();

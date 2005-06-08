@@ -36,6 +36,7 @@ enum
 
 
 static void        thunar_favourites_pane_class_init            (ThunarFavouritesPaneClass *klass);
+static void        thunar_favourites_pane_navigator_init        (ThunarNavigatorIface      *iface);
 static void        thunar_favourites_pane_side_pane_init        (ThunarSidePaneIface       *iface);
 static void        thunar_favourites_pane_init                  (ThunarFavouritesPane      *pane);
 static void        thunar_favourites_pane_dispose               (GObject                   *object);
@@ -47,11 +48,9 @@ static void        thunar_favourites_pane_set_property          (GObject        
                                                                  guint                      prop_id,
                                                                  const GValue              *value,
                                                                  GParamSpec                *pspec);
-static ThunarFile *thunar_favourites_pane_get_current_directory (ThunarSidePane            *side_pane);
-static void        thunar_favourites_pane_set_current_directory (ThunarSidePane            *side_pane,
+static ThunarFile *thunar_favourites_pane_get_current_directory (ThunarNavigator           *navigator);
+static void        thunar_favourites_pane_set_current_directory (ThunarNavigator           *navigator,
                                                                  ThunarFile                *current_directory);
-static void        thunar_favourites_pane_file_destroy          (ThunarFile                *file,
-                                                                 ThunarFavouritesPane      *pane);
 
 
 
@@ -72,6 +71,8 @@ struct _ThunarFavouritesPane
 G_DEFINE_TYPE_WITH_CODE (ThunarFavouritesPane,
                          thunar_favourites_pane,
                          GTK_TYPE_SCROLLED_WINDOW,
+                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR,
+                                                thunar_favourites_pane_navigator_init)
                          G_IMPLEMENT_INTERFACE (THUNAR_TYPE_SIDE_PANE,
                                                 thunar_favourites_pane_side_pane_init));
 
@@ -95,10 +96,17 @@ thunar_favourites_pane_class_init (ThunarFavouritesPaneClass *klass)
 
 
 static void
-thunar_favourites_pane_side_pane_init (ThunarSidePaneIface *iface)
+thunar_favourites_pane_navigator_init (ThunarNavigatorIface *iface)
 {
   iface->get_current_directory = thunar_favourites_pane_get_current_directory;
   iface->set_current_directory = thunar_favourites_pane_set_current_directory;
+}
+
+
+
+static void
+thunar_favourites_pane_side_pane_init (ThunarSidePaneIface *iface)
+{
 }
 
 
@@ -122,7 +130,7 @@ thunar_favourites_pane_init (ThunarFavouritesPane *pane)
 
   /* connect the "favourite-activated" signal */
   g_signal_connect_swapped (G_OBJECT (pane->view), "favourite-activated",
-                            G_CALLBACK (thunar_side_pane_set_current_directory), pane);
+                            G_CALLBACK (thunar_navigator_change_directory), pane);
 }
 
 
@@ -130,8 +138,8 @@ thunar_favourites_pane_init (ThunarFavouritesPane *pane)
 static void
 thunar_favourites_pane_dispose (GObject *object)
 {
-  ThunarSidePane *side_pane = THUNAR_SIDE_PANE (object);
-  thunar_side_pane_set_current_directory (side_pane, NULL);
+  ThunarNavigator *navigator = THUNAR_NAVIGATOR (object);
+  thunar_navigator_set_current_directory (navigator, NULL);
   G_OBJECT_CLASS (thunar_favourites_pane_parent_class)->dispose (object);
 }
 
@@ -143,12 +151,12 @@ thunar_favourites_pane_get_property (GObject    *object,
                                      GValue     *value,
                                      GParamSpec *pspec)
 {
-  ThunarSidePane *side_pane = THUNAR_SIDE_PANE (object);
+  ThunarNavigator *navigator = THUNAR_NAVIGATOR (object);
 
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      g_value_set_object (value, thunar_side_pane_get_current_directory (side_pane));
+      g_value_set_object (value, thunar_navigator_get_current_directory (navigator));
       break;
 
     default:
@@ -165,12 +173,12 @@ thunar_favourites_pane_set_property (GObject      *object,
                                      const GValue *value,
                                      GParamSpec   *pspec)
 {
-  ThunarSidePane *side_pane = THUNAR_SIDE_PANE (object);
+  ThunarNavigator *navigator = THUNAR_NAVIGATOR (object);
 
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_side_pane_set_current_directory (side_pane, g_value_get_object (value));
+      thunar_navigator_set_current_directory (navigator, g_value_get_object (value));
       break;
 
     default:
@@ -182,29 +190,25 @@ thunar_favourites_pane_set_property (GObject      *object,
 
 
 static ThunarFile*
-thunar_favourites_pane_get_current_directory (ThunarSidePane *side_pane)
+thunar_favourites_pane_get_current_directory (ThunarNavigator *navigator)
 {
-  g_return_val_if_fail (THUNAR_IS_FAVOURITES_PANE (side_pane), NULL);
-  return THUNAR_FAVOURITES_PANE (side_pane)->current_directory;
+  g_return_val_if_fail (THUNAR_IS_FAVOURITES_PANE (navigator), NULL);
+  return THUNAR_FAVOURITES_PANE (navigator)->current_directory;
 }
 
 
 
 static void
-thunar_favourites_pane_set_current_directory (ThunarSidePane *side_pane,
-                                              ThunarFile     *current_directory)
+thunar_favourites_pane_set_current_directory (ThunarNavigator *navigator,
+                                              ThunarFile      *current_directory)
 {
-  ThunarFavouritesPane *pane = THUNAR_FAVOURITES_PANE (side_pane);
+  ThunarFavouritesPane *pane = THUNAR_FAVOURITES_PANE (navigator);
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_PANE (pane));
 
+  /* disconnect from the previously set current directory */
   if (G_LIKELY (pane->current_directory != NULL))
-    {
-      g_signal_handlers_disconnect_by_func (G_OBJECT (pane->current_directory),
-                                            G_CALLBACK (thunar_favourites_pane_file_destroy),
-                                            pane);
-      g_object_unref (G_OBJECT (pane->current_directory));
-    }
+    g_object_unref (G_OBJECT (pane->current_directory));
 
   pane->current_directory = current_directory;
 
@@ -212,8 +216,6 @@ thunar_favourites_pane_set_current_directory (ThunarSidePane *side_pane,
     {
       /* take a reference on the new directory */
       g_object_ref (G_OBJECT (current_directory));
-      g_signal_connect (G_OBJECT (current_directory), "destroy",
-                        G_CALLBACK (thunar_favourites_pane_file_destroy), pane);
 
       /* select the file in the view (if possible) */
       thunar_favourites_view_select_by_file (THUNAR_FAVOURITES_VIEW (pane->view),
@@ -221,27 +223,6 @@ thunar_favourites_pane_set_current_directory (ThunarSidePane *side_pane,
     }
 
   g_object_notify (G_OBJECT (pane), "current-directory");
-}
-
-
-
-static void
-thunar_favourites_pane_file_destroy (ThunarFile           *file,
-                                     ThunarFavouritesPane *pane)
-{
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (THUNAR_IS_FAVOURITES_PANE (pane));
-  g_return_if_fail (pane->current_directory == file);
-
-  /* we don't fire a notification on "current-directory" here,
-   * as the surrounding instance will notice the destroy as
-   * well and perform appropriate actions.
-   */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (pane->current_directory),
-                                        G_CALLBACK (thunar_favourites_pane_file_destroy),
-                                        pane);
-  g_object_unref (G_OBJECT (pane->current_directory));
-  pane->current_directory = NULL;
 }
 
 

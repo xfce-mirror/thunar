@@ -17,28 +17,28 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __THUNAR_SIDE_PANE_H__
-#define __THUNAR_SIDE_PANE_H__
+#ifndef __THUNAR_LOCATION_BAR_H__
+#define __THUNAR_LOCATION_BAR_H__
 
 #include <thunar/thunar-navigator.h>
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarSidePaneIface ThunarSidePaneIface;
-typedef struct _ThunarSidePane      ThunarSidePane;
+typedef struct _ThunarLocationBarIface ThunarLocationBarIface;
+typedef struct _ThunarLocationBar      ThunarLocationBar;
 
-#define THUNAR_TYPE_SIDE_PANE           (thunar_side_pane_get_type ())
-#define THUNAR_SIDE_PANE(obj)           (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_SIDE_PANE, ThunarSidePane))
-#define THUNAR_IS_SIDE_PANE(obj)        (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_SIDE_PANE))
-#define THUNAR_SIDE_PANE_GET_IFACE(obj) (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_SIDE_PANE, ThunarSidePaneIface))
+#define THUNAR_TYPE_LOCATION_BAR            (thunar_location_bar_get_type ())
+#define THUNAR_LOCATION_BAR(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCATION_BAR, ThunarLocationBar))
+#define THUNAR_IS_LOCATION_BAR(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCATION_BAR))
+#define THUNAR_LOCATION_BAR_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_LOCATION_BAR, ThunarLocationBarIface))
 
-struct _ThunarSidePaneIface
+struct _ThunarLocationBarIface
 {
   GTypeInterface __parent__;
 };
 
-GType thunar_side_pane_get_type (void) G_GNUC_CONST;
+GType    thunar_location_bar_get_type              (void) G_GNUC_CONST;
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_SIDE_PANE_H__ */
+#endif /* !__THUNAR_LOCATION_BAR_H__ */

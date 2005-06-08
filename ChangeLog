@@ -1,3 +1,28 @@
+2005-06-08	Benedikt Meurer <benny@xfce.org>
+
+	* docs/design/overview.xmi: All navigational UI elements in a
+	  ThunarWindow now implement the ThunarNavigator interface, which
+	  defines the "current-directory" property and the "change-directory"
+	  signal. See the ThunarNavigator gtk-docs for details about the
+	  behaviour.
+	* thunar/thunar-navigator.{h,c}: Provide source code for the current
+	  ThunarNavigator interface.
+	* thunar/thunar-side-pane.{h,c}, thunar/thunar-favourites-pane.c:
+	  Changed to use ThunarNavigator instead. ThunarSidePane is currently
+	  an empty interface.
+	* thunar-vfs/thunar-vfs-uri.{h,c}: Add a thunar_vfs_uri_to_string()
+	  method, which transform a ThunarVfsURI into a file:// uri.
+	* thunar/thunar-location-bar.{h,c}: Provide source code for the
+	  ThunarLocationBar interface, which extends the ThunarNavigator
+	  interface. The ThunarLocationBar interface does not add anything new
+	  currently, but that will change in future revisions.
+	* thunar/thunar-location-buttons.{c,h}: Add location path buttons
+	  implementation of the ThunarLocationBar interface. The layouting
+	  code was mostly copied from gtkpathbar.c, which was initially
+	  written by Jonathan Blandford. The implementation is not complete
+	  yet, and the layouting code is still very buggy.
+	* TODO: Add a bunch of TODO items for Thunar 1.0.
+
 2005-06-07	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-list-model.c(thunar_list_model_set_folder): Fix a bug

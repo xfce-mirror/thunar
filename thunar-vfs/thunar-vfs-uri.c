@@ -22,6 +22,13 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <exo/exo.h>
 
 #include <thunar-vfs/thunar-vfs-uri.h>
@@ -320,6 +327,33 @@ thunar_vfs_uri_relative (ThunarVfsURI *uri,
       relative->name = p + 1;
 
   return relative;
+}
+
+
+
+/**
+ * thunar_vfs_uri_to_string:
+ * @uri : a #ThunarVfsURI.
+ *
+ * Returns the string representation of @uri. The
+ * caller is responsible for freeing the returned
+ * string using #g_free().
+ *
+ * Return value: the string representation of @uri.
+ **/
+gchar*
+thunar_vfs_uri_to_string (ThunarVfsURI *uri)
+{
+  gchar *string;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+
+  /* transform the path into a file:// uri */
+  string = g_new (gchar, 7 + strlen (uri->path) + 1);
+  strcpy (string, "file://");
+  strcpy (string + 7, uri->path);
+
+  return string;
 }
 
 

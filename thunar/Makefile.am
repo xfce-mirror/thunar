@@ -29,6 +29,12 @@ Thunar_SOURCES =							\
 	thunar-icon-view.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
+	thunar-location-bar.c						\
+	thunar-location-bar.h						\
+	thunar-location-buttons.c					\
+	thunar-location-buttons.h					\
+	thunar-navigator.c						\
+	thunar-navigator.h						\
 	thunar-preferences.c						\
 	thunar-preferences.h						\
 	thunar-side-pane.c						\
