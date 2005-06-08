@@ -19,7 +19,7 @@ EOF
 }
 
 # substitute revision and date
-revision=`svn info autogen.sh|awk '/^Revision: / {printf "%04d\n", $2}'`
+revision=`svn info $0 | awk '/^Revision: / {printf "%04d\n", $2}'`
 sed -e "s/@DATE@/`date +%Y%m%d`/g" -e "s/@REVISION@/${revision}/g" \
   < "configure.in.in" > "configure.in"
 
