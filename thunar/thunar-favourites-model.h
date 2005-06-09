@@ -55,9 +55,15 @@ ThunarFavouritesModel *thunar_favourites_model_get_default    (void);
 gboolean               thunar_favourites_model_iter_for_file  (ThunarFavouritesModel *model,
                                                                ThunarFile            *file,
                                                                GtkTreeIter           *iter);
-
 ThunarFile            *thunar_favourites_model_file_for_iter  (ThunarFavouritesModel *model,
                                                                GtkTreeIter           *iter);
+
+gboolean               thunar_favourites_model_drop_possible  (ThunarFavouritesModel *model,
+                                                               GtkTreePath           *path);
+
+void                   thunar_favourites_model_move           (ThunarFavouritesModel *model,
+                                                               GtkTreePath           *src_path,
+                                                               GtkTreePath           *dst_path);
 
 G_END_DECLS;
 

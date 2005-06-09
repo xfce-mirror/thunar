@@ -1,3 +1,15 @@
+2005-06-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-favourites-model.{c,h},
+	  thunar/thunar-favourites-view.c: Add initial drag&drop-support for
+	  the favourites view. This is currently limited to rearranging
+	  favourites in the list. Support for adding new favourites by
+	  dropping text/uri-list's will be added soon. Also, the
+	  ThunarFavouritesModel also saves changes made by the user back to
+	  the .gtk-bookmarks file now.
+	* TODO: Add note about missing text/uri-list support in
+	  ThunarFavouritesView, and missing .gtk-bookmarks monitor support.
+
 2005-06-08	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-favourites-model.c: Use a signed gint for the number

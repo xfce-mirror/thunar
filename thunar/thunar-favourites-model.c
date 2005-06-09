@@ -21,7 +21,16 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
 #include <stdio.h>
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #include <thunar/thunar-favourites-model.h>
 #include <thunar/thunar-file.h>
@@ -35,7 +44,7 @@ typedef struct _ThunarFavourite ThunarFavourite;
 static void               thunar_favourites_model_class_init          (ThunarFavouritesModelClass *klass);
 static void               thunar_favourites_model_init                (ThunarFavouritesModel      *model);
 static void               thunar_favourites_model_tree_model_init     (GtkTreeModelIface          *iface);
-static void               thunar_favourites_model_drag_dest_init      (GtkTreeDragDestIface       *iface);
+static void               thunar_favourites_model_drag_source_init    (GtkTreeDragSourceIface     *iface);
 static void               thunar_favourites_model_finalize            (GObject                    *object);
 static GtkTreeModelFlags  thunar_favourites_model_get_flags           (GtkTreeModel               *tree_model);
 static gint               thunar_favourites_model_get_n_columns       (GtkTreeModel               *tree_model);
@@ -66,12 +75,14 @@ static gboolean           thunar_favourites_model_iter_nth_child      (GtkTreeMo
 static gboolean           thunar_favourites_model_iter_parent         (GtkTreeModel               *tree_model,
                                                                        GtkTreeIter                *iter,
                                                                        GtkTreeIter                *child);
-static gboolean           thunar_favourites_model_drag_data_received  (GtkTreeDragDest            *dest,
+static gboolean           thunar_favourites_model_row_draggable       (GtkTreeDragSource          *source,
+                                                                       GtkTreePath                *path);
+static gboolean           thunar_favourites_model_drag_data_get       (GtkTreeDragSource          *source,
                                                                        GtkTreePath                *path,
-                                                                       GtkSelectionData           *data);
-static gboolean           thunar_favourites_model_row_drop_possible   (GtkTreeDragDest            *dest,
-                                                                       GtkTreePath                *path,
-                                                                       GtkSelectionData           *data);
+                                                                       GtkSelectionData           *selection_data);
+static gboolean           thunar_favourites_model_drag_data_delete    (GtkTreeDragSource          *source,
+                                                                       GtkTreePath                *path);
+static void               thunar_favourites_model_save                (ThunarFavouritesModel      *model);
 static void               thunar_favourites_model_file_changed        (ThunarFile                 *file,
                                                                        ThunarFavouritesModel      *model);
 static void               thunar_favourites_model_file_destroy        (ThunarFile                 *file,
@@ -96,8 +107,9 @@ struct _ThunarFavouritesModel
 struct _ThunarFavourite
 {
   ThunarFile      *file;
-  const gchar     *special_name;
+  const gchar     *name;
   ThunarFavourite *next;
+  ThunarFavourite *prev;
 };
 
 
@@ -107,8 +119,8 @@ G_DEFINE_TYPE_WITH_CODE (ThunarFavouritesModel,
                          G_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
                                                 thunar_favourites_model_tree_model_init)
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_DEST,
-                                                thunar_favourites_model_drag_dest_init));
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_SOURCE,
+                                                thunar_favourites_model_drag_source_init));
 
 
     
@@ -172,6 +184,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
               for (current = model->favourites;; current = current->next)
                 if (current->next == NULL)
                   break;
+              favourite->prev = current;
               current->next = favourite;
             }
           ++model->n_favourites;
@@ -189,6 +202,8 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
   /* prepend the row separator (only supported with Gtk+ 2.6) */
 #if GTK_CHECK_VERSION(2,6,0)
   favourite = g_new0 (ThunarFavourite, 1);
+  if (G_LIKELY (model->favourites != NULL))
+    model->favourites->prev = favourite;
   favourite->next = model->favourites;
   model->favourites = favourite;
   ++model->n_favourites;
@@ -201,7 +216,11 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
     {
       favourite = g_new (ThunarFavourite, 1);
       favourite->file = file;
-      favourite->special_name = _("Filesystem");
+      favourite->name = _("Filesystem");
+
+      /* link the favourites to the list */
+      if (G_LIKELY (model->favourites != NULL))
+        model->favourites->prev = favourite;
       favourite->next = model->favourites;
       model->favourites = favourite;
       ++model->n_favourites;
@@ -220,7 +239,11 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
     {
       favourite = g_new (ThunarFavourite, 1);
       favourite->file = file;
-      favourite->special_name = _("Home");
+      favourite->name = _("Home");
+
+      /* link the favourites to the list */
+      if (G_LIKELY (model->favourites != NULL))
+        model->favourites->prev = favourite;
       favourite->next = model->favourites;
       model->favourites = favourite;
       ++model->n_favourites;
@@ -255,10 +278,11 @@ thunar_favourites_model_tree_model_init (GtkTreeModelIface *iface)
 
 
 static void
-thunar_favourites_model_drag_dest_init (GtkTreeDragDestIface *iface)
+thunar_favourites_model_drag_source_init (GtkTreeDragSourceIface *iface)
 {
-  iface->drag_data_received = thunar_favourites_model_drag_data_received;
-  iface->row_drop_possible = thunar_favourites_model_row_drop_possible;
+  iface->row_draggable = thunar_favourites_model_row_draggable;
+  iface->drag_data_get = thunar_favourites_model_drag_data_get;
+  iface->drag_data_delete = thunar_favourites_model_drag_data_delete;
 }
 
 
@@ -403,8 +427,8 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
     {
     case THUNAR_FAVOURITES_MODEL_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
-      if (favourite->special_name != NULL)
-        name = favourite->special_name;
+      if (favourite->name != NULL)
+        name = favourite->name;
       else if (favourite->file != NULL)
         name = thunar_file_get_display_name (favourite->file);
       else
@@ -533,23 +557,103 @@ thunar_favourites_model_iter_parent (GtkTreeModel *tree_model,
 
 
 static gboolean
-thunar_favourites_model_drag_data_received (GtkTreeDragDest  *dest,
-                                            GtkTreePath      *path,
-                                            GtkSelectionData *data)
+thunar_favourites_model_row_draggable (GtkTreeDragSource *source,
+                                       GtkTreePath       *path)
 {
-  // TODO: Implement this.
+  ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (source);
+  ThunarFavourite       *favourite;
+  gint                   n;
+
+  g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
+  g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
+
+  /* verify that the index of the path is valid */
+  n = gtk_tree_path_get_indices (path)[0];
+  if (G_UNLIKELY (n < 0 || n >= model->n_favourites))
+    return FALSE;
+
+  /* lookup the ThunarFavourite for the path */
+  for (favourite = model->favourites; --n >= 0; favourite = favourite->next)
+    ;
+
+  /* special favourites cannot be reordered */
+  return (favourite->name == NULL);
+}
+
+
+
+static gboolean
+thunar_favourites_model_drag_data_get (GtkTreeDragSource *source,
+                                       GtkTreePath       *path,
+                                       GtkSelectionData  *selection_data)
+{
+  // FIXME
   return FALSE;
 }
 
 
 
 static gboolean
-thunar_favourites_model_row_drop_possible (GtkTreeDragDest  *dest,
-                                           GtkTreePath      *path,
-                                           GtkSelectionData *data)
+thunar_favourites_model_drag_data_delete (GtkTreeDragSource *source,
+                                          GtkTreePath       *path)
 {
-  // TODO: Implement this.
+  // we simply return FALSE here, as this function can only be
+  // called if the user is re-arranging favourites within the
+  // model, which will be handle by the exchange method
   return FALSE;
+}
+
+
+
+static void
+thunar_favourites_model_save (ThunarFavouritesModel *model)
+{
+  ThunarFavourite *favourite;
+  gchar           *dst_path;
+  gchar           *tmp_path;
+  gchar           *uri;
+  FILE            *fp = NULL;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
+
+  /* open a temporary file for writing */
+  tmp_path = g_strdup_printf ("%s%c.gtk-bookmarks.tmp-%d",
+                              xfce_get_homedir (),
+                              G_DIR_SEPARATOR,
+                              (gint) getpid ());
+  fp = fopen (tmp_path, "w");
+  if (G_UNLIKELY (fp == NULL))
+    {
+      g_warning ("Failed to open `%s' for writing: %s",
+                 tmp_path, g_strerror (errno));
+      g_free (tmp_path);
+      return;
+    }
+
+  /* write the uris of user customizable favourites */
+  for (favourite = model->favourites; favourite != NULL; favourite = favourite->next)
+    if (favourite->name == NULL && favourite->file != NULL)
+      {
+        uri = thunar_vfs_uri_to_string (thunar_file_get_uri (favourite->file));
+        fprintf (fp, "%s\n", uri);
+        g_free (uri);
+      }
+
+  /* we're done writing the temporary file */
+  fclose (fp);
+
+  /* move the temporary file to it's final location (atomic writing) */
+  dst_path = xfce_get_homefile (".gtk-bookmarks", NULL);
+  if (rename (tmp_path, dst_path) < 0)
+    {
+      g_warning ("Failed to write `%s': %s",
+                 dst_path, g_strerror (errno));
+      unlink (tmp_path);
+    }
+
+  /* cleanup */
+  g_free (dst_path);
+  g_free (tmp_path);
 }
 
 
@@ -572,8 +676,7 @@ thunar_favourites_model_file_changed (ThunarFile            *file,
         iter.stamp = model->stamp;
         iter.user_data = favourite;
 
-        path = gtk_tree_path_new ();
-        gtk_tree_path_append_index (path, n);
+        path = gtk_tree_path_new_from_indices (n, -1);
         gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
         gtk_tree_path_free (path);
       }
@@ -675,6 +778,150 @@ thunar_favourites_model_file_for_iter (ThunarFavouritesModel *model,
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), NULL);
   g_return_val_if_fail (iter != NULL && iter->stamp == model->stamp, NULL);
   return ((ThunarFavourite *) iter->user_data)->file;
+}
+
+
+
+/**
+ * thunar_favourites_model_drop_possible:
+ * @model : a #ThunarFavouritestModel.
+ * @path  : a #GtkTreePath.
+ *
+ * Determines whether a drop is possible before the given @path, at the same depth
+ * as @path. I.e., can we drop data at that location. @path does not have to exist;
+ * the return value will almost certainly be FALSE if the parent of @path doesn't
+ * exist, though.
+ *
+ * Return value: %TRUE if it's possible to drop data before @path, else %FALSE.
+ **/
+gboolean
+thunar_favourites_model_drop_possible (ThunarFavouritesModel *model,
+                                       GtkTreePath           *path)
+{
+  ThunarFavourite *favourite;
+  gint             n;
+
+  g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
+  g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
+
+  /* append to the list is always possible */
+  n = gtk_tree_path_get_indices (path)[0];
+  if (n >= model->n_favourites)
+    return TRUE;
+
+  /* lookup the ThunarFavourite for the path (remember, we are
+   * checking whether we can insert BEFORE path)
+   */
+  for (favourite = model->favourites; --n >= 0; favourite = favourite->next)
+    ;
+
+  /* cannot drop before special favourites! */
+  return (favourite->name == NULL
+       && favourite->file != NULL);
+}
+
+
+
+/**
+ * thunar_favourites_model_move:
+ * @model    : a #ThunarFavouritesModel.
+ * @src_path : the source path.
+ * @dst_path : the destination path.
+ *
+ * Moves the favourite at @src_path to @dst_path, adjusting other
+ * favourite's positions as required.
+ **/
+void
+thunar_favourites_model_move (ThunarFavouritesModel *model,
+                              GtkTreePath           *src_path,
+                              GtkTreePath           *dst_path)
+{
+  ThunarFavourite *favourite;
+  GtkTreePath     *path;
+  const gchar     *name;
+  ThunarFile      *file;
+  gint            *order;
+  gint             index_src;
+  gint             index_dst;
+  gint             index;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
+  g_return_if_fail (gtk_tree_path_get_depth (src_path) > 0);
+  g_return_if_fail (gtk_tree_path_get_depth (dst_path) > 0);
+  g_return_if_fail (gtk_tree_path_get_indices (src_path)[0] >= 0);
+  g_return_if_fail (gtk_tree_path_get_indices (src_path)[0] < model->n_favourites);
+  g_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] > 0);
+
+  index_src = gtk_tree_path_get_indices (src_path)[0];
+  index_dst = gtk_tree_path_get_indices (dst_path)[0];
+
+  if (G_UNLIKELY (index_src == index_dst))
+    return;
+
+  /* generate the order for the rows prior the dst/src rows */
+  order = g_new (gint, model->n_favourites);
+  for (favourite = model->favourites, index = 0;
+       index < index_src && index < index_dst;
+       favourite = favourite->next, ++index)
+    {
+      order[index] = index;
+    }
+
+  if (index == index_src)
+    {
+      file = favourite->file;
+      name = favourite->name;
+
+      for (; index < index_dst; favourite = favourite->next, ++index)
+        {
+          favourite->file = favourite->next->file;
+          favourite->name = favourite->next->name;
+          order[index] = index + 1;
+        }
+
+      favourite->file = file;
+      favourite->name = name;
+      order[index++] = index_src;
+    }
+  else
+    {
+      for (; index < index_src; favourite = favourite->next, ++index)
+        ;
+
+      g_assert (index == index_src);
+
+      file = favourite->file;
+      name = favourite->name;
+
+      for (; index > index_dst; favourite = favourite->prev, --index)
+        {
+          favourite->file = favourite->prev->file;
+          favourite->name = favourite->prev->name;
+          order[index] = index - 1;
+        }
+
+      g_assert (index == index_dst);
+
+      favourite->file = file;
+      favourite->name = name;
+      order[index] = index_src;
+      index = index_src + 1;
+    }
+
+  /* generate the remaining order */
+  for (; index < model->n_favourites; ++index)
+    order[index] = index;
+
+  /* tell all listeners about the reordering just performed */
+  path = gtk_tree_path_new ();
+  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (model), path, NULL, order);
+  gtk_tree_path_free (path);
+
+  /* the favourites list was changed, so write the gtk bookmarks file */
+  thunar_favourites_model_save (model);
+
+  /* cleanup */
+  g_free (order);
 }
 
 

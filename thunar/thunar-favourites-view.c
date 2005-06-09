@@ -26,23 +26,51 @@
 
 
 
+/* Identifiers for signals */
 enum
 {
   FAVOURITE_ACTIVATED,
   LAST_SIGNAL,
 };
 
+/* Identifiers for DnD target types */
+enum
+{
+  GTK_TREE_MODEL_ROW,
+  TEXT_URI_LIST,
+};
 
 
-static void     thunar_favourites_view_class_init     (ThunarFavouritesViewClass *klass);
-static void     thunar_favourites_view_init           (ThunarFavouritesView      *view);
-static void     thunar_favourites_view_row_activated  (GtkTreeView               *tree_view,
-                                                       GtkTreePath               *path,
-                                                       GtkTreeViewColumn         *column);
+
+static void         thunar_favourites_view_class_init             (ThunarFavouritesViewClass *klass);
+static void         thunar_favourites_view_init                   (ThunarFavouritesView      *view);
+static void         thunar_favourites_view_row_activated          (GtkTreeView               *tree_view,
+                                                                   GtkTreePath               *path,
+                                                                   GtkTreeViewColumn         *column);
+static void         thunar_favourites_view_drag_data_received     (GtkWidget                 *widget,
+                                                                   GdkDragContext            *context,
+                                                                   gint                       x,
+                                                                   gint                       y,
+                                                                   GtkSelectionData          *selection_data,
+                                                                   guint                      info,
+                                                                   guint                      time);
+static gboolean     thunar_favourites_view_drag_drop              (GtkWidget                 *widget,
+                                                                   GdkDragContext            *context,
+                                                                   gint                       x,
+                                                                   gint                       y,
+                                                                   guint                      time);
+static gboolean     thunar_favourites_view_drag_motion            (GtkWidget                 *widget,
+                                                                   GdkDragContext            *context,
+                                                                   gint                       x,
+                                                                   gint                       y,
+                                                                   guint                      time);
+static GtkTreePath *thunar_favourites_view_compute_drop_position  (ThunarFavouritesView      *view,
+                                                                   gint                       x,
+                                                                   gint                       y);
 #if GTK_CHECK_VERSION(2,6,0)
-static gboolean thunar_favourites_view_separator_func (GtkTreeModel              *model,
-                                                       GtkTreeIter               *iter,
-                                                       gpointer                   user_data);
+static gboolean     thunar_favourites_view_separator_func         (GtkTreeModel              *model,
+                                                                   GtkTreeIter               *iter,
+                                                                   gpointer                   user_data);
 #endif
 
 
@@ -65,6 +93,17 @@ struct _ThunarFavouritesView
 
 static guint view_signals[LAST_SIGNAL];
 
+/* Target types for dragging from the favourites view */
+static const GtkTargetEntry drag_targets[] = {
+  { "GTK_TREE_MODEL_ROW", GTK_TARGET_SAME_WIDGET, GTK_TREE_MODEL_ROW },
+};
+
+/* Target types for dropping into the favourites view */
+static const GtkTargetEntry drop_targets[] = {
+  { "GTK_TREE_MODEL_ROW", GTK_TARGET_SAME_WIDGET, GTK_TREE_MODEL_ROW },
+  { "text/uri-list", 0, TEXT_URI_LIST },
+};
+
 
 
 G_DEFINE_TYPE (ThunarFavouritesView, thunar_favourites_view, GTK_TYPE_TREE_VIEW);
@@ -75,6 +114,12 @@ static void
 thunar_favourites_view_class_init (ThunarFavouritesViewClass *klass)
 {
   GtkTreeViewClass *gtktree_view_class;
+  GtkWidgetClass   *gtkwidget_class;
+
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->drag_data_received = thunar_favourites_view_drag_data_received;
+  gtkwidget_class->drag_drop = thunar_favourites_view_drag_drop;
+  gtkwidget_class->drag_motion = thunar_favourites_view_drag_motion;
 
   gtktree_view_class = GTK_TREE_VIEW_CLASS (klass);
   gtktree_view_class->row_activated = thunar_favourites_view_row_activated;
@@ -124,6 +169,17 @@ thunar_favourites_view_init (ThunarFavouritesView *view)
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
+  /* enable drag support for the favourites view (actually used to support reordering) */
+  gtk_tree_view_enable_model_drag_source (GTK_TREE_VIEW (view), GDK_BUTTON1_MASK, drag_targets,
+                                          G_N_ELEMENTS (drag_targets), GDK_ACTION_MOVE);
+
+  /* enable drop support for the favourites view (both internal reordering
+   * and adding new favourites from other widgets)
+   */
+  gtk_drag_dest_set (GTK_WIDGET (view), GTK_DEST_DEFAULT_ALL,
+                     drop_targets, G_N_ELEMENTS (drop_targets),
+                     GDK_ACTION_COPY | GDK_ACTION_MOVE);
+
 #if GTK_CHECK_VERSION(2,6,0)
   gtk_tree_view_set_row_separator_func (GTK_TREE_VIEW (view), thunar_favourites_view_separator_func, NULL, NULL);
 #endif
@@ -155,6 +211,159 @@ thunar_favourites_view_row_activated (GtkTreeView       *tree_view,
   /* call the row-activated method in the parent class */
   if (GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated != NULL)
     GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated (tree_view, path, column);
+}
+
+
+
+static void
+thunar_favourites_view_drag_data_received (GtkWidget        *widget,
+                                           GdkDragContext   *context,
+                                           gint              x,
+                                           gint              y,
+                                           GtkSelectionData *selection_data,
+                                           guint             info,
+                                           guint             time)
+{
+  ThunarFavouritesView *view = THUNAR_FAVOURITES_VIEW (widget);
+  GtkTreeSelection     *selection;
+  GtkTreeModel         *model;
+  GtkTreePath          *dst_path;
+  GtkTreePath          *src_path;
+  GtkTreeIter           iter;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_VIEW (view));
+
+  /* compute the drop position */
+  dst_path = thunar_favourites_view_compute_drop_position (view, x, y);
+
+  if (selection_data->target == gdk_atom_intern ("text/uri-list", FALSE))
+    {
+      g_error ("text/uri-list not handled yet");
+    }
+  else if (selection_data->target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
+    {
+      selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+      if (gtk_tree_selection_get_selected (selection, &model, &iter))
+        {
+          /* we need to adjust the destination path here, because the path returned by
+           * the drop position computation effectively points after the insert position,
+           * which can led to unexpected results.
+           */
+          gtk_tree_path_prev (dst_path);
+          if (!thunar_favourites_model_drop_possible (THUNAR_FAVOURITES_MODEL (model), dst_path))
+            gtk_tree_path_next (dst_path);
+
+          /* perform the move */
+          src_path = gtk_tree_model_get_path (model, &iter);
+          thunar_favourites_model_move (THUNAR_FAVOURITES_MODEL (model), src_path, dst_path);
+          gtk_tree_path_free (src_path);
+        }
+    }
+
+  gtk_tree_path_free (dst_path);
+}
+
+
+
+static gboolean
+thunar_favourites_view_drag_drop (GtkWidget      *widget,
+                                  GdkDragContext *context,
+                                  gint            x,
+                                  gint            y,
+                                  guint           time)
+{
+  g_return_val_if_fail (THUNAR_IS_FAVOURITES_VIEW (widget), FALSE);
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_favourites_view_drag_motion (GtkWidget      *widget,
+                                    GdkDragContext *context,
+                                    gint            x,
+                                    gint            y,
+                                    guint           time)
+{
+  GtkTreeViewDropPosition position = GTK_TREE_VIEW_DROP_BEFORE;
+  ThunarFavouritesView   *view = THUNAR_FAVOURITES_VIEW (widget);
+  GdkDragAction           action;
+  GtkTreeModel           *model;
+  GtkTreePath            *path;
+
+  /* check the action that should be performed */
+  if (context->suggested_action == GDK_ACTION_COPY || (context->actions & GDK_ACTION_COPY) != 0)
+    action = GDK_ACTION_COPY;
+  else if (context->suggested_action == GDK_ACTION_MOVE || (context->actions & GDK_ACTION_MOVE) != 0)
+    action = GDK_ACTION_MOVE;
+  else
+    return FALSE;
+
+  /* compute the drop position for the coordinates */
+  path = thunar_favourites_view_compute_drop_position (view, x, y);
+
+  /* check if path is about to append to the model */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+  if (gtk_tree_path_get_indices (path)[0] >= gtk_tree_model_iter_n_children (model, NULL))
+    {
+      /* set the position to "after" and move the path to
+       * point to the previous row instead; required to
+       * get the highlighting in GtkTreeView correct.
+       */
+      position = GTK_TREE_VIEW_DROP_AFTER;
+      gtk_tree_path_prev (path);
+    }
+
+  /* highlight the appropriate row */
+  gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (view), path, position);
+  gtk_tree_path_free (path);
+
+  gdk_drag_status (context, action, time);
+  return TRUE;
+}
+
+
+
+static GtkTreePath*
+thunar_favourites_view_compute_drop_position (ThunarFavouritesView *view,
+                                              gint                  x,
+                                              gint                  y)
+{
+  GtkTreeViewColumn *column;
+  GtkTreeModel      *model;
+  GdkRectangle       area;
+  GtkTreePath       *path;
+  gint               n_rows;
+
+  g_return_val_if_fail (gtk_tree_view_get_model (GTK_TREE_VIEW (view)) != NULL, NULL);
+  g_return_val_if_fail (THUNAR_IS_FAVOURITES_VIEW (view), NULL);
+
+  /* query the number of rows in the model */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+  n_rows = gtk_tree_model_iter_n_children (model, NULL);
+
+  if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (view), x, y,
+                                     &path, &column, &x, &y))
+    {
+      /* determine the exact path of the row the user is trying to drop 
+       * (taking into account the relative y position)
+       */
+      gtk_tree_view_get_background_area (GTK_TREE_VIEW (view), path, column, &area);
+      if (y >= area.height / 2)
+        gtk_tree_path_next (path);
+
+      /* find a suitable drop path (we cannot drop into the default favourites list) */
+      for (; gtk_tree_path_get_indices (path)[0] < n_rows; gtk_tree_path_next (path))
+        if (thunar_favourites_model_drop_possible (THUNAR_FAVOURITES_MODEL (model), path))
+          return path;
+    }
+  else
+    {
+      /* we'll append to the favourites list */
+      path = gtk_tree_path_new_from_indices (n_rows, -1);
+    }
+
+  return path;
 }
 
 
