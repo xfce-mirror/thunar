@@ -59,6 +59,16 @@ guint          thunar_vfs_uri_hash              (gconstpointer uri);
 gboolean       thunar_vfs_uri_equal             (gconstpointer a,
                                                  gconstpointer b);
 
+GList         *thunar_vfs_uri_list_from_string  (const gchar  *string,
+                                                 GError      **error);
+gchar         *thunar_vfs_uri_list_to_string    (GList        *uri_list);
+void           thunar_vfs_uri_list_free         (GList        *uri_list);
+
+#define thunar_vfs_uri_list_append(uri_list, uri) \
+  g_list_append ((uri_list), g_object_ref (G_OBJECT ((uri))))
+#define thunar_vfs_uri_list_prepend(uri_list, uri) \
+  g_list_prepend ((uri_list), g_object_ref (G_OBJECT ((uri))))
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_VFS_URI_H__ */

@@ -1,7 +1,12 @@
 Important for Thunar 1.0
 ========================
 
- - Handle text/uri-list drops on the ThunarFavouritesView.
+ - ThunarFavouritesModel should include the 'Trash' in the default system
+   favourites list, given the user the ability to atleast empty the trash
+   by right-clicking on the favourite and choosing 'Empty trash bin' from
+   the context menu. An optional, yet tricky feature, would be to allow
+   dropping files to the trash bin in the favourites pane (not for 1.0 I'd
+   say).
 
  - ThunarFavouritesModel should watch the .gtk-bookmarks file for changes and
    reload it on-demand (take care of not reloading if the change was caused by

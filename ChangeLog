@@ -1,3 +1,31 @@
+2005-06-11	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-uri.{c,h}: Add functions to ease the handling
+	  of URI lists, specifically to automatically parse and generate
+	  string representations of URI lists that conform to the
+	  text/uri-list mime type.
+	* thunar/thunar-location-buttons.c
+	  (thunar_location_buttons_drag_data_get): Use new ThunarVfsURI list
+	  handling functions instead.
+	* thunar/thunar-favourites-model.c
+	  (thunar_favourites_model_file_destroy): Handle the case where a
+	  directory referenced by a favourite disappears from the backend media.
+	* thunar/thunar-favourites-model.c
+	  (thunar_favourites_model_file_changed): Remove a given favourite if
+	  the system notices that the favourite's file no longer refers to a
+	  directory.
+	* thunar/thunar-favourites-model.c(thunar_favourites_model_init): Do
+	  not re-add favourites initially, that do not refer to a directory.
+	* thunar/thunar-favourites-model.{c,h}: Add a new method
+	  thunar_favourites_model_add(), which is used by the
+	  ThunarFavouritesView to add new favourites to the list and
+	  automatically sync the changes with the Gtk+ bookmarks list.
+	* thunar/thunar-favourites-view.c: Handle "text/uri-list" drops,
+	  adding new favourites as appropriate. Add note, that the initial
+	  idea is based on the GtkFileChooser written by Red Hat for Gtk+.
+	* TODO: Remove the 'text/uri-list'-handling for ThunarFavouritesView.
+	  Add item concerning the Trash in the favourites list.
+
 2005-06-10	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-favourites-model.{c,h},

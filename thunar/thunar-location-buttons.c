@@ -1009,7 +1009,7 @@ thunar_location_buttons_drag_data_get (GtkWidget             *button,
 {
   ThunarVfsURI *uri;
   ThunarFile   *file;
-  gchar        *uri_list;
+  GList        *uri_list = NULL;
   gchar        *uri_string;
 
   g_return_if_fail (GTK_IS_WIDGET (button));
@@ -1019,17 +1019,17 @@ thunar_location_buttons_drag_data_get (GtkWidget             *button,
   file = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
   uri = thunar_file_get_uri (file);
 
-  /* transform the uri into an uri list (using DOS line endings!) */
-  uri_string = thunar_vfs_uri_to_string (uri);
-  uri_list = g_strconcat (uri_string, "\r\n", NULL);
+  /* transform the uri into an uri list string */
+  uri_list = thunar_vfs_uri_list_prepend (uri_list, uri);
+  uri_string = thunar_vfs_uri_list_to_string (uri_list);
+  thunar_vfs_uri_list_free (uri_list);
 
   /* set the uri list for the drag selection */
   gtk_selection_data_set (selection_data, selection_data->target,
-                          8, uri_list, strlen (uri_list));
+                          8, uri_string, strlen (uri_string));
 
   /* cleanup */
   g_free (uri_string);
-  g_free (uri_list);
 }
 
 

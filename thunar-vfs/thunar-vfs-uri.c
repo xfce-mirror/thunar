@@ -105,12 +105,18 @@ thunar_vfs_uri_new (const gchar *identifier,
 {
   ThunarVfsURI *uri;
   const gchar  *p;
+  gchar        *path;
 
   g_return_val_if_fail (identifier != NULL, NULL);
 
+  /* try to parse the path */
+  path = g_filename_from_uri (identifier, NULL, error);
+  if (G_UNLIKELY (path == NULL))
+    return NULL;
+
   /* allocate the URI instance */
   uri = g_object_new (THUNAR_VFS_TYPE_URI, NULL);
-  uri->path = g_filename_from_uri (identifier, NULL, error);
+  uri->path = path;
 
   /* determine the basename of the path */
   for (p = uri->name = uri->path; *p != '\0'; ++p)
@@ -273,7 +279,8 @@ thunar_vfs_uri_get_path (ThunarVfsURI *uri)
  * Returns the #ThunarVfsURI object that refers to the parent 
  * folder of @uri or %NULL if @uri has no parent.
  *
- * Return value:
+ * Return value: the #ThunarVfsURI object referring to the parent folder
+ *               or %NULL.
  **/
 ThunarVfsURI*
 thunar_vfs_uri_parent (ThunarVfsURI *uri)
@@ -305,7 +312,7 @@ thunar_vfs_uri_parent (ThunarVfsURI *uri)
  * @uri   : an #ThunarVfsURI instance.
  * @name  : the relative name.
  *
- * Return value:
+ * Return value: 
  **/
 ThunarVfsURI*
 thunar_vfs_uri_relative (ThunarVfsURI *uri,
@@ -427,6 +434,157 @@ thunar_vfs_uri_equal (gconstpointer a,
   return (ap == a_name);
 }
 
+
+
+/**
+ * thunar_vfs_uri_list_from_string:
+ * @string : string representation of an URI list.
+ * @error  : return location for errors.
+ *
+ * Splits an URI list conforming to the text/uri-list
+ * mime type defined in RFC 2483 into individual URIs,
+ * discarding any comments and whitespace.
+ *
+ * If all URIs were successfully parsed into #ThunarVfsURI
+ * objects, the list of parsed URIs will be returned, and
+ * you'll need to call #thunar_vfs_uri_list_free() to
+ * release the list resources. Else if the parsing fails
+ * at some point, %NULL will be returned and @error will
+ * be set to describe the cause.
+ *
+ * Note, that if @string contains no URIs, this function
+ * will also return %NULL, but @error won't be set. So
+ * take care when checking for an error condition!
+ *
+ * Return value: the list of #ThunarVfsURI's or %NULL.
+ **/
+GList*
+thunar_vfs_uri_list_from_string (const gchar *string,
+                                 GError     **error)
+{
+  ThunarVfsURI *uri;
+  const gchar  *s;
+  const gchar  *t;
+  GList        *uri_list = NULL;
+  gchar        *identifier;
+
+  g_return_val_if_fail (string != NULL, NULL);
+
+  for (s = string; s != NULL; )
+    {
+      if (*s != '#')
+        {
+          while (g_ascii_isspace (*s))
+            ++s;
+
+          for (t = s; *t != '\0' && *t != '\n' && *t != '\r'; ++t)
+            ;
+
+          if (t > s)
+            {
+              for (t--; t > s && g_ascii_isspace (*t); t--)
+                ;
+
+              if (t > s)
+                {
+                  /* try to parse the URI */
+                  identifier = g_strndup (s, t - s + 1);
+                  uri = thunar_vfs_uri_new (identifier, error);
+                  g_free (identifier);
+
+                  /* check if we succeed */
+                  if (G_UNLIKELY (uri == NULL))
+                    {
+                      thunar_vfs_uri_list_free (uri_list);
+                      return NULL;
+                    }
+                  else
+                    {
+                      /* append the newly parsed uri */
+                      uri_list = g_list_append (uri_list, uri);
+                    }
+                }
+            }
+        }
+
+      for (; *s != '\0' && *s != '\n'; ++s)
+        ;
+
+      if (*s++ == '\0')
+        break;
+    }
+
+  return uri_list;
+}
+
+
+
+/**
+ * thunar_vfs_uri_list_to_string:
+ * @uri_list : a list of #ThunarVfsURI<!---->s.
+ *
+ * Free the returned value using #g_free() when you
+ * are done with it.
+ *
+ * Return value: the string representation of @uri_list conforming to the
+ *               text/uri-list mime type defined in RFC 2483.
+ **/
+gchar*
+thunar_vfs_uri_list_to_string (GList *uri_list)
+{
+  gchar *string_list;
+  gchar *uri_string;
+  gchar *new_list;
+  GList *lp;
+
+  string_list = g_strdup ("");
+
+  /* This way of building up the string representation is pretty
+   * slow and can lead to serious heap fragmentation if called
+   * too often. But this doesn't matter, as this function is not
+   * called very often (in fact it should only be used in Thunar
+   * when a file drag is started from within Thunar). If you can
+   * think of any easy way to avoid calling malloc that often,
+   * let me know (of course without depending too much on the
+   * exact internal representation and the type of URIs). Else
+   * don't waste any time or thought on this.
+   */
+  for (lp = uri_list; lp != NULL; lp = lp->next)
+    {
+      g_assert (THUNAR_VFS_IS_URI (lp->data));
+
+      uri_string = thunar_vfs_uri_to_string (THUNAR_VFS_URI (lp->data));
+      new_list = g_strconcat (string_list, uri_string, "\r\n", NULL);
+      g_free (string_list);
+      g_free (uri_string);
+      string_list = new_list;
+    }
+
+  return string_list;
+}
+
+
+
+/**
+ * thunar_vfs_uri_list_free:
+ * @uri_list : a list of #ThunarVfsURI<!---->s.
+ *
+ * Frees the #ThunarVfsURI<!---->s contained in @uri_list and
+ * the @uri_list itself.
+ **/
+void
+thunar_vfs_uri_list_free (GList *uri_list)
+{
+  GList *lp;
+
+  for (lp = uri_list; lp != NULL; lp = lp->next)
+    {
+      g_assert (THUNAR_VFS_IS_URI (lp->data));
+      g_object_unref (G_OBJECT (lp->data));
+    }
+
+  g_list_free (uri_list);
+}
 
 
 

@@ -15,6 +15,9 @@
  * You should have received a copy of the GNU General Public License along with
  * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
  * Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * Inspired by the shortcuts list as found in the GtkFileChooser, which was
+ * developed for Gtk+ by Red Hat, Inc.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -67,6 +70,9 @@ static gboolean     thunar_favourites_view_drag_motion            (GtkWidget    
 static GtkTreePath *thunar_favourites_view_compute_drop_position  (ThunarFavouritesView      *view,
                                                                    gint                       x,
                                                                    gint                       y);
+static void         thunar_favourites_view_drop_uri_list          (ThunarFavouritesView      *view,
+                                                                   const gchar               *uri_list,
+                                                                   GtkTreePath               *dst_path);
 #if GTK_CHECK_VERSION(2,6,0)
 static gboolean     thunar_favourites_view_separator_func         (GtkTreeModel              *model,
                                                                    GtkTreeIter               *iter,
@@ -238,7 +244,7 @@ thunar_favourites_view_drag_data_received (GtkWidget        *widget,
 
   if (selection_data->target == gdk_atom_intern ("text/uri-list", FALSE))
     {
-      g_error ("text/uri-list not handled yet");
+      thunar_favourites_view_drop_uri_list (view, selection_data->data, dst_path);
     }
   else if (selection_data->target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
     {
@@ -364,6 +370,71 @@ thunar_favourites_view_compute_drop_position (ThunarFavouritesView *view,
     }
 
   return path;
+}
+
+
+
+static void
+thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
+                                      const gchar          *uri_list,
+                                      GtkTreePath          *dst_path)
+{
+  GtkTreeModel *model;
+  ThunarFile   *file;
+  GtkWidget    *toplevel;
+  GtkWidget    *dialog;
+  GError       *error = NULL;
+  gchar        *uri_string;
+  GList        *uris;
+  GList        *lp;
+
+  uris = thunar_vfs_uri_list_from_string (uri_list, &error);
+  if (G_LIKELY (error == NULL))
+    {
+      /* process the URIs one-by-one and stop on error */
+      model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+      for (lp = uris; lp != NULL; lp = lp->next)
+        {
+          file = thunar_file_get_for_uri (lp->data, &error);
+          if (G_UNLIKELY (file == NULL))
+            break;
+
+          /* make sure, that only directories gets added to the favourites list */
+          if (G_UNLIKELY (!thunar_file_is_directory (file)))
+            {
+              uri_string = thunar_vfs_uri_to_string (lp->data);
+              g_set_error (&error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR,
+                           "The URI '%s' does not refer to a directory",
+                           uri_string);
+              g_object_unref (G_OBJECT (file));
+              g_free (uri_string);
+              break;
+            }
+
+          thunar_favourites_model_add (THUNAR_FAVOURITES_MODEL (model), dst_path, file);
+          g_object_unref (G_OBJECT (file));
+          gtk_tree_path_next (dst_path);
+        }
+
+      thunar_vfs_uri_list_free (uris);
+    }
+
+  if (G_UNLIKELY (error != NULL))
+    {
+      toplevel = gtk_widget_get_toplevel (GTK_WIDGET (view));
+      dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (toplevel),
+                                                   GTK_DIALOG_DESTROY_WITH_PARENT
+                                                   | GTK_DIALOG_MODAL,
+                                                   GTK_MESSAGE_ERROR,
+                                                   GTK_BUTTONS_OK,
+                                                   "<span weight=\"bold\" size="
+                                                   "\"larger\">%s</span>\n\n%s",
+                                                   _("Could not add favourite"),
+                                                   error->message);
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+      g_error_free (error);
+    }
 }
 
 

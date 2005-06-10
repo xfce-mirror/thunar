@@ -170,6 +170,13 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
           if (G_UNLIKELY (file == NULL))
             continue;
 
+          /* make sure the file refers to a directory */
+          if (G_UNLIKELY (!thunar_file_is_directory (file)))
+            {
+              g_object_unref (G_OBJECT (file));
+              continue;
+            }
+
           /* create the favourite entry */
           favourite = g_new0 (ThunarFavourite, 1);
           favourite->file = file;
@@ -669,6 +676,16 @@ thunar_favourites_model_file_changed (ThunarFile            *file,
 
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
+ 
+  /* check if the file still refers to a directory, else we cannot keep
+   * it on the favourites list, and so we'll treat it like the file
+   * was destroyed (and thereby removed)
+   */
+  if (G_UNLIKELY (!thunar_file_is_directory (file)))
+    {
+      thunar_favourites_model_file_destroy (file, model);
+      return;
+    }
 
   for (favourite = model->favourites, n = 0; favourite != NULL; favourite = favourite->next, ++n)
     if (favourite->file == file)
@@ -688,10 +705,52 @@ static void
 thunar_favourites_model_file_destroy (ThunarFile            *file,
                                       ThunarFavouritesModel *model)
 {
+  ThunarFavourite *favourite;
+  GtkTreePath     *path;
+  gint             n;
+
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
 
-  // TODO: Implement this function.
+  /* lookup the favourite matching the file */
+  for (favourite = model->favourites, n = 0; favourite != NULL; favourite = favourite->next, ++n)
+    if (favourite->file == file)
+      break;
+
+  g_assert (favourite != NULL);
+  g_assert (n < model->n_favourites);
+  g_assert (THUNAR_IS_FILE (favourite->file));
+
+  /* unlink the favourite from the model */
+  --model->n_favourites;
+  if (favourite == model->favourites)
+    {
+      favourite->next->prev = NULL;
+      model->favourites = favourite->next;
+    }
+  else
+    {
+      if (favourite->next != NULL)
+        favourite->next->prev = favourite->prev;
+      favourite->prev->next = favourite->next;
+    }
+
+  /* tell everybody that we have lost a favourite */
+  path = gtk_tree_path_new_from_indices (n, -1);
+  gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
+  gtk_tree_path_free (path);
+
+  /* disconnect us from the favourite's file */
+  g_signal_handlers_disconnect_matched (G_OBJECT (favourite->file),
+                                        G_SIGNAL_MATCH_DATA, 0,
+                                        0, NULL, NULL, model);
+  g_object_unref (G_OBJECT (favourite->file));
+
+  /* the favourites list was changed, so write the gtk bookmarks file */
+  thunar_favourites_model_save (model);
+
+  /* free the favourite data */
+  g_free (favourite);
 }
 
 
@@ -818,6 +877,95 @@ thunar_favourites_model_drop_possible (ThunarFavouritesModel *model,
   /* cannot drop before special favourites! */
   return (favourite->name == NULL
        && favourite->file != NULL);
+}
+
+
+
+/**
+ * thunar_favourites_model_add:
+ * @model    : a #ThunarFavouritesModel.
+ * @dst_path : the destination path.
+ * @file     : the #ThunarFile that should be added to the favourites list.
+ *
+ * Adds the favourite @file to the @model at @dst_path, unless @file is
+ * already present in @model in which case no action is performed.
+ **/
+void
+thunar_favourites_model_add (ThunarFavouritesModel *model,
+                             GtkTreePath           *dst_path,
+                             ThunarFile            *file)
+{
+  ThunarFavourite *favourite;
+  ThunarFavourite *current;
+  GtkTreeIter      iter;
+  gint             index;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
+  g_return_if_fail (gtk_tree_path_get_depth (dst_path) > 0);
+  g_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] >= 0);
+  g_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] <= model->n_favourites);
+  g_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* verify that the file is not already in use as favourite */
+  for (favourite = model->favourites; favourite != NULL; favourite = favourite->next)
+    if (G_UNLIKELY (favourite->file == file))
+      return;
+
+  /* create the new favourite that will be inserted */
+  favourite = g_new0 (ThunarFavourite, 1);
+  favourite->file = file;
+  g_object_ref (G_OBJECT (file));
+
+  /* we want to stay informed about changes to the file */
+  g_signal_connect (G_OBJECT (file), "changed",
+                    G_CALLBACK (thunar_favourites_model_file_changed), model);
+  g_signal_connect (G_OBJECT (file), "destroy",
+                    G_CALLBACK (thunar_favourites_model_file_destroy), model);
+
+  /* check if this is the first favourite to insert (shouldn't happen normally) */
+  if (G_UNLIKELY (model->favourites == NULL))
+    model->favourites = favourite;
+  else
+    {
+      index = gtk_tree_path_get_indices (dst_path)[0];
+      if (index == 0)
+        {
+          /* the new favourite should be prepended to the existing list */
+          favourite->next = model->favourites;
+          model->favourites->prev = favourite;
+          model->favourites = favourite;
+        }
+      else if (index == model->n_favourites)
+        {
+          /* the new favourite should be appended to the existing list */
+          for (current = model->favourites; current->next != NULL; current = current->next)
+            ;
+
+          favourite->prev = current;
+          current->next = favourite;
+        }
+      else
+        {
+          /* inserting somewhere into the existing list */
+          for (current = model->favourites; index-- > 0; current = current->next)
+            ;
+
+          favourite->next = current;
+          favourite->prev = current->prev;
+          current->prev->next = favourite;
+          current->prev = favourite;
+        }
+    }
+
+  /* we've just inserted a new item */
+  ++model->n_favourites;
+
+  /* tell everybody that we have a new favourite */
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &iter, dst_path);
+  gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), dst_path, &iter);
+
+  /* the favourites list was changed, so write the gtk bookmarks file */
+  thunar_favourites_model_save (model);
 }
 
 
