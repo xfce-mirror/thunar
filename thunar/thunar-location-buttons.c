@@ -1021,7 +1021,7 @@ thunar_location_buttons_drag_data_get (GtkWidget             *button,
 
   /* transform the uri into an uri list string */
   uri_list = thunar_vfs_uri_list_prepend (uri_list, uri);
-  uri_string = thunar_vfs_uri_list_to_string (uri_list);
+  uri_string = thunar_vfs_uri_list_to_string (uri_list, 0);
   thunar_vfs_uri_list_free (uri_list);
 
   /* set the uri list for the drag selection */

@@ -1,5 +1,18 @@
 2005-06-11	Benedikt Meurer <benny@xfce.org>
 
+	* docs/design/overview.xmi: Extend the ThunarVfsURI functionality.
+	* thunar-vfs/thunar-vfs-uri.{c,h}: Add host handling to ThunarVfsURI.
+	  Add support for different URI schemes, currently 'file://' and
+	  'trash://'.
+	* thunar/thunar-favourites-model.c, thunar/thunar-favourites-view.c, 
+	  thunar/thunar-location-buttons.c: Sync with the little API change
+	  to ThunarVfsURI.
+	* tests/Makefile.am: Delete core files on `make clean'.
+	* tests/test-thunar-vfs-uri.c(main): Add test cases for the trash:
+	  scheme.
+
+2005-06-11	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in, Makefile.am, tests/: Import first test program for
 	  ThunarVfsURI validation.
 

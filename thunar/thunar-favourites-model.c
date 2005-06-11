@@ -641,7 +641,8 @@ thunar_favourites_model_save (ThunarFavouritesModel *model)
   for (favourite = model->favourites; favourite != NULL; favourite = favourite->next)
     if (favourite->name == NULL && favourite->file != NULL)
       {
-        uri = thunar_vfs_uri_to_string (thunar_file_get_uri (favourite->file));
+        uri = thunar_vfs_uri_to_string (thunar_file_get_uri (favourite->file),
+                                        THUNAR_VFS_URI_HIDE_HOST);
         fprintf (fp, "%s\n", uri);
         g_free (uri);
       }

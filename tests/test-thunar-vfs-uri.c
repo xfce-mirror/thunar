@@ -48,7 +48,7 @@ main (int argc, char **argv)
   g_assert (exo_str_is_equal (thunar_vfs_uri_get_name (a), "/"));
   g_assert (exo_str_is_equal (thunar_vfs_uri_get_path (a), "/"));
   g_assert (thunar_vfs_uri_parent (a) == NULL);
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a), "file:///"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a, THUNAR_VFS_URI_HIDE_HOST), "file:///"));
 
   /* verify that URI parsing works */
   a = thunar_vfs_uri_new_for_path ("/tmp");
@@ -61,8 +61,20 @@ main (int argc, char **argv)
   b = thunar_vfs_uri_relative (a, "bin");
   g_assert (!thunar_vfs_uri_equal (a, b));
   g_assert (thunar_vfs_uri_equal (a, thunar_vfs_uri_parent (b)));
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a), "file:///usr"));
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (b), "file:///usr/bin"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a, THUNAR_VFS_URI_HIDE_HOST), "file:///usr"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (b, THUNAR_VFS_URI_HIDE_HOST), "file:///usr/bin"));
+
+  /* verify that trash:// uris work */
+  a = thunar_vfs_uri_new ("trash:", NULL);
+  b = thunar_vfs_uri_new ("trash://", NULL);
+  g_assert (thunar_vfs_uri_equal (a, b));
+  a = thunar_vfs_uri_new ("trash:///", NULL);
+  g_assert (thunar_vfs_uri_equal (a, b));
+  b = thunar_vfs_uri_new ("trash:///file", NULL);
+  g_assert (!thunar_vfs_uri_equal (a, b));
+  b = thunar_vfs_uri_parent (b);
+  g_assert (thunar_vfs_uri_equal (a, b));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a, 0), "trash:///"));
 
   return EXIT_SUCCESS;
 }

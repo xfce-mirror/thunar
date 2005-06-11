@@ -35,34 +35,65 @@ typedef struct _ThunarVfsURI      ThunarVfsURI;
 #define THUNAR_VFS_IS_URI_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_URI))
 #define THUNAR_VFS_URI_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_URI, ThunarVfsURIClass))
 
-GType          thunar_vfs_uri_get_type          (void) G_GNUC_CONST;
+/**
+ * ThunarVfsURIHideOptions:
+ * @THUNAR_VFS_URI_HIDE_HOST : Hide the hostname from the URI string.
+ *
+ * Determines which parts of the uri should be hidden when
+ * requesting the string representation of a #ThunarVfsURI 
+ * object.
+ **/
+typedef enum
+{
+  THUNAR_VFS_URI_HIDE_HOST = 1 << 0,
+} ThunarVfsURIHideOptions;
 
-ThunarVfsURI  *thunar_vfs_uri_new               (const gchar  *identifier,
-                                                 GError      **error);
-ThunarVfsURI  *thunar_vfs_uri_new_for_path      (const gchar  *path);
+/**
+ * ThunarVfsURIScheme:
+ * @THUNAR_VFS_URI_SCHEME_FILE  : 'file://' uris
+ * @THUNAR_VFS_URI_SCHEME_TRASH : 'trash://' uris
+ *
+ * Currently supported URI types for #ThunarVfsURI.
+ **/
+typedef enum
+{
+  THUNAR_VFS_URI_SCHEME_FILE,
+  THUNAR_VFS_URI_SCHEME_TRASH,
+} ThunarVfsURIScheme;
 
-gboolean       thunar_vfs_uri_is_home           (ThunarVfsURI *uri);
-gboolean       thunar_vfs_uri_is_local          (ThunarVfsURI *uri);
-gboolean       thunar_vfs_uri_is_root           (ThunarVfsURI *uri);
+GType              thunar_vfs_uri_get_type          (void) G_GNUC_CONST;
 
-gchar         *thunar_vfs_uri_get_display_name  (ThunarVfsURI *uri);
-const gchar   *thunar_vfs_uri_get_name          (ThunarVfsURI *uri);
-const gchar   *thunar_vfs_uri_get_path          (ThunarVfsURI *uri);
+ThunarVfsURI      *thunar_vfs_uri_new               (const gchar            *identifier,
+                                                     GError                **error);
+ThunarVfsURI      *thunar_vfs_uri_new_for_path      (const gchar            *path);
 
-ThunarVfsURI  *thunar_vfs_uri_parent            (ThunarVfsURI *uri);
-ThunarVfsURI  *thunar_vfs_uri_relative          (ThunarVfsURI *uri,
-                                                 const gchar  *name);
+gboolean           thunar_vfs_uri_is_home           (ThunarVfsURI           *uri);
+gboolean           thunar_vfs_uri_is_local          (ThunarVfsURI           *uri);
+gboolean           thunar_vfs_uri_is_root           (ThunarVfsURI           *uri);
 
-gchar         *thunar_vfs_uri_to_string         (ThunarVfsURI *uri);
+gchar             *thunar_vfs_uri_get_display_name  (ThunarVfsURI           *uri);
+const gchar       *thunar_vfs_uri_get_host          (ThunarVfsURI           *uri);
+const gchar       *thunar_vfs_uri_get_name          (ThunarVfsURI           *uri);
+const gchar       *thunar_vfs_uri_get_path          (ThunarVfsURI           *uri);
+ThunarVfsURIScheme thunar_vfs_uri_get_scheme        (ThunarVfsURI           *uri);
 
-guint          thunar_vfs_uri_hash              (gconstpointer uri);
-gboolean       thunar_vfs_uri_equal             (gconstpointer a,
-                                                 gconstpointer b);
+ThunarVfsURI      *thunar_vfs_uri_parent            (ThunarVfsURI           *uri);
+ThunarVfsURI      *thunar_vfs_uri_relative          (ThunarVfsURI           *uri,
+                                                     const gchar            *name);
 
-GList         *thunar_vfs_uri_list_from_string  (const gchar  *string,
-                                                 GError      **error);
-gchar         *thunar_vfs_uri_list_to_string    (GList        *uri_list);
-void           thunar_vfs_uri_list_free         (GList        *uri_list);
+gchar             *thunar_vfs_uri_to_string         (ThunarVfsURI           *uri,
+                                                     ThunarVfsURIHideOptions hide_options);
+
+guint              thunar_vfs_uri_hash              (gconstpointer           uri);
+gboolean           thunar_vfs_uri_equal             (gconstpointer           a,
+                                                     gconstpointer           b);
+
+
+GList             *thunar_vfs_uri_list_from_string  (const gchar            *string,
+                                                     GError                **error);
+gchar             *thunar_vfs_uri_list_to_string    (GList                  *uri_list,
+                                                     ThunarVfsURIHideOptions hide_options);
+void               thunar_vfs_uri_list_free         (GList                  *uri_list);
 
 #define thunar_vfs_uri_list_append(uri_list, uri) \
   g_list_append ((uri_list), g_object_ref (G_OBJECT ((uri))))

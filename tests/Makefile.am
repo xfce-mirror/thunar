@@ -22,4 +22,7 @@ test_thunar_vfs_uri_DEPENDENCIES =					\
 test_thunar_vfs_uri_LDADD =						\
 	$(top_builddir)/thunar-vfs/libthunar-vfs.la
 
+clean-local:
+	rm -f *.core core core.*
+
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
