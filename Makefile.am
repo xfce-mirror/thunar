@@ -3,7 +3,8 @@
 SUBDIRS =								\
 	docs								\
 	thunar-vfs							\
-	thunar
+	thunar								\
+	tests
 
 AUTOMAKE_OPTIONS =							\
 	1.8								\
