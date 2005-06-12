@@ -1,3 +1,25 @@
+2005-06-12	Benedikt Meurer <benny@xfce.org>
+
+	* docs/design/overview.xmi: Refined the basic ideas for the volume
+	  manager, which will provide core functionality required by the
+	  trash system. The ThunarVfsVolume and ThunarVfsVolumeManager concepts
+	  are interfaces now, which will be implemented by the backend (usually
+	  one backend per operating system family).
+	* tests/data/test-thunar-vfs-volume-bsd.fstab, tests/data/Makefile.am,
+	  tests/test-thunar-vfs-volume-bsd.c, tests/Makefile.am: Add test case
+	  for the BSD specific implementation of the ThunarVfsVolumeManager
+	  module.
+	* tests/test-thunar-vfs-uri.c: Fix copyright and includes.
+	* TODO: Add item about possible improvements of the BSD specific
+	  volume manager implementation.
+	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs.h, configure.in.in: Add
+	  new classes and interfaces to the build framework.
+	* thunar-vfs/thunar-vfs-volume.{c,h}: Import the basic interfaces to
+	  the volume manager module, with a minimum set of methods and signals,
+	  which will be extended later.
+	* thunar-vfs/thunar-vfs-volume-bsd.{c,h}: Add first try of an
+	  implementation of the the volume manager interfaces for BSD systems.
+
 2005-06-11	Benedikt Meurer <benny@xfce.org>
 
 	* docs/design/overview.xmi: Extend the ThunarVfsURI functionality.

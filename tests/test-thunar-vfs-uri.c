@@ -1,8 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 os-cillation e.K.
- *
- * Written by Benedikt Meurer <benny@xfce.org>.
+ * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -27,9 +25,7 @@
 #include <stdlib.h>
 #endif
 
-#include <exo/exo.h>
-
-#include <thunar-vfs/thunar-vfs-uri.h>
+#include <thunar-vfs/thunar-vfs.h>
 
 
 
