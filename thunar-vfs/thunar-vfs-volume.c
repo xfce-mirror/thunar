@@ -30,7 +30,20 @@
 
 
 
+enum
+{
+  THUNAR_VFS_VOLUME_CHANGED,
+  THUNAR_VFS_VOLUME_LAST_SIGNAL,
+};
+
+
+
+static void thunar_vfs_volume_base_init  (gpointer klass);
 static void thunar_vfs_volume_class_init (gpointer klass);
+
+
+
+static guint volume_signals[THUNAR_VFS_VOLUME_CHANGED];
 
 
 
@@ -44,7 +57,7 @@ thunar_vfs_volume_get_type (void)
       static const GTypeInfo info =
       {
         sizeof (ThunarVfsVolumeIface),
-        NULL,
+        (GBaseInitFunc) thunar_vfs_volume_base_init,
         NULL,
         (GClassInitFunc) thunar_vfs_volume_class_init,
         NULL,
@@ -67,6 +80,34 @@ thunar_vfs_volume_get_type (void)
 
 
 static void
+thunar_vfs_volume_base_init (gpointer klass)
+{
+  static gboolean initialized = FALSE;
+
+  if (G_UNLIKELY (!initialized))
+    {
+      /**
+       * ThunarVfsVolume::changed:
+       * @volume : the #ThunarVfsVolume instance.
+       *
+       * Emitted whenever the state of @volume changed.
+       **/
+      volume_signals[THUNAR_VFS_VOLUME_CHANGED] =
+        g_signal_new ("changed",
+                      G_TYPE_FROM_INTERFACE (klass),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (ThunarVfsVolumeIface, changed),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__VOID,
+                      G_TYPE_NONE, 0);
+
+      initialized = TRUE;
+    }
+}
+
+
+
+static void
 thunar_vfs_volume_class_init (gpointer klass)
 {
   /**
@@ -83,6 +124,32 @@ thunar_vfs_volume_class_init (gpointer klass)
                                                           G_PARAM_READABLE));
 
   /**
+   * ThunarVfsVolume:name:
+   *
+   * The name of the volume, which is usually the device name or
+   * the label of the medium.
+   **/
+  g_object_interface_install_property (klass,
+                                       g_param_spec_string ("name",
+                                                           _("Name"),
+                                                           _("The name of the volume"),
+                                                           NULL,
+                                                           G_PARAM_READABLE));
+
+  /**
+   * ThunarVfsVolume:status:
+   *
+   * The status of the volume, for example, whether or not a medium
+   * is currently present.
+   **/
+  g_object_interface_install_property (klass,
+                                       g_param_spec_flags ("status",
+                                                           _("Status"),
+                                                           _("The status of the volume"),
+                                                           THUNAR_VFS_TYPE_VFS_VOLUME_STATUS,
+                                                           0, G_PARAM_READABLE));
+
+  /**
    * ThunarVfsVolume:mount-point:
    *
    * The path in the file system where this volume is mounted
@@ -94,19 +161,6 @@ thunar_vfs_volume_class_init (gpointer klass)
                                                             _("The mount point of the volume"),
                                                             THUNAR_VFS_TYPE_URI,
                                                             G_PARAM_READABLE));
-
-  /**
-   * ThunarVfsVolume:mount-status:
-   *
-   * Indicates whether or not, this volume is currently mounted
-   * by the kernel.
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_boolean ("mount-status",
-                                                             _("Mount status"),
-                                                             _("The mount status of the volume"),
-                                                             FALSE,
-                                                             G_PARAM_READABLE));
 }
 
 
@@ -129,6 +183,44 @@ thunar_vfs_volume_get_kind (ThunarVfsVolume *volume)
 
 
 /**
+ * thunar_vfs_volume_get_name;
+ * @volume : a #ThunarVfsVolume instance.
+ *
+ * Returns the name of the @volume. This is usually the
+ * name of the device or the label of the medium, if a
+ * medium is present.
+ *
+ * Return value: the name of @volume.
+ **/
+const gchar*
+thunar_vfs_volume_get_name (ThunarVfsVolume *volume)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), NULL);
+  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_name (volume);
+}
+
+
+
+/**
+ * thunar_vfs_volume_get_status:
+ * @volume : a #ThunarVfsVolume instance.
+ *
+ * Determines the current status of the @volume, e.g. whether
+ * or not the @volume is currently mounted, or whether a
+ * medium is present.
+ *
+ * Return value: the status for @volume.
+ **/
+ThunarVfsVolumeStatus
+thunar_vfs_volume_get_status (ThunarVfsVolume *volume)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), 0);
+  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status (volume);
+}
+
+
+
+/**
  * thunar_vfs_volume_get_mount_point:
  * @volume : a #ThunarVfsVolume instance.
  *
@@ -146,19 +238,143 @@ thunar_vfs_volume_get_mount_point (ThunarVfsVolume *volume)
 
 
 /**
- * thunar_vfs_volume_get_mount_status:
+ * thunar_vfs_volume_is_mounted:
  * @volume : a #ThunarVfsVolume instance.
  *
- * Determines whether the @volume is currently mounted
- * or not.
+ * Determines whether @volume is currently mounted into the
+ * filesystem hierarchy.
  *
  * Return value: %TRUE if @volume is mounted, else %FALSE.
  **/
 gboolean
-thunar_vfs_volume_get_mount_status (ThunarVfsVolume *volume)
+thunar_vfs_volume_is_mounted (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
-  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_mount_status (volume);
+  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status (volume) & THUNAR_VFS_VOLUME_STATUS_MOUNTED;
+}
+
+
+
+/**
+ * thunar_vfs_volume_is_present:
+ * @volume : a #ThunarVfsVolume instance.
+ *
+ * Determines whether a medium is currently inserted for
+ * @volume, e.g. for a CD-ROM drive, this will be %TRUE
+ * only if a disc is present in the slot.
+ *
+ * Return value: %TRUE if @volume is present, else %FALSE.
+ **/
+gboolean
+thunar_vfs_volume_is_present (ThunarVfsVolume *volume)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status (volume) & THUNAR_VFS_VOLUME_STATUS_PRESENT;
+}
+
+
+
+/**
+ * thunar_vfs_volume_is_removable:
+ * @volume : a #ThunarVfsVolume instance.
+ *
+ * Determines whether @volume is a removable device, for example
+ * a CD-ROM or a floppy drive.
+ *
+ * Return value: %TRUE if @volume is a removable device, else %FALSE.
+ **/
+gboolean
+thunar_vfs_volume_is_removable (ThunarVfsVolume *volume)
+{
+  ThunarVfsVolumeKind kind;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+
+  kind = thunar_vfs_volume_get_kind (volume);
+
+  switch (kind)
+    {
+    case THUNAR_VFS_VOLUME_KIND_CDROM:
+    case THUNAR_VFS_VOLUME_KIND_FLOPPY:
+      return TRUE;
+
+    case THUNAR_VFS_VOLUME_KIND_UNKNOWN:
+    case THUNAR_VFS_VOLUME_KIND_HARDDISK:
+      return FALSE;
+
+    default:
+      g_assert_not_reached ();
+      return FALSE;
+    }
+}
+
+
+
+/**
+ * thunar_vfs_volume_lookup_icon:
+ * @volume     : a #ThunarVfsVolume instance.
+ * @icon_theme : a #GtkIconTheme instance.
+ * @size       : the size of the icon in pixels.
+ * @flags      : the icon theme lookup flags.
+ *
+ * Tries to find a suitable icon for @volume in the given @icon_theme. If
+ * no suitable icon can be found, %NULL will be returned instead.
+ *
+ * Call #gtk_icon_info_free() on the returned icon info object when you
+ * are done with it.
+ *
+ * Return value: a #GtkIconInfo or %NULL.
+ **/
+GtkIconInfo*
+thunar_vfs_volume_lookup_icon (ThunarVfsVolume   *volume,
+                               GtkIconTheme      *icon_theme,
+                               gint               size,
+                               GtkIconLookupFlags flags)
+{
+  ThunarVfsVolumeKind kind;
+  GtkIconInfo        *icon_info;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), NULL);
+  g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
+  g_return_val_if_fail (size > 0, NULL);
+
+  kind = thunar_vfs_volume_get_kind (volume);
+  switch (kind)
+    {
+    case THUNAR_VFS_VOLUME_KIND_CDROM:
+      icon_info = gtk_icon_theme_lookup_icon (icon_theme, "gnome-dev-cdrom", size, flags);
+      if (icon_info != NULL)
+        return icon_info;
+      break;
+
+    case THUNAR_VFS_VOLUME_KIND_FLOPPY:
+      icon_info = gtk_icon_theme_lookup_icon (icon_theme, "gnome-dev-floppy", size, flags);
+      if (icon_info != NULL)
+        return icon_info;
+      break;
+
+    default:
+      break;
+    }
+
+  return gtk_icon_theme_lookup_icon (icon_theme, "gnome-fs-blockdev", size, flags);
+}
+
+
+
+/**
+ * thunar_vfs_volume_changed:
+ * @volume : a #ThunarVfsVolume instance.
+ *
+ * Emits the "changed" signal on @volume. This function should
+ * only be used by implementations of the #ThunarVfsVolume
+ * interface.
+ **/
+void
+thunar_vfs_volume_changed (ThunarVfsVolume *volume)
+{
+  g_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  g_signal_emit (G_OBJECT (volume), volume_signals[THUNAR_VFS_VOLUME_CHANGED], 0);
 }
 
 
@@ -166,9 +382,9 @@ thunar_vfs_volume_get_mount_status (ThunarVfsVolume *volume)
 
 enum
 {
-  VOLUMES_ADDED,
-  VOLUMES_REMOVED,
-  LAST_SIGNAL,
+  THUNAR_VFS_VOLUME_MANAGER_VOLUMES_ADDED,
+  THUNAR_VFS_VOLUME_MANAGER_VOLUMES_REMOVED,
+  THUNAR_VFS_VOLUME_MANAGER_LAST_SIGNAL,
 };
 
 
@@ -177,7 +393,7 @@ static void thunar_vfs_volume_manager_base_init  (gpointer klass);
 
 
 
-static guint manager_signals[LAST_SIGNAL];
+static guint manager_signals[THUNAR_VFS_VOLUME_MANAGER_LAST_SIGNAL];
 
 
 
@@ -234,7 +450,7 @@ thunar_vfs_volume_manager_base_init (gpointer klass)
        * method when a volume is mounted, as that's a completely
        * different condition!
        **/
-      manager_signals[VOLUMES_ADDED] =
+      manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_ADDED] =
         g_signal_new ("volumes-added",
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
@@ -251,7 +467,7 @@ thunar_vfs_volume_manager_base_init (gpointer klass)
        * Invoked whenever the @manager notices that @volumes have
        * been detached from the system.
        **/
-      manager_signals[VOLUMES_REMOVED] =
+      manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_REMOVED] =
         g_signal_new ("volumes-removed",
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
@@ -336,7 +552,7 @@ thunar_vfs_volume_manager_volumes_added (ThunarVfsVolumeManager *manager,
 {
   g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager));
   g_return_if_fail (g_list_length (volumes) > 0);
-  g_signal_emit (G_OBJECT (manager), manager_signals[VOLUMES_ADDED], 0, volumes);
+  g_signal_emit (G_OBJECT (manager), manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_ADDED], 0, volumes);
 }
 
 
@@ -358,7 +574,7 @@ thunar_vfs_volume_manager_volumes_removed (ThunarVfsVolumeManager *manager,
 {
   g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager));
   g_return_if_fail (g_list_length (volumes) > 0);
-  g_signal_emit (G_OBJECT (manager), manager_signals[VOLUMES_REMOVED], 0, volumes);
+  g_signal_emit (G_OBJECT (manager), manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_REMOVED], 0, volumes);
 }
 
 

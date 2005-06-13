@@ -299,7 +299,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
       icon = thunar_file_load_icon (current_directory, 48);
       gtk_window_set_icon (GTK_WINDOW (window), icon);
       gtk_window_set_title (GTK_WINDOW (window),
-                            thunar_file_get_display_name (current_directory));
+                            thunar_file_get_special_name (current_directory));
       g_object_unref (G_OBJECT (icon));
     }
 

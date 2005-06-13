@@ -62,6 +62,7 @@ ThunarFile    *thunar_file_get_parent       (ThunarFile     *file,
 
 const gchar   *thunar_file_get_display_name (ThunarFile     *file);
 ExoMimeInfo   *thunar_file_get_mime_info    (ThunarFile     *file);
+const gchar   *thunar_file_get_special_name (ThunarFile     *file);
 ThunarVfsURI  *thunar_file_get_uri          (ThunarFile     *file);
 
 gchar         *thunar_file_get_mode_string  (ThunarFile     *file);
@@ -72,12 +73,14 @@ gboolean       thunar_file_is_hidden        (ThunarFile     *file);
 GdkPixbuf     *thunar_file_load_icon        (ThunarFile     *file,
                                              gint            size);
 
-#define thunar_file_get_name(file)      (thunar_vfs_uri_get_name (THUNAR_FILE (file)->info.uri))
-#define thunar_file_get_mode(file)      (THUNAR_FILE (file)->info.mode)
-#define thunar_file_get_size(file)      (THUNAR_FILE (file)->info.size)
+#define thunar_file_get_name(file)      (thunar_vfs_uri_get_name (THUNAR_FILE ((file))->info.uri))
+#define thunar_file_get_mode(file)      (THUNAR_FILE ((file))->info.mode)
+#define thunar_file_get_size(file)      (THUNAR_FILE ((file))->info.size)
 
-#define thunar_file_is_directory(file)  (THUNAR_FILE (file)->info.type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
-#define thunar_file_is_symlink(file)    (THUNAR_FILE (file)->info.flags & THUNAR_VFS_FILE_FLAGS_SYMLINK)
+#define thunar_file_is_directory(file)  (THUNAR_FILE ((file))->info.type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+#define thunar_file_is_home(file)       (thunar_vfs_uri_is_home (THUNAR_FILE ((file))->info.uri))
+#define thunar_file_is_root(file)       (thunar_vfs_uri_is_root (THUNAR_FILE ((file))->info.uri))
+#define thunar_file_is_symlink(file)    (THUNAR_FILE ((file))->info.flags & THUNAR_VFS_FILE_FLAGS_SYMLINK)
 
 G_END_DECLS;
 

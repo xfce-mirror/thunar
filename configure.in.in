@@ -40,8 +40,9 @@ AC_PROG_INSTALL()
 AC_PROG_LIBTOOL()
 
 dnl Check for standard headers
-AC_CHECK_HEADERS([errno.h fstab.h memory.h stdlib.h string.h sys/mount.h \
-                  sys/stat.h sys/param.h time.h])
+AC_CHECK_HEADERS([errno.h fcntl.h fstab.h memory.h stdlib.h string.h \
+                  sys/cdio.h \
+                  sys/mount.h sys/stat.h sys/param.h time.h])
 
 dnl Check for required packages
 XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1])

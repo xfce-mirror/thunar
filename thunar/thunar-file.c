@@ -32,6 +32,7 @@ enum
   PROP_0,
   PROP_DISPLAY_NAME,
   PROP_MIME_INFO,
+  PROP_SPECIAL_NAME,
   PROP_URI,
 };
 
@@ -98,9 +99,25 @@ thunar_file_class_init (ThunarFileClass *klass)
                                                         G_PARAM_READABLE));
 
   /**
-   * ThunarFile:path:
+   * ThunarFile:special-name:
    *
-   * The absolute path to this file.
+   * A special for this file. This includes the special name for a file, if there's
+   * any. E.g. the special name for "/" is "Filesystem", and so on. If there's no
+   * special name for a given #ThunarFile, this property will include the same
+   * value as the "display-name" property, so it's safe to query this property.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SPECIAL_NAME,
+                                   g_param_spec_string ("special-name",
+                                                        _("Special file name"),
+                                                        _("The special name of this file"),
+                                                        NULL,
+                                                        G_PARAM_READABLE));
+
+  /**
+   * ThunarFile:uri:
+   *
+   * The absolute uri to this file.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_URI,
@@ -174,11 +191,15 @@ thunar_file_get_property  (GObject    *object,
   switch (prop_id)
     {
     case PROP_DISPLAY_NAME:
-      g_value_set_string (value, thunar_file_get_display_name (file));
+      g_value_set_static_string (value, thunar_file_get_display_name (file));
       break;
 
     case PROP_MIME_INFO:
       g_value_set_object (value, thunar_file_get_mime_info (file));
+      break;
+
+    case PROP_SPECIAL_NAME:
+      g_value_set_static_string (value, thunar_file_get_special_name (file));
       break;
 
     case PROP_URI:
@@ -342,6 +363,34 @@ thunar_file_get_mime_info (ThunarFile *file)
     file->mime_info = thunar_vfs_info_get_mime_info (&file->info);
 
   return file->mime_info;
+}
+
+
+
+/**
+ * thunar_file_get_special_name:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the special name for the @file, e.g. "Filesystem" for the #ThunarFile
+ * referring to "/" and so on. If there's no special name for this @file, the
+ * value of the "display-name" property will be returned instead.
+ *
+ * Return value: the special name of @file.
+ **/
+const gchar*
+thunar_file_get_special_name (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (thunar_vfs_uri_get_scheme (file->info.uri) == THUNAR_VFS_URI_SCHEME_FILE)
+    {
+      if (thunar_vfs_uri_is_root (file->info.uri))
+        return _("Filesystem");
+      else if (thunar_vfs_uri_is_home (file->info.uri))
+        return _("Home");
+    }
+
+  return thunar_file_get_display_name (file);
 }
 
 

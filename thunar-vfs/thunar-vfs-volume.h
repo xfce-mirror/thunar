@@ -21,6 +21,8 @@
 #ifndef __THUNAR_VFS_VOLUME_H__
 #define __THUNAR_VFS_VOLUME_H__
 
+#include <gtk/gtk.h>
+
 #include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
@@ -50,21 +52,50 @@ typedef enum
   THUNAR_VFS_VOLUME_KIND_HARDDISK,
 } ThunarVfsVolumeKind;
 
+/**
+ * ThunarVfsVolumeStatus:
+ * @THUNAR_VFS_VOLUME_STATUS_PRESENT : Whether or not a medium is present.
+ * @THUNAR_VFS_VOLUME_STATUS_MOUNTED : Whether or not the media is currently mounted.
+ *
+ * Describes the current status of a VFS volume.
+ **/
+typedef enum /*< flags >*/
+{
+  THUNAR_VFS_VOLUME_STATUS_MOUNTED = 1 << 0,
+  THUNAR_VFS_VOLUME_STATUS_PRESENT = 1 << 1,
+} ThunarVfsVolumeStatus;
+
 struct _ThunarVfsVolumeIface
 {
   GTypeInterface __parent__;
 
   /* methods */
-  ThunarVfsVolumeKind (*get_kind)         (ThunarVfsVolume *volume);
-  ThunarVfsURI       *(*get_mount_point)  (ThunarVfsVolume *volume);
-  gboolean            (*get_mount_status) (ThunarVfsVolume *volume);
+  ThunarVfsVolumeKind   (*get_kind)         (ThunarVfsVolume *volume);
+  const gchar          *(*get_name)         (ThunarVfsVolume *volume);
+  ThunarVfsVolumeStatus (*get_status)       (ThunarVfsVolume *volume);
+  ThunarVfsURI         *(*get_mount_point)  (ThunarVfsVolume *volume);
+
+  /* signals */
+  void (*changed) (ThunarVfsVolume *volume);
 };
 
-GType               thunar_vfs_volume_get_type          (void) G_GNUC_CONST;
+GType                 thunar_vfs_volume_get_type          (void) G_GNUC_CONST;
 
-ThunarVfsVolumeKind thunar_vfs_volume_get_kind          (ThunarVfsVolume *volume);
-ThunarVfsURI       *thunar_vfs_volume_get_mount_point   (ThunarVfsVolume *volume);
-gboolean            thunar_vfs_volume_get_mount_status  (ThunarVfsVolume *volume);
+ThunarVfsVolumeKind   thunar_vfs_volume_get_kind          (ThunarVfsVolume   *volume);
+const gchar          *thunar_vfs_volume_get_name          (ThunarVfsVolume   *volume);
+ThunarVfsVolumeStatus thunar_vfs_volume_get_status        (ThunarVfsVolume   *volume);
+ThunarVfsURI         *thunar_vfs_volume_get_mount_point   (ThunarVfsVolume   *volume);
+
+gboolean              thunar_vfs_volume_is_mounted        (ThunarVfsVolume   *volume);
+gboolean              thunar_vfs_volume_is_present        (ThunarVfsVolume   *volume);
+gboolean              thunar_vfs_volume_is_removable      (ThunarVfsVolume   *volume);
+
+GtkIconInfo          *thunar_vfs_volume_lookup_icon       (ThunarVfsVolume   *volume,
+                                                           GtkIconTheme      *icon_theme,
+                                                           gint               size,
+                                                           GtkIconLookupFlags flags);
+
+void                  thunar_vfs_volume_changed           (ThunarVfsVolume   *volume);
 
 
 typedef struct _ThunarVfsVolumeManagerIface ThunarVfsVolumeManagerIface;

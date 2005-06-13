@@ -1,3 +1,26 @@
+2005-06-13	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Add header checks required for the BSD volume
+	  manager implementation.
+	* thunar/thunar-window.c: Display the current folder's special name.
+	* thunar/thunar-file.{c,h}: Add property "special-name", which contains
+	  the special name of a given file if any, else it contains the same
+	  value as the "display-name" property.
+	* thunar/thunar-location-buttons.c: Use the home directory as root.
+	  Don't display a label for the 'Filesystem' node, similar to how it
+	  is done with GtkFileChooser.
+	* thunar-vfs/thunar-vfs-volume.{c,h},
+	  thunar-vfs/thunar-vfs-volume-bsd.c: Try more advanced features, like
+	  detecting whether a medium is present for a given volume. This is
+	  currently just testing, based on what is provided by the BSD
+	  interface. The final design may look different, maybe even a
+	  D-BUS based thunar-volume-manager service, which can be run with
+	  special permissions in order to be able to query device stats and
+	  mount volumes.
+	* thunar/thunar-favourites-model.c: Use the new features provided by
+	  the volume manager to dynamically display volumes when a medium is
+	  inserted.
+
 2005-06-12	Benedikt Meurer <benny@xfce.org>
 
 	* docs/design/overview.xmi: Refined the basic ideas for the volume

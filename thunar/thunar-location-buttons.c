@@ -366,17 +366,21 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
       gtk_widget_push_composite_child ();
 
       /* add the new buttons */
-      for (file = current_directory; file != NULL; )
+      for (file = current_directory; file != NULL; file = file_parent)
         {
           button = thunar_location_buttons_make_button (buttons, file);
           buttons->list = g_list_append (buttons->list, button);
           gtk_container_add (GTK_CONTAINER (buttons), button);
           gtk_widget_show (button);
 
-          file_parent = thunar_file_get_parent (file, NULL);
+          /* we use 'Home' as possible root */
+          if (!thunar_file_is_home (file))
+            file_parent = thunar_file_get_parent (file, NULL);
+          else 
+            file_parent = NULL;
+
           if (G_LIKELY (file != current_directory))
             g_object_unref (G_OBJECT (file));
-          file = file_parent;
         }
 
       gtk_widget_pop_composite_child ();
@@ -735,21 +739,24 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
   gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
   g_object_unref (G_OBJECT (icon));
 
-  label = gtk_label_new (thunar_file_get_display_name (file));
-  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
-  gtk_widget_show (label);
-
-  /* current directory gets special appearance */
-  if (file == buttons->current_directory)
+  if (!thunar_file_is_root (file))
     {
-      /* the current directory is toggled */
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
+      /* only non-root nodes have a label */
+      label = gtk_label_new (thunar_file_get_special_name (file));
+      gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+      gtk_widget_show (label);
 
-      /* use bold label */
-      markup = g_markup_printf_escaped ("<b>%s</b>", thunar_file_get_display_name (file));
-      gtk_label_set_markup (GTK_LABEL (label), markup);
-      g_free (markup);
+      /* current directory gets a bold label */
+      if (file == buttons->current_directory)
+        {
+          markup = g_markup_printf_escaped ("<b>%s</b>", thunar_file_get_special_name (file));
+          gtk_label_set_markup (GTK_LABEL (label), markup);
+          g_free (markup);
+        }
     }
+
+  /* the current directory is toggled */
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), (file == buttons->current_directory));
 
   /* take a reference on the ThunarFile for the button */
   g_object_set_qdata_full (G_OBJECT (button), thunar_file_quark, file, g_object_unref);
