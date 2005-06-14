@@ -26,7 +26,6 @@
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-volume.h>
-#include <thunar-vfs/thunar-vfs-volume-bsd.h>
 
 
 
@@ -499,11 +498,12 @@ thunar_vfs_volume_manager_base_init (gpointer klass)
 ThunarVfsVolumeManager*
 thunar_vfs_volume_manager_get_default (void)
 {
+  extern GType _thunar_vfs_volume_manager_impl_get_type (void);
   static ThunarVfsVolumeManager *manager = NULL;
 
   if (G_UNLIKELY (manager == NULL))
     {
-      manager = g_object_new (THUNAR_VFS_TYPE_VOLUME_MANAGER_BSD, NULL);
+      manager = g_object_new (_thunar_vfs_volume_manager_impl_get_type (), NULL);
       g_object_add_weak_pointer (G_OBJECT (manager), (gpointer) &manager);
     }
   else

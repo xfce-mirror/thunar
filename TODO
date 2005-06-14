@@ -1,6 +1,9 @@
 Important for Thunar 1.0
 ========================
 
+ - Use better way to handle system flavours than simply (mis)using
+   AC_CONFIG_LINKS(), which is pretty messy for this purpose.
+
  - Check getmntinfo() or getfsstat() for ThunarVfsVolumeManagerBSD, which
    might be faster than several statfs() calls.
 
@@ -64,5 +67,3 @@ Important for Thunar 1.0
    the stat-thread. Backend technologies must be thread-safe. If
    there's a lot of time or manpower in the end, additional
    backends can be added, as long as they fit into the framework.
-
- - The ThunarFavourites framework needs drag and drop support.

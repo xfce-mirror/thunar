@@ -19,7 +19,6 @@ libthunar_vfs_headers =							\
 	thunar-vfs-util.h						\
 	thunar-vfs-uri.h						\
 	thunar-vfs-volume.h						\
-	thunar-vfs-volume-bsd.h						\
 	thunar-vfs.h
 
 libthunar_vfs_la_SOURCES =						\
@@ -30,7 +29,8 @@ libthunar_vfs_la_SOURCES =						\
 	thunar-vfs-util.c						\
 	thunar-vfs-uri.c						\
 	thunar-vfs-volume.c						\
-	thunar-vfs-volume-bsd.c
+	thunar-vfs-volume-impl.c					\
+	thunar-vfs-volume-impl.h
 
 libthunar_vfs_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
@@ -40,6 +40,12 @@ libthunar_vfs_la_LDFLAGS =						\
 	-no-undefined							\
 	$(EXO_LIBS)							\
 	$(GTHREADS_LIBS)
+
+EXTRA_DIST =								\
+	thunar-vfs-volume-bsd.c						\
+	thunar-vfs-volume-bsd.h						\
+	thunar-vfs-volume-sysv.c					\
+	thunar-vfs-volume-sysv.h
 
 ##
 ## Rules to auto-generate built sources

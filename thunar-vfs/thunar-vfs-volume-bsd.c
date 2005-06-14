@@ -432,3 +432,12 @@ thunar_vfs_volume_manager_bsd_get_volumes (ThunarVfsVolumeManager *manager)
 }
 
 
+
+GType
+_thunar_vfs_volume_manager_impl_get_type (void)
+{
+  return THUNAR_VFS_TYPE_VOLUME_MANAGER_BSD;
+}
+
+
+
