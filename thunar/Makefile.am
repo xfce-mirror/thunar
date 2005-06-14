@@ -15,6 +15,8 @@ Thunar_SOURCES =							\
 	thunar-application.h						\
 	thunar-desktop-view.c						\
 	thunar-desktop-view.h						\
+	thunar-fallback-icon.c						\
+	thunar-fallback-icon.h						\
 	thunar-favourites-model.c					\
 	thunar-favourites-model.h					\
 	thunar-favourites-pane.c					\
@@ -25,6 +27,8 @@ Thunar_SOURCES =							\
 	thunar-file.h							\
 	thunar-folder.c							\
 	thunar-folder.h							\
+	thunar-icon-factory.c						\
+	thunar-icon-factory.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
 	thunar-list-model.c						\
@@ -69,8 +73,15 @@ install-data-local:
 clean-local:
 	rm -f *.core core core.*
 
+if MAINTAINER_MODE
+DISTCLEANFILES = thunar-fallback-icon.c
+BUILT_SOURCES = thunar-fallback-icon.c
+
+thunar-fallback-icon.c: $(srcdir)/thunar-fallback-icon.png Makefile
+	(echo "#include <thunar/thunar-fallback-icon.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_fallback_icon $(srcdir)/thunar-fallback-icon.png) > thunar-fallback-icon.c
+endif
+
 EXTRA_DIST =								\
-	fallback-icon.h							\
-	fallback-icon.png
+	thunar-fallback-icon.png
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

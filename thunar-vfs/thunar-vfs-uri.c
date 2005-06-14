@@ -236,7 +236,7 @@ ThunarVfsURI*
 thunar_vfs_uri_new_for_path (const gchar *path)
 {
   ThunarVfsURI *uri;
-  const gchar  *p;
+  gchar        *p;
 
   g_return_val_if_fail (path != NULL, NULL);
   g_return_val_if_fail (g_path_is_absolute (path), NULL);
@@ -246,10 +246,26 @@ thunar_vfs_uri_new_for_path (const gchar *path)
   uri->scheme = THUNAR_VFS_URI_SCHEME_FILE;
   uri->path = g_strdup (path);
 
+  /* walk to the end of the path */
+  for (p = uri->path; *p != '\0'; ++p)
+    ;
+
+  g_assert (*p == '\0');
+
+  /* strip trailing slashes */
+  for (--p; p > uri->path && *p == '/'; --p)
+    *p = '\0';
+
+  g_assert (*p != '\0');
+  g_assert (p >= uri->path);
+
   /* determine the basename of the path */
-  for (p = uri->name = uri->path; *p != '\0'; ++p)
-    if (p[0] == '/' && (p[1] != '/' && p[1] != '\0'))
-      uri->name = p + 1;
+  for (uri->name = uri->path; p > uri->path && *p != '/'; --p)
+    uri->name = p;
+
+  g_assert (p >= uri->path);
+  g_assert (uri->name >= uri->path);
+  g_assert (uri->name < uri->path + strlen (uri->path));
 
   return uri;
 }

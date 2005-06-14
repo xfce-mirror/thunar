@@ -1,3 +1,21 @@
+2005-06-14	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-uri.c(thunar_vfs_uri_new_for_path): Add some
+	  code to automatically remove trailing slashes from path names, which
+	  would otherwise confuse the whole file manager.
+	* thunar/thunar-fallback-icon.{h,png}, thunar/Makefile.am: The fallback
+	  icon is now stored in a C file and automatically generated at compile
+	  time if maintainer mode is enabled, while dist tarballs will ship the
+	  generated C file.
+	* thunar/thunar-icon-factory.{c,h}: Add new class ThunarIconFactory,
+	  which provides caching of themed icons. The basic concept is based
+	  on the NautilusIconFactory class, but the implementation is simpler
+	  and faster than the implementation found in Nautilus.
+	* thunar/thunar-file.c: Use the new ThunarIconFactory class and the
+	  new exo_mime_info_lookup_icon_name() method to lookup and cache icons
+	  for files. This speeds up folder loading quite a lot.
+	* docs/design/overview.xmi: Add ThunarIconFactory diagram.
+
 2005-06-13	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in: Add header checks required for the BSD volume

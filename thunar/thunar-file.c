@@ -22,8 +22,7 @@
 #endif
 
 #include <thunar/thunar-file.h>
-
-#include "fallback-icon.h"
+#include <thunar/thunar-icon-factory.h>
 
 
 
@@ -521,51 +520,31 @@ GdkPixbuf*
 thunar_file_load_icon (ThunarFile *file,
                        gint        size)
 {
-  GtkIconTheme *icon_theme;
-  GtkIconInfo  *icon_info;
-  ExoMimeInfo  *mime_info;
-  GdkPixbuf    *icon = NULL;
-  GdkPixbuf    *tmp;
+  ThunarIconFactory *icon_factory;
+  GtkIconTheme      *icon_theme;
+  ExoMimeInfo       *mime_info;
+  const gchar       *icon_name;
+  GdkPixbuf         *icon = NULL;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  icon_theme = gtk_icon_theme_get_default ();
+  icon_factory = thunar_icon_factory_get_default ();
 
   /* special icon for the root node */
-  if (thunar_vfs_uri_is_root (file->info.uri))
-    {
-      icon = gtk_icon_theme_load_icon (icon_theme, "gnome-dev-harddisk",
-                                       size, 0, NULL);
-      if (G_LIKELY (icon != NULL))
-        return icon;
-    }
+  if (G_UNLIKELY (thunar_vfs_uri_is_root (file->info.uri)))
+    icon = thunar_icon_factory_load_icon (icon_factory, "gnome-dev-harddisk", size, NULL, FALSE);
 
   /* special icon for the home node */
-  if (thunar_vfs_uri_is_home (file->info.uri))
-    {
-      icon = gtk_icon_theme_load_icon (icon_theme, "gnome-fs-home",
-                                       size, 0, NULL);
-      if (G_LIKELY (icon != NULL))
-        return icon;
-    }
+  if (G_UNLIKELY (icon == NULL && thunar_vfs_uri_is_home (file->info.uri)))
+    icon = thunar_icon_factory_load_icon (icon_factory, "gnome-fs-home", size, NULL, FALSE);
 
-  mime_info = thunar_file_get_mime_info (file);
-  if (G_LIKELY (mime_info != NULL))
+  /* use the icon for the given MIME type */
+  if (icon == NULL)
     {
-      icon_info = exo_mime_info_lookup_icon (mime_info, icon_theme, size, 0);
-      if (G_LIKELY (icon_info != NULL))
-        {
-          icon = gtk_icon_info_load_icon (icon_info, NULL);
-          gtk_icon_info_free (icon_info);
-        }
-    }
-
-  if (G_UNLIKELY (icon == NULL))
-    {
-      tmp = gdk_pixbuf_new_from_inline (sizeof (fallback_icon),
-                                        fallback_icon, FALSE, NULL);
-      icon = exo_gdk_pixbuf_scale_ratio (tmp, size);
-      g_object_unref (G_OBJECT (tmp));
+      mime_info = thunar_file_get_mime_info (file);
+      icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
+      icon_name = exo_mime_info_lookup_icon_name (mime_info, icon_theme);
+      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);
     }
 
   return icon;
