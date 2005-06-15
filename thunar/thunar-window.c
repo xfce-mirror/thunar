@@ -303,8 +303,17 @@ thunar_window_set_current_directory (ThunarWindow *window,
       g_object_unref (G_OBJECT (icon));
     }
 
-  /* setup the folder for the view */
+  /* setup the folder for the view, we use a simple but very effective
+   * trick here to speed up the folder change: we completely disconnect
+   * the model from the view, load the folder into the model and afterwards
+   * reconnect the model with the view. This way we avoid having to fire
+   * and process thousands of row_removed() and row_inserted() signals.
+   * Instead the view can process the complete file list in the model
+   * ONCE.
+   */
   model = thunar_view_get_list_model (THUNAR_VIEW (window->view));
+  g_object_ref (G_OBJECT (model));
+  thunar_view_set_list_model (THUNAR_VIEW (window->view), NULL);
   if (G_LIKELY (current_directory != NULL))
     {
       /* try to open the directory */
@@ -342,6 +351,8 @@ thunar_window_set_current_directory (ThunarWindow *window,
       /* just reset the folder, so nothing is displayed */
       thunar_list_model_set_folder (model, NULL);
     }
+  thunar_view_set_list_model (THUNAR_VIEW (window->view), model);
+  g_object_unref (G_OBJECT (model));
 
   /* tell everybody that we have a new "current-directory" */
   g_object_notify (G_OBJECT (window), "current-directory");

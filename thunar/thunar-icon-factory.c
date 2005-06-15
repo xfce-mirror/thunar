@@ -106,8 +106,8 @@ struct _ThunarIconFactory
 {
   GObject __parent__;
 
-  GdkPixbuf       *recently[MAX_RECENTLY];
-  guint            n_recently;
+  GdkPixbuf       *recently[MAX_RECENTLY];  /* ring buffer */
+  guint            recently_pos;            /* insert position */
 
   GHashTable      *icon_cache;
 
@@ -236,8 +236,9 @@ thunar_icon_factory_finalize (GObject *object)
   g_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
 
   /* clear the recently used list */
-  for (n = 0; n < factory->n_recently; ++n)
-    g_object_unref (G_OBJECT (factory->recently[n]));
+  for (n = 0; n < MAX_RECENTLY; ++n)
+    if (G_LIKELY (factory->recently[n] != NULL))
+      g_object_unref (G_OBJECT (factory->recently[n]));
 
   /* clear the icon cache hash table */
   g_hash_table_destroy (factory->icon_cache);
@@ -318,9 +319,12 @@ thunar_icon_factory_changed (GtkIconTheme      *icon_theme,
   guint n;
 
   /* drop all items from the recently used list */
-  for (n = 0; n < factory->n_recently; ++n)
-    g_object_unref (G_OBJECT (factory->recently[n]));
-  factory->n_recently = 0;
+  for (n = 0; n < MAX_RECENTLY; ++n)
+    if (G_LIKELY (factory->recently[n] != NULL))
+      {
+        g_object_unref (G_OBJECT (factory->recently[n]));
+        factory->recently[n] = NULL;
+      }
 
   /* drop all items from the icon cache */
   g_hash_table_foreach_remove (factory->icon_cache, (GHRFunc)gtk_true, NULL);
@@ -483,24 +487,22 @@ thunar_icon_factory_mark_recently_used (ThunarIconFactory *factory,
   g_return_if_fail (GDK_IS_PIXBUF (pixbuf));
 
   /* check if the icon is already on the list */
-  for (n = 0; n < factory->n_recently; ++n)
+  for (n = 0; n < MAX_RECENTLY; ++n)
     if (G_UNLIKELY (factory->recently[n] == pixbuf))
       return;
 
-  /* prepend it to the list of recently used icons */
-  if (factory->n_recently == MAX_RECENTLY)
-    {
-      /* drop the oldest icon from the recently used list */
-      g_object_unref (G_OBJECT (factory->recently[MAX_RECENTLY - 1]));
-    }
-  else
-    {
-      ++factory->n_recently;
-    }
-  // FIXME: better use a ring-buffer than memmove()'ing all the time
-  memmove (factory->recently + 1, factory->recently, (factory->n_recently - 1) * sizeof (GdkPixbuf *));
+  /* ditch the previous item on the current insert position,
+   * which - if present - is the oldest item in the list.
+   */
+  if (G_LIKELY (factory->recently[factory->recently_pos] != NULL))
+    g_object_unref (G_OBJECT (factory->recently[factory->recently_pos]));
+
+  /* insert the new pixbuf into the list */
+  factory->recently[factory->recently_pos] = pixbuf;
   g_object_ref (G_OBJECT (pixbuf));
-  factory->recently[0] = pixbuf;
+
+  /* advance the insert position */
+  factory->recently_pos = (factory->recently_pos + 1) % MAX_RECENTLY;
 
   /* schedule the sweeper */
   if (factory->sweep_timer_id < 0)

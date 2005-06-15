@@ -1,3 +1,12 @@
+2005-06-15	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-icon-factory.c: Implement the recently used list using
+	  a circular buffer. This saves us from having to memmove() the list
+	  content on every icon lookup.
+	* thunar/thunar-window.c(thunar_window_set_current_directory): Use
+	  a simple optimization when loading new folders into a view. See the
+	  code comments for details about the trick.
+
 2005-06-14	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in: Depend on GLib 2.6 for now.
