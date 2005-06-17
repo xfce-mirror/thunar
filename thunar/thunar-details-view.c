@@ -92,6 +92,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* first column (icon, name) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
+                         "expand", TRUE,
                          "reorderable", TRUE,
                          "resizable", TRUE,
                          "title", _("Name"),
@@ -101,8 +102,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "pixbuf", THUNAR_LIST_MODEL_COLUMN_ICON_SMALL,
                                        NULL);
-  renderer = gtk_cell_renderer_text_new ();
-  gtk_tree_view_column_pack_start (column, renderer, FALSE);
+  renderer = g_object_new (EXO_TYPE_CELL_RENDERER_ELLIPSIZED_TEXT,
+                           "ellipsize", EXO_PANGO_ELLIPSIZE_END,
+                           "ellipsize-set", TRUE,
+                           NULL);
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_LIST_MODEL_COLUMN_NAME,
                                        NULL);
