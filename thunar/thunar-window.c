@@ -38,17 +38,20 @@ enum
 
 
 
-static void thunar_window_class_init    (ThunarWindowClass  *klass);
-static void thunar_window_init          (ThunarWindow       *window);
-static void thunar_window_dispose       (GObject            *object);
-static void thunar_window_get_property  (GObject            *object,
-                                         guint               prop_id,
-                                         GValue             *value,
-                                         GParamSpec         *pspec);
-static void thunar_window_set_property  (GObject            *object,
-                                         guint               prop_id,
-                                         const GValue       *value,
-                                         GParamSpec         *pspec);
+static void thunar_window_class_init      (ThunarWindowClass  *klass);
+static void thunar_window_init            (ThunarWindow       *window);
+static void thunar_window_dispose         (GObject            *object);
+static void thunar_window_get_property    (GObject            *object,
+                                           guint               prop_id,
+                                           GValue             *value,
+                                           GParamSpec         *pspec);
+static void thunar_window_set_property    (GObject            *object,
+                                           guint               prop_id,
+                                           const GValue       *value,
+                                           GParamSpec         *pspec);
+static void thunar_window_file_activated  (ThunarView         *view,
+                                           ThunarFile         *file,
+                                           ThunarWindow       *window);
 
 
 
@@ -152,18 +155,18 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_show (swin);
 
   window->view = thunar_icon_view_new ();
-  g_signal_connect_swapped (G_OBJECT (window->view), "change-directory",
-                            G_CALLBACK (thunar_window_set_current_directory), window);
+  g_signal_connect (G_OBJECT (window->view), "file-activated",
+                    G_CALLBACK (thunar_window_file_activated), window);
   gtk_container_add (GTK_CONTAINER (swin), window->view);
   gtk_widget_show (window->view);
 
   model = thunar_list_model_new ();
-  thunar_view_set_list_model (THUNAR_VIEW (window->view), model);
+  thunar_view_set_model (THUNAR_VIEW (window->view), model);
   g_object_unref (G_OBJECT (model));
 
-  window->statusbar = thunar_statusbar_new ();
-  exo_binding_new (G_OBJECT (window->view), "statusbar-text",
-                   G_OBJECT (window->statusbar), "text");
+  window->statusbar = g_object_new (THUNAR_TYPE_STATUSBAR,
+                                    "view", window->view,
+                                    NULL);
   gtk_box_pack_start (GTK_BOX (vbox), window->statusbar, FALSE, FALSE, 0);
   gtk_widget_show (window->statusbar);
 }
@@ -220,6 +223,24 @@ thunar_window_set_property (GObject            *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_window_file_activated (ThunarView   *view,
+                              ThunarFile   *file,
+                              ThunarWindow *window)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* change directory if the user activated a file
+   * that refers to a directory.
+   */
+  if (thunar_file_is_directory (file))
+    thunar_window_set_current_directory (window, file);
 }
 
 
@@ -311,9 +332,9 @@ thunar_window_set_current_directory (ThunarWindow *window,
    * Instead the view can process the complete file list in the model
    * ONCE.
    */
-  model = thunar_view_get_list_model (THUNAR_VIEW (window->view));
+  model = thunar_view_get_model (THUNAR_VIEW (window->view));
   g_object_ref (G_OBJECT (model));
-  thunar_view_set_list_model (THUNAR_VIEW (window->view), NULL);
+  thunar_view_set_model (THUNAR_VIEW (window->view), NULL);
   if (G_LIKELY (current_directory != NULL))
     {
       /* try to open the directory */
@@ -351,7 +372,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
       /* just reset the folder, so nothing is displayed */
       thunar_list_model_set_folder (model, NULL);
     }
-  thunar_view_set_list_model (THUNAR_VIEW (window->view), model);
+  thunar_view_set_model (THUNAR_VIEW (window->view), model);
   g_object_unref (G_OBJECT (model));
 
   /* tell everybody that we have a new "current-directory" */

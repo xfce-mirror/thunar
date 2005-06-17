@@ -74,9 +74,6 @@ ThunarFile      *thunar_list_model_get_file             (ThunarListModel  *store
 
 gint             thunar_list_model_get_num_files        (ThunarListModel  *store);
 
-gchar           *thunar_list_model_get_statusbar_text   (ThunarListModel  *store,
-                                                         GList            *selected_items);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_LIST_MODEL_H__ */

@@ -1,3 +1,22 @@
+2005-06-17	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-view.{c,h}: Adjust the interface for views to be more
+	  like the FilerView interface, which makes things slightly easier and
+	  adds more flexibility for the statusbar. Also the "list-model"
+	  property is now named "model", which is the easiest way for both
+	  ExoIconView and GtkTreeView, and it's safe to name it that way, as
+	  the ThunarView interface is the only way to change models anyways.
+	* thunar/thunar-list-model.{c,h}: Drop the statusbar text generator.
+	  It's now handled completely within the ThunarStatusbar class, which
+	  provides more flexibility.
+	* thunar/thunar-statusbar.{c,h}: Each statusbar instance is now
+	  associated with a ThunarView instance and automatically updates the
+	  status text according to the view.
+	* thunar/thunar-icon-view.c: Implement modified ThunarView interface,
+	  which makes things very easy here for now.
+	* thunar/thunar-window.c: Catch up with the changes to the other
+	  classes.
+
 2005-06-15	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-icon-factory.c: Implement the recently used list using

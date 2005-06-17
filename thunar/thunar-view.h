@@ -37,26 +37,27 @@ struct _ThunarViewIface
   GTypeInterface __parent__;
 
   /* methods */
-  ThunarListModel*  (*get_list_model)     (ThunarView      *view);
-  void              (*set_list_model)     (ThunarView      *view,
-                                           ThunarListModel *model);
-  const gchar*      (*get_statusbar_text) (ThunarView      *view);
+  ThunarListModel*  (*get_model)              (ThunarView      *view);
+  void              (*set_model)              (ThunarView      *view,
+                                               ThunarListModel *model);
+  GList            *(*get_selected_files)     (ThunarView      *view);
 
   /* signals */
-  void              (*change_directory)   (ThunarView      *view,
-                                           ThunarFile      *directory);
+  void              (*file_activated)         (ThunarView      *view,
+                                               ThunarFile      *file);
+  void              (*file_selection_changed) (ThunarView      *view);
 };
 
-GType            thunar_view_get_type           (void) G_GNUC_CONST;
+GType            thunar_view_get_type               (void) G_GNUC_CONST;
 
-ThunarListModel *thunar_view_get_list_model     (ThunarView      *view);
-void             thunar_view_set_list_model     (ThunarView      *view,
-                                                 ThunarListModel *model);
+ThunarListModel *thunar_view_get_model              (ThunarView      *view);
+void             thunar_view_set_model              (ThunarView      *view,
+                                                     ThunarListModel *model);
+GList           *thunar_view_get_selected_files     (ThunarView      *view);
 
-const gchar     *thunar_view_get_statusbar_text (ThunarView      *view);
-
-void             thunar_view_change_directory   (ThunarView      *view,
-                                                 ThunarFile      *directory);
+void             thunar_view_file_activated         (ThunarView      *view,
+                                                     ThunarFile      *file);
+void             thunar_view_file_selection_changed (ThunarView      *view);
 
 G_END_DECLS;
 

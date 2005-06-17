@@ -27,7 +27,8 @@
 
 enum
 {
-  CHANGE_DIRECTORY,
+  FILE_ACTIVATED,
+  FILE_SELECTION_CHANGED,
   LAST_SIGNAL,
 };
 
@@ -82,22 +83,40 @@ thunar_view_base_init (gpointer klass)
   if (G_UNLIKELY (!initialized))
     {
       /**
-       * ThunarView:change-directory:
-       * @view      : a #ThunarView instance.
-       * @directory : a #ThunarFile referrring to the new directory.
+       * ThunarView:file-actived:
+       * @view : a #ThunarView instance.
+       * @file : a #ThunarFile instance.
        *
-       * Invoked by derived classes whenever the user requests to
-       * change the current directory to @directory from within
-       * the @view (e.g. by double-clicking a folder icon).
+       * Emitted from the @view whenever the user activates a @file that
+       * is currently being displayed within the @view, for example by
+       * double-clicking the icon representation of @file or pressing
+       * Return while the @file is selected.
        **/
-      view_signals[CHANGE_DIRECTORY] =
-        g_signal_new ("change-directory",
+      view_signals[FILE_ACTIVATED] =
+        g_signal_new ("file-activated",
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarViewIface, change_directory),
+                      G_STRUCT_OFFSET (ThunarViewIface, file_activated),
                       NULL, NULL,
                       g_cclosure_marshal_VOID__OBJECT,
                       G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
+
+
+      /**
+       * ThunarView:file-selection-changed:
+       * @view : a #ThunarView instance.
+       *
+       * Emitted by @view whenever the set of currently selected files
+       * changes.
+       **/
+      view_signals[FILE_SELECTION_CHANGED] =
+        g_signal_new ("file-selection-changed",
+                      G_TYPE_FROM_INTERFACE (klass),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (ThunarViewIface, file_selection_changed),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__VOID,
+                      G_TYPE_NONE, 0);
 
       initialized = TRUE;
     }
@@ -109,39 +128,23 @@ static void
 thunar_view_class_init (gpointer klass)
 {
   /**
-   * ThunarView:list-model:
+   * ThunarView:model:
    *
    * The #ThunarListModel currently displayed by this #ThunarView. If
    * the property is %NULL, nothing should be displayed.
    **/
   g_object_interface_install_property (klass,
-                                       g_param_spec_object ("list-model",
-                                                            _("List model"),
+                                       g_param_spec_object ("model",
+                                                            _("Model"),
                                                             _("The model currently displayed by this view"),
                                                             THUNAR_TYPE_LIST_MODEL,
-                                                            G_PARAM_READWRITE));
-
-  /**
-   * ThunarView:statusbar-text:
-   *
-   * The text to be displayed in the status bar, which is associated
-   * with this #ThunarView instance. Implementations should invoke
-   * #g_object_notify() on this property, whenever they have a new
-   * text to be display in the status bar (e.g. the selection changed
-   * or similar).
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_string ("statusbar-text",
-                                                            _("Statusbar text"),
-                                                            _("Text to be displayed in the statusbar associated with this view"),
-                                                            NULL,
-                                                            G_PARAM_READABLE));
+                                                            EXO_PARAM_READWRITE));
 }
 
 
 
 /**
- * thunar_view_get_list_model:
+ * thunar_view_get_model:
  * @view : a #ThunarView instance.
  *
  * Returns the #ThunarListModel currently displayed by the @view or %NULL
@@ -150,81 +153,98 @@ thunar_view_class_init (gpointer klass)
  * Return value: the currently displayed model of @view or %NULL.
  **/
 ThunarListModel*
-thunar_view_get_list_model (ThunarView *view)
+thunar_view_get_model (ThunarView *view)
 {
   g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
-  return THUNAR_VIEW_GET_IFACE (view)->get_list_model (view);
+  return THUNAR_VIEW_GET_IFACE (view)->get_model (view);
 }
 
 
 
 /**
- * thunar_view_set_list_model:
- * @view       : a #ThunarView instance.
- * @list_model : the new directory to display or %NULL.
+ * thunar_view_set_model:
+ * @view  : a #ThunarView instance.
+ * @model : the new directory to display or %NULL.
  *
  * Instructs @view to display the folder associated with 
  * @current_directory. If @current_directory is %NULL, the @view
  * should display nothing.
  **/
 void
-thunar_view_set_list_model (ThunarView      *view,
-                            ThunarListModel *model)
+thunar_view_set_model (ThunarView      *view,
+                       ThunarListModel *model)
 {
   g_return_if_fail (THUNAR_IS_VIEW (view));
   g_return_if_fail (model == NULL || THUNAR_IS_LIST_MODEL (model));
-  THUNAR_VIEW_GET_IFACE (view)->set_list_model (view, model);
+  THUNAR_VIEW_GET_IFACE (view)->set_model (view, model);
 }
 
 
 
 /**
- * thunar_view_get_statusbar_text:
+ * thunar_view_get_selected_files:
  * @view : a #ThunarView instance.
  *
- * Queries the text that should be displayed in the status bar
- * associated with @view.
+ * Returns the list of currently selected files in @view. The elements
+ * in the returned list are instance of #ThunarFile. The return list
+ * will be empty if no files are selected in @view.
  *
- * Return value: the text to be displayed in the status bar
- *               asssociated with @view.
+ * The caller is responsible for freeing the returned list, which
+ * can be done like this:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc)g_object_unref, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: a #GList containing a #ThunarFile for each selected item.
  **/
-const gchar*
-thunar_view_get_statusbar_text (ThunarView *view)
+GList*
+thunar_view_get_selected_files (ThunarView *view)
 {
   g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
-  return THUNAR_VIEW_GET_IFACE (view)->get_statusbar_text (view);
+  return THUNAR_VIEW_GET_IFACE (view)->get_selected_files (view);
 }
 
 
 
 /**
- * thunar_view_change_directory:
- * @view      : a #ThunarView instance.
- * @directory : a #ThunarFile referring to a directory.
+ * thunar_view_file_activated:
+ * @view : a #ThunarView instance.
+ * @file : a #ThunarFile instance.
  *
- * Emits the "change-directory" signal on @view with the specified
- * @directory.
+ * Emits the ::file-activated signal on @view with the specified
+ * @file.
  *
- * Derived classes should invoke this method whenever the user
- * selects a new directory from within the @view. The derived
- * class should not perform any directory changing operations
- * itself, but leave it up to the #ThunarWindow class to
- * change the directory.
- *
- * It should NEVER ever be called from outside a #ThunarView
- * implementation, as that may led to unexpected results.
+ * This function is only meant to be used by #ThunarView
+ * implementations.
  **/
 void
-thunar_view_change_directory (ThunarView *view,
-                              ThunarFile *directory)
+thunar_view_file_activated (ThunarView *view,
+                            ThunarFile *file)
 {
   g_return_if_fail (THUNAR_IS_VIEW (view));
-  g_return_if_fail (THUNAR_IS_FILE (directory));
-  g_return_if_fail (thunar_file_is_directory (directory));
+  g_return_if_fail (THUNAR_IS_FILE (file));
 
-  g_signal_emit (G_OBJECT (view), view_signals[CHANGE_DIRECTORY], 0, directory);
+  g_signal_emit (G_OBJECT (view), view_signals[FILE_ACTIVATED], 0, file);
 }
 
 
+
+/**
+ * thunar_view_file_selection_changed:
+ * @view : a #ThunarView instance.
+ *
+ * Emits the ::file-selection-changed signal on @view.
+ *
+ * This function is only meant to be used by #ThunarView
+ * implementations.
+ **/
+void
+thunar_view_file_selection_changed (ThunarView *view)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+
+  g_signal_emit (G_OBJECT (view), view_signals[FILE_SELECTION_CHANGED], 0);
+}
 
 
