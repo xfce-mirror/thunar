@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-details-view.h>
 #include <thunar/thunar-favourites-pane.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-list-model.h>
@@ -154,7 +155,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_box_pack_start (GTK_BOX (box), swin, TRUE, TRUE, 0);
   gtk_widget_show (swin);
 
-  window->view = thunar_icon_view_new ();
+  window->view = thunar_details_view_new ();
   g_signal_connect (G_OBJECT (window->view), "file-activated",
                     G_CALLBACK (thunar_window_file_activated), window);
   gtk_container_add (GTK_CONTAINER (swin), window->view);

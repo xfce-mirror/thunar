@@ -1,5 +1,17 @@
 2005-06-17	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-view.{c,h}: Further improve the interface to ease the
+	  implementation and reduce the amount of duplicated code in the view
+	  implementations.
+	* thunar/thunar-details-view.{c,h}: Add a first implementation for a
+	  details view.
+	* thunar/thunar-icon-view.c: Catch up with the changes to ThunarView.
+	* thunar/thunar-window.c: Test the new ThunarDetailsView.
+	* thunar/Makefile.am: Add ThunarDetailsView class to the build
+	  framework.
+
+2005-06-17	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-view.{c,h}: Adjust the interface for views to be more
 	  like the FilerView interface, which makes things slightly easier and
 	  adds more flexibility for the statusbar. Also the "list-model"

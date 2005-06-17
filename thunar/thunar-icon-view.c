@@ -25,13 +25,12 @@
 
 
 
-static void             thunar_icon_view_class_init         (ThunarIconViewClass *klass);
-static void             thunar_icon_view_view_init          (ThunarViewIface     *iface);
-static void             thunar_icon_view_init               (ThunarIconView      *icon_view);
-static void             thunar_icon_view_item_activated     (ExoIconView         *view,
-                                                             GtkTreePath         *path);
-static void             thunar_icon_view_selection_changed  (ExoIconView         *view);
-static GList           *thunar_icon_view_get_selected_files (ThunarView          *view);
+static void thunar_icon_view_class_init         (ThunarIconViewClass *klass);
+static void thunar_icon_view_view_init          (ThunarViewIface     *iface);
+static void thunar_icon_view_init               (ThunarIconView      *icon_view);
+static void thunar_icon_view_item_activated     (ExoIconView         *view,
+                                                 GtkTreePath         *path);
+static void thunar_icon_view_selection_changed  (ExoIconView         *view);
 
 
 
@@ -72,7 +71,7 @@ thunar_icon_view_view_init (ThunarViewIface *iface)
 {
   iface->get_model = (gpointer) exo_icon_view_get_model;
   iface->set_model = (gpointer) exo_icon_view_set_model;
-  iface->get_selected_files = thunar_icon_view_get_selected_files;
+  iface->get_selected_items = (gpointer) exo_icon_view_get_selected_items;
 }
 
 
@@ -92,18 +91,17 @@ static void
 thunar_icon_view_item_activated (ExoIconView *view,
                                  GtkTreePath *path)
 {
-  ThunarIconView *icon_view = THUNAR_ICON_VIEW (view);
-  GtkTreeModel   *model;
-  GtkTreeIter     iter;
-  ThunarFile     *file;
+  GtkTreeModel *model;
+  GtkTreeIter   iter;
+  ThunarFile   *file;
 
-  g_return_if_fail (THUNAR_IS_ICON_VIEW (icon_view));
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (view));
 
   /* tell the controlling component, that the user activated a file */
   model = exo_icon_view_get_model (view);
   gtk_tree_model_get_iter (model, &iter, path);
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
-  thunar_view_file_activated (THUNAR_VIEW (icon_view), file);
+  thunar_view_file_activated (THUNAR_VIEW (view), file);
 
   /* invoke the item_activated method on the parent class */
   if (EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->item_activated != NULL)
@@ -122,37 +120,6 @@ thunar_icon_view_selection_changed (ExoIconView *view)
 
   if (EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->selection_changed != NULL)
     EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->selection_changed (view);
-}
-
-
-
-static GList*
-thunar_icon_view_get_selected_files (ThunarView *view)
-{
-  GtkTreeModel *model;
-  GtkTreeIter   iter;
-  ThunarFile   *file;
-  GList        *files = NULL;
-  GList        *paths;
-  GList        *lp;
-
-  g_return_val_if_fail (THUNAR_IS_ICON_VIEW (view), NULL);
-
-  paths = exo_icon_view_get_selected_items (EXO_ICON_VIEW (view));
-  if (paths != NULL)
-    {
-      model = exo_icon_view_get_model (EXO_ICON_VIEW (view));
-      for (lp = g_list_last (paths); lp != NULL; lp = lp->prev)
-        {
-          gtk_tree_model_get_iter (model, &iter, lp->data);
-          file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
-          files = g_list_prepend (files, file);
-          gtk_tree_path_free (lp->data);
-        }
-      g_list_free (paths);
-    }
-
-  return files;
 }
 
 

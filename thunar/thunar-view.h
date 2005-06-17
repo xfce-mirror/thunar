@@ -40,7 +40,7 @@ struct _ThunarViewIface
   ThunarListModel*  (*get_model)              (ThunarView      *view);
   void              (*set_model)              (ThunarView      *view,
                                                ThunarListModel *model);
-  GList            *(*get_selected_files)     (ThunarView      *view);
+  GList            *(*get_selected_items)     (ThunarView      *view);
 
   /* signals */
   void              (*file_activated)         (ThunarView      *view,
@@ -54,6 +54,7 @@ ThunarListModel *thunar_view_get_model              (ThunarView      *view);
 void             thunar_view_set_model              (ThunarView      *view,
                                                      ThunarListModel *model);
 GList           *thunar_view_get_selected_files     (ThunarView      *view);
+GList           *thunar_view_get_selected_items     (ThunarView      *view);
 
 void             thunar_view_file_activated         (ThunarView      *view,
                                                      ThunarFile      *file);

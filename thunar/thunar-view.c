@@ -201,8 +201,58 @@ thunar_view_set_model (ThunarView      *view,
 GList*
 thunar_view_get_selected_files (ThunarView *view)
 {
+  ThunarListModel *model;
+  GtkTreeIter      iter;
+  GList           *list;
+  GList           *lp;
+
+  list = thunar_view_get_selected_items (view);
+  if (list != NULL)
+    {
+      /* We use a simple trick here to avoid creating a second list and free'ing the
+       * items list: We simply determine the iterator for the path at the given list
+       * position, then free the path data in the list and replace it with the file
+       * corresponding to the previously stored path.
+       */
+      model = thunar_view_get_model (view);
+      for (lp = list; lp != NULL; lp = lp->next)
+        {
+          /* determine the tree iterator for the given path */
+          gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &iter, lp->data);
+          gtk_tree_path_free (lp->data);
+
+          /* replace the path with the file */
+          lp->data = thunar_list_model_get_file (model, &iter);
+        }
+    }
+
+  return list;
+}
+
+
+
+/**
+ * thunar_view_get_selected_items:
+ * @view : a #ThunarView instance.
+ *
+ * Creates a list of #GtkTreePath<!---->s of all selected items. Additionally, if
+ * you are planning on modifying the model after calling this function, you may
+ * want to convert the returned list into a list of #GtkTreeRowReferences. To do
+ * this, you can use #gtk_tree_row_reference_new().
+ *
+ * To free the return value, use:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc)gtk_tree_path_free, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: a #GList containing a #GtkTreePath for each selected row.
+ **/
+GList*
+thunar_view_get_selected_items (ThunarView *view)
+{
   g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
-  return THUNAR_VIEW_GET_IFACE (view)->get_selected_files (view);
+  return THUNAR_VIEW_GET_IFACE (view)->get_selected_items (view);
 }
 
 
