@@ -24,6 +24,7 @@
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-trash.h>
 #include <thunar-vfs/thunar-vfs-uri.h>
 #include <thunar-vfs/thunar-vfs-util.h>
 #include <thunar-vfs/thunar-vfs-volume.h>

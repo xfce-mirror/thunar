@@ -1,5 +1,17 @@
 2005-06-19	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-trash.{c,h}: Import first implementation of a
+	  trash manager into thunar-vfs. Does currently only support the "home
+	  trash", but will be extended to use the volume manager in order to
+	  support foreign trashes as well.
+	* thunar-vfs/Makefile.am: Add the trash manager to the build framework.
+	* thunar-vfs/thunar-vfs.h: Include the trash manager header.
+	* thunar/thunar-trash-file.c: Make use of the experimental trash
+	  manager to display the proper icon depending on whether the trash
+	  is full or empty.
+
+2005-06-19	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-statusbar.c, thunar/thunar-list-model.c,
 	  thunar/thunar-favourites-model.c: Fix bug, where Thunar crashed when
 	  NULL was returned for a mime info.

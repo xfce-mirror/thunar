@@ -16,6 +16,7 @@ libthunar_vfs_built_sources =						\
 libthunar_vfs_headers =							\
 	thunar-vfs-info.h						\
 	thunar-vfs-monitor.h						\
+	thunar-vfs-trash.h						\
 	thunar-vfs-util.h						\
 	thunar-vfs-uri.h						\
 	thunar-vfs-volume.h						\
@@ -26,6 +27,7 @@ libthunar_vfs_la_SOURCES =						\
 	$(libthunar_vfs_headers)					\
 	thunar-vfs-info.c						\
 	thunar-vfs-monitor.c						\
+	thunar-vfs-trash.c						\
 	thunar-vfs-util.c						\
 	thunar-vfs-uri.c						\
 	thunar-vfs-volume.c						\
