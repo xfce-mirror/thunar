@@ -1,3 +1,19 @@
+2005-06-19	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-statusbar.c, thunar/thunar-list-model.c,
+	  thunar/thunar-favourites-model.c: Fix bug, where Thunar crashed when
+	  NULL was returned for a mime info.
+	* thunar/thunar-file.{c,h}: Turn this into an abstract base class, which
+	  can be implemented in different ways.
+	* thunar/thunar-local-file.{c,h}: Implementation of the abstract
+	  ThunarFile class for local files handled by the 'file:///' URI
+	  scheme.
+	* thunar/thunar-trash-file.{c,h}: Implementation of the abstract
+	  ThunarFile class for trashed files handled by the 'trash:///' URI
+	  scheme and the trash can itself. This is currently only a boilerplate
+	  and waiting for the trash backend to show up.
+	* thunar/Makefile.am: Add new classes to the build framework.
+
 2005-06-17	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-details-view.c(thunar_details_view_init): Use the

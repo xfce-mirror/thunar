@@ -191,7 +191,23 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
     }
   g_object_unref (G_OBJECT (uri));
 
-  /* prepend the 'Filesystem' favourite */
+  /* append the 'Trash' favourite */
+  uri = thunar_vfs_uri_new ("trash:", NULL);
+  file = thunar_file_get_for_uri (uri, NULL);
+  if (G_LIKELY (file != NULL))
+    {
+      favourite = g_new (ThunarFavourite, 1);
+      favourite->type = THUNAR_FAVOURITE_SYSTEM_DEFINED;
+      favourite->file = file;
+      favourite->volume = NULL;
+
+      /* append the favourite to the list */
+      thunar_favourites_model_add_favourite (model, favourite, path);
+      gtk_tree_path_next (path);
+    }
+  g_object_unref (G_OBJECT (uri));
+
+  /* append the 'Filesystem' favourite */
   uri = thunar_vfs_uri_new_for_path ("/");
   file = thunar_file_get_for_uri (uri, NULL);
   if (G_LIKELY (file != NULL))
@@ -490,7 +506,7 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
       if (G_UNLIKELY (favourite->volume != NULL))
         g_object_get_property (G_OBJECT (favourite->volume), "name", value);
       else if (favourite->file != NULL)
-        g_object_get_property (G_OBJECT (favourite->file), "special-name", value);
+        g_value_set_static_string (value, thunar_file_get_special_name (favourite->file));
       else
         g_value_set_static_string (value, "");
       break;

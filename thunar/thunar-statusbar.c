@@ -161,6 +161,7 @@ thunar_statusbar_update (ThunarStatusbar *statusbar)
 {
   ThunarVfsFileSize size;
   ThunarListModel  *model;
+  ExoMimeInfo      *mime_info;
   ThunarFile       *file;
   GList            *selected_files;
   GList            *lp;
@@ -189,9 +190,17 @@ thunar_statusbar_update (ThunarStatusbar *statusbar)
   else if (selected_files->next == NULL)
     {
       file = THUNAR_FILE (selected_files->data);
+      mime_info = thunar_file_get_mime_info (file);
       size_string = thunar_file_get_size_string (file);
-      text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
-                              exo_mime_info_get_comment (thunar_file_get_mime_info (file)));
+      if (G_LIKELY (mime_info != NULL))
+        {
+          text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
+                                  exo_mime_info_get_comment (mime_info));
+        }
+      else
+        {
+          text = g_strdup_printf (_("\"%s\" (%s)"), thunar_file_get_display_name (file), size_string);
+        }
       g_free (size_string);
     }
   else

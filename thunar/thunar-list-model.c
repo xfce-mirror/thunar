@@ -656,11 +656,11 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_LIST_MODEL_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
-      if (G_LIKELY (row != NULL))
-        {
-          mime_info = thunar_file_get_mime_info (row->file);
-          g_value_set_static_string (value, exo_mime_info_get_comment (mime_info));
-        }
+      mime_info = thunar_file_get_mime_info (row->file);
+      if (G_LIKELY (mime_info != NULL))
+        g_value_set_static_string (value, exo_mime_info_get_comment (mime_info));
+      else
+        g_value_set_static_string (value, "unknown");
       break;
 
     default:

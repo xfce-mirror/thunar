@@ -23,17 +23,9 @@
 
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-local-file.h>
+#include <thunar/thunar-trash-file.h>
 
-
-
-enum
-{
-  PROP_0,
-  PROP_DISPLAY_NAME,
-  PROP_MIME_INFO,
-  PROP_SPECIAL_NAME,
-  PROP_URI,
-};
 
 enum
 {
@@ -43,22 +35,48 @@ enum
 
 
 
-static void thunar_file_class_init    (ThunarFileClass  *klass);
-static void thunar_file_init          (ThunarFile       *file);
-static void thunar_file_finalize      (GObject          *object);
-static void thunar_file_get_property  (GObject          *object,
-                                       guint             prop_id,
-                                       GValue           *value,
-                                       GParamSpec       *pspec);
+static void         thunar_file_class_init            (ThunarFileClass *klass);
+static void         thunar_file_finalize              (GObject         *object);
+static const gchar *thunar_file_real_get_special_name (ThunarFile      *file);
+static void         thunar_file_real_changed          (ThunarFile      *file);
+static void         thunar_file_destroyed             (gpointer         data,
+                                                       GObject         *object);
 
 
 
-static GHashTable *file_cache;
-static guint       file_signals[LAST_SIGNAL];
+static GObjectClass *thunar_file_parent_class;
+static GHashTable   *file_cache;
+static guint         file_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_TYPE (ThunarFile, thunar_file, GTK_TYPE_OBJECT);
+GType
+thunar_file_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarFileClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_file_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarFile),
+        0,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_OBJECT,
+                                     "ThunarFile", &info,
+                                     G_TYPE_FLAG_ABSTRACT);
+    }
+
+  return type;
+}
 
 
 
@@ -67,75 +85,24 @@ thunar_file_class_init (ThunarFileClass *klass)
 {
   GObjectClass *gobject_class;
 
+  thunar_file_parent_class = g_type_class_peek_parent (klass);
+
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_file_finalize;
-  gobject_class->get_property = thunar_file_get_property;
+
+  klass->get_special_name = thunar_file_real_get_special_name;
+  klass->changed = thunar_file_real_changed;
 
   /**
-   * ThunarFile:display-name:
-   *
-   * The displayable name of the this file in the UTF-8 encoding.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_DISPLAY_NAME,
-                                   g_param_spec_string ("display-name",
-                                                        _("Displayable file name"),
-                                                        _("The displayable file name in UTF-8 encoding"),
-                                                        NULL,
-                                                        G_PARAM_READABLE));
-
-  /**
-   * ThunarFile:mime-info:
-   *
-   * The MIME type information for this file.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_MIME_INFO,
-                                   g_param_spec_object ("mime-info",
-                                                        _("MIME info"),
-                                                        _("The MIME info for this file"),
-                                                        EXO_TYPE_MIME_INFO,
-                                                        G_PARAM_READABLE));
-
-  /**
-   * ThunarFile:special-name:
-   *
-   * A special for this file. This includes the special name for a file, if there's
-   * any. E.g. the special name for "/" is "Filesystem", and so on. If there's no
-   * special name for a given #ThunarFile, this property will include the same
-   * value as the "display-name" property, so it's safe to query this property.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_SPECIAL_NAME,
-                                   g_param_spec_string ("special-name",
-                                                        _("Special file name"),
-                                                        _("The special name of this file"),
-                                                        NULL,
-                                                        G_PARAM_READABLE));
-
-  /**
-   * ThunarFile:uri:
-   *
-   * The absolute uri to this file.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_URI,
-                                   g_param_spec_object ("uri",
-                                                        _("File URI"),
-                                                        _("The URI describing the location of the file"),
-                                                        THUNAR_VFS_TYPE_URI,
-                                                        G_PARAM_READABLE));
-  
-  /**
-   * ThunarFile:changed:
+   * ThunarFile::changed:
    * @file : the #ThunarFile instance.
    *
-   * Emitted whenever the system notices a change on this @file.
+   * Emitted whenever the system notices a change to @file.
    **/
   file_signals[CHANGED] =
     g_signal_new ("changed",
-                  G_TYPE_FROM_CLASS (gobject_class),
-                  G_SIGNAL_RUN_LAST,
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
                   G_STRUCT_OFFSET (ThunarFileClass, changed),
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
@@ -145,70 +112,69 @@ thunar_file_class_init (ThunarFileClass *klass)
 
 
 static void
-thunar_file_init (ThunarFile *file)
-{
-  g_return_if_fail (THUNAR_IS_FILE (file));
-
-  thunar_vfs_info_init (&file->info);
-}
-
-
-
-static void
 thunar_file_finalize (GObject *object)
 {
   ThunarFile *file = THUNAR_FILE (object);
 
-  g_return_if_fail (THUNAR_IS_FILE (file));
-
-  /* drop this ThunarFile from the cache */
-  if (G_LIKELY (file->info.uri != NULL))
-    g_hash_table_remove (file_cache, file->info.uri);
-
-  /* free the mime info */
-  if (G_LIKELY (file->mime_info != NULL))
-    g_object_unref (G_OBJECT (file->mime_info));
-
-  /* reset the vfs info (freeing the specific data) */
-  thunar_vfs_info_reset (&file->info);
-
-  g_free (file->display_name);
+  /* destroy the cached icon if any */
+  if (G_LIKELY (file->cached_icon != NULL))
+    g_object_unref (G_OBJECT (file->cached_icon));
 
   G_OBJECT_CLASS (thunar_file_parent_class)->finalize (object);
 }
 
 
 
-static void
-thunar_file_get_property  (GObject    *object,
-                           guint       prop_id,
-                           GValue     *value,
-                           GParamSpec *pspec)
+static const gchar*
+thunar_file_real_get_special_name (ThunarFile *file)
 {
-  ThunarFile *file = THUNAR_FILE (object);
+  return THUNAR_FILE_GET_CLASS (file)->get_display_name (file);
+}
 
-  switch (prop_id)
+
+
+static void
+thunar_file_real_changed (ThunarFile *file)
+{
+  /* destroy any cached icon, as we need to reload it */
+  if (G_LIKELY (file->cached_icon != NULL))
     {
-    case PROP_DISPLAY_NAME:
-      g_value_set_static_string (value, thunar_file_get_display_name (file));
-      break;
-
-    case PROP_MIME_INFO:
-      g_value_set_object (value, thunar_file_get_mime_info (file));
-      break;
-
-    case PROP_SPECIAL_NAME:
-      g_value_set_static_string (value, thunar_file_get_special_name (file));
-      break;
-
-    case PROP_URI:
-      g_value_set_object (value, thunar_file_get_uri (file));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
+      g_object_unref (G_OBJECT (file->cached_icon));
+      file->cached_icon = NULL;
     }
+}
+
+
+
+static ThunarFile*
+thunar_file_new_internal (ThunarVfsURI *uri,
+                          GError      **error)
+{
+  switch (thunar_vfs_uri_get_scheme (uri))
+    {
+    case THUNAR_VFS_URI_SCHEME_FILE:  return thunar_local_file_new (uri, error);
+    case THUNAR_VFS_URI_SCHEME_TRASH: return thunar_trash_file_new (uri, error);
+    }
+
+  g_assert_not_reached ();
+  return NULL;
+}
+
+
+
+static void
+thunar_file_destroyed (gpointer data,
+                       GObject *object)
+{
+  ThunarVfsURI *uri = THUNAR_VFS_URI (data);
+
+  g_return_if_fail (THUNAR_VFS_IS_URI (uri));
+
+  /* drop the entry from the cache */
+  g_hash_table_remove (file_cache, uri);
+
+  /* drop the reference on the uri */
+  g_object_unref (G_OBJECT (uri));
 }
 
 
@@ -236,32 +202,32 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
   ThunarFile *file;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate the ThunarFile cache on-demand */
   if (G_UNLIKELY (file_cache == NULL))
-    file_cache = g_hash_table_new (thunar_vfs_uri_hash, thunar_vfs_uri_equal);
+    {
+      file_cache = g_hash_table_new (thunar_vfs_uri_hash,
+                                     thunar_vfs_uri_equal);
+    }
 
-  /* check if we have the corresponding file cached already */
+  /* see if we have the corresponding file cached already */
   file = g_hash_table_lookup (file_cache, uri);
   if (file == NULL)
     {
       /* allocate the new file object */
-      file = g_object_new (THUNAR_TYPE_FILE, NULL);
-      file->display_name = thunar_vfs_uri_get_display_name (uri);
-
-      /* drop the floating reference */
-      g_object_ref (G_OBJECT (file));
-      gtk_object_sink (GTK_OBJECT (file));
-
-      /* query the file info */
-      if (!thunar_vfs_info_query (&file->info, uri, error))
+      file = thunar_file_new_internal (uri, error);
+      if (G_LIKELY (file != NULL))
         {
-          g_object_unref (G_OBJECT (file));
-          return NULL;
-        }
+          /* drop the floating reference */
+          g_object_ref (G_OBJECT (file));
+          gtk_object_sink (GTK_OBJECT (file));
 
-      /* insert the file into the cache */
-      g_hash_table_insert (file_cache, uri, file);
+          /* insert the file into the cache */
+          g_object_weak_ref (G_OBJECT (file), thunar_file_destroyed, uri);
+          g_hash_table_insert (file_cache, uri, file);
+          g_object_ref (G_OBJECT (uri));
+        }
     }
   else
     {
@@ -321,80 +287,6 @@ thunar_file_get_parent (ThunarFile *file,
 
 
 /**
- * thunar_file_get_display_name:
- * @file  : a #ThunarFile instance.
- *
- * Returns the @file name in the UTF-8 encoding, which is
- * suitable for displaying the file name in the GUI.
- *
- * Return value: the @file name suitable for display.
- **/
-const gchar*
-thunar_file_get_display_name (ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return file->display_name;
-}
-
-
-
-/**
- * thunar_file_get_mime_info:
- * @file  : a #ThunarFile instance.
- *
- * Returns the MIME type information for the given @file object. This
- * function may return %NULL if it is unable to determine a MIME type.
- *
- * Note, that there's no reference taken for the caller on the
- * returned #ExoMimeInfo, so if you need the object for a longer
- * period, you'll need to take a reference yourself using the
- * #g_object_ref() function.
- *
- * Return value: the MIME type or %NULL.
- **/
-ExoMimeInfo*
-thunar_file_get_mime_info (ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* determine the MIME type on-demand */
-  if (G_UNLIKELY (file->mime_info == NULL))
-    file->mime_info = thunar_vfs_info_get_mime_info (&file->info);
-
-  return file->mime_info;
-}
-
-
-
-/**
- * thunar_file_get_special_name:
- * @file : a #ThunarFile instance.
- *
- * Returns the special name for the @file, e.g. "Filesystem" for the #ThunarFile
- * referring to "/" and so on. If there's no special name for this @file, the
- * value of the "display-name" property will be returned instead.
- *
- * Return value: the special name of @file.
- **/
-const gchar*
-thunar_file_get_special_name (ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  if (thunar_vfs_uri_get_scheme (file->info.uri) == THUNAR_VFS_URI_SCHEME_FILE)
-    {
-      if (thunar_vfs_uri_is_root (file->info.uri))
-        return _("Filesystem");
-      else if (thunar_vfs_uri_is_home (file->info.uri))
-        return _("Home");
-    }
-
-  return thunar_file_get_display_name (file);
-}
-
-
-
-/**
  * thunar_file_get_uri:
  * @file  : a #ThunarFile instance.
  *
@@ -417,7 +309,119 @@ ThunarVfsURI*
 thunar_file_get_uri (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return file->info.uri;
+  return THUNAR_FILE_GET_CLASS (file)->get_uri (file);
+}
+
+
+
+/**
+ * thunar_file_get_mime_info:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the MIME type information for the given @file object. This
+ * function may return %NULL if it is unable to determine a MIME type.
+ * Therefore your component must be able to handle this case!
+ *
+ * Note, that there's no reference taken for the caller on the
+ * returned #ExoMimeInfo, so if you need the object for a longer
+ * period, you'll need to take a reference yourself using the
+ * #g_object_ref() function.
+ *
+ * Return value: the MIME type or %NULL.
+ **/
+ExoMimeInfo*
+thunar_file_get_mime_info (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return THUNAR_FILE_GET_CLASS (file)->get_mime_info (file);
+}
+
+
+
+/**
+ * thunar_file_get_display_name:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the @file name in the UTF-8 encoding, which is
+ * suitable for displaying the file name in the GUI.
+ *
+ * Return value: the @file name suitable for display.
+ **/
+const gchar*
+thunar_file_get_display_name (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return THUNAR_FILE_GET_CLASS (file)->get_display_name (file);
+}
+
+
+
+/**
+ * thunar_file_get_special_name:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the special name for the @file, e.g. "Filesystem" for the #ThunarFile
+ * referring to "/" and so on. If there's no special name for this @file, the
+ * value of the "display-name" property will be returned instead.
+ *
+ * Return value: the special name of @file.
+ **/
+const gchar*
+thunar_file_get_special_name (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return THUNAR_FILE_GET_CLASS (file)->get_special_name (file);
+}
+
+
+
+/**
+ * thunar_file_get_kind:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the kind of @file.
+ *
+ * Return value: the kind of @file.
+ **/
+ThunarVfsFileType
+thunar_file_get_kind (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), THUNAR_VFS_FILE_TYPE_UNKNOWN);
+  return THUNAR_FILE_GET_CLASS (file)->get_kind (file);
+}
+
+
+
+/**
+ * thunar_file_get_mode:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the permission bits of @file.
+ *
+ * Return value: the permission bits of @file.
+ **/
+ThunarVfsFileMode
+thunar_file_get_mode (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), 0);
+  return THUNAR_FILE_GET_CLASS (file)->get_mode (file);
+}
+
+
+
+/**
+ * thunar_file_get_size:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the size of @file in bytes.
+ *
+ * Return value: the size of @file in bytes.
+ **/
+ThunarVfsFileSize
+thunar_file_get_size (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), 0);
+  return THUNAR_FILE_GET_CLASS (file)->get_size (file);
 }
 
 
@@ -434,18 +438,18 @@ thunar_file_get_uri (ThunarFile *file)
 gchar*
 thunar_file_get_mode_string (ThunarFile *file)
 {
+  ThunarVfsFileType kind;
   ThunarVfsFileMode mode;
-  ThunarVfsFileType type;
   gchar            *text;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  mode = file->info.mode;
-  type = file->info.type;
+  kind = THUNAR_FILE_GET_CLASS (file)->get_kind (file);
+  mode = THUNAR_FILE_GET_CLASS (file)->get_mode (file);
   text = g_new (gchar, 11);
 
   /* file type */
-  switch (type)
+  switch (kind)
     {
     case THUNAR_VFS_FILE_TYPE_SOCKET:     text[0] = 's'; break;
     case THUNAR_VFS_FILE_TYPE_SYMLINK:    text[0] = 'l'; break;
@@ -454,6 +458,7 @@ thunar_file_get_mode_string (ThunarFile *file)
     case THUNAR_VFS_FILE_TYPE_DIRECTORY:  text[0] = 'd'; break;
     case THUNAR_VFS_FILE_TYPE_CHARDEV:    text[0] = 'c'; break;
     case THUNAR_VFS_FILE_TYPE_FIFO:       text[0] = 'f'; break;
+    case THUNAR_VFS_FILE_TYPE_UNKNOWN:    text[0] = ' '; break;
     default:                              g_assert_not_reached ();
     }
 
@@ -498,18 +503,15 @@ gchar*
 thunar_file_get_size_string (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return thunar_vfs_humanize_size (file->info.size, NULL, 0);
+  return thunar_vfs_humanize_size (THUNAR_FILE_GET_CLASS (file)->get_size (file), NULL, 0);
 }
 
 
 
 /**
  * thunar_file_load_icon:
- * @file  : a #ThunarFile instance.
- * @size  : the icon size in pixels.
- *
- * TODO: We need to perform some kind of caching, esp. on
- * common MIME icons.
+ * @file : a #ThunarFile instance.
+ * @size : the icon size in pixels.
  *
  * You need to call #g_object_unref() on the returned icon
  * when you don't need it any longer.
@@ -522,36 +524,26 @@ thunar_file_load_icon (ThunarFile *file,
 {
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
-  ExoMimeInfo       *mime_info;
   const gchar       *icon_name;
-  GdkPixbuf         *icon = NULL;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  icon_factory = thunar_icon_factory_get_default ();
-
-  /* special icon for the root node */
-  if (G_UNLIKELY (thunar_vfs_uri_is_root (file->info.uri)))
-    icon = thunar_icon_factory_load_icon (icon_factory, "gnome-dev-harddisk", size, NULL, FALSE);
-
-  /* special icon for the home node */
-  if (G_UNLIKELY (icon == NULL && thunar_vfs_uri_is_home (file->info.uri)))
-    icon = thunar_icon_factory_load_icon (icon_factory, "gnome-fs-home", size, NULL, FALSE);
-
-  /* use the icon for the given MIME type */
-  if (icon == NULL)
+  /* see if we have a cached icon that matches the request */
+  if (file->cached_icon != NULL && file->cached_size == size)
     {
-      mime_info = thunar_file_get_mime_info (file);
-      icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
-      icon_name = exo_mime_info_lookup_icon_name (mime_info, icon_theme);
-      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);
+      /* take a reference on the cached icon for the caller */
+      g_object_ref (G_OBJECT (file->cached_icon));
+      return file->cached_icon;
     }
 
-  return icon;
+  icon_factory = thunar_icon_factory_get_default ();
+  icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
+  icon_name = THUNAR_FILE_GET_CLASS (file)->get_icon_name (file, icon_theme);
+  return thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);
 }
 
 
-  
+
 /**
  * thunar_file_is_hidden:
  * @file : a #ThunarFile instance.
@@ -566,9 +558,8 @@ thunar_file_is_hidden (ThunarFile *file)
   const gchar *p;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  g_return_val_if_fail (file->display_name != NULL, FALSE);
 
-  p = file->display_name;
+  p = THUNAR_FILE_GET_CLASS (file)->get_display_name (file);
   if (*p != '.' && *p != '\0')
     {
       for (; p[1] != '\0'; ++p)

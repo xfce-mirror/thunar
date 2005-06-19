@@ -27,17 +27,34 @@ G_BEGIN_DECLS;
 typedef struct _ThunarFileClass ThunarFileClass;
 typedef struct _ThunarFile      ThunarFile;
 
-#define THUNAR_TYPE_FILE             (thunar_file_get_type ())
-#define THUNAR_FILE(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_FILE, ThunarFile))
-#define THUNAR_FILE_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_FILE, ThunarFileClass))
-#define THUNAR_IS_FILE(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_FILE))
-#define THUNAR_IS_FILE_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_FILE))
-#define THUNAR_FILE_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_FILE, ThunarFileClass))
+#define THUNAR_TYPE_FILE            (thunar_file_get_type ())
+#define THUNAR_FILE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_FILE, ThunarFile))
+#define THUNAR_FILE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_FILE, ThunarFileClass))
+#define THUNAR_IS_FILE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_FILE))
+#define THUNAR_IS_FILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_FILE))
+#define THUNAR_FILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_FILE, ThunarFileClass))
 
 struct _ThunarFileClass
 {
   GtkObjectClass __parent__;
 
+  /* virtual methods */
+  ThunarVfsURI        *(*get_uri)             (ThunarFile   *file);
+
+  ExoMimeInfo         *(*get_mime_info)       (ThunarFile   *file);
+
+  const gchar         *(*get_display_name)    (ThunarFile   *file);
+  const gchar         *(*get_special_name)    (ThunarFile   *file);
+
+  ThunarVfsFileType    (*get_kind)            (ThunarFile   *file);
+  ThunarVfsFileMode    (*get_mode)            (ThunarFile   *file);
+  ThunarVfsFileSize    (*get_size)            (ThunarFile   *file);
+
+  const gchar         *(*get_icon_name)       (ThunarFile   *file,
+                                               GtkIconTheme *icon_theme);
+
+
+  /* signals */
   void (*changed) (ThunarFile *file);
 };
 
@@ -46,41 +63,41 @@ struct _ThunarFile
   GtkObject __parent__;
 
   /*< private >*/
-  gchar         *display_name;
-  ExoMimeInfo   *mime_info;
-  ThunarVfsInfo  info;
+  GdkPixbuf *cached_icon;
+  gint       cached_size;
 };
 
+GType              thunar_file_get_type         (void) G_GNUC_CONST;
 
-GType          thunar_file_get_type         (void) G_GNUC_CONST;
+ThunarFile        *thunar_file_get_for_uri      (ThunarVfsURI *uri,
+                                                 GError      **error);
+ThunarFile        *thunar_file_get_parent       (ThunarFile   *file,
+                                                 GError      **error);
 
-ThunarFile    *thunar_file_get_for_uri      (ThunarVfsURI   *uri,
-                                             GError        **error);
+ThunarVfsURI      *thunar_file_get_uri          (ThunarFile   *file);
 
-ThunarFile    *thunar_file_get_parent       (ThunarFile     *file,
-                                             GError        **error);
+ExoMimeInfo       *thunar_file_get_mime_info    (ThunarFile   *file);
 
-const gchar   *thunar_file_get_display_name (ThunarFile     *file);
-ExoMimeInfo   *thunar_file_get_mime_info    (ThunarFile     *file);
-const gchar   *thunar_file_get_special_name (ThunarFile     *file);
-ThunarVfsURI  *thunar_file_get_uri          (ThunarFile     *file);
+const gchar       *thunar_file_get_display_name (ThunarFile   *file);
+const gchar       *thunar_file_get_special_name (ThunarFile   *file);
 
-gchar         *thunar_file_get_mode_string  (ThunarFile     *file);
-gchar         *thunar_file_get_size_string  (ThunarFile     *file);
+ThunarVfsFileType  thunar_file_get_kind         (ThunarFile   *file);
+ThunarVfsFileMode  thunar_file_get_mode         (ThunarFile   *file);
+ThunarVfsFileSize  thunar_file_get_size         (ThunarFile   *file);
 
-gboolean       thunar_file_is_hidden        (ThunarFile     *file);
+gchar             *thunar_file_get_mode_string  (ThunarFile   *file);
+gchar             *thunar_file_get_size_string  (ThunarFile   *file);
 
-GdkPixbuf     *thunar_file_load_icon        (ThunarFile     *file,
-                                             gint            size);
+GdkPixbuf         *thunar_file_load_icon        (ThunarFile   *file,
+                                                 gint          size);
 
-#define thunar_file_get_name(file)      (thunar_vfs_uri_get_name (THUNAR_FILE ((file))->info.uri))
-#define thunar_file_get_mode(file)      (THUNAR_FILE ((file))->info.mode)
-#define thunar_file_get_size(file)      (THUNAR_FILE ((file))->info.size)
+gboolean           thunar_file_is_hidden        (ThunarFile   *file);
 
-#define thunar_file_is_directory(file)  (THUNAR_FILE ((file))->info.type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
-#define thunar_file_is_home(file)       (thunar_vfs_uri_is_home (THUNAR_FILE ((file))->info.uri))
-#define thunar_file_is_root(file)       (thunar_vfs_uri_is_root (THUNAR_FILE ((file))->info.uri))
-#define thunar_file_is_symlink(file)    (THUNAR_FILE ((file))->info.flags & THUNAR_VFS_FILE_FLAGS_SYMLINK)
+#define thunar_file_get_name(file)      (thunar_vfs_uri_get_name (THUNAR_FILE_GET_CLASS ((file))->get_uri ((file))))
+
+#define thunar_file_is_directory(file)  (THUNAR_FILE_GET_CLASS ((file))->get_kind ((file)) == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+#define thunar_file_is_home(file)       (thunar_vfs_uri_is_home (THUNAR_FILE_GET_CLASS ((file))->get_uri ((file))))
+#define thunar_file_is_root(file)       (thunar_vfs_uri_is_root (THUNAR_FILE_GET_CLASS ((file))->get_uri ((file))))
 
 G_END_DECLS;
 
