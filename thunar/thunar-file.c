@@ -545,6 +545,22 @@ thunar_file_load_icon (ThunarFile *file,
 
 
 /**
+ * thunar_file_changed:
+ * @file : a #ThunarFile instance.
+ *
+ * Emits the ::changed signal on @file. This function is meant to be called
+ * by derived classes whenever they notice changes to the @file.
+ **/
+void
+thunar_file_changed (ThunarFile *file)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_signal_emit (G_OBJECT (file), file_signals[CHANGED], 0);
+}
+
+
+
+/**
  * thunar_file_is_hidden:
  * @file : a #ThunarFile instance.
  *

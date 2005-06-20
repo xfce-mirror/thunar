@@ -1,3 +1,20 @@
+2005-06-20	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-list-model.c: Instead of resolving the ids for the
+	  "destroy" and "changed" signals on ThunarFile everytime we need to
+	  register it, we query the signal id in the constructor and remember
+	  it. In addition, instead of creating a closure for every signal
+	  registration on a ThunarFile, we create a closure for "changed" and
+	  a closure for "destroy" in the constructor and reuse that closure
+	  everytime we need to register a signal handler.
+	* thunar/thunar-list-model.c: Watch hidden files for "destroy" condition
+	  as well.
+	* thunar/thunar-trash-file.c: Emit the "changed" signal whenever the
+	  "empty" property on the trash manager changes.
+	* thunar/thunar-file.{c,h}: Add a method thunar_file_changed(), which
+	  is used by derived classes to emit the "changed" signal on a given
+	  ThunarFile.
+
 2005-06-19	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-trash.{c,h}: Import first implementation of a

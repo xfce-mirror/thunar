@@ -91,6 +91,8 @@ gchar             *thunar_file_get_size_string  (ThunarFile   *file);
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile   *file,
                                                  gint          size);
 
+void               thunar_file_changed          (ThunarFile   *file);
+
 gboolean           thunar_file_is_hidden        (ThunarFile   *file);
 
 #define thunar_file_get_name(file)      (thunar_vfs_uri_get_name (THUNAR_FILE_GET_CLASS ((file))->get_uri ((file))))

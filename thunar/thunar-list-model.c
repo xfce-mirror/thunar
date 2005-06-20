@@ -52,6 +52,7 @@ static void               thunar_list_model_tree_model_init       (GtkTreeModelI
 static void               thunar_list_model_drag_source_init      (GtkTreeDragSourceIface *iface);
 static void               thunar_list_model_drag_dest_init        (GtkTreeDragDestIface   *iface);
 static void               thunar_list_model_sortable_init         (GtkTreeSortableIface   *iface);
+static void               thunar_list_model_finalize              (GObject                *object);
 static void               thunar_list_model_dispose               (GObject                *object);
 static void               thunar_list_model_get_property          (GObject                *object,
                                                                    guint                   prop_id,
@@ -168,6 +169,14 @@ struct _ThunarListModel
   ThunarFolder  *folder;
   gboolean       show_hidden;
 
+  /* ids and closures for the "changed" and "destroy" signals
+   * of ThunarFile's used to speed up signal registrations.
+   */
+  GClosure      *file_changed_closure;
+  GClosure      *file_destroy_closure;
+  gint           file_changed_id;
+  gint           file_destroy_id;
+
   gboolean       sort_folders_first;
   gint           sort_sign;   /* 1 = ascending, -1 descending */
   gint         (*sort_func) (ThunarFile *a,
@@ -190,97 +199,21 @@ struct _SortTuple
 
 
 
-static GObjectClass *parent_class;
-static GMemChunk    *row_chunk;
+static GMemChunk *row_chunk;
 
 
 
-GType
-thunar_list_model_get_type (void)
-{
-  static GType thunar_list_model_type = 0;
-
-  if (G_UNLIKELY (!thunar_list_model_type))
-    {
-      static const GTypeInfo thunar_list_model_info =
-      {
-        sizeof (ThunarListModelClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_list_model_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarListModel),
-        0,
-        (GInstanceInitFunc) thunar_list_model_init,
-      };
-
-      static const GInterfaceInfo tree_model_info =
-      {
-        (GInterfaceInitFunc) thunar_list_model_tree_model_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo drag_source_info =
-      {
-        (GInterfaceInitFunc) thunar_list_model_drag_source_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo drag_dest_info =
-      {
-        (GInterfaceInitFunc) thunar_list_model_drag_dest_init,
-        NULL,
-        NULL,
-      };
-
-      static const GInterfaceInfo sortable_info =
-      {
-        (GInterfaceInitFunc) thunar_list_model_sortable_init,
-        NULL,
-        NULL,
-      };
-
-      thunar_list_model_type = g_type_register_static (GTK_TYPE_OBJECT,
-                                                       "ThunarListModel",
-                                                       &thunar_list_model_info,
-                                                       0);
-
-      g_type_add_interface_static (thunar_list_model_type,
-                                   GTK_TYPE_TREE_MODEL,
-                                   &tree_model_info);
-      g_type_add_interface_static (thunar_list_model_type,
-                                   GTK_TYPE_TREE_DRAG_SOURCE,
-                                   &drag_source_info);
-      g_type_add_interface_static (thunar_list_model_type,
-                                   GTK_TYPE_TREE_DRAG_DEST,
-                                   &drag_dest_info);
-      g_type_add_interface_static (thunar_list_model_type,
-                                   GTK_TYPE_TREE_SORTABLE,
-                                   &sortable_info);
-    }
-
-  return thunar_list_model_type;
-}
-
-
-
-static void
-thunar_list_model_init (ThunarListModel *store)
-{
-  store->stamp              = g_random_int ();
-  store->rows               = NULL;
-  store->nrows              = 0;
-  store->hidden             = NULL;
-  store->folder             = NULL;
-  store->show_hidden        = FALSE;
-
-  store->sort_folders_first = TRUE;
-  store->sort_sign          = 1;
-  store->sort_func          = sort_by_name;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarListModel,
+                         thunar_list_model,
+                         GTK_TYPE_OBJECT,
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
+                                                thunar_list_model_tree_model_init)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_SOURCE,
+                                                thunar_list_model_drag_source_init)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_DEST,
+                                                thunar_list_model_drag_dest_init)
+                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_SORTABLE,
+                                                thunar_list_model_sortable_init));
 
 
 
@@ -289,9 +222,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
 {
   GObjectClass *gobject_class;
 
-  parent_class = g_type_class_peek_parent (klass);
-
   gobject_class               = G_OBJECT_CLASS (klass);
+  gobject_class->finalize     = thunar_list_model_finalize;
   gobject_class->dispose      = thunar_list_model_dispose;
   gobject_class->get_property = thunar_list_model_get_property;
   gobject_class->set_property = thunar_list_model_set_property;
@@ -407,6 +339,48 @@ thunar_list_model_sortable_init (GtkTreeSortableIface *iface)
 
 
 static void
+thunar_list_model_init (ThunarListModel *store)
+{
+  store->stamp                = g_random_int ();
+  store->rows                 = NULL;
+  store->nrows                = 0;
+  store->hidden               = NULL;
+  store->folder               = NULL;
+  store->show_hidden          = FALSE;
+
+  store->file_changed_closure = g_cclosure_new_object (G_CALLBACK (thunar_list_model_file_changed), G_OBJECT (store));
+  store->file_destroy_closure = g_cclosure_new_object (G_CALLBACK (thunar_list_model_file_destroy), G_OBJECT (store));
+  store->file_changed_id      = g_signal_lookup ("changed", THUNAR_TYPE_FILE);
+  store->file_destroy_id      = g_signal_lookup ("destroy", THUNAR_TYPE_FILE);
+
+  store->sort_folders_first   = TRUE;
+  store->sort_sign            = 1;
+  store->sort_func            = sort_by_name;
+
+  /* take over ownership of the closures */
+  g_closure_ref (store->file_changed_closure);
+  g_closure_ref (store->file_destroy_closure);
+  g_closure_sink (store->file_changed_closure);
+  g_closure_sink (store->file_destroy_closure);
+}
+
+
+
+static void
+thunar_list_model_finalize (GObject *object)
+{
+  ThunarListModel *store = THUNAR_LIST_MODEL (object);
+
+  /* get rid of the closures */
+  g_closure_unref (store->file_changed_closure);
+  g_closure_unref (store->file_destroy_closure);
+
+  G_OBJECT_CLASS (thunar_list_model_parent_class)->finalize (object);
+}
+
+
+
+static void
 thunar_list_model_dispose (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
@@ -414,7 +388,7 @@ thunar_list_model_dispose (GObject *object)
   /* unlink from the folder (if any) */
   thunar_list_model_set_folder (store, NULL);
 
-  G_OBJECT_CLASS (parent_class)->dispose (object);
+  G_OBJECT_CLASS (thunar_list_model_parent_class)->dispose (object);
 }
 
 
@@ -1149,6 +1123,8 @@ thunar_list_model_file_destroy (ThunarFile      *file,
 
   /* file is hidden */
   g_assert (g_slist_find (store->hidden, file) != NULL);
+  g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                        store->file_destroy_id, 0, store->file_destroy_closure, NULL, NULL);
   store->hidden = g_slist_remove (store->hidden, file);
   g_object_unref (G_OBJECT (file));
 }
@@ -1190,17 +1166,18 @@ thunar_list_model_files_added (ThunarFolder    *folder,
       /* check if the file should be hidden */
       if (!store->show_hidden && thunar_file_is_hidden (file))
         {
-          // FIXME: Need to connect "destroy" here as well
+          g_signal_connect_closure_by_id (G_OBJECT (file), store->file_destroy_id,
+                                          0, store->file_destroy_closure, TRUE);
           store->hidden = g_slist_prepend (store->hidden, file);
         }
       else
         {
           row = g_chunk_new (Row, row_chunk);
           row->file = file;
-          row->changed_id = g_signal_connect (G_OBJECT (file), "changed",
-                                              G_CALLBACK (thunar_list_model_file_changed), store);
-          row->destroy_id = g_signal_connect (G_OBJECT (file), "destroy",
-                                              G_CALLBACK (thunar_list_model_file_destroy), store);
+          row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
+                                                            0, store->file_changed_closure, TRUE);
+          row->destroy_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_destroy_id,
+                                                            0, store->file_destroy_closure, TRUE);
 
           /* find the position to insert the file to */
           if (G_UNLIKELY (store->rows == NULL || thunar_list_model_cmp (store, file, store->rows->file) < 0))
@@ -1401,7 +1378,11 @@ thunar_list_model_set_folder (ThunarListModel *store,
 
       /* remove hidden entries */
       for (lp = store->hidden; lp != NULL; lp = lp->next)
-        g_object_unref (G_OBJECT (lp->data));
+        {
+          g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                                store->file_destroy_id, 0, store->file_destroy_closure, NULL, NULL);
+          g_object_unref (G_OBJECT (lp->data));
+        }
       g_slist_free (store->hidden);
       store->hidden = NULL;
 
@@ -1438,16 +1419,18 @@ thunar_list_model_set_folder (ThunarListModel *store,
               /* check if this file should be shown/hidden */
               if (!store->show_hidden && thunar_file_is_hidden (file))
                 {
+                  g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                                        store->file_destroy_id, 0, store->file_destroy_closure, NULL, NULL);
                   store->hidden = g_slist_prepend (store->hidden, file);
                 }
               else
                 {
                   row = g_chunk_new (Row, row_chunk);
                   row->file = file;
-                  row->changed_id = g_signal_connect (G_OBJECT (file), "changed",
-                                                      G_CALLBACK (thunar_list_model_file_changed), store);
-                  row->destroy_id = g_signal_connect (G_OBJECT (file), "destroy",
-                                                      G_CALLBACK (thunar_list_model_file_destroy), store);
+                  row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
+                                                                    0, store->file_changed_closure, TRUE);
+                  row->destroy_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_destroy_id,
+                                                                    0, store->file_destroy_closure, TRUE);
                   row->next = store->rows;
 
                   store->rows = row;
@@ -1548,7 +1531,7 @@ thunar_list_model_get_show_hidden (ThunarListModel *store)
  **/
 void
 thunar_list_model_set_show_hidden (ThunarListModel *store,
-                             gboolean    show_hidden)
+                                   gboolean         show_hidden)
 {
   GtkTreePath  *path;
   GtkTreeIter   iter;
@@ -1576,10 +1559,10 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
 
           row = g_chunk_new (Row, row_chunk);
           row->file = file;
-          row->changed_id = g_signal_connect (G_OBJECT (file), "changed",
-                                              G_CALLBACK (thunar_list_model_file_changed), store);
-          row->destroy_id = g_signal_connect (G_OBJECT (file), "destroy",
-                                              G_CALLBACK (thunar_list_model_file_destroy), store);
+          row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
+                                                            0, store->file_changed_closure, TRUE);
+          row->destroy_id = g_signal_handler_find (G_OBJECT (file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                                   store->file_destroy_id, 0, store->file_destroy_closure, NULL, NULL);
 
           if (G_UNLIKELY (store->rows == NULL
                        || thunar_list_model_cmp (store, file, store->rows->file) < 0))
@@ -1617,6 +1600,8 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
       for (hidden_rows = files = NULL, row = store->rows; row != NULL; row = row->next)
         if (thunar_file_is_hidden (row->file))
           {
+            g_signal_handlers_disconnect_matched (G_OBJECT (row->file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                                  store->file_changed_id, 0, store->file_changed_closure, NULL, NULL);
             hidden_rows = g_slist_prepend (hidden_rows, row);
             files = g_slist_prepend (files, g_object_ref (row->file));
           }

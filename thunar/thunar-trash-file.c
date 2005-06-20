@@ -25,17 +25,17 @@
 
 
 
-static void               thunar_trash_file_class_init        (ThunarTrashFileClass *klass);
-static void               thunar_trash_file_init              (ThunarTrashFile      *trash_file);
-static void               thunar_trash_file_finalize          (GObject              *object);
-static ThunarVfsURI      *thunar_trash_file_get_uri           (ThunarFile           *file);
-static ExoMimeInfo       *thunar_trash_file_get_mime_info     (ThunarFile           *file);
-static const gchar       *thunar_trash_file_get_display_name  (ThunarFile           *file);
-static ThunarVfsFileType  thunar_trash_file_get_kind          (ThunarFile           *file);
-static ThunarVfsFileMode  thunar_trash_file_get_mode          (ThunarFile           *file);
-static ThunarVfsFileSize  thunar_trash_file_get_size          (ThunarFile           *file);
-static const gchar       *thunar_trash_file_get_icon_name     (ThunarFile           *file,
-                                                               GtkIconTheme         *icon_theme);
+static void               thunar_trash_file_class_init        (ThunarTrashFileClass   *klass);
+static void               thunar_trash_file_init              (ThunarTrashFile        *trash_file);
+static void               thunar_trash_file_finalize          (GObject                *object);
+static ThunarVfsURI      *thunar_trash_file_get_uri           (ThunarFile             *file);
+static ExoMimeInfo       *thunar_trash_file_get_mime_info     (ThunarFile             *file);
+static const gchar       *thunar_trash_file_get_display_name  (ThunarFile             *file);
+static ThunarVfsFileType  thunar_trash_file_get_kind          (ThunarFile             *file);
+static ThunarVfsFileMode  thunar_trash_file_get_mode          (ThunarFile             *file);
+static ThunarVfsFileSize  thunar_trash_file_get_size          (ThunarFile             *file);
+static const gchar       *thunar_trash_file_get_icon_name     (ThunarFile             *file,
+                                                               GtkIconTheme           *icon_theme);
 
 
 
@@ -82,7 +82,10 @@ thunar_trash_file_class_init (ThunarTrashFileClass *klass)
 static void
 thunar_trash_file_init (ThunarTrashFile *trash_file)
 {
+  /* register with the trash manager */
   trash_file->manager = thunar_vfs_trash_manager_get_default ();
+  g_signal_connect_swapped (G_OBJECT (trash_file->manager), "notify::empty",
+                            G_CALLBACK (thunar_file_changed), trash_file);
 }
 
 
@@ -91,7 +94,11 @@ static void
 thunar_trash_file_finalize (GObject *object)
 {
   ThunarTrashFile *trash_file = THUNAR_TRASH_FILE (object);
+
+  /* unregister from the trash manager */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (trash_file->manager), thunar_file_changed, trash_file);
   g_object_unref (G_OBJECT (trash_file->manager));
+
   G_OBJECT_CLASS (thunar_trash_file_parent_class)->finalize (object);
 }
 
