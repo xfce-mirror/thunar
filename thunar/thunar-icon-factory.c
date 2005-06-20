@@ -51,12 +51,6 @@ enum
   PROP_ICON_THEME,
 };
 
-enum
-{
-  CHANGED,
-  LAST_SIGNAL,
-};
-
 
 
 typedef struct _ThunarIconKey   ThunarIconKey;
@@ -76,10 +70,10 @@ static void             thunar_icon_factory_set_property          (GObject      
                                                                    guint                   prop_id,
                                                                    const GValue           *value,
                                                                    GParamSpec             *pspec);
-static void             thunar_icon_factory_changed               (GtkIconTheme           *icon_theme,
-                                                                   ThunarIconFactory      *factory);
-static gboolean         thunar_icon_factory_changed_idle          (gpointer                user_data);
-static void             thunar_icon_factory_changed_idle_destroy  (gpointer                user_data);
+static gboolean         thunar_icon_factory_changed               (GSignalInvocationHint  *ihint,
+                                                                   guint                   n_param_values,
+                                                                   const GValue           *param_values,
+                                                                   gpointer                user_data);
 static gboolean         thunar_icon_factory_sweep_timer           (gpointer                user_data);
 static void             thunar_icon_factory_sweep_timer_destroy   (gpointer                user_data);
 static ThunarIconValue *thunar_icon_factory_lookup_icon           (ThunarIconFactory      *factory,
@@ -98,8 +92,6 @@ static void             thunar_icon_value_free                    (gpointer     
 struct _ThunarIconFactoryClass
 {
   GObjectClass __parent__;
-
-  void (*changed) (ThunarIconFactory *factory);
 };
 
 struct _ThunarIconFactory
@@ -116,6 +108,8 @@ struct _ThunarIconFactory
 
   gint             changed_idle_id;
   gint             sweep_timer_id;
+
+  gulong           changed_hook_id;
 };
 
 struct _ThunarIconKey
@@ -132,7 +126,6 @@ struct _ThunarIconValue
 
 
 
-static guint      factory_signals[LAST_SIGNAL];
 static GQuark     thunar_icon_factory_quark = 0;
 static GMemChunk *values_chunk;
 
@@ -172,22 +165,6 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
                                                         _("The icon theme used by the icon factory"),
                                                         GTK_TYPE_ICON_THEME,
                                                         G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
-
-  /**
-   * ThunarIconFactory::changed:
-   * @factory : a #ThunarIconFactory.
-   *
-   * Emitted whenever the set of available icons changes, for example, whenever
-   * the user selects a different icon theme from the Xfce settings manager.
-   **/
-  factory_signals[CHANGED] =
-    g_signal_new ("changed",
-                  G_TYPE_FROM_CLASS (gobject_class),
-                  G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (ThunarIconFactoryClass, changed),
-                  NULL, NULL,
-                  g_cclosure_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
 }
 
 
@@ -195,8 +172,14 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 static void
 thunar_icon_factory_init (ThunarIconFactory *factory)
 {
-  factory->changed_idle_id = -1;
   factory->sweep_timer_id = -1;
+
+  /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
+   * hook way here, because that way we can make sure that the icon cache is definetly cleared
+   * before any other part of the application gets notified about the icon theme change.
+   */
+  factory->changed_hook_id = g_signal_add_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME),
+                                                         0, thunar_icon_factory_changed, factory, NULL);
 
   /* load the fallback icon */
   factory->fallback_icon = g_chunk_new (ThunarIconValue, values_chunk);
@@ -245,6 +228,9 @@ thunar_icon_factory_finalize (GObject *object)
 
   /* drop the fallback icon reference */
   thunar_icon_value_free (factory->fallback_icon);
+
+  /* remove the "changed" emission hook from the GtkIconTheme class */
+  g_signal_remove_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME), factory->changed_hook_id);
 
   /* disconnect from the associated icon theme (if any) */
   if (G_LIKELY (factory->icon_theme != NULL))
@@ -300,8 +286,6 @@ thunar_icon_factory_set_property (GObject      *object,
       g_object_set_qdata (G_OBJECT (factory->icon_theme),
                           thunar_icon_factory_quark,
                           factory);
-      g_signal_connect (G_OBJECT (factory->icon_theme), "changed",
-                        G_CALLBACK (thunar_icon_factory_changed), factory);
       break;
 
     default:
@@ -312,11 +296,14 @@ thunar_icon_factory_set_property (GObject      *object,
 
 
 
-static void
-thunar_icon_factory_changed (GtkIconTheme      *icon_theme,
-                             ThunarIconFactory *factory)
+static gboolean
+thunar_icon_factory_changed (GSignalInvocationHint *ihint,
+                             guint                  n_param_values,
+                             const GValue          *param_values,
+                             gpointer               user_data)
 {
-  guint n;
+  ThunarIconFactory *factory = THUNAR_ICON_FACTORY (user_data);
+  guint              n;
 
   /* drop all items from the recently used list */
   for (n = 0; n < MAX_RECENTLY; ++n)
@@ -329,44 +316,8 @@ thunar_icon_factory_changed (GtkIconTheme      *icon_theme,
   /* drop all items from the icon cache */
   g_hash_table_foreach_remove (factory->icon_cache, (GHRFunc)gtk_true, NULL);
 
-  /* Need to invoke the "changed" signal from an idle function
-   * so other modules will definetly have noticed the icon theme
-   * change as well and cleared their caches
-   */
-  if (G_LIKELY (factory->changed_idle_id < 0))
-    {
-      factory->changed_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_icon_factory_changed_idle,
-                                                  factory, thunar_icon_factory_changed_idle_destroy);
-    }
-}
-
-
-
-static gboolean
-thunar_icon_factory_changed_idle (gpointer user_data)
-{
-  ThunarIconFactory *factory = THUNAR_ICON_FACTORY (user_data);
-
-  g_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), FALSE);
-
-  GDK_THREADS_ENTER ();
-
-  /* emit the "changed" signal */
-  g_signal_emit (G_OBJECT (factory), factory_signals[CHANGED], 0);
-
-  GDK_THREADS_LEAVE ();
-
-  return FALSE;
-}
-
-
-
-static void
-thunar_icon_factory_changed_idle_destroy (gpointer user_data)
-{
-  GDK_THREADS_ENTER ();
-  THUNAR_ICON_FACTORY (user_data)->changed_idle_id = -1;
-  GDK_THREADS_LEAVE ();
+  /* keep the emission hook alive */
+  return TRUE;
 }
 
 

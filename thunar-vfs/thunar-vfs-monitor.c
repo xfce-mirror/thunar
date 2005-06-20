@@ -213,8 +213,6 @@ thunar_vfs_monitor_event (GIOChannel  *source,
   ThunarVfsMonitor   *monitor = THUNAR_VFS_MONITOR (user_data);
   ThunarVfsWatch     *watch;
   struct kevent       events[16];
-  GList              *lp;
-  gint                id;
   gint                n;
 
   GDK_THREADS_ENTER ();

@@ -37,6 +37,7 @@ static ThunarVfsFileMode  thunar_local_file_get_mode          (ThunarFile       
 static ThunarVfsFileSize  thunar_local_file_get_size          (ThunarFile           *file);
 static const gchar       *thunar_local_file_get_icon_name     (ThunarFile           *file,
                                                                GtkIconTheme         *icon_theme);
+static void               thunar_local_file_changed           (ThunarFile           *file);
 
 
 
@@ -78,6 +79,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_mode = thunar_local_file_get_mode;
   thunarfile_class->get_size = thunar_local_file_get_size;
   thunarfile_class->get_icon_name = thunar_local_file_get_icon_name;
+  thunarfile_class->changed = thunar_local_file_changed;
 }
 
 
@@ -210,6 +212,23 @@ thunar_local_file_get_icon_name (ThunarFile   *file,
   /* default is the mime type icon */
   mime_info = thunar_file_get_mime_info (file);
   return exo_mime_info_lookup_icon_name (mime_info, icon_theme);
+}
+
+
+
+static void
+thunar_local_file_changed (ThunarFile *file)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+
+  /* drop the cached mime type, will be recalculated on-demand */
+  if (G_LIKELY (local_file->mime_info != NULL))
+    {
+      g_object_unref (G_OBJECT (local_file->mime_info));
+      local_file->mime_info = NULL;
+    }
+
+  THUNAR_FILE_CLASS (thunar_local_file_parent_class)->changed (file);
 }
 
 

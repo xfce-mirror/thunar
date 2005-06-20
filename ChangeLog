@@ -1,5 +1,24 @@
 2005-06-20	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-monitor.c(thunar_vfs_monitor_event): Remove
+	  unused variables.
+	* thunar/thunar-folder.c: Apply the same optimization concerning signal
+	  id lookups and closure generations as done with ThunarListModel
+	  earlier.
+	* thunar/thunar-folder.c: Actually react to events on the corresponding
+	  file. We still need a mode in which we'll handle errors in async
+	  folder reloads.
+	* thunar/thunar-local-file.c: Drop the cached MIME type whenever the
+	  file changes. The MIME type will be recalculated on demand when
+	  needed.
+	* thunar/thunar-icon-factory.c: Instead of binding to the icon theme
+	  instance's "changed" signal and risking that somebody else already
+	  registered a handler earlier, we use a signal emission hook now, which
+	  is garantied to be fired before any of the signal handlers are
+	  invoked. See the code for details and additional comments.
+
+2005-06-20	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-local-file.h: Add missing THUNAR_LOCAL_FILE_GET_CLASS().
 	* configure.in.in: Add checks for kqueue() and required headers.
 	* thunar-vfs/thunar-vfs-info.{c,h}: thunar_vfs_info_update() is now

@@ -78,6 +78,9 @@ struct _ThunarFolder
 
   ThunarFile *corresponding_file;
   GSList     *files;
+
+  GClosure   *file_destroy_closure;
+  gint        file_destroy_id;
 };
 
 
@@ -111,7 +114,7 @@ thunar_folder_class_init (ThunarFolderClass *klass)
                                                         _("Corresponding file"),
                                                         _("The file corresponding to this folder"),
                                                         THUNAR_TYPE_FILE,
-                                                        G_PARAM_READABLE));
+                                                        EXO_PARAM_READABLE));
 
   /**
    * ThunarFolder:files:
@@ -123,7 +126,7 @@ thunar_folder_class_init (ThunarFolderClass *klass)
                                    g_param_spec_pointer ("files",
                                                          _("Files in the folder"),
                                                          _("The list of files currently known for the folder"),
-                                                         G_PARAM_READABLE));
+                                                         EXO_PARAM_READABLE));
 
   /**
    * ThunarFolder::files-added:
@@ -146,6 +149,13 @@ thunar_folder_class_init (ThunarFolderClass *klass)
 static void
 thunar_folder_init (ThunarFolder *folder)
 {
+  /* lookup the id for the "destroy" signal of ThunarFile's */
+  folder->file_destroy_id = g_signal_lookup ("destroy", THUNAR_TYPE_FILE);
+
+  /* generate the closure to connect to the "destroy" signal of all files */
+  folder->file_destroy_closure = g_cclosure_new (G_CALLBACK (thunar_folder_file_destroy), folder, NULL);
+  g_closure_ref (folder->file_destroy_closure);
+  g_closure_sink (folder->file_destroy_closure);
 }
 
 
@@ -172,12 +182,14 @@ thunar_folder_finalize (GObject *object)
   /* release references to the files */
   for (lp = folder->files; lp != NULL; lp = lp->next)
     {
-      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data),
-                                            G_SIGNAL_MATCH_DATA,
-                                            0, 0, NULL, NULL, folder);
+      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                            folder->file_destroy_id, 0, folder->file_destroy_closure, NULL, NULL);
       g_object_unref (G_OBJECT (lp->data));
     }
   g_slist_free (folder->files);
+
+  /* drop the "destroy" closure */
+  g_closure_unref (folder->file_destroy_closure);
 
   G_OBJECT_CLASS (thunar_folder_parent_class)->finalize (object);
 }
@@ -239,8 +251,7 @@ thunar_folder_rescan (ThunarFolder *folder,
         break;
 
       /* ignore ".." and "." entries */
-      if (G_UNLIKELY (name[0] == '.' && (name[1] == '\0' ||
-              (name[1] == '.' && name[2] == '\0'))))
+      if (G_UNLIKELY (name[0] == '.' && (name[1] == '\0' || (name[1] == '.' && name[2] == '\0'))))
         continue;
 
       /* check if the item was already present */
@@ -267,8 +278,8 @@ thunar_folder_rescan (ThunarFolder *folder,
 
           nfiles = g_slist_prepend (nfiles, file);
 
-          g_signal_connect (G_OBJECT (file), "destroy",
-                            G_CALLBACK (thunar_folder_file_destroy), folder);
+          g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id,
+                                          0, folder->file_destroy_closure, TRUE);
         }
     }
 
@@ -277,13 +288,10 @@ thunar_folder_rescan (ThunarFolder *folder,
   /* notify listeners about removed files */
   for (lp = ofiles; lp != NULL; lp = lp->next)
     {
-      file = THUNAR_FILE (lp->data);
-      
-      g_signal_handlers_disconnect_matched
-        (G_OBJECT (file), G_SIGNAL_MATCH_DATA | G_SIGNAL_MATCH_FUNC,
-         0, 0, NULL, thunar_folder_file_destroy, folder);
-      gtk_object_destroy (GTK_OBJECT (file));
-      g_object_unref (G_OBJECT (file));
+      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                            folder->file_destroy_id, 0, folder->file_destroy_closure, NULL, NULL);
+      gtk_object_destroy (GTK_OBJECT (lp->data));
+      g_object_unref (G_OBJECT (lp->data));
     }
   g_slist_free (ofiles);
 
@@ -307,7 +315,13 @@ static void
 thunar_folder_corresponding_file_changed (ThunarFile   *file,
                                           ThunarFolder *folder)
 {
-  // TODO: Rescan
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (folder->corresponding_file == file);
+
+  /* rescan the directory */
+  if (!thunar_folder_rescan (folder, NULL))
+    gtk_object_destroy (GTK_OBJECT (folder));
 }
 
 
@@ -320,7 +334,8 @@ thunar_folder_corresponding_file_destroy (ThunarFile   *file,
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
   g_return_if_fail (folder->corresponding_file == file);
 
-  // TODO: Error or Destroy?
+  /* the folder is useless now */
+  gtk_object_destroy (GTK_OBJECT (folder));
 }
 
 
@@ -333,9 +348,8 @@ thunar_folder_file_destroy (ThunarFile   *file,
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
   g_return_if_fail (g_slist_find (folder->files, file) != NULL);
 
-  g_signal_handlers_disconnect_matched
-    (G_OBJECT (file), G_SIGNAL_MATCH_DATA | G_SIGNAL_MATCH_FUNC,
-     0, 0, NULL, thunar_folder_file_destroy, folder);
+  g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                        folder->file_destroy_id, 0, folder->file_destroy_closure, NULL, NULL);
   folder->files = g_slist_remove (folder->files, file);
   g_object_unref (G_OBJECT (file));
 }
@@ -424,6 +438,7 @@ thunar_folder_get_for_uri (ThunarVfsURI *uri,
       folder = thunar_folder_get_for_file (file, error);
       g_object_unref (G_OBJECT (file));
     }
+
   return folder;
 }
 
