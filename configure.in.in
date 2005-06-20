@@ -42,8 +42,11 @@ AC_PROG_LIBTOOL()
 
 dnl Check for standard headers
 AC_CHECK_HEADERS([errno.h fcntl.h fstab.h memory.h stdlib.h string.h \
-                  sys/cdio.h \
-                  sys/mount.h sys/stat.h sys/param.h time.h])
+                  sys/cdio.h sys/event.h \
+                  sys/mount.h sys/stat.h sys/time.h sys/param.h time.h])
+
+dnl Check for standard functions
+AC_CHECK_FUNCS([kqueue])
 
 dnl Check for required packages
 XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1])

@@ -40,16 +40,53 @@
 
 
 
-static gboolean thunar_vfs_info_update (ThunarVfsInfo *info,
-                                        GError       **error);
-
-
-
 static ExoMimeDatabase *mime_database = NULL;
 
 
 
-static gboolean
+/**
+ * thunar_vfs_info_query:
+ * @info  : pointer to an uninitialized #ThunarVfsInfo object.
+ * @uri   : an #ThunarVfsURI instance.
+ * @error : return location for errors.
+ *
+ * Return value: %TRUE if the operation succeed, else %FALSE.
+ **/
+gboolean
+thunar_vfs_info_query (ThunarVfsInfo  *info,
+                       ThunarVfsURI   *uri,
+                       GError        **error)
+{
+  g_return_val_if_fail (info != NULL, FALSE);
+  g_return_val_if_fail (info->uri == NULL, FALSE);
+  g_return_val_if_fail (info->target == NULL, FALSE);
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
+
+  g_object_ref (G_OBJECT (uri));
+  info->uri = uri;
+
+  if (thunar_vfs_info_update (info, error) == THUNAR_VFS_INFO_RESULT_ERROR)
+    {
+      g_object_unref (G_OBJECT (info->uri));
+      info->uri = NULL;
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+
+
+/**
+ * thunar_vfs_info_update:
+ * @info  :
+ * @error :
+ *
+ * FIXME
+ *
+ * Return value:
+ **/
+ThunarVfsInfoResult
 thunar_vfs_info_update (ThunarVfsInfo *info,
                         GError       **error)
 {
@@ -63,7 +100,7 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    "Failed to stat file `%s': %s", path, g_strerror (errno));
-      return FALSE;
+      return THUNAR_VFS_INFO_RESULT_ERROR;
     }
 
   if (!S_ISLNK (lsb.st_mode))
@@ -90,6 +127,8 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
           info->mtime = lsb.st_mtime;
           info->inode = lsb.st_ino;
           info->device = lsb.st_dev;
+
+          return THUNAR_VFS_INFO_RESULT_CHANGED;
         }
     }
   else
@@ -104,7 +143,7 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
           g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                        "Failed to read link target of `%s': %s", path,
                        g_strerror (errno));
-          return FALSE;
+          return THUNAR_VFS_INFO_RESULT_ERROR;
         }
       buffer[length] = '\0';
 
@@ -131,6 +170,8 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
               info->mtime = sb.st_mtime;
               info->inode = sb.st_ino;
               info->device = sb.st_dev;
+          
+              return THUNAR_VFS_INFO_RESULT_CHANGED;
             }
         }
       else
@@ -158,44 +199,13 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
               info->mtime = lsb.st_mtime;
               info->inode = lsb.st_ino;
               info->device = lsb.st_dev;
+
+              return THUNAR_VFS_INFO_RESULT_CHANGED;
             }
         }
     }
 
-  return TRUE;
-}
-
-
-
-/**
- * thunar_vfs_info_query:
- * @info  : pointer to an uninitialized #ThunarVfsInfo object.
- * @uri   : an #ThunarVfsURI instance.
- * @error : return location for errors.
- *
- * Return value: %TRUE if the operation succeed, else %FALSE.
- **/
-gboolean
-thunar_vfs_info_query (ThunarVfsInfo  *info,
-                       ThunarVfsURI   *uri,
-                       GError        **error)
-{
-  g_return_val_if_fail (info != NULL, FALSE);
-  g_return_val_if_fail (info->uri == NULL, FALSE);
-  g_return_val_if_fail (info->target == NULL, FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
-
-  g_object_ref (G_OBJECT (uri));
-  info->uri = uri;
-
-  if (!thunar_vfs_info_update (info, error))
-    {
-      g_object_unref (G_OBJECT (info->uri));
-      info->uri = NULL;
-      return FALSE;
-    }
-
-  return TRUE;
+  return THUNAR_VFS_INFO_RESULT_NOCHANGE;
 }
 
 

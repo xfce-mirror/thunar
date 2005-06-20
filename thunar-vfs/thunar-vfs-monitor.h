@@ -18,8 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __THUNAR_VFS_WATCH_H__
-#define __THUNAR_VFS_WATCH_H__
+#ifndef __THUNAR_VFS_MONITOR_H__
+#define __THUNAR_VFS_MONITOR_H__
 
 #include <thunar-vfs/thunar-vfs-info.h>
 
@@ -35,15 +35,45 @@ typedef struct _ThunarVfsMonitor      ThunarVfsMonitor;
 #define THUNAR_VFS_IS_MONITOR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_MONITOR))
 #define THUNAR_VFS_MONITOR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_MONITOR, ThunarVfsMonitorClass))
 
+/**
+ * ThunarVfsMonitorEvent:
+ * @THUNAR_VFS_MONITOR_CHANGED: a monitored file has changed.
+ * @THUNAR_VFS_MONITOR_DELETED: a monitored file was deleted.
+ * FIXME
+ **/
+typedef enum
+{
+  THUNAR_VFS_MONITOR_CHANGED,
+  THUNAR_VFS_MONITOR_CREATED,
+  THUNAR_VFS_MONITOR_DELETED,
+} ThunarVfsMonitorEvent;
+
+/**
+ * ThunarVfsMonitorCallback:
+ * FIXME
+ **/
+typedef void (*ThunarVfsMonitorCallback) (ThunarVfsMonitor     *monitor,
+                                          ThunarVfsMonitorEvent event,
+                                          ThunarVfsInfo        *info,
+                                          gpointer              user_data);
+
 GType             thunar_vfs_monitor_get_type     (void) G_GNUC_CONST;
 
-ThunarVfsMonitor *thunar_vfs_monitor_get_for_uri  (ThunarVfsURI     *uri);
+ThunarVfsMonitor *thunar_vfs_monitor_get_default  (void);
 
-void              thunar_vfs_monitor_add          (ThunarVfsMonitor *monitor,
-                                                   ThunarVfsInfo    *info);
-void              thunar_vfs_monitor_remove       (ThunarVfsMonitor *monitor,
-                                                   ThunarVfsInfo    *info);
+gint              thunar_vfs_monitor_add_info     (ThunarVfsMonitor        *monitor,
+                                                   ThunarVfsInfo           *info,
+                                                   ThunarVfsMonitorCallback callback,
+                                                   gpointer                 user_data);
+
+gint              thunar_vfs_monitor_add_path     (ThunarVfsMonitor        *monitor,
+                                                   const gchar             *path,
+                                                   ThunarVfsMonitorCallback callback,
+                                                   gpointer                 user_data);
+
+void              thunar_vfs_monitor_remove       (ThunarVfsMonitor        *monitor,
+                                                   gint                     id);
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_VFS_WATCH_H__ */
+#endif /* !__THUNAR_VFS_MONITOR_H__ */

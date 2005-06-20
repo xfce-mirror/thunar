@@ -1,5 +1,16 @@
 2005-06-20	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-local-file.h: Add missing THUNAR_LOCAL_FILE_GET_CLASS().
+	* configure.in.in: Add checks for kqueue() and required headers.
+	* thunar-vfs/thunar-vfs-info.{c,h}: thunar_vfs_info_update() is now
+	  part of the public API as it's used by monitor and will be used
+	  by the ThunarLocalFile implementation later as well.
+	* thunar-vfs/thunar-vfs-monitor.{c,h}: Add implementation for most
+	  of the ThunarVfsMonitor. The current implementation uses kqueue()
+	  if available with a fallback to regular polling.
+
+2005-06-20	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-list-model.c: Instead of resolving the ids for the
 	  "destroy" and "changed" signals on ThunarFile everytime we need to
 	  register it, we query the signal id in the constructor and remember

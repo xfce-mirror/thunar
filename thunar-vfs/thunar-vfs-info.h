@@ -205,13 +205,34 @@ G_STMT_START {                                                              \
       g_object_unref (G_OBJECT ((info)->uri));                              \
       (info)->uri = NULL;                                                   \
     }                                                                       \
+  (info)->type = THUNAR_VFS_FILE_TYPE_UNKNOWN;                              \
+  (info)->ctime = (ThunarVfsFileTime) -1;                                   \
 } G_STMT_END
 
-gboolean     thunar_vfs_info_query            (ThunarVfsInfo  *info,
-                                               ThunarVfsURI   *uri,
-                                               GError        **error);
+/**
+ * ThunarVfsInfoResult:
+ * @THUNAR_VFS_INFO_NOCHANGE: file wasn't altered since last check.
+ * @THUNAR_VFS_INFO_CHANGED : file was changed since last update.
+ * @THUNAR_VFS_INFO_ERROR   : an error occured on checking the file.
+ *
+ * Possible return values for the #thunar_vfs_info_update() function,
+ * which determine the result of the update.
+ **/
+typedef enum
+{
+  THUNAR_VFS_INFO_RESULT_NOCHANGE,
+  THUNAR_VFS_INFO_RESULT_CHANGED,
+  THUNAR_VFS_INFO_RESULT_ERROR,
+} ThunarVfsInfoResult;
 
-ExoMimeInfo *thunar_vfs_info_get_mime_info    (ThunarVfsInfo  *info);
+gboolean            thunar_vfs_info_query            (ThunarVfsInfo       *info,
+                                                      ThunarVfsURI        *uri,
+                                                      GError             **error);
+
+ThunarVfsInfoResult thunar_vfs_info_update           (ThunarVfsInfo       *info,
+                                                      GError             **error);
+
+ExoMimeInfo        *thunar_vfs_info_get_mime_info    (ThunarVfsInfo        *info);
 
 G_END_DECLS;
 
