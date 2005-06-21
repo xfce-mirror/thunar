@@ -51,6 +51,8 @@ Thunar_SOURCES =							\
 	thunar-side-pane.h						\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
+	thunar-trash-file.c						\
+	thunar-trash-file.h						\
 	thunar-trash-folder.c						\
 	thunar-trash-folder.h						\
 	thunar-view.c							\

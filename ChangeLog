@@ -1,3 +1,26 @@
+2005-06-22	Benedikt Meurer <benny@xfce.org>
+
+	* TODO: Addd new TODO items and remove solved issues.
+	* thunar/Makefile.am: Add new class ThunarTrashFile to the build
+	  framework.
+	* thunar-vfs/thunar-vfs-monitor.c(thunar_vfs_monitor_add_info): Do not
+	  use kevent for symlinks, it's way easier to watch them using regular
+	  polling. This shouldn't be a problem anyways, as watching symlinks
+	  is not a common case.
+	* thunar-vfs/thunar-vfs-trash.{c,h}: Add functionality to handle trash:
+	  URIs and determine the real path for a file in a particular trash
+	  can.
+	* thunar-vfs/thunar-vfs-trash.c(thunar_vfs_trash_manager_get_trashes):
+	  Fix a typo where the order of arguments to the g_list_prepend()
+	  function was wrong.
+	* thunar/thunar-trash-file.{c,h}: Add a ThunarTrashFile class, which
+	  represents a trashed file.
+	* thunar/thunar-trash-folder.c: Add support for listing the contents
+	  of the various trash cans, and also provide a simple proxy mechanism,
+	  that automatically forwards the constructor invokation to the
+	  ThunarTrashFile class if required. The trash can handling must be
+	  improved, see bug #1027.
+
 2005-06-21	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-window.c(thunar_window_set_current_directory): Use

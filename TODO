@@ -1,6 +1,14 @@
 Important for Thunar 1.0
 ========================
 
+ - The ThunarTrashFile constructor needs some rework, as it's currently
+   mostly brain-dead. Should probably be splitted into several functions.
+   In addition the ThunarTrashFile should enable the monitoring on the
+   real file in order to stay informed about changes.
+
+ - The ThunarTrashFolder class should watch the trash manager and the
+   trash cans for changes.
+
  - Use better way to handle system flavours than simply (mis)using
    AC_CONFIG_LINKS(), which is pretty messy for this purpose.
 
@@ -37,8 +45,6 @@ Important for Thunar 1.0
  - We need a suite of unit tests and probably high-level tests, that enable
    us to test parts of the file manager automatically and isolate bugs
    early.
-
- - The ThunarListView class must be defined and implemented.
 
  - View's (and probably models) must be able to add custom actions to
    the ThunarWindow (e.g. 'Empty trash', etc.).

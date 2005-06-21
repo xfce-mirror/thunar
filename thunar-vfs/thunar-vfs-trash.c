@@ -28,8 +28,14 @@
 #include <sys/stat.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
+#endif
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
 #endif
 #ifdef HAVE_STRING_H
 #include <string.h>
@@ -526,6 +532,59 @@ thunar_vfs_trash_get_info (ThunarVfsTrash *trash,
 
 
 
+/**
+ * thunar_vfs_trash_get_path:
+ * @trash : a #ThunarVfsTrash.
+ * @file  : the basename of the trashed file.
+ *
+ * Returns the real absolute path to the @file in @trash. Call
+ * #g_free() on the returned path if you are done with it.
+ *
+ * Return value: the absolute path to @file in @trash.
+ **/
+gchar*
+thunar_vfs_trash_get_path (ThunarVfsTrash *trash,
+                           const gchar    *file)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_TRASH (trash), NULL);
+  g_return_val_if_fail (file != NULL && strchr (file, '/') == NULL, NULL);
+
+  return g_build_filename (trash->files_directory, file, NULL);
+}
+
+
+
+/**
+ * thunar_vfs_trash_get_uri:
+ * @trash : a #ThunarVfsTrash.
+ * @file  : the basename of the trashed file.
+ *
+ * Generates a 'trash://' URI that refers to the @file in @trash.
+ *
+ * You'll need to call #g_object_unref() on the returned
+ * object when you are done with it.
+ *
+ * Return value: the generated #ThunarVfsURI.
+ **/
+ThunarVfsURI*
+thunar_vfs_trash_get_uri (ThunarVfsTrash *trash,
+                          const gchar    *file)
+{
+  ThunarVfsURI *uri;
+  gchar        *identifier;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_TRASH (trash), NULL);
+  g_return_val_if_fail (file != NULL && strchr (file, '/') == NULL, NULL);
+
+  identifier = g_strdup_printf ("trash:///%d-%s", trash->id, file);
+  uri = thunar_vfs_uri_new (identifier, NULL);
+  g_free (identifier);
+
+  return uri;
+}
+
+
+
 
 enum
 {
@@ -739,10 +798,101 @@ thunar_vfs_trash_manager_get_trashes (ThunarVfsTrashManager *manager)
    * without breaking all other modules.
    */
   for (lp = manager->trashes; lp != NULL; lp = lp->next)
-    result = g_list_prepend (g_object_ref (G_OBJECT (lp->data)), result);
+    result = g_list_prepend (result, g_object_ref (G_OBJECT (lp->data)));
 
   return result;
 }
 
+
+
+/**
+ * thunar_vfs_trash_manager_resolve_uri:
+ * @manager :  a #ThunarVfsTrashManager.
+ * @uri     : the #ThunarVfsURI to resolve.
+ * @path    : location to store the relative path to.
+ * @error   : return location for errors or %NULL.
+ *
+ * Parses the given @uri and determines the trash referenced by
+ * the @uri and the relative path of the file within the trash.
+ *
+ * Returns the #ThunarVfsTrash referenced by @uri or %NULL on
+ * error, in which case @error will point to a description
+ * of the exact cause.
+ *
+ * For example, the URI 'trash:///0-bar/foo' referes to the
+ * file 'foo' in 'bar' within the first trash, which is usually
+ * the "home trash". So a reference to the "home trash" will
+ * be returned and @path will be set to 'bar/foo'.
+ *
+ * It is a bug to pass the root trash URI 'trash:///' to
+ * this function.
+ *
+ * You'll need to call #g_object_unref() on the returned
+ * object when you are done with it. In addition if you
+ * did not specify %NULL for @path, you'll also have to
+ * #g_free() the returned path.
+ *
+ * Return value: the #ThunarVfsTrash or %NULL on error.
+ **/
+ThunarVfsTrash*
+thunar_vfs_trash_manager_resolve_uri (ThunarVfsTrashManager *manager,
+                                      ThunarVfsURI          *uri,
+                                      gchar                **path,
+                                      GError               **error)
+{
+  ThunarVfsTrash *trash = NULL;
+  const gchar    *uri_path;
+  GList          *lp;
+  gchar          *p;
+  gint            id;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_TRASH_MANAGER (manager), NULL);
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+  g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_TRASH, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* query the path of the uri, skipping the leading '/' */
+  uri_path = thunar_vfs_uri_get_path (uri) + 1;
+
+  /* be sure to reset errno prior to calling strtoul() */
+  errno = 0;
+
+  /* try to extract the trash id */
+  id = (gint) strtoul (uri_path, &p, 10);
+  if (errno != 0 || p[0] != '-' || p[1] == '\0' || p[1] == '/')
+    {
+      p = thunar_vfs_uri_to_string (uri, 0);
+      g_set_error (error, G_CONVERT_ERROR, G_CONVERT_ERROR_BAD_URI,
+                   "Unable to parse malformed trash URI `%s'", p);
+      g_free (p);
+      return NULL;
+    }
+
+  /* lookup a matching trash */
+  for (lp = manager->trashes; lp != NULL; lp = lp->next)
+    if (THUNAR_VFS_TRASH (lp->data)->id == id)
+      {
+        trash = THUNAR_VFS_TRASH (lp->data);
+        break;
+      }
+
+  /* verify that a trash was found */
+  if (G_UNLIKELY (trash == NULL))
+    {
+      g_set_error (error, G_CONVERT_ERROR, G_CONVERT_ERROR_BAD_URI,
+                   "Invalid trash id %d", id);
+      return NULL;
+    }
+
+  /* copy the path for the caller */
+  if (path != NULL)
+    *path = g_strdup (p + 1);
+
+  /* take a reference for the caller */
+  g_object_ref (G_OBJECT (trash));
+
+  /* and return the trash */
+  return trash;
+}
 
 

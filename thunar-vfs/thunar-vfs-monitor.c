@@ -432,6 +432,7 @@ thunar_vfs_monitor_add_info (ThunarVfsMonitor        *monitor,
   /* prepare the watch */
   watch = g_new (ThunarVfsWatch, 1);
   watch->id = ++monitor->current_id;
+  watch->fd = -1;
   watch->info = info;
   watch->callback = callback;
   watch->user_data = user_data;
@@ -439,29 +440,33 @@ thunar_vfs_monitor_add_info (ThunarVfsMonitor        *monitor,
   /* add it to the list of active watches */
   monitor->watches = g_list_prepend (monitor->watches, watch);
 
-#ifdef HAVE_KQUEUE
-  if (G_LIKELY (monitor->kq >= 0))
+  /* For now, symlinks will be checked regularly using the timer */
+  if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) == 0)
     {
-      watch->fd = open (thunar_vfs_uri_get_path (info->uri), O_RDONLY, 0);
-      if (watch->fd >= 0)
+#ifdef HAVE_KQUEUE
+      if (G_LIKELY (monitor->kq >= 0))
         {
-          /* prepare the event definition */
-          struct kevent ev;
-          ev.ident = watch->fd;
-          ev.filter = EVFILT_VNODE;
-          ev.flags = EV_ADD | EV_ENABLE | EV_CLEAR;
-          ev.fflags = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_RENAME | NOTE_REVOKE;
-          ev.udata = watch;
-
-          /* try to add the event */
-          if (kevent (monitor->kq, &ev, 1, NULL, 0, NULL) < 0)
+          watch->fd = open (thunar_vfs_uri_get_path (info->uri), O_RDONLY, 0);
+          if (watch->fd >= 0)
             {
-              close (watch->fd);
-              watch->fd = -1;
+              /* prepare the event definition */
+              struct kevent ev;
+              ev.ident = watch->fd;
+              ev.filter = EVFILT_VNODE;
+              ev.flags = EV_ADD | EV_ENABLE | EV_CLEAR;
+              ev.fflags = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_RENAME | NOTE_REVOKE;
+              ev.udata = watch;
+
+              /* try to add the event */
+              if (kevent (monitor->kq, &ev, 1, NULL, 0, NULL) < 0)
+                {
+                  close (watch->fd);
+                  watch->fd = -1;
+                }
             }
         }
-    }
 #endif
+    }
 
   return watch->id;
 }

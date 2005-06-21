@@ -20,7 +20,7 @@
 #ifndef __THUNAR_VFS_TRASH_H__
 #define __THUNAR_VFS_TRASH_H__
 
-#include <glib-object.h>
+#include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
 
@@ -53,6 +53,10 @@ gint                thunar_vfs_trash_get_id     (ThunarVfsTrash *trash);
 GList              *thunar_vfs_trash_get_files  (ThunarVfsTrash *trash);
 ThunarVfsTrashInfo *thunar_vfs_trash_get_info   (ThunarVfsTrash *trash,
                                                  const gchar    *file);
+ThunarVfsURI       *thunar_vfs_trash_get_uri    (ThunarVfsTrash *trash,
+                                                 const gchar    *file);
+gchar              *thunar_vfs_trash_get_path   (ThunarVfsTrash *trash,
+                                                 const gchar    *file);
 
 
 typedef struct _ThunarVfsTrashManagerClass ThunarVfsTrashManagerClass;
@@ -72,6 +76,11 @@ ThunarVfsTrashManager *thunar_vfs_trash_manager_get_default (void);
 gboolean               thunar_vfs_trash_manager_is_empty    (ThunarVfsTrashManager *manager);
 
 GList                 *thunar_vfs_trash_manager_get_trashes (ThunarVfsTrashManager *manager);
+
+ThunarVfsTrash        *thunar_vfs_trash_manager_resolve_uri (ThunarVfsTrashManager *manager,
+                                                             ThunarVfsURI          *uri,
+                                                             gchar                **path,
+                                                             GError               **error);
 
 G_END_DECLS;
 
