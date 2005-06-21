@@ -37,6 +37,8 @@ Thunar_SOURCES =							\
 	thunar-list-model.h						\
 	thunar-local-file.c						\
 	thunar-local-file.h						\
+	thunar-local-folder.c						\
+	thunar-local-folder.h						\
 	thunar-location-bar.c						\
 	thunar-location-bar.h						\
 	thunar-location-buttons.c					\
@@ -49,8 +51,8 @@ Thunar_SOURCES =							\
 	thunar-side-pane.h						\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
-	thunar-trash-file.c						\
-	thunar-trash-file.h						\
+	thunar-trash-folder.c						\
+	thunar-trash-folder.h						\
 	thunar-view.c							\
 	thunar-view.h							\
 	thunar-window.c							\

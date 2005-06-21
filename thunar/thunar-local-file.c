@@ -22,12 +22,15 @@
 #endif
 
 #include <thunar/thunar-local-file.h>
+#include <thunar/thunar-local-folder.h>
 
 
 
 static void               thunar_local_file_class_init        (ThunarLocalFileClass *klass);
 static void               thunar_local_file_init              (ThunarLocalFile      *local_file);
 static void               thunar_local_file_finalize          (GObject              *object);
+static ThunarFolder      *thunar_local_file_open_as_folder    (ThunarFile           *file,
+                                                               GError              **error);
 static ThunarVfsURI      *thunar_local_file_get_uri           (ThunarFile           *file);
 static ExoMimeInfo       *thunar_local_file_get_mime_info     (ThunarFile           *file);
 static const gchar       *thunar_local_file_get_display_name  (ThunarFile           *file);
@@ -71,6 +74,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   gobject_class->finalize = thunar_local_file_finalize;
 
   thunarfile_class = THUNAR_FILE_CLASS (klass);
+  thunarfile_class->open_as_folder = thunar_local_file_open_as_folder;
   thunarfile_class->get_uri = thunar_local_file_get_uri;
   thunarfile_class->get_mime_info = thunar_local_file_get_mime_info;
   thunarfile_class->get_display_name = thunar_local_file_get_display_name;
@@ -108,6 +112,15 @@ thunar_local_file_finalize (GObject *object)
   g_free (local_file->display_name);
 
   G_OBJECT_CLASS (thunar_local_file_parent_class)->finalize (object);
+}
+
+
+
+static ThunarFolder*
+thunar_local_file_open_as_folder (ThunarFile *file,
+                                  GError    **error)
+{
+  return thunar_local_folder_get_for_file (THUNAR_LOCAL_FILE (file), error);
 }
 
 

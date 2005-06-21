@@ -339,7 +339,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (G_LIKELY (current_directory != NULL))
     {
       /* try to open the directory */
-      folder = thunar_folder_get_for_file (current_directory, &error);
+      folder = thunar_file_open_as_folder (current_directory, &error);
       if (G_LIKELY (folder != NULL))
         {
           thunar_list_model_set_folder (model, folder);

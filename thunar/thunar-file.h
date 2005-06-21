@@ -24,6 +24,11 @@
 
 G_BEGIN_DECLS;
 
+/* we define the folder type here, as thunar-file.h will
+ * be included by thunar-folder.h in any case.
+ */
+typedef struct _ThunarFolder ThunarFolder;
+
 typedef struct _ThunarFileClass ThunarFileClass;
 typedef struct _ThunarFile      ThunarFile;
 
@@ -39,6 +44,9 @@ struct _ThunarFileClass
   GtkObjectClass __parent__;
 
   /* virtual methods */
+  ThunarFolder        *(*open_as_folder)      (ThunarFile   *file,
+                                               GError      **error);
+
   ThunarVfsURI        *(*get_uri)             (ThunarFile   *file);
 
   ExoMimeInfo         *(*get_mime_info)       (ThunarFile   *file);
@@ -72,6 +80,9 @@ GType              thunar_file_get_type         (void) G_GNUC_CONST;
 ThunarFile        *thunar_file_get_for_uri      (ThunarVfsURI *uri,
                                                  GError      **error);
 ThunarFile        *thunar_file_get_parent       (ThunarFile   *file,
+                                                 GError      **error);
+
+ThunarFolder      *thunar_file_open_as_folder   (ThunarFile   *file,
                                                  GError      **error);
 
 ThunarVfsURI      *thunar_file_get_uri          (ThunarFile   *file);

@@ -21,10 +21,14 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
+
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-local-file.h>
-#include <thunar/thunar-trash-file.h>
+#include <thunar/thunar-trash-folder.h>
 
 
 enum
@@ -37,6 +41,8 @@ enum
 
 static void         thunar_file_class_init            (ThunarFileClass *klass);
 static void         thunar_file_finalize              (GObject         *object);
+static ThunarFolder*thunar_file_real_open_as_folder   (ThunarFile      *file,
+                                                       GError         **error);
 static const gchar *thunar_file_real_get_special_name (ThunarFile      *file);
 static void         thunar_file_real_changed          (ThunarFile      *file);
 static void         thunar_file_destroyed             (gpointer         data,
@@ -90,6 +96,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_file_finalize;
 
+  klass->open_as_folder = thunar_file_real_open_as_folder;
   klass->get_special_name = thunar_file_real_get_special_name;
   klass->changed = thunar_file_real_changed;
 
@@ -125,6 +132,16 @@ thunar_file_finalize (GObject *object)
 
 
 
+static ThunarFolder*
+thunar_file_real_open_as_folder (ThunarFile *file,
+                                 GError    **error)
+{
+  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR, g_strerror (ENOTDIR));
+  return NULL;
+}
+
+
+
 static const gchar*
 thunar_file_real_get_special_name (ThunarFile *file)
 {
@@ -153,7 +170,7 @@ thunar_file_new_internal (ThunarVfsURI *uri,
   switch (thunar_vfs_uri_get_scheme (uri))
     {
     case THUNAR_VFS_URI_SCHEME_FILE:  return thunar_local_file_new (uri, error);
-    case THUNAR_VFS_URI_SCHEME_TRASH: return thunar_trash_file_new (uri, error);
+    case THUNAR_VFS_URI_SCHEME_TRASH: return thunar_trash_folder_new (uri, error);
     }
 
   g_assert_not_reached ();
@@ -282,6 +299,31 @@ thunar_file_get_parent (ThunarFile *file,
   g_object_unref (G_OBJECT (parent_uri));
 
   return parent_file;
+}
+
+
+
+/**
+ * thunar_file_open_as_folder:
+ * @file  : a #ThunarFile instance.
+ * @error : return location for errors or %NULL.
+ *
+ * Tries to open the #ThunarFolder instance corresponding to @file. If @file
+ * does not refer to a folder in any way or you don't have permission to open
+ * the @file as a folder, %NULL will be returned and @error will be appropriately.
+ *
+ * You'll need to call #g_object_unref() on the returned instance when you're
+ * done with it.
+ *
+ * Return value: the #ThunarFolder corresponding to @file or %NULL.
+ **/
+ThunarFolder*
+thunar_file_open_as_folder (ThunarFile *file,
+                            GError    **error)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+  return THUNAR_FILE_GET_CLASS (file)->open_as_folder (file, error);
 }
 
 

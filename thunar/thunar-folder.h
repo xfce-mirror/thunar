@@ -24,26 +24,33 @@
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarFolderClass ThunarFolderClass;
-typedef struct _ThunarFolder      ThunarFolder;
+typedef struct _ThunarFolderIface ThunarFolderIface;
 
 #define THUNAR_TYPE_FOLDER            (thunar_folder_get_type ())
 #define THUNAR_FOLDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_FOLDER, ThunarFolder))
-#define THUNAR_FOLDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_FOLDER, ThunarFolderClass))
 #define THUNAR_IS_FOLDER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_FOLDER))
-#define THUNAR_IS_FOLDER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_FOLDER))
-#define THUNAR_FOLDER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_FOLDER, ThunarFolderClass))
+#define THUNAR_FOLDER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_FOLDER, ThunarFolderIface))
 
-GType         thunar_folder_get_type                (void) G_GNUC_CONST;
+struct _ThunarFolderIface
+{
+  GTypeInterface __parent__;
 
-ThunarFolder *thunar_folder_get_for_file            (ThunarFile   *file,
-                                                     GError      **error);
-ThunarFolder *thunar_folder_get_for_uri             (ThunarVfsURI *uri,
-                                                     GError      **error);
+  /* methods */
+  ThunarFile *(*get_corresponding_file) (ThunarFolder *folder);
+  GSList     *(*get_files)              (ThunarFolder *folder);
 
-ThunarFile   *thunar_folder_get_corresponding_file  (ThunarFolder *folder);
+  /* signals */
+  void (*files_added) (ThunarFolder *folder,
+                       GSList       *files);
+};
 
-GSList       *thunar_folder_get_files               (ThunarFolder *folder);
+GType       thunar_folder_get_type               (void) G_GNUC_CONST;
+
+ThunarFile *thunar_folder_get_corresponding_file (ThunarFolder *folder);
+GSList     *thunar_folder_get_files              (ThunarFolder *folder);
+
+void        thunar_folder_files_added            (ThunarFolder *folder,
+                                                  GSList       *files);
 
 G_END_DECLS;
 
