@@ -379,6 +379,7 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
       g_object_ref (G_OBJECT (local_file));
 
       /* drop the floating reference */
+      g_assert (GTK_OBJECT_FLOATING (local_file));
       g_object_ref (G_OBJECT (local_folder));
       gtk_object_sink (GTK_OBJECT (local_folder));
 

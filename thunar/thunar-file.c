@@ -237,6 +237,7 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
       if (G_LIKELY (file != NULL))
         {
           /* drop the floating reference */
+          g_assert (GTK_OBJECT_FLOATING (file));
           g_object_ref (G_OBJECT (file));
           gtk_object_sink (GTK_OBJECT (file));
 

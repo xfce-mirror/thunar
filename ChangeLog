@@ -1,5 +1,11 @@
 2005-06-22	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-file.c, thunar/thunar-local-folder.c: Add an assertion
+	  to verify that an object has a floating reference before we call
+	  gtk_object_sink() on it.
+
+2005-06-22	Benedikt Meurer <benny@xfce.org>
+
 	* TODO: Addd new TODO items and remove solved issues.
 	* thunar/Makefile.am: Add new class ThunarTrashFile to the build
 	  framework.
