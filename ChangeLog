@@ -1,5 +1,12 @@
 2005-06-22	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-local-file.c, thunar/thunar-local-folder.c: If for
+	  some reason the constructor fails, we need to make sure to handle
+	  the floating reference correctly, therefore we call gtk_object_sink()
+	  instead of g_object_unref() in this case now.
+
+2005-06-22	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.c, thunar/thunar-local-folder.c: Add an assertion
 	  to verify that an object has a floating reference before we call
 	  gtk_object_sink() on it.

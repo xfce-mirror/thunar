@@ -278,7 +278,7 @@ thunar_local_file_new (ThunarVfsURI *uri,
   /* query the file info */
   if (!thunar_vfs_info_query (&local_file->info, uri, error))
     {
-      g_object_unref (G_OBJECT (local_file));
+      gtk_object_sink (GTK_OBJECT (local_file));
       return NULL;
     }
 

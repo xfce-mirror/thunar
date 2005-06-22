@@ -379,7 +379,7 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
       g_object_ref (G_OBJECT (local_file));
 
       /* drop the floating reference */
-      g_assert (GTK_OBJECT_FLOATING (local_file));
+      g_assert (GTK_OBJECT_FLOATING (local_folder));
       g_object_ref (G_OBJECT (local_folder));
       gtk_object_sink (GTK_OBJECT (local_folder));
 
@@ -391,7 +391,7 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
       /* try to scan the new folder */
       if (G_UNLIKELY (!thunar_local_folder_rescan (local_folder, error)))
         {
-          g_object_unref (G_OBJECT (local_folder));
+          gtk_object_sink (GTK_OBJECT (local_folder));
           return NULL;
         }
     }
