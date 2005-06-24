@@ -641,7 +641,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
       if (G_LIKELY (mime_info != NULL))
-        g_value_set_static_string (value, exo_mime_info_get_name (mime_info));
+        {
+          g_value_set_static_string (value, exo_mime_info_get_name (mime_info));
+          g_object_unref (G_OBJECT (mime_info));
+        }
       else
         g_value_set_static_string (value, _("unknown"));
       break;
@@ -658,14 +661,21 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_LIST_MODEL_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
-      g_value_take_string (value, thunar_file_get_size_string (row->file));
+      str = thunar_file_get_size_string (row->file);
+      if (G_LIKELY (str != NULL))
+        g_value_take_string (value, str);
+      else
+        g_value_set_static_string (value, "--");
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
       if (G_LIKELY (mime_info != NULL))
-        g_value_set_static_string (value, exo_mime_info_get_comment (mime_info));
+        {
+          g_value_set_static_string (value, exo_mime_info_get_comment (mime_info));
+          g_object_unref (G_OBJECT (mime_info));
+        }
       else
         g_value_set_static_string (value, _("unknown"));
       break;
@@ -1325,6 +1335,7 @@ sort_by_mime_type (ThunarFile *a,
 {
   ExoMimeInfo *info_a;
   ExoMimeInfo *info_b;
+  gint         result;
 
   info_a = thunar_file_get_mime_info (a);
   info_b = thunar_file_get_mime_info (b);
@@ -1332,12 +1343,23 @@ sort_by_mime_type (ThunarFile *a,
   if (G_UNLIKELY (info_a == NULL && info_b == NULL))
     return 0;
   else if (G_UNLIKELY (info_a == NULL))
-    return -1;
+    {
+      g_object_unref (G_OBJECT (info_b));
+      return -1;
+    }
   else if (G_UNLIKELY (info_b == NULL))
-    return 1;
+    {
+      g_object_unref (G_OBJECT (info_a));
+      return 1;
+    }
 
-  return strcasecmp (exo_mime_info_get_name (info_a),
-                     exo_mime_info_get_name (info_b));
+  result = strcasecmp (exo_mime_info_get_name (info_a),
+                       exo_mime_info_get_name (info_b));
+
+  g_object_unref (G_OBJECT (info_b));
+  g_object_unref (G_OBJECT (info_a));
+
+  return result;
 }
 
 
@@ -1377,9 +1399,18 @@ sort_by_size (ThunarFile *a,
 {
   ThunarVfsFileSize size_a;
   ThunarVfsFileSize size_b;
+  gboolean          can_a;
+  gboolean          can_b;
 
-  size_a = thunar_file_get_size (a);
-  size_b = thunar_file_get_size (b);
+  can_a = thunar_file_get_size (a, &size_a);
+  can_b = thunar_file_get_size (b, &size_b);
+
+  if (G_UNLIKELY (!can_a && !can_b))
+    return 0;
+  else if (G_UNLIKELY (!can_a))
+    return -1;
+  else if (G_UNLIKELY (!can_b))
+    return 1;
 
   if (size_a < size_b)
     return -1;
@@ -1396,6 +1427,7 @@ sort_by_type (ThunarFile *a,
 {
   ExoMimeInfo *info_a;
   ExoMimeInfo *info_b;
+  gint         result;
 
   info_a = thunar_file_get_mime_info (a);
   info_b = thunar_file_get_mime_info (b);
@@ -1403,12 +1435,23 @@ sort_by_type (ThunarFile *a,
   if (G_UNLIKELY (info_a == NULL && info_b == NULL))
     return 0;
   else if (G_UNLIKELY (info_a == NULL))
-    return -1;
+    {
+      g_object_unref (G_OBJECT (info_b));
+      return -1;
+    }
   else if (G_UNLIKELY (info_b == NULL))
-    return 1;
+    {
+      g_object_unref (G_OBJECT (info_a));
+      return 1;
+    }
 
-  return strcasecmp (exo_mime_info_get_comment (info_a),
-                     exo_mime_info_get_comment (info_b));
+  result = strcasecmp (exo_mime_info_get_comment (info_a),
+                       exo_mime_info_get_comment (info_b));
+
+  g_object_unref (G_OBJECT (info_b));
+  g_object_unref (G_OBJECT (info_a));
+
+  return result;
 }
 
 

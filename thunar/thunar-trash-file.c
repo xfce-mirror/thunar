@@ -45,7 +45,8 @@ static gboolean          thunar_trash_file_get_date         (ThunarFile         
                                                              ThunarVfsFileTime    *date_return);
 static ThunarVfsFileType thunar_trash_file_get_kind         (ThunarFile           *file);
 static ThunarVfsFileMode thunar_trash_file_get_mode         (ThunarFile           *file);
-static ThunarVfsFileSize thunar_trash_file_get_size         (ThunarFile           *file);
+static gboolean          thunar_trash_file_get_size         (ThunarFile           *file,
+                                                             ThunarVfsFileSize    *size_return);
 static const gchar      *thunar_trash_file_get_icon_name    (ThunarFile           *file,
                                                              GtkIconTheme         *icon_theme);
 
@@ -187,10 +188,11 @@ thunar_trash_file_get_mode (ThunarFile *file)
 
 
 
-static ThunarVfsFileSize
-thunar_trash_file_get_size (ThunarFile *file)
+static gboolean
+thunar_trash_file_get_size (ThunarFile        *file,
+                            ThunarVfsFileSize *size_return)
 {
-  return thunar_file_get_size (THUNAR_TRASH_FILE (file)->real_file);
+  return thunar_file_get_size (THUNAR_TRASH_FILE (file)->real_file, size_return);
 }
 
 

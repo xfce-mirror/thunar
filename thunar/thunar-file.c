@@ -28,6 +28,7 @@
 #include <time.h>
 #endif
 
+#include <thunar/thunar-computer-folder.h>
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-local-file.h>
@@ -44,12 +45,18 @@ enum
 
 static void         thunar_file_class_init            (ThunarFileClass   *klass);
 static void         thunar_file_finalize              (GObject           *object);
+static gboolean     thunar_file_real_has_parent       (ThunarFile        *file);
+static ThunarFile  *thunar_file_real_get_parent       (ThunarFile        *file,
+                                                       GError           **error);
 static ThunarFolder*thunar_file_real_open_as_folder   (ThunarFile        *file,
                                                        GError           **error);
+static ExoMimeInfo *thunar_file_real_get_mime_info    (ThunarFile        *file);
 static const gchar *thunar_file_real_get_special_name (ThunarFile        *file);
 static gboolean     thunar_file_real_get_date         (ThunarFile        *file,
                                                        ThunarFileDateType date_type,
                                                        ThunarVfsFileTime *date_return);
+static gboolean     thunar_file_real_get_size         (ThunarFile        *file,
+                                                       ThunarVfsFileSize *size_return);
 static void         thunar_file_real_changed          (ThunarFile        *file);
 static void         thunar_file_destroyed             (gpointer           data,
                                                        GObject           *object);
@@ -102,9 +109,13 @@ thunar_file_class_init (ThunarFileClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_file_finalize;
 
+  klass->has_parent = thunar_file_real_has_parent;
+  klass->get_parent = thunar_file_real_get_parent;
   klass->open_as_folder = thunar_file_real_open_as_folder;
+  klass->get_mime_info = thunar_file_real_get_mime_info;
   klass->get_special_name = thunar_file_real_get_special_name;
   klass->get_date = thunar_file_real_get_date;
+  klass->get_size = thunar_file_real_get_size;
   klass->changed = thunar_file_real_changed;
 
   /**
@@ -139,11 +150,57 @@ thunar_file_finalize (GObject *object)
 
 
 
+static gboolean
+thunar_file_real_has_parent (ThunarFile *file)
+{
+  return TRUE;
+}
+
+
+
+static ThunarFile*
+thunar_file_real_get_parent (ThunarFile *file,
+                             GError    **error)
+{
+  ThunarVfsURI *parent_uri;
+  ThunarFile   *parent_file;
+  gchar        *p;
+
+  /* lookup the parent's URI */
+  parent_uri = thunar_vfs_uri_parent (thunar_file_get_uri (file));
+  if (G_UNLIKELY (parent_uri == NULL))
+    {
+      p = thunar_vfs_uri_to_string (thunar_file_get_uri (file), 0);
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
+                   _("Failed to determine parent URI for '%s'"), p);
+      g_free (p);
+      return NULL;
+    }
+
+  /* lookup the file object for the parent_uri */
+  parent_file = thunar_file_get_for_uri (parent_uri, error);
+
+  /* release the reference on the parent_uri */
+  g_object_unref (G_OBJECT (parent_uri));
+
+  return parent_file;
+}
+
+
+
 static ThunarFolder*
 thunar_file_real_open_as_folder (ThunarFile *file,
                                  GError    **error)
 {
   g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR, g_strerror (ENOTDIR));
+  return NULL;
+}
+
+
+
+static ExoMimeInfo*
+thunar_file_real_get_mime_info (ThunarFile *file)
+{
   return NULL;
 }
 
@@ -161,6 +218,15 @@ static gboolean
 thunar_file_real_get_date (ThunarFile        *file,
                            ThunarFileDateType date_type,
                            ThunarVfsFileTime *date_return)
+{
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_file_real_get_size (ThunarFile        *file,
+                           ThunarVfsFileSize *size_return)
 {
   return FALSE;
 }
@@ -186,8 +252,9 @@ thunar_file_new_internal (ThunarVfsURI *uri,
 {
   switch (thunar_vfs_uri_get_scheme (uri))
     {
-    case THUNAR_VFS_URI_SCHEME_FILE:  return thunar_local_file_new (uri, error);
-    case THUNAR_VFS_URI_SCHEME_TRASH: return thunar_trash_folder_new (uri, error);
+    case THUNAR_VFS_URI_SCHEME_COMPUTER: return thunar_computer_folder_new (uri, error);
+    case THUNAR_VFS_URI_SCHEME_FILE:     return thunar_local_file_new (uri, error);
+    case THUNAR_VFS_URI_SCHEME_TRASH:    return thunar_trash_folder_new (uri, error);
     }
 
   g_assert_not_reached ();
@@ -276,20 +343,37 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
 
 
 /**
+ * thunar_file_has_parent:
+ * @file : a #ThunarFile instance.
+ *
+ * Checks whether it is possible to determine the parent #ThunarFile
+ * for @file.
+ *
+ * Return value: whether @file has a parent.
+ **/
+gboolean
+thunar_file_has_parent (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return THUNAR_FILE_GET_CLASS (file)->has_parent (file);
+}
+
+
+
+/**
  * thunar_file_get_parent:
  * @file  : a #ThunarFile instance.
  * @error : return location for errors.
  *
- * Queries the parent #ThunarFile (the directory, which includes @file)
- * for @file. If an error happens, %NULL will be returned and @error
- * will be set to point to a #GError. Else the #ThunarFile will
- * be returned. The method will automatically take a reference
- * on the returned file for the caller, so you'll have to call
- * #g_object_unref() when you're done with the returned file object.
+ * Determines the parent #ThunarFile (the directory or virtual folder,
+ * which includes @file) for @file. If @file has no parent or the
+ * user is not allowed to open the parent folder of @file, %NULL will
+ * be returned and @error will be set to point to a #GError that
+ * describes the cause. Else, the #ThunarFile will be returned, and
+ * the caller must call #g_object_unref() on it.
  *
- * There's one special case to take care of: If @file refers to the
- * root directory ("/"), %NULL will be returned, but @error won't
- * be set. You'll have to handle this case gracefully.
+ * You may want to call #thunar_file_has_parent() first to
+ * determine whether @file has a parent.
  *
  * Return value: the parent #ThunarFile or %NULL.
  **/
@@ -297,26 +381,9 @@ ThunarFile*
 thunar_file_get_parent (ThunarFile *file,
                         GError    **error)
 {
-  ThunarVfsURI *parent_uri;
-  ThunarFile   *parent_file;
-
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* lookup the parent's URI */
-  parent_uri = thunar_vfs_uri_parent (thunar_file_get_uri (file));
-  if (G_UNLIKELY (parent_uri == NULL))
-    {
-      /* file has no parent (e.g. "/") */
-      return NULL;
-    }
-
-  /* lookup the file object for the parent_uri */
-  parent_file = thunar_file_get_for_uri (parent_uri, error);
-
-  /* release the reference on the parent_uri */
-  g_object_unref (G_OBJECT (parent_uri));
-
-  return parent_file;
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+  return THUNAR_FILE_GET_CLASS (file)->get_parent (file, error);
 }
 
 
@@ -382,10 +449,9 @@ thunar_file_get_uri (ThunarFile *file)
  * function may return %NULL if it is unable to determine a MIME type.
  * Therefore your component must be able to handle this case!
  *
- * Note, that there's no reference taken for the caller on the
- * returned #ExoMimeInfo, so if you need the object for a longer
- * period, you'll need to take a reference yourself using the
- * #g_object_ref() function.
+ * This method automatically takes a reference on the returned
+ * object for the caller, so you'll need to call #g_object_unref()
+ * when you are done with it.
  *
  * Return value: the MIME type or %NULL.
  **/
@@ -504,17 +570,25 @@ thunar_file_get_mode (ThunarFile *file)
 
 /**
  * thunar_file_get_size:
- * @file : a #ThunarFile instance.
+ * @file        : a #ThunarFile instance.
+ * @size_return : location to store the file size to.
  *
- * Returns the size of @file in bytes.
+ * Tries to determine the size of @file in bytes. If it
+ * was possible to determine the size, %TRUE will be
+ * returned and @size_return will be set to the size
+ * in bytes. Else %FALSE will be returned, which means
+ * that it is not possible to determine the size of
+ * @file.
  *
- * Return value: the size of @file in bytes.
+ * Return value: %TRUE if the operation succeeds, else %FALSE.
  **/
-ThunarVfsFileSize
-thunar_file_get_size (ThunarFile *file)
+gboolean
+thunar_file_get_size (ThunarFile        *file,
+                      ThunarVfsFileSize *size_return)
 {
-  g_return_val_if_fail (THUNAR_IS_FILE (file), 0);
-  return THUNAR_FILE_GET_CLASS (file)->get_size (file);
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (size_return != NULL, FALSE);
+  return THUNAR_FILE_GET_CLASS (file)->get_size (file, size_return);
 }
 
 
@@ -640,14 +714,24 @@ thunar_file_get_mode_string (ThunarFile *file)
  * format. You'll need to free the result using #g_free()
  * if you're done with it.
  *
+ * If it is not possible to determine the size of @file,
+ * %NULL will be returned, so the caller must be able to
+ * handle this case.
+ *
  * Return value: the size of @file in a human readable
- *               format.
+ *               format or %NULL.
  **/
 gchar*
 thunar_file_get_size_string (ThunarFile *file)
 {
+  ThunarVfsFileSize size;
+
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return thunar_vfs_humanize_size (THUNAR_FILE_GET_CLASS (file)->get_size (file), NULL, 0);
+
+  if (!thunar_file_get_size (file, &size))
+    return NULL;
+
+  return thunar_vfs_humanize_size (size, NULL, 0);
 }
 
 

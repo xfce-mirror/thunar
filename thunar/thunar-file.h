@@ -61,6 +61,10 @@ struct _ThunarFileClass
   GtkObjectClass __parent__;
 
   /* virtual methods */
+  gboolean             (*has_parent)          (ThunarFile        *file);
+  ThunarFile          *(*get_parent)          (ThunarFile        *file,
+                                               GError           **error);
+
   ThunarFolder        *(*open_as_folder)      (ThunarFile        *file,
                                                GError           **error);
 
@@ -76,7 +80,8 @@ struct _ThunarFileClass
                                                ThunarVfsFileTime *date_return);
   ThunarVfsFileType    (*get_kind)            (ThunarFile        *file);
   ThunarVfsFileMode    (*get_mode)            (ThunarFile        *file);
-  ThunarVfsFileSize    (*get_size)            (ThunarFile        *file);
+  gboolean             (*get_size)            (ThunarFile        *file,
+                                               ThunarVfsFileSize *size_return);
 
   const gchar         *(*get_icon_name)       (ThunarFile        *file,
                                                GtkIconTheme      *icon_theme);
@@ -99,6 +104,8 @@ GType              thunar_file_get_type         (void) G_GNUC_CONST;
 
 ThunarFile        *thunar_file_get_for_uri      (ThunarVfsURI      *uri,
                                                  GError           **error);
+
+gboolean           thunar_file_has_parent       (ThunarFile        *file);
 ThunarFile        *thunar_file_get_parent       (ThunarFile        *file,
                                                  GError           **error);
 
@@ -117,7 +124,8 @@ gboolean           thunar_file_get_date         (ThunarFile        *file,
                                                  ThunarVfsFileTime *date_return);
 ThunarVfsFileType  thunar_file_get_kind         (ThunarFile        *file);
 ThunarVfsFileMode  thunar_file_get_mode         (ThunarFile        *file);
-ThunarVfsFileSize  thunar_file_get_size         (ThunarFile        *file);
+gboolean           thunar_file_get_size         (ThunarFile        *file,
+                                                 ThunarVfsFileSize *size_return);
 
 gchar             *thunar_file_get_date_string  (ThunarFile        *file,
                                                  ThunarFileDateType date_type);

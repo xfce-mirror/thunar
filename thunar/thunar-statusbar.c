@@ -160,6 +160,7 @@ static void
 thunar_statusbar_update (ThunarStatusbar *statusbar)
 {
   ThunarVfsFileSize size;
+  ThunarVfsFileSize size_summary;
   ThunarListModel  *model;
   ExoMimeInfo      *mime_info;
   ThunarFile       *file;
@@ -194,22 +195,35 @@ thunar_statusbar_update (ThunarStatusbar *statusbar)
       size_string = thunar_file_get_size_string (file);
       if (G_LIKELY (mime_info != NULL))
         {
-          text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
-                                  exo_mime_info_get_comment (mime_info));
+          if (G_LIKELY (size_string != NULL))
+            {
+              text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
+                                      exo_mime_info_get_comment (mime_info));
+            }
+          else
+            {
+              text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file),
+                                      exo_mime_info_get_comment (mime_info));
+            }
+          g_object_unref (G_OBJECT (mime_info));
         }
       else
         {
-          text = g_strdup_printf (_("\"%s\" (%s)"), thunar_file_get_display_name (file), size_string);
+          if (G_LIKELY (size_string != NULL))
+            text = g_strdup_printf (_("\"%s\" (%s)"), thunar_file_get_display_name (file), size_string);
+          else
+            text = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
         }
       g_free (size_string);
     }
   else
     {
       /* sum up all sizes */
-      for (lp = selected_files, n = 0, size = 0; lp != NULL; lp = lp->next, ++n)
-        size += thunar_file_get_size (THUNAR_FILE (lp->data));
+      for (lp = selected_files, n = 0, size_summary = 0; lp != NULL; lp = lp->next, ++n)
+        if (thunar_file_get_size (THUNAR_FILE (lp->data), &size))
+          size_summary += size;
 
-      size_string = thunar_vfs_humanize_size (size, NULL, 0);
+      size_string = thunar_vfs_humanize_size (size_summary, NULL, 0);
       text = g_strdup_printf (_("%d items selected (%s)"), n, size_string);
       g_free (size_string);
     }

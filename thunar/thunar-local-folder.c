@@ -33,23 +33,10 @@
 
 
 
-enum
-{
-  PROP_0,
-  PROP_CORRESPONDING_FILE,
-  PROP_FILES,
-};
-
-
-
 static void        thunar_local_folder_class_init                 (ThunarLocalFolderClass *klass);
 static void        thunar_local_folder_folder_init                (ThunarFolderIface      *iface);
 static void        thunar_local_folder_init                       (ThunarLocalFolder      *local_folder);
 static void        thunar_local_folder_finalize                   (GObject                *object);
-static void        thunar_local_folder_get_property               (GObject                *object,
-                                                                   guint                   prop_id,
-                                                                   GValue                 *value,
-                                                                   GParamSpec             *pspec);
 static ThunarFile *thunar_local_folder_get_corresponding_file     (ThunarFolder           *folder);
 static GSList     *thunar_local_folder_get_files                  (ThunarFolder           *folder);
 static gboolean    thunar_local_folder_rescan                     (ThunarLocalFolder      *local_folder,
@@ -96,15 +83,6 @@ thunar_local_folder_class_init (ThunarLocalFolderClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_local_folder_finalize;
-  gobject_class->get_property = thunar_local_folder_get_property;
-
-  g_object_class_override_property (gobject_class,
-                                    PROP_CORRESPONDING_FILE,
-                                    "corresponding-file");
-
-  g_object_class_override_property (gobject_class,
-                                    PROP_FILES,
-                                    "files");
 }
 
 
@@ -163,32 +141,6 @@ thunar_local_folder_finalize (GObject *object)
   g_closure_unref (local_folder->file_destroy_closure);
 
   G_OBJECT_CLASS (thunar_local_folder_parent_class)->finalize (object);
-}
-
-
-
-static void
-thunar_local_folder_get_property (GObject     *object,
-                                  guint        prop_id,
-                                  GValue      *value,
-                                  GParamSpec  *pspec)
-{
-  ThunarFolder *folder = THUNAR_FOLDER (object);
-
-  switch (prop_id)
-    {
-    case PROP_CORRESPONDING_FILE:
-      g_value_set_object (value, thunar_folder_get_corresponding_file (folder));
-      break;
-
-    case PROP_FILES:
-      g_value_set_pointer (value, thunar_folder_get_files (folder));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    }
 }
 
 
@@ -275,8 +227,6 @@ thunar_local_folder_rescan (ThunarLocalFolder *local_folder,
       local_folder->files = g_slist_concat (local_folder->files, nfiles);
       thunar_folder_files_added (THUNAR_FOLDER (local_folder), nfiles);
     }
-
-  g_object_notify (G_OBJECT (local_folder), "files");
 
   return TRUE;
 }

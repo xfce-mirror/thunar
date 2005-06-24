@@ -63,6 +63,7 @@ struct _ThunarVfsURI
 
 static const gchar *scheme_names[] =
 {
+  "computer://",
   "file://",
   "trash://",
 };
@@ -155,6 +156,7 @@ thunar_vfs_uri_new (const gchar *identifier,
 
       /* allocate the URI instance */
       uri = g_object_new (THUNAR_VFS_TYPE_URI, NULL);
+      uri->scheme = THUNAR_VFS_URI_SCHEME_FILE;
       uri->path = path;
 
       /* check the host name */
@@ -202,6 +204,39 @@ thunar_vfs_uri_new (const gchar *identifier,
       /* allocate the URI instance */
       uri = g_object_new (THUNAR_VFS_TYPE_URI, NULL);
       uri->scheme = THUNAR_VFS_URI_SCHEME_TRASH;
+      uri->path = g_strdup ((*p == '/') ? p : "/");
+    }
+  else if (identifier[0] == 'c' && identifier[1] == 'o'
+        && identifier[2] == 'm' && identifier[3] == 'p'
+        && identifier[4] == 'u' && identifier[5] == 't'
+        && identifier[6] == 'e' && identifier[7] == 'r'
+        && identifier[8] == ':')
+    {
+      /* skip to the path */
+      p = (identifier[9] == '/' && identifier[10] == '/')
+        ? (identifier + 11) : (identifier + 9);
+
+      /* verify that the remainder is a path */
+      if (G_UNLIKELY (*p != '\0' && *p != '/'))
+        {
+          g_set_error (error, G_CONVERT_ERROR, G_CONVERT_ERROR_BAD_URI,
+                       _("The URI '%s' is invalid"), identifier);
+          return NULL;
+        }
+
+      /* verify that the path doesn't include a '#' */
+      for (q = p; *q != '\0'; ++q)
+        if (G_UNLIKELY (*q == '#'))
+          {
+            g_set_error (error, G_CONVERT_ERROR, G_CONVERT_ERROR_BAD_URI,
+                         _("The trash file URI '%s' may not include a '#'"),
+                         identifier);
+            return NULL;
+          }
+
+      /* allocate the URI instance */
+      uri = g_object_new (THUNAR_VFS_TYPE_URI, NULL);
+      uri->scheme = THUNAR_VFS_URI_SCHEME_COMPUTER;
       uri->path = g_strdup ((*p == '/') ? p : "/");
     }
   else

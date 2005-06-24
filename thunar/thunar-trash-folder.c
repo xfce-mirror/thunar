@@ -27,23 +27,12 @@
 
 
 
-enum
-{
-  PROP_0,
-  PROP_CORRESPONDING_FILE,
-  PROP_FILES,
-};
-
-
-
 static void               thunar_trash_folder_class_init              (ThunarTrashFolderClass *klass);
 static void               thunar_trash_folder_folder_init             (ThunarFolderIface      *iface);
 static void               thunar_trash_folder_init                    (ThunarTrashFolder      *trash_folder);
 static void               thunar_trash_folder_finalize                (GObject                *object);
-static void               thunar_trash_folder_get_property            (GObject                *object,
-                                                                       guint                   prop_id,
-                                                                       GValue                 *value,
-                                                                       GParamSpec             *pspec);
+static ThunarFile        *thunar_trash_folder_get_parent              (ThunarFile             *file,
+                                                                       GError                **error);
 static ThunarFolder      *thunar_trash_folder_open_as_folder          (ThunarFile             *file,
                                                                        GError                **error);
 static ThunarVfsURI      *thunar_trash_folder_get_uri                 (ThunarFile             *file);
@@ -51,7 +40,6 @@ static ExoMimeInfo       *thunar_trash_folder_get_mime_info           (ThunarFil
 static const gchar       *thunar_trash_folder_get_display_name        (ThunarFile             *file);
 static ThunarVfsFileType  thunar_trash_folder_get_kind                (ThunarFile             *file);
 static ThunarVfsFileMode  thunar_trash_folder_get_mode                (ThunarFile             *file);
-static ThunarVfsFileSize  thunar_trash_folder_get_size                (ThunarFile             *file);
 static const gchar       *thunar_trash_folder_get_icon_name           (ThunarFile             *file,
                                                                        GtkIconTheme           *icon_theme);
 static ThunarFile        *thunar_trash_folder_get_corresponding_file  (ThunarFolder           *folder);
@@ -91,25 +79,16 @@ thunar_trash_folder_class_init (ThunarTrashFolderClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_trash_folder_finalize;
-  gobject_class->get_property = thunar_trash_folder_get_property;
 
   thunarfile_class = THUNAR_FILE_CLASS (klass);
+  thunarfile_class->get_parent = thunar_trash_folder_get_parent;
   thunarfile_class->open_as_folder = thunar_trash_folder_open_as_folder;
   thunarfile_class->get_uri = thunar_trash_folder_get_uri;
   thunarfile_class->get_mime_info = thunar_trash_folder_get_mime_info;
   thunarfile_class->get_display_name = thunar_trash_folder_get_display_name;
   thunarfile_class->get_kind = thunar_trash_folder_get_kind;
   thunarfile_class->get_mode = thunar_trash_folder_get_mode;
-  thunarfile_class->get_size = thunar_trash_folder_get_size;
   thunarfile_class->get_icon_name = thunar_trash_folder_get_icon_name;
-
-  g_object_class_override_property (gobject_class,
-                                    PROP_CORRESPONDING_FILE,
-                                    "corresponding-file");
-
-  g_object_class_override_property (gobject_class,
-                                    PROP_FILES,
-                                    "files");
 }
 
 
@@ -154,28 +133,26 @@ thunar_trash_folder_finalize (GObject *object)
 
 
 
-static void
-thunar_trash_folder_get_property (GObject    *object,
-                                  guint       prop_id,
-                                  GValue     *value,
-                                  GParamSpec *pspec)
+static ThunarFile*
+thunar_trash_folder_get_parent (ThunarFile *file,
+                                GError    **error)
 {
-  ThunarFolder *folder = THUNAR_FOLDER (object);
+  ThunarVfsURI *computer_uri;
+  ThunarFile   *computer_file = NULL;
 
-  switch (prop_id)
+  /* the 'computer:' location is the parent for the trash vfolder */
+  computer_uri = thunar_vfs_uri_new ("computer:", error);
+  if (G_LIKELY (computer_uri != NULL))
     {
-    case PROP_CORRESPONDING_FILE:
-      g_value_set_object (value, thunar_folder_get_corresponding_file (folder));
-      break;
-
-    case PROP_FILES:
-      g_value_set_pointer (value, thunar_folder_get_files (folder));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
+      computer_file = thunar_file_get_for_uri (computer_uri, error);
+      g_object_unref (G_OBJECT (computer_uri));
     }
+  else
+    {
+      computer_file = NULL;
+    }
+
+  return computer_file;
 }
 
 
@@ -200,7 +177,15 @@ thunar_trash_folder_get_uri (ThunarFile *file)
 static ExoMimeInfo*
 thunar_trash_folder_get_mime_info (ThunarFile *file)
 {
-  return NULL;
+  ExoMimeDatabase *mime_database;
+  ExoMimeInfo     *mime_info;
+
+  /* the trash vfolder should appear as regular folder */
+  mime_database = exo_mime_database_get_default ();
+  mime_info = exo_mime_database_get_info (mime_database, "inode/directory");
+  g_object_unref (G_OBJECT (mime_database));
+
+  return mime_info;
 }
 
 
@@ -225,14 +210,6 @@ static ThunarVfsFileMode
 thunar_trash_folder_get_mode (ThunarFile *file)
 {
   return THUNAR_VFS_FILE_MODE_USR_ALL;
-}
-
-
-
-static ThunarVfsFileSize
-thunar_trash_folder_get_size (ThunarFile *file)
-{
-  return 0;
 }
 
 

@@ -55,11 +55,14 @@ main (int argc, char **argv)
 
   path = (argc > 1) ? argv[1] : xfce_get_homedir ();
 
-  uri = thunar_vfs_uri_new_for_path (path);
-  file = thunar_file_get_for_uri (uri, &error);
-  g_object_unref (G_OBJECT (uri));
+  uri = thunar_vfs_uri_new (path, &error);
+  if (G_LIKELY (uri != NULL))
+    {
+      file = thunar_file_get_for_uri (uri, &error);
+      g_object_unref (G_OBJECT (uri));
+    }
 
-  if (file == NULL)
+  if (uri == NULL || file == NULL)
     {
       fprintf (stderr, "%s: Failed to open `%s': %s\n",
                argv[0], path, error->message);

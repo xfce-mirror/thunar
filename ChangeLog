@@ -1,5 +1,30 @@
 2005-06-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-uri.{c,h}: Add support for the 'computer://'
+	  URI.
+	* thunar/thunar-trash-folder.c, thunar/thunar-local-folder.c,
+	  thunar/thunar-folder.c: Drop the GObject properties, as they are
+	  mostly useless here.
+	* thunar/main.c(main): Use thunar_vfs_uri_new() for the optional
+	  command line parameter to be able to open arbitrary URIs from the
+	  command line.
+	* thunar/Makefile.am: Add new class ThunarComputerFolder to the build
+	  framework.
+	* thunar/thunar-computer-folder.{c,h}: Add ThunarComputerFolder class,
+	  which implements the 'computer:' URI. This vfolder is the root of all
+	  other root folders, currently 'file:/' and 'trash:'.
+	* thunar/thunar-file.{c,h}, thunar/thunar-folder.c,
+	  thunar/thunar-list-model.c, thunar/thunar-local-file.c,
+	  thunar/thunar-local-folder.c, thunar/thunar-statusbar.c,
+	  thunar/thunar-trash-file.c, thunar/thunar-trash-folder.c: Add support
+	  for the 'computer:' vfolder as overall root node. Rearrange the
+	  get_size() method to be able to support objects for which no size
+	  is known, currently vfolders and directories in general. The virtual
+	  get_mime_info() method now automatically takes a reference on the
+	  returned object for the caller.
+
+2005-06-24	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Add check for localtime_r.
 	* thunar/thunar-file.{c,h}: Add support to query accessed, changed and
 	  modified dates of ThunarFiles.

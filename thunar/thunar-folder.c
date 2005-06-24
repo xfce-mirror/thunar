@@ -34,7 +34,6 @@ enum
 
 
 static void thunar_folder_base_init  (gpointer klass);
-static void thunar_folder_class_init (gpointer klass);
 
 
 
@@ -54,7 +53,7 @@ thunar_folder_get_type (void)
         sizeof (ThunarFolderIface),
         (GBaseInitFunc) thunar_folder_base_init,
         NULL,
-        (GClassInitFunc) thunar_folder_class_init,
+        NULL,
         NULL,
         NULL,
         0,
@@ -98,35 +97,6 @@ thunar_folder_base_init (gpointer klass)
 
       initialized = TRUE;
     }
-}
-
-
-
-static void
-thunar_folder_class_init (gpointer klass)
-{
-  /**
-   * ThunarFolder:corresponding-file:
-   *
-   * The #ThunarFile corresponding to this #ThunarFolder instance.
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_object ("corresponding-file",
-                                                            _("Corresponding file"),
-                                                            _("The file corresponding to a folder"),
-                                                            THUNAR_TYPE_FILE,
-                                                            EXO_PARAM_READABLE));
-
-  /**
-   * ThunarFolder:files:
-   *
-   * The list of files currently known for the #ThunarFolder.
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_pointer ("files",
-                                                             _("Files"),
-                                                             _("The files in the folder"),
-                                                             EXO_PARAM_READABLE));
 }
 
 

@@ -50,13 +50,15 @@ typedef enum
 
 /**
  * ThunarVfsURIScheme:
- * @THUNAR_VFS_URI_SCHEME_FILE  : 'file://' uris
- * @THUNAR_VFS_URI_SCHEME_TRASH : 'trash://' uris
+ * @THUNAR_VFS_URI_SCHEME_COMPUTER : 'computer://' uris
+ * @THUNAR_VFS_URI_SCHEME_FILE     : 'file://' uris
+ * @THUNAR_VFS_URI_SCHEME_TRASH    : 'trash://' uris
  *
  * Currently supported URI types for #ThunarVfsURI.
  **/
 typedef enum
 {
+  THUNAR_VFS_URI_SCHEME_COMPUTER,
   THUNAR_VFS_URI_SCHEME_FILE,
   THUNAR_VFS_URI_SCHEME_TRASH,
 } ThunarVfsURIScheme;
