@@ -1,3 +1,17 @@
+2005-06-25	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-location-buttons.c
+	  (thunar_location_buttons_set_current_directory): Don't display the
+	  real root node - the 'computer:'-node - if a sub-node is active. So
+	  currently we have four distinctive possible roots for the location
+	  buttons bar, which are the home directory of the user, the file system
+	  root node ('file:/'), the trash root ('trash:') and the real computer
+	  root node ('computer:'), which are checked in the given order.
+	* thunar/thunar-list-model.c(thunar_list_model_get_value): Use slightly
+	  larger icons for the details view.
+	* thunar/thunar-window.c: Add preliminary menu support with 'Close'
+	  and 'Go up'.
+
 2005-06-24	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-uri.{c,h}: Add support for the 'computer://'

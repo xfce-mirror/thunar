@@ -373,8 +373,8 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
           gtk_container_add (GTK_CONTAINER (buttons), button);
           gtk_widget_show (button);
 
-          /* we use 'Home' as possible root */
-          if (!thunar_file_is_home (file))
+          /* we use 'Home' as possible root, as well as real root nodes */
+          if (!thunar_file_is_home (file) && !thunar_file_is_root (file))
             file_parent = thunar_file_get_parent (file, NULL);
           else 
             file_parent = NULL;

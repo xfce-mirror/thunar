@@ -615,15 +615,13 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
       g_value_init (value, GDK_TYPE_PIXBUF);
-      // FIXME: don't use pixel sizes here
-      icon = thunar_file_load_icon (row->file, 16);
+      icon = thunar_file_load_icon (row->file, 22);
       g_value_set_object (value, icon);
       g_object_unref (G_OBJECT (icon));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL:
       g_value_init (value, GDK_TYPE_PIXBUF);
-      // FIXME: don't use pixel sizes here
       icon = thunar_file_load_icon (row->file, 48);
       g_value_set_object (value, icon);
       g_object_unref (G_OBJECT (icon));
@@ -631,7 +629,6 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_LARGE:
       g_value_init (value, GDK_TYPE_PIXBUF);
-      // FIXME: don't use pixel sizes here
       icon = thunar_file_load_icon (row->file, 64);
       g_value_set_object (value, icon);
       g_object_unref (G_OBJECT (icon));

@@ -42,6 +42,7 @@ enum
 static void thunar_window_class_init      (ThunarWindowClass  *klass);
 static void thunar_window_init            (ThunarWindow       *window);
 static void thunar_window_dispose         (GObject            *object);
+static void thunar_window_finalize        (GObject            *object);
 static void thunar_window_get_property    (GObject            *object,
                                            guint               prop_id,
                                            GValue             *value,
@@ -50,6 +51,10 @@ static void thunar_window_set_property    (GObject            *object,
                                            guint               prop_id,
                                            const GValue       *value,
                                            GParamSpec         *pspec);
+static void thunar_window_action_close    (GtkAction          *action,
+                                           ThunarWindow       *window);
+static void thunar_window_action_go_up    (GtkAction          *action,
+                                           ThunarWindow       *window);
 static void thunar_window_file_activated  (ThunarView         *view,
                                            ThunarFile         *file,
                                            ThunarWindow       *window);
@@ -65,15 +70,44 @@ struct _ThunarWindow
 {
   GtkWindow __parent__;
 
-  GtkWidget   *side_pane;
-  GtkWidget   *location_bar;
-  GtkWidget   *view;
-  GtkWidget   *statusbar;
+  GtkActionGroup  *action_group;
+  GtkUIManager    *ui_manager;
 
-  ThunarFile  *current_directory;
+  GtkWidget       *side_pane;
+  GtkWidget       *location_bar;
+  GtkWidget       *view;
+  GtkWidget       *statusbar;
+
+  ThunarFile      *current_directory;
 };
 
 
+
+static const GtkActionEntry const action_entries[] =
+{
+  { "file-menu", NULL, N_ ("_File"), NULL, },
+  { "close", GTK_STOCK_CLOSE, N_ ("_Close"), "<control>W", N_ ("Close this window"), G_CALLBACK (thunar_window_action_close), },
+  { "edit-menu", NULL, N_ ("_Edit"), NULL, },
+  { "view-menu", NULL, N_ ("_View"), NULL, },
+  { "go-menu", NULL, N_ ("_Go"), NULL, },
+  { "go-up", GTK_STOCK_GO_UP, N_ ("_Up"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
+  { "help-menu", NULL, N_ ("_Help"), NULL, },
+};
+
+static const gchar ui_description[] =
+  "<ui>"
+  "  <menubar name='main-menu'>"
+  "    <menu action='file-menu'>"
+  "      <menuitem action='close' />"
+  "    </menu>"
+  "    <menu action='edit-menu' />"
+  "    <menu action='view-menu' />"
+  "    <menu action='go-menu'>"
+  "      <menuitem action='go-up' />"
+  "    </menu>"
+  "    <menu action='help-menu' />"
+  "  </menubar>"
+  "</ui>";
 
 G_DEFINE_TYPE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW);
 
@@ -86,6 +120,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_window_dispose;
+  gobject_class->finalize = thunar_window_finalize;
   gobject_class->get_property = thunar_window_get_property;
   gobject_class->set_property = thunar_window_set_property;
 
@@ -110,10 +145,24 @@ static void
 thunar_window_init (ThunarWindow *window)
 {
   ThunarListModel *model;
+  GtkAccelGroup   *accel_group;
   GtkWidget       *vbox;
+  GtkWidget       *menubar;
   GtkWidget       *paned;
   GtkWidget       *swin;
   GtkWidget       *box;
+
+  window->action_group = gtk_action_group_new ("thunar-window");
+  gtk_action_group_add_actions (window->action_group, action_entries,
+                                G_N_ELEMENTS (action_entries),
+                                GTK_WIDGET (window));
+  
+  window->ui_manager = gtk_ui_manager_new ();
+  gtk_ui_manager_insert_action_group (window->ui_manager, window->action_group, 0);
+  gtk_ui_manager_add_ui_from_string (window->ui_manager, ui_description, -1, NULL);
+
+  accel_group = gtk_ui_manager_get_accel_group (window->ui_manager);
+  gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
 
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
   gtk_window_set_title (GTK_WINDOW (window), _("Thunar"));
@@ -121,7 +170,11 @@ thunar_window_init (ThunarWindow *window)
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (window), vbox);
   gtk_widget_show (vbox);
-  
+
+  menubar = gtk_ui_manager_get_widget (window->ui_manager, "/main-menu");
+  gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
+  gtk_widget_show (menubar);
+
   paned = g_object_new (GTK_TYPE_HPANED, "border-width", 6, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), paned, TRUE, TRUE, 0);
   gtk_widget_show (paned);
@@ -159,6 +212,7 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (window->view), "file-activated",
                     G_CALLBACK (thunar_window_file_activated), window);
   gtk_container_add (GTK_CONTAINER (swin), window->view);
+  gtk_widget_grab_focus (window->view);
   gtk_widget_show (window->view);
 
   model = thunar_list_model_new ();
@@ -180,6 +234,19 @@ thunar_window_dispose (GObject *object)
   ThunarWindow *window = THUNAR_WINDOW (object);
   thunar_window_set_current_directory (window, NULL);
   G_OBJECT_CLASS (thunar_window_parent_class)->dispose (object);
+}
+
+
+
+static void
+thunar_window_finalize (GObject *object)
+{
+  ThunarWindow *window = THUNAR_WINDOW (object);
+
+  g_object_unref (G_OBJECT (window->action_group));
+  g_object_unref (G_OBJECT (window->ui_manager));
+
+  G_OBJECT_CLASS (thunar_window_parent_class)->finalize (object);
 }
 
 
@@ -224,6 +291,29 @@ thunar_window_set_property (GObject            *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_window_action_close (GtkAction    *action,
+                            ThunarWindow *window)
+{
+  gtk_main_quit ();
+}
+
+
+
+static void
+thunar_window_action_go_up (GtkAction    *action,
+                            ThunarWindow *window)
+{
+  ThunarFile *parent;
+
+  // FIXME: error handling
+  parent = thunar_file_get_parent (window->current_directory, NULL);
+  thunar_window_set_current_directory (window, parent);
+  g_object_unref (G_OBJECT (parent));
 }
 
 
@@ -292,6 +382,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
 {
   ThunarListModel *model;
   ThunarFolder    *folder;
+  GtkAction       *action;
   GtkWidget       *dialog;
   GdkPixbuf       *icon;
   GError          *error = NULL;
@@ -318,11 +409,18 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* set window title/icon to the selected directory */
   if (G_LIKELY (current_directory != NULL))
     {
+      /* set window title and icon */
       icon = thunar_file_load_icon (current_directory, 48);
       gtk_window_set_icon (GTK_WINDOW (window), icon);
       gtk_window_set_title (GTK_WINDOW (window),
                             thunar_file_get_special_name (current_directory));
       g_object_unref (G_OBJECT (icon));
+
+      /* enable the 'Up' action if possible for the new directory */
+      action = gtk_action_group_get_action (window->action_group, "go-up");
+      g_object_set (G_OBJECT (action),
+                    "sensitive", thunar_file_has_parent (current_directory),
+                    NULL);
     }
 
   /* setup the folder for the view, we use a simple but very effective
