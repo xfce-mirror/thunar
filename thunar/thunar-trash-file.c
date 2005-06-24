@@ -40,6 +40,9 @@ static ThunarFolder     *thunar_trash_file_open_as_folder   (ThunarFile         
 static ThunarVfsURI     *thunar_trash_file_get_uri          (ThunarFile           *file);
 static ExoMimeInfo      *thunar_trash_file_get_mime_info    (ThunarFile           *file);
 static const gchar      *thunar_trash_file_get_display_name (ThunarFile           *file);
+static gboolean          thunar_trash_file_get_date         (ThunarFile           *file,
+                                                             ThunarFileDateType    date_type,
+                                                             ThunarVfsFileTime    *date_return);
 static ThunarVfsFileType thunar_trash_file_get_kind         (ThunarFile           *file);
 static ThunarVfsFileMode thunar_trash_file_get_mode         (ThunarFile           *file);
 static ThunarVfsFileSize thunar_trash_file_get_size         (ThunarFile           *file);
@@ -84,6 +87,7 @@ thunar_trash_file_class_init (ThunarTrashFileClass *klass)
   thunarfile_class->get_uri = thunar_trash_file_get_uri;
   thunarfile_class->get_mime_info = thunar_trash_file_get_mime_info;
   thunarfile_class->get_display_name = thunar_trash_file_get_display_name;
+  thunarfile_class->get_date = thunar_trash_file_get_date;
   thunarfile_class->get_kind = thunar_trash_file_get_kind;
   thunarfile_class->get_mode = thunar_trash_file_get_mode;
   thunarfile_class->get_size = thunar_trash_file_get_size;
@@ -152,6 +156,17 @@ static const gchar*
 thunar_trash_file_get_display_name (ThunarFile *file)
 {
   return THUNAR_TRASH_FILE (file)->display_name;
+}
+
+
+
+static gboolean
+thunar_trash_file_get_date (ThunarFile        *file,
+                            ThunarFileDateType date_type,
+                            ThunarVfsFileTime *date_return)
+{
+  ThunarTrashFile *trash_file = THUNAR_TRASH_FILE (file);
+  return THUNAR_FILE_GET_CLASS (trash_file->real_file)->get_date (trash_file->real_file, date_type, date_return);
 }
 
 

@@ -46,7 +46,7 @@ AC_CHECK_HEADERS([errno.h fcntl.h fstab.h memory.h stdlib.h string.h \
                   sys/mount.h sys/stat.h sys/time.h sys/param.h time.h])
 
 dnl Check for standard functions
-AC_CHECK_FUNCS([kqueue])
+AC_CHECK_FUNCS([kqueue localtime_r])
 
 dnl Check for required packages
 XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1])

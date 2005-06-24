@@ -35,6 +35,9 @@ static ThunarVfsURI      *thunar_local_file_get_uri           (ThunarFile       
 static ExoMimeInfo       *thunar_local_file_get_mime_info     (ThunarFile           *file);
 static const gchar       *thunar_local_file_get_display_name  (ThunarFile           *file);
 static const gchar       *thunar_local_file_get_special_name  (ThunarFile           *file);
+static gboolean           thunar_local_file_get_date          (ThunarFile           *file,
+                                                               ThunarFileDateType    date_type,
+                                                               ThunarVfsFileTime    *date_return);
 static ThunarVfsFileType  thunar_local_file_get_kind          (ThunarFile           *file);
 static ThunarVfsFileMode  thunar_local_file_get_mode          (ThunarFile           *file);
 static ThunarVfsFileSize  thunar_local_file_get_size          (ThunarFile           *file);
@@ -79,6 +82,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_mime_info = thunar_local_file_get_mime_info;
   thunarfile_class->get_display_name = thunar_local_file_get_display_name;
   thunarfile_class->get_special_name = thunar_local_file_get_special_name;
+  thunarfile_class->get_date = thunar_local_file_get_date;
   thunarfile_class->get_kind = thunar_local_file_get_kind;
   thunarfile_class->get_mode = thunar_local_file_get_mode;
   thunarfile_class->get_size = thunar_local_file_get_size;
@@ -173,6 +177,36 @@ thunar_local_file_get_special_name (ThunarFile *file)
     return _("Home");
 
   return thunar_file_get_display_name (file);
+}
+
+
+
+static gboolean
+thunar_local_file_get_date (ThunarFile        *file,
+                            ThunarFileDateType date_type,
+                            ThunarVfsFileTime *date_return)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+
+  switch (date_type)
+    {
+    case THUNAR_FILE_DATE_ACCESSED:
+      *date_return = local_file->info.atime;
+      break;
+
+    case THUNAR_FILE_DATE_CHANGED:
+      *date_return = local_file->info.ctime;
+      break;
+
+    case THUNAR_FILE_DATE_MODIFIED:
+      *date_return = local_file->info.mtime;
+      break;
+
+    default:
+      return THUNAR_FILE_GET_CLASS (file)->get_date (file, date_type, date_return);
+    }
+
+  return TRUE;
 }
 
 

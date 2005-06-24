@@ -145,6 +145,38 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_PERMISSIONS);
   gtk_tree_view_append_column (GTK_TREE_VIEW (details_view), column);
 
+  /* fourth column (type) */
+  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
+                         "reorderable", TRUE,
+                         "resizable", TRUE,
+                         "title", _("Type"),
+                         NULL);
+  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                           "xalign", 0.0,
+                           NULL);
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "text", THUNAR_LIST_MODEL_COLUMN_TYPE,
+                                       NULL);
+  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_TYPE);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (details_view), column);
+
+  /* fifth column (modification date) */
+  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
+                         "reorderable", TRUE,
+                         "resizable", TRUE,
+                         "title", _("Date modified"),
+                         NULL);
+  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                           "xalign", 0.0,
+                           NULL);
+  gtk_tree_view_column_pack_start (column, renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, renderer,
+                                       "text", THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED,
+                                       NULL);
+  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (details_view), column);
+
   /* configure the tree selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);

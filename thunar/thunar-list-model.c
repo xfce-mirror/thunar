@@ -142,6 +142,12 @@ static void               thunar_list_model_folder_destroy        (ThunarFolder 
 static void               thunar_list_model_files_added           (ThunarFolder           *folder,
                                                                    GSList                 *files,
                                                                    ThunarListModel        *store);
+static gint               sort_by_date_accessed                   (ThunarFile             *a,
+                                                                   ThunarFile             *b);
+static gint               sort_by_date_modified                   (ThunarFile             *a,
+                                                                   ThunarFile             *b);
+static gint               sort_by_mime_type                       (ThunarFile             *a,
+                                                                   ThunarFile             *b);
 static gint               sort_by_name                            (ThunarFile             *a,
                                                                    ThunarFile             *b);
 static gint               sort_by_permissions                     (ThunarFile             *a,
@@ -479,7 +485,10 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
 {
   switch (index)
     {
-    case THUNAR_LIST_MODEL_COLUMN_NAME:
+    case THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED:
+      return G_TYPE_STRING;
+
+    case THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED:
       return G_TYPE_STRING;
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
@@ -490,6 +499,12 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_LARGE:
       return GDK_TYPE_PIXBUF;
+
+    case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
+      return G_TYPE_STRING;
+
+    case THUNAR_LIST_MODEL_COLUMN_NAME:
+      return G_TYPE_STRING;
 
     case THUNAR_LIST_MODEL_COLUMN_PERMISSIONS:
       return G_TYPE_STRING;
@@ -569,63 +584,81 @@ thunar_list_model_get_value (GtkTreeModel *model,
 {
   ExoMimeInfo *mime_info;
   GdkPixbuf   *icon;
+  gchar       *str;
   Row         *row;
 
   g_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   g_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
 
   row = (Row *) iter->user_data;
+  g_assert (row != NULL);
 
   switch (column)
     {
+    case THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED:
+      g_value_init (value, G_TYPE_STRING);
+      str = thunar_file_get_date_string (row->file, THUNAR_FILE_DATE_ACCESSED);
+      if (G_LIKELY (str != NULL))
+        g_value_take_string (value, str);
+      else
+        g_value_set_static_string (value, _("unknown"));
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED:
+      g_value_init (value, G_TYPE_STRING);
+      str = thunar_file_get_date_string (row->file, THUNAR_FILE_DATE_MODIFIED);
+      if (G_LIKELY (str != NULL))
+        g_value_take_string (value, str);
+      else
+        g_value_set_static_string (value, _("unknown"));
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
+      g_value_init (value, GDK_TYPE_PIXBUF);
+      // FIXME: don't use pixel sizes here
+      icon = thunar_file_load_icon (row->file, 16);
+      g_value_set_object (value, icon);
+      g_object_unref (G_OBJECT (icon));
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL:
+      g_value_init (value, GDK_TYPE_PIXBUF);
+      // FIXME: don't use pixel sizes here
+      icon = thunar_file_load_icon (row->file, 48);
+      g_value_set_object (value, icon);
+      g_object_unref (G_OBJECT (icon));
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_ICON_LARGE:
+      g_value_init (value, GDK_TYPE_PIXBUF);
+      // FIXME: don't use pixel sizes here
+      icon = thunar_file_load_icon (row->file, 64);
+      g_value_set_object (value, icon);
+      g_object_unref (G_OBJECT (icon));
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
+      g_value_init (value, G_TYPE_STRING);
+      mime_info = thunar_file_get_mime_info (row->file);
+      if (G_LIKELY (mime_info != NULL))
+        g_value_set_static_string (value, exo_mime_info_get_name (mime_info));
+      else
+        g_value_set_static_string (value, _("unknown"));
+      break;
+
     case THUNAR_LIST_MODEL_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
       g_value_set_static_string (value, thunar_file_get_display_name (row->file));
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
-      g_value_init (value, GDK_TYPE_PIXBUF);
-      if (G_LIKELY (row != NULL))
-        {
-          // FIXME: don't use pixel sizes here
-          icon = thunar_file_load_icon (row->file, 16);
-          g_value_set_object (value, icon);
-          g_object_unref (G_OBJECT (icon));
-        }
-      break;
-
-    case THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL:
-      g_value_init (value, GDK_TYPE_PIXBUF);
-      if (G_LIKELY (row != NULL))
-        {
-          // FIXME: don't use pixel sizes here
-          icon = thunar_file_load_icon (row->file, 48);
-          g_value_set_object (value, icon);
-          g_object_unref (G_OBJECT (icon));
-        }
-      break;
-
-    case THUNAR_LIST_MODEL_COLUMN_ICON_LARGE:
-      g_value_init (value, GDK_TYPE_PIXBUF);
-      if (G_LIKELY (row != NULL))
-        {
-          // FIXME: don't use pixel sizes here
-          icon = thunar_file_load_icon (row->file, 64);
-          g_value_set_object (value, icon);
-          g_object_unref (G_OBJECT (icon));
-        }
-      break;
-
     case THUNAR_LIST_MODEL_COLUMN_PERMISSIONS:
       g_value_init (value, G_TYPE_STRING);
-      if (G_LIKELY (row != NULL))
-        g_value_take_string (value, thunar_file_get_mode_string (row->file));
+      g_value_take_string (value, thunar_file_get_mode_string (row->file));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
-      if (G_LIKELY (row != NULL))
-        g_value_take_string (value, thunar_file_get_size_string (row->file));
+      g_value_take_string (value, thunar_file_get_size_string (row->file));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_TYPE:
@@ -634,7 +667,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
       if (G_LIKELY (mime_info != NULL))
         g_value_set_static_string (value, exo_mime_info_get_comment (mime_info));
       else
-        g_value_set_static_string (value, "unknown");
+        g_value_set_static_string (value, _("unknown"));
       break;
 
     default:
@@ -814,12 +847,18 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
 
   g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
 
-  if (store->sort_func == sort_by_name)
+  if (store->sort_func == sort_by_mime_type)
+    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_MIME_TYPE;
+  else if (store->sort_func == sort_by_name)
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_NAME;
   else if (store->sort_func == sort_by_permissions)
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_PERMISSIONS;
   else if (store->sort_func == sort_by_size)
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_SIZE;
+  else if (store->sort_func == sort_by_date_accessed)
+    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED;
+  else if (store->sort_func == sort_by_date_modified)
+    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED;
   else if (store->sort_func == sort_by_type)
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_TYPE;
   else
@@ -846,6 +885,18 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
   switch (sort_column_id)
     {
+    case THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED:
+      store->sort_func = sort_by_date_accessed;
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED:
+      store->sort_func = sort_by_date_modified;
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
+      store->sort_func = sort_by_mime_type;
+      break;
+
     case THUNAR_LIST_MODEL_COLUMN_NAME:
       store->sort_func = sort_by_name;
       break;
@@ -1213,6 +1264,85 @@ thunar_list_model_files_added (ThunarFolder    *folder,
 
 
 static gint
+sort_by_date_accessed (ThunarFile *a,
+                       ThunarFile *b)
+{
+  ThunarVfsFileTime date_a;
+  ThunarVfsFileTime date_b;
+  gboolean          can_a;
+  gboolean          can_b;
+
+  can_a = thunar_file_get_date (a, THUNAR_FILE_DATE_ACCESSED, &date_a);
+  can_b = thunar_file_get_date (b, THUNAR_FILE_DATE_ACCESSED, &date_b);
+
+  if (G_UNLIKELY (!can_a && !can_b))
+    return 0;
+  else if (G_UNLIKELY (!can_a))
+    return -1;
+  else if (G_UNLIKELY (!can_b))
+    return 1;
+
+  if (date_a < date_b)
+    return -1;
+  else if (date_a > date_b)
+    return 1;
+  return 0;
+}
+
+
+
+static gint
+sort_by_date_modified (ThunarFile *a,
+                       ThunarFile *b)
+{
+  ThunarVfsFileTime date_a;
+  ThunarVfsFileTime date_b;
+  gboolean          can_a;
+  gboolean          can_b;
+
+  can_a = thunar_file_get_date (a, THUNAR_FILE_DATE_MODIFIED, &date_a);
+  can_b = thunar_file_get_date (b, THUNAR_FILE_DATE_MODIFIED, &date_b);
+
+  if (G_UNLIKELY (!can_a && !can_b))
+    return 0;
+  else if (G_UNLIKELY (!can_a))
+    return -1;
+  else if (G_UNLIKELY (!can_b))
+    return 1;
+
+  if (date_a < date_b)
+    return -1;
+  else if (date_a > date_b)
+    return 1;
+  return 0;
+}
+
+
+
+static gint
+sort_by_mime_type (ThunarFile *a,
+                   ThunarFile *b)
+{
+  ExoMimeInfo *info_a;
+  ExoMimeInfo *info_b;
+
+  info_a = thunar_file_get_mime_info (a);
+  info_b = thunar_file_get_mime_info (b);
+
+  if (G_UNLIKELY (info_a == NULL && info_b == NULL))
+    return 0;
+  else if (G_UNLIKELY (info_a == NULL))
+    return -1;
+  else if (G_UNLIKELY (info_b == NULL))
+    return 1;
+
+  return strcasecmp (exo_mime_info_get_name (info_a),
+                     exo_mime_info_get_name (info_b));
+}
+
+
+
+static gint
 sort_by_name (ThunarFile *a,
               ThunarFile *b)
 {
@@ -1264,9 +1394,21 @@ static gint
 sort_by_type (ThunarFile *a,
               ThunarFile *b)
 {
-  // TODO: Implement this.
-  g_assert_not_reached ();
-  return 0;
+  ExoMimeInfo *info_a;
+  ExoMimeInfo *info_b;
+
+  info_a = thunar_file_get_mime_info (a);
+  info_b = thunar_file_get_mime_info (b);
+
+  if (G_UNLIKELY (info_a == NULL && info_b == NULL))
+    return 0;
+  else if (G_UNLIKELY (info_a == NULL))
+    return -1;
+  else if (G_UNLIKELY (info_b == NULL))
+    return 1;
+
+  return strcasecmp (exo_mime_info_get_comment (info_a),
+                     exo_mime_info_get_comment (info_b));
 }
 
 

@@ -24,6 +24,9 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
 
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-icon-factory.h>
@@ -39,14 +42,17 @@ enum
 
 
 
-static void         thunar_file_class_init            (ThunarFileClass *klass);
-static void         thunar_file_finalize              (GObject         *object);
-static ThunarFolder*thunar_file_real_open_as_folder   (ThunarFile      *file,
-                                                       GError         **error);
-static const gchar *thunar_file_real_get_special_name (ThunarFile      *file);
-static void         thunar_file_real_changed          (ThunarFile      *file);
-static void         thunar_file_destroyed             (gpointer         data,
-                                                       GObject         *object);
+static void         thunar_file_class_init            (ThunarFileClass   *klass);
+static void         thunar_file_finalize              (GObject           *object);
+static ThunarFolder*thunar_file_real_open_as_folder   (ThunarFile        *file,
+                                                       GError           **error);
+static const gchar *thunar_file_real_get_special_name (ThunarFile        *file);
+static gboolean     thunar_file_real_get_date         (ThunarFile        *file,
+                                                       ThunarFileDateType date_type,
+                                                       ThunarVfsFileTime *date_return);
+static void         thunar_file_real_changed          (ThunarFile        *file);
+static void         thunar_file_destroyed             (gpointer           data,
+                                                       GObject           *object);
 
 
 
@@ -98,6 +104,7 @@ thunar_file_class_init (ThunarFileClass *klass)
 
   klass->open_as_folder = thunar_file_real_open_as_folder;
   klass->get_special_name = thunar_file_real_get_special_name;
+  klass->get_date = thunar_file_real_get_date;
   klass->changed = thunar_file_real_changed;
 
   /**
@@ -146,6 +153,16 @@ static const gchar*
 thunar_file_real_get_special_name (ThunarFile *file)
 {
   return THUNAR_FILE_GET_CLASS (file)->get_display_name (file);
+}
+
+
+
+static gboolean
+thunar_file_real_get_date (ThunarFile        *file,
+                           ThunarFileDateType date_type,
+                           ThunarVfsFileTime *date_return)
+{
+  return FALSE;
 }
 
 
@@ -436,6 +453,39 @@ thunar_file_get_kind (ThunarFile *file)
 
 
 /**
+ * thunar_file_get_date:
+ * @file        : a #ThunarFile instance.
+ * @date_type   : the kind of date you are interested in.
+ * @date_return : the return location for the date.
+ *
+ * Queries the given @date_type from @file and stores the result in @date_return.
+ * Not all #ThunarFile implementations may support all kinds of @date_type<!---->s,
+ * some may not even support dates at all. If the @date_type could not be determined
+ * on @file, %FALSE will be returned and @date_type will not be set to the proper
+ * value. Else if the operation was successful, %TRUE will be returned.
+ *
+ * Modules using this method must be prepared to handle the case when %FALSE is
+ * returned!
+ *
+ * Return value: %TRUE if the operation was successful, else %FALSE.
+ **/
+gboolean
+thunar_file_get_date (ThunarFile        *file,
+                      ThunarFileDateType date_type,
+                      ThunarVfsFileTime *date_return)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (date_type == THUNAR_FILE_DATE_ACCESSED
+                     || date_type == THUNAR_FILE_DATE_CHANGED
+                     || date_type == THUNAR_FILE_DATE_MODIFIED, FALSE);
+  g_return_val_if_fail (date_return != NULL, FALSE);
+
+  return THUNAR_FILE_GET_CLASS (file)->get_date (file, date_type, date_return);
+}
+
+
+
+/**
  * thunar_file_get_mode:
  * @file : a #ThunarFile instance.
  *
@@ -465,6 +515,57 @@ thunar_file_get_size (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), 0);
   return THUNAR_FILE_GET_CLASS (file)->get_size (file);
+}
+
+
+
+/**
+ * thunar_file_get_date_string:
+ * @file      : a #ThunarFile instance.
+ * @date_type : the kind of date you are interested to know about @file.
+ *
+ * Tries to determine the @date_type of @file, and if @file supports the
+ * given @date_type, it'll be formatted as string and returned. The
+ * caller is responsible for freeing the string using the #g_free()
+ * function.
+ *
+ * Else if @date_type is not supported for @file, %NULL will be returned
+ * and the caller must be able to handle that case.
+ *
+ * Return value: the @date_type of @file formatted as string or %NULL.
+ **/
+gchar*
+thunar_file_get_date_string (ThunarFile        *file,
+                             ThunarFileDateType date_type)
+{
+  ThunarVfsFileTime time;
+#ifdef HAVE_LOCALTIME_R
+  struct tm         tmbuf;
+#endif
+  struct tm        *tm;
+  gchar            *result;
+
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  g_return_val_if_fail (date_type == THUNAR_FILE_DATE_ACCESSED
+                     || date_type == THUNAR_FILE_DATE_CHANGED
+                     || date_type == THUNAR_FILE_DATE_MODIFIED, NULL);
+
+  /* query the date on the given file */
+  if (!thunar_file_get_date (file, date_type, &time))
+    return NULL;
+
+  /* convert to local time */
+#ifdef HAVE_LOCALTIME_R
+  tm = localtime_r (&time, &tmbuf);
+#else
+  tm = localtime (&time);
+#endif
+
+  /* convert to string */
+  result = g_new (gchar, 20);
+  strftime (result, 20, "%Y-%m-%d %H:%M:%S", tm);
+
+  return result;
 }
 
 

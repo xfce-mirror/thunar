@@ -1,3 +1,16 @@
+2005-06-24	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Add check for localtime_r.
+	* thunar/thunar-file.{c,h}: Add support to query accessed, changed and
+	  modified dates of ThunarFiles.
+	* thunar/thunar-local-file.c, thunar/thunar-trash-file.c: Implement
+	  the virtual get_date() method.
+	* thunar/thunar-list-model.{c,h}: Add new columns accessed date,
+	  modified date and mime type. Fix the sorting for the mime comment
+	  column.
+	* thunar/thunar-details-view.c: Display type and date modified columns
+	  as well.
+
 2005-06-23	Benedikt Meurer <benny@xfce.org>
 
 	* docs/papers/HackingOnThunar.odt, docs/papers/Makefile.am,
