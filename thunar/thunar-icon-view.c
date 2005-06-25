@@ -25,12 +25,13 @@
 
 
 
-static void thunar_icon_view_class_init         (ThunarIconViewClass *klass);
-static void thunar_icon_view_view_init          (ThunarViewIface     *iface);
-static void thunar_icon_view_init               (ThunarIconView      *icon_view);
-static void thunar_icon_view_item_activated     (ExoIconView         *view,
-                                                 GtkTreePath         *path);
-static void thunar_icon_view_selection_changed  (ExoIconView         *view);
+static void       thunar_icon_view_class_init         (ThunarIconViewClass *klass);
+static void       thunar_icon_view_view_init          (ThunarViewIface     *iface);
+static void       thunar_icon_view_init               (ThunarIconView      *icon_view);
+static AtkObject *thunar_icon_view_get_accessible     (GtkWidget           *widget);
+static void       thunar_icon_view_item_activated     (ExoIconView         *view,
+                                                       GtkTreePath         *path);
+static void       thunar_icon_view_selection_changed  (ExoIconView         *view);
 
 
 
@@ -58,6 +59,10 @@ static void
 thunar_icon_view_class_init (ThunarIconViewClass *klass)
 {
   ExoIconViewClass *exoicon_view_class;
+  GtkWidgetClass   *gtkwidget_class;
+
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->get_accessible = thunar_icon_view_get_accessible;
 
   exoicon_view_class = EXO_ICON_VIEW_CLASS (klass);
   exoicon_view_class->item_activated = thunar_icon_view_item_activated;
@@ -83,6 +88,26 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   exo_icon_view_set_text_column (EXO_ICON_VIEW (icon_view), THUNAR_LIST_MODEL_COLUMN_NAME);
   exo_icon_view_set_pixbuf_column (EXO_ICON_VIEW (icon_view), THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL);
   exo_icon_view_set_selection_mode (EXO_ICON_VIEW (icon_view), GTK_SELECTION_MULTIPLE);
+}
+
+
+
+static AtkObject*
+thunar_icon_view_get_accessible (GtkWidget *widget)
+{
+  AtkObject *object;
+
+  /* query the atk object for the icon view class */
+  object = GTK_WIDGET_CLASS (thunar_icon_view_parent_class)->get_accessible (widget);
+
+  /* set custom Atk properties for the icon view */
+  if (G_LIKELY (object != NULL))
+    {
+      atk_object_set_name (object, _("Icon view"));
+      atk_object_set_description (object, _("Icon based directory listing"));
+    }
+
+  return object;
 }
 
 

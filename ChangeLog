@@ -1,5 +1,13 @@
 2005-06-25	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-details-view.c(thunar_details_view_init): Use a
+	  GtkCellRendererText instead of an ExoCellRendererEllipsizedText
+	  for the name column.
+	* thunar/thunar-details-view.c, thunar/thunar-icon-view.c: Set proper
+	  ATK name and descriptions here.
+
+2005-06-25	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/main.c(main): Disable thread support for now, as it's not used
 	  and just slows down stuff.
 	* thunar/thunar-file.{c,h}, thunar/thunar-local-file.{c,h},
