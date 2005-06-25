@@ -121,6 +121,10 @@ thunar_local_folder_finalize (GObject *object)
   /* disconnect from the corresponding file */
   if (G_LIKELY (local_folder->corresponding_file != NULL))
     {
+      /* unwatch the corresponding file */
+      thunar_file_unwatch (local_folder->corresponding_file);
+
+      /* drop the reference */
       g_signal_handlers_disconnect_matched (G_OBJECT (local_folder->corresponding_file),
                                             G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, local_folder);
       g_object_set_data (G_OBJECT (local_folder->corresponding_file), "thunar-local-folder", NULL);
@@ -327,6 +331,9 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
       local_folder = g_object_new (THUNAR_TYPE_LOCAL_FOLDER, NULL);
       local_folder->corresponding_file = THUNAR_FILE (local_file);
       g_object_ref (G_OBJECT (local_file));
+
+      /* watch the corresponding file for changes */
+      thunar_file_watch (local_folder->corresponding_file);
 
       /* drop the floating reference */
       g_assert (GTK_OBJECT_FLOATING (local_folder));

@@ -86,6 +86,9 @@ struct _ThunarFileClass
   const gchar         *(*get_icon_name)       (ThunarFile        *file,
                                                GtkIconTheme      *icon_theme);
 
+  void                 (*watch)               (ThunarFile        *file);
+  void                 (*unwatch)             (ThunarFile        *file);
+
 
   /* signals */
   void (*changed) (ThunarFile *file);
@@ -98,6 +101,7 @@ struct _ThunarFile
   /*< private >*/
   GdkPixbuf *cached_icon;
   gint       cached_size;
+  gint       watch_count;
 };
 
 GType              thunar_file_get_type         (void) G_GNUC_CONST;
@@ -134,6 +138,9 @@ gchar             *thunar_file_get_size_string  (ThunarFile        *file);
 
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile        *file,
                                                  gint               size);
+
+void               thunar_file_watch            (ThunarFile        *file);
+void               thunar_file_unwatch          (ThunarFile        *file);
 
 void               thunar_file_changed          (ThunarFile        *file);
 

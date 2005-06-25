@@ -47,8 +47,10 @@ main (int argc, char **argv)
   g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING);
 
   /* initialize the GLib thread support */
+#if 0
   if (!g_thread_supported ())
     g_thread_init (NULL);
+#endif
 
   /* initialize Gtk+ */
   gtk_init (&argc, &argv);

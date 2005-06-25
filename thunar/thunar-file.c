@@ -141,6 +141,14 @@ thunar_file_finalize (GObject *object)
 {
   ThunarFile *file = THUNAR_FILE (object);
 
+#ifndef G_DISABLE_CHECKS
+  if (G_UNLIKELY (file->watch_count != 0))
+    {
+      g_error ("Attempt to finalize a ThunarFile, which has an "
+               "active watch count of %d", file->watch_count);
+    }
+#endif
+
   /* destroy the cached icon if any */
   if (G_LIKELY (file->cached_icon != NULL))
     g_object_unref (G_OBJECT (file->cached_icon));
@@ -772,6 +780,59 @@ thunar_file_load_icon (ThunarFile *file,
 
 
 
+/**
+ * thunar_file_watch:
+ * @file : a #ThunarFile instance.
+ *
+ * Tells @file to watch itself for changes. Not all #ThunarFile
+ * implementations must support this, but if a #ThunarFile
+ * implementation implements the #thunar_file_watch() method,
+ * it must also implement the #thunar_file_unwatch() method.
+ *
+ * The #ThunarFile base class implements automatic "ref
+ * counting" for watches, that says, you can call #thunar_file_watch()
+ * multiple times, but the virtual method will be invoked only
+ * once. This also means that you MUST call #thunar_file_unwatch()
+ * for every #thunar_file_watch() invokation, else the application
+ * will abort.
+ **/
+void
+thunar_file_watch (ThunarFile *file)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (file->watch_count >= 0);
+
+  if (++file->watch_count == 1 && THUNAR_FILE_GET_CLASS (file)->watch != NULL)
+    {
+      g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->unwatch != NULL);
+      THUNAR_FILE_GET_CLASS (file)->watch (file);
+    }
+}
+
+
+
+/**
+ * thunar_file_unwatch:
+ * @file : a #ThunarFile instance.
+ *
+ * See #thunar_file_watch() for a description of how watching
+ * #ThunarFile<!---->s works.
+ **/
+void
+thunar_file_unwatch (ThunarFile *file)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (file->watch_count > 0);
+
+  if (--file->watch_count == 0 && THUNAR_FILE_GET_CLASS (file)->unwatch != NULL)
+    {
+      g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->watch != NULL);
+      THUNAR_FILE_GET_CLASS (file)->unwatch (file);
+    }
+}
+
+
+ 
 /**
  * thunar_file_changed:
  * @file : a #ThunarFile instance.

@@ -46,22 +46,32 @@ static gboolean           thunar_local_file_get_size          (ThunarFile       
                                                                ThunarVfsFileSize    *size_return);
 static const gchar       *thunar_local_file_get_icon_name     (ThunarFile           *file,
                                                                GtkIconTheme         *icon_theme);
+static void               thunar_local_file_watch             (ThunarFile           *file);
+static void               thunar_local_file_unwatch           (ThunarFile           *file);
 static void               thunar_local_file_changed           (ThunarFile           *file);
+static void               thunar_local_file_monitor           (ThunarVfsMonitor     *monitor,
+                                                               ThunarVfsMonitorEvent event,
+                                                               ThunarVfsInfo        *info,
+                                                               gpointer              user_data);
 
 
 
 struct _ThunarLocalFileClass
 {
   ThunarFileClass __parent__;
+
+  ThunarVfsMonitor *monitor;
 };
 
 struct _ThunarLocalFile
 {
   ThunarFile __parent__;
 
-  gchar         *display_name;
-  ExoMimeInfo   *mime_info;
-  ThunarVfsInfo  info;
+  gchar        *display_name;
+  ExoMimeInfo  *mime_info;
+  ThunarVfsInfo info;
+
+  gint          watch_id;
 };
 
 
@@ -75,6 +85,8 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
 {
   ThunarFileClass *thunarfile_class;
   GObjectClass    *gobject_class;
+
+  klass->monitor = thunar_vfs_monitor_get_default ();
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_local_file_finalize;
@@ -91,6 +103,8 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_mode = thunar_local_file_get_mode;
   thunarfile_class->get_size = thunar_local_file_get_size;
   thunarfile_class->get_icon_name = thunar_local_file_get_icon_name;
+  thunarfile_class->watch = thunar_local_file_watch;
+  thunarfile_class->unwatch = thunar_local_file_unwatch;
   thunarfile_class->changed = thunar_local_file_changed;
 }
 
@@ -108,6 +122,14 @@ static void
 thunar_local_file_finalize (GObject *object)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (object);
+
+#ifndef G_DISABLE_CHECKS
+  if (G_UNLIKELY (local_file->watch_id != 0))
+    {
+      g_error ("Attempt to finalize a ThunarLocalFile, which "
+               "is still being watched for changes");
+    }
+#endif
 
   /* free the mime info */
   if (G_LIKELY (local_file->mime_info != NULL))
@@ -315,6 +337,32 @@ thunar_local_file_get_icon_name (ThunarFile   *file,
 
 
 static void
+thunar_local_file_watch (ThunarFile *file)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+
+  g_return_if_fail (local_file->watch_id == 0);
+
+  local_file->watch_id = thunar_vfs_monitor_add_info (THUNAR_LOCAL_FILE_GET_CLASS (local_file)->monitor,
+                                                      &local_file->info, thunar_local_file_monitor, local_file);
+}
+
+
+
+static void
+thunar_local_file_unwatch (ThunarFile *file)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+
+  g_return_if_fail (local_file->watch_id != 0);
+
+  thunar_vfs_monitor_remove (THUNAR_LOCAL_FILE_GET_CLASS (local_file)->monitor, local_file->watch_id);
+  local_file->watch_id = 0;
+}
+
+
+
+static void
 thunar_local_file_changed (ThunarFile *file)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
@@ -327,6 +375,29 @@ thunar_local_file_changed (ThunarFile *file)
     }
 
   THUNAR_FILE_CLASS (thunar_local_file_parent_class)->changed (file);
+}
+
+
+
+static void
+thunar_local_file_monitor (ThunarVfsMonitor     *monitor,
+                           ThunarVfsMonitorEvent event,
+                           ThunarVfsInfo        *info,
+                           gpointer              user_data)
+{
+  switch (event)
+    {
+    case THUNAR_VFS_MONITOR_CHANGED:
+      thunar_file_changed (THUNAR_FILE (user_data));
+      break;
+
+    case THUNAR_VFS_MONITOR_DELETED:
+      gtk_object_destroy (GTK_OBJECT (user_data));
+      break;
+
+    default:
+      break;
+    }
 }
 
 

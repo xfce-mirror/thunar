@@ -1,5 +1,13 @@
 2005-06-25	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/main.c(main): Disable thread support for now, as it's not used
+	  and just slows down stuff.
+	* thunar/thunar-file.{c,h}, thunar/thunar-local-file.{c,h},
+	  thunar/thunar-local-folder.c, thunar/thunar-trash-file.c: Watch local
+	  directories and trashed files for changes.
+
+2005-06-25	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-location-buttons.c
 	  (thunar_location_buttons_set_current_directory): Don't display the
 	  real root node - the 'computer:'-node - if a sub-node is active. So

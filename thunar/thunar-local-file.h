@@ -31,8 +31,8 @@ typedef struct _ThunarLocalFile      ThunarLocalFile;
 #define THUNAR_LOCAL_FILE(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCAL_FILE, ThunarLocalFile))
 #define THUNAR_LOCAL_FILE_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((obj), THUNAR_TYPE_LOCAL_FILE, ThunarLocalFileClass))
 #define THUNAR_IS_LOCAL_FILE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LOCAL_FILE))
-#define THUNAR_IS_LOCAL_FILE_CLASS(klass) (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCAL_FILE))
-#define THUNAR_LOCAL_FILE_GET_CLASS(obj)  (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_LOCAL_FILE, ThunarLocalFileClass))
+#define THUNAR_IS_LOCAL_FILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_LOCAL_FILE))
+#define THUNAR_LOCAL_FILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCAL_FILE, ThunarLocalFileClass))
 
 GType       thunar_local_file_get_type  (void) G_GNUC_CONST;
 
