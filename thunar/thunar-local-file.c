@@ -59,8 +59,6 @@ static void               thunar_local_file_monitor           (ThunarVfsMonitor 
 struct _ThunarLocalFileClass
 {
   ThunarFileClass __parent__;
-
-  ThunarVfsMonitor *monitor;
 };
 
 struct _ThunarLocalFile
@@ -76,6 +74,8 @@ struct _ThunarLocalFile
 
 
 
+static ThunarVfsMonitor *monitor = NULL;
+
 G_DEFINE_TYPE (ThunarLocalFile, thunar_local_file, THUNAR_TYPE_FILE);
 
 
@@ -85,8 +85,6 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
 {
   ThunarFileClass *thunarfile_class;
   GObjectClass    *gobject_class;
-
-  klass->monitor = thunar_vfs_monitor_get_default ();
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_local_file_finalize;
@@ -343,8 +341,21 @@ thunar_local_file_watch (ThunarFile *file)
 
   g_return_if_fail (local_file->watch_id == 0);
 
-  local_file->watch_id = thunar_vfs_monitor_add_info (THUNAR_LOCAL_FILE_GET_CLASS (local_file)->monitor,
-                                                      &local_file->info, thunar_local_file_monitor, local_file);
+  /* take a reference on the VFS monitor for this instance */
+  if (G_UNLIKELY (monitor == NULL))
+    {
+      monitor = thunar_vfs_monitor_get_default ();
+      g_object_add_weak_pointer (G_OBJECT (monitor), (gpointer) &monitor);
+    }
+  else
+    {
+      g_object_ref (G_OBJECT (monitor));
+    }
+
+  /* add our VFS info to the monitor */
+  local_file->watch_id = thunar_vfs_monitor_add_info (monitor, &local_file->info,
+                                                      thunar_local_file_monitor,
+                                                      local_file);
 }
 
 
@@ -356,8 +367,12 @@ thunar_local_file_unwatch (ThunarFile *file)
 
   g_return_if_fail (local_file->watch_id != 0);
 
-  thunar_vfs_monitor_remove (THUNAR_LOCAL_FILE_GET_CLASS (local_file)->monitor, local_file->watch_id);
+  /* remove our VFS info from the monitor */
+  thunar_vfs_monitor_remove (monitor, local_file->watch_id);
   local_file->watch_id = 0;
+
+  /* release our reference on the VFS monitor */
+  g_object_unref (G_OBJECT (monitor));
 }
 
 

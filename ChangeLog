@@ -1,5 +1,13 @@
 2005-06-25	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-local-file.c: Use a static variable for the VFS monitor
+	  instead of a class variable, that never gets freed with static types.
+	* thunar/thunar-favourites-model.c: Watch the files in the favourites
+	  list for changes, so that folders that no longer exists are
+	  automatically removed from the list.
+
+2005-06-25	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-navigator.c(thunar_navigator_get_type): Do not require
 	  derived classes to inherit GtkWidget. This enables us to let arbitrary
 	  classes implement the ThunarNavigator interface and therefore reduce

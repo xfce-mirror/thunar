@@ -362,6 +362,10 @@ thunar_favourites_model_finalize (GObject *object)
 
       if (G_LIKELY (current->file != NULL))
         {
+          /* drop the file watch */
+          thunar_file_unwatch (current->file);
+
+          /* unregister from the file */
           g_signal_handlers_disconnect_matched (G_OBJECT (current->file),
                                                 G_SIGNAL_MATCH_DATA, 0,
                                                 0, NULL, NULL, model);
@@ -710,6 +714,10 @@ thunar_favourites_model_add_favourite (ThunarFavouritesModel *model,
   /* we want to stay informed about changes to the file */
   if (G_LIKELY (favourite->file != NULL))
     {
+      /* watch the file for changes */
+      thunar_file_watch (favourite->file);
+
+      /* connect appropriate signals */
       g_signal_connect (G_OBJECT (favourite->file), "changed",
                         G_CALLBACK (thunar_favourites_model_file_changed), model);
       g_signal_connect (G_OBJECT (favourite->file), "destroy",
@@ -895,6 +903,9 @@ thunar_favourites_model_file_destroy (ThunarFile            *file,
   path = gtk_tree_path_new_from_indices (n, -1);
   gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
   gtk_tree_path_free (path);
+
+  /* drop the watch from the file */
+  thunar_file_unwatch (favourite->file);
 
   /* disconnect us from the favourite's file */
   g_signal_handlers_disconnect_matched (G_OBJECT (favourite->file),
