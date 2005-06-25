@@ -49,6 +49,7 @@ thunar_side_pane_get_type (void)
                                      "ThunarSidePane",
                                      &info, 0);
 
+      g_type_interface_add_prerequisite (type, GTK_TYPE_WIDGET);
       g_type_interface_add_prerequisite (type, THUNAR_TYPE_NAVIGATOR);
     }
 

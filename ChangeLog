@@ -1,5 +1,14 @@
 2005-06-25	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-navigator.c(thunar_navigator_get_type): Do not require
+	  derived classes to inherit GtkWidget. This enables us to let arbitrary
+	  classes implement the ThunarNavigator interface and therefore reduce
+	  the amount of hardcoded knowledge in ThunarWindow.
+	* thunar/thunar-side-pane.c(thunar_side_pane_get_type): Require derived
+	  classes to inhert GtkWidget.
+
+2005-06-25	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-details-view.c(thunar_details_view_init): Use a
 	  GtkCellRendererText instead of an ExoCellRendererEllipsizedText
 	  for the name column.
