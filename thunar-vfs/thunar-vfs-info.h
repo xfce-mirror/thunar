@@ -97,9 +97,8 @@ typedef enum {
 /**
  * ThunarVfsFileFlags:
  * @THUNAR_VFS_FILE_FLAGS_NONE    : No additional information available.
- * @THUNAR_VFS_FILE_FLAGS_SYMLINK : The file is a symlink, and thereby the
- *                                  %target field is valid. Whether or not
- *                                  the other fields refer to the symlink
+ * @THUNAR_VFS_FILE_FLAGS_SYMLINK : The file is a symlink. Whether or not
+ *                                  the info fields refer to the symlink
  *                                  itself or the linked file, depends on 
  *                                  whether the symlink is broken or not.
  *
@@ -178,11 +177,6 @@ typedef struct
 
   /* file's URI */
   ThunarVfsURI *uri;
-
-  /* link target in case of a symlink (as indicated by the
-   * %THUNAR_VFS_FILE_FLAGS_SYMLINK flag), else %NULL.
-   */
-  char *target;
 } ThunarVfsInfo;
 
 #define thunar_vfs_info_init(info)                                          \
@@ -190,16 +184,10 @@ G_STMT_START {                                                              \
   (info)->type = THUNAR_VFS_FILE_TYPE_UNKNOWN;                              \
   (info)->ctime = (ThunarVfsFileTime) -1;                                   \
   (info)->uri = NULL;                                                       \
-  (info)->target = NULL;                                                    \
 } G_STMT_END
 
 #define thunar_vfs_info_reset(info)                                         \
 G_STMT_START {                                                              \
-  if (G_LIKELY ((info)->target != NULL))                                    \
-    {                                                                       \
-      g_free ((info)->target);                                              \
-      (info)->target = NULL;                                                \
-    }                                                                       \
   if (G_LIKELY ((info)->uri != NULL))                                       \
     {                                                                       \
       thunar_vfs_uri_unref ((info)->uri);                                   \

@@ -1,5 +1,13 @@
 2005-06-26	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-info.{c,h}: Do not automatically determine the
+	  link target for ThunarVfsInfo objects. Instead, we'll add a method
+	  to ThunarVfsInfo later, so modules can do this on-demand. This speeds
+	  up loading directories with lots of symlinks within.
+	* TODO: Remove the ThunarVfsInfo symlink item.
+
+2005-06-26	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-uri.{c,h}: Don't use a GObject for the
 	  ThunarVfsURI class. GObject is really overhead here, as we don't need
 	  anything of whats provided by GObject.

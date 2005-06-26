@@ -59,7 +59,6 @@ thunar_vfs_info_query (ThunarVfsInfo  *info,
 {
   g_return_val_if_fail (info != NULL, FALSE);
   g_return_val_if_fail (info->uri == NULL, FALSE);
-  g_return_val_if_fail (info->target == NULL, FALSE);
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
 
   info->uri = thunar_vfs_uri_ref (uri);
@@ -95,26 +94,19 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
 
   path = thunar_vfs_uri_get_path (info->uri);
 
-  if (lstat (path, &lsb) < 0)
+  if (G_UNLIKELY (lstat (path, &lsb) < 0))
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    "Failed to stat file `%s': %s", path, g_strerror (errno));
       return THUNAR_VFS_INFO_RESULT_ERROR;
     }
 
-  if (!S_ISLNK (lsb.st_mode))
+  if (G_LIKELY (!S_ISLNK (lsb.st_mode)))
     {
       if (info->ctime != lsb.st_ctime
           || info->device != lsb.st_dev
           || info->inode != lsb.st_ino)
         {
-          /* no symlink, so no link target */
-          if (G_UNLIKELY (info->target != NULL))
-            {
-              g_free (info->target);
-              info->target = NULL;
-            }
-
           info->type = (lsb.st_mode & S_IFMT) >> 12;
           info->mode = lsb.st_mode & 07777;
           info->flags = THUNAR_VFS_FILE_FLAGS_NONE;
@@ -132,20 +124,6 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
     }
   else
     {
-      gchar buffer[PATH_MAX + 1];
-      gint  length;
-
-      /* we have a symlink, query the link target */
-      length = readlink (path, buffer, sizeof (buffer) - 1);
-      if (length < 0)
-        {
-          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
-                       "Failed to read link target of `%s': %s", path,
-                       g_strerror (errno));
-          return THUNAR_VFS_INFO_RESULT_ERROR;
-        }
-      buffer[length] = '\0';
-
       if (stat (path, &sb) == 0)
         {
           /* ok, link target is present */
@@ -153,11 +131,6 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
               || info->device != sb.st_dev
               || info->inode != sb.st_ino)
             {
-              /* update the link target */
-              g_free (info->target);
-              info->target = g_new (gchar, length + 1);
-              memcpy (info->target, buffer, length + 1);
-
               info->type = (sb.st_mode & S_IFMT) >> 12;
               info->mode = sb.st_mode & 07777;
               info->flags = THUNAR_VFS_FILE_FLAGS_SYMLINK;
@@ -181,12 +154,6 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
               || info->device != lsb.st_dev
               || info->inode != lsb.st_ino)
             {
-
-              /* update the link target */
-              g_free (info->target);
-              info->target = g_new (gchar, length + 1);
-              memcpy (info->target, buffer, length + 1);
-
               info->type = THUNAR_VFS_FILE_TYPE_SYMLINK;
               info->mode = lsb.st_mode & 07777;
               info->flags = THUNAR_VFS_FILE_FLAGS_SYMLINK;
