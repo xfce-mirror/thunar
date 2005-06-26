@@ -128,6 +128,9 @@ thunar_trash_folder_finalize (GObject *object)
   g_signal_handlers_disconnect_by_func (G_OBJECT (trash_folder->manager), thunar_file_changed, trash_folder);
   g_object_unref (G_OBJECT (trash_folder->manager));
 
+  /* release the trash URI */
+  thunar_vfs_uri_unref (trash_folder->uri);
+
   G_OBJECT_CLASS (thunar_trash_folder_parent_class)->finalize (object);
 }
 
@@ -145,7 +148,7 @@ thunar_trash_folder_get_parent (ThunarFile *file,
   if (G_LIKELY (computer_uri != NULL))
     {
       computer_file = thunar_file_get_for_uri (computer_uri, error);
-      g_object_unref (G_OBJECT (computer_uri));
+      thunar_vfs_uri_unref (computer_uri);
     }
   else
     {
@@ -267,7 +270,7 @@ thunar_trash_folder_get_files (ThunarFolder *folder)
               file = thunar_file_get_for_uri (uri, NULL);
               if (file != NULL)
                 trash_folder->files = g_slist_prepend (trash_folder->files, file);
-              g_object_unref (G_OBJECT (uri));
+              thunar_vfs_uri_unref (uri);
             }
           g_object_unref (G_OBJECT (trash));
         }
@@ -311,10 +314,7 @@ thunar_trash_folder_new (ThunarVfsURI *uri,
 
   /* allocate the new object */
   trash_folder = g_object_new (THUNAR_TYPE_TRASH_FOLDER, NULL);
-  trash_folder->uri = uri;
-
-  /* take an additional reference on the uri */
-  g_object_ref (G_OBJECT (uri));
+  trash_folder->uri = thunar_vfs_uri_ref (uri);
 
   return THUNAR_FILE (trash_folder);
 }

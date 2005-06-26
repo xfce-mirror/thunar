@@ -120,7 +120,7 @@ thunar_vfs_volume_class_init (gpointer klass)
                                                           _("The kind of the volume"),
                                                           THUNAR_VFS_TYPE_VFS_VOLUME_KIND,
                                                           THUNAR_VFS_VOLUME_KIND_UNKNOWN,
-                                                          G_PARAM_READABLE));
+                                                          EXO_PARAM_READABLE));
 
   /**
    * ThunarVfsVolume:name:
@@ -133,7 +133,7 @@ thunar_vfs_volume_class_init (gpointer klass)
                                                            _("Name"),
                                                            _("The name of the volume"),
                                                            NULL,
-                                                           G_PARAM_READABLE));
+                                                           EXO_PARAM_READABLE));
 
   /**
    * ThunarVfsVolume:status:
@@ -146,20 +146,7 @@ thunar_vfs_volume_class_init (gpointer klass)
                                                            _("Status"),
                                                            _("The status of the volume"),
                                                            THUNAR_VFS_TYPE_VFS_VOLUME_STATUS,
-                                                           0, G_PARAM_READABLE));
-
-  /**
-   * ThunarVfsVolume:mount-point:
-   *
-   * The path in the file system where this volume is mounted
-   * or will be mounted.
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_object ("mount-point",
-                                                            _("Mount point"),
-                                                            _("The mount point of the volume"),
-                                                            THUNAR_VFS_TYPE_URI,
-                                                            G_PARAM_READABLE));
+                                                           0, EXO_PARAM_READABLE));
 }
 
 

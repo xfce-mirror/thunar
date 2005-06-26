@@ -120,7 +120,7 @@ thunar_computer_folder_finalize (GObject *object)
   g_slist_free (computer_folder->files);
 
   /* release the folder's URI */
-  g_object_unref (G_OBJECT (computer_folder->uri));
+  thunar_vfs_uri_unref (computer_folder->uri);
 
   G_OBJECT_CLASS (thunar_computer_folder_parent_class)->finalize (object);
 }
@@ -217,7 +217,7 @@ thunar_computer_folder_get_files (ThunarFolder *folder)
               file = thunar_file_get_for_uri (uri, NULL);
               if (G_LIKELY (file != NULL))
                 computer_folder->files = g_slist_append (computer_folder->files, file);
-              g_object_unref (G_OBJECT (uri));
+              thunar_vfs_uri_unref (uri);
             }
         }
     }
@@ -259,10 +259,7 @@ thunar_computer_folder_new (ThunarVfsURI *uri,
 
   /* allocate the new object */
   computer_folder = g_object_new (THUNAR_TYPE_COMPUTER_FOLDER, NULL);
-  computer_folder->uri = uri;
-
-  /* take an additional reference on the uri */
-  g_object_ref (G_OBJECT (uri));
+  computer_folder->uri = thunar_vfs_uri_ref (uri);
 
   return THUNAR_FILE (computer_folder);
 }

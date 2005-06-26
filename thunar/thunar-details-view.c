@@ -224,6 +224,7 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
   gtk_tree_model_get_iter (model, &iter, path);
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
   thunar_view_file_activated (THUNAR_VIEW (tree_view), file);
+  g_object_unref (G_OBJECT (file));
 
   /* invoke the row activated method on the parent class */
   if (GTK_TREE_VIEW_CLASS (thunar_details_view_parent_class)->row_activated != NULL)

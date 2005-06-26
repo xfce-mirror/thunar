@@ -127,6 +127,7 @@ thunar_icon_view_item_activated (ExoIconView *view,
   gtk_tree_model_get_iter (model, &iter, path);
   file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
   thunar_view_file_activated (THUNAR_VIEW (view), file);
+  g_object_unref (G_OBJECT (file));
 
   /* invoke the item_activated method on the parent class */
   if (EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->item_activated != NULL)

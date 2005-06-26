@@ -54,7 +54,6 @@ enum
   PROP_KIND,
   PROP_NAME,
   PROP_STATUS,
-  PROP_MOUNT_POINT,
 };
 
 
@@ -128,10 +127,6 @@ thunar_vfs_volume_bsd_class_init (ThunarVfsVolumeBSDClass *klass)
   g_object_class_override_property (gobject_class,
                                     PROP_STATUS,
                                     "status");
-
-  g_object_class_override_property (gobject_class,
-                                    PROP_MOUNT_POINT,
-                                    "mount-point");
 }
 
 
@@ -162,7 +157,7 @@ thunar_vfs_volume_bsd_finalize (GObject *object)
   g_return_if_fail (THUNAR_VFS_IS_VOLUME_BSD (volume_bsd));
 
   if (G_LIKELY (volume_bsd->mount_point != NULL))
-    g_object_unref (G_OBJECT (volume_bsd->mount_point));
+    thunar_vfs_uri_unref (volume_bsd->mount_point);
   g_free (volume_bsd->device_path);
 
   G_OBJECT_CLASS (thunar_vfs_volume_bsd_parent_class)->finalize (object);
@@ -190,10 +185,6 @@ thunar_vfs_volume_bsd_get_property (GObject    *object,
 
     case PROP_STATUS:
       g_value_set_enum (value, thunar_vfs_volume_get_status (volume));
-      break;
-
-    case PROP_MOUNT_POINT:
-      g_value_set_object (value, thunar_vfs_volume_get_mount_point (volume));
       break;
 
     default:

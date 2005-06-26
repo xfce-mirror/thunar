@@ -189,7 +189,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
       thunar_favourites_model_add_favourite (model, favourite, path);
       gtk_tree_path_next (path);
     }
-  g_object_unref (G_OBJECT (uri));
+  thunar_vfs_uri_unref (uri);
 
   /* append the 'Trash' favourite */
   uri = thunar_vfs_uri_new ("trash:", NULL);
@@ -205,7 +205,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
       thunar_favourites_model_add_favourite (model, favourite, path);
       gtk_tree_path_next (path);
     }
-  g_object_unref (G_OBJECT (uri));
+  thunar_vfs_uri_unref (uri);
 
   /* append the 'Filesystem' favourite */
   uri = thunar_vfs_uri_new_for_path ("/");
@@ -221,7 +221,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
       thunar_favourites_model_add_favourite (model, favourite, path);
       gtk_tree_path_next (path);
     }
-  g_object_unref (G_OBJECT (uri));
+  thunar_vfs_uri_unref (uri);
 
   /* prepend the removable media volumes */
   volumes = thunar_vfs_volume_manager_get_volumes (model->volume_manager);
@@ -284,7 +284,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
 
           /* try to open the file corresponding to the uri */
           file = thunar_file_get_for_uri (uri, NULL);
-          g_object_unref (G_OBJECT (uri));
+          thunar_vfs_uri_unref (uri);
           if (G_UNLIKELY (file == NULL))
             continue;
 

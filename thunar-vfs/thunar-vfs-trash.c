@@ -561,7 +561,7 @@ thunar_vfs_trash_get_path (ThunarVfsTrash *trash,
  *
  * Generates a 'trash://' URI that refers to the @file in @trash.
  *
- * You'll need to call #g_object_unref() on the returned
+ * You'll need to call #thunar_vfs_uri_unref() on the returned
  * object when you are done with it.
  *
  * Return value: the generated #ThunarVfsURI.

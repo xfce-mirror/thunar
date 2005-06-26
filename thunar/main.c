@@ -61,7 +61,7 @@ main (int argc, char **argv)
   if (G_LIKELY (uri != NULL))
     {
       file = thunar_file_get_for_uri (uri, &error);
-      g_object_unref (G_OBJECT (uri));
+      thunar_vfs_uri_unref (uri);
     }
 
   if (uri == NULL || file == NULL)

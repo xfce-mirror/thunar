@@ -198,7 +198,7 @@ thunar_local_folder_rescan (ThunarLocalFolder *local_folder,
           /* we discovered a new file */
           file_uri = thunar_vfs_uri_relative (folder_uri, name);
           file = thunar_file_get_for_uri (file_uri, NULL);
-          g_object_unref (G_OBJECT (file_uri));
+          thunar_vfs_uri_unref (file_uri);
 
           if (G_UNLIKELY (file == NULL))
             continue;
@@ -348,7 +348,7 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
       /* try to scan the new folder */
       if (G_UNLIKELY (!thunar_local_folder_rescan (local_folder, error)))
         {
-          gtk_object_sink (GTK_OBJECT (local_folder));
+          g_object_unref (G_OBJECT (local_folder));
           return NULL;
         }
     }

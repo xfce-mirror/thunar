@@ -87,6 +87,7 @@ thunar_file_get_type (void)
         sizeof (ThunarFile),
         0,
         NULL,
+        NULL,
       };
 
       type = g_type_register_static (GTK_TYPE_OBJECT,
@@ -99,10 +100,50 @@ thunar_file_get_type (void)
 
 
 
+#ifndef G_DISABLE_CHECKS
+static gboolean thunar_file_atexit_registered = FALSE;
+
+static void
+thunar_file_atexit_foreach (gpointer key,
+                            gpointer value,
+                            gpointer user_data)
+{
+  gchar *s;
+
+  s = thunar_vfs_uri_to_string (THUNAR_VFS_URI (key), 0);
+  g_print ("--> %s (%u)\n", s, G_OBJECT (value)->ref_count);
+  g_free (s);
+}
+
+static void
+thunar_file_atexit (void)
+{
+  if (file_cache == NULL || g_hash_table_size (file_cache) == 0)
+    return;
+
+  g_print ("--- Leaked a total of %u ThunarFile objects:\n",
+           g_hash_table_size (file_cache));
+
+  g_hash_table_foreach (file_cache, thunar_file_atexit_foreach, NULL);
+
+  g_print ("\n");
+}
+#endif
+
+
+
 static void
 thunar_file_class_init (ThunarFileClass *klass)
 {
   GObjectClass *gobject_class;
+
+#ifndef G_DISABLE_CHECKS
+  if (G_UNLIKELY (!thunar_file_atexit_registered))
+    {
+      g_atexit (thunar_file_atexit);
+      thunar_file_atexit_registered = TRUE;
+    }
+#endif
 
   thunar_file_parent_class = g_type_class_peek_parent (klass);
 
@@ -189,7 +230,7 @@ thunar_file_real_get_parent (ThunarFile *file,
   parent_file = thunar_file_get_for_uri (parent_uri, error);
 
   /* release the reference on the parent_uri */
-  g_object_unref (G_OBJECT (parent_uri));
+  thunar_vfs_uri_unref (parent_uri);
 
   return parent_file;
 }
@@ -283,7 +324,7 @@ thunar_file_destroyed (gpointer data,
   g_hash_table_remove (file_cache, uri);
 
   /* drop the reference on the uri */
-  g_object_unref (G_OBJECT (uri));
+  thunar_vfs_uri_unref (uri);
 }
 
 
@@ -335,8 +376,7 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
 
           /* insert the file into the cache */
           g_object_weak_ref (G_OBJECT (file), thunar_file_destroyed, uri);
-          g_hash_table_insert (file_cache, uri, file);
-          g_object_ref (G_OBJECT (uri));
+          g_hash_table_insert (file_cache, thunar_vfs_uri_ref (uri), file);
         }
     }
   else
@@ -436,7 +476,7 @@ thunar_file_open_as_folder (ThunarFile *file,
  * Note, that there's no reference taken for the caller on the
  * returned #ThunarVfsURI, so if you need the object for a longer
  * period, you'll need to take a reference yourself using the
- * #g_object_ref() function.
+ * #thunar_vfs_uri_ref() function.
  *
  * Return value: the URI to the @file.
  **/

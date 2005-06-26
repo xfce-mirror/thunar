@@ -121,7 +121,7 @@ thunar_trash_file_finalize (GObject *object)
   g_object_unref (G_OBJECT (trash_file->real_file));
   g_object_unref (G_OBJECT (trash_file->manager));
   g_object_unref (G_OBJECT (trash_file->trash));
-  g_object_unref (G_OBJECT (trash_file->uri));
+  thunar_vfs_uri_unref (trash_file->uri);
   g_free (trash_file->display_name);
 
   G_OBJECT_CLASS (thunar_trash_file_parent_class)->finalize (object);
@@ -279,8 +279,8 @@ thunar_trash_file_new (ThunarVfsURI *uri,
   if (G_UNLIKELY (real_file == NULL))
     {
       g_object_unref (G_OBJECT (trash_manager));
-      g_object_unref (G_OBJECT (real_uri));
       g_object_unref (G_OBJECT (trash));
+      thunar_vfs_uri_unref (real_uri);
       thunar_vfs_trash_info_free (info);
       g_free (path);
       return NULL;
@@ -291,7 +291,7 @@ thunar_trash_file_new (ThunarVfsURI *uri,
   trash_file->display_name = g_path_get_basename (thunar_vfs_trash_info_get_path (info));
   trash_file->manager = trash_manager;
   trash_file->real_file = real_file;
-  trash_file->uri = g_object_ref (G_OBJECT (uri));
+  trash_file->uri = thunar_vfs_uri_ref (uri);
   trash_file->trash = trash;
 
   /* watch the real file */
@@ -300,8 +300,8 @@ thunar_trash_file_new (ThunarVfsURI *uri,
   thunar_file_watch (real_file);
 
   /* cleanup */
-  g_object_unref (G_OBJECT (real_uri));
   thunar_vfs_trash_info_free (info);
+  thunar_vfs_uri_unref (real_uri);
   g_free (path);
 
   return THUNAR_FILE (trash_file);

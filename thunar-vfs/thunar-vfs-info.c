@@ -62,12 +62,11 @@ thunar_vfs_info_query (ThunarVfsInfo  *info,
   g_return_val_if_fail (info->target == NULL, FALSE);
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
 
-  g_object_ref (G_OBJECT (uri));
-  info->uri = uri;
+  info->uri = thunar_vfs_uri_ref (uri);
 
   if (thunar_vfs_info_update (info, error) == THUNAR_VFS_INFO_RESULT_ERROR)
     {
-      g_object_unref (G_OBJECT (info->uri));
+      thunar_vfs_uri_unref (uri);
       info->uri = NULL;
       return FALSE;
     }

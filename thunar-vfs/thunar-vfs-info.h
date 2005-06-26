@@ -202,7 +202,7 @@ G_STMT_START {                                                              \
     }                                                                       \
   if (G_LIKELY ((info)->uri != NULL))                                       \
     {                                                                       \
-      g_object_unref (G_OBJECT ((info)->uri));                              \
+      thunar_vfs_uri_unref ((info)->uri);                                   \
       (info)->uri = NULL;                                                   \
     }                                                                       \
   (info)->type = THUNAR_VFS_FILE_TYPE_UNKNOWN;                              \

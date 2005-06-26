@@ -39,25 +39,27 @@ enum
 
 
 
-static void thunar_window_class_init      (ThunarWindowClass  *klass);
-static void thunar_window_init            (ThunarWindow       *window);
-static void thunar_window_dispose         (GObject            *object);
-static void thunar_window_finalize        (GObject            *object);
-static void thunar_window_get_property    (GObject            *object,
-                                           guint               prop_id,
-                                           GValue             *value,
-                                           GParamSpec         *pspec);
-static void thunar_window_set_property    (GObject            *object,
-                                           guint               prop_id,
-                                           const GValue       *value,
-                                           GParamSpec         *pspec);
-static void thunar_window_action_close    (GtkAction          *action,
-                                           ThunarWindow       *window);
-static void thunar_window_action_go_up    (GtkAction          *action,
-                                           ThunarWindow       *window);
-static void thunar_window_file_activated  (ThunarView         *view,
-                                           ThunarFile         *file,
-                                           ThunarWindow       *window);
+static void     thunar_window_class_init          (ThunarWindowClass  *klass);
+static void     thunar_window_init                (ThunarWindow       *window);
+static void     thunar_window_dispose             (GObject            *object);
+static void     thunar_window_finalize            (GObject            *object);
+static void     thunar_window_get_property        (GObject            *object,
+                                                   guint               prop_id,
+                                                   GValue             *value,
+                                                   GParamSpec         *pspec);
+static void     thunar_window_set_property        (GObject            *object,
+                                                   guint               prop_id,
+                                                   const GValue       *value,
+                                                   GParamSpec         *pspec);
+static void     thunar_window_action_close        (GtkAction          *action,
+                                                   ThunarWindow       *window);
+static void     thunar_window_action_go_up        (GtkAction          *action,
+                                                   ThunarWindow       *window);
+static void     thunar_window_file_activated      (ThunarView         *view,
+                                                   ThunarFile         *file,
+                                                   ThunarWindow       *window);
+static gboolean thunar_window_cursor_idle         (gpointer            user_data);
+static void     thunar_window_cursor_idle_destroy (gpointer            user_data);
 
 
 
@@ -79,6 +81,8 @@ struct _ThunarWindow
   GtkWidget       *statusbar;
 
   ThunarFile      *current_directory;
+
+  gint             cursor_idle_id;
 };
 
 
@@ -151,6 +155,8 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget       *paned;
   GtkWidget       *swin;
   GtkWidget       *box;
+
+  window->cursor_idle_id = -1;
 
   window->action_group = gtk_action_group_new ("thunar-window");
   gtk_action_group_add_actions (window->action_group, action_entries,
@@ -243,6 +249,10 @@ thunar_window_finalize (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
 
+  /* stop the reset cursor idle source */
+  if (G_UNLIKELY (window->cursor_idle_id >= 0))
+    g_source_remove (window->cursor_idle_id);
+
   g_object_unref (G_OBJECT (window->action_group));
   g_object_unref (G_OBJECT (window->ui_manager));
 
@@ -299,7 +309,7 @@ static void
 thunar_window_action_close (GtkAction    *action,
                             ThunarWindow *window)
 {
-  gtk_main_quit ();
+  gtk_object_destroy (GTK_OBJECT (window));
 }
 
 
@@ -332,6 +342,33 @@ thunar_window_file_activated (ThunarView   *view,
    */
   if (thunar_file_is_directory (file))
     thunar_window_set_current_directory (window, file);
+}
+
+
+
+static gboolean
+thunar_window_cursor_idle (gpointer user_data)
+{
+  GtkWidget *widget = user_data;
+
+  GDK_THREADS_ENTER ();
+
+  if (GTK_WIDGET_REALIZED (widget))
+    gdk_window_set_cursor (widget->window, NULL);
+
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_window_cursor_idle_destroy (gpointer user_data)
+{
+  GDK_THREADS_ENTER ();
+  THUNAR_WINDOW (user_data)->cursor_idle_id = -1;
+  GDK_THREADS_LEAVE ();
 }
 
 
@@ -385,6 +422,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   GtkAction       *action;
   GtkWidget       *dialog;
   GdkPixbuf       *icon;
+  GdkCursor       *cursor;
   GError          *error = NULL;
 
   g_return_if_fail (THUNAR_IS_WINDOW (window));
@@ -423,6 +461,12 @@ thunar_window_set_current_directory (ThunarWindow *window,
                     NULL);
     }
 
+  /* tell everybody that we have a new "current-directory",
+   * we do this first so other widgets display the new
+   * state already while the folder view is loading.
+   */
+  g_object_notify (G_OBJECT (window), "current-directory");
+
   /* setup the folder for the view, we use a simple but very effective
    * trick here to speed up the folder change: we completely disconnect
    * the model from the view, load the folder into the model and afterwards
@@ -436,6 +480,29 @@ thunar_window_set_current_directory (ThunarWindow *window,
   thunar_view_set_model (THUNAR_VIEW (window->view), NULL);
   if (G_LIKELY (current_directory != NULL))
     {
+      if (GTK_WIDGET_REALIZED (window))
+        {
+          /* set watch cursor */
+          cursor = gdk_cursor_new (GDK_WATCH);
+          gdk_window_set_cursor (GTK_WIDGET (window)->window, cursor);
+          gdk_cursor_unref (cursor);
+
+          /* be sure to display the watch cursor and the empty view
+           * (FIXME: This seems to cause some ugly flickering!)
+           */
+          while (gtk_events_pending ())
+            gtk_main_iteration ();
+
+          /* register an idle function to reset the cursor once
+           * everything below is done.
+           */
+          if (G_LIKELY (window->cursor_idle_id < 0))
+            {
+              window->cursor_idle_id = g_idle_add_full (G_PRIORITY_LOW + 100, thunar_window_cursor_idle,
+                                                        window, thunar_window_cursor_idle_destroy);
+            }
+        }
+
       /* try to open the directory */
       folder = thunar_file_open_as_folder (current_directory, &error);
       if (G_LIKELY (folder != NULL))
@@ -473,9 +540,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
     }
   thunar_view_set_model (THUNAR_VIEW (window->view), model);
   g_object_unref (G_OBJECT (model));
-
-  /* tell everybody that we have a new "current-directory" */
-  g_object_notify (G_OBJECT (window), "current-directory");
 }
 
 

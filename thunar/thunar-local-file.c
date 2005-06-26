@@ -159,7 +159,7 @@ thunar_local_file_get_parent (ThunarFile *file,
       if (G_LIKELY (computer_uri != NULL))
         {
           computer_file = thunar_file_get_for_uri (computer_uri, error);
-          g_object_unref (G_OBJECT (computer_uri));
+          thunar_vfs_uri_unref (computer_uri);
         }
       else
         {

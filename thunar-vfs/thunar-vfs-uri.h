@@ -66,8 +66,11 @@ typedef enum
 GType              thunar_vfs_uri_get_type          (void) G_GNUC_CONST;
 
 ThunarVfsURI      *thunar_vfs_uri_new               (const gchar            *identifier,
-                                                     GError                **error);
-ThunarVfsURI      *thunar_vfs_uri_new_for_path      (const gchar            *path);
+                                                     GError                **error) G_GNUC_MALLOC;
+ThunarVfsURI      *thunar_vfs_uri_new_for_path      (const gchar            *path) G_GNUC_MALLOC;
+
+ThunarVfsURI      *thunar_vfs_uri_ref               (ThunarVfsURI           *uri);
+void               thunar_vfs_uri_unref             (ThunarVfsURI           *uri);
 
 gboolean           thunar_vfs_uri_is_home           (ThunarVfsURI           *uri);
 gboolean           thunar_vfs_uri_is_local          (ThunarVfsURI           *uri);
@@ -79,9 +82,9 @@ const gchar       *thunar_vfs_uri_get_name          (ThunarVfsURI           *uri
 const gchar       *thunar_vfs_uri_get_path          (ThunarVfsURI           *uri);
 ThunarVfsURIScheme thunar_vfs_uri_get_scheme        (ThunarVfsURI           *uri);
 
-ThunarVfsURI      *thunar_vfs_uri_parent            (ThunarVfsURI           *uri);
+ThunarVfsURI      *thunar_vfs_uri_parent            (ThunarVfsURI           *uri) G_GNUC_MALLOC;
 ThunarVfsURI      *thunar_vfs_uri_relative          (ThunarVfsURI           *uri,
-                                                     const gchar            *name);
+                                                     const gchar            *name) G_GNUC_MALLOC;
 
 gchar             *thunar_vfs_uri_to_string         (ThunarVfsURI           *uri,
                                                      ThunarVfsURIHideOptions hide_options);
@@ -98,9 +101,9 @@ gchar             *thunar_vfs_uri_list_to_string    (GList                  *uri
 void               thunar_vfs_uri_list_free         (GList                  *uri_list);
 
 #define thunar_vfs_uri_list_append(uri_list, uri) \
-  g_list_append ((uri_list), g_object_ref (G_OBJECT ((uri))))
+  g_list_append ((uri_list), thunar_vfs_uri_ref ((uri)))
 #define thunar_vfs_uri_list_prepend(uri_list, uri) \
-  g_list_prepend ((uri_list), g_object_ref (G_OBJECT ((uri))))
+  g_list_prepend ((uri_list), thunar_vfs_uri_ref ((uri)))
 
 G_END_DECLS;
 
