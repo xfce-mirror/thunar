@@ -48,24 +48,10 @@
 
 
 
-enum
-{
-  PROP_0,
-  PROP_KIND,
-  PROP_NAME,
-  PROP_STATUS,
-};
-
-
-
 static void                thunar_vfs_volume_bsd_class_init         (ThunarVfsVolumeBSDClass *klass);
 static void                thunar_vfs_volume_bsd_volume_init        (ThunarVfsVolumeIface    *iface);
 static void                thunar_vfs_volume_bsd_init               (ThunarVfsVolumeBSD      *volume_bsd);
 static void                thunar_vfs_volume_bsd_finalize           (GObject                 *object);
-static void                thunar_vfs_volume_bsd_get_property       (GObject                 *object, 
-                                                                     guint                    prop_id,
-                                                                     GValue                  *value,
-                                                                     GParamSpec              *pspec);
 static ThunarVfsVolumeKind   thunar_vfs_volume_bsd_get_kind         (ThunarVfsVolume         *volume);
 static const gchar          *thunar_vfs_volume_bsd_get_name         (ThunarVfsVolume         *volume);
 static ThunarVfsVolumeStatus thunar_vfs_volume_bsd_get_status       (ThunarVfsVolume         *volume);
@@ -114,19 +100,6 @@ thunar_vfs_volume_bsd_class_init (ThunarVfsVolumeBSDClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_volume_bsd_finalize;
-  gobject_class->get_property = thunar_vfs_volume_bsd_get_property;
-
-  g_object_class_override_property (gobject_class,
-                                    PROP_KIND,
-                                    "kind");
-
-  g_object_class_override_property (gobject_class,
-                                    PROP_NAME,
-                                    "name");
-
-  g_object_class_override_property (gobject_class,
-                                    PROP_STATUS,
-                                    "status");
 }
 
 
@@ -161,36 +134,6 @@ thunar_vfs_volume_bsd_finalize (GObject *object)
   g_free (volume_bsd->device_path);
 
   G_OBJECT_CLASS (thunar_vfs_volume_bsd_parent_class)->finalize (object);
-}
-
-
-
-static void
-thunar_vfs_volume_bsd_get_property (GObject    *object, 
-                                    guint       prop_id,
-                                    GValue     *value,
-                                    GParamSpec *pspec)
-{
-  ThunarVfsVolume *volume = THUNAR_VFS_VOLUME (object);
-
-  switch (prop_id)
-    {
-    case PROP_KIND:
-      g_value_set_enum (value, thunar_vfs_volume_get_kind (volume));
-      break;
-
-    case PROP_NAME:
-      g_value_set_static_string (value, thunar_vfs_volume_get_name (volume));
-      break;
-
-    case PROP_STATUS:
-      g_value_set_enum (value, thunar_vfs_volume_get_status (volume));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    }
 }
 
 
@@ -266,7 +209,6 @@ thunar_vfs_volume_bsd_update (gpointer user_data)
   if (status != volume_bsd->status)
     {
       volume_bsd->status = status;
-      g_object_notify (G_OBJECT (volume_bsd), "status");
       thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_bsd));
     }
 

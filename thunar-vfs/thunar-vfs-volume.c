@@ -38,7 +38,6 @@ enum
 
 
 static void thunar_vfs_volume_base_init  (gpointer klass);
-static void thunar_vfs_volume_class_init (gpointer klass);
 
 
 
@@ -58,11 +57,12 @@ thunar_vfs_volume_get_type (void)
         sizeof (ThunarVfsVolumeIface),
         (GBaseInitFunc) thunar_vfs_volume_base_init,
         NULL,
-        (GClassInitFunc) thunar_vfs_volume_class_init,
+        NULL,
         NULL,
         NULL,
         0,
         0,
+        NULL,
         NULL,
       };
 
@@ -102,51 +102,6 @@ thunar_vfs_volume_base_init (gpointer klass)
 
       initialized = TRUE;
     }
-}
-
-
-
-static void
-thunar_vfs_volume_class_init (gpointer klass)
-{
-  /**
-   * ThunarVfsVolume:kind:
-   *
-   * The kind of the volume (e.g. cdrom, floppy or harddisk).
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_enum ("kind",
-                                                          _("Kind"),
-                                                          _("The kind of the volume"),
-                                                          THUNAR_VFS_TYPE_VFS_VOLUME_KIND,
-                                                          THUNAR_VFS_VOLUME_KIND_UNKNOWN,
-                                                          EXO_PARAM_READABLE));
-
-  /**
-   * ThunarVfsVolume:name:
-   *
-   * The name of the volume, which is usually the device name or
-   * the label of the medium.
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_string ("name",
-                                                           _("Name"),
-                                                           _("The name of the volume"),
-                                                           NULL,
-                                                           EXO_PARAM_READABLE));
-
-  /**
-   * ThunarVfsVolume:status:
-   *
-   * The status of the volume, for example, whether or not a medium
-   * is currently present.
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_flags ("status",
-                                                           _("Status"),
-                                                           _("The status of the volume"),
-                                                           THUNAR_VFS_TYPE_VFS_VOLUME_STATUS,
-                                                           0, EXO_PARAM_READABLE));
 }
 
 
