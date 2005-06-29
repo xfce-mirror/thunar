@@ -1,5 +1,16 @@
 2005-06-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-details-view-icon-renderer.{c,h}: Add a custom icon
+	  renderer for the details view.
+	* thunar/thunar-list-model.{c,h}: Allow consumers of this model to
+	  query the file for a given row.
+	* thunar/Makefile.am: Add the new ThunarDetailsViewIconRenderer class
+	  to the build framework.
+	* thunar/thunar-details-view.c(thunar_details_view_init): Use the custom
+	  icon renderer instead of the generic pixbuf renderer provided by Gtk+.
+
+2005-06-29	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-location-buttons.c: Make this behave like GtkFileChooser
 	  again.
 

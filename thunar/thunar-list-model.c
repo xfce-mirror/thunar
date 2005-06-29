@@ -491,6 +491,9 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED:
       return G_TYPE_STRING;
 
+    case THUNAR_LIST_MODEL_COLUMN_FILE:
+      return THUNAR_TYPE_FILE;
+
     case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
       return GDK_TYPE_PIXBUF;
 
@@ -613,9 +616,14 @@ thunar_list_model_get_value (GtkTreeModel *model,
         g_value_set_static_string (value, _("unknown"));
       break;
 
+    case THUNAR_LIST_MODEL_COLUMN_FILE:
+      g_value_init (value, THUNAR_TYPE_FILE);
+      g_value_set_object (value, row->file);
+      break;
+
     case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
       g_value_init (value, GDK_TYPE_PIXBUF);
-      icon = thunar_file_load_icon (row->file, 22);
+      icon = thunar_file_load_icon (row->file, 24);
       g_value_set_object (value, icon);
       g_object_unref (G_OBJECT (icon));
       break;

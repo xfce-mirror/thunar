@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-details-view.h>
+#include <thunar/thunar-details-view-icon-renderer.h>
 
 
 
@@ -102,10 +103,10 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Name"),
                          NULL);
-  renderer = gtk_cell_renderer_pixbuf_new ();
+  renderer = thunar_details_view_icon_renderer_new ();
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "pixbuf", THUNAR_LIST_MODEL_COLUMN_ICON_SMALL,
+                                       "file", THUNAR_LIST_MODEL_COLUMN_FILE,
                                        NULL);
   renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
                            "xalign", 0.0,
