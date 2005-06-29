@@ -44,6 +44,7 @@ static ThunarVfsFileType  thunar_local_file_get_kind          (ThunarFile       
 static ThunarVfsFileMode  thunar_local_file_get_mode          (ThunarFile           *file);
 static gboolean           thunar_local_file_get_size          (ThunarFile           *file,
                                                                ThunarVfsFileSize    *size_return);
+static GList             *thunar_local_file_get_emblem_names  (ThunarFile           *file);
 static const gchar       *thunar_local_file_get_icon_name     (ThunarFile           *file,
                                                                GtkIconTheme         *icon_theme);
 static void               thunar_local_file_watch             (ThunarFile           *file);
@@ -100,6 +101,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_kind = thunar_local_file_get_kind;
   thunarfile_class->get_mode = thunar_local_file_get_mode;
   thunarfile_class->get_size = thunar_local_file_get_size;
+  thunarfile_class->get_emblem_names = thunar_local_file_get_emblem_names;
   thunarfile_class->get_icon_name = thunar_local_file_get_icon_name;
   thunarfile_class->watch = thunar_local_file_watch;
   thunarfile_class->unwatch = thunar_local_file_unwatch;
@@ -298,6 +300,21 @@ static ThunarVfsFileType
 thunar_local_file_get_kind (ThunarFile *file)
 {
   return THUNAR_LOCAL_FILE (file)->info.type;
+}
+
+
+
+static GList*
+thunar_local_file_get_emblem_names (ThunarFile *file)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+  ThunarVfsInfo   *info = &local_file->info;
+  GList           *emblems = NULL;
+
+  if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
+    emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK);
+
+  return emblems;
 }
 
 

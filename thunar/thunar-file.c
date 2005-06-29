@@ -57,6 +57,7 @@ static gboolean     thunar_file_real_get_date         (ThunarFile        *file,
                                                        ThunarVfsFileTime *date_return);
 static gboolean     thunar_file_real_get_size         (ThunarFile        *file,
                                                        ThunarVfsFileSize *size_return);
+static GList       *thunar_file_real_get_emblem_names (ThunarFile        *file);
 static void         thunar_file_real_changed          (ThunarFile        *file);
 static void         thunar_file_destroyed             (gpointer           data,
                                                        GObject           *object);
@@ -157,6 +158,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->get_special_name = thunar_file_real_get_special_name;
   klass->get_date = thunar_file_real_get_date;
   klass->get_size = thunar_file_real_get_size;
+  klass->get_emblem_names = thunar_file_real_get_emblem_names;
   klass->changed = thunar_file_real_changed;
 
   /**
@@ -278,6 +280,14 @@ thunar_file_real_get_size (ThunarFile        *file,
                            ThunarVfsFileSize *size_return)
 {
   return FALSE;
+}
+
+
+
+static GList*
+thunar_file_real_get_emblem_names (ThunarFile *file)
+{
+  return NULL;
 }
 
 
@@ -780,6 +790,31 @@ thunar_file_get_size_string (ThunarFile *file)
     return NULL;
 
   return thunar_vfs_humanize_size (size, NULL, 0);
+}
+
+
+
+/**
+ * thunar_file_get_emblem_names:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines the names of the emblems that should be displayed for
+ * @file. The returned list is owned by the caller, but the list
+ * items - the name strings - are owned by @file. So the caller
+ * must call #g_list_free(), but don't #g_free() the list items.
+ *
+ * Note that the strings contained in the returned list are
+ * not garantied to exist over the next iteration of the main
+ * loop. So in case you need the list of emblem names for
+ * a longer time, you'll need to take a copy of the strings.
+ *
+ * Return value: the names of the emblems for @file.
+ **/
+GList*
+thunar_file_get_emblem_names (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return THUNAR_FILE_GET_CLASS (file)->get_emblem_names (file);
 }
 
 

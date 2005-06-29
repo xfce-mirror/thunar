@@ -1,5 +1,15 @@
 2005-06-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-details-view-icon-renderer.c
+	  (thunar_details_view_icon_renderer_render): Add support to render
+	  the primary emblem of the given file.
+	* thunar/thunar-file.{c,h}: Add support to query the list of emblems
+	  for a given ThunarFile.
+	* thunar/thunar-local-file.c: Implement the ThunarFile emblem support
+	  for symbolic links.
+
+2005-06-29	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-details-view-icon-renderer.{c,h}: Add a custom icon
 	  renderer for the details view.
 	* thunar/thunar-list-model.{c,h}: Allow consumers of this model to

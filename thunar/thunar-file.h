@@ -56,6 +56,8 @@ typedef enum
   THUNAR_FILE_DATE_MODIFIED,
 } ThunarFileDateType;
 
+#define THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK "emblem-symbolic-link"
+
 struct _ThunarFileClass
 {
   GtkObjectClass __parent__;
@@ -83,6 +85,7 @@ struct _ThunarFileClass
   gboolean             (*get_size)            (ThunarFile        *file,
                                                ThunarVfsFileSize *size_return);
 
+  GList               *(*get_emblem_names)    (ThunarFile        *file);
   const gchar         *(*get_icon_name)       (ThunarFile        *file,
                                                GtkIconTheme      *icon_theme);
 
@@ -136,6 +139,7 @@ gchar             *thunar_file_get_date_string  (ThunarFile        *file,
 gchar             *thunar_file_get_mode_string  (ThunarFile        *file);
 gchar             *thunar_file_get_size_string  (ThunarFile        *file);
 
+GList             *thunar_file_get_emblem_names (ThunarFile        *file);
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile        *file,
                                                  gint               size);
 

@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-details-view-icon-renderer.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-icon-factory.h>
 
 
 
@@ -259,10 +260,13 @@ thunar_details_view_icon_renderer_render (GtkCellRenderer     *renderer,
                                           GtkCellRendererState flags)
 {
   ThunarDetailsViewIconRenderer *icon_renderer = THUNAR_DETAILS_VIEW_ICON_RENDERER (renderer);
+  ThunarIconFactory             *factory;
   GdkRectangle                   icon_area;
   GdkRectangle                   draw_area;
   GdkPixbuf                     *scaled;
   GdkPixbuf                     *icon;
+  GList                         *emblems;
+  GList                         *lp;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -298,6 +302,41 @@ thunar_details_view_icon_renderer_render (GtkCellRenderer     *renderer,
     }
 
   g_object_unref (G_OBJECT (icon));
+
+  /* display the primary emblem as well (if any) */
+  emblems = thunar_file_get_emblem_names (icon_renderer->file);
+  if (emblems != NULL)
+    {
+      factory = thunar_icon_factory_get_default ();
+
+      /* lookup the first emblem icon that exits in the icon theme */
+      for (icon = NULL, lp = emblems; lp != NULL; lp = lp->next)
+        {
+          icon = thunar_icon_factory_load_icon (factory, lp->data, icon_renderer->size, NULL, FALSE);
+          if (G_LIKELY (icon != NULL))
+            break;
+        }
+
+      if (G_LIKELY (icon != NULL))
+        {
+          icon_area.width = gdk_pixbuf_get_width (icon);
+          icon_area.height = gdk_pixbuf_get_height (icon);
+          icon_area.x = cell_area->x + (cell_area->width - icon_area.width - renderer->xpad);
+          icon_area.y = cell_area->y + (cell_area->height - icon_area.height - renderer->ypad);
+
+          if (gdk_rectangle_intersect (expose_area, &icon_area, &draw_area))
+            {
+              gdk_draw_pixbuf (window, widget->style->black_gc, icon,
+                               draw_area.x - icon_area.x, draw_area.y - icon_area.y,
+                               draw_area.x, draw_area.y, draw_area.width, draw_area.height,
+                               GDK_RGB_DITHER_NORMAL, 0, 0);
+            }
+
+          g_object_unref (G_OBJECT (icon));
+        }
+
+      g_list_free (emblems);
+    }
 }
 
 
