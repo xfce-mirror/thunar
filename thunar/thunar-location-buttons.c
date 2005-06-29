@@ -133,6 +133,7 @@ struct _ThunarLocationButtons
 };
 
 
+static GQuark gtk_label_quark = 0;
 static GQuark thunar_file_quark = 0;
 
 static const GtkTargetEntry drag_targets[] =
@@ -159,6 +160,7 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
   GtkWidgetClass    *gtkwidget_class;
   GObjectClass      *gobject_class;
 
+  gtk_label_quark = g_quark_from_static_string ("gtk-label");
   thunar_file_quark = g_quark_from_static_string ("thunar-file");
 
   gobject_class = G_OBJECT_CLASS (klass);
@@ -743,6 +745,7 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
     {
       /* only non-root nodes have a label */
       label = gtk_label_new (thunar_file_get_special_name (file));
+      g_object_set_qdata (G_OBJECT (button), gtk_label_quark, label);
       gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
       gtk_widget_show (label);
 
@@ -805,7 +808,9 @@ thunar_location_buttons_scroll_timeout (gpointer user_data)
 static void
 thunar_location_buttons_scroll_timeout_destroy (gpointer user_data)
 {
+  GDK_THREADS_ENTER ();
   THUNAR_LOCATION_BUTTONS (user_data)->scroll_timeout_id = -1;
+  GDK_THREADS_LEAVE ();
 }
 
 
@@ -987,6 +992,9 @@ thunar_location_buttons_clicked (GtkWidget             *button,
                                  ThunarLocationButtons *buttons)
 {
   ThunarFile *directory;
+  GtkWidget  *label;
+  gchar      *markup;
+  GList      *lp;
 
   g_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
   g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
@@ -994,14 +1002,48 @@ thunar_location_buttons_clicked (GtkWidget             *button,
   /* determine the directory associated with the clicked button */
   directory = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
 
-  /* reset the button state (just in case there's no change) */
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button),
-                                directory == buttons->current_directory);
+  /* disconnect from previous current directory (if any) */
+  if (G_LIKELY (buttons->current_directory != NULL))
+    g_object_unref (G_OBJECT (buttons->current_directory));
+
+  /* setup the new current directory */
+  buttons->current_directory = directory;
+  g_object_ref (G_OBJECT (directory));
+
+  /* update all buttons */
+  for (lp = buttons->list; lp != NULL; lp = lp->next)
+    {
+      /* query button data */
+      button = GTK_WIDGET (lp->data);
+      label = g_object_get_qdata (G_OBJECT (button), gtk_label_quark);
+      directory = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
+
+      /* update the label (if any) */
+      if (G_LIKELY (label != NULL))
+        {
+          /* current directory gets a bold label */
+          if (directory == buttons->current_directory)
+            {
+              markup = g_markup_printf_escaped ("<b>%s</b>", thunar_file_get_special_name (directory));
+              gtk_label_set_markup (GTK_LABEL (label), markup);
+              g_free (markup);
+            }
+          else
+            {
+              gtk_label_set_text (GTK_LABEL (label), thunar_file_get_special_name (directory));
+            }
+        }
+
+      /* update the toggle button state (making sure to not recurse with the "clicked" handler) */
+      g_signal_handlers_block_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
+      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), directory == buttons->current_directory);
+      g_signal_handlers_unblock_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
+    }
 
   /* notify the surrounding module that we want to change
    * to a different directory.
    */
-  thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), directory);
+  thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), buttons->current_directory);
 }
 
 
