@@ -47,6 +47,8 @@ static ThunarVfsFileType thunar_trash_file_get_kind         (ThunarFile         
 static ThunarVfsFileMode thunar_trash_file_get_mode         (ThunarFile           *file);
 static gboolean          thunar_trash_file_get_size         (ThunarFile           *file,
                                                              ThunarVfsFileSize    *size_return);
+static ThunarVfsGroup   *thunar_trash_file_get_group        (ThunarFile           *file);
+static ThunarVfsUser    *thunar_trash_file_get_user         (ThunarFile           *file);
 static const gchar      *thunar_trash_file_get_icon_name    (ThunarFile           *file,
                                                              GtkIconTheme         *icon_theme);
 
@@ -92,6 +94,8 @@ thunar_trash_file_class_init (ThunarTrashFileClass *klass)
   thunarfile_class->get_kind = thunar_trash_file_get_kind;
   thunarfile_class->get_mode = thunar_trash_file_get_mode;
   thunarfile_class->get_size = thunar_trash_file_get_size;
+  thunarfile_class->get_group = thunar_trash_file_get_group;
+  thunarfile_class->get_user = thunar_trash_file_get_user;
   thunarfile_class->get_icon_name = thunar_trash_file_get_icon_name;
 }
 
@@ -196,6 +200,22 @@ thunar_trash_file_get_size (ThunarFile        *file,
                             ThunarVfsFileSize *size_return)
 {
   return thunar_file_get_size (THUNAR_TRASH_FILE (file)->real_file, size_return);
+}
+
+
+
+static ThunarVfsGroup*
+thunar_trash_file_get_group (ThunarFile *file)
+{
+  return thunar_file_get_group (THUNAR_TRASH_FILE (file)->real_file);
+}
+
+
+
+static ThunarVfsUser*
+thunar_trash_file_get_user (ThunarFile *file)
+{
+  return thunar_file_get_user (THUNAR_TRASH_FILE (file)->real_file);
 }
 
 

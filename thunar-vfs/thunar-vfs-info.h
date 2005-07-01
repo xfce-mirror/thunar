@@ -135,6 +135,18 @@ typedef off_t ThunarVfsFileSize;
 typedef time_t ThunarVfsFileTime;
 
 /**
+ * ThunarVfsGroupId:
+ * Datatype to represent a group id.
+ **/
+typedef gid_t ThunarVfsGroupId;
+
+/**
+ * ThunarVfsUserId:
+ * Datatype to represent a user id.
+ **/
+typedef uid_t ThunarVfsUserId;
+
+/**
  * ThunarVfsInfo:
  *
  * The #ThunarVfsInfo structure provides information about a file system
@@ -152,10 +164,10 @@ typedef struct
   ThunarVfsFileFlags flags;
 
   /* Owner's user id */
-  uid_t uid;
+  ThunarVfsUserId uid;
 
   /* Owner's group id */
-  gid_t gid;
+  ThunarVfsGroupId gid;
 
   /* Size in bytes */
   ThunarVfsFileSize size;

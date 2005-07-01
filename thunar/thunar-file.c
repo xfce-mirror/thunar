@@ -43,24 +43,26 @@ enum
 
 
 
-static void         thunar_file_class_init            (ThunarFileClass   *klass);
-static void         thunar_file_finalize              (GObject           *object);
-static gboolean     thunar_file_real_has_parent       (ThunarFile        *file);
-static ThunarFile  *thunar_file_real_get_parent       (ThunarFile        *file,
-                                                       GError           **error);
-static ThunarFolder*thunar_file_real_open_as_folder   (ThunarFile        *file,
-                                                       GError           **error);
-static ExoMimeInfo *thunar_file_real_get_mime_info    (ThunarFile        *file);
-static const gchar *thunar_file_real_get_special_name (ThunarFile        *file);
-static gboolean     thunar_file_real_get_date         (ThunarFile        *file,
-                                                       ThunarFileDateType date_type,
-                                                       ThunarVfsFileTime *date_return);
-static gboolean     thunar_file_real_get_size         (ThunarFile        *file,
-                                                       ThunarVfsFileSize *size_return);
-static GList       *thunar_file_real_get_emblem_names (ThunarFile        *file);
-static void         thunar_file_real_changed          (ThunarFile        *file);
-static void         thunar_file_destroyed             (gpointer           data,
-                                                       GObject           *object);
+static void            thunar_file_class_init            (ThunarFileClass   *klass);
+static void            thunar_file_finalize              (GObject           *object);
+static gboolean        thunar_file_real_has_parent       (ThunarFile        *file);
+static ThunarFile     *thunar_file_real_get_parent       (ThunarFile        *file,
+                                                          GError           **error);
+static ThunarFolder   *thunar_file_real_open_as_folder   (ThunarFile        *file,
+                                                          GError           **error);
+static ExoMimeInfo    *thunar_file_real_get_mime_info    (ThunarFile        *file);
+static const gchar    *thunar_file_real_get_special_name (ThunarFile        *file);
+static gboolean        thunar_file_real_get_date         (ThunarFile        *file,
+                                                          ThunarFileDateType date_type,
+                                                          ThunarVfsFileTime *date_return);
+static gboolean        thunar_file_real_get_size         (ThunarFile        *file,
+                                                          ThunarVfsFileSize *size_return);
+static ThunarVfsGroup *thunar_file_real_get_group        (ThunarFile        *file);
+static ThunarVfsUser  *thunar_file_real_get_user         (ThunarFile        *file);
+static GList          *thunar_file_real_get_emblem_names (ThunarFile        *file);
+static void            thunar_file_real_changed          (ThunarFile        *file);
+static void            thunar_file_destroyed             (gpointer           data,
+                                                          GObject           *object);
 
 
 
@@ -158,6 +160,8 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->get_special_name = thunar_file_real_get_special_name;
   klass->get_date = thunar_file_real_get_date;
   klass->get_size = thunar_file_real_get_size;
+  klass->get_group = thunar_file_real_get_group;
+  klass->get_user = thunar_file_real_get_user;
   klass->get_emblem_names = thunar_file_real_get_emblem_names;
   klass->changed = thunar_file_real_changed;
 
@@ -280,6 +284,22 @@ thunar_file_real_get_size (ThunarFile        *file,
                            ThunarVfsFileSize *size_return)
 {
   return FALSE;
+}
+
+
+
+static ThunarVfsGroup*
+thunar_file_real_get_group (ThunarFile *file)
+{
+  return NULL;
+}
+
+
+
+static ThunarVfsUser*
+thunar_file_real_get_user (ThunarFile *file)
+{
+  return NULL;
 }
 
 
@@ -790,6 +810,50 @@ thunar_file_get_size_string (ThunarFile *file)
     return NULL;
 
   return thunar_vfs_humanize_size (size, NULL, 0);
+}
+
+
+
+/**
+ * thunar_file_get_group:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines the #ThunarVfsGroup for @file. If there's no
+ * group associated with @file or if the system is unable to
+ * determine the group, %NULL will be returned.
+ *
+ * The caller is responsible for freeing the returned object
+ * using #g_object_unref().
+ *
+ * Return value: the #ThunarVfsGroup for @file or %NULL.
+ **/
+ThunarVfsGroup*
+thunar_file_get_group (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return THUNAR_FILE_GET_CLASS (file)->get_group (file);
+}
+
+
+
+/**
+ * thunar_file_get_user:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines the #ThunarVfsUser for @file. If there's no
+ * user associated with @file or if the system is unable
+ * to determine the user, %NULL will be returned.
+ *
+ * The caller is responsible for freeing the returned object
+ * using #g_object_unref().
+ *
+ * Return value: the #ThunarVfsUser for @file or %NULL.
+ **/
+ThunarVfsUser*
+thunar_file_get_user (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return THUNAR_FILE_GET_CLASS (file)->get_user (file);
 }
 
 

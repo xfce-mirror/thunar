@@ -44,6 +44,8 @@ static ThunarVfsFileType  thunar_local_file_get_kind          (ThunarFile       
 static ThunarVfsFileMode  thunar_local_file_get_mode          (ThunarFile           *file);
 static gboolean           thunar_local_file_get_size          (ThunarFile           *file,
                                                                ThunarVfsFileSize    *size_return);
+static ThunarVfsGroup    *thunar_local_file_get_group         (ThunarFile           *file);
+static ThunarVfsUser     *thunar_local_file_get_user          (ThunarFile           *file);
 static GList             *thunar_local_file_get_emblem_names  (ThunarFile           *file);
 static const gchar       *thunar_local_file_get_icon_name     (ThunarFile           *file,
                                                                GtkIconTheme         *icon_theme);
@@ -60,6 +62,8 @@ static void               thunar_local_file_monitor           (ThunarVfsMonitor 
 struct _ThunarLocalFileClass
 {
   ThunarFileClass __parent__;
+
+  ThunarVfsUserManager *user_manager;
 };
 
 struct _ThunarLocalFile
@@ -87,6 +91,9 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   ThunarFileClass *thunarfile_class;
   GObjectClass    *gobject_class;
 
+  /* query the user manager instance */
+  klass->user_manager = thunar_vfs_user_manager_get_default ();
+
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_local_file_finalize;
 
@@ -101,6 +108,8 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_kind = thunar_local_file_get_kind;
   thunarfile_class->get_mode = thunar_local_file_get_mode;
   thunarfile_class->get_size = thunar_local_file_get_size;
+  thunarfile_class->get_group = thunar_local_file_get_group;
+  thunarfile_class->get_user = thunar_local_file_get_user;
   thunarfile_class->get_emblem_names = thunar_local_file_get_emblem_names;
   thunarfile_class->get_icon_name = thunar_local_file_get_icon_name;
   thunarfile_class->watch = thunar_local_file_watch;
@@ -300,6 +309,24 @@ static ThunarVfsFileType
 thunar_local_file_get_kind (ThunarFile *file)
 {
   return THUNAR_LOCAL_FILE (file)->info.type;
+}
+
+
+
+static ThunarVfsGroup*
+thunar_local_file_get_group (ThunarFile *file)
+{
+  return thunar_vfs_user_manager_get_group_by_id (THUNAR_LOCAL_FILE_GET_CLASS (file)->user_manager,
+                                                  THUNAR_LOCAL_FILE (file)->info.gid);
+}
+
+
+
+static ThunarVfsUser*
+thunar_local_file_get_user (ThunarFile *file)
+{
+  return thunar_vfs_user_manager_get_user_by_id (THUNAR_LOCAL_FILE_GET_CLASS (file)->user_manager,
+                                                 THUNAR_LOCAL_FILE (file)->info.uid);
 }
 
 

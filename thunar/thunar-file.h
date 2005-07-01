@@ -85,6 +85,9 @@ struct _ThunarFileClass
   gboolean             (*get_size)            (ThunarFile        *file,
                                                ThunarVfsFileSize *size_return);
 
+  ThunarVfsGroup      *(*get_group)           (ThunarFile        *file);
+  ThunarVfsUser       *(*get_user)            (ThunarFile        *file);
+
   GList               *(*get_emblem_names)    (ThunarFile        *file);
   const gchar         *(*get_icon_name)       (ThunarFile        *file,
                                                GtkIconTheme      *icon_theme);
@@ -138,6 +141,9 @@ gchar             *thunar_file_get_date_string  (ThunarFile        *file,
                                                  ThunarFileDateType date_type);
 gchar             *thunar_file_get_mode_string  (ThunarFile        *file);
 gchar             *thunar_file_get_size_string  (ThunarFile        *file);
+
+ThunarVfsGroup    *thunar_file_get_group        (ThunarFile        *file);
+ThunarVfsUser     *thunar_file_get_user         (ThunarFile        *file);
 
 GList             *thunar_file_get_emblem_names (ThunarFile        *file);
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile        *file,

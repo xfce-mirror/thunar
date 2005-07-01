@@ -1,3 +1,20 @@
+2005-07-02	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Add checks for functions used in the user module.
+	* thunar-vfs/thunar-vfs-user.{c,h}: Add a user module to the VFS
+	  library, which is extensible and performs some caching to reduce
+	  the overhead caused by the underlying NSS implementation.
+	* docs/papers/HackingOnThunar.odt: Add comments about the newly added
+	  ThunarVfsUser module.
+	* thunar-vfs/thunar-vfs-info.h: Add ThunarVfsUserId and ThunarVfsGroupId
+	  typedefs.
+	* thunar-vfs/thunar-vfs.h, thunar-vfs/Makefile.am: Add the new
+	  ThunarVfsUser module to the build framework.
+	* thunar/thunar-file.{c,h}, thunar/thunar-local-file.c,
+	  thunar/thunar-trash-file.c: Add two new methods to the ThunarFile
+	  class - get_group() and get_user() - and add an implementation of
+	  these methods to the local and trash backends.
+
 2005-06-29	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-details-view-icon-renderer.c
