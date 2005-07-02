@@ -28,6 +28,7 @@
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-window.h>
+#include <thunar/thunar-window-ui.h>
 
 
 
@@ -54,6 +55,8 @@ static void     thunar_window_set_property        (GObject            *object,
 static void     thunar_window_action_close        (GtkAction          *action,
                                                    ThunarWindow       *window);
 static void     thunar_window_action_go_up        (GtkAction          *action,
+                                                   ThunarWindow       *window);
+static void     thunar_window_action_about        (GtkAction          *action,
                                                    ThunarWindow       *window);
 static void     thunar_window_file_activated      (ThunarView         *view,
                                                    ThunarFile         *file,
@@ -94,24 +97,16 @@ static const GtkActionEntry const action_entries[] =
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
   { "view-menu", NULL, N_ ("_View"), NULL, },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
-  { "go-up", GTK_STOCK_GO_UP, N_ ("_Up"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
+  { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "help-menu", NULL, N_ ("_Help"), NULL, },
+#if GTK_CHECK_VERSION(2,6,0)
+  { "about", GTK_STOCK_ABOUT, N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (thunar_window_action_about), },
+#else
+  { "about", GTK_STOCK_DIALOG_INFO, N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (thunar_window_action_about), },
+#endif
 };
 
-static const gchar ui_description[] =
-  "<ui>"
-  "  <menubar name='main-menu'>"
-  "    <menu action='file-menu'>"
-  "      <menuitem action='close' />"
-  "    </menu>"
-  "    <menu action='edit-menu' />"
-  "    <menu action='view-menu' />"
-  "    <menu action='go-menu'>"
-  "      <menuitem action='go-up' />"
-  "    </menu>"
-  "    <menu action='help-menu' />"
-  "  </menubar>"
-  "</ui>";
+
 
 G_DEFINE_TYPE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW);
 
@@ -165,7 +160,7 @@ thunar_window_init (ThunarWindow *window)
   
   window->ui_manager = gtk_ui_manager_new ();
   gtk_ui_manager_insert_action_group (window->ui_manager, window->action_group, 0);
-  gtk_ui_manager_add_ui_from_string (window->ui_manager, ui_description, -1, NULL);
+  gtk_ui_manager_add_ui_from_string (window->ui_manager, thunar_window_ui, thunar_window_ui_length, NULL);
 
   accel_group = gtk_ui_manager_get_accel_group (window->ui_manager);
   gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
@@ -329,6 +324,28 @@ thunar_window_action_go_up (GtkAction    *action,
 
 
 static void
+thunar_window_action_about (GtkAction    *action,
+                            ThunarWindow *window)
+{
+  XfceAboutInfo *info;
+  GtkWidget     *dialog;
+
+  info = xfce_about_info_new (PACKAGE_NAME, PACKAGE_VERSION, _("File Manager"),
+                              XFCE_COPYRIGHT_TEXT ("2004-2005", "os-cillation"),
+                              XFCE_LICENSE_GPL);
+  xfce_about_info_set_homepage (info, "http://thunar.xfce.org/");
+  xfce_about_info_add_credit (info, "Benedikt Meurer", "benny@xfce.org", _("Project leader"));
+
+  dialog = xfce_about_dialog_new (GTK_WINDOW (window), info, NULL);
+  gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  xfce_about_info_free (info);
+}
+
+
+
+static void
 thunar_window_file_activated (ThunarView   *view,
                               ThunarFile   *file,
                               ThunarWindow *window)
@@ -455,7 +472,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
       g_object_unref (G_OBJECT (icon));
 
       /* enable the 'Up' action if possible for the new directory */
-      action = gtk_action_group_get_action (window->action_group, "go-up");
+      action = gtk_action_group_get_action (window->action_group, "open-parent");
       g_object_set (G_OBJECT (action),
                     "sensitive", thunar_file_has_parent (current_directory),
                     NULL);

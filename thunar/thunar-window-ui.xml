@@ -1,0 +1,33 @@
+<ui>
+
+  <!--
+    $Id$
+
+    Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+
+    Thunar main window user interface description file. Do NOT
+    simply edit this file if you don't know how the whole system
+    works, because it's too easy to break something.
+  -->
+
+  <menubar name="main-menu">
+    <menu action="file-menu">
+      <menuitem action="close" />
+    </menu>
+
+    <menu action="edit-menu" />
+
+    <menu action="view-menu" />
+
+    <menu action="go-menu">
+      <menuitem action="open-parent" />
+    </menu>
+
+    <menu action="help-menu">
+      <menuitem action="about" />
+    </menu>
+  </menubar>
+
+</ui>
+
+<!-- vi: set ts=2 sw=2 et ai nocindent syntax=xml: -->
