@@ -74,6 +74,8 @@ struct _ThunarVfsVolumeBSD
   gchar                *device_path;
   const gchar          *device_name;
 
+  gchar                *label;
+
   struct statfs         info;
   ThunarVfsURI         *mount_point;
 
@@ -131,7 +133,9 @@ thunar_vfs_volume_bsd_finalize (GObject *object)
 
   if (G_LIKELY (volume_bsd->mount_point != NULL))
     thunar_vfs_uri_unref (volume_bsd->mount_point);
+
   g_free (volume_bsd->device_path);
+  g_free (volume_bsd->label);
 
   G_OBJECT_CLASS (thunar_vfs_volume_bsd_parent_class)->finalize (object);
 }
@@ -150,8 +154,14 @@ thunar_vfs_volume_bsd_get_kind (ThunarVfsVolume *volume)
 static const gchar*
 thunar_vfs_volume_bsd_get_name (ThunarVfsVolume *volume)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_BSD (volume), NULL);
-  return THUNAR_VFS_VOLUME_BSD (volume)->device_name;
+  ThunarVfsVolumeBSD *volume_bsd = THUNAR_VFS_VOLUME_BSD (volume);
+
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_BSD (volume_bsd), NULL);
+
+  if (volume_bsd->label != NULL)
+    return volume_bsd->label;
+  else
+    return volume_bsd->device_name;
 }
 
 
@@ -180,6 +190,8 @@ thunar_vfs_volume_bsd_update (gpointer user_data)
   ThunarVfsVolumeStatus status = 0;
   struct ioc_toc_header ith;
   ThunarVfsVolumeBSD   *volume_bsd = THUNAR_VFS_VOLUME_BSD (user_data);
+  gchar                *label;
+  gchar                 buffer[2048];
   int                   fd;
 
   if (volume_bsd->kind == THUNAR_VFS_VOLUME_KIND_CDROM)
@@ -192,7 +204,25 @@ thunar_vfs_volume_bsd_update (gpointer user_data)
       if (fd >= 0)
         {
           if (ioctl (fd, CDIOREADTOCHEADER, &ith) >= 0)
-            status |= THUNAR_VFS_VOLUME_STATUS_PRESENT;
+            {
+              status |= THUNAR_VFS_VOLUME_STATUS_PRESENT;
+
+              /* read the label of the disc */
+              if (volume_bsd->label == NULL && (volume_bsd->status & THUNAR_VFS_VOLUME_STATUS_PRESENT) == 0)
+                {
+                  /* skip to sector 16 and read it */
+                  if (lseek (fd, 16 * 2048, SEEK_SET) >= 0 && read (fd, buffer, 2048) >= 0)
+                    {
+                      /* offset 40 contains the volume identifier */
+                      label = buffer + 40;
+                      label[32] = '\0';
+                      g_strchomp (label);
+                      if (G_LIKELY (*label != '\0'))
+                        volume_bsd->label = g_strdup (label);
+                    }
+                }
+            }
+
           close (fd);
         }
     }
@@ -203,6 +233,13 @@ thunar_vfs_volume_bsd_update (gpointer user_data)
       /* if the device is mounted, it means that a medium is present */
       if (exo_str_is_equal (volume_bsd->info.f_mntfromname, volume_bsd->device_path))
         status |= THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT;
+    }
+
+  /* free the volume label if no disc is present */
+  if ((status & THUNAR_VFS_VOLUME_STATUS_PRESENT) == 0)
+    {
+      g_free (volume_bsd->label);
+      volume_bsd->label = NULL;
     }
 
   /* update the status if necessary */

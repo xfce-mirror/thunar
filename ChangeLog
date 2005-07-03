@@ -1,3 +1,12 @@
+2005-07-03	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-favourites-model.c(thunar_favourites_model_get_value):
+	  The ThunarVfsVolume interface does no longer provide the "name"
+	  property.
+	* thunar-vfs/thunar-vfs-volume-bsd.c: Read the label from the ISO9660
+	  volume descriptor block whenever a new medium is inserted and use
+	  this label as name.
+
 2005-07-02	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-window-ui.xml, thunar/Makefile.am,

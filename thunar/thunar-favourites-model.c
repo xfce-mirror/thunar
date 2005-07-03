@@ -508,7 +508,7 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_FAVOURITES_MODEL_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
       if (G_UNLIKELY (favourite->volume != NULL))
-        g_object_get_property (G_OBJECT (favourite->volume), "name", value);
+        g_value_set_static_string (value, thunar_vfs_volume_get_name (favourite->volume));
       else if (favourite->file != NULL)
         g_value_set_static_string (value, thunar_file_get_special_name (favourite->file));
       else
