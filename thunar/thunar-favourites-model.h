@@ -67,6 +67,11 @@ void                   thunar_favourites_model_add            (ThunarFavouritesM
 void                   thunar_favourites_model_move           (ThunarFavouritesModel *model,
                                                                GtkTreePath           *src_path,
                                                                GtkTreePath           *dst_path);
+void                   thunar_favourites_model_remove         (ThunarFavouritesModel *model,
+                                                               GtkTreePath           *path);
+
+GList                 *thunar_favourites_model_get_actions    (ThunarFavouritesModel *model,
+                                                               GtkTreePath           *path);
 
 G_END_DECLS;
 

@@ -100,6 +100,8 @@ static void               thunar_favourites_model_file_destroy        (ThunarFil
                                                                        ThunarFavouritesModel      *model);
 static void               thunar_favourites_model_volume_changed      (ThunarVfsVolume            *volume,
                                                                        ThunarFavouritesModel      *model);
+static void               thunar_favourites_model_action_remove       (GtkAction                  *action,
+                                                                       ThunarFavouritesModel      *model);
 
 
 
@@ -1019,6 +1021,24 @@ thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
 
 
 
+static void
+thunar_favourites_model_action_remove (GtkAction             *action,
+                                       ThunarFavouritesModel *model)
+{
+  GtkTreeRowReference *row;
+  GtkTreePath         *path;
+
+  row = g_object_get_data (G_OBJECT (action), "thunar-favourites-row");
+  path = gtk_tree_row_reference_get_path (row);
+  if (G_LIKELY (path != NULL))
+    {
+      thunar_favourites_model_remove (model, path);
+      gtk_tree_path_free (path);
+    }
+}
+
+
+
 /**
  * thunar_favourites_model_get_default:
  *
@@ -1295,4 +1315,101 @@ thunar_favourites_model_move (ThunarFavouritesModel *model,
   g_free (order);
 }
 
+
+
+/**
+ * thunar_favourites_model_remove:
+ * @model : a #ThunarFavouritesModel.
+ * @path  : the #GtkTreePath of the favourite to remove.
+ *
+ * Removes the favourite at @path from the @model and syncs to
+ * on-disk storage. @path must refer to a valid, user-defined
+ * favourite, as you cannot remove system-defined entities (they
+ * are managed internally).
+ **/
+void
+thunar_favourites_model_remove (ThunarFavouritesModel *model,
+                                GtkTreePath           *path)
+{
+  ThunarFavourite *favourite;
+  gint             index;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
+  g_return_if_fail (gtk_tree_path_get_depth (path) > 0);
+  g_return_if_fail (gtk_tree_path_get_indices (path)[0] >= 0);
+  g_return_if_fail (gtk_tree_path_get_indices (path)[0] < model->n_favourites);
+
+  /* lookup the favourite for the given path */
+  index = gtk_tree_path_get_indices (path)[0];
+  for (favourite = model->favourites; --index >= 0; favourite = favourite->next)
+    ;
+
+  /* verify that the favourite is removable */
+  g_assert (favourite->type == THUNAR_FAVOURITE_USER_DEFINED);
+  g_assert (THUNAR_IS_FILE (favourite->file));
+
+  /* remove the favourite (using the file destroy handler) */
+  thunar_favourites_model_file_destroy (favourite->file, model);
+}
+
+
+
+/**
+ * thunar_favourites_model_get_actions:
+ * @model : a #ThunarFavouritesModel.
+ * @path  : the #GtkTreePath which refers to the favourite whose
+ *          list of actions should be returned.
+ *
+ * Determines the list of actions that can be performed on the
+ * favourite referenced by @path in @model. The returned list
+ * consists of #GtkAction objects. The caller is responsible
+ * for freeing the returned list, which can be done like this:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) g_object_unref, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: a #GList containing the possible #GtkAction<!--->s
+ *               for @path in @model.
+ **/
+GList*
+thunar_favourites_model_get_actions (ThunarFavouritesModel *model,
+                                     GtkTreePath           *path)
+{
+  GtkTreeRowReference *row;
+  ThunarFavourite     *favourite;
+  GtkAction           *action;
+  GList               *actions = NULL;
+  gint                 index;
+
+  g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), NULL);
+  g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, NULL);
+  g_return_val_if_fail (gtk_tree_path_get_indices (path)[0] >= 0, NULL);
+  g_return_val_if_fail (gtk_tree_path_get_indices (path)[0] < model->n_favourites, NULL);
+
+  /* lookup the favourite for the given path */
+  index = gtk_tree_path_get_indices (path)[0];
+  for (favourite = model->favourites; --index >= 0; favourite = favourite->next)
+    ;
+
+  /* check if we have a separator item at that path */
+  if (G_UNLIKELY (favourite->type == THUNAR_FAVOURITE_SEPARATOR))
+    return NULL;
+
+  /* prepend the remove menu item */
+  action = g_object_new (GTK_TYPE_ACTION,
+                         "label", _("_Remove favourite"),
+                         "name", "thunar-favourite-remove",
+                         "sensitive", (favourite->type == THUNAR_FAVOURITE_USER_DEFINED),
+                         "stock-id", GTK_STOCK_REMOVE,
+                         NULL);
+  row = gtk_tree_row_reference_new (GTK_TREE_MODEL (model), path);
+  g_object_set_data_full (G_OBJECT (action), "thunar-favourites-row", row,
+                          (GDestroyNotify) gtk_tree_row_reference_free);
+  g_signal_connect (G_OBJECT (action), "activate",
+                    G_CALLBACK (thunar_favourites_model_action_remove), model);
+  actions = g_list_prepend (actions, action);
+
+  return actions;
+}
 

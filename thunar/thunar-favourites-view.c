@@ -47,9 +47,8 @@ enum
 
 static void         thunar_favourites_view_class_init             (ThunarFavouritesViewClass *klass);
 static void         thunar_favourites_view_init                   (ThunarFavouritesView      *view);
-static void         thunar_favourites_view_row_activated          (GtkTreeView               *tree_view,
-                                                                   GtkTreePath               *path,
-                                                                   GtkTreeViewColumn         *column);
+static gboolean     thunar_favourites_view_button_press_event     (GtkWidget                 *widget,
+                                                                   GdkEventButton            *event);
 static void         thunar_favourites_view_drag_data_received     (GtkWidget                 *widget,
                                                                    GdkDragContext            *context,
                                                                    gint                       x,
@@ -67,6 +66,9 @@ static gboolean     thunar_favourites_view_drag_motion            (GtkWidget    
                                                                    gint                       x,
                                                                    gint                       y,
                                                                    guint                      time);
+static void         thunar_favourites_view_row_activated          (GtkTreeView               *tree_view,
+                                                                   GtkTreePath               *path,
+                                                                   GtkTreeViewColumn         *column);
 static GtkTreePath *thunar_favourites_view_compute_drop_position  (ThunarFavouritesView      *view,
                                                                    gint                       x,
                                                                    gint                       y);
@@ -123,6 +125,7 @@ thunar_favourites_view_class_init (ThunarFavouritesViewClass *klass)
   GtkWidgetClass   *gtkwidget_class;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->button_press_event = thunar_favourites_view_button_press_event;
   gtkwidget_class->drag_data_received = thunar_favourites_view_drag_data_received;
   gtkwidget_class->drag_drop = thunar_favourites_view_drag_drop;
   gtkwidget_class->drag_motion = thunar_favourites_view_drag_motion;
@@ -193,30 +196,68 @@ thunar_favourites_view_init (ThunarFavouritesView *view)
 
 
 
-static void
-thunar_favourites_view_row_activated (GtkTreeView       *tree_view,
-                                      GtkTreePath       *path,
-                                      GtkTreeViewColumn *column)
+static gboolean
+thunar_favourites_view_button_press_event (GtkWidget      *widget,
+                                           GdkEventButton *event)
 {
-  ThunarFavouritesView *view = THUNAR_FAVOURITES_VIEW (tree_view);
-  GtkTreeModel         *model;
-  GtkTreeIter           iter;
-  ThunarFile           *file;
+  GtkTreeModel *model;
+  GtkTreePath  *path;
+  GtkWidget    *menu;
+  GtkWidget    *item;
+  GMainLoop    *loop;
+  gboolean      result;
+  GList        *actions;
+  GList        *lp;
 
-  g_return_if_fail (THUNAR_IS_FAVOURITES_VIEW (view));
-  g_return_if_fail (path != NULL);
+  /* let the widget process the event first (handles focussing and scrolling) */
+  result = GTK_WIDGET_CLASS (thunar_favourites_view_parent_class)->button_press_event (widget, event);
 
-  /* determine the iter for the path */
-  model = gtk_tree_view_get_model (tree_view);
-  gtk_tree_model_get_iter (model, &iter, path);
+  /* check if we have a right-click event */
+  if (G_LIKELY (event->button != 3))
+    return result;
 
-  /* determine the file for the favourite and invoke the signal */
-  file = thunar_favourites_model_file_for_iter (THUNAR_FAVOURITES_MODEL (model), &iter);
-  g_signal_emit (G_OBJECT (view), view_signals[FAVOURITE_ACTIVATED], 0, file);
+  /* resolve the path to the cursor position */
+  if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, NULL, NULL, NULL))
+    {
+      /* query the list of actions for the given path */
+      model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
+      actions = thunar_favourites_model_get_actions (THUNAR_FAVOURITES_MODEL (model), path);
+      gtk_tree_path_free (path);
 
-  /* call the row-activated method in the parent class */
-  if (GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated != NULL)
-    GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated (tree_view, path, column);
+      /* check if we have actions for the given path */
+      if (G_LIKELY (actions != NULL))
+        {
+          /* prepare the internal loop */
+          loop = g_main_loop_new (NULL, FALSE);
+
+          /* prepare the popup menu */
+          menu = gtk_menu_new ();
+          gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (widget));
+          g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+
+          /* add the action items to the menu */
+          for (lp = actions; lp != NULL; lp = lp->next)
+            {
+              item = gtk_action_create_menu_item (GTK_ACTION (lp->data));
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              g_object_unref (G_OBJECT (lp->data));
+              gtk_widget_show (item);
+            }
+          g_list_free (actions);
+
+          /* run the internal loop */
+          gtk_grab_add (menu);
+          gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, event->time);
+          g_main_loop_run (loop);
+          gtk_grab_remove (menu);
+
+          /* clean up */
+          gtk_object_sink (GTK_OBJECT (menu));
+          g_main_loop_unref (loop);
+        }
+    }
+
+  return result;
 }
 
 
@@ -326,6 +367,34 @@ thunar_favourites_view_drag_motion (GtkWidget      *widget,
 
   gdk_drag_status (context, action, time);
   return TRUE;
+}
+
+
+
+static void
+thunar_favourites_view_row_activated (GtkTreeView       *tree_view,
+                                      GtkTreePath       *path,
+                                      GtkTreeViewColumn *column)
+{
+  ThunarFavouritesView *view = THUNAR_FAVOURITES_VIEW (tree_view);
+  GtkTreeModel         *model;
+  GtkTreeIter           iter;
+  ThunarFile           *file;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_VIEW (view));
+  g_return_if_fail (path != NULL);
+
+  /* determine the iter for the path */
+  model = gtk_tree_view_get_model (tree_view);
+  gtk_tree_model_get_iter (model, &iter, path);
+
+  /* determine the file for the favourite and invoke the signal */
+  file = thunar_favourites_model_file_for_iter (THUNAR_FAVOURITES_MODEL (model), &iter);
+  g_signal_emit (G_OBJECT (view), view_signals[FAVOURITE_ACTIVATED], 0, file);
+
+  /* call the row-activated method in the parent class */
+  if (GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated != NULL)
+    GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated (tree_view, path, column);
 }
 
 
