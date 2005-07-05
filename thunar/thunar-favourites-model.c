@@ -1356,9 +1356,11 @@ thunar_favourites_model_remove (ThunarFavouritesModel *model,
 
 /**
  * thunar_favourites_model_get_actions:
- * @model : a #ThunarFavouritesModel.
- * @path  : the #GtkTreePath which refers to the favourite whose
- *          list of actions should be returned.
+ * @model  : a #ThunarFavouritesModel.
+ * @path   : the #GtkTreePath which refers to the favourite whose
+ *           list of actions should be returned.
+ * @window : the toplevel #GtkWindow in which the action will be
+ *           performed.
  *
  * Determines the list of actions that can be performed on the
  * favourite referenced by @path in @model. The returned list
@@ -1369,12 +1371,16 @@ thunar_favourites_model_remove (ThunarFavouritesModel *model,
  * g_list_free (list);
  * </programlisting></informalexample>
  *
+ * The @window parameter can be used by actions if they need to
+ * display a dialog or something.
+ *
  * Return value: a #GList containing the possible #GtkAction<!--->s
  *               for @path in @model.
  **/
 GList*
 thunar_favourites_model_get_actions (ThunarFavouritesModel *model,
-                                     GtkTreePath           *path)
+                                     GtkTreePath           *path,
+                                     GtkWindow             *window)
 {
   GtkTreeRowReference *row;
   ThunarFavourite     *favourite;
@@ -1386,6 +1392,7 @@ thunar_favourites_model_get_actions (ThunarFavouritesModel *model,
   g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, NULL);
   g_return_val_if_fail (gtk_tree_path_get_indices (path)[0] >= 0, NULL);
   g_return_val_if_fail (gtk_tree_path_get_indices (path)[0] < model->n_favourites, NULL);
+  g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
 
   /* lookup the favourite for the given path */
   index = gtk_tree_path_get_indices (path)[0];

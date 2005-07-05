@@ -71,7 +71,8 @@ void                   thunar_favourites_model_remove         (ThunarFavouritesM
                                                                GtkTreePath           *path);
 
 GList                 *thunar_favourites_model_get_actions    (ThunarFavouritesModel *model,
-                                                               GtkTreePath           *path);
+                                                               GtkTreePath           *path,
+                                                               GtkWindow             *window);
 
 G_END_DECLS;
 

@@ -202,6 +202,7 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
 {
   GtkTreeModel *model;
   GtkTreePath  *path;
+  GtkWindow    *window;
   GtkWidget    *menu;
   GtkWidget    *item;
   GMainLoop    *loop;
@@ -216,12 +217,17 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
   if (G_LIKELY (event->button != 3))
     return result;
 
+  /* figure out the toplevel window */
+  window = (GtkWindow *) gtk_widget_get_toplevel (widget);
+  if (G_UNLIKELY (window == NULL))
+    return result;
+
   /* resolve the path to the cursor position */
   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, NULL, NULL, NULL))
     {
       /* query the list of actions for the given path */
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
-      actions = thunar_favourites_model_get_actions (THUNAR_FAVOURITES_MODEL (model), path);
+      actions = thunar_favourites_model_get_actions (THUNAR_FAVOURITES_MODEL (model), path, window);
       gtk_tree_path_free (path);
 
       /* check if we have actions for the given path */
@@ -254,6 +260,9 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
           /* clean up */
           gtk_object_sink (GTK_OBJECT (menu));
           g_main_loop_unref (loop);
+
+          /* we effectively handled the event */
+          return TRUE;
         }
     }
 
