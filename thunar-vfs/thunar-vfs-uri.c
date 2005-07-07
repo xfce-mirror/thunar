@@ -35,6 +35,7 @@
 
 
 
+static void thunar_vfs_uri_register_type  (GType              *type);
 static void thunar_vfs_uri_base_init      (ThunarVfsURIClass  *klass);
 static void thunar_vfs_uri_base_finalize  (ThunarVfsURIClass  *klass);
 #ifndef G_DISABLE_CHECKS
@@ -83,37 +84,44 @@ static GList *debug_uris = NULL;
 GType
 thunar_vfs_uri_get_type (void)
 {
-  static GType type = G_TYPE_INVALID;
+  static GType type = G_TYPE_INVALID;;
+  static GOnce once = G_ONCE_INIT;
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeFundamentalInfo finfo =
-      {
-        G_TYPE_FLAG_CLASSED | G_TYPE_FLAG_INSTANTIATABLE
-      };
-
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsURIClass),
-        (GBaseInitFunc) thunar_vfs_uri_base_init,
-        (GBaseFinalizeFunc) thunar_vfs_uri_base_finalize,
-        NULL,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsURI),
-        256u,
-#ifndef G_DISABLE_CHECKS
-        (GInstanceInitFunc) thunar_vfs_uri_init,
-#else
-        NULL,
-#endif
-        NULL,
-      };
-
-      type = g_type_register_fundamental (g_type_fundamental_next (), "ThunarVfsURI", &info, &finfo, 0);
-    }
+  /* thread-safe type registration */
+  g_once (&once, (GThreadFunc) thunar_vfs_uri_register_type, &type);
 
   return type;
+}
+
+
+
+static void
+thunar_vfs_uri_register_type (GType *type)
+{
+  static const GTypeFundamentalInfo finfo =
+  {
+    G_TYPE_FLAG_CLASSED | G_TYPE_FLAG_INSTANTIATABLE
+  };
+
+  static const GTypeInfo info =
+  {
+    sizeof (ThunarVfsURIClass),
+    (GBaseInitFunc) thunar_vfs_uri_base_init,
+    (GBaseFinalizeFunc) thunar_vfs_uri_base_finalize,
+    NULL,
+    NULL,
+    NULL,
+    sizeof (ThunarVfsURI),
+    256u,
+#ifndef G_DISABLE_CHECKS
+    (GInstanceInitFunc) thunar_vfs_uri_init,
+#else
+    NULL,
+#endif
+    NULL,
+  };
+
+  *type = g_type_register_fundamental (g_type_fundamental_next (), "ThunarVfsURI", &info, &finfo, 0);
 }
 
 
