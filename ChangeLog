@@ -1,3 +1,27 @@
+2005-07-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-list-model.{c,h}: Readd the get_statusbar_text() method.
+	* thunar/thunar-favourites-view.c(thunar_favourites_view_row_activated):
+	  Make sure the activated row is not the separator row, as calling
+	  thunar_navigator_change_directory() with NULL for the directory
+	  parameter will lead to a crash.
+	* thunar/thunar-standard-view.{c,h}, thunar/thunar-details-view.{c,h},
+	  thunar/thunar-icon-view.{c,h}, thunar/Makefile.am: Add a new abstract
+	  base class ThunarStandardView, which is inherited by ThunarIconView
+	  and ThunarDetailsView. ThunarStandardView itself is derived from
+	  GtkScrolledWindow. This change was made to reduce the amount of
+	  duplicated code in ThunarIconView and ThunarDetailsView, and to
+	  workaround the problem that Gtk style properties don't pickup the
+	  custom properties for certain widgets once you have a derived class.
+	* thunar/thunar-statusbar.{c,h}: Revert to the previous ThunarStatusbar
+	  implementation, which has a single "text" property that is bound to
+	  the "statusbar-text" property of the active view.
+	* thunar/thunar-view.{c,h}: ThunarView now inherits (in terms of
+	  interface inheritance) from ThunarNavigator, which will allow for
+	  unified handling in ThunarWindow. In addition, the ThunarView now
+	  provides a "loading" and a "statusbar-text" property (both readonly)
+	  to put the view back in control of the loading process.
+
 2005-07-07	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-uri.c: Be sure to register the type in a

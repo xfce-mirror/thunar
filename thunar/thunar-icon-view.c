@@ -26,57 +26,42 @@
 
 
 static void       thunar_icon_view_class_init         (ThunarIconViewClass *klass);
-static void       thunar_icon_view_view_init          (ThunarViewIface     *iface);
 static void       thunar_icon_view_init               (ThunarIconView      *icon_view);
 static AtkObject *thunar_icon_view_get_accessible     (GtkWidget           *widget);
+static GList     *thunar_icon_view_get_selected_items (ThunarStandardView  *standard_view);
 static void       thunar_icon_view_item_activated     (ExoIconView         *view,
-                                                       GtkTreePath         *path);
-static void       thunar_icon_view_selection_changed  (ExoIconView         *view);
+                                                       GtkTreePath         *path,
+                                                       ThunarIconView      *icon_view);
 
 
 
 struct _ThunarIconViewClass
 {
-  ExoIconViewClass __parent__;
+  ThunarStandardViewClass __parent__;
 };
 
 struct _ThunarIconView
 {
-  ExoIconView __parent__;
+  ThunarStandardView __parent__;
 };
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarIconView,
-                         thunar_icon_view,
-                         EXO_TYPE_ICON_VIEW,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_VIEW,
-                                                thunar_icon_view_view_init));
+G_DEFINE_TYPE (ThunarIconView, thunar_icon_view, THUNAR_TYPE_STANDARD_VIEW);
 
 
 
 static void
 thunar_icon_view_class_init (ThunarIconViewClass *klass)
 {
-  ExoIconViewClass *exoicon_view_class;
-  GtkWidgetClass   *gtkwidget_class;
+  ThunarStandardViewClass *thunarstandard_view_class;
+  GtkWidgetClass          *gtkwidget_class;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_icon_view_get_accessible;
 
-  exoicon_view_class = EXO_ICON_VIEW_CLASS (klass);
-  exoicon_view_class->item_activated = thunar_icon_view_item_activated;
-  exoicon_view_class->selection_changed = thunar_icon_view_selection_changed;
-}
-
-
-
-static void
-thunar_icon_view_view_init (ThunarViewIface *iface)
-{
-  iface->get_model = (gpointer) exo_icon_view_get_model;
-  iface->set_model = (gpointer) exo_icon_view_set_model;
-  iface->get_selected_items = (gpointer) exo_icon_view_get_selected_items;
+  thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
+  thunarstandard_view_class->get_selected_items = thunar_icon_view_get_selected_items;
 }
 
 
@@ -84,10 +69,21 @@ thunar_icon_view_view_init (ThunarViewIface *iface)
 static void
 thunar_icon_view_init (ThunarIconView *icon_view)
 {
+  GtkWidget *view;
+
+  /* create the real view */
+  view = exo_icon_view_new ();
+  g_signal_connect (G_OBJECT (view), "item-activated",
+                    G_CALLBACK (thunar_icon_view_item_activated), icon_view);
+  g_signal_connect_swapped (G_OBJECT (view), "selection-changed",
+                            G_CALLBACK (thunar_standard_view_selection_changed), icon_view);
+  gtk_container_add (GTK_CONTAINER (icon_view), view);
+  gtk_widget_show (view);
+
   /* initialize the icon view properties */
-  exo_icon_view_set_text_column (EXO_ICON_VIEW (icon_view), THUNAR_LIST_MODEL_COLUMN_NAME);
-  exo_icon_view_set_pixbuf_column (EXO_ICON_VIEW (icon_view), THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL);
-  exo_icon_view_set_selection_mode (EXO_ICON_VIEW (icon_view), GTK_SELECTION_MULTIPLE);
+  exo_icon_view_set_text_column (EXO_ICON_VIEW (view), THUNAR_LIST_MODEL_COLUMN_NAME);
+  exo_icon_view_set_pixbuf_column (EXO_ICON_VIEW (view), THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL);
+  exo_icon_view_set_selection_mode (EXO_ICON_VIEW (view), GTK_SELECTION_MULTIPLE);
 }
 
 
@@ -112,40 +108,32 @@ thunar_icon_view_get_accessible (GtkWidget *widget)
 
 
 
-static void
-thunar_icon_view_item_activated (ExoIconView *view,
-                                 GtkTreePath *path)
+static GList*
+thunar_icon_view_get_selected_items (ThunarStandardView *standard_view)
 {
-  GtkTreeModel *model;
-  GtkTreeIter   iter;
-  ThunarFile   *file;
-
-  g_return_if_fail (THUNAR_IS_ICON_VIEW (view));
-
-  /* tell the controlling component, that the user activated a file */
-  model = exo_icon_view_get_model (view);
-  gtk_tree_model_get_iter (model, &iter, path);
-  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
-  thunar_view_file_activated (THUNAR_VIEW (view), file);
-  g_object_unref (G_OBJECT (file));
-
-  /* invoke the item_activated method on the parent class */
-  if (EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->item_activated != NULL)
-    EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->item_activated (view, path);
+  return exo_icon_view_get_selected_items (EXO_ICON_VIEW (GTK_BIN (standard_view)->child));
 }
 
 
 
 static void
-thunar_icon_view_selection_changed (ExoIconView *view)
+thunar_icon_view_item_activated (ExoIconView    *view,
+                                 GtkTreePath    *path,
+                                 ThunarIconView *icon_view)
 {
-  g_return_if_fail (THUNAR_IS_ICON_VIEW (view));
+  GtkTreeModel *model;
+  GtkTreeIter   iter;
+  ThunarFile   *file;
 
-  /* tell everybody that we have a new selection of files */
-  thunar_view_file_selection_changed (THUNAR_VIEW (view));
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (icon_view));
 
-  if (EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->selection_changed != NULL)
-    EXO_ICON_VIEW_CLASS (thunar_icon_view_parent_class)->selection_changed (view);
+  /* tell the controlling component, that the user activated a file */
+  model = exo_icon_view_get_model (view);
+  gtk_tree_model_get_iter (model, &iter, path);
+  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
+  if (thunar_file_is_directory (file))
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (icon_view), file);
+  g_object_unref (G_OBJECT (file));
 }
 
 

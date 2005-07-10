@@ -20,7 +20,7 @@
 #ifndef __THUNAR_VIEW_H__
 #define __THUNAR_VIEW_H__
 
-#include <thunar/thunar-list-model.h>
+#include <thunar/thunar-navigator.h>
 
 G_BEGIN_DECLS;
 
@@ -37,28 +37,14 @@ struct _ThunarViewIface
   GTypeInterface __parent__;
 
   /* methods */
-  ThunarListModel*  (*get_model)              (ThunarView      *view);
-  void              (*set_model)              (ThunarView      *view,
-                                               ThunarListModel *model);
-  GList            *(*get_selected_items)     (ThunarView      *view);
-
-  /* signals */
-  void              (*file_activated)         (ThunarView      *view,
-                                               ThunarFile      *file);
-  void              (*file_selection_changed) (ThunarView      *view);
+  gboolean     (*get_loading)        (ThunarView *view);
+  const gchar *(*get_statusbar_text) (ThunarView *view);
 };
 
-GType            thunar_view_get_type               (void) G_GNUC_CONST;
+GType        thunar_view_get_type           (void) G_GNUC_CONST;
 
-ThunarListModel *thunar_view_get_model              (ThunarView      *view);
-void             thunar_view_set_model              (ThunarView      *view,
-                                                     ThunarListModel *model);
-GList           *thunar_view_get_selected_files     (ThunarView      *view);
-GList           *thunar_view_get_selected_items     (ThunarView      *view);
-
-void             thunar_view_file_activated         (ThunarView      *view,
-                                                     ThunarFile      *file);
-void             thunar_view_file_selection_changed (ThunarView      *view);
+gboolean     thunar_view_get_loading        (ThunarView *view);
+const gchar *thunar_view_get_statusbar_text (ThunarView *view);
 
 G_END_DECLS;
 

@@ -27,59 +27,43 @@
 
 
 static void       thunar_details_view_class_init          (ThunarDetailsViewClass *klass);
-static void       thunar_details_view_view_init           (ThunarViewIface        *iface);
 static void       thunar_details_view_init                (ThunarDetailsView      *details_view);
 static AtkObject *thunar_details_view_get_accessible      (GtkWidget              *widget);
+static GList     *thunar_details_view_get_selected_items  (ThunarStandardView     *standard_view);
 static void       thunar_details_view_row_activated       (GtkTreeView            *tree_view,
                                                            GtkTreePath            *path,
-                                                           GtkTreeViewColumn      *column);
-static GList     *thunar_details_view_get_selected_items  (ThunarView             *view);
-static void       thunar_details_view_selection_changed   (GtkTreeSelection       *selection,
-                                                           ThunarView             *view);
+                                                           GtkTreeViewColumn      *column,
+                                                           ThunarDetailsView      *details_view);
 
 
 
 struct _ThunarDetailsViewClass
 {
-  GtkTreeViewClass __parent__;
+  ThunarStandardViewClass __parent__;
 };
 
 struct _ThunarDetailsView
 {
-  GtkTreeView __parent__;
+  ThunarStandardView __parent__;
 };
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarDetailsView,
-                         thunar_details_view,
-                         GTK_TYPE_TREE_VIEW,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_VIEW,
-                                                thunar_details_view_view_init));
+G_DEFINE_TYPE (ThunarDetailsView, thunar_details_view, THUNAR_TYPE_STANDARD_VIEW);
 
 
 
 static void
 thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 {
-  GtkTreeViewClass *gtktree_view_class;
-  GtkWidgetClass   *gtkwidget_class;
+  ThunarStandardViewClass *thunarstandard_view_class;
+  GtkWidgetClass          *gtkwidget_class;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_details_view_get_accessible;
 
-  gtktree_view_class = GTK_TREE_VIEW_CLASS (klass);
-  gtktree_view_class->row_activated = thunar_details_view_row_activated;
-}
-
-
-
-static void
-thunar_details_view_view_init (ThunarViewIface *iface)
-{
-  iface->get_model = (gpointer)gtk_tree_view_get_model;
-  iface->set_model = (gpointer)gtk_tree_view_set_model;
-  iface->get_selected_items = thunar_details_view_get_selected_items;
+  thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
+  thunarstandard_view_class->get_selected_items = thunar_details_view_get_selected_items;
 }
 
 
@@ -90,11 +74,19 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   GtkTreeViewColumn *column;
   GtkTreeSelection  *selection;
   GtkCellRenderer   *renderer;
+  GtkWidget         *tree_view;
+
+  /* create the tree view to embed */
+  tree_view = gtk_tree_view_new ();
+  g_signal_connect (G_OBJECT (tree_view), "row-activated",
+                    G_CALLBACK (thunar_details_view_row_activated), details_view);
+  gtk_container_add (GTK_CONTAINER (details_view), tree_view);
+  gtk_widget_show (tree_view);
 
   /* configure general aspects of the details view */
-  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (details_view), TRUE);
-  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (details_view), TRUE);
-  gtk_tree_view_set_search_column (GTK_TREE_VIEW (details_view), THUNAR_LIST_MODEL_COLUMN_NAME);
+  gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (tree_view), TRUE);
+  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
+  gtk_tree_view_set_search_column (GTK_TREE_VIEW (tree_view), THUNAR_LIST_MODEL_COLUMN_NAME);
 
   /* first column (icon, name) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -116,7 +108,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                                        "text", THUNAR_LIST_MODEL_COLUMN_NAME,
                                        NULL);
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_NAME);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (details_view), column);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* second column (size) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -132,7 +124,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                                        "text", THUNAR_LIST_MODEL_COLUMN_SIZE,
                                        NULL);
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_SIZE);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (details_view), column);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* third column (permissions) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -148,7 +140,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                                        "text", THUNAR_LIST_MODEL_COLUMN_PERMISSIONS,
                                        NULL);
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_PERMISSIONS);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (details_view), column);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* fourth column (type) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -164,7 +156,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                                        "text", THUNAR_LIST_MODEL_COLUMN_TYPE,
                                        NULL);
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_TYPE);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (details_view), column);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* fifth column (modification date) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -180,13 +172,13 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                                        "text", THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED,
                                        NULL);
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (details_view), column);
+  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* configure the tree selection */
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (details_view));
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
-  g_signal_connect (G_OBJECT (selection), "changed",
-                    G_CALLBACK (thunar_details_view_selection_changed), details_view);
+  g_signal_connect_swapped (G_OBJECT (selection), "changed",
+                            G_CALLBACK (thunar_standard_view_selection_changed), details_view);
 }
 
 
@@ -211,50 +203,38 @@ thunar_details_view_get_accessible (GtkWidget *widget)
 
 
 
-static void
-thunar_details_view_row_activated (GtkTreeView       *tree_view,
-                                   GtkTreePath       *path,
-                                   GtkTreeViewColumn *column)
-{
-  GtkTreeModel *model;
-  GtkTreeIter   iter;
-  ThunarFile   *file;
-
-  /* tell the controlling component that the user activated a file */
-  model = gtk_tree_view_get_model (tree_view);
-  gtk_tree_model_get_iter (model, &iter, path);
-  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
-  thunar_view_file_activated (THUNAR_VIEW (tree_view), file);
-  g_object_unref (G_OBJECT (file));
-
-  /* invoke the row activated method on the parent class */
-  if (GTK_TREE_VIEW_CLASS (thunar_details_view_parent_class)->row_activated != NULL)
-    GTK_TREE_VIEW_CLASS (thunar_details_view_parent_class)->row_activated (tree_view, path, column);
-}
-
-
-
 static GList*
-thunar_details_view_get_selected_items (ThunarView *view)
+thunar_details_view_get_selected_items (ThunarStandardView *standard_view)
 {
   GtkTreeSelection *selection;
 
-  g_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (view), NULL);
+  g_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view), NULL);
 
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
   return gtk_tree_selection_get_selected_rows (selection, NULL);
 }
 
 
 
 static void
-thunar_details_view_selection_changed (GtkTreeSelection *selection,
-                                       ThunarView       *view)
+thunar_details_view_row_activated (GtkTreeView       *tree_view,
+                                   GtkTreePath       *path,
+                                   GtkTreeViewColumn *column,
+                                   ThunarDetailsView *details_view)
 {
-  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (view));
+  GtkTreeModel *model;
+  GtkTreeIter   iter;
+  ThunarFile   *file;
 
-  /* tell everybody that we have a new selection of files */
-  thunar_view_file_selection_changed (view);
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  /* tell the controlling component that the user activated a file */
+  model = gtk_tree_view_get_model (tree_view);
+  gtk_tree_model_get_iter (model, &iter, path);
+  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
+  if (thunar_file_is_directory (file))
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (details_view), file);
+  g_object_unref (G_OBJECT (file));
 }
 
 

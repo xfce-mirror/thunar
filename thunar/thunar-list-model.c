@@ -1864,4 +1864,102 @@ thunar_list_model_get_num_files (ThunarListModel *store)
 
 
 
+/**
+ * thunar_list_model_get_statusbar_text:
+ * @store          : a #ThunarListModel instance.
+ * @selected_items : the list of selected items (as GtkTreePath's).
+ *
+ * Generates the statusbar text for @store with the given
+ * @selected_items.
+ *
+ * This function is used by the #ThunarStandardView (and thereby
+ * implicitly by #ThunarIconView and #ThunarDetailsView) to
+ * calculate the text to display in the statusbar for a given
+ * file selection.
+ *
+ * The caller is reponsible to free the returned text using
+ * #g_free() when it's no longer needed.
+ *
+ * Return value: the statusbar text for @store with the given
+ *               @selected_items.
+ **/
+gchar*
+thunar_list_model_get_statusbar_text (ThunarListModel *store,
+                                      GList           *selected_items)
+{
+  ThunarVfsFileSize size_summary;
+  ThunarVfsFileSize size;
+  ExoMimeInfo      *mime_info;
+  GtkTreeIter       iter;
+  ThunarFile       *file;
+  GList            *lp;
+  gchar            *size_string;
+  gchar            *text;
+  gint              n;
+
+  g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
+
+  if (selected_items == NULL)
+    text = g_strdup_printf (_("%d items"), store->nrows);
+  else if (selected_items->next == NULL)
+    {
+      /* resolve the iter for the single path */
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, selected_items->data);
+
+      /* get the file for the given iter */
+      file = ((Row *) iter.user_data)->file;
+
+      /* calculate the text to be displayed */
+      mime_info = thunar_file_get_mime_info (file);
+      size_string = thunar_file_get_size_string (file);
+      if (G_LIKELY (mime_info != NULL))
+        {
+          if (G_LIKELY (size_string != NULL))
+            {
+              text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
+                                      exo_mime_info_get_comment (mime_info));
+            }
+          else
+            {
+              text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file),
+                                      exo_mime_info_get_comment (mime_info));
+            }
+          g_object_unref (G_OBJECT (mime_info));
+        }
+      else
+        {
+          if (G_LIKELY (size_string != NULL))
+            text = g_strdup_printf (_("\"%s\" (%s)"), thunar_file_get_display_name (file), size_string);
+          else
+            text = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
+        }
+      g_free (size_string);
+    }
+  else
+    {
+      /* sum up all sizes */
+      for (lp = selected_items, n = 0, size_summary = 0; lp != NULL; lp = lp->next, ++n)
+        {
+          gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
+          if (thunar_file_get_size (((Row *) iter.user_data)->file, &size))
+            size_summary += size;
+        }
+
+      if (size_summary > 0)
+        {
+          size_string = thunar_vfs_humanize_size (size_summary, NULL, 0);
+          text = g_strdup_printf (_("%d items selected (%s)"), n, size_string);
+          g_free (size_string);
+        }
+      else
+        {
+          text = g_strdup_printf (_("%d items selected"), n);
+        }
+    }
+
+  return text;
+}
+
+
+
 

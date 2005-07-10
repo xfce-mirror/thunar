@@ -24,7 +24,6 @@
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-favourites-pane.h>
 #include <thunar/thunar-icon-view.h>
-#include <thunar/thunar-list-model.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-window.h>
@@ -42,7 +41,6 @@ enum
 
 static void     thunar_window_class_init          (ThunarWindowClass  *klass);
 static void     thunar_window_init                (ThunarWindow       *window);
-static void     thunar_window_dispose             (GObject            *object);
 static void     thunar_window_finalize            (GObject            *object);
 static void     thunar_window_get_property        (GObject            *object,
                                                    guint               prop_id,
@@ -58,11 +56,9 @@ static void     thunar_window_action_go_up        (GtkAction          *action,
                                                    ThunarWindow       *window);
 static void     thunar_window_action_about        (GtkAction          *action,
                                                    ThunarWindow       *window);
-static void     thunar_window_file_activated      (ThunarView         *view,
-                                                   ThunarFile         *file,
+static void     thunar_window_notify_loading      (ThunarView         *view,
+                                                   GParamSpec         *pspec,
                                                    ThunarWindow       *window);
-static gboolean thunar_window_cursor_idle         (gpointer            user_data);
-static void     thunar_window_cursor_idle_destroy (gpointer            user_data);
 
 
 
@@ -84,8 +80,6 @@ struct _ThunarWindow
   GtkWidget       *statusbar;
 
   ThunarFile      *current_directory;
-
-  gint             cursor_idle_id;
 };
 
 
@@ -118,7 +112,6 @@ thunar_window_class_init (ThunarWindowClass *klass)
   GObjectClass *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->dispose = thunar_window_dispose;
   gobject_class->finalize = thunar_window_finalize;
   gobject_class->get_property = thunar_window_get_property;
   gobject_class->set_property = thunar_window_set_property;
@@ -135,7 +128,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                         _("Current directory"),
                                                         _("The directory currently displayed within this window"),
                                                         THUNAR_TYPE_FILE,
-                                                        G_PARAM_READWRITE));
+                                                        EXO_PARAM_READWRITE));
 }
 
 
@@ -143,15 +136,11 @@ thunar_window_class_init (ThunarWindowClass *klass)
 static void
 thunar_window_init (ThunarWindow *window)
 {
-  ThunarListModel *model;
-  GtkAccelGroup   *accel_group;
-  GtkWidget       *vbox;
-  GtkWidget       *menubar;
-  GtkWidget       *paned;
-  GtkWidget       *swin;
-  GtkWidget       *box;
-
-  window->cursor_idle_id = -1;
+  GtkAccelGroup *accel_group;
+  GtkWidget     *vbox;
+  GtkWidget     *menubar;
+  GtkWidget     *paned;
+  GtkWidget     *box;
 
   window->action_group = gtk_action_group_new ("thunar-window");
   gtk_action_group_add_actions (window->action_group, action_entries,
@@ -200,41 +189,22 @@ thunar_window_init (ThunarWindow *window)
   gtk_box_pack_start (GTK_BOX (box), window->location_bar, FALSE, FALSE, 0);
   gtk_widget_show (window->location_bar);
 
-  swin = gtk_scrolled_window_new (NULL, NULL);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (swin),
-                                  GTK_POLICY_AUTOMATIC,
-                                  GTK_POLICY_AUTOMATIC);
-  gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (swin),
-                                       GTK_SHADOW_IN);
-  gtk_box_pack_start (GTK_BOX (box), swin, TRUE, TRUE, 0);
-  gtk_widget_show (swin);
-
   window->view = thunar_details_view_new ();
-  g_signal_connect (G_OBJECT (window->view), "file-activated",
-                    G_CALLBACK (thunar_window_file_activated), window);
-  gtk_container_add (GTK_CONTAINER (swin), window->view);
+  g_signal_connect (G_OBJECT (window->view), "notify::loading",
+                    G_CALLBACK (thunar_window_notify_loading), window);
+  g_signal_connect_swapped (G_OBJECT (window->view), "change-directory",
+                            G_CALLBACK (thunar_window_set_current_directory), window);
+  exo_binding_new (G_OBJECT (window), "current-directory",
+                   G_OBJECT (window->view), "current-directory");
+  gtk_box_pack_start (GTK_BOX (box), window->view, TRUE, TRUE, 0);
   gtk_widget_grab_focus (window->view);
   gtk_widget_show (window->view);
 
-  model = thunar_list_model_new ();
-  thunar_view_set_model (THUNAR_VIEW (window->view), model);
-  g_object_unref (G_OBJECT (model));
-
-  window->statusbar = g_object_new (THUNAR_TYPE_STATUSBAR,
-                                    "view", window->view,
-                                    NULL);
+  window->statusbar = thunar_statusbar_new ();
+  exo_binding_new (G_OBJECT (window->view), "statusbar-text",
+                   G_OBJECT (window->statusbar), "text");
   gtk_box_pack_start (GTK_BOX (vbox), window->statusbar, FALSE, FALSE, 0);
   gtk_widget_show (window->statusbar);
-}
-
-
-
-static void
-thunar_window_dispose (GObject *object)
-{
-  ThunarWindow *window = THUNAR_WINDOW (object);
-  thunar_window_set_current_directory (window, NULL);
-  G_OBJECT_CLASS (thunar_window_parent_class)->dispose (object);
 }
 
 
@@ -244,10 +214,7 @@ thunar_window_finalize (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
 
-  /* stop the reset cursor idle source */
-  if (G_UNLIKELY (window->cursor_idle_id >= 0))
-    g_source_remove (window->cursor_idle_id);
-
+  g_object_unref (G_OBJECT (window->current_directory));
   g_object_unref (G_OBJECT (window->action_group));
   g_object_unref (G_OBJECT (window->ui_manager));
 
@@ -346,48 +313,35 @@ thunar_window_action_about (GtkAction    *action,
 
 
 static void
-thunar_window_file_activated (ThunarView   *view,
-                              ThunarFile   *file,
+thunar_window_notify_loading (ThunarView   *view,
+                              GParamSpec   *pspec,
                               ThunarWindow *window)
 {
+  GdkCursor *cursor;
+
   g_return_if_fail (THUNAR_IS_VIEW (view));
-  g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_IS_WINDOW (window));
+  g_return_if_fail (THUNAR_VIEW (window->view) == view);
 
-  /* change directory if the user activated a file
-   * that refers to a directory.
-   */
-  if (thunar_file_is_directory (file))
-    thunar_window_set_current_directory (window, file);
+  /* make sure that the window is shown */
+  gtk_widget_show_now (GTK_WIDGET (window));
+
+  /* setup the proper cursor */
+  if (thunar_view_get_loading (view))
+    {
+      cursor = gdk_cursor_new (GDK_WATCH);
+      gdk_window_set_cursor (GTK_WIDGET (window)->window, cursor);
+      gdk_cursor_unref (cursor);
+    }
+  else
+    {
+      gdk_window_set_cursor (GTK_WIDGET (window)->window, NULL);
+    }
+
+  /* be sure to sync the changes to the Xserver */
+  gdk_display_flush (gtk_widget_get_display (GTK_WIDGET (window)));
 }
-
-
-
-static gboolean
-thunar_window_cursor_idle (gpointer user_data)
-{
-  GtkWidget *widget = user_data;
-
-  GDK_THREADS_ENTER ();
-
-  if (GTK_WIDGET_REALIZED (widget))
-    gdk_window_set_cursor (widget->window, NULL);
-
-  GDK_THREADS_LEAVE ();
-
-  return FALSE;
-}
-
-
-
-static void
-thunar_window_cursor_idle_destroy (gpointer user_data)
-{
-  GDK_THREADS_ENTER ();
-  THUNAR_WINDOW (user_data)->cursor_idle_id = -1;
-  GDK_THREADS_LEAVE ();
-}
-
+  
 
 
 /**
@@ -434,20 +388,13 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
-  ThunarListModel *model;
-  ThunarFolder    *folder;
-  GtkAction       *action;
-  GtkWidget       *dialog;
-  GdkPixbuf       *icon;
-  GdkCursor       *cursor;
-  GError          *error = NULL;
+  GtkAction *action;
+  GdkPixbuf *icon;
 
   g_return_if_fail (THUNAR_IS_WINDOW (window));
   g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
-  // TODO: We need a better error-recovery here!
-
-  /* check if we already display the requests directory */
+  /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
     return;
 
@@ -483,80 +430,6 @@ thunar_window_set_current_directory (ThunarWindow *window,
    * state already while the folder view is loading.
    */
   g_object_notify (G_OBJECT (window), "current-directory");
-
-  /* setup the folder for the view, we use a simple but very effective
-   * trick here to speed up the folder change: we completely disconnect
-   * the model from the view, load the folder into the model and afterwards
-   * reconnect the model with the view. This way we avoid having to fire
-   * and process thousands of row_removed() and row_inserted() signals.
-   * Instead the view can process the complete file list in the model
-   * ONCE.
-   */
-  model = thunar_view_get_model (THUNAR_VIEW (window->view));
-  g_object_ref (G_OBJECT (model));
-  thunar_view_set_model (THUNAR_VIEW (window->view), NULL);
-  if (G_LIKELY (current_directory != NULL))
-    {
-      if (GTK_WIDGET_REALIZED (window))
-        {
-          /* set watch cursor */
-          cursor = gdk_cursor_new (GDK_WATCH);
-          gdk_window_set_cursor (GTK_WIDGET (window)->window, cursor);
-          gdk_cursor_unref (cursor);
-
-          /* be sure to display the watch cursor and the empty view
-           * (FIXME: This seems to cause some ugly flickering!)
-           */
-          while (gtk_events_pending ())
-            gtk_main_iteration ();
-
-          /* register an idle function to reset the cursor once
-           * everything below is done.
-           */
-          if (G_LIKELY (window->cursor_idle_id < 0))
-            {
-              window->cursor_idle_id = g_idle_add_full (G_PRIORITY_LOW + 100, thunar_window_cursor_idle,
-                                                        window, thunar_window_cursor_idle_destroy);
-            }
-        }
-
-      /* try to open the directory */
-      folder = thunar_file_open_as_folder (current_directory, &error);
-      if (G_LIKELY (folder != NULL))
-        {
-          thunar_list_model_set_folder (model, folder);
-          g_object_unref (G_OBJECT (folder));
-        }
-      else
-        {
-          /* error condition, reset the folder */
-          thunar_list_model_set_folder (model, NULL);
-
-          /* make sure the window is shown */
-          gtk_widget_show_now (GTK_WIDGET (window));
-
-          /* display an error dialog */
-          dialog = gtk_message_dialog_new (GTK_WINDOW (window),
-                                           GTK_DIALOG_DESTROY_WITH_PARENT,
-                                           GTK_MESSAGE_ERROR,
-                                           GTK_BUTTONS_CLOSE,
-                                           "Failed to open directory `%s': %s",
-                                           thunar_file_get_display_name (current_directory),
-                                           error->message);
-          gtk_dialog_run (GTK_DIALOG (dialog));
-          gtk_widget_destroy (dialog);
-
-          /* free the error details */
-          g_error_free (error);
-        }
-    }
-  else
-    {
-      /* just reset the folder, so nothing is displayed */
-      thunar_list_model_set_folder (model, NULL);
-    }
-  thunar_view_set_model (THUNAR_VIEW (window->view), model);
-  g_object_unref (G_OBJECT (model));
 }
 
 

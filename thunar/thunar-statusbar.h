@@ -20,7 +20,7 @@
 #ifndef __THUNAR_STATUSBAR_H__
 #define __THUNAR_STATUSBAR_H__
 
-#include <thunar/thunar-view.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS;
 
@@ -34,13 +34,12 @@ typedef struct _ThunarStatusbar      ThunarStatusbar;
 #define THUNAR_IS_STATUSBAR_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_STATUSBAR))
 #define THUNAR_STATUSBAR_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_STATUSBAR, ThunarStatusbarClass))
 
-GType       thunar_statusbar_get_type (void) G_GNUC_CONST;
+GType      thunar_statusbar_get_type  (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_statusbar_new      (void);
+GtkWidget *thunar_statusbar_new       (void);
 
-ThunarView *thunar_statusbar_get_view (ThunarStatusbar *statusbar);
-void        thunar_statusbar_set_view (ThunarStatusbar *statusbar,
-                                       ThunarView      *view);
+void       thunar_statusbar_set_text  (ThunarStatusbar *statusbar,
+                                       const gchar     *text);
 
 G_END_DECLS;
 

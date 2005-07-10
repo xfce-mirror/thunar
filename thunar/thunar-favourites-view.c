@@ -399,7 +399,8 @@ thunar_favourites_view_row_activated (GtkTreeView       *tree_view,
 
   /* determine the file for the favourite and invoke the signal */
   file = thunar_favourites_model_file_for_iter (THUNAR_FAVOURITES_MODEL (model), &iter);
-  g_signal_emit (G_OBJECT (view), view_signals[FAVOURITE_ACTIVATED], 0, file);
+  if (G_LIKELY (file != NULL))
+    g_signal_emit (G_OBJECT (view), view_signals[FAVOURITE_ACTIVATED], 0, file);
 
   /* call the row-activated method in the parent class */
   if (GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated != NULL)
