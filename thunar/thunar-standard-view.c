@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-standard-view.h>
+#include <thunar/thunar-standard-view-ui.h>
 
 
 
@@ -31,36 +32,47 @@ enum
   PROP_CURRENT_DIRECTORY,
   PROP_LOADING,
   PROP_STATUSBAR_TEXT,
+  PROP_UI_MANAGER,
 };
 
 
 
-static void         thunar_standard_view_class_init             (ThunarStandardViewClass  *klass);
-static void         thunar_standard_view_navigator_init         (ThunarNavigatorIface     *iface);
-static void         thunar_standard_view_view_init              (ThunarViewIface          *iface);
-static void         thunar_standard_view_init                   (ThunarStandardView       *standard_view);
-static GObject     *thunar_standard_view_constructor            (GType                     type,
-                                                                 guint                     n_construct_properties,
-                                                                 GObjectConstructParam    *construct_properties);
-static void         thunar_standard_view_dispose                (GObject                  *object);
-static void         thunar_standard_view_finalize               (GObject                  *object);
-static void         thunar_standard_view_get_property           (GObject                  *object,
-                                                                 guint                     prop_id,
-                                                                 GValue                   *value,
-                                                                 GParamSpec               *pspec);
-static void         thunar_standard_view_set_property           (GObject                  *object,
-                                                                 guint                     prop_id,
-                                                                 const GValue             *value,
-                                                                 GParamSpec               *pspec);
-static ThunarFile  *thunar_standard_view_get_current_directory  (ThunarNavigator          *navigator);
-static void         thunar_standard_view_set_current_directory  (ThunarNavigator          *navigator,
-                                                                 ThunarFile               *current_directory);
-static gboolean     thunar_standard_view_get_loading            (ThunarView               *view);
-static const gchar *thunar_standard_view_get_statusbar_text     (ThunarView               *view);
-static gboolean     thunar_standard_view_loading_idle           (gpointer                  user_data);
-static void         thunar_standard_view_loading_idle_destroy   (gpointer                  user_data);
+static void          thunar_standard_view_class_init                (ThunarStandardViewClass  *klass);
+static void          thunar_standard_view_navigator_init            (ThunarNavigatorIface     *iface);
+static void          thunar_standard_view_view_init                 (ThunarViewIface          *iface);
+static void          thunar_standard_view_init                      (ThunarStandardView       *standard_view);
+static GObject      *thunar_standard_view_constructor               (GType                     type,
+                                                                     guint                     n_construct_properties,
+                                                                     GObjectConstructParam    *construct_properties);
+static void          thunar_standard_view_dispose                   (GObject                  *object);
+static void          thunar_standard_view_finalize                  (GObject                  *object);
+static void          thunar_standard_view_get_property              (GObject                  *object,
+                                                                     guint                     prop_id,
+                                                                     GValue                   *value,
+                                                                     GParamSpec               *pspec);
+static void          thunar_standard_view_set_property              (GObject                  *object,
+                                                                     guint                     prop_id,
+                                                                     const GValue             *value,
+                                                                     GParamSpec               *pspec);
+static ThunarFile   *thunar_standard_view_get_current_directory     (ThunarNavigator          *navigator);
+static void          thunar_standard_view_set_current_directory     (ThunarNavigator          *navigator,
+                                                                     ThunarFile               *current_directory);
+static gboolean      thunar_standard_view_get_loading               (ThunarView               *view);
+static const gchar  *thunar_standard_view_get_statusbar_text        (ThunarView               *view);
+static GtkUIManager *thunar_standard_view_get_ui_manager            (ThunarView               *view);
+static void          thunar_standard_view_set_ui_manager            (ThunarView               *view,
+                                                                     GtkUIManager             *ui_manager);
+static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
+                                                                     ThunarStandardView       *standard_view);
+static gboolean      thunar_standard_view_loading_idle              (gpointer                  user_data);
+static void          thunar_standard_view_loading_idle_destroy      (gpointer                  user_data);
 
 
+
+static const GtkToggleActionEntry const toggle_action_entries[] =
+{
+  { "show-hidden-files", NULL, N_("Show _hidden files"), NULL, N_("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_standard_view_action_show_hidden_files), FALSE },
+};
 
 static GObjectClass *thunar_standard_view_parent_class;
 
@@ -138,6 +150,9 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   g_object_class_override_property (gobject_class,
                                     PROP_STATUSBAR_TEXT,
                                     "statusbar-text");
+  g_object_class_override_property (gobject_class,
+                                    PROP_UI_MANAGER,
+                                    "ui-manager");
 }
 
 
@@ -156,6 +171,8 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
 {
   iface->get_loading = thunar_standard_view_get_loading;
   iface->get_statusbar_text = thunar_standard_view_get_statusbar_text;
+  iface->get_ui_manager = thunar_standard_view_get_ui_manager;
+  iface->set_ui_manager = thunar_standard_view_set_ui_manager;
 }
 
 
@@ -168,6 +185,12 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
                                   GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (standard_view), NULL);
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (standard_view), NULL);
+
+  /* setup the action group for this view */
+  standard_view->action_group = gtk_action_group_new ("thunar-standard-view");
+  gtk_action_group_add_toggle_actions (standard_view->action_group, toggle_action_entries,
+                                       G_N_ELEMENTS (toggle_action_entries),
+                                       GTK_WIDGET (standard_view));
 
   standard_view->model = thunar_list_model_new ();
   standard_view->loading_idle_id = -1;
@@ -215,8 +238,8 @@ thunar_standard_view_dispose (GObject *object)
   if (G_UNLIKELY (standard_view->loading_idle_id >= 0))
     g_source_remove (standard_view->loading_idle_id);
 
-  /* reset the model's folder */
-  thunar_list_model_set_folder (standard_view->model, NULL);
+  /* reset the UI manager property */
+  thunar_view_set_ui_manager (THUNAR_VIEW (standard_view), NULL);
 
   G_OBJECT_CLASS (thunar_standard_view_parent_class)->dispose (object);
 }
@@ -227,6 +250,9 @@ static void
 thunar_standard_view_finalize (GObject *object)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
+
+  /* release the reference on the action group */
+  g_object_unref (G_OBJECT (standard_view->action_group));
 
   /* release the reference on the list model */
   g_object_unref (G_OBJECT (standard_view->model));
@@ -259,6 +285,10 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_static_string (value, thunar_view_get_statusbar_text (THUNAR_VIEW (object)));
       break;
 
+    case PROP_UI_MANAGER:
+      g_value_set_object (value, thunar_view_get_ui_manager (THUNAR_VIEW (object)));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -273,12 +303,14 @@ thunar_standard_view_set_property (GObject      *object,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
-  ThunarNavigator *navigator = THUNAR_NAVIGATOR (object);
-
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (navigator, g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      break;
+
+    case PROP_UI_MANAGER:
+      thunar_view_set_ui_manager (THUNAR_VIEW (object), g_value_get_object (value));
       break;
 
     default:
@@ -426,6 +458,71 @@ thunar_standard_view_get_statusbar_text (ThunarView *view)
     }
 
   return standard_view->statusbar_text;
+}
+
+
+
+static GtkUIManager*
+thunar_standard_view_get_ui_manager (ThunarView *view)
+{
+  return THUNAR_STANDARD_VIEW (view)->ui_manager;
+}
+
+
+
+static void
+thunar_standard_view_set_ui_manager (ThunarView   *view,
+                                     GtkUIManager *ui_manager)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+
+  /* disconnect from the previous UI manager */
+  if (G_LIKELY (standard_view->ui_manager != NULL))
+    {
+      /* drop our action group from the previous UI manager */
+      gtk_ui_manager_remove_action_group (standard_view->ui_manager, standard_view->action_group);
+
+      /* unmerge our ui controls from the previous UI manager */
+      gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->ui_merge_id);
+
+      /* drop the reference on the previous UI manager */
+      g_object_unref (G_OBJECT (standard_view->ui_manager));
+    }
+
+  /* apply the new setting */
+  standard_view->ui_manager = ui_manager;
+
+  /* connect to the new manager (if any) */
+  if (G_LIKELY (ui_manager != NULL))
+    {
+      /* we keep a reference on the new manager */
+      g_object_ref (G_OBJECT (ui_manager));
+
+      /* add our action group to the new manager */
+      gtk_ui_manager_insert_action_group (ui_manager, standard_view->action_group, -1);
+
+      /* merge our UI control items with the new manager */
+      standard_view->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_standard_view_ui,
+                                                                      thunar_standard_view_ui_length, NULL);
+    }
+
+  /* let others know that we have a new manager */
+  g_object_notify (G_OBJECT (view), "ui-manager");
+}
+
+
+
+static void
+thunar_standard_view_action_show_hidden_files (GtkToggleAction    *toggle_action,
+                                               ThunarStandardView *standard_view)
+{
+  gboolean active;
+
+  g_return_if_fail (GTK_IS_TOGGLE_ACTION (toggle_action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  active = gtk_toggle_action_get_active (toggle_action);
+  thunar_list_model_set_show_hidden (standard_view->model, active);
 }
 
 

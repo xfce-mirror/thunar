@@ -189,7 +189,9 @@ thunar_window_init (ThunarWindow *window)
   gtk_box_pack_start (GTK_BOX (box), window->location_bar, FALSE, FALSE, 0);
   gtk_widget_show (window->location_bar);
 
-  window->view = thunar_details_view_new ();
+  window->view = g_object_new (THUNAR_TYPE_DETAILS_VIEW,
+                               "ui-manager", window->ui_manager,
+                               NULL);
   g_signal_connect (G_OBJECT (window->view), "notify::loading",
                     G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (window->view), "change-directory",

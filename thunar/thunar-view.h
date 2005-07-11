@@ -36,15 +36,23 @@ struct _ThunarViewIface
 {
   GTypeInterface __parent__;
 
-  /* methods */
-  gboolean     (*get_loading)        (ThunarView *view);
-  const gchar *(*get_statusbar_text) (ThunarView *view);
+  /* virtual methods */
+  gboolean      (*get_loading)        (ThunarView   *view);
+  const gchar  *(*get_statusbar_text) (ThunarView   *view);
+
+  GtkUIManager *(*get_ui_manager)     (ThunarView   *view);
+  void          (*set_ui_manager)     (ThunarView   *view,
+                                       GtkUIManager *ui_manager);
 };
 
-GType        thunar_view_get_type           (void) G_GNUC_CONST;
+GType         thunar_view_get_type           (void) G_GNUC_CONST;
 
-gboolean     thunar_view_get_loading        (ThunarView *view);
-const gchar *thunar_view_get_statusbar_text (ThunarView *view);
+gboolean      thunar_view_get_loading        (ThunarView   *view);
+const gchar  *thunar_view_get_statusbar_text (ThunarView   *view);
+
+GtkUIManager *thunar_view_get_ui_manager     (ThunarView   *view);
+void          thunar_view_set_ui_manager     (ThunarView   *view,
+                                              GtkUIManager *ui_manager);
 
 G_END_DECLS;
 

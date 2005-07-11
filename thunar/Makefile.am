@@ -55,6 +55,7 @@ Thunar_SOURCES =							\
 	thunar-side-pane.h						\
 	thunar-standard-view.c						\
 	thunar-standard-view.h						\
+	thunar-standard-view-ui.h					\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
 	thunar-trash-file.c						\
@@ -93,20 +94,27 @@ clean-local:
 if MAINTAINER_MODE
 DISTCLEANFILES =							\
 	thunar-fallback-icon.c						\
+	thunar-standard-view-ui.h					\
 	thunar-window-ui.h
 
 BUILT_SOURCES =								\
 	thunar-fallback-icon.c						\
+	thunar-standard-view-ui.h					\
 	thunar-window-ui.h
 
 thunar-fallback-icon.c: $(srcdir)/thunar-fallback-icon.png Makefile
 	(echo "#include <thunar/thunar-fallback-icon.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_fallback_icon $(srcdir)/thunar-fallback-icon.png) > thunar-fallback-icon.c
+
+thunar-standard-view-ui.h: Makefile $(srcdir)/thunar-standard-view-ui.xml
+	exo-csource --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h
 
 thunar-window-ui.h: Makefile $(srcdir)/thunar-window-ui.xml
 	exo-csource --static --name=thunar_window_ui $(srcdir)/thunar-window-ui.xml > thunar-window-ui.h
 endif
 
 EXTRA_DIST =								\
-	thunar-fallback-icon.png
+	thunar-fallback-icon.png					\
+	thunar-standard-view-ui.xml					\
+	thunar-window-ui.xml
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

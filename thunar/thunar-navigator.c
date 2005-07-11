@@ -137,7 +137,7 @@ thunar_navigator_class_init (gpointer klass)
                                                             _("Current directory"),
                                                             _("The directory currently displayed by the navigator"),
                                                             THUNAR_TYPE_FILE,
-                                                            G_PARAM_READWRITE));
+                                                            EXO_PARAM_READWRITE));
 }
 
 

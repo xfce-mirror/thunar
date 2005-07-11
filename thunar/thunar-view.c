@@ -99,6 +99,20 @@ thunar_view_class_init (gpointer klass)
                                                             _("Text to be displayed in the statusbar associated with this view"),
                                                             NULL,
                                                             EXO_PARAM_READABLE));
+
+  /**
+   * ThunarView:ui-manager:
+   *
+   * The UI manager used by the surrounding #ThunarWindow. The
+   * #ThunarView implementations may connect additional actions
+   * to the UI manager.
+   **/
+  g_object_interface_install_property (klass,
+                                       g_param_spec_object ("ui-manager",
+                                                            _("UI manager"),
+                                                            _("UI manager of the surrounding window"),
+                                                            GTK_TYPE_UI_MANAGER,
+                                                            EXO_PARAM_READWRITE));
 }
 
 
@@ -138,6 +152,49 @@ thunar_view_get_statusbar_text (ThunarView *view)
   return THUNAR_VIEW_GET_IFACE (view)->get_statusbar_text (view);
 }
 
+
+
+/**
+ * thunar_view_get_ui_manager:
+ * @view : a #ThunarView instance.
+ *
+ * Returns the #GtkUIManager associated with @view or
+ * %NULL if @view has no #GtkUIManager associated with
+ * it.
+ *
+ * Return value: the #GtkUIManager associated with @view
+ *               or %NULL.
+ **/
+GtkUIManager*
+thunar_view_get_ui_manager (ThunarView *view)
+{
+  g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
+  return THUNAR_VIEW_GET_IFACE (view)->get_ui_manager (view);
+}
+
+
+
+/**
+ * thunar_view_set_ui_manager:
+ * @view       : a #ThunarView instance.
+ * @ui_manager : a #GtkUIManager or %NULL.
+ *
+ * Installs a new #GtkUIManager for @view or resets the ::ui-manager
+ * property.
+ *
+ * Implementations of the #ThunarView interface must first disconnect
+ * from any previously set #GtkUIManager and then connect to the
+ * @ui_manager if not %NULL.
+ **/
+void
+thunar_view_set_ui_manager (ThunarView   *view,
+                            GtkUIManager *ui_manager)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+  g_return_if_fail (ui_manager == NULL || GTK_IS_UI_MANAGER (ui_manager));
+
+  THUNAR_VIEW_GET_IFACE (view)->set_ui_manager (view, ui_manager);
+}
 
 
 

@@ -1609,8 +1609,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
               /* check if this file should be shown/hidden */
               if (!store->show_hidden && thunar_file_is_hidden (file))
                 {
-                  g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
-                                                        store->file_destroy_id, 0, store->file_destroy_closure, NULL, NULL);
+                  g_signal_connect_closure_by_id (G_OBJECT (file), store->file_destroy_id,
+                                                  0, store->file_destroy_closure, TRUE);
                   store->hidden = g_slist_prepend (store->hidden, file);
                 }
               else
@@ -1790,8 +1790,6 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
       for (hidden_rows = files = NULL, row = store->rows; row != NULL; row = row->next)
         if (thunar_file_is_hidden (row->file))
           {
-            g_signal_handlers_disconnect_matched (G_OBJECT (row->file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
-                                                  store->file_changed_id, 0, store->file_changed_closure, NULL, NULL);
             hidden_rows = g_slist_prepend (hidden_rows, row);
             files = g_slist_prepend (files, g_object_ref (row->file));
           }
@@ -1807,6 +1805,13 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
           g_slist_free (hidden_rows);
 
           store->hidden = files;
+
+          /* re-connect the "destroy" handlers to all hidden files */
+          for (lp = store->hidden; lp != NULL; lp = lp->next)
+            {
+              g_signal_connect_closure_by_id (G_OBJECT (lp->data), store->file_destroy_id,
+                                              0, store->file_destroy_closure, TRUE);
+            }
         }
     }
 

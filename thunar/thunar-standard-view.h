@@ -51,6 +51,10 @@ struct _ThunarStandardView
   ThunarListModel *model;
   gchar           *statusbar_text;
 
+  GtkActionGroup  *action_group;
+  GtkUIManager    *ui_manager;
+  guint            ui_merge_id;
+
   gint             loading_idle_id;
 };
 
