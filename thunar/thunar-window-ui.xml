@@ -11,22 +11,23 @@
   -->
 
   <menubar name="main-menu">
-    <menu action="file-menu">
-      <menuitem action="close" />
+    <menu action="file-menu" name="file-menu">
+      <menuitem action="close" name="close" />
     </menu>
 
-    <menu action="edit-menu" />
+    <menu action="edit-menu" name="edit-menu">
+    </menu>
 
-    <menu action="view-menu">
+    <menu action="view-menu" name="view-menu">
       <placeholder name="placeholder-view-display-preferences" />
     </menu>
 
-    <menu action="go-menu">
-      <menuitem action="open-parent" />
+    <menu action="go-menu" name="go-menu">
+      <menuitem action="open-parent" name="open-parent" />
     </menu>
 
-    <menu action="help-menu">
-      <menuitem action="about" />
+    <menu action="help-menu" name="help-menu">
+      <menuitem action="about" name="about" />
     </menu>
   </menubar>
 
