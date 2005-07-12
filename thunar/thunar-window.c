@@ -35,6 +35,7 @@ enum
 {
   PROP_0,
   PROP_CURRENT_DIRECTORY,
+  PROP_UI_MANAGER,
 };
 
 
@@ -129,6 +130,21 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                         _("The directory currently displayed within this window"),
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarWindow:ui-manager:
+   *
+   * The #GtkUIManager used for this #ThunarWindow. This property
+   * can only be read and is garantied to always contain a valid
+   * #GtkUIManager instance (thus it's never %NULL).
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_UI_MANAGER,
+                                   g_param_spec_object ("ui-manager",
+                                                        _("UI manager"),
+                                                        _("The UI manager used within this window"),
+                                                        GTK_TYPE_UI_MANAGER,
+                                                        EXO_PARAM_READABLE));
 }
 
 
@@ -189,15 +205,13 @@ thunar_window_init (ThunarWindow *window)
   gtk_box_pack_start (GTK_BOX (box), window->location_bar, FALSE, FALSE, 0);
   gtk_widget_show (window->location_bar);
 
-  window->view = g_object_new (THUNAR_TYPE_DETAILS_VIEW,
-                               "ui-manager", window->ui_manager,
-                               NULL);
+  window->view = thunar_details_view_new ();
   g_signal_connect (G_OBJECT (window->view), "notify::loading",
                     G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (window->view), "change-directory",
                             G_CALLBACK (thunar_window_set_current_directory), window);
-  exo_binding_new (G_OBJECT (window), "current-directory",
-                   G_OBJECT (window->view), "current-directory");
+  exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->view), "current-directory");
+  exo_binding_new (G_OBJECT (window), "ui-manager", G_OBJECT (window->view), "ui-manager");
   gtk_box_pack_start (GTK_BOX (box), window->view, TRUE, TRUE, 0);
   gtk_widget_grab_focus (window->view);
   gtk_widget_show (window->view);
@@ -237,6 +251,10 @@ thunar_window_get_property (GObject    *object,
     {
     case PROP_CURRENT_DIRECTORY:
       g_value_set_object (value, thunar_window_get_current_directory (window));
+      break;
+
+    case PROP_UI_MANAGER:
+      g_value_set_object (value, window->ui_manager);
       break;
 
     default:
@@ -300,7 +318,7 @@ thunar_window_action_about (GtkAction    *action,
   GtkWidget     *dialog;
 
   info = xfce_about_info_new (PACKAGE_NAME, PACKAGE_VERSION, _("File Manager"),
-                              XFCE_COPYRIGHT_TEXT ("2004-2005", "os-cillation"),
+                              XFCE_COPYRIGHT_TEXT ("2004-2005", "Benedikt Meurer"),
                               XFCE_LICENSE_GPL);
   xfce_about_info_set_homepage (info, "http://thunar.xfce.org/");
   xfce_about_info_add_credit (info, "Benedikt Meurer", "benny@xfce.org", _("Project leader"));
