@@ -363,6 +363,11 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* query the clipboard manager for the display */
   display = gtk_widget_get_display (widget);
   standard_view->clipboard = thunar_clipboard_manager_get_for_display (display);
+
+  /* we need update the selection state based on the clipboard content */
+  g_signal_connect_swapped (G_OBJECT (standard_view->clipboard), "changed",
+                            G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
+  thunar_standard_view_selection_changed (standard_view);
 }
 
 
@@ -371,6 +376,9 @@ static void
 thunar_standard_view_unrealize (GtkWidget *widget)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (widget);
+
+  /* disconnect the clipboard changed handler */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->clipboard), thunar_standard_view_selection_changed, standard_view);
 
   /* drop the reference on the clipboard manager */
   g_object_unref (G_OBJECT (standard_view->clipboard));
@@ -644,6 +652,9 @@ thunar_standard_view_action_paste (GtkAction          *action,
 {
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  // FIXME: Implement this
+  g_assert_not_reached ();
 }
 
 
@@ -707,6 +718,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   ThunarFile *current_directory;
   GtkAction  *action;
+  gboolean    pastable;
   gboolean    writable;
   GList      *selected_items;
   gint        n_selected_items;
@@ -716,6 +728,9 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* check whether the folder displayed by the view is writable */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   writable = (current_directory != NULL && thunar_file_can_write (current_directory));
+
+  /* check whether the clipboard contains data that can be pasted here */
+  pastable = (standard_view->clipboard != NULL && thunar_clipboard_manager_get_can_paste (standard_view->clipboard));
 
   /* determine the number of selected items */
   selected_items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
@@ -740,7 +755,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* update the "Paste file(s)" action */
   action = gtk_action_group_get_action (standard_view->action_group, "paste");
   g_object_set (G_OBJECT (action),
-                "sensitive", writable,
+                "sensitive", writable && pastable,
                 NULL);
 
   /* clear the current status text (will be recalculated on-demand) */

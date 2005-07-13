@@ -424,6 +424,14 @@ thunar_clipboard_manager_copy_uri_list (ThunarClipboardManager *manager,
                                 thunar_clipboard_manager_get_callback,
                                 thunar_clipboard_manager_clear_callback,
                                 G_OBJECT (manager));
+
+  /* Need to fake a "owner-change" event here if the Xserver doesn't support clipboard notification */
+#if GTK_CHECK_VERSION(2,6,0)
+  if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
+#endif
+    {
+      thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
+    }
 }
 
 
@@ -459,5 +467,13 @@ thunar_clipboard_manager_cut_uri_list (ThunarClipboardManager *manager,
                                 thunar_clipboard_manager_get_callback,
                                 thunar_clipboard_manager_clear_callback,
                                 G_OBJECT (manager));
+
+  /* Need to fake a "owner-change" event here if the Xserver doesn't support clipboard notification */
+#if GTK_CHECK_VERSION(2,6,0)
+  if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
+#endif
+    {
+      thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
+    }
 }
 
