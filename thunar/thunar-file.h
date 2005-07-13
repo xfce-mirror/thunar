@@ -57,6 +57,8 @@ typedef enum
 } ThunarFileDateType;
 
 #define THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK "emblem-symbolic-link"
+#define THUNAR_FILE_EMBLEM_NAME_CANT_READ "emblem-noread"
+#define THUNAR_FILE_EMBLEM_NAME_CANT_WRITE "emblem-nowrite"
 
 struct _ThunarFileClass
 {
@@ -87,6 +89,10 @@ struct _ThunarFileClass
 
   ThunarVfsGroup      *(*get_group)           (ThunarFile        *file);
   ThunarVfsUser       *(*get_user)            (ThunarFile        *file);
+
+  gboolean             (*can_execute)         (ThunarFile        *file);
+  gboolean             (*can_read)            (ThunarFile        *file);
+  gboolean             (*can_write)           (ThunarFile        *file);
 
   GList               *(*get_emblem_names)    (ThunarFile        *file);
   const gchar         *(*get_icon_name)       (ThunarFile        *file,
@@ -144,6 +150,10 @@ gchar             *thunar_file_get_size_string  (ThunarFile        *file);
 
 ThunarVfsGroup    *thunar_file_get_group        (ThunarFile        *file);
 ThunarVfsUser     *thunar_file_get_user         (ThunarFile        *file);
+
+gboolean          thunar_file_can_execute       (ThunarFile        *file);
+gboolean          thunar_file_can_read          (ThunarFile        *file);
+gboolean          thunar_file_can_write         (ThunarFile        *file);
 
 GList             *thunar_file_get_emblem_names (ThunarFile        *file);
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile        *file,

@@ -747,8 +747,8 @@ thunar_vfs_user_manager_class_init (ThunarVfsUserManagerClass *klass)
 static void
 thunar_vfs_user_manager_init (ThunarVfsUserManager *manager)
 {
-  manager->groups = g_hash_table_new_full (g_int_hash, g_int_equal, NULL, g_object_unref);
-  manager->users = g_hash_table_new_full (g_int_hash, g_int_equal, NULL, g_object_unref);
+  manager->groups = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_object_unref);
+  manager->users = g_hash_table_new_full (g_direct_hash, g_direct_equal, NULL, g_object_unref);
 
   /* keep the groups file in memory if possible */
 #ifdef HAVE_SETGROUPENT

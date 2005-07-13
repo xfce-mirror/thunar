@@ -43,26 +43,35 @@ enum
 
 
 
-static void            thunar_file_class_init            (ThunarFileClass   *klass);
-static void            thunar_file_finalize              (GObject           *object);
-static gboolean        thunar_file_real_has_parent       (ThunarFile        *file);
-static ThunarFile     *thunar_file_real_get_parent       (ThunarFile        *file,
-                                                          GError           **error);
-static ThunarFolder   *thunar_file_real_open_as_folder   (ThunarFile        *file,
-                                                          GError           **error);
-static ExoMimeInfo    *thunar_file_real_get_mime_info    (ThunarFile        *file);
-static const gchar    *thunar_file_real_get_special_name (ThunarFile        *file);
-static gboolean        thunar_file_real_get_date         (ThunarFile        *file,
-                                                          ThunarFileDateType date_type,
-                                                          ThunarVfsFileTime *date_return);
-static gboolean        thunar_file_real_get_size         (ThunarFile        *file,
-                                                          ThunarVfsFileSize *size_return);
-static ThunarVfsGroup *thunar_file_real_get_group        (ThunarFile        *file);
-static ThunarVfsUser  *thunar_file_real_get_user         (ThunarFile        *file);
-static GList          *thunar_file_real_get_emblem_names (ThunarFile        *file);
-static void            thunar_file_real_changed          (ThunarFile        *file);
-static void            thunar_file_destroyed             (gpointer           data,
-                                                          GObject           *object);
+static void            thunar_file_class_init               (ThunarFileClass   *klass);
+static void            thunar_file_finalize                 (GObject           *object);
+static gboolean        thunar_file_real_has_parent          (ThunarFile        *file);
+static ThunarFile     *thunar_file_real_get_parent          (ThunarFile        *file,
+                                                             GError           **error);
+static ThunarFolder   *thunar_file_real_open_as_folder      (ThunarFile        *file,
+                                                             GError           **error);
+static ExoMimeInfo    *thunar_file_real_get_mime_info       (ThunarFile        *file);
+static const gchar    *thunar_file_real_get_special_name    (ThunarFile        *file);
+static gboolean        thunar_file_real_get_date            (ThunarFile        *file,
+                                                             ThunarFileDateType date_type,
+                                                             ThunarVfsFileTime *date_return);
+static gboolean        thunar_file_real_get_size            (ThunarFile        *file,
+                                                             ThunarVfsFileSize *size_return);
+static ThunarVfsGroup *thunar_file_real_get_group           (ThunarFile        *file);
+static ThunarVfsUser  *thunar_file_real_get_user            (ThunarFile        *file);
+static gboolean        thunar_file_real_can_execute         (ThunarFile        *file);
+static gboolean        thunar_file_real_can_read            (ThunarFile        *file);
+static gboolean        thunar_file_real_can_write           (ThunarFile        *file);
+static GList          *thunar_file_real_get_emblem_names    (ThunarFile        *file);
+static void            thunar_file_real_changed             (ThunarFile        *file);
+static ThunarFile     *thunar_file_new_internal             (ThunarVfsURI      *uri,
+                                                             GError           **error);
+static gboolean        thunar_file_denies_access_permission (ThunarFile        *file,
+                                                             ThunarVfsFileMode  usr_permissions,
+                                                             ThunarVfsFileMode  grp_permissions,
+                                                             ThunarVfsFileMode  oth_permissions);
+static void            thunar_file_destroyed                (gpointer           data,
+                                                             GObject           *object);
 
 
 
@@ -162,6 +171,9 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->get_size = thunar_file_real_get_size;
   klass->get_group = thunar_file_real_get_group;
   klass->get_user = thunar_file_real_get_user;
+  klass->can_execute = thunar_file_real_can_execute;
+  klass->can_read = thunar_file_real_can_read;
+  klass->can_write = thunar_file_real_can_write;
   klass->get_emblem_names = thunar_file_real_get_emblem_names;
   klass->changed = thunar_file_real_changed;
 
@@ -304,6 +316,39 @@ thunar_file_real_get_user (ThunarFile *file)
 
 
 
+static gboolean
+thunar_file_real_can_execute (ThunarFile *file)
+{
+  return !thunar_file_denies_access_permission (file,
+                                                THUNAR_VFS_FILE_MODE_USR_EXEC,
+                                                THUNAR_VFS_FILE_MODE_GRP_EXEC,
+                                                THUNAR_VFS_FILE_MODE_OTH_EXEC);
+}
+
+
+
+static gboolean
+thunar_file_real_can_read (ThunarFile *file)
+{
+  return !thunar_file_denies_access_permission (file,
+                                                THUNAR_VFS_FILE_MODE_USR_READ,
+                                                THUNAR_VFS_FILE_MODE_GRP_READ,
+                                                THUNAR_VFS_FILE_MODE_OTH_READ);
+}
+
+
+
+static gboolean
+thunar_file_real_can_write (ThunarFile *file)
+{
+  return !thunar_file_denies_access_permission (file,
+                                                THUNAR_VFS_FILE_MODE_USR_WRITE,
+                                                THUNAR_VFS_FILE_MODE_GRP_WRITE,
+                                                THUNAR_VFS_FILE_MODE_OTH_WRITE);
+}
+
+
+
 static GList*
 thunar_file_real_get_emblem_names (ThunarFile *file)
 {
@@ -338,6 +383,66 @@ thunar_file_new_internal (ThunarVfsURI *uri,
 
   g_assert_not_reached ();
   return NULL;
+}
+
+
+
+static gboolean
+thunar_file_denies_access_permission (ThunarFile       *file,
+                                      ThunarVfsFileMode usr_permissions,
+                                      ThunarVfsFileMode grp_permissions,
+                                      ThunarVfsFileMode oth_permissions)
+{
+  ThunarVfsFileMode mode;
+  ThunarVfsGroup   *group;
+  ThunarVfsUser    *user;
+  gboolean          result;
+  GList            *groups;
+  GList            *lp;
+
+  /* query the file mode */
+  mode = thunar_file_get_mode (file);
+
+  /* query the owner of the file, if we cannot determine
+   * the owner, we can't tell if we're denied to access
+   * the file, so we simply return FALSE then.
+   */
+  user = thunar_file_get_user (file);
+  if (G_UNLIKELY (user == NULL))
+    return FALSE;
+
+  // FIXME: We should add a superuser check here!
+
+  if (thunar_vfs_user_is_me (user))
+    {
+      /* we're the owner, so the usr permissions must be granted */
+      result = ((mode & usr_permissions) == 0);
+    }
+  else
+    {
+      group = thunar_file_get_group (file);
+      if (G_LIKELY (group != NULL))
+        {
+          /* check the group permissions */
+          groups = thunar_vfs_user_get_groups (user);
+          for (lp = groups; lp != NULL; lp = lp->next)
+            if (THUNAR_VFS_GROUP (lp->data) == group)
+              {
+                g_object_unref (G_OBJECT (user));
+                g_object_unref (G_OBJECT (group));
+                return ((mode & grp_permissions) == 0);
+              }
+
+          g_object_unref (G_OBJECT (group));
+        }
+
+      /* check other permissions */
+      result = ((mode & oth_permissions) == 0);
+    }
+
+  g_object_unref (G_OBJECT (user));
+
+  return result;
 }
 
 
@@ -854,6 +959,82 @@ thunar_file_get_user (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   return THUNAR_FILE_GET_CLASS (file)->get_user (file);
+}
+
+
+
+/**
+ * thunar_file_can_execute:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to execute the @file (or enter the directory refered to by
+ * @file).
+ *
+ * If the specific #ThunarFile implementation does not provide
+ * a custom #thunar_file_can_execute() method, the fallback
+ * method provided by #ThunarFile is used, which determines
+ * whether the @file can be executed based on the data provided
+ * by #thunar_file_get_mode(), #thunar_file_get_user() and
+ * #thunar_file_get_group().
+ *
+ * Return value: %TRUE if @file can be executed.
+ **/
+gboolean
+thunar_file_can_execute (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return THUNAR_FILE_GET_CLASS (file)->can_execute (file);
+}
+
+
+
+/**
+ * thunar_file_can_read:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to read the @file.
+ *
+ * If the specific #ThunarFile implementation does not provide
+ * a custom #thunar_file_can_read() method, the fallback
+ * method provided by #ThunarFile is used, which determines
+ * whether the @file can be read based on the data provided
+ * by #thunar_file_get_mode(), #thunar_file_get_user() and
+ * #thunar_file_get_group().
+ *
+ * Return value: %TRUE if @file can be read.
+ **/
+gboolean
+thunar_file_can_read (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return THUNAR_FILE_GET_CLASS (file)->can_read (file);
+}
+
+
+
+/**
+ * thunar_file_can_write:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to write the @file.
+ *
+ * If the specific #ThunarFile implementation does not provide
+ * a custom #thunar_file_can_write() method, the fallback
+ * method provided by #ThunarFile is used, which determines
+ * whether the @file can be written based on the data provided
+ * by #thunar_file_get_mode(), #thunar_file_get_user() and
+ * #thunar_file_get_group().
+ *
+ * Return value: %TRUE if @file can be read.
+ **/
+gboolean
+thunar_file_can_write (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return THUNAR_FILE_GET_CLASS (file)->can_write (file);
 }
 
 

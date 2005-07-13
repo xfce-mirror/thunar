@@ -341,6 +341,9 @@ thunar_local_file_get_emblem_names (ThunarFile *file)
   if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
     emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK);
 
+  if (!thunar_file_can_read (file))
+    emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
+
   return emblems;
 }
 

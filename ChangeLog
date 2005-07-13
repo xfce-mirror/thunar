@@ -1,3 +1,17 @@
+2005-07-13	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-user.c(thunar_vfs_user_manager_init): Use
+	  direct hashing instead of int hashing.
+	* thunar/thunar-local-file.c(thunar_local_file_get_emblem_names): If
+	  the file cannot be written, return the "noread" emblem as well.
+	* thunar/thunar-file.{c,h}: Add can_execute(), can_read() and
+	  can_write() methods, and a default implementation, so not every
+	  class derived from ThunarFile needs to implement these methods of
+	  its own.
+	* thunar/thunar-standard-view.c(thunar_standard_view_selection_changed):
+	  Update the "cut" and "paste" actions depending on whether the
+	  current directory is writable.
+
 2005-07-12	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-vfs-uri.c(thunar_vfs_uri_list_to_string): Use GString

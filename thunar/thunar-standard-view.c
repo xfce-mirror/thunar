@@ -705,11 +705,17 @@ thunar_standard_view_loading_idle_destroy (gpointer user_data)
 void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
-  GtkAction *action;
-  GList     *selected_items;
-  gint       n_selected_items;
+  ThunarFile *current_directory;
+  GtkAction  *action;
+  gboolean    writable;
+  GList      *selected_items;
+  gint        n_selected_items;
 
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* check whether the folder displayed by the view is writable */
+  current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+  writable = (current_directory != NULL && thunar_file_can_write (current_directory));
 
   /* determine the number of selected items */
   selected_items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
@@ -728,7 +734,13 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   action = gtk_action_group_get_action (standard_view->action_group, "cut");
   g_object_set (G_OBJECT (action),
                 "label", (n_selected_items > 1) ? _("Cu_t files") : _("Cu_t file"),
-                "sensitive", (n_selected_items > 0), // FIXME: Test if directory is writable!
+                "sensitive", (n_selected_items > 0) && writable,
+                NULL);
+
+  /* update the "Paste file(s)" action */
+  action = gtk_action_group_get_action (standard_view->action_group, "paste");
+  g_object_set (G_OBJECT (action),
+                "sensitive", writable,
                 NULL);
 
   /* clear the current status text (will be recalculated on-demand) */
