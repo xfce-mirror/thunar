@@ -20,6 +20,7 @@
 #ifndef __THUNAR_STANDARD_VIEW_H__
 #define __THUNAR_STANDARD_VIEW_H__
 
+#include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-view.h>
 
@@ -48,14 +49,15 @@ struct _ThunarStandardView
 {
   GtkScrolledWindow __parent__;
 
-  ThunarListModel *model;
-  gchar           *statusbar_text;
+  ThunarClipboardManager *clipboard;
+  ThunarListModel        *model;
+  gchar                  *statusbar_text;
 
-  GtkActionGroup  *action_group;
-  GtkUIManager    *ui_manager;
-  guint            ui_merge_id;
+  GtkActionGroup         *action_group;
+  GtkUIManager           *ui_manager;
+  guint                   ui_merge_id;
 
-  gint             loading_idle_id;
+  gint                    loading_idle_id;
 };
 
 GType thunar_standard_view_get_type           (void) G_GNUC_CONST;

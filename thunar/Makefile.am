@@ -13,6 +13,8 @@ Thunar_SOURCES =							\
 	main.c								\
 	thunar-application.c						\
 	thunar-application.h						\
+	thunar-clipboard-manager.c					\
+	thunar-clipboard-manager.h					\
 	thunar-computer-folder.c					\
 	thunar-computer-folder.h					\
 	thunar-desktop-view.c						\

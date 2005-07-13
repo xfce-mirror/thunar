@@ -1,6 +1,12 @@
 Important for Thunar 1.0
 ========================
 
+ - In thunar_standard_view_selection_changed(), the "Cut file(s)" action
+   should only be sensitive if the current folder is writable.
+
+ - We need a way to "refresh" folders after a "Cut"-operation with Nautilus.
+   With local folders - with not many files inside - the move is too fast!
+
  - ThunarVfsURI should have it's own parameter specification, that
    can be used for GValue handling.
 

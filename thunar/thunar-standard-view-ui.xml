@@ -11,6 +11,14 @@
   -->
 
   <menubar name="main-menu">
+    <menu action="edit-menu" name="edit-menu">
+      <placeholder name="placeholder-edit-clipboard-actions">
+        <menuitem action="copy" name="copy" />
+        <menuitem action="cut" name="cut" />
+        <menuitem action="paste" name="paste" />
+      </placeholder>
+    </menu>
+
     <menu action="view-menu" name="view-menu">
       <placeholder name="placeholder-view-display-preferences">
         <menuitem action="show-hidden-files" name="show-hidde-files" />

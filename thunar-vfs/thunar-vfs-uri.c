@@ -916,33 +916,43 @@ gchar*
 thunar_vfs_uri_list_to_string (GList                  *uri_list,
                                ThunarVfsURIHideOptions hide_options)
 {
-  gchar *string_list;
-  gchar *uri_string;
-  gchar *new_list;
-  GList *lp;
+  GString *string_list;
+  gchar   *uri_string;
+  GList   *lp;
 
-  string_list = g_strdup ("");
-
-  /* This way of building up the string representation is pretty
-   * slow and can lead to serious heap fragmentation if called
-   * too often. But this doesn't matter, as this function is not
-   * called very often (in fact it should only be used in Thunar
-   * when a file drag is started from within Thunar). If you can
-   * think of any easy way to avoid calling malloc that often,
-   * let me know (of course without depending too much on the
-   * exact internal representation and the type of URIs). Else
-   * don't waste any time or thought on this.
-   */
-  for (lp = uri_list; lp != NULL; lp = lp->next)
+  for (lp = uri_list, string_list = g_string_new (NULL); lp != NULL; lp = lp->next)
     {
       uri_string = thunar_vfs_uri_to_string (THUNAR_VFS_URI (lp->data), hide_options);
-      new_list = g_strconcat (string_list, uri_string, "\r\n", NULL);
-      g_free (string_list);
+      g_string_append (string_list, uri_string);
+      g_string_append_c (string_list, '\n');
       g_free (uri_string);
-      string_list = new_list;
     }
 
-  return string_list;
+  return g_string_free (string_list, FALSE);
+}
+
+
+
+/**
+ * thunar_vfs_uri_list_copy:
+ * @uri_list : a list of #ThunarVfsURI<!---->s.
+ *
+ * Takes a deep copy of the @uri_list and returns it.
+ * The deep copy also includes taking additional
+ * references on the #ThunarVfsURI<!---->s contained
+ * within the @uri_list.
+ *
+ * Return value: a duplicate of @uri_list.
+ **/
+GList*
+thunar_vfs_uri_list_copy (GList *uri_list)
+{
+  GList *result;
+
+  result = g_list_copy (uri_list);
+  g_list_foreach (result, (GFunc) thunar_vfs_uri_ref, NULL);
+
+  return result;
 }
 
 

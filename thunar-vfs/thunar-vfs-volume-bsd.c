@@ -131,6 +131,9 @@ thunar_vfs_volume_bsd_finalize (GObject *object)
 
   g_return_if_fail (THUNAR_VFS_IS_VOLUME_BSD (volume_bsd));
 
+  if (G_LIKELY (volume_bsd->update_timer_id >= 0))
+    g_source_remove (volume_bsd->update_timer_id);
+
   if (G_LIKELY (volume_bsd->mount_point != NULL))
     thunar_vfs_uri_unref (volume_bsd->mount_point);
 

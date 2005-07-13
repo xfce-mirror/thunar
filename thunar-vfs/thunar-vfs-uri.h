@@ -98,6 +98,7 @@ GList             *thunar_vfs_uri_list_from_string  (const gchar            *str
                                                      GError                **error);
 gchar             *thunar_vfs_uri_list_to_string    (GList                  *uri_list,
                                                      ThunarVfsURIHideOptions hide_options);
+GList             *thunar_vfs_uri_list_copy         (GList                  *uri_list);
 void               thunar_vfs_uri_list_free         (GList                  *uri_list);
 
 #define thunar_vfs_uri_list_append(uri_list, uri) \

@@ -1069,8 +1069,8 @@ thunar_list_model_remove (ThunarListModel  *store,
   /* notify other parties */
   if (G_LIKELY (!silently))
     {
-      g_object_notify (G_OBJECT (store), "num-files");
       gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
+      g_object_notify (G_OBJECT (store), "num-files");
     }
   gtk_tree_path_free (path);
 

@@ -1,5 +1,26 @@
 2005-07-12	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-vfs-uri.c(thunar_vfs_uri_list_to_string): Use GString
+	  to build the URI list string.
+	* thunar/thunar-vfs-uri.{c,h}: Add a method thunar_vfs_uri_list_copy()
+	  which duplicates a list of ThunarVfsURIs.
+	* thunar-vfs/thunar-vfs-volume-bsd.c(thunar_vfs_volume_bsd_finalize):
+	  Properly remove the update timer here.
+	* thunar/thunar-list-model.c(thunar_list_model_remove): Perform the
+	  GtkTreeModel delete operation prior to notifying the "num-files"
+	  property to make sure the selection of the view is updated before
+	  the standard-view requests the statusbar text for the selection.
+	* TODO: Add another two issues.
+	* thunar/thunar-clipboard-manager.{c,h}, thunar/Makefile.am: Add the new
+	  ThunarClipboardManager class, which does the interaction with the
+	  clipboard.
+	* thunar/thunar-standard-view.{c,h}: Implement Copy/Cut operations based
+	  on the newly added ThunarClipboardManager class.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-window-ui.xml: Add
+	  clipboard operations to the "Edit" menu.
+
+2005-07-12	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-window.c: Add a readonly property "ui-manager" to the
 	  ThunarWindow and use property binding to sync the UI manager with
 	  the ThunarView.

@@ -54,6 +54,8 @@ static void          thunar_standard_view_set_property              (GObject    
                                                                      guint                     prop_id,
                                                                      const GValue             *value,
                                                                      GParamSpec               *pspec);
+static void          thunar_standard_view_realize                   (GtkWidget                *widget);
+static void          thunar_standard_view_unrealize                 (GtkWidget                *widget);
 static ThunarFile   *thunar_standard_view_get_current_directory     (ThunarNavigator          *navigator);
 static void          thunar_standard_view_set_current_directory     (ThunarNavigator          *navigator,
                                                                      ThunarFile               *current_directory);
@@ -62,6 +64,13 @@ static const gchar  *thunar_standard_view_get_statusbar_text        (ThunarView 
 static GtkUIManager *thunar_standard_view_get_ui_manager            (ThunarView               *view);
 static void          thunar_standard_view_set_ui_manager            (ThunarView               *view,
                                                                      GtkUIManager             *ui_manager);
+static GList        *thunar_standard_view_get_selected_uris         (ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_copy               (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_cut                (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_paste              (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
                                                                      ThunarStandardView       *standard_view);
 static gboolean      thunar_standard_view_loading_idle              (gpointer                  user_data);
@@ -69,9 +78,16 @@ static void          thunar_standard_view_loading_idle_destroy      (gpointer   
 
 
 
+static const GtkActionEntry const action_entries[] =
+{
+  { "copy", GTK_STOCK_COPY, N_ ("_Copy files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
+  { "cut", GTK_STOCK_CUT, N_ ("Cu_t files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
+  { "paste", GTK_STOCK_PASTE, N_ ("_Paste files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_paste), },
+};
+
 static const GtkToggleActionEntry const toggle_action_entries[] =
 {
-  { "show-hidden-files", NULL, N_("Show _hidden files"), NULL, N_("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_standard_view_action_show_hidden_files), FALSE },
+  { "show-hidden-files", NULL, N_("Show _hidden files"), NULL, N_("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_standard_view_action_show_hidden_files), FALSE, },
 };
 
 static GObjectClass *thunar_standard_view_parent_class;
@@ -129,7 +145,8 @@ thunar_standard_view_get_type (void)
 static void
 thunar_standard_view_class_init (ThunarStandardViewClass *klass)
 {
-  GObjectClass *gobject_class;
+  GtkWidgetClass *gtkwidget_class;
+  GObjectClass   *gobject_class;
 
   thunar_standard_view_parent_class = g_type_class_peek_parent (klass);
 
@@ -139,6 +156,10 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gobject_class->finalize = thunar_standard_view_finalize;
   gobject_class->get_property = thunar_standard_view_get_property;
   gobject_class->set_property = thunar_standard_view_set_property;
+
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->realize = thunar_standard_view_realize;
+  gtkwidget_class->unrealize = thunar_standard_view_unrealize;
 
   g_object_class_override_property (gobject_class,
                                     PROP_CURRENT_DIRECTORY,
@@ -188,6 +209,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* setup the action group for this view */
   standard_view->action_group = gtk_action_group_new ("thunar-standard-view");
+  gtk_action_group_add_actions (standard_view->action_group, action_entries,
+                                G_N_ELEMENTS (action_entries),
+                                GTK_WIDGET (standard_view));
   gtk_action_group_add_toggle_actions (standard_view->action_group, toggle_action_entries,
                                        G_N_ELEMENTS (toggle_action_entries),
                                        GTK_WIDGET (standard_view));
@@ -251,10 +275,16 @@ thunar_standard_view_finalize (GObject *object)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
 
+  /* some safety checks */
+  g_assert (standard_view->loading_idle_id < 0);
+  g_assert (standard_view->ui_manager == NULL);
+  g_assert (standard_view->clipboard == NULL);
+
   /* release the reference on the action group */
   g_object_unref (G_OBJECT (standard_view->action_group));
 
-  /* release the reference on the list model */
+  /* disconnect from the list model */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->model), thunar_standard_view_selection_changed, standard_view);
   g_object_unref (G_OBJECT (standard_view->model));
   
   /* free the statusbar text (if any) */
@@ -317,6 +347,37 @@ thunar_standard_view_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_standard_view_realize (GtkWidget *widget)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (widget);
+  GdkDisplay         *display;
+
+  /* let the GtkWidget do its work */
+  GTK_WIDGET_CLASS (thunar_standard_view_parent_class)->realize (widget);
+
+  /* query the clipboard manager for the display */
+  display = gtk_widget_get_display (widget);
+  standard_view->clipboard = thunar_clipboard_manager_get_for_display (display);
+}
+
+
+
+static void
+thunar_standard_view_unrealize (GtkWidget *widget)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (widget);
+
+  /* drop the reference on the clipboard manager */
+  g_object_unref (G_OBJECT (standard_view->clipboard));
+  standard_view->clipboard = NULL;
+
+  /* let the GtkWidget do its work */
+  GTK_WIDGET_CLASS (thunar_standard_view_parent_class)->unrealize (widget);
 }
 
 
@@ -512,6 +573,81 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
 
 
 
+static GList*
+thunar_standard_view_get_selected_uris (ThunarStandardView *standard_view)
+{
+  GtkTreeIter iter;
+  ThunarFile *file;
+  GList      *selected_items;
+  GList      *selected_uris = NULL;
+  GList      *lp;
+
+  selected_items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
+  for (lp = selected_items; lp != NULL; lp = lp->next)
+    {
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data);
+      file = thunar_list_model_get_file (standard_view->model, &iter);
+      selected_uris = thunar_vfs_uri_list_append (selected_uris, thunar_file_get_uri (file));
+      g_object_unref (G_OBJECT (file));
+      gtk_tree_path_free (lp->data);
+    }
+  g_list_free (selected_items);
+
+  return selected_uris;
+}
+
+
+
+static void
+thunar_standard_view_action_copy (GtkAction          *action,
+                                  ThunarStandardView *standard_view)
+{
+  GList *uri_list;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
+
+  uri_list = thunar_standard_view_get_selected_uris (standard_view);
+  if (G_LIKELY (uri_list != NULL))
+    {
+      thunar_clipboard_manager_copy_uri_list (standard_view->clipboard, uri_list);
+      thunar_vfs_uri_list_free (uri_list);
+    }
+}
+
+
+
+static void
+thunar_standard_view_action_cut (GtkAction          *action,
+                                 ThunarStandardView *standard_view)
+{
+  GList *uri_list;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
+
+  uri_list = thunar_standard_view_get_selected_uris (standard_view);
+  if (G_LIKELY (uri_list != NULL))
+    {
+      thunar_clipboard_manager_cut_uri_list (standard_view->clipboard, uri_list);
+      thunar_vfs_uri_list_free (uri_list);
+    }
+}
+
+
+
+static void
+thunar_standard_view_action_paste (GtkAction          *action,
+                                   ThunarStandardView *standard_view)
+{
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+}
+
+
+
 static void
 thunar_standard_view_action_show_hidden_files (GtkToggleAction    *toggle_action,
                                                ThunarStandardView *standard_view)
@@ -569,7 +705,31 @@ thunar_standard_view_loading_idle_destroy (gpointer user_data)
 void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
+  GtkAction *action;
+  GList     *selected_items;
+  gint       n_selected_items;
+
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* determine the number of selected items */
+  selected_items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
+  n_selected_items = g_list_length (selected_items);
+  g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
+  g_list_free (selected_items);
+
+  /* update the "Copy file(s)" action */
+  action = gtk_action_group_get_action (standard_view->action_group, "copy");
+  g_object_set (G_OBJECT (action),
+                "label", (n_selected_items > 1) ? _("_Copy files") : _("_Copy file"),
+                "sensitive", (n_selected_items > 0),
+                NULL);
+
+  /* update the "Cut file(s)" action */
+  action = gtk_action_group_get_action (standard_view->action_group, "cut");
+  g_object_set (G_OBJECT (action),
+                "label", (n_selected_items > 1) ? _("Cu_t files") : _("Cu_t file"),
+                "sensitive", (n_selected_items > 0), // FIXME: Test if directory is writable!
+                NULL);
 
   /* clear the current status text (will be recalculated on-demand) */
   g_free (standard_view->statusbar_text);
