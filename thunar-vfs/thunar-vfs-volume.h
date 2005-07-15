@@ -23,7 +23,7 @@
 
 #include <gtk/gtk.h>
 
-#include <thunar-vfs/thunar-vfs-uri.h>
+#include <thunar-vfs/thunar-vfs-info.h>
 
 G_BEGIN_DECLS;
 
@@ -48,8 +48,10 @@ typedef enum
 {
   THUNAR_VFS_VOLUME_KIND_UNKNOWN,
   THUNAR_VFS_VOLUME_KIND_CDROM,
+  THUNAR_VFS_VOLUME_KIND_DVD,
   THUNAR_VFS_VOLUME_KIND_FLOPPY,
   THUNAR_VFS_VOLUME_KIND_HARDDISK,
+  THUNAR_VFS_VOLUME_KIND_USBSTICK,
 } ThunarVfsVolumeKind;
 
 /**
@@ -70,10 +72,14 @@ struct _ThunarVfsVolumeIface
   GTypeInterface __parent__;
 
   /* methods */
-  ThunarVfsVolumeKind   (*get_kind)         (ThunarVfsVolume *volume);
-  const gchar          *(*get_name)         (ThunarVfsVolume *volume);
-  ThunarVfsVolumeStatus (*get_status)       (ThunarVfsVolume *volume);
-  ThunarVfsURI         *(*get_mount_point)  (ThunarVfsVolume *volume);
+  ThunarVfsVolumeKind   (*get_kind)         (ThunarVfsVolume   *volume);
+  const gchar          *(*get_name)         (ThunarVfsVolume   *volume);
+  ThunarVfsVolumeStatus (*get_status)       (ThunarVfsVolume   *volume);
+  ThunarVfsURI         *(*get_mount_point)  (ThunarVfsVolume   *volume);
+  gboolean              (*get_free_space)   (ThunarVfsVolume   *volume,
+                                             ThunarVfsFileSize *free_space_return);
+  const gchar          *(*lookup_icon_name) (ThunarVfsVolume   *volume,
+                                             GtkIconTheme      *icon_theme);
 
   /* signals */
   void (*changed) (ThunarVfsVolume *volume);
@@ -90,10 +96,11 @@ gboolean              thunar_vfs_volume_is_mounted        (ThunarVfsVolume   *vo
 gboolean              thunar_vfs_volume_is_present        (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_removable      (ThunarVfsVolume   *volume);
 
-GtkIconInfo          *thunar_vfs_volume_lookup_icon       (ThunarVfsVolume   *volume,
-                                                           GtkIconTheme      *icon_theme,
-                                                           gint               size,
-                                                           GtkIconLookupFlags flags);
+gboolean              thunar_vfs_volume_get_free_space    (ThunarVfsVolume   *volume,
+                                                           ThunarVfsFileSize *free_space_return);
+
+const gchar          *thunar_vfs_volume_lookup_icon_name  (ThunarVfsVolume   *volume,
+                                                           GtkIconTheme      *icon_theme);
 
 void                  thunar_vfs_volume_changed           (ThunarVfsVolume   *volume);
 

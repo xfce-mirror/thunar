@@ -48,14 +48,16 @@
 
 
 
-static void                thunar_vfs_volume_bsd_class_init         (ThunarVfsVolumeBSDClass *klass);
-static void                thunar_vfs_volume_bsd_volume_init        (ThunarVfsVolumeIface    *iface);
-static void                thunar_vfs_volume_bsd_init               (ThunarVfsVolumeBSD      *volume_bsd);
-static void                thunar_vfs_volume_bsd_finalize           (GObject                 *object);
+static void                  thunar_vfs_volume_bsd_class_init       (ThunarVfsVolumeBSDClass *klass);
+static void                  thunar_vfs_volume_bsd_volume_init      (ThunarVfsVolumeIface    *iface);
+static void                  thunar_vfs_volume_bsd_init             (ThunarVfsVolumeBSD      *volume_bsd);
+static void                  thunar_vfs_volume_bsd_finalize         (GObject                 *object);
 static ThunarVfsVolumeKind   thunar_vfs_volume_bsd_get_kind         (ThunarVfsVolume         *volume);
 static const gchar          *thunar_vfs_volume_bsd_get_name         (ThunarVfsVolume         *volume);
 static ThunarVfsVolumeStatus thunar_vfs_volume_bsd_get_status       (ThunarVfsVolume         *volume);
 static ThunarVfsURI         *thunar_vfs_volume_bsd_get_mount_point  (ThunarVfsVolume         *volume);
+static gboolean              thunar_vfs_volume_bsd_get_free_space   (ThunarVfsVolume         *volume,
+                                                                     ThunarVfsFileSize       *free_space_return);
 static gboolean              thunar_vfs_volume_bsd_update           (gpointer                 user_data);
 static ThunarVfsVolumeBSD   *thunar_vfs_volume_bsd_new              (const gchar             *device_path,
                                                                      const gchar             *mount_path);
@@ -113,6 +115,7 @@ thunar_vfs_volume_bsd_volume_init (ThunarVfsVolumeIface *iface)
   iface->get_name = thunar_vfs_volume_bsd_get_name;
   iface->get_status = thunar_vfs_volume_bsd_get_status;
   iface->get_mount_point = thunar_vfs_volume_bsd_get_mount_point;
+  iface->get_free_space = thunar_vfs_volume_bsd_get_free_space;
 }
 
 
@@ -148,7 +151,6 @@ thunar_vfs_volume_bsd_finalize (GObject *object)
 static ThunarVfsVolumeKind
 thunar_vfs_volume_bsd_get_kind (ThunarVfsVolume *volume)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_BSD (volume), THUNAR_VFS_VOLUME_KIND_UNKNOWN);
   return THUNAR_VFS_VOLUME_BSD (volume)->kind;
 }
 
@@ -159,12 +161,7 @@ thunar_vfs_volume_bsd_get_name (ThunarVfsVolume *volume)
 {
   ThunarVfsVolumeBSD *volume_bsd = THUNAR_VFS_VOLUME_BSD (volume);
 
-  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_BSD (volume_bsd), NULL);
-
-  if (volume_bsd->label != NULL)
-    return volume_bsd->label;
-  else
-    return volume_bsd->device_name;
+  return (volume_bsd->label != NULL) ? volume_bsd->label : volume_bsd->device_name;
 }
 
 
@@ -172,7 +169,6 @@ thunar_vfs_volume_bsd_get_name (ThunarVfsVolume *volume)
 static ThunarVfsVolumeStatus
 thunar_vfs_volume_bsd_get_status (ThunarVfsVolume *volume)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_BSD (volume), FALSE);
   return THUNAR_VFS_VOLUME_BSD (volume)->status;
 }
 
@@ -181,8 +177,18 @@ thunar_vfs_volume_bsd_get_status (ThunarVfsVolume *volume)
 static ThunarVfsURI*
 thunar_vfs_volume_bsd_get_mount_point (ThunarVfsVolume *volume)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_BSD (volume), NULL);
   return THUNAR_VFS_VOLUME_BSD (volume)->mount_point;
+}
+
+
+
+static gboolean
+thunar_vfs_volume_bsd_get_free_space (ThunarVfsVolume   *volume,
+                                      ThunarVfsFileSize *free_space_return)
+{
+  ThunarVfsVolumeBSD *volume_bsd = THUNAR_VFS_VOLUME_BSD (volume);
+  *free_space_return = volume_bsd->info.f_blocks * volume_bsd->info.f_bsize;
+  return TRUE;
 }
 
 
@@ -283,6 +289,8 @@ thunar_vfs_volume_bsd_new (const gchar *device_path,
     volume_bsd->kind = THUNAR_VFS_VOLUME_KIND_CDROM;
   else if (p[0] == 'f' && p[1] == 'd' && g_ascii_isdigit (p[2]))
     volume_bsd->kind = THUNAR_VFS_VOLUME_KIND_FLOPPY;
+  else if (p[0] == 'a' && p[1] == 'd' && g_ascii_isdigit (p[2]))
+    volume_bsd->kind = THUNAR_VFS_VOLUME_KIND_HARDDISK;
   else
     volume_bsd->kind = THUNAR_VFS_VOLUME_KIND_UNKNOWN;
 

@@ -1,3 +1,19 @@
+2005-07-15	Benedikt Meurer <benny@xfce.org>
+
+	* docs/papers/HackingOnThunar.odt: Improve the "Hacking on Thunar"
+	  guide.
+	* thunar-vfs/thunar-vfs-volume.{c,h}: Change the icon lookup mechanism
+	  to return an icon name instead of a GtkIconInfo object. Also allow
+	  the ThunarVfsVolume implementation to specify a custom icon by
+	  overriding the lookup_icon_name() method. Add a new method
+	  get_free_space() which can be used to determine the amount of free
+	  space on a given volume.
+	* thunar-vfs/thunar-vfs-volume-bsd.c: Catch up with the changes to
+	  ThunarVfsVolume.
+	* thunar/thunar-favourites-model.c: Cache icons for the favourites and
+	  reload them whenever the file/volume changes. Adopt the new icon
+	  lookup mechanism for ThunarVfsVolume.
+
 2005-07-14	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-standard-view.c(thunar_standard_view_init): Add frame

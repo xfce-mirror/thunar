@@ -252,53 +252,100 @@ thunar_vfs_volume_is_removable (ThunarVfsVolume *volume)
 
 
 /**
- * thunar_vfs_volume_lookup_icon:
+ * thunar_vfs_volume_get_free_space:
+ * @volume            : a #ThunarVfsVolume instance.
+ * @free_space_return : location to store the free space to.
+ *
+ * Tries to determine the number of available bytes on the specified
+ * @volume and places the result to the memory pointed to by
+ * @free_space_return. The returned amount of bytes represents the
+ * space available to the current user, which may be different from
+ * the total free amount.
+ *
+ * If @volume is unable to determine the free space, %FALSE will be
+ * returned and @free_space_return won't be set.
+ *
+ * Return value: %TRUE if the free amount was determined successfully,
+ *               else %FALSE.
+ **/
+gboolean
+thunar_vfs_volume_get_free_space (ThunarVfsVolume   *volume,
+                                  ThunarVfsFileSize *free_space_return)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+  g_return_val_if_fail (free_space_return != NULL, FALSE);
+  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_free_space (volume, free_space_return);
+}
+
+
+
+/**
+ * thunar_vfs_volume_lookup_icon_name:
  * @volume     : a #ThunarVfsVolume instance.
  * @icon_theme : a #GtkIconTheme instance.
- * @size       : the size of the icon in pixels.
- * @flags      : the icon theme lookup flags.
  *
- * Tries to find a suitable icon for @volume in the given @icon_theme. If
- * no suitable icon can be found, %NULL will be returned instead.
+ * Tries to find a suitable icon for @volume in the given @icon_theme and
+ * returns its name. If no suitable icon is found in @icon_theme, then
+ * a fallback icon name will be returned. This way you can always count
+ * on this method to return a valid string.
  *
- * Call #gtk_icon_info_free() on the returned icon info object when you
- * are done with it.
- *
- * Return value: a #GtkIconInfo or %NULL.
+ * Return value: the icon name.
  **/
-GtkIconInfo*
-thunar_vfs_volume_lookup_icon (ThunarVfsVolume   *volume,
-                               GtkIconTheme      *icon_theme,
-                               gint               size,
-                               GtkIconLookupFlags flags)
+const gchar*
+thunar_vfs_volume_lookup_icon_name (ThunarVfsVolume *volume,
+                                    GtkIconTheme    *icon_theme)
 {
-  ThunarVfsVolumeKind kind;
-  GtkIconInfo        *icon_info;
+  ThunarVfsVolumeIface *iface;
+  ThunarVfsVolumeKind   kind;
+  const gchar          *icon_name;
 
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), NULL);
   g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
-  g_return_val_if_fail (size > 0, NULL);
+
+  /* allow the implementing class to provide a custom icon */
+  iface = THUNAR_VFS_VOLUME_GET_IFACE (volume);
+  if (iface->lookup_icon_name != NULL)
+    {
+      icon_name = (*iface->lookup_icon_name) (volume, icon_theme);
+      if (G_LIKELY (icon_name != NULL))
+        return icon_name;
+    }
 
   kind = thunar_vfs_volume_get_kind (volume);
   switch (kind)
     {
+    case THUNAR_VFS_VOLUME_KIND_DVD:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-dvd"))
+        return "gnome-dev-dvd";
+      /* FALL-THROUGH */
+
     case THUNAR_VFS_VOLUME_KIND_CDROM:
-      icon_info = gtk_icon_theme_lookup_icon (icon_theme, "gnome-dev-cdrom", size, flags);
-      if (icon_info != NULL)
-        return icon_info;
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-cdrom"))
+        return "gnome-dev-cdrom";
       break;
 
     case THUNAR_VFS_VOLUME_KIND_FLOPPY:
-      icon_info = gtk_icon_theme_lookup_icon (icon_theme, "gnome-dev-floppy", size, flags);
-      if (icon_info != NULL)
-        return icon_info;
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-floppy"))
+        return "gnome-dev-floppy";
+      break;
+
+    case THUNAR_VFS_VOLUME_KIND_HARDDISK:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-harddisk"))
+        return "gnome-dev-harddisk";
+      break;
+
+    case THUNAR_VFS_VOLUME_KIND_USBSTICK:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-removable-usb"))
+        return "gnome-dev-removable-usb";
+      else if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-harddisk-usb"))
+        return "gnome-dev-harddisk-usb";
       break;
 
     default:
       break;
     }
 
-  return gtk_icon_theme_lookup_icon (icon_theme, "gnome-fs-blockdev", size, flags);
+  return "gnome-fs-blockdev";
 }
 
 

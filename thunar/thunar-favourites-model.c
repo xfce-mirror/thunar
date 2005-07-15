@@ -34,6 +34,7 @@
 
 #include <thunar/thunar-favourites-model.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-icon-factory.h>
 
 
 
@@ -118,6 +119,7 @@ struct _ThunarFavouritesModel
   gint                    n_favourites;
   GList                  *hidden_volumes;
   ThunarFavourite        *favourites;
+  ThunarIconFactory      *icon_factory;
   ThunarVfsVolumeManager *volume_manager;
 };
 
@@ -130,6 +132,9 @@ struct _ThunarFavourite
 
   ThunarFavourite    *next;
   ThunarFavourite    *prev;
+
+  /* cached icon */
+  GdkPixbuf          *icon;
 };
 
 
@@ -172,6 +177,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
   model->stamp = g_random_int ();
   model->n_favourites = 0;
   model->favourites = NULL;
+  model->icon_factory = thunar_icon_factory_get_for_icon_theme (gtk_icon_theme_get_default ());
   model->volume_manager = thunar_vfs_volume_manager_get_default ();
 
   /* will be used to append the favourites to the list */
@@ -186,6 +192,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
       favourite->type = THUNAR_FAVOURITE_SYSTEM_DEFINED;
       favourite->file = file;
       favourite->volume = NULL;
+      favourite->icon = NULL;
 
       /* append the favourite to the list */
       thunar_favourites_model_add_favourite (model, favourite, path);
@@ -202,6 +209,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
       favourite->type = THUNAR_FAVOURITE_SYSTEM_DEFINED;
       favourite->file = file;
       favourite->volume = NULL;
+      favourite->icon = NULL;
 
       /* append the favourite to the list */
       thunar_favourites_model_add_favourite (model, favourite, path);
@@ -218,6 +226,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
       favourite->type = THUNAR_FAVOURITE_SYSTEM_DEFINED;
       favourite->file = file;
       favourite->volume = NULL;
+      favourite->icon = NULL;
 
       /* append the favourite to the list */
       thunar_favourites_model_add_favourite (model, favourite, path);
@@ -249,6 +258,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
                   favourite->type = THUNAR_FAVOURITE_REMOVABLE_MEDIA;
                   favourite->file = file;
                   favourite->volume = volume;
+                  favourite->icon = NULL;
 
                   /* link the favourite to the list */
                   thunar_favourites_model_add_favourite (model, favourite, path);
@@ -302,6 +312,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
           favourite->type = THUNAR_FAVOURITE_USER_DEFINED;
           favourite->file = file;
           favourite->volume = NULL;
+          favourite->icon = NULL;
 
           /* append the favourite to the list */
           thunar_favourites_model_add_favourite (model, favourite, path);
@@ -382,6 +393,9 @@ thunar_favourites_model_finalize (GObject *object)
           g_object_unref (G_OBJECT (current->volume));
         }
 
+      if (G_LIKELY (current->icon != NULL))
+        g_object_unref (G_OBJECT (current->icon));
+
       g_free (current);
     }
 
@@ -389,6 +403,9 @@ thunar_favourites_model_finalize (GObject *object)
   for (lp = model->hidden_volumes; lp != NULL; lp = lp->next)
     g_object_unref (G_OBJECT (lp->data));
   g_list_free (model->hidden_volumes);
+
+  /* unlink from the icon factory */
+  g_object_unref (G_OBJECT (model->icon_factory));
 
   /* unlink from the volume manager */
   g_object_unref (G_OBJECT (model->volume_manager));
@@ -495,13 +512,13 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
                                    gint          column,
                                    GValue       *value)
 {
-  ThunarFavourite *favourite;
-  GtkIconTheme    *icon_theme;
-  GtkIconInfo     *icon_info;
-  GdkPixbuf       *icon;
+  ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (tree_model);
+  ThunarFavourite       *favourite;
+  GtkIconTheme          *icon_theme;
+  const gchar           *icon_name;
 
-  g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (tree_model));
-  g_return_if_fail (iter->stamp == THUNAR_FAVOURITES_MODEL (tree_model)->stamp);
+  g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
+  g_return_if_fail (iter->stamp == model->stamp);
 
   favourite = iter->user_data;
 
@@ -519,24 +536,20 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_FAVOURITES_MODEL_COLUMN_ICON:
       g_value_init (value, GDK_TYPE_PIXBUF);
-      if (G_UNLIKELY (favourite->volume != NULL))
+      if (G_UNLIKELY (favourite->icon == NULL))
         {
-          icon_theme = gtk_icon_theme_get_default ();
-          icon_info = thunar_vfs_volume_lookup_icon (favourite->volume, icon_theme, 32, 0);
-          if (G_LIKELY (icon_info != NULL))
+          if (G_UNLIKELY (favourite->volume != NULL))
             {
-              icon = gtk_icon_info_load_icon (icon_info, NULL);
-              if (G_LIKELY (icon != NULL))
-                g_value_take_object (value, icon);
-              gtk_icon_info_free (icon_info);
+              icon_theme = thunar_icon_factory_get_icon_theme (model->icon_factory);
+              icon_name = thunar_vfs_volume_lookup_icon_name (favourite->volume, icon_theme);
+              favourite->icon = thunar_icon_factory_load_icon (model->icon_factory, icon_name, 32, NULL, TRUE);
+            }
+          else if (G_LIKELY (favourite->file != NULL))
+            {
+              favourite->icon = thunar_file_load_icon (favourite->file, 32);
             }
         }
-      else if (G_LIKELY (favourite->file != NULL))
-        {
-          icon = thunar_file_load_icon (favourite->file, 32);
-          if (G_LIKELY (icon != NULL))
-            g_value_take_object (value, icon);
-        }
+      g_value_set_object (value, favourite->icon);
       break;
 
     case THUNAR_FAVOURITES_MODEL_COLUMN_SEPARATOR:
@@ -856,6 +869,13 @@ thunar_favourites_model_file_changed (ThunarFile            *file,
   for (favourite = model->favourites, n = 0; favourite != NULL; favourite = favourite->next, ++n)
     if (favourite->file == file)
       {
+        /* drop the cached icon */
+        if (G_LIKELY (favourite->icon != NULL))
+          {
+            g_object_unref (G_OBJECT (favourite->icon));
+            favourite->icon = NULL;
+          }
+
         iter.stamp = model->stamp;
         iter.user_data = favourite;
 
@@ -908,6 +928,10 @@ thunar_favourites_model_file_destroy (ThunarFile            *file,
 
   /* drop the watch from the file */
   thunar_file_unwatch (favourite->file);
+
+  /* drop the cached icon */
+  if (G_LIKELY (favourite->icon != NULL))
+    g_object_unref (G_OBJECT (favourite->icon));
 
   /* disconnect us from the favourite's file */
   g_signal_handlers_disconnect_matched (G_OBJECT (favourite->file),
@@ -972,6 +996,7 @@ thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
               favourite->type = THUNAR_FAVOURITE_REMOVABLE_MEDIA;
               favourite->file = file;
               favourite->volume = volume;
+              favourite->icon = NULL;
 
               /* the volume is present now, so we have to display it */
               path = gtk_tree_path_new_from_indices (index, -1);
@@ -1008,6 +1033,13 @@ thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
         }
       else
         {
+          /* drop the cached icon */
+          if (G_LIKELY (favourite->icon != NULL))
+            {
+              g_object_unref (G_OBJECT (favourite->icon));
+              favourite->icon = NULL;
+            }
+
           /* tell the view that the volume has changed in some way */
           iter.stamp = model->stamp;
           iter.user_data = favourite;
@@ -1225,6 +1257,7 @@ thunar_favourites_model_move (ThunarFavouritesModel *model,
   ThunarVfsVolume    *volume;
   GtkTreePath        *path;
   ThunarFile         *file;
+  GdkPixbuf          *icon;
   gint               *order;
   gint                index_src;
   gint                index_dst;
@@ -1256,18 +1289,21 @@ thunar_favourites_model_move (ThunarFavouritesModel *model,
     {
       type = favourite->type;
       file = favourite->file;
+      icon = favourite->icon;
       volume = favourite->volume;
 
       for (; index < index_dst; favourite = favourite->next, ++index)
         {
           favourite->type = favourite->next->type;
           favourite->file = favourite->next->file;
+          favourite->icon = favourite->next->icon;
           favourite->volume = favourite->next->volume;
           order[index] = index + 1;
         }
 
       favourite->type = type;
       favourite->file = file;
+      favourite->icon = icon;
       favourite->volume = volume;
       order[index++] = index_src;
     }
@@ -1280,12 +1316,14 @@ thunar_favourites_model_move (ThunarFavouritesModel *model,
 
       type = favourite->type;
       file = favourite->file;
+      icon = favourite->icon;
       volume = favourite->volume;
 
       for (; index > index_dst; favourite = favourite->prev, --index)
         {
           favourite->type = favourite->prev->type;
           favourite->file = favourite->prev->file;
+          favourite->icon = favourite->prev->icon;
           favourite->volume = favourite->prev->volume;
           order[index] = index - 1;
         }
@@ -1294,6 +1332,7 @@ thunar_favourites_model_move (ThunarFavouritesModel *model,
 
       favourite->type = type;
       favourite->file = file;
+      favourite->icon = icon;
       favourite->volume = volume;
       order[index] = index_src;
       index = index_src + 1;
