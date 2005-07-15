@@ -1,3 +1,14 @@
+2005-07-16	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-folder.{c,h}: Add a "files-removed" signal, which can
+	  be used by ThunarFolder implementation to solve the reload problem,
+	  and probably other problems as well (like asynchronous loading).
+	* thunar/thunar-local-folder.c(thunar_local_folder_rescan): Use
+	  "files-removed" instead of destroying the no longer present files,
+	  so we don't accidently terminate other stuff here.
+	* thunar/thunar-list-model.c: Handle the "files-removed" signal of the
+	  ThunarFolder.
+
 2005-07-15	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-details-view.c: Unselect all selected items if the

@@ -142,6 +142,9 @@ static void               thunar_list_model_folder_destroy        (ThunarFolder 
 static void               thunar_list_model_files_added           (ThunarFolder           *folder,
                                                                    GSList                 *files,
                                                                    ThunarListModel        *store);
+static void               thunar_list_model_files_removed         (ThunarFolder           *folder,
+                                                                   GSList                 *files,
+                                                                   ThunarListModel        *store);
 static gint               sort_by_date_accessed                   (ThunarFile             *a,
                                                                    ThunarFile             *b);
 static gint               sort_by_date_modified                   (ThunarFile             *a,
@@ -1285,6 +1288,17 @@ thunar_list_model_files_added (ThunarFolder    *folder,
 
 
 
+static void
+thunar_list_model_files_removed (ThunarFolder    *folder,
+                                 GSList          *files,
+                                 ThunarListModel *store)
+{
+  /* drop all the referenced files from the model */
+  g_slist_foreach (files, (GFunc) thunar_list_model_file_destroy, store);
+}
+
+
+
 static gint
 sort_by_date_accessed (ThunarFile *a,
                        ThunarFile *b)
@@ -1652,10 +1666,12 @@ thunar_list_model_set_folder (ThunarListModel *store,
         }
 
       /* connect signals to the new folder */
-      g_signal_connect (G_OBJECT (store->folder), "files-added",
-                        G_CALLBACK (thunar_list_model_files_added), store);
       g_signal_connect (G_OBJECT (store->folder), "destroy",
                         G_CALLBACK (thunar_list_model_folder_destroy), store);
+      g_signal_connect (G_OBJECT (store->folder), "files-added",
+                        G_CALLBACK (thunar_list_model_files_added), store);
+      g_signal_connect (G_OBJECT (store->folder), "files-removed",
+                        G_CALLBACK (thunar_list_model_files_removed), store);
     }
 
   /* notify listeners that we have a new folder */

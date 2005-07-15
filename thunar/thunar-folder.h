@@ -40,8 +40,10 @@ struct _ThunarFolderIface
   GSList     *(*get_files)              (ThunarFolder *folder);
 
   /* signals */
-  void (*files_added) (ThunarFolder *folder,
-                       GSList       *files);
+  void (*files_added)   (ThunarFolder *folder,
+                         GSList       *files);
+  void (*files_removed) (ThunarFolder *folder,
+                         GSList       *files);
 };
 
 GType       thunar_folder_get_type               (void) G_GNUC_CONST;
@@ -50,6 +52,8 @@ ThunarFile *thunar_folder_get_corresponding_file (ThunarFolder *folder);
 GSList     *thunar_folder_get_files              (ThunarFolder *folder);
 
 void        thunar_folder_files_added            (ThunarFolder *folder,
+                                                  GSList       *files);
+void        thunar_folder_files_removed          (ThunarFolder *folder,
                                                   GSList       *files);
 
 G_END_DECLS;

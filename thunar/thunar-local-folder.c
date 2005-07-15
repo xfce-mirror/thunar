@@ -212,16 +212,22 @@ thunar_local_folder_rescan (ThunarLocalFolder *local_folder,
 
   g_dir_close (dp);
 
-  /* notify listeners about removed files */
-  for (lp = ofiles; lp != NULL; lp = lp->next)
+  /* handle the left over old-files */
+  if (G_UNLIKELY (ofiles != NULL))
     {
-      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
-                                            local_folder->file_destroy_id, 0, local_folder->file_destroy_closure,
-                                            NULL, NULL);
-      gtk_object_destroy (GTK_OBJECT (lp->data));
-      g_object_unref (G_OBJECT (lp->data));
+      /* notify listeners about removed files */
+      thunar_folder_files_removed (THUNAR_FOLDER (local_folder), ofiles);
+
+      /* drop old files */
+      for (lp = ofiles; lp != NULL; lp = lp->next)
+        {
+          g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                                local_folder->file_destroy_id, 0, local_folder->file_destroy_closure,
+                                                NULL, NULL);
+          g_object_unref (G_OBJECT (lp->data));
+        }
+      g_slist_free (ofiles);
     }
-  g_slist_free (ofiles);
 
   /* notify listening parties about added files and append the
    * new files to our internal file list.

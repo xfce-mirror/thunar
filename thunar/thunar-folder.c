@@ -28,6 +28,7 @@
 enum
 {
   FILES_ADDED,
+  FILES_REMOVED,
   LAST_SIGNAL,
 };
 
@@ -91,6 +92,23 @@ thunar_folder_base_init (gpointer klass)
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
                       G_STRUCT_OFFSET (ThunarFolderIface, files_added),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__POINTER,
+                      G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+      /**
+       * ThunarFolder::files-removed:
+       *
+       * Emitted by the #ThunarFolder implementation whenever a bunch of
+       * files is removed from the folder, which means they are not
+       * necessarily deleted from disk. This can be used to implement
+       * the reload of folders, which take longer to load.
+       **/
+      folder_signals[FILES_REMOVED] =
+        g_signal_new ("files-removed",
+                      G_TYPE_FROM_INTERFACE (klass),
+                      G_SIGNAL_RUN_LAST,
+                      G_STRUCT_OFFSET (ThunarFolderIface, files_removed),
                       NULL, NULL,
                       g_cclosure_marshal_VOID__POINTER,
                       G_TYPE_NONE, 1, G_TYPE_POINTER);
@@ -159,4 +177,24 @@ thunar_folder_files_added (ThunarFolder *folder,
   g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
 }
 
+
+
+/**
+ * thunar_folder_files_removed:
+ * @folder : a #ThunarFolder instance.
+ * @files  : the list of removed #ThunarFile<!---->s.
+ *
+ * Emits the ::files-removed signal on @folder using the
+ * given @files. This should only be called by #ThunarFolder
+ * implementations.
+ **/
+void
+thunar_folder_files_removed (ThunarFolder *folder,
+                             GSList       *files)
+{
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (files != NULL);
+
+  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
+}
 
