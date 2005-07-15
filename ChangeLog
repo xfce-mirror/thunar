@@ -1,5 +1,19 @@
 2005-07-15	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-details-view.c: Unselect all selected items if the
+	  user clicks on an empty area of the treeview and neither Control
+	  nor Shift is active.
+	* thunar/thunar-properties-dialog.{c,h}: Add the first draft for the
+	  ThunarPropertiesDialog class, which implements a properties dialog for
+	  a single file.
+	* thunar/Makefile.am: Add ThunarPropertiesDialog to the build framework.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c,
+	  thunar/thunar-window-ui.xml: Add the "properties" action to the
+	  menu structure, which displays a properties dialog for the selected
+	  file.
+
+2005-07-15	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-volume.{c,h}: Extend the ThunarVfsVolumeManager
 	  interface to be able to query the ThunarVfsVolume for a given
 	  ThunarVfsInfo.

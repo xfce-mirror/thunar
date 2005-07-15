@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
 
@@ -64,7 +65,10 @@ static const gchar  *thunar_standard_view_get_statusbar_text        (ThunarView 
 static GtkUIManager *thunar_standard_view_get_ui_manager            (ThunarView               *view);
 static void          thunar_standard_view_set_ui_manager            (ThunarView               *view,
                                                                      GtkUIManager             *ui_manager);
+static GList        *thunar_standard_view_get_selected_files        (ThunarStandardView       *standard_view);
 static GList        *thunar_standard_view_get_selected_uris         (ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_properties         (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_copy               (GtkAction                *action,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_cut                (GtkAction                *action,
@@ -80,6 +84,7 @@ static void          thunar_standard_view_loading_idle_destroy      (gpointer   
 
 static const GtkActionEntry const action_entries[] =
 {
+  { "properties", GTK_STOCK_PROPERTIES, N_ ("_Properties"), "<alt>Return", N_ ("View the properties of the selected item"), G_CALLBACK (thunar_standard_view_action_properties), },
   { "copy", GTK_STOCK_COPY, N_ ("_Copy files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
   { "paste", GTK_STOCK_PASTE, N_ ("_Paste files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_paste), },
@@ -545,6 +550,7 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
                                      GtkUIManager *ui_manager)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  GError             *error = NULL;
 
   /* disconnect from the previous UI manager */
   if (G_LIKELY (standard_view->ui_manager != NULL))
@@ -573,11 +579,40 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
 
       /* merge our UI control items with the new manager */
       standard_view->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_standard_view_ui,
-                                                                      thunar_standard_view_ui_length, NULL);
+                                                                      thunar_standard_view_ui_length, &error);
+      if (G_UNLIKELY (standard_view->ui_merge_id == 0))
+        {
+          g_error ("Failed to merge ThunarStandardView menus: %s", error->message);
+          g_error_free (error);
+        }
     }
 
   /* let others know that we have a new manager */
   g_object_notify (G_OBJECT (view), "ui-manager");
+}
+
+
+
+static GList*
+thunar_standard_view_get_selected_files (ThunarStandardView *standard_view)
+{
+  GtkTreeIter iter;
+  ThunarFile *file;
+  GList      *selected_items;
+  GList      *selected_files = NULL;
+  GList      *lp;
+
+  selected_items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
+  for (lp = selected_items; lp != NULL; lp = lp->next)
+    {
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, lp->data);
+      file = thunar_list_model_get_file (standard_view->model, &iter);
+      selected_files = g_list_append (selected_files, file);
+      gtk_tree_path_free (lp->data);
+    }
+  g_list_free (selected_items);
+
+  return selected_files;
 }
 
 
@@ -603,6 +638,38 @@ thunar_standard_view_get_selected_uris (ThunarStandardView *standard_view)
   g_list_free (selected_items);
 
   return selected_uris;
+}
+
+
+
+static void
+thunar_standard_view_action_properties (GtkAction          *action,
+                                        ThunarStandardView *standard_view)
+{
+  GtkWidget *toplevel;
+  GtkWidget *dialog;
+  GList     *files;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  files = thunar_standard_view_get_selected_files (standard_view);
+  if (G_LIKELY (g_list_length (files) == 1))
+    {
+      toplevel = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+      if (G_LIKELY (toplevel != NULL))
+        {
+          dialog = g_object_new (THUNAR_TYPE_PROPERTIES_DIALOG,
+                                 "destroy-with-parent", TRUE,
+                                 "file", files->data,
+                                 NULL);
+          gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (toplevel));
+          gtk_widget_show (dialog);
+        }
+    }
+
+  g_list_foreach (files, (GFunc) g_object_unref, NULL);
+  g_list_free (files);
 }
 
 
@@ -738,6 +805,12 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   n_selected_items = g_list_length (selected_items);
   g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
   g_list_free (selected_items);
+
+  /* update the "Properties" action */
+  action = gtk_action_group_get_action (standard_view->action_group, "properties");
+  g_object_set (G_OBJECT (action),
+                "sensitive", (n_selected_items == 1),
+                NULL);
 
   /* update the "Copy file(s)" action */
   action = gtk_action_group_get_action (standard_view->action_group, "copy");

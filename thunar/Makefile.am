@@ -53,6 +53,8 @@ Thunar_SOURCES =							\
 	thunar-navigator.h						\
 	thunar-preferences.c						\
 	thunar-preferences.h						\
+	thunar-properties-dialog.c					\
+	thunar-properties-dialog.h					\
 	thunar-side-pane.c						\
 	thunar-side-pane.h						\
 	thunar-standard-view.c						\

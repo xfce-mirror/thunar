@@ -30,6 +30,9 @@ static void       thunar_details_view_class_init          (ThunarDetailsViewClas
 static void       thunar_details_view_init                (ThunarDetailsView      *details_view);
 static AtkObject *thunar_details_view_get_accessible      (GtkWidget              *widget);
 static GList     *thunar_details_view_get_selected_items  (ThunarStandardView     *standard_view);
+static gboolean   thunar_details_view_button_press_event  (GtkTreeView            *tree_view,
+                                                           GdkEventButton         *event,
+                                                           ThunarDetailsView      *details_view);
 static void       thunar_details_view_row_activated       (GtkTreeView            *tree_view,
                                                            GtkTreePath            *path,
                                                            GtkTreeViewColumn      *column,
@@ -78,6 +81,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* create the tree view to embed */
   tree_view = gtk_tree_view_new ();
+  g_signal_connect (G_OBJECT (tree_view), "button-press-event",
+                    G_CALLBACK (thunar_details_view_button_press_event), details_view);
   g_signal_connect (G_OBJECT (tree_view), "row-activated",
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
@@ -212,6 +217,29 @@ thunar_details_view_get_selected_items (ThunarStandardView *standard_view)
 
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
   return gtk_tree_selection_get_selected_rows (selection, NULL);
+}
+
+
+
+static gboolean
+thunar_details_view_button_press_event (GtkTreeView       *tree_view,
+                                        GdkEventButton    *event,
+                                        ThunarDetailsView *details_view)
+{
+  GtkTreeSelection *selection;
+
+  /* we unselect all selected items if the user clicks on an empty
+   * area of the treeview and no modifier key is active.
+   */
+  if ((event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) == 0
+      && !gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL))
+    {
+      selection = gtk_tree_view_get_selection (tree_view);
+      gtk_tree_selection_unselect_all (selection);
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 
