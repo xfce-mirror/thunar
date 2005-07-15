@@ -506,6 +506,32 @@ thunar_vfs_volume_manager_get_default (void)
 
 
 /**
+ * thunar_vfs_volume_manager_get_volume_by_info:
+ * @manager : a #ThunarVfsVolumeManager instance.
+ * @info    : a #ThunarVfsInfo.
+ *
+ * Tries to lookup the #ThunarVfsVolume on which @info is
+ * located. If @manager doesn't know a #ThunarVfsVolume
+ * for @info, %NULL will be returned.
+ *
+ * The returned #ThunarVfsVolume (if any) is owned by
+ * @manager and must not be freed by the caller.
+ *
+ * Return value: the #ThunarVfsVolume, on which @info is
+ *               located or %NULL.
+ **/
+ThunarVfsVolume*
+thunar_vfs_volume_manager_get_volume_by_info (ThunarVfsVolumeManager *manager,
+                                              const ThunarVfsInfo    *info)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager), NULL);
+  g_return_val_if_fail (info != NULL, NULL);
+  return THUNAR_VFS_VOLUME_MANAGER_GET_IFACE (manager)->get_volume_by_info (manager, info);
+}
+
+
+
+/**
  * thunar_vfs_volume_manager_get_volumes:
  * @manager : a #ThunarVfsVolumeManager instance.
  *

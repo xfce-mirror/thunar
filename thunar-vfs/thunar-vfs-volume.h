@@ -38,9 +38,11 @@ typedef struct _ThunarVfsVolume      ThunarVfsVolume;
 /**
  * ThunarVfsVolumeKind:
  * @THUNAR_VFS_VOLUME_KIND_UNKNOWN  : Unknown volume.
- * @THUNAR_VFS_VOLUME_KIND_CDROM    : CD/DVD drives.
+ * @THUNAR_VFS_VOLUME_KIND_CDROM    : CD drives.
+ * @THUNAR_VFS_VOLUME_KIND_DVD      : DVD drives.
  * @THUNAR_VFS_VOLUME_KIND_FLOPPY   : Floppy drives.
  * @THUNAR_VFS_VOLUME_KIND_HARDDISK : Hard disk drives.
+ * @THUNAR_VFS_VOLUME_KIND_USBSTICK : USB sticks.
  *
  * Describes the type of a VFS volume.
  **/
@@ -118,7 +120,9 @@ struct _ThunarVfsVolumeManagerIface
   GTypeInterface __parent__;
 
   /* methods */
-  GList *(*get_volumes) (ThunarVfsVolumeManager *manager);
+  ThunarVfsVolume *(*get_volume_by_info) (ThunarVfsVolumeManager *manager,
+                                          const ThunarVfsInfo    *info);
+  GList           *(*get_volumes)        (ThunarVfsVolumeManager *manager);
 
   /* signals */
   void (*volumes_added)   (ThunarVfsVolumeManager *manager,
@@ -127,16 +131,18 @@ struct _ThunarVfsVolumeManagerIface
                            GList                  *volumes);
 };
 
-GType                   thunar_vfs_volume_manager_get_type        (void) G_GNUC_CONST;
+GType                   thunar_vfs_volume_manager_get_type            (void) G_GNUC_CONST;
 
-ThunarVfsVolumeManager *thunar_vfs_volume_manager_get_default     (void);
+ThunarVfsVolumeManager *thunar_vfs_volume_manager_get_default         (void);
 
-GList                  *thunar_vfs_volume_manager_get_volumes     (ThunarVfsVolumeManager *manager);
+ThunarVfsVolume        *thunar_vfs_volume_manager_get_volume_by_info  (ThunarVfsVolumeManager *manager,
+                                                                       const ThunarVfsInfo    *info);
+GList                  *thunar_vfs_volume_manager_get_volumes         (ThunarVfsVolumeManager *manager);
 
-void                    thunar_vfs_volume_manager_volumes_added   (ThunarVfsVolumeManager *manager,
-                                                                   GList                  *volumes);
-void                    thunar_vfs_volume_manager_volumes_removed (ThunarVfsVolumeManager *manager,
-                                                                   GList                  *volumes);
+void                    thunar_vfs_volume_manager_volumes_added       (ThunarVfsVolumeManager *manager,
+                                                                       GList                  *volumes);
+void                    thunar_vfs_volume_manager_volumes_removed     (ThunarVfsVolumeManager *manager,
+                                                                       GList                  *volumes);
 
 G_END_DECLS;
 

@@ -175,6 +175,8 @@ struct _ThunarListModel
   ThunarFolder  *folder;
   gboolean       show_hidden;
 
+  ThunarVfsVolumeManager *volume_manager;
+
   /* ids and closures for the "changed" and "destroy" signals
    * of ThunarFile's used to speed up signal registrations.
    */
@@ -354,6 +356,8 @@ thunar_list_model_init (ThunarListModel *store)
   store->folder               = NULL;
   store->show_hidden          = FALSE;
 
+  store->volume_manager       = thunar_vfs_volume_manager_get_default ();
+
   store->file_changed_closure = g_cclosure_new_object (G_CALLBACK (thunar_list_model_file_changed), G_OBJECT (store));
   store->file_destroy_closure = g_cclosure_new_object (G_CALLBACK (thunar_list_model_file_destroy), G_OBJECT (store));
   store->file_changed_id      = g_signal_lookup ("changed", THUNAR_TYPE_FILE);
@@ -376,6 +380,9 @@ static void
 thunar_list_model_finalize (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
+
+  /* disconnect from the volume manager */
+  g_object_unref (G_OBJECT (store->volume_manager));
 
   /* get rid of the closures */
   g_closure_unref (store->file_changed_closure);
@@ -1894,6 +1901,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
 {
   ThunarVfsFileSize size_summary;
   ThunarVfsFileSize size;
+  ThunarVfsVolume  *volume;
   ExoMimeInfo      *mime_info;
   GtkTreeIter       iter;
   ThunarFile       *file;
@@ -1905,7 +1913,22 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
   if (selected_items == NULL)
-    text = g_strdup_printf (_("%d items"), store->nrows);
+    {
+      /* try to determine a file for the current folder */
+      file = (store->folder != NULL) ? thunar_folder_get_corresponding_file (store->folder) : NULL;
+      volume = (file != NULL) ? thunar_file_get_volume (file, store->volume_manager) : NULL;
+
+      if (G_LIKELY (volume != NULL && thunar_vfs_volume_get_free_space (volume, &size)))
+        {
+          size_string = thunar_vfs_humanize_size (size, NULL, 0);
+          text = g_strdup_printf (_("%d items, Free space: %s"), store->nrows, size_string);
+          g_free (size_string);
+        }
+      else
+        {
+          text = g_strdup_printf (_("%d items"), store->nrows);
+        }
+    }
   else if (selected_items->next == NULL)
     {
       /* resolve the iter for the single path */

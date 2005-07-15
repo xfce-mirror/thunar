@@ -26,36 +26,38 @@
 
 
 
-static void               thunar_local_file_class_init        (ThunarLocalFileClass *klass);
-static void               thunar_local_file_init              (ThunarLocalFile      *local_file);
-static void               thunar_local_file_finalize          (GObject              *object);
-static ThunarFile        *thunar_local_file_get_parent        (ThunarFile           *file,
-                                                               GError              **error);
-static ThunarFolder      *thunar_local_file_open_as_folder    (ThunarFile           *file,
-                                                               GError              **error);
-static ThunarVfsURI      *thunar_local_file_get_uri           (ThunarFile           *file);
-static ExoMimeInfo       *thunar_local_file_get_mime_info     (ThunarFile           *file);
-static const gchar       *thunar_local_file_get_display_name  (ThunarFile           *file);
-static const gchar       *thunar_local_file_get_special_name  (ThunarFile           *file);
-static gboolean           thunar_local_file_get_date          (ThunarFile           *file,
-                                                               ThunarFileDateType    date_type,
-                                                               ThunarVfsFileTime    *date_return);
-static ThunarVfsFileType  thunar_local_file_get_kind          (ThunarFile           *file);
-static ThunarVfsFileMode  thunar_local_file_get_mode          (ThunarFile           *file);
-static gboolean           thunar_local_file_get_size          (ThunarFile           *file,
-                                                               ThunarVfsFileSize    *size_return);
-static ThunarVfsGroup    *thunar_local_file_get_group         (ThunarFile           *file);
-static ThunarVfsUser     *thunar_local_file_get_user          (ThunarFile           *file);
-static GList             *thunar_local_file_get_emblem_names  (ThunarFile           *file);
-static const gchar       *thunar_local_file_get_icon_name     (ThunarFile           *file,
-                                                               GtkIconTheme         *icon_theme);
-static void               thunar_local_file_watch             (ThunarFile           *file);
-static void               thunar_local_file_unwatch           (ThunarFile           *file);
-static void               thunar_local_file_changed           (ThunarFile           *file);
-static void               thunar_local_file_monitor           (ThunarVfsMonitor     *monitor,
-                                                               ThunarVfsMonitorEvent event,
-                                                               ThunarVfsInfo        *info,
-                                                               gpointer              user_data);
+static void               thunar_local_file_class_init        (ThunarLocalFileClass   *klass);
+static void               thunar_local_file_init              (ThunarLocalFile        *local_file);
+static void               thunar_local_file_finalize          (GObject                *object);
+static ThunarFile        *thunar_local_file_get_parent        (ThunarFile             *file,
+                                                               GError                **error);
+static ThunarFolder      *thunar_local_file_open_as_folder    (ThunarFile             *file,
+                                                               GError                **error);
+static ThunarVfsURI      *thunar_local_file_get_uri           (ThunarFile             *file);
+static ExoMimeInfo       *thunar_local_file_get_mime_info     (ThunarFile             *file);
+static const gchar       *thunar_local_file_get_display_name  (ThunarFile             *file);
+static const gchar       *thunar_local_file_get_special_name  (ThunarFile             *file);
+static gboolean           thunar_local_file_get_date          (ThunarFile             *file,
+                                                               ThunarFileDateType      date_type,
+                                                               ThunarVfsFileTime      *date_return);
+static ThunarVfsFileType  thunar_local_file_get_kind          (ThunarFile             *file);
+static ThunarVfsFileMode  thunar_local_file_get_mode          (ThunarFile             *file);
+static gboolean           thunar_local_file_get_size          (ThunarFile             *file,
+                                                               ThunarVfsFileSize      *size_return);
+static ThunarVfsVolume   *thunar_local_file_get_volume        (ThunarFile             *file,
+                                                               ThunarVfsVolumeManager *volume_manager);
+static ThunarVfsGroup    *thunar_local_file_get_group         (ThunarFile             *file);
+static ThunarVfsUser     *thunar_local_file_get_user          (ThunarFile             *file);
+static GList             *thunar_local_file_get_emblem_names  (ThunarFile             *file);
+static const gchar       *thunar_local_file_get_icon_name     (ThunarFile             *file,
+                                                               GtkIconTheme           *icon_theme);
+static void               thunar_local_file_watch             (ThunarFile             *file);
+static void               thunar_local_file_unwatch           (ThunarFile             *file);
+static void               thunar_local_file_changed           (ThunarFile             *file);
+static void               thunar_local_file_monitor           (ThunarVfsMonitor       *monitor,
+                                                               ThunarVfsMonitorEvent   event,
+                                                               ThunarVfsInfo          *info,
+                                                               gpointer                user_data);
 
 
 
@@ -108,6 +110,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_kind = thunar_local_file_get_kind;
   thunarfile_class->get_mode = thunar_local_file_get_mode;
   thunarfile_class->get_size = thunar_local_file_get_size;
+  thunarfile_class->get_volume = thunar_local_file_get_volume;
   thunarfile_class->get_group = thunar_local_file_get_group;
   thunarfile_class->get_user = thunar_local_file_get_user;
   thunarfile_class->get_emblem_names = thunar_local_file_get_emblem_names;
@@ -309,6 +312,15 @@ static ThunarVfsFileType
 thunar_local_file_get_kind (ThunarFile *file)
 {
   return THUNAR_LOCAL_FILE (file)->info.type;
+}
+
+
+
+static ThunarVfsVolume*
+thunar_local_file_get_volume (ThunarFile             *file,
+                              ThunarVfsVolumeManager *volume_manager)
+{
+  return thunar_vfs_volume_manager_get_volume_by_info (volume_manager, &THUNAR_LOCAL_FILE (file)->info);
 }
 
 

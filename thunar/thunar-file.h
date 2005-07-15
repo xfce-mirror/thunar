@@ -65,41 +65,44 @@ struct _ThunarFileClass
   GtkObjectClass __parent__;
 
   /* virtual methods */
-  gboolean             (*has_parent)          (ThunarFile        *file);
-  ThunarFile          *(*get_parent)          (ThunarFile        *file,
-                                               GError           **error);
+  gboolean             (*has_parent)          (ThunarFile             *file);
+  ThunarFile          *(*get_parent)          (ThunarFile             *file,
+                                               GError                **error);
 
-  ThunarFolder        *(*open_as_folder)      (ThunarFile        *file,
-                                               GError           **error);
+  ThunarFolder        *(*open_as_folder)      (ThunarFile             *file,
+                                               GError                **error);
 
-  ThunarVfsURI        *(*get_uri)             (ThunarFile        *file);
+  ThunarVfsURI        *(*get_uri)             (ThunarFile             *file);
 
-  ExoMimeInfo         *(*get_mime_info)       (ThunarFile        *file);
+  ExoMimeInfo         *(*get_mime_info)       (ThunarFile             *file);
 
-  const gchar         *(*get_display_name)    (ThunarFile        *file);
-  const gchar         *(*get_special_name)    (ThunarFile        *file);
+  const gchar         *(*get_display_name)    (ThunarFile             *file);
+  const gchar         *(*get_special_name)    (ThunarFile             *file);
 
-  gboolean             (*get_date)            (ThunarFile        *file,
-                                               ThunarFileDateType date_type,
-                                               ThunarVfsFileTime *date_return);
-  ThunarVfsFileType    (*get_kind)            (ThunarFile        *file);
-  ThunarVfsFileMode    (*get_mode)            (ThunarFile        *file);
-  gboolean             (*get_size)            (ThunarFile        *file,
-                                               ThunarVfsFileSize *size_return);
+  gboolean             (*get_date)            (ThunarFile             *file,
+                                               ThunarFileDateType      date_type,
+                                               ThunarVfsFileTime      *date_return);
+  ThunarVfsFileType    (*get_kind)            (ThunarFile             *file);
+  ThunarVfsFileMode    (*get_mode)            (ThunarFile             *file);
+  gboolean             (*get_size)            (ThunarFile             *file,
+                                               ThunarVfsFileSize      *size_return);
 
-  ThunarVfsGroup      *(*get_group)           (ThunarFile        *file);
-  ThunarVfsUser       *(*get_user)            (ThunarFile        *file);
+  ThunarVfsVolume     *(*get_volume)          (ThunarFile             *file,
+                                               ThunarVfsVolumeManager *volume_manager);
 
-  gboolean             (*can_execute)         (ThunarFile        *file);
-  gboolean             (*can_read)            (ThunarFile        *file);
-  gboolean             (*can_write)           (ThunarFile        *file);
+  ThunarVfsGroup      *(*get_group)           (ThunarFile             *file);
+  ThunarVfsUser       *(*get_user)            (ThunarFile             *file);
 
-  GList               *(*get_emblem_names)    (ThunarFile        *file);
-  const gchar         *(*get_icon_name)       (ThunarFile        *file,
-                                               GtkIconTheme      *icon_theme);
+  gboolean             (*can_execute)         (ThunarFile             *file);
+  gboolean             (*can_read)            (ThunarFile             *file);
+  gboolean             (*can_write)           (ThunarFile             *file);
 
-  void                 (*watch)               (ThunarFile        *file);
-  void                 (*unwatch)             (ThunarFile        *file);
+  GList               *(*get_emblem_names)    (ThunarFile             *file);
+  const gchar         *(*get_icon_name)       (ThunarFile             *file,
+                                               GtkIconTheme           *icon_theme);
+
+  void                 (*watch)               (ThunarFile             *file);
+  void                 (*unwatch)             (ThunarFile             *file);
 
 
   /* signals */
@@ -118,53 +121,56 @@ struct _ThunarFile
 
 GType              thunar_file_get_type         (void) G_GNUC_CONST;
 
-ThunarFile        *thunar_file_get_for_uri      (ThunarVfsURI      *uri,
-                                                 GError           **error);
+ThunarFile        *thunar_file_get_for_uri      (ThunarVfsURI           *uri,
+                                                 GError                **error);
 
-gboolean           thunar_file_has_parent       (ThunarFile        *file);
-ThunarFile        *thunar_file_get_parent       (ThunarFile        *file,
-                                                 GError           **error);
+gboolean           thunar_file_has_parent       (ThunarFile             *file);
+ThunarFile        *thunar_file_get_parent       (ThunarFile             *file,
+                                                 GError                **error);
 
-ThunarFolder      *thunar_file_open_as_folder   (ThunarFile        *file,
-                                                 GError           **error);
+ThunarFolder      *thunar_file_open_as_folder   (ThunarFile             *file,
+                                                 GError                **error);
 
-ThunarVfsURI      *thunar_file_get_uri          (ThunarFile        *file);
+ThunarVfsURI      *thunar_file_get_uri          (ThunarFile             *file);
 
-ExoMimeInfo       *thunar_file_get_mime_info    (ThunarFile        *file);
+ExoMimeInfo       *thunar_file_get_mime_info    (ThunarFile             *file);
 
-const gchar       *thunar_file_get_display_name (ThunarFile        *file);
-const gchar       *thunar_file_get_special_name (ThunarFile        *file);
+const gchar       *thunar_file_get_display_name (ThunarFile             *file);
+const gchar       *thunar_file_get_special_name (ThunarFile             *file);
 
-gboolean           thunar_file_get_date         (ThunarFile        *file,
-                                                 ThunarFileDateType date_type,
-                                                 ThunarVfsFileTime *date_return);
-ThunarVfsFileType  thunar_file_get_kind         (ThunarFile        *file);
-ThunarVfsFileMode  thunar_file_get_mode         (ThunarFile        *file);
-gboolean           thunar_file_get_size         (ThunarFile        *file,
-                                                 ThunarVfsFileSize *size_return);
+gboolean           thunar_file_get_date         (ThunarFile             *file,
+                                                 ThunarFileDateType      date_type,
+                                                 ThunarVfsFileTime      *date_return);
+ThunarVfsFileType  thunar_file_get_kind         (ThunarFile             *file);
+ThunarVfsFileMode  thunar_file_get_mode         (ThunarFile             *file);
+gboolean           thunar_file_get_size         (ThunarFile             *file,
+                                                 ThunarVfsFileSize      *size_return);
 
-gchar             *thunar_file_get_date_string  (ThunarFile        *file,
-                                                 ThunarFileDateType date_type);
-gchar             *thunar_file_get_mode_string  (ThunarFile        *file);
-gchar             *thunar_file_get_size_string  (ThunarFile        *file);
+gchar             *thunar_file_get_date_string  (ThunarFile             *file,
+                                                 ThunarFileDateType      date_type);
+gchar             *thunar_file_get_mode_string  (ThunarFile             *file);
+gchar             *thunar_file_get_size_string  (ThunarFile             *file);
 
-ThunarVfsGroup    *thunar_file_get_group        (ThunarFile        *file);
-ThunarVfsUser     *thunar_file_get_user         (ThunarFile        *file);
+ThunarVfsVolume   *thunar_file_get_volume       (ThunarFile             *file,
+                                                 ThunarVfsVolumeManager *volume_manager);
 
-gboolean          thunar_file_can_execute       (ThunarFile        *file);
-gboolean          thunar_file_can_read          (ThunarFile        *file);
-gboolean          thunar_file_can_write         (ThunarFile        *file);
+ThunarVfsGroup    *thunar_file_get_group        (ThunarFile             *file);
+ThunarVfsUser     *thunar_file_get_user         (ThunarFile             *file);
 
-GList             *thunar_file_get_emblem_names (ThunarFile        *file);
-GdkPixbuf         *thunar_file_load_icon        (ThunarFile        *file,
-                                                 gint               size);
+gboolean          thunar_file_can_execute       (ThunarFile             *file);
+gboolean          thunar_file_can_read          (ThunarFile             *file);
+gboolean          thunar_file_can_write         (ThunarFile             *file);
 
-void               thunar_file_watch            (ThunarFile        *file);
-void               thunar_file_unwatch          (ThunarFile        *file);
+GList             *thunar_file_get_emblem_names (ThunarFile             *file);
+GdkPixbuf         *thunar_file_load_icon        (ThunarFile             *file,
+                                                 gint                    size);
 
-void               thunar_file_changed          (ThunarFile        *file);
+void               thunar_file_watch            (ThunarFile             *file);
+void               thunar_file_unwatch          (ThunarFile             *file);
 
-gboolean           thunar_file_is_hidden        (ThunarFile        *file);
+void               thunar_file_changed          (ThunarFile             *file);
+
+gboolean           thunar_file_is_hidden        (ThunarFile             *file);
 
 #define thunar_file_get_name(file)      (thunar_vfs_uri_get_name (THUNAR_FILE_GET_CLASS ((file))->get_uri ((file))))
 
