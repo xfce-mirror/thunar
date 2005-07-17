@@ -18,25 +18,34 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __THUNAR_VFS_H__
-#define __THUNAR_VFS_H__
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
-#include <thunar-vfs/thunar-vfs-enum-types.h>
-#include <thunar-vfs/thunar-vfs-info.h>
-#include <thunar-vfs/thunar-vfs-job.h>
-#include <thunar-vfs/thunar-vfs-job-listdir.h>
-#include <thunar-vfs/thunar-vfs-mime.h>
-#include <thunar-vfs/thunar-vfs-monitor.h>
-#include <thunar-vfs/thunar-vfs-trash.h>
-#include <thunar-vfs/thunar-vfs-uri.h>
-#include <thunar-vfs/thunar-vfs-user.h>
-#include <thunar-vfs/thunar-vfs-util.h>
-#include <thunar-vfs/thunar-vfs-volume.h>
+#include <thunar-vfs/thunar-vfs.h>
 
-G_BEGIN_DECLS;
 
-void  thunar_vfs_init (void);
 
-G_END_DECLS;
+/**
+ * thunar_vfs_init:
+ *
+ * Initializes the ThunarVFS library.
+ **/
+void
+thunar_vfs_init (void)
+{
+  extern void _thunar_vfs_job_init (void);
+  extern void _thunar_vfs_mime_init (void);
 
-#endif /* !__THUNAR_VFS_H__ */
+  static gboolean initialized = FALSE;
+
+  if (!initialized)
+    {
+      _thunar_vfs_job_init ();
+      _thunar_vfs_mime_init ();
+
+      initialized = TRUE;
+    }
+}
+
+

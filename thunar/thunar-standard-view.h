@@ -57,7 +57,8 @@ struct _ThunarStandardView
   GtkUIManager           *ui_manager;
   guint                   ui_merge_id;
 
-  gint                    loading_idle_id;
+  ExoBinding             *loading_binding;
+  gboolean                loading;
 };
 
 GType thunar_standard_view_get_type           (void) G_GNUC_CONST;

@@ -35,6 +35,7 @@ enum
 
 
 static void thunar_folder_base_init  (gpointer klass);
+static void thunar_folder_class_init (gpointer klass);
 
 
 
@@ -54,7 +55,7 @@ thunar_folder_get_type (void)
         sizeof (ThunarFolderIface),
         (GBaseInitFunc) thunar_folder_base_init,
         NULL,
-        NULL,
+        (GClassInitFunc) thunar_folder_class_init,
         NULL,
         NULL,
         0,
@@ -119,6 +120,25 @@ thunar_folder_base_init (gpointer klass)
 
 
 
+static void
+thunar_folder_class_init (gpointer klass)
+{
+  /**
+   * ThunarFolder:loading:
+   *
+   * Tells whether the contents of the #ThunarFolder are
+   * currently being loaded.
+   **/
+  g_object_interface_install_property (klass,
+                                       g_param_spec_boolean ("loading",
+                                                             _("Loading"),
+                                                             _("Whether the contents of the folder are currently being loaded"),
+                                                             FALSE,
+                                                             EXO_PARAM_READABLE));
+}
+
+
+
 /**
  * thunar_folder_get_corresponding_file:
  * @folder : a #ThunarFolder instance.
@@ -154,6 +174,24 @@ thunar_folder_get_files (ThunarFolder *folder)
 {
   g_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
   return THUNAR_FOLDER_GET_IFACE (folder)->get_files (folder);
+}
+
+
+
+/**
+ * thunar_folder_get_loading:
+ * @folder : a #ThunarFolder instance.
+ *
+ * Tells whether the contents of the @folder are currently
+ * being loaded.
+ *
+ * Return value: %TRUE if @folder is loading, else %FALSE.
+ **/
+gboolean
+thunar_folder_get_loading (ThunarFolder *folder)
+{
+  g_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
+  return THUNAR_FOLDER_GET_IFACE (folder)->get_loading (folder);
 }
 
 

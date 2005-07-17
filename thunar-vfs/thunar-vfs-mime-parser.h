@@ -18,25 +18,16 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __THUNAR_VFS_H__
-#define __THUNAR_VFS_H__
+#ifndef __THUNAR_VFS_MIME_PARSER_H__
+#define __THUNAR_VFS_MIME_PARSER_H__
 
-#include <thunar-vfs/thunar-vfs-enum-types.h>
-#include <thunar-vfs/thunar-vfs-info.h>
-#include <thunar-vfs/thunar-vfs-job.h>
-#include <thunar-vfs/thunar-vfs-job-listdir.h>
-#include <thunar-vfs/thunar-vfs-mime.h>
-#include <thunar-vfs/thunar-vfs-monitor.h>
-#include <thunar-vfs/thunar-vfs-trash.h>
-#include <thunar-vfs/thunar-vfs-uri.h>
-#include <thunar-vfs/thunar-vfs-user.h>
-#include <thunar-vfs/thunar-vfs-util.h>
-#include <thunar-vfs/thunar-vfs-volume.h>
+#include <exo/exo.h>
 
 G_BEGIN_DECLS;
 
-void  thunar_vfs_init (void);
+gchar *_thunar_vfs_mime_parser_load_comment_from_file (const gchar *filename,
+                                                       GError     **error);
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_VFS_H__ */
+#endif /* !__THUNAR_VFS_MIME_PARSER_H__ */

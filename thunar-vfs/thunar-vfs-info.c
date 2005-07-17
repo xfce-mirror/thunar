@@ -40,76 +40,78 @@
 
 
 
-static ExoMimeDatabase *mime_database = NULL;
-
-
-
 /**
- * thunar_vfs_info_query:
- * @info  : pointer to an uninitialized #ThunarVfsInfo object.
- * @uri   : an #ThunarVfsURI instance.
- * @error : return location for errors.
+ * thunar_vfs_info_new_for_uri:
+ * @uri   : the #ThunarVfsURI of the file whose info should be queried.
+ * @error : return location for errors or %NULL.
  *
- * Return value: %TRUE if the operation succeed, else %FALSE.
+ * Queries the #ThunarVfsInfo for the given @uri. Returns the
+ * #ThunarVfsInfo if the operation is successfull, else %NULL.
+ * In the latter case, @error will be set to point to a #GError
+ * describing the cause of the failure.
+ *
+ * Return value: the #ThunarVfsInfo for @uri or %NULL.
  **/
-gboolean
-thunar_vfs_info_query (ThunarVfsInfo  *info,
-                       ThunarVfsURI   *uri,
-                       GError        **error)
+ThunarVfsInfo*
+thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
+                             GError      **error)
 {
-  g_return_val_if_fail (info != NULL, FALSE);
-  g_return_val_if_fail (info->uri == NULL, FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
+  ThunarVfsInfo *info;
+  const gchar   *path;
+  struct stat    lsb;
+  struct stat    sb;
 
-  info->uri = thunar_vfs_uri_ref (uri);
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  if (thunar_vfs_info_update (info, error) == THUNAR_VFS_INFO_RESULT_ERROR)
-    {
-      thunar_vfs_uri_unref (uri);
-      info->uri = NULL;
-      return FALSE;
-    }
-
-  return TRUE;
-}
-
-
-
-/**
- * thunar_vfs_info_update:
- * @info  :
- * @error :
- *
- * FIXME
- *
- * Return value:
- **/
-ThunarVfsInfoResult
-thunar_vfs_info_update (ThunarVfsInfo *info,
-                        GError       **error)
-{
-  const gchar *path;
-  struct stat  lsb;
-  struct stat  sb;
-
-  path = thunar_vfs_uri_get_path (info->uri);
+  path = thunar_vfs_uri_get_path (uri);
 
   if (G_UNLIKELY (lstat (path, &lsb) < 0))
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    "Failed to stat file `%s': %s", path, g_strerror (errno));
-      return THUNAR_VFS_INFO_RESULT_ERROR;
+      return NULL;
     }
+
+  info = g_new (ThunarVfsInfo, 1);
+  info->uri = thunar_vfs_uri_ref (uri);
+  info->ref_count = 1;
 
   if (G_LIKELY (!S_ISLNK (lsb.st_mode)))
     {
-      if (info->ctime != lsb.st_ctime
-          || info->device != lsb.st_dev
-          || info->inode != lsb.st_ino)
+      info->type = (lsb.st_mode & S_IFMT) >> 12;
+      info->mode = lsb.st_mode & 07777;
+      info->flags = THUNAR_VFS_FILE_FLAGS_NONE;
+      info->uid = lsb.st_uid;
+      info->gid = lsb.st_gid;
+      info->size = lsb.st_size;
+      info->atime = lsb.st_atime;
+      info->ctime = lsb.st_ctime;
+      info->mtime = lsb.st_mtime;
+      info->inode = lsb.st_ino;
+      info->device = lsb.st_dev;
+    }
+  else
+    {
+      if (stat (path, &sb) == 0)
         {
-          info->type = (lsb.st_mode & S_IFMT) >> 12;
+          info->type = (sb.st_mode & S_IFMT) >> 12;
+          info->mode = sb.st_mode & 07777;
+          info->flags = THUNAR_VFS_FILE_FLAGS_SYMLINK;
+          info->uid = sb.st_uid;
+          info->gid = sb.st_gid;
+          info->size = sb.st_size;
+          info->atime = sb.st_atime;
+          info->ctime = sb.st_ctime;
+          info->mtime = sb.st_mtime;
+          info->inode = sb.st_ino;
+          info->device = sb.st_dev;
+        }
+      else
+        {
+          info->type = THUNAR_VFS_FILE_TYPE_SYMLINK;
           info->mode = lsb.st_mode & 07777;
-          info->flags = THUNAR_VFS_FILE_FLAGS_NONE;
+          info->flags = THUNAR_VFS_FILE_FLAGS_SYMLINK;
           info->uid = lsb.st_uid;
           info->gid = lsb.st_gid;
           info->size = lsb.st_size;
@@ -118,114 +120,146 @@ thunar_vfs_info_update (ThunarVfsInfo *info,
           info->mtime = lsb.st_mtime;
           info->inode = lsb.st_ino;
           info->device = lsb.st_dev;
-
-          return THUNAR_VFS_INFO_RESULT_CHANGED;
         }
     }
-  else
+
+  switch (info->type)
     {
-      if (stat (path, &sb) == 0)
-        {
-          /* ok, link target is present */
-          if (info->ctime != sb.st_ctime
-              || info->device != sb.st_dev
-              || info->inode != sb.st_ino)
-            {
-              info->type = (sb.st_mode & S_IFMT) >> 12;
-              info->mode = sb.st_mode & 07777;
-              info->flags = THUNAR_VFS_FILE_FLAGS_SYMLINK;
-              info->uid = sb.st_uid;
-              info->gid = sb.st_gid;
-              info->size = sb.st_size;
-              info->atime = sb.st_atime;
-              info->ctime = sb.st_ctime;
-              info->mtime = sb.st_mtime;
-              info->inode = sb.st_ino;
-              info->device = sb.st_dev;
-          
-              return THUNAR_VFS_INFO_RESULT_CHANGED;
-            }
-        }
-      else
-        {
-          /* we have a broken symlink */
-          if (info->type != THUNAR_VFS_FILE_TYPE_SYMLINK
-              || info->ctime != lsb.st_ctime
-              || info->device != lsb.st_dev
-              || info->inode != lsb.st_ino)
-            {
-              info->type = THUNAR_VFS_FILE_TYPE_SYMLINK;
-              info->mode = lsb.st_mode & 07777;
-              info->flags = THUNAR_VFS_FILE_FLAGS_SYMLINK;
-              info->uid = lsb.st_uid;
-              info->gid = lsb.st_gid;
-              info->size = lsb.st_size;
-              info->atime = lsb.st_atime;
-              info->ctime = lsb.st_ctime;
-              info->mtime = lsb.st_mtime;
-              info->inode = lsb.st_ino;
-              info->device = lsb.st_dev;
+    case THUNAR_VFS_FILE_TYPE_SOCKET:
+      info->mime_info = thunar_vfs_mime_info_get ("inode/socket");
+      break;
 
-              return THUNAR_VFS_INFO_RESULT_CHANGED;
-            }
-        }
+    case THUNAR_VFS_FILE_TYPE_SYMLINK:
+      info->mime_info = thunar_vfs_mime_info_get ("inode/symlink");
+      break;
+
+    case THUNAR_VFS_FILE_TYPE_BLOCKDEV:
+      info->mime_info = thunar_vfs_mime_info_get ("inode/blockdevice");
+      break;
+
+    case THUNAR_VFS_FILE_TYPE_DIRECTORY:
+      info->mime_info = thunar_vfs_mime_info_get ("inode/directory");
+      break;
+
+    case THUNAR_VFS_FILE_TYPE_CHARDEV:
+      info->mime_info = thunar_vfs_mime_info_get ("inode/chardevice");
+      break;
+
+    case THUNAR_VFS_FILE_TYPE_FIFO:
+      info->mime_info = thunar_vfs_mime_info_get ("inode/fifo");
+      break;
+
+    case THUNAR_VFS_FILE_TYPE_REGULAR:
+      info->mime_info = thunar_vfs_mime_info_get_for_file (path);
+      break;
+
+    default:
+      g_assert_not_reached ();
+      break;
     }
 
-  return THUNAR_VFS_INFO_RESULT_NOCHANGE;
+  return info;
 }
 
 
 
 /**
- * thunar_vfs_info_get_mime_info:
- * @info : pointer to a valid #ThunarVfsInfo object.
+ * thunar_vfs_info_ref:
+ * @info : a #ThunarVfsInfo.
  *
- * Determines the appropriate MIME type for @info. The
- * caller is responsible for freeing the returned object
- * using #g_object_unref() once it's no longer needed.
+ * Increments the reference count on @info by 1 and
+ * returns a pointer to @info.
  *
- * Return value: the #ExoMimeInfo instance for @info.
+ * Return value: a pointer to @info.
  **/
-ExoMimeInfo*
-thunar_vfs_info_get_mime_info (ThunarVfsInfo *info)
+ThunarVfsInfo*
+thunar_vfs_info_ref (ThunarVfsInfo *info)
 {
-  const gchar *path;
+  g_return_val_if_fail (info->ref_count > 0, NULL);
 
-  g_return_val_if_fail (info != NULL, NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (info->uri), NULL);
+  g_atomic_int_inc (&info->ref_count);
 
-  if (G_UNLIKELY (mime_database == NULL))
-    mime_database = exo_mime_database_get_default ();
-
-  switch (info->type)
-    {
-    case THUNAR_VFS_FILE_TYPE_SOCKET:
-      return exo_mime_database_get_info (mime_database, "inode/socket");
-
-    case THUNAR_VFS_FILE_TYPE_SYMLINK:
-      return exo_mime_database_get_info (mime_database, "inode/symlink");
-
-    case THUNAR_VFS_FILE_TYPE_BLOCKDEV:
-      return exo_mime_database_get_info (mime_database, "inode/blockdevice");
-
-    case THUNAR_VFS_FILE_TYPE_DIRECTORY:
-      return exo_mime_database_get_info (mime_database, "inode/directory");
-
-    case THUNAR_VFS_FILE_TYPE_CHARDEV:
-      return exo_mime_database_get_info (mime_database, "inode/chardevice");
-
-    case THUNAR_VFS_FILE_TYPE_FIFO:
-      return exo_mime_database_get_info (mime_database, "inode/fifo");
-
-    default:
-      path = thunar_vfs_uri_get_path (THUNAR_VFS_URI (info->uri));
-      return exo_mime_database_get_info_for_file (mime_database, path);
-    }
-
-  g_assert_not_reached ();
-  return NULL;
+  return info;
 }
 
 
 
+/**
+ * thunar_vfs_info_unref:
+ * @info : a #ThunarVfsInfo.
+ *
+ * Decrements the reference count on @info by 1 and if
+ * the reference count drops to zero as a result of this
+ * operation, the @info will be freed completely.
+ **/
+void
+thunar_vfs_info_unref (ThunarVfsInfo *info)
+{
+  g_return_if_fail (info != NULL);
+  g_return_if_fail (info->ref_count > 0);
+
+  if (g_atomic_int_dec_and_test (&info->ref_count))
+    {
+      thunar_vfs_mime_info_unref (info->mime_info);
+      thunar_vfs_uri_unref (info->uri);
+
+#ifndef G_DISABLE_CHECKS
+      memset (info, 0xaa, sizeof (*info));
+#endif
+
+      g_free (info);
+    }
+}
+
+
+
+/**
+ * thunar_vfs_info_matches:
+ * @a : a #ThunarVfsInfo.
+ * @b : a #ThunarVfsInfo.
+ *
+ * Checks whether @a and @b refer to the same file
+ * and share the same properties.
+ *
+ * Return value: %TRUE if @a and @b match.
+ **/
+gboolean
+thunar_vfs_info_matches (const ThunarVfsInfo *a,
+                         const ThunarVfsInfo *b)
+{
+  g_return_val_if_fail (a != NULL, FALSE);
+  g_return_val_if_fail (b != NULL, FALSE);
+  g_return_val_if_fail (a->ref_count > 0, FALSE);
+  g_return_val_if_fail (b->ref_count > 0, FALSE);
+
+  return thunar_vfs_uri_equal (a->uri, b->uri)
+      && a->type == b->type
+      && a->mode == b->mode
+      && a->flags == b->flags
+      && a->uid == b->uid
+      && a->gid == b->gid
+      && a->size == b->size
+      && a->atime == b->atime
+      && a->mtime == b->mtime
+      && a->ctime == b->ctime
+      && a->inode == b->inode
+      && a->device == b->device
+      && a->mime_info == b->mime_info;
+}
+
+
+
+/**
+ * thunar_vfs_info_list_free:
+ * @info_list : a list #ThunarVfsInfo<!---->s.
+ *
+ * Unrefs all #ThunarVfsInfo<!---->s in @info_list and
+ * frees the list itself.
+ **/
+void
+thunar_vfs_info_list_free (GSList *info_list)
+{
+  g_slist_foreach (info_list, (GFunc) thunar_vfs_info_unref, NULL);
+  g_slist_free (info_list);
+}
 

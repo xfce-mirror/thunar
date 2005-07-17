@@ -43,37 +43,37 @@ enum
 
 
 
-static void             thunar_file_class_init               (ThunarFileClass        *klass);
-static void             thunar_file_finalize                 (GObject                *object);
-static gboolean         thunar_file_real_has_parent          (ThunarFile             *file);
-static ThunarFile      *thunar_file_real_get_parent          (ThunarFile             *file,
-                                                              GError                **error);
-static ThunarFolder    *thunar_file_real_open_as_folder      (ThunarFile             *file,
-                                                              GError                **error);
-static ExoMimeInfo     *thunar_file_real_get_mime_info       (ThunarFile             *file);
-static const gchar     *thunar_file_real_get_special_name    (ThunarFile             *file);
-static gboolean         thunar_file_real_get_date            (ThunarFile             *file,
-                                                              ThunarFileDateType      date_type,
-                                                              ThunarVfsFileTime      *date_return);
-static gboolean         thunar_file_real_get_size            (ThunarFile             *file,
-                                                              ThunarVfsFileSize      *size_return);
-static ThunarVfsVolume *thunar_file_real_get_volume          (ThunarFile             *file,
-                                                              ThunarVfsVolumeManager *volume_manager);
-static ThunarVfsGroup  *thunar_file_real_get_group           (ThunarFile             *file);
-static ThunarVfsUser   *thunar_file_real_get_user            (ThunarFile             *file);
-static gboolean         thunar_file_real_can_execute         (ThunarFile             *file);
-static gboolean         thunar_file_real_can_read            (ThunarFile             *file);
-static gboolean         thunar_file_real_can_write           (ThunarFile             *file);
-static GList           *thunar_file_real_get_emblem_names    (ThunarFile             *file);
-static void             thunar_file_real_changed             (ThunarFile             *file);
-static ThunarFile      *thunar_file_new_internal             (ThunarVfsURI           *uri,
-                                                              GError                **error);
-static gboolean         thunar_file_denies_access_permission (ThunarFile             *file,
-                                                              ThunarVfsFileMode       usr_permissions,
-                                                              ThunarVfsFileMode       grp_permissions,
-                                                              ThunarVfsFileMode       oth_permissions);
-static void             thunar_file_destroyed                (gpointer                data,
-                                                              GObject                *object);
+static void               thunar_file_class_init               (ThunarFileClass        *klass);
+static void               thunar_file_finalize                 (GObject                *object);
+static gboolean           thunar_file_real_has_parent          (ThunarFile             *file);
+static ThunarFile        *thunar_file_real_get_parent          (ThunarFile             *file,
+                                                                GError                **error);
+static ThunarFolder      *thunar_file_real_open_as_folder      (ThunarFile             *file,
+                                                                GError                **error);
+static ThunarVfsMimeInfo *thunar_file_real_get_mime_info       (ThunarFile             *file);
+static const gchar       *thunar_file_real_get_special_name    (ThunarFile             *file);
+static gboolean           thunar_file_real_get_date            (ThunarFile             *file,
+                                                                ThunarFileDateType      date_type,
+                                                                ThunarVfsFileTime      *date_return);
+static gboolean           thunar_file_real_get_size            (ThunarFile             *file,
+                                                                ThunarVfsFileSize      *size_return);
+static ThunarVfsVolume   *thunar_file_real_get_volume          (ThunarFile             *file,
+                                                                ThunarVfsVolumeManager *volume_manager);
+static ThunarVfsGroup    *thunar_file_real_get_group           (ThunarFile             *file);
+static ThunarVfsUser     *thunar_file_real_get_user            (ThunarFile             *file);
+static gboolean           thunar_file_real_can_execute         (ThunarFile             *file);
+static gboolean           thunar_file_real_can_read            (ThunarFile             *file);
+static gboolean           thunar_file_real_can_write           (ThunarFile             *file);
+static GList             *thunar_file_real_get_emblem_names    (ThunarFile             *file);
+static void               thunar_file_real_changed             (ThunarFile             *file);
+static ThunarFile        *thunar_file_new_internal             (ThunarVfsURI           *uri,
+                                                                GError                **error);
+static gboolean           thunar_file_denies_access_permission (ThunarFile             *file,
+                                                                ThunarVfsFileMode       usr_permissions,
+                                                                ThunarVfsFileMode       grp_permissions,
+                                                                ThunarVfsFileMode       oth_permissions);
+static void               thunar_file_destroyed                (gpointer                data,
+                                                                GObject                *object);
 
 
 
@@ -268,7 +268,7 @@ thunar_file_real_open_as_folder (ThunarFile *file,
 
 
 
-static ExoMimeInfo*
+static ThunarVfsMimeInfo*
 thunar_file_real_get_mime_info (ThunarFile *file)
 {
   return NULL;
@@ -477,6 +477,69 @@ thunar_file_destroyed (gpointer data,
 
 
 /**
+ * _thunar_file_cache_lookup:
+ * @uri : a #ThunarVfsURI.
+ *
+ * Checks if the #ThunarFile which handles @uri is
+ * already present in the #ThunarFile cache. Returns
+ * a reference to the cached #ThunarFile or %NULL
+ * if no matching file is found.
+ *
+ * No reference on the returned object is taken for
+ * the caller.
+ *
+ * This function is solely intended to be used by
+ * implementors of the #ThunarFile class.
+ *
+ * Return value: the #ThunarFile cached for
+ *               @uri or %NULL.
+ **/
+ThunarFile*
+_thunar_file_cache_lookup (ThunarVfsURI *uri)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+
+  /* allocate the ThunarFile cache on-demand */
+  if (G_UNLIKELY (file_cache == NULL))
+    {
+      file_cache = g_hash_table_new (thunar_vfs_uri_hash,
+                                     thunar_vfs_uri_equal);
+    }
+
+  return g_hash_table_lookup (file_cache, uri);
+}
+
+
+
+/**
+ * _thunar_file_cache_insert:
+ * @file : a #ThunarFile.
+ *
+ * Inserts the @file into the #ThunarFile cache and
+ * removes the floating reference from the @file.
+ **/
+void
+_thunar_file_cache_insert (ThunarFile *file)
+{
+  ThunarVfsURI *uri;
+
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (file_cache != NULL);
+
+  /* drop the floating reference */
+  g_assert (GTK_OBJECT_FLOATING (file));
+  g_object_ref (G_OBJECT (file));
+  gtk_object_sink (GTK_OBJECT (file));
+
+  /* insert the file into the cache */
+  uri = thunar_file_get_uri (file);
+  g_object_weak_ref (G_OBJECT (file), thunar_file_destroyed, uri);
+  g_hash_table_insert (file_cache, thunar_vfs_uri_ref (uri), file);
+}
+
+
+
+/**
  * thunar_file_get_for_uri:
  * @uri   : an #ThunarVfsURI instance.
  * @error : error return location.
@@ -501,30 +564,14 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  /* allocate the ThunarFile cache on-demand */
-  if (G_UNLIKELY (file_cache == NULL))
-    {
-      file_cache = g_hash_table_new (thunar_vfs_uri_hash,
-                                     thunar_vfs_uri_equal);
-    }
-
   /* see if we have the corresponding file cached already */
-  file = g_hash_table_lookup (file_cache, uri);
+  file = _thunar_file_cache_lookup (uri);
   if (file == NULL)
     {
       /* allocate the new file object */
       file = thunar_file_new_internal (uri, error);
       if (G_LIKELY (file != NULL))
-        {
-          /* drop the floating reference */
-          g_assert (GTK_OBJECT_FLOATING (file));
-          g_object_ref (G_OBJECT (file));
-          gtk_object_sink (GTK_OBJECT (file));
-
-          /* insert the file into the cache */
-          g_object_weak_ref (G_OBJECT (file), thunar_file_destroyed, uri);
-          g_hash_table_insert (file_cache, thunar_vfs_uri_ref (uri), file);
-        }
+        _thunar_file_cache_insert (file);
     }
   else
     {
@@ -645,12 +692,12 @@ thunar_file_get_uri (ThunarFile *file)
  * Therefore your component must be able to handle this case!
  *
  * This method automatically takes a reference on the returned
- * object for the caller, so you'll need to call #g_object_unref()
+ * object for the caller, so you'll need to call #thunar_vfs_mime_info()
  * when you are done with it.
  *
  * Return value: the MIME type or %NULL.
  **/
-ExoMimeInfo*
+ThunarVfsMimeInfo*
 thunar_file_get_mime_info (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);

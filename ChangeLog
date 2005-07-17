@@ -1,3 +1,11 @@
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/xdgmime/: Import the XDG mime implementation with the
+	  patches from libexo.
+	* thunar-vfs/: The ThunarVfsInfo framework is now thread-safe, using
+	  the ThunarVfsMime framework provided by ThunarVFS.
+	* thunar/: Turn Thunar into a threaded application.
+
 2005-07-16	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-folder.{c,h}: Add a "files-removed" signal, which can

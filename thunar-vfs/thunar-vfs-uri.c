@@ -56,7 +56,7 @@ struct _ThunarVfsURI
 {
   GTypeInstance __parent__;
 
-  guint              ref_count;
+  gint               ref_count;
   gchar             *host;
   gchar             *path;
   const gchar       *name;
@@ -409,7 +409,7 @@ thunar_vfs_uri_ref (ThunarVfsURI *uri)
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (uri->ref_count > 0, NULL);
 
-  ++uri->ref_count;
+  g_atomic_int_inc (&uri->ref_count);
 
   return uri;
 }
@@ -430,7 +430,7 @@ thunar_vfs_uri_unref (ThunarVfsURI *uri)
   g_return_if_fail (THUNAR_VFS_IS_URI (uri));
   g_return_if_fail (uri->ref_count > 0);
 
-  if (--uri->ref_count == 0)
+  if (g_atomic_int_dec_and_test (&uri->ref_count))
     {
 #ifndef G_DISABLE_CHECKS
       G_LOCK (debug_uris);
