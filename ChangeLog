@@ -1,5 +1,16 @@
 2005-07-17	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-path-entry.c: Do not handle the focus-out-event here,
+	  as it's better to handle it in the upper layers.
+	* thunar/thunar-path-entry.c(thunar_path_entry_set_current_file): Set
+	  the cursor to the end and queue a redraw on the whole widget.
+	* thunar/thunar-window.c: Include <thunar/thunar-location-entry.h>.
+	* thunar/thunar-location-entry.{c,h}, thunar/Makefile.am: Add
+	  ThunarLocationEntry, which implements ThunarLocationBar using a
+	  ThunarPathEntry widget.
+
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-path-entry.{c,h}: Add ThunarPathEntry class, which
 	  implements a widget to which the user can enter paths. The auto
 	  completion support is not yet provided.

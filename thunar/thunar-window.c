@@ -26,6 +26,7 @@
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-dialog.h>
+#include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-window-ui.h>

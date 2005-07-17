@@ -51,6 +51,8 @@ Thunar_SOURCES =							\
 	thunar-location-buttons.h					\
 	thunar-location-dialog.c					\
 	thunar-location-dialog.h					\
+	thunar-location-entry.c						\
+	thunar-location-entry.h						\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
 	thunar-path-entry.c						\

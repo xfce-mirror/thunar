@@ -62,8 +62,6 @@ static gboolean thunar_path_entry_focus               (GtkWidget            *wid
                                                        GtkDirectionType      direction);
 static gboolean thunar_path_entry_expose_event        (GtkWidget            *widget,
                                                        GdkEventExpose       *event);
-static gboolean thunar_path_entry_focus_out_event     (GtkWidget            *widget,
-                                                       GdkEventFocus        *event);
 static void     thunar_path_entry_activate            (GtkEntry             *entry);
 static void     thunar_path_entry_changed             (GtkEditable          *editable);
 static void     thunar_path_entry_get_borders         (ThunarPathEntry      *path_entry,
@@ -86,7 +84,6 @@ struct _ThunarPathEntry
 {
   GtkEntry __parent__;
 
-  ThunarFile *last_valid_file;
   ThunarFile *current_file;
   GdkWindow  *icon_area;
 };
@@ -122,7 +119,6 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
   gtkwidget_class->unrealize = thunar_path_entry_unrealize;
   gtkwidget_class->focus = thunar_path_entry_focus;
   gtkwidget_class->expose_event = thunar_path_entry_expose_event;
-  gtkwidget_class->focus_out_event = thunar_path_entry_focus_out_event;
 
   gtkentry_class = GTK_ENTRY_CLASS (klass);
   gtkentry_class->activate = thunar_path_entry_activate;
@@ -178,9 +174,6 @@ thunar_path_entry_finalize (GObject *object)
 
   if (G_LIKELY (path_entry->current_file != NULL))
     g_object_unref (G_OBJECT (path_entry->current_file));
-
-  if (G_LIKELY (path_entry->last_valid_file != NULL))
-    g_object_unref (G_OBJECT (path_entry->last_valid_file));
 
   G_OBJECT_CLASS (thunar_path_entry_parent_class)->finalize (object);
 }
@@ -440,34 +433,6 @@ thunar_path_entry_expose_event (GtkWidget      *widget,
 
 
 
-static gboolean
-thunar_path_entry_focus_out_event (GtkWidget     *widget,
-                                   GdkEventFocus *event)
-{
-  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-  ThunarFile      *file;
-
-  /* if currently no valid path is entered, we return to the last known
-   * valid file when the focus is removed from the widget.
-   */
-  if (path_entry->current_file == NULL && path_entry->last_valid_file != NULL)
-    {
-      /* get the last valid file... */
-      file = path_entry->last_valid_file;
-      path_entry->last_valid_file = NULL;
-
-      /* ... and set it to be the current file */
-      thunar_path_entry_set_current_file (path_entry, file);
-
-      /* we own the refence, as we set last_valid_file to NULL */
-      g_object_unref (G_OBJECT (file));
-    }
-
-  return GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->focus_out_event (widget, event);
-}
-
-
-
 static void
 thunar_path_entry_activate (GtkEntry *entry)
 {
@@ -491,12 +456,7 @@ thunar_path_entry_changed (GtkEditable *editable)
   if (file != path_entry->current_file)
     {
       if (G_UNLIKELY (path_entry->current_file != NULL))
-        {
-          /* remember this file as last valid file */
-          if (G_LIKELY (path_entry->last_valid_file != NULL))
-            g_object_unref (G_OBJECT (path_entry->last_valid_file));
-          path_entry->last_valid_file = path_entry->current_file;
-        }
+        g_object_unref (G_OBJECT (path_entry->current_file));
 
       path_entry->current_file = file;
 
@@ -638,5 +598,9 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
       gtk_entry_set_text (GTK_ENTRY (path_entry), uri_string);
       g_free (uri_string);
     }
+
+  gtk_editable_set_position (GTK_EDITABLE (path_entry), -1);
+
+  gtk_widget_queue_draw (GTK_WIDGET (path_entry));
 }
 
