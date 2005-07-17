@@ -207,7 +207,7 @@ void           thunar_vfs_info_unref       (ThunarVfsInfo       *info);
 gboolean       thunar_vfs_info_matches     (const ThunarVfsInfo *a,
                                             const ThunarVfsInfo *b);
 
-void           thunar_vfs_info_list_free   (GSList              *info_list);
+GSList        *thunar_vfs_info_list_free   (GSList              *info_list);
 
 G_END_DECLS;
 

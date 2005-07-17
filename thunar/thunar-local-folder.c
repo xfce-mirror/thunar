@@ -232,7 +232,6 @@ thunar_local_folder_callback (ThunarVfsJob *job,
   ThunarLocalFolder *local_folder = THUNAR_LOCAL_FOLDER (user_data);
   ThunarFile        *file;
   GSList            *nfiles = NULL;
-  GSList            *ofiles;
   GSList            *lp;
 
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
@@ -246,40 +245,22 @@ thunar_local_folder_callback (ThunarVfsJob *job,
     }
   else
     {
-      /* remember the previously contained files (if any) */
-      ofiles = local_folder->files;
-      local_folder->files = NULL;
-
-      /* generate the new list of files */
+      /* add the new files */
       for (lp = infos; lp != NULL; lp = lp->next)
         {
           file = thunar_local_file_get_for_info (lp->data);
           nfiles = g_slist_prepend (nfiles, file);
+          local_folder->files = g_slist_prepend (local_folder->files, file);
 
           g_signal_connect_closure_by_id (G_OBJECT (file), local_folder->file_destroy_id,
                                           0, local_folder->file_destroy_closure, TRUE);
         }
 
-      /* tell the consumers that the old files are gone */
-      if (G_UNLIKELY (ofiles != NULL))
-        {
-          thunar_folder_files_removed (THUNAR_FOLDER (local_folder), ofiles);
-
-          for (lp = ofiles; lp != NULL; lp = lp->next)
-            {
-              g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
-                                                local_folder->file_destroy_id, 0, local_folder->file_destroy_closure,
-                                                NULL, NULL);
-              g_object_unref (G_OBJECT (lp->data));
-            }
-          g_slist_free (ofiles);
-        }
-
       /* tell the consumers that we have new files */
       if (G_LIKELY (nfiles != NULL))
         {
-          local_folder->files = nfiles;
           thunar_folder_files_added (THUNAR_FOLDER (local_folder), nfiles);
+          g_slist_free (nfiles);
         }
     }
 
@@ -305,7 +286,7 @@ thunar_local_folder_corresponding_file_changed (ThunarFile        *file,
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
   g_return_if_fail (local_folder->corresponding_file == file);
 
-  /* rescan the directory */
+  /* rescan the directory (FIXME) */
 #if 0
   if (!thunar_local_folder_rescan (local_folder, NULL))
     gtk_object_destroy (GTK_OBJECT (local_folder));

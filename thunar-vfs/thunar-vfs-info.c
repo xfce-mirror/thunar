@@ -255,11 +255,20 @@ thunar_vfs_info_matches (const ThunarVfsInfo *a,
  *
  * Unrefs all #ThunarVfsInfo<!---->s in @info_list and
  * frees the list itself.
+ *
+ * This method always returns %NULL for the convenience of
+ * being able to do:
+ * <informalexample><programlisting>
+ * info_list = thunar_vfs_info_list_free (info_list);
+ * </programlisting></informalexample>
+ *
+ * Return value: the empty list (%NULL).
  **/
-void
+GSList*
 thunar_vfs_info_list_free (GSList *info_list)
 {
   g_slist_foreach (info_list, (GFunc) thunar_vfs_info_unref, NULL);
   g_slist_free (info_list);
+  return NULL;
 }
 

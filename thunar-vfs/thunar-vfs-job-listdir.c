@@ -38,6 +38,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
 
 #include <thunar-vfs/thunar-vfs-job-listdir.h>
 
@@ -142,6 +145,8 @@ thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
   ThunarVfsURI        *file_uri;
   GSList              *names;
   GSList              *lp;
+  time_t               last_check_time;
+  time_t               current_time;
   DIR                 *dp;
 
   dp = opendir (thunar_vfs_uri_get_path (job_listdir->uri));
@@ -181,10 +186,12 @@ thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
           if (G_UNLIKELY (d == NULL))
               break;
 
-          names = g_slist_prepend (names, g_string_chunk_insert (names_chunk, d->d_name));
+          names = g_slist_insert_sorted (names, g_string_chunk_insert (names_chunk, d->d_name), (GCompareFunc) strcmp);
         }
 
       closedir (dp);
+
+      last_check_time = time (NULL);
 
       /* Next we query the info for each of the file names
        * queried in the loop above.
@@ -200,6 +207,15 @@ thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
           if (G_LIKELY (info != NULL))
             job_listdir->infos = g_slist_prepend (job_listdir->infos, info);
           thunar_vfs_uri_unref (file_uri);
+
+          current_time = time (NULL);
+          if (current_time - last_check_time > 2)
+            {
+              last_check_time = current_time;
+              thunar_vfs_job_callback (job);
+              thunar_vfs_info_list_free (job_listdir->infos);
+              job_listdir->infos = NULL;
+            }
         }
 
       /* free the names */
