@@ -49,8 +49,12 @@ Thunar_SOURCES =							\
 	thunar-location-bar.h						\
 	thunar-location-buttons.c					\
 	thunar-location-buttons.h					\
+	thunar-location-dialog.c					\
+	thunar-location-dialog.h					\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
+	thunar-path-entry.c						\
+	thunar-path-entry.h						\
 	thunar-preferences.c						\
 	thunar-preferences.h						\
 	thunar-properties-dialog.c					\

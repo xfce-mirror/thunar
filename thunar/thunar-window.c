@@ -25,6 +25,7 @@
 #include <thunar/thunar-favourites-pane.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-location-buttons.h>
+#include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-window-ui.h>
@@ -54,6 +55,8 @@ static void     thunar_window_set_property        (GObject            *object,
 static void     thunar_window_action_close        (GtkAction          *action,
                                                    ThunarWindow       *window);
 static void     thunar_window_action_go_up        (GtkAction          *action,
+                                                   ThunarWindow       *window);
+static void     thunar_window_action_location     (GtkAction          *action,
                                                    ThunarWindow       *window);
 static void     thunar_window_action_about        (GtkAction          *action,
                                                    ThunarWindow       *window);
@@ -93,6 +96,7 @@ static const GtkActionEntry const action_entries[] =
   { "view-menu", NULL, N_ ("_View"), NULL, },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
+  { "open-location", NULL, N_ ("Open _Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_location), },
   { "help-menu", NULL, N_ ("_Help"), NULL, },
 #if GTK_CHECK_VERSION(2,6,0)
   { "about", GTK_STOCK_ABOUT, N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (thunar_window_action_about), },
@@ -306,6 +310,24 @@ thunar_window_action_go_up (GtkAction    *action,
   parent = thunar_file_get_parent (window->current_directory, NULL);
   thunar_window_set_current_directory (window, parent);
   g_object_unref (G_OBJECT (parent));
+}
+
+
+
+static void
+thunar_window_action_location (GtkAction    *action,
+                               ThunarWindow *window)
+{
+  GtkWidget *dialog;
+
+  dialog = thunar_location_dialog_new ();
+  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+  gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+  gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+  thunar_location_dialog_set_selected_file (THUNAR_LOCATION_DIALOG (dialog), thunar_window_get_current_directory (window));
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+    thunar_window_set_current_directory (window, thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog)));
+  gtk_widget_destroy (dialog);
 }
 
 

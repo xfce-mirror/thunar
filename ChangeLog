@@ -1,5 +1,18 @@
 2005-07-17	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-path-entry.{c,h}: Add ThunarPathEntry class, which
+	  implements a widget to which the user can enter paths. The auto
+	  completion support is not yet provided.
+	* thunar/thunar-location-dialog.{c,h}: Add ThunarLocationDialog class,
+	  which provides a "Open Location"-dialog similar to the one found in
+	  GtkFileChooser.
+	* thunar/Makefile.am: Add new classes to the build framework.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Add "Open
+	  Location" action to the window, which will bring up a
+	  ThunarLocationDialog.
+
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Use "thunar-threaded" instead of "Thunar-threaded".
 	* tests/test-thunar-vfs-volume-bsd.c(main): Get this test working again.
 
