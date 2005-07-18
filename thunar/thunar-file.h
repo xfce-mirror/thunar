@@ -74,7 +74,7 @@ struct _ThunarFileClass
 
   ThunarVfsURI        *(*get_uri)             (ThunarFile             *file);
 
-  ExoMimeInfo         *(*get_mime_info)       (ThunarFile             *file);
+  ThunarVfsMimeInfo   *(*get_mime_info)       (ThunarFile             *file);
 
   const gchar         *(*get_display_name)    (ThunarFile             *file);
   const gchar         *(*get_special_name)    (ThunarFile             *file);
@@ -121,6 +121,9 @@ struct _ThunarFile
 
 GType              thunar_file_get_type         (void) G_GNUC_CONST;
 
+ThunarFile        *_thunar_file_cache_lookup    (ThunarVfsURI           *uri);
+void               _thunar_file_cache_insert    (ThunarFile             *file);
+
 ThunarFile        *thunar_file_get_for_uri      (ThunarVfsURI           *uri,
                                                  GError                **error);
 
@@ -133,7 +136,7 @@ ThunarFolder      *thunar_file_open_as_folder   (ThunarFile             *file,
 
 ThunarVfsURI      *thunar_file_get_uri          (ThunarFile             *file);
 
-ExoMimeInfo       *thunar_file_get_mime_info    (ThunarFile             *file);
+ThunarVfsMimeInfo *thunar_file_get_mime_info    (ThunarFile             *file);
 
 const gchar       *thunar_file_get_display_name (ThunarFile             *file);
 const gchar       *thunar_file_get_special_name (ThunarFile             *file);

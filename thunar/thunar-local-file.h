@@ -34,10 +34,12 @@ typedef struct _ThunarLocalFile      ThunarLocalFile;
 #define THUNAR_IS_LOCAL_FILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_LOCAL_FILE))
 #define THUNAR_LOCAL_FILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCAL_FILE, ThunarLocalFileClass))
 
-GType       thunar_local_file_get_type  (void) G_GNUC_CONST;
+GType       thunar_local_file_get_type     (void) G_GNUC_CONST;
 
-ThunarFile *thunar_local_file_new       (ThunarVfsURI *uri,
-                                         GError      **error);
+ThunarFile *thunar_local_file_new          (ThunarVfsURI  *uri,
+                                            GError       **error);
+
+ThunarFile *thunar_local_file_get_for_info (ThunarVfsInfo *info);
 
 G_END_DECLS;
 

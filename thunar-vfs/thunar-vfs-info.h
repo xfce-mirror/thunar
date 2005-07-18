@@ -26,6 +26,7 @@
 
 #include <exo/exo.h>
 
+#include <thunar-vfs/thunar-vfs-mime.h>
 #include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
@@ -187,52 +188,26 @@ typedef struct
   /* device id */
   ThunarVfsFileDevice device;
 
+  /* file's mime type */
+  ThunarVfsMimeInfo *mime_info;
+
   /* file's URI */
   ThunarVfsURI *uri;
+
+  /*< private >*/
+  gint ref_count;
 } ThunarVfsInfo;
 
-#define thunar_vfs_info_init(info)                                          \
-G_STMT_START {                                                              \
-  (info)->type = THUNAR_VFS_FILE_TYPE_UNKNOWN;                              \
-  (info)->ctime = (ThunarVfsFileTime) -1;                                   \
-  (info)->uri = NULL;                                                       \
-} G_STMT_END
+ThunarVfsInfo *thunar_vfs_info_new_for_uri (ThunarVfsURI        *uri,
+                                            GError             **error) G_GNUC_MALLOC;
 
-#define thunar_vfs_info_reset(info)                                         \
-G_STMT_START {                                                              \
-  if (G_LIKELY ((info)->uri != NULL))                                       \
-    {                                                                       \
-      thunar_vfs_uri_unref ((info)->uri);                                   \
-      (info)->uri = NULL;                                                   \
-    }                                                                       \
-  (info)->type = THUNAR_VFS_FILE_TYPE_UNKNOWN;                              \
-  (info)->ctime = (ThunarVfsFileTime) -1;                                   \
-} G_STMT_END
+ThunarVfsInfo *thunar_vfs_info_ref         (ThunarVfsInfo       *info);
+void           thunar_vfs_info_unref       (ThunarVfsInfo       *info);
 
-/**
- * ThunarVfsInfoResult:
- * @THUNAR_VFS_INFO_NOCHANGE: file wasn't altered since last check.
- * @THUNAR_VFS_INFO_CHANGED : file was changed since last update.
- * @THUNAR_VFS_INFO_ERROR   : an error occured on checking the file.
- *
- * Possible return values for the #thunar_vfs_info_update() function,
- * which determine the result of the update.
- **/
-typedef enum
-{
-  THUNAR_VFS_INFO_RESULT_NOCHANGE,
-  THUNAR_VFS_INFO_RESULT_CHANGED,
-  THUNAR_VFS_INFO_RESULT_ERROR,
-} ThunarVfsInfoResult;
+gboolean       thunar_vfs_info_matches     (const ThunarVfsInfo *a,
+                                            const ThunarVfsInfo *b);
 
-gboolean            thunar_vfs_info_query            (ThunarVfsInfo       *info,
-                                                      ThunarVfsURI        *uri,
-                                                      GError             **error);
-
-ThunarVfsInfoResult thunar_vfs_info_update           (ThunarVfsInfo       *info,
-                                                      GError             **error);
-
-ExoMimeInfo        *thunar_vfs_info_get_mime_info    (ThunarVfsInfo        *info);
+GSList        *thunar_vfs_info_list_free   (GSList              *info_list);
 
 G_END_DECLS;
 

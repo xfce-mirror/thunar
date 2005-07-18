@@ -32,25 +32,25 @@
 
 
 
-static void              thunar_trash_file_class_init       (ThunarTrashFileClass *klass);
-static void              thunar_trash_file_init             (ThunarTrashFile      *trash_file);
-static void              thunar_trash_file_finalize         (GObject              *object);
-static ThunarFolder     *thunar_trash_file_open_as_folder   (ThunarFile           *file,
-                                                             GError              **error);
-static ThunarVfsURI     *thunar_trash_file_get_uri          (ThunarFile           *file);
-static ExoMimeInfo      *thunar_trash_file_get_mime_info    (ThunarFile           *file);
-static const gchar      *thunar_trash_file_get_display_name (ThunarFile           *file);
-static gboolean          thunar_trash_file_get_date         (ThunarFile           *file,
-                                                             ThunarFileDateType    date_type,
-                                                             ThunarVfsFileTime    *date_return);
-static ThunarVfsFileType thunar_trash_file_get_kind         (ThunarFile           *file);
-static ThunarVfsFileMode thunar_trash_file_get_mode         (ThunarFile           *file);
-static gboolean          thunar_trash_file_get_size         (ThunarFile           *file,
-                                                             ThunarVfsFileSize    *size_return);
-static ThunarVfsGroup   *thunar_trash_file_get_group        (ThunarFile           *file);
-static ThunarVfsUser    *thunar_trash_file_get_user         (ThunarFile           *file);
-static const gchar      *thunar_trash_file_get_icon_name    (ThunarFile           *file,
-                                                             GtkIconTheme         *icon_theme);
+static void               thunar_trash_file_class_init       (ThunarTrashFileClass *klass);
+static void               thunar_trash_file_init             (ThunarTrashFile      *trash_file);
+static void               thunar_trash_file_finalize         (GObject              *object);
+static ThunarFolder      *thunar_trash_file_open_as_folder   (ThunarFile           *file,
+                                                              GError              **error);
+static ThunarVfsURI      *thunar_trash_file_get_uri          (ThunarFile           *file);
+static ThunarVfsMimeInfo *thunar_trash_file_get_mime_info    (ThunarFile           *file);
+static const gchar       *thunar_trash_file_get_display_name (ThunarFile           *file);
+static gboolean           thunar_trash_file_get_date         (ThunarFile           *file,
+                                                              ThunarFileDateType    date_type,
+                                                              ThunarVfsFileTime    *date_return);
+static ThunarVfsFileType  thunar_trash_file_get_kind         (ThunarFile           *file);
+static ThunarVfsFileMode  thunar_trash_file_get_mode         (ThunarFile           *file);
+static gboolean           thunar_trash_file_get_size         (ThunarFile           *file,
+                                                              ThunarVfsFileSize    *size_return);
+static ThunarVfsGroup    *thunar_trash_file_get_group        (ThunarFile           *file);
+static ThunarVfsUser     *thunar_trash_file_get_user         (ThunarFile           *file);
+static const gchar       *thunar_trash_file_get_icon_name    (ThunarFile           *file,
+                                                              GtkIconTheme         *icon_theme);
 
 
 
@@ -152,7 +152,7 @@ thunar_trash_file_get_uri (ThunarFile *file)
 
 
 
-static ExoMimeInfo*
+static ThunarVfsMimeInfo*
 thunar_trash_file_get_mime_info (ThunarFile *file)
 {
   return thunar_file_get_mime_info (THUNAR_TRASH_FILE (file)->real_file);

@@ -208,6 +208,7 @@ thunar_vfs_monitor_event (GIOChannel  *source,
                           GIOCondition condition,
                           gpointer     user_data)
 {
+#if 0
 #ifdef HAVE_KQUEUE
   ThunarVfsInfoResult result;
   ThunarVfsMonitor   *monitor = THUNAR_VFS_MONITOR (user_data);
@@ -225,7 +226,7 @@ thunar_vfs_monitor_event (GIOChannel  *source,
         continue;
 
       /* force an update on the info */
-      result = thunar_vfs_info_update (watch->info, NULL);
+      result = 0; /*thunar_vfs_info_update (watch->info, NULL);*/
       switch (result)
         {
         case THUNAR_VFS_INFO_RESULT_ERROR:
@@ -247,6 +248,7 @@ thunar_vfs_monitor_event (GIOChannel  *source,
 
   GDK_THREADS_LEAVE ();
 #endif
+#endif
 
   /* keep the kqueue monitor going */
   return TRUE;
@@ -257,6 +259,7 @@ thunar_vfs_monitor_event (GIOChannel  *source,
 static gboolean
 thunar_vfs_monitor_timer (gpointer user_data)
 {
+#if 0
   ThunarVfsInfoResult result;
   ThunarVfsMonitor   *monitor = THUNAR_VFS_MONITOR (user_data);
   ThunarVfsWatch     *watch;
@@ -350,7 +353,8 @@ thunar_vfs_monitor_timer (gpointer user_data)
     }
 
   GDK_THREADS_LEAVE ();
-
+#endif
+  
   return TRUE;
 }
 

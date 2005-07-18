@@ -33,14 +33,28 @@
 
 
 
+enum
+{
+  PROP_0,
+  PROP_LOADING,
+};
+
+
+
 static void        thunar_local_folder_class_init                 (ThunarLocalFolderClass *klass);
 static void        thunar_local_folder_folder_init                (ThunarFolderIface      *iface);
 static void        thunar_local_folder_init                       (ThunarLocalFolder      *local_folder);
+static void        thunar_local_folder_get_property               (GObject                *object,
+                                                                   guint                   prop_id,
+                                                                   GValue                 *value,
+                                                                   GParamSpec             *pspec);
 static void        thunar_local_folder_finalize                   (GObject                *object);
 static ThunarFile *thunar_local_folder_get_corresponding_file     (ThunarFolder           *folder);
 static GSList     *thunar_local_folder_get_files                  (ThunarFolder           *folder);
-static gboolean    thunar_local_folder_rescan                     (ThunarLocalFolder      *local_folder,
-                                                                   GError                **error);
+static gboolean    thunar_local_folder_get_loading                (ThunarFolder           *folder);
+static void        thunar_local_folder_callback                   (ThunarVfsJob           *job,
+                                                                   GSList                 *infos,
+                                                                   gpointer                user_data);
 static void        thunar_local_folder_corresponding_file_changed (ThunarFile             *file,
                                                                    ThunarLocalFolder      *local_folder);
 static void        thunar_local_folder_corresponding_file_destroy (ThunarFile             *file,
@@ -58,6 +72,8 @@ struct _ThunarLocalFolderClass
 struct _ThunarLocalFolder
 {
   GtkObject __parent__;
+
+  ThunarVfsJob *job;
 
   ThunarFile *corresponding_file;
   GSList     *files;
@@ -83,6 +99,11 @@ thunar_local_folder_class_init (ThunarLocalFolderClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_local_folder_finalize;
+  gobject_class->get_property = thunar_local_folder_get_property;
+
+  g_object_class_override_property (gobject_class,
+                                    PROP_LOADING,
+                                    "loading");
 }
 
 
@@ -92,6 +113,7 @@ thunar_local_folder_folder_init (ThunarFolderIface *iface)
 {
   iface->get_corresponding_file = thunar_local_folder_get_corresponding_file;
   iface->get_files = thunar_local_folder_get_files;
+  iface->get_loading = thunar_local_folder_get_loading;
 }
 
 
@@ -117,6 +139,13 @@ thunar_local_folder_finalize (GObject *object)
   GSList            *lp;
 
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
+
+  /* cancel the pending job (if any) */
+  if (G_UNLIKELY (local_folder->job != NULL))
+    {
+      thunar_vfs_job_cancel (local_folder->job);
+      thunar_vfs_job_unref (local_folder->job);
+    }
 
   /* disconnect from the corresponding file */
   if (G_LIKELY (local_folder->corresponding_file != NULL))
@@ -149,96 +178,24 @@ thunar_local_folder_finalize (GObject *object)
 
 
 
-static gboolean
-thunar_local_folder_rescan (ThunarLocalFolder *local_folder,
-                            GError           **error)
+static void
+thunar_local_folder_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
 {
-  ThunarVfsURI  *folder_uri;
-  ThunarVfsURI  *file_uri;
-  const gchar   *name;
-  ThunarFile    *file;
-  GSList        *nfiles = NULL;
-  GSList        *ofiles;
-  GSList        *lp;
-  GDir          *dp;
+  ThunarFolder *folder = THUNAR_FOLDER (object);
 
-  /* remember the previously known items */
-  ofiles = local_folder->files;
-  local_folder->files = NULL;
-
-  folder_uri = thunar_file_get_uri (local_folder->corresponding_file);
-  dp = g_dir_open (thunar_vfs_uri_get_path (folder_uri), 0, error);
-  if (G_UNLIKELY (dp == NULL))
-    return FALSE;
-
-  for (;;)
+  switch (prop_id)
     {
-      name = g_dir_read_name (dp);
-      if (G_UNLIKELY (name == NULL))
-        break;
+    case PROP_LOADING:
+      g_value_set_boolean (value, thunar_folder_get_loading (folder));
+      break;
 
-      /* ignore ".." and "." entries */
-      if (G_UNLIKELY (name[0] == '.' && (name[1] == '\0' || (name[1] == '.' && name[2] == '\0'))))
-        continue;
-
-      /* check if the item was already present */
-      for (lp = ofiles; lp != NULL; lp = lp->next)
-        if (exo_str_is_equal (thunar_file_get_name (lp->data), name))
-          break;
-
-      if (lp != NULL)
-        {
-          /* the file was already present, relink to active items list */
-          ofiles = g_slist_remove_link (ofiles, lp);
-          lp->next = local_folder->files;
-          local_folder->files = lp;
-        }
-      else
-        {
-          /* we discovered a new file */
-          file_uri = thunar_vfs_uri_relative (folder_uri, name);
-          file = thunar_file_get_for_uri (file_uri, NULL);
-          thunar_vfs_uri_unref (file_uri);
-
-          if (G_UNLIKELY (file == NULL))
-            continue;
-
-          nfiles = g_slist_prepend (nfiles, file);
-
-          g_signal_connect_closure_by_id (G_OBJECT (file), local_folder->file_destroy_id,
-                                          0, local_folder->file_destroy_closure, TRUE);
-        }
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
     }
-
-  g_dir_close (dp);
-
-  /* handle the left over old-files */
-  if (G_UNLIKELY (ofiles != NULL))
-    {
-      /* notify listeners about removed files */
-      thunar_folder_files_removed (THUNAR_FOLDER (local_folder), ofiles);
-
-      /* drop old files */
-      for (lp = ofiles; lp != NULL; lp = lp->next)
-        {
-          g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
-                                                local_folder->file_destroy_id, 0, local_folder->file_destroy_closure,
-                                                NULL, NULL);
-          g_object_unref (G_OBJECT (lp->data));
-        }
-      g_slist_free (ofiles);
-    }
-
-  /* notify listening parties about added files and append the
-   * new files to our internal file list.
-   */
-  if (G_LIKELY (nfiles != NULL))
-    {
-      local_folder->files = g_slist_concat (local_folder->files, nfiles);
-      thunar_folder_files_added (THUNAR_FOLDER (local_folder), nfiles);
-    }
-
-  return TRUE;
 }
 
 
@@ -259,6 +216,68 @@ thunar_local_folder_get_files (ThunarFolder *folder)
 
 
 
+static gboolean
+thunar_local_folder_get_loading (ThunarFolder *folder)
+{
+  return (THUNAR_LOCAL_FOLDER (folder)->job != NULL);
+}
+
+
+
+static void
+thunar_local_folder_callback (ThunarVfsJob *job,
+                              GSList       *infos,
+                              gpointer      user_data)
+{
+  ThunarLocalFolder *local_folder = THUNAR_LOCAL_FOLDER (user_data);
+  ThunarFile        *file;
+  GSList            *nfiles = NULL;
+  GSList            *lp;
+
+  g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
+  g_return_if_fail (local_folder->job == job);
+
+  GDK_THREADS_ENTER ();
+
+  if (thunar_vfs_job_failed (job))
+    {
+      g_warning ("ThunarLocalFolder error: %s", thunar_vfs_job_get_error (job)->message);
+    }
+  else
+    {
+      /* add the new files */
+      for (lp = infos; lp != NULL; lp = lp->next)
+        {
+          file = thunar_local_file_get_for_info (lp->data);
+          nfiles = g_slist_prepend (nfiles, file);
+          local_folder->files = g_slist_prepend (local_folder->files, file);
+
+          g_signal_connect_closure_by_id (G_OBJECT (file), local_folder->file_destroy_id,
+                                          0, local_folder->file_destroy_closure, TRUE);
+        }
+
+      /* tell the consumers that we have new files */
+      if (G_LIKELY (nfiles != NULL))
+        {
+          thunar_folder_files_added (THUNAR_FOLDER (local_folder), nfiles);
+          g_slist_free (nfiles);
+        }
+    }
+
+  /* we did it, the folder is loaded */
+  if (thunar_vfs_job_finished (job))
+    {
+      thunar_vfs_job_unref (local_folder->job);
+      local_folder->job = NULL;
+
+      g_object_notify (G_OBJECT (local_folder), "loading");
+    }
+
+  GDK_THREADS_LEAVE ();
+}
+
+
+
 static void
 thunar_local_folder_corresponding_file_changed (ThunarFile        *file,
                                                 ThunarLocalFolder *local_folder)
@@ -267,9 +286,11 @@ thunar_local_folder_corresponding_file_changed (ThunarFile        *file,
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
   g_return_if_fail (local_folder->corresponding_file == file);
 
-  /* rescan the directory */
+  /* rescan the directory (FIXME) */
+#if 0
   if (!thunar_local_folder_rescan (local_folder, NULL))
     gtk_object_destroy (GTK_OBJECT (local_folder));
+#endif
 }
 
 
@@ -351,12 +372,9 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
 
       g_object_set_data (G_OBJECT (local_file), "thunar-local-folder", local_folder);
 
-      /* try to scan the new folder */
-      if (G_UNLIKELY (!thunar_local_folder_rescan (local_folder, error)))
-        {
-          g_object_unref (G_OBJECT (local_folder));
-          return NULL;
-        }
+      /* schedule the loading of the folder */
+      local_folder->job = thunar_vfs_job_listdir (thunar_file_get_uri (THUNAR_FILE (local_file)),
+                                                  thunar_local_folder_callback, local_folder);
     }
 
   return THUNAR_FOLDER (local_folder);

@@ -23,11 +23,20 @@
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-info.h>
+#include <thunar-vfs/thunar-vfs-job.h>
+#include <thunar-vfs/thunar-vfs-job-listdir.h>
+#include <thunar-vfs/thunar-vfs-mime.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
 #include <thunar-vfs/thunar-vfs-trash.h>
 #include <thunar-vfs/thunar-vfs-uri.h>
 #include <thunar-vfs/thunar-vfs-user.h>
 #include <thunar-vfs/thunar-vfs-util.h>
 #include <thunar-vfs/thunar-vfs-volume.h>
+
+G_BEGIN_DECLS;
+
+void  thunar_vfs_init (void);
+
+G_END_DECLS;
 
 #endif /* !__THUNAR_VFS_H__ */

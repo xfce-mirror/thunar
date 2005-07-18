@@ -38,6 +38,7 @@ struct _ThunarFolderIface
   /* methods */
   ThunarFile *(*get_corresponding_file) (ThunarFolder *folder);
   GSList     *(*get_files)              (ThunarFolder *folder);
+  gboolean    (*get_loading)            (ThunarFolder *folder);
 
   /* signals */
   void (*files_added)   (ThunarFolder *folder,
@@ -50,6 +51,7 @@ GType       thunar_folder_get_type               (void) G_GNUC_CONST;
 
 ThunarFile *thunar_folder_get_corresponding_file (ThunarFolder *folder);
 GSList     *thunar_folder_get_files              (ThunarFolder *folder);
+gboolean    thunar_folder_get_loading            (ThunarFolder *folder);
 
 void        thunar_folder_files_added            (ThunarFolder *folder,
                                                   GSList       *files);

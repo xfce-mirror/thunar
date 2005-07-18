@@ -397,9 +397,9 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 {
   ThunarIconFactory *icon_factory;
   ThunarVfsFileSize  size;
+  ThunarVfsMimeInfo *info;
   ThunarVfsVolume   *volume;
   GtkIconTheme      *icon_theme;
-  ExoMimeInfo       *info;
   const gchar       *icon_name;
   const gchar       *name;
   GdkPixbuf         *icon;
@@ -430,9 +430,9 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   info = thunar_file_get_mime_info (dialog->file);
   if (G_LIKELY (info != NULL))
     {
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), exo_mime_info_get_comment (info));
+      gtk_label_set_text (GTK_LABEL (dialog->kind_label), thunar_vfs_mime_info_get_comment (info));
       gtk_widget_show (dialog->kind_label);
-      g_object_unref (G_OBJECT (info));
+      thunar_vfs_mime_info_unref (info);
     }
   else
     {

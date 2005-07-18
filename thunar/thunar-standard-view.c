@@ -77,8 +77,7 @@ static void          thunar_standard_view_action_paste              (GtkAction  
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
                                                                      ThunarStandardView       *standard_view);
-static gboolean      thunar_standard_view_loading_idle              (gpointer                  user_data);
-static void          thunar_standard_view_loading_idle_destroy      (gpointer                  user_data);
+static void          thunar_standard_view_loading_unbound           (gpointer                  user_data);
 
 
 
@@ -170,9 +169,15 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                                     PROP_CURRENT_DIRECTORY,
                                     "current-directory");
 
-  g_object_class_override_property (gobject_class,
-                                    PROP_LOADING,
-                                    "loading");
+  g_object_class_install_property (gobject_class,
+                                   PROP_LOADING,
+                                   g_param_spec_override ("loading",
+                                                          g_param_spec_boolean ("loading",
+                                                                                _("Loading"),
+                                                                                _("Whether the view is currently being loaded"),
+                                                                                FALSE,
+                                                                                EXO_PARAM_READWRITE)));
+
   g_object_class_override_property (gobject_class,
                                     PROP_STATUSBAR_TEXT,
                                     "statusbar-text");
@@ -223,7 +228,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
                                        GTK_WIDGET (standard_view));
 
   standard_view->model = thunar_list_model_new ();
-  standard_view->loading_idle_id = -1;
 
   /* be sure to update the statusbar text whenever the number of
    * files in our model changes.
@@ -264,9 +268,9 @@ thunar_standard_view_dispose (GObject *object)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
 
-  /* be sure to cancel any loading idle source */
-  if (G_UNLIKELY (standard_view->loading_idle_id >= 0))
-    g_source_remove (standard_view->loading_idle_id);
+  /* unregister the "loading" binding */
+  if (G_UNLIKELY (standard_view->loading_binding != NULL))
+    exo_binding_unbind (standard_view->loading_binding);
 
   /* reset the UI manager property */
   thunar_view_set_ui_manager (THUNAR_VIEW (standard_view), NULL);
@@ -282,7 +286,7 @@ thunar_standard_view_finalize (GObject *object)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
 
   /* some safety checks */
-  g_assert (standard_view->loading_idle_id < 0);
+  g_assert (standard_view->loading_binding == NULL);
   g_assert (standard_view->ui_manager == NULL);
   g_assert (standard_view->clipboard == NULL);
 
@@ -339,10 +343,23 @@ thunar_standard_view_set_property (GObject      *object,
                                    const GValue *value,
                                    GParamSpec   *pspec)
 {
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
+  gboolean            loading;
+
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
       thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      break;
+
+    case PROP_LOADING:
+      loading = g_value_get_boolean (value);
+      if (G_LIKELY (loading != standard_view->loading))
+        {
+          standard_view->loading = loading;
+          g_object_notify (object, "loading");
+          g_object_notify (object, "statusbar-text");
+        }
       break;
 
     case PROP_UI_MANAGER:
@@ -427,6 +444,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
+  /* disconnect any previous "loading" binding */
+  if (G_LIKELY (standard_view->loading_binding != NULL))
+    exo_binding_unbind (standard_view->loading_binding);
+
   /* check if we want to reset the directory */
   if (G_UNLIKELY (current_directory == NULL))
     {
@@ -434,32 +455,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
       return;
     }
 
-  /* setup the folder for the view, we use a simple but very effective
-   * trick here to speed up the folder change: we completely disconnect
-   * the model from the view, load the folder into the model and afterwards
-   * reconnect the model with the view. This way we avoid having to fire
-   * and process thousands of row_removed() and row_inserted() signals.
-   * Instead the view can process the complete file list in the model
-   * ONCE.
+  /* We drop the model from the view as a simple optimization to speed up
+   * the process of disconnecting the model data from the view.
    */
-  g_object_set (G_OBJECT (GTK_BIN (standard_view)->child),
-                "model", NULL,
-                NULL);
-
-  /* give the real view some time to apply the new (not existing!) model */
-  while (gtk_events_pending ())
-    gtk_main_iteration ();
-
-  /* enter loading state (if not already in loading state) */
-  if (G_LIKELY (standard_view->loading_idle_id < 0))
-    {
-      /* launch the idle function, which will reset the loading state */
-      standard_view->loading_idle_id = g_idle_add_full (G_PRIORITY_LOW + 100, thunar_standard_view_loading_idle,
-                                                        standard_view, thunar_standard_view_loading_idle_destroy);
-
-      /* tell everybody that we are loading */
-      g_object_notify (G_OBJECT (standard_view), "loading");
-    }
+  g_object_set (G_OBJECT (GTK_BIN (standard_view)->child), "model", NULL, NULL);
 
   /* try to open the new directory */
   folder = thunar_file_open_as_folder (current_directory, &error);
@@ -490,15 +489,19 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
     }
   else
     {
+      /* connect the "loading" binding */
+      standard_view->loading_binding = exo_binding_new_full (G_OBJECT (folder), "loading",
+                                                             G_OBJECT (standard_view), "loading",
+                                                             NULL, thunar_standard_view_loading_unbound,
+                                                             standard_view);
+
       /* apply the new folder */
       thunar_list_model_set_folder (standard_view->model, folder);
       g_object_unref (G_OBJECT (folder));
     }
 
-  /* reset the model on the real view */
-  g_object_set (G_OBJECT (GTK_BIN (standard_view)->child),
-                "model", standard_view->model,
-                NULL);
+  /* reconnect our model to the view */
+  g_object_set (G_OBJECT (GTK_BIN (standard_view)->child), "model", standard_view->model, NULL);
 
   /* notify all listeners about the new/old current directory */
   g_object_notify (G_OBJECT (standard_view), "current-directory");
@@ -509,7 +512,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 static gboolean
 thunar_standard_view_get_loading (ThunarView *view)
 {
-  return (THUNAR_STANDARD_VIEW (view)->loading_idle_id >= 0);
+  return THUNAR_STANDARD_VIEW (view)->loading;
 }
 
 
@@ -527,6 +530,13 @@ thunar_standard_view_get_statusbar_text (ThunarView *view)
     {
       /* query the selected items (actually a list of GtkTreePath's) */
       items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
+
+      /* we display a loading text if no items are
+       * selected and the view is loading
+       */
+      if (items == NULL && standard_view->loading)
+        return _("Loading folder contents...");
+
       standard_view->statusbar_text = thunar_list_model_get_statusbar_text (standard_view->model, items);
       g_list_foreach (items, (GFunc) gtk_tree_path_free, NULL);
       g_list_free (items);
@@ -742,31 +752,21 @@ thunar_standard_view_action_show_hidden_files (GtkToggleAction    *toggle_action
 
 
 
-static gboolean
-thunar_standard_view_loading_idle (gpointer user_data)
-{
-  /* we just return FALSE here, and let the thunar_standard_view_loading_idle_destroy()
-   * method do the real work for us.
-   */
-  return FALSE;
-}
-
-
-
 static void
-thunar_standard_view_loading_idle_destroy (gpointer user_data)
+thunar_standard_view_loading_unbound (gpointer user_data)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
 
-  GDK_THREADS_ENTER ();
+  /* we don't have any binding now */
+  standard_view->loading_binding = NULL;
 
-  /* reset the loading state... */
-  standard_view->loading_idle_id = -1;
-
-  /* ...and tell everybody */
-  g_object_notify (G_OBJECT (standard_view), "loading");
-
-  GDK_THREADS_LEAVE ();
+  /* reset the "loading" property */
+  if (G_UNLIKELY (standard_view->loading))
+    {
+      standard_view->loading = FALSE;
+      g_object_notify (G_OBJECT (standard_view), "loading");
+      g_object_notify (G_OBJECT (standard_view), "statusbar-text");
+    }
 }
 
 

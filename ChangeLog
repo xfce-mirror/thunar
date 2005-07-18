@@ -1,3 +1,74 @@
+2005-07-18	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-job-listdir.c(thunar_vfs_job_listdir_execute):
+	  Always ignore the "." and ".." entries for directories.
+	* thunar/thunar-location-bar.{c,h}: Add virtual method accept_focus(),
+	  which tries to transfer keyboard focus to the location bar if it
+	  provides a way for the user to enter the location as text. Else
+	  the method returns FALSE and the window will open a separate dialog.
+	* thunar/thunar-location-buttons.c, thunar/thunar-location-entry.c:
+	  Implement the accept_focus() method on the ThunarLocationBar
+	  interface appropriately.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Make the
+	  location bar configurable using the action system.
+
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-path-entry.c: Do not handle the focus-out-event here,
+	  as it's better to handle it in the upper layers.
+	* thunar/thunar-path-entry.c(thunar_path_entry_set_current_file): Set
+	  the cursor to the end and queue a redraw on the whole widget.
+	* thunar/thunar-window.c: Include <thunar/thunar-location-entry.h>.
+	* thunar/thunar-location-entry.{c,h}, thunar/Makefile.am: Add
+	  ThunarLocationEntry, which implements ThunarLocationBar using a
+	  ThunarPathEntry widget.
+
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-path-entry.{c,h}: Add ThunarPathEntry class, which
+	  implements a widget to which the user can enter paths. The auto
+	  completion support is not yet provided.
+	* thunar/thunar-location-dialog.{c,h}: Add ThunarLocationDialog class,
+	  which provides a "Open Location"-dialog similar to the one found in
+	  GtkFileChooser.
+	* thunar/Makefile.am: Add new classes to the build framework.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Add "Open
+	  Location" action to the window, which will bring up a
+	  ThunarLocationDialog.
+
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Use "thunar-threaded" instead of "Thunar-threaded".
+	* tests/test-thunar-vfs-volume-bsd.c(main): Get this test working again.
+
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
+	* TODO: Add note to based the ThunarVfsJob communication on the GSignal
+	  mechanism.
+	* configure.in.in: Set tarname to be "Thunar-threaded".
+	* thunar-vfs/thunar-vfs-info.{c,h}: Let thunar_vfs_info_list_free()
+	  return NULL.
+	* thunar-vfs/thunar-vfs-job-listdir.c: Invoke the callback every two
+	  seconds, so for large directories, the user does not need to wait for
+	  the whole folder to be loaded. Also sort the item names prior to
+	  loading the infos.
+	* thunar/thunar-local-folder.c: Support partial loading, as implemented
+	  for ThunarVfsJobListdir.
+
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-volume-sysv.c: Fix compile warning with wrong
+	  parameters to thunar_vfs_volume_manager_sysv_get_volume_by_info().
+	  This fixes bug #1083.
+
+2005-07-17	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/xdgmime/: Import the XDG mime implementation with the
+	  patches from libexo.
+	* thunar-vfs/: The ThunarVfsInfo framework is now thread-safe, using
+	  the ThunarVfsMime framework provided by ThunarVFS.
+	* thunar/: Turn Thunar into a threaded application.
+
 2005-07-16	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-folder.{c,h}: Add a "files-removed" signal, which can

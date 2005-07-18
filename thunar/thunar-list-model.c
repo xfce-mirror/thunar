@@ -595,10 +595,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
                              gint          column,
                              GValue       *value)
 {
-  ExoMimeInfo *mime_info;
-  GdkPixbuf   *icon;
-  gchar       *str;
-  Row         *row;
+  ThunarVfsMimeInfo *mime_info;
+  GdkPixbuf         *icon;
+  gchar             *str;
+  Row               *row;
 
   g_return_if_fail (THUNAR_IS_LIST_MODEL (model));
   g_return_if_fail (iter->stamp == (THUNAR_LIST_MODEL (model))->stamp);
@@ -657,8 +657,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
       mime_info = thunar_file_get_mime_info (row->file);
       if (G_LIKELY (mime_info != NULL))
         {
-          g_value_set_static_string (value, exo_mime_info_get_name (mime_info));
-          g_object_unref (G_OBJECT (mime_info));
+          g_value_set_string (value, thunar_vfs_mime_info_get_name (mime_info));
+          thunar_vfs_mime_info_unref (mime_info);
         }
       else
         g_value_set_static_string (value, _("unknown"));
@@ -688,8 +688,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
       mime_info = thunar_file_get_mime_info (row->file);
       if (G_LIKELY (mime_info != NULL))
         {
-          g_value_set_static_string (value, exo_mime_info_get_comment (mime_info));
-          g_object_unref (G_OBJECT (mime_info));
+          g_value_set_string (value, thunar_vfs_mime_info_get_comment (mime_info));
+          thunar_vfs_mime_info_unref (mime_info);
         }
       else
         g_value_set_static_string (value, _("unknown"));
@@ -1359,9 +1359,9 @@ static gint
 sort_by_mime_type (ThunarFile *a,
                    ThunarFile *b)
 {
-  ExoMimeInfo *info_a;
-  ExoMimeInfo *info_b;
-  gint         result;
+  ThunarVfsMimeInfo *info_a;
+  ThunarVfsMimeInfo *info_b;
+  gint               result;
 
   info_a = thunar_file_get_mime_info (a);
   info_b = thunar_file_get_mime_info (b);
@@ -1379,11 +1379,11 @@ sort_by_mime_type (ThunarFile *a,
       return 1;
     }
 
-  result = strcasecmp (exo_mime_info_get_name (info_a),
-                       exo_mime_info_get_name (info_b));
+  result = strcasecmp (thunar_vfs_mime_info_get_name (info_a),
+                       thunar_vfs_mime_info_get_name (info_b));
 
-  g_object_unref (G_OBJECT (info_b));
-  g_object_unref (G_OBJECT (info_a));
+  thunar_vfs_mime_info_unref (info_b);
+  thunar_vfs_mime_info_unref (info_a);
 
   return result;
 }
@@ -1451,9 +1451,9 @@ static gint
 sort_by_type (ThunarFile *a,
               ThunarFile *b)
 {
-  ExoMimeInfo *info_a;
-  ExoMimeInfo *info_b;
-  gint         result;
+  ThunarVfsMimeInfo *info_a;
+  ThunarVfsMimeInfo *info_b;
+  gint               result;
 
   info_a = thunar_file_get_mime_info (a);
   info_b = thunar_file_get_mime_info (b);
@@ -1471,11 +1471,11 @@ sort_by_type (ThunarFile *a,
       return 1;
     }
 
-  result = strcasecmp (exo_mime_info_get_comment (info_a),
-                       exo_mime_info_get_comment (info_b));
+  result = strcasecmp (thunar_vfs_mime_info_get_comment (info_a),
+                       thunar_vfs_mime_info_get_comment (info_b));
 
-  g_object_unref (G_OBJECT (info_b));
-  g_object_unref (G_OBJECT (info_a));
+  thunar_vfs_mime_info_unref (info_b);
+  thunar_vfs_mime_info_unref (info_a);
 
   return result;
 }
@@ -1915,16 +1915,16 @@ gchar*
 thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
-  ThunarVfsFileSize size_summary;
-  ThunarVfsFileSize size;
-  ThunarVfsVolume  *volume;
-  ExoMimeInfo      *mime_info;
-  GtkTreeIter       iter;
-  ThunarFile       *file;
-  GList            *lp;
-  gchar            *size_string;
-  gchar            *text;
-  gint              n;
+  ThunarVfsMimeInfo *mime_info;
+  ThunarVfsFileSize  size_summary;
+  ThunarVfsFileSize  size;
+  ThunarVfsVolume   *volume;
+  GtkTreeIter        iter;
+  ThunarFile        *file;
+  GList             *lp;
+  gchar             *size_string;
+  gchar             *text;
+  gint               n;
 
   g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
@@ -1961,14 +1961,14 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           if (G_LIKELY (size_string != NULL))
             {
               text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
-                                      exo_mime_info_get_comment (mime_info));
+                                      thunar_vfs_mime_info_get_comment (mime_info));
             }
           else
             {
               text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file),
-                                      exo_mime_info_get_comment (mime_info));
+                                      thunar_vfs_mime_info_get_comment (mime_info));
             }
-          g_object_unref (G_OBJECT (mime_info));
+          thunar_vfs_mime_info_unref (mime_info);
         }
       else
         {

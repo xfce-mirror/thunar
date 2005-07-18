@@ -1,0 +1,285 @@
+Thu Jun  9 23:55:25 2005  Jonathan Blandford  <jrb@redhat.com>
+
+	* src/xdgmime.c (xdg_mime_init_from_directory): patch from
+	federico to realloc the right size, #3506
+
+2005-04-17  Christophe Fergeau  <teuf@gnome.org>
+
+	* src/xdgmimeint.c: fix gcc4 signedness warning
+
+2005-04-17  Christophe Fergeau  <teuf@gnome.org>
+
+	* src/xdgmimemagic.c: (_xdg_mime_magic_matchlet_compare_to_data),
+	(_xdg_mime_magic_matchlet_compare_level),
+	(_xdg_mime_magic_lookup_data): when  magic patterns matches, check if
+	there aren't subtypes with matching patterns too, and if so, favour
+	the subtype over the parent type, should fix #2686
+
+2005-04-16  Christophe Fergeau  <teuf@gnome.org>
+
+	* src/xdgmime.c: (xdg_mime_init_from_directory): fix leak when
+	mime.cache doesn't exist
+
+2005-04-16  Christophe Fergeau  <teuf@gnome.org>
+
+	* src/test-mime.c: (main): disabled call to xdg_mime_dump for now
+	* src/xdgmimemagic.c: (_xdg_mime_magic_matchlet_compare_to_data):
+	fixed off by 1 error when handling offsets, fixes bug #2050 and 
+	partly bug #2359
+
+Fri Apr  8 23:37:33 2005  Jonathan Blandford  <jrb@redhat.com>
+
+	* src/xdgmimecache.c: Actually add the file.  Also, patch from
+	Matthias Clasen <mclasen@redhat.com> to fix small bugs, #2939
+
+Fri Apr  1 14:59:43 2005  Jonathan Blandford  <jrb@redhat.com>
+
+	* src/xdgmimecache.c: Patch from Matthias Clasen to mmap the
+	cached xdg file.
+
+Mon Mar 28 13:58:32 2005  Jonathan Blandford  <jrb@redhat.com>
+
+	* src/xdgmimeglob.c (_xdg_glob_hash_insert_text): patch from
+	Matthias Clasen to handle globs that don't have '.' chars in
+	them.  As an example 'foo~' should match '*~'
+
+Mon Mar 21 13:16:12 2005  Jonathan Blandford  <jrb@redhat.com>
+
+	* src/xdgmime.c (xdg_mime_shutdown): fix from  Axel Liljencrantz
+	<f97-ali@nada.kth.se> to free parent_list in shutdown.
+
+2005-01-10  Christophe Fergeau  <teuf@gnome.org>
+
+	* src/xdgmimeglob.c: (_xdg_glob_hash_lookup_file_name): make previous
+	commit actually work...
+
+2005-01-10  Christophe Fergeau  <teuf@gnome.org>
+
+	* src/xdgmimeglob.c: (_xdg_glob_hash_lookup_file_name): don't get
+	confused by multiple dots in filenames when doing extension matching
+
+2004-12-13  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmime.h:
+
+	 wrap new API in XDG_ENTRY()
+
+2004-12-13  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimeglob.c: (_xdg_glob_hash_lookup_file_name):
+
+	Do not assume the filename is UTF8. We just need to look
+	for the dot which is ASCII.
+
+2004-12-09  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimeint.h:
+
+	Remove spacings I introduced by mistake
+
+2004-12-09  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimealias.c: (_xdg_mime_alias_read_from_file):
+	* src/xdgmimeint.c: (_xdg_ucs4_to_lower):
+	* src/xdgmimeint.h:
+	* src/xdgmimeparent.c: (_xdg_mime_parent_read_from_file):
+
+	Check in Mariano Suárez-Alvarez <msuarezalvarez@arnet.com.ar> patch
+	for GNOME bug #160838.
+
+2004-12-09  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimeglob.c: (_xdg_glob_hash_node_lookup_file_name):
+	* src/xdgmimeint.c: (_xdg_ucs4_to_lower):
+	* src/xdgmimeint.h:
+
+	Follow the freedesktop spec about case sensitiveness. Fix #732
+
+2004-12-08  Christophe Fergeau  <teuf@gnome.org>
+
+	* src/xdgmimeglob.c: (_xdg_mime_glob_read_from_file): backing out
+	"fix" for bug #1048 since it frees memory that shouldn't be freed.
+
+2004-12-08  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimemagic.c: (_xdg_mime_magic_read_from_file):
+
+	Check that fread succeeded reading all chars. Fix #1049
+
+2004-12-08  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmime.c:
+	* src/xdgmimealias.c:
+	* src/xdgmimeglob.c:
+	* src/xdgmimeint.c:
+	* src/xdgmimemagic.c:
+	* src/xdgmimeparent.c:
+
+	Include config.h. Fix #913
+
+2004-12-08  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimealias.c: (_xdg_mime_alias_list_lookup):
+
+	Fix a typo
+
+2004-12-08  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmime.c: (xdg_mime_unalias_mime_type),
+	(xdg_mime_mime_type_equal), (xdg_mime_mime_type_subclass),
+	(xdg_mime_get_mime_parents):
+	* src/xdgmime.h:
+
+	Add apis to get parents and to unalias mime type
+
+2004-12-08  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimealias.c: (_xdg_mime_alias_list_lookup):
+	* src/xdgmimeparent.c: (_xdg_mime_parent_list_lookup):
+
+	Protect against stupid bsearch() implementations.  (#1961,
+	Morten Welinder)
+
+2004-12-08  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimeparent.c: (_xdg_mime_parent_read_from_file):
+
+	Initialize the parent field of the newly allocate list 
+	entry.  (#1916, Alex Larsson)
+
+2004-12-08  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimeglob.c: (_xdg_mime_glob_read_from_file):
+
+	Patch from Matthias Clasen <mclasen@redhat.com> to fix
+	a mem leak. Bug #1048
+
+2004-12-08  Marco Pesenti Gritti  <marco@gnome.org>
+
+	* src/xdgmimeglob.h:
+
+	Patch from Michael.Wilson@bull.net to fix compile error on AIX
+
+Sun Nov  7 02:25:21 2004  Jonathan Blandford  <jrb@redhat.com>
+
+	* src/xdgmime.h: Patch from Matthias Clasen <mclasen@redhat.com>
+	to add alias and inheritence support.
+
+2004-09-16  Christophe Fergeau  <teuf@gnome.org>
+
+	* src/xdgmimeglob.c: (_xdg_glob_hash_free_nodes):
+	* src/xdgmimemagic.c: (_xdg_mime_magic_free): fix memory leaks, 
+	  fixes http://bugzilla.gnome.org/show_bug.cgi?id=152771 and
+	  http://bugzilla.gnome.org/show_bug.cgi?id=152768
+
+Mon Jul 19 00:23:00 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmime.c (xdg_mime_register_reload_callback): register a
+	callback when we reload MIME data.
+
+	* src/xdgmime.c (xdg_mime_remove_callback): Add capability to
+	remove callback.
+
+Sun Jul 18 20:56:22 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmime.c (xdg_mime_shutdown):
+	(xdg_mime_init): reread data when it changes on disk.
+
+Thu May 27 16:18:14 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmime.h: move xdg_mime_shutdown into the XDG_ENTRY guard.
+
+Thu May 27 15:02:13 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmimemagic.c (_xdg_mime_magic_read_magic_file): patch from
+	Hongli Lai <h.lai@chello.nl> to catch magic files that don't end
+	with a '\n'.
+
+Fri Apr 30 11:56:01 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmimemagic.c (_xdg_mime_magic_read_a_number): make the
+	buffer the right size.  Reported by Morten Welinder, #136323
+
+Sun Mar 21 23:56:46 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmimemagic.c: Patch from Arjan van de Ven
+	<arjanv@redhat.com> to do s/fgetc/getc_unlocked/g.
+
+Wed Mar 10 22:28:41 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmimemagic.c (_xdg_mime_magic_read_a_number): fix usage of
+	isdigit.  Reported by Morten Welinder, #136323
+
+	* src/xdgmimemagic.c (_xdg_mime_magic_read_magic_file): patch from
+	Christophe Fergeau to reverse the order of the matchlet before
+	adding it to the list.
+
+	* src/xdgmimeint.h (_xdg_utf8_skip): patch from Alexander Larsson
+	to make extern.
+
+Wed Jan 21 09:29:41 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmimemagic.c (_xdg_mime_magic_insert_match): dropped
+	patches.  Fix.
+
+	* src/xdgmimeglob.c (_xdg_glob_hash_free_nodes): dropped patches.
+	Fix.
+
+Tue Jan 20 14:55:39 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmime.h (XDG_MIME_TYPE_UNKNOWN): move the definition so
+	that it catches the XDG_ENTRY mangling.
+
+	* src/xdgmimemagic.c: make some functions static
+
+Tue Jan 20 14:34:26 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmime.c (xdg_mime_get_max_buffer_extents): add function so
+	that it's easy to get the max buffer extents.
+
+Tue Jan 20 12:55:55 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/Makefile: Test prefix code
+
+	* src/xdgmime*.h: Fully use the prefix code
+
+	* src/xdgmime.c: finish the syncing from both GTK+ and gnome-vfs.
+
+Tue Jan 13 16:21:04 2004  Jonathan Blandford  <jrb@gnome.org>
+
+	* src/xdgmime.[ch] (XDG_MIME_TYPE_UNKNOWN): make an extern const
+	char * so that comparisons can work.
+
+	* src/xdgmimeint.c (_xdg_utf8_to_ucs4): patch from Dave Jones
+	<davej@redhat.com> to make operations more explicit.
+
+Tue Oct 28 15:09:06 2003  Jonathan Blandford  <jrb@redhat.com>
+
+	* README: Add a readme, and clarify the licensing terms of the
+	software.
+
+Tue Oct 28 14:47:37 2003  Jonathan Blandford  <jrb@redhat.com>
+
+	* src/xdgmime.c (xdg_mime_shutdown): implement shutdown.  This
+	frees all memory and resets to an uninitialized state as best as
+	possible.
+
+Mon Oct 27 11:45:58 2003  Jonathan Blandford  <jrb@redhat.com>
+
+	* src/xdgmimemagic.c (_xdg_mime_magic_read_a_number): strtol
+	returns a long, not an int.  Thanks to Manish Singh for pointing
+	this out.
+
+	* src/xdgmimemagic.c (_xdg_mime_magic_parse_magic_line): change
+	assertion to avoid a warning.
+
+Tue Oct 21 15:56:55 2003  Jonathan Blandford  <jrb@gnome.org>
+
+	* Makefile: add a simple makefile
+	* src/Makefile: ditto
+
+Tue Jul 22 15:37:45 2003  Jonathan Blandford  <jrb@gnome.org>
+
+	* xdgmime/xdgmime.c (xdg_mime_init): use XDG_DATA_HOME instead of
+	XDG_CONFIG_HOME.
+

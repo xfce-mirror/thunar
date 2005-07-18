@@ -41,19 +41,22 @@ main (int argc, char **argv)
   GtkWidget    *window;
   GError       *error = NULL;
 
+#ifndef G_DISABLE_CHECKS
   /* Do NOT remove this line for now, If something doesn't work,
    * fix your code instead!
    */
   g_log_set_always_fatal (G_LOG_LEVEL_CRITICAL | G_LOG_LEVEL_WARNING);
+#endif
 
   /* initialize the GLib thread support */
-#if 0
   if (!g_thread_supported ())
     g_thread_init (NULL);
-#endif
 
   /* initialize Gtk+ */
   gtk_init (&argc, &argv);
+
+  /* initialize the ThunarVFS library */
+  thunar_vfs_init ();
 
   path = (argc > 1) ? argv[1] : xfce_get_homedir ();
 

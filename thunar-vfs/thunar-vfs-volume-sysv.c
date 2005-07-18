@@ -29,7 +29,7 @@
 static void             thunar_vfs_volume_manager_sysv_class_init         (ThunarVfsVolumeManagerSysVClass *klass);
 static void             thunar_vfs_volume_manager_sysv_manager_init       (ThunarVfsVolumeManagerIface     *iface);
 static void             thunar_vfs_volume_manager_sysv_init               (ThunarVfsVolumeManagerSysV      *manager_sysv);
-static ThunarVfsVolume *thunar_vfs_volume_manager_sysv_get_volume_by_info (ThunarVfsVolumeManagerSysV      *manager_sysv,
+static ThunarVfsVolume *thunar_vfs_volume_manager_sysv_get_volume_by_info (ThunarVfsVolumeManager          *manager,
                                                                            const ThunarVfsInfo             *info);
 static GList           *thunar_vfs_volume_manager_sysv_get_volumes        (ThunarVfsVolumeManager          *manager);
 
@@ -78,8 +78,8 @@ thunar_vfs_volume_manager_sysv_init (ThunarVfsVolumeManagerSysV *manager_sysv)
 
 
 static ThunarVfsVolume*
-thunar_vfs_volume_manager_sysv_get_volume_by_info (ThunarVfsVolumeManagerSysV *manager_sysv,
-                                                   const ThunarVfsInfo        *info)
+thunar_vfs_volume_manager_sysv_get_volume_by_info (ThunarVfsVolumeManager *manager,
+                                                   const ThunarVfsInfo    *info)
 {
   return NULL;
 }

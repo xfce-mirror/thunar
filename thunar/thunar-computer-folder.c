@@ -30,10 +30,22 @@
 
 
 
+enum
+{
+  PROP_0,
+  PROP_LOADING,
+};
+
+
+
 static void               thunar_computer_folder_class_init             (ThunarComputerFolderClass *klass);
 static void               thunar_computer_folder_folder_init            (ThunarFolderIface         *iface);
 static void               thunar_computer_folder_init                   (ThunarComputerFolder      *computer_folder);
 static void               thunar_computer_folder_finalize               (GObject                   *object);
+static void               thunar_computer_folder_get_property           (GObject                   *object,
+                                                                         guint                      prop_id,
+                                                                         GValue                    *value,
+                                                                         GParamSpec                *pspec);
 static gboolean           thunar_computer_folder_has_parent             (ThunarFile                *file);
 static ThunarFolder      *thunar_computer_folder_open_as_folder         (ThunarFile                *file,
                                                                          GError                   **error);
@@ -45,6 +57,7 @@ static const gchar       *thunar_computer_folder_get_icon_name          (ThunarF
                                                                          GtkIconTheme              *icon_theme);
 static ThunarFile        *thunar_computer_folder_get_corresponding_file (ThunarFolder              *folder);
 static GSList            *thunar_computer_folder_get_files              (ThunarFolder              *folder);
+static gboolean           thunar_computer_folder_get_loading            (ThunarFolder              *folder);
 
 
 
@@ -79,6 +92,7 @@ thunar_computer_folder_class_init (ThunarComputerFolderClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_computer_folder_finalize;
+  gobject_class->get_property = thunar_computer_folder_get_property;
 
   thunarfile_class = THUNAR_FILE_CLASS (klass);
   thunarfile_class->has_parent = thunar_computer_folder_has_parent;
@@ -88,6 +102,10 @@ thunar_computer_folder_class_init (ThunarComputerFolderClass *klass)
   thunarfile_class->get_kind = thunar_computer_folder_get_kind;
   thunarfile_class->get_mode = thunar_computer_folder_get_mode;
   thunarfile_class->get_icon_name = thunar_computer_folder_get_icon_name;
+
+  g_object_class_override_property (gobject_class,
+                                    PROP_LOADING,
+                                    "loading");
 }
 
 
@@ -97,6 +115,7 @@ thunar_computer_folder_folder_init (ThunarFolderIface *iface)
 {
   iface->get_corresponding_file = thunar_computer_folder_get_corresponding_file;
   iface->get_files = thunar_computer_folder_get_files;
+  iface->get_loading = thunar_computer_folder_get_loading;
 }
 
 
@@ -123,6 +142,28 @@ thunar_computer_folder_finalize (GObject *object)
   thunar_vfs_uri_unref (computer_folder->uri);
 
   G_OBJECT_CLASS (thunar_computer_folder_parent_class)->finalize (object);
+}
+
+
+
+static void
+thunar_computer_folder_get_property (GObject    *object,
+                                     guint       prop_id,
+                                     GValue     *value,
+                                     GParamSpec *pspec)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (object);
+
+  switch (prop_id)
+    {
+    case PROP_LOADING:
+      g_value_set_boolean (value, thunar_folder_get_loading (folder));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 
@@ -223,6 +264,14 @@ thunar_computer_folder_get_files (ThunarFolder *folder)
     }
 
   return computer_folder->files;
+}
+
+
+
+static gboolean
+thunar_computer_folder_get_loading (ThunarFolder *folder)
+{
+  return FALSE;
 }
 
 

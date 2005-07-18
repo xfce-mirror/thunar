@@ -34,7 +34,7 @@ static ThunarFile        *thunar_local_file_get_parent        (ThunarFile       
 static ThunarFolder      *thunar_local_file_open_as_folder    (ThunarFile             *file,
                                                                GError                **error);
 static ThunarVfsURI      *thunar_local_file_get_uri           (ThunarFile             *file);
-static ExoMimeInfo       *thunar_local_file_get_mime_info     (ThunarFile             *file);
+static ThunarVfsMimeInfo *thunar_local_file_get_mime_info     (ThunarFile             *file);
 static const gchar       *thunar_local_file_get_display_name  (ThunarFile             *file);
 static const gchar       *thunar_local_file_get_special_name  (ThunarFile             *file);
 static gboolean           thunar_local_file_get_date          (ThunarFile             *file,
@@ -53,7 +53,6 @@ static const gchar       *thunar_local_file_get_icon_name     (ThunarFile       
                                                                GtkIconTheme           *icon_theme);
 static void               thunar_local_file_watch             (ThunarFile             *file);
 static void               thunar_local_file_unwatch           (ThunarFile             *file);
-static void               thunar_local_file_changed           (ThunarFile             *file);
 static void               thunar_local_file_monitor           (ThunarVfsMonitor       *monitor,
                                                                ThunarVfsMonitorEvent   event,
                                                                ThunarVfsInfo          *info,
@@ -72,11 +71,10 @@ struct _ThunarLocalFile
 {
   ThunarFile __parent__;
 
-  gchar        *display_name;
-  ExoMimeInfo  *mime_info;
-  ThunarVfsInfo info;
+  gchar         *display_name;
+  ThunarVfsInfo *info;
 
-  gint          watch_id;
+  gint           watch_id;
 };
 
 
@@ -117,7 +115,6 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_icon_name = thunar_local_file_get_icon_name;
   thunarfile_class->watch = thunar_local_file_watch;
   thunarfile_class->unwatch = thunar_local_file_unwatch;
-  thunarfile_class->changed = thunar_local_file_changed;
 }
 
 
@@ -125,7 +122,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
 static void
 thunar_local_file_init (ThunarLocalFile *local_file)
 {
-  thunar_vfs_info_init (&local_file->info);
+  local_file->info = NULL;
 }
 
 
@@ -143,12 +140,9 @@ thunar_local_file_finalize (GObject *object)
     }
 #endif
 
-  /* free the mime info */
-  if (G_LIKELY (local_file->mime_info != NULL))
-    g_object_unref (G_OBJECT (local_file->mime_info));
-
   /* reset the vfs info (freeing the specific data) */
-  thunar_vfs_info_reset (&local_file->info);
+  if (G_LIKELY (local_file->info != NULL))
+    thunar_vfs_info_unref (local_file->info);
 
   /* free the display name */
   g_free (local_file->display_name);
@@ -167,7 +161,7 @@ thunar_local_file_get_parent (ThunarFile *file,
   ThunarFile      *computer_file;
 
   /* the root file system node has 'computer:' as its parent */
-  if (G_UNLIKELY (thunar_vfs_uri_is_root (local_file->info.uri)))
+  if (G_UNLIKELY (thunar_vfs_uri_is_root (local_file->info->uri)))
     {
       computer_uri = thunar_vfs_uri_new ("computer:", error);
       if (G_LIKELY (computer_uri != NULL))
@@ -200,24 +194,15 @@ thunar_local_file_open_as_folder (ThunarFile *file,
 static ThunarVfsURI*
 thunar_local_file_get_uri (ThunarFile *file)
 {
-  return THUNAR_LOCAL_FILE (file)->info.uri;
+  return THUNAR_LOCAL_FILE (file)->info->uri;
 }
 
 
 
-static ExoMimeInfo*
+static ThunarVfsMimeInfo*
 thunar_local_file_get_mime_info (ThunarFile *file)
 {
-  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
-
-  /* determine the mime type on-demand */
-  if (G_UNLIKELY (local_file->mime_info == NULL))
-    local_file->mime_info = thunar_vfs_info_get_mime_info (&local_file->info);
-
-  /* take a reference for the caller */
-  g_object_ref (G_OBJECT (local_file->mime_info));
-
-  return local_file->mime_info;
+  return thunar_vfs_mime_info_ref (THUNAR_LOCAL_FILE (file)->info->mime_info);
 }
 
 
@@ -228,12 +213,12 @@ thunar_local_file_get_display_name (ThunarFile *file)
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
 
   /* root directory is always displayed as 'Filesystem' */
-  if (thunar_vfs_uri_is_root (local_file->info.uri))
+  if (thunar_vfs_uri_is_root (local_file->info->uri))
     return _("Filesystem");
 
   /* determine the display name on-demand */
   if (G_UNLIKELY (local_file->display_name == NULL))
-    local_file->display_name = thunar_vfs_uri_get_display_name (local_file->info.uri);
+    local_file->display_name = thunar_vfs_uri_get_display_name (local_file->info->uri);
 
   return local_file->display_name;
 }
@@ -246,9 +231,9 @@ thunar_local_file_get_special_name (ThunarFile *file)
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
 
   /* root and home dir have special names */
-  if (thunar_vfs_uri_is_root (local_file->info.uri))
+  if (thunar_vfs_uri_is_root (local_file->info->uri))
     return _("Filesystem");
-  else if (thunar_vfs_uri_is_home (local_file->info.uri))
+  else if (thunar_vfs_uri_is_home (local_file->info->uri))
     return _("Home");
 
   return thunar_file_get_display_name (file);
@@ -266,15 +251,15 @@ thunar_local_file_get_date (ThunarFile        *file,
   switch (date_type)
     {
     case THUNAR_FILE_DATE_ACCESSED:
-      *date_return = local_file->info.atime;
+      *date_return = local_file->info->atime;
       break;
 
     case THUNAR_FILE_DATE_CHANGED:
-      *date_return = local_file->info.ctime;
+      *date_return = local_file->info->ctime;
       break;
 
     case THUNAR_FILE_DATE_MODIFIED:
-      *date_return = local_file->info.mtime;
+      *date_return = local_file->info->mtime;
       break;
 
     default:
@@ -289,7 +274,7 @@ thunar_local_file_get_date (ThunarFile        *file,
 static ThunarVfsFileMode
 thunar_local_file_get_mode (ThunarFile *file)
 {
-  return THUNAR_LOCAL_FILE (file)->info.mode;
+  return THUNAR_LOCAL_FILE (file)->info->mode;
 }
 
 
@@ -299,10 +284,10 @@ thunar_local_file_get_size (ThunarFile        *file,
                             ThunarVfsFileSize *size_return)
 {
   /* we don't return files sizes for directories, as that's confusing */
-  if (THUNAR_LOCAL_FILE (file)->info.type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+  if (THUNAR_LOCAL_FILE (file)->info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
     return FALSE;
 
-  *size_return = THUNAR_LOCAL_FILE (file)->info.size;
+  *size_return = THUNAR_LOCAL_FILE (file)->info->size;
   return TRUE;
 }
 
@@ -311,7 +296,7 @@ thunar_local_file_get_size (ThunarFile        *file,
 static ThunarVfsFileType
 thunar_local_file_get_kind (ThunarFile *file)
 {
-  return THUNAR_LOCAL_FILE (file)->info.type;
+  return THUNAR_LOCAL_FILE (file)->info->type;
 }
 
 
@@ -320,7 +305,7 @@ static ThunarVfsVolume*
 thunar_local_file_get_volume (ThunarFile             *file,
                               ThunarVfsVolumeManager *volume_manager)
 {
-  return thunar_vfs_volume_manager_get_volume_by_info (volume_manager, &THUNAR_LOCAL_FILE (file)->info);
+  return thunar_vfs_volume_manager_get_volume_by_info (volume_manager, THUNAR_LOCAL_FILE (file)->info);
 }
 
 
@@ -329,7 +314,7 @@ static ThunarVfsGroup*
 thunar_local_file_get_group (ThunarFile *file)
 {
   return thunar_vfs_user_manager_get_group_by_id (THUNAR_LOCAL_FILE_GET_CLASS (file)->user_manager,
-                                                  THUNAR_LOCAL_FILE (file)->info.gid);
+                                                  THUNAR_LOCAL_FILE (file)->info->gid);
 }
 
 
@@ -338,7 +323,7 @@ static ThunarVfsUser*
 thunar_local_file_get_user (ThunarFile *file)
 {
   return thunar_vfs_user_manager_get_user_by_id (THUNAR_LOCAL_FILE_GET_CLASS (file)->user_manager,
-                                                 THUNAR_LOCAL_FILE (file)->info.uid);
+                                                 THUNAR_LOCAL_FILE (file)->info->uid);
 }
 
 
@@ -347,7 +332,7 @@ static GList*
 thunar_local_file_get_emblem_names (ThunarFile *file)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
-  ThunarVfsInfo   *info = &local_file->info;
+  ThunarVfsInfo   *info = local_file->info;
   GList           *emblems = NULL;
 
   if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
@@ -366,27 +351,24 @@ thunar_local_file_get_icon_name (ThunarFile   *file,
                                  GtkIconTheme *icon_theme)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
-  ExoMimeInfo     *mime_info;
   const gchar     *icon_name;
 
   /* special icon for the root node */
-  if (G_UNLIKELY (thunar_vfs_uri_is_root (local_file->info.uri))
+  if (G_UNLIKELY (thunar_vfs_uri_is_root (local_file->info->uri))
       && gtk_icon_theme_has_icon (icon_theme, "gnome-dev-harddisk"))
     {
       return "gnome-dev-harddisk";
     }
 
   /* special icon for the home node */
-  if (G_UNLIKELY (thunar_vfs_uri_is_home (local_file->info.uri))
+  if (G_UNLIKELY (thunar_vfs_uri_is_home (local_file->info->uri))
       && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-home"))
     {
       return "gnome-fs-home";
     }
 
   /* default is the mime type icon */
-  mime_info = thunar_file_get_mime_info (file);
-  icon_name = exo_mime_info_lookup_icon_name (mime_info, icon_theme);
-  g_object_unref (G_OBJECT (mime_info));
+  icon_name = thunar_vfs_mime_info_lookup_icon_name (local_file->info->mime_info, icon_theme);
 
   return icon_name;
 }
@@ -411,10 +393,14 @@ thunar_local_file_watch (ThunarFile *file)
       g_object_ref (G_OBJECT (monitor));
     }
 
+#if 0
   /* add our VFS info to the monitor */
-  local_file->watch_id = thunar_vfs_monitor_add_info (monitor, &local_file->info,
+  local_file->watch_id = thunar_vfs_monitor_add_info (monitor, local_file->info,
                                                       thunar_local_file_monitor,
                                                       local_file);
+#else
+  (void) &thunar_local_file_monitor;
+#endif
 }
 
 
@@ -422,6 +408,7 @@ thunar_local_file_watch (ThunarFile *file)
 static void
 thunar_local_file_unwatch (ThunarFile *file)
 {
+#if 0
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
 
   g_return_if_fail (local_file->watch_id != 0);
@@ -429,26 +416,10 @@ thunar_local_file_unwatch (ThunarFile *file)
   /* remove our VFS info from the monitor */
   thunar_vfs_monitor_remove (monitor, local_file->watch_id);
   local_file->watch_id = 0;
+#endif
 
   /* release our reference on the VFS monitor */
   g_object_unref (G_OBJECT (monitor));
-}
-
-
-
-static void
-thunar_local_file_changed (ThunarFile *file)
-{
-  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
-
-  /* drop the cached mime type, will be recalculated on-demand */
-  if (G_LIKELY (local_file->mime_info != NULL))
-    {
-      g_object_unref (G_OBJECT (local_file->mime_info));
-      local_file->mime_info = NULL;
-    }
-
-  THUNAR_FILE_CLASS (thunar_local_file_parent_class)->changed (file);
 }
 
 
@@ -497,24 +468,76 @@ thunar_local_file_new (ThunarVfsURI *uri,
                        GError      **error)
 {
   ThunarLocalFile *local_file;
+  ThunarVfsInfo   *info;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
   g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE, NULL);
 
+  /* query the file info */
+  info = thunar_vfs_info_new_for_uri (uri, error);
+  if (G_UNLIKELY (info == NULL))
+    return NULL;
+
   /* allocate the new object */
   local_file = g_object_new (THUNAR_TYPE_LOCAL_FILE, NULL);
-
-  /* query the file info */
-  if (!thunar_vfs_info_query (&local_file->info, uri, error))
-    {
-      gtk_object_sink (GTK_OBJECT (local_file));
-      return NULL;
-    }
+  local_file->info = info;
 
   return THUNAR_FILE (local_file);
 }
 
 
 
+/**
+ * thunar_local_file_get_for_info:
+ * @info : a #ThunarVfsInfo.
+ *
+ * Looks up the #ThunarLocalFile corresponding to
+ * @info. Use this function if want to specify the
+ * #ThunarVfsInfo to use for a #ThunarLocalFile instead
+ * of #thunar_file_get_for_uri(), which would determine
+ * the #ThunarVfsInfo once again.
+ *
+ * The caller is responsible to call #g_object_unref()
+ * when done with the returned object.
+ *
+ * Return value: the #ThunarLocalFile for @info.
+ **/
+ThunarFile*
+thunar_local_file_get_for_info (ThunarVfsInfo *info)
+{
+  ThunarLocalFile *local_file;
+
+  g_return_val_if_fail (info != NULL, NULL);
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (info->uri), NULL);
+
+  /* check if we already have a cached version of that file */
+  local_file = THUNAR_LOCAL_FILE (_thunar_file_cache_lookup (info->uri));
+  if (G_UNLIKELY (local_file != NULL))
+    {
+      /* take a reference for the caller */
+      g_object_ref (G_OBJECT (local_file));
+
+      /* apply the new info */
+      if (!thunar_vfs_info_matches (local_file->info, info))
+        {
+          thunar_vfs_info_unref (local_file->info);
+          local_file->info = thunar_vfs_info_ref (info);
+          thunar_file_changed (THUNAR_FILE (local_file));
+        }
+    }
+  else
+    {
+      /* allocate a new object */
+      local_file = g_object_new (THUNAR_TYPE_LOCAL_FILE, NULL);
+      local_file->info = thunar_vfs_info_ref (info);
+
+      /* insert the file into the cache (also strips the
+       * floating reference from the object).
+       */
+      _thunar_file_cache_insert (THUNAR_FILE (local_file));
+    }
+
+  return THUNAR_FILE (local_file);
+}
 
