@@ -42,28 +42,31 @@ enum
 
 
 
-static void     thunar_window_class_init          (ThunarWindowClass  *klass);
-static void     thunar_window_init                (ThunarWindow       *window);
-static void     thunar_window_finalize            (GObject            *object);
-static void     thunar_window_get_property        (GObject            *object,
-                                                   guint               prop_id,
-                                                   GValue             *value,
-                                                   GParamSpec         *pspec);
-static void     thunar_window_set_property        (GObject            *object,
-                                                   guint               prop_id,
-                                                   const GValue       *value,
-                                                   GParamSpec         *pspec);
-static void     thunar_window_action_close        (GtkAction          *action,
-                                                   ThunarWindow       *window);
-static void     thunar_window_action_go_up        (GtkAction          *action,
-                                                   ThunarWindow       *window);
-static void     thunar_window_action_location     (GtkAction          *action,
-                                                   ThunarWindow       *window);
-static void     thunar_window_action_about        (GtkAction          *action,
-                                                   ThunarWindow       *window);
-static void     thunar_window_notify_loading      (ThunarView         *view,
-                                                   GParamSpec         *pspec,
-                                                   ThunarWindow       *window);
+static void     thunar_window_class_init                  (ThunarWindowClass  *klass);
+static void     thunar_window_init                        (ThunarWindow       *window);
+static void     thunar_window_finalize                    (GObject            *object);
+static void     thunar_window_get_property                (GObject            *object,
+                                                           guint               prop_id,
+                                                           GValue             *value,
+                                                           GParamSpec         *pspec);
+static void     thunar_window_set_property                (GObject            *object,
+                                                           guint               prop_id,
+                                                           const GValue       *value,
+                                                           GParamSpec         *pspec);
+static void     thunar_window_action_close                (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_location_bar_changed (GtkRadioAction     *action,
+                                                           GtkRadioAction     *current,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_go_up                (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_location             (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_about                (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_notify_loading              (ThunarView         *view,
+                                                           GParamSpec         *pspec,
+                                                           ThunarWindow       *window);
 
 
 
@@ -95,6 +98,7 @@ static const GtkActionEntry const action_entries[] =
   { "close", GTK_STOCK_CLOSE, N_ ("_Close"), "<control>W", N_ ("Close this window"), G_CALLBACK (thunar_window_action_close), },
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
   { "view-menu", NULL, N_ ("_View"), NULL, },
+  { "view-location-bar-menu", NULL, N_ ("_Location Bar"), NULL, },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "open-location", NULL, N_ ("Open _Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_location), },
@@ -157,17 +161,41 @@ thunar_window_class_init (ThunarWindowClass *klass)
 static void
 thunar_window_init (ThunarWindow *window)
 {
-  GtkAccelGroup *accel_group;
-  GtkWidget     *vbox;
-  GtkWidget     *menubar;
-  GtkWidget     *paned;
-  GtkWidget     *box;
+  GtkRadioAction *radio_action;
+  GtkAccelGroup  *accel_group;
+  GtkAction      *action;
+  GtkWidget      *vbox;
+  GtkWidget      *menubar;
+  GtkWidget      *paned;
+  GtkWidget      *box;
+  GSList         *group = NULL;
 
   window->action_group = gtk_action_group_new ("thunar-window");
   gtk_action_group_add_actions (window->action_group, action_entries,
                                 G_N_ELEMENTS (action_entries),
                                 GTK_WIDGET (window));
-  
+
+  /*
+   * add the location bar options
+   */
+  radio_action = gtk_radio_action_new ("view-location-bar-buttons", N_ ("_Button Style"), NULL, NULL, THUNAR_TYPE_LOCATION_BUTTONS);
+  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
+  gtk_radio_action_set_group (radio_action, group);
+  group = gtk_radio_action_get_group (radio_action);
+  g_object_unref (G_OBJECT (radio_action));
+
+  radio_action = gtk_radio_action_new ("view-location-bar-entry", N_ ("_Traditional Style"), NULL, NULL, THUNAR_TYPE_LOCATION_ENTRY);
+  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
+  gtk_radio_action_set_group (radio_action, group);
+  group = gtk_radio_action_get_group (radio_action);
+  g_object_unref (G_OBJECT (radio_action));
+
+  radio_action = gtk_radio_action_new ("view-location-bar-hidden", N_ ("_Hidden"), NULL, NULL, G_TYPE_NONE);
+  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
+  gtk_radio_action_set_group (radio_action, group);
+  group = gtk_radio_action_get_group (radio_action);
+  g_object_unref (G_OBJECT (radio_action));
+
   window->ui_manager = gtk_ui_manager_new ();
   gtk_ui_manager_insert_action_group (window->ui_manager, window->action_group, 0);
   gtk_ui_manager_add_ui_from_string (window->ui_manager, thunar_window_ui, thunar_window_ui_length, NULL);
@@ -202,11 +230,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (paned), box, TRUE, FALSE);
   gtk_widget_show (box);
 
-  window->location_bar = thunar_location_buttons_new ();
-  g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory",
-                            G_CALLBACK (thunar_window_set_current_directory), window);
-  exo_binding_new (G_OBJECT (window), "current-directory",
-                   G_OBJECT (window->location_bar), "current-directory");
+  window->location_bar = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
   gtk_box_pack_start (GTK_BOX (box), window->location_bar, FALSE, FALSE, 0);
   gtk_widget_show (window->location_bar);
 
@@ -226,6 +250,11 @@ thunar_window_init (ThunarWindow *window)
                    G_OBJECT (window->statusbar), "text");
   gtk_box_pack_start (GTK_BOX (vbox), window->statusbar, FALSE, FALSE, 0);
   gtk_widget_show (window->statusbar);
+
+  /* activate the selected location bar */
+  action = gtk_action_group_get_action (window->action_group, "view-location-bar-buttons");
+  g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_location_bar_changed), window);
+  thunar_window_action_location_bar_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 }
 
 
@@ -302,6 +331,36 @@ thunar_window_action_close (GtkAction    *action,
 
 
 static void
+thunar_window_action_location_bar_changed (GtkRadioAction *action,
+                                           GtkRadioAction *current,
+                                           ThunarWindow   *window)
+{
+  GtkWidget *widget;
+  GType      type;
+
+  /* drop the previous location bar (if any) */
+  widget = gtk_bin_get_child (GTK_BIN (window->location_bar));
+  if (G_LIKELY (widget != NULL))
+    gtk_widget_destroy (widget);
+
+  /* determine the new type of location bar */
+  type = gtk_radio_action_get_current_value (action);
+
+  if (G_LIKELY (type != G_TYPE_NONE))
+    {
+      widget = g_object_new (type, NULL);;
+      g_signal_connect_swapped (G_OBJECT (widget), "change-directory",
+                                G_CALLBACK (thunar_window_set_current_directory), window);
+      exo_binding_new (G_OBJECT (window), "current-directory",
+                       G_OBJECT (widget), "current-directory");
+      gtk_container_add (GTK_CONTAINER (window->location_bar), widget);
+      gtk_widget_show (widget);
+    }
+}
+
+
+
+static void
 thunar_window_action_go_up (GtkAction    *action,
                             ThunarWindow *window)
 {
@@ -320,15 +379,23 @@ thunar_window_action_location (GtkAction    *action,
                                ThunarWindow *window)
 {
   GtkWidget *dialog;
+  GtkWidget *widget;
 
-  dialog = thunar_location_dialog_new ();
-  gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-  gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
-  gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
-  thunar_location_dialog_set_selected_file (THUNAR_LOCATION_DIALOG (dialog), thunar_window_get_current_directory (window));
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-    thunar_window_set_current_directory (window, thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog)));
-  gtk_widget_destroy (dialog);
+  /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
+   * in the window does not support text entry by the user.
+   */
+  widget = gtk_bin_get_child (GTK_BIN (window->location_bar));
+  if (widget == NULL || !thunar_location_bar_accept_focus (THUNAR_LOCATION_BAR (widget)))
+    {
+      dialog = thunar_location_dialog_new ();
+      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+      thunar_location_dialog_set_selected_file (THUNAR_LOCATION_DIALOG (dialog), thunar_window_get_current_directory (window));
+      if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+        thunar_window_set_current_directory (window, thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog)));
+      gtk_widget_destroy (dialog);
+    }
 }
 
 

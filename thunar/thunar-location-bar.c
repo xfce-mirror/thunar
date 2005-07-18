@@ -57,3 +57,29 @@ thunar_location_bar_get_type (void)
 
 
 
+/**
+ * thunar_location_bar_accept_focus:
+ * @location_bar : a #ThunarLocationBar.
+ *
+ * If the implementation of the #ThunarLocationBar interface
+ * supports entering a location into a text widget, then the
+ * text widget will be focused and the method will return
+ * %TRUE. The #ThunarLocationEntry is an example for such
+ * an implementation.
+ *
+ * Else if the implementation offers no way to enter a new
+ * location as text, it will simply return %FALSE here. The
+ * #ThunarLocationButtons class is an example for such an
+ * implementation.
+ *
+ * Return value: %TRUE if the @location_bar gave focus to
+ *               a text entry widget provided by @location_bar,
+ *               else %FALSE.
+ **/
+gboolean
+thunar_location_bar_accept_focus (ThunarLocationBar *location_bar)
+{
+  g_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
+  return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->accept_focus) (location_bar);
+}
+

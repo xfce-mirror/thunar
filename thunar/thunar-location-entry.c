@@ -50,6 +50,7 @@ static void        thunar_location_entry_set_property          (GObject         
 static ThunarFile *thunar_location_entry_get_current_directory (ThunarNavigator          *navigator);
 static void        thunar_location_entry_set_current_directory (ThunarNavigator          *navigator,
                                                                 ThunarFile               *current_directory);
+static gboolean    thunar_location_entry_accept_focus          (ThunarLocationBar        *location_bar);
 static void        thunar_location_entry_activate              (ThunarLocationEntry      *location_entry);
 
 
@@ -108,6 +109,7 @@ thunar_location_entry_navigator_init (ThunarNavigatorIface *iface)
 static void
 thunar_location_entry_location_bar_init (ThunarLocationBarIface *iface)
 {
+  iface->accept_focus = thunar_location_entry_accept_focus;
 }
 
 
@@ -236,6 +238,22 @@ thunar_location_entry_set_current_directory (ThunarNavigator *navigator,
   thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry), current_directory);
 
   g_object_notify (G_OBJECT (location_entry), "current-directory");
+}
+
+
+
+static gboolean
+thunar_location_entry_accept_focus (ThunarLocationBar *location_bar)
+{
+  ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (location_bar);
+
+  /* select the whole path in the path entry */
+  gtk_editable_select_region (GTK_EDITABLE (location_entry->path_entry), 0, -1);
+
+  /* give the keyboard focus to the path entry */
+  gtk_widget_grab_focus (location_entry->path_entry);
+
+  return TRUE;
 }
 
 

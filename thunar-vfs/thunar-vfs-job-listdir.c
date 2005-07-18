@@ -186,6 +186,10 @@ thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
           if (G_UNLIKELY (d == NULL))
               break;
 
+          /* ignore "." and ".." entries */
+          if (G_UNLIKELY (d->d_name[0] == '.' && (d->d_name[1] == '\0' || (d->d_name[1] == '.' && d->d_name[2] == '\0'))))
+            continue;
+
           names = g_slist_insert_sorted (names, g_string_chunk_insert (names_chunk, d->d_name), (GCompareFunc) strcmp);
         }
 
