@@ -21,6 +21,8 @@
 #include <config.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-details-view-icon-renderer.h>
 
@@ -32,6 +34,9 @@ static AtkObject *thunar_details_view_get_accessible      (GtkWidget            
 static GList     *thunar_details_view_get_selected_items  (ThunarStandardView     *standard_view);
 static gboolean   thunar_details_view_button_press_event  (GtkTreeView            *tree_view,
                                                            GdkEventButton         *event,
+                                                           ThunarDetailsView      *details_view);
+static gboolean   thunar_details_view_key_press_event     (GtkTreeView            *tree_view,
+                                                           GdkEventKey            *event,
                                                            ThunarDetailsView      *details_view);
 static void       thunar_details_view_row_activated       (GtkTreeView            *tree_view,
                                                            GtkTreePath            *path,
@@ -83,6 +88,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   tree_view = gtk_tree_view_new ();
   g_signal_connect (G_OBJECT (tree_view), "button-press-event",
                     G_CALLBACK (thunar_details_view_button_press_event), details_view);
+  g_signal_connect (G_OBJECT (tree_view), "key-press-event",
+                    G_CALLBACK (thunar_details_view_key_press_event), details_view);
   g_signal_connect (G_OBJECT (tree_view), "row-activated",
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
@@ -227,6 +234,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         ThunarDetailsView *details_view)
 {
   GtkTreeSelection *selection;
+  GtkTreePath      *path;
 
   /* we unselect all selected items if the user clicks on an empty
    * area of the treeview and no modifier key is active.
@@ -236,6 +244,44 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
     {
       selection = gtk_tree_view_get_selection (tree_view);
       gtk_tree_selection_unselect_all (selection);
+      return TRUE;
+    }
+
+  /* open the context menu on right clicks */
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3
+      && gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, NULL, NULL, NULL))
+    {
+      /* select the path on which the user clicked if not selected yet */
+      selection = gtk_tree_view_get_selection (tree_view);
+      if (!gtk_tree_selection_path_is_selected (selection, path))
+        {
+          /* we don't unselect all other items if Control is active */
+          if ((event->state & GDK_CONTROL_MASK) == 0)
+            gtk_tree_selection_unselect_all (selection);
+          gtk_tree_selection_select_path (selection, path);
+        }
+      gtk_tree_path_free (path);
+
+      /* open the context menu */
+      thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);
+
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_details_view_key_press_event (GtkTreeView       *tree_view,
+                                     GdkEventKey       *event,
+                                     ThunarDetailsView *details_view)
+{
+  /* popup context menu if "Menu" or "<Shift>F10" is pressed */
+  if (event->keyval == GDK_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_F10))
+    {
+      thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), 0, event->time);
       return TRUE;
     }
 

@@ -83,6 +83,7 @@ static void          thunar_standard_view_loading_unbound           (gpointer   
 
 static const GtkActionEntry const action_entries[] =
 {
+  { "file-context-menu", NULL, N_ ("Context Menu"), NULL, NULL, NULL, },
   { "properties", GTK_STOCK_PROPERTIES, N_ ("_Properties"), "<alt>Return", N_ ("View the properties of the selected item"), G_CALLBACK (thunar_standard_view_action_properties), },
   { "copy", GTK_STOCK_COPY, N_ ("_Copy files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
@@ -767,6 +768,63 @@ thunar_standard_view_loading_unbound (gpointer user_data)
       g_object_notify (G_OBJECT (standard_view), "loading");
       g_object_notify (G_OBJECT (standard_view), "statusbar-text");
     }
+}
+
+
+
+/**
+ * thunar_standard_view_context_menu:
+ * @standard_view : a #ThunarStandardView instance.
+ * @button        : the mouse button which triggered the context menu or %0 if
+ *                  the event wasn't triggered by a pointer device.
+ * @time          : the event time.
+ *
+ * Invoked by derived classes (and only by derived classes!) whenever the user
+ * requests to open a context menu, e.g. by right-clicking on a file or by
+ * using one of the context menu shortcuts.
+ **/
+void
+thunar_standard_view_context_menu (ThunarStandardView *standard_view,
+                                   guint               button,
+                                   guint32             time)
+{
+  GMainLoop *loop;
+  GtkWidget *menu;
+  guint      id;
+
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* take a reference on the file context menu */
+  menu = gtk_ui_manager_get_widget (standard_view->ui_manager, "/file-context-menu");
+  g_object_ref (G_OBJECT (menu));
+  gtk_object_sink (GTK_OBJECT (menu));
+
+  /* grab an additional reference on the view */
+  g_object_ref (G_OBJECT (standard_view));
+
+  loop = g_main_loop_new (NULL, FALSE);
+
+  /* connect the deactivate handler */
+  id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+
+  /* make sure the menu is on the proper screen */
+  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (standard_view)));
+
+  /* run our custom main loop */
+  gtk_grab_add (menu);
+  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, button, time);
+  g_main_loop_run (loop);
+  g_main_loop_unref (loop);
+  gtk_grab_remove (menu);
+
+  /* unlink the deactivate callback */
+  g_signal_handler_disconnect (G_OBJECT (menu), id);
+
+  /* release the additional reference on the view */
+  g_object_unref (G_OBJECT (standard_view));
+
+  /* decrease the reference count on the menu */
+  g_object_unref (G_OBJECT (menu));
 }
 
 
