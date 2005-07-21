@@ -315,7 +315,7 @@ thunar_statusbar_icon_realize (GtkWidget *widget)
   attr_mask = GDK_WA_X | GDK_WA_Y | GDK_WA_VISUAL | GDK_WA_COLORMAP;
 
   widget->window = gdk_window_new (widget->parent->window, &attr, attr_mask);
-  gtk_style_attach (widget->style, widget->window);
+  widget->style = gtk_style_attach (widget->style, widget->window);
   gtk_style_set_background (widget->style, widget->window, GTK_STATE_NORMAL);
   gdk_window_set_user_data (widget->window, widget);
 }
@@ -460,8 +460,11 @@ thunar_statusbar_icon_expose_event (GtkWidget      *widget,
   /* render the animation */
   if (thunar_statusbar_icon_get_loading (statusbar_icon))
     {
+      GdkColor color;
       cairo_t *cr;
       gdouble  n;
+
+      color = widget->style->fg[GTK_STATE_NORMAL];
 
       cr = get_cairo_context (widget->window);
 
@@ -469,7 +472,7 @@ thunar_statusbar_icon_expose_event (GtkWidget      *widget,
 
       for (n = 0.0; n < 2.0; n += 0.25)
         {
-          cairo_set_source_rgba (cr, 0.0, 0.0, 0.0, (n - 0.1) / 1.9);
+          cairo_set_source_rgba (cr, color.red / 65535., color.green / 65535., color.blue / 65535., (n - 0.1) / 1.9);
           cairo_arc (cr, cos (n * M_PI) / 3.0, sin (n * M_PI) / 3.0, 0.12, 0.0, 2 * M_PI);
           cairo_fill (cr);
         }

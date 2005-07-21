@@ -1,3 +1,11 @@
+2005-07-22	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Add --disable-debug option, which can be used to
+	  disable all kinds of debugging support, and thereby may speed up
+	  the whole application in certain cases.
+	* thunar/thunar-statusbar.c: Use the foreground color from the selected
+	  style instead of hard coding black for the animation.
+
 2005-07-21	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-favourites-view.c: Add support for the LINK DnD action.
