@@ -103,7 +103,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   /* first column (icon, name) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
                          "expand", TRUE,
-                         "reorderable", TRUE,
                          "resizable", TRUE,
                          "title", _("Name"),
                          NULL);
@@ -124,7 +123,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* second column (size) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "reorderable", TRUE,
                          "resizable", TRUE,
                          "title", _("Size"),
                          NULL);
@@ -140,7 +138,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* third column (permissions) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "reorderable", TRUE,
                          "resizable", TRUE,
                          "title", _("Permissions"),
                          NULL);
@@ -156,7 +153,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* fourth column (type) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "reorderable", TRUE,
                          "resizable", TRUE,
                          "title", _("Type"),
                          NULL);
@@ -172,7 +168,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* fifth column (modification date) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "reorderable", TRUE,
                          "resizable", TRUE,
                          "title", _("Date modified"),
                          NULL);

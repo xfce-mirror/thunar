@@ -462,7 +462,7 @@ thunar_vfs_uri_unref (ThunarVfsURI *uri)
  * Return value: %TRUE if @uri refers to the home directory.
  **/
 gboolean
-thunar_vfs_uri_is_home (ThunarVfsURI *uri)
+thunar_vfs_uri_is_home (const ThunarVfsURI *uri)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
   return (uri->scheme == THUNAR_VFS_URI_SCHEME_FILE
@@ -480,7 +480,7 @@ thunar_vfs_uri_is_home (ThunarVfsURI *uri)
  * Return value: %TRUE if the @uri refers to a local resource.
  **/
 gboolean
-thunar_vfs_uri_is_local (ThunarVfsURI *uri)
+thunar_vfs_uri_is_local (const ThunarVfsURI *uri)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
   return TRUE;
@@ -498,7 +498,7 @@ thunar_vfs_uri_is_local (ThunarVfsURI *uri)
  * Return value: %TRUE if @uri is a root element, else %FALSE.
  **/
 gboolean
-thunar_vfs_uri_is_root (ThunarVfsURI *uri)
+thunar_vfs_uri_is_root (const ThunarVfsURI *uri)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
   return (uri->path[0] == '/' && uri->path[1] == '\0');
@@ -520,12 +520,40 @@ thunar_vfs_uri_is_root (ThunarVfsURI *uri)
  * Return value: a displayable version of the @uri's base name.
  **/
 gchar*
-thunar_vfs_uri_get_display_name (ThunarVfsURI *uri)
+thunar_vfs_uri_get_display_name (const ThunarVfsURI *uri)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
   // FIXME: This should be optimized (and GLib 2.4 compatible)!
   return g_filename_display_basename (uri->path);
+}
+
+
+
+/**
+ * thunar_vfs_uri_get_md5sum:
+ * @uri : a #ThunarVfsURI instance.
+ *
+ * Calculates the MD5 digest of the full string
+ * representation of @uri.
+ *
+ * The caller is responsible to free the returned
+ * string using #g_free().
+ *
+ * Return value: the MD5 digest of the @uri.
+ **/
+gchar*
+thunar_vfs_uri_get_md5sum (const ThunarVfsURI *uri)
+{
+  gchar str[4096];
+  gsize n;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+
+  n = g_strlcpy (str, scheme_names[uri->scheme], sizeof (str));
+  n += g_strlcpy (str + n, uri->path, sizeof (str) - n);
+
+  return exo_str_get_md5_str (str);
 }
 
 
@@ -542,7 +570,7 @@ thunar_vfs_uri_get_display_name (ThunarVfsURI *uri)
  * Return value: the name of the host set for @uri or %NULL.
  **/
 const gchar*
-thunar_vfs_uri_get_host (ThunarVfsURI *uri)
+thunar_vfs_uri_get_host (const ThunarVfsURI *uri)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
@@ -564,7 +592,7 @@ thunar_vfs_uri_get_host (ThunarVfsURI *uri)
  * Return value: the basename of @uri.
  **/
 const gchar*
-thunar_vfs_uri_get_name (ThunarVfsURI *uri)
+thunar_vfs_uri_get_name (const ThunarVfsURI *uri)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   return uri->name;
@@ -581,7 +609,7 @@ thunar_vfs_uri_get_name (ThunarVfsURI *uri)
  * Return value: the path component of @uri.
  **/
 const gchar*
-thunar_vfs_uri_get_path (ThunarVfsURI *uri)
+thunar_vfs_uri_get_path (const ThunarVfsURI *uri)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   return uri->path;
@@ -598,7 +626,7 @@ thunar_vfs_uri_get_path (ThunarVfsURI *uri)
  * Return value: the scheme of @uri.
  **/
 ThunarVfsURIScheme
-thunar_vfs_uri_get_scheme (ThunarVfsURI *uri)
+thunar_vfs_uri_get_scheme (const ThunarVfsURI *uri)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), THUNAR_VFS_URI_SCHEME_FILE);
   return uri->scheme;
@@ -617,7 +645,7 @@ thunar_vfs_uri_get_scheme (ThunarVfsURI *uri)
  *               or %NULL.
  **/
 ThunarVfsURI*
-thunar_vfs_uri_parent (ThunarVfsURI *uri)
+thunar_vfs_uri_parent (const ThunarVfsURI *uri)
 {
   ThunarVfsURI *parent;
   const gchar  *p;
@@ -652,8 +680,8 @@ thunar_vfs_uri_parent (ThunarVfsURI *uri)
  * Return value: 
  **/
 ThunarVfsURI*
-thunar_vfs_uri_relative (ThunarVfsURI *uri,
-                         const gchar  *name)
+thunar_vfs_uri_relative (const ThunarVfsURI *uri,
+                         const gchar        *name)
 {
   ThunarVfsURI *relative;
   const gchar  *p;
@@ -690,7 +718,7 @@ thunar_vfs_uri_relative (ThunarVfsURI *uri,
  * Return value: the string representation of @uri.
  **/
 gchar*
-thunar_vfs_uri_to_string (ThunarVfsURI           *uri,
+thunar_vfs_uri_to_string (const ThunarVfsURI     *uri,
                           ThunarVfsURIHideOptions hide_options)
 {
   const gchar *host;

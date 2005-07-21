@@ -1,5 +1,16 @@
 2005-07-22	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-uri.{c,h}: Use "const" parameters if possible
+	  to give more hints to the compiler.
+	* thunar-vfs/thunar-vfs-uri.{c,h}: Add thunar_vfs_uri_get_md5sum()
+	  method to calculate the MD5 digest of an URI.
+	* thunar/thunar-local-file.c: Preallocate 512 instances of the
+	  ThunarLocalFile class to speed up the creation of new objects.
+	* thunar/thunar-details-view.c(thunar_details_view_init): Do not
+	  allow reordering of treeview columns.
+
+2005-07-22	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Add --disable-debug option, which can be used to
 	  disable all kinds of debugging support, and thereby may speed up
 	  the whole application in certain cases.

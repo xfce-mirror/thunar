@@ -72,21 +72,22 @@ ThunarVfsURI      *thunar_vfs_uri_new_for_path      (const gchar            *pat
 ThunarVfsURI      *thunar_vfs_uri_ref               (ThunarVfsURI           *uri);
 void               thunar_vfs_uri_unref             (ThunarVfsURI           *uri);
 
-gboolean           thunar_vfs_uri_is_home           (ThunarVfsURI           *uri);
-gboolean           thunar_vfs_uri_is_local          (ThunarVfsURI           *uri);
-gboolean           thunar_vfs_uri_is_root           (ThunarVfsURI           *uri);
+gboolean           thunar_vfs_uri_is_home           (const ThunarVfsURI     *uri);
+gboolean           thunar_vfs_uri_is_local          (const ThunarVfsURI     *uri);
+gboolean           thunar_vfs_uri_is_root           (const ThunarVfsURI     *uri);
 
-gchar             *thunar_vfs_uri_get_display_name  (ThunarVfsURI           *uri);
-const gchar       *thunar_vfs_uri_get_host          (ThunarVfsURI           *uri);
-const gchar       *thunar_vfs_uri_get_name          (ThunarVfsURI           *uri);
-const gchar       *thunar_vfs_uri_get_path          (ThunarVfsURI           *uri);
-ThunarVfsURIScheme thunar_vfs_uri_get_scheme        (ThunarVfsURI           *uri);
+gchar             *thunar_vfs_uri_get_display_name  (const ThunarVfsURI     *uri);
+gchar             *thunar_vfs_uri_get_md5sum        (const ThunarVfsURI     *uri);
+const gchar       *thunar_vfs_uri_get_host          (const ThunarVfsURI     *uri);
+const gchar       *thunar_vfs_uri_get_name          (const ThunarVfsURI     *uri);
+const gchar       *thunar_vfs_uri_get_path          (const ThunarVfsURI     *uri);
+ThunarVfsURIScheme thunar_vfs_uri_get_scheme        (const ThunarVfsURI     *uri);
 
-ThunarVfsURI      *thunar_vfs_uri_parent            (ThunarVfsURI           *uri) G_GNUC_MALLOC;
-ThunarVfsURI      *thunar_vfs_uri_relative          (ThunarVfsURI           *uri,
+ThunarVfsURI      *thunar_vfs_uri_parent            (const ThunarVfsURI     *uri) G_GNUC_MALLOC;
+ThunarVfsURI      *thunar_vfs_uri_relative          (const ThunarVfsURI     *uri,
                                                      const gchar            *name) G_GNUC_MALLOC;
 
-gchar             *thunar_vfs_uri_to_string         (ThunarVfsURI           *uri,
+gchar             *thunar_vfs_uri_to_string         (const ThunarVfsURI     *uri,
                                                      ThunarVfsURIHideOptions hide_options);
 
 guint              thunar_vfs_uri_hash              (gconstpointer           uri);

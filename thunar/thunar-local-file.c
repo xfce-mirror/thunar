@@ -80,8 +80,38 @@ struct _ThunarLocalFile
 
 
 static ThunarVfsMonitor *monitor = NULL;
+static GObjectClass     *thunar_local_file_parent_class;
 
-G_DEFINE_TYPE (ThunarLocalFile, thunar_local_file, THUNAR_TYPE_FILE);
+
+
+GType
+thunar_local_file_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarLocalFileClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_local_file_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarLocalFile),
+        512u,
+        (GInstanceInitFunc) thunar_local_file_init,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_TYPE_FILE,
+                                     "ThunarLocalFile",
+                                     &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -90,6 +120,9 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
 {
   ThunarFileClass *thunarfile_class;
   GObjectClass    *gobject_class;
+
+  /* query the parent class */
+  thunar_local_file_parent_class = g_type_class_peek_parent (klass);
 
   /* query the user manager instance */
   klass->user_manager = thunar_vfs_user_manager_get_default ();
