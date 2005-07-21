@@ -41,8 +41,8 @@ AC_PROG_INSTALL()
 AC_PROG_LIBTOOL()
 
 dnl Check for standard headers
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h fstab.h grp.h locale.h memory.h \
-                  pwd.h \
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h fstab.h grp.h locale.h \
+                  math.h memory.h pwd.h \
                   stdlib.h string.h sys/cdio.h sys/event.h \
                   sys/mount.h sys/stat.h sys/time.h sys/param.h time.h])
 
@@ -52,6 +52,9 @@ AC_CHECK_FUNCS([kqueue localtime_r readdir_r setgroupent setpassent])
 dnl Check for required packages
 XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1])
 XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.6.0])
+
+dnl Check for optional packages
+XDT_CHECK_OPTIONAL_PACKAGE([CAIRO], [cairo], [0.5], [cairo], [Cairo])
 
 dnl Check for the system flavour
 AC_MSG_CHECKING([for system flavour])

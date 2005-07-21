@@ -187,7 +187,7 @@ thunar_favourites_view_init (ThunarFavouritesView *view)
    */
   gtk_drag_dest_set (GTK_WIDGET (view), GTK_DEST_DEFAULT_ALL,
                      drop_targets, G_N_ELEMENTS (drop_targets),
-                     GDK_ACTION_COPY | GDK_ACTION_MOVE);
+                     GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
 
 #if GTK_CHECK_VERSION(2,6,0)
   gtk_tree_view_set_row_separator_func (GTK_TREE_VIEW (view), thunar_favourites_view_separator_func, NULL, NULL);
@@ -348,7 +348,9 @@ thunar_favourites_view_drag_motion (GtkWidget      *widget,
   GtkTreePath            *path;
 
   /* check the action that should be performed */
-  if (context->suggested_action == GDK_ACTION_COPY || (context->actions & GDK_ACTION_COPY) != 0)
+  if (context->suggested_action == GDK_ACTION_LINK || (context->actions & GDK_ACTION_LINK) != 0)
+    action = GDK_ACTION_LINK;
+  else if (context->suggested_action == GDK_ACTION_COPY || (context->actions & GDK_ACTION_COPY) != 0)
     action = GDK_ACTION_COPY;
   else if (context->suggested_action == GDK_ACTION_MOVE || (context->actions & GDK_ACTION_MOVE) != 0)
     action = GDK_ACTION_MOVE;

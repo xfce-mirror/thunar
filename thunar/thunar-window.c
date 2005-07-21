@@ -246,8 +246,11 @@ thunar_window_init (ThunarWindow *window)
   gtk_widget_show (window->view);
 
   window->statusbar = thunar_statusbar_new ();
-  exo_binding_new (G_OBJECT (window->view), "statusbar-text",
-                   G_OBJECT (window->statusbar), "text");
+  g_signal_connect_swapped (G_OBJECT (window->statusbar), "change-directory",
+                            G_CALLBACK (thunar_window_set_current_directory), window);
+  exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->statusbar), "current-directory");
+  exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->statusbar), "loading");
+  exo_binding_new (G_OBJECT (window->view), "statusbar-text", G_OBJECT (window->statusbar), "text");
   gtk_box_pack_start (GTK_BOX (vbox), window->statusbar, FALSE, FALSE, 0);
   gtk_widget_show (window->statusbar);
 

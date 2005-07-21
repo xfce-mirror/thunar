@@ -734,7 +734,7 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
 
   /* setup drag support for the button */
   gtk_drag_source_set (GTK_WIDGET (button), GDK_BUTTON1_MASK, drag_targets,
-                       G_N_ELEMENTS (drag_targets), GDK_ACTION_COPY);
+                       G_N_ELEMENTS (drag_targets), GDK_ACTION_LINK);
   g_signal_connect (G_OBJECT (button), "drag-data-get",
                     G_CALLBACK (thunar_location_buttons_drag_data_get), buttons);
 

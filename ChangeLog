@@ -1,3 +1,20 @@
+2005-07-21	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-favourites-view.c: Add support for the LINK DnD action.
+	* thunar/thunar-location-buttons.c(thunar_location_buttons_init): Use
+	  GDK_ACTION_LINK instead of GDK_ACTION_COPY to avoid accident copying
+	  of directories.
+	* thunar/thunar-statusbar.{c,h}: Implement the ThunarNavigator
+	  interface.
+	* thunar/thunar-statusbar.{c,h}: Add a "loading" indicator to the
+	  statusbar. Add support to dnd from the shortcut indicator to the
+	  favourites list.
+	* thunar/thunar-window.c(thunar_window_init): Connect the statusbar as
+	  a navigator. Forward the "loading" property from the view to the
+	  statusbar.
+	* configure.in.in: Check for additional headers. Add optional
+	  dependency on cairo.
+
 2005-07-20	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in: Rename to "thunar" again, as this is now the main

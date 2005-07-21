@@ -79,11 +79,13 @@ Thunar_SOURCES =							\
 	thunar-window-ui.h
 
 Thunar_CFLAGS =								\
+	$(CAIRO_CFLAGS)							\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)
 
 Thunar_LDFLAGS =							\
 	-no-undefined							\
+	$(CAIRO_LIBS)							\
 	$(EXO_LIBS)							\
 	$(GTHREAD_LIBS)
 
