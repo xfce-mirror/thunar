@@ -40,42 +40,42 @@ struct _ThunarVfsJobClass
   GTypeClass __parent__;
 
   /* virtual methods */
-  void (*callback) (ThunarVfsJob *job);
   void (*execute)  (ThunarVfsJob *job);
   void (*finalize) (ThunarVfsJob *job);
+
+  /* signals */
+  void (*finished) (ThunarVfsJob *job);
 };
 
 struct _ThunarVfsJob
 {
   GTypeInstance __parent__;
 
-  gint     ref_count;
-  GCond   *cond;
-  GMutex  *mutex;
-  GError  *error;
-  gboolean cancelled;
-  gboolean finished;
+  gint              ref_count;
+  GCond            *cond;
+  GMutex           *mutex;
+  volatile gboolean launched;
+  volatile gboolean cancelled;
 };
 
-GType         thunar_vfs_job_get_type  (void) G_GNUC_CONST;
+GType         thunar_vfs_job_get_type     (void) G_GNUC_CONST;
 
 /* public API */
-ThunarVfsJob *thunar_vfs_job_ref       (ThunarVfsJob       *job);
-void          thunar_vfs_job_unref     (ThunarVfsJob       *job);
-void          thunar_vfs_job_cancel    (ThunarVfsJob       *job);
-gboolean      thunar_vfs_job_cancelled (const ThunarVfsJob *job);
-gboolean      thunar_vfs_job_failed    (const ThunarVfsJob *job);
-gboolean      thunar_vfs_job_finished  (const ThunarVfsJob *job);
-GError       *thunar_vfs_job_get_error (const ThunarVfsJob *job);
+ThunarVfsJob *thunar_vfs_job_ref          (ThunarVfsJob       *job);
+void          thunar_vfs_job_unref        (ThunarVfsJob       *job);
+ThunarVfsJob *thunar_vfs_job_launch       (ThunarVfsJob       *job);
+void          thunar_vfs_job_cancel       (ThunarVfsJob       *job);
+gboolean      thunar_vfs_job_cancelled    (const ThunarVfsJob *job);
 
 /* module API */
-void          thunar_vfs_job_finish    (ThunarVfsJob       *job);
-ThunarVfsJob *thunar_vfs_job_schedule  (ThunarVfsJob       *job);
-void          thunar_vfs_job_callback  (ThunarVfsJob       *job);
-void          thunar_vfs_job_set_error (ThunarVfsJob       *job,
-                                        GQuark              domain,
-                                        gint                code,
-                                        const gchar        *message);
+void          thunar_vfs_job_emit_valist  (ThunarVfsJob       *job,
+                                           guint               signal_id,
+                                           GQuark              signal_detail,
+                                           va_list             var_args);
+void          thunar_vfs_job_emit         (ThunarVfsJob       *job,
+                                           guint               signal_id,
+                                           GQuark              signal_detail,
+                                           ...);
 
 G_END_DECLS;
 

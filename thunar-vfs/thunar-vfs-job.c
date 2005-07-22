@@ -29,18 +29,51 @@
 #include <string.h>
 #endif
 
+#include <gobject/gvaluecollector.h>
+
 #include <thunar-vfs/thunar-vfs-job.h>
 
 
 
-static void     thunar_vfs_job_register_type (GType        *type);
-static void     thunar_vfs_job_init          (ThunarVfsJob *job);
-static void     thunar_vfs_job_execute       (gpointer      data,
-                                              gpointer      user_data);
-static gboolean thunar_vfs_job_idle          (gpointer      user_data);
+enum
+{
+  FINISHED,
+  LAST_SIGNAL,
+};
+
+typedef struct
+{
+  ThunarVfsJob *job;
+  guint         signal_id;
+  GQuark        signal_detail;
+  va_list       var_args;
+} ThunarVfsJobEmitDetails;
 
 
 
+static void     thunar_vfs_job_register_type      (GType             *type);
+static void     thunar_vfs_job_class_init         (ThunarVfsJobClass *klass);
+static void     thunar_vfs_job_init               (ThunarVfsJob      *job);
+static void     thunar_vfs_job_execute            (gpointer           data,
+                                                   gpointer           user_data);
+static gboolean thunar_vfs_job_idle               (gpointer           user_data);
+static void     thunar_vfs_job_value_init         (GValue            *value);
+static void     thunar_vfs_job_value_free         (GValue            *value);
+static void     thunar_vfs_job_value_copy         (const GValue      *src_value,
+                                                   GValue            *dst_value);
+static gpointer thunar_vfs_job_value_peek_pointer (const GValue      *value);
+static gchar*   thunar_vfs_job_value_collect      (GValue            *value,
+                                                   guint              n_collect_values,
+                                                   GTypeCValue       *collect_values,
+                                                   guint              collect_flags);
+static gchar*   thunar_vfs_job_value_lcopy        (const GValue      *value,
+                                                   guint              n_collect_values,
+                                                   GTypeCValue       *collect_values,
+                                                   guint              collect_flags);
+
+
+
+static guint        job_signals[LAST_SIGNAL];
 static GThreadPool *job_pool = NULL;
 
 
@@ -64,7 +97,19 @@ thunar_vfs_job_register_type (GType *type)
 {
   static const GTypeFundamentalInfo finfo =
   {
-    G_TYPE_FLAG_CLASSED | G_TYPE_FLAG_INSTANTIATABLE | G_TYPE_FLAG_DERIVABLE
+    G_TYPE_FLAG_CLASSED | G_TYPE_FLAG_INSTANTIATABLE | G_TYPE_FLAG_DERIVABLE | G_TYPE_FLAG_DEEP_DERIVABLE,
+  };
+
+  static const GTypeValueTable value_table =
+  {
+    thunar_vfs_job_value_init,
+    thunar_vfs_job_value_free,
+    thunar_vfs_job_value_copy,
+    thunar_vfs_job_value_peek_pointer,
+    "p",
+    thunar_vfs_job_value_collect,
+    "p",
+    thunar_vfs_job_value_lcopy,
   };
 
   static const GTypeInfo info =
@@ -72,16 +117,38 @@ thunar_vfs_job_register_type (GType *type)
     sizeof (ThunarVfsJobClass),
     NULL,
     NULL,
-    NULL,
+    (GClassInitFunc) thunar_vfs_job_class_init,
     NULL,
     NULL,
     sizeof (ThunarVfsJob),
     0,
     (GInstanceInitFunc) thunar_vfs_job_init,
-    NULL,
+    &value_table,
   };
 
   *type = g_type_register_fundamental (g_type_fundamental_next (), "ThunarVfsJob", &info, &finfo, G_TYPE_FLAG_ABSTRACT);
+}
+
+
+
+static void
+thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
+{
+  /**
+   * ThunarVfsJob::finished:
+   * @job : a #ThunarVfsJob.
+   *
+   * This signal will be automatically emitted once the
+   * @job finishes its execution, if the @job was not
+   * cancelled before. Else, if the @job was cancelled,
+   * this signal won't be emitted!
+   **/
+  job_signals[FINISHED] =
+    g_signal_new ("finished",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
 }
 
 
@@ -105,6 +172,9 @@ thunar_vfs_job_execute (gpointer data,
   /* perform the real work */
   (*THUNAR_VFS_JOB_GET_CLASS (job)->execute) (job);
 
+  /* emit the "finished" signal (if not cancelled!) */
+  thunar_vfs_job_emit (job, job_signals[FINISHED], 0);
+
   /* cleanup */
   thunar_vfs_job_unref (job);
 }
@@ -114,21 +184,97 @@ thunar_vfs_job_execute (gpointer data,
 static gboolean
 thunar_vfs_job_idle (gpointer user_data)
 {
-  ThunarVfsJob *job = THUNAR_VFS_JOB (user_data);
+  ThunarVfsJobEmitDetails *details = user_data;
+  ThunarVfsJob            *job = details->job;
 
   g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
 
   g_mutex_lock (job->mutex);
 
-  /* invoke the callback if the job wasn't cancelled */
+  /* emit the signal if the job wasn't cancelled */
   if (G_LIKELY (!thunar_vfs_job_cancelled (job)))
-    THUNAR_VFS_JOB_GET_CLASS (job)->callback (job);
+    {
+      GDK_THREADS_ENTER ();
+      g_signal_emit_valist (job, details->signal_id, details->signal_detail, details->var_args);
+      GDK_THREADS_LEAVE ();
+    }
 
   g_cond_signal (job->cond);
   g_mutex_unlock (job->mutex);
 
   /* remove the idle source */
   return FALSE;
+}
+
+
+
+static void
+thunar_vfs_job_value_init (GValue *value)
+{
+  /* nothing to do here, as value is already zero-filled! */
+}
+
+
+
+static void
+thunar_vfs_job_value_free (GValue *value)
+{
+  if (G_LIKELY (value->data[0].v_pointer != NULL))
+    thunar_vfs_job_unref (value->data[0].v_pointer);
+}
+
+
+
+static void
+thunar_vfs_job_value_copy (const GValue *src_value,
+                           GValue       *dst_value)
+{
+  if (G_LIKELY (src_value->data[0].v_pointer != NULL))
+    dst_value->data[0].v_pointer = thunar_vfs_job_ref (src_value->data[0].v_pointer);
+}
+
+
+
+static gpointer
+thunar_vfs_job_value_peek_pointer (const GValue *value)
+{
+  return value->data[0].v_pointer;
+}
+
+
+
+static gchar*
+thunar_vfs_job_value_collect (GValue      *value,
+                              guint        n_collect_values,
+                              GTypeCValue *collect_values,
+                              guint        collect_flags)
+{
+  if (G_LIKELY (collect_values[0].v_pointer != NULL))
+    value->data[0].v_pointer = thunar_vfs_job_ref (collect_values[0].v_pointer);
+
+  return NULL;
+}
+
+
+
+static gchar*
+thunar_vfs_job_value_lcopy (const GValue *value,
+                            guint         n_collect_values,
+                            GTypeCValue  *collect_values,
+                            guint         collect_flags)
+{
+  ThunarVfsJob **job_p = collect_values[0].v_pointer;
+
+  g_return_val_if_fail (job_p != NULL, NULL);
+
+  if (value->data[0].v_pointer == NULL)
+    *job_p = NULL;
+  else if (collect_flags & G_VALUE_NOCOPY_CONTENTS)
+    *job_p = value->data[0].v_pointer;
+  else
+    *job_p = thunar_vfs_job_ref (value->data[0].v_pointer);
+
+  return NULL;
 }
 
 
@@ -176,14 +322,43 @@ thunar_vfs_job_unref (ThunarVfsJob *job)
       if (THUNAR_VFS_JOB_GET_CLASS (job)->finalize != NULL)
         (*THUNAR_VFS_JOB_GET_CLASS (job)->finalize) (job);
 
-      if (G_UNLIKELY (job->error != NULL))
-        g_error_free (job->error);
-
       g_mutex_free (job->mutex);
       g_cond_free (job->cond);
 
+      /* disconnect all handlers for this instance */
+      g_signal_handlers_destroy (job);
+
       g_type_free_instance ((GTypeInstance *) job);
     }
+}
+
+
+
+/**
+ * thunar_vfs_job_launch:
+ * @job : a #ThunarVfsJob.
+ *
+ * This functions schedules @job to be run as soon
+ * as possible, in a separate thread.
+ *
+ * Return value: a pointer to @job.
+ **/
+ThunarVfsJob*
+thunar_vfs_job_launch (ThunarVfsJob *job)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), NULL);
+  g_return_val_if_fail (job->ref_count > 0, NULL);
+  g_return_val_if_fail (!job->launched, NULL);
+  g_return_val_if_fail (!job->cancelled, NULL);
+  g_return_val_if_fail (job_pool != NULL, NULL);
+
+  /* mark the job as launched */
+  job->launched = TRUE;
+
+  /* schedule the job on the thread pool */
+  g_thread_pool_push (job_pool, thunar_vfs_job_ref (job), NULL);
+
+  return job;
 }
 
 
@@ -229,133 +404,45 @@ thunar_vfs_job_cancelled (const ThunarVfsJob *job)
 
 
 /**
- * thunar_vfs_job_failed:
- * @job : a #ThunarVfsJob.
+ * thunar_vfs_job_emit:
+ * @job           : a #ThunarVfsJob.
+ * @signal_id     : the id of the signal to emit on @job.
+ * @signal_detail : the detail.
+ * @var_args      : a list of paramters to be passed to the signal,
+ *                  folled by a location for the return value. If
+ *                  the return type of the signals is #G_TYPE_NONE,
+ *                  the return value location can be omitted.
  *
- * Checks whether the execution of @job failed with
- * an error. You can use #thunar_vfs_job_get_error()
- * to query the error cause.
+ * Emits the signal identified by @signal_id on @job in
+ * the context of the main thread. This method doesn't
+ * return until the signal was emitted.
  *
- * Return value: %TRUE if @job failed.
- **/
-gboolean
-thunar_vfs_job_failed (const ThunarVfsJob *job)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
-  g_return_val_if_fail (job->ref_count > 0, FALSE);
-
-  return (job->error != NULL);
-}
-
-
-
-/**
- * thunar_vfs_job_finished:
- * @job : a #ThunarVfsJob.
- *
- * Checks whether the execution of @job is finished,
- * either successfull or not. You can use
- * #thunar_vfs_job_failed() to determine whether the
- * execution terminated successfully.
- *
- * Return value: %TRUE if @job is done.
- **/
-gboolean
-thunar_vfs_job_finished (const ThunarVfsJob *job)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
-  g_return_val_if_fail (job->ref_count > 0, FALSE);
-
-  return job->finished;
-}
-
-
-
-/**
- * thunar_vfs_job_get_error:
- * @job : a #ThunarVfsJob.
- *
- * Returns the #GError that describes the exact cause
- * of a failure during the execution of @job, or %NULL
- * if @job is not finished or did not fail. Use
- * #thunar_vfs_job_failed() to see whether the @job
- * failed.
- *
- * The returned #GError instance is owned by @job, so
- * the caller must not free it.
- *
- * Return value: the #GError describing the failure
- *               cause for @job, or %NULL.
- **/
-GError*
-thunar_vfs_job_get_error (const ThunarVfsJob *job)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), NULL);
-  g_return_val_if_fail (job->ref_count > 0, NULL);
-
-  return job->error;
-}
-
-
-
-/**
- * thunar_vfs_job_finish:
- * @job : a #ThunarVfsJob.
- *
- * Marks the @job as finished (if not already finished).
- *
- * This method is part of the module API and must not
- * be called by application code.
+ * If the @job was cancelled prior to the invocation of
+ * the signal, the signal will never be invoked. So you
+ * must take care when querying a return value from
+ * the signal!
  **/
 void
-thunar_vfs_job_finish (ThunarVfsJob *job)
+thunar_vfs_job_emit_valist (ThunarVfsJob *job,
+                            guint         signal_id,
+                            GQuark        signal_detail,
+                            va_list       var_args)
 {
+  ThunarVfsJobEmitDetails details;
+
   g_return_if_fail (THUNAR_VFS_IS_JOB (job));
   g_return_if_fail (job->ref_count > 0);
-
-  job->finished = TRUE;
-}
-
-
-
-/**
- * thunar_vfs_job_schedule:
- * @job : a #ThunarVfsJob.
- *
- * This functions schedules @job to be run as soon
- * as possible, in a separate thread.
- *
- * Return value: a pointer to @job.
- **/
-ThunarVfsJob*
-thunar_vfs_job_schedule (ThunarVfsJob *job)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), NULL);
-  g_return_val_if_fail (job->ref_count > 0, NULL);
-  g_return_val_if_fail (job_pool != NULL, NULL);
-
-  /* schedule the job on the thread pool */
-  g_thread_pool_push (job_pool, thunar_vfs_job_ref (job), NULL);
-
-  return job;
-}
-
-
-
-/**
- * thunar_vfs_job_callback:
- * @job : a #ThunarVfsJob.
- **/
-void
-thunar_vfs_job_callback (ThunarVfsJob *job)
-{
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (job->ref_count > 0);
+  g_return_if_fail (job->launched);
 
   if (G_LIKELY (!thunar_vfs_job_cancelled (job)))
     {
+      details.job = job;
+      details.signal_id = signal_id;
+      details.signal_detail = signal_detail;
+      details.var_args = var_args;
+
       g_mutex_lock (job->mutex);
-      g_idle_add_full (G_PRIORITY_HIGH, thunar_vfs_job_idle, job, NULL);
+      g_idle_add_full (G_PRIORITY_HIGH, thunar_vfs_job_idle, &details, NULL);
       g_cond_wait (job->cond, job->mutex);
       g_mutex_unlock (job->mutex);
     }
@@ -364,276 +451,24 @@ thunar_vfs_job_callback (ThunarVfsJob *job)
 
 
 /**
- * thunar_vfs_job_set_error:
- * @job     : a #ThunarVfsJob.
- * @domain  : the #GError domain.
- * @code    : the #GError code.
- * @message : an error message.
- *
- * Marks @job as failed and finished, and sets the failure
- * cause according to the given error parameters.
- *
- * This method is part of the module API and must not
- * be called by application code.
+ * thunar_vfs_job_emit:
+ * @job           : a #ThunarVfsJob.
+ * @signal_id     :
+ * @signal_detail :
+ * @...           :
  **/
 void
-thunar_vfs_job_set_error (ThunarVfsJob *job,
-                          GQuark        domain,
-                          gint          code,
-                          const gchar  *message)
+thunar_vfs_job_emit (ThunarVfsJob *job,
+                     guint         signal_id,
+                     GQuark        signal_detail,
+                     ...)
 {
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (job->ref_count > 0);
-  g_return_if_fail (message != NULL);
+  va_list var_args;
 
-  if (G_UNLIKELY (job->error != NULL))
-    g_error_free (job->error);
-
-  job->error = g_error_new_literal (domain, code, message);
-  job->finished = TRUE;
+  va_start (var_args, signal_detail);
+  thunar_vfs_job_emit_valist (job, signal_id, signal_detail, var_args);
+  va_end (var_args);
 }
-
-
-
-
-
-
-
-
-#if 0
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#ifdef HAVE_DIRENT_H
-#include <dirent.h>
-#endif
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
-
-#include <thunar-vfs/thunar-vfs-job.h>
-
-
-
-typedef struct _ThunarVfsJobReadFolder ThunarVfsJobReadFolder;
-
-
-
-static void thunar_vfs_job_callback (ThunarVfsJob *job);
-
-
-
-struct _ThunarVfsJob
-{
-  volatile gint cancelled;
-
-  void (*callback_func) (ThunarVfsJob *job);
-  void (*execute_func) (ThunarVfsJob *job);
-  void (*free_func) (ThunarVfsJob *job);
-};
-
-struct _ThunarVfsJobReadFolder
-{
-  ThunarVfsJob __parent__;
-
-  ThunarVfsURI *uri;
-  GSList       *infos;
-  GError       *error;
-
-  ThunarVfsJobReadFolderCallback callback;
-  gpointer                       user_data;
-};
-
-
-
-static GThreadPool *job_pool = NULL;
-
-#ifndef HAVE_READDIR_R
-G_LOCK_DEFINE_STATIC (readdir);
-#endif
-
-
-
-static void
-thunar_vfs_job_execute (gpointer data,
-                        gpointer user_data)
-{
-  ThunarVfsJob *job = (ThunarVfsJob *) data;
-  (*job->execute_func) (job);
-  (*job->free_func) (job);
-}
-
-
-
-static void
-thunar_vfs_job_schedule (ThunarVfsJob *job)
-{
-  g_thread_pool_push (job_pool, job, NULL);
-}
-
-
-
-static void
-thunar_vfs_job_read_folder_free (ThunarVfsJob *job)
-{
-  ThunarVfsJobReadFolder *folder_job = (ThunarVfsJobReadFolder *) job;
-
-  if (G_UNLIKELY (folder_job->error != NULL))
-    g_error_free (folder_job->error);
-
-  thunar_vfs_info_list_free (folder_job->infos);
-  thunar_vfs_uri_unref (folder_job->uri);
-
-  g_free (folder_job);
-}
-
-
-
-static void
-thunar_vfs_job_read_folder_callback (ThunarVfsJob *job)
-{
-  ThunarVfsJobReadFolder *folder_job = (ThunarVfsJobReadFolder *) job;
-  (*folder_job->callback) (job, folder_job->error, folder_job->infos, folder_job->user_data);
-}
-
-
-
-static void
-thunar_vfs_job_read_folder_execute (ThunarVfsJob *job)
-{
-  ThunarVfsJobReadFolder *folder_job = (ThunarVfsJobReadFolder *) job;
-  ThunarVfsInfo          *info;
-  struct dirent           d_buffer;
-  struct dirent          *d;
-  GStringChunk           *names_chunk;
-  ThunarVfsURI           *file_uri;
-  const gchar            *folder_path;
-  GSList                 *names;
-  GSList                 *lp;
-  DIR                    *dp;
-
-  folder_path = thunar_vfs_uri_get_path (folder_job->uri);
-
-  dp = opendir (folder_path);
-  if (G_UNLIKELY (dp == NULL))
-    {
-      folder_job->error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
-    }
-  else
-    {
-      names_chunk = g_string_chunk_new (4 * 1024);
-      names = NULL;
-
-      /* read the directory content */
-      for (;;)
-        {
-#ifdef HAVE_READDIR_R
-          if (G_UNLIKELY (readdir_r (dp, &d_buffer, &d) < 0))
-            {
-              folder_job->error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
-              break;
-            }
-#else
-          G_LOCK (readdir);
-          d = readdir (dp);
-          if (G_LIKELY (d != NULL))
-            {
-              memcpy (&d_buffer, d, sizeof (*d));
-              d = &d_buffer;
-            }
-          G_UNLOCK (readdir);
-#endif
-
-          if (G_UNLIKELY (d == NULL))
-            {
-              /* end of directory reached */
-              break;
-            }
-
-          names = g_slist_prepend (names, g_string_chunk_insert (names_chunk, d->d_name));
-        }
-
-      closedir (dp);
-
-      /* check if the job was neither cancelled nor was there an error */
-      if (G_LIKELY (!job->cancelled && folder_job->error == NULL))
-        {
-          for (lp = names; lp != NULL; lp = lp->next)
-            {
-              file_uri = thunar_vfs_uri_relative (folder_job->uri, lp->data);
-              info = thunar_vfs_info_new_for_uri (file_uri, NULL);
-              if (G_LIKELY (info != NULL))
-                folder_job->infos = g_slist_prepend (folder_job->infos, info);
-              thunar_vfs_uri_unref (file_uri);
-            }
-        }
-
-      /* free the names */
-      g_string_chunk_free (names_chunk);
-      g_slist_free (names);
-    }
-
-  thunar_vfs_job_callback (job);
-}
-
-
-
-/**
- * _thunar_vfs_job_init:
- *
- * Initializes the jobs module of the ThunarVFS
- * library.
- **/
-void
-_thunar_vfs_job_init (void)
-{
-  g_return_if_fail (job_pool == NULL);
-
-  job_pool = g_thread_pool_new (thunar_vfs_job_execute, NULL, 8, FALSE, NULL);
-}
-
-
-
-/**
- **/
-void
-thunar_vfs_job_cancel (ThunarVfsJob *job)
-{
-  g_return_if_fail (job != NULL);
-  g_return_if_fail (!job->cancelled);
-
-  g_atomic_int_inc ((gint *) &job->cancelled);
-}
-
-
-
-/**
- **/
-ThunarVfsJob*
-thunar_vfs_job_read_folder (ThunarVfsURI                  *folder_uri,
-                            ThunarVfsJobReadFolderCallback callback,
-                            gpointer                       user_data)
-{
-  ThunarVfsJobReadFolder *folder_job;
-
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (folder_uri), NULL);
-  g_return_val_if_fail (callback != NULL, NULL);
-
-  folder_job = g_new0 (ThunarVfsJobReadFolder, 1);
-  folder_job->uri = thunar_vfs_uri_ref (folder_uri);
-  folder_job->callback = callback;
-  folder_job->user_data = user_data;
-
-  THUNAR_VFS_JOB (folder_job)->callback_func = thunar_vfs_job_read_folder_callback;
-  THUNAR_VFS_JOB (folder_job)->execute_func = thunar_vfs_job_read_folder_execute;
-  THUNAR_VFS_JOB (folder_job)->free_func = thunar_vfs_job_read_folder_free;
-
-  thunar_vfs_job_schedule (THUNAR_VFS_JOB (folder_job));
-
-  return THUNAR_VFS_JOB (folder_job);
-}
-#endif
 
 
 

@@ -46,20 +46,17 @@
 
 
 
-typedef struct _ThunarVfsJobListdir ThunarVfsJobListdir;
+enum
+{
+  ERROR_OCCURRED,
+  INFOS_READY,
+  LAST_SIGNAL,
+};
 
 
 
-#define THUNAR_VFS_TYPE_JOB_LISTDIR     (thunar_vfs_job_listdir_get_type ())
-#define THUNAR_VFS_JOB_LISTDIR(obj)     (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_JOB_LISTDIR, ThunarVfsJobListdir))
-#define THUNAR_VFS_IS_JOB_LISTDIR(obj)  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_JOB_LISTDIR))
-
-
-
-static GType thunar_vfs_job_listdir_get_type      (void) G_GNUC_CONST;
 static void  thunar_vfs_job_listdir_register_type (GType             *type);
 static void  thunar_vfs_job_listdir_class_init    (ThunarVfsJobClass *klass);
-static void  thunar_vfs_job_listdir_callback      (ThunarVfsJob      *job);
 static void  thunar_vfs_job_listdir_execute       (ThunarVfsJob      *job);
 static void  thunar_vfs_job_listdir_finalize      (ThunarVfsJob      *job);
 
@@ -69,15 +66,15 @@ struct _ThunarVfsJobListdir
   ThunarVfsJob __parent__;
 
   ThunarVfsURI *uri;
-  GSList       *infos;
-
-  ThunarVfsJobListdirCallback callback;
-  gpointer                    user_data;
 };
 
 
 
-static GType
+static guint listdir_signals[LAST_SIGNAL];
+
+
+
+GType
 thunar_vfs_job_listdir_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
@@ -118,18 +115,39 @@ thunar_vfs_job_listdir_register_type (GType *type)
 static void
 thunar_vfs_job_listdir_class_init (ThunarVfsJobClass *klass)
 {
-  klass->callback = thunar_vfs_job_listdir_callback;
   klass->execute = thunar_vfs_job_listdir_execute;
   klass->finalize = thunar_vfs_job_listdir_finalize;
-}
 
+  /**
+   * ThunarVfsJobListdir::error-occurred:
+   * @job   : a #ThunarVfsJob.
+   * @error : a #GError describing the cause.
+   *
+   * Emitted whenever an error occurs while listing the directory
+   * contents.
+   **/
+  listdir_signals[ERROR_OCCURRED] =
+    g_signal_new ("error-occurred",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
 
-
-static void
-thunar_vfs_job_listdir_callback (ThunarVfsJob *job)
-{
-  (*THUNAR_VFS_JOB_LISTDIR (job)->callback) (job, THUNAR_VFS_JOB_LISTDIR (job)->infos,
-                                             THUNAR_VFS_JOB_LISTDIR (job)->user_data);
+  /**
+   * ThunarVfsJobListdir::infos-ready:
+   * @job   : a #ThunarVfsJob.
+   * @infos : a list of #ThunarVfsInfo<!---->s.
+   *
+   * This signal is emitted whenever there's a new bunch of
+   * #ThunarVfsInfo<!---->s ready. This signal is garantied
+   * to be never emitted with an @infos parameter of %NULL.
+   **/
+  listdir_signals[INFOS_READY] =
+    g_signal_new ("infos-ready",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 
@@ -137,27 +155,27 @@ thunar_vfs_job_listdir_callback (ThunarVfsJob *job)
 static void
 thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
 {
-  ThunarVfsJobListdir *job_listdir = THUNAR_VFS_JOB_LISTDIR (job);
-  ThunarVfsInfo       *info;
-  struct dirent        d_buffer;
-  struct dirent       *d;
-  GStringChunk        *names_chunk;
-  ThunarVfsURI        *file_uri;
-  GSList              *names;
-  GSList              *lp;
-  time_t               last_check_time;
-  time_t               current_time;
-  DIR                 *dp;
+  ThunarVfsInfo *info;
+  struct dirent  d_buffer;
+  struct dirent *d;
+  GStringChunk  *names_chunk;
+  ThunarVfsURI  *file_uri;
+  GError        *error = NULL;
+  GSList        *infos = NULL;
+  GSList        *names = NULL;
+  GSList        *lp;
+  time_t         last_check_time;
+  time_t         current_time;
+  DIR           *dp;
 
-  dp = opendir (thunar_vfs_uri_get_path (job_listdir->uri));
+  dp = opendir (thunar_vfs_uri_get_path (THUNAR_VFS_JOB_LISTDIR (job)->uri));
   if (G_UNLIKELY (dp == NULL))
     {
-      thunar_vfs_job_set_error (job, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+      error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
     }
   else
     {
       names_chunk = g_string_chunk_new (4 * 1024);
-      names = NULL;
 
       /* We read the file names first here to
        * (hopefully) avoid a bit unnecessary
@@ -165,22 +183,11 @@ thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
        */
       for (;;)
         {
-#ifdef HAVE_READDIR_R
           if (G_UNLIKELY (readdir_r (dp, &d_buffer, &d) < 0))
             {
-              thunar_vfs_job_set_error (job, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+              error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
               break;
             }
-#else
-          G_LOCK (readdir);
-          d = readdir (dp);
-          if (G_LIKELY (d != NULL))
-            {
-              memcpy (&d_buffer, d, sizeof (*d));
-              d = &d_buffer;
-            }
-          G_UNLOCK (readdir);
-#endif
 
           /* check for end of directory */
           if (G_UNLIKELY (d == NULL))
@@ -203,22 +210,22 @@ thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
       for (lp = names; lp != NULL; lp = lp->next)
         {
           /* check for cancellation/failure condition */
-          if (thunar_vfs_job_cancelled (job) || thunar_vfs_job_failed (job))
+          if (thunar_vfs_job_cancelled (job) || error != NULL)
             break;
 
-          file_uri = thunar_vfs_uri_relative (job_listdir->uri, lp->data);
+          file_uri = thunar_vfs_uri_relative (THUNAR_VFS_JOB_LISTDIR (job)->uri, lp->data);
           info = thunar_vfs_info_new_for_uri (file_uri, NULL);
           if (G_LIKELY (info != NULL))
-            job_listdir->infos = g_slist_prepend (job_listdir->infos, info);
+            infos = g_slist_prepend (infos, info);
           thunar_vfs_uri_unref (file_uri);
 
           current_time = time (NULL);
-          if (current_time - last_check_time > 2)
+          if (current_time - last_check_time > 2 && infos != NULL)
             {
               last_check_time = current_time;
-              thunar_vfs_job_callback (job);
-              thunar_vfs_info_list_free (job_listdir->infos);
-              job_listdir->infos = NULL;
+              thunar_vfs_job_emit (job, listdir_signals[INFOS_READY], 0, infos);
+              thunar_vfs_info_list_free (infos);
+              infos = NULL;
             }
         }
 
@@ -227,9 +234,19 @@ thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
       g_slist_free (names);
     }
 
-  /* we did it */
-  thunar_vfs_job_finish (job);
-  thunar_vfs_job_callback (job);
+  /* emit appropriate signals */
+  if (G_UNLIKELY (error != NULL))
+    {
+      thunar_vfs_job_emit (job, listdir_signals[ERROR_OCCURRED], 0, error);
+      g_error_free (error);
+    }
+  else if (G_LIKELY (infos != NULL))
+    {
+      thunar_vfs_job_emit (job, listdir_signals[INFOS_READY], 0, infos);
+    }
+
+  /* cleanup */
+  thunar_vfs_info_list_free (infos);
 }
 
 
@@ -242,43 +259,38 @@ thunar_vfs_job_listdir_finalize (ThunarVfsJob *job)
   /* free the folder uri */
   if (G_LIKELY (job_listdir->uri != NULL))
     thunar_vfs_uri_unref (job_listdir->uri);
-
-  /* free the leftover files */
-  thunar_vfs_info_list_free (job_listdir->infos);
 }
 
 
 
 /**
- * thunar_vfs_job_listdir:
- * @folder_uri : the #ThunarVfsURI of the directory whose content to query.
- * @callback   : the callback function to handle the retrieved infos.
- * @user_data  : additional data to pass to @callback.
+ * thunar_vfs_job_new:
+ * @folder_uri : the #ThunarVfsURI of the directory whose contents to query.
  *
- * FIXME: DOC!
+ * Allocates a new #ThunarVfsJobListdir object, which can be used to
+ * query the contents of the directory @folder_uri.
  *
- * The caller is responsible for freeing the returned #ThunarVfsJob
- * using the #thunar_vfs_job_unref() function.
+ * You need to call #thunar_vfs_job_launch() in order to start the
+ * job. You may want to connect to ::finished, ::error-occurred and
+ * ::infos-ready prior to launching the job.
  *
- * Return value: the newly allocated #ThunarVfsJob, which performs
- *               the directory listing.
+ * The caller is responsible to call #thunar_vfs_job_unref() on the
+ * returned object.
+ *
+ * Return value: the newly allocated #ThunarVfsJob, which performs the
+ *               directory listing.
  **/
 ThunarVfsJob*
-thunar_vfs_job_listdir (ThunarVfsURI               *folder_uri,
-                        ThunarVfsJobListdirCallback callback,
-                        gpointer                    user_data)
+thunar_vfs_job_listdir_new (ThunarVfsURI *folder_uri)
 {
   ThunarVfsJobListdir *job_listdir;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (folder_uri), NULL);
-  g_return_val_if_fail (callback != NULL, NULL);
 
   job_listdir = (ThunarVfsJobListdir *) g_type_create_instance (THUNAR_VFS_TYPE_JOB_LISTDIR);
   job_listdir->uri = thunar_vfs_uri_ref (folder_uri);
-  job_listdir->callback = callback;
-  job_listdir->user_data = user_data;
 
-  return thunar_vfs_job_schedule (THUNAR_VFS_JOB (job_listdir));
+  return THUNAR_VFS_JOB (job_listdir);
 }
 
 

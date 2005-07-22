@@ -52,9 +52,14 @@ static void        thunar_local_folder_finalize                   (GObject      
 static ThunarFile *thunar_local_folder_get_corresponding_file     (ThunarFolder           *folder);
 static GSList     *thunar_local_folder_get_files                  (ThunarFolder           *folder);
 static gboolean    thunar_local_folder_get_loading                (ThunarFolder           *folder);
-static void        thunar_local_folder_callback                   (ThunarVfsJob           *job,
+static void        thunar_local_folder_error_occurred             (ThunarVfsJob           *job,
+                                                                   GError                 *error,
+                                                                   ThunarLocalFolder      *local_folder);
+static void        thunar_local_folder_infos_ready                (ThunarVfsJob           *job,
                                                                    GSList                 *infos,
-                                                                   gpointer                user_data);
+                                                                   ThunarLocalFolder      *local_folder);
+static void        thunar_local_folder_finished                   (ThunarVfsJob           *job,
+                                                                   ThunarLocalFolder      *local_folder);
 static void        thunar_local_folder_corresponding_file_changed (ThunarFile             *file,
                                                                    ThunarLocalFolder      *local_folder);
 static void        thunar_local_folder_corresponding_file_destroy (ThunarFile             *file,
@@ -225,55 +230,67 @@ thunar_local_folder_get_loading (ThunarFolder *folder)
 
 
 static void
-thunar_local_folder_callback (ThunarVfsJob *job,
-                              GSList       *infos,
-                              gpointer      user_data)
+thunar_local_folder_error_occurred (ThunarVfsJob      *job,
+                                    GError            *error,
+                                    ThunarLocalFolder *local_folder)
 {
-  ThunarLocalFolder *local_folder = THUNAR_LOCAL_FOLDER (user_data);
-  ThunarFile        *file;
-  GSList            *nfiles = NULL;
-  GSList            *lp;
+  g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
+  g_return_if_fail (local_folder->job == job);
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
+
+  // FIXME:
+  g_warning ("ThunarLocalFolder error: %s", error->message);
+}
+
+
+
+static void
+thunar_local_folder_infos_ready (ThunarVfsJob      *job,
+                                 GSList            *infos,
+                                 ThunarLocalFolder *local_folder)
+{
+  ThunarFile *file;
+  GSList     *nfiles = NULL;
+  GSList     *lp;
 
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
   g_return_if_fail (local_folder->job == job);
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
 
-  GDK_THREADS_ENTER ();
-
-  if (thunar_vfs_job_failed (job))
+  /* add the new files */
+  for (lp = infos; lp != NULL; lp = lp->next)
     {
-      g_warning ("ThunarLocalFolder error: %s", thunar_vfs_job_get_error (job)->message);
+      file = thunar_local_file_get_for_info (lp->data);
+      nfiles = g_slist_prepend (nfiles, file);
+      local_folder->files = g_slist_prepend (local_folder->files, file);
+
+      g_signal_connect_closure_by_id (G_OBJECT (file), local_folder->file_destroy_id,
+                                      0, local_folder->file_destroy_closure, TRUE);
     }
-  else
+
+  /* tell the consumers that we have new files */
+  if (G_LIKELY (nfiles != NULL))
     {
-      /* add the new files */
-      for (lp = infos; lp != NULL; lp = lp->next)
-        {
-          file = thunar_local_file_get_for_info (lp->data);
-          nfiles = g_slist_prepend (nfiles, file);
-          local_folder->files = g_slist_prepend (local_folder->files, file);
-
-          g_signal_connect_closure_by_id (G_OBJECT (file), local_folder->file_destroy_id,
-                                          0, local_folder->file_destroy_closure, TRUE);
-        }
-
-      /* tell the consumers that we have new files */
-      if (G_LIKELY (nfiles != NULL))
-        {
-          thunar_folder_files_added (THUNAR_FOLDER (local_folder), nfiles);
-          g_slist_free (nfiles);
-        }
+      thunar_folder_files_added (THUNAR_FOLDER (local_folder), nfiles);
+      g_slist_free (nfiles);
     }
+}
+
+
+
+static void
+thunar_local_folder_finished (ThunarVfsJob      *job,
+                              ThunarLocalFolder *local_folder)
+{
+  g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
+  g_return_if_fail (local_folder->job == job);
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
 
   /* we did it, the folder is loaded */
-  if (thunar_vfs_job_finished (job))
-    {
-      thunar_vfs_job_unref (local_folder->job);
-      local_folder->job = NULL;
+  thunar_vfs_job_unref (local_folder->job);
+  local_folder->job = NULL;
 
-      g_object_notify (G_OBJECT (local_folder), "loading");
-    }
-
-  GDK_THREADS_LEAVE ();
+  g_object_notify (G_OBJECT (local_folder), "loading");
 }
 
 
@@ -373,8 +390,11 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
       g_object_set_data (G_OBJECT (local_file), "thunar-local-folder", local_folder);
 
       /* schedule the loading of the folder */
-      local_folder->job = thunar_vfs_job_listdir (thunar_file_get_uri (THUNAR_FILE (local_file)),
-                                                  thunar_local_folder_callback, local_folder);
+      local_folder->job = thunar_vfs_job_listdir_new (thunar_file_get_uri (THUNAR_FILE (local_file)));
+      g_signal_connect (local_folder->job, "error-occurred", G_CALLBACK (thunar_local_folder_error_occurred), local_folder);
+      g_signal_connect (local_folder->job, "infos-ready", G_CALLBACK (thunar_local_folder_infos_ready), local_folder);
+      g_signal_connect (local_folder->job, "finished", G_CALLBACK (thunar_local_folder_finished), local_folder);
+      thunar_vfs_job_launch (local_folder->job);
     }
 
   return THUNAR_FOLDER (local_folder);

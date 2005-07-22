@@ -25,19 +25,15 @@
 
 G_BEGIN_DECLS;
 
-/**
- * ThunarVfsJobListdirCallback:
- * @job       :
- * @infos     :
- * @user_data :
- **/
-typedef void (*ThunarVfsJobListdirCallback) (ThunarVfsJob *job,
-                                             GSList       *infos,
-                                             gpointer      user_data);
+typedef struct _ThunarVfsJobListdir ThunarVfsJobListdir;
 
-ThunarVfsJob *thunar_vfs_job_listdir (ThunarVfsURI               *folder_uri,
-                                      ThunarVfsJobListdirCallback callback,
-                                      gpointer                    user_data);
+#define THUNAR_VFS_TYPE_JOB_LISTDIR     (thunar_vfs_job_listdir_get_type ())
+#define THUNAR_VFS_JOB_LISTDIR(obj)     (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_JOB_LISTDIR, ThunarVfsJobListdir))
+#define THUNAR_VFS_IS_JOB_LISTDIR(obj)  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_JOB_LISTDIR))
+
+GType         thunar_vfs_job_listdir_get_type (void) G_GNUC_CONST;
+
+ThunarVfsJob *thunar_vfs_job_listdir_new      (ThunarVfsURI *folder_uri);
 
 G_END_DECLS;
 
