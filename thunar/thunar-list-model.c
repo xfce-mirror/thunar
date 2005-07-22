@@ -1370,12 +1370,12 @@ sort_by_mime_type (ThunarFile *a,
     return 0;
   else if (G_UNLIKELY (info_a == NULL))
     {
-      g_object_unref (G_OBJECT (info_b));
+      thunar_vfs_mime_info_unref (info_b);
       return -1;
     }
   else if (G_UNLIKELY (info_b == NULL))
     {
-      g_object_unref (G_OBJECT (info_a));
+      thunar_vfs_mime_info_unref (info_a);
       return 1;
     }
 
@@ -1462,12 +1462,12 @@ sort_by_type (ThunarFile *a,
     return 0;
   else if (G_UNLIKELY (info_a == NULL))
     {
-      g_object_unref (G_OBJECT (info_b));
+      thunar_vfs_mime_info_unref (info_b);
       return -1;
     }
   else if (G_UNLIKELY (info_b == NULL))
     {
-      g_object_unref (G_OBJECT (info_a));
+      thunar_vfs_mime_info_unref (info_a);
       return 1;
     }
 
