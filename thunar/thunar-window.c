@@ -92,7 +92,7 @@ struct _ThunarWindow
 
 
 
-static const GtkActionEntry const action_entries[] =
+static const GtkActionEntry action_entries[] =
 {
   { "file-menu", NULL, N_ ("_File"), NULL, },
   { "close", GTK_STOCK_CLOSE, N_ ("_Close"), "<control>W", N_ ("Close this window"), G_CALLBACK (thunar_window_action_close), },

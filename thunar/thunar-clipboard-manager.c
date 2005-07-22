@@ -100,7 +100,7 @@ typedef struct
 
 
 
-static const GtkTargetEntry const clipboard_targets[] =
+static const GtkTargetEntry clipboard_targets[] =
 {
   { "x-special/gnome-copied-files", 0, TARGET_GNOME_COPIED_FILES },
   { "UTF8_STRING", 0, TARGET_UTF8_STRING }

@@ -81,7 +81,7 @@ static void          thunar_standard_view_loading_unbound           (gpointer   
 
 
 
-static const GtkActionEntry const action_entries[] =
+static const GtkActionEntry action_entries[] =
 {
   { "file-context-menu", NULL, N_ ("Context Menu"), NULL, NULL, NULL, },
   { "properties", GTK_STOCK_PROPERTIES, N_ ("_Properties"), "<alt>Return", N_ ("View the properties of the selected item"), G_CALLBACK (thunar_standard_view_action_properties), },
@@ -90,7 +90,7 @@ static const GtkActionEntry const action_entries[] =
   { "paste", GTK_STOCK_PASTE, N_ ("_Paste files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_paste), },
 };
 
-static const GtkToggleActionEntry const toggle_action_entries[] =
+static const GtkToggleActionEntry toggle_action_entries[] =
 {
   { "show-hidden-files", NULL, N_("Show _hidden files"), NULL, N_("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_standard_view_action_show_hidden_files), FALSE, },
 };
