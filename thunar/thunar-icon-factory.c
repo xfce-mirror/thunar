@@ -626,9 +626,17 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
   ThunarIconValue *value;
 
   g_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
-  g_return_val_if_fail (name != NULL && *name != '\0', NULL);
   g_return_val_if_fail (size > 0, NULL);
   
+  /* cannot happen unless there's no XSETTINGS manager
+   * for the default screen, but just in case...
+   */
+  if (G_UNLIKELY (name == NULL || *name == '\0'))
+    {
+      g_object_ref (G_OBJECT (factory->fallback_icon->pixbuf));
+      return factory->fallback_icon->pixbuf;
+    }
+
   /* lookup the icon */
   value = thunar_icon_factory_lookup_icon (factory, name, size, wants_default);
   if (value != NULL)
