@@ -3,6 +3,7 @@
 SUBDIRS =								\
 	docs								\
 	thunar-vfs							\
+	thunarx								\
 	thunar								\
 	tests
 

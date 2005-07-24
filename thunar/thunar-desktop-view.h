@@ -22,28 +22,39 @@
 
 #include <gtk/gtk.h>
 
-#include <thunar/thunar-preferences.h>
-
 G_BEGIN_DECLS;
 
-typedef struct _ThunarDesktopViewClass  ThunarDesktopViewClass;
-typedef struct _ThunarDesktopView       ThunarDesktopView;
+typedef struct _ThunarDesktopViewClass ThunarDesktopViewClass;
+typedef struct _ThunarDesktopView      ThunarDesktopView;
 
 #define THUNAR_TYPE_DESKTOP_VIEW            (thunar_desktop_view_get_type ())
 #define THUNAR_DESKTOP_VIEW(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_DESKTOP_VIEW, ThunarDesktopView))
 #define THUNAR_DESKTOP_VIEW_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_DESKTOP_VIEW, ThunarDesktopViewClass))
 #define THUNAR_IS_DESKTOP_VIEW(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_DESKTOP_VIEW))
 #define THUNAR_IS_DESKTOP_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_DESKTOP_VIEW))
-#define THUNAR_DESKTOP_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DESKTOP_VIEW, ThunarDesktopViewClass))
+#define THUNAR_DESKTOP_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DESKTOP_VIEW, ThunarDesktopView))
 
-GType       thunar_desktop_view_get_type         (void) G_GNUC_CONST;
+GType         thunar_desktop_view_get_type             (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_desktop_view_new              (void);
-GtkWidget  *thunar_desktop_view_new_with_display (GdkDisplay        *display);
+GtkWidget    *thunar_desktop_view_new                  (void);
 
-GdkDisplay *thunar_desktop_view_get_display      (ThunarDesktopView *view);
-void        thunar_desktop_view_set_display      (ThunarDesktopView *view,
-                                                  GdkDisplay        *display);
+gint          thunar_desktop_view_get_icon_size        (ThunarDesktopView *view);
+void          thunar_desktop_view_set_icon_size        (ThunarDesktopView *view,
+                                                        gint               icon_size);
+
+GtkTreeModel *thunar_desktop_view_get_model            (ThunarDesktopView *view);
+void          thunar_desktop_view_set_model            (ThunarDesktopView *view,
+                                                        GtkTreeModel      *model);
+
+gint          thunar_desktop_view_get_file_column      (ThunarDesktopView *view);
+void          thunar_desktop_view_set_file_column      (ThunarDesktopView *view,
+                                                        gint               file_column);
+
+gint          thunar_desktop_view_get_position_column  (ThunarDesktopView *view);
+void          thunar_desktop_view_set_position_column  (ThunarDesktopView *view,
+                                                        gint               position_column);
+
+void          thunar_desktop_view_unselect_all         (ThunarDesktopView *view);
 
 G_END_DECLS;
 

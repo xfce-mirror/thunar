@@ -1168,17 +1168,22 @@ thunar_file_load_icon (ThunarFile *file,
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
   /* see if we have a cached icon that matches the request */
-  if (file->cached_icon != NULL && file->cached_size == size)
+  if (file->cached_icon == NULL || file->cached_size != size)
     {
-      /* take a reference on the cached icon for the caller */
-      g_object_ref (G_OBJECT (file->cached_icon));
-      return file->cached_icon;
+      /* drop any previous icon */
+      if (file->cached_icon != NULL)
+        g_object_unref (G_OBJECT (file->cached_icon));
+
+      /* load the icon */
+      icon_factory = thunar_icon_factory_get_default ();
+      icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
+      icon_name = THUNAR_FILE_GET_CLASS (file)->get_icon_name (file, icon_theme);
+      file->cached_icon = thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);
     }
 
-  icon_factory = thunar_icon_factory_get_default ();
-  icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
-  icon_name = THUNAR_FILE_GET_CLASS (file)->get_icon_name (file, icon_theme);
-  return thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);
+  /* take a reference on the cached icon for the caller */
+  g_object_ref (G_OBJECT (file->cached_icon));
+  return file->cached_icon;
 }
 
 

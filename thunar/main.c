@@ -28,6 +28,7 @@
 #include <stdlib.h>
 #endif
 
+#include <thunar/thunar-desktop-window.h>
 #include <thunar/thunar-window.h>
 
 
@@ -57,6 +58,14 @@ main (int argc, char **argv)
 
   /* initialize the ThunarVFS library */
   thunar_vfs_init ();
+
+  if (argc >= 2 && exo_str_is_equal (argv[1], "--desktop"))
+    {
+      window = thunar_desktop_window_new ();
+      gtk_widget_show (window);
+      gtk_main ();
+      return 0;
+    }
 
   path = (argc > 1) ? argv[1] : xfce_get_homedir ();
 

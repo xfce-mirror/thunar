@@ -1,3 +1,16 @@
+2005-07-24	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.c(thunar_file_load_icon): Actually cache the result
+	  of an icon lookup.
+	* thunarx/, thunarx/Makefile.am, configure.in.in: Add "thunarx"
+	  namespace, which contains extensions to existing frameworks and
+	  various helper functions that don't fit anywhere else.
+	* thunarx/thunarx-gdk-pixbuf-extensions.{c,h}: Add a method to colorize
+	  a GdkPixbuf to a given GdkColor.
+	* thunar/main.c, thunar/thunar-desktop-model.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-desktop-window.{c,h}, thunar/thunar-desktop-view.{c,h}:
+	  Add proof-of-concept for the desktop support.
+
 2005-07-23	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-list-model.c: Fix incorrect ThunarVfsMimeInfo -> GObject

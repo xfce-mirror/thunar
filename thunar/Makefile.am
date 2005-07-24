@@ -17,8 +17,12 @@ Thunar_SOURCES =							\
 	thunar-clipboard-manager.h					\
 	thunar-computer-folder.c					\
 	thunar-computer-folder.h					\
+	thunar-desktop-model.c						\
+	thunar-desktop-model.h						\
 	thunar-desktop-view.c						\
 	thunar-desktop-view.h						\
+	thunar-desktop-window.c						\
+	thunar-desktop-window.h						\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
 	thunar-details-view-icon-renderer.c				\
@@ -90,10 +94,12 @@ Thunar_LDFLAGS =							\
 	$(GTHREAD_LIBS)
 
 Thunar_LDADD =								\
-	$(top_builddir)/thunar-vfs/libthunar-vfs.la
+	$(top_builddir)/thunar-vfs/libthunar-vfs.la			\
+	$(top_builddir)/thunarx/libthunarx.la
 
 Thunar_DEPENDENCIES =							\
-	$(top_builddir)/thunar-vfs/libthunar-vfs.la
+	$(top_builddir)/thunar-vfs/libthunar-vfs.la			\
+	$(top_builddir)/thunarx/libthunarx.la
 
 # install symlink to 'thunar'
 install-data-local:
