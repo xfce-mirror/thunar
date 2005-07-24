@@ -633,21 +633,21 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
       g_value_init (value, GDK_TYPE_PIXBUF);
-      icon = thunar_file_load_icon (row->file, 24);
+      icon = thunar_file_load_icon (row->file, thunar_icon_factory_get_default (), 24);
       g_value_set_object (value, icon);
       g_object_unref (G_OBJECT (icon));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL:
       g_value_init (value, GDK_TYPE_PIXBUF);
-      icon = thunar_file_load_icon (row->file, 48);
+      icon = thunar_file_load_icon (row->file, thunar_icon_factory_get_default (), 48);
       g_value_set_object (value, icon);
       g_object_unref (G_OBJECT (icon));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_ICON_LARGE:
       g_value_init (value, GDK_TYPE_PIXBUF);
-      icon = thunar_file_load_icon (row->file, 64);
+      icon = thunar_file_load_icon (row->file, thunar_icon_factory_get_default (), 64);
       g_value_set_object (value, icon);
       g_object_unref (G_OBJECT (icon));
       break;

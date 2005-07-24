@@ -77,6 +77,7 @@ static void        thunar_statusbar_icon_set_property  (GObject                 
 static void        thunar_statusbar_icon_size_request  (GtkWidget                *widget,
                                                         GtkRequisition           *requisition);
 static void        thunar_statusbar_icon_realize       (GtkWidget                *widget);
+static void        thunar_statusbar_icon_unrealize     (GtkWidget                *widget);
 static gboolean    thunar_statusbar_icon_expose_event  (GtkWidget                *widget,
                                                         GdkEventExpose           *event);
 static void        thunar_statusbar_icon_drag_begin    (GtkWidget                *widget,
@@ -106,10 +107,11 @@ struct _ThunarStatusbarIcon
 {
   GtkWidget __parent__;
 
-  ThunarFile *file;
-  GdkPixbuf  *lucent;
-  gint        angle;
-  gint        timer_id;
+  ThunarIconFactory *icon_factory;
+  ThunarFile        *file;
+  GdkPixbuf         *lucent;
+  gint               angle;
+  gint               timer_id;
 };
 
 
@@ -169,6 +171,7 @@ thunar_statusbar_icon_class_init (ThunarStatusbarIconClass *klass)
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->size_request = thunar_statusbar_icon_size_request;
   gtkwidget_class->realize = thunar_statusbar_icon_realize;
+  gtkwidget_class->unrealize = thunar_statusbar_icon_unrealize;
   gtkwidget_class->expose_event = thunar_statusbar_icon_expose_event;
   gtkwidget_class->drag_begin = thunar_statusbar_icon_drag_begin;
   gtkwidget_class->drag_data_get = thunar_statusbar_icon_drag_data_get;
@@ -298,8 +301,10 @@ thunar_statusbar_icon_size_request (GtkWidget      *widget,
 static void
 thunar_statusbar_icon_realize (GtkWidget *widget)
 {
-  GdkWindowAttr attr;
-  gint          attr_mask;
+  ThunarStatusbarIcon *statusbar_icon = THUNAR_STATUSBAR_ICON (widget);
+  GdkWindowAttr        attr;
+  GtkIconTheme        *icon_theme;
+  gint                 attr_mask;
 
   GTK_WIDGET_SET_FLAGS (widget, GTK_REALIZED);
 
@@ -318,6 +323,24 @@ thunar_statusbar_icon_realize (GtkWidget *widget)
   widget->style = gtk_style_attach (widget->style, widget->window);
   gtk_style_set_background (widget->style, widget->window, GTK_STATE_NORMAL);
   gdk_window_set_user_data (widget->window, widget);
+
+  /* connect to the icon factory */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
+  statusbar_icon->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+}
+
+
+
+static void
+thunar_statusbar_icon_unrealize (GtkWidget *widget)
+{
+  ThunarStatusbarIcon *statusbar_icon = THUNAR_STATUSBAR_ICON (widget);
+
+  /* disconnect from the icon factory */
+  g_object_unref (G_OBJECT (statusbar_icon->icon_factory));
+  statusbar_icon->icon_factory = NULL;
+
+  GTK_WIDGET_CLASS (thunar_statusbar_icon_parent_class)->unrealize (widget);
 }
 
 
@@ -430,7 +453,7 @@ thunar_statusbar_icon_expose_event (GtkWidget      *widget,
   /* draw the icon if we have a file */
   if (G_LIKELY (statusbar_icon->file != NULL))
     {
-      icon = thunar_file_load_icon (statusbar_icon->file, 16);
+      icon = thunar_file_load_icon (statusbar_icon->file, statusbar_icon->icon_factory, 16);
 
       /* use the lucent variant if we're currently loading */
       if (thunar_statusbar_icon_get_loading (statusbar_icon))
@@ -496,7 +519,7 @@ thunar_statusbar_icon_drag_begin (GtkWidget      *widget,
   /* setup the drag source icon */
   if (G_LIKELY (statusbar_icon->file != NULL))
     {
-      icon = thunar_file_load_icon (statusbar_icon->file, 24);
+      icon = thunar_file_load_icon (statusbar_icon->file, statusbar_icon->icon_factory, 24);
       gtk_drag_source_set_icon_pixbuf (widget, icon);
       g_object_unref (G_OBJECT (icon));
     }

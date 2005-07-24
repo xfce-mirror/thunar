@@ -84,8 +84,9 @@ struct _ThunarPathEntry
 {
   GtkEntry __parent__;
 
-  ThunarFile *current_file;
-  GdkWindow  *icon_area;
+  ThunarIconFactory *icon_factory;
+  ThunarFile        *current_file;
+  GdkWindow         *icon_area;
 };
 
 
@@ -312,10 +313,15 @@ thunar_path_entry_realize (GtkWidget *widget)
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
   GdkWindowAttr    attributes;
+  GtkIconTheme    *icon_theme;
   gint             attributes_mask;
   gint             text_height;
   gint             icon_size;
   gint             spacing;
+
+  /* query the proper icon factory */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
+  path_entry->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
   gtk_widget_style_get (GTK_WIDGET (widget),
                         "icon-size", &icon_size,
@@ -362,6 +368,10 @@ thunar_path_entry_unrealize (GtkWidget *widget)
   gdk_window_destroy (path_entry->icon_area);
   path_entry->icon_area = NULL;
 
+  /* disconnect from the icon factory */
+  g_object_unref (G_OBJECT (path_entry->icon_factory));
+  path_entry->icon_factory = NULL;
+
   /* let the GtkWidget class do the rest */
   GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->unrealize (widget);
 }
@@ -405,7 +415,7 @@ thunar_path_entry_expose_event (GtkWidget      *widget,
       if (path_entry->current_file == NULL)
         icon = gtk_widget_render_icon (widget, GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_SMALL_TOOLBAR, "path_entry");
       else
-        icon = thunar_file_load_icon (path_entry->current_file, icon_size);
+        icon = thunar_file_load_icon (path_entry->current_file, path_entry->icon_factory, icon_size);
 
       if (G_LIKELY (icon != NULL))
         {

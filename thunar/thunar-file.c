@@ -1149,8 +1149,11 @@ thunar_file_get_emblem_names (ThunarFile *file)
 
 /**
  * thunar_file_load_icon:
- * @file : a #ThunarFile instance.
- * @size : the icon size in pixels.
+ * @file         : a #ThunarFile instance.
+ * @icon_factory : the #ThunarIconFactory, which should be used to load the icon.
+ * @size         : the icon size in pixels.
+ *
+ * Loads an icon from @icon_factory for @file at @size.
  *
  * You need to call #g_object_unref() on the returned icon
  * when you don't need it any longer.
@@ -1158,12 +1161,12 @@ thunar_file_get_emblem_names (ThunarFile *file)
  * Return value: the icon for @file at @size.
  **/
 GdkPixbuf*
-thunar_file_load_icon (ThunarFile *file,
-                       gint        size)
+thunar_file_load_icon (ThunarFile        *file,
+                       ThunarIconFactory *icon_factory,
+                       gint               size)
 {
-  ThunarIconFactory *icon_factory;
-  GtkIconTheme      *icon_theme;
-  const gchar       *icon_name;
+  GtkIconTheme *icon_theme;
+  const gchar  *icon_name;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
@@ -1175,7 +1178,6 @@ thunar_file_load_icon (ThunarFile *file,
         g_object_unref (G_OBJECT (file->cached_icon));
 
       /* load the icon */
-      icon_factory = thunar_icon_factory_get_default ();
       icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
       icon_name = THUNAR_FILE_GET_CLASS (file)->get_icon_name (file, icon_theme);
       file->cached_icon = thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);

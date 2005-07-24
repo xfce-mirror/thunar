@@ -260,7 +260,7 @@ thunar_details_view_icon_renderer_render (GtkCellRenderer     *renderer,
                                           GtkCellRendererState flags)
 {
   ThunarDetailsViewIconRenderer *icon_renderer = THUNAR_DETAILS_VIEW_ICON_RENDERER (renderer);
-  ThunarIconFactory             *factory;
+  ThunarIconFactory             *icon_factory;
   GdkRectangle                   icon_area;
   GdkRectangle                   draw_area;
   GdkPixbuf                     *scaled;
@@ -271,7 +271,9 @@ thunar_details_view_icon_renderer_render (GtkCellRenderer     *renderer,
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
 
-  icon = thunar_file_load_icon (icon_renderer->file, icon_renderer->size);
+  /* load the main icon */
+  icon_factory = thunar_icon_factory_get_default ();
+  icon = thunar_file_load_icon (icon_renderer->file, icon_factory, icon_renderer->size);
   if (G_UNLIKELY (icon == NULL))
     return;
 
@@ -307,12 +309,10 @@ thunar_details_view_icon_renderer_render (GtkCellRenderer     *renderer,
   emblems = thunar_file_get_emblem_names (icon_renderer->file);
   if (emblems != NULL)
     {
-      factory = thunar_icon_factory_get_default ();
-
       /* lookup the first emblem icon that exits in the icon theme */
       for (icon = NULL, lp = emblems; lp != NULL; lp = lp->next)
         {
-          icon = thunar_icon_factory_load_icon (factory, lp->data, icon_renderer->size, NULL, FALSE);
+          icon = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, NULL, FALSE);
           if (G_LIKELY (icon != NULL))
             break;
         }

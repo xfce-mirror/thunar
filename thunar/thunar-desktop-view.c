@@ -66,6 +66,8 @@ static void                   thunar_desktop_view_set_property        (GObject  
                                                                        const GValue           *value,
                                                                        GParamSpec             *pspec);
 static void                   thunar_desktop_view_destroy             (GtkObject              *object);
+static void                   thunar_desktop_view_realize             (GtkWidget              *widget);
+static void                   thunar_desktop_view_unrealize           (GtkWidget              *widget);
 static void                   thunar_desktop_view_size_request        (GtkWidget              *widget,
                                                                        GtkRequisition         *requisition);
 static gboolean               thunar_desktop_view_button_press_event  (GtkWidget              *widget,
@@ -108,16 +110,18 @@ struct _ThunarDesktopView
 {
   GtkWidget __parent__;
 
-  PangoLayout  *layout;
+  PangoLayout       *layout;
 
-  GList        *items;
+  GList             *items;
 
-  GtkTreeModel *model;
+  GtkTreeModel      *model;
 
-  gint          icon_size;
+  ThunarIconFactory *icon_factory;
 
-  gint          file_column;
-  gint          position_column;
+  gint               icon_size;
+
+  gint               file_column;
+  gint               position_column;
 };
 
 struct _ThunarDesktopViewItem
@@ -149,6 +153,8 @@ thunar_desktop_view_class_init (ThunarDesktopViewClass *klass)
   gtkobject_class->destroy = thunar_desktop_view_destroy;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->realize = thunar_desktop_view_realize;
+  gtkwidget_class->unrealize = thunar_desktop_view_unrealize;
   gtkwidget_class->size_request = thunar_desktop_view_size_request;
   gtkwidget_class->button_press_event = thunar_desktop_view_button_press_event;
   gtkwidget_class->expose_event = thunar_desktop_view_expose_event;
@@ -230,6 +236,9 @@ static void
 thunar_desktop_view_finalize (GObject *object)
 {
   ThunarDesktopView *view = THUNAR_DESKTOP_VIEW (object);
+
+  /* verify that the icon factory was released */
+  g_assert (view->icon_factory == NULL);
 
   g_object_unref (G_OBJECT (view->layout));
 
@@ -314,6 +323,35 @@ thunar_desktop_view_destroy (GtkObject *object)
   thunar_desktop_view_set_model (view, NULL);
 
   (*GTK_OBJECT_CLASS (thunar_desktop_view_parent_class)->destroy) (object);
+}
+
+
+
+static void
+thunar_desktop_view_realize (GtkWidget *widget)
+{
+  ThunarDesktopView *view = THUNAR_DESKTOP_VIEW (widget);
+  GtkIconTheme      *icon_theme;
+
+  GTK_WIDGET_CLASS (thunar_desktop_view_parent_class)->realize (widget);
+
+  /* determine the icon factory to use */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
+  view->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+}
+
+
+
+static void
+thunar_desktop_view_unrealize (GtkWidget *widget)
+{
+  ThunarDesktopView *view = THUNAR_DESKTOP_VIEW (widget);
+
+  /* disconnect from the icon factory */
+  g_object_unref (G_OBJECT (view->icon_factory));
+  view->icon_factory = NULL;
+
+  GTK_WIDGET_CLASS (thunar_desktop_view_parent_class)->unrealize (widget);
 }
 
 
@@ -449,7 +487,7 @@ thunar_desktop_view_get_item_at_pos (ThunarDesktopView *view,
       gtk_tree_model_get (view->model, &item->iter, view->file_column, &file, -1);
 
       /* add the icon area */
-      icon = thunar_file_load_icon (file, view->icon_size);
+      icon = thunar_file_load_icon (file, view->icon_factory, view->icon_size);
       icon_area.width = gdk_pixbuf_get_width (icon);
       icon_area.height = gdk_pixbuf_get_height (icon);
       icon_area.x = item_area.x + (TILE_WIDTH * 2 - icon_area.width) / 2;
@@ -504,7 +542,7 @@ thunar_desktop_view_render_item (ThunarDesktopView     *view,
 
   gtk_tree_model_get (view->model, &item->iter, view->file_column, &file, -1);
 
-  icon = thunar_file_load_icon (file, view->icon_size);
+  icon = thunar_file_load_icon (file, view->icon_factory, view->icon_size);
 
   icon_area.width = gdk_pixbuf_get_width (icon);
   icon_area.height = gdk_pixbuf_get_height (icon);

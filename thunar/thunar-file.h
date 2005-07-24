@@ -21,6 +21,7 @@
 #define __THUNAR_FILE_H__
 
 #include <thunar-vfs/thunar-vfs.h>
+#include <thunar/thunar-icon-factory.h>
 
 G_BEGIN_DECLS;
 
@@ -166,6 +167,7 @@ gboolean          thunar_file_can_write         (ThunarFile             *file);
 
 GList             *thunar_file_get_emblem_names (ThunarFile             *file);
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile             *file,
+                                                 ThunarIconFactory      *icon_factory,
                                                  gint                    size);
 
 void               thunar_file_watch            (ThunarFile             *file);

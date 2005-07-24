@@ -746,7 +746,7 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
-  icon = thunar_file_load_icon (file, size);
+  icon = thunar_file_load_icon (file, thunar_icon_factory_get_default (), size);
   gtk_drag_source_set_icon_pixbuf (button, icon);
   gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
   g_object_unref (G_OBJECT (icon));

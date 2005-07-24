@@ -1,5 +1,17 @@
 2005-07-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-desktop-view.c,
+	  thunar/thunar-details-view-icon-renderer.c,
+	  thunar/thunar-favourites-model.c, thunar/thunar-file.{c,h},
+	  thunar/thunar-list-model.c, thunar/thunar-location-buttons.c,
+	  thunar/thunar-path-entry.c, thunar/thunar-properties-dialog.c,
+	  thunar/thunar-statusbar.c, thunar/thunar-window.c: Do not hardcode
+	  the default icon factory in thunar_file_load_icon. Instead the icon
+	  factory is now a parameter to that function, which permits for proper
+	  multi-screen support.
+
+2005-07-24	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-icon-factory.c(thunar_icon_factory_load_icon): Handle
 	  the case where no XSETTINGS manager is running on one of the
 	  connected screens.

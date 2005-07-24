@@ -525,7 +525,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (G_LIKELY (current_directory != NULL))
     {
       /* set window title and icon */
-      icon = thunar_file_load_icon (current_directory, 48);
+      icon = thunar_file_load_icon (current_directory, thunar_icon_factory_get_default (), 48);
       gtk_window_set_icon (GTK_WINDOW (window), icon);
       gtk_window_set_title (GTK_WINDOW (window),
                             thunar_file_get_special_name (current_directory));

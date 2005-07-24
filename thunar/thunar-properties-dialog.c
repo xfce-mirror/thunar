@@ -409,11 +409,11 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   g_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   g_return_if_fail (THUNAR_IS_FILE (dialog->file));
 
-  icon_factory = thunar_icon_factory_get_default ();
-  icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (dialog)));
+  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
   /* update the icon */
-  icon = thunar_file_load_icon (dialog->file, 48);
+  icon = thunar_file_load_icon (dialog->file, icon_factory, 48);
   gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->icon_image), icon);
   gtk_window_set_icon (GTK_WINDOW (dialog), icon);
   if (G_LIKELY (icon != NULL))
@@ -506,6 +506,9 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     {
       gtk_widget_hide (dialog->size_label);
     }
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (icon_factory));
 }
 
 
