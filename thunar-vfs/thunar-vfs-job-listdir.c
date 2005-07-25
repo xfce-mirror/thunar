@@ -43,6 +43,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-job-listdir.h>
+#include <thunar-vfs/thunar-vfs-sysdep.h>
 
 
 
@@ -183,19 +184,12 @@ thunar_vfs_job_listdir_execute (ThunarVfsJob *job)
        */
       for (;;)
         {
-          if (G_UNLIKELY (readdir_r (dp, &d_buffer, &d) < 0))
-            {
-              error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
-              break;
-            }
+          if (G_UNLIKELY (!_thunar_vfs_sysdep_readdir (dp, &d_buffer, &d, &error)))
+            break;
 
           /* check for end of directory */
           if (G_UNLIKELY (d == NULL))
               break;
-
-          /* ignore "." and ".." entries */
-          if (G_UNLIKELY (d->d_name[0] == '.' && (d->d_name[1] == '\0' || (d->d_name[1] == '.' && d->d_name[2] == '\0'))))
-            continue;
 
           names = g_slist_insert_sorted (names, g_string_chunk_insert (names_chunk, d->d_name), (GCompareFunc) strcmp);
         }

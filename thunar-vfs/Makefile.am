@@ -40,6 +40,8 @@ libthunar_vfs_la_SOURCES =						\
 	thunar-vfs-mime-parser.h					\
 	thunar-vfs-mime-parser.c					\
 	thunar-vfs-monitor.c						\
+	thunar-vfs-sysdep.c						\
+	thunar-vfs-sysdep.h						\
 	thunar-vfs-trash.c						\
 	thunar-vfs-user.c						\
 	thunar-vfs-util.c						\
