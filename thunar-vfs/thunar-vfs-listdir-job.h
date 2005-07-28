@@ -18,23 +18,23 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __THUNAR_VFS_JOB_LISTDIR_H__
-#define __THUNAR_VFS_JOB_LISTDIR_H__
+#ifndef __THUNAR_VFS_LISTDIR_JOB_H__
+#define __THUNAR_VFS_LISTDIR_JOB_H__
 
 #include <thunar-vfs/thunar-vfs-job.h>
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarVfsJobListdir ThunarVfsJobListdir;
+typedef struct _ThunarVfsListdirJob ThunarVfsListdirJob;
 
-#define THUNAR_VFS_TYPE_JOB_LISTDIR     (thunar_vfs_job_listdir_get_type ())
-#define THUNAR_VFS_JOB_LISTDIR(obj)     (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_JOB_LISTDIR, ThunarVfsJobListdir))
-#define THUNAR_VFS_IS_JOB_LISTDIR(obj)  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_JOB_LISTDIR))
+#define THUNAR_VFS_TYPE_LISTDIR_JOB     (thunar_vfs_listdir_job_get_type ())
+#define THUNAR_VFS_LISTDIR_JOB(obj)     (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_LISTDIR_JOB, ThunarVfsListdirJob))
+#define THUNAR_VFS_IS_LISTDIR_JOB(obj)  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_LISTDIR_JOB))
 
-GType         thunar_vfs_job_listdir_get_type (void) G_GNUC_CONST;
+GType         thunar_vfs_listdir_job_get_type (void) G_GNUC_CONST;
 
-ThunarVfsJob *thunar_vfs_job_listdir_new      (ThunarVfsURI *folder_uri);
+ThunarVfsJob *thunar_vfs_listdir_job_new      (ThunarVfsURI *folder_uri);
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_VFS_JOB_LISTDIR_H__ */
+#endif /* !__THUNAR_VFS_LISTDIR_JOB_H__ */

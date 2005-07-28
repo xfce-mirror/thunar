@@ -472,6 +472,156 @@ thunar_vfs_job_emit (ThunarVfsJob *job,
 
 
 
+
+GType
+thunar_vfs_param_spec_job_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (GParamSpecClass),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsParamSpecJob),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_PARAM,
+                                     "ThunarVfsParamSpecJob",
+                                     &info, 0);
+    }
+
+  return type;
+}
+
+
+
+/**
+ * thunar_vfs_param_spec_job:
+ * @name
+ * @nick
+ * @blurb
+ * @job_type
+ * @flags
+ *
+ * Return value:
+ **/
+GParamSpec*
+thunar_vfs_param_spec_job (const gchar *name,
+                           const gchar *nick,
+                           const gchar *blurb,
+                           GType        job_type,
+                           GParamFlags  flags)
+{
+  GParamSpec *pspec;
+
+  g_return_val_if_fail (g_type_is_a (job_type, THUNAR_VFS_TYPE_JOB), NULL);
+
+  pspec = g_param_spec_internal (THUNAR_VFS_TYPE_PARAM_JOB, name, nick, blurb, flags);
+  pspec->value_type = job_type;
+
+  return pspec;
+}
+
+
+
+/**
+ * thunar_vfs_value_set_job:
+ * @value : a valid #GValue of type #THUNAR_VFS_TYPE_JOB or a derived type.
+ * @job   : the #ThunarVfsJob to set or %NULL.
+ *
+ * Sets the contents of @value to @job.
+ **/
+void
+thunar_vfs_value_set_job (GValue  *value,
+                          gpointer job)
+{
+  g_return_if_fail (THUNAR_VFS_VALUE_HOLDS_JOB (value));
+  g_return_if_fail (job == NULL || THUNAR_VFS_IS_JOB (job));
+  g_return_if_fail (job == NULL || g_value_type_compatible (G_TYPE_FROM_INSTANCE (job), G_VALUE_TYPE (value)));
+
+  if (value->data[0].v_pointer != NULL)
+    thunar_vfs_job_unref (value->data[0].v_pointer);
+
+  value->data[0].v_pointer = job;
+
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_ref (job);
+}
+
+
+
+/**
+ * thunar_vfs_value_take_job:
+ * @value : a valid #GValue of type #THUNAR_VFS_TYPE_JOB or a derived type.
+ * @job   : the #ThunarVfsJob to take over or %NULL.
+ *
+ * Sets the contents of @value to @job and takes over the ownership of
+ * the callers reference to @job; the caller doesn't have to unref it
+ * any more.
+ **/
+void
+thunar_vfs_value_take_job (GValue  *value,
+                           gpointer job)
+{
+  g_return_if_fail (THUNAR_VFS_VALUE_HOLDS_JOB (value));
+  g_return_if_fail (job == NULL || THUNAR_VFS_IS_JOB (job));
+  g_return_if_fail (job == NULL || g_value_type_compatible (G_TYPE_FROM_INSTANCE (job), G_VALUE_TYPE (value)));
+
+  if (value->data[0].v_pointer != NULL)
+    thunar_vfs_job_unref (value->data[0].v_pointer);
+
+  value->data[0].v_pointer = job;
+}
+
+
+
+/**
+ * thunar_vfs_value_get_job:
+ * @value : a valid #GValue of type #THUNAR_VFS_TYPE_JOB or a derived type.
+ *
+ * Queries the #ThunarVfsJob stored within @value and returns it. The
+ * stored value may be %NULL.
+ *
+ * Return value: the #ThunarVfsJob stored in @value.
+ **/
+gpointer
+thunar_vfs_value_get_job (const GValue *value)
+{
+  g_return_val_if_fail (THUNAR_VFS_VALUE_HOLDS_JOB (value), NULL);
+  return value->data[0].v_pointer;
+}
+
+
+
+/**
+ * thunar_vfs_value_dup_job:
+ * @value : a valid #GValue of type #THUNAR_VFS_TYPE_JOB or a derived type.
+ *
+ * Similar to #thunar_vfs_value_get_job(), but also takes a reference for
+ * the caller if @value contains a valid #ThunarVfsJob.
+ *
+ * Return value: the #ThunarVfsJob stored in @value with an additional
+ *               reference taken for the caller.
+ **/
+gpointer
+thunar_vfs_value_dup_job (const GValue *value)
+{
+  g_return_val_if_fail (THUNAR_VFS_VALUE_HOLDS_JOB (value), NULL);
+  return (value->data[0].v_pointer != NULL) ? thunar_vfs_job_ref (value->data[0].v_pointer) : NULL;
+}
+
+
+
+
 /**
  * _thunar_vfs_job_init:
  *
@@ -485,5 +635,7 @@ _thunar_vfs_job_init (void)
 
   job_pool = g_thread_pool_new (thunar_vfs_job_execute, NULL, 8, FALSE, NULL);
 }
+
+
 
 

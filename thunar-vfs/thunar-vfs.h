@@ -24,7 +24,7 @@
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-job.h>
-#include <thunar-vfs/thunar-vfs-job-listdir.h>
+#include <thunar-vfs/thunar-vfs-listdir-job.h>
 #include <thunar-vfs/thunar-vfs-mime.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
 #include <thunar-vfs/thunar-vfs-trash.h>

@@ -77,6 +77,35 @@ void          thunar_vfs_job_emit         (ThunarVfsJob       *job,
                                            GQuark              signal_detail,
                                            ...);
 
+
+typedef struct _ThunarVfsParamSpecJob ThunarVfsParamSpecJob;
+
+#define THUNAR_VFS_TYPE_PARAM_JOB           (thunar_vfs_param_spec_job_get_type ())
+#define THUNAR_VFS_PARAM_SPEC_JOB(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), THUNAR_VFS_TYPE_PARAM_JOB, ThunarVfsParamJob))
+#define THUNAR_VFS_IS_PARAM_SPEC_JOB(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), THUNAR_VFS_TYPE_PARAM_JOB))
+#define THUNAR_VFS_VALUE_HOLDS_JOB(value)   (G_TYPE_CHECK_VALUE_TYPE ((value), THUNAR_VFS_TYPE_JOB))
+
+struct _ThunarVfsParamSpecJob
+{
+  /*< private >*/
+  GParamSpec __parent__;
+};
+
+GType       thunar_vfs_param_spec_job_get_type (void) G_GNUC_CONST;
+
+GParamSpec *thunar_vfs_param_spec_job          (const gchar   *name,
+                                                const gchar   *nick,
+                                                const gchar   *blurb,
+                                                GType          job_type,
+                                                GParamFlags    flags);
+
+void        thunar_vfs_value_set_job           (GValue        *value,
+                                     gpointer       job);
+void      thunar_vfs_value_take_job (GValue        *value,
+                                     gpointer       job);
+gpointer  thunar_vfs_value_get_job  (const GValue  *value);
+gpointer  thunar_vfs_value_dup_job  (const GValue  *value);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_VFS_JOB_H__ */

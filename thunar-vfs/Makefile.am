@@ -20,7 +20,7 @@ libthunar_vfs_built_sources =						\
 libthunar_vfs_headers =							\
 	thunar-vfs-info.h						\
 	thunar-vfs-job.h						\
-	thunar-vfs-job-listdir.h					\
+	thunar-vfs-listdir-job.h					\
 	thunar-vfs-mime.h						\
 	thunar-vfs-monitor.h						\
 	thunar-vfs-trash.h						\
@@ -35,7 +35,7 @@ libthunar_vfs_la_SOURCES =						\
 	$(libthunar_vfs_headers)					\
 	thunar-vfs-info.c						\
 	thunar-vfs-job.c						\
-	thunar-vfs-job-listdir.c					\
+	thunar-vfs-listdir-job.c					\
 	thunar-vfs-mime.c						\
 	thunar-vfs-mime-parser.h					\
 	thunar-vfs-mime-parser.c					\
