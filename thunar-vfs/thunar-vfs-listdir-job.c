@@ -49,7 +49,6 @@
 
 enum
 {
-  ERROR_OCCURRED,
   INFOS_READY,
   LAST_SIGNAL,
 };
@@ -71,7 +70,8 @@ struct _ThunarVfsListdirJob
 
 
 
-static guint listdir_signals[LAST_SIGNAL];
+static guint              listdir_signals[LAST_SIGNAL];
+static ThunarVfsJobClass *thunar_vfs_listdir_job_parent_class;
 
 
 
@@ -116,23 +116,10 @@ thunar_vfs_listdir_job_register_type (GType *type)
 static void
 thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass)
 {
+  thunar_vfs_listdir_job_parent_class = g_type_class_peek_parent (klass);
+
   klass->execute = thunar_vfs_listdir_job_execute;
   klass->finalize = thunar_vfs_listdir_job_finalize;
-
-  /**
-   * ThunarVfsListdirJob::error-occurred:
-   * @job   : a #ThunarVfsJob.
-   * @error : a #GError describing the cause.
-   *
-   * Emitted whenever an error occurs while listing the directory
-   * contents.
-   **/
-  listdir_signals[ERROR_OCCURRED] =
-    g_signal_new ("error-occurred",
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
-                  g_cclosure_marshal_VOID__POINTER,
-                  G_TYPE_NONE, 1, G_TYPE_POINTER);
 
   /**
    * ThunarVfsListdirJob::infos-ready:
@@ -222,7 +209,7 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
   /* emit appropriate signals */
   if (G_UNLIKELY (error != NULL))
     {
-      thunar_vfs_job_emit (job, listdir_signals[ERROR_OCCURRED], 0, error);
+      thunar_vfs_job_error (job, error);
       g_error_free (error);
     }
   else if (G_LIKELY (infos != NULL))
@@ -244,6 +231,10 @@ thunar_vfs_listdir_job_finalize (ThunarVfsJob *job)
   /* free the folder uri */
   if (G_LIKELY (listdir_job->uri != NULL))
     thunar_vfs_uri_unref (listdir_job->uri);
+
+  /* call the parents finalize method */
+  if (THUNAR_VFS_JOB_CLASS (thunar_vfs_listdir_job_parent_class)->finalize != NULL)
+    (*THUNAR_VFS_JOB_CLASS (thunar_vfs_listdir_job_parent_class)->finalize) (job);
 }
 
 

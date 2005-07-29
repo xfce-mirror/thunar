@@ -37,6 +37,7 @@
 
 enum
 {
+  ERROR,
   FINISHED,
   LAST_SIGNAL,
 };
@@ -54,6 +55,7 @@ typedef struct
 static void     thunar_vfs_job_register_type      (GType             *type);
 static void     thunar_vfs_job_class_init         (ThunarVfsJobClass *klass);
 static void     thunar_vfs_job_init               (ThunarVfsJob      *job);
+static void     thunar_vfs_job_finalize           (ThunarVfsJob      *job);
 static void     thunar_vfs_job_execute            (gpointer           data,
                                                    gpointer           user_data);
 static gboolean thunar_vfs_job_idle               (gpointer           user_data);
@@ -134,6 +136,23 @@ thunar_vfs_job_register_type (GType *type)
 static void
 thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
 {
+  klass->finalize = thunar_vfs_job_finalize;
+
+  /**
+   * ThunarVfsJob::error:
+   * @job   : a #ThunarVfsJob.
+   * @error : a #GError describing the cause.
+   *
+   * Emitted whenever an error occurs while executing the
+   * @job.
+   **/
+  job_signals[ERROR] =
+    g_signal_new ("error",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
+
   /**
    * ThunarVfsJob::finished:
    * @job : a #ThunarVfsJob.
@@ -159,6 +178,19 @@ thunar_vfs_job_init (ThunarVfsJob *job)
   job->ref_count = 1;
   job->cond = g_cond_new ();
   job->mutex = g_mutex_new ();
+}
+
+
+
+static void
+thunar_vfs_job_finalize (ThunarVfsJob *job)
+{
+  /* destroy the synchronization entities */
+  g_mutex_free (job->mutex);
+  g_cond_free (job->cond);
+
+  /* disconnect all handlers for this instance */
+  g_signal_handlers_destroy (job);
 }
 
 
@@ -322,12 +354,7 @@ thunar_vfs_job_unref (ThunarVfsJob *job)
       if (THUNAR_VFS_JOB_GET_CLASS (job)->finalize != NULL)
         (*THUNAR_VFS_JOB_GET_CLASS (job)->finalize) (job);
 
-      g_mutex_free (job->mutex);
-      g_cond_free (job->cond);
-
-      /* disconnect all handlers for this instance */
-      g_signal_handlers_destroy (job);
-
+      /* free the instance resources */
       g_type_free_instance ((GTypeInstance *) job);
     }
 }
@@ -468,6 +495,29 @@ thunar_vfs_job_emit (ThunarVfsJob *job,
   va_start (var_args, signal_detail);
   thunar_vfs_job_emit_valist (job, signal_id, signal_detail, var_args);
   va_end (var_args);
+}
+
+
+
+/**
+ * thunar_vfs_job_error:
+ * @job   : a #ThunarVfsJob.
+ * @error : a #GError describing the error cause.
+ *
+ * Emits the ::error signal on @job with the given @error. Whether
+ * or not the @job continues after emitting the error depends on
+ * the particular implementation of @job, but most jobs will
+ * terminate instantly after emitting an error (emitting ::finished
+ * if the @job isn't cancelled afterwards).
+ **/
+void
+thunar_vfs_job_error (ThunarVfsJob *job,
+                      GError       *error)
+{
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  g_return_if_fail (error != NULL && error->message != NULL);
+
+  thunar_vfs_job_emit (job, job_signals[ERROR], 0, error);
 }
 
 

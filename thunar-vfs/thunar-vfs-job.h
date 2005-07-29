@@ -76,6 +76,8 @@ void          thunar_vfs_job_emit         (ThunarVfsJob       *job,
                                            guint               signal_id,
                                            GQuark              signal_detail,
                                            ...);
+void          thunar_vfs_job_error        (ThunarVfsJob       *job,
+                                           GError             *error);
 
 
 typedef struct _ThunarVfsParamSpecJob ThunarVfsParamSpecJob;
@@ -100,11 +102,11 @@ GParamSpec *thunar_vfs_param_spec_job          (const gchar   *name,
                                                 GParamFlags    flags);
 
 void        thunar_vfs_value_set_job           (GValue        *value,
-                                     gpointer       job);
-void      thunar_vfs_value_take_job (GValue        *value,
-                                     gpointer       job);
-gpointer  thunar_vfs_value_get_job  (const GValue  *value);
-gpointer  thunar_vfs_value_dup_job  (const GValue  *value);
+                                                gpointer       job);
+void        thunar_vfs_value_take_job          (GValue        *value,
+                                                gpointer       job);
+gpointer    thunar_vfs_value_get_job           (const GValue  *value);
+gpointer    thunar_vfs_value_dup_job           (const GValue  *value);
 
 G_END_DECLS;
 

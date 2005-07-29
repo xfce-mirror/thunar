@@ -1,5 +1,13 @@
 2005-07-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-job.{c,h}, thunar-vfs/thunar-vfs-listdir-job.c:
+	  Move "error" signal to the ThunarVfsJob class. Make proper use of the
+	  virtual finalize method.
+	* thunar/thunar-local-folder.c: Catch up with the ThunarVfsJob
+	  interface changes.
+
+2005-07-29	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-job.{c,h}: Add a parameter spec for
 	  ThunarVfsJob and derived types. Add support methods to handle
 	  GValues easily.

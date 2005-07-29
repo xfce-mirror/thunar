@@ -52,7 +52,7 @@ static void        thunar_local_folder_finalize                   (GObject      
 static ThunarFile *thunar_local_folder_get_corresponding_file     (ThunarFolder           *folder);
 static GSList     *thunar_local_folder_get_files                  (ThunarFolder           *folder);
 static gboolean    thunar_local_folder_get_loading                (ThunarFolder           *folder);
-static void        thunar_local_folder_error_occurred             (ThunarVfsJob           *job,
+static void        thunar_local_folder_error                      (ThunarVfsJob           *job,
                                                                    GError                 *error,
                                                                    ThunarLocalFolder      *local_folder);
 static void        thunar_local_folder_infos_ready                (ThunarVfsJob           *job,
@@ -230,9 +230,9 @@ thunar_local_folder_get_loading (ThunarFolder *folder)
 
 
 static void
-thunar_local_folder_error_occurred (ThunarVfsJob      *job,
-                                    GError            *error,
-                                    ThunarLocalFolder *local_folder)
+thunar_local_folder_error (ThunarVfsJob      *job,
+                           GError            *error,
+                           ThunarLocalFolder *local_folder)
 {
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
   g_return_if_fail (local_folder->job == job);
@@ -391,9 +391,9 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
 
       /* schedule the loading of the folder */
       local_folder->job = thunar_vfs_listdir_job_new (thunar_file_get_uri (THUNAR_FILE (local_file)));
-      g_signal_connect (local_folder->job, "error-occurred", G_CALLBACK (thunar_local_folder_error_occurred), local_folder);
-      g_signal_connect (local_folder->job, "infos-ready", G_CALLBACK (thunar_local_folder_infos_ready), local_folder);
+      g_signal_connect (local_folder->job, "error", G_CALLBACK (thunar_local_folder_error), local_folder);
       g_signal_connect (local_folder->job, "finished", G_CALLBACK (thunar_local_folder_finished), local_folder);
+      g_signal_connect (local_folder->job, "infos-ready", G_CALLBACK (thunar_local_folder_infos_ready), local_folder);
       thunar_vfs_job_launch (local_folder->job);
     }
 
