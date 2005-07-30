@@ -390,11 +390,10 @@ thunar_local_folder_get_for_file (ThunarLocalFile *local_file,
       g_object_set_data (G_OBJECT (local_file), "thunar-local-folder", local_folder);
 
       /* schedule the loading of the folder */
-      local_folder->job = thunar_vfs_listdir_job_new (thunar_file_get_uri (THUNAR_FILE (local_file)));
+      local_folder->job = thunar_vfs_listdir (thunar_file_get_uri (THUNAR_FILE (local_file)), NULL);
       g_signal_connect (local_folder->job, "error", G_CALLBACK (thunar_local_folder_error), local_folder);
       g_signal_connect (local_folder->job, "finished", G_CALLBACK (thunar_local_folder_finished), local_folder);
       g_signal_connect (local_folder->job, "infos-ready", G_CALLBACK (thunar_local_folder_infos_ready), local_folder);
-      thunar_vfs_job_launch (local_folder->job);
     }
 
   return THUNAR_FOLDER (local_folder);

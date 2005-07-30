@@ -1,3 +1,28 @@
+2005-07-30	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-job.c: Emit signals independant of the
+	  cancellation state of the current job.
+	* thunar-vfs/thunar-vfs-trash.{c,h}: Add a way to query the absolute
+	  path to the .trashinfo file. Support relative paths and not just
+	  filenames for several trash methods.
+	* thunar-vfs/thunar-vfs-interactive-job.{c,h}: Import the
+	  ThunarVfsInteractiveJob class, which provides the base for all
+	  jobs, that require extended user interaction.
+	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-marshal.list: Add
+	  required marshallers, which are not provided by GObject out of
+	  the box.
+	* thunar-vfs/thunar-vfs-unlink-job.{c,h}: Import ThunarVfsUnlinkJob
+	  class, which is used to unlink a bunch of local or trashed files.
+	* thunar-vfs/thunar-vfs-jobs.{c,h}: Add public interface to the
+	  various jobs provided by Thunar-VFS.
+	* thunar-vfs/thunar-vfs.h: Remove the listdir job from the public
+	  interface. Add the jobs and the interactive job headers.
+	* thunar/thunar-progress-dialog.{c,h}: Add ThunarProgressDialog class,
+	  which provides a dialog, that monitors the progress of an interactive
+	  and supports the required user interaction.
+	* thunar/Makefile.am, thunar/thunar-local-folder.c: Catch up with
+	  Thunar-VFS changes.
+
 2005-07-29	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-job.{c,h}, thunar-vfs/thunar-vfs-listdir-job.c:

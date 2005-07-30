@@ -514,7 +514,7 @@ thunar_vfs_trash_get_info (ThunarVfsTrash *trash,
   g_return_val_if_fail (THUNAR_VFS_IS_TRASH (trash), NULL);
   g_return_val_if_fail (file != NULL, NULL);
 
-  info_path = g_strconcat (trash->directory, G_DIR_SEPARATOR_S, "info", G_DIR_SEPARATOR_S, file, ".trashinfo", NULL);
+  info_path = thunar_vfs_trash_get_info_path (trash, file);
   rc = xfce_rc_simple_open (info_path, TRUE);
   if (G_LIKELY (rc != NULL))
     {
@@ -528,6 +528,35 @@ thunar_vfs_trash_get_info (ThunarVfsTrash *trash,
   g_free (info_path);
 
   return info;
+}
+
+
+
+/**
+ * thunar_vfs_trash_get_info_path:
+ * @trash : a #ThunarVfsTrash.
+ * @file  : the basename of the trashed file.
+ *
+ * Determines the absolute path to the trash info file
+ * for @file, which includes various informations
+ * stored when trashing the file.
+ *
+ * This function should be rarely needed.
+ *
+ * The caller is responsible to free the returned
+ * string using #g_free().
+ *
+ * Return value: the absolute path to the trash info
+ *               file for @file.
+ **/
+gchar*
+thunar_vfs_trash_get_info_path (ThunarVfsTrash *trash,
+                                const gchar    *file)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_TRASH (trash), NULL);
+  g_return_val_if_fail (file != NULL && strchr (file, '/') == NULL, NULL);
+
+  return g_strconcat (trash->directory, G_DIR_SEPARATOR_S, "info", G_DIR_SEPARATOR_S, file, ".trashinfo", NULL);
 }
 
 
@@ -547,7 +576,7 @@ thunar_vfs_trash_get_path (ThunarVfsTrash *trash,
                            const gchar    *file)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_TRASH (trash), NULL);
-  g_return_val_if_fail (file != NULL && strchr (file, '/') == NULL, NULL);
+  g_return_val_if_fail (file != NULL, NULL);
 
   return g_build_filename (trash->files_directory, file, NULL);
 }
@@ -574,7 +603,7 @@ thunar_vfs_trash_get_uri (ThunarVfsTrash *trash,
   gchar        *identifier;
 
   g_return_val_if_fail (THUNAR_VFS_IS_TRASH (trash), NULL);
-  g_return_val_if_fail (file != NULL && strchr (file, '/') == NULL, NULL);
+  g_return_val_if_fail (file != NULL, NULL);
 
   identifier = g_strdup_printf ("trash:///%d-%s", trash->id, file);
   uri = thunar_vfs_uri_new (identifier, NULL);
@@ -884,9 +913,15 @@ thunar_vfs_trash_manager_resolve_uri (ThunarVfsTrashManager *manager,
       return NULL;
     }
 
-  /* copy the path for the caller */
   if (path != NULL)
-    *path = g_strdup (p + 1);
+    {
+      /* copy the path for the caller */
+      *path = g_strdup (p + 1);
+
+      /* be sure to strip any trailing slashes */
+      for (p = *path + strlen (*path); p > *path && *p == '/'; --p)
+        *p = '\0';
+    }
 
   /* take a reference for the caller */
   g_object_ref (G_OBJECT (trash));

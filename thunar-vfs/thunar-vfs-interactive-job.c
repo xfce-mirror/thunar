@@ -1,0 +1,343 @@
+/* $Id$ */
+/*-
+ * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <thunar-vfs/thunar-vfs-enum-types.h>
+#include <thunar-vfs/thunar-vfs-interactive-job.h>
+#include <thunar-vfs/thunar-vfs-marshal.h>
+
+
+
+enum
+{
+  ASK,
+  INFO_MESSAGE,
+  PERCENT,
+  LAST_SIGNAL,
+};
+
+
+
+static void                            thunar_vfs_interactive_job_register_type (GType                          *type);
+static void                            thunar_vfs_interactive_job_class_init    (ThunarVfsInteractiveJobClass   *klass);
+static ThunarVfsInteractiveJobResponse thunar_vfs_interactive_job_real_ask      (ThunarVfsInteractiveJob        *interactive_job,
+                                                                                 const gchar                    *message,
+                                                                                 ThunarVfsInteractiveJobResponse choices);
+static ThunarVfsInteractiveJobResponse thunar_vfs_interactive_job_ask           (ThunarVfsInteractiveJob        *interactive_job,
+                                                                                 const gchar                    *message,
+                                                                                 ThunarVfsInteractiveJobResponse choices);
+
+
+
+static guint interactive_signals[LAST_SIGNAL];
+
+
+
+GType
+thunar_vfs_interactive_job_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+  static GOnce once = G_ONCE_INIT;
+
+  /* thread-safe type registration */
+  g_once (&once, (GThreadFunc) thunar_vfs_interactive_job_register_type, &type);
+
+  return type;
+}
+
+
+
+static void
+thunar_vfs_interactive_job_register_type (GType *type)
+{
+  static const GTypeInfo info =
+  {
+    sizeof (ThunarVfsInteractiveJobClass),
+    NULL,
+    NULL,
+    (GClassInitFunc) thunar_vfs_interactive_job_class_init,
+    NULL,
+    NULL,
+    sizeof (ThunarVfsInteractiveJob),
+    0,
+    NULL,
+    NULL,
+  };
+
+  *type = g_type_register_static (THUNAR_VFS_TYPE_JOB, "ThunarVfsInteractiveJob", &info, G_TYPE_FLAG_ABSTRACT);
+}
+
+
+
+static gboolean
+ask_accumulator (GSignalInvocationHint *ihint,
+                 GValue                *return_accu,
+                 const GValue          *handler_return,
+                 gpointer               data)
+{
+  g_value_copy (handler_return, return_accu);
+  return FALSE;
+}
+
+
+
+static void
+thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
+{
+  klass->ask = thunar_vfs_interactive_job_real_ask;
+
+  /**
+   * ThunarVfsInteractiveJob::ask:
+   * @job     : a #ThunarVfsJob.
+   * @message : question to display to the user.
+   * @choices : a combination of #ThunarVfsInteractiveJobResponse<!---->s.
+   *
+   * The @message is garantied to contain valid UTF-8.
+   *
+   * Return value: the selected choice.
+   **/
+  interactive_signals[ASK] =
+    g_signal_new ("ask",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS | G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarVfsInteractiveJobClass, ask),
+                  ask_accumulator, NULL,
+                  _thunar_vfs_marshal_FLAGS__STRING_FLAGS,
+                  THUNAR_VFS_TYPE_VFS_INTERACTIVE_JOB_RESPONSE,
+                  2, G_TYPE_STRING,
+                  THUNAR_VFS_TYPE_VFS_INTERACTIVE_JOB_RESPONSE);
+
+  /**
+   * ThunarVfsInteractiveJob::info-message:
+   * @job     : a #ThunarVfsJob.
+   * @message : information to be displayed about @job.
+   *
+   * This signal is emitted to display information about the
+   * @job. Examples of messages are "Preparing..." or
+   * "Cleaning up...".
+   *
+   * The @message is garantied to contain valid UTF-8, so
+   * it can be displayed by #GtkWidget<!---->s out of the
+   * box.
+   **/
+  interactive_signals[INFO_MESSAGE] =
+    g_signal_new ("info-message",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__STRING,
+                  G_TYPE_NONE, 1, G_TYPE_STRING);
+
+  /**
+   * ThunarVfsInteractiveJob::percent:
+   * @job     : a #ThunarVfsJob.
+   * @percent : the percentage of completeness.
+   *
+   * This signal is emitted to present the state
+   * of the overall progress.
+   **/
+  interactive_signals[PERCENT] =
+    g_signal_new ("percent",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__DOUBLE,
+                  G_TYPE_NONE, 1, G_TYPE_DOUBLE);
+}
+
+
+
+static ThunarVfsInteractiveJobResponse
+thunar_vfs_interactive_job_real_ask (ThunarVfsInteractiveJob        *interactive_job,
+                                     const gchar                    *message,
+                                     ThunarVfsInteractiveJobResponse choices)
+{
+  return THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL;
+}
+
+
+
+static ThunarVfsInteractiveJobResponse
+thunar_vfs_interactive_job_ask (ThunarVfsInteractiveJob        *interactive_job,
+                                const gchar                    *message,
+                                ThunarVfsInteractiveJobResponse choices)
+{
+  ThunarVfsInteractiveJobResponse response;
+  thunar_vfs_job_emit (THUNAR_VFS_JOB (interactive_job), interactive_signals[ASK], 0, message, choices, &response);
+  return response;
+}
+
+
+
+/**
+ * thunar_vfs_interactive_job_info_message:
+ * @interactive_job : a #ThunarVfsInteractiveJob.
+ * @message         : an informational message about @interactive_job.
+ *
+ * Emits the ::info-message signal on @interactive_job with @message.
+ *
+ * The text contained in @message must be valid UTF-8.
+ **/
+void
+thunar_vfs_interactive_job_info_message (ThunarVfsInteractiveJob *interactive_job,
+                                         const gchar             *message)
+{
+  g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (interactive_job));
+  g_return_if_fail (g_utf8_validate (message, -1, NULL));
+
+  thunar_vfs_job_emit (THUNAR_VFS_JOB (interactive_job), interactive_signals[INFO_MESSAGE], 0, message);
+}
+
+
+
+/**
+ * thunar_vfs_interactive_job_percent:
+ * @interactive_job : a #ThunarVfsInteractiveJob.
+ * @percent         : the percentage of completeness (in the range of 0.0 to 100.0).
+ *
+ * Emits the ::percent signal on @interactive_job with @percent.
+ **/
+void
+thunar_vfs_interactive_job_percent (ThunarVfsInteractiveJob *interactive_job,
+                                    gdouble                  percent)
+{
+  g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (interactive_job));
+  g_return_if_fail (percent >= 0.0 && percent <= 100.0);
+
+  thunar_vfs_job_emit (THUNAR_VFS_JOB (interactive_job), interactive_signals[PERCENT], 0, percent);
+}
+
+
+
+/**
+ * thunar_vfs_interactive_job_overwrite:
+ * @interactive_job : a #ThunarVfsInteractiveJob.
+ * @message         : the message to be displayed in valid UTF-8.
+ *
+ * Asks the user whether to overwrite a certain file as described by
+ * @message.
+ *
+ * The return value may be %TRUE to perform the overwrite, or %FALSE,
+ * which means to either skip the file or cancel the @interactive_job.
+ * The caller must check using #thunar_vfs_job_cancelled() if %FALSE
+ * is returned.
+ *
+ * Return value: %TRUE to overwrite or %FALSE to leave it or cancel
+ *               the @interactive_job.
+ **/
+gboolean
+thunar_vfs_interactive_job_overwrite (ThunarVfsInteractiveJob *interactive_job,
+                                      const gchar             *message)
+{
+  ThunarVfsInteractiveJobResponse response;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (interactive_job), FALSE);
+  g_return_val_if_fail (g_utf8_validate (message, -1, NULL), FALSE);
+
+  /* check if the user said "overwrite all" earlier */
+  if (interactive_job->overwrite_all)
+    return TRUE;
+
+  /* ask the user */
+  response = thunar_vfs_interactive_job_ask (interactive_job, message,
+                                             THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES |
+                                             THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES_ALL |
+                                             THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_NO |
+                                             THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL);
+
+  /* evaluate the response */
+  switch (response)
+    {
+    case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES_ALL:
+      interactive_job->overwrite_all = TRUE;
+      /* FALL-THROUGH */
+
+    case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES:
+      return TRUE;
+
+    case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL:
+      thunar_vfs_job_cancel (THUNAR_VFS_JOB (interactive_job));
+      /* FALL-THROUGH */
+
+    case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_NO:
+      return FALSE;
+
+    default:
+      g_assert_not_reached ();
+      return FALSE;
+    }
+}
+
+
+
+/**
+ * thunar_vfs_interactive_job_skip:
+ * @interactive_job : a #ThunarVfsInteractiveJob.
+ * @message         : the message to be displayed as valid UTF-8.
+ *
+ * Asks the user whether to skip a certain file as described by
+ * @message.
+ *
+ * The return value may be %TRUE to perform the skip, or %FALSE,
+ * which means to cancel the @interactive_job.
+ *
+ * Return value: %TRUE to overwrite or %FALSE to cancel
+ *               the @interactive_job.
+ **/
+gboolean
+thunar_vfs_interactive_job_skip (ThunarVfsInteractiveJob *interactive_job,
+                                 const gchar             *message)
+{
+  ThunarVfsInteractiveJobResponse response;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (interactive_job), FALSE);
+  g_return_val_if_fail (g_utf8_validate (message, -1, NULL), FALSE);
+
+  /* check if the user said "skip all" earlier */
+  if (interactive_job->skip_all)
+    return TRUE;
+
+  /* ask the user */
+  response = thunar_vfs_interactive_job_ask (interactive_job, message,
+                                             THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES |
+                                             THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES_ALL |
+                                             THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL);
+
+  /* evaluate the response */
+  switch (response)
+    {
+    case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES_ALL:
+      interactive_job->skip_all = TRUE;
+      /* FALL-THROUGH */
+
+    case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES:
+      return TRUE;
+
+    case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL:
+      thunar_vfs_job_cancel (THUNAR_VFS_JOB (interactive_job));
+      return FALSE;
+
+    default:
+      g_assert_not_reached ();
+      return FALSE;
+    }
+}
+

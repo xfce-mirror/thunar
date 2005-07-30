@@ -63,6 +63,8 @@ Thunar_SOURCES =							\
 	thunar-path-entry.h						\
 	thunar-preferences.c						\
 	thunar-preferences.h						\
+	thunar-progress-dialog.c					\
+	thunar-progress-dialog.h					\
 	thunar-properties-dialog.c					\
 	thunar-properties-dialog.h					\
 	thunar-side-pane.c						\

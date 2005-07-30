@@ -49,14 +49,16 @@ typedef struct _ThunarVfsTrash      ThunarVfsTrash;
 
 GType               thunar_vfs_trash_get_type   (void) G_GNUC_CONST;
 
-gint                thunar_vfs_trash_get_id     (ThunarVfsTrash *trash);
-GList              *thunar_vfs_trash_get_files  (ThunarVfsTrash *trash);
-ThunarVfsTrashInfo *thunar_vfs_trash_get_info   (ThunarVfsTrash *trash,
-                                                 const gchar    *file);
-ThunarVfsURI       *thunar_vfs_trash_get_uri    (ThunarVfsTrash *trash,
-                                                 const gchar    *file);
-gchar              *thunar_vfs_trash_get_path   (ThunarVfsTrash *trash,
-                                                 const gchar    *file);
+gint                thunar_vfs_trash_get_id         (ThunarVfsTrash *trash);
+GList              *thunar_vfs_trash_get_files      (ThunarVfsTrash *trash);
+ThunarVfsTrashInfo *thunar_vfs_trash_get_info       (ThunarVfsTrash *trash,
+                                                     const gchar    *file);
+gchar              *thunar_vfs_trash_get_info_path  (ThunarVfsTrash *trash,
+                                                     const gchar    *file);
+ThunarVfsURI       *thunar_vfs_trash_get_uri        (ThunarVfsTrash *trash,
+                                                     const gchar    *file);
+gchar              *thunar_vfs_trash_get_path       (ThunarVfsTrash *trash,
+                                                     const gchar    *file);
 
 
 typedef struct _ThunarVfsTrashManagerClass ThunarVfsTrashManagerClass;

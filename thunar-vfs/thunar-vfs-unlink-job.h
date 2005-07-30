@@ -18,26 +18,24 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __THUNAR_VFS_H__
-#define __THUNAR_VFS_H__
+#ifndef __THUNAR_VFS_UNLINK_JOB_H__
+#define __THUNAR_VFS_UNLINK_JOB_H__
 
-#include <thunar-vfs/thunar-vfs-enum-types.h>
-#include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
-#include <thunar-vfs/thunar-vfs-job.h>
-#include <thunar-vfs/thunar-vfs-jobs.h>
-#include <thunar-vfs/thunar-vfs-mime.h>
-#include <thunar-vfs/thunar-vfs-monitor.h>
-#include <thunar-vfs/thunar-vfs-trash.h>
-#include <thunar-vfs/thunar-vfs-uri.h>
-#include <thunar-vfs/thunar-vfs-user.h>
-#include <thunar-vfs/thunar-vfs-util.h>
-#include <thunar-vfs/thunar-vfs-volume.h>
 
 G_BEGIN_DECLS;
 
-void  thunar_vfs_init (void);
+typedef struct _ThunarVfsUnlinkJob ThunarVfsUnlinkJob;
+
+#define THUNAR_VFS_TYPE_UNLINK_JOB    (thunar_vfs_unlink_job_get_type ())
+#define THUNAR_VFS_UNLINK_JOB(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_UNLINK_JOB, ThunarVfsUnlinkJob))
+#define THUNAR_VFS_IS_UNLINK_JOB(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_UNLINK_JOB))
+
+GType         thunar_vfs_unlink_job_get_type  (void) G_GNUC_CONST;
+
+ThunarVfsJob *thunar_vfs_unlink_job_new       (GList   *uris,
+                                               GError **error);
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_VFS_H__ */
+#endif /* !__THUNAR_VFS_UNLINK_JOB_H__ */

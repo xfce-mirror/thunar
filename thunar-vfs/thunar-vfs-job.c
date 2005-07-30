@@ -44,10 +44,11 @@ enum
 
 typedef struct
 {
-  ThunarVfsJob *job;
-  guint         signal_id;
-  GQuark        signal_detail;
-  va_list       var_args;
+  ThunarVfsJob     *job;
+  guint             signal_id;
+  GQuark            signal_detail;
+  va_list           var_args;
+  volatile gboolean pending;
 } ThunarVfsJobEmitDetails;
 
 
@@ -158,9 +159,9 @@ thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
    * @job : a #ThunarVfsJob.
    *
    * This signal will be automatically emitted once the
-   * @job finishes its execution, if the @job was not
-   * cancelled before. Else, if the @job was cancelled,
-   * this signal won't be emitted!
+   * @job finishes its execution, no matter whether @job
+   * completed successfully or was cancelled by the
+   * user.
    **/
   job_signals[FINISHED] =
     g_signal_new ("finished",
@@ -223,14 +224,13 @@ thunar_vfs_job_idle (gpointer user_data)
 
   g_mutex_lock (job->mutex);
 
-  /* emit the signal if the job wasn't cancelled */
-  if (G_LIKELY (!thunar_vfs_job_cancelled (job)))
-    {
-      GDK_THREADS_ENTER ();
-      g_signal_emit_valist (job, details->signal_id, details->signal_detail, details->var_args);
-      GDK_THREADS_LEAVE ();
-    }
+  /* emit the signal */
+  GDK_THREADS_ENTER ();
+  g_signal_emit_valist (job, details->signal_id, details->signal_detail, details->var_args);
+  GDK_THREADS_LEAVE ();
 
+  /* tell the other thread, that we're done */
+  details->pending = FALSE;
   g_cond_signal (job->cond);
   g_mutex_unlock (job->mutex);
 
@@ -395,9 +395,11 @@ thunar_vfs_job_launch (ThunarVfsJob *job)
  * @job : a #ThunarVfsJob.
  *
  * Attempts to cancel the operation currently
- * performed by @job. No single callback will
- * be invoked for a cancelled job, you need
- * to take that into account.
+ * performed by @job. Even after the cancellation
+ * of @job, it may still emit signals, so you
+ * must take care of disconnecting all handlers
+ * appropriately if you cannot handle signals
+ * after cancellation.
  **/
 void
 thunar_vfs_job_cancel (ThunarVfsJob *job)
@@ -443,11 +445,6 @@ thunar_vfs_job_cancelled (const ThunarVfsJob *job)
  * Emits the signal identified by @signal_id on @job in
  * the context of the main thread. This method doesn't
  * return until the signal was emitted.
- *
- * If the @job was cancelled prior to the invocation of
- * the signal, the signal will never be invoked. So you
- * must take care when querying a return value from
- * the signal!
  **/
 void
 thunar_vfs_job_emit_valist (ThunarVfsJob *job,
@@ -461,18 +458,17 @@ thunar_vfs_job_emit_valist (ThunarVfsJob *job,
   g_return_if_fail (job->ref_count > 0);
   g_return_if_fail (job->launched);
 
-  if (G_LIKELY (!thunar_vfs_job_cancelled (job)))
-    {
-      details.job = job;
-      details.signal_id = signal_id;
-      details.signal_detail = signal_detail;
-      details.var_args = var_args;
+  details.job = job;
+  details.signal_id = signal_id;
+  details.signal_detail = signal_detail;
+  details.var_args = var_args;
+  details.pending = TRUE;
 
-      g_mutex_lock (job->mutex);
-      g_idle_add_full (G_PRIORITY_HIGH, thunar_vfs_job_idle, &details, NULL);
-      g_cond_wait (job->cond, job->mutex);
-      g_mutex_unlock (job->mutex);
-    }
+  g_mutex_lock (job->mutex);
+  g_idle_add_full (G_PRIORITY_HIGH, thunar_vfs_job_idle, &details, NULL);
+  while (G_UNLIKELY (details.pending))
+    g_cond_wait (job->cond, job->mutex);
+  g_mutex_unlock (job->mutex);
 }
 
 
@@ -507,8 +503,7 @@ thunar_vfs_job_emit (ThunarVfsJob *job,
  * Emits the ::error signal on @job with the given @error. Whether
  * or not the @job continues after emitting the error depends on
  * the particular implementation of @job, but most jobs will
- * terminate instantly after emitting an error (emitting ::finished
- * if the @job isn't cancelled afterwards).
+ * terminate instantly after emitting an error.
  **/
 void
 thunar_vfs_job_error (ThunarVfsJob *job,

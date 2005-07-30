@@ -18,26 +18,19 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifndef __THUNAR_VFS_H__
-#define __THUNAR_VFS_H__
+#ifndef __THUNAR_VFS_JOBS_H__
+#define __THUNAR_VFS_JOBS_H__
 
-#include <thunar-vfs/thunar-vfs-enum-types.h>
-#include <thunar-vfs/thunar-vfs-info.h>
-#include <thunar-vfs/thunar-vfs-interactive-job.h>
 #include <thunar-vfs/thunar-vfs-job.h>
-#include <thunar-vfs/thunar-vfs-jobs.h>
-#include <thunar-vfs/thunar-vfs-mime.h>
-#include <thunar-vfs/thunar-vfs-monitor.h>
-#include <thunar-vfs/thunar-vfs-trash.h>
-#include <thunar-vfs/thunar-vfs-uri.h>
-#include <thunar-vfs/thunar-vfs-user.h>
-#include <thunar-vfs/thunar-vfs-util.h>
-#include <thunar-vfs/thunar-vfs-volume.h>
 
 G_BEGIN_DECLS;
 
-void  thunar_vfs_init (void);
+ThunarVfsJob *thunar_vfs_listdir  (ThunarVfsURI *uri,
+                                   GError      **error);
+
+ThunarVfsJob *thunar_vfs_unlink   (GList        *uris,
+                                   GError      **error);
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_VFS_H__ */
+#endif /* !__THUNAR_VFS_JOBS_H__ */

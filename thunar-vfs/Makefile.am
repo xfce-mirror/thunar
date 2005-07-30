@@ -15,12 +15,15 @@ noinst_LTLIBRARIES =							\
 
 libthunar_vfs_built_sources =						\
 	thunar-vfs-enum-types.c						\
-	thunar-vfs-enum-types.h
+	thunar-vfs-enum-types.h						\
+	thunar-vfs-marshal.c						\
+	thunar-vfs-marshal.h
 
 libthunar_vfs_headers =							\
 	thunar-vfs-info.h						\
+	thunar-vfs-interactive-job.h					\
 	thunar-vfs-job.h						\
-	thunar-vfs-listdir-job.h					\
+	thunar-vfs-jobs.h						\
 	thunar-vfs-mime.h						\
 	thunar-vfs-monitor.h						\
 	thunar-vfs-trash.h						\
@@ -34,8 +37,11 @@ libthunar_vfs_la_SOURCES =						\
 	$(libthunar_vfs_built_sources)					\
 	$(libthunar_vfs_headers)					\
 	thunar-vfs-info.c						\
+	thunar-vfs-interactive-job.c					\
 	thunar-vfs-job.c						\
+	thunar-vfs-jobs.c						\
 	thunar-vfs-listdir-job.c					\
+	thunar-vfs-listdir-job.h					\
 	thunar-vfs-mime.c						\
 	thunar-vfs-mime-parser.h					\
 	thunar-vfs-mime-parser.c					\
@@ -43,6 +49,8 @@ libthunar_vfs_la_SOURCES =						\
 	thunar-vfs-sysdep.c						\
 	thunar-vfs-sysdep.h						\
 	thunar-vfs-trash.c						\
+	thunar-vfs-unlink-job.c						\
+	thunar-vfs-unlink-job.h						\
 	thunar-vfs-user.c						\
 	thunar-vfs-util.c						\
 	thunar-vfs-uri.c						\
@@ -67,6 +75,7 @@ libthunar_vfs_la_LIBADD =						\
 	$(GTHREADS_LIBS)
 
 EXTRA_DIST =								\
+	thunar-vfs-marshal.list						\
 	thunar-vfs-volume-bsd.c						\
 	thunar-vfs-volume-bsd.h						\
 	thunar-vfs-volume-sysv.c					\
@@ -84,10 +93,13 @@ EXTRA_DIST =								\
 if MAINTAINER_MODE
 CLEANFILES =								\
 	xgen-tvetc							\
-	xgen-tveth
+	xgen-tveth							\
+	xgen-tvmc							\
+	xgen-tvmh
 
 DISTCLEANFILES =							\
 	stamp-thunar-vfs-enum-types.h					\
+	stamp-thunar-vfs-marshal.h					\
 	$(libthunar_vfs_built_sources)
 
 BUILT_SOURCES =								\
@@ -115,6 +127,23 @@ thunar-vfs-enum-types.c: $(libthunar_vfs_headers) Makefile
 		$(libthunar_vfs_headers) ) >> xgen-tvetc \
 	&& cp xgen-tvetc thunar-vfs-enum-types.c \
 	&& rm -f xgen-tvetc
+
+thunar-vfs-marshal.h: stamp-thunar-vfs-marshal.h
+	@true
+stamp-thunar-vfs-marshal.h: thunar-vfs-marshal.list Makefile
+	( cd $(srcdir) && glib-genmarshal \
+		--prefix=_thunar_vfs_marshal \
+		--header thunar-vfs-marshal.list ) >> xgen-tvmh \
+	&& ( cmp -s xgen-tvmh thunar-vfs-marshal.h || cp xgen-tvmh thunar-vfs-marshal.h ) \
+	&& rm -f xgen-tvmh \
+	&& echo timestamp > $(@F)
+
+thunar-vfs-marshal.c: thunar-vfs-marshal.list Makefile
+	( cd $(srcdir) && glib-genmarshal \
+		--prefix=_thunar_vfs_marshal \
+		--body thunar-vfs-marshal.list ) >> xgen-tvmc \
+	&& cp xgen-tvmc thunar-vfs-marshal.c \
+	&& rm -f xgen-tvmc
 endif
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
