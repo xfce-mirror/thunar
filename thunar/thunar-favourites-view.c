@@ -294,7 +294,7 @@ thunar_favourites_view_drag_data_received (GtkWidget        *widget,
 
   if (selection_data->target == gdk_atom_intern ("text/uri-list", FALSE))
     {
-      thunar_favourites_view_drop_uri_list (view, selection_data->data, dst_path);
+      thunar_favourites_view_drop_uri_list (view, (gchar *) selection_data->data, dst_path);
     }
   else if (selection_data->target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
     {

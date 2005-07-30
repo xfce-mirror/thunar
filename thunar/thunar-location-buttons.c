@@ -1085,7 +1085,7 @@ thunar_location_buttons_drag_data_get (GtkWidget             *button,
 
   /* set the uri list for the drag selection */
   gtk_selection_data_set (selection_data, selection_data->target,
-                          8, uri_string, strlen (uri_string));
+                          8, (guchar *) uri_string, strlen (uri_string));
 
   /* cleanup */
   g_free (uri_string);

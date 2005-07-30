@@ -288,12 +288,12 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
     {
     case TARGET_GNOME_COPIED_FILES:
       data = g_strconcat (manager->uri_copy ? "copy" : "cut", "\n", string_list, NULL);
-      gtk_selection_data_set (selection_data, selection_data->target, 8, data, strlen (data));
+      gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) data, strlen (data));
       g_free (data);
       break;
 
     case TARGET_UTF8_STRING:
-      gtk_selection_data_set (selection_data, selection_data->target, 8, string_list, strlen (string_list));
+      gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) string_list, strlen (string_list));
       break;
 
     default:
