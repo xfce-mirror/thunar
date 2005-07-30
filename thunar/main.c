@@ -28,19 +28,19 @@
 #include <stdlib.h>
 #endif
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-desktop-window.h>
-#include <thunar/thunar-window.h>
 
 
 
 int
 main (int argc, char **argv)
 {
-  ThunarVfsURI *uri;
-  const gchar  *path;
-  ThunarFile   *file;
-  GtkWidget    *window;
-  GError       *error = NULL;
+  ThunarApplication *application;
+  ThunarVfsURI      *uri;
+  const gchar       *path;
+  ThunarFile        *file;
+  GError            *error = NULL;
 
 #ifndef G_DISABLE_CHECKS
   /* Do NOT remove this line for now, If something doesn't work,
@@ -61,11 +61,14 @@ main (int argc, char **argv)
 
   if (argc >= 2 && exo_str_is_equal (argv[1], "--desktop"))
     {
-      window = thunar_desktop_window_new ();
+      GtkWidget *window = thunar_desktop_window_new ();
       gtk_widget_show (window);
       gtk_main ();
       return 0;
     }
+
+  /* acquire a reference on the global application */
+  application = thunar_application_get ();
 
   path = (argc > 1) ? argv[1] : xfce_get_homedir ();
 
@@ -84,14 +87,15 @@ main (int argc, char **argv)
       return EXIT_FAILURE;
     }
 
-  window = g_object_new (THUNAR_TYPE_WINDOW, "current-directory", file, NULL);
-  g_signal_connect (G_OBJECT (window), "destroy",
-                    G_CALLBACK (gtk_main_quit), NULL);
-  gtk_widget_show (window);
+  /* open the first window */
+  thunar_application_open_window (application, file, NULL);
 
   g_object_unref (G_OBJECT (file));
 
   gtk_main ();
+
+  /* release the application reference */
+  g_object_unref (G_OBJECT (application));
 
   return EXIT_SUCCESS;
 }

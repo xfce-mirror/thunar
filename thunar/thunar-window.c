@@ -21,6 +21,9 @@
 #include <config.h>
 #endif
 
+#include <thunarx/thunarx-gtk-extensions.h>
+
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-favourites-pane.h>
 #include <thunar/thunar-icon-view.h>
@@ -53,6 +56,10 @@ static void     thunar_window_set_property                (GObject            *o
                                                            guint               prop_id,
                                                            const GValue       *value,
                                                            GParamSpec         *pspec);
+static void     thunar_window_action_open_new_window      (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_close_all_windows    (GtkAction          *action,
+                                                           ThunarWindow       *window);
 static void     thunar_window_action_close                (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_location_bar_changed (GtkRadioAction     *action,
@@ -95,6 +102,8 @@ struct _ThunarWindow
 static const GtkActionEntry action_entries[] =
 {
   { "file-menu", NULL, N_ ("_File"), NULL, },
+  { "open-new-window", NULL, N_ ("Open New _Window"), "<control>N", N_ ("Open a new Thunar window for the displayed location"), G_CALLBACK (thunar_window_action_open_new_window), },
+  { "close-all-windows", NULL, N_ ("Close _All Windows"), "<control><shift>W", N_ ("Close all Thunar windows"), G_CALLBACK (thunar_window_action_close_all_windows), },
   { "close", GTK_STOCK_CLOSE, N_ ("_Close"), "<control>W", N_ ("Close this window"), G_CALLBACK (thunar_window_action_close), },
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
   { "view-menu", NULL, N_ ("_View"), NULL, },
@@ -325,10 +334,43 @@ thunar_window_set_property (GObject            *object,
 
 
 static void
+thunar_window_action_open_new_window (GtkAction    *action,
+                                      ThunarWindow *window)
+{
+  ThunarApplication *application;
+
+  application = thunar_application_get ();
+  thunar_application_open_window (application, window->current_directory,
+                                  gtk_widget_get_screen (GTK_WIDGET (window)));
+  g_object_unref (G_OBJECT (application));
+}
+
+
+
+static void
+thunar_window_action_close_all_windows (GtkAction    *action,
+                                        ThunarWindow *window)
+{
+  ThunarApplication *application;
+  GList             *windows;
+
+  /* query the list of currently open windows */
+  application = thunar_application_get ();
+  windows = thunar_application_get_windows (application);
+  g_object_unref (G_OBJECT (application));
+
+  /* destroy all open windows */
+  g_list_foreach (windows, (GFunc) gtk_widget_destroy, NULL);
+  g_list_free (windows);
+}
+
+
+
+static void
 thunar_window_action_close (GtkAction    *action,
                             ThunarWindow *window)
 {
-  gtk_object_destroy (GTK_OBJECT (window));
+  gtk_widget_destroy (GTK_WIDGET (window));
 }
 
 
@@ -501,7 +543,6 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
-  GtkAction *action;
   GdkPixbuf *icon;
 
   g_return_if_fail (THUNAR_IS_WINDOW (window));
@@ -530,13 +571,14 @@ thunar_window_set_current_directory (ThunarWindow *window,
       gtk_window_set_title (GTK_WINDOW (window),
                             thunar_file_get_special_name (current_directory));
       g_object_unref (G_OBJECT (icon));
-
-      /* enable the 'Up' action if possible for the new directory */
-      action = gtk_action_group_get_action (window->action_group, "open-parent");
-      g_object_set (G_OBJECT (action),
-                    "sensitive", thunar_file_has_parent (current_directory),
-                    NULL);
     }
+
+  /* enable the 'Open new window' action if we have a valid directory */
+  thunarx_gtk_action_group_set_action_sensitive (window->action_group, "open-new-window", (current_directory != NULL));
+
+  /* enable the 'Up' action if possible for the new directory */
+  thunarx_gtk_action_group_set_action_sensitive (window->action_group, "open-parent", (current_directory != NULL
+                                                  && thunar_file_has_parent (current_directory)));
 
   /* tell everybody that we have a new "current-directory",
    * we do this first so other widgets display the new

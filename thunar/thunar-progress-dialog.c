@@ -75,8 +75,6 @@ struct _ThunarProgressDialog
 
   ThunarVfsJob *job;
 
-  GtkWidget    *action_image;
-  GtkWidget    *action_label;
   GtkWidget    *progress_bar;
   GtkWidget    *progress_label;
 };
@@ -133,6 +131,8 @@ static void
 thunar_progress_dialog_init (ThunarProgressDialog *dialog)
 {
   GtkWidget *table;
+  GtkWidget *image;
+  GtkWidget *label;
 
   gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
@@ -149,15 +149,15 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), table, TRUE, TRUE, 0);
   gtk_widget_show (table);
 
-  dialog->action_image = gtk_image_new ();
-  gtk_table_attach (GTK_TABLE (table), dialog->action_image, 0, 1, 0, 1,
+  image = g_object_new (GTK_TYPE_IMAGE, "icon-size", GTK_ICON_SIZE_BUTTON, NULL);
+  gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1,
                     GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
-  gtk_widget_show (dialog->action_image);
+  gtk_widget_show (image);
 
-  dialog->action_label = g_object_new (GTK_TYPE_LABEL, "use-markup", TRUE, "xalign", 0.0f, NULL);
-  gtk_table_attach (GTK_TABLE (table), dialog->action_label, 1, 2, 0, 1,
+  label = g_object_new (GTK_TYPE_LABEL, "use-markup", TRUE, "xalign", 0.0f, NULL);
+  gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1,
                     GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
-  gtk_widget_show (dialog->action_label);
+  gtk_widget_show (label);
 
   dialog->progress_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_table_attach (GTK_TABLE (table), dialog->progress_label, 0, 2, 1, 2,
@@ -169,9 +169,13 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
                     GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->progress_bar);
 
+  /* connect the window icon name to the action image */
+  exo_binding_new (G_OBJECT (dialog), "icon-name",
+                   G_OBJECT (image), "icon-name");
+
   /* connect the window title to the action label */
   exo_binding_new_full (G_OBJECT (dialog), "title",
-                        G_OBJECT (dialog->action_label), "label",
+                        G_OBJECT (label), "label",
                         transform_to_markup, NULL, NULL);
 }
 
@@ -511,47 +515,5 @@ thunar_progress_dialog_set_job (ThunarProgressDialog *dialog,
     }
 
   g_object_notify (G_OBJECT (dialog), "job");
-}
-
-
-
-/**
- * thunar_progress_dialog_get_icon_name:
- * @dialog : a #ThunarProgressDialog.
- *
- * Returns the name of the icon set for @dialog.
- *
- * Return value: the name of the icon for @dialog.
- **/
-const gchar*
-thunar_progress_dialog_get_icon_name (ThunarProgressDialog *dialog)
-{
-  const gchar *icon_name;
-  GtkIconSize  icon_size;
-
-  g_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), NULL);
-
-  gtk_image_get_icon_name (GTK_IMAGE (dialog->action_image), &icon_name, &icon_size);
-
-  return icon_name;
-}
-
-
-
-/**
- * thunar_progress_dialog_set_icon_name:
- * @dialog    : a #ThunarProgressDialog.
- * @icon_name : the name of the icon to set for @dialog.
- *
- * Sets the name of the icon for @dialog to @icon_name.
- **/
-void
-thunar_progress_dialog_set_icon_name (ThunarProgressDialog *dialog,
-                                      const gchar          *icon_name)
-{
-  g_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
-  g_return_if_fail (icon_name != NULL);
-
-  gtk_image_set_from_icon_name (GTK_IMAGE (dialog->action_image), icon_name, GTK_ICON_SIZE_BUTTON);
 }
 

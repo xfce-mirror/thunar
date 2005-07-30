@@ -1,5 +1,23 @@
 2005-07-30	Benedikt Meurer <benny@xfce.org>
 
+	* thunarx/thunarx-gtk-extensions.{c,h}, thunarx/Makefile.am: Add a
+	  helper function thunarx_gtk_action_group_set_action_sensitive(),
+	  which is used to easily change the sensitivity of a GtkAction
+	  within a GtkActionGroup.
+	* thunar/thunar-window.c, thunar/thunar-standard-view.c: Use the newly
+	  added thunarx_gtk_action_group_set_action_sensitive() method.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Add new actions
+	  "open-new-window" and "close-all-windows".
+	* thunar/thunar-application.{c,h}: Add support for progress dialogs
+	  based on the ThunarVfsInteractiveJob. Turn the ThunarApplication
+	  class into a single-instance class. Add support to open new windows
+	  and querying the list of currently open windows.
+	* thunar/thunar-progress-dialog.{c,h}: GtkWindow already provides the
+	  "icon-name" property (since Gtk 2.6), no need to duplicate that.
+	* thunar/main.c: Switch to ThunarApplication.
+
+2005-07-30	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-clipboard-manager.c, thunar/thunar-favourites-view.c,
 	  thunar/thunar-location-buttons.c, thunar/thunar-statusbar.c: Fix
 	  GCC 4.0 cast warnings, thanks to Jeff Franks <jcfranks@tpg.com.au>.

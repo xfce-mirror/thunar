@@ -21,6 +21,8 @@
 #include <config.h>
 #endif
 
+#include <thunarx/thunarx-gtk-extensions.h>
+
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
@@ -865,10 +867,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   g_list_free (selected_items);
 
   /* update the "Properties" action */
-  action = gtk_action_group_get_action (standard_view->action_group, "properties");
-  g_object_set (G_OBJECT (action),
-                "sensitive", (n_selected_items == 1),
-                NULL);
+  thunarx_gtk_action_group_set_action_sensitive (standard_view->action_group, "properties", (n_selected_items == 1));
 
   /* update the "Copy file(s)" action */
   action = gtk_action_group_get_action (standard_view->action_group, "copy");
@@ -885,10 +884,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
                 NULL);
 
   /* update the "Paste file(s)" action */
-  action = gtk_action_group_get_action (standard_view->action_group, "paste");
-  g_object_set (G_OBJECT (action),
-                "sensitive", writable && pastable,
-                NULL);
+  thunarx_gtk_action_group_set_action_sensitive (standard_view->action_group, "paste", writable && pastable);
 
   /* clear the current status text (will be recalculated on-demand) */
   g_free (standard_view->statusbar_text);

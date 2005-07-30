@@ -43,10 +43,6 @@ ThunarVfsJob *thunar_progress_dialog_get_job       (ThunarProgressDialog *dialog
 void          thunar_progress_dialog_set_job       (ThunarProgressDialog *dialog,
                                                     ThunarVfsJob         *job);
 
-const gchar  *thunar_progress_dialog_get_icon_name (ThunarProgressDialog *dialog);
-void          thunar_progress_dialog_set_icon_name (ThunarProgressDialog *dialog,
-                                                    const gchar          *icon_name);
-
 G_END_DECLS;
 
 #endif /* !__THUNAR_PROGRESS_DIALOG_H__ */

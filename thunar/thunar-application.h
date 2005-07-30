@@ -35,9 +35,19 @@ typedef struct _ThunarApplication      ThunarApplication;
 #define THUNAR_IS_APPLICATION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_APPLICATION))
 #define THUNAR_APPLICATION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_APPLICATION, ThunarApplicationClass))
 
-GType              thunar_application_get_type (void) G_GNUC_CONST;
+GType              thunar_application_get_type      (void) G_GNUC_CONST;
 
-ThunarApplication *thunar_application_new      (void);
+ThunarApplication *thunar_application_get           (void);
+
+GList             *thunar_application_get_windows   (ThunarApplication *application);
+
+void               thunar_application_open_window   (ThunarApplication *application,
+                                                     ThunarFile        *directory,
+                                                     GdkScreen         *screen);
+
+void               thunar_application_unlink_files  (ThunarApplication *application,
+                                                     GtkWindow         *window,
+                                                     GList             *uri_list);
 
 G_END_DECLS;
 

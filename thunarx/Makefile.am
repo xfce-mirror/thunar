@@ -11,7 +11,9 @@ noinst_LTLIBRARIES =							\
 
 libthunarx_la_SOURCES =							\
 	thunarx-gdk-pixbuf-extensions.c					\
-	thunarx-gdk-pixbuf-extensions.h
+	thunarx-gdk-pixbuf-extensions.h					\
+	thunarx-gtk-extensions.c					\
+	thunarx-gtk-extensions.h
 
 libthunarx_la_CFLAGS =							\
 	$(EXO_CFLAGS)
