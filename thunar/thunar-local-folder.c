@@ -148,6 +148,7 @@ thunar_local_folder_finalize (GObject *object)
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (local_folder->job != NULL))
     {
+      g_signal_handlers_disconnect_matched (local_folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, local_folder);
       thunar_vfs_job_cancel (local_folder->job);
       thunar_vfs_job_unref (local_folder->job);
     }
@@ -287,6 +288,7 @@ thunar_local_folder_finished (ThunarVfsJob      *job,
   g_return_if_fail (THUNAR_VFS_IS_JOB (job));
 
   /* we did it, the folder is loaded */
+  g_signal_handlers_disconnect_matched (local_folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, local_folder);
   thunar_vfs_job_unref (local_folder->job);
   local_folder->job = NULL;
 

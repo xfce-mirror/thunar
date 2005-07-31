@@ -300,10 +300,6 @@ thunar_vfs_transfer_job_insert_base (ThunarVfsTransferJob *transfer_job,
   gchar                 *dirname;
   gchar                 *basename;
 
-  /* make sure that source and target differ */
-  if (G_UNLIKELY (strcmp (source_path, target_path) == 0))
-    return;
-
   /* allocate the base */
   base = g_chunk_new0 (ThunarVfsTransferBase, transfer_job->base_chunk);
   base->job = transfer_job;
@@ -315,6 +311,10 @@ thunar_vfs_transfer_job_insert_base (ThunarVfsTransferJob *transfer_job,
 
   /* setup the target path */
   base->target_path = g_string_chunk_insert (transfer_job->string_chunk, target_path);
+
+  /* check if source and target are equal */
+  if (G_UNLIKELY (strcmp (base->target_path, base->source_path) == 0))
+    return;
 
   /* hook up the new base */
   base->next = transfer_job->bases;
@@ -329,7 +329,7 @@ thunar_vfs_transfer_job_insert_base (ThunarVfsTransferJob *transfer_job,
   item->source_path = g_string_chunk_insert (transfer_job->string_chunk, basename);
   item->target_path = item->source_path;
   g_free (basename);
-  
+
   /* hook up the new item */
   base->items = item;
 }

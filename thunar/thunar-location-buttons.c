@@ -107,6 +107,18 @@ static void        thunar_location_buttons_drag_data_get          (GtkWidget    
                                                                    guint                       info,
                                                                    guint                       time,
                                                                    ThunarLocationButtons      *buttons);
+static void        thunar_location_buttons_drag_leave             (GtkWidget                  *button,
+                                                                   GdkDragContext             *context,
+                                                                   guint                       time,
+                                                                   ThunarLocationButtons      *buttons);
+static gboolean    thunar_location_buttons_drag_motion            (GtkWidget                  *button,
+                                                                   GdkDragContext             *context,
+                                                                   gint                        x,
+                                                                   gint                        y,
+                                                                   guint                       time,
+                                                                   ThunarLocationButtons      *buttons);
+static gboolean    thunar_location_buttons_enter_timeout          (gpointer                    user_data);
+static void        thunar_location_buttons_enter_timeout_destroy  (gpointer                    user_data);
 
 
 
@@ -131,6 +143,9 @@ struct _ThunarLocationButtons
   GList       *first_scrolled_button;
 
   gint         scroll_timeout_id;
+
+  GtkWidget   *enter_button;
+  gint         enter_timeout_id;
 };
 
 
@@ -225,6 +240,7 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   GTK_WIDGET_SET_FLAGS (buttons, GTK_NO_WINDOW);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
 
+  buttons->enter_timeout_id = -1;
   buttons->scroll_timeout_id = -1;
 
   gtk_widget_push_composite_child ();
@@ -268,6 +284,10 @@ thunar_location_buttons_finalize (GObject *object)
   ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (object);
 
   g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+
+  /* be sure to cancel any enter timeout */
+  if (G_UNLIKELY (buttons->enter_timeout_id >= 0))
+    g_source_remove (buttons->enter_timeout_id);
 
   /* be sure to cancel the scrolling */
   thunar_location_buttons_stop_scrolling (buttons);
@@ -735,8 +755,11 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
   /* setup drag support for the button */
   gtk_drag_source_set (GTK_WIDGET (button), GDK_BUTTON1_MASK, drag_targets,
                        G_N_ELEMENTS (drag_targets), GDK_ACTION_LINK);
-  g_signal_connect (G_OBJECT (button), "drag-data-get",
-                    G_CALLBACK (thunar_location_buttons_drag_data_get), buttons);
+  gtk_drag_dest_set (GTK_WIDGET (button), GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_MOTION, drag_targets,
+                     G_N_ELEMENTS (drag_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
+  g_signal_connect (G_OBJECT (button), "drag-data-get", G_CALLBACK (thunar_location_buttons_drag_data_get), buttons);
+  g_signal_connect (G_OBJECT (button), "drag-leave", G_CALLBACK (thunar_location_buttons_drag_leave), buttons);
+  g_signal_connect (G_OBJECT (button), "drag-motion", G_CALLBACK (thunar_location_buttons_drag_motion), buttons);
 
   hbox = gtk_hbox_new (FALSE, 2);
   gtk_container_add (GTK_CONTAINER (button), hbox);
@@ -1089,6 +1112,96 @@ thunar_location_buttons_drag_data_get (GtkWidget             *button,
 
   /* cleanup */
   g_free (uri_string);
+}
+
+
+
+static void
+thunar_location_buttons_drag_leave (GtkWidget             *button,
+                                    GdkDragContext        *context,
+                                    guint                  time,
+                                    ThunarLocationButtons *buttons)
+{
+  g_return_if_fail (GTK_IS_BUTTON (button));
+  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+
+  /* be sure to cancel any running enter timeout */
+  if (G_LIKELY (buttons->enter_timeout_id >= 0))
+    g_source_remove (buttons->enter_timeout_id);
+}
+
+
+
+static gboolean
+thunar_location_buttons_drag_motion (GtkWidget             *button,
+                                     GdkDragContext        *context,
+                                     gint                   x,
+                                     gint                   y,
+                                     guint                  time,
+                                     ThunarLocationButtons *buttons)
+{
+  g_return_val_if_fail (GTK_IS_BUTTON (button), FALSE);
+  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons), FALSE);
+
+  /* schedule the enter timeout if not already done */
+  if (G_UNLIKELY (buttons->enter_timeout_id < 0))
+    {
+      /* remember the new button */
+      buttons->enter_button = button;
+      g_object_add_weak_pointer (G_OBJECT (button), (gpointer) &buttons->enter_button);
+
+      /* schedule the timeout */
+      buttons->enter_timeout_id = g_timeout_add_full (G_PRIORITY_DEFAULT, 500, thunar_location_buttons_enter_timeout,
+                                                      buttons, thunar_location_buttons_enter_timeout_destroy);
+    }
+
+  /* tell GDK that it cannot drop here */
+  gdk_drag_status (context, 0, time);
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_location_buttons_enter_timeout (gpointer user_data)
+{
+  ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (user_data);
+
+  GDK_THREADS_ENTER ();
+
+  /* We emulate a "clicked" event here, because else the buttons
+   * would be destroyed and replaced by new buttons, which causes
+   * the Gtk DND code to dump core once the mouse leaves the area
+   * of the new button.
+   *
+   * Besides that, handling this as "clicked" event allows the user
+   * to go back to the initial directory.
+   */
+  if (G_LIKELY (buttons->enter_button != NULL))
+    thunar_location_buttons_clicked (buttons->enter_button, buttons);
+
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_location_buttons_enter_timeout_destroy (gpointer user_data)
+{
+  ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (user_data);
+
+  /* disconnect from the remembered button */
+  if (G_LIKELY (buttons->enter_button != NULL))
+    {
+      g_object_remove_weak_pointer (G_OBJECT (buttons->enter_button), (gpointer) &buttons->enter_button);
+      buttons->enter_button = NULL;
+    }
+
+  /* reset the timeout id */
+  buttons->enter_timeout_id = -1;
 }
 
 

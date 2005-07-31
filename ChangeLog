@@ -1,5 +1,21 @@
 2005-07-31	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-local-folder.c: Properly disconnect all signal handlers
+	  prior to releasing the job.
+	* TODO: Remove completed items. Add note about the copy&paste behaviour
+	  within the same folder.
+	* thunar-vfs/thunar-vfs-transfer-job.c
+	  (thunar_vfs_transfer_job_insert_base): Fix the check whether source
+	  and target directory are equal.
+	* thunar-vfs/thunar-vfs-user.c(thunar_vfs_user_local_class_init): Fix
+	  a crash, where the thunar_vfs_local_user_parent_class wasn't initia-
+	  lized properly.
+	* thunar/thunar-location-buttons.c: Allow users to automatically enter
+	  directories while dragging a text/uri-list over one of the folder
+	  buttons.
+
+2005-07-31	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-transfer-job.c: Include <time.h> since we
 	  use the time() library call. g_chmod() will be introduced with GLib
 	  2.8.0, so adjust the check.

@@ -506,6 +506,8 @@ thunar_vfs_local_user_class_init (ThunarVfsLocalUserClass *klass)
   ThunarVfsUserClass *thunarvfs_user_class;
   GObjectClass       *gobject_class;
 
+  thunar_vfs_local_user_parent_class = g_type_class_peek_parent (klass);
+
   /* determine the current process' effective user id, we do
    * this only once to avoid the syscall overhead on every
    * is_me() invokation.

@@ -1,10 +1,9 @@
 Important for Thunar 1.0
 ========================
 
- - Use GObject signals for the ThunarVfsJob communication.
-
- - In thunar_standard_view_selection_changed(), the "Cut file(s)" action
-   should only be sensitive if the current folder is writable.
+ - When copy&paste in the same folder, adopt Nautilus' behaviour of
+   automatically creating a copy of the original file, guessing names
+   automatically.
 
  - We need a way to "refresh" folders after a "Cut"-operation with Nautilus.
    With local folders - with not many files inside - the move is too fast!
@@ -44,8 +43,6 @@ Important for Thunar 1.0
  - A design for the ThunarTreePane framework must be developed and later
    be implemented.
 
- - The trash system details are mostly unclear currently.
-
  - The preferences must be sorted out and a suggestion for both a good
    set of preferences and a layout for the preferences dialog must be
    developed and presented.
@@ -56,12 +53,6 @@ Important for Thunar 1.0
  - We need a suite of unit tests and probably high-level tests, that enable
    us to test parts of the file manager automatically and isolate bugs
    early.
-
- - View's (and probably models) must be able to add custom actions to
-   the ThunarWindow (e.g. 'Empty trash', etc.).
-
- - The protocol between the view/model and the ThunarWindow must be
-   defined and implemented.
 
  - Setup gtk-doc to present developers with the internal API of Thunar
    to ease development of core modules (and later plugins).
