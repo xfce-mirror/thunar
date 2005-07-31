@@ -44,6 +44,9 @@ void                    thunar_clipboard_manager_copy_uri_list   (ThunarClipboar
                                                                   GList                  *uri_list);
 void                    thunar_clipboard_manager_cut_uri_list    (ThunarClipboardManager *manager,
                                                                   GList                  *uri_list);
+void                    thunar_clipboard_manager_paste_uri_list  (ThunarClipboardManager *manager,
+                                                                  ThunarVfsURI           *target_uri,
+                                                                  GtkWindow              *window);
 
 G_END_DECLS;
 

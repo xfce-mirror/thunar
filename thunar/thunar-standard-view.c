@@ -731,11 +731,18 @@ static void
 thunar_standard_view_action_paste (GtkAction          *action,
                                    ThunarStandardView *standard_view)
 {
+  ThunarFile *current_directory;
+  GtkWidget  *window;
+
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  // FIXME: Implement this
-  g_assert_not_reached ();
+  current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+  if (G_LIKELY (current_directory != NULL))
+    {
+      window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+      thunar_clipboard_manager_paste_uri_list (standard_view->clipboard, thunar_file_get_uri (current_directory), GTK_WINDOW (window));
+    }
 }
 
 

@@ -28,6 +28,7 @@
 #include <string.h>
 #endif
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 
 
@@ -52,24 +53,27 @@ enum
 
 
 
-static void thunar_clipboard_manager_class_init       (ThunarClipboardManagerClass *klass);
-static void thunar_clipboard_manager_finalize         (GObject                     *object);
-static void thunar_clipboard_manager_get_property     (GObject                     *object,
-                                                       guint                        prop_id,
-                                                       GValue                      *value,
-                                                       GParamSpec                  *pspec);
-static void thunar_clipboard_manager_owner_changed    (GtkClipboard                *clipboard,
-                                                       GdkEventOwnerChange         *event,
-                                                       ThunarClipboardManager      *manager);
-static void thunar_clipboard_manager_targets_received (GtkClipboard                *clipboard,
-                                                       GtkSelectionData            *selection_data,
-                                                       gpointer                     user_data);
-static void thunar_clipboard_manager_get_callback     (GtkClipboard                *clipboard,
-                                                       GtkSelectionData            *selection_data,
-                                                       guint                        info,
-                                                       gpointer                     user_data);
-static void thunar_clipboard_manager_clear_callback   (GtkClipboard                *clipboard,
-                                                       gpointer                     user_data);
+static void thunar_clipboard_manager_class_init         (ThunarClipboardManagerClass *klass);
+static void thunar_clipboard_manager_finalize           (GObject                     *object);
+static void thunar_clipboard_manager_get_property       (GObject                     *object,
+                                                         guint                        prop_id,
+                                                         GValue                      *value,
+                                                         GParamSpec                  *pspec);
+static void thunar_clipboard_manager_owner_changed      (GtkClipboard                *clipboard,
+                                                         GdkEventOwnerChange         *event,
+                                                         ThunarClipboardManager      *manager);
+static void thunar_clipboard_manager_contents_received  (GtkClipboard                *clipboard,
+                                                         GtkSelectionData            *selection_data,
+                                                         gpointer                     user_data);
+static void thunar_clipboard_manager_targets_received   (GtkClipboard                *clipboard,
+                                                         GtkSelectionData            *selection_data,
+                                                         gpointer                     user_data);
+static void thunar_clipboard_manager_get_callback       (GtkClipboard                *clipboard,
+                                                         GtkSelectionData            *selection_data,
+                                                         guint                        info,
+                                                         gpointer                     user_data);
+static void thunar_clipboard_manager_clear_callback     (GtkClipboard                *clipboard,
+                                                         gpointer                     user_data);
 
 
 
@@ -97,6 +101,13 @@ typedef struct
   gboolean copy;
   GList   *uri_list;
 } ThunarClipboardInfo;
+
+typedef struct
+{
+  ThunarClipboardManager *manager;
+  ThunarVfsURI           *target_uri;
+  GtkWindow              *window;
+} ThunarClipboardPasteRequest;
 
 
 
@@ -224,6 +235,75 @@ thunar_clipboard_manager_owner_changed (GtkClipboard           *clipboard,
   /* request the list of supported targets from the new owner */
   gtk_clipboard_request_contents (clipboard, gdk_atom_intern ("TARGETS", FALSE),
                                   thunar_clipboard_manager_targets_received, manager);
+}
+
+
+
+static void
+thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
+                                            GtkSelectionData *selection_data,
+                                            gpointer          user_data)
+{
+  ThunarClipboardPasteRequest *request = user_data;
+  ThunarApplication           *application;
+  GtkWidget                   *dialog;
+  gboolean                     copy = TRUE;
+  GList                       *uri_list = NULL;
+  gchar                       *data;
+
+  /* check whether the retrieval worked */
+  if (G_LIKELY (selection_data->length > 0))
+    {
+      /* be sure the selection data is zero-terminated */
+      data = (gchar *) selection_data->data;
+      data[selection_data->length] = '\0';
+
+      /* check whether to copy or move */
+      if (g_ascii_strncasecmp (data, "copy\n", 5) == 0)
+        {
+          copy = TRUE;
+          data += 5;
+        }
+      else if (g_ascii_strncasecmp (data, "cut\n", 4) == 0)
+        {
+          copy = FALSE;
+          data += 4;
+        }
+
+      /* determine the uri list stored with the selection */
+      uri_list = thunar_vfs_uri_list_from_string (data, NULL);
+    }
+
+  /* perform the action if possible */
+  if (G_LIKELY (uri_list != NULL))
+    {
+      application = thunar_application_get ();
+      if (G_LIKELY (copy))
+        thunar_application_copy_uris (application, request->window, uri_list, request->target_uri);
+      else
+        thunar_application_move_uris (application, request->window, uri_list, request->target_uri);
+      g_object_unref (G_OBJECT (application));
+      thunar_vfs_uri_list_free (uri_list);
+    }
+  else
+    {
+      /* tell the user that we cannot paste */
+      dialog = gtk_message_dialog_new (request->window,
+                                       GTK_DIALOG_MODAL |
+                                       GTK_DIALOG_DESTROY_WITH_PARENT,
+                                       GTK_MESSAGE_WARNING,
+                                       GTK_BUTTONS_OK,
+                                       _("There is nothing on the clipboard to paste"));
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+    }
+
+  /* free the request */
+  if (G_LIKELY (request->window != NULL))
+    g_object_remove_weak_pointer (G_OBJECT (request->window), (gpointer) &request->window);
+  thunar_vfs_uri_unref (THUNAR_VFS_URI (request->target_uri));
+  g_object_unref (G_OBJECT (request->manager));
+  g_free (request);
 }
 
 
@@ -475,5 +555,45 @@ thunar_clipboard_manager_cut_uri_list (ThunarClipboardManager *manager,
     {
       thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
     }
+}
+
+
+
+/**
+ * thunar_clipboard_manager:
+ * @manager    : a #ThunarClipboardManager.
+ * @target_uri : the #ThunarVfsURI of the folder to which the contents on the clipboard
+ *               should be pasted.
+ * @window     : a #GtkWindow, on which to perform the paste or %NULL if no window is
+ *               known.
+ *
+ * Pastes the contents from the clipboard associated with @manager to the directory
+ * referenced by @target_uri.
+ **/
+void
+thunar_clipboard_manager_paste_uri_list (ThunarClipboardManager *manager,
+                                         ThunarVfsURI           *target_uri,
+                                         GtkWindow              *window)
+{
+  ThunarClipboardPasteRequest *request;
+
+  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  g_return_if_fail (THUNAR_VFS_IS_URI (target_uri));
+  g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
+
+  /* prepare the paste request */
+  request = g_new (ThunarClipboardPasteRequest, 1);
+  request->manager = g_object_ref (G_OBJECT (manager));
+  request->target_uri = thunar_vfs_uri_ref (target_uri);
+  request->window = window;
+
+  /* get notified when the window is destroyed prior to
+   * completing the clipboard contents retrieval
+   */
+  g_object_add_weak_pointer (G_OBJECT (request->window), (gpointer) &request->window);
+
+  /* schedule the request */
+  gtk_clipboard_request_contents (manager->clipboard, manager->x_special_gnome_copied_files,
+                                  thunar_clipboard_manager_contents_received, request);
 }
 
