@@ -44,6 +44,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -54,13 +57,15 @@
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
 #else
-#define g_chmod(path, mode) (chmod ((path), (mode)))
 #define g_lstat(path, buffer) (lstat ((path), (buffer)))
 #define g_mkdir(path, mode) (mkdir ((path), (mode)))
 #define g_remove(path) (remove ((path)))
 #define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
 #endif
 
+#if !GLIB_CHECK_VERSION(2,7,2)
+#define g_chmod(path, mode) (chmod ((path), (mode)))
+#endif
 
 
 typedef struct _ThunarVfsTransferBase ThunarVfsTransferBase;
