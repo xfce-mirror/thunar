@@ -245,6 +245,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
                                             gpointer          user_data)
 {
   ThunarClipboardPasteRequest *request = user_data;
+  ThunarClipboardManager      *manager = THUNAR_CLIPBOARD_MANAGER (request->manager);
   ThunarApplication           *application;
   GtkWidget                   *dialog;
   gboolean                     copy = TRUE;
@@ -284,6 +285,24 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
         thunar_application_move_uris (application, request->window, uri_list, request->target_uri);
       g_object_unref (G_OBJECT (application));
       thunar_vfs_uri_list_free (uri_list);
+
+      /* clear the clipboard if it contained "cutted data"
+       * (gtk_clipboard_clear takes care of not clearing
+       * the selection if we don't own it)
+       */
+      if (G_UNLIKELY (!copy))
+        gtk_clipboard_clear (manager->clipboard);
+
+      /* check the contents of the clipboard again
+       * if either the Xserver or our GTK+ version
+       * doesn't support the XFixes extension.
+       */
+#if GTK_CHECK_VERSION(2,6,0)
+      if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
+#endif
+        {
+          thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
+        }
     }
   else
     {

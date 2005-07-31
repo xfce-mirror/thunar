@@ -29,6 +29,10 @@
 
 
 
+#define THUNAR_STANDARD_VIEW_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNAR_TYPE_STANDARD_VIEW, ThunarStandardViewPrivate))
+
+
+
 enum
 {
   PROP_0,
@@ -77,9 +81,23 @@ static void          thunar_standard_view_action_cut                (GtkAction  
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_paste              (GtkAction                *action,
                                                                      ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_paste_into_folder  (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_loading_unbound           (gpointer                  user_data);
+
+
+
+struct _ThunarStandardViewPrivate
+{
+  GtkAction *action_properties;
+  GtkAction *action_copy;
+  GtkAction *action_cut;
+  GtkAction *action_paste;
+  GtkAction *action_paste_into_folder;
+  GtkAction *action_show_hidden_files;
+};
 
 
 
@@ -90,6 +108,7 @@ static const GtkActionEntry action_entries[] =
   { "copy", GTK_STOCK_COPY, N_ ("_Copy files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
   { "paste", GTK_STOCK_PASTE, N_ ("_Paste files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_paste), },
+  { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste files into folder"), NULL, N_ ("_Paste files into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
 };
 
 static const GtkToggleActionEntry toggle_action_entries[] =
@@ -155,6 +174,8 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
 
+  g_type_class_add_private (klass, sizeof (ThunarStandardViewPrivate));
+
   thunar_standard_view_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
@@ -214,6 +235,8 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
 static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
+  standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
+
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (standard_view),
                                   GTK_POLICY_AUTOMATIC,
                                   GTK_POLICY_AUTOMATIC);
@@ -229,6 +252,14 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   gtk_action_group_add_toggle_actions (standard_view->action_group, toggle_action_entries,
                                        G_N_ELEMENTS (toggle_action_entries),
                                        GTK_WIDGET (standard_view));
+
+  /* lookup all actions to speed up access later */
+  standard_view->priv->action_properties = gtk_action_group_get_action (standard_view->action_group, "properties");
+  standard_view->priv->action_copy = gtk_action_group_get_action (standard_view->action_group, "copy");
+  standard_view->priv->action_cut = gtk_action_group_get_action (standard_view->action_group, "cut");
+  standard_view->priv->action_paste = gtk_action_group_get_action (standard_view->action_group, "paste");
+  standard_view->priv->action_paste_into_folder = gtk_action_group_get_action (standard_view->action_group, "paste-into-folder");
+  standard_view->priv->action_show_hidden_files = gtk_action_group_get_action (standard_view->action_group, "show-hidden-files");
 
   standard_view->model = thunar_list_model_new ();
 
@@ -748,6 +779,31 @@ thunar_standard_view_action_paste (GtkAction          *action,
 
 
 static void
+thunar_standard_view_action_paste_into_folder (GtkAction          *action,
+                                               ThunarStandardView *standard_view)
+{
+  ThunarFile *file;
+  GtkWidget  *window;
+  GList      *files;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* determine the first selected directory and paste into it */
+  files = thunar_standard_view_get_selected_files (standard_view);
+  file = (files != NULL) ? THUNAR_FILE (files->data) : NULL;
+  if (G_LIKELY (file != NULL && thunar_file_is_directory (file)))
+    {
+      window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+      thunar_clipboard_manager_paste_uri_list (standard_view->clipboard, thunar_file_get_uri (file), GTK_WINDOW (window));
+    }
+  g_list_foreach (files, (GFunc) g_object_unref, NULL);
+  g_list_free (files);
+}
+
+
+
+static void
 thunar_standard_view_action_show_hidden_files (GtkToggleAction    *toggle_action,
                                                ThunarStandardView *standard_view)
 {
@@ -852,11 +908,11 @@ void
 thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 {
   ThunarFile *current_directory;
-  GtkAction  *action;
+  gboolean    can_paste_into_folder;
   gboolean    pastable;
   gboolean    writable;
-  GList      *selected_items;
-  gint        n_selected_items;
+  GList      *selected_files;
+  gint        n_selected_files;
 
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
@@ -867,31 +923,39 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* check whether the clipboard contains data that can be pasted here */
   pastable = (standard_view->clipboard != NULL && thunar_clipboard_manager_get_can_paste (standard_view->clipboard));
 
-  /* determine the number of selected items */
-  selected_items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
-  n_selected_items = g_list_length (selected_items);
-  g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
-  g_list_free (selected_items);
+  /* determine the number of selected files */
+  selected_files = thunar_standard_view_get_selected_files (standard_view);
+  n_selected_files = g_list_length (selected_files);
+
+  /* check whether the only selected file is
+   * folder to which we can paste to */
+  can_paste_into_folder = (n_selected_files == 1)
+                       && thunar_file_is_directory (selected_files->data)
+                       && thunar_file_can_write (selected_files->data);
 
   /* update the "Properties" action */
-  thunarx_gtk_action_group_set_action_sensitive (standard_view->action_group, "properties", (n_selected_items == 1));
+  gtk_action_set_sensitive (standard_view->priv->action_properties, (n_selected_files == 1));
 
   /* update the "Copy file(s)" action */
-  action = gtk_action_group_get_action (standard_view->action_group, "copy");
-  g_object_set (G_OBJECT (action),
-                "label", (n_selected_items > 1) ? _("_Copy files") : _("_Copy file"),
-                "sensitive", (n_selected_items > 0),
+  g_object_set (G_OBJECT (standard_view->priv->action_copy),
+                "label", (n_selected_files > 1) ? _("_Copy files") : _("_Copy file"),
+                "sensitive", (n_selected_files > 0),
                 NULL);
 
   /* update the "Cut file(s)" action */
-  action = gtk_action_group_get_action (standard_view->action_group, "cut");
-  g_object_set (G_OBJECT (action),
-                "label", (n_selected_items > 1) ? _("Cu_t files") : _("Cu_t file"),
-                "sensitive", (n_selected_items > 0) && writable,
+  g_object_set (G_OBJECT (standard_view->priv->action_cut),
+                "label", (n_selected_files > 1) ? _("Cu_t files") : _("Cu_t file"),
+                "sensitive", (n_selected_files > 0) && writable,
                 NULL);
 
   /* update the "Paste file(s)" action */
-  thunarx_gtk_action_group_set_action_sensitive (standard_view->action_group, "paste", writable && pastable);
+  gtk_action_set_sensitive (standard_view->priv->action_paste, writable && pastable);
+
+  /* update the "Paste file(s) Into Folder" action */
+  g_object_set (G_OBJECT (standard_view->priv->action_paste_into_folder),
+                "sensitive", pastable,
+                "visible", can_paste_into_folder,
+                NULL);
 
   /* clear the current status text (will be recalculated on-demand) */
   g_free (standard_view->statusbar_text);
@@ -899,6 +963,10 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* tell everybody that the statusbar text may have changed */
   g_object_notify (G_OBJECT (standard_view), "statusbar-text");
+
+  /* cleanup */
+  g_list_foreach (selected_files, (GFunc) g_object_unref, NULL);
+  g_list_free (selected_files);
 }
 
 

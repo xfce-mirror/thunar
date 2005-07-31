@@ -26,8 +26,9 @@
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarStandardViewClass ThunarStandardViewClass;
-typedef struct _ThunarStandardView      ThunarStandardView;
+typedef struct _ThunarStandardViewPrivate ThunarStandardViewPrivate;
+typedef struct _ThunarStandardViewClass   ThunarStandardViewClass;
+typedef struct _ThunarStandardView        ThunarStandardView;
 
 #define THUNAR_TYPE_STANDARD_VIEW             (thunar_standard_view_get_type ())
 #define THUNAR_STANDARD_VIEW(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_STANDARD_VIEW, ThunarStandardView))
@@ -49,16 +50,18 @@ struct _ThunarStandardView
 {
   GtkScrolledWindow __parent__;
 
-  ThunarClipboardManager *clipboard;
-  ThunarListModel        *model;
-  gchar                  *statusbar_text;
+  ThunarStandardViewPrivate *priv;
 
-  GtkActionGroup         *action_group;
-  GtkUIManager           *ui_manager;
-  guint                   ui_merge_id;
+  ThunarClipboardManager    *clipboard;
+  ThunarListModel           *model;
+  gchar                     *statusbar_text;
 
-  ExoBinding             *loading_binding;
-  gboolean                loading;
+  GtkActionGroup            *action_group;
+  GtkUIManager              *ui_manager;
+  guint                      ui_merge_id;
+
+  ExoBinding                *loading_binding;
+  gboolean                   loading;
 };
 
 GType thunar_standard_view_get_type           (void) G_GNUC_CONST;

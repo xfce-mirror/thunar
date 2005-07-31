@@ -1,5 +1,23 @@
 2005-07-31	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-clipboard-manager.c
+	  (thunar_clipboard_manager_contents_received): Properly clear the
+	  CLIPBOARD selection after a paste on "cutted data". Manually trigger
+	  an "owner-changed" after a successfully initiating the paste operation
+	  if either the Xserver or the GTK+ version doesn't support the XFixes
+	  extension.
+	* thunar-vfs/thunar-vfs-transfer-job.c, configure.in.in: Add work-around
+	  for systems that lack the lchmod() system call.
+	* thunar/thunar-standard-view.{c,h}: Query all actions from the group
+	  when initializing the view to speed up access later.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c:
+	  Add a "paste-into-folder" action, which is only available from the
+	  context menu.
+	* autogen.sh, configure.in.in: Adopt the version numbering scheme from
+	  libexo and ditch the date.
+
+2005-07-31	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-clipboard-manager.{c,h}: Implement paste support based
 	  on the recent API additions to ThunarApplication.
 	* thunar/thunar-standard-view.c(thunar_standard_view_action_paste):

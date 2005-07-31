@@ -54,6 +54,7 @@
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
 #else
+#define g_chmod(path, mode) (chmod ((path), (mode)))
 #define g_lstat(path, buffer) (lstat ((path), (buffer)))
 #define g_mkdir(path, mode) (mkdir ((path), (mode)))
 #define g_remove(path) (remove ((path)))
@@ -551,7 +552,18 @@ thunar_vfs_transfer_item_copy (ThunarVfsTransferItem *item)
 
           /* apply the original permissions */
           if (!item->skipped && !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job)))
-            lchmod (target_path, item->mode & ~S_IFMT);
+            {
+#ifdef HAVE_LCHMOD
+              lchmod (target_path, item->mode & ~S_IFMT);
+#else
+              /* some systems lack the lchmod system call, so we have to
+               * work-around that deficiency here by manually checking
+               * whether we have a symlink or a "regular" fs entity.
+               */
+              if (!S_ISLNK (item->mode))
+                g_chmod (target_path, item->mode & ~S_IFMT);
+#endif
+            }
 
           /* if we're moving, we'll have to unlink afterwards */
           if (job->move && !item->skipped && !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job))
