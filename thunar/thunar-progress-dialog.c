@@ -159,7 +159,7 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
                     GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
   gtk_widget_show (label);
 
-  dialog->progress_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  dialog->progress_label = g_object_new (EXO_TYPE_ELLIPSIZED_LABEL, "ellipsize", EXO_PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_table_attach (GTK_TABLE (table), dialog->progress_label, 0, 2, 1, 2,
                     GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->progress_label);

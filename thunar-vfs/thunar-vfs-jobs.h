@@ -28,7 +28,15 @@ G_BEGIN_DECLS;
 ThunarVfsJob *thunar_vfs_listdir  (ThunarVfsURI *uri,
                                    GError      **error);
 
-ThunarVfsJob *thunar_vfs_unlink   (GList        *uris,
+ThunarVfsJob *thunar_vfs_copy     (GList        *source_uri_list,
+                                   ThunarVfsURI *target_uri,
+                                   GError      **error);
+
+ThunarVfsJob *thunar_vfs_move     (GList        *source_uri_list,
+                                   ThunarVfsURI *target_uri,
+                                   GError      **error);
+
+ThunarVfsJob *thunar_vfs_unlink   (GList        *uri_list,
                                    GError      **error);
 
 G_END_DECLS;

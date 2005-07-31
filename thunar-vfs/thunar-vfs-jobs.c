@@ -24,6 +24,7 @@
 
 #include <thunar-vfs/thunar-vfs-jobs.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
+#include <thunar-vfs/thunar-vfs-transfer-job.h>
 #include <thunar-vfs/thunar-vfs-unlink-job.h>
 
 
@@ -68,9 +69,89 @@ thunar_vfs_listdir (ThunarVfsURI *uri,
 
 
 /**
+ * thunar_vfs_copy:
+ * @source_uri_list : the list of #ThunarVfsURI<!---->s that should be copied.
+ * @target_uri      : the #ThunarVfsURI of the target directory.
+ * @error           : return location for errors or %NULL.
+ *
+ * Generates a #ThunarVfsTransferJob, which can be used to copy
+ * the files referenced by @source_uri_list to the directory referred
+ * to by @target_uri. If the creation of the job failes for some reason,
+ * %NULL will be returned and @error will be set to point to a #GError
+ * describing the cause. Else the newly allocated #ThunarVfsTransferJob
+ * will be returned and the caller is responsible to call
+ * #thunar_vfs_job_unref().
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call #thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsTransferJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_copy (GList        *source_uri_list,
+                 ThunarVfsURI *target_uri,
+                 GError      **error)
+{
+  ThunarVfsJob *job;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (target_uri), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate/launch the job */
+  job = thunar_vfs_transfer_job_new (source_uri_list, target_uri, FALSE, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
+}
+
+
+
+/**
+ * thunar_vfs_move:
+ * @source_uri_list : the list of #ThunarVfsURI<!---->s that should be moved.
+ * @target_uri      : the #ThunarVfsURI of the target directory.
+ * @error           : return location for errors or %NULL.
+ *
+ * Generates a #ThunarVfsTransferJob, which can be used to move
+ * the files referenced by @source_uri_list to the directory referred
+ * to by @target_uri. If the creation of the job failes for some reason,
+ * %NULL will be returned and @error will be set to point to a #GError
+ * describing the cause. Else the newly allocated #ThunarVfsTransferJob
+ * will be returned and the caller is responsible to call
+ * #thunar_vfs_job_unref().
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call #thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsTransferJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_move (GList        *source_uri_list,
+                 ThunarVfsURI *target_uri,
+                 GError      **error)
+{
+  ThunarVfsJob *job;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (target_uri), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate/launch the job */
+  job = thunar_vfs_transfer_job_new (source_uri_list, target_uri, TRUE, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
+}
+
+
+
+/**
  * thunar_vfs_unlink:
- * @uris  : a list of #ThunarVfsURI<!---->s, that should be unlinked.
- * @error : return location for errors or %NULL.
+ * @uri_list : a list of #ThunarVfsURI<!---->s, that should be unlinked.
+ * @error    : return location for errors or %NULL.
  *
  * Generates a #ThunarVfsInteractiveJob, which can be used to unlink
  * all files referenced by the @uris. If the creation of the job
@@ -86,7 +167,7 @@ thunar_vfs_listdir (ThunarVfsURI *uri,
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
-thunar_vfs_unlink (GList   *uris,
+thunar_vfs_unlink (GList   *uri_list,
                    GError **error)
 {
   ThunarVfsJob *job;
@@ -94,7 +175,7 @@ thunar_vfs_unlink (GList   *uris,
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* try to allocate the job */
-  job = thunar_vfs_unlink_job_new (uris, error);
+  job = thunar_vfs_unlink_job_new (uri_list, error);
   if (G_LIKELY (job != NULL))
     thunar_vfs_job_launch (job);
 

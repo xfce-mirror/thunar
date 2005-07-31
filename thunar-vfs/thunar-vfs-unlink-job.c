@@ -87,6 +87,9 @@ struct _ThunarVfsUnlinkJob
 
   gint                 total_items;
   gint                 completed_items;
+
+  /* dirent item buffer to reduce stack overhead */
+  struct dirent        dirent_buffer;
 };
 
 struct _ThunarVfsUnlinkBase
@@ -285,7 +288,6 @@ thunar_vfs_unlink_item_collect (ThunarVfsUnlinkItem *item)
   ThunarVfsUnlinkItem *child_item;
   ThunarVfsUnlinkJob  *job = base->job;
   struct dirent       *d;
-  struct dirent        d_buffer;
   gchar               *path;
   DIR                 *dirp;
 
@@ -300,7 +302,7 @@ thunar_vfs_unlink_item_collect (ThunarVfsUnlinkItem *item)
   /* collect directory entries */
   if (G_UNLIKELY (dirp != NULL))
     {
-      while (_thunar_vfs_sysdep_readdir (dirp, &d_buffer, &d, NULL) && d != NULL)
+      while (_thunar_vfs_sysdep_readdir (dirp, &job->dirent_buffer, &d, NULL) && d != NULL)
         {
           /* check if the operation was cancelled in the meantime */
           if (G_UNLIKELY (thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job))))

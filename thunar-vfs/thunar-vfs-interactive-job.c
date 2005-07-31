@@ -22,6 +22,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
+
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
 #include <thunar-vfs/thunar-vfs-marshal.h>
@@ -219,10 +223,24 @@ void
 thunar_vfs_interactive_job_percent (ThunarVfsInteractiveJob *interactive_job,
                                     gdouble                  percent)
 {
+  struct timeval tv;
+  guint64        time;
+
   g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (interactive_job));
   g_return_if_fail (percent >= 0.0 && percent <= 100.0);
 
-  thunar_vfs_job_emit (THUNAR_VFS_JOB (interactive_job), interactive_signals[PERCENT], 0, percent);
+  /* determine the current time in msecs */
+  gettimeofday (&tv, NULL);
+  time = tv.tv_sec * 1000 + tv.tv_usec / 1000;
+
+  /* don't fire the "percent" signal more than ten times per second
+   * to avoid unneccessary load on the main thread.
+   */
+  if (G_UNLIKELY (time - interactive_job->last_percent_time > 100))
+    {
+      thunar_vfs_job_emit (THUNAR_VFS_JOB (interactive_job), interactive_signals[PERCENT], 0, percent);
+      interactive_job->last_percent_time = time;
+    }
 }
 
 
@@ -251,6 +269,10 @@ thunar_vfs_interactive_job_overwrite (ThunarVfsInteractiveJob *interactive_job,
 
   g_return_val_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (interactive_job), FALSE);
   g_return_val_if_fail (g_utf8_validate (message, -1, NULL), FALSE);
+
+  /* check if the user cancelled the job already */
+  if (thunar_vfs_job_cancelled (THUNAR_VFS_JOB (interactive_job)))
+    return FALSE;
 
   /* check if the user said "overwrite all" earlier */
   if (interactive_job->overwrite_all)
@@ -310,6 +332,10 @@ thunar_vfs_interactive_job_skip (ThunarVfsInteractiveJob *interactive_job,
 
   g_return_val_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (interactive_job), FALSE);
   g_return_val_if_fail (g_utf8_validate (message, -1, NULL), FALSE);
+
+  /* check if the user cancelled the job already */
+  if (thunar_vfs_job_cancelled (THUNAR_VFS_JOB (interactive_job)))
+    return FALSE;
 
   /* check if the user said "skip all" earlier */
   if (interactive_job->skip_all)

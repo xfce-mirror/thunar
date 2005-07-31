@@ -1,3 +1,25 @@
+2005-07-31	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-unlink-job.c: Allocate dirent buffer for
+	  the job instead of the stack on every thunar_vfs_unlink_item_collect
+	  call to reduce the stack overhead for the threads.
+	* thunar-vfs/thunar-vfs-interactive-job.c: Check the cancellation
+	  state prior to invoking the "ask" signal.
+	* thunar-vfs/thunar-vfs-interactive-job.{c,h}: Reduce the number
+	  of "percent" signal invokations to one per second to reduce the
+	  overall load on the main thread.
+	* thunar-vfs/thunar-vfs-job.c(thunar_vfs_job_emit_valist): Lower
+	  the priority of inter-thread signals.
+	* thunar/thunar-progress-dialog.c(thunar_progress_dialog_init): Use
+	  an ellipsizing label for the progress info message to avoid
+	  automatic resizing of the progress dialog.
+	* thunar/thunar-application.{c,h}: Add "copy" and "move" actions. Drop
+	  "unlink" action, will be replaced with "trash" and "empty-trash-bin"
+	  later.
+	* thunar-vfs/thunar-vfs-transfer-job.{c,h}: Import the
+	  ThunarVfsTransferJob class, which can only handle 'file:'-URI
+	  transfers right now.
+
 2005-07-30	Benedikt Meurer <benny@xfce.org>
 
 	* thunarx/thunarx-gtk-extensions.{c,h}, thunarx/Makefile.am: Add a

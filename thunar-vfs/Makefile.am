@@ -48,6 +48,8 @@ libthunar_vfs_la_SOURCES =						\
 	thunar-vfs-monitor.c						\
 	thunar-vfs-sysdep.c						\
 	thunar-vfs-sysdep.h						\
+	thunar-vfs-transfer-job.c					\
+	thunar-vfs-transfer-job.h					\
 	thunar-vfs-trash.c						\
 	thunar-vfs-unlink-job.c						\
 	thunar-vfs-unlink-job.h						\

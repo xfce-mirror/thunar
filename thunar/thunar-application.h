@@ -45,9 +45,15 @@ void               thunar_application_open_window   (ThunarApplication *applicat
                                                      ThunarFile        *directory,
                                                      GdkScreen         *screen);
 
-void               thunar_application_unlink_files  (ThunarApplication *application,
+void               thunar_application_copy_uris     (ThunarApplication *application,
                                                      GtkWindow         *window,
-                                                     GList             *uri_list);
+                                                     GList             *source_uri_list,
+                                                     ThunarVfsURI      *target_uri);
+
+void               thunar_application_move_uris     (ThunarApplication *application,
+                                                     GtkWindow         *window,
+                                                     GList             *source_uri_list,
+                                                     ThunarVfsURI      *target_uri);
 
 G_END_DECLS;
 

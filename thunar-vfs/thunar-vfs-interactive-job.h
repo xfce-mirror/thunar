@@ -64,6 +64,9 @@ struct _ThunarVfsInteractiveJob
 {
   ThunarVfsJob __parent__;
 
+  /* the last time we fired the "percent" signal (in msecs) */
+  guint64 last_percent_time;
+
   guint overwrite_all : 1;
   guint skip_all : 1;
 };

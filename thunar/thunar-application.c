@@ -302,18 +302,21 @@ thunar_application_open_window (ThunarApplication *application,
 
 
 /**
- * thunar_application_unlink_files:
- * @application : a #ThunarApplication.
- * @window      : a parent #GtkWindow or %NULL.
- * @uri_list    : a list of #ThunarVfsURI<!---->s.
+ * thunar_application_copy_uris:
+ * @application     : a #ThunarApplication.
+ * @window          : a parent #GtkWindow or %NULL.
+ * @source_uri_list : the list of #ThunarVfsURI<!---->s that should be copied.
+ * @target_uri      : the target directory.
  *
- * Unlinks all files referenced by the @uri_list. This method takes
- * care of all user interaction.
+ * Copies all files referenced by the @source_uri_list to the directory
+ * referenced by @target_uri. This method takes care of all user
+ * interaction.
  **/
 void
-thunar_application_unlink_files (ThunarApplication *application,
-                                 GtkWindow         *window,
-                                 GList             *uri_list)
+thunar_application_copy_uris  (ThunarApplication *application,
+                               GtkWindow         *window,
+                               GList             *source_uri_list,
+                               ThunarVfsURI      *target_uri)
 {
   ThunarVfsJob *job;
   GtkWidget    *message;
@@ -323,7 +326,7 @@ thunar_application_unlink_files (ThunarApplication *application,
   g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
   
   /* allocate the job */
-  job = thunar_vfs_unlink (uri_list, &error);
+  job = thunar_vfs_copy (source_uri_list, target_uri, &error);
   if (G_UNLIKELY (job == NULL))
     {
       message = gtk_message_dialog_new (window, GTK_DIALOG_MODAL |
@@ -337,11 +340,56 @@ thunar_application_unlink_files (ThunarApplication *application,
   else
     {
       /* let the application take care of the dialog */
-      thunar_application_handle_job (application, window, job, "stock_delete", _("Purging files..."));
+      thunar_application_handle_job (application, window, job, "stock_folder-copy", _("Copying files..."));
       thunar_vfs_job_unref (job);
     }
 }
 
+
+
+/**
+ * thunar_application_move_uris:
+ * @application     : a #ThunarApplication.
+ * @window          : a parent #GtkWindow or %NULL.
+ * @source_uri_list : the list of #ThunarVfsURI<!---->s that should be moved.
+ * @target_uri      : the target directory.
+ *
+ * Moves all files referenced by the @source_uri_list to the directory
+ * referenced by @target_uri. This method takes care of all user
+ * interaction.
+ **/
+void
+thunar_application_move_uris  (ThunarApplication *application,
+                               GtkWindow         *window,
+                               GList             *source_uri_list,
+                               ThunarVfsURI      *target_uri)
+{
+  ThunarVfsJob *job;
+  GtkWidget    *message;
+  GError       *error = NULL;
+
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
+  
+  /* allocate the job */
+  job = thunar_vfs_move (source_uri_list, target_uri, &error);
+  if (G_UNLIKELY (job == NULL))
+    {
+      message = gtk_message_dialog_new (window, GTK_DIALOG_MODAL |
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
+                                        "%s", error->message);
+      gtk_dialog_run (GTK_DIALOG (message));
+      gtk_widget_destroy (message);
+      g_error_free (error);
+    }
+  else
+    {
+      /* let the application take care of the dialog */
+      thunar_application_handle_job (application, window, job, "stock_folder-move", _("Moving files..."));
+      thunar_vfs_job_unref (job);
+    }
+}
 
 
 
