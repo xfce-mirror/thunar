@@ -21,7 +21,7 @@
 #ifndef __THUNAR_VFS_MONITOR_H__
 #define __THUNAR_VFS_MONITOR_H__
 
-#include <thunar-vfs/thunar-vfs-info.h>
+#include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
 
@@ -37,42 +37,67 @@ typedef struct _ThunarVfsMonitor      ThunarVfsMonitor;
 
 /**
  * ThunarVfsMonitorEvent:
- * @THUNAR_VFS_MONITOR_CHANGED: a monitored file has changed.
- * @THUNAR_VFS_MONITOR_DELETED: a monitored file was deleted.
- * FIXME
+ * @THUNAR_VFS_MONITOR_EVENT_CHANGED : a file or directory was changed.
+ * @THUNAR_VFS_MONITOR_EVENT_CREATED : a file or directory was created.
+ * @THUNAR_VFS_MONITOR_EVENT_DELETED : a file or directory was deleted.
+ *
+ * Describes an event that occurred on a #ThunarVfsMonitorHandle.
  **/
 typedef enum
 {
-  THUNAR_VFS_MONITOR_CHANGED,
-  THUNAR_VFS_MONITOR_CREATED,
-  THUNAR_VFS_MONITOR_DELETED,
+  THUNAR_VFS_MONITOR_EVENT_CHANGED,
+  THUNAR_VFS_MONITOR_EVENT_CREATED,
+  THUNAR_VFS_MONITOR_EVENT_DELETED,
 } ThunarVfsMonitorEvent;
 
 /**
- * ThunarVfsMonitorCallback:
- * FIXME
+ * ThunarVfsMonitorHandle:
+ *
+ * A handle on a file system entity, which is currently watched
+ * by a #ThunarVfsMonitor.
  **/
-typedef void (*ThunarVfsMonitorCallback) (ThunarVfsMonitor     *monitor,
-                                          ThunarVfsMonitorEvent event,
-                                          ThunarVfsInfo        *info,
-                                          gpointer              user_data);
+typedef struct _ThunarVfsMonitorHandle ThunarVfsMonitorHandle;
 
-GType             thunar_vfs_monitor_get_type     (void) G_GNUC_CONST;
+/**
+ * ThunarVfsMonitorCallback:
+ * @monitor    : a #ThunarVfsMonitor.
+ * @handle     : a #ThunarVfsMonitorHandle.
+ * @event      : the event that occurred.
+ * @handle_uri : the #ThunarVfsURI that was specified when registering the @handle.
+ * @event_uri  : the #ThunarVfsURI on which the @event occurred.
+ * @user_data  : the user data that was specified when registering the @handle with the @monitor.
+ *
+ * The prototype for callback functions that will be called by a #ThunarVfsMonitor
+ * whenever one of its associated #ThunarVfsMonitorHandle<!---->s notice a
+ * change.
+ **/
+typedef void (*ThunarVfsMonitorCallback)  (ThunarVfsMonitor       *monitor,
+                                           ThunarVfsMonitorHandle *handle,
+                                           ThunarVfsMonitorEvent   event,
+                                           ThunarVfsURI           *handle_uri,
+                                           ThunarVfsURI           *event_uri,
+                                           gpointer                user_data);
 
-ThunarVfsMonitor *thunar_vfs_monitor_get_default  (void);
+GType                   thunar_vfs_monitor_get_type       (void) G_GNUC_CONST;
 
-gint              thunar_vfs_monitor_add_info     (ThunarVfsMonitor        *monitor,
-                                                   ThunarVfsInfo           *info,
-                                                   ThunarVfsMonitorCallback callback,
-                                                   gpointer                 user_data);
+ThunarVfsMonitor       *thunar_vfs_monitor_get            (void);
 
-gint              thunar_vfs_monitor_add_path     (ThunarVfsMonitor        *monitor,
-                                                   const gchar             *path,
-                                                   ThunarVfsMonitorCallback callback,
-                                                   gpointer                 user_data);
+ThunarVfsMonitorHandle *thunar_vfs_monitor_add_directory  (ThunarVfsMonitor        *monitor,
+                                                           ThunarVfsURI            *uri,
+                                                           ThunarVfsMonitorCallback callback,
+                                                           gpointer                 user_data);
 
-void              thunar_vfs_monitor_remove       (ThunarVfsMonitor        *monitor,
-                                                   gint                     id);
+ThunarVfsMonitorHandle *thunar_vfs_monitor_add_file       (ThunarVfsMonitor        *monitor,
+                                                           ThunarVfsURI            *uri,
+                                                           ThunarVfsMonitorCallback callback,
+                                                           gpointer                 user_data);
+
+void                    thunar_vfs_monitor_remove         (ThunarVfsMonitor        *monitor,
+                                                           ThunarVfsMonitorHandle  *handle);
+
+void                    thunar_vfs_monitor_feed           (ThunarVfsMonitor        *monitor,
+                                                           ThunarVfsMonitorEvent    event,
+                                                           ThunarVfsURI            *uri);
 
 G_END_DECLS;
 

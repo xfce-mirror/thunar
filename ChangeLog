@@ -1,3 +1,17 @@
+2005-08-02	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Add check for the FAM/Gamin library.
+	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-monitor.{c,h}: Redesign
+	  the VFS monitor to use FAM if available. It also provides an interface
+	  to feed the monitor with external events, which will be used by the
+	  VFS jobs, which know for sure that they changed/created/deleted a
+	  file. The interface is not yet implemented.
+	* thunar/thunar-file.{c,h}: Add a virtual method reload(), which allows
+	  external entities to trigger a reload on a ThunarFile.
+	* thunar/thunar-local-file.c: Implement the reload() method.
+	* thunar/thunar-local-file.c, thunar/thunar-local-folder.c: Add support
+	  for the new VFS monitor.
+
 2005-08-01	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-list-model.{c,h}: Add new method

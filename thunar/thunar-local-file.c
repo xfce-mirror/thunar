@@ -53,9 +53,12 @@ static const gchar       *thunar_local_file_get_icon_name     (ThunarFile       
                                                                GtkIconTheme           *icon_theme);
 static void               thunar_local_file_watch             (ThunarFile             *file);
 static void               thunar_local_file_unwatch           (ThunarFile             *file);
+static void               thunar_local_file_reload            (ThunarFile             *file);
 static void               thunar_local_file_monitor           (ThunarVfsMonitor       *monitor,
+                                                               ThunarVfsMonitorHandle *handle,
                                                                ThunarVfsMonitorEvent   event,
-                                                               ThunarVfsInfo          *info,
+                                                               ThunarVfsURI           *handle_uri,
+                                                               ThunarVfsURI           *event_uri,
                                                                gpointer                user_data);
 
 
@@ -71,10 +74,10 @@ struct _ThunarLocalFile
 {
   ThunarFile __parent__;
 
-  gchar         *display_name;
-  ThunarVfsInfo *info;
+  gchar                  *display_name;
+  ThunarVfsInfo          *info;
 
-  gint           watch_id;
+  ThunarVfsMonitorHandle *handle;
 };
 
 
@@ -148,6 +151,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_icon_name = thunar_local_file_get_icon_name;
   thunarfile_class->watch = thunar_local_file_watch;
   thunarfile_class->unwatch = thunar_local_file_unwatch;
+  thunarfile_class->reload = thunar_local_file_reload;
 }
 
 
@@ -166,7 +170,7 @@ thunar_local_file_finalize (GObject *object)
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (object);
 
 #ifndef G_DISABLE_CHECKS
-  if (G_UNLIKELY (local_file->watch_id != 0))
+  if (G_UNLIKELY (local_file->handle != NULL))
     {
       g_error ("Attempt to finalize a ThunarLocalFile, which "
                "is still being watched for changes");
@@ -413,12 +417,12 @@ thunar_local_file_watch (ThunarFile *file)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
 
-  g_return_if_fail (local_file->watch_id == 0);
+  g_return_if_fail (local_file->handle == NULL);
 
   /* take a reference on the VFS monitor for this instance */
   if (G_UNLIKELY (monitor == NULL))
     {
-      monitor = thunar_vfs_monitor_get_default ();
+      monitor = thunar_vfs_monitor_get ();
       g_object_add_weak_pointer (G_OBJECT (monitor), (gpointer) &monitor);
     }
   else
@@ -426,14 +430,8 @@ thunar_local_file_watch (ThunarFile *file)
       g_object_ref (G_OBJECT (monitor));
     }
 
-#if 0
-  /* add our VFS info to the monitor */
-  local_file->watch_id = thunar_vfs_monitor_add_info (monitor, local_file->info,
-                                                      thunar_local_file_monitor,
-                                                      local_file);
-#else
-  (void) &thunar_local_file_monitor;
-#endif
+  /* add us to the file monitor */
+  local_file->handle = thunar_vfs_monitor_add_file (monitor, local_file->info->uri, thunar_local_file_monitor, local_file);
 }
 
 
@@ -441,15 +439,13 @@ thunar_local_file_watch (ThunarFile *file)
 static void
 thunar_local_file_unwatch (ThunarFile *file)
 {
-#if 0
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
 
-  g_return_if_fail (local_file->watch_id != 0);
+  g_return_if_fail (local_file->handle != NULL);
 
   /* remove our VFS info from the monitor */
-  thunar_vfs_monitor_remove (monitor, local_file->watch_id);
-  local_file->watch_id = 0;
-#endif
+  thunar_vfs_monitor_remove (monitor, local_file->handle);
+  local_file->handle = NULL;
 
   /* release our reference on the VFS monitor */
   g_object_unref (G_OBJECT (monitor));
@@ -458,22 +454,62 @@ thunar_local_file_unwatch (ThunarFile *file)
 
 
 static void
-thunar_local_file_monitor (ThunarVfsMonitor     *monitor,
-                           ThunarVfsMonitorEvent event,
-                           ThunarVfsInfo        *info,
-                           gpointer              user_data)
+thunar_local_file_reload (ThunarFile *file)
 {
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+  ThunarVfsInfo   *info;
+
+  /* re-query the file info */
+  info = thunar_vfs_info_new_for_uri (local_file->info->uri, NULL);
+  if (G_UNLIKELY (info == NULL))
+    {
+      /* the file is no longer present */
+      gtk_object_destroy (GTK_OBJECT (file));
+    }
+  else
+    {
+      /* apply the new info... */
+      thunar_vfs_info_unref (local_file->info);
+      local_file->info = info;
+
+      /* ... and tell others */
+      thunar_file_changed (file);
+    }
+}
+
+
+
+static void
+thunar_local_file_monitor (ThunarVfsMonitor       *monitor,
+                           ThunarVfsMonitorHandle *handle,
+                           ThunarVfsMonitorEvent   event,
+                           ThunarVfsURI           *handle_uri,
+                           ThunarVfsURI           *event_uri,
+                           gpointer                user_data)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (user_data);
+
+  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  g_return_if_fail (THUNAR_VFS_IS_URI (handle_uri));
+  g_return_if_fail (THUNAR_VFS_IS_URI (event_uri));
+  g_return_if_fail (THUNAR_IS_LOCAL_FILE (local_file));
+  g_return_if_fail (local_file->handle == handle);
+  g_return_if_fail (thunar_vfs_uri_equal (local_file->info->uri, handle_uri));
+
+  /* just to be sure... */
+  if (G_UNLIKELY (!thunar_vfs_uri_equal (handle_uri, event_uri)))
+    return;
+
   switch (event)
     {
-    case THUNAR_VFS_MONITOR_CHANGED:
+    case THUNAR_VFS_MONITOR_EVENT_CHANGED:
+    case THUNAR_VFS_MONITOR_EVENT_CREATED:
+      // FIXME: We need to reload the file data here
       thunar_file_changed (THUNAR_FILE (user_data));
       break;
 
-    case THUNAR_VFS_MONITOR_DELETED:
+    case THUNAR_VFS_MONITOR_EVENT_DELETED:
       gtk_object_destroy (GTK_OBJECT (user_data));
-      break;
-
-    default:
       break;
     }
 }

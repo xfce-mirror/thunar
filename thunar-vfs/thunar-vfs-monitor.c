@@ -22,47 +22,27 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-#ifdef HAVE_SYS_EVENT_H
-#include <sys/event.h>
-#endif
-#ifdef HAVE_SYS_TIME_H
-#include <sys/time.h>
+#ifdef HAVE_FAM_H
+#include <fam.h>
 #endif
 
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
-#endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
+#include <gdk/gdk.h>
 
 #include <thunar-vfs/thunar-vfs-monitor.h>
 
 
 
-/* the monitor timer interval */
-#define THUNAR_VFS_MONITOR_INTERVAL (4 * 1000)
-
-
-
-typedef struct _ThunarVfsWatch ThunarVfsWatch;
-
-
-
-static void     thunar_vfs_monitor_class_init     (ThunarVfsMonitorClass *klass);
-static void     thunar_vfs_monitor_init           (ThunarVfsMonitor      *monitor);
-static void     thunar_vfs_monitor_finalize       (GObject               *object);
-static gboolean thunar_vfs_monitor_event          (GIOChannel            *source,
-                                                   GIOCondition           condition,
-                                                   gpointer               user_data);
-static gboolean thunar_vfs_monitor_timer          (gpointer               user_data);
-static void     thunar_vfs_monitor_timer_destroy  (gpointer               user_data);
+static void     thunar_vfs_monitor_class_init (ThunarVfsMonitorClass *klass);
+static void     thunar_vfs_monitor_init       (ThunarVfsMonitor      *monitor);
+static void     thunar_vfs_monitor_finalize   (GObject               *object);
+#ifdef HAVE_LIBFAM
+static void     thunar_vfs_monitor_fam_cancel (ThunarVfsMonitor      *monitor);
+static void     thunar_vfs_monitor_fam_event  (ThunarVfsMonitor      *monitor,
+                                               const FAMEvent        *fe);
+static gboolean thunar_vfs_monitor_fam_watch (GIOChannel             *channel,
+                                              GIOCondition            condition,
+                                              gpointer                user_data);
+#endif
 
 
 
@@ -75,21 +55,25 @@ struct _ThunarVfsMonitor
 {
   GObject __parent__;
 
-  GList *watches;
-  gint   current_id;
-  gint   timer_id;
+  GMemChunk    *handle_chunk;
+  GList        *handles;
 
-  gint   kq;
-  gint   kq_watch_id;
+#ifdef HAVE_LIBFAM
+  FAMConnection fc;
+  gint          fc_watch_id;
+  gint          fc_sequence;
+#endif
 };
 
-struct _ThunarVfsWatch
+struct _ThunarVfsMonitorHandle
 {
-  gint                     id;
-  gint                     fd;
-  ThunarVfsInfo           *info;
   ThunarVfsMonitorCallback callback;
   gpointer                 user_data;
+  ThunarVfsURI            *uri;
+
+#ifdef HAVE_LIBFAM
+  FAMRequest               fr;
+#endif
 };
 
 
@@ -112,35 +96,29 @@ thunar_vfs_monitor_class_init (ThunarVfsMonitorClass *klass)
 static void
 thunar_vfs_monitor_init (ThunarVfsMonitor *monitor)
 {
-  GIOChannel *channel;
-
-  monitor->current_id = 0;
-  monitor->timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNAR_VFS_MONITOR_INTERVAL,
-                                          thunar_vfs_monitor_timer, monitor,
-                                          thunar_vfs_monitor_timer_destroy);
-
-  /* open a connection to the system's event queue */
-#ifdef HAVE_KQUEUE
-  monitor->kq = kqueue ();
-#else
-  monitor->kq = -1;
-#endif
-
-  if (G_LIKELY (monitor->kq >= 0))
+#ifdef HAVE_LIBFAM
+  if (FAMOpen2 (&monitor->fc, PACKAGE_NAME) == 0)
     {
-      /* make sure the connection is not passed on to child processes */
-      fcntl (monitor->kq, F_SETFD, fcntl (monitor->kq, F_GETFD, 0) | FD_CLOEXEC);
+      GIOChannel *channel;
 
-      /* setup an io channel for the connection */
-      channel = g_io_channel_unix_new (monitor->kq);
-      monitor->kq_watch_id = g_io_add_watch (channel, G_IO_ERR | G_IO_HUP | G_IO_IN,
-                                             thunar_vfs_monitor_event, monitor);
+      channel = g_io_channel_unix_new (FAMCONNECTION_GETFD (&monitor->fc));
+      monitor->fc_watch_id = g_io_add_watch (channel, G_IO_ERR | G_IO_HUP | G_IO_IN,
+                                             thunar_vfs_monitor_fam_watch, monitor);
       g_io_channel_unref (channel);
+
+#ifdef HAVE_FAMNOEXISTS
+      /* luckily gamin offers a way to avoid the FAMExists events */
+      FAMNoExists (&monitor->fc);
+#endif
     }
   else
     {
-      monitor->kq_watch_id = -1;
+      monitor->fc_watch_id = -1;
     }
+#endif
+
+  /* allocate the memory chunk for the handles */
+  monitor->handle_chunk = g_mem_chunk_create (ThunarVfsMonitorHandle, 64, G_ALLOC_AND_FREE);
 }
 
 
@@ -149,240 +127,158 @@ static void
 thunar_vfs_monitor_finalize (GObject *object)
 {
   ThunarVfsMonitor *monitor = THUNAR_VFS_MONITOR (object);
-  ThunarVfsWatch   *watch;
   GList            *lp;
 
-  /* drop the still present (previously deleted) watches */
-  for (lp = monitor->watches; lp != NULL; lp = lp->next)
-    {
-      watch = lp->data;
-      if (G_UNLIKELY (watch->callback != NULL))
-        {
-          g_error ("Tried to finalize a ThunarVfsMonitor, which has "
-                   "atleast one active watch monitoring \"%s\"",
-                   thunar_vfs_uri_to_string (watch->info->uri, 0));
-        }
-
-#ifdef HAVE_KQUEUE
-      if (G_LIKELY (watch->fd >= 0))
-        {
-          /* prepare the delete command */
-          struct kevent ev;
-          ev.ident = watch->fd;
-          ev.filter = EVFILT_VNODE;
-          ev.flags = EV_DELETE;
-          ev.fflags = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_RENAME | NOTE_REVOKE;
-
-          /* perform the delete operation */
-          if (kevent (monitor->kq, &ev, 1, NULL, 0, NULL) < 0)
-            g_error ("Failed to remove watch %d: %s", watch->id, g_strerror (errno));
-
-          /* drop the file descriptor */
-          close (watch->fd);
-        }
+#ifdef HAVE_LIBFAM
+  if (monitor->fc_watch_id >= 0)
+    thunar_vfs_monitor_fam_cancel (monitor);
 #endif
 
-      g_free (watch);
-    }
-  g_list_free (monitor->watches);
+  /* drop all handles */
+  for (lp = monitor->handles; lp != NULL; lp = lp->next)
+    thunar_vfs_uri_unref (((ThunarVfsMonitorHandle *) lp->data)->uri);
+  g_list_free (monitor->handles);
 
-  /* stop the timer */
-  if (G_LIKELY (monitor->timer_id >= 0))
-    g_source_remove (monitor->timer_id);
+  /* release the memory chunk */
+  g_mem_chunk_destroy (monitor->handle_chunk);
 
-  /* remove the main loop watch for the event loop */
-  if (G_LIKELY (monitor->kq_watch_id >= 0))
-    g_source_remove (monitor->kq_watch_id);
-
-  /* destroy the event queue */
-  if (G_LIKELY (monitor->kq >= 0))
-    close (monitor->kq);
-
-  G_OBJECT_CLASS (thunar_vfs_monitor_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_vfs_monitor_parent_class)->finalize) (object);
 }
 
 
 
-static gboolean
-thunar_vfs_monitor_event (GIOChannel  *source,
-                          GIOCondition condition,
-                          gpointer     user_data)
+#ifdef HAVE_LIBFAM
+static void
+thunar_vfs_monitor_fam_cancel (ThunarVfsMonitor *monitor)
 {
-#if 0
-#ifdef HAVE_KQUEUE
-  ThunarVfsInfoResult result;
-  ThunarVfsMonitor   *monitor = THUNAR_VFS_MONITOR (user_data);
-  ThunarVfsWatch     *watch;
-  struct kevent       events[16];
-  gint                n;
+  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  g_return_if_fail (monitor->fc_watch_id >= 0);
 
-  GDK_THREADS_ENTER ();
+  /* close the FAM connection */
+  FAMClose (&monitor->fc);
 
-  n = kevent (monitor->kq, NULL, 0, events, G_N_ELEMENTS (events), NULL);
-  while (--n >= 0)
-    {
-      watch = events[n].udata;
-      if (G_UNLIKELY (watch->callback == NULL))
-        continue;
-
-      /* force an update on the info */
-      result = 0; /*thunar_vfs_info_update (watch->info, NULL);*/
-      switch (result)
-        {
-        case THUNAR_VFS_INFO_RESULT_ERROR:
-          watch->callback (monitor, THUNAR_VFS_MONITOR_DELETED, watch->info, watch->user_data);
-          break;
-
-        case THUNAR_VFS_INFO_RESULT_CHANGED:
-          watch->callback (monitor, THUNAR_VFS_MONITOR_CHANGED, watch->info, watch->user_data);
-          break;
-        
-        case THUNAR_VFS_INFO_RESULT_NOCHANGE:
-          break;
-
-        default:
-          g_assert_not_reached ();
-          break;
-        }
-    }
-
-  GDK_THREADS_LEAVE ();
-#endif
-#endif
-
-  /* keep the kqueue monitor going */
-  return TRUE;
-}
-
-
-
-static gboolean
-thunar_vfs_monitor_timer (gpointer user_data)
-{
-#if 0
-  ThunarVfsInfoResult result;
-  ThunarVfsMonitor   *monitor = THUNAR_VFS_MONITOR (user_data);
-  ThunarVfsWatch     *watch;
-  GList              *changed = NULL;
-  GList              *deleted = NULL;
-  GList              *next;
-  GList              *lp;
-
-  GDK_THREADS_ENTER ();
-
-  for (lp = monitor->watches; lp != NULL; lp = next)
-    {
-      watch = lp->data;
-      next = lp->next;
-
-      /* handle deletion of watches */
-      if (G_UNLIKELY (watch->callback == NULL))
-        {
-#ifdef HAVE_KQUEUE
-          if (G_LIKELY (watch->fd >= 0))
-            {
-              /* prepare the delete command */
-              struct kevent ev;
-              ev.ident = watch->fd;
-              ev.filter = EVFILT_VNODE;
-              ev.flags = EV_DELETE;
-              ev.fflags = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_RENAME | NOTE_REVOKE;
-
-              /* perform the delete operation */
-              if (kevent (monitor->kq, &ev, 1, NULL, 0, NULL) < 0)
-                g_error ("Failed to remove watch %d: %s", watch->id, g_strerror (errno));
-
-              /* drop the file descriptor */
-              close (watch->fd);
-            }
-#endif
-
-          monitor->watches = g_list_delete_link (monitor->watches, lp);
-          g_free (watch);
-          continue;
-        }
-
-#ifdef HAVE_KQUEUE
-      if (G_LIKELY (watch->fd >= 0))
-        continue;
-#endif
-
-      /* force an update on the info */
-      result = thunar_vfs_info_update (watch->info, NULL);
-      switch (result)
-        {
-        case THUNAR_VFS_INFO_RESULT_ERROR:
-          deleted = g_list_prepend (deleted, watch);
-          break;
-
-        case THUNAR_VFS_INFO_RESULT_CHANGED:
-          changed = g_list_prepend (changed, watch);
-          break;
-        
-        case THUNAR_VFS_INFO_RESULT_NOCHANGE:
-          break;
-
-        default:
-          g_assert_not_reached ();
-          break;
-        }
-    }
-
-  /* notify all files that have been changed */
-  if (G_UNLIKELY (changed != NULL))
-    {
-      for (lp = changed; lp != NULL; lp = lp->next)
-        {
-          watch = lp->data;
-          if (G_LIKELY (watch->callback != NULL))
-            watch->callback (monitor, THUNAR_VFS_MONITOR_CHANGED, watch->info, watch->user_data);
-        }
-      g_list_free (changed);
-    }
-
-  /* notify all files that have been deleted */
-  if (G_UNLIKELY (deleted != NULL))
-    {
-      for (lp = deleted; lp != NULL; lp = lp->next)
-        {
-          watch = lp->data;
-          if (G_LIKELY (watch->callback != NULL))
-            watch->callback (monitor, THUNAR_VFS_MONITOR_DELETED, watch->info, watch->user_data);
-        }
-      g_list_free (deleted);
-    }
-
-  GDK_THREADS_LEAVE ();
-#endif
-  
-  return TRUE;
+  /* remove the I/O watch */
+  g_source_remove (monitor->fc_watch_id);
+  monitor->fc_watch_id = -1;
 }
 
 
 
 static void
-thunar_vfs_monitor_timer_destroy (gpointer user_data)
+thunar_vfs_monitor_fam_event (ThunarVfsMonitor *monitor,
+                              const FAMEvent   *fe)
 {
-  GDK_THREADS_ENTER ();
-  THUNAR_VFS_MONITOR (user_data)->timer_id = -1;
-  GDK_THREADS_LEAVE ();
+  ThunarVfsMonitorHandle *handle;
+  ThunarVfsMonitorEvent   event;
+  ThunarVfsURI           *uri;
+  GList                  *lp;
+
+  /* lookup the handle for the request that caused the event */
+  for (lp = monitor->handles; lp != NULL; lp = lp->next)
+    if (((ThunarVfsMonitorHandle *) lp->data)->fr.reqnum == fe->fr.reqnum)
+      break;
+
+  /* yes, this can really happen, see
+   * the FAM documentation.
+   */
+  if (G_UNLIKELY (lp == NULL))
+    return;
+  else
+    handle = lp->data;
+
+  /* translate the event code */
+  switch (fe->code)
+    {
+    case FAMChanged:
+      event = THUNAR_VFS_MONITOR_EVENT_CHANGED;
+      break;
+
+    case FAMCreated:
+      event = THUNAR_VFS_MONITOR_EVENT_CREATED;
+      break;
+
+    case FAMDeleted:
+      event = THUNAR_VFS_MONITOR_EVENT_DELETED;
+      break;
+
+    default:
+      g_assert_not_reached ();
+      return;
+    }
+
+  /* determine the URI */
+  if (G_UNLIKELY (*fe->filename != '/'))
+    uri = thunar_vfs_uri_relative (handle->uri, fe->filename);
+  else if (strcmp (thunar_vfs_uri_get_path (handle->uri), fe->filename) == 0)
+    uri = thunar_vfs_uri_ref (handle->uri);
+  else
+    uri = thunar_vfs_uri_new_for_path (fe->filename);
+
+  /* invoke the callback, fortunately - due to our design - we
+   * have no reentrancy issues here. ;-)
+   */
+  (*handle->callback) (monitor, handle, event, handle->uri, uri, handle->user_data);
+  thunar_vfs_uri_unref (uri);
 }
 
 
 
+static gboolean
+thunar_vfs_monitor_fam_watch (GIOChannel  *channel,
+                              GIOCondition condition,
+                              gpointer     user_data)
+{
+  ThunarVfsMonitor *monitor = THUNAR_VFS_MONITOR (user_data);
+  FAMEvent          fe;
+
+  /* check for an error on the FAM connection */
+  if (G_UNLIKELY ((condition & (G_IO_ERR | G_IO_HUP | G_IO_NVAL)) != 0))
+    {
+error:
+      /* terminate the FAM connection */
+      GDK_THREADS_ENTER ();
+      thunar_vfs_monitor_fam_cancel (monitor);
+      GDK_THREADS_LEAVE ();
+
+      /* thats it, no more FAM */
+      return FALSE;
+    }
+
+  /* process all pending FAM events */
+  while (FAMPending (&monitor->fc))
+    {
+      /* query the next pending event */
+      if (G_UNLIKELY (FAMNextEvent (&monitor->fc, &fe) < 0))
+        goto error;
+
+      /* we ignore all events other than changed/created/deleted */
+      if (G_UNLIKELY (fe.code != FAMChanged && fe.code != FAMCreated && fe.code != FAMDeleted))
+        continue;
+
+      /* process the event */
+      GDK_THREADS_ENTER ();
+      thunar_vfs_monitor_fam_event (monitor, &fe);
+      GDK_THREADS_LEAVE ();
+    }
+
+  return TRUE;
+}
+#endif
+
+
+
 /**
- * thunar_vfs_monitor_get_default:
+ * thunar_vfs_monitor_get:
  *
- * Returns the default #ThunarVfsMonitor which is shared
- * by all modules.
+ * Returns the shared #ThunarVfsMonitor instance. The caller
+ * is responsible to call #g_object_unref() on the returned
+ * object when no longer needed.
  *
- * You need to call #g_object_unref() on the returned
- * object when you don't need the monitor any longer.
- *
- * Return value: the default #ThunarVfsMonitor instance.
+ * Return value: a reference to the shared #ThunarVfsMonitor
+ *               instance.
  **/
 ThunarVfsMonitor*
-thunar_vfs_monitor_get_default (void)
+thunar_vfs_monitor_get (void)
 {
   static ThunarVfsMonitor *monitor = NULL;
 
@@ -402,144 +298,150 @@ thunar_vfs_monitor_get_default (void)
 
 
 /**
- * thunar_vfs_monitor_add_info:
+ * thunar_vfs_monitor_add_directory:
  * @monitor   : a #ThunarVfsMonitor.
- * @info      : pointer to the #ThunarVfsInfo object to watch.
- * @callback  : callback function to invoke whenever changes to the file are detected.
- * @user_data : additional user specific data to pass to @callback.
+ * @uri       : the #ThunarVfsURI of the directory that should be watched.
+ * @callback  : the callback function to invoke.
+ * @user_data : additional data to pass to @callback.
  *
- * Adds @info to the list of watched entities of @monitor. Note that this
- * way of monitoring is very special and optimized for very low overhead.
- * No copy of @info is made, instead the #ThunarVfsInfo object referenced
- * by @info is modified directly whenever a change is noticed to avoid
- * an additional #stat() invokation. This means, that you'll need to
- * unregister the watch BEFORE freeing @info!
+ * The @uri is currently limited to the #THUNAR_VFS_URI_SCHEME_FILE.
  *
- * Returns the unique id of the newly registered watch, which can later
- * be used to drop the watch from the @monitor using the method
- * #thunar_vfs_monitor_remove().
- *
- * Return value: the unique id of the newly created watch.
+ * Return value: the #ThunarVfsMonitorHandle for the new watch.
  **/
-gint
-thunar_vfs_monitor_add_info (ThunarVfsMonitor        *monitor,
-                             ThunarVfsInfo           *info,
-                             ThunarVfsMonitorCallback callback,
-                             gpointer                 user_data)
+ThunarVfsMonitorHandle*
+thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
+                                  ThunarVfsURI            *uri,
+                                  ThunarVfsMonitorCallback callback,
+                                  gpointer                 user_data)
 {
-  ThunarVfsWatch *watch;
+  ThunarVfsMonitorHandle *handle;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), 0);
-  g_return_val_if_fail (info != NULL && THUNAR_VFS_IS_URI (info->uri), 0);
-  g_return_val_if_fail (callback != NULL, 0);
+  g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), NULL);
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+  g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE, NULL);
+  g_return_val_if_fail (callback != NULL, NULL);
 
-  /* prepare the watch */
-  watch = g_new (ThunarVfsWatch, 1);
-  watch->id = ++monitor->current_id;
-  watch->fd = -1;
-  watch->info = info;
-  watch->callback = callback;
-  watch->user_data = user_data;
+  /* allocate a new handle */
+  handle = g_chunk_new (ThunarVfsMonitorHandle, monitor->handle_chunk);
+  handle->uri = thunar_vfs_uri_ref (uri);
+  handle->callback = callback;
+  handle->user_data = user_data;
 
-  /* add it to the list of active watches */
-  monitor->watches = g_list_prepend (monitor->watches, watch);
-
-  /* For now, symlinks will be checked regularly using the timer */
-  if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) == 0)
+#ifdef HAVE_LIBFAM
+  if (G_LIKELY (monitor->fc_watch_id >= 0))
     {
-#ifdef HAVE_KQUEUE
-      if (G_LIKELY (monitor->kq >= 0))
-        {
-          watch->fd = open (thunar_vfs_uri_get_path (info->uri), O_RDONLY, 0);
-          if (watch->fd >= 0)
-            {
-              /* prepare the event definition */
-              struct kevent ev;
-              ev.ident = watch->fd;
-              ev.filter = EVFILT_VNODE;
-              ev.flags = EV_ADD | EV_ENABLE | EV_CLEAR;
-              ev.fflags = NOTE_DELETE | NOTE_WRITE | NOTE_EXTEND | NOTE_ATTRIB | NOTE_RENAME | NOTE_REVOKE;
-              ev.udata = watch;
+      /* generate a unique sequence number for the request */
+      handle->fr.reqnum = ++monitor->fc_sequence;
 
-              /* try to add the event */
-              if (kevent (monitor->kq, &ev, 1, NULL, 0, NULL) < 0)
-                {
-                  close (watch->fd);
-                  watch->fd = -1;
-                }
-            }
-        }
-#endif
+      /* schedule the watch on the FAM daemon */
+      if (FAMMonitorDirectory2 (&monitor->fc, thunar_vfs_uri_get_path (uri), &handle->fr) < 0)
+        thunar_vfs_monitor_fam_cancel (monitor);
     }
+#endif
 
-  return watch->id;
+  /* add the handle to the monitor */
+  monitor->handles = g_list_prepend (monitor->handles, handle);
+
+  return handle;
 }
 
 
 
 /**
- * thunar_vfs_monitor_add_path:
+ * thunar_vfs_monitor_add_file:
  * @monitor   : a #ThunarVfsMonitor.
- * @path      : the path to the file or directory to monitor for changes.
- * @callback  : a callback function to be invoked whenever changes are noticed on the @path.
- * @user_data : additional user specific data to pass to @callback.
+ * @uri       : the #ThunarVfsURI of the file that should be watched.
+ * @callback  : the callback function to invoke.
+ * @user_data : additional data to pass to @callback.
  *
- * FIXME
+ * The @uri is currently limited to the #THUNAR_VFS_URI_SCHEME_FILE.
  *
- * Returns the unique id of the newly registered watch, which can later
- * be used to drop the watch from the @monitor using the method
- * #thunar_vfs_monitor_remove().
- *
- * Return value: the watch id.
+ * Return value: the #ThunarVfsMonitorHandle for the new watch.
  **/
-gint
-thunar_vfs_monitor_add_path (ThunarVfsMonitor        *monitor,
-                             const gchar             *path,
+ThunarVfsMonitorHandle*
+thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
+                             ThunarVfsURI            *uri,
                              ThunarVfsMonitorCallback callback,
                              gpointer                 user_data)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), 0);
-  g_return_val_if_fail (g_path_is_absolute (path), 0);
-  g_return_val_if_fail (callback != NULL, 0);
+  ThunarVfsMonitorHandle *handle;
 
-  g_error ("Not implemented yet!");
+  g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), NULL);
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+  g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE, NULL);
+  g_return_val_if_fail (callback != NULL, NULL);
 
-  return 0;
+  /* allocate a new handle */
+  handle = g_chunk_new (ThunarVfsMonitorHandle, monitor->handle_chunk);
+  handle->uri = thunar_vfs_uri_ref (uri);
+  handle->callback = callback;
+  handle->user_data = user_data;
+
+#ifdef HAVE_LIBFAM
+  if (G_LIKELY (monitor->fc_watch_id >= 0))
+    {
+      /* generate a unique sequence number for the request */
+      handle->fr.reqnum = ++monitor->fc_sequence;
+
+      /* schedule the watch on the FAM daemon */
+      if (FAMMonitorFile2 (&monitor->fc, thunar_vfs_uri_get_path (uri), &handle->fr) < 0)
+        thunar_vfs_monitor_fam_cancel (monitor);
+    }
+#endif
+
+  /* add the handle to the monitor */
+  monitor->handles = g_list_prepend (monitor->handles, handle);
+
+  return handle;
 }
 
 
 
 /**
- * thunar_vfs_monitor_remove_info:
+ * thunar_vfs_monitor_remove:
  * @monitor : a #ThunarVfsMonitor.
- * @id      : the watch id.
+ * @handle  : a valid #ThunarVfsMonitorHandle for @monitor.
  *
- * Removes an existing watch identified by @id from the
- * given @monitor.
- *
- * Note that the @id must be valid, else the application
- * will abort.
+ * Removes @handle from @monitor.
  **/
 void
-thunar_vfs_monitor_remove (ThunarVfsMonitor *monitor,
-                           gint              id)
+thunar_vfs_monitor_remove (ThunarVfsMonitor       *monitor,
+                           ThunarVfsMonitorHandle *handle)
 {
-  ThunarVfsWatch *watch;
-  GList          *lp;
-
   g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  g_return_if_fail (id > 0);
+  g_return_if_fail (g_list_find (monitor->handles, handle) != NULL);
 
-  for (lp = monitor->watches; lp != NULL; lp = lp->next)
-    {
-      watch = lp->data;
-      if (watch->id == id && watch->callback != NULL)
-        {
-          /* mark this watch for deletion */
-          watch->callback = NULL;
-          return;
-        }
-    }
+  /* unlink the handle */
+  monitor->handles = g_list_remove (monitor->handles, handle);
 
-  g_error ("Watch %d not present in ThunarVfsMonitor", id);
+#ifdef HAVE_LIBFAM
+  if (G_LIKELY (monitor->fc_watch_id >= 0 && handle->fr.reqnum > 0))
+    if (FAMCancelMonitor (&monitor->fc, &handle->fr) < 0)
+      thunar_vfs_monitor_fam_cancel (monitor);
+#endif
+
+  /* free the handle */
+  thunar_vfs_uri_unref (handle->uri);
+  g_mem_chunk_free (monitor->handle_chunk, handle);
 }
+
+
+
+/**
+ * thunar_vfs_monitor_feed:
+ * @monitor
+ * @event
+ * @uri
+ **/
+void
+thunar_vfs_monitor_feed (ThunarVfsMonitor     *monitor,
+                         ThunarVfsMonitorEvent event,
+                         ThunarVfsURI         *uri)
+{
+  // FIXME
+  g_assert_not_reached ();
+}
+
+
+
+

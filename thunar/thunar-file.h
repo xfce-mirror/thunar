@@ -105,6 +105,8 @@ struct _ThunarFileClass
   void                 (*watch)               (ThunarFile             *file);
   void                 (*unwatch)             (ThunarFile             *file);
 
+  void                 (*reload)              (ThunarFile             *file);
+
 
   /* signals */
   void (*changed) (ThunarFile *file);
@@ -172,6 +174,8 @@ GdkPixbuf         *thunar_file_load_icon        (ThunarFile             *file,
 
 void               thunar_file_watch            (ThunarFile             *file);
 void               thunar_file_unwatch          (ThunarFile             *file);
+
+void               thunar_file_reload           (ThunarFile             *file);
 
 void               thunar_file_changed          (ThunarFile             *file);
 

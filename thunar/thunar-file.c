@@ -65,6 +65,7 @@ static gboolean           thunar_file_real_can_execute         (ThunarFile      
 static gboolean           thunar_file_real_can_read            (ThunarFile             *file);
 static gboolean           thunar_file_real_can_write           (ThunarFile             *file);
 static GList             *thunar_file_real_get_emblem_names    (ThunarFile             *file);
+static void               thunar_file_real_reload              (ThunarFile             *file);
 static void               thunar_file_real_changed             (ThunarFile             *file);
 static ThunarFile        *thunar_file_new_internal             (ThunarVfsURI           *uri,
                                                                 GError                **error);
@@ -178,6 +179,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->can_read = thunar_file_real_can_read;
   klass->can_write = thunar_file_real_can_write;
   klass->get_emblem_names = thunar_file_real_get_emblem_names;
+  klass->reload = thunar_file_real_reload;
   klass->changed = thunar_file_real_changed;
 
   /**
@@ -365,6 +367,14 @@ static GList*
 thunar_file_real_get_emblem_names (ThunarFile *file)
 {
   return NULL;
+}
+
+
+
+static void
+thunar_file_real_reload (ThunarFile *file)
+{
+  /* we don't do anything here... */
 }
 
 
@@ -1239,6 +1249,28 @@ thunar_file_unwatch (ThunarFile *file)
       g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->watch != NULL);
       THUNAR_FILE_GET_CLASS (file)->unwatch (file);
     }
+}
+
+
+
+/**
+ * thunar_file_reload:
+ * @file : a #ThunarFile instance.
+ *
+ * Tells @file to reload its internal state, e.g. by reacquiring
+ * the file info from the underlying media. Not all #ThunarFile
+ * implementations may actually implement this method, so don't
+ * count on it to do anything useful. Some implementations may
+ * also decide to reload its state asynchronously.
+ *
+ * You must also be able to handle the case that @file is
+ * destroyed during the reload call.
+ **/
+void
+thunar_file_reload (ThunarFile *file)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  THUNAR_FILE_GET_CLASS (file)->reload (file);
 }
 
 

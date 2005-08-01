@@ -63,7 +63,8 @@ libthunar_vfs_la_SOURCES =						\
 
 libthunar_vfs_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
-	$(GTHREAD_CFLAGS)
+	$(GTHREAD_CFLAGS)						\
+	$(LIBFAM_CFLAGS)
 
 libthunar_vfs_la_LDFLAGS =						\
 	-no-undefined
@@ -74,7 +75,8 @@ libthunar_vfs_la_DEPENDENCIES =						\
 libthunar_vfs_la_LIBADD =						\
 	$(top_builddir)/thunar-vfs/xdgmime/libxdgmime.la		\
 	$(EXO_LIBS)							\
-	$(GTHREADS_LIBS)
+	$(GTHREADS_LIBS)						\
+	$(LIBFAM_LIBS)
 
 EXTRA_DIST =								\
 	thunar-vfs-marshal.list						\
