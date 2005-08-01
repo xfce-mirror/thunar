@@ -1322,7 +1322,8 @@ sort_by_date_accessed (ThunarFile *a,
     return -1;
   else if (date_a > date_b)
     return 1;
-  return 0;
+
+  return sort_by_name (a, b);
 }
 
 
@@ -1350,7 +1351,8 @@ sort_by_date_modified (ThunarFile *a,
     return -1;
   else if (date_a > date_b)
     return 1;
-  return 0;
+
+  return sort_by_name (a, b);
 }
 
 
@@ -1381,6 +1383,9 @@ sort_by_mime_type (ThunarFile *a,
 
   result = strcasecmp (thunar_vfs_mime_info_get_name (info_a),
                        thunar_vfs_mime_info_get_name (info_b));
+
+  if (result == 0)
+    result = sort_by_name (a, b);
 
   thunar_vfs_mime_info_unref (info_b);
   thunar_vfs_mime_info_unref (info_a);
@@ -1414,7 +1419,8 @@ sort_by_permissions (ThunarFile *a,
     return -1;
   else if (mode_a > mode_b)
     return 1;
-  return 0;
+
+  return sort_by_name (a, b);
 }
 
 
@@ -1442,7 +1448,8 @@ sort_by_size (ThunarFile *a,
     return -1;
   else if (size_a > size_b)
     return 1;
-  return 0;
+
+  return sort_by_name (a, b);
 }
 
 
@@ -1473,6 +1480,9 @@ sort_by_type (ThunarFile *a,
 
   result = strcasecmp (thunar_vfs_mime_info_get_comment (info_a),
                        thunar_vfs_mime_info_get_comment (info_b));
+
+  if (result == 0)
+    result = sort_by_name (a, b);
 
   thunar_vfs_mime_info_unref (info_b);
   thunar_vfs_mime_info_unref (info_a);

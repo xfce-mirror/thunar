@@ -1,5 +1,14 @@
 2005-08-02	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-local-file.c(thunar_local_file_monitor): Actually
+	  reload the file info when the VFS monitor notices a change.
+	* thunar/thunar-list-model.c: Apply Jens Luedickes patch to add
+	  sub-sorting on the filename.
+	* thunar-vfs/thunar-vfs-monitor.c: Add missing header files.
+	* configure.in.in: Drop the kevent related checks.
+
+2005-08-02	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Add check for the FAM/Gamin library.
 	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-monitor.{c,h}: Redesign
 	  the VFS monitor to use FAM if available. It also provides an interface

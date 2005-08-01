@@ -504,12 +504,11 @@ thunar_local_file_monitor (ThunarVfsMonitor       *monitor,
     {
     case THUNAR_VFS_MONITOR_EVENT_CHANGED:
     case THUNAR_VFS_MONITOR_EVENT_CREATED:
-      // FIXME: We need to reload the file data here
-      thunar_file_changed (THUNAR_FILE (user_data));
+      thunar_local_file_reload (THUNAR_FILE (local_file));
       break;
 
     case THUNAR_VFS_MONITOR_EVENT_DELETED:
-      gtk_object_destroy (GTK_OBJECT (user_data));
+      gtk_object_destroy (GTK_OBJECT (local_file));
       break;
     }
 }
