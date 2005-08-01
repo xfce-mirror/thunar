@@ -1312,7 +1312,7 @@ sort_by_date_accessed (ThunarFile *a,
   can_b = thunar_file_get_date (b, THUNAR_FILE_DATE_ACCESSED, &date_b);
 
   if (G_UNLIKELY (!can_a && !can_b))
-    return 0;
+    return sort_by_name (a, b);
   else if (G_UNLIKELY (!can_a))
     return -1;
   else if (G_UNLIKELY (!can_b))
@@ -1341,7 +1341,7 @@ sort_by_date_modified (ThunarFile *a,
   can_b = thunar_file_get_date (b, THUNAR_FILE_DATE_MODIFIED, &date_b);
 
   if (G_UNLIKELY (!can_a && !can_b))
-    return 0;
+    return sort_by_name (a, b);
   else if (G_UNLIKELY (!can_a))
     return -1;
   else if (G_UNLIKELY (!can_b))
@@ -1369,7 +1369,7 @@ sort_by_mime_type (ThunarFile *a,
   info_b = thunar_file_get_mime_info (b);
 
   if (G_UNLIKELY (info_a == NULL && info_b == NULL))
-    return 0;
+    return sort_by_name (a, b);
   else if (G_UNLIKELY (info_a == NULL))
     {
       thunar_vfs_mime_info_unref (info_b);
@@ -1438,7 +1438,7 @@ sort_by_size (ThunarFile *a,
   can_b = thunar_file_get_size (b, &size_b);
 
   if (G_UNLIKELY (!can_a && !can_b))
-    return 0;
+    return sort_by_name (a, b);
   else if (G_UNLIKELY (!can_a))
     return -1;
   else if (G_UNLIKELY (!can_b))
@@ -1466,7 +1466,7 @@ sort_by_type (ThunarFile *a,
   info_b = thunar_file_get_mime_info (b);
 
   if (G_UNLIKELY (info_a == NULL && info_b == NULL))
-    return 0;
+    return sort_by_name (a, b);
   else if (G_UNLIKELY (info_a == NULL))
     {
       thunar_vfs_mime_info_unref (info_b);
