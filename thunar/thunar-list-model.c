@@ -1893,6 +1893,50 @@ thunar_list_model_get_num_files (ThunarListModel *store)
 
 
 /**
+ * thunar_list_model_get_paths_for_pattern:
+ * @store   : a #ThunarListModel instance.
+ * @pattern : the pattern to match.
+ *
+ * Looks up all rows in the @store that match @pattern and returns
+ * a list of #GtkTreePath<!---->s corresponding to the rows.
+ *
+ * The caller is responsible to free the returned list using:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: the list of #GtkTreePath<!---->s that match @pattern.
+ **/
+GList*
+thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
+                                         const gchar     *pattern)
+{
+  GPatternSpec *pspec;
+  GList        *paths = NULL;
+  gint          index = 0;
+  Row          *row;
+
+  g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
+  g_return_val_if_fail (g_utf8_validate (pattern, -1, NULL), NULL);
+
+  /* compile the pattern */
+  pspec = g_pattern_spec_new (pattern);
+
+  /* find all rows that match the given pattern */
+  for (row = store->rows; row != NULL; ++index, row = row->next)
+    if (g_pattern_match_string (pspec, thunar_file_get_display_name (row->file)))
+      paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (index, -1));
+
+  /* release the pattern */
+  g_pattern_spec_free (pspec);
+
+  return paths;
+}
+
+
+
+/**
  * thunar_list_model_get_statusbar_text:
  * @store          : a #ThunarListModel instance.
  * @selected_items : the list of selected items (as GtkTreePath's).

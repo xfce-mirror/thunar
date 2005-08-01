@@ -51,6 +51,8 @@
 /* we use g_stat() if possible */
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
+#else
+#define g_stat(path, buffer) (stat ((path), (buffer)))
 #endif
 
 
@@ -325,13 +327,8 @@ thunar_vfs_trash_update (ThunarVfsTrash *trash)
   GDir        *dp;
 
   /* stat the files/ subdirectory */
-#if GLIB_CHECK_VERSION(2,6,0)
   if (g_stat (trash->files_directory, &sb) == 0)
     ctime = sb.st_ctime;
-#else
-  if (stat (trash->files_directory, &sb) == 0)
-    ctime = sb.st_ctime;
-#endif
 
   /* update only if the ctimes differ */
   if (G_LIKELY (ctime == trash->update_last_ctime))

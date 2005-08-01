@@ -83,6 +83,10 @@ static void          thunar_standard_view_action_paste              (GtkAction  
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_paste_into_folder  (GtkAction                *action,
                                                                      ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_select_all_files   (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_select_by_pattern  (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_loading_unbound           (gpointer                  user_data);
@@ -96,6 +100,8 @@ struct _ThunarStandardViewPrivate
   GtkAction *action_cut;
   GtkAction *action_paste;
   GtkAction *action_paste_into_folder;
+  GtkAction *action_select_all_files;
+  GtkAction *action_select_by_pattern;
   GtkAction *action_show_hidden_files;
 };
 
@@ -108,7 +114,9 @@ static const GtkActionEntry action_entries[] =
   { "copy", GTK_STOCK_COPY, N_ ("_Copy files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
   { "paste", GTK_STOCK_PASTE, N_ ("_Paste files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_paste), },
-  { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste files into folder"), NULL, N_ ("_Paste files into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
+  { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste files into folder"), NULL, N_ ("Paste files into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
+  { "select-all-files", NULL, N_ ("Select _all files"), "<control>A", N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
+  { "select-by-pattern", NULL, N_ ("Select by _pattern"), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
 };
 
 static const GtkToggleActionEntry toggle_action_entries[] =
@@ -259,6 +267,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_cut = gtk_action_group_get_action (standard_view->action_group, "cut");
   standard_view->priv->action_paste = gtk_action_group_get_action (standard_view->action_group, "paste");
   standard_view->priv->action_paste_into_folder = gtk_action_group_get_action (standard_view->action_group, "paste-into-folder");
+  standard_view->priv->action_select_all_files = gtk_action_group_get_action (standard_view->action_group, "select-all-files");
+  standard_view->priv->action_select_by_pattern = gtk_action_group_get_action (standard_view->action_group, "select-by-pattern");
   standard_view->priv->action_show_hidden_files = gtk_action_group_get_action (standard_view->action_group, "show-hidden-files");
 
   standard_view->model = thunar_list_model_new ();
@@ -799,6 +809,77 @@ thunar_standard_view_action_paste_into_folder (GtkAction          *action,
     }
   g_list_foreach (files, (GFunc) g_object_unref, NULL);
   g_list_free (files);
+}
+
+
+
+static void
+thunar_standard_view_action_select_all_files (GtkAction          *action,
+                                              ThunarStandardView *standard_view)
+{
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_all (standard_view);
+}
+
+
+
+static void
+thunar_standard_view_action_select_by_pattern (GtkAction          *action,
+                                               ThunarStandardView *standard_view)
+{
+  GtkWidget *window;
+  GtkWidget *dialog;
+  GtkWidget *hbox;
+  GtkWidget *label;
+  GtkWidget *entry;
+  GList     *paths;
+  GList     *lp;
+  gint       response;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+  dialog = gtk_dialog_new_with_buttons (_("Select by pattern"),
+                                        GTK_WINDOW (window),
+                                        GTK_DIALOG_MODAL
+                                        | GTK_DIALOG_NO_SEPARATOR
+                                        | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                        GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                        NULL);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+  gtk_container_set_border_width (GTK_CONTAINER (dialog), 6);
+
+  hbox = g_object_new (GTK_TYPE_HBOX, "border-width", 6, "spacing", 10, NULL);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, TRUE, TRUE, 0);
+  gtk_widget_show (hbox);
+
+  label = gtk_label_new (_("Pattern:"));
+  gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
+  gtk_widget_show (label);
+
+  entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, NULL);
+  gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+  gtk_widget_show (entry);
+
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  if (response == GTK_RESPONSE_OK)
+    {
+      /* select all files that match the entered pattern */
+      paths = thunar_list_model_get_paths_for_pattern (standard_view->model, gtk_entry_get_text (GTK_ENTRY (entry)));
+      THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all (standard_view);
+      for (lp = paths; lp != NULL; lp = lp->next)
+        {
+          THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path (standard_view, lp->data);
+          gtk_tree_path_free (lp->data);
+        }
+      g_list_free (paths);
+    }
+
+  gtk_widget_destroy (dialog);
 }
 
 

@@ -32,6 +32,10 @@ static void       thunar_details_view_class_init          (ThunarDetailsViewClas
 static void       thunar_details_view_init                (ThunarDetailsView      *details_view);
 static AtkObject *thunar_details_view_get_accessible      (GtkWidget              *widget);
 static GList     *thunar_details_view_get_selected_items  (ThunarStandardView     *standard_view);
+static void       thunar_details_view_select_all          (ThunarStandardView     *standard_view);
+static void       thunar_details_view_unselect_all        (ThunarStandardView     *standard_view);
+static void       thunar_details_view_select_path         (ThunarStandardView     *standard_view,
+                                                           GtkTreePath            *path);
 static gboolean   thunar_details_view_button_press_event  (GtkTreeView            *tree_view,
                                                            GdkEventButton         *event,
                                                            ThunarDetailsView      *details_view);
@@ -72,6 +76,9 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->get_selected_items = thunar_details_view_get_selected_items;
+  thunarstandard_view_class->select_all = thunar_details_view_select_all;
+  thunarstandard_view_class->unselect_all = thunar_details_view_unselect_all;
+  thunarstandard_view_class->select_path = thunar_details_view_select_path;
 }
 
 
@@ -219,6 +226,46 @@ thunar_details_view_get_selected_items (ThunarStandardView *standard_view)
 
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
   return gtk_tree_selection_get_selected_rows (selection, NULL);
+}
+
+
+
+static void
+thunar_details_view_select_all (ThunarStandardView *standard_view)
+{
+  GtkTreeSelection *selection;
+
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+  gtk_tree_selection_select_all (selection);
+}
+
+
+
+static void
+thunar_details_view_unselect_all (ThunarStandardView *standard_view)
+{
+  GtkTreeSelection *selection;
+
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+  gtk_tree_selection_unselect_all (selection);
+}
+
+
+
+static void
+thunar_details_view_select_path (ThunarStandardView *standard_view,
+                                 GtkTreePath        *path)
+{
+  GtkTreeSelection *selection;
+
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
+  gtk_tree_selection_select_path (selection, path);
 }
 
 

@@ -29,6 +29,10 @@ static void       thunar_icon_view_class_init         (ThunarIconViewClass *klas
 static void       thunar_icon_view_init               (ThunarIconView      *icon_view);
 static AtkObject *thunar_icon_view_get_accessible     (GtkWidget           *widget);
 static GList     *thunar_icon_view_get_selected_items (ThunarStandardView  *standard_view);
+static void       thunar_icon_view_select_all         (ThunarStandardView  *standard_view);
+static void       thunar_icon_view_unselect_all       (ThunarStandardView  *standard_view);
+static void       thunar_icon_view_select_path        (ThunarStandardView  *standard_view,
+                                                       GtkTreePath         *path);
 static void       thunar_icon_view_item_activated     (ExoIconView         *view,
                                                        GtkTreePath         *path,
                                                        ThunarIconView      *icon_view);
@@ -62,6 +66,9 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->get_selected_items = thunar_icon_view_get_selected_items;
+  thunarstandard_view_class->select_all = thunar_icon_view_select_all;
+  thunarstandard_view_class->unselect_all = thunar_icon_view_unselect_all;
+  thunarstandard_view_class->select_path = thunar_icon_view_select_path;
 }
 
 
@@ -112,6 +119,34 @@ static GList*
 thunar_icon_view_get_selected_items (ThunarStandardView *standard_view)
 {
   return exo_icon_view_get_selected_items (EXO_ICON_VIEW (GTK_BIN (standard_view)->child));
+}
+
+
+
+static void
+thunar_icon_view_select_all (ThunarStandardView *standard_view)
+{
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (standard_view));
+  exo_icon_view_select_all (EXO_ICON_VIEW (GTK_BIN (standard_view)->child));
+}
+
+
+
+static void
+thunar_icon_view_unselect_all (ThunarStandardView *standard_view)
+{
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (standard_view));
+  exo_icon_view_unselect_all (EXO_ICON_VIEW (GTK_BIN (standard_view)->child));
+}
+
+
+
+static void
+thunar_icon_view_select_path (ThunarStandardView *standard_view,
+                              GtkTreePath        *path)
+{
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (standard_view));
+  exo_icon_view_select_path (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path);
 }
 
 

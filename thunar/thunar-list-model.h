@@ -56,30 +56,33 @@ typedef enum
   THUNAR_LIST_MODEL_N_COLUMNS,
 } ThunarListModelColumn;
 
-GType            thunar_list_model_get_type             (void) G_GNUC_CONST;
+GType            thunar_list_model_get_type               (void) G_GNUC_CONST;
 
-ThunarListModel *thunar_list_model_new                  (void);
-ThunarListModel *thunar_list_model_new_with_folder      (ThunarFolder     *folder);
+ThunarListModel *thunar_list_model_new                    (void);
+ThunarListModel *thunar_list_model_new_with_folder        (ThunarFolder     *folder);
 
-ThunarFolder    *thunar_list_model_get_folder           (ThunarListModel  *store);
-void             thunar_list_model_set_folder           (ThunarListModel  *store,
-                                                         ThunarFolder     *folder);
+ThunarFolder    *thunar_list_model_get_folder             (ThunarListModel  *store);
+void             thunar_list_model_set_folder             (ThunarListModel  *store,
+                                                           ThunarFolder     *folder);
 
-gboolean         thunar_list_model_get_folders_first    (ThunarListModel  *store);
-void             thunar_list_model_set_folders_first    (ThunarListModel  *store,
-                                                         gboolean          folders_first);
+gboolean         thunar_list_model_get_folders_first      (ThunarListModel  *store);
+void             thunar_list_model_set_folders_first      (ThunarListModel  *store,
+                                                           gboolean          folders_first);
 
-gboolean         thunar_list_model_get_show_hidden      (ThunarListModel  *store);
-void             thunar_list_model_set_show_hidden      (ThunarListModel  *store,
-                                                         gboolean          show_hidden);
+gboolean         thunar_list_model_get_show_hidden        (ThunarListModel  *store);
+void             thunar_list_model_set_show_hidden        (ThunarListModel  *store,
+                                                           gboolean          show_hidden);
 
-ThunarFile      *thunar_list_model_get_file             (ThunarListModel  *store,
-                                                         GtkTreeIter      *iter);
+ThunarFile      *thunar_list_model_get_file               (ThunarListModel  *store,
+                                                           GtkTreeIter      *iter);
 
-gint             thunar_list_model_get_num_files        (ThunarListModel  *store);
+gint             thunar_list_model_get_num_files          (ThunarListModel  *store);
 
-gchar           *thunar_list_model_get_statusbar_text   (ThunarListModel  *store,
-                                                         GList            *selected_items);
+GList           *thunar_list_model_get_paths_for_pattern  (ThunarListModel  *store,
+                                                           const gchar      *pattern);
+
+gchar           *thunar_list_model_get_statusbar_text     (ThunarListModel  *store,
+                                                           GList            *selected_items);
 
 G_END_DECLS;
 
