@@ -64,6 +64,9 @@ struct _ThunarVfsMonitor
   GMemChunk    *handle_chunk;
   GList        *handles;
 
+  gint          reentrant_level;
+  GList        *reentrant_removals;
+
 #ifdef HAVE_LIBFAM
   FAMConnection fc;
   gint          fc_watch_id;
@@ -76,6 +79,7 @@ struct _ThunarVfsMonitorHandle
   ThunarVfsMonitorCallback callback;
   gpointer                 user_data;
   ThunarVfsURI            *uri;
+  gboolean                 directory;
 
 #ifdef HAVE_LIBFAM
   FAMRequest               fr;
@@ -139,6 +143,10 @@ thunar_vfs_monitor_finalize (GObject *object)
   if (monitor->fc_watch_id >= 0)
     thunar_vfs_monitor_fam_cancel (monitor);
 #endif
+
+  /* we cannot get here if there's still one pending feed call */
+  g_assert (monitor->reentrant_level == 0);
+  g_assert (monitor->reentrant_removals == NULL);
 
   /* drop all handles */
   for (lp = monitor->handles; lp != NULL; lp = lp->next)
@@ -332,6 +340,7 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
   handle->uri = thunar_vfs_uri_ref (uri);
   handle->callback = callback;
   handle->user_data = user_data;
+  handle->directory = TRUE;
 
 #ifdef HAVE_LIBFAM
   if (G_LIKELY (monitor->fc_watch_id >= 0))
@@ -382,6 +391,7 @@ thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
   handle->uri = thunar_vfs_uri_ref (uri);
   handle->callback = callback;
   handle->user_data = user_data;
+  handle->directory = FALSE;
 
 #ifdef HAVE_LIBFAM
   if (G_LIKELY (monitor->fc_watch_id >= 0))
@@ -416,36 +426,106 @@ thunar_vfs_monitor_remove (ThunarVfsMonitor       *monitor,
 {
   g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
   g_return_if_fail (g_list_find (monitor->handles, handle) != NULL);
-
-  /* unlink the handle */
-  monitor->handles = g_list_remove (monitor->handles, handle);
+  g_return_if_fail (g_list_find (monitor->reentrant_removals, handle) == NULL);
 
 #ifdef HAVE_LIBFAM
+  /* drop the FAM request from the daemon */
   if (G_LIKELY (monitor->fc_watch_id >= 0 && handle->fr.reqnum > 0))
-    if (FAMCancelMonitor (&monitor->fc, &handle->fr) < 0)
-      thunar_vfs_monitor_fam_cancel (monitor);
+    {
+      if (FAMCancelMonitor (&monitor->fc, &handle->fr) < 0)
+        thunar_vfs_monitor_fam_cancel (monitor);
+      handle->fr.reqnum = 0;
+    }
 #endif
 
-  /* free the handle */
-  thunar_vfs_uri_unref (handle->uri);
-  g_mem_chunk_free (monitor->handle_chunk, handle);
+  if (monitor->reentrant_level > 0)
+    {
+      /* we need to delay the removal to not fuck up the handles list */
+      monitor->reentrant_removals = g_list_prepend (monitor->reentrant_removals, handle);
+    }
+  else
+    {
+      /* unlink the handle */
+      monitor->handles = g_list_remove (monitor->handles, handle);
+
+      /* free the handle */
+      thunar_vfs_uri_unref (handle->uri);
+      g_mem_chunk_free (monitor->handle_chunk, handle);
+    }
 }
 
 
 
 /**
  * thunar_vfs_monitor_feed:
- * @monitor
- * @event
- * @uri
+ * @monitor : a #ThunarVfsMonitor.
+ * @event   : the #ThunarVfsMonitorEvent that should be emulated.
+ * @uri     : the #ThunarVfsURI on which @event took place.
+ *
+ * Explicitly injects the given @event into @monitor<!---->s event
+ * processing logic.
  **/
 void
 thunar_vfs_monitor_feed (ThunarVfsMonitor     *monitor,
                          ThunarVfsMonitorEvent event,
                          ThunarVfsURI         *uri)
 {
-  // FIXME
-  g_assert_not_reached ();
+  ThunarVfsMonitorHandle *handle;
+  ThunarVfsURI           *parent_uri;
+  GList                  *removals;
+  GList                  *lp;
+
+  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  g_return_if_fail (event == THUNAR_VFS_MONITOR_EVENT_CHANGED
+                 || event == THUNAR_VFS_MONITOR_EVENT_CREATED
+                 || event == THUNAR_VFS_MONITOR_EVENT_DELETED);
+  g_return_if_fail (THUNAR_VFS_IS_URI (uri));
+  g_return_if_fail (monitor->reentrant_level >= 0);
+
+  /* increate the reentrancy level */
+  ++monitor->reentrant_level;
+
+  /* process all handles affected directly by this event */
+  for (lp = monitor->handles; lp != NULL; lp = lp->next)
+    {
+      /* check if this handle is scheduled for removal */
+      handle = (ThunarVfsMonitorHandle *) lp->data;
+      if (G_UNLIKELY (g_list_find (monitor->reentrant_removals, handle) != NULL))
+        continue;
+
+      if (G_UNLIKELY (thunar_vfs_uri_equal (handle->uri, uri)))
+        (*handle->callback) (monitor, handle, event, handle->uri, uri, handle->user_data);
+    }
+
+  /* process all directory handles affected indirectly */
+  if (G_LIKELY (!thunar_vfs_uri_is_root (uri)))
+    {
+      parent_uri = thunar_vfs_uri_parent (uri);
+      for (lp = monitor->handles; lp != NULL; lp = lp->next)
+        {
+          /* check if this handle is scheduled for removal */
+          handle = (ThunarVfsMonitorHandle *) lp->data;
+          if (G_UNLIKELY (g_list_find (monitor->reentrant_removals, handle) != NULL))
+            continue;
+
+          if (G_UNLIKELY (handle->directory && thunar_vfs_uri_equal (handle->uri, parent_uri)))
+            (*handle->callback) (monitor, handle, event, handle->uri, uri, handle->user_data);
+        }
+      thunar_vfs_uri_unref (parent_uri);
+    }
+
+  /* decrease the reentrancy level */
+  if (--monitor->reentrant_level == 0)
+    {
+      /* query the list of handles to remove */
+      removals = monitor->reentrant_removals;
+      monitor->reentrant_removals = NULL;
+
+      /* perform any scheduled removals */
+      for (lp = removals; lp != NULL; lp = lp->next)
+        thunar_vfs_monitor_remove (monitor, lp->data);
+      g_list_free (removals);
+    }
 }
 
 
