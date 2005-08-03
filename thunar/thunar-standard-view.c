@@ -254,6 +254,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* setup the action group for this view */
   standard_view->action_group = gtk_action_group_new ("thunar-standard-view");
+  gtk_action_group_set_translation_domain (standard_view->action_group, GETTEXT_PACKAGE);
   gtk_action_group_add_actions (standard_view->action_group, action_entries,
                                 G_N_ELEMENTS (action_entries),
                                 GTK_WIDGET (standard_view));

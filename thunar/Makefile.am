@@ -4,7 +4,8 @@ INCLUDES =								\
 	-I$(top_srcdir)							\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DEXO_DISABLE_DEPRECATED					\
-	-DG_LOG_DOMAIN=\"Thunar\"
+	-DG_LOG_DOMAIN=\"Thunar\"					\
+	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"
 
 bin_PROGRAMS =								\
 	Thunar

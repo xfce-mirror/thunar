@@ -180,6 +180,7 @@ thunar_window_init (ThunarWindow *window)
   GSList         *group = NULL;
 
   window->action_group = gtk_action_group_new ("thunar-window");
+  gtk_action_group_set_translation_domain (window->action_group, GETTEXT_PACKAGE);
   gtk_action_group_add_actions (window->action_group, action_entries,
                                 G_N_ELEMENTS (action_entries),
                                 GTK_WIDGET (window));

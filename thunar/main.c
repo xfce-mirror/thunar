@@ -42,6 +42,12 @@ main (int argc, char **argv)
   ThunarFile        *file;
   GError            *error = NULL;
 
+  /* setup translation domain */
+  xfce_textdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
+
+  /* setup application name */
+  g_set_application_name (_("Thunar"));
+
 #ifndef G_DISABLE_CHECKS
   /* Do NOT remove this line for now, If something doesn't work,
    * fix your code instead!
