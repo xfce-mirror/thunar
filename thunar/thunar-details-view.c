@@ -25,6 +25,7 @@
 
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-details-view-icon-renderer.h>
+#include <thunar/thunar-details-view-text-renderer.h>
 
 
 
@@ -118,7 +119,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "file", THUNAR_LIST_MODEL_COLUMN_FILE,
                                        NULL);
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+  renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
                            "xalign", 0.0,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
@@ -133,7 +134,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Size"),
                          NULL);
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+  renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
                            "xalign", 1.0,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
@@ -148,7 +149,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Permissions"),
                          NULL);
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+  renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
                            "xalign", 0.0,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
@@ -163,9 +164,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Type"),
                          NULL);
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+  /*renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
                            "xalign", 0.0,
-                           NULL);
+                           NULL);*/
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_LIST_MODEL_COLUMN_TYPE,
@@ -178,9 +179,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Date modified"),
                          NULL);
-  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+  /*renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
                            "xalign", 0.0,
-                           NULL);
+                           NULL);*/
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED,
