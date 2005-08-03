@@ -1,5 +1,11 @@
 2005-08-03	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-job.c(thunar_vfs_job_emit_valist): Lower the
+	  Job signal priority to increase the responsiveness of the user
+	  interface.
+
+2005-08-03	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-details-view-text-renderer.{c,h}: Fast text cell
 	  renderer, which provides less accurate cell area size calculation.
 	* thunar/Makefile.am: Add ThunarDetailsViewTextRenderer to the build

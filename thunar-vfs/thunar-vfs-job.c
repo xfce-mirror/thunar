@@ -465,7 +465,7 @@ thunar_vfs_job_emit_valist (ThunarVfsJob *job,
   details.pending = TRUE;
 
   g_mutex_lock (job->mutex);
-  g_idle_add_full (G_PRIORITY_DEFAULT, thunar_vfs_job_idle, &details, NULL);
+  g_idle_add_full (G_PRIORITY_LOW, thunar_vfs_job_idle, &details, NULL);
   while (G_UNLIKELY (details.pending))
     g_cond_wait (job->cond, job->mutex);
   g_mutex_unlock (job->mutex);
