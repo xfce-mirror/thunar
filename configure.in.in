@@ -23,7 +23,7 @@ AC_COPYRIGHT([Copyright (c) 2004-2005
         The Thunar development team. All rights reserved.
         
 Written for Thunar by Benedikt Meurer <benny@xfce.org>.])
-AC_INIT([Thunar], [thunar_version()], [benny@xfce.org])
+AC_INIT([Thunar], [thunar_version()], [benny@xfce.org], [Thunar])
 AC_PREREQ([2.50])
 AC_CANONICAL_TARGET()
 AC_REVISION([$Id$])
@@ -61,6 +61,11 @@ dnl ************************************
 dnl *** Check for standard functions ***
 dnl ************************************
 AC_CHECK_FUNCS([lchmod localtime_r readdir_r setgroupent setpassent])
+
+dnl ******************************
+dnl *** Check for i18n support ***
+dnl ******************************
+XDT_I18N([de])
 
 dnl ***********************************
 dnl *** Check for required packages ***
@@ -148,6 +153,7 @@ Makefile
 docs/Makefile
 docs/design/Makefile
 docs/papers/Makefile
+po/Makefile.in
 tests/Makefile
 tests/data/Makefile
 thunar/Makefile

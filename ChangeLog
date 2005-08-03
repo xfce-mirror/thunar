@@ -1,5 +1,19 @@
 2005-08-03	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-folder.c(thunar_folder_files_removed): Update docu-
+	  mentation.
+	* thunar/thunar-local-folder.c(thunar_local_folder_file_destroy): In-
+	  voke the "files-removed" signal when a file in this folder is de-
+	  stroyed.
+	* thunar/thunar-list-model.c: Do not connect the "destroy" signal of
+	  ThunarFile anymore, but instead we rely on the folder to emit
+	  "files-removed" appropriately.
+	* thunar/thunar-list-model.c(thunar_list_model_class_init): Increase
+	  the number of preallocated rows.
+	* po/, Makefile.am, configure.in.in: Add i18n support.
+
+2005-08-03	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-details-view-text-renderer.c: Calculating the approxi-
 	  mate sizes based on the font metrics requires way too much additional
 	  data memory (because Pango loads the whole fontset for this calcu-

@@ -335,14 +335,24 @@ static void
 thunar_local_folder_file_destroy (ThunarFile        *file,
                                   ThunarLocalFolder *local_folder)
 {
+  GSList *files;
+
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
   g_return_if_fail (g_slist_find (local_folder->files, file) != NULL);
 
+  /* disconnect from the file */
   g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
                                         local_folder->file_destroy_id, 0, local_folder->file_destroy_closure,
                                         NULL, NULL);
   local_folder->files = g_slist_remove (local_folder->files, file);
+
+  /* tell everybody that the file is gone */
+  files = g_slist_prepend (NULL, file);
+  thunar_folder_files_removed (THUNAR_FOLDER (local_folder), files);
+  g_slist_free_1 (files);
+
+  /* drop our reference to the file */
   g_object_unref (G_OBJECT (file));
 }
 

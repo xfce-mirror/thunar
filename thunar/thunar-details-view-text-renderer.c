@@ -1,4 +1,4 @@
-/* $Id: thunar-details-view-text-renderer.c 16446 2005-08-03 15:28:50Z benny $ */
+/* $Id$ */
 /*-
  * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
  *

@@ -225,6 +225,10 @@ thunar_folder_files_added (ThunarFolder *folder,
  * Emits the ::files-removed signal on @folder using the
  * given @files. This should only be called by #ThunarFolder
  * implementations.
+ *
+ * The #ThunarFolder implementation is responsible to
+ * invoke the ::files-removed signal whenever one of its
+ * #ThunarFile<!---->s is destroyed.
  **/
 void
 thunar_folder_files_removed (ThunarFolder *folder,

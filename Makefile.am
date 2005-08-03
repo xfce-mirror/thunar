@@ -2,6 +2,7 @@
 
 SUBDIRS =								\
 	docs								\
+	po								\
 	thunar-vfs							\
 	thunarx								\
 	thunar								\
