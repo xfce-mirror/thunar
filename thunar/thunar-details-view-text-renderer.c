@@ -1,4 +1,4 @@
-/* $Id$ */
+/* $Id: thunar-details-view-text-renderer.c 16446 2005-08-03 15:28:50Z benny $ */
 /*-
  * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
  *
@@ -35,37 +35,33 @@ enum
 
 
 
-static void              thunar_details_view_text_renderer_class_init   (ThunarDetailsViewTextRendererClass *klass);
-static void              thunar_details_view_text_renderer_init         (ThunarDetailsViewTextRenderer      *text_renderer);
-static void              thunar_details_view_text_renderer_finalize     (GObject                            *object);
-static void              thunar_details_view_text_renderer_get_property (GObject                            *object,
-                                                                         guint                               prop_id,
-                                                                         GValue                             *value,
-                                                                         GParamSpec                         *pspec);
-static void              thunar_details_view_text_renderer_set_property (GObject                            *object,
-                                                                         guint                               prop_id,
-                                                                         const GValue                       *value,
-                                                                         GParamSpec                         *pspec);
-static void              thunar_details_view_text_renderer_get_size     (GtkCellRenderer                    *renderer,
-                                                                         GtkWidget                          *widget,
-                                                                         GdkRectangle                       *cell_area,
-                                                                         gint                               *x_offset,
-                                                                         gint                               *y_offset,
-                                                                         gint                               *width,
-                                                                         gint                               *height);
-static void              thunar_details_view_text_renderer_render       (GtkCellRenderer                    *renderer,
-                                                                         GdkWindow                          *window,
-                                                                         GtkWidget                          *widget,
-                                                                         GdkRectangle                       *background_area,
-                                                                         GdkRectangle                       *cell_area,
-                                                                         GdkRectangle                       *expose_area,
-                                                                         GtkCellRendererState                flags);
-static PangoContext     *thunar_details_view_text_renderer_get_context  (ThunarDetailsViewTextRenderer      *text_renderer,
-                                                                         GtkWidget                          *widget);
-static PangoFontMetrics *thunar_details_view_text_renderer_get_metrics  (ThunarDetailsViewTextRenderer      *text_renderer,
-                                                                         GtkWidget                          *widget);
-static PangoLayout      *thunar_details_view_text_renderer_get_layout   (ThunarDetailsViewTextRenderer      *text_renderer,
-                                                                         GtkWidget                          *widget);
+static void thunar_details_view_text_renderer_class_init   (ThunarDetailsViewTextRendererClass *klass);
+static void thunar_details_view_text_renderer_finalize     (GObject                            *object);
+static void thunar_details_view_text_renderer_get_property (GObject                            *object,
+                                                            guint                               prop_id,
+                                                            GValue                             *value,
+                                                            GParamSpec                         *pspec);
+static void thunar_details_view_text_renderer_set_property (GObject                            *object,
+                                                            guint                               prop_id,
+                                                            const GValue                       *value,
+                                                            GParamSpec                         *pspec);
+static void thunar_details_view_text_renderer_get_size     (GtkCellRenderer                    *renderer,
+                                                            GtkWidget                          *widget,
+                                                            GdkRectangle                       *cell_area,
+                                                            gint                               *x_offset,
+                                                            gint                               *y_offset,
+                                                            gint                               *width,
+                                                            gint                               *height);
+static void thunar_details_view_text_renderer_render       (GtkCellRenderer                    *renderer,
+                                                            GdkWindow                          *window,
+                                                            GtkWidget                          *widget,
+                                                            GdkRectangle                       *background_area,
+                                                            GdkRectangle                       *cell_area,
+                                                            GdkRectangle                       *expose_area,
+                                                            GtkCellRendererState                flags);
+static void thunar_details_view_text_renderer_invalidate   (ThunarDetailsViewTextRenderer      *text_renderer);
+static void thunar_details_view_text_renderer_set_widget   (ThunarDetailsViewTextRenderer      *text_renderer,
+                                                            GtkWidget                          *widget);
 
 
 
@@ -78,14 +74,45 @@ struct _ThunarDetailsViewTextRenderer
 {
   GtkCellRenderer __parent__;
 
-  PangoFontMetrics *metrics;
-  PangoContext     *context;
-  gchar             text[256];
+  PangoLayout *layout;
+  GtkWidget   *widget;
+  gchar        text[256];
+  gint         char_width;
+  gint         char_height;
 };
 
 
 
-G_DEFINE_TYPE (ThunarDetailsViewTextRenderer, thunar_details_view_text_renderer, GTK_TYPE_CELL_RENDERER);
+static GObjectClass *thunar_details_view_text_renderer_parent_class;
+
+
+
+GType
+thunar_details_view_text_renderer_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarDetailsViewTextRendererClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_details_view_text_renderer_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarDetailsViewTextRenderer),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_CELL_RENDERER, "ThunarDetailsViewTextRenderer", &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -94,6 +121,8 @@ thunar_details_view_text_renderer_class_init (ThunarDetailsViewTextRendererClass
 {
   GtkCellRendererClass *gtkcell_renderer_class;
   GObjectClass         *gobject_class;
+
+  thunar_details_view_text_renderer_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_details_view_text_renderer_finalize;
@@ -121,23 +150,12 @@ thunar_details_view_text_renderer_class_init (ThunarDetailsViewTextRendererClass
 
 
 static void
-thunar_details_view_text_renderer_init (ThunarDetailsViewTextRenderer *text_renderer)
-{
-}
-
-
-
-static void
 thunar_details_view_text_renderer_finalize (GObject *object)
 {
   ThunarDetailsViewTextRenderer *text_renderer = THUNAR_DETAILS_VIEW_TEXT_RENDERER (object);
 
-  /* drop the cached pango context/metrics */
-  if (G_LIKELY (text_renderer->context != NULL))
-    {
-      g_object_unref (G_OBJECT (text_renderer->context));
-      pango_font_metrics_unref (text_renderer->metrics);
-    }
+  /* drop the cached widget */
+  thunar_details_view_text_renderer_set_widget (text_renderer, NULL);
 
   G_OBJECT_CLASS (thunar_details_view_text_renderer_parent_class)->finalize (object);
 }
@@ -200,24 +218,19 @@ thunar_details_view_text_renderer_get_size (GtkCellRenderer *renderer,
                                             gint            *height)
 {
   ThunarDetailsViewTextRenderer *text_renderer = THUNAR_DETAILS_VIEW_TEXT_RENDERER (renderer);
-  PangoFontMetrics              *metrics;
-  gint                           char_width;
-  gint                           char_height;
   gint                           text_length;
   gint                           text_width;
   gint                           text_height;
 
-  /* calculate the character dimensions from the font-metrics */
-  metrics = thunar_details_view_text_renderer_get_metrics (text_renderer, widget);
-  char_width = pango_font_metrics_get_approximate_char_width (metrics);
-  char_height = pango_font_metrics_get_ascent (metrics) + pango_font_metrics_get_descent (metrics);
+  /* setup the new widget */
+  thunar_details_view_text_renderer_set_widget (text_renderer, widget);
 
   /* determine the text_length in characters */
   text_length = g_utf8_strlen (text_renderer->text, -1);
 
   /* calculate the appromixate text width/height */
-  text_width = PANGO_PIXELS (char_width) * text_length;
-  text_height = PANGO_PIXELS (char_height);
+  text_width = text_renderer->char_width * text_length;
+  text_height = text_renderer->char_height;
 
   /* update width/height */
   if (G_LIKELY (width != NULL))
@@ -256,11 +269,13 @@ thunar_details_view_text_renderer_render (GtkCellRenderer     *renderer,
 {
   ThunarDetailsViewTextRenderer *text_renderer = THUNAR_DETAILS_VIEW_TEXT_RENDERER (renderer);
   GtkStateType                   state;
-  PangoLayout                   *layout;
   gint                           text_width;
   gint                           text_height;
   gint                           x_offset;
   gint                           y_offset;
+
+  /* setup the new widget */
+  thunar_details_view_text_renderer_set_widget (text_renderer, widget);
 
   if ((flags & GTK_CELL_RENDERER_SELECTED) == GTK_CELL_RENDERER_SELECTED)
     {
@@ -282,10 +297,10 @@ thunar_details_view_text_renderer_render (GtkCellRenderer     *renderer,
         state = GTK_STATE_NORMAL;
     }
 
-  layout = thunar_details_view_text_renderer_get_layout (text_renderer, widget);
+  pango_layout_set_text (text_renderer->layout, text_renderer->text, -1);
 
   /* calculate the real text dimension */
-  pango_layout_get_pixel_size (layout, &text_width, &text_height);
+  pango_layout_get_pixel_size (text_renderer->layout, &text_width, &text_height);
 
   /* calculate the real x-offset */
   x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? (1.0 - renderer->xalign) : renderer->xalign)
@@ -300,68 +315,64 @@ thunar_details_view_text_renderer_render (GtkCellRenderer     *renderer,
                     expose_area, widget, "cellrenderertext",
                     cell_area->x + x_offset + renderer->xpad,
                     cell_area->y + y_offset + renderer->ypad,
-                    layout);
-
-  g_object_unref (G_OBJECT (layout));
+                    text_renderer->layout);
 }
 
 
 
-static PangoContext*
-thunar_details_view_text_renderer_get_context (ThunarDetailsViewTextRenderer *text_renderer,
-                                               GtkWidget                     *widget)
+static void
+thunar_details_view_text_renderer_invalidate (ThunarDetailsViewTextRenderer *text_renderer)
 {
-  PangoContext *context;
-
-  context = gtk_widget_get_pango_context (widget);
-  if (G_UNLIKELY (text_renderer->context != context))
-    {
-      /* drop any previously cached context/metrics */
-      if (G_LIKELY (text_renderer->context != NULL))
-        {
-          g_object_unref (G_OBJECT (text_renderer->context));
-          pango_font_metrics_unref (text_renderer->metrics);
-          text_renderer->metrics = NULL;
-        }
-
-      text_renderer->context = g_object_ref (G_OBJECT (context));
-    }
-
-  return text_renderer->context;
+  thunar_details_view_text_renderer_set_widget (text_renderer, NULL);
 }
 
 
 
-static PangoFontMetrics*
-thunar_details_view_text_renderer_get_metrics (ThunarDetailsViewTextRenderer *text_renderer,
-                                               GtkWidget                     *widget)
-{
-  PangoContext *context;
-
-  if (G_UNLIKELY (text_renderer->metrics == NULL))
-    {
-      context = thunar_details_view_text_renderer_get_context (text_renderer, widget);
-      text_renderer->metrics = pango_context_get_metrics (context, widget->style->font_desc, NULL);
-    }
-
-  return text_renderer->metrics;
-}
-
-
-
-static PangoLayout*
-thunar_details_view_text_renderer_get_layout (ThunarDetailsViewTextRenderer *text_renderer,
+static void
+thunar_details_view_text_renderer_set_widget (ThunarDetailsViewTextRenderer *text_renderer,
                                               GtkWidget                     *widget)
 {
-  PangoContext *context;
-  PangoLayout  *layout;
+  // FIXME: The sample text should be translatable with a hint to translators!
+  static const gchar SAMPLE_TEXT[] = "The Quick Brown Fox Jumps Over the Lazy Dog";
+  PangoRectangle     extents;
 
-  context = thunar_details_view_text_renderer_get_context (text_renderer, widget);
-  layout = pango_layout_new (context);
-  pango_layout_set_width (layout, -1);
-  pango_layout_set_text (layout, text_renderer->text, -1);
+  if (G_LIKELY (widget == text_renderer->widget))
+    return;
 
-  return layout;
+  /* disconnect from the previously set widget */
+  if (G_UNLIKELY (text_renderer->widget != NULL))
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (text_renderer->widget), thunar_details_view_text_renderer_invalidate, text_renderer);
+      g_object_unref (G_OBJECT (text_renderer->layout));
+      g_object_unref (G_OBJECT (text_renderer->widget));
+    }
+
+  /* activate the new widget */
+  text_renderer->widget = widget;
+
+  /* connect to the new widget */
+  if (G_LIKELY (widget != NULL))
+    {
+      /* take a reference on the widget */
+      g_object_ref (G_OBJECT (widget));
+
+      /* we need to recalculate the metrics when a new style (and thereby a new font) is set */
+      g_signal_connect_swapped (G_OBJECT (text_renderer->widget), "destroy", G_CALLBACK (thunar_details_view_text_renderer_invalidate), text_renderer);
+      g_signal_connect_swapped (G_OBJECT (text_renderer->widget), "style-set", G_CALLBACK (thunar_details_view_text_renderer_invalidate), text_renderer);
+
+      /* calculate the average character dimensions */
+      text_renderer->layout = gtk_widget_create_pango_layout (widget, SAMPLE_TEXT);
+      pango_layout_get_pixel_extents (text_renderer->layout, NULL, &extents);
+      pango_layout_set_width (text_renderer->layout, -1);
+      text_renderer->char_width = extents.width / g_utf8_strlen (SAMPLE_TEXT, sizeof (SAMPLE_TEXT) - 1);
+      text_renderer->char_height = extents.height;
+    }
+  else
+    {
+      text_renderer->layout = NULL;
+      text_renderer->char_width = 0;
+      text_renderer->char_height = 0;
+    }
 }
 
 

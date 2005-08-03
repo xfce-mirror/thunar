@@ -1,5 +1,12 @@
 2005-08-03	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-details-view-text-renderer.c: Calculating the approxi-
+	  mate sizes based on the font metrics requires way too much additional
+	  data memory (because Pango loads the whole fontset for this calcu-
+	  lation), so we base our calculation on a sample text instead.
+
+2005-08-03	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-job.c(thunar_vfs_job_emit_valist): Lower the
 	  Job signal priority to increase the responsiveness of the user
 	  interface.
