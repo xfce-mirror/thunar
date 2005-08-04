@@ -45,27 +45,14 @@ enum
 
 static void               thunar_file_class_init               (ThunarFileClass        *klass);
 static void               thunar_file_finalize                 (GObject                *object);
-static gboolean           thunar_file_real_has_parent          (ThunarFile             *file);
 static ThunarFile        *thunar_file_real_get_parent          (ThunarFile             *file,
                                                                 GError                **error);
 static ThunarFolder      *thunar_file_real_open_as_folder      (ThunarFile             *file,
                                                                 GError                **error);
-static ThunarVfsMimeInfo *thunar_file_real_get_mime_info       (ThunarFile             *file);
 static const gchar       *thunar_file_real_get_special_name    (ThunarFile             *file);
-static gboolean           thunar_file_real_get_date            (ThunarFile             *file,
-                                                                ThunarFileDateType      date_type,
-                                                                ThunarVfsFileTime      *date_return);
-static gboolean           thunar_file_real_get_size            (ThunarFile             *file,
-                                                                ThunarVfsFileSize      *size_return);
-static ThunarVfsVolume   *thunar_file_real_get_volume          (ThunarFile             *file,
-                                                                ThunarVfsVolumeManager *volume_manager);
-static ThunarVfsGroup    *thunar_file_real_get_group           (ThunarFile             *file);
-static ThunarVfsUser     *thunar_file_real_get_user            (ThunarFile             *file);
 static gboolean           thunar_file_real_can_execute         (ThunarFile             *file);
 static gboolean           thunar_file_real_can_read            (ThunarFile             *file);
 static gboolean           thunar_file_real_can_write           (ThunarFile             *file);
-static GList             *thunar_file_real_get_emblem_names    (ThunarFile             *file);
-static void               thunar_file_real_reload              (ThunarFile             *file);
 static void               thunar_file_real_changed             (ThunarFile             *file);
 static ThunarFile        *thunar_file_new_internal             (ThunarVfsURI           *uri,
                                                                 GError                **error);
@@ -165,21 +152,21 @@ thunar_file_class_init (ThunarFileClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_file_finalize;
 
-  klass->has_parent = thunar_file_real_has_parent;
+  klass->has_parent = (gpointer) exo_noop_true;
   klass->get_parent = thunar_file_real_get_parent;
   klass->open_as_folder = thunar_file_real_open_as_folder;
-  klass->get_mime_info = thunar_file_real_get_mime_info;
+  klass->get_mime_info = (gpointer) exo_noop_null;
   klass->get_special_name = thunar_file_real_get_special_name;
-  klass->get_date = thunar_file_real_get_date;
-  klass->get_size = thunar_file_real_get_size;
-  klass->get_volume = thunar_file_real_get_volume;
-  klass->get_group = thunar_file_real_get_group;
-  klass->get_user = thunar_file_real_get_user;
+  klass->get_date = (gpointer) exo_noop_false;
+  klass->get_size = (gpointer) exo_noop_false;
+  klass->get_volume = (gpointer) exo_noop_null;
+  klass->get_group = (gpointer) exo_noop_null;
+  klass->get_user = (gpointer) exo_noop_null;
   klass->can_execute = thunar_file_real_can_execute;
   klass->can_read = thunar_file_real_can_read;
   klass->can_write = thunar_file_real_can_write;
-  klass->get_emblem_names = thunar_file_real_get_emblem_names;
-  klass->reload = thunar_file_real_reload;
+  klass->get_emblem_names = (gpointer) exo_noop_null;
+  klass->reload = (gpointer) exo_noop;
   klass->changed = thunar_file_real_changed;
 
   /**
@@ -218,14 +205,6 @@ thunar_file_finalize (GObject *object)
     g_object_unref (G_OBJECT (file->cached_icon));
 
   G_OBJECT_CLASS (thunar_file_parent_class)->finalize (object);
-}
-
-
-
-static gboolean
-thunar_file_real_has_parent (ThunarFile *file)
-{
-  return TRUE;
 }
 
 
@@ -270,62 +249,10 @@ thunar_file_real_open_as_folder (ThunarFile *file,
 
 
 
-static ThunarVfsMimeInfo*
-thunar_file_real_get_mime_info (ThunarFile *file)
-{
-  return NULL;
-}
-
-
-
 static const gchar*
 thunar_file_real_get_special_name (ThunarFile *file)
 {
   return THUNAR_FILE_GET_CLASS (file)->get_display_name (file);
-}
-
-
-
-static gboolean
-thunar_file_real_get_date (ThunarFile        *file,
-                           ThunarFileDateType date_type,
-                           ThunarVfsFileTime *date_return)
-{
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_file_real_get_size (ThunarFile        *file,
-                           ThunarVfsFileSize *size_return)
-{
-  return FALSE;
-}
-
-
-
-static ThunarVfsVolume*
-thunar_file_real_get_volume (ThunarFile             *file,
-                             ThunarVfsVolumeManager *volume_manager)
-{
-  return NULL;
-}
-
-
-
-static ThunarVfsGroup*
-thunar_file_real_get_group (ThunarFile *file)
-{
-  return NULL;
-}
-
-
-
-static ThunarVfsUser*
-thunar_file_real_get_user (ThunarFile *file)
-{
-  return NULL;
 }
 
 
@@ -359,22 +286,6 @@ thunar_file_real_can_write (ThunarFile *file)
                                                 THUNAR_VFS_FILE_MODE_USR_WRITE,
                                                 THUNAR_VFS_FILE_MODE_GRP_WRITE,
                                                 THUNAR_VFS_FILE_MODE_OTH_WRITE);
-}
-
-
-
-static GList*
-thunar_file_real_get_emblem_names (ThunarFile *file)
-{
-  return NULL;
-}
-
-
-
-static void
-thunar_file_real_reload (ThunarFile *file)
-{
-  /* we don't do anything here... */
 }
 
 

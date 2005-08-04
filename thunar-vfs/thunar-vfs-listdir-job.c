@@ -57,8 +57,8 @@ enum
 
 static void  thunar_vfs_listdir_job_register_type (GType             *type);
 static void  thunar_vfs_listdir_job_class_init    (ThunarVfsJobClass *klass);
+static void  thunar_vfs_listdir_job_finalize      (ExoObject         *object);
 static void  thunar_vfs_listdir_job_execute       (ThunarVfsJob      *job);
-static void  thunar_vfs_listdir_job_finalize      (ThunarVfsJob      *job);
 
 
 struct _ThunarVfsListdirJob
@@ -70,8 +70,8 @@ struct _ThunarVfsListdirJob
 
 
 
-static guint              listdir_signals[LAST_SIGNAL];
-static ThunarVfsJobClass *thunar_vfs_listdir_job_parent_class;
+static guint           listdir_signals[LAST_SIGNAL];
+static ExoObjectClass *thunar_vfs_listdir_job_parent_class;
 
 
 
@@ -116,10 +116,14 @@ thunar_vfs_listdir_job_register_type (GType *type)
 static void
 thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass)
 {
+  ExoObjectClass *exoobject_class;
+
   thunar_vfs_listdir_job_parent_class = g_type_class_peek_parent (klass);
 
+  exoobject_class = EXO_OBJECT_CLASS (klass);
+  exoobject_class->finalize = thunar_vfs_listdir_job_finalize;
+
   klass->execute = thunar_vfs_listdir_job_execute;
-  klass->finalize = thunar_vfs_listdir_job_finalize;
 
   /**
    * ThunarVfsListdirJob::infos-ready:
@@ -136,6 +140,21 @@ thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass)
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1, G_TYPE_POINTER);
+}
+
+
+
+static void
+thunar_vfs_listdir_job_finalize (ExoObject *object)
+{
+  ThunarVfsListdirJob *listdir_job = THUNAR_VFS_LISTDIR_JOB (object);
+
+  /* free the folder uri */
+  if (G_LIKELY (listdir_job->uri != NULL))
+    thunar_vfs_uri_unref (listdir_job->uri);
+
+  /* call the parents finalize method */
+  (*EXO_OBJECT_CLASS (thunar_vfs_listdir_job_parent_class)->finalize) (object);
 }
 
 
@@ -223,22 +242,6 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
 
 
 
-static void
-thunar_vfs_listdir_job_finalize (ThunarVfsJob *job)
-{
-  ThunarVfsListdirJob *listdir_job = THUNAR_VFS_LISTDIR_JOB (job);
-
-  /* free the folder uri */
-  if (G_LIKELY (listdir_job->uri != NULL))
-    thunar_vfs_uri_unref (listdir_job->uri);
-
-  /* call the parents finalize method */
-  if (THUNAR_VFS_JOB_CLASS (thunar_vfs_listdir_job_parent_class)->finalize != NULL)
-    (*THUNAR_VFS_JOB_CLASS (thunar_vfs_listdir_job_parent_class)->finalize) (job);
-}
-
-
-
 /**
  * thunar_vfs_job_new:
  * @folder_uri : the #ThunarVfsURI of the directory whose contents to query.
@@ -263,7 +266,7 @@ thunar_vfs_listdir_job_new (ThunarVfsURI *folder_uri)
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (folder_uri), NULL);
 
-  listdir_job = (ThunarVfsListdirJob *) g_type_create_instance (THUNAR_VFS_TYPE_LISTDIR_JOB);
+  listdir_job = exo_object_new (THUNAR_VFS_TYPE_LISTDIR_JOB);
   listdir_job->uri = thunar_vfs_uri_ref (folder_uri);
 
   return THUNAR_VFS_JOB (listdir_job);

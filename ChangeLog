@@ -1,3 +1,21 @@
+2005-08-04	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Add "r" in front of the revision for the version
+	  string.
+	* thunar-vfs/thunar-vfs-job.{c,h}, thunar-vfs/thunar-vfs-listdir-job.c,
+	  thunar-vfs/thunar-vfs-mime.{c,h}, thunar-vfs/thunar-vfs-unlink-job.c,
+	  thunar-vfs/thunar-vfs-uri.{c,h}, thunar-vfs/thunar-vfs-transfer-job.c,
+	  thunar/thunar-progress-dialog.c: Use ExoObject as base class for
+	  ThunarVfsJob, ThunarVfsMimeInfo and ThunarVfsUri, which were fun-
+	  damental types previously. ExoObject does exactly what we need
+	  here, without any additional overhead. In particular, the ref-
+	  counting is atomic, even with GLib < 2.7.4.
+	* configure.in.in: Connect greek translations, previously committed
+	  by Stavros Giannouris <stavrosg2002@freemail.gr>.
+	* thunar/thunar-file.c: Use exo-noops for the defaults where possible
+	  instead of providing several fallback implementations.
+	* configure.in.in: Bump version number to 0.1.0.
+
 2005-08-03	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/main.c(main): Connect the translation domain and setup the

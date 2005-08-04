@@ -76,8 +76,8 @@ typedef struct _ThunarVfsTransferItem ThunarVfsTransferItem;
 static void     thunar_vfs_transfer_job_register_type   (GType                  *type);
 static void     thunar_vfs_transfer_job_class_init      (ThunarVfsJobClass      *klass);
 static void     thunar_vfs_transfer_job_init            (ThunarVfsTransferJob   *transfer_job);
+static void     thunar_vfs_transfer_job_finalize        (ExoObject              *object);
 static void     thunar_vfs_transfer_job_execute         (ThunarVfsJob           *job);
-static void     thunar_vfs_transfer_job_finalize        (ThunarVfsJob           *job);
 static gboolean thunar_vfs_transfer_job_skip            (ThunarVfsTransferJob   *job,
                                                          const gchar            *format,
                                                          const gchar            *filename);
@@ -150,7 +150,7 @@ struct _ThunarVfsTransferItem
 
 
 
-static ThunarVfsJobClass *thunar_vfs_transfer_job_parent_class;
+static ExoObjectClass *thunar_vfs_transfer_job_parent_class;
 
 
 
@@ -194,10 +194,14 @@ thunar_vfs_transfer_job_register_type (GType *type)
 static void
 thunar_vfs_transfer_job_class_init (ThunarVfsJobClass *klass)
 {
+  ExoObjectClass *exoobject_class;
+
   thunar_vfs_transfer_job_parent_class = g_type_class_peek_parent (klass);
 
+  exoobject_class = EXO_OBJECT_CLASS (klass);
+  exoobject_class->finalize = thunar_vfs_transfer_job_finalize;
+
   klass->execute = thunar_vfs_transfer_job_execute;
-  klass->finalize = thunar_vfs_transfer_job_finalize;
 }
 
 
@@ -220,6 +224,22 @@ thunar_vfs_transfer_job_init (ThunarVfsTransferJob *transfer_job)
 
 
 static void
+thunar_vfs_transfer_job_finalize (ExoObject *object)
+{
+  ThunarVfsTransferJob *transfer_job = THUNAR_VFS_TRANSFER_JOB (object);
+
+  /* destroy the various helper chunks */
+  g_mem_chunk_destroy (transfer_job->base_chunk);
+  g_mem_chunk_destroy (transfer_job->item_chunk);
+  g_string_chunk_free (transfer_job->string_chunk);
+
+  /* call the parents finalize method */
+  (*EXO_OBJECT_CLASS (thunar_vfs_transfer_job_parent_class)->finalize) (object);
+}
+
+
+
+static void
 thunar_vfs_transfer_job_execute (ThunarVfsJob *job)
 {
   ThunarVfsTransferBase *base;
@@ -234,23 +254,6 @@ thunar_vfs_transfer_job_execute (ThunarVfsJob *job)
   /* copy/move all bases */
   for (base = transfer_job->bases; !thunar_vfs_job_cancelled (job) && base != NULL; base = base->next)
     thunar_vfs_transfer_base_copy (base);
-}
-
-
-
-static void
-thunar_vfs_transfer_job_finalize (ThunarVfsJob *job)
-{
-  ThunarVfsTransferJob *transfer_job = THUNAR_VFS_TRANSFER_JOB (job);
-
-  /* destroy the various helper chunks */
-  g_mem_chunk_destroy (transfer_job->base_chunk);
-  g_mem_chunk_destroy (transfer_job->item_chunk);
-  g_string_chunk_free (transfer_job->string_chunk);
-
-  /* call the parents finalize method */
-  if (THUNAR_VFS_JOB_CLASS (thunar_vfs_transfer_job_parent_class)->finalize != NULL)
-    (*THUNAR_VFS_JOB_CLASS (thunar_vfs_transfer_job_parent_class)->finalize) (job);
 }
 
 
@@ -781,7 +784,7 @@ thunar_vfs_transfer_job_new (GList        *source_uri_list,
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate the job instance */
-  job = (ThunarVfsTransferJob *) g_type_create_instance (THUNAR_VFS_TYPE_TRANSFER_JOB);
+  job = exo_object_new (THUNAR_VFS_TYPE_TRANSFER_JOB);
   job->move = move;
 
   /* process the source uris */

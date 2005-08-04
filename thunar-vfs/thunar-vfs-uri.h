@@ -21,7 +21,7 @@
 #ifndef __THUNAR_VFS_URI_H__
 #define __THUNAR_VFS_URI_H__
 
-#include <glib-object.h>
+#include <exo/exo.h>
 
 G_BEGIN_DECLS;
 
@@ -69,9 +69,6 @@ ThunarVfsURI      *thunar_vfs_uri_new               (const gchar            *ide
                                                      GError                **error) G_GNUC_MALLOC;
 ThunarVfsURI      *thunar_vfs_uri_new_for_path      (const gchar            *path) G_GNUC_MALLOC;
 
-ThunarVfsURI      *thunar_vfs_uri_ref               (ThunarVfsURI           *uri);
-void               thunar_vfs_uri_unref             (ThunarVfsURI           *uri);
-
 gboolean           thunar_vfs_uri_is_home           (const ThunarVfsURI     *uri);
 gboolean           thunar_vfs_uri_is_local          (const ThunarVfsURI     *uri);
 gboolean           thunar_vfs_uri_is_root           (const ThunarVfsURI     *uri);
@@ -93,6 +90,27 @@ gchar             *thunar_vfs_uri_to_string         (const ThunarVfsURI     *uri
 guint              thunar_vfs_uri_hash              (gconstpointer           uri);
 gboolean           thunar_vfs_uri_equal             (gconstpointer           a,
                                                      gconstpointer           b);
+
+/**
+ * thunar_vfs_uri_ref:
+ * @uri : a #ThunarVfsURI instance.
+ *
+ * Increments the reference count on @uri by 1 and
+ * returns @uri.
+ *
+ * Return value: pointer to @uri.
+ **/
+#define thunar_vfs_uri_ref exo_object_ref
+
+/**
+ * thunar_vfs_uri_unref:
+ * @uri : a #ThunarVfsURI instance.
+ *
+ * Decreases the reference count on @uri by 1. If the
+ * reference count drops to 0, the resources allocated
+ * for @uri will be freed.
+ **/
+#define thunar_vfs_uri_unref exo_object_unref
 
 
 GList             *thunar_vfs_uri_list_from_string  (const gchar            *string,

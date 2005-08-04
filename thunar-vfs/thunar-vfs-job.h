@@ -37,11 +37,10 @@ typedef struct _ThunarVfsJob      ThunarVfsJob;
 
 struct _ThunarVfsJobClass
 {
-  GTypeClass __parent__;
+  ExoObjectClass __parent__;
 
   /* virtual methods */
   void (*execute)  (ThunarVfsJob *job);
-  void (*finalize) (ThunarVfsJob *job);
 
   /* signals */
   void (*finished) (ThunarVfsJob *job);
@@ -49,9 +48,8 @@ struct _ThunarVfsJobClass
 
 struct _ThunarVfsJob
 {
-  GTypeInstance __parent__;
+  ExoObject __parent__;
 
-  gint              ref_count;
   GCond            *cond;
   GMutex           *mutex;
   volatile gboolean launched;
@@ -61,11 +59,32 @@ struct _ThunarVfsJob
 GType         thunar_vfs_job_get_type     (void) G_GNUC_CONST;
 
 /* public API */
-ThunarVfsJob *thunar_vfs_job_ref          (ThunarVfsJob       *job);
-void          thunar_vfs_job_unref        (ThunarVfsJob       *job);
 ThunarVfsJob *thunar_vfs_job_launch       (ThunarVfsJob       *job);
 void          thunar_vfs_job_cancel       (ThunarVfsJob       *job);
 gboolean      thunar_vfs_job_cancelled    (const ThunarVfsJob *job);
+
+/**
+ * thunar_vfs_job_ref:
+ * @job : a #ThunarVfsJob.
+ *
+ * Increments the reference count on @job by
+ * 1 and returns a pointer to @job.
+ *
+ * Return value: a pointer to @job.
+ **/
+#define thunar_vfs_job_ref exo_object_ref
+
+/**
+ * thunar_vfs_job_unref:
+ * @job : a #ThunarVfsJob.
+ *
+ * Decrements the reference count on @job by
+ * 1. If the reference count drops to zero,
+ * the resources allocated to @job will be
+ * freed.
+ **/
+#define thunar_vfs_job_unref exo_object_unref
+
 
 /* module API */
 void          thunar_vfs_job_emit_valist  (ThunarVfsJob       *job,
@@ -78,35 +97,6 @@ void          thunar_vfs_job_emit         (ThunarVfsJob       *job,
                                            ...);
 void          thunar_vfs_job_error        (ThunarVfsJob       *job,
                                            GError             *error);
-
-
-typedef struct _ThunarVfsParamSpecJob ThunarVfsParamSpecJob;
-
-#define THUNAR_VFS_TYPE_PARAM_JOB           (thunar_vfs_param_spec_job_get_type ())
-#define THUNAR_VFS_PARAM_SPEC_JOB(pspec)    (G_TYPE_CHECK_INSTANCE_CAST ((pspec), THUNAR_VFS_TYPE_PARAM_JOB, ThunarVfsParamJob))
-#define THUNAR_VFS_IS_PARAM_SPEC_JOB(pspec) (G_TYPE_CHECK_INSTANCE_TYPE ((pspec), THUNAR_VFS_TYPE_PARAM_JOB))
-#define THUNAR_VFS_VALUE_HOLDS_JOB(value)   (G_TYPE_CHECK_VALUE_TYPE ((value), THUNAR_VFS_TYPE_JOB))
-
-struct _ThunarVfsParamSpecJob
-{
-  /*< private >*/
-  GParamSpec __parent__;
-};
-
-GType       thunar_vfs_param_spec_job_get_type (void) G_GNUC_CONST;
-
-GParamSpec *thunar_vfs_param_spec_job          (const gchar   *name,
-                                                const gchar   *nick,
-                                                const gchar   *blurb,
-                                                GType          job_type,
-                                                GParamFlags    flags);
-
-void        thunar_vfs_value_set_job           (GValue        *value,
-                                                gpointer       job);
-void        thunar_vfs_value_take_job          (GValue        *value,
-                                                gpointer       job);
-gpointer    thunar_vfs_value_get_job           (const GValue  *value);
-gpointer    thunar_vfs_value_dup_job           (const GValue  *value);
 
 G_END_DECLS;
 

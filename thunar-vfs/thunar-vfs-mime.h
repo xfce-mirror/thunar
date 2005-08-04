@@ -37,9 +37,6 @@ typedef struct _ThunarVfsMimeInfo      ThunarVfsMimeInfo;
 
 GType              thunar_vfs_mime_info_get_type         (void) G_GNUC_CONST;
 
-ThunarVfsMimeInfo *thunar_vfs_mime_info_ref              (ThunarVfsMimeInfo       *info);
-void               thunar_vfs_mime_info_unref            (ThunarVfsMimeInfo       *info);
-
 ThunarVfsMimeInfo *thunar_vfs_mime_info_get              (const gchar             *mime_type);
 ThunarVfsMimeInfo *thunar_vfs_mime_info_get_for_file     (const gchar             *path);
 
@@ -51,6 +48,27 @@ const gchar       *thunar_vfs_mime_info_get_subtype      (const ThunarVfsMimeInf
 
 const gchar       *thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo       *info,
                                                           GtkIconTheme            *icon_theme);
+
+/**
+ * thunar_vfs_mime_info_ref:
+ * @info : a #ThunarVfsMimeInfo.
+ *
+ * Increments the reference count by 1 on @info, and
+ * returns a pointer to @info.
+ *
+ * Return value: a pointer to @info.
+ **/
+#define thunar_vfs_mime_info_ref exo_object_ref
+
+/**
+ * thunar_vfs_mime_info_unref:
+ * @info : a #ThunarVfsMimeInfo.
+ *
+ * Decrements the reference count on @info by
+ * 1. If the reference count drops to zero, the
+ * resources allocated to @info will be freed.
+ **/
+#define thunar_vfs_mime_info_unref exo_object_unref
 
 G_END_DECLS;
 

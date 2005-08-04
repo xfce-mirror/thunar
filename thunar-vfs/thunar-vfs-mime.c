@@ -51,23 +51,23 @@ static const struct
 
 
 
-static void               thunar_vfs_mime_info_register_type      (GType             *type);
-static ThunarVfsMimeInfo *thunar_vfs_mime_info_get_unlocked       (const gchar       *name);
-static void               thunar_vfs_mime_info_icon_theme_changed (GtkIconTheme      *icon_theme,
-                                                                   ThunarVfsMimeInfo *info);
+static void               thunar_vfs_mime_info_register_type      (GType                  *type);
+static void               thunar_vfs_mime_info_class_init         (ThunarVfsMimeInfoClass *klass);
+static void               thunar_vfs_mime_info_finalize           (ExoObject              *object);
+static ThunarVfsMimeInfo *thunar_vfs_mime_info_get_unlocked       (const gchar            *name);
+static void               thunar_vfs_mime_info_icon_theme_changed (GtkIconTheme           *icon_theme,
+                                                                   ThunarVfsMimeInfo      *info);
 
 
 
 struct _ThunarVfsMimeInfoClass
 {
-  GTypeClass __parent__;
+  ExoObjectClass __parent__;
 };
 
 struct _ThunarVfsMimeInfo
 {
-  GTypeInstance __parent__;
-
-  gint          ref_count;
+  ExoObject __parent__;
 
   gchar        *comment;
   gchar        *name;
@@ -82,7 +82,8 @@ struct _ThunarVfsMimeInfo
 
 
 
-static GHashTable *mime_infos = NULL;
+static ExoObjectClass *thunar_vfs_mime_info_parent_class;
+static GHashTable     *mime_infos = NULL;
 G_LOCK_DEFINE_STATIC (mime_infos);
 
 
@@ -104,17 +105,12 @@ thunar_vfs_mime_info_get_type (void)
 static void
 thunar_vfs_mime_info_register_type (GType *type)
 {
-  static const GTypeFundamentalInfo finfo =
-  {
-    G_TYPE_FLAG_CLASSED | G_TYPE_FLAG_INSTANTIATABLE
-  };
-
   static const GTypeInfo info =
   {
     sizeof (ThunarVfsMimeInfoClass),
     NULL,
     NULL,
-    NULL,
+    (GClassInitFunc) thunar_vfs_mime_info_class_init,
     NULL,
     NULL,
     sizeof (ThunarVfsMimeInfo),
@@ -123,7 +119,65 @@ thunar_vfs_mime_info_register_type (GType *type)
     NULL,
   };
 
-  *type = g_type_register_fundamental (g_type_fundamental_next (), "ThunarVfsMimeInfo", &info, &finfo, 0);
+  *type = g_type_register_static (EXO_TYPE_OBJECT, "ThunarVfsMimeInfo", &info, 0);
+}
+
+
+
+static void
+thunar_vfs_mime_info_class_init (ThunarVfsMimeInfoClass *klass)
+{
+  ExoObjectClass *exoobject_class;
+
+  thunar_vfs_mime_info_parent_class = g_type_class_peek_parent (klass);
+
+  exoobject_class = EXO_OBJECT_CLASS (klass);
+  exoobject_class->finalize = thunar_vfs_mime_info_finalize;
+}
+
+
+
+static void
+thunar_vfs_mime_info_finalize (ExoObject *object)
+{
+  ThunarVfsMimeInfo *info = THUNAR_VFS_MIME_INFO (object);
+
+  g_return_if_fail (THUNAR_VFS_IS_MIME_INFO (info));
+
+  /* free the comment */
+  if (info->comment != NULL && info->comment != info->name)
+    {
+#ifndef G_DISABLE_CHECKS
+      memset (info->comment, 0xaa, strlen (info->comment) + 1);
+#endif
+      g_free (info->comment);
+    }
+
+  /* free the name */
+#ifndef G_DISABLE_CHECKS
+  if (G_LIKELY (info->name != NULL))
+    memset (info->name, 0xaa, strlen (info->name) + 1);
+#endif
+  g_free (info->name);
+
+  /* disconnect from the icon theme (if any) */
+  if (G_LIKELY (info->icon_theme != NULL))
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (info->icon_theme), thunar_vfs_mime_info_icon_theme_changed, info);
+      g_object_unref (G_OBJECT (info->icon_theme));
+    }
+
+  /* free the icon name if it isn't one of the statics */
+  if (G_LIKELY (!info->icon_name_static && info->icon_name != NULL))
+    {
+#ifndef G_DISABLE_CHECKS
+      memset (info->icon_name, 0xaa, strlen (info->icon_name) + 1);
+#endif
+      g_free (info->icon_name);
+    }
+
+  /* invoke the parent's finalize method */
+  (*EXO_OBJECT_CLASS (thunar_vfs_mime_info_parent_class)->finalize) (object);
 }
 
 
@@ -150,8 +204,7 @@ thunar_vfs_mime_info_get_unlocked (const gchar *name)
         g_error ("Invalid MIME type '%s'", name);
 
       /* allocate the MIME info instance */
-      info = (ThunarVfsMimeInfo *) g_type_create_instance (THUNAR_VFS_TYPE_MIME_INFO);
-      info->ref_count = 2;
+      info = exo_object_new (THUNAR_VFS_TYPE_MIME_INFO);
 
       /* allocate memory to store both the full name,
        * as well as the media type alone.
@@ -175,16 +228,10 @@ thunar_vfs_mime_info_get_unlocked (const gchar *name)
 
       /* insert the mime type into the cache */
       g_hash_table_insert (mime_infos, info->name, info);
-
-      g_assert (THUNAR_VFS_IS_MIME_INFO (info));
-    }
-  else
-    {
-      /* take a reference for the caller */
-      thunar_vfs_mime_info_ref (info);
     }
 
-  return info;
+  /* take a reference for the caller */
+  return thunar_vfs_mime_info_ref (info);
 }
 
 
@@ -210,82 +257,6 @@ thunar_vfs_mime_info_icon_theme_changed (GtkIconTheme      *icon_theme,
 
 
 /**
- * thunar_vfs_mime_info_ref:
- * @info : a #ThunarVfsMimeInfo.
- *
- * Increments the reference count by 1 on @info, and
- * returns a pointer to @info.
- *
- * Return value: a pointer to @info.
- **/
-ThunarVfsMimeInfo*
-thunar_vfs_mime_info_ref (ThunarVfsMimeInfo *info)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
-  g_return_val_if_fail (info->ref_count > 0, NULL);
-
-  g_atomic_int_inc (&info->ref_count);
-
-  return info;
-}
-
-
-
-/**
- * thunar_vfs_mime_info_unref:
- * @info : a #ThunarVfsMimeInfo.
- *
- * Decrements the reference count on @info by
- * 1. If the reference count drops to zero, the
- * resources allocated to @info will be freed.
- **/
-void
-thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
-{
-  g_return_if_fail (THUNAR_VFS_IS_MIME_INFO (info));
-  g_return_if_fail (info->ref_count > 0);
-
-  if (g_atomic_int_dec_and_test (&info->ref_count))
-    {
-      /* free the comment */
-      if (info->comment != NULL && info->comment != info->name)
-        {
-#ifndef G_DISABLE_CHECKS
-          memset (info->comment, 0xaa, strlen (info->comment) + 1);
-#endif
-          g_free (info->comment);
-        }
-
-      /* free the name */
-#ifndef G_DISABLE_CHECKS
-      if (G_LIKELY (info->name != NULL))
-        memset (info->name, 0xaa, strlen (info->name) + 1);
-#endif
-      g_free (info->name);
-
-      /* disconnect from the icon theme (if any) */
-      if (G_LIKELY (info->icon_theme != NULL))
-        {
-          g_signal_handlers_disconnect_by_func (G_OBJECT (info->icon_theme), thunar_vfs_mime_info_icon_theme_changed, info);
-          g_object_unref (G_OBJECT (info->icon_theme));
-        }
-
-      /* free the icon name if it isn't one of the statics */
-      if (G_LIKELY (!info->icon_name_static && info->icon_name != NULL))
-        {
-#ifndef G_DISABLE_CHECKS
-          memset (info->icon_name, 0xaa, strlen (info->icon_name) + 1);
-#endif
-          g_free (info->icon_name);
-        }
-
-      g_type_free_instance ((GTypeInstance *) info);
-    }
-}
-
-
-
-/**
  * thunar_vfs_mime_info_get_comment:
  * @info : a #ThunarVfsMimeInfo.
  *
@@ -304,7 +275,6 @@ thunar_vfs_mime_info_get_comment (ThunarVfsMimeInfo *info)
   gchar *spec;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
-  g_return_val_if_fail (info->ref_count > 0, NULL);
 
   if (G_UNLIKELY (info->comment == NULL))
     {
@@ -340,8 +310,6 @@ const gchar*
 thunar_vfs_mime_info_get_name (const ThunarVfsMimeInfo *info)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
-  g_return_val_if_fail (info->ref_count > 0, NULL);
-
   return info->name;
 }
 
@@ -361,8 +329,6 @@ const gchar*
 thunar_vfs_mime_info_get_media (const ThunarVfsMimeInfo *info)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
-  g_return_val_if_fail (info->ref_count > 0, NULL);
-
   return info->media;
 }
 
@@ -382,8 +348,6 @@ const gchar*
 thunar_vfs_mime_info_get_subtype (const ThunarVfsMimeInfo *info)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
-  g_return_val_if_fail (info->ref_count > 0, NULL);
-
   return info->subtype;
 }
 
@@ -411,7 +375,6 @@ thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
   gsize n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
-  g_return_val_if_fail (info->ref_count > 0, NULL);
   g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
   /* check if our cached name will suffice */
