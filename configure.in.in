@@ -62,8 +62,42 @@ dnl ************************************
 dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
-AC_CHECK_FUNCS([extattr_get_fd lchmod localtime_r posix_madvise readdir_r \
+AC_CHECK_FUNCS([extattr_get_fd lchmod localtime_r readdir_r \
                 setgroupent setpassent])
+
+dnl ***************************************
+dnl *** Check for working posix_madvise ***
+dnl ***************************************
+m4_define([posix_madvise_test],
+[int main()
+{
+  posix_madvise (0, 0, POSIX_MADV_NORMAL);
+  posix_madvise (0, 0, POSIX_MADV_SEQUENTIAL);
+  posix_madvise (0, 0, POSIX_MADV_RANDOM);
+  posix_madvise (0, 0, POSIX_MADV_WILLNEED);
+  posix_madvise (0, 0, POSIX_MADV_DONTNEED);
+  return 0;
+}])
+AC_MSG_CHECKING([for working posix_madvise])
+AC_TRY_COMPILE([#include <sys/mman.h>], [posix_madvise_test()],
+[
+  AC_DEFINE([HAVE_POSIX_MADVISE], [1], [Define if posix_madvise is working])
+  AC_MSG_RESULT([yes])
+],
+[
+  dnl As usual, Linux/glibc doesn't work properly out-of-the-box
+  ac_save_CPPFLAGS="$CPPFLAGS"
+  CPPFLAGS="$CPPFLAGS -D__USE_XOPEN2K"
+  AC_TRY_COMPILE([#include <sys/mman.h>], [posix_madvise_test()],
+  [
+    AC_DEFINE([HAVE_POSIX_MADVISE], [1], [Define if posix_madvise is working])
+    AC_MSG_RESULT([yes])
+  ],
+  [
+    CPPFLAGS="$ac_save_CPPFLAGS"
+    AC_MSG_RESULT([no])
+  ])
+])
 
 dnl ******************************
 dnl *** Check for i18n support ***
