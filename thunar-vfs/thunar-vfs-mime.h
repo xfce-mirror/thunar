@@ -21,54 +21,12 @@
 #ifndef __THUNAR_VFS_MIME_H__
 #define __THUNAR_VFS_MIME_H__
 
-#include <exo/exo.h>
+#include <thunar-vfs/thunar-vfs-mime-info.h>
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarVfsMimeInfoClass ThunarVfsMimeInfoClass;
-typedef struct _ThunarVfsMimeInfo      ThunarVfsMimeInfo;
-
-#define THUNAR_VFS_TYPE_MIME_INFO             (thunar_vfs_mime_info_get_type ())
-#define THUNAR_VFS_MIME_INFO(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_MIME_INFO, ThunarVfsMimeInfo))
-#define THUNAR_VFS_MIME_INFO_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_MIME_INFO, ThunarVfsMimeInfoClass))
-#define THUNAR_VFS_IS_MIME_INFO(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_MIME_INFO))
-#define THUNAR_VFS_IS_MIME_INFO_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_MIME_INFO))
-#define THUNAR_VFS_MIME_INFO_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_MIME_INFO, ThunarVfsMimeInfoClass))
-
-GType              thunar_vfs_mime_info_get_type         (void) G_GNUC_CONST;
-
 ThunarVfsMimeInfo *thunar_vfs_mime_info_get              (const gchar             *mime_type);
 ThunarVfsMimeInfo *thunar_vfs_mime_info_get_for_file     (const gchar             *path);
-
-const gchar       *thunar_vfs_mime_info_get_comment      (ThunarVfsMimeInfo       *info) G_GNUC_PURE;
-const gchar       *thunar_vfs_mime_info_get_name         (const ThunarVfsMimeInfo *info) G_GNUC_PURE;
-
-const gchar       *thunar_vfs_mime_info_get_media        (const ThunarVfsMimeInfo *info) G_GNUC_PURE;
-const gchar       *thunar_vfs_mime_info_get_subtype      (const ThunarVfsMimeInfo *info) G_GNUC_PURE;
-
-const gchar       *thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo       *info,
-                                                          GtkIconTheme            *icon_theme);
-
-/**
- * thunar_vfs_mime_info_ref:
- * @info : a #ThunarVfsMimeInfo.
- *
- * Increments the reference count by 1 on @info, and
- * returns a pointer to @info.
- *
- * Return value: a pointer to @info.
- **/
-#define thunar_vfs_mime_info_ref exo_object_ref
-
-/**
- * thunar_vfs_mime_info_unref:
- * @info : a #ThunarVfsMimeInfo.
- *
- * Decrements the reference count on @info by
- * 1. If the reference count drops to zero, the
- * resources allocated to @info will be freed.
- **/
-#define thunar_vfs_mime_info_unref exo_object_unref
 
 G_END_DECLS;
 

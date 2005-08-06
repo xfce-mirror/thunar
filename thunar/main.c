@@ -103,5 +103,8 @@ main (int argc, char **argv)
   /* release the application reference */
   g_object_unref (G_OBJECT (application));
 
+  /* shutdown the VFS library */
+  thunar_vfs_shutdown ();
+
   return EXIT_SUCCESS;
 }

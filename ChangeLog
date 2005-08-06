@@ -1,3 +1,22 @@
+2005-08-06	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Check for fnmatch.h and sys/mman.h. Add checks for
+	  working mmap and posix_madvise.
+	* configure.in.in, thunar-vfs/xdgmime/, thunar-vfs/Makefile.am: Drop
+	  the xdgmime library.
+	* thunar-vfs/thunar-vfs-mime-cache.{c,h},
+	  thunar-vfs/thunar-vfs-mime-database.{c,h},
+	  thunar-vfs/thunar-vfs-mime-info.{c,h},
+	  thunar-vfs/thunar-vfs-mime-legacy.{c,h},
+	  thunar-vfs/thunar-vfs-mime-provider.{c,h},
+	  thunar-vfs/thunar-vfs-mime.{c,h}: Import thread-safe replacement for
+	  the xdgmime library. Works only with very recent shared-mime-info
+	  right now.
+	* thunar-vfs/Makefile.am: Add new files to the build framework.
+	* thunar-vfs/thunar-vfs-job.c, thunar-vfs/thunar-vfs-mime.c,
+	  thunar-vfs/thunar-vfs.c, thunar-vfs/thunar-vfs.h, thunar/main.c: Add
+	  ability to shutdown the VFS library.
+
 2005-08-04	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in: Add "r" in front of the revision for the version

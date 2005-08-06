@@ -53,14 +53,17 @@ AC_PROG_LIBTOOL()
 dnl **********************************
 dnl *** Check for standard headers ***
 dnl **********************************
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h fstab.h grp.h locale.h \
-                  math.h memory.h pwd.h stdlib.h string.h sys/cdio.h \
+AC_CHECK_HEADERS([dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h locale.h \
+                  math.h memory.h pwd.h stdlib.h string.h \
+                  sys/cdio.h sys/mman.h \
                   sys/mount.h sys/stat.h sys/time.h sys/param.h time.h])
 
 dnl ************************************
 dnl *** Check for standard functions ***
 dnl ************************************
-AC_CHECK_FUNCS([lchmod localtime_r readdir_r setgroupent setpassent])
+AC_FUNC_MMAP()
+AC_CHECK_FUNCS([lchmod localtime_r posix_madvise readdir_r \
+                setgroupent setpassent])
 
 dnl ******************************
 dnl *** Check for i18n support ***
@@ -158,6 +161,5 @@ tests/Makefile
 tests/data/Makefile
 thunar/Makefile
 thunar-vfs/Makefile
-thunar-vfs/xdgmime/Makefile
 thunarx/Makefile
 ])

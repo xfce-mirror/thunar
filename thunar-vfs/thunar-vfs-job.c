@@ -389,4 +389,18 @@ _thunar_vfs_job_init (void)
 
 
 
+/**
+ * _thunar_vfs_job_shutdown:
+ *
+ * Shuts down the jobs module of the ThunarVFS
+ * library.
+ **/
+void
+_thunar_vfs_job_shutdown (void)
+{
+  g_return_if_fail (job_pool != NULL);
+
+  g_thread_pool_free (job_pool, FALSE, TRUE);
+  job_pool = NULL;
+}
 

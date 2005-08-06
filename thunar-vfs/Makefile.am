@@ -1,14 +1,10 @@
 # $Id$
 
-SUBDIRS =								\
-	xdgmime
-
 INCLUDES =								\
 	-I$(top_srcdir)							\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DEXO_DISABLE_DEPRECATED					\
-	-DG_LOG_DOMAIN=\"thunar-vfs\"					\
-	-DXDG_PREFIX=_thunar_vfs_xdg
+	-DG_LOG_DOMAIN=\"thunar-vfs\"
 
 noinst_LTLIBRARIES =							\
 	libthunar-vfs.la
@@ -25,6 +21,8 @@ libthunar_vfs_headers =							\
 	thunar-vfs-job.h						\
 	thunar-vfs-jobs.h						\
 	thunar-vfs-mime.h						\
+	thunar-vfs-mime-database.h					\
+	thunar-vfs-mime-info.h						\
 	thunar-vfs-monitor.h						\
 	thunar-vfs-trash.h						\
 	thunar-vfs-user.h						\
@@ -43,8 +41,16 @@ libthunar_vfs_la_SOURCES =						\
 	thunar-vfs-listdir-job.c					\
 	thunar-vfs-listdir-job.h					\
 	thunar-vfs-mime.c						\
+	thunar-vfs-mime-cache.c						\
+	thunar-vfs-mime-cache.h						\
+	thunar-vfs-mime-database.c					\
+	thunar-vfs-mime-info.c						\
+	thunar-vfs-mime-legacy.c					\
+	thunar-vfs-mime-legacy.h					\
 	thunar-vfs-mime-parser.h					\
 	thunar-vfs-mime-parser.c					\
+	thunar-vfs-mime-provider.c					\
+	thunar-vfs-mime-provider.h					\
 	thunar-vfs-monitor.c						\
 	thunar-vfs-sysdep.c						\
 	thunar-vfs-sysdep.h						\
@@ -69,11 +75,7 @@ libthunar_vfs_la_CFLAGS =						\
 libthunar_vfs_la_LDFLAGS =						\
 	-no-undefined
 
-libthunar_vfs_la_DEPENDENCIES =						\
-	$(top_builddir)/thunar-vfs/xdgmime/libxdgmime.la
-
 libthunar_vfs_la_LIBADD =						\
-	$(top_builddir)/thunar-vfs/xdgmime/libxdgmime.la		\
 	$(EXO_LIBS)							\
 	$(GTHREADS_LIBS)						\
 	$(LIBFAM_LIBS)

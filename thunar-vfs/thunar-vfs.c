@@ -26,6 +26,10 @@
 
 
 
+static gint thunar_vfs_ref_count = 0;
+
+
+
 /**
  * thunar_vfs_init:
  *
@@ -37,15 +41,32 @@ thunar_vfs_init (void)
   extern void _thunar_vfs_job_init (void);
   extern void _thunar_vfs_mime_init (void);
 
-  static gboolean initialized = FALSE;
-
-  if (!initialized)
+  if (g_atomic_int_exchange_and_add (&thunar_vfs_ref_count, 1) == 0)
     {
-      _thunar_vfs_job_init ();
       _thunar_vfs_mime_init ();
-
-      initialized = TRUE;
+      _thunar_vfs_job_init ();
     }
 }
+
+
+
+/**
+ * thunar_vfs_shutdown:
+ *
+ * Shuts down the ThunarVFS library.
+ **/
+void
+thunar_vfs_shutdown (void)
+{
+  extern void _thunar_vfs_job_shutdown (void);
+  extern void _thunar_vfs_mime_shutdown (void);
+
+  if (g_atomic_int_dec_and_test (&thunar_vfs_ref_count))
+    {
+      _thunar_vfs_job_shutdown ();
+      _thunar_vfs_mime_shutdown ();
+    }
+}
+
 
 

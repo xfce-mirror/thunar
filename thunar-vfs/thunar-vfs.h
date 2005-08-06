@@ -26,6 +26,8 @@
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
 #include <thunar-vfs/thunar-vfs-job.h>
 #include <thunar-vfs/thunar-vfs-jobs.h>
+#include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-mime-info.h>
 #include <thunar-vfs/thunar-vfs-mime.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
 #include <thunar-vfs/thunar-vfs-trash.h>
@@ -36,7 +38,8 @@
 
 G_BEGIN_DECLS;
 
-void  thunar_vfs_init (void);
+void thunar_vfs_init     (void);
+void thunar_vfs_shutdown (void);
 
 G_END_DECLS;
 
