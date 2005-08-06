@@ -482,7 +482,7 @@ thunar_vfs_uri_get_display_name (const ThunarVfsURI *uri)
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
   // FIXME: This should be optimized (and GLib 2.4 compatible)!
-  return g_filename_display_basename (uri->path);
+  return g_filename_display_name (uri->name);
 }
 
 

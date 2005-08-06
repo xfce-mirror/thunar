@@ -26,7 +26,7 @@
 
 #include <exo/exo.h>
 
-#include <thunar-vfs/thunar-vfs-mime.h>
+#include <thunar-vfs/thunar-vfs-mime-info.h>
 #include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
@@ -193,6 +193,9 @@ typedef struct
 
   /* file's URI */
   ThunarVfsURI *uri;
+
+  /* file's display name (UTF-8) */
+  gchar *display_name;
 
   /*< private >*/
   gint ref_count;

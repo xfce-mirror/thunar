@@ -37,6 +37,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-info.h>
+#include <thunar-vfs/thunar-vfs-mime-database.h>
 
 
 
@@ -56,10 +57,11 @@ ThunarVfsInfo*
 thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
                              GError      **error)
 {
-  ThunarVfsInfo *info;
-  const gchar   *path;
-  struct stat    lsb;
-  struct stat    sb;
+  ThunarVfsMimeDatabase *database;
+  ThunarVfsInfo         *info;
+  const gchar           *path;
+  struct stat            lsb;
+  struct stat            sb;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -76,6 +78,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
   info = g_new (ThunarVfsInfo, 1);
   info->uri = thunar_vfs_uri_ref (uri);
   info->ref_count = 1;
+  info->display_name = thunar_vfs_uri_get_display_name (uri);
 
   if (G_LIKELY (!S_ISLNK (lsb.st_mode)))
     {
@@ -123,40 +126,42 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
         }
     }
 
+  database = thunar_vfs_mime_database_get ();
   switch (info->type)
     {
     case THUNAR_VFS_FILE_TYPE_SOCKET:
-      info->mime_info = thunar_vfs_mime_info_get ("inode/socket");
+      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/socket");
       break;
 
     case THUNAR_VFS_FILE_TYPE_SYMLINK:
-      info->mime_info = thunar_vfs_mime_info_get ("inode/symlink");
+      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/symlink");
       break;
 
     case THUNAR_VFS_FILE_TYPE_BLOCKDEV:
-      info->mime_info = thunar_vfs_mime_info_get ("inode/blockdevice");
+      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/blockdevice");
       break;
 
     case THUNAR_VFS_FILE_TYPE_DIRECTORY:
-      info->mime_info = thunar_vfs_mime_info_get ("inode/directory");
+      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/directory");
       break;
 
     case THUNAR_VFS_FILE_TYPE_CHARDEV:
-      info->mime_info = thunar_vfs_mime_info_get ("inode/chardevice");
+      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/chardevice");
       break;
 
     case THUNAR_VFS_FILE_TYPE_FIFO:
-      info->mime_info = thunar_vfs_mime_info_get ("inode/fifo");
+      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/fifo");
       break;
 
     case THUNAR_VFS_FILE_TYPE_REGULAR:
-      info->mime_info = thunar_vfs_mime_info_get_for_file (path);
+      info->mime_info = thunar_vfs_mime_database_get_info_for_file (database, path, info->display_name);
       break;
 
     default:
       g_assert_not_reached ();
       break;
     }
+  exo_object_unref (EXO_OBJECT (database));
 
   return info;
 }
@@ -202,6 +207,7 @@ thunar_vfs_info_unref (ThunarVfsInfo *info)
     {
       thunar_vfs_mime_info_unref (info->mime_info);
       thunar_vfs_uri_unref (info->uri);
+      g_free (info->display_name);
 
 #ifndef G_DISABLE_CHECKS
       memset (info, 0xaa, sizeof (*info));

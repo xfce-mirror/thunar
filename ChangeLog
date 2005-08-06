@@ -1,5 +1,18 @@
 2005-08-06	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-info.{c,h}: Determine the display_name for
+	  each file info.
+	* thunar-vfs/thunar-vfs-info.c(thunar_vfs_info_new_for_uri): Hand the
+	  display name to thunar_vfs_mime_database_get_info_for_file(), so
+	  we don't need to determine it again.
+	* thunar-vfs/thunar-vfs-uri.c(thunar_vfs_uri_get_display_name): Don't
+	  use g_filename_display_basename(), because it may returned a somehow
+	  translated file name.
+	* thunar/thunar-local-file.c: Use the display_name supplied with the
+	  ThunarVfsInfo rather than determining it again.
+
+2005-08-06	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in, thunar-vfs/thunar-vfs-mime-database.c: Add support
 	  to query the MIME type stored in the extended attribute
 	  "user.mime_type" as specified in the Shared MIME-info spec.

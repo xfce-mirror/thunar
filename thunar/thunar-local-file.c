@@ -74,7 +74,6 @@ struct _ThunarLocalFile
 {
   ThunarFile __parent__;
 
-  gchar                  *display_name;
   ThunarVfsInfo          *info;
 
   ThunarVfsMonitorHandle *handle;
@@ -181,9 +180,6 @@ thunar_local_file_finalize (GObject *object)
   if (G_LIKELY (local_file->info != NULL))
     thunar_vfs_info_unref (local_file->info);
 
-  /* free the display name */
-  g_free (local_file->display_name);
-
   G_OBJECT_CLASS (thunar_local_file_parent_class)->finalize (object);
 }
 
@@ -253,11 +249,7 @@ thunar_local_file_get_display_name (ThunarFile *file)
   if (thunar_vfs_uri_is_root (local_file->info->uri))
     return _("Filesystem");
 
-  /* determine the display name on-demand */
-  if (G_UNLIKELY (local_file->display_name == NULL))
-    local_file->display_name = thunar_vfs_uri_get_display_name (local_file->info->uri);
-
-  return local_file->display_name;
+  return local_file->info->display_name;
 }
 
 
