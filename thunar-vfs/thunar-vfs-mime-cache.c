@@ -304,7 +304,7 @@ thunar_vfs_mime_cache_lookup_literal (ThunarVfsMimeProvider *provider,
       else if (cmp > 0)
         max = mid - 1;
       else
-        return buffer + offset + 4;
+        return buffer + CACHE_READ32 (buffer, list_offset + 4 + 8 * mid + 4);
     }
 
   return NULL;
@@ -380,12 +380,13 @@ thunar_vfs_mime_cache_lookup_glob (ThunarVfsMimeProvider *provider,
                                    const gchar           *filename)
 {
   const gchar *buffer = THUNAR_VFS_MIME_CACHE (provider)->buffer;
-  guint32      offset = CACHE_READ32 (buffer, 20);
-  guint32      n = CACHE_READ32 (buffer, offset);
+  guint32      list_offset = CACHE_READ32 (buffer, 20);
+  guint32      n_entries = CACHE_READ32 (buffer, list_offset);
+  guint32      n;
 
-  for (offset = CACHE_READ32 (buffer, offset + 4); n-- > 0; offset += 8)
-    if (fnmatch (buffer + offset, filename, 0) == 0)
-      return buffer + offset + 4;
+  for (n = 0; n < n_entries; ++n)
+    if (fnmatch (buffer + CACHE_READ32 (buffer, list_offset + 4 + 8 * n), filename, 0) == 0)
+      return buffer + CACHE_READ32 (buffer, list_offset + 4 + 8 * n + 4);
 
   return NULL;
 }

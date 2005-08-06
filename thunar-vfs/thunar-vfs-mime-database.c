@@ -28,6 +28,9 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
+#ifdef HAVE_SYS_EXTATTR_H
+#include <sys/extattr.h>
+#endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -588,8 +591,24 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
       fd = g_open (path, O_RDONLY, 0);
       if (G_LIKELY (fd >= 0))
         {
+#ifdef HAVE_EXTATTR_GET_FD
+          /* check if we have a valid mime type stored in the extattr */
+          nbytes = extattr_get_fd (fd, EXTATTR_NAMESPACE_USER, "mime_type", NULL, 0);
+          if (G_UNLIKELY (nbytes >= 3))
+            {
+              buffer = g_new (gchar, nbytes + 1);
+              nbytes = extattr_get_fd (fd, EXTATTR_NAMESPACE_USER, "mime_type", buffer, nbytes);
+              if (G_LIKELY (nbytes >= 3))
+                {
+                  buffer[nbytes] = '\0';
+                  info = thunar_vfs_mime_database_get_info (database, buffer);
+                }
+              g_free (buffer);
+            }
+#endif
+
           /* stat the file and verify that we have a regular file, which is not empty */
-          if (G_LIKELY (fstat (fd, &stat) == 0 && S_ISREG (stat.st_mode) && stat.st_size > 0))
+          if (G_LIKELY (info == NULL && fstat (fd, &stat) == 0 && S_ISREG (stat.st_mode) && stat.st_size > 0))
             {
               /* read the beginning from the file */
               buflen = MIN (stat.st_size, database->max_buffer_extents);

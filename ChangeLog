@@ -1,5 +1,18 @@
 2005-08-06	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in, thunar-vfs/thunar-vfs-mime-database.c: Add support
+	  to query the MIME type stored in the extended attribute
+	  "user.mime_type" as specified in the Shared MIME-info spec.
+	* docs/design/mime.xmi, docs/design/Makefile.am: Import description for
+	  the ThunarVFS mime module.
+	* thunar-vfs/thunar-vfs-mime-cache.c(thunar_vfs_mime_cache_lookup_glob):
+	  Use correct offset when iterating over the GlobEntries.
+	* thunar-vfs/thunar-vfs-mime-cache.c
+	  (thunar_vfs_mime_cache_lookup_literal): Fix the offset returned for
+	  the MIME-type name.
+
+2005-08-06	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Check for fnmatch.h and sys/mman.h. Add checks for
 	  working mmap and posix_madvise.
 	* configure.in.in, thunar-vfs/xdgmime/, thunar-vfs/Makefile.am: Drop
