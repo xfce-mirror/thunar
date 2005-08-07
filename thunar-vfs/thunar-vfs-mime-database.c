@@ -74,6 +74,9 @@ static void               thunar_vfs_mime_database_init                       (T
 static void               thunar_vfs_mime_database_finalize                   (ExoObject                  *object);
 static ThunarVfsMimeInfo *thunar_vfs_mime_database_get_info_unlocked          (ThunarVfsMimeDatabase      *database,
                                                                                const gchar                *mime_type);
+static ThunarVfsMimeInfo *thunar_vfs_mime_database_get_info_for_data_unlocked (ThunarVfsMimeDatabase      *database,
+                                                                               gconstpointer               data,
+                                                                               gsize                       length);
 static ThunarVfsMimeInfo *thunar_vfs_mime_database_get_info_for_name_unlocked (ThunarVfsMimeDatabase      *database,
                                                                                const gchar                *name);
 
@@ -182,10 +185,11 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
     }
   g_strfreev (basedirs);
 
-  /* clamp the max buffer extents to [1..256] to make
-   * sure we don't try insane values.
+  /* clamp the max buffer extents to [64..256] to make
+   * sure we don't try insane values (everything below
+   * 64 bytes would be useless for the UTF-8 check).
    */
-  database->max_buffer_extents = CLAMP (database->max_buffer_extents, 1, 256);
+  database->max_buffer_extents = CLAMP (database->max_buffer_extents, 64, 256);
 
   /* collect the stop characters */
   database->stopchars = g_new (gchar, g_list_length (stopchars) + 1);
@@ -305,6 +309,53 @@ again:
 
   /* take a reference for the caller */
   return exo_object_ref (info);
+}
+
+
+
+static ThunarVfsMimeInfo*
+thunar_vfs_mime_database_get_info_for_data_unlocked (ThunarVfsMimeDatabase *database,
+                                                     gconstpointer          data,
+                                                     gsize                  length)
+{
+  ThunarVfsMimeProvider *provider;
+  ThunarVfsMimeInfo     *info = NULL;
+  const gchar           *type_best;
+  const gchar           *type;
+  GList                 *lp;
+  gint                   prio_best;
+  gint                   prio;
+
+  if (G_LIKELY (data != NULL && length > 0))
+    {
+      /* perform a 'best fit' lookup on all active providers */
+      for (type_best = NULL, prio_best = -1, lp = database->providers; lp != NULL; lp = lp->next)
+        {
+          provider = THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider;
+          if (G_LIKELY (provider != NULL))
+            {
+              type = thunar_vfs_mime_provider_lookup_data (provider, data, length, &prio);
+              if (G_LIKELY (type != NULL && prio > prio_best))
+                {
+                  prio_best = prio;
+                  type_best = type;
+                }
+            }
+        }
+
+      if (G_LIKELY (type_best != NULL))
+        {
+          /* lookup the info for the best type (if any) */
+          info = thunar_vfs_mime_database_get_info_unlocked (database, type_best);
+        }
+      else if (g_utf8_validate (data, length, NULL))
+        {
+          /* we have valid UTF-8 text here! */
+          info = thunar_vfs_mime_database_get_info_unlocked (database, "text/plain");
+        }
+    }
+
+  return info;
 }
 
 
@@ -443,46 +494,14 @@ thunar_vfs_mime_database_get_info_for_data (ThunarVfsMimeDatabase *database,
                                             gconstpointer          data,
                                             gsize                  length)
 {
-  ThunarVfsMimeProvider *provider;
-  ThunarVfsMimeInfo     *info = NULL;
-  const gchar           *type_best;
-  const gchar           *type;
-  GList                 *lp;
-  gint                   prio_best;
-  gint                   prio;
+  ThunarVfsMimeInfo *info;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
 
   g_mutex_lock (database->lock);
 
-  if (G_LIKELY (data != NULL && length > 0))
-    {
-      /* perform a 'best fit' lookup on all active providers */
-      for (type_best = NULL, prio_best = -1, lp = database->providers; lp != NULL; lp = lp->next)
-        {
-          provider = THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider;
-          if (G_LIKELY (provider != NULL))
-            {
-              type = thunar_vfs_mime_provider_lookup_data (provider, data, length, &prio);
-              if (G_LIKELY (type != NULL && prio > prio_best))
-                {
-                  prio_best = prio;
-                  type_best = type;
-                }
-            }
-        }
-
-      if (G_LIKELY (type_best != NULL))
-        {
-          /* lookup the info for the best type (if any) */
-          info = thunar_vfs_mime_database_get_info_unlocked (database, type_best);
-        }
-      else if (g_utf8_validate (data, length, NULL))
-        {
-          /* we have valid UTF-8 text here! */
-          info = thunar_vfs_mime_database_get_info_unlocked (database, "text/plain");
-        }
-    }
+  /* try to determine a MIME type based on the data */
+  info = thunar_vfs_mime_database_get_info_for_data_unlocked (database, data, length);
 
   /* fallback to 'application/octet-stream' if we could not determine any type */
   if (G_UNLIKELY (info == NULL))
@@ -617,7 +636,21 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
 
               /* try to determine a type from the buffer contents */
               if (G_LIKELY (nbytes > 0))
-                info = thunar_vfs_mime_database_get_info_for_data (database, buffer, nbytes);
+                {
+                  g_mutex_lock (database->lock);
+
+                  /* the regular magic check first */
+                  info = thunar_vfs_mime_database_get_info_for_data_unlocked (database, buffer, nbytes);
+
+                  /* then if magic doesn't tell us anything and the file is marked,
+                   * as executable, we just guess "application/x-executable", which
+                   * is atleast more precise than "application/octet-stream".
+                   */
+                  if (G_UNLIKELY (info == NULL && (stat.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != 0))
+                    info = thunar_vfs_mime_database_get_info_unlocked (database, "application/x-executable");
+
+                  g_mutex_unlock (database->lock);
+                }
 
               /* cleanup */
               g_free (buffer);
