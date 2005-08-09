@@ -23,6 +23,7 @@
 
 #include <thunarx/thunarx-gtk-extensions.h>
 
+#include <thunar/thunar-launcher.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
@@ -95,14 +96,15 @@ static void          thunar_standard_view_loading_unbound           (gpointer   
 
 struct _ThunarStandardViewPrivate
 {
-  GtkAction *action_properties;
-  GtkAction *action_copy;
-  GtkAction *action_cut;
-  GtkAction *action_paste;
-  GtkAction *action_paste_into_folder;
-  GtkAction *action_select_all_files;
-  GtkAction *action_select_by_pattern;
-  GtkAction *action_show_hidden_files;
+  ThunarLauncher *launcher;
+  GtkAction      *action_properties;
+  GtkAction      *action_copy;
+  GtkAction      *action_cut;
+  GtkAction      *action_paste;
+  GtkAction      *action_paste_into_folder;
+  GtkAction      *action_select_all_files;
+  GtkAction      *action_select_by_pattern;
+  GtkAction      *action_show_hidden_files;
 };
 
 
@@ -279,6 +281,12 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
    */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files",
                             G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
+
+  /* allocate the launcher support */
+  standard_view->priv->launcher = thunar_launcher_new ();
+  thunar_launcher_set_action_group (standard_view->priv->launcher, standard_view->action_group);
+  thunar_launcher_set_widget (standard_view->priv->launcher, GTK_WIDGET (standard_view));
+  g_signal_connect_swapped (G_OBJECT (standard_view->priv->launcher), "open-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
 }
 
 
@@ -320,6 +328,9 @@ thunar_standard_view_dispose (GObject *object)
   /* reset the UI manager property */
   thunar_view_set_ui_manager (THUNAR_VIEW (standard_view), NULL);
 
+  /* disconnect the widget from the launcher support */
+  thunar_launcher_set_widget (standard_view->priv->launcher, NULL);
+
   G_OBJECT_CLASS (thunar_standard_view_parent_class)->dispose (object);
 }
 
@@ -337,6 +348,9 @@ thunar_standard_view_finalize (GObject *object)
 
   /* release the reference on the action group */
   g_object_unref (G_OBJECT (standard_view->action_group));
+
+  /* release the reference on the launcher */
+  g_object_unref (G_OBJECT (standard_view->priv->launcher));
 
   /* disconnect from the list model */
   g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->model), thunar_standard_view_selection_changed, standard_view);
@@ -1046,9 +1060,11 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* tell everybody that the statusbar text may have changed */
   g_object_notify (G_OBJECT (standard_view), "statusbar-text");
 
+  /* setup the new file selection for the launcher support */
+  thunar_launcher_set_selected_files (standard_view->priv->launcher, selected_files);
+
   /* cleanup */
-  g_list_foreach (selected_files, (GFunc) g_object_unref, NULL);
-  g_list_free (selected_files);
+  thunar_file_list_free (selected_files);
 }
 
 

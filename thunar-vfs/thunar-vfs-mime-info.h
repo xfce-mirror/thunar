@@ -66,6 +66,10 @@ const gchar       *thunar_vfs_mime_info_get_name         (const ThunarVfsMimeInf
 const gchar       *thunar_vfs_mime_info_get_media        (const ThunarVfsMimeInfo *info) G_GNUC_PURE;
 const gchar       *thunar_vfs_mime_info_get_subtype      (const ThunarVfsMimeInfo *info) G_GNUC_PURE;
 
+guint              thunar_vfs_mime_info_hash             (gconstpointer            info);
+gboolean           thunar_vfs_mime_info_equal            (gconstpointer            a,
+                                                          gconstpointer            b);
+
 const gchar       *thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo       *info,
                                                           GtkIconTheme            *icon_theme);
 

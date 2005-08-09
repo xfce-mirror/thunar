@@ -164,9 +164,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Type"),
                          NULL);
-  /*renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
-                           "xalign", 0.0,
-                           NULL);*/
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_LIST_MODEL_COLUMN_TYPE,
@@ -179,9 +176,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Date modified"),
                          NULL);
-  /*renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
-                           "xalign", 0.0,
-                           NULL);*/
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED,
@@ -339,19 +333,20 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
                                    GtkTreeViewColumn *column,
                                    ThunarDetailsView *details_view)
 {
-  GtkTreeModel *model;
-  GtkTreeIter   iter;
-  ThunarFile   *file;
+  GtkTreeSelection *selection;
+  GtkAction        *action;
 
   g_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
-  /* tell the controlling component that the user activated a file */
-  model = gtk_tree_view_get_model (tree_view);
-  gtk_tree_model_get_iter (model, &iter, path);
-  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
-  if (thunar_file_is_directory (file))
-    thunar_navigator_change_directory (THUNAR_NAVIGATOR (details_view), file);
-  g_object_unref (G_OBJECT (file));
+  /* be sure to have only the double clicked item selected */
+  selection = gtk_tree_view_get_selection (tree_view);
+  gtk_tree_selection_unselect_all (selection);
+  gtk_tree_selection_select_path (selection, path);
+
+  /* emit the "open" action */
+  action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (details_view)->action_group, "open");
+  if (G_LIKELY (action != NULL))
+    gtk_action_activate (action);
 }
 
 

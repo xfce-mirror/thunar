@@ -156,19 +156,18 @@ thunar_icon_view_item_activated (ExoIconView    *view,
                                  GtkTreePath    *path,
                                  ThunarIconView *icon_view)
 {
-  GtkTreeModel *model;
-  GtkTreeIter   iter;
-  ThunarFile   *file;
+  GtkAction *action;
 
   g_return_if_fail (THUNAR_IS_ICON_VIEW (icon_view));
 
-  /* tell the controlling component, that the user activated a file */
-  model = exo_icon_view_get_model (view);
-  gtk_tree_model_get_iter (model, &iter, path);
-  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (model), &iter);
-  if (thunar_file_is_directory (file))
-    thunar_navigator_change_directory (THUNAR_NAVIGATOR (icon_view), file);
-  g_object_unref (G_OBJECT (file));
+  /* be sure to have only the double clicked item selected */
+  exo_icon_view_unselect_all (view);
+  exo_icon_view_select_path (view, path);
+
+  /* emit the "open" action */
+  action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (icon_view)->action_group, "open");
+  if (G_LIKELY (action != NULL))
+    gtk_action_activate (action);
 }
 
 

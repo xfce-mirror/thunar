@@ -633,8 +633,17 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
    */
   if (G_UNLIKELY (name == NULL || *name == '\0'))
     {
-      g_object_ref (G_OBJECT (factory->fallback_icon->pixbuf));
-      return factory->fallback_icon->pixbuf;
+      if (G_LIKELY (wants_default))
+        {
+          if (size == 48)
+            return g_object_ref (G_OBJECT (factory->fallback_icon->pixbuf));
+          else
+            return exo_gdk_pixbuf_scale_ratio (factory->fallback_icon->pixbuf, size);
+        }
+      else
+        {
+          return NULL;
+        }
     }
 
   /* lookup the icon */

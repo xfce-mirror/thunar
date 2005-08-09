@@ -1,3 +1,27 @@
+2005-08-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-mime-info.{c,h}: Add support methods required
+	  for hashing.
+	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-mime-application.{c,h},
+	  thunar-vfs/thunar-vfs-mime-database.{c,h}: Add initial MIME
+	  application support to the MIME database.
+	* thunar/thunar-launcher.{c,h}: Add ThunarLauncher class, which provides
+	  actions to launch files using appropriate MIME applications. The
+	  ThunarLauncher class will also be used by the desktop view.
+	* thunar/thunar-open-with-action.{c,h}: Add special action class
+	  ThunarOpenWithAction, which provides a GtkAction implementation, that
+	  - when used as menu - displays a submenu with all available MIME
+	  applications for a given file.
+	* thunar/thunar-window-ui.xml: Add a placeholder to include the launcher
+	  support in the "File" menu on the main menu bar.
+	* thunar/thunar-standard-view.c, thunar/thunar-standard-view-ui.xml,
+	  thunar/thunar-icon-view.c, thunar/thunar-details-view.c: Add file
+	  launcher support based on the new ThunarLauncher class.
+	* thunar/thunar-file.{c,h}: Add methods to handle lists of ThunarFile
+	  items easily.
+	* thunar/thunar-icon-factory.c(thunar_icon_factory_load_icon): Handle
+	  the case of passing a NULL or empty name properly.
+
 2005-08-07	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in, po/ja.po, THANKS: Add initial japanese translations,

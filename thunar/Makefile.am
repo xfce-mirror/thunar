@@ -46,6 +46,8 @@ Thunar_SOURCES =							\
 	thunar-icon-factory.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
+	thunar-launcher.c						\
+	thunar-launcher.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
 	thunar-local-file.c						\
@@ -62,6 +64,8 @@ Thunar_SOURCES =							\
 	thunar-location-entry.h						\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
+	thunar-open-with-action.c					\
+	thunar-open-with-action.h					\
 	thunar-path-entry.c						\
 	thunar-path-entry.h						\
 	thunar-preferences.c						\

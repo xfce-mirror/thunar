@@ -275,6 +275,52 @@ thunar_vfs_mime_info_get_subtype (const ThunarVfsMimeInfo *info)
 
 
 /**
+ * thunar_vfs_mime_info_hash:
+ * @info : a #ThunarVfsMimeInfo.
+ *
+ * Calculates a hash value for @info.
+ *
+ * Return value: a hash value for @info.
+ **/
+guint
+thunar_vfs_mime_info_hash (gconstpointer info)
+{
+  const gchar *p;
+  guint        h;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), 0);
+
+  for (h = THUNAR_VFS_MIME_INFO (info)->name[0], p = THUNAR_VFS_MIME_INFO (info)->name + 1; *p != '\0'; ++p)
+    h = (h << 5) - h + *p;
+
+  return h;
+}
+
+
+
+/**
+ * thunar_vfs_mime_info_equal:
+ * @a : a #ThunarVfsMimeInfo.
+ * @b : a #ThunarVfsMimeInfo.
+ *
+ * Compares @a and @b and returns %TRUE if both
+ * are equal. 
+ *
+ * Return value: %TRUE if @a and @b are equal.
+ **/
+gboolean
+thunar_vfs_mime_info_equal (gconstpointer a,
+                            gconstpointer b)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (a), FALSE);
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (b), FALSE);
+
+  return (a == b) || G_UNLIKELY (strcmp (THUNAR_VFS_MIME_INFO (a)->name, THUNAR_VFS_MIME_INFO (b)->name) == 0);
+}
+
+
+
+/**
  * thunar_vfs_mime_info_lookup_icon_name:
  * @info       : a #ThunarVfsMimeInfo.
  * @icon_theme : the #GtkIconTheme on which to perform the lookup.

@@ -1230,3 +1230,38 @@ thunar_file_is_hidden (ThunarFile *file)
 
 
 
+
+/**
+ * thunar_file_list_dup:
+ * @file_list : a list of #ThunarFile<!---->s.
+ *
+ * Returns a deep-copy of @file_list, which must be
+ * freed using #thunar_file_list_free().
+ *
+ * Return value: a deep copy of @file_list.
+ **/
+GList*
+thunar_file_list_dup (const GList *file_list)
+{
+  GList *list = g_list_copy ((GList *) file_list);
+  g_list_foreach (list, (GFunc) g_object_ref, NULL);
+  return list;
+}
+
+
+
+/**
+ * thunar_file_list_free:
+ * @file_list : a list of #ThunarFile<!---->s.
+ *
+ * Unrefs the #ThunarFile<!---->s contained in @file_list
+ * and frees the list itself.
+ **/
+void
+thunar_file_list_free (GList *file_list)
+{
+  g_list_foreach (file_list, (GFunc) g_object_unref, NULL);
+  g_list_free (file_list);
+}
+
+
