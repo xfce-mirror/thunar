@@ -1,5 +1,11 @@
 2005-08-10	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-mime-database.c: According to the specification
+	  the defaults.list may specify more than one desktop-id per MIME type,
+	  where the first available application should be used.
+
+2005-08-10	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-mime-info.{c,h}: Add support methods required
 	  for hashing.
 	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-mime-application.{c,h},

@@ -93,10 +93,9 @@ static void                      thunar_vfs_mime_database_store_changed         
                                                                                         ThunarVfsURI               *handle_uri,
                                                                                         ThunarVfsURI               *event_uri,
                                                                                         gpointer                    user_data);
-static void                      thunar_vfs_mime_database_store_update_defaults_list   (ThunarVfsMimeDatabase      *database,
-                                                                                        ThunarVfsMimeDesktopStore  *store);
-static void                      thunar_vfs_mime_database_store_update_mimeinfo_cache  (ThunarVfsMimeDatabase      *database,
-                                                                                        ThunarVfsMimeDesktopStore  *store);
+static void                      thunar_vfs_mime_database_store_parse_file             (ThunarVfsMimeDatabase      *database,
+                                                                                        ThunarVfsURI               *uri,
+                                                                                        GHashTable                 *table);
 
 
 
@@ -552,11 +551,11 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
       store->defaults_list = g_hash_table_new_full (thunar_vfs_mime_info_hash,
                                                     thunar_vfs_mime_info_equal,
                                                     thunar_vfs_mime_info_unref,
-                                                    g_free);
+                                                    (GDestroyNotify) g_strfreev);
       store->defaults_list_uri = thunar_vfs_uri_new_for_path (path);
       store->defaults_list_handle = thunar_vfs_monitor_add_file (database->monitor, store->defaults_list_uri,
                                                                  thunar_vfs_mime_database_store_changed, database);
-      thunar_vfs_mime_database_store_update_defaults_list (database, store);
+      thunar_vfs_mime_database_store_parse_file (database, store->defaults_list_uri, store->defaults_list);
       g_free (path);
 
       /* setup the mimeinfo.cache */
@@ -568,7 +567,7 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
       store->mimeinfo_cache_uri = thunar_vfs_uri_new_for_path (path);
       store->mimeinfo_cache_handle = thunar_vfs_monitor_add_file (database->monitor, store->mimeinfo_cache_uri,
                                                                   thunar_vfs_mime_database_store_changed, database);
-      thunar_vfs_mime_database_store_update_mimeinfo_cache (database, store);
+      thunar_vfs_mime_database_store_parse_file (database, store->mimeinfo_cache_uri, store->mimeinfo_cache);
       g_free (path);
     }
   g_strfreev (basedirs);
@@ -629,7 +628,7 @@ thunar_vfs_mime_database_store_changed (ThunarVfsMonitor       *monitor,
           g_hash_table_foreach_remove (store->defaults_list, (GHRFunc) exo_noop_true, NULL);
 
           /* reload the store's defaults.list */
-          thunar_vfs_mime_database_store_update_defaults_list (database, store);
+          thunar_vfs_mime_database_store_parse_file (database, store->defaults_list_uri, store->defaults_list);
 
           /* and now we're done */
           break;
@@ -645,7 +644,7 @@ thunar_vfs_mime_database_store_changed (ThunarVfsMonitor       *monitor,
           g_hash_table_foreach_remove (store->mimeinfo_cache, (GHRFunc) exo_noop_true, NULL);
 
           /* reload the store's mimeinfo.cache */
-          thunar_vfs_mime_database_store_update_mimeinfo_cache (database, store);
+          thunar_vfs_mime_database_store_parse_file (database, store->mimeinfo_cache_uri, store->mimeinfo_cache);
 
           /* and now we're done */
           break;
@@ -657,58 +656,9 @@ thunar_vfs_mime_database_store_changed (ThunarVfsMonitor       *monitor,
 
 
 static void
-thunar_vfs_mime_database_store_update_defaults_list (ThunarVfsMimeDatabase     *database,
-                                                     ThunarVfsMimeDesktopStore *store)
-{
-  ThunarVfsMimeInfo *info;
-  const gchar       *type;
-  const gchar       *id;
-  gchar              line[2048];
-  gchar             *lp;
-  FILE              *fp;
-
-  /* try to open the defaults.list */
-  fp = fopen (thunar_vfs_uri_get_path (store->defaults_list_uri), "r");
-  if (G_LIKELY (fp == NULL))
-    return;
-
-  /* process the file */
-  while (fgets (line, sizeof (line), fp) != NULL)
-    {
-      /* skip everything that doesn't look like a mime type line */
-      for (lp = line; g_ascii_isspace (*lp); ++lp) ;
-      if (G_UNLIKELY (*lp < 'a' || *lp > 'z'))
-        continue;
-
-      /* lookup the '=' */
-      for (type = lp++; *lp != '\0' && *lp != '='; ++lp) ;
-      if (G_UNLIKELY (*lp != '='))
-        continue;
-      *lp++ = '\0';
-
-      /* extract the application id */
-      for (id = lp; g_ascii_isgraph (*lp); ++lp) ;
-      if (G_UNLIKELY (id == lp))
-        continue;
-
-      /* lookup the mime info for the type */
-      info = thunar_vfs_mime_database_get_info_locked (database, type);
-      if (G_LIKELY (info != NULL))
-        {
-          /* add the association to the defaults list */
-          g_hash_table_insert (store->defaults_list, info, g_strdup (id));
-        }
-    }
-
-  /* close the file */
-  fclose (fp);
-}
-
-
-
-static void
-thunar_vfs_mime_database_store_update_mimeinfo_cache (ThunarVfsMimeDatabase     *database,
-                                                      ThunarVfsMimeDesktopStore *store)
+thunar_vfs_mime_database_store_parse_file (ThunarVfsMimeDatabase *database,
+                                           ThunarVfsURI          *uri,
+                                           GHashTable            *table)
 {
   ThunarVfsMimeInfo *info;
   const gchar       *type;
@@ -720,8 +670,8 @@ thunar_vfs_mime_database_store_update_mimeinfo_cache (ThunarVfsMimeDatabase     
   gint               n;
   gint               m;
 
-  /* try to open the mimeinfo.cache */
-  fp = fopen (thunar_vfs_uri_get_path (store->mimeinfo_cache_uri), "r");
+  /* try to open the file */
+  fp = fopen (thunar_vfs_uri_get_path (uri), "r");
   if (G_UNLIKELY (fp == NULL))
     return;
 
@@ -772,7 +722,7 @@ thunar_vfs_mime_database_store_update_mimeinfo_cache (ThunarVfsMimeDatabase     
         }
 
       /* insert the association for the desktop store */
-      g_hash_table_insert (store->mimeinfo_cache, info, id_list);
+      g_hash_table_insert (table, info, id_list);
     }
 
   /* close the file */
@@ -1109,7 +1059,7 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
 {
   ThunarVfsMimeDesktopStore *store;
   ThunarVfsMimeApplication  *application = NULL;
-  const gchar               *id;
+  const gchar              **id;
   guint                      n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
@@ -1120,8 +1070,12 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
   for (n = database->n_stores, store = database->stores; application == NULL && n-- > 0; ++store)
     {
       id = g_hash_table_lookup (store->defaults_list, info);
-      if (G_UNLIKELY (id != NULL))
-        application = thunar_vfs_mime_database_get_application_locked (database, id);
+      if (G_LIKELY (id == NULL))
+        continue;
+
+      /* test all applications (use first match) */
+      for (; application == NULL && *id != NULL; ++id)
+        application = thunar_vfs_mime_database_get_application_locked (database, *id);
     }
 
   g_mutex_unlock (database->lock);
