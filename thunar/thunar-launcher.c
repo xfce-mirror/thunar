@@ -43,25 +43,34 @@ enum
 
 
 
-static void thunar_launcher_class_init                (ThunarLauncherClass *klass);
-static void thunar_launcher_init                      (ThunarLauncher      *launcher);
-static void thunar_launcher_dispose                   (GObject             *object);
-static void thunar_launcher_finalize                  (GObject             *object);
-static void thunar_launcher_get_property              (GObject             *object,
-                                                       guint                prop_id,
-                                                       GValue              *value,
-                                                       GParamSpec          *pspec);
-static void thunar_launcher_set_property              (GObject             *object,
-                                                       guint                prop_id,
-                                                       const GValue        *value,
-                                                       GParamSpec          *pspec);
-static void thunar_launcher_open_new_windows          (ThunarLauncher      *launcher,
-                                                       GList               *directories);
-static void thunar_launcher_update                    (ThunarLauncher      *launcher);
-static void thunar_launcher_action_open               (GtkAction           *action,
-                                                       ThunarLauncher      *launcher);
-static void thunar_launcher_action_open_in_new_window (GtkAction           *action,
-                                                       ThunarLauncher      *launcher);
+static void thunar_launcher_class_init                (ThunarLauncherClass      *klass);
+static void thunar_launcher_init                      (ThunarLauncher           *launcher);
+static void thunar_launcher_dispose                   (GObject                  *object);
+static void thunar_launcher_finalize                  (GObject                  *object);
+static void thunar_launcher_get_property              (GObject                  *object,
+                                                       guint                     prop_id,
+                                                       GValue                   *value,
+                                                       GParamSpec               *pspec);
+static void thunar_launcher_set_property              (GObject                  *object,
+                                                       guint                     prop_id,
+                                                       const GValue             *value,
+                                                       GParamSpec               *pspec);
+static void thunar_launcher_open_uris                 (ThunarVfsMimeApplication *application,
+                                                       GList                    *uri_list,
+                                                       ThunarLauncher           *launcher);
+static void thunar_launcher_open_files                (ThunarLauncher           *launcher,
+                                                       GList                    *files);
+static void thunar_launcher_open_new_windows          (ThunarLauncher           *launcher,
+                                                       GList                    *directories);
+static void thunar_launcher_update                    (ThunarLauncher           *launcher);
+static void thunar_launcher_action_open               (GtkAction                *action,
+                                                       ThunarLauncher           *launcher);
+static void thunar_launcher_action_open_application   (GtkAction                *action,
+                                                       ThunarVfsMimeApplication *application,
+                                                       GList                    *uri_list,
+                                                       ThunarLauncher           *launcher);
+static void thunar_launcher_action_open_in_new_window (GtkAction                *action,
+                                                       ThunarLauncher           *launcher);
 
 
 
@@ -180,6 +189,7 @@ thunar_launcher_init (ThunarLauncher *launcher)
 
   /* the "Open with" action */
   launcher->action_open_with = thunar_open_with_action_new ("open-with", _("Open With"));
+  g_signal_connect (G_OBJECT (launcher->action_open_with), "open-application", G_CALLBACK (thunar_launcher_action_open_application), launcher);
 }
 
 
@@ -269,6 +279,127 @@ thunar_launcher_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_launcher_open_uris (ThunarVfsMimeApplication *application,
+                           GList                    *uri_list,
+                           ThunarLauncher           *launcher)
+{
+  GdkScreen *screen;
+  GtkWidget *window;
+  GtkWidget *message;
+  GError    *error = NULL;
+  gchar     *name;
+  gchar     *text;
+
+  /* determine the screen on which to launch the application */
+  screen = (launcher->widget != NULL) ? gtk_widget_get_screen (launcher->widget) : NULL;
+
+  /* try to execute the application with the given URIs */
+  if (!thunar_vfs_mime_application_exec (application, screen, uri_list, &error))
+    {
+      /* figure out the appropriate error message */
+      if (g_list_length (uri_list) == 1)
+        {
+          name = thunar_vfs_uri_get_display_name (uri_list->data);
+          text = g_strdup_printf (_("Unable to open \"%s\"."), name);
+          g_free (name);
+        }
+      else
+        {
+          text = g_strdup_printf (_("Unable to open %d files."), g_list_length (uri_list));
+        }
+
+      /* display an error dialog */
+      window = (launcher->widget != NULL) ? gtk_widget_get_toplevel (launcher->widget) : NULL;
+      message = gtk_message_dialog_new ((GtkWindow *) window, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", text);
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
+      gtk_dialog_run (GTK_DIALOG (message));
+      gtk_widget_destroy (message);
+      g_error_free (error);
+    }
+}
+
+
+
+static void
+thunar_launcher_open_files (ThunarLauncher *launcher,
+                            GList          *files)
+{
+  ThunarVfsMimeApplication *application;
+  ThunarVfsMimeDatabase    *database;
+  ThunarVfsMimeInfo        *info;
+  GHashTable               *applications;
+  GtkWidget                *window;
+  GtkWidget                *message;
+  GList                    *uri_list;
+  GList                    *lp;
+
+  /* allocate a hash table to associate applications to URIs */
+  applications = g_hash_table_new_full (thunar_vfs_mime_application_hash,
+                                        thunar_vfs_mime_application_equal,
+                                        thunar_vfs_mime_application_unref,
+                                        (GDestroyNotify) thunar_vfs_uri_list_free);
+
+  /* take a reference on the mime database */
+  database = thunar_vfs_mime_database_get ();
+
+  for (lp = files; lp != NULL; lp = lp->next)
+    {
+      /* determine the MIME type for the file */
+      info = thunar_file_get_mime_info (lp->data);
+      if (G_UNLIKELY (info == NULL))
+        continue;
+
+      /* determine the default application for the MIME type */
+      application = thunar_vfs_mime_database_get_default_application (database, info);
+      if (G_LIKELY (application != NULL))
+        {
+          /* check if we have that application already */
+          uri_list = g_hash_table_lookup (applications, application);
+          if (G_LIKELY (uri_list != NULL))
+            {
+              /* take a copy of the list as the old one will be dropped by the insert */
+              uri_list = thunar_vfs_uri_list_copy (uri_list);
+            }
+
+          /* append our new URI to the list */
+          uri_list = thunar_vfs_uri_list_append (uri_list, thunar_file_get_uri (lp->data));
+
+          /* (re)insert the URI list for the application */
+          g_hash_table_insert (applications, application, uri_list);
+        }
+      else
+        {
+          window = (launcher->widget != NULL) ? gtk_widget_get_toplevel (launcher->widget) : NULL;
+          message = gtk_message_dialog_new ((GtkWindow *) window, 
+                                            GTK_DIALOG_MODAL
+                                            | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            _("No application available to open \"%s\".\n"
+                                              "This will be fixed soon!"),
+                                            thunar_file_get_display_name (lp->data));
+          gtk_dialog_run (GTK_DIALOG (message));
+          gtk_widget_destroy (message);
+        }
+
+      /* cleanup */
+      thunar_vfs_mime_info_unref (info);
+    }
+
+  /* run all collected applications */
+  g_hash_table_foreach (applications, (GHFunc) thunar_launcher_open_uris, launcher);
+
+  /* release the reference on the mime database */
+  exo_object_unref (EXO_OBJECT (database));
+
+  /* drop the applications hash table */
+  g_hash_table_destroy (applications);
 }
 
 
@@ -417,8 +548,26 @@ thunar_launcher_action_open (GtkAction      *action,
   /* open the files */
   if (files != NULL)
     {
+      thunar_launcher_open_files (launcher, files);
       thunar_file_list_free (files);
     }
+}
+
+
+
+static void
+thunar_launcher_action_open_application (GtkAction                *action,
+                                         ThunarVfsMimeApplication *application,
+                                         GList                    *uri_list,
+                                         ThunarLauncher           *launcher)
+{
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  g_return_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application));
+
+  /* open the URIs (if any) using the given application */
+  if (G_LIKELY (uri_list != NULL))
+    thunar_launcher_open_uris (application, uri_list, launcher);
 }
 
 
@@ -436,7 +585,7 @@ thunar_launcher_action_open_in_new_window (GtkAction      *action,
   g_object_ref (G_OBJECT (launcher));
 
   /* open the directories */
-  directories = thunar_file_list_dup (launcher->selected_files);
+  directories = thunar_file_list_copy (launcher->selected_files);
   thunar_launcher_open_new_windows (launcher, directories);
   thunar_file_list_free (directories);
 
@@ -560,7 +709,7 @@ thunar_launcher_set_selected_files (ThunarLauncher *launcher,
     thunar_file_list_free (launcher->selected_files);
 
   /* activate the new selected files list */
-  launcher->selected_files = thunar_file_list_dup (selected_files);
+  launcher->selected_files = thunar_file_list_copy (selected_files);
 
   /* update the user interface */
   thunar_launcher_update (launcher);

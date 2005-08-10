@@ -1232,7 +1232,7 @@ thunar_file_is_hidden (ThunarFile *file)
 
 
 /**
- * thunar_file_list_dup:
+ * thunar_file_list_copy:
  * @file_list : a list of #ThunarFile<!---->s.
  *
  * Returns a deep-copy of @file_list, which must be
@@ -1241,7 +1241,7 @@ thunar_file_is_hidden (ThunarFile *file)
  * Return value: a deep copy of @file_list.
  **/
 GList*
-thunar_file_list_dup (const GList *file_list)
+thunar_file_list_copy (const GList *file_list)
 {
   GList *list = g_list_copy ((GList *) file_list);
   g_list_foreach (list, (GFunc) g_object_ref, NULL);

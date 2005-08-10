@@ -1,5 +1,24 @@
 2005-08-10	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-mime-database.c
+	  (thunar_vfs_mime_database_get_default_application): Fall back to the
+	  first available application if no explicit default application is
+	  set by the user.
+	* thunar/thunar-file.{c,h}, thunar/thunar-launcher.c: Rename
+	  thunar_file_list_dup() to thunar_file_list_copy() to get
+	  consistent naming.
+	* thunar-vfs/thunar-vfs-mime-application.{c,h}: Add support methods
+	  required for hashing.
+	* thunar-vfs/thunar-vfs-mime-application.{c,h}: Add methods to launch
+	  an application on a given list of URIs on a specific screen. Implement
+	  the Desktop Entry Specification 0.9.4, except for startup notification
+	  support, which will be added soon.
+	* thunar/thunar-launcher.c, thunar/thunar-open-with-action.c: Allow
+	  users to open files using the newly added ThunarVfsMimeApplication
+	  functionality.
+
+2005-08-10	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-mime-database.c: According to the specification
 	  the defaults.list may specify more than one desktop-id per MIME type,
 	  where the first available application should be used.

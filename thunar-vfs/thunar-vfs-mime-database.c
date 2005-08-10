@@ -1060,6 +1060,7 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
   ThunarVfsMimeDesktopStore *store;
   ThunarVfsMimeApplication  *application = NULL;
   const gchar              **id;
+  GList                     *applications;
   guint                      n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
@@ -1079,6 +1080,22 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
     }
 
   g_mutex_unlock (database->lock);
+
+  /* if we don't have a default application set, we simply
+   * use the first available application here.
+   */
+  if (G_LIKELY (application == NULL))
+    {
+      /* query all apps for this mime type */
+      applications = thunar_vfs_mime_database_get_applications (database, info);
+      if (G_LIKELY (applications != NULL))
+        {
+          /* use the first available application */
+          application = THUNAR_VFS_MIME_APPLICATION (applications->data);
+          g_list_foreach (applications->next, (GFunc) exo_object_unref, NULL);
+          g_list_free (applications);
+        }
+    }
 
   return application;
 }

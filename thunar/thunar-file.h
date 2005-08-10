@@ -188,7 +188,7 @@ gboolean           thunar_file_is_hidden        (ThunarFile             *file);
 #define thunar_file_is_root(file)       (thunar_vfs_uri_is_root (THUNAR_FILE_GET_CLASS ((file))->get_uri ((file))))
 
 
-GList             *thunar_file_list_dup         (const GList            *file_list);
+GList             *thunar_file_list_copy        (const GList            *file_list);
 void               thunar_file_list_free        (GList                  *file_list);
 
 G_END_DECLS;

@@ -21,9 +21,19 @@
 #ifndef __THUNAR_VFS_MIME_APPLICATION_H__
 #define __THUNAR_VFS_MIME_APPLICATION_H__
 
-#include <exo/exo.h>
+#include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
+
+#define THUNAR_VFS_MIME_APPLICATION_ERROR (thunar_vfs_mime_application_error_quark ())
+
+typedef enum
+{
+  THUNAR_VFS_MIME_APPLICATION_ERROR_LOCAL_FILES_ONLY,
+} ThunarVfsMimeApplicationError;
+
+GQuark thunar_vfs_mime_application_error_quark (void) G_GNUC_CONST;
+
 
 typedef struct _ThunarVfsMimeApplicationClass ThunarVfsMimeApplicationClass;
 typedef struct _ThunarVfsMimeApplication      ThunarVfsMimeApplication;
@@ -37,13 +47,30 @@ typedef struct _ThunarVfsMimeApplication      ThunarVfsMimeApplication;
 
 GType                     thunar_vfs_mime_application_get_type            (void) G_GNUC_CONST;
 
+#define                   thunar_vfs_mime_application_ref exo_object_ref
+#define                   thunar_vfs_mime_application_unref exo_object_unref
+
 ThunarVfsMimeApplication *thunar_vfs_mime_application_new_from_desktop_id (const gchar                    *desktop_id) EXO_GNUC_MALLOC;
 
 const gchar              *thunar_vfs_mime_application_get_desktop_id      (const ThunarVfsMimeApplication *application);
 const gchar              *thunar_vfs_mime_application_get_name            (const ThunarVfsMimeApplication *application);
 
+gboolean                  thunar_vfs_mime_application_exec                (const ThunarVfsMimeApplication *application,
+                                                                           GdkScreen                      *screen,
+                                                                           GList                          *uris,
+                                                                           GError                        **error);
+gboolean                  thunar_vfs_mime_application_exec_with_env       (const ThunarVfsMimeApplication *application,
+                                                                           GdkScreen                      *screen,
+                                                                           GList                          *uris,
+                                                                           gchar                         **envp,
+                                                                           GError                        **error);
+
 const gchar              *thunar_vfs_mime_application_lookup_icon_name    (const ThunarVfsMimeApplication *application,
                                                                            GtkIconTheme                   *icon_theme);
+
+guint                     thunar_vfs_mime_application_hash                (gconstpointer                   application);
+gboolean                  thunar_vfs_mime_application_equal               (gconstpointer                   a,
+                                                                           gconstpointer                   b);
 
 G_END_DECLS;
 
