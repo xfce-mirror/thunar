@@ -73,6 +73,8 @@ gboolean           thunar_vfs_mime_info_equal            (gconstpointer         
 const gchar       *thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo       *info,
                                                           GtkIconTheme            *icon_theme);
 
+void               thunar_vfs_mime_info_list_free        (GList                   *info_list);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_VFS_MIME_INFO_H__ */

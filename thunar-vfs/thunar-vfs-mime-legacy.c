@@ -63,6 +63,12 @@ static const gchar *thunar_vfs_mime_legacy_lookup_suffix          (ThunarVfsMime
                                                                    gboolean                  ignore_case);
 static const gchar *thunar_vfs_mime_legacy_lookup_glob            (ThunarVfsMimeProvider    *provider,
                                                                    const gchar              *filename);
+static const gchar *thunar_vfs_mime_legacy_lookup_alias           (ThunarVfsMimeProvider    *provider,
+                                                                   const gchar              *alias);
+static guint        thunar_vfs_mime_legacy_lookup_parents         (ThunarVfsMimeProvider    *provider,
+                                                                   const gchar              *mime_type,
+                                                                   gchar                   **parents,
+                                                                   guint                     max_parents);
 static GList       *thunar_vfs_mime_legacy_get_stop_characters    (ThunarVfsMimeProvider    *provider);
 static gsize        thunar_vfs_mime_legacy_get_max_buffer_extents (ThunarVfsMimeProvider    *provider);
 static gboolean     thunar_vfs_mime_legacy_parse_globs            (ThunarVfsMimeLegacy      *legacy,
@@ -154,6 +160,8 @@ thunar_vfs_mime_legacy_class_init (ThunarVfsMimeLegacyClass *klass)
   thunarvfs_mime_provider_class->lookup_literal = thunar_vfs_mime_legacy_lookup_literal;
   thunarvfs_mime_provider_class->lookup_suffix = thunar_vfs_mime_legacy_lookup_suffix;
   thunarvfs_mime_provider_class->lookup_glob = thunar_vfs_mime_legacy_lookup_glob;
+  thunarvfs_mime_provider_class->lookup_alias = thunar_vfs_mime_legacy_lookup_alias;
+  thunarvfs_mime_provider_class->lookup_parents = thunar_vfs_mime_legacy_lookup_parents;
   thunarvfs_mime_provider_class->get_stop_characters = thunar_vfs_mime_legacy_get_stop_characters;
   thunarvfs_mime_provider_class->get_max_buffer_extents = thunar_vfs_mime_legacy_get_max_buffer_extents;
 }
@@ -328,6 +336,26 @@ thunar_vfs_mime_legacy_lookup_glob (ThunarVfsMimeProvider *provider,
       return THUNAR_VFS_MIME_LEGACY_GLOB (lp->data)->mime_type;
 
   return NULL;
+}
+
+
+
+static const gchar*
+thunar_vfs_mime_legacy_lookup_alias (ThunarVfsMimeProvider *provider,
+                                     const gchar           *alias)
+{
+  return NULL;
+}
+
+
+
+static guint
+thunar_vfs_mime_legacy_lookup_parents (ThunarVfsMimeProvider *provider,
+                                       const gchar           *mime_type,
+                                       gchar                **parents,
+                                       guint                  max_parents)
+{
+  return 0;
 }
 
 

@@ -82,6 +82,12 @@ static const gchar *thunar_vfs_mime_cache_lookup_suffix          (ThunarVfsMimeP
                                                                   gboolean                 ignore_case);
 static const gchar *thunar_vfs_mime_cache_lookup_glob            (ThunarVfsMimeProvider   *provider,
                                                                   const gchar             *filename);
+static const gchar *thunar_vfs_mime_cache_lookup_alias           (ThunarVfsMimeProvider   *provider,
+                                                                  const gchar             *alias);
+static guint        thunar_vfs_mime_cache_lookup_parents         (ThunarVfsMimeProvider   *provider,
+                                                                  const gchar             *mime_type,
+                                                                  gchar                  **parents,
+                                                                  guint                    max_parents);
 static GList       *thunar_vfs_mime_cache_get_stop_characters    (ThunarVfsMimeProvider   *provider);
 static gsize        thunar_vfs_mime_cache_get_max_buffer_extents (ThunarVfsMimeProvider   *provider);
 
@@ -152,6 +158,8 @@ thunar_vfs_mime_cache_class_init (ThunarVfsMimeCacheClass *klass)
   thunarvfs_mime_provider_class->lookup_literal = thunar_vfs_mime_cache_lookup_literal;
   thunarvfs_mime_provider_class->lookup_suffix = thunar_vfs_mime_cache_lookup_suffix;
   thunarvfs_mime_provider_class->lookup_glob = thunar_vfs_mime_cache_lookup_glob;
+  thunarvfs_mime_provider_class->lookup_alias = thunar_vfs_mime_cache_lookup_alias;
+  thunarvfs_mime_provider_class->lookup_parents = thunar_vfs_mime_cache_lookup_parents;
   thunarvfs_mime_provider_class->get_stop_characters = thunar_vfs_mime_cache_get_stop_characters;
   thunarvfs_mime_provider_class->get_max_buffer_extents = thunar_vfs_mime_cache_get_max_buffer_extents;
 }
@@ -389,6 +397,63 @@ thunar_vfs_mime_cache_lookup_glob (ThunarVfsMimeProvider *provider,
       return buffer + CACHE_READ32 (buffer, list_offset + 4 + 8 * n + 4);
 
   return NULL;
+}
+
+
+
+static const gchar*
+thunar_vfs_mime_cache_lookup_alias (ThunarVfsMimeProvider *provider,
+                                    const gchar           *alias)
+{
+  const gchar *buffer = THUNAR_VFS_MIME_CACHE (provider)->buffer;
+  guint32      list_offset = CACHE_READ32 (buffer, 4);
+  gint         max;
+  gint         mid;
+  gint         min;
+  gint         n;
+
+  for (max = ((gint) CACHE_READ32 (buffer, list_offset)) - 1, min = 0; max >= min; )
+    {
+      mid = (min + max) / 2;
+
+      n = strcmp (buffer + CACHE_READ32 (buffer, list_offset + 4 + 8 * mid), alias);
+      if (n < 0)
+        min = mid + 1;
+      else if (n > 0)
+        max = mid - 1;
+      else
+        return buffer + CACHE_READ32 (buffer, list_offset + 4 + 8 * mid + 4);
+    }
+
+  return NULL;
+}
+
+
+
+static guint
+thunar_vfs_mime_cache_lookup_parents (ThunarVfsMimeProvider *provider,
+                                      const gchar           *mime_type,
+                                      gchar                **parents,
+                                      guint                  max_parents)
+{
+  const gchar *buffer = THUNAR_VFS_MIME_CACHE (provider)->buffer;
+  guint32      parents_offset;
+  guint32      list_offset = CACHE_READ32 (buffer, 8);
+  guint32      n_entries = CACHE_READ32 (buffer, list_offset);
+  guint32      n_parents;
+  guint32      i, j, l;
+
+  for (i = j = 0; i < n_entries && j < max_parents; ++i)
+    if (strcmp (buffer + CACHE_READ32 (buffer, list_offset + 4 + 8 * i), mime_type) == 0)
+      {
+        parents_offset = CACHE_READ32 (buffer, list_offset + 4 + 8 * i + 4);
+        n_parents = CACHE_READ32 (buffer, parents_offset);
+
+        for (l = 0; l < n_parents && j < max_parents; ++l, ++j)
+          parents[j] = (gchar *) (buffer + parents_offset + 4 + 4 * l);
+      }
+
+  return j;
 }
 
 

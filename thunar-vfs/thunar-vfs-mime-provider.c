@@ -78,9 +78,9 @@ thunar_vfs_mime_provider_class_init (ThunarVfsMimeProviderClass *klass)
   klass->lookup_literal = (gpointer) exo_noop_null;
   klass->lookup_suffix = (gpointer) exo_noop_null;
   klass->lookup_glob = (gpointer) exo_noop_null;
+  klass->lookup_alias = (gpointer) exo_noop_null;
+  klass->lookup_parents = (gpointer) exo_noop_zero;
   klass->get_stop_characters = (gpointer) exo_noop_null;
   klass->get_max_buffer_extents = (gpointer) exo_noop_zero;
 }
-
-
 

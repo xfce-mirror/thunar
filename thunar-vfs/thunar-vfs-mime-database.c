@@ -83,6 +83,8 @@ static ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_data_lock
                                                                                         gsize                       length);
 static ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_name_locked     (ThunarVfsMimeDatabase      *database,
                                                                                         const gchar                *name);
+static GList                    *thunar_vfs_mime_database_get_infos_for_info_locked    (ThunarVfsMimeDatabase      *database,
+                                                                                        ThunarVfsMimeInfo          *info);
 static void                      thunar_vfs_mime_database_initialize_providers         (ThunarVfsMimeDatabase      *database);
 static void                      thunar_vfs_mime_database_shutdown_providers           (ThunarVfsMimeDatabase      *database);
 static void                      thunar_vfs_mime_database_initialize_stores            (ThunarVfsMimeDatabase      *database);
@@ -429,6 +431,80 @@ thunar_vfs_mime_database_get_info_for_name_locked (ThunarVfsMimeDatabase *databa
     }
 
   return (type != NULL) ? thunar_vfs_mime_database_get_info_locked (database, type) : NULL;
+}
+
+
+
+static GList*
+thunar_vfs_mime_database_get_infos_for_info_locked (ThunarVfsMimeDatabase *database,
+                                                    ThunarVfsMimeInfo     *info)
+{
+  ThunarVfsMimeProvider *provider;
+  ThunarVfsMimeInfo     *parent_info;
+  const gchar           *name = thunar_vfs_mime_info_get_name (info);
+  const gchar           *type;
+  gchar                 *parents[128];
+  GList                 *infos;
+  GList                 *lp;
+  guint                  n, m;
+
+  /* the info itself is of course on the list */
+  infos = g_list_prepend (NULL, thunar_vfs_mime_info_ref (info));
+
+  /* check if the info is an alias */
+  for (lp = database->providers; lp != NULL; lp = lp->next)
+    {
+      provider = THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider;
+      if (G_LIKELY (provider != NULL))
+        {
+          type = thunar_vfs_mime_provider_lookup_alias (provider, name);
+          if (G_UNLIKELY (type != NULL && strcmp (name, type) != 0))
+            {
+              /* it is indeed an alias, so we use the unaliased type instead */
+              info = thunar_vfs_mime_database_get_info_locked (database, type);
+              name = thunar_vfs_mime_info_get_name (info);
+              infos = g_list_append (infos, info);
+            }
+        }
+    }
+
+  /* lookup all parents on every provider */
+  for (lp = database->providers; lp != NULL; lp = lp->next)
+    {
+      provider = THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider;
+      if (G_LIKELY (provider != NULL))
+        {
+          /* ask this provider for the parents list */
+          n = thunar_vfs_mime_provider_lookup_parents (provider, name, parents, G_N_ELEMENTS (parents));
+          if (G_UNLIKELY (n == 0))
+            continue;
+
+          /* process the parents */
+          for (m = 0; m < n; ++m)
+            {
+              /* append the type if we don't have it already */
+              parent_info = thunar_vfs_mime_database_get_info_locked (database, parents[m]);
+              if (G_LIKELY (g_list_find (infos, parent_info) == NULL))
+                infos = g_list_append (infos, parent_info);
+              else
+                thunar_vfs_mime_info_unref (parent_info);
+            }
+        }
+    }
+
+  /* all text/xxxx types are subtype of text/plain */
+  if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_media (info), "text") == 0))
+    {
+      /* append text/plain if we don't have it already */
+      if (g_list_find (infos, database->text_plain) == NULL)
+        infos = g_list_append (infos, thunar_vfs_mime_info_ref (database->text_plain));
+    }
+
+  /* everything is subtype of application/octet-stream */
+  if (g_list_find (infos, database->application_octet_stream) == NULL)
+    infos = g_list_append (infos, thunar_vfs_mime_info_ref (database->application_octet_stream));
+
+  return infos;
 }
 
 
@@ -880,9 +956,11 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
 {
   ThunarVfsMimeInfo *info;
   struct stat        stat;
+  const gchar       *p;
   gssize             nbytes;
   gchar             *basename;
   gchar             *buffer;
+  gchar             *type;
   gsize              buflen;
   gint               fd;
 
@@ -963,6 +1041,22 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
           close (fd);
         }
 
+      /* if we have exactly a dot and a non-empty extension, we
+       * can generate a 'application/x-extension-<EXT>' on the fly.
+       */
+      if (G_UNLIKELY (info == NULL))
+        {
+          p = strrchr (name, '.');
+          if (G_UNLIKELY (p != NULL && *++p != '\0'))
+            {
+              buffer = g_utf8_strdown (p, -1);
+              type = g_strconcat ("application/x-extension-", buffer, NULL);
+              info = thunar_vfs_mime_database_get_info (database, type);
+              g_free (buffer);
+              g_free (type);
+            }
+        }
+
       /* fallback to 'application/octet-stream' */
       if (G_UNLIKELY (info == NULL))
         info = exo_object_ref (database->application_octet_stream);
@@ -1001,6 +1095,8 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
   ThunarVfsMimeApplication  *application;
   const gchar              **id;
   GList                     *applications = NULL;
+  GList                     *infos;
+  GList                     *lp;
   guint                      n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
@@ -1008,30 +1104,37 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
 
   g_mutex_lock (database->lock);
 
-  for (n = database->n_stores, store = database->stores; n-- > 0; ++store)
+  infos = thunar_vfs_mime_database_get_infos_for_info_locked (database, info);
+  for (lp = infos; lp != NULL; lp = lp->next)
     {
-      /* lookup the application ids */
-      id = g_hash_table_lookup (store->mimeinfo_cache, info);
-      if (G_UNLIKELY (id == NULL))
-        continue;
-
-      /* merge the applications */
-      for (; *id != NULL; ++id)
+      for (n = database->n_stores, store = database->stores; n-- > 0; ++store)
         {
-          /* lookup the application for the id */
-          application = thunar_vfs_mime_database_get_application_locked (database, *id);
-          if (G_UNLIKELY (application == NULL))
+          /* lookup the application ids */
+          id = g_hash_table_lookup (store->mimeinfo_cache, lp->data);
+          if (G_UNLIKELY (id == NULL))
             continue;
 
-          /* merge the application */
-          if (g_list_find (applications, application) == NULL)
-            applications = g_list_append (applications, application);
-          else
-            exo_object_unref (EXO_OBJECT (application));
+          /* merge the applications */
+          for (; *id != NULL; ++id)
+            {
+              /* lookup the application for the id */
+              application = thunar_vfs_mime_database_get_application_locked (database, *id);
+              if (G_UNLIKELY (application == NULL))
+                continue;
+
+              /* merge the application */
+              if (g_list_find (applications, application) == NULL)
+                applications = g_list_append (applications, application);
+              else
+                exo_object_unref (EXO_OBJECT (application));
+            }
         }
     }
 
   g_mutex_unlock (database->lock);
+
+  /* free the temporary list of mime infos */
+  thunar_vfs_mime_info_list_free (infos);
 
   return applications;
 }
@@ -1061,6 +1164,8 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
   ThunarVfsMimeApplication  *application = NULL;
   const gchar              **id;
   GList                     *applications;
+  GList                     *infos;
+  GList                     *lp;
   guint                      n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
@@ -1068,18 +1173,25 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
 
   g_mutex_lock (database->lock);
 
-  for (n = database->n_stores, store = database->stores; application == NULL && n-- > 0; ++store)
+  infos = thunar_vfs_mime_database_get_infos_for_info_locked (database, info);
+  for (lp = infos; application == NULL && lp != NULL; lp = lp->next)
     {
-      id = g_hash_table_lookup (store->defaults_list, info);
-      if (G_LIKELY (id == NULL))
-        continue;
+      for (n = database->n_stores, store = database->stores; application == NULL && n-- > 0; ++store)
+        {
+          id = g_hash_table_lookup (store->defaults_list, lp->data);
+          if (G_LIKELY (id == NULL))
+            continue;
 
-      /* test all applications (use first match) */
-      for (; application == NULL && *id != NULL; ++id)
-        application = thunar_vfs_mime_database_get_application_locked (database, *id);
+          /* test all applications (use first match) */
+          for (; application == NULL && *id != NULL; ++id)
+            application = thunar_vfs_mime_database_get_application_locked (database, *id);
+        }
     }
 
   g_mutex_unlock (database->lock);
+
+  /* free the temporary list of mime infos */
+  thunar_vfs_mime_info_list_free (infos);
 
   /* if we don't have a default application set, we simply
    * use the first available application here.

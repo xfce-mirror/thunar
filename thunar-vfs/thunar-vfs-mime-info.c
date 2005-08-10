@@ -210,7 +210,13 @@ thunar_vfs_mime_info_get_comment (ThunarVfsMimeInfo *info)
         }
 
       if (G_UNLIKELY (info->comment == NULL))
-        info->comment = info->name;
+        {
+          /* we handle 'application/x-extension-<EXT>' special here */
+          if (G_UNLIKELY (strncmp (info->name, "application/x-extension-", 24) == 0))
+            info->comment = g_strdup_printf (_("%s document"), info->name + 24);
+          else
+            info->comment = info->name;
+        }
     }
 
   return info->comment;
@@ -403,6 +409,20 @@ thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
 }
 
 
+
+/**
+ * thunar_vfs_mime_info_list_free:
+ * @info_list : a #GList of #ThunarVfsMimeInfo<!---->s
+ *
+ * Frees the list and all #ThunarVfsMimeInfo<!---->s
+ * contained within the list.
+ **/
+void
+thunar_vfs_mime_info_list_free (GList *info_list)
+{
+  g_list_foreach (info_list, (GFunc) thunar_vfs_mime_info_unref, NULL);
+  g_list_free (info_list);
+}
 
 
 

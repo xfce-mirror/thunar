@@ -39,21 +39,29 @@ struct _ThunarVfsMimeProviderClass
 {
   ExoObjectClass __parent__;
 
-  const gchar           *(*lookup_data)             (ThunarVfsMimeProvider *provider,
-                                                     gconstpointer          data,
-                                                     gsize                  length,
-                                                     gint                  *priority);
+  const gchar *(*lookup_data)             (ThunarVfsMimeProvider *provider,
+                                           gconstpointer          data,
+                                           gsize                  length,
+                                           gint                  *priority);
 
-  const gchar           *(*lookup_literal)          (ThunarVfsMimeProvider *provider,
-                                                     const gchar           *filename);
-  const gchar           *(*lookup_suffix)           (ThunarVfsMimeProvider *provider,
-                                                     const gchar           *suffix,
-                                                     gboolean               ignore_case);
-  const gchar           *(*lookup_glob)             (ThunarVfsMimeProvider *provider,
-                                                     const gchar           *filename);
+  const gchar *(*lookup_literal)          (ThunarVfsMimeProvider *provider,
+                                           const gchar           *filename);
+  const gchar *(*lookup_suffix)           (ThunarVfsMimeProvider *provider,
+                                           const gchar           *suffix,
+                                           gboolean               ignore_case);
+  const gchar *(*lookup_glob)             (ThunarVfsMimeProvider *provider,
+                                           const gchar           *filename);
 
-  GList                 *(*get_stop_characters)     (ThunarVfsMimeProvider *provider);
-  gsize                  (*get_max_buffer_extents)  (ThunarVfsMimeProvider *provider);
+  const gchar *(*lookup_alias)            (ThunarVfsMimeProvider *provider,
+                                           const gchar           *alias);
+
+  guint        (*lookup_parents)          (ThunarVfsMimeProvider *provider,
+                                           const gchar           *mime_type,
+                                           gchar                **parents,
+                                           guint                  max_parents);
+
+  GList       *(*get_stop_characters)     (ThunarVfsMimeProvider *provider);
+  gsize        (*get_max_buffer_extents)  (ThunarVfsMimeProvider *provider);
 };
 
 struct _ThunarVfsMimeProvider
@@ -109,6 +117,34 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  **/
 #define thunar_vfs_mime_provider_lookup_glob(provider, filename) \
   ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_glob) ((provider), (filename)))
+
+/**
+ * thunar_vfs_mime_provider_lookup_alias:
+ * @provider : a #ThunarVfsMimeProvider.
+ * @alias    : a valid mime type.
+ *
+ * Unaliases the @alias using the alias table found in @provider.
+ *
+ * Return value: the unaliased mime type or %NULL if @alias
+ *               is not a valid mime type alias.
+ */
+#define thunar_vfs_mime_provider_lookup_alias(provider, alias) \
+  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_alias) ((provider), (alias)))
+
+/**
+ * thunar_vfs_mime_provider_lookup_parents:
+ * @provider    : a #ThunarVfsMimeProvider.
+ * @mime_type   : a valid mime type.
+ * @parents     : buffer to store the parents to.
+ * @max_parents : the maximum number of parents that should be stored to @parents.
+ *
+ * Looks up up to @max_parents parent types of @mime_type in @provider and
+ * stores them to @parents. Returns the list of mime parents.
+ *
+ * Return value: the list of mime parents.
+ **/
+#define thunar_vfs_mime_provider_lookup_parents(provider, mime_type, parents, max_parents) \
+  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_parents) ((provider), (mime_type), (parents), (max_parents)))
 
 /**
  * thunar_vfs_mime_provider_get_stop_characters:

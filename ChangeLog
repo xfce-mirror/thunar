@@ -1,5 +1,24 @@
 2005-08-10	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in: Bump version to 0.1.1.
+	* thunar-vfs/thunar-vfs-mime-info.h: Add list handling method
+	  thunar_vfs_mime_info_list_free().
+	* thunar-vfs/thunar-vfs-mime-info.c(thunar_vfs_mime_info_get_comment):
+	  Automatically generate a comment for 'application/x-extension-<EXT>'
+	  types if no comment is found on the disk.
+	* thunar-vfs/thunar-vfs-mime-database.c
+	  (thunar_vfs_mime_database_get_info_for_file): Automatically generate
+	  an 'application/x-extension-<EXT>' type on the fly if all other
+	  checks fail and the file name has an extension.
+	* thunar-vfs/thunar-vfs-mime-cache.c,
+	  thunar-vfs/thunar-vfs-mime-legacy.c,
+	  thunar-vfs/thunar-vfs-mime-database.c,
+	  thunar-vfs/thunar-vfs-mime-provider.{c,h}: Add provider methods to
+	  unalias mime types and to determine the parents of a given mime
+	  type. Use these information to query additional MIME applications.
+
+2005-08-10	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-mime-database.c
 	  (thunar_vfs_mime_database_get_default_application): Fall back to the
 	  first available application if no explicit default application is
