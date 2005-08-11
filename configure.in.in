@@ -50,6 +50,7 @@ dnl ********************************
 AC_PROG_CC()
 AC_PROG_LD()
 AC_PROG_INSTALL()
+AC_PROG_INTLTOOL()
 AC_CHECK_PROGS([PERL], [perl5 perl])
 
 dnl **************************
@@ -129,26 +130,31 @@ dnl *** Check for optional packages ***
 dnl ***********************************
 XDT_CHECK_OPTIONAL_PACKAGE([CAIRO], [cairo], [0.5], [cairo], [Cairo])
 
-dnl *********************
-dnl *** Check for FAM ***
-dnl *********************
+dnl ***************************
+dnl *** Check for Gamin/FAM ***
+dnl ***************************
 LIBFAM_CFLAGS=""
 LIBFAM_LIBS=""
-AC_CHECK_HEADERS([fam.h],
+have_libfam=no
+XDT_CHECK_PACKAGE([LIBFAM], [gamin], [0.1.0], [have_libfam=yes],
 [
-  AC_CHECK_LIB([fam], [FAMOpen],
+  dnl Fallback to a generic FAM check
+  AC_CHECK_HEADERS([fam.h],
   [
-    dnl Nice, we can use FAM
-    AC_DEFINE([HAVE_LIBFAM], [1], [Define if the File Alteration Monitor is available])
-    LIBFAM_LIBS="-lfam"
-
-    dnl Check for FAMNoExists (gamin only)
-    save_LIBS="$LIBS"
-    LIBS="$LIBS $LIBFAM_LIBS"
-    AC_CHECK_FUNCS([FAMNoExists])
-    LIBS="$save_LIBS"
+    AC_CHECK_LIB([fam], [FAMOpen], [have_libfam="yes" LIBFAM_LIBS="-lfam"])
   ])
 ])
+if test x"$have_libfam" = x"yes"; then
+  dnl Define appropriate symbols
+  AC_DEFINE([HAVE_FAM_H], [1], [Define to 1 if you have the <fam.h> header file.])
+  AC_DEFINE([HAVE_LIBFAM], [1], [Define to 1 if the File Alteration Monitor is available.])
+
+  dnl Check for FAMNoExists (currently Gamin only)
+  save_LIBS="$LIBS"
+  LIBS="$LIBS $LIBFAM_LIBS"
+  AC_CHECK_FUNCS([FAMNoExists])
+  LIBS="$save_LIBS"
+fi
 AC_SUBST([LIBFAM_CFLAGS])
 AC_SUBST([LIBFAM_LIBS])
 

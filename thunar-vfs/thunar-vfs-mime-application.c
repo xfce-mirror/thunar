@@ -352,9 +352,7 @@ thunar_vfs_mime_application_new_from_desktop_id (const gchar *desktop_id)
   /* parse the file */
   xfce_rc_set_group (rc, "Desktop Entry");
   exec = xfce_rc_read_entry (rc, "Exec", NULL);
-  name = xfce_rc_read_entry (rc, "GenericName", NULL);
-  if (G_UNLIKELY (name == NULL))
-    name = xfce_rc_read_entry (rc, "Name", NULL);
+  name = xfce_rc_read_entry (rc, "Name", NULL);
   icon = xfce_rc_read_entry (rc, "Icon", NULL);
 
   /* generate the application object */
@@ -367,8 +365,8 @@ thunar_vfs_mime_application_new_from_desktop_id (const gchar *desktop_id)
       application->name = g_strdup (name);
       application->icon = g_strdup (icon);
 
-      /* we assume %f if the application hasn't set anything else, as that's also what
-       * KDE and Gnome do in this case.
+      /* we assume %f if the application hasn't set anything else,
+       * as that's also what KDE and Gnome do in this case.
        */
       if (strstr (exec, "%f") == NULL && strstr (exec, "%F") == NULL && strstr (exec, "%u") == NULL && strstr (exec, "%U") == NULL)
         application->exec = g_strconcat (exec, " %f", NULL);
