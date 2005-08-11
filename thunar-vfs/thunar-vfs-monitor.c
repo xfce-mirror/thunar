@@ -35,6 +35,7 @@
 #include <gdk/gdk.h>
 
 #include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -282,7 +283,7 @@ error:
 
 
 /**
- * thunar_vfs_monitor_get:
+ * thunar_vfs_monitor_get_default:
  *
  * Returns the shared #ThunarVfsMonitor instance. The caller
  * is responsible to call #g_object_unref() on the returned
@@ -292,7 +293,7 @@ error:
  *               instance.
  **/
 ThunarVfsMonitor*
-thunar_vfs_monitor_get (void)
+thunar_vfs_monitor_get_default (void)
 {
   static ThunarVfsMonitor *monitor = NULL;
 
@@ -530,4 +531,5 @@ thunar_vfs_monitor_feed (ThunarVfsMonitor     *monitor,
 
 
 
-
+#define __THUNAR_VFS_MONITOR_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

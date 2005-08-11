@@ -30,7 +30,7 @@ typedef struct _ThunarVfsTrashInfo ThunarVfsTrashInfo;
 
 GType               thunar_vfs_trash_info_get_type          (void) G_GNUC_CONST;
 
-ThunarVfsTrashInfo *thunar_vfs_trash_info_copy              (const ThunarVfsTrashInfo *info);
+ThunarVfsTrashInfo *thunar_vfs_trash_info_copy              (const ThunarVfsTrashInfo *info) G_GNUC_MALLOC;
 void                thunar_vfs_trash_info_free              (ThunarVfsTrashInfo       *info);
 
 const gchar        *thunar_vfs_trash_info_get_path          (const ThunarVfsTrashInfo *info);

@@ -25,19 +25,19 @@ test_thunar_vfs_uri_SOURCES =						\
 	test-thunar-vfs-uri.c
 
 test_thunar_vfs_uri_DEPENDENCIES =					\
-	$(top_builddir)/thunar-vfs/libthunar-vfs.la
+	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
 
 test_thunar_vfs_uri_LDADD =						\
-	$(top_builddir)/thunar-vfs/libthunar-vfs.la
+	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
 
 test_thunar_vfs_volume_bsd_SOURCES =					\
 	test-thunar-vfs-volume-bsd.c
 
 test_thunar_vfs_volume_bsd_DEPENDENCIES =				\
-	$(top_builddir)/thunar-vfs/libthunar-vfs.la
+	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
 
 test_thunar_vfs_volume_bsd_LDADD =					\
-	$(top_builddir)/thunar-vfs/libthunar-vfs.la
+	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
 
 clean-local:
 	rm -f *.core core core.*

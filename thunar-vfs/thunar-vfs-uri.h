@@ -73,8 +73,8 @@ gboolean           thunar_vfs_uri_is_home           (const ThunarVfsURI     *uri
 gboolean           thunar_vfs_uri_is_local          (const ThunarVfsURI     *uri);
 gboolean           thunar_vfs_uri_is_root           (const ThunarVfsURI     *uri);
 
-gchar             *thunar_vfs_uri_get_display_name  (const ThunarVfsURI     *uri);
-gchar             *thunar_vfs_uri_get_md5sum        (const ThunarVfsURI     *uri);
+gchar             *thunar_vfs_uri_get_display_name  (const ThunarVfsURI     *uri) G_GNUC_MALLOC;
+gchar             *thunar_vfs_uri_get_md5sum        (const ThunarVfsURI     *uri) G_GNUC_MALLOC;
 const gchar       *thunar_vfs_uri_get_host          (const ThunarVfsURI     *uri);
 const gchar       *thunar_vfs_uri_get_name          (const ThunarVfsURI     *uri);
 const gchar       *thunar_vfs_uri_get_path          (const ThunarVfsURI     *uri);
@@ -85,7 +85,7 @@ ThunarVfsURI      *thunar_vfs_uri_relative          (const ThunarVfsURI     *uri
                                                      const gchar            *name) G_GNUC_MALLOC;
 
 gchar             *thunar_vfs_uri_to_string         (const ThunarVfsURI     *uri,
-                                                     ThunarVfsURIHideOptions hide_options);
+                                                     ThunarVfsURIHideOptions hide_options) G_GNUC_MALLOC;
 
 guint              thunar_vfs_uri_hash              (gconstpointer           uri);
 gboolean           thunar_vfs_uri_equal             (gconstpointer           a,
@@ -114,10 +114,10 @@ gboolean           thunar_vfs_uri_equal             (gconstpointer           a,
 
 
 GList             *thunar_vfs_uri_list_from_string  (const gchar            *string,
-                                                     GError                **error);
+                                                     GError                **error) G_GNUC_MALLOC;
 gchar             *thunar_vfs_uri_list_to_string    (GList                  *uri_list,
-                                                     ThunarVfsURIHideOptions hide_options);
-GList             *thunar_vfs_uri_list_copy         (GList                  *uri_list);
+                                                     ThunarVfsURIHideOptions hide_options) G_GNUC_MALLOC;
+GList             *thunar_vfs_uri_list_copy         (GList                  *uri_list) G_GNUC_MALLOC;
 void               thunar_vfs_uri_list_free         (GList                  *uri_list);
 
 #define thunar_vfs_uri_list_append(uri_list, uri) \

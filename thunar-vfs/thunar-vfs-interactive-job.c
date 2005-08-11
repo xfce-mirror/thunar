@@ -29,6 +29,7 @@
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
 #include <thunar-vfs/thunar-vfs-marshal.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -367,3 +368,7 @@ thunar_vfs_interactive_job_skip (ThunarVfsInteractiveJob *interactive_job,
     }
 }
 
+
+
+#define __THUNAR_VFS_INTERACTIVE_JOB_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

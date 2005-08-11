@@ -9,6 +9,8 @@ dnl
 dnl ***************************
 dnl *** Version information ***
 dnl ***************************
+m4_define([thunar_verinfo], [0:0:0])
+m4_define([thunar_version_api], [1])
 m4_define([thunar_version_major], [0])
 m4_define([thunar_version_minor], [1])
 m4_define([thunar_version_micro], [1])
@@ -48,7 +50,21 @@ dnl ********************************
 AC_PROG_CC()
 AC_PROG_LD()
 AC_PROG_INSTALL()
+AC_CHECK_PROGS([PERL], [perl5 perl])
+
+dnl **************************
+dnl *** Initialize libtool ***
+dnl **************************
+AC_DISABLE_STATIC()
 AC_PROG_LIBTOOL()
+
+dnl **************************************
+dnl *** Substitute version information ***
+dnl **************************************
+THUNAR_VERINFO=thunar_verinfo()
+THUNAR_VERSION_API=thunar_version_api()
+AC_SUBST([THUNAR_VERINFO])
+AC_SUBST([THUNAR_VERSION_API])
 
 dnl **********************************
 dnl *** Check for standard headers ***
@@ -183,6 +199,46 @@ else
   esac
 fi
 
+dnl ****************************************
+dnl *** Check for ELF visibility support ***
+dnl ****************************************
+AC_ARG_ENABLE([visibility], AC_HELP_STRING([--disable-visibility], [Don't use ELF visibility attributes]), [], [enable_visibility=yes])
+have_gnuc_visibility=no
+if test x"$enable_visibility" != x"no"; then
+  dnl Check whether the compiler supports the visibility attribute
+  AC_MSG_CHECKING([whether $CC supports the GNUC visibility attribute])
+  AC_COMPILE_IFELSE(AC_LANG_SOURCE(
+  [
+    void __attribute__ ((visibility("default"))) test_default (void) {}
+    void __attribute__ ((visibility("hidden"))) test_hidden (void) {}
+    int main (int argc, char **argv) { test_default (); test_hidden (); return 0; }
+  ]),
+  [
+    AC_MSG_RESULT([yes])
+    dnl Check if the compiler supports -fvisibility=hidden
+    save_CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -fvisibility=hidden"
+    AC_MSG_CHECKING([whether $CC accepts -fvisibility=hidden])
+    AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]),
+    [
+      have_gnuc_visibility=yes
+      AC_MSG_RESULT([yes])
+    ],
+    [
+      AC_MSG_RESULT([no])
+    ])
+    CFLAGS="$save_CFLAGS"
+  ],
+  [
+    AC_MSG_RESULT([no])
+  ])
+fi
+if test x"$have_gnuc_visibility" = x"yes"; then
+  CFLAGS="$CFLAGS -fvisibility=hidden"
+  CPPFLAGS="$CPPFLAGS -DHAVE_GNUC_VISIBILITY"
+fi
+AM_CONDITIONAL([HAVE_GNUC_VISIBILITY], [test x"$have_gnuc_visibility" = x"yes"])
+
 AC_OUTPUT([
 Makefile
 docs/Makefile
@@ -193,5 +249,6 @@ tests/Makefile
 tests/data/Makefile
 thunar/Makefile
 thunar-vfs/Makefile
+thunar-vfs/thunar-vfs-1.pc
 thunarx/Makefile
 ])

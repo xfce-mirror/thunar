@@ -221,7 +221,14 @@ thunar_trash_folder_get_uri (ThunarFile *file)
 static ThunarVfsMimeInfo*
 thunar_trash_folder_get_mime_info (ThunarFile *file)
 {
-  return thunar_vfs_mime_info_get ("inode/directory");
+  ThunarVfsMimeDatabase *database;
+  ThunarVfsMimeInfo     *info;
+
+  database = thunar_vfs_mime_database_get_default ();
+  info = thunar_vfs_mime_database_get_info (database, "inode/directory");
+  exo_object_unref (EXO_OBJECT (database));
+
+  return info;
 }
 
 

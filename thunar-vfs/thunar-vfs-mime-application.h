@@ -50,7 +50,7 @@ GType                     thunar_vfs_mime_application_get_type            (void)
 #define                   thunar_vfs_mime_application_ref exo_object_ref
 #define                   thunar_vfs_mime_application_unref exo_object_unref
 
-ThunarVfsMimeApplication *thunar_vfs_mime_application_new_from_desktop_id (const gchar                    *desktop_id) EXO_GNUC_MALLOC;
+ThunarVfsMimeApplication *thunar_vfs_mime_application_new_from_desktop_id (const gchar                    *desktop_id) G_GNUC_MALLOC;
 
 const gchar              *thunar_vfs_mime_application_get_desktop_id      (const ThunarVfsMimeApplication *application);
 const gchar              *thunar_vfs_mime_application_get_name            (const ThunarVfsMimeApplication *application);

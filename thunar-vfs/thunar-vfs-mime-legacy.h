@@ -37,7 +37,7 @@ typedef struct _ThunarVfsMimeLegacy      ThunarVfsMimeLegacy;
 
 GType                  thunar_vfs_mime_legacy_get_type (void) G_GNUC_CONST;
 
-ThunarVfsMimeProvider *thunar_vfs_mime_legacy_new      (const gchar *directory) EXO_GNUC_MALLOC;
+ThunarVfsMimeProvider *thunar_vfs_mime_legacy_new      (const gchar *directory) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

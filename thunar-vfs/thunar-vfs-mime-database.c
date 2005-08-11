@@ -52,6 +52,7 @@
 #include <thunar-vfs/thunar-vfs-mime-database.h>
 #include <thunar-vfs/thunar-vfs-mime-legacy.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
@@ -176,7 +177,7 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
   database->lock = g_mutex_new ();
 
   /* acquire a reference on the file alteration monitor */
-  database->monitor = thunar_vfs_monitor_get ();
+  database->monitor = thunar_vfs_monitor_get_default ();
 
   /* allocate the hash table for the mime infos */
   database->infos = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, exo_object_unref);
@@ -808,7 +809,7 @@ thunar_vfs_mime_database_store_parse_file (ThunarVfsMimeDatabase *database,
 
 
 /**
- * thunar_vfs_mime_database_get:
+ * thunar_vfs_mime_database_get_default:
  *
  * Returns a reference on the shared #ThunarVfsMimeDatabase
  * instance. The caller is responsible to call #exo_object_unref()
@@ -817,7 +818,7 @@ thunar_vfs_mime_database_store_parse_file (ThunarVfsMimeDatabase *database,
  * Return value: the shared #ThunarVfsMimeDatabase.
  **/
 ThunarVfsMimeDatabase*
-thunar_vfs_mime_database_get (void)
+thunar_vfs_mime_database_get_default (void)
 {
   if (G_UNLIKELY (thunar_vfs_mime_database_shared_instance == NULL))
     thunar_vfs_mime_database_shared_instance = exo_object_new (THUNAR_VFS_TYPE_MIME_DATABASE);
@@ -1213,3 +1214,6 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
 }
 
 
+
+#define __THUNAR_VFS_MIME_DATABASE_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

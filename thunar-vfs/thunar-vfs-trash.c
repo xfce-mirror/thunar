@@ -47,6 +47,7 @@
 #include <exo/exo.h>
 
 #include <thunar-vfs/thunar-vfs-trash.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 /* we use g_stat() if possible */
 #if GLIB_CHECK_VERSION(2,6,0)
@@ -928,3 +929,6 @@ thunar_vfs_trash_manager_resolve_uri (ThunarVfsTrashManager *manager,
 }
 
 
+
+#define __THUNAR_VFS_TRASH_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

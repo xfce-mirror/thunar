@@ -346,7 +346,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
                                         (GDestroyNotify) thunar_vfs_uri_list_free);
 
   /* take a reference on the mime database */
-  database = thunar_vfs_mime_database_get ();
+  database = thunar_vfs_mime_database_get_default ();
 
   for (lp = files; lp != NULL; lp = lp->next)
     {

@@ -103,11 +103,11 @@ Thunar_LDFLAGS =							\
 	$(GTHREAD_LIBS)
 
 Thunar_LDADD =								\
-	$(top_builddir)/thunar-vfs/libthunar-vfs.la			\
+	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
 	$(top_builddir)/thunarx/libthunarx.la
 
 Thunar_DEPENDENCIES =							\
-	$(top_builddir)/thunar-vfs/libthunar-vfs.la			\
+	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
 	$(top_builddir)/thunarx/libthunarx.la
 
 # install symlink to 'thunar'

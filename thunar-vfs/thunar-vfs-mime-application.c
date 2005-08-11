@@ -30,6 +30,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-mime-application.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -614,3 +615,7 @@ thunar_vfs_mime_application_equal (gconstpointer a,
   return (strcmp (THUNAR_VFS_MIME_APPLICATION (a)->desktop_id, THUNAR_VFS_MIME_APPLICATION (b)->desktop_id) == 0);
 }
 
+
+
+#define __THUNAR_VFS_MIME_APPLICATION_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

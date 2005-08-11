@@ -1,5 +1,22 @@
 2005-08-10	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-jobs.{c,h}, thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs.{c,h}: Merge thunar-vfs-jobs.[ch] into
+	  thunar-vfs.[ch].
+	* thunar-vfs/thunar-vfs-mime-database.c, thunar/thunar-local-folder.c,
+	  thunar-vfs/thunar-vfs-monitor.{c,h}, thunar/thunar-local-file.c:
+	  Rename thunar_vfs_monitor_get() to thunar_vfs_monitor_get_default().
+	* thunar-vfs/thunar-vfs-mime-database.{c,h},
+	  thunar-vfs/thunar-vfs-mime.c, thunar-vfs/thunar-vfs-info.c,
+	  thunar/thunar-launcher.c, thunar/thunar-open-with-action.c,
+	  thunar/thunar-trash-folder.c: Rename thunar_vfs_mime_database_get()
+	  to thunar_vfs_mime_database_get_default().
+	* thunar-vfs/, thunar/Makefile.am, tests/Makefile.am, configure.in.in:
+	  Turn libthunar-vfs into a shared library, so we can use it in other
+	  applications/plugins as well.
+
+2005-08-10	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Bump version to 0.1.1.
 	* thunar-vfs/thunar-vfs-mime-info.h: Add list handling method
 	  thunar_vfs_mime_info_list_free().

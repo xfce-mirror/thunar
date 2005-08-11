@@ -46,6 +46,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-user.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -938,3 +939,8 @@ thunar_vfs_user_manager_get_user_by_id (ThunarVfsUserManager *manager,
 
   return user;
 }
+
+
+
+#define __THUNAR_VFS_USER_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

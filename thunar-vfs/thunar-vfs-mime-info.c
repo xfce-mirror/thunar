@@ -31,6 +31,7 @@
 
 #include <thunar-vfs/thunar-vfs-mime-info.h>
 #include <thunar-vfs/thunar-vfs-mime-parser.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -426,3 +427,5 @@ thunar_vfs_mime_info_list_free (GList *info_list)
 
 
 
+#define __THUNAR_VFS_MIME_INFO_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

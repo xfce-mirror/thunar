@@ -6,20 +6,13 @@ INCLUDES =								\
 	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"thunar-vfs\"
 
-noinst_LTLIBRARIES =							\
-	libthunar-vfs.la
-
-libthunar_vfs_built_sources =						\
-	thunar-vfs-enum-types.c						\
-	thunar-vfs-enum-types.h						\
-	thunar-vfs-marshal.c						\
-	thunar-vfs-marshal.h
+lib_LTLIBRARIES =							\
+	libthunar-vfs-1.la
 
 libthunar_vfs_headers =							\
 	thunar-vfs-info.h						\
 	thunar-vfs-interactive-job.h					\
 	thunar-vfs-job.h						\
-	thunar-vfs-jobs.h						\
 	thunar-vfs-mime.h						\
 	thunar-vfs-mime-application.h					\
 	thunar-vfs-mime-database.h					\
@@ -29,16 +22,32 @@ libthunar_vfs_headers =							\
 	thunar-vfs-user.h						\
 	thunar-vfs-util.h						\
 	thunar-vfs-uri.h						\
-	thunar-vfs-volume.h						\
+	thunar-vfs-volume.h
+
+libthunar_vfs_public_built_sources =					\
+	thunar-vfs-enum-types.h
+
+libthunar_vfs_built_sources =						\
+	$(libthunar_vfs_public_built_sources)				\
+	thunar-vfs-alias.h						\
+	thunar-vfs-aliasdef.c						\
+	thunar-vfs-enum-types.c						\
+	thunar-vfs-marshal.c						\
+	thunar-vfs-marshal.h
+
+libthunar_vfs_includedir = 						\
+	$(includedir)/thunar-vfs-$(THUNAR_VERSION_API)/thunar-vfs
+libthunar_vfs_include_HEADERS =						\
+	$(libthunar_vfs_headers)					\
+	$(libthunar_vfs_public_built_sources)				\
 	thunar-vfs.h
 
-libthunar_vfs_la_SOURCES =						\
+libthunar_vfs_1_la_SOURCES =						\
 	$(libthunar_vfs_built_sources)					\
 	$(libthunar_vfs_headers)					\
 	thunar-vfs-info.c						\
 	thunar-vfs-interactive-job.c					\
 	thunar-vfs-job.c						\
-	thunar-vfs-jobs.c						\
 	thunar-vfs-listdir-job.c					\
 	thunar-vfs-listdir-job.h					\
 	thunar-vfs-mime.c						\
@@ -69,20 +78,30 @@ libthunar_vfs_la_SOURCES =						\
 	thunar-vfs-volume-impl.h					\
 	thunar-vfs.c
 
-libthunar_vfs_la_CFLAGS =						\
+libthunar_vfs_1_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
 	$(LIBFAM_CFLAGS)
 
-libthunar_vfs_la_LDFLAGS =						\
-	-no-undefined
+libthunar_vfs_1_la_LDFLAGS =						\
+	-export-dynamic							\
+	-export-symbols-regex "^[^_].*"					\
+	-version-info $(THUNAR_VERINFO)
 
-libthunar_vfs_la_LIBADD =						\
+libthunar_vfs_1_la_LIBADD =						\
 	$(EXO_LIBS)							\
 	$(GTHREADS_LIBS)						\
 	$(LIBFAM_LIBS)
 
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = thunar-vfs-1.pc
+
 EXTRA_DIST =								\
+	abicheck.sh							\
+	make-thunar-vfs-alias.pl					\
+	thunar-vfs.symbols						\
+	thunar-vfs-alias.h						\
+	thunar-vfs-aliasdef.c						\
 	thunar-vfs-marshal.list						\
 	thunar-vfs-volume-bsd.c						\
 	thunar-vfs-volume-bsd.h						\
@@ -100,6 +119,8 @@ EXTRA_DIST =								\
 ##
 if MAINTAINER_MODE
 CLEANFILES =								\
+	actual-abi							\
+	expected-abi							\
 	xgen-tvetc							\
 	xgen-tveth							\
 	xgen-tvmc							\
@@ -113,25 +134,37 @@ DISTCLEANFILES =							\
 BUILT_SOURCES =								\
 	$(libthunar_vfs_built_sources)
 
+if HAVE_GNUC_VISIBILITY
+TESTS =									\
+	abicheck.sh
+endif
+
+thunar-vfs-alias.h: make-thunar-vfs-alias.pl thunar-vfs.symbols
+	$(PERL) $(srcdir)/make-thunar-vfs-alias.pl < $(srcdir)/thunar-vfs.symbols > thunar-vfs-alias.h
+
+thunar-vfs-aliasdef.c: make-thunar-vfs-alias.pl thunar-vfs.symbols
+	$(PERL) $(srcdir)/make-thunar-vfs-alias.pl -def < $(srcdir)/thunar-vfs.symbols > thunar-vfs-aliasdef.c
+
 thunar-vfs-enum-types.h: stamp-thunar-vfs-enum-types.h
 	@true
 stamp-thunar-vfs-enum-types.h: $(libthunar_vfs_headers) Makefile
 	( cd $(srcdir) && glib-mkenums \
 		--fhead "#ifndef __THUNAR_VFS_ENUM_TYPES_H__\n#define __THUNAR_VFS_ENUM_TYPES_H__\n#include <exo/exo.h>\nG_BEGIN_DECLS\n" \
 		--fprod "/* enumerations from \"@filename@\" */\n" \
-		--vhead "GType @enum_name@_get_type (void);\n#define THUNAR_VFS_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n" \
+		--vhead "GType @enum_name@_get_type (void) G_GNUC_CONST;\n#define THUNAR_VFS_TYPE_@ENUMSHORT@ (@enum_name@_get_type())\n" \
 		--ftail "G_END_DECLS\n\n#endif /* !__THUNAR_VFS_ENUM_TYPES_H__ */" \
 		$(libthunar_vfs_headers) ) >> xgen-tveth \
-	&& (cmp -s xgen-tveth thunar-vfs-enum-types.h || cp xgen-tveth thunar-vfs-enum-types.h ) \
+	&& ( cmp -s xgen-tveth thunar-vfs-enum-types.h || cp xgen-tveth thunar-vfs-enum-types.h ) \
 	&& rm -f xgen-tveth \
 	&& echo timestamp > $(@F)
 thunar-vfs-enum-types.c: $(libthunar_vfs_headers) Makefile
 	( cd $(srcdir) && glib-mkenums \
-		--fhead "#undef GTK_DISABLE_DEPRECATED\n#define GTK_ENABLE_BROKEN\n#include <thunar-vfs/thunar-vfs.h>" \
+		--fhead "#undef GTK_DISABLE_DEPRECATED\n#define GTK_ENABLE_BROKEN\n#include <thunar-vfs/thunar-vfs.h>\n#include <thunar-vfs/thunar-vfs-alias.h>" \
 		--fprod "\n/* enumerations from \"@filename@\" */" \
 		--vhead "GType\n@enum_name@_get_type (void)\n{\n\tstatic GType type = 0;\n\tif (type == 0) {\n\tstatic const G@Type@Value values[] = {"\
 		--vprod "\t{ @VALUENAME@, \"@VALUENAME@\", \"@valuenick@\" }," \
 		--vtail "\t{ 0, NULL, NULL }\n\t};\n\ttype = g_@type@_register_static (\"@EnumName@\", values);\n  }\n\treturn type;\n}\n" \
+		--ftail "\n#define __THUNAR_VFS_ENUM_TYPES_C__\n#include \"thunar-vfs-aliasdef.c\"\n" \
 		$(libthunar_vfs_headers) ) >> xgen-tvetc \
 	&& cp xgen-tvetc thunar-vfs-enum-types.c \
 	&& rm -f xgen-tvetc

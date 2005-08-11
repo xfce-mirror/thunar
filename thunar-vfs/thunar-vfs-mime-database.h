@@ -38,7 +38,7 @@ typedef struct _ThunarVfsMimeDatabase      ThunarVfsMimeDatabase;
 
 GType                     thunar_vfs_mime_database_get_type                 (void) G_GNUC_CONST;
 
-ThunarVfsMimeDatabase    *thunar_vfs_mime_database_get                      (void);
+ThunarVfsMimeDatabase    *thunar_vfs_mime_database_get_default              (void);
 
 ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info                 (ThunarVfsMimeDatabase *database,
                                                                              const gchar           *mime_type);

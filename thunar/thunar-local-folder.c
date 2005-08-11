@@ -136,7 +136,7 @@ thunar_local_folder_init (ThunarLocalFolder *local_folder)
   g_closure_sink (local_folder->file_destroy_closure);
 
   /* connect to the file alteration monitor */
-  local_folder->monitor = thunar_vfs_monitor_get ();
+  local_folder->monitor = thunar_vfs_monitor_get_default ();
 }
 
 

@@ -32,6 +32,7 @@
 #include <gobject/gvaluecollector.h>
 
 #include <thunar-vfs/thunar-vfs-job.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -404,3 +405,7 @@ _thunar_vfs_job_shutdown (void)
   job_pool = NULL;
 }
 
+
+
+#define __THUNAR_VFS_JOB_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

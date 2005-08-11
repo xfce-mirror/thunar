@@ -80,7 +80,7 @@ typedef void (*ThunarVfsMonitorCallback)  (ThunarVfsMonitor       *monitor,
 
 GType                   thunar_vfs_monitor_get_type       (void) G_GNUC_CONST;
 
-ThunarVfsMonitor       *thunar_vfs_monitor_get            (void);
+ThunarVfsMonitor       *thunar_vfs_monitor_get_default    (void);
 
 ThunarVfsMonitorHandle *thunar_vfs_monitor_add_directory  (ThunarVfsMonitor        *monitor,
                                                            ThunarVfsURI            *uri,

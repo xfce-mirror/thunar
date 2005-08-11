@@ -1,0 +1,245 @@
+/* $Id$ */
+/*-
+ * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* This file lists all exported symbols. It is used to generate
+ * the gobject.def file used to control exports on Windows and the
+ * thunar-vfs-alias.h/thunar-vfs-aliasdef.c files used to avoid PLT
+ * entries for * internal uses of exported functions (see
+ * make-thunar-vfs-alias.pl).
+ * 
+ * Every symbol must be included in the right
+ * #ifdef IN_HEADER(sym) #endif and
+ * #ifdef IN_SOURCE(sym) #endif sections. 
+ */
+
+#ifdef ALL_FILES
+#define IN_SOURCE(x) 1
+#define IN_HEADER(x) 1
+#endif
+
+/* thunar-vfs functions */
+#if IN_HEADER(__THUNAR_VFS_H__)
+#if IN_SOURCE(__THUNAR_VFS_C__)
+thunar_vfs_init
+thunar_vfs_shutdown
+thunar_vfs_listdir
+thunar_vfs_copy
+thunar_vfs_move
+thunar_vfs_unlink
+#endif
+#endif
+
+/* ThunarVfsInfo methods */
+#if IN_HEADER(__THUNAR_VFS_INFO_H__)
+#if IN_SOURCE(__THUNAR_VFS_INFO_C__)
+thunar_vfs_info_new_for_uri
+thunar_vfs_info_ref
+thunar_vfs_info_unref
+thunar_vfs_info_matches
+thunar_vfs_info_list_free
+#endif
+#endif
+
+/* thunar-vfs-enum-types functions */
+#if IN_HEADER(__THUNAR_VFS_ENUM_TYPES_H__)
+#if IN_SOURCE(__THUNAR_VFS_ENUM_TYPES_C__)
+thunar_vfs_file_flags_get_type G_GNUC_CONST
+thunar_vfs_file_mode_get_type G_GNUC_CONST
+thunar_vfs_file_type_get_type G_GNUC_CONST
+thunar_vfs_interactive_job_response_get_type G_GNUC_CONST
+thunar_vfs_mime_application_error_get_type G_GNUC_CONST
+thunar_vfs_monitor_event_get_type G_GNUC_CONST
+thunar_vfs_uri_hide_options_get_type G_GNUC_CONST
+thunar_vfs_volume_kind_get_type G_GNUC_CONST
+thunar_vfs_volume_status_get_type G_GNUC_CONST
+#endif
+#endif
+
+/* ThunarVfsInteractiveJob methods */
+#if IN_HEADER(__THUNAR_VFS_INTERACTIVE_JOB_H__)
+#if IN_SOURCE(__THUNAR_VFS_INTERACTIVE_JOB_C__)
+thunar_vfs_interactive_job_get_type G_GNUC_CONST
+#endif
+#endif
+
+/* ThunarVfsJob methods */
+#if IN_HEADER(__THUNAR_VFS_JOB_H__)
+#if IN_SOURCE(__THUNAR_VFS_JOB_C__)
+thunar_vfs_job_get_type G_GNUC_CONST
+thunar_vfs_job_launch
+thunar_vfs_job_cancel
+thunar_vfs_job_cancelled
+#endif
+#endif
+
+/* ThunarVfsMimeApplication methods */
+#if IN_HEADER(__THUNAR_VFS_MIME_APPLICATION_H__)
+#if IN_SOURCE(__THUNAR_VFS_MIME_APPLICATION_C__)
+thunar_vfs_mime_application_error_quark G_GNUC_CONST
+thunar_vfs_mime_application_get_type G_GNUC_CONST
+thunar_vfs_mime_application_new_from_desktop_id
+thunar_vfs_mime_application_get_desktop_id
+thunar_vfs_mime_application_get_name
+thunar_vfs_mime_application_exec
+thunar_vfs_mime_application_exec_with_env
+thunar_vfs_mime_application_lookup_icon_name
+thunar_vfs_mime_application_hash
+thunar_vfs_mime_application_equal
+#endif
+#endif
+
+/* ThunarVfsMimeDatabase methods */
+#if IN_HEADER(__THUNAR_VFS_MIME_DATABASE_H__)
+#if IN_SOURCE(__THUNAR_VFS_MIME_DATABASE_C__)
+thunar_vfs_mime_database_get_type G_GNUC_CONST
+thunar_vfs_mime_database_get_default
+thunar_vfs_mime_database_get_info
+thunar_vfs_mime_database_get_info_for_data
+thunar_vfs_mime_database_get_info_for_name
+thunar_vfs_mime_database_get_info_for_file
+thunar_vfs_mime_database_get_applications
+thunar_vfs_mime_database_get_default_application
+#endif
+#endif
+
+/* ThunarVfsMimeInfo methods */
+#if IN_HEADER(__THUNAR_VFS_MIME_INFO_H__)
+#if IN_SOURCE(__THUNAR_VFS_MIME_INFO_C__)
+thunar_vfs_mime_info_get_type G_GNUC_CONST
+thunar_vfs_mime_info_get_comment G_GNUC_PURE
+thunar_vfs_mime_info_get_name G_GNUC_PURE
+thunar_vfs_mime_info_get_media G_GNUC_PURE
+thunar_vfs_mime_info_get_subtype G_GNUC_PURE
+thunar_vfs_mime_info_hash
+thunar_vfs_mime_info_equal
+thunar_vfs_mime_info_lookup_icon_name
+thunar_vfs_mime_info_list_free
+#endif
+#endif
+
+/* ThunarVfsMonitor methods */
+#if IN_HEADER(__THUNAR_VFS_MONITOR_H__)
+#if IN_SOURCE(__THUNAR_VFS_MONITOR_C__)
+thunar_vfs_monitor_get_type G_GNUC_CONST
+thunar_vfs_monitor_get_default
+thunar_vfs_monitor_add_directory
+thunar_vfs_monitor_add_file
+thunar_vfs_monitor_remove
+thunar_vfs_monitor_feed
+#endif
+#endif
+
+/* ThunarVfsTrashInfo/ThunarVfsTrash/ThunarVfsTrashManager methods */
+#if IN_HEADER(__THUNAR_VFS_TRASH_H__)
+#if IN_SOURCE(__THUNAR_VFS_TRASH_C__)
+thunar_vfs_trash_info_get_type G_GNUC_CONST
+thunar_vfs_trash_info_copy G_GNUC_MALLOC
+thunar_vfs_trash_info_free
+thunar_vfs_trash_info_get_path
+thunar_vfs_trash_info_get_deletion_date
+thunar_vfs_trash_get_type G_GNUC_CONST
+thunar_vfs_trash_get_id
+thunar_vfs_trash_get_files
+thunar_vfs_trash_get_info
+thunar_vfs_trash_get_info_path
+thunar_vfs_trash_get_uri
+thunar_vfs_trash_get_path
+thunar_vfs_trash_manager_get_type G_GNUC_CONST
+thunar_vfs_trash_manager_get_default
+thunar_vfs_trash_manager_is_empty
+thunar_vfs_trash_manager_get_trashes
+thunar_vfs_trash_manager_resolve_uri
+#endif
+#endif
+
+/* ThunarVfsURI methods */
+#if IN_HEADER(__THUNAR_VFS_URI_H__)
+#if IN_SOURCE(__THUNAR_VFS_URI_C__)
+thunar_vfs_uri_get_type G_GNUC_CONST
+thunar_vfs_uri_new G_GNUC_MALLOC
+thunar_vfs_uri_new_for_path G_GNUC_MALLOC
+thunar_vfs_uri_is_home
+thunar_vfs_uri_is_local
+thunar_vfs_uri_is_root
+thunar_vfs_uri_get_display_name G_GNUC_MALLOC
+thunar_vfs_uri_get_md5sum G_GNUC_MALLOC
+thunar_vfs_uri_get_host
+thunar_vfs_uri_get_name
+thunar_vfs_uri_get_path
+thunar_vfs_uri_get_scheme
+thunar_vfs_uri_parent G_GNUC_MALLOC
+thunar_vfs_uri_relative G_GNUC_MALLOC
+thunar_vfs_uri_to_string G_GNUC_MALLOC
+thunar_vfs_uri_hash
+thunar_vfs_uri_equal
+thunar_vfs_uri_list_from_string G_GNUC_MALLOC
+thunar_vfs_uri_list_to_string G_GNUC_MALLOC
+thunar_vfs_uri_list_copy G_GNUC_MALLOC
+thunar_vfs_uri_list_free
+#endif
+#endif
+
+/* ThunarVfsGroup/ThunarVfsUser/ThunarVfsUserManager methods */
+#if IN_HEADER(__THUNAR_VFS_USER_H__)
+#if IN_SOURCE(__THUNAR_VFS_USER_C__)
+thunar_vfs_group_get_type G_GNUC_CONST
+thunar_vfs_group_get_id
+thunar_vfs_group_get_name
+thunar_vfs_user_get_type G_GNUC_CONST
+thunar_vfs_user_get_groups
+thunar_vfs_user_get_primary_group
+thunar_vfs_user_get_id
+thunar_vfs_user_get_name
+thunar_vfs_user_get_real_name
+thunar_vfs_user_is_me
+thunar_vfs_user_manager_get_type
+thunar_vfs_user_manager_get_default
+thunar_vfs_user_manager_get_group_by_id
+thunar_vfs_user_manager_get_user_by_id
+#endif
+#endif
+
+/* thunar-vfs-util functions */
+#if IN_HEADER(__THUNAR_VFS_UTIL_H__)
+#if IN_SOURCE(__THUNAR_VFS_UTIL_C__)
+thunar_vfs_humanize_size
+#endif
+#endif
+
+/* ThunarVfsVolume/ThunarVfsVolumeManager methods */
+#if IN_HEADER(__THUNAR_VFS_VOLUME_H__)
+#if IN_SOURCE(__THUNAR_VFS_VOLUME_C__)
+thunar_vfs_volume_get_type G_GNUC_CONST
+thunar_vfs_volume_get_kind
+thunar_vfs_volume_get_name
+thunar_vfs_volume_get_status
+thunar_vfs_volume_get_mount_point
+thunar_vfs_volume_is_mounted
+thunar_vfs_volume_is_present
+thunar_vfs_volume_is_removable
+thunar_vfs_volume_get_free_space
+thunar_vfs_volume_lookup_icon_name
+thunar_vfs_volume_manager_get_type G_GNUC_CONST
+thunar_vfs_volume_manager_get_default
+thunar_vfs_volume_manager_get_volume_by_info
+thunar_vfs_volume_manager_get_volumes
+#endif
+#endif
+

@@ -414,7 +414,7 @@ thunar_local_file_watch (ThunarFile *file)
   /* take a reference on the VFS monitor for this instance */
   if (G_UNLIKELY (monitor == NULL))
     {
-      monitor = thunar_vfs_monitor_get ();
+      monitor = thunar_vfs_monitor_get_default ();
       g_object_add_weak_pointer (G_OBJECT (monitor), (gpointer) &monitor);
     }
   else

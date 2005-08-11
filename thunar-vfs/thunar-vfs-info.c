@@ -38,6 +38,7 @@
 
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -126,7 +127,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
         }
     }
 
-  database = thunar_vfs_mime_database_get ();
+  database = thunar_vfs_mime_database_get_default ();
   switch (info->type)
     {
     case THUNAR_VFS_FILE_TYPE_SOCKET:
@@ -278,3 +279,7 @@ thunar_vfs_info_list_free (GSList *info_list)
   return NULL;
 }
 
+
+
+#define __THUNAR_VFS_INFO_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

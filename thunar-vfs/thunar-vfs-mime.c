@@ -42,7 +42,7 @@ _thunar_vfs_mime_init (void)
 {
   g_return_if_fail (mime_database == NULL);
 
-  mime_database = thunar_vfs_mime_database_get ();
+  mime_database = thunar_vfs_mime_database_get_default ();
 }
 
 

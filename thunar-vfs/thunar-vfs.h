@@ -25,7 +25,7 @@
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
 #include <thunar-vfs/thunar-vfs-job.h>
-#include <thunar-vfs/thunar-vfs-jobs.h>
+#include <thunar-vfs/thunar-vfs-mime-application.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
 #include <thunar-vfs/thunar-vfs-mime-info.h>
 #include <thunar-vfs/thunar-vfs-mime.h>
@@ -38,8 +38,22 @@
 
 G_BEGIN_DECLS;
 
-void thunar_vfs_init     (void);
-void thunar_vfs_shutdown (void);
+void          thunar_vfs_init     (void);
+void          thunar_vfs_shutdown (void);
+
+ThunarVfsJob *thunar_vfs_listdir  (ThunarVfsURI *uri,
+                                   GError      **error);
+
+ThunarVfsJob *thunar_vfs_copy     (GList        *source_uri_list,
+                                   ThunarVfsURI *target_uri,
+                                   GError      **error);
+
+ThunarVfsJob *thunar_vfs_move     (GList        *source_uri_list,
+                                   ThunarVfsURI *target_uri,
+                                   GError      **error);
+
+ThunarVfsJob *thunar_vfs_unlink   (GList        *uri_list,
+                                   GError      **error);
 
 G_END_DECLS;
 

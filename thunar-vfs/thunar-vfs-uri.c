@@ -30,6 +30,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-uri.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -959,3 +960,5 @@ thunar_vfs_uri_list_free (GList *uri_list)
 
 
 
+#define __THUNAR_VFS_URI_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

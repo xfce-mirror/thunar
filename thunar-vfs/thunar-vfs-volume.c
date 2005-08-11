@@ -26,6 +26,7 @@
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-volume.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -593,3 +594,6 @@ thunar_vfs_volume_manager_volumes_removed (ThunarVfsVolumeManager *manager,
 }
 
 
+
+#define __THUNAR_VFS_VOLUME_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

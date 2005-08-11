@@ -169,7 +169,7 @@ thunar_open_with_action_class_init (ThunarOpenWithActionClass *klass)
 static void
 thunar_open_with_action_init (ThunarOpenWithAction *open_with_action)
 {
-  open_with_action->mime_database = thunar_vfs_mime_database_get ();
+  open_with_action->mime_database = thunar_vfs_mime_database_get_default ();
 }
 
 
