@@ -33,8 +33,9 @@
 
 #include <thunar/thunar-statusbar.h>
 
-#ifdef HAVE_CAIRO
+#if !GTK_CHECK_VERSION(2,7,1) && defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
 #include <cairo/cairo-xlib.h>
+#include <gdk/gdkx.h>
 #endif
 
 
@@ -396,7 +397,7 @@ create_lucent_pixbuf (GdkPixbuf *src)
 
 
 
-#if GTK_CHECK_VERSION(2,7,2)
+#if GTK_CHECK_VERSION(2,7,1)
 static cairo_t*
 get_cairo_context (GdkWindow *window)
 {
@@ -412,7 +413,7 @@ get_cairo_context (GdkWindow *window)
 
   return cr;
 }
-#elif defined(HAVE_CAIRO)
+#elif defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
 static cairo_t*
 get_cairo_context (GdkWindow *window)
 {
@@ -479,7 +480,7 @@ thunar_statusbar_icon_expose_event (GtkWidget      *widget,
       g_object_unref (G_OBJECT (icon));
     }
 
-#if defined(HAVE_CAIRO) || GTK_CHECK_VERSION(2,7,1)
+#if GTK_CHECK_VERSION(2,7,1) || (defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO))
   /* render the animation */
   if (thunar_statusbar_icon_get_loading (statusbar_icon))
     {

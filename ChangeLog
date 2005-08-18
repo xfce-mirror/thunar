@@ -1,3 +1,9 @@
+2005-08-19	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-statusbar.c: Drop the dependency on X11.
+	* thunar/thunar-desktop-window.c: Include <gdk/gdkx.h> explicitly (since
+	  that's no longer done by libexo -> libxfcegui4).
+
 2005-08-18	Benedikt Meurer <benny@xfce.org>
 
 	* thunarx/thunarx-gdk-pixbuf-extensions.{c,h}: Add new function

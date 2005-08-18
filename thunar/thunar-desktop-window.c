@@ -25,6 +25,10 @@
 #include <thunar/thunar-desktop-window.h>
 #include <thunar/thunar-desktop-view.h>
 
+#ifdef GDK_WINDOWING_X11
+#include <gdk/gdkx.h>
+#endif
+
 
 
 static void     thunar_desktop_window_class_init    (ThunarDesktopWindowClass *klass);
