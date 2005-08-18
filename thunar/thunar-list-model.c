@@ -1187,8 +1187,9 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   GtkTreePath  *path;
   GtkTreeIter   iter;
   ThunarFile   *file;
+  gint          index = 0;
   Row          *row;
-  Row          *prev;
+  Row          *prev = NULL;
 
   // TODO: pre-sort files to get faster insert?!
   for (; files != NULL; files = files->next)
@@ -1212,12 +1213,24 @@ thunar_list_model_files_added (ThunarFolder    *folder,
           /* find the position to insert the file to */
           if (G_UNLIKELY (store->rows == NULL || thunar_list_model_cmp (store, file, store->rows->file) < 0))
             {
+              prev        = NULL;
+              index       = 0;
               row->next   = store->rows;
               store->rows = row;
             }
           else
             {
-              for (prev = store->rows; prev->next != NULL; prev = prev->next)
+              /* We use a simple optimization here to avoid going through the whole
+               * list if the current file is to be inserted right before or after
+               * the previous item (which is common).
+               */
+              if (G_UNLIKELY (prev == NULL || thunar_list_model_cmp (store, file, prev->file) < 0))
+                {
+                  prev = store->rows;
+                  index = 1;
+                }
+
+              for (; prev->next != NULL; ++index, prev = prev->next)
                 if (thunar_list_model_cmp (store, file, prev->next->file) < 0)
                   break;
 
@@ -1228,7 +1241,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
           iter.stamp = store->stamp;
           iter.user_data = row;
 
-          path = thunar_list_model_get_path (GTK_TREE_MODEL (store), &iter);
+          path = gtk_tree_path_new_from_indices (index, -1);
           gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
           gtk_tree_path_free (path);
 
@@ -1567,7 +1580,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
   /* unlink from the previously active folder (if any) */
   if (G_LIKELY (store->folder != NULL))
     {
-      /* remove existing entries (FIXME: this could be done faster!) */
+      /* remove existing entries */
       path = gtk_tree_path_new ();
       while (store->nrows > 0)
         {

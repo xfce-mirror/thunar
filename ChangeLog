@@ -1,5 +1,11 @@
 2005-08-18	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-list-model.c(thunar_list_model_files_added): Speed up
+	  inserts if the order of the files match the current sort order, which
+	  is usually the case with sorting by name.
+
+2005-08-18	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-list-model.c(thunar_list_model_set_folder): Speed up
 	  the removal of existing rows when changing folders. It's now O(n)
 	  instead of O(n^2).
