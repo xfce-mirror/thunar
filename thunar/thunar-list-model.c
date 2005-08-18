@@ -173,6 +173,7 @@ struct _ThunarListModel
   Row           *rows;
   gint           nrows;
   GSList        *hidden;
+  GMemChunk     *row_chunk;
   ThunarFolder  *folder;
   gboolean       show_hidden;
 
@@ -205,10 +206,6 @@ struct _SortTuple
 
 
 
-static GMemChunk *row_chunk;
-
-
-
 G_DEFINE_TYPE_WITH_CODE (ThunarListModel,
                          thunar_list_model,
                          GTK_TYPE_OBJECT,
@@ -233,8 +230,6 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
   gobject_class->dispose      = thunar_list_model_dispose;
   gobject_class->get_property = thunar_list_model_get_property;
   gobject_class->set_property = thunar_list_model_set_property;
-
-  row_chunk = g_mem_chunk_create (Row, 512, G_ALLOC_AND_FREE);
 
   /**
    * ThunarListModel:folder:
@@ -348,6 +343,7 @@ thunar_list_model_init (ThunarListModel *store)
   store->rows                 = NULL;
   store->nrows                = 0;
   store->hidden               = NULL;
+  store->row_chunk            = g_mem_chunk_create (Row, 512, G_ALLOC_AND_FREE);
   store->folder               = NULL;
   store->show_hidden          = FALSE;
 
@@ -371,6 +367,9 @@ static void
 thunar_list_model_finalize (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
+
+  /* drop the row memory chunk */
+  g_mem_chunk_destroy (store->row_chunk);
 
   /* disconnect from the volume manager */
   g_object_unref (G_OBJECT (store->volume_manager));
@@ -1024,9 +1023,9 @@ thunar_list_model_cmp_slist (gconstpointer a,
 
 
 static gboolean
-thunar_list_model_remove (ThunarListModel  *store,
-                          GtkTreeIter *iter,
-                          gboolean     silently)
+thunar_list_model_remove (ThunarListModel *store,
+                          GtkTreeIter     *iter,
+                          gboolean         silently)
 {
   GtkTreePath *path;
   Row         *next;
@@ -1060,7 +1059,7 @@ thunar_list_model_remove (ThunarListModel  *store,
           break;
         }
     }
-  g_chunk_free (row, row_chunk);
+  g_chunk_free (row, store->row_chunk);
 
   /* notify other parties */
   if (G_LIKELY (!silently))
@@ -1205,7 +1204,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
         }
       else
         {
-          row = g_chunk_new (Row, row_chunk);
+          row = g_chunk_new (Row, store->row_chunk);
           row->file = file;
           row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
                                                             0, store->file_changed_closure, TRUE);
@@ -1551,12 +1550,12 @@ void
 thunar_list_model_set_folder (ThunarListModel *store,
                               ThunarFolder    *folder)
 {
-  ThunarFile *file;
-  GtkTreePath  *path;
-  GtkTreeIter   iter;
-  GSList       *files;
-  GSList       *lp;
-  Row          *row;
+  GtkTreePath *path;
+  GtkTreeIter  iter;
+  ThunarFile  *file;
+  GSList      *files;
+  GSList      *lp;
+  Row         *row;
 
   g_return_if_fail (THUNAR_IS_LIST_MODEL (store));
   g_return_if_fail (folder == NULL || THUNAR_IS_FOLDER (folder));
@@ -1569,12 +1568,27 @@ thunar_list_model_set_folder (ThunarListModel *store,
   if (G_LIKELY (store->folder != NULL))
     {
       /* remove existing entries (FIXME: this could be done faster!) */
-      while (store->rows)
+      path = gtk_tree_path_new ();
+      while (store->nrows > 0)
         {
-          iter.stamp = store->stamp;
-          iter.user_data = store->rows;
-          thunar_list_model_remove (store, &iter, FALSE);
+          /* grab the next row */
+          row = store->rows;
+
+          /* delete data associated with this row */
+          g_signal_handler_disconnect (G_OBJECT (row->file), row->changed_id);
+          g_object_unref (G_OBJECT (row->file));
+
+          /* remove the row from the list */
+          store->rows = row->next;
+          store->nrows--;
+
+          /* notify the view(s) */
+          gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
         }
+      gtk_tree_path_free (path);
+
+      /* reset the row chunk as all rows have been freed now */
+      g_mem_chunk_reset (store->row_chunk);
 
       /* remove hidden entries */
       g_slist_foreach (store->hidden, (GFunc) g_object_unref, NULL);
@@ -1618,7 +1632,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
                 }
               else
                 {
-                  row = g_chunk_new (Row, row_chunk);
+                  row = g_chunk_new (Row, store->row_chunk);
                   row->file = file;
                   row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
                                                                     0, store->file_changed_closure, TRUE);
@@ -1750,7 +1764,7 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
         {
           file = THUNAR_FILE (files->data);
 
-          row = g_chunk_new (Row, row_chunk);
+          row = g_chunk_new (Row, store->row_chunk);
           row->file = file;
           row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
                                                             0, store->file_changed_closure, TRUE);
