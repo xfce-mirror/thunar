@@ -24,8 +24,9 @@
 
 G_BEGIN_DECLS;
 
-GdkPixbuf *thunarx_gdk_pixbuf_colorize (GdkPixbuf      *src,
-                                        const GdkColor *color);
+GdkPixbuf *thunarx_gdk_pixbuf_colorize  (const GdkPixbuf *src,
+                                         const GdkColor  *color);
+GdkPixbuf *thunarx_gdk_pixbuf_spotlight (const GdkPixbuf *src);
 
 G_END_DECLS;
 

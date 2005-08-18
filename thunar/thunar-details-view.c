@@ -24,8 +24,8 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-details-view.h>
-#include <thunar/thunar-details-view-icon-renderer.h>
-#include <thunar/thunar-details-view-text-renderer.h>
+#include <thunar/thunar-icon-renderer.h>
+#include <thunar/thunar-text-renderer.h>
 
 
 
@@ -114,12 +114,12 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Name"),
                          NULL);
-  renderer = thunar_details_view_icon_renderer_new ();
+  renderer = thunar_icon_renderer_new ();
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "file", THUNAR_LIST_MODEL_COLUMN_FILE,
                                        NULL);
-  renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
+  renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
                            "xalign", 0.0,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
@@ -134,7 +134,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Size"),
                          NULL);
-  renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
+  renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
                            "xalign", 1.0,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
@@ -149,7 +149,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Permissions"),
                          NULL);
-  renderer = g_object_new (THUNAR_TYPE_DETAILS_VIEW_TEXT_RENDERER,
+  renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
                            "xalign", 0.0,
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);

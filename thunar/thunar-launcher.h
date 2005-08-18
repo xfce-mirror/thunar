@@ -36,7 +36,7 @@ typedef struct _ThunarLauncher      ThunarLauncher;
 
 GType           thunar_launcher_get_type            (void) G_GNUC_CONST;
 
-ThunarLauncher *thunar_launcher_new                 (void) EXO_GNUC_MALLOC;
+ThunarLauncher *thunar_launcher_new                 (void) G_GNUC_MALLOC;
 
 GtkActionGroup *thunar_launcher_get_action_group    (const ThunarLauncher *launcher);
 void            thunar_launcher_set_action_group    (ThunarLauncher       *launcher,

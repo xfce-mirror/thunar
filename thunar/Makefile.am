@@ -26,10 +26,6 @@ Thunar_SOURCES =							\
 	thunar-desktop-window.h						\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
-	thunar-details-view-icon-renderer.c				\
-	thunar-details-view-icon-renderer.h				\
-	thunar-details-view-text-renderer.c				\
-	thunar-details-view-text-renderer.h				\
 	thunar-fallback-icon.c						\
 	thunar-fallback-icon.h						\
 	thunar-favourites-model.c					\
@@ -44,6 +40,8 @@ Thunar_SOURCES =							\
 	thunar-folder.h							\
 	thunar-icon-factory.c						\
 	thunar-icon-factory.h						\
+	thunar-icon-renderer.c						\
+	thunar-icon-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
 	thunar-launcher.c						\
@@ -81,6 +79,8 @@ Thunar_SOURCES =							\
 	thunar-standard-view-ui.h					\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
+	thunar-text-renderer.c						\
+	thunar-text-renderer.h						\
 	thunar-trash-file.c						\
 	thunar-trash-file.h						\
 	thunar-trash-folder.c						\

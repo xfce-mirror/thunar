@@ -21,7 +21,11 @@
 #include <config.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
+#include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-icon-view.h>
+#include <thunar/thunar-text-renderer.h>
 
 
 
@@ -33,6 +37,12 @@ static void       thunar_icon_view_select_all         (ThunarStandardView  *stan
 static void       thunar_icon_view_unselect_all       (ThunarStandardView  *standard_view);
 static void       thunar_icon_view_select_path        (ThunarStandardView  *standard_view,
                                                        GtkTreePath         *path);
+static gboolean   thunar_icon_view_button_press_event (ExoIconView         *view,
+                                                       GdkEventButton      *event,
+                                                       ThunarIconView      *icon_view);
+static gboolean   thunar_icon_view_key_press_event    (ExoIconView         *view,
+                                                       GdkEventKey         *event,
+                                                       ThunarIconView      *icon_view);
 static void       thunar_icon_view_item_activated     (ExoIconView         *view,
                                                        GtkTreePath         *path,
                                                        ThunarIconView      *icon_view);
@@ -76,21 +86,38 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
 static void
 thunar_icon_view_init (ThunarIconView *icon_view)
 {
-  GtkWidget *view;
+  GtkCellRenderer *renderer;
+  GtkWidget       *view;
 
   /* create the real view */
   view = exo_icon_view_new ();
-  g_signal_connect (G_OBJECT (view), "item-activated",
-                    G_CALLBACK (thunar_icon_view_item_activated), icon_view);
-  g_signal_connect_swapped (G_OBJECT (view), "selection-changed",
-                            G_CALLBACK (thunar_standard_view_selection_changed), icon_view);
+  g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_icon_view_button_press_event), icon_view);
+  g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_icon_view_key_press_event), icon_view);
+  g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_icon_view_item_activated), icon_view);
+  g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), icon_view);
   gtk_container_add (GTK_CONTAINER (icon_view), view);
   gtk_widget_show (view);
 
   /* initialize the icon view properties */
-  exo_icon_view_set_text_column (EXO_ICON_VIEW (view), THUNAR_LIST_MODEL_COLUMN_NAME);
-  exo_icon_view_set_pixbuf_column (EXO_ICON_VIEW (view), THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL);
   exo_icon_view_set_selection_mode (EXO_ICON_VIEW (view), GTK_SELECTION_MULTIPLE);
+
+  /* add the icon renderer */
+  renderer = g_object_new (THUNAR_TYPE_ICON_RENDERER,
+                           "follow-state", TRUE,
+                           "size", 48,
+                           NULL);
+  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), renderer, FALSE);
+  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), renderer, "file", THUNAR_LIST_MODEL_COLUMN_FILE);
+
+  /* add the text renderer */
+  renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
+                           "follow-state", TRUE,
+                           "wrap-mode", PANGO_WRAP_WORD_CHAR,
+                           "wrap-width", 128,
+                           "yalign", 0.0f,
+                           NULL);
+  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), renderer, TRUE);
+  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), renderer, "text", THUNAR_LIST_MODEL_COLUMN_NAME);
 }
 
 
@@ -147,6 +174,55 @@ thunar_icon_view_select_path (ThunarStandardView *standard_view,
 {
   g_return_if_fail (THUNAR_IS_ICON_VIEW (standard_view));
   exo_icon_view_select_path (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path);
+}
+
+
+
+static gboolean
+thunar_icon_view_button_press_event (ExoIconView    *view,
+                                     GdkEventButton *event,
+                                     ThunarIconView *icon_view)
+{
+  GtkTreePath *path;
+
+  /* open the context menu on right clicks */
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3
+      && exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
+    {
+      /* select the path on which the user clicked if not selected yet */
+      if (!exo_icon_view_path_is_selected (view, path))
+        {
+          /* we don't unselect all other items if Control is active */
+          if ((event->state & GDK_CONTROL_MASK) == 0)
+            exo_icon_view_unselect_all (view);
+          exo_icon_view_select_path (view, path);
+        }
+      gtk_tree_path_free (path);
+
+      /* open the context menu */
+      thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (icon_view), event->button, event->time);
+
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_icon_view_key_press_event (ExoIconView    *view,
+                                  GdkEventKey    *event,
+                                  ThunarIconView *icon_view)
+{
+  /* popup context menu if "Menu" or "<Shift>F10" is pressed */
+  if (event->keyval == GDK_Menu || ((event->state & GDK_SHIFT_MASK) != 0 && event->keyval == GDK_F10))
+    {
+      thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (icon_view), 0, event->time);
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 

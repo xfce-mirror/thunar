@@ -1,5 +1,31 @@
 2005-08-18	Benedikt Meurer <benny@xfce.org>
 
+	* thunarx/thunarx-gdk-pixbuf-extensions.{c,h}: Add new function
+	  thunarx_gdk_pixbuf_spotlight(), which is used to create a
+	  special icon for the Gtk prelight state.
+	* thunar/thunar-icon-renderer.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-details-view.c, po/POTFILES.in: Rename
+	  ThunarDetailsViewIconRenderer to ThunarIconRenderer, as
+	  it will also be used by the icon view now.
+	* thunar/thunar-text-renderer.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-details-view.c, po/POTFILES.in: Rename
+	  ThunarDetailsViewTextRenderer to ThunarTextRenderer,
+	  as it will also be used by the icon view now.
+	* thunar/thunar-icon-renderer.{c,h}, thunar/thunar-text-renderer.{c,h}:
+	  Add required functionality to use these renderers with the new
+	  ExoIconView.
+	* thunar/thunar-icon-view.c: Update to use the new ExoIconView class,
+	  with the modified ThunarIconRenderer and ThunarTextRenderer.
+	* thunar/thunar-launcher.h, thunar/thunar-open-with-action.h: Use
+	  G_GNUC_MALLOC instead of EXO_GNUC_MALLOC.
+	* thunar/thunar-window.c(thunar_window_init): Use the icon view by
+	  default for testing now.
+	* configure.in.in: Bump version to 0.1.2.
+	* thunar/thunar-window.c(thunar_window_action_about): Switch to
+	  GtkAboutDialog.
+
+2005-08-18	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-list-model.c(thunar_list_model_files_added): Speed up
 	  inserts if the order of the files match the current sort order, which
 	  is usually the case with sorting by name.

@@ -1,0 +1,547 @@
+/* $Id$ */
+/*-
+ * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ *
+ * This program is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the Free
+ * Software Foundation; either version 2 of the License, or (at your option)
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ * more details.
+ *
+ * You should have received a copy of the GNU General Public License along with
+ * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+ * Place, Suite 330, Boston, MA  02111-1307  USA
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <exo/exo.h>
+
+#include <thunar/thunar-text-renderer.h>
+
+
+
+enum
+{
+  PROP_0,
+  PROP_FOLLOW_STATE,
+  PROP_TEXT,
+  PROP_WRAP_MODE,
+  PROP_WRAP_WIDTH,
+};
+
+
+
+static void thunar_text_renderer_class_init   (ThunarTextRendererClass *klass);
+static void thunar_text_renderer_init         (ThunarTextRenderer      *text_renderer);
+static void thunar_text_renderer_finalize     (GObject                 *object);
+static void thunar_text_renderer_get_property (GObject                 *object,
+                                               guint                    prop_id,
+                                               GValue                  *value,
+                                               GParamSpec              *pspec);
+static void thunar_text_renderer_set_property (GObject                 *object,
+                                               guint                    prop_id,
+                                               const GValue            *value,
+                                               GParamSpec              *pspec);
+static void thunar_text_renderer_get_size     (GtkCellRenderer         *renderer,
+                                               GtkWidget               *widget,
+                                               GdkRectangle            *cell_area,
+                                               gint                    *x_offset,
+                                               gint                    *y_offset,
+                                               gint                    *width,
+                                               gint                    *height);
+static void thunar_text_renderer_render       (GtkCellRenderer         *renderer,
+                                               GdkWindow               *window,
+                                               GtkWidget               *widget,
+                                               GdkRectangle            *background_area,
+                                               GdkRectangle            *cell_area,
+                                               GdkRectangle            *expose_area,
+                                               GtkCellRendererState     flags);
+static void thunar_text_renderer_invalidate   (ThunarTextRenderer      *text_renderer);
+static void thunar_text_renderer_set_widget   (ThunarTextRenderer      *text_renderer,
+                                               GtkWidget               *widget);
+
+
+
+struct _ThunarTextRendererClass
+{
+  GtkCellRendererClass __parent__;
+};
+
+struct _ThunarTextRenderer
+{
+  GtkCellRenderer __parent__;
+
+  PangoLayout  *layout;
+  GtkWidget    *widget;
+  gchar         text[256];
+  gint          char_width;
+  gint          char_height;
+  PangoWrapMode wrap_mode;
+  gint          wrap_width;
+  gboolean      follow_state;
+};
+
+
+
+G_DEFINE_TYPE (ThunarTextRenderer, thunar_text_renderer, GTK_TYPE_CELL_RENDERER);
+
+
+
+static void
+thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
+{
+  GtkCellRendererClass *gtkcell_renderer_class;
+  GObjectClass         *gobject_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_text_renderer_finalize;
+  gobject_class->get_property = thunar_text_renderer_get_property;
+  gobject_class->set_property = thunar_text_renderer_set_property;
+
+  gtkcell_renderer_class = GTK_CELL_RENDERER_CLASS (klass);
+  gtkcell_renderer_class->get_size = thunar_text_renderer_get_size;
+  gtkcell_renderer_class->render = thunar_text_renderer_render;
+
+  /**
+   * ThunarTextRenderer:follow-state:
+   *
+   * Specifies whether the text renderer should render text
+   * based on the selection state of the items. This is necessary
+   * for #ExoIconView, which doesn't draw any item state indicators
+   * itself.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FOLLOW_STATE,
+                                   g_param_spec_boolean ("follow-state",
+                                                         _("Follow state"),
+                                                         _("Follow state"),
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarTextRenderer:text:
+   *
+   * The text to render.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_TEXT,
+                                   g_param_spec_string ("text",
+                                                        _("Text"),
+                                                        _("The text to render"),
+                                                        NULL,
+                                                        EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarTextRenderer:wrap-mode:
+   *
+   * Specifies how to break the string into multiple lines, if the cell renderer
+   * does not have enough room to display the entire string. This property has
+   * no effect unless the wrap-width property is set.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_WRAP_MODE,
+                                   g_param_spec_enum ("wrap-mode",
+                                                      _("Wrap mode"),
+                                                      _("The wrap mode"),
+                                                      PANGO_TYPE_WRAP_MODE,
+                                                      PANGO_WRAP_CHAR,
+                                                      EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarTextRenderer:wrap-width:
+   *
+   * Specifies the width at which the text is wrapped. The wrap-mode property can
+   * be used to influence at what character positions the line breaks can be placed.
+   * Setting wrap-width to -1 turns wrapping off.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_WRAP_WIDTH,
+                                   g_param_spec_int ("wrap-width",
+                                                     _("Wrap width"),
+                                                     _("The wrap width"),
+                                                     -1, G_MAXINT, -1,
+                                                     EXO_PARAM_READWRITE));
+}
+
+
+
+static void
+thunar_text_renderer_init (ThunarTextRenderer *text_renderer)
+{
+  text_renderer->wrap_width = -1;
+}
+
+
+
+static void
+thunar_text_renderer_finalize (GObject *object)
+{
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (object);
+
+  /* drop the cached widget */
+  thunar_text_renderer_set_widget (text_renderer, NULL);
+
+  G_OBJECT_CLASS (thunar_text_renderer_parent_class)->finalize (object);
+}
+
+
+
+static void
+thunar_text_renderer_get_property (GObject    *object,
+                                   guint       prop_id,
+                                   GValue     *value,
+                                   GParamSpec *pspec)
+{
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (object);
+
+  switch (prop_id)
+    {
+    case PROP_FOLLOW_STATE:
+      g_value_set_boolean (value, text_renderer->follow_state);
+      break;
+
+    case PROP_TEXT:
+      g_value_set_string (value, text_renderer->text);
+      break;
+
+    case PROP_WRAP_MODE:
+      g_value_set_enum (value, text_renderer->wrap_mode);
+      break;
+
+    case PROP_WRAP_WIDTH:
+      g_value_set_int (value, text_renderer->wrap_width);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_text_renderer_set_property (GObject      *object,
+                                   guint         prop_id,
+                                   const GValue *value,
+                                   GParamSpec   *pspec)
+{
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (object);
+  const gchar        *sval;
+
+  switch (prop_id)
+    {
+    case PROP_FOLLOW_STATE:
+      text_renderer->follow_state = g_value_get_boolean (value);
+      break;
+
+    case PROP_TEXT:
+      sval = g_value_get_string (value);
+      g_strlcpy (text_renderer->text, G_UNLIKELY (sval == NULL) ? "" : sval, sizeof (text_renderer->text));
+      break;
+
+    case PROP_WRAP_MODE:
+      text_renderer->wrap_mode = g_value_get_enum (value);
+      break;
+
+    case PROP_WRAP_WIDTH:
+      text_renderer->wrap_width = g_value_get_int (value);
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_text_renderer_get_size (GtkCellRenderer *renderer,
+                               GtkWidget       *widget,
+                               GdkRectangle    *cell_area,
+                               gint            *x_offset,
+                               gint            *y_offset,
+                               gint            *width,
+                               gint            *height)
+{
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (renderer);
+  gint                text_length;
+  gint                text_width;
+  gint                text_height;
+  gint                focus_padding;
+  gint                focus_width;
+
+  /* setup the new widget */
+  thunar_text_renderer_set_widget (text_renderer, widget);
+
+  /* we can guess the dimensions if we don't wrap */
+  if (text_renderer->wrap_width < 0)
+    {
+      /* determine the text_length in characters */
+      text_length = g_utf8_strlen (text_renderer->text, -1);
+
+      /* calculate the appromixate text width/height */
+      text_width = text_renderer->char_width * text_length;
+      text_height = text_renderer->char_height;
+    }
+  else
+    {
+      /* calculate the real text dimension */
+      pango_layout_set_width (text_renderer->layout, text_renderer->wrap_width * PANGO_SCALE);
+      pango_layout_set_wrap (text_renderer->layout, text_renderer->wrap_mode);
+      pango_layout_set_text (text_renderer->layout, text_renderer->text, -1);
+      pango_layout_get_pixel_size (text_renderer->layout, &text_width, &text_height);
+    }
+
+  /* if we have to follow the state manually, we'll need
+   * to reserve some space to render the indicator to.
+   */
+  if (text_renderer->follow_state)
+    {
+      gtk_widget_style_get (widget, "focus-padding", &focus_padding, "focus-line-width", &focus_width, NULL);
+      text_width += 2 * (focus_padding + focus_width);
+      text_height += 2 * (focus_padding + focus_width);
+    }
+
+  /* update width/height */
+  if (G_LIKELY (width != NULL))
+    *width = text_width + 2 * renderer->xpad;
+  if (G_LIKELY (height != NULL))
+    *height = text_height + 2 * renderer->ypad;
+
+  /* update the x/y offsets */
+  if (G_LIKELY (cell_area != NULL))
+    {
+      if (G_LIKELY (x_offset != NULL))
+        {
+          *x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? (1.0 - renderer->xalign) : renderer->xalign)
+                    * (cell_area->width - text_width - (2 * renderer->xpad));
+          *x_offset = MAX (*x_offset, 0);
+        }
+
+      if (G_LIKELY (y_offset != NULL))
+        {
+          *y_offset = renderer->yalign * (cell_area->height - text_height - (2 * renderer->ypad));
+          *y_offset = MAX (*y_offset, 0);
+        }
+    }
+}
+
+
+
+static void
+thunar_text_renderer_render (GtkCellRenderer     *renderer,
+                             GdkWindow           *window,
+                             GtkWidget           *widget,
+                             GdkRectangle        *background_area,
+                             GdkRectangle        *cell_area,
+                             GdkRectangle        *expose_area,
+                             GtkCellRendererState flags)
+{
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (renderer);
+  GtkStateType        state;
+#if !GTK_CHECK_VERSION(2,8,0)
+  GdkPoint            points[8];
+#else
+  cairo_t            *cr;
+#endif
+  gint                x0, x1, y0, y1;
+  gint                focus_padding;
+  gint                focus_width;
+  gint                text_width;
+  gint                text_height;
+  gint                x_offset;
+  gint                y_offset;
+
+  /* setup the new widget */
+  thunar_text_renderer_set_widget (text_renderer, widget);
+
+  if ((flags & GTK_CELL_RENDERER_SELECTED) == GTK_CELL_RENDERER_SELECTED)
+    {
+      if (GTK_WIDGET_HAS_FOCUS (widget))
+        state = GTK_STATE_SELECTED;
+      else
+        state = GTK_STATE_ACTIVE;
+    }
+  else if ((flags & GTK_CELL_RENDERER_PRELIT) == GTK_CELL_RENDERER_PRELIT
+        && GTK_WIDGET_STATE (widget) == GTK_STATE_PRELIGHT)
+    {
+      state = GTK_STATE_PRELIGHT;
+    }
+  else
+    {
+      if (GTK_WIDGET_STATE (widget) == GTK_STATE_INSENSITIVE)
+        state = GTK_STATE_INSENSITIVE;
+      else
+        state = GTK_STATE_NORMAL;
+    }
+
+  /* setup the wrapping */
+  if (text_renderer->wrap_width < 0)
+    {
+      pango_layout_set_width (text_renderer->layout, -1);
+      pango_layout_set_wrap (text_renderer->layout, PANGO_WRAP_CHAR);
+    }
+  else
+    {
+      pango_layout_set_width (text_renderer->layout, text_renderer->wrap_width * PANGO_SCALE);
+      pango_layout_set_wrap (text_renderer->layout, text_renderer->wrap_mode);
+    }
+
+  pango_layout_set_text (text_renderer->layout, text_renderer->text, -1);
+
+  /* calculate the real text dimension */
+  pango_layout_get_pixel_size (text_renderer->layout, &text_width, &text_height);
+
+  /* take into account the state indicator (required for calculation) */
+  if (text_renderer->follow_state)
+    {
+      gtk_widget_style_get (widget, "focus-padding", &focus_padding, "focus-line-width", &focus_width, NULL);
+      text_width += 2 * (focus_padding + focus_width);
+      text_height += 2 * (focus_padding + focus_width);
+    }
+
+  /* calculate the real x-offset */
+  x_offset = ((gtk_widget_get_direction (widget) == GTK_TEXT_DIR_RTL) ? (1.0 - renderer->xalign) : renderer->xalign)
+           * (cell_area->width - text_width - (2 * renderer->xpad));
+  x_offset = MAX (x_offset, 0);
+
+  /* calculate the real y-offset */
+  y_offset = renderer->yalign * (cell_area->height - text_height - (2 * renderer->ypad));
+  y_offset = MAX (y_offset, 0);
+
+  /* render the state indicator */
+  if ((flags & GTK_CELL_RENDERER_SELECTED) == GTK_CELL_RENDERER_SELECTED && text_renderer->follow_state)
+    {
+      /* calculate the text bounding box (including the focus padding/width) */
+      x0 = cell_area->x + x_offset;
+      y0 = cell_area->y + y_offset;
+      x1 = x0 + text_width;
+      y1 = y0 + text_height;
+
+#if GTK_CHECK_VERSION(2,8,0)
+      /* Cairo produces nicer results than using a polygon
+       * and so we use it directly if possible.
+       */
+      cr = gdk_cairo_create (window);
+      cairo_move_to (cr, x0 + 5, y0);
+      cairo_line_to (cr, x1 - 5, y0);
+      cairo_curve_to (cr, x1 - 5, y0, x1, y0, x1, y0 + 5);
+      cairo_line_to (cr, x1, y1 - 5);
+      cairo_curve_to (cr, x1, y1 - 5, x1, y1, x1 - 5, y1);
+      cairo_line_to (cr, x0 + 5, y1);
+      cairo_curve_to (cr, x0 + 5, y1, x0, y1, x0, y1 - 5);
+      cairo_line_to (cr, x0, y0 + 5);
+      cairo_curve_to (cr, x0, y0 + 5, x0, y0, x0 + 5, y0);
+      gdk_cairo_set_source_color (cr, &widget->style->base[state]);
+      cairo_fill (cr);
+      cairo_destroy (cr);
+#else
+      /* calculate a (more or less rounded) polygon */
+      points[0].x = x0 + 2; points[0].y = y0;
+      points[1].x = x1 - 2; points[1].y = y0;
+      points[2].x = x1;     points[2].y = y0 + 2;
+      points[3].x = x1;     points[3].y = y1 - 2;
+      points[4].x = x1 - 2; points[4].y = y1;
+      points[5].x = x0 + 2; points[5].y = y1;
+      points[6].x = x0;     points[6].y = y1 - 2;
+      points[7].x = x0;     points[7].y = y0 + 2;
+
+      /* render the indicator */
+      gdk_draw_polygon (window, widget->style->base_gc[state], TRUE, points, G_N_ELEMENTS (points));
+#endif
+    }
+
+  /* get proper sizing for the layout drawing */
+  if (text_renderer->follow_state)
+    {
+      text_width -= 2 * (focus_padding + focus_width);
+      text_height -= 2 * (focus_padding + focus_width);
+      x_offset += focus_padding + focus_width;
+      y_offset += focus_padding + focus_width;
+    }
+
+  /* draw the text */
+  gtk_paint_layout (widget->style, window, state, TRUE,
+                    expose_area, widget, "cellrenderertext",
+                    cell_area->x + x_offset + renderer->xpad,
+                    cell_area->y + y_offset + renderer->ypad,
+                    text_renderer->layout);
+}
+
+
+
+static void
+thunar_text_renderer_invalidate (ThunarTextRenderer *text_renderer)
+{
+  thunar_text_renderer_set_widget (text_renderer, NULL);
+}
+
+
+
+static void
+thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
+                                 GtkWidget                     *widget)
+{
+  // FIXME: The sample text should be translatable with a hint to translators!
+  static const gchar SAMPLE_TEXT[] = "The Quick Brown Fox Jumps Over the Lazy Dog";
+  PangoRectangle     extents;
+
+  if (G_LIKELY (widget == text_renderer->widget))
+    return;
+
+  /* disconnect from the previously set widget */
+  if (G_UNLIKELY (text_renderer->widget != NULL))
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (text_renderer->widget), thunar_text_renderer_invalidate, text_renderer);
+      g_object_unref (G_OBJECT (text_renderer->layout));
+      g_object_unref (G_OBJECT (text_renderer->widget));
+    }
+
+  /* activate the new widget */
+  text_renderer->widget = widget;
+
+  /* connect to the new widget */
+  if (G_LIKELY (widget != NULL))
+    {
+      /* take a reference on the widget */
+      g_object_ref (G_OBJECT (widget));
+
+      /* we need to recalculate the metrics when a new style (and thereby a new font) is set */
+      g_signal_connect_swapped (G_OBJECT (text_renderer->widget), "destroy", G_CALLBACK (thunar_text_renderer_invalidate), text_renderer);
+      g_signal_connect_swapped (G_OBJECT (text_renderer->widget), "style-set", G_CALLBACK (thunar_text_renderer_invalidate), text_renderer);
+
+      /* calculate the average character dimensions */
+      text_renderer->layout = gtk_widget_create_pango_layout (widget, SAMPLE_TEXT);
+      pango_layout_get_pixel_extents (text_renderer->layout, NULL, &extents);
+      pango_layout_set_width (text_renderer->layout, -1);
+      text_renderer->char_width = extents.width / g_utf8_strlen (SAMPLE_TEXT, sizeof (SAMPLE_TEXT) - 1);
+      text_renderer->char_height = extents.height;
+    }
+  else
+    {
+      text_renderer->layout = NULL;
+      text_renderer->char_width = 0;
+      text_renderer->char_height = 0;
+    }
+}
+
+
+
+/**
+ * thunar_text_renderer_new:
+ **/
+GtkCellRenderer*
+thunar_text_renderer_new (void)
+{
+  return g_object_new (THUNAR_TYPE_TEXT_RENDERER, NULL);
+}
+

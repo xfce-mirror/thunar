@@ -244,7 +244,7 @@ thunar_window_init (ThunarWindow *window)
   gtk_box_pack_start (GTK_BOX (box), window->location_bar, FALSE, FALSE, 0);
   gtk_widget_show (window->location_bar);
 
-  window->view = thunar_details_view_new ();
+  window->view = thunar_icon_view_new ();
   g_signal_connect (G_OBJECT (window->view), "notify::loading",
                     G_CALLBACK (thunar_window_notify_loading), window);
   g_signal_connect_swapped (G_OBJECT (window->view), "change-directory",
@@ -450,20 +450,39 @@ static void
 thunar_window_action_about (GtkAction    *action,
                             ThunarWindow *window)
 {
-  XfceAboutInfo *info;
-  GtkWidget     *dialog;
+  static const gchar *authors[] =
+  {
+    "Benedikt Meurer <benny@xfce.org>",
+    NULL,
+  };
 
-  info = xfce_about_info_new (PACKAGE_NAME, PACKAGE_VERSION, _("File Manager"),
-                              XFCE_COPYRIGHT_TEXT ("2004-2005", "Benedikt Meurer"),
-                              XFCE_LICENSE_GPL);
-  xfce_about_info_set_homepage (info, "http://thunar.xfce.org/");
-  xfce_about_info_add_credit (info, "Benedikt Meurer", "benny@xfce.org", _("Project leader"));
+  static const gchar license[] =
+    "This program is free software; you can redistribute it and/or modify it\n"
+    "under the terms of the GNU General Public License as published by the Free\n"
+    "Software Foundation; either version 2 of the License, or (at your option)\n"
+    "any later version.\n"
+    "\n"
+    "This program is distributed in the hope that it will be useful, but WITHOUT\n"
+    "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\n"
+    "FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for\n"
+    "more details.\n"
+    "\n"
+    "You should have received a copy of the GNU General Public License along with\n"
+    "this program; if not, write to the Free Software Foundation, Inc., 59 Temple\n"
+    "Place, Suite 330, Boston, MA  02111-1307  USA.\n";
 
-  dialog = xfce_about_dialog_new (GTK_WINDOW (window), info, NULL);
-  gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
-
-  xfce_about_info_free (info);
+  gtk_about_dialog_set_email_hook ((gpointer) exo_noop, NULL, NULL);
+  gtk_about_dialog_set_url_hook ((gpointer) exo_noop, NULL, NULL);
+  gtk_show_about_dialog (GTK_WINDOW (window),
+                         "authors", authors,
+                         "comments", _("Thunar is a fast and easy to use file manager\nfor the Xfce Desktop Environment."),
+                         "copyright", "Copyright © 2004-2005 Benedikt Meurer",
+                         "license", license,
+                         "name", PACKAGE_NAME,
+                         "translator-credits", _("translator-credits"),
+                         "version", PACKAGE_VERSION,
+                         "website", "http://thunar.xfce.org/",
+                         NULL);
 }
 
 

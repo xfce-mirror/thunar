@@ -37,7 +37,7 @@ typedef struct _ThunarOpenWithAction      ThunarOpenWithAction;
 GType       thunar_open_with_action_get_type (void) G_GNUC_CONST;
 
 GtkAction  *thunar_open_with_action_new      (const gchar          *name,
-                                              const gchar          *label) EXO_GNUC_MALLOC;
+                                              const gchar          *label) G_GNUC_MALLOC;
 
 ThunarFile *thunar_open_with_action_get_file (ThunarOpenWithAction *open_with_action);
 void        thunar_open_with_action_set_file (ThunarOpenWithAction *open_with_action,
