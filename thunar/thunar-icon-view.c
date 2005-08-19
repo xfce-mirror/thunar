@@ -25,27 +25,37 @@
 
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-icon-view.h>
+#include <thunar/thunar-icon-view-ui.h>
 #include <thunar/thunar-text-renderer.h>
 
 
 
-static void       thunar_icon_view_class_init         (ThunarIconViewClass *klass);
-static void       thunar_icon_view_init               (ThunarIconView      *icon_view);
-static AtkObject *thunar_icon_view_get_accessible     (GtkWidget           *widget);
-static GList     *thunar_icon_view_get_selected_items (ThunarStandardView  *standard_view);
-static void       thunar_icon_view_select_all         (ThunarStandardView  *standard_view);
-static void       thunar_icon_view_unselect_all       (ThunarStandardView  *standard_view);
-static void       thunar_icon_view_select_path        (ThunarStandardView  *standard_view,
-                                                       GtkTreePath         *path);
-static gboolean   thunar_icon_view_button_press_event (ExoIconView         *view,
-                                                       GdkEventButton      *event,
-                                                       ThunarIconView      *icon_view);
-static gboolean   thunar_icon_view_key_press_event    (ExoIconView         *view,
-                                                       GdkEventKey         *event,
-                                                       ThunarIconView      *icon_view);
-static void       thunar_icon_view_item_activated     (ExoIconView         *view,
-                                                       GtkTreePath         *path,
-                                                       ThunarIconView      *icon_view);
+static void       thunar_icon_view_class_init             (ThunarIconViewClass *klass);
+static void       thunar_icon_view_init                   (ThunarIconView      *icon_view);
+static AtkObject *thunar_icon_view_get_accessible         (GtkWidget           *widget);
+static void       thunar_icon_view_connect_ui_manager     (ThunarStandardView  *standard_view,
+                                                           GtkUIManager        *ui_manager);
+static void       thunar_icon_view_disconnect_ui_manager  (ThunarStandardView  *standard_view,
+                                                           GtkUIManager        *ui_manager);
+static GList     *thunar_icon_view_get_selected_items     (ThunarStandardView  *standard_view);
+static void       thunar_icon_view_select_all             (ThunarStandardView  *standard_view);
+static void       thunar_icon_view_unselect_all           (ThunarStandardView  *standard_view);
+static void       thunar_icon_view_select_path            (ThunarStandardView  *standard_view,
+                                                           GtkTreePath         *path);
+static void       thunar_icon_view_action_sort            (GtkAction           *action,
+                                                           GtkAction           *current,
+                                                           ThunarStandardView  *standard_view);
+static gboolean   thunar_icon_view_button_press_event     (ExoIconView         *view,
+                                                           GdkEventButton      *event,
+                                                           ThunarIconView      *icon_view);
+static gboolean   thunar_icon_view_key_press_event        (ExoIconView         *view,
+                                                           GdkEventKey         *event,
+                                                           ThunarIconView      *icon_view);
+static void       thunar_icon_view_item_activated         (ExoIconView         *view,
+                                                           GtkTreePath         *path,
+                                                           ThunarIconView      *icon_view);
+static void       thunar_icon_view_sort_column_changed    (GtkTreeSortable     *sortable,
+                                                           ThunarIconView      *icon_view);
 
 
 
@@ -57,6 +67,29 @@ struct _ThunarIconViewClass
 struct _ThunarIconView
 {
   ThunarStandardView __parent__;
+
+  gint ui_merge_id;
+};
+
+
+
+static const GtkActionEntry action_entries[] =
+{
+  { "arrange-items-menu", NULL, N_ ("Arran_ge Items"), NULL, NULL, NULL, },
+};
+
+static const GtkRadioActionEntry column_action_entries[] =
+{
+  { "sort-by-name", NULL, N_ ("Sort By _Name"), NULL, N_ ("Keep items sorted by their name in rows"), THUNAR_LIST_MODEL_COLUMN_NAME, },
+  { "sort-by-size", NULL, N_ ("Sort By _Size"), NULL, N_ ("Keep items sorted by their size in rows"), THUNAR_LIST_MODEL_COLUMN_SIZE, },
+  { "sort-by-type", NULL, N_ ("Sort By _Type"), NULL, N_ ("Keep items sorted by their type in rows"), THUNAR_LIST_MODEL_COLUMN_TYPE, },
+  { "sort-by-mtime", NULL, N_ ("Sort By Modification _Date"), NULL, N_ ("Keep items sorted by their modification date in rows"), THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED, },
+};
+
+static const GtkRadioActionEntry order_action_entries[] =
+{
+  { "sort-ascending", NULL, N_ ("_Ascending"), NULL, N_ ("Sort items in ascending order"), GTK_SORT_ASCENDING, },
+  { "sort-descending", NULL, N_ ("_Descending"), NULL, N_ ("Sort items in descending order"), GTK_SORT_DESCENDING, },
 };
 
 
@@ -75,6 +108,8 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   gtkwidget_class->get_accessible = thunar_icon_view_get_accessible;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
+  thunarstandard_view_class->connect_ui_manager = thunar_icon_view_connect_ui_manager;
+  thunarstandard_view_class->disconnect_ui_manager = thunar_icon_view_disconnect_ui_manager;
   thunarstandard_view_class->get_selected_items = thunar_icon_view_get_selected_items;
   thunarstandard_view_class->select_all = thunar_icon_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_icon_view_unselect_all;
@@ -105,6 +140,7 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   renderer = g_object_new (THUNAR_TYPE_ICON_RENDERER,
                            "follow-state", TRUE,
                            "size", 48,
+                           "ypad", 3u,
                            NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), renderer, FALSE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), renderer, "file", THUNAR_LIST_MODEL_COLUMN_FILE);
@@ -118,6 +154,22 @@ thunar_icon_view_init (ThunarIconView *icon_view)
                            NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), renderer, "text", THUNAR_LIST_MODEL_COLUMN_NAME);
+
+  /* setup the icon view actions */
+  gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (icon_view)->action_group,
+                                action_entries, G_N_ELEMENTS (action_entries),
+                                GTK_WIDGET (icon_view));
+  gtk_action_group_add_radio_actions (THUNAR_STANDARD_VIEW (icon_view)->action_group, column_action_entries,
+                                      G_N_ELEMENTS (column_action_entries), THUNAR_LIST_MODEL_COLUMN_NAME,
+                                      G_CALLBACK (thunar_icon_view_action_sort), icon_view);
+  gtk_action_group_add_radio_actions (THUNAR_STANDARD_VIEW (icon_view)->action_group, order_action_entries,
+                                      G_N_ELEMENTS (order_action_entries), GTK_SORT_ASCENDING,
+                                      G_CALLBACK (thunar_icon_view_action_sort), icon_view);
+
+  /* we need to listen to sort column changes to sync the menu items */
+  g_signal_connect (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->model), "sort-column-changed",
+                    G_CALLBACK (thunar_icon_view_sort_column_changed), icon_view);
+  thunar_icon_view_sort_column_changed (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (icon_view)->model), icon_view);
 }
 
 
@@ -138,6 +190,33 @@ thunar_icon_view_get_accessible (GtkWidget *widget)
     }
 
   return object;
+}
+
+
+
+static void
+thunar_icon_view_connect_ui_manager (ThunarStandardView *standard_view,
+                                     GtkUIManager       *ui_manager)
+{
+  ThunarIconView *icon_view = THUNAR_ICON_VIEW (standard_view);
+  GError         *error = NULL;
+
+  icon_view->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_icon_view_ui,
+                                                              thunar_icon_view_ui_length, &error);
+  if (G_UNLIKELY (icon_view->ui_merge_id == 0))
+    {
+      g_error ("Failed to merge ThunarIconView menus: %s", error->message);
+      g_error_free (error);
+    }
+}
+
+
+
+static void
+thunar_icon_view_disconnect_ui_manager (ThunarStandardView *standard_view,
+                                        GtkUIManager       *ui_manager)
+{
+  gtk_ui_manager_remove_ui (ui_manager, THUNAR_ICON_VIEW (standard_view)->ui_merge_id);
 }
 
 
@@ -178,6 +257,28 @@ thunar_icon_view_select_path (ThunarStandardView *standard_view,
 
 
 
+static void
+thunar_icon_view_action_sort (GtkAction          *action,
+                              GtkAction          *current,
+                              ThunarStandardView *standard_view)
+{
+  GtkSortType order;
+  gint        column;
+
+  /* query the new sort column id */
+  action = gtk_action_group_get_action (standard_view->action_group, "sort-by-name");
+  column = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+
+  /* query the new sort order */
+  action = gtk_action_group_get_action (standard_view->action_group, "sort-ascending");
+  order = gtk_radio_action_get_current_value (GTK_RADIO_ACTION (action));
+
+  /* apply the new settings */
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), column, order);
+}
+
+
+
 static gboolean
 thunar_icon_view_button_press_event (ExoIconView    *view,
                                      GdkEventButton *event,
@@ -186,18 +287,27 @@ thunar_icon_view_button_press_event (ExoIconView    *view,
   GtkTreePath *path;
 
   /* open the context menu on right clicks */
-  if (event->type == GDK_BUTTON_PRESS && event->button == 3
-      && exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
-      /* select the path on which the user clicked if not selected yet */
-      if (!exo_icon_view_path_is_selected (view, path))
+      if (exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
         {
-          /* we don't unselect all other items if Control is active */
-          if ((event->state & GDK_CONTROL_MASK) == 0)
-            exo_icon_view_unselect_all (view);
-          exo_icon_view_select_path (view, path);
+          /* select the path on which the user clicked if not selected yet */
+          if (!exo_icon_view_path_is_selected (view, path))
+            {
+              /* we don't unselect all other items if Control is active */
+              if ((event->state & GDK_CONTROL_MASK) == 0)
+                exo_icon_view_unselect_all (view);
+              exo_icon_view_select_path (view, path);
+            }
+          gtk_tree_path_free (path);
         }
-      gtk_tree_path_free (path);
+      else if ((event->state & GDK_CONTROL_MASK) == 0)
+        {
+          /* user clicked on an empty area, so we unselect everything
+           * to make sure that the folder context menu is opened.
+           */
+          exo_icon_view_unselect_all (view);
+        }
 
       /* open the context menu */
       thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (icon_view), event->button, event->time);
@@ -244,6 +354,28 @@ thunar_icon_view_item_activated (ExoIconView    *view,
   action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (icon_view)->action_group, "open");
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
+}
+
+
+
+static void
+thunar_icon_view_sort_column_changed (GtkTreeSortable *sortable,
+                                      ThunarIconView  *icon_view)
+{
+  GtkSortType order;
+  GtkAction  *action;
+  gint        column;
+
+  if (gtk_tree_sortable_get_sort_column_id (sortable, &column, &order))
+    {
+      /* apply the new sort column */
+      action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (icon_view)->action_group, "sort-by-name");
+      exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), column);
+
+      /* apply the new sort order */
+      action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (icon_view)->action_group, "sort-ascending");
+      exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), order);
+    }
 }
 
 

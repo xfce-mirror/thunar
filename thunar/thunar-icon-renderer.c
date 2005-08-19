@@ -288,11 +288,13 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 {
   ThunarIconRenderer *icon_renderer = THUNAR_ICON_RENDERER (renderer);
   ThunarIconFactory  *icon_factory;
+  GdkRectangle        emblem_area;
   GdkRectangle        icon_area;
   GdkRectangle        draw_area;
   GtkStateType        state;
-  GdkPixbuf          *temp;
+  GdkPixbuf          *emblem;
   GdkPixbuf          *icon;
+  GdkPixbuf          *temp;
   GList              *emblems;
   GList              *lp;
 
@@ -357,29 +359,41 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   if (emblems != NULL)
     {
       /* lookup the first emblem icon that exits in the icon theme */
-      for (icon = NULL, lp = emblems; lp != NULL; lp = lp->next)
-        {
-          icon = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, NULL, FALSE);
-          if (G_LIKELY (icon != NULL))
-            break;
-        }
+      for (emblem = NULL, lp = emblems; emblem == NULL && lp != NULL; lp = lp->next)
+        emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, NULL, FALSE);
 
-      if (G_LIKELY (icon != NULL))
+      if (G_LIKELY (emblem != NULL))
         {
-          icon_area.width = gdk_pixbuf_get_width (icon);
-          icon_area.height = gdk_pixbuf_get_height (icon);
-          icon_area.x = cell_area->x + (cell_area->width - renderer->xpad ) / 2;
-          icon_area.y = cell_area->y + (cell_area->height - renderer->ypad) / 2;
+          /* determine the dimensions of the emblem */
+          emblem_area.width = gdk_pixbuf_get_width (emblem);
+          emblem_area.height = gdk_pixbuf_get_height (emblem);
 
-          if (gdk_rectangle_intersect (expose_area, &icon_area, &draw_area))
+          /* shrink insane emblems */
+          if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > (2 * icon_renderer->size) / 3))
             {
-              gdk_draw_pixbuf (window, widget->style->black_gc, icon,
-                               draw_area.x - icon_area.x, draw_area.y - icon_area.y,
+              temp = exo_gdk_pixbuf_scale_ratio (emblem, (2 * icon_renderer->size) / 3);
+              emblem_area.width = gdk_pixbuf_get_width (temp);
+              emblem_area.height = gdk_pixbuf_get_height (temp);
+              g_object_unref (G_OBJECT (emblem));
+              emblem = temp;
+            }
+
+          /* determine a good position for the emblem */
+          emblem_area.x = MIN (icon_area.x + icon_area.width - emblem_area.width / 2,
+                               cell_area->x + cell_area->width - emblem_area.width);
+          emblem_area.y = MIN (icon_area.y + icon_area.height - emblem_area.height / 2,
+                               cell_area->y + cell_area->height -emblem_area.height);
+
+          /* render the emblem */
+          if (gdk_rectangle_intersect (expose_area, &emblem_area, &draw_area))
+            {
+              gdk_draw_pixbuf (window, widget->style->black_gc, emblem,
+                               draw_area.x - emblem_area.x, draw_area.y - emblem_area.y,
                                draw_area.x, draw_area.y, draw_area.width, draw_area.height,
                                GDK_RGB_DITHER_NORMAL, 0, 0);
             }
 
-          g_object_unref (G_OBJECT (icon));
+          g_object_unref (G_OBJECT (emblem));
         }
 
       g_list_free (emblems);

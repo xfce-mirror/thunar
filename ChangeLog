@@ -1,5 +1,24 @@
 2005-08-19	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.{c,h}: Allow derived classes to add
+	  custom actions to the user interface.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-window-ui.xml: Add
+	  support for custom view item actions.
+	* thunar/Makefile.am, thunar/thunar-icon-view-ui.xml,
+	  thunar/thunar-icon-view.c: Add support to arrange items within the
+	  icon view.
+	* thunar/thunar-file.h, thunar/thunar-local-file.c: Provide an emblem
+	  for the desktop folder in regular file listings.
+	* thunar/thunar-icon-view.c(thunar_icon_view_init): Add 3 pixel padding
+	  in vertical direction to the icon cell, to allow better placement
+	  of the emblems.
+	* thunar/thunar-icon-renderer.c(thunar_icon_renderer_render): Improve
+	  the emblem placement and drawing code to work-around issues with
+	  most icon themes, that don't provide emblems in the appropriate
+	  sizes.
+
+2005-08-19	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-statusbar.c: Drop the dependency on X11.
 	* thunar/thunar-desktop-window.c: Include <gdk/gdkx.h> explicitly (since
 	  that's no longer done by libexo -> libxfcegui4).

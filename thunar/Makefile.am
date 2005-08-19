@@ -44,6 +44,7 @@ Thunar_SOURCES =							\
 	thunar-icon-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
+	thunar-icon-view-ui.h						\
 	thunar-launcher.c						\
 	thunar-launcher.h						\
 	thunar-list-model.c						\
@@ -121,16 +122,21 @@ clean-local:
 if MAINTAINER_MODE
 DISTCLEANFILES =							\
 	thunar-fallback-icon.c						\
+	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
 	thunar-window-ui.h
 
 BUILT_SOURCES =								\
 	thunar-fallback-icon.c						\
+	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
 	thunar-window-ui.h
 
 thunar-fallback-icon.c: $(srcdir)/thunar-fallback-icon.png Makefile
 	(echo "#include <thunar/thunar-fallback-icon.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_fallback_icon $(srcdir)/thunar-fallback-icon.png) > thunar-fallback-icon.c
+
+thunar-icon-view-ui.h: Makefile $(srcdir)/thunar-icon-view-ui.xml
+	exo-csource --static --name=thunar_icon_view_ui $(srcdir)/thunar-icon-view-ui.xml > thunar-icon-view-ui.h
 
 thunar-standard-view-ui.h: Makefile $(srcdir)/thunar-standard-view-ui.xml
 	exo-csource --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h
@@ -141,6 +147,7 @@ endif
 
 EXTRA_DIST =								\
 	thunar-fallback-icon.png					\
+	thunar-icon-view-ui.xml						\
 	thunar-standard-view-ui.xml					\
 	thunar-window-ui.xml
 

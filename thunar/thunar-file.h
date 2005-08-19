@@ -60,6 +60,7 @@ typedef enum
 #define THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK "emblem-symbolic-link"
 #define THUNAR_FILE_EMBLEM_NAME_CANT_READ "emblem-noread"
 #define THUNAR_FILE_EMBLEM_NAME_CANT_WRITE "emblem-nowrite"
+#define THUNAR_FILE_EMBLEM_NAME_DESKTOP "emblem-desktop"
 
 struct _ThunarFileClass
 {

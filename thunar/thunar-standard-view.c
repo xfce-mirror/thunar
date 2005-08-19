@@ -111,7 +111,8 @@ struct _ThunarStandardViewPrivate
 
 static const GtkActionEntry action_entries[] =
 {
-  { "file-context-menu", NULL, N_ ("Context Menu"), NULL, NULL, NULL, },
+  { "file-context-menu", NULL, N_ ("File Context Menu"), NULL, NULL, NULL, },
+  { "folder-context-menu", NULL, N_ ("Folder Context Menu"), NULL, NULL, NULL, },
   { "properties", GTK_STOCK_PROPERTIES, N_ ("_Properties"), "<alt>Return", N_ ("View the properties of the selected item"), G_CALLBACK (thunar_standard_view_action_properties), },
   { "copy", GTK_STOCK_COPY, N_ ("_Copy files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
@@ -198,6 +199,9 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->realize = thunar_standard_view_realize;
   gtkwidget_class->unrealize = thunar_standard_view_unrealize;
+
+  klass->connect_ui_manager = (gpointer) exo_noop;
+  klass->disconnect_ui_manager = (gpointer) exo_noop;
 
   g_object_class_override_property (gobject_class,
                                     PROP_CURRENT_DIRECTORY,
@@ -627,6 +631,9 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
       /* drop our action group from the previous UI manager */
       gtk_ui_manager_remove_action_group (standard_view->ui_manager, standard_view->action_group);
 
+      /* unmerge the ui controls from derived classes */
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->disconnect_ui_manager) (standard_view, standard_view->ui_manager);
+
       /* unmerge our ui controls from the previous UI manager */
       gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->ui_merge_id);
 
@@ -654,6 +661,9 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
           g_error ("Failed to merge ThunarStandardView menus: %s", error->message);
           g_error_free (error);
         }
+
+      /* merge the ui controls from derived classes */
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->connect_ui_manager) (standard_view, ui_manager);
     }
 
   /* let others know that we have a new manager */
@@ -941,7 +951,7 @@ thunar_standard_view_loading_unbound (gpointer user_data)
  * @time          : the event time.
  *
  * Invoked by derived classes (and only by derived classes!) whenever the user
- * requests to open a context menu, e.g. by right-clicking on a file or by
+ * requests to open a context menu, e.g. by right-clicking on a file/folder or by
  * using one of the context menu shortcuts.
  **/
 void
@@ -951,12 +961,21 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
 {
   GMainLoop *loop;
   GtkWidget *menu;
+  GList     *selected_items;
   guint      id;
 
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* take a reference on the file context menu */
-  menu = gtk_ui_manager_get_widget (standard_view->ui_manager, "/file-context-menu");
+  /* check if we need to popup the file or the folder context menu */
+  selected_items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
+  if (G_LIKELY (selected_items != NULL))
+    menu = gtk_ui_manager_get_widget (standard_view->ui_manager, "/file-context-menu");
+  else
+    menu = gtk_ui_manager_get_widget (standard_view->ui_manager, "/folder-context-menu");
+  g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
+  g_list_free (selected_items);
+
+  /* take a reference on the context menu */
   g_object_ref (G_OBJECT (menu));
   gtk_object_sink (GTK_OBJECT (menu));
 
