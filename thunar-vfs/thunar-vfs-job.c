@@ -317,8 +317,10 @@ thunar_vfs_job_emit_valist (ThunarVfsJob *job,
   details.job = job;
   details.signal_id = signal_id;
   details.signal_detail = signal_detail;
-  details.var_args = var_args;
   details.pending = TRUE;
+
+  /* copy the variable argument list (portable) */
+  G_VA_COPY (details.var_args, var_args);
 
   g_mutex_lock (job->mutex);
   g_idle_add_full (G_PRIORITY_LOW, thunar_vfs_job_idle, &details, NULL);
