@@ -65,6 +65,9 @@ static void     thunar_window_action_close                (GtkAction          *a
 static void     thunar_window_action_location_bar_changed (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
                                                            ThunarWindow       *window);
+static void     thunar_window_action_view_changed         (GtkRadioAction     *action,
+                                                           GtkRadioAction     *current,
+                                                           ThunarWindow       *window);
 static void     thunar_window_action_go_up                (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_location             (GtkAction          *action,
@@ -91,6 +94,7 @@ struct _ThunarWindow
 
   GtkWidget       *side_pane;
   GtkWidget       *location_bar;
+  GtkWidget       *view_container;
   GtkWidget       *view;
   GtkWidget       *statusbar;
 
@@ -177,7 +181,7 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget      *menubar;
   GtkWidget      *paned;
   GtkWidget      *box;
-  GSList         *group = NULL;
+  GSList         *group;
 
   window->action_group = gtk_action_group_new ("thunar-window");
   gtk_action_group_set_translation_domain (window->action_group, GETTEXT_PACKAGE);
@@ -190,7 +194,7 @@ thunar_window_init (ThunarWindow *window)
    */
   radio_action = gtk_radio_action_new ("view-location-bar-buttons", N_ ("_Button Style"), NULL, NULL, THUNAR_TYPE_LOCATION_BUTTONS);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
-  gtk_radio_action_set_group (radio_action, group);
+  gtk_radio_action_set_group (radio_action, NULL);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
@@ -201,6 +205,21 @@ thunar_window_init (ThunarWindow *window)
   g_object_unref (G_OBJECT (radio_action));
 
   radio_action = gtk_radio_action_new ("view-location-bar-hidden", N_ ("_Hidden"), NULL, NULL, G_TYPE_NONE);
+  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
+  gtk_radio_action_set_group (radio_action, group);
+  group = gtk_radio_action_get_group (radio_action);
+  g_object_unref (G_OBJECT (radio_action));
+
+  /*
+   * add view options
+   */
+  radio_action = gtk_radio_action_new ("view-as-icons", N_ ("View as _Icons"), NULL, NULL, THUNAR_TYPE_ICON_VIEW);
+  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
+  gtk_radio_action_set_group (radio_action, NULL);
+  group = gtk_radio_action_get_group (radio_action);
+  g_object_unref (G_OBJECT (radio_action));
+
+  radio_action = gtk_radio_action_new ("view-as-detailed-list", N_ ("View as _Detailed List"), NULL, NULL, THUNAR_TYPE_DETAILS_VIEW);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
@@ -244,23 +263,14 @@ thunar_window_init (ThunarWindow *window)
   gtk_box_pack_start (GTK_BOX (box), window->location_bar, FALSE, FALSE, 0);
   gtk_widget_show (window->location_bar);
 
-  window->view = thunar_icon_view_new ();
-  g_signal_connect (G_OBJECT (window->view), "notify::loading",
-                    G_CALLBACK (thunar_window_notify_loading), window);
-  g_signal_connect_swapped (G_OBJECT (window->view), "change-directory",
-                            G_CALLBACK (thunar_window_set_current_directory), window);
-  exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->view), "current-directory");
-  exo_binding_new (G_OBJECT (window), "ui-manager", G_OBJECT (window->view), "ui-manager");
-  gtk_box_pack_start (GTK_BOX (box), window->view, TRUE, TRUE, 0);
-  gtk_widget_grab_focus (window->view);
-  gtk_widget_show (window->view);
+  window->view_container = gtk_alignment_new (0.5f, 0.5f, 1.0f, 1.0f);
+  gtk_box_pack_start (GTK_BOX (box), window->view_container, TRUE, TRUE, 0);
+  gtk_widget_show (window->view_container);
 
   window->statusbar = thunar_statusbar_new ();
   g_signal_connect_swapped (G_OBJECT (window->statusbar), "change-directory",
                             G_CALLBACK (thunar_window_set_current_directory), window);
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->statusbar), "current-directory");
-  exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->statusbar), "loading");
-  exo_binding_new (G_OBJECT (window->view), "statusbar-text", G_OBJECT (window->statusbar), "text");
   gtk_box_pack_start (GTK_BOX (vbox), window->statusbar, FALSE, FALSE, 0);
   gtk_widget_show (window->statusbar);
 
@@ -268,6 +278,11 @@ thunar_window_init (ThunarWindow *window)
   action = gtk_action_group_get_action (window->action_group, "view-location-bar-buttons");
   g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_location_bar_changed), window);
   thunar_window_action_location_bar_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
+
+  /* activate the selected view */
+  action = gtk_action_group_get_action (window->action_group, "view-as-icons");
+  g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_view_changed), window);
+  thunar_window_action_view_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 }
 
 
@@ -281,7 +296,7 @@ thunar_window_finalize (GObject *object)
   g_object_unref (G_OBJECT (window->action_group));
   g_object_unref (G_OBJECT (window->ui_manager));
 
-  G_OBJECT_CLASS (thunar_window_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_window_parent_class)->finalize) (object);
 }
 
 
@@ -401,6 +416,48 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
                        G_OBJECT (widget), "current-directory");
       gtk_container_add (GTK_CONTAINER (window->location_bar), widget);
       gtk_widget_show (widget);
+    }
+}
+
+
+
+static void
+thunar_window_action_view_changed (GtkRadioAction *action,
+                                   GtkRadioAction *current,
+                                   ThunarWindow   *window)
+{
+  GType type;
+
+  /* drop the previous view (if any) */
+  if (G_LIKELY (window->view != NULL))
+    {
+      /* destroy and disconnect the previous view */
+      gtk_widget_destroy (window->view);
+
+      /* update the UI (else GtkUIManager will crash on merging) */
+      gtk_ui_manager_ensure_update (window->ui_manager);
+    }
+
+  /* determine the new type of view */
+  type = gtk_radio_action_get_current_value (action);
+
+  /* allocate a new view of the requested type */
+  if (G_LIKELY (type != G_TYPE_NONE && type != G_TYPE_INVALID))
+    {
+      window->view = g_object_new (type, "ui-manager", window->ui_manager, NULL);
+      g_signal_connect (G_OBJECT (window->view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
+      g_signal_connect_swapped (G_OBJECT (window->view), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->view), "current-directory");
+      exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->statusbar), "loading");
+      exo_binding_new (G_OBJECT (window->view), "statusbar-text", G_OBJECT (window->statusbar), "text");
+      gtk_container_add (GTK_CONTAINER (window->view_container), window->view);
+      gtk_widget_grab_focus (window->view);
+      gtk_widget_show (window->view);
+    }
+  else
+    {
+      /* this should not happen under normal conditions */
+      window->view = NULL;
     }
 }
 

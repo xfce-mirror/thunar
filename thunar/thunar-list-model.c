@@ -49,7 +49,6 @@ typedef struct _SortTuple SortTuple;
 static void               thunar_list_model_init                  (ThunarListModel        *store);
 static void               thunar_list_model_class_init            (ThunarListModelClass   *klass);
 static void               thunar_list_model_tree_model_init       (GtkTreeModelIface      *iface);
-static void               thunar_list_model_drag_source_init      (GtkTreeDragSourceIface *iface);
 static void               thunar_list_model_drag_dest_init        (GtkTreeDragDestIface   *iface);
 static void               thunar_list_model_sortable_init         (GtkTreeSortableIface   *iface);
 static void               thunar_list_model_finalize              (GObject                *object);
@@ -91,13 +90,6 @@ static gboolean           thunar_list_model_iter_nth_child        (GtkTreeModel 
 static gboolean           thunar_list_model_iter_parent           (GtkTreeModel           *model,
                                                                    GtkTreeIter            *iter,
                                                                    GtkTreeIter            *child);
-static gboolean           thunar_list_model_row_draggable         (GtkTreeDragSource      *source,
-                                                                   GtkTreePath            *path);
-static gboolean           thunar_list_model_drag_data_delete      (GtkTreeDragSource      *source,
-                                                                   GtkTreePath            *path);
-static gboolean           thunar_list_model_drag_data_get         (GtkTreeDragSource      *source,
-                                                                   GtkTreePath            *path,
-                                                                   GtkSelectionData       *data);
 static gboolean           thunar_list_model_drag_data_received    (GtkTreeDragDest        *dest,
                                                                    GtkTreePath            *path,
                                                                    GtkSelectionData       *data);
@@ -211,8 +203,6 @@ G_DEFINE_TYPE_WITH_CODE (ThunarListModel,
                          GTK_TYPE_OBJECT,
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
                                                 thunar_list_model_tree_model_init)
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_SOURCE,
-                                                thunar_list_model_drag_source_init)
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_DEST,
                                                 thunar_list_model_drag_dest_init)
                          G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_SORTABLE,
@@ -301,16 +291,6 @@ thunar_list_model_tree_model_init (GtkTreeModelIface *iface)
   iface->iter_n_children  = thunar_list_model_iter_n_children;
   iface->iter_nth_child   = thunar_list_model_iter_nth_child;
   iface->iter_parent      = thunar_list_model_iter_parent;
-}
-
-
-
-static void
-thunar_list_model_drag_source_init (GtkTreeDragSourceIface *iface)
-{
-  iface->row_draggable    = thunar_list_model_row_draggable;
-  iface->drag_data_delete = thunar_list_model_drag_data_delete;
-  iface->drag_data_get    = thunar_list_model_drag_data_get;
 }
 
 
@@ -782,47 +762,6 @@ thunar_list_model_iter_parent (GtkTreeModel *model,
                                GtkTreeIter  *child)
 {
   return FALSE;
-}
-
-
-
-static gboolean
-thunar_list_model_row_draggable (GtkTreeDragSource *source,
-                                 GtkTreePath       *path)
-{
-  return TRUE;
-}
-
-
-
-static gboolean
-thunar_list_model_drag_data_delete (GtkTreeDragSource *source,
-                                    GtkTreePath       *path)
-{
-  GtkTreeIter iter;
-
-  g_return_val_if_fail (THUNAR_IS_LIST_MODEL (source), FALSE);
-
-  if (thunar_list_model_get_iter (GTK_TREE_MODEL (source), &iter, path))
-    {
-      thunar_list_model_remove (THUNAR_LIST_MODEL (source), &iter, FALSE);
-      return TRUE;
-    }
-
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_list_model_drag_data_get (GtkTreeDragSource *source,
-                                 GtkTreePath       *path,
-                                 GtkSelectionData  *data)
-{
-  if (gtk_tree_set_row_drag_data (data, (GtkTreeModel *) source, path))
-    return TRUE;
-  else
-    return FALSE;
 }
 
 

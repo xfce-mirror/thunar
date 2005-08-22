@@ -24,6 +24,13 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <thunar/thunar-path-entry.h>
 
 
@@ -40,38 +47,49 @@ enum
 
 
 
-static void     thunar_path_entry_class_init          (ThunarPathEntryClass *klass);
-static void     thunar_path_entry_editable_init       (GtkEditableClass     *iface);
-static void     thunar_path_entry_init                (ThunarPathEntry      *path_entry);
-static void     thunar_path_entry_finalize            (GObject              *object);
-static void     thunar_path_entry_get_property        (GObject              *object,  
-                                                       guint                 prop_id,
-                                                       GValue               *value,
-                                                       GParamSpec           *pspec);
-static void     thunar_path_entry_set_property        (GObject              *object,  
-                                                       guint                 prop_id,
-                                                       const GValue         *value,
-                                                       GParamSpec           *pspec);
-static void     thunar_path_entry_size_request        (GtkWidget            *widget,
-                                                       GtkRequisition       *requisition);
-static void     thunar_path_entry_size_allocate       (GtkWidget            *widget,
-                                                       GtkAllocation        *allocation);
-static void     thunar_path_entry_realize             (GtkWidget            *widget);
-static void     thunar_path_entry_unrealize           (GtkWidget            *widget);
-static gboolean thunar_path_entry_focus               (GtkWidget            *widget,
-                                                       GtkDirectionType      direction);
-static gboolean thunar_path_entry_expose_event        (GtkWidget            *widget,
-                                                       GdkEventExpose       *event);
-static void     thunar_path_entry_activate            (GtkEntry             *entry);
-static void     thunar_path_entry_changed             (GtkEditable          *editable);
-static void     thunar_path_entry_get_borders         (ThunarPathEntry      *path_entry,
-                                                       gint                 *xborder,
-                                                       gint                 *yborder);
-static void     thunar_path_entry_get_text_area_size  (ThunarPathEntry      *path_entry,
-                                                       gint                 *x,
-                                                       gint                 *y,
-                                                       gint                 *width,
-                                                       gint                 *height);
+static void     thunar_path_entry_class_init            (ThunarPathEntryClass *klass);
+static void     thunar_path_entry_editable_init         (GtkEditableClass     *iface);
+static void     thunar_path_entry_init                  (ThunarPathEntry      *path_entry);
+static void     thunar_path_entry_finalize              (GObject              *object);
+static void     thunar_path_entry_get_property          (GObject              *object,  
+                                                         guint                 prop_id,
+                                                         GValue               *value,
+                                                         GParamSpec           *pspec);
+static void     thunar_path_entry_set_property          (GObject              *object,  
+                                                         guint                 prop_id,
+                                                         const GValue         *value,
+                                                         GParamSpec           *pspec);
+static void     thunar_path_entry_size_request          (GtkWidget            *widget,
+                                                         GtkRequisition       *requisition);
+static void     thunar_path_entry_size_allocate         (GtkWidget            *widget,
+                                                         GtkAllocation        *allocation);
+static void     thunar_path_entry_realize               (GtkWidget            *widget);
+static void     thunar_path_entry_unrealize             (GtkWidget            *widget);
+static gboolean thunar_path_entry_focus                 (GtkWidget            *widget,
+                                                         GtkDirectionType      direction);
+static gboolean thunar_path_entry_expose_event          (GtkWidget            *widget,
+                                                         GdkEventExpose       *event);
+static gboolean thunar_path_entry_button_press_event    (GtkWidget            *widget,
+                                                         GdkEventButton       *event);
+static gboolean thunar_path_entry_button_release_event  (GtkWidget            *widget,
+                                                         GdkEventButton       *event);
+static gboolean thunar_path_entry_motion_notify_event   (GtkWidget            *widget,
+                                                         GdkEventMotion       *event);
+static void     thunar_path_entry_drag_data_get         (GtkWidget            *widget,
+                                                         GdkDragContext       *context,
+                                                         GtkSelectionData     *selection_data,
+                                                         guint                 info,
+                                                         guint                 time);
+static void     thunar_path_entry_activate              (GtkEntry             *entry);
+static void     thunar_path_entry_changed               (GtkEditable          *editable);
+static void     thunar_path_entry_get_borders           (ThunarPathEntry      *path_entry,
+                                                         gint                 *xborder,
+                                                         gint                 *yborder);
+static void     thunar_path_entry_get_text_area_size    (ThunarPathEntry      *path_entry,
+                                                         gint                 *x,
+                                                         gint                 *y,
+                                                         gint                 *width,
+                                                         gint                 *height);
 
 
 
@@ -87,9 +105,18 @@ struct _ThunarPathEntry
   ThunarIconFactory *icon_factory;
   ThunarFile        *current_file;
   GdkWindow         *icon_area;
+
+  gint               drag_button;
+  gint               drag_x;
+  gint               drag_y;
 };
 
 
+
+static const GtkTargetEntry drag_targets[] =
+{
+  { "text/uri-list", 0, 0, },
+};
 
 static GtkEditableClass *thunar_path_entry_editable_parent_iface;
 
@@ -120,6 +147,10 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
   gtkwidget_class->unrealize = thunar_path_entry_unrealize;
   gtkwidget_class->focus = thunar_path_entry_focus;
   gtkwidget_class->expose_event = thunar_path_entry_expose_event;
+  gtkwidget_class->button_press_event = thunar_path_entry_button_press_event;
+  gtkwidget_class->button_release_event = thunar_path_entry_button_release_event;
+  gtkwidget_class->motion_notify_event = thunar_path_entry_motion_notify_event;
+  gtkwidget_class->drag_data_get = thunar_path_entry_drag_data_get;
 
   gtkentry_class = GTK_ENTRY_CLASS (klass);
   gtkentry_class->activate = thunar_path_entry_activate;
@@ -164,6 +195,7 @@ thunar_path_entry_editable_init (GtkEditableClass *iface)
 static void
 thunar_path_entry_init (ThunarPathEntry *path_entry)
 {
+  path_entry->drag_button = -1;
 }
 
 
@@ -341,7 +373,8 @@ thunar_path_entry_realize (GtkWidget *widget)
                         | GDK_BUTTON_RELEASE_MASK
                         | GDK_ENTER_NOTIFY_MASK
                         | GDK_EXPOSURE_MASK
-                        | GDK_LEAVE_NOTIFY_MASK;
+                        | GDK_LEAVE_NOTIFY_MASK
+                        | GDK_POINTER_MOTION_MASK;
   attributes.x = widget->allocation.x + widget->allocation.width - icon_size - spacing;
   attributes.y = widget->allocation.y + (widget->allocation.height - widget->requisition.height) / 2;
   attributes.width = icon_size + spacing;
@@ -439,6 +472,112 @@ thunar_path_entry_expose_event (GtkWidget      *widget,
     }
 
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_path_entry_button_press_event (GtkWidget      *widget,
+                                      GdkEventButton *event)
+{
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+
+  if (event->window == path_entry->icon_area && event->button == 1)
+    {
+      /* consume the event */
+      path_entry->drag_button = event->button;
+      path_entry->drag_x = event->x;
+      path_entry->drag_x = event->y;
+      return TRUE;
+    }
+
+  return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->button_press_event) (widget, event);
+}
+
+
+
+static gboolean
+thunar_path_entry_button_release_event (GtkWidget      *widget,
+                                        GdkEventButton *event)
+{
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+
+  if (event->window == path_entry->icon_area && event->button == path_entry->drag_button)
+    {
+      /* reset the drag button state */
+      path_entry->drag_button = -1;
+      return TRUE;
+    }
+
+  return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->button_release_event) (widget, event);
+}
+
+
+
+static gboolean
+thunar_path_entry_motion_notify_event (GtkWidget      *widget,
+                                       GdkEventMotion *event)
+{
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+  GdkDragContext  *context;
+  GtkTargetList   *target_list;
+  GdkPixbuf       *icon;
+  gint             size;
+
+  if (event->window == path_entry->icon_area && path_entry->drag_button >= 0 && path_entry->current_file != NULL
+      && gtk_drag_check_threshold (widget, path_entry->drag_x, path_entry->drag_y, event->x, event->y))
+    {
+      /* create the drag context */
+      target_list = gtk_target_list_new (drag_targets, G_N_ELEMENTS (drag_targets));
+      context = gtk_drag_begin (widget, target_list, GDK_ACTION_COPY | GDK_ACTION_LINK, path_entry->drag_button, (GdkEvent *) event);
+      gtk_target_list_unref (target_list);
+
+      /* setup the drag icon (atleast 24px) */
+      gtk_widget_style_get (widget, "icon-size", &size, NULL);
+      icon = thunar_file_load_icon (path_entry->current_file, path_entry->icon_factory, MAX (size, 24));
+      if (G_LIKELY (icon != NULL))
+        {
+          gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
+          g_object_unref (G_OBJECT (icon));
+        }
+
+      /* reset the drag button state */
+      path_entry->drag_button = -1;
+
+      return TRUE;
+    }
+
+  return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->motion_notify_event) (widget, event);
+}
+
+
+
+static void
+thunar_path_entry_drag_data_get (GtkWidget        *widget,
+                                 GdkDragContext   *context,
+                                 GtkSelectionData *selection_data,
+                                 guint             info,
+                                 guint             time)
+{
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+  GList           *uri_list = NULL;
+  gchar           *uri_string;
+
+  /* verify that we actually display a path */
+  if (G_LIKELY (path_entry->current_file != NULL))
+    {
+      /* transform the uri for the current path into an uri string list */
+      uri_list = thunar_vfs_uri_list_prepend (uri_list, thunar_file_get_uri (path_entry->current_file));
+      uri_string = thunar_vfs_uri_list_to_string (uri_list, 0);
+      thunar_vfs_uri_list_free (uri_list);
+
+      /* setup the uri list for the drag selection */
+      gtk_selection_data_set (selection_data, selection_data->target, 8,
+                              (guchar *) uri_string, strlen (uri_string));
+
+      /* clean up */
+      g_free (uri_string);
+    }
 }
 
 

@@ -10,7 +10,12 @@ INCLUDES =								\
 bin_PROGRAMS =								\
 	Thunar
 
+thunar_built_sources =							\
+	thunar-marshal.c						\
+	thunar-marshal.h
+
 Thunar_SOURCES =							\
+	$(thunar_built_sources)						\
 	main.c								\
 	thunar-application.c						\
 	thunar-application.h						\
@@ -120,13 +125,20 @@ clean-local:
 	rm -f *.core core core.*
 
 if MAINTAINER_MODE
+CLEANFILES =								\
+	xgen-tvmc							\
+	xgen-tvmh
+
 DISTCLEANFILES =							\
+	$(thunar_built_sources)						\
+	stamp-thunar-marshal.h						\
 	thunar-fallback-icon.c						\
 	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
 	thunar-window-ui.h
 
 BUILT_SOURCES =								\
+	$(thunar_built_sources)						\
 	thunar-fallback-icon.c						\
 	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
@@ -143,11 +155,29 @@ thunar-standard-view-ui.h: Makefile $(srcdir)/thunar-standard-view-ui.xml
 
 thunar-window-ui.h: Makefile $(srcdir)/thunar-window-ui.xml
 	exo-csource --static --name=thunar_window_ui $(srcdir)/thunar-window-ui.xml > thunar-window-ui.h
+
+thunar-marshal.h: stamp-thunar-marshal.h
+	@true
+stamp-thunar-marshal.h: thunar-marshal.list Makefile
+	( cd $(srcdir) && glib-genmarshal \
+		--prefix=_thunar_marshal \
+		--header thunar-marshal.list ) >> xgen-tmh \
+	&& ( cmp -s xgen-tmh thunar-marshal.h || cp xgen-tmh thunar-marshal.h ) \
+	&& rm -f xgen-tmh \
+	&& echo timestamp > $(@F)
+
+thunar-marshal.c: thunar-marshal.list Makefile
+	( cd $(srcdir) && glib-genmarshal \
+		--prefix=_thunar_marshal \
+		--body thunar-marshal.list ) >> xgen-tmc \
+	&& cp xgen-tmc thunar-marshal.c \
+	&& rm -f xgen-tmc
 endif
 
 EXTRA_DIST =								\
 	thunar-fallback-icon.png					\
 	thunar-icon-view-ui.xml						\
+	thunar-marshal.list						\
 	thunar-standard-view-ui.xml					\
 	thunar-window-ui.xml
 

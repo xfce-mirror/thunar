@@ -78,6 +78,9 @@ struct _ThunarStandardView
   GtkUIManager              *ui_manager;
   guint                      ui_merge_id;
 
+  ThunarIconFactory         *icon_factory;
+  GtkCellRenderer           *icon_renderer;
+
   ExoBinding                *loading_binding;
   gboolean                   loading;
 };

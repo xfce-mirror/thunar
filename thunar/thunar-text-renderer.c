@@ -23,6 +23,7 @@
 
 #include <exo/exo.h>
 
+#include <thunar/thunar-marshal.h>
 #include <thunar/thunar-text-renderer.h>
 
 
@@ -36,42 +37,71 @@ enum
   PROP_WRAP_WIDTH,
 };
 
+enum
+{
+  EDITED,
+  LAST_SIGNAL,
+};
 
 
-static void thunar_text_renderer_class_init   (ThunarTextRendererClass *klass);
-static void thunar_text_renderer_init         (ThunarTextRenderer      *text_renderer);
-static void thunar_text_renderer_finalize     (GObject                 *object);
-static void thunar_text_renderer_get_property (GObject                 *object,
-                                               guint                    prop_id,
-                                               GValue                  *value,
-                                               GParamSpec              *pspec);
-static void thunar_text_renderer_set_property (GObject                 *object,
-                                               guint                    prop_id,
-                                               const GValue            *value,
-                                               GParamSpec              *pspec);
-static void thunar_text_renderer_get_size     (GtkCellRenderer         *renderer,
-                                               GtkWidget               *widget,
-                                               GdkRectangle            *cell_area,
-                                               gint                    *x_offset,
-                                               gint                    *y_offset,
-                                               gint                    *width,
-                                               gint                    *height);
-static void thunar_text_renderer_render       (GtkCellRenderer         *renderer,
-                                               GdkWindow               *window,
-                                               GtkWidget               *widget,
-                                               GdkRectangle            *background_area,
-                                               GdkRectangle            *cell_area,
-                                               GdkRectangle            *expose_area,
-                                               GtkCellRendererState     flags);
-static void thunar_text_renderer_invalidate   (ThunarTextRenderer      *text_renderer);
-static void thunar_text_renderer_set_widget   (ThunarTextRenderer      *text_renderer,
-                                               GtkWidget               *widget);
+
+static void             thunar_text_renderer_class_init                       (ThunarTextRendererClass *klass);
+static void             thunar_text_renderer_init                             (ThunarTextRenderer      *text_renderer);
+static void             thunar_text_renderer_finalize                         (GObject                 *object);
+static void             thunar_text_renderer_get_property                     (GObject                 *object,
+                                                                               guint                    prop_id,
+                                                                               GValue                  *value,
+                                                                               GParamSpec              *pspec);
+static void             thunar_text_renderer_set_property                     (GObject                 *object,
+                                                                               guint                    prop_id,
+                                                                               const GValue            *value,
+                                                                               GParamSpec              *pspec);
+static void             thunar_text_renderer_get_size                         (GtkCellRenderer         *renderer,
+                                                                               GtkWidget               *widget,
+                                                                               GdkRectangle            *cell_area,
+                                                                               gint                    *x_offset,
+                                                                               gint                    *y_offset,
+                                                                               gint                    *width,
+                                                                               gint                    *height);
+static void             thunar_text_renderer_render                           (GtkCellRenderer         *renderer,
+                                                                               GdkWindow               *window,
+                                                                               GtkWidget               *widget,
+                                                                               GdkRectangle            *background_area,
+                                                                               GdkRectangle            *cell_area,
+                                                                               GdkRectangle            *expose_area,
+                                                                               GtkCellRendererState     flags);
+static GtkCellEditable *thunar_text_renderer_start_editing                    (GtkCellRenderer         *renderer,
+                                                                               GdkEvent                *event,
+                                                                               GtkWidget               *widget,
+                                                                               const gchar             *path,
+                                                                               GdkRectangle            *background_area,
+                                                                               GdkRectangle            *cell_area,
+                                                                               GtkCellRendererState     flags);
+static void             thunar_text_renderer_invalidate                       (ThunarTextRenderer      *text_renderer);
+static void             thunar_text_renderer_set_widget                       (ThunarTextRenderer      *text_renderer,
+                                                                               GtkWidget               *widget);
+static void             thunar_text_renderer_editing_done                     (GtkCellEditable         *editable,
+                                                                               ThunarTextRenderer      *text_renderer);
+static gboolean         thunar_text_renderer_focus_out_event                  (GtkWidget               *entry,
+                                                                               GdkEventFocus           *event,
+                                                                               ThunarTextRenderer      *text_renderer);
+static void             thunar_text_renderer_populate_popup                   (GtkEntry                *entry,
+                                                                               GtkMenu                 *menu,
+                                                                               ThunarTextRenderer      *text_renderer);
+static void             thunar_text_renderer_popup_unmap                      (GtkMenu                 *menu,
+                                                                               ThunarTextRenderer      *text_renderer);
+static gboolean         thunar_text_renderer_entry_menu_popdown_timer         (gpointer                 user_data);
+static void             thunar_text_renderer_entry_menu_popdown_timer_destroy (gpointer                 user_data);
 
 
 
 struct _ThunarTextRendererClass
 {
   GtkCellRendererClass __parent__;
+
+  void (*edited) (ThunarTextRenderer *text_renderer,
+                  const gchar        *path,
+                  const gchar        *text);
 };
 
 struct _ThunarTextRenderer
@@ -86,7 +116,16 @@ struct _ThunarTextRenderer
   PangoWrapMode wrap_mode;
   gint          wrap_width;
   gboolean      follow_state;
+
+  /* cell editing support */
+  GtkWidget    *entry;
+  gboolean      entry_menu_active;
+  gint          entry_menu_popdown_timer_id;
 };
+
+
+
+static guint text_renderer_signals[LAST_SIGNAL];
 
 
 
@@ -108,6 +147,7 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   gtkcell_renderer_class = GTK_CELL_RENDERER_CLASS (klass);
   gtkcell_renderer_class->get_size = thunar_text_renderer_get_size;
   gtkcell_renderer_class->render = thunar_text_renderer_render;
+  gtkcell_renderer_class->start_editing = thunar_text_renderer_start_editing;
 
   /**
    * ThunarTextRenderer:follow-state:
@@ -168,6 +208,24 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
                                                      _("The wrap width"),
                                                      -1, G_MAXINT, -1,
                                                      EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarTextRenderer::edited:
+   * @text_renderer : a #ThunarTextRenderer.
+   * @path          : the string representation of the tree path, which was edited.
+   * @text          : the new text for the cell.
+   * @user_data     : user data set when the signal handler was connected.
+   *
+   * Emitted whenever the user successfully edits a cell.
+   **/
+  text_renderer_signals[EDITED] =
+    g_signal_new ("edited",
+                  G_OBJECT_CLASS_TYPE (gobject_class),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarTextRendererClass, edited),
+                  NULL, NULL,
+                  _thunar_marshal_VOID__STRING_STRING,
+                  G_TYPE_NONE, 2, G_TYPE_STRING, G_TYPE_STRING);
 }
 
 
@@ -176,6 +234,7 @@ static void
 thunar_text_renderer_init (ThunarTextRenderer *text_renderer)
 {
   text_renderer->wrap_width = -1;
+  text_renderer->entry_menu_popdown_timer_id = -1;
 }
 
 
@@ -479,6 +538,45 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
 
 
 
+static GtkCellEditable*
+thunar_text_renderer_start_editing (GtkCellRenderer     *renderer,
+                                    GdkEvent            *event,
+                                    GtkWidget           *widget,
+                                    const gchar         *path,
+                                    GdkRectangle        *background_area,
+                                    GdkRectangle        *cell_area,
+                                    GtkCellRendererState flags)
+{
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (renderer);
+
+  /* verify that we are editable */
+  if (renderer->mode != GTK_CELL_RENDERER_MODE_EDITABLE)
+    return NULL;
+
+  /* allocate a new text entry widget to be used for editing */
+  text_renderer->entry = g_object_new (GTK_TYPE_ENTRY,
+                                       "has-frame", FALSE,
+                                       "text", text_renderer->text,
+                                       "visible", TRUE,
+                                       "xalign", renderer->xalign,
+                                       NULL);
+
+  /* select the whole text (this could be changed to exclude the extension) */
+  gtk_editable_select_region (GTK_EDITABLE (text_renderer->entry), 0, -1);
+
+  /* remember the tree path that we're editing */
+  g_object_set_data_full (G_OBJECT (text_renderer->entry), "thunar-text-renderer-path", g_strdup (path), g_free);
+
+  /* connect required signals */
+  g_signal_connect (G_OBJECT (text_renderer->entry), "editing-done", G_CALLBACK (thunar_text_renderer_editing_done), text_renderer);
+  g_signal_connect (G_OBJECT (text_renderer->entry), "focus-out-event", G_CALLBACK (thunar_text_renderer_focus_out_event), text_renderer);
+  g_signal_connect (G_OBJECT (text_renderer->entry), "populate-popup", G_CALLBACK (thunar_text_renderer_populate_popup), text_renderer);
+
+  return GTK_CELL_EDITABLE (text_renderer->entry);
+}
+
+
+
 static void
 thunar_text_renderer_invalidate (ThunarTextRenderer *text_renderer)
 {
@@ -532,6 +630,103 @@ thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
       text_renderer->char_width = 0;
       text_renderer->char_height = 0;
     }
+}
+
+
+
+static void
+thunar_text_renderer_editing_done (GtkCellEditable    *editable,
+                                   ThunarTextRenderer *text_renderer)
+{
+  const gchar *path;
+  const gchar *text;
+
+  /* disconnect our signals from the cell editable */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (editable), thunar_text_renderer_editing_done, text_renderer);
+  g_signal_handlers_disconnect_by_func (G_OBJECT (editable), thunar_text_renderer_focus_out_event, text_renderer);
+  g_signal_handlers_disconnect_by_func (G_OBJECT (editable), thunar_text_renderer_populate_popup, text_renderer);
+
+  /* let the GtkCellRenderer class do it's part of the job */
+  gtk_cell_renderer_stop_editing (GTK_CELL_RENDERER (text_renderer), GTK_ENTRY (editable)->editing_canceled);
+
+  /* inform whoever is interested that we have new text (if not cancelled) */
+  if (G_LIKELY (!GTK_ENTRY (editable)->editing_canceled))
+    {
+      text = gtk_entry_get_text (GTK_ENTRY (editable));
+      path = g_object_get_data (G_OBJECT (editable), "thunar-text-renderer-path");
+      g_signal_emit (G_OBJECT (text_renderer), text_renderer_signals[EDITED], 0, path, text);
+    }
+}
+
+
+
+static gboolean
+thunar_text_renderer_focus_out_event (GtkWidget          *entry,
+                                      GdkEventFocus      *event,
+                                      ThunarTextRenderer *text_renderer)
+{
+  /* cancel editing if we haven't popped up the menu */
+  if (G_LIKELY (!text_renderer->entry_menu_active))
+    thunar_text_renderer_editing_done (GTK_CELL_EDITABLE (entry), text_renderer);
+
+  /* we need to pass the event to the entry */
+  return FALSE;
+}
+
+
+
+static void
+thunar_text_renderer_populate_popup (GtkEntry           *entry,
+                                     GtkMenu            *menu,
+                                     ThunarTextRenderer *text_renderer)
+{
+  if (G_UNLIKELY (text_renderer->entry_menu_popdown_timer_id >= 0))
+    g_source_remove (text_renderer->entry_menu_popdown_timer_id);
+
+  text_renderer->entry_menu_active = TRUE;
+
+  g_signal_connect (G_OBJECT (menu), "unmap", G_CALLBACK (thunar_text_renderer_popup_unmap), text_renderer);
+}
+
+
+
+static void
+thunar_text_renderer_popup_unmap (GtkMenu            *menu,
+                                  ThunarTextRenderer *text_renderer)
+{
+  text_renderer->entry_menu_active = FALSE;
+
+  if (G_LIKELY (text_renderer->entry_menu_popdown_timer_id < 0))
+    {
+      text_renderer->entry_menu_popdown_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 500u, thunar_text_renderer_entry_menu_popdown_timer,
+                                                                       text_renderer, thunar_text_renderer_entry_menu_popdown_timer_destroy);
+    }
+}
+
+
+
+static gboolean
+thunar_text_renderer_entry_menu_popdown_timer (gpointer user_data)
+{
+  ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (user_data);
+
+  GDK_THREADS_ENTER ();
+
+  /* check if we still have the keyboard focus */
+  if (G_UNLIKELY (!GTK_WIDGET_HAS_FOCUS (text_renderer->entry)))
+    thunar_text_renderer_editing_done (GTK_CELL_EDITABLE (text_renderer->entry), text_renderer);
+
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_text_renderer_entry_menu_popdown_timer_destroy (gpointer user_data)
+{
+  THUNAR_TEXT_RENDERER (user_data)->entry_menu_popdown_timer_id = -1;
 }
 
 

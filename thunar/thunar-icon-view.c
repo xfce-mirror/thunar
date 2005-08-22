@@ -23,7 +23,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-icon-view-ui.h>
 #include <thunar/thunar-text-renderer.h>
@@ -137,13 +136,9 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   exo_icon_view_set_selection_mode (EXO_ICON_VIEW (view), GTK_SELECTION_MULTIPLE);
 
   /* add the icon renderer */
-  renderer = g_object_new (THUNAR_TYPE_ICON_RENDERER,
-                           "follow-state", TRUE,
-                           "size", 48,
-                           "ypad", 3u,
-                           NULL);
-  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), renderer, FALSE);
-  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), renderer, "file", THUNAR_LIST_MODEL_COLUMN_FILE);
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->icon_renderer), "follow-state", TRUE, "size", 48, "ypad", 3u, NULL);
+  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer, FALSE);
+  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer, "file", THUNAR_LIST_MODEL_COLUMN_FILE);
 
   /* add the text renderer */
   renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
@@ -301,7 +296,7 @@ thunar_icon_view_button_press_event (ExoIconView    *view,
             }
           gtk_tree_path_free (path);
         }
-      else if ((event->state & GDK_CONTROL_MASK) == 0)
+      else if ((event->state & gtk_accelerator_get_default_mod_mask ()) == 0)
         {
           /* user clicked on an empty area, so we unselect everything
            * to make sure that the folder context menu is opened.

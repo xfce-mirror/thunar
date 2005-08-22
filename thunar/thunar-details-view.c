@@ -24,7 +24,6 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-details-view.h>
-#include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-text-renderer.h>
 
 
@@ -37,6 +36,9 @@ static void       thunar_details_view_select_all          (ThunarStandardView   
 static void       thunar_details_view_unselect_all        (ThunarStandardView     *standard_view);
 static void       thunar_details_view_select_path         (ThunarStandardView     *standard_view,
                                                            GtkTreePath            *path);
+static void       thunar_details_view_notify_model        (GtkTreeView            *tree_view,
+                                                           GParamSpec             *pspec,
+                                                           ThunarDetailsView      *details_view);
 static gboolean   thunar_details_view_button_press_event  (GtkTreeView            *tree_view,
                                                            GdkEventButton         *event,
                                                            ThunarDetailsView      *details_view);
@@ -94,6 +96,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
 
   /* create the tree view to embed */
   tree_view = gtk_tree_view_new ();
+  g_signal_connect (G_OBJECT (tree_view), "notify::model",
+                    G_CALLBACK (thunar_details_view_notify_model), details_view);
   g_signal_connect (G_OBJECT (tree_view), "button-press-event",
                     G_CALLBACK (thunar_details_view_button_press_event), details_view);
   g_signal_connect (G_OBJECT (tree_view), "key-press-event",
@@ -106,7 +110,6 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   /* configure general aspects of the details view */
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (tree_view), TRUE);
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
-  gtk_tree_view_set_search_column (GTK_TREE_VIEW (tree_view), THUNAR_LIST_MODEL_COLUMN_NAME);
 
   /* first column (icon, name) */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -114,9 +117,8 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          "resizable", TRUE,
                          "title", _("Name"),
                          NULL);
-  renderer = thunar_icon_renderer_new ();
-  gtk_tree_view_column_pack_start (column, renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, renderer,
+  gtk_tree_view_column_pack_start (column, THUNAR_STANDARD_VIEW (details_view)->icon_renderer, FALSE);
+  gtk_tree_view_column_set_attributes (column, THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
                                        "file", THUNAR_LIST_MODEL_COLUMN_FILE,
                                        NULL);
   renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
@@ -265,6 +267,19 @@ thunar_details_view_select_path (ThunarStandardView *standard_view,
 
 
 
+static void
+thunar_details_view_notify_model (GtkTreeView       *tree_view,
+                                  GParamSpec        *pspec,
+                                  ThunarDetailsView *details_view)
+{
+  /* We need to set the search column here, as GtkTreeView resets it
+   * whenever a new model is set.
+   */
+  gtk_tree_view_set_search_column (tree_view, THUNAR_LIST_MODEL_COLUMN_NAME);
+}
+
+
+
 static gboolean
 thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         GdkEventButton    *event,
@@ -276,28 +291,29 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   /* we unselect all selected items if the user clicks on an empty
    * area of the treeview and no modifier key is active.
    */
-  if ((event->state & (GDK_SHIFT_MASK | GDK_CONTROL_MASK)) == 0
+  if ((event->state & gtk_accelerator_get_default_mod_mask ()) == 0
       && !gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL))
     {
       selection = gtk_tree_view_get_selection (tree_view);
       gtk_tree_selection_unselect_all (selection);
-      return TRUE;
     }
 
   /* open the context menu on right clicks */
-  if (event->type == GDK_BUTTON_PRESS && event->button == 3
-      && gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, NULL, NULL, NULL))
+  if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
-      /* select the path on which the user clicked if not selected yet */
       selection = gtk_tree_view_get_selection (tree_view);
-      if (!gtk_tree_selection_path_is_selected (selection, path))
+      if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, NULL, NULL, NULL))
         {
-          /* we don't unselect all other items if Control is active */
-          if ((event->state & GDK_CONTROL_MASK) == 0)
-            gtk_tree_selection_unselect_all (selection);
-          gtk_tree_selection_select_path (selection, path);
+          /* select the path on which the user clicked if not selected yet */
+          if (!gtk_tree_selection_path_is_selected (selection, path))
+            {
+              /* we don't unselect all other items if Control is active */
+              if ((event->state & GDK_CONTROL_MASK) == 0)
+                gtk_tree_selection_unselect_all (selection);
+              gtk_tree_selection_select_path (selection, path);
+            }
+          gtk_tree_path_free (path);
         }
-      gtk_tree_path_free (path);
 
       /* open the context menu */
       thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);

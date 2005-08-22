@@ -21,8 +21,16 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <thunarx/thunarx-gtk-extensions.h>
 
+#include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
@@ -34,6 +42,7 @@
 
 
 
+/* Property identifiers */
 enum
 {
   PROP_0,
@@ -41,6 +50,12 @@ enum
   PROP_LOADING,
   PROP_STATUSBAR_TEXT,
   PROP_UI_MANAGER,
+};
+
+/* Identifiers for DnD target types */
+enum
+{
+  TEXT_URI_LIST,
 };
 
 
@@ -64,6 +79,7 @@ static void          thunar_standard_view_set_property              (GObject    
                                                                      GParamSpec               *pspec);
 static void          thunar_standard_view_realize                   (GtkWidget                *widget);
 static void          thunar_standard_view_unrealize                 (GtkWidget                *widget);
+static void          thunar_standard_view_grab_focus                (GtkWidget                *widget);
 static ThunarFile   *thunar_standard_view_get_current_directory     (ThunarNavigator          *navigator);
 static void          thunar_standard_view_set_current_directory     (ThunarNavigator          *navigator,
                                                                      ThunarFile               *current_directory);
@@ -89,6 +105,15 @@ static void          thunar_standard_view_action_select_all_files   (GtkAction  
 static void          thunar_standard_view_action_select_by_pattern  (GtkAction                *action,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_drag_begin                (GtkWidget                *widget,
+                                                                     GdkDragContext           *context,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_drag_data_get             (GtkWidget                *widget,
+                                                                     GdkDragContext           *context,
+                                                                     GtkSelectionData         *selection_data,
+                                                                     guint                     info,
+                                                                     guint                     time,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_loading_unbound           (gpointer                  user_data);
 
@@ -125,6 +150,12 @@ static const GtkActionEntry action_entries[] =
 static const GtkToggleActionEntry toggle_action_entries[] =
 {
   { "show-hidden-files", NULL, N_("Show _hidden files"), NULL, N_("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_standard_view_action_show_hidden_files), FALSE, },
+};
+
+/* Target types for dragging from the view */
+static const GtkTargetEntry drag_targets[] =
+{
+  { "text/uri-list", 0, TEXT_URI_LIST, },
 };
 
 static GObjectClass *thunar_standard_view_parent_class;
@@ -199,6 +230,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->realize = thunar_standard_view_realize;
   gtkwidget_class->unrealize = thunar_standard_view_unrealize;
+  gtkwidget_class->grab_focus = thunar_standard_view_grab_focus;
 
   klass->connect_ui_manager = (gpointer) exo_noop;
   klass->disconnect_ui_manager = (gpointer) exo_noop;
@@ -278,7 +310,13 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_select_by_pattern = gtk_action_group_get_action (standard_view->action_group, "select-by-pattern");
   standard_view->priv->action_show_hidden_files = gtk_action_group_get_action (standard_view->action_group, "show-hidden-files");
 
+  /* setup the list model */
   standard_view->model = thunar_list_model_new ();
+
+  /* setup the icon renderer */
+  standard_view->icon_renderer = thunar_icon_renderer_new ();
+  g_object_ref (G_OBJECT (standard_view->icon_renderer));
+  gtk_object_sink (GTK_OBJECT (standard_view->icon_renderer));
 
   /* be sure to update the statusbar text whenever the number of
    * files in our model changes.
@@ -300,7 +338,8 @@ thunar_standard_view_constructor (GType                  type,
                                   guint                  n_construct_properties,
                                   GObjectConstructParam *construct_properties)
 {
-  GObject *object;
+  GtkWidget *widget;
+  GObject   *object;
 
   /* let the GObject constructor create the instance */
   object = G_OBJECT_CLASS (thunar_standard_view_parent_class)->constructor (type,
@@ -313,6 +352,17 @@ thunar_standard_view_constructor (GType                  type,
   g_object_set (G_OBJECT (GTK_BIN (object)->child),
                 "model", THUNAR_STANDARD_VIEW (object)->model,
                 NULL);
+
+  /* determine the real view widget (treeview or iconview) */
+  widget = GTK_BIN (object)->child;
+
+  /* setup the real view as drag source */
+  gtk_drag_source_set (widget, GDK_BUTTON1_MASK | GDK_BUTTON3_MASK,
+                       drag_targets, G_N_ELEMENTS (drag_targets),
+                       GDK_ACTION_COPY | GDK_ACTION_MOVE
+                       | GDK_ACTION_LINK | GDK_ACTION_ASK);
+  g_signal_connect (G_OBJECT (widget), "drag-begin", G_CALLBACK (thunar_standard_view_drag_begin), object);
+  g_signal_connect (G_OBJECT (widget), "drag-data-get", G_CALLBACK (thunar_standard_view_drag_data_get), object);
 
   /* done, we have a working object */
   return object;
@@ -347,8 +397,12 @@ thunar_standard_view_finalize (GObject *object)
 
   /* some safety checks */
   g_assert (standard_view->loading_binding == NULL);
+  g_assert (standard_view->icon_factory == NULL);
   g_assert (standard_view->ui_manager == NULL);
   g_assert (standard_view->clipboard == NULL);
+
+  /* release the reference on the icon renderer */
+  g_object_unref (G_OBJECT (standard_view->icon_renderer));
 
   /* release the reference on the action group */
   g_object_unref (G_OBJECT (standard_view->action_group));
@@ -441,6 +495,7 @@ static void
 thunar_standard_view_realize (GtkWidget *widget)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (widget);
+  GtkIconTheme       *icon_theme;
   GdkDisplay         *display;
 
   /* let the GtkWidget do its work */
@@ -454,6 +509,10 @@ thunar_standard_view_realize (GtkWidget *widget)
   g_signal_connect_swapped (G_OBJECT (standard_view->clipboard), "changed",
                             G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
   thunar_standard_view_selection_changed (standard_view);
+
+  /* determine the icon factory for the screen on which we are realized */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
+  standard_view->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 }
 
 
@@ -466,12 +525,25 @@ thunar_standard_view_unrealize (GtkWidget *widget)
   /* disconnect the clipboard changed handler */
   g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->clipboard), thunar_standard_view_selection_changed, standard_view);
 
+  /* drop the reference on the icon factory */
+  g_object_unref (G_OBJECT (standard_view->icon_factory));
+  standard_view->icon_factory = NULL;
+
   /* drop the reference on the clipboard manager */
   g_object_unref (G_OBJECT (standard_view->clipboard));
   standard_view->clipboard = NULL;
 
   /* let the GtkWidget do its work */
   GTK_WIDGET_CLASS (thunar_standard_view_parent_class)->unrealize (widget);
+}
+
+
+
+static void
+thunar_standard_view_grab_focus (GtkWidget *widget)
+{
+  /* forward the focus grab to the real view */
+  gtk_widget_grab_focus (GTK_BIN (widget)->child);
 }
 
 
@@ -920,6 +992,73 @@ thunar_standard_view_action_show_hidden_files (GtkToggleAction    *toggle_action
 
   active = gtk_toggle_action_get_active (toggle_action);
   thunar_list_model_set_show_hidden (standard_view->model, active);
+}
+
+
+
+static void
+thunar_standard_view_drag_begin (GtkWidget          *widget,
+                                 GdkDragContext     *context,
+                                 ThunarStandardView *standard_view)
+{
+  GtkTreeIter iter;
+  ThunarFile *file;
+  GdkPixbuf  *icon;
+  GList      *selected_items;
+  gint        size;
+
+  /* query the list of selected items */
+  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
+  if (G_LIKELY (selected_items != NULL))
+    {
+      /* grab the tree iterator for the first selected item */
+      if (gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, selected_items->data))
+        {
+          /* determine the first selected file */
+          file = thunar_list_model_get_file (THUNAR_LIST_MODEL (standard_view->model), &iter);
+          if (G_LIKELY (file != NULL))
+            {
+              /* generate an icon based on that file */
+              g_object_get (G_OBJECT (standard_view->icon_renderer), "size", &size, NULL);
+              icon = thunar_file_load_icon (file, standard_view->icon_factory, size);
+              gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
+              g_object_unref (G_OBJECT (icon));
+
+              /* release the file */
+              g_object_unref (G_OBJECT (file));
+            }
+        }
+
+      /* release the selected items */
+      g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
+      g_list_free (selected_items);
+    }
+}
+
+
+
+static void
+thunar_standard_view_drag_data_get (GtkWidget          *widget,
+                                    GdkDragContext     *context,
+                                    GtkSelectionData   *selection_data,
+                                    guint               info,
+                                    guint               time,
+                                    ThunarStandardView *standard_view)
+{
+  gchar *uri_string;
+  GList *uri_list;
+
+  /* transform the list of selected URIs to a string */
+  uri_list = thunar_standard_view_get_selected_uris (standard_view);
+  uri_string = thunar_vfs_uri_list_to_string (uri_list, 0);
+  thunar_vfs_uri_list_free (uri_list);
+
+  /* set the URI list for the drag selection */
+  gtk_selection_data_set (selection_data, selection_data->target, 8,
+                          (guchar *) uri_string, strlen (uri_string));
+
+  /* clean up */
+  g_free (uri_string);
 }
 
 
