@@ -34,6 +34,9 @@
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
+#ifdef HAVE_SYS_XATTR_H
+#include <sys/xattr.h>
+#endif
 
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
@@ -986,6 +989,29 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
   info = thunar_vfs_mime_database_get_info_for_name_locked (database, name);
   g_mutex_unlock (database->lock);
 
+#ifdef HAVE_ATTROPEN
+  /* check if we have a valid mime type stored in the extattr (SunOS) */
+  if (G_UNLIKELY (info == NULL))
+    {
+      fd = attropen (path, "user.mime_type", O_RDONLY);
+      if (G_UNLIKELY (fd >= 0))
+        {
+          if (fstat (fd, &stat) == 0)
+            {
+              buffer = g_new (gchar, stat.st_size + 1);
+              nbytes = read (fd, buffer, stat.st_size);
+              if (G_LIKELY (nbytes >= 3))
+                {
+                  buffer[nbytes] = '\0';
+                  info = thunar_vfs_mime_database_get_info (database, buffer);
+                }
+              g_free (buffer);
+            }
+          close (fd);
+        }
+    }
+#endif
+
   /* try to determine the type from the file content */
   if (G_UNLIKELY (info == NULL))
     {
@@ -993,12 +1019,26 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
       if (G_LIKELY (fd >= 0))
         {
 #ifdef HAVE_EXTATTR_GET_FD
-          /* check if we have a valid mime type stored in the extattr */
+          /* check if we have a valid mime type stored in the extattr (TrustedBSD) */
           nbytes = extattr_get_fd (fd, EXTATTR_NAMESPACE_USER, "mime_type", NULL, 0);
           if (G_UNLIKELY (nbytes >= 3))
             {
               buffer = g_new (gchar, nbytes + 1);
               nbytes = extattr_get_fd (fd, EXTATTR_NAMESPACE_USER, "mime_type", buffer, nbytes);
+              if (G_LIKELY (nbytes >= 3))
+                {
+                  buffer[nbytes] = '\0';
+                  info = thunar_vfs_mime_database_get_info (database, buffer);
+                }
+              g_free (buffer);
+            }
+#elif defined(HAVE_FGETXATTR)
+          /* check for valid mime type stored in the extattr (Linux) */
+          nbytes = fgetxattr (fd, "user.mime_type", NULL, 0);
+          if (G_UNLIKELY (nbytes >= 3))
+            {
+              buffer = g_new (gchar, nbytes + 1);
+              nbytes = fgetxattr (fd, "user.mime_type", buffer, nbytes);
               if (G_LIKELY (nbytes >= 3))
                 {
                   buffer[nbytes] = '\0';

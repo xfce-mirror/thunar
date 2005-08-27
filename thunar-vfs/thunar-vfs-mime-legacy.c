@@ -71,7 +71,11 @@ static guint        thunar_vfs_mime_legacy_lookup_parents         (ThunarVfsMime
                                                                    guint                     max_parents);
 static GList       *thunar_vfs_mime_legacy_get_stop_characters    (ThunarVfsMimeProvider    *provider);
 static gsize        thunar_vfs_mime_legacy_get_max_buffer_extents (ThunarVfsMimeProvider    *provider);
+static void         thunar_vfs_mime_legacy_parse_aliases          (ThunarVfsMimeLegacy      *legacy,
+                                                                   const gchar              *directory);
 static gboolean     thunar_vfs_mime_legacy_parse_globs            (ThunarVfsMimeLegacy      *legacy,
+                                                                   const gchar              *directory);
+static void         thunar_vfs_mime_legacy_parse_subclasses       (ThunarVfsMimeLegacy      *legacy,
                                                                    const gchar              *directory);
 
 
@@ -92,6 +96,9 @@ struct _ThunarVfsMimeLegacy
   GHashTable                *literals;
   ThunarVfsMimeLegacySuffix *suffixes;
   GList                     *globs;
+
+  GHashTable                *aliases;
+  GHashTable                *parents;
 };
 
 struct _ThunarVfsMimeLegacyGlob
@@ -176,6 +183,9 @@ thunar_vfs_mime_legacy_init (ThunarVfsMimeLegacy *legacy)
   legacy->suffix_chunk = g_mem_chunk_create (ThunarVfsMimeLegacySuffix, 128, G_ALLOC_ONLY);
 
   legacy->literals = g_hash_table_new (g_str_hash, g_str_equal);
+
+  legacy->aliases = g_hash_table_new (g_str_hash, g_str_equal);
+  legacy->parents = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) g_list_free);
 }
 
 
@@ -184,6 +194,12 @@ static void
 thunar_vfs_mime_legacy_finalize (ExoObject *object)
 {
   ThunarVfsMimeLegacy *legacy = THUNAR_VFS_MIME_LEGACY (object);
+
+  /* free parents hash table */
+  g_hash_table_destroy (legacy->parents);
+
+  /* free aliases hash table */
+  g_hash_table_destroy (legacy->aliases);
 
   /* free the list of globs */
   g_list_free (legacy->globs);
@@ -344,7 +360,7 @@ static const gchar*
 thunar_vfs_mime_legacy_lookup_alias (ThunarVfsMimeProvider *provider,
                                      const gchar           *alias)
 {
-  return NULL;
+  return g_hash_table_lookup (THUNAR_VFS_MIME_LEGACY (provider)->aliases, alias);
 }
 
 
@@ -355,7 +371,15 @@ thunar_vfs_mime_legacy_lookup_parents (ThunarVfsMimeProvider *provider,
                                        gchar                **parents,
                                        guint                  max_parents)
 {
-  return 0;
+  GList *lp;
+  guint  n = 0;
+
+  /* determine the known parents for the MIME-type */
+  lp = g_hash_table_lookup (THUNAR_VFS_MIME_LEGACY (provider)->parents, mime_type);
+  for (; lp != NULL && n < max_parents; lp = lp->next, ++n, ++parents)
+    *parents = lp->data;
+
+  return n;
 }
 
 
@@ -379,6 +403,66 @@ static gsize
 thunar_vfs_mime_legacy_get_max_buffer_extents (ThunarVfsMimeProvider *provider)
 {
   return 0;
+}
+
+
+
+static void
+thunar_vfs_mime_legacy_parse_aliases (ThunarVfsMimeLegacy *legacy,
+                                      const gchar         *directory)
+{
+  gchar  line[2048];
+  gchar *alias;
+  gchar *name;
+  gchar *path;
+  gchar *lp;
+  FILE  *fp;
+
+  /* try to open the "aliases" file */
+  path = g_build_filename (directory, "aliases", NULL);
+  fp = fopen (path, "r");
+  g_free (path);
+
+  /* check if we succeed */
+  if (G_UNLIKELY (fp == NULL))
+    return;
+
+  /* parse all aliases */
+  while (fgets (line, sizeof (line), fp) != NULL)
+    {
+      /* skip whitespace/comments */
+      for (lp = line; g_ascii_isspace (*lp); ++lp);
+      if (G_UNLIKELY (*lp == '\0' || *lp == '#'))
+        continue;
+
+      /* extract the alias name */
+      for (alias = lp; *lp != '\0' && !g_ascii_isspace (*lp); ++lp);
+      if (G_UNLIKELY (*lp == '\0' || alias == lp))
+        continue;
+      *lp++ = '\0';
+
+      /* skip whitespace */
+      for (; G_UNLIKELY (g_ascii_isspace (*lp)); ++lp);
+      if (G_UNLIKELY (*lp == '\0'))
+        continue;
+
+      /* extract the MIME-type name */
+      for (name = lp; *lp != '\0' && *lp != '\n' && *lp != '\r'; ++lp);
+      if (G_UNLIKELY (name == lp))
+        continue;
+      *lp = '\0';
+
+      /* insert the alias into the string chunk */
+      alias = g_string_chunk_insert_const (legacy->string_chunk, alias);
+
+      /* insert the MIME-type name into the string chunk */
+      name = g_string_chunk_insert_const (legacy->string_chunk, name);
+
+      /* insert the association into the aliases hash table */
+      g_hash_table_insert (legacy->aliases, alias, name);
+    }
+
+  fclose (fp);
 }
 
 
@@ -451,6 +535,71 @@ thunar_vfs_mime_legacy_parse_globs (ThunarVfsMimeLegacy *legacy,
 
 
 
+static void
+thunar_vfs_mime_legacy_parse_subclasses (ThunarVfsMimeLegacy *legacy,
+                                         const gchar         *directory)
+{
+  gchar  line[2048];
+  GList *parents;
+  gchar *subclass;
+  gchar *name;
+  gchar *path;
+  gchar *lp;
+  FILE  *fp;
+
+  /* try to open the "subclasses" file */
+  path = g_build_filename (directory, "subclasses", NULL);
+  fp = fopen (path, "r");
+  g_free (path);
+
+  /* check if we succeed */
+  if (G_UNLIKELY (fp == NULL))
+    return;
+
+  /* parse all subclasses */
+  while (fgets (line, sizeof (line), fp) != NULL)
+    {
+      /* skip whitespace/comments */
+      for (lp = line; g_ascii_isspace (*lp); ++lp);
+      if (G_UNLIKELY (*lp == '\0' || *lp == '#'))
+        continue;
+
+      /* extract the subclass name */
+      for (subclass = lp; *lp != '\0' && !g_ascii_isspace (*lp); ++lp);
+      if (G_UNLIKELY (*lp == '\0' || subclass == lp))
+        continue;
+      *lp++ = '\0';
+
+      /* skip whitespace */
+      for (; G_UNLIKELY (g_ascii_isspace (*lp)); ++lp);
+      if (G_UNLIKELY (*lp == '\0'))
+        continue;
+
+      /* extract the MIME-type name */
+      for (name = lp; *lp != '\0' && *lp != '\n' && *lp != '\r'; ++lp);
+      if (G_UNLIKELY (name == lp))
+        continue;
+      *lp = '\0';
+
+      /* insert the subclass into the string chunk */
+      subclass = g_string_chunk_insert_const (legacy->string_chunk, subclass);
+
+      /* insert the MIME-type name into the string chunk */
+      name = g_string_chunk_insert_const (legacy->string_chunk, name);
+
+      /* add the MIME-type name to the list of parents for the subclass */
+      parents = g_hash_table_lookup (legacy->parents, subclass);
+      if (G_UNLIKELY (parents != NULL))
+        parents = g_list_copy (parents);
+      parents = g_list_append (parents, name);
+      g_hash_table_insert (legacy->parents, subclass, parents);
+    }
+
+  fclose (fp);
+}
+
+
+
 /**
  * thunar_vfs_mime_legacy_new:
  * @directory : an XDG mime base directory.
@@ -478,6 +627,12 @@ thunar_vfs_mime_legacy_new (const gchar *directory)
       exo_object_unref (legacy);
       return NULL;
     }
+
+  /* parse the aliases file (optional) */
+  thunar_vfs_mime_legacy_parse_aliases (legacy, directory);
+
+  /* parse the subclasses file (optional) */
+  thunar_vfs_mime_legacy_parse_subclasses (legacy, directory);
 
   /* we got it */
   return THUNAR_VFS_MIME_PROVIDER (legacy);
