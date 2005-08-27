@@ -46,15 +46,9 @@
 
 #include <exo/exo.h>
 
+#include <thunar-vfs/thunar-vfs-monitor.h>
 #include <thunar-vfs/thunar-vfs-trash.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
-
-/* we use g_stat() if possible */
-#if GLIB_CHECK_VERSION(2,6,0)
-#include <glib/gstdio.h>
-#else
-#define g_stat(path, buffer) (stat ((path), (buffer)))
-#endif
 
 
 
@@ -160,7 +154,7 @@ const gchar*
 thunar_vfs_trash_info_get_path (const ThunarVfsTrashInfo *info)
 {
   g_return_val_if_fail (info != NULL, NULL);
-  return ((gchar *) info) + sizeof (*info);
+  return ((const gchar *) info) + sizeof (*info);
 }
 
 
@@ -177,14 +171,9 @@ const gchar*
 thunar_vfs_trash_info_get_deletion_date (const ThunarVfsTrashInfo *info)
 {
   g_return_val_if_fail (info != NULL, NULL);
-  return ((gchar *) info) + info->deletion_date_offset;
+  return ((const gchar *) info) + info->deletion_date_offset;
 }
 
-
-
-
-/* interval in which trashes will be checked */
-#define THUNAR_VFS_TRASH_INTERVAL (5 * 1000)
 
 
 
@@ -196,17 +185,19 @@ enum
 
 
 
-static void            thunar_vfs_trash_class_init           (ThunarVfsTrashClass *klass);
-static void            thunar_vfs_trash_init                 (ThunarVfsTrash      *trash);
-static void            thunar_vfs_trash_finalize             (GObject             *object);
-static void            thunar_vfs_trash_get_property         (GObject             *object,
-                                                              guint                prop_id,
-                                                              GValue              *value,
-                                                              GParamSpec          *pspec);
-static void            thunar_vfs_trash_update               (ThunarVfsTrash      *trash);
-static gboolean        thunar_vfs_trash_update_timer         (gpointer             user_data);
-static void            thunar_vfs_trash_update_timer_destroy (gpointer             user_data);
-static ThunarVfsTrash *thunar_vfs_trash_new_internal         (gchar               *directory);
+static void            thunar_vfs_trash_class_init           (ThunarVfsTrashClass    *klass);
+static void            thunar_vfs_trash_init                 (ThunarVfsTrash         *trash);
+static void            thunar_vfs_trash_finalize             (GObject                *object);
+static void            thunar_vfs_trash_get_property         (GObject                *object,
+                                                              guint                   prop_id,
+                                                              GValue                 *value,
+                                                              GParamSpec             *pspec);
+static void            thunar_vfs_trash_monitor              (ThunarVfsMonitor       *monitor,
+                                                              ThunarVfsMonitorHandle *handle,
+                                                              ThunarVfsMonitorEvent   event,
+                                                              ThunarVfsURI           *handle_uri,
+                                                              ThunarVfsURI           *event_uri,
+                                                              gpointer                user_data);
 
 
 
@@ -219,13 +210,13 @@ struct _ThunarVfsTrash
 {
   GtkObject __parent__;
 
-  gint     id;
-  GList   *files;
-  gchar   *directory;
-  gchar   *files_directory;
+  gint                    id;
+  GList                  *files;
+  ThunarVfsURI           *base_directory;
+  ThunarVfsURI           *files_directory;
 
-  time_t   update_last_ctime;
-  gint     update_timer_id;
+  ThunarVfsMonitor       *monitor;
+  ThunarVfsMonitorHandle *handle;
 };
 
 
@@ -262,8 +253,7 @@ thunar_vfs_trash_class_init (ThunarVfsTrashClass *klass)
 static void
 thunar_vfs_trash_init (ThunarVfsTrash *trash)
 {
-  trash->update_last_ctime = (time_t) -1;
-  trash->update_timer_id = -1;
+  trash->monitor = thunar_vfs_monitor_get_default ();
 }
 
 
@@ -272,24 +262,22 @@ static void
 thunar_vfs_trash_finalize (GObject *object)
 {
   ThunarVfsTrash *trash = THUNAR_VFS_TRASH (object);
-  GList          *lp;
 
-  /* stop the update timer */
-  if (G_LIKELY (trash->update_timer_id >= 0))
-    g_source_remove (trash->update_timer_id);
+  /* detach from the VFS monitor */
+  thunar_vfs_monitor_remove (trash->monitor, trash->handle);
+  g_object_unref (G_OBJECT (trash->monitor));
 
   /* free the list of files */
-  for (lp = trash->files; lp != NULL; lp = lp->next)
-    g_free ((gchar *) lp->data);
+  g_list_foreach (trash->files, (GFunc) g_free, NULL);
   g_list_free (trash->files);
 
   /* free the files directory path */
-  g_free (trash->files_directory);
+  thunar_vfs_uri_unref (trash->files_directory);
 
   /* free the base directory path */
-  g_free (trash->directory);
+  thunar_vfs_uri_unref (trash->base_directory);
 
-  G_OBJECT_CLASS (thunar_vfs_trash_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_vfs_trash_parent_class)->finalize) (object);
 }
 
 
@@ -317,27 +305,85 @@ thunar_vfs_trash_get_property (GObject    *object,
 
 
 static void
-thunar_vfs_trash_update (ThunarVfsTrash *trash)
+thunar_vfs_trash_monitor (ThunarVfsMonitor       *monitor,
+                          ThunarVfsMonitorHandle *handle,
+                          ThunarVfsMonitorEvent   event,
+                          ThunarVfsURI           *handle_uri,
+                          ThunarVfsURI           *event_uri,
+                          gpointer                user_data)
 {
-  const gchar *name;
-  struct stat  sb;
-  gboolean     emit = FALSE;
-  time_t       ctime = (time_t) -1;
-  GList       *new_files = NULL;
-  GList       *lp;
-  GDir        *dp;
+  ThunarVfsTrash *trash = THUNAR_VFS_TRASH (user_data);
+  const gchar    *name;
+  GList          *lp;
 
-  /* stat the files/ subdirectory */
-  if (g_stat (trash->files_directory, &sb) == 0)
-    ctime = sb.st_ctime;
+  /* check if the event affects the files directory or a file below it */
+  if (thunar_vfs_uri_equal (trash->files_directory, event_uri))
+    {
+      if (event == THUNAR_VFS_MONITOR_EVENT_DELETED && trash->files != NULL)
+        {
+          /* clear the list of files */
+          g_list_foreach (trash->files, (GFunc) g_free, NULL);
+          g_list_free (trash->files);
+          trash->files = NULL;
 
-  /* update only if the ctimes differ */
-  if (G_LIKELY (ctime == trash->update_last_ctime))
-    return;
+          /* tell everybody */
+          g_object_notify (G_OBJECT (trash), "files");
+        }
+    }
   else
-    trash->update_last_ctime = ctime;
+    {
+      /* determine the basename of the affected file */
+      name = thunar_vfs_uri_get_name (event_uri);
 
-  dp = g_dir_open (trash->files_directory, 0, NULL);
+      /* check if the file was added or removed */
+      if (event == THUNAR_VFS_MONITOR_EVENT_CREATED)
+        {
+          /* check if we already know that file */
+          for (lp = trash->files; lp != NULL; lp = lp->next)
+            if (G_UNLIKELY (strcmp (lp->data, name) == 0))
+              break;
+
+          /* add the file if we don't know about it yet */
+          if (G_LIKELY (lp == NULL))
+            {
+              trash->files = g_list_prepend (trash->files, g_strdup (name));
+              g_object_notify (G_OBJECT (trash), "files");
+            }
+        }
+      else if (event == THUNAR_VFS_MONITOR_EVENT_DELETED)
+        {
+          /* check if we know about the file */
+          for (lp = trash->files; lp != NULL; lp = lp->next)
+            if (G_UNLIKELY (strcmp (lp->data, name) == 0))
+              {
+                g_free (lp->data);
+                trash->files = g_list_delete_link (trash->files, lp);
+                g_object_notify (G_OBJECT (trash), "files");
+                break;
+              }
+        }
+    }
+}
+
+
+
+static ThunarVfsTrash*
+thunar_vfs_trash_new_internal (gchar *directory)
+{
+  ThunarVfsTrash *trash;
+  const gchar    *name;
+  GDir           *dp;
+
+  g_return_val_if_fail (directory != NULL, NULL);
+  g_return_val_if_fail (g_path_is_absolute (directory), NULL);
+
+  /* allocate the trash object (directory string is taken!) */
+  trash = g_object_new (THUNAR_VFS_TYPE_TRASH, NULL);
+  trash->base_directory = thunar_vfs_uri_new_for_path (directory);
+  trash->files_directory = thunar_vfs_uri_relative (trash->base_directory, "files");
+
+  /* load the files from the trash files/ directory */
+  dp = g_dir_open (thunar_vfs_uri_get_path (trash->files_directory), 0, NULL);
   if (G_LIKELY (dp != NULL))
     {
       for (;;)
@@ -351,87 +397,14 @@ thunar_vfs_trash_update (ThunarVfsTrash *trash)
           if (name[0] == '.' && (name[1] == '\0' || (name[1] == '.' && name[2] == '\0')))
             continue;
 
-          /* check if we already know about that file */
-          for (lp = trash->files; lp != NULL; lp = lp->next)
-            if (exo_str_is_equal (lp->data, name))
-              break;
-
-          if (lp != NULL)
-            {
-              trash->files = g_list_remove_link (trash->files, lp);
-              new_files = g_list_concat (lp, new_files);
-            }
-          else
-            {
-              new_files = g_list_prepend (new_files, g_strdup (name));
-              emit = TRUE;
-            }
+          trash->files = g_list_prepend (trash->files, g_strdup (name));
         }
-
       g_dir_close (dp);
     }
-  
-  /* check if we have leftover files (deleted files) */
-  if (trash->files != NULL)
-    {
-      for (lp = trash->files; lp != NULL; lp = lp->next)
-        g_free ((gchar *) lp->data);
-      g_list_free (trash->files);
-      trash->files = NULL;
-      emit = TRUE;
-    }
 
-  /* activate the new files list */
-  trash->files = new_files;
-
-  /* emit notification (if necessary) */
-  if (G_UNLIKELY (emit))
-    g_object_notify (G_OBJECT (trash), "files");
-}
-
-
-
-static gboolean
-thunar_vfs_trash_update_timer (gpointer user_data)
-{
-  GDK_THREADS_ENTER ();
-  thunar_vfs_trash_update (THUNAR_VFS_TRASH (user_data));
-  GDK_THREADS_LEAVE ();
-  return TRUE;
-}
-
-
-
-static void
-thunar_vfs_trash_update_timer_destroy (gpointer user_data)
-{
-  GDK_THREADS_ENTER ();
-  THUNAR_VFS_TRASH (user_data)->update_timer_id = -1;
-  GDK_THREADS_LEAVE ();
-}
-
-
-
-static ThunarVfsTrash*
-thunar_vfs_trash_new_internal (gchar *directory)
-{
-  ThunarVfsTrash *trash;
-
-  g_return_val_if_fail (directory != NULL, NULL);
-  g_return_val_if_fail (g_path_is_absolute (directory), NULL);
-
-  /* allocate the trash object (directory string is taken!) */
-  trash = g_object_new (THUNAR_VFS_TYPE_TRASH, NULL);
-  trash->directory = directory;
-  trash->files_directory = g_build_filename (directory, "files", NULL);
-
-  /* force an update to read the current trash contents */
-  thunar_vfs_trash_update (trash);
-
-  /* schedule a timer to regularly check the trash contents */
-  trash->update_timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNAR_VFS_TRASH_INTERVAL,
-                                               thunar_vfs_trash_update_timer, trash,
-                                               thunar_vfs_trash_update_timer_destroy);
+  /* register with the VFS monitor */
+  trash->handle = thunar_vfs_monitor_add_directory (trash->monitor, trash->files_directory,
+                                                    thunar_vfs_trash_monitor, trash);
 
   /* drop the floating reference */
   g_object_ref (G_OBJECT (trash));
@@ -554,7 +527,8 @@ thunar_vfs_trash_get_info_path (ThunarVfsTrash *trash,
   g_return_val_if_fail (THUNAR_VFS_IS_TRASH (trash), NULL);
   g_return_val_if_fail (file != NULL && strchr (file, '/') == NULL, NULL);
 
-  return g_strconcat (trash->directory, G_DIR_SEPARATOR_S, "info", G_DIR_SEPARATOR_S, file, ".trashinfo", NULL);
+  return g_strconcat (thunar_vfs_uri_get_path (trash->base_directory), G_DIR_SEPARATOR_S,
+                      "info", G_DIR_SEPARATOR_S, file, ".trashinfo", NULL);
 }
 
 
@@ -576,7 +550,7 @@ thunar_vfs_trash_get_path (ThunarVfsTrash *trash,
   g_return_val_if_fail (THUNAR_VFS_IS_TRASH (trash), NULL);
   g_return_val_if_fail (file != NULL, NULL);
 
-  return g_build_filename (trash->files_directory, file, NULL);
+  return g_build_filename (thunar_vfs_uri_get_path (trash->files_directory), file, NULL);
 }
 
 
