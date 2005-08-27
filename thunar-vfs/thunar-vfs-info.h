@@ -77,7 +77,7 @@ typedef enum {
  *
  * Special flags and permissions of a filesystem entity.
  **/
-typedef enum {
+typedef enum { /*< flags >*/
   THUNAR_VFS_FILE_MODE_SUID       = 04000,
   THUNAR_VFS_FILE_MODE_SGID       = 02000,
   THUNAR_VFS_FILE_MODE_STICKY     = 01000,
@@ -106,10 +106,33 @@ typedef enum {
  * Flags providing additional information about the
  * file system entity.
  **/
-typedef enum {
+typedef enum { /*< flags >*/
   THUNAR_VFS_FILE_FLAGS_NONE    = 0,
   THUNAR_VFS_FILE_FLAGS_SYMLINK = 1 << 0,
 } ThunarVfsFileFlags;
+
+/**
+ * ThunarVfsFileHint:
+ * @THUNAR_VFS_FILE_HINT_ICON : The name of an icon or the path to
+ *                              an image file, which should be used
+ *                              to represent the file (e.g. the Icon
+ *                              entry specified in a .desktop file).
+ * @THUNAR_VFS_FILE_HINT_NAME : A more precise name to represent the
+ *                              file, which is different from the
+ *                              real file name (e.g. the Name entry
+ *                              specified in a .desktop file).
+ *
+ * Additional hints that may be provided by the file system
+ * backend.
+ *
+ * You can use #thunar_vfs_info_get_hint() to query hints from a
+ * #ThunarVfsInfo.
+ **/
+typedef enum {
+  THUNAR_VFS_FILE_HINT_ICON,
+  THUNAR_VFS_FILE_HINT_NAME,
+  THUNAR_VFS_FILE_N_HINTS,
+} ThunarVfsFileHint;
 
 /**
  * ThunarVfsFileDevice:
@@ -198,7 +221,8 @@ typedef struct
   gchar *display_name;
 
   /*< private >*/
-  gint ref_count;
+  gchar **hints;
+  gint    ref_count;
 } ThunarVfsInfo;
 
 ThunarVfsInfo *thunar_vfs_info_new_for_uri (ThunarVfsURI        *uri,
@@ -206,6 +230,9 @@ ThunarVfsInfo *thunar_vfs_info_new_for_uri (ThunarVfsURI        *uri,
 
 ThunarVfsInfo *thunar_vfs_info_ref         (ThunarVfsInfo       *info);
 void           thunar_vfs_info_unref       (ThunarVfsInfo       *info);
+
+const gchar   *thunar_vfs_info_get_hint    (const ThunarVfsInfo *info,
+                                            ThunarVfsFileHint    hint);
 
 gboolean       thunar_vfs_info_matches     (const ThunarVfsInfo *a,
                                             const ThunarVfsInfo *b);

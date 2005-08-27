@@ -27,7 +27,6 @@
 
 
 static void               thunar_local_file_class_init        (ThunarLocalFileClass   *klass);
-static void               thunar_local_file_init              (ThunarLocalFile        *local_file);
 static void               thunar_local_file_finalize          (GObject                *object);
 static ThunarFile        *thunar_local_file_get_parent        (ThunarFile             *file,
                                                                GError                **error);
@@ -103,7 +102,7 @@ thunar_local_file_get_type (void)
         NULL,
         sizeof (ThunarLocalFile),
         512u,
-        (GInstanceInitFunc) thunar_local_file_init,
+        NULL,
         NULL,
       };
 
@@ -151,14 +150,6 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->watch = thunar_local_file_watch;
   thunarfile_class->unwatch = thunar_local_file_unwatch;
   thunarfile_class->reload = thunar_local_file_reload;
-}
-
-
-
-static void
-thunar_local_file_init (ThunarLocalFile *local_file)
-{
-  local_file->info = NULL;
 }
 
 
@@ -244,10 +235,16 @@ static const gchar*
 thunar_local_file_get_display_name (ThunarFile *file)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+  const gchar     *name;
 
   /* root directory is always displayed as 'Filesystem' */
   if (thunar_vfs_uri_is_root (local_file->info->uri))
     return _("Filesystem");
+
+  /* check if the VFS info provides a name hint */
+  name = thunar_vfs_info_get_hint (local_file->info, THUNAR_VFS_FILE_HINT_NAME);
+  if (G_UNLIKELY (name != NULL))
+    return name;
 
   return local_file->info->display_name;
 }
@@ -259,10 +256,8 @@ thunar_local_file_get_special_name (ThunarFile *file)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
 
-  /* root and home dir have special names */
-  if (thunar_vfs_uri_is_root (local_file->info->uri))
-    return _("Filesystem");
-  else if (thunar_vfs_uri_is_home (local_file->info->uri))
+  /* root dir has special name, root is handled in get_display_name() */
+  if (thunar_vfs_uri_is_home (local_file->info->uri))
     return _("Home");
 
   return thunar_file_get_display_name (file);
@@ -404,6 +399,11 @@ thunar_local_file_get_icon_name (ThunarFile   *file,
     {
       return "gnome-fs-home";
     }
+
+  /* check if the VFS info specifies an icon hint */
+  icon_name = thunar_vfs_info_get_hint (local_file->info, THUNAR_VFS_FILE_HINT_ICON);
+  if (G_UNLIKELY (icon_name != NULL && gtk_icon_theme_has_icon (icon_theme, icon_name)))
+    return icon_name;
 
   /* default is the mime type icon */
   icon_name = thunar_vfs_mime_info_lookup_icon_name (local_file->info->mime_info, icon_theme);

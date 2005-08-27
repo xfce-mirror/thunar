@@ -1,5 +1,14 @@
 2005-08-27	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-info.{c,h}: Add support to pass hints from the
+	  ThunarVfsInfo to the upper layers. Use these hints to pass icon and
+	  name information from .desktop files.
+	* thunar-vfs/thunar-vfs.symbols: Add new symbols.
+	* thunar/thunar-local-file.c: Use the new hints to display appropriate
+	  names and icons for .desktop files.
+
+2005-08-27	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-trash.c: Use ThunarVfsMonitor instead of
 	  polling the trash files/ directories manually.
 

@@ -61,8 +61,10 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
   ThunarVfsMimeDatabase *database;
   ThunarVfsInfo         *info;
   const gchar           *path;
+  const gchar           *str;
   struct stat            lsb;
   struct stat            sb;
+  XfceRc                *rc;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -80,6 +82,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
   info->uri = thunar_vfs_uri_ref (uri);
   info->ref_count = 1;
   info->display_name = thunar_vfs_uri_get_display_name (uri);
+  info->hints = NULL;
 
   if (G_LIKELY (!S_ISLNK (lsb.st_mode)))
     {
@@ -164,6 +167,34 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
     }
   exo_object_unref (EXO_OBJECT (database));
 
+  /* check whether we have a .desktop file here */
+  if (strcmp (info->mime_info->name, "application/x-desktop") == 0)
+    {
+      /* try to query the hints from the .desktop file */
+      rc = xfce_rc_simple_open (path, TRUE);
+      if (G_LIKELY (rc != NULL))
+        {
+          /* we're only interested in the desktop data */
+          xfce_rc_set_group (rc, "Desktop Entry");
+
+          /* allocate the hints for the VFS info */
+          info->hints = g_new0 (gchar *, THUNAR_VFS_FILE_N_HINTS);
+
+          /* check if we have a valid icon info */
+          str = xfce_rc_read_entry (rc, "Icon", NULL);
+          if (G_LIKELY (str != NULL))
+            info->hints[THUNAR_VFS_FILE_HINT_ICON] = g_strdup (str);
+
+          /* check if we have a valid name info */
+          str = xfce_rc_read_entry (rc, "Name", NULL);
+          if (G_LIKELY (str != NULL))
+            info->hints[THUNAR_VFS_FILE_HINT_NAME] = g_strdup (str);
+
+          /* close the file */
+          xfce_rc_close (rc);
+        }
+    }
+
   return info;
 }
 
@@ -183,7 +214,13 @@ thunar_vfs_info_ref (ThunarVfsInfo *info)
 {
   g_return_val_if_fail (info->ref_count > 0, NULL);
 
+#if defined(__GNUC__) && defined(__i386__) && defined(__OPTIMIZE__)
+  __asm__ __volatile__ ("lock; incl %0"
+                        : "=m" (info->ref_count)
+                        : "m" (info->ref_count));
+#else
   g_atomic_int_inc (&info->ref_count);
+#endif
 
   return info;
 }
@@ -201,14 +238,25 @@ thunar_vfs_info_ref (ThunarVfsInfo *info)
 void
 thunar_vfs_info_unref (ThunarVfsInfo *info)
 {
+  guint n;
+
   g_return_if_fail (info != NULL);
   g_return_if_fail (info->ref_count > 0);
 
   if (g_atomic_int_dec_and_test (&info->ref_count))
     {
+      /* drop the public info part */
       thunar_vfs_mime_info_unref (info->mime_info);
       thunar_vfs_uri_unref (info->uri);
       g_free (info->display_name);
+
+      /* free the hints (if any) */
+      if (G_UNLIKELY (info->hints != NULL))
+        {
+          for (n = 0; n < THUNAR_VFS_FILE_N_HINTS; ++n)
+            g_free (info->hints[n]);
+          g_free (info->hints);
+        }
 
 #ifndef G_DISABLE_CHECKS
       memset (info, 0xaa, sizeof (*info));
@@ -216,6 +264,35 @@ thunar_vfs_info_unref (ThunarVfsInfo *info)
 
       g_free (info);
     }
+}
+
+
+
+/**
+ * thunar_vfs_info_get_hint:
+ * @info : a #ThunarVfsInfo.
+ * @hint : a #ThunarVfsFileHint.
+ *
+ * If @info provides the @hint, then the value available for
+ * @hint will be returned. Else %NULL will be returned.
+ *
+ * The returned string - if any - is owned by @info and must
+ * not be freed by the caller. You should thereby note that the
+ * returned string is no longer valid after @info is finalized.
+ *
+ * Return value: the string stored for @hint on @info or %NULL.
+ **/
+const gchar*
+thunar_vfs_info_get_hint (const ThunarVfsInfo *info,
+                          ThunarVfsFileHint    hint)
+{
+  g_return_val_if_fail (info != NULL, NULL);
+  g_return_val_if_fail (info->ref_count > 0, NULL);
+
+  if (G_UNLIKELY (hint < THUNAR_VFS_FILE_N_HINTS && info->hints != NULL))
+    return info->hints[hint];
+
+  return NULL;
 }
 
 
