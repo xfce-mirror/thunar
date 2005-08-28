@@ -8,9 +8,6 @@ Important for Thunar 1.0
  - We need a way to "refresh" folders after a "Cut"-operation with Nautilus.
    With local folders - with not many files inside - the move is too fast!
 
- - ThunarVfsURI should have it's own parameter specification, that
-   can be used for GValue handling.
-
  - The ThunarTrashFile constructor needs some rework, as it's currently
    mostly brain-dead. Should probably be splitted into several functions.
    In addition the ThunarTrashFile should enable the monitoring on the
@@ -70,8 +67,3 @@ Important for Thunar 1.0
    development of Thunar core modules is to be done, and what
    material each developer in addition to the source code.
 
- - The ThunarVfsMonitor framework must be designed and implemented.
-   The list of supported backends for 1.0 is kqueue, fam and
-   the stat-thread. Backend technologies must be thread-safe. If
-   there's a lot of time or manpower in the end, additional
-   backends can be added, as long as they fit into the framework.

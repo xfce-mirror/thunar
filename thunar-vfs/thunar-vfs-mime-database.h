@@ -51,6 +51,9 @@ ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_file        (Thu
                                                                              const gchar           *path,
                                                                              const gchar           *name);
 
+GList                    *thunar_vfs_mime_database_get_infos_for_info       (ThunarVfsMimeDatabase *database,
+                                                                             ThunarVfsMimeInfo     *info);
+
 GList                    *thunar_vfs_mime_database_get_applications         (ThunarVfsMimeDatabase *database,
                                                                              ThunarVfsMimeInfo     *info);
 ThunarVfsMimeApplication *thunar_vfs_mime_database_get_default_application  (ThunarVfsMimeDatabase *database,

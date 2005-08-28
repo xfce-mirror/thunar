@@ -97,18 +97,21 @@ typedef enum { /*< flags >*/
 
 /**
  * ThunarVfsFileFlags:
- * @THUNAR_VFS_FILE_FLAGS_NONE    : No additional information available.
- * @THUNAR_VFS_FILE_FLAGS_SYMLINK : The file is a symlink. Whether or not
- *                                  the info fields refer to the symlink
- *                                  itself or the linked file, depends on 
- *                                  whether the symlink is broken or not.
+ * @THUNAR_VFS_FILE_FLAGS_NONE       : No additional information available.
+ * @THUNAR_VFS_FILE_FLAGS_SYMLINK    : The file is a symlink. Whether or not
+ *                                     the info fields refer to the symlink
+ *                                     itself or the linked file, depends on 
+ *                                     whether the symlink is broken or not.
+ * @THUNAR_VFS_FILE_FLAGS_EXECUTABLE : The file can most probably be executed
+ *                                     by #thunar_vfs_info_execute().
  *
  * Flags providing additional information about the
  * file system entity.
  **/
 typedef enum { /*< flags >*/
-  THUNAR_VFS_FILE_FLAGS_NONE    = 0,
-  THUNAR_VFS_FILE_FLAGS_SYMLINK = 1 << 0,
+  THUNAR_VFS_FILE_FLAGS_NONE       = 0,
+  THUNAR_VFS_FILE_FLAGS_SYMLINK    = 1L << 0,
+  THUNAR_VFS_FILE_FLAGS_EXECUTABLE = 1L << 1,
 } ThunarVfsFileFlags;
 
 /**
@@ -230,6 +233,11 @@ ThunarVfsInfo *thunar_vfs_info_new_for_uri (ThunarVfsURI        *uri,
 
 ThunarVfsInfo *thunar_vfs_info_ref         (ThunarVfsInfo       *info);
 void           thunar_vfs_info_unref       (ThunarVfsInfo       *info);
+
+gboolean       thunar_vfs_info_execute     (const ThunarVfsInfo *info,
+                                            GdkScreen           *screen,
+                                            GList               *uris,
+                                            GError             **error);
 
 const gchar   *thunar_vfs_info_get_hint    (const ThunarVfsInfo *info,
                                             ThunarVfsFileHint    hint);

@@ -71,6 +71,11 @@ struct _ThunarFileClass
   ThunarFile          *(*get_parent)          (ThunarFile             *file,
                                                GError                **error);
 
+  gboolean             (*execute)             (ThunarFile             *file,
+                                               GdkScreen              *screen,
+                                               GList                  *uris,
+                                               GError                **error);
+
   ThunarFolder        *(*open_as_folder)      (ThunarFile             *file,
                                                GError                **error);
 
@@ -95,9 +100,9 @@ struct _ThunarFileClass
   ThunarVfsGroup      *(*get_group)           (ThunarFile             *file);
   ThunarVfsUser       *(*get_user)            (ThunarFile             *file);
 
-  gboolean             (*can_execute)         (ThunarFile             *file);
-  gboolean             (*can_read)            (ThunarFile             *file);
-  gboolean             (*can_write)           (ThunarFile             *file);
+  gboolean             (*is_executable)       (ThunarFile             *file);
+  gboolean             (*is_readable)         (ThunarFile             *file);
+  gboolean             (*is_writable)         (ThunarFile             *file);
 
   GList               *(*get_emblem_names)    (ThunarFile             *file);
   const gchar         *(*get_icon_name)       (ThunarFile             *file,
@@ -135,6 +140,11 @@ gboolean           thunar_file_has_parent       (ThunarFile             *file);
 ThunarFile        *thunar_file_get_parent       (ThunarFile             *file,
                                                  GError                **error);
 
+gboolean           thunar_file_execute          (ThunarFile             *file,
+                                                 GdkScreen              *screen,
+                                                 GList                  *uris,
+                                                 GError                **error);
+
 ThunarFolder      *thunar_file_open_as_folder   (ThunarFile             *file,
                                                  GError                **error);
 
@@ -164,9 +174,9 @@ ThunarVfsVolume   *thunar_file_get_volume       (ThunarFile             *file,
 ThunarVfsGroup    *thunar_file_get_group        (ThunarFile             *file);
 ThunarVfsUser     *thunar_file_get_user         (ThunarFile             *file);
 
-gboolean          thunar_file_can_execute       (ThunarFile             *file);
-gboolean          thunar_file_can_read          (ThunarFile             *file);
-gboolean          thunar_file_can_write         (ThunarFile             *file);
+gboolean          thunar_file_is_executable     (ThunarFile             *file);
+gboolean          thunar_file_is_readable       (ThunarFile             *file);
+gboolean          thunar_file_is_writable       (ThunarFile             *file);
 
 GList             *thunar_file_get_emblem_names (ThunarFile             *file);
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile             *file,

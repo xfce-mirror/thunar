@@ -25,10 +25,23 @@
 
 G_BEGIN_DECLS;
 
-gboolean _thunar_vfs_sysdep_readdir (gpointer        dirp,
-                                     struct dirent  *entry,
-                                     struct dirent **result,
-                                     GError        **error);
+/* forward declarations */
+struct dirent;
+
+gboolean _thunar_vfs_sysdep_readdir    (gpointer        dirp,
+                                        struct dirent  *entry,
+                                        struct dirent **result,
+                                        GError        **error);
+
+gboolean _thunar_vfs_sysdep_parse_exec (const gchar    *exec,
+                                        GList          *uris,
+                                        const gchar    *icon,
+                                        const gchar    *name,
+                                        const gchar    *path,
+                                        gboolean        terminal,
+                                        gint           *argc,
+                                        gchar        ***argv,
+                                        GError        **error)
 
 G_END_DECLS;
 

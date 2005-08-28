@@ -1,0 +1,24 @@
+This file contains a list of frequently asked questions about Thunar and the
+appropriate answers to these questions.
+
+
+1. What is Thunar?
+==================
+
+  Thunar is a fast and easy-to-use file manager for the X Window System, with a
+  special focus on the Xfce Desktop Environment.
+
+
+2. Why doesn't Thunar execute files marked as executable?
+=========================================================
+
+  For security reasons Thunar only executes files of type application/x-desktop,
+  application/x-executable and application/x-shellscript. For desktop files
+  the execution feature will only be enabled if the desktop file is of type
+  Application and a valid Exec line is given. For the other types the feature
+  is available if the file is marked executable for the current user.
+
+  Also note that for application/x-executable and application/x-shellscript, the
+  types of the file don't really need to match these types exactly, but it is
+  suffice if the detected type has a parent that matches one of the two types
+  listed above, or if the MIME-type is an alias for one of the above.

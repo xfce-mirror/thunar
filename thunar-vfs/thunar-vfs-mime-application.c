@@ -30,6 +30,8 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-mime-application.h>
+#include <thunar-vfs/thunar-vfs-sysdep.h>
+#include <thunar-vfs/thunar-vfs-util.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -157,141 +159,7 @@ thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *applicatio
                                       gchar                        ***argv,
                                       GError                        **error)
 {
-  const gchar *p;
-  gboolean     result;
-  GString     *command_line = g_string_new (NULL);
-  GList       *lp;
-  gchar       *uri_string;
-  gchar       *quoted;
-
-  /* prepend terminal command if required */
-  if (G_UNLIKELY (application->requires_terminal))
-    {
-      quoted = g_shell_quote (application->name);
-      g_string_append (command_line, "Terminal -T ");
-      g_string_append (command_line, quoted);
-      g_string_append (command_line, " -x ");
-      g_free (quoted);
-    }
-
-  for (p = application->exec; *p != '\0'; ++p)
-    {
-      if (p[0] == '%' && p[1] != '\0')
-        {
-          switch (*++p)
-            {
-            case 'f':
-              quoted = g_shell_quote (thunar_vfs_uri_get_path (uris->data));
-              g_string_append (command_line, quoted);
-              g_free (quoted);
-              break;
-
-            case 'F':
-              for (lp = uris; lp != NULL; lp = lp->next)
-                {
-                  if (G_LIKELY (lp != uris))
-                    g_string_append_c (command_line, ' ');
-                  quoted = g_shell_quote (thunar_vfs_uri_get_path (lp->data));
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                }
-              break;
-
-            case 'u':
-              /* we need to hide the host parameter here, because there are quite a few
-               * applications out there (namely GNOME applications), which cannot handle
-               * 'file:'-URIs with host names.
-               */
-              uri_string = thunar_vfs_uri_to_string (uris->data, THUNAR_VFS_URI_HIDE_HOST);
-              quoted = g_shell_quote (uri_string);
-              g_string_append (command_line, quoted);
-              g_free (uri_string);
-              g_free (quoted);
-              break;
-
-            case 'U':
-              for (lp = uris; lp != NULL; lp = lp->next)
-                {
-                  if (G_LIKELY (lp != uris))
-                    g_string_append_c (command_line, ' ');
-                  uri_string = thunar_vfs_uri_to_string (lp->data, THUNAR_VFS_URI_HIDE_HOST);
-                  quoted = g_shell_quote (uri_string);
-                  g_string_append (command_line, quoted);
-                  g_free (uri_string);
-                  g_free (quoted);
-                }
-              break;
-
-            case 'd':
-              uri_string = g_path_get_dirname (thunar_vfs_uri_get_path (uris->data));
-              quoted = g_shell_quote (uri_string);
-              g_string_append (command_line, quoted);
-              g_free (uri_string);
-              g_free (quoted);
-              break;
-
-            case 'D':
-              for (lp = uris; lp != NULL; lp = lp->next)
-                {
-                  if (G_LIKELY (lp != uris))
-                    g_string_append_c (command_line, ' ');
-                  uri_string = g_path_get_dirname (thunar_vfs_uri_get_path (lp->data));
-                  quoted = g_shell_quote (uri_string);
-                  g_string_append (command_line, quoted);
-                  g_free (uri_string);
-                  g_free (quoted);
-                }
-              break;
-
-            case 'n':
-              quoted = g_shell_quote (thunar_vfs_uri_get_name (uris->data));
-              g_string_append (command_line, quoted);
-              g_free (quoted);
-              break;
-
-            case 'N':
-              for (lp = uris; lp != NULL; lp = lp->next)
-                {
-                  if (G_LIKELY (lp != uris))
-                    g_string_append_c (command_line, ' ');
-                  quoted = g_shell_quote (thunar_vfs_uri_get_name (lp->data));
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                }
-              break;
-
-            case 'i':
-              if (G_LIKELY (application->icon != NULL))
-                {
-                  quoted = g_shell_quote (application->icon);
-                  g_string_append (command_line, "--icon ");
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                }
-              break;
-
-            case 'c':
-              quoted = g_shell_quote (application->name);
-              g_string_append (command_line, quoted);
-              g_free (quoted);
-              break;
-
-            case '%':
-              g_string_append_c (command_line, '%');
-              break;
-            }
-        }
-      else
-        {
-          g_string_append_c (command_line, *p);
-        }
-    }
-
-  result = g_shell_parse_argv (command_line->str, argc, argv, NULL);
-
-  g_string_free (command_line, TRUE);
-
-  return result;
+  return _thunar_vfs_sysdep_parse_exec (application->exec, uris, application->icon, application->name, NULL, application->requires_terminal, argc, argv, error);
 }
 
 

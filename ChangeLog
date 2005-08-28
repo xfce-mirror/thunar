@@ -1,3 +1,37 @@
+2005-08-28	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.{c,h}, thunar/thunar-local-file.c,
+	  thunar/thunar-standard-view.c: Rename can_execute(), can_read() and
+	  can_write() to is_executable(), is_readable() and is_writable() to
+	  get consistent naming.
+	* thunar-vfs/thunar-vfs-info.{c,h}: Add THUNAR_VFS_FILE_FLAGS_EXECUTABLE
+	  to the ThunarVfsFileFlags, which will be set if a ThunarVfsInfo
+	  can be executed, either as regular binary or as .desktop file.
+	* thunar-vfs/thunar-vfs-mime-application.c,
+	  thunar-vfs/thunar-vfs-sysdep.{c,h}: Move the Exec parsing code from
+	  ThunarVfsMimeApplication to thunar-vfs-sysdep, so it can be used by
+	  other modules as well.
+	* thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs.symbols: Add
+	  new method thunar_vfs_info_execute(), which is used to execute
+	  files with a list of URIs. These method can handle both regular
+	  executable files as well as .desktop files.
+	* thunar/thunar-file.{c,h}, thunar/thunar-launcher.c,
+	  thunar/thunar-local-file.c: Add support to execute files that are
+	  marked as executable by the ThunarVfsInfo module.
+	* thunar-vfs/thunar-vfs-mime-database.c
+	  (thunar_vfs_mime_database_get_info_locked),
+	  (thunar_vfs_mime_database_get_infos_for_info_locked): Be sure to
+	  always unalias MIME-types prior to returning them from the mime
+	  database instance. This way we don't need to care for unaliasing
+	  when determining the MIME-type comment or MIME-type icon.
+	* thunar-vfs/thunar-vfs-mime-database.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Add new method
+	  thunar_vfs_mime_database_get_infos_for_info() to the public API, to
+	  allow other components to access the subclassing information.
+	* FAQ, Makefile.am: Add initial items for the list of frequently asked
+	  questions.
+	* TODO: Remove obsolete items.
+
 2005-08-27	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-info.{c,h}: Add support to pass hints from the

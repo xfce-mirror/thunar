@@ -270,12 +270,29 @@ static ThunarVfsMimeInfo*
 thunar_vfs_mime_database_get_info_locked (ThunarVfsMimeDatabase *database,
                                           const gchar           *mime_type)
 {
-  ThunarVfsMimeInfo *info;
-  const gchar       *s;
-  const gchar       *t;
-  const gchar       *u;
-  gchar             *v;
-  guint              n;
+  ThunarVfsMimeProvider *provider;
+  ThunarVfsMimeInfo     *info;
+  const gchar           *s;
+  const gchar           *t;
+  const gchar           *u;
+  GList                 *lp;
+  gchar                 *v;
+  guint                  n;
+
+  /* unalias the mime type */
+  for (lp = database->providers; lp != NULL; lp = lp->next)
+    {
+      provider = THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider;
+      if (G_LIKELY (provider != NULL))
+        {
+          t = thunar_vfs_mime_provider_lookup_alias (provider, mime_type);
+          if (G_UNLIKELY (t != NULL && strcmp (mime_type, t) != 0))
+            {
+              mime_type = t;
+              break;
+            }
+        }
+    }
 
   /* check if we have a cached version of the mime type */
   info = g_hash_table_lookup (database->infos, mime_type);
@@ -446,7 +463,6 @@ thunar_vfs_mime_database_get_infos_for_info_locked (ThunarVfsMimeDatabase *datab
   ThunarVfsMimeProvider *provider;
   ThunarVfsMimeInfo     *parent_info;
   const gchar           *name = thunar_vfs_mime_info_get_name (info);
-  const gchar           *type;
   gchar                 *parents[128];
   GList                 *infos;
   GList                 *lp;
@@ -454,23 +470,6 @@ thunar_vfs_mime_database_get_infos_for_info_locked (ThunarVfsMimeDatabase *datab
 
   /* the info itself is of course on the list */
   infos = g_list_prepend (NULL, thunar_vfs_mime_info_ref (info));
-
-  /* check if the info is an alias */
-  for (lp = database->providers; lp != NULL; lp = lp->next)
-    {
-      provider = THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider;
-      if (G_LIKELY (provider != NULL))
-        {
-          type = thunar_vfs_mime_provider_lookup_alias (provider, name);
-          if (G_UNLIKELY (type != NULL && strcmp (name, type) != 0))
-            {
-              /* it is indeed an alias, so we use the unaliased type instead */
-              info = thunar_vfs_mime_database_get_info_locked (database, type);
-              name = thunar_vfs_mime_info_get_name (info);
-              infos = g_list_append (infos, info);
-            }
-        }
-    }
 
   /* lookup all parents on every provider */
   for (lp = database->providers; lp != NULL; lp = lp->next)
@@ -1109,6 +1108,49 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
 
   /* we got it */
   return info;
+}
+
+
+
+/**
+ * thunar_vfs_mime_database_get_infos_for_info:
+ * @database : a #ThunarVfsMimeDatabase.
+ * @info     : a #ThunarVfsMimeInfo.
+ *
+ * Returns a list of all #ThunarVfsMimeInfo<!---->s,
+ * that are related to @info in @database. Currently
+ * this is the list of parent MIME-types for @info,
+ * as defined in the Shared Mime Database.
+ *
+ * Note that the returned list will also include
+ * a reference @info itself. In addition, this
+ * method also handles details specified by the
+ * Shared Mime Database Specification like the
+ * fact that every "text/xxxx" MIME-type is a
+ * subclass of "text/plain" and every MIME-type
+ * is a subclass of "application/octet-stream".
+ *
+ * The caller is responsible to free the returned
+ * list using #thunar_vfs_mime_info_list_free()
+ * when done with it.
+ *
+ * Return value: the list of #ThunarVfsMimeInfo<!---->s
+ *               related to @info.
+ **/
+GList*
+thunar_vfs_mime_database_get_infos_for_info (ThunarVfsMimeDatabase *database,
+                                             ThunarVfsMimeInfo     *info)
+{
+  GList *infos;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
+
+  g_mutex_lock (database->lock);
+  infos = thunar_vfs_mime_database_get_infos_for_info_locked (database, info);
+  g_mutex_unlock (database->lock);
+
+  return infos;
 }
 
 

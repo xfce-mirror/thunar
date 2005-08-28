@@ -47,12 +47,15 @@ static void               thunar_file_class_init               (ThunarFileClass 
 static void               thunar_file_finalize                 (GObject                *object);
 static ThunarFile        *thunar_file_real_get_parent          (ThunarFile             *file,
                                                                 GError                **error);
+static gboolean           thunar_file_real_execute             (ThunarFile             *file,
+                                                                GdkScreen              *screen,
+                                                                GList                  *uris,
+                                                                GError                **error);
 static ThunarFolder      *thunar_file_real_open_as_folder      (ThunarFile             *file,
                                                                 GError                **error);
 static const gchar       *thunar_file_real_get_special_name    (ThunarFile             *file);
-static gboolean           thunar_file_real_can_execute         (ThunarFile             *file);
-static gboolean           thunar_file_real_can_read            (ThunarFile             *file);
-static gboolean           thunar_file_real_can_write           (ThunarFile             *file);
+static gboolean           thunar_file_real_is_readable         (ThunarFile             *file);
+static gboolean           thunar_file_real_is_writable         (ThunarFile             *file);
 static void               thunar_file_real_changed             (ThunarFile             *file);
 static ThunarFile        *thunar_file_new_internal             (ThunarVfsURI           *uri,
                                                                 GError                **error);
@@ -154,6 +157,7 @@ thunar_file_class_init (ThunarFileClass *klass)
 
   klass->has_parent = (gpointer) exo_noop_true;
   klass->get_parent = thunar_file_real_get_parent;
+  klass->execute = thunar_file_real_execute;
   klass->open_as_folder = thunar_file_real_open_as_folder;
   klass->get_mime_info = (gpointer) exo_noop_null;
   klass->get_special_name = thunar_file_real_get_special_name;
@@ -162,9 +166,9 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->get_volume = (gpointer) exo_noop_null;
   klass->get_group = (gpointer) exo_noop_null;
   klass->get_user = (gpointer) exo_noop_null;
-  klass->can_execute = thunar_file_real_can_execute;
-  klass->can_read = thunar_file_real_can_read;
-  klass->can_write = thunar_file_real_can_write;
+  klass->is_executable = (gpointer) exo_noop_false;
+  klass->is_readable = thunar_file_real_is_readable;
+  klass->is_writable = thunar_file_real_is_writable;
   klass->get_emblem_names = (gpointer) exo_noop_null;
   klass->reload = (gpointer) exo_noop;
   klass->changed = thunar_file_real_changed;
@@ -239,6 +243,18 @@ thunar_file_real_get_parent (ThunarFile *file,
 
 
 
+static gboolean
+thunar_file_real_execute (ThunarFile *file,
+                          GdkScreen  *screen,
+                          GList      *uris,
+                          GError    **error)
+{
+  g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (ENOEXEC), g_strerror (ENOEXEC));
+  return FALSE;
+}
+
+
+
 static ThunarFolder*
 thunar_file_real_open_as_folder (ThunarFile *file,
                                  GError    **error)
@@ -258,18 +274,7 @@ thunar_file_real_get_special_name (ThunarFile *file)
 
 
 static gboolean
-thunar_file_real_can_execute (ThunarFile *file)
-{
-  return !thunar_file_denies_access_permission (file,
-                                                THUNAR_VFS_FILE_MODE_USR_EXEC,
-                                                THUNAR_VFS_FILE_MODE_GRP_EXEC,
-                                                THUNAR_VFS_FILE_MODE_OTH_EXEC);
-}
-
-
-
-static gboolean
-thunar_file_real_can_read (ThunarFile *file)
+thunar_file_real_is_readable (ThunarFile *file)
 {
   return !thunar_file_denies_access_permission (file,
                                                 THUNAR_VFS_FILE_MODE_USR_READ,
@@ -280,7 +285,7 @@ thunar_file_real_can_read (ThunarFile *file)
 
 
 static gboolean
-thunar_file_real_can_write (ThunarFile *file)
+thunar_file_real_is_writable (ThunarFile *file)
 {
   return !thunar_file_denies_access_permission (file,
                                                 THUNAR_VFS_FILE_MODE_USR_WRITE,
@@ -547,6 +552,34 @@ thunar_file_get_parent (ThunarFile *file,
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
   return THUNAR_FILE_GET_CLASS (file)->get_parent (file, error);
+}
+
+
+
+/**
+ * thunar_file_execute:
+ * @file   : a #ThunarFile instance.
+ * @screen : a #GdkScreen.
+ * @uris   : the list of #ThunarVfsURI<!---->s to supply to @file on
+ *           execution.
+ * @error  : return location for errors or %NULL.
+ *
+ * Tries to execute @file on the specified @screen. If @file is executable
+ * and could have been spawned successfully, %TRUE is returned, else %FALSE
+ * will be returned and @error will be set to point to the error location.
+ *
+ * Return value: %TRUE on success, else %FALSE.
+ **/
+gboolean
+thunar_file_execute (ThunarFile *file,
+                     GdkScreen  *screen,
+                     GList      *uris,
+                     GError    **error)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (GDK_IS_SCREEN (screen), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  return (*THUNAR_FILE_GET_CLASS (file)->execute) (file, screen, uris, error);
 }
 
 
@@ -968,7 +1001,7 @@ thunar_file_get_user (ThunarFile *file)
 
 
 /**
- * thunar_file_can_execute:
+ * thunar_file_is_executable:
  * @file : a #ThunarFile instance.
  *
  * Determines whether the owner of the current process is allowed
@@ -976,7 +1009,7 @@ thunar_file_get_user (ThunarFile *file)
  * @file).
  *
  * If the specific #ThunarFile implementation does not provide
- * a custom #thunar_file_can_execute() method, the fallback
+ * a custom #thunar_file_is_executable() method, the fallback
  * method provided by #ThunarFile is used, which determines
  * whether the @file can be executed based on the data provided
  * by #thunar_file_get_mode(), #thunar_file_get_user() and
@@ -985,23 +1018,23 @@ thunar_file_get_user (ThunarFile *file)
  * Return value: %TRUE if @file can be executed.
  **/
 gboolean
-thunar_file_can_execute (ThunarFile *file)
+thunar_file_is_executable (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return THUNAR_FILE_GET_CLASS (file)->can_execute (file);
+  return THUNAR_FILE_GET_CLASS (file)->is_executable (file);
 }
 
 
 
 /**
- * thunar_file_can_read:
+ * thunar_file_is_readable:
  * @file : a #ThunarFile instance.
  *
  * Determines whether the owner of the current process is allowed
  * to read the @file.
  *
  * If the specific #ThunarFile implementation does not provide
- * a custom #thunar_file_can_read() method, the fallback
+ * a custom #thunar_file_is_readable() method, the fallback
  * method provided by #ThunarFile is used, which determines
  * whether the @file can be read based on the data provided
  * by #thunar_file_get_mode(), #thunar_file_get_user() and
@@ -1010,23 +1043,23 @@ thunar_file_can_execute (ThunarFile *file)
  * Return value: %TRUE if @file can be read.
  **/
 gboolean
-thunar_file_can_read (ThunarFile *file)
+thunar_file_is_readable (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return THUNAR_FILE_GET_CLASS (file)->can_read (file);
+  return THUNAR_FILE_GET_CLASS (file)->is_readable (file);
 }
 
 
 
 /**
- * thunar_file_can_write:
+ * thunar_file_is_writable:
  * @file : a #ThunarFile instance.
  *
  * Determines whether the owner of the current process is allowed
  * to write the @file.
  *
  * If the specific #ThunarFile implementation does not provide
- * a custom #thunar_file_can_write() method, the fallback
+ * a custom #thunar_file_is_writable() method, the fallback
  * method provided by #ThunarFile is used, which determines
  * whether the @file can be written based on the data provided
  * by #thunar_file_get_mode(), #thunar_file_get_user() and
@@ -1035,10 +1068,10 @@ thunar_file_can_read (ThunarFile *file)
  * Return value: %TRUE if @file can be read.
  **/
 gboolean
-thunar_file_can_write (ThunarFile *file)
+thunar_file_is_writable (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return THUNAR_FILE_GET_CLASS (file)->can_write (file);
+  return THUNAR_FILE_GET_CLASS (file)->is_writable (file);
 }
 
 

@@ -30,6 +30,10 @@ static void               thunar_local_file_class_init        (ThunarLocalFileCl
 static void               thunar_local_file_finalize          (GObject                *object);
 static ThunarFile        *thunar_local_file_get_parent        (ThunarFile             *file,
                                                                GError                **error);
+static gboolean           thunar_local_file_execute           (ThunarFile             *file,
+                                                               GdkScreen              *screen,
+                                                               GList                  *uris,
+                                                               GError                **error);
 static ThunarFolder      *thunar_local_file_open_as_folder    (ThunarFile             *file,
                                                                GError                **error);
 static ThunarVfsURI      *thunar_local_file_get_uri           (ThunarFile             *file);
@@ -47,6 +51,7 @@ static ThunarVfsVolume   *thunar_local_file_get_volume        (ThunarFile       
                                                                ThunarVfsVolumeManager *volume_manager);
 static ThunarVfsGroup    *thunar_local_file_get_group         (ThunarFile             *file);
 static ThunarVfsUser     *thunar_local_file_get_user          (ThunarFile             *file);
+static gboolean           thunar_local_file_is_executable     (ThunarFile             *file);
 static GList             *thunar_local_file_get_emblem_names  (ThunarFile             *file);
 static const gchar       *thunar_local_file_get_icon_name     (ThunarFile             *file,
                                                                GtkIconTheme           *icon_theme);
@@ -133,6 +138,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
 
   thunarfile_class = THUNAR_FILE_CLASS (klass);
   thunarfile_class->get_parent = thunar_local_file_get_parent;
+  thunarfile_class->execute = thunar_local_file_execute;
   thunarfile_class->open_as_folder = thunar_local_file_open_as_folder;
   thunarfile_class->get_uri = thunar_local_file_get_uri;
   thunarfile_class->get_mime_info = thunar_local_file_get_mime_info;
@@ -145,6 +151,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_volume = thunar_local_file_get_volume;
   thunarfile_class->get_group = thunar_local_file_get_group;
   thunarfile_class->get_user = thunar_local_file_get_user;
+  thunarfile_class->is_executable = thunar_local_file_is_executable;
   thunarfile_class->get_emblem_names = thunar_local_file_get_emblem_names;
   thunarfile_class->get_icon_name = thunar_local_file_get_icon_name;
   thunarfile_class->watch = thunar_local_file_watch;
@@ -202,6 +209,18 @@ thunar_local_file_get_parent (ThunarFile *file,
 
   /* other file uris are handled by the generic get_parent() method */
   return THUNAR_FILE_CLASS (thunar_local_file_parent_class)->get_parent (file, error);
+}
+
+
+
+static gboolean
+thunar_local_file_execute (ThunarFile *file,
+                           GdkScreen  *screen,
+                           GList      *uris,
+                           GError    **error)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+  return thunar_vfs_info_execute (local_file->info, screen, uris, error);
 }
 
 
@@ -352,6 +371,15 @@ thunar_local_file_get_user (ThunarFile *file)
 
 
 
+static gboolean
+thunar_local_file_is_executable (ThunarFile *file)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+  return ((local_file->info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE) != 0);
+}
+
+
+
 static GList*
 thunar_local_file_get_emblem_names (ThunarFile *file)
 {
@@ -371,7 +399,7 @@ thunar_local_file_get_emblem_names (ThunarFile *file)
   if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
     emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK);
 
-  if (!thunar_file_can_read (file))
+  if (!thunar_file_is_readable (file))
     emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
 
   return emblems;

@@ -55,6 +55,8 @@ static void thunar_launcher_set_property              (GObject                  
                                                        guint                     prop_id,
                                                        const GValue             *value,
                                                        GParamSpec               *pspec);
+static void thunar_launcher_execute_files             (ThunarLauncher           *launcher,
+                                                       GList                    *files);
 static void thunar_launcher_open_uris                 (ThunarVfsMimeApplication *application,
                                                        GList                    *uri_list,
                                                        ThunarLauncher           *launcher);
@@ -284,6 +286,47 @@ thunar_launcher_set_property (GObject      *object,
 
 
 static void
+thunar_launcher_execute_files (ThunarLauncher *launcher,
+                               GList          *files)
+{
+  ThunarFile *file;
+  GtkWidget  *message;
+  GtkWidget  *window;
+  GdkScreen  *screen;
+  GError     *error = NULL;
+  GList      *lp;
+
+  /* determine the screen on which to run the file(s) */
+  screen = (launcher->widget != NULL)
+         ? gtk_widget_get_screen (launcher->widget)
+         : gdk_screen_get_default ();
+
+  /* execute all selected files */
+  for (lp = files; lp != NULL; lp = lp->next)
+    {
+      file = THUNAR_FILE (lp->data);
+      if (!thunar_file_execute (file, screen, NULL, &error))
+        {
+          window = (launcher->widget != NULL) ? gtk_widget_get_toplevel (launcher->widget) : NULL;
+          message = gtk_message_dialog_new ((GtkWindow *) window,
+                                            GTK_DIALOG_MODAL
+                                            | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_OK,
+                                            _("Unable to execute file \"%s\"."),
+                                            thunar_file_get_display_name (file));
+          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
+          gtk_dialog_run (GTK_DIALOG (message));
+          gtk_widget_destroy (message);
+          g_error_free (error);
+          break;
+        }
+    }
+}
+
+
+
+static void
 thunar_launcher_open_uris (ThunarVfsMimeApplication *application,
                            GList                    *uri_list,
                            ThunarLauncher           *launcher)
@@ -460,6 +503,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
   GList *lp;
   gchar  text[256];
   gint   n_directories = 0;
+  gint   n_executables = 0;
   gint   n_files = 0;
   gint   n_items;
 
@@ -471,9 +515,15 @@ thunar_launcher_update (ThunarLauncher *launcher)
   for (lp = items; lp != NULL; lp = lp->next)
     {
       if (thunar_file_is_directory (lp->data))
-        ++n_directories;
+        {
+          ++n_directories;
+        }
       else
-        ++n_files;
+        {
+          if (thunar_file_is_executable (lp->data))
+            ++n_executables;
+          ++n_files;
+        }
     }
 
   if (G_UNLIKELY (n_directories == n_items))
@@ -496,6 +546,12 @@ thunar_launcher_update (ThunarLauncher *launcher)
     }
   else
     {
+      /* we turn the "Open" label into "Execute" if we have only one executable file */
+      if (G_UNLIKELY (n_executables == 1 && n_items == 1))
+        g_object_set (G_OBJECT (launcher->action_open), "label", _("Execute"), NULL);
+      else
+        g_object_set (G_OBJECT (launcher->action_open), "label", _("Open"), NULL);
+
 #if GTK_CHECK_VERSION(2,6,0)
       gtk_action_set_sensitive (launcher->action_open, (n_items > 0));
       gtk_action_set_visible (launcher->action_open_in_new_window, FALSE);
@@ -548,7 +604,10 @@ thunar_launcher_action_open (GtkAction      *action,
   /* open the files */
   if (files != NULL)
     {
-      thunar_launcher_open_files (launcher, files);
+      if (g_list_length (files) == 1 && thunar_file_is_executable (files->data))
+        thunar_launcher_execute_files (launcher, files);
+      else
+        thunar_launcher_open_files (launcher, files);
       thunar_file_list_free (files);
     }
 }

@@ -1172,7 +1172,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* check whether the folder displayed by the view is writable */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
-  writable = (current_directory != NULL && thunar_file_can_write (current_directory));
+  writable = (current_directory != NULL && thunar_file_is_writable (current_directory));
 
   /* check whether the clipboard contains data that can be pasted here */
   pastable = (standard_view->clipboard != NULL && thunar_clipboard_manager_get_can_paste (standard_view->clipboard));
@@ -1185,7 +1185,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
    * folder to which we can paste to */
   can_paste_into_folder = (n_selected_files == 1)
                        && thunar_file_is_directory (selected_files->data)
-                       && thunar_file_can_write (selected_files->data);
+                       && thunar_file_is_writable (selected_files->data);
 
   /* update the "Properties" action */
   gtk_action_set_sensitive (standard_view->priv->action_properties, (n_selected_files == 1));

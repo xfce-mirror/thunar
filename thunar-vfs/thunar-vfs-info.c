@@ -35,10 +35,21 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
 
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-sysdep.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
+
+/* Use g_access() if possible */
+#if GLIB_CHECK_VERSION(2,8,0)
+#include <glib/gstdio.h>
+#else
+#define g_access(path, mode) (access ((path), (mode)))
+#endif
 
 
 
@@ -59,12 +70,15 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
                              GError      **error)
 {
   ThunarVfsMimeDatabase *database;
+  ThunarVfsMimeInfo     *mime_info;
   ThunarVfsInfo         *info;
   const gchar           *path;
   const gchar           *str;
   struct stat            lsb;
   struct stat            sb;
   XfceRc                *rc;
+  GList                 *mime_infos;
+  GList                 *lp;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -84,6 +98,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
   info->display_name = thunar_vfs_uri_get_display_name (uri);
   info->hints = NULL;
 
+  /* determine the POSIX file attributes */
   if (G_LIKELY (!S_ISLNK (lsb.st_mode)))
     {
       info->type = (lsb.st_mode & S_IFMT) >> 12;
@@ -130,6 +145,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
         }
     }
 
+  /* determine the file's mime type */
   database = thunar_vfs_mime_database_get_default ();
   switch (info->type)
     {
@@ -158,7 +174,28 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
       break;
 
     case THUNAR_VFS_FILE_TYPE_REGULAR:
+      /* determine the MIME-type for the regular file */
       info->mime_info = thunar_vfs_mime_database_get_info_for_file (database, path, info->display_name);
+
+      /* check if the file is executable (for security reasons
+       * we only allow execution of well known file types).
+       */
+      if (G_LIKELY (info->type == THUNAR_VFS_FILE_TYPE_REGULAR)
+          && (info->mode & 0444) != 0 && g_access (path, X_OK) == 0)
+        {
+          mime_infos = thunar_vfs_mime_database_get_infos_for_info (database, info->mime_info);
+          for (lp = mime_infos; lp != NULL; lp = lp->next)
+            {
+              mime_info = THUNAR_VFS_MIME_INFO (lp->data);
+              if (strcmp (mime_info->name, "application/x-executable") == 0
+                  || strcmp (mime_info->name, "application/x-shellscript") == 0)
+                {
+                  info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
+                  break;
+                }
+            }
+          thunar_vfs_mime_info_list_free (mime_infos);
+        }
       break;
 
     default:
@@ -189,6 +226,16 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
           str = xfce_rc_read_entry (rc, "Name", NULL);
           if (G_LIKELY (str != NULL))
             info->hints[THUNAR_VFS_FILE_HINT_NAME] = g_strdup (str);
+
+          /* check if the desktop file refers to an application
+           * and has a non-NULL Exec field set.
+           */
+          str = xfce_rc_read_entry (rc, "Type", "Application");
+          if (G_LIKELY (exo_str_is_equal (str, "Application"))
+              && xfce_rc_read_entry (rc, "Exec", NULL) != NULL)
+            {
+              info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
+            }
 
           /* close the file */
           xfce_rc_close (rc);
@@ -264,6 +311,112 @@ thunar_vfs_info_unref (ThunarVfsInfo *info)
 
       g_free (info);
     }
+}
+
+
+
+/**
+ * thunar_vfs_info_execute:
+ * @info   : a #ThunarVfsInfo.
+ * @screen : a #GdkScreen or %NULL to use the default #GdkScreen.
+ * @uris   : the list of #ThunarVfsURI<!---->s to give as parameters
+ *           to the file referred to by @info on execution.
+ * @error  : return location for errors or %NULL.
+ *
+ * Executes the file referred to by @info, given @uris as parameters,
+ * on the specified @screen. @info may refer to either a regular,
+ * executable file, or a <filename>.desktop</filename> file, whose
+ * type is <literal>Application</literal>.
+ *
+ * Return value: %TRUE on success, else %FALSE.
+ **/
+gboolean
+thunar_vfs_info_execute (const ThunarVfsInfo *info,
+                         GdkScreen           *screen,
+                         GList               *uris,
+                         GError             **error)
+{
+  const gchar *icon;
+  const gchar *name;
+  const gchar *path;
+  gboolean     terminal;
+  gboolean     result = FALSE;
+  XfceRc      *rc;
+  gchar       *working_directory;
+  gchar       *path_escaped;
+  gchar      **argv = NULL;
+  gchar       *exec;
+
+  g_return_val_if_fail (info != NULL, FALSE);
+  g_return_val_if_fail (info->ref_count > 0, FALSE);
+  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* fallback to the default screen if none given */
+  if (G_UNLIKELY (screen == NULL))
+    screen = gdk_screen_get_default ();
+
+  /* determine the path */
+  path = thunar_vfs_uri_get_path (info->uri);
+
+  /* check if we have a .desktop file here */
+  if (G_UNLIKELY (strcmp (info->mime_info->name, "application/x-desktop") == 0))
+    {
+      rc = xfce_rc_simple_open (path, TRUE);
+      if (G_LIKELY (rc != NULL))
+        {
+          /* check if we have a valid Exec field */
+          exec = (gchar *) xfce_rc_read_entry_untranslated (rc, "Exec", NULL);
+          if (G_LIKELY (exec != NULL))
+            {
+              /* parse the Exec field */
+              name = xfce_rc_read_entry (rc, "Name", NULL);
+              icon = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
+              terminal = xfce_rc_read_bool_entry (rc, "Terminal", FALSE);
+              result = _thunar_vfs_sysdep_parse_exec (exec, uris, icon, name, path,
+                                                      terminal, NULL, &argv, error);
+            }
+          else
+            {
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No Exec field specified"));
+            }
+
+          /* close the rc file */
+          xfce_rc_close (rc);
+        }
+      else
+        {
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Unable to parse file"));
+        }
+    }
+  else
+    {
+      /* fake the Exec line */
+      path_escaped = g_shell_quote (path);
+      exec = g_strconcat (path_escaped, " %F", NULL);
+      result = _thunar_vfs_sysdep_parse_exec (exec, uris, NULL, NULL, NULL, FALSE, NULL, &argv, error);
+      g_free (path_escaped);
+      g_free (exec);
+    }
+
+  if (G_LIKELY (result))
+    {
+      /* determine the working directory */
+      working_directory = g_path_get_dirname ((uris != NULL) ?  thunar_vfs_uri_get_path (uris->data) : path);
+
+      /* execute the command */
+      result = gdk_spawn_on_screen (screen, working_directory, argv,
+                                    NULL, G_SPAWN_SEARCH_PATH, NULL,
+                                    NULL, NULL, error);
+
+      /* release the working directory */
+      g_free (working_directory);
+    }
+
+  /* clean up */
+  g_strfreev (argv);
+
+  return result;
 }
 
 
