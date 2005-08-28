@@ -28,7 +28,6 @@
 #include <thunar-vfs/thunar-vfs-mime-application.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
 #include <thunar-vfs/thunar-vfs-mime-info.h>
-#include <thunar-vfs/thunar-vfs-mime.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
 #include <thunar-vfs/thunar-vfs-trash.h>
 #include <thunar-vfs/thunar-vfs-uri.h>

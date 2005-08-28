@@ -1,5 +1,29 @@
 2005-08-28	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-list-model.c(thunar_list_model_sort): Use temporary
+	  storage on the stack, rather than the heap.
+	* thunar/thunar-list-model.c: Derive from GObject rather than
+	  GtkObject, as we don't need GtkObject's features anymore in
+	  ThunarListModel.
+	* thunar/thunar-list-model.c(thunar_list_model_class_init): Use
+	  EXO_PARAM_* macros rather than G_PARAM_*.
+	* thunar-vfs/thunar-vfs-uri.c(thunar_vfs_uri_equal): Add a check to
+	  see whether the compared references refer to the same object, which
+	  can happen quite often (in case of a positive match).
+	* thunar-vfs/thunar-vfs-uri.c(thunar_vfs_uri_list_to_string): Prealloc
+	  a buffer of 512 bytes for the URI list string representation.
+	* thunar-vfs/thunar-vfs-uri.c(thunar_vfs_uri_list_free): Use
+	  g_list_foreach() to unref the URIs.
+	* thunar/thunar-local-file.c(thunar_local_file_get_emblem_names):
+	  Properly verify the parent uri when testing for the Desktop
+	  directory.
+	* thunar-vfs/thunar-vfs.{c,h}, thunar-vfs/Makefile.am: Drop the
+	  thunar_vfs_mime_info_get() and thunar_vfs_mime_info_get_for_file()
+	  methods, and merge the thunar-vfs-mime initialization into the
+	  thunar-vfs initialization routines.
+
+2005-08-28	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.{c,h}, thunar/thunar-local-file.c,
 	  thunar/thunar-standard-view.c: Rename can_execute(), can_read() and
 	  can_write() to is_executable(), is_readable() and is_writable() to

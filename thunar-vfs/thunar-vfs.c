@@ -26,12 +26,12 @@
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
 #include <thunar-vfs/thunar-vfs-transfer-job.h>
 #include <thunar-vfs/thunar-vfs-unlink-job.h>
-
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
-static gint thunar_vfs_ref_count = 0;
+static ThunarVfsMimeDatabase *thunar_vfs_mime_database = NULL;
+static gint                   thunar_vfs_ref_count = 0;
 
 
 
@@ -48,7 +48,12 @@ thunar_vfs_init (void)
 
   if (g_atomic_int_exchange_and_add (&thunar_vfs_ref_count, 1) == 0)
     {
-      _thunar_vfs_mime_init ();
+      /* grab a reference on the mime database, so the global
+       * instance stays alive while we use the ThunarVFS library.
+       */
+      thunar_vfs_mime_database = thunar_vfs_mime_database_get_default ();
+
+      /* initialize the jobs framework */
       _thunar_vfs_job_init ();
     }
 }
@@ -68,8 +73,12 @@ thunar_vfs_shutdown (void)
 
   if (g_atomic_int_dec_and_test (&thunar_vfs_ref_count))
     {
+      /* shutdown the jobs framework */
       _thunar_vfs_job_shutdown ();
-      _thunar_vfs_mime_shutdown ();
+
+      /* drop our reference on the global mime database */
+      exo_object_unref (EXO_OBJECT (thunar_vfs_mime_database));
+      thunar_vfs_mime_database = NULL;
     }
 }
 

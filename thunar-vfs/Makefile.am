@@ -13,7 +13,6 @@ libthunar_vfs_headers =							\
 	thunar-vfs-info.h						\
 	thunar-vfs-interactive-job.h					\
 	thunar-vfs-job.h						\
-	thunar-vfs-mime.h						\
 	thunar-vfs-mime-application.h					\
 	thunar-vfs-mime-database.h					\
 	thunar-vfs-mime-info.h						\
@@ -50,7 +49,6 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-job.c						\
 	thunar-vfs-listdir-job.c					\
 	thunar-vfs-listdir-job.h					\
-	thunar-vfs-mime.c						\
 	thunar-vfs-mime-application.c					\
 	thunar-vfs-mime-cache.c						\
 	thunar-vfs-mime-cache.h						\

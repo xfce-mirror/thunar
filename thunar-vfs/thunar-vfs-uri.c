@@ -761,6 +761,10 @@ thunar_vfs_uri_equal (gconstpointer a,
   g_return_val_if_fail (THUNAR_VFS_IS_URI (a), FALSE);
   g_return_val_if_fail (THUNAR_VFS_IS_URI (b), FALSE);
 
+  /* in some cases we can escape from here quite easily */
+  if (G_UNLIKELY (a == b))
+    return TRUE;
+
   /* compare the schemes first */
   if (THUNAR_VFS_URI (a)->scheme != THUNAR_VFS_URI (b)->scheme)
     return FALSE;
@@ -903,7 +907,7 @@ thunar_vfs_uri_list_to_string (GList                  *uri_list,
   gchar   *uri_string;
   GList   *lp;
 
-  for (lp = uri_list, string_list = g_string_new (NULL); lp != NULL; lp = lp->next)
+  for (lp = uri_list, string_list = g_string_sized_new (512); lp != NULL; lp = lp->next)
     {
       uri_string = thunar_vfs_uri_to_string (THUNAR_VFS_URI (lp->data), hide_options);
       g_string_append (string_list, uri_string);
@@ -950,11 +954,7 @@ thunar_vfs_uri_list_copy (GList *uri_list)
 void
 thunar_vfs_uri_list_free (GList *uri_list)
 {
-  GList *lp;
-
-  for (lp = uri_list; lp != NULL; lp = lp->next)
-    thunar_vfs_uri_unref (lp->data);
-
+  g_list_foreach (uri_list, (GFunc) thunar_vfs_uri_unref, NULL);
   g_list_free (uri_list);
 }
 

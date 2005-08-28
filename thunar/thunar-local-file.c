@@ -391,9 +391,12 @@ thunar_local_file_get_emblem_names (ThunarFile *file)
   if (G_UNLIKELY (exo_str_is_equal (info->display_name, "Desktop")))
     {
       parent_uri = thunar_vfs_uri_parent (info->uri);
-      if (thunar_vfs_uri_is_home (parent_uri))
-        emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_DESKTOP);
-      thunar_vfs_uri_unref (parent_uri);
+      if (G_LIKELY (parent_uri != NULL))
+        {
+          if (thunar_vfs_uri_is_home (parent_uri))
+            emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_DESKTOP);
+          thunar_vfs_uri_unref (parent_uri);
+        }
     }
 
   if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
