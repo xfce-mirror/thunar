@@ -80,6 +80,7 @@ struct _ThunarStandardView
 
   ThunarIconFactory         *icon_factory;
   GtkCellRenderer           *icon_renderer;
+  GtkCellRenderer           *name_renderer;
 
   ExoBinding                *loading_binding;
   gboolean                   loading;

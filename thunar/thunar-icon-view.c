@@ -25,7 +25,6 @@
 
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-icon-view-ui.h>
-#include <thunar/thunar-text-renderer.h>
 
 
 
@@ -120,8 +119,7 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
 static void
 thunar_icon_view_init (ThunarIconView *icon_view)
 {
-  GtkCellRenderer *renderer;
-  GtkWidget       *view;
+  GtkWidget *view;
 
   /* create the real view */
   view = exo_icon_view_new ();
@@ -136,19 +134,25 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   exo_icon_view_set_selection_mode (EXO_ICON_VIEW (view), GTK_SELECTION_MULTIPLE);
 
   /* add the icon renderer */
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->icon_renderer), "follow-state", TRUE, "size", 48, "ypad", 3u, NULL);
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->icon_renderer),
+                "follow-state", TRUE,
+                "size", 48,
+                "ypad", 3u,
+                NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer, FALSE);
-  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer, "file", THUNAR_LIST_MODEL_COLUMN_FILE);
+  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer,
+                                 "file", THUNAR_LIST_MODEL_COLUMN_FILE);
 
-  /* add the text renderer */
-  renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
-                           "follow-state", TRUE,
-                           "wrap-mode", PANGO_WRAP_WORD_CHAR,
-                           "wrap-width", 128,
-                           "yalign", 0.0f,
-                           NULL);
-  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), renderer, TRUE);
-  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), renderer, "text", THUNAR_LIST_MODEL_COLUMN_NAME);
+  /* add the name renderer */
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->name_renderer),
+                "follow-state", TRUE,
+                "wrap-mode", PANGO_WRAP_WORD_CHAR,
+                "wrap-width", 128,
+                "yalign", 0.0f,
+                NULL);
+  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->name_renderer, TRUE);
+  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->name_renderer,
+                                 "text", THUNAR_LIST_MODEL_COLUMN_NAME);
 
   /* setup the icon view actions */
   gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (icon_view)->action_group,

@@ -51,6 +51,9 @@ static gboolean           thunar_file_real_execute             (ThunarFile      
                                                                 GdkScreen              *screen,
                                                                 GList                  *uris,
                                                                 GError                **error);
+static gboolean           thunar_file_real_rename              (ThunarFile             *file,
+                                                                const gchar            *name,
+                                                                GError                **error);
 static ThunarFolder      *thunar_file_real_open_as_folder      (ThunarFile             *file,
                                                                 GError                **error);
 static const gchar       *thunar_file_real_get_special_name    (ThunarFile             *file);
@@ -158,6 +161,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->has_parent = (gpointer) exo_noop_true;
   klass->get_parent = thunar_file_real_get_parent;
   klass->execute = thunar_file_real_execute;
+  klass->rename = thunar_file_real_rename;
   klass->open_as_folder = thunar_file_real_open_as_folder;
   klass->get_mime_info = (gpointer) exo_noop_null;
   klass->get_special_name = thunar_file_real_get_special_name;
@@ -168,6 +172,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->get_user = (gpointer) exo_noop_null;
   klass->is_executable = (gpointer) exo_noop_false;
   klass->is_readable = thunar_file_real_is_readable;
+  klass->is_renameable = (gpointer) exo_noop_false;
   klass->is_writable = thunar_file_real_is_writable;
   klass->get_emblem_names = (gpointer) exo_noop_null;
   klass->reload = (gpointer) exo_noop;
@@ -250,6 +255,17 @@ thunar_file_real_execute (ThunarFile *file,
                           GError    **error)
 {
   g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (ENOEXEC), g_strerror (ENOEXEC));
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_file_real_rename (ThunarFile  *file,
+                         const gchar *name,
+                         GError     **error)
+{
+  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unable to rename file"));
   return FALSE;
 }
 
@@ -580,6 +596,36 @@ thunar_file_execute (ThunarFile *file,
   g_return_val_if_fail (GDK_IS_SCREEN (screen), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   return (*THUNAR_FILE_GET_CLASS (file)->execute) (file, screen, uris, error);
+}
+
+
+
+/**
+ * thunar_file_rename:
+ * @file  : a #ThunarFile instance.
+ * @name  : the new file name in UTF-8 encoding.
+ * @error : return location for errors or %NULL.
+ *
+ * Tries to rename @file to the new @name. If @file cannot be renamed,
+ * %FALSE will be returned and @error will be accordingly. Else, if
+ * the operation succeeds, %TRUE will be returned, and @file will have
+ * a new URI and a new display name.
+ *
+ * When offering a rename action in the user interface, the implementation
+ * should first check whether the file is available, using the
+ * #thunar_file_is_renameable() method.
+ *
+ * Return value: %TRUE on success, else %FALSE.
+ **/
+gboolean
+thunar_file_rename (ThunarFile  *file,
+                    const gchar *name,
+                    GError     **error)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  return (*THUNAR_FILE_GET_CLASS (file)->rename) (file, name, error);
 }
 
 
@@ -1047,6 +1093,26 @@ thunar_file_is_readable (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   return THUNAR_FILE_GET_CLASS (file)->is_readable (file);
+}
+
+
+
+/**
+ * thunar_file_is_renameable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether @file can be renamed using
+ * #thunar_file_rename(). Note that the return
+ * value is just a guess and #thunar_file_rename()
+ * may fail even if this method returns %TRUE.
+ *
+ * Return value: %TRUE if @file can be renamed.
+ **/
+gboolean
+thunar_file_is_renameable (ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return (*THUNAR_FILE_GET_CLASS (file)->is_renameable) (file);
 }
 
 

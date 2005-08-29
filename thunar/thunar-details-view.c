@@ -121,11 +121,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_column_set_attributes (column, THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
                                        "file", THUNAR_LIST_MODEL_COLUMN_FILE,
                                        NULL);
-  renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
-                           "xalign", 0.0,
-                           NULL);
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
+  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
+                "xalign", 0.0,
+                NULL);
+  gtk_tree_view_column_pack_start (column, THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
+  gtk_tree_view_column_set_attributes (column, THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                        "text", THUNAR_LIST_MODEL_COLUMN_NAME,
                                        NULL);
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_NAME);

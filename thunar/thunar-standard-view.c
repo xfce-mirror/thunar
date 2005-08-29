@@ -35,6 +35,7 @@
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
+#include <thunar/thunar-text-renderer.h>
 
 
 
@@ -104,6 +105,8 @@ static void          thunar_standard_view_action_select_all_files   (GtkAction  
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_select_by_pattern  (GtkAction                *action,
                                                                      ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_rename             (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_drag_begin                (GtkWidget                *widget,
@@ -129,6 +132,7 @@ struct _ThunarStandardViewPrivate
   GtkAction      *action_paste_into_folder;
   GtkAction      *action_select_all_files;
   GtkAction      *action_select_by_pattern;
+  GtkAction      *action_rename;
   GtkAction      *action_show_hidden_files;
 };
 
@@ -145,6 +149,7 @@ static const GtkActionEntry action_entries[] =
   { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste files into folder"), NULL, N_ ("Paste files into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all files"), "<control>A", N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
   { "select-by-pattern", NULL, N_ ("Select by _pattern"), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
+  { "rename", NULL, N_ ("_Rename"), "F2", N_ ("Rename the selected item"), G_CALLBACK (thunar_standard_view_action_rename), },
 };
 
 static const GtkToggleActionEntry toggle_action_entries[] =
@@ -308,6 +313,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_paste_into_folder = gtk_action_group_get_action (standard_view->action_group, "paste-into-folder");
   standard_view->priv->action_select_all_files = gtk_action_group_get_action (standard_view->action_group, "select-all-files");
   standard_view->priv->action_select_by_pattern = gtk_action_group_get_action (standard_view->action_group, "select-by-pattern");
+  standard_view->priv->action_rename = gtk_action_group_get_action (standard_view->action_group, "rename");
   standard_view->priv->action_show_hidden_files = gtk_action_group_get_action (standard_view->action_group, "show-hidden-files");
 
   /* setup the list model */
@@ -317,6 +323,11 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->icon_renderer = thunar_icon_renderer_new ();
   g_object_ref (G_OBJECT (standard_view->icon_renderer));
   gtk_object_sink (GTK_OBJECT (standard_view->icon_renderer));
+
+  /* setup the name renderer */
+  standard_view->name_renderer = thunar_text_renderer_new ();
+  g_object_ref (G_OBJECT (standard_view->name_renderer));
+  gtk_object_sink (GTK_OBJECT (standard_view->name_renderer));
 
   /* be sure to update the statusbar text whenever the number of
    * files in our model changes.
@@ -400,6 +411,9 @@ thunar_standard_view_finalize (GObject *object)
   g_assert (standard_view->icon_factory == NULL);
   g_assert (standard_view->ui_manager == NULL);
   g_assert (standard_view->clipboard == NULL);
+
+  /* release the reference on the name renderer */
+  g_object_unref (G_OBJECT (standard_view->name_renderer));
 
   /* release the reference on the icon renderer */
   g_object_unref (G_OBJECT (standard_view->icon_renderer));
@@ -982,6 +996,16 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
 
 
 static void
+thunar_standard_view_action_rename (GtkAction          *action,
+                                    ThunarStandardView *standard_view)
+{
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+}
+
+
+
+static void
 thunar_standard_view_action_show_hidden_files (GtkToggleAction    *toggle_action,
                                                ThunarStandardView *standard_view)
 {
@@ -1210,6 +1234,10 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
                 "sensitive", pastable,
                 "visible", can_paste_into_folder,
                 NULL);
+
+  /* update the "Rename" action */
+  gtk_action_set_sensitive (standard_view->priv->action_rename, (n_selected_files == 1
+                            && thunar_file_is_renameable (selected_files->data)));
 
   /* clear the current status text (will be recalculated on-demand) */
   g_free (standard_view->statusbar_text);

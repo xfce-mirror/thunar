@@ -1,5 +1,22 @@
 2005-08-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-details-view.c, thunar/thunar-icon-view.c,
+	  thunar/thunar-standard-view.{c,h}: Turn the name cell renderer into
+	  a property of the ThunarStandardView class, so related functionality
+	  can be easily shared between the icon and details views.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-window-ui.xml: Add
+	  placeholder for alteration actions to the "Edit" menu in the thunar
+	  window and fill this placeholder with the "Rename" action in the
+	  standard view. In addition, add the "Rename" action to the file
+	  context menu.
+	* thunar/thunar-file.{c,h}: Add rename functionality to the ThunarFile
+	  interface.
+	* thunar/thunar-standard-view.c(thunar_standard_view_selection_changed):
+	  Enable the "Rename" action if exactly one file is selected and that
+	  file is renameable.
+
+2005-08-29	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-favourites-model.c: Use GLib linked lists to manage
 	  the favourites.
 	* thunar/thunar-favourites-model.c: Monitor the bookmarks file for

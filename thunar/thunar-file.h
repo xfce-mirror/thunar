@@ -76,6 +76,10 @@ struct _ThunarFileClass
                                                GList                  *uris,
                                                GError                **error);
 
+  gboolean             (*rename)              (ThunarFile             *file,
+                                               const gchar            *name,
+                                               GError                **error);
+
   ThunarFolder        *(*open_as_folder)      (ThunarFile             *file,
                                                GError                **error);
 
@@ -102,6 +106,7 @@ struct _ThunarFileClass
 
   gboolean             (*is_executable)       (ThunarFile             *file);
   gboolean             (*is_readable)         (ThunarFile             *file);
+  gboolean             (*is_renameable)       (ThunarFile             *file);
   gboolean             (*is_writable)         (ThunarFile             *file);
 
   GList               *(*get_emblem_names)    (ThunarFile             *file);
@@ -145,6 +150,10 @@ gboolean           thunar_file_execute          (ThunarFile             *file,
                                                  GList                  *uris,
                                                  GError                **error);
 
+gboolean           thunar_file_rename           (ThunarFile             *file,
+                                                 const gchar            *name,
+                                                 GError                **error);
+
 ThunarFolder      *thunar_file_open_as_folder   (ThunarFile             *file,
                                                  GError                **error);
 
@@ -176,6 +185,7 @@ ThunarVfsUser     *thunar_file_get_user         (ThunarFile             *file);
 
 gboolean          thunar_file_is_executable     (ThunarFile             *file);
 gboolean          thunar_file_is_readable       (ThunarFile             *file);
+gboolean          thunar_file_is_renameable     (ThunarFile             *file);
 gboolean          thunar_file_is_writable       (ThunarFile             *file);
 
 GList             *thunar_file_get_emblem_names (ThunarFile             *file);
