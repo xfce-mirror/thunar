@@ -38,6 +38,10 @@
 
 
 
+#define THUNAR_FAVOURITE(obj) ((ThunarFavourite *) (obj))
+
+
+
 typedef struct _ThunarFavourite ThunarFavourite;
 
 typedef enum
@@ -94,7 +98,14 @@ static gboolean           thunar_favourites_model_drag_data_delete    (GtkTreeDr
 static void               thunar_favourites_model_add_favourite       (ThunarFavouritesModel      *model,
                                                                        ThunarFavourite            *favourite,
                                                                        GtkTreePath                *path);
+static void               thunar_favourites_model_load                (ThunarFavouritesModel      *model);
 static void               thunar_favourites_model_save                (ThunarFavouritesModel      *model);
+static void               thunar_favourites_model_monitor             (ThunarVfsMonitor           *monitor,
+                                                                       ThunarVfsMonitorHandle     *handle,
+                                                                       ThunarVfsMonitorEvent       event,
+                                                                       ThunarVfsURI               *handle_uri,
+                                                                       ThunarVfsURI               *event_uri,
+                                                                       gpointer                    user_data);
 static void               thunar_favourites_model_file_changed        (ThunarFile                 *file,
                                                                        ThunarFavouritesModel      *model);
 static void               thunar_favourites_model_file_destroy        (ThunarFile                 *file,
@@ -102,6 +113,8 @@ static void               thunar_favourites_model_file_destroy        (ThunarFil
 static void               thunar_favourites_model_volume_changed      (ThunarVfsVolume            *volume,
                                                                        ThunarFavouritesModel      *model);
 static void               thunar_favourites_model_action_remove       (GtkAction                  *action,
+                                                                       ThunarFavouritesModel      *model);
+static void               thunar_favourite_free                       (ThunarFavourite            *favourite,
                                                                        ThunarFavouritesModel      *model);
 
 
@@ -116,11 +129,13 @@ struct _ThunarFavouritesModel
   GObject __parent__;
 
   guint                   stamp;
-  gint                    n_favourites;
+  GList                  *favourites;
   GList                  *hidden_volumes;
-  ThunarFavourite        *favourites;
   ThunarIconFactory      *icon_factory;
   ThunarVfsVolumeManager *volume_manager;
+
+  ThunarVfsMonitor       *monitor;
+  ThunarVfsMonitorHandle *handle;
 };
 
 struct _ThunarFavourite
@@ -129,9 +144,6 @@ struct _ThunarFavourite
 
   ThunarFile         *file;
   ThunarVfsVolume    *volume;
-
-  ThunarFavourite    *next;
-  ThunarFavourite    *prev;
 
   /* cached icon */
   GdkPixbuf          *icon;
@@ -171,12 +183,8 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
   GList           *volumes;
   GList           *lp;
   gchar           *bookmarks_path;
-  gchar            line[1024];
-  FILE            *fp;
 
   model->stamp = g_random_int ();
-  model->n_favourites = 0;
-  model->favourites = NULL;
   model->icon_factory = thunar_icon_factory_get_for_icon_theme (gtk_icon_theme_get_default ());
   model->volume_manager = thunar_vfs_volume_manager_get_default ();
 
@@ -280,50 +288,20 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
   gtk_tree_path_next (path);
 #endif
 
-  /* append the GTK+ bookmarks (if any) */
+  /* determine the URI to the Gtk+ bookmarks file */
   bookmarks_path = xfce_get_homefile (".gtk-bookmarks", NULL);
-  fp = fopen (bookmarks_path, "r");
-  if (G_LIKELY (fp != NULL))
-    {
-      while (fgets (line, sizeof (line), fp) != NULL)
-        {
-          /* strip leading/trailing whitespace */
-          g_strstrip (line);
-
-          uri = thunar_vfs_uri_new (line, NULL);
-          if (G_UNLIKELY (uri == NULL))
-            continue;
-
-          /* try to open the file corresponding to the uri */
-          file = thunar_file_get_for_uri (uri, NULL);
-          thunar_vfs_uri_unref (uri);
-          if (G_UNLIKELY (file == NULL))
-            continue;
-
-          /* make sure the file refers to a directory */
-          if (G_UNLIKELY (!thunar_file_is_directory (file)))
-            {
-              g_object_unref (G_OBJECT (file));
-              continue;
-            }
-
-          /* create the favourite entry */
-          favourite = g_new (ThunarFavourite, 1);
-          favourite->type = THUNAR_FAVOURITE_USER_DEFINED;
-          favourite->file = file;
-          favourite->volume = NULL;
-          favourite->icon = NULL;
-
-          /* append the favourite to the list */
-          thunar_favourites_model_add_favourite (model, favourite, path);
-          gtk_tree_path_next (path);
-        }
-
-      fclose (fp);
-    }
+  uri = thunar_vfs_uri_new_for_path (bookmarks_path);
   g_free (bookmarks_path);
 
+  /* register with the alteration monitor for the bookmarks file */
+  model->monitor = thunar_vfs_monitor_get_default ();
+  model->handle = thunar_vfs_monitor_add_file (model->monitor, uri, thunar_favourites_model_monitor, G_OBJECT (model));
+
+  /* read the Gtk+ bookmarks file */
+  thunar_favourites_model_load (model);
+
   /* cleanup */
+  thunar_vfs_uri_unref (uri);
   gtk_tree_path_free (path);
 }
 
@@ -362,47 +340,20 @@ static void
 thunar_favourites_model_finalize (GObject *object)
 {
   ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (object);
-  ThunarFavourite       *current;
-  ThunarFavourite       *next;
-  GList                 *lp;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
 
   /* free all favourites */
-  for (current = model->favourites; current != NULL; current = next)
-    {
-      next = current->next;
-
-      if (G_LIKELY (current->file != NULL))
-        {
-          /* drop the file watch */
-          thunar_file_unwatch (current->file);
-
-          /* unregister from the file */
-          g_signal_handlers_disconnect_matched (G_OBJECT (current->file),
-                                                G_SIGNAL_MATCH_DATA, 0,
-                                                0, NULL, NULL, model);
-          g_object_unref (G_OBJECT (current->file));
-        }
-
-      if (G_LIKELY (current->volume != NULL))
-        {
-          g_signal_handlers_disconnect_matched (G_OBJECT (current->volume),
-                                                G_SIGNAL_MATCH_DATA, 0,
-                                                0, NULL, NULL, model);
-          g_object_unref (G_OBJECT (current->volume));
-        }
-
-      if (G_LIKELY (current->icon != NULL))
-        g_object_unref (G_OBJECT (current->icon));
-
-      g_free (current);
-    }
+  g_list_foreach (model->favourites, (GFunc) thunar_favourite_free, model);
+  g_list_free (model->favourites);
 
   /* free all hidden volumes */
-  for (lp = model->hidden_volumes; lp != NULL; lp = lp->next)
-    g_object_unref (G_OBJECT (lp->data));
+  g_list_foreach (model->hidden_volumes, (GFunc) g_object_unref, NULL);
   g_list_free (model->hidden_volumes);
+
+  /* detach from the VFS monitor */
+  thunar_vfs_monitor_remove (model->monitor, model->handle);
+  g_object_unref (G_OBJECT (model->monitor));
 
   /* unlink from the icon factory */
   g_object_unref (G_OBJECT (model->icon_factory));
@@ -410,7 +361,7 @@ thunar_favourites_model_finalize (GObject *object)
   /* unlink from the volume manager */
   g_object_unref (G_OBJECT (model->volume_manager));
 
-  G_OBJECT_CLASS (thunar_favourites_model_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_favourites_model_parent_class)->finalize) (object);
 }
 
 
@@ -459,23 +410,21 @@ thunar_favourites_model_get_iter (GtkTreeModel *tree_model,
                                   GtkTreePath  *path)
 {
   ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (tree_model);
-  ThunarFavourite       *favourite;
-  gint                   index;
+  GList                 *lp;
 
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
   g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
 
-  index = gtk_tree_path_get_indices (path)[0];
-  if (G_UNLIKELY (index >= model->n_favourites))
-    return FALSE;
+  /* determine the list item for the path */
+  lp = g_list_nth (model->favourites, gtk_tree_path_get_indices (path)[0]);
+  if (G_LIKELY (lp != NULL))
+    {
+      iter->stamp = model->stamp;
+      iter->user_data = lp;
+      return TRUE;
+    }
 
-  for (favourite = model->favourites; index-- > 0; favourite = favourite->next)
-    g_assert (favourite != NULL);
-
-  iter->stamp = model->stamp;
-  iter->user_data = favourite;
-
-  return TRUE;
+  return FALSE;
 }
 
 
@@ -485,23 +434,17 @@ thunar_favourites_model_get_path (GtkTreeModel *tree_model,
                                   GtkTreeIter  *iter)
 {
   ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (tree_model);
-  ThunarFavourite       *favourite;
-  GtkTreePath           *path;
-  gint                   index = 0;
+  gint                   index;
 
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), NULL);
   g_return_val_if_fail (iter->stamp == model->stamp, NULL);
 
-  for (favourite = model->favourites; favourite != NULL; favourite = favourite->next, ++index)
-    if (favourite == iter->user_data)
-      break;
+  /* lookup the list item in the favourites list */
+  index = g_list_position (model->favourites, iter->user_data);
+  if (G_LIKELY (index >= 0))
+    return gtk_tree_path_new_from_indices (index, -1);
 
-  if (G_UNLIKELY (favourite == NULL))
-    return NULL;
-
-  path = gtk_tree_path_new ();
-  gtk_tree_path_append_index (path, index);
-  return path;
+  return NULL;
 }
 
 
@@ -520,7 +463,8 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
   g_return_if_fail (iter->stamp == model->stamp);
 
-  favourite = iter->user_data;
+  /* determine the favourite for the list item */
+  favourite = THUNAR_FAVOURITE (((GList *) iter->user_data)->data);
 
   switch (column)
     {
@@ -571,7 +515,7 @@ thunar_favourites_model_iter_next (GtkTreeModel *tree_model,
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (tree_model), FALSE);
   g_return_val_if_fail (iter->stamp == THUNAR_FAVOURITES_MODEL (tree_model)->stamp, FALSE);
 
-  iter->user_data = ((ThunarFavourite *) iter->user_data)->next;
+  iter->user_data = g_list_next (iter->user_data);
   return (iter->user_data != NULL);
 }
 
@@ -586,10 +530,7 @@ thunar_favourites_model_iter_children (GtkTreeModel *tree_model,
 
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
 
-  if (G_UNLIKELY (parent != NULL))
-    return FALSE;
-
-  if (G_LIKELY (model->favourites != NULL))
+  if (G_LIKELY (parent == NULL && model->favourites != NULL))
     {
       iter->stamp = model->stamp;
       iter->user_data = model->favourites;
@@ -618,7 +559,7 @@ thunar_favourites_model_iter_n_children (GtkTreeModel *tree_model,
 
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
 
-  return (iter == NULL) ? model->n_favourites : 0;
+  return (iter == NULL) ? g_list_length (model->favourites) : 0;
 }
 
 
@@ -630,21 +571,14 @@ thunar_favourites_model_iter_nth_child (GtkTreeModel *tree_model,
                                         gint          n)
 {
   ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (tree_model);
-  ThunarFavourite       *favourite;
 
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
 
-  if (G_UNLIKELY (parent != NULL))
-    return FALSE;
-
-  for (favourite = model->favourites; favourite != NULL && n-- > 0; favourite = favourite->next)
-    ;
-
-  if (G_LIKELY (favourite != NULL))
+  if (G_LIKELY (parent != NULL))
     {
       iter->stamp = model->stamp;
-      iter->user_data = favourite;
-      return TRUE;
+      iter->user_data = g_list_nth (model->favourites, n);
+      return (iter->user_data != NULL);
     }
 
   return FALSE;
@@ -668,22 +602,15 @@ thunar_favourites_model_row_draggable (GtkTreeDragSource *source,
 {
   ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (source);
   ThunarFavourite       *favourite;
-  gint                   n;
 
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
   g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
 
-  /* verify that the index of the path is valid */
-  n = gtk_tree_path_get_indices (path)[0];
-  if (G_UNLIKELY (n < 0 || n >= model->n_favourites))
-    return FALSE;
-
   /* lookup the ThunarFavourite for the path */
-  for (favourite = model->favourites; --n >= 0; favourite = favourite->next)
-    ;
+  favourite = g_list_nth_data (model->favourites, gtk_tree_path_get_indices (path)[0]);
 
   /* special favourites cannot be reordered */
-  return (favourite->type == THUNAR_FAVOURITE_USER_DEFINED);
+  return (favourite != NULL && favourite->type == THUNAR_FAVOURITE_USER_DEFINED);
 }
 
 
@@ -716,15 +643,13 @@ thunar_favourites_model_add_favourite (ThunarFavouritesModel *model,
                                        ThunarFavourite       *favourite,
                                        GtkTreePath           *path)
 {
-  ThunarFavourite *current;
-  GtkTreeIter      iter;
-  gint             index;
+  GtkTreeIter iter;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
   g_return_if_fail (favourite->file == NULL || THUNAR_IS_FILE (favourite->file));
   g_return_if_fail (gtk_tree_path_get_depth (path) > 0);
   g_return_if_fail (gtk_tree_path_get_indices (path)[0] >= 0);
-  g_return_if_fail (gtk_tree_path_get_indices (path)[0] <= model->n_favourites);
+  g_return_if_fail (gtk_tree_path_get_indices (path)[0] <= g_list_length (model->favourites));
 
   /* we want to stay informed about changes to the file */
   if (G_LIKELY (favourite->file != NULL))
@@ -739,49 +664,8 @@ thunar_favourites_model_add_favourite (ThunarFavouritesModel *model,
                         G_CALLBACK (thunar_favourites_model_file_destroy), model);
     }
 
-  /* check if this is the first favourite to insert (shouldn't happen normally) */
-  if (G_UNLIKELY (model->favourites == NULL))
-    {
-      model->favourites = favourite;
-      favourite->next = NULL;
-      favourite->prev = NULL;
-    }
-  else
-    {
-      index = gtk_tree_path_get_indices (path)[0];
-      if (index == 0)
-        {
-          /* the new favourite should be prepended to the existing list */
-          favourite->next = model->favourites;
-          favourite->prev = NULL;
-          model->favourites->prev = favourite;
-          model->favourites = favourite;
-        }
-      else if (index == model->n_favourites)
-        {
-          /* the new favourite should be appended to the existing list */
-          for (current = model->favourites; current->next != NULL; current = current->next)
-            ;
-
-          favourite->next = NULL;
-          favourite->prev = current;
-          current->next = favourite;
-        }
-      else
-        {
-          /* inserting somewhere into the existing list */
-          for (current = model->favourites; index-- > 0; current = current->next)
-            ;
-
-          favourite->next = current;
-          favourite->prev = current->prev;
-          current->prev->next = favourite;
-          current->prev = favourite;
-        }
-    }
-
-  /* we've just inserted a new item */
-  ++model->n_favourites;
+  /* insert the new favourite to the favourites list */
+  model->favourites = g_list_insert (model->favourites, favourite, gtk_tree_path_get_indices (path)[0]);
 
   /* tell everybody that we have a new favourite */
   gtk_tree_model_get_iter (GTK_TREE_MODEL (model), &iter, path);
@@ -791,12 +675,132 @@ thunar_favourites_model_add_favourite (ThunarFavouritesModel *model,
 
 
 static void
+thunar_favourites_model_load (ThunarFavouritesModel *model)
+{
+  ThunarFavourite *favourite;
+  ThunarVfsURI    *file_uri;
+  GtkTreePath     *path;
+  ThunarFile      *file;
+  gchar           *bookmarks_path;
+  gchar            line[2048];
+  FILE            *fp;
+
+  /* determine the path to the GTK+ bookmarks file */
+  bookmarks_path = xfce_get_homefile (".gtk-bookmarks", NULL);
+
+  /* append the GTK+ bookmarks (if any) */
+  fp = fopen (bookmarks_path, "r");
+  if (G_LIKELY (fp != NULL))
+    {
+      /* allocate a tree path for appending to the model */
+      path = gtk_tree_path_new_from_indices (g_list_length (model->favourites), -1);
+
+      while (fgets (line, sizeof (line), fp) != NULL)
+        {
+          /* strip leading/trailing whitespace */
+          g_strstrip (line);
+
+          file_uri = thunar_vfs_uri_new (line, NULL);
+          if (G_UNLIKELY (file_uri == NULL))
+            continue;
+
+          /* try to open the file corresponding to the uri */
+          file = thunar_file_get_for_uri (file_uri, NULL);
+          thunar_vfs_uri_unref (file_uri);
+          if (G_UNLIKELY (file == NULL))
+            continue;
+
+          /* make sure the file refers to a directory */
+          if (G_UNLIKELY (!thunar_file_is_directory (file)))
+            {
+              g_object_unref (G_OBJECT (file));
+              continue;
+            }
+
+          /* create the favourite entry */
+          favourite = g_new (ThunarFavourite, 1);
+          favourite->type = THUNAR_FAVOURITE_USER_DEFINED;
+          favourite->file = file;
+          favourite->volume = NULL;
+          favourite->icon = NULL;
+
+          /* append the favourite to the list */
+          thunar_favourites_model_add_favourite (model, favourite, path);
+          gtk_tree_path_next (path);
+        }
+
+      /* clean up */
+      gtk_tree_path_free (path);
+      fclose (fp);
+    }
+
+  /* clean up */
+  g_free (bookmarks_path);
+}
+
+
+
+static void
+thunar_favourites_model_monitor (ThunarVfsMonitor       *monitor,
+                                 ThunarVfsMonitorHandle *handle,
+                                 ThunarVfsMonitorEvent   event,
+                                 ThunarVfsURI           *handle_uri,
+                                 ThunarVfsURI           *event_uri,
+                                 gpointer                user_data)
+{
+  ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (user_data);
+  ThunarFavourite       *favourite;
+  GtkTreePath           *path;
+  GList                 *lp;
+  gint                   index;
+
+  g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
+  g_return_if_fail (model->monitor == monitor);
+  g_return_if_fail (model->handle == handle);
+
+  /* drop all existing user-defined favourites from the model */
+  for (index = 0, lp = model->favourites; lp != NULL; )
+    {
+      /* grab the favourite */
+      favourite = THUNAR_FAVOURITE (lp->data);
+
+      /* advance to the next list item */
+      lp = g_list_next (lp);
+
+      /* drop the favourite if it is user-defined */
+      if (favourite->type == THUNAR_FAVOURITE_USER_DEFINED)
+        {
+          /* unlink the favourite from the model */
+          model->favourites = g_list_remove (model->favourites, favourite);
+          
+          /* tell everybody that we have lost a favourite */
+          path = gtk_tree_path_new_from_indices (index, -1);
+          gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
+          gtk_tree_path_free (path);
+
+          /* actually free the favourite */
+          thunar_favourite_free (favourite, model);
+        }
+      else
+        {
+          ++index;
+        }
+    }
+
+  /* reload the favourites model */
+  thunar_favourites_model_load (model);
+}
+
+
+
+static void
 thunar_favourites_model_save (ThunarFavouritesModel *model)
 {
   ThunarFavourite *favourite;
-  gchar           *dst_path;
+  gchar           *bookmarks_path;
   gchar           *tmp_path;
   gchar           *uri;
+  GList           *lp;
   FILE            *fp = NULL;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
@@ -816,29 +820,32 @@ thunar_favourites_model_save (ThunarFavouritesModel *model)
     }
 
   /* write the uris of user customizable favourites */
-  for (favourite = model->favourites; favourite != NULL; favourite = favourite->next)
-    if (favourite->type == THUNAR_FAVOURITE_USER_DEFINED)
-      {
-        uri = thunar_vfs_uri_to_string (thunar_file_get_uri (favourite->file),
-                                        THUNAR_VFS_URI_HIDE_HOST);
-        fprintf (fp, "%s\n", uri);
-        g_free (uri);
-      }
+  for (lp = model->favourites; lp != NULL; lp = lp->next)
+    {
+      favourite = THUNAR_FAVOURITE (lp->data);
+      if (favourite->type == THUNAR_FAVOURITE_USER_DEFINED)
+        {
+          uri = thunar_vfs_uri_to_string (thunar_file_get_uri (favourite->file),
+                                          THUNAR_VFS_URI_HIDE_HOST);
+          fprintf (fp, "%s\n", uri);
+          g_free (uri);
+        }
+    }
 
   /* we're done writing the temporary file */
   fclose (fp);
 
   /* move the temporary file to it's final location (atomic writing) */
-  dst_path = xfce_get_homefile (".gtk-bookmarks", NULL);
-  if (rename (tmp_path, dst_path) < 0)
+  bookmarks_path = xfce_get_homefile (".gtk-bookmarks", NULL);
+  if (rename (tmp_path, bookmarks_path) < 0)
     {
       g_warning ("Failed to write `%s': %s",
-                 dst_path, g_strerror (errno));
+                 bookmarks_path, g_strerror (errno));
       unlink (tmp_path);
     }
 
   /* cleanup */
-  g_free (dst_path);
+  g_free (bookmarks_path);
   g_free (tmp_path);
 }
 
@@ -851,7 +858,8 @@ thunar_favourites_model_file_changed (ThunarFile            *file,
   ThunarFavourite *favourite;
   GtkTreePath     *path;
   GtkTreeIter      iter;
-  gint             n;
+  GList           *lp;
+  gint             index;
 
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
@@ -866,23 +874,26 @@ thunar_favourites_model_file_changed (ThunarFile            *file,
       return;
     }
 
-  for (favourite = model->favourites, n = 0; favourite != NULL; favourite = favourite->next, ++n)
-    if (favourite->file == file)
-      {
-        /* drop the cached icon */
-        if (G_LIKELY (favourite->icon != NULL))
-          {
-            g_object_unref (G_OBJECT (favourite->icon));
-            favourite->icon = NULL;
-          }
+  for (index = 0, lp = model->favourites; lp != NULL; ++index, lp = lp->next)
+    {
+      favourite = THUNAR_FAVOURITE (lp->data);
+      if (favourite->file == file)
+        {
+          /* drop the cached icon */
+          if (G_LIKELY (favourite->icon != NULL))
+            {
+              g_object_unref (G_OBJECT (favourite->icon));
+              favourite->icon = NULL;
+            }
 
-        iter.stamp = model->stamp;
-        iter.user_data = favourite;
+          iter.stamp = model->stamp;
+          iter.user_data = lp;
 
-        path = gtk_tree_path_new_from_indices (n, -1);
-        gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
-        gtk_tree_path_free (path);
-      }
+          path = gtk_tree_path_new_from_indices (index, -1);
+          gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+          gtk_tree_path_free (path);
+        }
+    }
 }
 
 
@@ -891,68 +902,39 @@ static void
 thunar_favourites_model_file_destroy (ThunarFile            *file,
                                       ThunarFavouritesModel *model)
 {
-  ThunarFavourite *favourite;
+  ThunarFavourite *favourite = NULL;
   GtkTreePath     *path;
-  gint             n;
+  GList           *lp;
+  gint             index;
 
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
 
   /* lookup the favourite matching the file */
-  for (favourite = model->favourites, n = 0; favourite != NULL; favourite = favourite->next, ++n)
-    if (favourite->file == file)
-      break;
+  for (index = 0, lp = model->favourites; lp != NULL; ++index, lp = lp->next)
+    {
+      favourite = THUNAR_FAVOURITE (lp->data);
+      if (favourite->file == file)
+        break;
+    }
 
-  g_assert (favourite != NULL);
-  g_assert (n < model->n_favourites);
+  /* verify that we actually found a favourite */
+  g_assert (lp != NULL);
   g_assert (THUNAR_IS_FILE (favourite->file));
 
   /* unlink the favourite from the model */
-  --model->n_favourites;
-  if (favourite == model->favourites)
-    {
-      favourite->next->prev = NULL;
-      model->favourites = favourite->next;
-    }
-  else
-    {
-      if (favourite->next != NULL)
-        favourite->next->prev = favourite->prev;
-      favourite->prev->next = favourite->next;
-    }
+  model->favourites = g_list_delete_link (model->favourites, lp);
 
   /* tell everybody that we have lost a favourite */
-  path = gtk_tree_path_new_from_indices (n, -1);
+  path = gtk_tree_path_new_from_indices (index, -1);
   gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
   gtk_tree_path_free (path);
 
-  /* drop the watch from the file */
-  thunar_file_unwatch (favourite->file);
-
-  /* drop the cached icon */
-  if (G_LIKELY (favourite->icon != NULL))
-    g_object_unref (G_OBJECT (favourite->icon));
-
-  /* disconnect us from the favourite's file */
-  g_signal_handlers_disconnect_matched (G_OBJECT (favourite->file),
-                                        G_SIGNAL_MATCH_DATA, 0,
-                                        0, NULL, NULL, model);
-  g_object_unref (G_OBJECT (favourite->file));
-
-  /* disconnect us from the favourite's volume (if any) */
-  if (favourite->volume != NULL) 
-    {
-      g_signal_handlers_disconnect_matched (G_OBJECT (favourite->volume),
-                                            G_SIGNAL_MATCH_DATA, 0,
-                                            0, NULL, NULL, model);
-      g_object_unref (G_OBJECT (favourite->volume));
-    }
+  /* actually free the favourite */
+  thunar_favourite_free (favourite, model);
 
   /* the favourites list was changed, so write the gtk bookmarks file */
   thunar_favourites_model_save (model);
-
-  /* free the favourite data */
-  g_free (favourite);
 }
 
 
@@ -961,7 +943,7 @@ static void
 thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
                                         ThunarFavouritesModel *model)
 {
-  ThunarFavourite *favourite;
+  ThunarFavourite *favourite = NULL;
   ThunarVfsURI    *uri;
   GtkTreePath     *path;
   GtkTreeIter      iter;
@@ -983,13 +965,17 @@ thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
           file = thunar_file_get_for_uri (uri, NULL);
           if (G_LIKELY (file != NULL))
             {
-              /* find the insert position */
-              for (favourite = model->favourites, index = 0; favourite != NULL; favourite = favourite->next, ++index)
-                if (favourite->type == THUNAR_FAVOURITE_SEPARATOR || favourite->type == THUNAR_FAVOURITE_USER_DEFINED)
-                  break;
-
               /* remove the volume from the list of hidden volumes */
               model->hidden_volumes = g_list_delete_link (model->hidden_volumes, lp);
+
+              /* find the insert position */
+              for (index = 0, lp = model->favourites; lp != NULL; ++index, lp = lp->next)
+                {
+                  favourite = THUNAR_FAVOURITE (lp->data);
+                  if (favourite->type == THUNAR_FAVOURITE_SEPARATOR
+                      || favourite->type == THUNAR_FAVOURITE_USER_DEFINED)
+                    break;
+                }
 
               /* allocate a new favourite */
               favourite = g_new (ThunarFavourite, 1);
@@ -1008,10 +994,14 @@ thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
   else
     {
       /* lookup the favourite that contains the given volume */
-      for (favourite = model->favourites, index = 0; favourite != NULL; favourite = favourite->next, ++index)
-        if (favourite->volume == volume)
-          break;
+      for (index = 0, lp = model->favourites; lp != NULL; ++index, lp = lp->next)
+        {
+          favourite = THUNAR_FAVOURITE (lp->data);
+          if (favourite->volume == volume)
+            break;
+        }
 
+      /* verify that we actually found the favourite */
       g_assert (favourite != NULL);
       g_assert (favourite->volume == volume);
 
@@ -1042,7 +1032,7 @@ thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
 
           /* tell the view that the volume has changed in some way */
           iter.stamp = model->stamp;
-          iter.user_data = favourite;
+          iter.user_data = lp;
 
           path = gtk_tree_path_new_from_indices (index, -1);
           gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
@@ -1067,6 +1057,39 @@ thunar_favourites_model_action_remove (GtkAction             *action,
       thunar_favourites_model_remove (model, path);
       gtk_tree_path_free (path);
     }
+}
+
+
+
+static void
+thunar_favourite_free (ThunarFavourite       *favourite,
+                       ThunarFavouritesModel *model)
+{
+  if (G_LIKELY (favourite->file != NULL))
+    {
+      /* drop the file watch */
+      thunar_file_unwatch (favourite->file);
+
+      /* unregister from the file */
+      g_signal_handlers_disconnect_matched (G_OBJECT (favourite->file),
+                                            G_SIGNAL_MATCH_DATA, 0,
+                                            0, NULL, NULL, model);
+      g_object_unref (G_OBJECT (favourite->file));
+    }
+
+  if (G_LIKELY (favourite->volume != NULL))
+    {
+      g_signal_handlers_disconnect_matched (G_OBJECT (favourite->volume),
+                                            G_SIGNAL_MATCH_DATA, 0,
+                                            0, NULL, NULL, model);
+      g_object_unref (G_OBJECT (favourite->volume));
+    }
+
+  /* drop any cached icon */
+  if (G_LIKELY (favourite->icon != NULL))
+    g_object_unref (G_OBJECT (favourite->icon));
+
+  g_free (favourite);
 }
 
 
@@ -1120,17 +1143,17 @@ thunar_favourites_model_iter_for_file (ThunarFavouritesModel *model,
                                        ThunarFile            *file,
                                        GtkTreeIter           *iter)
 {
-  ThunarFavourite *favourite;
+  GList *lp;
   
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   g_return_val_if_fail (iter != NULL, FALSE);
 
-  for (favourite = model->favourites; favourite != NULL; favourite = favourite->next)
-    if (favourite->file == file)
+  for (lp = model->favourites; lp != NULL; lp = lp->next)
+    if (THUNAR_FAVOURITE (lp->data)->file == file)
       {
         iter->stamp = model->stamp;
-        iter->user_data = favourite;
+        iter->user_data = lp;
         return TRUE;
       }
 
@@ -1152,7 +1175,7 @@ thunar_favourites_model_file_for_iter (ThunarFavouritesModel *model,
 {
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), NULL);
   g_return_val_if_fail (iter != NULL && iter->stamp == model->stamp, NULL);
-  return ((ThunarFavourite *) iter->user_data)->file;
+  return THUNAR_FAVOURITE (((GList *) iter->user_data)->data)->file;
 }
 
 
@@ -1174,21 +1197,16 @@ thunar_favourites_model_drop_possible (ThunarFavouritesModel *model,
                                        GtkTreePath           *path)
 {
   ThunarFavourite *favourite;
-  gint             n;
 
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), FALSE);
   g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
 
-  /* append to the list is always possible */
-  n = gtk_tree_path_get_indices (path)[0];
-  if (n >= model->n_favourites)
-    return TRUE;
+  /* determine the list item for the path */
+  favourite = g_list_nth_data (model->favourites, gtk_tree_path_get_indices (path)[0]);
 
-  /* lookup the ThunarFavourite for the path (remember, we are
-   * checking whether we can insert BEFORE path)
-   */
-  for (favourite = model->favourites; --n >= 0; favourite = favourite->next)
-    ;
+  /* append to the list is always possible */
+  if (G_LIKELY (favourite == NULL))
+    return TRUE;
 
   /* cannot drop before special favourites! */
   return (favourite->type == THUNAR_FAVOURITE_USER_DEFINED);
@@ -1211,23 +1229,23 @@ thunar_favourites_model_add (ThunarFavouritesModel *model,
                              ThunarFile            *file)
 {
   ThunarFavourite *favourite;
+  GList           *lp;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
   g_return_if_fail (gtk_tree_path_get_depth (dst_path) > 0);
   g_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] >= 0);
-  g_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] <= model->n_favourites);
+  g_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] <= g_list_length (model->favourites));
   g_return_if_fail (THUNAR_IS_FILE (file));
 
   /* verify that the file is not already in use as favourite */
-  for (favourite = model->favourites; favourite != NULL; favourite = favourite->next)
-    if (G_UNLIKELY (favourite->file == file))
+  for (lp = model->favourites; lp != NULL; lp = lp->next)
+    if (THUNAR_FAVOURITE (lp->data)->file == file)
       return;
 
   /* create the new favourite that will be inserted */
   favourite = g_new0 (ThunarFavourite, 1);
   favourite->type = THUNAR_FAVOURITE_USER_DEFINED;
-  favourite->file = file;
-  g_object_ref (G_OBJECT (file));
+  favourite->file = g_object_ref (G_OBJECT (file));
 
   /* add the favourite to the list at the given position */
   thunar_favourites_model_add_favourite (model, favourite, dst_path);
@@ -1252,22 +1270,19 @@ thunar_favourites_model_move (ThunarFavouritesModel *model,
                               GtkTreePath           *src_path,
                               GtkTreePath           *dst_path)
 {
-  ThunarFavouriteType type;
-  ThunarFavourite    *favourite;
-  ThunarVfsVolume    *volume;
-  GtkTreePath        *path;
-  ThunarFile         *file;
-  GdkPixbuf          *icon;
-  gint               *order;
-  gint                index_src;
-  gint                index_dst;
-  gint                index;
+  ThunarFavourite *favourite;
+  GtkTreePath     *path;
+  GList           *lp;
+  gint            *order;
+  gint             index_src;
+  gint             index_dst;
+  gint             index;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
   g_return_if_fail (gtk_tree_path_get_depth (src_path) > 0);
   g_return_if_fail (gtk_tree_path_get_depth (dst_path) > 0);
   g_return_if_fail (gtk_tree_path_get_indices (src_path)[0] >= 0);
-  g_return_if_fail (gtk_tree_path_get_indices (src_path)[0] < model->n_favourites);
+  g_return_if_fail (gtk_tree_path_get_indices (src_path)[0] < g_list_length (model->favourites));
   g_return_if_fail (gtk_tree_path_get_indices (dst_path)[0] > 0);
 
   index_src = gtk_tree_path_get_indices (src_path)[0];
@@ -1277,69 +1292,47 @@ thunar_favourites_model_move (ThunarFavouritesModel *model,
     return;
 
   /* generate the order for the rows prior the dst/src rows */
-  order = g_new (gint, model->n_favourites);
-  for (favourite = model->favourites, index = 0;
-       index < index_src && index < index_dst;
-       favourite = favourite->next, ++index)
-    {
-      order[index] = index;
-    }
+  order = g_newa (gint, g_list_length (model->favourites));
+  for (index = 0, lp = model->favourites; index < index_src && index < index_dst; ++index, lp = lp->next)
+    order[index] = index;
 
   if (index == index_src)
     {
-      type = favourite->type;
-      file = favourite->file;
-      icon = favourite->icon;
-      volume = favourite->volume;
+      favourite = THUNAR_FAVOURITE (lp->data);
 
-      for (; index < index_dst; favourite = favourite->next, ++index)
+      for (; index < index_dst; ++index, lp = lp->next)
         {
-          favourite->type = favourite->next->type;
-          favourite->file = favourite->next->file;
-          favourite->icon = favourite->next->icon;
-          favourite->volume = favourite->next->volume;
+          lp->data = lp->next->data;
           order[index] = index + 1;
         }
 
-      favourite->type = type;
-      favourite->file = file;
-      favourite->icon = icon;
-      favourite->volume = volume;
+      lp->data = favourite;
       order[index++] = index_src;
     }
   else
     {
-      for (; index < index_src; favourite = favourite->next, ++index)
+      for (; index < index_src; ++index, lp = lp->next)
         ;
 
       g_assert (index == index_src);
 
-      type = favourite->type;
-      file = favourite->file;
-      icon = favourite->icon;
-      volume = favourite->volume;
+      favourite = THUNAR_FAVOURITE (lp->data);
 
-      for (; index > index_dst; favourite = favourite->prev, --index)
+      for (; index > index_dst; --index, lp = lp->prev)
         {
-          favourite->type = favourite->prev->type;
-          favourite->file = favourite->prev->file;
-          favourite->icon = favourite->prev->icon;
-          favourite->volume = favourite->prev->volume;
+          lp->data = lp->prev->data;
           order[index] = index - 1;
         }
 
       g_assert (index == index_dst);
 
-      favourite->type = type;
-      favourite->file = file;
-      favourite->icon = icon;
-      favourite->volume = volume;
+      lp->data = favourite;
       order[index] = index_src;
       index = index_src + 1;
     }
 
   /* generate the remaining order */
-  for (; index < model->n_favourites; ++index)
+  for (; index < g_list_length (model->favourites); ++index)
     order[index] = index;
 
   /* tell all listeners about the reordering just performed */
@@ -1349,9 +1342,6 @@ thunar_favourites_model_move (ThunarFavouritesModel *model,
 
   /* the favourites list was changed, so write the gtk bookmarks file */
   thunar_favourites_model_save (model);
-
-  /* cleanup */
-  g_free (order);
 }
 
 
@@ -1371,17 +1361,14 @@ thunar_favourites_model_remove (ThunarFavouritesModel *model,
                                 GtkTreePath           *path)
 {
   ThunarFavourite *favourite;
-  gint             index;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
   g_return_if_fail (gtk_tree_path_get_depth (path) > 0);
   g_return_if_fail (gtk_tree_path_get_indices (path)[0] >= 0);
-  g_return_if_fail (gtk_tree_path_get_indices (path)[0] < model->n_favourites);
+  g_return_if_fail (gtk_tree_path_get_indices (path)[0] < g_list_length (model->favourites));
 
   /* lookup the favourite for the given path */
-  index = gtk_tree_path_get_indices (path)[0];
-  for (favourite = model->favourites; --index >= 0; favourite = favourite->next)
-    ;
+  favourite = g_list_nth_data (model->favourites, gtk_tree_path_get_indices (path)[0]);
 
   /* verify that the favourite is removable */
   g_assert (favourite->type == THUNAR_FAVOURITE_USER_DEFINED);
@@ -1425,18 +1412,15 @@ thunar_favourites_model_get_actions (ThunarFavouritesModel *model,
   ThunarFavourite     *favourite;
   GtkAction           *action;
   GList               *actions = NULL;
-  gint                 index;
 
   g_return_val_if_fail (THUNAR_IS_FAVOURITES_MODEL (model), NULL);
   g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, NULL);
   g_return_val_if_fail (gtk_tree_path_get_indices (path)[0] >= 0, NULL);
-  g_return_val_if_fail (gtk_tree_path_get_indices (path)[0] < model->n_favourites, NULL);
+  g_return_val_if_fail (gtk_tree_path_get_indices (path)[0] < g_list_length (model->favourites), NULL);
   g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
 
   /* lookup the favourite for the given path */
-  index = gtk_tree_path_get_indices (path)[0];
-  for (favourite = model->favourites; --index >= 0; favourite = favourite->next)
-    ;
+  favourite = g_list_nth_data (model->favourites, gtk_tree_path_get_indices (path)[0]);
 
   /* check if we have a separator item at that path */
   if (G_UNLIKELY (favourite->type == THUNAR_FAVOURITE_SEPARATOR))
