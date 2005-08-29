@@ -65,6 +65,9 @@ static void     thunar_window_action_close                (GtkAction          *a
 static void     thunar_window_action_location_bar_changed (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
                                                            ThunarWindow       *window);
+static void     thunar_window_action_side_pane_changed    (GtkRadioAction     *action,
+                                                           GtkRadioAction     *current,
+                                                           ThunarWindow       *window);
 static void     thunar_window_action_view_changed         (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
                                                            ThunarWindow       *window);
@@ -92,7 +95,7 @@ struct _ThunarWindow
   GtkActionGroup  *action_group;
   GtkUIManager    *ui_manager;
 
-  GtkWidget       *side_pane;
+  GtkWidget       *paned;
   GtkWidget       *location_bar;
   GtkWidget       *view_container;
   GtkWidget       *view;
@@ -112,6 +115,7 @@ static const GtkActionEntry action_entries[] =
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
   { "view-menu", NULL, N_ ("_View"), NULL, },
   { "view-location-bar-menu", NULL, N_ ("_Location Bar"), NULL, },
+  { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "open-location", NULL, N_ ("Open _Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_location), },
@@ -179,7 +183,6 @@ thunar_window_init (ThunarWindow *window)
   GtkAction      *action;
   GtkWidget      *vbox;
   GtkWidget      *menubar;
-  GtkWidget      *paned;
   GtkWidget      *box;
   GSList         *group;
 
@@ -188,6 +191,21 @@ thunar_window_init (ThunarWindow *window)
   gtk_action_group_add_actions (window->action_group, action_entries,
                                 G_N_ELEMENTS (action_entries),
                                 GTK_WIDGET (window));
+
+  /*
+   * add the side pane options
+   */
+  radio_action = gtk_radio_action_new ("view-side-pane-favourites", N_ ("_Favourites"), NULL, NULL, THUNAR_TYPE_FAVOURITES_PANE);
+  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
+  gtk_radio_action_set_group (radio_action, NULL);
+  group = gtk_radio_action_get_group (radio_action);
+  g_object_unref (G_OBJECT (radio_action));
+
+  radio_action = gtk_radio_action_new ("view-side-pane-hidden", N_ ("_Hidden"), NULL, NULL, G_TYPE_INVALID);
+  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
+  gtk_radio_action_set_group (radio_action, group);
+  group = gtk_radio_action_get_group (radio_action);
+  g_object_unref (G_OBJECT (radio_action));
 
   /*
    * add the location bar options
@@ -204,7 +222,7 @@ thunar_window_init (ThunarWindow *window)
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
-  radio_action = gtk_radio_action_new ("view-location-bar-hidden", N_ ("_Hidden"), NULL, NULL, G_TYPE_NONE);
+  radio_action = gtk_radio_action_new ("view-location-bar-hidden", N_ ("_Hidden"), NULL, NULL, G_TYPE_INVALID);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
@@ -243,20 +261,12 @@ thunar_window_init (ThunarWindow *window)
   gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
   gtk_widget_show (menubar);
 
-  paned = g_object_new (GTK_TYPE_HPANED, "border-width", 6, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), paned, TRUE, TRUE, 0);
-  gtk_widget_show (paned);
-
-  window->side_pane = thunar_favourites_pane_new ();
-  g_signal_connect_swapped (G_OBJECT (window->side_pane), "change-directory",
-                            G_CALLBACK (thunar_window_set_current_directory), window);
-  exo_binding_new (G_OBJECT (window), "current-directory",
-                   G_OBJECT (window->side_pane), "current-directory");
-  gtk_paned_pack1 (GTK_PANED (paned), window->side_pane, FALSE, FALSE);
-  gtk_widget_show (window->side_pane);
+  window->paned = g_object_new (GTK_TYPE_HPANED, "border-width", 6, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), window->paned, TRUE, TRUE, 0);
+  gtk_widget_show (window->paned);
 
   box = gtk_vbox_new (FALSE, 6);
-  gtk_paned_pack2 (GTK_PANED (paned), box, TRUE, FALSE);
+  gtk_paned_pack2 (GTK_PANED (window->paned), box, TRUE, FALSE);
   gtk_widget_show (box);
 
   window->location_bar = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
@@ -273,6 +283,11 @@ thunar_window_init (ThunarWindow *window)
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->statusbar), "current-directory");
   gtk_box_pack_start (GTK_BOX (vbox), window->statusbar, FALSE, FALSE, 0);
   gtk_widget_show (window->statusbar);
+
+  /* activate the selected side pane */
+  action = gtk_action_group_get_action (window->action_group, "view-side-pane-favourites");
+  g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_side_pane_changed), window);
+  thunar_window_action_side_pane_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 
   /* activate the selected location bar */
   action = gtk_action_group_get_action (window->action_group, "view-location-bar-buttons");
@@ -407,7 +422,7 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
   /* determine the new type of location bar */
   type = gtk_radio_action_get_current_value (action);
 
-  if (G_LIKELY (type != G_TYPE_NONE))
+  if (G_LIKELY (type != G_TYPE_INVALID))
     {
       /* initialize the new location bar widget */
       widget = g_object_new (type, NULL);
@@ -425,6 +440,33 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
     {
       /* hide the location bar container */
       gtk_widget_hide (window->location_bar);
+    }
+}
+
+
+
+static void
+thunar_window_action_side_pane_changed (GtkRadioAction *action,
+                                        GtkRadioAction *current,
+                                        ThunarWindow   *window)
+{
+  GtkWidget *widget;
+  GType      type;
+
+  /* drop the previous side pane (if any) */
+  widget = gtk_paned_get_child1 (GTK_PANED (window->paned));
+  if (G_LIKELY (widget != NULL))
+    gtk_widget_destroy (widget);
+
+  /* determine the new type of side pane */
+  type = gtk_radio_action_get_current_value (action);
+  if (G_LIKELY (type != G_TYPE_INVALID))
+    {
+      widget = g_object_new (type, NULL);
+      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (widget), "current-directory");
+      g_signal_connect_swapped (G_OBJECT (widget), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+      gtk_paned_pack1 (GTK_PANED (window->paned), widget, FALSE, FALSE);
+      gtk_widget_show (widget);
     }
 }
 
@@ -451,7 +493,7 @@ thunar_window_action_view_changed (GtkRadioAction *action,
   type = gtk_radio_action_get_current_value (action);
 
   /* allocate a new view of the requested type */
-  if (G_LIKELY (type != G_TYPE_NONE && type != G_TYPE_INVALID))
+  if (G_LIKELY (type != G_TYPE_INVALID))
     {
       window->view = g_object_new (type, "ui-manager", window->ui_manager, NULL);
       g_signal_connect (G_OBJECT (window->view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
