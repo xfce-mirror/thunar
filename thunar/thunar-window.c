@@ -409,13 +409,22 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
 
   if (G_LIKELY (type != G_TYPE_NONE))
     {
-      widget = g_object_new (type, NULL);;
+      /* initialize the new location bar widget */
+      widget = g_object_new (type, NULL);
       g_signal_connect_swapped (G_OBJECT (widget), "change-directory",
                                 G_CALLBACK (thunar_window_set_current_directory), window);
       exo_binding_new (G_OBJECT (window), "current-directory",
                        G_OBJECT (widget), "current-directory");
       gtk_container_add (GTK_CONTAINER (window->location_bar), widget);
       gtk_widget_show (widget);
+
+      /* display the location bar container */
+      gtk_widget_show (window->location_bar);
+    }
+  else
+    {
+      /* hide the location bar container */
+      gtk_widget_hide (window->location_bar);
     }
 }
 

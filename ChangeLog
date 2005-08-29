@@ -1,3 +1,13 @@
+2005-08-29	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Check for Intel MMX Intrinsics header.
+	* thunarx/thunarx-gdk-pixbuf-extensions.c: Use Intel MMX Intrinsics to
+	  speed up pixbuf operations, if supported by the compiler (the -mmmx
+	  option in gcc).
+	* thunar/thunar-window.c(thunar_window_action_location_bar_changed):
+	  Apply the location bar patch submitted by Jeffs Franks
+	  <jcfranks@tpg.com.au> in a slightly modified form.
+
 2005-08-28	Benedikt Meurer <benny@xfce.org>
 
 	* po/POTFILES.in: Remove thunar-vfs-mime.{c,h}.
