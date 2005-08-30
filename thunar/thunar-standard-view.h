@@ -62,6 +62,21 @@ struct _ThunarStandardViewClass
   /* Selects the given item */
   void   (*select_path)           (ThunarStandardView *standard_view,
                                    GtkTreePath        *path);
+
+  /* Called by the ThunarStandardView class to let derived class
+   * place the cursor on the item/row referred to by path. If
+   * start_editing is TRUE, the derived class should also start
+   * editing that item/row.
+   */
+  void   (*set_cursor)            (ThunarStandardView *standard_view,
+                                   GtkTreePath        *path,
+                                   gboolean            start_editing);
+
+  /* Called by the ThunarStandardView class to let derived class
+   * scroll the view to the given path.
+   */
+  void   (*scroll_to_path)        (ThunarStandardView *standard_view,
+                                   GtkTreePath        *path);
 };
 
 struct _ThunarStandardView

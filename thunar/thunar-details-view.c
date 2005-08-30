@@ -36,6 +36,11 @@ static void       thunar_details_view_select_all          (ThunarStandardView   
 static void       thunar_details_view_unselect_all        (ThunarStandardView     *standard_view);
 static void       thunar_details_view_select_path         (ThunarStandardView     *standard_view,
                                                            GtkTreePath            *path);
+static void       thunar_details_view_set_cursor          (ThunarStandardView     *standard_view,
+                                                           GtkTreePath            *path,
+                                                           gboolean                start_editing);
+static void       thunar_details_view_scroll_to_path      (ThunarStandardView     *standard_view,
+                                                           GtkTreePath            *path);
 static void       thunar_details_view_notify_model        (GtkTreeView            *tree_view,
                                                            GParamSpec             *pspec,
                                                            ThunarDetailsView      *details_view);
@@ -82,6 +87,8 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->select_all = thunar_details_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_details_view_unselect_all;
   thunarstandard_view_class->select_path = thunar_details_view_select_path;
+  thunarstandard_view_class->set_cursor = thunar_details_view_set_cursor;
+  thunarstandard_view_class->scroll_to_path = thunar_details_view_scroll_to_path;
 }
 
 
@@ -263,6 +270,47 @@ thunar_details_view_select_path (ThunarStandardView *standard_view,
 
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (GTK_BIN (standard_view)->child));
   gtk_tree_selection_select_path (selection, path);
+}
+
+
+
+static void
+thunar_details_view_set_cursor (ThunarStandardView *standard_view,
+                                GtkTreePath        *path,
+                                gboolean            start_editing)
+{
+  GtkCellRendererMode mode;
+  GtkTreeViewColumn  *column;
+
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+
+  /* make sure the name renderer is editable */
+  mode = standard_view->name_renderer->mode;
+  standard_view->name_renderer->mode = GTK_CELL_RENDERER_MODE_EDITABLE;
+
+  /* tell the tree view to start editing the given row */
+  column = gtk_tree_view_get_column (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), 0);
+  gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (GTK_BIN (standard_view)->child),
+                                    path, column, standard_view->name_renderer,
+                                    start_editing);
+
+  /* reset the name renderer mode */
+  standard_view->name_renderer->mode = mode;
+}
+
+
+
+static void
+thunar_details_view_scroll_to_path (ThunarStandardView *standard_view,
+                                    GtkTreePath        *path)
+{
+  GtkTreeViewColumn *column;
+
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+
+  /* tell the tree view to scroll to the given row */
+  column = gtk_tree_view_get_column (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), 0);
+  gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), path, column, FALSE, 0.0f, 0.0f);
 }
 
 

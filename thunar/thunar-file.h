@@ -137,6 +137,8 @@ GType              thunar_file_get_type         (void) G_GNUC_CONST;
 
 ThunarFile        *_thunar_file_cache_lookup    (ThunarVfsURI           *uri);
 void               _thunar_file_cache_insert    (ThunarFile             *file);
+void               _thunar_file_cache_rename    (ThunarFile             *file,
+                                                 ThunarVfsURI           *uri);
 
 ThunarFile        *thunar_file_get_for_uri      (ThunarVfsURI           *uri,
                                                  GError                **error);

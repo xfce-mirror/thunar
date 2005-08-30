@@ -118,6 +118,10 @@ static void          thunar_standard_view_drag_data_get             (GtkWidget  
                                                                      guint                     info,
                                                                      guint                     time,
                                                                      ThunarStandardView       *standard_view);
+static void          thunar_standard_view_renamed                   (ThunarTextRenderer       *text_renderer,
+                                                                     const gchar              *path_string,
+                                                                     const gchar              *text,
+                                                                     ThunarStandardView       *standard_view);
 static void          thunar_standard_view_loading_unbound           (gpointer                  user_data);
 
 
@@ -326,6 +330,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* setup the name renderer */
   standard_view->name_renderer = thunar_text_renderer_new ();
+  g_signal_connect (G_OBJECT (standard_view->name_renderer), "edited", G_CALLBACK (thunar_standard_view_renamed), standard_view);
   g_object_ref (G_OBJECT (standard_view->name_renderer));
   gtk_object_sink (GTK_OBJECT (standard_view->name_renderer));
 
@@ -999,8 +1004,17 @@ static void
 thunar_standard_view_action_rename (GtkAction          *action,
                                     ThunarStandardView *standard_view)
 {
+  GList *selected_items;
+
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* start renaming if we have exactly one selected file */
+  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
+  if (G_LIKELY (selected_items != NULL && selected_items->next == NULL))
+    (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, selected_items->data, TRUE);
+  g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
+  g_list_free (selected_items);
 }
 
 
@@ -1083,6 +1097,88 @@ thunar_standard_view_drag_data_get (GtkWidget          *widget,
 
   /* clean up */
   g_free (uri_string);
+}
+
+
+
+static void
+thunar_standard_view_renamed (ThunarTextRenderer *text_renderer,
+                              const gchar        *path_string,
+                              const gchar        *text,
+                              ThunarStandardView *standard_view)
+{
+  GtkTreeRowReference *row;
+  const gchar         *old_name;
+  GtkTreePath         *path;
+  GtkTreeIter          iter;
+  ThunarFile          *file;
+  GtkWidget           *message;
+  GtkWidget           *window;
+  GError              *error = NULL;
+
+  g_return_if_fail (THUNAR_IS_TEXT_RENDERER (text_renderer));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  g_return_if_fail (path_string != NULL);
+
+  /* verify that the user supplied a valid file name */
+  if (G_UNLIKELY (text == NULL || *text == '\0'))
+    return;
+
+  /* determine path and iterator for the edited item */
+  path = gtk_tree_path_new_from_string (path_string);
+  gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, path);
+
+  /* determine the file from the iter */
+  file = thunar_list_model_get_file (THUNAR_LIST_MODEL (standard_view->model), &iter);
+
+  /* check if the name changed */
+  old_name = thunar_file_get_display_name (file);
+  if (G_LIKELY (!exo_str_is_equal (old_name, text)))
+    {
+      /* remember a row reference to the file as the
+       * rename operation is likely cause a reordering
+       * of the list model.
+       */
+      row = gtk_tree_row_reference_new (GTK_TREE_MODEL (standard_view->model), path);
+
+      /* try to rename the file */
+      if (!thunar_file_rename (file, text, &error))
+        {
+          /* determine the toplevel widget */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+
+          /* display an error message */
+          message = gtk_message_dialog_new (GTK_WINDOW (window),
+                                            GTK_DIALOG_DESTROY_WITH_PARENT
+                                            | GTK_DIALOG_MODAL,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_CLOSE,
+                                            _("Failed to rename %s."),
+                                            old_name);
+          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
+                                                    "%s.", error->message);
+          gtk_dialog_run (GTK_DIALOG (message));
+          gtk_widget_destroy (message);
+          g_error_free (error);
+        }
+      else if (G_LIKELY (gtk_tree_row_reference_valid (row)))
+        {
+          /* place the cursor on the item again and scroll to the position */
+          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, gtk_tree_row_reference_get_path (row));
+
+          /* update the selection, so we get updated actions, statusbar,
+           * etc. with the new file name and probably new mime type.
+           */
+          thunar_standard_view_selection_changed (standard_view);
+        }
+
+      /* release the row reference */
+      gtk_tree_row_reference_free (row);
+    }
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (file));
+  gtk_tree_path_free (path);
 }
 
 

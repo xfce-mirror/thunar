@@ -480,6 +480,39 @@ _thunar_file_cache_insert (ThunarFile *file)
 }
 
 
+/**
+ * _thunar_file_cache_rename:
+ * @file : a #ThunarFile.
+ * @uri  : the previous #ThunarVfsURI of @file.
+ *
+ * Renames the existing @file in the #ThunarFile
+ * cache from the previous @uri to the new
+ * #ThunarVfsURI of @file.
+ *
+ * This method is provided to support the
+ * implementation of #thunar_file_rename()
+ * in #ThunarFile derived classes.
+ **/
+void
+_thunar_file_cache_rename (ThunarFile   *file,
+                           ThunarVfsURI *uri)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_VFS_IS_URI (uri));
+  g_return_if_fail (file_cache != NULL);
+
+  /* drop the previous entry for the uri */
+  g_object_weak_unref (G_OBJECT (file), thunar_file_destroyed, uri);
+  g_hash_table_remove (file_cache, uri);
+  thunar_vfs_uri_unref (uri);
+
+  /* insert the new entry */
+  uri = thunar_file_get_uri (file);
+  g_object_weak_ref (G_OBJECT (file), thunar_file_destroyed, uri);
+  g_hash_table_insert (file_cache, thunar_vfs_uri_ref (uri), file);
+}
+
+
 
 /**
  * thunar_file_get_for_uri:

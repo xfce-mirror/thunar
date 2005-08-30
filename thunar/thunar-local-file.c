@@ -34,6 +34,9 @@ static gboolean           thunar_local_file_execute           (ThunarFile       
                                                                GdkScreen              *screen,
                                                                GList                  *uris,
                                                                GError                **error);
+static gboolean           thunar_local_file_rename            (ThunarFile             *file,
+                                                               const gchar            *name,
+                                                               GError                **error);
 static ThunarFolder      *thunar_local_file_open_as_folder    (ThunarFile             *file,
                                                                GError                **error);
 static ThunarVfsURI      *thunar_local_file_get_uri           (ThunarFile             *file);
@@ -52,6 +55,7 @@ static ThunarVfsVolume   *thunar_local_file_get_volume        (ThunarFile       
 static ThunarVfsGroup    *thunar_local_file_get_group         (ThunarFile             *file);
 static ThunarVfsUser     *thunar_local_file_get_user          (ThunarFile             *file);
 static gboolean           thunar_local_file_is_executable     (ThunarFile             *file);
+static gboolean           thunar_local_file_is_renameable     (ThunarFile             *file);
 static GList             *thunar_local_file_get_emblem_names  (ThunarFile             *file);
 static const gchar       *thunar_local_file_get_icon_name     (ThunarFile             *file,
                                                                GtkIconTheme           *icon_theme);
@@ -139,6 +143,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class = THUNAR_FILE_CLASS (klass);
   thunarfile_class->get_parent = thunar_local_file_get_parent;
   thunarfile_class->execute = thunar_local_file_execute;
+  thunarfile_class->rename = thunar_local_file_rename;
   thunarfile_class->open_as_folder = thunar_local_file_open_as_folder;
   thunarfile_class->get_uri = thunar_local_file_get_uri;
   thunarfile_class->get_mime_info = thunar_local_file_get_mime_info;
@@ -152,6 +157,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->get_group = thunar_local_file_get_group;
   thunarfile_class->get_user = thunar_local_file_get_user;
   thunarfile_class->is_executable = thunar_local_file_is_executable;
+  thunarfile_class->is_renameable = thunar_local_file_is_renameable;
   thunarfile_class->get_emblem_names = thunar_local_file_get_emblem_names;
   thunarfile_class->get_icon_name = thunar_local_file_get_icon_name;
   thunarfile_class->watch = thunar_local_file_watch;
@@ -208,7 +214,7 @@ thunar_local_file_get_parent (ThunarFile *file,
     }
 
   /* other file uris are handled by the generic get_parent() method */
-  return THUNAR_FILE_CLASS (thunar_local_file_parent_class)->get_parent (file, error);
+  return (*THUNAR_FILE_CLASS (thunar_local_file_parent_class)->get_parent) (file, error);
 }
 
 
@@ -221,6 +227,37 @@ thunar_local_file_execute (ThunarFile *file,
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
   return thunar_vfs_info_execute (local_file->info, screen, uris, error);
+}
+
+
+
+static gboolean
+thunar_local_file_rename (ThunarFile  *file,
+                          const gchar *name,
+                          GError     **error)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+  ThunarVfsURI    *previous_uri;
+  gboolean         succeed;
+
+  /* remember the previous URI */
+  previous_uri = thunar_vfs_uri_ref (local_file->info->uri);
+  
+  /* try to rename the file */
+  succeed = thunar_vfs_info_rename (local_file->info, name, error);
+  if (G_LIKELY (succeed))
+    {
+      /* perform the rename on the file cache */
+      _thunar_file_cache_rename (file, previous_uri);
+
+      /* emit the file changed signal */
+      thunar_file_changed (file);
+    }
+
+  /* drop the reference on the previous URI */
+  thunar_vfs_uri_unref (previous_uri);
+
+  return succeed;
 }
 
 
@@ -376,6 +413,24 @@ thunar_local_file_is_executable (ThunarFile *file)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
   return ((local_file->info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE) != 0);
+}
+
+
+
+static gboolean
+thunar_local_file_is_renameable (ThunarFile *file)
+{
+  gboolean renameable = FALSE;
+
+  /* we just do a guess here, by checking whether the folder is writable */
+  file = thunar_file_get_parent (file, NULL);
+  if (G_LIKELY (file != NULL))
+    {
+      renameable = thunar_file_is_writable (file);
+      g_object_unref (G_OBJECT (file));
+    }
+
+  return renameable;
 }
 
 

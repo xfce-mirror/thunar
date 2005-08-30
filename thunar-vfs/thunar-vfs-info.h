@@ -239,6 +239,10 @@ gboolean       thunar_vfs_info_execute     (const ThunarVfsInfo *info,
                                             GList               *uris,
                                             GError             **error);
 
+gboolean       thunar_vfs_info_rename      (ThunarVfsInfo       *info,
+                                            const gchar         *name,
+                                            GError             **error);
+
 const gchar   *thunar_vfs_info_get_hint    (const ThunarVfsInfo *info,
                                             ThunarVfsFileHint    hint);
 

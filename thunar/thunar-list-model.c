@@ -1024,8 +1024,7 @@ static void
 thunar_list_model_sort (ThunarListModel *store)
 {
   GtkTreePath *path;
-  SortTuple    tuple;
-  GArray      *sort_array;
+  SortTuple   *sort_array;
   gint        *new_order;
   gint         n;
   Row         *row;
@@ -1035,37 +1034,41 @@ thunar_list_model_sort (ThunarListModel *store)
   if (G_UNLIKELY (store->nrows <= 1))
     return;
 
-  sort_array = g_array_sized_new (FALSE, FALSE,
-                                  sizeof (SortTuple),
-                                  store->nrows);
+  /* be sure to not overuse the stack */
+  if (G_LIKELY (store->nrows < 2000))
+    sort_array = g_newa (SortTuple, store->nrows);
+  else
+    sort_array = g_new (SortTuple, store->nrows);
 
+  /* generate the sort array of tuples */
   for (n = 0, row = store->rows; n < store->nrows; ++n, row = row->next)
     {
-      g_assert (row != NULL);
-
-      tuple.offset = n;
-      tuple.row = row;
-      g_array_append_val (sort_array, tuple);
+      sort_array[n].offset = n;
+      sort_array[n].row = row;
     }
 
-  g_array_sort_with_data (sort_array, thunar_list_model_cmp_array, store);
+  /* sort the array using QuickSort */
+  g_qsort_with_data (sort_array, store->nrows, sizeof (SortTuple), thunar_list_model_cmp_array, store);
 
-  /* update our internals */
-  for (n = 0; n < store->nrows - 1; ++n)
-    g_array_index (sort_array, SortTuple, n).row->next = g_array_index (sort_array, SortTuple, n + 1).row;
-  g_array_index (sort_array, SortTuple, n).row->next = NULL;
-  store->rows = g_array_index (sort_array, SortTuple, 0).row;
-
-  /* let the world know about our new order */
+  /* update our internals and generate the new order */
   new_order = g_newa (gint, store->nrows);
-  for (n = 0; n < store->nrows; ++n)
-    new_order[n] = g_array_index (sort_array, SortTuple, n).offset;
+  for (n = 0; n < store->nrows - 1; ++n)
+    {
+      new_order[n] = sort_array[n].offset;
+      sort_array[n].row->next = sort_array[n + 1].row;
+    }
+  new_order[n] = sort_array[n].offset;
+  sort_array[n].row->next = NULL;
+  store->rows = sort_array[0].row;
 
+  /* tell the view about the new item order */
   path = gtk_tree_path_new ();
   gtk_tree_model_rows_reordered (GTK_TREE_MODEL (store), path, NULL, new_order);
   gtk_tree_path_free (path);
 
-  g_array_free (sort_array, TRUE);
+  /* clean up if we used the heap */
+  if (G_UNLIKELY (store->nrows >= 2000))
+    g_free (sort_array);
 }
 
 
@@ -1088,10 +1091,15 @@ thunar_list_model_file_changed (ThunarFile      *file,
         iter.stamp = store->stamp;
         iter.user_data = row;
 
+        /* notify the view that it has to redraw the file */
         path = gtk_tree_path_new ();
         gtk_tree_path_append_index (path, n);
         gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
         gtk_tree_path_free (path);
+
+        /* re-sort the model as the file may have changed its name */
+        thunar_list_model_sort (store);
+
         return;
       }
 

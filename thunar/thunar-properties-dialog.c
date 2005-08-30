@@ -36,23 +36,30 @@ enum
 
 
 
-static void thunar_properties_dialog_class_init           (ThunarPropertiesDialogClass *klass);
-static void thunar_properties_dialog_init                 (ThunarPropertiesDialog      *dialog);
-static void thunar_properties_dialog_dispose              (GObject                     *object);
-static void thunar_properties_dialog_finalize             (GObject                     *object);
-static void thunar_properties_dialog_get_property         (GObject                     *object,
-                                                           guint                        prop_id,
-                                                           GValue                      *value,
-                                                           GParamSpec                  *pspec);
-static void thunar_properties_dialog_set_property         (GObject                     *object,
-                                                           guint                        prop_id,
-                                                           const GValue                *value,
-                                                           GParamSpec                  *pspec);
-static gboolean thunar_properties_dialog_key_press_event  (GtkWidget                   *widget,
-                                                           GdkEventKey                 *event);
-static void     thunar_properties_dialog_response         (GtkDialog                   *dialog,
-                                                           gint                         response);
-static void     thunar_properties_dialog_update           (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_class_init           (ThunarPropertiesDialogClass *klass);
+static void     thunar_properties_dialog_init                 (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_dispose              (GObject                     *object);
+static void     thunar_properties_dialog_finalize             (GObject                     *object);
+static void     thunar_properties_dialog_get_property         (GObject                     *object,
+                                                               guint                        prop_id,
+                                                               GValue                      *value,
+                                                               GParamSpec                  *pspec);
+static void     thunar_properties_dialog_set_property         (GObject                     *object,
+                                                               guint                        prop_id,
+                                                               const GValue                *value,
+                                                               GParamSpec                  *pspec);
+static gboolean thunar_properties_dialog_key_press_event      (GtkWidget                   *widget,
+                                                               GdkEventKey                 *event);
+static void     thunar_properties_dialog_response             (GtkDialog                   *dialog,
+                                                               gint                         response);
+static void     thunar_properties_dialog_activate             (GtkWidget                   *entry,
+                                                               ThunarPropertiesDialog      *dialog);
+static gboolean thunar_properties_dialog_focus_out_event      (GtkWidget                   *entry,
+                                                               GdkEventFocus               *event,
+                                                               ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_update               (ThunarPropertiesDialog      *dialog);
+static gboolean thunar_properties_dialog_rename_idle          (gpointer                     user_data);
+static void     thunar_properties_dialog_rename_idle_destroy  (gpointer                     user_data);
 
 
 
@@ -77,6 +84,8 @@ struct _ThunarPropertiesDialog
   GtkWidget   *volume_image;
   GtkWidget   *volume_label;
   GtkWidget   *size_label;
+
+  gint         rename_idle_id;
 };
 
 
@@ -133,6 +142,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gint       row = 0;
 
   dialog->volume_manager = thunar_vfs_volume_manager_get_default ();
+  dialog->rename_idle_id = -1;
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_HELP, GTK_RESPONSE_HELP,
@@ -173,6 +183,8 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   g_free (text);
 
   dialog->name_entry = g_object_new (GTK_TYPE_ENTRY, "editable", FALSE, NULL);
+  g_signal_connect (G_OBJECT (dialog->name_entry), "activate", G_CALLBACK (thunar_properties_dialog_activate), dialog);
+  g_signal_connect (G_OBJECT (dialog->name_entry), "focus-out-event", G_CALLBACK (thunar_properties_dialog_focus_out_event), dialog);
   gtk_table_attach (GTK_TABLE (table), dialog->name_entry, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->name_entry);
 
@@ -301,8 +313,11 @@ static void
 thunar_properties_dialog_dispose (GObject *object)
 {
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (object);
+
+  /* reset the file displayed by the dialog */
   thunar_properties_dialog_set_file (dialog, NULL);
-  G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->dispose (object);
+
+  (*G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->dispose) (object);
 }
 
 
@@ -311,8 +326,15 @@ static void
 thunar_properties_dialog_finalize (GObject *object)
 {
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (object);
+
+  /* drop the reference on the volume manager */
   g_object_unref (G_OBJECT (dialog->volume_manager));
-  G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->finalize (object);
+
+  /* be sure to cancel any pending rename idle source */
+  if (G_UNLIKELY (dialog->rename_idle_id >= 0))
+    g_source_remove (dialog->rename_idle_id);
+
+  (*G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->finalize) (object);
 }
 
 
@@ -393,6 +415,35 @@ thunar_properties_dialog_response (GtkDialog *dialog,
 
 
 static void
+thunar_properties_dialog_activate (GtkWidget              *entry,
+                                   ThunarPropertiesDialog *dialog)
+{
+  if (G_LIKELY (dialog->rename_idle_id < 0))
+    {
+      dialog->rename_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_properties_dialog_rename_idle,
+                                                dialog, thunar_properties_dialog_rename_idle_destroy);
+    }
+}
+
+
+
+static gboolean
+thunar_properties_dialog_focus_out_event (GtkWidget              *entry,
+                                          GdkEventFocus          *event,
+                                          ThunarPropertiesDialog *dialog)
+{
+  if (G_LIKELY (dialog->rename_idle_id < 0))
+    {
+      dialog->rename_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_properties_dialog_rename_idle,
+                                                dialog, thunar_properties_dialog_rename_idle_destroy);
+    }
+
+  return FALSE;
+}
+
+
+
+static void
 thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 {
   ThunarIconFactory *icon_factory;
@@ -421,6 +472,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   /* update the name */
   name = thunar_file_get_display_name (dialog->file);
+  gtk_entry_set_editable (GTK_ENTRY (dialog->name_entry), thunar_file_is_renameable (dialog->file));
   gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
   str = g_strdup_printf (_("%s Info"), name);
   gtk_window_set_title (GTK_WINDOW (dialog), str);
@@ -509,6 +561,64 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
+}
+
+
+
+static gboolean
+thunar_properties_dialog_rename_idle (gpointer user_data)
+{
+  ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (user_data);
+  const gchar            *old_name;
+  GtkWidget              *message;
+  GError                 *error = NULL;
+  gchar                  *new_name;
+
+  /* check if we still have a valid file and if the user is allowed to rename */
+  if (G_UNLIKELY (dialog->file == NULL || !GTK_WIDGET_SENSITIVE (dialog->name_entry)))
+    return FALSE;
+
+  GDK_THREADS_ENTER ();
+
+  /* determine new and old name */
+  new_name = gtk_editable_get_chars (GTK_EDITABLE (dialog->name_entry), 0, -1);
+  old_name = thunar_file_get_display_name (dialog->file);
+  if (g_utf8_collate (new_name, old_name) != 0)
+    {
+      /* try to rename the file to the new name */
+      if (!thunar_file_rename (dialog->file, new_name, &error))
+        {
+          /* reset the entry widget to the old name */
+          gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), old_name);
+
+          /* display an error message */
+          message = gtk_message_dialog_new (GTK_WINDOW (dialog),
+                                            GTK_DIALOG_DESTROY_WITH_PARENT
+                                            | GTK_DIALOG_MODAL,
+                                            GTK_MESSAGE_ERROR,
+                                            GTK_BUTTONS_CLOSE,
+                                            _("Failed to rename %s."),
+                                            old_name);
+          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
+                                                    "%s.", error->message);
+          gtk_dialog_run (GTK_DIALOG (message));
+          gtk_widget_destroy (message);
+          g_error_free (error);
+        }
+    }
+  g_free (new_name);
+
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_properties_dialog_rename_idle_destroy (gpointer user_data)
+{
+  THUNAR_PROPERTIES_DIALOG (user_data)->rename_idle_id = -1;
 }
 
 

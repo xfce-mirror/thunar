@@ -40,6 +40,11 @@ static void       thunar_icon_view_select_all             (ThunarStandardView  *
 static void       thunar_icon_view_unselect_all           (ThunarStandardView  *standard_view);
 static void       thunar_icon_view_select_path            (ThunarStandardView  *standard_view,
                                                            GtkTreePath         *path);
+static void       thunar_icon_view_set_cursor             (ThunarStandardView  *standard_view,
+                                                           GtkTreePath         *path,
+                                                           gboolean             start_editing);
+static void       thunar_icon_view_scroll_to_path         (ThunarStandardView  *standard_view,
+                                                           GtkTreePath         *path);
 static void       thunar_icon_view_action_sort            (GtkAction           *action,
                                                            GtkAction           *current,
                                                            ThunarStandardView  *standard_view);
@@ -112,6 +117,8 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   thunarstandard_view_class->select_all = thunar_icon_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_icon_view_unselect_all;
   thunarstandard_view_class->select_path = thunar_icon_view_select_path;
+  thunarstandard_view_class->set_cursor = thunar_icon_view_set_cursor;
+  thunarstandard_view_class->scroll_to_path = thunar_icon_view_scroll_to_path;
 }
 
 
@@ -252,6 +259,38 @@ thunar_icon_view_select_path (ThunarStandardView *standard_view,
 {
   g_return_if_fail (THUNAR_IS_ICON_VIEW (standard_view));
   exo_icon_view_select_path (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path);
+}
+
+
+
+static void
+thunar_icon_view_set_cursor (ThunarStandardView *standard_view,
+                             GtkTreePath        *path,
+                             gboolean            start_editing)
+{
+  GtkCellRendererMode mode;
+
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (standard_view));
+
+  /* make sure the name renderer is editable */
+  mode = standard_view->name_renderer->mode;
+  standard_view->name_renderer->mode = GTK_CELL_RENDERER_MODE_EDITABLE;
+
+  /* tell the icon view to start editing the given item */
+  exo_icon_view_set_cursor (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path, standard_view->name_renderer, start_editing);
+
+  /* reset the name renderer mode */
+  standard_view->name_renderer->mode = mode;
+}
+
+
+
+static void
+thunar_icon_view_scroll_to_path (ThunarStandardView *standard_view,
+                                 GtkTreePath        *path)
+{
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (standard_view));
+  exo_icon_view_scroll_to_path (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path, FALSE, 0.0f, 0.0f);
 }
 
 

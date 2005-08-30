@@ -1,5 +1,29 @@
 2005-08-30	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-properties-dialog.c: Adjust the "editability" of the
+	  name entry widget depending on whether the file can be renamed.
+	* thunar-vfs/thunar-vfs-info.{c,h}: Add methd thunar_vfs_info_rename()
+	  which supports renaming of regular files and .desktop files.
+	* thunar/thunar-file.{c,h}: Add _thunar_file_cache_rename() to support
+	  ThunarFile implementations that provide the thunar_file_rename()
+	  method.
+	* thunar/thunar-local-file.c: Add support to rename local files based
+	  on thunar_vfs_info_rename().
+	* thunar/thunar-properties-dialog.c: Allow users to rename files using
+	  the name entry widget.
+	* thunar/thunar-list-model.c(thunar_list_model_file_changed): Re-sort
+	  the model as the file may have changed its name.
+	* thunar/thunar-list-model.c(thunar_list_model_sort): Avoid the GArray
+	  overhead and try to use stack memory if possible.
+	* thunar/thunar-standard-view.h, thunar/thunar-details-view.c,
+	  thunar/thunar-icon-view.c: Add virtual methods set_cursor() and
+	  scroll_to_path() to the ThunarStandardView class and implement them
+	  in ThunarDetailsView and ThunarIconView.
+	* thunar/thunar-standard-view.c: Implement the "Rename" action based
+	  on the inline editing capabilities of ThunarTextRenderer.
+
+2005-08-30	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-favourites-view.c(thunar_favourites_view_init): Use
 	  auto-sizing for the favourites column.
 	* thunar/thunar-favourites-model.{c,h}, thunar/thunar-favourites-view.c:

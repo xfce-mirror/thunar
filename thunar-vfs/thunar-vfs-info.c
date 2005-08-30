@@ -32,6 +32,7 @@
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
+#include <stdio.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
@@ -49,6 +50,13 @@
 #include <glib/gstdio.h>
 #else
 #define g_access(path, mode) (access ((path), (mode)))
+#endif
+
+/* Use g_rename() if possible */
+#if GLIB_CHECK_VERSION(2,6,0)
+#include <glib/gstdio.h>
+#else
+#define g_rename(from, to) (rename ((from), (to)))
 #endif
 
 
@@ -205,7 +213,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
   exo_object_unref (EXO_OBJECT (database));
 
   /* check whether we have a .desktop file here */
-  if (strcmp (info->mime_info->name, "application/x-desktop") == 0)
+  if (G_UNLIKELY (strcmp (info->mime_info->name, "application/x-desktop") == 0))
     {
       /* try to query the hints from the .desktop file */
       rc = xfce_rc_simple_open (path, TRUE);
@@ -218,7 +226,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
           info->hints = g_new0 (gchar *, THUNAR_VFS_FILE_N_HINTS);
 
           /* check if we have a valid icon info */
-          str = xfce_rc_read_entry (rc, "Icon", NULL);
+          str = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
           if (G_LIKELY (str != NULL))
             info->hints[THUNAR_VFS_FILE_HINT_ICON] = g_strdup (str);
 
@@ -230,7 +238,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
           /* check if the desktop file refers to an application
            * and has a non-NULL Exec field set.
            */
-          str = xfce_rc_read_entry (rc, "Type", "Application");
+          str = xfce_rc_read_entry_untranslated (rc, "Type", "Application");
           if (G_LIKELY (exo_str_is_equal (str, "Application"))
               && xfce_rc_read_entry (rc, "Exec", NULL) != NULL)
             {
@@ -417,6 +425,188 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
   g_strfreev (argv);
 
   return result;
+}
+
+
+
+/**
+ * thunar_vfs_info_rename:
+ * @info  : a #ThunarVfsInfo.
+ * @name  : the new file name in UTF-8 encoding.
+ * @error : return location for errors or %NULL.
+ *
+ * Tries to rename the file referred to by @info to the
+ * new @name.
+ *
+ * The rename operation is smart in that it checks the
+ * type of @info first, and if @info refers to a
+ * <filename>.desktop</filename> file, the file name
+ * won't be touched, but instead the <literal>Name</literal>
+ * field of the <filename>.desktop</filename> will be
+ * changed to @name. Else, if @info refers to a regular
+ * file or directory, the file will be given a new
+ * name.
+ *
+ * Return value: %TRUE on success, else %FALSE.
+ **/
+gboolean
+thunar_vfs_info_rename (ThunarVfsInfo *info,
+                        const gchar   *name,
+                        GError       **error)
+{
+  ThunarVfsMimeDatabase *database;
+  const gchar * const   *locale;
+  const gchar           *src_path;
+  GKeyFile              *key_file;
+  gssize                 data_length;
+  gchar                 *data;
+  gchar                 *key;
+  gchar                 *dir_name;
+  gchar                 *dst_name;
+  gchar                 *dst_path;
+#if !GLIB_CHECK_VERSION(2,8,0)
+  FILE                  *fp;
+#endif
+
+  g_return_val_if_fail (info != NULL, FALSE);
+  g_return_val_if_fail (info->ref_count > 0, FALSE);
+  g_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* validate the name */
+  if (*name == '\0' || strchr (name, '/') != NULL)
+    {
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid file name"));
+      return FALSE;
+    }
+
+  /* determine the source path */
+  src_path = thunar_vfs_uri_get_path (info->uri);
+
+  /* check whether we have a .desktop file here */
+  if (G_UNLIKELY (strcmp (info->mime_info->name, "application/x-desktop") == 0))
+    {
+      /* try to open the .desktop file */
+      key_file = g_key_file_new ();
+      if (!g_key_file_load_from_file (key_file, src_path, G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, error))
+        {
+          g_key_file_free (key_file);
+          return FALSE;
+        }
+
+      /* check if the file is valid */
+      if (G_UNLIKELY (!g_key_file_has_group (key_file, "Desktop Entry")))
+        {
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid desktop file"));
+          g_key_file_free (key_file);
+          return FALSE;
+        }
+
+      /* save the new name (localized if required) */
+      for (locale = g_get_language_names (); *locale != NULL; ++locale)
+        {
+          key = g_strdup_printf ("Name[%s]", *locale);
+          if (g_key_file_has_key (key_file, "Desktop Entry", key, NULL))
+            {
+              g_key_file_set_string (key_file, "Desktop Entry", key, name);
+              g_free (key);
+              break;
+            }
+          g_free (key);
+        }
+
+      /* fallback to unlocalized name */
+      if (G_UNLIKELY (*locale == NULL))
+        g_key_file_set_string (key_file, "Desktop Entry", "Name", name);
+
+      /* serialize the key file to a buffer */
+      data = g_key_file_to_data (key_file, &data_length, error);
+      g_key_file_free (key_file);
+      if (G_UNLIKELY (data == NULL))
+        return FALSE;
+
+      /* write the data back to the file */
+#if GLIB_CHECK_VERSION(2,8,0)
+      if (!g_file_set_contents (src_path, data, data_length, error))
+        {
+          g_free (data);
+          return FALSE;
+        }
+#else
+      fp = fopen (src_path, "w");
+      if (G_UNLIKELY (fp == NULL))
+        {
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+          g_free (data);
+          return FALSE;
+        }
+      fwrite (data, data_length, 1, fp);
+      fclose (fp);
+#endif
+
+      /* update the Name hint (if any) */
+      if (G_LIKELY (info->hints != NULL))
+        {
+          g_free (info->hints[THUNAR_VFS_FILE_HINT_NAME]);
+          info->hints[THUNAR_VFS_FILE_HINT_NAME] = g_strdup (name);
+        }
+
+      /* clean up */
+      g_free (data);
+    }
+  else
+    {
+      /* convert the destination file to local encoding */
+      dst_name = g_filename_from_utf8 (name, -1, NULL, NULL, error);
+      if (G_UNLIKELY (dst_name == NULL))
+        return FALSE;
+
+      /* determine the destination path */
+      dir_name = g_path_get_dirname (src_path);
+      dst_path = g_build_filename (dir_name, dst_name, NULL);
+      g_free (dst_name);
+      g_free (dir_name);
+
+      /* verify that the rename target does not already exist */
+      if (G_UNLIKELY (g_file_test (dst_path, G_FILE_TEST_EXISTS)))
+        {
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_EXIST, g_strerror (EEXIST));
+          g_free (dst_path);
+          return FALSE;
+        }
+
+      /* perform the rename */
+      if (G_UNLIKELY (g_rename (src_path, dst_path) < 0))
+        {
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+          g_free (dst_path);
+          return FALSE;
+        }
+
+      /* update the info's URI */
+      thunar_vfs_uri_unref (info->uri);
+      info->uri = thunar_vfs_uri_new_for_path (dst_path);
+
+      /* update the info's display name */
+      g_free (info->display_name);
+      info->display_name = g_strdup (name);
+
+      /* if we have a regular file here, then we'll need to determine
+       * the mime type again, as it may be based on the file name
+       */
+      if (G_LIKELY (info->type == THUNAR_VFS_FILE_TYPE_REGULAR))
+        {
+          thunar_vfs_mime_info_unref (info->mime_info);
+          database = thunar_vfs_mime_database_get_default ();
+          info->mime_info = thunar_vfs_mime_database_get_info_for_file (database, dst_path, info->display_name);
+          exo_object_unref (EXO_OBJECT (database));
+        }
+
+      /* clean up */
+      g_free (dst_path);
+    }
+
+  return TRUE;
 }
 
 
