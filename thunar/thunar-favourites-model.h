@@ -36,6 +36,10 @@ typedef struct _ThunarFavouritesModel      ThunarFavouritesModel;
 
 /**
  * ThunarFavouritesModelColumn:
+ * @THUNAR_FAVOURITES_MODEL_COLUMN_NAME      : the index of the name column.
+ * @THUNAR_FAVOURITES_MODEL_COLUMN_ICON      : the index of the icon column.
+ * @THUNAR_FAVOURITES_MODEL_COLUMN_MUTABLE   : tells whether a row is mutable.
+ * @THUNAR_FAVOURITES_MODEL_COLUMN_SEPARATOR : tells whether a row is a separator.
  *
  * Columns exported by #ThunarFavouritesModel using the
  * #GtkTreeModel interface.
@@ -44,6 +48,7 @@ typedef enum
 {
   THUNAR_FAVOURITES_MODEL_COLUMN_NAME,
   THUNAR_FAVOURITES_MODEL_COLUMN_ICON,
+  THUNAR_FAVOURITES_MODEL_COLUMN_MUTABLE,
   THUNAR_FAVOURITES_MODEL_COLUMN_SEPARATOR,
   THUNAR_FAVOURITES_MODEL_N_COLUMNS,
 } ThunarFavouritesModelColumn;
@@ -69,10 +74,9 @@ void                   thunar_favourites_model_move           (ThunarFavouritesM
                                                                GtkTreePath           *dst_path);
 void                   thunar_favourites_model_remove         (ThunarFavouritesModel *model,
                                                                GtkTreePath           *path);
-
-GList                 *thunar_favourites_model_get_actions    (ThunarFavouritesModel *model,
+void                   thunar_favourites_model_rename         (ThunarFavouritesModel *model,
                                                                GtkTreePath           *path,
-                                                               GtkWindow             *window);
+                                                               const gchar           *name);
 
 G_END_DECLS;
 
