@@ -71,6 +71,8 @@ static void        thunar_location_buttons_size_allocate          (GtkWidget    
                                                                    GtkAllocation              *allocation);
 static void        thunar_location_buttons_state_changed          (GtkWidget                  *widget,
                                                                    GtkStateType                previous_state);
+static void        thunar_location_buttons_style_set              (GtkWidget                  *widget,
+                                                                   GtkStyle                   *previous_style);
 static void        thunar_location_buttons_grab_notify            (GtkWidget                  *widget,
                                                                    gboolean                    was_grabbed);
 static void        thunar_location_buttons_add                    (GtkContainer               *container,
@@ -189,6 +191,7 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
   gtkwidget_class->size_request = thunar_location_buttons_size_request;
   gtkwidget_class->size_allocate = thunar_location_buttons_size_allocate;
   gtkwidget_class->state_changed = thunar_location_buttons_state_changed;
+  gtkwidget_class->style_set = thunar_location_buttons_style_set;
   gtkwidget_class->grab_notify = thunar_location_buttons_grab_notify;
 
   gtkcontainer_class = GTK_CONTAINER_CLASS (klass);
@@ -648,6 +651,37 @@ thunar_location_buttons_state_changed (GtkWidget   *widget,
 {
   if (!GTK_WIDGET_IS_SENSITIVE (widget))
     thunar_location_buttons_stop_scrolling (THUNAR_LOCATION_BUTTONS (widget));
+}
+
+
+
+static void
+thunar_location_buttons_style_set (GtkWidget *widget,
+                                   GtkStyle  *previous_style)
+{
+  ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (widget);
+  ThunarFile            *file;
+  GdkPixbuf             *icon;
+  GList                 *children;
+  GList                 *lp;
+  gint                   size;
+
+  /* lookup the icon size for buttons */
+  gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &size, &size);
+
+  /* update the icons for every button */
+  for (lp = buttons->list; lp != NULL; lp = lp->next)
+    {
+      file = g_object_get_qdata (G_OBJECT (lp->data), thunar_file_quark);
+      children = gtk_container_get_children (GTK_CONTAINER (GTK_BIN (lp->data)->child));
+      icon = thunar_file_load_icon (file, thunar_icon_factory_get_default (), size);
+      gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (lp->data), icon);
+      gtk_image_set_from_pixbuf (GTK_IMAGE (children->data), icon);
+      g_object_unref (G_OBJECT (icon));
+      g_list_free (children);
+    }
+
+  (*GTK_WIDGET_CLASS (thunar_location_buttons_parent_class)->style_set) (widget, previous_style);
 }
 
 

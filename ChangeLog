@@ -1,5 +1,14 @@
 2005-08-30	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-favourites-model.c: Drop the icon caching from the
+	  favourites model as it causes trouble with icon theme changing and
+	  is unnecessary since the ThunarIconFactory already performs quite
+	  well at caching icons.
+	* thunar/thunar-location-buttons.c: Reload the icons for the location
+	  buttons when the active icon/gtk theme is changed.
+
+2005-08-30	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-local-file.c(thunar_local_folder_infos_ready): Do not
 	  compare the newly inserted files, as they are garantied to be
 	  different from each other.
