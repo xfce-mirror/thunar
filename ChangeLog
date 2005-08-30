@@ -1,5 +1,16 @@
 2005-08-30	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-local-file.c(thunar_local_folder_infos_ready): Do not
+	  compare the newly inserted files, as they are garantied to be
+	  different from each other.
+	* thunar-vfs/thunar-vfs-info.c(thunar_vfs_info_matches): Move the URI
+	  comparison to the end as that takes most of the time.
+	* thunar-vfs/thunar-vfs-listdir-job.c(thunar_vfs_listdir_job_execute):
+	  Pre-sort the names in ascending order to get faster inserts for the
+	  usual case where the user sorts its views by name.
+
+2005-08-30	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-properties-dialog.c: Adjust the "editability" of the
 	  name entry widget depending on whether the file can be renamed.
 	* thunar-vfs/thunar-vfs-info.{c,h}: Add methd thunar_vfs_info_rename()

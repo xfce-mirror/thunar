@@ -257,6 +257,7 @@ thunar_local_folder_infos_ready (ThunarVfsJob      *job,
                                  ThunarLocalFolder *local_folder)
 {
   ThunarFile *file;
+  GSList     *existing_files = local_folder->files;
   GSList     *nfiles = NULL;
   GSList     *lp;
   GSList     *p;
@@ -272,7 +273,7 @@ thunar_local_folder_infos_ready (ThunarVfsJob      *job,
       file = thunar_local_file_get_for_info (lp->data);
 
       /* verify that we don't already have that file */
-      for (p = local_folder->files; p != NULL; p = p->next)
+      for (p = existing_files; p != NULL; p = p->next)
         if (G_UNLIKELY (p->data == file))
           break;
       if (G_UNLIKELY (p != NULL))

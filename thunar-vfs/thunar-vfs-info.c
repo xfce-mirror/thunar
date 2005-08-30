@@ -659,8 +659,7 @@ thunar_vfs_info_matches (const ThunarVfsInfo *a,
   g_return_val_if_fail (a->ref_count > 0, FALSE);
   g_return_val_if_fail (b->ref_count > 0, FALSE);
 
-  return thunar_vfs_uri_equal (a->uri, b->uri)
-      && a->type == b->type
+  return a->type == b->type
       && a->mode == b->mode
       && a->flags == b->flags
       && a->uid == b->uid
@@ -671,7 +670,8 @@ thunar_vfs_info_matches (const ThunarVfsInfo *a,
       && a->ctime == b->ctime
       && a->inode == b->inode
       && a->device == b->device
-      && a->mime_info == b->mime_info;
+      && a->mime_info == b->mime_info
+      && thunar_vfs_uri_equal (a->uri, b->uri);
 }
 
 
