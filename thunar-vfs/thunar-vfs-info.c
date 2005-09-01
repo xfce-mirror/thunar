@@ -458,7 +458,7 @@ thunar_vfs_info_rename (ThunarVfsInfo *info,
   const gchar * const   *locale;
   const gchar           *src_path;
   GKeyFile              *key_file;
-  gssize                 data_length;
+  gsize                  data_length;
   gchar                 *data;
   gchar                 *key;
   gchar                 *dir_name;

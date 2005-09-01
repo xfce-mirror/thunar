@@ -1,3 +1,34 @@
+2005-09-01	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-listdir-job.c: Fix the pre-sorting of files, so
+	  upper layers always receive the info list sorted by name.
+	* thunar/thunar-details-view.c(thunar_details_view_button_press_event),
+	  thunar/thunar-icon-view.c(thunar_icon_view_button_press_event): Don't
+	  popup the context menu immediately on right-clicks, but schedule the
+	  menu popup using thunar_standard_view_queue_popup().
+	* thunar/thunar-standard-view.{c,h}: Add the ability to start a drag
+	  operation using the right mouse button.
+	* thunar/thunar-file.{c,h}: Add virtual method accepts_uri_drop() and
+	  method thunar_file_accepts_uri_drop(), which are used to determine
+	  whether it is possible to drop a certain list of ThunarVfsURIs on
+	  a given ThunarFile (using a set of actions specified by the drag
+	  source).
+	* thunar/thunar-local-file.c: Implement the accepts_uri_drop() method
+	  for local file handling.
+	* thunar/thunar-progress-dialog.c(thunar_progress_dialog_ask),
+	  (thunar_progress_dialog_error): Be sure to display the progress dialog
+	  prior to opening an error or question dialog.
+	* thunar-vfs/thunar-vfs-info.c(thunar_vfs_info_rename): Fix gcc4
+	  warning.
+	* thunar-vfs/thunar-vfs.symbols: Add missing thunar_vfs_rename symbol.
+	* thunar/thunar-favourites-model.c(thunar_favourites_model_get_value):
+	  Work-around a compiler bug with newer gcc versions.
+	* thunar/thunar-standard-view.{c,h}: Turn ThunarStandardView into a
+	  valid drop site with support for text/uri-list drops.
+	* thunar/Makefile.am, thunar/thunar-dnd.{c,h}: Add DnD helper functions,
+	  which can be used by other modules as well (e.g. for the desktop
+	  view).
+
 2005-08-30	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-favourites-model.c: Drop the icon caching from the

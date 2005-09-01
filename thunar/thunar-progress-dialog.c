@@ -258,6 +258,9 @@ thunar_progress_dialog_ask (ThunarProgressDialog           *dialog,
   g_return_val_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (job), THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL);
   g_return_val_if_fail (dialog->job == job, THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL);
 
+  /* be sure to display the progress dialog prior to opening the question dialog */
+  gtk_widget_show_now (GTK_WIDGET (dialog));
+
   question = g_object_new (GTK_TYPE_DIALOG,
                            "has-separator", FALSE,
                            "resizable", FALSE,
@@ -339,6 +342,9 @@ thunar_progress_dialog_error (ThunarProgressDialog *dialog,
   g_return_if_fail (error != NULL && error->message != NULL);
   g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (job));
   g_return_if_fail (dialog->job == job);
+
+  /* be sure to display the progress dialog prior to opening the error dialog */
+  gtk_widget_show_now (GTK_WIDGET (dialog));
 
   message = gtk_message_dialog_new (GTK_WINDOW (dialog),
                                     GTK_DIALOG_MODAL |

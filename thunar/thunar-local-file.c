@@ -39,6 +39,9 @@ static gboolean           thunar_local_file_rename            (ThunarFile       
                                                                GError                **error);
 static ThunarFolder      *thunar_local_file_open_as_folder    (ThunarFile             *file,
                                                                GError                **error);
+static GdkDragAction      thunar_local_file_accepts_uri_drop  (ThunarFile             *file,
+                                                               const ThunarVfsURI     *uri,
+                                                               GdkDragAction           actions);
 static ThunarVfsURI      *thunar_local_file_get_uri           (ThunarFile             *file);
 static ThunarVfsMimeInfo *thunar_local_file_get_mime_info     (ThunarFile             *file);
 static const gchar       *thunar_local_file_get_display_name  (ThunarFile             *file);
@@ -145,6 +148,7 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
   thunarfile_class->execute = thunar_local_file_execute;
   thunarfile_class->rename = thunar_local_file_rename;
   thunarfile_class->open_as_folder = thunar_local_file_open_as_folder;
+  thunarfile_class->accepts_uri_drop = thunar_local_file_accepts_uri_drop;
   thunarfile_class->get_uri = thunar_local_file_get_uri;
   thunarfile_class->get_mime_info = thunar_local_file_get_mime_info;
   thunarfile_class->get_display_name = thunar_local_file_get_display_name;
@@ -267,6 +271,30 @@ thunar_local_file_open_as_folder (ThunarFile *file,
                                   GError    **error)
 {
   return thunar_local_folder_get_for_file (THUNAR_LOCAL_FILE (file), error);
+}
+
+
+
+static GdkDragAction
+thunar_local_file_accepts_uri_drop (ThunarFile         *file,
+                                    const ThunarVfsURI *uri,
+                                    GdkDragAction       actions)
+{
+  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
+
+  /* we can only drop local files here (for now) */
+  if (G_LIKELY (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE))
+    {
+      /* check if we have a writable directory here */
+      if (G_LIKELY (local_file->info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY))
+        return GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK;
+
+      /* check if we can execute the file */
+      if ((local_file->info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE) != 0)
+        return GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE;
+    }
+
+  return 0;
 }
 
 

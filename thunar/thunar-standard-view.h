@@ -44,39 +44,52 @@ struct _ThunarStandardViewClass
   /* Called by the ThunarStandardView class to let derived classes
    * connect to and disconnect from the UI manager.
    */
-  void   (*connect_ui_manager)    (ThunarStandardView *standard_view,
-                                   GtkUIManager       *ui_manager);
-  void   (*disconnect_ui_manager) (ThunarStandardView *standard_view,
-                                   GtkUIManager       *ui_manager);
+  void       (*connect_ui_manager)    (ThunarStandardView *standard_view,
+                                       GtkUIManager       *ui_manager);
+  void       (*disconnect_ui_manager) (ThunarStandardView *standard_view,
+                                       GtkUIManager       *ui_manager);
 
   /* Returns the list of currently selected GtkTreePath's, where
    * both the list and the items are owned by the caller. */
-  GList *(*get_selected_items)    (ThunarStandardView *standard_view);
+  GList       *(*get_selected_items)    (ThunarStandardView *standard_view);
 
   /* Selects all items in the view */
-  void   (*select_all)            (ThunarStandardView *standard_view);
+  void         (*select_all)            (ThunarStandardView *standard_view);
 
   /* Unselects all items in the view */
-  void   (*unselect_all)          (ThunarStandardView *standard_view);
+  void         (*unselect_all)          (ThunarStandardView *standard_view);
 
   /* Selects the given item */
-  void   (*select_path)           (ThunarStandardView *standard_view,
-                                   GtkTreePath        *path);
+  void         (*select_path)           (ThunarStandardView *standard_view,
+                                         GtkTreePath        *path);
 
   /* Called by the ThunarStandardView class to let derived class
    * place the cursor on the item/row referred to by path. If
    * start_editing is TRUE, the derived class should also start
    * editing that item/row.
    */
-  void   (*set_cursor)            (ThunarStandardView *standard_view,
-                                   GtkTreePath        *path,
-                                   gboolean            start_editing);
+  void         (*set_cursor)            (ThunarStandardView *standard_view,
+                                         GtkTreePath        *path,
+                                         gboolean            start_editing);
 
   /* Called by the ThunarStandardView class to let derived class
    * scroll the view to the given path.
    */
-  void   (*scroll_to_path)        (ThunarStandardView *standard_view,
-                                   GtkTreePath        *path);
+  void         (*scroll_to_path)        (ThunarStandardView *standard_view,
+                                         GtkTreePath        *path);
+
+  /* Returns the path at the given position or NULL if no item/row
+   * is located at that coordinates. The path is freed by the caller.
+   */
+  GtkTreePath *(*get_path_at_pos)       (ThunarStandardView *standard_view,
+                                         gint                x,
+                                         gint                y);
+
+  /* Sets the item/row that is highlighted for feedback. NULL is
+   * passed for path to disable the highlighting.
+   */
+  void         (*highlight_path)       (ThunarStandardView  *standard_view,
+                                        GtkTreePath         *path);
 };
 
 struct _ThunarStandardView
@@ -106,6 +119,10 @@ GType thunar_standard_view_get_type           (void) G_GNUC_CONST;
 void  thunar_standard_view_context_menu       (ThunarStandardView *standard_view,
                                                guint               button,
                                                guint32             time);
+
+void  thunar_standard_view_queue_popup        (ThunarStandardView *standard_view,
+                                               GdkEventButton     *event);
+
 void  thunar_standard_view_selection_changed  (ThunarStandardView *standard_view);
 
 G_END_DECLS;

@@ -159,15 +159,6 @@ thunar_vfs_listdir_job_finalize (ExoObject *object)
 
 
 
-static gint
-namecmp (gconstpointer name_a,
-         gconstpointer name_b)
-{
-  return -1 * strcmp (name_a, name_b);
-}
-
-
-
 static void
 thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
 {
@@ -198,7 +189,7 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
        * disk seeking.
        */
       while (_thunar_vfs_sysdep_readdir (dp, &d_buffer, &d, &error) && d != NULL)
-        names = g_slist_insert_sorted (names, g_string_chunk_insert (names_chunk, d->d_name), namecmp);
+        names = g_slist_insert_sorted (names, g_string_chunk_insert (names_chunk, d->d_name), (GCompareFunc) strcmp);
 
       closedir (dp);
 
@@ -216,7 +207,7 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
           file_uri = thunar_vfs_uri_relative (THUNAR_VFS_LISTDIR_JOB (job)->uri, lp->data);
           info = thunar_vfs_info_new_for_uri (file_uri, NULL);
           if (G_LIKELY (info != NULL))
-            infos = g_slist_prepend (infos, info);
+            infos = g_slist_append (infos, info);
           thunar_vfs_uri_unref (file_uri);
 
           current_time = time (NULL);

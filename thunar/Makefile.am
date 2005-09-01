@@ -31,6 +31,8 @@ Thunar_SOURCES =							\
 	thunar-desktop-window.h						\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
+	thunar-dnd.c							\
+	thunar-dnd.h							\
 	thunar-fallback-icon.c						\
 	thunar-fallback-icon.h						\
 	thunar-favourites-model.c					\

@@ -27,33 +27,37 @@
 #include <thunar/thunar-text-renderer.h>
 
 
-
-static void       thunar_details_view_class_init          (ThunarDetailsViewClass *klass);
-static void       thunar_details_view_init                (ThunarDetailsView      *details_view);
-static AtkObject *thunar_details_view_get_accessible      (GtkWidget              *widget);
-static GList     *thunar_details_view_get_selected_items  (ThunarStandardView     *standard_view);
-static void       thunar_details_view_select_all          (ThunarStandardView     *standard_view);
-static void       thunar_details_view_unselect_all        (ThunarStandardView     *standard_view);
-static void       thunar_details_view_select_path         (ThunarStandardView     *standard_view,
-                                                           GtkTreePath            *path);
-static void       thunar_details_view_set_cursor          (ThunarStandardView     *standard_view,
-                                                           GtkTreePath            *path,
-                                                           gboolean                start_editing);
-static void       thunar_details_view_scroll_to_path      (ThunarStandardView     *standard_view,
-                                                           GtkTreePath            *path);
-static void       thunar_details_view_notify_model        (GtkTreeView            *tree_view,
-                                                           GParamSpec             *pspec,
-                                                           ThunarDetailsView      *details_view);
-static gboolean   thunar_details_view_button_press_event  (GtkTreeView            *tree_view,
-                                                           GdkEventButton         *event,
-                                                           ThunarDetailsView      *details_view);
-static gboolean   thunar_details_view_key_press_event     (GtkTreeView            *tree_view,
-                                                           GdkEventKey            *event,
-                                                           ThunarDetailsView      *details_view);
-static void       thunar_details_view_row_activated       (GtkTreeView            *tree_view,
-                                                           GtkTreePath            *path,
-                                                           GtkTreeViewColumn      *column,
-                                                           ThunarDetailsView      *details_view);
+static void         thunar_details_view_class_init          (ThunarDetailsViewClass *klass);
+static void         thunar_details_view_init                (ThunarDetailsView      *details_view);
+static AtkObject   *thunar_details_view_get_accessible      (GtkWidget              *widget);
+static GList       *thunar_details_view_get_selected_items  (ThunarStandardView     *standard_view);
+static void         thunar_details_view_select_all          (ThunarStandardView     *standard_view);
+static void         thunar_details_view_unselect_all        (ThunarStandardView     *standard_view);
+static void         thunar_details_view_select_path         (ThunarStandardView     *standard_view,
+                                                             GtkTreePath            *path);
+static void         thunar_details_view_set_cursor          (ThunarStandardView     *standard_view,
+                                                             GtkTreePath            *path,
+                                                             gboolean                start_editing);
+static void         thunar_details_view_scroll_to_path      (ThunarStandardView     *standard_view,
+                                                             GtkTreePath            *path);
+static GtkTreePath *thunar_details_view_get_path_at_pos     (ThunarStandardView     *standard_view,
+                                                             gint                    x,
+                                                             gint                    y);
+static void         thunar_details_view_highlight_path      (ThunarStandardView     *standard_view,
+                                                             GtkTreePath            *path);
+static void         thunar_details_view_notify_model        (GtkTreeView            *tree_view,
+                                                             GParamSpec             *pspec,
+                                                             ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_button_press_event  (GtkTreeView            *tree_view,
+                                                             GdkEventButton         *event,
+                                                             ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_key_press_event     (GtkTreeView            *tree_view,
+                                                             GdkEventKey            *event,
+                                                             ThunarDetailsView      *details_view);
+static void         thunar_details_view_row_activated       (GtkTreeView            *tree_view,
+                                                             GtkTreePath            *path,
+                                                             GtkTreeViewColumn      *column,
+                                                             ThunarDetailsView      *details_view);
 
 
 
@@ -89,6 +93,8 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->select_path = thunar_details_view_select_path;
   thunarstandard_view_class->set_cursor = thunar_details_view_set_cursor;
   thunarstandard_view_class->scroll_to_path = thunar_details_view_scroll_to_path;
+  thunarstandard_view_class->get_path_at_pos = thunar_details_view_get_path_at_pos;
+  thunarstandard_view_class->highlight_path = thunar_details_view_highlight_path;
 }
 
 
@@ -315,6 +321,33 @@ thunar_details_view_scroll_to_path (ThunarStandardView *standard_view,
 
 
 
+static GtkTreePath*
+thunar_details_view_get_path_at_pos (ThunarStandardView *standard_view,
+                                     gint                x,
+                                     gint                y)
+{
+  GtkTreePath *path;
+
+  g_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view), NULL);
+
+  if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), x, y, &path, NULL))
+    return path;
+
+  return NULL;
+}
+
+
+
+static void
+thunar_details_view_highlight_path (ThunarStandardView *standard_view,
+                                    GtkTreePath        *path)
+{
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view));
+  gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), path, GTK_TREE_VIEW_DROP_INTO_OR_AFTER);
+}
+
+
+
 static void
 thunar_details_view_notify_model (GtkTreeView       *tree_view,
                                   GParamSpec        *pspec,
@@ -361,10 +394,15 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               gtk_tree_selection_select_path (selection, path);
             }
           gtk_tree_path_free (path);
-        }
 
-      /* open the context menu */
-      thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);
+          /* queue the menu popup */
+          thunar_standard_view_queue_popup (THUNAR_STANDARD_VIEW (details_view), event);
+        }
+      else
+        {
+          /* open the context menu */
+          thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);
+        }
 
       return TRUE;
     }

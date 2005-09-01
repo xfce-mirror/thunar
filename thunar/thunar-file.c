@@ -163,6 +163,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->execute = thunar_file_real_execute;
   klass->rename = thunar_file_real_rename;
   klass->open_as_folder = thunar_file_real_open_as_folder;
+  klass->accepts_uri_drop = (gpointer) exo_noop_zero;
   klass->get_mime_info = (gpointer) exo_noop_null;
   klass->get_special_name = thunar_file_real_get_special_name;
   klass->get_date = (gpointer) exo_noop_false;
@@ -684,6 +685,72 @@ thunar_file_open_as_folder (ThunarFile *file,
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
   return THUNAR_FILE_GET_CLASS (file)->open_as_folder (file, error);
+}
+
+
+
+/**
+ * thunar_file_accepts_uri_drop:
+ * @file     : a #ThunarFile instance.
+ * @uri_list : the list of #ThunarVfsURI<!---->s that will be droppped.
+ * @actions  : the #GdkDragAction<!---->s provided by the drag source.
+ *
+ * Checks whether @file can accept @uri_list for the given @actions and
+ * returns the #GdkDragAction<!---->s that can be used or 0 if no
+ * actions apply.
+ *
+ * Return value: the #GdkDragAction<!---->s supported for the drop or
+ *               0 if no drop is possible.
+ **/
+GdkDragAction
+thunar_file_accepts_uri_drop (ThunarFile   *file,
+                              GList        *uri_list,
+                              GdkDragAction actions)
+{
+  GdkDragAction action;
+  ThunarVfsURI *parent_uri;
+  ThunarVfsURI *uri;
+  GList        *lp;
+  guint         n;
+
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  /* we can never drop an empty list */
+  if (G_UNLIKELY (uri_list == NULL))
+    return 0;
+
+  /* determine the uri of the file */
+  uri = thunar_file_get_uri (file);
+
+  /* check up to 500 of the URIs (just in case somebody tries to
+   * drag around his music collection with 5000 files).
+   */
+  for (lp = uri_list, n = 0; actions != 0 && lp != NULL && n < 500; lp = lp->next, ++n)
+    {
+      /* we cannot drop a file on itself */
+      if (G_UNLIKELY (thunar_vfs_uri_equal (uri, lp->data)))
+        return 0;
+
+      /* check whether source and destination are the same */
+      parent_uri = thunar_vfs_uri_parent (lp->data);
+      if (G_LIKELY (parent_uri != NULL))
+        {
+          if (thunar_vfs_uri_equal (uri, parent_uri))
+            actions = 0;
+          thunar_vfs_uri_unref (parent_uri);
+        }
+
+      /* check if this URI is supported */
+      action = (*THUNAR_FILE_GET_CLASS (file)->accepts_uri_drop) (file, lp->data, action);
+      if (G_UNLIKELY (action == 0))
+        return 0;
+
+      /* drop actions not supported for this URI from the actions list */
+      actions &= action;
+    }
+
+  /* check if we can drop */
+  return actions;
 }
 
 

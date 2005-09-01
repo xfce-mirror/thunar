@@ -83,6 +83,10 @@ struct _ThunarFileClass
   ThunarFolder        *(*open_as_folder)      (ThunarFile             *file,
                                                GError                **error);
 
+  GdkDragAction        (*accepts_uri_drop)    (ThunarFile             *file,
+                                               const ThunarVfsURI     *uri,
+                                               GdkDragAction           actions);
+
   ThunarVfsURI        *(*get_uri)             (ThunarFile             *file);
 
   ThunarVfsMimeInfo   *(*get_mime_info)       (ThunarFile             *file);
@@ -158,6 +162,10 @@ gboolean           thunar_file_rename           (ThunarFile             *file,
 
 ThunarFolder      *thunar_file_open_as_folder   (ThunarFile             *file,
                                                  GError                **error);
+
+GdkDragAction      thunar_file_accepts_uri_drop (ThunarFile             *file,
+                                                 GList                  *uri_list,
+                                                 GdkDragAction           actions);
 
 ThunarVfsURI      *thunar_file_get_uri          (ThunarFile             *file);
 

@@ -454,7 +454,7 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
   ThunarFavourite       *favourite;
   GtkIconTheme          *icon_theme;
   const gchar           *icon_name;
-  GdkPixbuf             *icon;
+  GdkPixbuf             *icon = NULL;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
   g_return_if_fail (iter->stamp == model->stamp);
@@ -489,7 +489,8 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
         {
           icon = thunar_file_load_icon (favourite->file, icon_factory, 32);
         }
-      g_value_take_object (value, icon);
+      if (G_LIKELY (icon != NULL))
+        g_value_take_object (value, icon);
       break;
 
     case THUNAR_FAVOURITES_MODEL_COLUMN_MUTABLE:

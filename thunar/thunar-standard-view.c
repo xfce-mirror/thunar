@@ -30,6 +30,7 @@
 
 #include <thunarx/thunarx-gtk-extensions.h>
 
+#include <thunar/thunar-dnd.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -81,6 +82,8 @@ static void          thunar_standard_view_set_property              (GObject    
 static void          thunar_standard_view_realize                   (GtkWidget                *widget);
 static void          thunar_standard_view_unrealize                 (GtkWidget                *widget);
 static void          thunar_standard_view_grab_focus                (GtkWidget                *widget);
+static gboolean      thunar_standard_view_expose_event              (GtkWidget                *widget,
+                                                                     GdkEventExpose           *event);
 static ThunarFile   *thunar_standard_view_get_current_directory     (ThunarNavigator          *navigator);
 static void          thunar_standard_view_set_current_directory     (ThunarNavigator          *navigator,
                                                                      ThunarFile               *current_directory);
@@ -89,6 +92,12 @@ static const gchar  *thunar_standard_view_get_statusbar_text        (ThunarView 
 static GtkUIManager *thunar_standard_view_get_ui_manager            (ThunarView               *view);
 static void          thunar_standard_view_set_ui_manager            (ThunarView               *view,
                                                                      GtkUIManager             *ui_manager);
+static GdkDragAction thunar_standard_view_get_dest_actions          (ThunarStandardView       *standard_view,
+                                                                     GdkDragContext           *context,
+                                                                     gint                      x,
+                                                                     gint                      y,
+                                                                     guint                     time,
+                                                                     ThunarFile              **file_return);
 static GList        *thunar_standard_view_get_selected_files        (ThunarStandardView       *standard_view);
 static GList        *thunar_standard_view_get_selected_uris         (ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_properties         (GtkAction                *action,
@@ -109,20 +118,55 @@ static void          thunar_standard_view_action_rename             (GtkAction  
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
                                                                      ThunarStandardView       *standard_view);
-static void          thunar_standard_view_drag_begin                (GtkWidget                *widget,
+static gboolean      thunar_standard_view_button_release_event      (GtkWidget                *view,
+                                                                     GdkEventButton           *event,
+                                                                     ThunarStandardView       *standard_view);
+static gboolean      thunar_standard_view_motion_notify_event       (GtkWidget                *view,
+                                                                     GdkEventMotion           *event,
+                                                                     ThunarStandardView       *standard_view);
+static gboolean      thunar_standard_view_drag_drop                 (GtkWidget                *view,
+                                                                     GdkDragContext           *context,
+                                                                     gint                      x,
+                                                                     gint                      y,
+                                                                     guint                     time,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_drag_data_received        (GtkWidget                *view,
+                                                                     GdkDragContext           *context,
+                                                                     gint                      x,
+                                                                     gint                      y,
+                                                                     GtkSelectionData         *selection_data,
+                                                                     guint                     info,
+                                                                     guint                     time,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_drag_leave                (GtkWidget                *view,
+                                                                     GdkDragContext           *context,
+                                                                     guint                     time,
+                                                                     ThunarStandardView       *standard_view);
+static gboolean      thunar_standard_view_drag_motion               (GtkWidget                *view,
+                                                                     GdkDragContext           *context,
+                                                                     gint                      x,
+                                                                     gint                      y,
+                                                                     guint                     time,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_drag_begin                (GtkWidget                *view,
                                                                      GdkDragContext           *context,
                                                                      ThunarStandardView       *standard_view);
-static void          thunar_standard_view_drag_data_get             (GtkWidget                *widget,
+static void          thunar_standard_view_drag_data_get             (GtkWidget                *view,
                                                                      GdkDragContext           *context,
                                                                      GtkSelectionData         *selection_data,
                                                                      guint                     info,
                                                                      guint                     time,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_drag_end                  (GtkWidget                *view,
+                                                                     GdkDragContext           *context,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_renamed                   (ThunarTextRenderer       *text_renderer,
                                                                      const gchar              *path_string,
                                                                      const gchar              *text,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_loading_unbound           (gpointer                  user_data);
+static gboolean      thunar_standard_view_drag_timer                (gpointer                  user_data);
+static void          thunar_standard_view_drag_timer_destroy        (gpointer                  user_data);
 
 
 
@@ -138,6 +182,18 @@ struct _ThunarStandardViewPrivate
   GtkAction      *action_select_by_pattern;
   GtkAction      *action_rename;
   GtkAction      *action_show_hidden_files;
+
+  /* right-click drag/popup support */
+  GList          *drag_uri_list;
+  gint            drag_timer_id;
+  gint            drag_x;
+  gint            drag_y;
+
+  /* drop site support */
+  guint           drop_data_ready : 1; /* whether the drop data was received already */
+  guint           drop_highlight : 1;
+  guint           drop_occurred : 1;   /* whether the data was dropped */
+  GList          *drop_uri_list;       /* the list of URIs that are contained in the drop data */
 };
 
 
@@ -166,6 +222,14 @@ static const GtkTargetEntry drag_targets[] =
 {
   { "text/uri-list", 0, TEXT_URI_LIST, },
 };
+
+/* Target types for dropping to the view */
+static const GtkTargetEntry drop_targets[] =
+{
+  { "text/uri-list", 0, TEXT_URI_LIST, },
+};
+
+
 
 static GObjectClass *thunar_standard_view_parent_class;
 
@@ -240,6 +304,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class->realize = thunar_standard_view_realize;
   gtkwidget_class->unrealize = thunar_standard_view_unrealize;
   gtkwidget_class->grab_focus = thunar_standard_view_grab_focus;
+  gtkwidget_class->expose_event = thunar_standard_view_expose_event;
 
   klass->connect_ui_manager = (gpointer) exo_noop;
   klass->disconnect_ui_manager = (gpointer) exo_noop;
@@ -291,6 +356,7 @@ static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
   standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
+  standard_view->priv->drag_timer_id = -1;
 
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (standard_view),
                                   GTK_POLICY_AUTOMATIC,
@@ -354,7 +420,7 @@ thunar_standard_view_constructor (GType                  type,
                                   guint                  n_construct_properties,
                                   GObjectConstructParam *construct_properties)
 {
-  GtkWidget *widget;
+  GtkWidget *view;
   GObject   *object;
 
   /* let the GObject constructor create the instance */
@@ -362,23 +428,28 @@ thunar_standard_view_constructor (GType                  type,
                                                                             n_construct_properties,
                                                                             construct_properties);
 
+  /* determine the real view widget (treeview or iconview) */
+  view = GTK_BIN (object)->child;
+
   /* apply our list model to the real view (the child of the scrolled window),
    * we therefore assume that all real views have the "model" property.
    */
-  g_object_set (G_OBJECT (GTK_BIN (object)->child),
-                "model", THUNAR_STANDARD_VIEW (object)->model,
-                NULL);
+  g_object_set (G_OBJECT (view), "model", THUNAR_STANDARD_VIEW (object)->model, NULL);
 
-  /* determine the real view widget (treeview or iconview) */
-  widget = GTK_BIN (object)->child;
+  /* setup the real view as drop site */
+  gtk_drag_dest_set (view, 0, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
+  g_signal_connect (G_OBJECT (view), "drag-drop", G_CALLBACK (thunar_standard_view_drag_drop), object);
+  g_signal_connect (G_OBJECT (view), "drag-data-received", G_CALLBACK (thunar_standard_view_drag_data_received), object);
+  g_signal_connect (G_OBJECT (view), "drag-leave", G_CALLBACK (thunar_standard_view_drag_leave), object);
+  g_signal_connect (G_OBJECT (view), "drag-motion", G_CALLBACK (thunar_standard_view_drag_motion), object);
 
   /* setup the real view as drag source */
-  gtk_drag_source_set (widget, GDK_BUTTON1_MASK | GDK_BUTTON3_MASK,
-                       drag_targets, G_N_ELEMENTS (drag_targets),
-                       GDK_ACTION_COPY | GDK_ACTION_MOVE
-                       | GDK_ACTION_LINK | GDK_ACTION_ASK);
-  g_signal_connect (G_OBJECT (widget), "drag-begin", G_CALLBACK (thunar_standard_view_drag_begin), object);
-  g_signal_connect (G_OBJECT (widget), "drag-data-get", G_CALLBACK (thunar_standard_view_drag_data_get), object);
+  gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets,
+                       G_N_ELEMENTS (drag_targets), GDK_ACTION_COPY
+                       | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+  g_signal_connect (G_OBJECT (view), "drag-begin", G_CALLBACK (thunar_standard_view_drag_begin), object);
+  g_signal_connect (G_OBJECT (view), "drag-data-get", G_CALLBACK (thunar_standard_view_drag_data_get), object);
+  g_signal_connect (G_OBJECT (view), "drag-end", G_CALLBACK (thunar_standard_view_drag_end), object);
 
   /* done, we have a working object */
   return object;
@@ -395,13 +466,17 @@ thunar_standard_view_dispose (GObject *object)
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
     exo_binding_unbind (standard_view->loading_binding);
 
+  /* be sure to cancel any pending drag timer */
+  if (G_UNLIKELY (standard_view->priv->drag_timer_id >= 0))
+    g_source_remove (standard_view->priv->drag_timer_id);
+
   /* reset the UI manager property */
   thunar_view_set_ui_manager (THUNAR_VIEW (standard_view), NULL);
 
   /* disconnect the widget from the launcher support */
   thunar_launcher_set_widget (standard_view->priv->launcher, NULL);
 
-  G_OBJECT_CLASS (thunar_standard_view_parent_class)->dispose (object);
+  (*G_OBJECT_CLASS (thunar_standard_view_parent_class)->dispose) (object);
 }
 
 
@@ -416,6 +491,12 @@ thunar_standard_view_finalize (GObject *object)
   g_assert (standard_view->icon_factory == NULL);
   g_assert (standard_view->ui_manager == NULL);
   g_assert (standard_view->clipboard == NULL);
+
+  /* release the drag URI list (just in case the drag-end wasn't fired before) */
+  thunar_vfs_uri_list_free (standard_view->priv->drag_uri_list);
+
+  /* release the drop URI list (just in case the drag-leave wasn't fired before) */
+  thunar_vfs_uri_list_free (standard_view->priv->drop_uri_list);
 
   /* release the reference on the name renderer */
   g_object_unref (G_OBJECT (standard_view->name_renderer));
@@ -436,7 +517,7 @@ thunar_standard_view_finalize (GObject *object)
   /* free the statusbar text (if any) */
   g_free (standard_view->statusbar_text);
 
-  G_OBJECT_CLASS (thunar_standard_view_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_standard_view_parent_class)->finalize) (object);
 }
 
 
@@ -563,6 +644,51 @@ thunar_standard_view_grab_focus (GtkWidget *widget)
 {
   /* forward the focus grab to the real view */
   gtk_widget_grab_focus (GTK_BIN (widget)->child);
+}
+
+
+
+static gboolean
+thunar_standard_view_expose_event (GtkWidget      *widget,
+                                   GdkEventExpose *event)
+{
+  gboolean result = FALSE;
+#if GTK_CHECK_VERSION(2,7,2)
+  cairo_t *cr;
+#endif
+  gint     x, y, width, height;
+
+  /* let the scrolled window do it's work */
+  result = (*GTK_WIDGET_CLASS (thunar_standard_view_parent_class)->expose_event) (widget, event);
+
+  /* render the folder drop shadow */
+  if (G_UNLIKELY (THUNAR_STANDARD_VIEW (widget)->priv->drop_highlight))
+    {
+      x = widget->allocation.x;
+      y = widget->allocation.y;
+      width = widget->allocation.width;
+      height = widget->allocation.height;
+
+      gtk_paint_shadow (widget->style, widget->window,
+                        GTK_STATE_NORMAL, GTK_SHADOW_OUT,
+                        NULL, widget, "dnd",
+                        x, y, width, height);
+
+#if GTK_CHECK_VERSION(2,7,2)
+      /* the cairo version looks better here, so we use it if possible */
+      cr = gdk_cairo_create (widget->window);
+      cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
+      cairo_set_line_width (cr, 1.0);
+      cairo_rectangle (cr, x + 0.5, y + 0.5, width - 1, height - 1);
+      cairo_stroke (cr);
+      cairo_destroy (cr);
+#else
+      gdk_draw_rectangle (widget->window, widget->style->black_gc,
+                          FALSE, x, y, width - 1, height - 1);
+#endif
+    }
+
+  return result;
 }
 
 
@@ -759,6 +885,94 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
 
   /* let others know that we have a new manager */
   g_object_notify (G_OBJECT (view), "ui-manager");
+}
+
+
+
+static GdkDragAction
+thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
+                                       GdkDragContext     *context,
+                                       gint                x,
+                                       gint                y,
+                                       guint               time,
+                                       ThunarFile        **file_return)
+{
+  GdkDragAction actions = 0;
+  GdkDragAction action = 0;
+  GtkTreePath  *path;
+  GtkTreeIter   iter;
+  ThunarFile   *file;
+
+  /* determine the path for the given coordinates */
+  path = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_path_at_pos) (standard_view, x, y);
+  if (G_LIKELY (path != NULL))
+    {
+      /* determine the file for the path */
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, path);
+      file = thunar_list_model_get_file (standard_view->model, &iter);
+    }
+  else
+    {
+      /* determine the current directory */
+      file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+      if (G_LIKELY (file != NULL))
+        g_object_ref (G_OBJECT (file));
+    }
+
+  /* check if we can drop there */
+  if (G_LIKELY (file != NULL))
+    {
+      actions = thunar_file_accepts_uri_drop (file, standard_view->priv->drop_uri_list, context->actions);
+      if (G_LIKELY (actions != 0))
+        {
+          /* determine a working action */
+          if (G_LIKELY ((context->suggested_action & actions) != 0))
+            action = context->suggested_action;
+          else if ((actions & GDK_ACTION_ASK) != 0)
+            action = GDK_ACTION_ASK;
+          else if ((actions & GDK_ACTION_COPY) != 0)
+            action = GDK_ACTION_COPY;
+          else if ((actions & GDK_ACTION_LINK) != 0)
+            action = GDK_ACTION_LINK;
+          else if ((actions & GDK_ACTION_MOVE) != 0)
+            action = GDK_ACTION_MOVE;
+          else
+            action = GDK_ACTION_PRIVATE;
+
+          /* tell the caller about the file (if it's interested) */
+          if (G_UNLIKELY (file_return != NULL))
+            *file_return = g_object_ref (G_OBJECT (file));
+        }
+
+      /* release the file reference */
+      g_object_unref (G_OBJECT (file));
+    }
+
+  /* reset path if we cannot drop */
+  if (G_UNLIKELY (action == 0 && path != NULL))
+    {
+      gtk_tree_path_free (path);
+      path = NULL;
+    }
+
+  /* do the view highlighting */
+  if (standard_view->priv->drop_highlight != (path == NULL && action != 0))
+    {
+      standard_view->priv->drop_highlight = (path == NULL && action != 0);
+      gtk_widget_queue_draw (GTK_WIDGET (standard_view));
+    }
+
+  /* do the item highlighting */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->highlight_path) (standard_view, path);
+
+  /* tell Gdk whether we can drop here */
+  gdk_drag_status (context, action, time);
+
+  /* clean up */
+  if (G_LIKELY (path != NULL))
+    gtk_tree_path_free (path);
+
+  return actions;
 }
 
 
@@ -1034,49 +1248,249 @@ thunar_standard_view_action_show_hidden_files (GtkToggleAction    *toggle_action
 
 
 
-static void
-thunar_standard_view_drag_begin (GtkWidget          *widget,
-                                 GdkDragContext     *context,
-                                 ThunarStandardView *standard_view)
+static gboolean
+thunar_standard_view_button_release_event (GtkWidget          *view,
+                                           GdkEventButton     *event,
+                                           ThunarStandardView *standard_view)
 {
-  GtkTreeIter iter;
-  ThunarFile *file;
-  GdkPixbuf  *icon;
-  GList      *selected_items;
-  gint        size;
+  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  g_return_val_if_fail (standard_view->priv->drag_timer_id >= 0, FALSE);
 
-  /* query the list of selected items */
-  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-  if (G_LIKELY (selected_items != NULL))
+  /* cancel the pending drag timer */
+  g_source_remove (standard_view->priv->drag_timer_id);
+
+  /* fire up the context menu */
+  thunar_standard_view_context_menu (standard_view, event->button, event->time);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_standard_view_motion_notify_event (GtkWidget          *view,
+                                          GdkEventMotion     *event,
+                                          ThunarStandardView *standard_view)
+{
+  GdkDragContext *context;
+  GtkTargetList  *target_list;
+
+  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  g_return_val_if_fail (standard_view->priv->drag_timer_id >= 0, FALSE);
+
+  /* check if we passed the DnD threshold */
+  if (gtk_drag_check_threshold (view, standard_view->priv->drag_x, standard_view->priv->drag_y, event->x, event->y))
     {
-      /* grab the tree iterator for the first selected item */
-      if (gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, selected_items->data))
-        {
-          /* determine the first selected file */
-          file = thunar_list_model_get_file (THUNAR_LIST_MODEL (standard_view->model), &iter);
-          if (G_LIKELY (file != NULL))
-            {
-              /* generate an icon based on that file */
-              g_object_get (G_OBJECT (standard_view->icon_renderer), "size", &size, NULL);
-              icon = thunar_file_load_icon (file, standard_view->icon_factory, size);
-              gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
-              g_object_unref (G_OBJECT (icon));
+      /* cancel the drag timer, as we won't popup the menu anymore */
+      g_source_remove (standard_view->priv->drag_timer_id);
 
-              /* release the file */
-              g_object_unref (G_OBJECT (file));
-            }
-        }
+      /* allocate the drag context (preferred action is to ask the user) */
+      target_list = gtk_target_list_new (drag_targets, G_N_ELEMENTS (drag_targets));
+      context = gtk_drag_begin (view, target_list, GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK, 3, (GdkEvent *) event);
+      context->suggested_action = GDK_ACTION_ASK;
+      gtk_target_list_unref (target_list);
 
-      /* release the selected items */
-      g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
-      g_list_free (selected_items);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_standard_view_drag_drop (GtkWidget          *view,
+                                GdkDragContext     *context,
+                                gint                x,
+                                gint                y,
+                                guint               time,
+                                ThunarStandardView *standard_view)
+{
+  GdkAtom target;
+
+  target = gtk_drag_dest_find_target (view, context, NULL);
+  if (G_LIKELY (target != GDK_NONE))
+    {
+      /* set state so the drag-data-received knows that
+       * this is really a drop this time.
+       */
+      standard_view->priv->drop_occurred = TRUE;
+
+      /* request the drag data from the source */
+      gtk_drag_get_data (view, context, target, time);
+  
+      /* we'll call gtk_drag_finish() later */
+      return TRUE;
+    }
+  else
+    {
+      /* we cannot handle the drag data */
+      return FALSE;
     }
 }
 
 
 
 static void
-thunar_standard_view_drag_data_get (GtkWidget          *widget,
+thunar_standard_view_drag_data_received (GtkWidget          *view,
+                                         GdkDragContext     *context,
+                                         gint                x,
+                                         gint                y,
+                                         GtkSelectionData   *selection_data,
+                                         guint               info,
+                                         guint               time,
+                                         ThunarStandardView *standard_view)
+{
+  GdkDragAction actions;
+  GdkDragAction action;
+  ThunarFile   *file = NULL;
+  gboolean      succeed = FALSE;
+
+  /* check if we don't already know the drop data */
+  if (G_LIKELY (!standard_view->priv->drop_data_ready))
+    {
+      /* extract the URI list from the selection data (if valid) */
+      if (info == TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
+        standard_view->priv->drop_uri_list = thunar_vfs_uri_list_from_string ((gchar *) selection_data->data, NULL);
+
+      /* reset the state */
+      standard_view->priv->drop_data_ready = TRUE;
+    }
+
+  /* check if the data was dropped */
+  if (G_UNLIKELY (standard_view->priv->drop_occurred))
+    {
+      /* reset the state */
+      standard_view->priv->drop_occurred = FALSE;
+
+      /* determine the drop position */
+      actions = thunar_standard_view_get_dest_actions (standard_view, context, x, y, time, &file);
+      if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
+        {
+          /* ask the user what to do with the drop data */
+          action = (context->action == GDK_ACTION_ASK) ? thunar_dnd_ask (GTK_WIDGET (standard_view), time, actions) : context->action;
+
+          /* perform the requested action */
+          if (G_LIKELY (action != 0))
+            succeed = thunar_dnd_perform (GTK_WIDGET (standard_view), file, standard_view->priv->drop_uri_list, action);
+        }
+
+      /* release the file reference */
+      if (G_LIKELY (file != NULL))
+        g_object_unref (G_OBJECT (file));
+
+      /* disable the highlighting and release the drag data */
+      thunar_standard_view_drag_leave (view, context, time, standard_view);
+
+      /* tell the peer that we handled the drop */
+      gtk_drag_finish (context, succeed, FALSE, time);
+    }
+}
+
+
+
+static void
+thunar_standard_view_drag_leave (GtkWidget          *widget,
+                                 GdkDragContext     *context,
+                                 guint               time,
+                                 ThunarStandardView *standard_view)
+{
+  /* disable the drop highlighting around the view */
+  if (G_LIKELY (standard_view->priv->drop_highlight))
+    {
+      standard_view->priv->drop_highlight = FALSE;
+      gtk_widget_queue_draw (GTK_WIDGET (standard_view));
+    }
+
+  /* reset the "drop data ready" status and free the URI list */
+  if (G_LIKELY (standard_view->priv->drop_data_ready))
+    {
+      thunar_vfs_uri_list_free (standard_view->priv->drop_uri_list);
+      standard_view->priv->drop_uri_list = NULL;
+      standard_view->priv->drop_data_ready = FALSE;
+    }
+
+  /* disable the highlighting of the items in the view */
+  (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->highlight_path) (standard_view, NULL);
+}
+
+
+
+static gboolean
+thunar_standard_view_drag_motion (GtkWidget          *view,
+                                  GdkDragContext     *context,
+                                  gint                x,
+                                  gint                y,
+                                  guint               time,
+                                  ThunarStandardView *standard_view)
+{
+  GdkAtom target;
+
+  /* request the drop data on-demand (if we don't have it already) */
+  if (G_UNLIKELY (!standard_view->priv->drop_data_ready))
+    {
+      /* check if we can handle that drag data (yet?) */
+      target = gtk_drag_dest_find_target (view, context, NULL);
+      if (G_UNLIKELY (target == GDK_NONE))
+        {
+          /* we cannot handle the drag data */
+          gdk_drag_status (context, 0, time);
+        }
+      else
+        {
+          /* request the drag data from the source */
+          gtk_drag_get_data (view, context, target, time);
+
+          /* and deny the drop so far */
+          gdk_drag_status (context, 0, time);
+        }
+    }
+  else
+    {
+      /* check whether we can drop at (x,y) */
+      thunar_standard_view_get_dest_actions (standard_view, context, x, y, time, NULL);
+    }
+
+  return TRUE;
+}
+
+
+
+static void
+thunar_standard_view_drag_begin (GtkWidget          *view,
+                                 GdkDragContext     *context,
+                                 ThunarStandardView *standard_view)
+{
+  ThunarFile *file;
+  GdkPixbuf  *icon;
+  gint        size;
+
+  g_return_if_fail (standard_view->priv->drag_uri_list == NULL);
+
+  /* query the list of selected URIs */
+  standard_view->priv->drag_uri_list = thunar_standard_view_get_selected_uris (standard_view);
+  if (G_LIKELY (standard_view->priv->drag_uri_list != NULL))
+    {
+      /* determine the first selected file */
+      file = thunar_file_get_for_uri (standard_view->priv->drag_uri_list->data, NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          /* generate an icon based on that file */
+          g_object_get (G_OBJECT (standard_view->icon_renderer), "size", &size, NULL);
+          icon = thunar_file_load_icon (file, standard_view->icon_factory, size);
+          gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
+          g_object_unref (G_OBJECT (icon));
+
+          /* release the file */
+          g_object_unref (G_OBJECT (file));
+        }
+    }
+}
+
+
+
+static void
+thunar_standard_view_drag_data_get (GtkWidget          *view,
                                     GdkDragContext     *context,
                                     GtkSelectionData   *selection_data,
                                     guint               info,
@@ -1084,19 +1498,23 @@ thunar_standard_view_drag_data_get (GtkWidget          *widget,
                                     ThunarStandardView *standard_view)
 {
   gchar *uri_string;
-  GList *uri_list;
-
-  /* transform the list of selected URIs to a string */
-  uri_list = thunar_standard_view_get_selected_uris (standard_view);
-  uri_string = thunar_vfs_uri_list_to_string (uri_list, 0);
-  thunar_vfs_uri_list_free (uri_list);
 
   /* set the URI list for the drag selection */
-  gtk_selection_data_set (selection_data, selection_data->target, 8,
-                          (guchar *) uri_string, strlen (uri_string));
-
-  /* clean up */
+  uri_string = thunar_vfs_uri_list_to_string (standard_view->priv->drag_uri_list, 0);
+  gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
   g_free (uri_string);
+}
+
+
+
+static void
+thunar_standard_view_drag_end (GtkWidget          *view,
+                               GdkDragContext     *context,
+                               ThunarStandardView *standard_view)
+{
+  /* release the list of dragged URIs */
+  thunar_vfs_uri_list_free (standard_view->priv->drag_uri_list);
+  standard_view->priv->drag_uri_list = NULL;
 }
 
 
@@ -1202,6 +1620,34 @@ thunar_standard_view_loading_unbound (gpointer user_data)
 
 
 
+static gboolean
+thunar_standard_view_drag_timer (gpointer user_data)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
+
+  /* fire up the context menu */
+  GDK_THREADS_ENTER ();
+  thunar_standard_view_context_menu (standard_view, 3, gtk_get_current_event_time ());
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_standard_view_drag_timer_destroy (gpointer user_data)
+{
+  /* unregister the motion notify and button release event handlers (thread-safe) */
+  g_signal_handlers_disconnect_by_func (GTK_BIN (user_data)->child, thunar_standard_view_button_release_event, user_data);
+  g_signal_handlers_disconnect_by_func (GTK_BIN (user_data)->child, thunar_standard_view_motion_notify_event, user_data);
+
+  /* reset the drag timer source id */
+  THUNAR_STANDARD_VIEW (user_data)->priv->drag_timer_id = -1;
+}
+
+
+
 /**
  * thunar_standard_view_context_menu:
  * @standard_view : a #ThunarStandardView instance.
@@ -1264,6 +1710,59 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
 
   /* decrease the reference count on the menu */
   g_object_unref (G_OBJECT (menu));
+}
+
+
+
+/**
+ * thunar_standard_view_queue_popup:
+ * @standard_view : a #ThunarStandardView.
+ * @event         : the right click event.
+ *
+ * Schedules a context menu popup in response to
+ * a right-click button event. Right-click events
+ * need to be handled in a special way, as the
+ * user may also start a drag using the right
+ * mouse button and therefore this function
+ * schedules a timer, which - once expired -
+ * opens the context menu. If the user moves
+ * the mouse prior to expiration, a right-click
+ * drag (with #GDK_ACTION_ASK) will be started
+ * instead.
+ **/
+void
+thunar_standard_view_queue_popup (ThunarStandardView *standard_view,
+                                  GdkEventButton     *event)
+{
+  GtkSettings *settings;
+  GtkWidget   *view;
+  gint         delay;
+
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  g_return_if_fail (event != NULL);
+
+  /* check if we have already scheduled a drag timer */
+  if (G_LIKELY (standard_view->priv->drag_timer_id < 0))
+    {
+      /* remember the new coordinates */
+      standard_view->priv->drag_x = event->x;
+      standard_view->priv->drag_y = event->y;
+
+      /* figure out the real view */
+      view = GTK_BIN (standard_view)->child;
+
+      /* we use the menu popup delay here, which should give us good values */
+      settings = gtk_settings_get_for_screen (gtk_widget_get_screen (view));
+      g_object_get (G_OBJECT (settings), "gtk-menu-popup-delay", &delay, NULL);
+
+      /* schedule the timer */
+      standard_view->priv->drag_timer_id = g_timeout_add_full (G_PRIORITY_LOW, delay, thunar_standard_view_drag_timer,
+                                                               standard_view, thunar_standard_view_drag_timer_destroy);
+
+      /* register the motion notify and the button release events on the real view */
+      g_signal_connect (G_OBJECT (view), "button-release-event", G_CALLBACK (thunar_standard_view_button_release_event), standard_view);
+      g_signal_connect (G_OBJECT (view), "motion-notify-event", G_CALLBACK (thunar_standard_view_motion_notify_event), standard_view);
+    }
 }
 
 
