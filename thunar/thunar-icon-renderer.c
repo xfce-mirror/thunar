@@ -343,6 +343,11 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   if (G_UNLIKELY (icon == NULL))
     return;
 
+  /* pre-light the item if we're dragging about it */
+  if (G_UNLIKELY (icon_state == THUNAR_FILE_ICON_STATE_DROP))
+    flags |= GTK_CELL_RENDERER_PRELIT;
+
+  /* determine the real icon size */
   icon_area.width = gdk_pixbuf_get_width (icon);
   icon_area.height = gdk_pixbuf_get_height (icon);
 
