@@ -21,6 +21,13 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-icon-factory.h>
@@ -454,6 +461,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   const gchar       *icon_name;
   const gchar       *name;
   GdkPixbuf         *icon;
+  glong              offset;
   gchar             *size_string;
   gchar             *str;
 
@@ -477,6 +485,21 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   str = g_strdup_printf (_("%s Info"), name);
   gtk_window_set_title (GTK_WINDOW (dialog), str);
   g_free (str);
+
+  /* grab the input focus to the name entry */
+  gtk_widget_grab_focus (dialog->name_entry);
+
+  /* select the pre-dot part of the name */
+  str = strrchr (name, '.');
+  if (G_LIKELY (str != NULL))
+    {
+      /* calculate the offset */
+      offset = g_utf8_pointer_to_offset (name, str);
+
+      /* select the region */
+      if (G_LIKELY (offset > 0))
+        gtk_entry_select_region (GTK_ENTRY (dialog->name_entry), 0, offset);
+    }
 
   /* update the mime type */
   info = thunar_file_get_mime_info (dialog->file);

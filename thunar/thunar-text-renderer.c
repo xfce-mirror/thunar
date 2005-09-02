@@ -21,6 +21,13 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <exo/exo.h>
 
 #include <thunar/thunar-marshal.h>
@@ -81,6 +88,8 @@ static void             thunar_text_renderer_invalidate                       (T
 static void             thunar_text_renderer_set_widget                       (ThunarTextRenderer      *text_renderer,
                                                                                GtkWidget               *widget);
 static void             thunar_text_renderer_editing_done                     (GtkCellEditable         *editable,
+                                                                               ThunarTextRenderer      *text_renderer);
+static void             thunar_text_renderer_grab_focus                       (GtkWidget               *entry,
                                                                                ThunarTextRenderer      *text_renderer);
 static gboolean         thunar_text_renderer_focus_out_event                  (GtkWidget               *entry,
                                                                                GdkEventFocus           *event,
@@ -561,7 +570,7 @@ thunar_text_renderer_start_editing (GtkCellRenderer     *renderer,
                                        "xalign", renderer->xalign,
                                        NULL);
 
-  /* select the whole text (this could be changed to exclude the extension) */
+  /* select the whole text */
   gtk_editable_select_region (GTK_EDITABLE (text_renderer->entry), 0, -1);
 
   /* remember the tree path that we're editing */
@@ -569,6 +578,7 @@ thunar_text_renderer_start_editing (GtkCellRenderer     *renderer,
 
   /* connect required signals */
   g_signal_connect (G_OBJECT (text_renderer->entry), "editing-done", G_CALLBACK (thunar_text_renderer_editing_done), text_renderer);
+  g_signal_connect_after (G_OBJECT (text_renderer->entry), "grab-focus", G_CALLBACK (thunar_text_renderer_grab_focus), text_renderer);
   g_signal_connect (G_OBJECT (text_renderer->entry), "focus-out-event", G_CALLBACK (thunar_text_renderer_focus_out_event), text_renderer);
   g_signal_connect (G_OBJECT (text_renderer->entry), "populate-popup", G_CALLBACK (thunar_text_renderer_populate_popup), text_renderer);
 
@@ -656,6 +666,35 @@ thunar_text_renderer_editing_done (GtkCellEditable    *editable,
       path = g_object_get_data (G_OBJECT (editable), "thunar-text-renderer-path");
       g_signal_emit (G_OBJECT (text_renderer), text_renderer_signals[EDITED], 0, path, text);
     }
+}
+
+
+
+static void
+thunar_text_renderer_grab_focus (GtkWidget          *entry,
+                                 ThunarTextRenderer *text_renderer)
+{
+  const gchar *text;
+  const gchar *dot;
+  glong        offset;
+
+  /* determine the text from the entry widget */
+  text = gtk_entry_get_text (GTK_ENTRY (entry));
+
+  /* lookup the last dot in the text */
+  dot = strrchr (text, '.');
+  if (G_LIKELY (dot != NULL))
+    {
+      /* determine the UTF-8 char offset */
+      offset = g_utf8_pointer_to_offset (text, dot);
+
+      /* select the text prior to the dot */
+      if (G_LIKELY (offset > 0))
+        gtk_entry_select_region (GTK_ENTRY (entry), 0, offset);
+    }
+
+  /* disconnect the grab-focus handler, so we change the selection only once */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (entry), thunar_text_renderer_grab_focus, text_renderer);
 }
 
 
