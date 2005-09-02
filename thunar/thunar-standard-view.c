@@ -157,6 +157,9 @@ static void          thunar_standard_view_drag_data_get             (GtkWidget  
                                                                      guint                     info,
                                                                      guint                     time,
                                                                      ThunarStandardView       *standard_view);
+static void          thunar_standard_view_drag_data_delete          (GtkWidget                *view,
+                                                                     GdkDragContext           *context,
+                                                                     ThunarStandardView       *standard_view);
 static void          thunar_standard_view_drag_end                  (GtkWidget                *view,
                                                                      GdkDragContext           *context,
                                                                      ThunarStandardView       *standard_view);
@@ -444,11 +447,10 @@ thunar_standard_view_constructor (GType                  type,
   g_signal_connect (G_OBJECT (view), "drag-motion", G_CALLBACK (thunar_standard_view_drag_motion), object);
 
   /* setup the real view as drag source */
-  gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets,
-                       G_N_ELEMENTS (drag_targets), GDK_ACTION_COPY
-                       | GDK_ACTION_MOVE | GDK_ACTION_LINK);
+  gtk_drag_source_set (view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK);
   g_signal_connect (G_OBJECT (view), "drag-begin", G_CALLBACK (thunar_standard_view_drag_begin), object);
   g_signal_connect (G_OBJECT (view), "drag-data-get", G_CALLBACK (thunar_standard_view_drag_data_get), object);
+  g_signal_connect (G_OBJECT (view), "drag-data-delete", G_CALLBACK (thunar_standard_view_drag_data_delete), object);
   g_signal_connect (G_OBJECT (view), "drag-end", G_CALLBACK (thunar_standard_view_drag_end), object);
 
   /* done, we have a working object */
@@ -1511,6 +1513,17 @@ thunar_standard_view_drag_data_get (GtkWidget          *view,
   uri_string = thunar_vfs_uri_list_to_string (standard_view->priv->drag_uri_list, 0);
   gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
   g_free (uri_string);
+}
+
+
+
+static void
+thunar_standard_view_drag_data_delete (GtkWidget          *view,
+                                       GdkDragContext     *context,
+                                       ThunarStandardView *standard_view)
+{
+  /* make sure the default handler of ExoIconView/GtkTreeView is never run */
+  g_signal_stop_emission_by_name (G_OBJECT (view), "drag-data-delete");
 }
 
 

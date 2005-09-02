@@ -1,5 +1,14 @@
 2005-09-02	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c: Be sure to override the default
+	  drag-data-delete handler of ExoIconView/GtkTreeView.
+	* thunar/thunar-icon-view.c(thunar_icon_view_get_path_at_pos): The
+	  exo_icon_view_get_path_at_pos() method really accepts widget
+	  coordinates now, like GtkTreeView does, so we don't need to translate
+	  the widget coordinates to icon window coordinates first.
+
+2005-09-02	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-standard-view.c(thunar_standard_view_get_dest_actions):
 	  Set the drop-file icon renderer property only if we have a valid
 	  drag action.

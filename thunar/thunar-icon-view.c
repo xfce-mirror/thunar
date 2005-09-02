@@ -308,11 +308,6 @@ thunar_icon_view_get_path_at_pos (ThunarStandardView *standard_view,
                                   gint                y)
 {
   g_return_val_if_fail (THUNAR_IS_ICON_VIEW (standard_view), NULL);
-
-  /* translate the widget coordinates to icon window coordinates */
-  exo_icon_view_widget_to_icon_coords (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), x, y, &x, &y);
-
-  /* determine the path at the position */
   return exo_icon_view_get_path_at_pos (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), x, y);
 }
 
