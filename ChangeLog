@@ -1,5 +1,14 @@
 2005-09-02	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-open-with-action.c(thunar_open_with_action_activated):
+	  Remove obsolete code.
+	* thunar/thunar-standard-view.c
+	  (thunar_standard_view_button_release_event): Don't popup the context
+	  menu using the just released button, as that would render the items
+	  unclickable.
+
+2005-09-02	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-standard-view.c: Avoid going through the selection
 	  changed handling whenever the number of files in a model changes,
 	  as the only thing that needs updating here is the statusbar text.

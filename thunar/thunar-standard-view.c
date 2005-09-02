@@ -1287,7 +1287,7 @@ thunar_standard_view_button_release_event (GtkWidget          *view,
   g_source_remove (standard_view->priv->drag_timer_id);
 
   /* fire up the context menu */
-  thunar_standard_view_context_menu (standard_view, event->button, event->time);
+  thunar_standard_view_context_menu (standard_view, 0, event->time);
 
   return TRUE;
 }

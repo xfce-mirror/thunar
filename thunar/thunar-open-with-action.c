@@ -278,6 +278,7 @@ thunar_open_with_action_activated (GtkWidget            *item,
   file = open_with_action->file;
   if (G_UNLIKELY (file == NULL))
     return;
+
   /* query the launch parameters for this application item */
   application = g_object_get_data (G_OBJECT (item), "thunar-vfs-mime-application");
 
@@ -288,59 +289,6 @@ thunar_open_with_action_activated (GtkWidget            *item,
 
   /* emit the "open-application" signal */
   g_signal_emit (G_OBJECT (open_with_action), open_with_action_signals[OPEN_APPLICATION], 0, application, &uri_list);
-
-#if 0
-  ThunarVfsMimeApplication *application;
-  ThunarFile               *file;
-  GdkScreen                *screen;
-  GtkWidget                *message;
-  GError                   *error = NULL;
-  GList                     uris;
-
-  g_return_if_fail (THUNAR_IS_OPEN_WITH_ACTION (open_with_action));
-  g_return_if_fail (GTK_IS_MENU_ITEM (item));
-
-  /* verify that the file is still active */
-  file = open_with_action->file;
-  if (G_UNLIKELY (file == NULL))
-    return;
-
-  /* query the launch parameters for this application item */
-  application = g_object_get_data (G_OBJECT (item), "thunar-vfs-mime-application");
-
-  /* generate a single item list */
-  uris.data = thunar_file_get_uri (file);
-  uris.next = NULL;
-  uris.prev = NULL;
-
-  /* determine the screen on which the application should be launched */
-  screen = gtk_widget_get_screen (item);
-
-  /* be sure to keep a reference on the file and the screen, as it might be
-   * destroyed while we are trying to execute the application.
-   */
-  g_object_ref (G_OBJECT (screen));
-  g_object_ref (G_OBJECT (file));
-
-  /* try to run the application */
-  if (!thunar_vfs_mime_application_exec (application, screen, &uris, &error))
-    {
-      /* display an error dialog */
-      message = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-                                        _("Unable to open \"%s\"."),
-                                        thunar_file_get_display_name (file));
-      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
-                                                "%s.", error->message);
-      gtk_window_set_screen (GTK_WINDOW (message), screen);
-      gtk_dialog_run (GTK_DIALOG (message));
-      gtk_widget_destroy (message);
-      g_error_free (error);
-    }
-
-  /* release the additional references */
-  g_object_unref (G_OBJECT (screen));
-  g_object_unref (G_OBJECT (file));
-#endif
 }
 
 
