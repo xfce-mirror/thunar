@@ -44,7 +44,9 @@ enum
 
 
 static void               thunar_file_class_init               (ThunarFileClass        *klass);
+#ifndef G_DISABLE_CHECKS
 static void               thunar_file_finalize                 (GObject                *object);
+#endif
 static ThunarFile        *thunar_file_real_get_parent          (ThunarFile             *file,
                                                                 GError                **error);
 static gboolean           thunar_file_real_execute             (ThunarFile             *file,
@@ -59,7 +61,6 @@ static ThunarFolder      *thunar_file_real_open_as_folder      (ThunarFile      
 static const gchar       *thunar_file_real_get_special_name    (ThunarFile             *file);
 static gboolean           thunar_file_real_is_readable         (ThunarFile             *file);
 static gboolean           thunar_file_real_is_writable         (ThunarFile             *file);
-static void               thunar_file_real_changed             (ThunarFile             *file);
 static ThunarFile        *thunar_file_new_internal             (ThunarVfsURI           *uri,
                                                                 GError                **error);
 static gboolean           thunar_file_denies_access_permission (ThunarFile             *file,
@@ -143,7 +144,9 @@ thunar_file_atexit (void)
 static void
 thunar_file_class_init (ThunarFileClass *klass)
 {
+#ifndef G_DISABLE_CHECKS
   GObjectClass *gobject_class;
+#endif
 
 #ifndef G_DISABLE_CHECKS
   if (G_UNLIKELY (!thunar_file_atexit_registered))
@@ -155,8 +158,10 @@ thunar_file_class_init (ThunarFileClass *klass)
 
   thunar_file_parent_class = g_type_class_peek_parent (klass);
 
+#ifndef G_DISABLE_CHECKS
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_file_finalize;
+#endif
 
   klass->has_parent = (gpointer) exo_noop_true;
   klass->get_parent = thunar_file_real_get_parent;
@@ -177,7 +182,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->is_writable = thunar_file_real_is_writable;
   klass->get_emblem_names = (gpointer) exo_noop_null;
   klass->reload = (gpointer) exo_noop;
-  klass->changed = thunar_file_real_changed;
+  klass->changed = (gpointer) exo_noop;
 
   /**
    * ThunarFile::changed:
@@ -197,25 +202,21 @@ thunar_file_class_init (ThunarFileClass *klass)
 
 
 
+#ifndef G_DISABLE_CHECKS
 static void
 thunar_file_finalize (GObject *object)
 {
   ThunarFile *file = THUNAR_FILE (object);
 
-#ifndef G_DISABLE_CHECKS
   if (G_UNLIKELY (file->watch_count != 0))
     {
       g_error ("Attempt to finalize a ThunarFile, which has an "
                "active watch count of %d", file->watch_count);
     }
-#endif
-
-  /* destroy the cached icon if any */
-  if (G_LIKELY (file->cached_icon != NULL))
-    g_object_unref (G_OBJECT (file->cached_icon));
 
   G_OBJECT_CLASS (thunar_file_parent_class)->finalize (object);
 }
+#endif
 
 
 
@@ -308,19 +309,6 @@ thunar_file_real_is_writable (ThunarFile *file)
                                                 THUNAR_VFS_FILE_MODE_USR_WRITE,
                                                 THUNAR_VFS_FILE_MODE_GRP_WRITE,
                                                 THUNAR_VFS_FILE_MODE_OTH_WRITE);
-}
-
-
-
-static void
-thunar_file_real_changed (ThunarFile *file)
-{
-  /* destroy any cached icon, as we need to reload it */
-  if (G_LIKELY (file->cached_icon != NULL))
-    {
-      g_object_unref (G_OBJECT (file->cached_icon));
-      file->cached_icon = NULL;
-    }
 }
 
 
@@ -1270,10 +1258,12 @@ thunar_file_get_emblem_names (ThunarFile *file)
 /**
  * thunar_file_load_icon:
  * @file         : a #ThunarFile instance.
+ * @icon_state   : the state of the @file<!---->s icon we are interested in.
  * @icon_factory : the #ThunarIconFactory, which should be used to load the icon.
  * @size         : the icon size in pixels.
  *
- * Loads an icon from @icon_factory for @file at @size.
+ * Loads an icon from @icon_factory for @file at @size in
+ * the given @icon_state.
  *
  * You need to call #g_object_unref() on the returned icon
  * when you don't need it any longer.
@@ -1281,31 +1271,22 @@ thunar_file_get_emblem_names (ThunarFile *file)
  * Return value: the icon for @file at @size.
  **/
 GdkPixbuf*
-thunar_file_load_icon (ThunarFile        *file,
-                       ThunarIconFactory *icon_factory,
-                       gint               size)
+thunar_file_load_icon (ThunarFile         *file,
+                       ThunarFileIconState icon_state,
+                       ThunarIconFactory  *icon_factory,
+                       gint                size)
 {
   GtkIconTheme *icon_theme;
   const gchar  *icon_name;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  /* see if we have a cached icon that matches the request */
-  if (file->cached_icon == NULL || file->cached_size != size)
-    {
-      /* drop any previous icon */
-      if (file->cached_icon != NULL)
-        g_object_unref (G_OBJECT (file->cached_icon));
+  /* lookup the icon name for the icon in the given state */
+  icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
+  icon_name = (*THUNAR_FILE_GET_CLASS (file)->get_icon_name) (file, icon_state, icon_theme);
 
-      /* load the icon */
-      icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
-      icon_name = THUNAR_FILE_GET_CLASS (file)->get_icon_name (file, icon_theme);
-      file->cached_icon = thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);
-    }
-
-  /* take a reference on the cached icon for the caller */
-  g_object_ref (G_OBJECT (file->cached_icon));
-  return file->cached_icon;
+  /* load the icon of the given name */
+  return thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);
 }
 
 

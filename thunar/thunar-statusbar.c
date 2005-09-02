@@ -454,7 +454,7 @@ thunar_statusbar_icon_expose_event (GtkWidget      *widget,
   /* draw the icon if we have a file */
   if (G_LIKELY (statusbar_icon->file != NULL))
     {
-      icon = thunar_file_load_icon (statusbar_icon->file, statusbar_icon->icon_factory, 16);
+      icon = thunar_file_load_icon (statusbar_icon->file, THUNAR_FILE_ICON_STATE_DEFAULT, statusbar_icon->icon_factory, 16);
 
       /* use the lucent variant if we're currently loading */
       if (thunar_statusbar_icon_get_loading (statusbar_icon))
@@ -520,7 +520,7 @@ thunar_statusbar_icon_drag_begin (GtkWidget      *widget,
   /* setup the drag source icon */
   if (G_LIKELY (statusbar_icon->file != NULL))
     {
-      icon = thunar_file_load_icon (statusbar_icon->file, statusbar_icon->icon_factory, 24);
+      icon = thunar_file_load_icon (statusbar_icon->file, THUNAR_FILE_ICON_STATE_DEFAULT, statusbar_icon->icon_factory, 24);
       gtk_drag_source_set_icon_pixbuf (widget, icon);
       g_object_unref (G_OBJECT (icon));
     }

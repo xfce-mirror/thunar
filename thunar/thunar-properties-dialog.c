@@ -464,7 +464,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
   /* update the icon */
-  icon = thunar_file_load_icon (dialog->file, icon_factory, 48);
+  icon = thunar_file_load_icon (dialog->file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, 48);
   gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->icon_image), icon);
   gtk_window_set_icon (GTK_WINDOW (dialog), icon);
   if (G_LIKELY (icon != NULL))

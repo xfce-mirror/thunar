@@ -54,6 +54,7 @@ static const gchar       *thunar_computer_folder_get_display_name       (ThunarF
 static ThunarVfsFileType  thunar_computer_folder_get_kind               (ThunarFile                *file);
 static ThunarVfsFileMode  thunar_computer_folder_get_mode               (ThunarFile                *file);
 static const gchar       *thunar_computer_folder_get_icon_name          (ThunarFile                *file,
+                                                                         ThunarFileIconState        icon_state,
                                                                          GtkIconTheme              *icon_theme);
 static ThunarFile        *thunar_computer_folder_get_corresponding_file (ThunarFolder              *folder);
 static GSList            *thunar_computer_folder_get_files              (ThunarFolder              *folder);
@@ -218,13 +219,11 @@ thunar_computer_folder_get_mode (ThunarFile *file)
 
 
 static const gchar*
-thunar_computer_folder_get_icon_name (ThunarFile   *file,
-                                      GtkIconTheme *icon_theme)
+thunar_computer_folder_get_icon_name (ThunarFile         *file,
+                                      ThunarFileIconState icon_state,
+                                      GtkIconTheme       *icon_theme)
 {
-  if (gtk_icon_theme_has_icon (icon_theme, "gnome-fs-client"))
-    return "gnome-fs-client";
-
-  return NULL;
+  return "gnome-fs-client";
 }
 
 

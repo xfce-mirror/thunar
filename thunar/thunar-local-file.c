@@ -21,6 +21,13 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <thunar/thunar-local-file.h>
 #include <thunar/thunar-local-folder.h>
 
@@ -61,6 +68,7 @@ static gboolean           thunar_local_file_is_executable     (ThunarFile       
 static gboolean           thunar_local_file_is_renameable     (ThunarFile             *file);
 static GList             *thunar_local_file_get_emblem_names  (ThunarFile             *file);
 static const gchar       *thunar_local_file_get_icon_name     (ThunarFile             *file,
+                                                               ThunarFileIconState     icon_state,
                                                                GtkIconTheme           *icon_theme);
 static void               thunar_local_file_watch             (ThunarFile             *file);
 static void               thunar_local_file_unwatch           (ThunarFile             *file);
@@ -494,8 +502,9 @@ thunar_local_file_get_emblem_names (ThunarFile *file)
 
 
 static const gchar*
-thunar_local_file_get_icon_name (ThunarFile   *file,
-                                 GtkIconTheme *icon_theme)
+thunar_local_file_get_icon_name (ThunarFile         *file,
+                                 ThunarFileIconState icon_state,
+                                 GtkIconTheme       *icon_theme)
 {
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
   const gchar     *icon_name;
@@ -521,6 +530,13 @@ thunar_local_file_get_icon_name (ThunarFile   *file,
 
   /* default is the mime type icon */
   icon_name = thunar_vfs_mime_info_lookup_icon_name (local_file->info->mime_info, icon_theme);
+
+  /* check if we have an accept icon for the icon we found */
+  if (icon_state == THUNAR_FILE_ICON_STATE_DROP && strcmp (icon_name, "gnome-fs-directory") == 0
+      && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-directory-accept"))
+    {
+      return "gnome-fs-directory-accept";
+    }
 
   return icon_name;
 }

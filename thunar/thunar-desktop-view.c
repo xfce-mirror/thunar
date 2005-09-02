@@ -487,7 +487,7 @@ thunar_desktop_view_get_item_at_pos (ThunarDesktopView *view,
       gtk_tree_model_get (view->model, &item->iter, view->file_column, &file, -1);
 
       /* add the icon area */
-      icon = thunar_file_load_icon (file, view->icon_factory, view->icon_size);
+      icon = thunar_file_load_icon (file, THUNAR_FILE_ICON_STATE_DEFAULT, view->icon_factory, view->icon_size);
       icon_area.width = gdk_pixbuf_get_width (icon);
       icon_area.height = gdk_pixbuf_get_height (icon);
       icon_area.x = item_area.x + (TILE_WIDTH * 2 - icon_area.width) / 2;
@@ -542,7 +542,7 @@ thunar_desktop_view_render_item (ThunarDesktopView     *view,
 
   gtk_tree_model_get (view->model, &item->iter, view->file_column, &file, -1);
 
-  icon = thunar_file_load_icon (file, view->icon_factory, view->icon_size);
+  icon = thunar_file_load_icon (file, THUNAR_FILE_ICON_STATE_DEFAULT, view->icon_factory, view->icon_size);
 
   icon_area.width = gdk_pixbuf_get_width (icon);
   icon_area.height = gdk_pixbuf_get_height (icon);

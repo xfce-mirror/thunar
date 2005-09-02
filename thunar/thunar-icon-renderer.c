@@ -31,6 +31,7 @@
 enum
 {
   PROP_0,
+  PROP_DROP_FILE,
   PROP_FILE,
   PROP_FOLLOW_STATE,
   PROP_SIZE,
@@ -75,6 +76,7 @@ struct _ThunarIconRenderer
 {
   GtkCellRenderer __parent__;
 
+  ThunarFile *drop_file;
   ThunarFile *file;
   gboolean    follow_state;
   gint        size;
@@ -100,6 +102,20 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
   gtkcell_renderer_class = GTK_CELL_RENDERER_CLASS (klass);
   gtkcell_renderer_class->get_size = thunar_icon_renderer_get_size;
   gtkcell_renderer_class->render = thunar_icon_renderer_render;
+
+  /**
+   * ThunarIconRenderer:drop-file:
+   *
+   * The file which should be rendered in the drop
+   * accept state.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_DROP_FILE,
+                                   g_param_spec_object ("drop-file",
+                                                        _("Drop file"),
+                                                        _("The file which should be rendered in as drop acceptor"),
+                                                        THUNAR_TYPE_FILE,
+                                                        EXO_PARAM_READWRITE));
 
   /**
    * ThunarIconRenderer:file:
@@ -160,10 +176,12 @@ thunar_icon_renderer_finalize (GObject *object)
   ThunarIconRenderer *icon_renderer = THUNAR_ICON_RENDERER (object);
 
   /* free the icon data */
+  if (G_UNLIKELY (icon_renderer->drop_file != NULL))
+    g_object_unref (G_OBJECT (icon_renderer->drop_file));
   if (G_LIKELY (icon_renderer->file != NULL))
     g_object_unref (G_OBJECT (icon_renderer->file));
 
-  G_OBJECT_CLASS (thunar_icon_renderer_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_icon_renderer_parent_class)->finalize) (object);
 }
 
 
@@ -178,6 +196,10 @@ thunar_icon_renderer_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_DROP_FILE:
+      g_value_set_object (value, icon_renderer->drop_file);
+      break;
+
     case PROP_FILE:
       g_value_set_object (value, icon_renderer->file);
       break;
@@ -208,6 +230,14 @@ thunar_icon_renderer_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_DROP_FILE:
+      if (G_LIKELY (icon_renderer->drop_file != NULL))
+        g_object_unref (G_OBJECT (icon_renderer->drop_file));
+      icon_renderer->drop_file = g_value_get_object (value);
+      if (G_LIKELY (icon_renderer->drop_file != NULL))
+        g_object_ref (G_OBJECT (icon_renderer->drop_file));
+      break;
+
     case PROP_FILE:
       if (G_LIKELY (icon_renderer->file != NULL))
         g_object_unref (G_OBJECT (icon_renderer->file));
@@ -286,6 +316,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                              GdkRectangle        *expose_area,
                              GtkCellRendererState flags)
 {
+  ThunarFileIconState icon_state;
   ThunarIconRenderer *icon_renderer = THUNAR_ICON_RENDERER (renderer);
   ThunarIconFactory  *icon_factory;
   GdkRectangle        emblem_area;
@@ -301,9 +332,14 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
 
+  /* determine the icon state */
+  icon_state = (icon_renderer->drop_file != icon_renderer->file)
+             ? THUNAR_FILE_ICON_STATE_DEFAULT
+             : THUNAR_FILE_ICON_STATE_DROP;
+
   /* load the main icon */
   icon_factory = thunar_icon_factory_get_default ();
-  icon = thunar_file_load_icon (icon_renderer->file, icon_factory, icon_renderer->size);
+  icon = thunar_file_load_icon (icon_renderer->file, icon_state, icon_factory, icon_renderer->size);
   if (G_UNLIKELY (icon == NULL))
     return;
 

@@ -955,6 +955,11 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
       path = NULL;
     }
 
+  /* setup the drop-file for the icon renderer, so the user
+   * gets good visual feedback for the drop target.
+   */
+  g_object_set (G_OBJECT (standard_view->icon_renderer), "drop-file", file, NULL);
+
   /* do the view highlighting */
   if (standard_view->priv->drop_highlight != (path == NULL && action != 0))
     {
@@ -1395,6 +1400,9 @@ thunar_standard_view_drag_leave (GtkWidget          *widget,
                                  guint               time,
                                  ThunarStandardView *standard_view)
 {
+  /* reset the drop-file for the icon renderer */
+  g_object_set (G_OBJECT (standard_view->icon_renderer), "drop-file", NULL, NULL);
+
   /* disable the drop highlighting around the view */
   if (G_LIKELY (standard_view->priv->drop_highlight))
     {
@@ -1477,7 +1485,7 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
         {
           /* generate an icon based on that file */
           g_object_get (G_OBJECT (standard_view->icon_renderer), "size", &size, NULL);
-          icon = thunar_file_load_icon (file, standard_view->icon_factory, size);
+          icon = thunar_file_load_icon (file, THUNAR_FILE_ICON_STATE_DEFAULT, standard_view->icon_factory, size);
           gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
           g_object_unref (G_OBJECT (icon));
 

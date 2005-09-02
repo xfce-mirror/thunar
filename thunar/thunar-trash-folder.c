@@ -53,6 +53,7 @@ static const gchar       *thunar_trash_folder_get_display_name        (ThunarFil
 static ThunarVfsFileType  thunar_trash_folder_get_kind                (ThunarFile             *file);
 static ThunarVfsFileMode  thunar_trash_folder_get_mode                (ThunarFile             *file);
 static const gchar       *thunar_trash_folder_get_icon_name           (ThunarFile             *file,
+                                                                       ThunarFileIconState     icon_state,
                                                                        GtkIconTheme           *icon_theme);
 static ThunarFile        *thunar_trash_folder_get_corresponding_file  (ThunarFolder           *folder);
 static GSList            *thunar_trash_folder_get_files               (ThunarFolder           *folder);
@@ -258,21 +259,28 @@ thunar_trash_folder_get_mode (ThunarFile *file)
 
 
 static const gchar*
-thunar_trash_folder_get_icon_name (ThunarFile   *file,
-                                 GtkIconTheme *icon_theme)
+thunar_trash_folder_get_icon_name (ThunarFile         *file,
+                                   ThunarFileIconState icon_state,
+                                   GtkIconTheme       *icon_theme)
 {
   ThunarTrashFolder *trash_folder = THUNAR_TRASH_FOLDER (file);
-  const gchar       *icon_name;
+  const gchar       *icon_name = NULL;
 
-  /* determine the proper icon for the trash state */
-  icon_name = thunar_vfs_trash_manager_is_empty (trash_folder->manager)
-            ? "gnome-fs-trash-empty" : "gnome-fs-trash-full";
+  if (G_UNLIKELY (icon_state == THUNAR_FILE_ICON_STATE_DROP))
+    {
+      icon_name = thunar_vfs_trash_manager_is_empty (trash_folder->manager)
+                ? "gnome-fs-trash-empty-accept" : "gnome-fs-trash-full-accept";
+      if (G_UNLIKELY (!gtk_icon_theme_has_icon (icon_theme, icon_name)))
+        icon_name = NULL;
+    }
 
-  /* check if the icon is present in the icon theme */
-  if (gtk_icon_theme_has_icon (icon_theme, icon_name))
-    return icon_name;
+  if (G_UNLIKELY (icon_name == NULL))
+    {
+      icon_name = thunar_vfs_trash_manager_is_empty (trash_folder->manager)
+                ? "gnome-fs-trash-empty" : "gnome-fs-trash-full";
+    }
 
-  return NULL;
+  return icon_name;
 }
 
 

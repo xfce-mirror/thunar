@@ -487,7 +487,7 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
         }
       else if (G_LIKELY (favourite->file != NULL))
         {
-          icon = thunar_file_load_icon (favourite->file, icon_factory, 32);
+          icon = thunar_file_load_icon (favourite->file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, 32);
         }
       if (G_LIKELY (icon != NULL))
         g_value_take_object (value, icon);

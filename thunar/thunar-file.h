@@ -42,9 +42,9 @@ typedef struct _ThunarFile      ThunarFile;
 
 /**
  * ThunarFileDateType:
- * @THUNAR_FILE_DATE_ACCESSED: date of last access to the file.
- * @THUNAR_FILE_DATE_CHANGED:  date of last change to the file meta data or the content.
- * @THUNAR_FILE_DATE_MODIFIED: date of last modification of the file's content.
+ * @THUNAR_FILE_DATE_ACCESSED : date of last access to the file.
+ * @THUNAR_FILE_DATE_CHANGED  : date of last change to the file meta data or the content.
+ * @THUNAR_FILE_DATE_MODIFIED : date of last modification of the file's content.
  *
  * The various dates that can be queried about a #ThunarFile. Note, that not all
  * #ThunarFile implementations support all types listed above. See the documentation
@@ -56,6 +56,20 @@ typedef enum
   THUNAR_FILE_DATE_CHANGED,
   THUNAR_FILE_DATE_MODIFIED,
 } ThunarFileDateType;
+
+/**
+ * ThunarFileIconState:
+ * @THUNAR_FILE_ICON_STATE_DEFAULT : the default icon for the file.
+ * @THUNAR_FILE_ICON_STATE_DROP    : the drop accept icon for the file.
+ *
+ * The various file icon states that are used within the file manager
+ * views.
+ **/
+typedef enum
+{
+  THUNAR_FILE_ICON_STATE_DEFAULT,
+  THUNAR_FILE_ICON_STATE_DROP,
+} ThunarFileIconState;
 
 #define THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK "emblem-symbolic-link"
 #define THUNAR_FILE_EMBLEM_NAME_CANT_READ "emblem-noread"
@@ -115,6 +129,7 @@ struct _ThunarFileClass
 
   GList               *(*get_emblem_names)    (ThunarFile             *file);
   const gchar         *(*get_icon_name)       (ThunarFile             *file,
+                                               ThunarFileIconState     icon_state,
                                                GtkIconTheme           *icon_theme);
 
   void                 (*watch)               (ThunarFile             *file);
@@ -132,8 +147,6 @@ struct _ThunarFile
   GtkObject __parent__;
 
   /*< private >*/
-  GdkPixbuf *cached_icon;
-  gint       cached_size;
   gint       watch_count;
 };
 
@@ -200,6 +213,7 @@ gboolean          thunar_file_is_writable       (ThunarFile             *file);
 
 GList             *thunar_file_get_emblem_names (ThunarFile             *file);
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile             *file,
+                                                 ThunarFileIconState     icon_state,
                                                  ThunarIconFactory      *icon_factory,
                                                  gint                    size);
 

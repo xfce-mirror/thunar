@@ -674,7 +674,7 @@ thunar_location_buttons_style_set (GtkWidget *widget,
     {
       file = g_object_get_qdata (G_OBJECT (lp->data), thunar_file_quark);
       children = gtk_container_get_children (GTK_CONTAINER (GTK_BIN (lp->data)->child));
-      icon = thunar_file_load_icon (file, thunar_icon_factory_get_default (), size);
+      icon = thunar_file_load_icon (file, THUNAR_FILE_ICON_STATE_DEFAULT, thunar_icon_factory_get_default (), size);
       gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (lp->data), icon);
       gtk_image_set_from_pixbuf (GTK_IMAGE (children->data), icon);
       g_object_unref (G_OBJECT (icon));
@@ -803,7 +803,7 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
-  icon = thunar_file_load_icon (file, thunar_icon_factory_get_default (), size);
+  icon = thunar_file_load_icon (file, THUNAR_FILE_ICON_STATE_DEFAULT, thunar_icon_factory_get_default (), size);
   gtk_drag_source_set_icon_pixbuf (button, icon);
   gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
   g_object_unref (G_OBJECT (icon));

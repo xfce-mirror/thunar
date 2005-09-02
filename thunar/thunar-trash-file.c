@@ -50,6 +50,7 @@ static gboolean           thunar_trash_file_get_size         (ThunarFile        
 static ThunarVfsGroup    *thunar_trash_file_get_group        (ThunarFile           *file);
 static ThunarVfsUser     *thunar_trash_file_get_user         (ThunarFile           *file);
 static const gchar       *thunar_trash_file_get_icon_name    (ThunarFile           *file,
+                                                              ThunarFileIconState   icon_state,
                                                               GtkIconTheme         *icon_theme);
 
 
@@ -221,11 +222,12 @@ thunar_trash_file_get_user (ThunarFile *file)
 
 
 static const gchar*
-thunar_trash_file_get_icon_name (ThunarFile   *file,
-                                 GtkIconTheme *icon_theme)
+thunar_trash_file_get_icon_name (ThunarFile         *file,
+                                 ThunarFileIconState icon_state,
+                                 GtkIconTheme       *icon_theme)
 {
   ThunarTrashFile *trash_file = THUNAR_TRASH_FILE (file);
-  return THUNAR_FILE_GET_CLASS (trash_file->real_file)->get_icon_name (trash_file->real_file, icon_theme);
+  return (*THUNAR_FILE_GET_CLASS (trash_file->real_file)->get_icon_name) (trash_file->real_file, icon_state, icon_theme);
 }
 
 

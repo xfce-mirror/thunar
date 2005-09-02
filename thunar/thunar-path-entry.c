@@ -448,7 +448,7 @@ thunar_path_entry_expose_event (GtkWidget      *widget,
       if (path_entry->current_file == NULL)
         icon = gtk_widget_render_icon (widget, GTK_STOCK_DIALOG_ERROR, GTK_ICON_SIZE_SMALL_TOOLBAR, "path_entry");
       else
-        icon = thunar_file_load_icon (path_entry->current_file, path_entry->icon_factory, icon_size);
+        icon = thunar_file_load_icon (path_entry->current_file, THUNAR_FILE_ICON_STATE_DEFAULT, path_entry->icon_factory, icon_size);
 
       if (G_LIKELY (icon != NULL))
         {
@@ -534,7 +534,7 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
 
       /* setup the drag icon (atleast 24px) */
       gtk_widget_style_get (widget, "icon-size", &size, NULL);
-      icon = thunar_file_load_icon (path_entry->current_file, path_entry->icon_factory, MAX (size, 24));
+      icon = thunar_file_load_icon (path_entry->current_file, THUNAR_FILE_ICON_STATE_DEFAULT, path_entry->icon_factory, MAX (size, 24));
       if (G_LIKELY (icon != NULL))
         {
           gtk_drag_set_icon_pixbuf (context, icon, 0, 0);
