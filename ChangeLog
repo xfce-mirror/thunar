@@ -1,5 +1,16 @@
 2005-09-02	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-icon-factory.c(thunar_icon_factory_lookup_icon): Add
+	  support to load icons from absolute paths.
+	* thunar/thunar-local-file.c(thunar_local_file_get_icon_name): Allow the
+	  VFS layer to pass absolute paths for the file icon hint. This is
+	  required for some .desktop files, that specify absolute icon paths
+	  instead of themed icon names.
+	* thunar/thunar-location-buttons.c(thunar_location_buttons_make_button):
+	  Don't permit location buttons to grab the focus.
+
+2005-09-02	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-standard-view.c: Be sure to override the default
 	  drag-data-delete handler of ExoIconView/GtkTreeView.
 	* thunar/thunar-icon-view.c(thunar_icon_view_get_path_at_pos): The

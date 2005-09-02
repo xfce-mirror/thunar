@@ -525,7 +525,7 @@ thunar_local_file_get_icon_name (ThunarFile         *file,
 
   /* check if the VFS info specifies an icon hint */
   icon_name = thunar_vfs_info_get_hint (local_file->info, THUNAR_VFS_FILE_HINT_ICON);
-  if (G_UNLIKELY (icon_name != NULL && gtk_icon_theme_has_icon (icon_theme, icon_name)))
+  if (G_UNLIKELY (icon_name != NULL && (g_path_is_absolute (icon_name) || gtk_icon_theme_has_icon (icon_theme, icon_name))))
     return icon_name;
 
   /* default is the mime type icon */

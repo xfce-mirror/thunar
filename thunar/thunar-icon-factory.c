@@ -382,13 +382,23 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
   /* check if we already have a cached version of the icon */
   if (!g_hash_table_lookup_extended (factory->icon_cache, &lookup_key, NULL, (gpointer) &value))
     {
-      /* check if the icon theme contains an icon of that name */
-      icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, 0);
-      if (G_LIKELY (icon_info != NULL))
+#if GTK_CHECK_VERSION(2,6,0)
+      if (G_UNLIKELY (g_path_is_absolute (name)))
         {
-          /* try to load the icon returned from the icon theme */
-          pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
-          gtk_icon_info_free (icon_info);
+          /* try to load the icon directly (scaling on-demand) */
+          pixbuf = gdk_pixbuf_new_from_file_at_scale (name, size, size, TRUE, NULL);
+        }
+      else
+#endif
+        {
+          /* check if the icon theme contains an icon of that name */
+          icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, 0);
+          if (G_LIKELY (icon_info != NULL))
+            {
+              /* try to load the icon returned from the icon theme */
+              pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
+              gtk_icon_info_free (icon_info);
+            }
         }
 
       /* use fallback icon if no pixbuf could be loaded */

@@ -786,6 +786,9 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
   /* allocate the button */
   button = gtk_toggle_button_new ();
 
+  /* don't allow location buttons to grab the focus */
+  GTK_WIDGET_UNSET_FLAGS (button, GTK_CAN_FOCUS);
+
   /* setup drag support for the button */
   gtk_drag_source_set (GTK_WIDGET (button), GDK_BUTTON1_MASK, drag_targets,
                        G_N_ELEMENTS (drag_targets), GDK_ACTION_LINK);
