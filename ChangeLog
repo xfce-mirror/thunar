@@ -1,5 +1,13 @@
 2005-09-02	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c(thunar_standard_view_get_dest_actions):
+	  Set the drop-file icon renderer property only if we have a valid
+	  drag action.
+	* thunar/thunar-local-file.c(thunar_local_file_accepts_uri_drop): Do
+	  not accept directory drops if the directory isn't writable.
+
+2005-09-02	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-icon-renderer.c(thunar_icon_renderer_render): Prelight
 	  drop destination icons.
 

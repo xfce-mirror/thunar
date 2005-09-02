@@ -294,7 +294,7 @@ thunar_local_file_accepts_uri_drop (ThunarFile         *file,
   if (G_LIKELY (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE))
     {
       /* check if we have a writable directory here */
-      if (G_LIKELY (local_file->info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY))
+      if (local_file->info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY && thunar_file_is_writable (file))
         return GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK;
 
       /* check if we can execute the file */

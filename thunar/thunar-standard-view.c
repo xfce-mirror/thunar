@@ -958,7 +958,7 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
   /* setup the drop-file for the icon renderer, so the user
    * gets good visual feedback for the drop target.
    */
-  g_object_set (G_OBJECT (standard_view->icon_renderer), "drop-file", file, NULL);
+  g_object_set (G_OBJECT (standard_view->icon_renderer), "drop-file", (action != 0) ? file : NULL, NULL);
 
   /* do the view highlighting */
   if (standard_view->priv->drop_highlight != (path == NULL && action != 0))
