@@ -331,6 +331,7 @@ cache_node_lookup_suffix (const gchar *buffer,
   gunichar  match_char;
   gint      min, max, mid;
 
+next:
   character = g_utf8_get_char (suffix);
   if (ignore_case)
     character = g_unichar_tolower (character);
@@ -354,9 +355,20 @@ cache_node_lookup_suffix (const gchar *buffer,
             }
           else
             {
-              return cache_node_lookup_suffix (buffer, CACHE_READ32 (buffer, offset + 16 * mid + 8),
-                                               CACHE_READ32 (buffer, offset + 16 * mid + 12),
-                                               suffix, ignore_case);
+              /* We emulate a recursive call to cache_node_lookup_suffix()
+               * here. This optimization works because the algorithm is
+               * tail-recursive. The goto is not necessarily nice, but it
+               * works for our purpose and doesn't decrease readability.
+               * If we'd use a recursive call here, the code would look
+               * like this:
+               *
+               * return cache_node_lookup_suffix (buffer, CACHE_READ32 (buffer, offset + 16 * mid + 8),
+               *                                  CACHE_READ32 (buffer, offset + 16 * mid + 12),
+               *                                  suffix, ignore_case);
+               */
+              n_entries = CACHE_READ32 (buffer, offset + 16 * mid + 8);
+              offset = CACHE_READ32 (buffer, offset + 16 * mid + 12);
+              goto next;
             }
         }
     }
@@ -450,7 +462,7 @@ thunar_vfs_mime_cache_lookup_parents (ThunarVfsMimeProvider *provider,
         n_parents = CACHE_READ32 (buffer, parents_offset);
 
         for (l = 0; l < n_parents && j < max_parents; ++l, ++j)
-          parents[j] = (gchar *) (buffer + parents_offset + 4 + 4 * l);
+          parents[j] = (gchar *) (buffer + CACHE_READ32 (buffer, parents_offset + 4 + 4 * l));
       }
 
   return j;

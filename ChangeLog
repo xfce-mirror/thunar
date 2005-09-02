@@ -1,5 +1,19 @@
 2005-09-02	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c: Avoid going through the selection
+	  changed handling whenever the number of files in a model changes,
+	  as the only thing that needs updating here is the statusbar text.
+	* thunar-vfs/thunar-vfs-mime-cache.c
+	  (thunar_vfs_mime_cache_lookup_parents): Fix the offset from which the
+	  parent mime type name is read.
+	* thunar-vfs/thunar-vfs-mime-cache.c(cache_node_lookup_suffix):
+	  Optimize the tail-recursive suffix lookup.
+	* thunar-vfs/thunar-vfs-mime-database.c
+	  (thunar_vfs_mime_database_get_info_for_file): Use fast stack memory
+	  for the extattr and content lookups.
+
+2005-09-02	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-icon-factory.c(thunar_icon_factory_lookup_icon): Add
 	  support to load icons from absolute paths.
 	* thunar/thunar-local-file.c(thunar_local_file_get_icon_name): Allow the

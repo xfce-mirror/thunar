@@ -997,14 +997,13 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
         {
           if (fstat (fd, &stat) == 0)
             {
-              buffer = g_new (gchar, stat.st_size + 1);
+              buffer = g_newa (gchar, stat.st_size + 1);
               nbytes = read (fd, buffer, stat.st_size);
               if (G_LIKELY (nbytes >= 3))
                 {
                   buffer[nbytes] = '\0';
                   info = thunar_vfs_mime_database_get_info (database, buffer);
                 }
-              g_free (buffer);
             }
           close (fd);
         }
@@ -1022,28 +1021,26 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
           nbytes = extattr_get_fd (fd, EXTATTR_NAMESPACE_USER, "mime_type", NULL, 0);
           if (G_UNLIKELY (nbytes >= 3))
             {
-              buffer = g_new (gchar, nbytes + 1);
+              buffer = g_newa (gchar, nbytes + 1);
               nbytes = extattr_get_fd (fd, EXTATTR_NAMESPACE_USER, "mime_type", buffer, nbytes);
               if (G_LIKELY (nbytes >= 3))
                 {
                   buffer[nbytes] = '\0';
                   info = thunar_vfs_mime_database_get_info (database, buffer);
                 }
-              g_free (buffer);
             }
 #elif defined(HAVE_FGETXATTR)
           /* check for valid mime type stored in the extattr (Linux) */
           nbytes = fgetxattr (fd, "user.mime_type", NULL, 0);
           if (G_UNLIKELY (nbytes >= 3))
             {
-              buffer = g_new (gchar, nbytes + 1);
+              buffer = g_newa (gchar, nbytes + 1);
               nbytes = fgetxattr (fd, "user.mime_type", buffer, nbytes);
               if (G_LIKELY (nbytes >= 3))
                 {
                   buffer[nbytes] = '\0';
                   info = thunar_vfs_mime_database_get_info (database, buffer);
                 }
-              g_free (buffer);
             }
 #endif
 
@@ -1052,7 +1049,7 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
             {
               /* read the beginning from the file */
               buflen = MIN (stat.st_size, database->max_buffer_extents);
-              buffer = g_new (gchar, buflen);
+              buffer = g_newa (gchar, buflen);
               nbytes = read (fd, buffer, buflen);
 
               /* try to determine a type from the buffer contents */
@@ -1072,9 +1069,6 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
 
                   g_mutex_unlock (database->lock);
                 }
-
-              /* cleanup */
-              g_free (buffer);
             }
 
           /* cleanup */
