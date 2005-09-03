@@ -188,8 +188,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
       /* check if the file is executable (for security reasons
        * we only allow execution of well known file types).
        */
-      if (G_LIKELY (info->type == THUNAR_VFS_FILE_TYPE_REGULAR)
-          && (info->mode & 0444) != 0 && g_access (path, X_OK) == 0)
+      if ((info->mode & 0444) != 0 && g_access (path, X_OK) == 0)
         {
           mime_infos = thunar_vfs_mime_database_get_infos_for_info (database, info->mime_info);
           for (lp = mime_infos; lp != NULL; lp = lp->next)
@@ -204,6 +203,44 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
             }
           thunar_vfs_mime_info_list_free (mime_infos);
         }
+
+      /* check whether we have a .desktop file here */
+      if (G_UNLIKELY (strcmp (info->mime_info->name, "application/x-desktop") == 0))
+        {
+          /* try to query the hints from the .desktop file */
+          rc = xfce_rc_simple_open (path, TRUE);
+          if (G_LIKELY (rc != NULL))
+            {
+              /* we're only interested in the desktop data */
+              xfce_rc_set_group (rc, "Desktop Entry");
+
+              /* allocate the hints for the VFS info */
+              info->hints = g_new0 (gchar *, THUNAR_VFS_FILE_N_HINTS);
+
+              /* check if we have a valid icon info */
+              str = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
+              if (G_LIKELY (str != NULL))
+                info->hints[THUNAR_VFS_FILE_HINT_ICON] = g_strdup (str);
+
+              /* check if we have a valid name info */
+              str = xfce_rc_read_entry (rc, "Name", NULL);
+              if (G_LIKELY (str != NULL))
+                info->hints[THUNAR_VFS_FILE_HINT_NAME] = g_strdup (str);
+
+              /* check if the desktop file refers to an application
+               * and has a non-NULL Exec field set.
+               */
+              str = xfce_rc_read_entry_untranslated (rc, "Type", "Application");
+              if (G_LIKELY (exo_str_is_equal (str, "Application"))
+                  && xfce_rc_read_entry (rc, "Exec", NULL) != NULL)
+                {
+                  info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
+                }
+
+              /* close the file */
+              xfce_rc_close (rc);
+            }
+        }
       break;
 
     default:
@@ -211,44 +248,6 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
       break;
     }
   exo_object_unref (EXO_OBJECT (database));
-
-  /* check whether we have a .desktop file here */
-  if (G_UNLIKELY (strcmp (info->mime_info->name, "application/x-desktop") == 0))
-    {
-      /* try to query the hints from the .desktop file */
-      rc = xfce_rc_simple_open (path, TRUE);
-      if (G_LIKELY (rc != NULL))
-        {
-          /* we're only interested in the desktop data */
-          xfce_rc_set_group (rc, "Desktop Entry");
-
-          /* allocate the hints for the VFS info */
-          info->hints = g_new0 (gchar *, THUNAR_VFS_FILE_N_HINTS);
-
-          /* check if we have a valid icon info */
-          str = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
-          if (G_LIKELY (str != NULL))
-            info->hints[THUNAR_VFS_FILE_HINT_ICON] = g_strdup (str);
-
-          /* check if we have a valid name info */
-          str = xfce_rc_read_entry (rc, "Name", NULL);
-          if (G_LIKELY (str != NULL))
-            info->hints[THUNAR_VFS_FILE_HINT_NAME] = g_strdup (str);
-
-          /* check if the desktop file refers to an application
-           * and has a non-NULL Exec field set.
-           */
-          str = xfce_rc_read_entry_untranslated (rc, "Type", "Application");
-          if (G_LIKELY (exo_str_is_equal (str, "Application"))
-              && xfce_rc_read_entry (rc, "Exec", NULL) != NULL)
-            {
-              info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
-            }
-
-          /* close the file */
-          xfce_rc_close (rc);
-        }
-    }
 
   return info;
 }

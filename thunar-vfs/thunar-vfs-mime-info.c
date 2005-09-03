@@ -251,13 +251,23 @@ thunar_vfs_mime_info_get_name (const ThunarVfsMimeInfo *info)
  * #ThunarVfsMimeInfo instance refers to "text/plain", invoking
  * this method will return "text".
  *
+ * The caller is responsible to free the returned string
+ * using g_free() when no longer needed.
+ *
  * Return value: the media portion of the MIME type.
  **/
-const gchar*
+gchar*
 thunar_vfs_mime_info_get_media (const ThunarVfsMimeInfo *info)
 {
+  const gchar *p;
+
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
-  return info->media;
+
+  /* lookup the slash character */
+  for (p = info->name; *p != '/' && *p != '\0'; ++p)
+    ;
+
+  return g_strndup (info->name, p - info->name);
 }
 
 
@@ -270,13 +280,27 @@ thunar_vfs_mime_info_get_media (const ThunarVfsMimeInfo *info)
  * refers to "application/octect-stream", this method will
  * return "octect-stream".
  *
+ * The caller is responsible to free the returned string
+ * using g_free() when no longer needed.
+ *
  * Return value: the subtype portion of @info.
  **/
-const gchar*
+gchar*
 thunar_vfs_mime_info_get_subtype (const ThunarVfsMimeInfo *info)
 {
+  const gchar *p;
+
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
-  return info->subtype;
+
+  /* lookup the slash character */
+  for (p = info->name; *p != '/' && *p != '\0'; ++p)
+    ;
+
+  /* skip the slash character */
+  if (G_LIKELY (*p == '/'))
+    ++p;
+
+  return g_strdup (p);
 }
 
 
@@ -346,7 +370,10 @@ const gchar*
 thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
                                        GtkIconTheme      *icon_theme)
 {
-  gsize n;
+  const gchar *subtype;
+  const gchar *p;
+  gchar       *media;
+  gsize        n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
   g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
@@ -375,13 +402,20 @@ thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
   if (!info->icon_name_static)
     g_free (info->icon_name);
 
+  /* determine media and subtype */
+  for (p = info->name + 1; *p != '/' && *p != '\0'; ++p);
+  media = g_newa (gchar, p - info->name + 1);
+  memcpy (media, info->name, p - info->name);
+  media[p - info->name] = '\0';
+  subtype = G_LIKELY (*p == '/') ? p + 1 : p;
+
   /* start out with the full name (assuming a non-static icon_name) */
-  info->icon_name = g_strdup_printf ("gnome-mime-%s-%s", info->media, info->subtype);
+  info->icon_name = g_strdup_printf ("gnome-mime-%s-%s", media, subtype);
   info->icon_name_static = FALSE;
   if (!gtk_icon_theme_has_icon (icon_theme, info->icon_name))
     {
       /* only the media portion */
-      info->icon_name[11 + ((info->subtype - 1) - info->name)] = '\0';
+      info->icon_name[11 + ((subtype - 1) - info->name)] = '\0';
       if (!gtk_icon_theme_has_icon (icon_theme, info->icon_name))
         {
           /* if we get here, we'll use a static icon name */

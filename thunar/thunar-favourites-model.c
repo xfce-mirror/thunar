@@ -491,6 +491,7 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
         }
       if (G_LIKELY (icon != NULL))
         g_value_take_object (value, icon);
+      g_object_unref (G_OBJECT (icon_factory));
       break;
 
     case THUNAR_FAVOURITES_MODEL_COLUMN_MUTABLE:

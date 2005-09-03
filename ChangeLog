@@ -1,3 +1,28 @@
+2005-09-03	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs.symbols, thunar-vfs/thunar-vfs-mime-info.{c,h},
+	  thunar-vfs/thunar-vfs-mime-database.c: Determine media and subtype of
+	  a ThunarVfsMimeInfo on-demand.
+	* thunar-vfs/thunar-vfs-info.c(thunar_vfs_info_new_for_uri): Move the
+	  .desktop file handling to the regular file case.
+	* thunar-vfs/thunar-vfs-thumb.{c,h}, thunar-vfs/thunar-vfs.symbols,
+	  thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs.h: Import the
+	  ThunarVfsThumbFactory class, which implements the freedesktop
+	  thumbnail management specification.
+	* thunarx/thunarx-gdk-pixbuf-extensions.{c,h}: Add new helper function
+	  thunarx_gdk_pixbuf_frame(), which is used to embed an arbitrary image
+	  into a frame (e.g. for thumbnails).
+	* thunar/thunar-favourites-model.c, thunar/thunar-file.c,
+	  thunar/thunar-icon-factory.{c,h}, thunar/thunar-icon-renderer.c,
+	  thunar/thunar-list-model.c, thunar/thunar-location-buttons.c,
+	  thunar/thunar-window.c: Make sure we don't leak the default icon
+	  factory instance on exit.
+	* thunar/Makefile.am, thunar/thunar-thumbnail-frame.{h,png}: Import
+	  the thumbnail frame image used by Nautilus.
+	* thunar/thunar-icon-factory.{c,h}: Add thumbnail loading support to
+	  the icon factory and reorganize the internals a bit.
+	* thunar/thunar-file.c: Load thumbnails for regular if possible.
+
 2005-09-02	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-icon-renderer.c(thunar_icon_renderer_render): Don't

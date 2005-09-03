@@ -89,6 +89,8 @@ Thunar_SOURCES =							\
 	thunar-statusbar.h						\
 	thunar-text-renderer.c						\
 	thunar-text-renderer.h						\
+	thunar-thumbnail-frame.c					\
+	thunar-thumbnail-frame.h					\
 	thunar-trash-file.c						\
 	thunar-trash-file.h						\
 	thunar-trash-folder.c						\
@@ -137,6 +139,7 @@ DISTCLEANFILES =							\
 	thunar-fallback-icon.c						\
 	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
+	thunar-thumbnail-frame.h					\
 	thunar-window-ui.h
 
 BUILT_SOURCES =								\
@@ -144,10 +147,14 @@ BUILT_SOURCES =								\
 	thunar-fallback-icon.c						\
 	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
+	thunar-thumbnail-frame.c					\
 	thunar-window-ui.h
 
 thunar-fallback-icon.c: $(srcdir)/thunar-fallback-icon.png Makefile
 	(echo "#include <thunar/thunar-fallback-icon.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_fallback_icon $(srcdir)/thunar-fallback-icon.png) > thunar-fallback-icon.c
+
+thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
+	(echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
 
 thunar-icon-view-ui.h: Makefile $(srcdir)/thunar-icon-view-ui.xml
 	exo-csource --static --name=thunar_icon_view_ui $(srcdir)/thunar-icon-view-ui.xml > thunar-icon-view-ui.h

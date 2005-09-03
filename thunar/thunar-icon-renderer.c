@@ -341,7 +341,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   icon_factory = thunar_icon_factory_get_default ();
   icon = thunar_file_load_icon (icon_renderer->file, icon_state, icon_factory, icon_renderer->size);
   if (G_UNLIKELY (icon == NULL))
-    return;
+    {
+      g_object_unref (G_OBJECT (icon_factory));
+      return;
+    }
 
   /* pre-light the item if we're dragging about it */
   if (G_UNLIKELY (icon_state == THUNAR_FILE_ICON_STATE_DROP))
@@ -439,6 +442,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
 
       g_list_free (emblems);
     }
+
+  /* release our reference on the icon factory */
+  g_object_unref (G_OBJECT (icon_factory));
 }
 
 

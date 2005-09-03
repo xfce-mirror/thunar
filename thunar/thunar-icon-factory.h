@@ -20,7 +20,7 @@
 #ifndef __THUNAR_ICON_FACTORY_H__
 #define __THUNAR_ICON_FACTORY_H__
 
-#include <gtk/gtk.h>
+#include <thunar-vfs/thunar-vfs.h>
 
 G_BEGIN_DECLS;
 
@@ -33,6 +33,13 @@ typedef struct _ThunarIconFactory      ThunarIconFactory;
 #define THUNAR_IS_ICON_FACTORY(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ICON_FACTORY))
 #define THUNAR_IS_ICON_FACTORY_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_ICON_FACTORY))
 #define THUNAR_ICON_FACTORY_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_FACTORY, ThunarIconFactoryClass))
+
+/**
+ * THUNAR_THUMBNAIL_SIZE:
+ * The icon size which is used for loading and storing
+ * thumbnails in Thunar.
+ **/
+#define THUNAR_THUMBNAIL_SIZE (128)
 
 /**
  * THUNAR_EMBLEM_MAX_ATTACH_POINTS:
@@ -51,18 +58,26 @@ typedef struct
 	GdkPoint points[THUNAR_EMBLEM_MAX_ATTACH_POINTS];
 } ThunarEmblemAttachPoints;
 
-GType              thunar_icon_factory_get_type           (void) G_GNUC_CONST;
+GType                  thunar_icon_factory_get_type           (void) G_GNUC_CONST;
 
-ThunarIconFactory *thunar_icon_factory_get_default        (void);
-ThunarIconFactory *thunar_icon_factory_get_for_icon_theme (GtkIconTheme             *icon_theme);
+ThunarIconFactory     *thunar_icon_factory_get_default        (void);
+ThunarIconFactory     *thunar_icon_factory_get_for_icon_theme (GtkIconTheme             *icon_theme);
 
-GtkIconTheme      *thunar_icon_factory_get_icon_theme     (ThunarIconFactory        *factory);
+GtkIconTheme          *thunar_icon_factory_get_icon_theme     (const ThunarIconFactory  *factory);
 
-GdkPixbuf         *thunar_icon_factory_load_icon          (ThunarIconFactory        *factory,
-                                                           const gchar              *name,
-                                                           gint                      size,
-                                                           ThunarEmblemAttachPoints *attach_points,
-                                                           gboolean                  wants_default);
+ThunarVfsThumbFactory *thunar_icon_factory_get_thumb_factory  (const ThunarIconFactory  *factory);
+
+GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory        *factory,
+                                                               const gchar              *name,
+                                                               gint                      size,
+                                                               ThunarEmblemAttachPoints *attach_points,
+                                                               gboolean                  wants_default);
+
+GdkPixbuf             *thunar_icon_factory_load_file_icon     (ThunarIconFactory        *factory,
+                                                               const gchar              *path,
+                                                               gint                      size,
+                                                               ThunarVfsFileTime         mtime,
+                                                               ThunarVfsURI             *uri);
 
 G_END_DECLS;
 

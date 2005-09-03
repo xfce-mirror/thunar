@@ -92,6 +92,8 @@ struct _ThunarWindow
 {
   GtkWindow __parent__;
 
+  ThunarIconFactory *icon_factory;
+
   GtkActionGroup  *action_group;
   GtkUIManager    *ui_manager;
 
@@ -185,6 +187,8 @@ thunar_window_init (ThunarWindow *window)
   GtkWidget      *menubar;
   GtkWidget      *box;
   GSList         *group;
+
+  window->icon_factory = thunar_icon_factory_get_default ();
 
   window->action_group = gtk_action_group_new ("thunar-window");
   gtk_action_group_set_translation_domain (window->action_group, GETTEXT_PACKAGE);
@@ -309,6 +313,7 @@ thunar_window_finalize (GObject *object)
 
   g_object_unref (G_OBJECT (window->current_directory));
   g_object_unref (G_OBJECT (window->action_group));
+  g_object_unref (G_OBJECT (window->icon_factory));
   g_object_unref (G_OBJECT (window->ui_manager));
 
   (*G_OBJECT_CLASS (thunar_window_parent_class)->finalize) (object);
@@ -694,10 +699,9 @@ thunar_window_set_current_directory (ThunarWindow *window,
   if (G_LIKELY (current_directory != NULL))
     {
       /* set window title and icon */
-      icon = thunar_file_load_icon (current_directory, THUNAR_FILE_ICON_STATE_DEFAULT, thunar_icon_factory_get_default (), 48);
+      icon = thunar_file_load_icon (current_directory, THUNAR_FILE_ICON_STATE_DEFAULT, window->icon_factory, 48);
       gtk_window_set_icon (GTK_WINDOW (window), icon);
-      gtk_window_set_title (GTK_WINDOW (window),
-                            thunar_file_get_special_name (current_directory));
+      gtk_window_set_title (GTK_WINDOW (window), thunar_file_get_special_name (current_directory));
       g_object_unref (G_OBJECT (icon));
     }
 

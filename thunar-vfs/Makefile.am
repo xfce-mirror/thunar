@@ -17,6 +17,7 @@ libthunar_vfs_headers =							\
 	thunar-vfs-mime-database.h					\
 	thunar-vfs-mime-info.h						\
 	thunar-vfs-monitor.h						\
+	thunar-vfs-thumb.h						\
 	thunar-vfs-trash.h						\
 	thunar-vfs-user.h						\
 	thunar-vfs-util.h						\
@@ -63,6 +64,7 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-monitor.c						\
 	thunar-vfs-sysdep.c						\
 	thunar-vfs-sysdep.h						\
+	thunar-vfs-thumb.c						\
 	thunar-vfs-transfer-job.c					\
 	thunar-vfs-transfer-job.h					\
 	thunar-vfs-trash.c						\
@@ -79,7 +81,8 @@ libthunar_vfs_1_la_SOURCES =						\
 libthunar_vfs_1_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
-	$(LIBFAM_CFLAGS)
+	$(LIBFAM_CFLAGS)						\
+	$(LIBPNG_CFLAGS)
 
 libthunar_vfs_1_la_LDFLAGS =						\
 	-export-dynamic							\
@@ -89,7 +92,8 @@ libthunar_vfs_1_la_LDFLAGS =						\
 libthunar_vfs_1_la_LIBADD =						\
 	$(EXO_LIBS)							\
 	$(GTHREADS_LIBS)						\
-	$(LIBFAM_LIBS)
+	$(LIBFAM_LIBS)							\
+	$(LIBPNG_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunar-vfs-1.pc

@@ -17,25 +17,15 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __THUNARX_GDK_PIXBUF_EXTENSIONS_H__
-#define __THUNARX_GDK_PIXBUF_EXTENSIONS_H__
+#ifndef __THUNAR_THUMBNAIL_FRAME_H__
+#define __THUNAR_THUMBNAIL_FRAME_H__
 
-#include <gdk/gdk.h>
+#include <glib.h>
 
 G_BEGIN_DECLS;
 
-GdkPixbuf *thunarx_gdk_pixbuf_colorize  (const GdkPixbuf *src,
-                                         const GdkColor  *color);
-
-GdkPixbuf *thunarx_gdk_pixbuf_frame     (GdkPixbuf       *src,
-                                         GdkPixbuf       *frame,
-                                         gint             left_offset,
-                                         gint             top_offset,
-                                         gint             right_offset,
-                                         gint             bottom_offset);
-
-GdkPixbuf *thunarx_gdk_pixbuf_spotlight (const GdkPixbuf *src);
+extern const guint8 thunar_thumbnail_frame[];
 
 G_END_DECLS;
 
-#endif /* !__THUNARX_GDK_PIXBUF_EXTENSIONS_H__ */
+#endif /* !__THUNAR_THUMBNAIL_FRAME_H__ */

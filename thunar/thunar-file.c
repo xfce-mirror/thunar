@@ -35,6 +35,24 @@
 #include <thunar/thunar-trash-folder.h>
 
 
+/* the thumbnailing state of a given file (this
+ * state is stored in the unused bits of the
+ * GtkObject flags).
+ */
+typedef enum
+{
+  THUNAR_FILE_THUMB_STATE_MASK    = 0xc0000000,
+  THUNAR_FILE_THUMB_STATE_UNKNOWN = 0x00000000,
+  THUNAR_FILE_THUMB_STATE_NONE    = 0x40000000,
+  THUNAR_FILE_THUMB_STATE_LOADED  = 0x80000000,
+  THUNAR_FILE_THUMB_STATE_LOADING = 0xc0000000,
+} ThunarFileThumbState;
+
+#define THUNAR_FILE_GET_THUMB_STATE(file)        (GTK_OBJECT ((file))->flags & THUNAR_FILE_THUMB_STATE_MASK)
+#define THUNAR_FILE_SET_THUMB_STATE(file, state) (GTK_OBJECT ((file))->flags = (GTK_OBJECT ((file))->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state))
+
+
+
 enum
 {
   CHANGED,
@@ -61,6 +79,7 @@ static ThunarFolder      *thunar_file_real_open_as_folder      (ThunarFile      
 static const gchar       *thunar_file_real_get_special_name    (ThunarFile             *file);
 static gboolean           thunar_file_real_is_readable         (ThunarFile             *file);
 static gboolean           thunar_file_real_is_writable         (ThunarFile             *file);
+static void               thunar_file_real_changed             (ThunarFile             *file);
 static ThunarFile        *thunar_file_new_internal             (ThunarVfsURI           *uri,
                                                                 GError                **error);
 static gboolean           thunar_file_denies_access_permission (ThunarFile             *file,
@@ -74,6 +93,7 @@ static void               thunar_file_destroyed                (gpointer        
 
 static GObjectClass *thunar_file_parent_class;
 static GHashTable   *file_cache;
+static GQuark        thunar_file_thumb_path_quark;
 static guint         file_signals[LAST_SIGNAL];
 
 
@@ -156,6 +176,10 @@ thunar_file_class_init (ThunarFileClass *klass)
     }
 #endif
 
+  /* allocate the thunar-file-thumb-path quark */
+  thunar_file_thumb_path_quark = g_quark_from_static_string ("thunar-file-thumb-path");
+
+  /* determine the parent class */
   thunar_file_parent_class = g_type_class_peek_parent (klass);
 
 #ifndef G_DISABLE_CHECKS
@@ -182,7 +206,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->is_writable = thunar_file_real_is_writable;
   klass->get_emblem_names = (gpointer) exo_noop_null;
   klass->reload = (gpointer) exo_noop;
-  klass->changed = (gpointer) exo_noop;
+  klass->changed = thunar_file_real_changed;
 
   /**
    * ThunarFile::changed:
@@ -286,7 +310,7 @@ thunar_file_real_open_as_folder (ThunarFile *file,
 static const gchar*
 thunar_file_real_get_special_name (ThunarFile *file)
 {
-  return THUNAR_FILE_GET_CLASS (file)->get_display_name (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_display_name) (file);
 }
 
 
@@ -309,6 +333,17 @@ thunar_file_real_is_writable (ThunarFile *file)
                                                 THUNAR_VFS_FILE_MODE_USR_WRITE,
                                                 THUNAR_VFS_FILE_MODE_GRP_WRITE,
                                                 THUNAR_VFS_FILE_MODE_OTH_WRITE);
+}
+
+
+
+static void
+thunar_file_real_changed (ThunarFile *file)
+{
+  /* reset the thumbnail state, so the next thunar_file_load_icon()
+   * invokation will recheck the thumbnail.
+   */
+  THUNAR_FILE_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
 }
 
 
@@ -469,6 +504,7 @@ _thunar_file_cache_insert (ThunarFile *file)
 }
 
 
+
 /**
  * _thunar_file_cache_rename:
  * @file : a #ThunarFile.
@@ -561,7 +597,7 @@ gboolean
 thunar_file_has_parent (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return THUNAR_FILE_GET_CLASS (file)->has_parent (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->has_parent) (file);
 }
 
 
@@ -589,7 +625,7 @@ thunar_file_get_parent (ThunarFile *file,
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_parent (file, error);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_parent) (file, error);
 }
 
 
@@ -672,7 +708,7 @@ thunar_file_open_as_folder (ThunarFile *file,
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
-  return THUNAR_FILE_GET_CLASS (file)->open_as_folder (file, error);
+  return (*THUNAR_FILE_GET_CLASS (file)->open_as_folder) (file, error);
 }
 
 
@@ -766,7 +802,7 @@ ThunarVfsURI*
 thunar_file_get_uri (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_uri (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_uri) (file);
 }
 
 
@@ -789,7 +825,7 @@ ThunarVfsMimeInfo*
 thunar_file_get_mime_info (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_mime_info (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_mime_info) (file);
 }
 
 
@@ -807,7 +843,7 @@ const gchar*
 thunar_file_get_display_name (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_display_name (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_display_name) (file);
 }
 
 
@@ -826,7 +862,7 @@ const gchar*
 thunar_file_get_special_name (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_special_name (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_special_name) (file);
 }
 
 
@@ -843,7 +879,7 @@ ThunarVfsFileType
 thunar_file_get_kind (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), THUNAR_VFS_FILE_TYPE_UNKNOWN);
-  return THUNAR_FILE_GET_CLASS (file)->get_kind (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_kind) (file);
 }
 
 
@@ -876,7 +912,7 @@ thunar_file_get_date (ThunarFile        *file,
                      || date_type == THUNAR_FILE_DATE_MODIFIED, FALSE);
   g_return_val_if_fail (date_return != NULL, FALSE);
 
-  return THUNAR_FILE_GET_CLASS (file)->get_date (file, date_type, date_return);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_date) (file, date_type, date_return);
 }
 
 
@@ -1276,13 +1312,92 @@ thunar_file_load_icon (ThunarFile         *file,
                        ThunarIconFactory  *icon_factory,
                        gint                size)
 {
-  GtkIconTheme *icon_theme;
-  const gchar  *icon_name;
+  ThunarVfsThumbFactory *thumb_factory;
+  ThunarFileThumbState   state;
+  ThunarVfsFileTime      mtime;
+  ThunarVfsMimeInfo     *mime_info;
+  ThunarVfsURI          *uri;
+  GtkIconTheme          *icon_theme;
+  const gchar           *icon_name;
+  GdkPixbuf             *icon;
+  gchar                 *path;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  /* lookup the icon name for the icon in the given state */
+  /* determine the icon theme associated with the factory */
   icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
+
+  /* check if we can display a thumbnail */
+  if (thunar_file_get_kind (file) == THUNAR_VFS_FILE_TYPE_REGULAR
+      && thunar_file_get_date (file, THUNAR_FILE_DATE_MODIFIED, &mtime))
+    {
+      /* determine the URI */
+      uri = thunar_file_get_uri (file);
+
+      /* grab the thumbnail state */
+      state = THUNAR_FILE_GET_THUMB_STATE (file);
+
+      /* check if we haven't yet determined the thumbnail state */
+      if (state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
+        {
+          /* try to load an existing thumbnail for the file */
+          thumb_factory = thunar_icon_factory_get_thumb_factory (icon_factory);
+          path = thunar_vfs_thumb_factory_lookup_thumbnail (thumb_factory, uri, mtime);
+
+          /* check if we can generate a thumbnail if there's no existing one */
+          if (G_UNLIKELY (path == NULL))
+            {
+              mime_info = thunar_file_get_mime_info (file);
+              if (G_LIKELY (mime_info != NULL))
+                {
+#if 0 /* FIXME: not yet */
+                  if (thunar_vfs_thumb_factory_can_thumbnail (thumb_factory, uri, mime_info, mtime))
+                    state = THUNAR_FILE_THUMB_STATE_LOADING;
+#endif
+                  thunar_vfs_mime_info_unref (mime_info);
+                }
+            }
+
+          if (G_LIKELY (path != NULL))
+            {
+              state = THUNAR_FILE_THUMB_STATE_LOADED;
+              g_object_set_qdata_full (G_OBJECT (file), thunar_file_thumb_path_quark, path, g_free);
+            }
+          else if (state != THUNAR_FILE_THUMB_STATE_LOADING)
+            {
+              state = THUNAR_FILE_THUMB_STATE_NONE;
+            }
+
+          /* apply the new state */
+          THUNAR_FILE_SET_THUMB_STATE (file, state);
+        }
+
+      /* check if we have a thumbnail path loaded */
+      if (state == THUNAR_FILE_THUMB_STATE_LOADED)
+        {
+          path = g_object_get_qdata (G_OBJECT (file), thunar_file_thumb_path_quark);
+          if (G_LIKELY (path != NULL))
+            {
+              icon = thunar_icon_factory_load_file_icon (icon_factory, path, size, mtime, uri);
+              if (G_LIKELY (icon != NULL))
+                return icon;
+            }
+        }
+
+      /* check if we are currently loading a thumbnail */
+      if (G_UNLIKELY (state == THUNAR_FILE_THUMB_STATE_LOADING))
+        {
+          /* check if the icon theme supports the loading icon */
+          if (gtk_icon_theme_has_icon (icon_theme, "gnome-fs-loading-icon"))
+            {
+              icon = thunar_icon_factory_load_icon (icon_factory, "gnome-fs-loading-icon", size, NULL, FALSE);
+              if (G_LIKELY (icon != NULL))
+                return icon;
+            }
+        }
+    }
+
+  /* lookup the icon name for the icon in the given state */
   icon_name = (*THUNAR_FILE_GET_CLASS (file)->get_icon_name) (file, icon_state, icon_theme);
 
   /* load the icon of the given name */
@@ -1316,7 +1431,7 @@ thunar_file_watch (ThunarFile *file)
   if (++file->watch_count == 1 && THUNAR_FILE_GET_CLASS (file)->watch != NULL)
     {
       g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->unwatch != NULL);
-      THUNAR_FILE_GET_CLASS (file)->watch (file);
+      (*THUNAR_FILE_GET_CLASS (file)->watch) (file);
     }
 }
 
@@ -1338,7 +1453,7 @@ thunar_file_unwatch (ThunarFile *file)
   if (--file->watch_count == 0 && THUNAR_FILE_GET_CLASS (file)->unwatch != NULL)
     {
       g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->watch != NULL);
-      THUNAR_FILE_GET_CLASS (file)->unwatch (file);
+      (*THUNAR_FILE_GET_CLASS (file)->unwatch) (file);
     }
 }
 
@@ -1361,7 +1476,7 @@ void
 thunar_file_reload (ThunarFile *file)
 {
   g_return_if_fail (THUNAR_IS_FILE (file));
-  THUNAR_FILE_GET_CLASS (file)->reload (file);
+  (*THUNAR_FILE_GET_CLASS (file)->reload) (file);
 }
 
 
@@ -1397,7 +1512,7 @@ thunar_file_is_hidden (ThunarFile *file)
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  p = THUNAR_FILE_GET_CLASS (file)->get_display_name (file);
+  p = (*THUNAR_FILE_GET_CLASS (file)->get_display_name) (file);
   if (*p != '.' && *p != '\0')
     {
       for (; p[1] != '\0'; ++p)

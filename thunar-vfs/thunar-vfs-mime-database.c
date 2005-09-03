@@ -272,11 +272,8 @@ thunar_vfs_mime_database_get_info_locked (ThunarVfsMimeDatabase *database,
 {
   ThunarVfsMimeProvider *provider;
   ThunarVfsMimeInfo     *info;
-  const gchar           *s;
-  const gchar           *t;
-  const gchar           *u;
+  const gchar           *p;
   GList                 *lp;
-  gchar                 *v;
   guint                  n;
 
   /* unalias the mime type */
@@ -285,10 +282,10 @@ thunar_vfs_mime_database_get_info_locked (ThunarVfsMimeDatabase *database,
       provider = THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider;
       if (G_LIKELY (provider != NULL))
         {
-          t = thunar_vfs_mime_provider_lookup_alias (provider, mime_type);
-          if (G_UNLIKELY (t != NULL && strcmp (mime_type, t) != 0))
+          p = thunar_vfs_mime_provider_lookup_alias (provider, mime_type);
+          if (G_UNLIKELY (p != NULL && strcmp (mime_type, p) != 0))
             {
-              mime_type = t;
+              mime_type = p;
               break;
             }
         }
@@ -299,12 +296,9 @@ thunar_vfs_mime_database_get_info_locked (ThunarVfsMimeDatabase *database,
   if (G_UNLIKELY (info == NULL))
     {
       /* count the number of slashes in the mime_type */
-      for (n = 0, s = NULL, t = mime_type; *t != '\0'; ++t)
-        if (G_UNLIKELY (*t == '/'))
-          {
-            s = t;
-            ++n;
-          }
+      for (n = 0, p = mime_type; *p != '\0'; ++p)
+        if (G_UNLIKELY (*p == '/'))
+          ++n;
 
       /* fallback to 'application/octet-stream' if the type is invalid */
       if (G_UNLIKELY (n != 1))
@@ -312,26 +306,8 @@ thunar_vfs_mime_database_get_info_locked (ThunarVfsMimeDatabase *database,
 
       /* allocate the MIME info instance */
       info = exo_object_new (THUNAR_VFS_TYPE_MIME_INFO);
-
-      /* allocate memory to store both the full name,
-       * as well as the media type alone.
-       */
-      info->name = g_new (gchar, (t - mime_type) + (s - mime_type) + 2);
-
-      /* copy full name (including the terminator) */
-      for (u = mime_type, v = info->name; u <= t; ++u, ++v)
-        *v = *u;
-
-      /* set the subtype portion */
-      info->subtype = info->name + (s - mime_type) + 1;
-
-      /* copy the media portion */
-      info->media = v;
-      for (u = mime_type; u < s; ++u, ++v)
-        *v = *u;
-
-      /* terminate the media portion */
-      *v = '\0';
+      info->name = g_new (gchar, (p - mime_type) + 1);
+      memcpy (info->name, mime_type, (p - mime_type) + 1);
 
       /* insert the mime type into the cache */
       g_hash_table_insert (database->infos, info->name, info);
@@ -496,7 +472,7 @@ thunar_vfs_mime_database_get_infos_for_info_locked (ThunarVfsMimeDatabase *datab
     }
 
   /* all text/xxxx types are subtype of text/plain */
-  if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_media (info), "text") == 0))
+  if (G_UNLIKELY (strncmp ("text/", info->name, 5) == 0))
     {
       /* append text/plain if we don't have it already */
       if (g_list_find (infos, database->text_plain) == NULL)

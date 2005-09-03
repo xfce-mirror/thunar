@@ -130,8 +130,8 @@ thunar_vfs_mime_database_get_default_application
 thunar_vfs_mime_info_get_type G_GNUC_CONST
 thunar_vfs_mime_info_get_comment G_GNUC_PURE
 thunar_vfs_mime_info_get_name G_GNUC_PURE
-thunar_vfs_mime_info_get_media G_GNUC_PURE
-thunar_vfs_mime_info_get_subtype G_GNUC_PURE
+thunar_vfs_mime_info_get_media G_GNUC_MALLOC
+thunar_vfs_mime_info_get_subtype G_GNUC_MALLOC
 thunar_vfs_mime_info_hash
 thunar_vfs_mime_info_equal
 thunar_vfs_mime_info_lookup_icon_name
@@ -148,6 +148,21 @@ thunar_vfs_monitor_add_directory
 thunar_vfs_monitor_add_file
 thunar_vfs_monitor_remove
 thunar_vfs_monitor_feed
+#endif
+#endif
+
+/* thunar-vfs-thumb methods */
+#if IN_HEADER(__THUNAR_VFS_THUMB_H__)
+#if IN_SOURCE(__THUNAR_VFS_THUMB_C__)
+thunar_vfs_thumb_factory_get_type G_GNUC_CONST
+thunar_vfs_thumb_factory_new G_GNUC_MALLOC
+thunar_vfs_thumb_factory_lookup_thumbnail G_GNUC_MALLOC
+thunar_vfs_thumb_factory_can_thumbnail
+thunar_vfs_thumb_factory_has_failed_thumbnail
+thunar_vfs_thumb_factory_generate_thumbnail G_GNUC_MALLOC
+thunar_vfs_thumb_factory_store_thumbnail
+thunar_vfs_thumb_path_for_uri G_GNUC_MALLOC
+thunar_vfs_thumb_path_is_valid
 #endif
 #endif
 
