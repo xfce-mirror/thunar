@@ -372,6 +372,52 @@ thunar_icon_factory_sweep_timer_destroy (gpointer user_data)
 
 
 
+static gboolean
+thumbnail_needs_frame (const GdkPixbuf *thumbnail,
+                       gint             width,
+                       gint             height)
+{
+  const guchar *pixels;
+  gint          rowstride;
+  gint          n;
+
+  /* don't add frames to small thumbnails */
+  if (width < THUNAR_THUMBNAIL_SIZE && height < THUNAR_THUMBNAIL_SIZE)
+    return FALSE;
+
+  /* always add a frame to thumbnails w/o alpha channel */
+  if (G_LIKELY (!gdk_pixbuf_get_has_alpha (thumbnail)))
+    return TRUE;
+
+  /* get a pointer to the thumbnail data */
+  pixels = gdk_pixbuf_get_pixels (thumbnail);
+
+  /* check if we have a transparent pixel on the first row */
+  for (n = width * 4; n > 0; n -= 4)
+    if (pixels[n - 1] < 255u)
+      return FALSE;
+
+  /* determine the rowstride */
+  rowstride = gdk_pixbuf_get_rowstride (thumbnail);
+
+  /* skip the first row */
+  pixels += rowstride;
+
+  /* check if we have a transparent pixel in the first or last column */
+  for (n = height - 2; n > 0; --n, pixels += rowstride)
+    if (pixels[3] < 255u || pixels[width * 4 - 1] < 255u)
+      return FALSE;
+
+  /* check if we have a transparent pixel on the last row */
+  for (n = width * 4; n > 0; n -= 4)
+    if (pixels[n - 1] < 255u)
+      return FALSE;
+
+  return TRUE;
+}
+
+
+
 static GdkPixbuf*
 thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
                                     const gchar       *path,
@@ -391,8 +437,8 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       height = gdk_pixbuf_get_height (pixbuf);
 
       /* add a frame around thumbnail (large) images */
-      if (MAX (width, height) >= THUNAR_THUMBNAIL_SIZE && !gdk_pixbuf_get_has_alpha (pixbuf)
-          && strstr (path, G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S) != NULL)
+      if (strstr (path, G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S) != NULL
+          && thumbnail_needs_frame (pixbuf, width, height))
         {
           /* add the frame */
           tmp = thunarx_gdk_pixbuf_frame (pixbuf, factory->thumbnail_frame, 3, 3, 6, 6);

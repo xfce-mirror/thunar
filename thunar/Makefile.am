@@ -188,6 +188,7 @@ EXTRA_DIST =								\
 	thunar-icon-view-ui.xml						\
 	thunar-marshal.list						\
 	thunar-standard-view-ui.xml					\
+	thunar-thumbnail-frame.png					\
 	thunar-window-ui.xml
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
