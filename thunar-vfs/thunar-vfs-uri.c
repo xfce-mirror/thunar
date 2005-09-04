@@ -500,7 +500,7 @@ escape (const gchar *s,
 
   for (; n > 1 && *s != '\0'; ++s)
     {
-      if (G_LIKELY (*((const guchar *) s) > 32 && *((const guchar *) s) < 128))
+      if (G_LIKELY (*((const guchar *) s) > 32 && *((const guchar *) s) < 128 && *s != '&'))
         {
           *t++ = *s;
           --n;
