@@ -41,7 +41,7 @@ gboolean _thunar_vfs_sysdep_parse_exec (const gchar    *exec,
                                         gboolean        terminal,
                                         gint           *argc,
                                         gchar        ***argv,
-                                        GError        **error)
+                                        GError        **error);
 
 G_END_DECLS;
 

@@ -145,9 +145,6 @@ struct _ThunarFileClass
 struct _ThunarFile
 {
   GtkObject __parent__;
-
-  /*< private >*/
-  gint       watch_count;
 };
 
 GType              thunar_file_get_type         (void) G_GNUC_CONST;

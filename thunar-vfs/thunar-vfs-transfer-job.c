@@ -52,6 +52,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-sysdep.h>
+#include <thunar-vfs/thunar-vfs-thumb.h>
 #include <thunar-vfs/thunar-vfs-transfer-job.h>
 
 #if GLIB_CHECK_VERSION(2,6,0)
@@ -495,9 +496,11 @@ thunar_vfs_transfer_item_copy (ThunarVfsTransferItem *item)
 {
   const ThunarVfsTransferBase *base = item->base;
   ThunarVfsTransferJob        *job = base->job;
+  ThunarVfsURI                *uri;
   struct stat                  sb;
   gchar                       *source_path;
   gchar                       *target_path;
+  gchar                       *thumb_path;
   gchar                       *display;
   gchar                       *message;
 
@@ -534,7 +537,28 @@ thunar_vfs_transfer_item_copy (ThunarVfsTransferItem *item)
       /* try to rename the item if possible (for move) */
       if (job->move && g_rename (source_path, target_path) == 0)
         {
+          /* count the moved file's size */
           job->completed_bytes += item->size;
+
+          /* ditch the thumbnails for the file (if any), in very
+           * rare cases we may ditch thumbnails for other files
+           * here, but that's very unlikely and not worth to care
+           * about here.
+           */
+          uri = thunar_vfs_uri_new_for_path (source_path);
+
+          /* unlink the "normal" thumbnail (if any) */
+          thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_NORMAL);
+          g_remove (thumb_path);
+          g_free (thumb_path);
+
+          /* unlink the "large" thumbnail (if any) */
+          thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_LARGE);
+          g_remove (thumb_path);
+          g_free (thumb_path);
+
+          /* cleanup */
+          thunar_vfs_uri_unref (uri);
         }
       else
         {
@@ -574,11 +598,35 @@ thunar_vfs_transfer_item_copy (ThunarVfsTransferItem *item)
             }
 
           /* if we're moving, we'll have to unlink afterwards */
-          if (job->move && !item->skipped && !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job))
-              && g_remove (source_path) < 0 && errno != ENOENT)
+          if (job->move && !item->skipped && !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job)))
             {
-              /* ask the user whether to skip the item if the removal failes (only for cancellation) */
-              thunar_vfs_transfer_job_skip (job, _("Unable to remove %s."), item->source_path);
+              if (g_remove (source_path) < 0 && errno != ENOENT)
+                {
+                  /* ask the user whether to skip the item if the removal failes (only for cancellation) */
+                  thunar_vfs_transfer_job_skip (job, _("Unable to remove %s."), item->source_path);
+                }
+              else
+                {
+                  /* ditch the thumbnails for the file (if any), in very
+                   * rare cases we may ditch thumbnails for other files
+                   * here, but that's very unlikely and not worth to care
+                   * about here.
+                   */
+                  uri = thunar_vfs_uri_new_for_path (source_path);
+
+                  /* unlink the "normal" thumbnail (if any) */
+                  thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_NORMAL);
+                  g_remove (thumb_path);
+                  g_free (thumb_path);
+
+                  /* unlink the "large" thumbnail (if any) */
+                  thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_LARGE);
+                  g_remove (thumb_path);
+                  g_free (thumb_path);
+
+                  /* cleanup */
+                  thunar_vfs_uri_unref (uri);
+                }
             }
         }
 

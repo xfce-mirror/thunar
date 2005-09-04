@@ -118,9 +118,6 @@ static void          thunar_standard_view_action_rename             (GtkAction  
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_show_hidden_files  (GtkToggleAction          *toggle_action,
                                                                      ThunarStandardView       *standard_view);
-static void          thunar_standard_view_notify_num_files          (ThunarListModel          *model,
-                                                                     GParamSpec               *pspec,
-                                                                     ThunarStandardView       *standard_view);
 static gboolean      thunar_standard_view_button_release_event      (GtkWidget                *view,
                                                                      GdkEventButton           *event,
                                                                      ThunarStandardView       *standard_view);
@@ -409,7 +406,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* be sure to update the statusbar text whenever the number of
    * files in our model changes.
    */
-  g_signal_connect (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_notify_num_files), standard_view);
+  g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
 
   /* allocate the launcher support */
   standard_view->priv->launcher = thunar_launcher_new ();
@@ -1253,24 +1250,6 @@ thunar_standard_view_action_show_hidden_files (GtkToggleAction    *toggle_action
 
   active = gtk_toggle_action_get_active (toggle_action);
   thunar_list_model_set_show_hidden (standard_view->model, active);
-}
-
-
-
-static void
-thunar_standard_view_notify_num_files (ThunarListModel    *model,
-                                       GParamSpec         *pspec,
-                                       ThunarStandardView *standard_view)
-{
-  g_return_if_fail (THUNAR_IS_LIST_MODEL (model));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-
-  /* clear the current status text (will be recalculated on-demand) */
-  g_free (standard_view->statusbar_text);
-  standard_view->statusbar_text = NULL;
-
-  /* tell everybody that the statusbar text may have changed */
-  g_object_notify (G_OBJECT (standard_view), "statusbar-text");
 }
 
 

@@ -503,14 +503,39 @@ thunar_vfs_uri_get_display_name (const ThunarVfsURI *uri)
 gchar*
 thunar_vfs_uri_get_md5sum (const ThunarVfsURI *uri)
 {
-  gchar str[4096];
-  gsize n;
+  static const gchar HEX_DIGITS[16] = "0123456789ABCDEF";
+  const guchar      *p;
+  gchar              str[4096];
+  gsize              n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
   n = g_strlcpy (str, scheme_names[uri->scheme], sizeof (str));
-  n += g_strlcpy (str + n, uri->path, sizeof (str) - n);
 
+  /* we need to properly escape the path here to be compatible
+   * with other file managers (e.g. so we use the same thumbnails,
+   * etc.).
+   */
+  for (p = (const guchar *) uri->path; n < sizeof (str) - 1 && *p != '\0'; ++p)
+    {
+      if (G_LIKELY (*p > 32 && *p < 128))
+        {
+          str[n++] = *((const gchar *) p);
+        }
+      else if (n + 3 < sizeof (str))
+        {
+          str[n++] = '%';
+          str[n++] = HEX_DIGITS[*p >> 4];
+          str[n++] = HEX_DIGITS[*p & 0xf];
+        }
+      else
+        {
+          break;
+        }
+    }
+  str[n] = '\0';
+
+  /* determine the MD5 sum */
   return exo_str_get_md5_str (str);
 }
 

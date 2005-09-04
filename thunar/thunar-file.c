@@ -53,6 +53,15 @@ typedef enum
 
 
 
+/* the watch count is stored in the GObject data
+ * list, as it is needed only for a very few
+ * files.
+ */
+#define THUNAR_FILE_GET_WATCH_COUNT(file)        (GPOINTER_TO_INT (g_object_get_qdata (G_OBJECT ((file)), thunar_file_watch_count_quark)))
+#define THUNAR_FILE_SET_WATCH_COUNT(file, count) (g_object_set_qdata (G_OBJECT ((file)), thunar_file_watch_count_quark, GINT_TO_POINTER ((count))))
+
+
+
 enum
 {
   CHANGED,
@@ -94,6 +103,7 @@ static void               thunar_file_destroyed                (gpointer        
 static GObjectClass *thunar_file_parent_class;
 static GHashTable   *file_cache;
 static GQuark        thunar_file_thumb_path_quark;
+static GQuark        thunar_file_watch_count_quark;
 static guint         file_signals[LAST_SIGNAL];
 
 
@@ -176,8 +186,9 @@ thunar_file_class_init (ThunarFileClass *klass)
     }
 #endif
 
-  /* allocate the thunar-file-thumb-path quark */
+  /* pre-allocate the required quarks */
   thunar_file_thumb_path_quark = g_quark_from_static_string ("thunar-file-thumb-path");
+  thunar_file_watch_count_quark = g_quark_from_static_string ("thunar-file-watch-count");
 
   /* determine the parent class */
   thunar_file_parent_class = g_type_class_peek_parent (klass);
@@ -232,13 +243,13 @@ thunar_file_finalize (GObject *object)
 {
   ThunarFile *file = THUNAR_FILE (object);
 
-  if (G_UNLIKELY (file->watch_count != 0))
+  if (G_UNLIKELY (THUNAR_FILE_GET_WATCH_COUNT (file) != 0))
     {
-      g_error ("Attempt to finalize a ThunarFile, which has an "
-               "active watch count of %d", file->watch_count);
+      g_error ("Attempt to finalize a ThunarFile, which has an active "
+               "watch count of %d", THUNAR_FILE_GET_WATCH_COUNT (file));
     }
 
-  G_OBJECT_CLASS (thunar_file_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_file_parent_class)->finalize) (object);
 }
 #endif
 
@@ -1388,12 +1399,9 @@ thunar_file_load_icon (ThunarFile         *file,
       if (G_UNLIKELY (state == THUNAR_FILE_THUMB_STATE_LOADING))
         {
           /* check if the icon theme supports the loading icon */
-          if (gtk_icon_theme_has_icon (icon_theme, "gnome-fs-loading-icon"))
-            {
-              icon = thunar_icon_factory_load_icon (icon_factory, "gnome-fs-loading-icon", size, NULL, FALSE);
-              if (G_LIKELY (icon != NULL))
-                return icon;
-            }
+          icon = thunar_icon_factory_load_icon (icon_factory, "gnome-fs-loading-icon", size, NULL, FALSE);
+          if (G_LIKELY (icon != NULL))
+            return icon;
         }
     }
 
@@ -1425,14 +1433,20 @@ thunar_file_load_icon (ThunarFile         *file,
 void
 thunar_file_watch (ThunarFile *file)
 {
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (file->watch_count >= 0);
+  gint watch_count;
 
-  if (++file->watch_count == 1 && THUNAR_FILE_GET_CLASS (file)->watch != NULL)
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_FILE_GET_WATCH_COUNT (file) >= 0);
+
+  watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
+
+  if (++watch_count == 1 && THUNAR_FILE_GET_CLASS (file)->watch != NULL)
     {
       g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->unwatch != NULL);
       (*THUNAR_FILE_GET_CLASS (file)->watch) (file);
     }
+
+  THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
 }
 
 
@@ -1447,14 +1461,20 @@ thunar_file_watch (ThunarFile *file)
 void
 thunar_file_unwatch (ThunarFile *file)
 {
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (file->watch_count > 0);
+  gint watch_count;
 
-  if (--file->watch_count == 0 && THUNAR_FILE_GET_CLASS (file)->unwatch != NULL)
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_FILE_GET_WATCH_COUNT (file) > 0);
+
+  watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
+
+  if (--watch_count == 0 && THUNAR_FILE_GET_CLASS (file)->unwatch != NULL)
     {
       g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->watch != NULL);
       (*THUNAR_FILE_GET_CLASS (file)->unwatch) (file);
     }
+
+  THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
 }
 
 

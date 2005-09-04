@@ -44,6 +44,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-sysdep.h>
+#include <thunar-vfs/thunar-vfs-thumb.h>
 #include <thunar-vfs/thunar-vfs-trash.h>
 #include <thunar-vfs/thunar-vfs-unlink-job.h>
 
@@ -339,7 +340,9 @@ thunar_vfs_unlink_item_remove (ThunarVfsUnlinkItem *item)
   ThunarVfsUnlinkBase *base = item->base;
   ThunarVfsUnlinkItem *child_item;
   ThunarVfsUnlinkJob  *job = base->job;
+  ThunarVfsURI        *uri;
   gdouble              percent;
+  gchar               *thumb_path;
   gchar               *display;
   gchar               *message;
   gchar               *path;
@@ -366,6 +369,28 @@ thunar_vfs_unlink_item_remove (ThunarVfsUnlinkItem *item)
       thunar_vfs_interactive_job_skip (THUNAR_VFS_INTERACTIVE_JOB (job), message);
       g_free (message);
       g_free (display);
+    }
+  else
+    {
+      /* ditch the thumbnails for the file (if any), in very
+       * rare cases we may ditch thumbnails for other files
+       * here, but that's very unlikely and not worth to care
+       * about here.
+       */
+      uri = thunar_vfs_uri_new_for_path (path);
+
+      /* unlink the "normal" thumbnail (if any) */
+      thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_NORMAL);
+      g_remove (thumb_path);
+      g_free (thumb_path);
+
+      /* unlink the "large" thumbnail (if any) */
+      thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_LARGE);
+      g_remove (thumb_path);
+      g_free (thumb_path);
+
+      /* cleanup */
+      thunar_vfs_uri_unref (uri);
     }
   g_free (path);
 

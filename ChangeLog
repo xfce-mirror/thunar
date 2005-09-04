@@ -1,5 +1,22 @@
 2005-09-04	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Store the watch count in the GObject data
+	  list, as it seldomly used.
+	* thunar/thunar-file.c(thunar_file_load_icon): Try to load the "loading"
+	  icon directly instead of checking the icon theme first.
+	* thunar/thunar-standard-view.c: Revert the "num-files" special handling
+	  as it leads to a bug where the actions aren't updated properly when
+	  changing directories.
+	* thunar-vfs/thunar-vfs-sysdep.h: Fix typo.
+	* thunar-vfs/thunar-vfs-transfer-job.c,
+	  thunar-vfs/thunar-vfs-unlink-job.c: Unlink thumbnails after removing
+	  a file to reduce the junk in ~/.thumbnails/.
+	* thunar-vfs/thunar-vfs-uri.c(thunar_vfs_uri_get_md5sum): Escape the
+	  path properly, so the thumbnail paths we determine are equal to those
+	  of other file managers.
+
+2005-09-04	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/Makefile.am: Add the thumbnail frame source image to the
 	  distribution.
 	* thunar/thunar-icon-factory.c: Add some more cleverness in determining
