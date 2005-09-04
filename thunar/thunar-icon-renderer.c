@@ -365,31 +365,32 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       icon_area.height = gdk_pixbuf_get_height (icon);
     }
 
-  /* colorize the icon if we should follow the selection state */
-  if ((flags & (GTK_CELL_RENDERER_SELECTED | GTK_CELL_RENDERER_PRELIT)) != 0 && icon_renderer->follow_state)
-    {
-      if ((flags & GTK_CELL_RENDERER_SELECTED) != 0)
-        {
-          state = GTK_WIDGET_HAS_FOCUS (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
-          temp = thunarx_gdk_pixbuf_colorize (icon, &widget->style->base[state]);
-          g_object_unref (G_OBJECT (icon));
-          icon = temp;
-        }
-
-      if ((flags & GTK_CELL_RENDERER_PRELIT) != 0)
-        {
-          temp = thunarx_gdk_pixbuf_spotlight (icon);
-          g_object_unref (G_OBJECT (icon));
-          icon = temp;
-        }
-    }
-
   icon_area.x = cell_area->x + (cell_area->width - icon_area.width) / 2;
   icon_area.y = cell_area->y + (cell_area->height - icon_area.height) / 2;
 
-  if (gdk_rectangle_intersect (cell_area, &icon_area, &draw_area)
-      && gdk_rectangle_intersect (expose_area, &icon_area, &draw_area))
+  /* check whether the icon is affected by the expose event */
+  if (gdk_rectangle_intersect (expose_area, &icon_area, &draw_area))
     {
+      /* colorize the icon if we should follow the selection state */
+      if ((flags & (GTK_CELL_RENDERER_SELECTED | GTK_CELL_RENDERER_PRELIT)) != 0 && icon_renderer->follow_state)
+        {
+          if ((flags & GTK_CELL_RENDERER_SELECTED) != 0)
+            {
+              state = GTK_WIDGET_HAS_FOCUS (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
+              temp = thunarx_gdk_pixbuf_colorize (icon, &widget->style->base[state]);
+              g_object_unref (G_OBJECT (icon));
+              icon = temp;
+            }
+
+          if ((flags & GTK_CELL_RENDERER_PRELIT) != 0)
+            {
+              temp = thunarx_gdk_pixbuf_spotlight (icon);
+              g_object_unref (G_OBJECT (icon));
+              icon = temp;
+            }
+        }
+
+      /* render the invalid parts of the icon */
       gdk_draw_pixbuf (window, widget->style->black_gc, icon,
                        draw_area.x - icon_area.x, draw_area.y - icon_area.y,
                        draw_area.x, draw_area.y, draw_area.width, draw_area.height,
