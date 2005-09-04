@@ -36,17 +36,21 @@ typedef struct _ThunarVfsURI      ThunarVfsURI;
 #define THUNAR_VFS_URI_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_URI, ThunarVfsURIClass))
 
 /**
- * ThunarVfsURIHideOptions:
- * @THUNAR_VFS_URI_HIDE_HOST : Hide the hostname from the URI string.
+ * ThunarVfsURIStringFlags:
+ * @THUNAR_VFS_URI_STRING_UTF8         : whether to return the URI in UTF-8 encoding.
+ * @THUNAR_VFS_URI_STRING_ESCAPED      : whether to escape the URI.
+ * @THUNAR_VFS_URI_STRING_INCLUDE_HOST : include the hostname with the returned string.
  *
- * Determines which parts of the uri should be hidden when
- * requesting the string representation of a #ThunarVfsURI 
- * object.
+ * Flags that determine how thunar_vfs_uri_to_string() and
+ * thunar_vfs_uri_list_to_string() transform a #ThunarVfsURI
+ * or a list of #ThunarVfsURI<!---->s to a string.
  **/
-typedef enum
+typedef enum /*< flags >*/
 {
-  THUNAR_VFS_URI_HIDE_HOST = 1 << 0,
-} ThunarVfsURIHideOptions;
+  THUNAR_VFS_URI_STRING_UTF8         = (1 << 0L),
+  THUNAR_VFS_URI_STRING_ESCAPED      = (1 << 1L),
+  THUNAR_VFS_URI_STRING_INCLUDE_HOST = (1 << 8L),
+} ThunarVfsURIStringFlags;
 
 /**
  * ThunarVfsURIScheme:
@@ -85,7 +89,7 @@ ThunarVfsURI      *thunar_vfs_uri_relative          (const ThunarVfsURI     *uri
                                                      const gchar            *name) G_GNUC_MALLOC;
 
 gchar             *thunar_vfs_uri_to_string         (const ThunarVfsURI     *uri,
-                                                     ThunarVfsURIHideOptions hide_options) G_GNUC_MALLOC;
+                                                     ThunarVfsURIStringFlags flags) G_GNUC_MALLOC;
 
 guint              thunar_vfs_uri_hash              (gconstpointer           uri);
 gboolean           thunar_vfs_uri_equal             (gconstpointer           a,
@@ -116,7 +120,7 @@ gboolean           thunar_vfs_uri_equal             (gconstpointer           a,
 GList             *thunar_vfs_uri_list_from_string  (const gchar            *string,
                                                      GError                **error) G_GNUC_MALLOC;
 gchar             *thunar_vfs_uri_list_to_string    (GList                  *uri_list,
-                                                     ThunarVfsURIHideOptions hide_options) G_GNUC_MALLOC;
+                                                     ThunarVfsURIStringFlags flags) G_GNUC_MALLOC;
 GList             *thunar_vfs_uri_list_copy         (GList                  *uri_list) G_GNUC_MALLOC;
 void               thunar_vfs_uri_list_free         (GList                  *uri_list);
 

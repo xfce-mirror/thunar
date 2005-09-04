@@ -208,7 +208,7 @@ _thunar_vfs_sysdep_parse_exec (const gchar *exec,
                */
               if (G_LIKELY (uris != NULL))
                 {
-                  uri_string = thunar_vfs_uri_to_string (uris->data, THUNAR_VFS_URI_HIDE_HOST);
+                  uri_string = thunar_vfs_uri_to_string (uris->data, THUNAR_VFS_URI_STRING_ESCAPED);
                   quoted = g_shell_quote (uri_string);
                   g_string_append (command_line, quoted);
                   g_free (uri_string);
@@ -221,7 +221,7 @@ _thunar_vfs_sysdep_parse_exec (const gchar *exec,
                 {
                   if (G_LIKELY (lp != uris))
                     g_string_append_c (command_line, ' ');
-                  uri_string = thunar_vfs_uri_to_string (lp->data, THUNAR_VFS_URI_HIDE_HOST);
+                  uri_string = thunar_vfs_uri_to_string (lp->data, THUNAR_VFS_URI_STRING_ESCAPED);
                   quoted = g_shell_quote (uri_string);
                   g_string_append (command_line, quoted);
                   g_free (uri_string);

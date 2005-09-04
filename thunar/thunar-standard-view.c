@@ -1509,7 +1509,7 @@ thunar_standard_view_drag_data_get (GtkWidget          *view,
   gchar *uri_string;
 
   /* set the URI list for the drag selection */
-  uri_string = thunar_vfs_uri_list_to_string (standard_view->priv->drag_uri_list, 0);
+  uri_string = thunar_vfs_uri_list_to_string (standard_view->priv->drag_uri_list, THUNAR_VFS_URI_STRING_ESCAPED);
   gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
   g_free (uri_string);
 }

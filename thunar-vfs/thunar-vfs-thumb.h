@@ -69,10 +69,11 @@ GdkPixbuf             *thunar_vfs_thumb_factory_generate_thumbnail    (ThunarVfs
                                                                        const ThunarVfsURI      *uri,
                                                                        const ThunarVfsMimeInfo *mime_info) G_GNUC_MALLOC;
 
-void                   thunar_vfs_thumb_factory_store_thumbnail       (ThunarVfsThumbFactory   *factory,
+gboolean               thunar_vfs_thumb_factory_store_thumbnail       (ThunarVfsThumbFactory   *factory,
                                                                        const GdkPixbuf         *pixbuf,
                                                                        const ThunarVfsURI      *uri,
-                                                                       ThunarVfsFileTime        mtime);
+                                                                       ThunarVfsFileTime        mtime,
+                                                                       GError                 **error);
 
 
 gchar    *thunar_vfs_thumb_path_for_uri   (const ThunarVfsURI *uri,

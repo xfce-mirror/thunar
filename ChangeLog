@@ -1,5 +1,19 @@
 2005-09-04	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-thumb.{c,h}: Implement the store thumbnail
+	  functionality.
+	* thunar-vfs/thunar-vfs-sysdep.c, thunar-vfs/thunar-vfs-trash.c,
+	  thunar-vfs/thunar-vfs-uri.{c,h}, thunar-vfs/thunar-vfs.symbols,
+	  thunar/thunar-clipboard-manager.c, thunar/thunar-favourites-model.c,
+	  thunar/thunar-favourites-view.c, thunar/thunar-file.c,
+	  thunar/thunar-location-buttons.c, thunar/thunar-path-entry.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-statusbar.c: Improve
+	  the thunar_vfs_uri_to_string() method to support UTF-8 URI strings
+	  and escaping of URIs, which is required for proper Drag'n'Drop
+	  interaction with other applications.
+
+2005-09-04	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Store the watch count in the GObject data
 	  list, as it seldomly used.
 	* thunar/thunar-file.c(thunar_file_load_icon): Try to load the "loading"

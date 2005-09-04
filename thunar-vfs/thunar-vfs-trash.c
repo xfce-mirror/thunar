@@ -862,7 +862,7 @@ thunar_vfs_trash_manager_resolve_uri (ThunarVfsTrashManager *manager,
   id = (gint) strtoul (uri_path, &p, 10);
   if (errno != 0 || p[0] != '-' || p[1] == '\0' || p[1] == '/')
     {
-      p = thunar_vfs_uri_to_string (uri, 0);
+      p = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_UTF8);
       g_set_error (error, G_CONVERT_ERROR, G_CONVERT_ERROR_BAD_URI,
                    "Unable to parse malformed trash URI `%s'", p);
       g_free (p);

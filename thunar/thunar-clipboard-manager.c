@@ -381,7 +381,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
   g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
   g_return_if_fail (manager->clipboard == clipboard);
 
-  string_list = thunar_vfs_uri_list_to_string (manager->uri_list, 0);
+  string_list = thunar_vfs_uri_list_to_string (manager->uri_list, THUNAR_VFS_URI_STRING_ESCAPED);
 
   switch (target_info)
     {

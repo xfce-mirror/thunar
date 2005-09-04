@@ -153,7 +153,7 @@ thunar_vfs_uri_atexit (void)
       for (lp = debug_uris; lp != NULL; lp = lp->next)
         {
           uri = THUNAR_VFS_URI (lp->data);
-          s = thunar_vfs_uri_to_string (uri, 0);
+          s = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_UTF8);
           g_print ("--> %s (%u)\n", s, EXO_OBJECT (uri)->ref_count);
           g_free (s);
         }
@@ -488,6 +488,41 @@ thunar_vfs_uri_get_display_name (const ThunarVfsURI *uri)
 
 
 
+static void
+escape (const gchar *s,
+        gchar       *t,
+        gsize        n)
+{
+  static const gchar hex_digits[16] = "0123456789ABCDEF";
+
+  if (G_UNLIKELY (n == 0))
+    return;
+
+  for (; n > 1 && *s != '\0'; ++s)
+    {
+      if (G_LIKELY (*((const guchar *) s) > 32 && *((const guchar *) s) < 128))
+        {
+          *t++ = *s;
+          --n;
+        }
+      else if (n > 3)
+        {
+          *t++ = '%';
+          *t++ = hex_digits[*((const guchar *) s) >> 4];
+          *t++ = hex_digits[*((const guchar *) s) & 15];
+          n -= 3;
+        }
+      else
+        {
+          break;
+        }
+    }
+
+  *t = '\0';
+}
+
+
+
 /**
  * thunar_vfs_uri_get_md5sum:
  * @uri : a #ThunarVfsURI instance.
@@ -496,17 +531,15 @@ thunar_vfs_uri_get_display_name (const ThunarVfsURI *uri)
  * representation of @uri.
  *
  * The caller is responsible to free the returned
- * string using #g_free().
+ * string using g_free().
  *
  * Return value: the MD5 digest of the @uri.
  **/
 gchar*
 thunar_vfs_uri_get_md5sum (const ThunarVfsURI *uri)
 {
-  static const gchar HEX_DIGITS[16] = "0123456789ABCDEF";
-  const guchar      *p;
-  gchar              str[4096];
-  gsize              n;
+  gchar str[4096];
+  gsize n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
@@ -516,24 +549,7 @@ thunar_vfs_uri_get_md5sum (const ThunarVfsURI *uri)
    * with other file managers (e.g. so we use the same thumbnails,
    * etc.).
    */
-  for (p = (const guchar *) uri->path; n < sizeof (str) - 1 && *p != '\0'; ++p)
-    {
-      if (G_LIKELY (*p > 32 && *p < 128))
-        {
-          str[n++] = *((const gchar *) p);
-        }
-      else if (n + 3 < sizeof (str))
-        {
-          str[n++] = '%';
-          str[n++] = HEX_DIGITS[*p >> 4];
-          str[n++] = HEX_DIGITS[*p & 0xf];
-        }
-      else
-        {
-          break;
-        }
-    }
-  str[n] = '\0';
+  escape (uri->path, str + n, sizeof (str) - n);
 
   /* determine the MD5 sum */
   return exo_str_get_md5_str (str);
@@ -689,38 +705,59 @@ thunar_vfs_uri_relative (const ThunarVfsURI *uri,
 
 /**
  * thunar_vfs_uri_to_string:
- * @uri          : a #ThunarVfsURI.
- * @hide_options : tells which parts of the uri should be hidden.
+ * @uri   : a #ThunarVfsURI.
+ * @flags : or'ed list of #ThunarVfsURIStringFlags.
  *
  * Returns the string representation of @uri. The
  * caller is responsible for freeing the returned
- * string using #g_free().
+ * string using g_free().
  *
  * Return value: the string representation of @uri.
  **/
 gchar*
 thunar_vfs_uri_to_string (const ThunarVfsURI     *uri,
-                          ThunarVfsURIHideOptions hide_options)
+                          ThunarVfsURIStringFlags flags)
 {
   const gchar *host;
+  gchar       *string;
+  gchar       *path;
 
   g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
-  /* determine the host name */
-  if ((hide_options & THUNAR_VFS_URI_HIDE_HOST) != 0)
+  /* check if we should escape the URI (the path) */
+  if ((flags & THUNAR_VFS_URI_STRING_ESCAPED) != 0)
     {
-      host = "";
-    }
-  else if (uri->host == NULL)
-    {
-      host = (uri->scheme == THUNAR_VFS_URI_SCHEME_FILE) ? localhost : "";
+      path = g_new (gchar, strlen (uri->path) * 3 + 1);
+      escape (uri->path, path, strlen (uri->path) * 3 + 1);
     }
   else
     {
-      host = uri->host;
+      path = g_strdup (uri->path);
     }
 
-  return g_strconcat (scheme_names[uri->scheme], host, uri->path, NULL);
+  /* check if we should return an UTF-8 version */
+  if ((flags & THUNAR_VFS_URI_STRING_UTF8) != 0)
+    {
+      string = g_filename_display_name (path);
+      g_free (path);
+      path = string;
+    }
+
+  /* determine the host name */
+  if ((flags & THUNAR_VFS_URI_STRING_INCLUDE_HOST) == 0)
+    host = "";
+  else if (G_LIKELY (uri->host == NULL))
+    host = (uri->scheme == THUNAR_VFS_URI_SCHEME_FILE) ? localhost : "";
+  else
+    host = uri->host;
+
+  /* build up the URI string */
+  string = g_strconcat (scheme_names[uri->scheme], host, path, NULL);
+
+  /* free the temporary path buffer */
+  g_free (path);
+
+  return string;
 }
 
 
@@ -915,10 +952,10 @@ thunar_vfs_uri_list_from_string (const gchar *string,
 
 /**
  * thunar_vfs_uri_list_to_string:
- * @uri_list     : a list of #ThunarVfsURI<!---->s.
- * @hide_options : tells which parts of the uris should be hidden.
+ * @uri_list : a list of #ThunarVfsURI<!---->s.
+ * @flags    : or'ed list of #ThunarVfsURIStringFlags.
  *
- * Free the returned value using #g_free() when you
+ * Free the returned value using g_free() when you
  * are done with it.
  *
  * Return value: the string representation of @uri_list conforming to the
@@ -926,7 +963,7 @@ thunar_vfs_uri_list_from_string (const gchar *string,
  **/
 gchar*
 thunar_vfs_uri_list_to_string (GList                  *uri_list,
-                               ThunarVfsURIHideOptions hide_options)
+                               ThunarVfsURIStringFlags flags)
 {
   GString *string_list;
   gchar   *uri_string;
@@ -934,7 +971,7 @@ thunar_vfs_uri_list_to_string (GList                  *uri_list,
 
   for (lp = uri_list, string_list = g_string_sized_new (512); lp != NULL; lp = lp->next)
     {
-      uri_string = thunar_vfs_uri_to_string (THUNAR_VFS_URI (lp->data), hide_options);
+      uri_string = thunar_vfs_uri_to_string (THUNAR_VFS_URI (lp->data), flags);
       g_string_append (string_list, uri_string);
       g_string_append_c (string_list, '\n');
       g_free (uri_string);

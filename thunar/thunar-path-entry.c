@@ -560,20 +560,18 @@ thunar_path_entry_drag_data_get (GtkWidget        *widget,
                                  guint             time)
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-  GList           *uri_list = NULL;
+  GList            uri_list;
   gchar           *uri_string;
 
   /* verify that we actually display a path */
   if (G_LIKELY (path_entry->current_file != NULL))
     {
       /* transform the uri for the current path into an uri string list */
-      uri_list = thunar_vfs_uri_list_prepend (uri_list, thunar_file_get_uri (path_entry->current_file));
-      uri_string = thunar_vfs_uri_list_to_string (uri_list, 0);
-      thunar_vfs_uri_list_free (uri_list);
+      uri_list.data = thunar_file_get_uri (path_entry->current_file); uri_list.next = uri_list.prev = NULL;
+      uri_string = thunar_vfs_uri_list_to_string (&uri_list, THUNAR_VFS_URI_STRING_ESCAPED);
 
       /* setup the uri list for the drag selection */
-      gtk_selection_data_set (selection_data, selection_data->target, 8,
-                              (guchar *) uri_string, strlen (uri_string));
+      gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
 
       /* clean up */
       g_free (uri_string);
@@ -743,7 +741,7 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
     }
   else
     {
-      uri_string = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_HIDE_HOST);
+      uri_string = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_UTF8);
       gtk_entry_set_text (GTK_ENTRY (path_entry), uri_string);
       g_free (uri_string);
     }

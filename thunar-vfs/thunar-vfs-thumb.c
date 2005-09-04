@@ -22,14 +22,21 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
+#include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
 #ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
 #endif
 
 #include <png.h>
@@ -38,6 +45,12 @@
 #include <thunar-vfs/thunar-vfs-mime-database.h>
 #include <thunar-vfs/thunar-vfs-thumb.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
+
+#if GLIB_CHECK_VERSION(2,6,0)
+#include <glib/gstdio.h>
+#else
+#define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
+#endif
 
 
 
@@ -427,27 +440,108 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory   *factory,
 /**
  * thunar_vfs_thumb_factory_store_thumbnail:
  * @factory : a #ThunarVfsThumbFactory.
- * @pixbuf  :
- * @uri     :
- * @mtime   :
+ * @pixbuf  : the thumbnail #GdkPixbuf to store or %NULL
+ *            to remember the thumbnail for @uri as failed.
+ * @uri     : the #ThunarVfsURI of the original file.
+ * @mtime   : the last known modification time of the original file.
+ * @error   : return location for errors or %NULL.
  *
- * FIXME
+ * Stores @pixbuf as thumbnail for @uri in the right place, according
+ * to the size set for @factory.
+ *
+ * If you specify %NULL for @pixbuf, the @factory will remember that
+ * the thumbnail generation for @uri failed.
  *
  * The usage of this method is thread-safe.
  *
- * Return value:
+ * Return value: %TRUE if the thumbnail was stored successfully,
+ *               else %FALSE.
  **/
-void
+gboolean
 thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
                                           const GdkPixbuf       *pixbuf,
                                           const ThunarVfsURI    *uri,
-                                          ThunarVfsFileTime      mtime)
+                                          ThunarVfsFileTime      mtime,
+                                          GError               **error)
 {
-  g_return_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory));
-  g_return_if_fail (GDK_IS_PIXBUF (pixbuf));
-  g_return_if_fail (THUNAR_VFS_IS_URI (uri));
-  
-  // FIXME
+  const gchar *base_path;
+  GdkPixbuf   *thumbnail;
+  gboolean     succeed;
+  gchar       *mtime_string;
+  gchar       *uri_string;
+  gchar       *dst_path;
+  gchar       *tmp_path;
+  gchar       *md5;
+  gint         tmp_fd;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
+  g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), FALSE);
+  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* check whether we should save a thumbnail or remember failed generation */
+  base_path = (pixbuf != NULL) ? factory->base_path : factory->fail_path;
+
+  /* verify that the target directory exists */
+  if (!xfce_mkdirhier (base_path, 0700, error))
+    return FALSE;
+
+  /* determine the MD5 sum for the URI */
+  md5 = thunar_vfs_uri_get_md5sum (uri);
+
+  /* try to open a temporary file to write the thumbnail to */
+  tmp_path = g_strconcat (base_path, md5, ".png.XXXXXX", NULL);
+  tmp_fd = g_mkstemp (tmp_path);
+  if (G_UNLIKELY (tmp_fd < 0))
+    {
+      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+      g_free (tmp_path);
+      g_free (md5);
+      return FALSE;
+    }
+
+  /* close the temporary file as it exists now, and hence
+   * we successfully avoided a race condition there.
+   */
+  close (tmp_fd);
+
+  /* generate a 1x1 image if we're storing a failure */
+  thumbnail = (pixbuf != NULL) ? GDK_PIXBUF (pixbuf) : gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, 1, 1);
+
+  /* convert the thumbnail settings to strings */
+  mtime_string = g_strdup_printf ("%lu", (gulong) mtime);
+  uri_string = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_ESCAPED);
+
+  /* write the thumbnail to the temporary location */
+  succeed = gdk_pixbuf_save (thumbnail, tmp_path, "png", error,
+                             "tEXt::Thumb::URI", uri_string,
+                             "tEXt::Thumb::MTime", mtime_string,
+                             "tEXt::Software", "Thunar-VFS Thumbnail Factory",
+                             NULL);
+
+  /* drop the failed thumbnail pixbuf (if any) */
+  if (G_UNLIKELY (pixbuf == NULL))
+    g_object_unref (G_OBJECT (thumbnail));
+
+  /* rename the file to the final location */
+  if (G_LIKELY (succeed))
+    {
+      dst_path = g_strconcat (base_path, md5, ".png", NULL);
+      if (G_UNLIKELY (g_rename (tmp_path, dst_path) < 0))
+        {
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+          succeed = FALSE;
+        }
+      g_free (dst_path);
+    }
+
+  /* cleanup */
+  g_free (mtime_string);
+  g_free (uri_string);
+  g_free (tmp_path);
+  g_free (md5);
+
+  return succeed;
 }
 
 

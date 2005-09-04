@@ -841,7 +841,7 @@ thunar_favourites_model_save (ThunarFavouritesModel *model)
       favourite = THUNAR_FAVOURITE (lp->data);
       if (favourite->type == THUNAR_FAVOURITE_USER_DEFINED)
         {
-          uri = thunar_vfs_uri_to_string (thunar_file_get_uri (favourite->file), THUNAR_VFS_URI_HIDE_HOST);
+          uri = thunar_vfs_uri_to_string (thunar_file_get_uri (favourite->file), THUNAR_VFS_URI_STRING_ESCAPED);
           if (G_LIKELY (favourite->name != NULL))
             fprintf (fp, "%s %s\n", uri, favourite->name);
           else

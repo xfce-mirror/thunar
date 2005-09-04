@@ -149,7 +149,7 @@ thunar_file_atexit_foreach (gpointer key,
 {
   gchar *s;
 
-  s = thunar_vfs_uri_to_string (THUNAR_VFS_URI (key), 0);
+  s = thunar_vfs_uri_to_string (THUNAR_VFS_URI (key), THUNAR_VFS_URI_STRING_UTF8);
   g_print ("--> %s (%u)\n", s, G_OBJECT (value)->ref_count);
   g_free (s);
 }
@@ -267,7 +267,7 @@ thunar_file_real_get_parent (ThunarFile *file,
   parent_uri = thunar_vfs_uri_parent (thunar_file_get_uri (file));
   if (G_UNLIKELY (parent_uri == NULL))
     {
-      p = thunar_vfs_uri_to_string (thunar_file_get_uri (file), 0);
+      p = thunar_vfs_uri_to_string (thunar_file_get_uri (file), THUNAR_VFS_URI_STRING_UTF8);
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
                    _("Failed to determine parent URI for '%s'"), p);
       g_free (p);

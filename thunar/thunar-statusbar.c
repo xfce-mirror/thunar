@@ -539,19 +539,14 @@ thunar_statusbar_icon_drag_data_get (GtkWidget        *widget,
                                      guint             time)
 {
   ThunarStatusbarIcon *statusbar_icon = THUNAR_STATUSBAR_ICON (widget);
-  ThunarVfsURI        *uri;
-  GList               *uri_list;
+  GList                uri_list;
   gchar               *uri_string;
 
   if (G_LIKELY (statusbar_icon->file != NULL))
     {
-      /* determine the uri of the file in question */
-      uri = thunar_file_get_uri (statusbar_icon->file);
-
       /* transform the uri into an uri list string */
-      uri_list = thunar_vfs_uri_list_prepend (NULL, uri);
-      uri_string = thunar_vfs_uri_list_to_string (uri_list, 0);
-      thunar_vfs_uri_list_free (uri_list);
+      uri_list.data = thunar_file_get_uri (statusbar_icon->file); uri_list.next = uri_list.prev = NULL;
+      uri_string = thunar_vfs_uri_list_to_string (&uri_list, THUNAR_VFS_URI_STRING_ESCAPED);
 
       /* set the uri for the drag selection */
       gtk_selection_data_set (selection_data, selection_data->target,

@@ -1141,26 +1141,22 @@ thunar_location_buttons_drag_data_get (GtkWidget             *button,
                                        guint                  time,
                                        ThunarLocationButtons *buttons)
 {
-  ThunarVfsURI *uri;
-  ThunarFile   *file;
-  GList        *uri_list = NULL;
-  gchar        *uri_string;
+  ThunarFile *file;
+  GList       uri_list;
+  gchar      *uri_string;
 
   g_return_if_fail (GTK_IS_WIDGET (button));
   g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* determine the uri of the file in question */
   file = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
-  uri = thunar_file_get_uri (file);
 
   /* transform the uri into an uri list string */
-  uri_list = thunar_vfs_uri_list_prepend (uri_list, uri);
-  uri_string = thunar_vfs_uri_list_to_string (uri_list, 0);
-  thunar_vfs_uri_list_free (uri_list);
+  uri_list.data = thunar_file_get_uri (file); uri_list.next = uri_list.prev = NULL;
+  uri_string = thunar_vfs_uri_list_to_string (&uri_list, THUNAR_VFS_URI_STRING_ESCAPED);
 
   /* set the uri list for the drag selection */
-  gtk_selection_data_set (selection_data, selection_data->target,
-                          8, (guchar *) uri_string, strlen (uri_string));
+  gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
 
   /* cleanup */
   g_free (uri_string);
