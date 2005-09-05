@@ -67,7 +67,7 @@ thunar_folder_get_type (void)
                                      "ThunarFolder",
                                      &info, 0);
 
-      g_type_interface_add_prerequisite (type, GTK_TYPE_OBJECT);
+      g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
     }
 
   return type;
@@ -169,7 +169,7 @@ thunar_folder_get_corresponding_file (ThunarFolder *folder)
  *
  * Return value: the list of #ThunarFiles for @folder.
  **/
-GSList*
+GList *
 thunar_folder_get_files (ThunarFolder *folder)
 {
   g_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
@@ -207,7 +207,7 @@ thunar_folder_get_loading (ThunarFolder *folder)
  **/
 void
 thunar_folder_files_added (ThunarFolder *folder,
-                           GSList       *files)
+                           GList        *files)
 {
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
   g_return_if_fail (files != NULL);
@@ -232,7 +232,7 @@ thunar_folder_files_added (ThunarFolder *folder,
  **/
 void
 thunar_folder_files_removed (ThunarFolder *folder,
-                             GSList       *files)
+                             GList        *files)
 {
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
   g_return_if_fail (files != NULL);

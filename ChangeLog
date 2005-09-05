@@ -1,5 +1,21 @@
 2005-09-05	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs-listdir-job.c:
+	  Use GList instead of GSList to manage ThunarVfsInfo lists, which
+	  increases data locality and decreases memory usage (as there's no
+	  need to keep another allocator around any more).
+	* thunar/thunar-computer-folder.c, thunar/thunar-folder.{c,h},
+	  thunar/thunar-list-model.c, thunar/thunar-local-folder.c,
+	  thunar/thunar-trash-folder.c: Use GList instead of GSList to manage
+	  the list of files for a folder for the same reason.
+	* thunar/thunar-file.{c,h}, thunar/thunar-folder.c,
+	  thunar/thunar-local-folder.c, thunar/thunar-local-file.c: ThunarFile
+	  is derived from GObject now, instead of GtkObject.
+	* thunar/thunar-list-model.c: No need to implement GtkTreeDragDest,
+	  as that's handled in ThunarStandardView.
+
+2005-09-05	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-launcher.c, thunar/thunar-list-model.c,
 	  thunar/thunar-open-with-action.c, thunar/thunar-properties-dialog.c:
 	  We don't need to check the result of thunar_file_get_mime_info() any

@@ -595,7 +595,7 @@ thunar_local_file_reload (ThunarFile *file)
   if (G_UNLIKELY (info == NULL))
     {
       /* the file is no longer present */
-      gtk_object_destroy (GTK_OBJECT (file));
+      thunar_file_destroy (file);
     }
   else
     {
@@ -639,7 +639,7 @@ thunar_local_file_monitor (ThunarVfsMonitor       *monitor,
       break;
 
     case THUNAR_VFS_MONITOR_EVENT_DELETED:
-      gtk_object_destroy (GTK_OBJECT (local_file));
+      thunar_file_destroy (THUNAR_FILE (local_file));
       break;
     }
 }

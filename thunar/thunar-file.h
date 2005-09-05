@@ -78,7 +78,7 @@ typedef enum
 
 struct _ThunarFileClass
 {
-  GtkObjectClass __parent__;
+  GObjectClass __parent__;
 
   /* virtual methods */
   gboolean             (*has_parent)          (ThunarFile             *file);
@@ -140,11 +140,15 @@ struct _ThunarFileClass
 
   /* signals */
   void (*changed) (ThunarFile *file);
+  void (*destroy) (ThunarFile *file);
 };
 
 struct _ThunarFile
 {
-  GtkObject __parent__;
+  GObject __parent__;
+
+  /*< private >*/
+  guint flags;
 };
 
 GType              thunar_file_get_type         (void) G_GNUC_CONST;
@@ -220,6 +224,7 @@ void               thunar_file_unwatch          (ThunarFile             *file);
 void               thunar_file_reload           (ThunarFile             *file);
 
 void               thunar_file_changed          (ThunarFile             *file);
+void               thunar_file_destroy          (ThunarFile             *file);
 
 gboolean           thunar_file_is_hidden        (ThunarFile             *file);
 

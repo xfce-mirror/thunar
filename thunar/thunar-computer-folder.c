@@ -58,7 +58,7 @@ static const gchar       *thunar_computer_folder_get_icon_name          (ThunarF
                                                                          ThunarFileIconState        icon_state,
                                                                          GtkIconTheme              *icon_theme);
 static ThunarFile        *thunar_computer_folder_get_corresponding_file (ThunarFolder              *folder);
-static GSList            *thunar_computer_folder_get_files              (ThunarFolder              *folder);
+static GList             *thunar_computer_folder_get_files              (ThunarFolder              *folder);
 static gboolean           thunar_computer_folder_get_loading            (ThunarFolder              *folder);
 
 
@@ -73,7 +73,7 @@ struct _ThunarComputerFolder
   ThunarFile __parent__;
 
   ThunarVfsURI *uri;
-  GSList       *files;
+  GList        *files;
 };
 
 
@@ -134,12 +134,12 @@ static void
 thunar_computer_folder_finalize (GObject *object)
 {
   ThunarComputerFolder *computer_folder = THUNAR_COMPUTER_FOLDER (object);
-  GSList               *lp;
+  GList                *lp;
 
   /* free the virtual folder nodes */
   for (lp = computer_folder->files; lp != NULL; lp = lp->next)
     g_object_unref (G_OBJECT (lp->data));
-  g_slist_free (computer_folder->files);
+  g_list_free (computer_folder->files);
 
   /* release the folder's URI */
   thunar_vfs_uri_unref (computer_folder->uri);
@@ -253,7 +253,7 @@ thunar_computer_folder_get_corresponding_file (ThunarFolder *folder)
 
 
 
-static GSList*
+static GList *
 thunar_computer_folder_get_files (ThunarFolder *folder)
 {
   static const gchar * const identifiers[] = { "file:/", "trash:" };
@@ -273,7 +273,7 @@ thunar_computer_folder_get_files (ThunarFolder *folder)
             {
               file = thunar_file_get_for_uri (uri, NULL);
               if (G_LIKELY (file != NULL))
-                computer_folder->files = g_slist_append (computer_folder->files, file);
+                computer_folder->files = g_list_append (computer_folder->files, file);
               thunar_vfs_uri_unref (uri);
             }
         }

@@ -249,7 +249,7 @@ const gchar   *thunar_vfs_info_get_hint    (const ThunarVfsInfo *info,
 gboolean       thunar_vfs_info_matches     (const ThunarVfsInfo *a,
                                             const ThunarVfsInfo *b);
 
-GSList        *thunar_vfs_info_list_free   (GSList              *info_list);
+void           thunar_vfs_info_list_free   (GList               *info_list);
 
 G_END_DECLS;
 

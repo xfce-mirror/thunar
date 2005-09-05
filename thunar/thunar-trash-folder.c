@@ -56,7 +56,7 @@ static const gchar       *thunar_trash_folder_get_icon_name           (ThunarFil
                                                                        ThunarFileIconState     icon_state,
                                                                        GtkIconTheme           *icon_theme);
 static ThunarFile        *thunar_trash_folder_get_corresponding_file  (ThunarFolder           *folder);
-static GSList            *thunar_trash_folder_get_files               (ThunarFolder           *folder);
+static GList             *thunar_trash_folder_get_files               (ThunarFolder           *folder);
 static gboolean           thunar_trash_folder_get_loading             (ThunarFolder           *folder);
 
 
@@ -72,7 +72,7 @@ struct _ThunarTrashFolder
 
   ThunarVfsTrashManager *manager;
   ThunarVfsURI          *uri;
-  GSList                *files;
+  GList                 *files;
 };
 
 
@@ -137,12 +137,12 @@ static void
 thunar_trash_folder_finalize (GObject *object)
 {
   ThunarTrashFolder *trash_folder = THUNAR_TRASH_FOLDER (object);
-  GSList            *lp;
+  GList             *lp;
 
   /* drop the files list */
   for (lp = trash_folder->files; lp != NULL; lp = lp->next)
     g_object_unref (G_OBJECT (lp->data));
-  g_slist_free (trash_folder->files);
+  g_list_free (trash_folder->files);
 
   /* unregister from the trash manager */
   g_signal_handlers_disconnect_by_func (G_OBJECT (trash_folder->manager), thunar_file_changed, trash_folder);
@@ -293,7 +293,7 @@ thunar_trash_folder_get_corresponding_file (ThunarFolder *folder)
 
 
 
-static GSList*
+static GList *
 thunar_trash_folder_get_files (ThunarFolder *folder)
 {
   ThunarTrashFolder *trash_folder = THUNAR_TRASH_FOLDER (folder);
@@ -317,7 +317,7 @@ thunar_trash_folder_get_files (ThunarFolder *folder)
               uri = thunar_vfs_trash_get_uri (trash, fp->data);
               file = thunar_file_get_for_uri (uri, NULL);
               if (file != NULL)
-                trash_folder->files = g_slist_prepend (trash_folder->files, file);
+                trash_folder->files = g_list_prepend (trash_folder->files, file);
               thunar_vfs_uri_unref (uri);
             }
           g_object_unref (G_OBJECT (trash));

@@ -35,10 +35,7 @@
 #include <thunar/thunar-trash-folder.h>
 
 
-/* the thumbnailing state of a given file (this
- * state is stored in the unused bits of the
- * GtkObject flags).
- */
+/* the thumbnailing state of a given file */
 typedef enum
 {
   THUNAR_FILE_THUMB_STATE_MASK    = 0xc0000000,
@@ -48,8 +45,8 @@ typedef enum
   THUNAR_FILE_THUMB_STATE_LOADING = 0xc0000000,
 } ThunarFileThumbState;
 
-#define THUNAR_FILE_GET_THUMB_STATE(file)        (GTK_OBJECT ((file))->flags & THUNAR_FILE_THUMB_STATE_MASK)
-#define THUNAR_FILE_SET_THUMB_STATE(file, state) (GTK_OBJECT ((file))->flags = (GTK_OBJECT ((file))->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state))
+#define THUNAR_FILE_GET_THUMB_STATE(file)        (THUNAR_FILE ((file))->flags & THUNAR_FILE_THUMB_STATE_MASK)
+#define THUNAR_FILE_SET_THUMB_STATE(file, state) (THUNAR_FILE ((file))->flags = (THUNAR_FILE ((file))->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state))
 
 
 
@@ -65,12 +62,14 @@ typedef enum
 enum
 {
   CHANGED,
+  DESTROY,
   LAST_SIGNAL,
 };
 
 
 
 static void               thunar_file_class_init               (ThunarFileClass        *klass);
+static void               thunar_file_dispose                  (GObject                *object);
 #ifndef G_DISABLE_CHECKS
 static void               thunar_file_finalize                 (GObject                *object);
 #endif
@@ -129,7 +128,7 @@ thunar_file_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_OBJECT,
+      type = g_type_register_static (G_TYPE_OBJECT,
                                      "ThunarFile", &info,
                                      G_TYPE_FLAG_ABSTRACT);
     }
@@ -174,9 +173,7 @@ thunar_file_atexit (void)
 static void
 thunar_file_class_init (ThunarFileClass *klass)
 {
-#ifndef G_DISABLE_CHECKS
   GObjectClass *gobject_class;
-#endif
 
 #ifndef G_DISABLE_CHECKS
   if (G_UNLIKELY (!thunar_file_atexit_registered))
@@ -193,8 +190,9 @@ thunar_file_class_init (ThunarFileClass *klass)
   /* determine the parent class */
   thunar_file_parent_class = g_type_class_peek_parent (klass);
 
-#ifndef G_DISABLE_CHECKS
   gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->dispose = thunar_file_dispose;
+#ifndef G_DISABLE_CHECKS
   gobject_class->finalize = thunar_file_finalize;
 #endif
 
@@ -233,6 +231,41 @@ thunar_file_class_init (ThunarFileClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+
+  /**
+   * ThunarFile::destroy:
+   * @file : the #ThunarFile instance.
+   *
+   * Emitted when the system notices that the @file
+   * was destroyed.
+   **/
+  file_signals[DESTROY] =
+    g_signal_new ("destroy",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_CLEANUP | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
+                  G_STRUCT_OFFSET (ThunarFileClass, destroy),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
+}
+
+
+
+static void
+thunar_file_dispose (GObject *object)
+{
+  ThunarFile *file = THUNAR_FILE (object);
+
+  /* check that we don't recurse here */
+  if (G_LIKELY ((file->flags & GTK_IN_DESTRUCTION) == 0))
+    {
+      /* emit the "destroy" signal */
+      file->flags |= GTK_IN_DESTRUCTION;
+      g_signal_emit (object, file_signals[DESTROY], 0);
+      file->flags &= ~GTK_IN_DESTRUCTION;
+    }
+
+  (*G_OBJECT_CLASS (thunar_file_parent_class)->dispose) (object);
 }
 
 
@@ -502,11 +535,6 @@ _thunar_file_cache_insert (ThunarFile *file)
 
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (file_cache != NULL);
-
-  /* drop the floating reference */
-  g_assert (GTK_OBJECT_FLOATING (file));
-  g_object_ref (G_OBJECT (file));
-  gtk_object_sink (GTK_OBJECT (file));
 
   /* insert the file into the cache */
   uri = thunar_file_get_uri (file);
@@ -1512,6 +1540,27 @@ thunar_file_changed (ThunarFile *file)
 {
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_signal_emit (G_OBJECT (file), file_signals[CHANGED], 0);
+}
+
+
+
+/**
+ * thunar_file_destroy:
+ * @file : a #ThunarFile instance.
+ *
+ * Emits the ::destroy signal notifying all reference holders
+ * that they should release their references to the @file.
+ *
+ * This method is very similar to what gtk_object_destroy()
+ * does for #GtkObject<!---->s.
+ **/
+void
+thunar_file_destroy (ThunarFile *file)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (G_LIKELY ((file->flags & GTK_IN_DESTRUCTION) == 0))
+    g_object_run_dispose (G_OBJECT (file));
 }
 
 

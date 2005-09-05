@@ -690,12 +690,11 @@ thunar_vfs_info_matches (const ThunarVfsInfo *a,
  *
  * Return value: the empty list (%NULL).
  **/
-GSList*
-thunar_vfs_info_list_free (GSList *info_list)
+void
+thunar_vfs_info_list_free (GList  *info_list)
 {
-  g_slist_foreach (info_list, (GFunc) thunar_vfs_info_unref, NULL);
-  g_slist_free (info_list);
-  return NULL;
+  g_list_foreach (info_list, (GFunc) thunar_vfs_info_unref, NULL);
+  g_list_free (info_list);
 }
 
 

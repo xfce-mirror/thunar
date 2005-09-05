@@ -118,7 +118,7 @@ static gint               thunar_list_model_cmp                   (ThunarListMod
 static gint               thunar_list_model_cmp_array             (gconstpointer           a,
                                                                    gconstpointer           b,
                                                                    gpointer                user_data);
-static gint               thunar_list_model_cmp_slist             (gconstpointer           a,
+static gint               thunar_list_model_cmp_list              (gconstpointer           a,
                                                                    gconstpointer           b,
                                                                    gpointer                user_data);
 static gboolean           thunar_list_model_remove                (ThunarListModel        *store,
@@ -130,10 +130,10 @@ static void               thunar_list_model_file_changed          (ThunarFile   
 static void               thunar_list_model_folder_destroy        (ThunarFolder           *folder,
                                                                    ThunarListModel        *store);
 static void               thunar_list_model_files_added           (ThunarFolder           *folder,
-                                                                   GSList                 *files,
+                                                                   GList                  *files,
                                                                    ThunarListModel        *store);
 static void               thunar_list_model_files_removed         (ThunarFolder           *folder,
-                                                                   GSList                 *files,
+                                                                   GList                  *files,
                                                                    ThunarListModel        *store);
 static gint               sort_by_date_accessed                   (ThunarFile             *a,
                                                                    ThunarFile             *b);
@@ -164,7 +164,7 @@ struct _ThunarListModel
   guint          stamp;
   Row           *rows;
   gint           nrows;
-  GSList        *hidden;
+  GList         *hidden;
   GMemChunk     *row_chunk;
   ThunarFolder  *folder;
   gboolean       show_hidden;
@@ -906,9 +906,9 @@ thunar_list_model_cmp_array (gconstpointer a,
 
 
 static gint
-thunar_list_model_cmp_slist (gconstpointer a,
-                             gconstpointer b,
-                             gpointer      user_data)
+thunar_list_model_cmp_list (gconstpointer a,
+                            gconstpointer b,
+                            gpointer      user_data)
 {
   return -thunar_list_model_cmp (THUNAR_LIST_MODEL (user_data),
                                  THUNAR_FILE (a),
@@ -1083,7 +1083,7 @@ thunar_list_model_folder_destroy (ThunarFolder    *folder,
 
 static void
 thunar_list_model_files_added (ThunarFolder    *folder,
-                               GSList          *files,
+                               GList           *files,
                                ThunarListModel *store)
 {
   GtkTreePath  *path;
@@ -1103,7 +1103,7 @@ thunar_list_model_files_added (ThunarFolder    *folder,
       /* check if the file should be hidden */
       if (!store->show_hidden && thunar_file_is_hidden (file))
         {
-          store->hidden = g_slist_prepend (store->hidden, file);
+          store->hidden = g_list_prepend (store->hidden, file);
         }
       else
         {
@@ -1159,12 +1159,12 @@ thunar_list_model_files_added (ThunarFolder    *folder,
 
 static void
 thunar_list_model_files_removed (ThunarFolder    *folder,
-                                 GSList          *files,
+                                 GList           *files,
                                  ThunarListModel *store)
 {
   GtkTreeIter iter;
   ThunarFile *file;
-  GSList     *lp;
+  GList      *lp;
   Row        *row;
 
   /* drop all the referenced files from the model */
@@ -1184,8 +1184,8 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
           }
 
       /* file is hidden */
-      g_assert (g_slist_find (store->hidden, file) != NULL);
-      store->hidden = g_slist_remove (store->hidden, file);
+      g_assert (g_list_find (store->hidden, file) != NULL);
+      store->hidden = g_list_remove (store->hidden, file);
       g_object_unref (G_OBJECT (file));
     }
 }
@@ -1425,8 +1425,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
   GtkTreePath *path;
   GtkTreeIter  iter;
   ThunarFile  *file;
-  GSList      *files;
-  GSList      *lp;
+  GList       *files;
+  GList       *lp;
   Row         *row;
 
   g_return_if_fail (THUNAR_IS_LIST_MODEL (store));
@@ -1463,8 +1463,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
       g_mem_chunk_reset (store->row_chunk);
 
       /* remove hidden entries */
-      g_slist_foreach (store->hidden, (GFunc) g_object_unref, NULL);
-      g_slist_free (store->hidden);
+      g_list_foreach (store->hidden, (GFunc) g_object_unref, NULL);
+      g_list_free (store->hidden);
       store->hidden = NULL;
 
       /* unregister signals and drop the reference */
@@ -1485,10 +1485,10 @@ thunar_list_model_set_folder (ThunarListModel *store,
       g_object_ref (G_OBJECT (folder));
 
       /* sort the files _before_ adding them to the store (reverse order -> prepend below) */
-      files = g_slist_copy (thunar_folder_get_files (folder));
+      files = g_list_copy (thunar_folder_get_files (folder));
       if (G_LIKELY (files != NULL))
         {
-          files = g_slist_sort_with_data (files, thunar_list_model_cmp_slist, store);
+          files = g_list_sort_with_data (files, thunar_list_model_cmp_list, store);
 
           /* insert the files */
           for (lp = files; lp != NULL; lp = lp->next)
@@ -1500,7 +1500,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
               /* check if this file should be shown/hidden */
               if (!store->show_hidden && thunar_file_is_hidden (file))
                 {
-                  store->hidden = g_slist_prepend (store->hidden, file);
+                  store->hidden = g_list_prepend (store->hidden, file);
                 }
               else
                 {
@@ -1528,7 +1528,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
           gtk_tree_path_free (path);
 
           /* cleanup */
-          g_slist_free (files);
+          g_list_free (files);
         }
 
       /* connect signals to the new folder */
@@ -1615,9 +1615,9 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
   GtkTreePath  *path;
   GtkTreeIter   iter;
   ThunarFile   *file;
-  GSList       *hidden_rows;
-  GSList       *files;
-  GSList       *lp;
+  GList        *hidden_rows;
+  GList        *files;
+  GList        *lp;
   Row          *prev;
   Row          *row;
 
@@ -1641,8 +1641,7 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
           row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
                                                             0, store->file_changed_closure, TRUE);
 
-          if (G_UNLIKELY (store->rows == NULL
-                       || thunar_list_model_cmp (store, file, store->rows->file) < 0))
+          if (G_UNLIKELY (store->rows == NULL || thunar_list_model_cmp (store, file, store->rows->file) < 0))
             {
               row->next   = store->rows;
               store->rows = row;
@@ -1666,7 +1665,7 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
 
           store->nrows += 1;
         }
-      g_slist_free (store->hidden);
+      g_list_free (store->hidden);
       store->hidden = NULL;
     }
   else
@@ -1677,8 +1676,8 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
       for (hidden_rows = files = NULL, row = store->rows; row != NULL; row = row->next)
         if (thunar_file_is_hidden (row->file))
           {
-            hidden_rows = g_slist_prepend (hidden_rows, row);
-            files = g_slist_prepend (files, g_object_ref (row->file));
+            hidden_rows = g_list_prepend (hidden_rows, row);
+            files = g_list_prepend (files, g_object_ref (row->file));
           }
 
       if (files != NULL)
@@ -1689,7 +1688,7 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
               iter.user_data = lp->data;
               thunar_list_model_remove (store, &iter, FALSE);
             }
-          g_slist_free (hidden_rows);
+          g_list_free (hidden_rows);
 
           store->hidden = files;
         }
