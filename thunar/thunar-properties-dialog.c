@@ -503,16 +503,9 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   /* update the mime type */
   info = thunar_file_get_mime_info (dialog->file);
-  if (G_LIKELY (info != NULL))
-    {
-      gtk_label_set_text (GTK_LABEL (dialog->kind_label), thunar_vfs_mime_info_get_comment (info));
-      gtk_widget_show (dialog->kind_label);
-      thunar_vfs_mime_info_unref (info);
-    }
-  else
-    {
-      gtk_widget_hide (dialog->kind_label);
-    }
+  gtk_label_set_text (GTK_LABEL (dialog->kind_label), thunar_vfs_mime_info_get_comment (info));
+  gtk_widget_show (dialog->kind_label);
+  thunar_vfs_mime_info_unref (info);
 
   /* update the modified time */
   str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED);

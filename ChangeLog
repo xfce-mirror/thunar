@@ -1,5 +1,12 @@
 2005-09-05	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-launcher.c, thunar/thunar-list-model.c,
+	  thunar/thunar-open-with-action.c, thunar/thunar-properties-dialog.c:
+	  We don't need to check the result of thunar_file_get_mime_info() any
+	  more as it's garantied to be a valid ThunarVfsMimeInfo.
+
+2005-09-05	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-computer-folder.c, thunar/thunar-file.c,
 	  thunar/thunar-list-model.c: Always return a valid ThunarVfsMimeInfo
 	  from the get_mime_info() method.

@@ -590,13 +590,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
-      if (G_LIKELY (mime_info != NULL))
-        {
-          g_value_set_string (value, thunar_vfs_mime_info_get_name (mime_info));
-          thunar_vfs_mime_info_unref (mime_info);
-        }
-      else
-        g_value_set_static_string (value, _("unknown"));
+      g_value_set_string (value, thunar_vfs_mime_info_get_name (mime_info));
+      thunar_vfs_mime_info_unref (mime_info);
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_NAME:
@@ -621,13 +616,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
-      if (G_LIKELY (mime_info != NULL))
-        {
-          g_value_set_string (value, thunar_vfs_mime_info_get_comment (mime_info));
-          thunar_vfs_mime_info_unref (mime_info);
-        }
-      else
-        g_value_set_static_string (value, _("unknown"));
+      g_value_set_string (value, thunar_vfs_mime_info_get_comment (mime_info));
+      thunar_vfs_mime_info_unref (mime_info);
       break;
 
     default:
@@ -1271,19 +1261,6 @@ sort_by_mime_type (ThunarFile *a,
   info_a = thunar_file_get_mime_info (a);
   info_b = thunar_file_get_mime_info (b);
 
-  if (G_UNLIKELY (info_a == NULL && info_b == NULL))
-    return sort_by_name (a, b);
-  else if (G_UNLIKELY (info_a == NULL))
-    {
-      thunar_vfs_mime_info_unref (info_b);
-      return -1;
-    }
-  else if (G_UNLIKELY (info_b == NULL))
-    {
-      thunar_vfs_mime_info_unref (info_a);
-      return 1;
-    }
-
   result = strcasecmp (thunar_vfs_mime_info_get_name (info_a),
                        thunar_vfs_mime_info_get_name (info_b));
 
@@ -1367,19 +1344,6 @@ sort_by_type (ThunarFile *a,
 
   info_a = thunar_file_get_mime_info (a);
   info_b = thunar_file_get_mime_info (b);
-
-  if (G_UNLIKELY (info_a == NULL && info_b == NULL))
-    return sort_by_name (a, b);
-  else if (G_UNLIKELY (info_a == NULL))
-    {
-      thunar_vfs_mime_info_unref (info_b);
-      return -1;
-    }
-  else if (G_UNLIKELY (info_b == NULL))
-    {
-      thunar_vfs_mime_info_unref (info_a);
-      return 1;
-    }
 
   result = strcasecmp (thunar_vfs_mime_info_get_comment (info_a),
                        thunar_vfs_mime_info_get_comment (info_b));

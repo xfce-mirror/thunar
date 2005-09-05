@@ -395,8 +395,6 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
     {
       /* determine the MIME type for the file */
       info = thunar_file_get_mime_info (lp->data);
-      if (G_UNLIKELY (info == NULL))
-        continue;
 
       /* determine the default application for the MIME type */
       application = thunar_vfs_mime_database_get_default_application (database, info);

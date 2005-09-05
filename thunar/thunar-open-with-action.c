@@ -319,8 +319,6 @@ thunar_open_with_action_menu_mapped (GtkWidget            *menu,
 
   /* determine the mime info for the file (may fail) */
   info = thunar_file_get_mime_info (open_with_action->file);
-  if (G_UNLIKELY (info == NULL))
-    return;
 
   /* determine the icon size for menus */
   gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_size, &icon_size);
