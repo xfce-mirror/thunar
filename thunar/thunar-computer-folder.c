@@ -50,6 +50,7 @@ static gboolean           thunar_computer_folder_has_parent             (ThunarF
 static ThunarFolder      *thunar_computer_folder_open_as_folder         (ThunarFile                *file,
                                                                          GError                   **error);
 static ThunarVfsURI      *thunar_computer_folder_get_uri                (ThunarFile                *file);
+static ThunarVfsMimeInfo *thunar_computer_folder_get_mime_info          (ThunarFile                *file);
 static const gchar       *thunar_computer_folder_get_display_name       (ThunarFile                *file);
 static ThunarVfsFileType  thunar_computer_folder_get_kind               (ThunarFile                *file);
 static ThunarVfsFileMode  thunar_computer_folder_get_mode               (ThunarFile                *file);
@@ -99,6 +100,7 @@ thunar_computer_folder_class_init (ThunarComputerFolderClass *klass)
   thunarfile_class->has_parent = thunar_computer_folder_has_parent;
   thunarfile_class->open_as_folder = thunar_computer_folder_open_as_folder;
   thunarfile_class->get_uri = thunar_computer_folder_get_uri;
+  thunarfile_class->get_mime_info = thunar_computer_folder_get_mime_info;
   thunarfile_class->get_display_name = thunar_computer_folder_get_display_name;
   thunarfile_class->get_kind = thunar_computer_folder_get_kind;
   thunarfile_class->get_mode = thunar_computer_folder_get_mode;
@@ -190,6 +192,21 @@ static ThunarVfsURI*
 thunar_computer_folder_get_uri (ThunarFile *file)
 {
   return THUNAR_COMPUTER_FOLDER (file)->uri;
+}
+
+
+
+static ThunarVfsMimeInfo*
+thunar_computer_folder_get_mime_info (ThunarFile *file)
+{
+  ThunarVfsMimeDatabase *database;
+  ThunarVfsMimeInfo     *info;
+
+  database = thunar_vfs_mime_database_get_default ();
+  info = thunar_vfs_mime_database_get_info (database, "inode/directory");
+  exo_object_unref (EXO_OBJECT (database));
+
+  return info;
 }
 
 

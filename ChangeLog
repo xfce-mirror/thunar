@@ -1,5 +1,11 @@
 2005-09-05	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-computer-folder.c, thunar/thunar-file.c,
+	  thunar/thunar-list-model.c: Always return a valid ThunarVfsMimeInfo
+	  from the get_mime_info() method.
+
+2005-09-05	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-list-model.{c,h}: Drop the unused icon columns from the
 	  ThunarListModel.
 

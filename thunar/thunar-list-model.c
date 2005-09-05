@@ -1893,27 +1893,17 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       /* calculate the text to be displayed */
       mime_info = thunar_file_get_mime_info (file);
       size_string = thunar_file_get_size_string (file);
-      if (G_LIKELY (mime_info != NULL))
+      if (G_LIKELY (size_string != NULL))
         {
-          if (G_LIKELY (size_string != NULL))
-            {
-              text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
-                                      thunar_vfs_mime_info_get_comment (mime_info));
-            }
-          else
-            {
-              text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file),
-                                      thunar_vfs_mime_info_get_comment (mime_info));
-            }
-          thunar_vfs_mime_info_unref (mime_info);
+          text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
+                                  thunar_vfs_mime_info_get_comment (mime_info));
         }
       else
         {
-          if (G_LIKELY (size_string != NULL))
-            text = g_strdup_printf (_("\"%s\" (%s)"), thunar_file_get_display_name (file), size_string);
-          else
-            text = g_strdup_printf (_("\"%s\""), thunar_file_get_display_name (file));
+          text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file),
+                                  thunar_vfs_mime_info_get_comment (mime_info));
         }
+      thunar_vfs_mime_info_unref (mime_info);
       g_free (size_string);
     }
   else

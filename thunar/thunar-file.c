@@ -823,11 +823,10 @@ thunar_file_get_uri (ThunarFile *file)
  * @file : a #ThunarFile instance.
  *
  * Returns the MIME type information for the given @file object. This
- * function may return %NULL if it is unable to determine a MIME type.
- * Therefore your component must be able to handle this case!
+ * function is garantied to always return a valid #ThunarVfsMimeInfo.
  *
  * This method automatically takes a reference on the returned
- * object for the caller, so you'll need to call #thunar_vfs_mime_info()
+ * object for the caller, so you'll need to call thunar_vfs_mime_info()
  * when you are done with it.
  *
  * Return value: the MIME type or %NULL.
