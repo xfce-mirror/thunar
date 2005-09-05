@@ -470,15 +470,6 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_FILE:
       return THUNAR_TYPE_FILE;
 
-    case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
-      return GDK_TYPE_PIXBUF;
-
-    case THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL:
-      return GDK_TYPE_PIXBUF;
-
-    case THUNAR_LIST_MODEL_COLUMN_ICON_LARGE:
-      return GDK_TYPE_PIXBUF;
-
     case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
       return G_TYPE_STRING;
 
@@ -561,9 +552,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
                              gint          column,
                              GValue       *value)
 {
-  ThunarIconFactory *icon_factory;
   ThunarVfsMimeInfo *mime_info;
-  GdkPixbuf         *icon;
   gchar             *str;
   Row               *row;
 
@@ -596,33 +585,6 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_FILE:
       g_value_init (value, THUNAR_TYPE_FILE);
       g_value_set_object (value, row->file);
-      break;
-
-    case THUNAR_LIST_MODEL_COLUMN_ICON_SMALL:
-      g_value_init (value, GDK_TYPE_PIXBUF);
-      icon_factory = thunar_icon_factory_get_default ();
-      icon = thunar_file_load_icon (row->file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, 24);
-      g_object_unref (G_OBJECT (icon_factory));
-      g_value_set_object (value, icon);
-      g_object_unref (G_OBJECT (icon));
-      break;
-
-    case THUNAR_LIST_MODEL_COLUMN_ICON_NORMAL:
-      g_value_init (value, GDK_TYPE_PIXBUF);
-      icon_factory = thunar_icon_factory_get_default ();
-      icon = thunar_file_load_icon (row->file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, 48);
-      g_object_unref (G_OBJECT (icon_factory));
-      g_value_set_object (value, icon);
-      g_object_unref (G_OBJECT (icon));
-      break;
-
-    case THUNAR_LIST_MODEL_COLUMN_ICON_LARGE:
-      g_value_init (value, GDK_TYPE_PIXBUF);
-      icon_factory = thunar_icon_factory_get_default ();
-      icon = thunar_file_load_icon (row->file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, 64);
-      g_object_unref (G_OBJECT (icon_factory));
-      g_value_set_object (value, icon);
-      g_object_unref (G_OBJECT (icon));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
