@@ -69,8 +69,9 @@ static const gchar *scheme_names[] =
 
 
 
-static const gchar *home_path;
-static gchar       *localhost;
+static ExoObjectClass *thunar_vfs_uri_parent_class;
+static const gchar    *home_path;
+static gchar          *localhost;
 
 #ifndef G_DISABLE_CHECKS
 G_LOCK_DEFINE_STATIC (debug_uris);
@@ -123,6 +124,9 @@ static void
 thunar_vfs_uri_class_init (ThunarVfsURIClass *klass)
 {
   ExoObjectClass *exoobject_class;
+
+  /* determine the parent class */
+  thunar_vfs_uri_parent_class = g_type_class_peek_parent (klass);
 
   /* determine the path to the current user's homedir */
   home_path = xfce_get_homedir ();
@@ -207,13 +211,7 @@ thunar_vfs_uri_finalize (ExoObject *object)
   /* free the path */
   g_free (uri->path);
 
-  /* We don't call the parent's finalize method here,
-   * because we know that ExoObject does not finalize
-   * anything. But this only works as long as we are
-   * a direct decendant of ExoObject, so be sure to
-   * verify that here.
-   */
-  g_assert (g_type_parent (THUNAR_VFS_TYPE_URI) == EXO_TYPE_OBJECT);
+  (*EXO_OBJECT_CLASS (thunar_vfs_uri_parent_class)->finalize) (object);
 }
 
 
@@ -773,7 +771,6 @@ thunar_vfs_uri_to_string (const ThunarVfsURI     *uri,
 guint
 thunar_vfs_uri_hash (gconstpointer uri)
 {
-  const gchar *host;
   const gchar *p;
   guint        h;
 
@@ -787,9 +784,8 @@ thunar_vfs_uri_hash (gconstpointer uri)
     h = (h << 5) - h + *p;
 
   /* hash the host (if present) */
-  host = thunar_vfs_uri_get_host (THUNAR_VFS_URI (uri));
-  if (G_LIKELY (host != NULL))
-    for (p = host; *p != '\0'; ++p)
+  if (G_LIKELY (THUNAR_VFS_URI (uri)->host != NULL))
+    for (p = THUNAR_VFS_URI (uri)->host; *p != '\0'; ++p)
       h = (h << 5) - h + *p;
 
   return h;
@@ -811,8 +807,6 @@ gboolean
 thunar_vfs_uri_equal (gconstpointer a,
                       gconstpointer b)
 {
-  const gchar *a_host;
-  const gchar *b_host;
   const gchar *a_name;
   const gchar *b_name;
   const gchar *a_path;
@@ -831,12 +825,6 @@ thunar_vfs_uri_equal (gconstpointer a,
   if (THUNAR_VFS_URI (a)->scheme != THUNAR_VFS_URI (b)->scheme)
     return FALSE;
 
-  /* compare the host names (TODO: speedup?!) */
-  a_host = thunar_vfs_uri_get_host (THUNAR_VFS_URI (a));
-  b_host = thunar_vfs_uri_get_host (THUNAR_VFS_URI (b));
-  if (!exo_str_is_equal (a_host, b_host))
-    return FALSE;
-
   a_name = THUNAR_VFS_URI (a)->name;
   b_name = THUNAR_VFS_URI (b)->name;
 
@@ -844,6 +832,10 @@ thunar_vfs_uri_equal (gconstpointer a,
   for (ap = a_name, bp = b_name; *ap == *bp && *ap != '\0'; ++ap, ++bp)
     ;
   if (G_LIKELY (*ap != '\0' || *bp != '\0'))
+    return FALSE;
+
+  /* compare the host names */
+  if (!exo_str_is_equal (THUNAR_VFS_URI (a)->host, THUNAR_VFS_URI (b)->host))
     return FALSE;
 
   a_path = THUNAR_VFS_URI (a)->path;

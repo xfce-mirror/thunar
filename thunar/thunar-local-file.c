@@ -259,6 +259,16 @@ thunar_local_file_rename (ThunarFile  *file,
   succeed = thunar_vfs_info_rename (local_file->info, name, error);
   if (G_LIKELY (succeed))
     {
+      /* need to re-register the monitor handle for the new uri */
+      if (G_LIKELY (local_file->handle != NULL))
+        {
+          /* drop the previous handle (with the old URI) */
+          thunar_vfs_monitor_remove (monitor, local_file->handle);
+
+          /* register the new handle (with the new URI) */
+          local_file->handle = thunar_vfs_monitor_add_file (monitor, local_file->info->uri, thunar_local_file_monitor, local_file);
+        }
+
       /* perform the rename on the file cache */
       _thunar_file_cache_rename (file, previous_uri);
 

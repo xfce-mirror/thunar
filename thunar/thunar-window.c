@@ -584,6 +584,12 @@ thunar_window_action_about (GtkAction    *action,
     "this program; if not, write to the Free Software Foundation, Inc., 59 Temple\n"
     "Place, Suite 330, Boston, MA  02111-1307  USA.\n";
 
+  GdkPixbuf *logo;
+  
+  /* try to load the about logo */
+  logo = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/Thunar/Thunar-about-logo.png", NULL);
+
+  /* open the about dialog */
   gtk_about_dialog_set_email_hook ((gpointer) exo_noop, NULL, NULL);
   gtk_about_dialog_set_url_hook ((gpointer) exo_noop, NULL, NULL);
   gtk_show_about_dialog (GTK_WINDOW (window),
@@ -591,11 +597,16 @@ thunar_window_action_about (GtkAction    *action,
                          "comments", _("Thunar is a fast and easy to use file manager\nfor the Xfce Desktop Environment."),
                          "copyright", "Copyright © 2004-2005 Benedikt Meurer",
                          "license", license,
+                         "logo", logo,
                          "name", PACKAGE_NAME,
                          "translator-credits", _("translator-credits"),
                          "version", PACKAGE_VERSION,
                          "website", "http://thunar.xfce.org/",
                          NULL);
+
+  /* release the about logo (if any) */
+  if (G_LIKELY (logo != NULL))
+    g_object_unref (G_OBJECT (logo));
 }
 
 

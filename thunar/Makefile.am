@@ -2,6 +2,7 @@
 
 INCLUDES =								\
 	-I$(top_srcdir)							\
+	-DDATADIR=\"$(datadir)\"					\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"Thunar\"					\
