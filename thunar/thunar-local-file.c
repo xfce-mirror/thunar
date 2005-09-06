@@ -79,6 +79,7 @@ static void               thunar_local_file_monitor           (ThunarVfsMonitor 
                                                                ThunarVfsURI           *handle_uri,
                                                                ThunarVfsURI           *event_uri,
                                                                gpointer                user_data);
+static void               thunar_local_file_watch_free        (gpointer                data);
 
 
 
@@ -93,15 +94,14 @@ struct _ThunarLocalFile
 {
   ThunarFile __parent__;
 
-  ThunarVfsInfo          *info;
-
-  ThunarVfsMonitorHandle *handle;
+  ThunarVfsInfo *info;
 };
 
 
 
 static ThunarVfsMonitor *monitor = NULL;
 static GObjectClass     *thunar_local_file_parent_class;
+static GQuark            thunar_local_file_watch_quark;
 
 
 
@@ -141,6 +141,9 @@ thunar_local_file_class_init (ThunarLocalFileClass *klass)
 {
   ThunarFileClass *thunarfile_class;
   GObjectClass    *gobject_class;
+
+  /* query the thunar-local-file-watch quark */
+  thunar_local_file_watch_quark = g_quark_from_static_string ("thunar-local-file-watch");
 
   /* query the parent class */
   thunar_local_file_parent_class = g_type_class_peek_parent (klass);
@@ -185,7 +188,7 @@ thunar_local_file_finalize (GObject *object)
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (object);
 
 #ifndef G_DISABLE_CHECKS
-  if (G_UNLIKELY (local_file->handle != NULL))
+  if (G_UNLIKELY (g_object_get_qdata (object, thunar_local_file_watch_quark) != NULL))
     {
       g_error ("Attempt to finalize a ThunarLocalFile, which "
                "is still being watched for changes");
@@ -196,7 +199,7 @@ thunar_local_file_finalize (GObject *object)
   if (G_LIKELY (local_file->info != NULL))
     thunar_vfs_info_unref (local_file->info);
 
-  G_OBJECT_CLASS (thunar_local_file_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_local_file_parent_class)->finalize) (object);
 }
 
 
@@ -260,13 +263,13 @@ thunar_local_file_rename (ThunarFile  *file,
   if (G_LIKELY (succeed))
     {
       /* need to re-register the monitor handle for the new uri */
-      if (G_LIKELY (local_file->handle != NULL))
+      if (g_object_get_qdata (G_OBJECT (file), thunar_local_file_watch_quark) != NULL)
         {
           /* drop the previous handle (with the old URI) */
-          thunar_vfs_monitor_remove (monitor, local_file->handle);
+          thunar_local_file_unwatch (file);
 
           /* register the new handle (with the new URI) */
-          local_file->handle = thunar_vfs_monitor_add_file (monitor, local_file->info->uri, thunar_local_file_monitor, local_file);
+          thunar_local_file_watch (file);
         }
 
       /* perform the rename on the file cache */
@@ -556,9 +559,7 @@ thunar_local_file_get_icon_name (ThunarFile         *file,
 static void
 thunar_local_file_watch (ThunarFile *file)
 {
-  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
-
-  g_return_if_fail (local_file->handle == NULL);
+  ThunarVfsMonitorHandle *handle;
 
   /* take a reference on the VFS monitor for this instance */
   if (G_UNLIKELY (monitor == NULL))
@@ -572,7 +573,8 @@ thunar_local_file_watch (ThunarFile *file)
     }
 
   /* add us to the file monitor */
-  local_file->handle = thunar_vfs_monitor_add_file (monitor, local_file->info->uri, thunar_local_file_monitor, local_file);
+  handle = thunar_vfs_monitor_add_file (monitor, THUNAR_LOCAL_FILE (file)->info->uri, thunar_local_file_monitor, file);
+  g_object_set_qdata_full (G_OBJECT (file), thunar_local_file_watch_quark, handle, thunar_local_file_watch_free);
 }
 
 
@@ -580,16 +582,8 @@ thunar_local_file_watch (ThunarFile *file)
 static void
 thunar_local_file_unwatch (ThunarFile *file)
 {
-  ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (file);
-
-  g_return_if_fail (local_file->handle != NULL);
-
-  /* remove our VFS info from the monitor */
-  thunar_vfs_monitor_remove (monitor, local_file->handle);
-  local_file->handle = NULL;
-
-  /* release our reference on the VFS monitor */
-  g_object_unref (G_OBJECT (monitor));
+  /* just unset the watch handle */
+  g_object_set_qdata (G_OBJECT (file), thunar_local_file_watch_quark, NULL);
 }
 
 
@@ -634,7 +628,6 @@ thunar_local_file_monitor (ThunarVfsMonitor       *monitor,
   g_return_if_fail (THUNAR_VFS_IS_URI (handle_uri));
   g_return_if_fail (THUNAR_VFS_IS_URI (event_uri));
   g_return_if_fail (THUNAR_IS_LOCAL_FILE (local_file));
-  g_return_if_fail (local_file->handle == handle);
   g_return_if_fail (thunar_vfs_uri_equal (local_file->info->uri, handle_uri));
 
   /* just to be sure... */
@@ -652,6 +645,18 @@ thunar_local_file_monitor (ThunarVfsMonitor       *monitor,
       thunar_file_destroy (THUNAR_FILE (local_file));
       break;
     }
+}
+
+
+
+static void
+thunar_local_file_watch_free (gpointer data)
+{
+  /* remove the watch from the VFS monitor */
+  thunar_vfs_monitor_remove (monitor, data);
+
+  /* release our reference on the VFS monitor */
+  g_object_unref (G_OBJECT (monitor));
 }
 
 

@@ -509,8 +509,13 @@ thunar_list_model_get_iter (GtkTreeModel *model,
   if (G_UNLIKELY (index >= store->nrows))
     return FALSE;
 
-  for (n = 0, row = store->rows; n < index; ++n, row = row->next)
-    g_assert (row != NULL);
+  /* use fast-forward, skipping every second comparison */
+  for (n = index / 2, row = store->rows; n-- > 0; row = row->next->next)
+    ;
+
+  /* advance for odd indices */
+  if ((index % 2) == 1)
+    row = row->next;
 
   iter->stamp = store->stamp;
   iter->user_data = row;

@@ -2,6 +2,7 @@
 
 SUBDIRS =								\
 	docs								\
+	icons								\
 	pixmaps								\
 	po								\
 	thunar-vfs							\
