@@ -1,5 +1,24 @@
 2005-09-06	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-list-model.c: Don't emit the "row-inserted" and
+	  "row-deleted" signals when changing folders unless somebody
+	  is actually interested in these signals.
+	* thunar/thunar-list-model.c(thunar_list_model_set_folder): Actually
+	  specify the correct path when deleting the previous items from the
+	  model.
+	* thunar/thunar-local-folder.c(thunar_local_folder_file_destroy): No
+	  need to request a new list from GLib here.
+	* thunar/thunar-local-folder.c(thunar_local_folder_infos_ready): Don't
+	  add new files to two lists. Instead add them to one temporary list
+	  and append the temporary list to the internal list later.
+	* thunar/thunar-local-file.c(thunar_local_file_get_for_info): Fix an
+	  invalid instance cast check.
+	* thunar/thunar-file.c: Manage the file cache directly without using
+	  weak references to avoid problems and save memory (weak references
+	  are allocated in the GObject dataset).
+
+2005-09-06	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-local-file.c: Store the VFS monitor handle in the
 	  GObject dataset as it's used only for explicit file monitoring (e.g.
 	  for the properties dialog).

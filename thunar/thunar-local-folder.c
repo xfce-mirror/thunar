@@ -266,7 +266,7 @@ thunar_local_folder_infos_ready (ThunarVfsJob      *job,
   g_return_if_fail (local_folder->job == job);
   g_return_if_fail (THUNAR_VFS_IS_JOB (job));
 
-  /* add the new files */
+  /* add the new files to our temporary list of new files */
   for (lp = infos; lp != NULL; lp = lp->next)
     {
       /* get the file corresponding to the info */
@@ -282,19 +282,22 @@ thunar_local_folder_infos_ready (ThunarVfsJob      *job,
           continue;
         }
 
-      /* add the file */
+      /* add the file to the temporary list of new files */
       nfiles = g_list_prepend (nfiles, file);
-      local_folder->files = g_list_prepend (local_folder->files, file);
 
+      /* connect the "destroy" signal */
       g_signal_connect_closure_by_id (G_OBJECT (file), local_folder->file_destroy_id,
                                       0, local_folder->file_destroy_closure, TRUE);
     }
 
-  /* tell the consumers that we have new files */
+  /* check if we have any new files */
   if (G_LIKELY (nfiles != NULL))
     {
+      /* add the new files to our existing list of files */
+      local_folder->files = g_list_concat (existing_files, nfiles);
+
+      /* tell the consumers that we have new files */
       thunar_folder_files_added (THUNAR_FOLDER (local_folder), nfiles);
-      g_list_free (nfiles);
     }
 }
 
@@ -336,7 +339,7 @@ static void
 thunar_local_folder_file_destroy (ThunarFile        *file,
                                   ThunarLocalFolder *local_folder)
 {
-  GList  *files;
+  GList files;
 
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
@@ -349,9 +352,8 @@ thunar_local_folder_file_destroy (ThunarFile        *file,
   local_folder->files = g_list_remove (local_folder->files, file);
 
   /* tell everybody that the file is gone */
-  files = g_list_prepend (NULL, file);
-  thunar_folder_files_removed (THUNAR_FOLDER (local_folder), files);
-  g_list_free_1 (files);
+  files.data = file; files.next = files.prev = NULL;
+  thunar_folder_files_removed (THUNAR_FOLDER (local_folder), &files);
 
   /* drop our reference to the file */
   g_object_unref (G_OBJECT (file));

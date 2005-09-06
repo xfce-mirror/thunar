@@ -94,8 +94,6 @@ static gboolean           thunar_file_denies_access_permission (ThunarFile      
                                                                 ThunarVfsFileMode       usr_permissions,
                                                                 ThunarVfsFileMode       grp_permissions,
                                                                 ThunarVfsFileMode       oth_permissions);
-static void               thunar_file_destroyed                (gpointer                data,
-                                                                GObject                *object);
 
 
 
@@ -264,6 +262,9 @@ thunar_file_dispose (GObject *object)
       g_signal_emit (object, file_signals[DESTROY], 0);
       file->flags &= ~GTK_IN_DESTRUCTION;
     }
+
+  /* drop the entry from the cache */
+  g_hash_table_remove (file_cache, thunar_file_get_uri (file));
 
   (*G_OBJECT_CLASS (thunar_file_parent_class)->dispose) (object);
 }
@@ -469,23 +470,6 @@ thunar_file_denies_access_permission (ThunarFile       *file,
 
 
 
-static void
-thunar_file_destroyed (gpointer data,
-                       GObject *object)
-{
-  ThunarVfsURI *uri = THUNAR_VFS_URI (data);
-
-  g_return_if_fail (THUNAR_VFS_IS_URI (uri));
-
-  /* drop the entry from the cache */
-  g_hash_table_remove (file_cache, uri);
-
-  /* drop the reference on the uri */
-  thunar_vfs_uri_unref (uri);
-}
-
-
-
 /**
  * _thunar_file_cache_lookup:
  * @uri : a #ThunarVfsURI.
@@ -511,10 +495,7 @@ _thunar_file_cache_lookup (ThunarVfsURI *uri)
 
   /* allocate the ThunarFile cache on-demand */
   if (G_UNLIKELY (file_cache == NULL))
-    {
-      file_cache = g_hash_table_new (thunar_vfs_uri_hash,
-                                     thunar_vfs_uri_equal);
-    }
+    file_cache = g_hash_table_new_full (thunar_vfs_uri_hash, thunar_vfs_uri_equal, thunar_vfs_uri_unref, NULL);
 
   return g_hash_table_lookup (file_cache, uri);
 }
@@ -538,7 +519,6 @@ _thunar_file_cache_insert (ThunarFile *file)
 
   /* insert the file into the cache */
   uri = thunar_file_get_uri (file);
-  g_object_weak_ref (G_OBJECT (file), thunar_file_destroyed, uri);
   g_hash_table_insert (file_cache, thunar_vfs_uri_ref (uri), file);
 }
 
@@ -566,13 +546,10 @@ _thunar_file_cache_rename (ThunarFile   *file,
   g_return_if_fail (file_cache != NULL);
 
   /* drop the previous entry for the uri */
-  g_object_weak_unref (G_OBJECT (file), thunar_file_destroyed, uri);
   g_hash_table_remove (file_cache, uri);
-  thunar_vfs_uri_unref (uri);
 
   /* insert the new entry */
   uri = thunar_file_get_uri (file);
-  g_object_weak_ref (G_OBJECT (file), thunar_file_destroyed, uri);
   g_hash_table_insert (file_cache, thunar_vfs_uri_ref (uri), file);
 }
 
@@ -1159,7 +1136,7 @@ thunar_file_get_volume (ThunarFile             *file,
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager), NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_volume (file, volume_manager);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_volume) (file, volume_manager);
 }
 
 
@@ -1181,7 +1158,7 @@ ThunarVfsGroup*
 thunar_file_get_group (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_group (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_group) (file);
 }
 
 
@@ -1203,7 +1180,7 @@ ThunarVfsUser*
 thunar_file_get_user (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_user (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_user) (file);
 }
 
 
@@ -1229,7 +1206,7 @@ gboolean
 thunar_file_is_executable (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return THUNAR_FILE_GET_CLASS (file)->is_executable (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->is_executable) (file);
 }
 
 
@@ -1254,7 +1231,7 @@ gboolean
 thunar_file_is_readable (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return THUNAR_FILE_GET_CLASS (file)->is_readable (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->is_readable) (file);
 }
 
 
@@ -1299,7 +1276,7 @@ gboolean
 thunar_file_is_writable (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return THUNAR_FILE_GET_CLASS (file)->is_writable (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->is_writable) (file);
 }
 
 
@@ -1324,7 +1301,7 @@ GList*
 thunar_file_get_emblem_names (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return THUNAR_FILE_GET_CLASS (file)->get_emblem_names (file);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_emblem_names) (file);
 }
 
 

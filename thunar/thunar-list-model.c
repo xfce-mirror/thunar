@@ -177,6 +177,12 @@ struct _ThunarListModel
   GClosure      *file_changed_closure;
   gint           file_changed_id;
 
+  /* ids for the "row-inserted" and "row-deleted" signals
+   * of GtkTreeModel to speed up folder changing.
+   */
+  guint          row_inserted_id;
+  guint          row_deleted_id;
+
   gboolean       sort_folders_first;
   gint           sort_sign;   /* 1 = ascending, -1 descending */
   gint         (*sort_func) (ThunarFile *a,
@@ -331,6 +337,9 @@ thunar_list_model_init (ThunarListModel *store)
 
   store->file_changed_closure = g_cclosure_new_object (G_CALLBACK (thunar_list_model_file_changed), G_OBJECT (store));
   store->file_changed_id      = g_signal_lookup ("changed", THUNAR_TYPE_FILE);
+
+  store->row_inserted_id      = g_signal_lookup ("row-inserted", GTK_TYPE_TREE_MODEL);
+  store->row_deleted_id       = g_signal_lookup ("row-deleted", GTK_TYPE_TREE_MODEL);
 
   store->sort_folders_first   = TRUE;
   store->sort_sign            = 1;
@@ -1430,6 +1439,7 @@ thunar_list_model_set_folder (ThunarListModel *store,
   GtkTreePath *path;
   GtkTreeIter  iter;
   ThunarFile  *file;
+  gboolean     has_handler;
   GList       *files;
   GList       *lp;
   Row         *row;
@@ -1444,8 +1454,12 @@ thunar_list_model_set_folder (ThunarListModel *store,
   /* unlink from the previously active folder (if any) */
   if (G_LIKELY (store->folder != NULL))
     {
+      /* check if we have any handlers connected for "row-deleted" */
+      has_handler = g_signal_has_handler_pending (G_OBJECT (store), store->row_deleted_id, 0, FALSE);
+
       /* remove existing entries */
       path = gtk_tree_path_new ();
+      gtk_tree_path_append_index (path, 0);
       while (store->nrows > 0)
         {
           /* grab the next row */
@@ -1459,8 +1473,11 @@ thunar_list_model_set_folder (ThunarListModel *store,
           store->rows = row->next;
           store->nrows--;
 
-          /* notify the view(s) */
-          gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
+          /* notify the view(s) if they're actually
+           * interested in the "row-deleted" signal.
+           */
+          if (G_UNLIKELY (has_handler))
+            gtk_tree_model_row_deleted (GTK_TREE_MODEL (store), path);
         }
       gtk_tree_path_free (path);
 
@@ -1520,17 +1537,23 @@ thunar_list_model_set_folder (ThunarListModel *store,
                 }
             }
 
-          /* notify other parties */
-          path = gtk_tree_path_new ();
-          gtk_tree_path_append_index (path, 0);
-          for (row = store->rows; row != NULL; row = row->next)
+          /* check if we have any handlers connected for "row-inserted" */
+          if (g_signal_has_handler_pending (G_OBJECT (store), store->row_inserted_id, 0, FALSE))
             {
-              iter.stamp = store->stamp;
-              iter.user_data = row;
-              gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
-              gtk_tree_path_next (path);
+              /* notify other parties only if anyone is actually
+               * interested in the "row-inserted" signal.
+               */
+              path = gtk_tree_path_new ();
+              gtk_tree_path_append_index (path, 0);
+              for (row = store->rows; row != NULL; row = row->next)
+                {
+                  iter.stamp = store->stamp;
+                  iter.user_data = row;
+                  gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
+                  gtk_tree_path_next (path);
+                }
+              gtk_tree_path_free (path);
             }
-          gtk_tree_path_free (path);
 
           /* cleanup */
           g_list_free (files);

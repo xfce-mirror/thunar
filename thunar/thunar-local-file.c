@@ -726,7 +726,7 @@ thunar_local_file_get_for_info (ThunarVfsInfo *info)
   g_return_val_if_fail (THUNAR_VFS_IS_URI (info->uri), NULL);
 
   /* check if we already have a cached version of that file */
-  local_file = THUNAR_LOCAL_FILE (_thunar_file_cache_lookup (info->uri));
+  local_file = (ThunarLocalFile *) _thunar_file_cache_lookup (info->uri);
   if (G_UNLIKELY (local_file != NULL))
     {
       /* take a reference for the caller */
