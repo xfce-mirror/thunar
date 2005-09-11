@@ -28,12 +28,12 @@
 #include <mmintrin.h>
 #endif
 
-#include <thunarx/thunarx-gdk-pixbuf-extensions.h>
+#include <thunar/thunar-gdk-pixbuf-extensions.h>
 
 
 
 /**
- * thunarx_gdk_pixbuf_colorize:
+ * thunar_gdk_pixbuf_colorize:
  * @src   : the source #GdkPixbuf.
  * @color : the new color.
  *
@@ -43,8 +43,8 @@
  * Return value: the colorized #GdkPixbuf.
  **/
 GdkPixbuf*
-thunarx_gdk_pixbuf_colorize (const GdkPixbuf *src,
-                             const GdkColor  *color)
+thunar_gdk_pixbuf_colorize (const GdkPixbuf *src,
+                            const GdkColor  *color)
 {
   GdkPixbuf *dst;
   gboolean   has_alpha;
@@ -196,7 +196,7 @@ draw_frame_column (GdkPixbuf *frame_image,
 
 
 /**
- * thunarx_gdk_pixbuf_frame:
+ * thunar_gdk_pixbuf_frame:
  * @src           : the source #GdkPixbuf.
  * @frame         : the frame #GdkPixbuf.
  * @left_offset   : the left frame offset.
@@ -213,12 +213,12 @@ draw_frame_column (GdkPixbuf *frame_image,
  * Return value: the framed version of @src.
  **/
 GdkPixbuf*
-thunarx_gdk_pixbuf_frame (GdkPixbuf *src,
-                          GdkPixbuf *frame,
-                          gint       left_offset,
-                          gint       top_offset,
-                          gint       right_offset,
-                          gint       bottom_offset)
+thunar_gdk_pixbuf_frame (GdkPixbuf *src,
+                         GdkPixbuf *frame,
+                         gint       left_offset,
+                         gint       top_offset,
+                         gint       right_offset,
+                         gint       bottom_offset)
 {
   GdkPixbuf *dst;
   gint       dst_width;
@@ -288,7 +288,7 @@ lighten_channel (guchar cur_value)
 
 
 /**
- * thunarx_gdk_pixbuf_spotlight:
+ * thunar_gdk_pixbuf_spotlight:
  * @src : the source #GdkPixbuf.
  *
  * Creates a lightened version of @src, suitable for
@@ -300,7 +300,7 @@ lighten_channel (guchar cur_value)
  * Return value: the lightened version of @src.
  **/
 GdkPixbuf*
-thunarx_gdk_pixbuf_spotlight (const GdkPixbuf *src)
+thunar_gdk_pixbuf_spotlight (const GdkPixbuf *src)
 {
   GdkPixbuf *dst;
   gboolean   has_alpha;

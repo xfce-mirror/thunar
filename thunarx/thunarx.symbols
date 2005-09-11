@@ -1,0 +1,92 @@
+/* $Id$ */
+/*-
+ * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+/* This file lists all exported symbols. It is used to generate
+ * the thunarx.def file used to control exports on Windows and the
+ * thunarx-alias.h/thunarx-aliasdef.c files used to avoid PLT
+ * entries for * internal uses of exported functions (see
+ * make-thunarx-alias.pl).
+ * 
+ * Every symbol must be included in the right
+ * #ifdef IN_HEADER(sym) #endif and
+ * #ifdef IN_SOURCE(sym) #endif sections. 
+ */
+
+#ifdef ALL_FILES
+#define IN_SOURCE(x) 1
+#define IN_HEADER(x) 1
+#endif
+
+/* thunarx-config symbols */
+#if IN_HEADER(__THUNARX_CONFIG_H__)
+#if IN_SOURCE(__THUNARX_CONFIG_C__)
+thunarx_major_version
+thunarx_minor_version
+thunarx_micro_version
+thunarx_check_version
+#endif
+#endif
+
+/* ThunarxFileInfo methods */
+#if IN_HEADER(__THUNARX_FILE_INFO_H__)
+#if IN_SOURCE(__THUNARX_FILE_INFO_C__)
+thunarx_file_info_get_type G_GNUC_CONST
+thunarx_file_info_get_name
+thunarx_file_info_get_uri
+thunarx_file_info_get_parent_uri
+thunarx_file_info_get_uri_scheme
+thunarx_file_info_get_mime_type
+thunarx_file_info_has_mime_type
+thunarx_file_info_is_directory
+thunarx_file_info_list_copy
+thunarx_file_info_list_free
+#endif
+#endif
+
+/* ThunarxMenuProvider methods */
+#if IN_HEADER(__THUNARX_MENU_PROVIDER_H__)
+#if IN_SOURCE(__THUNARX_MENU_PROVIDER_C__)
+thunarx_menu_provider_get_type G_GNUC_CONST
+thunarx_menu_provider_get_file_actions
+thunarx_menu_provider_get_folder_actions
+#endif
+#endif
+
+/* ThunarxPropertyPage methods */
+#if IN_HEADER(__THUNARX_PROPERTY_PAGE_H__)
+#if IN_SOURCE(__THUNARX_PROPERTY_PAGE_C__)
+thunarx_property_page_get_type G_GNUC_CONST
+thunarx_property_page_new G_GNUC_MALLOC
+thunarx_property_page_new_with_label_widget G_GNUC_MALLOC
+thunarx_property_page_get_label
+thunarx_property_page_set_label
+thunarx_property_page_get_label_widget
+thunarx_property_page_set_label_widget
+#endif
+#endif
+
+/* ThunarxPropertyPageProvider methods */
+#if IN_HEADER(__THUNARX_PROPERTY_PAGE_PROVIDER_H__)
+#if IN_SOURCE(__THUNARX_PROPERTY_PAGE_PROVIDER_C__)
+thunarx_property_page_provider_get_type G_GNUC_CONST
+thunarx_property_page_provider_get_pages
+#endif
+#endif
+

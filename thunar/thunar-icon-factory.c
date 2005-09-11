@@ -34,9 +34,8 @@
 
 #include <exo/exo.h>
 
-#include <thunarx/thunarx-gdk-pixbuf-extensions.h>
-
 #include <thunar/thunar-fallback-icon.h>
+#include <thunar/thunar-gdk-pixbuf-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-thumbnail-frame.h>
 
@@ -441,7 +440,7 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
           && thumbnail_needs_frame (pixbuf, width, height))
         {
           /* add the frame */
-          tmp = thunarx_gdk_pixbuf_frame (pixbuf, factory->thumbnail_frame, 3, 3, 6, 6);
+          tmp = thunar_gdk_pixbuf_frame (pixbuf, factory->thumbnail_frame, 3, 3, 6, 6);
           g_object_unref (G_OBJECT (pixbuf));
           pixbuf = tmp;
 

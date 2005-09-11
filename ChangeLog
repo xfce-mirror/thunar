@@ -1,3 +1,29 @@
+2005-09-09	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Substitute version information.
+	* thunar/thunar-window.c(thunar_window_action_about): Escape the
+	  copyright sign.
+	* thunar/thunar-gdk-pixbuf-extensions.{c,h},
+	  thunar/thunar-gtk-extensions.{c,h}, thunar/thunar-desktop-view.c,
+	  thunar/thunar-icon-factory.c, thunar/thunar-icon-renderer.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-window.c,
+	  thunar/Makefile.am: Merge the GdkPixbuf and GTK+ extensions into
+	  the thunar namespace.
+	* configure.in.in, thunarx/: Import the initial extensions library.
+	* configure.in.in, docs/Makefile.am, Makefile.am, docs/reference/:
+	  Import the reference manual for the extensions library.
+	* thunar/thunar-file.c: Implement the ThunarxFileInfo interface.
+	* thunar/thunar-extension-manager.{c,h}, thunar/Makefile.am: Import the
+	  ThunarExtensionManager class.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c: Add
+	  support for context menu providers to the standard views.
+	* po/POTFILES.in: Add thunarx/thunarx-property-page.c here.
+	* thunar/thunar-properties-dialog.c: Add support for property page
+	  providers here.
+	* Makefile.am, configure.in.in, examples/Makefile.am,
+	  examples/open-terminal-here/: Add "Open Terminal Here" menu provider
+	  example.
+
 2005-09-06	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-list-model.c: Don't emit the "row-inserted" and

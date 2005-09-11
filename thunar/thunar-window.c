@@ -21,11 +21,10 @@
 #include <config.h>
 #endif
 
-#include <thunarx/thunarx-gtk-extensions.h>
-
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-favourites-pane.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-dialog.h>
@@ -595,7 +594,7 @@ thunar_window_action_about (GtkAction    *action,
   gtk_show_about_dialog (GTK_WINDOW (window),
                          "authors", authors,
                          "comments", _("Thunar is a fast and easy to use file manager\nfor the Xfce Desktop Environment."),
-                         "copyright", "Copyright © 2004-2005 Benedikt Meurer",
+                         "copyright", "Copyright \302\251 2004-2005 Benedikt Meurer",
                          "license", license,
                          "logo", logo,
                          "name", PACKAGE_NAME,
@@ -717,11 +716,11 @@ thunar_window_set_current_directory (ThunarWindow *window,
     }
 
   /* enable the 'Open new window' action if we have a valid directory */
-  thunarx_gtk_action_group_set_action_sensitive (window->action_group, "open-new-window", (current_directory != NULL));
+  thunar_gtk_action_group_set_action_sensitive (window->action_group, "open-new-window", (current_directory != NULL));
 
   /* enable the 'Up' action if possible for the new directory */
-  thunarx_gtk_action_group_set_action_sensitive (window->action_group, "open-parent", (current_directory != NULL
-                                                  && thunar_file_has_parent (current_directory)));
+  thunar_gtk_action_group_set_action_sensitive (window->action_group, "open-parent", (current_directory != NULL
+                                                && thunar_file_has_parent (current_directory)));
 
   /* tell everybody that we have a new "current-directory",
    * we do this first so other widgets display the new

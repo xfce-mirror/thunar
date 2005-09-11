@@ -6,7 +6,9 @@ INCLUDES =								\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"Thunar\"					\
-	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"
+	-DLIBDIR=\"$(libdir)\"						\
+	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
+	-DTHUNAR_VERSION_API=\"$(THUNAR_VERSION_API)\"
 
 bin_PROGRAMS =								\
 	Thunar
@@ -16,6 +18,7 @@ thunar_built_sources =							\
 	thunar-marshal.h
 
 Thunar_SOURCES =							\
+	$(thunar_include_HEADERS)					\
 	$(thunar_built_sources)						\
 	main.c								\
 	thunar-application.c						\
@@ -34,6 +37,8 @@ Thunar_SOURCES =							\
 	thunar-details-view.h						\
 	thunar-dnd.c							\
 	thunar-dnd.h							\
+	thunar-extension-manager.c					\
+	thunar-extension-manager.h					\
 	thunar-fallback-icon.c						\
 	thunar-fallback-icon.h						\
 	thunar-favourites-model.c					\
@@ -46,6 +51,10 @@ Thunar_SOURCES =							\
 	thunar-file.h							\
 	thunar-folder.c							\
 	thunar-folder.h							\
+	thunar-gdk-pixbuf-extensions.c					\
+	thunar-gdk-pixbuf-extensions.h					\
+	thunar-gtk-extensions.c						\
+	thunar-gtk-extensions.h						\
 	thunar-icon-factory.c						\
 	thunar-icon-factory.h						\
 	thunar-icon-renderer.c						\
@@ -115,11 +124,11 @@ Thunar_LDFLAGS =							\
 
 Thunar_LDADD =								\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
-	$(top_builddir)/thunarx/libthunarx.la
+	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
 
 Thunar_DEPENDENCIES =							\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
-	$(top_builddir)/thunarx/libthunarx.la
+	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
 
 # install symlink to 'thunar'
 install-data-local:

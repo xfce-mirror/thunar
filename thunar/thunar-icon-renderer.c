@@ -22,9 +22,9 @@
 #endif
 
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-gdk-pixbuf-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
-#include <thunarx/thunarx-gdk-pixbuf-extensions.h>
 
 
 
@@ -377,14 +377,14 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           if ((flags & GTK_CELL_RENDERER_SELECTED) != 0)
             {
               state = GTK_WIDGET_HAS_FOCUS (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
-              temp = thunarx_gdk_pixbuf_colorize (icon, &widget->style->base[state]);
+              temp = thunar_gdk_pixbuf_colorize (icon, &widget->style->base[state]);
               g_object_unref (G_OBJECT (icon));
               icon = temp;
             }
 
           if ((flags & GTK_CELL_RENDERER_PRELIT) != 0)
             {
-              temp = thunarx_gdk_pixbuf_spotlight (icon);
+              temp = thunar_gdk_pixbuf_spotlight (icon);
               g_object_unref (G_OBJECT (icon));
               icon = temp;
             }

@@ -1,0 +1,13 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+extensionsdir=${libdir}/thunarx-@THUNAR_VERSION_API@
+
+Name: thunarx
+Description: A library to create Thunar extensions
+Requires: gtk+-2.0
+Version: @PACKAGE_VERSION@
+Libs: -L${libdir} -lthunarx-@THUNAR_VERSION_API@
+Cflags: -I${includedir}/thunarx-@THUNAR_VERSION_API@

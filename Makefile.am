@@ -1,14 +1,15 @@
 # $Id$
 
 SUBDIRS =								\
-	docs								\
 	icons								\
 	pixmaps								\
 	po								\
 	thunar-vfs							\
 	thunarx								\
 	thunar								\
-	tests
+	tests								\
+	docs								\
+	examples
 
 AUTOMAKE_OPTIONS =							\
 	1.8								\
@@ -39,5 +40,7 @@ DISTCLEANFILES =							\
 	intltool-merge							\
 	intltool-update							\
 	$(desktop_DATA)
+
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

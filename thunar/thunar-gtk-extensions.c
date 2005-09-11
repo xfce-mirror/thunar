@@ -21,12 +21,12 @@
 #include <config.h>
 #endif
 
-#include <thunarx/thunarx-gtk-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
 
 
 
 /**
- * thunarx_gtk_action_group_set_action_sensitive:
+ * thunar_gtk_action_group_set_action_sensitive:
  * @action_group : a #GtkActionGroup.
  * @action_name  : the name of a #GtkAction in @action_group.
  * @sensitive    : the new sensitivity.
@@ -35,9 +35,9 @@
  * in @action_group (whose name is @action_name) to @sensitive.
  **/
 void
-thunarx_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
-                                               const gchar    *action_name,
-                                               gboolean        sensitive)
+thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
+                                              const gchar    *action_name,
+                                              gboolean        sensitive)
 {
   GtkAction *action;
 

@@ -17,17 +17,17 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __THUNARX_GTK_EXTENSIONS_H__
-#define __THUNARX_GTK_EXTENSIONS_H__
+#ifndef __THUNAR_GTK_EXTENSIONS_H__
+#define __THUNAR_GTK_EXTENSIONS_H__
 
 #include <gtk/gtk.h>
 
 G_BEGIN_DECLS;
 
-void thunarx_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
-                                                    const gchar    *action_name,
-                                                    gboolean        sensitive);
+void thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
+                                                   const gchar    *action_name,
+                                                   gboolean        sensitive);
 
 G_END_DECLS;
 
-#endif /* !__THUNARX_GTK_EXTENSIONS_H__ */
+#endif /* !__THUNAR_GTK_EXTENSIONS_H__ */

@@ -31,8 +31,7 @@
 #include <thunar/thunar-desktop-model.h>
 #include <thunar/thunar-desktop-view.h>
 #include <thunar/thunar-file.h>
-
-#include <thunarx/thunarx-gdk-pixbuf-extensions.h>
+#include <thunar/thunar-gdk-pixbuf-extensions.h>
 
 
 
@@ -553,7 +552,7 @@ thunar_desktop_view_render_item (ThunarDesktopView     *view,
     {
       if (G_UNLIKELY (item->selected))
         {
-          colorized_icon = thunarx_gdk_pixbuf_colorize (icon, &GTK_WIDGET (view)->style->base[GTK_STATE_SELECTED]);
+          colorized_icon = thunar_gdk_pixbuf_colorize (icon, &GTK_WIDGET (view)->style->base[GTK_STATE_SELECTED]);
           g_object_unref (G_OBJECT (icon));
           icon = colorized_icon;
         }

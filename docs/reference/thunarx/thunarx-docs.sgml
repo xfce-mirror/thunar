@@ -1,0 +1,454 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+
+<!ENTITY ThunarxFileInfo SYSTEM "xml/thunarx-file-info.xml">
+<!ENTITY ThunarxMenuProvider SYSTEM "xml/thunarx-menu-provider.xml">
+<!ENTITY ThunarxPropertyPage SYSTEM "xml/thunarx-property-page.xml">
+<!ENTITY ThunarxPropertyPageProvider SYSTEM "xml/thunarx-property-page-provider.xml">
+<!ENTITY thunarx-version-information SYSTEM "xml/thunarx-version-information.xml">
+
+<!ENTITY version SYSTEM "version.xml">
+<!ENTITY date "September 2005">
+]>
+
+<book id="index">
+  <bookinfo>
+    <title>Thunar Extensions Reference Manual</title>
+    <releaseinfo>Version &version;</releaseinfo>
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2005</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright>
+
+    <legalnotice id="legalnotice">
+      <para>
+        Permission is granted to copy, distribute and/or modify this document
+        under the terms of the GNU Free Documentation License, Version 1.1 or
+        any later version published by the Free Software Foundation; with no
+        Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+        Texts. The complete license text is available from the <ulink
+        type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.
+      </para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>System development</orgdiv>
+          <jobtitle>Software developer</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+  </bookinfo>
+
+  <part id="thunarx-overview">
+    <title>Overview</title>
+
+    <para>
+      The Thunar Extension Framework (<systemitem class="library">thunarx</systemitem>) provides
+      developers with an easy way to extend the basic functionality provided by
+      the <ulink type="http" url="http://thunar.xfce.org/">Thunar File Manager</ulink>.
+      The <systemitem class="library">thunarx</systemitem> library includes interfaces that can
+      be implemented by extensions for various purposes.
+    </para>
+
+    <para>
+      It is based on the <ulink type="http"
+      url="http://developer.gnome.org/doc/API/2.0/gobject/ch02.html">GLib Dynamic Type
+      System</ulink> and loads the extensions on demand to reduce the system resources
+      allocated for the file manager process.
+    </para>
+
+    <sect1 id="thunarx-overview-goals">
+      <title>Goals</title>
+
+      <para>
+        The Thunar Extension Framework was developed with the following goals in mind:
+      </para>
+
+      <orderedlist>
+        <listitem>
+          It should be easy to extend the functionality of the file manager in certain
+          ways.
+        </listitem>
+
+        <listitem>
+          The internals of the file manager should be hidden from the extensions to be
+          able to maintain API/ABI compatibility for extensions over various major
+          releases of the file manager.
+        </listitem>
+
+        <listitem>
+          Provide basic compatibility with the <ulink type="http"
+          url="http://www.gnome.org/projects/nautilus/">Nautilus</ulink> Extension Framework,
+          so vendors don't need to write several versions of their extensions for the various
+          file managers. With the current implementation it should be easy to write a small
+          wrapper library for generic extensions that can be loaded into both Thunar and
+          Nautilus.
+        </listitem>
+
+        <listitem>
+          Extensions should not be loaded into memory until they are actually required to
+          save system resources. This differs from the way Nautilus handles extensions and
+          therefore people that already know how to write Nautilus extensions must be
+          careful when writing extensions for Thunar, because Thunar actually unloads the
+          extension when it's no longer needed. The <ulink type="http"
+          url="http://developer.gnome.org/doc/API/2.0/gobject/GTypePlugin.html">GTypePlugin</ulink>
+          and <ulink type="http"
+          url="http://developer.gnome.org/doc/API/2.0/gobject/GTypeModule.html">GTypeModule</ulink>
+          sections in the <ulink type="http" url="http://developer.gnome.org/doc/API/2.0/gobject/">GObject
+          Reference Manual</ulink> provide details about the handling of dynamic type plugins.
+        </listitem>
+
+        <listitem>
+          Permit developers to write extensions in languages other than C.
+        </listitem>
+      </orderedlist>
+    </sect1>
+  </part>
+
+  <part id="thunarx-writing-extensions">
+    <title>Writing Extensions</title>
+
+    <para>
+      This section explains the basic steps required to write an extension for the <ulink type="http"
+      url="http://thunar.xfce.org">Thunar File Manager</ulink> using the C language interface. It is
+      just a short introduction and not meant to provide extensive details about the internal workings
+      of the file manager.
+    </para>
+
+    <sect1 id="thunarx-writing-extensions-basic-concepts">
+      <title>Basic Concepts</title>
+
+      <sect2 id="thunarx-writing-extensions-extensions-and-providers">
+        <title>Extensions and Providers</title>
+
+        <para>
+          <emphasis>Thunar Extensions</emphasis> are shared libraries that extend the basic functionality
+          provided by the Thunar File Manager. An extension exports one or more <link
+          linkend="GObject"><type>GObject</type></link>s, called <emphasis>providers</emphasis> to Thunar.
+        </para>
+
+        <para>
+          Providers implement one or more of the <link linkend="GInterface"><type>GInterface</type></link>s included with
+          the <systemitem class="library">thunarx</systemitem> library. The currently exported interfaces
+          include the <link linkend="ThunarxMenuProvider"><type>ThunarxMenuProvider</type></link> for adding context menu
+          items to the file views and the <link
+          linkend="ThunarxPropertyPageProvider"><type>ThunarxPropertyPageProvider</type></link> for adding pages to the
+          file properties dialog.
+        </para>
+      </sect2>
+
+      <sect2 id="thunarx-writing-extensions-thunarxfileinfo">
+        <title>ThunarxFileInfo</title>
+
+        <para>
+          Thunar passes file references to the provider using <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link>
+          objects. The <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link> interface provides access to the file
+          information that Thunar has already read - mime type, URI, name, etc. Extensions should use the data from
+          from the <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link> rather than reading it themselves, to
+          prevent excessive I/O.
+        </para>
+
+        <para>
+          There is exactly one <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link> per file, and it is kept around
+          for as long as Thunar is interested in the file. Extensions can use this information to manage lifecycles of
+          its own data - e.g. when the <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link> goes away, it is safe
+          for the extension to forget any private data for that file.
+        </para>
+      </sect2>
+
+      <sect2 id="thunarx-writing-extensions-names">
+        <title>Names</title>
+
+        <para>
+          Most objects created by the extensions need names, e.g. the <link linkend="GtkAction"><type>GtkAction</type></link>s
+          returned from the <link linkend="ThunarxMenuProvider"><type>ThunarxMenuProvider</type></link>s. These names must be
+          namespaced with the name of the extension. For example the main action returned from the
+          <application>OpenTerminal</application> extension should be called <literal>OpenTerminal::open-terminal</literal>.
+          The namespace must be global among the providers exported by a certain extension.
+        </para>
+      </sect2>
+
+      <sect2 id="thunarx-writing-extensions-types">
+        <title>Types</title>
+
+        <para>
+          Thunar extensions are loaded as <link linkend="GTypeModule"><type>GTypeModule</type></link>s. This means that all GTypes
+          created by the extension must be registered with the <link linkend="GTypeModule"><type>GTypeModule</type></link>, using
+          <link linkend="g-type-module-register-type"><function>g_type_module_register_type()</function></link> function rather
+          than <link linked="g-type-register-static"><function>g_type_register_static()</function></link>. All types exported by
+          an extension must be registered in
+          <link linkend="thunar-extension-initialize"><function>thunar_extension_initialize()</function></link>.
+        </para>
+      </sect2>
+    </sect1>
+
+    <sect1 id="thunarx-writing-extensions-getting-started">
+      <title>Getting Started</title>
+
+      <para>
+        Providers are <link linkend="GTypeModule"><type>GTypeModule</type></link>s loaded from shared libraries installed in
+        <filename role="directory">$libdir/thunarx-1/</filename>. The shared libraries are linked against the
+        <systemitem class="library">thunarx-1</systemitem> library.
+      </para>
+
+      <para>
+        The extensions must provide three public functions, <function>thunar_extension_initialize()</function>,
+        <function>thunar_extension_shutdown()</function> and <function>thunar_extension_list_types()</function>.
+      </para>
+
+      <para>
+        <function>thunar_extension_initialize()</function> is passed a <link linkend="GTypeModule"><type>GTypeModule</type></link>
+        object, and must register all GTypes that the extension needs. <function>thunar_extension_shutdown()</function> should
+        perform any extension-specific shutdown required prior to unloading the extension. <function>thunar_extension_list_types()</function>
+        returns an array of GTypes that represent the types of the providers exported by the extension. Thunar will instantiate
+        objects of those types when needed.
+      </para>
+
+      <example>
+        <title>Basic Structure of an extension</title>
+
+        <programlisting>
+#include &lt;gmodule.h&gt;
+#include &lt;thunarx/thunarx.h&gt;
+
+static GType type_list[1];
+
+static void
+foo_extension_register_type (GTypeModule *module)
+{
+  static const GTypeInfo info =
+  {
+    sizeof (FooExtensionClass),
+    NULL,
+    NULL,
+    (GClassInitFunc) foo_extension_class_init,
+    NULL,
+    NULL,
+    sizeof (FooExtension),
+    0,
+    (GInstanceInitFunc) foo_extension_init,
+    NULL,
+  };
+
+  type_list[0] = g_type_module_register_type (module,
+                                              G_TYPE_OBJECT,
+                                              "FooExtension",
+                                              &amp;info, 0);
+
+  /* implement the desired provider interfaces */
+}
+
+static GType
+foo_extension_get_type (void)
+{
+  return type_list[0];
+}
+
+G_MODULE_EXPORT void
+thunar_extension_initialize (GTypeModule *module)
+{
+  const gchar *mismatch;
+
+  /* verify the versions */
+  mismatch = thunarx_check_version (THUNARX_MAJOR_VERSION,
+                                    THUNARX_MINOR_VERSION,
+                                    THUNARX_MICRO_VERSION);
+  if (G_UNLIKELY (mismatch != NULL))
+    {
+      g_warning ("Version mismatch: %s", mismatch);
+      return;
+    }
+
+  foo_extension_register_type (module);
+}
+
+G_MODULE_EXPORT void
+thunar_extension_shutdown (void)
+{
+  /* any extension-specific shutdown */
+}
+
+G_MODULE_EXPORT void
+thunar_extension_list_types (const GType **types,
+                             gint         *n_types)
+{
+  *types = type_list;
+  *n_types = G_N_ELEMENTS (type_list);
+}</programlisting>
+      </example>
+
+      <sect2 id="thunarx-writing-extensions-compiling-thunar-extensions">
+        <title>Compiling Thunar Extensions</title>
+
+        <para>
+          To compile a Thunar extension, you need to tell the compiler where to find the
+          <systemitem class="library">thunarx</systemitem> header files and library. This
+          is done with the <literal>pkg-config</literal> utility.
+        </para>
+
+        <para>
+          The following interactive shell session demonstrates how <literal>pkg-config</literal>
+          is used (the actual output on your system will be different):
+          <screen>
+$ pkg-config --cflags thunarx-1
+-DXTHREADS -DXUSE_MTSAFE_API -I/opt/local/include/thunarx-1 -I/usr/local/include/atk-1.0 \
+-I/usr/local/include/glib-2.0 -I/usr/local/lib/glib-2.0/include -I/usr/X11R6/include/gtk-2.0 \
+-I/usr/X11R6/lib/gtk-2.0/include -I/usr/X11R6/include -I/usr/X11R6/include/pango-1.0 \
+-I/usr/local/include/freetype2 -I/usr/local/include
+$ pkg-config --libs thunarx-1
+-Wl,--rpath -Wl,/usr/local/lib -L/usr/local/lib -L/usr/X11R6/lib -L/opt/local/lib -lthunarx-1</screen>
+        </para>
+
+        <para>
+          The easiest way to compile an extension is to use the <emphasis>backticks</emphasis>
+          feature of the shell. If you enclose a command in backticks (<emphasis>not single
+          quotes</emphasis>), then its output will be substituted into the command line before
+          execution. So to compile an extension, you would type the following:
+          <screen>
+$ gcc -shared -fPIC -DPIC `pkg-config --cflags --libs thunarx-1` foo.c -o foo.so</screen>
+        </para>
+      </sect2>
+
+      <sect2 id="thunarx-writing-extensions-installing-thunar-extensions">
+        <title>Installing Thunar Extensions</title>
+
+        <para>
+          To determine the directory where extensions must be installed on your local system,
+          you can use the following command (as mentioned above, the output will be different
+          on your system):
+          <screen>
+$ pkg-config --variable=extensionsdir thunarx-1
+/opt/local/lib/thunarx-1</screen>
+        </para>
+
+        <para>
+          For example, to install the extension <filename>foo.so</filename> on your system,
+          you would type the following:
+          <screen>
+$ install -d `pkg-config --variable=extensionsdir thunarx-1`
+$ install -c -m 0755 foo.so `pkg-config --variable=extensionsdir thunarx-1`/foo.so</screen>
+        </para>
+      </sect2>
+    </sect1>
+
+    <sect1 id="thunarx-writing-extensions-advanced-topics">
+      <title>Advanced topics</title>
+
+      <para>
+        This section provides a short introduction to some of the advanced topics in the
+        Thunar Extension Framework.
+      </para>
+
+      <sect2 id="thunarx-writing-extensions-memory-resident-extensions">
+        <title>Memory-Resident Extensions</title>
+
+        <para>
+          Some extensions may not play well with Thunar's on-demand loading and unloading
+          of extensions. For example, an extension that uses a desktop library, which in
+          turn registers additional static GTypes will not work after being loaded and
+          unloaded for the first time. For these kind of extensions, Thunar provides the
+          option to make extensions <emphasis>memory resident</emphasis>, which means the
+          extension will be loaded once and afterwards will never be unloaded again until
+          Thunar exits.
+        </para>
+
+        <para>
+          Such extensions must set the <literal>resident</literal> property of the type
+          module in its <function>thunar_extension_initialize()</function> function to
+          <literal>TRUE</literal>.
+        </para>
+
+        <example>
+          <title>Making an extension memory resident</title>
+          <programlisting>
+G_MODULE_EXPORT void
+thunar_extension_initialize (GTypeModule *module)
+{
+  /* setup the types for the extension */
+  ...
+
+  /* ensure that the extension will never be unloaded */
+  g_object_set (G_OBJECT (module),
+                "resident", TRUE,
+                NULL);
+}</programlisting>
+        </example>
+      </sect2>
+    </sect1>
+  </part>
+
+  <part id="thunarx-fundamentals">
+    <title>Fundamentals</title>
+
+    &thunarx-version-information;
+  </part>
+
+  <part id="thunarx-abstraction-layer">
+    <title>Abstraction Layer</title>
+
+    <para>
+      In order to hide the internals of the file manager from the extensions, the <systemitem
+      class="library">thunarx</systemitem> provides an abstraction layer, which includes interfaces
+      accessible to the extension, that are implemented by the file manager at runtime.
+    </para>
+
+    <para>
+      <inlinegraphic fileref="abstraction.png" format="PNG" />
+    </para>
+
+    <para>
+      Currently the abstraction layer consists of the interface <link
+      linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link>, which provides
+      extensions with a way to access information about a file handled within
+      the file manager, and the class <link
+      linkend="ThunarxPropertyPage"><type>ThunarxPropertyPage</type></link>, which
+      is the base class for widgets that can be added to the properties dialog by
+      extensions.
+    </para>
+
+    &ThunarxFileInfo;
+    &ThunarxPropertyPage;
+  </part>
+
+  <part id="thunarx-providers">
+    <title>Providers</title>
+
+    <para>
+      The extensions interact with the file manager by implementing so called
+      <emphasis>providers</emphasis>. This is a concept adopted from the Nautilus
+      Extension Framework.
+    </para>
+
+    <para>
+      Providers are interfaces in the <systemitem class="library">thunarx</systemitem>
+      library that describe the functionality provided by a certain extension. For
+      example, when the file manager pops up the file context menu, it'll first lookup
+      all extensions that implement the interface <interface>ThunarxMenuProvider</interface>
+      ask those extensions for the list of additional actions.
+    </para>
+
+    <para>
+      <inlinegraphic fileref="menu-provider.png" format="PNG" />
+    </para>
+
+    &ThunarxMenuProvider;
+    &ThunarxPropertyPageProvider;
+  </part>
+
+  <index>
+    <title>Index</title>
+  </index>
+</book>
+
+<!--
+  vi:set ts=2 sw=2 et ai syntax=docbkxml:
+-->

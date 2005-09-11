@@ -24,6 +24,12 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
@@ -33,6 +39,9 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-local-file.h>
 #include <thunar/thunar-trash-folder.h>
+
+#include <thunarx/thunarx.h>
+
 
 
 /* the thumbnailing state of a given file */
@@ -69,10 +78,19 @@ enum
 
 
 static void               thunar_file_class_init               (ThunarFileClass        *klass);
+static void               thunar_file_info_init                (ThunarxFileInfoIface   *iface);
 static void               thunar_file_dispose                  (GObject                *object);
 #ifndef G_DISABLE_CHECKS
 static void               thunar_file_finalize                 (GObject                *object);
 #endif
+static gchar             *thunar_file_info_get_name            (ThunarxFileInfo        *file_info);
+static gchar             *thunar_file_info_get_uri             (ThunarxFileInfo        *file_info);
+static gchar             *thunar_file_info_get_parent_uri      (ThunarxFileInfo        *file_info);
+static gchar             *thunar_file_info_get_uri_scheme      (ThunarxFileInfo        *file_info);
+static gchar             *thunar_file_info_get_mime_type       (ThunarxFileInfo        *file_info);
+static gboolean           thunar_file_info_has_mime_type       (ThunarxFileInfo        *file_info,
+                                                                const gchar            *mime_type);
+static gboolean           thunar_file_info_is_directory        (ThunarxFileInfo        *file_info);
 static ThunarFile        *thunar_file_real_get_parent          (ThunarFile             *file,
                                                                 GError                **error);
 static gboolean           thunar_file_real_execute             (ThunarFile             *file,
@@ -126,9 +144,18 @@ thunar_file_get_type (void)
         NULL,
       };
 
+      static const GInterfaceInfo file_info_info = 
+      {
+        (GInterfaceInitFunc) thunar_file_info_init,
+        NULL,
+        NULL,
+      };
+
       type = g_type_register_static (G_TYPE_OBJECT,
                                      "ThunarFile", &info,
                                      G_TYPE_FLAG_ABSTRACT);
+
+      g_type_add_interface_static (type, THUNARX_TYPE_FILE_INFO, &file_info_info);
     }
 
   return type;
@@ -250,6 +277,20 @@ thunar_file_class_init (ThunarFileClass *klass)
 
 
 static void
+thunar_file_info_init (ThunarxFileInfoIface *iface)
+{
+  iface->get_name = thunar_file_info_get_name;
+  iface->get_uri = thunar_file_info_get_uri;
+  iface->get_parent_uri = thunar_file_info_get_parent_uri;
+  iface->get_uri_scheme = thunar_file_info_get_uri_scheme;
+  iface->get_mime_type = thunar_file_info_get_mime_type;
+  iface->has_mime_type = thunar_file_info_has_mime_type;
+  iface->is_directory = thunar_file_info_is_directory;
+}
+
+
+
+static void
 thunar_file_dispose (GObject *object)
 {
   ThunarFile *file = THUNAR_FILE (object);
@@ -286,6 +327,118 @@ thunar_file_finalize (GObject *object)
   (*G_OBJECT_CLASS (thunar_file_parent_class)->finalize) (object);
 }
 #endif
+
+
+
+static gchar*
+thunar_file_info_get_name (ThunarxFileInfo *file_info)
+{
+  ThunarVfsURI *uri = thunar_file_get_uri (THUNAR_FILE (file_info));
+  return g_strdup (thunar_vfs_uri_get_name (uri));
+}
+
+
+
+static gchar*
+thunar_file_info_get_uri (ThunarxFileInfo *file_info)
+{
+  ThunarVfsURI *uri = thunar_file_get_uri (THUNAR_FILE (file_info));
+  return g_strdup (thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_ESCAPED));
+}
+
+
+
+static gchar*
+thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
+{
+  ThunarVfsURI *uri = thunar_file_get_uri (THUNAR_FILE (file_info));
+  gchar        *uri_string = NULL;
+
+  /* determine the parent's URI */
+  uri = thunar_vfs_uri_parent (uri);
+  if (G_LIKELY (uri != NULL))
+    {
+      uri_string = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_ESCAPED);
+      thunar_vfs_uri_unref (uri);
+    }
+
+  return uri_string;
+}
+
+
+
+static gchar*
+thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
+{
+  gchar *uri_string;
+  gchar *colon;
+
+  /* determine the URI for the file */
+  uri_string = thunarx_file_info_get_uri (file_info);
+
+  /* we're only interested in the URI scheme */
+  colon = strchr (uri_string, ':');
+  if (G_LIKELY (colon != NULL))
+    *colon = '\0';
+
+  return uri_string;
+}
+
+
+
+static gchar*
+thunar_file_info_get_mime_type (ThunarxFileInfo *file_info)
+{
+  ThunarVfsMimeInfo *mime_info;
+  gchar             *mime_type = NULL;
+
+  /* determine the mime info for the file */
+  mime_info = thunar_file_get_mime_info (THUNAR_FILE (file_info));
+  if (G_LIKELY (mime_info != NULL))
+    {
+      mime_type = g_strdup (thunar_vfs_mime_info_get_name (mime_info));
+      thunar_vfs_mime_info_unref (mime_info);
+    }
+
+  return mime_type;
+}
+
+
+
+static gboolean
+thunar_file_info_has_mime_type (ThunarxFileInfo *file_info,
+                                const gchar     *mime_type)
+{
+  ThunarVfsMimeDatabase *mime_database;
+  ThunarVfsMimeInfo     *mime_info;
+  gboolean               valid = FALSE;
+  GList                 *mime_infos;
+  GList                 *lp;
+
+  /* determine the mime info for the file */
+  mime_info = thunar_file_get_mime_info (THUNAR_FILE (file_info));
+  if (G_UNLIKELY (mime_info == NULL))
+    return FALSE;
+
+  /* check the related mime types for the file's mime info */
+  mime_database = thunar_vfs_mime_database_get_default ();
+  mime_infos = thunar_vfs_mime_database_get_infos_for_info (mime_database, mime_info);
+  for (lp = mime_infos; lp != NULL && !valid; lp = lp->next)
+    valid = (strcmp (thunar_vfs_mime_info_get_name (lp->data), mime_type) == 0);
+  exo_object_unref (EXO_OBJECT (mime_database));
+  thunar_vfs_mime_info_list_free (mime_infos);
+  thunar_vfs_mime_info_unref (mime_info);
+
+  return valid;
+}
+
+
+
+static gboolean
+thunar_file_info_is_directory (ThunarxFileInfo *file_info)
+{
+  return thunar_file_is_directory (THUNAR_FILE (file_info));
+}
 
 
 
