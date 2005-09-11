@@ -184,8 +184,6 @@ open_terminal_here_activated (GtkAction *action,
   /* build up the command line for the terminal */
   command = g_strdup_printf ("Terminal --working-directory \"%s\"", path);
 
-  //g_message ("COMMAND=\"%s\"", command);return;
-
   /* try to run the terminal command */
   if (!gdk_spawn_command_line_on_screen (gtk_widget_get_screen (window), command, &error))
     {
