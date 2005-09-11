@@ -1,6 +1,25 @@
 2005-09-11	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-standard-view.c: Sort the extension actions by their
+	  names instead of their labels.
+	* thunar/thunar-extension-manager.c(thunar_extension_class_init):
+	  Properly initialize the parent class reference.
+	* examples/open-terminal-here/Makefile.am: Don't specify CLEANFILES
+	  explicitly.
+	* thunar/thunar-file.c(thunar_file_get_mime_info): Documentation fix.
+	* thunar-vfs/thunar-vfs-mime-database.c
+	  (thunar_vfs_mime_database_get_info_for_file): When generating an
+	  application/x-extension-<EXT> mime type and no valid extension is
+	  found for the file name, fallback to the whole filename as suggested
+	  by jrb. This way we can make sure that we will never return
+	  application/octet-stream from this method and thereby allow the
+	  program chooser to set default applications for every mime type
+	  used in the file manager.
+	* thunar/Makefile.am: Add $(top_builddir) to INCLUDES.
+
+2005-09-11	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-standard-view.c: Sort the extension actions by their
 	  labels prior to adding them to the UI manager.
 
 2005-09-11	Benedikt Meurer <benny@xfce.org>

@@ -134,6 +134,9 @@ thunar_extension_class_init (ThunarExtensionClass *klass)
   GTypeModuleClass *gtype_module_class;
   GObjectClass     *gobject_class;
 
+  /* determine the parent class */
+  thunar_extension_parent_class = g_type_class_peek_parent (klass);
+
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_extension_finalize;
   gobject_class->get_property = thunar_extension_get_property;

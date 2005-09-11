@@ -987,7 +987,7 @@ thunar_file_get_uri (ThunarFile *file)
  * object for the caller, so you'll need to call thunar_vfs_mime_info()
  * when you are done with it.
  *
- * Return value: the MIME type or %NULL.
+ * Return value: the MIME type.
  **/
 ThunarVfsMimeInfo*
 thunar_file_get_mime_info (ThunarFile *file)

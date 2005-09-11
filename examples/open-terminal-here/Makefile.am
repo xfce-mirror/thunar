@@ -27,9 +27,6 @@ open_terminal_here_la_LDFLAGS =						\
 	-export-dynamic							\
 	-module
 
-CLEANFILES =								\
-	open-terminal-here.la
-
 EXTRA_DIST =								\
 	README
 

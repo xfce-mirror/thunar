@@ -1052,24 +1052,31 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
         }
 
       /* if we have exactly a dot and a non-empty extension, we
-       * can generate a 'application/x-extension-<EXT>' on the fly.
+       * can generate a 'application/x-extension-<EXT>' on the fly
+       * or if no extension is found, we'll use the whole filename
+       * for '<EXT>'.
        */
       if (G_UNLIKELY (info == NULL))
         {
+          /* check if the filename has an extension */
           p = strrchr (name, '.');
           if (G_UNLIKELY (p != NULL && *++p != '\0'))
             {
+              /* use the file extension for the type */
               buffer = g_utf8_strdown (p, -1);
-              type = g_strconcat ("application/x-extension-", buffer, NULL);
-              info = thunar_vfs_mime_database_get_info (database, type);
-              g_free (buffer);
-              g_free (type);
             }
-        }
+          else
+            {
+              /* use the whole filename for the type as suggested by jrb */
+              buffer = g_utf8_strdown (name, -1);
+            }
 
-      /* fallback to 'application/octet-stream' */
-      if (G_UNLIKELY (info == NULL))
-        info = exo_object_ref (database->application_octet_stream);
+          /* generate a new mime type */
+          type = g_strconcat ("application/x-extension-", buffer, NULL);
+          info = thunar_vfs_mime_database_get_info (database, type);
+          g_free (buffer);
+          g_free (type);
+        }
     }
 
   /* cleanup */
