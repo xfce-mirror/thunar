@@ -1062,6 +1062,34 @@ thunar_standard_view_get_selected_uris (ThunarStandardView *standard_view)
 
 
 
+static gint
+compare_actions (gconstpointer a,
+                 gconstpointer b)
+{
+  gchar *label_a;
+  gchar *label_b;
+  gint   result;
+
+  g_object_get (G_OBJECT (a), "label", &label_a, NULL);
+  g_object_get (G_OBJECT (b), "label", &label_b, NULL);
+
+  if (G_UNLIKELY (label_a == NULL && label_b == NULL))
+    result = 0;
+  else if (G_UNLIKELY (label_a == NULL))
+    result = -1;
+  else if (G_UNLIKELY (label_b == NULL))
+    result = 1;
+  else
+    result = g_utf8_collate (label_a, label_b);
+
+  g_free (label_b);
+  g_free (label_a);
+
+  return result;
+}
+
+
+
 static void
 thunar_standard_view_merge_menu_extensions (ThunarStandardView *standard_view,
                                             GList              *selected_items)
@@ -1144,7 +1172,10 @@ thunar_standard_view_merge_menu_extensions (ThunarStandardView *standard_view,
       standard_view->priv->extension_merge_id = gtk_ui_manager_new_merge_id (standard_view->ui_manager);
       gtk_ui_manager_insert_action_group (standard_view->ui_manager, standard_view->priv->extension_actions, -1);
 
-      /* add the actions */
+      /* sort the actions by their labels */
+      actions = g_list_sort (actions, compare_actions);
+
+      /* add the actions to the UI manager */
       for (lp = actions; lp != NULL; lp = lp->next)
         {
           /* add the action to the action group */
