@@ -61,6 +61,10 @@
 
 
 
+static ThunarVfsMimeDatabase *mime_database = NULL;
+
+
+
 GType
 thunar_vfs_info_get_type (void)
 {
@@ -94,16 +98,14 @@ ThunarVfsInfo*
 thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
                              GError      **error)
 {
-  ThunarVfsMimeDatabase *database;
-  ThunarVfsMimeInfo     *mime_info;
-  ThunarVfsInfo         *info;
-  const gchar           *path;
-  const gchar           *str;
-  struct stat            lsb;
-  struct stat            sb;
-  XfceRc                *rc;
-  GList                 *mime_infos;
-  GList                 *lp;
+  ThunarVfsInfo *info;
+  const gchar   *path;
+  const gchar   *str;
+  struct stat    lsb;
+  struct stat    sb;
+  XfceRc        *rc;
+  GList         *mime_infos;
+  GList         *lp;
 
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
@@ -170,48 +172,46 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
     }
 
   /* determine the file's mime type */
-  database = thunar_vfs_mime_database_get_default ();
   switch (info->type)
     {
     case THUNAR_VFS_FILE_TYPE_SOCKET:
-      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/socket");
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/socket");
       break;
 
     case THUNAR_VFS_FILE_TYPE_SYMLINK:
-      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/symlink");
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/symlink");
       break;
 
     case THUNAR_VFS_FILE_TYPE_BLOCKDEV:
-      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/blockdevice");
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/blockdevice");
       break;
 
     case THUNAR_VFS_FILE_TYPE_DIRECTORY:
-      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/directory");
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/directory");
       break;
 
     case THUNAR_VFS_FILE_TYPE_CHARDEV:
-      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/chardevice");
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/chardevice");
       break;
 
     case THUNAR_VFS_FILE_TYPE_FIFO:
-      info->mime_info = thunar_vfs_mime_database_get_info (database, "inode/fifo");
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/fifo");
       break;
 
     case THUNAR_VFS_FILE_TYPE_REGULAR:
       /* determine the MIME-type for the regular file */
-      info->mime_info = thunar_vfs_mime_database_get_info_for_file (database, path, info->display_name);
+      info->mime_info = thunar_vfs_mime_database_get_info_for_file (mime_database, path, info->display_name);
 
       /* check if the file is executable (for security reasons
        * we only allow execution of well known file types).
        */
       if ((info->mode & 0444) != 0 && g_access (path, X_OK) == 0)
         {
-          mime_infos = thunar_vfs_mime_database_get_infos_for_info (database, info->mime_info);
+          mime_infos = thunar_vfs_mime_database_get_infos_for_info (mime_database, info->mime_info);
           for (lp = mime_infos; lp != NULL; lp = lp->next)
             {
-              mime_info = THUNAR_VFS_MIME_INFO (lp->data);
-              if (strcmp (mime_info->name, "application/x-executable") == 0
-                  || strcmp (mime_info->name, "application/x-shellscript") == 0)
+              if (strcmp (thunar_vfs_mime_info_get_name (lp->data), "application/x-executable") == 0
+                  || strcmp (thunar_vfs_mime_info_get_name (lp->data), "application/x-shellscript") == 0)
                 {
                   info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
                   break;
@@ -221,7 +221,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
         }
 
       /* check whether we have a .desktop file here */
-      if (G_UNLIKELY (strcmp (info->mime_info->name, "application/x-desktop") == 0))
+      if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (info->mime_info), "application/x-desktop") == 0))
         {
           /* try to query the hints from the .desktop file */
           rc = xfce_rc_simple_open (path, TRUE);
@@ -263,7 +263,6 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
       g_assert_not_reached ();
       break;
     }
-  exo_object_unref (EXO_OBJECT (database));
 
   return info;
 }
@@ -371,7 +370,7 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
   path = thunar_vfs_uri_get_path (info->uri);
 
   /* check if we have a .desktop file here */
-  if (G_UNLIKELY (strcmp (info->mime_info->name, "application/x-desktop") == 0))
+  if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (info->mime_info), "application/x-desktop") == 0))
     {
       rc = xfce_rc_simple_open (path, TRUE);
       if (G_LIKELY (rc != NULL))
@@ -457,18 +456,17 @@ thunar_vfs_info_rename (ThunarVfsInfo *info,
                         const gchar   *name,
                         GError       **error)
 {
-  ThunarVfsMimeDatabase *database;
-  const gchar * const   *locale;
-  const gchar           *src_path;
-  GKeyFile              *key_file;
-  gsize                  data_length;
-  gchar                 *data;
-  gchar                 *key;
-  gchar                 *dir_name;
-  gchar                 *dst_name;
-  gchar                 *dst_path;
+  const gchar * const *locale;
+  const gchar         *src_path;
+  GKeyFile            *key_file;
+  gsize                data_length;
+  gchar               *data;
+  gchar               *key;
+  gchar               *dir_name;
+  gchar               *dst_name;
+  gchar               *dst_path;
 #if !GLIB_CHECK_VERSION(2,8,0)
-  FILE                  *fp;
+  FILE                *fp;
 #endif
 
   g_return_val_if_fail (info != NULL, FALSE);
@@ -487,7 +485,7 @@ thunar_vfs_info_rename (ThunarVfsInfo *info,
   src_path = thunar_vfs_uri_get_path (info->uri);
 
   /* check whether we have a .desktop file here */
-  if (G_UNLIKELY (strcmp (info->mime_info->name, "application/x-desktop") == 0))
+  if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (info->mime_info), "application/x-desktop") == 0))
     {
       /* try to open the .desktop file */
       key_file = g_key_file_new ();
@@ -600,9 +598,7 @@ thunar_vfs_info_rename (ThunarVfsInfo *info,
       if (G_LIKELY (info->type == THUNAR_VFS_FILE_TYPE_REGULAR))
         {
           thunar_vfs_mime_info_unref (info->mime_info);
-          database = thunar_vfs_mime_database_get_default ();
-          info->mime_info = thunar_vfs_mime_database_get_info_for_file (database, dst_path, info->display_name);
-          exo_object_unref (EXO_OBJECT (database));
+          info->mime_info = thunar_vfs_mime_database_get_info_for_file (mime_database, dst_path, info->display_name);
         }
 
       /* clean up */
@@ -699,6 +695,37 @@ thunar_vfs_info_list_free (GList  *info_list)
 {
   g_list_foreach (info_list, (GFunc) thunar_vfs_info_unref, NULL);
   g_list_free (info_list);
+}
+
+
+
+/**
+ * _thunar_vfs_info_init:
+ *
+ * Initializes the info component of the Thunar-VFS
+ * library.
+ **/
+void
+_thunar_vfs_info_init (void)
+{
+  /* grab a reference on the mime database */
+  mime_database = thunar_vfs_mime_database_get_default ();
+}
+
+
+
+/**
+ * _thunar_vfs_info_shutdown:
+ *
+ * Shuts down the info component of the Thunar-VFS
+ * library.
+ **/
+void
+_thunar_vfs_info_shutdown (void)
+{
+  /* release the reference on the mime database */
+  g_object_unref (G_OBJECT (mime_database));
+  mime_database = NULL;
 }
 
 

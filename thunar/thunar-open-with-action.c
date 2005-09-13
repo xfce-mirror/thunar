@@ -191,7 +191,7 @@ thunar_open_with_action_finalize (GObject *object)
 {
   ThunarOpenWithAction *open_with_action = THUNAR_OPEN_WITH_ACTION (object);
 
-  exo_object_unref (EXO_OBJECT (open_with_action->mime_database));
+  g_object_unref (G_OBJECT (open_with_action->mime_database));
 
   (*G_OBJECT_CLASS (thunar_open_with_action_parent_class)->finalize) (object);
 }

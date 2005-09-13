@@ -26,61 +26,30 @@
 
 
 
-static void thunar_vfs_mime_provider_register_type (GType                      *type);
-static void thunar_vfs_mime_provider_class_init    (ThunarVfsMimeProviderClass *klass);
-
-
-
 GType
 thunar_vfs_mime_provider_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
-  static GOnce once = G_ONCE_INIT;
 
-  /* thread-safe type registration */
-  g_once (&once, (GThreadFunc) thunar_vfs_mime_provider_register_type, &type);
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsMimeProviderClass),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsMimeProvider),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, "ThunarVfsMimeProvider", &info, G_TYPE_FLAG_ABSTRACT);
+    }
 
   return type;
-}
-
-
-
-static void
-thunar_vfs_mime_provider_register_type (GType *type)
-{
-  static const GTypeInfo info =
-  {
-    sizeof (ThunarVfsMimeProviderClass),
-    NULL,
-    NULL,
-    (GClassInitFunc) thunar_vfs_mime_provider_class_init,
-    NULL,
-    NULL,
-    sizeof (ThunarVfsMimeProvider),
-    0,
-    NULL,
-    NULL,
-  };
-
-  *type = g_type_register_static (EXO_TYPE_OBJECT, "ThunarVfsMimeProvider", &info, G_TYPE_FLAG_ABSTRACT);
-}
-
-
-
-static void
-thunar_vfs_mime_provider_class_init (ThunarVfsMimeProviderClass *klass)
-{
-  /* We install noops for every virtual method here,
-   * so derived classes don't need to implement
-   * each and every method if desired.
-   */
-  klass->lookup_data = (gpointer) exo_noop_null;
-  klass->lookup_literal = (gpointer) exo_noop_null;
-  klass->lookup_suffix = (gpointer) exo_noop_null;
-  klass->lookup_glob = (gpointer) exo_noop_null;
-  klass->lookup_alias = (gpointer) exo_noop_null;
-  klass->lookup_parents = (gpointer) exo_noop_zero;
-  klass->get_stop_characters = (gpointer) exo_noop_null;
-  klass->get_max_buffer_extents = (gpointer) exo_noop_zero;
 }
 

@@ -425,7 +425,7 @@ thunar_file_info_has_mime_type (ThunarxFileInfo *file_info,
   mime_infos = thunar_vfs_mime_database_get_infos_for_info (mime_database, mime_info);
   for (lp = mime_infos; lp != NULL && !valid; lp = lp->next)
     valid = (strcmp (thunar_vfs_mime_info_get_name (lp->data), mime_type) == 0);
-  exo_object_unref (EXO_OBJECT (mime_database));
+  g_object_unref (G_OBJECT (mime_database));
   thunar_vfs_mime_info_list_free (mime_infos);
   thunar_vfs_mime_info_unref (mime_info);
 

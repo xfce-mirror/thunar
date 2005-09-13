@@ -204,7 +204,7 @@ thunar_computer_folder_get_mime_info (ThunarFile *file)
 
   database = thunar_vfs_mime_database_get_default ();
   info = thunar_vfs_mime_database_get_info (database, "inode/directory");
-  exo_object_unref (EXO_OBJECT (database));
+  g_object_unref (G_OBJECT (database));
 
   return info;
 }

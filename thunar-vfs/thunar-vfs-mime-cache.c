@@ -70,7 +70,7 @@
 
 
 static void         thunar_vfs_mime_cache_class_init             (ThunarVfsMimeCacheClass *klass);
-static void         thunar_vfs_mime_cache_finalize               (ExoObject               *object);
+static void         thunar_vfs_mime_cache_finalize               (GObject                 *object);
 static const gchar *thunar_vfs_mime_cache_lookup_data            (ThunarVfsMimeProvider   *provider,
                                                                   gconstpointer            data,
                                                                   gsize                    length,
@@ -108,7 +108,7 @@ struct _ThunarVfsMimeCache
 
 
 
-static ExoObjectClass *thunar_vfs_mime_cache_parent_class;
+static GObjectClass *thunar_vfs_mime_cache_parent_class;
 
 
 
@@ -146,12 +146,12 @@ static void
 thunar_vfs_mime_cache_class_init (ThunarVfsMimeCacheClass *klass)
 {
   ThunarVfsMimeProviderClass *thunarvfs_mime_provider_class;
-  ExoObjectClass             *exoobject_class;
+  GObjectClass               *gobject_class;
 
   thunar_vfs_mime_cache_parent_class = g_type_class_peek_parent (klass);
 
-  exoobject_class = EXO_OBJECT_CLASS (klass);
-  exoobject_class->finalize = thunar_vfs_mime_cache_finalize;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_mime_cache_finalize;
 
   thunarvfs_mime_provider_class = THUNAR_VFS_MIME_PROVIDER_CLASS (klass);
   thunarvfs_mime_provider_class->lookup_data = thunar_vfs_mime_cache_lookup_data;
@@ -167,7 +167,7 @@ thunar_vfs_mime_cache_class_init (ThunarVfsMimeCacheClass *klass)
 
 
 static void
-thunar_vfs_mime_cache_finalize (ExoObject *object)
+thunar_vfs_mime_cache_finalize (GObject *object)
 {
   ThunarVfsMimeCache *cache = THUNAR_VFS_MIME_CACHE (object);
 
@@ -176,7 +176,7 @@ thunar_vfs_mime_cache_finalize (ExoObject *object)
     munmap (cache->buffer, cache->bufsize);
 #endif
 
-  (*EXO_OBJECT_CLASS (thunar_vfs_mime_cache_parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (thunar_vfs_mime_cache_parent_class)->finalize) (object);
 }
 
 
@@ -515,7 +515,7 @@ thunar_vfs_mime_cache_get_max_buffer_extents (ThunarVfsMimeProvider *provider)
  * %NULL if for some reason, @directory could not be opened
  * as a #ThunarVfsMimeCache.
  *
- * The caller is responsible to call #exo_object_unref()
+ * The caller is responsible to call g_object_unref()
  * on the returned instance.
  *
  * Return value: a #ThunarVfsMimeCache for @directory or %NULL.
@@ -556,7 +556,7 @@ thunar_vfs_mime_cache_new (const gchar *directory)
     }
 
   /* allocate a new cache provider */
-  cache = exo_object_new (THUNAR_VFS_TYPE_MIME_CACHE);
+  cache = g_object_new (THUNAR_VFS_TYPE_MIME_CACHE, NULL);
   cache->buffer = buffer;
   cache->bufsize = stat.st_size;
 

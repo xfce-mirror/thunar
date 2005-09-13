@@ -30,8 +30,7 @@
 
 
 
-static ThunarVfsMimeDatabase *thunar_vfs_mime_database = NULL;
-static gint                   thunar_vfs_ref_count = 0;
+static gint thunar_vfs_ref_count = 0;
 
 
 
@@ -43,18 +42,17 @@ static gint                   thunar_vfs_ref_count = 0;
 void
 thunar_vfs_init (void)
 {
-  extern void _thunar_vfs_job_init ();
-  extern void _thunar_vfs_uri_init ();
+  extern void _thunar_vfs_info_init (void);
+  extern void _thunar_vfs_job_init (void);
+  extern void _thunar_vfs_uri_init (void);
 
   if (g_atomic_int_exchange_and_add (&thunar_vfs_ref_count, 1) == 0)
     {
       /* initialize the URIs module */
       _thunar_vfs_uri_init ();
 
-      /* grab a reference on the mime database, so the global
-       * instance stays alive while we use the ThunarVFS library.
-       */
-      thunar_vfs_mime_database = thunar_vfs_mime_database_get_default ();
+      /* initialize the info module */
+      _thunar_vfs_info_init ();
 
       /* initialize the jobs framework */
       _thunar_vfs_job_init ();
@@ -71,17 +69,17 @@ thunar_vfs_init (void)
 void
 thunar_vfs_shutdown (void)
 {
-  extern void _thunar_vfs_job_shutdown ();
-  extern void _thunar_vfs_uri_shutdown ();
+  extern void _thunar_vfs_info_shutdown (void);
+  extern void _thunar_vfs_job_shutdown (void);
+  extern void _thunar_vfs_uri_shutdown (void);
 
   if (g_atomic_int_dec_and_test (&thunar_vfs_ref_count))
     {
       /* shutdown the jobs framework */
       _thunar_vfs_job_shutdown ();
 
-      /* drop our reference on the global mime database */
-      exo_object_unref (EXO_OBJECT (thunar_vfs_mime_database));
-      thunar_vfs_mime_database = NULL;
+      /* release the info module */
+      _thunar_vfs_info_shutdown ();
 
       /* shutdown the URIs module */
       _thunar_vfs_uri_shutdown ();

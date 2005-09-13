@@ -31,6 +31,7 @@
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
+#include <stdio.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
@@ -51,7 +52,7 @@ typedef struct _ThunarVfsMimeLegacySuffix ThunarVfsMimeLegacySuffix;
 
 static void         thunar_vfs_mime_legacy_class_init             (ThunarVfsMimeLegacyClass *klass);
 static void         thunar_vfs_mime_legacy_init                   (ThunarVfsMimeLegacy      *legacy);
-static void         thunar_vfs_mime_legacy_finalize               (ExoObject                *object);
+static void         thunar_vfs_mime_legacy_finalize               (GObject                  *object);
 static const gchar *thunar_vfs_mime_legacy_lookup_data            (ThunarVfsMimeProvider    *provider,
                                                                    gconstpointer             data,
                                                                    gsize                     length,
@@ -117,7 +118,7 @@ struct _ThunarVfsMimeLegacySuffix
 
 
 
-static ExoObjectClass *thunar_vfs_mime_legacy_parent_class;
+static GObjectClass *thunar_vfs_mime_legacy_parent_class;
 
 
 
@@ -155,12 +156,12 @@ static void
 thunar_vfs_mime_legacy_class_init (ThunarVfsMimeLegacyClass *klass)
 {
   ThunarVfsMimeProviderClass *thunarvfs_mime_provider_class;
-  ExoObjectClass             *exoobject_class;
+  GObjectClass               *gobject_class;
 
   thunar_vfs_mime_legacy_parent_class = g_type_class_peek_parent (klass);
 
-  exoobject_class = EXO_OBJECT_CLASS (klass);
-  exoobject_class->finalize = thunar_vfs_mime_legacy_finalize;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_mime_legacy_finalize;
 
   thunarvfs_mime_provider_class = THUNAR_VFS_MIME_PROVIDER_CLASS (klass);
   thunarvfs_mime_provider_class->lookup_data = thunar_vfs_mime_legacy_lookup_data;
@@ -191,7 +192,7 @@ thunar_vfs_mime_legacy_init (ThunarVfsMimeLegacy *legacy)
 
 
 static void
-thunar_vfs_mime_legacy_finalize (ExoObject *object)
+thunar_vfs_mime_legacy_finalize (GObject *object)
 {
   ThunarVfsMimeLegacy *legacy = THUNAR_VFS_MIME_LEGACY (object);
 
@@ -212,7 +213,7 @@ thunar_vfs_mime_legacy_finalize (ExoObject *object)
   g_mem_chunk_destroy (legacy->suffix_chunk);
   g_mem_chunk_destroy (legacy->glob_chunk);
 
-  (*EXO_OBJECT_CLASS (thunar_vfs_mime_legacy_parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (thunar_vfs_mime_legacy_parent_class)->finalize) (object);
 }
 
 
@@ -608,7 +609,7 @@ thunar_vfs_mime_legacy_parse_subclasses (ThunarVfsMimeLegacy *legacy,
  * returns the instance on success, or %NULL on error.
  *
  * The caller is responsible to free the returned instance
- * using #exo_object_unref().
+ * using g_object_unref().
  *
  * Return value: the newly allocated #ThunarVfsMimeLegacy
  *               instance or %NULL on error.
@@ -619,12 +620,12 @@ thunar_vfs_mime_legacy_new (const gchar *directory)
   ThunarVfsMimeLegacy *legacy;
 
   /* allocate the new object */
-  legacy = exo_object_new (THUNAR_VFS_TYPE_MIME_LEGACY);
+  legacy = g_object_new (THUNAR_VFS_TYPE_MIME_LEGACY, NULL);
 
   /* try to parse the globs file */
   if (!thunar_vfs_mime_legacy_parse_globs (legacy, directory))
     {
-      exo_object_unref (legacy);
+      g_object_unref (legacy);
       return NULL;
     }
 

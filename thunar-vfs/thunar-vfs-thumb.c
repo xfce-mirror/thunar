@@ -152,7 +152,7 @@ thunar_vfs_thumb_factory_init (ThunarVfsThumbFactory *factory)
   factory->size = THUNAR_VFS_THUMB_SIZE_NORMAL;
 
   /* determine the MIME types supported by GdkPixbuf */
-  factory->pixbuf_mime_infos = g_hash_table_new_full (g_direct_hash, g_direct_equal, exo_object_unref, NULL);
+  factory->pixbuf_mime_infos = g_hash_table_new_full (g_direct_hash, g_direct_equal, (GDestroyNotify) thunar_vfs_mime_info_unref, NULL);
   formats = gdk_pixbuf_get_formats ();
   for (lp = formats; lp != NULL; lp = lp->next)
     if (!gdk_pixbuf_format_is_disabled (lp->data))
@@ -177,7 +177,7 @@ thunar_vfs_thumb_factory_finalize (GObject *object)
   ThunarVfsThumbFactory *factory = THUNAR_VFS_THUMB_FACTORY (object);
 
   /* release the reference on the mime database */
-  exo_object_unref (EXO_OBJECT (factory->mime_database));
+  g_object_unref (G_OBJECT (factory->mime_database));
 
   /* destroy the hash table with mime infos supported by GdkPixbuf */
   g_hash_table_destroy (factory->pixbuf_mime_infos);
@@ -324,7 +324,6 @@ thunar_vfs_thumb_factory_can_thumbnail (ThunarVfsThumbFactory   *factory,
                                         ThunarVfsFileTime        mtime)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (mime_info), FALSE);
 
   /* we support only local files for thumbnail generation */
   if (G_UNLIKELY (thunar_vfs_uri_get_scheme (uri) != THUNAR_VFS_URI_SCHEME_FILE))
@@ -406,7 +405,6 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory   *factory,
   gint       size;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (mime_info), NULL);
 
   /* we can only generate thumbnails for local files */
   if (G_UNLIKELY (thunar_vfs_uri_get_scheme (uri) != THUNAR_VFS_URI_SCHEME_FILE))

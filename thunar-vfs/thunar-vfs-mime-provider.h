@@ -21,7 +21,7 @@
 #ifndef __THUNAR_VFS_MIME_PROVIDER_H__
 #define __THUNAR_VFS_MIME_PROVIDER_H__
 
-#include <exo/exo.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS;
 
@@ -37,7 +37,7 @@ typedef struct _ThunarVfsMimeProvider      ThunarVfsMimeProvider;
 
 struct _ThunarVfsMimeProviderClass
 {
-  ExoObjectClass __parent__;
+  GObjectClass __parent__;
 
   const gchar *(*lookup_data)             (ThunarVfsMimeProvider *provider,
                                            gconstpointer          data,
@@ -66,7 +66,7 @@ struct _ThunarVfsMimeProviderClass
 
 struct _ThunarVfsMimeProvider
 {
-  ExoObject __parent__;
+  GObject __parent__;
 };
 
 GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
@@ -152,7 +152,7 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  *
  * Returns the list of stop characters for all suffix entries in @provider as
  * a #GList of #gunichar<!---->s. The caller is responsible to free the list
- * using #g_list_free().
+ * using g_list_free().
  *
  * Return value: the list of stop characters for the suffix entries in @provider.
  **/

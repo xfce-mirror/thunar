@@ -128,6 +128,9 @@ thunar_vfs_mime_database_get_default_application
 #if IN_HEADER(__THUNAR_VFS_MIME_INFO_H__)
 #if IN_SOURCE(__THUNAR_VFS_MIME_INFO_C__)
 thunar_vfs_mime_info_get_type G_GNUC_CONST
+thunar_vfs_mime_info_new G_GNUC_MALLOC
+thunar_vfs_mime_info_ref
+thunar_vfs_mime_info_unref
 thunar_vfs_mime_info_get_comment G_GNUC_PURE
 thunar_vfs_mime_info_get_name G_GNUC_PURE
 thunar_vfs_mime_info_get_media G_GNUC_MALLOC

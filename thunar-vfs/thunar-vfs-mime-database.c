@@ -77,7 +77,7 @@ typedef struct _ThunarVfsMimeProviderData ThunarVfsMimeProviderData;
 
 static void                      thunar_vfs_mime_database_class_init                   (ThunarVfsMimeDatabaseClass *klass);
 static void                      thunar_vfs_mime_database_init                         (ThunarVfsMimeDatabase      *database);
-static void                      thunar_vfs_mime_database_finalize                     (ExoObject                  *object);
+static void                      thunar_vfs_mime_database_finalize                     (GObject                    *object);
 static ThunarVfsMimeApplication *thunar_vfs_mime_database_get_application_locked       (ThunarVfsMimeDatabase      *database,
                                                                                         const gchar                *desktop_id);
 static ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_locked              (ThunarVfsMimeDatabase      *database,
@@ -107,12 +107,12 @@ static void                      thunar_vfs_mime_database_store_parse_file      
 
 struct _ThunarVfsMimeDatabaseClass
 {
-  ExoObjectClass __parent__;
+  GObjectClass __parent__;
 };
 
 struct _ThunarVfsMimeDatabase
 {
-  ExoObject __parent__;
+  GObject __parent__;
 
   GMutex           *lock;
 
@@ -154,21 +154,17 @@ struct _ThunarVfsMimeProviderData
 
 
 
-static ThunarVfsMimeDatabase *thunar_vfs_mime_database_shared_instance = NULL;
-
-
-
-G_DEFINE_TYPE (ThunarVfsMimeDatabase, thunar_vfs_mime_database, EXO_TYPE_OBJECT);
+G_DEFINE_TYPE (ThunarVfsMimeDatabase, thunar_vfs_mime_database, G_TYPE_OBJECT);
 
 
 
 static void
 thunar_vfs_mime_database_class_init (ThunarVfsMimeDatabaseClass *klass)
 {
-  ExoObjectClass *exoobject_class;
+  GObjectClass *gobject_class;
 
-  exoobject_class = EXO_OBJECT_CLASS (klass);
-  exoobject_class->finalize = thunar_vfs_mime_database_finalize;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_mime_database_finalize;
 }
 
 
@@ -183,7 +179,7 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
   database->monitor = thunar_vfs_monitor_get_default ();
 
   /* allocate the hash table for the mime infos */
-  database->infos = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, exo_object_unref);
+  database->infos = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) thunar_vfs_mime_info_unref);
 
   /* grab references on commonly used mime infos */
   database->application_octet_stream = thunar_vfs_mime_database_get_info_locked (database, "application/octet-stream");
@@ -202,7 +198,7 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
 
 
 static void
-thunar_vfs_mime_database_finalize (ExoObject *object)
+thunar_vfs_mime_database_finalize (GObject *object)
 {
   ThunarVfsMimeDatabase *database = THUNAR_VFS_MIME_DATABASE (object);
 
@@ -216,8 +212,8 @@ thunar_vfs_mime_database_finalize (ExoObject *object)
   g_hash_table_destroy (database->applications);
 
   /* free commonly used mime infos */
-  exo_object_unref (database->application_octet_stream);
-  exo_object_unref (database->text_plain);
+  thunar_vfs_mime_info_unref (database->application_octet_stream);
+  thunar_vfs_mime_info_unref (database->text_plain);
 
   /* free all mime infos */
   g_hash_table_destroy (database->infos);
@@ -225,15 +221,11 @@ thunar_vfs_mime_database_finalize (ExoObject *object)
   /* release the reference on the file alteration monitor */
   g_object_unref (G_OBJECT (database->monitor));
 
-  /* reset the shared instance pointer, as we're the last one to release it */
-  g_atomic_pointer_compare_and_exchange ((gpointer) &thunar_vfs_mime_database_shared_instance,
-                                         (gpointer) database, (gpointer) NULL);
-
   /* release the mutex for this object */
   g_mutex_free (database->lock);
 
   /* call the parent's finalize method */
-  (*EXO_OBJECT_CLASS (thunar_vfs_mime_database_parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (thunar_vfs_mime_database_parent_class)->finalize) (object);
 }
 
 
@@ -259,7 +251,7 @@ thunar_vfs_mime_database_get_application_locked (ThunarVfsMimeDatabase *database
 
   /* take an additional reference for the caller */
   if (G_LIKELY (application != NULL))
-    exo_object_ref (EXO_OBJECT (application));
+    g_object_ref (EXO_OBJECT (application));
 
   return application;
 }
@@ -302,19 +294,17 @@ thunar_vfs_mime_database_get_info_locked (ThunarVfsMimeDatabase *database,
 
       /* fallback to 'application/octet-stream' if the type is invalid */
       if (G_UNLIKELY (n != 1))
-        return exo_object_ref (database->application_octet_stream);
+        return thunar_vfs_mime_info_ref (database->application_octet_stream);
 
       /* allocate the MIME info instance */
-      info = exo_object_new (THUNAR_VFS_TYPE_MIME_INFO);
-      info->name = g_new (gchar, (p - mime_type) + 1);
-      memcpy (info->name, mime_type, (p - mime_type) + 1);
+      info = thunar_vfs_mime_info_new (mime_type, (p - mime_type));
 
-      /* insert the mime type into the cache */
-      g_hash_table_insert (database->infos, info->name, info);
+      /* insert the mime type into the cache (w/o taking a copy on the name) */
+      g_hash_table_insert (database->infos, (gpointer) thunar_vfs_mime_info_get_name (info), info);
     }
 
   /* take a reference for the caller */
-  return exo_object_ref (info);
+  return thunar_vfs_mime_info_ref (info);
 }
 
 
@@ -357,7 +347,7 @@ thunar_vfs_mime_database_get_info_for_data_locked (ThunarVfsMimeDatabase *databa
       else if (g_utf8_validate (data, length, NULL))
         {
           /* we have valid UTF-8 text here! */
-          info = exo_object_ref (database->text_plain);
+          info = thunar_vfs_mime_info_ref (database->text_plain);
         }
     }
 
@@ -472,7 +462,7 @@ thunar_vfs_mime_database_get_infos_for_info_locked (ThunarVfsMimeDatabase *datab
     }
 
   /* all text/xxxx types are subtype of text/plain */
-  if (G_UNLIKELY (strncmp ("text/", info->name, 5) == 0))
+  if (G_UNLIKELY (strncmp ("text/", thunar_vfs_mime_info_get_name (info), 5) == 0))
     {
       /* append text/plain if we don't have it already */
       if (g_list_find (infos, database->text_plain) == NULL)
@@ -569,7 +559,7 @@ thunar_vfs_mime_database_shutdown_providers (ThunarVfsMimeDatabase *database)
   for (lp = database->providers; lp != NULL; lp = lp->next)
     {
       if (G_LIKELY (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider != NULL))
-        exo_object_unref (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider);
+        g_object_unref (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider);
       thunar_vfs_uri_unref (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->uri);
       g_free (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data));
     }
@@ -605,7 +595,7 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
       path = g_build_filename (basedirs[n], "applications" G_DIR_SEPARATOR_S "defaults.list", NULL);
       store->defaults_list = g_hash_table_new_full (thunar_vfs_mime_info_hash,
                                                     thunar_vfs_mime_info_equal,
-                                                    thunar_vfs_mime_info_unref,
+                                                    (GDestroyNotify) thunar_vfs_mime_info_unref,
                                                     (GDestroyNotify) g_strfreev);
       store->defaults_list_uri = thunar_vfs_uri_new_for_path (path);
       store->defaults_list_handle = thunar_vfs_monitor_add_file (database->monitor, store->defaults_list_uri,
@@ -617,7 +607,7 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
       path = g_build_filename (basedirs[n], "applications" G_DIR_SEPARATOR_S "mimeinfo.cache", NULL);
       store->mimeinfo_cache = g_hash_table_new_full (thunar_vfs_mime_info_hash,
                                                      thunar_vfs_mime_info_equal,
-                                                     thunar_vfs_mime_info_unref,
+                                                     (GDestroyNotify) thunar_vfs_mime_info_unref,
                                                      (GDestroyNotify) g_strfreev);
       store->mimeinfo_cache_uri = thunar_vfs_uri_new_for_path (path);
       store->mimeinfo_cache_handle = thunar_vfs_monitor_add_file (database->monitor, store->mimeinfo_cache_uri,
@@ -790,7 +780,7 @@ thunar_vfs_mime_database_store_parse_file (ThunarVfsMimeDatabase *database,
  * thunar_vfs_mime_database_get_default:
  *
  * Returns a reference on the shared #ThunarVfsMimeDatabase
- * instance. The caller is responsible to call #exo_object_unref()
+ * instance. The caller is responsible to call g_object_unref()
  * on the returned object when no longer needed.
  *
  * Return value: the shared #ThunarVfsMimeDatabase.
@@ -798,12 +788,19 @@ thunar_vfs_mime_database_store_parse_file (ThunarVfsMimeDatabase *database,
 ThunarVfsMimeDatabase*
 thunar_vfs_mime_database_get_default (void)
 {
-  if (G_UNLIKELY (thunar_vfs_mime_database_shared_instance == NULL))
-    thunar_vfs_mime_database_shared_instance = exo_object_new (THUNAR_VFS_TYPE_MIME_DATABASE);
-  else
-    exo_object_ref (EXO_OBJECT (thunar_vfs_mime_database_shared_instance));
+  static ThunarVfsMimeDatabase *database = NULL;
 
-  return thunar_vfs_mime_database_shared_instance;
+  if (G_UNLIKELY (database == NULL))
+    {
+      database = g_object_new (THUNAR_VFS_TYPE_MIME_DATABASE, NULL);
+      g_object_add_weak_pointer (G_OBJECT (database), (gpointer) &database);
+    }
+  else
+    {
+      g_object_ref (G_OBJECT (database));
+    }
+
+  return database;
 }
 
 
@@ -814,7 +811,7 @@ thunar_vfs_mime_database_get_default (void)
  * @mime_type : the string representation of the mime type.
  *
  * Determines the #ThunarVfsMimeInfo which corresponds to @mime_type
- * in database. The caller is responsible to call #exo_object_unref()
+ * in database. The caller is responsible to call thunar_vfs_mime_info_unref()
  * on the returned instance.
  *
  * Return value: the #ThunarVfsMimeInfo corresponding to @mime_type in @database.
@@ -844,8 +841,8 @@ thunar_vfs_mime_database_get_info (ThunarVfsMimeDatabase *database,
  * @length   : the length of @data in bytes.
  *
  * Determines the #ThunarVfsMimeInfo for @data in @database. The
- * caller is responsible to call #exo_object_unref() on the
- * returned instance.
+ * caller is responsible to call thunar_vfs_mime_info_unref() on
+ * the returned instance.
  *
  * Return value: the #ThunarVfsMimeInfo determined for @data.
  **/
@@ -865,7 +862,7 @@ thunar_vfs_mime_database_get_info_for_data (ThunarVfsMimeDatabase *database,
 
   /* fallback to 'application/octet-stream' if we could not determine any type */
   if (G_UNLIKELY (info == NULL))
-    info = exo_object_ref (database->application_octet_stream);
+    info = thunar_vfs_mime_info_ref (database->application_octet_stream);
 
   return info;
 }
@@ -879,7 +876,7 @@ thunar_vfs_mime_database_get_info_for_data (ThunarVfsMimeDatabase *database,
  *
  * Determines the #ThunarVfsMimeInfo for the filename given
  * in @name from @database. The caller is responsible to
- * call #exo_object_unref() on the returned instance.
+ * call thunar_vfs_mime_info_unref() on the returned instance.
  *
  * The @name must be a valid filename in UTF-8 encoding
  * and it may not contained any slashes!
@@ -904,7 +901,7 @@ thunar_vfs_mime_database_get_info_for_name (ThunarVfsMimeDatabase *database,
 
   /* fallback to 'application/octet-stream' */
   if (G_UNLIKELY (info == NULL))
-    info = exo_object_ref (database->application_octet_stream);
+    info = thunar_vfs_mime_info_ref (database->application_octet_stream);
 
   /* we got it */
   return info;
@@ -920,7 +917,7 @@ thunar_vfs_mime_database_get_info_for_name (ThunarVfsMimeDatabase *database,
  *
  * Determines the #ThunarVfsMimeInfo for @path in @database. The
  * caller is responsible to free the returned instance using
- * #exo_object_unref().
+ * thunar_vfs_mime_info_unref().
  *
  * The @name parameter is optional. If the caller already knows the
  * basename of @path in UTF-8 encoding, it should be specified here
@@ -1121,7 +1118,6 @@ thunar_vfs_mime_database_get_infos_for_info (ThunarVfsMimeDatabase *database,
   GList *infos;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
 
   g_mutex_lock (database->lock);
   infos = thunar_vfs_mime_database_get_infos_for_info_locked (database, info);
@@ -1160,7 +1156,6 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
   guint                      n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
 
   g_mutex_lock (database->lock);
 
@@ -1211,7 +1206,7 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
  * is set for @info.
  *
  * The caller is responsible to free the returned instance
- * using #exo_object_unref().
+ * using exo_object_unref().
  *
  * Return value: the default #ThunarVfsMimeApplication for
  *               @info or %NULL.
@@ -1229,7 +1224,6 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
   guint                      n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (info), NULL);
 
   g_mutex_lock (database->lock);
 

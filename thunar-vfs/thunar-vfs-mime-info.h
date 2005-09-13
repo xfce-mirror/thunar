@@ -21,41 +21,21 @@
 #ifndef __THUNAR_VFS_MIME_INFO_H__
 #define __THUNAR_VFS_MIME_INFO_H__
 
-#include <exo/exo.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarVfsMimeInfoClass ThunarVfsMimeInfoClass;
-typedef struct _ThunarVfsMimeInfo      ThunarVfsMimeInfo;
+typedef struct _ThunarVfsMimeInfo ThunarVfsMimeInfo;
 
-#define THUNAR_VFS_TYPE_MIME_INFO             (thunar_vfs_mime_info_get_type ())
-#define THUNAR_VFS_MIME_INFO(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_MIME_INFO, ThunarVfsMimeInfo))
-#define THUNAR_VFS_MIME_INFO_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_MIME_INFO, ThunarVfsMimeInfoClass))
-#define THUNAR_VFS_IS_MIME_INFO(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_MIME_INFO))
-#define THUNAR_VFS_IS_MIME_INFO_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_MIME_INFO))
-#define THUNAR_VFS_MIME_INFO_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_MIME_INFO, ThunarVfsMimeInfoClass))
-
-struct _ThunarVfsMimeInfoClass
-{
-  ExoObjectClass __parent__;
-};
-
-struct _ThunarVfsMimeInfo
-{
-  ExoObject __parent__;
-
-  gchar        *comment;
-  gchar        *name;
-
-  gchar        *icon_name;
-  gboolean      icon_name_static : 1;
-  GtkIconTheme *icon_theme;
-};
+#define THUNAR_VFS_TYPE_MIME_INFO (thunar_vfs_mime_info_get_type ())
 
 GType              thunar_vfs_mime_info_get_type         (void) G_GNUC_CONST;
 
-#define thunar_vfs_mime_info_ref exo_object_ref
-#define thunar_vfs_mime_info_unref exo_object_unref
+ThunarVfsMimeInfo *thunar_vfs_mime_info_new              (const gchar             *name,
+                                                          gssize                   len) G_GNUC_MALLOC;
+
+ThunarVfsMimeInfo *thunar_vfs_mime_info_ref              (ThunarVfsMimeInfo       *info);
+void               thunar_vfs_mime_info_unref            (ThunarVfsMimeInfo       *info);
 
 const gchar       *thunar_vfs_mime_info_get_comment      (ThunarVfsMimeInfo       *info) G_GNUC_PURE;
 const gchar       *thunar_vfs_mime_info_get_name         (const ThunarVfsMimeInfo *info) G_GNUC_PURE;
