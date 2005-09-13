@@ -332,7 +332,6 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
   ThunarVfsMonitorHandle *handle;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE, NULL);
   g_return_val_if_fail (callback != NULL, NULL);
 
@@ -383,7 +382,6 @@ thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
   ThunarVfsMonitorHandle *handle;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE, NULL);
   g_return_val_if_fail (callback != NULL, NULL);
 
@@ -480,7 +478,6 @@ thunar_vfs_monitor_feed (ThunarVfsMonitor     *monitor,
   g_return_if_fail (event == THUNAR_VFS_MONITOR_EVENT_CHANGED
                  || event == THUNAR_VFS_MONITOR_EVENT_CREATED
                  || event == THUNAR_VFS_MONITOR_EVENT_DELETED);
-  g_return_if_fail (THUNAR_VFS_IS_URI (uri));
   g_return_if_fail (monitor->reentrant_level >= 0);
 
   /* increate the reentrancy level */

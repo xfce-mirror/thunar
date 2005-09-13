@@ -49,6 +49,7 @@ thunar_vfs_unlink
 /* ThunarVfsInfo methods */
 #if IN_HEADER(__THUNAR_VFS_INFO_H__)
 #if IN_SOURCE(__THUNAR_VFS_INFO_C__)
+thunar_vfs_info_get_type
 thunar_vfs_info_new_for_uri
 thunar_vfs_info_ref
 thunar_vfs_info_unref
@@ -70,7 +71,6 @@ thunar_vfs_file_type_get_type G_GNUC_CONST
 thunar_vfs_interactive_job_response_get_type G_GNUC_CONST
 thunar_vfs_mime_application_error_get_type G_GNUC_CONST
 thunar_vfs_monitor_event_get_type G_GNUC_CONST
-thunar_vfs_uri_string_flags_get_type G_GNUC_CONST
 thunar_vfs_volume_kind_get_type G_GNUC_CONST
 thunar_vfs_volume_status_get_type G_GNUC_CONST
 #endif
@@ -195,12 +195,12 @@ thunar_vfs_trash_manager_resolve_uri
 thunar_vfs_uri_get_type G_GNUC_CONST
 thunar_vfs_uri_new G_GNUC_MALLOC
 thunar_vfs_uri_new_for_path G_GNUC_MALLOC
+thunar_vfs_uri_ref
+thunar_vfs_uri_unref
 thunar_vfs_uri_is_home
-thunar_vfs_uri_is_local
 thunar_vfs_uri_is_root
 thunar_vfs_uri_get_display_name G_GNUC_MALLOC
 thunar_vfs_uri_get_md5sum G_GNUC_MALLOC
-thunar_vfs_uri_get_host
 thunar_vfs_uri_get_name
 thunar_vfs_uri_get_path
 thunar_vfs_uri_get_scheme

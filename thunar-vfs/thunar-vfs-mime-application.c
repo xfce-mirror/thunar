@@ -347,7 +347,6 @@ thunar_vfs_mime_application_exec_with_env (const ThunarVfsMimeApplication *appli
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application), FALSE);
   g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
-  g_return_val_if_fail (uris != NULL && THUNAR_VFS_IS_URI (uris->data), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* fallback to the default screen if no screen is given */

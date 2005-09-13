@@ -375,8 +375,6 @@ thunar_local_folder_monitor (ThunarVfsMonitor       *monitor,
   GList              list;
 
   g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  g_return_if_fail (THUNAR_VFS_IS_URI (handle_uri));
-  g_return_if_fail (THUNAR_VFS_IS_URI (event_uri));
   g_return_if_fail (THUNAR_IS_LOCAL_FOLDER (local_folder));
   g_return_if_fail (local_folder->monitor == monitor);
   g_return_if_fail (local_folder->handle == handle);

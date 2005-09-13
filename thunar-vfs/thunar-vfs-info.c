@@ -61,6 +61,23 @@
 
 
 
+GType
+thunar_vfs_info_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = g_boxed_type_register_static ("ThunarVfsInfo",
+                                           (GBoxedCopyFunc) thunar_vfs_info_ref,
+                                           (GBoxedFreeFunc) thunar_vfs_info_unref);
+    }
+
+  return type;
+}
+
+
+
 /**
  * thunar_vfs_info_new_for_uri:
  * @uri   : the #ThunarVfsURI of the file whose info should be queried.
@@ -88,7 +105,6 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
   GList                 *mime_infos;
   GList                 *lp;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   path = thunar_vfs_uri_get_path (uri);
@@ -266,16 +282,7 @@ thunar_vfs_info_new_for_uri (ThunarVfsURI *uri,
 ThunarVfsInfo*
 thunar_vfs_info_ref (ThunarVfsInfo *info)
 {
-  g_return_val_if_fail (info->ref_count > 0, NULL);
-
-#if defined(__GNUC__) && defined(__i386__) && defined(__OPTIMIZE__)
-  __asm__ __volatile__ ("lock; incl %0"
-                        : "=m" (info->ref_count)
-                        : "m" (info->ref_count));
-#else
-  g_atomic_int_inc (&info->ref_count);
-#endif
-
+  _thunar_vfs_sysdep_inc (&info->ref_count);
   return info;
 }
 
@@ -294,10 +301,7 @@ thunar_vfs_info_unref (ThunarVfsInfo *info)
 {
   guint n;
 
-  g_return_if_fail (info != NULL);
-  g_return_if_fail (info->ref_count > 0);
-
-  if (g_atomic_int_dec_and_test (&info->ref_count))
+  if (_thunar_vfs_sysdep_dec (&info->ref_count))
     {
       /* drop the public info part */
       thunar_vfs_mime_info_unref (info->mime_info);

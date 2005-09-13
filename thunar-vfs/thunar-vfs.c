@@ -44,10 +44,13 @@ void
 thunar_vfs_init (void)
 {
   extern void _thunar_vfs_job_init ();
-  extern void _thunar_vfs_mime_init ();
+  extern void _thunar_vfs_uri_init ();
 
   if (g_atomic_int_exchange_and_add (&thunar_vfs_ref_count, 1) == 0)
     {
+      /* initialize the URIs module */
+      _thunar_vfs_uri_init ();
+
       /* grab a reference on the mime database, so the global
        * instance stays alive while we use the ThunarVFS library.
        */
@@ -69,7 +72,7 @@ void
 thunar_vfs_shutdown (void)
 {
   extern void _thunar_vfs_job_shutdown ();
-  extern void _thunar_vfs_mime_shutdown ();
+  extern void _thunar_vfs_uri_shutdown ();
 
   if (g_atomic_int_dec_and_test (&thunar_vfs_ref_count))
     {
@@ -79,6 +82,9 @@ thunar_vfs_shutdown (void)
       /* drop our reference on the global mime database */
       exo_object_unref (EXO_OBJECT (thunar_vfs_mime_database));
       thunar_vfs_mime_database = NULL;
+
+      /* shutdown the URIs module */
+      _thunar_vfs_uri_shutdown ();
     }
 }
 
@@ -106,7 +112,6 @@ ThunarVfsJob*
 thunar_vfs_listdir (ThunarVfsURI *uri,
                     GError      **error)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* verify that we have a 'file://'-URI here */
@@ -150,7 +155,6 @@ thunar_vfs_copy (GList        *source_uri_list,
 {
   ThunarVfsJob *job;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (target_uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate/launch the job */
@@ -190,7 +194,6 @@ thunar_vfs_move (GList        *source_uri_list,
 {
   ThunarVfsJob *job;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (target_uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate/launch the job */

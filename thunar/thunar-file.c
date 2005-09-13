@@ -173,7 +173,7 @@ thunar_file_atexit_foreach (gpointer key,
 {
   gchar *s;
 
-  s = thunar_vfs_uri_to_string (THUNAR_VFS_URI (key), THUNAR_VFS_URI_STRING_UTF8);
+  s = thunar_vfs_uri_to_string (key);
   g_print ("--> %s (%u)\n", s, G_OBJECT (value)->ref_count);
   g_free (s);
 }
@@ -343,7 +343,7 @@ static gchar*
 thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 {
   ThunarVfsURI *uri = thunar_file_get_uri (THUNAR_FILE (file_info));
-  return g_strdup (thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_ESCAPED));
+  return thunar_vfs_uri_to_string (uri);
 }
 
 
@@ -358,7 +358,7 @@ thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
   uri = thunar_vfs_uri_parent (uri);
   if (G_LIKELY (uri != NULL))
     {
-      uri_string = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_ESCAPED);
+      uri_string = thunar_vfs_uri_to_string (uri);
       thunar_vfs_uri_unref (uri);
     }
 
@@ -454,7 +454,7 @@ thunar_file_real_get_parent (ThunarFile *file,
   parent_uri = thunar_vfs_uri_parent (thunar_file_get_uri (file));
   if (G_UNLIKELY (parent_uri == NULL))
     {
-      p = thunar_vfs_uri_to_string (thunar_file_get_uri (file), THUNAR_VFS_URI_STRING_UTF8);
+      p = thunar_vfs_uri_to_string (thunar_file_get_uri (file));
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
                    _("Failed to determine parent URI for '%s'"), p);
       g_free (p);
@@ -644,11 +644,9 @@ thunar_file_denies_access_permission (ThunarFile       *file,
 ThunarFile*
 _thunar_file_cache_lookup (ThunarVfsURI *uri)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
-
   /* allocate the ThunarFile cache on-demand */
   if (G_UNLIKELY (file_cache == NULL))
-    file_cache = g_hash_table_new_full (thunar_vfs_uri_hash, thunar_vfs_uri_equal, thunar_vfs_uri_unref, NULL);
+    file_cache = g_hash_table_new_full (thunar_vfs_uri_hash, thunar_vfs_uri_equal, (GDestroyNotify) thunar_vfs_uri_unref, NULL);
 
   return g_hash_table_lookup (file_cache, uri);
 }
@@ -695,7 +693,6 @@ _thunar_file_cache_rename (ThunarFile   *file,
                            ThunarVfsURI *uri)
 {
   g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (THUNAR_VFS_IS_URI (uri));
   g_return_if_fail (file_cache != NULL);
 
   /* drop the previous entry for the uri */
@@ -730,7 +727,6 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
 {
   ThunarFile *file;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* see if we have the corresponding file cached already */

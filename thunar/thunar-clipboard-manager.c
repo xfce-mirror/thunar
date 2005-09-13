@@ -320,8 +320,8 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   /* free the request */
   if (G_LIKELY (request->window != NULL))
     g_object_remove_weak_pointer (G_OBJECT (request->window), (gpointer) &request->window);
-  thunar_vfs_uri_unref (THUNAR_VFS_URI (request->target_uri));
   g_object_unref (G_OBJECT (request->manager));
+  thunar_vfs_uri_unref (request->target_uri);
   g_free (request);
 }
 
@@ -381,7 +381,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
   g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
   g_return_if_fail (manager->clipboard == clipboard);
 
-  string_list = thunar_vfs_uri_list_to_string (manager->uri_list, THUNAR_VFS_URI_STRING_ESCAPED);
+  string_list = thunar_vfs_uri_list_to_string (manager->uri_list);
 
   switch (target_info)
     {
@@ -597,7 +597,6 @@ thunar_clipboard_manager_paste_uri_list (ThunarClipboardManager *manager,
   ThunarClipboardPasteRequest *request;
 
   g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (THUNAR_VFS_IS_URI (target_uri));
   g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
 
   /* prepare the paste request */

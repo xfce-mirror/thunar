@@ -25,6 +25,37 @@
 
 G_BEGIN_DECLS;
 
+/* atomic incrementation */
+static inline void
+_thunar_vfs_sysdep_inc (gint *value)
+{
+#if defined(__GNUC__) && defined(__i386__) && defined(__OPTIMIZE__)
+  __asm__ __volatile__ ("lock; incl %0"
+                        : "=m" (*value)
+                        : "m" (*value));
+#else
+  g_atomic_int_inc (value);
+#endif
+}
+
+/* atomic decrementation */
+static inline gboolean
+_thunar_vfs_sysdep_dec (gint *value)
+{
+#if defined(__GNUC__) && defined(__i386__) && defined(__OPTIMIZE__)
+  gint result;
+
+  __asm__ __volatile__ ("lock; xaddl %0,%1"
+                        : "=r" (result), "=m" (*value)
+                        : "0" (-1), "m" (*value));
+
+  return (result == 1);
+#else
+  return g_atomic_int_dec_and_test (value);
+#endif
+}
+
+
 /* forward declarations */
 struct dirent;
 

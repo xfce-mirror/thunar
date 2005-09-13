@@ -311,7 +311,6 @@ thunar_computer_folder_new (ThunarVfsURI *uri,
 {
   ThunarComputerFolder *computer_folder;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
   g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_COMPUTER, NULL);
 

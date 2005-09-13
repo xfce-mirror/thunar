@@ -625,8 +625,6 @@ thunar_local_file_monitor (ThunarVfsMonitor       *monitor,
   ThunarLocalFile *local_file = THUNAR_LOCAL_FILE (user_data);
 
   g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  g_return_if_fail (THUNAR_VFS_IS_URI (handle_uri));
-  g_return_if_fail (THUNAR_VFS_IS_URI (event_uri));
   g_return_if_fail (THUNAR_IS_LOCAL_FILE (local_file));
   g_return_if_fail (thunar_vfs_uri_equal (local_file->info->uri, handle_uri));
 
@@ -684,7 +682,6 @@ thunar_local_file_new (ThunarVfsURI *uri,
   ThunarLocalFile *local_file;
   ThunarVfsInfo   *info;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
   g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE, NULL);
 
@@ -723,7 +720,6 @@ thunar_local_file_get_for_info (ThunarVfsInfo *info)
   ThunarLocalFile *local_file;
 
   g_return_val_if_fail (info != NULL, NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (info->uri), NULL);
 
   /* check if we already have a cached version of that file */
   local_file = (ThunarLocalFile *) _thunar_file_cache_lookup (info->uri);

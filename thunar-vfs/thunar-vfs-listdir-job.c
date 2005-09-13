@@ -264,7 +264,7 @@ thunar_vfs_listdir_job_new (ThunarVfsURI *folder_uri)
 {
   ThunarVfsListdirJob *listdir_job;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (folder_uri), NULL);
+  g_return_val_if_fail (folder_uri != NULL, NULL);
 
   listdir_job = exo_object_new (THUNAR_VFS_TYPE_LISTDIR_JOB);
   listdir_job->uri = thunar_vfs_uri_ref (folder_uri);

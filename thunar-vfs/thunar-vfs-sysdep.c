@@ -202,13 +202,9 @@ _thunar_vfs_sysdep_parse_exec (const gchar *exec,
               break;
 
             case 'u':
-              /* we need to hide the host parameter here, because there are quite a few
-               * applications out there (namely GNOME applications), which cannot handle
-               * 'file:'-URIs with host names.
-               */
               if (G_LIKELY (uris != NULL))
                 {
-                  uri_string = thunar_vfs_uri_to_string (uris->data, THUNAR_VFS_URI_STRING_ESCAPED);
+                  uri_string = thunar_vfs_uri_to_string (uris->data);
                   quoted = g_shell_quote (uri_string);
                   g_string_append (command_line, quoted);
                   g_free (uri_string);
@@ -221,7 +217,7 @@ _thunar_vfs_sysdep_parse_exec (const gchar *exec,
                 {
                   if (G_LIKELY (lp != uris))
                     g_string_append_c (command_line, ' ');
-                  uri_string = thunar_vfs_uri_to_string (lp->data, THUNAR_VFS_URI_STRING_ESCAPED);
+                  uri_string = thunar_vfs_uri_to_string (lp->data);
                   quoted = g_shell_quote (uri_string);
                   g_string_append (command_line, quoted);
                   g_free (uri_string);

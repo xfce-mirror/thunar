@@ -810,7 +810,6 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   g_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   g_return_val_if_fail (g_path_is_absolute (path), NULL);
   g_return_val_if_fail (size > 0, NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
   /* prepare the lookup key */
   lookup_key.name = (gchar *) path;
@@ -837,7 +836,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
     return NULL;
 
   /* remember the settings for the icon */
-  g_object_set_qdata_full (G_OBJECT (pixbuf), thunar_icon_uri_quark, thunar_vfs_uri_ref (uri), thunar_vfs_uri_unref);
+  g_object_set_qdata_full (G_OBJECT (pixbuf), thunar_icon_uri_quark, thunar_vfs_uri_ref (uri), (GDestroyNotify) thunar_vfs_uri_unref);
   g_object_set_qdata (G_OBJECT (pixbuf), thunar_icon_mtime_quark, GINT_TO_POINTER (mtime));
 
   /* generate a key for the new cached icon */

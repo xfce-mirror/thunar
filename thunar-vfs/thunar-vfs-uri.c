@@ -29,30 +29,19 @@
 #include <string.h>
 #endif
 
+#include <thunar-vfs/thunar-vfs-sysdep.h>
 #include <thunar-vfs/thunar-vfs-uri.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
-static void thunar_vfs_uri_register_type  (GType             *type);
-static void thunar_vfs_uri_class_init     (ThunarVfsURIClass *klass);
-static void thunar_vfs_uri_finalize       (ExoObject         *object);
-#ifndef G_DISABLE_CHECKS
-static void thunar_vfs_uri_init           (ThunarVfsURI      *uri);
-#endif
+static ThunarVfsURI *thunar_vfs_uri_allocate (void) G_GNUC_MALLOC;
 
 
-
-struct _ThunarVfsURIClass
-{
-  ExoObjectClass __parent__;
-};
 
 struct _ThunarVfsURI
 {
-  ExoObject __parent__;
-
-  gchar             *host;
+  gint               ref_count;
   gchar             *path;
   const gchar       *name;
   ThunarVfsURIScheme scheme;
@@ -69,9 +58,7 @@ static const gchar *scheme_names[] =
 
 
 
-static ExoObjectClass *thunar_vfs_uri_parent_class;
-static const gchar    *home_path;
-static gchar          *localhost;
+static const gchar *home_path;
 
 #ifndef G_DISABLE_CHECKS
 G_LOCK_DEFINE_STATIC (debug_uris);
@@ -84,134 +71,34 @@ GType
 thunar_vfs_uri_get_type (void)
 {
   static GType type = G_TYPE_INVALID;;
-  static GOnce once = G_ONCE_INIT;
 
-  /* thread-safe type registration */
-  g_once (&once, (GThreadFunc) thunar_vfs_uri_register_type, &type);
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = g_boxed_type_register_static ("ThunarVfsURI",
+                                           (GBoxedCopyFunc) thunar_vfs_uri_ref,
+                                           (GBoxedFreeFunc) thunar_vfs_uri_unref);
+    }
 
   return type;
 }
 
 
 
-static void
-thunar_vfs_uri_register_type (GType *type)
-{
-  static const GTypeInfo info =
-  {
-    sizeof (ThunarVfsURIClass),
-    NULL,
-    NULL,
-    (GClassInitFunc) thunar_vfs_uri_class_init,
-    NULL,
-    NULL,
-    sizeof (ThunarVfsURI),
-    256u,
-#ifndef G_DISABLE_CHECKS
-    (GInstanceInitFunc) thunar_vfs_uri_init,
-#else
-    NULL,
-#endif
-    NULL,
-  };
-
-  *type = g_type_register_static (EXO_TYPE_OBJECT, "ThunarVfsURI", &info, 0);
-}
-
-
-
-static void
-thunar_vfs_uri_class_init (ThunarVfsURIClass *klass)
-{
-  ExoObjectClass *exoobject_class;
-
-  /* determine the parent class */
-  thunar_vfs_uri_parent_class = g_type_class_peek_parent (klass);
-
-  /* determine the path to the current user's homedir */
-  home_path = xfce_get_homedir ();
-
-  /* determine the local host's name */
-  localhost = xfce_gethostname ();
-
-  exoobject_class = EXO_OBJECT_CLASS (klass);
-  exoobject_class->finalize = thunar_vfs_uri_finalize;
-}
-
-
-
-#ifndef G_DISABLE_CHECKS
-static void
-thunar_vfs_uri_atexit (void)
+static ThunarVfsURI*
+thunar_vfs_uri_allocate (void)
 {
   ThunarVfsURI *uri;
-  GList        *lp;
-  gchar        *s;
 
-  G_LOCK (debug_uris);
-
-  if (G_UNLIKELY (debug_uris != NULL))
-    {
-      g_print ("--- Leaked a total of %u ThunarVfsURI objects:\n", g_list_length (debug_uris));
-
-      for (lp = debug_uris; lp != NULL; lp = lp->next)
-        {
-          uri = THUNAR_VFS_URI (lp->data);
-          s = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_UTF8);
-          g_print ("--> %s (%u)\n", s, EXO_OBJECT (uri)->ref_count);
-          g_free (s);
-        }
-
-      g_print ("\n");
-    }
-
-  G_UNLOCK (debug_uris);
-}
-
-static void
-thunar_vfs_uri_init (ThunarVfsURI *uri)
-{
-  static gboolean registered = FALSE;
-
-  G_LOCK (debug_uris);
-
-  /* register the check function to be called at program exit */
-  if (!registered)
-    {
-      g_atexit (thunar_vfs_uri_atexit);
-      registered = TRUE;
-    }
-
-  debug_uris = g_list_prepend (debug_uris, uri);
-
-  G_UNLOCK (debug_uris);
-}
-#endif
-
-
-
-static void
-thunar_vfs_uri_finalize (ExoObject *object)
-{
-  ThunarVfsURI *uri = THUNAR_VFS_URI (object);
+  uri = g_new (ThunarVfsURI, 1);
+  uri->ref_count = 1;
 
 #ifndef G_DISABLE_CHECKS
   G_LOCK (debug_uris);
-  if (G_UNLIKELY (uri->host != NULL))
-    memset (uri->host, 0xaa, strlen (uri->host));
-  memset (uri->path, 0xaa, strlen (uri->path));
-  debug_uris = g_list_remove (debug_uris, uri);
+  debug_uris = g_list_prepend (debug_uris, uri);
   G_UNLOCK (debug_uris);
 #endif
 
-  /* free the host if we got a custom one */
-  if (G_UNLIKELY (uri->host != NULL))
-    g_free (uri->host);
-
-  /* free the path */
-  g_free (uri->path);
-
-  (*EXO_OBJECT_CLASS (thunar_vfs_uri_parent_class)->finalize) (object);
+  return uri;
 }
 
 
@@ -238,10 +125,7 @@ thunar_vfs_uri_new (const gchar *identifier,
   ThunarVfsURI *uri;
   const gchar  *p;
   const gchar  *q;
-  gchar        *host;
   gchar        *path;
-
-  g_return_val_if_fail (identifier != NULL, NULL);
 
   /* check if identifier includes an absolute path */
   if (G_UNLIKELY (*identifier == '/'))
@@ -251,30 +135,15 @@ thunar_vfs_uri_new (const gchar *identifier,
             && identifier[2] == 'l' && identifier[3] == 'e'
             && identifier[4] == ':'))
     {
-      /* try to parse the path and hostname */
-      path = g_filename_from_uri (identifier, &host, error);
+      /* try to parse the path and ignore the hostname */
+      path = g_filename_from_uri (identifier, NULL, error);
       if (G_UNLIKELY (path == NULL))
         return NULL;
 
       /* allocate the URI instance */
-      uri = exo_object_new (THUNAR_VFS_TYPE_URI);
+      uri = thunar_vfs_uri_allocate ();
       uri->scheme = THUNAR_VFS_URI_SCHEME_FILE;
       uri->path = path;
-
-      /* check the host name */
-      if (host != NULL)
-        {
-          if (strcmp (host, localhost) == 0 || strcmp (host, "localhost") == 0)
-            {
-              /* no need to remember the host name */
-              g_free (host);
-            }
-          else
-            {
-              /* non-local host name, need to remember */
-              uri->host = host;
-            }
-        }
     }
   else if (identifier[0] == 't' && identifier[1] == 'r'
         && identifier[2] == 'a' && identifier[3] == 's'
@@ -303,7 +172,7 @@ thunar_vfs_uri_new (const gchar *identifier,
           }
 
       /* allocate the URI instance */
-      uri = exo_object_new (THUNAR_VFS_TYPE_URI);
+      uri = thunar_vfs_uri_allocate ();
       uri->scheme = THUNAR_VFS_URI_SCHEME_TRASH;
       uri->path = g_strdup ((*p == '/') ? p : "/");
     }
@@ -336,7 +205,7 @@ thunar_vfs_uri_new (const gchar *identifier,
           }
 
       /* allocate the URI instance */
-      uri = exo_object_new (THUNAR_VFS_TYPE_URI);
+      uri = thunar_vfs_uri_allocate ();
       uri->scheme = THUNAR_VFS_URI_SCHEME_COMPUTER;
       uri->path = g_strdup ((*p == '/') ? p : "/");
     }
@@ -374,11 +243,8 @@ thunar_vfs_uri_new_for_path (const gchar *path)
   ThunarVfsURI *uri;
   gchar        *p;
 
-  g_return_val_if_fail (path != NULL, NULL);
-  g_return_val_if_fail (g_path_is_absolute (path), NULL);
-
   /* allocate the URI instance */
-  uri = exo_object_new (THUNAR_VFS_TYPE_URI);
+  uri = thunar_vfs_uri_allocate ();
   uri->scheme = THUNAR_VFS_URI_SCHEME_FILE;
   uri->path = g_strdup (path);
 
@@ -409,6 +275,55 @@ thunar_vfs_uri_new_for_path (const gchar *path)
 
 
 /**
+ * thunar_vfs_uri_ref:
+ * @uri : a #ThunarVfsURI instance.
+ *
+ * Increments the reference count on @uri by 1 and
+ * returns @uri.
+ *
+ * Return value: pointer to @uri.
+ **/
+ThunarVfsURI*
+thunar_vfs_uri_ref (ThunarVfsURI *uri)
+{
+  _thunar_vfs_sysdep_inc (&uri->ref_count);
+  return uri;
+}
+
+
+
+/**
+ * thunar_vfs_uri_unref:
+ * @uri : a #ThunarVfsURI instance.
+ *
+ * Decreases the reference count on @uri by 1. If the
+ * reference count drops to 0, the resources allocated
+ * for @uri will be freed.
+ **/
+void
+thunar_vfs_uri_unref (ThunarVfsURI *uri)
+{
+  if (_thunar_vfs_sysdep_dec (&uri->ref_count))
+    {
+      /* remove the uri from the list of active URIs */
+#ifndef G_DISABLE_CHECKS
+      G_LOCK (debug_uris);
+      memset (uri->path, 0xaa, strlen (uri->path));
+      debug_uris = g_list_remove (debug_uris, uri);
+      G_UNLOCK (debug_uris);
+#endif
+
+      /* free the path */
+      g_free (uri->path);
+
+      /* free the uri object itself */
+      g_free (uri);
+    }
+}
+
+
+
+/**
  * thunar_vfs_uri_is_home:
  * @uri : a #ThunarVfsURI instance.
  *
@@ -420,26 +335,8 @@ thunar_vfs_uri_new_for_path (const gchar *path)
 gboolean
 thunar_vfs_uri_is_home (const ThunarVfsURI *uri)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
   return (uri->scheme == THUNAR_VFS_URI_SCHEME_FILE
        && exo_str_is_equal (home_path, uri->path));
-}
-
-
-
-/**
- * thunar_vfs_uri_is_local:
- * @uri : a #ThunarVfsURI instance.
- *
- * Checks whether @uri refers to a local resource.
- *
- * Return value: %TRUE if the @uri refers to a local resource.
- **/
-gboolean
-thunar_vfs_uri_is_local (const ThunarVfsURI *uri)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
-  return TRUE;
 }
 
 
@@ -456,7 +353,6 @@ thunar_vfs_uri_is_local (const ThunarVfsURI *uri)
 gboolean
 thunar_vfs_uri_is_root (const ThunarVfsURI *uri)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
   return (uri->path[0] == '/' && uri->path[1] == '\0');
 }
 
@@ -478,9 +374,6 @@ thunar_vfs_uri_is_root (const ThunarVfsURI *uri)
 gchar*
 thunar_vfs_uri_get_display_name (const ThunarVfsURI *uri)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
-
-  // FIXME: This should be optimized (and GLib 2.4 compatible)!
   return g_filename_display_name (uri->name);
 }
 
@@ -539,8 +432,6 @@ thunar_vfs_uri_get_md5sum (const ThunarVfsURI *uri)
   gchar str[4096];
   gsize n;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
-
   n = g_strlcpy (str, scheme_names[uri->scheme], sizeof (str));
 
   /* we need to properly escape the path here to be compatible
@@ -556,31 +447,6 @@ thunar_vfs_uri_get_md5sum (const ThunarVfsURI *uri)
 
 
 /**
- * thunar_vfs_uri_get_host:
- * @uri : a #ThunarVfsURI instance.
- *
- * Returns the host associated with the given @uri. This
- * function may return %NULL if either the scheme of @uri
- * does not support specifying a hostname or no hostname
- * was given on construction of the @uri.
- *
- * Return value: the name of the host set for @uri or %NULL.
- **/
-const gchar*
-thunar_vfs_uri_get_host (const ThunarVfsURI *uri)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
-
-  /* fallback to local host for 'file://' uris */
-  if (uri->scheme == THUNAR_VFS_URI_SCHEME_FILE && uri->host == NULL)
-    return localhost;
-
-  return uri->host;
-}
-
-
-
-/**
  * thunar_vfs_uri_get_name:
  * @uri : a #ThunarVfsURI instance.
  *
@@ -591,7 +457,6 @@ thunar_vfs_uri_get_host (const ThunarVfsURI *uri)
 const gchar*
 thunar_vfs_uri_get_name (const ThunarVfsURI *uri)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   return uri->name;
 }
 
@@ -608,7 +473,6 @@ thunar_vfs_uri_get_name (const ThunarVfsURI *uri)
 const gchar*
 thunar_vfs_uri_get_path (const ThunarVfsURI *uri)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   return uri->path;
 }
 
@@ -625,7 +489,6 @@ thunar_vfs_uri_get_path (const ThunarVfsURI *uri)
 ThunarVfsURIScheme
 thunar_vfs_uri_get_scheme (const ThunarVfsURI *uri)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), THUNAR_VFS_URI_SCHEME_FILE);
   return uri->scheme;
 }
 
@@ -647,14 +510,11 @@ thunar_vfs_uri_parent (const ThunarVfsURI *uri)
   ThunarVfsURI *parent;
   const gchar  *p;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
-
   if (thunar_vfs_uri_is_root (uri))
     return NULL;
 
   /* allocate the new object */
-  parent = exo_object_new (THUNAR_VFS_TYPE_URI);
-  parent->host = g_strdup (uri->host);
+  parent = thunar_vfs_uri_allocate ();
   parent->path = g_path_get_dirname (uri->path);
   parent->scheme = uri->scheme;
 
@@ -682,12 +542,8 @@ thunar_vfs_uri_relative (const ThunarVfsURI *uri,
   ThunarVfsURI *relative;
   const gchar  *p;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
-  g_return_val_if_fail (name != NULL, NULL);
-
   /* allocate the new object */
-  relative = exo_object_new (THUNAR_VFS_TYPE_URI);
-  relative->host = g_strdup (uri->host);
+  relative = thunar_vfs_uri_allocate ();
   relative->path = g_build_filename (uri->path, name, NULL);
   relative->scheme = uri->scheme;
 
@@ -703,57 +559,36 @@ thunar_vfs_uri_relative (const ThunarVfsURI *uri,
 
 /**
  * thunar_vfs_uri_to_string:
- * @uri   : a #ThunarVfsURI.
- * @flags : or'ed list of #ThunarVfsURIStringFlags.
+ * @uri : a #ThunarVfsURI.
  *
- * Returns the string representation of @uri. The
+ * Returns the string representation of @uri (encoded
+ * as specified on the file URI specification). The
  * caller is responsible for freeing the returned
  * string using g_free().
  *
  * Return value: the string representation of @uri.
  **/
 gchar*
-thunar_vfs_uri_to_string (const ThunarVfsURI     *uri,
-                          ThunarVfsURIStringFlags flags)
+thunar_vfs_uri_to_string (const ThunarVfsURI *uri)
 {
-  const gchar *host;
-  gchar       *string;
-  gchar       *path;
+  gchar *string;
+  gint   scheme_length;
+  gint   string_length;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
+  /* determine the scheme length */
+  scheme_length = strlen (scheme_names[uri->scheme]);
 
-  /* check if we should escape the URI (the path) */
-  if ((flags & THUNAR_VFS_URI_STRING_ESCAPED) != 0)
-    {
-      path = g_new (gchar, strlen (uri->path) * 3 + 1);
-      escape (uri->path, path, strlen (uri->path) * 3 + 1);
-    }
-  else
-    {
-      path = g_strdup (uri->path);
-    }
+  /* determine the approx. memory required to for the string */
+  string_length = scheme_length + strlen (uri->path) * 3 + 1;
 
-  /* check if we should return an UTF-8 version */
-  if ((flags & THUNAR_VFS_URI_STRING_UTF8) != 0)
-    {
-      string = g_filename_display_name (path);
-      g_free (path);
-      path = string;
-    }
+  /* allocate memory for the string */
+  string = g_new (gchar, string_length);
 
-  /* determine the host name */
-  if ((flags & THUNAR_VFS_URI_STRING_INCLUDE_HOST) == 0)
-    host = "";
-  else if (G_LIKELY (uri->host == NULL))
-    host = (uri->scheme == THUNAR_VFS_URI_SCHEME_FILE) ? localhost : "";
-  else
-    host = uri->host;
+  /* prepend the uri scheme */
+  memcpy (string, scheme_names[uri->scheme], scheme_length);
 
-  /* build up the URI string */
-  string = g_strconcat (scheme_names[uri->scheme], host, path, NULL);
-
-  /* free the temporary path buffer */
-  g_free (path);
+  /* append the escaped path */
+  escape (uri->path, string + scheme_length, string_length - scheme_length);
 
   return string;
 }
@@ -774,19 +609,12 @@ thunar_vfs_uri_hash (gconstpointer uri)
   const gchar *p;
   guint        h;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), 0);
-
   /* hash the scheme */
-  h = THUNAR_VFS_URI (uri)->scheme;
+  h = ((ThunarVfsURI *) uri)->scheme;
 
   /* hash the path */
-  for (p = THUNAR_VFS_URI (uri)->path; *p != '\0'; ++p)
+  for (p = ((ThunarVfsURI *) uri)->path; *p != '\0'; ++p)
     h = (h << 5) - h + *p;
-
-  /* hash the host (if present) */
-  if (G_LIKELY (THUNAR_VFS_URI (uri)->host != NULL))
-    for (p = THUNAR_VFS_URI (uri)->host; *p != '\0'; ++p)
-      h = (h << 5) - h + *p;
 
   return h;
 }
@@ -807,26 +635,25 @@ gboolean
 thunar_vfs_uri_equal (gconstpointer a,
                       gconstpointer b)
 {
-  const gchar *a_name;
-  const gchar *b_name;
-  const gchar *a_path;
-  const gchar *b_path;
-  const gchar *ap;
-  const gchar *bp;
-
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (a), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (b), FALSE);
+  const ThunarVfsURI *a_uri = a;
+  const ThunarVfsURI *b_uri = b;
+  const gchar        *a_name;
+  const gchar        *b_name;
+  const gchar        *a_path;
+  const gchar        *b_path;
+  const gchar        *ap;
+  const gchar        *bp;
 
   /* in some cases we can escape from here quite easily */
   if (G_UNLIKELY (a == b))
     return TRUE;
 
   /* compare the schemes first */
-  if (THUNAR_VFS_URI (a)->scheme != THUNAR_VFS_URI (b)->scheme)
+  if (a_uri->scheme != b_uri->scheme)
     return FALSE;
 
-  a_name = THUNAR_VFS_URI (a)->name;
-  b_name = THUNAR_VFS_URI (b)->name;
+  a_name = a_uri->name;
+  b_name = b_uri->name;
 
   /* compare the names first */
   for (ap = a_name, bp = b_name; *ap == *bp && *ap != '\0'; ++ap, ++bp)
@@ -834,12 +661,8 @@ thunar_vfs_uri_equal (gconstpointer a,
   if (G_LIKELY (*ap != '\0' || *bp != '\0'))
     return FALSE;
 
-  /* compare the host names */
-  if (!exo_str_is_equal (THUNAR_VFS_URI (a)->host, THUNAR_VFS_URI (b)->host))
-    return FALSE;
-
-  a_path = THUNAR_VFS_URI (a)->path;
-  b_path = THUNAR_VFS_URI (b)->path;
+  a_path = a_uri->path;
+  b_path = b_uri->path;
 
   /* check if the dirnames have the same length */
   if (G_LIKELY ((a_name - a_path) != (b_name - b_path)))
@@ -890,8 +713,6 @@ thunar_vfs_uri_list_from_string (const gchar *string,
   const gchar  *t;
   GList        *uri_list = NULL;
   gchar        *identifier;
-
-  g_return_val_if_fail (string != NULL, NULL);
 
   for (s = string; s != NULL; )
     {
@@ -945,7 +766,6 @@ thunar_vfs_uri_list_from_string (const gchar *string,
 /**
  * thunar_vfs_uri_list_to_string:
  * @uri_list : a list of #ThunarVfsURI<!---->s.
- * @flags    : or'ed list of #ThunarVfsURIStringFlags.
  *
  * Free the returned value using g_free() when you
  * are done with it.
@@ -954,8 +774,7 @@ thunar_vfs_uri_list_from_string (const gchar *string,
  *               text/uri-list mime type defined in RFC 2483.
  **/
 gchar*
-thunar_vfs_uri_list_to_string (GList                  *uri_list,
-                               ThunarVfsURIStringFlags flags)
+thunar_vfs_uri_list_to_string (GList *uri_list)
 {
   GString *string_list;
   gchar   *uri_string;
@@ -963,7 +782,7 @@ thunar_vfs_uri_list_to_string (GList                  *uri_list,
 
   for (lp = uri_list, string_list = g_string_sized_new (512); lp != NULL; lp = lp->next)
     {
-      uri_string = thunar_vfs_uri_to_string (THUNAR_VFS_URI (lp->data), flags);
+      uri_string = thunar_vfs_uri_to_string (lp->data);
       g_string_append (string_list, uri_string);
       g_string_append_c (string_list, '\n');
       g_free (uri_string);
@@ -1010,6 +829,58 @@ thunar_vfs_uri_list_free (GList *uri_list)
 {
   g_list_foreach (uri_list, (GFunc) thunar_vfs_uri_unref, NULL);
   g_list_free (uri_list);
+}
+
+
+
+/**
+ * _thunar_vfs_uri_init:
+ *
+ * Initializes the URI component of the Thunar-VFS
+ * library.
+ **/
+void
+_thunar_vfs_uri_init (void)
+{
+  /* determine the path to the current user's homedir */
+  home_path = xfce_get_homedir ();
+}
+
+
+
+/**
+ * _thunar_vfs_uri_shutdown:
+ *
+ * Shuts down the URI component of the Thunar-VFS
+ * library.
+ **/
+void
+_thunar_vfs_uri_shutdown (void)
+{
+#ifndef G_DISABLE_CHECKS
+  ThunarVfsURI *uri;
+  GList        *lp;
+  gchar        *s;
+
+  G_LOCK (debug_uris);
+
+  if (G_UNLIKELY (debug_uris != NULL))
+    {
+      g_print ("--- Leaked a total of %u ThunarVfsURI objects:\n", g_list_length (debug_uris));
+
+      for (lp = debug_uris; lp != NULL; lp = lp->next)
+        {
+          uri = lp->data;
+          s = thunar_vfs_uri_to_string (uri);
+          g_print ("--> %s (%u)\n", s, uri->ref_count);
+          g_free (s);
+        }
+
+      g_print ("\n");
+    }
+
+  G_UNLOCK (debug_uris);
+#endif
 }
 
 

@@ -40,11 +40,10 @@ main (int argc, char **argv)
   /* perform simple validation on "file:///" */
   a = thunar_vfs_uri_new_for_path ("/");
   g_assert (thunar_vfs_uri_is_root (a));
-  g_assert (thunar_vfs_uri_is_local (a));
   g_assert (exo_str_is_equal (thunar_vfs_uri_get_name (a), "/"));
   g_assert (exo_str_is_equal (thunar_vfs_uri_get_path (a), "/"));
   g_assert (thunar_vfs_uri_parent (a) == NULL);
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a, 0), "file:///"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a), "file:///"));
 
   /* verify that URI parsing works */
   a = thunar_vfs_uri_new_for_path ("/tmp");
@@ -57,8 +56,8 @@ main (int argc, char **argv)
   b = thunar_vfs_uri_relative (a, "bin");
   g_assert (!thunar_vfs_uri_equal (a, b));
   g_assert (thunar_vfs_uri_equal (a, thunar_vfs_uri_parent (b)));
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a, 0), "file:///usr"));
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (b, 0), "file:///usr/bin"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a), "file:///usr"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (b), "file:///usr/bin"));
 
   /* verify that trash:// uris work */
   a = thunar_vfs_uri_new ("trash:", NULL);
@@ -70,15 +69,13 @@ main (int argc, char **argv)
   g_assert (!thunar_vfs_uri_equal (a, b));
   b = thunar_vfs_uri_parent (b);
   g_assert (thunar_vfs_uri_equal (a, b));
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a, 0), "trash:///"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a), "trash:///"));
 
   /* verify thunar_vfs_uri_to_string */
   a = thunar_vfs_uri_new ("file:///a ", NULL);
   b = thunar_vfs_uri_new ("file:///b+", NULL);
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a, THUNAR_VFS_URI_STRING_UTF8), "file:///a "));
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a, THUNAR_VFS_URI_STRING_ESCAPED), "file:///a%20"));
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (b, THUNAR_VFS_URI_STRING_UTF8), "file:///b+"));
-  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (b, THUNAR_VFS_URI_STRING_ESCAPED), "file:///b%2B"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (a), "file:///a%20"));
+  g_assert (exo_str_is_equal (thunar_vfs_uri_to_string (b), "file:///b%2B"));
 
   return EXIT_SUCCESS;
 }

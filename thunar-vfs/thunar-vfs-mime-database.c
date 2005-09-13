@@ -570,7 +570,7 @@ thunar_vfs_mime_database_shutdown_providers (ThunarVfsMimeDatabase *database)
     {
       if (G_LIKELY (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider != NULL))
         exo_object_unref (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider);
-      exo_object_unref (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->uri);
+      thunar_vfs_uri_unref (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->uri);
       g_free (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data));
     }
   g_list_free (database->providers);

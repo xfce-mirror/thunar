@@ -48,17 +48,17 @@ main (int argc, char **argv)
   volume = g_list_nth_data (volumes, 0);
   g_assert (THUNAR_VFS_IS_VOLUME (volume));
   g_assert (!thunar_vfs_volume_is_mounted (volume));
-  g_assert (THUNAR_VFS_IS_URI (thunar_vfs_volume_get_mount_point (volume)));
+  g_assert (thunar_vfs_volume_get_mount_point (volume) != NULL);
 
   volume = g_list_nth_data (volumes, 1);
   g_assert (THUNAR_VFS_IS_VOLUME (volume));
   g_assert (!thunar_vfs_volume_is_mounted (volume));
-  g_assert (THUNAR_VFS_IS_URI (thunar_vfs_volume_get_mount_point (volume)));
+  g_assert (thunar_vfs_volume_get_mount_point (volume) != NULL);
 
   volume = g_list_nth_data (volumes, 2);
   g_assert (THUNAR_VFS_IS_VOLUME (volume));
   g_assert (!thunar_vfs_volume_is_mounted (volume));
-  g_assert (THUNAR_VFS_IS_URI (thunar_vfs_volume_get_mount_point (volume)));
+  g_assert (thunar_vfs_volume_get_mount_point (volume) != NULL);
 
   g_object_unref (G_OBJECT (manager));
 

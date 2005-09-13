@@ -825,10 +825,8 @@ thunar_vfs_transfer_job_new (GList        *source_uri_list,
                              GError      **error)
 {
   ThunarVfsTransferJob *job;
-  ThunarVfsURI         *uri;
   GList                *lp;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (target_uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate the job instance */
@@ -839,8 +837,7 @@ thunar_vfs_transfer_job_new (GList        *source_uri_list,
   for (lp = source_uri_list; lp != NULL; lp = lp->next)
     {
       /* verify the source uri */
-      uri = THUNAR_VFS_URI (lp->data);
-      if (thunar_vfs_uri_get_scheme (uri) != THUNAR_VFS_URI_SCHEME_FILE)
+      if (thunar_vfs_uri_get_scheme (lp->data) != THUNAR_VFS_URI_SCHEME_FILE)
         {
           g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (EINVAL),
                        _("URI scheme not supported for transfer operations"));
@@ -849,7 +846,7 @@ thunar_vfs_transfer_job_new (GList        *source_uri_list,
         }
 
       /* add a base for the source */
-      thunar_vfs_transfer_job_insert_base (job, thunar_vfs_uri_get_path (uri),
+      thunar_vfs_transfer_job_insert_base (job, thunar_vfs_uri_get_path (lp->data),
                                            thunar_vfs_uri_get_path (target_uri));
     }
 

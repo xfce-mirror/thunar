@@ -254,7 +254,6 @@ thunar_trash_file_new (ThunarVfsURI *uri,
   gchar                 *real_path;
   gchar                 *path;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* grab a reference to the global trash manager */

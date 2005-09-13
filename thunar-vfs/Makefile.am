@@ -19,6 +19,7 @@ libthunar_vfs_headers =							\
 	thunar-vfs-monitor.h						\
 	thunar-vfs-thumb.h						\
 	thunar-vfs-trash.h						\
+	thunar-vfs-types.h						\
 	thunar-vfs-user.h						\
 	thunar-vfs-util.h						\
 	thunar-vfs-uri.h						\

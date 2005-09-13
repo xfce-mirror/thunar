@@ -284,7 +284,6 @@ thunar_vfs_thumb_factory_lookup_thumbnail (ThunarVfsThumbFactory *factory,
   gchar *md5;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
 
   /* determine the path to the thumbnail for the factory */
   md5 = thunar_vfs_uri_get_md5sum (uri);
@@ -325,7 +324,6 @@ thunar_vfs_thumb_factory_can_thumbnail (ThunarVfsThumbFactory   *factory,
                                         ThunarVfsFileTime        mtime)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (mime_info), FALSE);
 
   /* we support only local files for thumbnail generation */
@@ -371,7 +369,6 @@ thunar_vfs_thumb_factory_has_failed_thumbnail (ThunarVfsThumbFactory *factory,
   gchar *md5;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
 
   md5 = thunar_vfs_uri_get_md5sum (uri);
   g_snprintf (path, sizeof (path), "%s%s.png", factory->fail_path, md5);
@@ -409,7 +406,6 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory   *factory,
   gint       size;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), NULL);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_INFO (mime_info), NULL);
 
   /* we can only generate thumbnails for local files */
@@ -476,7 +472,6 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
   g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* check whether we should save a thumbnail or remember failed generation */
@@ -510,7 +505,7 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
 
   /* convert the thumbnail settings to strings */
   mtime_string = g_strdup_printf ("%lu", (gulong) mtime);
-  uri_string = thunar_vfs_uri_to_string (uri, THUNAR_VFS_URI_STRING_ESCAPED);
+  uri_string = thunar_vfs_uri_to_string (uri);
 
   /* write the thumbnail to the temporary location */
   succeed = gdk_pixbuf_save (thumbnail, tmp_path, "png", error,
@@ -569,8 +564,6 @@ thunar_vfs_thumb_path_for_uri (const ThunarVfsURI *uri,
   gchar *path;
   gchar *md5;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), NULL);
-
   md5 = thunar_vfs_uri_get_md5sum (uri);
   path = g_strconcat (xfce_get_homedir (),
                       G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S,
@@ -614,7 +607,6 @@ thunar_vfs_thumb_path_is_valid (const gchar        *thumb_path,
   gint          n;
 
   g_return_val_if_fail (g_path_is_absolute (thumb_path), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_URI (uri), FALSE);
 
   /* try to open the thumbnail file */
   fp = fopen (thumb_path, "r");

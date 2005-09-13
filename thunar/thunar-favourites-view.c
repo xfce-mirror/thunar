@@ -580,7 +580,7 @@ thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
           /* make sure, that only directories gets added to the favourites list */
           if (G_UNLIKELY (!thunar_file_is_directory (file)))
             {
-              uri_string = thunar_vfs_uri_to_string (lp->data, THUNAR_VFS_URI_STRING_UTF8);
+              uri_string = thunar_vfs_uri_to_string (lp->data);
               g_set_error (&error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR,
                            _("The URI '%s' does not refer to a directory"),
                            uri_string);
