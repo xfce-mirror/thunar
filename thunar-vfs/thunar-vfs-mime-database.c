@@ -186,7 +186,7 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
   database->text_plain = thunar_vfs_mime_database_get_info_locked (database, "text/plain");
 
   /* allocate the applications cache */
-  database->applications = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, exo_object_unref);
+  database->applications = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) thunar_vfs_mime_application_unref);
 
   /* initialize the MIME providers */
   thunar_vfs_mime_database_initialize_providers (database);
@@ -251,7 +251,7 @@ thunar_vfs_mime_database_get_application_locked (ThunarVfsMimeDatabase *database
 
   /* take an additional reference for the caller */
   if (G_LIKELY (application != NULL))
-    g_object_ref (EXO_OBJECT (application));
+    thunar_vfs_mime_application_ref (application);
 
   return application;
 }
@@ -1138,7 +1138,11 @@ thunar_vfs_mime_database_get_infos_for_info (ThunarVfsMimeDatabase *database,
  * @info.
  *
  * The caller is responsible to free the returned list using
- * #thunar_vfs_mime_application_list_free().
+ * something like:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) thunar_vfs_mime_application_unref, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
  *
  * Return value: the list of #ThunarVfsMimeApplication<!---->s, that
  *               can handle @info.
@@ -1181,7 +1185,7 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
               if (g_list_find (applications, application) == NULL)
                 applications = g_list_append (applications, application);
               else
-                exo_object_unref (EXO_OBJECT (application));
+                thunar_vfs_mime_application_unref (application);
             }
         }
     }
@@ -1206,7 +1210,7 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
  * is set for @info.
  *
  * The caller is responsible to free the returned instance
- * using exo_object_unref().
+ * using thunar_vfs_mime_application_unref().
  *
  * Return value: the default #ThunarVfsMimeApplication for
  *               @info or %NULL.
@@ -1257,8 +1261,8 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
       if (G_LIKELY (applications != NULL))
         {
           /* use the first available application */
-          application = THUNAR_VFS_MIME_APPLICATION (applications->data);
-          g_list_foreach (applications->next, (GFunc) exo_object_unref, NULL);
+          application = applications->data;
+          g_list_foreach (applications->next, (GFunc) thunar_vfs_mime_application_unref, NULL);
           g_list_free (applications);
         }
     }

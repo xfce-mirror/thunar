@@ -385,7 +385,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
   /* allocate a hash table to associate applications to URIs */
   applications = g_hash_table_new_full (thunar_vfs_mime_application_hash,
                                         thunar_vfs_mime_application_equal,
-                                        thunar_vfs_mime_application_unref,
+                                        (GDestroyNotify) thunar_vfs_mime_application_unref,
                                         (GDestroyNotify) thunar_vfs_uri_list_free);
 
   /* take a reference on the mime database */
@@ -620,7 +620,6 @@ thunar_launcher_action_open_application (GtkAction                *action,
 {
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-  g_return_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application));
 
   /* open the URIs (if any) using the given application */
   if (G_LIKELY (uri_list != NULL))

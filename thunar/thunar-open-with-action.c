@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-marshal.h>
 #include <thunar/thunar-open-with-action.h>
 
 
@@ -87,37 +88,6 @@ G_DEFINE_TYPE (ThunarOpenWithAction, thunar_open_with_action, GTK_TYPE_ACTION);
 
 
 static void
-marshal_VOID__EOBJECT_POINTER (GClosure     *closure,
-                               GValue       *return_value,
-                               guint         n_param_values,
-                               const GValue *param_values,
-                               gpointer      invocation_hint,
-                               gpointer      marshal_data)
-{
-  typedef void (*MarshalFunc_VOID__EOBJECT_POINTER) (gpointer data1, gpointer arg_1, gpointer arg_2, gpointer data2);
-  register MarshalFunc_VOID__EOBJECT_POINTER callback;
-  register gpointer data1, data2;
-
-  g_return_if_fail (n_param_values == 3);
-
-  if (G_CCLOSURE_SWAP_DATA (closure))
-    {
-      data1 = closure->data;
-      data2 = g_value_peek_pointer (param_values + 0);
-    }
-  else
-    {
-      data1 = g_value_peek_pointer (param_values + 0);
-      data2 = closure->data;
-    }
-
-  callback = (gpointer) ((marshal_data != NULL) ? marshal_data : ((GCClosure *) closure)->callback);
-  callback (data1, exo_value_get_object (param_values + 1), g_value_get_pointer (param_values + 2), data2);
-}
-
-
-
-static void
 thunar_open_with_action_class_init (ThunarOpenWithActionClass *klass)
 {
   GtkActionClass *gtkaction_class;
@@ -160,7 +130,7 @@ thunar_open_with_action_class_init (ThunarOpenWithActionClass *klass)
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarOpenWithActionClass, open_application),
-                  NULL, NULL, marshal_VOID__EOBJECT_POINTER,
+                  NULL, NULL, _thunar_marshal_VOID__BOXED_POINTER,
                   G_TYPE_NONE, 2, THUNAR_VFS_TYPE_MIME_APPLICATION, G_TYPE_POINTER);
 }
 
@@ -333,7 +303,7 @@ thunar_open_with_action_menu_mapped (GtkWidget            *menu,
   /* determine the default application (fallback to the first available application) */
   default_application = thunar_vfs_mime_database_get_default_application (open_with_action->mime_database, info);
   if (G_UNLIKELY (default_application == NULL && applications != NULL))
-    default_application = exo_object_ref (applications->data);
+    default_application = thunar_vfs_mime_application_ref (applications->data);
 
   /* add a menu entry for the default application */
   if (G_LIKELY (default_application != NULL))
@@ -343,12 +313,12 @@ thunar_open_with_action_menu_mapped (GtkWidget            *menu,
       if (G_LIKELY (lp != NULL))
         {
           applications = g_list_delete_link (applications, lp);
-          exo_object_unref (EXO_OBJECT (default_application));
+          thunar_vfs_mime_application_unref (default_application);
         }
 
       text = g_strdup_printf (_("%s (default)"), thunar_vfs_mime_application_get_name (default_application));
       item = gtk_image_menu_item_new_with_label (text);
-      g_object_set_data_full (G_OBJECT (item), "thunar-vfs-mime-application", default_application, exo_object_unref);
+      g_object_set_data_full (G_OBJECT (item), "thunar-vfs-mime-application", default_application, (GDestroyNotify) thunar_vfs_mime_application_unref);
       g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_open_with_action_activated), open_with_action);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
@@ -374,7 +344,7 @@ thunar_open_with_action_menu_mapped (GtkWidget            *menu,
       for (lp = applications; lp != NULL; lp = lp->next)
         {
           item = gtk_image_menu_item_new_with_label (thunar_vfs_mime_application_get_name (lp->data));
-          g_object_set_data_full (G_OBJECT (item), "thunar-vfs-mime-application", lp->data, exo_object_unref);
+          g_object_set_data_full (G_OBJECT (item), "thunar-vfs-mime-application", lp->data, (GDestroyNotify) thunar_vfs_mime_application_unref);
           g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_open_with_action_activated), open_with_action);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_show (item);

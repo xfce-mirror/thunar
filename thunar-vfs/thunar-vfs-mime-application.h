@@ -35,22 +35,16 @@ typedef enum
 GQuark thunar_vfs_mime_application_error_quark (void) G_GNUC_CONST;
 
 
-typedef struct _ThunarVfsMimeApplicationClass ThunarVfsMimeApplicationClass;
-typedef struct _ThunarVfsMimeApplication      ThunarVfsMimeApplication;
+typedef struct _ThunarVfsMimeApplication ThunarVfsMimeApplication;
 
-#define THUNAR_VFS_TYPE_MIME_APPLICATION            (thunar_vfs_mime_application_get_type ())
-#define THUNAR_VFS_MIME_APPLICATION(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_MIME_APPLICATION, ThunarVfsMimeApplication))
-#define THUNAR_VFS_MIME_APPLICATION_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_MIME_APPLICATION, ThunarVfsMimeApplicationClass))
-#define THUNAR_VFS_IS_MIME_APPLICATION(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_MIME_APPLICATION))
-#define THUNAR_VFS_IS_MIME_APPLICATION_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_MIME_APPLICATION))
-#define THUNAR_VFS_MIME_APPLICATION_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_MIME_APPLICATION, ThunarVfsMimeApplicationClass))
+#define THUNAR_VFS_TYPE_MIME_APPLICATION (thunar_vfs_mime_application_get_type ())
 
 GType                     thunar_vfs_mime_application_get_type            (void) G_GNUC_CONST;
 
-#define                   thunar_vfs_mime_application_ref exo_object_ref
-#define                   thunar_vfs_mime_application_unref exo_object_unref
-
 ThunarVfsMimeApplication *thunar_vfs_mime_application_new_from_desktop_id (const gchar                    *desktop_id) G_GNUC_MALLOC;
+
+ThunarVfsMimeApplication *thunar_vfs_mime_application_ref                 (ThunarVfsMimeApplication       *application);
+void                      thunar_vfs_mime_application_unref               (ThunarVfsMimeApplication       *application);
 
 const gchar              *thunar_vfs_mime_application_get_desktop_id      (const ThunarVfsMimeApplication *application);
 const gchar              *thunar_vfs_mime_application_get_name            (const ThunarVfsMimeApplication *application);

@@ -48,41 +48,29 @@ thunar_vfs_mime_application_error_quark (void)
 
 
 
-static void     thunar_vfs_mime_application_register_type (GType                          *type);
-static void     thunar_vfs_mime_application_class_init    (ThunarVfsMimeApplicationClass  *klass);
-static void     thunar_vfs_mime_application_finalize      (ExoObject                      *object);
-static gboolean thunar_vfs_mime_application_get_argv      (const ThunarVfsMimeApplication *application,
-                                                           GList                          *uris,
-                                                           gint                           *argc,
-                                                           gchar                        ***argv,
-                                                           GError                        **error);
+static gboolean thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *application,
+                                                      GList                          *uris,
+                                                      gint                           *argc,
+                                                      gchar                        ***argv,
+                                                      GError                        **error);
 
 
-
-struct _ThunarVfsMimeApplicationClass
-{
-  ExoObjectClass __parent__;
-};
 
 struct _ThunarVfsMimeApplication
 {
-  ExoObject __parent__;
+  gint   ref_count;
 
-  gchar    *binary_name;
-  gchar    *desktop_id;
-  gchar    *exec;
-  gchar    *icon;
-  gchar    *name;
+  gchar *binary_name;
+  gchar *desktop_id;
+  gchar *exec;
+  gchar *icon;
+  gchar *name;
 
-  guint     requires_terminal : 1;
-  guint     supports_startup_notify : 1;
-  guint     supports_multi : 1; /* %F or %U */
-  guint     supports_uris : 1;  /* %u or %U */
+  guint  requires_terminal : 1;
+  guint  supports_startup_notify : 1;
+  guint  supports_multi : 1; /* %F or %U */
+  guint  supports_uris : 1;  /* %u or %U */
 };
-
-
-
-static ExoObjectClass *thunar_vfs_mime_application_parent_class;
 
 
 
@@ -90,64 +78,15 @@ GType
 thunar_vfs_mime_application_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
-  static GOnce once = G_ONCE_INIT;
 
-  /* thread-safe type registration */
-  g_once (&once, (GThreadFunc) thunar_vfs_mime_application_register_type, &type);
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = g_boxed_type_register_static ("ThunarVfsMimeApplication",
+                                           (GBoxedCopyFunc) thunar_vfs_mime_application_ref,
+                                           (GBoxedFreeFunc) thunar_vfs_mime_application_unref);
+    }
 
   return type;
-}
-
-
-
-static void
-thunar_vfs_mime_application_register_type (GType *type)
-{
-  static const GTypeInfo info =
-  {
-    sizeof (ThunarVfsMimeApplicationClass),
-    NULL,
-    NULL,
-    (GClassInitFunc) thunar_vfs_mime_application_class_init,
-    NULL,
-    NULL,
-    sizeof (ThunarVfsMimeApplication),
-    0,
-    NULL,
-    NULL,
-  };
-
-  *type = g_type_register_static (EXO_TYPE_OBJECT, "ThunarVfsMimeApplication", &info, 0);
-}
-
-
-
-static void
-thunar_vfs_mime_application_class_init (ThunarVfsMimeApplicationClass *klass)
-{
-  ExoObjectClass *exoobject_class;
-
-  thunar_vfs_mime_application_parent_class = g_type_class_peek_parent (klass);
-
-  exoobject_class = EXO_OBJECT_CLASS (klass);
-  exoobject_class->finalize = thunar_vfs_mime_application_finalize;
-}
-
-
-
-static void
-thunar_vfs_mime_application_finalize (ExoObject *object)
-{
-  ThunarVfsMimeApplication *application = THUNAR_VFS_MIME_APPLICATION (object);
-
-  /* free resources */
-  g_free (application->binary_name);
-  g_free (application->desktop_id);
-  g_free (application->exec);
-  g_free (application->icon);
-  g_free (application->name);
-
-  (*EXO_OBJECT_CLASS (thunar_vfs_mime_application_parent_class)->finalize) (object);
 }
 
 
@@ -172,7 +111,7 @@ thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *applicatio
  * referenced by @desktop_id. Returns %NULL if @desktop_id is not valid.
  *
  * The caller is responsible to free the returned instance using
- * #exo_object_unref().
+ * thunar_vfs_mime_application_unref().
  *
  * Return value: the #ThunarVfsMimeApplication for @desktop_id or %NULL.
  **/
@@ -226,7 +165,8 @@ thunar_vfs_mime_application_new_from_desktop_id (const gchar *desktop_id)
   /* generate the application object */
   if (G_LIKELY (exec != NULL && name != NULL && g_shell_parse_argv (exec, &argc, &argv, NULL)))
     {
-      application = exo_object_new (THUNAR_VFS_TYPE_MIME_APPLICATION);
+      application = g_new0 (ThunarVfsMimeApplication, 1);
+      application->ref_count = 1;
 
       application->binary_name = g_path_get_basename (argv[0]);
       application->desktop_id = g_strdup (desktop_id);
@@ -259,6 +199,49 @@ thunar_vfs_mime_application_new_from_desktop_id (const gchar *desktop_id)
 
 
 /**
+ * thunar_vfs_mime_application_ref:
+ * @application : a #ThunarVfsMimeApplication.
+ *
+ * Increases the reference count on @application by one
+ * and returns the reference to @application.
+ *
+ * Return value: a reference to @application.
+ **/
+ThunarVfsMimeApplication*
+thunar_vfs_mime_application_ref (ThunarVfsMimeApplication *application)
+{
+  _thunar_vfs_sysdep_inc (&application->ref_count);
+  return application;
+}
+
+
+
+/**
+ * thunar_vfs_mime_application_unref:
+ * @application : a #ThunarVfsMimeApplication.
+ *
+ * Decreases the reference count on @application and frees
+ * the @application object once the reference count drops
+ * to zero.
+ **/
+void
+thunar_vfs_mime_application_unref (ThunarVfsMimeApplication *application)
+{
+  if (_thunar_vfs_sysdep_dec (&application->ref_count))
+    {
+      /* free resources */
+      g_free (application->binary_name);
+      g_free (application->desktop_id);
+      g_free (application->exec);
+      g_free (application->icon);
+      g_free (application->name);
+      g_free (application);
+    }
+}
+
+
+
+/**
  * thunar_vfs_mime_application_get_desktop_id:
  * @application : a #ThunarVfsMimeApplication.
  *
@@ -269,7 +252,6 @@ thunar_vfs_mime_application_new_from_desktop_id (const gchar *desktop_id)
 const gchar*
 thunar_vfs_mime_application_get_desktop_id (const ThunarVfsMimeApplication *application)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application), NULL);
   return application->desktop_id;
 }
 
@@ -286,7 +268,6 @@ thunar_vfs_mime_application_get_desktop_id (const ThunarVfsMimeApplication *appl
 const gchar*
 thunar_vfs_mime_application_get_name (const ThunarVfsMimeApplication *application)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application), NULL);
   return application->name;
 }
 
@@ -345,7 +326,6 @@ thunar_vfs_mime_application_exec_with_env (const ThunarVfsMimeApplication *appli
   gchar  **argv;
   gint     argc;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application), FALSE);
   g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
@@ -430,8 +410,6 @@ const gchar*
 thunar_vfs_mime_application_lookup_icon_name (const ThunarVfsMimeApplication *application,
                                               GtkIconTheme                   *icon_theme)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application), NULL);
-
   if (application->icon != NULL && gtk_icon_theme_has_icon (icon_theme, application->icon))
     return application->icon;
   else if (application->binary_name != NULL && gtk_icon_theme_has_icon (icon_theme, application->binary_name))
@@ -456,8 +434,7 @@ thunar_vfs_mime_application_lookup_icon_name (const ThunarVfsMimeApplication *ap
 guint
 thunar_vfs_mime_application_hash (gconstpointer application)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application), 0);
-  return g_str_hash (THUNAR_VFS_MIME_APPLICATION (application)->desktop_id);
+  return g_str_hash (((const ThunarVfsMimeApplication *) application)->desktop_id);
 }
 
 
@@ -475,9 +452,9 @@ gboolean
 thunar_vfs_mime_application_equal (gconstpointer a,
                                    gconstpointer b)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (a), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (b), FALSE);
-  return (strcmp (THUNAR_VFS_MIME_APPLICATION (a)->desktop_id, THUNAR_VFS_MIME_APPLICATION (b)->desktop_id) == 0);
+  const ThunarVfsMimeApplication *a_application;
+  const ThunarVfsMimeApplication *b_application;
+  return (strcmp (a_application->desktop_id, b_application->desktop_id) == 0);
 }
 
 

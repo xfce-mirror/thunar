@@ -198,13 +198,13 @@ thunar_window_init (ThunarWindow *window)
   /*
    * add the side pane options
    */
-  radio_action = gtk_radio_action_new ("view-side-pane-favourites", N_ ("_Favourites"), NULL, NULL, THUNAR_TYPE_FAVOURITES_PANE);
+  radio_action = gtk_radio_action_new ("view-side-pane-favourites", _("_Favourites"), NULL, NULL, THUNAR_TYPE_FAVOURITES_PANE);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, NULL);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
-  radio_action = gtk_radio_action_new ("view-side-pane-hidden", N_ ("_Hidden"), NULL, NULL, G_TYPE_INVALID);
+  radio_action = gtk_radio_action_new ("view-side-pane-hidden", _("_Hidden"), NULL, NULL, G_TYPE_INVALID);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
@@ -213,19 +213,19 @@ thunar_window_init (ThunarWindow *window)
   /*
    * add the location bar options
    */
-  radio_action = gtk_radio_action_new ("view-location-bar-buttons", N_ ("_Button Style"), NULL, NULL, THUNAR_TYPE_LOCATION_BUTTONS);
+  radio_action = gtk_radio_action_new ("view-location-bar-buttons", _("_Button Style"), NULL, NULL, THUNAR_TYPE_LOCATION_BUTTONS);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, NULL);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
-  radio_action = gtk_radio_action_new ("view-location-bar-entry", N_ ("_Traditional Style"), NULL, NULL, THUNAR_TYPE_LOCATION_ENTRY);
+  radio_action = gtk_radio_action_new ("view-location-bar-entry", _("_Traditional Style"), NULL, NULL, THUNAR_TYPE_LOCATION_ENTRY);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
-  radio_action = gtk_radio_action_new ("view-location-bar-hidden", N_ ("_Hidden"), NULL, NULL, G_TYPE_INVALID);
+  radio_action = gtk_radio_action_new ("view-location-bar-hidden", _("_Hidden"), NULL, NULL, G_TYPE_INVALID);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
@@ -234,13 +234,13 @@ thunar_window_init (ThunarWindow *window)
   /*
    * add view options
    */
-  radio_action = gtk_radio_action_new ("view-as-icons", N_ ("View as _Icons"), NULL, NULL, THUNAR_TYPE_ICON_VIEW);
+  radio_action = gtk_radio_action_new ("view-as-icons", _("View as _Icons"), NULL, NULL, THUNAR_TYPE_ICON_VIEW);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, NULL);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
-  radio_action = gtk_radio_action_new ("view-as-detailed-list", N_ ("View as _Detailed List"), NULL, NULL, THUNAR_TYPE_DETAILS_VIEW);
+  radio_action = gtk_radio_action_new ("view-as-detailed-list", _("View as _Detailed List"), NULL, NULL, THUNAR_TYPE_DETAILS_VIEW);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
