@@ -437,7 +437,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
   g_hash_table_foreach (applications, (GHFunc) thunar_launcher_open_uris, launcher);
 
   /* release the reference on the mime database */
-  exo_object_unref (EXO_OBJECT (database));
+  g_object_unref (G_OBJECT (database));
 
   /* drop the applications hash table */
   g_hash_table_destroy (applications);
