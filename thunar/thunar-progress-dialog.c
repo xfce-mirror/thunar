@@ -118,11 +118,11 @@ thunar_progress_dialog_class_init (ThunarProgressDialogClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_JOB,
-                                   exo_param_spec_object ("job",
-                                                          _("Job"),
-                                                          _("The job whose progress to display"),
-                                                          THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                                          EXO_PARAM_READWRITE));
+                                   g_param_spec_object ("job",
+                                                        _("Job"),
+                                                        _("The job whose progress to display"),
+                                                        THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                                        EXO_PARAM_READWRITE));
 }
 
 
@@ -205,7 +205,7 @@ thunar_progress_dialog_get_property (GObject    *object,
   switch (prop_id)
     {
     case PROP_JOB:
-      exo_value_set_object (value, thunar_progress_dialog_get_job (dialog));
+      g_value_set_object (value, thunar_progress_dialog_get_job (dialog));
       break;
 
     default:
@@ -227,7 +227,7 @@ thunar_progress_dialog_set_property (GObject      *object,
   switch (prop_id)
     {
     case PROP_JOB:
-      thunar_progress_dialog_set_job (dialog, exo_value_get_object (value));
+      thunar_progress_dialog_set_job (dialog, g_value_get_object (value));
       break;
 
     default:
