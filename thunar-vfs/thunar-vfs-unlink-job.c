@@ -47,6 +47,7 @@
 #include <thunar-vfs/thunar-vfs-thumb.h>
 #include <thunar-vfs/thunar-vfs-trash.h>
 #include <thunar-vfs/thunar-vfs-unlink-job.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
@@ -61,20 +62,24 @@ typedef struct _ThunarVfsUnlinkItem ThunarVfsUnlinkItem;
 
 
 
-static void thunar_vfs_unlink_job_register_type (GType               *type);
-static void thunar_vfs_unlink_job_class_init    (ThunarVfsJobClass   *klass);
-static void thunar_vfs_unlink_job_init          (ThunarVfsUnlinkJob  *unlink_job);
-static void thunar_vfs_unlink_job_finalize      (ExoObject           *object);
-static void thunar_vfs_unlink_job_execute       (ThunarVfsJob        *job);
-static void thunar_vfs_unlink_base_new          (ThunarVfsUnlinkJob  *unlink_job,
-                                                 const gchar         *path,
-                                                 const gchar         *trash_info);
-static void thunar_vfs_unlink_base_collect      (ThunarVfsUnlinkBase *base);
-static void thunar_vfs_unlink_base_remove       (ThunarVfsUnlinkBase *base);
-static void thunar_vfs_unlink_item_collect      (ThunarVfsUnlinkItem *item);
-static void thunar_vfs_unlink_item_remove       (ThunarVfsUnlinkItem *item);
+static void thunar_vfs_unlink_job_class_init (ThunarVfsJobClass   *klass);
+static void thunar_vfs_unlink_job_init       (ThunarVfsUnlinkJob  *unlink_job);
+static void thunar_vfs_unlink_job_finalize   (GObject             *object);
+static void thunar_vfs_unlink_job_execute    (ThunarVfsJob        *job);
+static void thunar_vfs_unlink_base_new       (ThunarVfsUnlinkJob  *unlink_job,
+                                              const gchar         *path,
+                                              const gchar         *trash_info);
+static void thunar_vfs_unlink_base_collect   (ThunarVfsUnlinkBase *base);
+static void thunar_vfs_unlink_base_remove    (ThunarVfsUnlinkBase *base);
+static void thunar_vfs_unlink_item_collect   (ThunarVfsUnlinkItem *item);
+static void thunar_vfs_unlink_item_remove    (ThunarVfsUnlinkItem *item);
 
 
+
+struct _ThunarVfsUnlinkJobClass
+{
+  ThunarVfsInteractiveJobClass __parent__;
+};
 
 struct _ThunarVfsUnlinkJob
 {
@@ -112,7 +117,7 @@ struct _ThunarVfsUnlinkItem
 
 
 
-static ExoObjectClass *thunar_vfs_unlink_job_parent_class;
+static GObjectClass *thunar_vfs_unlink_job_parent_class;
 
 
 
@@ -120,10 +125,26 @@ GType
 thunar_vfs_unlink_job_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
-  static GOnce once = G_ONCE_INIT;
 
-  /* thread-safe type registration */
-  g_once (&once, (GThreadFunc) thunar_vfs_unlink_job_register_type, &type);
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsUnlinkJobClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_unlink_job_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsUnlinkJob),
+        0,
+        (GInstanceInitFunc) thunar_vfs_unlink_job_init,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                     "ThunarVfsUnlinkJob", &info, 0);
+    }
 
   return type;
 }
@@ -131,37 +152,15 @@ thunar_vfs_unlink_job_get_type (void)
 
 
 static void
-thunar_vfs_unlink_job_register_type (GType *type)
-{
-  static const GTypeInfo info =
-  {
-    sizeof (ThunarVfsInteractiveJobClass),
-    NULL,
-    NULL,
-    (GClassInitFunc) thunar_vfs_unlink_job_class_init,
-    NULL,
-    NULL,
-    sizeof (ThunarVfsUnlinkJob),
-    0,
-    (GInstanceInitFunc) thunar_vfs_unlink_job_init,
-    NULL,
-  };
-
-  *type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                  "ThunarVfsUnlinkJob", &info, 0);
-}
-
-
-
-static void
 thunar_vfs_unlink_job_class_init (ThunarVfsJobClass *klass)
 {
-  ExoObjectClass *exoobject_class;
+  GObjectClass *gobject_class;
 
+  /* determine the parent class */
   thunar_vfs_unlink_job_parent_class = g_type_class_peek_parent (klass);
 
-  exoobject_class = EXO_OBJECT_CLASS (klass);
-  exoobject_class->finalize = thunar_vfs_unlink_job_finalize;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_unlink_job_finalize;
 
   klass->execute = thunar_vfs_unlink_job_execute;
 }
@@ -185,7 +184,7 @@ thunar_vfs_unlink_job_init (ThunarVfsUnlinkJob *unlink_job)
 
 
 static void
-thunar_vfs_unlink_job_finalize (ExoObject *object)
+thunar_vfs_unlink_job_finalize (GObject *object)
 {
   ThunarVfsUnlinkJob *unlink_job = THUNAR_VFS_UNLINK_JOB (object);
 
@@ -195,7 +194,7 @@ thunar_vfs_unlink_job_finalize (ExoObject *object)
   g_string_chunk_free (unlink_job->string_chunk);
 
   /* call the parents finalize method */
-  (*EXO_OBJECT_CLASS (thunar_vfs_unlink_job_parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (thunar_vfs_unlink_job_parent_class)->finalize) (object);
 }
 
 
@@ -427,7 +426,7 @@ thunar_vfs_unlink_job_new (GList   *uris,
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate the job instance */
-  job = exo_object_new (THUNAR_VFS_TYPE_UNLINK_JOB);
+  job = g_object_new (THUNAR_VFS_TYPE_UNLINK_JOB, NULL);
 
   /* process the uris */
   for (; uris != NULL; uris = uris->next)

@@ -58,6 +58,11 @@ struct _ThunarVfsInteractiveJobClass
   ThunarVfsInteractiveJobResponse (*ask) (ThunarVfsInteractiveJob        *interactive_job,
                                           const gchar                    *message,
                                           ThunarVfsInteractiveJobResponse choices);
+
+  /*< private >*/
+  void (*reserved1) (void);
+  void (*reserved2) (void);
+  void (*reserved3) (void);
 };
 
 struct _ThunarVfsInteractiveJob

@@ -22,19 +22,24 @@
 #define __THUNAR_VFS_UNLINK_JOB_H__
 
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
+#include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarVfsUnlinkJob ThunarVfsUnlinkJob;
+typedef struct _ThunarVfsUnlinkJobClass ThunarVfsUnlinkJobClass;
+typedef struct _ThunarVfsUnlinkJob      ThunarVfsUnlinkJob;
 
-#define THUNAR_VFS_TYPE_UNLINK_JOB    (thunar_vfs_unlink_job_get_type ())
-#define THUNAR_VFS_UNLINK_JOB(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_UNLINK_JOB, ThunarVfsUnlinkJob))
-#define THUNAR_VFS_IS_UNLINK_JOB(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_UNLINK_JOB))
+#define THUNAR_VFS_TYPE_UNLINK_JOB            (thunar_vfs_unlink_job_get_type ())
+#define THUNAR_VFS_UNLINK_JOB(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_UNLINK_JOB, ThunarVfsUnlinkJob))
+#define THUNAR_VFS_UNLINK_JOB_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_UNLINK_JOB, ThunarVfsUnlinkJobClass))
+#define THUNAR_VFS_IS_UNLINK_JOB(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_UNLINK_JOB))
+#define THUNAR_VFS_IS_UNLINK_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_UNLINK_JOB))
+#define THUNAR_VFS_UNLINK_JOB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_UNLINK_JOB, ThunarVfsUnlinkJobClass))
 
 GType         thunar_vfs_unlink_job_get_type  (void) G_GNUC_CONST;
 
 ThunarVfsJob *thunar_vfs_unlink_job_new       (GList   *uris,
-                                               GError **error);
+                                               GError **error) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

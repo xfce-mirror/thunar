@@ -43,14 +43,13 @@ enum
 
 
 
-static void                            thunar_vfs_interactive_job_register_type (GType                          *type);
-static void                            thunar_vfs_interactive_job_class_init    (ThunarVfsInteractiveJobClass   *klass);
-static ThunarVfsInteractiveJobResponse thunar_vfs_interactive_job_real_ask      (ThunarVfsInteractiveJob        *interactive_job,
-                                                                                 const gchar                    *message,
-                                                                                 ThunarVfsInteractiveJobResponse choices);
-static ThunarVfsInteractiveJobResponse thunar_vfs_interactive_job_ask           (ThunarVfsInteractiveJob        *interactive_job,
-                                                                                 const gchar                    *message,
-                                                                                 ThunarVfsInteractiveJobResponse choices);
+static void                            thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass   *klass);
+static ThunarVfsInteractiveJobResponse thunar_vfs_interactive_job_real_ask   (ThunarVfsInteractiveJob        *interactive_job,
+                                                                              const gchar                    *message,
+                                                                              ThunarVfsInteractiveJobResponse choices);
+static ThunarVfsInteractiveJobResponse thunar_vfs_interactive_job_ask        (ThunarVfsInteractiveJob        *interactive_job,
+                                                                              const gchar                    *message,
+                                                                              ThunarVfsInteractiveJobResponse choices);
 
 
 
@@ -62,34 +61,27 @@ GType
 thunar_vfs_interactive_job_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
-  static GOnce once = G_ONCE_INIT;
 
-  /* thread-safe type registration */
-  g_once (&once, (GThreadFunc) thunar_vfs_interactive_job_register_type, &type);
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsInteractiveJobClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_interactive_job_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsInteractiveJob),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_JOB, "ThunarVfsInteractiveJob", &info, G_TYPE_FLAG_ABSTRACT);
+    }
 
   return type;
-}
-
-
-
-static void
-thunar_vfs_interactive_job_register_type (GType *type)
-{
-  static const GTypeInfo info =
-  {
-    sizeof (ThunarVfsInteractiveJobClass),
-    NULL,
-    NULL,
-    (GClassInitFunc) thunar_vfs_interactive_job_class_init,
-    NULL,
-    NULL,
-    sizeof (ThunarVfsInteractiveJob),
-    0,
-    NULL,
-    NULL,
-  };
-
-  *type = g_type_register_static (THUNAR_VFS_TYPE_JOB, "ThunarVfsInteractiveJob", &info, G_TYPE_FLAG_ABSTRACT);
 }
 
 
@@ -256,7 +248,7 @@ thunar_vfs_interactive_job_percent (ThunarVfsInteractiveJob *interactive_job,
  *
  * The return value may be %TRUE to perform the overwrite, or %FALSE,
  * which means to either skip the file or cancel the @interactive_job.
- * The caller must check using #thunar_vfs_job_cancelled() if %FALSE
+ * The caller must check using thunar_vfs_job_cancelled() if %FALSE
  * is returned.
  *
  * Return value: %TRUE to overwrite or %FALSE to leave it or cancel

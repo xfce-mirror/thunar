@@ -21,12 +21,13 @@
 #ifndef __THUNAR_VFS_JOB_H__
 #define __THUNAR_VFS_JOB_H__
 
-#include <thunar-vfs/thunar-vfs-info.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarVfsJobClass ThunarVfsJobClass;
-typedef struct _ThunarVfsJob      ThunarVfsJob;
+typedef struct _ThunarVfsJobPrivate ThunarVfsJobPrivate;
+typedef struct _ThunarVfsJobClass   ThunarVfsJobClass;
+typedef struct _ThunarVfsJob        ThunarVfsJob;
 
 #define THUNAR_VFS_TYPE_JOB             (thunar_vfs_job_get_type ())
 #define THUNAR_VFS_JOB(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_JOB, ThunarVfsJob))
@@ -37,23 +38,27 @@ typedef struct _ThunarVfsJob      ThunarVfsJob;
 
 struct _ThunarVfsJobClass
 {
-  ExoObjectClass __parent__;
+  GObjectClass __parent__;
 
   /* virtual methods */
   void (*execute)  (ThunarVfsJob *job);
 
   /* signals */
   void (*finished) (ThunarVfsJob *job);
+
+  /*< private >*/
+  void (*reserved1) (void);
+  void (*reserved2) (void);
+  void (*reserved3) (void);
+  void (*reserved4) (void);
 };
 
 struct _ThunarVfsJob
 {
-  ExoObject __parent__;
+  GObject __parent__;
 
-  GCond            *cond;
-  GMutex           *mutex;
-  volatile gboolean launched;
-  volatile gboolean cancelled;
+  /*< private >*/
+  ThunarVfsJobPrivate *priv;
 };
 
 GType         thunar_vfs_job_get_type     (void) G_GNUC_CONST;
@@ -72,7 +77,7 @@ gboolean      thunar_vfs_job_cancelled    (const ThunarVfsJob *job);
  *
  * Return value: a pointer to @job.
  **/
-#define thunar_vfs_job_ref exo_object_ref
+#define thunar_vfs_job_ref g_object_ref
 
 /**
  * thunar_vfs_job_unref:
@@ -83,7 +88,7 @@ gboolean      thunar_vfs_job_cancelled    (const ThunarVfsJob *job);
  * the resources allocated to @job will be
  * freed.
  **/
-#define thunar_vfs_job_unref exo_object_unref
+#define thunar_vfs_job_unref g_object_unref
 
 
 /* module API */

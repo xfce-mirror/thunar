@@ -54,6 +54,7 @@
 #include <thunar-vfs/thunar-vfs-sysdep.h>
 #include <thunar-vfs/thunar-vfs-thumb.h>
 #include <thunar-vfs/thunar-vfs-transfer-job.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
@@ -74,10 +75,9 @@ typedef struct _ThunarVfsTransferItem ThunarVfsTransferItem;
 
 
 
-static void     thunar_vfs_transfer_job_register_type   (GType                  *type);
 static void     thunar_vfs_transfer_job_class_init      (ThunarVfsJobClass      *klass);
 static void     thunar_vfs_transfer_job_init            (ThunarVfsTransferJob   *transfer_job);
-static void     thunar_vfs_transfer_job_finalize        (ExoObject              *object);
+static void     thunar_vfs_transfer_job_finalize        (GObject                *object);
 static void     thunar_vfs_transfer_job_execute         (ThunarVfsJob           *job);
 static gboolean thunar_vfs_transfer_job_skip            (ThunarVfsTransferJob   *job,
                                                          const gchar            *format,
@@ -104,6 +104,11 @@ static void     thunar_vfs_transfer_item_copy_symlink   (ThunarVfsTransferItem  
                                                          const gchar            *target_path);
 
 
+
+struct _ThunarVfsTransferJobClass
+{
+  ThunarVfsInteractiveJobClass __parent__;
+};
 
 struct _ThunarVfsTransferJob
 {
@@ -151,7 +156,7 @@ struct _ThunarVfsTransferItem
 
 
 
-static ExoObjectClass *thunar_vfs_transfer_job_parent_class;
+static GObjectClass *thunar_vfs_transfer_job_parent_class;
 
 
 
@@ -159,10 +164,26 @@ GType
 thunar_vfs_transfer_job_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
-  static GOnce once = G_ONCE_INIT;
 
-  /* thread-safe type registration */
-  g_once (&once, (GThreadFunc) thunar_vfs_transfer_job_register_type, &type);
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsTransferJobClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_transfer_job_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsTransferJob),
+        0,
+        (GInstanceInitFunc) thunar_vfs_transfer_job_init,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                     "ThunarVfsTransferJob", &info, 0);
+    }
 
   return type;
 }
@@ -170,37 +191,15 @@ thunar_vfs_transfer_job_get_type (void)
 
 
 static void
-thunar_vfs_transfer_job_register_type (GType *type)
-{
-  static const GTypeInfo info =
-  {
-    sizeof (ThunarVfsInteractiveJobClass),
-    NULL,
-    NULL,
-    (GClassInitFunc) thunar_vfs_transfer_job_class_init,
-    NULL,
-    NULL,
-    sizeof (ThunarVfsTransferJob),
-    0,
-    (GInstanceInitFunc) thunar_vfs_transfer_job_init,
-    NULL,
-  };
-
-  *type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                  "ThunarVfsTransferJob", &info, 0);
-}
-
-
-
-static void
 thunar_vfs_transfer_job_class_init (ThunarVfsJobClass *klass)
 {
-  ExoObjectClass *exoobject_class;
+  GObjectClass *gobject_class;
 
+  /* determine the parent class */
   thunar_vfs_transfer_job_parent_class = g_type_class_peek_parent (klass);
 
-  exoobject_class = EXO_OBJECT_CLASS (klass);
-  exoobject_class->finalize = thunar_vfs_transfer_job_finalize;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_transfer_job_finalize;
 
   klass->execute = thunar_vfs_transfer_job_execute;
 }
@@ -225,7 +224,7 @@ thunar_vfs_transfer_job_init (ThunarVfsTransferJob *transfer_job)
 
 
 static void
-thunar_vfs_transfer_job_finalize (ExoObject *object)
+thunar_vfs_transfer_job_finalize (GObject *object)
 {
   ThunarVfsTransferJob *transfer_job = THUNAR_VFS_TRANSFER_JOB (object);
 
@@ -235,7 +234,7 @@ thunar_vfs_transfer_job_finalize (ExoObject *object)
   g_string_chunk_free (transfer_job->string_chunk);
 
   /* call the parents finalize method */
-  (*EXO_OBJECT_CLASS (thunar_vfs_transfer_job_parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (thunar_vfs_transfer_job_parent_class)->finalize) (object);
 }
 
 
@@ -830,7 +829,7 @@ thunar_vfs_transfer_job_new (GList        *source_uri_list,
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate the job instance */
-  job = exo_object_new (THUNAR_VFS_TYPE_TRANSFER_JOB);
+  job = g_object_new (THUNAR_VFS_TYPE_TRANSFER_JOB, NULL);
   job->move = move;
 
   /* process the source uris */

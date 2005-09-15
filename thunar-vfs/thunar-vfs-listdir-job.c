@@ -42,8 +42,10 @@
 #include <time.h>
 #endif
 
+#include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
 #include <thunar-vfs/thunar-vfs-sysdep.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -55,23 +57,26 @@ enum
 
 
 
-static void  thunar_vfs_listdir_job_register_type (GType             *type);
-static void  thunar_vfs_listdir_job_class_init    (ThunarVfsJobClass *klass);
-static void  thunar_vfs_listdir_job_finalize      (ExoObject         *object);
-static void  thunar_vfs_listdir_job_execute       (ThunarVfsJob      *job);
+static void  thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass);
+static void  thunar_vfs_listdir_job_finalize   (GObject           *object);
+static void  thunar_vfs_listdir_job_execute    (ThunarVfsJob      *job);
 
+
+struct _ThunarVfsListdirJobClass
+{
+  ThunarVfsJobClass __parent__;
+};
 
 struct _ThunarVfsListdirJob
 {
   ThunarVfsJob __parent__;
-
   ThunarVfsURI *uri;
 };
 
 
 
-static guint           listdir_signals[LAST_SIGNAL];
-static ExoObjectClass *thunar_vfs_listdir_job_parent_class;
+static GObjectClass *thunar_vfs_listdir_job_parent_class;
+static guint         listdir_signals[LAST_SIGNAL];
 
 
 
@@ -79,10 +84,27 @@ GType
 thunar_vfs_listdir_job_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
-  static GOnce once = G_ONCE_INIT;
 
-  /* thread-safe type registration */
-  g_once (&once, (GThreadFunc) thunar_vfs_listdir_job_register_type, &type);
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsListdirJobClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_listdir_job_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsListdirJob),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_JOB,
+                                     "ThunarVfsListdirJob",
+                                     &info, 0);
+    }
 
   return type;
 }
@@ -90,38 +112,15 @@ thunar_vfs_listdir_job_get_type (void)
 
 
 static void
-thunar_vfs_listdir_job_register_type (GType *type)
-{
-  static const GTypeInfo info =
-  {
-    sizeof (ThunarVfsJobClass),
-    NULL,
-    NULL,
-    (GClassInitFunc) thunar_vfs_listdir_job_class_init,
-    NULL,
-    NULL,
-    sizeof (ThunarVfsListdirJob),
-    0,
-    NULL,
-    NULL,
-  };
-
-  *type = g_type_register_static (THUNAR_VFS_TYPE_JOB,
-                                  "ThunarVfsListdirJob",
-                                  &info, 0);
-}
-
-
-
-static void
 thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass)
 {
-  ExoObjectClass *exoobject_class;
+  GObjectClass *gobject_class;
 
+  /* determine the parent class */
   thunar_vfs_listdir_job_parent_class = g_type_class_peek_parent (klass);
 
-  exoobject_class = EXO_OBJECT_CLASS (klass);
-  exoobject_class->finalize = thunar_vfs_listdir_job_finalize;
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_listdir_job_finalize;
 
   klass->execute = thunar_vfs_listdir_job_execute;
 
@@ -145,7 +144,7 @@ thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass)
 
 
 static void
-thunar_vfs_listdir_job_finalize (ExoObject *object)
+thunar_vfs_listdir_job_finalize (GObject *object)
 {
   ThunarVfsListdirJob *listdir_job = THUNAR_VFS_LISTDIR_JOB (object);
 
@@ -154,7 +153,7 @@ thunar_vfs_listdir_job_finalize (ExoObject *object)
     thunar_vfs_uri_unref (listdir_job->uri);
 
   /* call the parents finalize method */
-  (*EXO_OBJECT_CLASS (thunar_vfs_listdir_job_parent_class)->finalize) (object);
+  (*G_OBJECT_CLASS (thunar_vfs_listdir_job_parent_class)->finalize) (object);
 }
 
 
@@ -249,11 +248,11 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
  * Allocates a new #ThunarVfsListdirJob object, which can be used to
  * query the contents of the directory @folder_uri.
  *
- * You need to call #thunar_vfs_job_launch() in order to start the
+ * You need to call thunar_vfs_job_launch() in order to start the
  * job. You may want to connect to ::finished, ::error-occurred and
  * ::infos-ready prior to launching the job.
  *
- * The caller is responsible to call #thunar_vfs_job_unref() on the
+ * The caller is responsible to call g_object_unref() on the
  * returned object.
  *
  * Return value: the newly allocated #ThunarVfsJob, which performs the
@@ -266,7 +265,7 @@ thunar_vfs_listdir_job_new (ThunarVfsURI *folder_uri)
 
   g_return_val_if_fail (folder_uri != NULL, NULL);
 
-  listdir_job = exo_object_new (THUNAR_VFS_TYPE_LISTDIR_JOB);
+  listdir_job = g_object_new (THUNAR_VFS_TYPE_LISTDIR_JOB, NULL);
   listdir_job->uri = thunar_vfs_uri_ref (folder_uri);
 
   return THUNAR_VFS_JOB (listdir_job);

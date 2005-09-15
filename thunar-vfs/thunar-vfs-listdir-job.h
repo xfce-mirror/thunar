@@ -22,18 +22,23 @@
 #define __THUNAR_VFS_LISTDIR_JOB_H__
 
 #include <thunar-vfs/thunar-vfs-job.h>
+#include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarVfsListdirJob ThunarVfsListdirJob;
+typedef struct _ThunarVfsListdirJobClass ThunarVfsListdirJobClass;
+typedef struct _ThunarVfsListdirJob      ThunarVfsListdirJob;
 
-#define THUNAR_VFS_TYPE_LISTDIR_JOB     (thunar_vfs_listdir_job_get_type ())
-#define THUNAR_VFS_LISTDIR_JOB(obj)     (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_LISTDIR_JOB, ThunarVfsListdirJob))
-#define THUNAR_VFS_IS_LISTDIR_JOB(obj)  (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_LISTDIR_JOB))
+#define THUNAR_VFS_TYPE_LISTDIR_JOB             (thunar_vfs_listdir_job_get_type ())
+#define THUNAR_VFS_LISTDIR_JOB(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_LISTDIR_JOB, ThunarVfsListdirJob))
+#define THUNAR_VFS_LISTDIR_JOB_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_LISTDIR_JOB, ThunarVfsListdirJobClass))
+#define THUNAR_VFS_IS_LISTDIR_JOB(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_LISTDIR_JOB))
+#define THUNAR_VFS_IS_LISTDIR_JOB_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_LISTDIR_JOB))
+#define THUNAR_VFS_LISTDIR_JOB_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_LISTDIR_JOB, ThunarVfsListdirJobClass))
 
 GType         thunar_vfs_listdir_job_get_type (void) G_GNUC_CONST;
 
-ThunarVfsJob *thunar_vfs_listdir_job_new      (ThunarVfsURI *folder_uri);
+ThunarVfsJob *thunar_vfs_listdir_job_new      (ThunarVfsURI *folder_uri) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

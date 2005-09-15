@@ -1,3 +1,17 @@
+2005-09-15	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-interactive-job.{c,h},
+	  thunar-vfs/thunar-vfs-job.{c,h},
+	  thunar-vfs/thunar-vfs-listdir-job.{c,h},
+	  thunar-vfs/thunar-vfs-transfer-job.{c,h},
+	  thunar-vfs/thunar-vfs-unlink-job.{c,h}: Allocate a new main loop for
+	  every running job so we can terminate them properly and be sure to
+	  run the finalize method in the main thread. This enables us to use
+	  arbitrary GObjects within a job without having to worry about the
+	  reference counting problem in GLib 2.6. The jobs are GObjects as well
+	  now to easily support language bindings and allow us to drop the
+	  problematic ExoObject class.
+
 2005-09-14	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-launcher.c(thunar_launcher_open_files): Use

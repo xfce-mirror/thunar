@@ -22,21 +22,26 @@
 #define __THUNAR_VFS_TRANSFER_JOB_H__
 
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
+#include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarVfsTransferJob ThunarVfsTransferJob;
+typedef struct _ThunarVfsTransferJobClass ThunarVfsTransferJobClass;
+typedef struct _ThunarVfsTransferJob      ThunarVfsTransferJob;
 
-#define THUNAR_VFS_TYPE_TRANSFER_JOB    (thunar_vfs_transfer_job_get_type ())
-#define THUNAR_VFS_TRANSFER_JOB(obj)    (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_TRANSFER_JOB, ThunarVfsTransferJob))
-#define THUNAR_VFS_IS_TRANSFER_JOB(obj) (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_TRANSFER_JOB))
+#define THUNAR_VFS_TYPE_TRANSFER_JOB            (thunar_vfs_transfer_job_get_type ())
+#define THUNAR_VFS_TRANSFER_JOB(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_TRANSFER_JOB, ThunarVfsTransferJob))
+#define THUNAR_VFS_TRANSFER_JOB_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_TRANSFER_JOB, ThunarVfsTransferJobClass))
+#define THUNAR_VFS_IS_TRANSFER_JOB(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_TRANSFER_JOB))
+#define THUNAR_VFS_IS_TRANSFER_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_TRANSFER_JOB))
+#define THUNAR_VFS_TRANSFER_JOB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_TRANSFER_JOB, ThunarVfsTransferJobClass))
 
 GType         thunar_vfs_transfer_job_get_type (void) G_GNUC_CONST;
 
 ThunarVfsJob *thunar_vfs_transfer_job_new      (GList        *source_uri_list,
                                                 ThunarVfsURI *target_uri,
                                                 gboolean      move,
-                                                GError      **error);
+                                                GError      **error) G_GNUC_MALLOC;
 
 G_END_DECLS;
 
