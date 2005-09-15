@@ -48,6 +48,7 @@
 #include <exo/exo.h>
 
 #include <thunar-vfs/thunar-vfs-volume-bsd.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 

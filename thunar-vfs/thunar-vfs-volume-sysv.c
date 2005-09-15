@@ -23,6 +23,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-volume-sysv.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
