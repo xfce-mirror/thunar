@@ -51,6 +51,8 @@
 #include <unistd.h>
 #endif
 
+#include <exo/exo.h>
+
 #include <thunar-vfs/thunar-vfs-mime-cache.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
 #include <thunar-vfs/thunar-vfs-mime-legacy.h>
