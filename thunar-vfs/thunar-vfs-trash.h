@@ -26,7 +26,7 @@ G_BEGIN_DECLS;
 
 typedef struct _ThunarVfsTrashInfo ThunarVfsTrashInfo;
 
-#define THUNAR_VFS_TRASH_INFO (thunar_vfs_trash_info_get_type ())
+#define THUNAR_VFS_TYPE_TRASH_INFO (thunar_vfs_trash_info_get_type ())
 
 GType               thunar_vfs_trash_info_get_type          (void) G_GNUC_CONST;
 

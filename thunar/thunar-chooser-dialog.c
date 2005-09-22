@@ -382,6 +382,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GtkWidget                *message;
   gboolean                  succeed;
   GError                   *error = NULL;
+  gchar                    *path;
   gchar                    *name;
   gchar                    *s;
   GList                     list;
@@ -408,11 +409,14 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       /* determine the command line for the custom command */
       exec = gtk_entry_get_text (GTK_ENTRY (dialog->custom_entry));
 
-      /* determine the name for the custom command */
-      name = g_strdup (exec);
-      s = strchr (name, ' ');
+      /* determine the path for the custom command */
+      path = g_strdup (exec);
+      s = strchr (path, ' ');
       if (G_UNLIKELY (s != NULL))
         *s = '\0';
+
+      /* determine the name from the path of the custom command */
+      name = g_path_get_basename (path);
 
       /* try to add an application for the custom command */
       application = thunar_vfs_mime_database_add_application (mime_database, mime_info, name, exec, &error);
@@ -433,6 +437,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
         }
 
       /* cleanup */
+      g_free (path);
       g_free (name);
     }
 
