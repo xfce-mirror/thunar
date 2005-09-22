@@ -209,7 +209,7 @@ else
   AC_MSG_CHECKING([whether $LD accepts -O1])
   case `$LD -O1 -v 2>&1 </dev/null` in
   *GNU* | *'with BFD'*)
-    PLATFORM_LDFLAGS="$LDFLAGS -Wl,-O1"
+    PLATFORM_LDFLAGS="$PLATFORM_LDFLAGS -Wl,-O1"
     AC_MSG_RESULT([yes])
     ;;
   *)
