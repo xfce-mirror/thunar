@@ -98,10 +98,10 @@ thunar_vfs_shutdown (void)
  * of the job failes for some reason, %NULL will be returned and
  * @error will be set to point to a #GError describing the cause.
  * Else the newly allocated #ThunarVfsListdirJob will be returned
- * and the caller is responsible to call #thunar_vfs_job_unref().
+ * and the caller is responsible to call g_object_unref().
  *
  * Note, that the returned job is launched right away, so you
- * don't need to call #thunar_vfs_job_launch() on it.
+ * don't need to call thunar_vfs_job_launch() on it.
  *
  * Return value: the newly allocated #ThunarVfsListdirJob or %NULL
  *               if an error occurs while creating the job.
@@ -138,10 +138,10 @@ thunar_vfs_listdir (ThunarVfsURI *uri,
  * %NULL will be returned and @error will be set to point to a #GError
  * describing the cause. Else the newly allocated #ThunarVfsTransferJob
  * will be returned and the caller is responsible to call
- * #thunar_vfs_job_unref().
+ * g_object_unref().
  *
  * Note, that the returned job is launched right away, so you don't
- * need to call #thunar_vfs_job_launch() on it.
+ * need to call thunar_vfs_job_launch() on it.
  *
  * Return value: the newly allocated #ThunarVfsTransferJob or %NULL
  *               if an error occurs while creating the job.
@@ -176,11 +176,10 @@ thunar_vfs_copy (GList        *source_uri_list,
  * to by @target_uri. If the creation of the job failes for some reason,
  * %NULL will be returned and @error will be set to point to a #GError
  * describing the cause. Else the newly allocated #ThunarVfsTransferJob
- * will be returned and the caller is responsible to call
- * #thunar_vfs_job_unref().
+ * will be returned and the caller is responsible to call g_object_unref().
  *
  * Note, that the returned job is launched right away, so you don't
- * need to call #thunar_vfs_job_launch() on it.
+ * need to call thunar_vfs_job_launch() on it.
  *
  * Return value: the newly allocated #ThunarVfsTransferJob or %NULL
  *               if an error occurs while creating the job.
@@ -214,10 +213,10 @@ thunar_vfs_move (GList        *source_uri_list,
  * failes for some reason, %NULL will be returned and @error will
  * be set to point to a #GError describing the cause. Else, the
  * newly allocated #ThunarVfsUnlinkJob will be returned, and the
- * caller is responsible to call #thunar_vfs_job_unref().
+ * caller is responsible to call g_object_unref().
  *
  * Note, that the returned job is launched right away, so you
- * don't need to call #thunar_vfs_job_launch() on it.
+ * don't need to call thunar_vfs_job_launch() on it.
  *
  * Return value: the newly allocated #ThunarVfsUnlinkJob or %NULL
  *               if an error occurs while creating the job.

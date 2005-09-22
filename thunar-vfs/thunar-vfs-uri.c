@@ -366,7 +366,7 @@ thunar_vfs_uri_is_root (const ThunarVfsURI *uri)
  * name in UTF-8 encoding, which is suitable for
  * display in the user interface.
  *
- * The returned string must be freed using #g_free()
+ * The returned string must be freed using g_free()
  * when no longer needed.
  *
  * Return value: a displayable version of the @uri's base name.
@@ -693,7 +693,7 @@ thunar_vfs_uri_equal (gconstpointer a,
  *
  * If all URIs were successfully parsed into #ThunarVfsURI
  * objects, the list of parsed URIs will be returned, and
- * you'll need to call #thunar_vfs_uri_list_free() to
+ * you'll need to call thunar_vfs_uri_list_free() to
  * release the list resources. Else if the parsing fails
  * at some point, %NULL will be returned and @error will
  * be set to describe the cause.

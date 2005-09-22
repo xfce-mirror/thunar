@@ -410,7 +410,7 @@ thunar_vfs_mime_application_get_mime_types (const ThunarVfsMimeApplication *appl
  * @uris        : a list of #ThunarVfsURI<!---->s to open.
  * @error       : return location for errors or %NULL.
  *
- * Wrapper to #thunar_vfs_mime_application_exec_with_env(), which
+ * Wrapper to thunar_vfs_mime_application_exec_with_env(), which
  * simply passes a %NULL pointer for the environment variables.
  *
  * Return value: %TRUE if the execution succeed, else %FALSE.
@@ -555,7 +555,7 @@ thunar_vfs_mime_application_lookup_icon_name (const ThunarVfsMimeApplication *ap
  * @application : a #ThunarVfsMimeApplication.
  *
  * Converts @application to a hash value. It can be passed
- * to #g_hash_table_new() as the @hash_func parameter,
+ * to g_hash_table_new() as the @hash_func parameter,
  * when using #ThunarVfsMimeApplication<!---->s as keys
  * in a #GHashTable.
  *

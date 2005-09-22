@@ -200,16 +200,16 @@ dnl ***********************************
 AC_ARG_ENABLE([debug], AC_HELP_STRING([--disable-debug], [Disable debugging support]), [], [enable_debug=yes])
 AC_MSG_CHECKING([whether to enable debugging support])
 if test x"$enable_debug" != x"no"; then
-  CFLAGS="$CFLAGS -O0 -g3 -DG_DISABLE_DEPRECATED -Werror -Wall"
+  PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3 -DG_DISABLE_DEPRECATED -Werror -Wall"
   AC_MSG_RESULT([yes])
 else
-  CPPFLAGS="$CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CAST_CHECKS -DG_DISABLE_CHECKS"
+  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CAST_CHECKS -DG_DISABLE_CHECKS"
   AC_MSG_RESULT([no])
 
   AC_MSG_CHECKING([whether $LD accepts -O1])
   case `$LD -O1 -v 2>&1 </dev/null` in
   *GNU* | *'with BFD'*)
-    LDFLAGS="$LDFLAGS -Wl,-O1"
+    PLATFORM_LDFLAGS="$LDFLAGS -Wl,-O1"
     AC_MSG_RESULT([yes])
     ;;
   *)
@@ -253,8 +253,8 @@ if test x"$enable_visibility" != x"no"; then
   ])
 fi
 if test x"$have_gnuc_visibility" = x"yes"; then
-  CFLAGS="$CFLAGS -fvisibility=hidden"
-  CPPFLAGS="$CPPFLAGS -DHAVE_GNUC_VISIBILITY"
+  PLATFORM_CFLAGS="$PLATFORM_CFLAGS -fvisibility=hidden"
+  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DHAVE_GNUC_VISIBILITY"
 fi
 AM_CONDITIONAL([HAVE_GNUC_VISIBILITY], [test x"$have_gnuc_visibility" = x"yes"])
 
@@ -264,6 +264,8 @@ docs/Makefile
 docs/design/Makefile
 docs/papers/Makefile
 docs/reference/Makefile
+docs/reference/thunar-vfs/Makefile
+docs/reference/thunar-vfs/version.xml
 docs/reference/thunarx/Makefile
 docs/reference/thunarx/version.xml
 examples/Makefile

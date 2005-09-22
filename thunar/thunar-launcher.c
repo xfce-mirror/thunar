@@ -341,6 +341,7 @@ thunar_launcher_open_uris (ThunarVfsMimeApplication *application,
   GError    *error = NULL;
   gchar     *name;
   gchar     *text;
+  guint      n;
 
   /* determine the screen on which to launch the application */
   screen = (launcher->widget != NULL) ? gtk_widget_get_screen (launcher->widget) : NULL;
@@ -357,7 +358,8 @@ thunar_launcher_open_uris (ThunarVfsMimeApplication *application,
         }
       else
         {
-          text = g_strdup_printf (_("Unable to open %d files."), g_list_length (uri_list));
+          n = g_list_length (uri_list);
+          text = g_strdup_printf (ngettext ("Unable to open %d file.", "Unable to open %d files.", n), n);
         }
 
       /* display an error dialog */
@@ -468,7 +470,11 @@ thunar_launcher_open_new_windows (ThunarLauncher *launcher,
                                         GTK_MESSAGE_QUESTION,
                                         GTK_BUTTONS_YES_NO,
                                         _("Are you sure you want to open all folders?"));
-      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), _("This will open %d separate windows."), n);
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
+                                                ngettext ("This will open %d separate window.",
+                                                          "This will open %d separate windows.",
+                                                          n),
+                                                n);
       response = gtk_dialog_run (GTK_DIALOG (message));
       gtk_widget_destroy (message);
     }
@@ -524,7 +530,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
     {
       /* we turn the "Open" label into "Open in n New Windows" if we have only directories */
       if (n_directories > 1)
-        g_snprintf (text, sizeof (text), _("Open in %d New Windows"), n_directories);
+        g_snprintf (text, sizeof (text), ngettext ("Open in %d New Window", "Open in %d New Windows", n_directories), n_directories);
       else
         g_strlcpy (text, _("_Open"), sizeof (text));
 

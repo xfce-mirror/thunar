@@ -33,6 +33,10 @@
  * @buffer : destination buffer or %NULL to dynamically allocate a buffer.
  * @buflen : length of @buffer in bytes.
  *
+ * The caller is responsible to free the returned string using g_free()
+ * if you pass %NULL for @buffer. Else the returned string will be a
+ * pointer to @buffer.
+ *
  * Return value: a string containing a human readable description of @size.
  **/
 gchar*

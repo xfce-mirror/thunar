@@ -1,0 +1,125 @@
+<?xml version="1.0"?>
+<!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" 
+               "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd"[
+<!ENTITY thunar-vfs-group SYSTEM "xml/thunar-vfs-group.xml">
+<!ENTITY thunar-vfs-info SYSTEM "xml/thunar-vfs-info.xml">
+<!ENTITY thunar-vfs-init-shutdown SYSTEM "xml/thunar-vfs-init-shutdown.xml">
+<!ENTITY thunar-vfs-interactive-job SYSTEM "xml/thunar-vfs-interactive-job.xml">
+<!ENTITY thunar-vfs-job SYSTEM "xml/thunar-vfs-job.xml">
+<!ENTITY thunar-vfs-mime-application SYSTEM "xml/thunar-vfs-mime-application.xml">
+<!ENTITY thunar-vfs-mime-database SYSTEM "xml/thunar-vfs-mime-database.xml">
+<!ENTITY thunar-vfs-mime-info SYSTEM "xml/thunar-vfs-mime-info.xml">
+<!ENTITY thunar-vfs-monitor SYSTEM "xml/thunar-vfs-monitor.xml">
+<!ENTITY thunar-vfs-operations SYSTEM "xml/thunar-vfs-operations.xml">
+<!ENTITY thunar-vfs-thumb SYSTEM "xml/thunar-vfs-thumb.xml">
+<!ENTITY thunar-vfs-thumb-factory SYSTEM "xml/thunar-vfs-thumb-factory.xml">
+<!ENTITY thunar-vfs-trash SYSTEM "xml/thunar-vfs-trash.xml">
+<!ENTITY thunar-vfs-trash-info SYSTEM "xml/thunar-vfs-trash-info.xml">
+<!ENTITY thunar-vfs-trash-manager SYSTEM "xml/thunar-vfs-trash-manager.xml">
+<!ENTITY thunar-vfs-types SYSTEM "xml/thunar-vfs-types.xml">
+<!ENTITY thunar-vfs-uri SYSTEM "xml/thunar-vfs-uri.xml">
+<!ENTITY thunar-vfs-user SYSTEM "xml/thunar-vfs-user.xml">
+<!ENTITY thunar-vfs-user-manager SYSTEM "xml/thunar-vfs-user-manager.xml">
+<!ENTITY thunar-vfs-util SYSTEM "xml/thunar-vfs-util.xml">
+<!ENTITY thunar-vfs-volume SYSTEM "xml/thunar-vfs-volume.xml">
+<!ENTITY thunar-vfs-volume-manager SYSTEM "xml/thunar-vfs-volume-manager.xml">
+
+<!ENTITY version SYSTEM "version.xml">
+<!ENTITY date "September 2005">
+]>
+
+<book id="index">
+  <bookinfo>
+    <title>Thunar-VFS Reference Manual</title>
+    <releaseinfo>Version &version;</releaseinfo>
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2005</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright>
+
+    <legalnotice id="legalnotice">
+      <para>
+        Permission is granted to copy, distribute and/or modify this document
+        under the terms of the GNU Free Documentation License, Version 1.1 or
+        any later version published by the Free Software Foundation; with no
+        Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+        Texts. The complete license text is available from the <ulink
+        type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.
+      </para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>System development</orgdiv>
+          <jobtitle>Software developer</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+  </bookinfo>
+
+  <part id="introduction">
+    <title>Introduction</title>
+  </part>
+
+  <part id="fundamentals">
+    <title>Fundamentals</title>
+    &thunar-vfs-init-shutdown;
+    &thunar-vfs-types;
+    &thunar-vfs-uri;
+    &thunar-vfs-info;
+    &thunar-vfs-util;
+  </part>
+
+  <part id="filesystem-monitoring">
+    <title>Filesystem Monitoring</title>
+    &thunar-vfs-monitor;
+  </part>
+
+  <part id="mime-types">
+    <title>MIME Types</title>
+    &thunar-vfs-mime-info;
+    &thunar-vfs-mime-database;
+    &thunar-vfs-mime-application;
+  </part>
+
+  <part id="trash-handling">
+    <title>Trash Handling</title>
+    &thunar-vfs-trash-info;
+    &thunar-vfs-trash;
+    &thunar-vfs-trash-manager;
+  </part>
+
+  <part id="users-and-groups-handling">
+    <title>Users and Groups Handling</title>
+    &thunar-vfs-user;
+    &thunar-vfs-group;
+    &thunar-vfs-user-manager;
+  </part>
+
+  <part id="volume-handling">
+    <title>Volume Handling</title>
+    &thunar-vfs-volume;
+    &thunar-vfs-volume-manager;
+  </part>
+
+  <part id="thumbnails">
+    <title>Thumbnails</title>
+    &thunar-vfs-thumb;
+    &thunar-vfs-thumb-factory;
+  </part>
+
+  <index>
+    <title>Index</title>
+  </index>
+</book>
+
+<!--
+  vi:set ts=2 sw=2 et ai syntax=docbkxml:
+-->

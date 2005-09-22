@@ -3,7 +3,8 @@
 INCLUDES =								\
 	-I$(top_builddir)						\
 	-I$(top_srcdir)							\
-	-DG_LOG_DOMAIN=\"OpenTerminalHere\"
+	-DG_LOG_DOMAIN=\"OpenTerminalHere\"				\
+	$(PLATFORM_CPPFLAGS)
 
 extensionsdir = $(libdir)/thunarx-$(THUNAR_VERSION_API)
 extensions_LTLIBRARIES =						\
@@ -13,7 +14,8 @@ open_terminal_here_la_SOURCES =						\
 	open-terminal-here.c
 
 open_terminal_here_la_CFLAGS =						\
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS)							\
+	$(PLATFORM_CFLAGS)
 
 open_terminal_here_la_DEPENDENCIES =					\
 	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
@@ -25,7 +27,8 @@ open_terminal_here_la_LIBADD =						\
 open_terminal_here_la_LDFLAGS =						\
 	-avoid-version							\
 	-export-dynamic							\
-	-module
+	-module								\
+	$(PLATFORM_LDFLAGS)
 
 EXTRA_DIST =								\
 	README

@@ -1,0 +1,150 @@
+<!-- ##### SECTION Title ##### -->
+ThunarVfsVolume
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### ENUM ThunarVfsVolumeKind ##### -->
+<para>
+
+</para>
+
+@THUNAR_VFS_VOLUME_KIND_UNKNOWN: 
+@THUNAR_VFS_VOLUME_KIND_CDROM: 
+@THUNAR_VFS_VOLUME_KIND_DVD: 
+@THUNAR_VFS_VOLUME_KIND_FLOPPY: 
+@THUNAR_VFS_VOLUME_KIND_HARDDISK: 
+@THUNAR_VFS_VOLUME_KIND_USBSTICK: 
+
+<!-- ##### ENUM ThunarVfsVolumeStatus ##### -->
+<para>
+
+</para>
+
+@THUNAR_VFS_VOLUME_STATUS_MOUNTED: 
+@THUNAR_VFS_VOLUME_STATUS_PRESENT: 
+
+<!-- ##### STRUCT ThunarVfsVolumeIface ##### -->
+<para>
+
+</para>
+
+@__parent__: 
+@get_kind: 
+@get_name: 
+@get_status: 
+@get_mount_point: 
+@get_free_space: 
+@lookup_icon_name: 
+@changed: 
+
+<!-- ##### STRUCT ThunarVfsVolume ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_get_kind ##### -->
+<para>
+
+</para>
+
+@volume: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_get_name ##### -->
+<para>
+
+</para>
+
+@volume: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_get_status ##### -->
+<para>
+
+</para>
+
+@volume: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_get_mount_point ##### -->
+<para>
+
+</para>
+
+@volume: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_is_mounted ##### -->
+<para>
+
+</para>
+
+@volume: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_is_present ##### -->
+<para>
+
+</para>
+
+@volume: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_is_removable ##### -->
+<para>
+
+</para>
+
+@volume: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_get_free_space ##### -->
+<para>
+
+</para>
+
+@volume: 
+@free_space_return: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_lookup_icon_name ##### -->
+<para>
+
+</para>
+
+@volume: 
+@icon_theme: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_changed ##### -->
+<para>
+
+</para>
+
+@volume: 
+
+

@@ -10,7 +10,8 @@ INCLUDES =								\
 	-DG_LOG_DOMAIN=\"Thunar\"					\
 	-DLIBDIR=\"$(libdir)\"						\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
-	-DTHUNAR_VERSION_API=\"$(THUNAR_VERSION_API)\"
+	-DTHUNAR_VERSION_API=\"$(THUNAR_VERSION_API)\"			\
+	$(PLATFORM_CPPFLAGS)
 
 bin_PROGRAMS =								\
 	Thunar
@@ -120,17 +121,19 @@ Thunar_SOURCES =							\
 Thunar_CFLAGS =								\
 	$(CAIRO_CFLAGS)							\
 	$(EXO_CFLAGS)							\
-	$(GTHREAD_CFLAGS)
+	$(GTHREAD_CFLAGS)						\
+	$(PLATFORM_CFLAGS)
 
 Thunar_LDFLAGS =							\
 	-no-undefined							\
-	$(CAIRO_LIBS)							\
-	$(EXO_LIBS)							\
-	$(GTHREAD_LIBS)
+	$(PLATFORM_LDFLAGS)
 
 Thunar_LDADD =								\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
-	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
+	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la	\
+	$(CAIRO_LIBS)							\
+	$(EXO_LIBS)							\
+	$(GTHREAD_LIBS)
 
 Thunar_DEPENDENCIES =							\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \

@@ -480,7 +480,7 @@ thunar_vfs_volume_manager_base_init (gpointer klass)
  * the target system and returns an instance of that class, which
  * is shared among all modules using the volume manager facility.
  *
- * Call #g_object_unref() on the returned object when you are
+ * Call g_object_unref() on the returned object when you are
  * done with it.
  *
  * Return value: the shared #ThunarVfsVolumeManager instance.

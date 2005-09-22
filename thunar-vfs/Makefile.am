@@ -4,7 +4,8 @@ INCLUDES =								\
 	-I$(top_srcdir)							\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DEXO_DISABLE_DEPRECATED					\
-	-DG_LOG_DOMAIN=\"thunar-vfs\"
+	-DG_LOG_DOMAIN=\"thunar-vfs\"					\
+	$(PLATFORM_CPPFLAGS)
 
 lib_LTLIBRARIES =							\
 	libthunar-vfs-1.la
@@ -83,12 +84,14 @@ libthunar_vfs_1_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
 	$(LIBFAM_CFLAGS)						\
-	$(LIBPNG_CFLAGS)
+	$(LIBPNG_CFLAGS)						\
+	$(PLATFORM_CFLAGS)
 
 libthunar_vfs_1_la_LDFLAGS =						\
 	-export-dynamic							\
 	-export-symbols-regex "^[^_].*"					\
-	-version-info $(THUNAR_VERINFO)
+	-version-info $(THUNAR_VERINFO)					\
+	$(PLATFORM_LDFLAGS)
 
 libthunar_vfs_1_la_LIBADD =						\
 	$(EXO_LIBS)							\

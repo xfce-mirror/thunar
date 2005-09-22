@@ -1,0 +1,104 @@
+<!-- ##### SECTION Title ##### -->
+ThunarVfsMonitor
+
+<!-- ##### SECTION Short_Description ##### -->
+
+
+<!-- ##### SECTION Long_Description ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION See_Also ##### -->
+<para>
+
+</para>
+
+<!-- ##### SECTION Stability_Level ##### -->
+
+
+<!-- ##### STRUCT ThunarVfsMonitor ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### ENUM ThunarVfsMonitorEvent ##### -->
+<para>
+
+</para>
+
+@THUNAR_VFS_MONITOR_EVENT_CHANGED: 
+@THUNAR_VFS_MONITOR_EVENT_CREATED: 
+@THUNAR_VFS_MONITOR_EVENT_DELETED: 
+
+<!-- ##### STRUCT ThunarVfsMonitorHandle ##### -->
+<para>
+
+</para>
+
+
+<!-- ##### USER_FUNCTION ThunarVfsMonitorCallback ##### -->
+<para>
+
+</para>
+
+@monitor: 
+@handle: 
+@event: 
+@handle_uri: 
+@event_uri: 
+@user_data: 
+
+
+<!-- ##### FUNCTION thunar_vfs_monitor_get_default ##### -->
+<para>
+
+</para>
+
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_monitor_add_directory ##### -->
+<para>
+
+</para>
+
+@monitor: 
+@uri: 
+@callback: 
+@user_data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_monitor_add_file ##### -->
+<para>
+
+</para>
+
+@monitor: 
+@uri: 
+@callback: 
+@user_data: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_monitor_remove ##### -->
+<para>
+
+</para>
+
+@monitor: 
+@handle: 
+
+
+<!-- ##### FUNCTION thunar_vfs_monitor_feed ##### -->
+<para>
+
+</para>
+
+@monitor: 
+@event: 
+@uri: 
+
+

@@ -183,7 +183,7 @@ thunar_vfs_user_get_groups (ThunarVfsUser *user)
  * has no primary group.
  *
  * No reference is taken for the caller, so you must
- * not call #g_object_unref() on the returned object.
+ * not call g_object_unref() on the returned object.
  *
  * Return value: the primary group of @user or %NULL.
  **/
@@ -845,7 +845,7 @@ thunar_vfs_user_manager_flush_timer_destroy (gpointer user_data)
  * thunar_vfs_user_manager_get_default:
  *
  * Returns the default #ThunarVfsUserManager instance, which is shared
- * by all modules using the user module. Call #g_object_unref() on the
+ * by all modules using the user module. Call g_object_unref() on the
  * returned object when you are done with it.
  *
  * Return value: the default #ThunarVfsUserManager instance.
@@ -878,7 +878,7 @@ thunar_vfs_user_manager_get_default (void)
  * Looks up the #ThunarVfsGroup corresponding to @id in @manager. Returns
  * %NULL if @manager is unable to determine the #ThunarVfsGroup for @id,
  * else a pointer to the corresponding #ThunarVfsGroup. The caller is
- * responsible for freeing the returned object using #g_object_unref().
+ * responsible for freeing the returned object using g_object_unref().
  *
  * Return value: the #ThunarVfsGroup corresponding to @id or %NULL.
  **/
@@ -914,7 +914,7 @@ thunar_vfs_user_manager_get_group_by_id (ThunarVfsUserManager *manager,
  * Looks up the #ThunarVfsUser corresponding to @id in @manager. Returns
  * %NULL if @manager is unable to determine the #ThunarVfsUser for @id,
  * else a pointer to the corresponding #ThunarVfsUser. The caller is
- * responsible for freeing the returned object using #g_object_unref().
+ * responsible for freeing the returned object using g_object_unref().
  *
  * Return value: the #ThunarVfsUser corresponding to @id or %NULL.
  **/

@@ -3,7 +3,8 @@
 INCLUDES =								\
 	-I$(top_srcdir)							\
 	-DG_LOG_DOMAIN=\"thunarx\"					\
-	-DTHUNARX_COMPILATION
+	-DTHUNARX_COMPILATION						\
+	$(PLATFORM_CPPFLAGS)
 
 libthunarx_built_sources =						\
 	thunarx-alias.h							\
@@ -36,12 +37,14 @@ libthunarx_1_la_SOURCES =						\
 	thunarx-property-page-provider.c
 
 libthunarx_1_la_CFLAGS =						\
-	$(GTK_CFLAGS)
+	$(GTK_CFLAGS)							\
+	$(PLATFORM_CFLAGS)
 
 libthunarx_1_la_LDFLAGS =						\
 	-export-dynamic							\
 	-export-symbols-regex "^[^_].*"					\
-	-version-info $(THUNAR_VERINFO)
+	-version-info $(THUNAR_VERINFO)					\
+	$(PLATFORM_LDFLAGS)
 
 libthunarx_1_la_LIBADD =						\
 	$(GTK_LIBS)

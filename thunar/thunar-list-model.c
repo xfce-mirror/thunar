@@ -1865,12 +1865,12 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       if (G_LIKELY (volume != NULL && thunar_vfs_volume_get_free_space (volume, &size)))
         {
           size_string = thunar_vfs_humanize_size (size, NULL, 0);
-          text = g_strdup_printf (_("%d items, Free space: %s"), store->nrows, size_string);
+          text = g_strdup_printf (ngettext ("%d item, Free space: %s", "%d items, Free space: %s", store->nrows), store->nrows, size_string);
           g_free (size_string);
         }
       else
         {
-          text = g_strdup_printf (_("%d items"), store->nrows);
+          text = g_strdup_printf (ngettext ("%d item", "%d items", store->nrows), store->nrows);
         }
     }
   else if (selected_items->next == NULL)
@@ -1910,12 +1910,12 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       if (size_summary > 0)
         {
           size_string = thunar_vfs_humanize_size (size_summary, NULL, 0);
-          text = g_strdup_printf (_("%d items selected (%s)"), n, size_string);
+          text = g_strdup_printf (ngettext ("%d item selected", "%d items selected (%s)", n), n, size_string);
           g_free (size_string);
         }
       else
         {
-          text = g_strdup_printf (_("%d items selected"), n);
+          text = g_strdup_printf (ngettext ("%d item selected", "%d items selected", n), n);
         }
     }
 
