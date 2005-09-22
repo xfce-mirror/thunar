@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-open-with-action.h>
 
@@ -66,6 +67,8 @@ static void thunar_launcher_open_new_windows          (ThunarLauncher           
                                                        GList                    *directories);
 static void thunar_launcher_update                    (ThunarLauncher           *launcher);
 static void thunar_launcher_action_open               (GtkAction                *action,
+                                                       ThunarLauncher           *launcher);
+static void thunar_launcher_action_open_with          (GtkAction                *action,
                                                        ThunarLauncher           *launcher);
 static void thunar_launcher_action_open_application   (GtkAction                *action,
                                                        ThunarVfsMimeApplication *application,
@@ -192,6 +195,7 @@ thunar_launcher_init (ThunarLauncher *launcher)
   /* the "Open with" action */
   launcher->action_open_with = thunar_open_with_action_new ("open-with", _("Open With"));
   g_signal_connect (G_OBJECT (launcher->action_open_with), "open-application", G_CALLBACK (thunar_launcher_action_open_application), launcher);
+  g_signal_connect (G_OBJECT (launcher->action_open_with), "activate", G_CALLBACK (thunar_launcher_action_open_with), launcher);
 }
 
 
@@ -378,7 +382,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
   ThunarVfsMimeInfo        *info;
   GHashTable               *applications;
   GtkWidget                *window;
-  GtkWidget                *message;
+  GtkWidget                *dialog;
   GList                    *uri_list;
   GList                    *lp;
 
@@ -393,11 +397,12 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
 
   for (lp = files; lp != NULL; lp = lp->next)
     {
-      /* determine the MIME type for the file */
-      info = thunar_file_get_mime_info (lp->data);
-
       /* determine the default application for the MIME type */
+      info = thunar_file_get_mime_info (lp->data);
       application = thunar_vfs_mime_database_get_default_application (database, info);
+      thunar_vfs_mime_info_unref (info);
+
+      /* check if we have an application here */
       if (G_LIKELY (application != NULL))
         {
           /* check if we have that application already */
@@ -417,20 +422,11 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
       else
         {
           window = (launcher->widget != NULL) ? gtk_widget_get_toplevel (launcher->widget) : NULL;
-          message = gtk_message_dialog_new ((GtkWindow *) window, 
-                                            GTK_DIALOG_MODAL
-                                            | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            _("No application available to open \"%s\".\n"
-                                              "This will be fixed soon!"),
-                                            thunar_file_get_display_name (lp->data));
-          gtk_dialog_run (GTK_DIALOG (message));
-          gtk_widget_destroy (message);
+          dialog = thunar_chooser_dialog_new ((GtkWindow *) window, lp->data, TRUE);
+          gtk_dialog_run (GTK_DIALOG (dialog));
+          gtk_widget_destroy (dialog);
+          break;
         }
-
-      /* cleanup */
-      thunar_vfs_mime_info_unref (info);
     }
 
   /* run all collected applications */
@@ -608,6 +604,30 @@ thunar_launcher_action_open (GtkAction      *action,
         thunar_launcher_open_files (launcher, files);
       thunar_file_list_free (files);
     }
+}
+
+
+
+static void
+thunar_launcher_action_open_with (GtkAction      *action,
+                                  ThunarLauncher *launcher)
+{
+  ThunarFile *file;
+  GtkWidget  *dialog;
+  GtkWidget  *window;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* determine the first selected file */
+  file = g_list_nth_data (launcher->selected_files, 0);
+  if (G_UNLIKELY (file == NULL))
+    return;
+
+  window = (launcher->widget != NULL) ? gtk_widget_get_toplevel (launcher->widget) : NULL;
+  dialog = thunar_chooser_dialog_new ((GtkWindow *) window, file, TRUE);
+  gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
 }
 
 

@@ -170,6 +170,7 @@ _thunar_vfs_sysdep_parse_exec (const gchar *exec,
           quoted = g_shell_quote (name);
           g_string_append (command_line, "-T ");
           g_string_append (command_line, quoted);
+          g_string_append_c (command_line, ' ');
           g_free (quoted);
         }
       g_string_append (command_line, "-x ");

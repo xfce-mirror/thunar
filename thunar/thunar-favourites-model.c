@@ -28,9 +28,6 @@
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
 
 #include <thunar/thunar-favourites-model.h>
 #include <thunar/thunar-file.h>
@@ -623,7 +620,9 @@ thunar_favourites_model_drag_data_get (GtkTreeDragSource *source,
                                        GtkTreePath       *path,
                                        GtkSelectionData  *selection_data)
 {
-  // FIXME
+  /* we simply return FALSE here, as the drag handling is done in
+   * the ThunarFavouritesView class.
+   */
   return FALSE;
 }
 
@@ -633,9 +632,10 @@ static gboolean
 thunar_favourites_model_drag_data_delete (GtkTreeDragSource *source,
                                           GtkTreePath       *path)
 {
-  // we simply return FALSE here, as this function can only be
-  // called if the user is re-arranging favourites within the
-  // model, which will be handle by the exchange method
+  /* we simply return FALSE here, as this function can only be
+   * called if the user is re-arranging favourites within the
+   * model, which will be handle by the exchange method.
+   */
   return FALSE;
 }
 
@@ -817,17 +817,15 @@ thunar_favourites_model_save (ThunarFavouritesModel *model)
   gchar           *tmp_path;
   gchar           *uri;
   GList           *lp;
-  FILE            *fp = NULL;
+  FILE            *fp;
+  gint             fd;
 
   g_return_if_fail (THUNAR_IS_FAVOURITES_MODEL (model));
 
   /* open a temporary file for writing */
-  tmp_path = g_strdup_printf ("%s%c.gtk-bookmarks.tmp-%d",
-                              xfce_get_homedir (),
-                              G_DIR_SEPARATOR,
-                              (gint) getpid ());
-  fp = fopen (tmp_path, "w");
-  if (G_UNLIKELY (fp == NULL))
+  tmp_path = xfce_get_homefile (".gtk-bookmarks.XXXXXX", NULL);
+  fd = g_mkstemp (tmp_path);
+  if (G_UNLIKELY (fd < 0))
     {
       g_warning ("Failed to open `%s' for writing: %s",
                  tmp_path, g_strerror (errno));
@@ -836,6 +834,7 @@ thunar_favourites_model_save (ThunarFavouritesModel *model)
     }
 
   /* write the uris of user customizable favourites */
+  fp = fdopen (fd, "w");
   for (lp = model->favourites; lp != NULL; lp = lp->next)
     {
       favourite = THUNAR_FAVOURITE (lp->data);

@@ -1,3 +1,54 @@
+2005-09-20	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-mime-application.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Load the supported mime types for the
+	  applications.
+	* thunar-vfs/thunar-vfs-mime-application.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Add a new constructor
+	  thunar_vfs_mime_application_new_from_file() for the special case
+	  where a particular file should be loaded by path.
+	* thunar-vfs/thunar-vfs-mime-application.c
+	  (thunar_vfs_mime_application_equal): Properly initialize the
+	  application variables.
+	* thunar-vfs/thunar-vfs-mime-application.c
+	  (thunar_vfs_mime_application_lookup_icon_name): Permit applications
+	  to specify absolute paths for the icon name.
+	* thunar-vfs/thunar-vfs-mime-database.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Extend the mime database by a new
+	  method thunar_vfs_mime_database_set_default_application(), which is
+	  used to set the default application for a given mime type.
+	* thunar-vfs/thunar-vfs-sysdep.c(_thunar_vfs_sysdep_parse_exec): Fix
+	  typo to properly execute applications that require a terminal.
+	* thunar-vfs/thunar-vfs-mime-database.c
+	  (thunar_vfs_mime_database_get_applications): Always prepend the
+	  default applications for the given mime info to the list returned
+	  from this method.
+	* thunar/thunar-favourites-model.c(thunar_favourites_model_save): Use
+	  g_mkstemp() to create the temporary file.
+	* thunar-vfs/thunar-vfs-mime-application.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Add public flags to the mime
+	  applications.
+	* thunar-vfs/thunar-vfs-mime-application.c
+	  (thunar_vfs_mime_application_new_from_file): Strip off known suffixes
+	  for image files if a themed icon is specified. This way we can
+	  work-around quite a few broken .desktop files.
+	* thunar-vfs/thunar-vfs-mime-database.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Support the addition of custom
+	  applications using thunar_vfs_mime_database_add_application() in
+	  a way compatible to what Nautilus does (which is actually quite a
+	  mess).
+	* thunar/thunar-chooser-dialog.{c,h}, thunar/thunar-chooser-model.{c,h},
+	  thunar/Makefile.am: Import the "Open With" dialog based on the two
+	  classes ThunarChooserDialog and ThunarChooserModel, which in turn are
+	  based on the new functionality provided by Thunar-VFS, and thereby
+	  permit the user to associate applications with files (actually mime
+	  types) and add new applications.
+	* thunar/thunar-launcher.c: Connect the "Open With Other" action to
+	  the new ThunarChooserDialog.
+	* thunar/thunar-favourites-model.c: Document the drag source functions.
+	* README: Add a list of dependencies for Thunar.
+	* TODO: Drop completed items.
+
 2005-09-17	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-mime-database.c: Include exo/exo.h.

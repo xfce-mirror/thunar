@@ -40,24 +40,33 @@ GType                     thunar_vfs_mime_database_get_type                 (voi
 
 ThunarVfsMimeDatabase    *thunar_vfs_mime_database_get_default              (void);
 
-ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info                 (ThunarVfsMimeDatabase *database,
-                                                                             const gchar           *mime_type);
-ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_data        (ThunarVfsMimeDatabase *database,
-                                                                             gconstpointer          data,
-                                                                             gsize                  length);
-ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_name        (ThunarVfsMimeDatabase *database,
-                                                                             const gchar           *name);
-ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_file        (ThunarVfsMimeDatabase *database,
-                                                                             const gchar           *path,
-                                                                             const gchar           *name);
+ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info                 (ThunarVfsMimeDatabase    *database,
+                                                                             const gchar              *mime_type);
+ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_data        (ThunarVfsMimeDatabase    *database,
+                                                                             gconstpointer             data,
+                                                                             gsize                     length);
+ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_name        (ThunarVfsMimeDatabase    *database,
+                                                                             const gchar              *name);
+ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_file        (ThunarVfsMimeDatabase    *database,
+                                                                             const gchar              *path,
+                                                                             const gchar              *name);
 
-GList                    *thunar_vfs_mime_database_get_infos_for_info       (ThunarVfsMimeDatabase *database,
-                                                                             ThunarVfsMimeInfo     *info);
+GList                    *thunar_vfs_mime_database_get_infos_for_info       (ThunarVfsMimeDatabase    *database,
+                                                                             ThunarVfsMimeInfo        *info);
 
-GList                    *thunar_vfs_mime_database_get_applications         (ThunarVfsMimeDatabase *database,
-                                                                             ThunarVfsMimeInfo     *info);
-ThunarVfsMimeApplication *thunar_vfs_mime_database_get_default_application  (ThunarVfsMimeDatabase *database,
-                                                                             ThunarVfsMimeInfo     *info);
+GList                    *thunar_vfs_mime_database_get_applications         (ThunarVfsMimeDatabase    *database,
+                                                                             ThunarVfsMimeInfo        *info);
+ThunarVfsMimeApplication *thunar_vfs_mime_database_get_default_application  (ThunarVfsMimeDatabase    *database,
+                                                                             ThunarVfsMimeInfo        *info);
+gboolean                  thunar_vfs_mime_database_set_default_application  (ThunarVfsMimeDatabase    *database,
+                                                                             ThunarVfsMimeInfo        *info,
+                                                                             ThunarVfsMimeApplication *application,
+                                                                             GError                  **error);
+ThunarVfsMimeApplication *thunar_vfs_mime_database_add_application          (ThunarVfsMimeDatabase    *database,
+                                                                             ThunarVfsMimeInfo        *info,
+                                                                             const gchar              *name,
+                                                                             const gchar              *exec,
+                                                                             GError                  **error);
 
 G_END_DECLS;
 

@@ -38,12 +38,16 @@
 #include <sys/xattr.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
+#include <stdio.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
@@ -62,7 +66,9 @@
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
 #else
-#define g_open(path, flags, mode) (open ((path), (flags), (mode)))
+#define g_open(path, flagsremove, mode) (open ((path), (flags), (mode)))
+#define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
+#define g_unlink(path) (unlink ((path)))
 #endif
 
 
@@ -1155,17 +1161,57 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
 {
   ThunarVfsMimeDesktopStore *store;
   ThunarVfsMimeApplication  *application;
+  const gchar               *command;
   const gchar              **id;
   GList                     *applications = NULL;
   GList                     *infos;
   GList                     *lp;
+  GList                     *p;
   guint                      n;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
 
   g_mutex_lock (database->lock);
 
+  /* determine the mime infos for info */
   infos = thunar_vfs_mime_database_get_infos_for_info_locked (database, info);
+
+  /* lookup the default applications for the infos */
+  for (lp = infos; lp != NULL; lp = lp->next)
+    {
+      for (n = database->n_stores, store = database->stores; n-- > 0; ++store)
+        {
+          /* lookup the application ids */
+          id = g_hash_table_lookup (store->defaults_list, lp->data);
+          if (G_LIKELY (id == NULL))
+            continue;
+
+          /* merge the applications */
+          for (; *id != NULL; ++id)
+            {
+              /* lookup the application for the id */
+              application = thunar_vfs_mime_database_get_application_locked (database, *id);
+              if (G_UNLIKELY (application == NULL))
+                continue;
+
+              /* check if we already have an application with an equal command
+               * (thanks again Nautilus for the .desktop file mess).
+               */
+              command = thunar_vfs_mime_application_get_command (application);
+              for (p = applications; p != NULL; p = p->next)
+                if (g_str_equal (thunar_vfs_mime_application_get_command (p->data), command))
+                  break;
+
+              /* merge the application */
+              if (G_LIKELY (p == NULL))
+                applications = g_list_append (applications, application);
+              else
+                thunar_vfs_mime_application_unref (application);
+            }
+        }
+    }
+
+  /* lookup the other applications */
   for (lp = infos; lp != NULL; lp = lp->next)
     {
       for (n = database->n_stores, store = database->stores; n-- > 0; ++store)
@@ -1183,8 +1229,16 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
               if (G_UNLIKELY (application == NULL))
                 continue;
 
+              /* check if we already have an application with an equal command
+               * (thanks again Nautilus for the .desktop file mess).
+               */
+              command = thunar_vfs_mime_application_get_command (application);
+              for (p = applications; p != NULL; p = p->next)
+                if (g_str_equal (thunar_vfs_mime_application_get_command (p->data), command))
+                  break;
+
               /* merge the application */
-              if (g_list_find (applications, application) == NULL)
+              if (G_LIKELY (p == NULL))
                 applications = g_list_append (applications, application);
               else
                 thunar_vfs_mime_application_unref (application);
@@ -1268,6 +1322,239 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
           g_list_free (applications);
         }
     }
+
+  return application;
+}
+
+
+
+static void
+defaults_list_write (ThunarVfsMimeInfo *info,
+                     gchar            **ids,
+                     FILE              *fp)
+{
+  guint n;
+
+  fprintf (fp, "%s=%s", thunar_vfs_mime_info_get_name (info), ids[0]);
+  for (n = 1; ids[n] != NULL; ++n)
+    fprintf (fp, ";%s", ids[n]);
+  fprintf (fp, "\n");
+}
+
+
+
+/**
+ * thunar_vfs_mime_database_set_default_application:
+ * @database    : a #ThunarVfsMimeDatabase.
+ * @info        : a valid #ThunarVfsMimeInfo for @database.
+ * @application : a #ThunarVfsMimeApplication.
+ * @error       : return location for errors or %NULL.
+ *
+ * Sets @application to be the default #ThunarVfsMimeApplication to open files
+ * of type @info in @database.
+ *
+ * Return value: %TRUE if the operation was successfull, else %FALSE.
+ **/
+gboolean
+thunar_vfs_mime_database_set_default_application (ThunarVfsMimeDatabase    *database,
+                                                  ThunarVfsMimeInfo        *info,
+                                                  ThunarVfsMimeApplication *application,
+                                                  GError                  **error)
+{
+  ThunarVfsMimeDesktopStore *store;
+  gboolean                   succeed;
+  gchar                    **pids;
+  gchar                    **nids;
+  gchar                     *path;
+  guint                      n, m;
+  FILE                      *fp;
+  gint                       fd;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* acquire the lock on the database */
+  g_mutex_lock (database->lock);
+
+  /* grab the user's desktop applications store */
+  store = database->stores;
+
+  /* verify that the applications/ directory exists */
+  path = g_path_get_dirname (thunar_vfs_uri_get_path (store->defaults_list_uri));
+  succeed = xfce_mkdirhier (path, 0700, error);
+  g_free (path);
+
+  /* associate the application with the info */
+  if (G_LIKELY (succeed))
+    {
+      /* generate the new application id list */
+      pids = g_hash_table_lookup (store->defaults_list, info);
+      if (G_UNLIKELY (pids == NULL))
+        {
+          /* generate a new list that contains only the application */
+          nids = g_new (gchar *, 2);
+          nids[0] = g_strdup (thunar_vfs_mime_application_get_desktop_id (application));
+          nids[1] = NULL;
+        }
+      else
+        {
+          /* count the number of previously associated application ids */
+          for (n = 0; pids[n] != NULL; ++n)
+            ;
+
+          /* allocate a new list and prepend the application */
+          nids = g_new (gchar *, n + 2);
+          nids[0] = g_strdup (thunar_vfs_mime_application_get_desktop_id (application));
+
+          /* append the previously associated application ids */
+          for (m = 0, n = 1; pids[m] != NULL; ++m)
+            if (strcmp (pids[m], nids[0]) != 0)
+              nids[n++] = g_strdup (pids[m]);
+
+          /* null-terminate the new application id list */
+          nids[n] = NULL;
+        }
+
+      /* activate the new application id list */
+      g_hash_table_replace (store->defaults_list, thunar_vfs_mime_info_ref (info), nids);
+
+      /* write the default applications list to a temporary file */
+      path = g_strdup_printf ("%s.XXXXXX", thunar_vfs_uri_get_path (store->defaults_list_uri));
+      fd = g_mkstemp (path);
+      if (G_LIKELY (fd >= 0))
+        {
+          /* wrap the descriptor in a file pointer */
+          fp = fdopen (fd, "w");
+
+          /* write the default application list content */
+          fprintf (fp, "[Default Applications]\n");
+          g_hash_table_foreach (store->defaults_list, (GHFunc) defaults_list_write, fp);
+          fclose (fp);
+
+          /* disable the monitor handle for the defaults.list, so we don't unneccessary reload it */
+          thunar_vfs_monitor_remove (database->monitor, store->defaults_list_handle);
+
+          /* try to atomically rename the file */
+          if (G_UNLIKELY (g_rename (path, thunar_vfs_uri_get_path (store->defaults_list_uri)) < 0))
+            {
+              /* tell the caller that we failed */
+              g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+              succeed = FALSE;
+
+              /* be sure to remove the temporary file */
+              g_unlink (path);
+            }
+
+          /* re-enable the monitor handle for the defaults.list */
+          store->defaults_list_handle = thunar_vfs_monitor_add_file (database->monitor, store->defaults_list_uri,
+                                                                     thunar_vfs_mime_database_store_changed, database);
+        }
+      else
+        {
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+          succeed = FALSE;
+        }
+      g_free (path);
+    }
+
+  /* release the lock on the database */
+  g_mutex_unlock (database->lock);
+
+  return succeed;
+}
+
+
+
+/**
+ * thunar_vfs_mime_database_add_application:
+ * @database : a #ThunarVfsMimeDatabase.
+ * @info     : a #ThunarVfsMimeInfo.
+ * @name     : the name for the application.
+ * @exec     : the command for the application.
+ * @error    : return location for errors or %NULL.
+ *
+ * Adds a new #ThunarVfsMimeApplication to the @database, whose
+ * name is @name and command is @exec, and which can be used to
+ * open files of type @info.
+ *
+ * The caller is responsible to free the returned object
+ * using thunar_vfs_mime_application_unref() when no longer
+ * needed.
+ *
+ * Return value: the newly created #ThunarVfsMimeApplication
+ *               or %NULL on error.
+ **/
+ThunarVfsMimeApplication*
+thunar_vfs_mime_database_add_application (ThunarVfsMimeDatabase *database,
+                                          ThunarVfsMimeInfo     *info,
+                                          const gchar           *name,
+                                          const gchar           *exec,
+                                          GError               **error)
+{
+  ThunarVfsMimeApplication *application = NULL;
+  gboolean                  succeed;
+  gchar                    *desktop_id;
+  gchar                    *directory;
+  gchar                    *command;
+  gchar                    *file;
+  guint                     n;
+  FILE                     *fp;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), NULL);
+  g_return_val_if_fail (info != NULL, NULL);
+  g_return_val_if_fail (g_utf8_validate (name, -1, NULL), NULL);
+  g_return_val_if_fail (exec != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* determine a file name for the new applications .desktop file */
+  directory = xfce_resource_save_location (XFCE_RESOURCE_DATA, "applications/", TRUE);
+  file = g_strconcat (directory, G_DIR_SEPARATOR_S, name, "-usercreated.desktop", NULL);
+  for (n = 1; g_file_test (file, G_FILE_TEST_EXISTS); ++n)
+    {
+      g_free (file);
+      file = g_strdup_printf ("%s" G_DIR_SEPARATOR_S "%s-usercreated-%u.desktop", directory, name, n);
+    }
+
+  /* open the .desktop file for writing */
+  fp = fopen (file, "w");
+  if (G_UNLIKELY (fp == NULL))
+    {
+      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+    }
+  else
+    {
+      /* write the content and close the file */
+      fprintf (fp, "[Desktop Entry]\n");
+      fprintf (fp, "Encoding=UTF-8\n");
+      fprintf (fp, "Type=Application\n");
+      fprintf (fp, "NoDisplay=true\n");
+      fprintf (fp, "Name=%s\n", name);
+      fprintf (fp, "Exec=%s\n", exec);
+      fprintf (fp, "MimeType=%s\n", thunar_vfs_mime_info_get_name (info));
+      fclose (fp);
+
+      /* update the mimeinfo.cache file for the directory */
+      command = g_strdup_printf ("update-desktop-database %s", directory);
+      succeed = g_spawn_command_line_sync (command, NULL, NULL, NULL, error);
+      g_free (command);
+
+      /* check if the update was successfull */
+      if (G_LIKELY (succeed))
+        {
+          /* load the application from the .desktop file */
+          desktop_id = g_path_get_basename (file);
+          application = thunar_vfs_mime_application_new_from_file (file, desktop_id);
+          g_free (desktop_id);
+
+          /* this shouldn't happen, but you never know */
+          if (G_UNLIKELY (application == NULL))
+            g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_IO, _("Failed to load application from file %s"), file);
+        }
+    }
+
+  /* cleanup */
+  g_free (directory);
+  g_free (file);
 
   return application;
 }

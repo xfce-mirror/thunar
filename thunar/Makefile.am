@@ -3,6 +3,7 @@
 INCLUDES =								\
 	-I$(top_builddir)						\
 	-I$(top_srcdir)							\
+	-DBINDIR=\"$(bindir)\"						\
 	-DDATADIR=\"$(datadir)\"					\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DEXO_DISABLE_DEPRECATED					\
@@ -24,6 +25,10 @@ Thunar_SOURCES =							\
 	main.c								\
 	thunar-application.c						\
 	thunar-application.h						\
+	thunar-chooser-dialog.c						\
+	thunar-chooser-dialog.h						\
+	thunar-chooser-model.c						\
+	thunar-chooser-model.h						\
 	thunar-clipboard-manager.c					\
 	thunar-clipboard-manager.h					\
 	thunar-computer-folder.c					\

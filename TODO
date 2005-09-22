@@ -29,10 +29,6 @@ Important for Thunar 1.0
    dropping files to the trash bin in the favourites pane (not for 1.0 I'd
    say).
 
- - ThunarFavouritesModel should watch the .gtk-bookmarks file for changes and
-   reload it on-demand (take care of not reloading if the change was caused by
-   thunar_favourites_model_save!).
-
  - The layouting code for ThunarLocationButtons is still buggy. Problem shows
    with paths that include a very long directory; you cannot scroll to the
    last path component then.
