@@ -368,6 +368,9 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
 {
   GtkTreeSelection *selection;
   GtkTreePath      *path;
+  GtkTreeIter       iter;
+  ThunarFile       *file;
+  GtkAction        *action;
 
   /* we unselect all selected items if the user clicks on an empty
    * area of the treeview and no modifier key is active.
@@ -402,6 +405,43 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
         {
           /* open the context menu */
           thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (details_view), event->button, event->time);
+        }
+
+      return TRUE;
+    }
+  else if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_2BUTTON_PRESS) && event->button == 2)
+    {
+      /* determine the path to the item that was middle-clicked */
+      if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, NULL, NULL, NULL))
+        {
+          /* select only the path to the item on which the user clicked */
+          selection = gtk_tree_view_get_selection (tree_view);
+          gtk_tree_selection_unselect_all (selection);
+          gtk_tree_selection_select_path (selection, path);
+
+          /* if the event was a double-click, then we'll open the file or folder (folder's are opened in new windows) */
+          if (G_LIKELY (event->type == GDK_2BUTTON_PRESS))
+            {
+              /* determine the file for the path */
+              gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (details_view)->model), &iter, path);
+              file = thunar_list_model_get_file (THUNAR_STANDARD_VIEW (details_view)->model, &iter);
+              if (G_LIKELY (file != NULL))
+                {
+                  /* determine the action to perform depending on the type of the file */
+                  action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (details_view)->action_group,
+                                                        thunar_file_is_directory (file) ? "open-in-new-window" : "open");
+      
+                  /* emit the action */
+                  if (G_LIKELY (action != NULL))
+                    gtk_action_activate (action);
+
+                  /* release the file reference */
+                  g_object_unref (G_OBJECT (file));
+                }
+            }
+
+          /* cleanup */
+          gtk_tree_path_free (path);
         }
 
       return TRUE;

@@ -351,10 +351,13 @@ thunar_icon_view_button_press_event (ExoIconView    *view,
                                      ThunarIconView *icon_view)
 {
   GtkTreePath *path;
+  GtkTreeIter  iter;
+  ThunarFile  *file;
+  GtkAction   *action;
 
-  /* open the context menu on right clicks */
   if (event->type == GDK_BUTTON_PRESS && event->button == 3)
     {
+      /* open the context menu on right clicks */
       if (exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
         {
           /* select the path on which the user clicked if not selected yet */
@@ -379,6 +382,44 @@ thunar_icon_view_button_press_event (ExoIconView    *view,
       
           /* open the context menu */
           thunar_standard_view_context_menu (THUNAR_STANDARD_VIEW (icon_view), event->button, event->time);
+        }
+
+      return TRUE;
+    }
+  else if ((event->type == GDK_BUTTON_PRESS || event->type == GDK_2BUTTON_PRESS) && event->button == 2)
+    {
+      /* unselect all currently selected items */
+      exo_icon_view_unselect_all (view);
+
+      /* determine the path to the item that was middle-clicked */
+      if (exo_icon_view_get_item_at_pos (view, event->x, event->y, &path, NULL))
+        {
+          /* select only the path to the item on which the user clicked */
+          exo_icon_view_select_path (view, path);
+
+          /* if the event was a double-click, then we'll open the file or folder (folder's are opened in new windows) */
+          if (G_LIKELY (event->type == GDK_2BUTTON_PRESS))
+            {
+              /* determine the file for the path */
+              gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (icon_view)->model), &iter, path);
+              file = thunar_list_model_get_file (THUNAR_STANDARD_VIEW (icon_view)->model, &iter);
+              if (G_LIKELY (file != NULL))
+                {
+                  /* determine the action to perform depending on the type of the file */
+                  action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (icon_view)->action_group,
+                                                        thunar_file_is_directory (file) ? "open-in-new-window" : "open");
+      
+                  /* emit the action */
+                  if (G_LIKELY (action != NULL))
+                    gtk_action_activate (action);
+
+                  /* release the file reference */
+                  g_object_unref (G_OBJECT (file));
+                }
+            }
+
+          /* cleanup */
+          gtk_tree_path_free (path);
         }
 
       return TRUE;
