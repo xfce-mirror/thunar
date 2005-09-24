@@ -1,4 +1,7 @@
+# $Id$
+#
 # Japanese translations for Thunar package.
+# Copyright (C) 2004-2005 Benedikt Meurer.
 # Copyright (C) 2004-2005 The Thunar development team.
 # This file is distributed under the same license as the Thunar package.
 # Daichi Kawahata <daichi@xfce.org>, 2005.
@@ -7,17 +10,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.2svn-r\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-22 23:04+0200\n"
-"PO-Revision-Date: 2005-09-15 02:41+0900\n"
+"POT-Creation-Date: 2005-09-24 15:57+0900\n"
+"PO-Revision-Date: 2005-09-24 15:58+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../thunar-vfs/thunar-vfs-info.c:391
 msgid "No Exec field specified"
-msgstr "実行領域が指定されていません"
+msgstr "実行コマンドが指定されていません"
 
 #: ../thunar-vfs/thunar-vfs-info.c:399
 msgid "Unable to parse file"
@@ -25,11 +29,11 @@ msgstr "ファイルを解析できません"
 
 #: ../thunar-vfs/thunar-vfs-info.c:480
 msgid "Invalid file name"
-msgstr "不適切なファイル名です"
+msgstr "無効なファイル名です"
 
 #: ../thunar-vfs/thunar-vfs-info.c:501
 msgid "Invalid desktop file"
-msgstr "不適切なデスクトップ・ファイルです"
+msgstr "無効なデスクトップファイルです"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:248
 msgid "Collecting files..."
@@ -44,7 +48,7 @@ msgid ""
 msgstr ""
 "\n"
 "\n"
-"飛ばしますか？"
+"これを飛ばしますか？"
 
 #. ask the user what to do
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:398
@@ -130,11 +134,11 @@ msgstr "空"
 
 #: ../thunar-vfs/thunar-vfs-trash.c:648
 msgid "Whether all trashes are empty"
-msgstr "全てのゴミ箱が空かどうかです"
+msgstr "全てのゴミ箱が空かどうかを表します"
 
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:208
 msgid "Preparing..."
-msgstr "作成しています..."
+msgstr "準備しています..."
 
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:367
 #, c-format
@@ -145,7 +149,7 @@ msgid ""
 msgstr ""
 "%s を削除できません。\n"
 "\n"
-"飛ばしますか？"
+"これを飛ばしますか？"
 
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:481
 msgid "Unable to unlink root nodes"
@@ -158,7 +162,7 @@ msgstr "リンク解除のための URI スキームはサポートされてい�
 #: ../thunar-vfs/thunar-vfs-uri.c:160 ../thunar-vfs/thunar-vfs-uri.c:193
 #, c-format
 msgid "The URI '%s' is invalid"
-msgstr "この URI '%s' は不適切です"
+msgstr "この URI '%s' は無効です"
 
 #: ../thunar-vfs/thunar-vfs-uri.c:169 ../thunar-vfs/thunar-vfs-uri.c:202
 #, c-format
@@ -195,7 +199,7 @@ msgstr "貼り付け可能"
 
 #: ../thunar/thunar-clipboard-manager.c:149
 msgid "Whether the clipboard content can be pasted"
-msgstr "クリップボードの内容が貼り付け可能であるかどうかです"
+msgstr "クリップボードの内容が貼り付け可能であるかを表します"
 
 #: ../thunar/thunar-clipboard-manager.c:315
 msgid "There is nothing on the clipboard to paste"
@@ -203,7 +207,7 @@ msgstr "クリップボードに貼り付けるものはありません"
 
 #: ../thunar/thunar-computer-folder.c:217
 msgid "Computer"
-msgstr "コンピュータ"
+msgstr "コンピューター"
 
 #: ../thunar/thunar-desktop-view.c:169 ../thunar/thunar-icon-renderer.c:157
 #: ../thunar/thunar-path-entry.c:178
@@ -279,7 +283,7 @@ msgstr "お気に入りの名前を変更(_N)"
 #: ../thunar/thunar-favourites-view.c:585
 #, c-format
 msgid "The URI '%s' does not refer to a directory"
-msgstr "URI '%s' はフォルダを参照しません"
+msgstr "URI '%s' はフォルダを参照していません"
 
 #: ../thunar/thunar-favourites-view.c:610
 msgid "Could not add favourite"
@@ -302,15 +306,15 @@ msgstr "読み込み"
 
 #: ../thunar/thunar-folder.c:135
 msgid "Whether the contents of the folder are currently being loaded"
-msgstr "フォルダの内容が現在読み込まれているかどうかです"
+msgstr "フォルダの内容が現在読み込まれているかどうかを表します"
 
 #: ../thunar/thunar-icon-factory.c:163
 msgid "Icon theme"
-msgstr "アイコン・テーマ"
+msgstr "アイコンテーマ"
 
 #: ../thunar/thunar-icon-factory.c:164
 msgid "The icon theme used by the icon factory"
-msgstr "アイコン・ファクトリに使用されるアイコンのテーマです"
+msgstr "アイコンファクトリに使用されるアイコンのテーマです"
 
 #: ../thunar/thunar-icon-renderer.c:115
 msgid "Drop file"
@@ -442,29 +446,26 @@ msgid "Unable to open \"%s\"."
 msgstr "\"%s\" を開けません。"
 
 #: ../thunar/thunar-launcher.c:362
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to open %d file."
 msgid_plural "Unable to open %d files."
 msgstr[0] "%d 個のファイルを開けません。"
-msgstr[1] "%d 個のファイルを開けません。"
 
 #: ../thunar/thunar-launcher.c:472
 msgid "Are you sure you want to open all folders?"
 msgstr "全てのフォルダを開いてもよろしいですか？"
 
 #: ../thunar/thunar-launcher.c:474
-#, fuzzy, c-format
+#, c-format
 msgid "This will open %d separate window."
 msgid_plural "This will open %d separate windows."
 msgstr[0] "%d のウィンドウを別々に開きます。"
-msgstr[1] "%d のウィンドウを別々に開きます。"
 
 #: ../thunar/thunar-launcher.c:533
-#, fuzzy, c-format
+#, c-format
 msgid "Open in %d New Window"
 msgid_plural "Open in %d New Windows"
-msgstr[0] "%d の新しいウィンドウで開く"
-msgstr[1] "%d の新しいウィンドウで開く"
+msgstr[0] "%d の新しいウィンドウで開きます。"
 
 #: ../thunar/thunar-launcher.c:551
 msgid "Execute"
@@ -511,18 +512,16 @@ msgid "unknown"
 msgstr "不明"
 
 #: ../thunar/thunar-list-model.c:1868
-#, fuzzy, c-format
+#, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d 個のアイテム, 空き領域: %s"
-msgstr[1] "%d 個のアイテム, 空き領域: %s"
 
 #: ../thunar/thunar-list-model.c:1873
-#, fuzzy, c-format
+#, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d 個のアイテム"
-msgstr[1] "%d 個のアイテム"
 
 #: ../thunar/thunar-list-model.c:1889
 #, c-format
@@ -535,11 +534,10 @@ msgid "\"%s\" %s"
 msgstr "\"%s\" %s"
 
 #: ../thunar/thunar-list-model.c:1913 ../thunar/thunar-list-model.c:1918
-#, fuzzy, c-format
+#, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected (%s)"
-msgstr[0] "%d 個のアイテムが選択されています"
-msgstr[1] "%d 個のアイテムが選択されています"
+msgstr[0] "%d 個のアイテムが選択されています (%s)"
 
 #: ../thunar/thunar-local-file.c:347
 msgid "Filesystem"
@@ -750,7 +748,7 @@ msgstr "現在のウィンドウで隠しファイルの表示/非表示を切�
 
 #: ../thunar/thunar-standard-view.c:332 ../thunar/thunar-view.c:83
 msgid "Whether the view is currently being loaded"
-msgstr "表示ペインが現在読み込まれているかどうかです"
+msgstr "表示ペインが現在読み込まれているかどうかを表します"
 
 #: ../thunar/thunar-standard-view.c:834
 msgid "Loading folder contents..."
@@ -778,7 +776,7 @@ msgstr "アイコンを表示するファイルです"
 
 #: ../thunar/thunar-statusbar.c:204 ../thunar/thunar-statusbar.c:746
 msgid "Whether to display a loading animation"
-msgstr "読み込みの際のアニメーションを表示するかどうかです"
+msgstr "読み込みの際のアニメーションを表示するかどうかを表します"
 
 #: ../thunar/thunar-statusbar.c:759 ../thunar/thunar-view.c:98
 msgid "Statusbar text"
@@ -984,13 +982,3 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
-
-#~ msgid ""
-#~ "No application available to open \"%s\".\n"
-#~ "This will be fixed soon!"
-#~ msgstr ""
-#~ "\"%s\" を開くアプリケーションがありません。\n"
-#~ "これは間もなく直ります！"
-
-#~ msgid "%d items selected (%s)"
-#~ msgstr "%d 個のアイテムが選択されています (%s)"
