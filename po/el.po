@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-22 23:04+0200\n"
+"POT-Creation-Date: 2005-09-27 23:46+0200\n"
 "PO-Revision-Date: 2005-08-05 21:53+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -186,6 +186,12 @@ msgstr "Αντιγραφή αρχείων..."
 msgid "Moving files..."
 msgstr "Μετακίνηση αρχείων..."
 
+#. let the application take care of the dialog
+#: ../thunar/thunar-application.c:432
+#, fuzzy
+msgid "Deleting files..."
+msgstr "Συλλογή αρχείων..."
+
 #: ../thunar/thunar-clipboard-manager.c:148
 msgid "Can paste"
 msgstr "Δυνατότητα επικόλλησης"
@@ -264,37 +270,37 @@ msgid "Detailed directory listing"
 msgstr ""
 
 #. append the remove menu item
-#: ../thunar/thunar-favourites-view.c:250
+#: ../thunar/thunar-favourites-view.c:291
 #, fuzzy
 msgid "_Remove Favourite"
 msgstr "_Απομάκρυνση αγαπημένου"
 
 #. append the rename menu item
-#: ../thunar/thunar-favourites-view.c:265
+#: ../thunar/thunar-favourites-view.c:306
 #, fuzzy
 msgid "Re_name Favourite"
 msgstr "_Απομάκρυνση αγαπημένου"
 
-#: ../thunar/thunar-favourites-view.c:585
+#: ../thunar/thunar-favourites-view.c:626
 #, c-format
 msgid "The URI '%s' does not refer to a directory"
 msgstr ""
 
-#: ../thunar/thunar-favourites-view.c:610
+#: ../thunar/thunar-favourites-view.c:651
 msgid "Could not add favourite"
 msgstr "Αδυναμία προσθήκης αγαπημένου"
 
-#: ../thunar/thunar-file.c:459
+#: ../thunar/thunar-file.c:460
 #, c-format
 msgid "Failed to determine parent URI for '%s'"
 msgstr ""
 
-#: ../thunar/thunar-file.c:492
+#: ../thunar/thunar-file.c:493
 #, fuzzy
 msgid "Unable to rename file"
 msgstr "Αδύνατο το άνοιγμα αρχείου %s."
 
-#: ../thunar/thunar-folder.c:134 ../thunar/thunar-standard-view.c:331
+#: ../thunar/thunar-folder.c:134 ../thunar/thunar-standard-view.c:333
 #: ../thunar/thunar-statusbar.c:203 ../thunar/thunar-statusbar.c:745
 #: ../thunar/thunar-view.c:82
 msgid "Loading"
@@ -680,103 +686,109 @@ msgid "%s (%u Bytes)"
 msgstr "%s (%u Bytes)"
 
 #: ../thunar/thunar-properties-dialog.c:681
-#: ../thunar/thunar-standard-view.c:1760
+#: ../thunar/thunar-standard-view.c:1787
 #, fuzzy, c-format
 msgid "Failed to rename %s."
 msgstr "Αδύνατη η αφαίρεση του %s."
 
-#: ../thunar/thunar-standard-view.c:214
+#: ../thunar/thunar-standard-view.c:216
 msgid "File Context Menu"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:215
+#: ../thunar/thunar-standard-view.c:217
 msgid "Folder Context Menu"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:216
+#: ../thunar/thunar-standard-view.c:218
 msgid "_Properties"
 msgstr "_Ιδιότητες"
 
-#: ../thunar/thunar-standard-view.c:216
+#: ../thunar/thunar-standard-view.c:218
 msgid "View the properties of the selected item"
 msgstr "Προβολή των ιδιοτήτων του επιλεγμένου αντικειμένου"
 
-#: ../thunar/thunar-standard-view.c:217 ../thunar/thunar-standard-view.c:2005
+#: ../thunar/thunar-standard-view.c:219
 msgid "_Copy files"
 msgstr "_Αντιγραφή Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:218 ../thunar/thunar-standard-view.c:2011
+#: ../thunar/thunar-standard-view.c:220
 msgid "Cu_t files"
 msgstr "Αποκοπή _Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:219
+#: ../thunar/thunar-standard-view.c:221
 msgid "_Paste files"
 msgstr "_Επικόλληση Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:220
+#: ../thunar/thunar-standard-view.c:222
 msgid "Paste files into folder"
 msgstr "_Επικόλληση Αρχείων στο φάκελο"
 
-#: ../thunar/thunar-standard-view.c:220
+#: ../thunar/thunar-standard-view.c:222
 msgid "Paste files into the selected folder"
 msgstr "Επικόλληση αρχείων στον επιλεγμένο φάκελο"
 
-#: ../thunar/thunar-standard-view.c:221
+#: ../thunar/thunar-standard-view.c:223
 msgid "Select _all files"
 msgstr "Επιλογή ό_λων των αρχείων"
 
-#: ../thunar/thunar-standard-view.c:221
+#: ../thunar/thunar-standard-view.c:223
 msgid "Select all files in this window"
 msgstr "Επιλογή όλων των αρχείων σε αυτό το παράθυρο"
 
-#: ../thunar/thunar-standard-view.c:222
+#: ../thunar/thunar-standard-view.c:224
 msgid "Select by _pattern"
 msgstr "Επιλογή βάσει _μοτίβου"
 
-#: ../thunar/thunar-standard-view.c:222
+#: ../thunar/thunar-standard-view.c:224
 msgid "Select all files that match a certain pattern"
 msgstr "Επιλογή όλων των αρχείων που ταιριάζουν σε ένα μοτίβο"
 
-#: ../thunar/thunar-standard-view.c:223
+#: ../thunar/thunar-standard-view.c:225
 msgid "_Rename"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:223
+#: ../thunar/thunar-standard-view.c:225
 #, fuzzy
 msgid "Rename the selected item"
 msgstr "Προβολή των ιδιοτήτων του επιλεγμένου αντικειμένου"
 
-#: ../thunar/thunar-standard-view.c:228
+#: ../thunar/thunar-standard-view.c:230
 msgid "Show _hidden files"
 msgstr "Εμφάνιση _Κρυφών Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:228
+#: ../thunar/thunar-standard-view.c:230
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Εναλλάσσει την εμφάνιση κρυφών αρχείων στο τρέχον παράθυρο"
 
-#: ../thunar/thunar-standard-view.c:332 ../thunar/thunar-view.c:83
+#: ../thunar/thunar-standard-view.c:334 ../thunar/thunar-view.c:83
 msgid "Whether the view is currently being loaded"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:834
+#: ../thunar/thunar-standard-view.c:836
 msgid "Loading folder contents..."
 msgstr "Φόρτωμα περιεχομένων φακέλου..."
 
-#: ../thunar/thunar-standard-view.c:1347
+#: ../thunar/thunar-standard-view.c:1374
 msgid "Select by pattern"
 msgstr "Επιλογή βάσει μοτίβου"
 
-#: ../thunar/thunar-standard-view.c:1362
+#: ../thunar/thunar-standard-view.c:1389
 msgid "Pattern:"
 msgstr "Μοτίβο:"
 
-#: ../thunar/thunar-standard-view.c:2005
+#: ../thunar/thunar-standard-view.c:2031
+#, fuzzy
 msgid "_Copy file"
-msgstr "_Αντιγραφή Αρχείου"
+msgid_plural "_Copy files"
+msgstr[0] "_Αντιγραφή Αρχείου"
+msgstr[1] "_Αντιγραφή Αρχείου"
 
-#: ../thunar/thunar-standard-view.c:2011
+#: ../thunar/thunar-standard-view.c:2037
+#, fuzzy
 msgid "Cu_t file"
-msgstr "Α_ποκοπή Αρχείου"
+msgid_plural "Cu_t files"
+msgstr[0] "Α_ποκοπή Αρχείου"
+msgstr[1] "Α_ποκοπή Αρχείου"
 
 #: ../thunar/thunar-statusbar.c:190
 msgid "The file whose icon to display"
@@ -818,9 +830,30 @@ msgstr ""
 msgid "The wrap width"
 msgstr ""
 
-#: ../thunar/thunar-trash-folder.c:240
+#: ../thunar/thunar-trash-folder.c:258
 msgid "Trash"
 msgstr "Απορρίμματα"
+
+#. prepare the "Empty Trash Bin" action
+#: ../thunar/thunar-trash-folder.c:287
+msgid "_Empty Trash Bin"
+msgstr ""
+
+#: ../thunar/thunar-trash-folder.c:287
+#, fuzzy
+msgid "Delete all items in the Trash"
+msgstr "Επιλογή όλων των αρχείων σε αυτό το παράθυρο"
+
+#: ../thunar/thunar-trash-folder.c:414
+msgid "Are you sure that you want to delete all trashed files?"
+msgstr ""
+
+#: ../thunar/thunar-trash-folder.c:416
+#, c-format
+msgid "This will delete %d file currently located in the trash bin."
+msgid_plural "This will delete %d files currently located in the trash bin."
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../thunar/thunar-view.c:99
 msgid "Text to be displayed in the statusbar associated with this view"

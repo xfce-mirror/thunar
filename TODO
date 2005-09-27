@@ -22,13 +22,6 @@ Important for Thunar 1.0
  - Check getmntinfo() or getfsstat() for ThunarVfsVolumeManagerBSD, which
    might be faster than several statfs() calls.
 
- - ThunarFavouritesModel should include the 'Trash' in the default system
-   favourites list, given the user the ability to atleast empty the trash
-   by right-clicking on the favourite and choosing 'Empty trash bin' from
-   the context menu. An optional, yet tricky feature, would be to allow
-   dropping files to the trash bin in the favourites pane (not for 1.0 I'd
-   say).
-
  - The layouting code for ThunarLocationButtons is still buggy. Problem shows
    with paths that include a very long directory; you cannot scroll to the
    last path component then.

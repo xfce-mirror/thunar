@@ -202,6 +202,20 @@ AC_MSG_CHECKING([whether to enable debugging support])
 if test x"$enable_debug" != x"no"; then
   PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3 -DG_DISABLE_DEPRECATED -Werror -Wall"
   AC_MSG_RESULT([yes])
+
+  dnl Check whether the compiler accepts the -fno-strict-aliasing
+  dnl switch, as certain packages - like Glib - still don't work
+  dnl properly with newer compilers.
+  save_CFLAGS="$CFLAGS"
+  CFLAGS="$CFLAGS -fno-strict-aliasing"
+  AC_MSG_CHECKING([whether $CC accepts -fno-strict-aliasing])
+  AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
+    AC_MSG_RESULT([yes])
+    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -fno-strict-aliasing"
+  ], [
+    AC_MSG_RESULT([no])
+  ])
+  CFLAGS="$save_CFLAGS"
 else
   PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CAST_CHECKS -DG_DISABLE_CHECKS"
   AC_MSG_RESULT([no])
@@ -257,6 +271,13 @@ if test x"$have_gnuc_visibility" = x"yes"; then
   PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DHAVE_GNUC_VISIBILITY"
 fi
 AM_CONDITIONAL([HAVE_GNUC_VISIBILITY], [test x"$have_gnuc_visibility" = x"yes"])
+
+dnl *********************************
+dnl *** Substitute platform flags ***
+dnl *********************************
+AC_SUBST([PLATFORM_CFLAGS])
+AC_SUBST([PLATFORM_CPPFLAGS])
+AC_SUBST([PLATFORM_LDFLAGS])
 
 AC_OUTPUT([
 Makefile

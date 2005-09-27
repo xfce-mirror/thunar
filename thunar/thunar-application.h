@@ -55,6 +55,10 @@ void               thunar_application_move_uris     (ThunarApplication *applicat
                                                      GList             *source_uri_list,
                                                      ThunarVfsURI      *target_uri);
 
+void               thunar_application_delete_uris   (ThunarApplication *application,
+                                                     GtkWindow         *window,
+                                                     GList             *uri_list);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_APPLICATION_H__ */

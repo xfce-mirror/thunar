@@ -216,12 +216,16 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
   GtkTreeModel *model;
   GtkTreePath  *path;
   GtkTreeIter   iter;
+  ThunarFile   *file;
+  GtkWidget    *window;
   GtkWidget    *image;
   GtkWidget    *menu;
   GtkWidget    *item;
   GMainLoop    *loop;
   gboolean      mutable;
   gboolean      result;
+  GList        *actions;
+  GList        *lp;
 
   /* let the widget process the event first (handles focussing and scrolling) */
   result = GTK_WIDGET_CLASS (thunar_favourites_view_parent_class)->button_press_event (widget, event);
@@ -233,10 +237,15 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
   /* resolve the path to the cursor position */
   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, NULL, NULL, NULL))
     {
-      /* check whether the favourite at the given path is mutable */
+      /* determine the iterator for the selected row */
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
       gtk_tree_model_get_iter (model, &iter, path);
+
+      /* check whether the favourite at the given path is mutable */
       gtk_tree_model_get (model, &iter, THUNAR_FAVOURITES_MODEL_COLUMN_MUTABLE, &mutable, -1);
+
+      /* determine the file for the given path */
+      file = thunar_favourites_model_file_for_iter (THUNAR_FAVOURITES_MODEL (model), &iter);
 
       /* prepare the internal loop */
       loop = g_main_loop_new (NULL, FALSE);
@@ -245,6 +254,38 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
       menu = gtk_menu_new ();
       gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (widget));
       g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+
+      /* prepend the custom actions for the selected file (if any) */
+      if (G_LIKELY (file != NULL))
+        {
+          /* determine the toplevel window */
+          window = gtk_widget_get_toplevel (widget);
+
+          /* determine the actions for the selected file */
+          actions = thunar_file_get_actions (file, window);
+
+          /* check if we have any actions */
+          if (G_LIKELY (actions != NULL))
+            {
+              /* append the actions */
+              for (lp = actions; lp != NULL; lp = lp->next)
+                {
+                  /* append the menu item */
+                  item = gtk_action_create_menu_item (GTK_ACTION (lp->data));
+                  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+                  gtk_widget_show (item);
+
+                  /* release the reference on the action */
+                  g_object_unref (G_OBJECT (lp->data));
+                }
+              g_list_free (actions);
+
+              /* append a menu separator */
+              item = gtk_separator_menu_item_new ();
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_show (item);
+            }
+        }
 
       /* append the remove menu item */
       item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Favourite"));

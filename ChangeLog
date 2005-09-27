@@ -1,3 +1,36 @@
+2005-09-27	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Substitute platform flags properly.
+	* thunar/Makefile.am: Don't delete thunar-thumbnail-frame.h.
+	* thunar/thunar-standard-view.c(thunar_standard_view_selection_changed):
+	  Use ngettext() for the Cut/Copy File(s) actions.
+	* thunar/thunar-file.{c,h}: Add new virtual method get_actions(), which
+	  is used to support custom actions for certain files (e.g. the Empty
+	  Trash Bin action for the trash file).
+	* thunar/thunar-application.{c,h}: Add thunar_application_delete_uris()
+	  to be able to easily delete arbitrary files.
+	* thunar/thunar-trash-file.c(thunar_trash_file_new): Use
+	  thunar_file_destroy() instead of gtk_object_destroy().
+	* thunar/thunar-trash-folder.c: Implement the get_actions() method with
+	  the "Empty Trash Bin" action.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c:
+	  Extend the extension menu merge mechanism to also load custom actions
+	  provided by ThunarFile implementations.
+	* thunar/thunar-file.c(thunar_file_accepts_uri_drop): Fix typo.
+	* thunar/thunar-trash-folder.c: Watch files for changes.
+	* thunar/thunar-favourites-view.c
+	  (thunar_favourites_view_button_press_event): Add custom actions to the
+	  favourite context menu.
+	* TODO: Drop completed item.
+	* configure.in.in: Disable strict aliasing if debugging is enabled and
+	  the compiler supports the -fno-strict-aliasing switch.
+	* po/*.po: Update translations.
+	* main.c(main): Initialize file properly.
+	* thunar/thunar-file.c(thunar_local_file_is_renameable): Don't permit
+	  users to rename root nodes.
+	* thunar/thunar-open-with-action.c(thunar_open_with_action_menu_mapped):
+	  Use "Other Application..." instead of just "Other...".
+
 2005-09-23	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-details-view.c(thunar_details_view_button_press_event),

@@ -238,6 +238,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   klass->is_readable = thunar_file_real_is_readable;
   klass->is_renameable = (gpointer) exo_noop_false;
   klass->is_writable = thunar_file_real_is_writable;
+  klass->get_actions = (gpointer) exo_noop_null;
   klass->get_emblem_names = (gpointer) exo_noop_null;
   klass->reload = (gpointer) exo_noop;
   klass->changed = thunar_file_real_changed;
@@ -930,7 +931,7 @@ thunar_file_accepts_uri_drop (ThunarFile   *file,
         }
 
       /* check if this URI is supported */
-      action = (*THUNAR_FILE_GET_CLASS (file)->accepts_uri_drop) (file, lp->data, action);
+      action = (*THUNAR_FILE_GET_CLASS (file)->accepts_uri_drop) (file, lp->data, actions);
       if (G_UNLIKELY (action == 0))
         return 0;
 
@@ -1426,6 +1427,33 @@ thunar_file_is_writable (ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   return (*THUNAR_FILE_GET_CLASS (file)->is_writable) (file);
+}
+
+
+
+/**
+ * thunar_file_get_actions:
+ * @file   : a #ThunarFile instance.
+ * @window : a #GdkWindow instance.
+ *
+ * Returns additional #GtkAction<!---->s for @file.
+ *
+ * The caller is responsible to free the returned list
+ * using
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) g_object_unref, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: additional #GtkAction<!---->s for @file.
+ **/
+GList*
+thunar_file_get_actions (ThunarFile *file,
+                         GtkWidget  *window)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
+  return (*THUNAR_FILE_GET_CLASS (file)->get_actions) (file, window);
 }
 
 

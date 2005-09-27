@@ -313,10 +313,10 @@ thunar_application_open_window (ThunarApplication *application,
  * interaction.
  **/
 void
-thunar_application_copy_uris  (ThunarApplication *application,
-                               GtkWindow         *window,
-                               GList             *source_uri_list,
-                               ThunarVfsURI      *target_uri)
+thunar_application_copy_uris (ThunarApplication *application,
+                              GtkWindow         *window,
+                              GList             *source_uri_list,
+                              ThunarVfsURI      *target_uri)
 {
   ThunarVfsJob *job;
   GtkWidget    *message;
@@ -331,8 +331,8 @@ thunar_application_copy_uris  (ThunarApplication *application,
     {
       message = gtk_message_dialog_new (window, GTK_DIALOG_MODAL |
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-                                        "%s", error->message);
+                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+                                        "%s.", error->message);
       gtk_dialog_run (GTK_DIALOG (message));
       gtk_widget_destroy (message);
       g_error_free (error);
@@ -359,10 +359,10 @@ thunar_application_copy_uris  (ThunarApplication *application,
  * interaction.
  **/
 void
-thunar_application_move_uris  (ThunarApplication *application,
-                               GtkWindow         *window,
-                               GList             *source_uri_list,
-                               ThunarVfsURI      *target_uri)
+thunar_application_move_uris (ThunarApplication *application,
+                              GtkWindow         *window,
+                              GList             *source_uri_list,
+                              ThunarVfsURI      *target_uri)
 {
   ThunarVfsJob *job;
   GtkWidget    *message;
@@ -377,8 +377,8 @@ thunar_application_move_uris  (ThunarApplication *application,
     {
       message = gtk_message_dialog_new (window, GTK_DIALOG_MODAL |
                                         GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_OK,
-                                        "%s", error->message);
+                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+                                        "%s.", error->message);
       gtk_dialog_run (GTK_DIALOG (message));
       gtk_widget_destroy (message);
       g_error_free (error);
@@ -387,6 +387,49 @@ thunar_application_move_uris  (ThunarApplication *application,
     {
       /* let the application take care of the dialog */
       thunar_application_handle_job (application, window, job, "stock_folder-move", _("Moving files..."));
+      thunar_vfs_job_unref (job);
+    }
+}
+
+
+
+/**
+ * thunar_application_delete_uris:
+ * @application : a #ThunarApplication.
+ * @window      : a parent #GtkWindow or %NULL.
+ * @uri_list    : the list of #ThunarVfsURI<!---->s that should be deleted.
+ *
+ * Deletes all files referenced by the @uri_list and takes care of all user
+ * interaction.
+ **/
+void
+thunar_application_delete_uris (ThunarApplication *application,
+                                GtkWindow         *window,
+                                GList             *uri_list)
+{
+  ThunarVfsJob *job;
+  GtkWidget    *message;
+  GError       *error = NULL;
+
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
+
+  /* allocate the job */
+  job = thunar_vfs_unlink (uri_list, &error);
+  if (G_UNLIKELY (job == NULL))
+    {
+      message = gtk_message_dialog_new (window, GTK_DIALOG_MODAL |
+                                        GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
+                                        "%s.", error->message);
+      gtk_dialog_run (GTK_DIALOG (message));
+      gtk_widget_destroy (message);
+      g_error_free (error);
+    }
+  else
+    {
+      /* let the application take care of the dialog */
+      thunar_application_handle_job (application, window, job, "stock_delete", _("Deleting files..."));
       thunar_vfs_job_unref (job);
     }
 }

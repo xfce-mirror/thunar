@@ -101,7 +101,7 @@ static GdkDragAction thunar_standard_view_get_dest_actions          (ThunarStand
                                                                      ThunarFile              **file_return);
 static GList        *thunar_standard_view_get_selected_files        (ThunarStandardView       *standard_view);
 static GList        *thunar_standard_view_get_selected_uris         (ThunarStandardView       *standard_view);
-static void          thunar_standard_view_merge_menu_extensions     (ThunarStandardView       *standard_view,
+static void          thunar_standard_view_merge_custom_actions      (ThunarStandardView       *standard_view,
                                                                      GList                    *selected_items);
 static void          thunar_standard_view_action_properties         (GtkAction                *action,
                                                                      ThunarStandardView       *standard_view);
@@ -189,10 +189,12 @@ struct _ThunarStandardViewPrivate
   GtkAction              *action_rename;
   GtkAction              *action_show_hidden_files;
 
-  /* menu extensions support */
+  /* support for file manager extensions */
   ThunarExtensionManager *extension_manager;
-  GtkActionGroup         *extension_actions;
-  gint                    extension_merge_id;
+
+  /* custom menu actions support */
+  GtkActionGroup         *custom_actions;
+  gint                    custom_merge_id;
 
   /* right-click drag/popup support */
   GList                  *drag_uri_list;
@@ -861,19 +863,19 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
   /* disconnect from the previous UI manager */
   if (G_LIKELY (standard_view->ui_manager != NULL))
     {
-      /* remove any registered menu extension actions */
-      if (G_LIKELY (standard_view->priv->extension_merge_id != 0))
+      /* remove any registered custom menu actions */
+      if (G_LIKELY (standard_view->priv->custom_merge_id != 0))
         {
-          gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->priv->extension_merge_id);
-          standard_view->priv->extension_merge_id = 0;
+          gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->priv->custom_merge_id);
+          standard_view->priv->custom_merge_id = 0;
         }
 
-      /* drop any previous extensions action group */
-      if (G_LIKELY (standard_view->priv->extension_actions != NULL))
+      /* drop the previous custom action group */
+      if (G_LIKELY (standard_view->priv->custom_actions != NULL))
         {
-          gtk_ui_manager_remove_action_group (standard_view->ui_manager, standard_view->priv->extension_actions);
-          g_object_unref (G_OBJECT (standard_view->priv->extension_actions));
-          standard_view->priv->extension_actions = NULL;
+          gtk_ui_manager_remove_action_group (standard_view->ui_manager, standard_view->priv->custom_actions);
+          g_object_unref (G_OBJECT (standard_view->priv->custom_actions));
+          standard_view->priv->custom_actions = NULL;
         }
 
       /* drop our action group from the previous UI manager */
@@ -1072,8 +1074,8 @@ compare_actions (gconstpointer a,
 
 
 static void
-thunar_standard_view_merge_menu_extensions (ThunarStandardView *standard_view,
-                                            GList              *selected_items)
+thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
+                                           GList              *selected_items)
 {
   GtkTreeIter iter;
   ThunarFile *file = NULL;
@@ -1088,13 +1090,13 @@ thunar_standard_view_merge_menu_extensions (ThunarStandardView *standard_view,
   if (G_UNLIKELY (standard_view->ui_manager == NULL))
     return;
 
+  /* determine the toplevel window we belong to */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
+
   /* load the menu providers from the extension manager */
   providers = thunar_extension_manager_list_providers (standard_view->priv->extension_manager, THUNARX_TYPE_MENU_PROVIDER);
   if (G_LIKELY (providers != NULL))
     {
-      /* determine the toplevel window we belong to */
-      window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-
       /* determine the list of selected files or the current folder */
       if (G_LIKELY (selected_items != NULL))
         {
@@ -1130,28 +1132,53 @@ thunar_standard_view_merge_menu_extensions (ThunarStandardView *standard_view,
         thunar_file_list_free (files);
     }
 
-  /* remove the previously determined menu actions from the UI manager */
-  if (G_LIKELY (standard_view->priv->extension_merge_id != 0))
+  /* determine the currently selected file/folder for which to load custom actions */
+  if (G_LIKELY (selected_items != NULL && selected_items->next == NULL))
     {
-      gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->priv->extension_merge_id);
-      standard_view->priv->extension_merge_id = 0;
+      gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, selected_items->data);
+      file = thunar_list_model_get_file (standard_view->model, &iter);
+    }
+  else if (selected_items == NULL)
+    {
+      file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+      if (G_LIKELY (file != NULL))
+        g_object_ref (G_OBJECT (file));
+    }
+  else
+    {
+      file = NULL;
     }
 
-  /* drop any previous extensions action group */
-  if (G_LIKELY (standard_view->priv->extension_actions != NULL))
+  /* load the custom actions for the currently selected file/folder */
+  if (G_LIKELY (file != NULL))
     {
-      gtk_ui_manager_remove_action_group (standard_view->ui_manager, standard_view->priv->extension_actions);
-      g_object_unref (G_OBJECT (standard_view->priv->extension_actions));
-      standard_view->priv->extension_actions = NULL;
+      tmp = thunar_file_get_actions (file, window);
+      actions = g_list_concat (actions, tmp);
+      g_object_unref (G_OBJECT (file));
+    }
+
+  /* remove the previously determined menu actions from the UI manager */
+  if (G_LIKELY (standard_view->priv->custom_actions != 0))
+    {
+      gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->priv->custom_merge_id);
+      standard_view->priv->custom_merge_id = 0;
+    }
+
+  /* drop any previous custom action group */
+  if (G_LIKELY (standard_view->priv->custom_actions != NULL))
+    {
+      gtk_ui_manager_remove_action_group (standard_view->ui_manager, standard_view->priv->custom_actions);
+      g_object_unref (G_OBJECT (standard_view->priv->custom_actions));
+      standard_view->priv->custom_actions = NULL;
     }
 
   /* add the actions specified by the menu providers */
   if (G_LIKELY (actions != NULL))
     {
-      /* allocate the action group and the merge id for the extensions */
-      standard_view->priv->extension_actions = gtk_action_group_new ("thunar-standard-view-extensions");
-      standard_view->priv->extension_merge_id = gtk_ui_manager_new_merge_id (standard_view->ui_manager);
-      gtk_ui_manager_insert_action_group (standard_view->ui_manager, standard_view->priv->extension_actions, -1);
+      /* allocate the action group and the merge id for the custom actions */
+      standard_view->priv->custom_actions = gtk_action_group_new ("thunar-standard-view-custom-actions");
+      standard_view->priv->custom_merge_id = gtk_ui_manager_new_merge_id (standard_view->ui_manager);
+      gtk_ui_manager_insert_action_group (standard_view->ui_manager, standard_view->priv->custom_actions, -1);
 
       /* sort the actions by their names */
       actions = g_list_sort (actions, compare_actions);
@@ -1160,15 +1187,15 @@ thunar_standard_view_merge_menu_extensions (ThunarStandardView *standard_view,
       for (lp = actions; lp != NULL; lp = lp->next)
         {
           /* add the action to the action group */
-          gtk_action_group_add_action (standard_view->priv->extension_actions, GTK_ACTION (lp->data));
+          gtk_action_group_add_action (standard_view->priv->custom_actions, GTK_ACTION (lp->data));
 
           /* add the action to the UI manager */
           if (G_LIKELY (selected_items != NULL))
             {
               /* add to the file context menu */
               gtk_ui_manager_add_ui (standard_view->ui_manager,
-                                     standard_view->priv->extension_merge_id,
-                                     "/file-context-menu/placeholder-extensions",
+                                     standard_view->priv->custom_merge_id,
+                                     "/file-context-menu/placeholder-custom-actions",
                                      gtk_action_get_name (GTK_ACTION (lp->data)),
                                      gtk_action_get_name (GTK_ACTION (lp->data)),
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
@@ -1177,8 +1204,8 @@ thunar_standard_view_merge_menu_extensions (ThunarStandardView *standard_view,
             {
               /* add to the folder context menu */
               gtk_ui_manager_add_ui (standard_view->ui_manager,
-                                     standard_view->priv->extension_merge_id,
-                                     "/folder-context-menu/placeholder-extensions",
+                                     standard_view->priv->custom_merge_id,
+                                     "/folder-context-menu/placeholder-custom-actions",
                                      gtk_action_get_name (GTK_ACTION (lp->data)),
                                      gtk_action_get_name (GTK_ACTION (lp->data)),
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
@@ -1850,22 +1877,21 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
                                    guint               button,
                                    guint32             time)
 {
-  GMainLoop *loop;
-  GtkWidget *menu;
-  GList     *selected_items;
-  guint      id;
+  GMainLoop  *loop;
+  GtkWidget  *menu;
+  GList      *selected_items;
+  guint       id;
 
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* check if we need to popup the file or the folder context menu */
-  selected_items = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items (standard_view);
-  if (G_LIKELY (selected_items != NULL))
-    menu = gtk_ui_manager_get_widget (standard_view->ui_manager, "/file-context-menu");
-  else
-    menu = gtk_ui_manager_get_widget (standard_view->ui_manager, "/folder-context-menu");
+  /* determine the selected items */
+  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
 
-  /* merge the menu extensions for the selected items */
-  thunar_standard_view_merge_menu_extensions (standard_view, selected_items);
+  /* merge the custom menu actions for the selected items */
+  thunar_standard_view_merge_custom_actions (standard_view, selected_items);
+
+  /* check if we need to popup the file or the folder context menu */
+  menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
 
   /* release the selected items */
   g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
@@ -2002,13 +2028,13 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* update the "Copy file(s)" action */
   g_object_set (G_OBJECT (standard_view->priv->action_copy),
-                "label", (n_selected_files > 1) ? _("_Copy files") : _("_Copy file"),
+                "label", ngettext ("_Copy file", "_Copy files", n_selected_files),
                 "sensitive", (n_selected_files > 0),
                 NULL);
 
   /* update the "Cut file(s)" action */
   g_object_set (G_OBJECT (standard_view->priv->action_cut),
-                "label", (n_selected_files > 1) ? _("Cu_t files") : _("Cu_t file"),
+                "label", ngettext ("Cu_t file", "Cu_t files", n_selected_files),
                 "sensitive", (n_selected_files > 0) && writable,
                 NULL);
 

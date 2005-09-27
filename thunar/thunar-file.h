@@ -127,6 +127,9 @@ struct _ThunarFileClass
   gboolean             (*is_renameable)       (ThunarFile             *file);
   gboolean             (*is_writable)         (ThunarFile             *file);
 
+  GList               *(*get_actions)         (ThunarFile             *file,
+                                               GtkWidget              *window);
+
   GList               *(*get_emblem_names)    (ThunarFile             *file);
   const gchar         *(*get_icon_name)       (ThunarFile             *file,
                                                ThunarFileIconState     icon_state,
@@ -207,10 +210,13 @@ ThunarVfsVolume   *thunar_file_get_volume       (ThunarFile             *file,
 ThunarVfsGroup    *thunar_file_get_group        (ThunarFile             *file);
 ThunarVfsUser     *thunar_file_get_user         (ThunarFile             *file);
 
-gboolean          thunar_file_is_executable     (ThunarFile             *file);
-gboolean          thunar_file_is_readable       (ThunarFile             *file);
-gboolean          thunar_file_is_renameable     (ThunarFile             *file);
-gboolean          thunar_file_is_writable       (ThunarFile             *file);
+gboolean           thunar_file_is_executable    (ThunarFile             *file);
+gboolean           thunar_file_is_readable      (ThunarFile             *file);
+gboolean           thunar_file_is_renameable    (ThunarFile             *file);
+gboolean           thunar_file_is_writable      (ThunarFile             *file);
+
+GList             *thunar_file_get_actions      (ThunarFile             *file,
+                                                 GtkWidget              *window);
 
 GList             *thunar_file_get_emblem_names (ThunarFile             *file);
 GdkPixbuf         *thunar_file_load_icon        (ThunarFile             *file,

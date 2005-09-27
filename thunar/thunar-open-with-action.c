@@ -367,7 +367,7 @@ thunar_open_with_action_menu_mapped (GtkWidget            *menu,
     }
 
   /* add our custom children */
-  item = gtk_image_menu_item_new_with_label (_("Other..."));
+  item = gtk_image_menu_item_new_with_label (_("Other Application..."));
   g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (gtk_action_activate), open_with_action);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);

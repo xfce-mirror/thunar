@@ -317,7 +317,7 @@ thunar_trash_file_new (ThunarVfsURI *uri,
 
   /* watch the real file */
   g_signal_connect_swapped (G_OBJECT (real_file), "changed", G_CALLBACK (thunar_file_changed), trash_file);
-  g_signal_connect_swapped (G_OBJECT (real_file), "destroy", G_CALLBACK (gtk_object_destroy), trash_file);
+  g_signal_connect_swapped (G_OBJECT (real_file), "destroy", G_CALLBACK (thunar_file_destroy), trash_file);
   thunar_file_watch (real_file);
 
   /* cleanup */

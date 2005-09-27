@@ -471,12 +471,16 @@ thunar_local_file_is_renameable (ThunarFile *file)
 {
   gboolean renameable = FALSE;
 
-  /* we just do a guess here, by checking whether the folder is writable */
-  file = thunar_file_get_parent (file, NULL);
-  if (G_LIKELY (file != NULL))
+  /* we cannot rename root nodes */
+  if (G_LIKELY (!thunar_file_is_root (file)))
     {
-      renameable = thunar_file_is_writable (file);
-      g_object_unref (G_OBJECT (file));
+      /* we just do a guess here, by checking whether the folder is writable */
+      file = thunar_file_get_parent (file, NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          renameable = thunar_file_is_writable (file);
+          g_object_unref (G_OBJECT (file));
+        }
     }
 
   return renameable;

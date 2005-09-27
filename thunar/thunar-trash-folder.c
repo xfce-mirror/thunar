@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-folder.h>
 #include <thunar/thunar-trash-file.h>
 #include <thunar/thunar-trash-folder.h>
@@ -52,12 +53,18 @@ static ThunarVfsMimeInfo *thunar_trash_folder_get_mime_info           (ThunarFil
 static const gchar       *thunar_trash_folder_get_display_name        (ThunarFile             *file);
 static ThunarVfsFileType  thunar_trash_folder_get_kind                (ThunarFile             *file);
 static ThunarVfsFileMode  thunar_trash_folder_get_mode                (ThunarFile             *file);
+static GList             *thunar_trash_folder_get_actions             (ThunarFile             *file,
+                                                                       GtkWidget              *window);
 static const gchar       *thunar_trash_folder_get_icon_name           (ThunarFile             *file,
                                                                        ThunarFileIconState     icon_state,
                                                                        GtkIconTheme           *icon_theme);
 static ThunarFile        *thunar_trash_folder_get_corresponding_file  (ThunarFolder           *folder);
 static GList             *thunar_trash_folder_get_files               (ThunarFolder           *folder);
 static gboolean           thunar_trash_folder_get_loading             (ThunarFolder           *folder);
+static void               thunar_trash_folder_action_empty            (GtkAction              *action,
+                                                                       GtkWindow              *window);
+static void               thunar_trash_folder_file_destroy            (ThunarFile             *file,
+                                                                       ThunarTrashFolder      *trash_folder);
 
 
 
@@ -77,6 +84,8 @@ struct _ThunarTrashFolder
 
 
 
+static GQuark thunar_trash_folder_action_quark;
+
 G_DEFINE_TYPE_WITH_CODE (ThunarTrashFolder,
                          thunar_trash_folder,
                          THUNAR_TYPE_FILE,
@@ -91,6 +100,11 @@ thunar_trash_folder_class_init (ThunarTrashFolderClass *klass)
   ThunarFileClass *thunarfile_class;
   GObjectClass    *gobject_class;
 
+  /* setup the thunar-trash-folder-action quark, which is
+   * used to connect the custom actions to the folder instance.
+   */
+  thunar_trash_folder_action_quark = g_quark_from_static_string ("thunar-trash-folder-action");
+
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_trash_folder_finalize;
   gobject_class->get_property = thunar_trash_folder_get_property;
@@ -103,6 +117,7 @@ thunar_trash_folder_class_init (ThunarTrashFolderClass *klass)
   thunarfile_class->get_display_name = thunar_trash_folder_get_display_name;
   thunarfile_class->get_kind = thunar_trash_folder_get_kind;
   thunarfile_class->get_mode = thunar_trash_folder_get_mode;
+  thunarfile_class->get_actions = thunar_trash_folder_get_actions;
   thunarfile_class->get_icon_name = thunar_trash_folder_get_icon_name;
 
   g_object_class_override_property (gobject_class,
@@ -141,7 +156,10 @@ thunar_trash_folder_finalize (GObject *object)
 
   /* drop the files list */
   for (lp = trash_folder->files; lp != NULL; lp = lp->next)
-    g_object_unref (G_OBJECT (lp->data));
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_trash_folder_file_destroy, trash_folder);
+      g_object_unref (G_OBJECT (lp->data));
+    }
   g_list_free (trash_folder->files);
 
   /* unregister from the trash manager */
@@ -151,7 +169,7 @@ thunar_trash_folder_finalize (GObject *object)
   /* release the trash URI */
   thunar_vfs_uri_unref (trash_folder->uri);
 
-  G_OBJECT_CLASS (thunar_trash_folder_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_trash_folder_parent_class)->finalize) (object);
 }
 
 
@@ -258,6 +276,24 @@ thunar_trash_folder_get_mode (ThunarFile *file)
 
 
 
+static GList*
+thunar_trash_folder_get_actions (ThunarFile *file,
+                                 GtkWidget  *window)
+{
+  ThunarTrashFolder *trash_folder = THUNAR_TRASH_FOLDER (file);
+  GtkAction         *action;
+
+  /* prepare the "Empty Trash Bin" action */
+  action = gtk_action_new ("ThunarTrashFolder::empty-trash-bin", _("_Empty Trash Bin"), _("Delete all items in the Trash"), NULL);
+  g_object_set_qdata_full (G_OBJECT (action), thunar_trash_folder_action_quark, g_object_ref (G_OBJECT (trash_folder)), g_object_unref);
+  exo_binding_new_with_negation (G_OBJECT (trash_folder->manager), "empty", G_OBJECT (action), "sensitive");
+  g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_trash_folder_action_empty), window);
+
+  return g_list_prepend (NULL, action);
+}
+
+
+
 static const gchar*
 thunar_trash_folder_get_icon_name (ThunarFile         *file,
                                    ThunarFileIconState icon_state,
@@ -317,7 +353,13 @@ thunar_trash_folder_get_files (ThunarFolder *folder)
               uri = thunar_vfs_trash_get_uri (trash, fp->data);
               file = thunar_file_get_for_uri (uri, NULL);
               if (file != NULL)
-                trash_folder->files = g_list_prepend (trash_folder->files, file);
+                {
+                  /* watch the lifecycle of the file */
+                  g_signal_connect (G_OBJECT (file), "destroy", G_CALLBACK (thunar_trash_folder_file_destroy), trash_folder);
+
+                  /* add the file to our internal list */
+                  trash_folder->files = g_list_prepend (trash_folder->files, file);
+                }
               thunar_vfs_uri_unref (uri);
             }
           g_object_unref (G_OBJECT (trash));
@@ -334,6 +376,89 @@ static gboolean
 thunar_trash_folder_get_loading (ThunarFolder *folder)
 {
   return FALSE;
+}
+
+
+
+static void
+thunar_trash_folder_action_empty (GtkAction *action,
+                                  GtkWindow *window)
+{
+  ThunarApplication *application;
+  ThunarTrashFolder *trash_folder;
+  GtkWidget         *message;
+  GList             *uri_list;
+  GList             *files;
+  GList             *lp;
+  gint               response;
+  gint               n_files;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (GTK_IS_WINDOW (window));
+
+  /* grab the pointer on the trash folder for the action */
+  trash_folder = g_object_get_qdata (G_OBJECT (action), thunar_trash_folder_action_quark);
+
+  /* determine the files currently stored in the trash can */
+  files = thunar_folder_get_files (THUNAR_FOLDER (trash_folder));
+  n_files = g_list_length (files);
+  if (G_UNLIKELY (n_files == 0))
+    return;
+
+  /* ask the user whether to empty the trash can */
+  message = gtk_message_dialog_new (GTK_WINDOW (window),
+                                    GTK_DIALOG_DESTROY_WITH_PARENT
+                                    | GTK_DIALOG_MODAL,
+                                    GTK_MESSAGE_QUESTION,
+                                    GTK_BUTTONS_YES_NO,
+                                    _("Are you sure that you want to delete all trashed files?"));
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
+                                            ngettext ("This will delete %d file currently located in the trash bin.",
+                                                      "This will delete %d files currently located in the trash bin.",
+                                                      n_files),
+                                            n_files);
+  response = gtk_dialog_run (GTK_DIALOG (message));
+  gtk_widget_destroy (message);
+  
+  /* check if we should delete all trashed files */
+  if (G_LIKELY (response == GTK_RESPONSE_YES))
+    {
+      /* determine the URIs for the trashed files */
+      for (lp = files, uri_list = NULL; lp != NULL; lp = lp->next)
+        uri_list = g_list_prepend (uri_list, thunar_file_get_uri (lp->data));
+
+      /* perform the unlink operation */
+      application = thunar_application_get ();
+      thunar_application_delete_uris (application, window, uri_list);
+      g_object_unref (G_OBJECT (application));
+
+      /* cleanup */
+      g_list_free (uri_list);
+    }
+}
+
+
+
+static void
+thunar_trash_folder_file_destroy (ThunarFile        *file,
+                                  ThunarTrashFolder *trash_folder)
+{
+  GList files;
+
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_IS_TRASH_FOLDER (trash_folder));
+  g_return_if_fail (g_list_find (trash_folder->files, file) != NULL);
+
+  /* disconnect from the file */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (file), thunar_trash_folder_file_destroy, trash_folder);
+  trash_folder->files = g_list_remove (trash_folder->files, file);
+
+  /* tell everybody that the file is gone */
+  files.data = file; files.next = files.prev = NULL;
+  thunar_folder_files_removed (THUNAR_FOLDER (trash_folder), &files);
+
+  /* drop our reference on the fole */
+  g_object_unref (G_OBJECT (file));
 }
 
 

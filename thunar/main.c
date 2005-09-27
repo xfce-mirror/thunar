@@ -39,7 +39,7 @@ main (int argc, char **argv)
   ThunarApplication *application;
   ThunarVfsURI      *uri;
   const gchar       *path;
-  ThunarFile        *file;
+  ThunarFile        *file = NULL;
   GError            *error = NULL;
 
   /* setup translation domain */

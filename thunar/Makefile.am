@@ -158,7 +158,7 @@ DISTCLEANFILES =							\
 	thunar-fallback-icon.c						\
 	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
-	thunar-thumbnail-frame.h					\
+	thunar-thumbnail-frame.c					\
 	thunar-window-ui.h
 
 BUILT_SOURCES =								\
