@@ -548,9 +548,9 @@ thunar_launcher_update (ThunarLauncher *launcher)
     {
       /* we turn the "Open" label into "Execute" if we have only one executable file */
       if (G_UNLIKELY (n_executables == 1 && n_items == 1))
-        g_object_set (G_OBJECT (launcher->action_open), "label", _("Execute"), NULL);
+        g_object_set (G_OBJECT (launcher->action_open), "label", _("_Execute"), NULL);
       else
-        g_object_set (G_OBJECT (launcher->action_open), "label", _("Open"), NULL);
+        g_object_set (G_OBJECT (launcher->action_open), "label", _("_Open"), NULL);
 
 #if GTK_CHECK_VERSION(2,6,0)
       gtk_action_set_sensitive (launcher->action_open, (n_items > 0));
