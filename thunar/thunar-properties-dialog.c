@@ -540,27 +540,30 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   if (G_LIKELY (icon != NULL))
     g_object_unref (G_OBJECT (icon));
 
-  /* update the name */
-  name = thunar_file_get_display_name (dialog->file);
+  /* update the name (if it differs) */
   gtk_entry_set_editable (GTK_ENTRY (dialog->name_entry), thunar_file_is_renameable (dialog->file));
-  gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
-  str = g_strdup_printf (_("%s Info"), name);
-  gtk_window_set_title (GTK_WINDOW (dialog), str);
-  g_free (str);
-
-  /* grab the input focus to the name entry */
-  gtk_widget_grab_focus (dialog->name_entry);
-
-  /* select the pre-dot part of the name */
-  str = strrchr (name, '.');
-  if (G_LIKELY (str != NULL))
+  name = thunar_file_get_display_name (dialog->file);
+  if (G_LIKELY (strcmp (name, gtk_entry_get_text (GTK_ENTRY (dialog->name_entry))) != 0))
     {
-      /* calculate the offset */
-      offset = g_utf8_pointer_to_offset (name, str);
+      gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
+      str = g_strdup_printf (_("%s Info"), name);
+      gtk_window_set_title (GTK_WINDOW (dialog), str);
+      g_free (str);
 
-      /* select the region */
-      if (G_LIKELY (offset > 0))
-        gtk_entry_select_region (GTK_ENTRY (dialog->name_entry), 0, offset);
+      /* grab the input focus to the name entry */
+      gtk_widget_grab_focus (dialog->name_entry);
+
+      /* select the pre-dot part of the name */
+      str = strrchr (name, '.');
+      if (G_LIKELY (str != NULL))
+        {
+          /* calculate the offset */
+          offset = g_utf8_pointer_to_offset (name, str);
+
+          /* select the region */
+          if (G_LIKELY (offset > 0))
+            gtk_entry_select_region (GTK_ENTRY (dialog->name_entry), 0, offset);
+        }
     }
 
   /* update the mime type */
