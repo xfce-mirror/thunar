@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.2svn-r\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-28 00:21+0200\n"
-"PO-Revision-Date: 2005-09-27 23:50+0200\n"
+"POT-Creation-Date: 2005-10-06 20:48+0900\n"
+"PO-Revision-Date: 2005-10-06 20:49+0900\n"
 "Last-Translator: Pablo Hernández-M. Saiz <homeless3d@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -53,7 +53,8 @@ msgstr ""
 msgid ""
 "Unable to query information about\n"
 "the file %s."
-msgstr "No se puede obtener información sobre\n"
+msgstr ""
+"No se puede obtener información sobre\n"
 "el archivo %s."
 
 #. ask the user what to do
@@ -79,7 +80,7 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:605
 #, c-format
 msgid "Unable to remove %s."
-msgstr "Imposible eliminar $s."
+msgstr "Imposible eliminar %s."
 
 #. ask the user whether to skip the item (only for cancellation)
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:655
@@ -415,6 +416,7 @@ msgstr ""
 
 #. the "Open" action
 #: ../thunar/thunar-launcher.c:188 ../thunar/thunar-launcher.c:535
+#: ../thunar/thunar-launcher.c:553
 msgid "_Open"
 msgstr "_Abrir"
 
@@ -472,12 +474,9 @@ msgstr[0] "Abrir en %d ventana nueva"
 msgstr[1] "Abrir en %d ventanas nuevas"
 
 #: ../thunar/thunar-launcher.c:551
-msgid "Execute"
+#, fuzzy
+msgid "_Execute"
 msgstr "Ejecutar"
-
-#: ../thunar/thunar-launcher.c:553
-msgid "Open"
-msgstr "Abrir"
 
 #: ../thunar/thunar-list-model.c:238
 msgid "Folder"
@@ -549,8 +548,8 @@ msgstr[1] "%d elementos seleccionados (%s)"
 #: ../thunar/thunar-local-file.c:347
 msgid "Filesystem"
 msgstr "Raíz"
-#msgstr "Sistema de archivos"
 
+# msgstr "Sistema de archivos"
 #: ../thunar/thunar-local-file.c:366
 msgid "Home"
 msgstr "Casa"
@@ -670,17 +669,17 @@ msgstr "Volumen:"
 msgid "Size:"
 msgstr "Tamaño:"
 
-#: ../thunar/thunar-properties-dialog.c:547
+#: ../thunar/thunar-properties-dialog.c:549
 #, c-format
 msgid "%s Info"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:623
+#: ../thunar/thunar-properties-dialog.c:626
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u Bytes)"
 
-#: ../thunar/thunar-properties-dialog.c:681
+#: ../thunar/thunar-properties-dialog.c:684
 #: ../thunar/thunar-standard-view.c:1787
 #, c-format
 msgid "Failed to rename %s."
@@ -979,7 +978,8 @@ msgstr "Ver como _Lista"
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
-msgstr "Thunar es un gestor de archivos rápido\n"
+msgstr ""
+"Thunar es un gestor de archivos rápido\n"
 "y fácil de usar para el escritorio Xfce"
 
 #: ../thunar/thunar-window.c:601
@@ -1013,3 +1013,6 @@ msgstr "Gestor de archivos"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Gestor de archivos Thunar"
+
+#~ msgid "Open"
+#~ msgstr "Abrir"
