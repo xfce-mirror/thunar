@@ -2,7 +2,6 @@
 #
 # Japanese translations for Thunar package.
 # Copyright (C) 2004-2005 Benedikt Meurer.
-# Copyright (C) 2004-2005 The Thunar development team.
 # This file is distributed under the same license as the Thunar package.
 # Daichi Kawahata <daichi@xfce.org>, 2005.
 #
@@ -10,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.2svn-r\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-27 23:46+0200\n"
-"PO-Revision-Date: 2005-09-24 15:58+0900\n"
+"POT-Creation-Date: 2005-10-06 20:48+0900\n"
+"PO-Revision-Date: 2005-10-06 20:50+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -195,9 +194,8 @@ msgstr "ファイルを移動しています..."
 
 #. let the application take care of the dialog
 #: ../thunar/thunar-application.c:432
-#, fuzzy
 msgid "Deleting files..."
-msgstr "ファイルを集めています..."
+msgstr "ファイルを削除しています..."
 
 #: ../thunar/thunar-clipboard-manager.c:148
 msgid "Can paste"
@@ -322,6 +320,7 @@ msgstr "アイコンテーマ"
 msgid "The icon theme used by the icon factory"
 msgstr "アイコンファクトリに使用されるアイコンのテーマです"
 
+# FIXME: what's this? 'Dropped file' or 'File dropped'?
 #: ../thunar/thunar-icon-renderer.c:115
 msgid "Drop file"
 msgstr "ファイルをドロップ"
@@ -341,14 +340,15 @@ msgstr "ファイル"
 msgid "The file whose icon to render"
 msgstr "アイコンを表示するファイルです"
 
+# FIXME: what's this?
 #: ../thunar/thunar-icon-renderer.c:144 ../thunar/thunar-icon-renderer.c:145
 #: ../thunar/thunar-text-renderer.c:172 ../thunar/thunar-text-renderer.c:173
 msgid "Follow state"
-msgstr ""
+msgstr "状態に従う"
 
 #: ../thunar/thunar-icon-view.c:86
 msgid "Arran_ge Items"
-msgstr "アイテムを整理(_G)"
+msgstr "アイテムを整頓(_G)"
 
 #: ../thunar/thunar-icon-view.c:91
 msgid "Sort By _Name"
@@ -420,6 +420,7 @@ msgstr "ウィジット"
 
 #. the "Open" action
 #: ../thunar/thunar-launcher.c:188 ../thunar/thunar-launcher.c:535
+#: ../thunar/thunar-launcher.c:553
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -474,12 +475,8 @@ msgid_plural "Open in %d New Windows"
 msgstr[0] "%d の新しいウィンドウで開きます。"
 
 #: ../thunar/thunar-launcher.c:551
-msgid "Execute"
-msgstr "実行"
-
-#: ../thunar/thunar-launcher.c:553
-msgid "Open"
-msgstr "開く"
+msgid "_Execute"
+msgstr "実行(_E)"
 
 #: ../thunar/thunar-list-model.c:238
 msgid "Folder"
@@ -571,7 +568,7 @@ msgstr "場所(_L):"
 
 #: ../thunar/thunar-navigator.c:137 ../thunar/thunar-window.c:156
 msgid "Current directory"
-msgstr "現フォルダ"
+msgstr "現在のフォルダ"
 
 #: ../thunar/thunar-navigator.c:138
 msgid "The directory currently displayed by the navigator"
@@ -584,8 +581,8 @@ msgstr "%s (標準)"
 
 #. add our custom children
 #: ../thunar/thunar-open-with-action.c:370
-msgid "Other..."
-msgstr "その他..."
+msgid "Other Application..."
+msgstr "他のアプリケーション..."
 
 #: ../thunar/thunar-path-entry.c:166
 msgid "Current file"
@@ -668,17 +665,17 @@ msgstr "容量:"
 msgid "Size:"
 msgstr "サイズ:"
 
-#: ../thunar/thunar-properties-dialog.c:547
+#: ../thunar/thunar-properties-dialog.c:549
 #, c-format
 msgid "%s Info"
 msgstr "%s の情報"
 
-#: ../thunar/thunar-properties-dialog.c:623
+#: ../thunar/thunar-properties-dialog.c:626
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u バイト)"
 
-#: ../thunar/thunar-properties-dialog.c:681
+#: ../thunar/thunar-properties-dialog.c:684
 #: ../thunar/thunar-standard-view.c:1787
 #, c-format
 msgid "Failed to rename %s."
@@ -769,16 +766,14 @@ msgid "Pattern:"
 msgstr "パターン:"
 
 #: ../thunar/thunar-standard-view.c:2031
-#, fuzzy
 msgid "_Copy file"
 msgid_plural "_Copy files"
-msgstr[0] "コピー(_C)"
+msgstr[0] "ファイルをコピー(_C)"
 
 #: ../thunar/thunar-standard-view.c:2037
-#, fuzzy
 msgid "Cu_t file"
 msgid_plural "Cu_t files"
-msgstr[0] "切り取り(_T)"
+msgstr[0] "ファイルを切り取り(_T)"
 
 #: ../thunar/thunar-statusbar.c:190
 msgid "The file whose icon to display"
@@ -827,24 +822,21 @@ msgstr "ゴミ箱"
 #. prepare the "Empty Trash Bin" action
 #: ../thunar/thunar-trash-folder.c:287
 msgid "_Empty Trash Bin"
-msgstr ""
+msgstr "ゴミ箱を空にする(_E)"
 
 #: ../thunar/thunar-trash-folder.c:287
-#, fuzzy
 msgid "Delete all items in the Trash"
-msgstr "このウィンドウの全てのファイルを選択します"
+msgstr "このゴミ箱の全てのアイテムを削除します"
 
 #: ../thunar/thunar-trash-folder.c:414
-#, fuzzy
 msgid "Are you sure that you want to delete all trashed files?"
-msgstr "全てのフォルダを開いてもよろしいですか？"
+msgstr "ゴミ箱にある全てのファイルを削除してもよろしいですか？"
 
 #: ../thunar/thunar-trash-folder.c:416
 #, c-format
 msgid "This will delete %d file currently located in the trash bin."
 msgid_plural "This will delete %d files currently located in the trash bin."
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "現在ゴミ箱にある %d のファイルを削除します。"
 
 #: ../thunar/thunar-view.c:99
 msgid "Text to be displayed in the statusbar associated with this view"
