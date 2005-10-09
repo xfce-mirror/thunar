@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.2svn-r\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-10-06 20:48+0900\n"
-"PO-Revision-Date: 2005-10-06 20:50+0900\n"
+"POT-Creation-Date: 2005-10-10 01:16+0900\n"
+"PO-Revision-Date: 2005-10-06 21:58+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -33,6 +33,29 @@ msgstr "無効なファイル名です"
 #: ../thunar-vfs/thunar-vfs-info.c:501
 msgid "Invalid desktop file"
 msgstr "無効なデスクトップファイルです"
+
+#: ../thunar-vfs/thunar-vfs-mime-application.c:472
+#, c-format
+msgid "The application \"%s\" supports only local documents."
+msgstr "アプリケーション \"%s\" はローカル文書のみサポートします。"
+
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1551
+#, c-format
+msgid "Failed to load application from file %s"
+msgstr "ファイル %s からアプリケーションを読み込むのに失敗しました"
+
+#: ../thunar-vfs/thunar-vfs-mime-info.c:260
+#, c-format
+msgid "%s document"
+msgstr "%s 文書"
+
+#: ../thunar-vfs/thunar-vfs-thumb.c:122 ../thunar/thunar-details-view.c:150
+msgid "Size"
+msgstr "サイズ"
+
+#: ../thunar-vfs/thunar-vfs-thumb.c:123
+msgid "The desired thumbnail size"
+msgstr "お望みのサムネイルサイズです"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:248
 msgid "Collecting files..."
@@ -197,6 +220,121 @@ msgstr "ファイルを移動しています..."
 msgid "Deleting files..."
 msgstr "ファイルを削除しています..."
 
+#: ../thunar/thunar-chooser-dialog.c:135 ../thunar/thunar-icon-renderer.c:128
+#: ../thunar/thunar-open-with-action.c:114
+#: ../thunar/thunar-open-with-action.c:115
+#: ../thunar/thunar-properties-dialog.c:140 ../thunar/thunar-statusbar.c:189
+msgid "File"
+msgstr "ファイル"
+
+#: ../thunar/thunar-chooser-dialog.c:136
+msgid "The file for which an application should be chosen"
+msgstr "アプリケーションによって開かれるファイルです"
+
+#: ../thunar/thunar-chooser-dialog.c:148
+msgid "Open"
+msgstr "開く"
+
+#: ../thunar/thunar-chooser-dialog.c:149
+msgid "Whether the chooser should open the specified file"
+msgstr "指定したファイルをチョーサーで開くかどうかを表します"
+
+#. the "Open with" action
+#: ../thunar/thunar-chooser-dialog.c:174 ../thunar/thunar-launcher.c:196
+msgid "Open With"
+msgstr "アプリで開く"
+
+#. create the "Custom command" expand
+#: ../thunar/thunar-chooser-dialog.c:236
+msgid "Use a _custom command:"
+msgstr "指定コマンドを使用(_C):"
+
+#. create the "Custom command" button
+#: ../thunar/thunar-chooser-dialog.c:254
+msgid "_Browse"
+msgstr "参照(_B)"
+
+#: ../thunar/thunar-chooser-dialog.c:432
+#, c-format
+msgid "Failed to add new application %s."
+msgstr "新しいアプリケーション %s を追加するのに失敗しました。"
+
+#: ../thunar/thunar-chooser-dialog.c:459
+#, c-format
+msgid "Failed to set default application for \"%s\"."
+msgstr "\"%s\" の標準アプリケーションをセットするのに失敗しました。"
+
+#: ../thunar/thunar-chooser-dialog.c:477
+#, c-format
+msgid "Failed execute %s."
+msgstr "%s の実行に失敗しました。"
+
+#. update the header label
+#: ../thunar/thunar-chooser-dialog.c:595
+#, c-format
+msgid "Open <i>%s</i> and other files of type \"%s\" with:"
+msgstr "<i>%s</i> とタイプが \"%s\" の他のファイルを以下のアプリで開きます:"
+
+#: ../thunar/thunar-chooser-dialog.c:618
+msgid "Select an Application"
+msgstr "アプリケーションを選択して下さい"
+
+#: ../thunar/thunar-chooser-dialog.c:628
+msgid "All Files"
+msgstr "全てのファイル"
+
+#: ../thunar/thunar-chooser-dialog.c:633
+msgid "Executable Files"
+msgstr "実行可能ファイル"
+
+#: ../thunar/thunar-chooser-dialog.c:648
+msgid "Perl Scripts"
+msgstr "Perl スクリプト"
+
+#: ../thunar/thunar-chooser-dialog.c:654
+msgid "Python Scripts"
+msgstr "Python スクリプト"
+
+#: ../thunar/thunar-chooser-dialog.c:660
+msgid "Ruby Scripts"
+msgstr "Ruby スクリプト"
+
+#: ../thunar/thunar-chooser-dialog.c:666
+msgid "Shell Scripts"
+msgstr "シェルスクリプト"
+
+#: ../thunar/thunar-chooser-model.c:116 ../thunar/thunar-folder.c:134
+#: ../thunar/thunar-standard-view.c:333 ../thunar/thunar-statusbar.c:203
+#: ../thunar/thunar-statusbar.c:745 ../thunar/thunar-view.c:82
+msgid "Loading"
+msgstr "読み込み"
+
+#: ../thunar/thunar-chooser-model.c:117
+msgid "Whether the model is currently being loaded"
+msgstr "モデルが現在読み込まれているかどうかを表します"
+
+#: ../thunar/thunar-chooser-model.c:129
+msgid "Mime info"
+msgstr "MIME 情報"
+
+#: ../thunar/thunar-chooser-model.c:130
+msgid "The mime info for the model"
+msgstr "モデルの MIME 情報です"
+
+#: ../thunar/thunar-chooser-model.c:306
+msgid "None available"
+msgstr "利用できません"
+
+#. append the "Recommended Applications:" category
+#: ../thunar/thunar-chooser-model.c:350
+msgid "Recommended Applications:"
+msgstr "推奨アプリケーション:"
+
+#. append the "Other Applications:" category
+#: ../thunar/thunar-chooser-model.c:353
+msgid "Other Applications:"
+msgstr "他のアプリケーション:"
+
 #: ../thunar/thunar-clipboard-manager.c:148
 msgid "Can paste"
 msgstr "貼り付け可能"
@@ -250,10 +388,6 @@ msgstr "位置を含む表示欄です"
 msgid "Name"
 msgstr "名前"
 
-#: ../thunar/thunar-details-view.c:150
-msgid "Size"
-msgstr "サイズ"
-
 #: ../thunar/thunar-details-view.c:165
 msgid "Permissions"
 msgstr "許可属性"
@@ -273,6 +407,35 @@ msgstr "詳細表示"
 #: ../thunar/thunar-details-view.c:222
 msgid "Detailed directory listing"
 msgstr "詳細なフォルダ内容をリスト表示します"
+
+#: ../thunar/thunar-dnd.c:61
+msgid "_Copy here"
+msgstr "ここにコピー(_C)"
+
+#: ../thunar/thunar-dnd.c:61
+msgid "_Move here"
+msgstr "ここに移動(_M)"
+
+#: ../thunar/thunar-dnd.c:61
+msgid "_Link here"
+msgstr "ここにリンク(_L)"
+
+#: ../thunar/thunar-dnd.c:171
+msgid "Creating links is not yet supported. This will be fixed soon!"
+msgstr "リンクの作成はまだサポートされていません。これは間もなく直します!"
+
+#: ../thunar/thunar-dnd.c:190 ../thunar/thunar-launcher.c:320
+#, c-format
+msgid "Unable to execute file \"%s\"."
+msgstr "ファイル \"%s\" を実行できません。"
+
+#: ../thunar/thunar-extension-manager.c:158
+msgid "Resident"
+msgstr ""
+
+#: ../thunar/thunar-extension-manager.c:159
+msgid "Ensures that an extension will never be unloaded."
+msgstr ""
 
 #. append the remove menu item
 #: ../thunar/thunar-favourites-view.c:291
@@ -302,12 +465,6 @@ msgstr "'%s' の親 URI を確定するのに失敗しました"
 msgid "Unable to rename file"
 msgstr "ファイル名を変更できません"
 
-#: ../thunar/thunar-folder.c:134 ../thunar/thunar-standard-view.c:333
-#: ../thunar/thunar-statusbar.c:203 ../thunar/thunar-statusbar.c:745
-#: ../thunar/thunar-view.c:82
-msgid "Loading"
-msgstr "読み込み"
-
 #: ../thunar/thunar-folder.c:135
 msgid "Whether the contents of the folder are currently being loaded"
 msgstr "フォルダの内容が現在読み込まれているかどうかを表します"
@@ -328,13 +485,6 @@ msgstr "ファイルをドロップ"
 #: ../thunar/thunar-icon-renderer.c:116
 msgid "The file which should be rendered in as drop acceptor"
 msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:128
-#: ../thunar/thunar-open-with-action.c:114
-#: ../thunar/thunar-open-with-action.c:115
-#: ../thunar/thunar-properties-dialog.c:140 ../thunar/thunar-statusbar.c:189
-msgid "File"
-msgstr "ファイル"
 
 #: ../thunar/thunar-icon-renderer.c:129
 msgid "The file whose icon to render"
@@ -436,16 +586,6 @@ msgstr "新しいウィンドウで開く"
 #: ../thunar/thunar-launcher.c:192
 msgid "Open the selected directories in new Thunar windows"
 msgstr "選択したフォルダを新しい Thunar ウィンドウで開きます"
-
-#. the "Open with" action
-#: ../thunar/thunar-launcher.c:196
-msgid "Open With"
-msgstr "アプリで開く"
-
-#: ../thunar/thunar-launcher.c:320
-#, c-format
-msgid "Unable to execute file \"%s\"."
-msgstr "ファイル \"%s\" を実行できません。"
 
 #: ../thunar/thunar-launcher.c:356
 #, c-format
@@ -586,7 +726,7 @@ msgstr "他のアプリケーション..."
 
 #: ../thunar/thunar-path-entry.c:166
 msgid "Current file"
-msgstr "現ファイル"
+msgstr "現在のファイル"
 
 #: ../thunar/thunar-path-entry.c:167
 msgid "The currently displayed file"
@@ -768,12 +908,12 @@ msgstr "パターン:"
 #: ../thunar/thunar-standard-view.c:2031
 msgid "_Copy file"
 msgid_plural "_Copy files"
-msgstr[0] "ファイルをコピー(_C)"
+msgstr[0] "コピー(_C)"
 
 #: ../thunar/thunar-standard-view.c:2037
 msgid "Cu_t file"
 msgid_plural "Cu_t files"
-msgstr[0] "ファイルを切り取り(_T)"
+msgstr[0] "切り取り(_T)"
 
 #: ../thunar/thunar-statusbar.c:190
 msgid "The file whose icon to display"
