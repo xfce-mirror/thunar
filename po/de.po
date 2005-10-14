@@ -1,14 +1,14 @@
 # German translations for Thunar.
-# Copyright (C) 2005 Benedikt Meurer
+# Copyright (C) 2004-2005 Benedikt Meurer.
 # This file is distributed under the same license as the Thunar package.
 # Benedikt Meurer <benny@xfce.org>, 2005
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar 0.0.2\n"
+"Project-Id-Version: Thunar 0.1.2svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-09-28 00:21+0200\n"
-"PO-Revision-Date: 2005-09-27 23:50+0200\n"
+"POT-Creation-Date: 2005-10-14 23:51+0900\n"
+"PO-Revision-Date: 2005-10-06 22:03+0900\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -29,6 +29,29 @@ msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-info.c:501
 msgid "Invalid desktop file"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-mime-application.c:472
+#, c-format
+msgid "The application \"%s\" supports only local documents."
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1551
+#, c-format
+msgid "Failed to load application from file %s"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-mime-info.c:260
+#, c-format
+msgid "%s document"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-thumb.c:122 ../thunar/thunar-details-view.c:150
+msgid "Size"
+msgstr "Größe"
+
+#: ../thunar-vfs/thunar-vfs-thumb.c:123
+msgid "The desired thumbnail size"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:248
@@ -183,6 +206,125 @@ msgstr ""
 msgid "Deleting files..."
 msgstr ""
 
+#: ../thunar/thunar-chooser-dialog.c:135 ../thunar/thunar-icon-renderer.c:128
+#: ../thunar/thunar-open-with-action.c:114
+#: ../thunar/thunar-open-with-action.c:115
+#: ../thunar/thunar-properties-dialog.c:140 ../thunar/thunar-statusbar.c:189
+msgid "File"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:136
+msgid "The file for which an application should be chosen"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:148
+#, fuzzy
+msgid "Open"
+msgstr "Ö_ffnen"
+
+#: ../thunar/thunar-chooser-dialog.c:149
+msgid "Whether the chooser should open the specified file"
+msgstr ""
+
+#. the "Open with" action
+#: ../thunar/thunar-chooser-dialog.c:174 ../thunar/thunar-launcher.c:196
+msgid "Open With"
+msgstr ""
+
+#. create the "Custom command" expand
+#: ../thunar/thunar-chooser-dialog.c:236
+msgid "Use a _custom command:"
+msgstr ""
+
+#. create the "Custom command" button
+#: ../thunar/thunar-chooser-dialog.c:254
+#, fuzzy
+msgid "_Browse"
+msgstr "_Schließen"
+
+#: ../thunar/thunar-chooser-dialog.c:432
+#, c-format
+msgid "Failed to add new application %s."
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:459
+#, c-format
+msgid "Failed to set default application for \"%s\"."
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:477
+#, c-format
+msgid "Failed execute %s."
+msgstr ""
+
+#. update the header label
+#: ../thunar/thunar-chooser-dialog.c:595
+#, c-format
+msgid "Open <i>%s</i> and other files of type \"%s\" with:"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:618
+#, fuzzy
+msgid "Select an Application"
+msgstr "Andere Anwendung..."
+
+#: ../thunar/thunar-chooser-dialog.c:628
+msgid "All Files"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:633
+msgid "Executable Files"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:648
+msgid "Perl Scripts"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:654
+msgid "Python Scripts"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:660
+msgid "Ruby Scripts"
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:666
+msgid "Shell Scripts"
+msgstr ""
+
+#: ../thunar/thunar-chooser-model.c:116 ../thunar/thunar-folder.c:134
+#: ../thunar/thunar-standard-view.c:333 ../thunar/thunar-statusbar.c:203
+#: ../thunar/thunar-statusbar.c:745 ../thunar/thunar-view.c:82
+msgid "Loading"
+msgstr ""
+
+#: ../thunar/thunar-chooser-model.c:117
+msgid "Whether the model is currently being loaded"
+msgstr ""
+
+#: ../thunar/thunar-chooser-model.c:129
+msgid "Mime info"
+msgstr ""
+
+#: ../thunar/thunar-chooser-model.c:130
+msgid "The mime info for the model"
+msgstr ""
+
+#: ../thunar/thunar-chooser-model.c:306
+msgid "None available"
+msgstr ""
+
+#. append the "Recommended Applications:" category
+#: ../thunar/thunar-chooser-model.c:350
+msgid "Recommended Applications:"
+msgstr ""
+
+#. append the "Other Applications:" category
+#: ../thunar/thunar-chooser-model.c:353
+#, fuzzy
+msgid "Other Applications:"
+msgstr "Andere Anwendung..."
+
 #: ../thunar/thunar-clipboard-manager.c:148
 msgid "Can paste"
 msgstr ""
@@ -236,10 +378,6 @@ msgstr ""
 msgid "Name"
 msgstr "Name"
 
-#: ../thunar/thunar-details-view.c:150
-msgid "Size"
-msgstr "Größe"
-
 #: ../thunar/thunar-details-view.c:165
 msgid "Permissions"
 msgstr "Berechtigungen"
@@ -259,6 +397,35 @@ msgstr "Detailansicht"
 #: ../thunar/thunar-details-view.c:222
 msgid "Detailed directory listing"
 msgstr "Detailierte Verzeichnisansicht"
+
+#: ../thunar/thunar-dnd.c:61
+msgid "_Copy here"
+msgstr ""
+
+#: ../thunar/thunar-dnd.c:61
+msgid "_Move here"
+msgstr ""
+
+#: ../thunar/thunar-dnd.c:61
+msgid "_Link here"
+msgstr ""
+
+#: ../thunar/thunar-dnd.c:171
+msgid "Creating links is not yet supported. This will be fixed soon!"
+msgstr ""
+
+#: ../thunar/thunar-dnd.c:190 ../thunar/thunar-launcher.c:320
+#, c-format
+msgid "Unable to execute file \"%s\"."
+msgstr ""
+
+#: ../thunar/thunar-extension-manager.c:158
+msgid "Resident"
+msgstr ""
+
+#: ../thunar/thunar-extension-manager.c:159
+msgid "Ensures that an extension will never be unloaded."
+msgstr ""
 
 #. append the remove menu item
 #: ../thunar/thunar-favourites-view.c:291
@@ -288,12 +455,6 @@ msgstr ""
 msgid "Unable to rename file"
 msgstr ""
 
-#: ../thunar/thunar-folder.c:134 ../thunar/thunar-standard-view.c:333
-#: ../thunar/thunar-statusbar.c:203 ../thunar/thunar-statusbar.c:745
-#: ../thunar/thunar-view.c:82
-msgid "Loading"
-msgstr ""
-
 #: ../thunar/thunar-folder.c:135
 msgid "Whether the contents of the folder are currently being loaded"
 msgstr ""
@@ -312,13 +473,6 @@ msgstr ""
 
 #: ../thunar/thunar-icon-renderer.c:116
 msgid "The file which should be rendered in as drop acceptor"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:128
-#: ../thunar/thunar-open-with-action.c:114
-#: ../thunar/thunar-open-with-action.c:115
-#: ../thunar/thunar-properties-dialog.c:140 ../thunar/thunar-statusbar.c:189
-msgid "File"
 msgstr ""
 
 #: ../thunar/thunar-icon-renderer.c:129
@@ -404,6 +558,7 @@ msgstr ""
 
 #. the "Open" action
 #: ../thunar/thunar-launcher.c:188 ../thunar/thunar-launcher.c:535
+#: ../thunar/thunar-launcher.c:553
 msgid "_Open"
 msgstr "Ö_ffnen"
 
@@ -418,16 +573,6 @@ msgstr ""
 
 #: ../thunar/thunar-launcher.c:192
 msgid "Open the selected directories in new Thunar windows"
-msgstr ""
-
-#. the "Open with" action
-#: ../thunar/thunar-launcher.c:196
-msgid "Open With"
-msgstr ""
-
-#: ../thunar/thunar-launcher.c:320
-#, c-format
-msgid "Unable to execute file \"%s\"."
 msgstr ""
 
 #: ../thunar/thunar-launcher.c:356
@@ -461,11 +606,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: ../thunar/thunar-launcher.c:551
-msgid "Execute"
-msgstr ""
-
-#: ../thunar/thunar-launcher.c:553
-msgid "Open"
+msgid "_Execute"
 msgstr ""
 
 #: ../thunar/thunar-list-model.c:238
@@ -658,17 +799,17 @@ msgstr ""
 msgid "Size:"
 msgstr "Größe:"
 
-#: ../thunar/thunar-properties-dialog.c:547
+#: ../thunar/thunar-properties-dialog.c:549
 #, c-format
 msgid "%s Info"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:623
+#: ../thunar/thunar-properties-dialog.c:626
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u Byte)"
 
-#: ../thunar/thunar-properties-dialog.c:681
+#: ../thunar/thunar-properties-dialog.c:684
 #: ../thunar/thunar-standard-view.c:1787
 #, c-format
 msgid "Failed to rename %s."
