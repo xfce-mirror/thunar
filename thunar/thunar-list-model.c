@@ -32,6 +32,7 @@
 
 
 
+/* Property identifiers */
 enum
 {
   PROP_0,
@@ -40,6 +41,15 @@ enum
   PROP_NUM_FILES,
   PROP_SHOW_HIDDEN,
 };
+
+/* Signal identifiers */
+enum
+{
+  ERROR,
+  LAST_SIGNAL,
+};
+
+
 
 typedef struct _Row       Row;
 typedef struct _SortTuple SortTuple;
@@ -129,32 +139,39 @@ static void               thunar_list_model_file_changed          (ThunarFile   
                                                                    ThunarListModel        *store);
 static void               thunar_list_model_folder_destroy        (ThunarFolder           *folder,
                                                                    ThunarListModel        *store);
+static void               thunar_list_model_folder_error          (ThunarFolder           *folder,
+                                                                   const GError           *error,
+                                                                   ThunarListModel        *store);
 static void               thunar_list_model_files_added           (ThunarFolder           *folder,
                                                                    GList                  *files,
                                                                    ThunarListModel        *store);
 static void               thunar_list_model_files_removed         (ThunarFolder           *folder,
                                                                    GList                  *files,
                                                                    ThunarListModel        *store);
-static gint               sort_by_date_accessed                   (ThunarFile             *a,
-                                                                   ThunarFile             *b);
-static gint               sort_by_date_modified                   (ThunarFile             *a,
-                                                                   ThunarFile             *b);
-static gint               sort_by_mime_type                       (ThunarFile             *a,
-                                                                   ThunarFile             *b);
-static gint               sort_by_name                            (ThunarFile             *a,
-                                                                   ThunarFile             *b);
-static gint               sort_by_permissions                     (ThunarFile             *a,
-                                                                   ThunarFile             *b);
-static gint               sort_by_size                            (ThunarFile             *a,
-                                                                   ThunarFile             *b);
-static gint               sort_by_type                            (ThunarFile             *a,
-                                                                   ThunarFile             *b);
+static gint               sort_by_date_accessed                   (const ThunarFile       *a,
+                                                                   const ThunarFile       *b);
+static gint               sort_by_date_modified                   (const ThunarFile       *a,
+                                                                   const ThunarFile       *b);
+static gint               sort_by_mime_type                       (const ThunarFile       *a,
+                                                                   const ThunarFile       *b);
+static gint               sort_by_name                            (const ThunarFile       *a,
+                                                                   const ThunarFile       *b);
+static gint               sort_by_permissions                     (const ThunarFile       *a,
+                                                                   const ThunarFile       *b);
+static gint               sort_by_size                            (const ThunarFile       *a,
+                                                                   const ThunarFile       *b);
+static gint               sort_by_type                            (const ThunarFile       *a,
+                                                                   const ThunarFile       *b);
 
 
 
 struct _ThunarListModelClass
 {
   GObjectClass __parent__;
+
+  /* signals */
+  void (*error) (ThunarListModel *store,
+                 const GError    *error);
 };
 
 struct _ThunarListModel
@@ -185,14 +202,13 @@ struct _ThunarListModel
 
   gboolean       sort_folders_first;
   gint           sort_sign;   /* 1 = ascending, -1 descending */
-  gint         (*sort_func) (ThunarFile *a,
-                             ThunarFile *b);
+  gint         (*sort_func) (const ThunarFile *a,
+                             const ThunarFile *b);
 };
 
 struct _Row
 {
   ThunarFile *file;
-  guint       changed_id;
   Row        *next;
 };
 
@@ -201,6 +217,10 @@ struct _SortTuple
   gint offset;
   Row *row;
 };
+
+
+
+static guint list_model_signals[LAST_SIGNAL];
 
 
 
@@ -278,6 +298,23 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
                                                          _("Whether to display hidden files"),
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarListModel::error:
+   * @store : a #ThunarListModel.
+   * @error : a #GError that describes the problem.
+   *
+   * Emitted when an error occurs while loading the
+   * @store content.
+   **/
+  list_model_signals[ERROR] =
+    g_signal_new ("error",
+                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarListModelClass, error),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
 }
 
 
@@ -326,12 +363,7 @@ static void
 thunar_list_model_init (ThunarListModel *store)
 {
   store->stamp                = g_random_int ();
-  store->rows                 = NULL;
-  store->nrows                = 0;
-  store->hidden               = NULL;
-  store->row_chunk            = g_mem_chunk_create (Row, 512, G_ALLOC_AND_FREE);
-  store->folder               = NULL;
-  store->show_hidden          = FALSE;
+  store->row_chunk            = g_mem_chunk_create (Row, 512, G_ALLOC_ONLY);
 
   store->volume_manager       = thunar_vfs_volume_manager_get_default ();
 
@@ -581,19 +613,13 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED:
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_date_string (row->file, THUNAR_FILE_DATE_ACCESSED);
-      if (G_LIKELY (str != NULL))
-        g_value_take_string (value, str);
-      else
-        g_value_set_static_string (value, _("unknown"));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED:
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_date_string (row->file, THUNAR_FILE_DATE_MODIFIED);
-      if (G_LIKELY (str != NULL))
-        g_value_take_string (value, str);
-      else
-        g_value_set_static_string (value, _("unknown"));
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_FILE:
@@ -605,7 +631,6 @@ thunar_list_model_get_value (GtkTreeModel *model,
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
       g_value_set_string (value, thunar_vfs_mime_info_get_name (mime_info));
-      thunar_vfs_mime_info_unref (mime_info);
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_NAME:
@@ -621,17 +646,18 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_size_string (row->file);
-      if (G_LIKELY (str != NULL))
-        g_value_take_string (value, str);
-      else
-        g_value_set_static_string (value, "--");
+      g_value_take_string (value, str);
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
-      g_value_set_string (value, thunar_vfs_mime_info_get_comment (mime_info));
-      thunar_vfs_mime_info_unref (mime_info);
+      if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (mime_info), "inode/symlink") == 0))
+        g_value_set_static_string (value, _("broken link"));
+      else if (G_UNLIKELY (thunar_file_is_symlink (row->file)))
+        g_value_take_string (value, g_strdup_printf (_("link to %s"), thunar_vfs_mime_info_get_comment (mime_info)));
+      else
+        g_value_set_static_string (value, thunar_vfs_mime_info_get_comment (mime_info));
       break;
 
     default:
@@ -950,7 +976,8 @@ thunar_list_model_remove (ThunarListModel *store,
   path = thunar_list_model_get_path (GTK_TREE_MODEL (store), iter);
 
   /* delete data associated with this row */
-  g_signal_handler_disconnect (G_OBJECT (row->file), row->changed_id);
+  g_signal_handlers_disconnect_matched (G_OBJECT (row->file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                        store->file_changed_id, 0, store->file_changed_closure, NULL, NULL);
   g_object_unref (row->file);
 
   /* remove the link from the list */
@@ -968,7 +995,6 @@ thunar_list_model_remove (ThunarListModel *store,
           break;
         }
     }
-  g_chunk_free (row, store->row_chunk);
 
   /* notify other parties */
   if (G_LIKELY (!silently))
@@ -1065,8 +1091,7 @@ thunar_list_model_file_changed (ThunarFile      *file,
         iter.user_data = row;
 
         /* notify the view that it has to redraw the file */
-        path = gtk_tree_path_new ();
-        gtk_tree_path_append_index (path, n);
+        path = gtk_tree_path_new_from_indices (n, -1);
         gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
         gtk_tree_path_free (path);
 
@@ -1091,6 +1116,24 @@ thunar_list_model_folder_destroy (ThunarFolder    *folder,
   thunar_list_model_set_folder (store, NULL);
 
   // TODO: What to do when the folder is deleted?
+}
+
+
+
+static void
+thunar_list_model_folder_error (ThunarFolder    *folder,
+                                const GError    *error,
+                                ThunarListModel *store)
+{
+  g_return_if_fail (error != NULL);
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+
+  /* forward the error signal */
+  g_signal_emit (G_OBJECT (store), list_model_signals[ERROR], 0, error);
+
+  /* reset the current folder */
+  thunar_list_model_set_folder (store, NULL);
 }
 
 
@@ -1123,8 +1166,8 @@ thunar_list_model_files_added (ThunarFolder    *folder,
         {
           row = g_chunk_new (Row, store->row_chunk);
           row->file = file;
-          row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
-                                                            0, store->file_changed_closure, TRUE);
+          g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
+                                          0, store->file_changed_closure, TRUE);
 
           /* find the position to insert the file to */
           if (G_UNLIKELY (store->rows == NULL || thunar_list_model_cmp (store, file, store->rows->file) < 0))
@@ -1207,23 +1250,14 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
 
 
 static gint
-sort_by_date_accessed (ThunarFile *a,
-                       ThunarFile *b)
+sort_by_date_accessed (const ThunarFile *a,
+                       const ThunarFile *b)
 {
   ThunarVfsFileTime date_a;
   ThunarVfsFileTime date_b;
-  gboolean          can_a;
-  gboolean          can_b;
 
-  can_a = thunar_file_get_date (a, THUNAR_FILE_DATE_ACCESSED, &date_a);
-  can_b = thunar_file_get_date (b, THUNAR_FILE_DATE_ACCESSED, &date_b);
-
-  if (G_UNLIKELY (!can_a && !can_b))
-    return sort_by_name (a, b);
-  else if (G_UNLIKELY (!can_a))
-    return -1;
-  else if (G_UNLIKELY (!can_b))
-    return 1;
+  date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_ACCESSED);
+  date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_ACCESSED);
 
   if (date_a < date_b)
     return -1;
@@ -1236,23 +1270,14 @@ sort_by_date_accessed (ThunarFile *a,
 
 
 static gint
-sort_by_date_modified (ThunarFile *a,
-                       ThunarFile *b)
+sort_by_date_modified (const ThunarFile *a,
+                       const ThunarFile *b)
 {
   ThunarVfsFileTime date_a;
   ThunarVfsFileTime date_b;
-  gboolean          can_a;
-  gboolean          can_b;
 
-  can_a = thunar_file_get_date (a, THUNAR_FILE_DATE_MODIFIED, &date_a);
-  can_b = thunar_file_get_date (b, THUNAR_FILE_DATE_MODIFIED, &date_b);
-
-  if (G_UNLIKELY (!can_a && !can_b))
-    return sort_by_name (a, b);
-  else if (G_UNLIKELY (!can_a))
-    return -1;
-  else if (G_UNLIKELY (!can_b))
-    return 1;
+  date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_MODIFIED);
+  date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_MODIFIED);
 
   if (date_a < date_b)
     return -1;
@@ -1265,8 +1290,8 @@ sort_by_date_modified (ThunarFile *a,
 
 
 static gint
-sort_by_mime_type (ThunarFile *a,
-                   ThunarFile *b)
+sort_by_mime_type (const ThunarFile *a,
+                   const ThunarFile *b)
 {
   ThunarVfsMimeInfo *info_a;
   ThunarVfsMimeInfo *info_b;
@@ -1281,17 +1306,14 @@ sort_by_mime_type (ThunarFile *a,
   if (result == 0)
     result = sort_by_name (a, b);
 
-  thunar_vfs_mime_info_unref (info_b);
-  thunar_vfs_mime_info_unref (info_a);
-
   return result;
 }
 
 
 
 static gint
-sort_by_name (ThunarFile *a,
-              ThunarFile *b)
+sort_by_name (const ThunarFile *a,
+              const ThunarFile *b)
 {
   return strcmp (thunar_file_get_display_name (a),
                  thunar_file_get_display_name (b));
@@ -1300,8 +1322,8 @@ sort_by_name (ThunarFile *a,
 
 
 static gint
-sort_by_permissions (ThunarFile *a,
-                     ThunarFile *b)
+sort_by_permissions (const ThunarFile *a,
+                     const ThunarFile *b)
 {
   ThunarVfsFileMode mode_a;
   ThunarVfsFileMode mode_b;
@@ -1320,23 +1342,14 @@ sort_by_permissions (ThunarFile *a,
 
 
 static gint
-sort_by_size (ThunarFile *a,
-              ThunarFile *b)
+sort_by_size (const ThunarFile *a,
+              const ThunarFile *b)
 {
   ThunarVfsFileSize size_a;
   ThunarVfsFileSize size_b;
-  gboolean          can_a;
-  gboolean          can_b;
 
-  can_a = thunar_file_get_size (a, &size_a);
-  can_b = thunar_file_get_size (b, &size_b);
-
-  if (G_UNLIKELY (!can_a && !can_b))
-    return sort_by_name (a, b);
-  else if (G_UNLIKELY (!can_a))
-    return -1;
-  else if (G_UNLIKELY (!can_b))
-    return 1;
+  size_a = thunar_file_get_size (a);
+  size_b = thunar_file_get_size (b);
 
   if (size_a < size_b)
     return -1;
@@ -1349,8 +1362,8 @@ sort_by_size (ThunarFile *a,
 
 
 static gint
-sort_by_type (ThunarFile *a,
-              ThunarFile *b)
+sort_by_type (const ThunarFile *a,
+              const ThunarFile *b)
 {
   ThunarVfsMimeInfo *info_a;
   ThunarVfsMimeInfo *info_b;
@@ -1364,9 +1377,6 @@ sort_by_type (ThunarFile *a,
 
   if (result == 0)
     result = sort_by_name (a, b);
-
-  thunar_vfs_mime_info_unref (info_b);
-  thunar_vfs_mime_info_unref (info_a);
 
   return result;
 }
@@ -1466,7 +1476,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
           row = store->rows;
 
           /* delete data associated with this row */
-          g_signal_handler_disconnect (G_OBJECT (row->file), row->changed_id);
+          g_signal_handlers_disconnect_matched (G_OBJECT (row->file), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                                store->file_changed_id, 0, store->file_changed_closure, NULL, NULL);
           g_object_unref (G_OBJECT (row->file));
 
           /* remove the row from the list */
@@ -1528,8 +1539,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
                 {
                   row = g_chunk_new (Row, store->row_chunk);
                   row->file = file;
-                  row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
-                                                                    0, store->file_changed_closure, TRUE);
+                  g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
+                                                  0, store->file_changed_closure, TRUE);
                   row->next = store->rows;
 
                   store->rows = row;
@@ -1562,6 +1573,8 @@ thunar_list_model_set_folder (ThunarListModel *store,
       /* connect signals to the new folder */
       g_signal_connect (G_OBJECT (store->folder), "destroy",
                         G_CALLBACK (thunar_list_model_folder_destroy), store);
+      g_signal_connect (G_OBJECT (store->folder), "error",
+                        G_CALLBACK (thunar_list_model_folder_error), store);
       g_signal_connect (G_OBJECT (store->folder), "files-added",
                         G_CALLBACK (thunar_list_model_files_added), store);
       g_signal_connect (G_OBJECT (store->folder), "files-removed",
@@ -1569,8 +1582,10 @@ thunar_list_model_set_folder (ThunarListModel *store,
     }
 
   /* notify listeners that we have a new folder */
+  g_object_freeze_notify (G_OBJECT (store));
   g_object_notify (G_OBJECT (store), "folder");
   g_object_notify (G_OBJECT (store), "num-files");
+  g_object_thaw_notify (G_OBJECT (store));
 }
 
 
@@ -1666,8 +1681,8 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
 
           row = g_chunk_new (Row, store->row_chunk);
           row->file = file;
-          row->changed_id = g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
-                                                            0, store->file_changed_closure, TRUE);
+          g_signal_connect_closure_by_id (G_OBJECT (file), store->file_changed_id,
+                                          0, store->file_changed_closure, TRUE);
 
           if (G_UNLIKELY (store->rows == NULL || thunar_list_model_cmp (store, file, store->rows->file) < 0))
             {
@@ -1723,8 +1738,10 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
     }
 
   /* notify listeners about the new setting */
+  g_object_freeze_notify (G_OBJECT (store));
   g_object_notify (G_OBJECT (store), "num-files");
   g_object_notify (G_OBJECT (store), "show-hidden");
+  g_object_thaw_notify (G_OBJECT (store));
 }
 
 
@@ -1772,6 +1789,45 @@ thunar_list_model_get_num_files (ThunarListModel *store)
 {
   g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), 0);
   return store->nrows;
+}
+
+
+
+/**
+ * thunar_list_model_get_paths_for_files:
+ * @store : a #ThunarListModel instance.
+ * @files : a list of #ThunarFile<!---->s.
+ *
+ * Determines the list of #GtkTreePath<!---->s for the #ThunarFile<!---->s
+ * found in the @files list. If a #ThunarFile from the @files list is not
+ * available in @store, no #GtkTreePath will be returned for it. So, in effect,
+ * only #GtkTreePath<!---->s for the subset of @files available in @store will
+ * be returned.
+ *
+ * The caller is responsible to free the returned list using:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) gtk_tree_path_free, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: the list of #GtkTreePath<!---->s for @files.
+ **/
+GList*
+thunar_list_model_get_paths_for_files (ThunarListModel *store,
+                                       GList           *files)
+{
+  GList *paths = NULL;
+  gint   index = 0;
+  Row   *row;
+
+  g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
+
+  /* find the rows for the given files */
+  for (row = store->rows; row != NULL; ++index, row = row->next)
+    if (g_list_find (files, row->file) != NULL)
+      paths = g_list_prepend (paths, gtk_tree_path_new_from_indices (index, -1));
+
+  return paths;
 }
 
 
@@ -1834,7 +1890,7 @@ thunar_list_model_get_paths_for_pattern (ThunarListModel *store,
  * file selection.
  *
  * The caller is reponsible to free the returned text using
- * #g_free() when it's no longer needed.
+ * g_free() when it's no longer needed.
  *
  * Return value: the statusbar text for @store with the given
  *               @selected_items.
@@ -1884,17 +1940,20 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       /* calculate the text to be displayed */
       mime_info = thunar_file_get_mime_info (file);
       size_string = thunar_file_get_size_string (file);
-      if (G_LIKELY (size_string != NULL))
+      if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (mime_info), "inode/symlink") == 0))
         {
-          text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file), size_string,
-                                  thunar_vfs_mime_info_get_comment (mime_info));
+          text = g_strdup_printf (_("\"%s\" broken link"), thunar_file_get_display_name (file));
+        }
+      else if (G_UNLIKELY (thunar_file_is_symlink (file)))
+        {
+          text = g_strdup_printf (_("\"%s\" (%s) link to %s"), thunar_file_get_display_name (file),
+                                  size_string, thunar_vfs_mime_info_get_comment (mime_info));
         }
       else
         {
-          text = g_strdup_printf (_("\"%s\" %s"), thunar_file_get_display_name (file),
-                                  thunar_vfs_mime_info_get_comment (mime_info));
+          text = g_strdup_printf (_("\"%s\" (%s) %s"), thunar_file_get_display_name (file),
+                                  size_string, thunar_vfs_mime_info_get_comment (mime_info));
         }
-      thunar_vfs_mime_info_unref (mime_info);
       g_free (size_string);
     }
   else
@@ -1903,8 +1962,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       for (lp = selected_items, n = 0, size_summary = 0; lp != NULL; lp = lp->next, ++n)
         {
           gtk_tree_model_get_iter (GTK_TREE_MODEL (store), &iter, lp->data);
-          if (thunar_file_get_size (((Row *) iter.user_data)->file, &size))
-            size_summary += size;
+          size_summary += thunar_file_get_size (((Row *) iter.user_data)->file);
         }
 
       if (size_summary > 0)

@@ -21,13 +21,55 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
+#endif
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
+#include <exo/exo.h>
+
+#include <tdb/tdb.h>
+
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
 
 
 
-static void thunar_preferences_class_init (ThunarPreferencesClass *klass);
-static void thunar_preferences_init       (ThunarPreferences      *preferences);
-static void thunar_preferences_finalize   (GObject                *object);
+/* Property identifiers */
+enum
+{
+  PROP_0,
+  PROP_DEFAULT_SHOW_HIDDEN,
+  PROP_LAST_LOCATION_BAR,
+  PROP_LAST_SIDE_PANE,
+  PROP_LAST_VIEW,
+  N_PROPERTIES,
+};
+
+
+
+static void thunar_preferences_class_init   (ThunarPreferencesClass *klass);
+static void thunar_preferences_init         (ThunarPreferences      *preferences);
+static void thunar_preferences_finalize     (GObject                *object);
+static void thunar_preferences_get_property (GObject                *object,
+                                             guint                   prop_id,
+                                             GValue                 *value,
+                                             GParamSpec             *pspec);
+static void thunar_preferences_set_property (GObject                *object,
+                                             guint                   prop_id,
+                                             const GValue           *value,
+                                             GParamSpec             *pspec);
 
 
 
@@ -39,6 +81,9 @@ struct _ThunarPreferencesClass
 struct _ThunarPreferences
 {
   GObject __parent__;
+
+  /* the database context */
+  TDB_CONTEXT *context;
 };
 
 
@@ -54,6 +99,68 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_preferences_finalize;
+  gobject_class->get_property = thunar_preferences_get_property;
+  gobject_class->set_property = thunar_preferences_set_property;
+
+  /* register additional transformation functions */
+  thunar_g_initialize_transformations ();
+
+  /**
+   * ThunarPreferences::default-show-hidden:
+   *
+   * Whether to show hidden files by default in new windows.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_DEFAULT_SHOW_HIDDEN,
+                                   g_param_spec_boolean ("default-show-hidden",
+                                                         "default-show-hidden",
+                                                         "default-show-hidden",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences::last-location-bar:
+   *
+   * The name of the widget class, which should be used for the
+   * location bar in #ThunarWindow<!---->s or "void" to hide the
+   * location bar.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_LOCATION_BAR,
+                                   g_param_spec_string ("last-location-bar",
+                                                        "last-location-bar",
+                                                        "last-location-bar",
+                                                        "ThunarLocationButtons",
+                                                        EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences::last-side-pane:
+   *
+   * The name of the widget class, which should be used for the
+   * side pane in #ThunarWindow<!---->s or "void" to hide the
+   * side pane completely.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_SIDE_PANE,
+                                   g_param_spec_string ("last-side-pane",
+                                                        "last-side-pane",
+                                                        "last-side-pane",
+                                                        "ThunarFavouritesPane",
+                                                        EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences::last-view:
+   *
+   * The name of the widget class, which should be used for the
+   * main view component in #ThunarWindow<!---->s.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_VIEW,
+                                   g_param_spec_string ("last-view",
+                                                        "last-view",
+                                                        "last-view",
+                                                        "ThunarIconView",
+                                                        EXO_PARAM_READWRITE));
 }
 
 
@@ -61,6 +168,25 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 static void
 thunar_preferences_init (ThunarPreferences *preferences)
 {
+  gchar *path;
+
+  /* determine the path to the preferences database */
+  path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/preferences.tdb", TRUE);
+  if (G_UNLIKELY (path == NULL))
+    {
+      path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/", FALSE);
+      g_warning (_("Failed to create the Thunar configuration directory in %s"), path);
+      g_free (path);
+      return;
+    }
+
+  /* try to open the preferences database file */
+  preferences->context = tdb_open (path, 0, TDB_DEFAULT, O_CREAT | O_RDWR, 0600);
+  if (G_UNLIKELY (preferences->context == NULL))
+    g_warning (_("Failed to open preferences database in %s: %s"), path, g_strerror (errno));
+
+  /* release the path */
+  g_free (path);
 }
 
 
@@ -68,7 +194,135 @@ thunar_preferences_init (ThunarPreferences *preferences)
 static void
 thunar_preferences_finalize (GObject *object)
 {
-  G_OBJECT_CLASS (thunar_preferences_parent_class)->finalize (object);
+  ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
+
+  /* close the database (if open) */
+  if (G_LIKELY (preferences->context != NULL))
+    tdb_close (preferences->context);
+
+  (*G_OBJECT_CLASS (thunar_preferences_parent_class)->finalize) (object);
+}
+
+
+
+static inline void
+value_take_string (GValue  *value,
+                   gpointer data)
+{
+  if (G_LIKELY (g_mem_is_system_malloc ()))
+    {
+      g_value_take_string (value, data);
+    }
+  else
+    {
+      g_value_set_string (value, data);
+      free (data);
+    }
+}
+
+
+
+static void
+thunar_preferences_get_property (GObject    *object,
+                                 guint       prop_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec)
+{
+  ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
+  TDB_DATA           data;
+  GValue             tmp = { 0, };
+
+  g_return_if_fail (prop_id > PROP_0 && prop_id < N_PROPERTIES);
+
+  /* check if we have a database handle */
+  if (G_LIKELY (preferences->context != NULL))
+    {
+      /* use the param spec's name as key */
+      data.dptr = pspec->name;
+      data.dsize = strlen (data.dptr);
+
+      /* lookup the data for the key */
+      data = tdb_fetch (preferences->context, data);
+      if (data.dptr != NULL && data.dsize > 0 && data.dptr[data.dsize - 1] == '\0')
+        {
+          /* check if we have a string or can transform */
+          if (G_VALUE_TYPE (value) == G_TYPE_STRING)
+            {
+              value_take_string (value, data.dptr);
+              return;
+            }
+          else if (g_value_type_transformable (G_TYPE_STRING, G_VALUE_TYPE (value)))
+            {
+              /* try to transform the string */
+              g_value_init (&tmp, G_TYPE_STRING);
+              value_take_string (&tmp, data.dptr);
+              if (g_value_transform (&tmp, value))
+                {
+                  g_value_unset (&tmp);
+                  return;
+                }
+              g_value_unset (&tmp);
+
+              /* data.dptr was freed by the g_value_unset() call */
+              data.dptr = NULL;
+            }
+        }
+
+      /* release the data (if any) */
+      if (data.dptr != NULL)
+        free (data.dptr);
+    }
+
+  /* set the default value */
+  g_param_value_set_default (pspec, value);
+}
+
+
+
+static void
+thunar_preferences_set_property (GObject      *object,
+                                 guint         prop_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec)
+{
+  ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
+  TDB_DATA           data;
+  TDB_DATA           key;
+  GValue             dst = { 0, };
+
+  g_return_if_fail (prop_id > PROP_0 && prop_id < N_PROPERTIES);
+
+  /* save the new value if we have a database handle */
+  if (G_LIKELY (preferences->context != NULL))
+    {
+      /* generate the key for the operation */
+      key.dptr = pspec->name;
+      key.dsize = strlen (key.dptr);
+
+      /* check if we have the default value here */
+      if (g_param_value_defaults (pspec, (GValue *) value))
+        {
+          /* just delete as we don't store defaults */
+          tdb_delete (preferences->context, key);
+        }
+      else
+        {
+          /* transform the value to a string */
+          g_value_init (&dst, G_TYPE_STRING);
+          if (!g_value_transform (value, &dst))
+            g_warning ("Unable to transform %s to %s", g_type_name (G_VALUE_TYPE (value)), g_type_name (G_VALUE_TYPE (&dst)));
+
+          /* setup the data value (we also store the '\0' byte) */
+          data.dptr = (gchar *) g_value_get_string (&dst);
+          data.dsize = strlen (data.dptr) + 1;
+
+          /* perform the store operation */
+          tdb_store (preferences->context, key, data, TDB_REPLACE);
+
+          /* release the string */
+          g_value_unset (&dst);
+        }
+    }
 }
 
 
@@ -78,7 +332,7 @@ thunar_preferences_finalize (GObject *object)
  *
  * Queries the global #ThunarPreferences instance, which is shared
  * by all modules. The function automatically takes a reference
- * for the caller, so you'll need to call #g_object_unref() when
+ * for the caller, so you'll need to call g_object_unref() when
  * you're done with it.
  *
  * Return value: the global #ThunarPreferences instance.

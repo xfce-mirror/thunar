@@ -35,7 +35,7 @@ typedef struct _ThunarVfsVolumeBSD      ThunarVfsVolumeBSD;
 #define THUNAR_VFS_IS_VOLUME_BSD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_VOLUME_BSD))
 #define THUNAR_VFS_VOLUME_BSD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_VOLUME_BSD, ThunarVfsVolumeBSDClass))
 
-GType thunar_vfs_volume_bsd_get_type (void) G_GNUC_CONST;
+GType thunar_vfs_volume_bsd_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
 typedef struct _ThunarVfsVolumeManagerBSDClass ThunarVfsVolumeManagerBSDClass;
@@ -48,7 +48,7 @@ typedef struct _ThunarVfsVolumeManagerBSD      ThunarVfsVolumeManagerBSD;
 #define THUNAR_VFS_IS_VOLUME_MANAGER_BSD_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_VOLUME_MANAGER_BSD))
 #define THUNAR_VFS_VOLUME_MANAGER_BSD_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_VOLUME_MANAGER_BSD, ThunarVfsVolumeManagerBSDClass))
 
-GType thunar_vfs_volume_manager_bsd_get_type (void) G_GNUC_CONST;
+GType thunar_vfs_volume_manager_bsd_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 G_END_DECLS;
 

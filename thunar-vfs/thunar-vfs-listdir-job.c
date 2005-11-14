@@ -22,29 +22,16 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_SYS_TYPES_H
-#include <sys/types.h>
-#endif
-
-#ifdef HAVE_DIRENT_H
-#include <dirent.h>
-#endif
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#ifdef HAVE_TIME_H
-#include <time.h>
-#endif
 
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
-#include <thunar-vfs/thunar-vfs-sysdep.h>
+#include <thunar-vfs/thunar-vfs-scandir.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -57,9 +44,14 @@ enum
 
 
 
-static void  thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass);
-static void  thunar_vfs_listdir_job_finalize   (GObject           *object);
-static void  thunar_vfs_listdir_job_execute    (ThunarVfsJob      *job);
+typedef struct _ThunarVfsListdirJobTask ThunarVfsListdirJobTask;
+
+
+
+static void thunar_vfs_listdir_job_class_init (ThunarVfsJobClass       *klass);
+static void thunar_vfs_listdir_job_finalize   (GObject                 *object);
+static void thunar_vfs_listdir_job_execute    (ThunarVfsJob            *job);
+static void thunar_vfs_listdir_job_task       (ThunarVfsListdirJobTask *task);
 
 
 struct _ThunarVfsListdirJobClass
@@ -70,7 +62,15 @@ struct _ThunarVfsListdirJobClass
 struct _ThunarVfsListdirJob
 {
   ThunarVfsJob __parent__;
-  ThunarVfsURI *uri;
+  ThunarVfsPath *path;
+};
+
+struct _ThunarVfsListdirJobTask
+{
+  GList *first;
+  GList *last;
+  guint  floc;
+  gchar  fpath[THUNAR_VFS_PATH_MAXSTRLEN + 128];
 };
 
 
@@ -148,9 +148,9 @@ thunar_vfs_listdir_job_finalize (GObject *object)
 {
   ThunarVfsListdirJob *listdir_job = THUNAR_VFS_LISTDIR_JOB (object);
 
-  /* free the folder uri */
-  if (G_LIKELY (listdir_job->uri != NULL))
-    thunar_vfs_uri_unref (listdir_job->uri);
+  /* free the folder path */
+  if (G_LIKELY (listdir_job->path != NULL))
+    thunar_vfs_path_unref (listdir_job->path);
 
   /* call the parents finalize method */
   (*G_OBJECT_CLASS (thunar_vfs_listdir_job_parent_class)->finalize) (object);
@@ -158,70 +158,111 @@ thunar_vfs_listdir_job_finalize (GObject *object)
 
 
 
+static gint
+pathcmp (gconstpointer a,
+         gconstpointer b)
+{
+  return -strcmp (thunar_vfs_path_get_name (a),
+                  thunar_vfs_path_get_name (b));
+}
+
+
+
 static void
 thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
 {
-  ThunarVfsInfo *info;
-  struct dirent  d_buffer;
-  struct dirent *d;
-  GStringChunk  *names_chunk;
-  ThunarVfsURI  *file_uri;
-  GError        *error = NULL;
-  GList         *infos = NULL;
-  GList         *names = NULL;
-  GList         *lp;
-  time_t         last_check_time;
-  time_t         current_time;
-  DIR           *dp;
+  GThreadPool *pool;
+  GError      *error = NULL;
+  GList       *list = NULL;
+  GList       *lp;
+  GList       *hp;
+  guint        n;
 
-  dp = opendir (thunar_vfs_uri_get_path (THUNAR_VFS_LISTDIR_JOB (job)->uri));
-  if (G_UNLIKELY (dp == NULL))
+  /* scan the given directory */
+  list = thunar_vfs_scandir (THUNAR_VFS_LISTDIR_JOB (job)->path, THUNAR_VFS_SCANDIR_FOLLOW_LINKS, pathcmp, &error);
+  if (G_LIKELY (list != NULL))
     {
-      error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
-    }
-  else
-    {
-      names_chunk = g_string_chunk_new (4 * 1024);
+      for (lp = hp = list, n = 0; lp != NULL; lp = lp->next, ++n)
+        if ((n % 2) == 0)
+          hp = hp->next;
 
-      /* We read the file names first here to
-       * (hopefully) avoid a bit unnecessary
-       * disk seeking.
-       */
-      while (_thunar_vfs_sysdep_readdir (dp, &d_buffer, &d, &error) && d != NULL)
-        names = g_list_insert_sorted (names, g_string_chunk_insert (names_chunk, d->d_name), (GCompareFunc) strcmp);
-
-      closedir (dp);
-
-      last_check_time = time (NULL);
-
-      /* Next we query the info for each of the file names
-       * queried in the loop above.
-       */
-      for (lp = names; lp != NULL; lp = lp->next)
+      /* no need to parallelize for really small folders */
+      if (G_UNLIKELY (n < 50))
         {
-          /* check for cancellation/failure condition */
-          if (thunar_vfs_job_cancelled (job) || error != NULL)
-            break;
+          /* initialize the task struct */
+          ThunarVfsListdirJobTask task;
+          task.first = list;
+          task.last = NULL;
 
-          file_uri = thunar_vfs_uri_relative (THUNAR_VFS_LISTDIR_JOB (job)->uri, lp->data);
-          info = thunar_vfs_info_new_for_uri (file_uri, NULL);
-          if (G_LIKELY (info != NULL))
-            infos = g_list_append (infos, info);
-          thunar_vfs_uri_unref (file_uri);
-
-          current_time = time (NULL);
-          if (current_time - last_check_time > 2 && infos != NULL)
+          /* put in the absolute path to the folder */
+          task.floc = thunar_vfs_path_to_string (THUNAR_VFS_LISTDIR_JOB (job)->path, task.fpath, sizeof (task.fpath), &error);
+          if (G_LIKELY (task.floc > 0))
             {
-              last_check_time = current_time;
-              thunar_vfs_job_emit (job, listdir_signals[INFOS_READY], 0, infos);
-              thunar_vfs_info_list_free (infos);
-              infos = NULL;
+              /* append a path separator to the absolute folder path, so we can easily generate child paths */
+              task.fpath[task.floc - 1] = G_DIR_SEPARATOR;
+
+              /* run the task */
+              thunar_vfs_listdir_job_task (&task);
+            }
+        }
+      else
+        {
+          /* allocate memory for 2 tasks */
+          ThunarVfsListdirJobTask tasks[2];
+
+          /* initialize the first task */
+          tasks[0].first = list;
+          tasks[0].last = NULL;
+
+          /* put in the absolute path to the folder */
+          tasks[0].floc = thunar_vfs_path_to_string (THUNAR_VFS_LISTDIR_JOB (job)->path, tasks[0].fpath, sizeof (tasks[0].fpath), &error);
+          if (G_LIKELY (tasks[0].floc > 0))
+            {
+              /* allocate a thread pool for the first task */
+              pool = g_thread_pool_new ((GFunc) thunar_vfs_listdir_job_task, NULL, 1, FALSE, NULL);
+
+              /* append a path separator to the absolute folder path, so we can easily generate child paths */
+              tasks[0].fpath[tasks[0].floc - 1] = G_DIR_SEPARATOR;
+
+              /* terminate the list for the first task */
+              hp->prev->next = NULL;
+              hp->prev = NULL;
+
+              /* launch the first task */
+              g_thread_pool_push (pool, &tasks[0], NULL);
+
+              /* initialize the second task */
+              tasks[1].first = hp;
+              tasks[1].last = NULL;
+              tasks[1].floc = tasks[0].floc;
+              memcpy (tasks[1].fpath, tasks[0].fpath, tasks[0].floc);
+
+              /* run the second task */
+              thunar_vfs_listdir_job_task (&tasks[1]);
+
+              /* wait for the first task to finish */
+              g_thread_pool_free (pool, FALSE, TRUE);
+
+              /* concatenate the info lists */
+              if (G_UNLIKELY (tasks[0].last == NULL))
+                {
+                  list = tasks[1].first;
+                }
+              else
+                {
+                  tasks[0].last->next = tasks[1].first;
+                  if (G_LIKELY (tasks[1].first != NULL))
+                    tasks[1].first->prev = tasks[0].last;
+                }
             }
         }
 
-      /* free the names */
-      g_string_chunk_free (names_chunk);
-      g_list_free (names);
+      /* release the path list in case of an early error */
+      if (G_UNLIKELY (error != NULL))
+        {
+          thunar_vfs_path_list_free (list);
+          list = NULL;
+        }
     }
 
   /* emit appropriate signals */
@@ -230,23 +271,61 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
       thunar_vfs_job_error (job, error);
       g_error_free (error);
     }
-  else if (G_LIKELY (infos != NULL))
+  else if (G_LIKELY (list != NULL))
     {
-      thunar_vfs_job_emit (job, listdir_signals[INFOS_READY], 0, infos);
+      thunar_vfs_job_emit (job, listdir_signals[INFOS_READY], 0, list);
     }
 
   /* cleanup */
-  thunar_vfs_info_list_free (infos);
+  thunar_vfs_info_list_free (list);
+}
+
+
+
+static void
+thunar_vfs_listdir_job_task (ThunarVfsListdirJobTask *task)
+{
+  ThunarVfsInfo *info;
+  GList         *sp;
+  GList         *tp;
+
+  for (sp = tp = task->first; sp != NULL; sp = sp->next)
+    {
+      /* generate the absolute path to the file */
+      g_strlcpy (task->fpath + task->floc, thunar_vfs_path_get_name (sp->data), sizeof (task->fpath) - task->floc);
+
+      /* try to determine the file info */
+      info = _thunar_vfs_info_new_internal (sp->data, task->fpath, NULL);
+
+      /* release the reference on the path (the info holds the reference now) */
+      thunar_vfs_path_unref (sp->data);
+
+      /* replace the path with the info on the list */
+      if (G_LIKELY (info != NULL))
+        {
+          task->last = tp;
+          tp->data = info;
+          tp = tp->next;
+        }
+    }
+
+  /* release the not-filled list items (only non-NULL in case of an info error) */
+  if (G_UNLIKELY (tp != NULL))
+    {
+      if (G_LIKELY (tp->prev != NULL))
+        tp->prev->next = NULL;
+      g_list_free (tp);
+    }
 }
 
 
 
 /**
  * thunar_vfs_job_new:
- * @folder_uri : the #ThunarVfsURI of the directory whose contents to query.
+ * @folder_path : the #ThunarVfsPath of the directory whose contents to query.
  *
  * Allocates a new #ThunarVfsListdirJob object, which can be used to
- * query the contents of the directory @folder_uri.
+ * query the contents of the directory @folder_path.
  *
  * You need to call thunar_vfs_job_launch() in order to start the
  * job. You may want to connect to ::finished, ::error-occurred and
@@ -259,14 +338,12 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
  *               directory listing.
  **/
 ThunarVfsJob*
-thunar_vfs_listdir_job_new (ThunarVfsURI *folder_uri)
+thunar_vfs_listdir_job_new (ThunarVfsPath *folder_path)
 {
   ThunarVfsListdirJob *listdir_job;
 
-  g_return_val_if_fail (folder_uri != NULL, NULL);
-
   listdir_job = g_object_new (THUNAR_VFS_TYPE_LISTDIR_JOB, NULL);
-  listdir_job->uri = thunar_vfs_uri_ref (folder_uri);
+  listdir_job->path = thunar_vfs_path_ref (folder_path);
 
   return THUNAR_VFS_JOB (listdir_job);
 }

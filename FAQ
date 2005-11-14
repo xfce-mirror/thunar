@@ -22,3 +22,45 @@ appropriate answers to these questions.
   types of the file don't really need to match these types exactly, but it is
   suffice if the detected type has a parent that matches one of the two types
   listed above, or if the MIME-type is an alias for one of the above.
+
+
+3. Where does Thunar store the metadata associated with files?
+==============================================================
+
+  Thunar associates various settings with files/folders, which we call metadata.
+  This metadata for all files is stored in tdb database file, which is called
+  the metafile. The database file is stored in
+  
+    $XDG_CACHE_HOME/Thunar/metafile.tdb
+
+  and can be examined using the tdbtool, which is part of the Thunar
+  distribution (located in the tdb/ subdirectory).
+
+
+4. Where does Thunar store its preferences?
+===========================================
+
+  Thunar stores the user configurable preferences in a tdb database file, which
+  is located at
+
+    $XDG_CONFIG_HOME/Thunar/preferences.tdb
+
+  and can be examined using the tdbtool, which is part of the Thunar
+  distribution (located in the tdb/ subdirectory).
+
+
+5. How to use mouse gestures in Thunar?
+=======================================
+
+  Thunar currently features basic support for so called "mouse gestures" in its
+  icon view. You can use these "mouse gestures" by holding down the middle
+  mouse button (usually the mouse wheel) while the mouse pointer is on the
+  background area of the icon view component (any area that is not covered by
+  an icon or a text). Now you can move the cursor into four directions to
+  perform certain actions, which are described below.
+
+   * Left  - opens the previous visited folder
+   * Up    - opens the parent folder
+   * Right - opens the next visited folder
+   * Down  - cancels the gesture action
+

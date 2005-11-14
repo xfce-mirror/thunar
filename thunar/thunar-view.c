@@ -101,6 +101,19 @@ thunar_view_class_init (gpointer klass)
                                                             EXO_PARAM_READABLE));
 
   /**
+   * ThunarView:show-hidden:
+   *
+   * Tells whether to display hidden and backup files in the
+   * #ThunarView or whether to hide them.
+   **/
+  g_object_interface_install_property (klass,
+                                       g_param_spec_boolean ("show-hidden",
+                                                             _("Show hidden"),
+                                                             _("Whether to display hidden files"),
+                                                             FALSE,
+                                                             EXO_PARAM_READWRITE));
+
+  /**
    * ThunarView:ui-manager:
    *
    * The UI manager used by the surrounding #ThunarWindow. The
@@ -130,7 +143,7 @@ gboolean
 thunar_view_get_loading (ThunarView *view)
 {
   g_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
-  return THUNAR_VIEW_GET_IFACE (view)->get_loading (view);
+  return (*THUNAR_VIEW_GET_IFACE (view)->get_loading) (view);
 }
 
 
@@ -149,7 +162,44 @@ const gchar*
 thunar_view_get_statusbar_text (ThunarView *view)
 {
   g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
-  return THUNAR_VIEW_GET_IFACE (view)->get_statusbar_text (view);
+  return (*THUNAR_VIEW_GET_IFACE (view)->get_statusbar_text) (view);
+}
+
+
+
+/**
+ * thunar_view_get_show_hidden:
+ * @view : a #ThunarView instance.
+ *
+ * Returns %TRUE if hidden and backup files are shown
+ * in @view. Else %FALSE is returned.
+ *
+ * Return value: whether @view displays hidden files.
+ **/
+gboolean
+thunar_view_get_show_hidden (ThunarView *view)
+{
+  g_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
+  return (*THUNAR_VIEW_GET_IFACE (view)->get_show_hidden) (view);
+}
+
+
+
+/**
+ * thunar_view_set_show_hidden:
+ * @view        : a #ThunarView instance.
+ * @show_hidden : &TRUE to display hidden files, else %FALSE.
+ *
+ * If @show_hidden is %TRUE then @view will display hidden and
+ * backup files, else those files will be hidden from the user
+ * interface.
+ **/
+void
+thunar_view_set_show_hidden (ThunarView *view,
+                             gboolean    show_hidden)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+  (*THUNAR_VIEW_GET_IFACE (view)->set_show_hidden) (view, show_hidden);
 }
 
 
@@ -169,7 +219,7 @@ GtkUIManager*
 thunar_view_get_ui_manager (ThunarView *view)
 {
   g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
-  return THUNAR_VIEW_GET_IFACE (view)->get_ui_manager (view);
+  return (*THUNAR_VIEW_GET_IFACE (view)->get_ui_manager) (view);
 }
 
 
@@ -192,8 +242,7 @@ thunar_view_set_ui_manager (ThunarView   *view,
 {
   g_return_if_fail (THUNAR_IS_VIEW (view));
   g_return_if_fail (ui_manager == NULL || GTK_IS_UI_MANAGER (ui_manager));
-
-  THUNAR_VIEW_GET_IFACE (view)->set_ui_manager (view, ui_manager);
+  (*THUNAR_VIEW_GET_IFACE (view)->set_ui_manager) (view, ui_manager);
 }
 
 

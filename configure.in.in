@@ -13,7 +13,7 @@ m4_define([thunar_verinfo], [0:0:0])
 m4_define([thunar_version_api], [1])
 m4_define([thunar_version_major], [0])
 m4_define([thunar_version_minor], [1])
-m4_define([thunar_version_micro], [2])
+m4_define([thunar_version_micro], [3])
 m4_define([thunar_version_build], [r@REVISION@])
 m4_define([thunar_version_tag], [svn])
 m4_define([thunar_version], [thunar_version_major().thunar_version_minor().thunar_version_micro()ifelse(thunar_version_tag(), [], [], [thunar_version_tag()-thunar_version_build()])])
@@ -73,20 +73,38 @@ AC_SUBST([THUNAR_VERSION_MAJOR])
 AC_SUBST([THUNAR_VERSION_MINOR])
 AC_SUBST([THUNAR_VERSION_MICRO])
 
+dnl ***********************************************
+dnl *** Determine the u32 type required for tdb ***
+dnl ***********************************************
+AC_CHECK_SIZEOF([int])
+AC_CHECK_SIZEOF([long])
+AC_CHECK_SIZEOF([short])
+AC_MSG_CHECKING([for 32bit unsigned integer])
+case 4 in
+$ac_cv_sizeof_int)   TDB_U32_TYPE="unsigned int" ;;
+$ac_cv_sizeof_long)  TDB_U32_TYPE="unsigned long" ;;
+$ac_cv_sizeof_short) TDB_U32_TYPE="unsigned short" ;;
+esac
+AC_SUBST([TDB_U32_TYPE])
+AC_MSG_RESULT([$TDB_U32_TYPE])
+
 dnl **********************************
 dnl *** Check for standard headers ***
 dnl **********************************
-AC_CHECK_HEADERS([dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h locale.h \
-                  math.h memory.h mmintrin.h pwd.h stdlib.h string.h \
-                  sys/xattr.h sys/extattr.h sys/cdio.h sys/mman.h \
-                  sys/mount.h sys/stat.h sys/time.h sys/param.h time.h])
+AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h \
+                  locale.h math.h memory.h mmintrin.h pwd.h sched.h setjmp.h \
+                  stdarg.h stdlib.h string.h sys/xattr.h sys/extattr.h \
+                  sys/cdio.h sys/mman.h \
+                  sys/mount.h sys/param.h sys/stat.h sys/time.h sys/uio.h \
+                  sys/wait.h time.h wchar.h wctype.h])
 
 dnl ************************************
 dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
-AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr lchmod localtime_r readdir_r \
-                setgroupent setpassent])
+AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr lchmod localtime_r \
+                mbrtowc pread pwrite readdir_r \
+                sched_yield setgroupent setpassent])
 
 dnl ***************************************
 dnl *** Check for working posix_madvise ***
@@ -129,14 +147,47 @@ dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
 XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1])
-XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.6.0])
+XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.6.4])
+XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.6.0])
 XDT_CHECK_PACKAGE([LIBPNG], [libpng12], [1.2.0])
 
-dnl ***********************************
-dnl *** Check for optional packages ***
-dnl ***********************************
+dnl **********************************
+dnl *** Optional support for cairo ***
+dnl **********************************
 XDT_CHECK_OPTIONAL_PACKAGE([CAIRO], [cairo], [0.5], [cairo], [Cairo])
+
+dnl *******************************************************
+dnl *** Optional support for gconf (GNOME thumbnailers) ***
+dnl *******************************************************
+XDT_CHECK_OPTIONAL_PACKAGE([GCONF], [gconf-2.0],
+                           [2.4.0], [gnome-thumbnailers],
+                           [GNOME thumbnailer support])
+
+dnl *************************************************
+dnl *** Optional support for startup notification ***
+dnl *************************************************
+XDT_CHECK_OPTIONAL_PACKAGE([LIBSTARTUP_NOTIFICATION],
+                           [libstartup-notification-1.0],
+                           [0.4], [startup-notification],
+                           [startup notification library])
+
+dnl *************************
+dnl *** Check for libjpeg ***
+dnl *************************
+LIBJPEG_LIBS=""
+LIBJPEG_CFLAGS=""
+AC_CHECK_LIB([jpeg], [jpeg_start_decompress],
+[
+  AC_CHECK_HEADER([jpeglib.h],
+  [
+    LIBJPEG_LIBS="-ljpeg -lm"
+    AC_DEFINE([HAVE_LIBJPEG], [1], [Define to 1 if libjpeg is found])
+    AC_DEFINE([HAVE_JPEGLIB_H], [1], [Define to 1 if jpeglib.h is found])
+  ])
+], [-lm])
+AC_SUBST([LIBJPEG_CFLAGS])
+AC_SUBST([LIBJPEG_LIBS])
 
 dnl *************************
 dnl *** Check for gtk-doc ***
@@ -247,27 +298,14 @@ if test x"$enable_visibility" != x"no"; then
     int main (int argc, char **argv) { test_default (); test_hidden (); return 0; }
   ]),
   [
+    have_gnuc_visibility=yes
     AC_MSG_RESULT([yes])
-    dnl Check if the compiler supports -fvisibility=hidden
-    save_CFLAGS="$CFLAGS"
-    CFLAGS="$CFLAGS -fvisibility=hidden"
-    AC_MSG_CHECKING([whether $CC accepts -fvisibility=hidden])
-    AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]),
-    [
-      have_gnuc_visibility=yes
-      AC_MSG_RESULT([yes])
-    ],
-    [
-      AC_MSG_RESULT([no])
-    ])
-    CFLAGS="$save_CFLAGS"
   ],
   [
     AC_MSG_RESULT([no])
   ])
 fi
 if test x"$have_gnuc_visibility" = x"yes"; then
-  PLATFORM_CFLAGS="$PLATFORM_CFLAGS -fvisibility=hidden"
   PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DHAVE_GNUC_VISIBILITY"
 fi
 AM_CONDITIONAL([HAVE_GNUC_VISIBILITY], [test x"$have_gnuc_visibility" = x"yes"])
@@ -295,12 +333,15 @@ icons/Makefile
 icons/24x24/Makefile
 icons/48x48/Makefile
 po/Makefile.in
+tdb/Makefile
+tdb/tdbconfig.h
 pixmaps/Makefile
 tests/Makefile
 tests/data/Makefile
 thunar/Makefile
 thunar-vfs/Makefile
 thunar-vfs/thunar-vfs-1.pc
+thunar-vfs/thunar-vfs-config.h
 thunarx/Makefile
 thunarx/thunarx-1.pc
 thunarx/thunarx-config.h

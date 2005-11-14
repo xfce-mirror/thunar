@@ -25,8 +25,17 @@
 
 
 
+/* property identifiers */
 enum
 {
+  PROP_0,
+  PROP_LOADING,
+};
+
+/* signal identifiers */
+enum
+{
+  ERROR,
   FILES_ADDED,
   FILES_REMOVED,
   LAST_SIGNAL,
@@ -34,107 +43,494 @@ enum
 
 
 
-static void thunar_folder_base_init  (gpointer klass);
-static void thunar_folder_class_init (gpointer klass);
+static void thunar_folder_class_init                  (ThunarFolderClass      *klass);
+static void thunar_folder_init                        (ThunarFolder           *folder);
+static void thunar_folder_finalize                    (GObject                *object);
+static void thunar_folder_get_property                (GObject                *object,
+                                                       guint                   prop_id,
+                                                       GValue                 *value,
+                                                       GParamSpec             *pspec);
+static void thunar_folder_error                       (ThunarVfsJob           *job,
+                                                       GError                 *error,
+                                                       ThunarFolder           *folder);
+static void thunar_folder_infos_ready                 (ThunarVfsJob           *job,
+                                                       GList                  *infos,
+                                                       ThunarFolder           *folder);
+static void thunar_folder_finished                    (ThunarVfsJob           *job,
+                                                       ThunarFolder           *folder);
+static void thunar_folder_corresponding_file_destroy  (ThunarFile             *file,
+                                                       ThunarFolder           *folder);
+static void thunar_folder_corresponding_file_renamed  (ThunarFile             *file,
+                                                       ThunarFolder           *folder);
+static void thunar_folder_file_destroy                (ThunarFile             *file,
+                                                       ThunarFolder           *folder);
+static void thunar_folder_monitor                     (ThunarVfsMonitor       *monitor,
+                                                       ThunarVfsMonitorHandle *handle,
+                                                       ThunarVfsMonitorEvent   event,
+                                                       ThunarVfsPath          *handle_path,
+                                                       ThunarVfsPath          *event_path,
+                                                       gpointer                user_data);
 
 
 
-static guint folder_signals[LAST_SIGNAL];
-
-
-
-GType
-thunar_folder_get_type (void)
+struct _ThunarFolderClass
 {
-  static GType type = G_TYPE_INVALID;
+  GtkObjectClass __parent__;
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarFolderIface),
-        (GBaseInitFunc) thunar_folder_base_init,
-        NULL,
-        (GClassInitFunc) thunar_folder_class_init,
-        NULL,
-        NULL,
-        0,
-        0,
-        NULL,
-      };
+  /* signals */
+  void (*error)         (ThunarFolder *folder,
+                         const GError *error);
+  void (*files_added)   (ThunarFolder *folder,
+                         GList        *files);
+  void (*files_removed) (ThunarFolder *folder,
+                         GList        *files);
+};
 
-      type = g_type_register_static (G_TYPE_INTERFACE,
-                                     "ThunarFolder",
-                                     &info, 0);
+struct _ThunarFolder
+{
+  GtkObject __parent__;
 
-      g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-    }
+  ThunarVfsJob           *job;
 
-  return type;
-}
+  ThunarFile             *corresponding_file;
+  GList                  *files;
+
+  GClosure               *file_destroy_closure;
+  gint                    file_destroy_id;
+
+  ThunarVfsMonitor       *monitor;
+  ThunarVfsMonitorHandle *handle;
+};
+
+
+
+static guint  folder_signals[LAST_SIGNAL];
+static GQuark thunar_folder_quark;
+
+
+
+G_DEFINE_TYPE (ThunarFolder, thunar_folder, GTK_TYPE_OBJECT);
 
 
 
 static void
-thunar_folder_base_init (gpointer klass)
+thunar_folder_class_init (ThunarFolderClass *klass)
 {
-  static gboolean initialized = FALSE;
+  GObjectClass *gobject_class;
 
-  if (G_UNLIKELY (!initialized))
-    {
-      /**
-       * ThunarFolder::files-added:
-       *
-       * Emitted by the #ThunarFolder implementations whenever new files have
-       * been added to a particular folder.
-       **/
-      folder_signals[FILES_ADDED] =
-        g_signal_new ("files-added",
-                      G_TYPE_FROM_INTERFACE (klass),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarFolderIface, files_added),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__POINTER,
-                      G_TYPE_NONE, 1, G_TYPE_POINTER);
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_folder_finalize;
+  gobject_class->get_property = thunar_folder_get_property;
 
-      /**
-       * ThunarFolder::files-removed:
-       *
-       * Emitted by the #ThunarFolder implementation whenever a bunch of
-       * files is removed from the folder, which means they are not
-       * necessarily deleted from disk. This can be used to implement
-       * the reload of folders, which take longer to load.
-       **/
-      folder_signals[FILES_REMOVED] =
-        g_signal_new ("files-removed",
-                      G_TYPE_FROM_INTERFACE (klass),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarFolderIface, files_removed),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__POINTER,
-                      G_TYPE_NONE, 1, G_TYPE_POINTER);
-
-      initialized = TRUE;
-    }
-}
-
-
-
-static void
-thunar_folder_class_init (gpointer klass)
-{
   /**
-   * ThunarFolder:loading:
+   * ThunarFolder::loading:
    *
    * Tells whether the contents of the #ThunarFolder are
    * currently being loaded.
    **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_boolean ("loading",
-                                                             _("Loading"),
-                                                             _("Whether the contents of the folder are currently being loaded"),
-                                                             FALSE,
-                                                             EXO_PARAM_READABLE));
+  g_object_class_install_property (gobject_class,
+                                   PROP_LOADING,
+                                   g_param_spec_boolean ("loading",
+                                                         _("Loading"),
+                                                         _("Whether the contents of the folder are currently being loaded"),
+                                                         FALSE,
+                                                         EXO_PARAM_READABLE));
+
+  /**
+   * ThunarFolder::error:
+   * @folder : a #ThunarFolder.
+   * @error  : the #GError describing the problem.
+   *
+   * Emitted when the #ThunarFolder fails to completly
+   * load the directory content because of an error.
+   **/
+  folder_signals[ERROR] =
+    g_signal_new ("error",
+                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarFolderClass, error),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarFolder::files-added:
+   *
+   * Emitted by the #ThunarFolder whenever new files have
+   * been added to a particular folder.
+   **/
+  folder_signals[FILES_ADDED] =
+    g_signal_new ("files-added",
+                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarFolderClass, files_added),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarFolder::files-removed:
+   *
+   * Emitted by the #ThunarFolder whenever a bunch of files
+   * is removed from the folder, which means they are not
+   * necessarily deleted from disk. This can be used to implement
+   * the reload of folders, which take longer to load.
+   **/
+  folder_signals[FILES_REMOVED] =
+    g_signal_new ("files-removed",
+                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarFolderClass, files_removed),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
+}
+
+
+
+static void
+thunar_folder_init (ThunarFolder *folder)
+{
+  /* lookup the id for the "destroy" signal of ThunarFile's */
+  folder->file_destroy_id = g_signal_lookup ("destroy", THUNAR_TYPE_FILE);
+
+  /* generate the closure to connect to the "destroy" signal of all files */
+  folder->file_destroy_closure = g_cclosure_new (G_CALLBACK (thunar_folder_file_destroy), folder, NULL);
+  g_closure_ref (folder->file_destroy_closure);
+  g_closure_sink (folder->file_destroy_closure);
+
+  /* connect to the file alteration monitor */
+  folder->monitor = thunar_vfs_monitor_get_default ();
+}
+
+
+
+static void
+thunar_folder_finalize (GObject *object)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (object);
+  GList        *lp;
+
+  /* disconnect from the file alteration monitor */
+  if (G_LIKELY (folder->handle != NULL))
+    thunar_vfs_monitor_remove (folder->monitor, folder->handle);
+  g_object_unref (G_OBJECT (folder->monitor));
+
+  /* cancel the pending job (if any) */
+  if (G_UNLIKELY (folder->job != NULL))
+    {
+      g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      thunar_vfs_job_cancel (folder->job);
+      g_object_unref (G_OBJECT (folder->job));
+    }
+
+  /* disconnect from the corresponding file */
+  if (G_LIKELY (folder->corresponding_file != NULL))
+    {
+      /* drop the reference */
+      g_signal_handlers_disconnect_matched (G_OBJECT (folder->corresponding_file), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      g_object_set_qdata (G_OBJECT (folder->corresponding_file), thunar_folder_quark, NULL);
+      g_object_unref (G_OBJECT (folder->corresponding_file));
+    }
+
+  /* release references to the files */
+  for (lp = folder->files; lp != NULL; lp = lp->next)
+    {
+      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                            folder->file_destroy_id, 0, folder->file_destroy_closure, NULL, NULL);
+      g_object_unref (G_OBJECT (lp->data));
+    }
+  g_list_free (folder->files);
+
+  /* drop the "destroy" closure */
+  g_closure_unref (folder->file_destroy_closure);
+
+  (*G_OBJECT_CLASS (thunar_folder_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_folder_get_property (GObject    *object,
+                            guint       prop_id,
+                            GValue     *value,
+                            GParamSpec *pspec)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (object);
+
+  switch (prop_id)
+    {
+    case PROP_LOADING:
+      g_value_set_boolean (value, thunar_folder_get_loading (folder));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_folder_error (ThunarVfsJob *job,
+                     GError       *error,
+                     ThunarFolder *folder)
+{
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  g_return_if_fail (folder->job == job);
+
+  /* tell the consumer about the problem */
+  g_signal_emit (G_OBJECT (folder), folder_signals[ERROR], 0, error);
+}
+
+
+
+static void
+thunar_folder_infos_ready (ThunarVfsJob *job,
+                           GList        *infos,
+                           ThunarFolder *folder)
+{
+  ThunarFile *file;
+  GList      *nfiles = NULL;
+  GList      *lp;
+
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  g_return_if_fail (folder->handle == NULL);
+  g_return_if_fail (folder->job == job);
+
+  /* add the new files to our temporary list of new files */
+  for (lp = infos; lp != NULL; lp = lp->next)
+    {
+      /* get the file corresponding to the info */
+      file = thunar_file_get_for_info (lp->data);
+
+      /* add the file to the temporary list of new files */
+      nfiles = g_list_prepend (nfiles, file);
+
+      /* connect the "destroy" signal */
+      g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id,
+                                      0, folder->file_destroy_closure, TRUE);
+    }
+
+  /* check if we have any new files */
+  if (G_LIKELY (nfiles != NULL))
+    {
+      /* add the new files to our existing list of files */
+      folder->files = g_list_concat (folder->files, nfiles);
+
+      /* tell the consumers that we have new files */
+      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, nfiles);
+    }
+}
+
+
+
+static void
+thunar_folder_finished (ThunarVfsJob *job,
+                        ThunarFolder *folder)
+{
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  g_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
+  g_return_if_fail (folder->handle == NULL);
+  g_return_if_fail (folder->job == job);
+
+  /* we did it, the folder is loaded */
+  g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+  g_object_unref (G_OBJECT (folder->job));
+  folder->job = NULL;
+
+  /* tell the consumers that we have loaded the directory */
+  g_object_notify (G_OBJECT (folder), "loading");
+
+  /* add us to the file alteration monitor */
+  folder->handle = thunar_vfs_monitor_add_directory (folder->monitor, thunar_file_get_path (folder->corresponding_file),
+                                                     thunar_folder_monitor, folder);
+}
+
+
+
+static void
+thunar_folder_corresponding_file_destroy (ThunarFile   *file,
+                                          ThunarFolder *folder)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (folder->corresponding_file == file);
+
+  /* the folder is useless now */
+  gtk_object_destroy (GTK_OBJECT (folder));
+}
+
+
+
+static void
+thunar_folder_corresponding_file_renamed (ThunarFile   *file,
+                                          ThunarFolder *folder)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (folder->corresponding_file == file);
+
+  /* re-register the VFS monitor handle if already connected */
+  if (G_LIKELY (folder->handle != NULL))
+    {
+      thunar_vfs_monitor_remove (folder->monitor, folder->handle);
+      folder->handle = thunar_vfs_monitor_add_directory (folder->monitor, thunar_file_get_path (file),
+                                                         thunar_folder_monitor, folder);
+    }
+}
+
+
+
+static void
+thunar_folder_file_destroy (ThunarFile   *file,
+                            ThunarFolder *folder)
+{
+  GList files;
+
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (g_list_find (folder->files, file) != NULL);
+
+  /* disconnect from the file */
+  g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_CLOSURE, 0, 0, folder->file_destroy_closure, NULL, NULL);
+  folder->files = g_list_remove (folder->files, file);
+
+  /* tell everybody that the file is gone */
+  files.data = file; files.next = files.prev = NULL;
+  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
+
+  /* drop our reference to the file */
+  g_object_unref (G_OBJECT (file));
+}
+
+
+
+static void
+thunar_folder_monitor (ThunarVfsMonitor       *monitor,
+                       ThunarVfsMonitorHandle *handle,
+                       ThunarVfsMonitorEvent   event,
+                       ThunarVfsPath          *handle_path,
+                       ThunarVfsPath          *event_path,
+                       gpointer                user_data)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (user_data);
+  ThunarFile   *file;
+  GList        *lp;
+  GList         list;
+
+  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  g_return_if_fail (folder->monitor == monitor);
+  g_return_if_fail (folder->handle == handle);
+  g_return_if_fail (folder->job == NULL);
+
+  /* check on which file the event occurred */
+  if (!thunar_vfs_path_equal (event_path, thunar_file_get_path (folder->corresponding_file)))
+    {
+      /* check if we already ship the file */
+      for (lp = folder->files; lp != NULL; lp = lp->next)
+        if (thunar_vfs_path_equal (event_path, thunar_file_get_path (lp->data)))
+          break;
+
+      /* if we don't have it, add it if the event is not an "deleted" event */
+      if (G_UNLIKELY (lp == NULL && event != THUNAR_VFS_MONITOR_EVENT_DELETED))
+        {
+          /* allocate a file for the path */
+          file = thunar_file_get_for_path (event_path, NULL);
+          if (G_UNLIKELY (file == NULL))
+            return;
+
+          /* prepend it to our internal list */
+          g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id, 0, folder->file_destroy_closure, TRUE);
+          folder->files = g_list_prepend (folder->files, file);
+
+          /* tell others about the new file */
+          list.data = file; list.next = list.prev = NULL;
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, &list);
+        }
+      else if (lp != NULL)
+        {
+          /* update/destroy the file */
+          if (event == THUNAR_VFS_MONITOR_EVENT_DELETED)
+            thunar_file_destroy (lp->data);
+          else
+            thunar_file_reload (lp->data);
+        }
+    }
+  else
+    {
+      /* update/destroy the corresponding file */
+      if (event == THUNAR_VFS_MONITOR_EVENT_DELETED)
+        thunar_file_destroy (folder->corresponding_file);
+      else
+        thunar_file_reload (folder->corresponding_file);
+    }
+}
+
+
+
+/**
+ * thunar_folder_get_for_file:
+ * @file : a #ThunarFile.
+ *
+ * Opens the specified @file as #ThunarFolder and
+ * returns a reference to the folder.
+ *
+ * The caller is responsible to free the returned
+ * object using g_object_unref() when no longer
+ * needed.
+ *
+ * Return value: the #ThunarFolder which corresponds
+ *               to @file.
+ **/
+ThunarFolder*
+thunar_folder_get_for_file (ThunarFile *file)
+{
+  ThunarFolder *folder;
+
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  g_return_val_if_fail (thunar_file_is_directory (file), NULL);
+
+  /* determine the "thunar-folder" quark on-demand */
+  if (G_UNLIKELY (thunar_folder_quark == 0))
+    thunar_folder_quark = g_quark_from_static_string ("thunar-folder");
+
+  /* check if we already know that folder */
+  folder = g_object_get_qdata (G_OBJECT (file), thunar_folder_quark);
+  if (G_UNLIKELY (folder != NULL))
+    {
+      g_object_ref (G_OBJECT (folder));
+    }
+  else
+    {
+      /* allocate the new instance */
+      folder = g_object_new (THUNAR_TYPE_FOLDER, NULL);
+      folder->corresponding_file = file;
+      g_object_ref (G_OBJECT (file));
+
+      /* drop the floating reference */
+      g_assert (GTK_OBJECT_FLOATING (folder));
+      g_object_ref (G_OBJECT (folder));
+      gtk_object_sink (GTK_OBJECT (folder));
+
+      g_signal_connect (G_OBJECT (file), "destroy", G_CALLBACK (thunar_folder_corresponding_file_destroy), folder);
+      g_signal_connect (G_OBJECT (file), "renamed", G_CALLBACK (thunar_folder_corresponding_file_renamed), folder);
+
+      g_object_set_qdata (G_OBJECT (file), thunar_folder_quark, folder);
+
+      /* schedule the loading of the folder */
+      folder->job = thunar_vfs_listdir (thunar_file_get_path (file), NULL);
+      g_signal_connect (folder->job, "error", G_CALLBACK (thunar_folder_error), folder);
+      g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
+      g_signal_connect (folder->job, "infos-ready", G_CALLBACK (thunar_folder_infos_ready), folder);
+    }
+
+  return folder;
 }
 
 
@@ -147,15 +543,15 @@ thunar_folder_class_init (gpointer klass)
  *
  * No reference is taken on the returned #ThunarFile for
  * the caller, so if you need a persistent reference to
- * the file, you'll have to call #g_object_ref() yourself.
+ * the file, you'll have to call g_object_ref() yourself.
  *
  * Return value: the #ThunarFile corresponding to @folder.
  **/
 ThunarFile*
-thunar_folder_get_corresponding_file (ThunarFolder *folder)
+thunar_folder_get_corresponding_file (const ThunarFolder *folder)
 {
   g_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
-  return THUNAR_FOLDER_GET_IFACE (folder)->get_corresponding_file (folder);
+  return folder->corresponding_file;
 }
 
 
@@ -169,11 +565,11 @@ thunar_folder_get_corresponding_file (ThunarFolder *folder)
  *
  * Return value: the list of #ThunarFiles for @folder.
  **/
-GList *
-thunar_folder_get_files (ThunarFolder *folder)
+GList*
+thunar_folder_get_files (const ThunarFolder *folder)
 {
   g_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
-  return THUNAR_FOLDER_GET_IFACE (folder)->get_files (folder);
+  return folder->files;
 }
 
 
@@ -188,55 +584,12 @@ thunar_folder_get_files (ThunarFolder *folder)
  * Return value: %TRUE if @folder is loading, else %FALSE.
  **/
 gboolean
-thunar_folder_get_loading (ThunarFolder *folder)
+thunar_folder_get_loading (const ThunarFolder *folder)
 {
   g_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
-  return THUNAR_FOLDER_GET_IFACE (folder)->get_loading (folder);
+  return (folder->job != NULL);
 }
 
 
 
-/**
- * thunar_folder_files_added:
- * @folder : a #ThunarFolder instance.
- * @files  : the list of added #ThunarFile<!---->s.
- *
- * Emits the ::files-added signal on @folder using the given
- * @files. This should only be called by #ThunarFolder
- * implementations.
- **/
-void
-thunar_folder_files_added (ThunarFolder *folder,
-                           GList        *files)
-{
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (files != NULL);
-
-  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
-}
-
-
-
-/**
- * thunar_folder_files_removed:
- * @folder : a #ThunarFolder instance.
- * @files  : the list of removed #ThunarFile<!---->s.
- *
- * Emits the ::files-removed signal on @folder using the
- * given @files. This should only be called by #ThunarFolder
- * implementations.
- *
- * The #ThunarFolder implementation is responsible to
- * invoke the ::files-removed signal whenever one of its
- * #ThunarFile<!---->s is destroyed.
- **/
-void
-thunar_folder_files_removed (ThunarFolder *folder,
-                             GList        *files)
-{
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (files != NULL);
-
-  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
-}
 

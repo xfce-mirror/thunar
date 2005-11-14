@@ -22,6 +22,7 @@
 #define __THUNAR_VFS_INTERACTIVE_JOB_H__
 
 #include <thunar-vfs/thunar-vfs-job.h>
+#include <thunar-vfs/thunar-vfs-monitor.h>
 
 G_BEGIN_DECLS;
 
@@ -72,6 +73,9 @@ struct _ThunarVfsInteractiveJob
   /* the last time we fired the "percent" signal (in msecs) */
   guint64 last_percent_time;
 
+  /* connection to the default ThunarVfsMonitor */
+  ThunarVfsMonitor *monitor;
+
   guint overwrite_all : 1;
   guint skip_all : 1;
 };
@@ -79,14 +83,17 @@ struct _ThunarVfsInteractiveJob
 GType     thunar_vfs_interactive_job_get_type     (void) G_GNUC_CONST;
 
 void      thunar_vfs_interactive_job_info_message (ThunarVfsInteractiveJob *interactive_job,
-                                                   const gchar             *message);
+                                                   const gchar             *message) G_GNUC_INTERNAL;
 void      thunar_vfs_interactive_job_percent      (ThunarVfsInteractiveJob *interactive_job,
-                                                   gdouble                  percent);
+                                                   gdouble                  percent) G_GNUC_INTERNAL;
+
+void      thunar_vfs_interactive_job_new_files    (ThunarVfsInteractiveJob *interactive_job,
+                                                   const GList             *path_list) G_GNUC_INTERNAL;
 
 gboolean  thunar_vfs_interactive_job_overwrite    (ThunarVfsInteractiveJob *interactive_job,
-                                                   const gchar             *message);
+                                                   const gchar             *message) G_GNUC_INTERNAL;
 gboolean  thunar_vfs_interactive_job_skip         (ThunarVfsInteractiveJob *interactive_job,
-                                                   const gchar             *message);
+                                                   const gchar             *message) G_GNUC_INTERNAL;
 
 G_END_DECLS;
 

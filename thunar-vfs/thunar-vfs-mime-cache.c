@@ -327,9 +327,10 @@ cache_node_lookup_suffix (const gchar *buffer,
                           const gchar *suffix, 
                           gboolean     ignore_case)
 {
-  gunichar  character;
-  gunichar  match_char;
-  gint      min, max, mid;
+  const gchar *type;
+  gunichar     character;
+  gunichar     match_char;
+  gint         min, max, mid;
 
 next:
   character = g_utf8_get_char (suffix);
@@ -351,7 +352,15 @@ next:
           suffix = g_utf8_next_char (suffix);
           if (*suffix == '\0')
             {
-              return buffer + CACHE_READ32 (buffer, offset + 16 * mid + 4);
+              /* need to verify the type here, as the stopchars may be
+               * misleading, which in turn may lead to the problem of
+               * returning '' here, which in turn will cause the mime
+               * database to return application/octet-stream for those
+               * files!
+               */
+              type = buffer + CACHE_READ32 (buffer, offset + 16 * mid + 4);
+              if (G_LIKELY (*type != '\0'))
+                return type;
             }
           else
             {

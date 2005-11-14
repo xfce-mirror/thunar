@@ -100,8 +100,8 @@ static void               thunar_favourites_model_save                (ThunarFav
 static void               thunar_favourites_model_monitor             (ThunarVfsMonitor           *monitor,
                                                                        ThunarVfsMonitorHandle     *handle,
                                                                        ThunarVfsMonitorEvent       event,
-                                                                       ThunarVfsURI               *handle_uri,
-                                                                       ThunarVfsURI               *event_uri,
+                                                                       ThunarVfsPath              *handle_path,
+                                                                       ThunarVfsPath              *event_path,
                                                                        gpointer                    user_data);
 static void               thunar_favourites_model_file_changed        (ThunarFile                 *file,
                                                                        ThunarFavouritesModel      *model);
@@ -198,12 +198,12 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
 {
   ThunarFavourite *favourite;
   ThunarVfsVolume *volume;
-  ThunarVfsURI    *uri;
+  ThunarVfsPath   *fhome;
+  ThunarVfsPath   *fpath;
   GtkTreePath     *path;
   ThunarFile      *file;
   GList           *volumes;
   GList           *lp;
-  gchar           *bookmarks_path;
 
   model->stamp = g_random_int ();
   model->volume_manager = thunar_vfs_volume_manager_get_default ();
@@ -212,8 +212,8 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
   path = gtk_tree_path_new_from_indices (0, -1);
 
   /* append the 'Home' favourite */
-  uri = thunar_vfs_uri_new_for_path (xfce_get_homedir ());
-  file = thunar_file_get_for_uri (uri, NULL);
+  fpath = thunar_vfs_path_get_for_home ();
+  file = thunar_file_get_for_path (fpath, NULL);
   if (G_LIKELY (file != NULL))
     {
       favourite = g_new (ThunarFavourite, 1);
@@ -226,28 +226,11 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
       thunar_favourites_model_add_favourite (model, favourite, path);
       gtk_tree_path_next (path);
     }
-  thunar_vfs_uri_unref (uri);
-
-  /* append the 'Trash' favourite */
-  uri = thunar_vfs_uri_new ("trash:", NULL);
-  file = thunar_file_get_for_uri (uri, NULL);
-  if (G_LIKELY (file != NULL))
-    {
-      favourite = g_new (ThunarFavourite, 1);
-      favourite->type = THUNAR_FAVOURITE_SYSTEM_DEFINED;
-      favourite->file = file;
-      favourite->name = NULL;
-      favourite->volume = NULL;
-
-      /* append the favourite to the list */
-      thunar_favourites_model_add_favourite (model, favourite, path);
-      gtk_tree_path_next (path);
-    }
-  thunar_vfs_uri_unref (uri);
+  thunar_vfs_path_unref (fpath);
 
   /* append the 'Filesystem' favourite */
-  uri = thunar_vfs_uri_new_for_path ("/");
-  file = thunar_file_get_for_uri (uri, NULL);
+  fpath = thunar_vfs_path_get_for_root ();
+  file = thunar_file_get_for_path (fpath, NULL);
   if (G_LIKELY (file != NULL))
     {
       favourite = g_new (ThunarFavourite, 1);
@@ -260,7 +243,7 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
       thunar_favourites_model_add_favourite (model, favourite, path);
       gtk_tree_path_next (path);
     }
-  thunar_vfs_uri_unref (uri);
+  thunar_vfs_path_unref (fpath);
 
   /* prepend the removable media volumes */
   volumes = thunar_vfs_volume_manager_get_volumes (model->volume_manager);
@@ -277,8 +260,8 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
 
           if (thunar_vfs_volume_is_present (volume))
             {
-              uri = thunar_vfs_volume_get_mount_point (volume);
-              file = thunar_file_get_for_uri (uri, NULL);
+              fpath = thunar_vfs_volume_get_mount_point (volume);
+              file = thunar_file_get_for_path (fpath, NULL);
               if (G_LIKELY (file != NULL))
                 {
                   /* generate the favourite */
@@ -309,19 +292,19 @@ thunar_favourites_model_init (ThunarFavouritesModel *model)
 #endif
 
   /* determine the URI to the Gtk+ bookmarks file */
-  bookmarks_path = xfce_get_homefile (".gtk-bookmarks", NULL);
-  uri = thunar_vfs_uri_new_for_path (bookmarks_path);
-  g_free (bookmarks_path);
+  fhome = thunar_vfs_path_get_for_home ();
+  fpath = thunar_vfs_path_relative (fhome, ".gtk-bookmarks");
+  thunar_vfs_path_unref (fhome);
 
   /* register with the alteration monitor for the bookmarks file */
   model->monitor = thunar_vfs_monitor_get_default ();
-  model->handle = thunar_vfs_monitor_add_file (model->monitor, uri, thunar_favourites_model_monitor, G_OBJECT (model));
+  model->handle = thunar_vfs_monitor_add_file (model->monitor, fpath, thunar_favourites_model_monitor, G_OBJECT (model));
 
   /* read the Gtk+ bookmarks file */
   thunar_favourites_model_load (model);
 
   /* cleanup */
-  thunar_vfs_uri_unref (uri);
+  thunar_vfs_path_unref (fpath);
   gtk_tree_path_free (path);
 }
 
@@ -484,7 +467,7 @@ thunar_favourites_model_get_value (GtkTreeModel *tree_model,
         }
       else if (G_LIKELY (favourite->file != NULL))
         {
-          icon = thunar_file_load_icon (favourite->file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, 32);
+          icon = thunar_icon_factory_load_file_icon (icon_factory, favourite->file, THUNAR_FILE_ICON_STATE_DEFAULT, 32);
         }
       if (G_LIKELY (icon != NULL))
         g_value_take_object (value, icon);
@@ -681,7 +664,7 @@ static void
 thunar_favourites_model_load (ThunarFavouritesModel *model)
 {
   ThunarFavourite *favourite;
-  ThunarVfsURI    *file_uri;
+  ThunarVfsPath   *file_path;
   GtkTreePath     *path;
   ThunarFile      *file;
   gchar           *bookmarks_path;
@@ -716,13 +699,13 @@ thunar_favourites_model_load (ThunarFavouritesModel *model)
             ;
 
           /* parse the URI */
-          file_uri = thunar_vfs_uri_new (line, NULL);
-          if (G_UNLIKELY (file_uri == NULL))
+          file_path = thunar_vfs_path_new (line, NULL);
+          if (G_UNLIKELY (file_path == NULL))
             continue;
 
           /* try to open the file corresponding to the uri */
-          file = thunar_file_get_for_uri (file_uri, NULL);
-          thunar_vfs_uri_unref (file_uri);
+          file = thunar_file_get_for_path (file_path, NULL);
+          thunar_vfs_path_unref (file_path);
           if (G_UNLIKELY (file == NULL))
             continue;
 
@@ -760,8 +743,8 @@ static void
 thunar_favourites_model_monitor (ThunarVfsMonitor       *monitor,
                                  ThunarVfsMonitorHandle *handle,
                                  ThunarVfsMonitorEvent   event,
-                                 ThunarVfsURI           *handle_uri,
-                                 ThunarVfsURI           *event_uri,
+                                 ThunarVfsPath          *handle_path,
+                                 ThunarVfsPath          *event_path,
                                  gpointer                user_data)
 {
   ThunarFavouritesModel *model = THUNAR_FAVOURITES_MODEL (user_data);
@@ -840,7 +823,7 @@ thunar_favourites_model_save (ThunarFavouritesModel *model)
       favourite = THUNAR_FAVOURITE (lp->data);
       if (favourite->type == THUNAR_FAVOURITE_USER_DEFINED)
         {
-          uri = thunar_vfs_uri_to_string (thunar_file_get_uri (favourite->file));
+          uri = thunar_vfs_path_dup_uri (thunar_file_get_path (favourite->file));
           if (G_LIKELY (favourite->name != NULL))
             fprintf (fp, "%s %s\n", uri, favourite->name);
           else
@@ -955,7 +938,7 @@ thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
                                         ThunarFavouritesModel *model)
 {
   ThunarFavourite *favourite = NULL;
-  ThunarVfsURI    *uri;
+  ThunarVfsPath   *fpath;
   GtkTreePath     *path;
   GtkTreeIter      iter;
   ThunarFile      *file;
@@ -972,8 +955,8 @@ thunar_favourites_model_volume_changed (ThunarVfsVolume       *volume,
       /* check if we need to display the volume now */
       if (thunar_vfs_volume_is_present (volume))
         {
-          uri = thunar_vfs_volume_get_mount_point (volume);
-          file = thunar_file_get_for_uri (uri, NULL);
+          fpath = thunar_vfs_volume_get_mount_point (volume);
+          file = thunar_file_get_for_path (fpath, NULL);
           if (G_LIKELY (file != NULL))
             {
               /* remove the volume from the list of hidden volumes */

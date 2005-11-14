@@ -40,7 +40,6 @@ ThunarVfsMimeApplication
 @THUNAR_VFS_MIME_APPLICATION_REQUIRES_TERMINAL: 
 @THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY: 
 @THUNAR_VFS_MIME_APPLICATION_SUPPORTS_MULTI: 
-@THUNAR_VFS_MIME_APPLICATION_SUPPORTS_URIS: 
 
 <!-- ##### STRUCT ThunarVfsMimeApplication ##### -->
 <para>
@@ -127,9 +126,11 @@ ThunarVfsMimeApplication
 
 @application: 
 @screen: 
-@uris: 
+@path_list: 
 @error: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@uris: 
 
 
 <!-- ##### FUNCTION thunar_vfs_mime_application_exec_with_env ##### -->
@@ -139,10 +140,12 @@ ThunarVfsMimeApplication
 
 @application: 
 @screen: 
-@uris: 
+@path_list: 
 @envp: 
 @error: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@uris: 
 
 
 <!-- ##### FUNCTION thunar_vfs_mime_application_lookup_icon_name ##### -->

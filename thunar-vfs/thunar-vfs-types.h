@@ -110,29 +110,6 @@ typedef enum { /*< flags >*/
 } ThunarVfsFileFlags;
 
 /**
- * ThunarVfsFileHint:
- * @THUNAR_VFS_FILE_HINT_ICON : The name of an icon or the path to
- *                              an image file, which should be used
- *                              to represent the file (e.g. the Icon
- *                              entry specified in a .desktop file).
- * @THUNAR_VFS_FILE_HINT_NAME : A more precise name to represent the
- *                              file, which is different from the
- *                              real file name (e.g. the Name entry
- *                              specified in a .desktop file).
- *
- * Additional hints that may be provided by the file system
- * backend.
- *
- * You can use #thunar_vfs_info_get_hint() to query hints from a
- * #ThunarVfsInfo.
- **/
-typedef enum {
-  THUNAR_VFS_FILE_HINT_ICON,
-  THUNAR_VFS_FILE_HINT_NAME,
-  THUNAR_VFS_FILE_N_HINTS,
-} ThunarVfsFileHint;
-
-/**
  * ThunarVfsFileDevice:
  * Datatype to represent the device number of a file.
  **/

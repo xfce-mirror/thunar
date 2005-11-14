@@ -5,12 +5,15 @@ INCLUDES =								\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"thunar-vfs\"					\
+	-DSN_API_NOT_YET_FROZEN						\
+	-DTHUNAR_VFS_COMPILATION					\
 	$(PLATFORM_CPPFLAGS)
 
 lib_LTLIBRARIES =							\
 	libthunar-vfs-1.la
 
 libthunar_vfs_headers =							\
+	thunar-vfs-config.h						\
 	thunar-vfs-info.h						\
 	thunar-vfs-interactive-job.h					\
 	thunar-vfs-job.h						\
@@ -18,12 +21,11 @@ libthunar_vfs_headers =							\
 	thunar-vfs-mime-database.h					\
 	thunar-vfs-mime-info.h						\
 	thunar-vfs-monitor.h						\
+	thunar-vfs-path.h						\
 	thunar-vfs-thumb.h						\
-	thunar-vfs-trash.h						\
 	thunar-vfs-types.h						\
 	thunar-vfs-user.h						\
 	thunar-vfs-util.h						\
-	thunar-vfs-uri.h						\
 	thunar-vfs-volume.h
 
 libthunar_vfs_public_built_sources =					\
@@ -47,9 +49,14 @@ libthunar_vfs_include_HEADERS =						\
 libthunar_vfs_1_la_SOURCES =						\
 	$(libthunar_vfs_built_sources)					\
 	$(libthunar_vfs_headers)					\
+	thunar-vfs-config.c						\
+	thunar-vfs-exec.c						\
+	thunar-vfs-exec.h						\
 	thunar-vfs-info.c						\
 	thunar-vfs-interactive-job.c					\
 	thunar-vfs-job.c						\
+	thunar-vfs-link-job.c						\
+	thunar-vfs-link-job.h						\
 	thunar-vfs-listdir-job.c					\
 	thunar-vfs-listdir-job.h					\
 	thunar-vfs-mime-application.c					\
@@ -63,28 +70,38 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-mime-parser.c					\
 	thunar-vfs-mime-provider.c					\
 	thunar-vfs-mime-provider.h					\
+	thunar-vfs-mime-sniffer.c					\
+	thunar-vfs-mime-sniffer.h					\
+	thunar-vfs-mkdir-job.c						\
+	thunar-vfs-mkdir-job.h						\
 	thunar-vfs-monitor.c						\
-	thunar-vfs-sysdep.c						\
-	thunar-vfs-sysdep.h						\
+	thunar-vfs-path.c						\
+	thunar-vfs-scandir.c						\
+	thunar-vfs-scandir.h						\
+	thunar-vfs-thumb-jpeg.c						\
+	thunar-vfs-thumb-jpeg.h						\
 	thunar-vfs-thumb.c						\
 	thunar-vfs-transfer-job.c					\
 	thunar-vfs-transfer-job.h					\
-	thunar-vfs-trash.c						\
 	thunar-vfs-unlink-job.c						\
 	thunar-vfs-unlink-job.h						\
 	thunar-vfs-user.c						\
 	thunar-vfs-util.c						\
-	thunar-vfs-uri.c						\
 	thunar-vfs-volume.c						\
 	thunar-vfs-volume-impl.c					\
 	thunar-vfs-volume-impl.h					\
+	thunar-vfs-xfer.c						\
+	thunar-vfs-xfer.h						\
 	thunar-vfs.c
 
 libthunar_vfs_1_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
+	$(GCONF_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
 	$(LIBFAM_CFLAGS)						\
+	$(LIBJPEG_CFLAGS)						\
 	$(LIBPNG_CFLAGS)						\
+	$(LIBSTARTUP_NOTIFICATION_CFLAGS)				\
 	$(PLATFORM_CFLAGS)
 
 libthunar_vfs_1_la_LDFLAGS =						\
@@ -95,9 +112,12 @@ libthunar_vfs_1_la_LDFLAGS =						\
 
 libthunar_vfs_1_la_LIBADD =						\
 	$(EXO_LIBS)							\
-	$(GTHREADS_LIBS)						\
+	$(GCONF_LIBS)							\
+	$(GTHREAD_LIBS)							\
 	$(LIBFAM_LIBS)							\
-	$(LIBPNG_LIBS)
+	$(LIBJPEG_LIBS)							\
+	$(LIBPNG_LIBS)							\
+	$(LIBSTARTUP_NOTIFICATION_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunar-vfs-1.pc

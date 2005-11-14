@@ -24,39 +24,23 @@
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarFolderIface ThunarFolderIface;
+typedef struct _ThunarFolderClass ThunarFolderClass;
+typedef struct _ThunarFolder      ThunarFolder;
 
 #define THUNAR_TYPE_FOLDER            (thunar_folder_get_type ())
 #define THUNAR_FOLDER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_FOLDER, ThunarFolder))
+#define THUNAR_FOLDER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_FOLDER, ThunarFolderClass))
 #define THUNAR_IS_FOLDER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_FOLDER))
-#define THUNAR_FOLDER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_TYPE_FOLDER, ThunarFolderIface))
+#define THUNAR_IS_FOLDER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_FOLDER))
+#define THUNAR_FOLDER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_FOLDER, ThunarFolderClass))
 
-struct _ThunarFolderIface
-{
-  GTypeInterface __parent__;
+GType         thunar_folder_get_type               (void) G_GNUC_CONST;
 
-  /* methods */
-  ThunarFile *(*get_corresponding_file) (ThunarFolder *folder);
-  GList      *(*get_files)              (ThunarFolder *folder);
-  gboolean    (*get_loading)            (ThunarFolder *folder);
+ThunarFolder *thunar_folder_get_for_file           (ThunarFile         *file);
 
-  /* signals */
-  void (*files_added)   (ThunarFolder *folder,
-                         GList        *files);
-  void (*files_removed) (ThunarFolder *folder,
-                         GList        *files);
-};
-
-GType       thunar_folder_get_type               (void) G_GNUC_CONST;
-
-ThunarFile *thunar_folder_get_corresponding_file (ThunarFolder *folder);
-GList      *thunar_folder_get_files              (ThunarFolder *folder);
-gboolean    thunar_folder_get_loading            (ThunarFolder *folder);
-
-void        thunar_folder_files_added            (ThunarFolder *folder,
-                                                  GList        *files);
-void        thunar_folder_files_removed          (ThunarFolder *folder,
-                                                  GList        *files);
+ThunarFile   *thunar_folder_get_corresponding_file (const ThunarFolder *folder);
+GList        *thunar_folder_get_files              (const ThunarFolder *folder);
+gboolean      thunar_folder_get_loading            (const ThunarFolder *folder);
 
 G_END_DECLS;
 

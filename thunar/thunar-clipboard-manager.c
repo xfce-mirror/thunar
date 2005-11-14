@@ -30,6 +30,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
+#include <thunar/thunar-dialogs.h>
 
 
 
@@ -59,6 +60,8 @@ static void thunar_clipboard_manager_get_property       (GObject                
                                                          guint                        prop_id,
                                                          GValue                      *value,
                                                          GParamSpec                  *pspec);
+static void thunar_clipboard_manager_file_destroyed     (ThunarFile                  *file,
+                                                         ThunarClipboardManager      *manager);
 static void thunar_clipboard_manager_owner_changed      (GtkClipboard                *clipboard,
                                                          GdkEventOwnerChange         *event,
                                                          ThunarClipboardManager      *manager);
@@ -74,6 +77,9 @@ static void thunar_clipboard_manager_get_callback       (GtkClipboard           
                                                          gpointer                     user_data);
 static void thunar_clipboard_manager_clear_callback     (GtkClipboard                *clipboard,
                                                          gpointer                     user_data);
+static void thunar_clipboard_manager_transfer_files     (ThunarClipboardManager      *manager,
+                                                         gboolean                     copy,
+                                                         GList                       *files);
 
 
 
@@ -92,21 +98,16 @@ struct _ThunarClipboardManager
   gboolean      can_paste;
   GdkAtom       x_special_gnome_copied_files;
 
-  gboolean      uri_copy;
-  GList        *uri_list;
+  gboolean      files_cutted;
+  GList        *files;
 };
 
 typedef struct
 {
-  gboolean copy;
-  GList   *uri_list;
-} ThunarClipboardInfo;
-
-typedef struct
-{
   ThunarClipboardManager *manager;
-  ThunarVfsURI           *target_uri;
-  GtkWindow              *window;
+  ThunarVfsPath          *target_path;
+  GtkWidget              *widget;
+  GClosure               *new_files_closure;
 } ThunarClipboardPasteRequest;
 
 
@@ -182,16 +183,22 @@ static void
 thunar_clipboard_manager_finalize (GObject *object)
 {
   ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (object);
+  GList                  *lp;
 
-  /* free any pending URI list */
-  thunar_vfs_uri_list_free (manager->uri_list);
+  /* release any pending files */
+  for (lp = manager->files; lp != NULL; lp = lp->next)
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_clipboard_manager_file_destroyed, manager);
+      g_object_unref (G_OBJECT (lp->data));
+    }
+  g_list_free (manager->files);
 
   /* disconnect from the clipboard */
   g_signal_handlers_disconnect_by_func (G_OBJECT (manager->clipboard), thunar_clipboard_manager_owner_changed, manager);
   g_object_set_qdata (G_OBJECT (manager->clipboard), thunar_clipboard_manager_quark, NULL);
   g_object_unref (G_OBJECT (manager->clipboard));
 
-  G_OBJECT_CLASS (thunar_clipboard_manager_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_clipboard_manager_parent_class)->finalize) (object);
 }
 
 
@@ -214,6 +221,23 @@ thunar_clipboard_manager_get_property (GObject    *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_clipboard_manager_file_destroyed (ThunarFile             *file,
+                                         ThunarClipboardManager *manager)
+{
+  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  g_return_if_fail (g_list_find (manager->files, file) != NULL);
+
+  /* remove the file from our list */
+  manager->files = g_list_remove (manager->files, file);
+
+  /* disconnect from the file */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (file), thunar_clipboard_manager_file_destroyed, manager);
+  g_object_unref (G_OBJECT (file));
 }
 
 
@@ -247,9 +271,8 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   ThunarClipboardPasteRequest *request = user_data;
   ThunarClipboardManager      *manager = THUNAR_CLIPBOARD_MANAGER (request->manager);
   ThunarApplication           *application;
-  GtkWidget                   *dialog;
-  gboolean                     copy = TRUE;
-  GList                       *uri_list = NULL;
+  gboolean                     path_copy = TRUE;
+  GList                       *path_list = NULL;
   gchar                       *data;
 
   /* check whether the retrieval worked */
@@ -262,35 +285,35 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
       /* check whether to copy or move */
       if (g_ascii_strncasecmp (data, "copy\n", 5) == 0)
         {
-          copy = TRUE;
+          path_copy = TRUE;
           data += 5;
         }
       else if (g_ascii_strncasecmp (data, "cut\n", 4) == 0)
         {
-          copy = FALSE;
+          path_copy = FALSE;
           data += 4;
         }
 
-      /* determine the uri list stored with the selection */
-      uri_list = thunar_vfs_uri_list_from_string (data, NULL);
+      /* determine the path list stored with the selection */
+      path_list = thunar_vfs_path_list_from_string (data, NULL);
     }
 
   /* perform the action if possible */
-  if (G_LIKELY (uri_list != NULL))
+  if (G_LIKELY (path_list != NULL))
     {
       application = thunar_application_get ();
-      if (G_LIKELY (copy))
-        thunar_application_copy_uris (application, request->window, uri_list, request->target_uri);
+      if (G_LIKELY (path_copy))
+        thunar_application_copy_into (application, request->widget, path_list, request->target_path, request->new_files_closure);
       else
-        thunar_application_move_uris (application, request->window, uri_list, request->target_uri);
+        thunar_application_move_into (application, request->widget, path_list, request->target_path, request->new_files_closure);
       g_object_unref (G_OBJECT (application));
-      thunar_vfs_uri_list_free (uri_list);
+      thunar_vfs_path_list_free (path_list);
 
       /* clear the clipboard if it contained "cutted data"
        * (gtk_clipboard_clear takes care of not clearing
        * the selection if we don't own it)
        */
-      if (G_UNLIKELY (!copy))
+      if (G_UNLIKELY (!path_copy))
         gtk_clipboard_clear (manager->clipboard);
 
       /* check the contents of the clipboard again
@@ -307,21 +330,16 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
   else
     {
       /* tell the user that we cannot paste */
-      dialog = gtk_message_dialog_new (request->window,
-                                       GTK_DIALOG_MODAL |
-                                       GTK_DIALOG_DESTROY_WITH_PARENT,
-                                       GTK_MESSAGE_WARNING,
-                                       GTK_BUTTONS_OK,
-                                       _("There is nothing on the clipboard to paste"));
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
+      thunar_dialogs_show_error (request->widget, NULL, _("There is nothing on the clipboard to paste"));
     }
 
   /* free the request */
-  if (G_LIKELY (request->window != NULL))
-    g_object_remove_weak_pointer (G_OBJECT (request->window), (gpointer) &request->window);
+  if (G_LIKELY (request->widget != NULL))
+    g_object_remove_weak_pointer (G_OBJECT (request->widget), (gpointer) &request->widget);
+  if (G_LIKELY (request->new_files_closure != NULL))
+    g_closure_unref (request->new_files_closure);
   g_object_unref (G_OBJECT (request->manager));
-  thunar_vfs_uri_unref (request->target_uri);
+  thunar_vfs_path_unref (request->target_path);
   g_free (request);
 }
 
@@ -374,6 +392,8 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
                                        gpointer          user_data)
 {
   ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
+  GList                  *path_list = NULL;
+  GList                  *lp;
   gchar                  *string_list;
   gchar                  *data;
 
@@ -381,12 +401,17 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
   g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
   g_return_if_fail (manager->clipboard == clipboard);
 
-  string_list = thunar_vfs_uri_list_to_string (manager->uri_list);
+  /* determine the path list from the file list */
+  for (lp = manager->files; lp != NULL; lp = lp->next)
+    path_list = g_list_append (path_list, thunar_file_get_path (lp->data));
+
+  /* determine the string representation of the path list */
+  string_list = thunar_vfs_path_list_to_string (path_list);
 
   switch (target_info)
     {
     case TARGET_GNOME_COPIED_FILES:
-      data = g_strconcat (manager->uri_copy ? "copy" : "cut", "\n", string_list, NULL);
+      data = g_strconcat (manager->files_cutted ? "cut\n" : "copy\n", string_list, NULL);
       gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) data, strlen (data));
       g_free (data);
       break;
@@ -399,6 +424,8 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
       g_assert_not_reached ();
     }
 
+  /* cleanup */
+  g_list_free (path_list);
   g_free (string_list);
 }
 
@@ -409,15 +436,64 @@ thunar_clipboard_manager_clear_callback (GtkClipboard *clipboard,
                                          gpointer      user_data)
 {
   ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
+  GList                  *lp;
 
   g_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
   g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
   g_return_if_fail (manager->clipboard == clipboard);
 
-  if (G_LIKELY (manager->uri_list != NULL))
+  /* release the pending files */
+  for (lp = manager->files; lp != NULL; lp = lp->next)
     {
-      thunar_vfs_uri_list_free (manager->uri_list);
-      manager->uri_list = NULL;
+      g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_clipboard_manager_file_destroyed, manager);
+      g_object_unref (G_OBJECT (lp->data));
+    }
+  g_list_free (manager->files);
+  manager->files = NULL;
+}
+
+
+
+static void
+thunar_clipboard_manager_transfer_files (ThunarClipboardManager *manager,
+                                         gboolean                copy,
+                                         GList                  *files)
+{
+  ThunarFile *file;
+  GList      *lp;
+
+  /* release any pending files */
+  for (lp = manager->files; lp != NULL; lp = lp->next)
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_clipboard_manager_file_destroyed, manager);
+      g_object_unref (G_OBJECT (lp->data));
+    }
+  g_list_free (manager->files);
+
+  /* remember the transfer operation */
+  manager->files_cutted = !copy;
+
+  /* setup the new file list */
+  for (lp = files, manager->files = NULL; lp != NULL; lp = lp->next)
+    {
+      file = g_object_ref (G_OBJECT (lp->data));
+      manager->files = g_list_prepend (manager->files, file);
+      g_signal_connect (G_OBJECT (file), "destroy", G_CALLBACK (thunar_clipboard_manager_file_destroyed), manager);
+    }
+
+  /* acquire the CLIPBOARD ownership */
+  gtk_clipboard_set_with_owner (manager->clipboard, clipboard_targets,
+                                G_N_ELEMENTS (clipboard_targets),
+                                thunar_clipboard_manager_get_callback,
+                                thunar_clipboard_manager_clear_callback,
+                                G_OBJECT (manager));
+
+  /* Need to fake a "owner-change" event here if the Xserver doesn't support clipboard notification */
+#if GTK_CHECK_VERSION(2,6,0)
+  if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
+#endif
+    {
+      thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
     }
 }
 
@@ -431,7 +507,7 @@ thunar_clipboard_manager_clear_callback (GtkClipboard *clipboard,
  * the clipboard on the given @display.
  *
  * The caller is responsible for freeing the returned object
- * using #g_object_unref() when it's no longer needed.
+ * using g_object_unref() when it's no longer needed.
  *
  * Return value: the #ThunarClipboardManager for @display.
  **/
@@ -463,7 +539,7 @@ thunar_clipboard_manager_get_for_display (GdkDisplay *display)
   manager->clipboard = g_object_ref (G_OBJECT (clipboard));
   g_object_set_qdata (G_OBJECT (clipboard), thunar_clipboard_manager_quark, manager);
 
-  /* listen for "owner-change" on the clipboard */
+  /* listen for the "owner-change" signal on the clipboard */
   g_signal_connect (G_OBJECT (manager->clipboard), "owner-change",
                     G_CALLBACK (thunar_clipboard_manager_owner_changed), manager);
 
@@ -493,122 +569,109 @@ thunar_clipboard_manager_get_can_paste (ThunarClipboardManager *manager)
 
 
 /**
- * thunar_clipboard_manager_copy_uri_list:
- * @manager  : a #ThunarClipboardManager.
- * @uri_list : a list of #ThunarVfsURIs.
+ * thunar_clipboard_manager_has_cutted_file:
+ * @manager : a #ThunarClipboardManager.
+ * @file    : a #ThunarFile.
  *
- * Sets the clipboard represented by @manager to
- * contain the @uri_list and marks the files represented
- * by the #ThunarVfsURI<!---->s in @uri_list to be copied
- * when the user pastes from the clipboard.
+ * Checks whether @file was cutted to the given @manager earlier.
+ *
+ * Return value: %TRUE if @file is on the cutted list of @manager.
  **/
-void
-thunar_clipboard_manager_copy_uri_list (ThunarClipboardManager *manager,
-                                        GList                  *uri_list)
+gboolean
+thunar_clipboard_manager_has_cutted_file (ThunarClipboardManager *manager,
+                                          const ThunarFile       *file)
 {
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (uri_list != NULL);
+  g_return_val_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager), FALSE);
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  /* free any previously set URI list */
-  if (G_UNLIKELY (manager->uri_list != NULL))
-    thunar_vfs_uri_list_free (manager->uri_list);
-
-  /* setup the new URI list */
-  manager->uri_copy = TRUE;
-  manager->uri_list = thunar_vfs_uri_list_copy (uri_list);
-
-  /* acquire the CLIPBOARD ownership */
-  gtk_clipboard_set_with_owner (manager->clipboard, clipboard_targets,
-                                G_N_ELEMENTS (clipboard_targets),
-                                thunar_clipboard_manager_get_callback,
-                                thunar_clipboard_manager_clear_callback,
-                                G_OBJECT (manager));
-
-  /* Need to fake a "owner-change" event here if the Xserver doesn't support clipboard notification */
-#if GTK_CHECK_VERSION(2,6,0)
-  if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
-#endif
-    {
-      thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
-    }
+  return (manager->files_cutted && g_list_find (manager->files, file) != NULL);
 }
 
 
 
 /**
- * thunar_clipboard_manager_cut_uri_list:
- * @manager  : a #ThunarClipboardManager.
- * @uri_list : a list of #ThunarVfsURIs.
+ * thunar_clipboard_manager_copy_files:
+ * @manager : a #ThunarClipboardManager.
+ * @files   : a list of #ThunarFile<!---->s.
  *
  * Sets the clipboard represented by @manager to
- * contain the @uri_list and marks the files represented
- * by the #ThunarVfsURI<!---->s in @uri_list to be moved
+ * contain the @files and marks them to be copied
  * when the user pastes from the clipboard.
  **/
 void
-thunar_clipboard_manager_cut_uri_list (ThunarClipboardManager *manager,
-                                       GList                  *uri_list)
+thunar_clipboard_manager_copy_files (ThunarClipboardManager *manager,
+                                     GList                  *files)
 {
   g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (uri_list != NULL);
-
-  /* free any previously set URI list */
-  if (G_UNLIKELY (manager->uri_list != NULL))
-    thunar_vfs_uri_list_free (manager->uri_list);
-
-  /* setup the new URI list */
-  manager->uri_copy = FALSE;
-  manager->uri_list = thunar_vfs_uri_list_copy (uri_list);
-
-  /* acquire the CLIPBOARD ownership */
-  gtk_clipboard_set_with_owner (manager->clipboard, clipboard_targets,
-                                G_N_ELEMENTS (clipboard_targets),
-                                thunar_clipboard_manager_get_callback,
-                                thunar_clipboard_manager_clear_callback,
-                                G_OBJECT (manager));
-
-  /* Need to fake a "owner-change" event here if the Xserver doesn't support clipboard notification */
-#if GTK_CHECK_VERSION(2,6,0)
-  if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
-#endif
-    {
-      thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
-    }
+  thunar_clipboard_manager_transfer_files (manager, TRUE, files);
 }
 
 
 
 /**
- * thunar_clipboard_manager:
- * @manager    : a #ThunarClipboardManager.
- * @target_uri : the #ThunarVfsURI of the folder to which the contents on the clipboard
- *               should be pasted.
- * @window     : a #GtkWindow, on which to perform the paste or %NULL if no window is
- *               known.
+ * thunar_clipboard_manager_cut_files:
+ * @manager : a #ThunarClipboardManager.
+ * @files   : a list of #ThunarFile<!---->s.
+ *
+ * Sets the clipboard represented by @manager to
+ * contain the @files and marks them to be moved
+ * when the user pastes from the clipboard.
+ **/
+void
+thunar_clipboard_manager_cut_files (ThunarClipboardManager *manager,
+                                    GList                  *files)
+{
+  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  thunar_clipboard_manager_transfer_files (manager, FALSE, files);
+}
+
+
+
+/**
+ * thunar_clipboard_manager_paste_files:
+ * @manager           : a #ThunarClipboardManager.
+ * @target_path       : the #ThunarVfsPath of the folder to which the contents on the clipboard
+ *                      should be pasted.
+ * @widget            : a #GtkWidget, on which to perform the paste or %NULL if no widget is
+ *                      known.
+ * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
+ *                      which will be emitted when the job finishes with the
+ *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      %NULL if you're not interested in the signal.
  *
  * Pastes the contents from the clipboard associated with @manager to the directory
- * referenced by @target_uri.
+ * referenced by @target_path.
  **/
 void
-thunar_clipboard_manager_paste_uri_list (ThunarClipboardManager *manager,
-                                         ThunarVfsURI           *target_uri,
-                                         GtkWindow              *window)
+thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
+                                      ThunarVfsPath          *target_path,
+                                      GtkWidget              *widget,
+                                      GClosure               *new_files_closure)
 {
   ThunarClipboardPasteRequest *request;
 
   g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
+  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
 
   /* prepare the paste request */
-  request = g_new (ThunarClipboardPasteRequest, 1);
+  request = g_new0 (ThunarClipboardPasteRequest, 1);
   request->manager = g_object_ref (G_OBJECT (manager));
-  request->target_uri = thunar_vfs_uri_ref (target_uri);
-  request->window = window;
+  request->target_path = thunar_vfs_path_ref (target_path);
+  request->widget = widget;
 
-  /* get notified when the window is destroyed prior to
+  /* take a reference on the closure (if any) */
+  if (G_LIKELY (new_files_closure != NULL))
+    {
+      request->new_files_closure = new_files_closure;
+      g_closure_ref (new_files_closure);
+      g_closure_sink (new_files_closure);
+    }
+
+  /* get notified when the widget is destroyed prior to
    * completing the clipboard contents retrieval
    */
-  g_object_add_weak_pointer (G_OBJECT (request->window), (gpointer) &request->window);
+  if (G_LIKELY (request->widget != NULL))
+    g_object_add_weak_pointer (G_OBJECT (request->widget), (gpointer) &request->widget);
 
   /* schedule the request */
   gtk_clipboard_request_contents (manager->clipboard, manager->x_special_gnome_copied_files,

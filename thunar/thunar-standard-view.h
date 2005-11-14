@@ -21,6 +21,7 @@
 #define __THUNAR_STANDARD_VIEW_H__
 
 #include <thunar/thunar-clipboard-manager.h>
+#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-view.h>
 

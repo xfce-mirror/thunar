@@ -26,6 +26,11 @@
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-icon-view-ui.h>
 
+#if !GTK_CHECK_VERSION(2,7,1) && defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
+#include <cairo/cairo-xlib.h>
+#include <gdk/gdkx.h>
+#endif
+
 
 
 static void         thunar_icon_view_class_init             (ThunarIconViewClass *klass);
@@ -50,14 +55,24 @@ static GtkTreePath *thunar_icon_view_get_path_at_pos        (ThunarStandardView 
                                                              gint                 y);
 static void         thunar_icon_view_highlight_path         (ThunarStandardView  *standard_view,
                                                              GtkTreePath         *path);
+static GtkAction   *thunar_icon_view_gesture_action         (ThunarIconView      *icon_view);
 static void         thunar_icon_view_action_sort            (GtkAction           *action,
                                                              GtkAction           *current,
                                                              ThunarStandardView  *standard_view);
 static gboolean     thunar_icon_view_button_press_event     (ExoIconView         *view,
                                                              GdkEventButton      *event,
                                                              ThunarIconView      *icon_view);
+static gboolean     thunar_icon_view_button_release_event   (ExoIconView         *view,
+                                                             GdkEventButton      *event,
+                                                             ThunarIconView      *icon_view);
+static gboolean     thunar_icon_view_expose_event           (ExoIconView         *view,
+                                                             GdkEventExpose      *event,
+                                                             ThunarIconView      *icon_view);
 static gboolean     thunar_icon_view_key_press_event        (ExoIconView         *view,
                                                              GdkEventKey         *event,
+                                                             ThunarIconView      *icon_view);
+static gboolean     thunar_icon_view_motion_notify_event    (ExoIconView         *view,
+                                                             GdkEventMotion      *event,
                                                              ThunarIconView      *icon_view);
 static void         thunar_icon_view_item_activated         (ExoIconView         *view,
                                                              GtkTreePath         *path,
@@ -76,7 +91,17 @@ struct _ThunarIconView
 {
   ThunarStandardView __parent__;
 
+  /* the UI manager merge id for the icon view */
   gint ui_merge_id;
+
+  /* mouse gesture support */
+  gint gesture_start_x;
+  gint gesture_start_y;
+  gint gesture_current_x;
+  gint gesture_current_y;
+  gint gesture_expose_id;
+  gint gesture_motion_id;
+  gint gesture_release_id;
 };
 
 
@@ -323,6 +348,30 @@ thunar_icon_view_highlight_path (ThunarStandardView *standard_view,
 
 
 
+static GtkAction*
+thunar_icon_view_gesture_action (ThunarIconView *icon_view)
+{
+  if (icon_view->gesture_start_y - icon_view->gesture_current_y > 40
+      && ABS (icon_view->gesture_start_x - icon_view->gesture_current_x) < 40)
+    {
+      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (icon_view)->ui_manager, "/main-menu/go-menu/open-parent");
+    }
+  else if (icon_view->gesture_start_x - icon_view->gesture_current_x > 40
+      && ABS (icon_view->gesture_start_y - icon_view->gesture_current_y) < 40)
+    {
+      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (icon_view)->ui_manager, "/main-menu/go-menu/back");
+    }
+  else if (icon_view->gesture_current_x - icon_view->gesture_start_x > 40
+      && ABS (icon_view->gesture_start_y - icon_view->gesture_current_y) < 40)
+    {
+      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (icon_view)->ui_manager, "/main-menu/go-menu/forward");
+    }
+
+  return NULL;
+}
+
+
+
 static void
 thunar_icon_view_action_sort (GtkAction          *action,
                               GtkAction          *current,
@@ -421,8 +470,166 @@ thunar_icon_view_button_press_event (ExoIconView    *view,
           /* cleanup */
           gtk_tree_path_free (path);
         }
+      else if (event->type == GDK_BUTTON_PRESS)
+        {
+          icon_view->gesture_start_x = icon_view->gesture_current_x = event->x;
+          icon_view->gesture_start_y = icon_view->gesture_current_y = event->y;
+          icon_view->gesture_expose_id = g_signal_connect_after (G_OBJECT (view), "expose-event",
+                                                                 G_CALLBACK (thunar_icon_view_expose_event),
+                                                                 G_OBJECT (icon_view));
+          icon_view->gesture_motion_id = g_signal_connect (G_OBJECT (view), "motion-notify-event",
+                                                           G_CALLBACK (thunar_icon_view_motion_notify_event),
+                                                           G_OBJECT (icon_view));
+          icon_view->gesture_release_id = g_signal_connect (G_OBJECT (view), "button-release-event",
+                                                            G_CALLBACK (thunar_icon_view_button_release_event),
+                                                            G_OBJECT (icon_view));
+        }
 
+      /* don't run the default handler here */
       return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_icon_view_button_release_event (ExoIconView    *view,
+                                       GdkEventButton *event,
+                                       ThunarIconView *icon_view)
+{
+  GtkAction *action;
+
+  g_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
+  g_return_val_if_fail (THUNAR_IS_ICON_VIEW (icon_view), FALSE);
+  g_return_val_if_fail (icon_view->gesture_expose_id > 0, FALSE);
+  g_return_val_if_fail (icon_view->gesture_motion_id > 0, FALSE);
+  g_return_val_if_fail (icon_view->gesture_release_id > 0, FALSE);
+
+  /* run the selected action (if any) */
+  action = thunar_icon_view_gesture_action (icon_view);
+  if (G_LIKELY (action != NULL))
+    gtk_action_activate (action);
+
+  /* unregister the "expose-event" handler */
+  g_signal_handler_disconnect (G_OBJECT (view), icon_view->gesture_expose_id);
+  icon_view->gesture_expose_id = 0;
+
+  /* unregister the "motion-notify-event" handler */
+  g_signal_handler_disconnect (G_OBJECT (view), icon_view->gesture_motion_id);
+  icon_view->gesture_motion_id = 0;
+
+  /* unregister the "button-release-event" handler */
+  g_signal_handler_disconnect (G_OBJECT (view), icon_view->gesture_release_id);
+  icon_view->gesture_release_id = 0;
+
+  /* redraw the icon view */
+  gtk_widget_queue_draw (GTK_WIDGET (view));
+
+  return FALSE;
+}
+
+
+
+#if GTK_CHECK_VERSION(2,7,1)
+static cairo_t*
+get_cairo_context (GdkWindow *window)
+{
+  return gdk_cairo_create (window);
+}
+#elif defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
+static cairo_t*
+get_cairo_context (GdkWindow *window)
+{
+  cairo_surface_t *surface;
+  GdkDrawable     *drawable;
+  cairo_t         *cr;
+  gint             w;
+  gint             h;
+  gint             x;
+  gint             y;
+
+  gdk_window_get_internal_paint_info (window, &drawable, &x, &y);
+  gdk_drawable_get_size (drawable, &w, &h);
+
+  surface = cairo_xlib_surface_create (GDK_DRAWABLE_XDISPLAY (drawable), GDK_DRAWABLE_XID (drawable),
+                                       gdk_x11_visual_get_xvisual (gdk_drawable_get_visual (drawable)), w, h);
+  cr = cairo_create (surface);
+  cairo_surface_destroy (surface);
+
+  cairo_translate (cr, -x, -y);
+
+  return cr;
+}
+#endif
+
+
+
+static gboolean
+thunar_icon_view_expose_event (ExoIconView    *view,
+                               GdkEventExpose *event,
+                               ThunarIconView *icon_view)
+{
+  GtkIconSet *stock_icon_set;
+  GtkAction  *action = NULL;
+  GdkPixbuf  *stock_icon = NULL;
+  gchar      *stock_id;
+#if GTK_CHECK_VERSION(2,7,1) || (defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO))
+  GdkColor    bg;
+  cairo_t    *cr;
+#endif
+
+  g_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
+  g_return_val_if_fail (THUNAR_IS_ICON_VIEW (icon_view), FALSE);
+  g_return_val_if_fail (icon_view->gesture_expose_id > 0, FALSE);
+  g_return_val_if_fail (icon_view->gesture_motion_id > 0, FALSE);
+  g_return_val_if_fail (icon_view->gesture_release_id > 0, FALSE);
+
+  /* shade the icon view content while performing mouse gestures */
+#if GTK_CHECK_VERSION(2,7,1) || (defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO))
+  cr = get_cairo_context (event->window);
+  bg = GTK_WIDGET (view)->style->base[GTK_STATE_NORMAL];
+  cairo_set_source_rgba (cr, bg.red / 65535.0, bg.green / 65535.0, bg.blue / 65535.0, 0.7);
+  cairo_rectangle (cr, event->area.x, event->area.y, event->area.width, event->area.height);
+  cairo_clip (cr);
+  cairo_paint (cr);
+  cairo_destroy (cr);
+#endif
+
+  /* determine the gesture action */
+  action = thunar_icon_view_gesture_action (icon_view);
+  if (G_LIKELY (action != NULL))
+    {
+      /* determine the stock icon for the action */
+      g_object_get (G_OBJECT (action), "stock-id", &stock_id, NULL);
+
+      /* lookup the icon set for the stock icon */
+      stock_icon_set = gtk_style_lookup_icon_set (GTK_WIDGET (view)->style, stock_id);
+      if (G_LIKELY (stock_icon_set != NULL))
+        {
+          stock_icon = gtk_icon_set_render_icon (stock_icon_set, GTK_WIDGET (view)->style,
+                                                 gtk_widget_get_direction (GTK_WIDGET (view)),
+                                                 gtk_action_is_sensitive (action) ? 0 : GTK_STATE_INSENSITIVE,
+                                                 GTK_ICON_SIZE_DND, GTK_WIDGET (view), NULL);
+        }
+
+      /* draw the rendered icon */
+      if (G_LIKELY (stock_icon != NULL))
+        {
+          /* render the stock icon into the icon view window */
+          gdk_draw_pixbuf (event->window, NULL, stock_icon, 0, 0,
+                           icon_view->gesture_start_x - gdk_pixbuf_get_width (stock_icon) / 2,
+                           icon_view->gesture_start_y - gdk_pixbuf_get_height (stock_icon) / 2,
+                           gdk_pixbuf_get_width (stock_icon), gdk_pixbuf_get_height (stock_icon),
+                           GDK_RGB_DITHER_NONE, 0, 0);
+
+          /* release the stock icon */
+          g_object_unref (G_OBJECT (stock_icon));
+        }
+
+      /* release the stock id */
+      g_free (stock_id);
     }
 
   return FALSE;
@@ -443,6 +650,44 @@ thunar_icon_view_key_press_event (ExoIconView    *view,
     }
 
   return FALSE;
+}
+
+
+
+static gboolean
+thunar_icon_view_motion_notify_event (ExoIconView    *view,
+                                      GdkEventMotion *event,
+                                      ThunarIconView *icon_view)
+{
+  GdkRectangle area;
+
+  g_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
+  g_return_val_if_fail (THUNAR_IS_ICON_VIEW (icon_view), FALSE);
+  g_return_val_if_fail (icon_view->gesture_expose_id > 0, FALSE);
+  g_return_val_if_fail (icon_view->gesture_motion_id > 0, FALSE);
+  g_return_val_if_fail (icon_view->gesture_release_id > 0, FALSE);
+
+  /* schedule a complete redraw on the first motion event */
+  if (icon_view->gesture_current_x == icon_view->gesture_start_x
+      && icon_view->gesture_current_y == icon_view->gesture_start_y)
+    {
+      gtk_widget_queue_draw (GTK_WIDGET (view));
+    }
+  else
+    {
+      /* otherwise, just redraw the action icon area */
+      gtk_icon_size_lookup (GTK_ICON_SIZE_DND, &area.width, &area.height);
+      area.x = icon_view->gesture_start_x - area.width / 2;
+      area.y = icon_view->gesture_start_y - area.height / 2;
+      gdk_window_invalidate_rect (event->window, &area, TRUE);
+    }
+
+  /* update the current gesture position */
+  icon_view->gesture_current_x = event->x;
+  icon_view->gesture_current_y = event->y;
+
+  /* don't execute the default motion notify handler */
+  return TRUE;
 }
 
 

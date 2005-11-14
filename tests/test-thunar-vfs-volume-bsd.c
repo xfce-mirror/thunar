@@ -37,7 +37,15 @@ main (int argc, char **argv)
   ThunarVfsVolume        *volume;
   GList                  *volumes;
 
-  g_type_init ();
+  /* initialize GThread (required for Thunar-VFS initialization) */
+  if (!g_thread_supported ())
+    g_thread_init (NULL);
+
+  /* initialize Gtk+ (required for Thunar-VFS initialization) */
+  gtk_init (&argc, &argv);
+
+  /* initialize Thunar-VFS */
+  thunar_vfs_init ();
 
   manager = thunar_vfs_volume_manager_get_default ();
   g_assert (THUNAR_VFS_IS_VOLUME_MANAGER (manager));
@@ -61,6 +69,9 @@ main (int argc, char **argv)
   g_assert (thunar_vfs_volume_get_mount_point (volume) != NULL);
 
   g_object_unref (G_OBJECT (manager));
+
+  /* shutdown Thunar-VFS */
+  thunar_vfs_shutdown ();
 
   return EXIT_SUCCESS;
 #else

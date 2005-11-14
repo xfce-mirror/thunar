@@ -22,7 +22,7 @@
 #define __THUNAR_VFS_TRANSFER_JOB_H__
 
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
-#include <thunar-vfs/thunar-vfs-uri.h>
+#include <thunar-vfs/thunar-vfs-path.h>
 
 G_BEGIN_DECLS;
 
@@ -36,12 +36,12 @@ typedef struct _ThunarVfsTransferJob      ThunarVfsTransferJob;
 #define THUNAR_VFS_IS_TRANSFER_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_TRANSFER_JOB))
 #define THUNAR_VFS_TRANSFER_JOB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_TRANSFER_JOB, ThunarVfsTransferJobClass))
 
-GType         thunar_vfs_transfer_job_get_type (void) G_GNUC_CONST;
+GType         thunar_vfs_transfer_job_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
-ThunarVfsJob *thunar_vfs_transfer_job_new      (GList        *source_uri_list,
-                                                ThunarVfsURI *target_uri,
-                                                gboolean      move,
-                                                GError      **error) G_GNUC_MALLOC;
+ThunarVfsJob *thunar_vfs_transfer_job_new      (GList   *source_path_list,
+                                                GList   *target_path_list,
+                                                gboolean move,
+                                                GError **error) G_GNUC_INTERNAL G_GNUC_MALLOC;
 
 G_END_DECLS;
 

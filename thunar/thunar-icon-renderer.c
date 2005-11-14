@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-gdk-pixbuf-extensions.h>
 #include <thunar/thunar-icon-factory.h>
@@ -316,18 +317,22 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                              GdkRectangle        *expose_area,
                              GtkCellRendererState flags)
 {
-  ThunarFileIconState icon_state;
-  ThunarIconRenderer *icon_renderer = THUNAR_ICON_RENDERER (renderer);
-  ThunarIconFactory  *icon_factory;
-  GdkRectangle        emblem_area;
-  GdkRectangle        icon_area;
-  GdkRectangle        draw_area;
-  GtkStateType        state;
-  GdkPixbuf          *emblem;
-  GdkPixbuf          *icon;
-  GdkPixbuf          *temp;
-  GList              *emblems;
-  GList              *lp;
+  ThunarClipboardManager *clipboard;
+  ThunarFileIconState     icon_state;
+  ThunarIconRenderer     *icon_renderer = THUNAR_ICON_RENDERER (renderer);
+  ThunarIconFactory      *icon_factory;
+  GtkIconTheme           *icon_theme;
+  GdkRectangle            emblem_area;
+  GdkRectangle            icon_area;
+  GdkRectangle            draw_area;
+  GtkStateType            state;
+  GdkPixbuf              *emblem;
+  GdkPixbuf              *icon;
+  GdkPixbuf              *temp;
+  GList                  *emblems;
+  GList                  *lp;
+  gint                    max_emblems;
+  gint                    position;
 
   if (G_UNLIKELY (icon_renderer->file == NULL))
     return;
@@ -338,8 +343,9 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
              : THUNAR_FILE_ICON_STATE_DROP;
 
   /* load the main icon */
-  icon_factory = thunar_icon_factory_get_default ();
-  icon = thunar_file_load_icon (icon_renderer->file, icon_state, icon_factory, icon_renderer->size);
+  icon_theme = gtk_icon_theme_get_for_screen (gdk_drawable_get_screen (window));
+  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, icon_renderer->file, icon_state, icon_renderer->size);
   if (G_UNLIKELY (icon == NULL))
     {
       g_object_unref (G_OBJECT (icon_factory));
@@ -371,6 +377,16 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* check whether the icon is affected by the expose event */
   if (gdk_rectangle_intersect (expose_area, &icon_area, &draw_area))
     {
+      /* use a translucent icon to represent cutted files to the user */
+      clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (widget));
+      if (thunar_clipboard_manager_has_cutted_file (clipboard, icon_renderer->file))
+        {
+          temp = thunar_gdk_pixbuf_lucent (icon, 50);
+          g_object_unref (G_OBJECT (icon));
+          icon = temp;
+        }
+      g_object_unref (G_OBJECT (clipboard));
+
       /* colorize the icon if we should follow the selection state */
       if ((flags & (GTK_CELL_RENDERER_SELECTED | GTK_CELL_RENDERER_PRELIT)) != 0 && icon_renderer->follow_state)
         {
@@ -397,18 +413,24 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                        GDK_RGB_DITHER_NORMAL, 0, 0);
     }
 
+  /* release the file's icon */
   g_object_unref (G_OBJECT (icon));
 
   /* display the primary emblem as well (if any) */
   emblems = thunar_file_get_emblem_names (icon_renderer->file);
-  if (emblems != NULL)
+  if (G_UNLIKELY (emblems != NULL))
     {
-      /* lookup the first emblem icon that exits in the icon theme */
-      for (emblem = NULL, lp = emblems; emblem == NULL && lp != NULL; lp = lp->next)
-        emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, NULL, FALSE);
+      /* render up to four emblems for sizes from 48 onwards, else up to 2 emblems */
+      max_emblems = (icon_renderer->size < 48) ? 2 : 4;
 
-      if (G_LIKELY (emblem != NULL))
+      /* render the emblems */
+      for (lp = emblems, position = 0; lp != NULL && position < max_emblems; lp = lp->next)
         {
+          /* check if we have the emblem in the icon theme */
+          emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, NULL, FALSE);
+          if (G_UNLIKELY (emblem == NULL))
+            continue;
+
           /* determine the dimensions of the emblem */
           emblem_area.width = gdk_pixbuf_get_width (emblem);
           emblem_area.height = gdk_pixbuf_get_height (emblem);
@@ -416,18 +438,50 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           /* shrink insane emblems */
           if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > (2 * icon_renderer->size) / 3))
             {
+              /* scale down the emblem */
               temp = exo_gdk_pixbuf_scale_ratio (emblem, (2 * icon_renderer->size) / 3);
-              emblem_area.width = gdk_pixbuf_get_width (temp);
-              emblem_area.height = gdk_pixbuf_get_height (temp);
               g_object_unref (G_OBJECT (emblem));
               emblem = temp;
+
+              /* determine the size again */
+              emblem_area.width = gdk_pixbuf_get_width (emblem);
+              emblem_area.height = gdk_pixbuf_get_height (emblem);
             }
 
-          /* determine a good position for the emblem */
-          emblem_area.x = MIN (icon_area.x + icon_area.width - emblem_area.width / 2,
-                               cell_area->x + cell_area->width - emblem_area.width);
-          emblem_area.y = MIN (icon_area.y + icon_area.height - emblem_area.height / 2,
-                               cell_area->y + cell_area->height -emblem_area.height);
+          /* determine a good position for the emblem, depending on the position index */
+          switch (position)
+            {
+            case 0: /* right/bottom */
+              emblem_area.x = MIN (icon_area.x + icon_area.width - emblem_area.width / 2,
+                                   cell_area->x + cell_area->width - emblem_area.width);
+              emblem_area.y = MIN (icon_area.y + icon_area.height - emblem_area.height / 2,
+                                   cell_area->y + cell_area->height -emblem_area.height);
+              break;
+
+            case 1: /* left/bottom */
+              emblem_area.x = MAX (icon_area.x - emblem_area.width / 2,
+                                   cell_area->x);
+              emblem_area.y = MIN (icon_area.y + icon_area.height - emblem_area.height / 2,
+                                   cell_area->y + cell_area->height -emblem_area.height);
+              break;
+
+            case 2: /* left/top */
+              emblem_area.x = MAX (icon_area.x - emblem_area.width / 2,
+                                   cell_area->x);
+              emblem_area.y = MAX (icon_area.y - emblem_area.height / 2,
+                                   cell_area->y);
+              break;
+
+            case 3: /* right/top */
+              emblem_area.x = MIN (icon_area.x + icon_area.width - emblem_area.width / 2,
+                                   cell_area->x + cell_area->width - emblem_area.width);
+              emblem_area.y = MAX (icon_area.y - emblem_area.height / 2,
+                                   cell_area->y);
+              break;
+
+            default:
+              g_assert_not_reached ();
+            }
 
           /* render the emblem */
           if (gdk_rectangle_intersect (expose_area, &emblem_area, &draw_area))
@@ -438,9 +492,14 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                                GDK_RGB_DITHER_NORMAL, 0, 0);
             }
 
+          /* release the emblem */
           g_object_unref (G_OBJECT (emblem));
+
+          /* advance the position index */
+          ++position;
         }
 
+      /* release the emblem name list */
       g_list_free (emblems);
     }
 

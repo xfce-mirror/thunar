@@ -119,7 +119,7 @@ ThunarVfsVolumeKind
 thunar_vfs_volume_get_kind (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), THUNAR_VFS_VOLUME_KIND_UNKNOWN);
-  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_kind (volume);
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_kind) (volume);
 }
 
 
@@ -138,7 +138,7 @@ const gchar*
 thunar_vfs_volume_get_name (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), NULL);
-  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_name (volume);
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_name) (volume);
 }
 
 
@@ -157,7 +157,7 @@ ThunarVfsVolumeStatus
 thunar_vfs_volume_get_status (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), 0);
-  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status (volume);
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status) (volume);
 }
 
 
@@ -166,15 +166,15 @@ thunar_vfs_volume_get_status (ThunarVfsVolume *volume)
  * thunar_vfs_volume_get_mount_point:
  * @volume : a #ThunarVfsVolume instance.
  *
- * Return value: the URI which identifies the path where
+ * Return value: the path which identifies the path where
  *               the volume will be mounted (or is already
  *               mounted).
  **/
-ThunarVfsURI*
+ThunarVfsPath*
 thunar_vfs_volume_get_mount_point (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), NULL);
-  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_mount_point (volume);
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_mount_point) (volume);
 }
 
 
@@ -192,7 +192,7 @@ gboolean
 thunar_vfs_volume_is_mounted (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
-  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status (volume) & THUNAR_VFS_VOLUME_STATUS_MOUNTED;
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status) (volume) & THUNAR_VFS_VOLUME_STATUS_MOUNTED;
 }
 
 
@@ -211,7 +211,7 @@ gboolean
 thunar_vfs_volume_is_present (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
-  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status (volume) & THUNAR_VFS_VOLUME_STATUS_PRESENT;
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status) (volume) & THUNAR_VFS_VOLUME_STATUS_PRESENT;
 }
 
 
@@ -275,7 +275,7 @@ thunar_vfs_volume_get_free_space (ThunarVfsVolume   *volume,
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
   g_return_val_if_fail (free_space_return != NULL, FALSE);
-  return THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_free_space (volume, free_space_return);
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_free_space) (volume, free_space_return);
 }
 
 
@@ -527,7 +527,7 @@ thunar_vfs_volume_manager_get_volume_by_info (ThunarVfsVolumeManager *manager,
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager), NULL);
   g_return_val_if_fail (info != NULL, NULL);
-  return THUNAR_VFS_VOLUME_MANAGER_GET_IFACE (manager)->get_volume_by_info (manager, info);
+  return (*THUNAR_VFS_VOLUME_MANAGER_GET_IFACE (manager)->get_volume_by_info) (manager, info);
 }
 
 
@@ -546,7 +546,7 @@ GList*
 thunar_vfs_volume_manager_get_volumes (ThunarVfsVolumeManager *manager)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager), NULL);
-  return THUNAR_VFS_VOLUME_MANAGER_GET_IFACE (manager)->get_volumes (manager);
+  return (*THUNAR_VFS_VOLUME_MANAGER_GET_IFACE (manager)->get_volumes) (manager);
 }
 
 

@@ -21,6 +21,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
+
 #include <thunar/thunar-progress-dialog.h>
 
 
@@ -74,6 +78,9 @@ struct _ThunarProgressDialog
   GtkDialog __parent__;
 
   ThunarVfsJob *job;
+
+  GTimeVal      start_time;
+  GTimeVal      last_update_time;
 
   GtkWidget    *progress_bar;
   GtkWidget    *progress_label;
@@ -134,14 +141,17 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   GtkWidget *image;
   GtkWidget *label;
 
+  /* remember the current time as start time */
+  g_get_current_time (&dialog->start_time);
+
   gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
 
-  gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
+  gtk_window_set_default_size (GTK_WINDOW (dialog), 350, -1);
 
   table = g_object_new (GTK_TYPE_TABLE,
                         "border-width", 6,
-                        "n-columns", 2,
+                        "n-columns", 3,
                         "n-rows", 3,
                         "row-spacing", 6,
                         "column-spacing", 5,
@@ -150,23 +160,19 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_widget_show (table);
 
   image = g_object_new (GTK_TYPE_IMAGE, "icon-size", GTK_ICON_SIZE_BUTTON, NULL);
-  gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1,
-                    GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
+  gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1, GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
   gtk_widget_show (image);
 
   label = g_object_new (GTK_TYPE_LABEL, "use-markup", TRUE, "xalign", 0.0f, NULL);
-  gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1,
-                    GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
+  gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
   gtk_widget_show (label);
 
   dialog->progress_label = g_object_new (EXO_TYPE_ELLIPSIZED_LABEL, "ellipsize", EXO_PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
-  gtk_table_attach (GTK_TABLE (table), dialog->progress_label, 0, 2, 1, 2,
-                    GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), dialog->progress_label, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->progress_label);
 
-  dialog->progress_bar = g_object_new (GTK_TYPE_PROGRESS_BAR, "text", "0.00 %", NULL);
-  gtk_table_attach (GTK_TABLE (table), dialog->progress_bar, 0, 2, 2, 3,
-                    GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  dialog->progress_bar = g_object_new (GTK_TYPE_PROGRESS_BAR, "text", " ", NULL);
+  gtk_table_attach (GTK_TABLE (table), dialog->progress_bar, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->progress_bar);
 
   /* connect the window icon name to the action image */
@@ -386,21 +392,73 @@ thunar_progress_dialog_info_message (ThunarProgressDialog *dialog,
 
 
 
+static inline guint64
+time_diff (const GTimeVal *now,
+           const GTimeVal *last)
+{
+  return ((guint64) now->tv_sec - last->tv_sec) * G_USEC_PER_SEC
+       + ((guint64) last->tv_usec - last->tv_usec);
+}
+
+
+
 static void
 thunar_progress_dialog_percent (ThunarProgressDialog *dialog,
                                 gdouble               percent,
                                 ThunarVfsJob         *job)
 {
-  gchar text[32];
+  GTimeVal current_time;
+  gulong   remaining_time;
+  gulong   elapsed_time;
+  gchar    text[32];
 
   g_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   g_return_if_fail (percent >= 0.0 && percent <= 100.0);
   g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (job));
   g_return_if_fail (dialog->job == job);
 
-  g_snprintf (text, sizeof (text), "%.2f %%", percent);
-  gtk_progress_bar_set_text (GTK_PROGRESS_BAR (dialog->progress_bar), text);
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (dialog->progress_bar), percent / 100.0);
+
+  /* check if we should update the time display (every 400ms) */
+  g_get_current_time (&current_time);
+  if (time_diff (&current_time, &dialog->last_update_time) > 400 * 1000)
+    {
+      /* calculate the remaining time (in seconds) */
+      elapsed_time = time_diff (&current_time, &dialog->start_time) / 1000;
+      remaining_time = ((100 * elapsed_time) / percent - elapsed_time) / 1000;
+
+      /* setup the time label */
+      if (G_LIKELY (remaining_time > 0))
+        {
+          /* format the time text */
+          if (remaining_time > 60 * 60)
+            {
+              remaining_time = (gulong) (remaining_time / (60 * 60));
+              g_snprintf (text, sizeof (text), ngettext ("(%lu hour remaining)", "(%lu hours remaining)", remaining_time), remaining_time);
+            }
+          else if (remaining_time > 60)
+            {
+              remaining_time = (gulong) (remaining_time / 60);
+              g_snprintf (text, sizeof (text), ngettext ("(%lu minute remaining)", "(%lu minutes remaining)", remaining_time), remaining_time);
+            }
+          else
+            {
+              remaining_time = remaining_time;
+              g_snprintf (text, sizeof (text), ngettext ("(%lu second remaining)", "(%lu seconds remaining)", remaining_time), remaining_time);
+            }
+
+          /* apply the time text */
+          gtk_progress_bar_set_text (GTK_PROGRESS_BAR (dialog->progress_bar), text);
+        }
+      else
+        {
+          /* display an empty label */
+          gtk_progress_bar_set_text (GTK_PROGRESS_BAR (dialog->progress_bar), " ");
+        }
+
+      /* remember the current time as last update time */
+      dialog->last_update_time = current_time;
+    }
 }
 
 
@@ -502,7 +560,7 @@ thunar_progress_dialog_set_job (ThunarProgressDialog *dialog,
   if (G_LIKELY (dialog->job != NULL))
     {
       g_signal_handlers_disconnect_matched (dialog->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, dialog);
-      thunar_vfs_job_unref (dialog->job);
+      g_object_unref (G_OBJECT (dialog->job));
     }
 
   /* activate the new job */
@@ -511,7 +569,7 @@ thunar_progress_dialog_set_job (ThunarProgressDialog *dialog,
   /* connect to the new job */
   if (G_LIKELY (job != NULL))
     {
-      thunar_vfs_job_ref (job);
+      g_object_ref (G_OBJECT (job));
 
       g_signal_connect_swapped (job, "ask", G_CALLBACK (thunar_progress_dialog_ask), dialog);
       g_signal_connect_swapped (job, "error", G_CALLBACK (thunar_progress_dialog_error), dialog);

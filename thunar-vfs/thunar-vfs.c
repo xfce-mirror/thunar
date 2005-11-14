@@ -23,9 +23,12 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs.h>
+#include <thunar-vfs/thunar-vfs-link-job.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
+#include <thunar-vfs/thunar-vfs-mkdir-job.h>
 #include <thunar-vfs/thunar-vfs-transfer-job.h>
 #include <thunar-vfs/thunar-vfs-unlink-job.h>
+#include <thunar-vfs/thunar-vfs-xfer.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -42,14 +45,13 @@ static gint thunar_vfs_ref_count = 0;
 void
 thunar_vfs_init (void)
 {
-  extern void _thunar_vfs_info_init (void);
-  extern void _thunar_vfs_job_init (void);
-  extern void _thunar_vfs_uri_init (void);
-
   if (g_atomic_int_exchange_and_add (&thunar_vfs_ref_count, 1) == 0)
     {
-      /* initialize the URIs module */
-      _thunar_vfs_uri_init ();
+      /* initialize the path module */
+      _thunar_vfs_path_init ();
+
+      /* initialize the xfer module */
+      _thunar_vfs_xfer_init ();
 
       /* initialize the info module */
       _thunar_vfs_info_init ();
@@ -69,10 +71,6 @@ thunar_vfs_init (void)
 void
 thunar_vfs_shutdown (void)
 {
-  extern void _thunar_vfs_info_shutdown (void);
-  extern void _thunar_vfs_job_shutdown (void);
-  extern void _thunar_vfs_uri_shutdown (void);
-
   if (g_atomic_int_dec_and_test (&thunar_vfs_ref_count))
     {
       /* shutdown the jobs framework */
@@ -81,8 +79,11 @@ thunar_vfs_shutdown (void)
       /* release the info module */
       _thunar_vfs_info_shutdown ();
 
-      /* shutdown the URIs module */
-      _thunar_vfs_uri_shutdown ();
+      /* shutdown the xfer module */
+      _thunar_vfs_xfer_shutdown ();
+
+      /* shutdown the path module */
+      _thunar_vfs_path_shutdown ();
     }
 }
 
@@ -90,11 +91,11 @@ thunar_vfs_shutdown (void)
 
 /**
  * thunar_vfs_listdir:
- * @uri   : the #ThunarVfsURI for the folder that should be listed.
+ * @path  : the #ThunarVfsPath for the folder that should be listed.
  * @error : return location for errors or %NULL.
  *
  * Generates a #ThunarVfsListdirJob, which can be used to list the
- * contents of a directory (as specified by @uri). If the creation
+ * contents of a directory (as specified by @path). If the creation
  * of the job failes for some reason, %NULL will be returned and
  * @error will be set to point to a #GError describing the cause.
  * Else the newly allocated #ThunarVfsListdirJob will be returned
@@ -107,38 +108,30 @@ thunar_vfs_shutdown (void)
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
-thunar_vfs_listdir (ThunarVfsURI *uri,
-                    GError      **error)
+thunar_vfs_listdir (ThunarVfsPath *path,
+                    GError       **error)
 {
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
-
-  /* verify that we have a 'file://'-URI here */
-  if (G_UNLIKELY (thunar_vfs_uri_get_scheme (uri) != THUNAR_VFS_URI_SCHEME_FILE))
-    {
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
-                   _("Only local directories can be listed"));
-      return NULL;
-    }
 
   /* allocate the job */
-  return thunar_vfs_job_launch (thunar_vfs_listdir_job_new (uri));
+  return thunar_vfs_job_launch (thunar_vfs_listdir_job_new (path));
 }
 
 
 
 /**
- * thunar_vfs_copy:
- * @source_uri_list : the list of #ThunarVfsURI<!---->s that should be copied.
- * @target_uri      : the #ThunarVfsURI of the target directory.
- * @error           : return location for errors or %NULL.
+ * thunar_vfs_copy_file:
+ * @source_path : the source #ThunarVfsPath.
+ * @target_path : the target #ThunarVfsPath.
+ * @error       : return location for errors or %NULL.
  *
- * Generates a #ThunarVfsTransferJob, which can be used to copy
- * the files referenced by @source_uri_list to the directory referred
- * to by @target_uri. If the creation of the job failes for some reason,
- * %NULL will be returned and @error will be set to point to a #GError
- * describing the cause. Else the newly allocated #ThunarVfsTransferJob
- * will be returned and the caller is responsible to call
- * g_object_unref().
+ * Allocates a new #ThunarVfsTransferJob, which copies the file
+ * from @source_path to @target_path. That said, the file or directory
+ * located at @source_path will be placed at @target_path, NOT INTO
+ * @target_path.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
  *
  * Note, that the returned job is launched right away, so you don't
  * need to call thunar_vfs_job_launch() on it.
@@ -147,16 +140,61 @@ thunar_vfs_listdir (ThunarVfsURI *uri,
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
-thunar_vfs_copy (GList        *source_uri_list,
-                 ThunarVfsURI *target_uri,
-                 GError      **error)
+thunar_vfs_copy_file (ThunarVfsPath *source_path,
+                      ThunarVfsPath *target_path,
+                      GError       **error)
+{
+  GList source_path_list;
+  GList target_path_list;
+
+  g_return_val_if_fail (source_path != NULL, NULL);
+  g_return_val_if_fail (target_path != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* fake a source path list */
+  source_path_list.data = source_path;
+  source_path_list.next = NULL;
+  source_path_list.prev = NULL;
+
+  /* fake a target path list */
+  target_path_list.data = target_path;
+  target_path_list.next = NULL;
+  target_path_list.prev = NULL;
+
+  /* allocate the job */
+  return thunar_vfs_copy_files (&source_path_list, &target_path_list, error);
+}
+
+
+
+/**
+ * thunar_vfs_copy_files:
+ * @source_path_list : the list of #ThunarVfsPath<!---->s that should be copied.
+ * @target_path_list : the list of #ThunarVfsPath<!---->s for the targets.
+ * @error            : return location for errors or %NULL.
+ *
+ * Similar to thunar_vfs_copy_file(), but takes a bunch of files. The
+ * @source_path_list and @target_path_list must be of the same size.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it. The caller is responsible
+ * to free the returned object using g_object_unref() when no longer
+ * needed.
+ *
+ * Return value: the newly allocated #ThunarVfsTransferJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_copy_files (GList   *source_path_list,
+                       GList   *target_path_list,
+                       GError **error)
 {
   ThunarVfsJob *job;
 
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate/launch the job */
-  job = thunar_vfs_transfer_job_new (source_uri_list, target_uri, FALSE, error);
+  job = thunar_vfs_transfer_job_new (source_path_list, target_path_list, FALSE, error);
   if (G_LIKELY (job != NULL))
     thunar_vfs_job_launch (job);
 
@@ -166,35 +204,82 @@ thunar_vfs_copy (GList        *source_uri_list,
 
 
 /**
- * thunar_vfs_move:
- * @source_uri_list : the list of #ThunarVfsURI<!---->s that should be moved.
- * @target_uri      : the #ThunarVfsURI of the target directory.
- * @error           : return location for errors or %NULL.
+ * thunar_vfs_link_file:
+ * @source_path : the source #ThunarVfsPath.
+ * @target_path : the target #ThunarVfsPath.
+ * @error       : return location for errors or %NULL.
  *
- * Generates a #ThunarVfsTransferJob, which can be used to move
- * the files referenced by @source_uri_list to the directory referred
- * to by @target_uri. If the creation of the job failes for some reason,
- * %NULL will be returned and @error will be set to point to a #GError
- * describing the cause. Else the newly allocated #ThunarVfsTransferJob
- * will be returned and the caller is responsible to call g_object_unref().
+ * Allocates a new #ThunarVfsLinkJob, which creates a symbolic
+ * link from @source_path to @target_path.
+ *
+ * If @source_path and @target_path refer to the same file,
+ * a new unique target filename will be choosen automatically.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
  *
  * Note, that the returned job is launched right away, so you don't
  * need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsTransferJob or %NULL
+ * Return value: the newly allocated #ThunarVfsLinkJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
-thunar_vfs_move (GList        *source_uri_list,
-                 ThunarVfsURI *target_uri,
-                 GError      **error)
+thunar_vfs_link_file (ThunarVfsPath *source_path,
+                      ThunarVfsPath *target_path,
+                      GError       **error)
+{
+  GList source_path_list;
+  GList target_path_list;
+
+  g_return_val_if_fail (!thunar_vfs_path_is_root (source_path), NULL);
+  g_return_val_if_fail (!thunar_vfs_path_is_root (target_path), NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* fake a source path list */
+  source_path_list.data = source_path;
+  source_path_list.next = NULL;
+  source_path_list.prev = NULL;
+
+  /* fake a target path list */
+  target_path_list.data = target_path;
+  target_path_list.next = NULL;
+  target_path_list.prev = NULL;
+
+  return thunar_vfs_link_files (&source_path_list, &target_path_list, error);
+}
+
+
+
+/**
+ * thunar_vfs_link_files:
+ * @source_path_list : list of #ThunarVfsPath<!---->s to the source files.
+ * @target_path_list : list of #ThunarVfsPath<!---->s to the target files.
+ * @error            : return location for errors or %NULL.
+ *
+ * Like thunar_vfs_link_file(), but works on path lists, rather than
+ * a single path.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsLinkJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_link_files (GList   *source_path_list,
+                       GList   *target_path_list,
+                       GError **error)
 {
   ThunarVfsJob *job;
 
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate/launch the job */
-  job = thunar_vfs_transfer_job_new (source_uri_list, target_uri, TRUE, error);
+  job = thunar_vfs_link_job_new (source_path_list, target_path_list, error);
   if (G_LIKELY (job != NULL))
     thunar_vfs_job_launch (job);
 
@@ -204,12 +289,132 @@ thunar_vfs_move (GList        *source_uri_list,
 
 
 /**
- * thunar_vfs_unlink:
- * @uri_list : a list of #ThunarVfsURI<!---->s, that should be unlinked.
- * @error    : return location for errors or %NULL.
+ * thunar_vfs_move_file:
+ * @source_path : the source #ThunarVfsPath.
+ * @target_path : the target #ThunarVfsPath.
+ * @error       : return location for errors or %NULL.
+ *
+ * Allocates a new #ThunarVfsTransferJob, which moves the file
+ * from @source_path to @target_path. That said, the file or directory
+ * located at @source_path will be placed at @target_path, NOT INTO
+ * @target_path.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsTransferJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_move_file (ThunarVfsPath *source_path,
+                      ThunarVfsPath *target_path,
+                      GError       **error)
+{
+  GList source_path_list;
+  GList target_path_list;
+
+  g_return_val_if_fail (source_path != NULL, NULL);
+  g_return_val_if_fail (target_path != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* fake a source path list */
+  source_path_list.data = source_path;
+  source_path_list.next = NULL;
+  source_path_list.prev = NULL;
+
+  /* fake a target path list */
+  target_path_list.data = target_path;
+  target_path_list.next = NULL;
+  target_path_list.prev = NULL;
+
+  /* allocate and launch the job */
+  return thunar_vfs_move_files (&source_path_list, &target_path_list, error);
+}
+
+
+
+/**
+ * thunar_vfs_move_into:
+ * @source_path_list : the list of #ThunarVfsPath<!---->s that should be moved.
+ * @target_path_list : the list of #ThunarVfsPath<!---->s to the targets.
+ * @error            : return location for errors or %NULL.
+ *
+ * Similar to thunar_vfs_move_file(), but takes a bunch of files. The
+ * @source_path_list and @target_path_list must be of the same size.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it. The caller is responsible
+ * to free the returned object using g_object_unref() when no longer
+ * needed.
+ *
+ * Return value: the newly allocated #ThunarVfsTransferJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_move_files (GList   *source_path_list,
+                       GList   *target_path_list,
+                       GError **error)
+{
+  ThunarVfsJob *job;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate/launch the job */
+  job = thunar_vfs_transfer_job_new (source_path_list, target_path_list, TRUE, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
+}
+
+
+
+/**
+ * thunar_vfs_unlink_file:
+ * @path  : a #ThunarVfsPath, that should be unlinked.
+ * @error : return location for errors or %NULL.
+ *
+ * Simple wrapper to thunar_vfs_unlink_files(), which takes
+ * only a single path.
+ *
+ * Note, that the returned job is launched right away, so you
+ * don't need to call thunar_vfs_job_launch() on it. The caller
+ * is responsible to free the returned object using g_object_unref()
+ * when no longer needed.
+ *
+ * Return value: the newly allocated #ThunarVfsUnlinkJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_unlink_file (ThunarVfsPath *path,
+                        GError       **error)
+{
+  GList path_list;
+
+  g_return_val_if_fail (path != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* fake a path list */
+  path_list.data = path;
+  path_list.next = NULL;
+  path_list.prev = NULL;
+
+  /* allocate and launch the job */
+  return thunar_vfs_unlink_files (&path_list, error);
+}
+
+
+
+/**
+ * thunar_vfs_unlink_files:
+ * @path_list : a list of #ThunarVfsPath<!---->s, that should be unlinked.
+ * @error     : return location for errors or %NULL.
  *
  * Generates a #ThunarVfsInteractiveJob, which can be used to unlink
- * all files referenced by the @uris. If the creation of the job
+ * all files referenced by the @path_list. If the creation of the job
  * failes for some reason, %NULL will be returned and @error will
  * be set to point to a #GError describing the cause. Else, the
  * newly allocated #ThunarVfsUnlinkJob will be returned, and the
@@ -222,15 +427,90 @@ thunar_vfs_move (GList        *source_uri_list,
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
-thunar_vfs_unlink (GList   *uri_list,
-                   GError **error)
+thunar_vfs_unlink_files (GList   *path_list,
+                         GError **error)
 {
   ThunarVfsJob *job;
 
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* try to allocate the job */
-  job = thunar_vfs_unlink_job_new (uri_list, error);
+  job = thunar_vfs_unlink_job_new (path_list, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
+}
+
+
+
+/**
+ * thunar_vfs_make_directory:
+ * @path  : the #ThunarVfsPath to the directory to create.
+ * @error : return location for errors or %NULL.
+ *
+ * Generates a #ThunarVfsMkdirJob, which can be used to
+ * asynchronously create a new directory at the given @path. If
+ * the creation of the job fails for some reason, %NULL will be
+ * returned and @error will be set to point to a #GError
+ * describing the cause of the problem. Else the newly allocated
+ * #ThunarVfsMkdirJob will be returned, and the caller is responsible
+ * to call g_object_unref().
+ *
+ * Note, that the returned job is launched right away, so you
+ * don't need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsMkdirJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_make_directory (ThunarVfsPath *path,
+                           GError       **error)
+{
+  GList path_list;
+
+  g_return_val_if_fail (path != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* fake a path list */
+  path_list.data = path;
+  path_list.next = NULL;
+  path_list.prev = NULL;
+
+  /* allocate and launch the job */
+  return thunar_vfs_make_directories (&path_list, error);
+}
+
+
+
+/**
+ * thunar_vfs_make_directories:
+ * @path_list : a list of #ThunarVfsPath<!--->s that contain the paths
+ *              to the directories which should be created.
+ * @error     : return location for errors or %NULL.
+ *
+ * Similar to thunar_vfs_make_directory(), but allows the creation
+ * of multiple directories using a single #ThunarVfsJob.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsMkdirJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_make_directories (GList   *path_list,
+                             GError **error)
+{
+  ThunarVfsJob *job;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate and launch the new job */
+  job = thunar_vfs_mkdir_job_new (path_list, error);
   if (G_LIKELY (job != NULL))
     thunar_vfs_job_launch (job);
 

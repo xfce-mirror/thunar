@@ -29,7 +29,6 @@
 #endif
 
 #include <thunar/thunar-application.h>
-#include <thunar/thunar-desktop-window.h>
 
 
 
@@ -37,8 +36,7 @@ int
 main (int argc, char **argv)
 {
   ThunarApplication *application;
-  ThunarVfsURI      *uri;
-  const gchar       *path;
+  ThunarVfsPath     *path;
   ThunarFile        *file = NULL;
   GError            *error = NULL;
 
@@ -65,30 +63,21 @@ main (int argc, char **argv)
   /* initialize the ThunarVFS library */
   thunar_vfs_init ();
 
-  if (argc >= 2 && exo_str_is_equal (argv[1], "--desktop"))
-    {
-      GtkWidget *window = thunar_desktop_window_new ();
-      gtk_widget_show (window);
-      gtk_main ();
-      return 0;
-    }
-
   /* acquire a reference on the global application */
   application = thunar_application_get ();
 
-  path = (argc > 1) ? argv[1] : xfce_get_homedir ();
-
-  uri = thunar_vfs_uri_new (path, &error);
-  if (G_LIKELY (uri != NULL))
+  path = (argc > 1) ? thunar_vfs_path_new (argv[1], &error) : thunar_vfs_path_get_for_home ();
+  if (G_LIKELY (path != NULL))
     {
-      file = thunar_file_get_for_uri (uri, &error);
-      thunar_vfs_uri_unref (uri);
+      file = thunar_file_get_for_path (path, &error);
+      thunar_vfs_path_unref (path);
     }
 
-  if (uri == NULL || file == NULL)
+  if (path == NULL || file == NULL)
     {
       fprintf (stderr, "%s: Failed to open `%s': %s\n",
-               argv[0], path, error->message);
+               argv[0], (argc > 1) ? argv[1] : xfce_get_homedir (),
+               error->message);
       g_error_free (error);
       return EXIT_FAILURE;
     }

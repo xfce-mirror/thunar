@@ -37,6 +37,7 @@ enum
 {
   ASK,
   INFO_MESSAGE,
+  NEW_FILES,
   PERCENT,
   LAST_SIGNAL,
 };
@@ -44,6 +45,8 @@ enum
 
 
 static void                            thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass   *klass);
+static void                            thunar_vfs_interactive_job_init       (ThunarVfsInteractiveJob        *interactive_job);
+static void                            thunar_vfs_interactive_job_finalize   (GObject                        *object);
 static ThunarVfsInteractiveJobResponse thunar_vfs_interactive_job_real_ask   (ThunarVfsInteractiveJob        *interactive_job,
                                                                               const gchar                    *message,
                                                                               ThunarVfsInteractiveJobResponse choices);
@@ -57,32 +60,7 @@ static guint interactive_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_vfs_interactive_job_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsInteractiveJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_interactive_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsInteractiveJob),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_JOB, "ThunarVfsInteractiveJob", &info, G_TYPE_FLAG_ABSTRACT);
-    }
-
-  return type;
-}
+G_DEFINE_ABSTRACT_TYPE (ThunarVfsInteractiveJob, thunar_vfs_interactive_job, THUNAR_VFS_TYPE_JOB);
 
 
 
@@ -101,6 +79,11 @@ ask_accumulator (GSignalInvocationHint *ihint,
 static void
 thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
 {
+  GObjectClass *gobject_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_interactive_job_finalize;
+
   klass->ask = thunar_vfs_interactive_job_real_ask;
 
   /**
@@ -123,6 +106,23 @@ thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
                   THUNAR_VFS_TYPE_VFS_INTERACTIVE_JOB_RESPONSE,
                   2, G_TYPE_STRING,
                   THUNAR_VFS_TYPE_VFS_INTERACTIVE_JOB_RESPONSE);
+
+  /**
+   * ThunarVfsInteractiveJob::new-files:
+   * @job       : a #ThunarVfsJob.
+   * @path_list : a list of #ThunarVfsPath<!---->s that were created by @job.
+   *
+   * This signal is emitted by the @job right before the @job is terminated
+   * and informs the application about the list of created files in @path_list.
+   * @path_list contains only the toplevel path items, that were specified by
+   * the application on creation of the @job.
+   **/
+  interactive_signals[NEW_FILES] =
+    g_signal_new ("new-files",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
 
   /**
    * ThunarVfsInteractiveJob::info-message:
@@ -158,6 +158,28 @@ thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__DOUBLE,
                   G_TYPE_NONE, 1, G_TYPE_DOUBLE);
+}
+
+
+
+static void
+thunar_vfs_interactive_job_init (ThunarVfsInteractiveJob *interactive_job)
+{
+  /* grab a reference on the default vfs monitor */
+  interactive_job->monitor = thunar_vfs_monitor_get_default ();
+}
+
+
+
+static void
+thunar_vfs_interactive_job_finalize (GObject *object)
+{
+  ThunarVfsInteractiveJob *interactive_job = THUNAR_VFS_INTERACTIVE_JOB (object);
+
+  /* release the reference on the default vfs monitor */
+  g_object_unref (G_OBJECT (interactive_job->monitor));
+
+  (*G_OBJECT_CLASS (thunar_vfs_interactive_job_parent_class)->finalize) (object);
 }
 
 
@@ -234,6 +256,28 @@ thunar_vfs_interactive_job_percent (ThunarVfsInteractiveJob *interactive_job,
       thunar_vfs_job_emit (THUNAR_VFS_JOB (interactive_job), interactive_signals[PERCENT], 0, percent);
       interactive_job->last_percent_time = time;
     }
+}
+
+
+
+/**
+ * thunar_vfs_interactive_job_new_files:
+ * @interactive_job : a #ThunarVfsInteractiveJob.
+ * @path_list       : the #ThunarVfsPath<!---->s that were created by @interactive_job.
+ *
+ * Emits the ::created signal on @interactive_job with @info_list.
+ **/
+void
+thunar_vfs_interactive_job_new_files (ThunarVfsInteractiveJob *interactive_job,
+                                      const GList             *path_list)
+{
+  g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (interactive_job));
+
+  /* wait for the monitor to process all pending events */
+  thunar_vfs_monitor_wait (interactive_job->monitor);
+
+  /* emit the new-files signal */
+  thunar_vfs_job_emit (THUNAR_VFS_JOB (interactive_job), interactive_signals[NEW_FILES], 0, path_list);
 }
 
 

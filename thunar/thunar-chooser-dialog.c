@@ -30,6 +30,8 @@
 
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-chooser-model.h>
+#include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-icon-factory.h>
 
 
 
@@ -379,7 +381,6 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   GtkTreeModel             *model;
   GtkTreeIter               iter;
   const gchar              *exec;
-  GtkWidget                *message;
   gboolean                  succeed;
   GError                   *error = NULL;
   gchar                    *path;
@@ -424,15 +425,10 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       /* verify the application */
       if (G_UNLIKELY (application == NULL))
         {
-          message = gtk_message_dialog_new (GTK_WINDOW (dialog),
-                                            GTK_DIALOG_DESTROY_WITH_PARENT
-                                            | GTK_DIALOG_MODAL,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_CLOSE,
-                                            _("Failed to add new application %s."), name);
-          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
-          gtk_dialog_run (GTK_DIALOG (message));
-          gtk_widget_destroy (message);
+          /* display an error to the user */
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to add new application `%s'"), name);
+
+          /* release the error */
           g_error_free (error);
         }
 
@@ -451,34 +447,24 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   /* verify that we were successfull */
   if (G_UNLIKELY (!succeed))
     {
-      message = gtk_message_dialog_new (GTK_WINDOW (dialog),
-                                        GTK_DIALOG_DESTROY_WITH_PARENT
-                                        | GTK_DIALOG_MODAL,
-                                        GTK_MESSAGE_ERROR,
-                                        GTK_BUTTONS_CLOSE,
-                                        _("Failed to set default application for \"%s\"."),
-                                        thunar_file_get_display_name (dialog->file));
-      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
-      gtk_dialog_run (GTK_DIALOG (message));
-      gtk_widget_destroy (message);
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to set default application for `%s'"),
+                                 thunar_file_get_display_name (dialog->file));
+
+      /* release the error */
       g_error_free (error);
     }
   else if (G_LIKELY (dialog->open))
     {
       /* open the file using the specified application */
-      list.data = thunar_file_get_uri (dialog->file); list.next = list.prev = NULL;
+      list.data = thunar_file_get_path (dialog->file); list.next = list.prev = NULL;
       if (!thunar_vfs_mime_application_exec (application, gtk_widget_get_screen (GTK_WIDGET (dialog)), &list, &error))
         {
-          message = gtk_message_dialog_new (GTK_WINDOW (dialog),
-                                            GTK_DIALOG_DESTROY_WITH_PARENT
-                                            | GTK_DIALOG_MODAL,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_CLOSE,
-                                            _("Failed execute %s."),
-                                            thunar_vfs_mime_application_get_name (application));
-          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
-          gtk_dialog_run (GTK_DIALOG (message));
-          gtk_widget_destroy (message);
+          /* display an error to the user */
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to execute `%s'"),
+                                     thunar_vfs_mime_application_get_name (application));
+
+          /* release the error */
           g_error_free (error);
         }
     }
@@ -487,7 +473,6 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   thunar_vfs_mime_application_unref (application);
 cleanup:
   g_object_unref (G_OBJECT (mime_database));
-  thunar_vfs_mime_info_unref (mime_info);
 }
 
 
@@ -600,7 +585,6 @@ thunar_chooser_dialog_update_header (ThunarChooserDialog *dialog)
 
       /* cleanup */
       g_object_unref (G_OBJECT (icon_factory));
-      thunar_vfs_mime_info_unref (mime_info);
     }
 }
 
@@ -899,7 +883,6 @@ thunar_chooser_dialog_set_file (ThunarChooserDialog *dialog,
       model = thunar_chooser_model_new (mime_info);
       gtk_tree_view_set_model (GTK_TREE_VIEW (dialog->tree_view), GTK_TREE_MODEL (model));
       g_signal_connect (G_OBJECT (model), "notify::loading", G_CALLBACK (thunar_chooser_dialog_notify_loading), dialog);
-      thunar_vfs_mime_info_unref (mime_info);
       g_object_unref (G_OBJECT (model));
     }
 

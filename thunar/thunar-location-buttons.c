@@ -31,6 +31,7 @@
 #include <string.h>
 #endif
 
+#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-buttons.h>
 
 
@@ -364,6 +365,7 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
   ThunarFile            *file_parent;
   ThunarFile            *file;
   GtkWidget             *button;
+  GList                 *lp;
 
   g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
   g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -372,45 +374,60 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
   if (G_UNLIKELY (buttons->current_directory == current_directory))
     return;
 
-  if (G_LIKELY (buttons->current_directory != NULL))
+  /* check if we already have a button for that directory */
+  for (lp = buttons->list; lp != NULL; lp = lp->next)
+    if (g_object_get_qdata (G_OBJECT (lp->data), thunar_file_quark) == current_directory)
+      break;
+
+  /* if we already have a button for that directory, just activate it */
+  if (G_UNLIKELY (lp != NULL))
     {
-      g_object_unref (G_OBJECT (buttons->current_directory));
-
-      /* remove all buttons */
-      while (buttons->list != NULL)
-        gtk_container_remove (GTK_CONTAINER (buttons), buttons->list->data);
-
-      /* clear the first scrolled button state */
-      buttons->first_scrolled_button = NULL;
+      /* fake a "clicked" event for that button */
+      gtk_button_clicked (GTK_BUTTON (lp->data));
     }
-
-  buttons->current_directory = current_directory;
-
-  if (G_LIKELY (current_directory != NULL))
+  else
     {
-      g_object_ref (G_OBJECT (current_directory));
-
-      gtk_widget_push_composite_child ();
-
-      /* add the new buttons */
-      for (file = current_directory; file != NULL; file = file_parent)
+      /* regenerate the button list */
+      if (G_LIKELY (buttons->current_directory != NULL))
         {
-          button = thunar_location_buttons_make_button (buttons, file);
-          buttons->list = g_list_append (buttons->list, button);
-          gtk_container_add (GTK_CONTAINER (buttons), button);
-          gtk_widget_show (button);
+          g_object_unref (G_OBJECT (buttons->current_directory));
 
-          /* we use 'Home' as possible root, as well as real root nodes */
-          if (!thunar_file_is_home (file) && !thunar_file_is_root (file))
-            file_parent = thunar_file_get_parent (file, NULL);
-          else 
-            file_parent = NULL;
+          /* remove all buttons */
+          while (buttons->list != NULL)
+            gtk_container_remove (GTK_CONTAINER (buttons), buttons->list->data);
 
-          if (G_LIKELY (file != current_directory))
-            g_object_unref (G_OBJECT (file));
+          /* clear the first scrolled button state */
+          buttons->first_scrolled_button = NULL;
         }
 
-      gtk_widget_pop_composite_child ();
+      buttons->current_directory = current_directory;
+
+      if (G_LIKELY (current_directory != NULL))
+        {
+          g_object_ref (G_OBJECT (current_directory));
+
+          gtk_widget_push_composite_child ();
+
+          /* add the new buttons */
+          for (file = current_directory; file != NULL; file = file_parent)
+            {
+              button = thunar_location_buttons_make_button (buttons, file);
+              buttons->list = g_list_append (buttons->list, button);
+              gtk_container_add (GTK_CONTAINER (buttons), button);
+              gtk_widget_show (button);
+
+              /* we use 'Home' as possible root, as well as real root nodes */
+              if (!thunar_file_is_home (file) && !thunar_file_is_root (file))
+                file_parent = thunar_file_get_parent (file, NULL);
+              else 
+                file_parent = NULL;
+
+              if (G_LIKELY (file != current_directory))
+                g_object_unref (G_OBJECT (file));
+            }
+
+          gtk_widget_pop_composite_child ();
+        }
     }
 
   g_object_notify (G_OBJECT (buttons), "current-directory");
@@ -682,7 +699,7 @@ thunar_location_buttons_style_set (GtkWidget *widget,
         {
           file = g_object_get_qdata (G_OBJECT (lp->data), thunar_file_quark);
           children = gtk_container_get_children (GTK_CONTAINER (GTK_BIN (lp->data)->child));
-          icon = thunar_file_load_icon (file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, size);
+          icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, size);
           gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (lp->data), icon);
           gtk_image_set_from_pixbuf (GTK_IMAGE (children->data), icon);
           g_object_unref (G_OBJECT (icon));
@@ -820,7 +837,7 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
   gtk_widget_show (image);
 
   icon_factory = thunar_icon_factory_get_default ();
-  icon = thunar_file_load_icon (file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, size);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, size);
   gtk_drag_source_set_icon_pixbuf (button, icon);
   gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
   g_object_unref (G_OBJECT (icon_factory));
@@ -1142,7 +1159,7 @@ thunar_location_buttons_drag_data_get (GtkWidget             *button,
                                        ThunarLocationButtons *buttons)
 {
   ThunarFile *file;
-  GList       uri_list;
+  GList       path_list;
   gchar      *uri_string;
 
   g_return_if_fail (GTK_IS_WIDGET (button));
@@ -1151,9 +1168,9 @@ thunar_location_buttons_drag_data_get (GtkWidget             *button,
   /* determine the uri of the file in question */
   file = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
 
-  /* transform the uri into an uri list string */
-  uri_list.data = thunar_file_get_uri (file); uri_list.next = uri_list.prev = NULL;
-  uri_string = thunar_vfs_uri_list_to_string (&uri_list);
+  /* transform the path into an uri list string */
+  path_list.data = thunar_file_get_path (file); path_list.next = path_list.prev = NULL;
+  uri_string = thunar_vfs_path_list_to_string (&path_list);
 
   /* set the uri list for the drag selection */
   gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));

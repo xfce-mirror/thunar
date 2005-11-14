@@ -29,10 +29,14 @@
 #include <string.h>
 #endif
 
-#include <gdk/gdk.h>
-
+/* implement thunar-vfs-job's inline functions */
+#define G_IMPLEMENT_INLINES 1
+#define __THUNAR_VFS_JOB_C__
 #include <thunar-vfs/thunar-vfs-job.h>
+
 #include <thunar-vfs/thunar-vfs-alias.h>
+
+#include <gdk/gdk.h>
 
 
 
@@ -78,7 +82,6 @@ struct _ThunarVfsJobPrivate
   GMutex    *mutex;
   GMainLoop *loop;
   gint       launch_idle_id;
-  gboolean   cancelled;
 };
 
 
@@ -317,25 +320,7 @@ void
 thunar_vfs_job_cancel (ThunarVfsJob *job)
 {
   g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  job->priv->cancelled = TRUE;
-}
-
-
-
-/**
- * thunar_vfs_job_cancelled:
- * @job : a #ThunarVfsJob.
- *
- * Checks whether @job was previously cancelled
- * by a call to thunar_vfs_job_cancel().
- *
- * Return value: %TRUE if @job is cancelled.
- **/
-gboolean
-thunar_vfs_job_cancelled (const ThunarVfsJob *job)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
-  return job->priv->cancelled;
+  job->cancelled = TRUE;
 }
 
 

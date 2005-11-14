@@ -35,26 +35,6 @@ typedef struct _ThunarVfsGroup      ThunarVfsGroup;
 #define THUNAR_VFS_IS_GROUP_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_GROUP))
 #define THUNAR_VFS_GROUP_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_GROUP, ThunarVfsGroupClass))
 
-struct _ThunarVfsGroupClass
-{
-  GObjectClass __parent__;
-
-  /* virtual methods */
-  ThunarVfsGroupId (*get_id)   (ThunarVfsGroup *group);
-  const gchar     *(*get_name) (ThunarVfsGroup *group);
-
-  /*< private >*/
-  void (*reserved1) (void);
-  void (*reserved2) (void);
-  void (*reserved3) (void);
-  void (*reserved4) (void);
-};
-
-struct _ThunarVfsGroup
-{
-  GObject __parent__;
-};
-
 GType            thunar_vfs_group_get_type  (void) G_GNUC_CONST;
 
 ThunarVfsGroupId thunar_vfs_group_get_id    (ThunarVfsGroup *group);
@@ -70,30 +50,6 @@ typedef struct _ThunarVfsUser      ThunarVfsUser;
 #define THUNAR_VFS_IS_USER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_USER))
 #define THUNAR_VFS_IS_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_USER))
 #define THUNAR_VFS_USER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_USER, ThunarVfsUserClass))
-
-struct _ThunarVfsUserClass
-{
-  GObjectClass __parent__;
-
-  /* virtual methods */
-  GList          *(*get_groups)        (ThunarVfsUser *user);
-  ThunarVfsGroup *(*get_primary_group) (ThunarVfsUser *user);
-  ThunarVfsUserId (*get_id)            (ThunarVfsUser *user);
-  const gchar    *(*get_name)          (ThunarVfsUser *user);
-  const gchar    *(*get_real_name)     (ThunarVfsUser *user);
-  gboolean        (*is_me)             (ThunarVfsUser *user);
-
-  /*< private >*/
-  void (*reserved1) (void);
-  void (*reserved2) (void);
-  void (*reserved3) (void);
-  void (*reserved4) (void);
-};
-
-struct _ThunarVfsUser
-{
-  GObject __parent__;
-};
 
 GType            thunar_vfs_user_get_type          (void) G_GNUC_CONST;
 

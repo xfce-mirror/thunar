@@ -31,6 +31,7 @@
 #include <string.h>
 #endif
 
+#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-statusbar.h>
 
 #if !GTK_CHECK_VERSION(2,7,1) && defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
@@ -454,7 +455,7 @@ thunar_statusbar_icon_expose_event (GtkWidget      *widget,
   /* draw the icon if we have a file */
   if (G_LIKELY (statusbar_icon->file != NULL))
     {
-      icon = thunar_file_load_icon (statusbar_icon->file, THUNAR_FILE_ICON_STATE_DEFAULT, statusbar_icon->icon_factory, 16);
+      icon = thunar_icon_factory_load_file_icon (statusbar_icon->icon_factory, statusbar_icon->file, THUNAR_FILE_ICON_STATE_DEFAULT, 16);
 
       /* use the lucent variant if we're currently loading */
       if (thunar_statusbar_icon_get_loading (statusbar_icon))
@@ -520,7 +521,7 @@ thunar_statusbar_icon_drag_begin (GtkWidget      *widget,
   /* setup the drag source icon */
   if (G_LIKELY (statusbar_icon->file != NULL))
     {
-      icon = thunar_file_load_icon (statusbar_icon->file, THUNAR_FILE_ICON_STATE_DEFAULT, statusbar_icon->icon_factory, 24);
+      icon = thunar_icon_factory_load_file_icon (statusbar_icon->icon_factory, statusbar_icon->file, THUNAR_FILE_ICON_STATE_DEFAULT, 24);
       gtk_drag_source_set_icon_pixbuf (widget, icon);
       g_object_unref (G_OBJECT (icon));
     }
@@ -539,14 +540,14 @@ thunar_statusbar_icon_drag_data_get (GtkWidget        *widget,
                                      guint             time)
 {
   ThunarStatusbarIcon *statusbar_icon = THUNAR_STATUSBAR_ICON (widget);
-  GList                uri_list;
+  GList                path_list;
   gchar               *uri_string;
 
   if (G_LIKELY (statusbar_icon->file != NULL))
     {
-      /* transform the uri into an uri list string */
-      uri_list.data = thunar_file_get_uri (statusbar_icon->file); uri_list.next = uri_list.prev = NULL;
-      uri_string = thunar_vfs_uri_list_to_string (&uri_list);
+      /* transform the path into an uri list string */
+      path_list.data = thunar_file_get_path (statusbar_icon->file); path_list.next = path_list.prev = NULL;
+      uri_string = thunar_vfs_path_list_to_string (&path_list);
 
       /* set the uri for the drag selection */
       gtk_selection_data_set (selection_data, selection_data->target,

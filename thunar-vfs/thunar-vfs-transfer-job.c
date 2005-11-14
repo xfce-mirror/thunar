@@ -29,14 +29,8 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef HAVE_DIRENT_H
-#include <dirent.h>
-#endif
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
-#endif
-#ifdef HAVE_FCNTL_H
-#include <fcntl.h>
 #endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
@@ -44,64 +38,58 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
-#ifdef HAVE_TIME_H
-#include <time.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
 
-#include <thunar-vfs/thunar-vfs-sysdep.h>
-#include <thunar-vfs/thunar-vfs-thumb.h>
+#include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-scandir.h>
 #include <thunar-vfs/thunar-vfs-transfer-job.h>
+#include <thunar-vfs/thunar-vfs-xfer.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
 #else
-#define g_lstat(path, buffer) (lstat ((path), (buffer)))
-#define g_mkdir(path, mode) (mkdir ((path), (mode)))
-#define g_remove(path) (remove ((path)))
-#define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
-#endif
-
-#if !GLIB_CHECK_VERSION(2,7,2)
-#define g_chmod(path, mode) (chmod ((path), (mode)))
+#define g_lstat(path, statb) (lstat ((path), (statb)))
+#define g_rmdir(path) (rmdir ((path)))
+#define g_unlink(path) (unlink ((path)))
 #endif
 
 
-typedef struct _ThunarVfsTransferBase ThunarVfsTransferBase;
-typedef struct _ThunarVfsTransferItem ThunarVfsTransferItem;
+
+typedef struct _ThunarVfsTransferPair ThunarVfsTransferPair;
 
 
 
-static void     thunar_vfs_transfer_job_class_init      (ThunarVfsJobClass      *klass);
-static void     thunar_vfs_transfer_job_init            (ThunarVfsTransferJob   *transfer_job);
-static void     thunar_vfs_transfer_job_finalize        (GObject                *object);
-static void     thunar_vfs_transfer_job_execute         (ThunarVfsJob           *job);
-static gboolean thunar_vfs_transfer_job_skip            (ThunarVfsTransferJob   *job,
-                                                         const gchar            *format,
-                                                         const gchar            *filename);
-static void     thunar_vfs_transfer_job_percent         (ThunarVfsTransferJob   *job);
-static void     thunar_vfs_transfer_job_insert_base     (ThunarVfsTransferJob   *job,
-                                                         const gchar            *source_path,
-                                                         const gchar            *target_path);
-static void     thunar_vfs_transfer_base_collect        (ThunarVfsTransferBase  *base);
-static void     thunar_vfs_transfer_base_copy           (ThunarVfsTransferBase  *base);
-static void     thunar_vfs_transfer_item_collect        (ThunarVfsTransferItem  *item);
-static void     thunar_vfs_transfer_item_copy           (ThunarVfsTransferItem  *item);
-static void     thunar_vfs_transfer_item_copy_directory (ThunarVfsTransferItem  *item,
-                                                         const gchar            *source_path,
-                                                         const gchar            *target_path);
-static gboolean thunar_vfs_transfer_item_copy_legacy    (ThunarVfsTransferJob   *job,
-                                                         gint                    source_fd,
-                                                         gint                    target_fd);
-static void     thunar_vfs_transfer_item_copy_regular   (ThunarVfsTransferItem  *item,
-                                                         const gchar            *source_path,
-                                                         const gchar            *target_path);
-static void     thunar_vfs_transfer_item_copy_symlink   (ThunarVfsTransferItem  *item,
-                                                         const gchar            *source_path,
-                                                         const gchar            *target_path);
+static void                   thunar_vfs_transfer_job_class_init    (ThunarVfsTransferJobClass *klass);
+static void                   thunar_vfs_transfer_job_init          (ThunarVfsTransferJob      *transfer_job);
+static void                   thunar_vfs_transfer_job_finalize      (GObject                   *object);
+static void                   thunar_vfs_transfer_job_execute       (ThunarVfsJob              *job);
+static void                   thunar_vfs_transfer_job_update        (ThunarVfsTransferJob      *transfer_job);
+static gboolean               thunar_vfs_transfer_job_progress      (ThunarVfsFileSize          current_total_size,
+                                                                     ThunarVfsFileSize          current_completed_size,
+                                                                     gpointer                   user_data);
+static GList                 *thunar_vfs_transfer_job_collect_pairs (ThunarVfsTransferJob      *transfer_job,
+                                                                     ThunarVfsTransferPair     *pair,
+                                                                     GError                   **error);
+static void                   thunar_vfs_transfer_job_copy_pair     (ThunarVfsTransferJob      *transfer_job,
+                                                                     ThunarVfsTransferPair     *pair);
+static gboolean               thunar_vfs_transfer_job_overwrite     (ThunarVfsTransferJob      *transfer_job,
+                                                                     const GError              *error);
+static gboolean               thunar_vfs_transfer_job_skip          (ThunarVfsTransferJob      *transfer_job,
+                                                                     const GError              *error);
+static void                   thunar_vfs_transfer_job_skip_list_add (ThunarVfsTransferJob      *transfer_job,
+                                                                     ThunarVfsTransferPair     *pair);
+static gboolean               thunar_vfs_transfer_job_skip_list_has (ThunarVfsTransferJob      *transfer_job,
+                                                                     const ThunarVfsPath       *source_path);
+static ThunarVfsTransferPair *thunar_vfs_transfer_job_alloc_pair    (ThunarVfsTransferJob      *transfer_job,
+                                                                     ThunarVfsPath             *source_path,
+                                                                     ThunarVfsPath             *target_path,
+                                                                     gboolean                   toplevel,
+                                                                     GError                   **error);
+static inline void            thunar_vfs_transfer_job_free_pair     (ThunarVfsTransferJob      *transfer_job,
+                                                                     ThunarVfsTransferPair     *pair);
 
 
 
@@ -114,94 +102,67 @@ struct _ThunarVfsTransferJob
 {
   ThunarVfsInteractiveJob __parent__;
 
-  /* the list of item bases */
-  ThunarVfsTransferBase  *bases;
+  /* the VFS monitor */
+  ThunarVfsMonitor *monitor;
 
-  /* the various helper chunks */
-  GMemChunk              *base_chunk;
-  GMemChunk              *item_chunk;
-  GStringChunk           *string_chunk;
+  /* the list of pairs */
+  GList            *pairs;
+
+  /* the pair chunks (alloc-only) */
+  GMemChunk        *pair_chunk;
 
   /* whether to move files instead of copying them */
-  gboolean                move;
+  gboolean          move;
 
   /* the amount of completeness */
-  ThunarVfsFileSize       total_bytes;
-  ThunarVfsFileSize       completed_bytes;
+  ThunarVfsFileSize total_size;
+  ThunarVfsFileSize completed_size;
 
-  /* dirent item buffer, used to reduce stack overhead */
-  struct dirent           dirent_buffer;
+  /* the last time we update the status info */
+  GTimeVal          last_update_time;
+
+  /* current file status */
+  gboolean          current_path_changed;
+  ThunarVfsPath    *current_path;
+  ThunarVfsFileSize current_total_size;
+  ThunarVfsFileSize current_completed_size;
+
+  /* list of directories that should be deleted when the job finishes */
+  GList            *directories_to_delete;
+
+  /* the list of toplevel ThunarVfsPath's that were created by this job */
+  GList            *new_files;
+
+  /* the list of directories to skip */
+  GList            *skip_list;
 };
 
-struct _ThunarVfsTransferBase
+struct _ThunarVfsTransferPair
 {
-  ThunarVfsTransferJob  *job;
-  ThunarVfsTransferBase *next;
-  ThunarVfsTransferItem *items;
-  gchar                 *source_path;
-  gchar                 *target_path;
-};
-
-struct _ThunarVfsTransferItem
-{
-  ThunarVfsTransferBase *base;
-  ThunarVfsTransferItem *children;
-  ThunarVfsTransferItem *next;
-  ThunarVfsFileMode      mode;
-  ThunarVfsFileSize      size;
-  gboolean               skipped;
-  gchar                 *source_path;
-  gchar                 *target_path;
+  ThunarVfsPath    *source_path;
+  ThunarVfsPath    *target_path;
+  ThunarVfsFileSize source_size;
+  guint             source_mode : 31;
+  gboolean          toplevel : 1;
 };
 
 
 
-static GObjectClass *thunar_vfs_transfer_job_parent_class;
-
-
-
-GType
-thunar_vfs_transfer_job_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsTransferJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_transfer_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsTransferJob),
-        0,
-        (GInstanceInitFunc) thunar_vfs_transfer_job_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                     "ThunarVfsTransferJob", &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE (ThunarVfsTransferJob, thunar_vfs_transfer_job, THUNAR_VFS_TYPE_INTERACTIVE_JOB);
 
 
 
 static void
-thunar_vfs_transfer_job_class_init (ThunarVfsJobClass *klass)
+thunar_vfs_transfer_job_class_init (ThunarVfsTransferJobClass *klass)
 {
-  GObjectClass *gobject_class;
-
-  /* determine the parent class */
-  thunar_vfs_transfer_job_parent_class = g_type_class_peek_parent (klass);
+  ThunarVfsJobClass *thunarvfs_job_class;
+  GObjectClass      *gobject_class;
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_transfer_job_finalize;
 
-  klass->execute = thunar_vfs_transfer_job_execute;
+  thunarvfs_job_class = THUNAR_VFS_JOB_CLASS (klass);
+  thunarvfs_job_class->execute = thunar_vfs_transfer_job_execute;
 }
 
 
@@ -209,16 +170,14 @@ thunar_vfs_transfer_job_class_init (ThunarVfsJobClass *klass)
 static void
 thunar_vfs_transfer_job_init (ThunarVfsTransferJob *transfer_job)
 {
-  /* allocate the various helper chunks */
-  transfer_job->base_chunk = g_mem_chunk_new ("ThunarVfsTransferBase chunk",
-                                              sizeof (ThunarVfsTransferBase),
-                                              sizeof (ThunarVfsTransferBase) * 128,
+  /* connect to the VFS monitor */
+  transfer_job->monitor = thunar_vfs_monitor_get_default ();
+
+  /* allocate the pair chunk (alloc-only) */
+  transfer_job->pair_chunk = g_mem_chunk_new ("ThunarVfsTransferPair chunk",
+                                              sizeof (ThunarVfsTransferPair),
+                                              sizeof (ThunarVfsTransferPair) * 256,
                                               G_ALLOC_ONLY);
-  transfer_job->item_chunk = g_mem_chunk_new ("ThunarVfsTransferItem chunk",
-                                              sizeof (ThunarVfsTransferItem),
-                                              sizeof (ThunarVfsTransferItem) * 256,
-                                              G_ALLOC_ONLY);
-  transfer_job->string_chunk = g_string_chunk_new (4096);
 }
 
 
@@ -227,11 +186,31 @@ static void
 thunar_vfs_transfer_job_finalize (GObject *object)
 {
   ThunarVfsTransferJob *transfer_job = THUNAR_VFS_TRANSFER_JOB (object);
+  GList                *lp;
 
-  /* destroy the various helper chunks */
-  g_mem_chunk_destroy (transfer_job->base_chunk);
-  g_mem_chunk_destroy (transfer_job->item_chunk);
-  g_string_chunk_free (transfer_job->string_chunk);
+  /* release the pairs */
+  for (lp = transfer_job->pairs; lp != NULL; lp = lp->next)
+    thunar_vfs_transfer_job_free_pair (transfer_job, lp->data);
+  g_list_free (transfer_job->pairs);
+
+  /* drop the list of directories to delete */
+  thunar_vfs_path_list_free (transfer_job->directories_to_delete);
+
+  /* release the new files list */
+  thunar_vfs_path_list_free (transfer_job->new_files);
+
+  /* release the skip list */
+  thunar_vfs_path_list_free (transfer_job->skip_list);
+
+  /* release the current path */
+  if (G_LIKELY (transfer_job->current_path != NULL))
+    thunar_vfs_path_unref (transfer_job->current_path);
+
+  /* destroy the pair chunk */
+  g_mem_chunk_destroy (transfer_job->pair_chunk);
+
+  /* disconnect from the VFS monitor */
+  g_object_unref (G_OBJECT (transfer_job->monitor));
 
   /* call the parents finalize method */
   (*G_OBJECT_CLASS (thunar_vfs_transfer_job_parent_class)->finalize) (object);
@@ -242,615 +221,634 @@ thunar_vfs_transfer_job_finalize (GObject *object)
 static void
 thunar_vfs_transfer_job_execute (ThunarVfsJob *job)
 {
-  ThunarVfsTransferBase *base;
+  ThunarVfsTransferPair *pair;
   ThunarVfsTransferJob  *transfer_job = THUNAR_VFS_TRANSFER_JOB (job);
+  GError                *error;
+  gchar                 *source_absolute_path;
+  gchar                 *display_name;
+  GList                 *pairs;
+  GList                 *tmp;
+  GList                 *lp;
 
   thunar_vfs_interactive_job_info_message (THUNAR_VFS_INTERACTIVE_JOB (job), _("Collecting files..."));
 
-  /* collect all bases */
-  for (base = transfer_job->bases; !thunar_vfs_job_cancelled (job) && base != NULL; base = base->next)
-    thunar_vfs_transfer_base_collect (base);
+  /* save the current list of pairs */
+  pairs = transfer_job->pairs;
+  transfer_job->pairs = NULL;
 
-  /* copy/move all bases */
-  for (base = transfer_job->bases; !thunar_vfs_job_cancelled (job) && base != NULL; base = base->next)
-    thunar_vfs_transfer_base_copy (base);
+  /* collect pairs recursively */
+  for (lp = pairs; lp != NULL; lp = lp->next)
+    {
+      // FIXME: Error handling?
+      pair = (ThunarVfsTransferPair *) lp->data;
+      tmp = thunar_vfs_transfer_job_collect_pairs (transfer_job, pair, NULL);
+      transfer_job->pairs = g_list_concat (transfer_job->pairs, tmp);
+      transfer_job->pairs = g_list_append (transfer_job->pairs, pair);
+    }
+
+  /* release the temporary list */
+  g_list_free (pairs);
+
+  /* reverse the pair list, so we have the directories first */
+  transfer_job->pairs = g_list_reverse (transfer_job->pairs);
+
+  /* determine the total number of bytes to process */
+  for (lp = transfer_job->pairs; lp != NULL; lp = lp->next)
+    {
+      pair = (ThunarVfsTransferPair *) lp->data;
+      transfer_job->total_size += pair->source_size;
+    }
+
+  /* process the pairs */
+  while (transfer_job->pairs != NULL)
+    {
+      /* check if the job was cancelled */
+      if (thunar_vfs_job_cancelled (job))
+        break;
+
+      /* pick the next pair from the list */
+      pair = transfer_job->pairs->data;
+      lp = transfer_job->pairs->next;
+      g_list_free_1 (transfer_job->pairs);
+      transfer_job->pairs = lp;
+
+      /* check if we should skip this pair */
+      if (thunar_vfs_transfer_job_skip_list_has (transfer_job, pair->source_path))
+        {
+          /* add the size that was calculated for the skipped pair */
+          transfer_job->completed_size += pair->source_size;
+        }
+      else
+        {
+          /* copy the pair */
+          thunar_vfs_transfer_job_copy_pair (transfer_job, pair);
+        }
+
+      /* drop the pair, to reduce the overhead for finalize() */
+      thunar_vfs_transfer_job_free_pair (transfer_job, pair);
+    }
+
+  /* delete the scheduled directories */
+  if (transfer_job->directories_to_delete && transfer_job->move)
+    {
+      /* display info message */
+      thunar_vfs_interactive_job_info_message (THUNAR_VFS_INTERACTIVE_JOB (job), _("Deleting directories..."));
+
+      /* delete the directories */
+      for (lp = transfer_job->directories_to_delete; lp != NULL; lp = lp->next)
+        {
+          /* check if the job was cancelled */
+          if (thunar_vfs_job_cancelled (job))
+            break;
+
+          /* check if we should skip this directory */
+          if (thunar_vfs_transfer_job_skip_list_has (transfer_job, lp->data))
+            continue;
+
+          /* try to delete the source directory */
+          source_absolute_path = thunar_vfs_path_dup_string (lp->data);
+          if (g_rmdir (source_absolute_path) < 0 && errno != ENOENT)
+            {
+              /* ask the user whether we should skip this directory */
+              display_name = g_filename_display_name (source_absolute_path);
+              error = g_error_new (G_FILE_ERROR, g_file_error_from_errno (errno),
+                                   _("Unable to remove directory `%s': %s"),
+                                   display_name, g_strerror (errno));
+              thunar_vfs_transfer_job_skip (transfer_job, error);
+              g_clear_error (&error);
+              g_free (display_name);
+            }
+          else
+            {
+              /* schedule a "deleted" event for the source directory */
+              thunar_vfs_monitor_feed (transfer_job->monitor, THUNAR_VFS_MONITOR_EVENT_DELETED, lp->data);
+            }
+          g_free (source_absolute_path);
+        }
+    }
+
+  /* emit the "new-files" signal if we have any new files */
+  if (G_LIKELY (transfer_job->new_files != NULL))
+    thunar_vfs_interactive_job_new_files (THUNAR_VFS_INTERACTIVE_JOB (transfer_job), transfer_job->new_files);
+}
+
+
+
+static void
+thunar_vfs_transfer_job_update (ThunarVfsTransferJob *transfer_job)
+{
+  ThunarVfsFileSize completed_size;
+  gdouble           percentage;
+  gchar            *display_name;
+
+  /* check if we need to display a new file name */
+  if (G_LIKELY (transfer_job->current_path_changed))
+    {
+      /* update the info message with the file name */
+      display_name = g_filename_display_name (thunar_vfs_path_get_name (transfer_job->current_path));
+      thunar_vfs_interactive_job_info_message (THUNAR_VFS_INTERACTIVE_JOB (transfer_job), display_name);
+      g_free (display_name);
+
+      /* remember that we don't need to update the info message again now */
+      transfer_job->current_path_changed = FALSE;
+    }
+
+  /* determine total/completed sizes */
+  completed_size = transfer_job->completed_size + transfer_job->current_completed_size;
+
+  /* update the percentage */
+  percentage = (completed_size * 100.0) / MAX (transfer_job->total_size, 1);
+  percentage = CLAMP (percentage, 0.0, 100.0);
+  thunar_vfs_interactive_job_percent (THUNAR_VFS_INTERACTIVE_JOB (transfer_job), percentage);
+
+  /* update the "last update time" */
+  g_get_current_time (&transfer_job->last_update_time);
+}
+
+
+
+static inline gboolean
+should_update (const GTimeVal now,
+               const GTimeVal last)
+{
+  /* we want to update every 100ms */
+  guint64 d = ((guint64) now.tv_sec - last.tv_sec) * G_USEC_PER_SEC
+            + ((guint64) now.tv_usec - last.tv_usec);
+  return (d > 100 * 1000);
 }
 
 
 
 static gboolean
-thunar_vfs_transfer_job_skip (ThunarVfsTransferJob *job,
-                              const gchar          *format,
-                              const gchar          *filename)
+thunar_vfs_transfer_job_progress (ThunarVfsFileSize current_total_size,
+                                  ThunarVfsFileSize current_completed_size,
+                                  gpointer          user_data)
 {
-  gchar *display;
-  gchar  message[4096];
-  gint   length;
+  ThunarVfsTransferJob *transfer_job = THUNAR_VFS_TRANSFER_JOB (user_data);
+  GTimeVal              now;
 
-  /* build the basic message from the message */
-  display = g_filename_display_name (filename);
-  length = g_snprintf (message, sizeof (message), format, display);
-  g_free (display);
+  /* update the current total/completed size */
+  transfer_job->current_completed_size = current_completed_size;
+  transfer_job->current_total_size = current_total_size;
 
-  /* append our question */
-  g_strlcpy (message + length, _("\n\nDo you want to skip it?"), sizeof (message) - length);
+  /* determine the current time */
+  g_get_current_time (&now);
 
-  /* ask the user */
-  return thunar_vfs_interactive_job_skip (THUNAR_VFS_INTERACTIVE_JOB (job), message);
+  /* check if we should update the user visible info */
+  if (should_update (now, transfer_job->last_update_time))
+    thunar_vfs_transfer_job_update (transfer_job);
+
+  return !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (transfer_job));
 }
 
 
 
-static void
-thunar_vfs_transfer_job_percent (ThunarVfsTransferJob *job)
+static inline ThunarVfsPath*
+make_target_path (ThunarVfsPath *target_base_path,
+                  ThunarVfsPath *source_base_path,
+                  ThunarVfsPath *source_path)
 {
-  gdouble percentage;
+  typedef struct _Component
+  {
+    struct _Component *next;
+    const gchar       *name;
+  } Component;
 
-  percentage = (job->completed_bytes * 100.0) / MAX (job->total_bytes, 1);
-  percentage = CLAMP (percentage, 0.0, 100.0);
-  thunar_vfs_interactive_job_percent (THUNAR_VFS_INTERACTIVE_JOB (job), percentage);
-}
+  ThunarVfsPath *target_path = thunar_vfs_path_ref (target_base_path);
+  ThunarVfsPath *path;
+  Component     *components = NULL;
+  Component     *component;
 
-
-
-static void
-thunar_vfs_transfer_job_insert_base (ThunarVfsTransferJob *transfer_job,
-                                     const gchar          *source_path,
-                                     const gchar          *target_path)
-{
-  ThunarVfsTransferBase *base;
-  ThunarVfsTransferItem *item;
-  gchar                 *dirname;
-  gchar                 *basename;
-
-  /* allocate the base */
-  base = g_chunk_new0 (ThunarVfsTransferBase, transfer_job->base_chunk);
-  base->job = transfer_job;
-
-  /* setup the source path */
-  dirname = g_path_get_dirname (source_path);
-  base->source_path = g_string_chunk_insert (transfer_job->string_chunk, dirname);
-  g_free (dirname);
-
-  /* setup the target path */
-  base->target_path = g_string_chunk_insert (transfer_job->string_chunk, target_path);
-
-  /* check if source and target are equal */
-  if (G_UNLIKELY (strcmp (base->target_path, base->source_path) == 0))
-    return;
-
-  /* hook up the new base */
-  base->next = transfer_job->bases;
-  transfer_job->bases = base;
-
-  /* allocate the initial item (toplevel) */
-  item = g_chunk_new0 (ThunarVfsTransferItem, transfer_job->item_chunk);
-  item->base = base;
-
-  /* setup the source/target path */
-  basename = g_path_get_basename (source_path);
-  item->source_path = g_string_chunk_insert (transfer_job->string_chunk, basename);
-  item->target_path = item->source_path;
-  g_free (basename);
-
-  /* hook up the new item */
-  base->items = item;
-}
-
-
-
-static void
-thunar_vfs_transfer_base_collect (ThunarVfsTransferBase *base)
-{
-  ThunarVfsTransferItem *item;
-  ThunarVfsTransferJob  *job = base->job;
-
-  for (item = base->items; !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job)) && item != NULL; item = item->next)
-    thunar_vfs_transfer_item_collect (item);
-}
-
-
-
-static void
-thunar_vfs_transfer_base_copy (ThunarVfsTransferBase *base)
-{
-  ThunarVfsTransferItem *item;
-  ThunarVfsTransferJob  *job = base->job;
-
-  for (item = base->items; !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job)) && item != NULL; item = item->next)
-    thunar_vfs_transfer_item_copy (item);
-}
-
-
-
-static void
-thunar_vfs_transfer_item_collect (ThunarVfsTransferItem *item)
-{
-  ThunarVfsTransferBase *base = item->base;
-  ThunarVfsTransferItem *child_item;
-  ThunarVfsTransferJob  *job = base->job;
-  struct dirent         *d;
-  struct stat            sb;
-  gchar                 *path;
-  gint                   result;
-  DIR                   *dirp;
-
-again:
-  /* try to stat() the current items path */
-  path = g_build_filename (base->source_path, item->source_path, NULL);
-  result = g_lstat (path, &sb);
-  g_free (path);
-
-  /* check if the stat()ing works */
-  if (G_UNLIKELY (result < 0))
+  /* determine the components in reverse order */
+  for (; !thunar_vfs_path_equal (source_base_path, source_path); source_path = thunar_vfs_path_get_parent (source_path))
     {
-      /* if the item does not exist, we'll simply skip it
-       * (can only be caused by a race condition, which is
-       * unlikely to happen).
-       */
-      if (G_UNLIKELY (errno == ENOENT || errno == ENOTDIR))
-        {
-          item->skipped = TRUE;
-          return;
-        }
-
-      /* ask the user what to do */
-      item->skipped = thunar_vfs_transfer_job_skip (job, _("Unable to query information about\nthe file %s."), item->source_path);
-
-      /* check whether to cancel the job (cancellation state will be TRUE then). */
-      if (G_UNLIKELY (!item->skipped))
-        return;
+      g_assert (source_path != NULL);
+      component = g_newa (Component, 1);
+      component->next = components;
+      component->name = thunar_vfs_path_get_name (source_path);
+      components = component;
     }
 
-  /* skip special files */
-  switch ((sb.st_mode & S_IFMT) >> 12)
+  /* verify state */
+  g_assert (thunar_vfs_path_equal (source_base_path, source_path));
+
+  /* generate the target path */
+  for (component = components; component != NULL; component = component->next)
     {
-    case THUNAR_VFS_FILE_TYPE_SYMLINK:
-    case THUNAR_VFS_FILE_TYPE_REGULAR:
-    case THUNAR_VFS_FILE_TYPE_DIRECTORY:
+      /* allocate relative path for the component */
+      path = thunar_vfs_path_relative (target_path, component->name);
+      thunar_vfs_path_unref (target_path);
+      target_path = path;
+    }
+
+  return target_path;
+}
+
+
+
+static GList*
+thunar_vfs_transfer_job_collect_pairs (ThunarVfsTransferJob  *transfer_job,
+                                       ThunarVfsTransferPair *pair,
+                                       GError               **error)
+{
+  ThunarVfsTransferPair *child;
+  ThunarVfsPath         *target_path;
+  GHashTable            *source_to_target;
+  GError                *serror = NULL;
+  GList                 *paths;
+  GList                 *pairs = NULL;
+  GList                 *lp;
+
+  /* check if the pair refers to a directory */
+  if (G_UNLIKELY (!S_ISDIR (pair->source_mode)))
+    return NULL;
+
+  /* scan the pair directory */
+  paths = thunar_vfs_scandir (pair->source_path, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, &serror);
+  if (G_UNLIKELY (serror != NULL))
+    {
+      g_propagate_error (error, serror);
+      g_assert (paths == NULL);
+    }
+  else
+    {
+      /* simple optimization to save some memory (source->target directory mapping) */
+      source_to_target = g_hash_table_new (thunar_vfs_path_hash, thunar_vfs_path_equal);
+      g_hash_table_insert (source_to_target, pair->source_path, pair->target_path);
+
+      /* translate the paths to pairs */
+      for (lp = g_list_last (paths); lp != NULL; lp = lp->prev)
+        {
+          /* determine the target path */
+          target_path = g_hash_table_lookup (source_to_target, thunar_vfs_path_get_parent (lp->data));
+          if (G_LIKELY (target_path != NULL))
+            target_path = thunar_vfs_path_relative (target_path, thunar_vfs_path_get_name (lp->data));
+          else
+            target_path = make_target_path (pair->target_path, pair->source_path, lp->data);
+
+          /* try to allocate a pair for the child */
+          child = thunar_vfs_transfer_job_alloc_pair (transfer_job, lp->data, target_path, FALSE, NULL);
+
+          /* release the reference on the target path (the child holds the reference now) */
+          thunar_vfs_path_unref (target_path);
+
+          /* release the reference on the source path (the child holds the reference now) */
+          thunar_vfs_path_unref (lp->data);
+
+          /* prepend the child to the pair list */
+          if (G_LIKELY (child != NULL))
+            {
+              /* cache directory source->target mappings */
+              if (G_UNLIKELY (S_ISDIR (child->source_mode)))
+                g_hash_table_insert (source_to_target, child->source_path, child->target_path);
+
+              /* add to the list of pairs */
+              pairs = g_list_prepend (pairs, child);
+            }
+        }
+
+      /* drop the source->target directory mapping */
+      g_hash_table_destroy (source_to_target);
+
+      /* drop the path list */
+      g_list_free (paths);
+    }
+
+  return pairs;
+}
+
+
+
+static inline void
+maybe_replace_pair_target (ThunarVfsTransferPair *pair,
+                           ThunarVfsPath         *previous_target_path,
+                           ThunarVfsPath         *new_target_path)
+{
+  ThunarVfsPath *path;
+
+  /* check if the target path is below the previous_target_path */
+  for (path = thunar_vfs_path_get_parent (pair->target_path); path != NULL; path = thunar_vfs_path_get_parent (path))
+    if (thunar_vfs_path_equal (previous_target_path, path))
       break;
 
-    default:
-      return;
-    }
-
-  /* update the job's total size */
-  job->total_bytes += sb.st_size;
-
-  /* update the item info */
-  item->mode = sb.st_mode;
-  item->size = sb.st_size;
-
-  /* collect directory entries */
-  if (G_UNLIKELY (((sb.st_mode & S_IFMT) >> 12) == THUNAR_VFS_FILE_TYPE_DIRECTORY))
+  if (G_LIKELY (path != NULL))
     {
-      /* open the directory */
-      path = g_build_filename (base->source_path, item->source_path, NULL);
-      dirp = opendir (path);
-      g_free (path);
-
-      if (G_UNLIKELY (dirp == NULL))
-        {
-          /* somebody modified the directory in the meantime,
-           * just try again the whole procedure.
-           */
-          if (G_UNLIKELY (errno == ENOENT || errno == ENOTDIR))
-            goto again;
-
-          /* ask the user what to do */
-          item->skipped = thunar_vfs_transfer_job_skip (job, _("Unable to open directory %s."), item->source_path);
-
-          /* check whether to cancel the job (cancellation state will be TRUE then). */
-          if (G_UNLIKELY (!item->skipped))
-            return;
-        }
-      else
-        {
-          /* collect all directory entries */
-          while (_thunar_vfs_sysdep_readdir (dirp, &job->dirent_buffer, &d, NULL) && d != NULL)
-            {
-              /* check if the operation was cancelled in the meantime */
-              if (G_UNLIKELY (thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job))))
-                break;
-
-              /* allocate the child item */
-              child_item = g_chunk_new0 (ThunarVfsTransferItem, job->item_chunk);
-              child_item->base = base;
-
-              /* set the source path */
-              path = g_build_filename (item->source_path, d->d_name, NULL);
-              child_item->source_path = g_string_chunk_insert (job->string_chunk, path);
-              g_free (path);
-
-              /* set the target path */
-              if (G_UNLIKELY (strcmp (item->target_path, item->source_path) != 0))
-                {
-                  path = g_build_filename (item->target_path, d->d_name, NULL);
-                  child_item->target_path = g_string_chunk_insert (job->string_chunk, path);
-                  g_free (path);
-                }
-              else
-                {
-                  /* source and target relative paths are equal */
-                  child_item->target_path = child_item->source_path;
-                }
-
-              /* connect the child item to the tree */
-              child_item->next = item->children;
-              item->children = child_item;
-
-              /* collect the child item */
-              thunar_vfs_transfer_item_collect (child_item);
-            }
-
-          closedir (dirp);
-        }
+      /* replace the target path */
+      path = make_target_path (new_target_path, path, pair->target_path);
+      thunar_vfs_path_unref (pair->target_path);
+      pair->target_path = path;
     }
 }
 
 
 
 static void
-thunar_vfs_transfer_item_copy (ThunarVfsTransferItem *item)
+thunar_vfs_transfer_job_copy_pair (ThunarVfsTransferJob  *transfer_job,
+                                   ThunarVfsTransferPair *pair)
 {
-  const ThunarVfsTransferBase *base = item->base;
-  ThunarVfsTransferJob        *job = base->job;
-  ThunarVfsURI                *uri;
-  struct stat                  sb;
-  gchar                       *source_path;
-  gchar                       *target_path;
-  gchar                       *thumb_path;
-  gchar                       *display;
-  gchar                       *message;
+  ThunarVfsPath *target_path;
+  gboolean       skip;
+  GError        *error = NULL;
+  GList         *lp;
+  gchar         *absolute_path;
+  gchar         *display_name;
 
-  /* check if the target exists (and not already a directory) */
-  target_path = g_build_filename (base->target_path, item->target_path, NULL);
-  if (!item->skipped && g_lstat (target_path, &sb) == 0 && !(S_ISDIR (sb.st_mode) && S_ISDIR (item->mode)))
+  /* update the current file path */
+  if (G_LIKELY (transfer_job->current_path != NULL))
+    thunar_vfs_path_unref (transfer_job->current_path);
+  transfer_job->current_path = thunar_vfs_path_ref (pair->source_path);
+  transfer_job->current_path_changed = TRUE;
+
+  /* perform the xfer */
+  do
     {
-      /* ask the user whether we should overwrite the file */
-      display = g_filename_display_name (item->target_path);
-      message = g_strdup_printf (_("%s already exists.\n\nDo you want to overwrite it?"), display);
-      item->skipped = !thunar_vfs_interactive_job_overwrite (THUNAR_VFS_INTERACTIVE_JOB (job), message);
-      g_free (message);
-      g_free (display);
+      /* start with 0 completed/total current size */
+      transfer_job->current_completed_size = 0;
+      transfer_job->current_total_size = 0;
 
-      /* try to unlink the file */
-      if (!item->skipped && g_remove (target_path) < 0 && errno != ENOENT)
+      /* try to xfer the file */
+      if (thunar_vfs_xfer_copy (pair->source_path, pair->target_path, &target_path, thunar_vfs_transfer_job_progress, transfer_job, &error))
         {
-          /* ask the user whether to skip the item if the removal failes */
-          item->skipped = thunar_vfs_transfer_job_skip (job, _("Unable to remove %s."), item->target_path);
-        }
-    }
+          /* if this was a toplevel pair, then add the target path to the list of new files */
+          if (G_UNLIKELY (pair->toplevel))
+            transfer_job->new_files = thunar_vfs_path_list_prepend (transfer_job->new_files, target_path);
 
-  /* process if the item shouldn't be skipped and the job wasn't cancelled */
-  if (G_LIKELY (!item->skipped && !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job))))
-    {
-      /* update the info message to display the current file */
-      display = g_filename_display_name (item->source_path);
-      thunar_vfs_interactive_job_info_message (THUNAR_VFS_INTERACTIVE_JOB (job), display);
-      g_free (display);
-
-      /* generate the absolute source path */
-      source_path = g_build_filename (base->source_path, item->source_path, NULL);
-
-      /* try to rename the item if possible (for move) */
-      if (job->move && g_rename (source_path, target_path) == 0)
-        {
-          /* count the moved file's size */
-          job->completed_bytes += item->size;
-
-          /* ditch the thumbnails for the file (if any), in very
-           * rare cases we may ditch thumbnails for other files
-           * here, but that's very unlikely and not worth to care
-           * about here.
-           */
-          uri = thunar_vfs_uri_new_for_path (source_path);
-
-          /* unlink the "normal" thumbnail (if any) */
-          thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_NORMAL);
-          g_remove (thumb_path);
-          g_free (thumb_path);
-
-          /* unlink the "large" thumbnail (if any) */
-          thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_LARGE);
-          g_remove (thumb_path);
-          g_free (thumb_path);
-
-          /* cleanup */
-          thunar_vfs_uri_unref (uri);
-        }
-      else
-        {
-          /* perform the copy operation */
-          switch ((item->mode & S_IFMT) >> 12)
+          /* perform cleanup for moves */
+          if (G_UNLIKELY (transfer_job->move))
             {
-            case THUNAR_VFS_FILE_TYPE_SYMLINK:
-              thunar_vfs_transfer_item_copy_symlink (item, source_path, target_path);
-              break;
-
-            case THUNAR_VFS_FILE_TYPE_REGULAR:
-              thunar_vfs_transfer_item_copy_regular (item, source_path, target_path);
-              break;
-
-            case THUNAR_VFS_FILE_TYPE_DIRECTORY:
-              thunar_vfs_transfer_item_copy_directory (item, source_path, target_path);
-              break;
-
-            default:
-              g_assert_not_reached ();
-              break;
-            }
-
-          /* apply the original permissions */
-          if (!item->skipped && !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job)))
-            {
-#ifdef HAVE_LCHMOD
-              lchmod (target_path, item->mode & ~S_IFMT);
-#else
-              /* some systems lack the lchmod system call, so we have to
-               * work-around that deficiency here by manually checking
-               * whether we have a symlink or a "regular" fs entity.
-               */
-              if (!S_ISLNK (item->mode))
-                g_chmod (target_path, item->mode & ~S_IFMT);
-#endif
-            }
-
-          /* if we're moving, we'll have to unlink afterwards */
-          if (job->move && !item->skipped && !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job)))
-            {
-              if (g_remove (source_path) < 0 && errno != ENOENT)
+              /* if we have a directory, schedule it for later deletion, else try to delete it directly */
+              if (G_UNLIKELY (((pair->source_mode & S_IFMT) >> 12) == THUNAR_VFS_FILE_TYPE_DIRECTORY))
                 {
-                  /* ask the user whether to skip the item if the removal failes (only for cancellation) */
-                  thunar_vfs_transfer_job_skip (job, _("Unable to remove %s."), item->source_path);
+                  /* schedule the directory for later deletion */
+                  transfer_job->directories_to_delete = thunar_vfs_path_list_prepend (transfer_job->directories_to_delete, pair->source_path);
                 }
               else
                 {
-                  /* ditch the thumbnails for the file (if any), in very
-                   * rare cases we may ditch thumbnails for other files
-                   * here, but that's very unlikely and not worth to care
-                   * about here.
-                   */
-                  uri = thunar_vfs_uri_new_for_path (source_path);
-
-                  /* unlink the "normal" thumbnail (if any) */
-                  thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_NORMAL);
-                  g_remove (thumb_path);
-                  g_free (thumb_path);
-
-                  /* unlink the "large" thumbnail (if any) */
-                  thumb_path = thunar_vfs_thumb_path_for_uri (uri, THUNAR_VFS_THUMB_SIZE_LARGE);
-                  g_remove (thumb_path);
-                  g_free (thumb_path);
-
-                  /* cleanup */
-                  thunar_vfs_uri_unref (uri);
+                  absolute_path = thunar_vfs_path_dup_string (pair->source_path);
+                  if (g_unlink (absolute_path) < 0 && errno != ENOENT)
+                    {
+                      /* ask the user whether we should skip the file (used for cancellation only) */
+                      display_name = g_filename_display_name (absolute_path);
+                      error = g_error_new (G_FILE_ERROR, g_file_error_from_errno (errno),
+                                           _("Unable to remove `%s': %s"), display_name,
+                                           g_strerror (errno));
+                      thunar_vfs_transfer_job_skip (transfer_job, error);
+                      g_clear_error (&error);
+                      g_free (display_name);
+                    }
+                  else
+                    {
+                      /* schedule a deleted event for the source path */
+                      thunar_vfs_monitor_feed (transfer_job->monitor, THUNAR_VFS_MONITOR_EVENT_DELETED, pair->source_path);
+                    }
+                  g_free (absolute_path);
                 }
             }
+          else if (!thunar_vfs_path_equal (pair->target_path, target_path))
+            {
+              /* replace the target path on the following elements */
+              for (lp = transfer_job->pairs; lp != NULL; lp = lp->next)
+                maybe_replace_pair_target (lp->data, pair->target_path, target_path);
+
+              /* replace the previous target path with the real target path */
+              thunar_vfs_path_unref (pair->target_path);
+              pair->target_path = thunar_vfs_path_ref (target_path);
+            }
+
+          /* release the real target path */
+          thunar_vfs_path_unref (target_path);
+          break;
         }
 
-      g_free (source_path);
+      /* check the error */
+      if (error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_EXIST)
+        {
+          /* ask the user whether we should remove the target first */
+          skip = !thunar_vfs_transfer_job_overwrite (transfer_job, error);
+          g_clear_error (&error);
+
+          /* try to remove the target */
+          if (G_LIKELY (!skip))
+            {
+              absolute_path = thunar_vfs_path_dup_string (pair->target_path);
+              if (g_unlink (absolute_path) < 0 && errno != ENOENT)
+                {
+                  /* ask the user whether we should skip the file */
+                  display_name = g_filename_display_name (absolute_path);
+                  error = g_error_new (G_FILE_ERROR, g_file_error_from_errno (errno),
+                                       _("Unable to remove `%s': %s"), display_name,
+                                       g_strerror (errno));
+                  skip = thunar_vfs_transfer_job_skip (transfer_job, error);
+                  g_clear_error (&error);
+                  g_free (display_name);
+                }
+              g_free (absolute_path);
+            }
+        }
+      else
+        {
+          /* ask the user whether to skip this pair */
+          skip = thunar_vfs_transfer_job_skip (transfer_job, error);
+          g_clear_error (&error);
+        }
+
+      /* check if we should skip this pair */
+      if (G_LIKELY (skip))
+        {
+          thunar_vfs_transfer_job_skip_list_add (transfer_job, pair);
+          break;
+        }
     }
+  while (!thunar_vfs_job_cancelled (THUNAR_VFS_JOB (transfer_job)));
 
-  g_free (target_path);
-}
+  /* add the current file's size to the total completion state */
+  transfer_job->completed_size += transfer_job->current_completed_size;
 
-
-
-static void
-thunar_vfs_transfer_item_copy_directory (ThunarVfsTransferItem *item,
-                                         const gchar           *source_path,
-                                         const gchar           *target_path)
-{
-  ThunarVfsTransferItem *child_item;
-  ThunarVfsTransferJob  *job = item->base->job;
-
-  /* try to create the target directory (with full permissions first,
-   * we'll change that later, since the original permissions may not
-   * allow us to write to the directory afterwards).
-   */
-  if (!g_file_test (target_path, G_FILE_TEST_IS_DIR) && g_mkdir (target_path, 0700) < 0)
-    {
-      /* ask the user whether to skip the item (only for cancellation) */
-      thunar_vfs_transfer_job_skip (job, _("Unable to create directory %s."), item->target_path);
-    }
-  else
-    {
-      /* update the percentage of completeness */
-      job->completed_bytes += item->size;
-      thunar_vfs_transfer_job_percent (job);
-
-      /* process all children */
-      for (child_item = item->children; !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job)) && child_item != NULL; child_item = child_item->next)
-        thunar_vfs_transfer_item_copy (child_item);
-    }
+  /* reset the current completed/total size */
+  transfer_job->current_completed_size = 0;
+  transfer_job->current_total_size = 0;
 }
 
 
 
 static gboolean
-thunar_vfs_transfer_item_copy_legacy (ThunarVfsTransferJob *job,
-                                      gint                  source_fd,
-                                      gint                  target_fd)
+thunar_vfs_transfer_job_overwrite (ThunarVfsTransferJob *transfer_job,
+                                   const GError         *error)
 {
-  struct stat sb;
-  gboolean    succeed = FALSE;
-  time_t      last_checked_time;
-  time_t      current_time;
-  gssize      i, j, m;
-  gsize       bufsize, n;
-  gchar      *buffer;
+  gboolean overwrite;
+  gchar   *message;
 
-  /* determine file information from the source
-   * (for optimal buffer sizes).
-   */
-  if (G_UNLIKELY (fstat (source_fd, &sb) < 0))
-    return FALSE;
+  /* be sure to update the status info */
+  thunar_vfs_transfer_job_update (transfer_job);
 
-  last_checked_time = time (NULL);
+  /* ask the user whether to overwrite */
+  message = g_strdup_printf (_("%s.\n\nDo you want to overwrite it?"), error->message);
+  overwrite = thunar_vfs_interactive_job_overwrite (THUNAR_VFS_INTERACTIVE_JOB (transfer_job), message);
+  g_free (message);
 
-  /* allocate the transfer buffer */
-  bufsize = 4 * sb.st_blksize;
-  buffer = g_new (gchar, bufsize);
+  return overwrite;
+}
 
-  for (n = 0; n < sb.st_size && !thunar_vfs_job_cancelled (THUNAR_VFS_JOB (job)); n += i)
-    {
-      i = read (source_fd, buffer, bufsize);
-      if (G_UNLIKELY (i <= 0))
-        goto done;
 
-      for (m = 0; m < i; m += j)
-        {
-          j = write (target_fd, buffer + m, i - m);
-          if (G_UNLIKELY (j <= 0))
-            goto done;
-        }
 
-      /* advance the completed bytes count */
-      job->completed_bytes += i;
+static gboolean
+thunar_vfs_transfer_job_skip (ThunarVfsTransferJob *transfer_job,
+                              const GError         *error)
+{
+  gboolean skip;
+  gchar   *message;
 
-      /* notify the user atleast once per second */
-      current_time = time (NULL);
-      if (current_time - last_checked_time > 0)
-        {
-          thunar_vfs_transfer_job_percent (job);
-          last_checked_time = current_time;
-        }
-    }
+  /* be sure to update the status info */
+  thunar_vfs_transfer_job_update (transfer_job);
 
-  succeed = TRUE;
+  /* ask the user whether to skip */
+  message = g_strdup_printf (_("%s.\n\nDo you want to skip it?"), error->message);
+  skip = thunar_vfs_interactive_job_skip (THUNAR_VFS_INTERACTIVE_JOB (transfer_job), message);
+  g_free (message);
 
-done:
-  g_free (buffer);
-  return succeed;
+  return skip;
 }
 
 
 
 static void
-thunar_vfs_transfer_item_copy_regular (ThunarVfsTransferItem *item,
-                                       const gchar           *source_path,
-                                       const gchar           *target_path)
+thunar_vfs_transfer_job_skip_list_add (ThunarVfsTransferJob  *transfer_job,
+                                       ThunarVfsTransferPair *pair)
 {
-  ThunarVfsTransferJob *job = item->base->job;
-  gint                  source_fd;
-  gint                  target_fd;
-
-  /* try to open the source file */
-  source_fd = open (source_path, O_RDONLY);
-  if (G_UNLIKELY (source_fd < 0))
-    {
-      /* ask the user to skip (for cancellation only) */
-      thunar_vfs_transfer_job_skip (job, _("Unable to open file %s."), item->source_path);
-      return;
-    }
-
-  /* try to open the target file */
-  target_fd = open (target_path, O_CREAT | O_WRONLY | O_TRUNC, 0700);
-  if (G_UNLIKELY (target_fd < 0))
-    {
-      /* ask the user to skip (for cancellation only) */
-      thunar_vfs_transfer_job_skip (job, _("Unable to open file %s."), item->target_path);
-      goto failed;
-    }
-
-  /* try to copy the file */
-  if (!thunar_vfs_transfer_item_copy_legacy (job, source_fd, target_fd))
-    {
-      /* ask the user to skip (for cancellation only) */
-      thunar_vfs_transfer_job_skip (job, _("Unable to copy file %s."), item->source_path);
-    }
-
-  close (target_fd);
-failed:
-  close (source_fd);
+  /* add only directories to the skip_list */
+  if (((pair->source_mode & S_IFMT) >> 12) == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+    transfer_job->skip_list = thunar_vfs_path_list_prepend (transfer_job->skip_list, pair->source_path);
 }
 
 
 
-static void
-thunar_vfs_transfer_item_copy_symlink (ThunarVfsTransferItem *item,
-                                       const gchar           *source_path,
-                                       const gchar           *target_path)
+static gboolean
+thunar_vfs_transfer_job_skip_list_has (ThunarVfsTransferJob *transfer_job,
+                                       const ThunarVfsPath  *source_path)
 {
-  ThunarVfsTransferJob  *job = item->base->job;
-  gchar                 *link_target;
+  const ThunarVfsPath *path;
+  GList               *lp;
 
-  /* try to read the link target */
-  link_target = g_file_read_link (source_path, NULL);
-  if (G_UNLIKELY (link_target == NULL))
-    {
-      /* ask the user whether to skip the item (only used for cancellation) */
-      thunar_vfs_transfer_job_skip (job, _("Unable to read link target of %s."), item->source_path);
-    }
-  else
-    {
-      /* try to create the symlink */
-      if (symlink (link_target, target_path) < 0)
-        {
-          /* and just another skip (again, only for cancellation) */
-          thunar_vfs_transfer_job_skip (job, _("Unable to create symlink %s."), item->target_path);
-        }
-      else
-        {
-          /* update the percentage of completeness */
-          job->completed_bytes += item->size;
-          thunar_vfs_transfer_job_percent (job);
-        }
+  /* check if the source_path or any of its ancestors is on the skip list */
+  for (lp = transfer_job->skip_list; lp != NULL; lp = lp->next)
+    for (path = source_path; path != NULL; path = thunar_vfs_path_get_parent (path))
+      if (thunar_vfs_path_equal (path, lp->data))
+        return TRUE;
 
-      g_free (link_target);
+  return FALSE;
+}
+
+
+
+static ThunarVfsTransferPair*
+thunar_vfs_transfer_job_alloc_pair (ThunarVfsTransferJob *transfer_job,
+                                    ThunarVfsPath        *source_path,
+                                    ThunarVfsPath        *target_path,
+                                    gboolean              toplevel,
+                                    GError              **error)
+{
+  ThunarVfsTransferPair *pair;
+  struct stat            source_statb;
+  gchar                  source_absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
+
+  /* determine the absolute path to the source file */
+  if (thunar_vfs_path_to_string (source_path, source_absolute_path, sizeof (source_absolute_path), error) < 0)
+    return NULL;
+
+  /* determine the file info for the source file */
+  if (g_lstat (source_absolute_path, &source_statb) < 0)
+    {
+      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+      return NULL;
     }
+
+  /* allocate a new transfer pair */
+  pair = g_chunk_new (ThunarVfsTransferPair, transfer_job->pair_chunk);
+  pair->source_path = thunar_vfs_path_ref (source_path);
+  pair->target_path = thunar_vfs_path_ref (target_path);
+  pair->source_size = source_statb.st_size;
+  pair->source_mode = source_statb.st_mode;
+  pair->toplevel = toplevel;
+
+  return pair;
+}
+
+
+
+static inline void
+thunar_vfs_transfer_job_free_pair (ThunarVfsTransferJob  *transfer_job,
+                                   ThunarVfsTransferPair *pair)
+{
+  thunar_vfs_path_unref (pair->source_path);
+  thunar_vfs_path_unref (pair->target_path);
 }
 
 
 
 /**
  * thunar_vfs_transfer_job_new:
- * @source_uri_list : a list #ThunarVfsURI<!---->s that should be transferred.
- * @target_uri      : a #ThunarVfsURI referring to the target of the transfer.
- * @move            : whether to copy or move the files.
- * @error           : return location for errors or %NULL.
+ * @source_path_list : a list of #ThunarVfsPath<!---->s that should be transferred.
+ * @target_path_list : a list of #ThunarVfsPath<!---->s referring to the targets of the transfer.
+ * @move             : whether to copy or move the files.
+ * @error            : return location for errors or %NULL.
  *
- * Tries to transfer all files referred to by @source_uri_list to the directory
- * referred to by @target_uri. If @move is %TRUE then all successfully transferred
- * files will be unlinked afterwards.
+ * Transfers the files from the @source_path_list to the files in the @target_path_list.
+ * @source_path_list and @target_path_list must be of the same length.
+ *
+ * If @move is %FALSE, then all source/target path tuple, which refer to the same
+ * file cause a duplicate action, which means a new unique target path will be
+ * generated based on the source path.
+ *
+ * The caller is responsible to free the returned object using g_object_unref()
+ * when no longer needed.
  *
  * Return value: the newly allocated #ThunarVfsTransferJob or %NULL on error.
  **/
 ThunarVfsJob*
-thunar_vfs_transfer_job_new (GList        *source_uri_list,
-                             ThunarVfsURI *target_uri,
-                             gboolean      move,
-                             GError      **error)
+thunar_vfs_transfer_job_new (GList   *source_path_list,
+                             GList   *target_path_list,
+                             gboolean move,
+                             GError **error)
 {
-  ThunarVfsTransferJob *job;
-  GList                *lp;
+  ThunarVfsTransferPair *pair;
+  ThunarVfsTransferJob  *transfer_job;
+  GList                 *sp, *tp;
 
+  g_return_val_if_fail (g_list_length (target_path_list) == g_list_length (source_path_list), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  /* allocate the job instance */
-  job = g_object_new (THUNAR_VFS_TYPE_TRANSFER_JOB, NULL);
-  job->move = move;
+  /* allocate the job object */
+  transfer_job = g_object_new (THUNAR_VFS_TYPE_TRANSFER_JOB, NULL);
+  transfer_job->move = move;
 
-  /* process the source uris */
-  for (lp = source_uri_list; lp != NULL; lp = lp->next)
+  /* just create a pair for every (source, target) tuple */
+  for (sp = source_path_list, tp = target_path_list; sp != NULL; sp = sp->next, tp = tp->next)
     {
-      /* verify the source uri */
-      if (thunar_vfs_uri_get_scheme (lp->data) != THUNAR_VFS_URI_SCHEME_FILE)
+      /* verify that we don't transfer the root directory */
+      if (G_UNLIKELY (thunar_vfs_path_is_root (sp->data) || thunar_vfs_path_is_root (tp->data)))
         {
-          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (EINVAL),
-                       _("URI scheme not supported for transfer operations"));
-          thunar_vfs_job_unref (THUNAR_VFS_JOB (job));
-          return NULL;
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
+                       _("Cannot transfer the root directory"));
+          goto failure;
         }
 
-      /* add a base for the source */
-      thunar_vfs_transfer_job_insert_base (job, thunar_vfs_uri_get_path (lp->data),
-                                           thunar_vfs_uri_get_path (target_uri));
+      /* strip off all pairs with source=target when not copying */
+      if (G_LIKELY (!move || !thunar_vfs_path_equal (sp->data, tp->data)))
+        {
+          /* allocate a pair */
+          pair = thunar_vfs_transfer_job_alloc_pair (transfer_job, sp->data, tp->data, TRUE, error);
+          if (G_UNLIKELY (pair == NULL))
+            goto failure;
+          transfer_job->pairs = g_list_prepend (transfer_job->pairs, pair);
+        }
     }
 
-  return THUNAR_VFS_JOB (job);
+  /* we did it */
+  return THUNAR_VFS_JOB (transfer_job);
+
+  /* some of the sources failed */
+failure:
+  g_object_unref (G_OBJECT (transfer_job));
+  return NULL;
 }
-
-
 

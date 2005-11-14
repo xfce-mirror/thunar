@@ -11,13 +11,8 @@
 <!ENTITY thunar-vfs-mime-info SYSTEM "xml/thunar-vfs-mime-info.xml">
 <!ENTITY thunar-vfs-monitor SYSTEM "xml/thunar-vfs-monitor.xml">
 <!ENTITY thunar-vfs-operations SYSTEM "xml/thunar-vfs-operations.xml">
-<!ENTITY thunar-vfs-thumb SYSTEM "xml/thunar-vfs-thumb.xml">
-<!ENTITY thunar-vfs-thumb-factory SYSTEM "xml/thunar-vfs-thumb-factory.xml">
-<!ENTITY thunar-vfs-trash SYSTEM "xml/thunar-vfs-trash.xml">
-<!ENTITY thunar-vfs-trash-info SYSTEM "xml/thunar-vfs-trash-info.xml">
-<!ENTITY thunar-vfs-trash-manager SYSTEM "xml/thunar-vfs-trash-manager.xml">
 <!ENTITY thunar-vfs-types SYSTEM "xml/thunar-vfs-types.xml">
-<!ENTITY thunar-vfs-uri SYSTEM "xml/thunar-vfs-uri.xml">
+<!ENTITY thunar-vfs-path SYSTEM "xml/thunar-vfs-path.xml">
 <!ENTITY thunar-vfs-user SYSTEM "xml/thunar-vfs-user.xml">
 <!ENTITY thunar-vfs-user-manager SYSTEM "xml/thunar-vfs-user-manager.xml">
 <!ENTITY thunar-vfs-util SYSTEM "xml/thunar-vfs-util.xml">
@@ -72,7 +67,7 @@
     <title>Fundamentals</title>
     &thunar-vfs-init-shutdown;
     &thunar-vfs-types;
-    &thunar-vfs-uri;
+    &thunar-vfs-path;
     &thunar-vfs-info;
     &thunar-vfs-util;
   </part>
@@ -89,13 +84,6 @@
     &thunar-vfs-mime-application;
   </part>
 
-  <part id="trash-handling">
-    <title>Trash Handling</title>
-    &thunar-vfs-trash-info;
-    &thunar-vfs-trash;
-    &thunar-vfs-trash-manager;
-  </part>
-
   <part id="users-and-groups-handling">
     <title>Users and Groups Handling</title>
     &thunar-vfs-user;
@@ -107,12 +95,6 @@
     <title>Volume Handling</title>
     &thunar-vfs-volume;
     &thunar-vfs-volume-manager;
-  </part>
-
-  <part id="thumbnails">
-    <title>Thumbnails</title>
-    &thunar-vfs-thumb;
-    &thunar-vfs-thumb-factory;
   </part>
 
   <index>

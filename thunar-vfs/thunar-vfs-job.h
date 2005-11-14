@@ -18,6 +18,10 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#if !defined (THUNAR_VFS_INSIDE_THUNAR_VFS_H) && !defined (THUNAR_VFS_COMPILATION)
+#error "Only <thunar-vfs/thunar-vfs.h> can be included directly, this file may disappear or change contents."
+#endif
+
 #ifndef __THUNAR_VFS_JOB_H__
 #define __THUNAR_VFS_JOB_H__
 
@@ -58,50 +62,56 @@ struct _ThunarVfsJob
   GObject __parent__;
 
   /*< private >*/
+  volatile gboolean    cancelled;
   ThunarVfsJobPrivate *priv;
 };
 
-GType         thunar_vfs_job_get_type     (void) G_GNUC_CONST;
+GType                  thunar_vfs_job_get_type     (void) G_GNUC_CONST;
 
 /* public API */
-ThunarVfsJob *thunar_vfs_job_launch       (ThunarVfsJob       *job);
-void          thunar_vfs_job_cancel       (ThunarVfsJob       *job);
-gboolean      thunar_vfs_job_cancelled    (const ThunarVfsJob *job);
+ThunarVfsJob          *thunar_vfs_job_launch       (ThunarVfsJob       *job);
+void                   thunar_vfs_job_cancel       (ThunarVfsJob       *job);
+G_INLINE_FUNC gboolean thunar_vfs_job_cancelled    (const ThunarVfsJob *job);
 
-/**
- * thunar_vfs_job_ref:
- * @job : a #ThunarVfsJob.
- *
- * Increments the reference count on @job by
- * 1 and returns a pointer to @job.
- *
- * Return value: a pointer to @job.
- **/
-#define thunar_vfs_job_ref g_object_ref
-
-/**
- * thunar_vfs_job_unref:
- * @job : a #ThunarVfsJob.
- *
- * Decrements the reference count on @job by
- * 1. If the reference count drops to zero,
- * the resources allocated to @job will be
- * freed.
- **/
-#define thunar_vfs_job_unref g_object_unref
 
 
 /* module API */
-void          thunar_vfs_job_emit_valist  (ThunarVfsJob       *job,
-                                           guint               signal_id,
-                                           GQuark              signal_detail,
-                                           va_list             var_args);
-void          thunar_vfs_job_emit         (ThunarVfsJob       *job,
-                                           guint               signal_id,
-                                           GQuark              signal_detail,
-                                           ...);
-void          thunar_vfs_job_error        (ThunarVfsJob       *job,
-                                           GError             *error);
+void                   thunar_vfs_job_emit_valist  (ThunarVfsJob       *job,
+                                                    guint               signal_id,
+                                                    GQuark              signal_detail,
+                                                    va_list             var_args) G_GNUC_INTERNAL;
+void                   thunar_vfs_job_emit         (ThunarVfsJob       *job,
+                                                    guint               signal_id,
+                                                    GQuark              signal_detail,
+                                                    ...) G_GNUC_INTERNAL;
+void                   thunar_vfs_job_error        (ThunarVfsJob       *job,
+                                                    GError             *error) G_GNUC_INTERNAL;
+
+
+/* inline function implementations */
+#if defined(G_CAN_INLINE) || defined(__THUNAR_VFS_JOB_C__)
+/**
+ * thunar_vfs_job_cancelled:
+ * @job : a #ThunarVfsJob.
+ *
+ * Checks whether @job was previously cancelled
+ * by a call to thunar_vfs_job_cancel().
+ *
+ * Return value: %TRUE if @job is cancelled.
+ **/
+G_INLINE_FUNC gboolean
+thunar_vfs_job_cancelled (const ThunarVfsJob *job)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
+  return job->cancelled;
+}
+#endif /* G_CAN_INLINE || __THUNAR_VFS_JOB_C__ */
+
+
+#if defined(THUNAR_VFS_COMPILATION)
+void _thunar_vfs_job_init     (void) G_GNUC_INTERNAL;
+void _thunar_vfs_job_shutdown (void) G_GNUC_INTERNAL;
+#endif
 
 G_END_DECLS;
 

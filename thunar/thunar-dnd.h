@@ -31,7 +31,8 @@ GdkDragAction thunar_dnd_ask     (GtkWidget    *widget,
 gboolean      thunar_dnd_perform (GtkWidget    *widget,
                                   ThunarFile   *file,
                                   GList        *uri_list,
-                                  GdkDragAction action);
+                                  GdkDragAction action,
+                                  GClosure     *new_files_closure);
 
 G_END_DECLS;
 

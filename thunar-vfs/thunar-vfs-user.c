@@ -55,6 +55,32 @@
 
 
 
+
+static void            thunar_vfs_group_class_init (ThunarVfsGroupClass *klass);
+static void            thunar_vfs_group_finalize   (GObject             *object);
+static ThunarVfsGroup *thunar_vfs_group_new        (ThunarVfsGroupId     id);
+
+
+
+struct _ThunarVfsGroupClass
+{
+  GObjectClass __parent__;
+};
+
+struct _ThunarVfsGroup
+{
+  GObject __parent__;
+
+  ThunarVfsGroupId id;
+  gchar           *name;
+};
+
+
+
+static GObjectClass *thunar_vfs_group_parent_class;
+
+
+
 GType
 thunar_vfs_group_get_type (void)
 {
@@ -67,7 +93,7 @@ thunar_vfs_group_get_type (void)
         sizeof (ThunarVfsGroupClass),
         NULL,
         NULL,
-        NULL,
+        (GClassInitFunc) thunar_vfs_group_class_init,
         NULL,
         NULL,
         sizeof (ThunarVfsGroup),
@@ -76,11 +102,50 @@ thunar_vfs_group_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT, "ThunarVfsGroup",
-                                     &info, G_TYPE_FLAG_ABSTRACT);
+      type = g_type_register_static (G_TYPE_OBJECT, "ThunarVfsGroup", &info, 0);
     }
 
   return type;
+}
+
+
+
+static void
+thunar_vfs_group_class_init (ThunarVfsGroupClass *klass)
+{
+  GObjectClass *gobject_class;
+
+  /* determine the parent class */
+  thunar_vfs_group_parent_class = g_type_class_peek_parent (klass);
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_group_finalize;
+}
+
+
+
+static void
+thunar_vfs_group_finalize (GObject *object)
+{
+  ThunarVfsGroup *group = THUNAR_VFS_GROUP (object);
+
+  /* release the group's name */
+  g_free (group->name);
+
+  (*G_OBJECT_CLASS (thunar_vfs_group_parent_class)->finalize) (object);
+}
+
+
+
+static ThunarVfsGroup*
+thunar_vfs_group_new (ThunarVfsGroupId id)
+{
+  ThunarVfsGroup *group;
+
+  group = g_object_new (THUNAR_VFS_TYPE_GROUP, NULL);
+  group->id = id;
+
+  return group;
 }
 
 
@@ -97,7 +162,7 @@ ThunarVfsGroupId
 thunar_vfs_group_get_id (ThunarVfsGroup *group)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_GROUP (group), 0);
-  return THUNAR_VFS_GROUP_GET_CLASS (group)->get_id (group);
+  return group->id;
 }
 
 
@@ -115,10 +180,53 @@ thunar_vfs_group_get_id (ThunarVfsGroup *group)
 const gchar*
 thunar_vfs_group_get_name (ThunarVfsGroup *group)
 {
+  struct group *grp;
+
   g_return_val_if_fail (THUNAR_VFS_IS_GROUP (group), NULL);
-  return THUNAR_VFS_GROUP_GET_CLASS (group)->get_name (group);
+
+  /* determine the name on-demand */
+  if (G_UNLIKELY (group->name == NULL))
+    {
+      grp = getgrgid (group->id);
+      if (G_LIKELY (grp != NULL))
+        group->name = g_strdup (grp->gr_name);
+      else
+        group->name = g_strdup_printf ("%u", (guint) group->id);
+    }
+
+  return group->name;
 }
 
+
+
+
+static void           thunar_vfs_user_class_init (ThunarVfsUserClass *klass);
+static void           thunar_vfs_user_finalize   (GObject            *object);
+static void           thunar_vfs_user_load       (ThunarVfsUser      *user);
+static ThunarVfsUser *thunar_vfs_user_new        (ThunarVfsUserId     id);
+
+
+
+struct _ThunarVfsUserClass
+{
+  GObjectClass __parent__;
+};
+
+struct _ThunarVfsUser
+{
+  GObject __parent__;
+
+  GList          *groups;
+  ThunarVfsGroup *primary_group;
+  ThunarVfsUserId id;
+  gchar          *name;
+  gchar          *real_name;
+};
+
+
+
+static ThunarVfsUserId thunar_vfs_user_effective_uid;
+static GObjectClass   *thunar_vfs_user_parent_class;
 
 
 
@@ -134,7 +242,7 @@ thunar_vfs_user_get_type (void)
         sizeof (ThunarVfsUserClass),
         NULL,
         NULL,
-        NULL,
+        (GClassInitFunc) thunar_vfs_user_class_init,
         NULL,
         NULL,
         sizeof (ThunarVfsUser),
@@ -143,11 +251,100 @@ thunar_vfs_user_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT, "ThunarVfsUser",
-                                     &info, G_TYPE_FLAG_ABSTRACT);
+      type = g_type_register_static (G_TYPE_OBJECT, "ThunarVfsUser", &info, 0);
     }
 
   return type;
+}
+
+
+
+static void
+thunar_vfs_user_class_init (ThunarVfsUserClass *klass)
+{
+  GObjectClass *gobject_class;
+
+  /* determine the parent class */
+  thunar_vfs_user_parent_class = g_type_class_peek_parent (klass);
+
+  /* determine the current process' effective user id, we do
+   * this only once to avoid the syscall overhead on every
+   * is_me() invokation.
+   */
+  thunar_vfs_user_effective_uid = geteuid ();
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_user_finalize;
+}
+
+
+
+static void
+thunar_vfs_user_finalize (GObject *object)
+{
+  ThunarVfsUser *user = THUNAR_VFS_USER (object);
+
+  /* unref the associated groups */
+  g_list_foreach (user->groups, (GFunc) g_object_unref, NULL);
+  g_list_free (user->groups);
+
+  /* drop the reference on the primary group */
+  if (G_LIKELY (user->primary_group != NULL))
+    g_object_unref (G_OBJECT (user->primary_group));
+
+  /* release the names */
+  g_free (user->real_name);
+  g_free (user->name);
+
+  (*G_OBJECT_CLASS (thunar_vfs_user_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_vfs_user_load (ThunarVfsUser *user)
+{
+  ThunarVfsUserManager *manager;
+  struct passwd        *pw;
+  const gchar          *s;
+
+  g_return_if_fail (user->name == NULL);
+
+  pw = getpwuid (user->id);
+  if (G_LIKELY (pw != NULL))
+    {
+      manager = thunar_vfs_user_manager_get_default ();
+
+      /* query name and primary group */
+      user->name = g_strdup (pw->pw_name);
+      user->primary_group = thunar_vfs_user_manager_get_group_by_id (manager, pw->pw_gid);
+
+      /* try to figure out the real name */
+      s = strchr (pw->pw_gecos, ',');
+      if (s != NULL)
+        user->real_name = g_strndup (pw->pw_gecos, s - pw->pw_gecos);
+      else if (pw->pw_gecos[0] != '\0')
+        user->real_name = g_strdup (pw->pw_gecos);
+
+      g_object_unref (G_OBJECT (manager));
+    }
+  else
+    {
+      user->name = g_strdup_printf ("%u", (guint) user->id);
+    }
+}
+
+
+
+static ThunarVfsUser*
+thunar_vfs_user_new (ThunarVfsUserId id)
+{
+  ThunarVfsUser *user;
+
+  user = g_object_new (THUNAR_VFS_TYPE_USER, NULL);
+  user->id = id;
+
+  return user;
 }
 
 
@@ -169,8 +366,50 @@ thunar_vfs_user_get_type (void)
 GList*
 thunar_vfs_user_get_groups (ThunarVfsUser *user)
 {
+  ThunarVfsUserManager *manager;
+  ThunarVfsGroup       *primary_group;
+  ThunarVfsGroup       *group;
+  gid_t                 gidset[NGROUPS_MAX];
+  gint                  gidsetlen;
+  gint                  n;
+
   g_return_val_if_fail (THUNAR_VFS_IS_USER (user), NULL);
-  return THUNAR_VFS_USER_GET_CLASS (user)->get_groups (user);
+
+  /* load the groups on-demand */
+  if (G_UNLIKELY (user->groups == NULL))
+    {
+      primary_group = thunar_vfs_user_get_primary_group (user);
+
+      /* we can only determine the groups list for the current
+       * process owner in a portable fashion, and in fact, we
+       * only need the list for the current user.
+       */
+      if (thunar_vfs_user_is_me (user))
+        {
+          manager = thunar_vfs_user_manager_get_default ();
+
+          /* add all supplementary groups */
+          gidsetlen = getgroups (G_N_ELEMENTS (gidset), gidset);
+          for (n = 0; n < gidsetlen; ++n)
+            if (primary_group == NULL || thunar_vfs_group_get_id (primary_group) != gidset[n])
+              {
+                group = thunar_vfs_user_manager_get_group_by_id (manager, gidset[n]);
+                if (G_LIKELY (group != NULL))
+                  user->groups = g_list_append (user->groups, group);
+              }
+
+          g_object_unref (G_OBJECT (manager));
+        }
+
+      /* prepend the primary group (if any) */
+      if (G_LIKELY (primary_group != NULL))
+        {
+          user->groups = g_list_prepend (user->groups, primary_group);
+          g_object_ref (G_OBJECT (primary_group));
+        }
+    }
+
+  return user->groups;
 }
 
 
@@ -191,7 +430,12 @@ ThunarVfsGroup*
 thunar_vfs_user_get_primary_group (ThunarVfsUser *user)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_USER (user), NULL);
-  return THUNAR_VFS_USER_GET_CLASS (user)->get_primary_group (user);
+
+  /* load the user data on-demand */
+  if (G_UNLIKELY (user->name == NULL))
+    thunar_vfs_user_load (user);
+
+  return user->primary_group;
 }
 
 
@@ -208,7 +452,7 @@ ThunarVfsUserId
 thunar_vfs_user_get_id (ThunarVfsUser *user)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_USER (user), 0);
-  return THUNAR_VFS_USER_GET_CLASS (user)->get_id (user);
+  return user->id;
 }
 
 
@@ -227,7 +471,12 @@ const gchar*
 thunar_vfs_user_get_name (ThunarVfsUser *user)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_USER (user), 0);
-  return THUNAR_VFS_USER_GET_CLASS (user)->get_name (user);
+
+  /* load the user's data on-demand */
+  if (G_UNLIKELY (user->name == NULL))
+    thunar_vfs_user_load (user);
+
+  return user->name;
 }
 
 
@@ -246,7 +495,12 @@ const gchar*
 thunar_vfs_user_get_real_name (ThunarVfsUser *user)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_USER (user), 0);
-  return THUNAR_VFS_USER_GET_CLASS (user)->get_real_name (user);
+
+  /* load the user's data on-demand */
+  if (G_UNLIKELY (user->name == NULL))
+    thunar_vfs_user_load (user);
+
+  return user->real_name;
 }
 
 
@@ -265,443 +519,7 @@ gboolean
 thunar_vfs_user_is_me (ThunarVfsUser *user)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_USER (user), FALSE);
-  return THUNAR_VFS_USER_GET_CLASS (user)->is_me (user);
-}
-
-
-
-
-typedef struct _ThunarVfsLocalGroupClass ThunarVfsLocalGroupClass;
-typedef struct _ThunarVfsLocalGroup      ThunarVfsLocalGroup;
-
-
-
-#define THUNAR_VFS_TYPE_LOCAL_GROUP             (thunar_vfs_local_group_get_type ())
-#define THUNAR_VFS_LOCAL_GROUP(obj)             (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_LOCAL_GROUP, ThunarVfsLocalGroup))
-#define THUNAR_VFS_LOCAL_GROUP_CLASS(klass)     (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_LOCAL_GROUP, ThunarVfsLocalGroupClass))
-#define THUNAR_VFS_IS_LOCAL_GROUP(obj)          (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_LOCAL_GROUP))
-#define THUNAR_VFS_IS_LOCAL_GROUP_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_LOCAL_GROUP))
-#define THUNAR_VFS_LOCAL_GROUP_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_LOCAL_GROUP, ThunarVfsLocalGroupClass))
-
-
-
-static GType            thunar_vfs_local_group_get_type   (void) G_GNUC_CONST;
-static void             thunar_vfs_local_group_class_init (ThunarVfsLocalGroupClass *klass);
-static void             thunar_vfs_local_group_finalize   (GObject                  *object);
-static ThunarVfsGroupId thunar_vfs_local_group_get_id     (ThunarVfsGroup           *group);
-static const gchar     *thunar_vfs_local_group_get_name   (ThunarVfsGroup           *group);
-static ThunarVfsGroup  *thunar_vfs_local_group_new        (ThunarVfsGroupId          id);
-
-
-
-struct _ThunarVfsLocalGroupClass
-{
-  ThunarVfsGroupClass __parent__;
-};
-
-struct _ThunarVfsLocalGroup
-{
-  ThunarVfsGroup __parent__;
-
-  ThunarVfsGroupId id;
-  gchar           *name;
-};
-
-
-
-static GObjectClass *thunar_vfs_local_group_parent_class;
-
-
-
-static GType
-thunar_vfs_local_group_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsLocalGroupClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_local_group_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsLocalGroup),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_GROUP,
-                                     "ThunarVfsLocalGroup",
-                                     &info, 0);
-    }
-
-  return type;
-}
-
-
-
-static void
-thunar_vfs_local_group_class_init (ThunarVfsLocalGroupClass *klass)
-{
-  ThunarVfsGroupClass *thunarvfs_group_class;
-  GObjectClass        *gobject_class;
-
-  thunar_vfs_local_group_parent_class = g_type_class_peek_parent (klass);
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_vfs_local_group_finalize;
-
-  thunarvfs_group_class = THUNAR_VFS_GROUP_CLASS (klass);
-  thunarvfs_group_class->get_id = thunar_vfs_local_group_get_id;
-  thunarvfs_group_class->get_name = thunar_vfs_local_group_get_name;
-}
-
-
-
-static void
-thunar_vfs_local_group_finalize (GObject *object)
-{
-  ThunarVfsLocalGroup *local_group = THUNAR_VFS_LOCAL_GROUP (object);
-
-  /* free the group name */
-  g_free (local_group->name);
-
-  G_OBJECT_CLASS (thunar_vfs_local_group_parent_class)->finalize (object);
-}
-
-
-
-static ThunarVfsGroupId
-thunar_vfs_local_group_get_id (ThunarVfsGroup *group)
-{
-  return THUNAR_VFS_LOCAL_GROUP (group)->id;
-}
-
-
-
-static const gchar*
-thunar_vfs_local_group_get_name (ThunarVfsGroup *group)
-{
-  ThunarVfsLocalGroup *local_group = THUNAR_VFS_LOCAL_GROUP (group);
-  struct group        *grp;
-
-  /* determine the name on-demand */
-  if (G_UNLIKELY (local_group->name == NULL))
-    {
-      grp = getgrgid (local_group->id);
-      if (G_LIKELY (grp != NULL))
-        local_group->name = g_strdup (grp->gr_name);
-      else
-        local_group->name = g_strdup_printf ("%u", (guint) local_group->id);
-    }
-
-  return local_group->name;
-}
-
-
-
-static ThunarVfsGroup*
-thunar_vfs_local_group_new (ThunarVfsGroupId id)
-{
-  ThunarVfsLocalGroup *local_group;
-
-  local_group = g_object_new (THUNAR_VFS_TYPE_LOCAL_GROUP, NULL);
-  local_group->id = id;
-
-  return THUNAR_VFS_GROUP (local_group);
-}
-
-
-
-
-typedef struct _ThunarVfsLocalUserClass ThunarVfsLocalUserClass;
-typedef struct _ThunarVfsLocalUser      ThunarVfsLocalUser;
-
-
-
-#define THUNAR_VFS_TYPE_LOCAL_USER            (thunar_vfs_local_user_get_type ())
-#define THUNAR_VFS_LOCAL_USER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_LOCAL_USER, ThunarVfsLocalUser))
-#define THUNAR_VFS_LOCAL_USER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_LOCAL_USER, ThunarVfsLocalUserClass))
-#define THUNAR_VFS_IS_LOCAL_USER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_LOCAL_USER))
-#define THUNAR_VFS_IS_LOCAL_USER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_LOCAL_USER))
-#define THUNAR_VFS_LOCAL_USER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_LOCAL_USER, ThunarVfsLocalUserClass))
-
-
-
-static GType           thunar_vfs_local_user_get_type          (void) G_GNUC_CONST;
-static void            thunar_vfs_local_user_class_init        (ThunarVfsLocalUserClass *klass);
-static void            thunar_vfs_local_user_finalize          (GObject                 *object);
-static GList          *thunar_vfs_local_user_get_groups        (ThunarVfsUser           *user);
-static ThunarVfsGroup *thunar_vfs_local_user_get_primary_group (ThunarVfsUser           *user);
-static ThunarVfsUserId thunar_vfs_local_user_get_id            (ThunarVfsUser           *user);
-static const gchar    *thunar_vfs_local_user_get_name          (ThunarVfsUser           *user);
-static const gchar    *thunar_vfs_local_user_get_real_name     (ThunarVfsUser           *user);
-static gboolean        thunar_vfs_local_user_is_me             (ThunarVfsUser           *user);
-static void            thunar_vfs_local_user_load              (ThunarVfsLocalUser      *local_user);
-static ThunarVfsUser  *thunar_vfs_local_user_new               (ThunarVfsUserId          id);
-
-
-
-struct _ThunarVfsLocalUserClass
-{
-  ThunarVfsUserClass __parent__;
-
-  ThunarVfsUserId effective_uid;
-};
-
-struct _ThunarVfsLocalUser
-{
-  ThunarVfsUser __parent__;
-
-  GList          *groups;
-  ThunarVfsGroup *primary_group;
-  ThunarVfsUserId id;
-  gchar          *name;
-  gchar          *real_name;
-};
-
-
-
-static GObjectClass *thunar_vfs_local_user_parent_class;
-
-
-
-static GType
-thunar_vfs_local_user_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsLocalUserClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_local_user_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsLocalUser),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_USER,
-                                     "ThunarVfsLocalUser",
-                                     &info, 0);
-    }
-
-  return type;
-}
-
-
-
-static void
-thunar_vfs_local_user_class_init (ThunarVfsLocalUserClass *klass)
-{
-  ThunarVfsUserClass *thunarvfs_user_class;
-  GObjectClass       *gobject_class;
-
-  thunar_vfs_local_user_parent_class = g_type_class_peek_parent (klass);
-
-  /* determine the current process' effective user id, we do
-   * this only once to avoid the syscall overhead on every
-   * is_me() invokation.
-   */
-  klass->effective_uid = geteuid ();
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_vfs_local_user_finalize;
-
-  thunarvfs_user_class = THUNAR_VFS_USER_CLASS (klass);
-  thunarvfs_user_class->get_groups = thunar_vfs_local_user_get_groups;
-  thunarvfs_user_class->get_primary_group = thunar_vfs_local_user_get_primary_group;
-  thunarvfs_user_class->get_id = thunar_vfs_local_user_get_id;
-  thunarvfs_user_class->get_name = thunar_vfs_local_user_get_name;
-  thunarvfs_user_class->get_real_name = thunar_vfs_local_user_get_real_name;
-  thunarvfs_user_class->is_me = thunar_vfs_local_user_is_me;
-}
-
-
-
-static void
-thunar_vfs_local_user_finalize (GObject *object)
-{
-  ThunarVfsLocalUser *local_user = THUNAR_VFS_LOCAL_USER (object);
-  GList              *lp;
-
-  /* unref the associated groups */
-  for (lp = local_user->groups; lp != NULL; lp = lp->next)
-    g_object_unref (G_OBJECT (lp->data));
-  g_list_free (local_user->groups);
-
-  /* drop the ref on the primary group */
-  if (G_LIKELY (local_user->primary_group != NULL))
-    g_object_unref (G_OBJECT (local_user->primary_group));
-
-  /* free the names */
-  g_free (local_user->real_name);
-  g_free (local_user->name);
-
-  G_OBJECT_CLASS (thunar_vfs_local_user_parent_class)->finalize (object);
-}
-
-
-
-static GList*
-thunar_vfs_local_user_get_groups (ThunarVfsUser *user)
-{
-  ThunarVfsUserManager *manager;
-  ThunarVfsLocalUser   *local_user = THUNAR_VFS_LOCAL_USER (user);
-  ThunarVfsGroup       *primary_group;
-  ThunarVfsGroup       *group;
-  gid_t                 gidset[NGROUPS_MAX];
-  gint                  gidsetlen;
-  gint                  n;
-
-  /* load the groups on-demand */
-  if (G_UNLIKELY (local_user->groups == NULL))
-    {
-      primary_group = thunar_vfs_local_user_get_primary_group (user);
-
-      /* we can only determine the groups list for the current
-       * process owner in a portable fashion, and in fact, we
-       * only need the list for the current user.
-       */
-      if (thunar_vfs_local_user_is_me (user))
-        {
-          manager = thunar_vfs_user_manager_get_default ();
-
-          /* add all supplementary groups */
-          gidsetlen = getgroups (G_N_ELEMENTS (gidset), gidset);
-          for (n = 0; n < gidsetlen; ++n)
-            if (primary_group == NULL || thunar_vfs_group_get_id (primary_group) != gidset[n])
-              {
-                group = thunar_vfs_user_manager_get_group_by_id (manager, gidset[n]);
-                if (G_LIKELY (group != NULL))
-                  local_user->groups = g_list_append (local_user->groups, group);
-              }
-
-          g_object_unref (G_OBJECT (manager));
-        }
-
-      /* prepend the primary group (if any) */
-      if (G_LIKELY (primary_group != NULL))
-        {
-          local_user->groups = g_list_prepend (local_user->groups, primary_group);
-          g_object_ref (G_OBJECT (primary_group));
-        }
-    }
-
-  return local_user->groups;
-}
-
-
-
-static ThunarVfsGroup*
-thunar_vfs_local_user_get_primary_group (ThunarVfsUser *user)
-{
-  ThunarVfsLocalUser *local_user = THUNAR_VFS_LOCAL_USER (user);
-
-  if (G_UNLIKELY (local_user->name == NULL))
-    thunar_vfs_local_user_load (local_user);
-
-  return local_user->primary_group;
-}
-
-
-
-static ThunarVfsUserId
-thunar_vfs_local_user_get_id (ThunarVfsUser *user)
-{
-  return THUNAR_VFS_LOCAL_USER (user)->id;
-}
-
-
-
-static const gchar*
-thunar_vfs_local_user_get_name (ThunarVfsUser *user)
-{
-  ThunarVfsLocalUser *local_user = THUNAR_VFS_LOCAL_USER (user);
-
-  if (G_UNLIKELY (local_user->name == NULL))
-    thunar_vfs_local_user_load (local_user);
-
-  return local_user->name;
-}
-
-
-
-static const gchar*
-thunar_vfs_local_user_get_real_name (ThunarVfsUser *user)
-{
-  ThunarVfsLocalUser *local_user = THUNAR_VFS_LOCAL_USER (user);
-
-  if (G_UNLIKELY (local_user->name == NULL))
-    thunar_vfs_local_user_load (local_user);
-
-  return local_user->real_name;
-}
-
-
-
-static gboolean
-thunar_vfs_local_user_is_me (ThunarVfsUser *user)
-{
-  return (THUNAR_VFS_LOCAL_USER (user)->id == THUNAR_VFS_LOCAL_USER_GET_CLASS (user)->effective_uid);
-}
-
-
-
-static void
-thunar_vfs_local_user_load (ThunarVfsLocalUser *local_user)
-{
-  ThunarVfsUserManager *manager;
-  struct passwd        *pw;
-  const gchar          *s;
-
-  g_return_if_fail (local_user->name == NULL);
-
-  pw = getpwuid (local_user->id);
-  if (G_LIKELY (pw != NULL))
-    {
-      manager = thunar_vfs_user_manager_get_default ();
-
-      /* query name and primary group */
-      local_user->name = g_strdup (pw->pw_name);
-      local_user->primary_group = thunar_vfs_user_manager_get_group_by_id (manager, pw->pw_gid);
-
-      /* try to figure out the real name */
-      s = strchr (pw->pw_gecos, ',');
-      if (s != NULL)
-        local_user->real_name = g_strndup (pw->pw_gecos, s - pw->pw_gecos);
-      else if (pw->pw_gecos[0] != '\0')
-        local_user->real_name = g_strdup (pw->pw_gecos);
-
-      g_object_unref (G_OBJECT (manager));
-    }
-  else
-    {
-      local_user->name = g_strdup_printf ("%u", (guint) local_user->id);
-    }
-}
-
-
-
-static ThunarVfsUser*
-thunar_vfs_local_user_new (ThunarVfsUserId id)
-{
-  ThunarVfsLocalUser *local_user;
-
-  local_user = g_object_new (THUNAR_VFS_TYPE_LOCAL_USER, NULL);
-  local_user->id = id;
-
-  return THUNAR_VFS_USER (local_user);
+  return (user->id == thunar_vfs_user_effective_uid);
 }
 
 
@@ -834,9 +652,7 @@ thunar_vfs_user_manager_flush_timer (gpointer user_data)
 static void
 thunar_vfs_user_manager_flush_timer_destroy (gpointer user_data)
 {
-  GDK_THREADS_ENTER ();
   THUNAR_VFS_USER_MANAGER (user_data)->flush_timer_id = -1;
-  GDK_THREADS_LEAVE ();
 }
 
 
@@ -894,7 +710,7 @@ thunar_vfs_user_manager_get_group_by_id (ThunarVfsUserManager *manager,
   group = g_hash_table_lookup (manager->groups, GINT_TO_POINTER (id));
   if (group == NULL)
     {
-      group = thunar_vfs_local_group_new (id);
+      group = thunar_vfs_group_new (id);
       g_hash_table_insert (manager->groups, GINT_TO_POINTER (id), group);
     }
 
@@ -930,7 +746,7 @@ thunar_vfs_user_manager_get_user_by_id (ThunarVfsUserManager *manager,
   user = g_hash_table_lookup (manager->users, GINT_TO_POINTER (id));
   if (user == NULL)
     {
-      user = thunar_vfs_local_user_new (id);
+      user = thunar_vfs_user_new (id);
       g_hash_table_insert (manager->users, GINT_TO_POINTER (id), user);
     }
 

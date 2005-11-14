@@ -39,6 +39,17 @@
 
 
 
+/* minimum timer interval (in ms) */
+#define THUNAR_VFS_MONITOR_TIMER_INTERVAL (250)
+
+/* tagging for notifications, so we can make sure that
+ * (slow) FAM events don't override properly feeded events.
+ */
+#define THUNAR_VFS_MONITOR_TAG_FAM  (0)
+#define THUNAR_VFS_MONITOR_TAG_FEED (1)
+
+
+
 typedef struct _ThunarVfsMonitorNotification ThunarVfsMonitorNotification;
 
 
@@ -48,6 +59,7 @@ static void     thunar_vfs_monitor_init                 (ThunarVfsMonitor      *
 static void     thunar_vfs_monitor_finalize             (GObject               *object);
 static void     thunar_vfs_monitor_queue_notification   (ThunarVfsMonitor      *monitor,
                                                          gint                   id,
+                                                         gint                   tag,
                                                          ThunarVfsMonitorEvent  event,
                                                          const gchar           *filename);
 static gboolean thunar_vfs_monitor_notifications_timer  (gpointer               user_data);
@@ -75,7 +87,8 @@ struct _ThunarVfsMonitor
   gint                          notifications_timer_id;
   ThunarVfsMonitorNotification *notifications;
 
-  /* the monitor lock */
+  /* the monitor lock and cond */
+  GCond                        *cond;
   GMutex                       *lock;
 
   /* the current handle id */
@@ -92,7 +105,7 @@ struct _ThunarVfsMonitorHandle
 {
   ThunarVfsMonitorCallback callback;
   gpointer                 user_data;
-  ThunarVfsURI            *uri;
+  ThunarVfsPath           *path;
   gboolean                 directory;
 
   union
@@ -107,7 +120,8 @@ struct _ThunarVfsMonitorHandle
 struct _ThunarVfsMonitorNotification
 {
   gint                          id;       /* the unique id of the handle */
-  gchar                        *filename; /* the name/path of the file that changed or NULL if the handle uri should be used */
+  gint                          tag;      /* the notification source tag */
+  gchar                        *filename; /* the name/path of the file that changed or NULL if the handle path should be used */
   ThunarVfsMonitorEvent         event;    /* the type of the event */
   ThunarVfsMonitorNotification *next;     /* the pointer to the next notification in the queue */
 };
@@ -134,6 +148,7 @@ thunar_vfs_monitor_init (ThunarVfsMonitor *monitor)
 {
   /* initialize the monitor */
   monitor->notifications_timer_id = -1;
+  monitor->cond = g_cond_new ();
   monitor->lock = g_mutex_new ();
 
 #ifdef HAVE_LIBFAM
@@ -189,7 +204,7 @@ thunar_vfs_monitor_finalize (GObject *object)
 
   /* drop all handles */
   for (lp = monitor->handles; lp != NULL; lp = lp->next)
-    thunar_vfs_uri_unref (((ThunarVfsMonitorHandle *) lp->data)->uri);
+    thunar_vfs_path_unref (((ThunarVfsMonitorHandle *) lp->data)->path);
   g_list_free (monitor->handles);
 
   /* release the memory chunk */
@@ -197,6 +212,7 @@ thunar_vfs_monitor_finalize (GObject *object)
 
   /* release the monitor lock */
   g_mutex_free (monitor->lock);
+  g_cond_free (monitor->cond);
 
   (*G_OBJECT_CLASS (thunar_vfs_monitor_parent_class)->finalize) (object);
 }
@@ -206,6 +222,7 @@ thunar_vfs_monitor_finalize (GObject *object)
 static void
 thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
                                        gint                  id,
+                                       gint                  tag,
                                        ThunarVfsMonitorEvent event,
                                        const gchar          *filename)
 {
@@ -217,12 +234,13 @@ thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
 
   /* check if we already have a matching notification */
   for (notification = monitor->notifications; notification != NULL; notification = notification->next)
-    if (notification->id == id && notification->event == event
-        && exo_str_is_equal (filename, notification->filename))
+    if (notification->id == id && strcmp (filename, notification->filename) == 0)
       {
-        /* no need to queue this new change notification,
-         * as we already have a matching one in the queue.
-         */
+        if (tag >= notification->tag)
+          {
+            notification->tag = tag;
+            notification->event = event;
+          }
         return;
       }
 
@@ -242,13 +260,14 @@ thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
 
   /* prepend the notification to the queue */
   notification->id = id;
+  notification->tag = tag;
   notification->next = monitor->notifications;
   notification->event = event;
   monitor->notifications = notification;
 
   /* schedule the notification timer if not already active */
   if (G_UNLIKELY (monitor->notifications_timer_id < 0))
-    monitor->notifications_timer_id = g_timeout_add (500, thunar_vfs_monitor_notifications_timer, monitor);
+    monitor->notifications_timer_id = g_timeout_add (THUNAR_VFS_MONITOR_TIMER_INTERVAL, thunar_vfs_monitor_notifications_timer, monitor);
 }
 
 
@@ -259,7 +278,7 @@ thunar_vfs_monitor_notifications_timer (gpointer user_data)
   ThunarVfsMonitorNotification *notification;
   ThunarVfsMonitorHandle       *handle;
   ThunarVfsMonitor             *monitor = THUNAR_VFS_MONITOR (user_data);
-  ThunarVfsURI                 *uri;
+  ThunarVfsPath                *path;
   GList                        *lp;
 
   /* take an additional reference on the monitor, * so we don't accidently
@@ -291,30 +310,31 @@ thunar_vfs_monitor_notifications_timer (gpointer user_data)
           /* grab the handle pointer */
           handle = lp->data;
 
-          /* determine the event uri for the notification */
+          /* determine the event path for the notification */
           if (G_UNLIKELY (notification->filename == NULL))
-            uri = thunar_vfs_uri_ref (handle->uri);
+            path = thunar_vfs_path_ref (handle->path);
           else if (G_UNLIKELY (*notification->filename != '/'))
-            uri = thunar_vfs_uri_relative (handle->uri, notification->filename);
-          else if (strcmp (thunar_vfs_uri_get_path (handle->uri), notification->filename) == 0)
-            uri = thunar_vfs_uri_ref (handle->uri);
+            path = thunar_vfs_path_relative (handle->path, notification->filename);
           else
-            uri = thunar_vfs_uri_new_for_path (notification->filename);
+            path = thunar_vfs_path_new (notification->filename, NULL);
 
           /* invoke the callback (w/o the monitor lock) */
           GDK_THREADS_ENTER ();
           g_mutex_unlock (monitor->lock);
-          (*handle->callback) (monitor, handle, notification->event, handle->uri, uri, handle->user_data);
+          (*handle->callback) (monitor, handle, notification->event, handle->path, path, handle->user_data);
           g_mutex_lock (monitor->lock);
           GDK_THREADS_LEAVE ();
 
           /* cleanup */
-          thunar_vfs_uri_unref (uri);
+          thunar_vfs_path_unref (path);
         }
 
       /* release the current notification */
       g_free (notification);
     }
+
+  /* notify all waiting parties */
+  g_cond_broadcast (monitor->cond);
 
   /* release the lock on the monitor */
   g_mutex_unlock (monitor->lock);
@@ -394,7 +414,7 @@ error:
 
       /* schedule a notification for the monitor */
       g_mutex_lock (monitor->lock);
-      thunar_vfs_monitor_queue_notification (monitor, fe.fr.reqnum, event, fe.filename);
+      thunar_vfs_monitor_queue_notification (monitor, fe.fr.reqnum, THUNAR_VFS_MONITOR_TAG_FAM, event, fe.filename);
       g_mutex_unlock (monitor->lock);
     }
 
@@ -437,32 +457,33 @@ thunar_vfs_monitor_get_default (void)
 /**
  * thunar_vfs_monitor_add_directory:
  * @monitor   : a #ThunarVfsMonitor.
- * @uri       : the #ThunarVfsURI of the directory that should be watched.
+ * @path      : the #ThunarVfsPath of the directory that should be watched.
  * @callback  : the callback function to invoke.
  * @user_data : additional data to pass to @callback.
- *
- * The @uri is currently limited to the #THUNAR_VFS_URI_SCHEME_FILE.
  *
  * Return value: the #ThunarVfsMonitorHandle for the new watch.
  **/
 ThunarVfsMonitorHandle*
 thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
-                                  ThunarVfsURI            *uri,
+                                  ThunarVfsPath           *path,
                                   ThunarVfsMonitorCallback callback,
                                   gpointer                 user_data)
 {
   ThunarVfsMonitorHandle *handle;
+#ifdef HAVE_LIBFAM
+  gchar                  *absolute_path;
+#endif
 
   g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), NULL);
-  g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE, NULL);
   g_return_val_if_fail (callback != NULL, NULL);
+  g_return_val_if_fail (path != NULL, NULL);
 
   /* acquire the monitor lock */
   g_mutex_lock (monitor->lock);
 
   /* allocate a new handle */
   handle = g_chunk_new (ThunarVfsMonitorHandle, monitor->handle_chunk);
-  handle->uri = thunar_vfs_uri_ref (uri);
+  handle->path = thunar_vfs_path_ref (path);
   handle->callback = callback;
   handle->user_data = user_data;
   handle->directory = TRUE;
@@ -472,8 +493,10 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
   if (G_LIKELY (monitor->fc_watch_id >= 0))
     {
       /* schedule the watch on the FAM daemon */
-      if (FAMMonitorDirectory2 (&monitor->fc, thunar_vfs_uri_get_path (uri), &handle->fr) < 0)
+      absolute_path = thunar_vfs_path_dup_string (path);
+      if (FAMMonitorDirectory2 (&monitor->fc, absolute_path, &handle->fr) < 0)
         thunar_vfs_monitor_fam_cancel (monitor);
+      g_free (absolute_path);
     }
 #endif
 
@@ -491,32 +514,33 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
 /**
  * thunar_vfs_monitor_add_file:
  * @monitor   : a #ThunarVfsMonitor.
- * @uri       : the #ThunarVfsURI of the file that should be watched.
+ * @path      : the #ThunarVfsPath of the file that should be watched.
  * @callback  : the callback function to invoke.
  * @user_data : additional data to pass to @callback.
- *
- * The @uri is currently limited to the #THUNAR_VFS_URI_SCHEME_FILE.
  *
  * Return value: the #ThunarVfsMonitorHandle for the new watch.
  **/
 ThunarVfsMonitorHandle*
 thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
-                             ThunarVfsURI            *uri,
+                             ThunarVfsPath           *path,
                              ThunarVfsMonitorCallback callback,
                              gpointer                 user_data)
 {
   ThunarVfsMonitorHandle *handle;
+#ifdef HAVE_LIBFAM
+  gchar                  *absolute_path;
+#endif
 
   g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), NULL);
-  g_return_val_if_fail (thunar_vfs_uri_get_scheme (uri) == THUNAR_VFS_URI_SCHEME_FILE, NULL);
   g_return_val_if_fail (callback != NULL, NULL);
+  g_return_val_if_fail (path != NULL, NULL);
 
   /* acquire the monitor lock */
   g_mutex_lock (monitor->lock);
 
   /* allocate a new handle */
   handle = g_chunk_new (ThunarVfsMonitorHandle, monitor->handle_chunk);
-  handle->uri = thunar_vfs_uri_ref (uri);
+  handle->path = thunar_vfs_path_ref (path);
   handle->callback = callback;
   handle->user_data = user_data;
   handle->directory = FALSE;
@@ -526,8 +550,10 @@ thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
   if (G_LIKELY (monitor->fc_watch_id >= 0))
     {
       /* schedule the watch on the FAM daemon */
-      if (FAMMonitorFile2 (&monitor->fc, thunar_vfs_uri_get_path (uri), &handle->fr) < 0)
+      absolute_path = thunar_vfs_path_dup_string (path);
+      if (FAMMonitorFile2 (&monitor->fc, absolute_path, &handle->fr) < 0)
         thunar_vfs_monitor_fam_cancel (monitor);
+      g_free (absolute_path);
     }
 #endif
 
@@ -572,7 +598,7 @@ thunar_vfs_monitor_remove (ThunarVfsMonitor       *monitor,
   monitor->handles = g_list_remove (monitor->handles, handle);
 
   /* free the handle */
-  thunar_vfs_uri_unref (handle->uri);
+  thunar_vfs_path_unref (handle->path);
   g_mem_chunk_free (monitor->handle_chunk, handle);
 
   /* release the monitor lock */
@@ -585,7 +611,7 @@ thunar_vfs_monitor_remove (ThunarVfsMonitor       *monitor,
  * thunar_vfs_monitor_feed:
  * @monitor : a #ThunarVfsMonitor.
  * @event   : the #ThunarVfsMonitorEvent that should be emulated.
- * @uri     : the #ThunarVfsURI on which @event took place.
+ * @path    : the #ThunarVfsPath on which @event took place.
  *
  * Explicitly injects the given @event into @monitor<!---->s event
  * processing logic.
@@ -593,10 +619,10 @@ thunar_vfs_monitor_remove (ThunarVfsMonitor       *monitor,
 void
 thunar_vfs_monitor_feed (ThunarVfsMonitor     *monitor,
                          ThunarVfsMonitorEvent event,
-                         ThunarVfsURI         *uri)
+                         ThunarVfsPath        *path)
 {
   ThunarVfsMonitorHandle *handle;
-  ThunarVfsURI           *parent_uri;
+  ThunarVfsPath          *parent;
   GList                  *lp;
 
   g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
@@ -611,24 +637,49 @@ thunar_vfs_monitor_feed (ThunarVfsMonitor     *monitor,
   for (lp = monitor->handles; lp != NULL; lp = lp->next)
     {
       handle = (ThunarVfsMonitorHandle *) lp->data;
-      if (thunar_vfs_uri_equal (handle->uri, uri))
-        thunar_vfs_monitor_queue_notification (monitor, handle->id, event, NULL);
+      if (thunar_vfs_path_equal (handle->path, path))
+        thunar_vfs_monitor_queue_notification (monitor, handle->id, THUNAR_VFS_MONITOR_TAG_FEED, event, NULL);
     }
 
   /* schedule notifications for all directory handles affected indirectly */
-  if (G_LIKELY (!thunar_vfs_uri_is_root (uri)))
+  if (G_LIKELY (!thunar_vfs_path_is_root (path)))
     {
-      parent_uri = thunar_vfs_uri_parent (uri);
+      parent = thunar_vfs_path_get_parent (path);
       for (lp = monitor->handles; lp != NULL; lp = lp->next)
         {
           handle = (ThunarVfsMonitorHandle *) lp->data;
-          if (thunar_vfs_uri_equal (handle->uri, parent_uri))
-            thunar_vfs_monitor_queue_notification (monitor, handle->id, event, thunar_vfs_uri_get_name (uri));
+          if (handle->directory && thunar_vfs_path_equal (handle->path, parent))
+            thunar_vfs_monitor_queue_notification (monitor, handle->id, THUNAR_VFS_MONITOR_TAG_FEED, event, thunar_vfs_path_get_name (path));
         }
-      thunar_vfs_uri_unref (parent_uri);
     }
 
   /* release the lock on the monitor */
+  g_mutex_unlock (monitor->lock);
+}
+
+
+
+/**
+ * thunar_vfs_monitor_wait:
+ * @monitor : a #ThunarVfsMonitor.
+ *
+ * Suspends the execution of the current thread until the
+ * @monitor has processed all currently pending events. The
+ * calling thread must own a reference on the @monitor!
+ *
+ * This method should never be called from the main thread
+ * or you'll lock up your application!!
+ **/
+void
+thunar_vfs_monitor_wait (ThunarVfsMonitor *monitor)
+{
+  static const GTimeVal tv = { 2, 0 };
+
+  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+
+  g_mutex_lock (monitor->lock);
+  while (g_atomic_int_get (&monitor->notifications_timer_id) >= 0)
+    g_cond_timed_wait (monitor->cond, monitor->lock, (GTimeVal *) &tv);
   g_mutex_unlock (monitor->lock);
 }
 

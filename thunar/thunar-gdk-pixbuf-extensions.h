@@ -34,6 +34,9 @@ GdkPixbuf *thunar_gdk_pixbuf_frame     (GdkPixbuf       *src,
                                         gint             right_offset,
                                         gint             bottom_offset);
 
+GdkPixbuf *thunar_gdk_pixbuf_lucent    (const GdkPixbuf *src,
+                                        guint            percent);
+
 GdkPixbuf *thunar_gdk_pixbuf_spotlight (const GdkPixbuf *src);
 
 G_END_DECLS;

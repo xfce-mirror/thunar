@@ -273,6 +273,94 @@ thunar_gdk_pixbuf_frame (GdkPixbuf *src,
 
 
 
+/**
+ * thunar_gdk_pixbuf_lucent:
+ * @src     : the source #GdkPixbuf.
+ * @percent : the percentage of translucency.
+ *
+ * Returns a version of @src, whose pixels translucency is
+ * @percent of the original @src pixels.
+ *
+ * The caller is responsible to free the returned object
+ * using g_object_unref() when no longer needed.
+ *
+ * Return value: a translucent version of @src.
+ **/
+GdkPixbuf*
+thunar_gdk_pixbuf_lucent (const GdkPixbuf *src,
+                          guint            percent)
+{
+  GdkPixbuf *dst;
+  guchar    *dst_pixels;
+  guchar    *src_pixels;
+  guchar    *pixdst;
+  guchar    *pixsrc;
+  gint       dst_row_stride;
+  gint       src_row_stride;
+  gint       width;
+  gint       height;
+  gint       i, j;
+
+  g_return_val_if_fail (GDK_IS_PIXBUF (src), NULL);
+  g_return_val_if_fail (percent >= 0 && percent <= 100, NULL);
+
+  /* determine source parameters */
+  width = gdk_pixbuf_get_width (src);
+  height = gdk_pixbuf_get_height (src);
+
+  /* allocate the destination pixbuf */
+  dst = gdk_pixbuf_new (gdk_pixbuf_get_colorspace (src), TRUE, gdk_pixbuf_get_bits_per_sample (src), width, height);
+
+  /* determine row strides on src/dst */
+  dst_row_stride = gdk_pixbuf_get_rowstride (dst);
+  src_row_stride = gdk_pixbuf_get_rowstride (src);
+
+  /* determine pixels on src/dst */
+  dst_pixels = gdk_pixbuf_get_pixels (dst);
+  src_pixels = gdk_pixbuf_get_pixels (src);
+
+  /* check if the source already contains an alpha channel */
+  if (G_LIKELY (gdk_pixbuf_get_has_alpha (src)))
+    {
+      for (i = height; --i >= 0; )
+        {
+          pixdst = dst_pixels + i * dst_row_stride;
+          pixsrc = src_pixels + i * src_row_stride;
+
+          for (j = width; --j >= 0; )
+            {
+              *pixdst++ = *pixsrc++;
+              *pixdst++ = *pixsrc++;
+              *pixdst++ = *pixsrc++;
+              *pixdst++ = ((guint) *pixsrc++ * percent) / 100u;
+            }
+        }
+    }
+  else
+    {
+      /* pre-calculate the alpha value */
+      percent = (255u * percent) / 100u;
+
+      for (i = height; --i >= 0; )
+        {
+          pixdst = dst_pixels + i * dst_row_stride;
+          pixsrc = src_pixels + i * src_row_stride;
+
+          for (j = width; --j >= 0; )
+            {
+              *pixdst++ = *pixsrc++;
+              *pixdst++ = *pixsrc++;
+              *pixdst++ = *pixsrc++;
+              *pixdst++ = percent;
+            }
+        }
+    }
+
+  return dst;
+}
+
+
+
 static guchar
 lighten_channel (guchar cur_value)
 {

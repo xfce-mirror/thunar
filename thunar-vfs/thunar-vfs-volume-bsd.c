@@ -59,7 +59,7 @@ static void                  thunar_vfs_volume_bsd_finalize         (GObject    
 static ThunarVfsVolumeKind   thunar_vfs_volume_bsd_get_kind         (ThunarVfsVolume         *volume);
 static const gchar          *thunar_vfs_volume_bsd_get_name         (ThunarVfsVolume         *volume);
 static ThunarVfsVolumeStatus thunar_vfs_volume_bsd_get_status       (ThunarVfsVolume         *volume);
-static ThunarVfsURI         *thunar_vfs_volume_bsd_get_mount_point  (ThunarVfsVolume         *volume);
+static ThunarVfsPath        *thunar_vfs_volume_bsd_get_mount_point  (ThunarVfsVolume         *volume);
 static gboolean              thunar_vfs_volume_bsd_get_free_space   (ThunarVfsVolume         *volume,
                                                                      ThunarVfsFileSize       *free_space_return);
 static gboolean              thunar_vfs_volume_bsd_update           (gpointer                 user_data);
@@ -84,7 +84,7 @@ struct _ThunarVfsVolumeBSD
   gchar                *label;
 
   struct statfs         info;
-  ThunarVfsURI         *mount_point;
+  ThunarVfsPath        *mount_point;
 
   ThunarVfsVolumeKind   kind;
   ThunarVfsVolumeStatus status;
@@ -143,7 +143,7 @@ thunar_vfs_volume_bsd_finalize (GObject *object)
     g_source_remove (volume_bsd->update_timer_id);
 
   if (G_LIKELY (volume_bsd->mount_point != NULL))
-    thunar_vfs_uri_unref (volume_bsd->mount_point);
+    thunar_vfs_path_unref (volume_bsd->mount_point);
 
   g_free (volume_bsd->device_path);
   g_free (volume_bsd->label);
@@ -179,7 +179,7 @@ thunar_vfs_volume_bsd_get_status (ThunarVfsVolume *volume)
 
 
 
-static ThunarVfsURI*
+static ThunarVfsPath*
 thunar_vfs_volume_bsd_get_mount_point (ThunarVfsVolume *volume)
 {
   return THUNAR_VFS_VOLUME_BSD (volume)->mount_point;
@@ -206,7 +206,7 @@ thunar_vfs_volume_bsd_update (gpointer user_data)
   ThunarVfsVolumeBSD   *volume_bsd = THUNAR_VFS_VOLUME_BSD (user_data);
   struct stat           sb;
   gchar                *label;
-  gchar                 buffer[2048];
+  gchar                 buffer[THUNAR_VFS_PATH_MAXSTRLEN];
   int                   fd;
 
   if (volume_bsd->kind == THUNAR_VFS_VOLUME_KIND_CDROM)
@@ -242,28 +242,32 @@ thunar_vfs_volume_bsd_update (gpointer user_data)
         }
     }
 
-  /* query the file system information for the mount point */
-  if (statfs (thunar_vfs_uri_get_path (volume_bsd->mount_point), &volume_bsd->info) >= 0)
+  /* determine the absolute path to the mount point */
+  if (thunar_vfs_path_to_string (volume_bsd->mount_point, buffer, sizeof (buffer), NULL) > 0)
     {
-      /* if the device is mounted, it means that a medium is present */
-      if (exo_str_is_equal (volume_bsd->info.f_mntfromname, volume_bsd->device_path))
-        status |= THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT;
-    }
+      /* query the file system information for the mount point */
+      if (statfs (buffer, &volume_bsd->info) >= 0)
+        {
+          /* if the device is mounted, it means that a medium is present */
+          if (exo_str_is_equal (volume_bsd->info.f_mntfromname, volume_bsd->device_path))
+            status |= THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT;
+        }
 
-  /* free the volume label if no disc is present */
-  if ((status & THUNAR_VFS_VOLUME_STATUS_PRESENT) == 0)
-    {
-      g_free (volume_bsd->label);
-      volume_bsd->label = NULL;
-    }
+      /* free the volume label if no disc is present */
+      if ((status & THUNAR_VFS_VOLUME_STATUS_PRESENT) == 0)
+        {
+          g_free (volume_bsd->label);
+          volume_bsd->label = NULL;
+        }
 
-  /* determine the device id if mounted */
-  if ((status & THUNAR_VFS_VOLUME_STATUS_MOUNTED) != 0)
-    {
-      if (stat (thunar_vfs_uri_get_path (volume_bsd->mount_point), &sb) < 0)
-        volume_bsd->device_id = (ThunarVfsFileDevice) -1;
-      else
-        volume_bsd->device_id = sb.st_dev;
+      /* determine the device id if mounted */
+      if ((status & THUNAR_VFS_VOLUME_STATUS_MOUNTED) != 0)
+        {
+          if (stat (buffer, &sb) < 0)
+            volume_bsd->device_id = (ThunarVfsFileDevice) -1;
+          else
+            volume_bsd->device_id = sb.st_dev;
+        }
     }
 
   /* update the status if necessary */
@@ -291,7 +295,7 @@ thunar_vfs_volume_bsd_new (const gchar *device_path,
   /* allocate the volume object */
   volume_bsd = g_object_new (THUNAR_VFS_TYPE_VOLUME_BSD, NULL);
   volume_bsd->device_path = g_strdup (device_path);
-  volume_bsd->mount_point = thunar_vfs_uri_new_for_path (mount_path);
+  volume_bsd->mount_point = thunar_vfs_path_new (mount_path, NULL);
 
   /* determine the device name */
   for (p = volume_bsd->device_name = volume_bsd->device_path; *p != '\0'; ++p)

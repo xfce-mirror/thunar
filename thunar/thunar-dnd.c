@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 
 
@@ -59,8 +60,10 @@ thunar_dnd_ask (GtkWidget    *widget,
 {
   static const GdkDragAction action_items[] = { GDK_ACTION_COPY, GDK_ACTION_MOVE, GDK_ACTION_LINK };
   static const gchar        *action_names[] = { N_ ("_Copy here"), N_ ("_Move here"), N_ ("_Link here") };
+  static const gchar        *action_icons[] = { "stock_folder-copy", "stock_folder-move", NULL };
 
   GdkDragAction action = 0;
+  GtkWidget    *image;
   GtkWidget    *menu;
   GtkWidget    *item;
   GMainLoop    *loop;
@@ -85,6 +88,14 @@ thunar_dnd_ask (GtkWidget    *widget,
         g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (action_selected), &action);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
+
+        /* add image to the menu item */
+        if (G_LIKELY (action_icons[n] != NULL))
+          {
+            image = gtk_image_new_from_icon_name (action_icons[n], GTK_ICON_SIZE_MENU);
+            gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+            gtk_widget_show (image);
+          }
       }
 
   /* append the separator */
@@ -114,12 +125,16 @@ thunar_dnd_ask (GtkWidget    *widget,
 
 /**
  * thunar_dnd_perform:
- * @widget   : the #GtkWidget on which the drop was done.
- * @file     : the #ThunarFile on which the @uri_list was dropped.
- * @uri_list : the list of #ThunarVfsURI<!---->s that was dropped.
- * @action   : the #GdkDragAction that was performed.
+ * @widget            : the #GtkWidget on which the drop was done.
+ * @file              : the #ThunarFile on which the @path_list was dropped.
+ * @path_list         : the list of #ThunarVfsPath<!---->s that was dropped.
+ * @action            : the #GdkDragAction that was performed.
+ * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
+ *                      which will be emitted when the job finishes with the
+ *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      %NULL if you're not interested in the signal.
  *
- * Performs the drop of @uri_list on @file in @widget, as given in
+ * Performs the drop of @path_list on @file in @widget, as given in
  * @action and returns %TRUE if the drop was started successfully
  * (or even completed successfully), else %FALSE.
  *
@@ -129,23 +144,20 @@ thunar_dnd_ask (GtkWidget    *widget,
 gboolean
 thunar_dnd_perform (GtkWidget    *widget,
                     ThunarFile   *file,
-                    GList        *uri_list,
-                    GdkDragAction action)
+                    GList        *path_list,
+                    GdkDragAction action,
+                    GClosure     *new_files_closure)
 {
   ThunarApplication *application;
-  GtkWidget         *message;
-  GtkWidget         *window;
   gboolean           succeed = TRUE;
   GError            *error = NULL;
 
   g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (GTK_WIDGET_REALIZED (widget), FALSE);
 
   /* query a reference on the application object */
   application = thunar_application_get ();
-
-  /* determine the toplevel window for the widget */
-  window = gtk_widget_get_toplevel (widget);
 
   /* check if the file is a directory */
   if (thunar_file_is_directory (file))
@@ -154,23 +166,15 @@ thunar_dnd_perform (GtkWidget    *widget,
       switch (action)
         {
         case GDK_ACTION_COPY:
-          thunar_application_copy_uris (application, GTK_WINDOW (window), uri_list, thunar_file_get_uri (file));
+          thunar_application_copy_into (application, widget, path_list, thunar_file_get_path (file), new_files_closure);
           break;
 
         case GDK_ACTION_MOVE:
-          thunar_application_move_uris (application, GTK_WINDOW (window), uri_list, thunar_file_get_uri (file));
+          thunar_application_move_into (application, widget, path_list, thunar_file_get_path (file), new_files_closure);
           break;
 
         case GDK_ACTION_LINK:
-          // FIXME
-          message = gtk_message_dialog_new (GTK_WINDOW (window),
-                                            GTK_DIALOG_MODAL
-                                            | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            _("Creating links is not yet supported. This will be fixed soon!"));
-          gtk_dialog_run (GTK_DIALOG (message));
-          gtk_widget_destroy (message);
+          thunar_application_link_into (application, widget, path_list, thunar_file_get_path (file), new_files_closure);
           break;
 
         default:
@@ -179,19 +183,13 @@ thunar_dnd_perform (GtkWidget    *widget,
     }
   else if (thunar_file_is_executable (file))
     {
-      succeed = thunar_file_execute (file, gtk_widget_get_screen (widget), uri_list, &error);
+      succeed = thunar_file_execute (file, gtk_widget_get_screen (widget), path_list, &error);
       if (G_UNLIKELY (!succeed))
         {
-          message = gtk_message_dialog_new (GTK_WINDOW (window),
-                                            GTK_DIALOG_MODAL
-                                            | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_OK,
-                                            _("Unable to execute file \"%s\"."),
-                                            thunar_file_get_display_name (file));
-          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s.", error->message);
-          gtk_dialog_run (GTK_DIALOG (message));
-          gtk_widget_destroy (message);
+          /* display an error to the user */
+          thunar_dialogs_show_error (widget, error, _("Unable to execute file `%s'"), thunar_file_get_display_name (file));
+
+          /* release the error */
           g_error_free (error);
         }
     }

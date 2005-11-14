@@ -34,29 +34,16 @@
 #include <time.h>
 #endif
 
-#include <thunar/thunar-computer-folder.h>
 #include <thunar/thunar-file.h>
-#include <thunar/thunar-icon-factory.h>
-#include <thunar/thunar-local-file.h>
-#include <thunar/thunar-trash-folder.h>
 
 #include <thunarx/thunarx.h>
 
 
 
-/* the thumbnailing state of a given file */
-typedef enum
-{
-  THUNAR_FILE_THUMB_STATE_MASK    = 0xc0000000,
-  THUNAR_FILE_THUMB_STATE_UNKNOWN = 0x00000000,
-  THUNAR_FILE_THUMB_STATE_NONE    = 0x40000000,
-  THUNAR_FILE_THUMB_STATE_LOADED  = 0x80000000,
-  THUNAR_FILE_THUMB_STATE_LOADING = 0xc0000000,
-} ThunarFileThumbState;
-
-#define THUNAR_FILE_GET_THUMB_STATE(file)        (THUNAR_FILE ((file))->flags & THUNAR_FILE_THUMB_STATE_MASK)
-#define THUNAR_FILE_SET_THUMB_STATE(file, state) (THUNAR_FILE ((file))->flags = (THUNAR_FILE ((file))->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state))
-
+/* Additional flags associated with a ThunarFile */
+#define THUNAR_FILE_IN_DESTRUCTION          0x04
+#define THUNAR_FILE_OWNS_METAFILE_REFERENCE 0x08
+#define THUNAR_FILE_OWNS_EMBLEM_NAMES       0x10
 
 
 /* the watch count is stored in the GObject data
@@ -72,6 +59,7 @@ enum
 {
   CHANGED,
   DESTROY,
+  RENAMED,
   LAST_SIGNAL,
 };
 
@@ -80,9 +68,7 @@ enum
 static void               thunar_file_class_init               (ThunarFileClass        *klass);
 static void               thunar_file_info_init                (ThunarxFileInfoIface   *iface);
 static void               thunar_file_dispose                  (GObject                *object);
-#ifndef G_DISABLE_CHECKS
 static void               thunar_file_finalize                 (GObject                *object);
-#endif
 static gchar             *thunar_file_info_get_name            (ThunarxFileInfo        *file_info);
 static gchar             *thunar_file_info_get_uri             (ThunarxFileInfo        *file_info);
 static gchar             *thunar_file_info_get_parent_uri      (ThunarxFileInfo        *file_info);
@@ -91,35 +77,32 @@ static gchar             *thunar_file_info_get_mime_type       (ThunarxFileInfo 
 static gboolean           thunar_file_info_has_mime_type       (ThunarxFileInfo        *file_info,
                                                                 const gchar            *mime_type);
 static gboolean           thunar_file_info_is_directory        (ThunarxFileInfo        *file_info);
-static ThunarFile        *thunar_file_real_get_parent          (ThunarFile             *file,
-                                                                GError                **error);
-static gboolean           thunar_file_real_execute             (ThunarFile             *file,
-                                                                GdkScreen              *screen,
-                                                                GList                  *uris,
-                                                                GError                **error);
-static gboolean           thunar_file_real_rename              (ThunarFile             *file,
-                                                                const gchar            *name,
-                                                                GError                **error);
-static ThunarFolder      *thunar_file_real_open_as_folder      (ThunarFile             *file,
-                                                                GError                **error);
-static const gchar       *thunar_file_real_get_special_name    (ThunarFile             *file);
-static gboolean           thunar_file_real_is_readable         (ThunarFile             *file);
-static gboolean           thunar_file_real_is_writable         (ThunarFile             *file);
 static void               thunar_file_real_changed             (ThunarFile             *file);
-static ThunarFile        *thunar_file_new_internal             (ThunarVfsURI           *uri,
-                                                                GError                **error);
-static gboolean           thunar_file_denies_access_permission (ThunarFile             *file,
+static gboolean           thunar_file_denies_access_permission (const ThunarFile       *file,
                                                                 ThunarVfsFileMode       usr_permissions,
                                                                 ThunarVfsFileMode       grp_permissions,
                                                                 ThunarVfsFileMode       oth_permissions);
+static ThunarMetafile    *thunar_file_get_metafile             (ThunarFile             *file);
+static void               thunar_file_monitor                  (ThunarVfsMonitor       *monitor,
+                                                                ThunarVfsMonitorHandle *handle,
+                                                                ThunarVfsMonitorEvent   event,
+                                                                ThunarVfsPath          *handle_path,
+                                                                ThunarVfsPath          *event_path,
+                                                                gpointer                user_data);
+static void               thunar_file_watch_free               (gpointer                data);
 
 
 
-static GObjectClass *thunar_file_parent_class;
-static GHashTable   *file_cache;
-static GQuark        thunar_file_thumb_path_quark;
-static GQuark        thunar_file_watch_count_quark;
-static guint         file_signals[LAST_SIGNAL];
+static ThunarVfsUserManager *user_manager;
+static ThunarVfsMonitor     *monitor;
+static ThunarMetafile       *metafile;
+static GObjectClass         *thunar_file_parent_class;
+static GHashTable           *file_cache;
+static GQuark                thunar_file_thumb_path_quark;
+static GQuark                thunar_file_watch_count_quark;
+static GQuark                thunar_file_watch_handle_quark;
+static GQuark                thunar_file_emblem_names_quark;
+static guint                 file_signals[LAST_SIGNAL];
 
 
 
@@ -151,9 +134,7 @@ thunar_file_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT,
-                                     "ThunarFile", &info,
-                                     G_TYPE_FLAG_ABSTRACT);
+      type = g_type_register_static (G_TYPE_OBJECT, "ThunarFile", &info, 0);
 
       g_type_add_interface_static (type, THUNARX_TYPE_FILE_INFO, &file_info_info);
     }
@@ -173,7 +154,7 @@ thunar_file_atexit_foreach (gpointer key,
 {
   gchar *s;
 
-  s = thunar_vfs_uri_to_string (key);
+  s = thunar_vfs_path_dup_string (key);
   g_print ("--> %s (%u)\n", s, G_OBJECT (value)->ref_count);
   g_free (s);
 }
@@ -211,36 +192,19 @@ thunar_file_class_init (ThunarFileClass *klass)
   /* pre-allocate the required quarks */
   thunar_file_thumb_path_quark = g_quark_from_static_string ("thunar-file-thumb-path");
   thunar_file_watch_count_quark = g_quark_from_static_string ("thunar-file-watch-count");
+  thunar_file_watch_handle_quark = g_quark_from_static_string ("thunar-file-watch-handle");
+  thunar_file_emblem_names_quark = g_quark_from_static_string ("thunar-file-emblem-names");
 
   /* determine the parent class */
   thunar_file_parent_class = g_type_class_peek_parent (klass);
 
+  /* grab a reference on the user manager */
+  user_manager = thunar_vfs_user_manager_get_default ();
+
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_file_dispose;
-#ifndef G_DISABLE_CHECKS
   gobject_class->finalize = thunar_file_finalize;
-#endif
 
-  klass->has_parent = (gpointer) exo_noop_true;
-  klass->get_parent = thunar_file_real_get_parent;
-  klass->execute = thunar_file_real_execute;
-  klass->rename = thunar_file_real_rename;
-  klass->open_as_folder = thunar_file_real_open_as_folder;
-  klass->accepts_uri_drop = (gpointer) exo_noop_zero;
-  klass->get_mime_info = (gpointer) exo_noop_null;
-  klass->get_special_name = thunar_file_real_get_special_name;
-  klass->get_date = (gpointer) exo_noop_false;
-  klass->get_size = (gpointer) exo_noop_false;
-  klass->get_volume = (gpointer) exo_noop_null;
-  klass->get_group = (gpointer) exo_noop_null;
-  klass->get_user = (gpointer) exo_noop_null;
-  klass->is_executable = (gpointer) exo_noop_false;
-  klass->is_readable = thunar_file_real_is_readable;
-  klass->is_renameable = (gpointer) exo_noop_false;
-  klass->is_writable = thunar_file_real_is_writable;
-  klass->get_actions = (gpointer) exo_noop_null;
-  klass->get_emblem_names = (gpointer) exo_noop_null;
-  klass->reload = (gpointer) exo_noop;
   klass->changed = thunar_file_real_changed;
 
   /**
@@ -273,6 +237,23 @@ thunar_file_class_init (ThunarFileClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+
+  /**
+   * ThunarFile::renamed:
+   * @file : the #ThunarFile instance.
+   *
+   * Emitted when the @file is renamed to another
+   * name. #ThunarFolder uses this signal to
+   * reregister it's VFS directory monitor.
+   **/
+  file_signals[RENAMED] =
+    g_signal_new ("renamed",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_FIRST,
+                  G_STRUCT_OFFSET (ThunarFileClass, renamed),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
 }
 
 
@@ -297,45 +278,52 @@ thunar_file_dispose (GObject *object)
   ThunarFile *file = THUNAR_FILE (object);
 
   /* check that we don't recurse here */
-  if (G_LIKELY ((file->flags & GTK_IN_DESTRUCTION) == 0))
+  if (G_LIKELY ((file->flags & THUNAR_FILE_IN_DESTRUCTION) == 0))
     {
       /* emit the "destroy" signal */
-      file->flags |= GTK_IN_DESTRUCTION;
+      file->flags |= THUNAR_FILE_IN_DESTRUCTION;
       g_signal_emit (object, file_signals[DESTROY], 0);
-      file->flags &= ~GTK_IN_DESTRUCTION;
+      file->flags &= ~THUNAR_FILE_IN_DESTRUCTION;
     }
 
   /* drop the entry from the cache */
-  g_hash_table_remove (file_cache, thunar_file_get_uri (file));
+  g_hash_table_remove (file_cache, file->info->path);
 
   (*G_OBJECT_CLASS (thunar_file_parent_class)->dispose) (object);
 }
 
 
 
-#ifndef G_DISABLE_CHECKS
 static void
 thunar_file_finalize (GObject *object)
 {
   ThunarFile *file = THUNAR_FILE (object);
 
+  /* verify that nobody's watching the file anymore */
+#ifndef G_DISABLE_CHECKS
   if (G_UNLIKELY (THUNAR_FILE_GET_WATCH_COUNT (file) != 0))
     {
       g_error ("Attempt to finalize a ThunarFile, which has an active "
                "watch count of %d", THUNAR_FILE_GET_WATCH_COUNT (file));
     }
+#endif
+
+  /* drop a reference on the metadata if we own one */
+  if ((file->flags & THUNAR_FILE_OWNS_METAFILE_REFERENCE) != 0)
+    g_object_unref (G_OBJECT (metafile));
+
+  /* release the file info */
+  thunar_vfs_info_unref (file->info);
 
   (*G_OBJECT_CLASS (thunar_file_parent_class)->finalize) (object);
 }
-#endif
 
 
 
 static gchar*
 thunar_file_info_get_name (ThunarxFileInfo *file_info)
 {
-  ThunarVfsURI *uri = thunar_file_get_uri (THUNAR_FILE (file_info));
-  return g_strdup (thunar_vfs_uri_get_name (uri));
+  return g_strdup (thunar_vfs_path_get_name (THUNAR_FILE (file_info)->info->path));
 }
 
 
@@ -343,8 +331,7 @@ thunar_file_info_get_name (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 {
-  ThunarVfsURI *uri = thunar_file_get_uri (THUNAR_FILE (file_info));
-  return thunar_vfs_uri_to_string (uri);
+  return thunar_vfs_path_dup_uri (THUNAR_FILE (file_info)->info->path);
 }
 
 
@@ -352,18 +339,13 @@ thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 {
-  ThunarVfsURI *uri = thunar_file_get_uri (THUNAR_FILE (file_info));
-  gchar        *uri_string = NULL;
+  ThunarVfsPath *parent;
 
-  /* determine the parent's URI */
-  uri = thunar_vfs_uri_parent (uri);
-  if (G_LIKELY (uri != NULL))
-    {
-      uri_string = thunar_vfs_uri_to_string (uri);
-      thunar_vfs_uri_unref (uri);
-    }
+  parent = thunar_vfs_path_get_parent (THUNAR_FILE (file_info)->info->path);
+  if (G_LIKELY (parent != NULL))
+    return thunar_vfs_path_dup_uri (parent);
 
-  return uri_string;
+  return NULL;
 }
 
 
@@ -371,18 +353,7 @@ thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 {
-  gchar *uri_string;
-  gchar *colon;
-
-  /* determine the URI for the file */
-  uri_string = thunarx_file_info_get_uri (file_info);
-
-  /* we're only interested in the URI scheme */
-  colon = strchr (uri_string, ':');
-  if (G_LIKELY (colon != NULL))
-    *colon = '\0';
-
-  return uri_string;
+  return g_strdup ("file");
 }
 
 
@@ -396,10 +367,7 @@ thunar_file_info_get_mime_type (ThunarxFileInfo *file_info)
   /* determine the mime info for the file */
   mime_info = thunar_file_get_mime_info (THUNAR_FILE (file_info));
   if (G_LIKELY (mime_info != NULL))
-    {
-      mime_type = g_strdup (thunar_vfs_mime_info_get_name (mime_info));
-      thunar_vfs_mime_info_unref (mime_info);
-    }
+    mime_type = g_strdup (thunar_vfs_mime_info_get_name (mime_info));
 
   return mime_type;
 }
@@ -428,7 +396,6 @@ thunar_file_info_has_mime_type (ThunarxFileInfo *file_info,
     valid = (strcmp (thunar_vfs_mime_info_get_name (lp->data), mime_type) == 0);
   g_object_unref (G_OBJECT (mime_database));
   thunar_vfs_mime_info_list_free (mime_infos);
-  thunar_vfs_mime_info_unref (mime_info);
 
   return valid;
 }
@@ -443,129 +410,19 @@ thunar_file_info_is_directory (ThunarxFileInfo *file_info)
 
 
 
-static ThunarFile*
-thunar_file_real_get_parent (ThunarFile *file,
-                             GError    **error)
-{
-  ThunarVfsURI *parent_uri;
-  ThunarFile   *parent_file;
-  gchar        *p;
-
-  /* lookup the parent's URI */
-  parent_uri = thunar_vfs_uri_parent (thunar_file_get_uri (file));
-  if (G_UNLIKELY (parent_uri == NULL))
-    {
-      p = thunar_vfs_uri_to_string (thunar_file_get_uri (file));
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL,
-                   _("Failed to determine parent URI for '%s'"), p);
-      g_free (p);
-      return NULL;
-    }
-
-  /* lookup the file object for the parent_uri */
-  parent_file = thunar_file_get_for_uri (parent_uri, error);
-
-  /* release the reference on the parent_uri */
-  thunar_vfs_uri_unref (parent_uri);
-
-  return parent_file;
-}
-
-
-
-static gboolean
-thunar_file_real_execute (ThunarFile *file,
-                          GdkScreen  *screen,
-                          GList      *uris,
-                          GError    **error)
-{
-  g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (ENOEXEC), g_strerror (ENOEXEC));
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_file_real_rename (ThunarFile  *file,
-                         const gchar *name,
-                         GError     **error)
-{
-  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unable to rename file"));
-  return FALSE;
-}
-
-
-
-static ThunarFolder*
-thunar_file_real_open_as_folder (ThunarFile *file,
-                                 GError    **error)
-{
-  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR, g_strerror (ENOTDIR));
-  return NULL;
-}
-
-
-
-static const gchar*
-thunar_file_real_get_special_name (ThunarFile *file)
-{
-  return (*THUNAR_FILE_GET_CLASS (file)->get_display_name) (file);
-}
-
-
-
-static gboolean
-thunar_file_real_is_readable (ThunarFile *file)
-{
-  return !thunar_file_denies_access_permission (file,
-                                                THUNAR_VFS_FILE_MODE_USR_READ,
-                                                THUNAR_VFS_FILE_MODE_GRP_READ,
-                                                THUNAR_VFS_FILE_MODE_OTH_READ);
-}
-
-
-
-static gboolean
-thunar_file_real_is_writable (ThunarFile *file)
-{
-  return !thunar_file_denies_access_permission (file,
-                                                THUNAR_VFS_FILE_MODE_USR_WRITE,
-                                                THUNAR_VFS_FILE_MODE_GRP_WRITE,
-                                                THUNAR_VFS_FILE_MODE_OTH_WRITE);
-}
-
-
-
 static void
 thunar_file_real_changed (ThunarFile *file)
 {
-  /* reset the thumbnail state, so the next thunar_file_load_icon()
+  /* reset the thumbnail state, so the next thunar_icon_factory_load_file_icon()
    * invokation will recheck the thumbnail.
    */
-  THUNAR_FILE_SET_THUMB_STATE (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
-}
-
-
-
-static ThunarFile*
-thunar_file_new_internal (ThunarVfsURI *uri,
-                          GError      **error)
-{
-  switch (thunar_vfs_uri_get_scheme (uri))
-    {
-    case THUNAR_VFS_URI_SCHEME_COMPUTER: return thunar_computer_folder_new (uri, error);
-    case THUNAR_VFS_URI_SCHEME_FILE:     return thunar_local_file_new (uri, error);
-    case THUNAR_VFS_URI_SCHEME_TRASH:    return thunar_trash_folder_new (uri, error);
-    }
-
-  g_assert_not_reached ();
-  return NULL;
+  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
 }
 
 
 
 static gboolean
-thunar_file_denies_access_permission (ThunarFile       *file,
+thunar_file_denies_access_permission (const ThunarFile *file,
                                       ThunarVfsFileMode usr_permissions,
                                       ThunarVfsFileMode grp_permissions,
                                       ThunarVfsFileMode oth_permissions)
@@ -624,98 +481,137 @@ thunar_file_denies_access_permission (ThunarFile       *file,
 
 
 
+static ThunarMetafile*
+thunar_file_get_metafile (ThunarFile *file)
+{
+  if ((file->flags & THUNAR_FILE_OWNS_METAFILE_REFERENCE) == 0)
+    {
+      /* take a reference on the metafile for this file */
+      if (G_UNLIKELY (metafile == NULL))
+        {
+          metafile = thunar_metafile_get_default ();
+          g_object_add_weak_pointer (G_OBJECT (metafile), (gpointer) &metafile);
+        }
+      else
+        {
+          g_object_ref (G_OBJECT (metafile));
+        }
+
+      /* remember that we own a reference now */
+      file->flags |= THUNAR_FILE_OWNS_METAFILE_REFERENCE;
+    }
+
+  return metafile;
+}
+
+
+
+static void
+thunar_file_monitor (ThunarVfsMonitor       *monitor,
+                     ThunarVfsMonitorHandle *handle,
+                     ThunarVfsMonitorEvent   event,
+                     ThunarVfsPath          *handle_path,
+                     ThunarVfsPath          *event_path,
+                     gpointer                user_data)
+{
+  ThunarFile *file = THUNAR_FILE (user_data);
+
+  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (thunar_vfs_path_equal (file->info->path, event_path));
+
+  /* just to be sure... */
+  if (G_UNLIKELY (!thunar_vfs_path_equal (handle_path, event_path)))
+    return;
+
+  switch (event)
+    {
+    case THUNAR_VFS_MONITOR_EVENT_CHANGED:
+    case THUNAR_VFS_MONITOR_EVENT_CREATED:
+      thunar_file_reload (file);
+      break;
+
+    case THUNAR_VFS_MONITOR_EVENT_DELETED:
+      thunar_file_destroy (file);
+      break;
+    }
+}
+
+
+
+static void
+thunar_file_watch_free (gpointer data)
+{
+  /* remove the watch from the VFS monitor */
+  thunar_vfs_monitor_remove (monitor, data);
+
+  /* release our reference on the VFS monitor */
+  g_object_unref (G_OBJECT (monitor));
+}
+
+
+
 /**
- * _thunar_file_cache_lookup:
- * @uri : a #ThunarVfsURI.
+ * thunar_file_get_for_info:
+ * @info : a #ThunarVfsInfo.
  *
- * Checks if the #ThunarFile which handles @uri is
- * already present in the #ThunarFile cache. Returns
- * a reference to the cached #ThunarFile or %NULL
- * if no matching file is found.
+ * Looks up the #ThunarFile corresponding to @info. Use
+ * this function if want to specify the #ThunarVfsInfo
+ * to use for a #ThunarFile instead of thunar_file_get_for_path(),
+ * which would determine the #ThunarVfsInfo once again.
  *
- * No reference on the returned object is taken for
- * the caller.
+ * The caller is responsible to call g_object_unref()
+ * when done with the returned object.
  *
- * This function is solely intended to be used by
- * implementors of the #ThunarFile class.
- *
- * Return value: the #ThunarFile cached for
- *               @uri or %NULL.
+ * Return value: the #ThunarFile for @info.
  **/
 ThunarFile*
-_thunar_file_cache_lookup (ThunarVfsURI *uri)
+thunar_file_get_for_info (ThunarVfsInfo *info)
 {
-  /* allocate the ThunarFile cache on-demand */
-  if (G_UNLIKELY (file_cache == NULL))
-    file_cache = g_hash_table_new_full (thunar_vfs_uri_hash, thunar_vfs_uri_equal, (GDestroyNotify) thunar_vfs_uri_unref, NULL);
+  ThunarFile *file;
 
-  return g_hash_table_lookup (file_cache, uri);
+  g_return_val_if_fail (info != NULL, NULL);
+
+  /* check if we already have a cached version of that file */
+  file = thunar_file_cache_lookup (info->path);
+  if (G_UNLIKELY (file != NULL))
+    {
+      /* take a reference for the caller */
+      g_object_ref (G_OBJECT (file));
+
+      /* apply the new info */
+      if (!thunar_vfs_info_matches (file->info, info))
+        {
+          thunar_vfs_info_unref (file->info);
+          file->info = thunar_vfs_info_ref (info);
+          g_signal_emit (G_OBJECT (file), file_signals[CHANGED], 0);
+        }
+    }
+  else
+    {
+      /* allocate a new object */
+      file = g_object_new (THUNAR_TYPE_FILE, NULL);
+      file->info = thunar_vfs_info_ref (info);
+
+      /* insert the file into the cache */
+      g_hash_table_insert (file_cache, thunar_vfs_path_ref (info->path), file);
+    }
+
+  return file;
 }
 
 
 
 /**
- * _thunar_file_cache_insert:
- * @file : a #ThunarFile.
- *
- * Inserts the @file into the #ThunarFile cache and
- * removes the floating reference from the @file.
- **/
-void
-_thunar_file_cache_insert (ThunarFile *file)
-{
-  ThunarVfsURI *uri;
-
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (file_cache != NULL);
-
-  /* insert the file into the cache */
-  uri = thunar_file_get_uri (file);
-  g_hash_table_insert (file_cache, thunar_vfs_uri_ref (uri), file);
-}
-
-
-
-/**
- * _thunar_file_cache_rename:
- * @file : a #ThunarFile.
- * @uri  : the previous #ThunarVfsURI of @file.
- *
- * Renames the existing @file in the #ThunarFile
- * cache from the previous @uri to the new
- * #ThunarVfsURI of @file.
- *
- * This method is provided to support the
- * implementation of #thunar_file_rename()
- * in #ThunarFile derived classes.
- **/
-void
-_thunar_file_cache_rename (ThunarFile   *file,
-                           ThunarVfsURI *uri)
-{
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (file_cache != NULL);
-
-  /* drop the previous entry for the uri */
-  g_hash_table_remove (file_cache, uri);
-
-  /* insert the new entry */
-  uri = thunar_file_get_uri (file);
-  g_hash_table_insert (file_cache, thunar_vfs_uri_ref (uri), file);
-}
-
-
-
-/**
- * thunar_file_get_for_uri:
- * @uri   : an #ThunarVfsURI instance.
+ * thunar_file_get_for_path:
+ * @path  : a #ThunarVfsPath.
  * @error : error return location.
  *
- * Tries to query the file referred to by @uri. Returns %NULL
+ * Tries to query the file referred to by @path. Returns %NULL
  * if the file could not be queried and @error will point
  * to an error describing the problem, else the #ThunarFile
  * instance will be returned, which needs to freed using
- * #g_object_unref() when no longer needed.
+ * g_object_unref() when no longer needed.
  *
  * Note that this function is not thread-safe and may only
  * be called from the main thread.
@@ -723,21 +619,28 @@ _thunar_file_cache_rename (ThunarFile   *file,
  * Return value: the #ThunarFile instance or %NULL on error.
  **/
 ThunarFile*
-thunar_file_get_for_uri (ThunarVfsURI *uri,
-                         GError      **error)
+thunar_file_get_for_path (ThunarVfsPath *path,
+                          GError       **error)
 {
-  ThunarFile *file;
+  ThunarVfsInfo *info;
+  ThunarFile    *file;
 
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* see if we have the corresponding file cached already */
-  file = _thunar_file_cache_lookup (uri);
+  file = thunar_file_cache_lookup (path);
   if (file == NULL)
     {
+      /* determine the file info */
+      info = thunar_vfs_info_new_for_path (path, error);
+      if (G_UNLIKELY (info == NULL))
+        return NULL;
+
       /* allocate the new file object */
-      file = thunar_file_new_internal (uri, error);
-      if (G_LIKELY (file != NULL))
-        _thunar_file_cache_insert (file);
+      file = thunar_file_get_for_info (info);
+
+      /* release our reference to the info */
+      thunar_vfs_info_unref (info);
     }
   else
     {
@@ -751,58 +654,46 @@ thunar_file_get_for_uri (ThunarVfsURI *uri,
 
 
 /**
- * thunar_file_has_parent:
- * @file : a #ThunarFile instance.
- *
- * Checks whether it is possible to determine the parent #ThunarFile
- * for @file.
- *
- * Return value: whether @file has a parent.
- **/
-gboolean
-thunar_file_has_parent (ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return (*THUNAR_FILE_GET_CLASS (file)->has_parent) (file);
-}
-
-
-
-/**
  * thunar_file_get_parent:
  * @file  : a #ThunarFile instance.
  * @error : return location for errors.
  *
- * Determines the parent #ThunarFile (the directory or virtual folder,
- * which includes @file) for @file. If @file has no parent or the
- * user is not allowed to open the parent folder of @file, %NULL will
+ * Determines the parent #ThunarFile for @file. If @file has no parent or
+ * the user is not allowed to open the parent folder of @file, %NULL will
  * be returned and @error will be set to point to a #GError that
  * describes the cause. Else, the #ThunarFile will be returned, and
- * the caller must call #g_object_unref() on it.
+ * the caller must call g_object_unref() on it.
  *
- * You may want to call #thunar_file_has_parent() first to
+ * You may want to call thunar_file_has_parent() first to
  * determine whether @file has a parent.
  *
  * Return value: the parent #ThunarFile or %NULL.
  **/
 ThunarFile*
-thunar_file_get_parent (ThunarFile *file,
-                        GError    **error)
+thunar_file_get_parent (const ThunarFile *file,
+                        GError          **error)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_parent) (file, error);
+
+  if (!thunar_file_has_parent (file))
+    {
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOENT, _("The root folder has no parent"));
+      return NULL;
+    }
+
+  return thunar_file_get_for_path (thunar_vfs_path_get_parent (file->info->path), error);
 }
 
 
 
 /**
  * thunar_file_execute:
- * @file   : a #ThunarFile instance.
- * @screen : a #GdkScreen.
- * @uris   : the list of #ThunarVfsURI<!---->s to supply to @file on
- *           execution.
- * @error  : return location for errors or %NULL.
+ * @file      : a #ThunarFile instance.
+ * @screen    : a #GdkScreen.
+ * @path_list : the list of #ThunarVfsPath<!---->s to supply to @file on
+ *              execution.
+ * @error     : return location for errors or %NULL.
  *
  * Tries to execute @file on the specified @screen. If @file is executable
  * and could have been spawned successfully, %TRUE is returned, else %FALSE
@@ -813,13 +704,13 @@ thunar_file_get_parent (ThunarFile *file,
 gboolean
 thunar_file_execute (ThunarFile *file,
                      GdkScreen  *screen,
-                     GList      *uris,
+                     GList      *path_list,
                      GError    **error)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   g_return_val_if_fail (GDK_IS_SCREEN (screen), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  return (*THUNAR_FILE_GET_CLASS (file)->execute) (file, screen, uris, error);
+  return thunar_vfs_info_execute (file->info, screen, path_list, error);
 }
 
 
@@ -837,7 +728,7 @@ thunar_file_execute (ThunarFile *file,
  *
  * When offering a rename action in the user interface, the implementation
  * should first check whether the file is available, using the
- * #thunar_file_is_renameable() method.
+ * thunar_file_is_renameable() method.
  *
  * Return value: %TRUE on success, else %FALSE.
  **/
@@ -846,46 +737,66 @@ thunar_file_rename (ThunarFile  *file,
                     const gchar *name,
                     GError     **error)
 {
+  ThunarVfsPath *previous_path;
+  gboolean       succeed;
+  gint           watch_count;;
+
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   g_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  return (*THUNAR_FILE_GET_CLASS (file)->rename) (file, name, error);
+
+  /* remember the previous path */
+  previous_path = thunar_vfs_path_ref (file->info->path);
+  
+  /* try to rename the file */
+  succeed = thunar_vfs_info_rename (file->info, name, error);
+  if (G_LIKELY (succeed))
+    {
+      /* need to re-register the monitor handle for the new uri */
+      watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
+      if (G_LIKELY (watch_count > 0))
+        {
+          /* drop the watch_count temporary */
+          THUNAR_FILE_SET_WATCH_COUNT (file, 1);
+
+          /* drop the previous handle (with the old path) */
+          thunar_file_unwatch (file);
+
+          /* register the new handle (with the new path) */
+          thunar_file_watch (file);
+
+          /* reset the watch count */
+          THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
+        }
+
+      /* drop the previous entry from the cache */
+      g_hash_table_remove (file_cache, previous_path);
+
+      /* insert the new entry */
+      g_hash_table_insert (file_cache, thunar_vfs_path_ref (file->info->path), file);
+
+      /* tell the associated folder that the file was renamed */
+      g_signal_emit (G_OBJECT (file), file_signals[RENAMED], 0);
+
+      /* emit the file changed signal */
+      thunar_file_changed (file);
+    }
+
+  /* drop the reference on the previous path */
+  thunar_vfs_path_unref (previous_path);
+
+  return succeed;
 }
 
 
 
 /**
- * thunar_file_open_as_folder:
- * @file  : a #ThunarFile instance.
- * @error : return location for errors or %NULL.
+ * thunar_file_accepts_drop:
+ * @file      : a #ThunarFile instance.
+ * @path_list : the list of #ThunarVfsPath<!---->s that will be droppped.
+ * @actions   : the #GdkDragAction<!---->s provided by the drag source.
  *
- * Tries to open the #ThunarFolder instance corresponding to @file. If @file
- * does not refer to a folder in any way or you don't have permission to open
- * the @file as a folder, %NULL will be returned and @error will be appropriately.
- *
- * You'll need to call #g_object_unref() on the returned instance when you're
- * done with it.
- *
- * Return value: the #ThunarFolder corresponding to @file or %NULL.
- **/
-ThunarFolder*
-thunar_file_open_as_folder (ThunarFile *file,
-                            GError    **error)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->open_as_folder) (file, error);
-}
-
-
-
-/**
- * thunar_file_accepts_uri_drop:
- * @file     : a #ThunarFile instance.
- * @uri_list : the list of #ThunarVfsURI<!---->s that will be droppped.
- * @actions  : the #GdkDragAction<!---->s provided by the drag source.
- *
- * Checks whether @file can accept @uri_list for the given @actions and
+ * Checks whether @file can accept @path_list for the given @actions and
  * returns the #GdkDragAction<!---->s that can be used or 0 if no
  * actions apply.
  *
@@ -893,104 +804,52 @@ thunar_file_open_as_folder (ThunarFile *file,
  *               0 if no drop is possible.
  **/
 GdkDragAction
-thunar_file_accepts_uri_drop (ThunarFile   *file,
-                              GList        *uri_list,
-                              GdkDragAction actions)
+thunar_file_accepts_drop (ThunarFile   *file,
+                          GList        *path_list,
+                          GdkDragAction actions)
 {
-  GdkDragAction action;
-  ThunarVfsURI *parent_uri;
-  ThunarVfsURI *uri;
-  GList        *lp;
-  guint         n;
+  ThunarVfsPath *parent_path;
+  ThunarVfsPath *path;
+  GList         *lp;
+  guint          n;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
   /* we can never drop an empty list */
-  if (G_UNLIKELY (uri_list == NULL))
+  if (G_UNLIKELY (path_list == NULL))
     return 0;
 
-  /* determine the uri of the file */
-  uri = thunar_file_get_uri (file);
+  /* check if we have a writable directory here or an executable file */
+  if (thunar_file_is_directory (file) && thunar_file_is_writable (file))
+    actions &= GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK;
+  else if (thunar_file_is_executable (file))
+    actions &= GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE;
+  else
+    return 0;
 
-  /* check up to 500 of the URIs (just in case somebody tries to
+  /* determine the path of the file */
+  path = thunar_file_get_path (file);
+
+  /* check up to 500 of the paths (just in case somebody tries to
    * drag around his music collection with 5000 files).
    */
-  for (lp = uri_list, n = 0; actions != 0 && lp != NULL && n < 500; lp = lp->next, ++n)
+  for (lp = path_list, n = 0; actions != 0 && lp != NULL && n < 500; lp = lp->next, ++n)
     {
       /* we cannot drop a file on itself */
-      if (G_UNLIKELY (thunar_vfs_uri_equal (uri, lp->data)))
+      if (G_UNLIKELY (thunar_vfs_path_equal (path, lp->data)))
         return 0;
 
       /* check whether source and destination are the same */
-      parent_uri = thunar_vfs_uri_parent (lp->data);
-      if (G_LIKELY (parent_uri != NULL))
+      parent_path = thunar_vfs_path_get_parent (lp->data);
+      if (G_LIKELY (parent_path != NULL))
         {
-          if (thunar_vfs_uri_equal (uri, parent_uri))
-            actions = 0;
-          thunar_vfs_uri_unref (parent_uri);
+          if (thunar_vfs_path_equal (path, parent_path))
+            return 0;
         }
-
-      /* check if this URI is supported */
-      action = (*THUNAR_FILE_GET_CLASS (file)->accepts_uri_drop) (file, lp->data, actions);
-      if (G_UNLIKELY (action == 0))
-        return 0;
-
-      /* drop actions not supported for this URI from the actions list */
-      actions &= action;
     }
 
   /* check if we can drop */
   return actions;
-}
-
-
-
-/**
- * thunar_file_get_uri:
- * @file  : a #ThunarFile instance.
- *
- * Returns the #ThunarVfsURI, that refers to the location of the @file.
- *
- * This method cannot return %NULL, unless there's a bug in the
- * application. So you should never check the returned value for
- * a possible %NULL pointer, except in the context of a #g_return_if_fail()
- * or #g_assert() macro, which will not be compiled into the final
- * binary.
- *
- * Note, that there's no reference taken for the caller on the
- * returned #ThunarVfsURI, so if you need the object for a longer
- * period, you'll need to take a reference yourself using the
- * #thunar_vfs_uri_ref() function.
- *
- * Return value: the URI to the @file.
- **/
-ThunarVfsURI*
-thunar_file_get_uri (ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_uri) (file);
-}
-
-
-
-/**
- * thunar_file_get_mime_info:
- * @file : a #ThunarFile instance.
- *
- * Returns the MIME type information for the given @file object. This
- * function is garantied to always return a valid #ThunarVfsMimeInfo.
- *
- * This method automatically takes a reference on the returned
- * object for the caller, so you'll need to call thunar_vfs_mime_info()
- * when you are done with it.
- *
- * Return value: the MIME type.
- **/
-ThunarVfsMimeInfo*
-thunar_file_get_mime_info (ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_mime_info) (file);
 }
 
 
@@ -1005,10 +864,15 @@ thunar_file_get_mime_info (ThunarFile *file)
  * Return value: the @file name suitable for display.
  **/
 const gchar*
-thunar_file_get_display_name (ThunarFile *file)
+thunar_file_get_display_name (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_display_name) (file);
+
+  /* root directory is always displayed as 'Filesystem' */
+  if (thunar_file_is_root (file))
+    return _("Filesystem");
+
+  return file->info->display_name;
 }
 
 
@@ -1024,27 +888,15 @@ thunar_file_get_display_name (ThunarFile *file)
  * Return value: the special name of @file.
  **/
 const gchar*
-thunar_file_get_special_name (ThunarFile *file)
+thunar_file_get_special_name (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_special_name) (file);
-}
 
+  /* home dir has special name, root dir is handled in get_display_name() */
+  if (thunar_file_is_home (file))
+    return _("Home");
 
-
-/**
- * thunar_file_get_kind:
- * @file : a #ThunarFile instance.
- *
- * Returns the kind of @file.
- *
- * Return value: the kind of @file.
- **/
-ThunarVfsFileType
-thunar_file_get_kind (ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), THUNAR_VFS_FILE_TYPE_UNKNOWN);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_kind) (file);
+  return thunar_file_get_display_name (file);
 }
 
 
@@ -1053,73 +905,26 @@ thunar_file_get_kind (ThunarFile *file)
  * thunar_file_get_date:
  * @file        : a #ThunarFile instance.
  * @date_type   : the kind of date you are interested in.
- * @date_return : the return location for the date.
  *
- * Queries the given @date_type from @file and stores the result in @date_return.
- * Not all #ThunarFile implementations may support all kinds of @date_type<!---->s,
- * some may not even support dates at all. If the @date_type could not be determined
- * on @file, %FALSE will be returned and @date_type will not be set to the proper
- * value. Else if the operation was successful, %TRUE will be returned.
+ * Queries the given @date_type from @file and returns the result.
  *
- * Modules using this method must be prepared to handle the case when %FALSE is
- * returned!
- *
- * Return value: %TRUE if the operation was successful, else %FALSE.
+ * Return value: the time for @file of the given @date_type.
  **/
-gboolean
-thunar_file_get_date (ThunarFile        *file,
-                      ThunarFileDateType date_type,
-                      ThunarVfsFileTime *date_return)
+ThunarVfsFileTime
+thunar_file_get_date (const ThunarFile  *file,
+                      ThunarFileDateType date_type)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  g_return_val_if_fail (date_type == THUNAR_FILE_DATE_ACCESSED
-                     || date_type == THUNAR_FILE_DATE_CHANGED
-                     || date_type == THUNAR_FILE_DATE_MODIFIED, FALSE);
-  g_return_val_if_fail (date_return != NULL, FALSE);
+  
+  switch (date_type)
+    {
+    case THUNAR_FILE_DATE_ACCESSED: return file->info->atime;
+    case THUNAR_FILE_DATE_CHANGED:  return file->info->ctime;
+    case THUNAR_FILE_DATE_MODIFIED: return file->info->mtime;
+    default:                        g_assert_not_reached ();
+    }
 
-  return (*THUNAR_FILE_GET_CLASS (file)->get_date) (file, date_type, date_return);
-}
-
-
-
-/**
- * thunar_file_get_mode:
- * @file : a #ThunarFile instance.
- *
- * Returns the permission bits of @file.
- *
- * Return value: the permission bits of @file.
- **/
-ThunarVfsFileMode
-thunar_file_get_mode (ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), 0);
-  return THUNAR_FILE_GET_CLASS (file)->get_mode (file);
-}
-
-
-
-/**
- * thunar_file_get_size:
- * @file        : a #ThunarFile instance.
- * @size_return : location to store the file size to.
- *
- * Tries to determine the size of @file in bytes. If it
- * was possible to determine the size, %TRUE will be
- * returned and @size_return will be set to the size
- * in bytes. Else %FALSE will be returned, which means
- * that it is not possible to determine the size of
- * @file.
- *
- * Return value: %TRUE if the operation succeeds, else %FALSE.
- **/
-gboolean
-thunar_file_get_size (ThunarFile        *file,
-                      ThunarVfsFileSize *size_return)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  g_return_val_if_fail (size_return != NULL, FALSE);
-  return THUNAR_FILE_GET_CLASS (file)->get_size (file, size_return);
+  return (ThunarVfsFileTime) -1;
 }
 
 
@@ -1131,16 +936,13 @@ thunar_file_get_size (ThunarFile        *file,
  *
  * Tries to determine the @date_type of @file, and if @file supports the
  * given @date_type, it'll be formatted as string and returned. The
- * caller is responsible for freeing the string using the #g_free()
+ * caller is responsible for freeing the string using the g_free()
  * function.
  *
- * Else if @date_type is not supported for @file, %NULL will be returned
- * and the caller must be able to handle that case.
- *
- * Return value: the @date_type of @file formatted as string or %NULL.
+ * Return value: the @date_type of @file formatted as string.
  **/
 gchar*
-thunar_file_get_date_string (ThunarFile        *file,
+thunar_file_get_date_string (const ThunarFile  *file,
                              ThunarFileDateType date_type)
 {
   ThunarVfsFileTime time;
@@ -1151,13 +953,9 @@ thunar_file_get_date_string (ThunarFile        *file,
   gchar            *result;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  g_return_val_if_fail (date_type == THUNAR_FILE_DATE_ACCESSED
-                     || date_type == THUNAR_FILE_DATE_CHANGED
-                     || date_type == THUNAR_FILE_DATE_MODIFIED, NULL);
 
   /* query the date on the given file */
-  if (!thunar_file_get_date (file, date_type, &time))
-    return NULL;
+  time = thunar_file_get_date (file, date_type);
 
   /* convert to local time */
 #ifdef HAVE_LOCALTIME_R
@@ -1180,12 +978,12 @@ thunar_file_get_date_string (ThunarFile        *file,
  * @file : a #ThunarFile instance.
  *
  * Returns the mode of @file as text. You'll need to free
- * the result using #g_free() when you're done with it.
+ * the result using g_free() when you're done with it.
  *
  * Return value: the mode of @file as string.
  **/
 gchar*
-thunar_file_get_mode_string (ThunarFile *file)
+thunar_file_get_mode_string (const ThunarFile *file)
 {
   ThunarVfsFileType kind;
   ThunarVfsFileMode mode;
@@ -1193,8 +991,8 @@ thunar_file_get_mode_string (ThunarFile *file)
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  kind = THUNAR_FILE_GET_CLASS (file)->get_kind (file);
-  mode = THUNAR_FILE_GET_CLASS (file)->get_mode (file);
+  kind = thunar_file_get_kind (file);
+  mode = thunar_file_get_mode (file);
   text = g_new (gchar, 11);
 
   /* file type */
@@ -1242,25 +1040,20 @@ thunar_file_get_mode_string (ThunarFile *file)
  * @file : a #ThunarFile instance.
  *
  * Returns the size of the file as text in a human readable
- * format. You'll need to free the result using #g_free()
+ * format. You'll need to free the result using g_free()
  * if you're done with it.
  *
- * If it is not possible to determine the size of @file,
- * %NULL will be returned, so the caller must be able to
- * handle this case.
- *
  * Return value: the size of @file in a human readable
- *               format or %NULL.
+ *               format.
  **/
 gchar*
-thunar_file_get_size_string (ThunarFile *file)
+thunar_file_get_size_string (const ThunarFile *file)
 {
   ThunarVfsFileSize size;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
-  if (!thunar_file_get_size (file, &size))
-    return NULL;
+  size = thunar_file_get_size (file);
 
   return thunar_vfs_humanize_size (size, NULL, 0);
 }
@@ -1281,12 +1074,12 @@ thunar_file_get_size_string (ThunarFile *file)
  * Return value: the #ThunarVfsVolume for @file in @volume_manager or %NULL.
  **/
 ThunarVfsVolume*
-thunar_file_get_volume (ThunarFile             *file,
+thunar_file_get_volume (const ThunarFile       *file,
                         ThunarVfsVolumeManager *volume_manager)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_volume) (file, volume_manager);
+  return thunar_vfs_volume_manager_get_volume_by_info (volume_manager, file->info);
 }
 
 
@@ -1300,15 +1093,15 @@ thunar_file_get_volume (ThunarFile             *file,
  * determine the group, %NULL will be returned.
  *
  * The caller is responsible for freeing the returned object
- * using #g_object_unref().
+ * using g_object_unref().
  *
  * Return value: the #ThunarVfsGroup for @file or %NULL.
  **/
 ThunarVfsGroup*
-thunar_file_get_group (ThunarFile *file)
+thunar_file_get_group (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_group) (file);
+  return thunar_vfs_user_manager_get_group_by_id (user_manager, file->info->gid);
 }
 
 
@@ -1322,15 +1115,15 @@ thunar_file_get_group (ThunarFile *file)
  * to determine the user, %NULL will be returned.
  *
  * The caller is responsible for freeing the returned object
- * using #g_object_unref().
+ * using g_object_unref().
  *
  * Return value: the #ThunarVfsUser for @file or %NULL.
  **/
 ThunarVfsUser*
-thunar_file_get_user (ThunarFile *file)
+thunar_file_get_user (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_user) (file);
+  return thunar_vfs_user_manager_get_user_by_id (user_manager, file->info->uid);
 }
 
 
@@ -1343,20 +1136,13 @@ thunar_file_get_user (ThunarFile *file)
  * to execute the @file (or enter the directory refered to by
  * @file).
  *
- * If the specific #ThunarFile implementation does not provide
- * a custom #thunar_file_is_executable() method, the fallback
- * method provided by #ThunarFile is used, which determines
- * whether the @file can be executed based on the data provided
- * by #thunar_file_get_mode(), #thunar_file_get_user() and
- * #thunar_file_get_group().
- *
  * Return value: %TRUE if @file can be executed.
  **/
 gboolean
-thunar_file_is_executable (ThunarFile *file)
+thunar_file_is_executable (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return (*THUNAR_FILE_GET_CLASS (file)->is_executable) (file);
+  return ((file->info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE) != 0);
 }
 
 
@@ -1368,20 +1154,16 @@ thunar_file_is_executable (ThunarFile *file)
  * Determines whether the owner of the current process is allowed
  * to read the @file.
  *
- * If the specific #ThunarFile implementation does not provide
- * a custom #thunar_file_is_readable() method, the fallback
- * method provided by #ThunarFile is used, which determines
- * whether the @file can be read based on the data provided
- * by #thunar_file_get_mode(), #thunar_file_get_user() and
- * #thunar_file_get_group().
- *
  * Return value: %TRUE if @file can be read.
  **/
 gboolean
-thunar_file_is_readable (ThunarFile *file)
+thunar_file_is_readable (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return (*THUNAR_FILE_GET_CLASS (file)->is_readable) (file);
+  return !thunar_file_denies_access_permission (file,
+                                                THUNAR_VFS_FILE_MODE_USR_READ,
+                                                THUNAR_VFS_FILE_MODE_GRP_READ,
+                                                THUNAR_VFS_FILE_MODE_OTH_READ);
 }
 
 
@@ -1398,10 +1180,25 @@ thunar_file_is_readable (ThunarFile *file)
  * Return value: %TRUE if @file can be renamed.
  **/
 gboolean
-thunar_file_is_renameable (ThunarFile *file)
+thunar_file_is_renameable (const ThunarFile *file)
 {
+  gboolean renameable = FALSE;
+
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return (*THUNAR_FILE_GET_CLASS (file)->is_renameable) (file);
+
+  /* we cannot rename root nodes */
+  if (G_LIKELY (!thunar_file_is_root (file)))
+    {
+      /* we just do a guess here, by checking whether the folder is writable */
+      file = thunar_file_get_parent (file, NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          renameable = thunar_file_is_writable (file);
+          g_object_unref (G_OBJECT (file));
+        }
+    }
+
+  return renameable;
 }
 
 
@@ -1413,20 +1210,18 @@ thunar_file_is_renameable (ThunarFile *file)
  * Determines whether the owner of the current process is allowed
  * to write the @file.
  *
- * If the specific #ThunarFile implementation does not provide
- * a custom #thunar_file_is_writable() method, the fallback
- * method provided by #ThunarFile is used, which determines
- * whether the @file can be written based on the data provided
- * by #thunar_file_get_mode(), #thunar_file_get_user() and
- * #thunar_file_get_group().
- *
  * Return value: %TRUE if @file can be read.
  **/
 gboolean
-thunar_file_is_writable (ThunarFile *file)
+thunar_file_is_writable (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return (*THUNAR_FILE_GET_CLASS (file)->is_writable) (file);
+  return !thunar_file_denies_access_permission (file,
+                                                THUNAR_VFS_FILE_MODE_USR_WRITE,
+                                                THUNAR_VFS_FILE_MODE_GRP_WRITE,
+                                                THUNAR_VFS_FILE_MODE_OTH_WRITE);
+
+
 }
 
 
@@ -1453,7 +1248,7 @@ thunar_file_get_actions (ThunarFile *file,
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_actions) (file, window);
+  return NULL;
 }
 
 
@@ -1465,7 +1260,7 @@ thunar_file_get_actions (ThunarFile *file,
  * Determines the names of the emblems that should be displayed for
  * @file. The returned list is owned by the caller, but the list
  * items - the name strings - are owned by @file. So the caller
- * must call #g_list_free(), but don't #g_free() the list items.
+ * must call g_list_free(), but don't g_free() the list items.
  *
  * Note that the strings contained in the returned list are
  * not garantied to exist over the next iteration of the main
@@ -1477,120 +1272,225 @@ thunar_file_get_actions (ThunarFile *file,
 GList*
 thunar_file_get_emblem_names (ThunarFile *file)
 {
+  const ThunarVfsInfo *info = file->info;
+  const ThunarVfsPath *parent;
+  const gchar         *emblem_string;
+  gchar              **emblem_names;
+  GList               *emblems = NULL;
+
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return (*THUNAR_FILE_GET_CLASS (file)->get_emblem_names) (file);
+
+  /* check if we need to load the emblems_list from the metafile */
+  if (G_UNLIKELY ((file->flags & THUNAR_FILE_OWNS_EMBLEM_NAMES) == 0))
+    {
+      emblem_string = thunar_file_get_metadata (file, THUNAR_METAFILE_KEY_EMBLEMS, "");
+      if (G_UNLIKELY (*emblem_string != '\0'))
+        {
+          emblem_names = g_strsplit (emblem_string, ";", -1);
+          g_object_set_qdata_full (G_OBJECT (file), thunar_file_emblem_names_quark,
+                                   emblem_names, (GDestroyNotify) g_strfreev);
+        }
+      file->flags |= THUNAR_FILE_OWNS_EMBLEM_NAMES;
+    }
+
+  /* determine the custom emblems */
+  emblem_names = g_object_get_qdata (G_OBJECT (file), thunar_file_emblem_names_quark);
+  if (G_UNLIKELY (emblem_names != NULL))
+    {
+      for (; *emblem_names != NULL; ++emblem_names)
+        emblems = g_list_append (emblems, *emblem_names);
+    }
+
+  if (G_UNLIKELY (strcmp (info->display_name, "Desktop") == 0))
+    {
+      parent = thunar_vfs_path_get_parent (info->path);
+      if (G_LIKELY (parent != NULL) && thunar_vfs_path_is_home (parent))
+        emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_DESKTOP);
+    }
+
+  if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
+    emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK);
+
+  if (!thunar_file_is_readable (file))
+    emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
+
+  return emblems;
 }
 
 
 
 /**
- * thunar_file_load_icon:
+ * thunar_file_set_emblem_names:
  * @file         : a #ThunarFile instance.
- * @icon_state   : the state of the @file<!---->s icon we are interested in.
- * @icon_factory : the #ThunarIconFactory, which should be used to load the icon.
- * @size         : the icon size in pixels.
+ * @emblem_names : a #GList of emblem names.
  *
- * Loads an icon from @icon_factory for @file at @size in
- * the given @icon_state.
- *
- * You need to call #g_object_unref() on the returned icon
- * when you don't need it any longer.
- *
- * Return value: the icon for @file at @size.
+ * Sets the custom emblem name list of @file to @emblem_names
+ * and stores them in the @file<!---->s metadata.
  **/
-GdkPixbuf*
-thunar_file_load_icon (ThunarFile         *file,
-                       ThunarFileIconState icon_state,
-                       ThunarIconFactory  *icon_factory,
-                       gint                size)
+void
+thunar_file_set_emblem_names (ThunarFile *file,
+                              GList      *emblem_names)
 {
-  ThunarVfsThumbFactory *thumb_factory;
-  ThunarFileThumbState   state;
-  ThunarVfsFileTime      mtime;
-  ThunarVfsMimeInfo     *mime_info;
-  ThunarVfsURI          *uri;
-  GtkIconTheme          *icon_theme;
-  const gchar           *icon_name;
-  GdkPixbuf             *icon;
-  gchar                 *path;
+  GList  *lp;
+  gchar **emblems;
+  gchar  *emblems_string;
+  gint    n;
 
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  g_return_if_fail (THUNAR_IS_FILE (file));
 
-  /* determine the icon theme associated with the factory */
-  icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
+  /* allocate a zero-terminated array for the emblem names */
+  emblems = g_new0 (gchar *, g_list_length (emblem_names) + 1);
 
-  /* check if we can display a thumbnail */
-  if (thunar_file_get_kind (file) == THUNAR_VFS_FILE_TYPE_REGULAR
-      && thunar_file_get_date (file, THUNAR_FILE_DATE_MODIFIED, &mtime))
+  /* turn the emblem_names list into a zero terminated array */
+  for (lp = emblem_names, n = 0; lp != NULL; lp = lp->next)
     {
-      /* determine the URI */
-      uri = thunar_file_get_uri (file);
+      /* skip special emblems */
+      if (strcmp (lp->data, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK) == 0
+          || strcmp (lp->data, THUNAR_FILE_EMBLEM_NAME_CANT_READ) == 0
+          || strcmp (lp->data, THUNAR_FILE_EMBLEM_NAME_CANT_WRITE) == 0
+          || strcmp (lp->data, THUNAR_FILE_EMBLEM_NAME_DESKTOP) == 0)
+        continue;
 
-      /* grab the thumbnail state */
-      state = THUNAR_FILE_GET_THUMB_STATE (file);
-
-      /* check if we haven't yet determined the thumbnail state */
-      if (state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
-        {
-          /* try to load an existing thumbnail for the file */
-          thumb_factory = thunar_icon_factory_get_thumb_factory (icon_factory);
-          path = thunar_vfs_thumb_factory_lookup_thumbnail (thumb_factory, uri, mtime);
-
-          /* check if we can generate a thumbnail if there's no existing one */
-          if (G_UNLIKELY (path == NULL))
-            {
-              mime_info = thunar_file_get_mime_info (file);
-              if (G_LIKELY (mime_info != NULL))
-                {
-#if 0 /* FIXME: not yet */
-                  if (thunar_vfs_thumb_factory_can_thumbnail (thumb_factory, uri, mime_info, mtime))
-                    state = THUNAR_FILE_THUMB_STATE_LOADING;
-#endif
-                  thunar_vfs_mime_info_unref (mime_info);
-                }
-            }
-
-          if (G_LIKELY (path != NULL))
-            {
-              state = THUNAR_FILE_THUMB_STATE_LOADED;
-              g_object_set_qdata_full (G_OBJECT (file), thunar_file_thumb_path_quark, path, g_free);
-            }
-          else if (state != THUNAR_FILE_THUMB_STATE_LOADING)
-            {
-              state = THUNAR_FILE_THUMB_STATE_NONE;
-            }
-
-          /* apply the new state */
-          THUNAR_FILE_SET_THUMB_STATE (file, state);
-        }
-
-      /* check if we have a thumbnail path loaded */
-      if (state == THUNAR_FILE_THUMB_STATE_LOADED)
-        {
-          path = g_object_get_qdata (G_OBJECT (file), thunar_file_thumb_path_quark);
-          if (G_LIKELY (path != NULL))
-            {
-              icon = thunar_icon_factory_load_file_icon (icon_factory, path, size, mtime, uri);
-              if (G_LIKELY (icon != NULL))
-                return icon;
-            }
-        }
-
-      /* check if we are currently loading a thumbnail */
-      if (G_UNLIKELY (state == THUNAR_FILE_THUMB_STATE_LOADING))
-        {
-          /* check if the icon theme supports the loading icon */
-          icon = thunar_icon_factory_load_icon (icon_factory, "gnome-fs-loading-icon", size, NULL, FALSE);
-          if (G_LIKELY (icon != NULL))
-            return icon;
-        }
+      /* add the emblem to our list */
+      emblems[n++] = g_strdup (lp->data);
     }
 
-  /* lookup the icon name for the icon in the given state */
-  icon_name = (*THUNAR_FILE_GET_CLASS (file)->get_icon_name) (file, icon_state, icon_theme);
+  /* associate the emblems with the file */
+  file->flags |= THUNAR_FILE_OWNS_EMBLEM_NAMES;
+  g_object_set_qdata_full (G_OBJECT (file), thunar_file_emblem_names_quark,
+                           emblems, (GDestroyNotify) g_strfreev);
 
-  /* load the icon of the given name */
-  return thunar_icon_factory_load_icon (icon_factory, icon_name, size, NULL, TRUE);
+  /* store the emblem list in the file's metadata */
+  emblems_string = g_strjoinv (";", emblems);
+  thunar_file_set_metadata (file, THUNAR_METAFILE_KEY_EMBLEMS, emblems_string, "");
+  g_free (emblems_string);
+
+  /* tell everybody that we have changed */
+  thunar_file_changed (file);
+}
+
+
+
+/**
+ * thunar_file_get_icon_name:
+ * @file       : a #ThunarFile instance.
+ * @icon_state : the state of the @file<!---->s icon we are interested in.
+ * @icon_theme : the #GtkIconTheme on which to lookup up the icon name.
+ *
+ * Returns the name of the icon that can be used to present @file, based
+ * on the given @icon_state and @icon_theme.
+ *
+ * Return value: the icon name for @file in @icon_theme.
+ **/
+const gchar*
+thunar_file_get_icon_name (const ThunarFile   *file,
+                           ThunarFileIconState icon_state,
+                           GtkIconTheme       *icon_theme)
+{
+  const gchar *icon_name;
+
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
+
+  /* special icon for the root node */
+  if (G_UNLIKELY (thunar_file_is_root (file))
+      && gtk_icon_theme_has_icon (icon_theme, "gnome-dev-harddisk"))
+    {
+      return "gnome-dev-harddisk";
+    }
+
+  /* special icon for the home node */
+  if (G_UNLIKELY (thunar_file_is_home (file))
+      && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-home"))
+    {
+      return "gnome-fs-home";
+    }
+
+  /* try to be smart when determining icons for executable files
+   * in that we use the name of the file as icon name (which will
+   * work for quite a lot of binaries, e.g. 'Terminal', 'mousepad',
+   * 'Thunar', 'xfmedia', etc.).
+   */
+  if (G_UNLIKELY (thunar_file_is_executable (file)))
+    {
+      icon_name = thunar_vfs_path_get_name (file->info->path);
+      if (G_UNLIKELY (gtk_icon_theme_has_icon (icon_theme, icon_name)))
+        return icon_name;
+    }
+
+  /* default is the mime type icon */
+  icon_name = thunar_vfs_mime_info_lookup_icon_name (file->info->mime_info, icon_theme);
+
+  /* check if we have an accept icon for the icon we found */
+  if (icon_state == THUNAR_FILE_ICON_STATE_DROP && strcmp (icon_name, "gnome-fs-directory") == 0
+      && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-directory-accept"))
+    {
+      return "gnome-fs-directory-accept";
+    }
+
+  return icon_name;
+}
+
+
+
+/**
+ * thunar_file_get_metadata:
+ * @file          : a #ThunarFile instance.
+ * @key           : a #ThunarMetaFileKey.
+ * @default_value : the default value for @key in @file
+ *                  which is returned when @key isn't
+ *                  explicitly set for @file (may be
+ *                  %NULL).
+ *
+ * Returns the metadata available for @key in @file.
+ *
+ * The returned string is owned by the @file and uses
+ * an internal buffer that will be overridden on the
+ * next call to any of the metadata retrieval methods.
+ *
+ * Return value: the metadata available for @key in @file
+ *               or @default_value if @key is not set for
+ *               @file.
+ **/
+const gchar*
+thunar_file_get_metadata (ThunarFile       *file,
+                          ThunarMetafileKey key,
+                          const gchar      *default_value)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  g_return_val_if_fail (key < THUNAR_METAFILE_N_KEYS, NULL);
+
+  return thunar_metafile_fetch (thunar_file_get_metafile (file),
+                                file->info->path, key,
+                                default_value);
+}
+
+
+
+/**
+ * thunar_file_set_metadata:
+ * @file          : a #ThunarFile instance.
+ * @key           : a #ThunarMetafileKey.
+ * @value         : the new value for @key on @file.
+ * @default_value : the default for @key on @file.
+ *
+ * Sets the metadata available for @key in @file to
+ * the given @value.
+ **/
+void
+thunar_file_set_metadata (ThunarFile       *file,
+                          ThunarMetafileKey key,
+                          const gchar      *value,
+                          const gchar      *default_value)
+{
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (key < THUNAR_METAFILE_N_KEYS);
+  g_return_if_fail (default_value != NULL);
+  g_return_if_fail (value != NULL);
+
+  thunar_metafile_store (thunar_file_get_metafile (file),
+                         file->info->path, key, value,
+                         default_value);
 }
 
 
@@ -1601,30 +1501,43 @@ thunar_file_load_icon (ThunarFile         *file,
  *
  * Tells @file to watch itself for changes. Not all #ThunarFile
  * implementations must support this, but if a #ThunarFile
- * implementation implements the #thunar_file_watch() method,
- * it must also implement the #thunar_file_unwatch() method.
+ * implementation implements the thunar_file_watch() method,
+ * it must also implement the thunar_file_unwatch() method.
  *
  * The #ThunarFile base class implements automatic "ref
- * counting" for watches, that says, you can call #thunar_file_watch()
+ * counting" for watches, that says, you can call thunar_file_watch()
  * multiple times, but the virtual method will be invoked only
- * once. This also means that you MUST call #thunar_file_unwatch()
- * for every #thunar_file_watch() invokation, else the application
+ * once. This also means that you MUST call thunar_file_unwatch()
+ * for every thunar_file_watch() invokation, else the application
  * will abort.
  **/
 void
 thunar_file_watch (ThunarFile *file)
 {
-  gint watch_count;
+  ThunarVfsMonitorHandle *handle;
+  gint                    watch_count;
 
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_FILE_GET_WATCH_COUNT (file) >= 0);
 
   watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
 
-  if (++watch_count == 1 && THUNAR_FILE_GET_CLASS (file)->watch != NULL)
+  if (++watch_count == 1)
     {
-      g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->unwatch != NULL);
-      (*THUNAR_FILE_GET_CLASS (file)->watch) (file);
+      /* take a reference on the VFS monitor for this instance */
+      if (G_LIKELY (monitor == NULL))
+        {
+          monitor = thunar_vfs_monitor_get_default ();
+          g_object_add_weak_pointer (G_OBJECT (monitor), (gpointer) &monitor);
+        }
+      else
+        {
+          g_object_ref (G_OBJECT (monitor));
+        }
+
+      /* add us to the file monitor */
+      handle = thunar_vfs_monitor_add_file (monitor, file->info->path, thunar_file_monitor, file);
+      g_object_set_qdata_full (G_OBJECT (file), thunar_file_watch_handle_quark, handle, thunar_file_watch_free);
     }
 
   THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
@@ -1636,7 +1549,7 @@ thunar_file_watch (ThunarFile *file)
  * thunar_file_unwatch:
  * @file : a #ThunarFile instance.
  *
- * See #thunar_file_watch() for a description of how watching
+ * See thunar_file_watch() for a description of how watching
  * #ThunarFile<!---->s works.
  **/
 void
@@ -1649,10 +1562,10 @@ thunar_file_unwatch (ThunarFile *file)
 
   watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
 
-  if (--watch_count == 0 && THUNAR_FILE_GET_CLASS (file)->unwatch != NULL)
+  if (--watch_count == 0)
     {
-      g_return_if_fail (THUNAR_FILE_GET_CLASS (file)->watch != NULL);
-      (*THUNAR_FILE_GET_CLASS (file)->unwatch) (file);
+      /* just unset the watch handle */
+      g_object_set_qdata (G_OBJECT (file), thunar_file_watch_handle_quark, NULL);
     }
 
   THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
@@ -1665,19 +1578,34 @@ thunar_file_unwatch (ThunarFile *file)
  * @file : a #ThunarFile instance.
  *
  * Tells @file to reload its internal state, e.g. by reacquiring
- * the file info from the underlying media. Not all #ThunarFile
- * implementations may actually implement this method, so don't
- * count on it to do anything useful. Some implementations may
- * also decide to reload its state asynchronously.
+ * the file info from the underlying media.
  *
- * You must also be able to handle the case that @file is
+ * You must be able to handle the case that @file is
  * destroyed during the reload call.
  **/
 void
 thunar_file_reload (ThunarFile *file)
 {
+  ThunarVfsInfo *info;
+
   g_return_if_fail (THUNAR_IS_FILE (file));
-  (*THUNAR_FILE_GET_CLASS (file)->reload) (file);
+
+  /* re-query the file info */
+  info = thunar_vfs_info_new_for_path (file->info->path, NULL);
+  if (G_UNLIKELY (info == NULL))
+    {
+      /* the file is no longer present */
+      thunar_file_destroy (file);
+    }
+  else
+    {
+      /* apply the new info... */
+      thunar_vfs_info_unref (file->info);
+      file->info = info;
+
+      /* ... and tell others */
+      thunar_file_changed (file);
+    }
 }
 
 
@@ -1713,7 +1641,7 @@ thunar_file_destroy (ThunarFile *file)
 {
   g_return_if_fail (THUNAR_IS_FILE (file));
 
-  if (G_LIKELY ((file->flags & GTK_IN_DESTRUCTION) == 0))
+  if (G_LIKELY ((file->flags & THUNAR_FILE_IN_DESTRUCTION) == 0))
     g_object_run_dispose (G_OBJECT (file));
 }
 
@@ -1728,13 +1656,13 @@ thunar_file_destroy (ThunarFile *file)
  * Return value: %TRUE if @file is a hidden file, else %FALSE.
  **/
 gboolean
-thunar_file_is_hidden (ThunarFile *file)
+thunar_file_is_hidden (const ThunarFile *file)
 {
   const gchar *p;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  p = (*THUNAR_FILE_GET_CLASS (file)->get_display_name) (file);
+  p = file->info->display_name;
   if (*p != '.' && *p != '\0')
     {
       for (; p[1] != '\0'; ++p)
@@ -1747,13 +1675,40 @@ thunar_file_is_hidden (ThunarFile *file)
 
 
 
+/**
+ * thunar_file_cache_lookup:
+ * @path : a #ThunarVfsPath.
+ *
+ * Looks up the #ThunarFile for @path in the internal file
+ * cache and returns the file present for @path in the
+ * cache or %NULL if no #ThunarFile is cached for @path.
+ *
+ * Note that no reference is taken for the caller.
+ *
+ * This method should not be used but in very rare cases.
+ * Consider using thunar_file_get_for_path() instead.
+ *
+ * Return value: the #ThunarFile for @path in the internal
+ *               cache, or %NULL.
+ **/
+ThunarFile*
+thunar_file_cache_lookup (const ThunarVfsPath *path)
+{
+  /* allocate the ThunarFile cache on-demand */
+  if (G_UNLIKELY (file_cache == NULL))
+    file_cache = g_hash_table_new_full (thunar_vfs_path_hash, thunar_vfs_path_equal, (GDestroyNotify) thunar_vfs_path_unref, NULL);
+
+  return g_hash_table_lookup (file_cache, path);
+}
+
+
 
 /**
  * thunar_file_list_copy:
  * @file_list : a list of #ThunarFile<!---->s.
  *
  * Returns a deep-copy of @file_list, which must be
- * freed using #thunar_file_list_free().
+ * freed using thunar_file_list_free().
  *
  * Return value: a deep copy of @file_list.
  **/

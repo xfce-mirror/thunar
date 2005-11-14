@@ -20,7 +20,7 @@
 #ifndef __THUNAR_ICON_FACTORY_H__
 #define __THUNAR_ICON_FACTORY_H__
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
 
@@ -65,7 +65,9 @@ ThunarIconFactory     *thunar_icon_factory_get_for_icon_theme (GtkIconTheme     
 
 GtkIconTheme          *thunar_icon_factory_get_icon_theme     (const ThunarIconFactory  *factory);
 
+#if 0
 ThunarVfsThumbFactory *thunar_icon_factory_get_thumb_factory  (const ThunarIconFactory  *factory);
+#endif
 
 GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory        *factory,
                                                                const gchar              *name,
@@ -74,10 +76,9 @@ GdkPixbuf             *thunar_icon_factory_load_icon          (ThunarIconFactory
                                                                gboolean                  wants_default);
 
 GdkPixbuf             *thunar_icon_factory_load_file_icon     (ThunarIconFactory        *factory,
-                                                               const gchar              *path,
-                                                               gint                      size,
-                                                               ThunarVfsFileTime         mtime,
-                                                               ThunarVfsURI             *uri);
+                                                               ThunarFile               *file,
+                                                               ThunarFileIconState       icon_state,
+                                                               gint                      icon_size);
 
 G_END_DECLS;
 

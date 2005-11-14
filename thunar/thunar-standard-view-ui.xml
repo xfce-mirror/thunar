@@ -12,6 +12,9 @@
 
   <menubar name="main-menu">
     <menu action="file-menu" name="file-menu">
+      <placeholder name="placeholder-create-actions">
+        <menuitem action="create-folder" name="create-folder" />
+      </placeholder>
       <placeholder name="placeholder-launcher-actions">
         <menuitem action="open" name="open" />
         <menuitem action="open-in-new-window" name="open-in-new-window" />
@@ -27,19 +30,16 @@
         <menuitem action="copy" name="copy" />
         <menuitem action="cut" name="cut" />
         <menuitem action="paste" name="paste" />
+        <menuitem action="delete" name="delete" />
       </placeholder>
       <placeholder name="placeholder-edit-select-actions">
         <menuitem action="select-all-files" name="select-all-files" />
         <menuitem action="select-by-pattern" name="select-by-pattern" />
       </placeholder>
       <placeholder name="placeholder-edit-alter-actions">
+        <menuitem action="duplicate" name="duplicate" />
+        <menuitem action="make-link" name="make-link" />
         <menuitem action="rename" name="rename" />
-      </placeholder>
-    </menu>
-
-    <menu action="view-menu" name="view-menu">
-      <placeholder name="placeholder-view-display-preferences">
-        <menuitem action="show-hidden-files" name="show-hidde-files" />
       </placeholder>
     </menu>
   </menubar>
@@ -51,6 +51,7 @@
     <separator />
     <menuitem action="copy" name="copy" />
     <menuitem action="cut" name="cut" />
+    <menuitem action="delete" name="delete" />
     <menuitem action="paste-into-folder" name="paste-into-folder" />
     <separator />
     <menuitem action="rename" name="rename" />
@@ -61,6 +62,8 @@
   </popup>
 
   <popup action="folder-context-menu" name="folder-context-menu">
+    <menuitem action="create-folder" name="create-folder" />
+    <separator />
     <placeholder name="placeholder-view-items-actions" />
     <separator />
     <menuitem action="paste" name="paste" />

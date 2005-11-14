@@ -69,7 +69,7 @@ struct _ThunarVfsMimeProvider
   GObject __parent__;
 };
 
-GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
+GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 /**
  * thunar_vfs_mime_provider_lookup_data:
@@ -84,8 +84,14 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  *
  * Return value: a pointer to the MIME type or %NULL.
  **/
-#define thunar_vfs_mime_provider_lookup_data(provider, data, length, priority) \
-  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_data) ((provider), (data), (length), (priority)))
+static inline const gchar*
+thunar_vfs_mime_provider_lookup_data (ThunarVfsMimeProvider *provider,
+                                      gconstpointer          data,
+                                      gsize                  length,
+                                      gint                  *priority)
+{
+  return (*THUNAR_VFS_MIME_PROVIDER_GET_CLASS (provider)->lookup_data) (provider, data, length, priority);
+}
 
 /**
  * thunar_vfs_mime_provider_lookup_literal:
@@ -94,8 +100,12 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  *
  * Return value: a pointer to the MIME type or %NULL.
  **/
-#define thunar_vfs_mime_provider_lookup_literal(provider, filename) \
-  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_literal) ((provider), (filename)))
+static inline const gchar*
+thunar_vfs_mime_provider_lookup_literal (ThunarVfsMimeProvider *provider,
+                                         const gchar           *filename)
+{
+  return (*THUNAR_VFS_MIME_PROVIDER_GET_CLASS (provider)->lookup_literal) (provider, filename);
+}
 
 /**
  * thunar_vfs_mime_provider_lookup_suffix:
@@ -105,8 +115,13 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  *
  * Return value: a pointer to the MIME type or %NULL.
  **/
-#define thunar_vfs_mime_provider_lookup_suffix(provider, suffix, ignore_case) \
-  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_suffix) ((provider), (suffix), (ignore_case)))
+static inline const gchar*
+thunar_vfs_mime_provider_lookup_suffix (ThunarVfsMimeProvider *provider,
+                                        const gchar           *suffix,
+                                        gboolean               ignore_case)
+{
+  return (*THUNAR_VFS_MIME_PROVIDER_GET_CLASS (provider)->lookup_suffix) (provider, suffix, ignore_case);
+}
 
 /**
  * thunar_vfs_mime_provider_lookup_glob:
@@ -115,8 +130,12 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  *
  * Return value: a pointer to the MIME type or %NULL.
  **/
-#define thunar_vfs_mime_provider_lookup_glob(provider, filename) \
-  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_glob) ((provider), (filename)))
+static inline const gchar*
+thunar_vfs_mime_provider_lookup_glob (ThunarVfsMimeProvider *provider,
+                                      const gchar           *filename)
+{
+  return (*THUNAR_VFS_MIME_PROVIDER_GET_CLASS (provider)->lookup_glob) (provider, filename);
+}
 
 /**
  * thunar_vfs_mime_provider_lookup_alias:
@@ -128,8 +147,12 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  * Return value: the unaliased mime type or %NULL if @alias
  *               is not a valid mime type alias.
  */
-#define thunar_vfs_mime_provider_lookup_alias(provider, alias) \
-  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_alias) ((provider), (alias)))
+static inline const gchar*
+thunar_vfs_mime_provider_lookup_alias (ThunarVfsMimeProvider *provider,
+                                       const gchar           *alias)
+{
+  return (*THUNAR_VFS_MIME_PROVIDER_GET_CLASS (provider)->lookup_alias) (provider, alias);
+}
 
 /**
  * thunar_vfs_mime_provider_lookup_parents:
@@ -143,8 +166,14 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  *
  * Return value: the list of mime parents.
  **/
-#define thunar_vfs_mime_provider_lookup_parents(provider, mime_type, parents, max_parents) \
-  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->lookup_parents) ((provider), (mime_type), (parents), (max_parents)))
+static inline guint
+thunar_vfs_mime_provider_lookup_parents (ThunarVfsMimeProvider *provider,
+                                         const gchar           *mime_type,
+                                         gchar                **parents,
+                                         guint                  max_parents)
+{
+  return (*THUNAR_VFS_MIME_PROVIDER_GET_CLASS (provider)->lookup_parents) (provider, mime_type, parents, max_parents);
+}
 
 /**
  * thunar_vfs_mime_provider_get_stop_characters:
@@ -156,8 +185,11 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  *
  * Return value: the list of stop characters for the suffix entries in @provider.
  **/
-#define thunar_vfs_mime_provider_get_stop_characters(provider) \
-  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->get_stop_characters) ((provider)))
+static inline GList*
+thunar_vfs_mime_provider_get_stop_characters (ThunarVfsMimeProvider *provider)
+{
+  return (*THUNAR_VFS_MIME_PROVIDER_GET_CLASS (provider)->get_stop_characters) (provider);
+}
 
 /**
  * thunar_vfs_mime_provider_get_max_buffer_extents:
@@ -167,8 +199,11 @@ GType thunar_vfs_mime_provider_get_type (void) G_GNUC_CONST;
  *
  * Return value: the max buffer extents for @provider.
  **/
-#define thunar_vfs_mime_provider_get_max_buffer_extents(provider) \
-  ((*THUNAR_VFS_MIME_PROVIDER_GET_CLASS ((provider))->get_max_buffer_extents) ((provider)))
+static inline gsize
+thunar_vfs_mime_provider_get_max_buffer_extents (ThunarVfsMimeProvider *provider)
+{
+  return (*THUNAR_VFS_MIME_PROVIDER_GET_CLASS (provider)->get_max_buffer_extents) (provider);
+}
 
 G_END_DECLS;
 

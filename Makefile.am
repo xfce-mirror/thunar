@@ -4,6 +4,7 @@ SUBDIRS =								\
 	icons								\
 	pixmaps								\
 	po								\
+	tdb								\
 	thunar-vfs							\
 	thunarx								\
 	thunar								\

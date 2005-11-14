@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-favourites-model.h>
 #include <thunar/thunar-favourites-view.h>
 
@@ -600,32 +601,33 @@ thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
 {
   GtkTreeModel *model;
   ThunarFile   *file;
-  GtkWidget    *toplevel;
-  GtkWidget    *dialog;
   GError       *error = NULL;
+  gchar        *display_string;
   gchar        *uri_string;
-  GList        *uris;
+  GList        *path_list;
   GList        *lp;
 
-  uris = thunar_vfs_uri_list_from_string (uri_list, &error);
+  path_list = thunar_vfs_path_list_from_string (uri_list, &error);
   if (G_LIKELY (error == NULL))
     {
       /* process the URIs one-by-one and stop on error */
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-      for (lp = uris; lp != NULL; lp = lp->next)
+      for (lp = path_list; lp != NULL; lp = lp->next)
         {
-          file = thunar_file_get_for_uri (lp->data, &error);
+          file = thunar_file_get_for_path (lp->data, &error);
           if (G_UNLIKELY (file == NULL))
             break;
 
           /* make sure, that only directories gets added to the favourites list */
           if (G_UNLIKELY (!thunar_file_is_directory (file)))
             {
-              uri_string = thunar_vfs_uri_to_string (lp->data);
+              uri_string = thunar_vfs_path_dup_string (lp->data);
+              display_string = g_filename_display_name (uri_string);
               g_set_error (&error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR,
-                           _("The URI '%s' does not refer to a directory"),
-                           uri_string);
+                           _("The path '%s' does not refer to a directory"),
+                           display_string);
               g_object_unref (G_OBJECT (file));
+              g_free (display_string);
               g_free (uri_string);
               break;
             }
@@ -635,23 +637,15 @@ thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
           gtk_tree_path_next (dst_path);
         }
 
-      thunar_vfs_uri_list_free (uris);
+      thunar_vfs_path_list_free (path_list);
     }
 
   if (G_UNLIKELY (error != NULL))
     {
-      toplevel = gtk_widget_get_toplevel (GTK_WIDGET (view));
-      dialog = gtk_message_dialog_new_with_markup (GTK_WINDOW (toplevel),
-                                                   GTK_DIALOG_DESTROY_WITH_PARENT
-                                                   | GTK_DIALOG_MODAL,
-                                                   GTK_MESSAGE_ERROR,
-                                                   GTK_BUTTONS_OK,
-                                                   "<span weight=\"bold\" size="
-                                                   "\"larger\">%s</span>\n\n%s",
-                                                   _("Could not add favourite"),
-                                                   error->message);
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
+      /* display an error message to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to add new favourite"));
+
+      /* release the error */
       g_error_free (error);
     }
 }

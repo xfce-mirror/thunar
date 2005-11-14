@@ -21,7 +21,9 @@
 #ifndef __THUNAR_VFS_UTIL_H__
 #define __THUNAR_VFS_UTIL_H__
 
-#include <thunar-vfs/thunar-vfs-info.h>
+#include <glib.h>
+
+#include <thunar-vfs/thunar-vfs-types.h>
 
 G_BEGIN_DECLS;
 

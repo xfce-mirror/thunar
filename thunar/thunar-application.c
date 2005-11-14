@@ -23,24 +23,42 @@
 #endif
 
 #include <thunar/thunar-application.h>
-#include <thunar/thunar-desktop-view.h>
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-progress-dialog.h>
+
+
+
+/* Prototype for the Thunar-VFS job launchers */
+typedef ThunarVfsJob *(*Launcher) (GList   *source_path_list,
+                                   GList   *target_path_list,
+                                   GError **error);
 
 
 
 static void     thunar_application_class_init           (ThunarApplicationClass *klass);
 static void     thunar_application_init                 (ThunarApplication      *application);
 static void     thunar_application_finalize             (GObject                *object);
-static void     thunar_application_handle_job           (ThunarApplication *application,
-                                                         GtkWindow         *window,
-                                                         ThunarVfsJob      *job,
-                                                         const gchar       *icon_name,
-                                                         const gchar       *title);
-static void     thunar_application_window_destroyed     (GtkWidget         *window,
-                                                         ThunarApplication *application);
-static gboolean thunar_application_show_dialogs         (gpointer           user_data);
-static void     thunar_application_show_dialogs_destroy (gpointer           user_data);
+static void     thunar_application_collect_and_launch   (ThunarApplication      *application,
+                                                         GtkWidget              *widget,
+                                                         const gchar            *icon_name,
+                                                         const gchar            *title,
+                                                         Launcher                launcher,
+                                                         GList                  *source_path_list,
+                                                         ThunarVfsPath          *target_path,
+                                                         GClosure               *new_files_closure);
+static void     thunar_application_launch               (ThunarApplication      *application,
+                                                         GtkWidget              *widget,
+                                                         const gchar            *icon_name,
+                                                         const gchar            *title,
+                                                         Launcher                launcher,
+                                                         GList                  *source_path_list,
+                                                         GList                  *target_path_list,
+                                                         GClosure               *new_files_closure);
+static void     thunar_application_window_destroyed     (GtkWidget              *window,
+                                                         ThunarApplication      *application);
+static gboolean thunar_application_show_dialogs         (gpointer                user_data);
+static void     thunar_application_show_dialogs_destroy (gpointer                user_data);
 
 
 
@@ -53,7 +71,6 @@ struct _ThunarApplication
 {
   GObject __parent__;
 
-  ThunarDesktopView *desktop_view;
   ThunarPreferences *preferences;
   GList             *windows;
 
@@ -96,6 +113,7 @@ thunar_application_finalize (GObject *object)
   if (G_UNLIKELY (application->show_dialogs_timer_id >= 0))
     g_source_remove (application->show_dialogs_timer_id);
 
+  /* drop the open windows */
   for (lp = application->windows; lp != NULL; lp = lp->next)
     {
       g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), G_CALLBACK (thunar_application_window_destroyed), application);
@@ -103,50 +121,112 @@ thunar_application_finalize (GObject *object)
     }
   g_list_free (application->windows);
 
+  /* release our reference on the preferences */
   g_object_unref (G_OBJECT (application->preferences));
   
-  if (G_LIKELY (application->desktop_view != NULL))
-    g_object_unref (G_OBJECT (application->desktop_view));
-
-  G_OBJECT_CLASS (thunar_application_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_application_parent_class)->finalize) (object);
 }
 
 
 
 static void
-thunar_application_handle_job (ThunarApplication *application,
-                               GtkWindow         *window,
-                               ThunarVfsJob      *job,
-                               const gchar       *icon_name,
-                               const gchar       *title)
+thunar_application_collect_and_launch (ThunarApplication *application,
+                                       GtkWidget         *widget,
+                                       const gchar       *icon_name,
+                                       const gchar       *title,
+                                       Launcher           launcher,
+                                       GList             *source_path_list,
+                                       ThunarVfsPath     *target_path,
+                                       GClosure          *new_files_closure)
 {
-  GtkWidget *dialog;
+  ThunarVfsPath *path;
+  GList         *target_path_list = NULL;
+  GList         *lp;
 
-  /* allocate a progress dialog for the job */
-  dialog = g_object_new (THUNAR_TYPE_PROGRESS_DIALOG,
-                         "icon-name", icon_name,
-                         "title", title,
-                         "job", job,
-                         NULL);
+  /* check if we have anything to operate on */
+  if (G_UNLIKELY (source_path_list == NULL))
+    return;
 
-  /* connect to the parent (if any) */
-  if (G_LIKELY (window != NULL))
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
-
-  /* be sure to destroy the dialog when the job is done */
-  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), dialog);
-
-  /* hook up the dialog window */
-  g_signal_connect (G_OBJECT (dialog), "destroy", G_CALLBACK (thunar_application_window_destroyed), application);
-  application->windows = g_list_prepend (application->windows, dialog);
-
-  /* Set up a timer to show the dialog, to make sure we don't
-   * just popup and destroy a dialog for a very short job.
-   */
-  if (G_LIKELY (application->show_dialogs_timer_id < 0))
+  /* generate the target path list */
+  for (lp = g_list_last (source_path_list); lp != NULL; lp = lp->prev)
     {
-      application->show_dialogs_timer_id = g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
-                                                               application, thunar_application_show_dialogs_destroy);
+      path = thunar_vfs_path_relative (target_path, thunar_vfs_path_get_name (lp->data));
+      target_path_list = g_list_prepend (target_path_list, path);
+    }
+
+  /* launch the operation */
+  thunar_application_launch (application, widget, icon_name, title, launcher,
+                             source_path_list, target_path_list, new_files_closure);
+
+  /* release the target path list */
+  thunar_vfs_path_list_free (target_path_list);
+}
+
+
+
+static void
+thunar_application_launch (ThunarApplication *application,
+                           GtkWidget         *widget,
+                           const gchar       *icon_name,
+                           const gchar       *title,
+                           Launcher           launcher,
+                           GList             *source_path_list,
+                           GList             *target_path_list,
+                           GClosure          *new_files_closure)
+{
+  ThunarVfsJob *job;
+  GtkWidget    *dialog;
+  GtkWindow    *window;
+  GError       *error = NULL;
+
+  /* determine the toplevel window for the widget */
+  window = (widget != NULL) ? (GtkWindow *) gtk_widget_get_toplevel (widget) : NULL;
+
+  /* try to allocate a new job for the operation */
+  job = (*launcher) (source_path_list, target_path_list, &error);
+  if (G_UNLIKELY (job == NULL))
+    {
+      /* display an error message to the user */
+      thunar_dialogs_show_error (widget, error, _("Failed to launch operation"));
+
+      /* release the error */
+      g_error_free (error);
+    }
+  else
+    {
+      /* connect the "new-files" closure (if any) */
+      if (G_LIKELY (new_files_closure != NULL))
+        g_signal_connect_closure (G_OBJECT (job), "new-files", new_files_closure, FALSE);
+
+      /* allocate a progress dialog for the job */
+      dialog = g_object_new (THUNAR_TYPE_PROGRESS_DIALOG,
+                             "icon-name", icon_name,
+                             "title", title,
+                             "job", job,
+                             NULL);
+
+      /* connect to the parent (if any) */
+      if (G_LIKELY (window != NULL))
+        gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
+
+      /* be sure to destroy the dialog when the job is done */
+      g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), dialog);
+
+      /* hook up the dialog window */
+      g_signal_connect (G_OBJECT (dialog), "destroy", G_CALLBACK (thunar_application_window_destroyed), application);
+      application->windows = g_list_prepend (application->windows, dialog);
+
+      /* Set up a timer to show the dialog, to make sure we don't
+       * just popup and destroy a dialog for a very short job.
+       */
+      if (G_LIKELY (application->show_dialogs_timer_id < 0))
+        {
+          application->show_dialogs_timer_id = g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
+                                                                   application, thunar_application_show_dialogs_destroy);
+        }
+
+      /* drop our reference on the job */
+      g_object_unref (G_OBJECT (job));
     }
 }
 
@@ -166,7 +246,7 @@ thunar_application_window_destroyed (GtkWidget         *window,
    * windows and we don't manage the desktop.
    */
   if (G_UNLIKELY (application->windows == NULL
-        && application->desktop_view == NULL))
+        /*&& application->desktop_view == NULL*/))
     {
       gtk_main_quit ();
     }
@@ -207,7 +287,7 @@ thunar_application_show_dialogs_destroy (gpointer user_data)
  *
  * Returns the global shared #ThunarApplication instance.
  * This method takes a reference on the global instance
- * for the caller, so you must call #g_object_unref()
+ * for the caller, so you must call g_object_unref()
  * on it when done.
  *
  * Return value: the shared #ThunarApplication instance.
@@ -238,7 +318,7 @@ thunar_application_get (void)
  *
  * Returns the list of regular #ThunarWindows currently handled by
  * @application. The returned list is owned by the caller and
- * must be freed using #g_list_free().
+ * must be freed using g_list_free().
  *
  * Return value: the list of regular #ThunarWindows in @application.
  **/
@@ -302,137 +382,178 @@ thunar_application_open_window (ThunarApplication *application,
 
 
 /**
- * thunar_application_copy_uris:
- * @application     : a #ThunarApplication.
- * @window          : a parent #GtkWindow or %NULL.
- * @source_uri_list : the list of #ThunarVfsURI<!---->s that should be copied.
- * @target_uri      : the target directory.
+ * thunar_application_copy_into:
+ * @application       : a #ThunarApplication.
+ * @widget            : the associated widget or %NULL.
+ * @source_path_list  : the list of #ThunarVfsPath<!---->s that should be copied.
+ * @target_path       : the #ThunarVfsPath to the target directory.
+ * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
+ *                      which will be emitted when the job finishes with the
+ *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      %NULL if you're not interested in the signal.
  *
- * Copies all files referenced by the @source_uri_list to the directory
- * referenced by @target_uri. This method takes care of all user
- * interaction.
+ * Copies all files referenced by the @source_path_list to the directory
+ * referenced by @target_path. This method takes care of all user interaction.
  **/
 void
-thunar_application_copy_uris (ThunarApplication *application,
-                              GtkWindow         *window,
-                              GList             *source_uri_list,
-                              ThunarVfsURI      *target_uri)
+thunar_application_copy_into (ThunarApplication *application,
+                              GtkWidget         *widget,
+                              GList             *source_path_list,
+                              ThunarVfsPath     *target_path,
+                              GClosure          *new_files_closure)
 {
-  ThunarVfsJob *job;
-  GtkWidget    *message;
-  GError       *error = NULL;
-
   g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
-  
-  /* allocate the job */
-  job = thunar_vfs_copy (source_uri_list, target_uri, &error);
-  if (G_UNLIKELY (job == NULL))
-    {
-      message = gtk_message_dialog_new (window, GTK_DIALOG_MODAL |
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
-                                        "%s.", error->message);
-      gtk_dialog_run (GTK_DIALOG (message));
-      gtk_widget_destroy (message);
-      g_error_free (error);
-    }
-  else
-    {
-      /* let the application take care of the dialog */
-      thunar_application_handle_job (application, window, job, "stock_folder-copy", _("Copying files..."));
-      thunar_vfs_job_unref (job);
-    }
+  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
+  g_return_if_fail (target_path != NULL);
+
+  /* collect the target paths and launch the job */
+  thunar_application_collect_and_launch (application, widget, "stock_folder-copy",
+                                         _("Copying files..."), thunar_vfs_copy_files,
+                                         source_path_list, target_path, new_files_closure);
 }
 
 
 
 /**
- * thunar_application_move_uris:
- * @application     : a #ThunarApplication.
- * @window          : a parent #GtkWindow or %NULL.
- * @source_uri_list : the list of #ThunarVfsURI<!---->s that should be moved.
- * @target_uri      : the target directory.
+ * thunar_application_link_into:
+ * @application       : a #ThunarApplication.
+ * @widget            : the associated #GtkWidget or %NULL.
+ * @source_path_list  : the list of #ThunarVfsPath<!---->s that should be symlinked.
+ * @target_path       : the target directory.
+ * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
+ *                      which will be emitted when the job finishes with the
+ *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      %NULL if you're not interested in the signal.
  *
- * Moves all files referenced by the @source_uri_list to the directory
- * referenced by @target_uri. This method takes care of all user
+ * Symlinks all files referenced by the @source_path_list to the directory
+ * referenced by @target_path. This method takes care of all user
  * interaction.
  **/
 void
-thunar_application_move_uris (ThunarApplication *application,
-                              GtkWindow         *window,
-                              GList             *source_uri_list,
-                              ThunarVfsURI      *target_uri)
+thunar_application_link_into (ThunarApplication *application,
+                              GtkWidget         *widget,
+                              GList             *source_path_list,
+                              ThunarVfsPath     *target_path,
+                              GClosure          *new_files_closure)
 {
-  ThunarVfsJob *job;
-  GtkWidget    *message;
-  GError       *error = NULL;
-
   g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
-  
-  /* allocate the job */
-  job = thunar_vfs_move (source_uri_list, target_uri, &error);
-  if (G_UNLIKELY (job == NULL))
-    {
-      message = gtk_message_dialog_new (window, GTK_DIALOG_MODAL |
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
-                                        "%s.", error->message);
-      gtk_dialog_run (GTK_DIALOG (message));
-      gtk_widget_destroy (message);
-      g_error_free (error);
-    }
-  else
-    {
-      /* let the application take care of the dialog */
-      thunar_application_handle_job (application, window, job, "stock_folder-move", _("Moving files..."));
-      thunar_vfs_job_unref (job);
-    }
+  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
+  g_return_if_fail (target_path != NULL);
+
+  /* collect the target paths and launch the job */
+  thunar_application_collect_and_launch (application, widget, "stock_link",
+                                         _("Creating symbolic links..."),
+                                         thunar_vfs_link_files, source_path_list,
+                                         target_path, new_files_closure);
 }
 
 
 
 /**
- * thunar_application_delete_uris:
+ * thunar_application_move_into:
+ * @application       : a #ThunarApplication.
+ * @widget            : the associated #GtkWidget or %NULL.
+ * @source_path_list  : the list of #ThunarVfsPath<!---->s that should be moved.
+ * @target_path       : the target directory.
+ * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
+ *                      which will be emitted when the job finishes with the
+ *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      %NULL if you're not interested in the signal.
+ *
+ * Moves all files referenced by the @source_path_list to the directory
+ * referenced by @target_path. This method takes care of all user
+ * interaction.
+ **/
+void
+thunar_application_move_into (ThunarApplication *application,
+                              GtkWidget         *widget,
+                              GList             *source_path_list,
+                              ThunarVfsPath     *target_path,
+                              GClosure          *new_files_closure)
+{
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
+  g_return_if_fail (target_path != NULL);
+
+  /* launch the operation */
+  thunar_application_collect_and_launch (application, widget, "stock_folder-move",
+                                         _("Moving files..."), thunar_vfs_move_files,
+                                         source_path_list, target_path, new_files_closure);
+}
+
+
+
+static ThunarVfsJob*
+unlink_stub (GList   *source_path_list,
+             GList   *target_path_list,
+             GError **error)
+{
+  return thunar_vfs_unlink_files (source_path_list, error);
+}
+
+
+
+/**
+ * thunar_application_unlink:
  * @application : a #ThunarApplication.
- * @window      : a parent #GtkWindow or %NULL.
- * @uri_list    : the list of #ThunarVfsURI<!---->s that should be deleted.
+ * @widget      : the associated #GtkWidget or %NULL.
+ * @path_list   : the list of #ThunarVfsPath<!---->s that should be deleted.
  *
- * Deletes all files referenced by the @uri_list and takes care of all user
+ * Deletes all files referenced by the @path_list and takes care of all user
  * interaction.
  **/
 void
-thunar_application_delete_uris (ThunarApplication *application,
-                                GtkWindow         *window,
-                                GList             *uri_list)
+thunar_application_unlink (ThunarApplication *application,
+                           GtkWidget         *widget,
+                           GList             *path_list)
 {
-  ThunarVfsJob *job;
-  GtkWidget    *message;
-  GError       *error = NULL;
-
   g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (window == NULL || GTK_IS_WINDOW (window));
+  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
 
-  /* allocate the job */
-  job = thunar_vfs_unlink (uri_list, &error);
-  if (G_UNLIKELY (job == NULL))
-    {
-      message = gtk_message_dialog_new (window, GTK_DIALOG_MODAL |
-                                        GTK_DIALOG_DESTROY_WITH_PARENT,
-                                        GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE,
-                                        "%s.", error->message);
-      gtk_dialog_run (GTK_DIALOG (message));
-      gtk_widget_destroy (message);
-      g_error_free (error);
-    }
-  else
-    {
-      /* let the application take care of the dialog */
-      thunar_application_handle_job (application, window, job, "stock_delete", _("Deleting files..."));
-      thunar_vfs_job_unref (job);
-    }
+  /* launch the operation */
+  thunar_application_launch (application, widget, "stock_delete",
+                              _("Deleting files..."), unlink_stub,
+                              path_list, path_list, NULL);
 }
 
+
+
+static ThunarVfsJob*
+mkdir_stub (GList   *source_path_list,
+            GList   *target_path_list,
+            GError **error)
+{
+  return thunar_vfs_make_directories (source_path_list, error);
+}
+
+
+
+/**
+ * thunar_application_mkdir:
+ * @application       : a #ThunarApplication.
+ * @widget            : the associated #GtkWidget or %NULL.
+ * @path_list         : the list of directories to create.
+ * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
+ *                      which will be emitted when the job finishes with the
+ *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      %NULL if you're not interested in the signal.
+ *
+ * Creates all directories referenced by the @path_list. This method takes care of all user
+ * interaction.
+ **/
+void
+thunar_application_mkdir (ThunarApplication *application,
+                          GtkWidget         *widget,
+                          GList             *path_list,
+                          GClosure          *new_files_closure)
+{
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
+
+  /* launch the operation */
+  thunar_application_launch (application, widget, "stock_folder",
+                             _("Creating directories..."), mkdir_stub,
+                             path_list, path_list, new_files_closure);
+}
 
 

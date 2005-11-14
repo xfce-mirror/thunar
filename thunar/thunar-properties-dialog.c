@@ -30,6 +30,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-emblem-chooser.h>
 #include <thunar/thunar-extension-manager.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -148,6 +150,7 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
 static void
 thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 {
+  GtkWidget *chooser;
   GtkWidget *table;
   GtkWidget *label;
   GtkWidget *box;
@@ -320,6 +323,17 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (spacer);
 
   ++row;
+
+
+  /*
+     Emblem chooser
+   */
+  label = gtk_label_new (_("Emblems"));
+  chooser = thunar_emblem_chooser_new ();
+  exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (chooser), "file");
+  gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), chooser, label);
+  gtk_widget_show (chooser);
+  gtk_widget_show (label);
 }
 
 
@@ -534,7 +548,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
   /* update the icon */
-  icon = thunar_file_load_icon (dialog->file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_factory, 48);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, dialog->file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
   gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->icon_image), icon);
   gtk_window_set_icon (GTK_WINDOW (dialog), icon);
   if (G_LIKELY (icon != NULL))
@@ -568,9 +582,14 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   /* update the mime type */
   info = thunar_file_get_mime_info (dialog->file);
-  gtk_label_set_text (GTK_LABEL (dialog->kind_label), thunar_vfs_mime_info_get_comment (info));
-  gtk_widget_show (dialog->kind_label);
-  thunar_vfs_mime_info_unref (info);
+  if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (info), "inode/symlink") == 0))
+    str = g_strdup (_("broken link"));
+  else if (G_UNLIKELY (thunar_file_is_symlink (dialog->file)))
+    str = g_strdup_printf (_("link to %s"), thunar_vfs_mime_info_get_comment (info));
+  else
+    str = g_strdup (thunar_vfs_mime_info_get_comment (info));
+  gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
+  g_free (str);
 
   /* update the modified time */
   str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED);
@@ -621,19 +640,12 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   size_string = thunar_file_get_size_string (dialog->file);
   if (G_LIKELY (size_string != NULL))
     {
-      if (G_LIKELY (thunar_file_get_size (dialog->file, &size)))
-        {
-          str = g_strdup_printf (_("%s (%u Bytes)"), size_string, (guint) size);
-          gtk_label_set_text (GTK_LABEL (dialog->size_label), str);
-          g_free (str);
-        }
-      else
-        {
-          gtk_label_set_text (GTK_LABEL (dialog->size_label), size_string);
-        }
-
+      size = thunar_file_get_size (dialog->file);
+      str = g_strdup_printf (_("%s (%u Bytes)"), size_string, (guint) size);
+      gtk_label_set_text (GTK_LABEL (dialog->size_label), str);
       gtk_widget_show (dialog->size_label);
       g_free (size_string);
+      g_free (str);
     }
   else
     {
@@ -654,7 +666,6 @@ thunar_properties_dialog_rename_idle (gpointer user_data)
 {
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (user_data);
   const gchar            *old_name;
-  GtkWidget              *message;
   GError                 *error = NULL;
   gchar                  *new_name;
 
@@ -676,17 +687,9 @@ thunar_properties_dialog_rename_idle (gpointer user_data)
           gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), old_name);
 
           /* display an error message */
-          message = gtk_message_dialog_new (GTK_WINDOW (dialog),
-                                            GTK_DIALOG_DESTROY_WITH_PARENT
-                                            | GTK_DIALOG_MODAL,
-                                            GTK_MESSAGE_ERROR,
-                                            GTK_BUTTONS_CLOSE,
-                                            _("Failed to rename %s."),
-                                            old_name);
-          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message),
-                                                    "%s.", error->message);
-          gtk_dialog_run (GTK_DIALOG (message));
-          gtk_widget_destroy (message);
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename `%s'"), old_name);
+
+          /* release the error */
           g_error_free (error);
         }
     }

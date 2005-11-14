@@ -29,8 +29,10 @@
 #include <string.h>
 #endif
 
+#include <exo/exo.h>
+
+#include <thunar-vfs/thunar-vfs-exec.h>
 #include <thunar-vfs/thunar-vfs-mime-application.h>
-#include <thunar-vfs/thunar-vfs-sysdep.h>
 #include <thunar-vfs/thunar-vfs-util.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -49,7 +51,7 @@ thunar_vfs_mime_application_error_quark (void)
 
 
 static gboolean thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *application,
-                                                      GList                          *uris,
+                                                      GList                          *path_list,
                                                       gint                           *argc,
                                                       gchar                        ***argv,
                                                       GError                        **error);
@@ -89,14 +91,14 @@ thunar_vfs_mime_application_get_type (void)
 
 static gboolean
 thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *application,
-                                      GList                          *uris,
+                                      GList                          *path_list,
                                       gint                           *argc,
                                       gchar                        ***argv,
                                       GError                        **error)
 {
-  return _thunar_vfs_sysdep_parse_exec (application->exec, uris, application->icon, application->name, NULL,
-                                        (application->flags & THUNAR_VFS_MIME_APPLICATION_REQUIRES_TERMINAL) != 0,
-                                        argc, argv, error);
+  return thunar_vfs_exec_parse (application->exec, path_list, application->icon, application->name, NULL,
+                                (application->flags & THUNAR_VFS_MIME_APPLICATION_REQUIRES_TERMINAL) != 0,
+                                argc, argv, error);
 }
 
 
@@ -260,9 +262,6 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
       if ((strstr (application->exec, "%F") != NULL) || (strstr (application->exec, "%U") != NULL))
         application->flags |= THUNAR_VFS_MIME_APPLICATION_SUPPORTS_MULTI;
 
-      if ((strstr (application->exec, "%u") != NULL) || (strstr (application->exec, "%U") != NULL))
-        application->flags |= THUNAR_VFS_MIME_APPLICATION_SUPPORTS_URIS;
-
       g_strfreev (argv);
     }
 
@@ -286,7 +285,7 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
 ThunarVfsMimeApplication*
 thunar_vfs_mime_application_ref (ThunarVfsMimeApplication *application)
 {
-  _thunar_vfs_sysdep_inc (&application->ref_count);
+  exo_atomic_inc (&application->ref_count);
   return application;
 }
 
@@ -303,7 +302,7 @@ thunar_vfs_mime_application_ref (ThunarVfsMimeApplication *application)
 void
 thunar_vfs_mime_application_unref (ThunarVfsMimeApplication *application)
 {
-  if (_thunar_vfs_sysdep_dec (&application->ref_count))
+  if (exo_atomic_dec (&application->ref_count))
     {
       /* free resources */
       g_strfreev (application->mime_types);
@@ -407,7 +406,7 @@ thunar_vfs_mime_application_get_mime_types (const ThunarVfsMimeApplication *appl
  * thunar_vfs_mime_application_exec:
  * @application : a #ThunarVfsMimeApplication.
  * @screen      : a #GdkScreen or %NULL to use the default screen.
- * @uris        : a list of #ThunarVfsURI<!---->s to open.
+ * @path_list   : a list of #ThunarVfsPath<!---->s to open.
  * @error       : return location for errors or %NULL.
  *
  * Wrapper to thunar_vfs_mime_application_exec_with_env(), which
@@ -418,10 +417,10 @@ thunar_vfs_mime_application_get_mime_types (const ThunarVfsMimeApplication *appl
 gboolean
 thunar_vfs_mime_application_exec (const ThunarVfsMimeApplication *application,
                                   GdkScreen                      *screen,
-                                  GList                          *uris,
+                                  GList                          *path_list,
                                   GError                        **error)
 {
-  return thunar_vfs_mime_application_exec_with_env (application, screen, uris, NULL, error);
+  return thunar_vfs_mime_application_exec_with_env (application, screen, path_list, NULL, error);
 }
 
 
@@ -430,31 +429,32 @@ thunar_vfs_mime_application_exec (const ThunarVfsMimeApplication *application,
  * thunar_vfs_mime_application_exec_with_env:
  * @application : a #ThunarVfsMimeApplication.
  * @screen      : a #GdkScreen or %NULL to use the default screen.
- * @uris        : a list of #ThunarVfsURI<!---->s to open.
+ * @path_list   : a list of #ThunarVfsPath<!---->s to open.
  * @envp        : child's environment or %NULL to inherit parent's.
  * @error       : return location for errors or %NULL.
  *
- * Executes @application on @screen using the given @uris. If
- * @uris contains more than one #ThunarVfsURI and @application
+ * Executes @application on @screen using the given @path_list. If
+ * @path_list contains more than one #ThunarVfsPath and @application
  * doesn't support opening multiple documents at once, one
- * instance of @application will be spawned for every #ThunarVfsURI
- * given in @uris.
+ * instance of @application will be spawned for every #ThunarVfsPath
+ * given in @path_list.
  *
  * Return value: %TRUE if the execution succeed, else %FALSE.
  **/
 gboolean
 thunar_vfs_mime_application_exec_with_env (const ThunarVfsMimeApplication *application,
                                            GdkScreen                      *screen,
-                                           GList                          *uris,
+                                           GList                          *path_list,
                                            gchar                         **envp,
                                            GError                        **error)
 {
-  gboolean result = TRUE;
-  GList    list;
-  GList   *lp;
-  gchar   *working_directory;
-  gchar  **argv;
-  gint     argc;
+  ThunarVfsPath *parent;
+  gboolean       result = TRUE;
+  GList          list;
+  GList         *lp;
+  gchar         *working_directory;
+  gchar        **argv;
+  gint           argc;
 
   g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -463,20 +463,10 @@ thunar_vfs_mime_application_exec_with_env (const ThunarVfsMimeApplication *appli
   if (G_UNLIKELY (screen == NULL))
     screen = gdk_screen_get_default ();
 
-  /* verify that either the application supports URIs or only local files are given */
-  if (G_LIKELY ((application->flags & THUNAR_VFS_MIME_APPLICATION_SUPPORTS_URIS) == 0))
-    for (lp = uris; lp != NULL; lp = lp->next)
-      if (thunar_vfs_uri_get_scheme (lp->data) != THUNAR_VFS_URI_SCHEME_FILE)
-        {
-          g_set_error (error, THUNAR_VFS_MIME_APPLICATION_ERROR, THUNAR_VFS_MIME_APPLICATION_ERROR_LOCAL_FILES_ONLY,
-                       _("The application \"%s\" supports only local documents."), application->name);
-          return FALSE;
-        }
-
   /* check whether the application can open multiple documents at once */
   if (G_LIKELY ((application->flags & THUNAR_VFS_MIME_APPLICATION_SUPPORTS_MULTI) == 0))
     {
-      for (lp = uris; lp != NULL; lp = lp->next)
+      for (lp = path_list; lp != NULL; lp = lp->next)
         {
           /* use a short list with only one entry */
           list.data = lp->data;
@@ -487,11 +477,13 @@ thunar_vfs_mime_application_exec_with_env (const ThunarVfsMimeApplication *appli
           if (!thunar_vfs_mime_application_get_argv (application, &list, &argc, &argv, error))
             return FALSE;
 
-          /* use the first URI's base directory as working directory for the application */
-          working_directory = g_path_get_dirname (thunar_vfs_uri_get_path (list.data));
+          /* use the paths base directory as working directory for the application */
+          parent = thunar_vfs_path_get_parent (list.data);
+          working_directory = (parent != NULL) ? thunar_vfs_path_dup_string (parent) : NULL;
 
           /* try to spawn the application */
-          result = gdk_spawn_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, error);
+          result = thunar_vfs_exec_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH,
+                                              application->flags & THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY, error);
 
           /* cleanup */
           g_free (working_directory);
@@ -505,14 +497,16 @@ thunar_vfs_mime_application_exec_with_env (const ThunarVfsMimeApplication *appli
   else
     {
       /* we can open all documents at once */
-      if (!thunar_vfs_mime_application_get_argv (application, uris, &argc, &argv, error))
+      if (!thunar_vfs_mime_application_get_argv (application, path_list, &argc, &argv, error))
         return FALSE;
 
-      /* use the first URI's base directory as working directory for the application */
-      working_directory = g_path_get_dirname (thunar_vfs_uri_get_path (uris->data));
+      /* use the first paths base directory as working directory for the application */
+      parent = (path_list != NULL) ? thunar_vfs_path_get_parent (path_list->data) : NULL;
+      working_directory = (parent != NULL) ? thunar_vfs_path_dup_string (parent) : NULL;
 
       /* try to spawn the application */
-      result = gdk_spawn_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, error);
+      result = thunar_vfs_exec_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH,
+                                          application->flags & THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY, error);
 
       /* cleanup */
       g_free (working_directory);

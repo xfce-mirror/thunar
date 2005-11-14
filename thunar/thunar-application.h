@@ -45,19 +45,32 @@ void               thunar_application_open_window   (ThunarApplication *applicat
                                                      ThunarFile        *directory,
                                                      GdkScreen         *screen);
 
-void               thunar_application_copy_uris     (ThunarApplication *application,
-                                                     GtkWindow         *window,
-                                                     GList             *source_uri_list,
-                                                     ThunarVfsURI      *target_uri);
+void               thunar_application_copy_into     (ThunarApplication *application,
+                                                     GtkWidget         *widget,
+                                                     GList             *source_path_list,
+                                                     ThunarVfsPath     *target_path,
+                                                     GClosure          *new_files_closure);
 
-void               thunar_application_move_uris     (ThunarApplication *application,
-                                                     GtkWindow         *window,
-                                                     GList             *source_uri_list,
-                                                     ThunarVfsURI      *target_uri);
+void               thunar_application_link_into     (ThunarApplication *application,
+                                                     GtkWidget         *widget,
+                                                     GList             *source_path_list,
+                                                     ThunarVfsPath     *target_path,
+                                                     GClosure          *new_files_closure);
 
-void               thunar_application_delete_uris   (ThunarApplication *application,
-                                                     GtkWindow         *window,
-                                                     GList             *uri_list);
+void               thunar_application_move_into     (ThunarApplication *application,
+                                                     GtkWidget         *widget,
+                                                     GList             *source_path_list,
+                                                     ThunarVfsPath     *target_path,
+                                                     GClosure          *new_files_closure);
+
+void               thunar_application_unlink        (ThunarApplication *application,
+                                                     GtkWidget         *widget,
+                                                     GList             *path_list);
+
+void               thunar_application_mkdir         (ThunarApplication *application,
+                                                     GtkWidget         *widget,
+                                                     GList             *path_list,
+                                                     GClosure          *new_files_closure);
 
 G_END_DECLS;
 

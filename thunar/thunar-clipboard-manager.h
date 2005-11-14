@@ -20,7 +20,7 @@
 #ifndef __THUNAR_CLIPBOARD_MANAGER_H__
 #define __THUNAR_CLIPBOARD_MANAGER_H__
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
 
@@ -40,13 +40,17 @@ ThunarClipboardManager *thunar_clipboard_manager_get_for_display (GdkDisplay    
 
 gboolean                thunar_clipboard_manager_get_can_paste   (ThunarClipboardManager *manager);
 
-void                    thunar_clipboard_manager_copy_uri_list   (ThunarClipboardManager *manager,
-                                                                  GList                  *uri_list);
-void                    thunar_clipboard_manager_cut_uri_list    (ThunarClipboardManager *manager,
-                                                                  GList                  *uri_list);
-void                    thunar_clipboard_manager_paste_uri_list  (ThunarClipboardManager *manager,
-                                                                  ThunarVfsURI           *target_uri,
-                                                                  GtkWindow              *window);
+gboolean                thunar_clipboard_manager_has_cutted_file (ThunarClipboardManager *manager,
+                                                                  const ThunarFile       *file);
+
+void                    thunar_clipboard_manager_copy_files      (ThunarClipboardManager *manager,
+                                                                  GList                  *files);
+void                    thunar_clipboard_manager_cut_files       (ThunarClipboardManager *manager,
+                                                                  GList                  *files);
+void                    thunar_clipboard_manager_paste_files     (ThunarClipboardManager *manager,
+                                                                  ThunarVfsPath          *target_path,
+                                                                  GtkWidget              *widget,
+                                                                  GClosure               *new_files_closure);
 
 G_END_DECLS;
 

@@ -18,14 +18,16 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#if !defined (THUNAR_VFS_INSIDE_THUNAR_VFS_H) && !defined (THUNAR_VFS_COMPILATION)
+#error "Only <thunar-vfs/thunar-vfs.h> can be included directly, this file may disappear or change contents."
+#endif
+
 #ifndef __THUNAR_VFS_INFO_H__
 #define __THUNAR_VFS_INFO_H__
 
-#include <gdk/gdk.h>
-
 #include <thunar-vfs/thunar-vfs-mime-info.h>
+#include <thunar-vfs/thunar-vfs-path.h>
 #include <thunar-vfs/thunar-vfs-types.h>
-#include <thunar-vfs/thunar-vfs-uri.h>
 
 G_BEGIN_DECLS;
 
@@ -37,7 +39,8 @@ G_BEGIN_DECLS;
  * The #ThunarVfsInfo structure provides information about a file system
  * entity.
  **/
-typedef struct
+typedef struct _ThunarVfsInfo ThunarVfsInfo;
+struct _ThunarVfsInfo
 {
   /* File type */
   ThunarVfsFileType type;
@@ -75,41 +78,116 @@ typedef struct
   /* file's mime type */
   ThunarVfsMimeInfo *mime_info;
 
-  /* file's URI */
-  ThunarVfsURI *uri;
+  /* file's absolute path */
+  ThunarVfsPath *path;
+
+  /* file's custom icon (path or themed icon name) */
+  gchar *custom_icon;
 
   /* file's display name (UTF-8) */
   gchar *display_name;
 
   /*< private >*/
-  gchar **hints;
-  gint    ref_count;
-} ThunarVfsInfo;
+  gint ref_count;
+};
 
-GType          thunar_vfs_info_get_type    (void) G_GNUC_CONST;
+GType                        thunar_vfs_info_get_type         (void) G_GNUC_CONST;
 
-ThunarVfsInfo *thunar_vfs_info_new_for_uri (ThunarVfsURI        *uri,
-                                            GError             **error) G_GNUC_MALLOC;
+ThunarVfsInfo               *thunar_vfs_info_new_for_path     (ThunarVfsPath       *path,
+                                                               GError             **error) G_GNUC_MALLOC;
 
-ThunarVfsInfo *thunar_vfs_info_ref         (ThunarVfsInfo       *info);
-void           thunar_vfs_info_unref       (ThunarVfsInfo       *info);
+G_INLINE_FUNC ThunarVfsInfo *thunar_vfs_info_ref              (ThunarVfsInfo       *info);
+void                         thunar_vfs_info_unref            (ThunarVfsInfo       *info);
 
-gboolean       thunar_vfs_info_execute     (const ThunarVfsInfo *info,
-                                            GdkScreen           *screen,
-                                            GList               *uris,
-                                            GError             **error);
+ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsInfo *info) G_GNUC_MALLOC;
 
-gboolean       thunar_vfs_info_rename      (ThunarVfsInfo       *info,
-                                            const gchar         *name,
-                                            GError             **error);
+G_INLINE_FUNC const gchar   *thunar_vfs_info_get_custom_icon  (const ThunarVfsInfo *info);
 
-const gchar   *thunar_vfs_info_get_hint    (const ThunarVfsInfo *info,
-                                            ThunarVfsFileHint    hint);
+gboolean                     thunar_vfs_info_execute          (const ThunarVfsInfo *info,
+                                                               GdkScreen           *screen,
+                                                               GList               *path_list,
+                                                               GError             **error);
 
-gboolean       thunar_vfs_info_matches     (const ThunarVfsInfo *a,
-                                            const ThunarVfsInfo *b);
+gboolean                     thunar_vfs_info_rename           (ThunarVfsInfo       *info,
+                                                               const gchar         *name,
+                                                               GError             **error);
 
-void           thunar_vfs_info_list_free   (GList               *info_list);
+gboolean                     thunar_vfs_info_matches          (const ThunarVfsInfo *a,
+                                                               const ThunarVfsInfo *b);
+
+G_INLINE_FUNC void           thunar_vfs_info_list_free        (GList               *info_list);
+
+
+/* inline functions implementations */
+#if defined(G_CAN_INLINE) || defined(__THUNAR_VFS_INFO_C__)
+/**
+ * thunar_vfs_info_ref:
+ * @info : a #ThunarVfsInfo.
+ *
+ * Increments the reference count on @info by 1 and
+ * returns a pointer to @info.
+ *
+ * Return value: a pointer to @info.
+ **/
+G_INLINE_FUNC ThunarVfsInfo*
+thunar_vfs_info_ref (ThunarVfsInfo *info)
+{
+  exo_atomic_inc (&info->ref_count);
+  return info;
+}
+
+/**
+ * thunar_vfs_info_get_custom_icon:
+ * @info : a #ThunarVfsInfo.
+ *
+ * Returns the custom icon for @info if there's
+ * a custom icon, else %NULL.
+ *
+ * The custom icon can be a themed icon name or
+ * an absolute path to an icon file in the local
+ * file system.
+ *
+ * Return value: the custom icon for @info or %NULL.
+ **/
+G_INLINE_FUNC const gchar*
+thunar_vfs_info_get_custom_icon (const ThunarVfsInfo *info)
+{
+  return info->custom_icon;
+}
+
+/**
+ * thunar_vfs_info_list_free:
+ * @info_list : a list #ThunarVfsInfo<!---->s.
+ *
+ * Unrefs all #ThunarVfsInfo<!---->s in @info_list and
+ * frees the list itself.
+ *
+ * This method always returns %NULL for the convenience of
+ * being able to do:
+ * <informalexample><programlisting>
+ * info_list = thunar_vfs_info_list_free (info_list);
+ * </programlisting></informalexample>
+ *
+ * Return value: the empty list (%NULL).
+ **/
+G_INLINE_FUNC void
+thunar_vfs_info_list_free (GList *info_list)
+{
+  GList *lp;
+  for (lp = info_list; lp != NULL; lp = lp->next)
+    thunar_vfs_info_unref (lp->data);
+  g_list_free (info_list);
+}
+#endif /* G_CAN_INLINE || __THUNAR_VFS_INFO_C__ */
+
+
+#if defined(THUNAR_VFS_COMPILATION)
+void           _thunar_vfs_info_init          (void) G_GNUC_INTERNAL;
+void           _thunar_vfs_info_shutdown      (void) G_GNUC_INTERNAL;
+ThunarVfsInfo *_thunar_vfs_info_new_internal  (ThunarVfsPath *path,
+                                               const gchar   *absolute_path,
+                                               GError       **error) G_GNUC_INTERNAL;
+#endif
 
 G_END_DECLS;
 

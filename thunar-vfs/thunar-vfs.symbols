@@ -39,10 +39,27 @@
 #if IN_SOURCE(__THUNAR_VFS_C__)
 thunar_vfs_init
 thunar_vfs_shutdown
-thunar_vfs_listdir
-thunar_vfs_copy
-thunar_vfs_move
-thunar_vfs_unlink
+thunar_vfs_listdir G_GNUC_MALLOC
+thunar_vfs_copy_file G_GNUC_MALLOC
+thunar_vfs_copy_files G_GNUC_MALLOC
+thunar_vfs_link_file G_GNUC_MALLOC
+thunar_vfs_link_files G_GNUC_MALLOC
+thunar_vfs_move_file G_GNUC_MALLOC
+thunar_vfs_move_files G_GNUC_MALLOC
+thunar_vfs_unlink_file G_GNUC_MALLOC
+thunar_vfs_unlink_files G_GNUC_MALLOC
+thunar_vfs_make_directory G_GNUC_MALLOC
+thunar_vfs_make_directories G_GNUC_MALLOC
+#endif
+#endif
+
+/* thunar-vfs-config symbols */
+#if IN_HEADER(__THUNAR_VFS_CONFIG_H__)
+#if IN_SOURCE(__THUNAR_VFS_CONFIG_C__)
+thunar_vfs_major_version
+thunar_vfs_minor_version
+thunar_vfs_micro_version
+thunar_vfs_check_version
 #endif
 #endif
 
@@ -50,14 +67,21 @@ thunar_vfs_unlink
 #if IN_HEADER(__THUNAR_VFS_INFO_H__)
 #if IN_SOURCE(__THUNAR_VFS_INFO_C__)
 thunar_vfs_info_get_type
-thunar_vfs_info_new_for_uri
+thunar_vfs_info_new_for_path G_GNUC_MALLOC
+#ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_info_ref
+#endif
 thunar_vfs_info_unref
+thunar_vfs_info_copy
+#ifdef INCLUDE_INTERNAL_SYMBOLS
+thunar_vfs_info_get_custom_icon
+#endif
 thunar_vfs_info_execute
 thunar_vfs_info_rename
-thunar_vfs_info_get_hint
 thunar_vfs_info_matches
+#ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_info_list_free
+#endif
 #endif
 #endif
 
@@ -65,13 +89,13 @@ thunar_vfs_info_list_free
 #if IN_HEADER(__THUNAR_VFS_ENUM_TYPES_H__)
 #if IN_SOURCE(__THUNAR_VFS_ENUM_TYPES_C__)
 thunar_vfs_file_flags_get_type G_GNUC_CONST
-thunar_vfs_file_hint_get_type G_GNUC_CONST
 thunar_vfs_file_mode_get_type G_GNUC_CONST
 thunar_vfs_file_type_get_type G_GNUC_CONST
 thunar_vfs_interactive_job_response_get_type G_GNUC_CONST
 thunar_vfs_mime_application_error_get_type G_GNUC_CONST
 thunar_vfs_mime_application_flags_get_type G_GNUC_CONST
 thunar_vfs_monitor_event_get_type G_GNUC_CONST
+thunar_vfs_thumb_size_get_type G_GNUC_CONST
 thunar_vfs_volume_kind_get_type G_GNUC_CONST
 thunar_vfs_volume_status_get_type G_GNUC_CONST
 #endif
@@ -90,7 +114,9 @@ thunar_vfs_interactive_job_get_type G_GNUC_CONST
 thunar_vfs_job_get_type G_GNUC_CONST
 thunar_vfs_job_launch
 thunar_vfs_job_cancel
+#ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_job_cancelled
+#endif
 #endif
 #endif
 
@@ -138,16 +164,22 @@ thunar_vfs_mime_database_add_application
 #if IN_SOURCE(__THUNAR_VFS_MIME_INFO_C__)
 thunar_vfs_mime_info_get_type G_GNUC_CONST
 thunar_vfs_mime_info_new G_GNUC_MALLOC
+#ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_mime_info_ref
+#endif
 thunar_vfs_mime_info_unref
-thunar_vfs_mime_info_get_comment G_GNUC_PURE
-thunar_vfs_mime_info_get_name G_GNUC_PURE
+thunar_vfs_mime_info_get_comment
+#ifdef INCLUDE_INTERNAL_SYMBOLS
+thunar_vfs_mime_info_get_name
+#endif
 thunar_vfs_mime_info_get_media G_GNUC_MALLOC
 thunar_vfs_mime_info_get_subtype G_GNUC_MALLOC
 thunar_vfs_mime_info_hash
 thunar_vfs_mime_info_equal
 thunar_vfs_mime_info_lookup_icon_name
+#ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_mime_info_list_free
+#endif
 #endif
 #endif
 
@@ -160,10 +192,46 @@ thunar_vfs_monitor_add_directory
 thunar_vfs_monitor_add_file
 thunar_vfs_monitor_remove
 thunar_vfs_monitor_feed
+thunar_vfs_monitor_wait
 #endif
 #endif
 
-/* thunar-vfs-thumb methods */
+/* ThunarVfsPath methods */
+#if IN_HEADER(__THUNAR_VFS_PATH_H__)
+#if IN_SOURCE(__THUNAR_VFS_PATH_C__)
+thunar_vfs_path_get_type G_GNUC_CONST
+thunar_vfs_path_new G_GNUC_MALLOC
+thunar_vfs_path_get_for_home
+thunar_vfs_path_get_for_root
+#ifdef INCLUDE_INTERNAL_SYMBOLS
+thunar_vfs_path_ref
+#endif
+thunar_vfs_path_unref
+thunar_vfs_path_hash
+thunar_vfs_path_equal
+thunar_vfs_path_relative G_GNUC_MALLOC
+thunar_vfs_path_is_home
+#ifdef INCLUDE_INTERNAL_SYMBOLS
+thunar_vfs_path_is_root
+thunar_vfs_path_get_name
+thunar_vfs_path_get_parent
+#endif
+thunar_vfs_path_dup_string G_GNUC_MALLOC
+thunar_vfs_path_to_string
+thunar_vfs_path_dup_uri G_GNUC_MALLOC
+thunar_vfs_path_to_uri
+thunar_vfs_path_list_from_string G_GNUC_MALLOC
+thunar_vfs_path_list_to_string G_GNUC_MALLOC
+#ifdef INCLUDE_INTERNAL_SYMBOLS
+thunar_vfs_path_list_append
+thunar_vfs_path_list_prepend
+thunar_vfs_path_list_copy G_GNUC_MALLOC
+thunar_vfs_path_list_free
+#endif
+#endif
+#endif
+
+/* ThunarVfsThumbFactory methods */
 #if IN_HEADER(__THUNAR_VFS_THUMB_H__)
 #if IN_SOURCE(__THUNAR_VFS_THUMB_C__)
 thunar_vfs_thumb_factory_get_type G_GNUC_CONST
@@ -173,58 +241,14 @@ thunar_vfs_thumb_factory_can_thumbnail
 thunar_vfs_thumb_factory_has_failed_thumbnail
 thunar_vfs_thumb_factory_generate_thumbnail G_GNUC_MALLOC
 thunar_vfs_thumb_factory_store_thumbnail
-thunar_vfs_thumb_path_for_uri G_GNUC_MALLOC
-thunar_vfs_thumb_path_is_valid
 #endif
 #endif
 
-/* ThunarVfsTrashInfo/ThunarVfsTrash/ThunarVfsTrashManager methods */
-#if IN_HEADER(__THUNAR_VFS_TRASH_H__)
-#if IN_SOURCE(__THUNAR_VFS_TRASH_C__)
-thunar_vfs_trash_info_get_type G_GNUC_CONST
-thunar_vfs_trash_info_copy G_GNUC_MALLOC
-thunar_vfs_trash_info_free
-thunar_vfs_trash_info_get_path
-thunar_vfs_trash_info_get_deletion_date
-thunar_vfs_trash_get_type G_GNUC_CONST
-thunar_vfs_trash_get_id
-thunar_vfs_trash_get_files
-thunar_vfs_trash_get_info
-thunar_vfs_trash_get_info_path
-thunar_vfs_trash_get_uri
-thunar_vfs_trash_get_path
-thunar_vfs_trash_manager_get_type G_GNUC_CONST
-thunar_vfs_trash_manager_get_default
-thunar_vfs_trash_manager_is_empty
-thunar_vfs_trash_manager_get_trashes
-thunar_vfs_trash_manager_resolve_uri
-#endif
-#endif
-
-/* ThunarVfsURI methods */
-#if IN_HEADER(__THUNAR_VFS_URI_H__)
-#if IN_SOURCE(__THUNAR_VFS_URI_C__)
-thunar_vfs_uri_get_type G_GNUC_CONST
-thunar_vfs_uri_new G_GNUC_MALLOC
-thunar_vfs_uri_new_for_path G_GNUC_MALLOC
-thunar_vfs_uri_ref
-thunar_vfs_uri_unref
-thunar_vfs_uri_is_home
-thunar_vfs_uri_is_root
-thunar_vfs_uri_get_display_name G_GNUC_MALLOC
-thunar_vfs_uri_get_md5sum G_GNUC_MALLOC
-thunar_vfs_uri_get_name
-thunar_vfs_uri_get_path
-thunar_vfs_uri_get_scheme
-thunar_vfs_uri_parent G_GNUC_MALLOC
-thunar_vfs_uri_relative G_GNUC_MALLOC
-thunar_vfs_uri_to_string G_GNUC_MALLOC
-thunar_vfs_uri_hash
-thunar_vfs_uri_equal
-thunar_vfs_uri_list_from_string G_GNUC_MALLOC
-thunar_vfs_uri_list_to_string G_GNUC_MALLOC
-thunar_vfs_uri_list_copy G_GNUC_MALLOC
-thunar_vfs_uri_list_free
+/* thunar-vfs-thumbnail functions */
+#if IN_HEADER(__THUNAR_VFS_THUMB_H__)
+#if IN_SOURCE(__THUNAR_VFS_THUMB_C__)
+thunar_vfs_thumbnail_for_path G_GNUC_MALLOC
+thunar_vfs_thumbnail_is_valid
 #endif
 #endif
 

@@ -21,7 +21,9 @@
 #ifndef __THUNAR_VFS_MIME_APPLICATION_H__
 #define __THUNAR_VFS_MIME_APPLICATION_H__
 
-#include <thunar-vfs/thunar-vfs-uri.h>
+#include <gdk/gdk.h>
+
+#include <thunar-vfs/thunar-vfs-path.h>
 
 G_BEGIN_DECLS;
 
@@ -41,7 +43,6 @@ GQuark thunar_vfs_mime_application_error_quark (void) G_GNUC_CONST;
  * @THUNAR_VFS_MIME_APPLICATION_REQUIRES_TERMINAL       : the application must be run in a terminal.
  * @THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY : the application supports startup notification.
  * @THUNAR_VFS_MIME_APPLICATION_SUPPORTS_MULTI          : the application supports opening multiple documents at once (%F or %U).
- * @THUNAR_VFS_MIME_APPLICATION_SUPPORTS_URIS           : the application supports opening documents by their URIs (%u or %U).
  *
  * Various flags associated with a #ThunarVfsMimeApplication.
  **/
@@ -51,7 +52,6 @@ typedef enum /*< flags >*/
   THUNAR_VFS_MIME_APPLICATION_REQUIRES_TERMINAL       = (1 << 1L),
   THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY = (1 << 2L),
   THUNAR_VFS_MIME_APPLICATION_SUPPORTS_MULTI          = (1 << 3L),
-  THUNAR_VFS_MIME_APPLICATION_SUPPORTS_URIS           = (1 << 4L),
 } ThunarVfsMimeApplicationFlags;
 
 
@@ -76,11 +76,11 @@ const gchar * const          *thunar_vfs_mime_application_get_mime_types      (c
 
 gboolean                      thunar_vfs_mime_application_exec                (const ThunarVfsMimeApplication *application,
                                                                                GdkScreen                      *screen,
-                                                                               GList                          *uris,
+                                                                               GList                          *path_list,
                                                                                GError                        **error);
 gboolean                      thunar_vfs_mime_application_exec_with_env       (const ThunarVfsMimeApplication *application,
                                                                                GdkScreen                      *screen,
-                                                                               GList                          *uris,
+                                                                               GList                          *path_list,
                                                                                gchar                         **envp,
                                                                                GError                        **error);
 

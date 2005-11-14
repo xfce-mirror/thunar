@@ -18,10 +18,15 @@
  * Boston, MA 02111-1307, USA.
  */
 
+#if !defined (THUNAR_VFS_INSIDE_THUNAR_VFS_H) && !defined (THUNAR_VFS_COMPILATION)
+#error "Only <thunar-vfs/thunar-vfs.h> can be included directly, this file may disappear or change contents."
+#endif
+
 #ifndef __THUNAR_VFS_THUMB_H__
 #define __THUNAR_VFS_THUMB_H__
 
 #include <thunar-vfs/thunar-vfs-info.h>
+#include <thunar-vfs/thunar-vfs-job.h>
 
 G_BEGIN_DECLS;
 
@@ -53,34 +58,28 @@ GType                  thunar_vfs_thumb_factory_get_type              (void) G_G
 ThunarVfsThumbFactory *thunar_vfs_thumb_factory_new                   (ThunarVfsThumbSize       size) G_GNUC_MALLOC;
 
 gchar                 *thunar_vfs_thumb_factory_lookup_thumbnail      (ThunarVfsThumbFactory   *factory,
-                                                                       const ThunarVfsURI      *uri,
-                                                                       ThunarVfsFileTime        mtime) G_GNUC_MALLOC;
+                                                                       const ThunarVfsInfo     *info) G_GNUC_MALLOC;
 
 gboolean               thunar_vfs_thumb_factory_can_thumbnail         (ThunarVfsThumbFactory   *factory,
-                                                                       const ThunarVfsURI      *uri,
-                                                                       const ThunarVfsMimeInfo *mime_info,
-                                                                       ThunarVfsFileTime        mtime);
+                                                                       const ThunarVfsInfo     *info);
 
 gboolean               thunar_vfs_thumb_factory_has_failed_thumbnail  (ThunarVfsThumbFactory   *factory,
-                                                                       const ThunarVfsURI      *uri,
-                                                                       ThunarVfsFileTime        mtime);
+                                                                       const ThunarVfsInfo     *info);
 
 GdkPixbuf             *thunar_vfs_thumb_factory_generate_thumbnail    (ThunarVfsThumbFactory   *factory,
-                                                                       const ThunarVfsURI      *uri,
-                                                                       const ThunarVfsMimeInfo *mime_info) G_GNUC_MALLOC;
+                                                                       const ThunarVfsInfo     *info) G_GNUC_MALLOC;
 
 gboolean               thunar_vfs_thumb_factory_store_thumbnail       (ThunarVfsThumbFactory   *factory,
                                                                        const GdkPixbuf         *pixbuf,
-                                                                       const ThunarVfsURI      *uri,
-                                                                       ThunarVfsFileTime        mtime,
+                                                                       const ThunarVfsInfo     *info,
                                                                        GError                 **error);
 
 
-gchar    *thunar_vfs_thumb_path_for_uri   (const ThunarVfsURI *uri,
-                                           ThunarVfsThumbSize  size) G_GNUC_MALLOC;
-gboolean  thunar_vfs_thumb_path_is_valid  (const gchar        *thumb_path,
-                                           const ThunarVfsURI *uri,
-                                           ThunarVfsFileTime   mtime);
+gchar   *thunar_vfs_thumbnail_for_path  (const ThunarVfsPath *path,
+                                         ThunarVfsThumbSize   size) G_GNUC_MALLOC;
+gboolean thunar_vfs_thumbnail_is_valid  (const gchar         *thumbnail,
+                                         const gchar         *uri,
+                                         ThunarVfsFileTime    mtime);
 
 G_END_DECLS;
 

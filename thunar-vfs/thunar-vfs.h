@@ -21,6 +21,8 @@
 #ifndef __THUNAR_VFS_H__
 #define __THUNAR_VFS_H__
 
+#define THUNAR_VFS_INSIDE_THUNAR_VFS_H
+
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
@@ -29,31 +31,52 @@
 #include <thunar-vfs/thunar-vfs-mime-database.h>
 #include <thunar-vfs/thunar-vfs-mime-info.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-path.h>
 #include <thunar-vfs/thunar-vfs-thumb.h>
-#include <thunar-vfs/thunar-vfs-trash.h>
-#include <thunar-vfs/thunar-vfs-uri.h>
 #include <thunar-vfs/thunar-vfs-user.h>
 #include <thunar-vfs/thunar-vfs-util.h>
 #include <thunar-vfs/thunar-vfs-volume.h>
 
+#undef THUNAR_VFS_INSIDE_THUNAR_VFS_H
+
 G_BEGIN_DECLS;
 
-void          thunar_vfs_init     (void);
-void          thunar_vfs_shutdown (void);
+void          thunar_vfs_init             (void);
+void          thunar_vfs_shutdown         (void);
 
-ThunarVfsJob *thunar_vfs_listdir  (ThunarVfsURI *uri,
-                                   GError      **error);
+ThunarVfsJob *thunar_vfs_listdir          (ThunarVfsPath *path,
+                                           GError       **error) G_GNUC_MALLOC;
 
-ThunarVfsJob *thunar_vfs_copy     (GList        *source_uri_list,
-                                   ThunarVfsURI *target_uri,
-                                   GError      **error);
+ThunarVfsJob *thunar_vfs_copy_file        (ThunarVfsPath *source_path,
+                                           ThunarVfsPath *target_path,
+                                           GError       **error) G_GNUC_MALLOC;
+ThunarVfsJob *thunar_vfs_copy_files       (GList         *source_path_list,
+                                           GList         *target_path_list,
+                                           GError       **error) G_GNUC_MALLOC;
 
-ThunarVfsJob *thunar_vfs_move     (GList        *source_uri_list,
-                                   ThunarVfsURI *target_uri,
-                                   GError      **error);
+ThunarVfsJob *thunar_vfs_link_file        (ThunarVfsPath *source_path,
+                                           ThunarVfsPath *target_path,
+                                           GError       **error) G_GNUC_MALLOC;
+ThunarVfsJob *thunar_vfs_link_files       (GList         *source_path_list,
+                                           GList         *target_path_list,
+                                           GError       **error) G_GNUC_MALLOC;
 
-ThunarVfsJob *thunar_vfs_unlink   (GList        *uri_list,
-                                   GError      **error);
+ThunarVfsJob *thunar_vfs_move_file        (ThunarVfsPath *source_path,
+                                           ThunarVfsPath *target_path,
+                                           GError       **error) G_GNUC_MALLOC;
+ThunarVfsJob *thunar_vfs_move_files       (GList         *source_path_list,
+                                           GList         *target_path_list,
+                                           GError       **error) G_GNUC_MALLOC;
+
+ThunarVfsJob *thunar_vfs_unlink_file      (ThunarVfsPath *path,
+                                           GError       **error) G_GNUC_MALLOC;
+ThunarVfsJob *thunar_vfs_unlink_files     (GList         *path_list,
+                                           GError       **error) G_GNUC_MALLOC;
+
+ThunarVfsJob *thunar_vfs_make_directory   (ThunarVfsPath *path,
+                                           GError       **error) G_GNUC_MALLOC;
+ThunarVfsJob *thunar_vfs_make_directories (GList         *path_list,
+                                           GError       **error) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

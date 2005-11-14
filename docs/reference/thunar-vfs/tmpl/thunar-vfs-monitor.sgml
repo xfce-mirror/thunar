@@ -46,9 +46,12 @@ ThunarVfsMonitor
 @monitor: 
 @handle: 
 @event: 
+@handle_path: 
+@event_path: 
+@user_data: 
+<!-- # Unused Parameters # -->
 @handle_uri: 
 @event_uri: 
-@user_data: 
 
 
 <!-- ##### FUNCTION thunar_vfs_monitor_get_default ##### -->
@@ -65,10 +68,12 @@ ThunarVfsMonitor
 </para>
 
 @monitor: 
-@uri: 
+@path: 
 @callback: 
 @user_data: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@uri: 
 
 
 <!-- ##### FUNCTION thunar_vfs_monitor_add_file ##### -->
@@ -77,10 +82,12 @@ ThunarVfsMonitor
 </para>
 
 @monitor: 
-@uri: 
+@path: 
 @callback: 
 @user_data: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@uri: 
 
 
 <!-- ##### FUNCTION thunar_vfs_monitor_remove ##### -->
@@ -99,6 +106,16 @@ ThunarVfsMonitor
 
 @monitor: 
 @event: 
+@path: 
+<!-- # Unused Parameters # -->
 @uri: 
+
+
+<!-- ##### FUNCTION thunar_vfs_monitor_wait ##### -->
+<para>
+
+</para>
+
+@monitor: 
 
 

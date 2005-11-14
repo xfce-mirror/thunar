@@ -1,9 +1,12 @@
 Important for Thunar 1.0
 ========================
 
- - When copy&paste in the same folder, adopt Nautilus' behaviour of
-   automatically creating a copy of the original file, guessing names
-   automatically.
+ - Add ThunarVfsFlags, which specifies various flags for the job starters
+   (like thunar_vfs_copy_files, etc.). One important flag would be
+   THUNAR_VFS_FLAG_ERROR_ON_OVERWRITE, which tells the job not to ask the
+   user when the target exists, but to fail directly (the flags could also
+   be part of thunar-vfs-interactive-job.h, as they're only interesting
+   for interactive jobs).
 
  - We need a way to "refresh" folders after a "Cut"-operation with Nautilus.
    With local folders - with not many files inside - the move is too fast!

@@ -75,6 +75,8 @@ ThunarFile      *thunar_list_model_get_file               (ThunarListModel  *sto
 
 gint             thunar_list_model_get_num_files          (ThunarListModel  *store);
 
+GList           *thunar_list_model_get_paths_for_files    (ThunarListModel  *store,
+                                                           GList            *files);
 GList           *thunar_list_model_get_paths_for_pattern  (ThunarListModel  *store,
                                                            const gchar      *pattern);
 

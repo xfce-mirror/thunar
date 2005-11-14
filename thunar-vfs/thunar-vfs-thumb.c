@@ -22,8 +22,18 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+#ifdef HAVE_SYS_WAIT_H
+#include <sys/wait.h>
+#endif
+
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
+#endif
+#ifdef HAVE_FCNTL_H
+#include <fcntl.h>
 #endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
@@ -43,13 +53,19 @@
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-thumb-jpeg.h>
 #include <thunar-vfs/thunar-vfs-thumb.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
+
+#ifdef HAVE_GCONF
+#include <gconf/gconf-client.h>
+#endif
 
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
 #else
 #define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
+#define g_unlink(filename) (unlink ((filename)))
 #endif
 
 
@@ -86,12 +102,18 @@ struct _ThunarVfsThumbFactory
   GObject __parent__;
 
   ThunarVfsMimeDatabase *mime_database;
+  ThunarVfsMimeInfo     *mime_image_jpeg;
 
   GHashTable            *pixbuf_mime_infos;
 
   gchar                 *base_path;
   gchar                 *fail_path;
   ThunarVfsThumbSize     size;
+
+#ifdef HAVE_GCONF
+  GConfClient           *client;
+  GHashTable            *scripts;
+#endif
 };
 
 
@@ -140,6 +162,9 @@ thunar_vfs_thumb_factory_init (ThunarVfsThumbFactory *factory)
   /* take a reference on the mime database */
   factory->mime_database = thunar_vfs_mime_database_get_default ();
 
+  /* take a reference on the image/jpeg mime info */
+  factory->mime_image_jpeg = thunar_vfs_mime_database_get_info (factory->mime_database, "image/jpeg");
+
   /* pre-allocate the failed path, so we don't need to do that on every method call */
   factory->fail_path = g_strconcat (xfce_get_homedir (),
                                     G_DIR_SEPARATOR_S ".thumbnails"
@@ -167,6 +192,65 @@ thunar_vfs_thumb_factory_init (ThunarVfsThumbFactory *factory)
         g_strfreev (mime_types);
       }
   g_slist_free (formats);
+
+#ifdef HAVE_GCONF
+  /* grab a reference on the default GConf client */
+  factory->client = gconf_client_get_default ();
+
+  /* allocate the hash table for the GNOME thumbnailer scripts */
+  factory->scripts = g_hash_table_new_full (g_direct_hash, g_direct_equal, (GDestroyNotify) thunar_vfs_mime_info_unref, g_free);
+
+  /* check if the GNOME thumbnailers are enabled */
+  if (!gconf_client_get_bool (factory->client, "/desktop/gnome/thumbnailers/disable_all", NULL))
+    {
+      /* determine the MIME types supported by the GNOME thumbnailers */
+      formats = gconf_client_all_dirs (factory->client, "/desktop/gnome/thumbnailers", NULL);
+      for (lp = formats; lp != NULL; lp = lp->next)
+        {
+          gchar *mime_type;
+          gchar *script;
+          gchar *format = lp->data;
+          gchar  key[1024];
+
+          /* check if the given thumbnailer is enabled */
+          g_snprintf (key, sizeof (key), "%s/enable", format);
+          if (gconf_client_get_bool (factory->client, key, NULL))
+            {
+              /* determine the command */
+              g_snprintf (key, sizeof (key), "%s/command", format);
+              script = gconf_client_get_string (factory->client, key, NULL);
+              if (G_LIKELY (script != NULL))
+                {
+                  mime_type = strrchr (format, '/');
+                  if (G_LIKELY (mime_type != NULL))
+                    {
+                      /* skip past slash */
+                      ++mime_type;
+
+                      /* convert '@' to slash in the mime_type */
+                      for (n = 0; mime_type[n] != '\0'; ++n)
+                        if (G_UNLIKELY (mime_type[n] == '@'))
+                          mime_type[n] = '/';
+
+                      /* determine the mime info for the given mime_type */
+                      mime_info = thunar_vfs_mime_database_get_info (factory->mime_database, mime_type);
+                      if (G_LIKELY (mime_info != NULL))
+                        {
+                          g_hash_table_replace (factory->scripts, mime_info, script);
+                          script = NULL;
+                        }
+                    }
+                }
+
+              g_free (script);
+            }
+
+          g_free (format);
+        }
+
+      g_slist_free (formats);
+    }
+#endif
 }
 
 
@@ -175,6 +259,17 @@ static void
 thunar_vfs_thumb_factory_finalize (GObject *object)
 {
   ThunarVfsThumbFactory *factory = THUNAR_VFS_THUMB_FACTORY (object);
+
+#ifdef HAVE_GCONF
+  /* disconnect from the GConf client */
+  g_object_unref (G_OBJECT (factory->client));
+
+  /* release the scripts hash table */
+  g_hash_table_destroy (factory->scripts);
+#endif
+
+  /* release the image/jpeg mime info */
+  thunar_vfs_mime_info_unref (factory->mime_image_jpeg);
 
   /* release the reference on the mime database */
   g_object_unref (G_OBJECT (factory->mime_database));
@@ -250,6 +345,9 @@ thunar_vfs_thumb_factory_set_property (GObject      *object,
  * Allocates a new #ThunarVfsThumbFactory, that is able to
  * load and store thumbnails in the given @size.
  *
+ * The caller is responsible to free the returned object
+ * using g_object_unref() when no longer needed.
+ *
  * Return value: the newly allocated #ThunarVfsThumbFactory.
  **/
 ThunarVfsThumbFactory*
@@ -263,38 +361,42 @@ thunar_vfs_thumb_factory_new (ThunarVfsThumbSize size)
 /**
  * thunar_vfs_thumb_factory_lookup:
  * @factory : a #ThunarVfsThumbFactory.
- * @uri     : the #ThunarVfsURI to the original file.
- * @mtime   : the last known modification time of the original file.
+ * @info    : the #ThunarVfsInfo of the original file.
  *
- * Looks up the path to a thumbnail for @uri in @factory and returns
+ * Looks up the path to a thumbnail for @info in @factory and returns
  * the absolute path to the thumbnail file if a valid thumbnail is
  * found. Else %NULL is returned.
  *
  * The usage of this method is thread-safe.
  *
- * Return value: the path to a valid thumbnail for @uri in @factory
+ * Return value: the path to a valid thumbnail for @info in @factory
  *               or %NULL if no valid thumbnail was found.
  **/
 gchar*
 thunar_vfs_thumb_factory_lookup_thumbnail (ThunarVfsThumbFactory *factory,
-                                           const ThunarVfsURI    *uri,
-                                           ThunarVfsFileTime      mtime)
+                                           const ThunarVfsInfo   *info)
 {
+  gchar  uri[THUNAR_VFS_PATH_MAXURILEN];
   gchar *path;
   gchar *md5;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), NULL);
+  g_return_val_if_fail (info != NULL, NULL);
+
+  /* determine the URI for the path */
+  if (thunar_vfs_path_to_uri (info->path, uri, sizeof (uri), NULL) < 0)
+    return FALSE;
 
   /* determine the path to the thumbnail for the factory */
-  md5 = thunar_vfs_uri_get_md5sum (uri);
+  md5 = exo_str_get_md5_str (uri);
   path = g_strconcat (factory->base_path, md5, ".png", NULL);
   g_free (md5);
 
   /* check if the path contains a valid thumbnail */
-  if (thunar_vfs_thumb_path_is_valid (path, uri, mtime))
+  if (thunar_vfs_thumbnail_is_valid (path, uri, info->mtime))
     return path;
 
-  /* no valid thumbnail */
+  /* no valid thumbnail in the global repository */
   g_free (path);
 
   return NULL;
@@ -304,40 +406,47 @@ thunar_vfs_thumb_factory_lookup_thumbnail (ThunarVfsThumbFactory *factory,
 
 /**
  * thunar_vfs_thumb_factory_can_thumbnail:
- * @factory   : a #ThunarVfsThumbFactory.
- * @uri       : the #ThunarVfsURI to a file.
- * @mime_info : the #ThunarVfsMimeInfo of the file referred to by @uri.
- * @mtime     : the modification time of the file referred to by @uri.
+ * @factory : a #ThunarVfsThumbFactory.
+ * @info    : the #ThunarVfsInfo of a file.
  *
  * Checks if @factory can generate a thumbnail for
- * the file specified by @uri, which is of type
- * @mime_info.
+ * the file specified by @info.
  *
  * The usage of this method is thread-safe.
  *
- * Return value: %TRUE if @factory can generate a thumbnail for @uri.
+ * Return value: %TRUE if @factory can generate a thumbnail for @info.
  **/
 gboolean
-thunar_vfs_thumb_factory_can_thumbnail (ThunarVfsThumbFactory   *factory,
-                                        const ThunarVfsURI      *uri,
-                                        const ThunarVfsMimeInfo *mime_info,
-                                        ThunarVfsFileTime        mtime)
+thunar_vfs_thumb_factory_can_thumbnail (ThunarVfsThumbFactory *factory,
+                                        const ThunarVfsInfo   *info)
 {
-  g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
+  ThunarVfsPath *path;
+  const gchar   *name;
 
-  /* we support only local files for thumbnail generation */
-  if (G_UNLIKELY (thunar_vfs_uri_get_scheme (uri) != THUNAR_VFS_URI_SCHEME_FILE))
+  g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
+  g_return_val_if_fail (info != NULL, FALSE);
+
+  /* we can only handle thumbnails for regular files */
+  if (G_UNLIKELY (info->type != THUNAR_VFS_FILE_TYPE_REGULAR))
     return FALSE;
 
   /* we really don't want to generate a thumbnail for a thumbnail */
-  if (G_UNLIKELY (strstr (thunar_vfs_uri_get_path (uri), G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S) != NULL))
-    return FALSE;
+  for (path = info->path; path != NULL; path = thunar_vfs_path_get_parent (path))
+    {
+      name = thunar_vfs_path_get_name (path);
+      if (strcmp (name, ".thumbnails") == 0 || strcmp (name, ".thumblocal") == 0)
+        return FALSE;
+    }
 
   /* check GdkPixbuf supports the given mime info */
-  if (g_hash_table_lookup (factory->pixbuf_mime_infos, mime_info))
-    {
-      return !thunar_vfs_thumb_factory_has_failed_thumbnail (factory, uri, mtime);
-    }
+  if (g_hash_table_lookup (factory->pixbuf_mime_infos, info->mime_info))
+    return !thunar_vfs_thumb_factory_has_failed_thumbnail (factory, info);
+
+#ifdef HAVE_GCONF
+  /* check if we have a GNOME thumbnailer for the given mime info */
+  if (g_hash_table_lookup (factory->scripts, info->mime_info) != NULL)
+    return !thunar_vfs_thumb_factory_has_failed_thumbnail (factory, info);
+#endif
 
   return FALSE;
 }
@@ -347,45 +456,154 @@ thunar_vfs_thumb_factory_can_thumbnail (ThunarVfsThumbFactory   *factory,
 /**
  * thunar_vfs_thumb_factory_has_failed_thumbnail:
  * @factory : a #ThunarVfsThumbFactory.
- * @uri     : the #ThunarVfsURI to a file.
- * @mtime   : the modification time of the file referred to by @uri.
+ * @info    : the #ThunarVfsInfo of a file.
  *
  * Checks whether we know that @factory won't be able to generate
- * a thumbnail for the file referred to by @uri, whose modification
- * time is @mtime.
+ * a thumbnail for the file referred to by @info.
  *
  * The usage of this method is thread-safe.
  *
  * Return value: %TRUE if @factory knows that it cannot generate
- *               a thumbnail for @uri, else %TRUE.
+ *               a thumbnail for @info, else %TRUE.
  **/
 gboolean
 thunar_vfs_thumb_factory_has_failed_thumbnail (ThunarVfsThumbFactory *factory,
-                                               const ThunarVfsURI    *uri,
-                                               ThunarVfsFileTime      mtime)
+                                               const ThunarVfsInfo   *info)
 {
+  gchar  uri[THUNAR_VFS_PATH_MAXURILEN];
   gchar  path[4096];
   gchar *md5;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
+  g_return_val_if_fail (info != NULL, FALSE);
 
-  md5 = thunar_vfs_uri_get_md5sum (uri);
+  /* determine the URI of the info */
+  if (thunar_vfs_path_to_uri (info->path, uri, sizeof (uri), NULL) < 0)
+    return FALSE;
+
+  /* determine the path to the thumbnail */
+  md5 = exo_str_get_md5_str (uri);
   g_snprintf (path, sizeof (path), "%s%s.png", factory->fail_path, md5);
   g_free (md5);
 
-  return thunar_vfs_thumb_path_is_valid (path, uri, mtime);
+  return thunar_vfs_thumbnail_is_valid (path, uri, info->mtime);
 }
+
+
+
+#ifdef HAVE_GCONF
+static gchar*
+gnome_thumbnailer_script_expand (const gchar *script,
+                                 const gchar *ipath,
+                                 const gchar *opath,
+                                 gint         size)
+{
+  const gchar *p;
+  GString     *s;
+  gchar       *quoted;
+  gchar       *uri;
+
+  s = g_string_new (NULL);
+  for (p = script; *p != '\0'; ++p)
+    {
+      if (G_LIKELY (*p != '%'))
+        {
+          g_string_append_c (s, *p);
+          continue;
+        }
+
+      switch (*++p)
+        {
+        case 'u':
+          uri = g_filename_to_uri (ipath, NULL, NULL);
+          if (G_LIKELY (uri != NULL))
+            {
+              quoted = g_shell_quote (uri);
+              g_string_append (s, quoted);
+              g_free (quoted);
+              g_free (uri);
+            }
+          break;
+
+        case 'i':
+          quoted = g_shell_quote (ipath);
+          g_string_append (s, quoted);
+          g_free (quoted);
+          break;
+
+        case 'o':
+          quoted = g_shell_quote (opath);
+          g_string_append (s, quoted);
+          g_free (quoted);
+          break;
+
+        case 's':
+          g_string_append_printf (s, "%d", size);
+          break;
+
+        case '%':
+          g_string_append_c (s, '%');
+          break;
+
+        case '\0':
+          --p;
+          break;
+
+        default:
+          break;
+        }
+    }
+  return g_string_free (s, FALSE);
+}
+
+static GdkPixbuf*
+gnome_thumbnailer_script_run (const gchar *script,
+                              const gchar *path,
+                              gint         size)
+{
+  GdkPixbuf *pixbuf = NULL;
+  gchar     *tmp_path;
+  gchar     *command;
+  gint       status;
+  gint       fd;
+
+  /* create a temporary file for the thumbnailer */
+  fd = g_file_open_tmp (".thunar-vfs-thumbnail.XXXXXX", &tmp_path, NULL);
+  if (G_UNLIKELY (fd < 0))
+    return NULL;
+
+  /* determine the command for the script */
+  command = gnome_thumbnailer_script_expand (script, path, tmp_path, size);
+  if (G_LIKELY (command != NULL))
+    {
+      /* run the thumbnailer script and load the generated file */
+      if (g_spawn_command_line_sync (command, NULL, NULL, &status, NULL) && WIFEXITED (status) && WEXITSTATUS (status) == 0)
+        pixbuf = gdk_pixbuf_new_from_file (tmp_path, NULL);
+    }
+
+  /* unlink the temporary file */
+  g_unlink (tmp_path);
+
+  /* close the temporary file */
+  close (fd);
+
+  /* cleanup */
+  g_free (tmp_path);
+  g_free (command);
+
+  return pixbuf;
+}
+#endif
 
 
 
 /**
  * thunar_vfs_thumb_factory_generate_thumbnail:
- * @factory   : a #ThunarVfsThumbFactory.
- * @uri       : the #ThunarVfsURI to the file for which a thumbnail
- *              should be generated.
- * @mime_info : the #ThunarVfsMimeInfo for the file referred to by @uri.
+ * @factory : a #ThunarVfsThumbFactory.
+ * @info    : the #ThunarVfsInfo of the file for which a thumbnail
+ *            should be generated.
  *
- * Tries to generate a thumbnail for the file referred to by @uri in
+ * Tries to generate a thumbnail for the file referred to by @info in
  * @factory.
  *
  * The caller is responsible to free the returned #GdkPixbuf using
@@ -396,35 +614,51 @@ thunar_vfs_thumb_factory_has_failed_thumbnail (ThunarVfsThumbFactory *factory,
  * Return value: the thumbnail for the @uri or %NULL.
  **/
 GdkPixbuf*
-thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory   *factory,
-                                             const ThunarVfsURI      *uri,
-                                             const ThunarVfsMimeInfo *mime_info)
+thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory *factory,
+                                             const ThunarVfsInfo   *info)
 {
-  GdkPixbuf *pixbuf;
+  GdkPixbuf *pixbuf = NULL;
   GdkPixbuf *scaled;
+#ifdef HAVE_GCONF
+  gchar     *script;
+#endif
+  gchar     *path;
   gint       size;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), NULL);
-
-  /* we can only generate thumbnails for local files */
-  if (G_UNLIKELY (thunar_vfs_uri_get_scheme (uri) != THUNAR_VFS_URI_SCHEME_FILE))
-    return NULL;
+  g_return_val_if_fail (info != NULL, NULL);
 
   /* determine the pixel size of the thumbnail */
   size = G_LIKELY (factory->size == THUNAR_VFS_THUMB_SIZE_NORMAL) ? 128 : 256;
 
-  /* try to load the original image using GdkPixbuf */
-  pixbuf = gdk_pixbuf_new_from_file (thunar_vfs_uri_get_path (uri), NULL);
-  if (G_UNLIKELY (pixbuf == NULL))
-    return NULL;
+  /* determine the absolute path to the file */
+  path = thunar_vfs_path_dup_string (info->path);
+
+#ifdef HAVE_GCONF
+  /* check if we have a GNOME thumbnailer for the given mime info */
+  script = g_hash_table_lookup (factory->scripts, info->mime_info);
+  if (G_UNLIKELY (script != NULL))
+    pixbuf = gnome_thumbnailer_script_run (script, path, size);
+#endif
+
+  /* try the fast JPEG thumbnailer */
+  if (G_LIKELY (pixbuf == NULL && info->mime_info == factory->mime_image_jpeg))
+    pixbuf = thunar_vfs_thumb_jpeg_load (path, size);
+
+  /* fallback to GdkPixbuf based loading */
+  if (G_LIKELY (pixbuf == NULL))
+    pixbuf = gdk_pixbuf_new_from_file (path, NULL);
 
   /* check if we need to scale the image */
-  if (gdk_pixbuf_get_width (pixbuf) > size || gdk_pixbuf_get_height (pixbuf) > size)
+  if (pixbuf != NULL && (gdk_pixbuf_get_width (pixbuf) > size || gdk_pixbuf_get_height (pixbuf) > size))
     {
       scaled = exo_gdk_pixbuf_scale_ratio (pixbuf, size);
       g_object_unref (G_OBJECT (pixbuf));
       pixbuf = scaled;
     }
+
+  /* cleanup */
+  g_free (path);
 
   return pixbuf;
 }
@@ -436,15 +670,14 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory   *factory,
  * @factory : a #ThunarVfsThumbFactory.
  * @pixbuf  : the thumbnail #GdkPixbuf to store or %NULL
  *            to remember the thumbnail for @uri as failed.
- * @uri     : the #ThunarVfsURI of the original file.
- * @mtime   : the last known modification time of the original file.
+ * @info    : the #ThunarVfsInfo of the original file.
  * @error   : return location for errors or %NULL.
  *
- * Stores @pixbuf as thumbnail for @uri in the right place, according
+ * Stores @pixbuf as thumbnail for @info in the right place, according
  * to the size set for @factory.
  *
  * If you specify %NULL for @pixbuf, the @factory will remember that
- * the thumbnail generation for @uri failed.
+ * the thumbnail generation for @info failed.
  *
  * The usage of this method is thread-safe.
  *
@@ -454,33 +687,37 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory   *factory,
 gboolean
 thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
                                           const GdkPixbuf       *pixbuf,
-                                          const ThunarVfsURI    *uri,
-                                          ThunarVfsFileTime      mtime,
+                                          const ThunarVfsInfo   *info,
                                           GError               **error)
 {
   const gchar *base_path;
   GdkPixbuf   *thumbnail;
   gboolean     succeed;
-  gchar       *mtime_string;
-  gchar       *uri_string;
   gchar       *dst_path;
   gchar       *tmp_path;
+  gchar       *mtime;
+  gchar       *size;
   gchar       *md5;
+  gchar       *uri;
   gint         tmp_fd;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
-  g_return_val_if_fail (GDK_IS_PIXBUF (pixbuf), FALSE);
+  g_return_val_if_fail (pixbuf == NULL || GDK_IS_PIXBUF (pixbuf), FALSE);
+  g_return_val_if_fail (info != NULL, FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* check whether we should save a thumbnail or remember failed generation */
-  base_path = (pixbuf != NULL) ? factory->base_path : factory->fail_path;
+  base_path = G_LIKELY (pixbuf != NULL) ? factory->base_path : factory->fail_path;
 
   /* verify that the target directory exists */
   if (!xfce_mkdirhier (base_path, 0700, error))
     return FALSE;
 
+  /* determine the URI of the file */
+  uri = thunar_vfs_path_dup_uri (info->path);
+
   /* determine the MD5 sum for the URI */
-  md5 = thunar_vfs_uri_get_md5sum (uri);
+  md5 = exo_str_get_md5_str (uri);
 
   /* try to open a temporary file to write the thumbnail to */
   tmp_path = g_strconcat (base_path, md5, ".png.XXXXXX", NULL);
@@ -488,8 +725,8 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
   if (G_UNLIKELY (tmp_fd < 0))
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
-      g_free (tmp_path);
       g_free (md5);
+      g_free (uri);
       return FALSE;
     }
 
@@ -501,14 +738,16 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
   /* generate a 1x1 image if we're storing a failure */
   thumbnail = (pixbuf != NULL) ? GDK_PIXBUF (pixbuf) : gdk_pixbuf_new (GDK_COLORSPACE_RGB, TRUE, 8, 1, 1);
 
-  /* convert the thumbnail settings to strings */
-  mtime_string = g_strdup_printf ("%lu", (gulong) mtime);
-  uri_string = thunar_vfs_uri_to_string (uri);
+  /* determine string representations for the modification time and size */
+  mtime = g_strdup_printf ("%lu", (gulong) info->mtime);
+  size = g_strdup_printf ("%" G_GUINT64_FORMAT, (guint64) info->size);
 
   /* write the thumbnail to the temporary location */
   succeed = gdk_pixbuf_save (thumbnail, tmp_path, "png", error,
-                             "tEXt::Thumb::URI", uri_string,
-                             "tEXt::Thumb::MTime", mtime_string,
+                             "tEXt::Thumb::URI", uri,
+                             "tEXt::Thumb::Size", size,
+                             "tEXt::Thumb::MTime", mtime,
+                             "tEXt::Thumb::Mimetype", thunar_vfs_mime_info_get_name (info->mime_info),
                              "tEXt::Software", "Thunar-VFS Thumbnail Factory",
                              NULL);
 
@@ -529,10 +768,11 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
     }
 
   /* cleanup */
-  g_free (mtime_string);
-  g_free (uri_string);
   g_free (tmp_path);
+  g_free (mtime);
+  g_free (size);
   g_free (md5);
+  g_free (uri);
 
   return succeed;
 }
@@ -540,12 +780,12 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
 
 
 /**
- * thunar_vfs_thumb_path_for_uri:
- * @uri  : the #ThunarVfsURI to the original file.
+ * thunar_vfs_thumbnail_for_path:
+ * @path : the #ThunarVfsPath to the original file.
  * @size : the desired #ThunarVfsThumbSize.
  *
  * Returns the absolute path to the thumbnail location
- * for the file described by @uri, at the given @size.
+ * for the file described by @path, at the given @size.
  *
  * The caller is responsible to free the returned
  * string using g_free() when no longer needed.
@@ -553,61 +793,64 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
  * The usage of this method is thread-safe.
  *
  * Return value: the absolute path to the thumbnail
- *               location for @uri at @size.
+ *               location for @path at @size.
  **/
 gchar*
-thunar_vfs_thumb_path_for_uri (const ThunarVfsURI *uri,
-                               ThunarVfsThumbSize  size)
+thunar_vfs_thumbnail_for_path (const ThunarVfsPath *path,
+                               ThunarVfsThumbSize   size)
 {
-  gchar *path;
+  gchar *thumbnail;
   gchar *md5;
+  gchar *uri;
 
-  md5 = thunar_vfs_uri_get_md5sum (uri);
-  path = g_strconcat (xfce_get_homedir (),
-                      G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S,
-                      (size == THUNAR_VFS_THUMB_SIZE_NORMAL) ? "normal" : "large",
-                      G_DIR_SEPARATOR_S, md5, ".png", NULL);
+  uri = thunar_vfs_path_dup_uri (path);
+  md5 = exo_str_get_md5_str (uri);
+  thumbnail = g_strconcat (xfce_get_homedir (),
+                           G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S,
+                           (size == THUNAR_VFS_THUMB_SIZE_NORMAL) ? "normal" : "large",
+                           G_DIR_SEPARATOR_S, md5, ".png", NULL);
   g_free (md5);
+  g_free (uri);
 
-  return path;
+  return thumbnail;
 }
 
 
 
 /**
- * thunar_vfs_thumb_path_is_valid:
- * @thumb_path : the absolute path to a thumbnail file.
- * @uri        : the #ThunarVfsURI to the original file.
- * @mtime      : the modification time of the original file.
+ * thunar_vfs_thumbnail_is_valid:
+ * @thumbnail : the absolute path to a thumbnail file.
+ * @uri       : the URI of the original file.
+ * @mtime     : the modification time of the original file.
  *
- * Checks whether the file located at @thumb_path contains a
- * valid thumbnail for the file described by @uri.
+ * Checks whether the file located at @thumbnail contains a
+ * valid thumbnail for the file described by @uri and @mtime.
  *
  * The usage of this method is thread-safe.
  *
- * Return value: %TRUE if @thumb_path is a valid thumbnail for
+ * Return value: %TRUE if @thumbnail is a valid thumbnail for
  *               the file referred to by @uri, else %FALSE.
  **/
 gboolean
-thunar_vfs_thumb_path_is_valid (const gchar        *thumb_path,
-                                const ThunarVfsURI *uri,
-                                ThunarVfsFileTime   mtime)
+thunar_vfs_thumbnail_is_valid (const gchar      *thumbnail,
+                               const gchar      *uri,
+                               ThunarVfsFileTime mtime)
 {
-  ThunarVfsURI *thumb_uri;
-  png_structp   png_ptr;
-  png_infop     info_ptr;
-  png_textp     text_ptr;
-  gboolean      is_valid = FALSE;
-  gchar         signature[4];
-  FILE         *fp;
-  gint          n_checked;
-  gint          n_text;
-  gint          n;
+  png_structp  png_ptr;
+  png_infop    info_ptr;
+  png_textp    text_ptr;
+  gboolean     is_valid = FALSE;
+  gchar        signature[4];
+  FILE        *fp;
+  gint         n_checked;
+  gint         n_text;
+  gint         n;
 
-  g_return_val_if_fail (g_path_is_absolute (thumb_path), FALSE);
+  g_return_val_if_fail (g_path_is_absolute (thumbnail), FALSE);
+  g_return_val_if_fail (uri != NULL && *uri != '\0', FALSE);
 
   /* try to open the thumbnail file */
-  fp = fopen (thumb_path, "r");
+  fp = fopen (thumbnail, "r");
   if (G_UNLIKELY (fp == NULL))
     return FALSE;
 
@@ -651,20 +894,9 @@ thunar_vfs_thumb_path_is_valid (const gchar        *thumb_path,
         }
       else if (strcmp (text_ptr[n].key, "Thumb::URI") == 0)
         {
-          /* transform the stored URI */
-          thumb_uri = thunar_vfs_uri_new (text_ptr[n].text, NULL);
-          if (G_UNLIKELY (thumb_uri == NULL))
-            goto done1;
-
           /* check if the URIs are equal */
-          if (!thunar_vfs_uri_equal (thumb_uri, uri))
-            {
-              thunar_vfs_uri_unref (thumb_uri);
-              goto done1;
-            }
-
-          /* the URIs are equal */
-          thunar_vfs_uri_unref (thumb_uri);
+          if (strcmp (text_ptr[n].text, uri) != 0)
+            goto done1;
           ++n_checked;
         }
     }

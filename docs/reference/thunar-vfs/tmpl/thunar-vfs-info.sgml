@@ -17,12 +17,33 @@ ThunarVfsInfo
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### FUNCTION thunar_vfs_info_new_for_uri ##### -->
+<!-- ##### STRUCT ThunarVfsInfo ##### -->
 <para>
 
 </para>
 
-@uri: 
+@type: 
+@mode: 
+@flags: 
+@uid: 
+@gid: 
+@size: 
+@atime: 
+@mtime: 
+@ctime: 
+@inode: 
+@device: 
+@mime_info: 
+@path: 
+@custom_icon: 
+@display_name: 
+
+<!-- ##### FUNCTION thunar_vfs_info_new_for_path ##### -->
+<para>
+
+</para>
+
+@path: 
 @error: 
 @Returns: 
 
@@ -51,9 +72,11 @@ ThunarVfsInfo
 
 @info: 
 @screen: 
-@uris: 
+@path_list: 
 @error: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@uris: 
 
 
 <!-- ##### FUNCTION thunar_vfs_info_rename ##### -->
@@ -64,16 +87,6 @@ ThunarVfsInfo
 @info: 
 @name: 
 @error: 
-@Returns: 
-
-
-<!-- ##### FUNCTION thunar_vfs_info_get_hint ##### -->
-<para>
-
-</para>
-
-@info: 
-@hint: 
 @Returns: 
 
 

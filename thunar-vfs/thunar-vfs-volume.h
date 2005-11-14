@@ -77,7 +77,7 @@ struct _ThunarVfsVolumeIface
   ThunarVfsVolumeKind   (*get_kind)         (ThunarVfsVolume   *volume);
   const gchar          *(*get_name)         (ThunarVfsVolume   *volume);
   ThunarVfsVolumeStatus (*get_status)       (ThunarVfsVolume   *volume);
-  ThunarVfsURI         *(*get_mount_point)  (ThunarVfsVolume   *volume);
+  ThunarVfsPath        *(*get_mount_point)  (ThunarVfsVolume   *volume);
   gboolean              (*get_free_space)   (ThunarVfsVolume   *volume,
                                              ThunarVfsFileSize *free_space_return);
   const gchar          *(*lookup_icon_name) (ThunarVfsVolume   *volume,
@@ -92,7 +92,7 @@ GType                 thunar_vfs_volume_get_type          (void) G_GNUC_CONST;
 ThunarVfsVolumeKind   thunar_vfs_volume_get_kind          (ThunarVfsVolume   *volume);
 const gchar          *thunar_vfs_volume_get_name          (ThunarVfsVolume   *volume);
 ThunarVfsVolumeStatus thunar_vfs_volume_get_status        (ThunarVfsVolume   *volume);
-ThunarVfsURI         *thunar_vfs_volume_get_mount_point   (ThunarVfsVolume   *volume);
+ThunarVfsPath        *thunar_vfs_volume_get_mount_point   (ThunarVfsVolume   *volume);
 
 gboolean              thunar_vfs_volume_is_mounted        (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_present        (ThunarVfsVolume   *volume);
@@ -104,7 +104,7 @@ gboolean              thunar_vfs_volume_get_free_space    (ThunarVfsVolume   *vo
 const gchar          *thunar_vfs_volume_lookup_icon_name  (ThunarVfsVolume   *volume,
                                                            GtkIconTheme      *icon_theme);
 
-void                  thunar_vfs_volume_changed           (ThunarVfsVolume   *volume);
+void                  thunar_vfs_volume_changed           (ThunarVfsVolume   *volume) G_GNUC_INTERNAL;
 
 
 typedef struct _ThunarVfsVolumeManagerIface ThunarVfsVolumeManagerIface;
@@ -140,9 +140,9 @@ ThunarVfsVolume        *thunar_vfs_volume_manager_get_volume_by_info  (ThunarVfs
 GList                  *thunar_vfs_volume_manager_get_volumes         (ThunarVfsVolumeManager *manager);
 
 void                    thunar_vfs_volume_manager_volumes_added       (ThunarVfsVolumeManager *manager,
-                                                                       GList                  *volumes);
+                                                                       GList                  *volumes) G_GNUC_INTERNAL;
 void                    thunar_vfs_volume_manager_volumes_removed     (ThunarVfsVolumeManager *manager,
-                                                                       GList                  *volumes);
+                                                                       GList                  *volumes) G_GNUC_INTERNAL;
 
 G_END_DECLS;
 

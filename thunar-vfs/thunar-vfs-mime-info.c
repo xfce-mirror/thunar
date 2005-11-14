@@ -29,44 +29,63 @@
 #include <string.h>
 #endif
 
+/* implement thunar-vfs-mime-info's inline functions */
+#define G_IMPLEMENT_INLINES 1
+#define __THUNAR_VFS_MIME_INFO_C__
 #include <thunar-vfs/thunar-vfs-mime-info.h>
+
 #include <thunar-vfs/thunar-vfs-mime-parser.h>
-#include <thunar-vfs/thunar-vfs-sysdep.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
+/* special mime type to gnome icon mapping */
 static const struct
 {
   const gchar *const type;
   const gchar *const icon;
 } GNOME_ICONNAMES[] =
 {
-  { "inode/directory", "gnome-fs-directory" },
   { "inode/blockdevice", "gnome-fs-blockdev" },
   { "inode/chardevice", "gnome-fs-chardev" },
+  { "inode/directory", "gnome-fs-directory" },
   { "inode/fifo", "gnome-fs-fifo" },
   { "inode/socket", "gnome-fs-socket" },
 };
 
-
-
-static void thunar_vfs_mime_info_icon_theme_changed (GtkIconTheme           *icon_theme,
-                                                     ThunarVfsMimeInfo      *info);
-
-
-
-struct _ThunarVfsMimeInfo
+/* static constant media-only gnome icon names
+ * (shared by all mime types that don't have
+ * a more specific icon).
+ */
+static const gchar * const GNOME_MEDIAICONS[] =
 {
-  gint          ref_count;
-
-  gchar        *comment;
-  gchar        *name;
-
-  gchar        *icon_name;
-  gboolean      icon_name_static : 1;
-  GtkIconTheme *icon_theme;
+  "gnome-mime-application",
+  "gnome-mime-audio",
+  "gnome-mime-image",
+  "gnome-mime-text",
+  "gnome-mime-video",
 };
+
+/* fallback gnome icon name */
+static const gchar GNOME_MIME_APPLICATION_OCTET_STREAM[] = "gnome-mime-application-octet-stream";
+
+
+
+/* Checks whether info has a static constant icon name, that doesn't
+ * need to be freed using g_free().
+ */
+static inline gboolean
+thunar_vfs_mime_info_is_static_icon_name (const ThunarVfsMimeInfo *info)
+{
+  guint n;
+  for (n = 0; n < G_N_ELEMENTS (GNOME_ICONNAMES); ++n)
+    if (info->icon_name == GNOME_ICONNAMES[n].icon)
+      return TRUE;
+  for (n = 0; n < G_N_ELEMENTS (GNOME_MEDIAICONS); ++n)
+    if (info->icon_name == GNOME_MEDIAICONS[n])
+      return TRUE;
+  return (info->icon_name == GNOME_MIME_APPLICATION_OCTET_STREAM);
+}
 
 
 
@@ -83,25 +102,6 @@ thunar_vfs_mime_info_get_type (void)
     }
 
   return type;
-}
-
-
-
-static void
-thunar_vfs_mime_info_icon_theme_changed (GtkIconTheme      *icon_theme,
-                                         ThunarVfsMimeInfo *info)
-{
-  g_return_if_fail (GTK_IS_ICON_THEME (icon_theme));
-  g_return_if_fail (info->icon_theme == icon_theme);
-
-  /* drop the cached icon name, so the next lookup
-   * call will perform a lookup again.
-   */
-  if (G_LIKELY (!info->icon_name_static))
-    {
-      g_free (info->icon_name);
-      info->icon_name = NULL;
-    }
 }
 
 
@@ -137,35 +137,14 @@ thunar_vfs_mime_info_new (const gchar *name,
     len = strlen (name);
 
   /* allocate the new object */
-  info = g_new (ThunarVfsMimeInfo, 1);
+  info = g_malloc (sizeof (*info) + len + 1);
   info->ref_count = 1;
   info->comment = NULL;
   info->icon_name = NULL;
-  info->icon_theme = NULL;
-  info->icon_name_static = FALSE;
 
   /* set the name */
-  info->name = g_new (gchar, len + 1);
-  memcpy (info->name, name, len + 1);
+  memcpy (((gchar *) info) + sizeof (*info), name, len + 1);
 
-  return info;
-}
-
-
-
-/**
- * thunar_vfs_mime_info_ref:
- * @info : a #ThunarVfsMimeInfo.
- *
- * Increments the reference count on @info and returns
- * the reference to @info.
- *
- * Return value: a reference to @info.
- **/
-ThunarVfsMimeInfo*
-thunar_vfs_mime_info_ref (ThunarVfsMimeInfo *info)
-{
-  _thunar_vfs_sysdep_inc (&info->ref_count);
   return info;
 }
 
@@ -182,10 +161,10 @@ thunar_vfs_mime_info_ref (ThunarVfsMimeInfo *info)
 void
 thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
 {
-  if (_thunar_vfs_sysdep_dec (&info->ref_count))
+  if (exo_atomic_dec (&info->ref_count))
     {
       /* free the comment */
-      if (info->comment != NULL && info->comment != info->name)
+      if (info->comment != NULL && info->comment != thunar_vfs_mime_info_get_name (info))
         {
 #ifndef G_DISABLE_CHECKS
           memset (info->comment, 0xaa, strlen (info->comment) + 1);
@@ -193,25 +172,12 @@ thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
           g_free (info->comment);
         }
 
-      /* free the name */
-#ifndef G_DISABLE_CHECKS
-      if (G_LIKELY (info->name != NULL))
-        memset (info->name, 0xaa, strlen (info->name) + 1);
-#endif
-      g_free (info->name);
-
-      /* disconnect from the icon theme (if any) */
-      if (G_LIKELY (info->icon_theme != NULL))
-        {
-          g_signal_handlers_disconnect_by_func (G_OBJECT (info->icon_theme), thunar_vfs_mime_info_icon_theme_changed, info);
-          g_object_unref (G_OBJECT (info->icon_theme));
-        }
-
       /* free the icon name if it isn't one of the statics */
-      if (G_LIKELY (!info->icon_name_static && info->icon_name != NULL))
+      if (G_LIKELY (!thunar_vfs_mime_info_is_static_icon_name (info)))
         {
 #ifndef G_DISABLE_CHECKS
-          memset (info->icon_name, 0xaa, strlen (info->icon_name) + 1);
+          if (G_LIKELY (info->icon_name != NULL))
+            memset (info->icon_name, 0xaa, strlen (info->icon_name) + 1);
 #endif
           g_free (info->icon_name);
         }
@@ -238,12 +204,14 @@ thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
 const gchar*
 thunar_vfs_mime_info_get_comment (ThunarVfsMimeInfo *info)
 {
-  gchar *path;
-  gchar *spec;
+  const gchar *name;
+  gchar       *path;
+  gchar       *spec;
 
   if (G_UNLIKELY (info->comment == NULL))
     {
-      spec = g_strdup_printf ("mime/%s.xml", info->name);
+      name = thunar_vfs_mime_info_get_name (info);
+      spec = g_strdup_printf ("mime/%s.xml", name);
       path = xfce_resource_lookup (XFCE_RESOURCE_DATA, spec);
       g_free (spec);
 
@@ -256,31 +224,14 @@ thunar_vfs_mime_info_get_comment (ThunarVfsMimeInfo *info)
       if (G_UNLIKELY (info->comment == NULL))
         {
           /* we handle 'application/x-extension-<EXT>' special here */
-          if (G_UNLIKELY (strncmp (info->name, "application/x-extension-", 24) == 0))
-            info->comment = g_strdup_printf (_("%s document"), info->name + 24);
+          if (G_UNLIKELY (strncmp (name, "application/x-extension-", 24) == 0))
+            info->comment = g_strdup_printf (_("%s document"), name + 24);
           else
-            info->comment = info->name;
+            info->comment = (gchar *) name;
         }
     }
 
   return info->comment;
-}
-
-
-
-/**
- * thunar_vfs_mime_info_get_name:
- * @info : a #ThunarVfsMimeInfo.
- *
- * Returns the full qualified name of the MIME type
- * described by the @info object.
- *
- * Return value: the name of @info.
- **/
-const gchar*
-thunar_vfs_mime_info_get_name (const ThunarVfsMimeInfo *info)
-{
-  return info->name;
 }
 
 
@@ -301,13 +252,15 @@ thunar_vfs_mime_info_get_name (const ThunarVfsMimeInfo *info)
 gchar*
 thunar_vfs_mime_info_get_media (const ThunarVfsMimeInfo *info)
 {
+  const gchar *name;
   const gchar *p;
 
   /* lookup the slash character */
-  for (p = info->name; *p != '/' && *p != '\0'; ++p)
+  name = thunar_vfs_mime_info_get_name (info);
+  for (p = name; *p != '/' && *p != '\0'; ++p)
     ;
 
-  return g_strndup (info->name, p - info->name);
+  return g_strndup (name, p - name);
 }
 
 
@@ -328,10 +281,12 @@ thunar_vfs_mime_info_get_media (const ThunarVfsMimeInfo *info)
 gchar*
 thunar_vfs_mime_info_get_subtype (const ThunarVfsMimeInfo *info)
 {
+  const gchar *name;
   const gchar *p;
 
   /* lookup the slash character */
-  for (p = info->name; *p != '/' && *p != '\0'; ++p)
+  name = thunar_vfs_mime_info_get_name (info);
+  for (p = name; *p != '/' && *p != '\0'; ++p)
     ;
 
   /* skip the slash character */
@@ -354,12 +309,12 @@ thunar_vfs_mime_info_get_subtype (const ThunarVfsMimeInfo *info)
 guint
 thunar_vfs_mime_info_hash (gconstpointer info)
 {
-  const ThunarVfsMimeInfo *infop = info;
-  const gchar             *p;
-  guint                    h;
+  const gchar *name;
+  guint        h;
 
-  for (h = infop->name[0], p = infop->name + 1; *p != '\0'; ++p)
-    h = (h << 5) - h + *p;
+  name = thunar_vfs_mime_info_get_name (info);
+  for (h = *name; *++name != '\0'; )
+    h = (h << 5) - h + *name;
 
   return h;
 }
@@ -380,10 +335,10 @@ gboolean
 thunar_vfs_mime_info_equal (gconstpointer a,
                             gconstpointer b)
 {
-  const ThunarVfsMimeInfo *a_info = a;
-  const ThunarVfsMimeInfo *b_info = b;
+  const gchar *a_name = thunar_vfs_mime_info_get_name (a);
+  const gchar *b_name = thunar_vfs_mime_info_get_name (b);
 
-  return (a == b) || G_UNLIKELY (strcmp (a_info->name, b_info->name) == 0);
+  return (a == b) || G_UNLIKELY (strcmp (a_name, b_name) == 0);
 }
 
 
@@ -398,6 +353,9 @@ thunar_vfs_mime_info_equal (gconstpointer a,
  * in calls to gtk_icon_theme_lookup_icon() or
  * gtk_icon_theme_load_icon().
  *
+ * The returned icon name is owned by @info and MUST NOT be freed
+ * by the caller.
+ *
  * Note that this method MUST NOT be called from threads other than
  * the main thread, because it's not thread-safe!
  *
@@ -408,73 +366,66 @@ thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
                                        GtkIconTheme      *icon_theme)
 {
   const gchar *subtype;
+  const gchar *name;
   const gchar *p;
   gchar       *media;
   gsize        n;
 
+  g_return_val_if_fail (info != NULL, NULL);
   g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
-  /* check if our cached name will suffice */
-  if (G_LIKELY (info->icon_theme == icon_theme && info->icon_name != NULL))
-    return info->icon_name;
-
-  /* if we have a new icon theme, connect to the new one */
-  if (G_UNLIKELY (info->icon_theme != icon_theme))
+  /* determine the icon name if we don't already have it cached */
+  if (G_UNLIKELY (info->icon_name == NULL))
     {
-      /* disconnect from the previous one */
-      if (G_LIKELY (info->icon_theme != NULL))
-        {
-          g_signal_handlers_disconnect_by_func (G_OBJECT (info->icon_theme), thunar_vfs_mime_info_icon_theme_changed, info);
-          g_object_unref (G_OBJECT (info->icon_theme));
-        }
+      /* determine media and subtype */
+      name = thunar_vfs_mime_info_get_name (info);
+      for (p = name + 1; *p != '/' && *p != '\0'; ++p);
+      media = g_newa (gchar, p - name + 1);
+      memcpy (media, name, p - name);
+      media[p - name] = '\0';
+      subtype = G_LIKELY (*p == '/') ? p + 1 : p;
 
-      /* connect to the new one */
-      info->icon_theme = icon_theme;
-      g_object_ref (G_OBJECT (icon_theme));
-      g_signal_connect (G_OBJECT (icon_theme), "changed", G_CALLBACK (thunar_vfs_mime_info_icon_theme_changed), info);
-    }
-
-  /* free the previously set icon name */
-  if (!info->icon_name_static)
-    g_free (info->icon_name);
-
-  /* determine media and subtype */
-  for (p = info->name + 1; *p != '/' && *p != '\0'; ++p);
-  media = g_newa (gchar, p - info->name + 1);
-  memcpy (media, info->name, p - info->name);
-  media[p - info->name] = '\0';
-  subtype = G_LIKELY (*p == '/') ? p + 1 : p;
-
-  /* start out with the full name (assuming a non-static icon_name) */
-  info->icon_name = g_strdup_printf ("gnome-mime-%s-%s", media, subtype);
-  info->icon_name_static = FALSE;
-  if (!gtk_icon_theme_has_icon (icon_theme, info->icon_name))
-    {
-      /* only the media portion */
-      info->icon_name[11 + ((subtype - 1) - info->name)] = '\0';
+      /* start out with the full name */
+      info->icon_name = g_strdup_printf ("gnome-mime-%s-%s", media, subtype);
       if (!gtk_icon_theme_has_icon (icon_theme, info->icon_name))
         {
-          /* if we get here, we'll use a static icon name */
-          info->icon_name_static = TRUE;
-          g_free (info->icon_name);
+          /* only the media portion */
+          info->icon_name[11 + ((subtype - 1) - name)] = '\0';
+          if (!gtk_icon_theme_has_icon (icon_theme, info->icon_name))
+            {
+              /* if we get here, we'll use a static icon name */
+              g_free (info->icon_name);
 
-          /* GNOME uses non-standard names for special MIME types */
-          for (n = 0; n < G_N_ELEMENTS (GNOME_ICONNAMES); ++n)
-            if (exo_str_is_equal (info->name, GNOME_ICONNAMES[n].type))
-              if (gtk_icon_theme_has_icon (icon_theme, GNOME_ICONNAMES[n].icon))
-                {
-                  info->icon_name = (gchar *) GNOME_ICONNAMES[n].icon;
-                  break;
-                }
+              /* GNOME uses non-standard names for special MIME types */
+              for (n = 0; n < G_N_ELEMENTS (GNOME_ICONNAMES); ++n)
+                if (strcmp (name, GNOME_ICONNAMES[n].type) == 0)
+                  if (gtk_icon_theme_has_icon (icon_theme, GNOME_ICONNAMES[n].icon))
+                    {
+                      info->icon_name = (gchar *) GNOME_ICONNAMES[n].icon;
+                      break;
+                    }
 
-          /* fallback is always application/octect-stream */
-          if (n == G_N_ELEMENTS (GNOME_ICONNAMES))
-            info->icon_name = (gchar *) "gnome-mime-application-octect-stream";
+              /* fallback is always application/octet-stream */
+              if (n == G_N_ELEMENTS (GNOME_ICONNAMES))
+                info->icon_name = (gchar *) GNOME_MIME_APPLICATION_OCTET_STREAM;
+            }
+          else
+            {
+              /* check if we can use one of the static media icon names */
+              for (n = 0; n < G_N_ELEMENTS (GNOME_MEDIAICONS); ++n)
+                if (strcmp (info->icon_name, GNOME_MEDIAICONS[n]) == 0)
+                  {
+                    g_free (info->icon_name);
+                    info->icon_name = (gchar *) GNOME_MEDIAICONS[n];
+                    break;
+                  }
+            }
         }
-    }
 
-  g_assert (info->icon_name != NULL);
-  g_assert (info->icon_name[0] != '\0');
+      /* verify the icon name */
+      g_assert (info->icon_name != NULL);
+      g_assert (info->icon_name[0] != '\0');
+    }
 
   return info->icon_name;
 }
@@ -482,17 +433,26 @@ thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
 
 
 /**
- * thunar_vfs_mime_info_list_free:
- * @info_list : a #GList of #ThunarVfsMimeInfo<!---->s
+ * _thunar_vfs_mime_info_invalidate_icon_name:
+ * @info : a #ThunarVfsMimeInfo.
  *
- * Frees the list and all #ThunarVfsMimeInfo<!---->s
- * contained within the list.
+ * Invalidates the cached icon name for @info.
+ *
+ * Note that this method MUST NOT be called from threads other than
+ * the main thread, because it's not thread-safe!
  **/
 void
-thunar_vfs_mime_info_list_free (GList *info_list)
+_thunar_vfs_mime_info_invalidate_icon_name (ThunarVfsMimeInfo *info)
 {
-  g_list_foreach (info_list, (GFunc) thunar_vfs_mime_info_unref, NULL);
-  g_list_free (info_list);
+  if (!thunar_vfs_mime_info_is_static_icon_name (info))
+    {
+#ifndef G_DISABLE_CHECKS
+      if (G_LIKELY (info->icon_name != NULL))
+        memset (info->icon_name, 0xaa, strlen (info->icon_name));
+#endif
+      g_free (info->icon_name);
+    }
+  info->icon_name = NULL;
 }
 
 

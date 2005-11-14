@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-open-with-action.h>
 
@@ -68,7 +69,7 @@ struct _ThunarOpenWithActionClass
 
   void (*open_application) (ThunarOpenWithAction     *action,
                             ThunarVfsMimeApplication *application,
-                            GList                    *uri_list);
+                            GList                    *path_list);
 };
 
 struct _ThunarOpenWithAction
@@ -120,10 +121,10 @@ thunar_open_with_action_class_init (ThunarOpenWithActionClass *klass)
    * ThunarOpenWithAction::open-application:
    * @open_with_action : a #ThunarOpenWithAction.
    * @application      : a #ThunarVfsMimeApplication.
-   * @uri_list         : a list of #ThunarVfsURI<!---->s.
+   * @path_list        : a list of #ThunarVfsPath<!---->s.
    *
    * Emitted by @open_with_action whenever the user requests to
-   * open @uri_list with @application.
+   * open @path_list with @application.
    **/
   open_with_action_signals[OPEN_APPLICATION] =
     g_signal_new ("open-application",
@@ -239,7 +240,7 @@ thunar_open_with_action_activated (GtkWidget            *item,
 {
   ThunarVfsMimeApplication *application;
   ThunarFile               *file;
-  GList                     uri_list;
+  GList                     path_list;
 
   g_return_if_fail (THUNAR_IS_OPEN_WITH_ACTION (open_with_action));
   g_return_if_fail (GTK_IS_MENU_ITEM (item));
@@ -253,12 +254,12 @@ thunar_open_with_action_activated (GtkWidget            *item,
   application = g_object_get_data (G_OBJECT (item), "thunar-vfs-mime-application");
 
   /* generate a single item list */
-  uri_list.data = thunar_file_get_uri (file);
-  uri_list.next = NULL;
-  uri_list.prev = NULL;
+  path_list.data = thunar_file_get_path (file);
+  path_list.next = NULL;
+  path_list.prev = NULL;
 
   /* emit the "open-application" signal */
-  g_signal_emit (G_OBJECT (open_with_action), open_with_action_signals[OPEN_APPLICATION], 0, application, &uri_list);
+  g_signal_emit (G_OBJECT (open_with_action), open_with_action_signals[OPEN_APPLICATION], 0, application, &path_list);
 }
 
 
@@ -374,7 +375,6 @@ thunar_open_with_action_menu_mapped (GtkWidget            *menu,
 
   /* clean up */
   g_object_unref (G_OBJECT (icon_factory));
-  thunar_vfs_mime_info_unref (info);
 }
 
 

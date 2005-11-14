@@ -21,7 +21,7 @@
 #ifndef __THUNAR_VFS_MONITOR_H__
 #define __THUNAR_VFS_MONITOR_H__
 
-#include <thunar-vfs/thunar-vfs-uri.h>
+#include <thunar-vfs/thunar-vfs-path.h>
 
 G_BEGIN_DECLS;
 
@@ -60,12 +60,12 @@ typedef struct _ThunarVfsMonitorHandle ThunarVfsMonitorHandle;
 
 /**
  * ThunarVfsMonitorCallback:
- * @monitor    : a #ThunarVfsMonitor.
- * @handle     : a #ThunarVfsMonitorHandle.
- * @event      : the event that occurred.
- * @handle_uri : the #ThunarVfsURI that was specified when registering the @handle.
- * @event_uri  : the #ThunarVfsURI on which the @event occurred.
- * @user_data  : the user data that was specified when registering the @handle with the @monitor.
+ * @monitor     : a #ThunarVfsMonitor.
+ * @handle      : a #ThunarVfsMonitorHandle.
+ * @event       : the event that occurred.
+ * @handle_path : the #ThunarVfsPath that was specified when registering the @handle.
+ * @event_path  : the #ThunarVfsPath on which the @event occurred.
+ * @user_data   : the user data that was specified when registering the @handle with the @monitor.
  *
  * The prototype for callback functions that will be called by a #ThunarVfsMonitor
  * whenever one of its associated #ThunarVfsMonitorHandle<!---->s notice a
@@ -74,8 +74,8 @@ typedef struct _ThunarVfsMonitorHandle ThunarVfsMonitorHandle;
 typedef void (*ThunarVfsMonitorCallback)  (ThunarVfsMonitor       *monitor,
                                            ThunarVfsMonitorHandle *handle,
                                            ThunarVfsMonitorEvent   event,
-                                           ThunarVfsURI           *handle_uri,
-                                           ThunarVfsURI           *event_uri,
+                                           ThunarVfsPath          *handle_path,
+                                           ThunarVfsPath          *event_path,
                                            gpointer                user_data);
 
 GType                   thunar_vfs_monitor_get_type       (void) G_GNUC_CONST;
@@ -83,12 +83,12 @@ GType                   thunar_vfs_monitor_get_type       (void) G_GNUC_CONST;
 ThunarVfsMonitor       *thunar_vfs_monitor_get_default    (void);
 
 ThunarVfsMonitorHandle *thunar_vfs_monitor_add_directory  (ThunarVfsMonitor        *monitor,
-                                                           ThunarVfsURI            *uri,
+                                                           ThunarVfsPath           *path,
                                                            ThunarVfsMonitorCallback callback,
                                                            gpointer                 user_data);
 
 ThunarVfsMonitorHandle *thunar_vfs_monitor_add_file       (ThunarVfsMonitor        *monitor,
-                                                           ThunarVfsURI            *uri,
+                                                           ThunarVfsPath           *path,
                                                            ThunarVfsMonitorCallback callback,
                                                            gpointer                 user_data);
 
@@ -97,7 +97,9 @@ void                    thunar_vfs_monitor_remove         (ThunarVfsMonitor     
 
 void                    thunar_vfs_monitor_feed           (ThunarVfsMonitor        *monitor,
                                                            ThunarVfsMonitorEvent    event,
-                                                           ThunarVfsURI            *uri);
+                                                           ThunarVfsPath           *path);
+
+void                    thunar_vfs_monitor_wait           (ThunarVfsMonitor        *monitor);
 
 G_END_DECLS;
 

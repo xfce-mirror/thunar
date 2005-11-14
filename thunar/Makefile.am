@@ -32,18 +32,16 @@ Thunar_SOURCES =							\
 	thunar-chooser-model.h						\
 	thunar-clipboard-manager.c					\
 	thunar-clipboard-manager.h					\
-	thunar-computer-folder.c					\
-	thunar-computer-folder.h					\
-	thunar-desktop-model.c						\
-	thunar-desktop-model.h						\
-	thunar-desktop-view.c						\
-	thunar-desktop-view.h						\
-	thunar-desktop-window.c						\
-	thunar-desktop-window.h						\
+	thunar-create-dialog.c						\
+	thunar-create-dialog.h						\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
+	thunar-dialogs.c						\
+	thunar-dialogs.h						\
 	thunar-dnd.c							\
 	thunar-dnd.h							\
+	thunar-emblem-chooser.c						\
+	thunar-emblem-chooser.h						\
 	thunar-extension-manager.c					\
 	thunar-extension-manager.h					\
 	thunar-fallback-icon.c						\
@@ -60,8 +58,12 @@ Thunar_SOURCES =							\
 	thunar-folder.h							\
 	thunar-gdk-pixbuf-extensions.c					\
 	thunar-gdk-pixbuf-extensions.h					\
+	thunar-gobject-extensions.c					\
+	thunar-gobject-extensions.h					\
 	thunar-gtk-extensions.c						\
 	thunar-gtk-extensions.h						\
+	thunar-history.c						\
+	thunar-history.h						\
 	thunar-icon-factory.c						\
 	thunar-icon-factory.h						\
 	thunar-icon-renderer.c						\
@@ -73,10 +75,6 @@ Thunar_SOURCES =							\
 	thunar-launcher.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
-	thunar-local-file.c						\
-	thunar-local-file.h						\
-	thunar-local-folder.c						\
-	thunar-local-folder.h						\
 	thunar-location-bar.c						\
 	thunar-location-bar.h						\
 	thunar-location-buttons.c					\
@@ -85,6 +83,8 @@ Thunar_SOURCES =							\
 	thunar-location-dialog.h					\
 	thunar-location-entry.c						\
 	thunar-location-entry.h						\
+	thunar-metafile.c						\
+	thunar-metafile.h						\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
 	thunar-open-with-action.c					\
@@ -108,10 +108,8 @@ Thunar_SOURCES =							\
 	thunar-text-renderer.h						\
 	thunar-thumbnail-frame.c					\
 	thunar-thumbnail-frame.h					\
-	thunar-trash-file.c						\
-	thunar-trash-file.h						\
-	thunar-trash-folder.c						\
-	thunar-trash-folder.h						\
+	thunar-thumbnail-generator.c					\
+	thunar-thumbnail-generator.h					\
 	thunar-view.c							\
 	thunar-view.h							\
 	thunar-window.c							\
@@ -129,6 +127,7 @@ Thunar_LDFLAGS =							\
 	$(PLATFORM_LDFLAGS)
 
 Thunar_LDADD =								\
+	$(top_builddir)/tdb/libtdb.la					\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
 	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la	\
 	$(CAIRO_LIBS)							\
@@ -136,6 +135,7 @@ Thunar_LDADD =								\
 	$(GTHREAD_LIBS)
 
 Thunar_DEPENDENCIES =							\
+	$(top_builddir)/tdb/libtdb.la					\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
 	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
 

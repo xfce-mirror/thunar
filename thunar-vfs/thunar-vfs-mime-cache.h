@@ -35,9 +35,9 @@ typedef struct _ThunarVfsMimeCache      ThunarVfsMimeCache;
 #define THUNAR_VFS_IS_MIME_CACHE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_MIME_CACHE))
 #define THUNAR_VFS_MIME_CACHE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_MIME_CACHE, ThunarVfsMimeCacheClass))
 
-GType                  thunar_vfs_mime_cache_get_type (void) G_GNUC_CONST;
+GType                  thunar_vfs_mime_cache_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
-ThunarVfsMimeProvider *thunar_vfs_mime_cache_new      (const gchar *directory) G_GNUC_MALLOC;
+ThunarVfsMimeProvider *thunar_vfs_mime_cache_new      (const gchar *directory) G_GNUC_INTERNAL G_GNUC_MALLOC;
 
 G_END_DECLS;
 

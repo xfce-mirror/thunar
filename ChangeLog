@@ -1,3 +1,537 @@
+2005-11-14	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-list-model.c: Don't need to remember the "changed"
+	  signal handler id per row, as g_signal_handlers_disconnect_matched()
+	  using G_SIGNAL_MATCH_ID and G_SIGNAL_MATCH_CLOSURE is nearly as fast
+	  as g_signal_handler_disconnect().
+	* thunar/thunar-folder.c(thunar_folder_finalize): Specify both
+	  G_SIGNAL_MATCH_ID and G_SIGNAL_MATCH_CLOSURE when disconnecting
+	  "destroy" signals from files.
+	* thunar/thunar-preferences.c, thunar/thunar-window.c: Remember the last
+	  active view as default for now.
+	* thunar/thunar-create-dialog.c(thunar_create_dialog_text_changed): Use
+	  G_IS_DIR_SEPARATOR() rather than hardcoding the slash character.
+
+2005-11-13	Benedikt Meurer <benny@xfce.org>
+
+	* FAQ, thunar/thunar-icon-view.c: Add initial support for mouse gestures
+	  to the icon view component.
+
+2005-11-13	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-window.c, thunar/thunar-preferences.c: Rename
+	  "window-location-bar" to "last-location-bar" and "window-side-pane"
+	  to "last-side-pane" to make clear that it's the last selected
+	  setting.
+	* thunar/thunar-metafile.h: Drop THUNAR_METAFILE_KEY_SHOWHIDDEN.
+	* thunar/Makefile.am, thunar/thunar-gobject-extensions.{c,h}: Add
+	  additional GValue transformation functions.
+	* thunar/thunar-preferences.c: Register additional transformation
+	  functions provided by the GObject extensions in the class_init()
+	  function. Add new preference "default-show-hidden", which tells
+	  whether hidden files are shown by default in new windows.
+	* thunar/thunar-view.{c,h}: Add the "show-hidden" property to the
+	  ThunarView interface.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c:
+	  Implement the "show-hidden" property from the ThunarView interface,
+	  rather than adding an action to the UI manager.
+	* thunar/thunar-preferences.c: Add "default-show-hidden" property, which
+	  tells whether hidden files should be shown in newly opened windows.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Add the
+	  "show-hidden" action here, which starts with the default value queried
+	  from the preferences, and uses the new ThunarView API to sync the
+	  selected setting.
+
+2005-11-13	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-preferences.c(thunar_preferences_set_property): No need
+	  to call g_object_notify() here, as object_set_property() does that
+	  implictly once the set_property() call returns.
+
+2005-11-13	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.{c,h}, thunar/thunar-metafile.{c,h}: Remove the
+	  default value handling from the ThunarMetafile class and leave it up
+	  to the caller to specify the default value when fetching/storing
+	  metadata.
+	* thunar/thunar-folder.{c,h}, thunar/thunar-standard-view.c: Remove
+	  the error parameter from the thunar_folder_get_for_file() method, as
+	  this call cannot fail. If a loading error occurs, it will be reported
+	  asynchronously by the listdir job.
+	* thunar/thunar-preferences.c(thunar_preferences_set_property): Issue
+	  a warning if a required transformation function is not available to
+	  the GLib Type System, as this is effectively a bug in our application.
+
+2005-11-12	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-folder.c, thunar/thunar-list-model.c,
+	  thunar/thunar-standard-view.c: Forward ThunarVfsListdirJob loading
+	  errors to the ThunarStandardView and display an error dialog to the
+	  user.
+	* thunar/thunar-preferences.c, FAQ: Use a tdb database to store the
+	  preferences, while not saving defaults to the database file.
+	* thunar/thunar-preferences.c: Add initial preferences
+	  "window-location-bar" and "window-side-pane".
+	* thunar/thunar-window.c: Always remember the last selected location
+	  bar and side pane setting in the preferences.
+
+2005-11-11	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-list-model.c(thunar_list_model_get_statusbar_text):
+	  Display symbolic links properly just like the MIME type field in
+	  the properties dialog.
+
+2005-11-11	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-standard-view.c(thunar_standard_view_action_duplicate):
+	  Use thunar_standard_view_get_selected_paths() instead of
+	  thunar_standard_view_get_selected_files().
+	* po/POTFILES.in: Add new source files.
+	* po/*.po: Merge new strings.
+	* thunar/thunar-dialogs.{c,h}, thunar/Makefile.am: Add new function
+	  thunar_dialogs_show_error(), which takes care of displaying an error
+	  message dialog to the user.
+	* thunar/thunar-application.c, thunar/thunar-chooser-dialog.c,
+	  thunar/thunar-clipboard-manager.c, thunar/thunar-dnd.c,
+	  thunar/thunar-favourites-view.c, thunar/thunar-launcher.c,
+	  thunar/thunar-properties-dialog.c, thunar/thunar-standard-view.c,
+	  thunar/thunar-window.c: Use thunar_dialogs_show_error() whenever
+	  possible to reduce code duplication.
+	* thunar-vfs/thunar-vfs-info.h, docs/reference/thunar-vfs/: Update the
+	  Thunar-VFS documentation.
+
+2005-11-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-standard-view.c(thunar_standard_view_new_files): Grab
+	  focus for the view widget after selecting newly created files.
+	* thunar-vfs/thunar-vfs-mkdir-job.{c,h}, thunar-vfs/Makefile.am: Import
+	  new class ThunarVfsMkdirJob, which is used to asynchronously create
+	  a bunch of directories.
+	* thunar-vfs/thunar-vfs.{c,h}, thunar-vfs/thunar-vfs.symbols: Add new
+	  methods thunar_vfs_make_directory() and thunar_vfs_make_directories()
+	  as public interface to the newly imported ThunarVfsMkdirJob.
+	* thunar-vfs/thunar-vfs-mime-database.c
+	  (thunar_vfs_mime_database_get_info_for_data_locked),
+	  (thunar_vfs_mime_database_get_info_for_file): Consider empty
+	  files to be text/plain, so users can easily open newly created (empty)
+	  files in their favourite text editor.
+	* thunar-vfs/thunar-vfs-mime-sniffer.{c,h}, thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs-mime-database.c, configure.in.in: Add function
+	  thunar_vfs_mime_sniffer_looks_like_text(), which performs some smart
+	  checks to determine if a given data block looks like plain text. Plain
+	  text means either UTF-8 - and thereby also ASCII - or valid multi-byte
+	  if the platform supports multi-byte strings. In both cases, even
+	  truncated data blocks will be recognized.
+	* thunar/thunar-application.{c,h}: Add thunar_application_mkdir() as
+	  frontend to the thunar_vfs_make_directories() function.
+	* thunar/thunar-create-dialog.{c,h}, thunar-vfs/Makefile.am: Add class
+	  ThunarCreateDialog, which is used to query the user for the filename
+	  that should be used for a new file/folder.
+	* TODO: Add todo item.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c,
+	  thunar/thunar-window-ui.xml: Add "Create Folder" action, which uses
+	  thunar_application_mkdir() to create a new subfolder in the current
+	  folder.
+	* thunar/thunar-window.c: Rename thunar_window_action_location() to
+	  thunar_window_action_open_location() to get consistent naming.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Add "Home" action
+	  whose primary purpose is to be able to open the home folder using a
+	  keyboard shortcut.
+
+2005-11-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-monitor.c, thunar-vfs/thunar-vfs-thumb.c: Apply
+	  patch from Erik Harrison <erikharrison@gmail.com> to fix unused
+	  variables when FAM/Gamin and/or GConf aren't available.
+
+2005-11-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-standard-view.c(thunar_standard_view_init): Be sure to
+	  update the actions whenever the current folder is changed.
+
+2005-11-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-window.c(thunar_window_notify_loading): Don't force a
+	  round-trip to the Xserver when setting/unsetting the watch cursor.
+	  Set/unset the cursor only if the window is already realized.
+	* thunar/thunar-list-model.c(thunar_list_model_get_value): Don't need to
+	  check the result of thunar_file_get_date_string() and
+	  thunar_file_get_size_string() as they are garantied to be non-NULL.
+	* thunar/thunar-list-model.c(thunar_list_model_file_changed): Use
+	  gtk_tree_path_new_from_indices() instead of gtk_tree_path_new() and
+	  gtk_tree_path_append_index().
+	* thunar/thunar-list-model.c(thunar_list_model_set_folder): Use
+	  g_object_freeze_notify()/g_object_thaw_notify() for multiple property
+	  change notification.
+	* thunar/thunar-list-model.c(thunar_list_model_get_statusbar_text):
+	  Don't need to verify the result of thunar_file_get_size_string(), as
+	  it's garantied to be non-NULL.
+
+2005-11-09	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-location-buttons.c
+	  (thunar_location_buttons_set_current_directory): Be a bit smarter here
+	  and try to reuse existing buttons whenever possible.
+
+2005-11-09	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Depend on GLib 2.6.4 or above.
+	* tdb/Makefile.am: Add _XOPEN_SOURCE=500 workaround for glibc to make
+	  pread()/pwrite() visible to the compiler.
+
+2005-11-09	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-history.{c,h}, thunar/Makefile.am: Import new class
+	  ThunarHistory, which handles back/forward history for a ThunarWindow.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Use the newly
+	  imported class ThunarHistory to manage the navigational history for
+	  the ThunarWindow.
+
+2005-11-09	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-window.c: Display the tooltip of the currently selected
+	  menu item in the statusbar.
+	* thunar/thunar-icon-render.c(thunar_icon_renderer_render): Render up
+	  to 4 emblems for icon sizes from 48px on and up to 2 emblems for icon
+	  sizes lower than 48px.
+	* thunar/thunar-icon-render.c(thunar_icon_renderer_render): Use the
+	  proper icon factory for the target drawable, rather than the default
+	  icon factory.
+
+2005-11-09	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-xfer.{c,h}: Add function thunar_vfs_xfer_link(),
+	  which creates a symbolic link to a file.
+	* thunar-vfs/thunar-vfs-link-job.{c,h}, thunar-vfs/Makefile.am: Import
+	  new class ThunarVfsLinkJob, which can be used to symlink a bunch of
+	  files.
+	* thunar-vfs/thunar-vfs.{c,h}, thunar-vfs/thunar-vfs.symbols: Add
+	  thunar_vfs_link_file() and thunar_vfs_link_files() as public interface
+	  to the ThunarVfsLinkJob class.
+	* po/POTFILES.in: Add thunar-vfs-link-job.c here.
+	* thunar/thunar-application.{c,h}: Add thunar_application_link_into() as
+	  interface to the thunar_vfs_link_files() method. Restructure the code
+	  to further reduce the code duplication.
+	* thunar/thunar-dnd.c: Use thunar_application_link_into() to implement
+	  the "Link here" Drag&Drop action.
+	* thunar-vfs/thunar-vfs-transfer-job.c
+	  (thunar_vfs_transfer_job_copy_pair): Don't access pairs outside the
+	  current pair list.
+	* thunar-vfs/thunar-vfs-xfer.c(thunar_vfs_xfer_next_path): Also detect
+	  the "%uth copy of %s" pattern when duplicating a file.
+	* thunar/thunar-standard-view.c: Use upper case for substantives in
+	  action titles where appropriate.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c:
+	  Add "duplicate" and "make-link" actions, for duplicating/linking
+	  files easily.
+	* po/*.po: Merge new strings.
+
+2005-11-08	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-transfer-job.c(thunar_vfs_transfer_job_new):
+	  Verify that we don't ever try to transfer the root directory.
+	* thunar/thunar-file.{c,h}: Make thunar_file_cache_lookup() a public
+	  function.
+	* thunar-vfs/thunar-vfs-interactive-job.{c,h}: Add a new signal
+	  "new-files", which can be invoked by derived jobs for their new files.
+	  The application can use this signal to get notified when a job added
+	  new files to a folder (e.g. select them in a folder view, etc.).
+	* thunar-vfs/thunar-vfs-transfer-job.c: Collect the newly created paths
+	  and emit the "new-files" signal when the execution finishes.
+	* thunar-vfs/thunar-vfs-monitor.{c,h}, thunar-vfs/thunar-vfs.symbols:
+	  Add new method thunar_vfs_monitor_wait(), which can be used by helper
+	  threads to wait until the ThunarVfsMonitor has processed all pending
+	  notifications.
+	* thunar-vfs/thunar-vfs-interactive-job.c
+	  (thunar_vfs_interactive_job_new_files): Use thunar_vfs_monitor_wait()
+	  to delay the "new-files" emission until the application has processed
+	  all pending notifications.
+	* thunar-vfs/thunar-vfs-monitor.c: Lower the notification interval to
+	  250 milliseconds.
+	* thunar-vfs/thunar-vfs-transfer-job.c(thunar_vfs_transfer_job_execute):
+	  Don't use g_rename() for now, as it causes too much trouble right now.
+	* thunar/thunar-application.{c,h}, thunar/thunar-dnd.{c,h},
+	  thunar/thunar-clipboard-manager.{c,h}: Allow the consumers to pass
+	  a "new-files" closure when starting a transfer job.
+	* thunar/thunar-list-model.{c,h}: Add new method
+	  thunar_list_model_get_paths_for_files(), which returns the list of
+	  tree paths for a given list of ThunarFiles.
+	* thunar/thunar-standard-view.c: Supply a "new-files" closure when
+	  starting transfer jobs, and select the files that are passed to the
+	  "new-files" callback when the job finishes.
+	* docs/reference/thunar-vfs/: Update the documentation bits affected
+	  by the latest changes.
+
+2005-11-08	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.h: Add method thunar_file_is_symlink() to check
+	  whether a given ThunarFile is a symbolic link.
+	* thunar/thunar-list-model.c, thunar/thunar-properties-dialog.c: Display
+	  symbolic links properly for the MIME Type fields.
+	* thunar-vfs/thunar-vfs-transfer-job.{c,h}, thunar-vfs/thunar-vfs.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Adjust the asynchronous operations API
+	  again to make it more constistent with the requirements of the file
+	  manager.
+	* po/*.po: Merge new strings.
+	* thunar-vfs/thunar-vfs-monitor.c: Add tags to notifications to make
+	  sure (slow) FAM events don't override properly feeded events, as
+	  afterall we know best what we did.
+	* thunar-vfs/thunar-vfs-transfer-job.c
+	  (thunar_vfs_transfer_job_copy_pair): Fix a typo, where the result
+	  of thunar_vfs_transfer_job_overwrite() was not negated properly.
+	* thunar-vfs/thunar-vfs-xfer.c, thunar-vfs/thunar-vfs-transfer-job.c,
+	  TODO: Automatically duplicate files when copying and the source and
+	  target paths refer to the same file.
+	* thunar/thunar-application.{c,h}, thunar/thunar-standard-view.c,
+	  thunar/thunar-clipboard-manager.{c,h}, thunar/thunar-dnd.c: Rework
+	  the ThunarApplication API and internals to reduce the amount of
+	  duplicated code, and make the API more consistent.
+	* thunar-vfs/thunar-vfs-xfer.{c,h}, thunar-vfs/thunar-vfs.c: Feed events
+	  into the VFS monitor from the xfer module.
+	* thunar-vfs/thunar-vfs-transfer-job.c
+	  (thunar_vfs_transfer_job_copy_pair): No need to feed a "created" event
+	  into the VFS monitor, as that's done by the xfer module directly (with
+	  the correct target path).
+	* docs/reference/thunar-vfs/thunar-vfs-sections.txt,
+	  docs/reference/thunar-vfs/tmpl/thunar-vfs-operations.sgml: Update
+	  documentation bits affected by the latest changes to the public API.
+
+2005-11-07	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-list-model.c: Use an alloc-only memory chunk to reduce
+	  the overhead.
+	* thunar/thunar-icon-factory.c(thunar_icon_factory_load_from_file): Add
+	  the thumbnail frame after scaling down the thumbnail to the desired
+	  size.
+	* thunar/thunar-icon-factory.c(thumbnail_needs_frame): Inline this
+	  function if possible.
+
+2005-11-07	Benedikt Meurer <benny@xfce.org>
+
+	* tdb/tdbtool.c: Make gcc4 happy.
+	* thunar/thunar-dnd.c(thunar_dnd_ask): Add icons to the "move" and
+	  "copy" actions.
+	* thunar/thunar-folder.c(thunar_folder_monitor): Be sure to process
+	  monitor events properly in either case.
+	* thunar-vfs/thunar-vfs-monitor.c
+	  (thunar_vfs_monitor_queue_notification): Schedule only one
+	  notification per handle, where "deleted" events have the highest
+	  priority.
+	* docs/reference/thunar-vfs/: Update documentation.
+	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-xfer.{c,h}: Add module
+	  to copy various kinds of file system entities (basicly everything that
+	  a normal user is permitted to create, e.g. no device nodes).
+	* thunar-vfs/thunar-vfs-transfer-job.{c,h}: Add new ThunarVfsTransferJob
+	  class based on the thunar-vfs-xfer module.
+	* thunar-vfs/thunar-vfs.c: Use new ThunarVfsTransferJob class.
+	* thunar/thunar-progress-dialog.c: Improve the progress dialog.
+	* po/POTFILES.in, po/*.po: Update the file list and the translations.
+
+2005-11-04	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-transfer-job.{c,h}, thunar-vfs/thunar-vfs.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Update the Thunar-VFS transfer API.
+	* thunar/thunar-application.c: Use the new Thunar-VFS transfer API.
+
+2005-11-04	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add "renamed" signal and emit it whenever
+	  the file is renamed by the user.
+	* thunar/thunar-folder.c: Use the "ThunarFile::renamed" to re-register
+	  with the file alteration monitor under the new path.
+	* thunar/thunar-window.c: Update the window icon and title whenever the
+	  current-directory is changed (e.g. the user renamed the directory
+	  file).
+	* thunar-vfs/thunar-vfs-monitor.c: Place the timeout into a preprocessor
+	  define.
+	* tdb/, AUTHORS, FAQ, configure.in.in, Makefile.am: Import the tdb - the
+	  Trivial Database - engine from the Samba suite, which will be used to
+	  store file metadata in a lightweight and efficient way.
+	* thunar/thunar-metafile.{c,h}, thunar/Makefile.am: Add ThunarMetafile
+	  class, which handles metadata for files based on a tdb database.
+	* thunar/thunar-file.{c,h}: Add methods to access metadata for a given
+	  ThunarFile.
+	* thunar/thunar-file.c: Query additional emblems from the file's
+	  metadata (in addition to the special emblems that are set
+	  automcatically).
+	* thunar/thunar-emblem-chooser.{c,h}, thunar/Makefile.am: Add
+	  ThunarEmblemChooser widget class, to edit the list of additional
+	  emblems for a ThunarFile.
+	* thunar/thunar-standard-view.c: Synchronize the show-hidden property.
+	* thunar/thunar-properties-dialog.c: Add a notebook tab for the Emblems.
+
+2005-11-02	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.c: Use THUNAR_FILE_IN_DESTRUCTION as destruction
+	  flag rather than GTK_IN_DESTRUCTION.
+
+2005-11-01	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-unlink-job.c(thunar_vfs_unlink_job_remove):
+	  Also remove thumbnails when successfully deleting a regular file.
+	* thunar-vfs/thunar-vfs-thumb-jpeg.{c,h}, thunar-vfs/Makefile.am,
+	  configure.in.in: Add fast JPEG loader, which is able to scale down
+	  the data while loading it.
+	* thunar-vfs/thunar-vfs-thumb.c: Use the fast JPEG loader to generate
+	  thumbnails for JPEG files (if supported).
+
+2005-11-01	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs.symbols: Add
+	  attribute custom_icon to the ThunarVfsInfo struct instead of the hints
+	  framework and a new method thunar_vfs_info_get_custom_icon() to query
+	  the custom icon from a ThunarVfsInfo.
+	* thunar-vfs/thunar-vfs-thumb.c
+	  (thunar_vfs_thumb_factory_store_thumbnail): Fix invalid check for
+	  valid pixbuf.
+	* thunar-vfs/thunar-vfs-info.c(_thunar_vfs_info_new_internal): Be sure
+	  to remove any file extension (e.g. '.png') from themed icon names, so
+	  GtkIconTheme is able to locate the icon.
+	* thunar-vfs/thunar-vfs-info.c: Don't treat .directory files like other
+	  .desktop files, as that's confusing for the casual user.
+	* thunar/thunar-file.{c,h}: Add method thunar_file_get_custom_icon()
+	  to return the custom icon set for the associated ThunarVfsInfo.
+	* thunar/thunar-file.c(thunar_file_get_icon_name): Don't return the
+	  custom icon here.
+	* thunar/thunar-icon-factory.c(thunar_icon_factory_load_file_icon):Check
+	  first if the ThunarFile specifies a custom icon and try to load it,
+	  falling back to thumbnails and regular (mime) icons.
+
+2005-10-31	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.h: Add thunar_file_is_regular() to check whether a
+	  ThunarFile is a regular file.
+	* thunar/thunar-file.h: Add thunar_file_get_info() to query the
+	  ThunarVfsInfo for a given ThunarFile.
+	* thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs.symbols: Add
+	  new method thunar_vfs_info_copy(), which takes a deep copy of a
+	  ThunarVfsInfo.
+	* thunar-vfs/thunar-vfs-job.{c,h}, thunar-vfs/thunar-vfs.symbols: Turn
+	  thunar_vfs_job_cancelled() into an inline function.
+	* thunar-vfs/thunar-vfs-thumb.{c,h}, thunar-vfs/thunar-vfs.symbols,
+	  thunar-vfs/Makefile.am: Readd the ThunarVfsThumbFactory class and
+	  adjust it to use ThunarVfsInfo's instead of ThunarVfsURI's.
+	* configure.in.in, thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs-thumb.{c,h}: Add optional support for GNOME
+	  thumbnailers, which requires GConf.
+	* thunar/thunar-thumbnail-generator.{c,h}, thunar/Makefile.am: Add new
+	  class ThunarThumbnailGenerator, which is used to asynchronously
+	  generate and store thumbnails for files.
+	* thunar/thunar-icon-factory.{c,h}: Add support for loading thumbnails.
+	  Add support for generating thumbnails using the new
+	  ThunarThumbnailGenerator class.
+	* configure.in.in: Bump version to 0.1.3.
+
+2005-10-30	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-listdir-job.c(thunar_vfs_listdir_job_execute):
+	  Don't immediately terminate the second collector task.
+
+2005-10-30	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-scandir.c: Don't report EMLINK at all.
+
+2005-10-30	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-scandir.c(thunar_vfs_scandir): Treat EMLINK
+	  like ENOTDIR, since there's no GFileError to represent EMLINK.
+
+2005-10-29	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-mime-cache.c(cache_node_lookup_suffix): Always
+	  check the return value to avoid guessing invalid mime types just
+	  because of misleading stopchars.
+	* thunar/thunar-file.c(thunar_file_get_icon_name): Try to be smart when
+	  looking up the icon name for binaries.
+
+2005-10-29	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-clipboard-manager.{c,h}: Use ThunarFile to copy/cut to
+	  the clipboard and monitor the files for deletion.
+	* thunar/thunar-clipbard-manager.{c,h}: Add new method
+	  thunar_clipboard_manager_has_cutted_file() to check whether a certain
+	  file was cutted to the clipboard.
+	* thunar/thunar-gdk-pixbuf-extensions.{c,h}: Add new function
+	  thunar_gdk_pixbuf_lucent() when generates a translucent pixbuf.
+	* thunar/thunar-standard-view.c: Use the new clipboard manager
+	  interface.
+	* thunar/thunar-icon-renderer.c(thunar_icon_renderer_render): Render
+	  translucent icons for files previously cutted to the clipboard.
+	* thunar/thunar-window.c: Queue a draw on the window whenever the
+	  clipboard contents change to be sure to always display correct
+	  state.
+
+2005-10-28	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-monitor.c(thunar_vfs_monitor_feed): Be sure to
+	  schedule directory events only for handles that were registered as
+	  directory.
+	* thunar-vfs/thunar-vfs-unlink-job.c(thunar_vfs_unlink_job_execute):
+	  Ignore ENOTDIR errors when collecting the files to delete.
+	* thunar-vfs/thunar-vfs-exec.c(tvsn_startup_timeout),
+	  (thunar_vfs_exec_on_screen): Don't use libsn functions outside the
+	  GDK lock.
+	* thunar/thunar-file.{c,h}: Inline the most trivial methods.
+	* thunar-vfs/thunar-vfs-user.{c,h}: Implement ThunarVfsUser and 
+	  ThunarVfsGroup directly for local user/group management.
+
+2005-10-28	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-clipboard-manager.c
+	  (thunar_clipboard_manager_paste_path_list): Fix possible segmentation
+	  fault.
+
+2005-10-27	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-interactive-job.{c,h}: Add a VFS monitor pointer
+	  to the interactive job, which will be used by the derived classes to
+	  communicate fs changes to the application.
+	* thunar-vfs/thunar-vfs-unlink-job.c(thunar_vfs_unlink_job_remove): Feed
+	  deleted events into the VFS monitor whenever a file was successfully
+	  unlinked from the file system, so the application can be updated even
+	  if no file system monitoring mechanism like FAM or Gamin is available.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c: Add
+	  the "Delete file(s)" operation to the user interface.
+
+2005-10-27	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Add optional check for libstartup-notification-1.0.
+	* thunar-vfs/thunar-vfs-exec.{c,h}, thunar-vfs/Makefile.am: Add optional
+	  support for startup notification.
+	* thunar-vfs/thunar-vfs-info.c,
+	  thunar-vfs/thunar-vfs-mime-application.c: Use the thunar-vfs-exec
+	  module.
+	* thunar-vfs/thunar-vfs-transfer-job.c: Don't include
+	  thunar-vfs-sysdep.h anymore.
+	* po/POTFILES.in: Remove thunar-vfs-sysdep and add thunar-vfs-exec.
+
+2005-10-22	Benedikt Meurer <benny@xfce.org>
+
+	* thunarx/thunarx-config.c: Fix typo.
+	* thunar-vfs/thunar-vfs-config.{c,h.in}, thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs.symbols, thunar-vfs/abicheck.sh,
+	  thunar-vfs/thunar-vfs.h, configure.in.in: Add support for version
+	  checking to the Thunar-VFS library.
+	* thunar-vfs/*.[ch], thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs.symbols: Replace ThunarVfsURI with ThunarVfsPath
+	  for the first version and thereby limit the functionality to local
+	  files, which in turn means there's no trash and no computer folder.
+	  This will increase the chance that Thunar will be ready for the Xfce
+	  4.4.0 release.
+	* thunar/*.[ch], thunar/Makefile.am: Use ThunarVfsPath instead of
+	  ThunarVfsURI.
+	* tests/test-thunar-vfs-path.c, tests/test-thunar-vfs-uri.c,
+	  tests/Makefile.am: Replace the ThunarVfsURI test case with a new
+	  ThunarVfsPath test case.
+	* tests/test-thunar-vfs-volume-bsd.c: Properly initialize and shutdown
+	  the Thunar-VFS library.
+	* po/POTFILES.in: Update the file list.
+	* docs/: Sync the documentation with the changes.
+	* configure.in.in: Don't use -fvisibility=hidden as that causes trouble
+	  with inline functions that are also implemented and exported by the
+	  library. Instead we explicitly mark internal functions with
+	  G_GNUC_INTERNAL.
+
 2005-10-03	Benedikt Meurer <benny@xfce.org>
 
 	* THANKS, configure.in.in, po/es.po: Add spanish translations, thanks

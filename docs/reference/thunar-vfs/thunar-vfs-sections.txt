@@ -26,12 +26,11 @@ thunar_vfs_group_get_type
 <FILE>thunar-vfs-info</FILE>
 <TITLE>ThunarVfsInfo</TITLE>
 ThunarVfsInfo
-thunar_vfs_info_new_for_uri
+thunar_vfs_info_new_for_path
 thunar_vfs_info_ref
 thunar_vfs_info_unref
 thunar_vfs_info_execute
 thunar_vfs_info_rename
-thunar_vfs_info_get_hint
 thunar_vfs_info_matches
 thunar_vfs_info_list_free
 <SUBSECTION Standard>
@@ -56,10 +55,6 @@ thunar_vfs_shutdown
 <TITLE>ThunarVfsInteractiveJob</TITLE>
 ThunarVfsInteractiveJobResponse
 ThunarVfsInteractiveJob
-thunar_vfs_interactive_job_info_message
-thunar_vfs_interactive_job_percent
-thunar_vfs_interactive_job_overwrite
-thunar_vfs_interactive_job_skip
 <SUBSECTION Standard>
 ThunarVfsInteractiveJobClass
 THUNAR_VFS_TYPE_VFS_INTERACTIVE_JOB_RESPONSE
@@ -195,6 +190,7 @@ thunar_vfs_monitor_add_directory
 thunar_vfs_monitor_add_file
 thunar_vfs_monitor_remove
 thunar_vfs_monitor_feed
+thunar_vfs_monitor_wait
 <SUBSECTION Standard>
 ThunarVfsMonitorClass
 THUNAR_VFS_TYPE_VFS_MONITOR_EVENT
@@ -215,106 +211,16 @@ thunar_vfs_monitor_get_type
 <FILE>thunar-vfs-operations</FILE>
 <TITLE>Operations</TITLE>
 thunar_vfs_listdir
-thunar_vfs_copy
-thunar_vfs_move
-thunar_vfs_unlink
-</SECTION>
-
-
-
-<SECTION>
-<FILE>thunar-vfs-thumb</FILE>
-<TITLE>Thumbnail Functions</TITLE>
-ThunarVfsThumbSize
-thunar_vfs_thumb_path_for_uri
-thunar_vfs_thumb_path_is_valid
-<SUBSECTION Standard>
-THUNAR_VFS_TYPE_VFS_THUMB_SIZE
-<SUBSECTION Private>
-thunar_vfs_thumb_size_get_type
-</SECTION>
-
-
-<SECTION>
-<FILE>thunar-vfs-thumb-factory</FILE>
-<TITLE>ThunarVfsThumbFactory</TITLE>
-ThunarVfsThumbFactory
-thunar_vfs_thumb_factory_new
-thunar_vfs_thumb_factory_lookup_thumbnail
-thunar_vfs_thumb_factory_can_thumbnail
-thunar_vfs_thumb_factory_has_failed_thumbnail
-thunar_vfs_thumb_factory_generate_thumbnail
-thunar_vfs_thumb_factory_store_thumbnail
-<SUBSECTION Standard>
-ThunarVfsThumbFactoryClass
-THUNAR_VFS_TYPE_THUMB_FACTORY
-THUNAR_VFS_THUMB_FACTORY
-THUNAR_VFS_THUMB_FACTORY_CLASS
-THUNAR_VFS_IS_THUMB_FACTORY
-THUNAR_VFS_IS_THUMB_FACTORY_CLASS
-THUNAR_VFS_THUMB_FACTORY_GET_CLASS
-<SUBSECTION Private>
-thunar_vfs_thumb_factory_get_type
-</SECTION>
-
-
-
-<SECTION>
-<FILE>thunar-vfs-trash</FILE>
-<TITLE>ThunarVfsTrash</TITLE>
-ThunarVfsTrash
-thunar_vfs_trash_get_id
-thunar_vfs_trash_get_files
-thunar_vfs_trash_get_info
-thunar_vfs_trash_get_info_path
-thunar_vfs_trash_get_uri
-thunar_vfs_trash_get_path
-<SUBSECTION Standard>
-ThunarVfsTrashClass
-THUNAR_VFS_TYPE_TRASH
-THUNAR_VFS_TRASH
-THUNAR_VFS_TRASH_CLASS
-THUNAR_VFS_IS_TRASH
-THUNAR_VFS_IS_TRASH_CLASS
-THUNAR_VFS_TRASH_GET_CLASS
-<SUBSECTION Private>
-thunar_vfs_trash_get_type
-</SECTION>
-
-
-<SECTION>
-<FILE>thunar-vfs-trash-info</FILE>
-<TITLE>ThunarVfsTrashInfo</TITLE>
-ThunarVfsTrashInfo
-thunar_vfs_trash_info_copy
-thunar_vfs_trash_info_free
-thunar_vfs_trash_info_get_path
-thunar_vfs_trash_info_get_deletion_date
-<SUBSECTION Standard>
-THUNAR_VFS_TYPE_TRASH_INFO
-<SUBSECTION Private>
-thunar_vfs_trash_info_get_type
-</SECTION>
-
-
-<SECTION>
-<FILE>thunar-vfs-trash-manager</FILE>
-<TITLE>ThunarVfsTrashManager</TITLE>
-ThunarVfsTrashManager
-thunar_vfs_trash_manager_get_default
-thunar_vfs_trash_manager_is_empty
-thunar_vfs_trash_manager_get_trashes
-thunar_vfs_trash_manager_resolve_uri
-<SUBSECTION Standard>
-ThunarVfsTrashManagerClass
-THUNAR_VFS_TYPE_TRASH_MANAGER
-THUNAR_VFS_TRASH_MANAGER
-THUNAR_VFS_TRASH_MANAGER_CLASS
-THUNAR_VFS_IS_TRASH_MANAGER
-THUNAR_VFS_IS_TRASH_MANAGER_CLASS
-THUNAR_VFS_TRASH_MANAGER_GET_CLASS
-<SUBSECTION Private>
-thunar_vfs_trash_manager_get_type
+thunar_vfs_copy_file
+thunar_vfs_copy_files
+thunar_vfs_link_file
+thunar_vfs_link_files
+thunar_vfs_move_file
+thunar_vfs_move_files
+thunar_vfs_unlink_file
+thunar_vfs_unlink_files
+thunar_vfs_make_directory
+thunar_vfs_make_directories
 </SECTION>
 
 
@@ -325,7 +231,6 @@ thunar_vfs_trash_manager_get_type
 ThunarVfsFileType
 ThunarVfsFileMode
 ThunarVfsFileFlags
-ThunarVfsFileHint
 ThunarVfsFileDevice
 ThunarVfsFileInode
 ThunarVfsFileSize
@@ -336,49 +241,44 @@ ThunarVfsUserId
 THUNAR_VFS_TYPE_VFS_FILE_TYPE
 THUNAR_VFS_TYPE_VFS_FILE_MODE
 THUNAR_VFS_TYPE_VFS_FILE_FLAGS
-THUNAR_VFS_TYPE_VFS_FILE_HINT
 <SUBSECTION Private>
 thunar_vfs_file_type_get_type
 thunar_vfs_file_mode_get_type
 thunar_vfs_file_flags_get_type
-thunar_vfs_file_hint_get_type
 </SECTION>
 
 
 
 <SECTION>
-<FILE>thunar-vfs-uri</FILE>
-<TITLE>ThunarVfsURI</TITLE>
-ThunarVfsURI
-ThunarVfsURIScheme
-thunar_vfs_uri_new
-thunar_vfs_uri_new_for_path
-thunar_vfs_uri_ref
-thunar_vfs_uri_unref
-thunar_vfs_uri_is_home
-thunar_vfs_uri_is_root
-thunar_vfs_uri_get_display_name
-thunar_vfs_uri_get_md5sum
-thunar_vfs_uri_get_name
-thunar_vfs_uri_get_path
-thunar_vfs_uri_get_scheme
-thunar_vfs_uri_parent
-thunar_vfs_uri_relative
-thunar_vfs_uri_to_string
-thunar_vfs_uri_hash
-thunar_vfs_uri_equal
-thunar_vfs_uri_list_from_string
-thunar_vfs_uri_list_to_string
-thunar_vfs_uri_list_copy
-thunar_vfs_uri_list_free
-thunar_vfs_uri_list_append
-thunar_vfs_uri_list_prepend
+<FILE>thunar-vfs-path</FILE>
+<TITLE>ThunarVfsPath</TITLE>
+ThunarVfsPath
+thunar_vfs_path_new
+thunar_vfs_path_get_for_home
+thunar_vfs_path_get_for_root
+thunar_vfs_path_ref
+thunar_vfs_path_unref
+thunar_vfs_path_hash
+thunar_vfs_path_equal
+thunar_vfs_path_is_home
+thunar_vfs_path_is_root
+thunar_vfs_path_relative
+thunar_vfs_path_get_name
+thunar_vfs_path_get_parent
+thunar_vfs_path_dup_string
+thunar_vfs_path_to_string
+thunar_vfs_path_dup_uri
+thunar_vfs_path_to_uri
+thunar_vfs_path_list_from_string
+thunar_vfs_path_list_to_string
+thunar_vfs_path_list_append
+thunar_vfs_path_list_prepend
+thunar_vfs_path_list_copy
+thunar_vfs_path_list_free
 <SUBSECTION Standard>
-THUNAR_VFS_TYPE_VFS_URI_SCHEME
-THUNAR_VFS_TYPE_URI
+THUNAR_VFS_TYPE_PATH
 <SUBSECTION Private>
-thunar_vfs_uri_scheme_get_type
-thunar_vfs_uri_get_type
+thunar_vfs_path_get_type
 </SECTION>
 
 

@@ -51,9 +51,12 @@ INCLUDES =	 							\
 	-I$(top_srcdir) 						\
 	-I$(top_builddir) 						\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
-	$(EXO_CFLAGS)
+	$(EXO_CFLAGS)							\
+	$(GTHREAD_CFLAGS)
 
 GTKDOC_LIBS =  								\
+	$(EXO_LIBS)							\
+	$(GTHREAD_LIBS)							\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
 
 include $(top_srcdir)/gtk-doc.make
