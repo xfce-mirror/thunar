@@ -419,9 +419,9 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
               /* setup the child environment */
               if (G_LIKELY (envp == NULL))
                 envp = (gchar **) environ;
-              for (n = 2; envp[n] != NULL; ++n)
+              for (n = 0; envp[n] != NULL; ++n)
                 ;
-              sn_envp = g_new (gchar *, n);
+              sn_envp = g_new (gchar *, n + 2);
               for (n = m = 0; envp[n] != NULL; ++n)
                 if (strncmp (envp[n], "DESKTOP_STARTUP_ID", 18) != 0)
                   sn_envp[m++] = g_strdup (envp[n]);
