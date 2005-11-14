@@ -620,6 +620,13 @@ thunar_vfs_transfer_job_copy_pair (ThunarVfsTransferJob  *transfer_job,
           break;
         }
 
+      /* G_FILE_ERROR_INTR is returned when the job is cancelled during the copy operation */
+      if (G_UNLIKELY (error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_INTR))
+        {
+          g_error_free (error);
+          break;
+        }
+
       /* check the error */
       if (error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_EXIST)
         {
@@ -639,7 +646,6 @@ thunar_vfs_transfer_job_copy_pair (ThunarVfsTransferJob  *transfer_job,
                                        _("Unable to remove `%s': %s"), display_name,
                                        g_strerror (errno));
                   skip = thunar_vfs_transfer_job_skip (transfer_job, error);
-                  g_clear_error (&error);
                   g_free (display_name);
                 }
               g_free (absolute_path);
@@ -649,8 +655,10 @@ thunar_vfs_transfer_job_copy_pair (ThunarVfsTransferJob  *transfer_job,
         {
           /* ask the user whether to skip this pair */
           skip = thunar_vfs_transfer_job_skip (transfer_job, error);
-          g_clear_error (&error);
         }
+
+      /* clear the error */
+      g_clear_error (&error);
 
       /* check if we should skip this pair */
       if (G_LIKELY (skip))

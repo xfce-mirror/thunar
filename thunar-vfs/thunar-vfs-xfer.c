@@ -342,6 +342,10 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
       n = read (source_fd, buffer, bufsize);
       if (G_UNLIKELY (n < 0))
         {
+          /* just try again on EAGAIN/EINTR */
+          if (G_UNLIKELY (errno == EAGAIN || errno == EINTR))
+            continue;
+
           tvxc_set_error_from_errno (error, _("Failed to read data from `%s'"), source_absolute_path);
           goto end2;
         }
@@ -349,13 +353,22 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
         break;
 
       /* write the data to the target file */
-      for (m = 0; m < n; m += l)
+      for (m = 0; m < n; )
         {
           l = write (target_fd, buffer + m, n - m);
           if (G_UNLIKELY (l < 0))
             {
+              /* just try again on EAGAIN/EINTR */
+              if (G_UNLIKELY (errno == EAGAIN || errno == EINTR))
+                continue;
+
               tvxc_set_error_from_errno (error, _("Failed to write data to `%s'"), target_absolute_path);
               goto end2;
+            }
+          else
+            {
+              /* advance the offset */
+              m += l;
             }
         }
 
@@ -372,8 +385,9 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
               goto end2;
             }
 
-          /* cancel the copy operation */
-          break;
+          /* tell the caller that the job was cancelled */
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INTR, _("Operation cancelled"));
+          goto end2;
         }
     }
 
@@ -559,6 +573,10 @@ thunar_vfs_xfer_link_internal (const ThunarVfsPath *source_path,
  * pointed to by @target_path_return. The caller is responsible to
  * free the object using thunar_vfs_path_unref(). @target_path_return
  * will only be set if %TRUE is returned.
+ *
+ * As a special case, if @callback returns %FALSE (which means the
+ * operation should be cancelled), this method returns %FALSE and
+ * @error is set to #G_FILE_ERROR_INTR.
  *
  * Return value: %FALSE if @error is set, else %TRUE.
  **/
