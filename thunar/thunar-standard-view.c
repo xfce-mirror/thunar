@@ -28,6 +28,8 @@
 #include <string.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
@@ -35,6 +37,7 @@
 #include <thunar/thunar-extension-manager.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-launcher.h>
+#include <thunar/thunar-marshal.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
@@ -57,6 +60,13 @@ enum
   PROP_STATUSBAR_TEXT,
   PROP_SHOW_HIDDEN,
   PROP_UI_MANAGER,
+};
+
+/* Signal identifiers */
+enum
+{
+  DELETE_SELECTED_FILES,
+  LAST_SIGNAL,
 };
 
 /* Identifiers for DnD target types */
@@ -100,6 +110,7 @@ static void          thunar_standard_view_set_show_hidden           (ThunarView 
 static GtkUIManager *thunar_standard_view_get_ui_manager            (ThunarView               *view);
 static void          thunar_standard_view_set_ui_manager            (ThunarView               *view,
                                                                      GtkUIManager             *ui_manager);
+static gboolean      thunar_standard_view_delete_selected_files     (ThunarStandardView       *standard_view);
 static GdkDragAction thunar_standard_view_get_dest_actions          (ThunarStandardView       *standard_view,
                                                                      GdkDragContext           *context,
                                                                      gint                      x,
@@ -249,7 +260,7 @@ static const GtkActionEntry action_entries[] =
   { "copy", GTK_STOCK_COPY, N_ ("_Copy Files"), NULL, N_ ("Copy the selected files"), G_CALLBACK (thunar_standard_view_action_copy), },
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t Files"), NULL, N_ ("Cut the selected files"), G_CALLBACK (thunar_standard_view_action_cut), },
   { "paste", GTK_STOCK_PASTE, N_ ("_Paste Files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_paste), },
-  { "delete", GTK_STOCK_DELETE, N_ ("_Delete Files"), "Delete", N_ ("Delete the selected files"), G_CALLBACK (thunar_standard_view_action_delete), },
+  { "delete", GTK_STOCK_DELETE, N_ ("_Delete Files"), NULL, N_ ("Delete the selected files"), G_CALLBACK (thunar_standard_view_action_delete), },
   { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Files into Folder"), NULL, N_ ("Paste files into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), "<control>A", N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
   { "select-by-pattern", NULL, N_ ("Select by _Pattern"), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
@@ -272,6 +283,7 @@ static const GtkTargetEntry drop_targets[] =
 
 
 
+static guint         standard_view_signals[LAST_SIGNAL];
 static GObjectClass *thunar_standard_view_parent_class;
 
 
@@ -328,6 +340,7 @@ static void
 thunar_standard_view_class_init (ThunarStandardViewClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
+  GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
 
   g_type_class_add_private (klass, sizeof (ThunarStandardViewPrivate));
@@ -347,6 +360,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   gtkwidget_class->grab_focus = thunar_standard_view_grab_focus;
   gtkwidget_class->expose_event = thunar_standard_view_expose_event;
 
+  klass->delete_selected_files = thunar_standard_view_delete_selected_files;
   klass->connect_ui_manager = (gpointer) exo_noop;
   klass->disconnect_ui_manager = (gpointer) exo_noop;
 
@@ -366,6 +380,28 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   g_object_class_override_property (gobject_class, PROP_STATUSBAR_TEXT, "statusbar-text");
   g_object_class_override_property (gobject_class, PROP_SHOW_HIDDEN, "show-hidden");
   g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
+
+  /**
+   * ThunarStandardView::delete-selected-files:
+   * @standard_view : a #ThunarStandardView.
+   *
+   * Emitted whenever the user presses the Delete key. This
+   * is an internal signal used to bind the action to keys.
+   **/
+  standard_view_signals[DELETE_SELECTED_FILES] =
+    g_signal_new ("delete-selected-files",
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarStandardViewClass, delete_selected_files),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /* setup the key bindings for the standard views */
+  binding_set = gtk_binding_set_by_class (klass);
+  gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, GDK_CONTROL_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_Delete, 0, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KP_Delete, 0, "delete-selected-files", 0);
 }
 
 
@@ -952,6 +988,20 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
 
   /* let others know that we have a new manager */
   g_object_notify (G_OBJECT (view), "ui-manager");
+}
+
+
+
+static gboolean
+thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
+{
+  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+
+  /* just emit the "activate" signal on the "delete" action */
+  gtk_action_activate (standard_view->priv->action_delete);
+
+  /* ...and we're done */
+  return TRUE;
 }
 
 

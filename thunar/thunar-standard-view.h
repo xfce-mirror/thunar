@@ -45,10 +45,10 @@ struct _ThunarStandardViewClass
   /* Called by the ThunarStandardView class to let derived classes
    * connect to and disconnect from the UI manager.
    */
-  void       (*connect_ui_manager)    (ThunarStandardView *standard_view,
-                                       GtkUIManager       *ui_manager);
-  void       (*disconnect_ui_manager) (ThunarStandardView *standard_view,
-                                       GtkUIManager       *ui_manager);
+  void       (*connect_ui_manager)      (ThunarStandardView *standard_view,
+                                         GtkUIManager       *ui_manager);
+  void       (*disconnect_ui_manager)   (ThunarStandardView *standard_view,
+                                         GtkUIManager       *ui_manager);
 
   /* Returns the list of currently selected GtkTreePath's, where
    * both the list and the items are owned by the caller. */
@@ -89,8 +89,11 @@ struct _ThunarStandardViewClass
   /* Sets the item/row that is highlighted for feedback. NULL is
    * passed for path to disable the highlighting.
    */
-  void         (*highlight_path)       (ThunarStandardView  *standard_view,
-                                        GtkTreePath         *path);
+  void         (*highlight_path)        (ThunarStandardView  *standard_view,
+                                         GtkTreePath         *path);
+
+  /* Internal action signals */
+  gboolean     (*delete_selected_files) (ThunarStandardView *standard_view);
 };
 
 struct _ThunarStandardView
