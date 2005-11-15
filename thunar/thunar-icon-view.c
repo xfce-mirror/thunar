@@ -33,8 +33,21 @@
 
 
 
+/* Property identifiers */
+enum
+{
+  PROP_0,
+  PROP_TEXT_BESIDE_ICONS,
+};
+
+
+
 static void         thunar_icon_view_class_init             (ThunarIconViewClass *klass);
 static void         thunar_icon_view_init                   (ThunarIconView      *icon_view);
+static void         thunar_icon_view_set_property           (GObject             *object,
+                                                             guint                prop_id,
+                                                             const GValue        *value,
+                                                             GParamSpec          *pspec);
 static AtkObject   *thunar_icon_view_get_accessible         (GtkWidget           *widget);
 static void         thunar_icon_view_connect_ui_manager     (ThunarStandardView  *standard_view,
                                                              GtkUIManager        *ui_manager);
@@ -136,6 +149,10 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
 {
   ThunarStandardViewClass *thunarstandard_view_class;
   GtkWidgetClass          *gtkwidget_class;
+  GObjectClass            *gobject_class;
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->set_property = thunar_icon_view_set_property;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_icon_view_get_accessible;
@@ -151,6 +168,20 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   thunarstandard_view_class->scroll_to_path = thunar_icon_view_scroll_to_path;
   thunarstandard_view_class->get_path_at_pos = thunar_icon_view_get_path_at_pos;
   thunarstandard_view_class->highlight_path = thunar_icon_view_highlight_path;
+
+  /**
+   * ThunarIconView::text-beside-icons:
+   *
+   * Write-only property to specify whether text should be
+   * display besides the icon rather than below.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_TEXT_BESIDE_ICONS,
+                                   g_param_spec_boolean ("text-beside-icons",
+                                                         _("Text beside icons"),
+                                                         _("Text beside icons"),
+                                                         FALSE,
+                                                         EXO_PARAM_WRITABLE));
 }
 
 
@@ -208,6 +239,40 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   g_signal_connect (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->model), "sort-column-changed",
                     G_CALLBACK (thunar_icon_view_sort_column_changed), icon_view);
   thunar_icon_view_sort_column_changed (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (icon_view)->model), icon_view);
+
+  /* synchronize the "text-beside-icons" property with the global preference */
+  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences), "default-text-beside-icons", G_OBJECT (icon_view), "text-beside-icons");
+}
+
+
+
+static void
+thunar_icon_view_set_property (GObject      *object,
+                               guint         prop_id,
+                               const GValue *value,
+                               GParamSpec   *pspec)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
+
+  switch (prop_id)
+    {
+    case PROP_TEXT_BESIDE_ICONS:
+      if (G_UNLIKELY (g_value_get_boolean (value)))
+        {
+          exo_icon_view_set_orientation (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), GTK_ORIENTATION_HORIZONTAL);
+          g_object_set (G_OBJECT (standard_view->name_renderer), "yalign", 0.5f, NULL);
+        }
+      else
+        {
+          exo_icon_view_set_orientation (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), GTK_ORIENTATION_VERTICAL);
+          g_object_set (G_OBJECT (standard_view->name_renderer), "yalign", 0.0f, NULL);
+        }
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 
@@ -218,13 +283,14 @@ thunar_icon_view_get_accessible (GtkWidget *widget)
   AtkObject *object;
 
   /* query the atk object for the icon view class */
-  object = GTK_WIDGET_CLASS (thunar_icon_view_parent_class)->get_accessible (widget);
+  object = (*GTK_WIDGET_CLASS (thunar_icon_view_parent_class)->get_accessible) (widget);
 
   /* set custom Atk properties for the icon view */
   if (G_LIKELY (object != NULL))
     {
-      atk_object_set_name (object, _("Icon view"));
       atk_object_set_description (object, _("Icon based directory listing"));
+      atk_object_set_name (object, _("Icon view"));
+      atk_object_set_role (object, ATK_ROLE_DIRECTORY_PANE);
     }
 
   return object;

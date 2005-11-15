@@ -32,6 +32,7 @@
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-location-entry.h>
+#include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-window.h>
@@ -68,6 +69,8 @@ static void     thunar_window_action_open_new_window      (GtkAction          *a
 static void     thunar_window_action_close_all_windows    (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_close                (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_preferences          (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_location_bar_changed (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
@@ -151,6 +154,7 @@ static const GtkActionEntry action_entries[] =
   { "close-all-windows", NULL, N_ ("Close _All Windows"), "<control><shift>W", N_ ("Close all Thunar windows"), G_CALLBACK (thunar_window_action_close_all_windows), },
   { "close", GTK_STOCK_CLOSE, N_ ("_Close"), "<control>W", N_ ("Close this window"), G_CALLBACK (thunar_window_action_close), },
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
+  { "preferences", GTK_STOCK_PREFERENCES, N_ ("_Preferences"), NULL, N_ ("Edit Thunar Preferences"), G_CALLBACK (thunar_window_action_preferences), },
   { "view-menu", NULL, N_ ("_View"), NULL, },
   { "view-location-bar-menu", NULL, N_ ("_Location Bar"), NULL, },
   { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
@@ -402,10 +406,18 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_location_bar_changed), window);
   thunar_window_action_location_bar_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 
-  /* determine the selected view */
-  g_object_get (G_OBJECT (window->preferences), "last-view", &type_name, NULL);
+  /* determine the default view */
+  g_object_get (G_OBJECT (window->preferences), "default-view", &type_name, NULL);
   type = g_type_from_name (type_name);
   g_free (type_name);
+
+  /* determine the last selected view if we don't have a valid default */
+  if (!g_type_is_a (type, THUNAR_TYPE_VIEW))
+    {
+      g_object_get (G_OBJECT (window->preferences), "last-view", &type_name, NULL);
+      type = g_type_from_name (type_name);
+      g_free (type_name);
+    }
 
   /* activate the selected view */
   action = gtk_action_group_get_action (window->action_group, "view-as-icons");
@@ -579,6 +591,22 @@ thunar_window_action_close (GtkAction    *action,
                             ThunarWindow *window)
 {
   gtk_widget_destroy (GTK_WIDGET (window));
+}
+
+
+
+static void
+thunar_window_action_preferences (GtkAction    *action,
+                                  ThunarWindow *window)
+{
+  GtkWidget *dialog;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* allocate and display a preferences dialog */
+  dialog = thunar_preferences_dialog_new (GTK_WINDOW (window));
+  gtk_widget_show (dialog);
 }
 
 

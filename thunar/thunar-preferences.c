@@ -50,7 +50,10 @@
 enum
 {
   PROP_0,
+  PROP_DEFAULT_FOLDERS_FIRST,
   PROP_DEFAULT_SHOW_HIDDEN,
+  PROP_DEFAULT_TEXT_BESIDE_ICONS,
+  PROP_DEFAULT_VIEW,
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_VIEW,
@@ -106,6 +109,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   thunar_g_initialize_transformations ();
 
   /**
+   * ThunarPreferences::default-folders-first:
+   *
+   * Whether to sort folders before files.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_DEFAULT_FOLDERS_FIRST,
+                                   g_param_spec_boolean ("default-folders-first",
+                                                         "default-folders-first",
+                                                         "default-folders-first",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
    * ThunarPreferences::default-show-hidden:
    *
    * Whether to show hidden files by default in new windows.
@@ -117,6 +133,35 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          "default-show-hidden",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences::default-text-beside-icons:
+   *
+   * Whether the icon view should display the file names beside the
+   * file icons instead of below the file icons.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_DEFAULT_TEXT_BESIDE_ICONS,
+                                   g_param_spec_boolean ("default-text-beside-icons",
+                                                         "default-text-beside-icons",
+                                                         "default-text-beside-icons",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences::default-view:
+   *
+   * The name of the widget class, which should be used for the
+   * view pane in new #ThunarWindow<!---->s or "void" to use the
+   * last selected view from the "last-view" preference.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_DEFAULT_VIEW,
+                                   g_param_spec_string ("default-view",
+                                                        "default-view",
+                                                        "default-view",
+                                                        "void",
+                                                        EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences::last-location-bar:

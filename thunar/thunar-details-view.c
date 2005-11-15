@@ -213,13 +213,14 @@ thunar_details_view_get_accessible (GtkWidget *widget)
   AtkObject *object;
 
   /* query the atk object for the tree view class */
-  object = GTK_WIDGET_CLASS (thunar_details_view_parent_class)->get_accessible (widget);
+  object = (*GTK_WIDGET_CLASS (thunar_details_view_parent_class)->get_accessible) (widget);
 
   /* set custom Atk properties for the details view */
   if (G_LIKELY (object != NULL))
     {
-      atk_object_set_name (object, _("Details view"));
       atk_object_set_description (object, _("Detailed directory listing"));
+      atk_object_set_name (object, _("Details view"));
+      atk_object_set_role (object, ATK_ROLE_DIRECTORY_PANE);
     }
 
   return object;

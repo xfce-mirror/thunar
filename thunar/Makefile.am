@@ -91,6 +91,8 @@ Thunar_SOURCES =							\
 	thunar-open-with-action.h					\
 	thunar-path-entry.c						\
 	thunar-path-entry.h						\
+	thunar-preferences-dialog.c					\
+	thunar-preferences-dialog.h					\
 	thunar-preferences.c						\
 	thunar-preferences.h						\
 	thunar-progress-dialog.c					\

@@ -263,7 +263,7 @@ static const GtkActionEntry action_entries[] =
   { "delete", GTK_STOCK_DELETE, N_ ("_Delete Files"), NULL, N_ ("Delete the selected files"), G_CALLBACK (thunar_standard_view_action_delete), },
   { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Files into Folder"), NULL, N_ ("Paste files into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), "<control>A", N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
-  { "select-by-pattern", NULL, N_ ("Select by _Pattern"), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
+  { "select-by-pattern", NULL, N_ ("Select _by Pattern"), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
   { "duplicate", NULL, N_ ("Du_plicate File"), NULL, N_ ("Duplicate each selected file"), G_CALLBACK (thunar_standard_view_action_duplicate), },
   { "make-link", NULL, N_ ("Ma_ke Link"), NULL, N_ ("Create a symbolic link for each selected file"), G_CALLBACK (thunar_standard_view_action_make_link), },
   { "rename", NULL, N_ ("_Rename"), "F2", N_ ("Rename the selected file"), G_CALLBACK (thunar_standard_view_action_rename), },
@@ -434,6 +434,9 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
   standard_view->priv->drag_timer_id = -1;
 
+  /* grab a reference on the preferences */
+  standard_view->preferences = thunar_preferences_get ();
+
   /* grab a reference on the extension manager */
   standard_view->priv->extension_manager = thunar_extension_manager_get_default ();
 
@@ -469,6 +472,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
+  exo_binding_new (G_OBJECT (standard_view->preferences), "default-folders-first", G_OBJECT (standard_view->model), "folders-first");
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
@@ -602,6 +606,9 @@ thunar_standard_view_finalize (GObject *object)
       g_closure_unref (standard_view->priv->new_files_closure);
       standard_view->priv->new_files_closure = NULL;
     }
+
+  /* release our reference on the preferences */
+  g_object_unref (G_OBJECT (standard_view->preferences));
 
   /* disconnect from the list model */
   g_signal_handlers_disconnect_matched (G_OBJECT (standard_view->model), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);

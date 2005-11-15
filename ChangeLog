@@ -1,3 +1,32 @@
+2005-11-15	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-standard-view.c: Use "b" as mnemonic for the "Select by
+	  Pattern" action to avoid clash with "Preferences".
+	* thunar/thunar-preferences.c: Add "default-folders-first" property,
+	  which determines whether folders should be sorted before other files.
+	  Add "default-view", which dictates the default view pane used for new
+	  windows, or "void" to use the view remembered in "last-view".
+	* thunar/thunar-standard-view.{c,h}: Connect the list models
+	  "folders-first" property to the "default-folders-first" preference.
+	* thunar/thunar-window.c(thunar_window_init): Check "default-view" first
+	  and if it does not contain a valid view class name, check "last-view".
+	* thunar/thunar-details-view.c(thunar_details_view_get_accessible),
+	  thunar/thunar-icon-view.c(thunar_icon_view_get_accessible): Set ATK
+	  role for our folder views to ATK_ROLE_DIRECTORY_PANE.
+	* thunar/Makefile.am, thunar/thunar-preferences-dialog.{c,h},
+	  thunar/thunar-window-ui.xml, thunar/thunar-window.c: Import class
+	  ThunarPreferencesDialog, which allows the user to customize the global
+	  preferences for Thunar. Add a "Preferences" menu item to the "Edit"
+	  menu of ThunarWindow's.
+	* thunar/thunar-preferences.c: Add "default-text-beside-icons" property,
+	  which tells whether the icon view should display the file names beside
+	  the file icons, rather than below the file icons.
+	* thunar/thunar-icon-view.c: Add a property "text-beside-icons", which
+	  tells whether the icon view will place the icon captions beside the
+	  icons rather than below. Synchronize the property with the global
+	  option "default-text-beside-icons".
+	* po/*.po: Merge new strings.
+
 2005-11-14	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-xfer.c: Return G_FILE_ERROR_INTR when the copy

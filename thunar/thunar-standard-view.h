@@ -23,6 +23,7 @@
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-list-model.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-view.h>
 
 G_BEGIN_DECLS;
@@ -100,7 +101,7 @@ struct _ThunarStandardView
 {
   GtkScrolledWindow __parent__;
 
-  ThunarStandardViewPrivate *priv;
+  ThunarPreferences         *preferences;
 
   ThunarClipboardManager    *clipboard;
   ThunarListModel           *model;
@@ -116,6 +117,8 @@ struct _ThunarStandardView
 
   ExoBinding                *loading_binding;
   gboolean                   loading;
+
+  ThunarStandardViewPrivate *priv;
 };
 
 GType thunar_standard_view_get_type           (void) G_GNUC_CONST;
