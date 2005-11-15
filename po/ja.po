@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.2svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-15 19:36+0100\n"
+"POT-Creation-Date: 2005-11-15 22:36+0100\n"
 "PO-Revision-Date: 2005-10-06 21:58+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -262,7 +262,7 @@ msgid "Failed to create symbolic `%s'"
 msgstr "リンク %s を作成できません。"
 
 #. setup application name
-#: ../thunar/main.c:47 ../thunar/thunar-window.c:351
+#: ../thunar/main.c:47 ../thunar/thunar-window.c:359
 msgid "Thunar"
 msgstr "Thunar"
 
@@ -718,12 +718,12 @@ msgid "Number of visible files"
 msgstr "表示されるファイルの数です"
 
 #: ../thunar/thunar-list-model.c:297 ../thunar/thunar-view.c:111
-#: ../thunar/thunar-window.c:222
+#: ../thunar/thunar-window.c:226
 msgid "Show hidden"
 msgstr "隠しファイルを表示"
 
 #: ../thunar/thunar-list-model.c:298 ../thunar/thunar-view.c:112
-#: ../thunar/thunar-window.c:223
+#: ../thunar/thunar-window.c:227
 msgid "Whether to display hidden files"
 msgstr "隠しファイルを表示します"
 
@@ -780,7 +780,7 @@ msgstr "場所を開きます"
 msgid "_Location:"
 msgstr "場所(_L):"
 
-#: ../thunar/thunar-navigator.c:137 ../thunar/thunar-window.c:209
+#: ../thunar/thunar-navigator.c:137 ../thunar/thunar-window.c:213
 msgid "Current directory"
 msgstr "現在のフォルダ"
 
@@ -809,6 +809,68 @@ msgstr "現在表示されているファイルです"
 #: ../thunar/thunar-path-entry.c:180
 msgid "The icon size for the path entry"
 msgstr "パス・エントリーのアイコン・サイズです"
+
+#: ../thunar/thunar-preferences-dialog.c:145
+#, fuzzy
+msgid "File Manager Preferences"
+msgstr "ファイルマネージャー"
+
+#: ../thunar/thunar-preferences-dialog.c:161
+msgid "<b>Default View</b>"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:172
+msgid "View _new folders using:"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:177
+#, fuzzy
+msgid "Icon View"
+msgstr "アイコン表示"
+
+#: ../thunar/thunar-preferences-dialog.c:178
+#, fuzzy
+msgid "Detailed List View"
+msgstr "詳細表示"
+
+#: ../thunar/thunar-preferences-dialog.c:179
+msgid "Last Active View"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:194
+msgid "Sort _folders before files"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:196
+msgid "Select this option to list folders before files when you sort a folder."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:200
+#, fuzzy
+msgid "Show hidden and _backup files"
+msgstr "隠しファイルを表示(_H)"
+
+#: ../thunar/thunar-preferences-dialog.c:202
+msgid ""
+"Select this option to show hidden and backup files in new windows. The first "
+"character in a hidden filename is a period (.). The last character in a "
+"backup filename is a tilde (~)."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:212
+#, fuzzy
+msgid "<b>Icon View</b>"
+msgstr "アイコン表示"
+
+#: ../thunar/thunar-preferences-dialog.c:223
+msgid "_Text beside icons"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:225
+msgid ""
+"Select this option to place the icon captions for items beside the icon "
+"rather than below the icon."
+msgstr ""
 
 #: ../thunar/thunar-preferences.c:223
 #, fuzzy, c-format
@@ -1172,7 +1234,7 @@ msgstr "折り返し幅です"
 msgid "Text to be displayed in the statusbar associated with this view"
 msgstr "この表示に関連付けられたステータスバーで表示されるテキストです"
 
-#: ../thunar/thunar-view.c:125 ../thunar/thunar-window.c:237
+#: ../thunar/thunar-view.c:125 ../thunar/thunar-window.c:241
 msgid "UI manager"
 msgstr "UI マネージャ"
 
@@ -1180,158 +1242,181 @@ msgstr "UI マネージャ"
 msgid "UI manager of the surrounding window"
 msgstr "ウィンドウを囲う UI マネージャです"
 
-#: ../thunar/thunar-window.c:152
+#: ../thunar/thunar-window.c:156
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: ../thunar/thunar-window.c:153
+#: ../thunar/thunar-window.c:157
 msgid "Open New _Window"
 msgstr "新しいウィンドウを開く(_W)"
 
-#: ../thunar/thunar-window.c:153
+#: ../thunar/thunar-window.c:157
 msgid "Open a new Thunar window for the displayed location"
 msgstr "表示されている場所の Thunar ウィンドウを新しく開きます"
 
-#: ../thunar/thunar-window.c:154
+#: ../thunar/thunar-window.c:158
 msgid "Close _All Windows"
 msgstr "全ウィンドウを閉じる(_A)"
 
-#: ../thunar/thunar-window.c:154
+#: ../thunar/thunar-window.c:158
 msgid "Close all Thunar windows"
 msgstr "Thunar の全てのウィンドウを閉じます"
 
-#: ../thunar/thunar-window.c:155
+#: ../thunar/thunar-window.c:159
 msgid "_Close"
 msgstr "閉じる(_C)"
 
-#: ../thunar/thunar-window.c:155
+#: ../thunar/thunar-window.c:159
 msgid "Close this window"
 msgstr "このウィンドウを閉じます"
 
-#: ../thunar/thunar-window.c:156
+#: ../thunar/thunar-window.c:160
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: ../thunar/thunar-window.c:157
+#: ../thunar/thunar-window.c:161
 #, fuzzy
 msgid "_Preferences"
 msgstr "プロパティ(_P)"
 
-#: ../thunar/thunar-window.c:157
+#: ../thunar/thunar-window.c:161
 msgid "Edit Thunar Preferences"
 msgstr ""
 
-#: ../thunar/thunar-window.c:158
+#: ../thunar/thunar-window.c:162
 msgid "_View"
 msgstr "表示(_V)"
 
-#: ../thunar/thunar-window.c:159
-msgid "_Location Bar"
+#: ../thunar/thunar-window.c:163
+#, fuzzy
+msgid "_Location Selector"
 msgstr "場所バー(_L)"
 
-#: ../thunar/thunar-window.c:160
+#: ../thunar/thunar-window.c:164
 msgid "_Side Pane"
 msgstr "サイドペイン(_S)"
 
-#: ../thunar/thunar-window.c:161
+#: ../thunar/thunar-window.c:165
 msgid "_Go"
 msgstr "移動(_G)"
 
-#: ../thunar/thunar-window.c:162
+#: ../thunar/thunar-window.c:166
 msgid "Open _Parent"
 msgstr "親フォルダを開く(_P)"
 
-#: ../thunar/thunar-window.c:162
+#: ../thunar/thunar-window.c:166
 msgid "Open the parent folder"
 msgstr "親フォルダを開きます"
 
-#: ../thunar/thunar-window.c:163
+#: ../thunar/thunar-window.c:167
 #, fuzzy
 msgid "_Home"
 msgstr "ホーム"
 
-#: ../thunar/thunar-window.c:163
+#: ../thunar/thunar-window.c:167
 #, fuzzy
 msgid "Open the home folder"
 msgstr "親フォルダを開きます"
 
-#: ../thunar/thunar-window.c:164
+#: ../thunar/thunar-window.c:168
 msgid "Open _Location..."
 msgstr "場所を開く(_L)..."
 
-#: ../thunar/thunar-window.c:164
+#: ../thunar/thunar-window.c:168
 msgid "Specify a location to open"
 msgstr "開く場所を指定します"
 
-#: ../thunar/thunar-window.c:165
+#: ../thunar/thunar-window.c:169
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: ../thunar/thunar-window.c:167 ../thunar/thunar-window.c:169
+#: ../thunar/thunar-window.c:171 ../thunar/thunar-window.c:173
 msgid "_About"
 msgstr "このプログラムについて(_A)"
 
-#: ../thunar/thunar-window.c:167 ../thunar/thunar-window.c:169
+#: ../thunar/thunar-window.c:171 ../thunar/thunar-window.c:173
 msgid "Display information about Thunar"
 msgstr "Thunar についての情報を表示します"
 
-#: ../thunar/thunar-window.c:175
+#: ../thunar/thunar-window.c:179
 #, fuzzy
 msgid "Show _Hidden Files"
 msgstr "隠しファイルを表示(_H)"
 
-#: ../thunar/thunar-window.c:175
+#: ../thunar/thunar-window.c:179
 msgid "Toggles the display of hidden files in the current window"
 msgstr "現在のウィンドウで隠しファイルの表示/非表示を切り替えます"
 
-#: ../thunar/thunar-window.c:210
+#: ../thunar/thunar-window.c:214
 msgid "The directory currently displayed within this window"
 msgstr "現在このウィンドウ内に表示されているフォルダです"
 
-#: ../thunar/thunar-window.c:238
+#: ../thunar/thunar-window.c:242
 msgid "The UI manager used within this window"
 msgstr "このウィンドウ内で使用されている UI マネージャです"
 
 #.
 #. * add the side pane options
 #.
-#: ../thunar/thunar-window.c:293
+#: ../thunar/thunar-window.c:297
 msgid "_Favourites"
 msgstr "お気に入り(_F)"
 
-#: ../thunar/thunar-window.c:299 ../thunar/thunar-window.c:320
+#: ../thunar/thunar-window.c:303 ../thunar/thunar-window.c:326
 msgid "_Hidden"
 msgstr "隠す(_H)"
 
 #.
-#. * add the location bar options
+#. * add the location selector options
 #.
-#: ../thunar/thunar-window.c:308
-msgid "_Button Style"
-msgstr "ボタン式(_B)"
-
-#: ../thunar/thunar-window.c:314
-msgid "_Traditional Style"
+#: ../thunar/thunar-window.c:312
+#, fuzzy
+msgid "_Pathbar Style"
 msgstr "旧式(_T)"
+
+#: ../thunar/thunar-window.c:313
+msgid "Modern approach with buttons that correspond to folders"
+msgstr ""
+
+#: ../thunar/thunar-window.c:319
+#, fuzzy
+msgid "_Toolbar Style"
+msgstr "旧式(_T)"
+
+#: ../thunar/thunar-window.c:320
+msgid "Traditional approach with location bar and navigation buttons"
+msgstr ""
+
+#: ../thunar/thunar-window.c:326
+msgid "Don't display any location selector"
+msgstr ""
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:329
+#: ../thunar/thunar-window.c:335
 msgid "View as _Icons"
 msgstr "アイコン表示(_I)"
 
 #: ../thunar/thunar-window.c:335
+msgid "Display folder content in an icon view"
+msgstr ""
+
+#: ../thunar/thunar-window.c:342
 msgid "View as _Detailed List"
 msgstr "詳細リスト表示(_D)"
 
+#: ../thunar/thunar-window.c:342
+msgid "Display folder content in a detailed list view"
+msgstr ""
+
 #. display an error to the user
-#: ../thunar/thunar-window.c:766
+#: ../thunar/thunar-window.c:836
 #, fuzzy
 msgid "Failed to open home directory"
 msgstr "フォルダ %s を開けません。"
 
-#: ../thunar/thunar-window.c:843
+#: ../thunar/thunar-window.c:911
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -1339,7 +1424,7 @@ msgstr ""
 "Thunar は Xfce デスクトップ環境向けの\n"
 "使いやすい軽快なファイルマネージャーです"
 
-#: ../thunar/thunar-window.c:848
+#: ../thunar/thunar-window.c:916
 msgid "translator-credits"
 msgstr "Daichi Kawahata <daichi@xfce.org>"
 
@@ -1370,6 +1455,9 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
+
+#~ msgid "_Button Style"
+#~ msgstr "ボタン式(_B)"
 
 #, fuzzy
 #~ msgid "Select by _Pattern"

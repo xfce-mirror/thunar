@@ -135,10 +135,14 @@ struct _ThunarWindow
   guint                   menu_item_tooltip_id;
 
   GtkWidget              *paned;
-  GtkWidget              *location_bar;
   GtkWidget              *view_container;
   GtkWidget              *view;
   GtkWidget              *statusbar;
+
+  /* support for two different styles of location bars (standalone/toolbar'ed) */
+  GtkWidget              *location_standalone_box;
+  GtkWidget              *location_toolbar_box;
+  GtkWidget              *location_bar;
 
   ThunarHistory          *history;
 
@@ -156,7 +160,7 @@ static const GtkActionEntry action_entries[] =
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
   { "preferences", GTK_STOCK_PREFERENCES, N_ ("_Preferences"), NULL, N_ ("Edit Thunar Preferences"), G_CALLBACK (thunar_window_action_preferences), },
   { "view-menu", NULL, N_ ("_View"), NULL, },
-  { "view-location-bar-menu", NULL, N_ ("_Location Bar"), NULL, },
+  { "view-location-selector-menu", NULL, N_ ("_Location Selector"), NULL, },
   { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
@@ -303,21 +307,23 @@ thunar_window_init (ThunarWindow *window)
   g_object_unref (G_OBJECT (radio_action));
 
   /*
-   * add the location bar options
+   * add the location selector options
    */
-  radio_action = gtk_radio_action_new ("view-location-bar-buttons", _("_Button Style"), NULL, NULL, THUNAR_TYPE_LOCATION_BUTTONS);
+  radio_action = gtk_radio_action_new ("view-location-selector-pathbar", _("_Pathbar Style"),
+                                       _("Modern approach with buttons that correspond to folders"), NULL, THUNAR_TYPE_LOCATION_BUTTONS);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, NULL);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
-  radio_action = gtk_radio_action_new ("view-location-bar-entry", _("_Traditional Style"), NULL, NULL, THUNAR_TYPE_LOCATION_ENTRY);
+  radio_action = gtk_radio_action_new ("view-location-selector-toolbar", _("_Toolbar Style"),
+                                       _("Traditional approach with location bar and navigation buttons"), NULL, THUNAR_TYPE_LOCATION_ENTRY);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
-  radio_action = gtk_radio_action_new ("view-location-bar-hidden", _("_Hidden"), NULL, NULL, G_TYPE_NONE);
+  radio_action = gtk_radio_action_new ("view-location-selector-hidden", _("_Hidden"), _("Don't display any location selector"), NULL, G_TYPE_NONE);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
@@ -326,13 +332,15 @@ thunar_window_init (ThunarWindow *window)
   /*
    * add view options
    */
-  radio_action = gtk_radio_action_new ("view-as-icons", _("View as _Icons"), NULL, NULL, THUNAR_TYPE_ICON_VIEW);
+  radio_action = gtk_radio_action_new ("view-as-icons", _("View as _Icons"), _("Display folder content in an icon view"),
+                                       NULL, THUNAR_TYPE_ICON_VIEW);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, NULL);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
-  radio_action = gtk_radio_action_new ("view-as-detailed-list", _("View as _Detailed List"), NULL, NULL, THUNAR_TYPE_DETAILS_VIEW);
+  radio_action = gtk_radio_action_new ("view-as-detailed-list", _("View as _Detailed List"), _("Display folder content in a detailed list view"),
+                                       NULL, THUNAR_TYPE_DETAILS_VIEW);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
@@ -358,6 +366,10 @@ thunar_window_init (ThunarWindow *window)
   gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
   gtk_widget_show (menubar);
 
+  window->location_toolbar_box = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
+  gtk_box_pack_start (GTK_BOX (vbox), window->location_toolbar_box, FALSE, FALSE, 0);
+  gtk_widget_show (window->location_toolbar_box);
+
   window->paned = g_object_new (GTK_TYPE_HPANED, "border-width", 6, NULL);
   gtk_box_pack_start (GTK_BOX (vbox), window->paned, TRUE, TRUE, 0);
   gtk_widget_show (window->paned);
@@ -366,9 +378,9 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (window->paned), box, TRUE, FALSE);
   gtk_widget_show (box);
 
-  window->location_bar = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
-  gtk_box_pack_start (GTK_BOX (box), window->location_bar, FALSE, FALSE, 0);
-  gtk_widget_show (window->location_bar);
+  window->location_standalone_box = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
+  gtk_box_pack_start (GTK_BOX (box), window->location_standalone_box, FALSE, FALSE, 0);
+  gtk_widget_show (window->location_standalone_box);
 
   window->view_container = gtk_alignment_new (0.5f, 0.5f, 1.0f, 1.0f);
   gtk_box_pack_start (GTK_BOX (box), window->view_container, TRUE, TRUE, 0);
@@ -401,7 +413,7 @@ thunar_window_init (ThunarWindow *window)
   g_free (type_name);
 
   /* activate the selected location bar */
-  action = gtk_action_group_get_action (window->action_group, "view-location-bar-buttons");
+  action = gtk_action_group_get_action (window->action_group, "view-location-selector-pathbar");
   exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), g_type_is_a (type, THUNAR_TYPE_LOCATION_BAR) ? type : G_TYPE_NONE);
   g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_location_bar_changed), window);
   thunar_window_action_location_bar_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
@@ -616,13 +628,20 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
                                            GtkRadioAction *current,
                                            ThunarWindow   *window)
 {
-  GtkWidget *widget;
-  GType      type;
+  GtkToolItem *toolitem;
+  GtkWidget   *toolbar;
+  GType        type;
 
   /* drop the previous location bar (if any) */
-  widget = gtk_bin_get_child (GTK_BIN (window->location_bar));
-  if (G_LIKELY (widget != NULL))
-    gtk_widget_destroy (widget);
+  if (G_UNLIKELY (window->location_bar != NULL))
+    {
+      gtk_widget_destroy (window->location_bar);
+      window->location_bar = NULL;
+    }
+
+  /* hide the location bar containers */
+  gtk_widget_hide (window->location_standalone_box);
+  gtk_widget_hide (window->location_toolbar_box);
 
   /* determine the new type of location bar */
   type = gtk_radio_action_get_current_value (action);
@@ -631,21 +650,72 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
   if (G_LIKELY (type != G_TYPE_NONE))
     {
       /* initialize the new location bar widget */
-      widget = g_object_new (type, NULL);
-      g_signal_connect_swapped (G_OBJECT (widget), "change-directory",
-                                G_CALLBACK (thunar_window_set_current_directory), window);
-      exo_binding_new (G_OBJECT (window), "current-directory",
-                       G_OBJECT (widget), "current-directory");
-      gtk_container_add (GTK_CONTAINER (window->location_bar), widget);
-      gtk_widget_show (widget);
+      window->location_bar = g_object_new (type, NULL);
+      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory");
+      g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
 
-      /* display the location bar container */
+      /* check if the location bar should be placed into a toolbar */
+      if (!thunar_location_bar_is_standalone (THUNAR_LOCATION_BAR (window->location_bar)))
+        {
+          /* be sure to drop any previous toolbar */
+          toolbar = gtk_bin_get_child (GTK_BIN (window->location_toolbar_box));
+          if (G_LIKELY (toolbar != NULL))
+            gtk_widget_destroy (toolbar);
+
+          /* allocate the new toolbar */
+          toolbar = gtk_toolbar_new ();
+          gtk_container_add (GTK_CONTAINER (window->location_toolbar_box), toolbar);
+          gtk_widget_show (toolbar);
+
+          /* add the "back" action */
+          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "back");
+          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
+          gtk_widget_show (GTK_WIDGET (toolitem));
+
+          /* add the "forward" action */
+          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "forward");
+          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
+          gtk_widget_show (GTK_WIDGET (toolitem));
+
+          /* add the "open-parent" action */
+          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "open-parent");
+          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
+          gtk_widget_show (GTK_WIDGET (toolitem));
+
+          /* add a separator */
+          toolitem = gtk_separator_tool_item_new ();
+          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
+          gtk_widget_show (GTK_WIDGET (toolitem));
+
+          /* add the "open-home" action */
+          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "open-home");
+          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
+          gtk_widget_show (GTK_WIDGET (toolitem));
+
+          /* add a separator */
+          toolitem = gtk_separator_tool_item_new ();
+          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
+          gtk_widget_show (GTK_WIDGET (toolitem));
+
+          /* add the toolitem with the location bar */
+          toolitem = gtk_tool_item_new ();
+          gtk_tool_item_set_expand (toolitem, TRUE);
+          gtk_container_add (GTK_CONTAINER (toolitem), window->location_bar);
+          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
+          gtk_widget_show (GTK_WIDGET (toolitem));
+
+          /* make the location toolbar container visible */
+          gtk_widget_show (window->location_toolbar_box);
+        }
+      else
+        {
+          /* it's a standalone location bar, just place it in the standalone container */
+          gtk_container_add (GTK_CONTAINER (window->location_standalone_box), window->location_bar);
+          gtk_widget_show (window->location_standalone_box);
+        }
+
+      /* display the new location bar widget */
       gtk_widget_show (window->location_bar);
-    }
-  else
-    {
-      /* hide the location bar container */
-      gtk_widget_hide (window->location_bar);
     }
 
   /* remember the setting */
@@ -784,13 +854,11 @@ thunar_window_action_open_location (GtkAction    *action,
                                     ThunarWindow *window)
 {
   GtkWidget *dialog;
-  GtkWidget *widget;
 
   /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
    * in the window does not support text entry by the user.
    */
-  widget = gtk_bin_get_child (GTK_BIN (window->location_bar));
-  if (widget == NULL || !thunar_location_bar_accept_focus (THUNAR_LOCATION_BAR (widget)))
+  if (window->location_bar == NULL || !thunar_location_bar_accept_focus (THUNAR_LOCATION_BAR (window->location_bar)))
     {
       dialog = thunar_location_dialog_new ();
       gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);

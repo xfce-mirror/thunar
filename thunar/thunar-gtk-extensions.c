@@ -26,6 +26,34 @@
 
 
 /**
+ * thunar_gtk_action_group_create_tool_item:
+ * @action_group : a #GtkActionGroup.
+ * @action_name  : the name of a #GtkAction in @action_group.
+ *
+ * Convenience function to create a #GtkToolItem for the #GtkAction
+ * named @action_name in @action_group.
+ *
+ * Return value: the #GtkToolItem for @action_name in @action_group.
+ **/
+GtkToolItem*
+thunar_gtk_action_group_create_tool_item (GtkActionGroup *action_group,
+                                          const gchar    *action_name)
+{
+  GtkAction *action;
+
+  g_return_val_if_fail (GTK_IS_ACTION_GROUP (action_group), NULL);
+  g_return_val_if_fail (action_name != NULL, NULL);
+
+  action = gtk_action_group_get_action (action_group, action_name);
+  if (G_UNLIKELY (action == NULL))
+    return NULL;
+
+  return GTK_TOOL_ITEM (gtk_action_create_tool_item (action));
+}
+
+
+
+/**
  * thunar_gtk_action_group_set_action_sensitive:
  * @action_group : a #GtkActionGroup.
  * @action_name  : the name of a #GtkAction in @action_group.

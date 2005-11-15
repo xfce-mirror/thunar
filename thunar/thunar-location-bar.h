@@ -37,12 +37,14 @@ struct _ThunarLocationBarIface
   GTypeInterface __parent__;
 
   /* virtual methods */
-  gboolean (*accept_focus) (ThunarLocationBar *location_bar);
+  gboolean (*accept_focus)  (ThunarLocationBar *location_bar);
+  gboolean (*is_standalone) (ThunarLocationBar *location_bar);
 };
 
 GType    thunar_location_bar_get_type     (void) G_GNUC_CONST;
 
-gboolean thunar_location_bar_accept_focus (ThunarLocationBar *location_bar);
+gboolean thunar_location_bar_accept_focus  (ThunarLocationBar *location_bar);
+gboolean thunar_location_bar_is_standalone (ThunarLocationBar *location_bar);
 
 G_END_DECLS;
 

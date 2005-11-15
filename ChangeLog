@@ -1,5 +1,25 @@
 2005-11-15	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-gtk-extensions.{c,h}: Add new convenience function
+	  thunar_gtk_action_group_create_tool_item(), which creates a new
+	  GtkToolItem proxy for a given GtkAction in a GtkActionGroup.
+	* thunar/thunar-location-bar.{c,h}, thunar/thunar-location-entry.c,
+	  thunar/thunar-location-buttons.c: Add new virtual method
+	  thunar_location_bar_is_standalone(), which determines whether a
+	  given location bar should be displayed in a standalone fashion, or
+	  embedded within a location toolbar.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Check whether
+	  the location should be embedded into a location toolbar and if so,
+	  generate a toolbar for it on-demand and place it below the menubar.
+	  Else, the location bar is placed right above the view pane. This
+	  gives a better appearance when using the location entry implementation
+	  with a toolbar, and you don't need the toolbar with the pathbar
+	  anyways.
+	* po/POTFILES.in: Add thunar-preferences-dialog.c here.
+	* po/*.po: Merge new strings.
+
+2005-11-15	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-standard-view.c: Use "b" as mnemonic for the "Select by
 	  Pattern" action to avoid clash with "Preferences".
 	* thunar/thunar-preferences.c: Add "default-folders-first" property,

@@ -110,6 +110,7 @@ static void
 thunar_location_entry_location_bar_init (ThunarLocationBarIface *iface)
 {
   iface->accept_focus = thunar_location_entry_accept_focus;
+  iface->is_standalone = (gpointer) exo_noop_false;
 }
 
 

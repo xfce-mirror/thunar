@@ -83,3 +83,23 @@ thunar_location_bar_accept_focus (ThunarLocationBar *location_bar)
   return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->accept_focus) (location_bar);
 }
 
+
+
+/**
+ * thunar_location_bar_is_standalone:
+ * @location_bar : a #ThunarLocationBar.
+ *
+ * Returns %TRUE if @location_bar should not be placed in the location
+ * toolbar, but should be treated as a standalone component, which is
+ * placed near to the view pane. Else, if %FALSE is returned, the
+ * @location_bar will be placed into the location toolbar.
+ *
+ * Return value: %FALSE to embed @location_bar into the location toolbar,
+ *               %TRUE to treat it as a standalone component.
+ **/
+gboolean
+thunar_location_bar_is_standalone (ThunarLocationBar *location_bar)
+{
+  g_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
+  return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->is_standalone) (location_bar);
+}
