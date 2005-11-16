@@ -27,16 +27,6 @@
 
 G_BEGIN_DECLS;
 
-#define THUNAR_VFS_MIME_APPLICATION_ERROR (thunar_vfs_mime_application_error_quark ())
-
-typedef enum
-{
-  THUNAR_VFS_MIME_APPLICATION_ERROR_LOCAL_FILES_ONLY,
-} ThunarVfsMimeApplicationError;
-
-GQuark thunar_vfs_mime_application_error_quark (void) G_GNUC_CONST;
-
-
 /**
  * ThunarVfsMimeApplicationFlags:
  * @THUNAR_VFS_MIME_APPLICATION_HIDDEN                  : the application should not be displayed in the menu system.

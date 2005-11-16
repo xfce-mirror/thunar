@@ -38,18 +38,6 @@
 
 
 
-GQuark
-thunar_vfs_mime_application_error_quark (void)
-{
-  static GQuark quark = 0;
-  if (G_UNLIKELY (quark == 0))
-    quark = g_quark_from_static_string ("thunar-vfs-mime-application-error-quark");
-  return quark;
-}
-
-
-
-
 static gboolean thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *application,
                                                       GList                          *path_list,
                                                       gint                           *argc,
