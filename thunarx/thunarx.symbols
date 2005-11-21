@@ -90,3 +90,25 @@ thunarx_property_page_provider_get_pages
 #endif
 #endif
 
+/* ThunarxProviderFactory methods */
+#if IN_HEADER(__THUNARX_PROVIDER_FACTORY_H__)
+#if IN_SOURCE(__THUNARX_PROVIDER_FACTORY_C__)
+thunarx_provider_factory_get_type G_GNUC_CONST
+thunarx_provider_factory_get_default
+thunarx_provider_factory_list_providers G_GNUC_MALLOC
+#endif
+#endif
+
+/* ThunarxProviderPlugin methods */
+#if IN_HEADER(__THUNARX_PROVIDER_PLUGIN_H__)
+#if IN_SOURCE(__THUNARX_PROVIDER_PLUGIN_C__)
+thunarx_provider_plugin_get_type G_GNUC_CONST
+thunarx_provider_plugin_get_resident
+thunarx_provider_plugin_set_resident
+thunarx_provider_plugin_register_type
+thunarx_provider_plugin_add_interface
+thunarx_provider_plugin_register_enum
+thunarx_provider_plugin_register_flags
+#endif
+#endif
+

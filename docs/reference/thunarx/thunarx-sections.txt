@@ -78,6 +78,50 @@ thunarx_property_page_provider_get_type
 </SECTION>
 
 <SECTION>
+<FILE>thunarx-provider-factory</FILE>
+<TITLE>ThunarxProviderFactory</TITLE>
+ThunarxProviderFactory
+thunarx_provider_factory_get_default
+thunarx_provider_factory_list_providers
+<SUBSECTION Standard>
+ThunarxProviderFactoryClass
+THUNARX_TYPE_PROVIDER_FACTORY
+THUNARX_PROVIDER_FACTORY
+THUNARX_PROVIDER_FACTORY_CLASS
+THUNARX_IS_PROVIDER_FACTORY
+THUNARX_IS_PROVIDER_FACTORY_CLASS
+THUNARX_PROVIDER_FACTORY_GET_CLASS
+<SUBSECTION Private>
+thunarx_provider_factory_get_type
+</SECTION>
+
+<SECTION>
+<FILE>thunarx-provider-plugin</FILE>
+<TITLE>ThunarxProviderPlugin</TITLE>
+ThunarxProviderPlugin
+ThunarxProviderPluginIface
+thunarx_provider_plugin_get_resident
+thunarx_provider_plugin_set_resident
+thunarx_provider_plugin_register_type
+thunarx_provider_plugin_add_interface
+thunarx_provider_plugin_register_enum
+thunarx_provider_plugin_register_flags
+THUNARX_DEFINE_TYPE
+THUNARX_DEFINE_TYPE_WITH_CODE
+THUNARX_DEFINE_ABSTRACT_TYPE
+THUNARX_DEFINE_ABSTRACT_TYPE_WITH_CODE
+THUNARX_DEFINE_TYPE_EXTENDED
+THUNARX_IMPLEMENT_INTERFACE
+<SUBSECTION Standard>
+THUNARX_TYPE_PROVIDER_PLUGIN
+THUNARX_PROVIDER_PLUGIN
+THUNARX_IS_PROVIDER_PLUGIN
+THUNARX_PROVIDER_PLUGIN_GET_IFACE
+<SUBSECTION Private>
+thunarx_provider_plugin_get_type
+</SECTION>
+
+<SECTION>
 <FILE>thunarx-version-information</FILE>
 <TITLE>Variables and functions to check the library version</TITLE>
 thunarx_major_version

@@ -42,8 +42,6 @@ Thunar_SOURCES =							\
 	thunar-dnd.h							\
 	thunar-emblem-chooser.c						\
 	thunar-emblem-chooser.h						\
-	thunar-extension-manager.c					\
-	thunar-extension-manager.h					\
 	thunar-fallback-icon.c						\
 	thunar-fallback-icon.h						\
 	thunar-favourites-model.c					\

@@ -4,6 +4,7 @@ INCLUDES =								\
 	-I$(top_srcdir)							\
 	-DG_LOG_DOMAIN=\"thunarx\"					\
 	-DTHUNARX_COMPILATION						\
+	-DTHUNARX_DIRECTORY=\"$(libdir)/thunarx-$(THUNAR_VERSION_API)\"	\
 	$(PLATFORM_CPPFLAGS)
 
 libthunarx_built_sources =						\
@@ -16,7 +17,9 @@ libthunarx_headers =							\
 	thunarx-file-info.h						\
 	thunarx-menu-provider.h						\
 	thunarx-property-page.h						\
-	thunarx-property-page-provider.h
+	thunarx-property-page-provider.h				\
+	thunarx-provider-factory.h					\
+	thunarx-provider-plugin.h
 
 libthunarx_includedir =							\
 	$(includedir)/thunarx-$(THUNAR_VERSION_API)/thunarx
@@ -34,7 +37,11 @@ libthunarx_1_la_SOURCES =						\
 	thunarx-file-info.c						\
 	thunarx-menu-provider.c						\
 	thunarx-property-page.c						\
-	thunarx-property-page-provider.c
+	thunarx-property-page-provider.c				\
+	thunarx-provider-factory.c					\
+	thunarx-provider-module.c					\
+	thunarx-provider-module.h					\
+	thunarx-provider-plugin.c
 
 libthunarx_1_la_CFLAGS =						\
 	$(GTK_CFLAGS)							\

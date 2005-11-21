@@ -21,6 +21,7 @@
 #define __THUNAR_FILE_H__
 
 #include <thunar/thunar-metafile.h>
+#include <thunarx/thunarx.h>
 
 G_BEGIN_DECLS;
 
@@ -211,8 +212,8 @@ static inline void                 thunar_file_set_thumb_state (ThunarFile      
                                                                 ThunarFileThumbState thumb_state);
 
 
-GList *thunar_file_list_copy (const GList *file_list);
-void   thunar_file_list_free (GList       *file_list);
+static inline GList *thunar_file_list_copy (GList *file_list);
+static inline void   thunar_file_list_free (GList *file_list);
 
 
 /**
@@ -512,6 +513,36 @@ thunar_file_set_thumb_state (ThunarFile          *file,
 {
   g_return_if_fail (THUNAR_IS_FILE (file));
   file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | thumb_state;
+}
+
+
+
+/**
+ * thunar_file_list_copy:
+ * @file_list : a list of #ThunarFile<!---->s.
+ *
+ * Returns a deep-copy of @file_list, which must be
+ * freed using thunar_file_list_free().
+ *
+ * Return value: a deep copy of @file_list.
+ **/
+static inline GList*
+thunar_file_list_copy (GList *file_list)
+{
+  return thunarx_file_info_list_copy (file_list);
+}
+
+/**
+ * thunar_file_list_free:
+ * @file_list : a list of #ThunarFile<!---->s.
+ *
+ * Unrefs the #ThunarFile<!---->s contained in @file_list
+ * and frees the list itself.
+ **/
+static inline void
+thunar_file_list_free (GList *file_list)
+{
+  thunarx_file_info_list_free (file_list);
 }
 
 

@@ -3,28 +3,31 @@
 INCLUDES =								\
 	-I$(top_builddir)						\
 	-I$(top_srcdir)							\
-	-DG_LOG_DOMAIN=\"OpenTerminalHere\"				\
+	-I$(top_srcdir)/examples					\
+	-DG_LOG_DOMAIN=\"TexOpenTerminal\"				\
 	$(PLATFORM_CPPFLAGS)
 
 extensionsdir = $(libdir)/thunarx-$(THUNAR_VERSION_API)
 extensions_LTLIBRARIES =						\
-	open-terminal-here.la
+	tex-open-terminal.la
 
-open_terminal_here_la_SOURCES =						\
-	open-terminal-here.c
+tex_open_terminal_la_SOURCES =						\
+	tex-open-terminal-plugin.c					\
+	tex-open-terminal.c						\
+	tex-open-terminal.h
 
-open_terminal_here_la_CFLAGS =						\
+tex_open_terminal_la_CFLAGS =						\
 	$(GTK_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
-open_terminal_here_la_DEPENDENCIES =					\
+tex_open_terminal_la_DEPENDENCIES =					\
 	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
 
-open_terminal_here_la_LIBADD =						\
+tex_open_terminal_la_LIBADD =						\
 	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la	\
 	$(GTK_LIBS)
 
-open_terminal_here_la_LDFLAGS =						\
+tex_open_terminal_la_LDFLAGS =						\
 	-avoid-version							\
 	-export-dynamic							\
 	-module								\

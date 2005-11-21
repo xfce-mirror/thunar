@@ -34,7 +34,6 @@
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
-#include <thunar/thunar-extension-manager.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-marshal.h>
@@ -42,8 +41,6 @@
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
 #include <thunar/thunar-text-renderer.h>
-
-#include <thunarx/thunarx.h>
 
 
 
@@ -225,7 +222,7 @@ struct _ThunarStandardViewPrivate
   GtkAction              *action_rename;
 
   /* support for file manager extensions */
-  ThunarExtensionManager *extension_manager;
+  ThunarxProviderFactory *provider_factory;
 
   /* custom menu actions support */
   GtkActionGroup         *custom_actions;
@@ -437,8 +434,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* grab a reference on the preferences */
   standard_view->preferences = thunar_preferences_get ();
 
-  /* grab a reference on the extension manager */
-  standard_view->priv->extension_manager = thunar_extension_manager_get_default ();
+  /* grab a reference on the provider factory */
+  standard_view->priv->provider_factory = thunarx_provider_factory_get_default ();
 
   /* initialize the scrolled window */
   gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (standard_view),
@@ -578,8 +575,8 @@ thunar_standard_view_finalize (GObject *object)
   g_assert (standard_view->ui_manager == NULL);
   g_assert (standard_view->clipboard == NULL);
 
-  /* release our reference on the extension manager */
-  g_object_unref (G_OBJECT (standard_view->priv->extension_manager));
+  /* release our reference on the provider factory */
+  g_object_unref (G_OBJECT (standard_view->priv->provider_factory));
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
   thunar_vfs_path_list_free (standard_view->priv->drag_path_list);
@@ -1184,8 +1181,8 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
   /* determine the toplevel window we belong to */
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
 
-  /* load the menu providers from the extension manager */
-  providers = thunar_extension_manager_list_providers (standard_view->priv->extension_manager, THUNARX_TYPE_MENU_PROVIDER);
+  /* load the menu providers from the provider factory */
+  providers = thunarx_provider_factory_list_providers (standard_view->priv->provider_factory, THUNARX_TYPE_MENU_PROVIDER);
   if (G_LIKELY (providers != NULL))
     {
       /* determine the list of selected files or the current folder */

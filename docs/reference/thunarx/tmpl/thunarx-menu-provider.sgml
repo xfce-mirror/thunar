@@ -35,43 +35,14 @@ The interface to extensions that provide additional menu items
   <title>Menu provider example</title>
 
   <programlisting>
-static GType hello_type;
-
 static void   hello_menu_provider_init (ThunarxMenuProviderIface *iface);
 static GList *hello_get_file_actions   (ThunarxMenuProvider      *provider,
                                         GtkWidget                *window,
                                         GList                    *files);
 
-static void
-hello_register_type (GTypeModule *module)
-{
-  static const GTypeInfo info =
-  {
-    sizeof (HelloClass),
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    NULL,
-    sizeof (Hello),
-    0,
-    NULL,
-    NULL,
-  };
-
-  static const GInterfaceInfo menu_provider_info =
-  {
-    (GInterfaceInitFunc) hello_menu_provider_init,
-    NULL,
-    NULL,
-  };
-
-  hello_type = g_type_module_register_type (module, G_TYPE_OBJECT,
-                                            "Hello", &amp;info, 0);
-  g_type_module_add_interface (module, hello_type,
-                               THUNARX_TYPE_MENU_PROVIDER,
-                               &amp;menu_provider_info);
-}
+THUNARX_DEFINE_TYPE_WITH_CODE (Hello, hello, G_TYPE_OBJECT,
+                               THUNARX_IMPLEMENT_INTERFACE (THUNARX_TYPE_MENU_PROVIDER,
+                                                            hello_menu_provider_init));
 
 static void
 hello_menu_provider_init (ThunarxMenuProviderIface *iface)

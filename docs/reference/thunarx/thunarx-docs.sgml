@@ -6,6 +6,8 @@
 <!ENTITY ThunarxMenuProvider SYSTEM "xml/thunarx-menu-provider.xml">
 <!ENTITY ThunarxPropertyPage SYSTEM "xml/thunarx-property-page.xml">
 <!ENTITY ThunarxPropertyPageProvider SYSTEM "xml/thunarx-property-page-provider.xml">
+<!ENTITY ThunarxProviderFactory SYSTEM "xml/thunarx-provider-factory.xml">
+<!ENTITY ThunarxProviderPlugin SYSTEM "xml/thunarx-provider-plugin.xml">
 <!ENTITY thunarx-version-information SYSTEM "xml/thunarx-version-information.xml">
 
 <!ENTITY version SYSTEM "version.xml">
@@ -133,7 +135,7 @@
         <para>
           <emphasis>Thunar Extensions</emphasis> are shared libraries that extend the basic functionality
           provided by the Thunar File Manager. An extension exports one or more <link
-          linkend="GObject"><type>GObject</type></link>s, called <emphasis>providers</emphasis> to Thunar.
+          linkend="GObject"><type>GObject</type></link>s, called <emphasis>providers</emphasis>, to Thunar.
         </para>
 
         <para>
@@ -153,7 +155,7 @@
           Thunar passes file references to the provider using <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link>
           objects. The <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link> interface provides access to the file
           information that Thunar has already read - mime type, URI, name, etc. Extensions should use the data from
-          from the <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link> rather than reading it themselves, to
+          the <link linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link> rather than reading it themselves, to
           prevent excessive I/O.
         </para>
 
@@ -172,8 +174,10 @@
           Most objects created by the extensions need names, e.g. the <link linkend="GtkAction"><type>GtkAction</type></link>s
           returned from the <link linkend="ThunarxMenuProvider"><type>ThunarxMenuProvider</type></link>s. These names must be
           namespaced with the name of the extension. For example the main action returned from the
-          <application>OpenTerminal</application> extension should be called <literal>OpenTerminal::open-terminal</literal>.
-          The namespace must be global among the providers exported by a certain extension.
+          <application>TexOpenTerminal</application> extension (which can be found in the <filename
+          role="directory">examples/tex-open-terminal</filename> subdirectory of the Thunar distribution) should be called
+          <literal>TexOpenTerminal::open-terminal</literal>. The namespace must be global among the providers exported by
+          a certain extension.
         </para>
       </sect2>
 
@@ -183,9 +187,10 @@
         <para>
           Thunar extensions are loaded as <link linkend="GTypeModule"><type>GTypeModule</type></link>s. This means that all GTypes
           created by the extension must be registered with the <link linkend="GTypeModule"><type>GTypeModule</type></link>, using
-          <link linkend="g-type-module-register-type"><function>g_type_module_register_type()</function></link> function rather
-          than <link linked="g-type-register-static"><function>g_type_register_static()</function></link>. All types exported by
-          an extension must be registered in
+          <link linkend="thunarx-provider-plugin-register-type"><function>thunarx_provider_plugin_register_type()</function></link>
+          function (or one of the convenience macros like <link linkend="THUNARX-DEFINE-TYPE:CAPS"><function>THUNARX_DEFINE_TYPE()</function></link>)
+          rather than <link linked="g-type-register-static"><function>g_type_register_static()</function></link>. All types
+          exported by an extension must be registered in
           <link linkend="thunar-extension-initialize"><function>thunar_extension_initialize()</function></link>.
         </para>
       </sect2>
@@ -195,8 +200,8 @@
       <title>Getting Started</title>
 
       <para>
-        Providers are <link linkend="GTypeModule"><type>GTypeModule</type></link>s loaded from shared libraries installed in
-        <filename role="directory">$libdir/thunarx-1/</filename>. The shared libraries are linked against the
+        Providers are <link linkend="ThunarxProviderPlugin"><type>ThunarxProviderPlugin</type></link>s loaded from shared libraries
+        installed in <filename role="directory">$libdir/thunarx-1/</filename>. The shared libraries are linked against the
         <systemitem class="library">thunarx-1</systemitem> library.
       </para>
 
@@ -206,8 +211,8 @@
       </para>
 
       <para>
-        <function>thunar_extension_initialize()</function> is passed a <link linkend="GTypeModule"><type>GTypeModule</type></link>
-        object, and must register all GTypes that the extension needs. <function>thunar_extension_shutdown()</function> should
+        <function>thunar_extension_initialize()</function> is passed a <link linkend="ThunarxProviderPlugin"><type>ThunarxProviderPlugin</type></link>
+        object, and is responsible to register all GTypes required by the extension. <function>thunar_extension_shutdown()</function> should
         perform any extension-specific shutdown required prior to unloading the extension. <function>thunar_extension_list_types()</function>
         returns an array of GTypes that represent the types of the providers exported by the extension. Thunar will instantiate
         objects of those types when needed.
@@ -223,7 +228,7 @@
 static GType type_list[1];
 
 static void
-foo_extension_register_type (GTypeModule *module)
+foo_extension_register_type (ThunarxProviderPlugin *plugin)
 {
   static const GTypeInfo info =
   {
@@ -239,10 +244,10 @@ foo_extension_register_type (GTypeModule *module)
     NULL,
   };
 
-  type_list[0] = g_type_module_register_type (module,
-                                              G_TYPE_OBJECT,
-                                              "FooExtension",
-                                              &amp;info, 0);
+  type_list[0] = thunarx_provider_plugin_register_type (plugin,
+                                                        G_TYPE_OBJECT,
+                                                        "FooExtension",
+                                                        &amp;info, 0);
 
   /* implement the desired provider interfaces */
 }
@@ -254,7 +259,7 @@ foo_extension_get_type (void)
 }
 
 G_MODULE_EXPORT void
-thunar_extension_initialize (GTypeModule *module)
+thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 {
   const gchar *mismatch;
 
@@ -268,7 +273,7 @@ thunar_extension_initialize (GTypeModule *module)
       return;
     }
 
-  foo_extension_register_type (module);
+  foo_extension_register_type (plugin);
 }
 
 G_MODULE_EXPORT void
@@ -285,6 +290,12 @@ thunar_extension_list_types (const GType **types,
   *n_types = G_N_ELEMENTS (type_list);
 }</programlisting>
       </example>
+
+      <para>
+        You should check the <application>TexOpenTerminal</application> extension, which is included in the Thunar
+        distribution in the <filename role="directory">examples/tex-open-terminal</filename> directory, for a more
+        complete example of how to write a Thunar extension.
+      </para>
 
       <sect2 id="thunarx-writing-extensions-compiling-thunar-extensions">
         <title>Compiling Thunar Extensions</title>
@@ -362,24 +373,23 @@ $ install -c -m 0755 foo.so `pkg-config --variable=extensionsdir thunarx-1`/foo.
         </para>
 
         <para>
-          Such extensions must set the <literal>resident</literal> property of the type
-          module in its <function>thunar_extension_initialize()</function> function to
-          <literal>TRUE</literal>.
+          Such extensions must set the <literal>resident</literal> property of the provider plugin in its
+          <function>thunar_extension_initialize()</function> function to <literal>TRUE</literal>, using the <link
+          linkend="thunarx-provider-plugin-set-resident"><function>thunarx_provider_plugin_set_resident()</function></link>
+          method.
         </para>
 
         <example>
           <title>Making an extension memory resident</title>
           <programlisting>
 G_MODULE_EXPORT void
-thunar_extension_initialize (GTypeModule *module)
+thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 {
   /* setup the types for the extension */
   ...
 
   /* ensure that the extension will never be unloaded */
-  g_object_set (G_OBJECT (module),
-                "resident", TRUE,
-                NULL);
+  thunarx_provider_plugin_set_resident (plugin, TRUE);
 }</programlisting>
         </example>
       </sect2>
@@ -397,8 +407,8 @@ thunar_extension_initialize (GTypeModule *module)
 
     <para>
       In order to hide the internals of the file manager from the extensions, the <systemitem
-      class="library">thunarx</systemitem> provides an abstraction layer, which includes interfaces
-      accessible to the extension, that are implemented by the file manager at runtime.
+      class="library">thunarx</systemitem> library provides an abstraction layer, which includes
+      interfaces accessible to the extension, that are implemented by the file manager at runtime.
     </para>
 
     <para>
@@ -409,14 +419,17 @@ thunar_extension_initialize (GTypeModule *module)
       Currently the abstraction layer consists of the interface <link
       linkend="ThunarxFileInfo"><type>ThunarxFileInfo</type></link>, which provides
       extensions with a way to access information about a file handled within
-      the file manager, and the class <link
+      the file manager, the class <link
       linkend="ThunarxPropertyPage"><type>ThunarxPropertyPage</type></link>, which
       is the base class for widgets that can be added to the properties dialog by
-      extensions.
+      extensions, and the interface <link
+      linkend="ThunarxProviderPlugin"><type>ThunarxProviderPlugin</type></link>, which
+      hides the details of dynamic type registration from the extensions.
     </para>
 
     &ThunarxFileInfo;
     &ThunarxPropertyPage;
+    &ThunarxProviderPlugin;
   </part>
 
   <part id="thunarx-providers">
@@ -442,6 +455,12 @@ thunar_extension_initialize (GTypeModule *module)
 
     &ThunarxMenuProvider;
     &ThunarxPropertyPageProvider;
+  </part>
+
+  <part id="thunarx-using-extensions">
+    <title>Using Thunar extensions in applications</title>
+
+    &ThunarxProviderFactory;
   </part>
 
   <index>

@@ -1,3 +1,36 @@
+2005-11-21	Benedikt Meurer <benny@xfce.org>
+
+	* thunarx/thunarx-provider-plugin.{c,h}, thunarx/Makefile.am,
+	  thunarx/thunarx.h, thunarx/thunarx.symbols: Add ThunarxProviderPlugin
+	  interface, which abstracts from the details of the dynamic type
+	  registration, and is accessible to the extensions.
+	* thunarx/thunarx-provider-module.{c,h}, thunarx/Makefile.am: Add
+	  implementation for the ThunarxProviderPlugin interface, based on
+	  GTypeModule, which is used on the file manager's side to manage the
+	  type plugins.
+	* thunarx/thunarx-provider-factory.{c,h}, thunarx/Makefile.am,
+	  thunarx/thunarx.h, thunarx/thunarx.symbols: Add ThunarxProviderFactory
+	  based on the ThunarExtensionManager as public interface to the
+	  provider plugin mechanism. This may also be used by other applications
+	  in the future.
+	* thunarx/thunarx.h: Provide convenience macros ala G_DEFINE_TYPE() to
+	  ease type registration for plugin writers.
+	* examples/, configure.in.in: Update the "Open Terminal Here" example.
+	* docs/reference/thunarx/: Update the thunarx reference manual to
+	  include the new classes and interfaces.
+	* thunar/thunar-extension-manager.{c,h}: Drop the old extension manager
+	  class in favour of the new provider factory class.
+	* thunar/thunar-properties-dialog.c, thunar/thunar-standard-view.c: Use
+	  ThunarxProviderFactory to load the providers from the installed
+	  extensions.
+	* po/POTFILES.in: Update with new file list.
+	* thunar/thunar-file.{c,h}: Implement thunar_file_list_copy() using
+	  thunarx_file_info_list_copy() and thunar_file_list_free() using
+	  thunarx_file_info_list_free().
+	* docs/reference/thunar-vfs/thunar-vfs-overrides.txt,
+	  docs/reference/thunarx/thunarx-overrides.txt: Fix build error with
+	  older gtk-doc versions.
+
 2005-11-16	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-mime-application.{c,h},

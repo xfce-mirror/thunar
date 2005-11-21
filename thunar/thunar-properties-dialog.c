@@ -32,11 +32,8 @@
 
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-emblem-chooser.h>
-#include <thunar/thunar-extension-manager.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-properties-dialog.h>
-
-#include <thunarx/thunarx.h>
 
 
 
@@ -70,7 +67,7 @@ static gboolean thunar_properties_dialog_focus_out_event      (GtkWidget        
                                                                GdkEventFocus               *event,
                                                                ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update               (ThunarPropertiesDialog      *dialog);
-static void     thunar_properties_dialog_update_extensions    (ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_update_providers     (ThunarPropertiesDialog      *dialog);
 static gboolean thunar_properties_dialog_rename_idle          (gpointer                     user_data);
 static void     thunar_properties_dialog_rename_idle_destroy  (gpointer                     user_data);
 
@@ -85,8 +82,8 @@ struct _ThunarPropertiesDialog
 {
   GtkDialog __parent__;
 
-  ThunarExtensionManager *extension_manager;
-  GList                  *extension_pages;
+  ThunarxProviderFactory *provider_factory;
+  GList                  *provider_pages;
 
   ThunarVfsVolumeManager *volume_manager;
   ThunarFile             *file;
@@ -158,7 +155,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gchar     *text;
   gint       row = 0;
 
-  dialog->extension_manager = thunar_extension_manager_get_default ();
+  dialog->provider_factory = thunarx_provider_factory_get_default ();
   dialog->volume_manager = thunar_vfs_volume_manager_get_default ();
   dialog->rename_idle_id = -1;
 
@@ -356,12 +353,12 @@ thunar_properties_dialog_finalize (GObject *object)
 {
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (object);
 
-  /* release the extension property pages */
-  g_list_foreach (dialog->extension_pages, (GFunc) g_object_unref, NULL);
-  g_list_free (dialog->extension_pages);
+  /* release the provider property pages */
+  g_list_foreach (dialog->provider_pages, (GFunc) g_object_unref, NULL);
+  g_list_free (dialog->provider_pages);
 
-  /* drop the reference on the extension manager */
-  g_object_unref (G_OBJECT (dialog->extension_manager));
+  /* drop the reference on the provider factory */
+  g_object_unref (G_OBJECT (dialog->provider_factory));
 
   /* drop the reference on the volume manager */
   g_object_unref (G_OBJECT (dialog->volume_manager));
@@ -480,7 +477,7 @@ thunar_properties_dialog_focus_out_event (GtkWidget              *entry,
 
 
 static void
-thunar_properties_dialog_update_extensions (ThunarPropertiesDialog *dialog)
+thunar_properties_dialog_update_providers (ThunarPropertiesDialog *dialog)
 {
   GtkWidget *label_widget;
   GList     *providers;
@@ -489,8 +486,8 @@ thunar_properties_dialog_update_extensions (ThunarPropertiesDialog *dialog)
   GList     *tmp;
   GList     *lp;
 
-  /* load the property page providers from the extension manager */
-  providers = thunar_extension_manager_list_providers (dialog->extension_manager, THUNARX_TYPE_PROPERTY_PAGE_PROVIDER);
+  /* load the property page providers from the provider factory */
+  providers = thunarx_provider_factory_list_providers (dialog->provider_factory, THUNARX_TYPE_PROPERTY_PAGE_PROVIDER);
   if (G_LIKELY (providers != NULL))
     {
       /* determine the (one-element) file list */
@@ -507,15 +504,15 @@ thunar_properties_dialog_update_extensions (ThunarPropertiesDialog *dialog)
     }
 
   /* destroy any previous set pages */
-  for (lp = dialog->extension_pages; lp != NULL; lp = lp->next)
+  for (lp = dialog->provider_pages; lp != NULL; lp = lp->next)
     {
       gtk_widget_destroy (GTK_WIDGET (lp->data));
       g_object_unref (G_OBJECT (lp->data));
     }
-  g_list_free (dialog->extension_pages);
+  g_list_free (dialog->provider_pages);
 
   /* apply the new set of pages */
-  dialog->extension_pages = pages;
+  dialog->provider_pages = pages;
   for (lp = pages; lp != NULL; lp = lp->next)
     {
       label_widget = thunarx_property_page_get_label_widget (THUNARX_PROPERTY_PAGE (lp->data));
@@ -652,8 +649,8 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->size_label);
     }
 
-  /* update the extension property pages */
-  thunar_properties_dialog_update_extensions (dialog);
+  /* update the provider property pages */
+  thunar_properties_dialog_update_providers (dialog);
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
