@@ -31,15 +31,14 @@
 
 G_BEGIN_DECLS;
 
+/* Used to avoid a dependency of thunarx on thunar-vfs */
+#ifndef __THUNAR_VFS_INFO_DEFINED__
+#define __THUNAR_VFS_INFO_DEFINED__
+typedef struct _ThunarVfsInfo ThunarVfsInfo;
+#endif
+
 #define THUNAR_VFS_TYPE_INFO (thunar_vfs_info_get_type ())
 
-/**
- * ThunarVfsInfo:
- *
- * The #ThunarVfsInfo structure provides information about a file system
- * entity.
- **/
-typedef struct _ThunarVfsInfo ThunarVfsInfo;
 struct _ThunarVfsInfo
 {
   /* File type */
@@ -157,18 +156,10 @@ thunar_vfs_info_get_custom_icon (const ThunarVfsInfo *info)
 
 /**
  * thunar_vfs_info_list_free:
- * @info_list : a list #ThunarVfsInfo<!---->s.
+ * @info_list : a list of #ThunarVfsInfo<!---->s.
  *
  * Unrefs all #ThunarVfsInfo<!---->s in @info_list and
  * frees the list itself.
- *
- * This method always returns %NULL for the convenience of
- * being able to do:
- * <informalexample><programlisting>
- * info_list = thunar_vfs_info_list_free (info_list);
- * </programlisting></informalexample>
- *
- * Return value: the empty list (%NULL).
  **/
 G_INLINE_FUNC void
 thunar_vfs_info_list_free (GList *info_list)

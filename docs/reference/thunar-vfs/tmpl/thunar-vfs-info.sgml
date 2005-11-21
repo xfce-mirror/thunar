@@ -22,21 +22,21 @@ ThunarVfsInfo
 
 </para>
 
-@type: 
-@mode: 
-@flags: 
-@uid: 
-@gid: 
-@size: 
-@atime: 
-@mtime: 
-@ctime: 
-@inode: 
-@device: 
-@mime_info: 
-@path: 
-@custom_icon: 
-@display_name: 
+@type: the file type.
+@mode: the file permissions and special mode flags.
+@flags: the file flags.
+@uid: the owner's user id.
+@gid: the owner's group id.
+@size: the file size in bytes.
+@atime: the time of last access.
+@mtime: the time of last modification.
+@ctime: the time of last status change.
+@inode: the file's inode.
+@device: the file's device.
+@mime_info: the file's mime type.
+@path: the file's path.
+@custom_icon: a custom icon name or %NULL.
+@display_name: the file's display name (UTF-8).
 
 <!-- ##### FUNCTION thunar_vfs_info_new_for_path ##### -->
 <para>

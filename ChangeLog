@@ -1,5 +1,16 @@
 2005-11-21	Benedikt Meurer <benny@xfce.org>
 
+	* docs/reference/thunar-vfs/, thunar-vfs/thunar-vfs-info.h: Small
+	  documentation tweaks.
+	* thunar-vfs/thunar-vfs-info.h: Allow previous declarations of the
+	  ThunarVfsInfo typedef.
+	* thunarx/thunarx-file-info.{c,h}, thunarx/thunarx.symbols,
+	  thunar/thunar-file.c, docs/reference/thunarx/: Add new virtual method
+	  thunarx_file_info_get_vfs_info(), which can be used to query the
+	  ThunarVfsInfo for a given ThunarxFileInfo.
+
+2005-11-21	Benedikt Meurer <benny@xfce.org>
+
 	* thunarx/thunarx-provider-plugin.{c,h}, thunarx/Makefile.am,
 	  thunarx/thunarx.h, thunarx/thunarx.symbols: Add ThunarxProviderPlugin
 	  interface, which abstracts from the details of the dynamic type

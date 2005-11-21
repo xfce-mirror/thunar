@@ -235,6 +235,35 @@ thunarx_file_info_is_directory (ThunarxFileInfo *file_info)
 
 
 /**
+ * thunarx_file_info_get_vfs_info:
+ * @file_info : a #ThunarxFileInfo.
+ *
+ * Returns the #ThunarVfsInfo associated with @file_info,
+ * which includes additional information about the @file_info
+ * as queried from the VFS library earlier. The caller is
+ * responsible to free the returned #ThunarVfsInfo object
+ * using thunar_vfs_info_unref() when no longer needed.
+ *
+ * Note that the <application>thunarx</application> library itself
+ * is not linked to the <application>thunar-vfs</application> library,
+ * and so, if you need to use this method, you'll need to include
+ * <code>&lt;thunar-vfs/thunar-vfs.h&gt;</code> in your code and
+ * add <code>`pkg-config --cflags thunar-vfs-1`</code> to your
+ * <envar>CFLAGS</envar>.
+ *
+ * Return value: the #ThunarVfsInfo object associated with @file_info,
+ *               which MUST be freed using thunar_vfs_info_unref().
+ **/
+ThunarVfsInfo*
+thunarx_file_info_get_vfs_info (ThunarxFileInfo *file_info)
+{
+  g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
+  return (*THUNARX_FILE_INFO_GET_IFACE (file_info)->get_vfs_info) (file_info);
+}
+
+
+
+/**
  * thunarx_file_info_list_copy:
  * @file_infos : a #GList of #ThunarxFileInfo<!---->s.
  *

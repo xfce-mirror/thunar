@@ -75,6 +75,7 @@ static gchar             *thunar_file_info_get_mime_type       (ThunarxFileInfo 
 static gboolean           thunar_file_info_has_mime_type       (ThunarxFileInfo        *file_info,
                                                                 const gchar            *mime_type);
 static gboolean           thunar_file_info_is_directory        (ThunarxFileInfo        *file_info);
+static ThunarVfsInfo     *thunar_file_info_get_vfs_info        (ThunarxFileInfo        *file_info);
 static void               thunar_file_real_changed             (ThunarFile             *file);
 static gboolean           thunar_file_denies_access_permission (const ThunarFile       *file,
                                                                 ThunarVfsFileMode       usr_permissions,
@@ -266,6 +267,7 @@ thunar_file_info_init (ThunarxFileInfoIface *iface)
   iface->get_mime_type = thunar_file_info_get_mime_type;
   iface->has_mime_type = thunar_file_info_has_mime_type;
   iface->is_directory = thunar_file_info_is_directory;
+  iface->get_vfs_info = thunar_file_info_get_vfs_info;
 }
 
 
@@ -404,6 +406,14 @@ static gboolean
 thunar_file_info_is_directory (ThunarxFileInfo *file_info)
 {
   return thunar_file_is_directory (THUNAR_FILE (file_info));
+}
+
+
+
+static ThunarVfsInfo*
+thunar_file_info_get_vfs_info (ThunarxFileInfo *file_info)
+{
+  return thunar_vfs_info_ref (THUNAR_FILE (file_info)->info);
 }
 
 
