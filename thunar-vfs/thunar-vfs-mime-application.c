@@ -67,7 +67,7 @@ thunar_vfs_mime_application_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      type = g_boxed_type_register_static ("ThunarVfsMimeApplication",
+      type = g_boxed_type_register_static (I_("ThunarVfsMimeApplication"),
                                            (GBoxedCopyFunc) thunar_vfs_mime_application_ref,
                                            (GBoxedFreeFunc) thunar_vfs_mime_application_unref);
     }

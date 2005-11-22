@@ -37,6 +37,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-mime-legacy.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -144,7 +145,7 @@ thunar_vfs_mime_legacy_get_type (void)
       };
 
       type = g_type_register_static (THUNAR_VFS_TYPE_MIME_PROVIDER,
-                                     "ThunarVfsMimeLegacy", &info, 0);
+                                     I_("ThunarVfsMimeLegacy"), &info, 0);
     }
 
   return type;
@@ -641,3 +642,5 @@ thunar_vfs_mime_legacy_new (const gchar *directory)
 
 
 
+#define __THUNAR_VFS_MIME_LEGACY_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

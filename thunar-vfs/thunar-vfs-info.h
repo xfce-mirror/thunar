@@ -42,13 +42,13 @@ typedef struct _ThunarVfsInfo ThunarVfsInfo;
 struct _ThunarVfsInfo
 {
   /* File type */
-  ThunarVfsFileType type;
+  ThunarVfsFileType type : 8;
 
   /* File permissions and special mode flags */
-  ThunarVfsFileMode mode;
+  ThunarVfsFileMode mode : 12;
 
   /* File flags */
-  ThunarVfsFileFlags flags;
+  ThunarVfsFileFlags flags : 12;
 
   /* Owner's user id */
   ThunarVfsUserId uid;

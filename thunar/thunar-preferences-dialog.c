@@ -53,7 +53,36 @@ struct _ThunarPreferencesDialog
 
 
 
-G_DEFINE_TYPE (ThunarPreferencesDialog, thunar_preferences_dialog, GTK_TYPE_DIALOG);
+static GObjectClass *thunar_preferences_dialog_parent_class;
+
+
+
+GType
+thunar_preferences_dialog_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarPreferencesDialogClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_preferences_dialog_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarPreferencesDialog),
+        0,
+        (GInstanceInitFunc) thunar_preferences_dialog_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_DIALOG, I_("ThunarPreferencesDialog"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -107,6 +136,9 @@ thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 {
   GtkDialogClass *gtkdialog_class;
   GObjectClass   *gobject_class;
+
+  /* determine the parent type class */
+  thunar_preferences_dialog_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_preferences_dialog_finalize;

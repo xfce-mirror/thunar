@@ -84,7 +84,36 @@ struct _ThunarEmblemChooser
 
 
 
-G_DEFINE_TYPE (ThunarEmblemChooser, thunar_emblem_chooser, GTK_TYPE_SCROLLED_WINDOW);
+static GObjectClass *thunar_emblem_chooser_parent_class;
+
+
+
+GType
+thunar_emblem_chooser_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarEmblemChooserClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_emblem_chooser_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarEmblemChooser),
+        0,
+        (GInstanceInitFunc) thunar_emblem_chooser_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_SCROLLED_WINDOW, I_("ThunarEmblemChooser"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -93,6 +122,9 @@ thunar_emblem_chooser_class_init (ThunarEmblemChooserClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
+
+  /* determine the parent type class */
+  thunar_emblem_chooser_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_emblem_chooser_dispose;
@@ -279,7 +311,7 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
   for (lp = children; lp != NULL; lp = lp->next)
     if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lp->data)))
       {
-        emblem_name = g_object_get_data (G_OBJECT (lp->data), "thunar-emblem");
+        emblem_name = g_object_get_data (G_OBJECT (lp->data), I_("thunar-emblem"));
         emblem_names = g_list_append (emblem_names, g_strdup (emblem_name));
       }
   g_list_free (children);
@@ -317,7 +349,7 @@ thunar_emblem_chooser_file_changed (ThunarFile          *file,
   children = gtk_container_get_children (GTK_CONTAINER (chooser->table));
   for (lp = children; lp != NULL; lp = lp->next)
     {
-      emblem_name = g_object_get_data (G_OBJECT (lp->data), "thunar-emblem");
+      emblem_name = g_object_get_data (G_OBJECT (lp->data), I_("thunar-emblem"));
       if (g_list_find_custom (emblem_names, emblem_name, (GCompareFunc) strcmp) != NULL)
         gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (lp->data), TRUE);
       else
@@ -419,7 +451,7 @@ thunar_emblem_chooser_create_button (ThunarEmblemChooser *chooser,
   /* allocate the button */
   button = gtk_check_button_new ();
   GTK_WIDGET_UNSET_FLAGS (button, GTK_CAN_FOCUS);
-  g_object_set_data_full (G_OBJECT (button), "thunar-emblem", g_strdup (emblem), g_free);
+  g_object_set_data_full (G_OBJECT (button), I_("thunar-emblem"), g_strdup (emblem), g_free);
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (thunar_emblem_chooser_button_toggled), chooser);
 
   /* allocate the box */

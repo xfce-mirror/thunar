@@ -335,3 +335,5 @@ error:
 
 
 
+#define __THUNAR_VFS_THUMB_JPEG_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

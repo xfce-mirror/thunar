@@ -102,7 +102,7 @@ thunar_vfs_listdir_job_get_type (void)
       };
 
       type = g_type_register_static (THUNAR_VFS_TYPE_JOB,
-                                     "ThunarVfsListdirJob",
+                                     I_("ThunarVfsListdirJob"),
                                      &info, 0);
     }
 
@@ -134,7 +134,7 @@ thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass)
    * to be never emitted with an @infos parameter of %NULL.
    **/
   listdir_signals[INFOS_READY] =
-    g_signal_new ("infos-ready",
+    g_signal_new (I_("infos-ready"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
@@ -349,3 +349,6 @@ thunar_vfs_listdir_job_new (ThunarVfsPath *folder_path)
 }
 
 
+
+#define __THUNAR_VFS_LISTDIR_JOB_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

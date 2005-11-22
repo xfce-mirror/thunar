@@ -36,6 +36,7 @@ libthunarx_1_la_SOURCES =						\
 	thunarx-config.c						\
 	thunarx-file-info.c						\
 	thunarx-menu-provider.c						\
+	thunarx-private.h						\
 	thunarx-property-page.c						\
 	thunarx-property-page-provider.c				\
 	thunarx-provider-factory.c					\

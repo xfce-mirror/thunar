@@ -82,9 +82,37 @@ struct _ThunarOpenWithAction
 
 
 
-static guint open_with_action_signals[LAST_SIGNAL];
+static GObjectClass *thunar_open_with_action_parent_class;
+static guint         open_with_action_signals[LAST_SIGNAL];
 
-G_DEFINE_TYPE (ThunarOpenWithAction, thunar_open_with_action, GTK_TYPE_ACTION);
+
+
+GType
+thunar_open_with_action_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarOpenWithActionClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_open_with_action_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarOpenWithAction),
+        0,
+        (GInstanceInitFunc) thunar_open_with_action_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_ACTION, I_("ThunarOpenWithAction"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -93,6 +121,9 @@ thunar_open_with_action_class_init (ThunarOpenWithActionClass *klass)
 {
   GtkActionClass *gtkaction_class;
   GObjectClass   *gobject_class;
+
+  /* determine the parent type class */
+  thunar_open_with_action_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_open_with_action_dispose;
@@ -127,7 +158,7 @@ thunar_open_with_action_class_init (ThunarOpenWithActionClass *klass)
    * open @path_list with @application.
    **/
   open_with_action_signals[OPEN_APPLICATION] =
-    g_signal_new ("open-application",
+    g_signal_new (I_("open-application"),
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarOpenWithActionClass, open_application),
@@ -251,7 +282,7 @@ thunar_open_with_action_activated (GtkWidget            *item,
     return;
 
   /* query the launch parameters for this application item */
-  application = g_object_get_data (G_OBJECT (item), "thunar-vfs-mime-application");
+  application = g_object_get_data (G_OBJECT (item), I_("thunar-vfs-mime-application"));
 
   /* generate a single item list */
   path_list.data = thunar_file_get_path (file);
@@ -319,7 +350,7 @@ thunar_open_with_action_menu_mapped (GtkWidget            *menu,
 
       text = g_strdup_printf (_("%s (default)"), thunar_vfs_mime_application_get_name (default_application));
       item = gtk_image_menu_item_new_with_label (text);
-      g_object_set_data_full (G_OBJECT (item), "thunar-vfs-mime-application", default_application, (GDestroyNotify) thunar_vfs_mime_application_unref);
+      g_object_set_data_full (G_OBJECT (item), I_("thunar-vfs-mime-application"), default_application, (GDestroyNotify) thunar_vfs_mime_application_unref);
       g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_open_with_action_activated), open_with_action);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
@@ -345,7 +376,7 @@ thunar_open_with_action_menu_mapped (GtkWidget            *menu,
       for (lp = applications; lp != NULL; lp = lp->next)
         {
           item = gtk_image_menu_item_new_with_label (thunar_vfs_mime_application_get_name (lp->data));
-          g_object_set_data_full (G_OBJECT (item), "thunar-vfs-mime-application", lp->data, (GDestroyNotify) thunar_vfs_mime_application_unref);
+          g_object_set_data_full (G_OBJECT (item), I_("thunar-vfs-mime-application"), lp->data, (GDestroyNotify) thunar_vfs_mime_application_unref);
           g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_open_with_action_activated), open_with_action);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_show (item);

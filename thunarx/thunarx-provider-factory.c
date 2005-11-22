@@ -24,6 +24,7 @@
 
 #include <gdk/gdk.h>
 
+#include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-provider-factory.h>
 #include <thunarx/thunarx-provider-module.h>
 #include <thunarx/thunarx-provider-plugin.h>
@@ -71,7 +72,36 @@ struct _ThunarxProviderFactory
 
 
 
-G_DEFINE_TYPE (ThunarxProviderFactory, thunarx_provider_factory, G_TYPE_OBJECT);
+static GObjectClass *thunarx_provider_factory_parent_class;
+
+
+
+GType
+thunarx_provider_factory_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarxProviderFactoryClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunarx_provider_factory_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarxProviderFactory),
+        0,
+        (GInstanceInitFunc) thunarx_provider_factory_init,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarxProviderFactory"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -79,6 +109,9 @@ static void
 thunarx_provider_factory_class_init (ThunarxProviderFactoryClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunarx_provider_factory_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunarx_provider_factory_finalize;

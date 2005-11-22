@@ -45,10 +45,7 @@ thunar_side_pane_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_INTERFACE,
-                                     "ThunarSidePane",
-                                     &info, 0);
-
+      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarSidePane"), &info, 0);
       g_type_interface_add_prerequisite (type, GTK_TYPE_WIDGET);
       g_type_interface_add_prerequisite (type, THUNAR_TYPE_NAVIGATOR);
     }

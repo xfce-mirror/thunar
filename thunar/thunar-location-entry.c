@@ -70,13 +70,52 @@ struct _ThunarLocationEntry
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarLocationEntry,
-                         thunar_location_entry,
-                         GTK_TYPE_HBOX,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR,
-                                                thunar_location_entry_navigator_init)
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_LOCATION_BAR,
-                                                thunar_location_entry_location_bar_init));
+static GObjectClass *thunar_location_entry_parent_class;
+
+
+
+GType
+thunar_location_entry_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarLocationEntryClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_location_entry_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarLocationEntry),
+        0,
+        (GInstanceInitFunc) thunar_location_entry_init,
+        NULL,
+      };
+
+      static const GInterfaceInfo navigator_info =
+      {
+        (GInterfaceInitFunc) thunar_location_entry_navigator_init,
+        NULL,
+        NULL,
+      };
+
+      static const GInterfaceInfo location_bar_info =
+      {
+        (GInterfaceInitFunc) thunar_location_entry_location_bar_init,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_HBOX, I_("ThunarLocationEntry"), &info, 0);
+      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
+      g_type_add_interface_static (type, THUNAR_TYPE_LOCATION_BAR, &location_bar_info);
+    }
+
+  return type;
+}
 
 
 
@@ -84,6 +123,9 @@ static void
 thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_location_entry_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_location_entry_finalize;

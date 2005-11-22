@@ -102,7 +102,7 @@ thunar_vfs_group_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT, "ThunarVfsGroup", &info, 0);
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsGroup"), &info, 0);
     }
 
   return type;
@@ -251,7 +251,7 @@ thunar_vfs_user_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT, "ThunarVfsUser", &info, 0);
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsUser"), &info, 0);
     }
 
   return type;

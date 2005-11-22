@@ -23,6 +23,7 @@
 #endif
 
 #include <thunarx/thunarx-menu-provider.h>
+#include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-alias.h>
 
 
@@ -53,7 +54,7 @@ thunarx_menu_provider_get_type (void)
       };
 
       /* register the menu provider interface */
-      type = g_type_register_static (G_TYPE_INTERFACE, "ThunarxMenuProvider", &info, 0);
+      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxMenuProvider"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
 
       /* allocate the thunarx-menu-provider-action quark */

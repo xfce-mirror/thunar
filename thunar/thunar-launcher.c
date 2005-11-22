@@ -103,11 +103,37 @@ struct _ThunarLauncher
 
 
 
-static guint launcher_signals[LAST_SIGNAL];
+static GObjectClass *thunar_launcher_parent_class;
+static guint         launcher_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_TYPE (ThunarLauncher, thunar_launcher, G_TYPE_OBJECT);
+GType
+thunar_launcher_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarLauncherClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_launcher_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarLauncher),
+        0,
+        (GInstanceInitFunc) thunar_launcher_init,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarLauncher"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -115,6 +141,9 @@ static void
 thunar_launcher_class_init (ThunarLauncherClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_launcher_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_launcher_dispose;
@@ -171,7 +200,7 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
    * based on the @launcher in the current window (if possible).
    **/
   launcher_signals[OPEN_DIRECTORY] =
-    g_signal_new ("open-directory",
+    g_signal_new (I_("open-directory"),
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarLauncherClass, open_directory),

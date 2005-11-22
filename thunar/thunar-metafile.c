@@ -66,7 +66,36 @@ struct _ThunarMetafile
 
 
 
-G_DEFINE_TYPE (ThunarMetafile, thunar_metafile, G_TYPE_OBJECT);
+static GObjectClass *thunar_metafile_parent_class;
+
+
+
+GType
+thunar_metafile_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarMetafileClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_metafile_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarMetafile),
+        0,
+        (GInstanceInitFunc) thunar_metafile_init,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarMetafile"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -74,6 +103,9 @@ static void
 thunar_metafile_class_init (ThunarMetafileClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_metafile_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_metafile_finalize;

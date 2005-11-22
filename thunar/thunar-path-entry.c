@@ -50,7 +50,6 @@ enum
 
 static void     thunar_path_entry_class_init            (ThunarPathEntryClass *klass);
 static void     thunar_path_entry_editable_init         (GtkEditableClass     *iface);
-static void     thunar_path_entry_init                  (ThunarPathEntry      *path_entry);
 static void     thunar_path_entry_finalize              (GObject              *object);
 static void     thunar_path_entry_get_property          (GObject              *object,  
                                                          guint                 prop_id,
@@ -119,13 +118,47 @@ static const GtkTargetEntry drag_targets[] =
   { "text/uri-list", 0, 0, },
 };
 
-static GtkEditableClass *thunar_path_entry_editable_parent_iface;
 
-G_DEFINE_TYPE_WITH_CODE (ThunarPathEntry,
-                         thunar_path_entry,
-                         GTK_TYPE_ENTRY,
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_EDITABLE,
-                                                thunar_path_entry_editable_init));
+
+static GtkEditableClass *thunar_path_entry_editable_parent_iface;
+static GObjectClass     *thunar_path_entry_parent_class;
+
+
+
+GType
+thunar_path_entry_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarPathEntryClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_path_entry_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarPathEntry),
+        0,
+        NULL,
+        NULL,
+      };
+
+      static const GInterfaceInfo editable_info =
+      {
+        (GInterfaceInitFunc) thunar_path_entry_editable_init,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_ENTRY, I_("ThunarPathEntry"), &info, 0);
+      g_type_add_interface_static (type, GTK_TYPE_EDITABLE, &editable_info);
+    }
+
+  return type;
+}
 
 
 
@@ -135,6 +168,9 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GtkEntryClass  *gtkentry_class;
   GObjectClass   *gobject_class;
+
+  /* determine the parent type class */
+  thunar_path_entry_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_path_entry_finalize;
@@ -189,14 +225,6 @@ thunar_path_entry_editable_init (GtkEditableClass *iface)
   thunar_path_entry_editable_parent_iface = g_type_interface_peek_parent (iface);
 
   iface->changed = thunar_path_entry_changed;
-}
-
-
-
-static void
-thunar_path_entry_init (ThunarPathEntry *path_entry)
-{
-  path_entry->drag_button = -1;
 }
 
 
@@ -506,7 +534,7 @@ thunar_path_entry_button_release_event (GtkWidget      *widget,
   if (event->window == path_entry->icon_area && event->button == path_entry->drag_button)
     {
       /* reset the drag button state */
-      path_entry->drag_button = -1;
+      path_entry->drag_button = 0;
       return TRUE;
     }
 
@@ -525,7 +553,7 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
   GdkPixbuf       *icon;
   gint             size;
 
-  if (event->window == path_entry->icon_area && path_entry->drag_button >= 0 && path_entry->current_file != NULL
+  if (event->window == path_entry->icon_area && path_entry->drag_button > 0 && path_entry->current_file != NULL
       && gtk_drag_check_threshold (widget, path_entry->drag_x, path_entry->drag_y, event->x, event->y))
     {
       /* create the drag context */
@@ -543,7 +571,7 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
         }
 
       /* reset the drag button state */
-      path_entry->drag_button = -1;
+      path_entry->drag_button = 0;
 
       return TRUE;
     }

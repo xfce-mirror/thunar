@@ -1,5 +1,14 @@
 2005-11-22	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/*.{c,h}, thunar/*.c, thunarx/*.c: Avoid duplicating static
+	  strings if possible.
+	* thunar-vfs/thunar-vfs-scandir.c(thunar_vfs_scandir_collect): Ignore
+	  EACCES and EPERM on subdirectories with recursive scanning.
+	* thunar-vfs/thunar-vfs-info.h(ThunarVfsInfo): Compress "type", "mode"
+	  and "flags" to reduce memory overhead.
+
+2005-11-22	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Add fr and pt_BR to gettext linguas, which were
 	  previously imported by Daichi.
 

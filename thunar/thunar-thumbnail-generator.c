@@ -65,7 +65,36 @@ struct _ThunarThumbnailInfo
 
 
 
-G_DEFINE_TYPE (ThunarThumbnailGenerator, thunar_thumbnail_generator, G_TYPE_OBJECT);
+static GObjectClass *thunar_thumbnail_generator_parent_class;
+
+
+
+GType
+thunar_thumbnail_generator_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarThumbnailGeneratorClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_thumbnail_generator_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarThumbnailGenerator),
+        0,
+        (GInstanceInitFunc) thunar_thumbnail_generator_init,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarThumbnailGenerator"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -73,6 +102,9 @@ static void
 thunar_thumbnail_generator_class_init (ThunarThumbnailGeneratorClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_thumbnail_generator_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_thumbnail_generator_finalize;

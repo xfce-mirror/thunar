@@ -31,7 +31,7 @@ static void
 action_selected (GtkWidget     *item,
                  GdkDragAction *action)
 {
-  *action = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (item), "action"));
+  *action = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (item), I_("action")));
 }
 
 
@@ -84,7 +84,7 @@ thunar_dnd_ask (GtkWidget    *widget,
     if (G_LIKELY ((actions & action_items[n]) != 0))
       {
         item = gtk_image_menu_item_new_with_mnemonic (_(action_names[n]));
-        g_object_set_data (G_OBJECT (item), "action", GUINT_TO_POINTER (action_items[n]));
+        g_object_set_data (G_OBJECT (item), I_("action"), GUINT_TO_POINTER (action_items[n]));
         g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (action_selected), &action);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);

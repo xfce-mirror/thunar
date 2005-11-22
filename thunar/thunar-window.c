@@ -181,7 +181,36 @@ static const GtkToggleActionEntry toggle_action_entries[] =
 
 
 
-G_DEFINE_TYPE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW);
+static GObjectClass *thunar_window_parent_class;
+
+
+
+GType
+thunar_window_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarWindowClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_window_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarWindow),
+        0,
+        (GInstanceInitFunc) thunar_window_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_WINDOW, I_("ThunarWindow"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -190,6 +219,9 @@ thunar_window_class_init (ThunarWindowClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
+
+  /* determine the parent type class */
+  thunar_window_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_window_dispose;
@@ -999,7 +1031,7 @@ thunar_window_menu_item_selected (GtkWidget    *menu_item,
   gchar     *tooltip;
 
   /* determine the action for the menu item */
-  action = g_object_get_data (G_OBJECT (menu_item), "gtk-action");
+  action = g_object_get_data (G_OBJECT (menu_item), I_("gtk-action"));
   if (G_UNLIKELY (action == NULL))
     return;
 

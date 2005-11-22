@@ -55,6 +55,7 @@ enum
 
 
 static void thunar_clipboard_manager_class_init         (ThunarClipboardManagerClass *klass);
+static void thunar_clipboard_manager_init               (ThunarClipboardManager      *manager);
 static void thunar_clipboard_manager_finalize           (GObject                     *object);
 static void thunar_clipboard_manager_get_property       (GObject                     *object,
                                                          guint                        prop_id,
@@ -118,12 +119,38 @@ static const GtkTargetEntry clipboard_targets[] =
   { "UTF8_STRING", 0, TARGET_UTF8_STRING }
 };
 
-static GQuark thunar_clipboard_manager_quark = 0;
-static guint  manager_signals[LAST_SIGNAL];
+static GObjectClass *thunar_clipboard_manager_parent_class;
+static GQuark        thunar_clipboard_manager_quark = 0;
+static guint         manager_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_TYPE (ThunarClipboardManager, thunar_clipboard_manager, G_TYPE_OBJECT);
+GType
+thunar_clipboard_manager_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarClipboardManagerClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_clipboard_manager_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarClipboardManager),
+        0,
+        (GInstanceInitFunc) thunar_clipboard_manager_init,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarClipboardManager"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -131,6 +158,9 @@ static void
 thunar_clipboard_manager_class_init (ThunarClipboardManagerClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_clipboard_manager_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_clipboard_manager_finalize;
@@ -159,7 +189,7 @@ thunar_clipboard_manager_class_init (ThunarClipboardManagerClass *klass)
    * clipboard associated with @manager changes.
    **/
   manager_signals[CHANGED] =
-    g_signal_new ("changed",
+    g_signal_new (I_("changed"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
                   G_STRUCT_OFFSET (ThunarClipboardManagerClass, changed),
@@ -173,7 +203,6 @@ thunar_clipboard_manager_class_init (ThunarClipboardManagerClass *klass)
 static void
 thunar_clipboard_manager_init (ThunarClipboardManager *manager)
 {
-  manager->can_paste = FALSE;
   manager->x_special_gnome_copied_files = gdk_atom_intern ("x-special/gnome-copied-files", FALSE);
 }
 

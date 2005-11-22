@@ -170,7 +170,36 @@ struct _ThunarVfsMimeProviderData
 
 
 
-G_DEFINE_TYPE (ThunarVfsMimeDatabase, thunar_vfs_mime_database, G_TYPE_OBJECT);
+static GObjectClass *thunar_vfs_mime_database_parent_class;
+
+
+
+GType
+thunar_vfs_mime_database_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsMimeDatabaseClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_mime_database_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsMimeDatabase),
+        0,
+        (GInstanceInitFunc) thunar_vfs_mime_database_init,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsMimeDatabase"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -178,6 +207,9 @@ static void
 thunar_vfs_mime_database_class_init (ThunarVfsMimeDatabaseClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_vfs_mime_database_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_mime_database_finalize;

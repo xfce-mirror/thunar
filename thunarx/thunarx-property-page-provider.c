@@ -22,6 +22,7 @@
 #include <config.h>
 #endif
 
+#include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-property-page-provider.h>
 #include <thunarx/thunarx-alias.h>
 
@@ -53,7 +54,7 @@ thunarx_property_page_provider_get_type (void)
       };
 
       /* register the property page provider interface */
-      type = g_type_register_static (G_TYPE_INTERFACE, "ThunarxPropertyPageProvider", &info, 0);
+      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxPropertyPageProvider"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
 
       /* allocate the thunarx-property-page quark */

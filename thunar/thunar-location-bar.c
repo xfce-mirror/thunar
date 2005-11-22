@@ -45,10 +45,7 @@ thunar_location_bar_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_INTERFACE,
-                                     "ThunarLocationBar",
-                                     &info, 0);
-
+      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarLocationBar"), &info, 0);
       g_type_interface_add_prerequisite (type, THUNAR_TYPE_NAVIGATOR);
     }
 

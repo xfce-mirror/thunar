@@ -90,7 +90,36 @@ struct _ThunarChooserModel
 
 
 
-G_DEFINE_TYPE (ThunarChooserModel, thunar_chooser_model, GTK_TYPE_TREE_STORE);
+static GObjectClass *thunar_chooser_model_parent_class;
+
+
+
+GType
+thunar_chooser_model_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarChooserModelClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_chooser_model_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarChooserModel),
+        0,
+        (GInstanceInitFunc) thunar_chooser_model_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_TREE_STORE, I_("ThunarChooserModel"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -98,6 +127,9 @@ static void
 thunar_chooser_model_class_init (ThunarChooserModelClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_chooser_model_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_chooser_model_finalize;

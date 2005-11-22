@@ -56,11 +56,37 @@ static ThunarVfsInteractiveJobResponse thunar_vfs_interactive_job_ask        (Th
 
 
 
-static guint interactive_signals[LAST_SIGNAL];
+static GObjectClass *thunar_vfs_interactive_job_parent_class;
+static guint         interactive_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_ABSTRACT_TYPE (ThunarVfsInteractiveJob, thunar_vfs_interactive_job, THUNAR_VFS_TYPE_JOB);
+GType
+thunar_vfs_interactive_job_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsInteractiveJobClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_interactive_job_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsInteractiveJob),
+        0,
+        (GInstanceInitFunc) thunar_vfs_interactive_job_init,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_JOB, I_("ThunarVfsInteractiveJob"), &info, G_TYPE_FLAG_ABSTRACT);
+    }
+
+  return type;
+}
 
 
 
@@ -81,6 +107,9 @@ thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
 {
   GObjectClass *gobject_class;
 
+  /* determine the parent type class */
+  thunar_vfs_interactive_job_parent_class = g_type_class_peek_parent (klass);
+
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_interactive_job_finalize;
 
@@ -97,7 +126,7 @@ thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
    * Return value: the selected choice.
    **/
   interactive_signals[ASK] =
-    g_signal_new ("ask",
+    g_signal_new (I_("ask"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS | G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarVfsInteractiveJobClass, ask),
@@ -118,7 +147,7 @@ thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
    * the application on creation of the @job.
    **/
   interactive_signals[NEW_FILES] =
-    g_signal_new ("new-files",
+    g_signal_new (I_("new-files"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
@@ -138,7 +167,7 @@ thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
    * box.
    **/
   interactive_signals[INFO_MESSAGE] =
-    g_signal_new ("info-message",
+    g_signal_new (I_("info-message"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__STRING,
@@ -153,7 +182,7 @@ thunar_vfs_interactive_job_class_init (ThunarVfsInteractiveJobClass *klass)
    * of the overall progress.
    **/
   interactive_signals[PERCENT] =
-    g_signal_new ("percent",
+    g_signal_new (I_("percent"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__DOUBLE,

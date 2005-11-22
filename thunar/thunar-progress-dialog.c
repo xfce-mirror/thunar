@@ -88,7 +88,36 @@ struct _ThunarProgressDialog
 
 
 
-G_DEFINE_TYPE (ThunarProgressDialog, thunar_progress_dialog, GTK_TYPE_DIALOG);
+static GObjectClass *thunar_progress_dialog_parent_class;
+
+
+
+GType
+thunar_progress_dialog_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarProgressDialogClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_progress_dialog_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarProgressDialog),
+        0,
+        (GInstanceInitFunc) thunar_progress_dialog_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_DIALOG, I_("ThunarProgressDialog"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -108,6 +137,9 @@ thunar_progress_dialog_class_init (ThunarProgressDialogClass *klass)
 {
   GtkDialogClass *gtkdialog_class;
   GObjectClass   *gobject_class;
+
+  /* determine the parent type class */
+  thunar_progress_dialog_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_progress_dialog_dispose;

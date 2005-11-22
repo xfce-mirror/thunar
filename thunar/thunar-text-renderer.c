@@ -134,11 +134,37 @@ struct _ThunarTextRenderer
 
 
 
-static guint text_renderer_signals[LAST_SIGNAL];
+static GObjectClass *thunar_text_renderer_parent_class;
+static guint         text_renderer_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_TYPE (ThunarTextRenderer, thunar_text_renderer, GTK_TYPE_CELL_RENDERER);
+GType
+thunar_text_renderer_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarTextRendererClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_text_renderer_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarTextRenderer),
+        0,
+        (GInstanceInitFunc) thunar_text_renderer_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_CELL_RENDERER, I_("ThunarTextRenderer"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -147,6 +173,9 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
 {
   GtkCellRendererClass *gtkcell_renderer_class;
   GObjectClass         *gobject_class;
+
+  /* determine the parent type class */
+  thunar_text_renderer_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_text_renderer_finalize;
@@ -228,7 +257,7 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
    * Emitted whenever the user successfully edits a cell.
    **/
   text_renderer_signals[EDITED] =
-    g_signal_new ("edited",
+    g_signal_new (I_("edited"),
                   G_OBJECT_CLASS_TYPE (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarTextRendererClass, edited),
@@ -256,7 +285,7 @@ thunar_text_renderer_finalize (GObject *object)
   /* drop the cached widget */
   thunar_text_renderer_set_widget (text_renderer, NULL);
 
-  G_OBJECT_CLASS (thunar_text_renderer_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_text_renderer_parent_class)->finalize) (object);
 }
 
 
@@ -574,7 +603,7 @@ thunar_text_renderer_start_editing (GtkCellRenderer     *renderer,
   gtk_editable_select_region (GTK_EDITABLE (text_renderer->entry), 0, -1);
 
   /* remember the tree path that we're editing */
-  g_object_set_data_full (G_OBJECT (text_renderer->entry), "thunar-text-renderer-path", g_strdup (path), g_free);
+  g_object_set_data_full (G_OBJECT (text_renderer->entry), I_("thunar-text-renderer-path"), g_strdup (path), g_free);
 
   /* connect required signals */
   g_signal_connect (G_OBJECT (text_renderer->entry), "editing-done", G_CALLBACK (thunar_text_renderer_editing_done), text_renderer);
@@ -663,7 +692,7 @@ thunar_text_renderer_editing_done (GtkCellEditable    *editable,
   if (G_LIKELY (!GTK_ENTRY (editable)->editing_canceled))
     {
       text = gtk_entry_get_text (GTK_ENTRY (editable));
-      path = g_object_get_data (G_OBJECT (editable), "thunar-text-renderer-path");
+      path = g_object_get_data (G_OBJECT (editable), I_("thunar-text-renderer-path"));
       g_signal_emit (G_OBJECT (text_renderer), text_renderer_signals[EDITED], 0, path, text);
     }
 }

@@ -320,10 +320,7 @@ thunar_standard_view_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_SCROLLED_WINDOW,
-                                     "ThunarStandardView",
-                                     &info, G_TYPE_FLAG_ABSTRACT);
-
+      type = g_type_register_static (GTK_TYPE_SCROLLED_WINDOW, I_("ThunarStandardView"), &info, G_TYPE_FLAG_ABSTRACT);
       g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
       g_type_add_interface_static (type, THUNAR_TYPE_VIEW, &view_info);
     }
@@ -386,7 +383,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
    * is an internal signal used to bind the action to keys.
    **/
   standard_view_signals[DELETE_SELECTED_FILES] =
-    g_signal_new ("delete-selected-files",
+    g_signal_new (I_("delete-selected-files"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
                   G_STRUCT_OFFSET (ThunarStandardViewClass, delete_selected_files),
@@ -2225,8 +2222,10 @@ thunar_standard_view_loading_unbound (gpointer user_data)
   if (G_UNLIKELY (standard_view->loading))
     {
       standard_view->loading = FALSE;
+      g_object_freeze_notify (G_OBJECT (standard_view));
       g_object_notify (G_OBJECT (standard_view), "loading");
       g_object_notify (G_OBJECT (standard_view), "statusbar-text");
+      g_object_thaw_notify (G_OBJECT (standard_view));
     }
 }
 

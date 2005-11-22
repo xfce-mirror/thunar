@@ -58,6 +58,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-scandir.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
@@ -369,7 +370,7 @@ thunar_vfs_scandir_collect (ThunarVfsScandirHandle *handle,
           if (G_UNLIKELY (!succeed))
             {
               /* we can ignore certain errors here */
-              if (errno == EMLINK || errno == ENOTDIR || errno == ENOENT)
+              if (errno == EACCES || errno == EMLINK || errno == ENOTDIR || errno == ENOENT || errno == EPERM)
                 succeed = TRUE;
             }
         }
@@ -426,3 +427,7 @@ thunar_vfs_scandir (ThunarVfsPath        *path,
   return handle.path_list;
 }
 
+
+
+#define __THUNAR_VFS_SCANDIR_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

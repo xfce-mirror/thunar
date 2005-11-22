@@ -148,7 +148,7 @@ thunar_statusbar_icon_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_WIDGET, "ThunarStatusbarIcon", &info, 0);
+      type = g_type_register_static (GTK_TYPE_WIDGET, I_("ThunarStatusbarIcon"), &info, 0);
     }
 
   return type;
@@ -708,11 +708,40 @@ struct _ThunarStatusbar
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarStatusbar,
-                         thunar_statusbar,
-                         GTK_TYPE_STATUSBAR,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR,
-                                                thunar_statusbar_navigator_init));
+GType
+thunar_statusbar_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarStatusbarClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_statusbar_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarStatusbar),
+        0,
+        (GInstanceInitFunc) thunar_statusbar_init,
+        NULL,
+      };
+
+      static const GInterfaceInfo navigator_info =
+      {
+        (GInterfaceInitFunc) thunar_statusbar_navigator_init,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_STATUSBAR, I_("ThunarStatusbar"), &info, 0);
+      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
+    }
+
+  return type;
+}
 
 
 

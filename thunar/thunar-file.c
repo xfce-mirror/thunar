@@ -133,8 +133,7 @@ thunar_file_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT, "ThunarFile", &info, 0);
-
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarFile"), &info, 0);
       g_type_add_interface_static (type, THUNARX_TYPE_FILE_INFO, &file_info_info);
     }
 
@@ -213,7 +212,7 @@ thunar_file_class_init (ThunarFileClass *klass)
    * Emitted whenever the system notices a change to @file.
    **/
   file_signals[CHANGED] =
-    g_signal_new ("changed",
+    g_signal_new (I_("changed"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
                   G_STRUCT_OFFSET (ThunarFileClass, changed),
@@ -229,7 +228,7 @@ thunar_file_class_init (ThunarFileClass *klass)
    * was destroyed.
    **/
   file_signals[DESTROY] =
-    g_signal_new ("destroy",
+    g_signal_new (I_("destroy"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_CLEANUP | G_SIGNAL_NO_RECURSE | G_SIGNAL_NO_HOOKS,
                   G_STRUCT_OFFSET (ThunarFileClass, destroy),
@@ -246,7 +245,7 @@ thunar_file_class_init (ThunarFileClass *klass)
    * reregister it's VFS directory monitor.
    **/
   file_signals[RENAMED] =
-    g_signal_new ("renamed",
+    g_signal_new (I_("renamed"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_FIRST,
                   G_STRUCT_OFFSET (ThunarFileClass, renamed),

@@ -52,6 +52,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-mime-cache.h>
+#include <thunar-vfs/thunar-vfs-alias.h>
 
 #if GLIB_CHECK_VERSION(2,6,0)
 #include <glib/gstdio.h>
@@ -134,7 +135,8 @@ thunar_vfs_mime_cache_get_type (void)
       };
 
       type = g_type_register_static (THUNAR_VFS_TYPE_MIME_PROVIDER,
-                                     "ThunarVfsMimeCache", &info, 0);
+                                     I_("ThunarVfsMimeCache"),
+                                     &info, 0);
     }
 
   return type;

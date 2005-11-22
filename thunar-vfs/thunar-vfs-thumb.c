@@ -118,7 +118,36 @@ struct _ThunarVfsThumbFactory
 
 
 
-G_DEFINE_TYPE (ThunarVfsThumbFactory, thunar_vfs_thumb_factory, G_TYPE_OBJECT);
+static GObjectClass *thunar_vfs_thumb_factory_parent_class;
+
+
+
+GType
+thunar_vfs_thumb_factory_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsThumbFactoryClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_thumb_factory_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsThumbFactory),
+        0,
+        (GInstanceInitFunc) thunar_vfs_thumb_factory_init,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsThumbFactory"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -126,6 +155,9 @@ static void
 thunar_vfs_thumb_factory_class_init (ThunarVfsThumbFactoryClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_vfs_thumb_factory_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_thumb_factory_finalize;

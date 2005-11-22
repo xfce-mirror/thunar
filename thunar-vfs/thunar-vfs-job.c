@@ -36,7 +36,7 @@
 
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-#include <gdk/gdk.h>
+#include <exo/exo.h>
 
 
 
@@ -113,7 +113,7 @@ thunar_vfs_job_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_OBJECT, "ThunarVfsJob", &info, G_TYPE_FLAG_ABSTRACT);
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsJob"), &info, G_TYPE_FLAG_ABSTRACT);
     }
 
   return type;
@@ -144,7 +144,7 @@ thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
    * @job.
    **/
   job_signals[ERROR] =
-    g_signal_new ("error",
+    g_signal_new (I_("error"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
@@ -160,7 +160,7 @@ thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
    * user.
    **/
   job_signals[FINISHED] =
-    g_signal_new ("finished",
+    g_signal_new (I_("finished"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,

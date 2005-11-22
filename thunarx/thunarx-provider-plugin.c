@@ -24,6 +24,7 @@
 
 #include <glib/gi18n-lib.h>
 
+#include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-provider-plugin.h>
 #include <thunarx/thunarx-alias.h>
 
@@ -55,7 +56,7 @@ thunarx_provider_plugin_get_type (void)
       };
 
       /* register the provider plugin interface */
-      type = g_type_register_static (G_TYPE_INTERFACE, "ThunarxProviderPlugin", &info, 0);
+      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxProviderPlugin"), &info, 0);
     }
 
   return type;

@@ -89,7 +89,7 @@ thunar_vfs_link_job_get_type (void)
       };
 
       type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                     "ThunarVfsLinkJob", &info, 0);
+                                     I_("ThunarVfsLinkJob"), &info, 0);
     }
 
   return type;

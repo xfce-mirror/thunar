@@ -24,6 +24,7 @@
 
 #include <gmodule.h>
 
+#include <thunarx/thunarx-private.h>
 #include <thunarx/thunarx-provider-module.h>
 #include <thunarx/thunarx-provider-plugin.h>
 #include <thunarx/thunarx-alias.h>
@@ -109,7 +110,7 @@ thunarx_provider_module_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_TYPE_MODULE, "ThunarxProviderModule", &info, 0);
+      type = g_type_register_static (G_TYPE_TYPE_MODULE, I_("ThunarxProviderModule"), &info, 0);
       g_type_add_interface_static (type, THUNARX_TYPE_PROVIDER_PLUGIN, &plugin_info);
     }
 

@@ -220,19 +220,61 @@ struct _SortTuple
 
 
 
-static guint list_model_signals[LAST_SIGNAL];
+static GObjectClass *thunar_list_model_parent_class;
+static guint         list_model_signals[LAST_SIGNAL];
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarListModel,
-                         thunar_list_model,
-                         G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_MODEL,
-                                                thunar_list_model_tree_model_init)
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_DRAG_DEST,
-                                                thunar_list_model_drag_dest_init)
-                         G_IMPLEMENT_INTERFACE (GTK_TYPE_TREE_SORTABLE,
-                                                thunar_list_model_sortable_init));
+GType
+thunar_list_model_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarListModelClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_list_model_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarListModel),
+        0,
+        (GInstanceInitFunc) thunar_list_model_init,
+        NULL,
+      };
+
+      static const GInterfaceInfo tree_model_info =
+      {
+        (GInterfaceInitFunc) thunar_list_model_tree_model_init,
+        NULL,
+        NULL,
+      };
+
+      static const GInterfaceInfo drag_dest_info =
+      {
+        (GInterfaceInitFunc) thunar_list_model_drag_dest_init,
+        NULL,
+        NULL,
+      };
+
+      static const GInterfaceInfo sortable_info =
+      {
+        (GInterfaceInitFunc) thunar_list_model_sortable_init,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarListModel"), &info, 0);
+      g_type_add_interface_static (type, GTK_TYPE_TREE_MODEL, &tree_model_info);
+      g_type_add_interface_static (type, GTK_TYPE_TREE_DRAG_DEST, &drag_dest_info);
+      g_type_add_interface_static (type, GTK_TYPE_TREE_SORTABLE, &sortable_info);
+    }
+
+  return type;
+}
 
 
 
@@ -240,6 +282,9 @@ static void
 thunar_list_model_class_init (ThunarListModelClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_list_model_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class               = G_OBJECT_CLASS (klass);
   gobject_class->finalize     = thunar_list_model_finalize;
@@ -308,7 +353,7 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
    * @store content.
    **/
   list_model_signals[ERROR] =
-    g_signal_new ("error",
+    g_signal_new (I_("error"),
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarListModelClass, error),

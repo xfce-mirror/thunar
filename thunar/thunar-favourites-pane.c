@@ -68,13 +68,52 @@ struct _ThunarFavouritesPane
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarFavouritesPane,
-                         thunar_favourites_pane,
-                         GTK_TYPE_SCROLLED_WINDOW,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR,
-                                                thunar_favourites_pane_navigator_init)
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_SIDE_PANE,
-                                                thunar_favourites_pane_side_pane_init));
+static GObjectClass *thunar_favourites_pane_parent_class;
+
+
+
+GType
+thunar_favourites_pane_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarFavouritesPaneClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_favourites_pane_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarFavouritesPane),
+        0,
+        (GInstanceInitFunc) thunar_favourites_pane_init,
+        NULL,
+      };
+
+      static const GInterfaceInfo navigator_info =
+      {
+        (GInterfaceInitFunc) thunar_favourites_pane_navigator_init,
+        NULL,
+        NULL,
+      };
+
+      static const GInterfaceInfo side_pane_info =
+      {
+        (GInterfaceInitFunc) thunar_favourites_pane_side_pane_init,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_SCROLLED_WINDOW, I_("ThunarFavouritesPane"), &info, 0);
+      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
+      g_type_add_interface_static (type, THUNAR_TYPE_SIDE_PANE, &side_pane_info);
+    }
+
+  return type;
+}
 
 
 
@@ -82,6 +121,9 @@ static void
 thunar_favourites_pane_class_init (ThunarFavouritesPaneClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_favourites_pane_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_favourites_pane_dispose;

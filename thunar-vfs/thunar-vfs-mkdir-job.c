@@ -86,7 +86,7 @@ thunar_vfs_mkdir_job_get_type (void)
       };
 
       type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                     "ThunarVfsMkdirJob", &info, 0);
+                                     I_("ThunarVfsMkdirJob"), &info, 0);
     }
 
   return type;

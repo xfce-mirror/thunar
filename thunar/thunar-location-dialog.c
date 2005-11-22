@@ -26,8 +26,7 @@
 
 
 
-static void thunar_location_dialog_class_init (ThunarLocationDialogClass *klass);
-static void thunar_location_dialog_init       (ThunarLocationDialog      *location_dialog);
+static void thunar_location_dialog_init (ThunarLocationDialog      *location_dialog);
 
 
 
@@ -45,13 +44,31 @@ struct _ThunarLocationDialog
 
 
 
-G_DEFINE_TYPE (ThunarLocationDialog, thunar_location_dialog, GTK_TYPE_DIALOG);
-
-
-
-static void
-thunar_location_dialog_class_init (ThunarLocationDialogClass *klass)
+GType
+thunar_location_dialog_get_type (void)
 {
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarLocationDialogClass),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        sizeof (ThunarLocationDialog),
+        0,
+        (GInstanceInitFunc) thunar_location_dialog_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_DIALOG, I_("ThunarLocationDialog"), &info, 0);
+    }
+  
+  return type;
 }
 
 

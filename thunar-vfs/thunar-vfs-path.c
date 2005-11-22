@@ -177,7 +177,7 @@ thunar_vfs_path_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      type = g_boxed_type_register_static ("ThunarVfsPath",
+      type = g_boxed_type_register_static (I_("ThunarVfsPath"),
                                            (GBoxedCopyFunc) thunar_vfs_path_ref,
                                            (GBoxedFreeFunc) thunar_vfs_path_unref);
     }

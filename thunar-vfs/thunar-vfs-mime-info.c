@@ -96,7 +96,7 @@ thunar_vfs_mime_info_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      type = g_boxed_type_register_static ("ThunarVfsMimeInfo",
+      type = g_boxed_type_register_static (I_("ThunarVfsMimeInfo"),
                                            (GBoxedCopyFunc) thunar_vfs_mime_info_ref,
                                            (GBoxedFreeFunc) thunar_vfs_mime_info_unref);
     }

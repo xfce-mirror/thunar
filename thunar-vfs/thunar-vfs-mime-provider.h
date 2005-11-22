@@ -21,7 +21,7 @@
 #ifndef __THUNAR_VFS_MIME_PROVIDER_H__
 #define __THUNAR_VFS_MIME_PROVIDER_H__
 
-#include <glib-object.h>
+#include <exo/exo.h>
 
 G_BEGIN_DECLS;
 

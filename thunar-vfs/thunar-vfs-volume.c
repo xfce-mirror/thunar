@@ -67,10 +67,7 @@ thunar_vfs_volume_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_INTERFACE,
-                                     "ThunarVfsVolume",
-                                     &info, 0);
-
+      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarVfsVolume"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
     }
 
@@ -93,7 +90,7 @@ thunar_vfs_volume_base_init (gpointer klass)
        * Emitted whenever the state of @volume changed.
        **/
       volume_signals[THUNAR_VFS_VOLUME_CHANGED] =
-        g_signal_new ("changed",
+        g_signal_new (I_("changed"),
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
                       G_STRUCT_OFFSET (ThunarVfsVolumeIface, changed),

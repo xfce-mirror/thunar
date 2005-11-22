@@ -104,12 +104,38 @@ struct _ThunarFolder
 
 
 
-static guint  folder_signals[LAST_SIGNAL];
-static GQuark thunar_folder_quark;
+static GObjectClass *thunar_folder_parent_class;
+static guint         folder_signals[LAST_SIGNAL];
+static GQuark        thunar_folder_quark;
 
 
 
-G_DEFINE_TYPE (ThunarFolder, thunar_folder, GTK_TYPE_OBJECT);
+GType
+thunar_folder_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarFolderClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_folder_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarFolder),
+        0,
+        (GInstanceInitFunc) thunar_folder_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_OBJECT, I_("ThunarFolder"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -117,6 +143,9 @@ static void
 thunar_folder_class_init (ThunarFolderClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_folder_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_folder_finalize;
@@ -145,7 +174,7 @@ thunar_folder_class_init (ThunarFolderClass *klass)
    * load the directory content because of an error.
    **/
   folder_signals[ERROR] =
-    g_signal_new ("error",
+    g_signal_new (I_("error"),
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarFolderClass, error),
@@ -160,7 +189,7 @@ thunar_folder_class_init (ThunarFolderClass *klass)
    * been added to a particular folder.
    **/
   folder_signals[FILES_ADDED] =
-    g_signal_new ("files-added",
+    g_signal_new (I_("files-added"),
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarFolderClass, files_added),
@@ -177,7 +206,7 @@ thunar_folder_class_init (ThunarFolderClass *klass)
    * the reload of folders, which take longer to load.
    **/
   folder_signals[FILES_REMOVED] =
-    g_signal_new ("files-removed",
+    g_signal_new (I_("files-removed"),
                   G_TYPE_FROM_CLASS (gobject_class),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarFolderClass, files_removed),

@@ -125,7 +125,36 @@ static const GtkTargetEntry drop_targets[] = {
 
 
 
-G_DEFINE_TYPE (ThunarFavouritesView, thunar_favourites_view, GTK_TYPE_TREE_VIEW);
+static GObjectClass *thunar_favourites_view_parent_class;
+
+
+
+GType
+thunar_favourites_view_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarFavouritesViewClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_favourites_view_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarFavouritesView),
+        0,
+        (GInstanceInitFunc) thunar_favourites_view_init,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_TREE_VIEW, I_("ThunarFavouritesView"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -134,6 +163,9 @@ thunar_favourites_view_class_init (ThunarFavouritesViewClass *klass)
 {
   GtkTreeViewClass *gtktree_view_class;
   GtkWidgetClass   *gtkwidget_class;
+
+  /* determine the parent type class */
+  thunar_favourites_view_parent_class = g_type_class_peek_parent (klass);
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->button_press_event = thunar_favourites_view_button_press_event;
@@ -150,7 +182,7 @@ thunar_favourites_view_class_init (ThunarFavouritesViewClass *klass)
    * Invoked whenever a favourite is activated by the user.
    **/
   view_signals[FAVOURITE_ACTIVATED] =
-    g_signal_new ("favourite-activated",
+    g_signal_new (I_("favourite-activated"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarFavouritesViewClass, favourite_activated),
@@ -290,7 +322,7 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
 
       /* append the remove menu item */
       item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Favourite"));
-      g_object_set_data_full (G_OBJECT (item), "thunar-favourites-row",
+      g_object_set_data_full (G_OBJECT (item), I_("thunar-favourites-row"),
                               gtk_tree_row_reference_new (model, path),
                               (GDestroyNotify) gtk_tree_row_reference_free);
       g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_favourites_view_remove_activated), widget);
@@ -305,7 +337,7 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
 
       /* append the rename menu item */
       item = gtk_image_menu_item_new_with_mnemonic (_("Re_name Favourite"));
-      g_object_set_data_full (G_OBJECT (item), "thunar-favourites-row",
+      g_object_set_data_full (G_OBJECT (item), I_("thunar-favourites-row"),
                               gtk_tree_row_reference_new (model, path),
                               (GDestroyNotify) gtk_tree_row_reference_free);
       g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_favourites_view_rename_activated), widget);
@@ -481,7 +513,7 @@ thunar_favourites_view_remove_activated (GtkWidget            *item,
   GtkTreeModel        *model;
   GtkTreePath         *path;
 
-  row = g_object_get_data (G_OBJECT (item), "thunar-favourites-row");
+  row = g_object_get_data (G_OBJECT (item), I_("thunar-favourites-row"));
   path = gtk_tree_row_reference_get_path (row);
   if (G_LIKELY (path != NULL))
     {
@@ -503,7 +535,7 @@ thunar_favourites_view_rename_activated (GtkWidget            *item,
   GtkTreePath         *path;
   GList               *renderers;
 
-  row = g_object_get_data (G_OBJECT (item), "thunar-favourites-row");
+  row = g_object_get_data (G_OBJECT (item), I_("thunar-favourites-row"));
   path = gtk_tree_row_reference_get_path (row);
   if (G_LIKELY (path != NULL))
     {

@@ -81,11 +81,44 @@ struct _ThunarHistory
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarHistory,
-                         thunar_history,
-                         G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR,
-                                                thunar_history_navigator_init));
+static GObjectClass *thunar_history_parent_class;
+
+
+
+GType
+thunar_history_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarHistoryClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_history_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarHistory),
+        0,
+        (GInstanceInitFunc) thunar_history_init,
+        NULL,
+      };
+
+      static const GInterfaceInfo navigator_info =
+      {
+        (GInterfaceInitFunc) thunar_history_navigator_init,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarHistory"), &info, 0);
+      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
+    }
+
+  return type;
+}
 
 
 
@@ -93,6 +126,9 @@ static void
 thunar_history_class_init (ThunarHistoryClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_history_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_history_dispose;

@@ -62,9 +62,7 @@ thunar_navigator_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_INTERFACE,
-                                     "ThunarNavigator",
-                                     &info, 0);
+      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarNavigator"), &info, 0);
     }
 
   return type;
@@ -99,7 +97,7 @@ thunar_navigator_base_init (gpointer klass)
        * or the "current-directory" property.
        **/
       navigator_signals[CHANGE_DIRECTORY] =
-        g_signal_new ("change-directory",
+        g_signal_new (I_("change-directory"),
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
                       G_STRUCT_OFFSET (ThunarNavigatorIface, change_directory),

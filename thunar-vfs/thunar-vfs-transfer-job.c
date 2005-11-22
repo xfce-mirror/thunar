@@ -148,7 +148,38 @@ struct _ThunarVfsTransferPair
 
 
 
-G_DEFINE_TYPE (ThunarVfsTransferJob, thunar_vfs_transfer_job, THUNAR_VFS_TYPE_INTERACTIVE_JOB);
+static GObjectClass *thunar_vfs_transfer_job_parent_class;
+
+
+
+GType
+thunar_vfs_transfer_job_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsTransferJobClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_transfer_job_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsTransferJob),
+        0,
+        (GInstanceInitFunc) thunar_vfs_transfer_job_init,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                     I_("ThunarVfsTransferJob"),
+                                     &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -157,6 +188,9 @@ thunar_vfs_transfer_job_class_init (ThunarVfsTransferJobClass *klass)
 {
   ThunarVfsJobClass *thunarvfs_job_class;
   GObjectClass      *gobject_class;
+
+  /* determine the parent type class */
+  thunar_vfs_transfer_job_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_transfer_job_finalize;
@@ -860,3 +894,7 @@ failure:
   return NULL;
 }
 
+
+
+#define __THUNAR_VFS_TRANSFER_JOB_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

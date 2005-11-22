@@ -32,8 +32,6 @@
 #include <string.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar/thunar-fallback-icon.h>
 #include <thunar/thunar-gdk-pixbuf-extensions.h>
 #include <thunar/thunar-icon-factory.h>
@@ -128,12 +126,38 @@ struct _ThunarIconKey
 
 
 
-static GQuark thunar_icon_factory_quark = 0;
-static GQuark thunar_file_thumb_path_quark = 0;
+static GObjectClass *thunar_icon_factory_parent_class = NULL;
+static GQuark        thunar_icon_factory_quark = 0;
+static GQuark        thunar_file_thumb_path_quark = 0;
 
 
 
-G_DEFINE_TYPE (ThunarIconFactory, thunar_icon_factory, G_TYPE_OBJECT);
+GType
+thunar_icon_factory_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarIconFactoryClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_icon_factory_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarIconFactory),
+        0,
+        (GInstanceInitFunc) thunar_icon_factory_init,
+        NULL,
+      };
+
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarIconFactory"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -141,6 +165,9 @@ static void
 thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_icon_factory_parent_class = g_type_class_peek_parent (klass);
 
   /* setup the thunar-file-thumb-path quark */
   thunar_file_thumb_path_quark = g_quark_from_static_string ("thunar-file-thumb-path");

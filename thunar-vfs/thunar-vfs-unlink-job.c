@@ -109,7 +109,8 @@ thunar_vfs_unlink_job_get_type (void)
       };
 
       type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                     "ThunarVfsUnlinkJob", &info, 0);
+                                     I_("ThunarVfsUnlinkJob"),
+                                     &info, 0);
     }
 
   return type;
@@ -292,3 +293,6 @@ thunar_vfs_unlink_job_new (GList   *path_list,
 }
 
 
+
+#define __THUNAR_VFS_UNLINK_JOB_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

@@ -18,43 +18,23 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
+#if !defined(THUNARX_INSIDE_THUNARX_H) && !defined(THUNARX_COMPILATION)
+#error "Only <thunarx/thunarx.h> can be included directly, this file may disappear or change contents"
 #endif
 
-#include <thunar-vfs/thunar-vfs-mime-provider.h>
-#include <thunar-vfs/thunar-vfs-alias.h>
+#ifndef __THUNARX_PRIVATE_H__
+#define __THUNARX_PRIVATE_H__
 
+#include <glib.h>
 
+G_BEGIN_DECLS;
 
-GType
-thunar_vfs_mime_provider_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
+#if GLIB_CHECK_VERSION(2,9,0)
+#define I_(string) (g_intern_static_string ((string)))
+#else
+#define I_(string) (g_quark_to_string (g_quark_from_static_string ((string))))
+#endif
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsMimeProviderClass),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsMimeProvider),
-        0,
-        NULL,
-        NULL,
-      };
+G_END_DECLS;
 
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsMimeProvider"), &info, G_TYPE_FLAG_ABSTRACT);
-    }
-
-  return type;
-}
-
-
-
-#define __THUNAR_VFS_MIME_PROVIDER_C__
-#include <thunar-vfs/thunar-vfs-aliasdef.c>
+#endif /* !__THUNARX_PRIVATE_H__ */

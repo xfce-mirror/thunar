@@ -162,13 +162,52 @@ static const GtkTargetEntry drag_targets[] =
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarLocationButtons,
-                         thunar_location_buttons,
-                         GTK_TYPE_CONTAINER,
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_NAVIGATOR,
-                                                thunar_location_buttons_navigator_init)
-                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_LOCATION_BAR,
-                                                thunar_location_buttons_location_bar_init));
+static GObjectClass *thunar_location_buttons_parent_class;
+
+
+
+GType
+thunar_location_buttons_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarLocationButtonsClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_location_buttons_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarLocationButtons),
+        0,
+        (GInstanceInitFunc) thunar_location_buttons_init,
+        NULL,
+      };
+
+      static const GInterfaceInfo navigator_info =
+      {
+        (GInterfaceInitFunc) thunar_location_buttons_navigator_init,
+        NULL,
+        NULL,
+      };
+
+      static const GInterfaceInfo location_bar_info =
+      {
+        (GInterfaceInitFunc) thunar_location_buttons_location_bar_init,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (GTK_TYPE_CONTAINER, I_("ThunarLocationButtons"), &info, 0);
+      g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
+      g_type_add_interface_static (type, THUNAR_TYPE_LOCATION_BAR, &location_bar_info);
+    }
+
+  return type;
+}
 
 
 
@@ -178,6 +217,9 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
   GtkContainerClass *gtkcontainer_class;
   GtkWidgetClass    *gtkwidget_class;
   GObjectClass      *gobject_class;
+
+  /* determine the parent type class */
+  thunar_location_buttons_parent_class = g_type_class_peek_parent (klass);
 
   gtk_label_quark = g_quark_from_static_string ("gtk-label");
   thunar_file_quark = g_quark_from_static_string ("thunar-file");
