@@ -2191,7 +2191,9 @@ thunar_standard_view_renamed (ThunarTextRenderer *text_renderer,
       else if (G_LIKELY (gtk_tree_row_reference_valid (row)))
         {
           /* place the cursor on the item again and scroll to the position */
-          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, gtk_tree_row_reference_get_path (row));
+          path = gtk_tree_row_reference_get_path (row);
+          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, path);
+          gtk_tree_path_free (path);
 
           /* update the selection, so we get updated actions, statusbar,
            * etc. with the new file name and probably new mime type.

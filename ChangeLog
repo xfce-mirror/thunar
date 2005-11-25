@@ -1,3 +1,10 @@
+2005-11-25	Benedikt Meurer <benny@xfce.org>
+
+	* thunarx/thunarx-provider-factory.c: Make sure, ThunarxProviderModules
+	  are never finalized, as GObject cannot unregister dynamic types (yet).
+	* thunar/thunar-standard-view.c(thunar_standard_view_renamed): Properly
+	  release the path returned from gtk_tree_row_reference_get_path().
+
 2005-11-22	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/*.{c,h}, thunar/*.c, thunarx/*.c: Avoid duplicating static

@@ -33,7 +33,7 @@
 
 
 /* "provider cache" cleanup interval (in ms) */
-#define THUNARX_PROVIDER_FACTORY_INTERVAL (60 * 1000)
+#define THUNARX_PROVIDER_FACTORY_INTERVAL (45 * 1000)
 
 
 
@@ -62,8 +62,6 @@ struct _ThunarxProviderFactory
 {
   GObject __parent__;
 
-  GList               *modules;   /* the list of provider modules */
-
   ThunarxProviderInfo *infos;     /* provider types and cached provider references */
   gint                 n_infos;   /* number of items in the infos array */
 
@@ -73,6 +71,7 @@ struct _ThunarxProviderFactory
 
 
 static GObjectClass *thunarx_provider_factory_parent_class;
+static GList        *thunarx_provider_modules = NULL;       /* list of active provider modules */
 
 
 
@@ -124,6 +123,7 @@ thunarx_provider_factory_init (ThunarxProviderFactory *factory)
 {
   ThunarxProviderModule *module;
   const gchar           *name;
+  GList                 *lp;
   GDir                  *dp;
 
   dp = g_dir_open (THUNARX_DIRECTORY, 0, NULL);
@@ -140,23 +140,33 @@ thunarx_provider_factory_init (ThunarxProviderFactory *factory)
           /* check if this is a valid plugin file */
           if (g_str_has_suffix (name, "." G_MODULE_SUFFIX))
             {
-              /* allocate a new module for the file */
-              module = thunarx_provider_module_new (name);
+              /* check if we already have that module */
+              for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
+                if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
+                  break;
+
+              /* use or allocate a new module for the file */
+              if (G_UNLIKELY (lp != NULL))
+                {
+                  /* just use the existing module */
+                  module = THUNARX_PROVIDER_MODULE (lp->data);
+                }
+              else
+                {
+                  /* allocate the new module and add it to our list */
+                  module = thunarx_provider_module_new (name);
+                  thunarx_provider_modules = g_list_append (thunarx_provider_modules, module);
+                }
 
               /* try to load the module */
               if (g_type_module_use (G_TYPE_MODULE (module)))
                 {
-                  /* add the module to our list of managed modules */
+                  /* add the types provided by the module */
                   thunarx_provider_factory_add (factory, module);
 
                   /* don't unuse the type plugin if it should be resident in memory */
                   if (G_LIKELY (!thunarx_provider_plugin_get_resident (THUNARX_PROVIDER_PLUGIN (module))))
                     g_type_module_unuse (G_TYPE_MODULE (module));
-                }
-              else
-                {
-                  /* drop the reference on the module */
-                  g_object_unref (G_OBJECT (module));
                 }
             }
         }
@@ -188,10 +198,6 @@ thunarx_provider_factory_finalize (GObject *object)
       g_object_unref (factory->infos[n].provider);
   g_free (factory->infos);
 
-  /* release the modules */
-  g_list_foreach (factory->modules, (GFunc) g_object_unref, NULL);
-  g_list_free (factory->modules);
-
   (*G_OBJECT_CLASS (thunarx_provider_factory_parent_class)->finalize) (object);
 }
 
@@ -204,14 +210,11 @@ thunarx_provider_factory_add (ThunarxProviderFactory *factory,
   const GType *types;
   gint         n_types;
 
-  /* add the module to our internal list */
-  factory->modules = g_list_prepend (factory->modules, module);
-
   /* determines the types provided by the module */
   thunarx_provider_module_list_types (module, &types, &n_types);
 
   /* add the types provided by the extension */
-  factory->infos = g_realloc (factory->infos, sizeof (ThunarxProviderInfo) * (factory->n_infos + n_types));
+  factory->infos = g_renew (ThunarxProviderInfo, factory->infos, factory->n_infos + n_types);
   for (; n_types-- > 0; ++types)
     {
       factory->infos[factory->n_infos].provider = NULL;
@@ -272,14 +275,21 @@ thunarx_provider_factory_timer_destroy (gpointer user_data)
 ThunarxProviderFactory*
 thunarx_provider_factory_get_default (void)
 {
-  static ThunarxProviderFactory *default_factory = NULL;
+  static ThunarxProviderFactory *factory = NULL;
 
   /* allocate the default factory instance on-demand */
-  if (G_UNLIKELY (default_factory == NULL))
-    default_factory = g_object_new (THUNARX_TYPE_PROVIDER_FACTORY, NULL);
+  if (G_UNLIKELY (factory == NULL))
+    {
+      factory = g_object_new (THUNARX_TYPE_PROVIDER_FACTORY, NULL);
+      g_object_add_weak_pointer (G_OBJECT (factory), (gpointer) &factory);
+    }
+  else
+    {
+      /* take a reference on the default factory for the caller */
+      g_object_ref (G_OBJECT (factory));
+    }
 
-  /* take a reference on the default factory for the caller */
-  return g_object_ref (G_OBJECT (default_factory));
+  return factory;
 }
 
 
