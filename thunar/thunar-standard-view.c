@@ -1149,15 +1149,6 @@ thunar_standard_view_get_selected_paths (ThunarStandardView *standard_view)
 
 
 
-static gint
-compare_actions (gconstpointer a,
-                 gconstpointer b)
-{
-  return strcmp (gtk_action_get_name (GTK_ACTION (a)), gtk_action_get_name (GTK_ACTION (b)));
-}
-
-
-
 static void
 thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
                                            GList              *selected_items)
@@ -1246,6 +1237,7 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
   if (G_LIKELY (standard_view->priv->custom_actions != 0))
     {
       gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->priv->custom_merge_id);
+      gtk_ui_manager_ensure_update (standard_view->ui_manager);
       standard_view->priv->custom_merge_id = 0;
     }
 
@@ -1264,9 +1256,6 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
       standard_view->priv->custom_actions = gtk_action_group_new ("thunar-standard-view-custom-actions");
       standard_view->priv->custom_merge_id = gtk_ui_manager_new_merge_id (standard_view->ui_manager);
       gtk_ui_manager_insert_action_group (standard_view->ui_manager, standard_view->priv->custom_actions, -1);
-
-      /* sort the actions by their names */
-      actions = g_list_sort (actions, compare_actions);
 
       /* add the actions to the UI manager */
       for (lp = actions; lp != NULL; lp = lp->next)

@@ -1,3 +1,12 @@
+2005-11-26	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-standard-view.c
+	  (thunar_standard_view_merge_custom_actions): Don't sort custom actions
+	  explicitly, but leave it up to the provider plugins to determine the
+	  order of their actions. Also, be sure to update the UI manager after
+	  unmerging the previously set menu actions, else GtkUIManager will
+	  mess up the order of the actions.
+
 2005-11-25	Benedikt Meurer <benny@xfce.org>
 
 	* thunarx/thunarx-provider-factory.c: Make sure, ThunarxProviderModules
