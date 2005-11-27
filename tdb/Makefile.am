@@ -24,10 +24,10 @@ tdbtool_SOURCES =							\
 	tdbtool.c
 
 tdbtool_DEPENDENCIES =							\
-	$(top_builddir)/tdb/libtdb.la
+	libtdb.la
 
 tdbtool_LDADD =								\
-	$(top_builddir)/tdb/libtdb.la
+	libtdb.la
 
 TESTS =									\
 	tdbspeed							\
@@ -41,10 +41,10 @@ tdbspeed_SOURCES =							\
 	tdbspeed.c
 
 tdbspeed_DEPENDENCIES =							\
-	$(top_builddir)/tdb/libtdb.la
+	libtdb.la
 
 tdbspeed_LDADD =							\
-	$(top_builddir)/tdb/libtdb.la
+	libtdb.la
 
 tdbtorture_CFLAGS =							\
 	-DNLOOPS=1000							\
@@ -54,10 +54,10 @@ tdbtorture_SOURCES =							\
 	tdbtorture.c
 
 tdbtorture_DEPENDENCIES =						\
-	$(top_builddir)/tdb/libtdb.la
+	libtdb.la
 
 tdbtorture_LDADD =							\
-	$(top_builddir)/tdb/libtdb.la
+	libtdb.la
 
 CLEANFILES =								\
 	test.tdb							\
