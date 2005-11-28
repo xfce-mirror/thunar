@@ -134,21 +134,23 @@ struct _ThunarLocationButtons
 {
   GtkContainer __parent__;
 
-  GtkWidget   *left_slider;
-  GtkWidget   *right_slider;
+  GtkWidget     *left_slider;
+  GtkWidget     *right_slider;
 
-  ThunarFile  *current_directory;
+  ThunarFile    *current_directory;
 
-  gint         slider_width;
-  gboolean     ignore_click : 1;
+  PangoAttrList *attr_list_bold;
 
-  GList       *list;
-  GList       *first_scrolled_button;
+  gint           slider_width;
+  gboolean       ignore_click : 1;
 
-  gint         scroll_timeout_id;
+  GList         *list;
+  GList         *first_scrolled_button;
 
-  GtkWidget   *enter_button;
-  gint         enter_timeout_id;
+  gint           scroll_timeout_id;
+
+  GtkWidget     *enter_button;
+  gint           enter_timeout_id;
 };
 
 
@@ -282,13 +284,21 @@ thunar_location_buttons_location_bar_init (ThunarLocationBarIface *iface)
 static void
 thunar_location_buttons_init (ThunarLocationButtons *buttons)
 {
-  GtkWidget *arrow;
+  PangoAttribute *attribute;
+  GtkWidget      *arrow;
 
   GTK_WIDGET_SET_FLAGS (buttons, GTK_NO_WINDOW);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
 
   buttons->enter_timeout_id = -1;
   buttons->scroll_timeout_id = -1;
+
+  /* pre-allocate a pango attr list for bold labels */
+  buttons->attr_list_bold = pango_attr_list_new ();
+  attribute = pango_attr_weight_new (PANGO_WEIGHT_BOLD);
+  attribute->start_index = 0;
+  attribute->end_index = -1;
+  pango_attr_list_insert (buttons->attr_list_bold, attribute);
 
   gtk_widget_push_composite_child ();
 
@@ -342,7 +352,10 @@ thunar_location_buttons_finalize (GObject *object)
   /* release from the current_directory */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (buttons), NULL);
 
-  G_OBJECT_CLASS (thunar_location_buttons_parent_class)->finalize (object);
+  /* release the pre-allocated bold attribute list */
+  pango_attr_list_unref (buttons->attr_list_bold);
+
+  (*G_OBJECT_CLASS (thunar_location_buttons_parent_class)->finalize) (object);
 }
 
 
@@ -493,7 +506,7 @@ thunar_location_buttons_unmap (GtkWidget *widget)
   thunar_location_buttons_stop_scrolling (THUNAR_LOCATION_BUTTONS (widget));
 
   /* do the real unmap */
-  GTK_WIDGET_CLASS (thunar_location_buttons_parent_class)->unmap (widget);
+  (*GTK_WIDGET_CLASS (thunar_location_buttons_parent_class)->unmap) (widget);
 }
 
 
@@ -851,7 +864,6 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
   GtkWidget         *label;
   GtkWidget         *hbox;
   GdkPixbuf         *icon;
-  gchar             *markup;
   gint               size;
 
   gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &size, &size);
@@ -896,11 +908,7 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
 
       /* current directory gets a bold label */
       if (file == buttons->current_directory)
-        {
-          markup = g_markup_printf_escaped ("<b>%s</b>", thunar_file_get_special_name (file));
-          gtk_label_set_markup (GTK_LABEL (label), markup);
-          g_free (markup);
-        }
+        gtk_label_set_attributes (GTK_LABEL (label), buttons->attr_list_bold);
     }
 
   /* the current directory is toggled */
@@ -1138,7 +1146,6 @@ thunar_location_buttons_clicked (GtkWidget             *button,
 {
   ThunarFile *directory;
   GtkWidget  *label;
-  gchar      *markup;
   GList      *lp;
 
   g_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
@@ -1168,15 +1175,9 @@ thunar_location_buttons_clicked (GtkWidget             *button,
         {
           /* current directory gets a bold label */
           if (directory == buttons->current_directory)
-            {
-              markup = g_markup_printf_escaped ("<b>%s</b>", thunar_file_get_special_name (directory));
-              gtk_label_set_markup (GTK_LABEL (label), markup);
-              g_free (markup);
-            }
+            gtk_label_set_attributes (GTK_LABEL (label), buttons->attr_list_bold);
           else
-            {
-              gtk_label_set_text (GTK_LABEL (label), thunar_file_get_special_name (directory));
-            }
+            gtk_label_set_attributes (GTK_LABEL (label), NULL);
         }
 
       /* update the toggle button state (making sure to not recurse with the "clicked" handler) */
