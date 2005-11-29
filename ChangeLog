@@ -1,5 +1,11 @@
 2005-11-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-thumbnail-generator.c
+	  (thunar_thumbnail_generator_thread): Don't generate thumbnails for
+	  files for which only the generator owns a reference.
+
+2005-11-29	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-standard-view.c
 	  (thunar_standard_view_merge_custom_actions): Fix typo.
 	* thunarx/thunarx-private.{c,h}, thunarx/thunarx-menu-provider.c,

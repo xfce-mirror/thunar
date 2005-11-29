@@ -241,11 +241,19 @@ thunar_thumbnail_generator_thread (gpointer user_data)
       /* release the lock */
       g_mutex_unlock (generator->lock);
 
-      /* try to generate the thumbnail */
-      icon = thunar_vfs_thumb_factory_generate_thumbnail (generator->factory, info->info);
+      /* don't generate thumbnails for files for which only we own a reference */
+      if (G_LIKELY (G_OBJECT (info->file)->ref_count > 1))
+        {
+          /* try to generate the thumbnail */
+          icon = thunar_vfs_thumb_factory_generate_thumbnail (generator->factory, info->info);
 
-      /* store the thumbnail (or the failed notice) */
-      thunar_vfs_thumb_factory_store_thumbnail (generator->factory, icon, info->info, NULL);
+          /* store the thumbnail (or the failed notice) */
+          thunar_vfs_thumb_factory_store_thumbnail (generator->factory, icon, info->info, NULL);
+        }
+      else
+        {
+          icon = NULL;
+        }
 
       /* place the thumbnail on the reply list and schedule the idle source */
       g_mutex_lock (generator->lock);
