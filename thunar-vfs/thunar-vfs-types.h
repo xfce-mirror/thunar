@@ -24,6 +24,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+#include <glib.h>
+
 G_BEGIN_DECLS;
 
 /**
@@ -125,7 +127,7 @@ typedef ino_t ThunarVfsFileInode;
  * ThunarVfsFileSize:
  * Datatype to represent file sizes (in bytes).
  **/
-typedef off_t ThunarVfsFileSize;
+typedef gint64 ThunarVfsFileSize;
 
 /**
  * ThunarVfsFileTime:

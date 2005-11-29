@@ -88,6 +88,11 @@ esac
 AC_SUBST([TDB_U32_TYPE])
 AC_MSG_RESULT([$TDB_U32_TYPE])
 
+dnl ***********************************************
+dnl *** Work-around system-specific limitations ***
+dnl ***********************************************
+AC_SYS_LARGEFILE()
+
 dnl **********************************
 dnl *** Check for standard headers ***
 dnl **********************************
