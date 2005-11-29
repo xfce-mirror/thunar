@@ -18,26 +18,36 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#if !defined(THUNARX_INSIDE_THUNARX_H) && !defined(THUNARX_COMPILATION)
-#error "Only <thunarx/thunarx.h> can be included directly, this file may disappear or change contents"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
 #endif
 
-#ifndef __THUNARX_PRIVATE_H__
-#define __THUNARX_PRIVATE_H__
+#include <glib-object.h>
 
-#include <glib.h>
+#include <thunarx/thunarx-private.h>
 
-G_BEGIN_DECLS;
 
-#if GLIB_CHECK_VERSION(2,9,0)
-#define I_(string) (g_intern_static_string ((string)))
-#else
-#define I_(string) (g_quark_to_string (g_quark_from_static_string ((string))))
-#endif
 
-void thunarx_object_list_take_reference (GList   *object_list,
-                                         gpointer target) G_GNUC_INTERNAL;
+static GQuark thunarx_object_list_quark = 0;
 
-G_END_DECLS;
 
-#endif /* !__THUNARX_PRIVATE_H__ */
+
+/* takes a reference on target for each object in object_list */
+void
+thunarx_object_list_take_reference (GList   *object_list,
+                                    gpointer target)
+{
+  GList *lp;
+
+  /* allocate the "thunarx-object-list" quark on-demand */
+  if (G_UNLIKELY (thunarx_object_list_quark == 0))
+    thunarx_object_list_quark = g_quark_from_static_string ("thunarx-object-list");
+
+  for (lp = object_list; lp != NULL; lp = lp->next)
+    {
+      g_object_set_qdata_full (lp->data, thunarx_object_list_quark, target, g_object_unref);
+      g_object_ref (target);
+    }
+}
+
+

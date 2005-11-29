@@ -64,6 +64,7 @@ static void     thunar_window_set_property                (GObject            *o
                                                            GParamSpec         *pspec);
 static void     thunar_window_realize                     (GtkWidget          *widget);
 static void     thunar_window_unrealize                   (GtkWidget          *widget);
+static void     thunar_window_merge_custom_preferences    (ThunarWindow       *window);
 static void     thunar_window_action_open_new_window      (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_close_all_windows    (GtkAction          *action,
@@ -108,6 +109,8 @@ static void     thunar_window_menu_item_deselected        (GtkWidget          *m
 static void     thunar_window_notify_loading              (ThunarView         *view,
                                                            GParamSpec         *pspec,
                                                            ThunarWindow       *window);
+static gboolean thunar_window_merge_idle                  (gpointer            user_data);
+static void     thunar_window_merge_idle_destroy          (gpointer            user_data);
 
 
 
@@ -119,6 +122,10 @@ struct _ThunarWindowClass
 struct _ThunarWindow
 {
   GtkWindow __parent__;
+
+  /* support for custom preferences actions */
+  ThunarxProviderFactory *provider_factory;
+  gint                    custom_preferences_merge_id;
 
   ThunarClipboardManager *clipboard;
 
@@ -147,6 +154,9 @@ struct _ThunarWindow
   ThunarHistory          *history;
 
   ThunarFile             *current_directory;
+
+  /* menu merge idle source */
+  gint                    merge_idle_id;
 };
 
 
@@ -158,7 +168,7 @@ static const GtkActionEntry action_entries[] =
   { "close-all-windows", NULL, N_ ("Close _All Windows"), "<control><shift>W", N_ ("Close all Thunar windows"), G_CALLBACK (thunar_window_action_close_all_windows), },
   { "close", GTK_STOCK_CLOSE, N_ ("_Close"), "<control>W", N_ ("Close this window"), G_CALLBACK (thunar_window_action_close), },
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
-  { "preferences", GTK_STOCK_PREFERENCES, N_ ("_Preferences"), NULL, N_ ("Edit Thunar Preferences"), G_CALLBACK (thunar_window_action_preferences), },
+  { "preferences", GTK_STOCK_PREFERENCES, N_ ("Pr_eferences..."), NULL, N_ ("Edit Thunars Preferences"), G_CALLBACK (thunar_window_action_preferences), },
   { "view-menu", NULL, N_ ("_View"), NULL, },
   { "view-location-selector-menu", NULL, N_ ("_Location Selector"), NULL, },
   { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
@@ -291,6 +301,9 @@ thunar_window_init (ThunarWindow *window)
   GSList         *group;
   gchar          *type_name;
   GType           type;
+
+  /* grab a reference on the provider factory */
+  window->provider_factory = thunarx_provider_factory_get_default ();
 
   /* grab a reference on the preferences */
   window->preferences = thunar_preferences_get ();
@@ -468,6 +481,9 @@ thunar_window_init (ThunarWindow *window)
   exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), g_type_is_a (type, THUNAR_TYPE_VIEW) ? type : THUNAR_TYPE_ICON_VIEW);
   g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_view_changed), window);
   thunar_window_action_view_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
+
+  /* schedule asynchronous menu action merging */
+  window->merge_idle_id = g_idle_add_full (G_PRIORITY_LOW + 20, thunar_window_merge_idle, window, thunar_window_merge_idle_destroy);
 }
 
 
@@ -476,6 +492,17 @@ static void
 thunar_window_dispose (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
+
+  /* destroy the merge idle source */
+  if (G_UNLIKELY (window->merge_idle_id > 0))
+    g_source_remove (window->merge_idle_id);
+
+  /* un-merge the custom preferences */
+  if (G_LIKELY (window->custom_preferences_merge_id != 0))
+    {
+      gtk_ui_manager_remove_ui (window->ui_manager, window->custom_preferences_merge_id);
+      window->custom_preferences_merge_id = 0;
+    }
 
   /* disconnect from the current-directory */
   thunar_window_set_current_directory (window, NULL);
@@ -501,6 +528,9 @@ thunar_window_finalize (GObject *object)
   g_object_unref (G_OBJECT (window->action_group));
   g_object_unref (G_OBJECT (window->icon_factory));
   g_object_unref (G_OBJECT (window->history));
+
+  /* release our reference on the provider factory */
+  g_object_unref (G_OBJECT (window->provider_factory));
 
   /* release the preferences reference */
   g_object_unref (G_OBJECT (window->preferences));
@@ -593,6 +623,59 @@ thunar_window_unrealize (GtkWidget *widget)
 
   /* let the GtkWidget class unrealize the window */
   (*GTK_WIDGET_CLASS (thunar_window_parent_class)->unrealize) (widget);
+}
+
+
+
+static void
+thunar_window_merge_custom_preferences (ThunarWindow *window)
+{
+  GList *providers;
+  GList *actions;
+  GList *ap, *pp;
+
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  g_return_if_fail (window->custom_preferences_merge_id == 0);
+
+  /* determine the available preferences providers */
+  providers = thunarx_provider_factory_list_providers (window->provider_factory, THUNARX_TYPE_PREFERENCES_PROVIDER);
+  if (G_LIKELY (providers != NULL))
+    {
+      /* allocate a new merge id from the UI manager */
+      window->custom_preferences_merge_id = gtk_ui_manager_new_merge_id (window->ui_manager);
+
+      /* add actions from all providers */
+      for (pp = providers; pp != NULL; pp = pp->next)
+        {
+          /* determine the available actions for the provider */
+          actions = thunarx_preferences_provider_get_actions (THUNARX_PREFERENCES_PROVIDER (pp->data), GTK_WIDGET (window));
+          for (ap = actions; ap != NULL; ap = ap->next)
+            {
+              /* add the action to the action group */
+              gtk_action_group_add_action (window->action_group, GTK_ACTION (ap->data));
+
+              /* add the action to the UI manager */
+              gtk_ui_manager_add_ui (window->ui_manager,
+                                     window->custom_preferences_merge_id,
+                                     "/main-menu/edit-menu/placeholder-custom-preferences",
+                                     gtk_action_get_name (GTK_ACTION (ap->data)),
+                                     gtk_action_get_name (GTK_ACTION (ap->data)),
+                                     GTK_UI_MANAGER_MENUITEM, FALSE);
+
+              /* release the reference on the action */
+              g_object_unref (G_OBJECT (ap->data));
+            }
+
+          /* release the reference on the provider */
+          g_object_unref (G_OBJECT (pp->data));
+
+          /* release the action list */
+          g_list_free (actions);
+        }
+
+      /* release the provider list */
+      g_list_free (providers);
+    }
 }
 
 
@@ -1083,6 +1166,29 @@ thunar_window_notify_loading (ThunarView   *view,
     }
 }
   
+
+
+static gboolean
+thunar_window_merge_idle (gpointer user_data)
+{
+  ThunarWindow *window = THUNAR_WINDOW (user_data);
+
+  /* merge custom preferences from the providers */
+  GDK_THREADS_ENTER ();
+  thunar_window_merge_custom_preferences (window);
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_window_merge_idle_destroy (gpointer user_data)
+{
+  THUNAR_WINDOW (user_data)->merge_idle_id = 0;
+}
+
 
 
 /**

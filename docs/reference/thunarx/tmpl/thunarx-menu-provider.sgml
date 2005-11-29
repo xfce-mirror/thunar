@@ -51,8 +51,7 @@ hello_menu_provider_init (ThunarxMenuProviderIface *iface)
 }
 
 static void
-hello_activated (GtkAction *action,
-                 GtkWidget *window)
+hello_activated (GtkWidget *window)
 {
   GtkWidget *dialog;
 
@@ -72,13 +71,11 @@ hello_get_file_actions (ThunarxMenuProvider *provider,
                         GList               *files)
 {
   GtkAction *action;
+  GClosure  *closure;
 
-  action = gtk_action_new ("Hello::say-hello",
-                           "Say hello", "Say hello",
-                           NULL);
-  g_signal_connect (G_OBJECT (action), "activate",
-                    G_CALLBACK (hello_activated),
-                    window);
+  action = gtk_action_new ("Hello::say-hello", "Say hello", "Say hello", NULL);
+  closure = g_cclosure_object_new_swap (G_CALLBACK (hello_activated), G_OBJECT (window));
+  g_signal_connect_closure (G_OBJECT (action), "activate", closure, TRUE);
 
   return g_list_append (NULL, action);
 }</programlisting>

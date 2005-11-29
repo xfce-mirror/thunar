@@ -21,6 +21,8 @@
 #include <config.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
 #include <exo/exo.h>
 
 #include <thunar/thunar-details-view.h>
@@ -30,11 +32,13 @@
 
 
 
-static void thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass);
-static void thunar_preferences_dialog_init       (ThunarPreferencesDialog      *dialog);
-static void thunar_preferences_dialog_finalize   (GObject                      *object);
-static void thunar_preferences_dialog_response   (GtkDialog                    *dialog,
-                                                  gint                          response);
+static void     thunar_preferences_dialog_class_init      (ThunarPreferencesDialogClass *klass);
+static void     thunar_preferences_dialog_init            (ThunarPreferencesDialog      *dialog);
+static void     thunar_preferences_dialog_finalize        (GObject                      *object);
+static gboolean thunar_preferences_dialog_key_press_event (GtkWidget                    *widget,
+                                                           GdkEventKey                  *event);
+static void     thunar_preferences_dialog_response        (GtkDialog                    *dialog,
+                                                           gint                          response);
 
 
 
@@ -135,6 +139,7 @@ static void
 thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 {
   GtkDialogClass *gtkdialog_class;
+  GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
 
   /* determine the parent type class */
@@ -142,6 +147,9 @@ thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_preferences_dialog_finalize;
+
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->key_press_event = thunar_preferences_dialog_key_press_event;
 
   gtkdialog_class = GTK_DIALOG_CLASS (klass);
   gtkdialog_class->response = thunar_preferences_dialog_response;
@@ -274,6 +282,22 @@ thunar_preferences_dialog_finalize (GObject *object)
   g_object_unref (G_OBJECT (dialog->tooltips));
 
   (*G_OBJECT_CLASS (thunar_preferences_dialog_parent_class)->finalize) (object);
+}
+
+
+
+static gboolean
+thunar_preferences_dialog_key_press_event (GtkWidget   *widget,
+                                           GdkEventKey *event)
+{
+  /* close the dialog on Esc */
+  if (G_UNLIKELY (event->keyval == GDK_Escape))
+    {
+      gtk_dialog_response (GTK_DIALOG (widget), GTK_RESPONSE_CLOSE);
+      return TRUE;
+    }
+
+  return (*GTK_WIDGET_CLASS (thunar_preferences_dialog_parent_class)->key_press_event) (widget, event);
 }
 
 

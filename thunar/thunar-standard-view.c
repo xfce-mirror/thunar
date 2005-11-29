@@ -260,7 +260,7 @@ static const GtkActionEntry action_entries[] =
   { "delete", GTK_STOCK_DELETE, N_ ("_Delete Files"), NULL, N_ ("Delete the selected files"), G_CALLBACK (thunar_standard_view_action_delete), },
   { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Files into Folder"), NULL, N_ ("Paste files into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), "<control>A", N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
-  { "select-by-pattern", NULL, N_ ("Select _by Pattern"), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
+  { "select-by-pattern", NULL, N_ ("Select _by Pattern..."), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
   { "duplicate", NULL, N_ ("Du_plicate File"), NULL, N_ ("Duplicate each selected file"), G_CALLBACK (thunar_standard_view_action_duplicate), },
   { "make-link", NULL, N_ ("Ma_ke Link"), NULL, N_ ("Create a symbolic link for each selected file"), G_CALLBACK (thunar_standard_view_action_make_link), },
   { "rename", NULL, N_ ("_Rename"), "F2", N_ ("Rename the selected file"), G_CALLBACK (thunar_standard_view_action_rename), },
@@ -1234,7 +1234,7 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
     }
 
   /* remove the previously determined menu actions from the UI manager */
-  if (G_LIKELY (standard_view->priv->custom_actions != 0))
+  if (G_LIKELY (standard_view->priv->custom_merge_id != 0))
     {
       gtk_ui_manager_remove_ui (standard_view->ui_manager, standard_view->priv->custom_merge_id);
       gtk_ui_manager_ensure_update (standard_view->ui_manager);

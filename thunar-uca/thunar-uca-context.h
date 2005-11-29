@@ -18,26 +18,24 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#if !defined(THUNARX_INSIDE_THUNARX_H) && !defined(THUNARX_COMPILATION)
-#error "Only <thunarx/thunarx.h> can be included directly, this file may disappear or change contents"
-#endif
+#ifndef __THUNAR_UCA_CONTEXT_H__
+#define __THUNAR_UCA_CONTEXT_H__
 
-#ifndef __THUNARX_PRIVATE_H__
-#define __THUNARX_PRIVATE_H__
-
-#include <glib.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS;
 
-#if GLIB_CHECK_VERSION(2,9,0)
-#define I_(string) (g_intern_static_string ((string)))
-#else
-#define I_(string) (g_quark_to_string (g_quark_from_static_string ((string))))
-#endif
+typedef struct _ThunarUcaContext ThunarUcaContext;
 
-void thunarx_object_list_take_reference (GList   *object_list,
-                                         gpointer target) G_GNUC_INTERNAL;
+ThunarUcaContext *thunar_uca_context_new        (GtkWidget              *window,
+                                                 GList                  *files) G_GNUC_INTERNAL;
+
+ThunarUcaContext *thunar_uca_context_ref        (ThunarUcaContext       *context) G_GNUC_INTERNAL;
+void              thunar_uca_context_unref      (ThunarUcaContext       *context) G_GNUC_INTERNAL;
+
+GList            *thunar_uca_context_get_files  (const ThunarUcaContext *context) G_GNUC_INTERNAL;
+GtkWidget        *thunar_uca_context_get_window (const ThunarUcaContext *context) G_GNUC_INTERNAL;
 
 G_END_DECLS;
 
-#endif /* !__THUNARX_PRIVATE_H__ */
+#endif /* !__THUNAR_UCA_CONTEXT_H__ */

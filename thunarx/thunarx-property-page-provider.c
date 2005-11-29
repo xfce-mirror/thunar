@@ -28,10 +28,6 @@
 
 
 
-static GQuark thunarx_property_page_quark;
-
-
-
 GType
 thunarx_property_page_provider_get_type (void)
 {
@@ -56,9 +52,6 @@ thunarx_property_page_provider_get_type (void)
       /* register the property page provider interface */
       type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxPropertyPageProvider"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-
-      /* allocate the thunarx-property-page quark */
-      thunarx_property_page_quark = g_quark_from_static_string ("thunarx-property-page");
     }
 
   return type;
@@ -98,20 +91,17 @@ thunarx_property_page_provider_get_pages (ThunarxPropertyPageProvider *provider,
                                           GList                       *files)
 {
   GList *pages;
-  GList *lp;
 
   g_return_val_if_fail (THUNARX_IS_PROPERTY_PAGE_PROVIDER (provider), NULL);
   g_return_val_if_fail (files != NULL, NULL);
 
   if (THUNARX_PROPERTY_PAGE_PROVIDER_GET_IFACE (provider)->get_pages != NULL)
     {
-      /* query the property pages and take a reference on the provider for each page */
+      /* query the property pages from the implementation */
       pages = (*THUNARX_PROPERTY_PAGE_PROVIDER_GET_IFACE (provider)->get_pages) (provider, files);
-      for (lp = pages; lp != NULL; lp = lp->next)
-        {
-          g_object_set_qdata_full (G_OBJECT (lp->data), thunarx_property_page_quark, provider, g_object_unref);
-          g_object_ref (G_OBJECT (provider));
-        }
+
+      /* take a reference on the provider for each page */
+      thunarx_object_list_take_reference (pages, provider);
     }
   else
     {

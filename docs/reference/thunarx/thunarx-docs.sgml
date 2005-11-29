@@ -4,6 +4,7 @@
 
 <!ENTITY ThunarxFileInfo SYSTEM "xml/thunarx-file-info.xml">
 <!ENTITY ThunarxMenuProvider SYSTEM "xml/thunarx-menu-provider.xml">
+<!ENTITY ThunarxPreferencesProvider SYSTEM "xml/thunarx-preferences-provider.xml">
 <!ENTITY ThunarxPropertyPage SYSTEM "xml/thunarx-property-page.xml">
 <!ENTITY ThunarxPropertyPageProvider SYSTEM "xml/thunarx-property-page-provider.xml">
 <!ENTITY ThunarxProviderFactory SYSTEM "xml/thunarx-provider-factory.xml">
@@ -11,7 +12,7 @@
 <!ENTITY thunarx-version-information SYSTEM "xml/thunarx-version-information.xml">
 
 <!ENTITY version SYSTEM "version.xml">
-<!ENTITY date "September 2005">
+<!ENTITY date "December 2005">
 ]>
 
 <book id="index">
@@ -142,9 +143,11 @@
           Providers implement one or more of the <link linkend="GInterface"><type>GInterface</type></link>s included with
           the <systemitem class="library">thunarx</systemitem> library. The currently exported interfaces
           include the <link linkend="ThunarxMenuProvider"><type>ThunarxMenuProvider</type></link> for adding context menu
-          items to the file views and the <link
+          items to the file views, the <link
           linkend="ThunarxPropertyPageProvider"><type>ThunarxPropertyPageProvider</type></link> for adding pages to the
-          file properties dialog.
+          file properties dialog and the <link
+          linkend="ThunarxPreferencesProvider"><type>ThunarxPreferencesProvider</type></link> for adding actions to the
+          preferences section of the main menu.
         </para>
       </sect2>
 
@@ -455,6 +458,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 
     &ThunarxMenuProvider;
     &ThunarxPropertyPageProvider;
+    &ThunarxPreferencesProvider;
   </part>
 
   <part id="thunarx-using-extensions">

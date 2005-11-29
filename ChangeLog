@@ -1,5 +1,40 @@
 2005-11-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c
+	  (thunar_standard_view_merge_custom_actions): Fix typo.
+	* thunarx/thunarx-private.{c,h}, thunarx/thunarx-menu-provider.c,
+	  thunarx/Makefile.am, thunarx/thunarx-property-page-provider.c: Add
+	  helper function thunarx_object_list_take_reference(), so we don't
+	  need to repeat the same code again and again.
+	* thunar/thunar-window.c(action_entries): Add ... to the Preferences
+	  action, since it opens a dialog. Use "e" as mnemonic, as "P" is
+	  already used by "Paste".
+	* thunar/thunar-standard-view.c(action_entries): Add ... to the Select
+	  by Pattern action, since it opens a dialog.
+	* thunar/thunar-preferences-dialog.c: Close preferences dialog on Esc
+	  key press.
+	* thunarx/thunarx-preferences-provider.{c,h}, thunarx/thunarx.h,
+	  thunarx/thunarx.symbols, thunarx/Makefile.am: Add new interface
+	  ThunarxPreferencesProvider, which can be implemented to add custom
+	  actions to the preferences section of the "Edit" menu.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Query custom
+	  preferences actions from the installed providers and add them to the
+	  preferences section of the "Edit" menu. Actions are loaded in an idle
+	  source to not delay folder loading when opening a new window, even if
+	  a lot of preferences providers are installed.
+	* docs/reference/thunarx/: Update the thunarx reference documentation.
+	* thunar-uca/, configure.in.in, Makefile.am: Import the thunar-uca
+	  module, which provides advanced users with an easy way to add custom
+	  actions to Thunar's context menus. With this extension in place
+	  there's no longer a need to add support G-Scripts (except maybe an
+	  importer for thunar-uca).
+	* po/POTFILES.in: Add new translatable files.
+	* po/: Merge new strings.
+	* examples/tex-open-terminal/README: Add note to use thunar-uca, and
+	  consider the tex-open-terminal as example for extension writers.
+
+2005-11-29	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in, thunar-vfs/thunar-vfs-types.h: Add largefile support
 	  for systems that don't support 64bit file offsets by default. This
 	  fixes bug #1243.

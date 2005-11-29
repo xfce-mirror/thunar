@@ -70,6 +70,14 @@ thunarx_menu_provider_get_folder_actions
 #endif
 #endif
 
+/* ThunarxPreferencesProvider methods */
+#if IN_HEADER(__THUNARX_PREFERENCES_PROVIDER_H__)
+#if IN_SOURCE(__THUNARX_PREFERENCES_PROVIDER_C__)
+thunarx_preferences_provider_get_type G_GNUC_CONST
+thunarx_preferences_provider_get_actions
+#endif
+#endif
+
 /* ThunarxPropertyPage methods */
 #if IN_HEADER(__THUNARX_PROPERTY_PAGE_H__)
 #if IN_SOURCE(__THUNARX_PROPERTY_PAGE_C__)

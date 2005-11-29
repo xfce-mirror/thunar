@@ -1,16 +1,21 @@
 # $Id$
 
+if ENABLE_UCA_PLUGIN
+SUBDIRS_THUNAR_UCA = thunar-uca
+endif
+
 SUBDIRS =								\
 	icons								\
 	pixmaps								\
 	po								\
 	tdb								\
-	thunar-vfs							\
 	thunarx								\
+	thunar-vfs							\
 	thunar								\
 	tests								\
 	docs								\
-	examples
+	examples							\
+	$(SUBDIRS_THUNAR_UCA)
 
 AUTOMAKE_OPTIONS =							\
 	1.8								\

@@ -28,10 +28,6 @@
 
 
 
-static GQuark thunarx_menu_provider_action_quark;
-
-
-
 GType
 thunarx_menu_provider_get_type (void)
 {
@@ -56,9 +52,6 @@ thunarx_menu_provider_get_type (void)
       /* register the menu provider interface */
       type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxMenuProvider"), &info, 0);
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-
-      /* allocate the thunarx-menu-provider-action quark */
-      thunarx_menu_provider_action_quark = g_quark_from_static_string ("thunarx-menu-provider-action");
     }
 
   return type;
@@ -99,7 +92,6 @@ thunarx_menu_provider_get_file_actions (ThunarxMenuProvider *provider,
                                         GList               *files)
 {
   GList *actions;
-  GList *lp;
 
   g_return_val_if_fail (THUNARX_IS_MENU_PROVIDER (provider), NULL);
   g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
@@ -107,13 +99,11 @@ thunarx_menu_provider_get_file_actions (ThunarxMenuProvider *provider,
 
   if (THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_file_actions != NULL)
     {
-      /* query the actions and take a reference on the provider for each action */
+      /* query the actions from the implementation */
       actions = (*THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_file_actions) (provider, window, files);
-      for (lp = actions; lp != NULL; lp = lp->next)
-        {
-          g_object_set_qdata_full (G_OBJECT (lp->data), thunarx_menu_provider_action_quark, provider, g_object_unref);
-          g_object_ref (G_OBJECT (provider));
-        }
+
+      /* take a reference on the provider for each action */
+      thunarx_object_list_take_reference (actions, provider);
     }
   else
     {
@@ -158,7 +148,6 @@ thunarx_menu_provider_get_folder_actions (ThunarxMenuProvider *provider,
                                           ThunarxFileInfo     *folder)
 {
   GList *actions;
-  GList *lp;
 
   g_return_val_if_fail (THUNARX_IS_MENU_PROVIDER (provider), NULL);
   g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
@@ -167,13 +156,11 @@ thunarx_menu_provider_get_folder_actions (ThunarxMenuProvider *provider,
 
   if (THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_folder_actions != NULL)
     {
-      /* query the actions and take a reference on the provider for each action */
+      /* query the actions from the implementation */
       actions = (*THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_folder_actions) (provider, window, folder);
-      for (lp = actions; lp != NULL; lp = lp->next)
-        {
-          g_object_set_qdata_full (G_OBJECT (lp->data), thunarx_menu_provider_action_quark, provider, g_object_unref);
-          g_object_ref (G_OBJECT (provider));
-        }
+
+      /* take a reference on the provider for each action */
+      thunarx_object_list_take_reference (actions, provider);
     }
   else
     {
