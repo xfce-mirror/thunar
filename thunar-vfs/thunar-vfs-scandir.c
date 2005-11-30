@@ -62,6 +62,13 @@
 
 
 
+/* %&§$!# IRIX */
+#if defined(__sgi__) && !defined(dirfd)
+#define dirfd(dp) (((DIR *) dp)->__dd_fd)
+#endif
+
+
+
 typedef struct _ThunarVfsScandirHandle ThunarVfsScandirHandle;
 
 

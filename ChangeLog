@@ -1,5 +1,10 @@
 2005-11-30	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-scandir.c: Workaround missing dirfd() definition
+	  using the POSIX/XPG API on IRIX. This fixes bug #1247.
+
+2005-11-30	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-dnd.c, thunar/thunar-favourites-view.c,
 	  thunar/thunar-folder.c, thunar/thunar-preferences-dialog.c,
 	  thunar/thunar-standard-view.c: Use exo_gtk_object_ref_sink() to
