@@ -175,8 +175,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   /* allocate new tooltips for this dialog */
   dialog->tooltips = gtk_tooltips_new ();
-  g_object_ref (G_OBJECT (dialog->tooltips));
-  gtk_object_sink (GTK_OBJECT (dialog->tooltips));
+  exo_gtk_object_ref_sink (GTK_OBJECT (dialog->tooltips));
 
   /* configure the dialog properties */
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);

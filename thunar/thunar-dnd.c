@@ -78,6 +78,7 @@ thunar_dnd_ask (GtkWidget    *widget,
   menu = gtk_menu_new ();
   gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (widget));
   g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
   /* append the various items */
   for (n = 0; n < G_N_ELEMENTS (action_items); ++n)
@@ -115,7 +116,7 @@ thunar_dnd_ask (GtkWidget    *widget,
   gtk_grab_remove (menu);
 
   /* clean up */
-  gtk_object_sink (GTK_OBJECT (menu));
+  g_object_unref (G_OBJECT (menu));
   g_main_loop_unref (loop);
 
   return action;

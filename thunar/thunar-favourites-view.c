@@ -287,6 +287,7 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
       menu = gtk_menu_new ();
       gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (widget));
       g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+      exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
       /* prepend the custom actions for the selected file (if any) */
       if (G_LIKELY (file != NULL))
@@ -352,7 +353,7 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
       gtk_grab_remove (menu);
 
       /* clean up */
-      gtk_object_sink (GTK_OBJECT (menu));
+      g_object_unref (G_OBJECT (menu));
       gtk_tree_path_free (path);
       g_main_loop_unref (loop);
 

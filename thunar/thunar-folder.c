@@ -543,9 +543,7 @@ thunar_folder_get_for_file (ThunarFile *file)
       g_object_ref (G_OBJECT (file));
 
       /* drop the floating reference */
-      g_assert (GTK_OBJECT_FLOATING (folder));
-      g_object_ref (G_OBJECT (folder));
-      gtk_object_sink (GTK_OBJECT (folder));
+      exo_gtk_object_ref_sink (GTK_OBJECT (folder));
 
       g_signal_connect (G_OBJECT (file), "destroy", G_CALLBACK (thunar_folder_corresponding_file_destroy), folder);
       g_signal_connect (G_OBJECT (file), "renamed", G_CALLBACK (thunar_folder_corresponding_file_renamed), folder);

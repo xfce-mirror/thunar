@@ -470,14 +470,12 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
-  g_object_ref (G_OBJECT (standard_view->icon_renderer));
-  gtk_object_sink (GTK_OBJECT (standard_view->icon_renderer));
+  exo_gtk_object_ref_sink (GTK_OBJECT (standard_view->icon_renderer));
 
   /* setup the name renderer */
   standard_view->name_renderer = thunar_text_renderer_new ();
   g_signal_connect (G_OBJECT (standard_view->name_renderer), "edited", G_CALLBACK (thunar_standard_view_renamed), standard_view);
-  g_object_ref (G_OBJECT (standard_view->name_renderer));
-  gtk_object_sink (GTK_OBJECT (standard_view->name_renderer));
+  exo_gtk_object_ref_sink (GTK_OBJECT (standard_view->name_renderer));
 
   /* be sure to update the selection whenever the folder changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);
@@ -2284,8 +2282,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
   g_list_free (selected_items);
 
   /* take a reference on the context menu */
-  g_object_ref (G_OBJECT (menu));
-  gtk_object_sink (GTK_OBJECT (menu));
+  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
   /* grab an additional reference on the view */
   g_object_ref (G_OBJECT (standard_view));

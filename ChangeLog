@@ -1,5 +1,14 @@
 2005-11-30	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-dnd.c, thunar/thunar-favourites-view.c,
+	  thunar/thunar-folder.c, thunar/thunar-preferences-dialog.c,
+	  thunar/thunar-standard-view.c: Use exo_gtk_object_ref_sink() to
+	  automatically handle floating references properly and avoid the use
+	  of GTK_OBJECT_FLOATING (see GNOME bug #322853 for details). This fixes
+	  bug #1249.
+
+2005-11-30	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-standard-view.c(thunar_standard_view_renamed): Use
 	  persistent iterators instead of tree row references when renaming a
 	  file. This fixes bug #1248.
