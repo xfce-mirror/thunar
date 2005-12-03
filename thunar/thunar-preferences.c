@@ -222,7 +222,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                    g_param_spec_string ("last-side-pane",
                                                         "last-side-pane",
                                                         "last-side-pane",
-                                                        "ThunarFavouritesPane",
+                                                        "ThunarShortcutsPane",
                                                         EXO_PARAM_READWRITE));
 
   /**

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-29 18:22+0100\n"
+"POT-Creation-Date: 2005-12-03 22:32+0100\n"
 "PO-Revision-Date: 2005-10-06 22:03+0900\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
@@ -474,30 +474,31 @@ msgstr ""
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:190 ../thunar/thunar-launcher.c:343
+#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:343
 #, c-format
 msgid "Unable to execute file `%s'"
 msgstr ""
 
 #. append the remove menu item
-#: ../thunar/thunar-favourites-view.c:324
-msgid "_Remove Favourite"
+#: ../thunar/thunar-shortcuts-view.c:319
+msgid "_Remove Shortcut"
 msgstr ""
 
 #. append the rename menu item
-#: ../thunar/thunar-favourites-view.c:339
-msgid "Re_name Favourite"
+#: ../thunar/thunar-shortcuts-view.c:334
+msgid "Re_name Shortcut"
 msgstr ""
 
-#: ../thunar/thunar-favourites-view.c:659
+#: ../thunar/thunar-shortcuts-view.c:654
 #, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr ""
 
 #. display an error message to the user
-#: ../thunar/thunar-favourites-view.c:678
-msgid "Failed to add new favourite"
-msgstr ""
+#: ../thunar/thunar-shortcuts-view.c:673
+#, fuzzy
+msgid "Failed to add new shortcut"
+msgstr "Andere Anwendung..."
 
 #: ../thunar/thunar-file.c:688
 msgid "The root folder has no parent"
@@ -816,60 +817,60 @@ msgstr ""
 msgid "The icon size for the path entry"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:185
+#: ../thunar/thunar-preferences-dialog.c:184
 #, fuzzy
 msgid "File Manager Preferences"
 msgstr "Dateimanager"
 
-#: ../thunar/thunar-preferences-dialog.c:201
+#: ../thunar/thunar-preferences-dialog.c:200
 msgid "<b>Default View</b>"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:212
+#: ../thunar/thunar-preferences-dialog.c:211
 msgid "View _new folders using:"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:217
+#: ../thunar/thunar-preferences-dialog.c:216
 msgid "Icon View"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:218
+#: ../thunar/thunar-preferences-dialog.c:217
 #, fuzzy
 msgid "Detailed List View"
 msgstr "Detailansicht"
 
-#: ../thunar/thunar-preferences-dialog.c:219
+#: ../thunar/thunar-preferences-dialog.c:218
 msgid "Last Active View"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:234
+#: ../thunar/thunar-preferences-dialog.c:233
 msgid "Sort _folders before files"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:236
+#: ../thunar/thunar-preferences-dialog.c:235
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:240
+#: ../thunar/thunar-preferences-dialog.c:239
 msgid "Show hidden and _backup files"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:242
+#: ../thunar/thunar-preferences-dialog.c:241
 msgid ""
 "Select this option to show hidden and backup files in new windows. The first "
 "character in a hidden filename is a period (.). The last character in a "
 "backup filename is a tilde (~)."
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:252
+#: ../thunar/thunar-preferences-dialog.c:251
 msgid "<b>Icon View</b>"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:263
+#: ../thunar/thunar-preferences-dialog.c:262
 msgid "_Text beside icons"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:265
+#: ../thunar/thunar-preferences-dialog.c:264
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -994,7 +995,7 @@ msgstr "%s (%u Byte)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:731
-#: ../thunar/thunar-standard-view.c:2175
+#: ../thunar/thunar-standard-view.c:2170
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr ""
@@ -1077,7 +1078,7 @@ msgstr ""
 msgid "Select all files that match a certain pattern"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:264 ../thunar/thunar-standard-view.c:2458
+#: ../thunar/thunar-standard-view.c:264 ../thunar/thunar-standard-view.c:2452
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] ""
@@ -1087,7 +1088,7 @@ msgstr[1] ""
 msgid "Duplicate each selected file"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:265 ../thunar/thunar-standard-view.c:2464
+#: ../thunar/thunar-standard-view.c:265 ../thunar/thunar-standard-view.c:2458
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] ""
@@ -1109,32 +1110,32 @@ msgstr ""
 msgid "Whether the view is currently being loaded"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:890
+#: ../thunar/thunar-standard-view.c:888
 msgid "Loading folder contents..."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1345
+#: ../thunar/thunar-standard-view.c:1343
 msgid "New Folder"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1348
+#: ../thunar/thunar-standard-view.c:1346
 msgid "New Folder..."
 msgstr ""
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1362
+#: ../thunar/thunar-standard-view.c:1360
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1508
+#: ../thunar/thunar-standard-view.c:1506
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1514
+#: ../thunar/thunar-standard-view.c:1512
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1145,38 +1146,38 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:1529
+#: ../thunar/thunar-standard-view.c:1527
 msgid "If you delete a file, it is permanently lost."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1601
+#: ../thunar/thunar-standard-view.c:1599
 msgid "Select by Pattern"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1616
+#: ../thunar/thunar-standard-view.c:1614
 msgid "Pattern:"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2127
+#: ../thunar/thunar-standard-view.c:2125
 #, fuzzy, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Detailierte Verzeichnisansicht"
 
-#: ../thunar/thunar-standard-view.c:2431
+#: ../thunar/thunar-standard-view.c:2425
 #, fuzzy
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "_Datei"
 msgstr[1] "_Datei"
 
-#: ../thunar/thunar-standard-view.c:2437
+#: ../thunar/thunar-standard-view.c:2431
 #, fuzzy
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "_Datei"
 msgstr[1] "_Datei"
 
-#: ../thunar/thunar-standard-view.c:2446
+#: ../thunar/thunar-standard-view.c:2440
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] ""
@@ -1348,8 +1349,8 @@ msgstr ""
 #. * add the side pane options
 #.
 #: ../thunar/thunar-window.c:342
-msgid "_Favourites"
-msgstr "Favouriten"
+msgid "_Shortcuts"
+msgstr ""
 
 #: ../thunar/thunar-window.c:348 ../thunar/thunar-window.c:371
 msgid "_Hidden"
@@ -1637,25 +1638,25 @@ msgstr "Andere Anwendung..."
 msgid "Image Files"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:762
+#: ../thunar-uca/thunar-uca-model.c:767
 #, c-format
 msgid "Unknown element <%s>"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:780
+#: ../thunar-uca/thunar-uca-model.c:785
 msgid "End element handler called while in root context"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:868
+#: ../thunar-uca/thunar-uca-model.c:873
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:1293
+#: ../thunar-uca/thunar-uca-model.c:1298
 msgid "Failed to determine save location for uca.xml"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:1409
+#: ../thunar-uca/thunar-uca-model.c:1414
 msgid "Command not configured"
 msgstr ""
 
@@ -1692,6 +1693,9 @@ msgstr "Dateimanager"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar Dateimanager"
+
+#~ msgid "_Favourites"
+#~ msgstr "Favouriten"
 
 #~ msgid "Computer"
 #~ msgstr "Computer"

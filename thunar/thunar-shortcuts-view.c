@@ -25,15 +25,15 @@
 #endif
 
 #include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-favourites-model.h>
-#include <thunar/thunar-favourites-view.h>
+#include <thunar/thunar-shortcuts-model.h>
+#include <thunar/thunar-shortcuts-view.h>
 
 
 
 /* Identifiers for signals */
 enum
 {
-  FAVOURITE_ACTIVATED,
+  SHORTCUT_ACTIVATED,
   LAST_SIGNAL,
 };
 
@@ -46,78 +46,72 @@ enum
 
 
 
-static void         thunar_favourites_view_class_init             (ThunarFavouritesViewClass *klass);
-static void         thunar_favourites_view_init                   (ThunarFavouritesView      *view);
-static gboolean     thunar_favourites_view_button_press_event     (GtkWidget                 *widget,
-                                                                   GdkEventButton            *event);
-static void         thunar_favourites_view_drag_data_received     (GtkWidget                 *widget,
-                                                                   GdkDragContext            *context,
-                                                                   gint                       x,
-                                                                   gint                       y,
-                                                                   GtkSelectionData          *selection_data,
-                                                                   guint                      info,
-                                                                   guint                      time);
-static gboolean     thunar_favourites_view_drag_drop              (GtkWidget                 *widget,
-                                                                   GdkDragContext            *context,
-                                                                   gint                       x,
-                                                                   gint                       y,
-                                                                   guint                      time);
-static gboolean     thunar_favourites_view_drag_motion            (GtkWidget                 *widget,
-                                                                   GdkDragContext            *context,
-                                                                   gint                       x,
-                                                                   gint                       y,
-                                                                   guint                      time);
-static void         thunar_favourites_view_row_activated          (GtkTreeView               *tree_view,
-                                                                   GtkTreePath               *path,
-                                                                   GtkTreeViewColumn         *column);
-static void         thunar_favourites_view_remove_activated       (GtkWidget                 *item,
-                                                                   ThunarFavouritesView      *view);
-static void         thunar_favourites_view_rename_activated       (GtkWidget                 *item,
-                                                                   ThunarFavouritesView      *view);
-static void         thunar_favourites_view_rename_canceled        (GtkCellRenderer           *renderer,
-                                                                   ThunarFavouritesView      *view);
-static void         thunar_favourites_view_renamed                (GtkCellRenderer           *renderer,
-                                                                   const gchar               *path_string,
-                                                                   const gchar               *text,
-                                                                   ThunarFavouritesView      *view);
-static GtkTreePath *thunar_favourites_view_compute_drop_position  (ThunarFavouritesView      *view,
-                                                                   gint                       x,
-                                                                   gint                       y);
-static void         thunar_favourites_view_drop_uri_list          (ThunarFavouritesView      *view,
-                                                                   const gchar               *uri_list,
-                                                                   GtkTreePath               *dst_path);
+static void         thunar_shortcuts_view_class_init             (ThunarShortcutsViewClass *klass);
+static void         thunar_shortcuts_view_init                   (ThunarShortcutsView      *view);
+static gboolean     thunar_shortcuts_view_button_press_event     (GtkWidget                *widget,
+                                                                  GdkEventButton           *event);
+static void         thunar_shortcuts_view_drag_data_received     (GtkWidget                *widget,
+                                                                  GdkDragContext           *context,
+                                                                  gint                      x,
+                                                                  gint                      y,
+                                                                  GtkSelectionData         *selection_data,
+                                                                  guint                     info,
+                                                                  guint                     time);
+static gboolean     thunar_shortcuts_view_drag_drop              (GtkWidget                *widget,
+                                                                  GdkDragContext           *context,
+                                                                  gint                      x,
+                                                                  gint                      y,
+                                                                  guint                     time);
+static gboolean     thunar_shortcuts_view_drag_motion            (GtkWidget                *widget,
+                                                                  GdkDragContext           *context,
+                                                                  gint                      x,
+                                                                  gint                      y,
+                                                                  guint                     time);
+static void         thunar_shortcuts_view_row_activated          (GtkTreeView              *tree_view,
+                                                                  GtkTreePath              *path,
+                                                                  GtkTreeViewColumn        *column);
+static void         thunar_shortcuts_view_remove_activated       (GtkWidget                *item,
+                                                                  ThunarShortcutsView      *view);
+static void         thunar_shortcuts_view_rename_activated       (GtkWidget                *item,
+                                                                  ThunarShortcutsView      *view);
+static void         thunar_shortcuts_view_rename_canceled        (GtkCellRenderer          *renderer,
+                                                                  ThunarShortcutsView      *view);
+static void         thunar_shortcuts_view_renamed                (GtkCellRenderer          *renderer,
+                                                                  const gchar              *path_string,
+                                                                  const gchar              *text,
+                                                                  ThunarShortcutsView      *view);
+static GtkTreePath *thunar_shortcuts_view_compute_drop_position  (ThunarShortcutsView      *view,
+                                                                  gint                      x,
+                                                                  gint                      y);
+static void         thunar_shortcuts_view_drop_uri_list          (ThunarShortcutsView      *view,
+                                                                  const gchar              *uri_list,
+                                                                  GtkTreePath              *dst_path);
 #if GTK_CHECK_VERSION(2,6,0)
-static gboolean     thunar_favourites_view_separator_func         (GtkTreeModel              *model,
-                                                                   GtkTreeIter               *iter,
-                                                                   gpointer                   user_data);
+static gboolean     thunar_shortcuts_view_separator_func         (GtkTreeModel             *model,
+                                                                  GtkTreeIter              *iter,
+                                                                  gpointer                  user_data);
 #endif
 
 
 
-struct _ThunarFavouritesViewClass
+struct _ThunarShortcutsViewClass
 {
   GtkTreeViewClass __parent__;
-
-  /* signals */
-  void (*favourite_activated) (ThunarFavouritesView *view,
-                               ThunarFile           *file);
 };
 
-struct _ThunarFavouritesView
+struct _ThunarShortcutsView
 {
   GtkTreeView __parent__;
 };
 
 
 
-static guint view_signals[LAST_SIGNAL];
-
-/* Target types for dragging from the favourites view */
+/* Target types for dragging from the shortcuts view */
 static const GtkTargetEntry drag_targets[] = {
   { "GTK_TREE_MODEL_ROW", GTK_TARGET_SAME_WIDGET, GTK_TREE_MODEL_ROW },
 };
 
-/* Target types for dropping into the favourites view */
+/* Target types for dropping into the shortcuts view */
 static const GtkTargetEntry drop_targets[] = {
   { "GTK_TREE_MODEL_ROW", GTK_TARGET_SAME_WIDGET, GTK_TREE_MODEL_ROW },
   { "text/uri-list", 0, TEXT_URI_LIST },
@@ -125,12 +119,13 @@ static const GtkTargetEntry drop_targets[] = {
 
 
 
-static GObjectClass *thunar_favourites_view_parent_class;
+static GObjectClass *thunar_shortcuts_view_parent_class;
+static guint         view_signals[LAST_SIGNAL];
 
 
 
 GType
-thunar_favourites_view_get_type (void)
+thunar_shortcuts_view_get_type (void)
 {
   static GType type = G_TYPE_INVALID;
 
@@ -138,19 +133,19 @@ thunar_favourites_view_get_type (void)
     {
       static const GTypeInfo info =
       {
-        sizeof (ThunarFavouritesViewClass),
+        sizeof (ThunarShortcutsViewClass),
         NULL,
         NULL,
-        (GClassInitFunc) thunar_favourites_view_class_init,
+        (GClassInitFunc) thunar_shortcuts_view_class_init,
         NULL,
         NULL,
-        sizeof (ThunarFavouritesView),
+        sizeof (ThunarShortcutsView),
         0,
-        (GInstanceInitFunc) thunar_favourites_view_init,
+        (GInstanceInitFunc) thunar_shortcuts_view_init,
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_TREE_VIEW, I_("ThunarFavouritesView"), &info, 0);
+      type = g_type_register_static (GTK_TYPE_TREE_VIEW, I_("ThunarShortcutsView"), &info, 0);
     }
 
   return type;
@@ -159,34 +154,33 @@ thunar_favourites_view_get_type (void)
 
 
 static void
-thunar_favourites_view_class_init (ThunarFavouritesViewClass *klass)
+thunar_shortcuts_view_class_init (ThunarShortcutsViewClass *klass)
 {
   GtkTreeViewClass *gtktree_view_class;
   GtkWidgetClass   *gtkwidget_class;
 
   /* determine the parent type class */
-  thunar_favourites_view_parent_class = g_type_class_peek_parent (klass);
+  thunar_shortcuts_view_parent_class = g_type_class_peek_parent (klass);
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
-  gtkwidget_class->button_press_event = thunar_favourites_view_button_press_event;
-  gtkwidget_class->drag_data_received = thunar_favourites_view_drag_data_received;
-  gtkwidget_class->drag_drop = thunar_favourites_view_drag_drop;
-  gtkwidget_class->drag_motion = thunar_favourites_view_drag_motion;
+  gtkwidget_class->button_press_event = thunar_shortcuts_view_button_press_event;
+  gtkwidget_class->drag_data_received = thunar_shortcuts_view_drag_data_received;
+  gtkwidget_class->drag_drop = thunar_shortcuts_view_drag_drop;
+  gtkwidget_class->drag_motion = thunar_shortcuts_view_drag_motion;
 
   gtktree_view_class = GTK_TREE_VIEW_CLASS (klass);
-  gtktree_view_class->row_activated = thunar_favourites_view_row_activated;
+  gtktree_view_class->row_activated = thunar_shortcuts_view_row_activated;
 
   /**
-   * ThunarFavouritesView:favourite-activated:
+   * ThunarShortcutsView:shortcut-activated:
    *
-   * Invoked whenever a favourite is activated by the user.
+   * Invoked whenever a shortcut is activated by the user.
    **/
-  view_signals[FAVOURITE_ACTIVATED] =
-    g_signal_new (I_("favourite-activated"),
+  view_signals[SHORTCUT_ACTIVATED] =
+    g_signal_new (I_("shortcut-activated"),
                   G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
-                  G_STRUCT_OFFSET (ThunarFavouritesViewClass, favourite_activated),
-                  NULL, NULL,
+                  0, NULL, NULL,
                   g_cclosure_marshal_VOID__OBJECT,
                   G_TYPE_NONE, 1, THUNAR_TYPE_FILE);
 }
@@ -194,7 +188,7 @@ thunar_favourites_view_class_init (ThunarFavouritesViewClass *klass)
 
 
 static void
-thunar_favourites_view_init (ThunarFavouritesView *view)
+thunar_shortcuts_view_init (ThunarShortcutsView *view)
 {
   GtkTreeViewColumn *column;
   GtkTreeSelection  *selection;
@@ -210,41 +204,41 @@ thunar_favourites_view_init (ThunarFavouritesView *view)
   renderer = gtk_cell_renderer_pixbuf_new ();
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "pixbuf", THUNAR_FAVOURITES_MODEL_COLUMN_ICON,
+                                       "pixbuf", THUNAR_SHORTCUTS_MODEL_COLUMN_ICON,
                                        NULL);
   renderer = gtk_cell_renderer_text_new ();
-  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (thunar_favourites_view_renamed), view);
-  g_signal_connect (G_OBJECT (renderer), "editing-canceled", G_CALLBACK (thunar_favourites_view_rename_canceled), view);
+  g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (thunar_shortcuts_view_renamed), view);
+  g_signal_connect (G_OBJECT (renderer), "editing-canceled", G_CALLBACK (thunar_shortcuts_view_rename_canceled), view);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_FAVOURITES_MODEL_COLUMN_NAME,
+                                       "text", THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
                                        NULL);
   gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
 
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
-  /* enable drag support for the favourites view (actually used to support reordering) */
+  /* enable drag support for the shortcuts view (actually used to support reordering) */
   gtk_tree_view_enable_model_drag_source (GTK_TREE_VIEW (view), GDK_BUTTON1_MASK, drag_targets,
                                           G_N_ELEMENTS (drag_targets), GDK_ACTION_MOVE);
 
-  /* enable drop support for the favourites view (both internal reordering
-   * and adding new favourites from other widgets)
+  /* enable drop support for the shortcuts view (both internal reordering
+   * and adding new shortcuts from other widgets)
    */
   gtk_drag_dest_set (GTK_WIDGET (view), GTK_DEST_DEFAULT_ALL,
                      drop_targets, G_N_ELEMENTS (drop_targets),
                      GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
 
 #if GTK_CHECK_VERSION(2,6,0)
-  gtk_tree_view_set_row_separator_func (GTK_TREE_VIEW (view), thunar_favourites_view_separator_func, NULL, NULL);
+  gtk_tree_view_set_row_separator_func (GTK_TREE_VIEW (view), thunar_shortcuts_view_separator_func, NULL, NULL);
 #endif
 }
 
 
 
 static gboolean
-thunar_favourites_view_button_press_event (GtkWidget      *widget,
-                                           GdkEventButton *event)
+thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
+                                          GdkEventButton *event)
 {
   GtkTreeModel *model;
   GtkTreePath  *path;
@@ -261,7 +255,7 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
   GList        *lp;
 
   /* let the widget process the event first (handles focussing and scrolling) */
-  result = GTK_WIDGET_CLASS (thunar_favourites_view_parent_class)->button_press_event (widget, event);
+  result = (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->button_press_event) (widget, event);
 
   /* check if we have a right-click event */
   if (G_LIKELY (event->button != 3))
@@ -274,11 +268,11 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
       gtk_tree_model_get_iter (model, &iter, path);
 
-      /* check whether the favourite at the given path is mutable */
-      gtk_tree_model_get (model, &iter, THUNAR_FAVOURITES_MODEL_COLUMN_MUTABLE, &mutable, -1);
+      /* check whether the shortcut at the given path is mutable */
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE, &mutable, -1);
 
       /* determine the file for the given path */
-      file = thunar_favourites_model_file_for_iter (THUNAR_FAVOURITES_MODEL (model), &iter);
+      file = thunar_shortcuts_model_file_for_iter (THUNAR_SHORTCUTS_MODEL (model), &iter);
 
       /* prepare the internal loop */
       loop = g_main_loop_new (NULL, FALSE);
@@ -322,11 +316,11 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
         }
 
       /* append the remove menu item */
-      item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Favourite"));
-      g_object_set_data_full (G_OBJECT (item), I_("thunar-favourites-row"),
+      item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Shortcut"));
+      g_object_set_data_full (G_OBJECT (item), I_("thunar-shortcuts-row"),
                               gtk_tree_row_reference_new (model, path),
                               (GDestroyNotify) gtk_tree_row_reference_free);
-      g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_favourites_view_remove_activated), widget);
+      g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_remove_activated), widget);
       gtk_widget_set_sensitive (item, mutable);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
@@ -337,11 +331,11 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
       gtk_widget_show (image);
 
       /* append the rename menu item */
-      item = gtk_image_menu_item_new_with_mnemonic (_("Re_name Favourite"));
-      g_object_set_data_full (G_OBJECT (item), I_("thunar-favourites-row"),
+      item = gtk_image_menu_item_new_with_mnemonic (_("Re_name Shortcut"));
+      g_object_set_data_full (G_OBJECT (item), I_("thunar-shortcuts-row"),
                               gtk_tree_row_reference_new (model, path),
                               (GDestroyNotify) gtk_tree_row_reference_free);
-      g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_favourites_view_rename_activated), widget);
+      g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_rename_activated), widget);
       gtk_widget_set_sensitive (item, mutable);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
@@ -367,29 +361,29 @@ thunar_favourites_view_button_press_event (GtkWidget      *widget,
 
 
 static void
-thunar_favourites_view_drag_data_received (GtkWidget        *widget,
-                                           GdkDragContext   *context,
-                                           gint              x,
-                                           gint              y,
-                                           GtkSelectionData *selection_data,
-                                           guint             info,
-                                           guint             time)
+thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
+                                          GdkDragContext   *context,
+                                          gint              x,
+                                          gint              y,
+                                          GtkSelectionData *selection_data,
+                                          guint             info,
+                                          guint             time)
 {
-  ThunarFavouritesView *view = THUNAR_FAVOURITES_VIEW (widget);
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
   GtkTreeSelection     *selection;
   GtkTreeModel         *model;
   GtkTreePath          *dst_path;
   GtkTreePath          *src_path;
   GtkTreeIter           iter;
 
-  g_return_if_fail (THUNAR_IS_FAVOURITES_VIEW (view));
+  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* compute the drop position */
-  dst_path = thunar_favourites_view_compute_drop_position (view, x, y);
+  dst_path = thunar_shortcuts_view_compute_drop_position (view, x, y);
 
   if (selection_data->target == gdk_atom_intern ("text/uri-list", FALSE))
     {
-      thunar_favourites_view_drop_uri_list (view, (gchar *) selection_data->data, dst_path);
+      thunar_shortcuts_view_drop_uri_list (view, (gchar *) selection_data->data, dst_path);
     }
   else if (selection_data->target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
     {
@@ -401,12 +395,12 @@ thunar_favourites_view_drag_data_received (GtkWidget        *widget,
            * which can led to unexpected results.
            */
           gtk_tree_path_prev (dst_path);
-          if (!thunar_favourites_model_drop_possible (THUNAR_FAVOURITES_MODEL (model), dst_path))
+          if (!thunar_shortcuts_model_drop_possible (THUNAR_SHORTCUTS_MODEL (model), dst_path))
             gtk_tree_path_next (dst_path);
 
           /* perform the move */
           src_path = gtk_tree_model_get_path (model, &iter);
-          thunar_favourites_model_move (THUNAR_FAVOURITES_MODEL (model), src_path, dst_path);
+          thunar_shortcuts_model_move (THUNAR_SHORTCUTS_MODEL (model), src_path, dst_path);
           gtk_tree_path_free (src_path);
         }
     }
@@ -417,27 +411,27 @@ thunar_favourites_view_drag_data_received (GtkWidget        *widget,
 
 
 static gboolean
-thunar_favourites_view_drag_drop (GtkWidget      *widget,
-                                  GdkDragContext *context,
-                                  gint            x,
-                                  gint            y,
-                                  guint           time)
+thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
+                                 GdkDragContext *context,
+                                 gint            x,
+                                 gint            y,
+                                 guint           time)
 {
-  g_return_val_if_fail (THUNAR_IS_FAVOURITES_VIEW (widget), FALSE);
+  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (widget), FALSE);
   return TRUE;
 }
 
 
 
 static gboolean
-thunar_favourites_view_drag_motion (GtkWidget      *widget,
-                                    GdkDragContext *context,
-                                    gint            x,
-                                    gint            y,
-                                    guint           time)
+thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
+                                   GdkDragContext *context,
+                                   gint            x,
+                                   gint            y,
+                                   guint           time)
 {
   GtkTreeViewDropPosition position = GTK_TREE_VIEW_DROP_BEFORE;
-  ThunarFavouritesView   *view = THUNAR_FAVOURITES_VIEW (widget);
+  ThunarShortcutsView   *view = THUNAR_SHORTCUTS_VIEW (widget);
   GdkDragAction           action;
   GtkTreeModel           *model;
   GtkTreePath            *path;
@@ -453,7 +447,7 @@ thunar_favourites_view_drag_motion (GtkWidget      *widget,
     return FALSE;
 
   /* compute the drop position for the coordinates */
-  path = thunar_favourites_view_compute_drop_position (view, x, y);
+  path = thunar_shortcuts_view_compute_drop_position (view, x, y);
 
   /* check if path is about to append to the model */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
@@ -478,48 +472,48 @@ thunar_favourites_view_drag_motion (GtkWidget      *widget,
 
 
 static void
-thunar_favourites_view_row_activated (GtkTreeView       *tree_view,
-                                      GtkTreePath       *path,
-                                      GtkTreeViewColumn *column)
+thunar_shortcuts_view_row_activated (GtkTreeView       *tree_view,
+                                     GtkTreePath       *path,
+                                     GtkTreeViewColumn *column)
 {
-  ThunarFavouritesView *view = THUNAR_FAVOURITES_VIEW (tree_view);
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (tree_view);
   GtkTreeModel         *model;
   GtkTreeIter           iter;
   ThunarFile           *file;
 
-  g_return_if_fail (THUNAR_IS_FAVOURITES_VIEW (view));
+  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
   g_return_if_fail (path != NULL);
 
   /* determine the iter for the path */
   model = gtk_tree_view_get_model (tree_view);
   gtk_tree_model_get_iter (model, &iter, path);
 
-  /* determine the file for the favourite and invoke the signal */
-  file = thunar_favourites_model_file_for_iter (THUNAR_FAVOURITES_MODEL (model), &iter);
+  /* determine the file for the shortcut and invoke the signal */
+  file = thunar_shortcuts_model_file_for_iter (THUNAR_SHORTCUTS_MODEL (model), &iter);
   if (G_LIKELY (file != NULL))
-    g_signal_emit (G_OBJECT (view), view_signals[FAVOURITE_ACTIVATED], 0, file);
+    g_signal_emit (G_OBJECT (view), view_signals[SHORTCUT_ACTIVATED], 0, file);
 
   /* call the row-activated method in the parent class */
-  if (GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated != NULL)
-    (*GTK_TREE_VIEW_CLASS (thunar_favourites_view_parent_class)->row_activated) (tree_view, path, column);
+  if (GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated != NULL)
+    (*GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated) (tree_view, path, column);
 }
 
 
 
 static void
-thunar_favourites_view_remove_activated (GtkWidget            *item,
-                                         ThunarFavouritesView *view)
+thunar_shortcuts_view_remove_activated (GtkWidget           *item,
+                                        ThunarShortcutsView *view)
 {
   GtkTreeRowReference *row;
   GtkTreeModel        *model;
   GtkTreePath         *path;
 
-  row = g_object_get_data (G_OBJECT (item), I_("thunar-favourites-row"));
+  row = g_object_get_data (G_OBJECT (item), I_("thunar-shortcuts-row"));
   path = gtk_tree_row_reference_get_path (row);
   if (G_LIKELY (path != NULL))
     {
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-      thunar_favourites_model_remove (THUNAR_FAVOURITES_MODEL (model), path);
+      thunar_shortcuts_model_remove (THUNAR_SHORTCUTS_MODEL (model), path);
       gtk_tree_path_free (path);
     }
 }
@@ -527,8 +521,8 @@ thunar_favourites_view_remove_activated (GtkWidget            *item,
 
 
 static void
-thunar_favourites_view_rename_activated (GtkWidget            *item,
-                                         ThunarFavouritesView *view)
+thunar_shortcuts_view_rename_activated (GtkWidget           *item,
+                                        ThunarShortcutsView *view)
 {
   GtkTreeRowReference *row;
   GtkTreeViewColumn   *column;
@@ -536,7 +530,7 @@ thunar_favourites_view_rename_activated (GtkWidget            *item,
   GtkTreePath         *path;
   GList               *renderers;
 
-  row = g_object_get_data (G_OBJECT (item), I_("thunar-favourites-row"));
+  row = g_object_get_data (G_OBJECT (item), I_("thunar-shortcuts-row"));
   path = gtk_tree_row_reference_get_path (row);
   if (G_LIKELY (path != NULL))
     {
@@ -553,8 +547,8 @@ thunar_favourites_view_rename_activated (GtkWidget            *item,
 
 
 static void
-thunar_favourites_view_rename_canceled (GtkCellRenderer      *renderer,
-                                        ThunarFavouritesView *view)
+thunar_shortcuts_view_rename_canceled (GtkCellRenderer     *renderer,
+                                       ThunarShortcutsView *view)
 {
   /* disable the editing support on the name cell again */
   g_object_set (G_OBJECT (renderer), "editable", FALSE, NULL);
@@ -563,10 +557,10 @@ thunar_favourites_view_rename_canceled (GtkCellRenderer      *renderer,
 
 
 static void
-thunar_favourites_view_renamed (GtkCellRenderer      *renderer,
-                                const gchar          *path_string,
-                                const gchar          *text,
-                                ThunarFavouritesView *view)
+thunar_shortcuts_view_renamed (GtkCellRenderer     *renderer,
+                               const gchar         *path_string,
+                               const gchar         *text,
+                               ThunarShortcutsView *view)
 {
   GtkTreeModel *model;
   GtkTreePath  *path;
@@ -577,16 +571,16 @@ thunar_favourites_view_renamed (GtkCellRenderer      *renderer,
   /* perform the rename */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
   path = gtk_tree_path_new_from_string (path_string);
-  thunar_favourites_model_rename (THUNAR_FAVOURITES_MODEL (model), path, text);
+  thunar_shortcuts_model_rename (THUNAR_SHORTCUTS_MODEL (model), path, text);
   gtk_tree_path_free (path);
 }
 
 
 
 static GtkTreePath*
-thunar_favourites_view_compute_drop_position (ThunarFavouritesView *view,
-                                              gint                  x,
-                                              gint                  y)
+thunar_shortcuts_view_compute_drop_position (ThunarShortcutsView *view,
+                                             gint                 x,
+                                             gint                 y)
 {
   GtkTreeViewColumn *column;
   GtkTreeModel      *model;
@@ -595,7 +589,7 @@ thunar_favourites_view_compute_drop_position (ThunarFavouritesView *view,
   gint               n_rows;
 
   g_return_val_if_fail (gtk_tree_view_get_model (GTK_TREE_VIEW (view)) != NULL, NULL);
-  g_return_val_if_fail (THUNAR_IS_FAVOURITES_VIEW (view), NULL);
+  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), NULL);
 
   /* query the number of rows in the model */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
@@ -611,14 +605,14 @@ thunar_favourites_view_compute_drop_position (ThunarFavouritesView *view,
       if (y >= area.height / 2)
         gtk_tree_path_next (path);
 
-      /* find a suitable drop path (we cannot drop into the default favourites list) */
+      /* find a suitable drop path (we cannot drop into the default shortcuts list) */
       for (; gtk_tree_path_get_indices (path)[0] < n_rows; gtk_tree_path_next (path))
-        if (thunar_favourites_model_drop_possible (THUNAR_FAVOURITES_MODEL (model), path))
+        if (thunar_shortcuts_model_drop_possible (THUNAR_SHORTCUTS_MODEL (model), path))
           return path;
     }
   else
     {
-      /* we'll append to the favourites list */
+      /* we'll append to the shortcuts list */
       path = gtk_tree_path_new_from_indices (n_rows, -1);
     }
 
@@ -628,9 +622,9 @@ thunar_favourites_view_compute_drop_position (ThunarFavouritesView *view,
 
 
 static void
-thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
-                                      const gchar          *uri_list,
-                                      GtkTreePath          *dst_path)
+thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
+                                     const gchar         *uri_list,
+                                     GtkTreePath         *dst_path)
 {
   GtkTreeModel *model;
   ThunarFile   *file;
@@ -651,7 +645,7 @@ thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
           if (G_UNLIKELY (file == NULL))
             break;
 
-          /* make sure, that only directories gets added to the favourites list */
+          /* make sure, that only directories gets added to the shortcuts list */
           if (G_UNLIKELY (!thunar_file_is_directory (file)))
             {
               uri_string = thunar_vfs_path_dup_string (lp->data);
@@ -665,7 +659,7 @@ thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
               break;
             }
 
-          thunar_favourites_model_add (THUNAR_FAVOURITES_MODEL (model), dst_path, file);
+          thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (model), dst_path, file);
           g_object_unref (G_OBJECT (file));
           gtk_tree_path_next (dst_path);
         }
@@ -676,7 +670,7 @@ thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
   if (G_UNLIKELY (error != NULL))
     {
       /* display an error message to the user */
-      thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to add new favourite"));
+      thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to add new shortcut"));
 
       /* release the error */
       g_error_free (error);
@@ -687,12 +681,12 @@ thunar_favourites_view_drop_uri_list (ThunarFavouritesView *view,
 
 #if GTK_CHECK_VERSION(2,6,0)
 static gboolean
-thunar_favourites_view_separator_func (GtkTreeModel *model,
-                                       GtkTreeIter  *iter,
-                                       gpointer      user_data)
+thunar_shortcuts_view_separator_func (GtkTreeModel *model,
+                                      GtkTreeIter  *iter,
+                                      gpointer      user_data)
 {
   gboolean separator;
-  gtk_tree_model_get (model, iter, THUNAR_FAVOURITES_MODEL_COLUMN_SEPARATOR, &separator, -1);
+  gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR, &separator, -1);
   return separator;
 }
 #endif
@@ -700,22 +694,21 @@ thunar_favourites_view_separator_func (GtkTreeModel *model,
 
 
 /**
- * thunar_favourites_view_new:
+ * thunar_shortcuts_view_new:
  *
- * Allocates a new #ThunarFavouritesView instance and associates
- * it with the default #ThunarFavouritesModel instance.
+ * Allocates a new #ThunarShortcutsView instance and associates
+ * it with the default #ThunarShortcutsModel instance.
  *
- * Return value: the newly allocated #ThunarFavouritesView instance.
+ * Return value: the newly allocated #ThunarShortcutsView instance.
  **/
 GtkWidget*
-thunar_favourites_view_new (void)
+thunar_shortcuts_view_new (void)
 {
-  ThunarFavouritesModel *model;
+  ThunarShortcutsModel *model;
   GtkWidget             *view;
 
-  model = thunar_favourites_model_get_default ();
-  view = g_object_new (THUNAR_TYPE_FAVOURITES_VIEW,
-                       "model", model, NULL);
+  model = thunar_shortcuts_model_get_default ();
+  view = g_object_new (THUNAR_TYPE_SHORTCUTS_VIEW, "model", model, NULL);
   g_object_unref (G_OBJECT (model));
 
   return view;
@@ -724,23 +717,23 @@ thunar_favourites_view_new (void)
 
 
 /**
- * thunar_favourites_view_select_by_file:
- * @view : a #ThunarFavouritesView instance.
+ * thunar_shortcuts_view_select_by_file:
+ * @view : a #ThunarShortcutsView instance.
  * @file : a #ThunarFile instance.
  *
- * Looks up the first favourite that refers to @file in @view and selects it.
- * If @file is not present in the underlying #ThunarFavouritesModel, no
- * favourite will be selected afterwards.
+ * Looks up the first shortcut that refers to @file in @view and selects it.
+ * If @file is not present in the underlying #ThunarShortcutsModel, no
+ * shortcut will be selected afterwards.
  **/
 void
-thunar_favourites_view_select_by_file (ThunarFavouritesView *view,
-                                       ThunarFile           *file)
+thunar_shortcuts_view_select_by_file (ThunarShortcutsView *view,
+                                      ThunarFile          *file)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
 
-  g_return_if_fail (THUNAR_IS_FAVOURITES_VIEW (view));
+  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
   g_return_if_fail (THUNAR_IS_FILE (file));
 
   /* clear the selection */
@@ -749,7 +742,7 @@ thunar_favourites_view_select_by_file (ThunarFavouritesView *view,
 
   /* try to lookup a tree iter for the given file */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-  if (thunar_favourites_model_iter_for_file (THUNAR_FAVOURITES_MODEL (model), file, &iter))
+  if (thunar_shortcuts_model_iter_for_file (THUNAR_SHORTCUTS_MODEL (model), file, &iter))
     gtk_tree_selection_select_iter (selection, &iter);
 }
 

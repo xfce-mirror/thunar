@@ -25,7 +25,7 @@
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
-#include <thunar/thunar-favourites-pane.h>
+#include <thunar/thunar-shortcuts-pane.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-view.h>
@@ -339,7 +339,7 @@ thunar_window_init (ThunarWindow *window)
   /*
    * add the side pane options
    */
-  radio_action = gtk_radio_action_new ("view-side-pane-favourites", _("_Favourites"), NULL, NULL, THUNAR_TYPE_FAVOURITES_PANE);
+  radio_action = gtk_radio_action_new ("view-side-pane-shortcuts", _("_Shortcuts"), NULL, NULL, THUNAR_TYPE_SHORTCUTS_PANE);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, NULL);
   group = gtk_radio_action_get_group (radio_action);
@@ -447,7 +447,7 @@ thunar_window_init (ThunarWindow *window)
   g_free (type_name);
 
   /* activate the selected side pane */
-  action = gtk_action_group_get_action (window->action_group, "view-side-pane-favourites");
+  action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
   exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), g_type_is_a (type, THUNAR_TYPE_SIDE_PANE) ? type : G_TYPE_NONE);
   g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_side_pane_changed), window);
   thunar_window_action_side_pane_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);

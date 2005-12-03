@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-29 18:22+0100\n"
+"POT-Creation-Date: 2005-12-03 22:32+0100\n"
 "PO-Revision-Date: 2005-11-28 22:00+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -478,29 +478,32 @@ msgstr "ここにリンク(_L)"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:190 ../thunar/thunar-launcher.c:343
+#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:343
 #, c-format
 msgid "Unable to execute file `%s'"
 msgstr "ファイル `%s' を実行できません。"
 
 #. append the remove menu item
-#: ../thunar/thunar-favourites-view.c:324
-msgid "_Remove Favourite"
+#: ../thunar/thunar-shortcuts-view.c:319
+#, fuzzy
+msgid "_Remove Shortcut"
 msgstr "お気に入りを削除(_R)"
 
 #. append the rename menu item
-#: ../thunar/thunar-favourites-view.c:339
-msgid "Re_name Favourite"
+#: ../thunar/thunar-shortcuts-view.c:334
+#, fuzzy
+msgid "Re_name Shortcut"
 msgstr "お気に入りの名前を変更(_N)"
 
-#: ../thunar/thunar-favourites-view.c:659
+#: ../thunar/thunar-shortcuts-view.c:654
 #, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr "パス '%s' はフォルダを参照していません。"
 
 #. display an error message to the user
-#: ../thunar/thunar-favourites-view.c:678
-msgid "Failed to add new favourite"
+#: ../thunar/thunar-shortcuts-view.c:673
+#, fuzzy
+msgid "Failed to add new shortcut"
 msgstr "お気に入りの追加に失敗しました。"
 
 #: ../thunar/thunar-file.c:688
@@ -816,45 +819,45 @@ msgstr "現在表示されているファイルです。"
 msgid "The icon size for the path entry"
 msgstr "パス・エントリーのアイコン・サイズです"
 
-#: ../thunar/thunar-preferences-dialog.c:185
+#: ../thunar/thunar-preferences-dialog.c:184
 msgid "File Manager Preferences"
 msgstr "ファイルマネージャーの環境設定"
 
-#: ../thunar/thunar-preferences-dialog.c:201
+#: ../thunar/thunar-preferences-dialog.c:200
 msgid "<b>Default View</b>"
 msgstr "<b>標準の表示方法</b>"
 
-#: ../thunar/thunar-preferences-dialog.c:212
+#: ../thunar/thunar-preferences-dialog.c:211
 msgid "View _new folders using:"
 msgstr "新規フォルダの表示方法(_N):"
 
-#: ../thunar/thunar-preferences-dialog.c:217
+#: ../thunar/thunar-preferences-dialog.c:216
 msgid "Icon View"
 msgstr "アイコン表示"
 
-#: ../thunar/thunar-preferences-dialog.c:218
+#: ../thunar/thunar-preferences-dialog.c:217
 msgid "Detailed List View"
 msgstr "詳細リスト表示"
 
-#: ../thunar/thunar-preferences-dialog.c:219
+#: ../thunar/thunar-preferences-dialog.c:218
 msgid "Last Active View"
 msgstr "最後に使用した表示方法"
 
-#: ../thunar/thunar-preferences-dialog.c:234
+#: ../thunar/thunar-preferences-dialog.c:233
 msgid "Sort _folders before files"
 msgstr "フォルダをファイルの前にする(_F)"
 
-#: ../thunar/thunar-preferences-dialog.c:236
+#: ../thunar/thunar-preferences-dialog.c:235
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "フォルダを並べ替える時にフォルダをファイルの前に並べるなら、このオプションを"
 "選択して下さい。"
 
-#: ../thunar/thunar-preferences-dialog.c:240
+#: ../thunar/thunar-preferences-dialog.c:239
 msgid "Show hidden and _backup files"
 msgstr "隠しファイルを表示(_B)"
 
-#: ../thunar/thunar-preferences-dialog.c:242
+#: ../thunar/thunar-preferences-dialog.c:241
 msgid ""
 "Select this option to show hidden and backup files in new windows. The first "
 "character in a hidden filename is a period (.). The last character in a "
@@ -864,15 +867,15 @@ msgstr ""
 "選択して下さい。隠しファイル名の先頭につく文字はピリオド「.」、予備ファイルの"
 "末尾にはチルダ「~」がついています。"
 
-#: ../thunar/thunar-preferences-dialog.c:252
+#: ../thunar/thunar-preferences-dialog.c:251
 msgid "<b>Icon View</b>"
 msgstr "<b>アイコン表示</b>"
 
-#: ../thunar/thunar-preferences-dialog.c:263
+#: ../thunar/thunar-preferences-dialog.c:262
 msgid "_Text beside icons"
 msgstr "文字をアイコンの隣に置く(_T)"
 
-#: ../thunar/thunar-preferences-dialog.c:265
+#: ../thunar/thunar-preferences-dialog.c:264
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -996,7 +999,7 @@ msgstr "%s (%u バイト)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:731
-#: ../thunar/thunar-standard-view.c:2175
+#: ../thunar/thunar-standard-view.c:2170
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "`%s' の名前変更に失敗しました。"
@@ -1078,7 +1081,7 @@ msgstr "パターンで選択(_B)"
 msgid "Select all files that match a certain pattern"
 msgstr "ある特定のパターンに一致する全てのファイルを選択します。"
 
-#: ../thunar/thunar-standard-view.c:264 ../thunar/thunar-standard-view.c:2458
+#: ../thunar/thunar-standard-view.c:264 ../thunar/thunar-standard-view.c:2452
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] "コピーを作成(_P)"
@@ -1087,7 +1090,7 @@ msgstr[0] "コピーを作成(_P)"
 msgid "Duplicate each selected file"
 msgstr "選択したそれぞれのファイルのコピーを作成します。"
 
-#: ../thunar/thunar-standard-view.c:265 ../thunar/thunar-standard-view.c:2464
+#: ../thunar/thunar-standard-view.c:265 ../thunar/thunar-standard-view.c:2458
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "リンクを作成(_K)"
@@ -1108,25 +1111,25 @@ msgstr "選択したファイルの名前を変更します。"
 msgid "Whether the view is currently being loaded"
 msgstr "表示ペインが現在読み込まれているかどうかを表します。"
 
-#: ../thunar/thunar-standard-view.c:890
+#: ../thunar/thunar-standard-view.c:888
 msgid "Loading folder contents..."
 msgstr "フォルダの内容を読み込んでいます..."
 
-#: ../thunar/thunar-standard-view.c:1345
+#: ../thunar/thunar-standard-view.c:1343
 msgid "New Folder"
 msgstr "新規フォルダ"
 
-#: ../thunar/thunar-standard-view.c:1348
+#: ../thunar/thunar-standard-view.c:1346
 msgid "New Folder..."
 msgstr "新規フォルダ..."
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1362
+#: ../thunar/thunar-standard-view.c:1360
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr "ファイル名 `%s' をあなたのエンコード方式に変換できません。"
 
-#: ../thunar/thunar-standard-view.c:1508
+#: ../thunar/thunar-standard-view.c:1506
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1135,7 +1138,7 @@ msgstr ""
 "\"%s\" は永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-standard-view.c:1514
+#: ../thunar/thunar-standard-view.c:1512
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1147,34 +1150,34 @@ msgstr[0] ""
 "選択したファイルは永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-standard-view.c:1529
+#: ../thunar/thunar-standard-view.c:1527
 msgid "If you delete a file, it is permanently lost."
 msgstr "削除されたファイルは永久に失われます。"
 
-#: ../thunar/thunar-standard-view.c:1601
+#: ../thunar/thunar-standard-view.c:1599
 msgid "Select by Pattern"
 msgstr "パターンで選択します"
 
-#: ../thunar/thunar-standard-view.c:1616
+#: ../thunar/thunar-standard-view.c:1614
 msgid "Pattern:"
 msgstr "パターン:"
 
-#: ../thunar/thunar-standard-view.c:2127
+#: ../thunar/thunar-standard-view.c:2125
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "フォルダ `%s' を開くのに失敗しました。"
 
-#: ../thunar/thunar-standard-view.c:2431
+#: ../thunar/thunar-standard-view.c:2425
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "コピー(_C)"
 
-#: ../thunar/thunar-standard-view.c:2437
+#: ../thunar/thunar-standard-view.c:2431
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "切り取り(_T)"
 
-#: ../thunar/thunar-standard-view.c:2446
+#: ../thunar/thunar-standard-view.c:2440
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "削除(_D)"
@@ -1345,8 +1348,8 @@ msgstr "このウィンドウ内で使用されている UI マネージャー�
 #. * add the side pane options
 #.
 #: ../thunar/thunar-window.c:342
-msgid "_Favourites"
-msgstr "お気に入り(_F)"
+msgid "_Shortcuts"
+msgstr ""
 
 #: ../thunar/thunar-window.c:348 ../thunar/thunar-window.c:371
 msgid "_Hidden"
@@ -1652,26 +1655,26 @@ msgstr "アプリケーションを選択して下さい"
 msgid "Image Files"
 msgstr "貼り付け(_P)"
 
-#: ../thunar-uca/thunar-uca-model.c:762
+#: ../thunar-uca/thunar-uca-model.c:767
 #, c-format
 msgid "Unknown element <%s>"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:780
+#: ../thunar-uca/thunar-uca-model.c:785
 msgid "End element handler called while in root context"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:868
+#: ../thunar-uca/thunar-uca-model.c:873
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:1293
+#: ../thunar-uca/thunar-uca-model.c:1298
 #, fuzzy
 msgid "Failed to determine save location for uca.xml"
 msgstr "`%s' のファイル情報を確定するのに失敗しました。"
 
-#: ../thunar-uca/thunar-uca-model.c:1409
+#: ../thunar-uca/thunar-uca-model.c:1414
 msgid "Command not configured"
 msgstr ""
 
@@ -1708,3 +1711,6 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
+
+#~ msgid "_Favourites"
+#~ msgstr "お気に入り(_F)"

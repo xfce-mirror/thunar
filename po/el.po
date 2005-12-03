@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-11-29 18:22+0100\n"
+"POT-Creation-Date: 2005-12-03 22:32+0100\n"
 "PO-Revision-Date: 2005-11-15 22:07+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -480,29 +480,32 @@ msgstr "Δ_ημιουργία δεσμού εδώ"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:190 ../thunar/thunar-launcher.c:343
+#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:343
 #, c-format
 msgid "Unable to execute file `%s'"
 msgstr "Δεν ήταν δυνατή η εκτέλεση του αρχείου `%s'"
 
 #. append the remove menu item
-#: ../thunar/thunar-favourites-view.c:324
-msgid "_Remove Favourite"
+#: ../thunar/thunar-shortcuts-view.c:319
+#, fuzzy
+msgid "_Remove Shortcut"
 msgstr "_Απομάκρυνση Αγαπημένου"
 
 #. append the rename menu item
-#: ../thunar/thunar-favourites-view.c:339
-msgid "Re_name Favourite"
+#: ../thunar/thunar-shortcuts-view.c:334
+#, fuzzy
+msgid "Re_name Shortcut"
 msgstr "Μετο_νομασία Αγαπημένου"
 
-#: ../thunar/thunar-favourites-view.c:659
+#: ../thunar/thunar-shortcuts-view.c:654
 #, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr "Η διαδρομή '%s' δεν αντιστοιχεί σε κατάλογο"
 
 #. display an error message to the user
-#: ../thunar/thunar-favourites-view.c:678
-msgid "Failed to add new favourite"
+#: ../thunar/thunar-shortcuts-view.c:673
+#, fuzzy
+msgid "Failed to add new shortcut"
 msgstr "Η προσθήκη νέου αγαπημένου απέτυχε"
 
 #: ../thunar/thunar-file.c:688
@@ -822,63 +825,63 @@ msgstr "Το αρχείο που εμφανίζεται τώρα"
 msgid "The icon size for the path entry"
 msgstr "Μέγεθος εικονιδίου για τη διαδρομή"
 
-#: ../thunar/thunar-preferences-dialog.c:185
+#: ../thunar/thunar-preferences-dialog.c:184
 #, fuzzy
 msgid "File Manager Preferences"
 msgstr "Επεξεργασία Προτιμήσεων Thunar"
 
-#: ../thunar/thunar-preferences-dialog.c:201
+#: ../thunar/thunar-preferences-dialog.c:200
 msgid "<b>Default View</b>"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:212
+#: ../thunar/thunar-preferences-dialog.c:211
 msgid "View _new folders using:"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:217
+#: ../thunar/thunar-preferences-dialog.c:216
 #, fuzzy
 msgid "Icon View"
 msgstr "Προβολή Εικονιδίων"
 
-#: ../thunar/thunar-preferences-dialog.c:218
+#: ../thunar/thunar-preferences-dialog.c:217
 #, fuzzy
 msgid "Detailed List View"
 msgstr "Προβολή λεπτομεριών"
 
-#: ../thunar/thunar-preferences-dialog.c:219
+#: ../thunar/thunar-preferences-dialog.c:218
 msgid "Last Active View"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:234
+#: ../thunar/thunar-preferences-dialog.c:233
 msgid "Sort _folders before files"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:236
+#: ../thunar/thunar-preferences-dialog.c:235
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:240
+#: ../thunar/thunar-preferences-dialog.c:239
 #, fuzzy
 msgid "Show hidden and _backup files"
 msgstr "Εμφάνιση _Κρυφών Αρχείων"
 
-#: ../thunar/thunar-preferences-dialog.c:242
+#: ../thunar/thunar-preferences-dialog.c:241
 msgid ""
 "Select this option to show hidden and backup files in new windows. The first "
 "character in a hidden filename is a period (.). The last character in a "
 "backup filename is a tilde (~)."
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:252
+#: ../thunar/thunar-preferences-dialog.c:251
 #, fuzzy
 msgid "<b>Icon View</b>"
 msgstr "Προβολή Εικονιδίων"
 
-#: ../thunar/thunar-preferences-dialog.c:263
+#: ../thunar/thunar-preferences-dialog.c:262
 msgid "_Text beside icons"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:265
+#: ../thunar/thunar-preferences-dialog.c:264
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1003,7 +1006,7 @@ msgstr "%s (%u Bytes)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:731
-#: ../thunar/thunar-standard-view.c:2175
+#: ../thunar/thunar-standard-view.c:2170
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "Η μετονομασία του `%s' απέτυχε"
@@ -1085,7 +1088,7 @@ msgstr "Επιλογή _βάσει μοτίβου"
 msgid "Select all files that match a certain pattern"
 msgstr "Επιλογή όλων των αρχείων που ταιριάζουν σε ένα μοτίβο"
 
-#: ../thunar/thunar-standard-view.c:264 ../thunar/thunar-standard-view.c:2458
+#: ../thunar/thunar-standard-view.c:264 ../thunar/thunar-standard-view.c:2452
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] ""
@@ -1095,7 +1098,7 @@ msgstr[1] ""
 msgid "Duplicate each selected file"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:265 ../thunar/thunar-standard-view.c:2464
+#: ../thunar/thunar-standard-view.c:265 ../thunar/thunar-standard-view.c:2458
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Δημιουργία _Δεσμού"
@@ -1117,27 +1120,27 @@ msgstr "Μετονομασία του επιλεγμένου αρχείου"
 msgid "Whether the view is currently being loaded"
 msgstr "Εάν είναι φορτωμένη η προβολή"
 
-#: ../thunar/thunar-standard-view.c:890
+#: ../thunar/thunar-standard-view.c:888
 msgid "Loading folder contents..."
 msgstr "Φόρτωμα περιεχομένων φακέλου..."
 
-#: ../thunar/thunar-standard-view.c:1345
+#: ../thunar/thunar-standard-view.c:1343
 msgid "New Folder"
 msgstr "Νέος Φάκελος"
 
-#: ../thunar/thunar-standard-view.c:1348
+#: ../thunar/thunar-standard-view.c:1346
 msgid "New Folder..."
 msgstr "Νέος Φάκελος..."
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1362
+#: ../thunar/thunar-standard-view.c:1360
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr ""
 "Δεν είναι δυνατή η μετατροπή του ονόματος αρχείου `%s' στην τοπική "
 "κωδικοποίηση"
 
-#: ../thunar/thunar-standard-view.c:1508
+#: ../thunar/thunar-standard-view.c:1506
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1146,7 +1149,7 @@ msgstr ""
 "Είστε σίγουρος/η ότι θέλετε να διαγράψετε\n"
 "οριστικά το \"%s\";"
 
-#: ../thunar/thunar-standard-view.c:1514
+#: ../thunar/thunar-standard-view.c:1512
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1161,36 +1164,36 @@ msgstr[1] ""
 "Είστε σίγουρος/η ότι θέλετε να διαγράψετε\n"
 "οριστικά τα %u επιλεγμένα αρχεία;"
 
-#: ../thunar/thunar-standard-view.c:1529
+#: ../thunar/thunar-standard-view.c:1527
 msgid "If you delete a file, it is permanently lost."
 msgstr "Εάν διαγράψετε ένα αρχείο, χάνετε για πάντα."
 
-#: ../thunar/thunar-standard-view.c:1601
+#: ../thunar/thunar-standard-view.c:1599
 msgid "Select by Pattern"
 msgstr "Επιλογή βάσει Μοτίβου"
 
-#: ../thunar/thunar-standard-view.c:1616
+#: ../thunar/thunar-standard-view.c:1614
 msgid "Pattern:"
 msgstr "Μοτίβο:"
 
-#: ../thunar/thunar-standard-view.c:2127
+#: ../thunar/thunar-standard-view.c:2125
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Το άνοιγμα του καταλόγου `%s' απέτυχε"
 
-#: ../thunar/thunar-standard-view.c:2431
+#: ../thunar/thunar-standard-view.c:2425
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "_Αντιγραφή Αρχείου"
 msgstr[1] "_Αντιγραφή Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:2437
+#: ../thunar/thunar-standard-view.c:2431
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Αποκοπή _Αρχείου"
 msgstr[1] "Αποκοπή _Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:2446
+#: ../thunar/thunar-standard-view.c:2440
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "_Διαγραφή Αρχείου"
@@ -1364,8 +1367,8 @@ msgstr ""
 #. * add the side pane options
 #.
 #: ../thunar/thunar-window.c:342
-msgid "_Favourites"
-msgstr "_Αγαπημένα"
+msgid "_Shortcuts"
+msgstr ""
 
 #: ../thunar/thunar-window.c:348 ../thunar/thunar-window.c:371
 msgid "_Hidden"
@@ -1673,26 +1676,26 @@ msgstr "Επιλογή Εφαρμογής"
 msgid "Image Files"
 msgstr "_Επικόλληση Αρχείων"
 
-#: ../thunar-uca/thunar-uca-model.c:762
+#: ../thunar-uca/thunar-uca-model.c:767
 #, c-format
 msgid "Unknown element <%s>"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:780
+#: ../thunar-uca/thunar-uca-model.c:785
 msgid "End element handler called while in root context"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:868
+#: ../thunar-uca/thunar-uca-model.c:873
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:1293
+#: ../thunar-uca/thunar-uca-model.c:1298
 #, fuzzy
 msgid "Failed to determine save location for uca.xml"
 msgstr "Ο προσδιορισμός των πληροφοριών αρχείου για το `%s' απέτυχε"
 
-#: ../thunar-uca/thunar-uca-model.c:1409
+#: ../thunar-uca/thunar-uca-model.c:1414
 msgid "Command not configured"
 msgstr ""
 
@@ -1729,6 +1732,9 @@ msgstr "Διαχειριστής Αρχείων"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Διαχειριστής Αρχείων Thunar"
+
+#~ msgid "_Favourites"
+#~ msgstr "_Αγαπημένα"
 
 #~ msgid "Ensures that an extension will never be unloaded."
 #~ msgstr "Εξασφαλίζει ότι δεν θα αποφορτωθεί ποτέ μια επέκταση."

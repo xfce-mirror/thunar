@@ -44,12 +44,12 @@ Thunar_SOURCES =							\
 	thunar-emblem-chooser.h						\
 	thunar-fallback-icon.c						\
 	thunar-fallback-icon.h						\
-	thunar-favourites-model.c					\
-	thunar-favourites-model.h					\
-	thunar-favourites-pane.c					\
-	thunar-favourites-pane.h					\
-	thunar-favourites-view.c					\
-	thunar-favourites-view.h					\
+	thunar-shortcuts-model.c					\
+	thunar-shortcuts-model.h					\
+	thunar-shortcuts-pane.c						\
+	thunar-shortcuts-pane.h						\
+	thunar-shortcuts-view.c						\
+	thunar-shortcuts-view.h						\
 	thunar-file.c							\
 	thunar-file.h							\
 	thunar-folder.c							\
