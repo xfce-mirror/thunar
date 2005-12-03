@@ -637,6 +637,11 @@ start_element_handler (GMarkupParseContext *context,
           parser->name_match = XFCE_LOCALE_NO_MATCH;
           parser->description_match = XFCE_LOCALE_NO_MATCH;
           parser->types = 0;
+          g_string_truncate (parser->icon, 0);
+          g_string_truncate (parser->name, 0);
+          g_string_truncate (parser->command, 0);
+          g_string_truncate (parser->patterns, 0);
+          g_string_truncate (parser->description, 0);
           xfce_stack_push (parser->stack, PARSER_ACTION);
         }
       else

@@ -1,5 +1,10 @@
 2005-12-03	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-uca/thunar-uca-model.c(start_element_handler): Properly
+	  truncate values.
+
+2005-12-03	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Build the gnuc visibility test program with -Wall
 	  -Werror, as gcc reports warnings instead of errors if ELF visibility
 	  is not supported for the target platform. This fixes bug #1253.
