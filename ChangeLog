@@ -1,3 +1,11 @@
+2005-12-04	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-progress-dialog.c: Use Pango attribute list instead of
+	  markup for the dialog action label. This fixes bug #1252.
+	* thunar-uca/thunar-uca-chooser.c(thunar_uca_chooser_init): Be sure to
+	  create the button widgets prior to connecting the "selection-changed"
+	  handler. This fixes bug #1260.
+
 2005-12-03	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/, po/POTFILES.in, po/*.po: Rename "Favourites" to "Shortcuts",

@@ -121,17 +121,6 @@ thunar_progress_dialog_get_type (void)
 
 
 
-static gboolean
-transform_to_markup (const GValue *src_value,
-                     GValue       *dst_value,
-                     gpointer      user_data)
-{
-  g_value_take_string (dst_value, g_strdup_printf ("<big>%s</big>", g_value_get_string (src_value)));
-  return TRUE;
-}
-
-
-
 static void
 thunar_progress_dialog_class_init (ThunarProgressDialogClass *klass)
 {
@@ -169,17 +158,19 @@ thunar_progress_dialog_class_init (ThunarProgressDialogClass *klass)
 static void
 thunar_progress_dialog_init (ThunarProgressDialog *dialog)
 {
-  GtkWidget *table;
-  GtkWidget *image;
-  GtkWidget *label;
+  PangoAttribute *attribute;
+  PangoAttrList  *attr_list_big;
+  GtkWidget      *table;
+  GtkWidget      *image;
+  GtkWidget      *label;
 
   /* remember the current time as start time */
   g_get_current_time (&dialog->start_time);
 
   gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
-
   gtk_window_set_default_size (GTK_WINDOW (dialog), 350, -1);
+  gtk_window_set_title (GTK_WINDOW (dialog), "");
 
   table = g_object_new (GTK_TYPE_TABLE,
                         "border-width", 6,
@@ -195,9 +186,17 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1, GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
   gtk_widget_show (image);
 
-  label = g_object_new (GTK_TYPE_LABEL, "use-markup", TRUE, "xalign", 0.0f, NULL);
+  label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
   gtk_widget_show (label);
+
+  attr_list_big = pango_attr_list_new ();
+  attribute = pango_attr_scale_new (PANGO_SCALE_LARGE);
+  attribute->start_index = 0;
+  attribute->end_index = -1;
+  pango_attr_list_insert (attr_list_big, attribute);
+  gtk_label_set_attributes (GTK_LABEL (label), attr_list_big);
+  pango_attr_list_unref (attr_list_big);
 
   dialog->progress_label = g_object_new (EXO_TYPE_ELLIPSIZED_LABEL, "ellipsize", EXO_PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_table_attach (GTK_TABLE (table), dialog->progress_label, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -212,9 +211,8 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
                    G_OBJECT (image), "icon-name");
 
   /* connect the window title to the action label */
-  exo_binding_new_full (G_OBJECT (dialog), "title",
-                        G_OBJECT (label), "label",
-                        transform_to_markup, NULL, NULL);
+  exo_binding_new (G_OBJECT (dialog), "title",
+                   G_OBJECT (label), "label");
 }
 
 

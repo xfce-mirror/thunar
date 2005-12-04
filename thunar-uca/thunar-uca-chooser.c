@@ -163,10 +163,6 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   g_signal_connect_swapped (G_OBJECT (uca_chooser->treeview), "row-activated", G_CALLBACK (thunar_uca_chooser_edit_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->treeview);
 
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (uca_chooser->treeview));
-  gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
-  g_signal_connect_swapped (G_OBJECT (selection), "changed", G_CALLBACK (thunar_uca_chooser_selection_changed), uca_chooser);
-
   uca_model = thunar_uca_model_get_default ();
   gtk_tree_view_set_model (GTK_TREE_VIEW (uca_chooser->treeview), GTK_TREE_MODEL (uca_model));
   g_object_unref (G_OBJECT (uca_model));
@@ -237,6 +233,12 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   image = gtk_image_new_from_stock (GTK_STOCK_GO_DOWN, GTK_ICON_SIZE_BUTTON);
   gtk_container_add (GTK_CONTAINER (uca_chooser->down_button), image);
   gtk_widget_show (image);
+
+  /* configure the tree view selection after the buttons have been created */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (uca_chooser->treeview));
+  gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
+  g_signal_connect_swapped (G_OBJECT (selection), "changed", G_CALLBACK (thunar_uca_chooser_selection_changed), uca_chooser);
+  thunar_uca_chooser_selection_changed (uca_chooser, selection);
 }
 
 
