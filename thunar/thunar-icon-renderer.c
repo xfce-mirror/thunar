@@ -198,6 +198,11 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
 static void
 thunar_icon_renderer_init (ThunarIconRenderer *icon_renderer)
 {
+  /* use 1px padding */
+  GTK_CELL_RENDERER (icon_renderer)->xpad = 1;
+  GTK_CELL_RENDERER (icon_renderer)->ypad = 1;
+
+  /* default to 24px icons */
   icon_renderer->size = 24;
 }
 
@@ -395,10 +400,12 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* scale down the icon on-demand */
   if (G_UNLIKELY (icon_area.width > cell_area->width || icon_area.height > cell_area->height))
     {
-      temp = exo_gdk_pixbuf_scale_ratio (icon, icon_renderer->size);
+      /* scale down to fit */
+      temp = exo_gdk_pixbuf_scale_down (icon, TRUE, cell_area->width, cell_area->height);
       g_object_unref (G_OBJECT (icon));
       icon = temp;
 
+      /* determine the icon dimensions again */
       icon_area.width = gdk_pixbuf_get_width (icon);
       icon_area.height = gdk_pixbuf_get_height (icon);
     }

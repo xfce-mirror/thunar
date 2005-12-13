@@ -457,6 +457,9 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
 {
   GdkPixbuf *pixbuf;
   GdkPixbuf *tmp;
+  gboolean   needs_frame;
+  gint       max_width;
+  gint       max_height;
   gint       width;
   gint       height;
 
@@ -468,27 +471,38 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       width = gdk_pixbuf_get_width (pixbuf);
       height = gdk_pixbuf_get_height (pixbuf);
 
-      /* add a frame around thumbnail (large) images */
-      if (strstr (path, G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S) != NULL
-          && thumbnail_needs_frame (pixbuf, width, height))
-        {
-          /* perform the scaling first (if required) */
-          if (G_LIKELY (width > size || height > size))
-            {
-              tmp = exo_gdk_pixbuf_scale_ratio (pixbuf, size);
-              g_object_unref (G_OBJECT (pixbuf));
-              pixbuf = tmp;
-            }
+      /* check if we want to add a frame to the image (we really don't
+       * want to do this for icons displayed in the details view).
+       */
+      needs_frame = (strstr (path, G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S) != NULL)
+                 && (size >= 36) && thumbnail_needs_frame (pixbuf, width, height);
 
-          /* add the frame */
-          tmp = thunar_gdk_pixbuf_frame (pixbuf, factory->thumbnail_frame, 3, 3, 6, 6);
+      /* be sure to make framed thumbnails fit into the size */
+      if (G_LIKELY (needs_frame))
+        {
+          max_width = size - (3 + 6);
+          max_height = size - (3 + 6);
+        }
+      else
+        {
+          max_width = size;
+          max_height = size;
+        }
+
+      /* scale down the icon (if required) */
+      if (G_LIKELY (width > max_width || height > max_height))
+        {
+          /* scale down to the required size */
+          tmp = exo_gdk_pixbuf_scale_down (pixbuf, TRUE, max_height, max_height);
           g_object_unref (G_OBJECT (pixbuf));
           pixbuf = tmp;
         }
-      else if (G_LIKELY (width > size || height > size))
+
+      /* add a frame around thumbnail (large) images */
+      if (G_LIKELY (needs_frame))
         {
-          /* scale down the non-thumbnailed icon */
-          tmp = exo_gdk_pixbuf_scale_ratio (pixbuf, size);
+          /* add the frame */
+          tmp = thunar_gdk_pixbuf_frame (pixbuf, factory->thumbnail_frame, 3, 3, 6, 6);
           g_object_unref (G_OBJECT (pixbuf));
           pixbuf = tmp;
         }

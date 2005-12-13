@@ -206,7 +206,7 @@ thunar_vfs_volume_bsd_update (gpointer user_data)
   ThunarVfsVolumeBSD   *volume_bsd = THUNAR_VFS_VOLUME_BSD (user_data);
   struct stat           sb;
   gchar                *label;
-  gchar                 buffer[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar                 buffer[2048];
   int                   fd;
 
   if (volume_bsd->kind == THUNAR_VFS_VOLUME_KIND_CDROM)
@@ -226,7 +226,7 @@ thunar_vfs_volume_bsd_update (gpointer user_data)
               if (volume_bsd->label == NULL && (volume_bsd->status & THUNAR_VFS_VOLUME_STATUS_PRESENT) == 0)
                 {
                   /* skip to sector 16 and read it */
-                  if (lseek (fd, 16 * 2048, SEEK_SET) >= 0 && read (fd, buffer, 2048) >= 0)
+                  if (lseek (fd, 16 * 2048, SEEK_SET) >= 0 && read (fd, buffer, sizeof (buffer)) >= 0)
                     {
                       /* offset 40 contains the volume identifier */
                       label = buffer + 40;
