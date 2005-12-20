@@ -46,7 +46,7 @@ main (int argc, char **argv)
   /* setup application name */
   g_set_application_name (_("Thunar"));
 
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
   /* Do NOT remove this line for now, If something doesn't work,
    * fix your code instead!
    */

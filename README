@@ -34,6 +34,29 @@ The file 'INSTALL' contains generic installation instructions. For more
 detailed information, visit the Thunar website at http://thunar.xfce.org/.
 
 
+Debugging Support
+=================
+
+Thunar currently supports four different levels of debugging support, which
+can be setup using the configure flag `--enable-debug' (check the output of
+`configure --help'):
+
+  `full'	Use this if you want to debug Thunar to locate a bug. The
+  		build will most probably be noticably slower. This is also
+		recommended for people that want to develop Thunar stuff.
+
+  `yes'		This is the default for SVN snapshot builds. It adds all
+  		kinds of checks to the code, and is therefore likely to run
+		slower. Use this if you want to develop for Thunar (e.g.
+		writing Thunar extensions and such).
+
+  `minimum'	This is the default for release builds, and presents the
+  		recommended behaviour.
+
+  `no'		Disables all sanity checks. Don't use this unless you know
+  		exactly what you do.
+
+
 How to report bugs?
 ===================
 

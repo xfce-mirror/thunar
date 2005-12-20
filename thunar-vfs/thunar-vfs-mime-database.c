@@ -710,7 +710,7 @@ thunar_vfs_mime_database_shutdown_stores (ThunarVfsMimeDatabase *database)
       g_hash_table_destroy (store->mimeinfo_cache);
     }
 
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
   memset (database->stores, 0xaa, database->n_stores * sizeof (*store));
 #endif
 

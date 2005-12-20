@@ -143,7 +143,7 @@ thunar_vfs_info_unref (ThunarVfsInfo *info)
       thunar_vfs_mime_info_unref (info->mime_info);
       thunar_vfs_path_unref (info->path);
 
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
       memset (info, 0xaa, sizeof (*info));
 #endif
 

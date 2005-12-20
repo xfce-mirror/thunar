@@ -79,7 +79,7 @@ static const gchar HEX_CHARS[16] = "0123456789ABCDEF";
 
 
 
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
 G_LOCK_DEFINE_STATIC (debug_paths);
 static GList *debug_paths = NULL;
 #endif
@@ -275,7 +275,7 @@ thunar_vfs_path_new (const gchar *identifier,
       path->parent = thunar_vfs_path_ref (parent);
 
       /* add the path to the debug list */
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
       G_LOCK (debug_paths);
       debug_paths = g_list_prepend (debug_paths, path);
       G_UNLOCK (debug_paths);
@@ -364,7 +364,7 @@ thunar_vfs_path_unref (ThunarVfsPath *path)
       parent = path->parent;
 
       /* remove the path from the debug list */
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
       G_LOCK (debug_paths);
       debug_paths = g_list_remove (debug_paths, path);
       G_UNLOCK (debug_paths);
@@ -505,7 +505,7 @@ thunar_vfs_path_relative (ThunarVfsPath *parent,
   path->parent = thunar_vfs_path_ref (parent);
 
   /* add the path to the debug list */
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
   G_LOCK (debug_paths);
   debug_paths = g_list_prepend (debug_paths, path);
   G_UNLOCK (debug_paths);
@@ -1002,7 +1002,7 @@ _thunar_vfs_path_shutdown (void)
   g_return_if_fail (n_home_components != 0);
 
   /* print out the list of leaked paths */
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
   if (G_UNLIKELY (debug_paths != NULL))
     {
       GList *lp;

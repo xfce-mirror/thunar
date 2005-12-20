@@ -166,7 +166,7 @@ thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
       /* free the comment */
       if (info->comment != NULL && info->comment != thunar_vfs_mime_info_get_name (info))
         {
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
           memset (info->comment, 0xaa, strlen (info->comment) + 1);
 #endif
           g_free (info->comment);
@@ -175,7 +175,7 @@ thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
       /* free the icon name if it isn't one of the statics */
       if (G_LIKELY (!thunar_vfs_mime_info_is_static_icon_name (info)))
         {
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
           if (G_LIKELY (info->icon_name != NULL))
             memset (info->icon_name, 0xaa, strlen (info->icon_name) + 1);
 #endif
@@ -446,7 +446,7 @@ _thunar_vfs_mime_info_invalidate_icon_name (ThunarVfsMimeInfo *info)
 {
   if (!thunar_vfs_mime_info_is_static_icon_name (info))
     {
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
       if (G_LIKELY (info->icon_name != NULL))
         memset (info->icon_name, 0xaa, strlen (info->icon_name));
 #endif

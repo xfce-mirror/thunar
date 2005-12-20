@@ -142,7 +142,7 @@ thunar_file_get_type (void)
 
 
 
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
 static gboolean thunar_file_atexit_registered = FALSE;
 
 static void
@@ -179,7 +179,7 @@ thunar_file_class_init (ThunarFileClass *klass)
 {
   GObjectClass *gobject_class;
 
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
   if (G_UNLIKELY (!thunar_file_atexit_registered))
     {
       g_atexit (thunar_file_atexit);
@@ -299,7 +299,7 @@ thunar_file_finalize (GObject *object)
   ThunarFile *file = THUNAR_FILE (object);
 
   /* verify that nobody's watching the file anymore */
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
   if (G_UNLIKELY (THUNAR_FILE_GET_WATCH_COUNT (file) != 0))
     {
       g_error ("Attempt to finalize a ThunarFile, which has an active "
