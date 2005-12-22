@@ -119,7 +119,8 @@ struct _ThunarTextRenderer
 
   PangoLayout  *layout;
   GtkWidget    *widget;
-  gchar         text[256];
+  gboolean      text_static;
+  gchar        *text;
   gint          char_width;
   gint          char_height;
   PangoWrapMode wrap_mode;
@@ -282,6 +283,10 @@ thunar_text_renderer_finalize (GObject *object)
 {
   ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (object);
 
+  /* release text (if not static) */
+  if (!text_renderer->text_static)
+    g_free (text_renderer->text);
+
   /* drop the cached widget */
   thunar_text_renderer_set_widget (text_renderer, NULL);
 
@@ -340,8 +345,14 @@ thunar_text_renderer_set_property (GObject      *object,
       break;
 
     case PROP_TEXT:
+      /* release the previous text (if not static) */
+      if (!text_renderer->text_static)
+        g_free (text_renderer->text);
       sval = g_value_get_string (value);
-      g_strlcpy (text_renderer->text, G_UNLIKELY (sval == NULL) ? "" : sval, sizeof (text_renderer->text));
+      text_renderer->text_static = (value->data[1].v_uint & G_VALUE_NOCOPY_CONTENTS);
+      text_renderer->text = (sval == NULL) ? "" : (gchar *)sval;
+      if (!text_renderer->text_static)
+        text_renderer->text = g_strdup (text_renderer->text);
       break;
 
     case PROP_WRAP_MODE:
@@ -626,7 +637,7 @@ thunar_text_renderer_invalidate (ThunarTextRenderer *text_renderer)
 
 static void
 thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
-                                 GtkWidget                     *widget)
+                                 GtkWidget          *widget)
 {
   // FIXME: The sample text should be translatable with a hint to translators!
   static const gchar SAMPLE_TEXT[] = "The Quick Brown Fox Jumps Over the Lazy Dog";
@@ -692,7 +703,7 @@ thunar_text_renderer_editing_done (GtkCellEditable    *editable,
   if (G_LIKELY (!GTK_ENTRY (editable)->editing_canceled))
     {
       text = gtk_entry_get_text (GTK_ENTRY (editable));
-      path = g_object_get_data (G_OBJECT (editable), I_("thunar-text-renderer-path"));
+      path = g_object_get_data (G_OBJECT (editable), "thunar-text-renderer-path");
       g_signal_emit (G_OBJECT (text_renderer), text_renderer_signals[EDITED], 0, path, text);
     }
 }

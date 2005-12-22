@@ -151,7 +151,7 @@ AC_TRY_LINK([#include <sys/mman.h>], posix_madvise_test(),
 dnl ******************************
 dnl *** Check for i18n support ***
 dnl ******************************
-XDT_I18N([de el es fr hu ja pt_BR])
+XDT_I18N([de el es fr hu it ja pt_BR])
 
 dnl ***********************************
 dnl *** Check for required packages ***
@@ -277,9 +277,12 @@ if test x"$enable_debug" = x"full" -o x"$enable_debug" = x"yes"; then
   ])
   CFLAGS="$save_CFLAGS"
 
+  dnl Make sure we detect possible errors
+  PLATFORM_CFLAGS="$PLATFORM_CFLAGS -Werror -Wall"
+
   dnl Paranoia for --enable-debug=full
   if test x"$enable_debug" = x"full"; then
-    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3 -Werror -Wall"
+    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3"
     PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_DEPRECATED -DG_ENABLE_DEBUG"
   fi
 else

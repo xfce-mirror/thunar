@@ -1,3 +1,25 @@
+2005-12-22	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Use -Wall -Werror for --enable-debug=yes as well.
+	* thunar/thunar-list-model.c(thunar_list_model_get_value): The MIME info
+	  name is static.
+	* thunar/thunar-text-renderer.c: Don't copy static strings.
+	* pixmaps/Thunar-fallback-icon.png, pixmaps/Makefile.am,
+	  thunar/thunar-fallback-icon.{h,png}, thunar/Makefile.am,
+	  thunar/thunar-icon-factory.c: Load the fallback icon and the
+	  thumbnail frame on-demand.
+	* thunar/main.c(main): Use Thunar icon as default for new windows.
+	* thunar/thunar-icon-factory.c: Allocate the thumbnail factory and the
+	  thumbnail generator on-demand.
+	* thunar/thunar-file.c: Add "display-name" and "special-name" readonly
+	  properties and emit notifications on these properties whenever the
+	  file is changed/renamed.
+	* thunar/thunar-location-buttons.c(thunar_location_buttons_make_button):
+	  Automatically synchronize the button labels with the file's special
+	  names.
+	* configure.in.in: Add it translations to XDT_I18N().
+	* THANKS: Add credits for it translator Roberto Pariset.
+
 2005-12-20	Benedikt Meurer <benny@xfce.org>
 
 	* THANKS: Update credits.

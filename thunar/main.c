@@ -66,6 +66,9 @@ main (int argc, char **argv)
   /* acquire a reference on the global application */
   application = thunar_application_get ();
 
+  /* use the Thunar icon as default for new windows */
+  gtk_window_set_default_icon_name ("Thunar");
+
   path = (argc > 1) ? thunar_vfs_path_new (argv[1], &error) : thunar_vfs_path_get_for_home ();
   if (G_LIKELY (path != NULL))
     {

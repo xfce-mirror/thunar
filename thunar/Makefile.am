@@ -42,8 +42,6 @@ Thunar_SOURCES =							\
 	thunar-dnd.h							\
 	thunar-emblem-chooser.c						\
 	thunar-emblem-chooser.h						\
-	thunar-fallback-icon.c						\
-	thunar-fallback-icon.h						\
 	thunar-shortcuts-model.c					\
 	thunar-shortcuts-model.h					\
 	thunar-shortcuts-pane.c						\
@@ -155,7 +153,6 @@ CLEANFILES =								\
 DISTCLEANFILES =							\
 	$(thunar_built_sources)						\
 	stamp-thunar-marshal.h						\
-	thunar-fallback-icon.c						\
 	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
 	thunar-thumbnail-frame.c					\
@@ -163,14 +160,10 @@ DISTCLEANFILES =							\
 
 BUILT_SOURCES =								\
 	$(thunar_built_sources)						\
-	thunar-fallback-icon.c						\
 	thunar-icon-view-ui.h						\
 	thunar-standard-view-ui.h					\
 	thunar-thumbnail-frame.c					\
 	thunar-window-ui.h
-
-thunar-fallback-icon.c: $(srcdir)/thunar-fallback-icon.png Makefile
-	(echo "#include <thunar/thunar-fallback-icon.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_fallback_icon $(srcdir)/thunar-fallback-icon.png) > thunar-fallback-icon.c
 
 thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
 	(echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
@@ -203,7 +196,6 @@ thunar-marshal.c: thunar-marshal.list Makefile
 endif
 
 EXTRA_DIST =								\
-	thunar-fallback-icon.png					\
 	thunar-icon-view-ui.xml						\
 	thunar-marshal.list						\
 	thunar-standard-view-ui.xml					\

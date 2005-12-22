@@ -32,7 +32,6 @@
 #include <string.h>
 #endif
 
-#include <thunar/thunar-fallback-icon.h>
 #include <thunar/thunar-gdk-pixbuf-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-thumbnail-frame.h>
@@ -88,6 +87,7 @@ static void       thunar_icon_factory_mark_recently_used    (ThunarIconFactory  
 static guint      thunar_icon_key_hash                      (gconstpointer           data);
 static gboolean   thunar_icon_key_equal                     (gconstpointer           a,
                                                              gconstpointer           b);
+static GdkPixbuf *thunar_icon_factory_load_fallback         (gint                    size);
 
 
 
@@ -102,7 +102,6 @@ struct _ThunarIconFactory
 
   ThunarThumbnailGenerator *thumbnail_generator;
   ThunarVfsThumbFactory    *thumbnail_factory;
-  GdkPixbuf                *thumbnail_frame;
 
   GdkPixbuf                *recently[MAX_RECENTLY];  /* ring buffer */
   guint                     recently_pos;            /* insert position */
@@ -110,7 +109,6 @@ struct _ThunarIconFactory
   GHashTable               *icon_cache;
 
   GtkIconTheme             *icon_theme;
-  GdkPixbuf                *fallback_icon;
 
   gint                      changed_idle_id;
   gint                      sweep_timer_id;
@@ -209,22 +207,8 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
   factory->changed_hook_id = g_signal_add_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME),
                                                          0, thunar_icon_factory_changed, factory, NULL);
 
-  /* load the fallback icon */
-  factory->fallback_icon = gdk_pixbuf_new_from_inline (-1, thunar_fallback_icon, FALSE, NULL);
-
   /* allocate the hash table for the icon cache */
   factory->icon_cache = g_hash_table_new_full (thunar_icon_key_hash, thunar_icon_key_equal, g_free, g_object_unref);
-
-  /* allocate the thumbnail factory */
-  factory->thumbnail_factory = thunar_vfs_thumb_factory_new ((THUNAR_THUMBNAIL_SIZE > 128)
-                                                            ? THUNAR_VFS_THUMB_SIZE_LARGE
-                                                            : THUNAR_VFS_THUMB_SIZE_NORMAL);
-
-  /* allocate the thumbnail generator */
-  factory->thumbnail_generator = thunar_thumbnail_generator_new (factory->thumbnail_factory);
-
-  /* load the thumbnail frame */
-  factory->thumbnail_frame = gdk_pixbuf_new_from_inline (-1, thunar_thumbnail_frame, FALSE, NULL);
 }
 
 
@@ -263,17 +247,13 @@ thunar_icon_factory_finalize (GObject *object)
   /* clear the icon cache hash table */
   g_hash_table_destroy (factory->icon_cache);
 
-  /* drop the fallback icon reference */
-  g_object_unref (G_OBJECT (factory->fallback_icon));
-
-  /* release the thumbnail frame */
-  g_object_unref (G_OBJECT (factory->thumbnail_frame));
-
   /* disconnect from the thumbnail factory */
-  g_object_unref (G_OBJECT (factory->thumbnail_factory));
+  if (G_LIKELY (factory->thumbnail_factory != NULL))
+    g_object_unref (G_OBJECT (factory->thumbnail_factory));
 
   /* disconnect from the thumbnail generator */
-  g_object_unref (G_OBJECT (factory->thumbnail_generator));
+  if (G_LIKELY (factory->thumbnail_generator != NULL))
+    g_object_unref (G_OBJECT (factory->thumbnail_generator));
 
   /* remove the "changed" emission hook from the GtkIconTheme class */
   g_signal_remove_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME), factory->changed_hook_id);
@@ -456,6 +436,7 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
                                     gint               size)
 {
   GdkPixbuf *pixbuf;
+  GdkPixbuf *frame;
   GdkPixbuf *tmp;
   gboolean   needs_frame;
   gint       max_width;
@@ -501,9 +482,11 @@ thunar_icon_factory_load_from_file (ThunarIconFactory *factory,
       /* add a frame around thumbnail (large) images */
       if (G_LIKELY (needs_frame))
         {
-          /* add the frame */
-          tmp = thunar_gdk_pixbuf_frame (pixbuf, factory->thumbnail_frame, 3, 3, 6, 6);
+          /* add a frame to the thumbnail */
+          frame = gdk_pixbuf_new_from_inline (-1, thunar_thumbnail_frame, FALSE, NULL);
+          tmp = thunar_gdk_pixbuf_frame (pixbuf, frame, 3, 3, 6, 6);
           g_object_unref (G_OBJECT (pixbuf));
+          g_object_unref (G_OBJECT (frame));
           pixbuf = tmp;
         }
     }
@@ -558,13 +541,8 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
           /* check if we are allowed to return the fallback icon */
           if (!wants_default)
             return NULL;
-
-          /* already have the fallback icon loaded at 48x48 */
-          if (G_LIKELY (size == 48))
-            return g_object_ref (G_OBJECT (factory->fallback_icon));
-
-          /* return a scaled version of the fallback icon */
-          return exo_gdk_pixbuf_scale_ratio (factory->fallback_icon, size);
+          else
+            return thunar_icon_factory_load_fallback (size);
         }
 
       /* generate a key for the new cached icon */
@@ -657,6 +635,28 @@ thunar_icon_key_equal (gconstpointer a,
 
 
 
+static GdkPixbuf*
+thunar_icon_factory_load_fallback (gint size)
+{
+  static const gchar THUNAR_FALLBACK_ICON_PATH[] = DATADIR "/pixmaps/Thunar/Thunar-fallback-icon.png";
+  GdkPixbuf         *pixbuf;
+  GError            *error = NULL;
+
+  /* try to load the fallback icon */
+  pixbuf = gdk_pixbuf_new_from_file_at_scale (THUNAR_FALLBACK_ICON_PATH, size, size, TRUE, &error);
+
+  /* verify that it was loaded */
+  if (G_UNLIKELY (pixbuf == NULL))
+    {
+      g_error (_("Failed to load fallback icon from `%s' (%s). Check your installation!"), THUNAR_FALLBACK_ICON_PATH, error->message);
+      g_error_free (error);
+    }
+
+  return pixbuf;
+}
+
+
+
 /**
  * thunar_icon_factory_get_default:
  *
@@ -697,7 +697,7 @@ thunar_icon_factory_get_default (void)
  * @icon_theme and returns it.
  *
  * You need to explicitly free the returned #ThunarIconFactory object
- * using #g_object_unref() when you are done with it.
+ * using g_object_unref() when you are done with it.
  *
  * Return value: the #ThunarIconFactory for @icon_theme.
  **/
@@ -783,16 +783,9 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
     {
       /* check if the caller will happly accept the fallback icon */
       if (G_LIKELY (wants_default))
-        {
-          if (G_LIKELY (size == 48))
-            return g_object_ref (G_OBJECT (factory->fallback_icon));
-          else
-            return exo_gdk_pixbuf_scale_ratio (factory->fallback_icon, size);
-        }
+        return thunar_icon_factory_load_fallback (size);
       else
-        {
-          return NULL;
-        }
+        return NULL;
     }
 
   /* lookup the icon */
@@ -850,6 +843,18 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
         {
           /* determine the ThunarVfsInfo for the file */
           info = thunar_file_get_info (file);
+
+          /* allocate the thumbnail factory and thumbnail generator on-demand */
+          if (G_UNLIKELY (factory->thumbnail_factory == NULL))
+            {
+              /* allocate the thumbnail factory */
+              factory->thumbnail_factory = thunar_vfs_thumb_factory_new ((THUNAR_THUMBNAIL_SIZE > 128)
+                                                                        ? THUNAR_VFS_THUMB_SIZE_LARGE
+                                                                        : THUNAR_VFS_THUMB_SIZE_NORMAL);
+
+              /* allocate the thumbnail generator */
+              factory->thumbnail_generator = thunar_thumbnail_generator_new (factory->thumbnail_factory);
+            }
 
           /* try to load an existing thumbnail for the file */
           thumb_path = thunar_vfs_thumb_factory_lookup_thumbnail (factory->thumbnail_factory, info);

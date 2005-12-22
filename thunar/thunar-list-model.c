@@ -675,7 +675,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
-      g_value_set_string (value, thunar_vfs_mime_info_get_name (mime_info));
+      g_value_set_static_string (value, thunar_vfs_mime_info_get_name (mime_info));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_NAME:

@@ -901,7 +901,8 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
   if (!thunar_file_is_root (file))
     {
       /* only non-root nodes have a label */
-      label = gtk_label_new (thunar_file_get_special_name (file));
+      label = g_object_new (GTK_TYPE_LABEL, NULL);
+      exo_binding_new (G_OBJECT (file), "special-name", G_OBJECT (label), "label");
       g_object_set_qdata (G_OBJECT (button), gtk_label_quark, label);
       gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
       gtk_widget_show (label);
