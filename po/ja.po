@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-10 09:45+0900\n"
+"POT-Creation-Date: 2006-01-02 02:20+0900\n"
 "PO-Revision-Date: 2005-12-04 10:09+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -516,15 +516,15 @@ msgstr "パス「%s」はフォルダを参照していません。"
 msgid "Failed to add new shortcut"
 msgstr "ショートカットの追加に失敗しました。"
 
-#: ../thunar/thunar-file.c:688
+#: ../thunar/thunar-file.c:762
 msgid "The root folder has no parent"
 msgstr "ルートフォルダに上位のフォルダがありません。"
 
-#: ../thunar/thunar-file.c:880
+#: ../thunar/thunar-file.c:954
 msgid "Filesystem"
 msgstr "ファイルシステム"
 
-#: ../thunar/thunar-file.c:904
+#: ../thunar/thunar-file.c:978
 msgid "Home"
 msgstr "ホーム"
 
@@ -555,13 +555,18 @@ msgstr "進む"
 msgid "Go to the next visited folder"
 msgstr "次のフォルダに移動します。"
 
-#: ../thunar/thunar-icon-factory.c:190
+#: ../thunar/thunar-icon-factory.c:188
 msgid "Icon theme"
 msgstr "アイコンテーマ"
 
-#: ../thunar/thunar-icon-factory.c:191
+#: ../thunar/thunar-icon-factory.c:189
 msgid "The icon theme used by the icon factory"
 msgstr "アイコンファクトリーに使用されるアイコンのテーマです。"
+
+#: ../thunar/thunar-icon-factory.c:651
+#, c-format
+msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
+msgstr ""
 
 # FIXME: what's this? 'Dropped file' or 'File dropped'?
 #: ../thunar/thunar-icon-renderer.c:148
@@ -578,7 +583,7 @@ msgstr "アイコンを表示するファイルです。"
 
 # FIXME: what's this?
 #: ../thunar/thunar-icon-renderer.c:177 ../thunar/thunar-icon-renderer.c:178
-#: ../thunar/thunar-text-renderer.c:201 ../thunar/thunar-text-renderer.c:202
+#: ../thunar/thunar-text-renderer.c:202 ../thunar/thunar-text-renderer.c:203
 msgid "Follow state"
 msgstr "状態に従う"
 
@@ -1208,27 +1213,27 @@ msgstr "ステータスバーのテキスト"
 msgid "The main text to be displayed in the statusbar"
 msgstr "ステータスバーに表示されるメインテキストです。"
 
-#: ../thunar/thunar-text-renderer.c:214
+#: ../thunar/thunar-text-renderer.c:215
 msgid "Text"
 msgstr "テキスト"
 
-#: ../thunar/thunar-text-renderer.c:215
+#: ../thunar/thunar-text-renderer.c:216
 msgid "The text to render"
 msgstr "表示するテキストです。"
 
-#: ../thunar/thunar-text-renderer.c:229
+#: ../thunar/thunar-text-renderer.c:230
 msgid "Wrap mode"
 msgstr "折り返しモード"
 
-#: ../thunar/thunar-text-renderer.c:230
+#: ../thunar/thunar-text-renderer.c:231
 msgid "The wrap mode"
 msgstr "テキストを折り返します。"
 
-#: ../thunar/thunar-text-renderer.c:245
+#: ../thunar/thunar-text-renderer.c:246
 msgid "Wrap width"
 msgstr "折り返し幅"
 
-#: ../thunar/thunar-text-renderer.c:246
+#: ../thunar/thunar-text-renderer.c:247
 msgid "The wrap width"
 msgstr "テキストを折り返す幅です。"
 

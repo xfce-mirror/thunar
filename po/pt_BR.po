@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2005-12-10 09:45+0900\n"
+"POT-Creation-Date: 2006-01-02 02:20+0900\n"
 "PO-Revision-Date: 2005-11-17 16:55+0900\n"
 "Last-Translator: Joao Pedrosa <joaopedrosa@gmail.com>\n"
 "Language-Team: os-cillation <info@os-cillation.com>\n"
@@ -506,15 +506,15 @@ msgstr "O caminho '%s' não se refere a um diretório"
 msgid "Failed to add new shortcut"
 msgstr "Falha em adicionar novo favorito"
 
-#: ../thunar/thunar-file.c:688
+#: ../thunar/thunar-file.c:762
 msgid "The root folder has no parent"
 msgstr "A pasta raiz não tem parente"
 
-#: ../thunar/thunar-file.c:880
+#: ../thunar/thunar-file.c:954
 msgid "Filesystem"
 msgstr "Sistema de Arquivos"
 
-#: ../thunar/thunar-file.c:904
+#: ../thunar/thunar-file.c:978
 msgid "Home"
 msgstr "Pasta Inicial"
 
@@ -545,13 +545,18 @@ msgstr ""
 msgid "Go to the next visited folder"
 msgstr ""
 
-#: ../thunar/thunar-icon-factory.c:190
+#: ../thunar/thunar-icon-factory.c:188
 msgid "Icon theme"
 msgstr "Tema de ícones"
 
-#: ../thunar/thunar-icon-factory.c:191
+#: ../thunar/thunar-icon-factory.c:189
 msgid "The icon theme used by the icon factory"
 msgstr "O tema de ícones usado pela fábrica de ícones"
+
+#: ../thunar/thunar-icon-factory.c:651
+#, c-format
+msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
+msgstr ""
 
 #: ../thunar/thunar-icon-renderer.c:148
 msgid "Drop file"
@@ -566,7 +571,7 @@ msgid "The file whose icon to render"
 msgstr "O arquivo cujo ícone é para renderizar"
 
 #: ../thunar/thunar-icon-renderer.c:177 ../thunar/thunar-icon-renderer.c:178
-#: ../thunar/thunar-text-renderer.c:201 ../thunar/thunar-text-renderer.c:202
+#: ../thunar/thunar-text-renderer.c:202 ../thunar/thunar-text-renderer.c:203
 msgid "Follow state"
 msgstr "Segue estado"
 
@@ -1213,27 +1218,27 @@ msgstr "Texto da barra de status"
 msgid "The main text to be displayed in the statusbar"
 msgstr "O texto principal a ser mostrado na barra de status"
 
-#: ../thunar/thunar-text-renderer.c:214
+#: ../thunar/thunar-text-renderer.c:215
 msgid "Text"
 msgstr "Texto"
 
-#: ../thunar/thunar-text-renderer.c:215
+#: ../thunar/thunar-text-renderer.c:216
 msgid "The text to render"
 msgstr "O texto para renderizar"
 
-#: ../thunar/thunar-text-renderer.c:229
+#: ../thunar/thunar-text-renderer.c:230
 msgid "Wrap mode"
 msgstr "Modo quebra de texto"
 
-#: ../thunar/thunar-text-renderer.c:230
+#: ../thunar/thunar-text-renderer.c:231
 msgid "The wrap mode"
 msgstr "O modo de quebra de texto"
 
-#: ../thunar/thunar-text-renderer.c:245
+#: ../thunar/thunar-text-renderer.c:246
 msgid "Wrap width"
 msgstr "Largura da quebra de texto"
 
-#: ../thunar/thunar-text-renderer.c:246
+#: ../thunar/thunar-text-renderer.c:247
 msgid "The wrap width"
 msgstr "A largura da quebra de texto"
 
