@@ -1,5 +1,19 @@
 2006-01-04	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/Makefile.am, thunar/thunar-pango-extensions.{c,h}: Add common
+	  PangoAttrList's here, to avoid allocating them over and over again,
+	  and of course to avoid markup, which makes translator's life easier.
+	* thunar/thunar-location-buttons.c, thunar/thunar-preferences-dialog.c,
+	  thunar/thunar-progress-dialog.c, thunar/thunar-properties-dialog.c:
+	  Use common PangoAttrList's provided by the thunar-pango-extensions.
+	* thunar/thunar-permissions-view.c(thunar_permissions_view_init): Use
+	  italic font for the warning to make it easier to distinguish the text
+	  from the other parts of the GUI.
+	* thunar/thunar-chooser-dialog.c(thunar_chooser_dialog_update_header):
+	  Also setup the window icon in addition to the header image icon.
+
+2006-01-04	Benedikt Meurer <benny@xfce.org>
+
 	* docs/reference/thunar-vfs/thunar-vfs-sections.txt,
 	  thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs.symbols,
 	  docs/reference/thunar-vfs/tmpl/thunar-vfs-info.sgml: Add method

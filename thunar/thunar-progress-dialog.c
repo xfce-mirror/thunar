@@ -25,6 +25,7 @@
 #include <time.h>
 #endif
 
+#include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-progress-dialog.h>
 
 
@@ -158,11 +159,9 @@ thunar_progress_dialog_class_init (ThunarProgressDialogClass *klass)
 static void
 thunar_progress_dialog_init (ThunarProgressDialog *dialog)
 {
-  PangoAttribute *attribute;
-  PangoAttrList  *attr_list_big;
-  GtkWidget      *table;
-  GtkWidget      *image;
-  GtkWidget      *label;
+  GtkWidget *table;
+  GtkWidget *image;
+  GtkWidget *label;
 
   /* remember the current time as start time */
   g_get_current_time (&dialog->start_time);
@@ -187,16 +186,9 @@ thunar_progress_dialog_init (ThunarProgressDialog *dialog)
   gtk_widget_show (image);
 
   label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
   gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 6);
   gtk_widget_show (label);
-
-  attr_list_big = pango_attr_list_new ();
-  attribute = pango_attr_scale_new (PANGO_SCALE_LARGE);
-  attribute->start_index = 0;
-  attribute->end_index = -1;
-  pango_attr_list_insert (attr_list_big, attribute);
-  gtk_label_set_attributes (GTK_LABEL (label), attr_list_big);
-  pango_attr_list_unref (attr_list_big);
 
   dialog->progress_label = g_object_new (EXO_TYPE_ELLIPSIZED_LABEL, "ellipsize", EXO_PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_table_attach (GTK_TABLE (table), dialog->progress_label, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);

@@ -33,6 +33,7 @@
 
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-buttons.h>
+#include <thunar/thunar-pango-extensions.h>
 
 
 
@@ -138,8 +139,6 @@ struct _ThunarLocationButtons
   GtkWidget     *right_slider;
 
   ThunarFile    *current_directory;
-
-  PangoAttrList *attr_list_bold;
 
   gint           slider_width;
   gboolean       ignore_click : 1;
@@ -284,21 +283,13 @@ thunar_location_buttons_location_bar_init (ThunarLocationBarIface *iface)
 static void
 thunar_location_buttons_init (ThunarLocationButtons *buttons)
 {
-  PangoAttribute *attribute;
-  GtkWidget      *arrow;
+  GtkWidget *arrow;
 
   GTK_WIDGET_SET_FLAGS (buttons, GTK_NO_WINDOW);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
 
   buttons->enter_timeout_id = -1;
   buttons->scroll_timeout_id = -1;
-
-  /* pre-allocate a pango attr list for bold labels */
-  buttons->attr_list_bold = pango_attr_list_new ();
-  attribute = pango_attr_weight_new (PANGO_WEIGHT_BOLD);
-  attribute->start_index = 0;
-  attribute->end_index = -1;
-  pango_attr_list_insert (buttons->attr_list_bold, attribute);
 
   gtk_widget_push_composite_child ();
 
@@ -351,9 +342,6 @@ thunar_location_buttons_finalize (GObject *object)
 
   /* release from the current_directory */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (buttons), NULL);
-
-  /* release the pre-allocated bold attribute list */
-  pango_attr_list_unref (buttons->attr_list_bold);
 
   (*G_OBJECT_CLASS (thunar_location_buttons_parent_class)->finalize) (object);
 }
@@ -909,7 +897,7 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
 
       /* current directory gets a bold label */
       if (file == buttons->current_directory)
-        gtk_label_set_attributes (GTK_LABEL (label), buttons->attr_list_bold);
+        gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
     }
 
   /* the current directory is toggled */
@@ -1176,7 +1164,7 @@ thunar_location_buttons_clicked (GtkWidget             *button,
         {
           /* current directory gets a bold label */
           if (directory == buttons->current_directory)
-            gtk_label_set_attributes (GTK_LABEL (label), buttons->attr_list_bold);
+            gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
           else
             gtk_label_set_attributes (GTK_LABEL (label), NULL);
         }

@@ -33,6 +33,7 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-emblem-chooser.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-view.h>
 #include <thunar/thunar-properties-dialog.h>
 
@@ -180,25 +181,16 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
 static void
 thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 {
-  PangoAttribute *attribute;
-  PangoAttrList  *attr_list_bold;
-  GtkWidget      *chooser;
-  GtkWidget      *table;
-  GtkWidget      *label;
-  GtkWidget      *box;
-  GtkWidget      *spacer;
-  gint            row = 0;
+  GtkWidget *chooser;
+  GtkWidget *table;
+  GtkWidget *label;
+  GtkWidget *box;
+  GtkWidget *spacer;
+  gint       row = 0;
 
   dialog->provider_factory = thunarx_provider_factory_get_default ();
   dialog->volume_manager = thunar_vfs_volume_manager_get_default ();
   dialog->rename_idle_id = -1;
-
-  /* allocate shared pango attribute list for bold labels */
-  attr_list_bold = pango_attr_list_new ();
-  attribute = pango_attr_weight_new (PANGO_WEIGHT_BOLD);
-  attribute->start_index = 0;
-  attribute->end_index = -1;
-  pango_attr_list_insert (attr_list_bold, attribute);
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_HELP, GTK_RESPONSE_HELP,
@@ -235,7 +227,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (dialog->icon_image);
 
   label = gtk_label_new (_("Name:"));
-  gtk_label_set_attributes (GTK_LABEL (label), attr_list_bold);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_box_pack_start (GTK_BOX (box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
@@ -260,7 +252,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
      Second box (kind)
    */
   label = gtk_label_new (_("Kind:"));
-  gtk_label_set_attributes (GTK_LABEL (label), attr_list_bold);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   exo_binding_new (G_OBJECT (label), "visible", G_OBJECT (spacer), "visible");
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
@@ -285,7 +277,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
      Third box (modified, accessed)
    */
   label = gtk_label_new (_("Modified:"));
-  gtk_label_set_attributes (GTK_LABEL (label), attr_list_bold);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -298,7 +290,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   ++row;
 
   label = gtk_label_new (_("Accessed:"));
-  gtk_label_set_attributes (GTK_LABEL (label), attr_list_bold);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -322,7 +314,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
      Fourth box (volume, size)
    */
   label = gtk_label_new (_("Volume:"));
-  gtk_label_set_attributes (GTK_LABEL (label), attr_list_bold);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -345,7 +337,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   ++row;
 
   label = gtk_label_new (_("Size:"));
-  gtk_label_set_attributes (GTK_LABEL (label), attr_list_bold);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
@@ -385,10 +377,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), chooser, label);
   gtk_widget_show (chooser);
   gtk_widget_show (label);
-
-
-  /* release the shared pango attribute list */
-  pango_attr_list_unref (attr_list_bold);
 }
 
 

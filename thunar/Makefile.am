@@ -89,6 +89,8 @@ Thunar_SOURCES =							\
 	thunar-navigator.h						\
 	thunar-open-with-action.c					\
 	thunar-open-with-action.h					\
+	thunar-pango-extensions.c					\
+	thunar-pango-extensions.h					\
 	thunar-path-entry.c						\
 	thunar-path-entry.h						\
 	thunar-permissions-model.c					\

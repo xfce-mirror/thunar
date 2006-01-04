@@ -605,6 +605,7 @@ thunar_chooser_dialog_update_header (ThunarChooserDialog *dialog)
       icon_name = thunar_vfs_mime_info_lookup_icon_name (mime_info, icon_theme);
       icon = thunar_icon_factory_load_icon (icon_factory, icon_name, 48, NULL, FALSE);
       gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->header_image), icon);
+      gtk_window_set_icon (GTK_WINDOW (dialog), icon);
       if (G_LIKELY (icon != NULL))
         g_object_unref (G_OBJECT (icon));
 

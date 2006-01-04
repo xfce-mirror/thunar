@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-advanced-permissions-dialog.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-model.h>
 #include <thunar/thunar-permissions-view.h>
 
@@ -241,6 +242,7 @@ thunar_permissions_view_init (ThunarPermissionsView *view)
   gtk_widget_show (image);
 
   label = gtk_label_new (_("You are not the owner of this file, so\nyou cannot change these permissions."));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_italic ());
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);

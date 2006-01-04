@@ -27,6 +27,7 @@
 
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-icon-view.h>
+#include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
 
@@ -197,7 +198,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = g_object_new (GTK_TYPE_LABEL, "label", _("<b>Default View</b>"), "use-markup", TRUE, NULL);
+  label = gtk_label_new (_("Default View"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
@@ -248,7 +250,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = g_object_new (GTK_TYPE_LABEL, "label", _("<b>Icon View</b>"), "use-markup", TRUE, NULL);
+  label = gtk_label_new (_("Icon View"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
