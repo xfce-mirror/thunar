@@ -1,3 +1,38 @@
+2006-01-04	Benedikt Meurer <benny@xfce.org>
+
+	* docs/reference/thunar-vfs/thunar-vfs-sections.txt,
+	  thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs.symbols,
+	  docs/reference/thunar-vfs/tmpl/thunar-vfs-info.sgml: Add method
+	  thunar_vfs_info_chmod() to change the permissions of a file
+	  identified by a given ThunarVfsInfo.
+	* thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs.symbols,
+	  docs/reference/thunar-vfs/thunar-vfs-sections.txt,
+	  docs/reference/thunar-vfs/tmpl/thunar-vfs-info.sgml: Add method
+	  thunar_vfs_info_chgrp() to change the group id of a file identified
+	  by a given ThunarVfsInfo.
+	* thunar-vfs/thunar-vfs-user.c(thunar_vfs_user_load): Properly
+	  substitute '&' in real names.
+	* icons/16x16/, icons/Makefile.am, configure.in.in, thunar/Makefile.am,
+	  thunar/thunar-stock.{c,h}: Add stock icons thunar-permissions-user,
+	  thunar-permissions-group and thunar-permissions-other.
+	* thunar-uca/thunar-uca-plugin.c: Don't display debug messages unless
+	  G_ENABLE_DEBUG is defined.
+	* thunar-vfs/thunar-vfs-user.{c,h}, thunar-vfs/thunar-vfs.symbols,
+	  docs/reference/thunar-vfs/thunar-vfs-sections.txt,
+	  docs/reference/thunar-vfs/tmpl/thunar-vfs-user-manager.sgml: Add new
+	  method thunar_vfs_user_manager_get_all_groups() to retrieve all groups
+	  known to the ThunarVfsUserManager.
+	* thunar/thunar-advanced-permissions-dialog.{c,h},
+	  thunar/thunar-change-group-dialog.{c,h},
+	  thunar/thunar-permissions-model.{c,h},
+	  thunar/thunar-permissions-view.{c,h},
+	  thunar/Makefile.am, thunar/thunar-file.{c,h},
+	  thunar/thunar-properties-dialog.c: Add permissions tab to the
+	  file properties dialog.
+	* po/POTFILES.in: Add new files.
+	* po/*.po: Merge new strings.
+	* tdb/tdbtool.c(print_rec): Fix printf format.
+
 2006-01-02	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-uca/thunar-uca-model.c: Include <locale.h> to get LC_MESSAGES

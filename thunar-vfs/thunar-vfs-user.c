@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -307,6 +307,8 @@ thunar_vfs_user_load (ThunarVfsUser *user)
   ThunarVfsUserManager *manager;
   struct passwd        *pw;
   const gchar          *s;
+  gchar                *name;
+  gchar                *t;
 
   g_return_if_fail (user->name == NULL);
 
@@ -325,6 +327,22 @@ thunar_vfs_user_load (ThunarVfsUser *user)
         user->real_name = g_strndup (pw->pw_gecos, s - pw->pw_gecos);
       else if (pw->pw_gecos[0] != '\0')
         user->real_name = g_strdup (pw->pw_gecos);
+
+      /* substitute '&' in the real_name with the account name */
+      if (G_LIKELY (user->real_name != NULL && strchr (user->real_name, '&') != NULL))
+        {
+          /* generate a version of the username with the first char upper'd */
+          name = g_strdup (user->name);
+          name[0] = g_ascii_toupper (name[0]);
+
+          /* replace all occurances of '&' */
+          t = exo_str_replace (user->real_name, "&", name);
+          g_free (user->real_name);
+          user->real_name = t;
+
+          /* clean up */
+          g_free (name);
+        }
 
       g_object_unref (G_OBJECT (manager));
     }
@@ -608,7 +626,7 @@ thunar_vfs_user_manager_finalize (GObject *object)
   /* unload the passwd file */
   endpwent ();
 
-  G_OBJECT_CLASS (thunar_vfs_user_manager_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_vfs_user_manager_parent_class)->finalize) (object);
 }
 
 
@@ -754,6 +772,49 @@ thunar_vfs_user_manager_get_user_by_id (ThunarVfsUserManager *manager,
   g_object_ref (G_OBJECT (user));
 
   return user;
+}
+
+
+
+/**
+ * thunar_vfs_user_manager_get_all_groups:
+ * @manager : a #ThunarVfsUserManager.
+ *
+ * Returns the list of all #ThunarVfsGroup<!---->s in the system
+ * that are known to the @manager.
+ *
+ * The caller is responsible to free the returned list using:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) g_object_unref, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: the list of all groups known to the @manager.
+ **/
+GList*
+thunar_vfs_user_manager_get_all_groups (ThunarVfsUserManager *manager)
+{
+  ThunarVfsGroup *group;
+  struct group   *grp;
+  GList          *groups = NULL;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_USER_MANAGER (manager), NULL);
+
+  /* iterate through all groups in the system */
+  for (;;)
+    {
+      /* lookup the next group */
+      grp = getgrent ();
+      if (G_UNLIKELY (grp == NULL))
+        break;
+
+      /* lookup our version of the group */
+      group = thunar_vfs_user_manager_get_group_by_id (manager, grp->gr_gid);
+      if (G_LIKELY (group != NULL))
+        groups = g_list_append (groups, group);
+    }
+
+  return groups;
 }
 
 

@@ -45,7 +45,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
       return;
     }
 
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
   g_message ("Initializing ThunarUca extension");
 #endif
 
@@ -64,7 +64,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 G_MODULE_EXPORT void
 thunar_extension_shutdown (void)
 {
-#ifndef G_DISABLE_CHECKS
+#ifdef G_ENABLE_DEBUG
   g_message ("Shutting down ThunarUca extension");
 #endif
 }

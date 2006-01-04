@@ -342,9 +342,9 @@ static void delete_tdb(void)
 
 static int print_rec(TDB_CONTEXT *tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 {
-  fprintf(pDumpFile,"\nkey %d bytes\n", key.dsize);
+  fprintf(pDumpFile,"\nkey %u bytes\n", (unsigned) key.dsize);
   print_asc((unsigned char*)key.dptr, key.dsize);
-  fprintf(pDumpFile,"\ndata %d bytes\n", dbuf.dsize);
+  fprintf(pDumpFile,"\ndata %u bytes\n", (unsigned) dbuf.dsize);
   print_data((unsigned char*)dbuf.dptr, dbuf.dsize);
   return 0;
 }

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 os-cillation e.K.
+ * Copyright (c) 2005-2006 os-cillation e.K.
  *
  * Written by Benedikt Meurer <benny@xfce.org>.
  *
@@ -29,6 +29,7 @@
 #endif
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-stock.h>
 
 
 
@@ -62,6 +63,9 @@ main (int argc, char **argv)
 
   /* initialize the ThunarVFS library */
   thunar_vfs_init ();
+
+  /* initialize the thunar stock items/icons */
+  thunar_stock_init ();
 
   /* acquire a reference on the global application */
   application = thunar_application_get ();

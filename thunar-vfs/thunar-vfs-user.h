@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -79,6 +79,8 @@ ThunarVfsGroup       *thunar_vfs_user_manager_get_group_by_id (ThunarVfsUserMana
                                                                ThunarVfsGroupId      id);
 ThunarVfsUser        *thunar_vfs_user_manager_get_user_by_id  (ThunarVfsUserManager *manager,
                                                                ThunarVfsUserId       id);
+
+GList                *thunar_vfs_user_manager_get_all_groups  (ThunarVfsUserManager *manager) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

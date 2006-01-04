@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -101,6 +101,14 @@ void                         thunar_vfs_info_unref            (ThunarVfsInfo    
 ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsInfo *info) G_GNUC_MALLOC;
 
 G_INLINE_FUNC const gchar   *thunar_vfs_info_get_custom_icon  (const ThunarVfsInfo *info);
+
+gboolean                     thunar_vfs_info_chgrp            (ThunarVfsInfo       *info,
+                                                               ThunarVfsGroupId     gid,
+                                                               GError             **error);
+
+gboolean                     thunar_vfs_info_chmod            (ThunarVfsInfo       *info,
+                                                               ThunarVfsFileMode    mode,
+                                                               GError             **error);
 
 gboolean                     thunar_vfs_info_execute          (const ThunarVfsInfo *info,
                                                                GdkScreen           *screen,

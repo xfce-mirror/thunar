@@ -24,8 +24,12 @@ Thunar_SOURCES =							\
 	$(thunar_include_HEADERS)					\
 	$(thunar_built_sources)						\
 	main.c								\
+	thunar-advanced-permissions-dialog.c				\
+	thunar-advanced-permissions-dialog.h				\
 	thunar-application.c						\
 	thunar-application.h						\
+	thunar-change-group-dialog.c					\
+	thunar-change-group-dialog.h					\
 	thunar-chooser-dialog.c						\
 	thunar-chooser-dialog.h						\
 	thunar-chooser-model.c						\
@@ -87,6 +91,10 @@ Thunar_SOURCES =							\
 	thunar-open-with-action.h					\
 	thunar-path-entry.c						\
 	thunar-path-entry.h						\
+	thunar-permissions-model.c					\
+	thunar-permissions-model.h					\
+	thunar-permissions-view.c					\
+	thunar-permissions-view.h					\
 	thunar-preferences-dialog.c					\
 	thunar-preferences-dialog.h					\
 	thunar-preferences.c						\
@@ -102,6 +110,8 @@ Thunar_SOURCES =							\
 	thunar-standard-view-ui.h					\
 	thunar-statusbar.c						\
 	thunar-statusbar.h						\
+	thunar-stock.c							\
+	thunar-stock.h							\
 	thunar-text-renderer.c						\
 	thunar-text-renderer.h						\
 	thunar-thumbnail-frame.c					\

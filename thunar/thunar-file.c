@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,6 +21,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
@@ -32,6 +36,9 @@
 #endif
 #ifdef HAVE_TIME_H
 #include <time.h>
+#endif
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
 #endif
 
 #include <thunar/thunar-file.h>
@@ -107,6 +114,7 @@ static void               thunar_file_watch_free               (gpointer        
 
 static ThunarVfsUserManager *user_manager;
 static ThunarVfsMonitor     *monitor;
+static ThunarVfsUserId       effective_user_id;
 static ThunarMetafile       *metafile;
 static GObjectClass         *thunar_file_parent_class;
 static GHashTable           *file_cache;
@@ -211,6 +219,9 @@ thunar_file_class_init (ThunarFileClass *klass)
 
   /* grab a reference on the user manager */
   user_manager = thunar_vfs_user_manager_get_default ();
+
+  /* determine the effective user id of the process */
+  effective_user_id = geteuid ();
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_file_dispose;
@@ -526,7 +537,9 @@ thunar_file_denies_access_permission (const ThunarFile *file,
   if (G_UNLIKELY (user == NULL))
     return FALSE;
 
-  // FIXME: We should add a superuser check here!
+  /* root is allowed to do everything */
+  if (G_UNLIKELY (effective_user_id == 0))
+    return FALSE;
 
   if (thunar_vfs_user_is_me (user))
     {
@@ -764,6 +777,71 @@ thunar_file_get_parent (const ThunarFile *file,
     }
 
   return thunar_file_get_for_path (thunar_vfs_path_get_parent (file->info->path), error);
+}
+
+
+
+/**
+ * thunar_file_chgrp:
+ * @file  : a #ThunarFile instance.
+ * @group : a #ThunarVfsGroup.
+ * @error : return location for errors or %NULL.
+ *
+ * Tries to change the #ThunarVfsGroup for @file to @group.
+ * Returns %TRUE if the operation was successfull, else %FALSE
+ * and @error is set to describe the cause.
+ *
+ * Return value: %TRUE if the group of @file was successfully
+ *               changed to @group, else %FALSE.
+ **/
+gboolean
+thunar_file_chgrp (ThunarFile     *file,
+                   ThunarVfsGroup *group,
+                   GError        **error)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (THUNAR_VFS_IS_GROUP (group), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  if (thunar_vfs_info_chgrp (file->info, thunar_vfs_group_get_id (group), error))
+    {
+      thunar_file_changed (file);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_file_chmod:
+ * @file  : a #ThunarFile instance.
+ * @mode  : the new #ThunarVfsFileMode for @file.
+ * @error : return location for errors or %NULL.
+ *
+ * Tries to change the #ThunarVfsFileMode for @file to @mode.
+ * Returns %TRUE if the operation was successfull, else %FALSE
+ * and @error is set to describe the cause.
+ *
+ * Return value: %TRUE if the mode of @file was successfully
+ *               changed to @mode, else %FALSE.
+ **/
+gboolean
+thunar_file_chmod (ThunarFile       *file,
+                   ThunarVfsFileMode mode,
+                   GError          **error)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  if (thunar_vfs_info_chmod (file->info, mode, error))
+    {
+      thunar_file_changed (file);
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 
@@ -1205,6 +1283,48 @@ thunar_file_get_user (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   return thunar_vfs_user_manager_get_user_by_id (user_manager, file->info->uid);
+}
+
+
+
+/**
+ * thunar_file_is_chgrpable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to change the file group of @file.
+ *
+ * Return value: %TRUE if the group of @file can be changed.
+ **/
+gboolean
+thunar_file_is_chgrpable (const ThunarFile *file)
+{
+  /* we can change the group if we can change the mode */
+  return thunar_file_is_chmodable (file);
+}
+
+
+
+/**
+ * thunar_file_is_chmodable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to changed the file mode of @file.
+ *
+ * Return value: %TRUE if the mode of @file can be changed.
+ **/
+gboolean
+thunar_file_is_chmodable (const ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  /* we can only change the mode if we the euid is
+   *   a) equal to the file owner id
+   * or
+   *   b) the super-user id.
+   */
+  return (effective_user_id == 0 || effective_user_id == file->info->uid);
 }
 
 

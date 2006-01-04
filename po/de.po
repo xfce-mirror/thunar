@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-02 02:20+0900\n"
+"POT-Creation-Date: 2006-01-04 18:34+0100\n"
 "PO-Revision-Date: 2005-10-06 22:03+0900\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
@@ -15,23 +15,23 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../thunar-vfs/thunar-vfs-info.c:261
+#: ../thunar-vfs/thunar-vfs-info.c:362
 msgid "No Exec field specified"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-info.c:269
+#: ../thunar-vfs/thunar-vfs-info.c:370
 msgid "Unable to parse file"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-info.c:359
+#: ../thunar-vfs/thunar-vfs-info.c:460
 msgid "Invalid file name"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-info.c:381
+#: ../thunar-vfs/thunar-vfs-info.c:482
 msgid "Invalid desktop file"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-info.c:615
+#: ../thunar-vfs/thunar-vfs-info.c:716
 #, c-format
 msgid "Failed to stat file `%s': %s"
 msgstr ""
@@ -138,7 +138,7 @@ msgid "copy of %s"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:158 ../thunar/thunar-list-model.c:703
-#: ../thunar/thunar-properties-dialog.c:629
+#: ../thunar/thunar-properties-dialog.c:643
 #, c-format
 msgid "link to %s"
 msgstr ""
@@ -250,9 +250,61 @@ msgid "Failed to create symbolic `%s'"
 msgstr ""
 
 #. setup application name
-#: ../thunar/main.c:47 ../thunar/thunar-window.c:404
+#: ../thunar/main.c:48 ../thunar/thunar-window.c:404
 msgid "Thunar"
 msgstr "Thunar"
+
+#: ../thunar/thunar-advanced-permissions-dialog.c:159
+#, fuzzy
+msgid "Advanced Permissions"
+msgstr "Berechtigungen"
+
+#: ../thunar/thunar-advanced-permissions-dialog.c:167
+msgid "Special Bits"
+msgstr ""
+
+#: ../thunar/thunar-advanced-permissions-dialog.c:180
+msgid "Set _User ID (SUID)"
+msgstr ""
+
+#: ../thunar/thunar-advanced-permissions-dialog.c:190
+msgid ""
+"An executable file whose Set User ID (SUID) bit is\n"
+"set will always be executed with the privileges of\n"
+"the owner of the executable."
+msgstr ""
+
+#: ../thunar/thunar-advanced-permissions-dialog.c:211
+msgid "Set _Group ID (SGID)"
+msgstr ""
+
+#: ../thunar/thunar-advanced-permissions-dialog.c:221
+msgid ""
+"An executable file whose Set Group ID (SGID) bit is\n"
+"set will always be executed with the privileges of the\n"
+"group of the executable."
+msgstr ""
+
+#: ../thunar/thunar-advanced-permissions-dialog.c:242
+msgid "_Sticky"
+msgstr ""
+
+#: ../thunar/thunar-advanced-permissions-dialog.c:252
+msgid ""
+"A file in a sticky directory may only be removed or\n"
+"renamed by a user if the user has write permission\n"
+"for the directory and the user is the owner of the\n"
+"file, the owner of the directory or the superuser."
+msgstr ""
+
+#. display an error message to the user
+#. display an error to the user (when we get here, we definitely have a valid file!)
+#: ../thunar/thunar-advanced-permissions-dialog.c:356
+#: ../thunar/thunar-permissions-model.c:830
+#: ../thunar/thunar-permissions-view.c:494
+#, fuzzy, c-format
+msgid "Failed to change permissions of `%s'"
+msgstr "Andere Anwendung..."
 
 #. display an error message to the user
 #: ../thunar/thunar-application.c:222
@@ -279,11 +331,25 @@ msgstr ""
 msgid "Creating directories..."
 msgstr ""
 
+#: ../thunar/thunar-change-group-dialog.c:193
+msgid "Change Group"
+msgstr ""
+
+#: ../thunar/thunar-change-group-dialog.c:200
+msgid "_Group:"
+msgstr ""
+
+#. display an error message
+#: ../thunar/thunar-change-group-dialog.c:309
+#, c-format
+msgid "Failed to change the group to which `%s' belongs"
+msgstr ""
+
 #: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
 #: ../thunar/thunar-emblem-chooser.c:148 ../thunar/thunar-icon-renderer.c:161
 #: ../thunar/thunar-open-with-action.c:146
 #: ../thunar/thunar-open-with-action.c:147
-#: ../thunar/thunar-properties-dialog.c:171 ../thunar/thunar-statusbar.c:190
+#: ../thunar/thunar-properties-dialog.c:172 ../thunar/thunar-statusbar.c:190
 msgid "File"
 msgstr ""
 
@@ -433,7 +499,11 @@ msgstr ""
 msgid "Name"
 msgstr "Name"
 
+#.
+#. Permissions chooser
+#.
 #: ../thunar/thunar-details-view.c:197
+#: ../thunar/thunar-properties-dialog.c:382
 msgid "Permissions"
 msgstr "Berechtigungen"
 
@@ -479,36 +549,15 @@ msgstr ""
 msgid "Unable to execute file `%s'"
 msgstr ""
 
-#. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:319
-msgid "_Remove Shortcut"
-msgstr ""
-
-#. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:334
-msgid "Re_name Shortcut"
-msgstr ""
-
-#: ../thunar/thunar-shortcuts-view.c:654
-#, c-format
-msgid "The path '%s' does not refer to a directory"
-msgstr ""
-
-#. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:673
-#, fuzzy
-msgid "Failed to add new shortcut"
-msgstr "Andere Anwendung..."
-
-#: ../thunar/thunar-file.c:762
+#: ../thunar/thunar-file.c:775
 msgid "The root folder has no parent"
 msgstr ""
 
-#: ../thunar/thunar-file.c:954
+#: ../thunar/thunar-file.c:1032
 msgid "Filesystem"
 msgstr "Dateisystem"
 
-#: ../thunar/thunar-file.c:978
+#: ../thunar/thunar-file.c:1056
 msgid "Home"
 msgstr ""
 
@@ -736,7 +785,7 @@ msgstr ""
 msgid "Whether to display hidden files"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:701 ../thunar/thunar-properties-dialog.c:627
+#: ../thunar/thunar-list-model.c:701 ../thunar/thunar-properties-dialog.c:641
 msgid "broken link"
 msgstr ""
 
@@ -820,6 +869,76 @@ msgstr ""
 
 #: ../thunar/thunar-path-entry.c:216
 msgid "The icon size for the path entry"
+msgstr ""
+
+#: ../thunar/thunar-permissions-model.c:440
+#, fuzzy, c-format
+msgid "%s (%s)"
+msgstr "%s (%u Byte)"
+
+#: ../thunar/thunar-permissions-model.c:447
+msgid "Unknown file owner"
+msgstr ""
+
+#: ../thunar/thunar-permissions-model.c:460
+msgid "Unknown file group"
+msgstr ""
+
+#: ../thunar/thunar-permissions-model.c:465
+msgid "All other users"
+msgstr ""
+
+#: ../thunar/thunar-permissions-model.c:474
+msgid "Read"
+msgstr ""
+
+#: ../thunar/thunar-permissions-model.c:478
+msgid "Write"
+msgstr ""
+
+#: ../thunar/thunar-permissions-model.c:482
+msgid "List folder contents"
+msgstr ""
+
+#: ../thunar/thunar-permissions-model.c:482
+msgid "Execute"
+msgstr ""
+
+#. actions for the group item
+#: ../thunar/thunar-permissions-model.c:884
+msgid "Change _Group..."
+msgstr ""
+
+#. append the "Grant Permission" action
+#: ../thunar/thunar-permissions-model.c:897
+#, fuzzy
+msgid "_Grant Permission"
+msgstr "Berechtigungen"
+
+#. append the "Deny Permission" action
+#: ../thunar/thunar-permissions-model.c:906
+#, fuzzy
+msgid "_Deny Permission"
+msgstr "Berechtigungen"
+
+#: ../thunar/thunar-permissions-view.c:213
+msgid ""
+"For special permissions and for\n"
+"advanced settings, click Advanced."
+msgstr ""
+
+#: ../thunar/thunar-permissions-view.c:222
+msgid "_Advanced..."
+msgstr ""
+
+#: ../thunar/thunar-permissions-view.c:223
+msgid "Click here for special permissions and for advanced settings."
+msgstr ""
+
+#: ../thunar/thunar-permissions-view.c:243
+msgid ""
+"You are not the owner of this file, so\n"
+"you cannot change these permissions."
 msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:184
@@ -940,70 +1059,91 @@ msgid_plural "(%lu seconds remaining)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-properties-dialog.c:172
+#: ../thunar/thunar-properties-dialog.c:173
 msgid "The file displayed by the dialog"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:217
+#: ../thunar/thunar-properties-dialog.c:220
 msgid "General"
 msgstr "Allgemein"
 
-#: ../thunar/thunar-properties-dialog.c:234
+#: ../thunar/thunar-properties-dialog.c:237
 msgid "Name:"
 msgstr "Name:"
 
 #.
 #. Second box (kind)
 #.
-#: ../thunar/thunar-properties-dialog.c:259
+#: ../thunar/thunar-properties-dialog.c:262
 msgid "Kind:"
 msgstr ""
 
 #.
 #. Third box (modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:284
+#: ../thunar/thunar-properties-dialog.c:287
 msgid "Modified:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:297
+#: ../thunar/thunar-properties-dialog.c:300
 msgid "Accessed:"
 msgstr ""
 
 #.
 #. Fourth box (volume, size)
 #.
-#: ../thunar/thunar-properties-dialog.c:321
+#: ../thunar/thunar-properties-dialog.c:324
 msgid "Volume:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:344
+#: ../thunar/thunar-properties-dialog.c:347
 msgid "Size:"
 msgstr "Größe:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:368
+#: ../thunar/thunar-properties-dialog.c:371
 msgid "Emblems"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:604
+#: ../thunar/thunar-properties-dialog.c:618
 #, c-format
 msgid "%s Info"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:685
+#: ../thunar/thunar-properties-dialog.c:699
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u Byte)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:731
+#: ../thunar/thunar-properties-dialog.c:745
 #: ../thunar/thunar-standard-view.c:2170
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr ""
+
+#. append the remove menu item
+#: ../thunar/thunar-shortcuts-view.c:319
+msgid "_Remove Shortcut"
+msgstr ""
+
+#. append the rename menu item
+#: ../thunar/thunar-shortcuts-view.c:334
+msgid "Re_name Shortcut"
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:654
+#, c-format
+msgid "The path '%s' does not refer to a directory"
+msgstr ""
+
+#. display an error message to the user
+#: ../thunar/thunar-shortcuts-view.c:673
+#, fuzzy
+msgid "Failed to add new shortcut"
+msgstr "Andere Anwendung..."
 
 #: ../thunar/thunar-standard-view.c:253
 msgid "File Context Menu"
@@ -1643,25 +1783,25 @@ msgstr "Andere Anwendung..."
 msgid "Image Files"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:767
+#: ../thunar-uca/thunar-uca-model.c:770
 #, c-format
 msgid "Unknown element <%s>"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:785
+#: ../thunar-uca/thunar-uca-model.c:788
 msgid "End element handler called while in root context"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:873
+#: ../thunar-uca/thunar-uca-model.c:876
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:1298
+#: ../thunar-uca/thunar-uca-model.c:1301
 msgid "Failed to determine save location for uca.xml"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-model.c:1414
+#: ../thunar-uca/thunar-uca-model.c:1417
 msgid "Command not configured"
 msgstr ""
 

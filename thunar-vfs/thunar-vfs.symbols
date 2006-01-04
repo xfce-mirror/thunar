@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>.
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -76,6 +76,8 @@ thunar_vfs_info_copy
 #ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_info_get_custom_icon
 #endif
+thunar_vfs_info_chgrp
+thunar_vfs_info_chmod
 thunar_vfs_info_execute
 thunar_vfs_info_rename
 thunar_vfs_info_matches
@@ -267,6 +269,7 @@ thunar_vfs_user_manager_get_type
 thunar_vfs_user_manager_get_default
 thunar_vfs_user_manager_get_group_by_id
 thunar_vfs_user_manager_get_user_by_id
+thunar_vfs_user_manager_get_all_groups G_GNUC_MALLOC
 #endif
 #endif
 
