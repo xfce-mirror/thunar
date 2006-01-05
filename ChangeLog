@@ -1,3 +1,9 @@
+2006-01-05	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-text-renderer.c: Don't determine the focus-padding and
+	  focus-line-width style properties on every call to get_size() when
+	  used within the icon view.
+
 2006-01-04	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/Makefile.am, thunar/thunar-pango-extensions.{c,h}: Add common

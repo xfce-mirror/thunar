@@ -126,6 +126,7 @@ struct _ThunarTextRenderer
   PangoWrapMode wrap_mode;
   gint          wrap_width;
   gboolean      follow_state;
+  gint          focus_width;;
 
   /* cell editing support */
   GtkWidget    *entry;
@@ -384,8 +385,6 @@ thunar_text_renderer_get_size (GtkCellRenderer *renderer,
   gint                text_length;
   gint                text_width;
   gint                text_height;
-  gint                focus_padding;
-  gint                focus_width;
 
   /* setup the new widget */
   thunar_text_renderer_set_widget (text_renderer, widget);
@@ -414,9 +413,8 @@ thunar_text_renderer_get_size (GtkCellRenderer *renderer,
    */
   if (text_renderer->follow_state)
     {
-      gtk_widget_style_get (widget, "focus-padding", &focus_padding, "focus-line-width", &focus_width, NULL);
-      text_width += 2 * (focus_padding + focus_width);
-      text_height += 2 * (focus_padding + focus_width);
+      text_width += 2 * text_renderer->focus_width;
+      text_height += 2 * text_renderer->focus_width;
     }
 
   /* update width/height */
@@ -462,8 +460,6 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   cairo_t            *cr;
 #endif
   gint                x0, x1, y0, y1;
-  gint                focus_padding;
-  gint                focus_width;
   gint                text_width;
   gint                text_height;
   gint                x_offset;
@@ -512,9 +508,8 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   /* take into account the state indicator (required for calculation) */
   if (text_renderer->follow_state)
     {
-      gtk_widget_style_get (widget, "focus-padding", &focus_padding, "focus-line-width", &focus_width, NULL);
-      text_width += 2 * (focus_padding + focus_width);
-      text_height += 2 * (focus_padding + focus_width);
+      text_width += 2 * text_renderer->focus_width;
+      text_height += 2 * text_renderer->focus_width;
     }
 
   /* calculate the real x-offset */
@@ -571,10 +566,10 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
   /* get proper sizing for the layout drawing */
   if (text_renderer->follow_state)
     {
-      text_width -= 2 * (focus_padding + focus_width);
-      text_height -= 2 * (focus_padding + focus_width);
-      x_offset += focus_padding + focus_width;
-      y_offset += focus_padding + focus_width;
+      text_width -= 2 * text_renderer->focus_width;
+      text_height -= 2 * text_renderer->focus_width;
+      x_offset += text_renderer->focus_width;
+      y_offset += text_renderer->focus_width;
     }
 
   /* draw the text */
@@ -642,6 +637,8 @@ thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
   // FIXME: The sample text should be translatable with a hint to translators!
   static const gchar SAMPLE_TEXT[] = "The Quick Brown Fox Jumps Over the Lazy Dog";
   PangoRectangle     extents;
+  gint               focus_padding;
+  gint               focus_line_width;
 
   if (G_LIKELY (widget == text_renderer->widget))
     return;
@@ -673,6 +670,10 @@ thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
       pango_layout_set_width (text_renderer->layout, -1);
       text_renderer->char_width = extents.width / g_utf8_strlen (SAMPLE_TEXT, sizeof (SAMPLE_TEXT) - 1);
       text_renderer->char_height = extents.height;
+
+      /* determine the focus-padding and focus-line-width style properties from the widget */
+      gtk_widget_style_get (widget, "focus-padding", &focus_padding, "focus-line-width", &focus_line_width, NULL);
+      text_renderer->focus_width = focus_padding + focus_line_width;
     }
   else
     {
