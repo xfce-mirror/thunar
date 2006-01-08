@@ -50,6 +50,9 @@ thunar_vfs_unlink_file G_GNUC_MALLOC
 thunar_vfs_unlink_files G_GNUC_MALLOC
 thunar_vfs_make_directory G_GNUC_MALLOC
 thunar_vfs_make_directories G_GNUC_MALLOC
+thunar_vfs_change_mode G_GNUC_MALLOC
+thunar_vfs_change_group G_GNUC_MALLOC
+thunar_vfs_change_owner G_GNUC_MALLOC
 #endif
 #endif
 
@@ -76,8 +79,6 @@ thunar_vfs_info_copy
 #ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_info_get_custom_icon
 #endif
-thunar_vfs_info_chgrp
-thunar_vfs_info_chmod
 thunar_vfs_info_execute
 thunar_vfs_info_rename
 thunar_vfs_info_matches

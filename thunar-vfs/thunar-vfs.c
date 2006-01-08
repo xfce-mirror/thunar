@@ -23,6 +23,8 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs.h>
+#include <thunar-vfs/thunar-vfs-chmod-job.h>
+#include <thunar-vfs/thunar-vfs-chown-job.h>
 #include <thunar-vfs/thunar-vfs-link-job.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
 #include <thunar-vfs/thunar-vfs-mkdir-job.h>
@@ -511,6 +513,125 @@ thunar_vfs_make_directories (GList   *path_list,
 
   /* allocate and launch the new job */
   job = thunar_vfs_mkdir_job_new (path_list, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
+}
+
+
+
+/**
+ * thunar_vfs_change_mode:
+ * @path      : the base #ThunarVfsPath.
+ * @dir_mask  : the mask for the @dir_mode.
+ * @dir_mode  : the new mode for directories.
+ * @file_mask : the mask for the @file_mode.
+ * @file_mode : the new mode for files.
+ * @recursive : whether to change permissions recursively.
+ * @error     : return location for errors or %NULL.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsChmodJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_change_mode (ThunarVfsPath    *path,
+                        ThunarVfsFileMode dir_mask,
+                        ThunarVfsFileMode dir_mode,
+                        ThunarVfsFileMode file_mask,
+                        ThunarVfsFileMode file_mode,
+                        gboolean          recursive,
+                        GError          **error)
+{
+  ThunarVfsJob *job;
+
+  g_return_val_if_fail (path != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate and launch the new job */
+  job = thunar_vfs_chmod_job_new (path, dir_mask, dir_mode, file_mask, file_mode, recursive, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
+}
+
+
+
+/**
+ * thunar_vfs_change_group:
+ * @path      : the base #ThunarVfsPath.
+ * @gid       : the new group id.
+ * @recursive : whether to change groups recursively.
+ * @error     : return location for errors or %NULL.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsChownJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_change_group (ThunarVfsPath   *path,
+                         ThunarVfsGroupId gid,
+                         gboolean         recursive,
+                         GError         **error)
+{
+  ThunarVfsJob *job;
+
+  g_return_val_if_fail (path != NULL, NULL);
+  g_return_val_if_fail ((gint) gid >= 0, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate and launch the new job */
+  job = thunar_vfs_chown_job_new (path, -1, gid, recursive, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
+}
+
+
+
+/**
+ * thunar_vfs_change_owner:
+ * @path      : the base #ThunarVfsPath.
+ * @uid       : the new user id.
+ * @recursive : whether to change groups recursively.
+ * @error     : return location for errors or %NULL.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsChownJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_change_owner (ThunarVfsPath  *path,
+                         ThunarVfsUserId uid,
+                         gboolean        recursive,
+                         GError        **error)
+{
+  ThunarVfsJob *job;
+
+  g_return_val_if_fail (path != NULL, NULL);
+  g_return_val_if_fail ((gint) uid >= 0, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate and launch the new job */
+  job = thunar_vfs_chown_job_new (path, uid, -1, recursive, error);
   if (G_LIKELY (job != NULL))
     thunar_vfs_job_launch (job);
 

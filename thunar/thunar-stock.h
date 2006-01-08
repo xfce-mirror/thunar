@@ -22,10 +22,9 @@
 
 G_BEGIN_DECLS;
 
-/* stock icons for the ThunarPermissionsView */
-#define THUNAR_STOCK_PERMISSIONS_GROUP  "thunar-permissions-group"
-#define THUNAR_STOCK_PERMISSIONS_OTHER  "thunar-permissions-other"
-#define THUNAR_STOCK_PERMISSIONS_USER   "thunar-permissions-user"
+/* stock icons for the ThunarPermissionsChooser */
+#define THUNAR_STOCK_GROUP  "thunar-group"
+#define THUNAR_STOCK_USER   "thunar-user"
 
 void thunar_stock_init (void) G_GNUC_INTERNAL;
 

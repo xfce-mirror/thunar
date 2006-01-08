@@ -2,9 +2,8 @@
 
 iconsdir = $(datadir)/icons/hicolor/16x16/stock/generic
 icons_DATA =								\
-	stock_thunar-permissions-group.png				\
-	stock_thunar-permissions-other.png				\
-	stock_thunar-permissions-user.png
+	stock_thunar-group.png						\
+	stock_thunar-user.png
 
 EXTRA_DIST =								\
 	$(icons_DATA)

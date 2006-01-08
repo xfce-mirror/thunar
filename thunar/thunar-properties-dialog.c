@@ -34,7 +34,7 @@
 #include <thunar/thunar-emblem-chooser.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-pango-extensions.h>
-#include <thunar/thunar-permissions-view.h>
+#include <thunar/thunar-permissions-chooser.h>
 #include <thunar/thunar-properties-dialog.h>
 
 
@@ -197,7 +197,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
                           GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE,
                           NULL);
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
-  gtk_window_set_default_size (GTK_WINDOW (dialog), 350, 430);
+  gtk_window_set_default_size (GTK_WINDOW (dialog), 400, 430);
 
   dialog->notebook = gtk_notebook_new ();
   gtk_container_set_border_width (GTK_CONTAINER (dialog->notebook), 6);
@@ -372,7 +372,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
      Permissions chooser
    */
   label = gtk_label_new (_("Permissions"));
-  chooser = thunar_permissions_view_new ();
+  chooser = thunar_permissions_chooser_new ();
   exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (chooser), "file");
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), chooser, label);
   gtk_widget_show (chooser);

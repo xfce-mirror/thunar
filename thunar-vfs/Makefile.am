@@ -49,6 +49,10 @@ libthunar_vfs_include_HEADERS =						\
 libthunar_vfs_1_la_SOURCES =						\
 	$(libthunar_vfs_built_sources)					\
 	$(libthunar_vfs_headers)					\
+	thunar-vfs-chmod-job.c						\
+	thunar-vfs-chmod-job.h						\
+	thunar-vfs-chown-job.c						\
+	thunar-vfs-chown-job.h						\
 	thunar-vfs-config.c						\
 	thunar-vfs-exec.c						\
 	thunar-vfs-exec.h						\

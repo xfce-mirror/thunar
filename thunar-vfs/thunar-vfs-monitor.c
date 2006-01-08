@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -266,7 +266,7 @@ thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
 
   /* check if we already have a matching notification */
   for (notification = monitor->notifications; notification != NULL; notification = notification->next)
-    if (notification->id == id && strcmp (filename, notification->filename) == 0)
+    if (notification->id == id && exo_str_is_equal (filename, notification->filename))
       {
         if (tag >= notification->tag)
           {

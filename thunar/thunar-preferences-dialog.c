@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -164,6 +164,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   AtkRelationSet *relations;
   AtkRelation    *relation;
   AtkObject      *object;
+  GtkWidget      *notebook;
   GtkWidget      *button;
   GtkWidget      *combo;
   GtkWidget      *frame;
@@ -190,8 +191,19 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                           GTK_STOCK_HELP, GTK_RESPONSE_HELP,
                           NULL);
 
+  notebook = gtk_notebook_new ();
+  gtk_container_set_border_width (GTK_CONTAINER (notebook), 6);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), notebook, TRUE, TRUE, 0);
+  gtk_widget_show (notebook);
+
+
+  /*
+     Views
+   */
+  label = gtk_label_new (_("Views"));
   vbox = g_object_new (GTK_TYPE_VBOX, "border-width", 12, "spacing", 12, NULL);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), vbox, TRUE, TRUE, 0);
+  gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
+  gtk_widget_show (label);
   gtk_widget_show (vbox);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
@@ -218,7 +230,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Icon View"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Detailed List View"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Last Active View"));
+#if !GTK_CHECK_VERSION(2,9,0)
   g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
+#endif
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "default-view", G_OBJECT (combo), "active",
                                transform_view_string_to_index, transform_view_index_to_string, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -268,6 +282,55 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                                     "beside the icon rather than below the icon."), NULL);
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
+
+
+  /*
+     Advanced
+   */
+  label = gtk_label_new (_("Advanced"));
+  vbox = g_object_new (GTK_TYPE_VBOX, "border-width", 12, "spacing", 12, NULL);
+  gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
+  gtk_widget_show (label);
+  gtk_widget_show (vbox);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Miscellaneous"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  table = gtk_table_new (1, 2, FALSE);
+  gtk_table_set_row_spacings (GTK_TABLE (table), 6);
+  gtk_table_set_col_spacings (GTK_TABLE (table), 12);
+  gtk_container_set_border_width (GTK_CONTAINER (table), 12);
+  gtk_container_add (GTK_CONTAINER (frame), table);
+  gtk_widget_show (table);
+
+  label = gtk_label_new_with_mnemonic (_("Apply permissions _recursively:"));
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_new_text ();
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Ask everytime"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Always"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Never"));
+#if !GTK_CHECK_VERSION(2,9,0)
+  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
+#endif
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-recursive-permissions", G_OBJECT (combo), "active");
+  gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
+
+  /* set Atk label relation for the combo */
+  object = gtk_widget_get_accessible (combo);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
 }
 
 

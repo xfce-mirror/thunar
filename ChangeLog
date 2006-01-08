@@ -1,3 +1,45 @@
+2006-01-08	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-monitor.c
+	  (thunar_vfs_monitor_queue_notification): Don't use strcmp() here, as
+	  the notification's filename may be NULL.
+	* thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs.symbols: Drop
+	  thunar_vfs_info_chmod() and thunar_vfs_info_chgrp() again.
+	* thunar-vfs/thunar-vfs-chmod-job.{c,h}, thunar-vfs/thunar-vfs.{c,h},
+	  thunar-vfs/thunar-vfs-chown-job.{c,h}, thunar-vfs/Makefile.am: Add
+	  new classes ThunarVfsChmodJob and ThunarVfsChownJob as replacements
+	  for the thunar_vfs_info_chmod() and thunar_vfs_info_chgrp() functions.
+	  These jobs can operate recursively. Add interfaces to the new classes,
+	  thunar_vfs_change_mode() and thunar_vfs_change_group().
+	* docs/reference/thunar-vfs/: Update documentation.
+	* thunar/thunar-file.{c,h}: Drop thunar_file_chmod(),thunar_file_chgrp()
+	  and thunar_file_is_chgrpable(), as we'll use the asynchronous jobs
+	  added to Thunar-VFS now.
+	* thunar/thunar-advanced-permissions-dialog.{c,h},
+	  thunar/thunar-change-group-dialog.{c,h},
+	  thunar/thunar-permissions-model.{c,h},
+	  thunar/thunar-permissions-view.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-properties-dialog.c: Ditch the ACL aware permissions
+	  user interface, as it's unlikely that ACL support will be there for
+	  1.0 and so there's no need to reduce the usability of the permissions
+	  user interface yet.
+	* thunar/thunar-pango-extensions.{c,h}: Add new Pango helper method
+	  thunar_pango_attr_list_small_italic().
+	* thunar/thunar-enum-types.{c,h}: Import new files to contain enum
+	  types that don't fit anywhere else and provide conversation functions
+	  for these types.
+	* thunar/thunar-permissions-chooser.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-properties-dialog.c: Import simplified permissions
+	  chooser, similar to the Aqua Finder one, with support to change
+	  permissions recursively for folders.
+	* thunar/thunar-preferences-dialog.c, thunar/thunar-preferences.c: Add
+	  option "misc-recursive-permissions", which controls whether
+	  permissions are always/never applied recursively, or whether Thunar
+	  should ask the user everytime a permission flag is changed.
+	* icons/16x16/, thunar/thunar-stock.{c,h}: Remove now obsolete icon
+	  thunar-permissions-other. Rename the user and group icons.
+	* po/*.po, po/POTFILES.in: Update file list. Merge new strings.
+
 2006-01-05	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-text-renderer.c: Don't determine the focus-padding and

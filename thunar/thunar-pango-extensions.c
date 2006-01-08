@@ -21,23 +21,37 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_STDARG_H
+#include <stdarg.h>
+#endif
+
 #include <thunar/thunar-pango-extensions.h>
 
 
 
-static PangoAttrList *thunar_pango_attr_list_wrap (PangoAttribute *attribute) G_GNUC_MALLOC;
+static PangoAttrList *thunar_pango_attr_list_wrap (PangoAttribute *attribute, ...) G_GNUC_MALLOC;
 
 
 
 static PangoAttrList*
-thunar_pango_attr_list_wrap (PangoAttribute *attribute)
+thunar_pango_attr_list_wrap (PangoAttribute *attribute, ...)
 {
   PangoAttrList *attr_list;
-  
+  va_list        args;
+
+  /* allocate a new attribute list */
   attr_list = pango_attr_list_new ();
-  attribute->start_index = 0;
-  attribute->end_index = -1;
-  pango_attr_list_insert (attr_list, attribute);
+
+  /* add all specified attributes */
+  va_start (args, attribute);
+  while (attribute != NULL)
+    {
+      attribute->start_index = 0;
+      attribute->end_index = -1;
+      pango_attr_list_insert (attr_list, attribute);
+      attribute = va_arg (args, PangoAttribute *);
+    }
+  va_end (args);
 
   return attr_list;
 }
@@ -58,7 +72,7 @@ thunar_pango_attr_list_big (void)
 {
   static PangoAttrList *attr_list = NULL;
   if (G_UNLIKELY (attr_list == NULL))
-    attr_list = thunar_pango_attr_list_wrap (pango_attr_scale_new (PANGO_SCALE_LARGE));
+    attr_list = thunar_pango_attr_list_wrap (pango_attr_scale_new (PANGO_SCALE_LARGE), NULL);
   return attr_list;
 }
 
@@ -78,7 +92,7 @@ thunar_pango_attr_list_bold (void)
 {
   static PangoAttrList *attr_list = NULL;
   if (G_UNLIKELY (attr_list == NULL))
-    attr_list = thunar_pango_attr_list_wrap (pango_attr_weight_new (PANGO_WEIGHT_BOLD));
+    attr_list = thunar_pango_attr_list_wrap (pango_attr_weight_new (PANGO_WEIGHT_BOLD), NULL);
   return attr_list;
 }
 
@@ -98,7 +112,27 @@ thunar_pango_attr_list_italic (void)
 {
   static PangoAttrList *attr_list = NULL;
   if (G_UNLIKELY (attr_list == NULL))
-    attr_list = thunar_pango_attr_list_wrap (pango_attr_style_new (PANGO_STYLE_ITALIC));
+    attr_list = thunar_pango_attr_list_wrap (pango_attr_style_new (PANGO_STYLE_ITALIC), NULL);
+  return attr_list;
+}
+
+
+
+/**
+ * thunar_pango_attr_list_small_italic:
+ *
+ * Returns a #PangoAttrList for rendering small italic text.
+ * The returned list is owned by the callee and must
+ * not be freed or modified by the caller.
+ *
+ * Return value: a #PangoAttrList for rendering small italic text.
+ **/
+PangoAttrList*
+thunar_pango_attr_list_small_italic (void)
+{
+  static PangoAttrList *attr_list = NULL;
+  if (G_UNLIKELY (attr_list == NULL))
+    attr_list = thunar_pango_attr_list_wrap (pango_attr_scale_new (PANGO_SCALE_SMALL), pango_attr_style_new (PANGO_STYLE_ITALIC), NULL);
   return attr_list;
 }
 

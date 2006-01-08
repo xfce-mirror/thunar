@@ -782,71 +782,6 @@ thunar_file_get_parent (const ThunarFile *file,
 
 
 /**
- * thunar_file_chgrp:
- * @file  : a #ThunarFile instance.
- * @group : a #ThunarVfsGroup.
- * @error : return location for errors or %NULL.
- *
- * Tries to change the #ThunarVfsGroup for @file to @group.
- * Returns %TRUE if the operation was successfull, else %FALSE
- * and @error is set to describe the cause.
- *
- * Return value: %TRUE if the group of @file was successfully
- *               changed to @group, else %FALSE.
- **/
-gboolean
-thunar_file_chgrp (ThunarFile     *file,
-                   ThunarVfsGroup *group,
-                   GError        **error)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_GROUP (group), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-
-  if (thunar_vfs_info_chgrp (file->info, thunar_vfs_group_get_id (group), error))
-    {
-      thunar_file_changed (file);
-      return TRUE;
-    }
-
-  return FALSE;
-}
-
-
-
-/**
- * thunar_file_chmod:
- * @file  : a #ThunarFile instance.
- * @mode  : the new #ThunarVfsFileMode for @file.
- * @error : return location for errors or %NULL.
- *
- * Tries to change the #ThunarVfsFileMode for @file to @mode.
- * Returns %TRUE if the operation was successfull, else %FALSE
- * and @error is set to describe the cause.
- *
- * Return value: %TRUE if the mode of @file was successfully
- *               changed to @mode, else %FALSE.
- **/
-gboolean
-thunar_file_chmod (ThunarFile       *file,
-                   ThunarVfsFileMode mode,
-                   GError          **error)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-
-  if (thunar_vfs_info_chmod (file->info, mode, error))
-    {
-      thunar_file_changed (file);
-      return TRUE;
-    }
-
-  return FALSE;
-}
-
-
-
-/**
  * thunar_file_execute:
  * @file      : a #ThunarFile instance.
  * @screen    : a #GdkScreen.
@@ -1283,24 +1218,6 @@ thunar_file_get_user (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   return thunar_vfs_user_manager_get_user_by_id (user_manager, file->info->uid);
-}
-
-
-
-/**
- * thunar_file_is_chgrpable:
- * @file : a #ThunarFile instance.
- *
- * Determines whether the owner of the current process is allowed
- * to change the file group of @file.
- *
- * Return value: %TRUE if the group of @file can be changed.
- **/
-gboolean
-thunar_file_is_chgrpable (const ThunarFile *file)
-{
-  /* we can change the group if we can change the mode */
-  return thunar_file_is_chmodable (file);
 }
 
 

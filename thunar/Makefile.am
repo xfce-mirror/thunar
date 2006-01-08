@@ -24,12 +24,8 @@ Thunar_SOURCES =							\
 	$(thunar_include_HEADERS)					\
 	$(thunar_built_sources)						\
 	main.c								\
-	thunar-advanced-permissions-dialog.c				\
-	thunar-advanced-permissions-dialog.h				\
 	thunar-application.c						\
 	thunar-application.h						\
-	thunar-change-group-dialog.c					\
-	thunar-change-group-dialog.h					\
 	thunar-chooser-dialog.c						\
 	thunar-chooser-dialog.h						\
 	thunar-chooser-model.c						\
@@ -46,6 +42,8 @@ Thunar_SOURCES =							\
 	thunar-dnd.h							\
 	thunar-emblem-chooser.c						\
 	thunar-emblem-chooser.h						\
+	thunar-enum-types.c						\
+	thunar-enum-types.h						\
 	thunar-shortcuts-model.c					\
 	thunar-shortcuts-model.h					\
 	thunar-shortcuts-pane.c						\
@@ -93,10 +91,8 @@ Thunar_SOURCES =							\
 	thunar-pango-extensions.h					\
 	thunar-path-entry.c						\
 	thunar-path-entry.h						\
-	thunar-permissions-model.c					\
-	thunar-permissions-model.h					\
-	thunar-permissions-view.c					\
-	thunar-permissions-view.h					\
+	thunar-permissions-chooser.c					\
+	thunar-permissions-chooser.h					\
 	thunar-preferences-dialog.c					\
 	thunar-preferences-dialog.h					\
 	thunar-preferences.c						\

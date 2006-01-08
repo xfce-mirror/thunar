@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -41,6 +41,7 @@
 
 #include <tdb/tdb.h>
 
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
 
@@ -57,6 +58,7 @@ enum
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_VIEW,
+  PROP_MISC_RECURSIVE_PERMISSIONS,
   N_PROPERTIES,
 };
 
@@ -238,6 +240,21 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         "last-view",
                                                         "ThunarIconView",
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-recursive-permissions:
+   *
+   * Whether to apply permissions recursively everytime the
+   * permissions are altered by the user.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_RECURSIVE_PERMISSIONS,
+                                   g_param_spec_enum ("misc-recursive-permissions",
+                                                      "misc-recursive-permissions",
+                                                      "misc-recursive-permissions",
+                                                      THUNAR_TYPE_RECURSIVE_PERMISSIONS,
+                                                      THUNAR_RECURSIVE_PERMISSIONS_ASK,
+                                                      EXO_PARAM_READWRITE));
 }
 
 

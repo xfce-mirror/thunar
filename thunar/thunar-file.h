@@ -119,14 +119,6 @@ static inline gboolean           thunar_file_has_parent           (const ThunarF
 ThunarFile                      *thunar_file_get_parent           (const ThunarFile       *file,
                                                                    GError                **error);
 
-gboolean                         thunar_file_chgrp                (ThunarFile             *file,
-                                                                   ThunarVfsGroup         *group,
-                                                                   GError                **error);
-
-gboolean                         thunar_file_chmod                (ThunarFile             *file,
-                                                                   ThunarVfsFileMode       mode,
-                                                                   GError                **error);
-
 gboolean                         thunar_file_execute              (ThunarFile             *file,
                                                                    GdkScreen              *screen,
                                                                    GList                  *path_list,
@@ -163,7 +155,6 @@ ThunarVfsVolume                 *thunar_file_get_volume           (const ThunarF
 ThunarVfsGroup                  *thunar_file_get_group            (const ThunarFile       *file);
 ThunarVfsUser                   *thunar_file_get_user             (const ThunarFile       *file);
 
-gboolean                         thunar_file_is_chgrpable         (const ThunarFile       *file);
 gboolean                         thunar_file_is_chmodable         (const ThunarFile       *file);
 gboolean                         thunar_file_is_executable        (const ThunarFile       *file);
 gboolean                         thunar_file_is_readable          (const ThunarFile       *file);

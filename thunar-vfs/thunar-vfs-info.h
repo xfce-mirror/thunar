@@ -102,14 +102,6 @@ ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsIn
 
 G_INLINE_FUNC const gchar   *thunar_vfs_info_get_custom_icon  (const ThunarVfsInfo *info);
 
-gboolean                     thunar_vfs_info_chgrp            (ThunarVfsInfo       *info,
-                                                               ThunarVfsGroupId     gid,
-                                                               GError             **error);
-
-gboolean                     thunar_vfs_info_chmod            (ThunarVfsInfo       *info,
-                                                               ThunarVfsFileMode    mode,
-                                                               GError             **error);
-
 gboolean                     thunar_vfs_info_execute          (const ThunarVfsInfo *info,
                                                                GdkScreen           *screen,
                                                                GList               *path_list,

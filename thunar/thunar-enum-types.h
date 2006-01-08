@@ -17,18 +17,32 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __THUNAR_PANGO_EXTENSIONS_H__
-#define __THUNAR_PANGO_EXTENSIONS_H__
+#ifndef __THUNAR_ENUM_TYPES_H__
+#define __THUNAR_ENUM_TYPES_H__
 
-#include <pango/pango.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS;
 
-PangoAttrList *thunar_pango_attr_list_big           (void) G_GNUC_CONST G_GNUC_INTERNAL;
-PangoAttrList *thunar_pango_attr_list_bold          (void) G_GNUC_CONST G_GNUC_INTERNAL;
-PangoAttrList *thunar_pango_attr_list_italic        (void) G_GNUC_CONST G_GNUC_INTERNAL;
-PangoAttrList *thunar_pango_attr_list_small_italic  (void) G_GNUC_CONST G_GNUC_INTERNAL;
+#define THUNAR_TYPE_RECURSIVE_PERMISSIONS (thunar_recursive_permissions_get_type ())
+
+/**
+ * ThunarRecursivePermissionsMode:
+ * @THUNAR_RECURSIVE_PERMISSIONS_ASK    : ask the user everytime permissions are changed.
+ * @THUNAR_RECURSIVE_PERMISSIONS_ALWAYS : always apply the change recursively.
+ * @THUNAR_RECURSIVE_PERMISSIONS_NEVER  : never apply the change recursively.
+ *
+ * Modus operandi when changing permissions.
+ **/
+typedef enum
+{
+  THUNAR_RECURSIVE_PERMISSIONS_ASK,
+  THUNAR_RECURSIVE_PERMISSIONS_ALWAYS,
+  THUNAR_RECURSIVE_PERMISSIONS_NEVER,
+} ThunarRecursivePermissionsMode;
+
+GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_PANGO_EXTENSIONS_H__ */
+#endif /* !__THUNAR_ENUM_TYPES_H__ */
