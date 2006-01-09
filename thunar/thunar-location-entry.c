@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-path-entry.h>
 
@@ -305,10 +306,32 @@ static void
 thunar_location_entry_activate (ThunarLocationEntry *location_entry)
 {
   ThunarFile *file;
+  GError     *error = NULL;
 
+  /* determine the current file from the path entry */
   file = thunar_path_entry_get_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry));
   if (G_LIKELY (file != NULL))
-    thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), file);
+    {
+      /* check if we have a new directory or a file to launch */
+      if (thunar_file_is_directory (file))
+        {
+          /* open the new directory */
+          thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), file);
+        }
+      else
+        {
+          /* try to launch the selected file */
+          if (!thunar_file_launch (file, GTK_WIDGET (location_entry), &error))
+            {
+              thunar_dialogs_show_error (GTK_WIDGET (location_entry), error, _("Failed to launch `%s'"), thunar_file_get_display_name (file));
+              g_error_free (error);
+            }
+
+          /* be sure to reset the current file of the path entry */
+          if (G_LIKELY (location_entry->current_directory != NULL))
+            thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry), location_entry->current_directory);
+        }
+    }
 }
 
 

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2004-2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2004-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -47,6 +47,7 @@ typedef enum
   THUNAR_LIST_MODEL_COLUMN_FILE,
   THUNAR_LIST_MODEL_COLUMN_MIME_TYPE,
   THUNAR_LIST_MODEL_COLUMN_NAME,
+  THUNAR_LIST_MODEL_COLUMN_REAL_NAME,
   THUNAR_LIST_MODEL_COLUMN_PERMISSIONS,
   THUNAR_LIST_MODEL_COLUMN_SIZE,
   THUNAR_LIST_MODEL_COLUMN_TYPE,

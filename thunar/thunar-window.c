@@ -968,7 +968,9 @@ static void
 thunar_window_action_open_location (GtkAction    *action,
                                     ThunarWindow *window)
 {
-  GtkWidget *dialog;
+  ThunarFile *selected_file;
+  GtkWidget  *dialog;
+  GError     *error = NULL;
 
   /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
    * in the window does not support text entry by the user.
@@ -981,7 +983,27 @@ thunar_window_action_open_location (GtkAction    *action,
       gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
       thunar_location_dialog_set_selected_file (THUNAR_LOCATION_DIALOG (dialog), thunar_window_get_current_directory (window));
       if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-        thunar_window_set_current_directory (window, thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog)));
+        {
+          /* check if we have a new directory or a file to launch */
+          selected_file = thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog));
+          if (thunar_file_is_directory (selected_file))
+            {
+              /* open the new directory */
+              thunar_window_set_current_directory (window, selected_file);
+            }
+          else
+            {
+              /* be sure to hide the location dialog first */
+              gtk_widget_hide (dialog);
+
+              /* try to launch the selected file */
+              if (!thunar_file_launch (selected_file, GTK_WIDGET (window), &error))
+                {
+                  thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to launch `%s'"), thunar_file_get_display_name (selected_file));
+                  g_error_free (error);
+                }
+            }
+        }
       gtk_widget_destroy (dialog);
     }
 }

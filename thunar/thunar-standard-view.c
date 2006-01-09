@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -152,6 +152,9 @@ static gboolean      thunar_standard_view_button_release_event      (GtkWidget  
                                                                      ThunarStandardView       *standard_view);
 static gboolean      thunar_standard_view_motion_notify_event       (GtkWidget                *view,
                                                                      GdkEventMotion           *event,
+                                                                     ThunarStandardView       *standard_view);
+static gboolean      thunar_standard_view_scroll_event              (GtkWidget                *view,
+                                                                     GdkEventScroll           *event,
                                                                      ThunarStandardView       *standard_view);
 static gboolean      thunar_standard_view_drag_drop                 (GtkWidget                *view,
                                                                      GdkDragContext           *context,
@@ -514,6 +517,9 @@ thunar_standard_view_constructor (GType                  type,
    * we therefore assume that all real views have the "model" property.
    */
   g_object_set (G_OBJECT (view), "model", THUNAR_STANDARD_VIEW (object)->model, NULL);
+
+  /* setup support to navigate using a horizontal mouse wheel */
+  g_signal_connect (G_OBJECT (view), "scroll-event", G_CALLBACK (thunar_standard_view_scroll_event), object);
 
   /* setup the real view as drop site */
   gtk_drag_dest_set (view, 0, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
@@ -1861,6 +1867,34 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
       return TRUE;
     }
 
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_standard_view_scroll_event (GtkWidget          *view,
+                                   GdkEventScroll     *event,
+                                   ThunarStandardView *standard_view)
+{
+  GtkAction *action = NULL;
+
+  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+
+  /* determine the appropriate action ("back" for scroll left, "forward" for scroll right) */
+  if (G_UNLIKELY (event->type == GDK_SCROLL && event->direction == GDK_SCROLL_LEFT))
+    action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/back");
+  else if (G_UNLIKELY (event->type == GDK_SCROLL && event->direction == GDK_SCROLL_RIGHT))
+    action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/forward");
+
+  /* perform the action (if any) */
+  if (G_UNLIKELY (action != NULL))
+    {
+      gtk_action_activate (action);
+      return TRUE;
+    }
+
+  /* next please... */
   return FALSE;
 }
 

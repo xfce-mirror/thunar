@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2004-2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2004-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -155,6 +155,8 @@ static gint               sort_by_date_modified                   (const ThunarF
 static gint               sort_by_mime_type                       (const ThunarFile       *a,
                                                                    const ThunarFile       *b);
 static gint               sort_by_name                            (const ThunarFile       *a,
+                                                                   const ThunarFile       *b);
+static gint               sort_by_real_name                       (const ThunarFile       *a,
                                                                    const ThunarFile       *b);
 static gint               sort_by_permissions                     (const ThunarFile       *a,
                                                                    const ThunarFile       *b);
@@ -562,6 +564,9 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_NAME:
       return G_TYPE_STRING;
 
+    case THUNAR_LIST_MODEL_COLUMN_REAL_NAME:
+      return G_TYPE_STRING;
+
     case THUNAR_LIST_MODEL_COLUMN_PERMISSIONS:
       return G_TYPE_STRING;
 
@@ -681,6 +686,11 @@ thunar_list_model_get_value (GtkTreeModel *model,
     case THUNAR_LIST_MODEL_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
       g_value_set_static_string (value, thunar_file_get_display_name (row->file));
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_REAL_NAME:
+      g_value_init (value, G_TYPE_STRING);
+      g_value_take_string (value, g_filename_display_name (thunar_vfs_path_get_name (thunar_file_get_path (row->file))));
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_PERMISSIONS:
@@ -842,6 +852,8 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_MIME_TYPE;
   else if (store->sort_func == sort_by_name)
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_NAME;
+  else if (store->sort_func == sort_by_real_name)
+    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_REAL_NAME;
   else if (store->sort_func == sort_by_permissions)
     *sort_column_id = THUNAR_LIST_MODEL_COLUMN_PERMISSIONS;
   else if (store->sort_func == sort_by_size)
@@ -890,6 +902,10 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
     case THUNAR_LIST_MODEL_COLUMN_NAME:
       store->sort_func = sort_by_name;
+      break;
+
+    case THUNAR_LIST_MODEL_COLUMN_REAL_NAME:
+      store->sort_func = sort_by_real_name;
       break;
 
     case THUNAR_LIST_MODEL_COLUMN_PERMISSIONS:
@@ -1362,6 +1378,16 @@ sort_by_name (const ThunarFile *a,
 {
   return strcmp (thunar_file_get_display_name (a),
                  thunar_file_get_display_name (b));
+}
+
+
+
+static gint
+sort_by_real_name (const ThunarFile *a,
+                   const ThunarFile *b)
+{
+  return strcmp (thunar_vfs_path_get_name (thunar_file_get_path (a)),
+                 thunar_vfs_path_get_name (thunar_file_get_path (b)));
 }
 
 

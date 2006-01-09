@@ -1,3 +1,28 @@
+2006-01-09	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-util.{c,h}: Add thunar_vfs_expand_filename(),
+	  which is used to expand filenames that start with the tilde character.
+	* docs/reference/thunar-vfs/thunar-vfs-sections.txt,
+	  docs/reference/thunar-vfs/tmpl/thunar-vfs-util.sgml: Update
+	  documentation.
+	* thunar/thunar-permissions-chooser.c: Implement cancel-semantics for
+	  the recursive permissions dialog.
+	* thunar/thunar-permissions-chooser.c: Add tooltips.
+	* thunar/thunar-list-model.{c,h}: Additional column to access the real
+	  file name (in UTF-8 encoding).
+	* thunar/thunar-path-entry.{c,h}: Add support for auto path completion.
+	* thunar/thunar-file.{c,h}: Add thunar_file_launch() to automatically
+	  launch a given ThunarFile without having to manually figure out the
+	  proper action.
+	* thunar/thunar-location-entry.c, thunar/thunar-window.c: If the
+	  ThunarPathEntry returns a non-directory file, just try to launch it.
+	  This allows users to just open files right away from the path entry
+	  without having to lookup the file in the icon/details view.
+	* thunar/thunar-standard-view.c, THANKS: Allow people to use the
+	  horizontal mouse wheel to navigate back/forward. Based on a patch
+	  provided by Danny Milosavljevic <danny.milo@gmx.net>.
+	* po/*.po: Merge new strings.
+
 2006-01-08	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-monitor.c

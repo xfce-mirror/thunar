@@ -70,6 +70,7 @@ static void                             thunar_permissions_chooser_set_property 
                                                                                      guint                           prop_id,
                                                                                      const GValue                   *value,
                                                                                      GParamSpec                     *pspec);
+static gint                             thunar_permissions_chooser_ask_recursive    (ThunarPermissionsChooser       *chooser);
 static void                             thunar_permissions_chooser_change_group     (ThunarPermissionsChooser       *chooser,
                                                                                      ThunarVfsGroupId                gid);
 static void                             thunar_permissions_chooser_change_mode      (ThunarPermissionsChooser       *chooser,
@@ -77,7 +78,6 @@ static void                             thunar_permissions_chooser_change_mode  
                                                                                      ThunarVfsFileMode               dir_mode,
                                                                                      ThunarVfsFileMode               file_mask,
                                                                                      ThunarVfsFileMode               file_mode);
-static gboolean                         thunar_permissions_chooser_recursive        (ThunarPermissionsChooser       *chooser);
 static void                             thunar_permissions_chooser_access_changed   (ThunarPermissionsChooser       *chooser,
                                                                                      GtkWidget                      *combo);
 static void                             thunar_permissions_chooser_file_changed     (ThunarPermissionsChooser       *chooser,
@@ -118,6 +118,8 @@ struct _ThunarPermissionsChooser
   GtkVBox __parent__;
 
   ThunarFile   *file;
+
+  GtkTooltips  *tooltips;
 
   /* the main table widget, which contains everything but the job control stuff */
   GtkWidget    *table;
@@ -224,6 +226,10 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   GtkWidget       *image;
   GtkWidget       *hbox;
   gint             row = 0;
+
+  /* allocate the shared tooltips for the chooser */
+  chooser->tooltips = gtk_tooltips_new ();
+  exo_gtk_object_ref_sink (GTK_OBJECT (chooser->tooltips));
 
   /* setup the chooser */
   gtk_container_set_border_width (GTK_CONTAINER (chooser), 12);
@@ -438,6 +444,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_box_pack_start (GTK_BOX (hbox), chooser->job_progress, TRUE, TRUE, 0);
 
   button = gtk_button_new ();
+  gtk_tooltips_set_tip (chooser->tooltips, button, _("Stop applying permissions recursively."), NULL);
   g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_permissions_chooser_job_cancel), chooser);
   gtk_box_pack_start (GTK_BOX (hbox), button, FALSE, FALSE, 0);
   gtk_widget_show (button);
@@ -471,6 +478,9 @@ thunar_permissions_chooser_finalize (GObject *object)
 
   /* drop the reference on the file (if any) */
   thunar_permissions_chooser_set_file (chooser, NULL);
+
+  /* release the tooltips */
+  g_object_unref (G_OBJECT (chooser->tooltips));
 
   (*G_OBJECT_CLASS (thunar_permissions_chooser_parent_class)->finalize) (object);
 }
@@ -525,75 +535,8 @@ thunar_permissions_chooser_set_property (GObject      *object,
 
 
 
-static void
-thunar_permissions_chooser_change_group (ThunarPermissionsChooser *chooser,
-                                         ThunarVfsGroupId          gid)
-{
-  ThunarVfsJob *job;
-  gboolean      recursive;
-  GError       *error = NULL;
-
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (THUNAR_IS_FILE (chooser->file));
-
-  /* check if we should operate recursively */
-  recursive = (thunar_file_is_directory (chooser->file) && thunar_permissions_chooser_recursive (chooser));
-
-  /* try to allocate the new job */
-  job = thunar_vfs_change_group (thunar_file_get_path (chooser->file), gid, recursive, &error);
-  if (G_UNLIKELY (job == NULL))
-    {
-      /* display an error to the user */
-      thunar_dialogs_show_error (GTK_WIDGET (chooser), error, _("Failed to change group"));
-      g_error_free (error);
-    }
-  else
-    {
-      /* handle the job */
-      thunar_permissions_chooser_job_start (chooser, job, recursive);
-      g_object_unref (G_OBJECT (job));
-    }
-}
-
-
-
-static void
-thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
-                                        ThunarVfsFileMode         dir_mask,
-                                        ThunarVfsFileMode         dir_mode,
-                                        ThunarVfsFileMode         file_mask,
-                                        ThunarVfsFileMode         file_mode)
-{
-  ThunarVfsJob *job;
-  gboolean      recursive;
-  GError       *error = NULL;
-
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (THUNAR_IS_FILE (chooser->file));
-
-  /* check if we should operate recursively */
-  recursive = (thunar_file_is_directory (chooser->file) && thunar_permissions_chooser_recursive (chooser));
-
-  /* try to allocate the new job */
-  job = thunar_vfs_change_mode (thunar_file_get_path (chooser->file), dir_mask, dir_mode, file_mask, file_mode, recursive, &error);
-  if (G_UNLIKELY (job == NULL))
-    {
-      /* display an error to the user */
-      thunar_dialogs_show_error (GTK_WIDGET (chooser), error, _("Failed to apply new permissions"));
-      g_error_free (error);
-    }
-  else
-    {
-      /* handle the job */
-      thunar_permissions_chooser_job_start (chooser, job, recursive);
-      g_object_unref (G_OBJECT (job));
-    }
-}
-
-
-
 static gboolean
-thunar_permissions_chooser_recursive (ThunarPermissionsChooser *chooser)
+thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
 {
   ThunarRecursivePermissionsMode mode;
   ThunarPreferences             *preferences;
@@ -604,6 +547,7 @@ thunar_permissions_chooser_recursive (ThunarPermissionsChooser *chooser)
   GtkWidget                     *image;
   GtkWidget                     *hbox;
   GtkWidget                     *vbox;
+  gint                           response;
 
   /* grab a reference on the preferences */
   preferences = thunar_preferences_get ();
@@ -622,10 +566,11 @@ thunar_permissions_chooser_recursive (ThunarPermissionsChooser *chooser)
                                             GTK_DIALOG_DESTROY_WITH_PARENT
                                             | GTK_DIALOG_NO_SEPARATOR
                                             | GTK_DIALOG_MODAL,
-                                            GTK_STOCK_NO, GTK_RESPONSE_CANCEL,
-                                            GTK_STOCK_YES, GTK_RESPONSE_ACCEPT,
+                                            GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                            GTK_STOCK_NO, GTK_RESPONSE_NO,
+                                            GTK_STOCK_YES, GTK_RESPONSE_YES,
                                             NULL);
-      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
 
       hbox = gtk_hbox_new (FALSE, 6);
       gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
@@ -653,33 +598,148 @@ thunar_permissions_chooser_recursive (ThunarPermissionsChooser *chooser)
       gtk_widget_show (label);
 
       button = gtk_check_button_new_with_mnemonic (_("Do _not ask me again"));
+      gtk_tooltips_set_tip (chooser->tooltips, button, _("If you select this option your choice will be remembered and you won't be asked "
+                                                         "again. You can use the preferences dialog to alter your choice afterwards."), NULL);
       gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
 
-      /* run the dialog */
-      switch (gtk_dialog_run (GTK_DIALOG (dialog)))
+      /* run the dialog and save the selected option (if requested) */
+      response = gtk_dialog_run (GTK_DIALOG (dialog));
+      switch (response)
         {
-        case GTK_RESPONSE_ACCEPT:
-          mode = THUNAR_RECURSIVE_PERMISSIONS_ALWAYS;
+        case GTK_RESPONSE_YES:
+          if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
+            g_object_set (G_OBJECT (preferences), "misc-recursive-permissions", THUNAR_RECURSIVE_PERMISSIONS_ALWAYS, NULL);
+          break;
+
+        case GTK_RESPONSE_NO:
+          if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
+            g_object_set (G_OBJECT (preferences), "misc-recursive-permissions", THUNAR_RECURSIVE_PERMISSIONS_NEVER, NULL);
           break;
 
         default:
-          mode = THUNAR_RECURSIVE_PERMISSIONS_NEVER;
           break;
         }
 
-      /* save the selected option (if requested) */
-      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (button)))
-        g_object_set (G_OBJECT (preferences), "misc-recursive-permissions", mode, NULL);
-
       /* destroy the dialog resources */
       gtk_widget_destroy (dialog);
+    }
+  else if (mode == THUNAR_RECURSIVE_PERMISSIONS_ALWAYS)
+    {
+      response = GTK_RESPONSE_YES;
+    }
+  else
+    {
+      response = GTK_RESPONSE_NO;
     }
 
   /* release the reference on the preferences */
   g_object_unref (G_OBJECT (preferences));
 
-  return (mode == THUNAR_RECURSIVE_PERMISSIONS_ALWAYS);
+  return response;
+}
+
+
+
+static void
+thunar_permissions_chooser_change_group (ThunarPermissionsChooser *chooser,
+                                         ThunarVfsGroupId          gid)
+{
+  ThunarVfsJob *job;
+  gboolean      recursive = FALSE;
+  GError       *error = NULL;
+  gint          response;
+
+  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  g_return_if_fail (THUNAR_IS_FILE (chooser->file));
+
+  /* check if we should operate recursively */
+  if (thunar_file_is_directory (chooser->file))
+    {
+      response = thunar_permissions_chooser_ask_recursive (chooser);
+      switch (response)
+        {
+        case GTK_RESPONSE_YES:
+          recursive = TRUE;
+          break;
+
+        case GTK_RESPONSE_NO:
+          recursive = FALSE;
+          break;
+
+        default:  /* cancelled by the user */
+          thunar_file_changed (chooser->file);
+          return;
+        }
+    }
+
+  /* try to allocate the new job */
+  job = thunar_vfs_change_group (thunar_file_get_path (chooser->file), gid, recursive, &error);
+  if (G_UNLIKELY (job == NULL))
+    {
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (chooser), error, _("Failed to change group"));
+      g_error_free (error);
+    }
+  else
+    {
+      /* handle the job */
+      thunar_permissions_chooser_job_start (chooser, job, recursive);
+      g_object_unref (G_OBJECT (job));
+    }
+}
+
+
+
+static void
+thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
+                                        ThunarVfsFileMode         dir_mask,
+                                        ThunarVfsFileMode         dir_mode,
+                                        ThunarVfsFileMode         file_mask,
+                                        ThunarVfsFileMode         file_mode)
+{
+  ThunarVfsJob *job;
+  gboolean      recursive = FALSE;
+  GError       *error = NULL;
+  gint          response;
+
+  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  g_return_if_fail (THUNAR_IS_FILE (chooser->file));
+
+  /* check if we should operate recursively */
+  if (thunar_file_is_directory (chooser->file))
+    {
+      response = thunar_permissions_chooser_ask_recursive (chooser);
+      switch (response)
+        {
+        case GTK_RESPONSE_YES:
+          recursive = TRUE;
+          break;
+
+        case GTK_RESPONSE_NO:
+          recursive = FALSE;
+          break;
+
+        default:  /* cancelled by the user */
+          thunar_file_changed (chooser->file);
+          return;
+        }
+    }
+
+  /* try to allocate the new job */
+  job = thunar_vfs_change_mode (thunar_file_get_path (chooser->file), dir_mask, dir_mode, file_mask, file_mode, recursive, &error);
+  if (G_UNLIKELY (job == NULL))
+    {
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (chooser), error, _("Failed to apply new permissions"));
+      g_error_free (error);
+    }
+  else
+    {
+      /* handle the job */
+      thunar_permissions_chooser_job_start (chooser, job, recursive);
+      g_object_unref (G_OBJECT (job));
+    }
 }
 
 

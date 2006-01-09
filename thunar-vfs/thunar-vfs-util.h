@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,9 +27,12 @@
 
 G_BEGIN_DECLS;
 
-gchar *thunar_vfs_humanize_size (ThunarVfsFileSize size,
-                                 gchar            *buffer,
-                                 gsize             buflen);
+gchar *thunar_vfs_expand_filename (const gchar      *filename,
+                                   GError          **error) G_GNUC_MALLOC;
+
+gchar *thunar_vfs_humanize_size   (ThunarVfsFileSize size,
+                                   gchar            *buffer,
+                                   gsize             buflen);
 
 G_END_DECLS;
 

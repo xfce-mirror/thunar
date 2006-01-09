@@ -41,6 +41,8 @@
 #include <unistd.h>
 #endif
 
+#include <thunar/thunar-application.h>
+#include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-file.h>
 
 
@@ -805,6 +807,82 @@ thunar_file_execute (ThunarFile *file,
   g_return_val_if_fail (GDK_IS_SCREEN (screen), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   return thunar_vfs_info_execute (file->info, screen, path_list, error);
+}
+
+
+
+/**
+ * thunar_file_launch:
+ * @file   : a #ThunarFile instance.
+ * @widget : a #GtkWidget or %NULL.
+ * @error  : return location for errors or %NULL.
+ *
+ * If @file is an executable file, tries to execute it. Else if @file is
+ * a directory, opens a new #ThunarWindow to display the directory. Else,
+ * the default handler for @file is determined and run.
+ *
+ * Return value: %TRUE on success, else %FALSE.
+ **/
+gboolean
+thunar_file_launch (ThunarFile *file,
+                    GtkWidget  *widget,
+                    GError    **error)
+{
+  ThunarVfsMimeApplication *handler;
+  ThunarVfsMimeDatabase    *database;
+  ThunarApplication        *application;
+  GdkScreen                *screen;
+  GtkWidget                *window;
+  GtkWidget                *dialog;
+  gboolean                  succeed;
+  GList                     path_list;
+
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (widget == NULL || GTK_IS_WIDGET (widget), FALSE);
+
+  /* determine the screen for the widget */
+  screen = (widget != NULL) ? gtk_widget_get_screen (widget) : gdk_screen_get_default ();
+
+  /* check if we should execute the file */
+  if (thunar_file_is_executable (file))
+    return thunar_file_execute (file, screen, NULL, error);
+
+  /* check if we have a folder here */
+  if (thunar_file_is_directory (file))
+    {
+      application = thunar_application_get ();
+      thunar_application_open_window (application, file, screen);
+      g_object_unref (G_OBJECT (application));
+      return TRUE;
+    }
+
+  /* determine the default handler for the file */
+  database = thunar_vfs_mime_database_get_default ();
+  handler = thunar_vfs_mime_database_get_default_application (database, thunar_file_get_mime_info (file));
+  g_object_unref (G_OBJECT (database));
+
+  /* if we don't have any default handler, just popup the application chooser */
+  if (G_UNLIKELY (handler == NULL))
+    {
+      window = (widget != NULL) ? gtk_widget_get_toplevel (widget) : NULL;
+      dialog = thunar_chooser_dialog_new ((GtkWindow *) window, file, TRUE);
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
+      return TRUE;
+    }
+
+  /* fake a path list */
+  path_list.data = thunar_file_get_path (file);
+  path_list.next = path_list.prev = NULL;
+
+  /* otherwise try to execute the application */
+  succeed = thunar_vfs_mime_application_exec (handler, screen, &path_list, error);
+
+  /* release the handler reference */
+  thunar_vfs_mime_application_unref (handler);
+
+  return succeed;
 }
 
 

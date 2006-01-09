@@ -124,6 +124,10 @@ gboolean                         thunar_file_execute              (ThunarFile   
                                                                    GList                  *path_list,
                                                                    GError                **error);
 
+gboolean                         thunar_file_launch               (ThunarFile             *file,
+                                                                   GtkWidget              *widget,
+                                                                   GError                **error);
+
 gboolean                         thunar_file_rename               (ThunarFile             *file,
                                                                    const gchar            *name,
                                                                    GError                **error);
