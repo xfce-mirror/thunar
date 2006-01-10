@@ -1989,7 +1989,8 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
               gdk_property_change (GDK_DRAWABLE (context->source_window),
                                    gdk_atom_intern ("XdndDirectSave0", FALSE),
                                    gdk_atom_intern ("text/plain", FALSE), 8,
-                                   GDK_PROP_MODE_REPLACE, uri, strlen (uri));
+                                   GDK_PROP_MODE_REPLACE, (const guchar *) uri,
+                                   strlen (uri));
 
               /* cleanup */
               thunar_vfs_path_unref (path);
@@ -2064,7 +2065,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
               gdk_property_change (GDK_DRAWABLE (context->source_window),
                                    gdk_atom_intern ("XdndDirectSave0", FALSE),
                                    gdk_atom_intern ("text/plain", FALSE), 8,
-                                   GDK_PROP_MODE_REPLACE, "", 0);
+                                   GDK_PROP_MODE_REPLACE, (const guchar *) "", 0);
             }
           else if (G_LIKELY (selection_data->format == 8 && selection_data->length == 1 && selection_data->data[0] == 'S'))
             {
