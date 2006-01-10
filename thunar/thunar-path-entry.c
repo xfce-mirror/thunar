@@ -752,10 +752,10 @@ thunar_path_entry_changed (GtkEditable *editable)
   ThunarVfsPath      *folder_path = NULL;
   ThunarVfsPath      *file_path = NULL;
   ThunarFolder       *folder;
-  ThunarFile         *current_folder = NULL;
-  ThunarFile         *current_file = NULL;
-  gchar              *folder_part;
-  gchar              *file_part;
+  ThunarFile         *current_folder;
+  ThunarFile         *current_file;
+  gchar              *folder_part = NULL;
+  gchar              *file_part = NULL;
 
   /* check if we should ignore this event */
   if (G_UNLIKELY (path_entry->in_change))
