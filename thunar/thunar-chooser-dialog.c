@@ -501,6 +501,10 @@ thunar_chooser_dialog_response (GtkDialog *widget,
         }
     }
 
+  /* emit "changed" on the file if we successfully changed the default application */
+  if (G_LIKELY (succeed))
+    thunar_file_changed (dialog->file);
+
   /* cleanup */
   thunar_vfs_mime_application_unref (application);
 cleanup:

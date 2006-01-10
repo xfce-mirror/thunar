@@ -30,6 +30,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <thunar/thunar-chooser-button.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-emblem-chooser.h>
 #include <thunar/thunar-icon-factory.h>
@@ -90,17 +91,18 @@ struct _ThunarPropertiesDialog
   ThunarVfsVolumeManager *volume_manager;
   ThunarFile             *file;
 
-  GtkWidget   *notebook;
-  GtkWidget   *icon_image;
-  GtkWidget   *name_entry;
-  GtkWidget   *kind_label;
-  GtkWidget   *modified_label;
-  GtkWidget   *accessed_label;
-  GtkWidget   *volume_image;
-  GtkWidget   *volume_label;
-  GtkWidget   *size_label;
+  GtkWidget              *notebook;
+  GtkWidget              *icon_image;
+  GtkWidget              *name_entry;
+  GtkWidget              *kind_label;
+  GtkWidget              *openwith_chooser;
+  GtkWidget              *modified_label;
+  GtkWidget              *accessed_label;
+  GtkWidget              *volume_image;
+  GtkWidget              *volume_label;
+  GtkWidget              *size_label;
 
-  gint         rename_idle_id;
+  gint                    rename_idle_id;
 };
 
 
@@ -249,7 +251,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
 
   /*
-     Second box (kind)
+     Second box (kind, open with)
    */
   label = gtk_label_new (_("Kind:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
@@ -262,6 +264,20 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   exo_binding_new (G_OBJECT (dialog->kind_label), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->kind_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->kind_label);
+
+  ++row;
+
+  label = gtk_label_new (_("Open With:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  dialog->openwith_chooser = thunar_chooser_button_new ();
+  exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (dialog->openwith_chooser), "file");
+  exo_binding_new (G_OBJECT (dialog->openwith_chooser), "visible", G_OBJECT (label), "visible");
+  gtk_table_attach (GTK_TABLE (table), dialog->openwith_chooser, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (dialog->openwith_chooser);
 
   ++row;
 
@@ -377,6 +393,10 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), chooser, label);
   gtk_widget_show (chooser);
   gtk_widget_show (label);
+
+
+  /* place the initial focus on the name entry widget */
+  gtk_widget_grab_focus (dialog->name_entry);
 }
 
 
@@ -631,6 +651,11 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     str = g_strdup (thunar_vfs_mime_info_get_comment (info));
   gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
   g_free (str);
+
+  /* update the application chooser (shown only for non-executable regular files!) */
+  g_object_set (G_OBJECT (dialog->openwith_chooser),
+                "visible", (thunar_file_is_regular (dialog->file) && !thunar_file_is_executable (dialog->file)),
+                NULL);
 
   /* update the modified time */
   str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED);

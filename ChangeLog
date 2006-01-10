@@ -1,5 +1,15 @@
 2006-01-10	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-chooser-dialog.c(thunar_chooser_dialog_response): If
+	  the default application was changed successfully, emit "changed" on
+	  the file so everybody updates its state.
+	* thunar/thunar-chooser-button.{c,h}, thunar/thunar-properties-dialog.c:
+	  Import the ThunarChooserButton, which allows people to change the
+	  default application from within the properties dialog.
+	* po/POTFILES.in, po/*.po: Merge new strings.
+
+2006-01-10	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-path-entry.c(thunar_path_entry_activate): If we have
 	  a pending completion, accept the completion first, without activating
 	  the entry. This makes it more consistent with the behaviour when

@@ -26,6 +26,8 @@ Thunar_SOURCES =							\
 	main.c								\
 	thunar-application.c						\
 	thunar-application.h						\
+	thunar-chooser-button.c						\
+	thunar-chooser-button.h						\
 	thunar-chooser-dialog.c						\
 	thunar-chooser-dialog.h						\
 	thunar-chooser-model.c						\
