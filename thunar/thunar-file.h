@@ -137,7 +137,6 @@ GdkDragAction                    thunar_file_accepts_drop         (ThunarFile   
                                                                    GdkDragAction           actions);
 
 const gchar                     *thunar_file_get_display_name     (const ThunarFile       *file);
-const gchar                     *thunar_file_get_special_name     (const ThunarFile       *file);
 
 static inline ThunarVfsInfo     *thunar_file_get_info             (const ThunarFile       *file);
 static inline ThunarVfsPath     *thunar_file_get_path             (const ThunarFile       *file);

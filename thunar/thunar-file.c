@@ -247,20 +247,6 @@ thunar_file_class_init (ThunarFileClass *klass)
                                                         EXO_PARAM_READABLE));
 
   /**
-   * ThunarFile::special-name:
-   *
-   * The file's special name, see thunar_file_get_special_name()
-   * for details.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_SPECIAL_NAME,
-                                   g_param_spec_string ("special-name",
-                                                        "Special Name",
-                                                        "Special Name",
-                                                        NULL,
-                                                        EXO_PARAM_READABLE));
-
-  /**
    * ThunarFile::changed:
    * @file : the #ThunarFile instance.
    *
@@ -388,10 +374,6 @@ thunar_file_get_property (GObject    *object,
       g_value_set_static_string (value, thunar_file_get_display_name (file));
       break;
 
-    case PROP_SPECIAL_NAME:
-      g_value_set_static_string (value, thunar_file_get_special_name (file));
-      break;
-
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -506,11 +488,8 @@ thunar_file_real_changed (ThunarFile *file)
    */
   thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
 
-  /* notify about changes of the display-name and special-name properties */
-  g_object_freeze_notify (G_OBJECT (file));
+  /* notify about changes of the display-name property */
   g_object_notify (G_OBJECT (file), "display-name");
-  g_object_notify (G_OBJECT (file), "special-name");
-  g_object_thaw_notify (G_OBJECT (file));
 }
 
 
@@ -1042,33 +1021,9 @@ thunar_file_get_display_name (const ThunarFile *file)
 
   /* root directory is always displayed as 'Filesystem' */
   if (thunar_file_is_root (file))
-    return _("Filesystem");
+    return _("File System");
 
   return file->info->display_name;
-}
-
-
-
-/**
- * thunar_file_get_special_name:
- * @file : a #ThunarFile instance.
- *
- * Returns the special name for the @file, e.g. "Filesystem" for the #ThunarFile
- * referring to "/" and so on. If there's no special name for this @file, the
- * value of the "display-name" property will be returned instead.
- *
- * Return value: the special name of @file.
- **/
-const gchar*
-thunar_file_get_special_name (const ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* home dir has special name, root dir is handled in get_display_name() */
-  if (thunar_file_is_home (file))
-    return _("Home");
-
-  return thunar_file_get_display_name (file);
 }
 
 

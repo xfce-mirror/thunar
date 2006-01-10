@@ -730,11 +730,16 @@ thunar_path_entry_activate (GtkEntry *entry)
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (entry);
 
-  /* place cursor at the end of the text if we have completion set */
   if (G_LIKELY (path_entry->has_completion))
-    gtk_editable_set_position (GTK_EDITABLE (path_entry), -1);
-
-  (*GTK_ENTRY_CLASS (thunar_path_entry_parent_class)->activate) (entry);
+    {
+      /* place cursor at the end of the text if we have completion set */
+      gtk_editable_set_position (GTK_EDITABLE (path_entry), -1);
+    }
+  else
+    {
+      /* emit the "activate" signal */
+      (*GTK_ENTRY_CLASS (thunar_path_entry_parent_class)->activate) (entry);
+    }
 }
 
 
@@ -1179,32 +1184,39 @@ thunar_path_entry_parse (ThunarPathEntry *path_entry,
   if (G_UNLIKELY (last_slash == NULL))
     {
       /* no slash character, it's relative to the home dir */
-      *folder_part = g_strdup (xfce_get_homedir ());
-      *file_part = filename;
-      return TRUE;
+      *file_part = g_filename_from_utf8 (filename, -1, NULL, NULL, error);
+      if (G_LIKELY (*file_part != NULL))
+        *folder_part = g_strdup (xfce_get_homedir ());
     }
-
-  if (G_LIKELY (last_slash != filename))
-    *folder_part = g_filename_from_utf8 (filename, last_slash - filename, NULL, NULL, error);
   else
-    *folder_part = g_strdup ("/");
-
-  if (G_LIKELY (*folder_part != NULL))
     {
-      /* if folder_part doesn't start with '/', it's relative to the home dir */
-      if (G_UNLIKELY (**folder_part != G_DIR_SEPARATOR))
+      if (G_LIKELY (last_slash != filename))
+        *folder_part = g_filename_from_utf8 (filename, last_slash - filename, NULL, NULL, error);
+      else
+        *folder_part = g_strdup ("/");
+
+      if (G_LIKELY (*folder_part != NULL))
         {
-          path = xfce_get_homefile (*folder_part, NULL);
-          g_free (*folder_part);
-          *folder_part = path;
-        }
+          /* if folder_part doesn't start with '/', it's relative to the home dir */
+          if (G_UNLIKELY (**folder_part != G_DIR_SEPARATOR))
+            {
+              path = xfce_get_homefile (*folder_part, NULL);
+              g_free (*folder_part);
+              *folder_part = path;
+            }
 
-      /* determine the file part */
-      *file_part = g_strdup (last_slash + 1);
-    }
-  else
-    {
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid path"));
+          /* determine the file part */
+          *file_part = g_filename_from_utf8 (last_slash + 1, -1, NULL, NULL, error);
+          if (G_UNLIKELY (*file_part == NULL))
+            {
+              g_free (*folder_part);
+              *folder_part = NULL;
+            }
+        }
+      else
+        {
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid path"));
+        }
     }
 
   /* release the filename */

@@ -1,3 +1,27 @@
+2006-01-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-path-entry.c(thunar_path_entry_activate): If we have
+	  a pending completion, accept the completion first, without activating
+	  the entry. This makes it more consistent with the behaviour when
+	  completing from the popup window.
+	* thunar/thunar-path-entry.c(thunar_path_entry_parse): Properly
+	  transform all parts of the filename to the local encoding.
+	* thunar/thunar-text-renderer.c(thunar_text_renderer_set_widget):
+	  Calculate the approx. character dimensions based on the font metrics
+	  for the active widget font.
+	* thunar/thunar-window.c(thunar_window_action_go_up): Handle errors
+	  properly.
+	* thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c:
+	  Add support to view the properties of the current folder.
+	* thunar/thunar-file.{c,h}, thunar/thunar-location-buttons.c, 
+	  thunar/thunar-shortcuts-model.c, thunar/thunar-window.c: Change
+	  special file naming (home and root folder) to be consistent with
+	  what GtkFileChooser does.
+	* thunar/thunar-properties-dialog.c(thunar_properties_dialog_update):
+	  Display only the name of the file in the dialog title.
+	* thunar/thunar-standard-view.c: Add support for the XDS protocol.
+	* README: Add notes about supported standards.
+
 2006-01-09	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-util.{c,h}: Add thunar_vfs_expand_filename(),

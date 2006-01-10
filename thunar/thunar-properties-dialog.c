@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -603,9 +603,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   if (G_LIKELY (strcmp (name, gtk_entry_get_text (GTK_ENTRY (dialog->name_entry))) != 0))
     {
       gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
-      str = g_strdup_printf (_("%s Info"), name);
-      gtk_window_set_title (GTK_WINDOW (dialog), str);
-      g_free (str);
+      gtk_window_set_title (GTK_WINDOW (dialog), name);
 
       /* grab the input focus to the name entry */
       gtk_widget_grab_focus (dialog->name_entry);

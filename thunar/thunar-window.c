@@ -920,11 +920,19 @@ thunar_window_action_go_up (GtkAction    *action,
                             ThunarWindow *window)
 {
   ThunarFile *parent;
+  GError     *error = NULL;
 
-  // FIXME: error handling
-  parent = thunar_file_get_parent (window->current_directory, NULL);
-  thunar_window_set_current_directory (window, parent);
-  g_object_unref (G_OBJECT (parent));
+  parent = thunar_file_get_parent (window->current_directory, &error);
+  if (G_LIKELY (parent != NULL))
+    {
+      thunar_window_set_current_directory (window, parent);
+      g_object_unref (G_OBJECT (parent));
+    }
+  else
+    {
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open parent folder"));
+      g_error_free (error);
+    }
 }
 
 
@@ -1089,7 +1097,7 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
 
   /* set window title and icon */
   icon = thunar_icon_factory_load_file_icon (window->icon_factory, current_directory, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
-  gtk_window_set_title (GTK_WINDOW (window), thunar_file_get_special_name (current_directory));
+  gtk_window_set_title (GTK_WINDOW (window), thunar_file_get_display_name (current_directory));
   gtk_window_set_icon (GTK_WINDOW (window), icon);
   g_object_unref (G_OBJECT (icon));
 }

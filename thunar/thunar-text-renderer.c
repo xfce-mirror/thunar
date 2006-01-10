@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -634,11 +634,10 @@ static void
 thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
                                  GtkWidget          *widget)
 {
-  // FIXME: The sample text should be translatable with a hint to translators!
-  static const gchar SAMPLE_TEXT[] = "The Quick Brown Fox Jumps Over the Lazy Dog";
-  PangoRectangle     extents;
-  gint               focus_padding;
-  gint               focus_line_width;
+  PangoFontMetrics *metrics;
+  PangoContext     *context;
+  gint              focus_padding;
+  gint              focus_line_width;
 
   if (G_LIKELY (widget == text_renderer->widget))
     return;
@@ -664,12 +663,15 @@ thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
       g_signal_connect_swapped (G_OBJECT (text_renderer->widget), "destroy", G_CALLBACK (thunar_text_renderer_invalidate), text_renderer);
       g_signal_connect_swapped (G_OBJECT (text_renderer->widget), "style-set", G_CALLBACK (thunar_text_renderer_invalidate), text_renderer);
 
+      /* allocate a new pango layout for this widget */
+      context = gtk_widget_get_pango_context (widget);
+      text_renderer->layout = pango_layout_new (context);
+
       /* calculate the average character dimensions */
-      text_renderer->layout = gtk_widget_create_pango_layout (widget, SAMPLE_TEXT);
-      pango_layout_get_pixel_extents (text_renderer->layout, NULL, &extents);
-      pango_layout_set_width (text_renderer->layout, -1);
-      text_renderer->char_width = extents.width / g_utf8_strlen (SAMPLE_TEXT, sizeof (SAMPLE_TEXT) - 1);
-      text_renderer->char_height = extents.height;
+      metrics = pango_context_get_metrics (context, widget->style->font_desc, pango_context_get_language (context));
+      text_renderer->char_width = PANGO_PIXELS (pango_font_metrics_get_approximate_char_width (metrics));
+      text_renderer->char_height = PANGO_PIXELS (pango_font_metrics_get_ascent (metrics) + pango_font_metrics_get_descent (metrics));
+      pango_font_metrics_unref (metrics);
 
       /* determine the focus-padding and focus-line-width style properties from the widget */
       gtk_widget_style_get (widget, "focus-padding", &focus_padding, "focus-line-width", &focus_line_width, NULL);
