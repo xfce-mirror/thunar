@@ -563,6 +563,13 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
 #endif
     }
 
+  /* draw the focus indicator */
+  if (text_renderer->follow_state && (flags & GTK_CELL_RENDERER_FOCUSED) != 0)
+    {
+      gtk_paint_focus (widget->style, window, GTK_WIDGET_STATE (widget), NULL, widget, "icon_view",
+                       cell_area->x + x_offset, cell_area->y + y_offset, text_width, text_height);
+    }
+
   /* get proper sizing for the layout drawing */
   if (text_renderer->follow_state)
     {
