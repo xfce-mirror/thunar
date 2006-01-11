@@ -475,7 +475,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
-  exo_binding_new (G_OBJECT (standard_view->preferences), "default-folders-first", G_OBJECT (standard_view->model), "folders-first");
+  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first");
 
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
@@ -1921,20 +1921,26 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
                                    ThunarStandardView *standard_view)
 {
   GtkAction *action = NULL;
+  gboolean   misc_horizontal_wheel_navigates;
 
   g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
-  /* determine the appropriate action ("back" for scroll left, "forward" for scroll right) */
-  if (G_UNLIKELY (event->type == GDK_SCROLL && event->direction == GDK_SCROLL_LEFT))
-    action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/back");
-  else if (G_UNLIKELY (event->type == GDK_SCROLL && event->direction == GDK_SCROLL_RIGHT))
-    action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/forward");
-
-  /* perform the action (if any) */
-  if (G_UNLIKELY (action != NULL))
+  /* check if we should use the horizontal mouse wheel for navigation */
+  g_object_get (G_OBJECT (standard_view->preferences), "misc-horizontal-wheel-navigates", &misc_horizontal_wheel_navigates, NULL);
+  if (G_UNLIKELY (misc_horizontal_wheel_navigates))
     {
-      gtk_action_activate (action);
-      return TRUE;
+      /* determine the appropriate action ("back" for scroll left, "forward" for scroll right) */
+      if (G_UNLIKELY (event->type == GDK_SCROLL && event->direction == GDK_SCROLL_LEFT))
+        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/back");
+      else if (G_UNLIKELY (event->type == GDK_SCROLL && event->direction == GDK_SCROLL_RIGHT))
+        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/forward");
+
+      /* perform the action (if any) */
+      if (G_UNLIKELY (action != NULL))
+        {
+          gtk_action_activate (action);
+          return TRUE;
+        }
     }
 
   /* next please... */

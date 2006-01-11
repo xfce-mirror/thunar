@@ -247,7 +247,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   g_object_unref (G_OBJECT (relation));
 
   button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
-  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "default-folders-first", G_OBJECT (button), "active");
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-folders-first", G_OBJECT (button), "active");
   gtk_tooltips_set_tip (dialog->tooltips, button, _("Select this option to list folders before files when you sort a folder."), NULL);
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
@@ -277,7 +277,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_widget_show (table);
 
   button = gtk_check_button_new_with_mnemonic (_("_Text beside icons"));
-  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "default-text-beside-icons", G_OBJECT (button), "active");
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-text-beside-icons", G_OBJECT (button), "active");
   gtk_tooltips_set_tip (dialog->tooltips, button, _("Select this option to place the icon captions for items "
                                                     "beside the icon rather than below the icon."), NULL);
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);

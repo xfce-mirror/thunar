@@ -40,13 +40,13 @@ appropriate answers to these questions.
 4. Where does Thunar store its preferences?
 ===========================================
 
-  Thunar stores the user configurable preferences in a tdb database file, which
-  is located at
+  Thunar stores the user configurable preferences (and hidden settings) in
+  an .ini file, which is located at
 
-    $XDG_CONFIG_HOME/Thunar/preferences.tdb
+    $XDG_CONFIG_HOME/Thunar/thunarrc
 
-  and can be examined using the tdbtool, which is part of the Thunar
-  distribution (located in the tdb/ subdirectory).
+  and can be examined using a text editor. See docs/README.thunarrc for an
+  overview of the various preferences.
 
 
 5. How to use mouse gestures in Thunar?

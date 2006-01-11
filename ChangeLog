@@ -1,5 +1,24 @@
 2006-01-11	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-preferences.c, FAQ: Store preferences in an .ini file,
+	  $XDG_CONFIG_HOME/Thunar/thunarrc, similar to what Terminal does, so
+	  users can easily adjust hidden settings, and don't have to dive into
+	  the details of managing a tdb database file.
+	* thunar/thunar-icon-view.c, thunar/thunar-path-entry.c,
+	  thunar/thunar-preferences-dialog.c, thunar/thunar-preferences.c,
+	  thunar/thunar-standard-view.c: Rename "default-folders-first" to
+	  "misc-folders-first" and "default-text-beside-icons" to
+	  "misc-text-beside-icons", as those preferences aren't defaults.
+	* thunar/thunar-standard-view.c(thunar_standard_view_scroll_event),
+	  thunar/thunar-preferences.c: Add a new hidden preference,
+	  MiscHorizontalWheelNavigates, which controls whether the horizontal
+	  mouse wheel should be used to navigate back and forth within a
+	  Thunar view. This fixes bug #1319.
+	* docs/Makefile.am, docs/README.thunarrc: Add brief overview of the
+	  various Thunar configuration settings.
+
+2006-01-11	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-standard-view.c: Fix compiler warnings. Again bug
 	  #1318.
 

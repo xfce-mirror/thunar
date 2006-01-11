@@ -1,0 +1,59 @@
+The Thunar Configuration File (thunarrc)
+========================================
+
+  Thunar stores most of its preferences in the thunarrc file, which is located
+  in $XDG_CONFIG_HOME/Thunar/thunarrc. Many, but not all, of the settings are
+  configurable from the preferences dialog, which is available from the Edit
+  menu of every Thunar window.
+
+  The following list gives a brief overview of the preferences known to Thunar:
+
+   * DefaultShowHidden (FALSE/TRUE)
+
+     Determines whether hidden files should be shown by default in newly
+     opened Thunar windows.
+
+   * DefaultView (ThunarDetailsView/ThunarIconView/void)
+
+     The name of the widget class, which should be used for the view pane
+     in new Thunar windows, or "void" to use the last selected view from
+     LastView preference.
+
+   * LastLocationBar (ThunarLocationButtons/ThunarLocationEntry/void)
+
+     The name of the widget class which should be used for the location bar
+     in Thunar windows or "void" to hide the location bar completely.
+
+   * LastSidePane (ThunarShortcutsPane/void)
+
+     The name of the widget class which should be used for the side pane
+     in Thunar windows or "void" to hide the side pane completely.
+
+   * LastView (ThunarDetailsView/ThunarIconView)
+
+     The name of the widget class which should be used for the main view
+     component in Thunar windows if the DefaultView preference is "void".
+
+   * MiscFoldersFirst (FALSE/TRUE)
+     
+     Determines whether folder should be sorted before files.
+
+   * MiscHorizontalWheelNavigates (FALSE/TRUE)
+
+     Controls whether the horizontal mouse wheel is used to navigate back
+     and forth within a Thunar view, or whether it should be used for
+     horizontal scrolling.
+
+   * MiscRecursivePermissions (THUNAR_RECURSIVE_PERMISSIONS_ASK/
+                               THUNAR_RECURSIVE_PERMISSIONS_ALWAYS/
+                               THUNAR_RECURSIVE_PERMISSIONS_NEVER)
+
+     Determines whether to apply permissions recursively everytime the
+     permissions are altered by the user.
+
+   * MiscTextBesidesIcons (FALSE/TRUE)
+
+     Controls whether the icon view should display the file names beside
+     the file icons instead of below the file icons.
+
+

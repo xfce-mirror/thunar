@@ -295,7 +295,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   store = thunar_list_model_new ();
   preferences = thunar_preferences_get ();
   exo_binding_new (G_OBJECT (preferences), "default-show-hidden", G_OBJECT (store), "show-hidden");
-  exo_binding_new (G_OBJECT (preferences), "default-folders-first", G_OBJECT (store), "folders-first");
+  exo_binding_new (G_OBJECT (preferences), "misc-folders-first", G_OBJECT (store), "folders-first");
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_LIST_MODEL_COLUMN_REAL_NAME, GTK_SORT_ASCENDING);
   gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
   g_object_unref (G_OBJECT (preferences));

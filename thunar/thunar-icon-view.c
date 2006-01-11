@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -273,7 +273,7 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   thunar_icon_view_sort_column_changed (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (icon_view)->model), icon_view);
 
   /* synchronize the "text-beside-icons" property with the global preference */
-  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences), "default-text-beside-icons", G_OBJECT (icon_view), "text-beside-icons");
+  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences), "misc-text-beside-icons", G_OBJECT (icon_view), "text-beside-icons");
 }
 
 
