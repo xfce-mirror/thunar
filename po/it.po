@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-10 19:59+0100\n"
+"POT-Creation-Date: 2006-01-14 14:13+0100\n"
 "PO-Revision-Date: 2005-12-22 05:26+0100\n"
 "Last-Translator: Roberto Pariset <r.pariset@gmail.com>\n"
 "Language-Team: GUFI <traduzioni@gufi.org>\n"
@@ -171,7 +171,7 @@ msgstr ""
 "\n"
 "Si desidera saltarlo?"
 
-#: ../thunar-vfs/thunar-vfs-util.c:68 ../thunar/thunar-path-entry.c:1218
+#: ../thunar-vfs/thunar-vfs-util.c:68 ../thunar/thunar-path-entry.c:1220
 #, fuzzy
 msgid "Invalid path"
 msgstr "Nome del file non valido"
@@ -589,15 +589,19 @@ msgstr ""
 msgid "Go to the next visited folder"
 msgstr ""
 
-#: ../thunar/thunar-icon-factory.c:188
+#: ../thunar/thunar-icon-factory.c:195
 msgid "Icon theme"
 msgstr "Tema delle icone"
 
-#: ../thunar/thunar-icon-factory.c:189
+#: ../thunar/thunar-icon-factory.c:196
 msgid "The icon theme used by the icon factory"
 msgstr ""
 
-#: ../thunar/thunar-icon-factory.c:651
+#: ../thunar/thunar-icon-factory.c:209 ../thunar/thunar-icon-factory.c:210
+msgid "Show Thumbnails"
+msgstr ""
+
+#: ../thunar/thunar-icon-factory.c:668
 #, c-format
 msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
 msgstr ""
@@ -1035,7 +1039,7 @@ msgid "View _new folders using:"
 msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:230
-#: ../thunar/thunar-preferences-dialog.c:267
+#: ../thunar/thunar-preferences-dialog.c:274
 msgid "Icon View"
 msgstr "Vista a icone"
 
@@ -1067,11 +1071,21 @@ msgid ""
 "backup filename is a tilde (~)."
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:279
+#: ../thunar/thunar-preferences-dialog.c:263
+msgid "_Show thumbnails"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:265
+msgid ""
+"Select this option to display previewable files within a folder as "
+"automatically generated thumbnail icons."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:286
 msgid "_Text beside icons"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:281
+#: ../thunar/thunar-preferences-dialog.c:288
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1080,38 +1094,28 @@ msgstr ""
 #.
 #. Advanced
 #.
-#: ../thunar/thunar-preferences-dialog.c:290
+#: ../thunar/thunar-preferences-dialog.c:297
 msgid "Advanced"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:300
+#: ../thunar/thunar-preferences-dialog.c:307
 msgid "Miscellaneous"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:312
+#: ../thunar/thunar-preferences-dialog.c:319
 msgid "Apply permissions _recursively:"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:317
+#: ../thunar/thunar-preferences-dialog.c:324
 msgid "Ask everytime"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:318
+#: ../thunar/thunar-preferences-dialog.c:325
 msgid "Always"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:319
+#: ../thunar/thunar-preferences-dialog.c:326
 msgid "Never"
-msgstr ""
-
-#: ../thunar/thunar-preferences.c:272
-#, c-format
-msgid "Failed to create the Thunar configuration directory in %s"
-msgstr ""
-
-#: ../thunar/thunar-preferences.c:280
-#, c-format
-msgid "Failed to open preferences database in %s: %s"
 msgstr ""
 
 #: ../thunar/thunar-progress-dialog.c:151
@@ -1203,7 +1207,7 @@ msgstr "%s (%u Byte)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:756
-#: ../thunar/thunar-standard-view.c:2349
+#: ../thunar/thunar-standard-view.c:2360
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "Impossibile rinominare `%s'"
@@ -1308,7 +1312,7 @@ msgstr "Seleziona in _base ad un pattern..."
 msgid "Select all files that match a certain pattern"
 msgstr "Seleziona tutti i file che corrispondono a un certo pattern"
 
-#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2631
+#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2642
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] ""
@@ -1318,7 +1322,7 @@ msgstr[1] ""
 msgid "Duplicate each selected file"
 msgstr "Duplica ogni file selezionato"
 
-#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2637
+#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2648
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] ""
@@ -1340,25 +1344,25 @@ msgstr "Rinomina il file selezionato"
 msgid "Whether the view is currently being loaded"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:900
+#: ../thunar/thunar-standard-view.c:904
 msgid "Loading folder contents..."
 msgstr "Caricamento dei contenuti della cartella in corso..."
 
-#: ../thunar/thunar-standard-view.c:1377
+#: ../thunar/thunar-standard-view.c:1381
 msgid "New Folder"
 msgstr "Nuova directory"
 
-#: ../thunar/thunar-standard-view.c:1380
+#: ../thunar/thunar-standard-view.c:1384
 msgid "New Folder..."
 msgstr "Nuova directory..."
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1394
+#: ../thunar/thunar-standard-view.c:1398
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1555
+#: ../thunar/thunar-standard-view.c:1559
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1367,7 +1371,7 @@ msgstr ""
 "Sei sicuro di voler eliminare\n"
 "permanentemente \"%s\"?"
 
-#: ../thunar/thunar-standard-view.c:1561
+#: ../thunar/thunar-standard-view.c:1565
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1382,36 +1386,36 @@ msgstr[1] ""
 "Sei sicuro di voler eliminare\n"
 "permanentemente i %u file selezionati?"
 
-#: ../thunar/thunar-standard-view.c:1576
+#: ../thunar/thunar-standard-view.c:1580
 msgid "If you delete a file, it is permanently lost."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1648
+#: ../thunar/thunar-standard-view.c:1652
 msgid "Select by Pattern"
 msgstr "Seleziona in base ad un pattern"
 
-#: ../thunar/thunar-standard-view.c:1663
+#: ../thunar/thunar-standard-view.c:1667
 msgid "Pattern:"
 msgstr "Pattern:"
 
-#: ../thunar/thunar-standard-view.c:2304
+#: ../thunar/thunar-standard-view.c:2315
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Impossibile aprire la directory %s."
 
-#: ../thunar/thunar-standard-view.c:2604
+#: ../thunar/thunar-standard-view.c:2615
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "_Copia file"
 msgstr[1] "_Copia file"
 
-#: ../thunar/thunar-standard-view.c:2610
+#: ../thunar/thunar-standard-view.c:2621
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Taglia file"
 msgstr[1] "_Taglia file"
 
-#: ../thunar/thunar-standard-view.c:2619
+#: ../thunar/thunar-standard-view.c:2630
 #, fuzzy
 msgid "_Delete File"
 msgid_plural "_Delete Files"

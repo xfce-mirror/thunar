@@ -725,6 +725,9 @@ thunar_standard_view_realize (GtkWidget *widget)
   /* determine the icon factory for the screen on which we are realized */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
   standard_view->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+
+  /* we need to redraw whenever the "show-thumbnails" property is toggled */
+  g_signal_connect_swapped (G_OBJECT (standard_view->icon_factory), "notify::show-thumbnails", G_CALLBACK (gtk_widget_queue_draw), standard_view);
 }
 
 
@@ -738,6 +741,7 @@ thunar_standard_view_unrealize (GtkWidget *widget)
   g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->clipboard), thunar_standard_view_selection_changed, standard_view);
 
   /* drop the reference on the icon factory */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (standard_view->icon_factory), gtk_widget_queue_draw, standard_view);
   g_object_unref (G_OBJECT (standard_view->icon_factory));
   standard_view->icon_factory = NULL;
 

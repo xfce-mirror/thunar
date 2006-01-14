@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -34,6 +34,7 @@
 
 #include <thunar/thunar-gdk-pixbuf-extensions.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-thumbnail-frame.h>
 #include <thunar/thunar-thumbnail-generator.h>
 
@@ -45,10 +46,14 @@
 /* the maximum length of the recently used list */
 #define MAX_RECENTLY (128u)
 
+
+
+/* Property identifiers */
 enum
 {
   PROP_0,
   PROP_ICON_THEME,
+  PROP_SHOW_THUMBNAILS,
 };
 
 
@@ -109,6 +114,8 @@ struct _ThunarIconFactory
   GHashTable               *icon_cache;
 
   GtkIconTheme             *icon_theme;
+
+  gboolean                  show_thumbnails;
 
   gint                      changed_idle_id;
   gint                      sweep_timer_id;
@@ -188,7 +195,21 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
                                                         _("Icon theme"),
                                                         _("The icon theme used by the icon factory"),
                                                         GTK_TYPE_ICON_THEME,
-                                                        G_PARAM_CONSTRUCT_ONLY | G_PARAM_READWRITE));
+                                                        EXO_PARAM_READABLE));
+
+  /**
+   * ThunarIconFactory:show-thumbnails:
+   *
+   * Whether this #ThunarIconFactory will try to generate and load thumbnails
+   * when loading icons for #ThunarFile<!---->s.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SHOW_THUMBNAILS,
+                                   g_param_spec_boolean ("show-thumbnails",
+                                                         _("Show Thumbnails"),
+                                                         _("Show Thumbnails"),
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -284,6 +305,10 @@ thunar_icon_factory_get_property (GObject    *object,
       g_value_set_object (value, factory->icon_theme);
       break;
 
+    case PROP_SHOW_THUMBNAILS:
+      g_value_set_boolean (value, factory->show_thumbnails);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -300,18 +325,10 @@ thunar_icon_factory_set_property (GObject      *object,
 {
   ThunarIconFactory *factory = THUNAR_ICON_FACTORY (object);
 
-  g_return_if_fail (factory->icon_theme == NULL);
-  g_return_if_fail (thunar_icon_factory_quark != 0);
-
   switch (prop_id)
     {
-    case PROP_ICON_THEME:
-      /* connect to the icon-theme */
-      factory->icon_theme = g_value_get_object (value);
-      g_object_ref (G_OBJECT (factory->icon_theme));
-      g_object_set_qdata (G_OBJECT (factory->icon_theme),
-                          thunar_icon_factory_quark,
-                          factory);
+    case PROP_SHOW_THUMBNAILS:
+      factory->show_thumbnails = g_value_get_boolean (value);
       break;
 
     default:
@@ -704,6 +721,7 @@ thunar_icon_factory_get_default (void)
 ThunarIconFactory*
 thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
 {
+  ThunarPreferences *preferences;
   ThunarIconFactory *factory;
 
   g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
@@ -716,9 +734,15 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
   factory = g_object_get_qdata (G_OBJECT (icon_theme), thunar_icon_factory_quark);
   if (G_UNLIKELY (factory == NULL))
     {
-      factory = g_object_new (THUNAR_TYPE_ICON_FACTORY,
-                              "icon-theme", icon_theme,
-                              NULL);
+      /* allocate a new factory and connect it to the icon theme */
+      factory = g_object_new (THUNAR_TYPE_ICON_FACTORY, NULL);
+      factory->icon_theme = g_object_ref (G_OBJECT (icon_theme));
+      g_object_set_qdata (G_OBJECT (factory->icon_theme), thunar_icon_factory_quark, factory);
+
+      /* connect the "show-thumbnails" property to the global preference */
+      preferences = thunar_preferences_get ();
+      g_object_set_data_full (G_OBJECT (factory), I_("thunar-preferences"), preferences, g_object_unref);
+      exo_binding_new (G_OBJECT (preferences), "misc-show-thumbnails", G_OBJECT (factory), "show-thumbnails");
     }
   else
     {
@@ -832,8 +856,8 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
         return icon;
     }
 
-  /* check if we can display a thumbnail */
-  if (thunar_file_is_regular (file))
+  /* check if thumbnails are enabled and we can display a thumbnail for the item */
+  if (G_LIKELY (factory->show_thumbnails && thunar_file_is_regular (file)))
     {
       /* determine the thumbnail state */
       thumb_state = thunar_file_get_thumb_state (file);

@@ -57,6 +57,7 @@ enum
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_RECURSIVE_PERMISSIONS,
+  PROP_MISC_SHOW_THUMBNAILS,
   PROP_MISC_TEXT_BESIDE_ICONS,
   N_PROPERTIES,
 };
@@ -275,6 +276,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                       THUNAR_TYPE_RECURSIVE_PERMISSIONS,
                                                       THUNAR_RECURSIVE_PERMISSIONS_ASK,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-show-thumbnails:
+   *
+   * Whether to generate and display thumbnails for previewable files.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_SHOW_THUMBNAILS,
+                                   g_param_spec_boolean ("misc-show-thumbnails",
+                                                         "misc-show-thumbnails",
+                                                         "misc-show-thumbnails",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences::misc-text-beside-icons:
