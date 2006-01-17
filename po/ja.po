@@ -3,7 +3,7 @@
 # Japanese translations for Thunar package.
 # Copyright (C) 2004-2006 Benedikt Meurer.
 # This file is distributed under the same license as the Thunar package.
-# Daichi Kawahata <daichi@xfce.org>, 2005.
+# Daichi Kawahata <daichi@xfce.org>, 2005-2006.
 #
 # 対訳一覧:
 # context menu    右クリックメニュー
@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-14 14:13+0100\n"
-"PO-Revision-Date: 2005-12-31 01:22+0900\n"
+"PO-Revision-Date: 2006-01-17 00:05+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -47,24 +47,24 @@ msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-chmod-job.c:246
 #: ../thunar-vfs/thunar-vfs-chown-job.c:244
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine file info of `%s': %s"
-msgstr "「%s」のファイル情報を確定するのに失敗しました。"
+msgstr "「%s」のファイル情報を確定するのに失敗しました: %s"
 
 #: ../thunar-vfs/thunar-vfs-chmod-job.c:272
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change permissions of `%s': %s"
-msgstr "「%s」のモード変更に失敗しました。"
+msgstr "「%s」のアクセス権を変更するのに失敗しました: %s"
 
 #: ../thunar-vfs/thunar-vfs-chown-job.c:260
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file owner of `%s': %s"
-msgstr "「%s」のモード変更に失敗しました。"
+msgstr "「%s」の所有者を変更するのに失敗しました: %s"
 
 #: ../thunar-vfs/thunar-vfs-chown-job.c:262
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file group of `%s': %s"
-msgstr "「%s」のモード変更に失敗しました。"
+msgstr "「%s」のグループを変更するのに失敗しました: %s"
 
 #: ../thunar-vfs/thunar-vfs-info.c:261
 msgid "No Exec field specified"
@@ -174,14 +174,13 @@ msgstr ""
 "これを飛ばしますか？"
 
 #: ../thunar-vfs/thunar-vfs-util.c:68 ../thunar/thunar-path-entry.c:1220
-#, fuzzy
 msgid "Invalid path"
-msgstr "無効なファイル名です。"
+msgstr "無効なパスです。"
 
 #: ../thunar-vfs/thunar-vfs-util.c:104
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown user `%s'"
-msgstr "不明な要素 <%s> があります"
+msgstr "ユーザー「%s」は不明です。"
 
 # FIXME:
 #: ../thunar-vfs/thunar-vfs-xfer.c:157
@@ -289,7 +288,7 @@ msgstr "リンク「%s」の作成に失敗しました。"
 #: ../thunar-vfs/thunar-vfs-xfer.c:445
 #, c-format
 msgid "Failed to change mode of `%s'"
-msgstr "「%s」のモード変更に失敗しました。"
+msgstr "「%s」のモードを変更するのに失敗しました。"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:479 ../thunar-vfs/thunar-vfs-xfer.c:539
 #, c-format
@@ -342,12 +341,11 @@ msgstr "フォルダを作成しています..."
 #: ../thunar/thunar-chooser-button.c:281 ../thunar/thunar-chooser-dialog.c:483
 #, c-format
 msgid "Failed to set default application for `%s'"
-msgstr "「%s」の標準アプリケーションをセットするのに失敗しました。"
+msgstr "「%s」の標準アプリケーションをセットするのに失敗しました"
 
 #: ../thunar/thunar-chooser-button.c:367
-#, fuzzy
 msgid "No application selected"
-msgstr "位置セレクター(_L)"
+msgstr "アプリケーションが選択されていません"
 
 #. setup a useful tooltip and ATK description
 #: ../thunar/thunar-chooser-button.c:372
@@ -355,12 +353,13 @@ msgstr "位置セレクター(_L)"
 msgid ""
 "The selected application is used to open this and other files or type \"%s\"."
 msgstr ""
+"選択したアプリケーションは、このファイルやその他のファイル、またはタイプが「%"
+"s」のファイルを開くのに使用されます。"
 
 #. add the "Other Application..." choice
 #: ../thunar/thunar-chooser-button.c:513
-#, fuzzy
 msgid "_Other Application..."
-msgstr "他のアプリケーション..."
+msgstr "他のアプリケーション(_O)..."
 
 #: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
 #: ../thunar/thunar-emblem-chooser.c:148 ../thunar/thunar-icon-renderer.c:161
@@ -390,7 +389,7 @@ msgstr "アプリで開く"
 #. create the "Custom command" expand
 #: ../thunar/thunar-chooser-dialog.c:270
 msgid "Use a _custom command:"
-msgstr "指定コマンドを使用(_C):"
+msgstr "指定コマンドを使用する(_C):"
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:288
@@ -413,7 +412,8 @@ msgstr "「%s」の実行に失敗しました。"
 #: ../thunar/thunar-chooser-dialog.c:617
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
-msgstr "<i>%s</i> とタイプが「%s」の他のファイルを以下のアプリで開きます:"
+msgstr ""
+"<i>%s</i> とタイプが「%s」の他のファイルを以下のアプリケーションで開きます:"
 
 #: ../thunar/thunar-chooser-dialog.c:639 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
@@ -560,7 +560,6 @@ msgid "The root folder has no parent"
 msgstr "ルートフォルダに上位のフォルダがありません。"
 
 #: ../thunar/thunar-file.c:1024
-#, fuzzy
 msgid "File System"
 msgstr "ファイルシステム"
 
@@ -601,7 +600,7 @@ msgstr "アイコンファクトリーに使用されるアイコンのテーマ
 
 #: ../thunar/thunar-icon-factory.c:209 ../thunar/thunar-icon-factory.c:210
 msgid "Show Thumbnails"
-msgstr ""
+msgstr "サムネイルを表示"
 
 #: ../thunar/thunar-icon-factory.c:668
 #, c-format
@@ -847,9 +846,9 @@ msgid "_Location:"
 msgstr "フォルダの位置(_L):"
 
 #: ../thunar/thunar-location-entry.c:326 ../thunar/thunar-window.c:1010
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to launch `%s'"
-msgstr "アクション「%s」の実行に失敗しました。"
+msgstr "「%s」の実行に失敗しました。"
 
 #: ../thunar/thunar-navigator.c:135 ../thunar/thunar-window.c:255
 msgid "Current directory"
@@ -884,68 +883,67 @@ msgstr "パス・エントリーのアイコン・サイズです"
 #. 0000
 #: ../thunar/thunar-permissions-chooser.c:240
 msgid "None"
-msgstr ""
+msgstr "無し"
 
 #. 0002
 #: ../thunar/thunar-permissions-chooser.c:242
 msgid "Write only"
-msgstr ""
+msgstr "書込のみ"
 
 #. 0004
 #: ../thunar/thunar-permissions-chooser.c:244
 msgid "Read only"
-msgstr ""
+msgstr "読込のみ"
 
 #. 0006
 #: ../thunar/thunar-permissions-chooser.c:246
 msgid "Read & Write"
-msgstr ""
+msgstr "読込＆書込"
 
 #: ../thunar/thunar-permissions-chooser.c:258
 msgid "Owner:"
-msgstr ""
+msgstr "ファイル所有者:"
 
 #: ../thunar/thunar-permissions-chooser.c:272
 msgid "Unknown"
-msgstr ""
+msgstr "不明"
 
 #: ../thunar/thunar-permissions-chooser.c:286
 #: ../thunar/thunar-permissions-chooser.c:341
-#, fuzzy
 msgid "Access:"
-msgstr "アクセス日時:"
+msgstr "アクセス:"
 
 #: ../thunar/thunar-permissions-chooser.c:315
 msgid "Group:"
-msgstr ""
+msgstr "所属グループ:"
 
 #: ../thunar/thunar-permissions-chooser.c:370
-#, fuzzy
 msgid "Others:"
-msgstr "その他のファイル(_O)"
+msgstr "それ以外の人達:"
 
 #: ../thunar/thunar-permissions-chooser.c:399
 msgid "Program:"
-msgstr ""
+msgstr "プログラム:"
 
 #: ../thunar/thunar-permissions-chooser.c:405
 msgid "Allow this file to _run as a program"
-msgstr ""
+msgstr "プログラムとしての実行を許可する(_R)"
 
 #: ../thunar/thunar-permissions-chooser.c:431
 msgid ""
 "Allowing untrusted programs to run \n"
 "presents a security risk to your system."
 msgstr ""
+"信用の置けないプログラムの実行を許可すると\n"
+"セキュリティ上の危険をもたらします。"
 
 #: ../thunar/thunar-permissions-chooser.c:442
 msgid "Please wait..."
-msgstr ""
+msgstr "お待ち下さい..."
 
 #: ../thunar/thunar-permissions-chooser.c:447
-#, fuzzy
 msgid "Stop applying permissions recursively."
-msgstr "「%s」のモード変更に失敗しました。"
+msgstr "アクセス権を再帰的に変更していくのを止めます。"
 
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:565
@@ -956,17 +954,19 @@ msgstr "質問"
 
 #: ../thunar/thunar-permissions-chooser.c:589
 msgid "Apply recursively?"
-msgstr ""
+msgstr "再帰的に変更しますか？"
 
 #: ../thunar/thunar-permissions-chooser.c:595
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolder below the selected folder?"
 msgstr ""
+"選択したフォルダの中にある全てのファイルや\n"
+"サブフォルダにも変更を適用しますか？"
 
 #: ../thunar/thunar-permissions-chooser.c:600
 msgid "Do _not ask me again"
-msgstr ""
+msgstr "再び尋ねない(_N)"
 
 #: ../thunar/thunar-permissions-chooser.c:601
 msgid ""
@@ -974,22 +974,22 @@ msgid ""
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr ""
+"このオプションを選ぶと、あなたの選択は記憶され同じ質問を尋ねられる事はありま"
+"せん。今後これを変更するには環境設定ダイアログをご使用下さい。"
 
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:681
-#, fuzzy
 msgid "Failed to change group"
-msgstr "「%s」のモード変更に失敗しました。"
+msgstr "「%s」のグループを変更するのに失敗しました。"
 
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:734
-#, fuzzy
 msgid "Failed to apply new permissions"
-msgstr "「%s」のモード変更に失敗しました。"
+msgstr "新しいアクセス権を有効にするのに失敗しました。"
 
 #: ../thunar/thunar-permissions-chooser.c:913
 msgid "Unknown file owner"
-msgstr ""
+msgstr "ファイル所有者不明"
 
 #: ../thunar/thunar-permissions-chooser.c:1052
 #: ../thunar/thunar-progress-dialog.c:321
@@ -1019,14 +1019,12 @@ msgstr "ファイルマネージャーの環境設定"
 #. Views
 #.
 #: ../thunar/thunar-preferences-dialog.c:203
-#, fuzzy
 msgid "Views"
-msgstr "表示(_V)"
+msgstr "表示"
 
 #: ../thunar/thunar-preferences-dialog.c:213
-#, fuzzy
 msgid "Default View"
-msgstr "<b>標準の表示方法</b>"
+msgstr "標準の表示"
 
 #: ../thunar/thunar-preferences-dialog.c:225
 msgid "View _new folders using:"
@@ -1071,13 +1069,15 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:263
 msgid "_Show thumbnails"
-msgstr ""
+msgstr "サムネイルを表示する(_S)"
 
 #: ../thunar/thunar-preferences-dialog.c:265
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
 msgstr ""
+"フォルダ内のプレビュー可能なファイルを表示するにはこのオプションを有効にして"
+"下さい。これらは自動的に作成されるサムネイルアイコンとして表示されます。"
 
 #: ../thunar/thunar-preferences-dialog.c:286
 msgid "_Text beside icons"
@@ -1096,27 +1096,27 @@ msgstr ""
 #.
 #: ../thunar/thunar-preferences-dialog.c:297
 msgid "Advanced"
-msgstr ""
+msgstr "詳細..."
 
 #: ../thunar/thunar-preferences-dialog.c:307
 msgid "Miscellaneous"
-msgstr ""
+msgstr "その他"
 
 #: ../thunar/thunar-preferences-dialog.c:319
 msgid "Apply permissions _recursively:"
-msgstr ""
+msgstr "アクセス権を再帰的に変更する(_R):"
 
 #: ../thunar/thunar-preferences-dialog.c:324
 msgid "Ask everytime"
-msgstr ""
+msgstr "毎回尋ねる"
 
 #: ../thunar/thunar-preferences-dialog.c:325
 msgid "Always"
-msgstr ""
+msgstr "常に行う"
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Never"
-msgstr ""
+msgstr "行わない"
 
 #: ../thunar/thunar-progress-dialog.c:151
 msgid "Job"
@@ -1164,9 +1164,8 @@ msgid "Kind:"
 msgstr "種類:"
 
 #: ../thunar/thunar-properties-dialog.c:270
-#, fuzzy
 msgid "Open With:"
-msgstr "アプリで開く"
+msgstr "これで開く:"
 
 #.
 #. Third box (modified, accessed)
@@ -1247,9 +1246,8 @@ msgid "Create an empty folder within the current folder"
 msgstr "現在のフォルダに空のフォルダを作成します。"
 
 #: ../thunar/thunar-standard-view.c:264
-#, fuzzy
 msgid "_Properties..."
-msgstr "プロパティ(_P)"
+msgstr "プロパティ(_P)..."
 
 #: ../thunar/thunar-standard-view.c:264
 msgid "View the properties of the selected file"
@@ -1622,9 +1620,8 @@ msgid "Display folder content in a detailed list view"
 msgstr "フォルダの内容を詳細なリストで表示します。"
 
 #: ../thunar/thunar-window.c:933
-#, fuzzy
 msgid "Failed to open parent folder"
-msgstr "上の階層にあるフォルダを開きます。"
+msgstr "上位のフォルダを開くのに失敗しました。"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:959
@@ -1951,46 +1948,3 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
-
-#~ msgid "Failed to create the Thunar configuration directory in %s"
-#~ msgstr "%s に Thunar の設定フォルダを作成するのに失敗しました。"
-
-#~ msgid "Failed to open preferences database in %s: %s"
-#~ msgstr "%s にある環境設定データベースを開くのに失敗しました: %s"
-
-#~ msgid "Home"
-#~ msgstr "ホーム"
-
-#~ msgid "%s Info"
-#~ msgstr "%s の情報"
-
-#, fuzzy
-#~ msgid "Advanced Permissions"
-#~ msgstr "アクセス権"
-
-#, fuzzy
-#~ msgid "Failed to change the group to which `%s' belongs"
-#~ msgstr "「%s」のモード変更に失敗しました。"
-
-#, fuzzy
-#~ msgid "%s (%s)"
-#~ msgstr "「%s」(%s) %sです。"
-
-#, fuzzy
-#~ msgid "List folder contents"
-#~ msgstr "フォルダの内容を読み込んでいます..."
-
-#, fuzzy
-#~ msgid "Execute"
-#~ msgstr "実行(_E)"
-
-#, fuzzy
-#~ msgid "_Grant Permission"
-#~ msgstr "アクセス権"
-
-#, fuzzy
-#~ msgid "_Deny Permission"
-#~ msgstr "アクセス権"
-
-#~ msgid "<b>Icon View</b>"
-#~ msgstr "<b>アイコン表示</b>"
