@@ -11,14 +11,6 @@ Important for Thunar 1.0
  - We need a way to "refresh" folders after a "Cut"-operation with Nautilus.
    With local folders - with not many files inside - the move is too fast!
 
- - The ThunarTrashFile constructor needs some rework, as it's currently
-   mostly brain-dead. Should probably be splitted into several functions.
-   In addition the ThunarTrashFile should enable the monitoring on the
-   real file in order to stay informed about changes.
-
- - The ThunarTrashFolder class should watch the trash manager and the
-   trash cans for changes.
-
  - Use better way to handle system flavours than simply (mis)using
    AC_CONFIG_LINKS(), which is pretty messy for this purpose.
 
@@ -32,10 +24,6 @@ Important for Thunar 1.0
  - A design for the ThunarTreePane framework must be developed and later
    be implemented.
 
- - The preferences must be sorted out and a suggestion for both a good
-   set of preferences and a layout for the preferences dialog must be
-   developed and presented.
-
  - A design for the ThunarDesktopView module must be developed and later
    be implemented.
 
@@ -47,9 +35,6 @@ Important for Thunar 1.0
    to ease development of core modules (and later plugins).
 
  - Write good user documentation. Must be both precise and complete.
-
- - Design (UI design this time) the file properties dialog, develop
-   a software design and implement it.
 
  - We need some easy way to manage diagrams and related developer
    information, which also includes results from discussions on

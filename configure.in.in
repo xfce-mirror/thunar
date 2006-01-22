@@ -1,6 +1,6 @@
 dnl $Id$
 dnl
-dnl Copyright (c) 2004-2005
+dnl Copyright (c) 2004-2006
 dnl         The Thunar development team. All rights reserved.
 dnl
 dnl Written for Thunar by Benedikt Meurer <benny@xfce.org>.
@@ -9,13 +9,13 @@ dnl
 dnl ***************************
 dnl *** Version information ***
 dnl ***************************
-m4_define([thunar_verinfo], [0:0:0])
+m4_define([thunar_verinfo], [1:0:1])
 m4_define([thunar_version_api], [1])
 m4_define([thunar_version_major], [0])
-m4_define([thunar_version_minor], [1])
-m4_define([thunar_version_micro], [4])
+m4_define([thunar_version_minor], [2])
+m4_define([thunar_version_micro], [0])
 m4_define([thunar_version_build], [r@REVISION@])
-m4_define([thunar_version_tag], [svn])
+m4_define([thunar_version_tag], [alpha])
 m4_define([thunar_version], [thunar_version_major().thunar_version_minor().thunar_version_micro()ifelse(thunar_version_tag(), [], [], [thunar_version_tag()-thunar_version_build()])])
 
 dnl *******************************************
@@ -26,7 +26,7 @@ m4_define([thunar_debug_default], [ifelse(thunar_version_tag(), [], [minimum], [
 dnl ***************************
 dnl *** Initialize autoconf ***
 dnl ***************************
-AC_COPYRIGHT([Copyright (c) 2004-2005
+AC_COPYRIGHT([Copyright (c) 2004-2006
         The Thunar development team. All rights reserved.
         
 Written for Thunar by Benedikt Meurer <benny@xfce.org>.])
@@ -156,7 +156,7 @@ XDT_I18N([ca de el es fr hu it ja pl pt_BR])
 dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
-XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1.1])
+XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1.2])
 XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.6.0])
