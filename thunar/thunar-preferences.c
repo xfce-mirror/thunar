@@ -59,6 +59,8 @@ enum
   PROP_MISC_RECURSIVE_PERMISSIONS,
   PROP_MISC_SHOW_THUMBNAILS,
   PROP_MISC_TEXT_BESIDE_ICONS,
+  PROP_SHORTCUTS_ICON_EMBLEMS,
+  PROP_SHORTCUTS_ICON_SIZE,
   N_PROPERTIES,
 };
 
@@ -164,7 +166,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   thunar_g_initialize_transformations ();
 
   /**
-   * ThunarPreferences::default-show-hidden:
+   * ThunarPreferences:default-show-hidden:
    *
    * Whether to show hidden files by default in new windows.
    **/
@@ -177,7 +179,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPreferences::default-view:
+   * ThunarPreferences:default-view:
    *
    * The name of the widget class, which should be used for the
    * view pane in new #ThunarWindow<!---->s or "void" to use the
@@ -192,7 +194,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPreferences::last-location-bar:
+   * ThunarPreferences:last-location-bar:
    *
    * The name of the widget class, which should be used for the
    * location bar in #ThunarWindow<!---->s or "void" to hide the
@@ -207,7 +209,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPreferences::last-side-pane:
+   * ThunarPreferences:last-side-pane:
    *
    * The name of the widget class, which should be used for the
    * side pane in #ThunarWindow<!---->s or "void" to hide the
@@ -222,7 +224,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPreferences::last-view:
+   * ThunarPreferences:last-view:
    *
    * The name of the widget class, which should be used for the
    * main view component in #ThunarWindow<!---->s.
@@ -236,7 +238,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPreferences::misc-folders-first:
+   * ThunarPreferences:misc-folders-first:
    *
    * Whether to sort folders before files.
    **/
@@ -291,7 +293,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPreferences::misc-text-beside-icons:
+   * ThunarPreferences:misc-text-beside-icons:
    *
    * Whether the icon view should display the file names beside the
    * file icons instead of below the file icons.
@@ -303,6 +305,36 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          "misc-text-beside-icons",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:shortcuts-icon-emblems:
+   *
+   * Whether to display emblems for file icons (if defined) in the
+   * shortcuts side pane.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SHORTCUTS_ICON_EMBLEMS,
+                                   g_param_spec_boolean ("shortcuts-icon-emblems",
+                                                         "shortcuts-icon-emblems",
+                                                         "shortcuts-icon-emblems",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:shortcuts-icon-size:
+   *
+   * The icon size (in pixel) to use for the icons displayed in the
+   * shortcuts side pane. It is strongly suggested to use only icon
+   * sizes supported by the icon theme (e.g. 16, 24, 48) in order to
+   * avoid unnecessary scaling in the file manager.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_SHORTCUTS_ICON_SIZE,
+                                   g_param_spec_int ("shortcuts-icon-size",
+                                                     "shortcuts-icon-size",
+                                                     "shortcuts-icon-size",
+                                                     1, 128, 24,
+                                                     EXO_PARAM_READWRITE));
 }
 
 

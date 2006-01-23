@@ -46,12 +46,6 @@ Thunar_SOURCES =							\
 	thunar-emblem-chooser.h						\
 	thunar-enum-types.c						\
 	thunar-enum-types.h						\
-	thunar-shortcuts-model.c					\
-	thunar-shortcuts-model.h					\
-	thunar-shortcuts-pane.c						\
-	thunar-shortcuts-pane.h						\
-	thunar-shortcuts-view.c						\
-	thunar-shortcuts-view.h						\
 	thunar-file.c							\
 	thunar-file.h							\
 	thunar-folder.c							\
@@ -103,6 +97,14 @@ Thunar_SOURCES =							\
 	thunar-progress-dialog.h					\
 	thunar-properties-dialog.c					\
 	thunar-properties-dialog.h					\
+	thunar-shortcuts-icon-renderer.c				\
+	thunar-shortcuts-icon-renderer.h				\
+	thunar-shortcuts-model.c					\
+	thunar-shortcuts-model.h					\
+	thunar-shortcuts-pane.c						\
+	thunar-shortcuts-pane.h						\
+	thunar-shortcuts-view.c						\
+	thunar-shortcuts-view.h						\
 	thunar-side-pane.c						\
 	thunar-side-pane.h						\
 	thunar-standard-view.c						\

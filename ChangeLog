@@ -1,5 +1,23 @@
 2006-01-23	Benedikt Meurer <benny@xfce.org>
 
+	* docs/README.thunarrc, thunar/thunar-preferences.c: Add new preferences
+	  ShortcutsIconEmblems and ShortcutsIconSize, which control the
+	  appearance of the shortcuts view.
+	* thunar/thunar-gobject-extensions.c: Add transformator for string to
+	  int transformations.
+	* thunar/thunar-icon-renderer.{c,h},thunar/thunar-shortcuts-model.{c,h},
+	  thunar/thunar-shortcuts-icon-renderer.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-shortcuts-view.c: Import ThunarShortcutsIconRenderer
+	  class, which is derived from ThunarIconRenderer and allows us to draw
+	  icon cells consistently throughout the file manager. This also fixes
+	  bug #1340, which requests to display emblems for the icons in the
+	  shortcuts pane. Both the display of emblems in the shortcuts pane
+	  and the size of the icons in the shortcuts pane are now configurable
+	  through the thunarrc file (for the emblems, there's also a menu item
+	  in the context menu).
+
+2006-01-23	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Bump version to 0.2.1svn.
 	* thunar/thunar-file.{c,h}: Make thunar_file_accepts_drop() easier to
 	  use.

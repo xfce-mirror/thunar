@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -22,7 +22,6 @@
 #endif
 
 #include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-file.h>
 #include <thunar/thunar-gdk-pixbuf-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
@@ -34,6 +33,7 @@ enum
   PROP_0,
   PROP_DROP_FILE,
   PROP_FILE,
+  PROP_EMBLEMS,
   PROP_FOLLOW_STATE,
   PROP_SIZE,
 };
@@ -65,23 +65,6 @@ static void thunar_icon_renderer_render        (GtkCellRenderer         *rendere
                                                 GdkRectangle            *cell_area,
                                                 GdkRectangle            *expose_area,
                                                 GtkCellRendererState     flags);
-
-
-
-struct _ThunarIconRendererClass
-{
-  GtkCellRendererClass __parent__;
-};
-
-struct _ThunarIconRenderer
-{
-  GtkCellRenderer __parent__;
-
-  ThunarFile *drop_file;
-  ThunarFile *file;
-  gboolean    follow_state;
-  gint        size;
-};
 
 
 
@@ -145,8 +128,8 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_DROP_FILE,
                                    g_param_spec_object ("drop-file",
-                                                        _("Drop file"),
-                                                        _("The file which should be rendered in as drop acceptor"),
+                                                        "drop-file",
+                                                        "drop-file",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
 
@@ -157,14 +140,25 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_FILE,
-                                   g_param_spec_object ("file",
-                                                        _("File"),
-                                                        _("The file whose icon to render"),
+                                   g_param_spec_object ("file", "file", "file",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
 
   /**
-   * ThunarIconRenderer::follow-state:
+   * ThunarIconRenderer:emblems:
+   *
+   * Specifies whether to render emblems in addition to the file icons.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_EMBLEMS,
+                                   g_param_spec_boolean ("emblems",
+                                                         "emblems",
+                                                         "emblems",
+                                                         TRUE,
+                                                         G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarIconRenderer:follow-state:
    *
    * Specifies whether the icon renderer should render icons
    * based on the selection state of the items. This is necessary
@@ -174,8 +168,8 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_FOLLOW_STATE,
                                    g_param_spec_boolean ("follow-state",
-                                                         _("Follow state"),
-                                                         _("Follow state"),
+                                                         "follow-state",
+                                                         "follow-state",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 
@@ -186,11 +180,9 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_SIZE,
-                                   g_param_spec_int ("size",
-                                                     _("Icon size"),
-                                                     _("The icon size in pixels"),
+                                   g_param_spec_int ("size", "size", "size",
                                                      1, G_MAXINT, 24,
-                                                     EXO_PARAM_READWRITE));
+                                                     G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
 }
 
 
@@ -201,9 +193,6 @@ thunar_icon_renderer_init (ThunarIconRenderer *icon_renderer)
   /* use 1px padding */
   GTK_CELL_RENDERER (icon_renderer)->xpad = 1;
   GTK_CELL_RENDERER (icon_renderer)->ypad = 1;
-
-  /* default to 24px icons */
-  icon_renderer->size = 24;
 }
 
 
@@ -242,6 +231,10 @@ thunar_icon_renderer_get_property (GObject    *object,
       g_value_set_object (value, icon_renderer->file);
       break;
 
+    case PROP_EMBLEMS:
+      g_value_set_boolean (value, icon_renderer->emblems);
+      break;
+
     case PROP_FOLLOW_STATE:
       g_value_set_boolean (value, icon_renderer->follow_state);
       break;
@@ -271,17 +264,17 @@ thunar_icon_renderer_set_property (GObject      *object,
     case PROP_DROP_FILE:
       if (G_LIKELY (icon_renderer->drop_file != NULL))
         g_object_unref (G_OBJECT (icon_renderer->drop_file));
-      icon_renderer->drop_file = g_value_get_object (value);
-      if (G_LIKELY (icon_renderer->drop_file != NULL))
-        g_object_ref (G_OBJECT (icon_renderer->drop_file));
+      icon_renderer->drop_file = (gpointer) g_value_dup_object (value);
       break;
 
     case PROP_FILE:
       if (G_LIKELY (icon_renderer->file != NULL))
         g_object_unref (G_OBJECT (icon_renderer->file));
-      icon_renderer->file = g_value_get_object (value);
-      if (G_LIKELY (icon_renderer->file != NULL))
-        g_object_ref (G_OBJECT (icon_renderer->file));
+      icon_renderer->file = (gpointer) g_value_dup_object (value);
+      break;
+
+    case PROP_EMBLEMS:
+      icon_renderer->emblems = g_value_get_boolean (value);
       break;
 
     case PROP_FOLLOW_STATE:
@@ -455,91 +448,95 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   /* release the file's icon */
   g_object_unref (G_OBJECT (icon));
 
-  /* display the primary emblem as well (if any) */
-  emblems = thunar_file_get_emblem_names (icon_renderer->file);
-  if (G_UNLIKELY (emblems != NULL))
+  /* check if we should render emblems as well */
+  if (G_LIKELY (icon_renderer->emblems))
     {
-      /* render up to four emblems for sizes from 48 onwards, else up to 2 emblems */
-      max_emblems = (icon_renderer->size < 48) ? 2 : 4;
-
-      /* render the emblems */
-      for (lp = emblems, position = 0; lp != NULL && position < max_emblems; lp = lp->next)
+      /* display the primary emblem as well (if any) */
+      emblems = thunar_file_get_emblem_names (icon_renderer->file);
+      if (G_UNLIKELY (emblems != NULL))
         {
-          /* check if we have the emblem in the icon theme */
-          emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, NULL, FALSE);
-          if (G_UNLIKELY (emblem == NULL))
-            continue;
+          /* render up to four emblems for sizes from 48 onwards, else up to 2 emblems */
+          max_emblems = (icon_renderer->size < 48) ? 2 : 4;
 
-          /* determine the dimensions of the emblem */
-          emblem_area.width = gdk_pixbuf_get_width (emblem);
-          emblem_area.height = gdk_pixbuf_get_height (emblem);
-
-          /* shrink insane emblems */
-          if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > (2 * icon_renderer->size) / 3))
+          /* render the emblems */
+          for (lp = emblems, position = 0; lp != NULL && position < max_emblems; lp = lp->next)
             {
-              /* scale down the emblem */
-              temp = exo_gdk_pixbuf_scale_ratio (emblem, (2 * icon_renderer->size) / 3);
-              g_object_unref (G_OBJECT (emblem));
-              emblem = temp;
+              /* check if we have the emblem in the icon theme */
+              emblem = thunar_icon_factory_load_icon (icon_factory, lp->data, icon_renderer->size, NULL, FALSE);
+              if (G_UNLIKELY (emblem == NULL))
+                continue;
 
-              /* determine the size again */
+              /* determine the dimensions of the emblem */
               emblem_area.width = gdk_pixbuf_get_width (emblem);
               emblem_area.height = gdk_pixbuf_get_height (emblem);
+
+              /* shrink insane emblems */
+              if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > (2 * icon_renderer->size) / 3))
+                {
+                  /* scale down the emblem */
+                  temp = exo_gdk_pixbuf_scale_ratio (emblem, (2 * icon_renderer->size) / 3);
+                  g_object_unref (G_OBJECT (emblem));
+                  emblem = temp;
+
+                  /* determine the size again */
+                  emblem_area.width = gdk_pixbuf_get_width (emblem);
+                  emblem_area.height = gdk_pixbuf_get_height (emblem);
+                }
+
+              /* determine a good position for the emblem, depending on the position index */
+              switch (position)
+                {
+                case 0: /* right/bottom */
+                  emblem_area.x = MIN (icon_area.x + icon_area.width - emblem_area.width / 2,
+                                       cell_area->x + cell_area->width - emblem_area.width);
+                  emblem_area.y = MIN (icon_area.y + icon_area.height - emblem_area.height / 2,
+                                       cell_area->y + cell_area->height -emblem_area.height);
+                  break;
+
+                case 1: /* left/bottom */
+                  emblem_area.x = MAX (icon_area.x - emblem_area.width / 2,
+                                       cell_area->x);
+                  emblem_area.y = MIN (icon_area.y + icon_area.height - emblem_area.height / 2,
+                                       cell_area->y + cell_area->height -emblem_area.height);
+                  break;
+
+                case 2: /* left/top */
+                  emblem_area.x = MAX (icon_area.x - emblem_area.width / 2,
+                                       cell_area->x);
+                  emblem_area.y = MAX (icon_area.y - emblem_area.height / 2,
+                                       cell_area->y);
+                  break;
+
+                case 3: /* right/top */
+                  emblem_area.x = MIN (icon_area.x + icon_area.width - emblem_area.width / 2,
+                                       cell_area->x + cell_area->width - emblem_area.width);
+                  emblem_area.y = MAX (icon_area.y - emblem_area.height / 2,
+                                       cell_area->y);
+                  break;
+
+                default:
+                  g_assert_not_reached ();
+                }
+
+              /* render the emblem */
+              if (gdk_rectangle_intersect (expose_area, &emblem_area, &draw_area))
+                {
+                  gdk_draw_pixbuf (window, widget->style->black_gc, emblem,
+                                   draw_area.x - emblem_area.x, draw_area.y - emblem_area.y,
+                                   draw_area.x, draw_area.y, draw_area.width, draw_area.height,
+                                   GDK_RGB_DITHER_NORMAL, 0, 0);
+                }
+
+              /* release the emblem */
+              g_object_unref (G_OBJECT (emblem));
+
+              /* advance the position index */
+              ++position;
             }
 
-          /* determine a good position for the emblem, depending on the position index */
-          switch (position)
-            {
-            case 0: /* right/bottom */
-              emblem_area.x = MIN (icon_area.x + icon_area.width - emblem_area.width / 2,
-                                   cell_area->x + cell_area->width - emblem_area.width);
-              emblem_area.y = MIN (icon_area.y + icon_area.height - emblem_area.height / 2,
-                                   cell_area->y + cell_area->height -emblem_area.height);
-              break;
-
-            case 1: /* left/bottom */
-              emblem_area.x = MAX (icon_area.x - emblem_area.width / 2,
-                                   cell_area->x);
-              emblem_area.y = MIN (icon_area.y + icon_area.height - emblem_area.height / 2,
-                                   cell_area->y + cell_area->height -emblem_area.height);
-              break;
-
-            case 2: /* left/top */
-              emblem_area.x = MAX (icon_area.x - emblem_area.width / 2,
-                                   cell_area->x);
-              emblem_area.y = MAX (icon_area.y - emblem_area.height / 2,
-                                   cell_area->y);
-              break;
-
-            case 3: /* right/top */
-              emblem_area.x = MIN (icon_area.x + icon_area.width - emblem_area.width / 2,
-                                   cell_area->x + cell_area->width - emblem_area.width);
-              emblem_area.y = MAX (icon_area.y - emblem_area.height / 2,
-                                   cell_area->y);
-              break;
-
-            default:
-              g_assert_not_reached ();
-            }
-
-          /* render the emblem */
-          if (gdk_rectangle_intersect (expose_area, &emblem_area, &draw_area))
-            {
-              gdk_draw_pixbuf (window, widget->style->black_gc, emblem,
-                               draw_area.x - emblem_area.x, draw_area.y - emblem_area.y,
-                               draw_area.x, draw_area.y, draw_area.width, draw_area.height,
-                               GDK_RGB_DITHER_NORMAL, 0, 0);
-            }
-
-          /* release the emblem */
-          g_object_unref (G_OBJECT (emblem));
-
-          /* advance the position index */
-          ++position;
+          /* release the emblem name list */
+          g_list_free (emblems);
         }
-
-      /* release the emblem name list */
-      g_list_free (emblems);
     }
 
   /* release our reference on the icon factory */

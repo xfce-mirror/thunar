@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +20,7 @@
 #ifndef __THUNAR_ICON_RENDERER_H__
 #define __THUNAR_ICON_RENDERER_H__
 
-#include <gtk/gtk.h>
+#include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
 
@@ -33,6 +33,22 @@ typedef struct _ThunarIconRenderer      ThunarIconRenderer;
 #define THUNAR_IS_ICON_RENDERER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_ICON_RENDERER))
 #define THUNAR_IS_ICON_RENDERER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_ICON_RENDERER))
 #define THUNAR_ICON_RENDERER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_RENDERER, ThunarIconRendererClass))
+
+struct _ThunarIconRendererClass
+{
+  GtkCellRendererClass __parent__;
+};
+
+struct _ThunarIconRenderer
+{
+  GtkCellRenderer __parent__;
+
+  ThunarFile *drop_file;
+  ThunarFile *file;
+  gboolean    emblems;
+  gboolean    follow_state;
+  gint        size;
+};
 
 GType            thunar_icon_renderer_get_type (void) G_GNUC_CONST;
 

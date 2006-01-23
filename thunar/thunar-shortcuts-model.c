@@ -31,7 +31,6 @@
 
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-file.h>
-#include <thunar/thunar-icon-factory.h>
 
 
 
@@ -404,8 +403,11 @@ thunar_shortcuts_model_get_column_type (GtkTreeModel *tree_model,
     case THUNAR_SHORTCUTS_MODEL_COLUMN_NAME:
       return G_TYPE_STRING;
 
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_ICON:
-      return GDK_TYPE_PIXBUF;
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_FILE:
+      return THUNAR_TYPE_FILE;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME:
+      return THUNAR_VFS_TYPE_VOLUME;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE:
       return G_TYPE_BOOLEAN;
@@ -472,11 +474,7 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
                                   GValue       *value)
 {
   ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (tree_model);
-  ThunarIconFactory     *icon_factory;
   ThunarShortcut       *shortcut;
-  GtkIconTheme          *icon_theme;
-  const gchar           *icon_name;
-  GdkPixbuf             *icon = NULL;
 
   g_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   g_return_if_fail (iter->stamp == model->stamp);
@@ -498,22 +496,14 @@ thunar_shortcuts_model_get_value (GtkTreeModel *tree_model,
         g_value_set_static_string (value, "");
       break;
 
-    case THUNAR_SHORTCUTS_MODEL_COLUMN_ICON:
-      g_value_init (value, GDK_TYPE_PIXBUF);
-      icon_factory = thunar_icon_factory_get_default ();
-      icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
-      if (G_UNLIKELY (shortcut->volume != NULL))
-        {
-          icon_name = thunar_vfs_volume_lookup_icon_name (shortcut->volume, icon_theme);
-          icon = thunar_icon_factory_load_icon (icon_factory, icon_name, 32, NULL, TRUE);
-        }
-      else if (G_LIKELY (shortcut->file != NULL))
-        {
-          icon = thunar_icon_factory_load_file_icon (icon_factory, shortcut->file, THUNAR_FILE_ICON_STATE_DEFAULT, 32);
-        }
-      if (G_LIKELY (icon != NULL))
-        g_value_take_object (value, icon);
-      g_object_unref (G_OBJECT (icon_factory));
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_FILE:
+      g_value_init (value, THUNAR_TYPE_FILE);
+      g_value_set_object (value, shortcut->file);
+      break;
+
+    case THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME:
+      g_value_init (value, THUNAR_VFS_TYPE_VOLUME);
+      g_value_set_object (value, shortcut->volume);
       break;
 
     case THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE:

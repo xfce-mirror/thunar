@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -37,7 +37,8 @@ typedef struct _ThunarShortcutsModel      ThunarShortcutsModel;
 /**
  * ThunarShortcutsModelColumn:
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_NAME      : the index of the name column.
- * @THUNAR_SHORTCUTS_MODEL_COLUMN_ICON      : the index of the icon column.
+ * @THUNAR_SHORTCUTS_MODEL_COLUMN_FILE      : the index of the file column.
+ * @THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME    : the index of the volume column.
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE   : tells whether a row is mutable.
  * @THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR : tells whether a row is a separator.
  *
@@ -47,7 +48,8 @@ typedef struct _ThunarShortcutsModel      ThunarShortcutsModel;
 typedef enum
 {
   THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
-  THUNAR_SHORTCUTS_MODEL_COLUMN_ICON,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
+  THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME,
   THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE,
   THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR,
   THUNAR_SHORTCUTS_MODEL_N_COLUMNS,

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -25,8 +25,10 @@
 #endif
 
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-view.h>
+#include <thunar/thunar-preferences.h>
 
 
 
@@ -48,6 +50,7 @@ enum
 
 static void         thunar_shortcuts_view_class_init             (ThunarShortcutsViewClass *klass);
 static void         thunar_shortcuts_view_init                   (ThunarShortcutsView      *view);
+static void         thunar_shortcuts_view_finalize               (GObject                  *object);
 static gboolean     thunar_shortcuts_view_button_press_event     (GtkWidget                *widget,
                                                                   GdkEventButton           *event);
 static void         thunar_shortcuts_view_drag_data_received     (GtkWidget                *widget,
@@ -101,7 +104,15 @@ struct _ThunarShortcutsViewClass
 
 struct _ThunarShortcutsView
 {
-  GtkTreeView __parent__;
+  GtkTreeView        __parent__;
+  ThunarPreferences *preferences;
+
+#if GTK_CHECK_VERSION(2,8,0)
+  /* id of the signal used to queue a resize on the
+   * column whenever the shortcuts icon size is changed.
+   */
+  gint queue_resize_signal_id;
+#endif
 };
 
 
@@ -158,9 +169,13 @@ thunar_shortcuts_view_class_init (ThunarShortcutsViewClass *klass)
 {
   GtkTreeViewClass *gtktree_view_class;
   GtkWidgetClass   *gtkwidget_class;
+  GObjectClass     *gobject_class;
 
   /* determine the parent type class */
   thunar_shortcuts_view_parent_class = g_type_class_peek_parent (klass);
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_shortcuts_view_finalize;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->button_press_event = thunar_shortcuts_view_button_press_event;
@@ -191,21 +206,46 @@ static void
 thunar_shortcuts_view_init (ThunarShortcutsView *view)
 {
   GtkTreeViewColumn *column;
-  GtkTreeSelection  *selection;
   GtkCellRenderer   *renderer;
 
+  /* configure the tree view */
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
 
+  /* grab a reference on the preferences; be sure to redraw the view
+   * whenever the "shortcuts-icon-emblems" preference changes.
+   */
+  view->preferences = thunar_preferences_get ();
+  g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-icon-emblems", G_CALLBACK (gtk_widget_queue_draw), view);
+
+  /* allocate a single column for our renderers */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
                          "reorderable", FALSE,
                          "resizable", FALSE,
                          "sizing", GTK_TREE_VIEW_COLUMN_AUTOSIZE,
                          NULL);
-  renderer = gtk_cell_renderer_pixbuf_new ();
+  gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
+
+  /* queue a resize on the column whenever the icon size is changed */
+#if GTK_CHECK_VERSION(2,8,0)
+  view->queue_resize_signal_id = g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-icon-size",
+                                                           G_CALLBACK (gtk_tree_view_column_queue_resize), column);
+#endif
+
+  /* allocate the special icon renderer */
+  renderer = thunar_shortcuts_icon_renderer_new ();
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "pixbuf", THUNAR_SHORTCUTS_MODEL_COLUMN_ICON,
+                                       "file", THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
+                                       "volume", THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME,
                                        NULL);
+
+  /* sync the "emblems" property of the icon renderer with the "shortcuts-icon-emblems" preference
+   * and the "size" property of the renderer with the "shortcuts-icon-size" preference.
+   */
+  exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-size", G_OBJECT (renderer), "size");
+  exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-emblems", G_OBJECT (renderer), "emblems");
+
+  /* allocate the text renderer */
   renderer = gtk_cell_renderer_text_new ();
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (thunar_shortcuts_view_renamed), view);
   g_signal_connect (G_OBJECT (renderer), "editing-canceled", G_CALLBACK (thunar_shortcuts_view_rename_canceled), view);
@@ -213,10 +253,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
                                        NULL);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
-
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-  gtk_tree_selection_set_mode (selection, GTK_SELECTION_SINGLE);
 
   /* enable drag support for the shortcuts view (actually used to support reordering) */
   gtk_tree_view_enable_model_drag_source (GTK_TREE_VIEW (view), GDK_BUTTON1_MASK, drag_targets,
@@ -236,23 +272,44 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
 
 
+static void
+thunar_shortcuts_view_finalize (GObject *object)
+{
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (object);
+
+  /* disconnect the queue resize signal handler */
+#if GTK_CHECK_VERSION(2,8,0)
+  g_signal_handler_disconnect (G_OBJECT (view->preferences), view->queue_resize_signal_id);
+#endif
+
+  /* disconnect from the preferences object */
+  g_signal_handlers_disconnect_matched (G_OBJECT (view->preferences), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, view);
+  g_object_unref (G_OBJECT (view->preferences));
+
+  (*G_OBJECT_CLASS (thunar_shortcuts_view_parent_class)->finalize) (object);
+}
+
+
+
 static gboolean
 thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
                                           GdkEventButton *event)
 {
-  GtkTreeModel *model;
-  GtkTreePath  *path;
-  GtkTreeIter   iter;
-  ThunarFile   *file;
-  GtkWidget    *window;
-  GtkWidget    *image;
-  GtkWidget    *menu;
-  GtkWidget    *item;
-  GMainLoop    *loop;
-  gboolean      mutable;
-  gboolean      result;
-  GList        *actions;
-  GList        *lp;
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
+  GtkTreeModel        *model;
+  GtkTreePath         *path;
+  GtkTreeIter          iter;
+  GtkTooltips         *tooltips;
+  ThunarFile          *file;
+  GtkWidget           *window;
+  GtkWidget           *image;
+  GtkWidget           *menu;
+  GtkWidget           *item;
+  GMainLoop           *loop;
+  gboolean             mutable;
+  gboolean             result;
+  GList               *actions;
+  GList               *lp;
 
   /* let the widget process the event first (handles focussing and scrolling) */
   result = (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->button_press_event) (widget, event);
@@ -261,9 +318,13 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
   if (G_LIKELY (event->button != 3))
     return result;
 
-  /* resolve the path to the cursor position */
+  /* resolve the path at the cursor position */
   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, NULL, NULL, NULL))
     {
+      /* allocate a new tooltips object */
+      tooltips = gtk_tooltips_new ();
+      exo_gtk_object_ref_sink (GTK_OBJECT (tooltips));
+
       /* determine the iterator for the selected row */
       model = gtk_tree_view_get_model (GTK_TREE_VIEW (widget));
       gtk_tree_model_get_iter (model, &iter, path);
@@ -340,6 +401,19 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
 
+      /* append a menu separator */
+      item = gtk_separator_menu_item_new ();
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+
+      /* append the "Display icon emblems" item */
+      item = gtk_check_menu_item_new_with_mnemonic (_("Display _Emblem Icons"));
+      exo_mutual_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-emblems", G_OBJECT (item), "active");
+      gtk_tooltips_set_tip (tooltips, item, _("Display emblem icons in the shortcuts list for all files for which "
+                                              "emblems have been defined in the file properties dialog."), NULL);
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+
       /* run the internal loop */
       gtk_grab_add (menu);
       gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 0, event->time);
@@ -347,6 +421,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       gtk_grab_remove (menu);
 
       /* clean up */
+      g_object_unref (G_OBJECT (tooltips));
       g_object_unref (G_OBJECT (menu));
       gtk_tree_path_free (path);
       g_main_loop_unref (loop);

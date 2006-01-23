@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2004-2005 os-cillation e.K.
+ * Copyright (c) 2004-2006 os-cillation e.K.
  *
  * Written by Benedikt Meurer <benny@xfce.org>.
  *
@@ -26,6 +26,9 @@
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
@@ -37,6 +40,7 @@
 
 
 static void transform_string_to_boolean (const GValue *src, GValue *dst);
+static void transform_string_to_int     (const GValue *src, GValue *dst);
 
 
 
@@ -45,6 +49,15 @@ transform_string_to_boolean (const GValue *src,
                              GValue       *dst)
 {
   g_value_set_boolean (dst, strcmp (g_value_get_string (src), "FALSE") != 0);
+}
+
+
+
+static void
+transform_string_to_int (const GValue *src,
+                         GValue       *dst)
+{
+  g_value_set_int (dst, strtol (g_value_get_string (src), NULL, 10));
 }
 
 
@@ -61,4 +74,6 @@ thunar_g_initialize_transformations (void)
 {
   if (!g_value_type_transformable (G_TYPE_STRING, G_TYPE_BOOLEAN))
     g_value_register_transform_func (G_TYPE_STRING, G_TYPE_BOOLEAN, transform_string_to_boolean);
+  if (!g_value_type_transformable (G_TYPE_STRING, G_TYPE_INT))
+    g_value_register_transform_func (G_TYPE_STRING, G_TYPE_INT, transform_string_to_int);
 }
