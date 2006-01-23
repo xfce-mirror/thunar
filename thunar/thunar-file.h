@@ -134,7 +134,8 @@ gboolean                         thunar_file_rename               (ThunarFile   
 
 GdkDragAction                    thunar_file_accepts_drop         (ThunarFile             *file,
                                                                    GList                  *path_list,
-                                                                   GdkDragAction           actions);
+                                                                   GdkDragContext         *context,
+                                                                   GdkDragAction          *suggested_action_return);
 
 const gchar                     *thunar_file_get_display_name     (const ThunarFile       *file);
 

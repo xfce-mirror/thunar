@@ -943,28 +943,36 @@ thunar_file_rename (ThunarFile  *file,
 
 /**
  * thunar_file_accepts_drop:
- * @file      : a #ThunarFile instance.
- * @path_list : the list of #ThunarVfsPath<!---->s that will be droppped.
- * @actions   : the #GdkDragAction<!---->s provided by the drag source.
+ * @file                    : a #ThunarFile instance.
+ * @path_list               : the list of #ThunarVfsPath<!---->s that will be droppped.
+ * @context                 : the current #GdkDragContext, which is used for the drop.
+ * @suggested_action_return : return location for the suggested #GdkDragAction or %NULL.
  *
- * Checks whether @file can accept @path_list for the given @actions and
- * returns the #GdkDragAction<!---->s that can be used or 0 if no
- * actions apply.
+ * Checks whether @file can accept @path_list for the given @context and
+ * returns the #GdkDragAction<!---->s that can be used or 0 if no actions
+ * apply.
+ *
+ * If any #GdkDragAction<!---->s apply and @suggested_action_return is not
+ * %NULL, the suggested #GdkDragAction for this drop will be stored to the
+ * location pointed to by @suggested_action_return.
  *
  * Return value: the #GdkDragAction<!---->s supported for the drop or
  *               0 if no drop is possible.
  **/
 GdkDragAction
-thunar_file_accepts_drop (ThunarFile   *file,
-                          GList        *path_list,
-                          GdkDragAction actions)
+thunar_file_accepts_drop (ThunarFile     *file,
+                          GList          *path_list,
+                          GdkDragContext *context,
+                          GdkDragAction  *suggested_action_return)
 {
   ThunarVfsPath *parent_path;
   ThunarVfsPath *path;
+  GdkDragAction  actions;
   GList         *lp;
   guint          n;
 
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  g_return_val_if_fail (THUNAR_IS_FILE (file), 0);
+  g_return_val_if_fail (GDK_IS_DRAG_CONTEXT (context), 0);
 
   /* we can never drop an empty list */
   if (G_UNLIKELY (path_list == NULL))
@@ -972,9 +980,9 @@ thunar_file_accepts_drop (ThunarFile   *file,
 
   /* check if we have a writable directory here or an executable file */
   if (thunar_file_is_directory (file) && thunar_file_is_writable (file))
-    actions &= GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK;
+    actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK);
   else if (thunar_file_is_executable (file))
-    actions &= GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE;
+    actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE);
   else
     return 0;
 
@@ -984,7 +992,7 @@ thunar_file_accepts_drop (ThunarFile   *file,
   /* check up to 500 of the paths (just in case somebody tries to
    * drag around his music collection with 5000 files).
    */
-  for (lp = path_list, n = 0; actions != 0 && lp != NULL && n < 500; lp = lp->next, ++n)
+  for (lp = path_list, n = 0; lp != NULL && n < 500; lp = lp->next, ++n)
     {
       /* we cannot drop a file on itself */
       if (G_UNLIKELY (thunar_vfs_path_equal (path, lp->data)))
@@ -999,7 +1007,25 @@ thunar_file_accepts_drop (ThunarFile   *file,
         }
     }
 
-  /* check if we can drop */
+  /* determine the preferred action based on the context */
+  if (G_LIKELY (suggested_action_return != NULL))
+    {
+      /* determine a working action */
+      if (G_LIKELY ((context->suggested_action & actions) != 0))
+        *suggested_action_return = context->suggested_action;
+      else if ((actions & GDK_ACTION_ASK) != 0)
+        *suggested_action_return = GDK_ACTION_ASK;
+      else if ((actions & GDK_ACTION_COPY) != 0)
+        *suggested_action_return = GDK_ACTION_COPY;
+      else if ((actions & GDK_ACTION_LINK) != 0)
+        *suggested_action_return = GDK_ACTION_LINK;
+      else if ((actions & GDK_ACTION_MOVE) != 0)
+        *suggested_action_return = GDK_ACTION_MOVE;
+      else
+        *suggested_action_return = GDK_ACTION_PRIVATE;
+    }
+
+  /* yeppa, we can drop here */
   return actions;
 }
 

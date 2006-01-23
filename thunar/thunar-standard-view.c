@@ -1040,23 +1040,10 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
   /* check if we can drop there */
   if (G_LIKELY (file != NULL))
     {
-      actions = thunar_file_accepts_drop (file, standard_view->priv->drop_path_list, context->actions);
+      /* determine the possible drop actions for the file (and the suggested action if any) */
+      actions = thunar_file_accepts_drop (file, standard_view->priv->drop_path_list, context, &action);
       if (G_LIKELY (actions != 0))
         {
-          /* determine a working action */
-          if (G_LIKELY ((context->suggested_action & actions) != 0))
-            action = context->suggested_action;
-          else if ((actions & GDK_ACTION_ASK) != 0)
-            action = GDK_ACTION_ASK;
-          else if ((actions & GDK_ACTION_COPY) != 0)
-            action = GDK_ACTION_COPY;
-          else if ((actions & GDK_ACTION_LINK) != 0)
-            action = GDK_ACTION_LINK;
-          else if ((actions & GDK_ACTION_MOVE) != 0)
-            action = GDK_ACTION_MOVE;
-          else
-            action = GDK_ACTION_PRIVATE;
-
           /* tell the caller about the file (if it's interested) */
           if (G_UNLIKELY (file_return != NULL))
             *file_return = g_object_ref (G_OBJECT (file));
