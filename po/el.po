@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-22 12:10+0100\n"
+"POT-Creation-Date: 2006-01-23 23:50+0100\n"
 "PO-Revision-Date: 2005-12-04 23:18+0900\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -352,7 +352,7 @@ msgid "_Other Application..."
 msgstr "Άλλη Εφαρμογή..."
 
 #: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148 ../thunar/thunar-icon-renderer.c:161
+#: ../thunar/thunar-emblem-chooser.c:148
 #: ../thunar/thunar-open-with-action.c:146
 #: ../thunar/thunar-open-with-action.c:147
 #: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
@@ -548,7 +548,7 @@ msgstr "Δεν ήταν δυνατή η εκτέλεση του αρχείου `
 msgid "The root folder has no parent"
 msgstr "Ο ριζικός φάκελος δεν έχει γονεϊκό φάκελο"
 
-#: ../thunar/thunar-file.c:1024
+#: ../thunar/thunar-file.c:1050
 #, fuzzy
 msgid "File System"
 msgstr "Σύστημα αρχείων"
@@ -596,31 +596,6 @@ msgstr ""
 #, c-format
 msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
 msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:148
-msgid "Drop file"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:149
-msgid "The file which should be rendered in as drop acceptor"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:162
-msgid "The file whose icon to render"
-msgstr "Το αρχείο του οποίου το εικονίδιο να προβληθει"
-
-#: ../thunar/thunar-icon-renderer.c:177 ../thunar/thunar-icon-renderer.c:178
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr "Παρακολούθηση κατάστασης"
-
-#: ../thunar/thunar-icon-renderer.c:190 ../thunar/thunar-path-entry.c:250
-msgid "Icon size"
-msgstr "Μέγεθος εικονιδίου"
-
-#: ../thunar/thunar-icon-renderer.c:191
-msgid "The icon size in pixels"
-msgstr "Το μέγεθος εικονιδίου σε pixels"
 
 #: ../thunar/thunar-icon-view.c:124
 msgid "Arran_ge Items"
@@ -867,6 +842,10 @@ msgstr "Τρέχον αρχείο"
 #: ../thunar/thunar-path-entry.c:239
 msgid "The currently displayed file"
 msgstr "Το αρχείο που εμφανίζεται τώρα"
+
+#: ../thunar/thunar-path-entry.c:250
+msgid "Icon size"
+msgstr "Μέγεθος εικονιδίου"
 
 #: ../thunar/thunar-path-entry.c:251
 msgid "The icon size for the path entry"
@@ -1186,35 +1165,46 @@ msgstr "Μέγεθος:"
 msgid "Emblems"
 msgstr "Εμβλήματα"
 
-#: ../thunar/thunar-properties-dialog.c:710
+#: ../thunar/thunar-properties-dialog.c:712
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u Bytes)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:756
-#: ../thunar/thunar-standard-view.c:2360
+#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-standard-view.c:2347
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "Η μετονομασία του `%s' απέτυχε"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:319
+#: ../thunar/thunar-shortcuts-view.c:380
 msgid "_Remove Shortcut"
 msgstr "_Απομάκρυνση Συντόμευσης"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:334
+#: ../thunar/thunar-shortcuts-view.c:395
 msgid "Re_name Shortcut"
 msgstr "Μετο_νομασία Συντόμευσης"
 
-#: ../thunar/thunar-shortcuts-view.c:654
+#. append the "Display icon emblems" item
+#: ../thunar/thunar-shortcuts-view.c:410
+msgid "Display _Emblem Icons"
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:412
+msgid ""
+"Display emblem icons in the shortcuts list for all files for which emblems "
+"have been defined in the file properties dialog."
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:729
 #, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr "Η διαδρομή '%s' δεν αντιστοιχεί σε κατάλογο"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:673
+#: ../thunar/thunar-shortcuts-view.c:748
 msgid "Failed to add new shortcut"
 msgstr "Η προσθήκη νέας συντόμευσης απέτυχε"
 
@@ -1295,7 +1285,7 @@ msgstr "Επιλογή _βάσει μοτίβου..."
 msgid "Select all files that match a certain pattern"
 msgstr "Επιλογή όλων των αρχείων που ταιριάζουν σε ένα μοτίβο"
 
-#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2642
+#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2629
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] ""
@@ -1305,7 +1295,7 @@ msgstr[1] ""
 msgid "Duplicate each selected file"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2648
+#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2635
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Δημιουργία _Δεσμού"
@@ -1331,23 +1321,23 @@ msgstr "Εάν είναι φορτωμένη η προβολή"
 msgid "Loading folder contents..."
 msgstr "Φόρτωμα περιεχομένων φακέλου..."
 
-#: ../thunar/thunar-standard-view.c:1381
+#: ../thunar/thunar-standard-view.c:1368
 msgid "New Folder"
 msgstr "Νέος Φάκελος"
 
-#: ../thunar/thunar-standard-view.c:1384
+#: ../thunar/thunar-standard-view.c:1371
 msgid "New Folder..."
 msgstr "Νέος Φάκελος..."
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1398
+#: ../thunar/thunar-standard-view.c:1385
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr ""
 "Δεν είναι δυνατή η μετατροπή του ονόματος αρχείου `%s' στην τοπική "
 "κωδικοποίηση"
 
-#: ../thunar/thunar-standard-view.c:1559
+#: ../thunar/thunar-standard-view.c:1546
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1356,7 +1346,7 @@ msgstr ""
 "Είστε σίγουρος/η ότι θέλετε να διαγράψετε\n"
 "οριστικά το \"%s\";"
 
-#: ../thunar/thunar-standard-view.c:1565
+#: ../thunar/thunar-standard-view.c:1552
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1371,36 +1361,36 @@ msgstr[1] ""
 "Είστε σίγουρος/η ότι θέλετε να διαγράψετε\n"
 "οριστικά τα %u επιλεγμένα αρχεία;"
 
-#: ../thunar/thunar-standard-view.c:1580
+#: ../thunar/thunar-standard-view.c:1567
 msgid "If you delete a file, it is permanently lost."
 msgstr "Εάν διαγράψετε ένα αρχείο, χάνετε για πάντα."
 
-#: ../thunar/thunar-standard-view.c:1652
+#: ../thunar/thunar-standard-view.c:1639
 msgid "Select by Pattern"
 msgstr "Επιλογή βάσει Μοτίβου"
 
-#: ../thunar/thunar-standard-view.c:1667
+#: ../thunar/thunar-standard-view.c:1654
 msgid "Pattern:"
 msgstr "Μοτίβο:"
 
-#: ../thunar/thunar-standard-view.c:2315
+#: ../thunar/thunar-standard-view.c:2302
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Το άνοιγμα του καταλόγου `%s' απέτυχε"
 
-#: ../thunar/thunar-standard-view.c:2615
+#: ../thunar/thunar-standard-view.c:2602
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "_Αντιγραφή Αρχείου"
 msgstr[1] "_Αντιγραφή Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:2621
+#: ../thunar/thunar-standard-view.c:2608
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Αποκοπή _Αρχείου"
 msgstr[1] "Αποκοπή _Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:2630
+#: ../thunar/thunar-standard-view.c:2617
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "_Διαγραφή Αρχείου"
@@ -1421,6 +1411,10 @@ msgstr "Κείμενο μπάρας κατάστασης"
 #: ../thunar/thunar-statusbar.c:790
 msgid "The main text to be displayed in the statusbar"
 msgstr "Το κυρίως κείμενο που θα εμφανίζεται στη μπάρα κατάστασης"
+
+#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
+msgid "Follow state"
+msgstr "Παρακολούθηση κατάστασης"
 
 #: ../thunar/thunar-text-renderer.c:216
 msgid "Text"
@@ -1920,6 +1914,12 @@ msgstr "Διαχειριστής Αρχείων"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Διαχειριστής Αρχείων Thunar"
+
+#~ msgid "The file whose icon to render"
+#~ msgstr "Το αρχείο του οποίου το εικονίδιο να προβληθει"
+
+#~ msgid "The icon size in pixels"
+#~ msgstr "Το μέγεθος εικονιδίου σε pixels"
 
 #~ msgid "Failed to create the Thunar configuration directory in %s"
 #~ msgstr "Η δημιουργία του καταλόγου ρυθμίσεων του Thunar στο %s απέτυχε"

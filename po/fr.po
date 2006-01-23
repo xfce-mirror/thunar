@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-22 12:10+0100\n"
+"POT-Creation-Date: 2006-01-23 23:50+0100\n"
 "PO-Revision-Date: 2006-01-01 15:02+0100\n"
 "Last-Translator: Stephane Roy <sroy@j2n.net>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -350,7 +350,7 @@ msgid "_Other Application..."
 msgstr "Autre application..."
 
 #: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148 ../thunar/thunar-icon-renderer.c:161
+#: ../thunar/thunar-emblem-chooser.c:148
 #: ../thunar/thunar-open-with-action.c:146
 #: ../thunar/thunar-open-with-action.c:147
 #: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
@@ -546,7 +546,7 @@ msgstr "Impossible d'exécuter le fichier `%s'"
 msgid "The root folder has no parent"
 msgstr "Le dossier racine n'a pas de père"
 
-#: ../thunar/thunar-file.c:1024
+#: ../thunar/thunar-file.c:1050
 #, fuzzy
 msgid "File System"
 msgstr "Système de fichier"
@@ -594,31 +594,6 @@ msgstr ""
 #, c-format
 msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
 msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:148
-msgid "Drop file"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:149
-msgid "The file which should be rendered in as drop acceptor"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:162
-msgid "The file whose icon to render"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:177 ../thunar/thunar-icon-renderer.c:178
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:190 ../thunar/thunar-path-entry.c:250
-msgid "Icon size"
-msgstr "Taille d'icône"
-
-#: ../thunar/thunar-icon-renderer.c:191
-msgid "The icon size in pixels"
-msgstr "La taille de l'icône en pixels"
 
 #: ../thunar/thunar-icon-view.c:124
 msgid "Arran_ge Items"
@@ -866,6 +841,10 @@ msgstr "Fichier actuel"
 #: ../thunar/thunar-path-entry.c:239
 msgid "The currently displayed file"
 msgstr "Le fichier actuellement affiché"
+
+#: ../thunar/thunar-path-entry.c:250
+msgid "Icon size"
+msgstr "Taille d'icône"
 
 #: ../thunar/thunar-path-entry.c:251
 msgid "The icon size for the path entry"
@@ -1190,35 +1169,46 @@ msgstr "Taille :"
 msgid "Emblems"
 msgstr "Emblèmes"
 
-#: ../thunar/thunar-properties-dialog.c:710
+#: ../thunar/thunar-properties-dialog.c:712
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u octets)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:756
-#: ../thunar/thunar-standard-view.c:2360
+#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-standard-view.c:2347
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "Échec au changement de nom de `%s'"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:319
+#: ../thunar/thunar-shortcuts-view.c:380
 msgid "_Remove Shortcut"
 msgstr "_Supprimer raccourci"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:334
+#: ../thunar/thunar-shortcuts-view.c:395
 msgid "Re_name Shortcut"
 msgstr "_Renommer raccourci"
 
-#: ../thunar/thunar-shortcuts-view.c:654
+#. append the "Display icon emblems" item
+#: ../thunar/thunar-shortcuts-view.c:410
+msgid "Display _Emblem Icons"
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:412
+msgid ""
+"Display emblem icons in the shortcuts list for all files for which emblems "
+"have been defined in the file properties dialog."
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:729
 #, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr "Le chemin '%s' ne fait pas référence à un répertoire"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:673
+#: ../thunar/thunar-shortcuts-view.c:748
 msgid "Failed to add new shortcut"
 msgstr "Échec à l'ajout d'un nouveau raccourci"
 
@@ -1299,7 +1289,7 @@ msgstr "Sélectionner par _motif..."
 msgid "Select all files that match a certain pattern"
 msgstr "Sélectionner tous les fichiers qui correspondent à un certain motif"
 
-#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2642
+#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2629
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] "Du_pliquer le fichier"
@@ -1309,7 +1299,7 @@ msgstr[1] "Du_pliquer les fichiers"
 msgid "Duplicate each selected file"
 msgstr "Duplique chaque fichier sélectionné"
 
-#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2648
+#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2635
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "C_réer un lien"
@@ -1335,21 +1325,21 @@ msgstr "Si la vue est en cours de chargement"
 msgid "Loading folder contents..."
 msgstr "Chargement du contenu du dossier..."
 
-#: ../thunar/thunar-standard-view.c:1381
+#: ../thunar/thunar-standard-view.c:1368
 msgid "New Folder"
 msgstr "Nouveau dossier"
 
-#: ../thunar/thunar-standard-view.c:1384
+#: ../thunar/thunar-standard-view.c:1371
 msgid "New Folder..."
 msgstr "Nouveau dossier..."
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1398
+#: ../thunar/thunar-standard-view.c:1385
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr "Ne peut pas convertir le nom du fichier `%s' vers le codage local"
 
-#: ../thunar/thunar-standard-view.c:1559
+#: ../thunar/thunar-standard-view.c:1546
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1358,7 +1348,7 @@ msgstr ""
 "Êtes-vous certain que vous voulez\n"
 "effacer \"%s\" définitivement ?"
 
-#: ../thunar/thunar-standard-view.c:1565
+#: ../thunar/thunar-standard-view.c:1552
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1373,36 +1363,36 @@ msgstr[1] ""
 "Êtes-vous certain de vouloir effacer de manière\n"
 "permanente les %u fichiers sélectionnés ?"
 
-#: ../thunar/thunar-standard-view.c:1580
+#: ../thunar/thunar-standard-view.c:1567
 msgid "If you delete a file, it is permanently lost."
 msgstr "Si vous supprimez ce fichier, il sera définitivement perdu."
 
-#: ../thunar/thunar-standard-view.c:1652
+#: ../thunar/thunar-standard-view.c:1639
 msgid "Select by Pattern"
 msgstr "Sélectionner par motif"
 
-#: ../thunar/thunar-standard-view.c:1667
+#: ../thunar/thunar-standard-view.c:1654
 msgid "Pattern:"
 msgstr "Motif :"
 
-#: ../thunar/thunar-standard-view.c:2315
+#: ../thunar/thunar-standard-view.c:2302
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Échec à l'ouverture du répertoire `%s'"
 
-#: ../thunar/thunar-standard-view.c:2615
+#: ../thunar/thunar-standard-view.c:2602
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "_Copier le fichier"
 msgstr[1] "_Copier les fichiers"
 
-#: ../thunar/thunar-standard-view.c:2621
+#: ../thunar/thunar-standard-view.c:2608
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Co_uper le fichier"
 msgstr[1] "Co_uper les fichiers"
 
-#: ../thunar/thunar-standard-view.c:2630
+#: ../thunar/thunar-standard-view.c:2617
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "_Supprimer le fichier"
@@ -1423,6 +1413,10 @@ msgstr "Texte de la barre de statut"
 #: ../thunar/thunar-statusbar.c:790
 msgid "The main text to be displayed in the statusbar"
 msgstr "Le texte principal à afficher dans la barre de statut"
+
+#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
+msgid "Follow state"
+msgstr ""
 
 #: ../thunar/thunar-text-renderer.c:216
 msgid "Text"
@@ -1955,6 +1949,9 @@ msgstr "Gestionnaire de fichier"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Gestionnaire de Fichier Thunar"
+
+#~ msgid "The icon size in pixels"
+#~ msgstr "La taille de l'icône en pixels"
 
 #~ msgid "Failed to create the Thunar configuration directory in %s"
 #~ msgstr ""

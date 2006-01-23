@@ -702,16 +702,23 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->volume_label);
     }
 
-  /* update the size */
-  size_string = thunar_file_get_size_string (dialog->file);
-  if (G_LIKELY (size_string != NULL))
+  /* update the size (only for regular files) */
+  if (thunar_file_is_regular (dialog->file))
     {
-      size = thunar_file_get_size (dialog->file);
-      str = g_strdup_printf (_("%s (%u Bytes)"), size_string, (guint) size);
-      gtk_label_set_text (GTK_LABEL (dialog->size_label), str);
-      gtk_widget_show (dialog->size_label);
-      g_free (size_string);
-      g_free (str);
+      size_string = thunar_file_get_size_string (dialog->file);
+      if (G_LIKELY (size_string != NULL))
+        {
+          size = thunar_file_get_size (dialog->file);
+          str = g_strdup_printf (_("%s (%u Bytes)"), size_string, (guint) size);
+          gtk_label_set_text (GTK_LABEL (dialog->size_label), str);
+          gtk_widget_show (dialog->size_label);
+          g_free (size_string);
+          g_free (str);
+        }
+      else
+        {
+          gtk_widget_hide (dialog->size_label);
+        }
     }
   else
     {

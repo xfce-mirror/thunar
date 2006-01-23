@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-22 12:10+0100\n"
+"POT-Creation-Date: 2006-01-23 23:50+0100\n"
 "PO-Revision-Date: 2005-10-06 22:02+0900\n"
 "Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -353,7 +353,7 @@ msgid "_Other Application..."
 msgstr "_Hely megnyitása..."
 
 #: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148 ../thunar/thunar-icon-renderer.c:161
+#: ../thunar/thunar-emblem-chooser.c:148
 #: ../thunar/thunar-open-with-action.c:146
 #: ../thunar/thunar-open-with-action.c:147
 #: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
@@ -558,7 +558,7 @@ msgstr "Nem lehet másolni a fájlt: %s"
 msgid "The root folder has no parent"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1024
+#: ../thunar/thunar-file.c:1050
 #, fuzzy
 msgid "File System"
 msgstr "Fájlrendszer"
@@ -606,32 +606,6 @@ msgstr ""
 #, c-format
 msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
 msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:148
-#, fuzzy
-msgid "Drop file"
-msgstr "Fájl másolás"
-
-#: ../thunar/thunar-icon-renderer.c:149
-msgid "The file which should be rendered in as drop acceptor"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:162
-msgid "The file whose icon to render"
-msgstr "A kirajzolandó ikon"
-
-#: ../thunar/thunar-icon-renderer.c:177 ../thunar/thunar-icon-renderer.c:178
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:190 ../thunar/thunar-path-entry.c:250
-msgid "Icon size"
-msgstr "Ikon méret"
-
-#: ../thunar/thunar-icon-renderer.c:191
-msgid "The icon size in pixels"
-msgstr "Ikon méret pixelben"
 
 #: ../thunar/thunar-icon-view.c:124
 msgid "Arran_ge Items"
@@ -882,6 +856,10 @@ msgstr "Jelenlegi fájl"
 #: ../thunar/thunar-path-entry.c:239
 msgid "The currently displayed file"
 msgstr "A most megjelenített fájl"
+
+#: ../thunar/thunar-path-entry.c:250
+msgid "Icon size"
+msgstr "Ikon méret"
 
 #: ../thunar/thunar-path-entry.c:251
 msgid "The icon size for the path entry"
@@ -1202,35 +1180,46 @@ msgstr "Méret:"
 msgid "Emblems"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:710
+#: ../thunar/thunar-properties-dialog.c:712
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u bájt)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:756
-#: ../thunar/thunar-standard-view.c:2360
+#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-standard-view.c:2347
 #, fuzzy, c-format
 msgid "Failed to rename `%s'"
 msgstr "Nem törölhető: %s"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:319
+#: ../thunar/thunar-shortcuts-view.c:380
 msgid "_Remove Shortcut"
 msgstr ""
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:334
+#: ../thunar/thunar-shortcuts-view.c:395
 msgid "Re_name Shortcut"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-view.c:654
+#. append the "Display icon emblems" item
+#: ../thunar/thunar-shortcuts-view.c:410
+msgid "Display _Emblem Icons"
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:412
+msgid ""
+"Display emblem icons in the shortcuts list for all files for which emblems "
+"have been defined in the file properties dialog."
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:729
 #, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr ""
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:673
+#: ../thunar/thunar-shortcuts-view.c:748
 #, fuzzy
 msgid "Failed to add new shortcut"
 msgstr "Nem törölhető: %s"
@@ -1325,7 +1314,7 @@ msgstr "Kijelölés mintával"
 msgid "Select all files that match a certain pattern"
 msgstr "Egy adott mintára illő valamennyi fájl kiválasztása"
 
-#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2642
+#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2629
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] ""
@@ -1336,7 +1325,7 @@ msgstr[1] ""
 msgid "Duplicate each selected file"
 msgstr "A kijelölt elem tulajdonságai"
 
-#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2648
+#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2635
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] ""
@@ -1363,30 +1352,30 @@ msgstr "A nézet betöltését adja meg"
 msgid "Loading folder contents..."
 msgstr "Mappa beolvasása..."
 
-#: ../thunar/thunar-standard-view.c:1381
+#: ../thunar/thunar-standard-view.c:1368
 #, fuzzy
 msgid "New Folder"
 msgstr "Mappa"
 
-#: ../thunar/thunar-standard-view.c:1384
+#: ../thunar/thunar-standard-view.c:1371
 #, fuzzy
 msgid "New Folder..."
 msgstr "Mappa"
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1398
+#: ../thunar/thunar-standard-view.c:1385
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1559
+#: ../thunar/thunar-standard-view.c:1546
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1565
+#: ../thunar/thunar-standard-view.c:1552
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1397,39 +1386,39 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:1580
+#: ../thunar/thunar-standard-view.c:1567
 msgid "If you delete a file, it is permanently lost."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1652
+#: ../thunar/thunar-standard-view.c:1639
 #, fuzzy
 msgid "Select by Pattern"
 msgstr "Kijelölés mintával"
 
-#: ../thunar/thunar-standard-view.c:1667
+#: ../thunar/thunar-standard-view.c:1654
 msgid "Pattern:"
 msgstr "Minta:"
 
-#: ../thunar/thunar-standard-view.c:2315
+#: ../thunar/thunar-standard-view.c:2302
 #, fuzzy, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Nem megnyitható könyvtár: %s"
 
-#: ../thunar/thunar-standard-view.c:2615
+#: ../thunar/thunar-standard-view.c:2602
 #, fuzzy
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "Fájl másolás"
 msgstr[1] "Fájl másolás"
 
-#: ../thunar/thunar-standard-view.c:2621
+#: ../thunar/thunar-standard-view.c:2608
 #, fuzzy
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Fájl kivágás"
 msgstr[1] "Fájl kivágás"
 
-#: ../thunar/thunar-standard-view.c:2630
+#: ../thunar/thunar-standard-view.c:2617
 #, fuzzy
 msgid "_Delete File"
 msgid_plural "_Delete Files"
@@ -1451,6 +1440,10 @@ msgstr "Állapotsor szöveg"
 #: ../thunar/thunar-statusbar.c:790
 msgid "The main text to be displayed in the statusbar"
 msgstr "Az állapotsor fő szövege"
+
+#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
+msgid "Follow state"
+msgstr ""
 
 #: ../thunar/thunar-text-renderer.c:216
 msgid "Text"
@@ -1976,6 +1969,16 @@ msgstr "Fájlkezelő"
 #, fuzzy
 msgid "Thunar File Manager"
 msgstr "Fájlkezelő"
+
+#, fuzzy
+#~ msgid "Drop file"
+#~ msgstr "Fájl másolás"
+
+#~ msgid "The file whose icon to render"
+#~ msgstr "A kirajzolandó ikon"
+
+#~ msgid "The icon size in pixels"
+#~ msgstr "Ikon méret pixelben"
 
 #, fuzzy
 #~ msgid "Failed to create the Thunar configuration directory in %s"

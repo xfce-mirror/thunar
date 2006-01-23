@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-22 12:10+0100\n"
+"POT-Creation-Date: 2006-01-23 23:50+0100\n"
 "PO-Revision-Date: 2006-01-17 00:05+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -362,7 +362,7 @@ msgid "_Other Application..."
 msgstr "他のアプリケーション(_O)..."
 
 #: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148 ../thunar/thunar-icon-renderer.c:161
+#: ../thunar/thunar-emblem-chooser.c:148
 #: ../thunar/thunar-open-with-action.c:146
 #: ../thunar/thunar-open-with-action.c:147
 #: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
@@ -559,7 +559,7 @@ msgstr "ファイル「%s」を実行できません。"
 msgid "The root folder has no parent"
 msgstr "ルートフォルダに上位のフォルダがありません。"
 
-#: ../thunar/thunar-file.c:1024
+#: ../thunar/thunar-file.c:1050
 msgid "File System"
 msgstr "ファイルシステム"
 
@@ -608,33 +608,6 @@ msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
 msgstr ""
 "「%s」(%s) から代用アイコンを読み込むのに失敗しました。きちんとインストールさ"
 "れているか確認して下さい！"
-
-# FIXME: what's this? 'Dropped file' or 'File dropped'?
-#: ../thunar/thunar-icon-renderer.c:148
-msgid "Drop file"
-msgstr "ファイルをドロップ"
-
-#: ../thunar/thunar-icon-renderer.c:149
-msgid "The file which should be rendered in as drop acceptor"
-msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:162
-msgid "The file whose icon to render"
-msgstr "アイコンを表示するファイルです。"
-
-# FIXME: what's this?
-#: ../thunar/thunar-icon-renderer.c:177 ../thunar/thunar-icon-renderer.c:178
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr "状態に従う"
-
-#: ../thunar/thunar-icon-renderer.c:190 ../thunar/thunar-path-entry.c:250
-msgid "Icon size"
-msgstr "アイコンのサイズ"
-
-#: ../thunar/thunar-icon-renderer.c:191
-msgid "The icon size in pixels"
-msgstr "アイコンのサイズ (ピクセル単位) です。"
 
 #: ../thunar/thunar-icon-view.c:124
 msgid "Arran_ge Items"
@@ -875,6 +848,10 @@ msgstr "現在のファイル"
 #: ../thunar/thunar-path-entry.c:239
 msgid "The currently displayed file"
 msgstr "現在表示されているファイルです。"
+
+#: ../thunar/thunar-path-entry.c:250
+msgid "Icon size"
+msgstr "アイコンのサイズ"
 
 #: ../thunar/thunar-path-entry.c:251
 msgid "The icon size for the path entry"
@@ -1197,35 +1174,46 @@ msgstr "サイズ:"
 msgid "Emblems"
 msgstr "エンブレム"
 
-#: ../thunar/thunar-properties-dialog.c:710
+#: ../thunar/thunar-properties-dialog.c:712
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u バイト)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:756
-#: ../thunar/thunar-standard-view.c:2360
+#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-standard-view.c:2347
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "「%s」の名前変更に失敗しました。"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:319
+#: ../thunar/thunar-shortcuts-view.c:380
 msgid "_Remove Shortcut"
 msgstr "ショートカットを削除(_R)"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:334
+#: ../thunar/thunar-shortcuts-view.c:395
 msgid "Re_name Shortcut"
 msgstr "ショートカットの名前を変更(_N)"
 
-#: ../thunar/thunar-shortcuts-view.c:654
+#. append the "Display icon emblems" item
+#: ../thunar/thunar-shortcuts-view.c:410
+msgid "Display _Emblem Icons"
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:412
+msgid ""
+"Display emblem icons in the shortcuts list for all files for which emblems "
+"have been defined in the file properties dialog."
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:729
 #, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr "パス「%s」はフォルダを参照していません。"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:673
+#: ../thunar/thunar-shortcuts-view.c:748
 msgid "Failed to add new shortcut"
 msgstr "ショートカットの追加に失敗しました。"
 
@@ -1305,7 +1293,7 @@ msgstr "パターンで選択(_B)..."
 msgid "Select all files that match a certain pattern"
 msgstr "ある特定のパターンに一致する全てのファイルを選択します。"
 
-#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2642
+#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2629
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] "コピーを作成(_P)"
@@ -1314,7 +1302,7 @@ msgstr[0] "コピーを作成(_P)"
 msgid "Duplicate each selected file"
 msgstr "選択したそれぞれのファイルのコピーを作成します。"
 
-#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2648
+#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2635
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "リンクを作成(_K)"
@@ -1339,21 +1327,21 @@ msgstr "表示ペインが現在読み込まれているかどうかを表しま
 msgid "Loading folder contents..."
 msgstr "フォルダの内容を読み込んでいます..."
 
-#: ../thunar/thunar-standard-view.c:1381
+#: ../thunar/thunar-standard-view.c:1368
 msgid "New Folder"
 msgstr "新規フォルダ"
 
-#: ../thunar/thunar-standard-view.c:1384
+#: ../thunar/thunar-standard-view.c:1371
 msgid "New Folder..."
 msgstr "新規フォルダ..."
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1398
+#: ../thunar/thunar-standard-view.c:1385
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr "ファイル名「%s」をあなたのエンコード方式に変換できません。"
 
-#: ../thunar/thunar-standard-view.c:1559
+#: ../thunar/thunar-standard-view.c:1546
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1362,7 +1350,7 @@ msgstr ""
 "「%s」は永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-standard-view.c:1565
+#: ../thunar/thunar-standard-view.c:1552
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1374,34 +1362,34 @@ msgstr[0] ""
 "選択したファイルは永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-standard-view.c:1580
+#: ../thunar/thunar-standard-view.c:1567
 msgid "If you delete a file, it is permanently lost."
 msgstr "削除されたファイルは永久に失われます。"
 
-#: ../thunar/thunar-standard-view.c:1652
+#: ../thunar/thunar-standard-view.c:1639
 msgid "Select by Pattern"
 msgstr "パターンで選択します"
 
-#: ../thunar/thunar-standard-view.c:1667
+#: ../thunar/thunar-standard-view.c:1654
 msgid "Pattern:"
 msgstr "パターン:"
 
-#: ../thunar/thunar-standard-view.c:2315
+#: ../thunar/thunar-standard-view.c:2302
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "フォルダ「%s」を開くのに失敗しました。"
 
-#: ../thunar/thunar-standard-view.c:2615
+#: ../thunar/thunar-standard-view.c:2602
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "コピー(_C)"
 
-#: ../thunar/thunar-standard-view.c:2621
+#: ../thunar/thunar-standard-view.c:2608
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "切り取り(_T)"
 
-#: ../thunar/thunar-standard-view.c:2630
+#: ../thunar/thunar-standard-view.c:2617
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "削除(_D)"
@@ -1421,6 +1409,11 @@ msgstr "ステータスバーのテキスト"
 #: ../thunar/thunar-statusbar.c:790
 msgid "The main text to be displayed in the statusbar"
 msgstr "ステータスバーに表示されるメインテキストです。"
+
+# FIXME: what's this?
+#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
+msgid "Follow state"
+msgstr "状態に従う"
 
 #: ../thunar/thunar-text-renderer.c:216
 msgid "Text"
@@ -1948,3 +1941,13 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
+
+# FIXME: what's this? 'Dropped file' or 'File dropped'?
+#~ msgid "Drop file"
+#~ msgstr "ファイルをドロップ"
+
+#~ msgid "The file whose icon to render"
+#~ msgstr "アイコンを表示するファイルです。"
+
+#~ msgid "The icon size in pixels"
+#~ msgstr "アイコンのサイズ (ピクセル単位) です。"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.2svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-22 12:10+0100\n"
+"POT-Creation-Date: 2006-01-23 23:50+0100\n"
 "PO-Revision-Date: 2006-01-13 14:21+0100\n"
 "Last-Translator: Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -354,7 +354,7 @@ msgid "_Other Application..."
 msgstr "Inna aplikacja..."
 
 #: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148 ../thunar/thunar-icon-renderer.c:161
+#: ../thunar/thunar-emblem-chooser.c:148
 #: ../thunar/thunar-open-with-action.c:146
 #: ../thunar/thunar-open-with-action.c:147
 #: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
@@ -552,7 +552,7 @@ msgstr "Nie mogę wykonać pliku \"%s\"."
 msgid "The root folder has no parent"
 msgstr "Katalog główny nie ma katalogu nadrzędnego"
 
-#: ../thunar/thunar-file.c:1024
+#: ../thunar/thunar-file.c:1050
 #, fuzzy
 msgid "File System"
 msgstr "System plików"
@@ -600,31 +600,6 @@ msgstr ""
 #, c-format
 msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
 msgstr ""
-
-#: ../thunar/thunar-icon-renderer.c:148
-msgid "Drop file"
-msgstr "Plik docelowy"
-
-#: ../thunar/thunar-icon-renderer.c:149
-msgid "The file which should be rendered in as drop acceptor"
-msgstr "Plik, który ma być dodany jako cel operacji"
-
-#: ../thunar/thunar-icon-renderer.c:162
-msgid "The file whose icon to render"
-msgstr "Plik, którego ikona będzie rysowana"
-
-#: ../thunar/thunar-icon-renderer.c:177 ../thunar/thunar-icon-renderer.c:178
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr "Śledź zmiany"
-
-#: ../thunar/thunar-icon-renderer.c:190 ../thunar/thunar-path-entry.c:250
-msgid "Icon size"
-msgstr "Rozmiar ikony"
-
-#: ../thunar/thunar-icon-renderer.c:191
-msgid "The icon size in pixels"
-msgstr "Rozmiar w pikselach"
 
 #: ../thunar/thunar-icon-view.c:124
 msgid "Arran_ge Items"
@@ -878,6 +853,10 @@ msgstr "Bieżacy plik"
 #: ../thunar/thunar-path-entry.c:239
 msgid "The currently displayed file"
 msgstr "Akualnie wyświetlany plik"
+
+#: ../thunar/thunar-path-entry.c:250
+msgid "Icon size"
+msgstr "Rozmiar ikony"
 
 #: ../thunar/thunar-path-entry.c:251
 msgid "The icon size for the path entry"
@@ -1201,37 +1180,48 @@ msgstr "Rozmiar:"
 msgid "Emblems"
 msgstr "Symbole"
 
-#: ../thunar/thunar-properties-dialog.c:710
+#: ../thunar/thunar-properties-dialog.c:712
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u bajtów)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:756
-#: ../thunar/thunar-standard-view.c:2360
+#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-standard-view.c:2347
 #, fuzzy, c-format
 msgid "Failed to rename `%s'"
 msgstr "Nie udało się zmienić nazwy %s."
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:319
+#: ../thunar/thunar-shortcuts-view.c:380
 #, fuzzy
 msgid "_Remove Shortcut"
 msgstr "_Usuń element"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:334
+#: ../thunar/thunar-shortcuts-view.c:395
 #, fuzzy
 msgid "Re_name Shortcut"
 msgstr "Zmień _nazwę"
 
-#: ../thunar/thunar-shortcuts-view.c:654
+#. append the "Display icon emblems" item
+#: ../thunar/thunar-shortcuts-view.c:410
+msgid "Display _Emblem Icons"
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:412
+msgid ""
+"Display emblem icons in the shortcuts list for all files for which emblems "
+"have been defined in the file properties dialog."
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:729
 #, fuzzy, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr "Identyfikator URI '%s' nie wskazuje na katalog"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:673
+#: ../thunar/thunar-shortcuts-view.c:748
 #, fuzzy
 msgid "Failed to add new shortcut"
 msgstr "Nie udało się dodać aplikacji %s."
@@ -1314,7 +1304,7 @@ msgstr "Zaznacz według wzorca"
 msgid "Select all files that match a certain pattern"
 msgstr "Zaznacz wszystkie pliki pasujące do wzorca"
 
-#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2642
+#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2629
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] "Z_duplikuj plik"
@@ -1325,7 +1315,7 @@ msgstr[2] "Z_duplikuj pliki"
 msgid "Duplicate each selected file"
 msgstr "Zduplikuj wszystkie zaznaczone pliki"
 
-#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2648
+#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2635
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Utwórz _łącze"
@@ -1352,30 +1342,30 @@ msgstr "Czy widok jest aktualnie wczytywany"
 msgid "Loading folder contents..."
 msgstr "Wczytuję zawartość katalogu..."
 
-#: ../thunar/thunar-standard-view.c:1381
+#: ../thunar/thunar-standard-view.c:1368
 #, fuzzy
 msgid "New Folder"
 msgstr "Katalog"
 
-#: ../thunar/thunar-standard-view.c:1384
+#: ../thunar/thunar-standard-view.c:1371
 #, fuzzy
 msgid "New Folder..."
 msgstr "Katalog"
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1398
+#: ../thunar/thunar-standard-view.c:1385
 #, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1559
+#: ../thunar/thunar-standard-view.c:1546
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "Czy na pewno chcesz trwale usunąć \"%s\"?"
 
-#: ../thunar/thunar-standard-view.c:1565
+#: ../thunar/thunar-standard-view.c:1552
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1387,38 +1377,38 @@ msgstr[0] "Czy na pewno chcesz trwale usunąć wybrany plik?"
 msgstr[1] "Czy na pewno chcesz trwale usunąć wybrane pliki?"
 msgstr[2] "Czy na pewno chcesz trwale usunąć wybrane pliki?"
 
-#: ../thunar/thunar-standard-view.c:1580
+#: ../thunar/thunar-standard-view.c:1567
 msgid "If you delete a file, it is permanently lost."
 msgstr "Jeśli usuniesz plik, nie będzie można go odzyskać."
 
-#: ../thunar/thunar-standard-view.c:1652
+#: ../thunar/thunar-standard-view.c:1639
 msgid "Select by Pattern"
 msgstr "Zaznacz według wzorca"
 
-#: ../thunar/thunar-standard-view.c:1667
+#: ../thunar/thunar-standard-view.c:1654
 msgid "Pattern:"
 msgstr "Wzorzec nazwy:"
 
-#: ../thunar/thunar-standard-view.c:2315
+#: ../thunar/thunar-standard-view.c:2302
 #, fuzzy, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Nie udało się otworzyć katalogu '%s': %s"
 
-#: ../thunar/thunar-standard-view.c:2615
+#: ../thunar/thunar-standard-view.c:2602
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "S_kopiuj plik"
 msgstr[1] "S_kopiuj pliki"
 msgstr[2] "S_kopiuj pliki"
 
-#: ../thunar/thunar-standard-view.c:2621
+#: ../thunar/thunar-standard-view.c:2608
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "_Wytnij plik"
 msgstr[1] "_Wytnij pliki"
 msgstr[2] "_Wytnij pliki"
 
-#: ../thunar/thunar-standard-view.c:2630
+#: ../thunar/thunar-standard-view.c:2617
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "_Usuń plik"
@@ -1440,6 +1430,10 @@ msgstr "Tekst paska statusu"
 #: ../thunar/thunar-statusbar.c:790
 msgid "The main text to be displayed in the statusbar"
 msgstr "Tekst wyświetlany w pasku statusu"
+
+#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
+msgid "Follow state"
+msgstr "Śledź zmiany"
 
 #: ../thunar/thunar-text-renderer.c:216
 msgid "Text"
@@ -1963,6 +1957,18 @@ msgstr "Menedżer plików"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Menedżer plików Thunar"
+
+#~ msgid "Drop file"
+#~ msgstr "Plik docelowy"
+
+#~ msgid "The file which should be rendered in as drop acceptor"
+#~ msgstr "Plik, który ma być dodany jako cel operacji"
+
+#~ msgid "The file whose icon to render"
+#~ msgstr "Plik, którego ikona będzie rysowana"
+
+#~ msgid "The icon size in pixels"
+#~ msgstr "Rozmiar w pikselach"
 
 #~ msgid "Ensures that an extension will never be unloaded."
 #~ msgstr "Rozszerzenie nigdy nie będzie odładowywane."

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ca\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-22 12:10+0100\n"
+"POT-Creation-Date: 2006-01-23 23:50+0100\n"
 "PO-Revision-Date: 2006-01-20 12:19+0100\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
@@ -352,7 +352,7 @@ msgid "_Other Application..."
 msgstr "Altres Aplicacions..."
 
 #: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148 ../thunar/thunar-icon-renderer.c:161
+#: ../thunar/thunar-emblem-chooser.c:148
 #: ../thunar/thunar-open-with-action.c:146
 #: ../thunar/thunar-open-with-action.c:147
 #: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
@@ -548,7 +548,7 @@ msgstr "No s'ha pogut executar el fitxer `%s'"
 msgid "The root folder has no parent"
 msgstr "La carpeta arrel no té pare"
 
-#: ../thunar/thunar-file.c:1024
+#: ../thunar/thunar-file.c:1050
 msgid "File System"
 msgstr "Sistema de fitxers"
 
@@ -597,31 +597,6 @@ msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
 msgstr ""
 "No s'ha pogut carregar l'icona de recanvi de `%s' (%s). Reviseu la vostra "
 "instal·lació"
-
-#: ../thunar/thunar-icon-renderer.c:148
-msgid "Drop file"
-msgstr "Deixa anar el fitxer"
-
-#: ../thunar/thunar-icon-renderer.c:149
-msgid "The file which should be rendered in as drop acceptor"
-msgstr "El fitxer s'hauria de renderitzar com receptor"
-
-#: ../thunar/thunar-icon-renderer.c:162
-msgid "The file whose icon to render"
-msgstr "El fitxer del qual s'ha de renderitzar l'icona"
-
-#: ../thunar/thunar-icon-renderer.c:177 ../thunar/thunar-icon-renderer.c:178
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr "Manté estat"
-
-#: ../thunar/thunar-icon-renderer.c:190 ../thunar/thunar-path-entry.c:250
-msgid "Icon size"
-msgstr "Mida d'icona"
-
-#: ../thunar/thunar-icon-renderer.c:191
-msgid "The icon size in pixels"
-msgstr "La mida d'icona en píxels"
 
 #: ../thunar/thunar-icon-view.c:124
 msgid "Arran_ge Items"
@@ -893,6 +868,10 @@ msgstr "Actual fitxer"
 #, fuzzy
 msgid "The currently displayed file"
 msgstr "fitxer"
+
+#: ../thunar/thunar-path-entry.c:250
+msgid "Icon size"
+msgstr "Mida d'icona"
 
 #: ../thunar/thunar-path-entry.c:251
 #, fuzzy
@@ -1247,37 +1226,48 @@ msgstr "Mida:"
 msgid "Emblems"
 msgstr "Distintius"
 
-#: ../thunar/thunar-properties-dialog.c:710
+#: ../thunar/thunar-properties-dialog.c:712
 #, fuzzy, c-format
 msgid "%s (%u Bytes)"
 msgstr "Octets"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:756
-#: ../thunar/thunar-standard-view.c:2360
+#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-standard-view.c:2347
 #, fuzzy, c-format
 msgid "Failed to rename `%s'"
 msgstr "Ha fallat"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:319
+#: ../thunar/thunar-shortcuts-view.c:380
 #, fuzzy
 msgid "_Remove Shortcut"
 msgstr "Suprimeix Drecera"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:334
+#: ../thunar/thunar-shortcuts-view.c:395
 #, fuzzy
 msgid "Re_name Shortcut"
 msgstr "Drecera"
 
-#: ../thunar/thunar-shortcuts-view.c:654
+#. append the "Display icon emblems" item
+#: ../thunar/thunar-shortcuts-view.c:410
+msgid "Display _Emblem Icons"
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:412
+msgid ""
+"Display emblem icons in the shortcuts list for all files for which emblems "
+"have been defined in the file properties dialog."
+msgstr ""
+
+#: ../thunar/thunar-shortcuts-view.c:729
 #, fuzzy, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr "no a"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:673
+#: ../thunar/thunar-shortcuts-view.c:748
 #, fuzzy
 msgid "Failed to add new shortcut"
 msgstr "Ha fallat afegeix nou drecera"
@@ -1377,7 +1367,7 @@ msgstr "Selecciona Patró."
 msgid "Select all files that match a certain pattern"
 msgstr "Selecciona tot a"
 
-#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2642
+#: ../thunar/thunar-standard-view.c:272 ../thunar/thunar-standard-view.c:2629
 #, fuzzy
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
@@ -1389,7 +1379,7 @@ msgstr[1] "Fitxer"
 msgid "Duplicate each selected file"
 msgstr "Duplicat seleccionat fitxer"
 
-#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2648
+#: ../thunar/thunar-standard-view.c:273 ../thunar/thunar-standard-view.c:2635
 #, fuzzy
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
@@ -1419,30 +1409,30 @@ msgstr "és"
 msgid "Loading folder contents..."
 msgstr "S'estan carregant els continguts de la carpeta..."
 
-#: ../thunar/thunar-standard-view.c:1381
+#: ../thunar/thunar-standard-view.c:1368
 #, fuzzy
 msgid "New Folder"
 msgstr "Nova carpeta"
 
-#: ../thunar/thunar-standard-view.c:1384
+#: ../thunar/thunar-standard-view.c:1371
 #, fuzzy
 msgid "New Folder..."
 msgstr "Nou Carpeta."
 
 #. display an error message
-#: ../thunar/thunar-standard-view.c:1398
+#: ../thunar/thunar-standard-view.c:1385
 #, fuzzy, c-format
 msgid "Cannot convert filename `%s' to the local encoding"
 msgstr "converteix"
 
-#: ../thunar/thunar-standard-view.c:1559
+#: ../thunar/thunar-standard-view.c:1546
 #, fuzzy, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "suprimeix?"
 
-#: ../thunar/thunar-standard-view.c:1565
+#: ../thunar/thunar-standard-view.c:1552
 #, fuzzy, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1453,40 +1443,40 @@ msgid_plural ""
 msgstr[0] "seleccionat fitxer?"
 msgstr[1] "seleccionat fitxer?"
 
-#: ../thunar/thunar-standard-view.c:1580
+#: ../thunar/thunar-standard-view.c:1567
 #, fuzzy
 msgid "If you delete a file, it is permanently lost."
 msgstr "Si suprimeix a fitxer és."
 
-#: ../thunar/thunar-standard-view.c:1652
+#: ../thunar/thunar-standard-view.c:1639
 #, fuzzy
 msgid "Select by Pattern"
 msgstr "Selecciona Patró"
 
-#: ../thunar/thunar-standard-view.c:1667
+#: ../thunar/thunar-standard-view.c:1654
 msgid "Pattern:"
 msgstr "Patró:"
 
-#: ../thunar/thunar-standard-view.c:2315
+#: ../thunar/thunar-standard-view.c:2302
 #, fuzzy, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Ha fallat obre"
 
-#: ../thunar/thunar-standard-view.c:2615
+#: ../thunar/thunar-standard-view.c:2602
 #, fuzzy
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "Copia Fitxer"
 msgstr[1] "Copia Fitxer"
 
-#: ../thunar/thunar-standard-view.c:2621
+#: ../thunar/thunar-standard-view.c:2608
 #, fuzzy
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Fitxer"
 msgstr[1] "Fitxer"
 
-#: ../thunar/thunar-standard-view.c:2630
+#: ../thunar/thunar-standard-view.c:2617
 #, fuzzy
 msgid "_Delete File"
 msgid_plural "_Delete Files"
@@ -1512,6 +1502,10 @@ msgstr "text"
 #, fuzzy
 msgid "The main text to be displayed in the statusbar"
 msgstr "text in barra d'estat"
+
+#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
+msgid "Follow state"
+msgstr "Manté estat"
 
 #: ../thunar/thunar-text-renderer.c:216
 msgid "Text"
@@ -2085,3 +2079,15 @@ msgstr "Gestor de fitxers"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Gestor de fitxers Thunar"
+
+#~ msgid "Drop file"
+#~ msgstr "Deixa anar el fitxer"
+
+#~ msgid "The file which should be rendered in as drop acceptor"
+#~ msgstr "El fitxer s'hauria de renderitzar com receptor"
+
+#~ msgid "The file whose icon to render"
+#~ msgstr "El fitxer del qual s'ha de renderitzar l'icona"
+
+#~ msgid "The icon size in pixels"
+#~ msgstr "La mida d'icona en píxels"
