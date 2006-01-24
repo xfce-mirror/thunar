@@ -401,8 +401,6 @@ thunar_preferences_get_property (GObject    *object,
   ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
   GValue            *src;
 
-  g_return_if_fail (prop_id < N_PROPERTIES);
-
   src = preferences->values + prop_id;
   if (G_IS_VALUE (src))
     g_value_copy (src, value);
@@ -421,8 +419,6 @@ thunar_preferences_set_property (GObject      *object,
   ThunarPreferences *preferences = THUNAR_PREFERENCES (object);
   GValue            *dst;
 
-  g_return_if_fail (prop_id < N_PROPERTIES);
-
   dst = preferences->values + prop_id;
   if (G_UNLIKELY (!G_IS_VALUE (dst)))
     g_value_init (dst, pspec->value_type);
@@ -430,7 +426,6 @@ thunar_preferences_set_property (GObject      *object,
   if (g_param_values_cmp (pspec, value, dst) != 0)
     {
       g_value_copy (value, dst);
-      g_object_notify (object, pspec->name);
       thunar_preferences_queue_store (preferences);
     }
 }

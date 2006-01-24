@@ -1,3 +1,12 @@
+2006-01-24	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-preferences.c(thunar_preferences_set_property): No need
+	  to call g_object_notify() here, as GObject does that automatically
+	  whenever set_property() is being called.
+	* thunar/thunar-preferences.c: Remove useless safetly checks in
+	  get_property() and set_property(), since GObject already makes sure
+	  that the property id is valid.
+
 2006-01-23	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-properties-dialog.c(thunar_properties_dialog_update):
