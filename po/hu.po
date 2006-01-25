@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-23 23:50+0100\n"
+"POT-Creation-Date: 2006-01-25 19:04+0100\n"
 "PO-Revision-Date: 2005-10-06 22:02+0900\n"
 "Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -183,7 +183,7 @@ msgid "copy of %s"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:158 ../thunar/thunar-list-model.c:713
-#: ../thunar/thunar-properties-dialog.c:649
+#: ../thunar/thunar-properties-dialog.c:647
 #, c-format
 msgid "link to %s"
 msgstr ""
@@ -329,7 +329,7 @@ msgstr "Jelenlegi könyvtár"
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:281 ../thunar/thunar-chooser-dialog.c:483
+#: ../thunar/thunar-chooser-button.c:281 ../thunar/thunar-chooser-dialog.c:479
 #, fuzzy, c-format
 msgid "Failed to set default application for `%s'"
 msgstr "Nem törölhető: %s"
@@ -352,150 +352,93 @@ msgstr ""
 msgid "_Other Application..."
 msgstr "_Hely megnyitása..."
 
-#: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148
-#: ../thunar/thunar-open-with-action.c:146
-#: ../thunar/thunar-open-with-action.c:147
-#: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
-msgid "File"
-msgstr "Fájl"
-
-#: ../thunar/thunar-chooser-dialog.c:170
-msgid "The file for which an application should be chosen"
-msgstr ""
-
-#: ../thunar/thunar-chooser-dialog.c:182
-msgid "Open"
-msgstr ""
-
-#: ../thunar/thunar-chooser-dialog.c:183
-msgid "Whether the chooser should open the specified file"
-msgstr ""
-
 #. the "Open with" action
-#: ../thunar/thunar-chooser-dialog.c:208 ../thunar/thunar-launcher.c:226
+#: ../thunar/thunar-chooser-dialog.c:204 ../thunar/thunar-launcher.c:226
 msgid "Open With"
 msgstr ""
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:270
+#: ../thunar/thunar-chooser-dialog.c:266
 msgid "Use a _custom command:"
 msgstr ""
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:288
+#: ../thunar/thunar-chooser-dialog.c:284
 #, fuzzy
 msgid "_Browse"
 msgstr "_Bezárás"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:461
+#: ../thunar/thunar-chooser-dialog.c:457
 #, fuzzy, c-format
 msgid "Failed to add new application `%s'"
 msgstr "Nem törölhető: %s"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:496
+#: ../thunar/thunar-chooser-dialog.c:492
 #, fuzzy, c-format
 msgid "Failed to execute `%s'"
 msgstr "Nem törölhető: %s"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:617
+#: ../thunar/thunar-chooser-dialog.c:613
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:639 ../thunar-uca/thunar-uca-editor.c:491
+#: ../thunar/thunar-chooser-dialog.c:635 ../thunar-uca/thunar-uca-editor.c:491
 #, fuzzy
 msgid "Select an Application"
 msgstr "_Hely megnyitása..."
 
-#: ../thunar/thunar-chooser-dialog.c:649 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar/thunar-chooser-dialog.c:645 ../thunar-uca/thunar-uca-editor.c:501
 #: ../thunar-uca/thunar-uca-editor.c:640
 #, fuzzy
 msgid "All Files"
 msgstr "Fájlok"
 
-#: ../thunar/thunar-chooser-dialog.c:654 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:506
 #, fuzzy
 msgid "Executable Files"
 msgstr "Minden fájl kiválasztása"
 
-#: ../thunar/thunar-chooser-dialog.c:669 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:665 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:675 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:671 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:681 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:677 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:687 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:683 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-model.c:148 ../thunar/thunar-folder.c:163
-#: ../thunar/thunar-standard-view.c:374 ../thunar/thunar-statusbar.c:204
-#: ../thunar/thunar-statusbar.c:775 ../thunar/thunar-view.c:79
-msgid "Loading"
-msgstr ""
-
-#: ../thunar/thunar-chooser-model.c:149
-#, fuzzy
-msgid "Whether the model is currently being loaded"
-msgstr "A nézet betöltését adja meg"
-
-#: ../thunar/thunar-chooser-model.c:161
-msgid "Mime info"
-msgstr ""
-
-#: ../thunar/thunar-chooser-model.c:162
-msgid "The mime info for the model"
-msgstr ""
-
-#: ../thunar/thunar-chooser-model.c:338
+#: ../thunar/thunar-chooser-model.c:334
 msgid "None available"
 msgstr ""
 
 #. append the "Recommended Applications:" category
-#: ../thunar/thunar-chooser-model.c:382
+#: ../thunar/thunar-chooser-model.c:378
 msgid "Recommended Applications:"
 msgstr ""
 
 #. append the "Other Applications:" category
-#: ../thunar/thunar-chooser-model.c:385
+#: ../thunar/thunar-chooser-model.c:381
 #, fuzzy
 msgid "Other Applications:"
 msgstr "_Hely megnyitása..."
 
-#: ../thunar/thunar-clipboard-manager.c:179
-msgid "Can paste"
-msgstr "Beilleszthető"
-
-#: ../thunar/thunar-clipboard-manager.c:180
-msgid "Whether the clipboard content can be pasted"
-msgstr "A vágólap tartalma beilleszthető"
-
 #. tell the user that we cannot paste
-#: ../thunar/thunar-clipboard-manager.c:362
+#: ../thunar/thunar-clipboard-manager.c:360
 msgid "There is nothing on the clipboard to paste"
 msgstr "Nincs beillesztenivaló a vágólapon"
 
-#: ../thunar/thunar-create-dialog.c:132 ../thunar/thunar-create-dialog.c:133
-#, fuzzy
-msgid "Filename"
-msgstr "Fájlkezelő"
-
-#: ../thunar/thunar-create-dialog.c:145 ../thunar/thunar-create-dialog.c:146
-#, fuzzy
-msgid "Mime Info"
-msgstr "%s Info"
-
-#: ../thunar/thunar-create-dialog.c:180
+#: ../thunar/thunar-create-dialog.c:176
 msgid "Enter the new name:"
 msgstr ""
 
@@ -507,7 +450,7 @@ msgstr "Név"
 #. Permissions chooser
 #.
 #: ../thunar/thunar-details-view.c:197
-#: ../thunar/thunar-properties-dialog.c:390
+#: ../thunar/thunar-properties-dialog.c:388
 msgid "Permissions"
 msgstr "Jogok"
 
@@ -563,15 +506,6 @@ msgstr ""
 msgid "File System"
 msgstr "Fájlrendszer"
 
-#: ../thunar/thunar-folder.c:164
-msgid "Whether the contents of the folder are currently being loaded"
-msgstr ""
-
-#: ../thunar/thunar-history.c:148 ../thunar/thunar-history.c:149
-#: ../thunar/thunar-launcher.c:163 ../thunar/thunar-launcher.c:164
-msgid "Action group"
-msgstr ""
-
 #. create the "back" action
 #: ../thunar/thunar-history.c:178
 msgid "Back"
@@ -588,18 +522,6 @@ msgstr ""
 
 #: ../thunar/thunar-history.c:183
 msgid "Go to the next visited folder"
-msgstr ""
-
-#: ../thunar/thunar-icon-factory.c:195
-msgid "Icon theme"
-msgstr "Ikon téma"
-
-#: ../thunar/thunar-icon-factory.c:196
-msgid "The icon theme used by the icon factory"
-msgstr "Az ikongyár által használt ikontéma"
-
-#: ../thunar/thunar-icon-factory.c:209 ../thunar/thunar-icon-factory.c:210
-msgid "Show Thumbnails"
 msgstr ""
 
 #: ../thunar/thunar-icon-factory.c:668
@@ -659,10 +581,6 @@ msgstr ""
 msgid "Sort items in descending order"
 msgstr ""
 
-#: ../thunar/thunar-icon-view.c:213 ../thunar/thunar-icon-view.c:214
-msgid "Text beside icons"
-msgstr ""
-
 #: ../thunar/thunar-icon-view.c:323
 msgid "Icon based directory listing"
 msgstr "Ikon alapú könyvtár lista"
@@ -670,15 +588,6 @@ msgstr "Ikon alapú könyvtár lista"
 #: ../thunar/thunar-icon-view.c:324
 msgid "Icon view"
 msgstr "Ikonnézet"
-
-#: ../thunar/thunar-launcher.c:176 ../thunar/thunar-launcher.c:177
-#, fuzzy
-msgid "Selected files"
-msgstr "Minden fájl kiválasztása"
-
-#: ../thunar/thunar-launcher.c:189 ../thunar/thunar-launcher.c:190
-msgid "Widget"
-msgstr ""
 
 #. the "Open" action
 #: ../thunar/thunar-launcher.c:218 ../thunar/thunar-launcher.c:550
@@ -735,41 +644,7 @@ msgstr[1] "Új _Ablak"
 msgid "_Execute"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:305
-msgid "Folder"
-msgstr "Mappa"
-
-#: ../thunar/thunar-list-model.c:306
-msgid "The stores folder"
-msgstr "A tároló mappák"
-
-#: ../thunar/thunar-list-model.c:318
-msgid "Folders first"
-msgstr "Mappák előre"
-
-#: ../thunar/thunar-list-model.c:319
-msgid "Folders first in sorting"
-msgstr "Mappák előre rendezéskor"
-
-#: ../thunar/thunar-list-model.c:331
-msgid "Number of files"
-msgstr "Fájlok száma"
-
-#: ../thunar/thunar-list-model.c:332
-msgid "Number of visible files"
-msgstr "Látható fájlok száma"
-
-#: ../thunar/thunar-list-model.c:344 ../thunar/thunar-view.c:108
-#: ../thunar/thunar-window.c:268
-msgid "Show hidden"
-msgstr "Rejtettek mutatása"
-
-#: ../thunar/thunar-list-model.c:345 ../thunar/thunar-view.c:109
-#: ../thunar/thunar-window.c:269
-msgid "Whether to display hidden files"
-msgstr "Mutassuk-e a rejtett fájlokat"
-
-#: ../thunar/thunar-list-model.c:711 ../thunar/thunar-properties-dialog.c:647
+#: ../thunar/thunar-list-model.c:711 ../thunar/thunar-properties-dialog.c:645
 msgid "broken link"
 msgstr ""
 
@@ -830,14 +705,6 @@ msgstr "_Hely:"
 msgid "Failed to launch `%s'"
 msgstr "Nem törölhető: %s"
 
-#: ../thunar/thunar-navigator.c:135 ../thunar/thunar-window.c:255
-msgid "Current directory"
-msgstr "Jelenlegi könyvtár"
-
-#: ../thunar/thunar-navigator.c:136
-msgid "The directory currently displayed by the navigator"
-msgstr "A most megjelenített könyvtár"
-
 #: ../thunar/thunar-open-with-action.c:351
 #, c-format
 msgid "%s (default)"
@@ -848,14 +715,6 @@ msgstr ""
 #, fuzzy
 msgid "Other Application..."
 msgstr "_Hely megnyitása..."
-
-#: ../thunar/thunar-path-entry.c:238
-msgid "Current file"
-msgstr "Jelenlegi fájl"
-
-#: ../thunar/thunar-path-entry.c:239
-msgid "The currently displayed file"
-msgstr "A most megjelenített fájl"
 
 #: ../thunar/thunar-path-entry.c:250
 msgid "Icon size"
@@ -934,7 +793,7 @@ msgstr "Nem törölhető: %s"
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:565
 #: ../thunar/thunar-permissions-chooser.c:1023
-#: ../thunar/thunar-progress-dialog.c:295
+#: ../thunar/thunar-progress-dialog.c:293
 msgid "Question"
 msgstr "Kérdés"
 
@@ -976,22 +835,22 @@ msgid "Unknown file owner"
 msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:1052
-#: ../thunar/thunar-progress-dialog.c:321
+#: ../thunar/thunar-progress-dialog.c:319
 msgid "_Yes"
 msgstr "_Igen"
 
 #: ../thunar/thunar-permissions-chooser.c:1056
-#: ../thunar/thunar-progress-dialog.c:325
+#: ../thunar/thunar-progress-dialog.c:323
 msgid "Yes to _all"
 msgstr "_Mind"
 
 #: ../thunar/thunar-permissions-chooser.c:1060
-#: ../thunar/thunar-progress-dialog.c:329
+#: ../thunar/thunar-progress-dialog.c:327
 msgid "_No"
 msgstr "_Nem"
 
 #: ../thunar/thunar-permissions-chooser.c:1064
-#: ../thunar/thunar-progress-dialog.c:333
+#: ../thunar/thunar-progress-dialog.c:331
 msgid "_Cancel"
 msgstr "_Csendet!"
 
@@ -1099,94 +958,82 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
-#: ../thunar/thunar-progress-dialog.c:151
-msgid "Job"
-msgstr ""
-
-#: ../thunar/thunar-progress-dialog.c:152
-msgid "The job whose progress to display"
-msgstr ""
-
-#: ../thunar/thunar-progress-dialog.c:459
+#: ../thunar/thunar-progress-dialog.c:457
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-progress-dialog.c:464
+#: ../thunar/thunar-progress-dialog.c:462
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-progress-dialog.c:469
+#: ../thunar/thunar-progress-dialog.c:467
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-properties-dialog.c:176
-msgid "The file displayed by the dialog"
-msgstr ""
-
-#: ../thunar/thunar-properties-dialog.c:214
+#: ../thunar/thunar-properties-dialog.c:212
 msgid "General"
 msgstr "Általános"
 
-#: ../thunar/thunar-properties-dialog.c:231
+#: ../thunar/thunar-properties-dialog.c:229
 msgid "Name:"
 msgstr "Név"
 
 #.
 #. Second box (kind, open with)
 #.
-#: ../thunar/thunar-properties-dialog.c:256
+#: ../thunar/thunar-properties-dialog.c:254
 msgid "Kind:"
 msgstr "Típus:"
 
-#: ../thunar/thunar-properties-dialog.c:270
+#: ../thunar/thunar-properties-dialog.c:268
 msgid "Open With:"
 msgstr ""
 
 #.
 #. Third box (modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:295
+#: ../thunar/thunar-properties-dialog.c:293
 msgid "Modified:"
 msgstr "Módosítva:"
 
-#: ../thunar/thunar-properties-dialog.c:308
+#: ../thunar/thunar-properties-dialog.c:306
 msgid "Accessed:"
 msgstr "Megnyitva:"
 
 #.
 #. Fourth box (volume, size)
 #.
-#: ../thunar/thunar-properties-dialog.c:332
+#: ../thunar/thunar-properties-dialog.c:330
 msgid "Volume:"
 msgstr "Kötet:"
 
-#: ../thunar/thunar-properties-dialog.c:355
+#: ../thunar/thunar-properties-dialog.c:353
 msgid "Size:"
 msgstr "Méret:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:379
+#: ../thunar/thunar-properties-dialog.c:377
 msgid "Emblems"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:712
+#: ../thunar/thunar-properties-dialog.c:710
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u bájt)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-properties-dialog.c:761
 #: ../thunar/thunar-standard-view.c:2347
 #, fuzzy, c-format
 msgid "Failed to rename `%s'"
@@ -1344,10 +1191,6 @@ msgstr ""
 msgid "Rename the selected file"
 msgstr "A kijelölt elem tulajdonságai"
 
-#: ../thunar/thunar-standard-view.c:375 ../thunar/thunar-view.c:80
-msgid "Whether the view is currently being loaded"
-msgstr "A nézet betöltését adja meg"
-
 #: ../thunar/thunar-standard-view.c:904
 msgid "Loading folder contents..."
 msgstr "Mappa beolvasása..."
@@ -1425,62 +1268,21 @@ msgid_plural "_Delete Files"
 msgstr[0] "Minden fájl kiválasztása"
 msgstr[1] "Minden fájl kiválasztása"
 
-#: ../thunar/thunar-statusbar.c:191
-msgid "The file whose icon to display"
+#: ../thunar/thunar-statusbar.c:773
+msgid "Loading"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:205 ../thunar/thunar-statusbar.c:776
+#: ../thunar/thunar-statusbar.c:774
 msgid "Whether to display a loading animation"
 msgstr ""
 
-#: ../thunar/thunar-statusbar.c:789 ../thunar/thunar-view.c:95
+#: ../thunar/thunar-statusbar.c:787
 msgid "Statusbar text"
 msgstr "Állapotsor szöveg"
 
-#: ../thunar/thunar-statusbar.c:790
+#: ../thunar/thunar-statusbar.c:788
 msgid "The main text to be displayed in the statusbar"
 msgstr "Az állapotsor fő szövege"
-
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr ""
-
-#: ../thunar/thunar-text-renderer.c:216
-msgid "Text"
-msgstr "Szöveg"
-
-#: ../thunar/thunar-text-renderer.c:217
-msgid "The text to render"
-msgstr "A kiírandó szöveg"
-
-#: ../thunar/thunar-text-renderer.c:231
-msgid "Wrap mode"
-msgstr ""
-
-#: ../thunar/thunar-text-renderer.c:232
-#, fuzzy
-msgid "The wrap mode"
-msgstr "A tároló mappák"
-
-#: ../thunar/thunar-text-renderer.c:247
-msgid "Wrap width"
-msgstr ""
-
-#: ../thunar/thunar-text-renderer.c:248
-msgid "The wrap width"
-msgstr ""
-
-#: ../thunar/thunar-view.c:96
-msgid "Text to be displayed in the statusbar associated with this view"
-msgstr "E nézet állapotsorának szövege"
-
-#: ../thunar/thunar-view.c:122 ../thunar/thunar-window.c:283
-msgid "UI manager"
-msgstr "UI kezelő"
-
-#: ../thunar/thunar-view.c:123
-msgid "UI manager of the surrounding window"
-msgstr "Adot ablak felhasználói felület kezelője"
 
 #: ../thunar/thunar-window.c:166
 msgid "_File"
@@ -1587,14 +1389,6 @@ msgstr "Rejtett fájlok mutatása"
 #: ../thunar/thunar-window.c:189
 msgid "Toggles the display of hidden files in the current window"
 msgstr "A rejtett fájlok mutatását váltja a jelen ablakban"
-
-#: ../thunar/thunar-window.c:256
-msgid "The directory currently displayed within this window"
-msgstr "Ezen ablakban megjelenített könyvtár"
-
-#: ../thunar/thunar-window.c:284
-msgid "The UI manager used within this window"
-msgstr "Ezen ablakban használt UI kezelő"
 
 #.
 #. * add the side pane options
@@ -1969,6 +1763,101 @@ msgstr "Fájlkezelő"
 #, fuzzy
 msgid "Thunar File Manager"
 msgstr "Fájlkezelő"
+
+#~ msgid "File"
+#~ msgstr "Fájl"
+
+#, fuzzy
+#~ msgid "Whether the model is currently being loaded"
+#~ msgstr "A nézet betöltését adja meg"
+
+#~ msgid "Can paste"
+#~ msgstr "Beilleszthető"
+
+#~ msgid "Whether the clipboard content can be pasted"
+#~ msgstr "A vágólap tartalma beilleszthető"
+
+#, fuzzy
+#~ msgid "Filename"
+#~ msgstr "Fájlkezelő"
+
+#, fuzzy
+#~ msgid "Mime Info"
+#~ msgstr "%s Info"
+
+#~ msgid "Icon theme"
+#~ msgstr "Ikon téma"
+
+#~ msgid "The icon theme used by the icon factory"
+#~ msgstr "Az ikongyár által használt ikontéma"
+
+#, fuzzy
+#~ msgid "Selected files"
+#~ msgstr "Minden fájl kiválasztása"
+
+#~ msgid "Folder"
+#~ msgstr "Mappa"
+
+#~ msgid "The stores folder"
+#~ msgstr "A tároló mappák"
+
+#~ msgid "Folders first"
+#~ msgstr "Mappák előre"
+
+#~ msgid "Folders first in sorting"
+#~ msgstr "Mappák előre rendezéskor"
+
+#~ msgid "Number of files"
+#~ msgstr "Fájlok száma"
+
+#~ msgid "Number of visible files"
+#~ msgstr "Látható fájlok száma"
+
+#~ msgid "Show hidden"
+#~ msgstr "Rejtettek mutatása"
+
+#~ msgid "Whether to display hidden files"
+#~ msgstr "Mutassuk-e a rejtett fájlokat"
+
+#~ msgid "Current directory"
+#~ msgstr "Jelenlegi könyvtár"
+
+#~ msgid "The directory currently displayed by the navigator"
+#~ msgstr "A most megjelenített könyvtár"
+
+#~ msgid "Current file"
+#~ msgstr "Jelenlegi fájl"
+
+#~ msgid "The currently displayed file"
+#~ msgstr "A most megjelenített fájl"
+
+#~ msgid "Whether the view is currently being loaded"
+#~ msgstr "A nézet betöltését adja meg"
+
+#~ msgid "Text"
+#~ msgstr "Szöveg"
+
+#~ msgid "The text to render"
+#~ msgstr "A kiírandó szöveg"
+
+#, fuzzy
+#~ msgid "The wrap mode"
+#~ msgstr "A tároló mappák"
+
+#~ msgid "Text to be displayed in the statusbar associated with this view"
+#~ msgstr "E nézet állapotsorának szövege"
+
+#~ msgid "UI manager"
+#~ msgstr "UI kezelő"
+
+#~ msgid "UI manager of the surrounding window"
+#~ msgstr "Adot ablak felhasználói felület kezelője"
+
+#~ msgid "The directory currently displayed within this window"
+#~ msgstr "Ezen ablakban megjelenített könyvtár"
+
+#~ msgid "The UI manager used within this window"
+#~ msgstr "Ezen ablakban használt UI kezelő"
 
 #, fuzzy
 #~ msgid "Drop file"

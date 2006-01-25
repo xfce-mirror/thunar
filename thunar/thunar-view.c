@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -76,8 +76,8 @@ thunar_view_class_init (gpointer klass)
    **/
   g_object_interface_install_property (klass,
                                        g_param_spec_boolean ("loading",
-                                                             _("Loading"),
-                                                             _("Whether the view is currently being loaded"),
+                                                             "loading",
+                                                             "loading",
                                                              FALSE,
                                                              EXO_PARAM_READABLE));
 
@@ -92,8 +92,8 @@ thunar_view_class_init (gpointer klass)
    **/
   g_object_interface_install_property (klass,
                                        g_param_spec_string ("statusbar-text",
-                                                            _("Statusbar text"),
-                                                            _("Text to be displayed in the statusbar associated with this view"),
+                                                            "statusbar-text",
+                                                            "statusbar-text",
                                                             NULL,
                                                             EXO_PARAM_READABLE));
 
@@ -105,8 +105,8 @@ thunar_view_class_init (gpointer klass)
    **/
   g_object_interface_install_property (klass,
                                        g_param_spec_boolean ("show-hidden",
-                                                             _("Show hidden"),
-                                                             _("Whether to display hidden files"),
+                                                             "show-hidden",
+                                                             "show-hidden",
                                                              FALSE,
                                                              EXO_PARAM_READWRITE));
 
@@ -119,8 +119,8 @@ thunar_view_class_init (gpointer klass)
    **/
   g_object_interface_install_property (klass,
                                        g_param_spec_object ("ui-manager",
-                                                            _("UI manager"),
-                                                            _("UI manager of the surrounding window"),
+                                                            "ui-manager",
+                                                            "ui-manager",
                                                             GTK_TYPE_UI_MANAGER,
                                                             EXO_PARAM_READWRITE));
 }

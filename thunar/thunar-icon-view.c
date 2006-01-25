@@ -210,8 +210,8 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_TEXT_BESIDE_ICONS,
                                    g_param_spec_boolean ("text-beside-icons",
-                                                         _("Text beside icons"),
-                                                         _("Text beside icons"),
+                                                         "text-beside-icons",
+                                                         "text-beside-icons",
                                                          FALSE,
                                                          EXO_PARAM_WRITABLE));
 }

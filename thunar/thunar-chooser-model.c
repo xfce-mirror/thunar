@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>.
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -144,9 +144,7 @@ thunar_chooser_model_class_init (ThunarChooserModelClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_LOADING,
-                                   g_param_spec_boolean ("loading",
-                                                         _("Loading"),
-                                                         _("Whether the model is currently being loaded"),
+                                   g_param_spec_boolean ("loading", "loading", "loading",
                                                          FALSE,
                                                          EXO_PARAM_READABLE));
 
@@ -157,9 +155,7 @@ thunar_chooser_model_class_init (ThunarChooserModelClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_MIME_INFO,
-                                   g_param_spec_boxed ("mime-info",
-                                                       _("Mime info"),
-                                                       _("The mime info for the model"),
+                                   g_param_spec_boxed ("mime-info", "mime-info", "mime-info",
                                                        THUNAR_VFS_TYPE_MIME_INFO,
                                                        G_PARAM_CONSTRUCT_ONLY | EXO_PARAM_READWRITE));
 }

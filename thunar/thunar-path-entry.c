@@ -235,8 +235,8 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_CURRENT_FILE,
                                    g_param_spec_object ("current-file",
-                                                        _("Current file"),
-                                                        _("The currently displayed file"),
+                                                        "current-file",
+                                                        "current-file",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
 

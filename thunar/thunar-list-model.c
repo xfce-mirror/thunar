@@ -302,8 +302,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_FOLDER,
                                    g_param_spec_object ("folder",
-                                                        _("Folder"),
-                                                        _("The stores folder"),
+                                                        "folder",
+                                                        "folder",
                                                         THUNAR_TYPE_FOLDER,
                                                         EXO_PARAM_READWRITE));
 
@@ -315,8 +315,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_FOLDERS_FIRST,
                                    g_param_spec_boolean ("folders-first",
-                                                         _("Folders first"),
-                                                         _("Folders first in sorting"),
+                                                         "folders-first",
+                                                         "folders-first",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
 
@@ -328,8 +328,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_NUM_FILES,
                                    g_param_spec_uint ("num-files",
-                                                      _("Number of files"),
-                                                      _("Number of visible files"),
+                                                      "num-files",
+                                                      "num-files",
                                                       0, UINT_MAX, 0,
                                                       EXO_PARAM_READABLE));
 
@@ -341,8 +341,8 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_SHOW_HIDDEN,
                                    g_param_spec_boolean ("show-hidden",
-                                                         _("Show hidden"),
-                                                         _("Whether to display hidden files"),
+                                                         "show-hidden",
+                                                         "show-hidden",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 

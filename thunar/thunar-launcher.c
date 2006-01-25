@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -160,8 +160,8 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_ACTION_GROUP,
                                    g_param_spec_object ("action-group",
-                                                        _("Action group"),
-                                                        _("Action group"),
+                                                        "action-group",
+                                                        "action-group",
                                                         GTK_TYPE_ACTION_GROUP,
                                                         EXO_PARAM_READWRITE));
 
@@ -173,8 +173,8 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_SELECTED_FILES,
                                    g_param_spec_pointer ("selected-files",
-                                                         _("Selected files"),
-                                                         _("Selected files"),
+                                                         "selected-files",
+                                                         "selected-files",
                                                          EXO_PARAM_READWRITE));
 
   /**
@@ -186,8 +186,8 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_WIDGET,
                                    g_param_spec_object ("widget",
-                                                        _("Widget"),
-                                                        _("Widget"),
+                                                        "widget",
+                                                        "widget",
                                                         GTK_TYPE_WIDGET,
                                                         EXO_PARAM_READWRITE));
 

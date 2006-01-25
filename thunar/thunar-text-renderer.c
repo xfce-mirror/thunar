@@ -200,8 +200,8 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_FOLLOW_STATE,
                                    g_param_spec_boolean ("follow-state",
-                                                         _("Follow state"),
-                                                         _("Follow state"),
+                                                         "follow-state",
+                                                         "follow-state",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 
@@ -213,8 +213,8 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_TEXT,
                                    g_param_spec_string ("text",
-                                                        _("Text"),
-                                                        _("The text to render"),
+                                                        "text",
+                                                        "text",
                                                         NULL,
                                                         EXO_PARAM_READWRITE));
 
@@ -228,8 +228,8 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_WRAP_MODE,
                                    g_param_spec_enum ("wrap-mode",
-                                                      _("Wrap mode"),
-                                                      _("The wrap mode"),
+                                                      "wrap-mode",
+                                                      "wrap-mode",
                                                       PANGO_TYPE_WRAP_MODE,
                                                       PANGO_WRAP_CHAR,
                                                       EXO_PARAM_READWRITE));
@@ -244,8 +244,8 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_WRAP_WIDTH,
                                    g_param_spec_int ("wrap-width",
-                                                     _("Wrap width"),
-                                                     _("The wrap width"),
+                                                     "wrap-width",
+                                                     "wrap-width",
                                                      -1, G_MAXINT, -1,
                                                      EXO_PARAM_READWRITE));
 

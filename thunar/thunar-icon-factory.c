@@ -192,8 +192,8 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_ICON_THEME,
                                    g_param_spec_object ("icon-theme",
-                                                        _("Icon theme"),
-                                                        _("The icon theme used by the icon factory"),
+                                                        "icon-theme",
+                                                        "icon-theme",
                                                         GTK_TYPE_ICON_THEME,
                                                         EXO_PARAM_READABLE));
 
@@ -206,8 +206,8 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_SHOW_THUMBNAILS,
                                    g_param_spec_boolean ("show-thumbnails",
-                                                         _("Show Thumbnails"),
-                                                         _("Show Thumbnails"),
+                                                         "show-thumbnails",
+                                                         "show-thumbnails",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 }

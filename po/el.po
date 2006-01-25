@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.4svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-23 23:50+0100\n"
+"POT-Creation-Date: 2006-01-25 19:04+0100\n"
 "PO-Revision-Date: 2005-12-04 23:18+0900\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -185,7 +185,7 @@ msgid "copy of %s"
 msgstr "αντίγραφο του %s"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:158 ../thunar/thunar-list-model.c:713
-#: ../thunar/thunar-properties-dialog.c:649
+#: ../thunar/thunar-properties-dialog.c:647
 #, c-format
 msgid "link to %s"
 msgstr "δεσμός προς το %s"
@@ -328,7 +328,7 @@ msgstr "Δημιουργία καταλόγων..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:281 ../thunar/thunar-chooser-dialog.c:483
+#: ../thunar/thunar-chooser-button.c:281 ../thunar/thunar-chooser-dialog.c:479
 #, c-format
 msgid "Failed to set default application for `%s'"
 msgstr "Ο ορισμός της προκαθορισμένης εφαρμογής για το `%s' απέτυχε."
@@ -351,142 +351,88 @@ msgstr ""
 msgid "_Other Application..."
 msgstr "Άλλη Εφαρμογή..."
 
-#: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148
-#: ../thunar/thunar-open-with-action.c:146
-#: ../thunar/thunar-open-with-action.c:147
-#: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
-msgid "File"
-msgstr "Αρχείο"
-
-#: ../thunar/thunar-chooser-dialog.c:170
-msgid "The file for which an application should be chosen"
-msgstr "Το αρχείο για το οποίο πρέπει να επιλεχθεί μια εφαρμογή"
-
-#: ../thunar/thunar-chooser-dialog.c:182
-msgid "Open"
-msgstr "Άνοιγμα"
-
-#: ../thunar/thunar-chooser-dialog.c:183
-msgid "Whether the chooser should open the specified file"
-msgstr "Εάν ο επιλογέας πρέπει να ανοίγει το συγκεκριμένο αρχείο"
-
 #. the "Open with" action
-#: ../thunar/thunar-chooser-dialog.c:208 ../thunar/thunar-launcher.c:226
+#: ../thunar/thunar-chooser-dialog.c:204 ../thunar/thunar-launcher.c:226
 msgid "Open With"
 msgstr "Άνοιγμα Με"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:270
+#: ../thunar/thunar-chooser-dialog.c:266
 msgid "Use a _custom command:"
 msgstr "Χρήση _προσαρμοσμένης εντολής:"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:288
+#: ../thunar/thunar-chooser-dialog.c:284
 msgid "_Browse"
 msgstr "_Περιήγηση"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:461
+#: ../thunar/thunar-chooser-dialog.c:457
 #, c-format
 msgid "Failed to add new application `%s'"
 msgstr "Η προσθήκη της εφαρμογής `%s' απέτυχε."
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:496
+#: ../thunar/thunar-chooser-dialog.c:492
 #, c-format
 msgid "Failed to execute `%s'"
 msgstr "Η εκτέλεση του `%s' απέτυχε"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:617
+#: ../thunar/thunar-chooser-dialog.c:613
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Άνοιγμα του <i>%s</i> και των άλλων αρχείων του τύπου \"%s\" με:"
 
-#: ../thunar/thunar-chooser-dialog.c:639 ../thunar-uca/thunar-uca-editor.c:491
+#: ../thunar/thunar-chooser-dialog.c:635 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Επιλογή Εφαρμογής"
 
-#: ../thunar/thunar-chooser-dialog.c:649 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar/thunar-chooser-dialog.c:645 ../thunar-uca/thunar-uca-editor.c:501
 #: ../thunar-uca/thunar-uca-editor.c:640
 msgid "All Files"
 msgstr "Όλα τα Αρχεία"
 
-#: ../thunar/thunar-chooser-dialog.c:654 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Εκτελέσιμα Αρχεία"
 
-#: ../thunar/thunar-chooser-dialog.c:669 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:665 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:675 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:671 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:681 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:677 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:687 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:683 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-model.c:148 ../thunar/thunar-folder.c:163
-#: ../thunar/thunar-standard-view.c:374 ../thunar/thunar-statusbar.c:204
-#: ../thunar/thunar-statusbar.c:775 ../thunar/thunar-view.c:79
-msgid "Loading"
-msgstr "Φόρτωση"
-
-#: ../thunar/thunar-chooser-model.c:149
-msgid "Whether the model is currently being loaded"
-msgstr "Εάν είναι φορτωμένο το μοντέλο"
-
-#: ../thunar/thunar-chooser-model.c:161
-msgid "Mime info"
-msgstr "Πληροφορίες mime"
-
-#: ../thunar/thunar-chooser-model.c:162
-msgid "The mime info for the model"
-msgstr "Οι πληροφορίες mime για το μοντέλο"
-
-#: ../thunar/thunar-chooser-model.c:338
+#: ../thunar/thunar-chooser-model.c:334
 msgid "None available"
 msgstr "Κανένα διαθέσιμο"
 
 #. append the "Recommended Applications:" category
-#: ../thunar/thunar-chooser-model.c:382
+#: ../thunar/thunar-chooser-model.c:378
 msgid "Recommended Applications:"
 msgstr "Προτεινόμενες Εφαρμογές:"
 
 #. append the "Other Applications:" category
-#: ../thunar/thunar-chooser-model.c:385
+#: ../thunar/thunar-chooser-model.c:381
 msgid "Other Applications:"
 msgstr "Άλλες Εφαρμογές:"
 
-#: ../thunar/thunar-clipboard-manager.c:179
-msgid "Can paste"
-msgstr "Δυνατότητα επικόλλησης"
-
-#: ../thunar/thunar-clipboard-manager.c:180
-msgid "Whether the clipboard content can be pasted"
-msgstr "Εάν μπορούν να επικολληθούν τα περιεχόμενα του πρόχειρου"
-
 #. tell the user that we cannot paste
-#: ../thunar/thunar-clipboard-manager.c:362
+#: ../thunar/thunar-clipboard-manager.c:360
 msgid "There is nothing on the clipboard to paste"
 msgstr "Δεν υπάρχει τίποτα στο πρόχειρο για να επικολληθεί."
 
-#: ../thunar/thunar-create-dialog.c:132 ../thunar/thunar-create-dialog.c:133
-msgid "Filename"
-msgstr "Όνομα αρχείου"
-
-#: ../thunar/thunar-create-dialog.c:145 ../thunar/thunar-create-dialog.c:146
-msgid "Mime Info"
-msgstr "Πληροφορίες Mime"
-
-#: ../thunar/thunar-create-dialog.c:180
+#: ../thunar/thunar-create-dialog.c:176
 msgid "Enter the new name:"
 msgstr "Εισάγετε νέο όνομα:"
 
@@ -498,7 +444,7 @@ msgstr "Όνομα"
 #. Permissions chooser
 #.
 #: ../thunar/thunar-details-view.c:197
-#: ../thunar/thunar-properties-dialog.c:390
+#: ../thunar/thunar-properties-dialog.c:388
 msgid "Permissions"
 msgstr "Δικαιώματα"
 
@@ -553,15 +499,6 @@ msgstr "Ο ριζικός φάκελος δεν έχει γονεϊκό φάκε
 msgid "File System"
 msgstr "Σύστημα αρχείων"
 
-#: ../thunar/thunar-folder.c:164
-msgid "Whether the contents of the folder are currently being loaded"
-msgstr "Εάν φορτώνονται τα περιεχόμενα του φακέλου"
-
-#: ../thunar/thunar-history.c:148 ../thunar/thunar-history.c:149
-#: ../thunar/thunar-launcher.c:163 ../thunar/thunar-launcher.c:164
-msgid "Action group"
-msgstr "Ομάδα ενέργειας"
-
 #. create the "back" action
 #: ../thunar/thunar-history.c:178
 msgid "Back"
@@ -579,18 +516,6 @@ msgstr "Εμπρός"
 #: ../thunar/thunar-history.c:183
 msgid "Go to the next visited folder"
 msgstr "Μετάβαση στον επόμενο φάκελο που επισκεφτήκατε"
-
-#: ../thunar/thunar-icon-factory.c:195
-msgid "Icon theme"
-msgstr "Θέμα εικονιδίων"
-
-#: ../thunar/thunar-icon-factory.c:196
-msgid "The icon theme used by the icon factory"
-msgstr "Το θέμα εικονιδίων που χρησιμοποιείται από το icon factory"
-
-#: ../thunar/thunar-icon-factory.c:209 ../thunar/thunar-icon-factory.c:210
-msgid "Show Thumbnails"
-msgstr ""
 
 #: ../thunar/thunar-icon-factory.c:668
 #, c-format
@@ -649,10 +574,6 @@ msgstr "_Φθίνουσα"
 msgid "Sort items in descending order"
 msgstr "Ταξινόμηση καρτελών με φθίνουσα σειρά"
 
-#: ../thunar/thunar-icon-view.c:213 ../thunar/thunar-icon-view.c:214
-msgid "Text beside icons"
-msgstr "Το κείμενο δίπλα από τα εικονίδια"
-
 #: ../thunar/thunar-icon-view.c:323
 msgid "Icon based directory listing"
 msgstr ""
@@ -660,14 +581,6 @@ msgstr ""
 #: ../thunar/thunar-icon-view.c:324
 msgid "Icon view"
 msgstr "Εικονίδια"
-
-#: ../thunar/thunar-launcher.c:176 ../thunar/thunar-launcher.c:177
-msgid "Selected files"
-msgstr "Επιλεγμένα αρχεία"
-
-#: ../thunar/thunar-launcher.c:189 ../thunar/thunar-launcher.c:190
-msgid "Widget"
-msgstr "Μαραφέτι"
 
 #. the "Open" action
 #: ../thunar/thunar-launcher.c:218 ../thunar/thunar-launcher.c:550
@@ -722,41 +635,7 @@ msgstr[1] "Άνοιγμα σε %d Νέα Παράθυρα"
 msgid "_Execute"
 msgstr "_Εκτέλεση"
 
-#: ../thunar/thunar-list-model.c:305
-msgid "Folder"
-msgstr "Φάκελος"
-
-#: ../thunar/thunar-list-model.c:306
-msgid "The stores folder"
-msgstr ""
-
-#: ../thunar/thunar-list-model.c:318
-msgid "Folders first"
-msgstr "Πρώτα οι φάκελοι"
-
-#: ../thunar/thunar-list-model.c:319
-msgid "Folders first in sorting"
-msgstr "Εμφάνιση πρώτα των φακέλων κατά την ταξινόμηση"
-
-#: ../thunar/thunar-list-model.c:331
-msgid "Number of files"
-msgstr "Αριθμός Αρχείων"
-
-#: ../thunar/thunar-list-model.c:332
-msgid "Number of visible files"
-msgstr "Αριθμός ορατών αρχείων"
-
-#: ../thunar/thunar-list-model.c:344 ../thunar/thunar-view.c:108
-#: ../thunar/thunar-window.c:268
-msgid "Show hidden"
-msgstr "Προβολή κρυφών"
-
-#: ../thunar/thunar-list-model.c:345 ../thunar/thunar-view.c:109
-#: ../thunar/thunar-window.c:269
-msgid "Whether to display hidden files"
-msgstr "Αν θα προβάλλονται τα κρυφά αρχεία"
-
-#: ../thunar/thunar-list-model.c:711 ../thunar/thunar-properties-dialog.c:647
+#: ../thunar/thunar-list-model.c:711 ../thunar/thunar-properties-dialog.c:645
 msgid "broken link"
 msgstr "σπασμένος δεσμός"
 
@@ -817,14 +696,6 @@ msgstr "_Τοποθεσία:"
 msgid "Failed to launch `%s'"
 msgstr "Η εκκίνηση της ενέργειας `%s' απέτυχε."
 
-#: ../thunar/thunar-navigator.c:135 ../thunar/thunar-window.c:255
-msgid "Current directory"
-msgstr "Τρέχον κατάλογος"
-
-#: ../thunar/thunar-navigator.c:136
-msgid "The directory currently displayed by the navigator"
-msgstr "Ο τρέχον κατάλογος στον περιηγητή"
-
 #: ../thunar/thunar-open-with-action.c:351
 #, c-format
 msgid "%s (default)"
@@ -834,14 +705,6 @@ msgstr "%s (προεπιλογή)"
 #: ../thunar/thunar-open-with-action.c:402
 msgid "Other Application..."
 msgstr "Άλλη Εφαρμογή..."
-
-#: ../thunar/thunar-path-entry.c:238
-msgid "Current file"
-msgstr "Τρέχον αρχείο"
-
-#: ../thunar/thunar-path-entry.c:239
-msgid "The currently displayed file"
-msgstr "Το αρχείο που εμφανίζεται τώρα"
 
 #: ../thunar/thunar-path-entry.c:250
 msgid "Icon size"
@@ -920,7 +783,7 @@ msgstr "Η προσθήκη της εφαρμογής `%s' απέτυχε."
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:565
 #: ../thunar/thunar-permissions-chooser.c:1023
-#: ../thunar/thunar-progress-dialog.c:295
+#: ../thunar/thunar-progress-dialog.c:293
 msgid "Question"
 msgstr "Ερώτηση"
 
@@ -962,22 +825,22 @@ msgid "Unknown file owner"
 msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:1052
-#: ../thunar/thunar-progress-dialog.c:321
+#: ../thunar/thunar-progress-dialog.c:319
 msgid "_Yes"
 msgstr "_Ναι"
 
 #: ../thunar/thunar-permissions-chooser.c:1056
-#: ../thunar/thunar-progress-dialog.c:325
+#: ../thunar/thunar-progress-dialog.c:323
 msgid "Yes to _all"
 msgstr "Ναι σε ό_λα"
 
 #: ../thunar/thunar-permissions-chooser.c:1060
-#: ../thunar/thunar-progress-dialog.c:329
+#: ../thunar/thunar-progress-dialog.c:327
 msgid "_No"
 msgstr "_Όχι"
 
 #: ../thunar/thunar-permissions-chooser.c:1064
-#: ../thunar/thunar-progress-dialog.c:333
+#: ../thunar/thunar-progress-dialog.c:331
 msgid "_Cancel"
 msgstr "_Ακύρωση"
 
@@ -1083,55 +946,43 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
-#: ../thunar/thunar-progress-dialog.c:151
-msgid "Job"
-msgstr "Εργασία"
-
-#: ../thunar/thunar-progress-dialog.c:152
-msgid "The job whose progress to display"
-msgstr "Ποιας εργασίας η πρόοδος θα παρουσιαστεί"
-
-#: ../thunar/thunar-progress-dialog.c:459
+#: ../thunar/thunar-progress-dialog.c:457
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] "(απομένει %lu ώρα)"
 msgstr[1] "(απομένουν %lu ώρες)"
 
-#: ../thunar/thunar-progress-dialog.c:464
+#: ../thunar/thunar-progress-dialog.c:462
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] "(απομένει %lu λεπτό)"
 msgstr[1] "(απομένουν %lu λεπτά)"
 
-#: ../thunar/thunar-progress-dialog.c:469
+#: ../thunar/thunar-progress-dialog.c:467
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"
 msgstr[0] "(απομένει %lu δευτερόλεπτο)"
 msgstr[1] "(απομένουν %lu δευτερόλεπτα)"
 
-#: ../thunar/thunar-properties-dialog.c:176
-msgid "The file displayed by the dialog"
-msgstr "Το αρχείο που απεικονίζεται από το διάλογο"
-
-#: ../thunar/thunar-properties-dialog.c:214
+#: ../thunar/thunar-properties-dialog.c:212
 msgid "General"
 msgstr "Γενικές"
 
-#: ../thunar/thunar-properties-dialog.c:231
+#: ../thunar/thunar-properties-dialog.c:229
 msgid "Name:"
 msgstr "Όνομα:"
 
 #.
 #. Second box (kind, open with)
 #.
-#: ../thunar/thunar-properties-dialog.c:256
+#: ../thunar/thunar-properties-dialog.c:254
 msgid "Kind:"
 msgstr "Είδος:"
 
-#: ../thunar/thunar-properties-dialog.c:270
+#: ../thunar/thunar-properties-dialog.c:268
 #, fuzzy
 msgid "Open With:"
 msgstr "Άνοιγμα Με"
@@ -1139,39 +990,39 @@ msgstr "Άνοιγμα Με"
 #.
 #. Third box (modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:295
+#: ../thunar/thunar-properties-dialog.c:293
 msgid "Modified:"
 msgstr "Τροποποιήθηκε:"
 
-#: ../thunar/thunar-properties-dialog.c:308
+#: ../thunar/thunar-properties-dialog.c:306
 msgid "Accessed:"
 msgstr "Προσπελάστηκε:"
 
 #.
 #. Fourth box (volume, size)
 #.
-#: ../thunar/thunar-properties-dialog.c:332
+#: ../thunar/thunar-properties-dialog.c:330
 msgid "Volume:"
 msgstr "Τόμος:"
 
-#: ../thunar/thunar-properties-dialog.c:355
+#: ../thunar/thunar-properties-dialog.c:353
 msgid "Size:"
 msgstr "Μέγεθος:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:379
+#: ../thunar/thunar-properties-dialog.c:377
 msgid "Emblems"
 msgstr "Εμβλήματα"
 
-#: ../thunar/thunar-properties-dialog.c:712
+#: ../thunar/thunar-properties-dialog.c:710
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u Bytes)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-properties-dialog.c:761
 #: ../thunar/thunar-standard-view.c:2347
 #, c-format
 msgid "Failed to rename `%s'"
@@ -1313,10 +1164,6 @@ msgstr "_Μετονομασία"
 msgid "Rename the selected file"
 msgstr "Μετονομασία του επιλεγμένου αρχείου"
 
-#: ../thunar/thunar-standard-view.c:375 ../thunar/thunar-view.c:80
-msgid "Whether the view is currently being loaded"
-msgstr "Εάν είναι φορτωμένη η προβολή"
-
 #: ../thunar/thunar-standard-view.c:904
 msgid "Loading folder contents..."
 msgstr "Φόρτωμα περιεχομένων φακέλου..."
@@ -1396,61 +1243,21 @@ msgid_plural "_Delete Files"
 msgstr[0] "_Διαγραφή Αρχείου"
 msgstr[1] "_Διαγραφή Αρχείων"
 
-#: ../thunar/thunar-statusbar.c:191
-msgid "The file whose icon to display"
-msgstr "Το αρχείο του οποίου το εικονίδιο να προβληθει"
+#: ../thunar/thunar-statusbar.c:773
+msgid "Loading"
+msgstr "Φόρτωση"
 
-#: ../thunar/thunar-statusbar.c:205 ../thunar/thunar-statusbar.c:776
+#: ../thunar/thunar-statusbar.c:774
 msgid "Whether to display a loading animation"
 msgstr "Αν θα εμφανίζεται γραφικό φόρτωσης"
 
-#: ../thunar/thunar-statusbar.c:789 ../thunar/thunar-view.c:95
+#: ../thunar/thunar-statusbar.c:787
 msgid "Statusbar text"
 msgstr "Κείμενο μπάρας κατάστασης"
 
-#: ../thunar/thunar-statusbar.c:790
+#: ../thunar/thunar-statusbar.c:788
 msgid "The main text to be displayed in the statusbar"
 msgstr "Το κυρίως κείμενο που θα εμφανίζεται στη μπάρα κατάστασης"
-
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr "Παρακολούθηση κατάστασης"
-
-#: ../thunar/thunar-text-renderer.c:216
-msgid "Text"
-msgstr "Κείμενο"
-
-#: ../thunar/thunar-text-renderer.c:217
-msgid "The text to render"
-msgstr "Κείμενο προς εμφάνιση"
-
-#: ../thunar/thunar-text-renderer.c:231
-msgid "Wrap mode"
-msgstr "Κατάσταση αναδίπλωσης"
-
-#: ../thunar/thunar-text-renderer.c:232
-msgid "The wrap mode"
-msgstr "Η κατάσταση αναδίπλωσης"
-
-#: ../thunar/thunar-text-renderer.c:247
-msgid "Wrap width"
-msgstr "Πλάτος αναδίπλωσης"
-
-#: ../thunar/thunar-text-renderer.c:248
-msgid "The wrap width"
-msgstr "Το πλάτος αναδίπλωσης"
-
-#: ../thunar/thunar-view.c:96
-msgid "Text to be displayed in the statusbar associated with this view"
-msgstr "Κείμενο που θα εμφανίζεται στην γραμμή κατάστασης σε αυτή την προβολή"
-
-#: ../thunar/thunar-view.c:122 ../thunar/thunar-window.c:283
-msgid "UI manager"
-msgstr "Διαχειριστής UI"
-
-#: ../thunar/thunar-view.c:123
-msgid "UI manager of the surrounding window"
-msgstr ""
 
 #: ../thunar/thunar-window.c:166
 msgid "_File"
@@ -1552,14 +1359,6 @@ msgstr "Εμφάνιση _Κρυφών Αρχείων"
 #: ../thunar/thunar-window.c:189
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Εναλλάσσει την εμφάνιση κρυφών αρχείων στο τρέχον παράθυρο"
-
-#: ../thunar/thunar-window.c:256
-msgid "The directory currently displayed within this window"
-msgstr "Ο κατάλογος που εμφανίζεται τώρα σε αυτό το παράθυρο"
-
-#: ../thunar/thunar-window.c:284
-msgid "The UI manager used within this window"
-msgstr ""
 
 #.
 #. * add the side pane options
@@ -1914,6 +1713,139 @@ msgstr "Διαχειριστής Αρχείων"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Διαχειριστής Αρχείων Thunar"
+
+#~ msgid "File"
+#~ msgstr "Αρχείο"
+
+#~ msgid "The file for which an application should be chosen"
+#~ msgstr "Το αρχείο για το οποίο πρέπει να επιλεχθεί μια εφαρμογή"
+
+#~ msgid "Open"
+#~ msgstr "Άνοιγμα"
+
+#~ msgid "Whether the chooser should open the specified file"
+#~ msgstr "Εάν ο επιλογέας πρέπει να ανοίγει το συγκεκριμένο αρχείο"
+
+#~ msgid "Whether the model is currently being loaded"
+#~ msgstr "Εάν είναι φορτωμένο το μοντέλο"
+
+#~ msgid "Mime info"
+#~ msgstr "Πληροφορίες mime"
+
+#~ msgid "The mime info for the model"
+#~ msgstr "Οι πληροφορίες mime για το μοντέλο"
+
+#~ msgid "Can paste"
+#~ msgstr "Δυνατότητα επικόλλησης"
+
+#~ msgid "Whether the clipboard content can be pasted"
+#~ msgstr "Εάν μπορούν να επικολληθούν τα περιεχόμενα του πρόχειρου"
+
+#~ msgid "Filename"
+#~ msgstr "Όνομα αρχείου"
+
+#~ msgid "Mime Info"
+#~ msgstr "Πληροφορίες Mime"
+
+#~ msgid "Whether the contents of the folder are currently being loaded"
+#~ msgstr "Εάν φορτώνονται τα περιεχόμενα του φακέλου"
+
+#~ msgid "Action group"
+#~ msgstr "Ομάδα ενέργειας"
+
+#~ msgid "Icon theme"
+#~ msgstr "Θέμα εικονιδίων"
+
+#~ msgid "The icon theme used by the icon factory"
+#~ msgstr "Το θέμα εικονιδίων που χρησιμοποιείται από το icon factory"
+
+#~ msgid "Text beside icons"
+#~ msgstr "Το κείμενο δίπλα από τα εικονίδια"
+
+#~ msgid "Selected files"
+#~ msgstr "Επιλεγμένα αρχεία"
+
+#~ msgid "Widget"
+#~ msgstr "Μαραφέτι"
+
+#~ msgid "Folder"
+#~ msgstr "Φάκελος"
+
+#~ msgid "Folders first"
+#~ msgstr "Πρώτα οι φάκελοι"
+
+#~ msgid "Folders first in sorting"
+#~ msgstr "Εμφάνιση πρώτα των φακέλων κατά την ταξινόμηση"
+
+#~ msgid "Number of files"
+#~ msgstr "Αριθμός Αρχείων"
+
+#~ msgid "Number of visible files"
+#~ msgstr "Αριθμός ορατών αρχείων"
+
+#~ msgid "Show hidden"
+#~ msgstr "Προβολή κρυφών"
+
+#~ msgid "Whether to display hidden files"
+#~ msgstr "Αν θα προβάλλονται τα κρυφά αρχεία"
+
+#~ msgid "Current directory"
+#~ msgstr "Τρέχον κατάλογος"
+
+#~ msgid "The directory currently displayed by the navigator"
+#~ msgstr "Ο τρέχον κατάλογος στον περιηγητή"
+
+#~ msgid "Current file"
+#~ msgstr "Τρέχον αρχείο"
+
+#~ msgid "The currently displayed file"
+#~ msgstr "Το αρχείο που εμφανίζεται τώρα"
+
+#~ msgid "Job"
+#~ msgstr "Εργασία"
+
+#~ msgid "The job whose progress to display"
+#~ msgstr "Ποιας εργασίας η πρόοδος θα παρουσιαστεί"
+
+#~ msgid "The file displayed by the dialog"
+#~ msgstr "Το αρχείο που απεικονίζεται από το διάλογο"
+
+#~ msgid "Whether the view is currently being loaded"
+#~ msgstr "Εάν είναι φορτωμένη η προβολή"
+
+#~ msgid "The file whose icon to display"
+#~ msgstr "Το αρχείο του οποίου το εικονίδιο να προβληθει"
+
+#~ msgid "Follow state"
+#~ msgstr "Παρακολούθηση κατάστασης"
+
+#~ msgid "Text"
+#~ msgstr "Κείμενο"
+
+#~ msgid "The text to render"
+#~ msgstr "Κείμενο προς εμφάνιση"
+
+#~ msgid "Wrap mode"
+#~ msgstr "Κατάσταση αναδίπλωσης"
+
+#~ msgid "The wrap mode"
+#~ msgstr "Η κατάσταση αναδίπλωσης"
+
+#~ msgid "Wrap width"
+#~ msgstr "Πλάτος αναδίπλωσης"
+
+#~ msgid "The wrap width"
+#~ msgstr "Το πλάτος αναδίπλωσης"
+
+#~ msgid "Text to be displayed in the statusbar associated with this view"
+#~ msgstr ""
+#~ "Κείμενο που θα εμφανίζεται στην γραμμή κατάστασης σε αυτή την προβολή"
+
+#~ msgid "UI manager"
+#~ msgstr "Διαχειριστής UI"
+
+#~ msgid "The directory currently displayed within this window"
+#~ msgstr "Ο κατάλογος που εμφανίζεται τώρα σε αυτό το παράθυρο"
 
 #~ msgid "The file whose icon to render"
 #~ msgstr "Το αρχείο του οποίου το εικονίδιο να προβληθει"

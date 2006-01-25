@@ -371,8 +371,8 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
                                    PROP_LOADING,
                                    g_param_spec_override ("loading",
                                                           g_param_spec_boolean ("loading",
-                                                                                _("Loading"),
-                                                                                _("Whether the view is currently being loaded"),
+                                                                                "loading",
+                                                                                "loading",
                                                                                 FALSE,
                                                                                 EXO_PARAM_READWRITE)));
 

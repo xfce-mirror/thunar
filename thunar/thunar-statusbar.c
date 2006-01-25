@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -186,9 +186,7 @@ thunar_statusbar_icon_class_init (ThunarStatusbarIconClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    ICON_PROP_FILE,
-                                   g_param_spec_object ("file",
-                                                        _("File"),
-                                                        _("The file whose icon to display"),
+                                   g_param_spec_object ("file", "file", "file",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
 
@@ -200,9 +198,9 @@ thunar_statusbar_icon_class_init (ThunarStatusbarIconClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    ICON_PROP_LOADING,
-                                   g_param_spec_boolean ("loading",
-                                                         _("Loading"),
-                                                         _("Whether to display a loading animation"),
+                                   g_param_spec_boolean ("loading", 
+                                                         "loading",
+                                                         "loading",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
 }

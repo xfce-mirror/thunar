@@ -241,8 +241,8 @@ thunar_file_class_init (ThunarFileClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_DISPLAY_NAME,
                                    g_param_spec_string ("display-name",
-                                                        "Display Name",
-                                                        "Display Name",
+                                                        "display-name",
+                                                        "display-name",
                                                         NULL,
                                                         EXO_PARAM_READABLE));
 

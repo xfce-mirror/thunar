@@ -171,9 +171,7 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_FILE,
-                                   g_param_spec_object ("file",
-                                                        _("File"),
-                                                        _("The file displayed by the dialog"),
+                                   g_param_spec_object ("file", "file", "file",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
 }

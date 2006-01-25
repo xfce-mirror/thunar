@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.1.2svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-23 23:50+0100\n"
+"POT-Creation-Date: 2006-01-25 19:04+0100\n"
 "PO-Revision-Date: 2006-01-13 14:21+0100\n"
 "Last-Translator: Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -183,7 +183,7 @@ msgid "copy of %s"
 msgstr "kopia %s"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:158 ../thunar/thunar-list-model.c:713
-#: ../thunar/thunar-properties-dialog.c:649
+#: ../thunar/thunar-properties-dialog.c:647
 #, c-format
 msgid "link to %s"
 msgstr "łącze do %s"
@@ -330,7 +330,7 @@ msgstr "Usuwam katalogi..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:281 ../thunar/thunar-chooser-dialog.c:483
+#: ../thunar/thunar-chooser-button.c:281 ../thunar/thunar-chooser-dialog.c:479
 #, fuzzy, c-format
 msgid "Failed to set default application for `%s'"
 msgstr "Domyślna aplikacja dla pliku '%s' nie została wybrana."
@@ -353,144 +353,88 @@ msgstr ""
 msgid "_Other Application..."
 msgstr "Inna aplikacja..."
 
-#: ../thunar/thunar-chooser-dialog.c:169 ../thunar/thunar-emblem-chooser.c:147
-#: ../thunar/thunar-emblem-chooser.c:148
-#: ../thunar/thunar-open-with-action.c:146
-#: ../thunar/thunar-open-with-action.c:147
-#: ../thunar/thunar-properties-dialog.c:175 ../thunar/thunar-statusbar.c:190
-msgid "File"
-msgstr "Plik"
-
-#: ../thunar/thunar-chooser-dialog.c:170
-msgid "The file for which an application should be chosen"
-msgstr "Plik, dla którego ma być wybrana aplikacja"
-
-#: ../thunar/thunar-chooser-dialog.c:182
-msgid "Open"
-msgstr "Otwórz"
-
-#: ../thunar/thunar-chooser-dialog.c:183
-msgid "Whether the chooser should open the specified file"
-msgstr "Czy wybrany plik ma zostać otwarty"
-
 #. the "Open with" action
-#: ../thunar/thunar-chooser-dialog.c:208 ../thunar/thunar-launcher.c:226
+#: ../thunar/thunar-chooser-dialog.c:204 ../thunar/thunar-launcher.c:226
 msgid "Open With"
 msgstr "Otwórz z"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:270
+#: ../thunar/thunar-chooser-dialog.c:266
 msgid "Use a _custom command:"
 msgstr "Użyj polecenia użytkownika:"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:288
+#: ../thunar/thunar-chooser-dialog.c:284
 msgid "_Browse"
 msgstr "_Przeglądaj"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:461
+#: ../thunar/thunar-chooser-dialog.c:457
 #, fuzzy, c-format
 msgid "Failed to add new application `%s'"
 msgstr "Nie udało się dodać aplikacji %s."
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:496
+#: ../thunar/thunar-chooser-dialog.c:492
 #, fuzzy, c-format
 msgid "Failed to execute `%s'"
 msgstr "Nie udało się uruchomić %s"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:617
+#: ../thunar/thunar-chooser-dialog.c:613
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Otwieraj <i>%s</i> i inne pliki typu \"%s\" używając:"
 
-#: ../thunar/thunar-chooser-dialog.c:639 ../thunar-uca/thunar-uca-editor.c:491
+#: ../thunar/thunar-chooser-dialog.c:635 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Wybierz aplikację"
 
-#: ../thunar/thunar-chooser-dialog.c:649 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar/thunar-chooser-dialog.c:645 ../thunar-uca/thunar-uca-editor.c:501
 #: ../thunar-uca/thunar-uca-editor.c:640
 msgid "All Files"
 msgstr "Wszystkie pliki"
 
-#: ../thunar/thunar-chooser-dialog.c:654 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Pliki wykonywalne"
 
-#: ../thunar/thunar-chooser-dialog.c:669 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:665 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Skrypty języka Perl"
 
-#: ../thunar/thunar-chooser-dialog.c:675 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:671 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Skrypty języka Python"
 
-#: ../thunar/thunar-chooser-dialog.c:681 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:677 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Skrypty języka Ruby"
 
-#: ../thunar/thunar-chooser-dialog.c:687 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:683 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Skrypty powłoki"
 
-#: ../thunar/thunar-chooser-model.c:148 ../thunar/thunar-folder.c:163
-#: ../thunar/thunar-standard-view.c:374 ../thunar/thunar-statusbar.c:204
-#: ../thunar/thunar-statusbar.c:775 ../thunar/thunar-view.c:79
-msgid "Loading"
-msgstr "Ładowanie"
-
-#: ../thunar/thunar-chooser-model.c:149
-msgid "Whether the model is currently being loaded"
-msgstr "Czy model jest właśnie wczytywany z dysku"
-
-#: ../thunar/thunar-chooser-model.c:161
-msgid "Mime info"
-msgstr "Informacje MIME"
-
-#: ../thunar/thunar-chooser-model.c:162
-msgid "The mime info for the model"
-msgstr "Informacje MIME dla modelu"
-
-#: ../thunar/thunar-chooser-model.c:338
+#: ../thunar/thunar-chooser-model.c:334
 msgid "None available"
 msgstr "brak"
 
 #. append the "Recommended Applications:" category
-#: ../thunar/thunar-chooser-model.c:382
+#: ../thunar/thunar-chooser-model.c:378
 msgid "Recommended Applications:"
 msgstr "Zalecane aplikacje:"
 
 #. append the "Other Applications:" category
-#: ../thunar/thunar-chooser-model.c:385
+#: ../thunar/thunar-chooser-model.c:381
 msgid "Other Applications:"
 msgstr "Inne aplikacje:"
 
-#: ../thunar/thunar-clipboard-manager.c:179
-msgid "Can paste"
-msgstr "Można wkleić"
-
-#: ../thunar/thunar-clipboard-manager.c:180
-msgid "Whether the clipboard content can be pasted"
-msgstr "Czy zawartość schowka może zostać wklejona"
-
 #. tell the user that we cannot paste
-#: ../thunar/thunar-clipboard-manager.c:362
+#: ../thunar/thunar-clipboard-manager.c:360
 msgid "There is nothing on the clipboard to paste"
 msgstr "W schowku nie ma nic do wklejenia"
 
-#: ../thunar/thunar-create-dialog.c:132 ../thunar/thunar-create-dialog.c:133
-#, fuzzy
-msgid "Filename"
-msgstr "Menedżer plików"
-
-#: ../thunar/thunar-create-dialog.c:145 ../thunar/thunar-create-dialog.c:146
-#, fuzzy
-msgid "Mime Info"
-msgstr "Informacje MIME"
-
-#: ../thunar/thunar-create-dialog.c:180
+#: ../thunar/thunar-create-dialog.c:176
 msgid "Enter the new name:"
 msgstr ""
 
@@ -502,7 +446,7 @@ msgstr "Nazwa"
 #. Permissions chooser
 #.
 #: ../thunar/thunar-details-view.c:197
-#: ../thunar/thunar-properties-dialog.c:390
+#: ../thunar/thunar-properties-dialog.c:388
 msgid "Permissions"
 msgstr "Prawa dostępu"
 
@@ -557,15 +501,6 @@ msgstr "Katalog główny nie ma katalogu nadrzędnego"
 msgid "File System"
 msgstr "System plików"
 
-#: ../thunar/thunar-folder.c:164
-msgid "Whether the contents of the folder are currently being loaded"
-msgstr "Zawartość katalogu jest właśnie wczytywana"
-
-#: ../thunar/thunar-history.c:148 ../thunar/thunar-history.c:149
-#: ../thunar/thunar-launcher.c:163 ../thunar/thunar-launcher.c:164
-msgid "Action group"
-msgstr ""
-
 #. create the "back" action
 #: ../thunar/thunar-history.c:178
 msgid "Back"
@@ -583,18 +518,6 @@ msgstr "Następny"
 #: ../thunar/thunar-history.c:183
 msgid "Go to the next visited folder"
 msgstr "Przejdź do następnego katalogu"
-
-#: ../thunar/thunar-icon-factory.c:195
-msgid "Icon theme"
-msgstr "Zestaw ikon"
-
-#: ../thunar/thunar-icon-factory.c:196
-msgid "The icon theme used by the icon factory"
-msgstr "Zestaw ikon używany przez <i>icon factory</i>"
-
-#: ../thunar/thunar-icon-factory.c:209 ../thunar/thunar-icon-factory.c:210
-msgid "Show Thumbnails"
-msgstr ""
 
 #: ../thunar/thunar-icon-factory.c:668
 #, c-format
@@ -654,10 +577,6 @@ msgstr "_Malejąco"
 msgid "Sort items in descending order"
 msgstr "Sortuj elementy w porządku malejącym"
 
-#: ../thunar/thunar-icon-view.c:213 ../thunar/thunar-icon-view.c:214
-msgid "Text beside icons"
-msgstr ""
-
 #: ../thunar/thunar-icon-view.c:323
 msgid "Icon based directory listing"
 msgstr "Pokazuj tylko ikony"
@@ -665,14 +584,6 @@ msgstr "Pokazuj tylko ikony"
 #: ../thunar/thunar-icon-view.c:324
 msgid "Icon view"
 msgstr "Widok ikon"
-
-#: ../thunar/thunar-launcher.c:176 ../thunar/thunar-launcher.c:177
-msgid "Selected files"
-msgstr "Wybrane pliki"
-
-#: ../thunar/thunar-launcher.c:189 ../thunar/thunar-launcher.c:190
-msgid "Widget"
-msgstr ""
 
 #. the "Open" action
 #: ../thunar/thunar-launcher.c:218 ../thunar/thunar-launcher.c:550
@@ -730,41 +641,7 @@ msgstr[2] "Otwórz w %d nowych oknach"
 msgid "_Execute"
 msgstr "_Uruchom"
 
-#: ../thunar/thunar-list-model.c:305
-msgid "Folder"
-msgstr "Katalog"
-
-#: ../thunar/thunar-list-model.c:306
-msgid "The stores folder"
-msgstr "Wczytany katalog"
-
-#: ../thunar/thunar-list-model.c:318
-msgid "Folders first"
-msgstr "Najpierw katalogi"
-
-#: ../thunar/thunar-list-model.c:319
-msgid "Folders first in sorting"
-msgstr "Wyświetl katalogi przed plikami"
-
-#: ../thunar/thunar-list-model.c:331
-msgid "Number of files"
-msgstr "Liczba plików"
-
-#: ../thunar/thunar-list-model.c:332
-msgid "Number of visible files"
-msgstr "Liczba wyświetlanych plików"
-
-#: ../thunar/thunar-list-model.c:344 ../thunar/thunar-view.c:108
-#: ../thunar/thunar-window.c:268
-msgid "Show hidden"
-msgstr "Pokaż ukryte"
-
-#: ../thunar/thunar-list-model.c:345 ../thunar/thunar-view.c:109
-#: ../thunar/thunar-window.c:269
-msgid "Whether to display hidden files"
-msgstr "Czy wyświetlać ukryte pliki"
-
-#: ../thunar/thunar-list-model.c:711 ../thunar/thunar-properties-dialog.c:647
+#: ../thunar/thunar-list-model.c:711 ../thunar/thunar-properties-dialog.c:645
 msgid "broken link"
 msgstr "nieprawidłowe łącze"
 
@@ -828,14 +705,6 @@ msgstr "Położenie:"
 msgid "Failed to launch `%s'"
 msgstr "Nie udało się usunąć '%s'"
 
-#: ../thunar/thunar-navigator.c:135 ../thunar/thunar-window.c:255
-msgid "Current directory"
-msgstr "Bieżący katalog"
-
-#: ../thunar/thunar-navigator.c:136
-msgid "The directory currently displayed by the navigator"
-msgstr "Aktualnie wyświetlany katalog"
-
 #: ../thunar/thunar-open-with-action.c:351
 #, c-format
 msgid "%s (default)"
@@ -845,14 +714,6 @@ msgstr "%s (domyślna)"
 #: ../thunar/thunar-open-with-action.c:402
 msgid "Other Application..."
 msgstr "Inna aplikacja..."
-
-#: ../thunar/thunar-path-entry.c:238
-msgid "Current file"
-msgstr "Bieżacy plik"
-
-#: ../thunar/thunar-path-entry.c:239
-msgid "The currently displayed file"
-msgstr "Akualnie wyświetlany plik"
 
 #: ../thunar/thunar-path-entry.c:250
 msgid "Icon size"
@@ -930,7 +791,7 @@ msgstr ""
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:565
 #: ../thunar/thunar-permissions-chooser.c:1023
-#: ../thunar/thunar-progress-dialog.c:295
+#: ../thunar/thunar-progress-dialog.c:293
 msgid "Question"
 msgstr "Pytanie"
 
@@ -972,22 +833,22 @@ msgid "Unknown file owner"
 msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:1052
-#: ../thunar/thunar-progress-dialog.c:321
+#: ../thunar/thunar-progress-dialog.c:319
 msgid "_Yes"
 msgstr "_Tak"
 
 #: ../thunar/thunar-permissions-chooser.c:1056
-#: ../thunar/thunar-progress-dialog.c:325
+#: ../thunar/thunar-progress-dialog.c:323
 msgid "Yes to _all"
 msgstr "_Tak dla _wszystkich"
 
 #: ../thunar/thunar-permissions-chooser.c:1060
-#: ../thunar/thunar-progress-dialog.c:329
+#: ../thunar/thunar-progress-dialog.c:327
 msgid "_No"
 msgstr "_Nie"
 
 #: ../thunar/thunar-permissions-chooser.c:1064
-#: ../thunar/thunar-progress-dialog.c:333
+#: ../thunar/thunar-progress-dialog.c:331
 msgid "_Cancel"
 msgstr "_Anuluj"
 
@@ -1095,15 +956,7 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
-#: ../thunar/thunar-progress-dialog.c:151
-msgid "Job"
-msgstr "Zadanie"
-
-#: ../thunar/thunar-progress-dialog.c:152
-msgid "The job whose progress to display"
-msgstr "Zadanie, którego postęp ma być wyświetlany"
-
-#: ../thunar/thunar-progress-dialog.c:459
+#: ../thunar/thunar-progress-dialog.c:457
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
@@ -1111,7 +964,7 @@ msgstr[0] "(pozostała %lu godzina)"
 msgstr[1] "(pozostały %lu godziny)"
 msgstr[2] "(pozostało %lu godzin)"
 
-#: ../thunar/thunar-progress-dialog.c:464
+#: ../thunar/thunar-progress-dialog.c:462
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
@@ -1119,7 +972,7 @@ msgstr[0] "(pozostała %lu minuta)"
 msgstr[1] "(pozostały %lu minuty)"
 msgstr[2] "(pozostało %lu minut)"
 
-#: ../thunar/thunar-progress-dialog.c:469
+#: ../thunar/thunar-progress-dialog.c:467
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"
@@ -1127,26 +980,22 @@ msgstr[0] "(pozostała %lu sekunda)"
 msgstr[1] "(pozostały %lu sekundy)"
 msgstr[2] "(pozostało %lu sekund)"
 
-#: ../thunar/thunar-properties-dialog.c:176
-msgid "The file displayed by the dialog"
-msgstr "Plik wyświetlany przez okno dialogowe"
-
-#: ../thunar/thunar-properties-dialog.c:214
+#: ../thunar/thunar-properties-dialog.c:212
 msgid "General"
 msgstr "Ogólne"
 
-#: ../thunar/thunar-properties-dialog.c:231
+#: ../thunar/thunar-properties-dialog.c:229
 msgid "Name:"
 msgstr "Nazwa:"
 
 #.
 #. Second box (kind, open with)
 #.
-#: ../thunar/thunar-properties-dialog.c:256
+#: ../thunar/thunar-properties-dialog.c:254
 msgid "Kind:"
 msgstr "Typ:"
 
-#: ../thunar/thunar-properties-dialog.c:270
+#: ../thunar/thunar-properties-dialog.c:268
 #, fuzzy
 msgid "Open With:"
 msgstr "Otwórz z"
@@ -1154,39 +1003,39 @@ msgstr "Otwórz z"
 #.
 #. Third box (modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:295
+#: ../thunar/thunar-properties-dialog.c:293
 msgid "Modified:"
 msgstr "Ostatnio zmodyfikowany:"
 
-#: ../thunar/thunar-properties-dialog.c:308
+#: ../thunar/thunar-properties-dialog.c:306
 msgid "Accessed:"
 msgstr "Ostatnio otwarty:"
 
 #.
 #. Fourth box (volume, size)
 #.
-#: ../thunar/thunar-properties-dialog.c:332
+#: ../thunar/thunar-properties-dialog.c:330
 msgid "Volume:"
 msgstr "Urządzenie:"
 
-#: ../thunar/thunar-properties-dialog.c:355
+#: ../thunar/thunar-properties-dialog.c:353
 msgid "Size:"
 msgstr "Rozmiar:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:379
+#: ../thunar/thunar-properties-dialog.c:377
 msgid "Emblems"
 msgstr "Symbole"
 
-#: ../thunar/thunar-properties-dialog.c:712
+#: ../thunar/thunar-properties-dialog.c:710
 #, c-format
 msgid "%s (%u Bytes)"
 msgstr "%s (%u bajtów)"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:763
+#: ../thunar/thunar-properties-dialog.c:761
 #: ../thunar/thunar-standard-view.c:2347
 #, fuzzy, c-format
 msgid "Failed to rename `%s'"
@@ -1334,10 +1183,6 @@ msgstr "Zmień _nazwę"
 msgid "Rename the selected file"
 msgstr "Zmień nazwę zaznaczonego pliku"
 
-#: ../thunar/thunar-standard-view.c:375 ../thunar/thunar-view.c:80
-msgid "Whether the view is currently being loaded"
-msgstr "Czy widok jest aktualnie wczytywany"
-
 #: ../thunar/thunar-standard-view.c:904
 msgid "Loading folder contents..."
 msgstr "Wczytuję zawartość katalogu..."
@@ -1415,61 +1260,21 @@ msgstr[0] "_Usuń plik"
 msgstr[1] "_Usuń pliki"
 msgstr[2] "_Usuń pliki"
 
-#: ../thunar/thunar-statusbar.c:191
-msgid "The file whose icon to display"
-msgstr "Plik, którego ikona będzie wyświetlana"
+#: ../thunar/thunar-statusbar.c:773
+msgid "Loading"
+msgstr "Ładowanie"
 
-#: ../thunar/thunar-statusbar.c:205 ../thunar/thunar-statusbar.c:776
+#: ../thunar/thunar-statusbar.c:774
 msgid "Whether to display a loading animation"
 msgstr "Czy wyświetlać animację wczytywania"
 
-#: ../thunar/thunar-statusbar.c:789 ../thunar/thunar-view.c:95
+#: ../thunar/thunar-statusbar.c:787
 msgid "Statusbar text"
 msgstr "Tekst paska statusu"
 
-#: ../thunar/thunar-statusbar.c:790
+#: ../thunar/thunar-statusbar.c:788
 msgid "The main text to be displayed in the statusbar"
 msgstr "Tekst wyświetlany w pasku statusu"
-
-#: ../thunar/thunar-text-renderer.c:203 ../thunar/thunar-text-renderer.c:204
-msgid "Follow state"
-msgstr "Śledź zmiany"
-
-#: ../thunar/thunar-text-renderer.c:216
-msgid "Text"
-msgstr "Tekst"
-
-#: ../thunar/thunar-text-renderer.c:217
-msgid "The text to render"
-msgstr "Tekst do wyświetlenia"
-
-#: ../thunar/thunar-text-renderer.c:231
-msgid "Wrap mode"
-msgstr "Tryb zawijania"
-
-#: ../thunar/thunar-text-renderer.c:232
-msgid "The wrap mode"
-msgstr "Tryb łamania długich nazw na wiele wierszy"
-
-#: ../thunar/thunar-text-renderer.c:247
-msgid "Wrap width"
-msgstr "Szerokość zawijania"
-
-#: ../thunar/thunar-text-renderer.c:248
-msgid "The wrap width"
-msgstr "Maksymalna szerokość wyświetlanej nazwy pliku"
-
-#: ../thunar/thunar-view.c:96
-msgid "Text to be displayed in the statusbar associated with this view"
-msgstr ""
-
-#: ../thunar/thunar-view.c:122 ../thunar/thunar-window.c:283
-msgid "UI manager"
-msgstr ""
-
-#: ../thunar/thunar-view.c:123
-msgid "UI manager of the surrounding window"
-msgstr ""
 
 #: ../thunar/thunar-window.c:166
 msgid "_File"
@@ -1573,14 +1378,6 @@ msgstr "Pokaż _ukryte pliki"
 #: ../thunar/thunar-window.c:189
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Włącza/wyłącza pokazywanie ukrytych plików"
-
-#: ../thunar/thunar-window.c:256
-msgid "The directory currently displayed within this window"
-msgstr "Katalog aktualnie wyświetlany w tym oknie"
-
-#: ../thunar/thunar-window.c:284
-msgid "The UI manager used within this window"
-msgstr "Menedżer UI zarządzający tym oknem"
 
 #.
 #. * add the side pane options
@@ -1957,6 +1754,131 @@ msgstr "Menedżer plików"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Menedżer plików Thunar"
+
+#~ msgid "File"
+#~ msgstr "Plik"
+
+#~ msgid "The file for which an application should be chosen"
+#~ msgstr "Plik, dla którego ma być wybrana aplikacja"
+
+#~ msgid "Open"
+#~ msgstr "Otwórz"
+
+#~ msgid "Whether the chooser should open the specified file"
+#~ msgstr "Czy wybrany plik ma zostać otwarty"
+
+#~ msgid "Whether the model is currently being loaded"
+#~ msgstr "Czy model jest właśnie wczytywany z dysku"
+
+#~ msgid "Mime info"
+#~ msgstr "Informacje MIME"
+
+#~ msgid "The mime info for the model"
+#~ msgstr "Informacje MIME dla modelu"
+
+#~ msgid "Can paste"
+#~ msgstr "Można wkleić"
+
+#~ msgid "Whether the clipboard content can be pasted"
+#~ msgstr "Czy zawartość schowka może zostać wklejona"
+
+#, fuzzy
+#~ msgid "Filename"
+#~ msgstr "Menedżer plików"
+
+#, fuzzy
+#~ msgid "Mime Info"
+#~ msgstr "Informacje MIME"
+
+#~ msgid "Whether the contents of the folder are currently being loaded"
+#~ msgstr "Zawartość katalogu jest właśnie wczytywana"
+
+#~ msgid "Icon theme"
+#~ msgstr "Zestaw ikon"
+
+#~ msgid "The icon theme used by the icon factory"
+#~ msgstr "Zestaw ikon używany przez <i>icon factory</i>"
+
+#~ msgid "Selected files"
+#~ msgstr "Wybrane pliki"
+
+#~ msgid "Folder"
+#~ msgstr "Katalog"
+
+#~ msgid "The stores folder"
+#~ msgstr "Wczytany katalog"
+
+#~ msgid "Folders first"
+#~ msgstr "Najpierw katalogi"
+
+#~ msgid "Folders first in sorting"
+#~ msgstr "Wyświetl katalogi przed plikami"
+
+#~ msgid "Number of files"
+#~ msgstr "Liczba plików"
+
+#~ msgid "Number of visible files"
+#~ msgstr "Liczba wyświetlanych plików"
+
+#~ msgid "Show hidden"
+#~ msgstr "Pokaż ukryte"
+
+#~ msgid "Whether to display hidden files"
+#~ msgstr "Czy wyświetlać ukryte pliki"
+
+#~ msgid "Current directory"
+#~ msgstr "Bieżący katalog"
+
+#~ msgid "The directory currently displayed by the navigator"
+#~ msgstr "Aktualnie wyświetlany katalog"
+
+#~ msgid "Current file"
+#~ msgstr "Bieżacy plik"
+
+#~ msgid "The currently displayed file"
+#~ msgstr "Akualnie wyświetlany plik"
+
+#~ msgid "Job"
+#~ msgstr "Zadanie"
+
+#~ msgid "The job whose progress to display"
+#~ msgstr "Zadanie, którego postęp ma być wyświetlany"
+
+#~ msgid "The file displayed by the dialog"
+#~ msgstr "Plik wyświetlany przez okno dialogowe"
+
+#~ msgid "Whether the view is currently being loaded"
+#~ msgstr "Czy widok jest aktualnie wczytywany"
+
+#~ msgid "The file whose icon to display"
+#~ msgstr "Plik, którego ikona będzie wyświetlana"
+
+#~ msgid "Follow state"
+#~ msgstr "Śledź zmiany"
+
+#~ msgid "Text"
+#~ msgstr "Tekst"
+
+#~ msgid "The text to render"
+#~ msgstr "Tekst do wyświetlenia"
+
+#~ msgid "Wrap mode"
+#~ msgstr "Tryb zawijania"
+
+#~ msgid "The wrap mode"
+#~ msgstr "Tryb łamania długich nazw na wiele wierszy"
+
+#~ msgid "Wrap width"
+#~ msgstr "Szerokość zawijania"
+
+#~ msgid "The wrap width"
+#~ msgstr "Maksymalna szerokość wyświetlanej nazwy pliku"
+
+#~ msgid "The directory currently displayed within this window"
+#~ msgstr "Katalog aktualnie wyświetlany w tym oknie"
+
+#~ msgid "The UI manager used within this window"
+#~ msgstr "Menedżer UI zarządzający tym oknem"
 
 #~ msgid "Drop file"
 #~ msgstr "Plik docelowy"

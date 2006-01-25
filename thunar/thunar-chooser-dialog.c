@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>.
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -165,9 +165,7 @@ thunar_chooser_dialog_class_init (ThunarChooserDialogClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_FILE,
-                                   g_param_spec_object ("file",
-                                                        _("File"),
-                                                        _("The file for which an application should be chosen"),
+                                   g_param_spec_object ("file", "file", "file",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
 
@@ -178,9 +176,7 @@ thunar_chooser_dialog_class_init (ThunarChooserDialogClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_OPEN,
-                                   g_param_spec_boolean ("open",
-                                                         _("Open"),
-                                                         _("Whether the chooser should open the specified file"),
+                                   g_param_spec_boolean ("open", "open", "open",
                                                          FALSE,
                                                          G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
 }

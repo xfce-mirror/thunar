@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -175,9 +175,7 @@ thunar_clipboard_manager_class_init (ThunarClipboardManagerClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_CAN_PASTE,
-                                   g_param_spec_boolean ("can-paste",
-                                                         _("Can paste"),
-                                                         _("Whether the clipboard content can be pasted"),
+                                   g_param_spec_boolean ("can-paste", "can-pase", "can-paste",
                                                          FALSE,
                                                          EXO_PARAM_READABLE));
 
