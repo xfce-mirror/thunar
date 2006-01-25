@@ -1,5 +1,11 @@
 2006-01-25	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-util.c(thunar_vfs_humanize_size): Use "GB"
+	  instead of "G", "MB" instead of "M" and "KB" instead of "K", to
+	  make it more obvious what the value means (this fixes bug #1367).
+
+2006-01-25	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-chooser-dialog.c, thunar/thunar-chooser-model.c,
 	  thunar/thunar-clipboard-manager.c, thunar/thunar-create-dialog.c,
 	  thunar/thunar-emblem-chooser.c, thunar/thunar-file.c,

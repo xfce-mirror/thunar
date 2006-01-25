@@ -133,6 +133,7 @@ thunar_vfs_humanize_size (ThunarVfsFileSize size,
                           gchar            *buffer,
                           gsize             buflen)
 {
+  /* allocate buffer if necessary */
   if (buffer == NULL)
     {
       buffer = g_new (gchar, 32);
@@ -140,11 +141,11 @@ thunar_vfs_humanize_size (ThunarVfsFileSize size,
     }
 
   if (G_UNLIKELY (size > 1024ul * 1024ul * 1024ul))
-    g_snprintf (buffer, buflen, "%0.1f G", size / (1024.0 * 1024.0 * 1024.0));
+    g_snprintf (buffer, buflen, "%0.1f GB", size / (1024.0 * 1024.0 * 1024.0));
   else if (size > 1024ul * 1024ul)
-    g_snprintf (buffer, buflen, "%0.1f M", size / (1024.0 * 1024.0));
+    g_snprintf (buffer, buflen, "%0.1f MB", size / (1024.0 * 1024.0));
   else if (size > 1024ul)
-    g_snprintf (buffer, buflen, "%0.1f K", size / 1024.0);
+    g_snprintf (buffer, buflen, "%0.1f KB", size / 1024.0);
   else
     g_snprintf (buffer, buflen, "%lu B", (gulong) size);
 
