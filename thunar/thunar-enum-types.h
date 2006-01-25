@@ -24,6 +24,26 @@
 
 G_BEGIN_DECLS;
 
+#define THUNAR_TYPE_COLOR_STYLE (thunar_color_style_get_type ())
+
+/**
+ * ThunarColorStyle:
+ * @THUNAR_COLOR_STYLE_SOLID      : solid desktop background color.
+ * @THUNAR_COLOR_STYLE_HGRADIENT  : horizontal gradient from color0 to color1.
+ * @THUNAR_COLOR_STYLE_VGRADIENT  : vertical gradient from color0 to color1.
+ *
+ * Desktop background color style.
+ **/
+typedef enum
+{
+  THUNAR_COLOR_STYLE_SOLID,
+  THUNAR_COLOR_STYLE_HGRADIENT,
+  THUNAR_COLOR_STYLE_VGRADIENT,
+} ThunarColorStyle;
+
+GType thunar_color_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
 #define THUNAR_TYPE_RECURSIVE_PERMISSIONS (thunar_recursive_permissions_get_type ())
 
 /**
@@ -42,6 +62,28 @@ typedef enum
 } ThunarRecursivePermissionsMode;
 
 GType thunar_recursive_permissions_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
+#define THUNAR_TYPE_WALLPAPER_STYLE (thunar_wallpaper_style_get_type ())
+
+/**
+ * ThunarWallpaperStyle:
+ * @THUNAR_WALLPAPER_STYLE_CENTERED   : center the wallpaper.
+ * @THUNAR_WALLPAPER_STYLE_SCALED     : scale the wallpaper.
+ * @THUNAR_WALLPAPER_STYLE_STRETCHED  : stretch the wallpaper.
+ * @THUNAR_WALLPAPER_STYLE_TILED      : tile the wallpaper.
+ *
+ * Desktop background wallpaper style.
+ **/
+typedef enum
+{
+  THUNAR_WALLPAPER_STYLE_CENTERED,
+  THUNAR_WALLPAPER_STYLE_SCALED,
+  THUNAR_WALLPAPER_STYLE_STRETCHED,
+  THUNAR_WALLPAPER_STYLE_TILED,
+} ThunarWallpaperStyle;
+
+GType thunar_wallpaper_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 G_END_DECLS;
 
