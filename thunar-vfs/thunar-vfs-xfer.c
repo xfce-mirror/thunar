@@ -283,6 +283,7 @@ thunar_vfs_xfer_copy_fifo (const gchar          *source_absolute_path,
   /* try to create the named fifo */
   if (mkfifo (target_absolute_path, source_statb->st_mode) < 0)
     {
+      /* TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'. */
       tvxc_set_error_from_errno (error, _("Failed to create named fifo `%s'"), target_absolute_path);
       return FALSE;
     }

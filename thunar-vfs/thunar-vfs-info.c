@@ -258,6 +258,7 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
             }
           else
             {
+              /* TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is. */
               g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No Exec field specified"));
             }
 
@@ -612,6 +613,7 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
   if (G_UNLIKELY (lstat (absolute_path, &lsb) < 0))
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
+                   /* TRANSLATORS: See man page of stat(1) or stat(2) for more details. */
                    _("Failed to stat file `%s': %s"),
                    absolute_path, g_strerror (errno));
       return NULL;

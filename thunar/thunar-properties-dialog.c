@@ -484,7 +484,7 @@ static gboolean
 thunar_properties_dialog_key_press_event (GtkWidget   *widget,
                                           GdkEventKey *event)
 {
-  if (event->keyval == GDK_Escape)
+  if (event->keyval == GDK_Escape || ((event->keyval == GDK_w || event->keyval == GDK_W) && (event->state & GDK_CONTROL_MASK) != 0))
     {
       gtk_widget_destroy (widget);
       return TRUE;
