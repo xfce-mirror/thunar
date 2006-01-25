@@ -8,13 +8,14 @@
 # 対訳一覧:
 # context menu    右クリックメニュー
 # directory       フォルダ
+# emblem          シンボル (目印)
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar 0.1.4svn\n"
+"Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-25 19:04+0100\n"
-"PO-Revision-Date: 2006-01-17 00:05+0900\n"
+"PO-Revision-Date: 2006-01-26 00:21+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -1017,13 +1018,12 @@ msgstr "容量:"
 msgid "Size:"
 msgstr "サイズ:"
 
-# FIXME: should be revised
 #.
 #. Emblem chooser
 #.
 #: ../thunar/thunar-properties-dialog.c:377
 msgid "Emblems"
-msgstr "エンブレム"
+msgstr "シンボル"
 
 #: ../thunar/thunar-properties-dialog.c:710
 #, c-format
@@ -1050,13 +1050,15 @@ msgstr "ショートカットの名前を変更(_N)"
 #. append the "Display icon emblems" item
 #: ../thunar/thunar-shortcuts-view.c:410
 msgid "Display _Emblem Icons"
-msgstr ""
+msgstr "シンボルアイコンを表示(_E)"
 
 #: ../thunar/thunar-shortcuts-view.c:412
 msgid ""
 "Display emblem icons in the shortcuts list for all files for which emblems "
 "have been defined in the file properties dialog."
 msgstr ""
+"ショートカットのリストにある全てのファイルにシンボルアイコンを表示します。こ"
+"れらのシンボルはファイルプロパティのダイアログで定義されています。"
 
 #: ../thunar/thunar-shortcuts-view.c:729
 #, c-format
@@ -1739,158 +1741,3 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
-
-#~ msgid "File"
-#~ msgstr "ファイル"
-
-#~ msgid "The file for which an application should be chosen"
-#~ msgstr "アプリケーションによって開かれるファイルです。"
-
-#~ msgid "Open"
-#~ msgstr "開く"
-
-#~ msgid "Whether the chooser should open the specified file"
-#~ msgstr "指定したファイルをチョーサーで開くかどうかを指定します。"
-
-#~ msgid "Whether the model is currently being loaded"
-#~ msgstr "モデルが現在読み込まれているかどうかを表します。"
-
-#~ msgid "Mime info"
-#~ msgstr "MIME 情報"
-
-#~ msgid "The mime info for the model"
-#~ msgstr "モデルの MIME 情報です"
-
-#~ msgid "Can paste"
-#~ msgstr "貼り付け可能"
-
-#~ msgid "Whether the clipboard content can be pasted"
-#~ msgstr "クリップボードの内容が貼り付け可能であるかを表します。"
-
-#~ msgid "Filename"
-#~ msgstr "ファイル名"
-
-#~ msgid "Mime Info"
-#~ msgstr "MIME 情報"
-
-#~ msgid "Whether the contents of the folder are currently being loaded"
-#~ msgstr "フォルダの内容が現在読み込まれているかどうかを表します。"
-
-#~ msgid "Action group"
-#~ msgstr "アクショングループ"
-
-#~ msgid "Icon theme"
-#~ msgstr "アイコンテーマ"
-
-#~ msgid "The icon theme used by the icon factory"
-#~ msgstr "アイコンファクトリーに使用されるアイコンのテーマです。"
-
-#~ msgid "Show Thumbnails"
-#~ msgstr "サムネイルを表示"
-
-#~ msgid "Text beside icons"
-#~ msgstr "アイコンの隣に文字を表示"
-
-#~ msgid "Selected files"
-#~ msgstr "選択されたファイル"
-
-#~ msgid "Widget"
-#~ msgstr "ウィジット"
-
-#~ msgid "Folder"
-#~ msgstr "フォルダ"
-
-#~ msgid "The stores folder"
-#~ msgstr "保管フォルダです"
-
-#~ msgid "Folders first"
-#~ msgstr "フォルダを先頭にする"
-
-#~ msgid "Folders first in sorting"
-#~ msgstr "並べ替えでフォルダを先頭にします。"
-
-#~ msgid "Number of files"
-#~ msgstr "ファイルの数"
-
-#~ msgid "Number of visible files"
-#~ msgstr "表示されるファイルの数です。"
-
-#~ msgid "Show hidden"
-#~ msgstr "隠しファイルを表示"
-
-#~ msgid "Whether to display hidden files"
-#~ msgstr "隠しファイルを表示するかを指定します。"
-
-#~ msgid "Current directory"
-#~ msgstr "現在のフォルダ"
-
-#~ msgid "The directory currently displayed by the navigator"
-#~ msgstr "ナビゲーターに現在表示されているフォルダです。"
-
-#~ msgid "Current file"
-#~ msgstr "現在のファイル"
-
-#~ msgid "The currently displayed file"
-#~ msgstr "現在表示されているファイルです。"
-
-#~ msgid "Job"
-#~ msgstr "ジョブ"
-
-#~ msgid "The job whose progress to display"
-#~ msgstr "途中経過を表示するジョブです"
-
-#~ msgid "The file displayed by the dialog"
-#~ msgstr "ダイアログに表示されているファイルです"
-
-#~ msgid "Whether the view is currently being loaded"
-#~ msgstr "表示ペインが現在読み込まれているかどうかを表します。"
-
-#~ msgid "The file whose icon to display"
-#~ msgstr "アイコンを表示するファイルです"
-
-# FIXME: what's this?
-#~ msgid "Follow state"
-#~ msgstr "状態に従う"
-
-#~ msgid "Text"
-#~ msgstr "テキスト"
-
-#~ msgid "The text to render"
-#~ msgstr "表示するテキストです。"
-
-#~ msgid "Wrap mode"
-#~ msgstr "折り返しモード"
-
-#~ msgid "The wrap mode"
-#~ msgstr "テキストを折り返します。"
-
-#~ msgid "Wrap width"
-#~ msgstr "折り返し幅"
-
-#~ msgid "The wrap width"
-#~ msgstr "テキストを折り返す幅です。"
-
-#~ msgid "Text to be displayed in the statusbar associated with this view"
-#~ msgstr "この表示に関連付けられたステータスバーで表示されるテキストです。"
-
-#~ msgid "UI manager"
-#~ msgstr "UI マネージャー"
-
-#~ msgid "UI manager of the surrounding window"
-#~ msgstr "ウィンドウを囲う UI マネージャーです。"
-
-#~ msgid "The directory currently displayed within this window"
-#~ msgstr "現在このウィンドウ内に表示されているフォルダです。"
-
-#~ msgid "The UI manager used within this window"
-#~ msgstr "このウィンドウ内で使用されている UI マネージャーです。"
-
-# FIXME: what's this? 'Dropped file' or 'File dropped'?
-#~ msgid "Drop file"
-#~ msgstr "ファイルをドロップ"
-
-#~ msgid "The file whose icon to render"
-#~ msgstr "アイコンを表示するファイルです。"
-
-#~ msgid "The icon size in pixels"
-#~ msgstr "アイコンのサイズ (ピクセル単位) です。"
