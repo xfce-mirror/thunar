@@ -32,9 +32,11 @@
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-location-entry.h>
+#include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-statusbar.h>
+#include <thunar/thunar-stock.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-window-ui.h>
 
@@ -64,6 +66,8 @@ static void     thunar_window_set_property                (GObject            *o
                                                            GParamSpec         *pspec);
 static void     thunar_window_realize                     (GtkWidget          *widget);
 static void     thunar_window_unrealize                   (GtkWidget          *widget);
+static gboolean thunar_window_configure_event             (GtkWidget          *widget,
+                                                           GdkEventConfigure  *event);
 static void     thunar_window_merge_custom_preferences    (ThunarWindow       *window);
 static void     thunar_window_action_open_new_window      (GtkAction          *action,
                                                            ThunarWindow       *window);
@@ -85,6 +89,8 @@ static void     thunar_window_action_view_changed         (GtkRadioAction     *a
 static void     thunar_window_action_go_up                (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_open_home            (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_open_templates       (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_open_location        (GtkAction          *action,
                                                            ThunarWindow       *window);
@@ -111,6 +117,8 @@ static void     thunar_window_notify_loading              (ThunarView         *v
                                                            ThunarWindow       *window);
 static gboolean thunar_window_merge_idle                  (gpointer            user_data);
 static void     thunar_window_merge_idle_destroy          (gpointer            user_data);
+static gboolean thunar_window_save_geometry_timer         (gpointer            user_data);
+static void     thunar_window_save_geometry_timer_destroy (gpointer            user_data);
 
 
 
@@ -157,6 +165,9 @@ struct _ThunarWindow
 
   /* menu merge idle source */
   gint                    merge_idle_id;
+
+  /* support to remember window geometry */
+  gint                    save_geometry_timer_id;
 };
 
 
@@ -174,14 +185,11 @@ static const GtkActionEntry action_entries[] =
   { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
-  { "open-home", GTK_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Open the home folder"), G_CALLBACK (thunar_window_action_open_home), },
+  { "open-home", GTK_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
+  { "open-templates", THUNAR_STOCK_TEMPLATES, N_ ("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (thunar_window_action_open_templates), },
   { "open-location", NULL, N_ ("Open _Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_open_location), },
   { "help-menu", NULL, N_ ("_Help"), NULL, },
-#if GTK_CHECK_VERSION(2,6,0)
   { "about", GTK_STOCK_ABOUT, N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (thunar_window_action_about), },
-#else
-  { "about", GTK_STOCK_DIALOG_INFO, N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (thunar_window_action_about), },
-#endif
 };
 
 static const GtkToggleActionEntry toggle_action_entries[] =
@@ -242,6 +250,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->realize = thunar_window_realize;
   gtkwidget_class->unrealize = thunar_window_unrealize;
+  gtkwidget_class->configure_event = thunar_window_configure_event;
 
   /**
    * ThunarWindow:current-directory:
@@ -301,6 +310,8 @@ thunar_window_init (ThunarWindow *window)
   GSList         *group;
   gchar          *type_name;
   GType           type;
+  gint            width;
+  gint            height;
 
   /* grab a reference on the provider factory */
   window->provider_factory = thunarx_provider_factory_get_default ();
@@ -400,8 +411,9 @@ thunar_window_init (ThunarWindow *window)
   accel_group = gtk_ui_manager_get_accel_group (window->ui_manager);
   gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
 
-  gtk_window_set_default_size (GTK_WINDOW (window), 640, 480);
-  gtk_window_set_title (GTK_WINDOW (window), _("Thunar"));
+  /* determine the default window size from the preferences */
+  g_object_get (G_OBJECT (window->preferences), "last-window-width", &width, "last-window-height", &height, NULL);
+  gtk_window_set_default_size (GTK_WINDOW (window), width, height);
 
   vbox = gtk_vbox_new (FALSE, 0);
   gtk_container_add (GTK_CONTAINER (window), vbox);
@@ -492,6 +504,10 @@ static void
 thunar_window_dispose (GObject *object)
 {
   ThunarWindow *window = THUNAR_WINDOW (object);
+
+  /* destroy the save geometry timer source */
+  if (G_UNLIKELY (window->save_geometry_timer_id > 0))
+    g_source_remove (window->save_geometry_timer_id);
 
   /* destroy the merge idle source */
   if (G_UNLIKELY (window->merge_idle_id > 0))
@@ -623,6 +639,34 @@ thunar_window_unrealize (GtkWidget *widget)
 
   /* let the GtkWidget class unrealize the window */
   (*GTK_WIDGET_CLASS (thunar_window_parent_class)->unrealize) (widget);
+}
+
+
+
+static gboolean
+thunar_window_configure_event (GtkWidget         *widget,
+                               GdkEventConfigure *event)
+{
+  ThunarWindow *window = THUNAR_WINDOW (widget);
+
+  /* check if we have a new dimension here */
+  if (widget->allocation.width != event->width || widget->allocation.height != event->height)
+    {
+      /* drop any previous timer source */
+      if (window->save_geometry_timer_id > 0)
+        g_source_remove (window->save_geometry_timer_id);
+
+      /* check if we should schedule another save timer */
+      if (GTK_WIDGET_VISIBLE (widget))
+        {
+          /* save the geometry one second after the last configure event */
+          window->save_geometry_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 1000, thunar_window_save_geometry_timer,
+                                                               window, thunar_window_save_geometry_timer_destroy);
+        }
+    }
+
+  /* let Gtk+ handle the configure event */
+  return (*GTK_WIDGET_CLASS (thunar_window_parent_class)->configure_event) (widget, event);
 }
 
 
@@ -973,6 +1017,115 @@ thunar_window_action_open_home (GtkAction    *action,
 
 
 static void
+thunar_window_action_open_templates (GtkAction    *action,
+                                     ThunarWindow *window)
+{
+  ThunarVfsPath *home_path;
+  ThunarVfsPath *templates_path;
+  ThunarFile    *templates_file = NULL;
+  GtkWidget     *dialog;
+  GtkWidget     *button;
+  GtkWidget     *label;
+  GtkWidget     *image;
+  GtkWidget     *hbox;
+  GtkWidget     *vbox;
+  gboolean       show_about_templates;
+  GError        *error = NULL;
+  gchar         *absolute_path;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the path to the ~/Templates folder */
+  home_path = thunar_vfs_path_get_for_home ();
+  templates_path = thunar_vfs_path_relative (home_path, "Templates");
+  thunar_vfs_path_unref (home_path);
+
+  /* make sure that the ~/Templates folder exists */
+  absolute_path = thunar_vfs_path_dup_string (templates_path);
+  xfce_mkdirhier (absolute_path, 0755, &error);
+  g_free (absolute_path);
+
+  /* determine the file for the ~/Templates path */
+  if (G_LIKELY (error == NULL))
+    templates_file = thunar_file_get_for_path (templates_path, &error);
+
+  /* open the ~/Templates folder */
+  if (G_LIKELY (templates_file != NULL))
+    {
+      /* go to the ~/Templates folder */
+      thunar_window_set_current_directory (window, templates_file);
+      g_object_unref (G_OBJECT (templates_file));
+
+      /* check whether we should display the "About Templates" dialog */
+      g_object_get (G_OBJECT (window->preferences), "misc-show-about-templates", &show_about_templates, NULL);
+      if (G_UNLIKELY (show_about_templates))
+        {
+          /* display the "About Templates" dialog */
+          dialog = gtk_dialog_new_with_buttons (_("About Templates"), GTK_WINDOW (window),
+                                                GTK_DIALOG_DESTROY_WITH_PARENT
+                                                | GTK_DIALOG_NO_SEPARATOR,
+                                                GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                                NULL);
+          gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+
+          hbox = gtk_hbox_new (FALSE, 6);
+          gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
+          gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, TRUE, TRUE, 0);
+          gtk_widget_show (hbox);
+
+          image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
+          gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
+          gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+          gtk_widget_show (image);
+
+          vbox = gtk_vbox_new (FALSE, 18);
+          gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
+          gtk_widget_show (vbox);
+
+          label = gtk_label_new (_("All files in this folder will appear in the \"Create Document\" menu."));
+          gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+          gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big_bold ());
+          gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+          gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
+          gtk_widget_show (label);
+
+          label = gtk_label_new (_("You can create templates from documents that you "
+                                   "frequently create. For this to work, copy a "
+                                   "document into this folder and Thunar will have an "
+                                   "entry for it in the \"Create Document\" menu.\n\n"
+                                   "You can then select the entry from the \"Create "
+                                   "Document\" menu and a copy of the document will "
+                                   "be created in the directory you are viewing."));
+          gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+          gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+          gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
+          gtk_widget_show (label);
+
+          button = gtk_check_button_new_with_mnemonic (_("Do _not display this message again"));
+          exo_mutual_binding_new_with_negation (G_OBJECT (window->preferences), "misc-show-about-templates", G_OBJECT (button), "active");
+          gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
+          gtk_widget_show (button);
+
+          gtk_dialog_run (GTK_DIALOG (dialog));
+          gtk_widget_destroy (dialog);
+        }
+    }
+
+  /* display an error dialog if something went wrong */
+  if (G_UNLIKELY (error != NULL))
+    {
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open templates folder"));
+      g_error_free (error);
+    }
+
+  /* release our reference on the ~/Templates path */
+  thunar_vfs_path_unref (templates_path);
+}
+
+
+
+static void
 thunar_window_action_open_location (GtkAction    *action,
                                     ThunarWindow *window)
 {
@@ -1217,6 +1370,48 @@ static void
 thunar_window_merge_idle_destroy (gpointer user_data)
 {
   THUNAR_WINDOW (user_data)->merge_idle_id = 0;
+}
+
+
+
+static gboolean
+thunar_window_save_geometry_timer (gpointer user_data)
+{
+  GdkWindowState state;
+  ThunarWindow  *window = THUNAR_WINDOW (user_data);
+  gint           width;
+  gint           height;
+
+  GDK_THREADS_ENTER ();
+
+  /* check if the window is still visible */
+  if (GTK_WIDGET_VISIBLE (window))
+    {
+      /* determine the current state of the window */
+      state = gdk_window_get_state (GTK_WIDGET (window)->window);
+
+      /* don't save geometry for maximized or fullscreen windows */
+      if ((state & (GDK_WINDOW_STATE_MAXIMIZED | GDK_WINDOW_STATE_FULLSCREEN)) == 0)
+        {
+          /* determine the current width/height of the window... */
+          gtk_window_get_size (GTK_WINDOW (window), &width, &height);
+
+          /* ...and remember them as default for new windows */
+          g_object_set (G_OBJECT (window->preferences), "last-window-width", width, "last-window-height", height, NULL);
+        }
+    }
+
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_window_save_geometry_timer_destroy (gpointer user_data)
+{
+  THUNAR_WINDOW (user_data)->save_geometry_timer_id = 0;
 }
 
 

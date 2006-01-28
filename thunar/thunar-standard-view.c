@@ -40,6 +40,7 @@
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
+#include <thunar/thunar-templates-action.h>
 #include <thunar/thunar-text-renderer.h>
 
 
@@ -124,7 +125,12 @@ static GList        *thunar_standard_view_get_selected_paths        (ThunarStand
 static void          thunar_standard_view_merge_custom_actions      (ThunarStandardView       *standard_view,
                                                                      GList                    *selected_items);
 static void          thunar_standard_view_update_statusbar_text     (ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_create_empty_file  (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_create_folder      (GtkAction                *action,
+                                                                     ThunarStandardView       *standard_view);
+static void          thunar_standard_view_action_create_template    (GtkAction                *action,
+                                                                     const ThunarVfsInfo      *info,
                                                                      ThunarStandardView       *standard_view);
 static void          thunar_standard_view_action_properties         (GtkAction                *action,
                                                                      ThunarStandardView       *standard_view);
@@ -434,6 +440,8 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
 static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
+  GtkAction *action;
+
   standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
   standard_view->priv->drag_timer_id = -1;
 
@@ -471,6 +479,13 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_duplicate = gtk_action_group_get_action (standard_view->action_group, "duplicate");
   standard_view->priv->action_make_link = gtk_action_group_get_action (standard_view->action_group, "make-link");
   standard_view->priv->action_rename = gtk_action_group_get_action (standard_view->action_group, "rename");
+
+  /* add the "Create Document" sub menu action */
+  action = thunar_templates_action_new ("create-document", _("Create _Document"));
+  g_signal_connect (G_OBJECT (action), "create-empty-file", G_CALLBACK (thunar_standard_view_action_create_empty_file), standard_view);
+  g_signal_connect (G_OBJECT (action), "create-template", G_CALLBACK (thunar_standard_view_action_create_template), standard_view);
+  gtk_action_group_add_action (standard_view->action_group, action);
+  g_object_unref (G_OBJECT (action));
 
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
@@ -1338,17 +1353,64 @@ thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
 
 
 static void
+thunar_standard_view_action_create_empty_file (GtkAction          *action,
+                                               ThunarStandardView *standard_view)
+{
+  ThunarVfsMimeDatabase *mime_database;
+  ThunarVfsMimeInfo     *mime_info;
+  ThunarApplication     *application;
+  ThunarFile            *current_directory;
+  GList                  path_list;
+  gchar                 *name;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* lookup "text/plain" mime info */
+  mime_database = thunar_vfs_mime_database_get_default ();
+  mime_info = thunar_vfs_mime_database_get_info (mime_database, "text/plain");
+
+  /* ask the user to enter a name for the new empty file */
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), mime_info, _("New Empty File"), _("New Empty File..."));
+  if (G_LIKELY (name != NULL))
+    {
+      /* determine the ThunarFile for the current directory */
+      current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+      if (G_LIKELY (current_directory != NULL))
+        {
+          /* fake the path list */
+          path_list.data = thunar_vfs_path_relative (thunar_file_get_path (current_directory), name);
+          path_list.next = path_list.prev = NULL;
+
+          /* launch the operation */
+          application = thunar_application_get ();
+          thunar_application_creat (application, GTK_WIDGET (standard_view), &path_list,
+                                    thunar_standard_view_new_files_closure (standard_view));
+          g_object_unref (G_OBJECT (application));
+
+          /* release the path */
+          thunar_vfs_path_unref (path_list.data);
+        }
+
+      /* release the file name in the local encoding */
+      g_free (name);
+    }
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (mime_database));
+  thunar_vfs_mime_info_unref (mime_info);
+}
+
+
+
+static void
 thunar_standard_view_action_create_folder (GtkAction          *action,
                                            ThunarStandardView *standard_view)
 {
   ThunarVfsMimeDatabase *mime_database;
   ThunarVfsMimeInfo     *mime_info;
   ThunarApplication     *application;
-  const gchar           *filename;
   ThunarFile            *current_directory;
-  GtkWidget             *dialog;
-  GtkWidget             *window;
-  GError                *error = NULL;
   GList                  path_list;
   gchar                 *name;
 
@@ -1359,63 +1421,92 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
   mime_database = thunar_vfs_mime_database_get_default ();
   mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/directory");
 
-  /* determine the toplevel window */
-  window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-
-  /* display the create dialog */
-  dialog = g_object_new (THUNAR_TYPE_CREATE_DIALOG,
-                         "destroy-with-parent", TRUE,
-                         "filename", _("New Folder"),
-                         "mime-info", mime_info,
-                         "modal", TRUE,
-                         "title", _("New Folder..."),
-                         NULL);
-  if (G_LIKELY (window != NULL))
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
-  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+  /* ask the user to enter a name for the new folder */
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), mime_info, _("New Folder"), _("New Folder..."));
+  if (G_LIKELY (name != NULL))
     {
-      /* determine the chosen filename */
-      filename = thunar_create_dialog_get_filename (THUNAR_CREATE_DIALOG (dialog));
-
-      /* convert the UTF-8 filename to the local file system encoding */
-      name = g_filename_from_utf8 (filename, -1, NULL, NULL, &error);
-      if (G_UNLIKELY (name == NULL))
+      /* determine the ThunarFile for the current directory */
+      current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+      if (G_LIKELY (current_directory != NULL))
         {
-          /* display an error message */
-          thunar_dialogs_show_error (dialog, error, _("Cannot convert filename `%s' to the local encoding"), filename);
+          /* fake the path list */
+          path_list.data = thunar_vfs_path_relative (thunar_file_get_path (current_directory), name);
+          path_list.next = path_list.prev = NULL;
 
-          /* release the error */
-          g_error_free (error);
+          /* launch the operation */
+          application = thunar_application_get ();
+          thunar_application_mkdir (application, GTK_WIDGET (standard_view), &path_list,
+                                    thunar_standard_view_new_files_closure (standard_view));
+          g_object_unref (G_OBJECT (application));
+
+          /* release the path */
+          thunar_vfs_path_unref (path_list.data);
         }
-      else
-        {
-          /* determine the ThunarFile for the current directory */
-          current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
-          if (G_LIKELY (current_directory != NULL))
-            {
-              /* fake the path list */
-              path_list.data = thunar_vfs_path_relative (thunar_file_get_path (current_directory), name);
-              path_list.next = path_list.prev = NULL;
 
-              /* launch the operation */
-              application = thunar_application_get ();
-              thunar_application_mkdir (application, GTK_WIDGET (standard_view), &path_list,
-                                        thunar_standard_view_new_files_closure (standard_view));
-              g_object_unref (G_OBJECT (application));
-
-              /* release the path */
-              thunar_vfs_path_unref (path_list.data);
-            }
-
-          /* release the file name in the local encoding */
-          g_free (name);
-        }
+      /* release the file name */
+      g_free (name);
     }
-  gtk_widget_destroy (dialog);
 
   /* cleanup */
   g_object_unref (G_OBJECT (mime_database));
   thunar_vfs_mime_info_unref (mime_info);
+}
+
+
+
+static void
+thunar_standard_view_action_create_template (GtkAction           *action,
+                                             const ThunarVfsInfo *info,
+                                             ThunarStandardView  *standard_view)
+{
+  ThunarApplication *application;
+  ThunarFile        *current_directory;
+  GList              source_path_list;
+  GList              target_path_list;
+  gchar             *title;
+  gchar             *name;
+
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (info != NULL);
+
+  /* generate a title for the create dialog */
+  title = g_strdup_printf (_("Create Document from template \"%s\""), info->display_name);
+
+  /* ask the user to enter a name for the new document */
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), info->mime_info, info->display_name, title);
+  if (G_LIKELY (name != NULL))
+    {
+      /* determine the ThunarFile for the current directory */
+      current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+      if (G_LIKELY (current_directory != NULL))
+        {
+          /* fake the source path list */
+          source_path_list.data = info->path;
+          source_path_list.next = NULL;
+          source_path_list.prev = NULL;
+
+          /* fake the target path list */
+          target_path_list.data = thunar_vfs_path_relative (thunar_file_get_path (current_directory), name);
+          target_path_list.next = NULL;
+          target_path_list.prev = NULL;
+
+          /* launch the operation */
+          application = thunar_application_get ();
+          thunar_application_copy_to (application, GTK_WIDGET (standard_view), &source_path_list, &target_path_list,
+                                      thunar_standard_view_new_files_closure (standard_view));
+          g_object_unref (G_OBJECT (application));
+
+          /* release the target path */
+          thunar_vfs_path_unref (target_path_list.data);
+        }
+
+      /* release the file name */
+      g_free (name);
+    }
+
+  /* cleanup */
+  g_free (title);
 }
 
 

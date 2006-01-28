@@ -24,6 +24,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-shortcuts-model.h>
@@ -89,11 +90,11 @@ static GtkTreePath *thunar_shortcuts_view_compute_drop_position  (ThunarShortcut
 static void         thunar_shortcuts_view_drop_uri_list          (ThunarShortcutsView      *view,
                                                                   const gchar              *uri_list,
                                                                   GtkTreePath              *dst_path);
-#if GTK_CHECK_VERSION(2,6,0)
+static void         thunar_shortcuts_view_open                   (ThunarShortcutsView      *view);
+static void         thunar_shortcuts_view_open_in_new_window     (ThunarShortcutsView      *view);
 static gboolean     thunar_shortcuts_view_separator_func         (GtkTreeModel             *model,
                                                                   GtkTreeIter              *iter,
                                                                   gpointer                  user_data);
-#endif
 
 
 
@@ -265,9 +266,8 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
                      drop_targets, G_N_ELEMENTS (drop_targets),
                      GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
 
-#if GTK_CHECK_VERSION(2,6,0)
+  /* setup a row separator function to tell GtkTreeView about the separator */
   gtk_tree_view_set_row_separator_func (GTK_TREE_VIEW (view), thunar_shortcuts_view_separator_func, NULL, NULL);
-#endif
 }
 
 
@@ -316,7 +316,13 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
 
   /* check if we have a right-click event */
   if (G_LIKELY (event->button != 3))
-    return result;
+    {
+      /* we open a new window for double-middle-clicks */
+      if (G_UNLIKELY (event->type == GDK_2BUTTON_PRESS && event->button == 2))
+        thunar_shortcuts_view_open_in_new_window (view);
+
+      return result;
+    }
 
   /* resolve the path at the cursor position */
   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, &path, NULL, NULL, NULL))
@@ -344,7 +350,29 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
       exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
-      /* prepend the custom actions for the selected file (if any) */
+      /* append the "Open" menu action */
+      item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
+      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open), widget);
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+
+      /* set the stock icon */
+      image = gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU);
+      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+      gtk_widget_show (image);
+
+      /* append the "Open in New Window" menu action */
+      item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Window"));
+      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open_in_new_window), widget);
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+
+      /* append a menu separator */
+      item = gtk_separator_menu_item_new ();
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+
+      /* append the custom actions for the selected file (if any) */
       if (G_LIKELY (file != NULL))
         {
           /* determine the toplevel window */
@@ -551,26 +579,12 @@ thunar_shortcuts_view_row_activated (GtkTreeView       *tree_view,
                                      GtkTreePath       *path,
                                      GtkTreeViewColumn *column)
 {
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (tree_view);
-  GtkTreeModel         *model;
-  GtkTreeIter           iter;
-  ThunarFile           *file;
-
-  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-  g_return_if_fail (path != NULL);
-
-  /* determine the iter for the path */
-  model = gtk_tree_view_get_model (tree_view);
-  gtk_tree_model_get_iter (model, &iter, path);
-
-  /* determine the file for the shortcut and invoke the signal */
-  file = thunar_shortcuts_model_file_for_iter (THUNAR_SHORTCUTS_MODEL (model), &iter);
-  if (G_LIKELY (file != NULL))
-    g_signal_emit (G_OBJECT (view), view_signals[SHORTCUT_ACTIVATED], 0, file);
-
   /* call the row-activated method in the parent class */
   if (GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated != NULL)
     (*GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated) (tree_view, path, column);
+
+  /* open the folder referenced by the shortcut */
+  thunar_shortcuts_view_open (THUNAR_SHORTCUTS_VIEW (tree_view));
 }
 
 
@@ -754,7 +768,63 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
 
 
 
-#if GTK_CHECK_VERSION(2,6,0)
+static void
+thunar_shortcuts_view_open (ThunarShortcutsView *view)
+{
+  GtkTreeSelection *selection;
+  GtkTreeModel     *model;
+  GtkTreeIter       iter;
+  ThunarFile       *file;
+
+  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+
+  /* determine the selected item */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    {
+      /* determine the file for the shortcut at the given tree iterator */
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file, -1);
+      if (G_LIKELY (file != NULL))
+        {
+          /* invoke the signal to change to that folder */
+          g_signal_emit (G_OBJECT (view), view_signals[SHORTCUT_ACTIVATED], 0, file);
+          g_object_unref (G_OBJECT (file));
+        }
+    }
+}
+
+
+
+static void
+thunar_shortcuts_view_open_in_new_window (ThunarShortcutsView *view)
+{
+  ThunarApplication *application;
+  GtkTreeSelection  *selection;
+  GtkTreeModel      *model;
+  GtkTreeIter        iter;
+  ThunarFile        *file;
+
+  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+
+  /* determine the selected item */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    {
+      /* determine the file for the shortcut at the given tree iterator */
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file, -1);
+      if (G_LIKELY (file != NULL))
+        {
+          /* open a new window for the shortcut target folder */
+          application = thunar_application_get ();
+          thunar_application_open_window (application, file, gtk_widget_get_screen (GTK_WIDGET (view)));
+          g_object_unref (G_OBJECT (application));
+          g_object_unref (G_OBJECT (file));
+        }
+    }
+}
+
+
+
 static gboolean
 thunar_shortcuts_view_separator_func (GtkTreeModel *model,
                                       GtkTreeIter  *iter,
@@ -764,7 +834,6 @@ thunar_shortcuts_view_separator_func (GtkTreeModel *model,
   gtk_tree_model_get (model, iter, THUNAR_SHORTCUTS_MODEL_COLUMN_SEPARATOR, &separator, -1);
   return separator;
 }
-#endif
 
 
 

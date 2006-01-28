@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -45,6 +45,11 @@ void          thunar_vfs_init             (void);
 void          thunar_vfs_shutdown         (void);
 
 ThunarVfsJob *thunar_vfs_listdir          (ThunarVfsPath    *path,
+                                           GError          **error) G_GNUC_MALLOC;
+
+ThunarVfsJob *thunar_vfs_create_file      (ThunarVfsPath    *path,
+                                           GError          **error) G_GNUC_MALLOC;
+ThunarVfsJob *thunar_vfs_create_files     (GList            *path_list,
                                            GError          **error) G_GNUC_MALLOC;
 
 ThunarVfsJob *thunar_vfs_copy_file        (ThunarVfsPath    *source_path,

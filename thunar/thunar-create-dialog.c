@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-create-dialog.h>
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-icon-factory.h>
 
 
@@ -378,11 +379,32 @@ void
 thunar_create_dialog_set_filename (ThunarCreateDialog *dialog,
                                    const gchar        *filename)
 {
+  const gchar *dot;
+  glong        offset;
+
   g_return_if_fail (THUNAR_IS_CREATE_DIALOG (dialog));
   g_return_if_fail (filename != NULL);
       
   /* setup the new filename */
   gtk_entry_set_text (GTK_ENTRY (dialog->entry), filename);
+
+  /* check if filename contains a dot */
+  dot = g_utf8_strrchr (filename, -1, '.');
+  if (G_LIKELY (dot != NULL))
+    {
+      /* grab focus to the entry first, else
+       * the selection will be altered later
+       * when the focus is transferred.
+       */
+      gtk_widget_grab_focus (dialog->entry);
+
+      /* determine the UTF-8 char offset */
+      offset = g_utf8_pointer_to_offset (filename, dot);
+
+      /* select the text prior to the dot */
+      if (G_LIKELY (offset > 0))
+        gtk_entry_select_region (GTK_ENTRY (dialog->entry), 0, offset);
+    }
 
   /* notify listeners */
   g_object_notify (G_OBJECT (dialog), "filename");
@@ -439,4 +461,75 @@ thunar_create_dialog_set_mime_info (ThunarCreateDialog *dialog,
   /* notify listeners */
   g_object_notify (G_OBJECT (dialog), "mime-info");
 }
+
+
+
+/**
+ * thunar_show_create_dialog:
+ * @parent    : the parent widget or %NULL.
+ * @mime_info : the #ThunarVfsMimeInfo of the file or folder to create.
+ * @filename  : the suggested filename or %NULL.
+ * @title     : the dialog title.
+ *
+ * Constructs and display a #ThunarCreateDialog with the specified
+ * parameters that asks the user to enter a name for a new file or
+ * folder.
+ *
+ * The caller is responsible to free the returned filename using
+ * g_free() when no longer needed.
+ *
+ * Return value: the filename entered by the user or %NULL if the user
+ *               cancelled the dialog.
+ **/
+gchar*
+thunar_show_create_dialog (GtkWidget         *parent,
+                           ThunarVfsMimeInfo *mime_info,
+                           const gchar       *filename,
+                           const gchar       *title)
+{
+  GtkWidget *dialog;
+  GtkWidget *window;
+  GError    *error = NULL;
+  gchar     *name = NULL;
+
+  g_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
+
+  /* determine the toplevel window */
+  window = (parent != NULL) ? gtk_widget_get_toplevel (parent) : NULL;
+
+  /* display the create dialog */
+  dialog = g_object_new (THUNAR_TYPE_CREATE_DIALOG,
+                         "destroy-with-parent", TRUE,
+                         "filename", filename,
+                         "mime-info", mime_info,
+                         "modal", TRUE,
+                         "title", title,
+                         NULL);
+  if (G_LIKELY (window != NULL))
+    gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+  if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_OK)
+    {
+      /* determine the chosen filename */
+      filename = thunar_create_dialog_get_filename (THUNAR_CREATE_DIALOG (dialog));
+
+      /* convert the UTF-8 filename to the local file system encoding */
+      name = g_filename_from_utf8 (filename, -1, NULL, NULL, &error);
+      if (G_UNLIKELY (name == NULL))
+        {
+          /* display an error message */
+          thunar_dialogs_show_error (dialog, error, _("Cannot convert filename `%s' to the local encoding"), filename);
+
+          /* release the error */
+          g_error_free (error);
+        }
+    }
+
+  /* destroy the dialog */
+  gtk_widget_destroy (dialog);
+
+  return name;
+}
+
+
+
 

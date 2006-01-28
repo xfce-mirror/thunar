@@ -54,9 +54,12 @@ enum
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_VIEW,
+  PROP_LAST_WINDOW_HEIGHT,
+  PROP_LAST_WINDOW_WIDTH,
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_RECURSIVE_PERMISSIONS,
+  PROP_MISC_SHOW_ABOUT_TEMPLATES,
   PROP_MISC_SHOW_THUMBNAILS,
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_SHORTCUTS_ICON_EMBLEMS,
@@ -238,6 +241,34 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         EXO_PARAM_READWRITE));
 
   /**
+   * ThunarPreferences:last-window-height:
+   *
+   * The last known height of a #ThunarWindow, which will be used as
+   * default height for newly created windows.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_WINDOW_HEIGHT,
+                                   g_param_spec_int ("last-window-height",
+                                                     "last-window-height",
+                                                     "last-window-height",
+                                                     1, G_MAXINT, 480,
+                                                     EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-window-width:
+   *
+   * The last known width of a #ThunarWindow, which will be used as
+   * default width for newly created windows.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_WINDOW_WIDTH,
+                                   g_param_spec_int ("last-window-width",
+                                                     "last-window-width",
+                                                     "last-window-width",
+                                                     1, G_MAXINT, 640,
+                                                     EXO_PARAM_READWRITE));
+
+  /**
    * ThunarPreferences:misc-folders-first:
    *
    * Whether to sort folders before files.
@@ -278,6 +309,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                       THUNAR_TYPE_RECURSIVE_PERMISSIONS,
                                                       THUNAR_RECURSIVE_PERMISSIONS_ASK,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-show-about-templates:
+   *
+   * Whether to display the "About Templates" dialog, when opening the
+   * Templates folder from the Go menu.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_SHOW_ABOUT_TEMPLATES,
+                                   g_param_spec_boolean ("misc-show-about-templates",
+                                                         "misc-show-about-templates",
+                                                         "misc-show-about-templates",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:misc-show-thumbnails:

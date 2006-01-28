@@ -25,6 +25,7 @@
 G_BEGIN_DECLS;
 
 PangoAttrList *thunar_pango_attr_list_big           (void) G_GNUC_CONST G_GNUC_INTERNAL;
+PangoAttrList *thunar_pango_attr_list_big_bold      (void) G_GNUC_CONST G_GNUC_INTERNAL;
 PangoAttrList *thunar_pango_attr_list_bold          (void) G_GNUC_CONST G_GNUC_INTERNAL;
 PangoAttrList *thunar_pango_attr_list_italic        (void) G_GNUC_CONST G_GNUC_INTERNAL;
 PangoAttrList *thunar_pango_attr_list_small_italic  (void) G_GNUC_CONST G_GNUC_INTERNAL;

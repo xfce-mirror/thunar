@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,6 +25,7 @@
 #include <thunar-vfs/thunar-vfs.h>
 #include <thunar-vfs/thunar-vfs-chmod-job.h>
 #include <thunar-vfs/thunar-vfs-chown-job.h>
+#include <thunar-vfs/thunar-vfs-creat-job.h>
 #include <thunar-vfs/thunar-vfs-link-job.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
 #include <thunar-vfs/thunar-vfs-mkdir-job.h>
@@ -117,6 +118,78 @@ thunar_vfs_listdir (ThunarVfsPath *path,
 
   /* allocate the job */
   return thunar_vfs_job_launch (thunar_vfs_listdir_job_new (path));
+}
+
+
+
+/**
+ * thunar_vfs_create_file:
+ * @path  : the #ThunarVfsPath of the file to create.
+ * @error : return location for errors or %NULL.
+ *
+ * Allocates a new #ThunarVfsCreateJob, which creates a new 
+ * file at @path.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note that the returned job is launched right away, so you
+ * don't need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsCreateJob or
+ *               %NULL if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_create_file (ThunarVfsPath *path,
+                        GError       **error)
+{
+  GList path_list;
+
+  g_return_val_if_fail (path != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* fake a path list */
+  path_list.data = path;
+  path_list.next = NULL;
+  path_list.prev = NULL;
+
+  /* allocate the job */
+  return thunar_vfs_create_files (&path_list, error);
+}
+
+
+
+/**
+ * thunar_vfs_create_files:
+ * @path_list : a list of #ThunarVfsPath<!---->s for files to create.
+ * @error     : return location for errors or %NULL.
+ *
+ * Allocates a new #ThunarVfsCreateJob, which creates new 
+ * files for all #ThunarVfsPath<!---->s in @path_list.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note that the returned job is launched right away, so you
+ * don't need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsCreateJob or
+ *               %NULL if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_create_files (GList   *path_list,
+                         GError **error)
+{
+  ThunarVfsJob *job;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate/launch the job */
+  job = thunar_vfs_creat_job_new (path_list, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
 }
 
 

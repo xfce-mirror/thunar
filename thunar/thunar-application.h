@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2005 Jeff Franks <jcfranks@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005      Jeff Franks <jcfranks@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -45,6 +45,12 @@ void               thunar_application_open_window   (ThunarApplication *applicat
                                                      ThunarFile        *directory,
                                                      GdkScreen         *screen);
 
+void               thunar_application_copy_to       (ThunarApplication *application,
+                                                     GtkWidget         *widget,
+                                                     GList             *source_path_list,
+                                                     GList             *target_path_list,
+                                                     GClosure          *new_files_closure);
+
 void               thunar_application_copy_into     (ThunarApplication *application,
                                                      GtkWidget         *widget,
                                                      GList             *source_path_list,
@@ -66,6 +72,11 @@ void               thunar_application_move_into     (ThunarApplication *applicat
 void               thunar_application_unlink        (ThunarApplication *application,
                                                      GtkWidget         *widget,
                                                      GList             *path_list);
+
+void               thunar_application_creat         (ThunarApplication *application,
+                                                     GtkWidget         *widget,
+                                                     GList             *path_list,
+                                                     GClosure          *new_files_closure);
 
 void               thunar_application_mkdir         (ThunarApplication *application,
                                                      GtkWidget         *widget,

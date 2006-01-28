@@ -205,6 +205,13 @@ thunar_vfs_chown_job_execute (ThunarVfsJob *job)
       thunar_vfs_path_unref (lp->data);
     }
 
+  /* emit an error if some operation failed */
+  if (G_UNLIKELY (error != NULL))
+    {
+      thunar_vfs_job_error (job, error);
+      g_error_free (error);
+    }
+
   /* release the (remaining) path list */
   for (; lp != NULL; lp = lp->next)
     thunar_vfs_path_unref (lp->data);

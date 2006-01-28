@@ -588,7 +588,7 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
 
       label = gtk_label_new (_("Apply recursively?"));
       gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
-      gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
+      gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big_bold ());
       gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
       gtk_widget_show (label);
 

@@ -54,6 +54,8 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-chown-job.c						\
 	thunar-vfs-chown-job.h						\
 	thunar-vfs-config.c						\
+	thunar-vfs-creat-job.c						\
+	thunar-vfs-creat-job.h						\
 	thunar-vfs-exec.c						\
 	thunar-vfs-exec.h						\
 	thunar-vfs-info.c						\

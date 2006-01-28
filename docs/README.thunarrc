@@ -34,6 +34,16 @@ The Thunar Configuration File (thunarrc)
      The name of the widget class which should be used for the main view
      component in Thunar windows if the DefaultView preference is "void".
 
+   * LastWindowHeight (1..4096)
+
+     The last known height of a Thunar window, which will be used as
+     default height for newly created windows.
+
+   * LastWindowWidth (1..4096)
+
+     The last known width of a Thunar window, which will be used as
+     default width for newly created windows.
+
    * MiscFoldersFirst (FALSE/TRUE)
      
      Determines whether folder should be sorted before files.
@@ -50,6 +60,15 @@ The Thunar Configuration File (thunarrc)
 
      Determines whether to apply permissions recursively everytime the
      permissions are altered by the user.
+
+   * MiscShowAboutTemplates (FALSE/TRUE)
+
+     Whether to display the "About Templates" dialog, when opening the
+     Templates folder from the Go menu.
+
+   * MiscShowThumbnails (FALSE/TRUE)
+
+     Whether to generate and display thumbnails for previewable files.
 
    * MiscTextBesidesIcons (FALSE/TRUE)
 

@@ -114,6 +114,8 @@ Thunar_SOURCES =							\
 	thunar-statusbar.h						\
 	thunar-stock.c							\
 	thunar-stock.h							\
+	thunar-templates-action.c					\
+	thunar-templates-action.h					\
 	thunar-text-renderer.c						\
 	thunar-text-renderer.h						\
 	thunar-thumbnail-frame.c					\

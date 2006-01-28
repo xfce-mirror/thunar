@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -45,6 +45,11 @@ void               thunar_create_dialog_set_filename  (ThunarCreateDialog       
 ThunarVfsMimeInfo *thunar_create_dialog_get_mime_info (const ThunarCreateDialog *dialog);
 void               thunar_create_dialog_set_mime_info (ThunarCreateDialog       *dialog,
                                                        ThunarVfsMimeInfo        *mime_info);
+
+gchar             *thunar_show_create_dialog          (GtkWidget                *parent,
+                                                       ThunarVfsMimeInfo        *mime_info,
+                                                       const gchar              *filename,
+                                                       const gchar              *title) G_GNUC_MALLOC;
 
 G_END_DECLS;
 

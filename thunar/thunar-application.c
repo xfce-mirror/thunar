@@ -1,7 +1,7 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2005 Jeff Franks <jcfranks@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005      Jeff Franks <jcfranks@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -414,6 +414,41 @@ thunar_application_open_window (ThunarApplication *application,
 
 
 /**
+ * thunar_application_copy_to:
+ * @application       : a #ThunarApplication.
+ * @widget            : the associated widget or %NULL.
+ * @source_path_list  : the list of #ThunarVfsPath<!---->s that should be copied.
+ * @target_path_list  : the list of #ThunarVfsPath<!---->s where files should be copied to.
+ * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
+ *                      which will be emitted when the job finishes with the
+ *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      %NULL if you're not interested in the signal.
+ *
+ * Copies all files from @source_path_list to their locations specified in
+ * @target_path_list.
+ *
+ * @source_path_list and @target_path_list must be of the same length. 
+ **/
+void
+thunar_application_copy_to (ThunarApplication *application,
+                            GtkWidget         *widget,
+                            GList             *source_path_list,
+                            GList             *target_path_list,
+                            GClosure          *new_files_closure)
+{
+  g_return_if_fail (g_list_length (source_path_list) == g_list_length (target_path_list));
+  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  /* launch the operation */
+  thunar_application_launch (application, widget, "stock_folder-copy",
+                             _("Copying files..."), thunar_vfs_copy_files,
+                             source_path_list, target_path_list, new_files_closure);
+}
+
+
+
+/**
  * thunar_application_copy_into:
  * @application       : a #ThunarApplication.
  * @widget            : the associated widget or %NULL.
@@ -546,6 +581,46 @@ thunar_application_unlink (ThunarApplication *application,
   thunar_application_launch (application, widget, "stock_delete",
                               _("Deleting files..."), unlink_stub,
                               path_list, path_list, NULL);
+}
+
+
+
+static ThunarVfsJob*
+creat_stub (GList   *source_path_list,
+            GList   *target_path_list,
+            GError **error)
+{
+  return thunar_vfs_create_files (source_path_list, error);
+}
+
+
+
+/**
+ * thunar_application_creat:
+ * @application       : a #ThunarApplication.
+ * @widget            : the associated #GtkWidget or %NULL.
+ * @path_list         : the list of files to create.
+ * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
+ *                      which will be emitted when the job finishes with the
+ *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      %NULL if you're not interested in the signal.
+ *
+ * Creates empty files for all #ThunarVfsPath<!---->s listed in @path_list. This
+ * method takes care of all user interaction.
+ **/
+void
+thunar_application_creat (ThunarApplication *application,
+                          GtkWidget         *widget,
+                          GList             *path_list,
+                          GClosure          *new_files_closure)
+{
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
+
+  /* launch the operation */
+  thunar_application_launch (application, widget, "stock_new",
+                             _("Creating files..."), creat_stub,
+                             path_list, path_list, new_files_closure);
 }
 
 
