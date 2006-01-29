@@ -123,6 +123,20 @@ thunar_view_class_init (gpointer klass)
                                                             "ui-manager",
                                                             GTK_TYPE_UI_MANAGER,
                                                             EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarView:zoom-level:
+   *
+   * The #ThunarZoomLevel at which the items within this
+   * #ThunarView should be displayed.
+   **/
+  g_object_interface_install_property (klass,
+                                       g_param_spec_enum ("zoom-level",
+                                                          "zoom-level",
+                                                          "zoom-level",
+                                                          THUNAR_TYPE_ZOOM_LEVEL,
+                                                          THUNAR_ZOOM_LEVEL_NORMAL,
+                                                          EXO_PARAM_READWRITE));
 }
 
 
@@ -240,6 +254,57 @@ thunar_view_set_ui_manager (ThunarView   *view,
   g_return_if_fail (THUNAR_IS_VIEW (view));
   g_return_if_fail (ui_manager == NULL || GTK_IS_UI_MANAGER (ui_manager));
   (*THUNAR_VIEW_GET_IFACE (view)->set_ui_manager) (view, ui_manager);
+}
+
+
+
+/**
+ * thunar_view_get_zoom_level:
+ * @view : a #ThunarView instance.
+ *
+ * Returns the #ThunarZoomLevel currently used for the @view.
+ *
+ * Return value: the #ThunarZoomLevel currently used for the @view.
+ **/
+ThunarZoomLevel
+thunar_view_get_zoom_level (ThunarView *view)
+{
+  g_return_val_if_fail (THUNAR_IS_VIEW (view), THUNAR_ZOOM_LEVEL_NORMAL);
+  return (*THUNAR_VIEW_GET_IFACE (view)->get_zoom_level) (view);
+}
+
+
+
+/**
+ * thunar_view_set_zoom_level:
+ * @view       : a #ThunarView instance.
+ * @zoom_level : the new #ThunarZoomLevel for @view.
+ *
+ * Sets the zoom level used for @view to @zoom_level.
+ **/
+void
+thunar_view_set_zoom_level (ThunarView     *view,
+                            ThunarZoomLevel zoom_level)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+  g_return_if_fail (zoom_level >= 0 && zoom_level < THUNAR_ZOOM_N_LEVELS);
+  (*THUNAR_VIEW_GET_IFACE (view)->set_zoom_level) (view, zoom_level);
+}
+
+
+
+/**
+ * thunar_view_reset_zoom_level:
+ * @view : a #ThunarView instance.
+ *
+ * Resets the zoom level of @view to the default
+ * #ThunarZoomLevel for @view.
+ **/
+void
+thunar_view_reset_zoom_level (ThunarView *view)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+  (*THUNAR_VIEW_GET_IFACE (view)->reset_zoom_level) (view);
 }
 
 

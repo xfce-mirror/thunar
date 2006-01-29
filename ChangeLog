@@ -1,5 +1,30 @@
 2006-01-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-enum-types.{c,h}: Add ThunarZoomLevel and ThunarIconSize
+	  required for the zoom-level support.
+	* docs/README.thunarrc, thunar/thunar-preferences.c: Changed property
+	  ShortcutsIconSize to ThunarIconSize, required for the upcoming
+	  changes to ThunarIconRenderer. People starting Thunar for the first
+	  time after this upgrade will notice that the size of the shortcuts
+	  icons is too small because of this change. Either edit thunarrc and
+	  change ShortcutsIconSize appropriately or just remove thunarrc and
+	  let Thunar recreate it with sane defaults (your settings will be lost
+	  then). Add two new preferences LastDetailsViewZoomLevel and
+	  LastIconViewZoomLevel.
+	* thunar/thunar-icon-renderer.{c,h}: The size property is now of type
+	  ThunarIconSize, rather than plain int.
+	* thunar/thunar-view.{c,h}: Add zoom control methods to the ThunarView
+	  interface.
+	* thunar/thunar-standard-view.{c,h}, thunar/thunar-standard-view-ui.xml,
+	  thunar/thunar-window-ui.xml, thunar/thunar-window.{c,h},
+	  thunar/thunar-details-view.c, thunar/thunar-icon-view.c: Add support
+	  for seven different zoom levels to Thunar based on the previous
+	  changes. This fixes bug #1357, and thereby implements one of the most
+	  oftenly requested features.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+
+2006-01-29	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-location-buttons.c: Add support to drop on pathbar
 	  buttons, as requested in bug #1344.
 

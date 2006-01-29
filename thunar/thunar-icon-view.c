@@ -92,6 +92,7 @@ static void         thunar_icon_view_item_activated         (ExoIconView        
                                                              ThunarIconView      *icon_view);
 static void         thunar_icon_view_sort_column_changed    (GtkTreeSortable     *sortable,
                                                              ThunarIconView      *icon_view);
+static void         thunar_icon_view_zoom_level_changed     (ThunarIconView      *icon_view);
 
 
 
@@ -200,6 +201,7 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   thunarstandard_view_class->scroll_to_path = thunar_icon_view_scroll_to_path;
   thunarstandard_view_class->get_path_at_pos = thunar_icon_view_get_path_at_pos;
   thunarstandard_view_class->highlight_path = thunar_icon_view_highlight_path;
+  thunarstandard_view_class->zoom_level_property_name = "last-icon-view-zoom-level";
 
   /**
    * ThunarIconView::text-beside-icons:
@@ -223,6 +225,9 @@ thunar_icon_view_init (ThunarIconView *icon_view)
 {
   GtkWidget *view;
 
+  /* stay informed about zoom-level changes, so we can force a re-layout on the icon view */
+  g_signal_connect (G_OBJECT (icon_view), "notify::zoom-level", G_CALLBACK (thunar_icon_view_zoom_level_changed), NULL);
+
   /* create the real view */
   view = exo_icon_view_new ();
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_icon_view_button_press_event), icon_view);
@@ -238,7 +243,6 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   /* add the icon renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->icon_renderer),
                 "follow-state", TRUE,
-                "size", 48,
                 "ypad", 3u,
                 NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer, FALSE);
@@ -829,6 +833,17 @@ thunar_icon_view_sort_column_changed (GtkTreeSortable *sortable,
       action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (icon_view)->action_group, "sort-ascending");
       exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), order);
     }
+}
+
+
+
+static void
+thunar_icon_view_zoom_level_changed (ThunarIconView *icon_view)
+{
+  g_return_if_fail (THUNAR_IS_ICON_VIEW (icon_view));
+
+  /* we use the same trick as with ThunarDetailsView here, simply because its simple :-) */
+  gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (GTK_BIN (icon_view)->child), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer, NULL, NULL, NULL);
 }
 
 

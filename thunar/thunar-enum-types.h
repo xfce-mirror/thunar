@@ -44,6 +44,34 @@ typedef enum
 GType thunar_color_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
+#define THUNAR_TYPE_ICON_SIZE (thunar_icon_size_get_type ())
+
+/**
+ * ThunarIconSize:
+ * @THUNAR_ICON_SIZE_SMALLEST : icon size for #THUNAR_ZOOM_LEVEL_SMALLEST.
+ * @THUNAR_ICON_SIZE_SMALLER  : icon size for #THUNAR_ZOOM_LEVEL_SMALLER.
+ * @THUNAR_ICON_SIZE_SMALL    : icon size for #THUNAR_ZOOM_LEVEL_SMALL.
+ * @THUNAR_ICON_SIZE_NORMAL   : icon size for #THUNAR_ZOOM_LEVEL_NORMAL.
+ * @THUNAR_ICON_SIZE_LARGE    : icon size for #THUNAR_ZOOM_LEVEL_LARGE.
+ * @THUNAR_ICON_SIZE_LARGER   : icon size for #THUNAR_ZOOM_LEVEL_LARGER.
+ * @THUNAR_ICON_SIZE_LARGEST  : icon size for #THUNAR_ZOOM_LEVEL_LARGEST.
+ *
+ * Icon sizes matching the various #ThunarZoomLevel<!---->s.
+ **/
+typedef enum
+{
+  THUNAR_ICON_SIZE_SMALLEST = 16,
+  THUNAR_ICON_SIZE_SMALLER  = 24,
+  THUNAR_ICON_SIZE_SMALL    = 36,
+  THUNAR_ICON_SIZE_NORMAL   = 48,
+  THUNAR_ICON_SIZE_LARGE    = 64,
+  THUNAR_ICON_SIZE_LARGER   = 96,
+  THUNAR_ICON_SIZE_LARGEST  = 128,
+} ThunarIconSize;
+
+GType thunar_icon_size_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
 #define THUNAR_TYPE_RECURSIVE_PERMISSIONS (thunar_recursive_permissions_get_type ())
 
 /**
@@ -84,6 +112,39 @@ typedef enum
 } ThunarWallpaperStyle;
 
 GType thunar_wallpaper_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
+#define THUNAR_TYPE_ZOOM_LEVEL (thunar_zoom_level_get_type ())
+
+/**
+ * ThunarZoomLevel:
+ * @THUNAR_ZOOM_LEVEL_SMALLEST : smallest possible zoom level.
+ * @THUNAR_ZOOM_LEVEL_SMALLER  : smaller zoom level.
+ * @THUNAR_ZOOM_LEVEL_SMALL    : small zoom level.
+ * @THUNAR_ZOOM_LEVEL_NORMAL   : the default zoom level.
+ * @THUNAR_ZOOM_LEVEL_LARGE    : large zoom level.
+ * @THUNAR_ZOOM_LEVEL_LARGER   : larger zoom level.
+ * @THUNAR_ZOOM_LEVEL_LARGEST  : largest possible zoom level.
+ *
+ * Lists the various zoom levels supported by Thunar's
+ * folder views.
+ **/
+typedef enum
+{
+  THUNAR_ZOOM_LEVEL_SMALLEST,
+  THUNAR_ZOOM_LEVEL_SMALLER,
+  THUNAR_ZOOM_LEVEL_SMALL,
+  THUNAR_ZOOM_LEVEL_NORMAL,
+  THUNAR_ZOOM_LEVEL_LARGE,
+  THUNAR_ZOOM_LEVEL_LARGER,
+  THUNAR_ZOOM_LEVEL_LARGEST,
+
+  /*< private >*/
+  THUNAR_ZOOM_N_LEVELS,
+} ThunarZoomLevel;
+
+GType          thunar_zoom_level_get_type     (void) G_GNUC_CONST G_GNUC_INTERNAL;
+ThunarIconSize thunar_zoom_level_to_icon_size (ThunarZoomLevel zoom_level) G_GNUC_CONST G_GNUC_INTERNAL;
 
 G_END_DECLS;
 

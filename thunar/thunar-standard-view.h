@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -95,6 +95,12 @@ struct _ThunarStandardViewClass
 
   /* Internal action signals */
   gboolean     (*delete_selected_files) (ThunarStandardView *standard_view);
+
+  /* The name of the property in ThunarPreferences, that determines
+   * the last (and default) zoom-level for the view classes (i.e. in
+   * case of ThunarIconView, this is "last-icon-view-zoom-level").
+   */
+  const gchar *zoom_level_property_name;
 };
 
 struct _ThunarStandardView

@@ -20,6 +20,7 @@
 #ifndef __THUNAR_ICON_RENDERER_H__
 #define __THUNAR_ICON_RENDERER_H__
 
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
@@ -43,11 +44,11 @@ struct _ThunarIconRenderer
 {
   GtkCellRenderer __parent__;
 
-  ThunarFile *drop_file;
-  ThunarFile *file;
-  gboolean    emblems;
-  gboolean    follow_state;
-  gint        size;
+  ThunarFile    *drop_file;
+  ThunarFile    *file;
+  gboolean       emblems;
+  gboolean       follow_state;
+  ThunarIconSize size;
 };
 
 GType            thunar_icon_renderer_get_type (void) G_GNUC_CONST;

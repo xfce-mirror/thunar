@@ -51,6 +51,8 @@ enum
   PROP_0,
   PROP_DEFAULT_SHOW_HIDDEN,
   PROP_DEFAULT_VIEW,
+  PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
+  PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_VIEW,
@@ -212,6 +214,34 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         EXO_PARAM_READWRITE));
 
   /**
+   * ThunarPreferences:last-details-view-zoom-level:
+   *
+   * The last selected #ThunarZoomLevel for the #ThunarDetailsView.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
+                                   g_param_spec_enum ("last-details-view-zoom-level",
+                                                      "last-details-view-zoom-level",
+                                                      "last-details-view-zoom-level",
+                                                      THUNAR_TYPE_ZOOM_LEVEL,
+                                                      THUNAR_ZOOM_LEVEL_SMALLER,
+                                                      EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-icon-view-zoom-level:
+   *
+   * The last selected #ThunarZoomLevel for the #ThunarIconView.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
+                                   g_param_spec_enum ("last-icon-view-zoom-level",
+                                                      "last-icon-view-zoom-level",
+                                                      "last-icon-view-zoom-level",
+                                                      THUNAR_TYPE_ZOOM_LEVEL,
+                                                      THUNAR_ZOOM_LEVEL_NORMAL,
+                                                      EXO_PARAM_READWRITE));
+
+  /**
    * ThunarPreferences:last-side-pane:
    *
    * The name of the widget class, which should be used for the
@@ -368,18 +398,17 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   /**
    * ThunarPreferences:shortcuts-icon-size:
    *
-   * The icon size (in pixel) to use for the icons displayed in the
-   * shortcuts side pane. It is strongly suggested to use only icon
-   * sizes supported by the icon theme (e.g. 16, 24, 48) in order to
-   * avoid unnecessary scaling in the file manager.
+   * The icon size to use for the icons displayed in the
+   * shortcuts side pane.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_SHORTCUTS_ICON_SIZE,
-                                   g_param_spec_int ("shortcuts-icon-size",
-                                                     "shortcuts-icon-size",
-                                                     "shortcuts-icon-size",
-                                                     1, 128, 24,
-                                                     EXO_PARAM_READWRITE));
+                                   g_param_spec_enum ("shortcuts-icon-size",
+                                                      "shortcuts-icon-size",
+                                                      "shortcuts-icon-size",
+                                                      THUNAR_TYPE_ICON_SIZE,
+                                                      THUNAR_ICON_SIZE_SMALLER,
+                                                      EXO_PARAM_READWRITE));
 }
 
 

@@ -58,6 +58,7 @@ enum
   PROP_STATUSBAR_TEXT,
   PROP_SHOW_HIDDEN,
   PROP_UI_MANAGER,
+  PROP_ZOOM_LEVEL,
 };
 
 /* Signal identifiers */
@@ -76,147 +77,151 @@ enum
 
 
 
-static void          thunar_standard_view_class_init                (ThunarStandardViewClass  *klass);
-static void          thunar_standard_view_navigator_init            (ThunarNavigatorIface     *iface);
-static void          thunar_standard_view_view_init                 (ThunarViewIface          *iface);
-static void          thunar_standard_view_init                      (ThunarStandardView       *standard_view);
-static GObject      *thunar_standard_view_constructor               (GType                     type,
-                                                                     guint                     n_construct_properties,
-                                                                     GObjectConstructParam    *construct_properties);
-static void          thunar_standard_view_dispose                   (GObject                  *object);
-static void          thunar_standard_view_finalize                  (GObject                  *object);
-static void          thunar_standard_view_get_property              (GObject                  *object,
-                                                                     guint                     prop_id,
-                                                                     GValue                   *value,
-                                                                     GParamSpec               *pspec);
-static void          thunar_standard_view_set_property              (GObject                  *object,
-                                                                     guint                     prop_id,
-                                                                     const GValue             *value,
-                                                                     GParamSpec               *pspec);
-static void          thunar_standard_view_realize                   (GtkWidget                *widget);
-static void          thunar_standard_view_unrealize                 (GtkWidget                *widget);
-static void          thunar_standard_view_grab_focus                (GtkWidget                *widget);
-static gboolean      thunar_standard_view_expose_event              (GtkWidget                *widget,
-                                                                     GdkEventExpose           *event);
-static ThunarFile   *thunar_standard_view_get_current_directory     (ThunarNavigator          *navigator);
-static void          thunar_standard_view_set_current_directory     (ThunarNavigator          *navigator,
-                                                                     ThunarFile               *current_directory);
-static gboolean      thunar_standard_view_get_loading               (ThunarView               *view);
-static const gchar  *thunar_standard_view_get_statusbar_text        (ThunarView               *view);
-static gboolean      thunar_standard_view_get_show_hidden           (ThunarView               *view);
-static void          thunar_standard_view_set_show_hidden           (ThunarView               *view,
-                                                                     gboolean                  show_hidden);
-static GtkUIManager *thunar_standard_view_get_ui_manager            (ThunarView               *view);
-static void          thunar_standard_view_set_ui_manager            (ThunarView               *view,
-                                                                     GtkUIManager             *ui_manager);
-static void          thunar_standard_view_reload                    (ThunarView               *view);
-static gboolean      thunar_standard_view_delete_selected_files     (ThunarStandardView       *standard_view);
-static GdkDragAction thunar_standard_view_get_dest_actions          (ThunarStandardView       *standard_view,
-                                                                     GdkDragContext           *context,
-                                                                     gint                      x,
-                                                                     gint                      y,
-                                                                     guint                     time,
-                                                                     ThunarFile              **file_return);
-static ThunarFile   *thunar_standard_view_get_drop_file             (ThunarStandardView       *standard_view,
-                                                                     gint                      x,
-                                                                     gint                      y,
-                                                                     GtkTreePath             **path_return);
-static GList        *thunar_standard_view_get_selected_files        (ThunarStandardView       *standard_view);
-static GList        *thunar_standard_view_get_selected_paths        (ThunarStandardView       *standard_view);
-static void          thunar_standard_view_merge_custom_actions      (ThunarStandardView       *standard_view,
-                                                                     GList                    *selected_items);
-static void          thunar_standard_view_update_statusbar_text     (ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_create_empty_file  (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_create_folder      (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_create_template    (GtkAction                *action,
-                                                                     const ThunarVfsInfo      *info,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_properties         (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_copy               (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_cut                (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_paste              (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_delete             (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_paste_into_folder  (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_select_all_files   (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_select_by_pattern  (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_duplicate          (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_make_link          (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_action_rename             (GtkAction                *action,
-                                                                     ThunarStandardView       *standard_view);
-static GClosure     *thunar_standard_view_new_files_closure         (ThunarStandardView       *standard_view);
-static void          thunar_standard_view_new_files                 (ThunarVfsJob             *job,
-                                                                     GList                    *path_list,
-                                                                     ThunarStandardView       *standard_view);
-static gboolean      thunar_standard_view_button_release_event      (GtkWidget                *view,
-                                                                     GdkEventButton           *event,
-                                                                     ThunarStandardView       *standard_view);
-static gboolean      thunar_standard_view_motion_notify_event       (GtkWidget                *view,
-                                                                     GdkEventMotion           *event,
-                                                                     ThunarStandardView       *standard_view);
-static gboolean      thunar_standard_view_scroll_event              (GtkWidget                *view,
-                                                                     GdkEventScroll           *event,
-                                                                     ThunarStandardView       *standard_view);
-static gboolean      thunar_standard_view_drag_drop                 (GtkWidget                *view,
-                                                                     GdkDragContext           *context,
-                                                                     gint                      x,
-                                                                     gint                      y,
-                                                                     guint                     time,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_drag_data_received        (GtkWidget                *view,
-                                                                     GdkDragContext           *context,
-                                                                     gint                      x,
-                                                                     gint                      y,
-                                                                     GtkSelectionData         *selection_data,
-                                                                     guint                     info,
-                                                                     guint                     time,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_drag_leave                (GtkWidget                *view,
-                                                                     GdkDragContext           *context,
-                                                                     guint                     time,
-                                                                     ThunarStandardView       *standard_view);
-static gboolean      thunar_standard_view_drag_motion               (GtkWidget                *view,
-                                                                     GdkDragContext           *context,
-                                                                     gint                      x,
-                                                                     gint                      y,
-                                                                     guint                     time,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_drag_begin                (GtkWidget                *view,
-                                                                     GdkDragContext           *context,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_drag_data_get             (GtkWidget                *view,
-                                                                     GdkDragContext           *context,
-                                                                     GtkSelectionData         *selection_data,
-                                                                     guint                     info,
-                                                                     guint                     time,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_drag_data_delete          (GtkWidget                *view,
-                                                                     GdkDragContext           *context,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_drag_end                  (GtkWidget                *view,
-                                                                     GdkDragContext           *context,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_error                     (ThunarListModel          *model,
-                                                                     const GError             *error,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_renamed                   (ThunarTextRenderer       *text_renderer,
-                                                                     const gchar              *path_string,
-                                                                     const gchar              *text,
-                                                                     ThunarStandardView       *standard_view);
-static void          thunar_standard_view_loading_unbound           (gpointer                  user_data);
-static gboolean      thunar_standard_view_drag_timer                (gpointer                  user_data);
-static void          thunar_standard_view_drag_timer_destroy        (gpointer                  user_data);
+static void             thunar_standard_view_class_init                 (ThunarStandardViewClass  *klass);
+static void             thunar_standard_view_navigator_init             (ThunarNavigatorIface     *iface);
+static void             thunar_standard_view_view_init                  (ThunarViewIface          *iface);
+static void             thunar_standard_view_init                       (ThunarStandardView       *standard_view);
+static GObject         *thunar_standard_view_constructor                (GType                     type,
+                                                                         guint                     n_construct_properties,
+                                                                         GObjectConstructParam    *construct_properties);
+static void             thunar_standard_view_dispose                    (GObject                  *object);
+static void             thunar_standard_view_finalize                   (GObject                  *object);
+static void             thunar_standard_view_get_property               (GObject                  *object,
+                                                                         guint                     prop_id,
+                                                                         GValue                   *value,
+                                                                         GParamSpec               *pspec);
+static void             thunar_standard_view_set_property               (GObject                  *object,
+                                                                         guint                     prop_id,
+                                                                         const GValue             *value,
+                                                                         GParamSpec               *pspec);
+static void             thunar_standard_view_realize                    (GtkWidget                *widget);
+static void             thunar_standard_view_unrealize                  (GtkWidget                *widget);
+static void             thunar_standard_view_grab_focus                 (GtkWidget                *widget);
+static gboolean         thunar_standard_view_expose_event               (GtkWidget                *widget,
+                                                                         GdkEventExpose           *event);
+static ThunarFile      *thunar_standard_view_get_current_directory      (ThunarNavigator          *navigator);
+static void             thunar_standard_view_set_current_directory      (ThunarNavigator          *navigator,
+                                                                         ThunarFile               *current_directory);
+static gboolean         thunar_standard_view_get_loading                (ThunarView               *view);
+static const gchar     *thunar_standard_view_get_statusbar_text         (ThunarView               *view);
+static gboolean         thunar_standard_view_get_show_hidden            (ThunarView               *view);
+static void             thunar_standard_view_set_show_hidden            (ThunarView               *view,
+                                                                         gboolean                  show_hidden);
+static GtkUIManager    *thunar_standard_view_get_ui_manager             (ThunarView               *view);
+static void             thunar_standard_view_set_ui_manager             (ThunarView               *view,
+                                                                         GtkUIManager             *ui_manager);
+static ThunarZoomLevel  thunar_standard_view_get_zoom_level             (ThunarView               *view);
+static void             thunar_standard_view_set_zoom_level             (ThunarView               *view,
+                                                                         ThunarZoomLevel           zoom_level);
+static void             thunar_standard_view_reset_zoom_level           (ThunarView               *view);
+static void             thunar_standard_view_reload                     (ThunarView               *view);
+static gboolean         thunar_standard_view_delete_selected_files      (ThunarStandardView       *standard_view);
+static GdkDragAction    thunar_standard_view_get_dest_actions           (ThunarStandardView       *standard_view,
+                                                                         GdkDragContext           *context,
+                                                                         gint                      x,
+                                                                         gint                      y,
+                                                                         guint                     time,
+                                                                         ThunarFile              **file_return);
+static ThunarFile      *thunar_standard_view_get_drop_file              (ThunarStandardView       *standard_view,
+                                                                         gint                      x,
+                                                                         gint                      y,
+                                                                         GtkTreePath             **path_return);
+static GList           *thunar_standard_view_get_selected_files         (ThunarStandardView       *standard_view);
+static GList           *thunar_standard_view_get_selected_paths         (ThunarStandardView       *standard_view);
+static void             thunar_standard_view_merge_custom_actions       (ThunarStandardView       *standard_view,
+                                                                         GList                    *selected_items);
+static void             thunar_standard_view_update_statusbar_text      (ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_create_empty_file   (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_create_folder       (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_create_template     (GtkAction                *action,
+                                                                         const ThunarVfsInfo      *info,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_properties          (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_copy                (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_cut                 (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_paste               (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_delete              (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_paste_into_folder   (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_select_all_files    (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_select_by_pattern   (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_duplicate           (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_make_link           (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_action_rename              (GtkAction                *action,
+                                                                         ThunarStandardView       *standard_view);
+static GClosure        *thunar_standard_view_new_files_closure          (ThunarStandardView       *standard_view);
+static void             thunar_standard_view_new_files                  (ThunarVfsJob             *job,
+                                                                         GList                    *path_list,
+                                                                         ThunarStandardView       *standard_view);
+static gboolean         thunar_standard_view_button_release_event       (GtkWidget                *view,
+                                                                         GdkEventButton           *event,
+                                                                         ThunarStandardView       *standard_view);
+static gboolean         thunar_standard_view_motion_notify_event        (GtkWidget                *view,
+                                                                         GdkEventMotion           *event,
+                                                                         ThunarStandardView       *standard_view);
+static gboolean         thunar_standard_view_scroll_event               (GtkWidget                *view,
+                                                                         GdkEventScroll           *event,
+                                                                         ThunarStandardView       *standard_view);
+static gboolean         thunar_standard_view_drag_drop                  (GtkWidget                *view,
+                                                                         GdkDragContext           *context,
+                                                                         gint                      x,
+                                                                         gint                      y,
+                                                                         guint                     time,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_drag_data_received         (GtkWidget                *view,
+                                                                         GdkDragContext           *context,
+                                                                         gint                      x,
+                                                                         gint                      y,
+                                                                         GtkSelectionData         *selection_data,
+                                                                         guint                     info,
+                                                                         guint                     time,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_drag_leave                 (GtkWidget                *view,
+                                                                         GdkDragContext           *context,
+                                                                         guint                     time,
+                                                                         ThunarStandardView       *standard_view);
+static gboolean         thunar_standard_view_drag_motion                (GtkWidget                *view,
+                                                                         GdkDragContext           *context,
+                                                                         gint                      x,
+                                                                         gint                      y,
+                                                                         guint                     time,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_drag_begin                 (GtkWidget                *view,
+                                                                         GdkDragContext           *context,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_drag_data_get              (GtkWidget                *view,
+                                                                         GdkDragContext           *context,
+                                                                         GtkSelectionData         *selection_data,
+                                                                         guint                     info,
+                                                                         guint                     time,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_drag_data_delete           (GtkWidget                *view,
+                                                                         GdkDragContext           *context,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_drag_end                   (GtkWidget                *view,
+                                                                         GdkDragContext           *context,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_error                      (ThunarListModel          *model,
+                                                                         const GError             *error,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_renamed                    (ThunarTextRenderer       *text_renderer,
+                                                                         const gchar              *path_string,
+                                                                         const gchar              *text,
+                                                                         ThunarStandardView       *standard_view);
+static void             thunar_standard_view_loading_unbound            (gpointer                  user_data);
+static gboolean         thunar_standard_view_drag_timer                 (gpointer                  user_data);
+static void             thunar_standard_view_drag_timer_destroy         (gpointer                  user_data);
 
 
 
@@ -238,6 +243,9 @@ struct _ThunarStandardViewPrivate
 
   /* support for file manager extensions */
   ThunarxProviderFactory *provider_factory;
+
+  /* zoom-level support */
+  ThunarZoomLevel         zoom_level;
 
   /* custom menu actions support */
   GtkActionGroup         *custom_actions;
@@ -374,6 +382,12 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   klass->connect_ui_manager = (gpointer) exo_noop;
   klass->disconnect_ui_manager = (gpointer) exo_noop;
 
+  /**
+   * ThunarStandardView:loading:
+   *
+   * Whether the folder associated with this view is
+   * currently being loaded from the underlying media.
+   **/
   g_object_class_install_property (gobject_class,
                                    PROP_LOADING,
                                    g_param_spec_override ("loading",
@@ -390,6 +404,7 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   g_object_class_override_property (gobject_class, PROP_STATUSBAR_TEXT, "statusbar-text");
   g_object_class_override_property (gobject_class, PROP_SHOW_HIDDEN, "show-hidden");
   g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
+  g_object_class_override_property (gobject_class, PROP_ZOOM_LEVEL, "zoom-level");
 
   /**
    * ThunarStandardView::delete-selected-files:
@@ -434,6 +449,9 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
   iface->set_show_hidden = thunar_standard_view_set_show_hidden;
   iface->get_ui_manager = thunar_standard_view_get_ui_manager;
   iface->set_ui_manager = thunar_standard_view_set_ui_manager;
+  iface->get_zoom_level = thunar_standard_view_get_zoom_level;
+  iface->set_zoom_level = thunar_standard_view_set_zoom_level;
+  iface->reset_zoom_level = thunar_standard_view_reset_zoom_level;
   iface->reload = thunar_standard_view_reload;
 }
 
@@ -497,6 +515,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* setup the icon renderer */
   standard_view->icon_renderer = thunar_icon_renderer_new ();
   exo_gtk_object_ref_sink (GTK_OBJECT (standard_view->icon_renderer));
+  exo_binding_new (G_OBJECT (standard_view), "zoom-level", G_OBJECT (standard_view->icon_renderer), "size");
 
   /* setup the name renderer */
   standard_view->name_renderer = thunar_text_renderer_new ();
@@ -525,13 +544,25 @@ thunar_standard_view_constructor (GType                  type,
                                   guint                  n_construct_properties,
                                   GObjectConstructParam *construct_properties)
 {
-  GtkWidget *view;
-  GObject   *object;
+  ThunarStandardView *standard_view;
+  ThunarZoomLevel    zoom_level;
+  GtkWidget         *view;
+  GObject           *object;
 
   /* let the GObject constructor create the instance */
   object = G_OBJECT_CLASS (thunar_standard_view_parent_class)->constructor (type,
                                                                             n_construct_properties,
                                                                             construct_properties);
+
+  /* cast to standard_view for convenience */
+  standard_view = THUNAR_STANDARD_VIEW (object);
+
+  /* setup the default zoom-level, determined from the "last-<view>-zoom-level" preference */
+  g_object_get (G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name, &zoom_level, NULL);
+  thunar_view_set_zoom_level (THUNAR_VIEW (standard_view), zoom_level);
+
+  /* save the "zoom-level" as "last-<view>-zoom-level" whenever the user changes the zoom level */
+  exo_binding_new (object, "zoom-level", G_OBJECT (standard_view->preferences), THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name);
 
   /* determine the real view widget (treeview or iconview) */
   view = GTK_BIN (object)->child;
@@ -539,7 +570,7 @@ thunar_standard_view_constructor (GType                  type,
   /* apply our list model to the real view (the child of the scrolled window),
    * we therefore assume that all real views have the "model" property.
    */
-  g_object_set (G_OBJECT (view), "model", THUNAR_STANDARD_VIEW (object)->model, NULL);
+  g_object_set (G_OBJECT (view), "model", standard_view->model, NULL);
 
   /* setup support to navigate using a horizontal mouse wheel */
   g_signal_connect (G_OBJECT (view), "scroll-event", G_CALLBACK (thunar_standard_view_scroll_event), object);
@@ -671,6 +702,10 @@ thunar_standard_view_get_property (GObject    *object,
       g_value_set_object (value, thunar_view_get_ui_manager (THUNAR_VIEW (object)));
       break;
 
+    case PROP_ZOOM_LEVEL:
+      g_value_set_enum (value, thunar_view_get_zoom_level (THUNAR_VIEW (object)));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -710,6 +745,10 @@ thunar_standard_view_set_property (GObject      *object,
 
     case PROP_UI_MANAGER:
       thunar_view_set_ui_manager (THUNAR_VIEW (object), g_value_get_object (value));
+      break;
+
+    case PROP_ZOOM_LEVEL:
+      thunar_view_set_zoom_level (THUNAR_VIEW (object), g_value_get_enum (value));
       break;
 
     default:
@@ -1020,6 +1059,49 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
 
   /* let others know that we have a new manager */
   g_object_notify (G_OBJECT (view), "ui-manager");
+}
+
+
+
+static ThunarZoomLevel
+thunar_standard_view_get_zoom_level (ThunarView *view)
+{
+  return THUNAR_STANDARD_VIEW (view)->priv->zoom_level;
+}
+
+
+
+static void
+thunar_standard_view_set_zoom_level (ThunarView     *view,
+                                     ThunarZoomLevel zoom_level)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+
+  /* check if we have a new zoom-level here */
+  if (G_LIKELY (standard_view->priv->zoom_level != zoom_level))
+    {
+      standard_view->priv->zoom_level = zoom_level;
+      g_object_notify (G_OBJECT (standard_view), "zoom-level");
+    }
+}
+
+
+
+static void
+thunar_standard_view_reset_zoom_level (ThunarView *view)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  const gchar        *property_name;
+  GParamSpec         *pspec;
+  GValue              value = { 0, };
+
+  /* determine the default zoom level from the preferences */
+  property_name = THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->zoom_level_property_name;
+  pspec = g_object_class_find_property (G_OBJECT_GET_CLASS (standard_view->preferences), property_name);
+  g_value_init (&value, THUNAR_TYPE_ZOOM_LEVEL);
+  g_param_value_set_default (pspec, &value);
+  g_object_set_property (G_OBJECT (view), "zoom-level", &value);
+  g_value_unset (&value);
 }
 
 

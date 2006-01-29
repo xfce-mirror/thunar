@@ -174,15 +174,17 @@ thunar_icon_renderer_class_init (ThunarIconRendererClass *klass)
                                                          EXO_PARAM_READWRITE));
 
   /**
-   * ThunarIconRenderer:icon-size:
+   * ThunarIconRenderer:size:
    *
-   * The icon size in pixels.
+   * The size at which icons should be rendered by this
+   * #ThunarIconRenderer instance.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_SIZE,
-                                   g_param_spec_int ("size", "size", "size",
-                                                     1, G_MAXINT, 24,
-                                                     G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
+                                   g_param_spec_enum ("size", "size", "size",
+                                                      THUNAR_TYPE_ICON_SIZE,
+                                                      THUNAR_ICON_SIZE_SMALL,
+                                                      G_PARAM_CONSTRUCT | EXO_PARAM_READWRITE));
 }
 
 
@@ -240,7 +242,7 @@ thunar_icon_renderer_get_property (GObject    *object,
       break;
 
     case PROP_SIZE:
-      g_value_set_int (value, icon_renderer->size);
+      g_value_set_enum (value, icon_renderer->size);
       break;
 
     default:
@@ -282,7 +284,7 @@ thunar_icon_renderer_set_property (GObject      *object,
       break;
 
     case PROP_SIZE:
-      icon_renderer->size = g_value_get_int (value);
+      icon_renderer->size = g_value_get_enum (value);
       break;
 
     default:

@@ -20,6 +20,7 @@
 #ifndef __THUNAR_VIEW_H__
 #define __THUNAR_VIEW_H__
 
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-navigator.h>
 
 G_BEGIN_DECLS;
@@ -37,34 +38,44 @@ struct _ThunarViewIface
   GTypeInterface __parent__;
 
   /* virtual methods */
-  gboolean      (*get_loading)        (ThunarView   *view);
-  const gchar  *(*get_statusbar_text) (ThunarView   *view);
+  gboolean        (*get_loading)        (ThunarView     *view);
+  const gchar    *(*get_statusbar_text) (ThunarView     *view);
 
-  gboolean      (*get_show_hidden)    (ThunarView   *view);
-  void          (*set_show_hidden)    (ThunarView   *view,
-                                       gboolean      show_hidden);
+  gboolean        (*get_show_hidden)    (ThunarView     *view);
+  void            (*set_show_hidden)    (ThunarView     *view,
+                                         gboolean        show_hidden);
 
-  GtkUIManager *(*get_ui_manager)     (ThunarView   *view);
-  void          (*set_ui_manager)     (ThunarView   *view,
-                                       GtkUIManager *ui_manager);
+  GtkUIManager   *(*get_ui_manager)     (ThunarView     *view);
+  void            (*set_ui_manager)     (ThunarView     *view,
+                                         GtkUIManager   *ui_manager);
 
-  void          (*reload)             (ThunarView   *view);
+  ThunarZoomLevel (*get_zoom_level)     (ThunarView     *view);
+  void            (*set_zoom_level)     (ThunarView     *view,
+                                         ThunarZoomLevel zoom_level);
+  void            (*reset_zoom_level)   (ThunarView     *view);
+
+  void            (*reload)             (ThunarView     *view);
 };
 
-GType         thunar_view_get_type           (void) G_GNUC_CONST;
+GType           thunar_view_get_type            (void) G_GNUC_CONST;
 
-gboolean      thunar_view_get_loading        (ThunarView   *view);
-const gchar  *thunar_view_get_statusbar_text (ThunarView   *view);
+gboolean        thunar_view_get_loading         (ThunarView     *view);
+const gchar    *thunar_view_get_statusbar_text  (ThunarView     *view);
 
-gboolean      thunar_view_get_show_hidden    (ThunarView   *view);
-void          thunar_view_set_show_hidden    (ThunarView   *view,
-                                              gboolean      show_hidden);
+gboolean        thunar_view_get_show_hidden     (ThunarView     *view);
+void            thunar_view_set_show_hidden     (ThunarView     *view,
+                                                 gboolean        show_hidden);
 
-GtkUIManager *thunar_view_get_ui_manager     (ThunarView   *view);
-void          thunar_view_set_ui_manager     (ThunarView   *view,
-                                              GtkUIManager *ui_manager);
+GtkUIManager   *thunar_view_get_ui_manager      (ThunarView     *view);
+void            thunar_view_set_ui_manager      (ThunarView     *view,
+                                                 GtkUIManager   *ui_manager);
 
-void          thunar_view_reload             (ThunarView   *view);
+ThunarZoomLevel thunar_view_get_zoom_level      (ThunarView     *view);
+void            thunar_view_set_zoom_level      (ThunarView     *view,
+                                                 ThunarZoomLevel zoom_level);
+void            thunar_view_reset_zoom_level    (ThunarView     *view);
+
+void            thunar_view_reload              (ThunarView     *view);
 
 G_END_DECLS;
 

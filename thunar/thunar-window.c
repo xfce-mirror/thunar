@@ -21,6 +21,8 @@
 #include <config.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-details-view.h>
@@ -32,6 +34,7 @@
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-location-entry.h>
+#include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
@@ -42,12 +45,22 @@
 
 
 
+/* Property identifiers */
 enum
 {
   PROP_0,
   PROP_CURRENT_DIRECTORY,
   PROP_SHOW_HIDDEN,
   PROP_UI_MANAGER,
+  PROP_ZOOM_LEVEL,
+};
+
+/* Signal identifiers */
+enum
+{
+  ZOOM_IN,
+  ZOOM_OUT,
+  LAST_SIGNAL,
 };
 
 
@@ -64,6 +77,8 @@ static void     thunar_window_set_property                (GObject            *o
                                                            guint               prop_id,
                                                            const GValue       *value,
                                                            GParamSpec         *pspec);
+static gboolean thunar_window_zoom_in                     (ThunarWindow       *window);
+static gboolean thunar_window_zoom_out                    (ThunarWindow       *window);
 static void     thunar_window_realize                     (GtkWidget          *widget);
 static void     thunar_window_unrealize                   (GtkWidget          *widget);
 static gboolean thunar_window_configure_event             (GtkWidget          *widget,
@@ -84,6 +99,12 @@ static void     thunar_window_action_location_bar_changed (GtkRadioAction     *a
                                                            ThunarWindow       *window);
 static void     thunar_window_action_side_pane_changed    (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_zoom_in              (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_zoom_out             (GtkAction          *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_zoom_reset           (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_view_changed         (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
@@ -127,6 +148,10 @@ static void     thunar_window_save_geometry_timer_destroy (gpointer            u
 struct _ThunarWindowClass
 {
   GtkWindowClass __parent__;
+
+  /* internal action signals */
+  gboolean (*zoom_in)  (ThunarWindow *window);
+  gboolean (*zoom_out) (ThunarWindow *window);
 };
 
 struct _ThunarWindow
@@ -165,6 +190,9 @@ struct _ThunarWindow
 
   ThunarFile             *current_directory;
 
+  /* zoom-level support */
+  ThunarZoomLevel         zoom_level;
+
   /* menu merge idle source */
   gint                    merge_idle_id;
 
@@ -186,6 +214,9 @@ static const GtkActionEntry action_entries[] =
   { "reload", GTK_STOCK_REFRESH, N_ ("_Reload"), "<control>R", N_ ("Reload the current folder"), G_CALLBACK (thunar_window_action_reload), },
   { "view-location-selector-menu", NULL, N_ ("_Location Selector"), NULL, },
   { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
+  { "zoom-in", GTK_STOCK_ZOOM_IN, N_ ("Zoom _In"), "<control>plus", N_ ("Show the contents in more detail"), G_CALLBACK (thunar_window_action_zoom_in), },
+  { "zoom-out", GTK_STOCK_ZOOM_OUT, N_ ("Zoom _Out"), "<control>minus", N_ ("Show the contents in less detail"), G_CALLBACK (thunar_window_action_zoom_out), },
+  { "zoom-reset", GTK_STOCK_ZOOM_100, N_ ("Normal Si_ze"), "<control>0", N_ ("Show the contents at the normal size"), G_CALLBACK (thunar_window_action_zoom_reset), },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "open-home", GTK_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
@@ -203,6 +234,7 @@ static const GtkToggleActionEntry toggle_action_entries[] =
 
 
 static GObjectClass *thunar_window_parent_class;
+static guint         window_signals[LAST_SIGNAL];
 
 
 
@@ -239,6 +271,7 @@ static void
 thunar_window_class_init (ThunarWindowClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
+  GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
 
   /* determine the parent type class */
@@ -254,6 +287,9 @@ thunar_window_class_init (ThunarWindowClass *klass)
   gtkwidget_class->realize = thunar_window_realize;
   gtkwidget_class->unrealize = thunar_window_unrealize;
   gtkwidget_class->configure_event = thunar_window_configure_event;
+
+  klass->zoom_in = thunar_window_zoom_in;
+  klass->zoom_out = thunar_window_zoom_out;
 
   /**
    * ThunarWindow:current-directory:
@@ -296,6 +332,58 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                         "ui-manager",
                                                         GTK_TYPE_UI_MANAGER,
                                                         EXO_PARAM_READABLE));
+
+  /**
+   * ThunarWindow:zoom-level:
+   *
+   * The #ThunarZoomLevel applied to the #ThunarView currently
+   * shown within this window.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_ZOOM_LEVEL,
+                                   g_param_spec_enum ("zoom-level",
+                                                      "zoom-level",
+                                                      "zoom-level",
+                                                      THUNAR_TYPE_ZOOM_LEVEL,
+                                                      THUNAR_ZOOM_LEVEL_NORMAL,
+                                                      EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarWindow::zoom-in:
+   * @window : a #ThunarWindow instance.
+   *
+   * Emitted whenever the user requests to zoom in. This
+   * is an internal signal used to bind the action to keys.
+   **/
+  window_signals[ZOOM_IN] =
+    g_signal_new (I_("zoom-in"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarWindowClass, zoom_in),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /**
+   * ThunarWindow::zoom-out:
+   * @window : a #ThunarWindow instance.
+   *
+   * Emitted whenever the user requests to zoom out. This
+   * is an internal signal used to bind the action to keys.
+   **/
+  window_signals[ZOOM_OUT] =
+    g_signal_new (I_("zoom-out"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarWindowClass, zoom_out),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /* setup the key bindings for the windows */
+  binding_set = gtk_binding_set_by_class (klass);
+  gtk_binding_entry_add_signal (binding_set, GDK_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
 }
 
 
@@ -583,6 +671,10 @@ thunar_window_get_property (GObject    *object,
       g_value_set_object (value, window->ui_manager);
       break;
 
+    case PROP_ZOOM_LEVEL:
+      g_value_set_enum (value, window->zoom_level);
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
@@ -605,10 +697,48 @@ thunar_window_set_property (GObject            *object,
       thunar_window_set_current_directory (window, g_value_get_object (value));
       break;
 
+    case PROP_ZOOM_LEVEL:
+      thunar_window_set_zoom_level (window, g_value_get_enum (value));
+      break;
+
     default:
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static gboolean
+thunar_window_zoom_in (ThunarWindow *window)
+{
+  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* check if we can still zoom in */
+  if (G_LIKELY (window->zoom_level < THUNAR_ZOOM_N_LEVELS - 1))
+    {
+      thunar_window_set_zoom_level (window, window->zoom_level + 1);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_window_zoom_out (ThunarWindow *window)
+{
+  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* check if we can still zoom out */
+  if (G_LIKELY (window->zoom_level > 0))
+    {
+      thunar_window_set_zoom_level (window, window->zoom_level - 1);
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 
@@ -931,6 +1061,50 @@ thunar_window_action_side_pane_changed (GtkRadioAction *action,
 
 
 static void
+thunar_window_action_zoom_in (GtkAction    *action,
+                              ThunarWindow *window)
+{
+  gboolean result;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* increase the zoom level */
+  g_signal_emit (G_OBJECT (window), window_signals[ZOOM_IN], 0, &result);
+}
+
+
+
+static void
+thunar_window_action_zoom_out (GtkAction    *action,
+                               ThunarWindow *window)
+{
+  gboolean result;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* decrease the zoom level */
+  g_signal_emit (G_OBJECT (window), window_signals[ZOOM_OUT], 0, &result);
+}
+
+
+
+static void
+thunar_window_action_zoom_reset (GtkAction    *action,
+                                 ThunarWindow *window)
+{
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* tell the view to reset it's zoom level */
+  if (G_LIKELY (window->view != NULL))
+    thunar_view_reset_zoom_level (THUNAR_VIEW (window->view));
+}
+
+
+
+static void
 thunar_window_action_view_changed (GtkRadioAction *action,
                                    GtkRadioAction *current,
                                    ThunarWindow   *window)
@@ -960,6 +1134,7 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->view), "show-hidden");
       exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->statusbar), "loading");
       exo_binding_new (G_OBJECT (window->view), "statusbar-text", G_OBJECT (window->statusbar), "text");
+      exo_mutual_binding_new (G_OBJECT (window->view), "zoom-level", G_OBJECT (window), "zoom-level");
       gtk_container_add (GTK_CONTAINER (window->view_container), window->view);
       gtk_widget_grab_focus (window->view);
       gtk_widget_show (window->view);
@@ -1518,5 +1693,52 @@ thunar_window_set_current_directory (ThunarWindow *window,
   g_object_notify (G_OBJECT (window), "current-directory");
 }
 
+
+
+/**
+ * thunar_window_get_zoom_level:
+ * @window : a #ThunarWindow instance.
+ *
+ * Returns the #ThunarZoomLevel for @window.
+ *
+ * Return value: the #ThunarZoomLevel for @indow.
+ **/
+ThunarZoomLevel
+thunar_window_get_zoom_level (ThunarWindow *window)
+{
+  g_return_val_if_fail (THUNAR_IS_WINDOW (window), THUNAR_ZOOM_LEVEL_NORMAL);
+  return window->zoom_level;
+}
+
+
+
+/**
+ * thunar_window_set_zoom_level:
+ * @window     : a #ThunarWindow instance.
+ * @zoom_level : the new zoom level for @window.
+ *
+ * Sets the zoom level for @window to @zoom_level.
+ **/
+void
+thunar_window_set_zoom_level (ThunarWindow   *window,
+                              ThunarZoomLevel zoom_level)
+{
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  g_return_if_fail (zoom_level >= 0 && zoom_level < THUNAR_ZOOM_N_LEVELS);
+
+  /* check if we have a new zoom level */
+  if (G_LIKELY (window->zoom_level != zoom_level))
+    {
+      /* remember the new zoom level */
+      window->zoom_level = zoom_level;
+
+      /* update the "Zoom In" and "Zoom Out" actions */
+      thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-in", (zoom_level < THUNAR_ZOOM_N_LEVELS - 1));
+      thunar_gtk_action_group_set_action_sensitive (window->action_group, "zoom-out", (zoom_level > 0));
+
+      /* notify listeners */
+      g_object_notify (G_OBJECT (window), "zoom-level");
+    }
+}
 
 

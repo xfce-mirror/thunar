@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,6 +20,7 @@
 #ifndef __THUNAR_WINDOW_H__
 #define __THUNAR_WINDOW_H__
 
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-folder.h>
 
 G_BEGIN_DECLS;
@@ -34,13 +35,17 @@ typedef struct _ThunarWindow      ThunarWindow;
 #define THUNAR_IS_WINDOW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_WINDOW))
 #define THUNAR_WINDOW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_WINDOW, ThunarWindowClass))
 
-GType       thunar_window_get_type              (void) G_GNUC_CONST;
+GType           thunar_window_get_type              (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_window_new                   (void);
+GtkWidget      *thunar_window_new                   (void);
 
-ThunarFile *thunar_window_get_current_directory (ThunarWindow *window);
-void        thunar_window_set_current_directory (ThunarWindow *window,
-                                                 ThunarFile   *current_directory);
+ThunarFile     *thunar_window_get_current_directory (ThunarWindow   *window);
+void            thunar_window_set_current_directory (ThunarWindow   *window,
+                                                     ThunarFile     *current_directory);
+
+ThunarZoomLevel thunar_window_get_zoom_level        (ThunarWindow   *window);
+void            thunar_window_set_zoom_level        (ThunarWindow   *window,
+                                                     ThunarZoomLevel zoom_level);
 
 G_END_DECLS;
 

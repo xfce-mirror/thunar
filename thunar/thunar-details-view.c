@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -58,6 +58,7 @@ static void         thunar_details_view_row_activated       (GtkTreeView        
                                                              GtkTreePath            *path,
                                                              GtkTreeViewColumn      *column,
                                                              ThunarDetailsView      *details_view);
+static void         thunar_details_view_zoom_level_changed  (ThunarDetailsView      *details_view);
 
 
 
@@ -127,6 +128,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->scroll_to_path = thunar_details_view_scroll_to_path;
   thunarstandard_view_class->get_path_at_pos = thunar_details_view_get_path_at_pos;
   thunarstandard_view_class->highlight_path = thunar_details_view_highlight_path;
+  thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
 }
 
 
@@ -138,6 +140,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   GtkTreeSelection  *selection;
   GtkCellRenderer   *renderer;
   GtkWidget         *tree_view;
+
+  /* we need to force the GtkTreeView to recalculate column sizes
+   * whenever the zoom-level changes, so we connect a handler here.
+   */
+  g_signal_connect (G_OBJECT (details_view), "notify::zoom-level", G_CALLBACK (thunar_details_view_zoom_level_changed), NULL);
 
   /* create the tree view to embed */
   tree_view = gtk_tree_view_new ();
@@ -522,6 +529,40 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
   action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (details_view)->action_group, "open");
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
+}
+
+
+
+static void
+thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
+{
+  GList *columns;
+  GList *lp;
+
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  /* determine the list of tree view columns */
+  columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (GTK_BIN (details_view)->child));
+  for (lp = columns; lp != NULL; lp = lp->next)
+    {
+#if GTK_CHECK_VERSION(2,8,0)
+      /* just queue a resize on this column */
+      gtk_tree_view_column_queue_resize (lp->data);
+#else
+      /* determine the renderers for this column */
+      GList *renderers = gtk_tree_view_column_get_cell_renderers (lp->data);
+      if (G_LIKELY (renderers != NULL))
+        {
+          /* this is really an awfull hack, but it works! It forces GtkTreeView to recalculate
+           * the dimensions of this column, and that's all that matters. We don't use it with
+           * newer Gtk+ versions either, so what the f*ck...
+           */
+          gtk_tree_view_column_set_cell_data_func (lp->data, renderers->data, NULL, NULL, NULL);
+          g_list_free (renderers);
+        }
+#endif
+    }
+  g_list_free (columns);
 }
 
 
