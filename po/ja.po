@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-01-29 11:11+0900\n"
-"PO-Revision-Date: 2006-01-26 00:21+0900\n"
+"PO-Revision-Date: 2006-01-29 11:44+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -73,35 +73,37 @@ msgstr "「%s」のグループを変更するのに失敗しました: %s"
 msgid ""
 "The file `%s' already exists. Do you want to replace it with an empty file?"
 msgstr ""
+"ファイル「%s」は既に存在します。これを空のファイルで置き換えてもよろしいです"
+"か？"
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:199
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Unable to remove `%s'.\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
-"%s を削除できません。\n"
+"「%s」を削除できません。\n"
 "\n"
 "これを飛ばしますか？"
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:216
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Failed to create empty file `%s'.\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
-"%s を削除できません。\n"
+"空のファイル「%s」を作成するのに失敗しました。\n"
 "\n"
 "これを飛ばしますか？"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:262
 msgid "No Exec field specified"
-msgstr "実行コマンドが指定されていません。"
+msgstr "デスクトップファイルの「Exec」フィールドが指定されていません。"
 
 #: ../thunar-vfs/thunar-vfs-info.c:270
 msgid "Unable to parse file"
@@ -216,44 +218,37 @@ msgstr "無効なパスです。"
 msgid "Unknown user `%s'"
 msgstr "ユーザー「%s」は不明です。"
 
-# FIXME:
 #: ../thunar-vfs/thunar-vfs-xfer.c:157
 #, c-format
 msgid "copy of %s"
 msgstr "%s のコピー"
 
-# FIXME:
 #: ../thunar-vfs/thunar-vfs-xfer.c:158 ../thunar/thunar-list-model.c:713
 #: ../thunar/thunar-properties-dialog.c:647
 #, c-format
 msgid "link to %s"
 msgstr "%s へのリンク"
 
-# FIXME:
 #: ../thunar-vfs/thunar-vfs-xfer.c:161
 #, c-format
 msgid "another copy of %s"
 msgstr "%s の別のコピー"
 
-# FIXME:
 #: ../thunar-vfs/thunar-vfs-xfer.c:162
 #, c-format
 msgid "another link to %s"
 msgstr "%s への別のリンク"
 
-# FIXME:
 #: ../thunar-vfs/thunar-vfs-xfer.c:165
 #, c-format
 msgid "third copy of %s"
 msgstr "%s の 3 番目のコピー"
 
-# FIXME:
 #: ../thunar-vfs/thunar-vfs-xfer.c:166
 #, c-format
 msgid "third link to %s"
 msgstr "%s への 3 番目のリンク"
 
-# FIXME:
 #. if we had no match on the NAMES, try the "%uth copy of %s" pattern
 #: ../thunar-vfs/thunar-vfs-xfer.c:205 ../thunar-vfs/thunar-vfs-xfer.c:221
 #, c-format
@@ -261,7 +256,6 @@ msgid "%uth copy of %s"
 msgid_plural "%uth copy of %s"
 msgstr[0] "%2$s の %1$u 番目のコピー"
 
-# FIXME:
 #: ../thunar-vfs/thunar-vfs-xfer.c:223
 #, c-format
 msgid "%uth link to %s"
@@ -340,7 +334,6 @@ msgstr "特殊ファイル「%s」のコピーに失敗しました。"
 msgid "Failed to create symbolic `%s'"
 msgstr "リンク「%s」の作成に失敗しました。"
 
-# XXX: transliteration?
 #. setup application name
 #: ../thunar/main.c:48
 msgid "Thunar"
@@ -368,9 +361,8 @@ msgid "Deleting files..."
 msgstr "ファイルを削除しています..."
 
 #: ../thunar/thunar-application.c:622
-#, fuzzy
 msgid "Creating files..."
-msgstr "ファイルを集めています..."
+msgstr "ファイルを作成しています..."
 
 #: ../thunar/thunar-application.c:662
 msgid "Creating directories..."
@@ -1221,9 +1213,8 @@ msgstr "選択したファイルの名前を変更します。"
 
 #. add the "Create Document" sub menu action
 #: ../thunar/thunar-standard-view.c:484
-#, fuzzy
 msgid "Create _Document"
-msgstr "アクションを作成"
+msgstr "文書を作成(_D)"
 
 #: ../thunar/thunar-standard-view.c:919
 msgid "Loading folder contents..."
@@ -1232,12 +1223,11 @@ msgstr "フォルダの内容を読み込んでいます..."
 #. ask the user to enter a name for the new empty file
 #: ../thunar/thunar-standard-view.c:1374
 msgid "New Empty File"
-msgstr ""
+msgstr "新規ファイル"
 
 #: ../thunar/thunar-standard-view.c:1374
-#, fuzzy
 msgid "New Empty File..."
-msgstr "新規フォルダ..."
+msgstr "新規ファイル..."
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-standard-view.c:1425
@@ -1252,7 +1242,7 @@ msgstr "新規フォルダ..."
 #: ../thunar/thunar-standard-view.c:1474
 #, c-format
 msgid "Create Document from template \"%s\""
-msgstr ""
+msgstr "テンプレート「%s」から文書を作成"
 
 #: ../thunar/thunar-standard-view.c:1637
 #, c-format
@@ -1326,13 +1316,12 @@ msgstr "ステータスバーに表示されるメインテキストです。"
 #. tell the user that no templates were found
 #: ../thunar/thunar-templates-action.c:346
 msgid "No Templates installed"
-msgstr ""
+msgstr "テンプレートはインストールされていません"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:358
-#, fuzzy
 msgid "_Empty File"
-msgstr "コピー(_C)"
+msgstr "空のファイル(_E)"
 
 #: ../thunar/thunar-window.c:177
 msgid "_File"
@@ -1403,18 +1392,16 @@ msgid "_Home"
 msgstr "ホーム(_H)"
 
 #: ../thunar/thunar-window.c:188
-#, fuzzy
 msgid "Go to the home folder"
-msgstr "ホームフォルダを開きます。"
+msgstr "ホームフォルダに移動します。"
 
 #: ../thunar/thunar-window.c:189
 msgid "T_emplates"
-msgstr ""
+msgstr "テンプレート(_E)"
 
 #: ../thunar/thunar-window.c:189
-#, fuzzy
 msgid "Go to the templates folder"
-msgstr "次のフォルダに移動します。"
+msgstr "テンプレートフォルダに移動します。"
 
 #: ../thunar/thunar-window.c:190
 msgid "Open _Location..."
@@ -1509,11 +1496,12 @@ msgstr "ホームフォルダを開くのに失敗しました。"
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:1065
 msgid "About Templates"
-msgstr ""
+msgstr "テンプレートについて"
 
 #: ../thunar/thunar-window.c:1086
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
+"このフォルダにある全てのファイルはメニュー「文書を作成」に表示されます。"
 
 #: ../thunar/thunar-window.c:1093
 msgid ""
@@ -1524,16 +1512,19 @@ msgid ""
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
 msgstr ""
+"頻繁に作成する文書からテンプレートを作成する事ができます。このフォルダに文書"
+"をコピーすると、メニュー「文書を作成」にエントリーが作成されます。\n"
+"\n"
+"その後に「文書を作成」メニューからこのエントリーを選択してして下さい、御覧に"
+"なっているフォルダに文書のコピーが作成されます。"
 
 #: ../thunar/thunar-window.c:1105
-#, fuzzy
 msgid "Do _not display this message again"
-msgstr "再び尋ねない(_N)"
+msgstr "このメッセージを再び表示しない(_N)"
 
 #: ../thunar/thunar-window.c:1118
-#, fuzzy
 msgid "Failed to open templates folder"
-msgstr "上位のフォルダを開くのに失敗しました。"
+msgstr "テンプレートフォルダを開くのに失敗しました。"
 
 #: ../thunar/thunar-window.c:1209
 msgid ""
