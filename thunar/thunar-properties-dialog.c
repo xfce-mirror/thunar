@@ -96,6 +96,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *name_entry;
   GtkWidget              *kind_label;
   GtkWidget              *openwith_chooser;
+  GtkWidget              *link_label;
   GtkWidget              *modified_label;
   GtkWidget              *accessed_label;
   GtkWidget              *volume_image;
@@ -249,7 +250,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
 
   /*
-     Second box (kind, open with)
+     Second box (kind, open with, link target)
    */
   label = gtk_label_new (_("Kind:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
@@ -276,6 +277,19 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   exo_binding_new (G_OBJECT (dialog->openwith_chooser), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->openwith_chooser, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->openwith_chooser);
+
+  ++row;
+
+  label = gtk_label_new (_("Link Target:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  dialog->link_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
+  exo_binding_new (G_OBJECT (dialog->link_label), "visible", G_OBJECT (label), "visible");
+  gtk_table_attach (GTK_TABLE (table), dialog->link_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (dialog->link_label);
 
   ++row;
 
@@ -599,6 +613,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   const gchar       *name;
   GdkPixbuf         *icon;
   glong              offset;
+  gchar             *display_name;
   gchar             *size_string;
   gchar             *str;
 
@@ -654,6 +669,21 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   g_object_set (G_OBJECT (dialog->openwith_chooser),
                 "visible", (thunar_file_is_regular (dialog->file) && !thunar_file_is_executable (dialog->file)),
                 NULL);
+
+  /* update the link target */
+  str = thunar_file_is_symlink (dialog->file) ? thunar_file_read_link (dialog->file, NULL) : NULL;
+  if (G_UNLIKELY (str != NULL))
+    {
+      display_name = g_filename_display_name (str);
+      gtk_label_set_text (GTK_LABEL (dialog->link_label), display_name);
+      gtk_widget_show (dialog->link_label);
+      g_free (display_name);
+      g_free (str);
+    }
+  else
+    {
+      gtk_widget_hide (dialog->link_label);
+    }
 
   /* update the modified time */
   str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED);

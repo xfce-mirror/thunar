@@ -38,19 +38,12 @@ enum
 
 
 static void       thunar_templates_action_class_init        (ThunarTemplatesActionClass *klass);
-static void       thunar_templates_action_init              (ThunarTemplatesAction      *templates_action);
-static void       thunar_templates_action_finalize          (GObject                    *object);
 static GtkWidget *thunar_templates_action_create_menu_item  (GtkAction                  *action);
-static void       thunar_templates_action_build_menu        (ThunarTemplatesAction      *templates_action,
+static void       thunar_templates_action_fill_menu         (ThunarTemplatesAction      *templates_action,
+                                                             ThunarVfsPath              *templates_path,
                                                              GtkWidget                  *menu);
 static void       thunar_templates_action_menu_mapped       (GtkWidget                  *menu,
                                                              ThunarTemplatesAction      *templates_action);
-static void       thunar_templates_action_monitor           (ThunarVfsMonitor           *monitor,
-                                                             ThunarVfsMonitorHandle     *handle,
-                                                             ThunarVfsMonitorEvent       event,
-                                                             ThunarVfsPath              *handle_path,
-                                                             ThunarVfsPath              *event_path,
-                                                             gpointer                    user_data);
 
 
 
@@ -66,10 +59,6 @@ struct _ThunarTemplatesActionClass
 struct _ThunarTemplatesAction
 {
   GtkAction __parent__;
-
-  ThunarVfsMonitorHandle *templates_handle;
-  ThunarVfsMonitor       *templates_monitor;
-  ThunarVfsPath          *templates_path;
 };
 
 
@@ -96,7 +85,7 @@ thunar_templates_action_get_type (void)
         NULL,
         sizeof (ThunarTemplatesAction),
         0,
-        (GInstanceInitFunc) thunar_templates_action_init,
+        NULL,
         NULL,
       };
 
@@ -112,13 +101,9 @@ static void
 thunar_templates_action_class_init (ThunarTemplatesActionClass *klass)
 {
   GtkActionClass *gtkaction_class;
-  GObjectClass   *gobject_class;
 
   /* determine the parent type class */
   thunar_templates_action_parent_class = g_type_class_peek_parent (klass);
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_templates_action_finalize;
 
   gtkaction_class = GTK_ACTION_CLASS (klass);
   gtkaction_class->create_menu_item = thunar_templates_action_create_menu_item;
@@ -132,7 +117,7 @@ thunar_templates_action_class_init (ThunarTemplatesActionClass *klass)
    **/
   templates_action_signals[CREATE_EMPTY_FILE] =
     g_signal_new (I_("create-empty-file"),
-                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarTemplatesActionClass, create_empty_file),
                   NULL, NULL, g_cclosure_marshal_VOID__VOID,
@@ -149,44 +134,11 @@ thunar_templates_action_class_init (ThunarTemplatesActionClass *klass)
    **/
   templates_action_signals[CREATE_TEMPLATE] =
     g_signal_new (I_("create-template"),
-                  G_TYPE_FROM_CLASS (gobject_class),
+                  G_TYPE_FROM_CLASS (klass),
                   G_SIGNAL_RUN_LAST,
                   G_STRUCT_OFFSET (ThunarTemplatesActionClass, create_template),
                   NULL, NULL, g_cclosure_marshal_VOID__BOXED,
                   G_TYPE_NONE, 1, THUNAR_VFS_TYPE_INFO);
-}
-
-
-
-static void
-thunar_templates_action_init (ThunarTemplatesAction *templates_action)
-{
-  ThunarVfsPath *home_path;
-
-  /* determine the path to the ~/Templates directory */
-  home_path = thunar_vfs_path_get_for_home ();
-  templates_action->templates_path = thunar_vfs_path_relative (home_path, "Templates");
-  thunar_vfs_path_unref (home_path);
-}
-
-
-
-static void
-thunar_templates_action_finalize (GObject *object)
-{
-  ThunarTemplatesAction *templates_action = THUNAR_TEMPLATES_ACTION (object);
-
-  /* unregister from the monitor (if any) */
-  if (G_LIKELY (templates_action->templates_monitor != NULL))
-    {
-      thunar_vfs_monitor_remove (templates_action->templates_monitor, templates_action->templates_handle);
-      g_object_unref (G_OBJECT (templates_action->templates_monitor));
-    }
-
-  /* release the ~/Templates path */
-  thunar_vfs_path_unref (templates_action->templates_path);
-
-  (*G_OBJECT_CLASS (thunar_templates_action_parent_class)->finalize) (object);
 }
 
 
@@ -213,15 +165,24 @@ thunar_templates_action_create_menu_item (GtkAction *action)
 
 
 static gint
-info_compare (gconstpointer info_a,
-              gconstpointer info_b)
+info_compare (gconstpointer a,
+              gconstpointer b)
 {
-  gchar *name_a;
-  gchar *name_b;
-  gint   result;
+  const ThunarVfsInfo *info_a = a;
+  const ThunarVfsInfo *info_b = b;
+  gchar               *name_a;
+  gchar               *name_b;
+  gint                 result;
 
-  name_a = g_utf8_casefold (((ThunarVfsInfo *) info_a)->display_name, -1);
-  name_b = g_utf8_casefold (((ThunarVfsInfo *) info_b)->display_name, -1);
+  /* sort folders before files */
+  if (info_a->type == THUNAR_VFS_FILE_TYPE_DIRECTORY && info_b->type != THUNAR_VFS_FILE_TYPE_DIRECTORY)
+    return -1;
+  else if (info_a->type != THUNAR_VFS_FILE_TYPE_DIRECTORY && info_b->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+    return 1;
+
+  /* compare by name */
+  name_a = g_utf8_casefold (info_a->display_name, -1);
+  name_b = g_utf8_casefold (info_b->display_name, -1);
   result = g_utf8_collate (name_a, name_b);
   g_free (name_b);
   g_free (name_a);
@@ -251,14 +212,16 @@ item_activated (GtkWidget             *item,
 
 
 static void
-thunar_templates_action_build_menu (ThunarTemplatesAction *templates_action,
-                                    GtkWidget             *menu)
+thunar_templates_action_fill_menu (ThunarTemplatesAction *templates_action,
+                                   ThunarVfsPath         *templates_path,
+                                   GtkWidget             *menu)
 {
   ThunarVfsInfo *info;
   ThunarVfsPath *path;
   GtkIconTheme  *icon_theme;
   const gchar   *icon_name;
   const gchar   *name;
+  GtkWidget     *submenu;
   GtkWidget     *image;
   GtkWidget     *item;
   gchar         *absolute_path;
@@ -268,8 +231,8 @@ thunar_templates_action_build_menu (ThunarTemplatesAction *templates_action,
   GList         *lp;
   GDir          *dp;
 
-  /* try to open the ~/Templates directory */
-  absolute_path = thunar_vfs_path_dup_string (templates_action->templates_path);
+  /* try to open the templates (sub)directory */
+  absolute_path = thunar_vfs_path_dup_string (templates_path);
   dp = g_dir_open (absolute_path, 0, NULL);
   g_free (absolute_path);
 
@@ -287,7 +250,7 @@ thunar_templates_action_build_menu (ThunarTemplatesAction *templates_action,
             continue;
 
           /* determine the info for that file */
-          path = thunar_vfs_path_relative (templates_action->templates_path, name);
+          path = thunar_vfs_path_relative (templates_path, name);
           info = thunar_vfs_info_new_for_path (path, NULL);
           thunar_vfs_path_unref (path);
 
@@ -301,17 +264,21 @@ thunar_templates_action_build_menu (ThunarTemplatesAction *templates_action,
     }
 
   /* check if we have any infos */
-  if (G_LIKELY (info_list != NULL))
+  if (G_UNLIKELY (info_list == NULL))
+    return;
+
+  /* determine the icon theme for the menu */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (menu));
+
+  /* add menu items for all infos */
+  for (lp = info_list; lp != NULL; lp = lp->next)
     {
-      /* determine the icon theme for the mapped menu */
-      icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (menu));
+      /* determine the info */
+      info = lp->data;
 
-      /* add menu items for all infos */
-      for (lp = info_list; lp != NULL; lp = lp->next)
+      /* check if we have a regular file or a directory here */
+      if (G_LIKELY (info->type == THUNAR_VFS_FILE_TYPE_REGULAR))
         {
-          /* determine the info */
-          info = lp->data;
-
           /* generate a label by stripping off the extension */
           label = g_strdup (info->display_name);
           dot = g_utf8_strrchr (label, -1, '.');
@@ -320,7 +287,7 @@ thunar_templates_action_build_menu (ThunarTemplatesAction *templates_action,
 
           /* allocate a new menu item */
           item = gtk_image_menu_item_new_with_label (label);
-          g_object_set_data_full (G_OBJECT (item), I_("thunar-vfs-info"), info, (GDestroyNotify) thunar_vfs_info_unref);
+          g_object_set_data_full (G_OBJECT (item), I_("thunar-vfs-info"), thunar_vfs_info_ref (info), (GDestroyNotify) thunar_vfs_info_unref);
           g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (item_activated), templates_action);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_show (item);
@@ -336,11 +303,73 @@ thunar_templates_action_build_menu (ThunarTemplatesAction *templates_action,
           /* cleanup */
           g_free (label);
         }
+      else if (info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+        {
+          /* allocate a new submenu for the directory */
+          submenu = gtk_menu_new ();
+          exo_gtk_object_ref_sink (GTK_OBJECT (submenu));
+          gtk_menu_set_screen (GTK_MENU (submenu), gtk_widget_get_screen (menu));
 
-      /* release the info list itself */
-      g_list_free (info_list);
+          /* fill the submenu from the folder contents */
+          thunar_templates_action_fill_menu (templates_action, info->path, submenu);
+
+          /* check if any items were added to the submenu */
+          if (G_LIKELY (GTK_MENU_SHELL (submenu)->children != NULL))
+            {
+              /* hook up the submenu */
+              item = gtk_image_menu_item_new_with_label (info->display_name);
+              gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), submenu);
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_show (item);
+
+              /* lookup the icon for the mime type of that file */
+              icon_name = thunar_vfs_mime_info_lookup_icon_name (info->mime_info, icon_theme);
+
+              /* generate an image based on the named icon */
+              image = gtk_image_new_from_icon_name (icon_name, GTK_ICON_SIZE_MENU);
+              gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+              gtk_widget_show (image);
+            }
+
+          /* cleanup */
+          g_object_unref (G_OBJECT (submenu));
+        }
     }
-  else
+
+  /* release the info list */
+  thunar_vfs_info_list_free (info_list);
+}
+
+
+
+static void
+thunar_templates_action_menu_mapped (GtkWidget             *menu,
+                                     ThunarTemplatesAction *templates_action)
+{
+  ThunarVfsPath *templates_path;
+  ThunarVfsPath *home_path;
+  GtkWidget     *image;
+  GtkWidget     *item;
+  GList         *children;
+
+  g_return_if_fail (THUNAR_IS_TEMPLATES_ACTION (templates_action));
+  g_return_if_fail (GTK_IS_MENU_SHELL (menu));
+
+  /* drop all existing children of the menu first */
+  children = gtk_container_get_children (GTK_CONTAINER (menu));
+  g_list_foreach (children, (GFunc) gtk_widget_destroy, NULL);
+  g_list_free (children);
+
+  /* determine the path to the ~/Templates folder */
+  home_path = thunar_vfs_path_get_for_home ();
+  templates_path = thunar_vfs_path_relative (home_path, "Templates");
+  thunar_vfs_path_unref (home_path);
+
+  /* fill the menu with files/folders from the ~/Templates folder */
+  thunar_templates_action_fill_menu (templates_action, templates_path, menu);
+
+  /* check if any items were added to the menu */
+  if (G_UNLIKELY (GTK_MENU_SHELL (menu)->children == NULL))
     {
       /* tell the user that no templates were found */
       item = gtk_menu_item_new_with_label (_("No Templates installed"));
@@ -364,72 +393,9 @@ thunar_templates_action_build_menu (ThunarTemplatesAction *templates_action,
   image = gtk_image_new_from_stock (GTK_STOCK_NEW, GTK_ICON_SIZE_MENU);
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
   gtk_widget_show (image);
-}
 
-
-
-static void
-thunar_templates_action_menu_mapped (GtkWidget             *menu,
-                                     ThunarTemplatesAction *templates_action)
-{
-  g_return_if_fail (THUNAR_IS_TEMPLATES_ACTION (templates_action));
-  g_return_if_fail (GTK_IS_MENU_SHELL (menu));
-
-  /* check if we already added our children to the submenu */
-  if (G_LIKELY (GTK_MENU_SHELL (menu)->children != NULL))
-    return;
-
-  /* generate the menu */
-  thunar_templates_action_build_menu (templates_action, menu);
-
-  /* check if we're already monitoring ~/Templates for changes */
-  if (G_UNLIKELY (templates_action->templates_monitor == NULL))
-    {
-      /* grab a reference on the VFS monitor */
-      templates_action->templates_monitor = thunar_vfs_monitor_get_default ();
-      templates_action->templates_handle = thunar_vfs_monitor_add_directory (templates_action->templates_monitor,
-                                                                             templates_action->templates_path,
-                                                                             thunar_templates_action_monitor,
-                                                                             templates_action);
-    }
-}
-
-
-
-static void
-thunar_templates_action_monitor (ThunarVfsMonitor       *monitor,
-                                 ThunarVfsMonitorHandle *handle,
-                                 ThunarVfsMonitorEvent   event,
-                                 ThunarVfsPath          *handle_path,
-                                 ThunarVfsPath          *event_path,
-                                 gpointer                user_data)
-{
-  ThunarTemplatesAction *templates_action = THUNAR_TEMPLATES_ACTION (user_data);
-  GtkWidget             *menu;
-  GSList                *lp;
-  GList                 *children;
-
-  g_return_if_fail (THUNAR_IS_TEMPLATES_ACTION (templates_action));
-  g_return_if_fail (templates_action->templates_monitor == monitor);
-  g_return_if_fail (templates_action->templates_handle == handle);
-
-  /* clear all menus for all menu proxies (will be rebuild on-demand) */
-  for (lp = gtk_action_get_proxies (GTK_ACTION (templates_action)); lp != NULL; lp = lp->next)
-    if (G_LIKELY (GTK_IS_MENU_ITEM (lp->data)))
-      {
-        menu = gtk_menu_item_get_submenu (GTK_MENU_ITEM (lp->data));
-        if (G_UNLIKELY (menu == NULL))
-          continue;
-
-        /* we clear the menu */
-        children = gtk_container_get_children (GTK_CONTAINER (menu));
-        g_list_foreach (children, (GFunc) gtk_widget_destroy, NULL);
-        g_list_free (children);
-
-        /* regenerate it if its currently mapped */
-        if (G_UNLIKELY (GTK_WIDGET_MAPPED (menu)))
-          thunar_templates_action_build_menu (templates_action, menu);
-      }
+  /* cleanup */
+  thunar_vfs_path_unref (templates_path);
 }
 
 

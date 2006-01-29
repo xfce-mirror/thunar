@@ -193,6 +193,38 @@ thunar_vfs_info_copy (const ThunarVfsInfo *info)
 
 
 /**
+ * thunar_vfs_info_read_link:
+ * @info  : a #ThunarVfsInfo.
+ * @error : return location for errors or %NULL.
+ *
+ * Reads the contents of the symbolic link to which @info refers to,
+ * like the POSIX readlink() function. The returned string is in the
+ * encoding used for filenames.
+ *
+ * Return value: a newly allocated string with the contents of the
+ *               symbolic link, or %NULL if an error occurred.
+ **/
+gchar*
+thunar_vfs_info_read_link (const ThunarVfsInfo *info,
+                           GError             **error)
+{
+  gchar absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
+
+  g_return_val_if_fail (info != NULL, NULL);
+  g_return_val_if_fail (info->ref_count > 0, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* determine the absolute path */
+  if (thunar_vfs_path_to_string (info->path, absolute_path, sizeof (absolute_path), error) < 0)
+    return NULL;
+
+  /* determine the link target */
+  return g_file_read_link (absolute_path, error);
+}
+
+
+
+/**
  * thunar_vfs_info_execute:
  * @info      : a #ThunarVfsInfo.
  * @screen    : a #GdkScreen or %NULL to use the default #GdkScreen.
@@ -220,7 +252,7 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
   gboolean       terminal;
   gboolean       result = FALSE;
   XfceRc        *rc;
-  gchar          absolute_path[PATH_MAX + 1];
+  gchar          absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
   gchar         *working_directory;
   gchar         *path_escaped;
   gchar        **argv = NULL;

@@ -207,6 +207,9 @@ static inline gboolean           thunar_file_is_regular           (const ThunarF
 static inline gboolean           thunar_file_is_root              (const ThunarFile       *file);
 static inline gboolean           thunar_file_is_symlink           (const ThunarFile       *file);
 
+static inline gchar             *thunar_file_read_link            (const ThunarFile       *file,
+                                                                   GError                **error) G_GNUC_MALLOC;
+
 
 ThunarFile                      *thunar_file_cache_lookup         (const ThunarVfsPath    *path);
 
@@ -485,6 +488,24 @@ thunar_file_is_symlink (const ThunarFile *file)
 {
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   return ((file->info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0);
+}
+
+/**
+ * thunar_file_read_link:
+ * @file  : a #ThunarFile instance.
+ * @error : return location for errors or %NULL.
+ *
+ * Simple wrapper to thunar_vfs_info_read_link().
+ *
+ * Return value: the link target of @file or %NULL
+ *               if an error occurred.
+ **/
+static inline gchar*
+thunar_file_read_link (const ThunarFile *file,
+                       GError          **error)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return thunar_vfs_info_read_link (file->info, error);
 }
 
 

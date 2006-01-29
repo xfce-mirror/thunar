@@ -102,6 +102,9 @@ ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsIn
 
 G_INLINE_FUNC const gchar   *thunar_vfs_info_get_custom_icon  (const ThunarVfsInfo *info);
 
+gchar                       *thunar_vfs_info_read_link        (const ThunarVfsInfo *info,
+                                                               GError             **error) G_GNUC_MALLOC;
+
 gboolean                     thunar_vfs_info_execute          (const ThunarVfsInfo *info,
                                                                GdkScreen           *screen,
                                                                GList               *path_list,

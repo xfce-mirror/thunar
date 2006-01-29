@@ -1,3 +1,15 @@
+2006-01-29	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-templates-action.c: Add support for sub folders below
+	  the ~/Templates folder. This fixes reopened bug #1391.
+	* thunar-vfs/thunar-vfs.symbols, thunar-vfs/thunar-vfs-info.{c,h}: Add
+	  thunar_vfs_info_read_link(), which determines the target from a
+	  symbolic link.
+	* thunar/thunar-file.h: Add method thunar_file_read_link() as wrapper
+	  to thunar_vfs_info_read_link().
+	* thunar/thunar-properties-dialog.c: Display the "Link Target" for
+	  symbolic links. This fixes bug #1394.
+
 2006-01-28	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-chmod-job.c(thunar_vfs_chmod_job_execute),
