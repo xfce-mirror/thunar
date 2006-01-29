@@ -199,21 +199,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPreferences:last-location-bar:
-   *
-   * The name of the widget class, which should be used for the
-   * location bar in #ThunarWindow<!---->s or "void" to hide the
-   * location bar.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_LAST_LOCATION_BAR,
-                                   g_param_spec_string ("last-location-bar",
-                                                        "last-location-bar",
-                                                        "last-location-bar",
-                                                        "ThunarLocationButtons",
-                                                        EXO_PARAM_READWRITE));
-
-  /**
    * ThunarPreferences:last-details-view-zoom-level:
    *
    * The last selected #ThunarZoomLevel for the #ThunarDetailsView.
@@ -240,6 +225,21 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                       THUNAR_TYPE_ZOOM_LEVEL,
                                                       THUNAR_ZOOM_LEVEL_NORMAL,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-location-bar:
+   *
+   * The name of the widget class, which should be used for the
+   * location bar in #ThunarWindow<!---->s or "void" to hide the
+   * location bar.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_LOCATION_BAR,
+                                   g_param_spec_string ("last-location-bar",
+                                                        "last-location-bar",
+                                                        "last-location-bar",
+                                                        "ThunarLocationButtons",
+                                                        EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:last-side-pane:
