@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-28 23:55+0100\n"
+"POT-Creation-Date: 2006-01-29 11:11+0900\n"
 "PO-Revision-Date: 2006-01-26 00:21+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -66,6 +66,37 @@ msgstr "「%s」の所有者を変更するのに失敗しました: %s"
 #, c-format
 msgid "Failed to change file group of `%s': %s"
 msgstr "「%s」のグループを変更するのに失敗しました: %s"
+
+#. ask the user whether to override this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:188
+#, c-format
+msgid ""
+"The file `%s' already exists. Do you want to replace it with an empty file?"
+msgstr ""
+
+#. ask the user whether to skip this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:199
+#, fuzzy, c-format
+msgid ""
+"Unable to remove `%s'.\n"
+"\n"
+"Do you want to skip it?"
+msgstr ""
+"%s を削除できません。\n"
+"\n"
+"これを飛ばしますか？"
+
+#. ask the user whether to skip this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:216
+#, fuzzy, c-format
+msgid ""
+"Failed to create empty file `%s'.\n"
+"\n"
+"Do you want to skip it?"
+msgstr ""
+"%s を削除できません。\n"
+"\n"
+"これを飛ばしますか？"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:262
@@ -1291,6 +1322,17 @@ msgstr "ステータスバーのテキスト"
 #: ../thunar/thunar-statusbar.c:788
 msgid "The main text to be displayed in the statusbar"
 msgstr "ステータスバーに表示されるメインテキストです。"
+
+#. tell the user that no templates were found
+#: ../thunar/thunar-templates-action.c:346
+msgid "No Templates installed"
+msgstr ""
+
+#. add the "Empty File" item
+#: ../thunar/thunar-templates-action.c:358
+#, fuzzy
+msgid "_Empty File"
+msgstr "コピー(_C)"
 
 #: ../thunar/thunar-window.c:177
 msgid "_File"

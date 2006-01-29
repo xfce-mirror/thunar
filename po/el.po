@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-28 23:55+0100\n"
+"POT-Creation-Date: 2006-01-29 11:11+0900\n"
 "PO-Revision-Date: 2005-12-04 23:18+0900\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -61,6 +61,37 @@ msgstr "Η προσθήκη της εφαρμογής `%s' απέτυχε."
 #, fuzzy, c-format
 msgid "Failed to change file group of `%s': %s"
 msgstr "Η προσθήκη της εφαρμογής `%s' απέτυχε."
+
+#. ask the user whether to override this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:188
+#, c-format
+msgid ""
+"The file `%s' already exists. Do you want to replace it with an empty file?"
+msgstr ""
+
+#. ask the user whether to skip this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:199
+#, fuzzy, c-format
+msgid ""
+"Unable to remove `%s'.\n"
+"\n"
+"Do you want to skip it?"
+msgstr ""
+"Δεν ήταν δυνατή η διαγραφή του %s.\n"
+"\n"
+"Θέλετε να το προσπεράσετε;"
+
+#. ask the user whether to skip this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:216
+#, fuzzy, c-format
+msgid ""
+"Failed to create empty file `%s'.\n"
+"\n"
+"Do you want to skip it?"
+msgstr ""
+"Δεν ήταν δυνατή η διαγραφή του %s.\n"
+"\n"
+"Θέλετε να το προσπεράσετε;"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:262
@@ -1291,6 +1322,17 @@ msgstr "Κείμενο μπάρας κατάστασης"
 #: ../thunar/thunar-statusbar.c:788
 msgid "The main text to be displayed in the statusbar"
 msgstr "Το κυρίως κείμενο που θα εμφανίζεται στη μπάρα κατάστασης"
+
+#. tell the user that no templates were found
+#: ../thunar/thunar-templates-action.c:346
+msgid "No Templates installed"
+msgstr ""
+
+#. add the "Empty File" item
+#: ../thunar/thunar-templates-action.c:358
+#, fuzzy
+msgid "_Empty File"
+msgstr "_Αντιγραφή Αρχείου"
 
 #: ../thunar/thunar-window.c:177
 msgid "_File"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-28 23:55+0100\n"
+"POT-Creation-Date: 2006-01-29 11:11+0900\n"
 "PO-Revision-Date: 2006-01-13 14:21+0100\n"
 "Last-Translator: Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -59,6 +59,37 @@ msgstr "Nie udało się zmienić praw dostępu do '%s'"
 #, fuzzy, c-format
 msgid "Failed to change file group of `%s': %s"
 msgstr "Nie udało się zmienić praw dostępu do '%s'"
+
+#. ask the user whether to override this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:188
+#, c-format
+msgid ""
+"The file `%s' already exists. Do you want to replace it with an empty file?"
+msgstr ""
+
+#. ask the user whether to skip this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:199
+#, fuzzy, c-format
+msgid ""
+"Unable to remove `%s'.\n"
+"\n"
+"Do you want to skip it?"
+msgstr ""
+"Nie można usunąć %s.\n"
+"\n"
+"Czy chcesz go pominąć?"
+
+#. ask the user whether to skip this path
+#: ../thunar-vfs/thunar-vfs-creat-job.c:216
+#, fuzzy, c-format
+msgid ""
+"Failed to create empty file `%s'.\n"
+"\n"
+"Do you want to skip it?"
+msgstr ""
+"Nie można usunąć %s.\n"
+"\n"
+"Czy chcesz go pominąć?"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:262
@@ -1307,6 +1338,17 @@ msgstr "Tekst paska statusu"
 #: ../thunar/thunar-statusbar.c:788
 msgid "The main text to be displayed in the statusbar"
 msgstr "Tekst wyświetlany w pasku statusu"
+
+#. tell the user that no templates were found
+#: ../thunar/thunar-templates-action.c:346
+msgid "No Templates installed"
+msgstr ""
+
+#. add the "Empty File" item
+#: ../thunar/thunar-templates-action.c:358
+#, fuzzy
+msgid "_Empty File"
+msgstr "S_kopiuj plik"
 
 #: ../thunar/thunar-window.c:177
 msgid "_File"
