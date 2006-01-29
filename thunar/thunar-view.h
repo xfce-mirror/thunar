@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -47,6 +47,8 @@ struct _ThunarViewIface
   GtkUIManager *(*get_ui_manager)     (ThunarView   *view);
   void          (*set_ui_manager)     (ThunarView   *view,
                                        GtkUIManager *ui_manager);
+
+  void          (*reload)             (ThunarView   *view);
 };
 
 GType         thunar_view_get_type           (void) G_GNUC_CONST;
@@ -61,6 +63,8 @@ void          thunar_view_set_show_hidden    (ThunarView   *view,
 GtkUIManager *thunar_view_get_ui_manager     (ThunarView   *view);
 void          thunar_view_set_ui_manager     (ThunarView   *view,
                                               GtkUIManager *ui_manager);
+
+void          thunar_view_reload             (ThunarView   *view);
 
 G_END_DECLS;
 

@@ -1,5 +1,25 @@
 2006-01-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-list-model.c(thunar_list_model_files_removed): Fix bug
+	  where only the first file was removed.
+	* thunar/thunar-folder.{c,h}: Add new method thunar_folder_reload(),
+	  which explicitly forces the ThunarFolder to reload its contents.
+	  This fixes bug #1360.
+	* thunar/thunar-view.{c,h}: Add new method thunar_view_reload() to the
+	  ThunarView interface.
+	* thunar/thunar-standard-view.c: Implement thunar_view_reload() for the
+	  ThunarStandardView class, using the newly added thunar_folder_reload()
+	  method.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Add a "Reload"
+	  item to the "View" menu, using "Ctrl+R" as accelerator to stay com-
+	  patible with Firefox, Nautilus, etc. This fixes bug #1361.
+	* thunar/thunar-standard-view.c
+	  (thunar_standard_view_drag_data_received): Reload the contents of the
+	  target folder after a successful XDirectSave. This fixes bug #1362.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+
+2006-01-29	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-templates-action.c: Add support for sub folders below
 	  the ~/Templates folder. This fixes reopened bug #1391.
 	* thunar-vfs/thunar-vfs.symbols, thunar-vfs/thunar-vfs-info.{c,h}: Add

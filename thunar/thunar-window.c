@@ -77,6 +77,8 @@ static void     thunar_window_action_close                (GtkAction          *a
                                                            ThunarWindow       *window);
 static void     thunar_window_action_preferences          (GtkAction          *action,
                                                            ThunarWindow       *window);
+static void     thunar_window_action_reload               (GtkAction          *action,
+                                                           ThunarWindow       *window);
 static void     thunar_window_action_location_bar_changed (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
                                                            ThunarWindow       *window);
@@ -181,6 +183,7 @@ static const GtkActionEntry action_entries[] =
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
   { "preferences", GTK_STOCK_PREFERENCES, N_ ("Pr_eferences..."), NULL, N_ ("Edit Thunars Preferences"), G_CALLBACK (thunar_window_action_preferences), },
   { "view-menu", NULL, N_ ("_View"), NULL, },
+  { "reload", GTK_STOCK_REFRESH, N_ ("_Reload"), "<control>R", N_ ("Reload the current folder"), G_CALLBACK (thunar_window_action_reload), },
   { "view-location-selector-menu", NULL, N_ ("_Location Selector"), NULL, },
   { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
@@ -778,6 +781,20 @@ thunar_window_action_preferences (GtkAction    *action,
   /* allocate and display a preferences dialog */
   dialog = thunar_preferences_dialog_new (GTK_WINDOW (window));
   gtk_widget_show (dialog);
+}
+
+
+
+static void
+thunar_window_action_reload (GtkAction    *action,
+                             ThunarWindow *window)
+{
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* force the view to reload */
+  if (G_LIKELY (window->view != NULL))
+    thunar_view_reload (THUNAR_VIEW (window->view));
 }
 
 

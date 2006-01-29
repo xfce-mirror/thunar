@@ -93,6 +93,7 @@ struct _ThunarFolder
   ThunarVfsJob           *job;
 
   ThunarFile             *corresponding_file;
+  GList                  *previous_files;
   GList                  *files;
 
   GClosure               *file_destroy_closure;
@@ -260,7 +261,15 @@ thunar_folder_finalize (GObject *object)
       g_object_unref (G_OBJECT (folder->corresponding_file));
     }
 
-  /* release references to the files */
+  /* drop all previous files (if any) */
+  if (G_UNLIKELY (folder->previous_files != NULL))
+    {
+      /* actually drop the list of previous files */
+      g_list_foreach (folder->previous_files, (GFunc) g_object_unref, NULL);
+      g_list_free (folder->previous_files);
+    }
+
+  /* release references to the current files */
   for (lp = folder->files; lp != NULL; lp = lp->next)
     {
       g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
@@ -321,6 +330,7 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
 {
   ThunarFile *file;
   GList      *nfiles = NULL;
+  GList      *fp;
   GList      *lp;
 
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
@@ -328,18 +338,50 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
   g_return_if_fail (folder->handle == NULL);
   g_return_if_fail (folder->job == job);
 
-  /* add the new files to our temporary list of new files */
-  for (lp = infos; lp != NULL; lp = lp->next)
+  /* check if we have any previous files */
+  if (G_UNLIKELY (folder->previous_files != NULL))
     {
-      /* get the file corresponding to the info */
-      file = thunar_file_get_for_info (lp->data);
+      /* for every new info, check if we already have it on the previous list */
+      for (lp = infos; lp != NULL; lp = lp->next)
+        {
+          /* get the file corresponding to the info */
+          file = thunar_file_get_for_info (lp->data);
 
-      /* add the file to the temporary list of new files */
-      nfiles = g_list_prepend (nfiles, file);
+          /* check if we have that file on the previous list */
+          fp = g_list_find (folder->previous_files, file);
+          if (G_LIKELY (fp != NULL))
+            {
+              /* move it back to the current list */
+              folder->previous_files = g_list_delete_link (folder->previous_files, fp);
+              folder->files = g_list_prepend (folder->files, file);
+              g_object_unref (G_OBJECT (file));
+            }
+          else
+            {
+              /* yep, that's a new file then */
+              nfiles = g_list_prepend (nfiles, file);
+            }
 
-      /* connect the "destroy" signal */
-      g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id,
-                                      0, folder->file_destroy_closure, TRUE);
+          /* connect the "destroy" signal */
+          g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id,
+                                          0, folder->file_destroy_closure, TRUE);
+        }
+    }
+  else
+    {
+      /* add the new files to our temporary list of new files */
+      for (lp = infos; lp != NULL; lp = lp->next)
+        {
+          /* get the file corresponding to the info */
+          file = thunar_file_get_for_info (lp->data);
+
+          /* add the file to the temporary list of new files */
+          nfiles = g_list_prepend (nfiles, file);
+
+          /* connect the "destroy" signal */
+          g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id,
+                                          0, folder->file_destroy_closure, TRUE);
+        }
     }
 
   /* check if we have any new files */
@@ -365,17 +407,29 @@ thunar_folder_finished (ThunarVfsJob *job,
   g_return_if_fail (folder->handle == NULL);
   g_return_if_fail (folder->job == job);
 
+  /* check if we have any previous files */
+  if (G_UNLIKELY (folder->previous_files != NULL))
+    {
+      /* emit a "files-removed" signal for the previous files */
+      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, folder->previous_files);
+
+      /* actually drop the list of previous files */
+      g_list_foreach (folder->previous_files, (GFunc) g_object_unref, NULL);
+      g_list_free (folder->previous_files);
+      folder->previous_files = NULL;
+    }
+
   /* we did it, the folder is loaded */
   g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
   g_object_unref (G_OBJECT (folder->job));
   folder->job = NULL;
 
-  /* tell the consumers that we have loaded the directory */
-  g_object_notify (G_OBJECT (folder), "loading");
-
   /* add us to the file alteration monitor */
   folder->handle = thunar_vfs_monitor_add_directory (folder->monitor, thunar_file_get_path (folder->corresponding_file),
                                                      thunar_folder_monitor, folder);
+
+  /* tell the consumers that we have loaded the directory */
+  g_object_notify (G_OBJECT (folder), "loading");
 }
 
 
@@ -549,10 +603,7 @@ thunar_folder_get_for_file (ThunarFile *file)
       g_object_set_qdata (G_OBJECT (file), thunar_folder_quark, folder);
 
       /* schedule the loading of the folder */
-      folder->job = thunar_vfs_listdir (thunar_file_get_path (file), NULL);
-      g_signal_connect (folder->job, "error", G_CALLBACK (thunar_folder_error), folder);
-      g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
-      g_signal_connect (folder->job, "infos-ready", G_CALLBACK (thunar_folder_infos_ready), folder);
+      thunar_folder_reload (folder);
     }
 
   return folder;
@@ -613,6 +664,66 @@ thunar_folder_get_loading (const ThunarFolder *folder)
 {
   g_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
   return (folder->job != NULL);
+}
+
+
+
+/**
+ * thunar_folder_reload:
+ * @folder : a #ThunarFolder instance.
+ *
+ * Tells the @folder object to reread the directory
+ * contents from the underlying media.
+ **/
+void
+thunar_folder_reload (ThunarFolder *folder)
+{
+  GList *lp;
+
+  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+
+  /* check if we are currently connect to a job */
+  if (G_UNLIKELY (folder->job != NULL))
+    {
+      /* disconnect from the job */
+      g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      g_object_unref (G_OBJECT (folder->job));
+    }
+
+  /* disconnect from the file alteration monitor */
+  if (G_UNLIKELY (folder->handle != NULL))
+    {
+      thunar_vfs_monitor_remove (folder->monitor, folder->handle);
+      folder->handle = NULL;
+    }
+
+  /* drop all previous files (if any) */
+  if (G_UNLIKELY (folder->previous_files != NULL))
+    {
+      /* actually drop the list of previous files */
+      g_list_foreach (folder->previous_files, (GFunc) g_object_unref, NULL);
+      g_list_free (folder->previous_files);
+    }
+
+  /* disconnect signals from the current files */
+  for (lp = folder->files; lp != NULL; lp = lp->next)
+    {
+      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
+                                            folder->file_destroy_id, 0, folder->file_destroy_closure, NULL, NULL);
+    }
+
+  /* remember the current files as previous files */
+  folder->previous_files = folder->files;
+  folder->files = NULL;
+
+  /* start a new job */
+  folder->job = thunar_vfs_listdir (thunar_file_get_path (folder->corresponding_file), NULL);
+  g_signal_connect (folder->job, "error", G_CALLBACK (thunar_folder_error), folder);
+  g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
+  g_signal_connect (folder->job, "infos-ready", G_CALLBACK (thunar_folder_infos_ready), folder);
+
+  /* tell all consumers that we're loading */
+  g_object_notify (G_OBJECT (folder), "loading");
 }
 
 

@@ -1298,13 +1298,17 @@ thunar_list_model_files_removed (ThunarFolder    *folder,
             iter.stamp = store->stamp;
             iter.user_data = row;
             thunar_list_model_remove (store, &iter, FALSE);
-            return;
+            break;
           }
 
-      /* file is hidden */
-      g_assert (g_list_find (store->hidden, file) != NULL);
-      store->hidden = g_list_remove (store->hidden, file);
-      g_object_unref (G_OBJECT (file));
+      /* check if the file was found */
+      if (G_UNLIKELY (row == NULL))
+        {
+          /* file is hidden */
+          g_assert (g_list_find (store->hidden, file) != NULL);
+          store->hidden = g_list_remove (store->hidden, file);
+          g_object_unref (G_OBJECT (file));
+        }
     }
 }
 

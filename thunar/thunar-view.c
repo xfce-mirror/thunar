@@ -244,3 +244,19 @@ thunar_view_set_ui_manager (ThunarView   *view,
 
 
 
+/**
+ * thunar_view_reload:
+ * @view : a #ThunarView instance.
+ *
+ * Tells @view to reread the currently displayed folder
+ * contents from the underlying media.
+ **/
+void
+thunar_view_reload (ThunarView *view)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+  (*THUNAR_VIEW_GET_IFACE (view)->reload) (view);
+}
+
+
+

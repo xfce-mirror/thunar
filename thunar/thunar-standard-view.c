@@ -109,6 +109,7 @@ static void          thunar_standard_view_set_show_hidden           (ThunarView 
 static GtkUIManager *thunar_standard_view_get_ui_manager            (ThunarView               *view);
 static void          thunar_standard_view_set_ui_manager            (ThunarView               *view,
                                                                      GtkUIManager             *ui_manager);
+static void          thunar_standard_view_reload                    (ThunarView               *view);
 static gboolean      thunar_standard_view_delete_selected_files     (ThunarStandardView       *standard_view);
 static GdkDragAction thunar_standard_view_get_dest_actions          (ThunarStandardView       *standard_view,
                                                                      GdkDragContext           *context,
@@ -433,6 +434,7 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
   iface->set_show_hidden = thunar_standard_view_set_show_hidden;
   iface->get_ui_manager = thunar_standard_view_get_ui_manager;
   iface->set_ui_manager = thunar_standard_view_set_ui_manager;
+  iface->reload = thunar_standard_view_reload;
 }
 
 
@@ -1018,6 +1020,20 @@ thunar_standard_view_set_ui_manager (ThunarView   *view,
 
   /* let others know that we have a new manager */
   g_object_notify (G_OBJECT (view), "ui-manager");
+}
+
+
+
+static void
+thunar_standard_view_reload (ThunarView *view)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  ThunarFolder       *folder;
+
+  /* determine the folder for the view model */
+  folder = thunar_list_model_get_folder (standard_view->model);
+  if (G_LIKELY (folder != NULL))
+    thunar_folder_reload (folder);
 }
 
 
@@ -2123,6 +2139,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
 {
   GdkDragAction actions;
   GdkDragAction action;
+  ThunarFolder *folder;
   ThunarFile   *file = NULL;
   gboolean      succeed = FALSE;
 
@@ -2157,7 +2174,22 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
             }
           else if (G_LIKELY (selection_data->format == 8 && selection_data->length == 1 && selection_data->data[0] == 'S'))
             {
-              // FIXME: Reload the folder contents!
+              /* XDS was successfull, so determine the file for the drop position */
+              file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
+              if (G_LIKELY (file != NULL))
+                {
+                  /* verify that we have a directory here */
+                  if (thunar_file_is_directory (file))
+                    {
+                      /* reload the folder corresponding to the file */
+                      folder = thunar_folder_get_for_file (file);
+                      thunar_folder_reload (folder);
+                      g_object_unref (G_OBJECT (folder));
+                    }
+
+                  /* cleanup */
+                  g_object_unref (G_OBJECT (file));
+                }
             }
 
           /* in either case, we succeed! */
