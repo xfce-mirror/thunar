@@ -2123,6 +2123,16 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
         }
     }
 
+  /* zoom-in/zoom-out on control+mouse wheel */
+  if ((event->state & GDK_CONTROL_MASK) != 0 && (event->direction == GDK_SCROLL_UP || event->direction == GDK_SCROLL_DOWN))
+    {
+      thunar_view_set_zoom_level (THUNAR_VIEW (standard_view),
+          (event->direction == GDK_SCROLL_UP)
+          ? MIN (standard_view->priv->zoom_level + 1, THUNAR_ZOOM_N_LEVELS - 1)
+          : MAX (standard_view->priv->zoom_level, 1) - 1);
+      return TRUE;
+    }
+
   /* next please... */
   return FALSE;
 }
