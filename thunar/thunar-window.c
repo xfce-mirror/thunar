@@ -38,6 +38,7 @@
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-throbber.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-stock.h>
 #include <thunar/thunar-window.h>
@@ -58,6 +59,7 @@ enum
 /* Signal identifiers */
 enum
 {
+  RELOAD,
   ZOOM_IN,
   ZOOM_OUT,
   LAST_SIGNAL,
@@ -77,6 +79,7 @@ static void     thunar_window_set_property                (GObject            *o
                                                            guint               prop_id,
                                                            const GValue       *value,
                                                            GParamSpec         *pspec);
+static gboolean thunar_window_reload                      (ThunarWindow       *window);
 static gboolean thunar_window_zoom_in                     (ThunarWindow       *window);
 static gboolean thunar_window_zoom_out                    (ThunarWindow       *window);
 static void     thunar_window_realize                     (GtkWidget          *widget);
@@ -99,6 +102,8 @@ static void     thunar_window_action_location_bar_changed (GtkRadioAction     *a
                                                            ThunarWindow       *window);
 static void     thunar_window_action_side_pane_changed    (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_statusbar_changed    (GtkToggleAction    *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_zoom_in              (GtkAction          *action,
                                                            ThunarWindow       *window);
@@ -150,6 +155,7 @@ struct _ThunarWindowClass
   GtkWindowClass __parent__;
 
   /* internal action signals */
+  gboolean (*reload)   (ThunarWindow *window);
   gboolean (*zoom_in)  (ThunarWindow *window);
   gboolean (*zoom_out) (ThunarWindow *window);
 };
@@ -174,8 +180,9 @@ struct _ThunarWindow
   /* closures for the menu_item_selected()/menu_item_deselected() callbacks */
   GClosure               *menu_item_selected_closure;
   GClosure               *menu_item_deselected_closure;
-  guint                   menu_item_tooltip_id;
 
+  GtkWidget              *table;
+  GtkWidget              *throbber;
   GtkWidget              *paned;
   GtkWidget              *view_container;
   GtkWidget              *view;
@@ -228,7 +235,8 @@ static const GtkActionEntry action_entries[] =
 
 static const GtkToggleActionEntry toggle_action_entries[] =
 {
-  { "show-hidden", NULL, N_("Show _Hidden Files"), "<control>H", N_("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_window_action_show_hidden), FALSE, },
+  { "show-hidden", NULL, N_ ("Show _Hidden Files"), "<control>H", N_ ("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_window_action_show_hidden), FALSE, },
+  { "view-statusbar", NULL, N_ ("St_atusbar"), NULL, N_ ("Change the visibility of this window's statusbar"), G_CALLBACK (thunar_window_action_statusbar_changed), FALSE, },
 };
 
 
@@ -288,6 +296,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   gtkwidget_class->unrealize = thunar_window_unrealize;
   gtkwidget_class->configure_event = thunar_window_configure_event;
 
+  klass->reload = thunar_window_reload;
   klass->zoom_in = thunar_window_zoom_in;
   klass->zoom_out = thunar_window_zoom_out;
 
@@ -349,6 +358,23 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                       EXO_PARAM_READWRITE));
 
   /**
+   * ThunarWindow::reload:
+   * @window : a #ThunarWindow instance.
+   *
+   * Emitted whenever the user requests to reload the contents
+   * of the currently displayed folder. This is an internal
+   * signal used to bind the action to keys.
+   **/
+  window_signals[RELOAD] =
+    g_signal_new (I_("reload"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarWindowClass, reload),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /**
    * ThunarWindow::zoom-in:
    * @window : a #ThunarWindow instance.
    *
@@ -382,6 +408,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
   /* setup the key bindings for the windows */
   binding_set = gtk_binding_set_by_class (klass);
+  gtk_binding_entry_add_signal (binding_set, GDK_F5, 0, "reload", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
 }
@@ -394,10 +421,11 @@ thunar_window_init (ThunarWindow *window)
   GtkRadioAction *radio_action;
   GtkAccelGroup  *accel_group;
   GtkAction      *action;
-  GtkWidget      *vbox;
   GtkWidget      *menubar;
-  GtkWidget      *box;
+  GtkWidget      *vbox;
+  GtkWidget      *item;
   gboolean        show_hidden;
+  gboolean        statusbar_visible;
   GSList         *group;
   gchar          *type_name;
   GType           type;
@@ -506,54 +534,45 @@ thunar_window_init (ThunarWindow *window)
   g_object_get (G_OBJECT (window->preferences), "last-window-width", &width, "last-window-height", &height, NULL);
   gtk_window_set_default_size (GTK_WINDOW (window), width, height);
 
-  vbox = gtk_vbox_new (FALSE, 0);
-  gtk_container_add (GTK_CONTAINER (window), vbox);
-  gtk_widget_show (vbox);
+  window->table = gtk_table_new (4, 1, FALSE);
+  gtk_container_add (GTK_CONTAINER (window), window->table);
+  gtk_widget_show (window->table);
 
   menubar = gtk_ui_manager_get_widget (window->ui_manager, "/main-menu");
-  gtk_box_pack_start (GTK_BOX (vbox), menubar, FALSE, FALSE, 0);
+  gtk_table_attach (GTK_TABLE (window->table), menubar, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (menubar);
 
+  /* append the menu item for the throbber */
+  item = gtk_menu_item_new ();
+  gtk_widget_set_sensitive (GTK_WIDGET (item), FALSE);
+  gtk_menu_item_set_right_justified (GTK_MENU_ITEM (item), TRUE);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menubar), item);
+  gtk_widget_show (item);
+
+  /* place the throbber into the menu item */
+  window->throbber = thunar_throbber_new ();
+  gtk_container_add (GTK_CONTAINER (item), window->throbber);
+  gtk_widget_show (window->throbber);
+
   window->location_toolbar_box = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
-  gtk_box_pack_start (GTK_BOX (vbox), window->location_toolbar_box, FALSE, FALSE, 0);
+  gtk_table_attach (GTK_TABLE (window->table), window->location_toolbar_box, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (window->location_toolbar_box);
 
   window->paned = g_object_new (GTK_TYPE_HPANED, "border-width", 6, NULL);
-  gtk_box_pack_start (GTK_BOX (vbox), window->paned, TRUE, TRUE, 0);
+  gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (window->paned);
 
-  box = gtk_vbox_new (FALSE, 6);
-  gtk_paned_pack2 (GTK_PANED (window->paned), box, TRUE, FALSE);
-  gtk_widget_show (box);
+  vbox = gtk_vbox_new (FALSE, 6);
+  gtk_paned_pack2 (GTK_PANED (window->paned), vbox, TRUE, FALSE);
+  gtk_widget_show (vbox);
 
   window->location_standalone_box = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
-  gtk_box_pack_start (GTK_BOX (box), window->location_standalone_box, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), window->location_standalone_box, FALSE, FALSE, 0);
   gtk_widget_show (window->location_standalone_box);
 
   window->view_container = gtk_alignment_new (0.5f, 0.5f, 1.0f, 1.0f);
-  gtk_box_pack_start (GTK_BOX (box), window->view_container, TRUE, TRUE, 0);
+  gtk_box_pack_start (GTK_BOX (vbox), window->view_container, TRUE, TRUE, 0);
   gtk_widget_show (window->view_container);
-
-  window->statusbar = thunar_statusbar_new ();
-  g_signal_connect_swapped (G_OBJECT (window->statusbar), "change-directory",
-                            G_CALLBACK (thunar_window_set_current_directory), window);
-  exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->statusbar), "current-directory");
-  gtk_box_pack_start (GTK_BOX (vbox), window->statusbar, FALSE, FALSE, 0);
-  gtk_widget_show (window->statusbar);
-
-  /* allocate a statusbar context for displaying tooltips of the selected menu item */
-  window->menu_item_tooltip_id = gtk_statusbar_get_context_id (GTK_STATUSBAR (window->statusbar), "menu-item-tooltip");
-
-  /* determine the selected side pane */
-  g_object_get (G_OBJECT (window->preferences), "last-side-pane", &type_name, NULL);
-  type = g_type_from_name (type_name);
-  g_free (type_name);
-
-  /* activate the selected side pane */
-  action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
-  exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), g_type_is_a (type, THUNAR_TYPE_SIDE_PANE) ? type : G_TYPE_NONE);
-  g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_side_pane_changed), window);
-  thunar_window_action_side_pane_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 
   /* determine the selected location bar */
   g_object_get (G_OBJECT (window->preferences), "last-location-bar", &type_name, NULL);
@@ -566,10 +585,26 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_location_bar_changed), window);
   thunar_window_action_location_bar_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 
+  /* determine the selected side pane */
+  g_object_get (G_OBJECT (window->preferences), "last-side-pane", &type_name, NULL);
+  type = g_type_from_name (type_name);
+  g_free (type_name);
+
+  /* activate the selected side pane */
+  action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
+  exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), g_type_is_a (type, THUNAR_TYPE_SIDE_PANE) ? type : G_TYPE_NONE);
+  g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_side_pane_changed), window);
+  thunar_window_action_side_pane_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
+
   /* determine the default view */
   g_object_get (G_OBJECT (window->preferences), "default-view", &type_name, NULL);
   type = g_type_from_name (type_name);
   g_free (type_name);
+
+  /* check if we should display the statusbar by default */
+  g_object_get (G_OBJECT (window->preferences), "last-statusbar-visible", &statusbar_visible, NULL);
+  action = gtk_action_group_get_action (window->action_group, "view-statusbar");
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), statusbar_visible);
 
   /* determine the last selected view if we don't have a valid default */
   if (!g_type_is_a (type, THUNAR_TYPE_VIEW))
@@ -705,6 +740,23 @@ thunar_window_set_property (GObject            *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static gboolean
+thunar_window_reload (ThunarWindow *window)
+{
+  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* force the view to reload */
+  if (G_LIKELY (window->view != NULL))
+    {
+      thunar_view_reload (THUNAR_VIEW (window->view));
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 
@@ -919,12 +971,13 @@ static void
 thunar_window_action_reload (GtkAction    *action,
                              ThunarWindow *window)
 {
+  gboolean result;
+
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* force the view to reload */
-  if (G_LIKELY (window->view != NULL))
-    thunar_view_reload (THUNAR_VIEW (window->view));
+  g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, &result);
 }
 
 
@@ -1061,6 +1114,43 @@ thunar_window_action_side_pane_changed (GtkRadioAction *action,
 
 
 static void
+thunar_window_action_statusbar_changed (GtkToggleAction *action,
+                                        ThunarWindow    *window)
+{
+  gboolean active;
+
+  g_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the new state of the action */
+  active = gtk_toggle_action_get_active (action);
+  
+  /* check if we should drop the statusbar */
+  if (!active && window->statusbar != NULL)
+    {
+      /* just get rid of the statusbar */
+      gtk_widget_destroy (window->statusbar);
+      window->statusbar = NULL;
+    }
+  else if (active && window->statusbar == NULL)
+    {
+      /* setup a new statusbar */
+      window->statusbar = thunar_statusbar_new ();
+      gtk_table_attach (GTK_TABLE (window->table), window->statusbar, 0, 1, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_widget_show (window->statusbar);
+
+      /* connect to the view (if any) */
+      if (G_LIKELY (window->view != NULL))
+        exo_binding_new (G_OBJECT (window->view), "statusbar-text", G_OBJECT (window->statusbar), "text");
+    }
+
+  /* remember the setting */
+  g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", active, NULL);
+}
+
+
+
+static void
 thunar_window_action_zoom_in (GtkAction    *action,
                               ThunarWindow *window)
 {
@@ -1127,17 +1217,21 @@ thunar_window_action_view_changed (GtkRadioAction *action,
   /* allocate a new view of the requested type */
   if (G_LIKELY (type != G_TYPE_NONE))
     {
+      /* allocate and setup a new view */
       window->view = g_object_new (type, "ui-manager", window->ui_manager, NULL);
       g_signal_connect (G_OBJECT (window->view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
       g_signal_connect_swapped (G_OBJECT (window->view), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
       exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->view), "current-directory");
       exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->view), "show-hidden");
-      exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->statusbar), "loading");
-      exo_binding_new (G_OBJECT (window->view), "statusbar-text", G_OBJECT (window->statusbar), "text");
+      exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->throbber), "animated");
       exo_mutual_binding_new (G_OBJECT (window->view), "zoom-level", G_OBJECT (window), "zoom-level");
       gtk_container_add (GTK_CONTAINER (window->view_container), window->view);
       gtk_widget_grab_focus (window->view);
       gtk_widget_show (window->view);
+
+      /* connect to the statusbar (if any) */
+      if (G_LIKELY (window->statusbar != NULL))
+        exo_binding_new (G_OBJECT (window->view), "statusbar-text", G_OBJECT (window->statusbar), "text");
     }
   else
     {
@@ -1487,18 +1581,24 @@ thunar_window_menu_item_selected (GtkWidget    *menu_item,
 {
   GtkAction *action;
   gchar     *tooltip;
+  gint       id;
 
-  /* determine the action for the menu item */
-  action = g_object_get_data (G_OBJECT (menu_item), I_("gtk-action"));
-  if (G_UNLIKELY (action == NULL))
-    return;
-
-  /* determine the tooltip from the action */
-  g_object_get (G_OBJECT (action), "tooltip", &tooltip, NULL);
-  if (G_LIKELY (tooltip != NULL))
+  /* we can only display tooltips if we have a statusbar */
+  if (G_LIKELY (window->statusbar != NULL))
     {
-      gtk_statusbar_push (GTK_STATUSBAR (window->statusbar), window->menu_item_tooltip_id, tooltip);
-      g_free (tooltip);
+      /* determine the action for the menu item */
+      action = g_object_get_data (G_OBJECT (menu_item), I_("gtk-action"));
+      if (G_UNLIKELY (action == NULL))
+        return;
+
+      /* determine the tooltip from the action */
+      g_object_get (G_OBJECT (action), "tooltip", &tooltip, NULL);
+      if (G_LIKELY (tooltip != NULL))
+        {
+          id = gtk_statusbar_get_context_id (GTK_STATUSBAR (window->statusbar), "Menu tooltip");
+          gtk_statusbar_push (GTK_STATUSBAR (window->statusbar), id, tooltip);
+          g_free (tooltip);
+        }
     }
 }
 
@@ -1508,8 +1608,15 @@ static void
 thunar_window_menu_item_deselected (GtkWidget    *menu_item,
                                     ThunarWindow *window)
 {
-  /* drop the last tooltip from the statusbar */
-  gtk_statusbar_pop (GTK_STATUSBAR (window->statusbar), window->menu_item_tooltip_id);
+  gint id;
+
+  /* we can only undisplay tooltips if we have a statusbar */
+  if (G_LIKELY (window->statusbar != NULL))
+    {
+      /* drop the last tooltip from the statusbar */
+      id = gtk_statusbar_get_context_id (GTK_STATUSBAR (window->statusbar), "Menu tooltip");
+      gtk_statusbar_pop (GTK_STATUSBAR (window->statusbar), id);
+    }
 }
 
 

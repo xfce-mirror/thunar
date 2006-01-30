@@ -118,6 +118,8 @@ Thunar_SOURCES =							\
 	thunar-templates-action.h					\
 	thunar-text-renderer.c						\
 	thunar-text-renderer.h						\
+	thunar-throbber.c						\
+	thunar-throbber.h						\
 	thunar-thumbnail-frame.c					\
 	thunar-thumbnail-frame.h					\
 	thunar-thumbnail-generator.c					\

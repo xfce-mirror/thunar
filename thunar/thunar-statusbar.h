@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +20,7 @@
 #ifndef __THUNAR_STATUSBAR_H__
 #define __THUNAR_STATUSBAR_H__
 
-#include <thunar/thunar-navigator.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS;
 
@@ -38,8 +38,6 @@ GType      thunar_statusbar_get_type    (void) G_GNUC_CONST;
 
 GtkWidget *thunar_statusbar_new         (void);
 
-void       thunar_statusbar_set_loading (ThunarStatusbar *statusbar,
-                                         gboolean         loading);
 void       thunar_statusbar_set_text    (ThunarStatusbar *statusbar,
                                          const gchar     *text);
 

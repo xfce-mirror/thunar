@@ -1,5 +1,22 @@
 2006-01-30	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/Makefile.am, thunar/thunar-throbber.{c,h}: Import the
+	  ThunarThrobber widget class, which display a loading animation
+	  similar to the one found in Firefox.
+	* thunar/thunar-statusbar.{c,h}: Drop the statusbar icon, as it's
+	  confusing, since it refers to the current folder instead of the
+	  selected items, but the text displayed in the statusbar refers to the
+	  selected items.
+	* thunar/thunar-window.c: Add a ThunarThrobber to the menu bar, and use
+	  it to display loading animation instead of the statusbar icon.
+	* thunar/thunar-window.c: Add additional reload shortcut GDK_F5.
+	* docs/README.thunarrc, thunar/thunar-preferences.c,
+	  thunar/thunar-window-ui.xml, thunar/thunar-window.c: The statusbar
+	  is optional now. Bug #1395.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+
+2006-01-30	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Add ru translations.
 	* THANKS: Add ru translator credits for Andrey Fedoseev
 	  <andrey.fedoseev@gmail.com>.

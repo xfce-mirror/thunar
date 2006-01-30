@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-29 20:04+0100\n"
+"POT-Creation-Date: 2006-01-30 15:14+0100\n"
 "PO-Revision-Date: 2006-01-29 11:44+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -737,7 +737,7 @@ msgstr "開く位置を指定して下さい"
 msgid "_Location:"
 msgstr "フォルダの位置(_L):"
 
-#: ../thunar/thunar-location-entry.c:326 ../thunar/thunar-window.c:1355
+#: ../thunar/thunar-location-entry.c:326 ../thunar/thunar-window.c:1449
 #, c-format
 msgid "Failed to launch `%s'"
 msgstr "「%s」の実行に失敗しました。"
@@ -1302,22 +1302,6 @@ msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "削除(_D)"
 
-#: ../thunar/thunar-statusbar.c:773
-msgid "Loading"
-msgstr "読み込み"
-
-#: ../thunar/thunar-statusbar.c:774
-msgid "Whether to display a loading animation"
-msgstr "読み込みの際のアニメーションを表示するかどうかを表します。"
-
-#: ../thunar/thunar-statusbar.c:787
-msgid "Statusbar text"
-msgstr "ステータスバーのテキスト"
-
-#: ../thunar/thunar-statusbar.c:788
-msgid "The main text to be displayed in the statusbar"
-msgstr "ステータスバーに表示されるメインテキストです。"
-
 #. tell the user that no templates were found
 #: ../thunar/thunar-templates-action.c:375
 msgid "No Templates installed"
@@ -1328,220 +1312,229 @@ msgstr "テンプレートはインストールされていません"
 msgid "_Empty File"
 msgstr "空のファイル(_E)"
 
-#: ../thunar/thunar-window.c:207
+#: ../thunar/thunar-window.c:214
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: ../thunar/thunar-window.c:208
+#: ../thunar/thunar-window.c:215
 msgid "Open New _Window"
 msgstr "新規ウィンドウを開く(_W)"
 
-#: ../thunar/thunar-window.c:208
+#: ../thunar/thunar-window.c:215
 msgid "Open a new Thunar window for the displayed location"
 msgstr "表示されている場所のウィンドウを新しく開きます。"
 
-#: ../thunar/thunar-window.c:209
+#: ../thunar/thunar-window.c:216
 msgid "Close _All Windows"
 msgstr "全ウィンドウを閉じる(_A)"
 
-#: ../thunar/thunar-window.c:209
+#: ../thunar/thunar-window.c:216
 msgid "Close all Thunar windows"
 msgstr "Thunar の全てのウィンドウを閉じます。"
 
-#: ../thunar/thunar-window.c:210
+#: ../thunar/thunar-window.c:217
 msgid "_Close"
 msgstr "閉じる(_C)"
 
-#: ../thunar/thunar-window.c:210
+#: ../thunar/thunar-window.c:217
 msgid "Close this window"
 msgstr "このウィンドウを閉じます。"
 
-#: ../thunar/thunar-window.c:211
+#: ../thunar/thunar-window.c:218
 msgid "_Edit"
 msgstr "編集(_E)"
 
-#: ../thunar/thunar-window.c:212
+#: ../thunar/thunar-window.c:219
 msgid "Pr_eferences..."
 msgstr "環境設定(_P)..."
 
-#: ../thunar/thunar-window.c:212
+#: ../thunar/thunar-window.c:219
 msgid "Edit Thunars Preferences"
 msgstr "Thunar の環境設定を変更します。"
 
-#: ../thunar/thunar-window.c:213
+#: ../thunar/thunar-window.c:220
 msgid "_View"
 msgstr "表示(_V)"
 
-#: ../thunar/thunar-window.c:214
+#: ../thunar/thunar-window.c:221
 msgid "_Reload"
 msgstr ""
 
-#: ../thunar/thunar-window.c:214
+#: ../thunar/thunar-window.c:221
 #, fuzzy
 msgid "Reload the current folder"
 msgstr "上の階層にあるフォルダを開きます。"
 
-#: ../thunar/thunar-window.c:215
+#: ../thunar/thunar-window.c:222
 msgid "_Location Selector"
 msgstr "位置セレクター(_L)"
 
-#: ../thunar/thunar-window.c:216
+#: ../thunar/thunar-window.c:223
 msgid "_Side Pane"
 msgstr "サイドペイン(_S)"
 
-#: ../thunar/thunar-window.c:217
+#: ../thunar/thunar-window.c:224
 msgid "Zoom _In"
 msgstr ""
 
-#: ../thunar/thunar-window.c:217
+#: ../thunar/thunar-window.c:224
 msgid "Show the contents in more detail"
 msgstr ""
 
-#: ../thunar/thunar-window.c:218
+#: ../thunar/thunar-window.c:225
 msgid "Zoom _Out"
 msgstr ""
 
-#: ../thunar/thunar-window.c:218
+#: ../thunar/thunar-window.c:225
 msgid "Show the contents in less detail"
 msgstr ""
 
-#: ../thunar/thunar-window.c:219
+#: ../thunar/thunar-window.c:226
 msgid "Normal Si_ze"
 msgstr ""
 
-#: ../thunar/thunar-window.c:219
+#: ../thunar/thunar-window.c:226
 msgid "Show the contents at the normal size"
 msgstr ""
 
-#: ../thunar/thunar-window.c:220
+#: ../thunar/thunar-window.c:227
 msgid "_Go"
 msgstr "移動(_G)"
 
-#: ../thunar/thunar-window.c:221
+#: ../thunar/thunar-window.c:228
 msgid "Open _Parent"
 msgstr "上位フォルダを開く(_P)"
 
-#: ../thunar/thunar-window.c:221
+#: ../thunar/thunar-window.c:228
 msgid "Open the parent folder"
 msgstr "上の階層にあるフォルダを開きます。"
 
-#: ../thunar/thunar-window.c:222
+#: ../thunar/thunar-window.c:229
 msgid "_Home"
 msgstr "ホーム(_H)"
 
-#: ../thunar/thunar-window.c:222
+#: ../thunar/thunar-window.c:229
 msgid "Go to the home folder"
 msgstr "ホームフォルダに移動します。"
 
-#: ../thunar/thunar-window.c:223
+#: ../thunar/thunar-window.c:230
 msgid "T_emplates"
 msgstr "テンプレート(_E)"
 
-#: ../thunar/thunar-window.c:223
+#: ../thunar/thunar-window.c:230
 msgid "Go to the templates folder"
 msgstr "テンプレートフォルダに移動します。"
 
-#: ../thunar/thunar-window.c:224
+#: ../thunar/thunar-window.c:231
 msgid "Open _Location..."
 msgstr "指定位置を開く(_L)..."
 
-#: ../thunar/thunar-window.c:224
+#: ../thunar/thunar-window.c:231
 msgid "Specify a location to open"
 msgstr "フォルダの位置を指定して開きます。"
 
-#: ../thunar/thunar-window.c:225
+#: ../thunar/thunar-window.c:232
 msgid "_Help"
 msgstr "ヘルプ(_H)"
 
-#: ../thunar/thunar-window.c:226
+#: ../thunar/thunar-window.c:233
 msgid "_About"
 msgstr "このプログラムについて(_A)"
 
-#: ../thunar/thunar-window.c:226
+#: ../thunar/thunar-window.c:233
 msgid "Display information about Thunar"
 msgstr "Thunar についての情報を表示します。"
 
-#: ../thunar/thunar-window.c:231
+#: ../thunar/thunar-window.c:238
 msgid "Show _Hidden Files"
 msgstr "隠しファイルを表示(_H)"
 
-#: ../thunar/thunar-window.c:231
+#: ../thunar/thunar-window.c:238
 msgid "Toggles the display of hidden files in the current window"
 msgstr "現在のウィンドウで隠しファイルの表示/非表示を切り替えます。"
+
+#: ../thunar/thunar-window.c:239
+#, fuzzy
+msgid "St_atusbar"
+msgstr "ステータスバーのテキスト"
+
+#: ../thunar/thunar-window.c:239
+msgid "Change the visibility of this window's statusbar"
+msgstr ""
 
 #.
 #. * add the side pane options
 #.
-#: ../thunar/thunar-window.c:444
+#: ../thunar/thunar-window.c:472
 msgid "_Shortcuts"
 msgstr "ショートカット(_S)"
 
-#: ../thunar/thunar-window.c:450 ../thunar/thunar-window.c:473
+#: ../thunar/thunar-window.c:478 ../thunar/thunar-window.c:501
 msgid "_Hidden"
 msgstr "表示しない(_H)"
 
 #.
 #. * add the location selector options
 #.
-#: ../thunar/thunar-window.c:459
+#: ../thunar/thunar-window.c:487
 msgid "_Pathbar Style"
 msgstr "パスボタン方式(_T)"
 
-#: ../thunar/thunar-window.c:460
+#: ../thunar/thunar-window.c:488
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "フォルダに対応するボタンを表示する今風の表示方式です。"
 
-#: ../thunar/thunar-window.c:466
+#: ../thunar/thunar-window.c:494
 msgid "_Toolbar Style"
 msgstr "ツールバー方式(_T)"
 
-#: ../thunar/thunar-window.c:467
+#: ../thunar/thunar-window.c:495
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "位置バーおよびナビゲーションボタンを表示する旧来の表示方式です。"
 
-#: ../thunar/thunar-window.c:473
+#: ../thunar/thunar-window.c:501
 msgid "Don't display any location selector"
 msgstr "いずれの位置セレクターも表示しません。"
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:482
+#: ../thunar/thunar-window.c:510
 msgid "View as _Icons"
 msgstr "アイコン表示(_I)"
 
-#: ../thunar/thunar-window.c:482
+#: ../thunar/thunar-window.c:510
 msgid "Display folder content in an icon view"
 msgstr "フォルダの内容をアイコンで表示します。"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:517
 msgid "View as _Detailed List"
 msgstr "詳細リスト表示(_D)"
 
-#: ../thunar/thunar-window.c:489
+#: ../thunar/thunar-window.c:517
 msgid "Display folder content in a detailed list view"
 msgstr "フォルダの内容を詳細なリストで表示します。"
 
-#: ../thunar/thunar-window.c:1169
+#: ../thunar/thunar-window.c:1263
 msgid "Failed to open parent folder"
 msgstr "上位のフォルダを開くのに失敗しました。"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1195
+#: ../thunar/thunar-window.c:1289
 msgid "Failed to open home directory"
 msgstr "ホームフォルダを開くのに失敗しました。"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:1257
+#: ../thunar/thunar-window.c:1351
 msgid "About Templates"
 msgstr "テンプレートについて"
 
-#: ../thunar/thunar-window.c:1278
+#: ../thunar/thunar-window.c:1372
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "このフォルダにある全てのファイルはメニュー「文書を作成」に表示されます。"
 
-#: ../thunar/thunar-window.c:1285
+#: ../thunar/thunar-window.c:1379
 msgid ""
 "You can create templates from documents that you frequently create. For this "
 "to work, copy a document into this folder and Thunar will have an entry for "
@@ -1556,15 +1549,15 @@ msgstr ""
 "その後に「文書を作成」メニューからこのエントリーを選択してして下さい、御覧に"
 "なっているフォルダに文書のコピーが作成されます。"
 
-#: ../thunar/thunar-window.c:1297
+#: ../thunar/thunar-window.c:1391
 msgid "Do _not display this message again"
 msgstr "このメッセージを再び表示しない(_N)"
 
-#: ../thunar/thunar-window.c:1310
+#: ../thunar/thunar-window.c:1404
 msgid "Failed to open templates folder"
 msgstr "テンプレートフォルダを開くのに失敗しました。"
 
-#: ../thunar/thunar-window.c:1401
+#: ../thunar/thunar-window.c:1495
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -1572,7 +1565,7 @@ msgstr ""
 "Thunar は Xfce デスクトップ環境向けの\n"
 "使いやすい軽快なファイルマネージャーです。"
 
-#: ../thunar/thunar-window.c:1406
+#: ../thunar/thunar-window.c:1500
 msgid "translator-credits"
 msgstr "Daichi Kawahata <daichi@xfce.org>"
 
@@ -1884,3 +1877,12 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
+
+#~ msgid "Loading"
+#~ msgstr "読み込み"
+
+#~ msgid "Whether to display a loading animation"
+#~ msgstr "読み込みの際のアニメーションを表示するかどうかを表します。"
+
+#~ msgid "The main text to be displayed in the statusbar"
+#~ msgstr "ステータスバーに表示されるメインテキストです。"

@@ -55,6 +55,7 @@ enum
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_SIDE_PANE,
+  PROP_LAST_STATUSBAR_VISIBLE,
   PROP_LAST_VIEW,
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
@@ -255,6 +256,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         "last-side-pane",
                                                         "ThunarShortcutsPane",
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-statusbar-visible:
+   *
+   * Whether to display a statusbar in new windows by default.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_STATUSBAR_VISIBLE,
+                                   g_param_spec_boolean ("last-statusbar-visible",
+                                                         "last-statusbar-visible",
+                                                         "last-statusbar-visible",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:last-view:
