@@ -1376,10 +1376,10 @@ thunar_window_action_open_templates (GtkAction    *action,
           gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
           gtk_widget_show (label);
 
-          label = gtk_label_new (_("You can create templates from documents that you "
-                                   "frequently create. For this to work, copy a "
-                                   "document into this folder and Thunar will have an "
-                                   "entry for it in the \"Create Document\" menu.\n\n"
+          label = gtk_label_new (_("If you frequently create certain kinds of documents, "
+                                   "make a copy of one and put it in this folder. Thunar "
+                                   "will add an entry for this document in the \"Create "
+                                   "Document\" menu.\n\n"
                                    "You can then select the entry from the \"Create "
                                    "Document\" menu and a copy of the document will "
                                    "be created in the directory you are viewing."));
