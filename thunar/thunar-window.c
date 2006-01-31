@@ -1488,8 +1488,8 @@ thunar_window_action_about (GtkAction    *action,
   logo = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/Thunar/Thunar-about-logo.png", NULL);
 
   /* open the about dialog */
-  gtk_about_dialog_set_email_hook ((gpointer) exo_noop, NULL, NULL);
-  gtk_about_dialog_set_url_hook ((gpointer) exo_noop, NULL, NULL);
+  gtk_about_dialog_set_email_hook (exo_url_about_dialog_hook, NULL, NULL);
+  gtk_about_dialog_set_url_hook (exo_url_about_dialog_hook, NULL, NULL);
   gtk_show_about_dialog (GTK_WINDOW (window),
                          "authors", authors,
                          "comments", _("Thunar is a fast and easy to use file manager\nfor the Xfce Desktop Environment."),

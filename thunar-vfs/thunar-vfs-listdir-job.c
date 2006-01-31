@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -203,6 +203,9 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
 
               /* run the task */
               thunar_vfs_listdir_job_task (&task);
+
+              /* use the new first item as list head */
+              list = task.first;
             }
         }
       else
@@ -314,6 +317,8 @@ thunar_vfs_listdir_job_task (ThunarVfsListdirJobTask *task)
     {
       if (G_LIKELY (tp->prev != NULL))
         tp->prev->next = NULL;
+      else
+        task->first = NULL;
       g_list_free (tp);
     }
 }

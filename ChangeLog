@@ -1,5 +1,15 @@
 2006-01-31	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in: Depend on exo 0.3.1.3.
+	* thunar-vfs/thunar-vfs-listdir-job.c: Make sure the list head always
+	  points to a valid ThunarVfsInfo list, even if an error occurred while
+	  stat()'ing files in a given directory. Bug #1390.
+	* thunar/thunar-window.c(thunar_window_action_about): Use the newly
+	  added exo_url_about_dialog_hook() functions to open links in the
+	  about dialog.
+
+2006-01-31	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-standard-view.c(thunar_standard_view_scroll_event): Add
 	  support to zoom in/out using Control+MouseWheel.
 
