@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -96,18 +96,7 @@ thunar_vfs_exec_parse (const gchar *exec,
 
   /* prepend terminal command if required */
   if (G_UNLIKELY (terminal))
-    {
-      g_string_append (command_line, "Terminal ");
-      if (G_LIKELY (name != NULL))
-        {
-          quoted = g_shell_quote (name);
-          g_string_append (command_line, "-T ");
-          g_string_append (command_line, quoted);
-          g_string_append_c (command_line, ' ');
-          g_free (quoted);
-        }
-      g_string_append (command_line, "-x ");
-    }
+    g_string_append (command_line, "exo-open --launch TerminalEmulator ");
 
   for (p = exec; *p != '\0'; ++p)
     {

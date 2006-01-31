@@ -1,5 +1,10 @@
 2006-01-31	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-exec.c(thunar_vfs_exec_parse): Use exo-open
+	  instead of hardcoding Terminal as terminal emulator. Bug #1400.
+
+2006-01-31	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Depend on exo 0.3.1.3.
 	* thunar-vfs/thunar-vfs-listdir-job.c: Make sure the list head always
 	  points to a valid ThunarVfsInfo list, even if an error occurred while
