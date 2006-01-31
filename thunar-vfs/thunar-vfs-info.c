@@ -248,6 +248,8 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
   ThunarVfsPath *parent;
   const gchar   *icon;
   const gchar   *name;
+  const gchar   *type;
+  const gchar   *url;
   gboolean       startup_notify = FALSE;
   gboolean       terminal;
   gboolean       result = FALSE;
@@ -277,21 +279,52 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
       rc = xfce_rc_simple_open (absolute_path, TRUE);
       if (G_LIKELY (rc != NULL))
         {
-          /* check if we have a valid Exec field */
-          exec = (gchar *) xfce_rc_read_entry_untranslated (rc, "Exec", NULL);
-          if (G_LIKELY (exec != NULL))
+          /* we're only interested in [Desktop Entry] */
+          xfce_rc_set_group (rc, "Desktop Entry");
+
+          /* check if we have an application or a link here */
+          type = xfce_rc_read_entry_untranslated (rc, "Type", "Application");
+          if (G_LIKELY (exo_str_is_equal (type, "Application")))
             {
-              /* parse the Exec field */
-              name = xfce_rc_read_entry (rc, "Name", NULL);
-              icon = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
-              terminal = xfce_rc_read_bool_entry (rc, "Terminal", FALSE);
-              startup_notify = xfce_rc_read_bool_entry (rc, "StartupNotify", FALSE) || xfce_rc_read_bool_entry (rc, "X-KDE-StartupNotify", FALSE);
-              result = thunar_vfs_exec_parse (exec, path_list, icon, name, absolute_path, terminal, NULL, &argv, error);
+              /* check if we have a valid Exec field */
+              exec = (gchar *) xfce_rc_read_entry_untranslated (rc, "Exec", NULL);
+              if (G_LIKELY (exec != NULL))
+                {
+                  /* parse the Exec field */
+                  name = xfce_rc_read_entry (rc, "Name", NULL);
+                  icon = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
+                  terminal = xfce_rc_read_bool_entry (rc, "Terminal", FALSE);
+                  startup_notify = xfce_rc_read_bool_entry (rc, "StartupNotify", FALSE) || xfce_rc_read_bool_entry (rc, "X-KDE-StartupNotify", FALSE);
+                  result = thunar_vfs_exec_parse (exec, path_list, icon, name, absolute_path, terminal, NULL, &argv, error);
+                }
+              else
+                {
+                  /* TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is. */
+                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No Exec field specified"));
+                }
+            }
+          else if (exo_str_is_equal (type, "Link"))
+            {
+              /* check if we have a valid URL field */
+              url = xfce_rc_read_entry_untranslated (rc, "URL", NULL);
+              if (G_LIKELY (url != NULL))
+                {
+                  /* pass the URL to exo-open, which will fire up the appropriate viewer */
+                  argv = g_new (gchar *, 3);
+                  argv[0] = g_strdup ("exo-open");
+                  argv[1] = g_strdup (url);
+                  argv[2] = NULL;
+                  result = TRUE;
+                }
+              else
+                {
+                  /* TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is. */
+                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No URL field specified"));
+                }
             }
           else
             {
-              /* TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is. */
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("No Exec field specified"));
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid desktop file"));
             }
 
           /* close the rc file */
@@ -812,6 +845,12 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
               str = xfce_rc_read_entry_untranslated (rc, "Type", "Application");
               if (G_LIKELY (exo_str_is_equal (str, "Application"))
                   && xfce_rc_read_entry (rc, "Exec", NULL) != NULL)
+                {
+                  info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
+                }
+
+              if (G_LIKELY (exo_str_is_equal (str, "Link"))
+                  && xfce_rc_read_entry (rc, "URL", NULL) != NULL)
                 {
                   info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
                 }
