@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-30 15:14+0100\n"
+"POT-Creation-Date: 2006-02-01 01:05+0900\n"
 "PO-Revision-Date: 2005-10-06 22:02+0900\n"
 "Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -91,25 +91,30 @@ msgstr ""
 "Átugrod?"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:294
+#: ../thunar-vfs/thunar-vfs-info.c:303
 msgid "No Exec field specified"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-info.c:302
+#. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
+#: ../thunar-vfs/thunar-vfs-info.c:322
+msgid "No URL field specified"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-info.c:327 ../thunar-vfs/thunar-vfs-info.c:447
+msgid "Invalid desktop file"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-info.c:335
 #, fuzzy
 msgid "Unable to parse file"
 msgstr "Nem nyitható meg e fájl: %s"
 
-#: ../thunar-vfs/thunar-vfs-info.c:392
+#: ../thunar-vfs/thunar-vfs-info.c:425
 msgid "Invalid file name"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-info.c:414
-msgid "Invalid desktop file"
-msgstr ""
-
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
-#: ../thunar-vfs/thunar-vfs-info.c:649
+#: ../thunar-vfs/thunar-vfs-info.c:682
 #, fuzzy, c-format
 msgid "Failed to stat file `%s': %s"
 msgstr "Nem törölhető: %s"
@@ -1085,7 +1090,7 @@ msgstr "%s (%u bájt)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:791
-#: ../thunar/thunar-standard-view.c:2552
+#: ../thunar/thunar-standard-view.c:2562
 #, fuzzy, c-format
 msgid "Failed to rename `%s'"
 msgstr "Nem törölhető: %s"
@@ -1212,7 +1217,7 @@ msgstr "Kijelölés mintával"
 msgid "Select all files that match a certain pattern"
 msgstr "Egy adott mintára illő valamennyi fájl kiválasztása"
 
-#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2834
+#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2844
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] ""
@@ -1223,7 +1228,7 @@ msgstr[1] ""
 msgid "Duplicate each selected file"
 msgstr "A kijelölt elem tulajdonságai"
 
-#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2840
+#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2850
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] ""
@@ -1309,26 +1314,26 @@ msgstr "Kijelölés mintával"
 msgid "Pattern:"
 msgstr "Minta:"
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2517
 #, fuzzy, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Nem megnyitható könyvtár: %s"
 
-#: ../thunar/thunar-standard-view.c:2807
+#: ../thunar/thunar-standard-view.c:2817
 #, fuzzy
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "Fájl másolás"
 msgstr[1] "Fájl másolás"
 
-#: ../thunar/thunar-standard-view.c:2813
+#: ../thunar/thunar-standard-view.c:2823
 #, fuzzy
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Fájl kivágás"
 msgstr[1] "Fájl kivágás"
 
-#: ../thunar/thunar-standard-view.c:2822
+#: ../thunar/thunar-standard-view.c:2832
 #, fuzzy
 msgid "_Delete File"
 msgid_plural "_Delete Files"
@@ -1580,9 +1585,9 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:1379
 msgid ""
-"You can create templates from documents that you frequently create. For this "
-"to work, copy a document into this folder and Thunar will have an entry for "
-"it in the \"Create Document\" menu.\n"
+"If you frequently create certain kinds of documents, make a copy of one and "
+"put it in this folder. Thunar will add an entry for this document in the "
+"\"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
@@ -1904,6 +1909,3 @@ msgstr "Fájlkezelő"
 #, fuzzy
 msgid "Thunar File Manager"
 msgstr "Fájlkezelő"
-
-#~ msgid "The main text to be displayed in the statusbar"
-#~ msgstr "Az állapotsor fő szövege"

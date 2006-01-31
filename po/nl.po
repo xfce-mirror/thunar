@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-30 15:14+0100\n"
+"POT-Creation-Date: 2006-02-01 01:05+0900\n"
 "PO-Revision-Date: 2006-01-29 12:40+0100\n"
 "Last-Translator: Vincent Tunru <imnotb@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -95,27 +95,35 @@ msgstr ""
 # Unknown word "Exec"
 # Obekend woord: "Exec"
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:294
+#: ../thunar-vfs/thunar-vfs-info.c:303
 #, fuzzy
 msgid "No Exec field specified"
 msgstr "Geen <Exec> veld geselecteerd"
 
-#: ../thunar-vfs/thunar-vfs-info.c:302
+# Unknown word "Exec"
+# Obekend woord: "Exec"
+#. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
+#: ../thunar-vfs/thunar-vfs-info.c:322
+#, fuzzy
+msgid "No URL field specified"
+msgstr "Geen <Exec> veld geselecteerd"
+
+#: ../thunar-vfs/thunar-vfs-info.c:327 ../thunar-vfs/thunar-vfs-info.c:447
+msgid "Invalid desktop file"
+msgstr "Ongeldig bureublad-bestand"
+
+#: ../thunar-vfs/thunar-vfs-info.c:335
 msgid "Unable to parse file"
 msgstr "Verwerken van bestand niet mogelijk"
 
-#: ../thunar-vfs/thunar-vfs-info.c:392
+#: ../thunar-vfs/thunar-vfs-info.c:425
 msgid "Invalid file name"
 msgstr "Ongeldige bestandsnaam"
-
-#: ../thunar-vfs/thunar-vfs-info.c:414
-msgid "Invalid desktop file"
-msgstr "Ongeldig bureublad-bestand"
 
 # Unknown word "stat"
 # Obekend woord: "stat"
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
-#: ../thunar-vfs/thunar-vfs-info.c:649
+#: ../thunar-vfs/thunar-vfs-info.c:682
 #, fuzzy, c-format
 msgid "Failed to stat file `%s': %s"
 msgstr "Het <stat> van bestand `%s' is mislukt: %s"
@@ -1087,7 +1095,7 @@ msgstr "%s (%u Bytes)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:791
-#: ../thunar/thunar-standard-view.c:2552
+#: ../thunar/thunar-standard-view.c:2562
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "Fout bij het wijzigen van de naam van `%s'"
@@ -1201,7 +1209,7 @@ msgstr "_Op Patroon Selecteren"
 msgid "Select all files that match a certain pattern"
 msgstr "Alle bestanden die aan een bepaald patroon voldoen selecteren"
 
-#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2834
+#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2844
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] "Bestand Ver_dubbelen"
@@ -1211,7 +1219,7 @@ msgstr[1] "Bestanden Ver_dubbelen"
 msgid "Duplicate each selected file"
 msgstr "Elk geselecteerde bestand verdubbelen"
 
-#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2840
+#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2850
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Ma_ak Snelkoppeling"
@@ -1298,24 +1306,24 @@ msgstr "Selecteren op Patroon"
 msgid "Pattern:"
 msgstr "Patroon:"
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2517
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Fout bij het openen van de map `%s'"
 
-#: ../thunar/thunar-standard-view.c:2807
+#: ../thunar/thunar-standard-view.c:2817
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "Bestand _Kopiëren"
 msgstr[1] "Bestanden _Kopiëren"
 
-#: ../thunar/thunar-standard-view.c:2813
+#: ../thunar/thunar-standard-view.c:2823
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Bestand Kn_ippen"
 msgstr[1] "Bestanden Kn_ippen"
 
-#: ../thunar/thunar-standard-view.c:2822
+#: ../thunar/thunar-standard-view.c:2832
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "Bestand _Verwijderen"
@@ -1555,10 +1563,11 @@ msgstr ""
 "menu."
 
 #: ../thunar/thunar-window.c:1379
+#, fuzzy
 msgid ""
-"You can create templates from documents that you frequently create. For this "
-"to work, copy a document into this folder and Thunar will have an entry for "
-"it in the \"Create Document\" menu.\n"
+"If you frequently create certain kinds of documents, make a copy of one and "
+"put it in this folder. Thunar will add an entry for this document in the "
+"\"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
@@ -1910,12 +1919,3 @@ msgstr "Bestandsbeheerder"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar Bestandsbeheerder"
-
-#~ msgid "Loading"
-#~ msgstr "Laden"
-
-#~ msgid "Whether to display a loading animation"
-#~ msgstr "Of een \"laden...\" animatie afgespeeld moet worden"
-
-#~ msgid "The main text to be displayed in the statusbar"
-#~ msgstr "The hoofdtekst die in de statusbar weergegeven moet worden"

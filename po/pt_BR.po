@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-30 15:14+0100\n"
+"POT-Creation-Date: 2006-02-01 01:05+0900\n"
 "PO-Revision-Date: 2005-11-17 16:55+0900\n"
 "Last-Translator: Joao Pedrosa <joaopedrosa@gmail.com>\n"
 "Language-Team: os-cillation <info@os-cillation.com>\n"
@@ -92,24 +92,30 @@ msgstr ""
 "Você quer pulá-lo?"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:294
+#: ../thunar-vfs/thunar-vfs-info.c:303
 msgid "No Exec field specified"
 msgstr "Nenhum campo Exec especificado"
 
-#: ../thunar-vfs/thunar-vfs-info.c:302
-msgid "Unable to parse file"
-msgstr "Incapaz de \"parse\" arquivo"
+#. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
+#: ../thunar-vfs/thunar-vfs-info.c:322
+#, fuzzy
+msgid "No URL field specified"
+msgstr "Nenhum campo Exec especificado"
 
-#: ../thunar-vfs/thunar-vfs-info.c:392
-msgid "Invalid file name"
-msgstr "Nome de arquivo inválido"
-
-#: ../thunar-vfs/thunar-vfs-info.c:414
+#: ../thunar-vfs/thunar-vfs-info.c:327 ../thunar-vfs/thunar-vfs-info.c:447
 msgid "Invalid desktop file"
 msgstr "Arquivo de área de trabalho inválido"
 
+#: ../thunar-vfs/thunar-vfs-info.c:335
+msgid "Unable to parse file"
+msgstr "Incapaz de \"parse\" arquivo"
+
+#: ../thunar-vfs/thunar-vfs-info.c:425
+msgid "Invalid file name"
+msgstr "Nome de arquivo inválido"
+
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
-#: ../thunar-vfs/thunar-vfs-info.c:649
+#: ../thunar-vfs/thunar-vfs-info.c:682
 #, c-format
 msgid "Failed to stat file `%s': %s"
 msgstr "Falha em \"stat\" arquivo `%s': %s"
@@ -1078,7 +1084,7 @@ msgstr "%s (%u Bytes)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:791
-#: ../thunar/thunar-standard-view.c:2552
+#: ../thunar/thunar-standard-view.c:2562
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "Falha em renomear `%s'"
@@ -1195,7 +1201,7 @@ msgstr "Selecionar por _Padrão"
 msgid "Select all files that match a certain pattern"
 msgstr "Selecionar todos os arquivos que combinam com um certo padrão"
 
-#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2834
+#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2844
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] "Du_plicar Arquivo"
@@ -1205,7 +1211,7 @@ msgstr[1] "Du_plicar Arquivos"
 msgid "Duplicate each selected file"
 msgstr "Duplicar cada arquivo selecionado"
 
-#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2840
+#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2850
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Fazer _Ligação"
@@ -1294,24 +1300,24 @@ msgstr "Selecione por Padrão"
 msgid "Pattern:"
 msgstr "Padrão:"
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2517
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Falha em abrir diretório `%s'"
 
-#: ../thunar/thunar-standard-view.c:2807
+#: ../thunar/thunar-standard-view.c:2817
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "_Copiar Arquivo"
 msgstr[1] "_Copiar Arquivos"
 
-#: ../thunar/thunar-standard-view.c:2813
+#: ../thunar/thunar-standard-view.c:2823
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Recor_tar Arquivo"
 msgstr[1] "Recor_tar Arquivos"
 
-#: ../thunar/thunar-standard-view.c:2822
+#: ../thunar/thunar-standard-view.c:2832
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "_Deletar Arquivo"
@@ -1556,9 +1562,9 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:1379
 msgid ""
-"You can create templates from documents that you frequently create. For this "
-"to work, copy a document into this folder and Thunar will have an entry for "
-"it in the \"Create Document\" menu.\n"
+"If you frequently create certain kinds of documents, make a copy of one and "
+"put it in this folder. Thunar will add an entry for this document in the "
+"\"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
@@ -1881,12 +1887,3 @@ msgstr "Gerenciador de Arquivos"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Gerenciador de Arquivos Thunar"
-
-#~ msgid "Loading"
-#~ msgstr "Carregando"
-
-#~ msgid "Whether to display a loading animation"
-#~ msgstr "Se deve-se mostrar uma animação de carregamento"
-
-#~ msgid "The main text to be displayed in the statusbar"
-#~ msgstr "O texto principal a ser mostrado na barra de status"

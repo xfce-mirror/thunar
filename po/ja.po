@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-30 15:14+0100\n"
+"POT-Creation-Date: 2006-02-01 01:05+0900\n"
 "PO-Revision-Date: 2006-01-29 11:44+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -101,24 +101,30 @@ msgstr ""
 "これを飛ばしますか？"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:294
+#: ../thunar-vfs/thunar-vfs-info.c:303
 msgid "No Exec field specified"
 msgstr "デスクトップファイルの「Exec」フィールドが指定されていません。"
 
-#: ../thunar-vfs/thunar-vfs-info.c:302
-msgid "Unable to parse file"
-msgstr "ファイルを解析できません。"
+#. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
+#: ../thunar-vfs/thunar-vfs-info.c:322
+#, fuzzy
+msgid "No URL field specified"
+msgstr "デスクトップファイルの「Exec」フィールドが指定されていません。"
 
-#: ../thunar-vfs/thunar-vfs-info.c:392
-msgid "Invalid file name"
-msgstr "無効なファイル名です。"
-
-#: ../thunar-vfs/thunar-vfs-info.c:414
+#: ../thunar-vfs/thunar-vfs-info.c:327 ../thunar-vfs/thunar-vfs-info.c:447
 msgid "Invalid desktop file"
 msgstr "無効なデスクトップファイルです。"
 
+#: ../thunar-vfs/thunar-vfs-info.c:335
+msgid "Unable to parse file"
+msgstr "ファイルを解析できません。"
+
+#: ../thunar-vfs/thunar-vfs-info.c:425
+msgid "Invalid file name"
+msgstr "無効なファイル名です。"
+
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
-#: ../thunar-vfs/thunar-vfs-info.c:649
+#: ../thunar-vfs/thunar-vfs-info.c:682
 #, c-format
 msgid "Failed to stat file `%s': %s"
 msgstr "ファイル「%s」の状態を取得するのに失敗しました: %s"
@@ -1076,7 +1082,7 @@ msgstr "%s (%u バイト)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:791
-#: ../thunar/thunar-standard-view.c:2552
+#: ../thunar/thunar-standard-view.c:2562
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "「%s」の名前変更に失敗しました。"
@@ -1190,7 +1196,7 @@ msgstr "パターンで選択(_B)..."
 msgid "Select all files that match a certain pattern"
 msgstr "ある特定のパターンに一致する全てのファイルを選択します。"
 
-#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2834
+#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2844
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] "コピーを作成(_P)"
@@ -1199,7 +1205,7 @@ msgstr[0] "コピーを作成(_P)"
 msgid "Duplicate each selected file"
 msgstr "選択したそれぞれのファイルのコピーを作成します。"
 
-#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2840
+#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2850
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "リンクを作成(_K)"
@@ -1282,22 +1288,22 @@ msgstr "パターンで選択します"
 msgid "Pattern:"
 msgstr "パターン:"
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2517
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "フォルダ「%s」を開くのに失敗しました。"
 
-#: ../thunar/thunar-standard-view.c:2807
+#: ../thunar/thunar-standard-view.c:2817
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "コピー(_C)"
 
-#: ../thunar/thunar-standard-view.c:2813
+#: ../thunar/thunar-standard-view.c:2823
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "切り取り(_T)"
 
-#: ../thunar/thunar-standard-view.c:2822
+#: ../thunar/thunar-standard-view.c:2832
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "削除(_D)"
@@ -1535,10 +1541,11 @@ msgstr ""
 "このフォルダにある全てのファイルはメニュー「文書を作成」に表示されます。"
 
 #: ../thunar/thunar-window.c:1379
+#, fuzzy
 msgid ""
-"You can create templates from documents that you frequently create. For this "
-"to work, copy a document into this folder and Thunar will have an entry for "
-"it in the \"Create Document\" menu.\n"
+"If you frequently create certain kinds of documents, make a copy of one and "
+"put it in this folder. Thunar will add an entry for this document in the "
+"\"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
@@ -1877,12 +1884,3 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
-
-#~ msgid "Loading"
-#~ msgstr "読み込み"
-
-#~ msgid "Whether to display a loading animation"
-#~ msgstr "読み込みの際のアニメーションを表示するかどうかを表します。"
-
-#~ msgid "The main text to be displayed in the statusbar"
-#~ msgstr "ステータスバーに表示されるメインテキストです。"

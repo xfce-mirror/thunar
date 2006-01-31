@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-30 15:14+0100\n"
+"POT-Creation-Date: 2006-02-01 01:05+0900\n"
 "PO-Revision-Date: 2006-01-29 15:14+0900\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
@@ -94,24 +94,30 @@ msgstr ""
 "El voleu ometre?"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:294
+#: ../thunar-vfs/thunar-vfs-info.c:303
 msgid "No Exec field specified"
 msgstr "No s'ha especificat camp Exec"
 
-#: ../thunar-vfs/thunar-vfs-info.c:302
-msgid "Unable to parse file"
-msgstr "No s'ha pogut analitzar el fitxer"
+#. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
+#: ../thunar-vfs/thunar-vfs-info.c:322
+#, fuzzy
+msgid "No URL field specified"
+msgstr "No s'ha especificat camp Exec"
 
-#: ../thunar-vfs/thunar-vfs-info.c:392
-msgid "Invalid file name"
-msgstr "El nom del fitxer no és vàlid"
-
-#: ../thunar-vfs/thunar-vfs-info.c:414
+#: ../thunar-vfs/thunar-vfs-info.c:327 ../thunar-vfs/thunar-vfs-info.c:447
 msgid "Invalid desktop file"
 msgstr "El nom de l'escriptori no és vàlid"
 
+#: ../thunar-vfs/thunar-vfs-info.c:335
+msgid "Unable to parse file"
+msgstr "No s'ha pogut analitzar el fitxer"
+
+#: ../thunar-vfs/thunar-vfs-info.c:425
+msgid "Invalid file name"
+msgstr "El nom del fitxer no és vàlid"
+
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
-#: ../thunar-vfs/thunar-vfs-info.c:649
+#: ../thunar-vfs/thunar-vfs-info.c:682
 #, c-format
 msgid "Failed to stat file `%s': %s"
 msgstr "No s'ha pogut saber l'estat del fitxer `%s': %s"
@@ -1124,7 +1130,7 @@ msgstr "Octets"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:791
-#: ../thunar/thunar-standard-view.c:2552
+#: ../thunar/thunar-standard-view.c:2562
 #, fuzzy, c-format
 msgid "Failed to rename `%s'"
 msgstr "Ha fallat"
@@ -1258,7 +1264,7 @@ msgstr "Selecciona Patró."
 msgid "Select all files that match a certain pattern"
 msgstr "Selecciona tot a"
 
-#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2834
+#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2844
 #, fuzzy
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
@@ -1270,7 +1276,7 @@ msgstr[1] "Fitxer"
 msgid "Duplicate each selected file"
 msgstr "Duplicat seleccionat fitxer"
 
-#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2840
+#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2850
 #, fuzzy
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
@@ -1360,26 +1366,26 @@ msgstr "Selecciona Patró"
 msgid "Pattern:"
 msgstr "Patró:"
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2517
 #, fuzzy, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Ha fallat obre"
 
-#: ../thunar/thunar-standard-view.c:2807
+#: ../thunar/thunar-standard-view.c:2817
 #, fuzzy
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "Copia Fitxer"
 msgstr[1] "Copia Fitxer"
 
-#: ../thunar/thunar-standard-view.c:2813
+#: ../thunar/thunar-standard-view.c:2823
 #, fuzzy
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Fitxer"
 msgstr[1] "Fitxer"
 
-#: ../thunar/thunar-standard-view.c:2822
+#: ../thunar/thunar-standard-view.c:2832
 #, fuzzy
 msgid "_Delete File"
 msgid_plural "_Delete Files"
@@ -1640,9 +1646,9 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:1379
 msgid ""
-"You can create templates from documents that you frequently create. For this "
-"to work, copy a document into this folder and Thunar will have an entry for "
-"it in the \"Create Document\" menu.\n"
+"If you frequently create certain kinds of documents, make a copy of one and "
+"put it in this folder. Thunar will add an entry for this document in the "
+"\"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
@@ -1998,14 +2004,3 @@ msgstr "Gestor de fitxers"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Gestor de fitxers Thunar"
-
-#~ msgid "Loading"
-#~ msgstr "S'està carregant"
-
-#, fuzzy
-#~ msgid "Whether to display a loading animation"
-#~ msgstr "a animació"
-
-#, fuzzy
-#~ msgid "The main text to be displayed in the statusbar"
-#~ msgstr "text in barra d'estat"

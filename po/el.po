@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-01-30 15:14+0100\n"
+"POT-Creation-Date: 2006-02-01 01:05+0900\n"
 "PO-Revision-Date: 2005-12-04 23:18+0900\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -94,24 +94,30 @@ msgstr ""
 "Θέλετε να το προσπεράσετε;"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:294
+#: ../thunar-vfs/thunar-vfs-info.c:303
 msgid "No Exec field specified"
 msgstr "Δεν έχει οριστεί το πεδίο Exec"
 
-#: ../thunar-vfs/thunar-vfs-info.c:302
-msgid "Unable to parse file"
-msgstr "Δεν ήταν δυνατή η ανάγνωση του αρχείου"
+#. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
+#: ../thunar-vfs/thunar-vfs-info.c:322
+#, fuzzy
+msgid "No URL field specified"
+msgstr "Δεν έχει οριστεί το πεδίο Exec"
 
-#: ../thunar-vfs/thunar-vfs-info.c:392
-msgid "Invalid file name"
-msgstr "Μη έγκυρο όνομα αρχείου"
-
-#: ../thunar-vfs/thunar-vfs-info.c:414
+#: ../thunar-vfs/thunar-vfs-info.c:327 ../thunar-vfs/thunar-vfs-info.c:447
 msgid "Invalid desktop file"
 msgstr "Μη έγκυρο αρχείο συντόμευσης"
 
+#: ../thunar-vfs/thunar-vfs-info.c:335
+msgid "Unable to parse file"
+msgstr "Δεν ήταν δυνατή η ανάγνωση του αρχείου"
+
+#: ../thunar-vfs/thunar-vfs-info.c:425
+msgid "Invalid file name"
+msgstr "Μη έγκυρο όνομα αρχείου"
+
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
-#: ../thunar-vfs/thunar-vfs-info.c:649
+#: ../thunar-vfs/thunar-vfs-info.c:682
 #, c-format
 msgid "Failed to stat file `%s': %s"
 msgstr ""
@@ -1077,7 +1083,7 @@ msgstr "%s (%u Bytes)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:791
-#: ../thunar/thunar-standard-view.c:2552
+#: ../thunar/thunar-standard-view.c:2562
 #, c-format
 msgid "Failed to rename `%s'"
 msgstr "Η μετονομασία του `%s' απέτυχε"
@@ -1190,7 +1196,7 @@ msgstr "Επιλογή _βάσει μοτίβου..."
 msgid "Select all files that match a certain pattern"
 msgstr "Επιλογή όλων των αρχείων που ταιριάζουν σε ένα μοτίβο"
 
-#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2834
+#: ../thunar/thunar-standard-view.c:287 ../thunar/thunar-standard-view.c:2844
 msgid "Du_plicate File"
 msgid_plural "Du_plicate Files"
 msgstr[0] ""
@@ -1200,7 +1206,7 @@ msgstr[1] ""
 msgid "Duplicate each selected file"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2840
+#: ../thunar/thunar-standard-view.c:288 ../thunar/thunar-standard-view.c:2850
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Δημιουργία _Δεσμού"
@@ -1289,24 +1295,24 @@ msgstr "Επιλογή βάσει Μοτίβου"
 msgid "Pattern:"
 msgstr "Μοτίβο:"
 
-#: ../thunar/thunar-standard-view.c:2507
+#: ../thunar/thunar-standard-view.c:2517
 #, c-format
 msgid "Failed to open directory `%s'"
 msgstr "Το άνοιγμα του καταλόγου `%s' απέτυχε"
 
-#: ../thunar/thunar-standard-view.c:2807
+#: ../thunar/thunar-standard-view.c:2817
 msgid "_Copy File"
 msgid_plural "_Copy Files"
 msgstr[0] "_Αντιγραφή Αρχείου"
 msgstr[1] "_Αντιγραφή Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:2813
+#: ../thunar/thunar-standard-view.c:2823
 msgid "Cu_t File"
 msgid_plural "Cu_t Files"
 msgstr[0] "Αποκοπή _Αρχείου"
 msgstr[1] "Αποκοπή _Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:2822
+#: ../thunar/thunar-standard-view.c:2832
 msgid "_Delete File"
 msgid_plural "_Delete Files"
 msgstr[0] "_Διαγραφή Αρχείου"
@@ -1550,9 +1556,9 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:1379
 msgid ""
-"You can create templates from documents that you frequently create. For this "
-"to work, copy a document into this folder and Thunar will have an entry for "
-"it in the \"Create Document\" menu.\n"
+"If you frequently create certain kinds of documents, make a copy of one and "
+"put it in this folder. Thunar will add an entry for this document in the "
+"\"Create Document\" menu.\n"
 "\n"
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
@@ -1857,12 +1863,3 @@ msgstr "Διαχειριστής Αρχείων"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Διαχειριστής Αρχείων Thunar"
-
-#~ msgid "Loading"
-#~ msgstr "Φόρτωση"
-
-#~ msgid "Whether to display a loading animation"
-#~ msgstr "Αν θα εμφανίζεται γραφικό φόρτωσης"
-
-#~ msgid "The main text to be displayed in the statusbar"
-#~ msgstr "Το κυρίως κείμενο που θα εμφανίζεται στη μπάρα κατάστασης"
