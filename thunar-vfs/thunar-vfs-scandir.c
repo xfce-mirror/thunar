@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -138,6 +138,17 @@ thunar_vfs_scandir_collect_fast (ThunarVfsScandirHandle *handle,
       goto done;
     }
 
+  /* verify that we can enter the directory (else
+   * we won't get any useful infos about the dir
+   * contents either, so no need to continue). See
+   * http://bugzilla.xfce.org/show_bug.cgi?id=1408.
+   */
+  if ((statb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != (S_IXUSR | S_IXGRP | S_IXOTH) && (access (handle->fname, X_OK) < 0))
+    {
+      errno = EACCES;
+      goto done;
+    }
+
   /* calculate the directory buffer size */
   dlen = statb.st_blksize * 4;
   if (G_UNLIKELY ((dlen % DIRBLKSIZ) != 0))
@@ -253,6 +264,7 @@ thunar_vfs_scandir_collect_slow (ThunarVfsScandirHandle *handle,
   ThunarVfsPath *child;
   struct dirent  dbuf;
   struct dirent *dp;
+  struct stat    fstatb;
   gint           sverrno;
   gint           n;
   DIR           *dirp;
@@ -264,6 +276,10 @@ thunar_vfs_scandir_collect_slow (ThunarVfsScandirHandle *handle,
   if (G_UNLIKELY (dirp == NULL))
     return FALSE;
 
+  /* stat the just opened directory */
+  if (fstat (dirfd (dirp), &fstatb) < 0)
+    goto error;
+
   /* verify that the directory is really the directory we want
    * to open. If not, we've probably detected a race condition,
    * so we'll better stop rather than doing anything stupid
@@ -272,12 +288,7 @@ thunar_vfs_scandir_collect_slow (ThunarVfsScandirHandle *handle,
    */
   if (G_UNLIKELY ((handle->flags & THUNAR_VFS_SCANDIR_FOLLOW_LINKS) == 0))
     {
-      struct stat fstatb;
       struct stat lstatb;
-
-      /* stat the just opened directory */
-      if (fstat (dirfd (dirp), &fstatb) < 0)
-        goto error;
 
       /* stat the path (without following links) */
       if (lstat (handle->fname, &lstatb) < 0)
@@ -289,6 +300,17 @@ thunar_vfs_scandir_collect_slow (ThunarVfsScandirHandle *handle,
           errno = ENOTDIR;
           goto error;
         }
+    }
+
+  /* verify that we can enter the directory (else
+   * we won't get any useful infos about the dir
+   * contents either, so no need to continue). See
+   * http://bugzilla.xfce.org/show_bug.cgi?id=1408.
+   */
+  if ((fstatb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != (S_IXUSR | S_IXGRP | S_IXOTH) && (access (handle->fname, X_OK) < 0))
+    {
+      errno = EACCES;
+      goto error;
     }
 
   /* read the directory content */

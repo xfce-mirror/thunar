@@ -1,5 +1,15 @@
 2006-01-31	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c: Disable the "create-document" action
+	  on non-writable folders.
+	* thunar-vfs/thunar-vfs-scandir.c: Return an error when trying to scan
+	  a directory for which the user has no execute permissions. Bug #1408.
+	* thunar/thunar-file.c(thunar_file_get_emblem_names): Add "cant-read"
+	  emblem to folders, where we don't have permissions to enter. Second
+	  part of fix for bug #1408.
+
+2006-01-31	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-info.c: Treat .desktop files of Type=Link as
 	  executable as well, and when requested to execute such a file, extract
 	  the URL and pass it to exo-open for further processing. Bug #1369.

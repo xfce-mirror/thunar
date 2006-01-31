@@ -229,6 +229,7 @@ struct _ThunarStandardViewPrivate
 {
   ThunarLauncher         *launcher;
   GtkAction              *action_create_folder;
+  GtkAction              *action_create_document;
   GtkAction              *action_properties;
   GtkAction              *action_copy;
   GtkAction              *action_cut;
@@ -460,8 +461,6 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
 static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
-  GtkAction *action;
-
   standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
   standard_view->priv->drag_timer_id = -1;
 
@@ -501,11 +500,13 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_rename = gtk_action_group_get_action (standard_view->action_group, "rename");
 
   /* add the "Create Document" sub menu action */
-  action = thunar_templates_action_new ("create-document", _("Create _Document"));
-  g_signal_connect (G_OBJECT (action), "create-empty-file", G_CALLBACK (thunar_standard_view_action_create_empty_file), standard_view);
-  g_signal_connect (G_OBJECT (action), "create-template", G_CALLBACK (thunar_standard_view_action_create_template), standard_view);
-  gtk_action_group_add_action (standard_view->action_group, action);
-  g_object_unref (G_OBJECT (action));
+  standard_view->priv->action_create_document = thunar_templates_action_new ("create-document", _("Create _Document"));
+  g_signal_connect (G_OBJECT (standard_view->priv->action_create_document), "create-empty-file",
+                    G_CALLBACK (thunar_standard_view_action_create_empty_file), standard_view);
+  g_signal_connect (G_OBJECT (standard_view->priv->action_create_document), "create-template",
+                    G_CALLBACK (thunar_standard_view_action_create_template), standard_view);
+  gtk_action_group_add_action (standard_view->action_group, standard_view->priv->action_create_document);
+  g_object_unref (G_OBJECT (standard_view->priv->action_create_document));
 
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
@@ -2806,8 +2807,9 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
                        && thunar_file_is_directory (selected_files->data)
                        && thunar_file_is_writable (selected_files->data);
 
-  /* update the "Create Folder" action */
+  /* update the "Create Folder"/"Create Document" actions */
   gtk_action_set_sensitive (standard_view->priv->action_create_folder, writable);
+  gtk_action_set_sensitive (standard_view->priv->action_create_document, writable);
 
   /* update the "Properties" action */
   gtk_action_set_sensitive (standard_view->priv->action_properties, (n_selected_files == 1 || (n_selected_files == 0 && current_directory != NULL)));

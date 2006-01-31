@@ -1488,8 +1488,17 @@ thunar_file_get_emblem_names (ThunarFile *file)
   if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
     emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK);
 
-  if (!thunar_file_is_readable (file))
-    emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
+  /* we add "cant-read" if either (a) the file is not readable or (b) a directory, that lacks the
+   * x-bit, see http://bugzilla.xfce.org/show_bug.cgi?id=1408 for the details about this change.
+   */
+  if (!thunar_file_is_readable (file)
+      || (thunar_file_is_directory (file)
+        && thunar_file_denies_access_permission (file, THUNAR_VFS_FILE_MODE_USR_EXEC,
+                                                       THUNAR_VFS_FILE_MODE_GRP_EXEC,
+                                                       THUNAR_VFS_FILE_MODE_OTH_EXEC)))
+    {
+      emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
+    }
 
   return emblems;
 }
