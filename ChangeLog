@@ -1,5 +1,20 @@
 2006-02-01	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c: Open a dialog when renaming a file.
+	  Bug #1413.
+	* thunar/thunar-standard-view.c(thunar_standard_view_action_delete):
+	  Use "Cancel" and "Delete" buttons in the delete confirmation dialog,
+	  as suggested by Jasper.
+	* thunar/thunar-progress-dialog.c(thunar_progress_dialog_error),
+	  thunar/thunar-permissions-chooser.c
+	  (thunar_permissions_chooser_job_error): Use "Close" button for the
+	  error dialogs.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Some work on the german translations.
+	* docs/reference/thunar-vfs/tmpl/: Update thunar-vfs API docs.
+
+2006-02-01	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-properties-dialog.c: Don't recreate plugin pages if
 	  the file changes, but instead let the plugins connect to the file's
 	  "changed" signal and update their user interface appropriately.

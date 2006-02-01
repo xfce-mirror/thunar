@@ -376,7 +376,7 @@ thunar_progress_dialog_error (ThunarProgressDialog *dialog,
                                     GTK_DIALOG_MODAL |
                                     GTK_DIALOG_DESTROY_WITH_PARENT,
                                     GTK_MESSAGE_ERROR,
-                                    GTK_BUTTONS_OK,
+                                    GTK_BUTTONS_CLOSE,
                                     "%s", error->message);
   gtk_dialog_run (GTK_DIALOG (message));
   gtk_widget_destroy (message);
