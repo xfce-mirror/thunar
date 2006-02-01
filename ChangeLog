@@ -1,5 +1,12 @@
 2006-02-01	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-properties-dialog.c: Don't recreate plugin pages if
+	  the file changes, but instead let the plugins connect to the file's
+	  "changed" signal and update their user interface appropriately.
+	  Bug #1355.
+
+2006-02-01	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.{c,h}, thunarx/thunarx-file-info.{c,h},
 	  thunarx/thunarx.symbols: Move "changed" and "renamed" signals from
 	  ThunarFile to ThunarxFileInfo, so plugins can use these signals to

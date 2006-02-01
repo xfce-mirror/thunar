@@ -753,9 +753,6 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->size_label);
     }
 
-  /* update the provider property pages */
-  thunar_properties_dialog_update_providers (dialog);
-
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
 }
@@ -863,6 +860,10 @@ thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
   g_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   g_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
 
+  /* check if we already display that file */
+  if (G_UNLIKELY (dialog->file == file))
+    return;
+
   /* disconnect from any previously set file */
   if (dialog->file != NULL)
     {
@@ -893,6 +894,9 @@ thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
 
       /* update the UI for the new file */
       thunar_properties_dialog_update (dialog);
+
+      /* update the provider property pages */
+      thunar_properties_dialog_update_providers (dialog);
     }
 
   /* tell everybody that we have a new file here */
