@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -49,6 +49,8 @@ struct _ThunarxFileInfoIface
   GTypeInterface __parent__;
 
   /*< public >*/
+
+  /* virtual methods */
   gchar         *(*get_name)        (ThunarxFileInfo *file_info);
 
   gchar         *(*get_uri)         (ThunarxFileInfo *file_info);
@@ -64,12 +66,24 @@ struct _ThunarxFileInfoIface
   ThunarVfsInfo *(*get_vfs_info)    (ThunarxFileInfo *file_info);
 
   /*< private >*/
+  void (*reserved0) (void);
   void (*reserved1) (void);
   void (*reserved2) (void);
   void (*reserved3) (void);
   void (*reserved4) (void);
   void (*reserved5) (void);
   void (*reserved6) (void);
+
+  /*< public >*/
+
+  /* signals */
+  void (*changed) (ThunarxFileInfo *file_info);
+  void (*renamed) (ThunarxFileInfo *file_info);
+
+  /*< private >*/
+  void (*reserved7) (void);
+  void (*reserved8) (void);
+  void (*reserved9) (void);
 };
 
 GType          thunarx_file_info_get_type       (void) G_GNUC_CONST;
@@ -86,6 +100,9 @@ gboolean       thunarx_file_info_has_mime_type  (ThunarxFileInfo *file_info,
 gboolean       thunarx_file_info_is_directory   (ThunarxFileInfo *file_info);
 
 ThunarVfsInfo *thunarx_file_info_get_vfs_info   (ThunarxFileInfo *file_info);
+
+void           thunarx_file_info_changed        (ThunarxFileInfo *file_info);
+void           thunarx_file_info_renamed        (ThunarxFileInfo *file_info);
 
 GList         *thunarx_file_info_list_copy      (GList           *file_infos);
 void           thunarx_file_info_list_free      (GList           *file_infos);

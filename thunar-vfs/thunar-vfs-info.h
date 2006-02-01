@@ -68,9 +68,6 @@ struct _ThunarVfsInfo
   /* time of last status change */
   ThunarVfsFileTime ctime;
 
-  /* inode id */
-  ThunarVfsFileInode inode;
-
   /* device id */
   ThunarVfsFileDevice device;
 

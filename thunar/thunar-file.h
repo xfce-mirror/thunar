@@ -95,9 +95,7 @@ struct _ThunarFileClass
   GObjectClass __parent__;
 
   /* signals */
-  void (*changed) (ThunarFile *file);
   void (*destroy) (ThunarFile *file);
-  void (*renamed) (ThunarFile *file);
 };
 
 struct _ThunarFile
@@ -197,7 +195,7 @@ void                             thunar_file_unwatch              (ThunarFile   
 
 void                             thunar_file_reload               (ThunarFile             *file);
 
-void                             thunar_file_changed              (ThunarFile             *file);
+static inline void               thunar_file_changed              (ThunarFile             *file);
 void                             thunar_file_destroy              (ThunarFile             *file);
 
 static inline gboolean           thunar_file_is_directory         (const ThunarFile       *file);
@@ -411,6 +409,21 @@ thunar_file_set_boolean_metadata (ThunarFile       *file,
 {
   thunar_file_set_metadata (file, key, value ? "true" : "false",
                             default_value ? "true" : "false");
+}
+
+
+
+/**
+ * thunar_file_changed:
+ * @file : a #ThunarFile instance.
+ *
+ * Emits the ::changed signal on @file. This function is meant to be called
+ * by derived classes whenever they notice changes to the @file.
+ **/
+static inline void
+thunar_file_changed (ThunarFile *file)
+{
+  thunarx_file_info_changed (THUNARX_FILE_INFO (file));
 }
 
 

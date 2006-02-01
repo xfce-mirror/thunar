@@ -73,9 +73,7 @@ enum
 /* Signal identifiers */
 enum
 {
-  CHANGED,
   DESTROY,
-  RENAMED,
   LAST_SIGNAL,
 };
 
@@ -98,7 +96,7 @@ static gboolean           thunar_file_info_has_mime_type       (ThunarxFileInfo 
                                                                 const gchar            *mime_type);
 static gboolean           thunar_file_info_is_directory        (ThunarxFileInfo        *file_info);
 static ThunarVfsInfo     *thunar_file_info_get_vfs_info        (ThunarxFileInfo        *file_info);
-static void               thunar_file_real_changed             (ThunarFile             *file);
+static void               thunar_file_info_changed             (ThunarxFileInfo        *file_info);
 static gboolean           thunar_file_denies_access_permission (const ThunarFile       *file,
                                                                 ThunarVfsFileMode       usr_permissions,
                                                                 ThunarVfsFileMode       grp_permissions,
@@ -230,8 +228,6 @@ thunar_file_class_init (ThunarFileClass *klass)
   gobject_class->finalize = thunar_file_finalize;
   gobject_class->get_property = thunar_file_get_property;
 
-  klass->changed = thunar_file_real_changed;
-
   /**
    * ThunarFile::display-name:
    *
@@ -245,21 +241,6 @@ thunar_file_class_init (ThunarFileClass *klass)
                                                         "display-name",
                                                         NULL,
                                                         EXO_PARAM_READABLE));
-
-  /**
-   * ThunarFile::changed:
-   * @file : the #ThunarFile instance.
-   *
-   * Emitted whenever the system notices a change to @file.
-   **/
-  file_signals[CHANGED] =
-    g_signal_new (I_("changed"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (ThunarFileClass, changed),
-                  NULL, NULL,
-                  g_cclosure_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
 
   /**
    * ThunarFile::destroy:
@@ -277,22 +258,6 @@ thunar_file_class_init (ThunarFileClass *klass)
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
 
-  /**
-   * ThunarFile::renamed:
-   * @file : the #ThunarFile instance.
-   *
-   * Emitted when the @file is renamed to another
-   * name. #ThunarFolder uses this signal to
-   * reregister it's VFS directory monitor.
-   **/
-  file_signals[RENAMED] =
-    g_signal_new (I_("renamed"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_FIRST,
-                  G_STRUCT_OFFSET (ThunarFileClass, renamed),
-                  NULL, NULL,
-                  g_cclosure_marshal_VOID__VOID,
-                  G_TYPE_NONE, 0);
 }
 
 
@@ -308,6 +273,7 @@ thunar_file_info_init (ThunarxFileInfoIface *iface)
   iface->has_mime_type = thunar_file_info_has_mime_type;
   iface->is_directory = thunar_file_info_is_directory;
   iface->get_vfs_info = thunar_file_info_get_vfs_info;
+  iface->changed = thunar_file_info_changed;
 }
 
 
@@ -481,15 +447,15 @@ thunar_file_info_get_vfs_info (ThunarxFileInfo *file_info)
 
 
 static void
-thunar_file_real_changed (ThunarFile *file)
+thunar_file_info_changed (ThunarxFileInfo *file_info)
 {
   /* reset the thumbnail state, so the next thunar_icon_factory_load_file_icon()
    * invokation will recheck the thumbnail.
    */
-  thunar_file_set_thumb_state (file, THUNAR_FILE_THUMB_STATE_UNKNOWN);
+  thunar_file_set_thumb_state (THUNAR_FILE (file_info), THUNAR_FILE_THUMB_STATE_UNKNOWN);
 
   /* notify about changes of the display-name property */
-  g_object_notify (G_OBJECT (file), "display-name");
+  g_object_notify (G_OBJECT (file_info), "display-name");
 }
 
 
@@ -659,7 +625,7 @@ thunar_file_get_for_info (ThunarVfsInfo *info)
         {
           thunar_vfs_info_unref (file->info);
           file->info = thunar_vfs_info_ref (info);
-          g_signal_emit (G_OBJECT (file), file_signals[CHANGED], 0);
+          thunar_file_changed (file);
         }
     }
   else
@@ -927,7 +893,7 @@ thunar_file_rename (ThunarFile  *file,
       g_hash_table_insert (file_cache, thunar_vfs_path_ref (file->info->path), file);
 
       /* tell the associated folder that the file was renamed */
-      g_signal_emit (G_OBJECT (file), file_signals[RENAMED], 0);
+      thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
 
       /* emit the file changed signal */
       thunar_file_changed (file);
@@ -1796,22 +1762,6 @@ thunar_file_reload (ThunarFile *file)
 
 
  
-/**
- * thunar_file_changed:
- * @file : a #ThunarFile instance.
- *
- * Emits the ::changed signal on @file. This function is meant to be called
- * by derived classes whenever they notice changes to the @file.
- **/
-void
-thunar_file_changed (ThunarFile *file)
-{
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_signal_emit (G_OBJECT (file), file_signals[CHANGED], 0);
-}
-
-
-
 /**
  * thunar_file_destroy:
  * @file : a #ThunarFile instance.

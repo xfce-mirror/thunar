@@ -179,7 +179,6 @@ thunar_vfs_info_copy (const ThunarVfsInfo *info)
   dst->atime = info->atime;
   dst->mtime = info->mtime;
   dst->ctime = info->ctime;
-  dst->inode = info->inode;
   dst->device = info->device;
   dst->mime_info = thunar_vfs_mime_info_ref (info->mime_info);
   dst->path = thunar_vfs_path_ref (info->path);
@@ -586,7 +585,6 @@ thunar_vfs_info_matches (const ThunarVfsInfo *a,
       && a->atime == b->atime
       && a->mtime == b->mtime
       && a->ctime == b->ctime
-      && a->inode == b->inode
       && a->device == b->device
       && a->mime_info == b->mime_info
       && thunar_vfs_path_equal (a->path, b->path)
@@ -718,7 +716,6 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
       info->atime = lsb.st_atime;
       info->ctime = lsb.st_ctime;
       info->mtime = lsb.st_mtime;
-      info->inode = lsb.st_ino;
       info->device = lsb.st_dev;
     }
   else
@@ -734,7 +731,6 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
           info->atime = sb.st_atime;
           info->ctime = sb.st_ctime;
           info->mtime = sb.st_mtime;
-          info->inode = sb.st_ino;
           info->device = sb.st_dev;
         }
       else
@@ -748,7 +744,6 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
           info->atime = lsb.st_atime;
           info->ctime = lsb.st_ctime;
           info->mtime = lsb.st_mtime;
-          info->inode = lsb.st_ino;
           info->device = lsb.st_dev;
         }
     }

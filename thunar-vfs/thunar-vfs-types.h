@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -116,12 +116,6 @@ typedef enum { /*< flags >*/
  * Datatype to represent the device number of a file.
  **/
 typedef dev_t ThunarVfsFileDevice;
-
-/**
- * ThunarVfsFileInode:
- * Datatype to represent the inode number of a file.
- **/
-typedef ino_t ThunarVfsFileInode;
 
 /**
  * ThunarVfsFileSize:

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -28,6 +28,24 @@
 
 
 
+/* Signal identifiers */
+enum
+{
+  CHANGED,
+  RENAMED,
+  LAST_SIGNAL,
+};
+
+
+
+static void thunarx_file_info_base_init (gpointer klass);
+
+
+
+static guint file_info_signals[LAST_SIGNAL];
+
+
+
 GType
 thunarx_file_info_get_type (void)
 {
@@ -38,7 +56,7 @@ thunarx_file_info_get_type (void)
       static const GTypeInfo info =
       {
         sizeof (ThunarxFileInfoIface),
-        NULL,
+        (GBaseInitFunc) thunarx_file_info_base_init,
         NULL,
         NULL,
         NULL,
@@ -54,6 +72,60 @@ thunarx_file_info_get_type (void)
     }
 
   return type;
+}
+
+
+
+static void
+thunarx_file_info_base_init (gpointer klass)
+{
+  static gboolean initialized = FALSE;
+
+  if (G_UNLIKELY (!initialized))
+    {
+      /**
+       * ThunarxFileInfo::changed:
+       * @file_info : a #ThunarxFileInfo.
+       *
+       * Emitted whenever the system notices a change to @file_info.
+       *
+       * Thunar plugins should use this signal to stay informed about
+       * changes to a @file_info for which they currently display
+       * information (i.e. in a #ThunarxPropertyPage), and update
+       * it's user interface whenever a change is noticed on @file_info.
+       **/
+      file_info_signals[CHANGED] =
+        g_signal_new (I_("changed"),
+                      G_TYPE_FROM_CLASS (klass),
+                      G_SIGNAL_RUN_FIRST,
+                      G_STRUCT_OFFSET (ThunarxFileInfoIface, changed),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__VOID,
+                      G_TYPE_NONE, 0);
+
+      /**
+       * ThunarxFileInfo::renamed:
+       * @file_info : a #ThunarxFileInfo
+       *
+       * Emitted when the @file_info is renamed to another
+       * name.
+       *
+       * For example, within Thunar, #ThunarFolder uses this
+       * signal to reregister it's VFS directory monitor, after
+       * the corresponding file was renamed.
+       **/
+      file_info_signals[RENAMED] =
+        g_signal_new (I_("renamed"),
+                      G_TYPE_FROM_CLASS (klass),
+                      G_SIGNAL_RUN_FIRST,
+                      G_STRUCT_OFFSET (ThunarxFileInfoIface, renamed),
+                      NULL, NULL,
+                      g_cclosure_marshal_VOID__VOID,
+                      G_TYPE_NONE, 0);
+
+      /* yep, we're initialized now */
+      initialized = TRUE;
+    }
 }
 
 
@@ -259,6 +331,45 @@ thunarx_file_info_get_vfs_info (ThunarxFileInfo *file_info)
 {
   g_return_val_if_fail (THUNARX_IS_FILE_INFO (file_info), NULL);
   return (*THUNARX_FILE_INFO_GET_IFACE (file_info)->get_vfs_info) (file_info);
+}
+
+
+
+/**
+ * thunarx_file_info_changed:
+ * @file_info : a #ThunarxFileInfo.
+ *
+ * Emits the ::changed signal on @file_info. This method should not
+ * be invoked by Thunar plugins, instead the file manager itself
+ * will use this method to emit ::changed whenever it notices a
+ * change on @file_info.
+ **/
+void
+thunarx_file_info_changed (ThunarxFileInfo *file_info)
+{
+  g_return_if_fail (THUNARX_IS_FILE_INFO (file_info));
+  g_signal_emit (G_OBJECT (file_info), file_info_signals[CHANGED], 0);
+}
+
+
+
+/**
+ * thunarx_file_info_renamed:
+ * @file_info : a #ThunarxFileInfo.
+ *
+ * Emits the ::renamed signal on @file_info. This method should
+ * not be invoked by Thunar plugins, instead the file manager
+ * will emit this signal whenever the user renamed the @file_info.
+ *
+ * The plugins should instead connect to the ::renamed signal
+ * and update it's internal state and it's user interface
+ * after the file manager renamed a file.
+ **/
+void
+thunarx_file_info_renamed (ThunarxFileInfo *file_info)
+{
+  g_return_if_fail (THUNARX_IS_FILE_INFO (file_info));
+  g_signal_emit (G_OBJECT (file_info), file_info_signals[RENAMED], 0);
 }
 
 

@@ -1,5 +1,17 @@
 2006-02-01	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-file.{c,h}, thunarx/thunarx-file-info.{c,h},
+	  thunarx/thunarx.symbols: Move "changed" and "renamed" signals from
+	  ThunarFile to ThunarxFileInfo, so plugins can use these signals to
+	  stay informed about changes to files. First part of bug #1354.
+	* docs/reference/thunarx/: Update the API documentation.
+	* thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs-types.h:
+	  Drop the inode field from the ThunarVfsInfo struct, as we don't
+	  need it anyway and it can cause trouble with systems where ino_t's
+	  size depends on whether largefile support is active or not.
+
+2006-02-01	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-scandir.c: Use g_access() if available.
 	* thunar-vfs/thunar-vfs-info.c(_thunar_vfs_info_new_internal): Fix a
 	  bug where the path name was g_free()'d for .desktop files with non
