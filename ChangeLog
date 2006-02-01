@@ -1,5 +1,15 @@
 2006-02-01	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-scandir.c: Use g_access() if available.
+	* thunar-vfs/thunar-vfs-info.c(_thunar_vfs_info_new_internal): Fix a
+	  bug where the path name was g_free()'d for .desktop files with non
+	  ASCII file names.
+	* thunar-vfs/thunar-vfs-path.c(thunar_vfs_path_to_string): Apply simple
+	  optimization here: Prefer the stack memory over heap memory when
+	  constructing the absolute path.
+
+2006-02-01	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-util.c(thunar_vfs_humanize_size): Use "kB"
 	  instead of "KB".
 

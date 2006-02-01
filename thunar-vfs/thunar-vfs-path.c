@@ -612,7 +612,7 @@ thunar_vfs_path_to_string (const ThunarVfsPath *path,
 {
   typedef struct _ThunarVfsPathItem
   {
-    const ThunarVfsPath       *path;
+    const gchar               *name;
     struct _ThunarVfsPathItem *next;
   } ThunarVfsPathItem;
 
@@ -641,12 +641,12 @@ thunar_vfs_path_to_string (const ThunarVfsPath *path,
     {
       /* add the path to the item list */
       item = g_newa (ThunarVfsPathItem, 1);
-      item->path = path;
+      item->name = thunar_vfs_path_get_name (path);
       item->next = items;
       items = item;
 
       /* add the size constraint (including the '/') */
-      n += strlen (thunar_vfs_path_get_name (path)) + 1;
+      n += strlen (item->name) + 1;
     }
 
   /* verify the buffer size */
@@ -665,7 +665,7 @@ error:
       *bp++ = G_DIR_SEPARATOR;
 
       /* append the component name */
-      for (name = thunar_vfs_path_get_name (item->path); *name != '\0'; )
+      for (name = item->name; *name != '\0'; )
         *bp++ = *name++;
     }
 

@@ -833,23 +833,25 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
                 {
                   /* release the previous display name */
                   if (G_UNLIKELY (info->display_name != thunar_vfs_path_get_name (info->path)))
-                    g_free (info->path);
+                    g_free (info->display_name);
 
                   /* use the name specified by the .desktop file as display name */
                   info->display_name = g_strdup (str);
                 }
 
-              /* check if the desktop file refers to an application
-               * and has a non-NULL Exec field set.
-               */
+              /* determine the type of the .desktop file */
               str = xfce_rc_read_entry_untranslated (rc, "Type", "Application");
+
+              /* check if the desktop file refers to an application
+               * and has a non-NULL Exec field set, or it's a Link
+               * with a valid URL field.
+               */
               if (G_LIKELY (exo_str_is_equal (str, "Application"))
                   && xfce_rc_read_entry (rc, "Exec", NULL) != NULL)
                 {
                   info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
                 }
-
-              if (G_LIKELY (exo_str_is_equal (str, "Link"))
+              else if (G_LIKELY (exo_str_is_equal (str, "Link"))
                   && xfce_rc_read_entry (rc, "URL", NULL) != NULL)
                 {
                   info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;

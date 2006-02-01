@@ -60,6 +60,13 @@
 #include <thunar-vfs/thunar-vfs-scandir.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
+/* Use g_access() if possible */
+#if GLIB_CHECK_VERSION(2,8,0)
+#include <glib/gstdio.h>
+#else
+#define g_access(path, mode) (access ((path), (mode)))
+#endif
+
 
 
 /* %&§$!# IRIX */
@@ -143,7 +150,7 @@ thunar_vfs_scandir_collect_fast (ThunarVfsScandirHandle *handle,
    * contents either, so no need to continue). See
    * http://bugzilla.xfce.org/show_bug.cgi?id=1408.
    */
-  if ((statb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != (S_IXUSR | S_IXGRP | S_IXOTH) && (access (handle->fname, X_OK) < 0))
+  if ((statb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != (S_IXUSR | S_IXGRP | S_IXOTH) && (g_access (handle->fname, X_OK) < 0))
     {
       errno = EACCES;
       goto done;
@@ -307,7 +314,7 @@ thunar_vfs_scandir_collect_slow (ThunarVfsScandirHandle *handle,
    * contents either, so no need to continue). See
    * http://bugzilla.xfce.org/show_bug.cgi?id=1408.
    */
-  if ((fstatb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != (S_IXUSR | S_IXGRP | S_IXOTH) && (access (handle->fname, X_OK) < 0))
+  if ((fstatb.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH)) != (S_IXUSR | S_IXGRP | S_IXOTH) && (g_access (handle->fname, X_OK) < 0))
     {
       errno = EACCES;
       goto error;
