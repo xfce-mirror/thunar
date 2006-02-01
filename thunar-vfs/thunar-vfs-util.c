@@ -145,7 +145,7 @@ thunar_vfs_humanize_size (ThunarVfsFileSize size,
   else if (size > 1024ul * 1024ul)
     g_snprintf (buffer, buflen, "%0.1f MB", size / (1024.0 * 1024.0));
   else if (size > 1024ul)
-    g_snprintf (buffer, buflen, "%0.1f KB", size / 1024.0);
+    g_snprintf (buffer, buflen, "%0.1f kB", size / 1024.0);
   else
     g_snprintf (buffer, buflen, "%lu B", (gulong) size);
 
