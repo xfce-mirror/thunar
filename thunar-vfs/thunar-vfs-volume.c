@@ -272,34 +272,6 @@ thunar_vfs_volume_is_removable (ThunarVfsVolume *volume)
 
 
 /**
- * thunar_vfs_volume_get_free_space:
- * @volume            : a #ThunarVfsVolume instance.
- * @free_space_return : location to store the free space to.
- *
- * Tries to determine the number of available bytes on the specified
- * @volume and places the result to the memory pointed to by
- * @free_space_return. The returned amount of bytes represents the
- * space available to the current user, which may be different from
- * the total free amount.
- *
- * If @volume is unable to determine the free space, %FALSE will be
- * returned and @free_space_return won't be set.
- *
- * Return value: %TRUE if the free amount was determined successfully,
- *               else %FALSE.
- **/
-gboolean
-thunar_vfs_volume_get_free_space (ThunarVfsVolume   *volume,
-                                  ThunarVfsFileSize *free_space_return)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
-  g_return_val_if_fail (free_space_return != NULL, FALSE);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_free_space) (volume, free_space_return);
-}
-
-
-
-/**
  * thunar_vfs_volume_lookup_icon_name:
  * @volume     : a #ThunarVfsVolume instance.
  * @icon_theme : a #GtkIconTheme instance.

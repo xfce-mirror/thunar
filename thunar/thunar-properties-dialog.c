@@ -99,6 +99,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *link_label;
   GtkWidget              *modified_label;
   GtkWidget              *accessed_label;
+  GtkWidget              *freespace_label;
   GtkWidget              *volume_image;
   GtkWidget              *volume_label;
   GtkWidget              *size_label;
@@ -339,8 +340,21 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
 
   /*
-     Fourth box (volume, size)
+     Fourth box (free space, volume, size)
    */
+  label = gtk_label_new (_("Free Space:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  dialog->freespace_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  exo_binding_new (G_OBJECT (dialog->freespace_label), "visible", G_OBJECT (label), "visible");
+  gtk_table_attach (GTK_TABLE (table), dialog->freespace_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (dialog->freespace_label);
+
+  ++row;
+
   label = gtk_label_new (_("Volume:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
@@ -711,6 +725,19 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->accessed_label);
     }
 
+  /* update the free space (only for folders) */
+  if (thunar_file_is_directory (dialog->file) && thunar_file_get_free_space (dialog->file, &size))
+    {
+      size_string = thunar_vfs_humanize_size (size, NULL, 0);
+      gtk_label_set_text (GTK_LABEL (dialog->freespace_label), size_string);
+      gtk_widget_show (dialog->freespace_label);
+      g_free (size_string);
+    }
+  else
+    {
+      gtk_widget_hide (dialog->freespace_label);
+    }
+
   /* update the volume */
   volume = thunar_file_get_volume (dialog->file, dialog->volume_manager);
   if (G_LIKELY (volume != NULL))
@@ -737,7 +764,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
       if (G_LIKELY (size_string != NULL))
         {
           size = thunar_file_get_size (dialog->file);
-          str = g_strdup_printf (_("%s (%u Bytes)"), size_string, (guint) size);
+          str = g_strdup_printf (_("%s (%lld Bytes)"), size_string, (gint64) size);
           gtk_label_set_text (GTK_LABEL (dialog->size_label), str);
           gtk_widget_show (dialog->size_label);
           g_free (size_string);

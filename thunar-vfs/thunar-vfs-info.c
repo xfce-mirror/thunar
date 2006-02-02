@@ -22,8 +22,23 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+#ifdef HAVE_SYS_MOUNT_H
+#include <sys/mount.h>
+#endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_STATFS_H
+#include <sys/statfs.h>
+#endif
+#ifdef HAVE_SYS_STATVFS_H
+#include <sys/statvfs.h>
+#endif
+#ifdef HAVE_SYS_VFS_H
+#include <sys/vfs.h>
 #endif
 
 #ifdef HAVE_ERRNO_H
@@ -187,6 +202,63 @@ thunar_vfs_info_copy (const ThunarVfsInfo *info)
   dst->ref_count = 1;
 
   return dst;
+}
+
+
+
+/**
+ * thunar_vfs_info_get_free_space:
+ * @info              : a #ThunarVfsInfo.
+ * @free_space_return : return location for the amount of free space or %NULL.
+ *
+ * Determines the amount of free space available on the volume on which the
+ * file to which @info refers resides. If the system is able to determine the
+ * amount of free space, it will be placed into the location to which
+ * @free_space_return points and %TRUE will be returned, else the function
+ * will return %FALSE indicating that the system is unable to determine the
+ * amount of free space.
+ *
+ * Return value: %TRUE if the amount of free space could be determined, else
+ *               %FALSE:
+ **/
+gboolean
+thunar_vfs_info_get_free_space (const ThunarVfsInfo *info,
+                                ThunarVfsFileSize   *free_space_return)
+{
+#if defined(HAVE_STATFS)
+  struct statfs  statfsb;
+#elif defined(HAVE_STATVFS)
+  struct statvfs statvfsb;
+#endif
+  gchar          absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
+
+  g_return_val_if_fail (info != NULL, FALSE);
+  g_return_val_if_fail (info->ref_count > 0, FALSE);
+
+  /* determine the absolute path */
+  if (thunar_vfs_path_to_string (info->path, absolute_path, sizeof (absolute_path), NULL) < 0)
+    return FALSE;
+
+#if defined(HAVE_STATFS)
+  if (statfs (absolute_path, &statfsb) == 0)
+    {
+      /* good old BSD way */
+      if (G_LIKELY (free_space_return != NULL))
+        *free_space_return = (statfsb.f_bavail * statfsb.f_bsize);
+      return TRUE;
+    }
+#elif defined(HAVE_STATVFS)
+  if (statvfs (absolute_path, &statvfsb) == 0)
+    {
+      /* Linux, IRIX, Solaris way */
+      if (G_LIKELY (free_space_return != NULL))
+        *free_space_return = (statvfsb.f_bavail * statvfsb.f_bsize);
+      return TRUE;
+    }
+#endif
+
+  /* unable to determine the amount of free space */
+  return FALSE;
 }
 
 

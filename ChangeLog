@@ -1,5 +1,22 @@
 2006-02-02	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in: Check for statvfs() and statfs(), and required
+	  header files.
+	* thunar-vfs/thunar-vfs-info.{c,h}, thunar-vfs/thunar-vfs-volume.{c,h},
+	  thunar-vfs/thunar-vfs-volume-bsd.c, thunar-vfs/thunar-vfs.symbols:
+	  Move the get_free_space() method from ThunarVfsVolume to ThunarVfsInfo
+	  so we can use it even if no volume manager implementation is avail-
+	  able for the target system. Bug #1420.
+	* thunar/thunar-file.h: Add get_free_space() method to ThunarFile, so
+	  we can easily determine the amount free space for a given volume
+	  based on a file located on that volume. Bug #1421.
+	* thunar/thunar-list-model.c(thunar_list_model_get_statusbar_text): Use
+	  new method thunar_file_get_free_space().
+	* thunar/thunar-properties-dialog.c: Display the amount of free space
+	  on a certain volume in the properties dialog for folders.
+
+2006-02-02	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-throbber.c: Fix typo in GDK_WINDOWING_X11. Cannot use
 	  gdk_cairo_region() with GDK < 2.7.1.
 

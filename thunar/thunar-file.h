@@ -146,6 +146,9 @@ static inline ThunarVfsFileType  thunar_file_get_kind             (const ThunarF
 static inline ThunarVfsFileMode  thunar_file_get_mode             (const ThunarFile       *file);
 static inline ThunarVfsFileSize  thunar_file_get_size             (const ThunarFile       *file);
 
+static inline gboolean           thunar_file_get_free_space       (const ThunarFile       *file,
+                                                                   ThunarVfsFileSize      *free_space_return);
+
 gchar                           *thunar_file_get_date_string      (const ThunarFile       *file,
                                                                    ThunarFileDateType      date_type);
 gchar                           *thunar_file_get_mode_string      (const ThunarFile       *file);
@@ -344,6 +347,29 @@ thunar_file_get_size (const ThunarFile *file)
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   return file->info->size;
 }
+
+/**
+ * thunar_file_get_free_space:
+ * @file              : a #ThunarFile instance.
+ * @free_space_return : return location for the amount of
+ *                      free space or %NULL.
+ *
+ * Determines the amount of free space of the volume on
+ * which @file resides. Returns %TRUE if the amount of
+ * free space was determined successfully and placed into
+ * @free_space_return, else %FALSE will be returned.
+ *
+ * Return value: %TRUE if successfull, else %FALSE.
+ **/
+static inline gboolean
+thunar_file_get_free_space (const ThunarFile  *file,
+                            ThunarVfsFileSize *free_space_return)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_vfs_info_get_free_space (file->info, free_space_return);
+}
+
+
 
 /**
  * thunar_file_get_custom_icon:

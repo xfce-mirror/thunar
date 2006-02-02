@@ -81,8 +81,6 @@ struct _ThunarVfsVolumeIface
   const gchar          *(*get_name)         (ThunarVfsVolume   *volume);
   ThunarVfsVolumeStatus (*get_status)       (ThunarVfsVolume   *volume);
   ThunarVfsPath        *(*get_mount_point)  (ThunarVfsVolume   *volume);
-  gboolean              (*get_free_space)   (ThunarVfsVolume   *volume,
-                                             ThunarVfsFileSize *free_space_return);
   const gchar          *(*lookup_icon_name) (ThunarVfsVolume   *volume,
                                              GtkIconTheme      *icon_theme);
 
@@ -127,9 +125,6 @@ gboolean              thunar_vfs_volume_is_mounted        (ThunarVfsVolume   *vo
 gboolean              thunar_vfs_volume_is_present        (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_ejectable      (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_removable      (ThunarVfsVolume   *volume);
-
-gboolean              thunar_vfs_volume_get_free_space    (ThunarVfsVolume   *volume,
-                                                           ThunarVfsFileSize *free_space_return);
 
 const gchar          *thunar_vfs_volume_lookup_icon_name  (ThunarVfsVolume   *volume,
                                                            GtkIconTheme      *icon_theme);

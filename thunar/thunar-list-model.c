@@ -1977,7 +1977,6 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   ThunarVfsMimeInfo *mime_info;
   ThunarVfsFileSize  size_summary;
   ThunarVfsFileSize  size;
-  ThunarVfsVolume   *volume;
   GtkTreeIter        iter;
   ThunarFile        *file;
   GList             *lp;
@@ -1991,9 +1990,9 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
     {
       /* try to determine a file for the current folder */
       file = (store->folder != NULL) ? thunar_folder_get_corresponding_file (store->folder) : NULL;
-      volume = (file != NULL) ? thunar_file_get_volume (file, store->volume_manager) : NULL;
 
-      if (G_LIKELY (volume != NULL && thunar_vfs_volume_get_free_space (volume, &size)))
+      /* check if we can determine the amount of free space for the volume */
+      if (G_LIKELY (file != NULL && thunar_file_get_free_space (file, &size)))
         {
           size_string = thunar_vfs_humanize_size (size, NULL, 0);
           text = g_strdup_printf (ngettext ("%d item, Free space: %s", "%d items, Free space: %s", store->nrows), store->nrows, size_string);

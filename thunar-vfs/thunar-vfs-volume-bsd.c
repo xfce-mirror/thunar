@@ -60,8 +60,6 @@ static ThunarVfsVolumeKind   thunar_vfs_volume_bsd_get_kind         (ThunarVfsVo
 static const gchar          *thunar_vfs_volume_bsd_get_name         (ThunarVfsVolume         *volume);
 static ThunarVfsVolumeStatus thunar_vfs_volume_bsd_get_status       (ThunarVfsVolume         *volume);
 static ThunarVfsPath        *thunar_vfs_volume_bsd_get_mount_point  (ThunarVfsVolume         *volume);
-static gboolean              thunar_vfs_volume_bsd_get_free_space   (ThunarVfsVolume         *volume,
-                                                                     ThunarVfsFileSize       *free_space_return);
 static gboolean              thunar_vfs_volume_bsd_eject            (ThunarVfsVolume         *volume,
                                                                      GtkWidget               *window,
                                                                      GError                 **error);
@@ -129,7 +127,6 @@ thunar_vfs_volume_bsd_volume_init (ThunarVfsVolumeIface *iface)
   iface->get_name = thunar_vfs_volume_bsd_get_name;
   iface->get_status = thunar_vfs_volume_bsd_get_status;
   iface->get_mount_point = thunar_vfs_volume_bsd_get_mount_point;
-  iface->get_free_space = thunar_vfs_volume_bsd_get_free_space;
   iface->eject = thunar_vfs_volume_bsd_eject;
   iface->mount = thunar_vfs_volume_bsd_mount;
   iface->unmount = thunar_vfs_volume_bsd_unmount;
@@ -195,17 +192,6 @@ static ThunarVfsPath*
 thunar_vfs_volume_bsd_get_mount_point (ThunarVfsVolume *volume)
 {
   return THUNAR_VFS_VOLUME_BSD (volume)->mount_point;
-}
-
-
-
-static gboolean
-thunar_vfs_volume_bsd_get_free_space (ThunarVfsVolume   *volume,
-                                      ThunarVfsFileSize *free_space_return)
-{
-  ThunarVfsVolumeBSD *volume_bsd = THUNAR_VFS_VOLUME_BSD (volume);
-  *free_space_return = volume_bsd->info.f_bavail * volume_bsd->info.f_bsize;
-  return TRUE;
 }
 
 
