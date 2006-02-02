@@ -29,7 +29,7 @@
 
 #include <thunar/thunar-throbber.h>
 
-#if !GTK_CHECK_VERSION(2,7,1) && defined(GDK_WINDOWIN_X11) && defined(HAVE_CAIRO)
+#if !GTK_CHECK_VERSION(2,7,1) && defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
 #include <cairo/cairo-xlib.h>
 #include <gdk/gdkx.h>
 #endif
@@ -277,8 +277,12 @@ thunar_throbber_expose_event (GtkWidget      *widget,
 
   /* allocate a cairo context */
   cr = get_cairo_context (widget->window);
+
+  /* setup clipping area */
+#if GTK_CHECK_VERSION(2,7,1)
   gdk_cairo_region (cr, event->region);
   cairo_clip (cr);
+#endif
 
   /* determine size and position of the throbber */
   size = MIN (widget->allocation.width, widget->allocation.height);

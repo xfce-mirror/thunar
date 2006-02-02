@@ -1,5 +1,10 @@
 2006-02-02	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-throbber.c: Fix typo in GDK_WINDOWING_X11. Cannot use
+	  gdk_cairo_region() with GDK < 2.7.1.
+
+2006-02-02	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-icon-renderer.c(thunar_icon_renderer_render): Make it
 	  easier to distinguish hidden and backup files from regular files.
 	* docs/README.thunarrc, thunar/thunar-preferences.c: Rename the
