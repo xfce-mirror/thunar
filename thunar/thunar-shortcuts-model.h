@@ -62,8 +62,6 @@ ThunarShortcutsModel *thunar_shortcuts_model_get_default    (void);
 gboolean               thunar_shortcuts_model_iter_for_file (ThunarShortcutsModel *model,
                                                              ThunarFile           *file,
                                                              GtkTreeIter          *iter);
-ThunarFile            *thunar_shortcuts_model_file_for_iter (ThunarShortcutsModel *model,
-                                                             GtkTreeIter          *iter);
 
 gboolean               thunar_shortcuts_model_drop_possible (ThunarShortcutsModel *model,
                                                              GtkTreePath          *path);

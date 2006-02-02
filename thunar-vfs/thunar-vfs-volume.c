@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -214,6 +214,28 @@ thunar_vfs_volume_is_present (ThunarVfsVolume *volume)
 
 
 /**
+ * thunar_vfs_volume_is_ejectable:
+ * @volume : a #ThunarVfsVolume instance.
+ *
+ * Determines whether the current user is allowed to eject the medium
+ * for @volume. This method should return %TRUE only if a medium is
+ * present and the @volume is removable. Still, there's no warranty
+ * that a call to thunar_vfs_volume_eject() will succeed.
+ *
+ * Return value: whether the medium for @volume can be ejected.
+ **/
+gboolean
+thunar_vfs_volume_is_ejectable (ThunarVfsVolume *volume)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+
+  /* we can only eject removable media, that are present (surprise, surprise) */
+  return (thunar_vfs_volume_is_present (volume) && thunar_vfs_volume_is_removable (volume));
+}
+
+
+
+/**
  * thunar_vfs_volume_is_removable:
  * @volume : a #ThunarVfsVolume instance.
  *
@@ -344,6 +366,110 @@ thunar_vfs_volume_lookup_icon_name (ThunarVfsVolume *volume,
     }
 
   return "gnome-fs-blockdev";
+}
+
+
+
+/**
+ * thunar_vfs_volume_eject:
+ * @volume : a #ThunarVfsVolume instance.
+ * @window : a #GtkWindow or %NULL.
+ * @error  : return location for errors or %NULL.
+ *
+ * Tries to eject the medium present for @volume (or atleast to
+ * unmount the @volume).
+ *
+ * If ejecting @volume requires some complex user interaction
+ * (basicly everything else than displaying an error dialog), it
+ * should popup a modal dialog on @window (or on the default
+ * #GdkScreen if @window is %NULL). But be aware, that if an
+ * implementation of #ThunarVfsVolume performs user interaction
+ * during a call to this method, it must implement this method
+ * in a reentrant fashion!
+ *
+ * Return value: %TRUE if the medium for @volume was successfully
+ *               ejected (or atleast the @volume was unmounted
+ *               successfully), else %FALSE.
+ **/
+gboolean
+thunar_vfs_volume_eject (ThunarVfsVolume *volume,
+                         GtkWidget       *window,
+                         GError         **error)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->eject) (volume, window, error);
+}
+
+
+
+/**
+ * thunar_vfs_volume_mount:
+ * @volume : a #ThunarVfsVolume instance.
+ * @window : a #GtkWindow or %NULL.
+ * @error  : return location for errors or %NULL.
+ *
+ * Tries to mount @volume. Will return %TRUE if either @volume
+ * was already mounted previously to this method invokation or
+ * @volume was successfully mounted now.
+ *
+ * If mounting @volume requires some complex user interaction
+ * (basicly everything else than displaying an error dialog), it
+ * should popup a modal dialog on @window (or on the default
+ * #GdkScreen if @window is %NULL). But be aware, that if an
+ * implementation of #ThunarVfsVolume performs user interaction
+ * during a call to this method, it must implement this method
+ * in a reentrant fashion!
+ *
+ * Return value: %TRUE if the medium for @volume was successfully
+ *               mounted or was already mounted previously, else
+ *               %FALSE.
+ **/
+gboolean
+thunar_vfs_volume_mount (ThunarVfsVolume *volume,
+                         GtkWidget       *window,
+                         GError         **error)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->mount) (volume, window, error);
+}
+
+
+
+/**
+ * thunar_vfs_volume_unmount:
+ * @volume : a #ThunarVfsVolume instance.
+ * @window : a #GtkWindow or %NULL.
+ * @error  : return location for errors or %NULL.
+ *
+ * Tries to unmount @volume. Will return %TRUE if either @volume
+ * was already unmounted previously to this method invokation or
+ * @volume was successfully unmounted now.
+ *
+ * If unmounting @volume requires some complex user interaction
+ * (basicly everything else than displaying an error dialog), it
+ * should popup a modal dialog on @window (or on the default
+ * #GdkScreen if @window is %NULL). But be aware, that if an
+ * implementation of #ThunarVfsVolume performs user interaction
+ * during a call to this method, it must implement this method
+ * in a reentrant fashion!
+ *
+ * Return value: %TRUE if the medium for @volume was successfully
+ *               unmounted or wasn't mounted previously, else
+ *               %FALSE.
+ **/
+gboolean
+thunar_vfs_volume_unmount (ThunarVfsVolume *volume,
+                           GtkWidget       *window,
+                           GError         **error)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
+  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->unmount) (volume, window, error);
 }
 
 

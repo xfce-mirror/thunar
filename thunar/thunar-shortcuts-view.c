@@ -92,6 +92,9 @@ static void         thunar_shortcuts_view_drop_uri_list          (ThunarShortcut
                                                                   GtkTreePath              *dst_path);
 static void         thunar_shortcuts_view_open                   (ThunarShortcutsView      *view);
 static void         thunar_shortcuts_view_open_in_new_window     (ThunarShortcutsView      *view);
+static gboolean     thunar_shortcuts_view_eject                  (ThunarShortcutsView      *view);
+static gboolean     thunar_shortcuts_view_mount                  (ThunarShortcutsView      *view);
+static gboolean     thunar_shortcuts_view_unmount                (ThunarShortcutsView      *view);
 static gboolean     thunar_shortcuts_view_separator_func         (GtkTreeModel             *model,
                                                                   GtkTreeIter              *iter,
                                                                   gpointer                  user_data);
@@ -296,6 +299,7 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
                                           GdkEventButton *event)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
+  ThunarVfsVolume     *volume;
   GtkTreeModel        *model;
   GtkTreePath         *path;
   GtkTreeIter          iter;
@@ -336,10 +340,11 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       gtk_tree_model_get_iter (model, &iter, path);
 
       /* check whether the shortcut at the given path is mutable */
-      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE, &mutable, -1);
-
-      /* determine the file for the given path */
-      file = thunar_shortcuts_model_file_for_iter (THUNAR_SHORTCUTS_MODEL (model), &iter);
+      gtk_tree_model_get (model, &iter,
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file,
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE, &mutable, 
+                          -1);
 
       /* prepare the internal loop */
       loop = g_main_loop_new (NULL, FALSE);
@@ -371,6 +376,42 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       item = gtk_separator_menu_item_new ();
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
+
+      /* check if we have a volume here */
+      if (G_UNLIKELY (volume != NULL))
+        {
+          /* append the "Mount Volume" menu action */
+          item = gtk_image_menu_item_new_with_mnemonic (_("_Mount Volume"));
+          gtk_widget_set_sensitive (item, !thunar_vfs_volume_is_mounted (volume));
+          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_mount), widget);
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+          gtk_widget_show (item);
+
+          /* check if the volume is removable */
+          if (thunar_vfs_volume_is_removable (volume))
+            {
+              /* append the "Eject Volume" menu action */
+              item = gtk_image_menu_item_new_with_mnemonic (_("E_ject Volume"));
+              g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), widget);
+              gtk_widget_set_sensitive (item, thunar_vfs_volume_is_ejectable (volume));
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_show (item);
+            }
+          else
+            {
+              /* append the "Unmount Volume" menu item */
+              item = gtk_image_menu_item_new_with_mnemonic (_("_Unmount Volume"));
+              gtk_widget_set_sensitive (item, thunar_vfs_volume_is_mounted (volume));
+              g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_unmount), widget);
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_show (item);
+            }
+
+          /* append a menu separator */
+          item = gtk_separator_menu_item_new ();
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+          gtk_widget_show (item);
+        }
 
       /* append the custom actions for the selected file (if any) */
       if (G_LIKELY (file != NULL))
@@ -449,6 +490,10 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
       gtk_grab_remove (menu);
 
       /* clean up */
+      if (G_LIKELY (file != NULL))
+        g_object_unref (G_OBJECT (file));
+      if (G_UNLIKELY (volume != NULL))
+        g_object_unref (G_OBJECT (volume));
       g_object_unref (G_OBJECT (tooltips));
       g_object_unref (G_OBJECT (menu));
       gtk_tree_path_free (path);
@@ -778,6 +823,10 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view)
 
   g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
+  /* make sure to mount the volume first (if it's a volume) */
+  if (!thunar_shortcuts_view_mount (view))
+    return;
+
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
@@ -806,6 +855,10 @@ thunar_shortcuts_view_open_in_new_window (ThunarShortcutsView *view)
 
   g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
+  /* make sure to mount the volume first (if it's a volume) */
+  if (!thunar_shortcuts_view_mount (view))
+    return;
+
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
@@ -821,6 +874,139 @@ thunar_shortcuts_view_open_in_new_window (ThunarShortcutsView *view)
           g_object_unref (G_OBJECT (file));
         }
     }
+}
+
+
+
+static gboolean
+thunar_shortcuts_view_eject (ThunarShortcutsView *view)
+{
+  GtkTreeSelection *selection;
+  ThunarVfsVolume  *volume;
+  GtkTreeModel     *model;
+  GtkTreeIter       iter;
+  GtkWidget        *window;
+  gboolean          result = TRUE;
+  GError           *error = NULL;
+
+  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
+
+  /* determine the selected item */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    {
+      /* determine the volume for the shortcut at the given tree iterator */
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, -1);
+      if (G_UNLIKELY (volume != NULL))
+        {
+          /* determine the toplevel window */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+
+          /* try to eject the volume */
+          result = thunar_vfs_volume_eject (volume, window, &error);
+          if (G_UNLIKELY (!result))
+            {
+              /* display an error dialog to inform the user */
+              thunar_dialogs_show_error (window, error, _("Failed to eject \"%s\""), thunar_vfs_volume_get_name (volume));
+              g_error_free (error);
+            }
+
+          /* cleanup */
+          g_object_unref (G_OBJECT (volume));
+        }
+    }
+
+  return result;
+}
+
+
+
+static gboolean
+thunar_shortcuts_view_mount (ThunarShortcutsView *view)
+{
+  GtkTreeSelection *selection;
+  ThunarVfsVolume  *volume;
+  GtkTreeModel     *model;
+  GtkTreeIter       iter;
+  GtkWidget        *window;
+  gboolean          result = TRUE;
+  GError           *error = NULL;
+
+  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
+
+  /* determine the selected item */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    {
+      /* determine the volume for the shortcut at the given tree iterator */
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, -1);
+      if (G_UNLIKELY (volume != NULL))
+        {
+          /* check if the volume isn't already mounted */
+          if (G_LIKELY (!thunar_vfs_volume_is_mounted (volume)))
+            {
+              /* determine the toplevel window */
+              window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+
+              /* try to mount the volume */
+              result = thunar_vfs_volume_mount (volume, window, &error);
+              if (G_UNLIKELY (!result))
+                {
+                  /* display an error dialog to inform the user */
+                  thunar_dialogs_show_error (window, error, _("Failed to mount \"%s\""), thunar_vfs_volume_get_name (volume));
+                  g_error_free (error);
+                }
+            }
+
+          /* cleanup */
+          g_object_unref (G_OBJECT (volume));
+        }
+    }
+
+  return result;
+}
+
+
+
+static gboolean
+thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
+{
+  GtkTreeSelection *selection;
+  ThunarVfsVolume  *volume;
+  GtkTreeModel     *model;
+  GtkTreeIter       iter;
+  GtkWidget        *window;
+  gboolean          result = TRUE;
+  GError           *error = NULL;
+
+  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
+
+  /* determine the selected item */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    {
+      /* determine the volume for the shortcut at the given tree iterator */
+      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, -1);
+      if (G_UNLIKELY (volume != NULL))
+        {
+          /* determine the toplevel window */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+
+          /* try to unmount the volume */
+          result = thunar_vfs_volume_unmount (volume, window, &error);
+          if (G_UNLIKELY (!result))
+            {
+              /* display an error dialog to inform the user */
+              thunar_dialogs_show_error (window, error, _("Failed to unmount \"%s\""), thunar_vfs_volume_get_name (volume));
+              g_error_free (error);
+            }
+
+          /* cleanup */
+          g_object_unref (G_OBJECT (volume));
+        }
+    }
+
+  return result;
 }
 
 

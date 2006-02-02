@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -62,6 +62,15 @@ static ThunarVfsVolumeStatus thunar_vfs_volume_bsd_get_status       (ThunarVfsVo
 static ThunarVfsPath        *thunar_vfs_volume_bsd_get_mount_point  (ThunarVfsVolume         *volume);
 static gboolean              thunar_vfs_volume_bsd_get_free_space   (ThunarVfsVolume         *volume,
                                                                      ThunarVfsFileSize       *free_space_return);
+static gboolean              thunar_vfs_volume_bsd_eject            (ThunarVfsVolume         *volume,
+                                                                     GtkWidget               *window,
+                                                                     GError                 **error);
+static gboolean              thunar_vfs_volume_bsd_mount            (ThunarVfsVolume         *volume,
+                                                                     GtkWidget               *window,
+                                                                     GError                 **error);
+static gboolean              thunar_vfs_volume_bsd_unmount          (ThunarVfsVolume         *volume,
+                                                                     GtkWidget               *window,
+                                                                     GError                 **error);
 static gboolean              thunar_vfs_volume_bsd_update           (gpointer                 user_data);
 static ThunarVfsVolumeBSD   *thunar_vfs_volume_bsd_new              (const gchar             *device_path,
                                                                      const gchar             *mount_path);
@@ -121,6 +130,9 @@ thunar_vfs_volume_bsd_volume_init (ThunarVfsVolumeIface *iface)
   iface->get_status = thunar_vfs_volume_bsd_get_status;
   iface->get_mount_point = thunar_vfs_volume_bsd_get_mount_point;
   iface->get_free_space = thunar_vfs_volume_bsd_get_free_space;
+  iface->eject = thunar_vfs_volume_bsd_eject;
+  iface->mount = thunar_vfs_volume_bsd_mount;
+  iface->unmount = thunar_vfs_volume_bsd_unmount;
 }
 
 
@@ -194,6 +206,227 @@ thunar_vfs_volume_bsd_get_free_space (ThunarVfsVolume   *volume,
   ThunarVfsVolumeBSD *volume_bsd = THUNAR_VFS_VOLUME_BSD (volume);
   *free_space_return = volume_bsd->info.f_bavail * volume_bsd->info.f_bsize;
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_vfs_volume_bsd_eject (ThunarVfsVolume *volume,
+                             GtkWidget       *window,
+                             GError         **error)
+{
+  ThunarVfsVolumeBSD *volume_bsd = THUNAR_VFS_VOLUME_BSD (volume);
+  gboolean            result;
+  gchar              *standard_error;
+  gchar              *command_line;
+  gchar              *quoted;
+  gint                exit_status;
+
+  /* generate the command line for the eject command */
+  quoted = g_shell_quote (volume_bsd->device_path);
+  command_line = g_strconcat ("eject ", quoted, NULL);
+  g_free (quoted);
+
+  /* execute the eject command */
+  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
+  if (G_LIKELY (result))
+    {
+      /* check if the command failed */
+      if (G_UNLIKELY (exit_status != 0))
+        {
+          /* drop additional whitespace from the stderr output */
+          g_strstrip (standard_error);
+
+          /* generate an error from the standard_error content */
+          if (G_LIKELY (g_str_has_prefix (standard_error, "eject: ")))
+            {
+              /* strip off the "eject: " prefix */
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "%s", standard_error + 7);
+            }
+          else
+            {
+              /* use the error message as-is, not nice, but hey, better than nothing */
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "%s", standard_error);
+            }
+
+          /* and yes, we failed */
+          result = FALSE;
+        }
+
+      /* release the stderr output */
+      g_free (standard_error);
+    }
+
+  /* cleanup */
+  g_free (command_line);
+
+  /* update volume state if successfull */
+  if (G_LIKELY (result))
+    thunar_vfs_volume_bsd_update (volume_bsd);
+
+  return result;
+}
+
+
+
+static gboolean
+thunar_vfs_volume_bsd_mount (ThunarVfsVolume *volume,
+                             GtkWidget       *window,
+                             GError         **error)
+{
+  ThunarVfsVolumeBSD *volume_bsd = THUNAR_VFS_VOLUME_BSD (volume);
+  gboolean            result;
+  GString            *message;
+  gchar               mount_point[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar             **standard_error_parts;
+  gchar              *standard_error;
+  gchar              *command_line;
+  gchar              *quoted;
+  gint                exit_status;
+  gint                n_parts;
+  gint                i;
+
+  /* determine the absolute path to the mount point */
+  if (thunar_vfs_path_to_string (volume_bsd->mount_point, mount_point, sizeof (mount_point), error) < 0)
+    return FALSE;
+
+  /* generate the command line for the mount command */
+  quoted = g_shell_quote (mount_point);
+  command_line = g_strconcat ("mount ", quoted, NULL);
+  g_free (quoted);
+
+  /* execute the mount command */
+  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
+  if (G_LIKELY (result))
+    {
+      /* check if the command failed */
+      if (G_UNLIKELY (exit_status != 0))
+        {
+          /* drop additional whitespace from the stderr output */
+          g_strstrip (standard_error);
+
+          /* the error message will usually look like
+           * "cd9660: /dev/cd1: Operation not permitted",
+           * so let's apply some voodoo magic here to
+           * make it look better.
+           */
+          standard_error_parts = g_strsplit (standard_error, ":", -1);
+          if (G_UNLIKELY (standard_error_parts[0] == NULL))
+            {
+              /* no useful information, *narf* */
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
+            }
+          else
+            {
+              /* determine the last part of the error */
+              for (n_parts = 0; standard_error_parts[n_parts + 1] != NULL; ++n_parts)
+                ;
+
+              /* construct a new error message */
+              message = g_string_new (g_strstrip (standard_error_parts[n_parts]));
+
+              /* append any additional information in () */
+              if (G_LIKELY (n_parts > 0))
+                {
+                  g_string_append (message, " (");
+                  for (i = 0; i < n_parts; ++i)
+                    {
+                      if (G_UNLIKELY (i > 0))
+                        g_string_append (message, ", ");
+                      g_string_append (message, g_strstrip (standard_error_parts[i]));
+                    }
+                  g_string_append (message, ")");
+                }
+
+              /* use the generated message for the error */
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "%s", message->str);
+              g_string_free (message, TRUE);
+            }
+
+          /* release the standard error parts */
+          g_strfreev (standard_error_parts);
+
+          /* and yes, we failed */
+          result = FALSE;
+        }
+
+      /* release the stderr output */
+      g_free (standard_error);
+    }
+
+  /* cleanup */
+  g_free (command_line);
+
+  /* update volume state if successfull */
+  if (G_LIKELY (result))
+    thunar_vfs_volume_bsd_update (volume_bsd);
+
+  return result;
+}
+
+
+
+static gboolean
+thunar_vfs_volume_bsd_unmount (ThunarVfsVolume *volume,
+                               GtkWidget       *window,
+                               GError         **error)
+{
+  ThunarVfsVolumeBSD *volume_bsd = THUNAR_VFS_VOLUME_BSD (volume);
+  gboolean            result;
+  gchar               mount_point[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar              *standard_error;
+  gchar              *command_line;
+  gchar              *quoted;
+  gint                exit_status;
+
+  /* determine the absolute path to the mount point */
+  if (thunar_vfs_path_to_string (volume_bsd->mount_point, mount_point, sizeof (mount_point), error) < 0)
+    return FALSE;
+
+  /* generate the command line for the umount command */
+  quoted = g_shell_quote (mount_point);
+  command_line = g_strconcat ("umount ", quoted, NULL);
+  g_free (quoted);
+
+  /* execute the umount command */
+  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
+  if (G_LIKELY (result))
+    {
+      /* check if the command failed */
+      if (G_UNLIKELY (exit_status != 0))
+        {
+          /* drop additional whitespace from the stderr output */
+          g_strstrip (standard_error);
+
+          /* generate an error from the standard_error content */
+          if (G_LIKELY (g_str_has_prefix (standard_error, "umount: ")))
+            {
+              /* strip off the "umount: " prefix */
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "%s", standard_error + 8);
+            }
+          else
+            {
+              /* use the error message as-is, not nice, but hey, better than nothing */
+              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "%s", standard_error);
+            }
+
+
+          /* and yes, we failed */
+          result = FALSE;
+        }
+
+      /* release the stderr output */
+      g_free (standard_error);
+    }
+
+  /* cleanup */
+  g_free (command_line);
+
+  /* update volume state if successfull */
+  if (G_LIKELY (result))
+    thunar_vfs_volume_bsd_update (volume_bsd);
+
+  return result;
 }
 
 

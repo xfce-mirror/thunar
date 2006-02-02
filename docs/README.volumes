@@ -1,0 +1,44 @@
+The Thunar Volume Manager
+=========================
+
+ The Thunar-VFS library contains an abstract interface to volume managers
+ and implementations of this interface for some platforms (currently only
+ FreeBSD is known to work properly, although Net- and OpenBSD should also
+ work fine).
+
+ Using this abstract interface (in fact the platform specific implementations
+ of the interface), Thunar is able to display mounted and mountable volumes
+ in the shortcuts pane, and allows the user to mount or eject/unmount these
+ volumes from the context menu. In addition, if the user double-clicks a
+ volume in the shortcuts pane (or requests to open the shortcut in a new
+ window), Thunar will first try to mount the volume if it's not already
+ mounted.
+
+ Unfortunately, this functionality is currently only available to BSD users.
+ I'm looking for people to provide implementations of ThunarVfsVolume and
+ ThunarVfsVolumeManager (see thunar-vfs-volume.h) for other platforms. If
+ you need a starting point, you should have a look at the BSD implementation
+ in thunar-vfs-volume-bsd.c, it's a bit tricky when it comes to details,
+ but it should give you the basic idea.
+
+
+ Notes for FreeBSD users
+ ------------------------
+
+  FreeBSD offers a really nice option, which allows regular users to mount
+  devices on every folder owned by the user. It is very handy for a single
+  user desktop system.
+  You'll need to enable the vfs.usermount option for this to work:
+
+   # sysctl -w vfs.usermount=1
+
+  Afterwards, just change the owner of the mount points for removable
+  devices to your user id, i.e.
+
+   # chown benny /mnt/dvd
+   # chown benny /mnt/cdrw
+
+  and you will be able to mount and unmount your DVD and CD-RW in Thunar.
+
+  In order to be able to eject removable devices, you will need to install
+  the eject utility from the sysutils/eject port.

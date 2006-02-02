@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -71,7 +71,10 @@ typedef enum /*< flags >*/
 
 struct _ThunarVfsVolumeIface
 {
+  /*< private >*/
   GTypeInterface __parent__;
+
+  /*< public >*/
 
   /* methods */
   ThunarVfsVolumeKind   (*get_kind)         (ThunarVfsVolume   *volume);
@@ -83,8 +86,34 @@ struct _ThunarVfsVolumeIface
   const gchar          *(*lookup_icon_name) (ThunarVfsVolume   *volume,
                                              GtkIconTheme      *icon_theme);
 
+  gboolean              (*eject)            (ThunarVfsVolume   *volume,
+                                             GtkWidget         *window,
+                                             GError           **error);
+  gboolean              (*mount)            (ThunarVfsVolume   *volume,
+                                             GtkWidget         *window,
+                                             GError           **error);
+  gboolean              (*unmount)          (ThunarVfsVolume   *volume,
+                                             GtkWidget         *window,
+                                             GError           **error);
+
+  /*< private >*/
+  void (*reserved0) (void);
+  void (*reserved1) (void);
+  void (*reserved2) (void);
+  void (*reserved3) (void);
+  void (*reserved4) (void);
+  void (*reserved5) (void);
+
+  /*< public >*/
+
   /* signals */
   void (*changed) (ThunarVfsVolume *volume);
+  
+  /*< private >*/
+  void (*reserved6) (void);
+  void (*reserved7) (void);
+  void (*reserved8) (void);
+  void (*reserved9) (void);
 };
 
 GType                 thunar_vfs_volume_get_type          (void) G_GNUC_CONST;
@@ -96,6 +125,7 @@ ThunarVfsPath        *thunar_vfs_volume_get_mount_point   (ThunarVfsVolume   *vo
 
 gboolean              thunar_vfs_volume_is_mounted        (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_present        (ThunarVfsVolume   *volume);
+gboolean              thunar_vfs_volume_is_ejectable      (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_removable      (ThunarVfsVolume   *volume);
 
 gboolean              thunar_vfs_volume_get_free_space    (ThunarVfsVolume   *volume,
@@ -103,6 +133,16 @@ gboolean              thunar_vfs_volume_get_free_space    (ThunarVfsVolume   *vo
 
 const gchar          *thunar_vfs_volume_lookup_icon_name  (ThunarVfsVolume   *volume,
                                                            GtkIconTheme      *icon_theme);
+
+gboolean              thunar_vfs_volume_eject             (ThunarVfsVolume   *volume,
+                                                           GtkWidget         *window,
+                                                           GError           **error);
+gboolean              thunar_vfs_volume_mount             (ThunarVfsVolume   *volume,
+                                                           GtkWidget         *window,
+                                                           GError           **error);
+gboolean              thunar_vfs_volume_unmount           (ThunarVfsVolume   *volume,
+                                                           GtkWidget         *window,
+                                                           GError           **error);
 
 void                  thunar_vfs_volume_changed           (ThunarVfsVolume   *volume) G_GNUC_INTERNAL;
 

@@ -42,13 +42,15 @@ ThunarVfsVolume
 
 </para>
 
-@__parent__: 
 @get_kind: 
 @get_name: 
 @get_status: 
 @get_mount_point: 
 @get_free_space: 
 @lookup_icon_name: 
+@eject: 
+@mount: 
+@unmount: 
 @changed: 
 
 <!-- ##### STRUCT ThunarVfsVolume ##### -->
@@ -111,6 +113,15 @@ ThunarVfsVolume
 @Returns: 
 
 
+<!-- ##### FUNCTION thunar_vfs_volume_is_ejectable ##### -->
+<para>
+
+</para>
+
+@volume: 
+@Returns: 
+
+
 <!-- ##### FUNCTION thunar_vfs_volume_is_removable ##### -->
 <para>
 
@@ -137,6 +148,39 @@ ThunarVfsVolume
 
 @volume: 
 @icon_theme: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_eject ##### -->
+<para>
+
+</para>
+
+@volume: 
+@window: 
+@error: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_mount ##### -->
+<para>
+
+</para>
+
+@volume: 
+@window: 
+@error: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_volume_unmount ##### -->
+<para>
+
+</para>
+
+@volume: 
+@window: 
+@error: 
 @Returns: 
 
 

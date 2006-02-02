@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-01 22:26+0100\n"
+"POT-Creation-Date: 2006-02-02 01:11+0100\n"
 "PO-Revision-Date: 2005-11-17 16:55+0900\n"
 "Last-Translator: Joao Pedrosa <joaopedrosa@gmail.com>\n"
 "Language-Team: os-cillation <info@os-cillation.com>\n"
@@ -214,6 +214,11 @@ msgstr "Nome de arquivo inválido"
 #: ../thunar-vfs/thunar-vfs-util.c:104
 #, c-format
 msgid "Unknown user `%s'"
+msgstr ""
+
+#. no useful information, *narf*
+#: ../thunar-vfs/thunar-vfs-volume-bsd.c:317
+msgid "Unknown error"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:157
@@ -634,7 +639,7 @@ msgstr "Visualização de ícone"
 #. the "Open" action
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:218 ../thunar/thunar-launcher.c:550
-#: ../thunar/thunar-launcher.c:568 ../thunar/thunar-shortcuts-view.c:354
+#: ../thunar/thunar-launcher.c:568 ../thunar/thunar-shortcuts-view.c:359
 msgid "_Open"
 msgstr "_Abrir"
 
@@ -644,7 +649,7 @@ msgstr "Abrir os itens selecionados"
 
 #. the "Open in New Window" action
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:222 ../thunar/thunar-shortcuts-view.c:365
+#: ../thunar/thunar-launcher.c:222 ../thunar/thunar-shortcuts-view.c:370
 msgid "Open in New Window"
 msgstr "Abrir em Nova Janela"
 
@@ -1088,39 +1093,72 @@ msgstr "%s (%u Bytes)"
 msgid "Failed to rename `%s'"
 msgstr "Falha em renomear `%s'"
 
+#. append the "Mount Volume" menu action
+#: ../thunar/thunar-shortcuts-view.c:384
+msgid "_Mount Volume"
+msgstr ""
+
+#. append the "Eject Volume" menu action
+#: ../thunar/thunar-shortcuts-view.c:394
+msgid "E_ject Volume"
+msgstr ""
+
+#. append the "Unmount Volume" menu item
+#: ../thunar/thunar-shortcuts-view.c:403
+msgid "_Unmount Volume"
+msgstr ""
+
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:408
+#: ../thunar/thunar-shortcuts-view.c:449
 #, fuzzy
 msgid "_Remove Shortcut"
 msgstr "_Remover Favorito"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:423
+#: ../thunar/thunar-shortcuts-view.c:464
 #, fuzzy
 msgid "Re_name Shortcut"
 msgstr "Re_nomear Favorito"
 
 #. append the "Display icon emblems" item
-#: ../thunar/thunar-shortcuts-view.c:438
+#: ../thunar/thunar-shortcuts-view.c:479
 msgid "Display _Emblem Icons"
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-view.c:440
+#: ../thunar/thunar-shortcuts-view.c:481
 msgid ""
 "Display emblem icons in the shortcuts list for all files for which emblems "
 "have been defined in the file properties dialog."
 msgstr ""
 
-#: ../thunar/thunar-shortcuts-view.c:743
+#: ../thunar/thunar-shortcuts-view.c:788
 #, c-format
 msgid "The path '%s' does not refer to a directory"
 msgstr "O caminho '%s' não se refere a um diretório"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:762
+#: ../thunar/thunar-shortcuts-view.c:807
 #, fuzzy
 msgid "Failed to add new shortcut"
 msgstr "Falha em adicionar novo favorito"
+
+#. display an error dialog to inform the user
+#: ../thunar/thunar-shortcuts-view.c:910
+#, fuzzy, c-format
+msgid "Failed to eject \"%s\""
+msgstr "Falha em renomear `%s'"
+
+#. display an error dialog to inform the user
+#: ../thunar/thunar-shortcuts-view.c:956
+#, fuzzy, c-format
+msgid "Failed to mount \"%s\""
+msgstr "Falha em renomear `%s'"
+
+#. display an error dialog to inform the user
+#: ../thunar/thunar-shortcuts-view.c:1000
+#, fuzzy, c-format
+msgid "Failed to unmount \"%s\""
+msgstr "Falha em renomear `%s'"
 
 #: ../thunar/thunar-standard-view.c:273
 msgid "File Context Menu"

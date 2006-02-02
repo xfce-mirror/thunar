@@ -1,3 +1,23 @@
+2006-02-02	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-shortcuts-model.{c,h}: Drop obsolete method
+	  thunar_shortcuts_model_file_for_iter() from ThunarShortcutsModel.
+	* thunar-vfs/thunar-vfs-volume.{c,h}, thunar-vfs/thunar-vfs.symbols:
+	  Add eject(), mount() and unmount() methods to the ThunarVfsVolume
+	  interface. The interface is therefore mostly done now, maybe some
+	  small additions required for certain backends in the future. Bug #995.
+	* docs/reference/thunar-vfs/: Update the API docs.
+	* thunar-vfs/thunar-vfs-volume-bsd.c: Implement eject(), mount() and
+	  unmount() for the BSD backend.
+	* thunar/thunar-shortcuts-view.c: Allow users to mount, unmount and
+	  eject volumes using the shortcuts pane. Volumes will also be mounted
+	  automatically if you select "Open", "Open in New Window" or just
+	  double click them. But all this is currently only available to BSD
+	  users.
+	* docs/README.volumes: Add notes about the volume manager.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Another four strings translated!
+
 2006-02-01	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-standard-view.c(thunar_standard_view_scroll_event):

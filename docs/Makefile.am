@@ -7,7 +7,8 @@ SUBDIRS =								\
 
 docdir = $(datadir)/doc/Thunar
 doc_DATA =								\
-	README.thunarrc
+	README.thunarrc							\
+	README.volumes
 
 EXTRA_DIST =								\
 	$(doc_DATA)

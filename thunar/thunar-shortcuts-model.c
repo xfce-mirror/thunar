@@ -1049,6 +1049,16 @@ thunar_shortcuts_model_volume_changed (ThunarVfsVolume      *volume,
         }
       else
         {
+          /* we may need to update the file as the mount point may have changed */
+          fpath = thunar_vfs_volume_get_mount_point (volume);
+          file = thunar_file_get_for_path (fpath, NULL);
+          if (G_LIKELY (file != NULL))
+            {
+              /* replace the current shortcut file with the new one */
+              g_object_unref (G_OBJECT (shortcut->file));
+              shortcut->file = file;
+            }
+
           /* tell the view that the volume has changed in some way */
           iter.stamp = model->stamp;
           iter.user_data = lp;
@@ -1156,24 +1166,6 @@ thunar_shortcuts_model_iter_for_file (ThunarShortcutsModel *model,
       }
 
   return FALSE;
-}
-
-
-
-/**
- * thunar_shortcuts_model_file_for_iter:
- * @model : a #ThunarShortcutsModel instance.
- * @iter  : pointer to a valid #GtkTreeIter.
- *
- * Return value: the #ThunarFile matching the given @iter.
- **/
-ThunarFile*
-thunar_shortcuts_model_file_for_iter (ThunarShortcutsModel *model,
-                                      GtkTreeIter          *iter)
-{
-  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), NULL);
-  g_return_val_if_fail (iter != NULL && iter->stamp == model->stamp, NULL);
-  return THUNAR_SHORTCUT (((GList *) iter->user_data)->data)->file;
 }
 
 
