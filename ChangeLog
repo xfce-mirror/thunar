@@ -1,5 +1,17 @@
 2006-02-02	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-icon-renderer.c(thunar_icon_renderer_render): Make it
+	  easier to distinguish hidden and backup files from regular files.
+	* docs/README.thunarrc, thunar/thunar-preferences.c: Rename the
+	  DefaultShowHidden preference to LastShowHidden.
+	* thunar/thunar-preferences-dialog.c, thunar/thunar-window.c: Drop the
+	  "Show hidden files" option from the preferences dialog. Instead Thunar
+	  now preserves the users last selection. This way, the "Show hidden
+	  files" behaviour is now consistent with the rest of the file manager.
+	  Bug #1417.
+
+2006-02-02	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-shortcuts-model.{c,h}: Drop obsolete method
 	  thunar_shortcuts_model_file_for_iter() from ThunarShortcutsModel.
 	* thunar-vfs/thunar-vfs-volume.{c,h}, thunar-vfs/thunar-vfs.symbols:

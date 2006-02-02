@@ -215,7 +215,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
-  table = gtk_table_new (4, 2, FALSE);
+  table = gtk_table_new (3, 2, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 12);
   gtk_container_set_border_width (GTK_CONTAINER (table), 12);
@@ -252,19 +252,11 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
-  button = gtk_check_button_new_with_mnemonic (_("Show hidden and _backup files"));
-  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "default-show-hidden", G_OBJECT (button), "active");
-  gtk_tooltips_set_tip (dialog->tooltips, button, _("Select this option to show hidden and backup files in new windows. "
-                                                    "The first character in a hidden filename is a period (.). The last "
-                                                    "character in a backup filename is a tilde (~)."), NULL);
-  gtk_table_attach (GTK_TABLE (table), button, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-  gtk_widget_show (button);
-
   button = gtk_check_button_new_with_mnemonic (_("_Show thumbnails"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-show-thumbnails", G_OBJECT (button), "active");
   gtk_tooltips_set_tip (dialog->tooltips, button, _("Select this option to display previewable files within a "
                                                     "folder as automatically generated thumbnail icons."), NULL);
-  gtk_table_attach (GTK_TABLE (table), button, 0, 2, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), button, 0, 2, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
 
   frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);

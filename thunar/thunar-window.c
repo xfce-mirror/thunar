@@ -456,10 +456,13 @@ thunar_window_init (ThunarWindow *window)
   gtk_action_group_add_actions (window->action_group, action_entries, G_N_ELEMENTS (action_entries), GTK_WIDGET (window));
   gtk_action_group_add_toggle_actions (window->action_group, toggle_action_entries, G_N_ELEMENTS (toggle_action_entries), GTK_WIDGET (window));
 
-  /* initialize the "show-hidden" action using the default value from the preferences */
+  /* initialize the "show-hidden" action using the last value from the preferences */
   action = gtk_action_group_get_action (window->action_group, "show-hidden");
-  g_object_get (G_OBJECT (window->preferences), "default-show-hidden", &show_hidden, NULL);
+  g_object_get (G_OBJECT (window->preferences), "last-show-hidden", &show_hidden, NULL);
   gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), show_hidden);
+
+  /* synchronize the "show-hidden" state with the "last-show-hidden" preference */
+  exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->preferences), "last-show-hidden");
 
   /* setup the history support */
   window->history = g_object_new (THUNAR_TYPE_HISTORY, "action-group", window->action_group, NULL);

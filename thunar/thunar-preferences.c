@@ -49,11 +49,11 @@
 enum
 {
   PROP_0,
-  PROP_DEFAULT_SHOW_HIDDEN,
   PROP_DEFAULT_VIEW,
   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
+  PROP_LAST_SHOW_HIDDEN,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_STATUSBAR_VISIBLE,
   PROP_LAST_VIEW,
@@ -172,19 +172,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   thunar_g_initialize_transformations ();
 
   /**
-   * ThunarPreferences:default-show-hidden:
-   *
-   * Whether to show hidden files by default in new windows.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_DEFAULT_SHOW_HIDDEN,
-                                   g_param_spec_boolean ("default-show-hidden",
-                                                         "default-show-hidden",
-                                                         "default-show-hidden",
-                                                         FALSE,
-                                                         EXO_PARAM_READWRITE));
-
-  /**
    * ThunarPreferences:default-view:
    *
    * The name of the widget class, which should be used for the
@@ -241,6 +228,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         "last-location-bar",
                                                         "ThunarLocationButtons",
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-show-hidden:
+   *
+   * Whether to show hidden files by default in new windows.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_SHOW_HIDDEN,
+                                   g_param_spec_boolean ("last-show-hidden",
+                                                         "last-show-hidden",
+                                                         "last-show-hidden",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:last-side-pane:
