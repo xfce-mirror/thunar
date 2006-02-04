@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-04 01:23+0100\n"
+"POT-Creation-Date: 2006-02-04 02:49+0100\n"
 "PO-Revision-Date: 2006-01-29 15:14+0900\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
@@ -790,106 +790,120 @@ msgid "The icon size for the path entry"
 msgstr "icona mida per"
 
 #. 0000
-#: ../thunar/thunar-permissions-chooser.c:240
+#: ../thunar/thunar-permissions-chooser.c:244
 #, fuzzy
 msgid "None"
 msgstr "Cap"
 
 #. 0002
-#: ../thunar/thunar-permissions-chooser.c:242
+#: ../thunar/thunar-permissions-chooser.c:246
 #, fuzzy
 msgid "Write only"
 msgstr "Escriptura"
 
 #. 0004
-#: ../thunar/thunar-permissions-chooser.c:244
+#: ../thunar/thunar-permissions-chooser.c:248
 #, fuzzy
 msgid "Read only"
 msgstr "Només lectura"
 
 #. 0006
-#: ../thunar/thunar-permissions-chooser.c:246
+#: ../thunar/thunar-permissions-chooser.c:250
 #, fuzzy
 msgid "Read & Write"
 msgstr "Llegit Escriptura"
 
-#: ../thunar/thunar-permissions-chooser.c:258
+#: ../thunar/thunar-permissions-chooser.c:262
 #, fuzzy
 msgid "Owner:"
 msgstr "Propietari:"
 
-#: ../thunar/thunar-permissions-chooser.c:272
+#: ../thunar/thunar-permissions-chooser.c:276
 #, fuzzy
 msgid "Unknown"
 msgstr "Desconegut"
 
-#: ../thunar/thunar-permissions-chooser.c:286
-#: ../thunar/thunar-permissions-chooser.c:341
+#: ../thunar/thunar-permissions-chooser.c:290
+#: ../thunar/thunar-permissions-chooser.c:345
 #, fuzzy
 msgid "Access:"
 msgstr "Accedit:"
 
-#: ../thunar/thunar-permissions-chooser.c:315
+#: ../thunar/thunar-permissions-chooser.c:319
 #, fuzzy
 msgid "Group:"
 msgstr "Grup:"
 
-#: ../thunar/thunar-permissions-chooser.c:370
+#: ../thunar/thunar-permissions-chooser.c:374
 #, fuzzy
 msgid "Others:"
 msgstr "Altres:"
 
-#: ../thunar/thunar-permissions-chooser.c:399
+#: ../thunar/thunar-permissions-chooser.c:403
 #, fuzzy
 msgid "Program:"
 msgstr "Programa:"
 
-#: ../thunar/thunar-permissions-chooser.c:405
+#: ../thunar/thunar-permissions-chooser.c:409
 #, fuzzy
 msgid "Allow this file to _run as a program"
 msgstr "fitxer a programa"
 
-#: ../thunar/thunar-permissions-chooser.c:431
+#: ../thunar/thunar-permissions-chooser.c:435
 #, fuzzy
 msgid ""
-"Allowing untrusted programs to run \n"
+"Allowing untrusted programs to run\n"
 "presents a security risk to your system."
 msgstr "a."
 
-#: ../thunar/thunar-permissions-chooser.c:442
+#: ../thunar/thunar-permissions-chooser.c:450
+msgid ""
+"The folder permissions are inconsistent, you\n"
+"may not be able to work with files in this folder."
+msgstr ""
+
+#: ../thunar/thunar-permissions-chooser.c:463
+msgid "Correct folder permissions..."
+msgstr ""
+
+#: ../thunar/thunar-permissions-chooser.c:464
+msgid "Click here to automatically fix the folder permissions."
+msgstr ""
+
+#: ../thunar/thunar-permissions-chooser.c:475
 msgid "Please wait..."
 msgstr "Espereu..."
 
-#: ../thunar/thunar-permissions-chooser.c:447
+#: ../thunar/thunar-permissions-chooser.c:480
 #, fuzzy
 msgid "Stop applying permissions recursively."
 msgstr "Atura permisos."
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:565
-#: ../thunar/thunar-permissions-chooser.c:1023
+#: ../thunar/thunar-permissions-chooser.c:598
+#: ../thunar/thunar-permissions-chooser.c:1144
 #: ../thunar/thunar-progress-dialog.c:293
 msgid "Question"
 msgstr "Pregunta"
 
-#: ../thunar/thunar-permissions-chooser.c:589
+#: ../thunar/thunar-permissions-chooser.c:622
 #, fuzzy
 msgid "Apply recursively?"
 msgstr "Aplica?"
 
-#: ../thunar/thunar-permissions-chooser.c:595
+#: ../thunar/thunar-permissions-chooser.c:628
 #, fuzzy
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolder below the selected folder?"
 msgstr "aplica i seleccionat?"
 
-#: ../thunar/thunar-permissions-chooser.c:600
+#: ../thunar/thunar-permissions-chooser.c:633
 #, fuzzy
 msgid "Do _not ask me again"
 msgstr "no"
 
-#: ../thunar/thunar-permissions-chooser.c:601
+#: ../thunar/thunar-permissions-chooser.c:634
 #, fuzzy
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
@@ -898,39 +912,55 @@ msgid ""
 msgstr "Si i preferències diàleg."
 
 #. display an error to the user
-#: ../thunar/thunar-permissions-chooser.c:681
+#: ../thunar/thunar-permissions-chooser.c:714
 #, fuzzy
 msgid "Failed to change group"
 msgstr "Ha fallat grup"
 
 #. display an error to the user
-#: ../thunar/thunar-permissions-chooser.c:734
+#: ../thunar/thunar-permissions-chooser.c:767
+#: ../thunar/thunar-permissions-chooser.c:1103
 #, fuzzy
 msgid "Failed to apply new permissions"
 msgstr "Ha fallat aplica nou permisos"
 
-#: ../thunar/thunar-permissions-chooser.c:913
+#: ../thunar/thunar-permissions-chooser.c:946
 #, fuzzy
 msgid "Unknown file owner"
 msgstr "Desconegut fitxer propietari"
 
-#: ../thunar/thunar-permissions-chooser.c:1052
+#: ../thunar/thunar-permissions-chooser.c:1077
+msgid "Correct folder permissions automatically?"
+msgstr ""
+
+#: ../thunar/thunar-permissions-chooser.c:1079
+msgid "Correct folder permissions"
+msgstr ""
+
+#: ../thunar/thunar-permissions-chooser.c:1081
+msgid ""
+"The folder permissions will be reset to a consistent state. Only users "
+"allowed to read the contents of this folder will be allowed to enter the "
+"folder afterwards."
+msgstr ""
+
+#: ../thunar/thunar-permissions-chooser.c:1173
 #: ../thunar/thunar-progress-dialog.c:319
 msgid "_Yes"
 msgstr "_Sí"
 
-#: ../thunar/thunar-permissions-chooser.c:1056
+#: ../thunar/thunar-permissions-chooser.c:1177
 #: ../thunar/thunar-progress-dialog.c:323
 #, fuzzy
 msgid "Yes to _all"
 msgstr "Sí tot"
 
-#: ../thunar/thunar-permissions-chooser.c:1060
+#: ../thunar/thunar-permissions-chooser.c:1181
 #: ../thunar/thunar-progress-dialog.c:327
 msgid "_No"
 msgstr "_No"
 
-#: ../thunar/thunar-permissions-chooser.c:1064
+#: ../thunar/thunar-permissions-chooser.c:1185
 #: ../thunar/thunar-progress-dialog.c:331
 msgid "_Cancel"
 msgstr "_Cancel·la"

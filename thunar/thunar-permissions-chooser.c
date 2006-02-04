@@ -86,6 +86,8 @@ static void                             thunar_permissions_chooser_group_changed
                                                                                      GtkWidget                      *combo);
 static void                             thunar_permissions_chooser_program_toggled  (ThunarPermissionsChooser       *chooser,
                                                                                      GtkWidget                      *button);
+static void                             thunar_permissions_chooser_fixperm_clicked  (ThunarPermissionsChooser       *chooser,
+                                                                                     GtkWidget                      *button);
 static ThunarVfsInteractiveJobResponse  thunar_permissions_chooser_job_ask          (ThunarPermissionsChooser       *chooser,
                                                                                      const gchar                    *message,
                                                                                      ThunarVfsInteractiveJobResponse choices,
@@ -128,6 +130,8 @@ struct _ThunarPermissionsChooser
   GtkWidget    *group_combo;
   GtkWidget    *access_combos[3];
   GtkWidget    *program_button;
+  GtkWidget    *fixperm_label;
+  GtkWidget    *fixperm_button;
 
   /* job control stuff */
   ThunarVfsJob *job;
@@ -428,11 +432,40 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
-  label = gtk_label_new (_("Allowing untrusted programs to run \npresents a security risk to your system."));
+  label = gtk_label_new (_("Allowing untrusted programs to run\npresents a security risk to your system."));
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_small_italic ());
   gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
+
+  hbox = gtk_hbox_new (FALSE, 6);
+  exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (hbox), "sensitive");
+  gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (hbox);
+
+  image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_LARGE_TOOLBAR);
+  gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+  gtk_widget_show (image);
+
+  chooser->fixperm_label = gtk_label_new (_("The folder permissions are inconsistent, you\nmay not be able to work with files in this folder."));
+  gtk_misc_set_alignment (GTK_MISC (chooser->fixperm_label), 0.0f, 0.5f);
+  gtk_label_set_attributes (GTK_LABEL (chooser->fixperm_label), thunar_pango_attr_list_small_italic ());
+  exo_binding_new (G_OBJECT (chooser->fixperm_label), "visible", G_OBJECT (hbox), "visible");
+  gtk_box_pack_start (GTK_BOX (hbox), chooser->fixperm_label, TRUE, TRUE, 0);
+  gtk_widget_show (chooser->fixperm_label);
+
+  row += 1;
+
+  hbox = gtk_hbox_new (FALSE, 6);
+  gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (hbox);
+
+  chooser->fixperm_button = gtk_button_new_with_mnemonic (_("Correct folder permissions..."));
+  gtk_tooltips_set_tip (chooser->tooltips, chooser->fixperm_button, _("Click here to automatically fix the folder permissions."), NULL);
+  g_signal_connect_swapped (G_OBJECT (chooser->fixperm_button), "clicked", G_CALLBACK (thunar_permissions_chooser_fixperm_clicked), chooser);
+  exo_binding_new (G_OBJECT (chooser->fixperm_button), "visible", G_OBJECT (hbox), "visible");
+  gtk_box_pack_end (GTK_BOX (hbox), chooser->fixperm_button, FALSE, FALSE, 0);
+  gtk_widget_show (chooser->fixperm_button);
 
   /* the job control stuff */
   hbox = gtk_hbox_new (FALSE, 6);
@@ -922,11 +955,29 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
       g_signal_handlers_unblock_by_func (G_OBJECT (chooser->access_combos[n]), thunar_permissions_chooser_access_changed, chooser);
     }
 
-  /* update the program setting based on the mode (only visible for regular files) */
+  /* update the program setting based on the mode (only visible for regular files, allowed for execution) */
   g_signal_handlers_block_by_func (G_OBJECT (chooser->program_button), thunar_permissions_chooser_program_toggled, chooser);
-  g_object_set (G_OBJECT (chooser->program_button), "visible", thunar_file_is_regular (file), NULL);
+  g_object_set (G_OBJECT (chooser->program_button), "visible", thunar_file_is_regular (file)
+      && (thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-executable")
+       || thunarx_file_info_has_mime_type (THUNARX_FILE_INFO (file), "application/x-shellscript")), NULL);
   gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (chooser->program_button), (mode & 0111) != 0);
   g_signal_handlers_unblock_by_func (G_OBJECT (chooser->program_button), thunar_permissions_chooser_program_toggled, chooser);
+
+  /* update the "inconsistent folder permissions" warning and the "fix permissions" button based on the mode */
+  if (thunar_file_is_directory (file) && ((mode & 0111) != ((mode >> 2) & 0111)))
+    {
+      /* display the "fix permissions" button if we can modify the file */
+      g_object_set (G_OBJECT (chooser->fixperm_button), "visible", thunar_file_is_chmodable (file), NULL);
+
+      /* always display the warning even if we cannot fix it */
+      gtk_widget_show (chooser->fixperm_label);
+    }
+  else
+    {
+      /* hide both the warning text and the fix button */
+      gtk_widget_hide (chooser->fixperm_button);
+      gtk_widget_hide (chooser->fixperm_label);
+    }
 
   /* release our reference on the new combo store and unblock the combo */
   g_signal_handlers_unblock_by_func (G_OBJECT (chooser->group_combo), thunar_permissions_chooser_group_changed, chooser);
@@ -989,6 +1040,76 @@ thunar_permissions_chooser_program_toggled (ThunarPermissionsChooser *chooser,
 
   /* apply the new mode (only the executable bits for files) */
   thunar_permissions_chooser_change_mode (chooser, 0000, 0000, 0111, mode);
+}
+
+
+
+static void
+thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
+                                            GtkWidget                *button)
+{
+  ThunarVfsFileMode mode;
+  ThunarVfsJob     *job;
+  GtkWidget        *dialog;
+  GtkWidget        *window;
+  GError           *error = NULL;
+  gint              response;
+
+  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  g_return_if_fail (chooser->fixperm_button == button);
+  g_return_if_fail (GTK_IS_BUTTON (button));
+
+  /* verify that we have a valid file */
+  if (G_UNLIKELY (chooser->file == NULL))
+    return;
+
+  /* determine the toplevel widget */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (chooser));
+  if (G_UNLIKELY (window == NULL))
+    return;
+
+  /* popup a confirm dialog */
+  dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+                                   GTK_DIALOG_DESTROY_WITH_PARENT
+                                   | GTK_DIALOG_MODAL,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   _("Correct folder permissions automatically?"));
+  gtk_dialog_add_button (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
+  gtk_dialog_add_button (GTK_DIALOG (dialog), _("Correct folder permissions"), GTK_RESPONSE_OK);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("The folder permissions will be reset to a consistent state. Only users "
+                                                                           "allowed to read the contents of this folder will be allowed to enter the "
+                                                                           "folder afterwards."));
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  /* check if we should apply the changes */
+  if (G_LIKELY (chooser->file != NULL && response == GTK_RESPONSE_OK))
+    {
+      /* determine the current mode */
+      mode = thunar_file_get_mode (chooser->file);
+
+      /* determine the new mode */
+      mode = (((mode & THUNAR_VFS_FILE_MODE_USR_READ) != 0) ? THUNAR_VFS_FILE_MODE_USR_EXEC : 0)
+           | (((mode & THUNAR_VFS_FILE_MODE_GRP_READ) != 0) ? THUNAR_VFS_FILE_MODE_GRP_EXEC : 0)
+           | (((mode & THUNAR_VFS_FILE_MODE_OTH_READ) != 0) ? THUNAR_VFS_FILE_MODE_OTH_EXEC : 0);
+
+      /* try to allocate the new job */
+      job = thunar_vfs_change_mode (thunar_file_get_path (chooser->file), 0111, mode, 0000, 0000, FALSE, &error);
+      if (G_UNLIKELY (job == NULL))
+        {
+          /* display an error to the user */
+          thunar_dialogs_show_error (GTK_WIDGET (chooser), error, _("Failed to apply new permissions"));
+          g_error_free (error);
+        }
+      else
+        {
+          /* handle the job */
+          thunar_permissions_chooser_job_start (chooser, job, FALSE);
+          g_object_unref (G_OBJECT (job));
+        }
+    }
 }
 
 

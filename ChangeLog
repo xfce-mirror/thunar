@@ -1,5 +1,16 @@
 2006-02-04	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-permissions-chooser.c
+	  (thunar_permissions_chooser_file_changed): Display the program check
+	  box only for files which we will actually execute.
+	* thunar/thunar-permissions-chooser.c: Add a warning text to the
+	  permissions chooser for folders, whose exec and read flags are
+	  inconsistent. Add a button to allow the user to fix the folder
+	  permissions automatically if inconsistent.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+
+2006-02-04	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add method thunar_file_list_to_path_list(),
 	  which transforms a list of ThunarFile's to a list of ThunarVfsPath's.
 	* thunar/thunar-clipboard-manager.c
