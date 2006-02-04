@@ -2,11 +2,12 @@
 Basic Types
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Standard Thunar-VFS types, defined for ease-of-use and portability.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
-
+  Thunar-VFS defines a number of commonly used types to abstract the details
+  of the underlying system.
 </para>
 
 <!-- ##### SECTION See_Also ##### -->
@@ -15,7 +16,7 @@ Basic Types
 </para>
 
 <!-- ##### SECTION Stability_Level ##### -->
-
+Stable
 
 <!-- ##### ENUM ThunarVfsFileType ##### -->
 <para>
@@ -63,31 +64,33 @@ Basic Types
 
 <!-- ##### TYPEDEF ThunarVfsFileDevice ##### -->
 <para>
-
+  Datatype to represent the device number of a file.
 </para>
 
 
 <!-- ##### TYPEDEF ThunarVfsFileSize ##### -->
 <para>
-
+  Datatype to represent file sizes (in bytes). The file size
+  is always represented as a 64bit integer, even on system that
+  do not support large files.
 </para>
 
 
 <!-- ##### TYPEDEF ThunarVfsFileTime ##### -->
 <para>
-
+  Datatype to represent file times (in seconds).
 </para>
 
 
 <!-- ##### TYPEDEF ThunarVfsGroupId ##### -->
 <para>
-
+  Datatype to represent a group id.
 </para>
 
 
 <!-- ##### TYPEDEF ThunarVfsUserId ##### -->
 <para>
-
+  Datatype to represent a user id.
 </para>
 
 

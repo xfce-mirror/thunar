@@ -20,6 +20,7 @@
 #ifndef __THUNAR_VIEW_H__
 #define __THUNAR_VIEW_H__
 
+#include <thunar/thunar-component.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-navigator.h>
 
@@ -45,10 +46,6 @@ struct _ThunarViewIface
   void            (*set_show_hidden)    (ThunarView     *view,
                                          gboolean        show_hidden);
 
-  GtkUIManager   *(*get_ui_manager)     (ThunarView     *view);
-  void            (*set_ui_manager)     (ThunarView     *view,
-                                         GtkUIManager   *ui_manager);
-
   ThunarZoomLevel (*get_zoom_level)     (ThunarView     *view);
   void            (*set_zoom_level)     (ThunarView     *view,
                                          ThunarZoomLevel zoom_level);
@@ -65,10 +62,6 @@ const gchar    *thunar_view_get_statusbar_text  (ThunarView     *view);
 gboolean        thunar_view_get_show_hidden     (ThunarView     *view);
 void            thunar_view_set_show_hidden     (ThunarView     *view,
                                                  gboolean        show_hidden);
-
-GtkUIManager   *thunar_view_get_ui_manager      (ThunarView     *view);
-void            thunar_view_set_ui_manager      (ThunarView     *view,
-                                                 GtkUIManager   *ui_manager);
 
 ThunarZoomLevel thunar_view_get_zoom_level      (ThunarView     *view);
 void            thunar_view_set_zoom_level      (ThunarView     *view,

@@ -225,7 +225,7 @@ gboolean
 thunar_vfs_info_get_free_space (const ThunarVfsInfo *info,
                                 ThunarVfsFileSize   *free_space_return)
 {
-#if defined(HAVE_STATFS)
+#if defined(HAVE_STATFS) && !defined(__sgi__)
   struct statfs  statfsb;
 #elif defined(HAVE_STATVFS)
   struct statvfs statvfsb;
@@ -239,7 +239,7 @@ thunar_vfs_info_get_free_space (const ThunarVfsInfo *info,
   if (thunar_vfs_path_to_string (info->path, absolute_path, sizeof (absolute_path), NULL) < 0)
     return FALSE;
 
-#if defined(HAVE_STATFS)
+#if defined(HAVE_STATFS) && !defined(__sgi__)
   if (statfs (absolute_path, &statfsb) == 0)
     {
       /* good old BSD way */

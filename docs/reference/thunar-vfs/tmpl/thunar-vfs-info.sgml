@@ -2,7 +2,7 @@
 ThunarVfsInfo
 
 <!-- ##### SECTION Short_Description ##### -->
-
+Stores information about files.
 
 <!-- ##### SECTION Long_Description ##### -->
 <para>
@@ -11,7 +11,7 @@ ThunarVfsInfo
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
-
+  <link linkend="thunar-vfs-Basic-Types">Basic Types</link>
 </para>
 
 <!-- ##### SECTION Stability_Level ##### -->
@@ -19,7 +19,8 @@ ThunarVfsInfo
 
 <!-- ##### STRUCT ThunarVfsInfo ##### -->
 <para>
-
+  The Thunar-VFS equivalent of <function>stat(2)</function>, extended with
+  advanced information like display name and mime type.
 </para>
 
 @type: the file type.
@@ -62,6 +63,44 @@ ThunarVfsInfo
 </para>
 
 @info: 
+
+
+<!-- ##### FUNCTION thunar_vfs_info_copy ##### -->
+<para>
+
+</para>
+
+@info: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_info_get_free_space ##### -->
+<para>
+
+</para>
+
+@info: 
+@free_space_return: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_info_get_custom_icon ##### -->
+<para>
+
+</para>
+
+@info: 
+@Returns: 
+
+
+<!-- ##### FUNCTION thunar_vfs_info_read_link ##### -->
+<para>
+
+</para>
+
+@info: 
+@error: 
+@Returns: 
 
 
 <!-- ##### FUNCTION thunar_vfs_info_execute ##### -->

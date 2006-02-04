@@ -326,7 +326,7 @@ thunar_vfs_job_cancel (ThunarVfsJob *job)
 
 
 /**
- * thunar_vfs_job_emit:
+ * thunar_vfs_job_emit_valist:
  * @job           : a #ThunarVfsJob.
  * @signal_id     : the id of the signal to emit on @job.
  * @signal_detail : the detail.

@@ -412,7 +412,7 @@ thunar_vfs_move_file (ThunarVfsPath *source_path,
 
 
 /**
- * thunar_vfs_move_into:
+ * thunar_vfs_move_files:
  * @source_path_list : the list of #ThunarVfsPath<!---->s that should be moved.
  * @target_path_list : the list of #ThunarVfsPath<!---->s to the targets.
  * @error            : return location for errors or %NULL.

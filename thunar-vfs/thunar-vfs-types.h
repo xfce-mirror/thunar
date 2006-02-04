@@ -40,6 +40,8 @@ G_BEGIN_DECLS;
  *                                  #ThunarVfsInfo object would have the type
  *                                  of the target).
  * @THUNAR_VFS_FILE_TYPE_SOCKET   : A unix domain socket.
+ * @THUNAR_VFS_FILE_TYPE_UNKNOWN  : The exact type of the file could not be
+ *                                  determined.
  *
  * Describes the type of a file.
  **/
@@ -100,7 +102,7 @@ typedef enum { /*< flags >*/
  *                                     itself or the linked file, depends on 
  *                                     whether the symlink is broken or not.
  * @THUNAR_VFS_FILE_FLAGS_EXECUTABLE : The file can most probably be executed
- *                                     by #thunar_vfs_info_execute().
+ *                                     by thunar_vfs_info_execute().
  *
  * Flags providing additional information about the
  * file system entity.
@@ -111,34 +113,10 @@ typedef enum { /*< flags >*/
   THUNAR_VFS_FILE_FLAGS_EXECUTABLE = 1L << 1,
 } ThunarVfsFileFlags;
 
-/**
- * ThunarVfsFileDevice:
- * Datatype to represent the device number of a file.
- **/
 typedef dev_t ThunarVfsFileDevice;
-
-/**
- * ThunarVfsFileSize:
- * Datatype to represent file sizes (in bytes).
- **/
 typedef gint64 ThunarVfsFileSize;
-
-/**
- * ThunarVfsFileTime:
- * Datatype to represent file times (in seconds).
- **/
 typedef time_t ThunarVfsFileTime;
-
-/**
- * ThunarVfsGroupId:
- * Datatype to represent a group id.
- **/
 typedef gid_t ThunarVfsGroupId;
-
-/**
- * ThunarVfsUserId:
- * Datatype to represent a user id.
- **/
 typedef uid_t ThunarVfsUserId;
 
 G_END_DECLS;

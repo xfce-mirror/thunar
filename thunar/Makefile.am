@@ -34,6 +34,8 @@ Thunar_SOURCES =							\
 	thunar-chooser-model.h						\
 	thunar-clipboard-manager.c					\
 	thunar-clipboard-manager.h					\
+	thunar-component.c						\
+	thunar-component.h						\
 	thunar-create-dialog.c						\
 	thunar-create-dialog.h						\
 	thunar-details-view.c						\

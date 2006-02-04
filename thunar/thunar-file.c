@@ -1839,4 +1839,29 @@ thunar_file_cache_lookup (const ThunarVfsPath *path)
 
 
 
+/**
+ * thunar_file_list_to_path_list:
+ * @file_list : a #GList of #ThunarFile<!---->s.
+ *
+ * Transforms the @file_list to a #GList of #ThunarVfsPath<!---->s for
+ * the #ThunarFile<!---->s contained within @file_list.
+ *
+ * The caller is responsible to free the returned list using
+ * thunar_vfs_path_list_free() when no longer needed.
+ *
+ * Return value: the list of #ThunarVfsPath<!---->s for @file_list.
+ **/
+GList*
+thunar_file_list_to_path_list (GList *file_list)
+{
+  GList *path_list = NULL;
+  GList *lp;
+
+  for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev)
+    path_list = g_list_prepend (path_list, thunar_vfs_path_ref (THUNAR_FILE (lp->data)->info->path));
+
+  return path_list;
+}
+
+
 

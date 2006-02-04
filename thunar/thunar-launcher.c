@@ -172,10 +172,11 @@ thunar_launcher_class_init (ThunarLauncherClass *klass)
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_SELECTED_FILES,
-                                   g_param_spec_pointer ("selected-files",
-                                                         "selected-files",
-                                                         "selected-files",
-                                                         EXO_PARAM_READWRITE));
+                                   g_param_spec_boxed ("selected-files",
+                                                       "selected-files",
+                                                       "selected-files",
+                                                       THUNARX_TYPE_FILE_INFO_LIST,
+                                                       EXO_PARAM_READWRITE));
 
   /**
    * ThunarLauncher:widget:
@@ -274,7 +275,7 @@ thunar_launcher_get_property (GObject    *object,
       break;
 
     case PROP_SELECTED_FILES:
-      g_value_set_pointer (value, thunar_launcher_get_selected_files (launcher));
+      g_value_set_boxed (value, thunar_launcher_get_selected_files (launcher));
       break;
 
     case PROP_WIDGET:
@@ -304,7 +305,7 @@ thunar_launcher_set_property (GObject      *object,
       break;
 
     case PROP_SELECTED_FILES:
-      thunar_launcher_set_selected_files (launcher, g_value_get_pointer (value));
+      thunar_launcher_set_selected_files (launcher, g_value_get_boxed (value));
       break;
 
     case PROP_WIDGET:

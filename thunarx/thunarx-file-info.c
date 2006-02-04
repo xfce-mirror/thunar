@@ -374,6 +374,23 @@ thunarx_file_info_renamed (ThunarxFileInfo *file_info)
 
 
 
+GType
+thunarx_file_info_list_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = g_boxed_type_register_static (I_("ThunarxFileInfoList"),
+                                           (GBoxedCopyFunc) thunarx_file_info_list_copy,
+                                           (GBoxedFreeFunc) thunarx_file_info_list_free);
+    }
+
+  return type;
+}
+
+
+
 /**
  * thunarx_file_info_list_copy:
  * @file_infos : a #GList of #ThunarxFileInfo<!---->s.
@@ -386,10 +403,11 @@ thunarx_file_info_renamed (ThunarxFileInfo *file_info)
 GList*
 thunarx_file_info_list_copy (GList *file_infos)
 {
-  GList *list;
+  GList *list = NULL;
+  GList *lp;
 
-  list = g_list_copy (file_infos);
-  g_list_foreach (list, (GFunc) g_object_ref, NULL);
+  for (lp = g_list_last (file_infos); lp != NULL; lp = lp->prev)
+    list = g_list_prepend (list, g_object_ref (G_OBJECT (lp->data)));
 
   return list;
 }

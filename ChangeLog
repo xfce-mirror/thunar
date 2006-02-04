@@ -1,5 +1,39 @@
 2006-02-04	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Add method thunar_file_list_to_path_list(),
+	  which transforms a list of ThunarFile's to a list of ThunarVfsPath's.
+	* thunar/thunar-clipboard-manager.c
+	  (thunar_clipboard_manager_get_callback): Use newly added function
+	  thunar_file_list_to_path_list() here.
+	* thunarx/thunarx-file-info.c(thunarx_file_info_list_copy): Use a
+	  slightly more efficient implementation here.
+	* thunarx/thunarx-file-info.{c,h}, thunarx/thunarx.symbols: Add a boxed
+	  type for a list of ThunarxFileInfo's.
+	* docs/reference/thunarx/: Update the thunarx API docs.
+	* thunar/thunar-launcher.c: Use the new boxed type for the list of
+	  selected files, rather than a pointer.
+	* thunar/thunar-navigator.c(thunar_navigator_get_type): Add requirement
+	  on G_TYPE_OBJECT.
+	* thunar/thunar-component.{c,h}: Add new interface ThunarComponent for
+	  those parts of a ThunarWindow that require access to both the UI
+	  manager and the currently selected files. ThunarComponent extends
+	  ThunarNavigator.
+	* thunar/thunar-view.{c,h}: The ui-manager property is now in 
+	  ThunarComponent and ThunarView inherits ThunarComponent.
+	* thunar/thunar-standard-view.{c,h}: Implement ThunarComponent interface
+	  as required by ThunarView now. This way other components will be able
+	  to determine the selected files and set the selected files without
+	  having to interact with the ThunarView implementation directly.
+	* thunar-vfs/thunar-vfs-info.c(thunar_vfs_info_get_free_space): Be sure
+	  to use statvfs(2) for IRIX. Bug #1425.
+	* thunar-vfs/thunar-vfs-volume.h(ThunarVfsVolumeManagerIface): Reserve
+	  some space for future expansion now.
+	* thunar-vfs/thunar-vfs-*.c, docs/reference/thunar-vfs/: Some updates
+	  to the Thunar-VFS API documentation.
+	* po/Thunar.pot, po/*.po: Update translations.
+
+2006-02-04	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-path-entry.c(thunar_path_entry_init): Update to the
 	  new show-hidden settings name. Bug #1424.
 

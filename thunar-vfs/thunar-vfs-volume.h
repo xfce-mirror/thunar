@@ -152,18 +152,37 @@ typedef struct _ThunarVfsVolumeManager      ThunarVfsVolumeManager;
 
 struct _ThunarVfsVolumeManagerIface
 {
+  /*< private >*/
   GTypeInterface __parent__;
+
+  /*< public >*/
 
   /* methods */
   ThunarVfsVolume *(*get_volume_by_info) (ThunarVfsVolumeManager *manager,
                                           const ThunarVfsInfo    *info);
   GList           *(*get_volumes)        (ThunarVfsVolumeManager *manager);
 
+  /*< private >*/
+  void (*reserved0) (void);
+  void (*reserved1) (void);
+  void (*reserved2) (void);
+  void (*reserved3) (void);
+  void (*reserved4) (void);
+  void (*reserved5) (void);
+
+  /*< public >*/
+
   /* signals */
   void (*volumes_added)   (ThunarVfsVolumeManager *manager,
                            GList                  *volumes);
   void (*volumes_removed) (ThunarVfsVolumeManager *manager,
                            GList                  *volumes);
+
+  /*< private >*/
+  void (*reserved6) (void);
+  void (*reserved7) (void);
+  void (*reserved8) (void);
+  void (*reserved9) (void);
 };
 
 GType                   thunar_vfs_volume_manager_get_type            (void) G_GNUC_CONST;

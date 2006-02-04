@@ -163,6 +163,13 @@ thunar_vfs_volume_get_status (ThunarVfsVolume *volume)
  * thunar_vfs_volume_get_mount_point:
  * @volume : a #ThunarVfsVolume instance.
  *
+ * Determines the current mount point for @volume. If @volume
+ * is mounted this will be the location at which it is currently
+ * mounted. Else it will be the location where @volume is most
+ * probably being mounted. Note that this location may change
+ * during a call to thunar_vfs_volume_mount(), so be sure to
+ * check the mount point after the call to thunar_vfs_volume_mount().
+ *
  * Return value: the path which identifies the path where
  *               the volume will be mounted (or is already
  *               mounted).

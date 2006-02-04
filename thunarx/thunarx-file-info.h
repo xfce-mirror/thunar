@@ -104,6 +104,11 @@ ThunarVfsInfo *thunarx_file_info_get_vfs_info   (ThunarxFileInfo *file_info);
 void           thunarx_file_info_changed        (ThunarxFileInfo *file_info);
 void           thunarx_file_info_renamed        (ThunarxFileInfo *file_info);
 
+
+#define THUNARX_TYPE_FILE_INFO_LIST (thunarx_file_info_list_get_type ())
+
+GType          thunarx_file_info_list_get_type  (void) G_GNUC_CONST;
+
 GList         *thunarx_file_info_list_copy      (GList           *file_infos);
 void           thunarx_file_info_list_free      (GList           *file_infos);
 

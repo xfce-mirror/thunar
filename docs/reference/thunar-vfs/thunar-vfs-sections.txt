@@ -29,6 +29,10 @@ ThunarVfsInfo
 thunar_vfs_info_new_for_path
 thunar_vfs_info_ref
 thunar_vfs_info_unref
+thunar_vfs_info_copy
+thunar_vfs_info_get_free_space
+thunar_vfs_info_get_custom_icon
+thunar_vfs_info_read_link
 thunar_vfs_info_execute
 thunar_vfs_info_rename
 thunar_vfs_info_matches
@@ -234,7 +238,6 @@ ThunarVfsFileType
 ThunarVfsFileMode
 ThunarVfsFileFlags
 ThunarVfsFileDevice
-ThunarVfsFileInode
 ThunarVfsFileSize
 ThunarVfsFileTime
 ThunarVfsGroupId
@@ -354,7 +357,6 @@ thunar_vfs_volume_is_mounted
 thunar_vfs_volume_is_present
 thunar_vfs_volume_is_ejectable
 thunar_vfs_volume_is_removable
-thunar_vfs_volume_get_free_space
 thunar_vfs_volume_lookup_icon_name
 thunar_vfs_volume_eject
 thunar_vfs_volume_mount

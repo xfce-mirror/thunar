@@ -493,6 +493,13 @@ thunar_vfs_monitor_get_default (void)
  * @callback  : the callback function to invoke.
  * @user_data : additional data to pass to @callback.
  *
+ * Registers @path as directory for @monitor. @monitor will invoke
+ * @callback whenever it notices a change to the directory to which
+ * @path refers or any of the files within the directory.
+ *
+ * The returned #ThunarVfsMonitorHandle can be used to remove
+ * the @path from @monitor using thunar_vfs_monitor_remove().
+ *
  * Return value: the #ThunarVfsMonitorHandle for the new watch.
  **/
 ThunarVfsMonitorHandle*
@@ -549,6 +556,13 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
  * @path      : the #ThunarVfsPath of the file that should be watched.
  * @callback  : the callback function to invoke.
  * @user_data : additional data to pass to @callback.
+ *
+ * Registers @path as file with @monitor. @monitor will then invoke
+ * @callback whenever it notices a change to the file to which
+ * @path refers.
+ *
+ * The returned #ThunarVfsMonitorHandle can be used to remove
+ * the @path from @monitor using thunar_vfs_monitor_remove().
  *
  * Return value: the #ThunarVfsMonitorHandle for the new watch.
  **/

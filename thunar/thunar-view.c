@@ -51,7 +51,7 @@ thunar_view_get_type (void)
 
       type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarView"), &info, 0);
       g_type_interface_add_prerequisite (type, GTK_TYPE_WIDGET);
-      g_type_interface_add_prerequisite (type, THUNAR_TYPE_NAVIGATOR);
+      g_type_interface_add_prerequisite (type, THUNAR_TYPE_COMPONENT);
     }
 
   return type;
@@ -109,20 +109,6 @@ thunar_view_class_init (gpointer klass)
                                                              "show-hidden",
                                                              FALSE,
                                                              EXO_PARAM_READWRITE));
-
-  /**
-   * ThunarView:ui-manager:
-   *
-   * The UI manager used by the surrounding #ThunarWindow. The
-   * #ThunarView implementations may connect additional actions
-   * to the UI manager.
-   **/
-  g_object_interface_install_property (klass,
-                                       g_param_spec_object ("ui-manager",
-                                                            "ui-manager",
-                                                            "ui-manager",
-                                                            GTK_TYPE_UI_MANAGER,
-                                                            EXO_PARAM_READWRITE));
 
   /**
    * ThunarView:zoom-level:
@@ -211,49 +197,6 @@ thunar_view_set_show_hidden (ThunarView *view,
 {
   g_return_if_fail (THUNAR_IS_VIEW (view));
   (*THUNAR_VIEW_GET_IFACE (view)->set_show_hidden) (view, show_hidden);
-}
-
-
-
-/**
- * thunar_view_get_ui_manager:
- * @view : a #ThunarView instance.
- *
- * Returns the #GtkUIManager associated with @view or
- * %NULL if @view has no #GtkUIManager associated with
- * it.
- *
- * Return value: the #GtkUIManager associated with @view
- *               or %NULL.
- **/
-GtkUIManager*
-thunar_view_get_ui_manager (ThunarView *view)
-{
-  g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
-  return (*THUNAR_VIEW_GET_IFACE (view)->get_ui_manager) (view);
-}
-
-
-
-/**
- * thunar_view_set_ui_manager:
- * @view       : a #ThunarView instance.
- * @ui_manager : a #GtkUIManager or %NULL.
- *
- * Installs a new #GtkUIManager for @view or resets the ::ui-manager
- * property.
- *
- * Implementations of the #ThunarView interface must first disconnect
- * from any previously set #GtkUIManager and then connect to the
- * @ui_manager if not %NULL.
- **/
-void
-thunar_view_set_ui_manager (ThunarView   *view,
-                            GtkUIManager *ui_manager)
-{
-  g_return_if_fail (THUNAR_IS_VIEW (view));
-  g_return_if_fail (ui_manager == NULL || GTK_IS_UI_MANAGER (ui_manager));
-  (*THUNAR_VIEW_GET_IFACE (view)->set_ui_manager) (view, ui_manager);
 }
 
 
