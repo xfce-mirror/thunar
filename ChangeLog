@@ -1,3 +1,56 @@
+2006-02-05	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-chooser-dialog.{c,h}: Add a new convenience function
+	  thunar_show_chooser_dialog().
+	* thunar/thunar-launcher.c(thunar_launcher_open_files),
+	  thunar/thunar-file.c(thunar_file_launch): Use the new function
+	  thunar_show_chooser_dialog() here.
+	* thunar/thunar-gtk-extensions.{c,h}: Add a new convenience function
+	  thunar_gtk_ui_manager_get_action_by_name(), which is unfortunately
+	  missing from GtkUIManager.
+	* thunar/thunar-details-view.c, thunar/thunar-icon-view.c: Use
+	  thunar_gtk_ui_manager_get_action_by_name() to locate the launcher
+	  actions in the UI manager.
+	* thunar/thunar-file.{c,h}: Add a new convenience function
+	  thunar_file_list_get_applications(), which can be used to determine
+	  the set of applications that can be used to open a given set of
+	  files.
+	* thunar-uca/thunar-uca-chooser.c(thunar_uca_chooser_delete_clicked):
+	  Save the model after removing a custom action.
+	* thunar/thunar-launcher.{c,h}, thunar/thunar-chooser-dialog.{c,h},
+	  thunar/thunar-launcher-ui.xml, thunar/Makefile.am, 
+	  thunar/thunar-standard-view-ui.xml, thunar/thunar-standard-view.c,
+	  thunar/thunar-window-ui.xml, thunar/thunar-window.c: Replace the
+	  previous ThunarLauncher class with a more advanced one, which has
+	  access to the GtkUIManager. The new implementation also displays
+	  which application will be used to open files, based on Jonathan
+	  Blandfords suggestion for Nautilus. Bug #1428.
+	* thunar-vfs/thunar-vfs-mime-action-private.h, thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs-mime-action.{c,h},thunar-vfs/thunar-vfs.symbols,
+	  thunar-vfs/thunar-vfs-mime-handler-private.h, thunar-vfs/thunar-vfs.h,
+	  thunar-vfs/thunar-vfs-mime-handler.{c,h},
+	  thunar-vfs/thunar-vfs-mime-application.{c,h},
+	  thunar-vfs/thunar-vfs-mime-database.c: Import ThunarVfsMimeAction
+	  class to support desktop actions in Thunar. The abstract base class
+	  ThunarVfsMimeHandler is used to avoid duplicating the existing code
+	  for ThunarVfsMimeApplication in ThunarVfsMimeAction, and it will also
+	  make it easier to handle both ThunarVfsMimeApplication's and
+	  ThunarVfsMimeAction's in the user interface code. Bug #1374.
+	* docs/reference/thunar-vfs/: Update the Thunar-VFS API docs.
+	* thunar/thunar-chooser-button.c, thunar/thunar-chooser-dialog.c,
+	  thunar/thunar-chooser-model.c, thunar/thunar-file.c,
+	  thunar/thunar-launcher.c: Update to the new ThunarVfsMimeHandler and
+	  ThunarVfsMimeApplication interface.
+	* thunar/thunar-launcher.c: Display desktop actions in the file context
+	  menu and the "File" menu, based on the newly added ThunarVfsMimeAction
+	  class. Bug #1375.
+	* po/POTFILES.in: Update the file list.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+	* configure.in.in, icons/: Change the Thunar icon to the new one
+	  provided by Young Hahn <youngjin.hahn@gmail.com>. Any artists around
+	  to make it look even better?
+
 2006-02-04	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-permissions-chooser.c

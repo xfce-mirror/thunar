@@ -23,6 +23,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-icon-view-ui.h>
 
@@ -557,8 +558,8 @@ thunar_icon_view_button_press_event (ExoIconView    *view,
               if (G_LIKELY (file != NULL))
                 {
                   /* determine the action to perform depending on the type of the file */
-                  action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (icon_view)->action_group,
-                                                        thunar_file_is_directory (file) ? "open-in-new-window" : "open");
+                  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (icon_view)->ui_manager,
+                      thunar_file_is_directory (file) ? "open-in-new-window" : "open");
       
                   /* emit the action */
                   if (G_LIKELY (action != NULL))
@@ -808,7 +809,7 @@ thunar_icon_view_item_activated (ExoIconView    *view,
   exo_icon_view_select_path (view, path);
 
   /* emit the "open" action */
-  action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (icon_view)->action_group, "open");
+  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (icon_view)->ui_manager, "open");
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
 }

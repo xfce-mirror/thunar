@@ -15,7 +15,7 @@
       <menuitem action="open-new-window" name="open-new-window" />
       <placeholder name="placeholder-create-actions" />
       <separator />
-      <placeholder name="placeholder-launcher-actions" />
+      <placeholder name="placeholder-launcher" />
       <separator />
       <placeholder name="placeholder-file-properties" />
       <separator />
@@ -74,6 +74,18 @@
       <menuitem action="about" name="about" />
     </menu>
   </menubar>
+
+  <popup action="file-context-menu" name="file-context-menu">
+    <placeholder name="placeholder-launcher" />
+    <separator />
+    <placeholder name="placeholder-clipboard-actions" />
+    <separator />
+    <placeholder name="placeholder-edit-actions" />
+    <separator />
+    <placeholder name="placeholder-custom-actions" />
+    <separator />
+    <placeholder name="placeholder-file-actions" />
+  </popup>
 
 </ui>
 

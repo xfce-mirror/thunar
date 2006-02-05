@@ -777,8 +777,6 @@ thunar_file_launch (ThunarFile *file,
   ThunarVfsMimeDatabase    *database;
   ThunarApplication        *application;
   GdkScreen                *screen;
-  GtkWidget                *window;
-  GtkWidget                *dialog;
   gboolean                  succeed;
   GList                     path_list;
 
@@ -810,10 +808,7 @@ thunar_file_launch (ThunarFile *file,
   /* if we don't have any default handler, just popup the application chooser */
   if (G_UNLIKELY (handler == NULL))
     {
-      window = (widget != NULL) ? gtk_widget_get_toplevel (widget) : NULL;
-      dialog = thunar_chooser_dialog_new ((GtkWindow *) window, file, TRUE);
-      gtk_dialog_run (GTK_DIALOG (dialog));
-      gtk_widget_destroy (dialog);
+      thunar_show_chooser_dialog (widget, file, TRUE);
       return TRUE;
     }
 
@@ -822,10 +817,10 @@ thunar_file_launch (ThunarFile *file,
   path_list.next = path_list.prev = NULL;
 
   /* otherwise try to execute the application */
-  succeed = thunar_vfs_mime_application_exec (handler, screen, &path_list, error);
+  succeed = thunar_vfs_mime_handler_exec (THUNAR_VFS_MIME_HANDLER (handler), screen, &path_list, error);
 
   /* release the handler reference */
-  thunar_vfs_mime_application_unref (handler);
+  g_object_unref (G_OBJECT (handler));
 
   return succeed;
 }
@@ -1835,6 +1830,88 @@ thunar_file_cache_lookup (const ThunarVfsPath *path)
     file_cache = g_hash_table_new_full (thunar_vfs_path_hash, thunar_vfs_path_equal, (GDestroyNotify) thunar_vfs_path_unref, NULL);
 
   return g_hash_table_lookup (file_cache, path);
+}
+
+
+
+/**
+ * thunar_file_list_get_applications:
+ * @file_list : a #GList of #ThunarFile<!---->s.
+ *
+ * Returns the #GList of #ThunarVfsMimeApplication<!---->s
+ * that can be used to open all #ThunarFile<!---->s in the
+ * given @file_list.
+ *
+ * The caller is responsible to free the returned list using
+ * something like:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) thunar_vfs_mime_application_unref, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: the list of #ThunarVfsMimeApplication<!---->s that
+ *               can be used to open all items in the @file_list.
+ **/
+GList*
+thunar_file_list_get_applications (GList *file_list)
+{
+  ThunarVfsMimeDatabase *database;
+  GList                 *applications = NULL;
+  GList                 *list;
+  GList                 *next;
+  GList                 *ap;
+  GList                 *lp;
+
+  /* grab a reference on the mime database */
+  database = thunar_vfs_mime_database_get_default ();
+
+  /* determine the set of applications that can open all files */
+  for (lp = file_list; lp != NULL; lp = lp->next)
+    {
+      /* no need to check anything if this file has the same mime type as the previous file */
+      if (lp->prev != NULL && thunar_file_get_mime_info (lp->prev->data) == thunar_file_get_mime_info (lp->data))
+        continue;
+
+      /* determine the list of applications that can open this file */
+      list = thunar_vfs_mime_database_get_applications (database, thunar_file_get_mime_info (lp->data));
+      if (G_UNLIKELY (applications == NULL))
+        {
+          /* first file, so just use the applications list */
+          applications = list;
+        }
+      else
+        {
+          /* keep only the applications that are also present in list */
+          for (ap = applications; ap != NULL; ap = next)
+            {
+              /* grab a pointer on the next application */
+              next = ap->next;
+
+              /* check if the application is present in list */
+              if (g_list_find (list, ap->data) == NULL)
+                {
+                  /* drop our reference on the application */
+                  g_object_unref (G_OBJECT (ap->data));
+
+                  /* drop this application from the list */
+                  applications = g_list_delete_link (applications, ap);
+                }
+            }
+
+          /* release the list of applications for this file */
+          g_list_foreach (list, (GFunc) g_object_unref, NULL);
+          g_list_free (list);
+        }
+
+      /* check if the set is still not empty */
+      if (G_LIKELY (applications == NULL))
+        break;
+    }
+
+  /* release the mime database */
+  g_object_unref (G_OBJECT (database));
+
+  return applications;
 }
 
 

@@ -31,6 +31,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-view.h>
+#include <thunar/thunar-launcher.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-location-entry.h>
@@ -194,6 +195,7 @@ struct _ThunarWindow
   GtkWidget              *location_bar;
 
   ThunarHistory          *history;
+  ThunarLauncher         *launcher;
 
   ThunarFile             *current_directory;
 
@@ -533,6 +535,13 @@ thunar_window_init (ThunarWindow *window)
   accel_group = gtk_ui_manager_get_accel_group (window->ui_manager);
   gtk_window_add_accel_group (GTK_WINDOW (window), accel_group);
 
+  /* setup the launcher support */
+  window->launcher = thunar_launcher_new ();
+  thunar_launcher_set_widget (window->launcher, GTK_WIDGET (window));
+  thunar_component_set_ui_manager (THUNAR_COMPONENT (window->launcher), window->ui_manager);
+  exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->launcher), "current-directory");
+  g_signal_connect_swapped (G_OBJECT (window->launcher), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+
   /* determine the default window size from the preferences */
   g_object_get (G_OBJECT (window->preferences), "last-window-width", &width, "last-window-height", &height, NULL);
   gtk_window_set_default_size (GTK_WINDOW (window), width, height);
@@ -672,6 +681,7 @@ thunar_window_finalize (GObject *object)
 
   g_object_unref (G_OBJECT (window->action_group));
   g_object_unref (G_OBJECT (window->icon_factory));
+  g_object_unref (G_OBJECT (window->launcher));
   g_object_unref (G_OBJECT (window->history));
 
   /* release our reference on the provider factory */
@@ -1227,6 +1237,7 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->view), "current-directory");
       exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->view), "show-hidden");
       exo_binding_new (G_OBJECT (window->view), "loading", G_OBJECT (window->throbber), "animated");
+      exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->launcher), "selected-files");
       exo_mutual_binding_new (G_OBJECT (window->view), "zoom-level", G_OBJECT (window), "zoom-level");
       gtk_container_add (GTK_CONTAINER (window->view_container), window->view);
       gtk_widget_grab_focus (window->view);

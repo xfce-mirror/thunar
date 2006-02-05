@@ -27,8 +27,10 @@
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
 #include <thunar-vfs/thunar-vfs-job.h>
+#include <thunar-vfs/thunar-vfs-mime-action.h>
 #include <thunar-vfs/thunar-vfs-mime-application.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-mime-handler.h>
 #include <thunar-vfs/thunar-vfs-mime-info.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
 #include <thunar-vfs/thunar-vfs-path.h>

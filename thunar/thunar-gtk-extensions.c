@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -81,6 +81,41 @@ thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
 #else
   g_object_set (G_OBJECT (action), "sensitive", sensitive, NULL);
 #endif
+}
+
+
+
+/**
+ * thunar_gtk_ui_manager_get_action_by_name:
+ * @ui_manager  : a #GtkUIManager.
+ * @action_name : the name of a #GtkAction in @ui_manager.
+ *
+ * Looks up the #GtkAction with the given @action_name in all
+ * #GtkActionGroup<!---->s associated with @ui_manager. Returns
+ * %NULL if no such #GtkAction exists in @ui_manager.
+ *
+ * Return value: the #GtkAction of the given @action_name in
+ *               @ui_manager or %NULL.
+ **/
+GtkAction*
+thunar_gtk_ui_manager_get_action_by_name (GtkUIManager *ui_manager,
+                                          const gchar  *action_name)
+{
+  GtkAction *action;
+  GList     *lp;
+
+  g_return_val_if_fail (GTK_IS_UI_MANAGER (ui_manager), NULL);
+  g_return_val_if_fail (action_name != NULL, NULL);
+
+  /* check all action groups associated with the ui manager */
+  for (lp = gtk_ui_manager_get_action_groups (ui_manager); lp != NULL; lp = lp->next)
+    {
+      action = gtk_action_group_get_action (lp->data, action_name);
+      if (G_LIKELY (action != NULL))
+        return action;
+    }
+
+  return NULL;
 }
 
 

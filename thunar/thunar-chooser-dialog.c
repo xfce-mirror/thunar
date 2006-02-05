@@ -454,7 +454,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
       if (G_UNLIKELY (application == NULL))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to add new application `%s'"), name);
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to add new application \"%s\""), name);
 
           /* release the error */
           g_error_free (error);
@@ -476,7 +476,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
   if (G_UNLIKELY (!succeed))
     {
       /* display an error to the user */
-      thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to set default application for `%s'"),
+      thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to set default application for \"%s\""),
                                  thunar_file_get_display_name (dialog->file));
 
       /* release the error */
@@ -486,11 +486,11 @@ thunar_chooser_dialog_response (GtkDialog *widget,
     {
       /* open the file using the specified application */
       list.data = thunar_file_get_path (dialog->file); list.next = list.prev = NULL;
-      if (!thunar_vfs_mime_application_exec (application, gtk_widget_get_screen (GTK_WIDGET (dialog)), &list, &error))
+      if (!thunar_vfs_mime_handler_exec (THUNAR_VFS_MIME_HANDLER (application), gtk_widget_get_screen (GTK_WIDGET (dialog)), &list, &error))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to execute `%s'"),
-                                     thunar_vfs_mime_application_get_name (application));
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to execute \"%s\""),
+                                     thunar_vfs_mime_handler_get_name (THUNAR_VFS_MIME_HANDLER (application)));
 
           /* release the error */
           g_error_free (error);
@@ -502,7 +502,7 @@ thunar_chooser_dialog_response (GtkDialog *widget,
     thunar_file_changed (dialog->file);
 
   /* cleanup */
-  thunar_vfs_mime_application_unref (application);
+  g_object_unref (G_OBJECT (application));
 cleanup:
   g_object_unref (G_OBJECT (mime_database));
 }
@@ -526,7 +526,7 @@ thunar_chooser_dialog_selection_func (GtkTreeSelection *selection,
       /* check if there's an application for the path */
       gtk_tree_model_get_iter (model, &iter, path);
       gtk_tree_model_get_value (model, &iter, THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &value);
-      permitted = (g_value_get_boxed (&value) != NULL);
+      permitted = (g_value_get_object (&value) != NULL);
       g_value_unset (&value);
     }
 
@@ -560,7 +560,7 @@ thunar_chooser_dialog_update_accept (ThunarChooserDialog *dialog)
         {
           /* check if the selected row refers to a valid application */
           gtk_tree_model_get_value (model, &iter, THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &value);
-          sensitive = (g_value_get_boxed (&value) != NULL);
+          sensitive = (g_value_get_object (&value) != NULL);
           g_value_unset (&value);
         }
     }
@@ -794,7 +794,7 @@ thunar_chooser_dialog_row_activated (GtkTreeView         *treeview,
   gtk_tree_model_get_value (model, &iter, THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &value);
 
   /* check if the row refers to a valid application */
-  if (G_LIKELY (g_value_get_boxed (&value) != NULL))
+  if (G_LIKELY (g_value_get_object (&value) != NULL))
     {
       /* emit the accept dialog response */
       gtk_dialog_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
@@ -818,33 +818,53 @@ thunar_chooser_dialog_row_activated (GtkTreeView         *treeview,
 
 /**
  * thunar_chooser_dialog_new:
- * @parent : transient parent of the dialog or %NULL.
- * @file   : the #ThunarFile for which an application should be chosen.
- * @open   : whether to also open the @file.
  *
- * Allocates a new #ThunarChooserDialog with the given parameters.
+ * Allocates a new #ThunarChooserDialog.
  *
  * Return value: the newly allocated #ThunarChooserDialog.
  **/
 GtkWidget*
-thunar_chooser_dialog_new (GtkWindow  *parent,
-                           ThunarFile *file,
-                           gboolean    open)
+thunar_chooser_dialog_new (void)
+{
+  return g_object_new (THUNAR_TYPE_CHOOSER_DIALOG, NULL);
+}
+
+
+
+/**
+ * thunar_show_chooser_dialog:
+ * @parent : transient parent of the dialog or %NULL.
+ * @file   : the #ThunarFile for which an application should be chosen.
+ * @open   : whether to also open the @file.
+ *
+ * Convenience function to display a #ThunarChooserDialog with the
+ * given parameters.
+ **/
+void
+thunar_show_chooser_dialog (GtkWidget  *parent,
+                            ThunarFile *file,
+                            gboolean    open)
 {
   GtkWidget *dialog;
+  GtkWidget *window;
 
-  g_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), NULL);
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  g_return_if_fail (parent == NULL || GTK_IS_WIDGET (parent));
+  g_return_if_fail (THUNAR_IS_FILE (file));
 
+  /* determine the toplevel window */
+  window = (parent != NULL) ? gtk_widget_get_toplevel (parent) : NULL;
+
+  /* display the chooser dialog */
   dialog = g_object_new (THUNAR_TYPE_CHOOSER_DIALOG,
+                         "destroy-with-parent", TRUE,
                          "file", file,
+                         "modal", TRUE,
                          "open", open,
                          NULL);
-
-  if (G_LIKELY (parent != NULL))
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), parent);
-
-  return dialog;
+  if (G_LIKELY (window != NULL))
+    gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
+  gtk_widget_show (dialog);
 }
 
 

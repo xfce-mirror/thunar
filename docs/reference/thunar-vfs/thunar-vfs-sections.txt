@@ -101,32 +101,46 @@ thunar_vfs_job_get_type
 
 
 <SECTION>
+<FILE>thunar-vfs-mime-action</FILE>
+<TITLE>ThunarVfsMimeAction</TITLE>
+ThunarVfsMimeAction
+<SUBSECTION Standard>
+ThunarVfsMimeActionClass
+THUNAR_VFS_TYPE_MIME_ACTION
+THUNAR_VFS_MIME_ACTION
+THUNAR_VFS_MIME_ACTION_CLASS
+THUNAR_VFS_IS_MIME_ACTION
+THUNAR_VFS_IS_MIME_ACTION_CLASS
+THUNAR_VFS_MIME_ACTION_GET_CLASS
+<SUBSECTION Private>
+thunar_vfs_mime_action_get_type
+</SECTION>
+
+
+<SECTION>
 <FILE>thunar-vfs-mime-application</FILE>
 <TITLE>ThunarVfsMimeApplication</TITLE>
-ThunarVfsMimeApplicationFlags
 ThunarVfsMimeApplication
 thunar_vfs_mime_application_new_from_desktop_id
 thunar_vfs_mime_application_new_from_file
-thunar_vfs_mime_application_ref
-thunar_vfs_mime_application_unref
+thunar_vfs_mime_application_get_actions
 thunar_vfs_mime_application_get_command
 thunar_vfs_mime_application_get_desktop_id
 thunar_vfs_mime_application_get_flags
+thunar_vfs_mime_application_get_mime_types
 thunar_vfs_mime_application_get_name
-thunar_vfs_mime_application_exec
-thunar_vfs_mime_application_exec_with_env
-thunar_vfs_mime_application_lookup_icon_name
 thunar_vfs_mime_application_hash
 thunar_vfs_mime_application_equal
 <SUBSECTION Standard>
+ThunarVfsMimeActionClass
 THUNAR_VFS_TYPE_MIME_APPLICATION
-THUNAR_VFS_TYPE_VFS_MIME_APPLICATION_ERROR
-THUNAR_VFS_TYPE_VFS_MIME_APPLICATION_FLAGS
+THUNAR_VFS_MIME_APPLICATION
+THUNAR_VFS_MIME_APPLICATION_CLASS
+THUNAR_VFS_IS_MIME_APPLICATION
+THUNAR_VFS_IS_MIME_APPLICATION_CLASS
+THUNAR_VFS_MIME_APPLICATION_GET_CLASS
 <SUBSECTION Private>
 thunar_vfs_mime_application_get_type
-thunar_vfs_mime_application_error_quark
-thunar_vfs_mime_application_error_get_type
-thunar_vfs_mime_application_flags_get_type
 </SECTION>
 
 
@@ -154,6 +168,29 @@ THUNAR_VFS_IS_MIME_DATABASE_CLASS
 THUNAR_VFS_MIME_DATABASE_GET_CLASS
 <SUBSECTION Private>
 thunar_vfs_mime_database_get_type
+</SECTION>
+
+
+<SECTION>
+<FILE>thunar-vfs-mime-handler</FILE>
+<TITLE>ThunarVfsMimeHandler</TITLE>
+ThunarVfsMimeHandler
+thunar_vfs_mime_handler_get_command
+thunar_vfs_mime_handler_get_flags
+thunar_vfs_mime_handler_get_name
+thunar_vfs_mime_handler_exec
+thunar_vfs_mime_handler_exec_with_env
+thunar_vfs_mime_handler_lookup_icon_name
+<SUBSECTION Standard>
+ThunarVfsMimeHandlerClass
+THUNAR_VFS_TYPE_MIME_HANDLER
+THUNAR_VFS_MIME_HANDLER
+THUNAR_VFS_MIME_HANDLER_CLASS
+THUNAR_VFS_IS_MIME_HANDLER
+THUNAR_VFS_IS_MIME_HANDLER_CLASS
+THUNAR_VFS_MIME_HANDLER_GET_CLASS
+<SUBSECTION Private>
+thunar_vfs_mime_handler_get_type
 </SECTION>
 
 

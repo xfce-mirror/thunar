@@ -16,11 +16,6 @@
         <menuitem action="create-folder" name="create-folder" />
         <menuitem action="create-document" name="create-document" />
       </placeholder>
-      <placeholder name="placeholder-launcher-actions">
-        <menuitem action="open" name="open" />
-        <menuitem action="open-in-new-window" name="open-in-new-window" />
-        <menuitem action="open-with" name="open-with" />
-      </placeholder>
       <placeholder name="placeholder-file-properties">
         <menuitem action="properties" name="properties" />
       </placeholder>
@@ -46,20 +41,18 @@
   </menubar>
 
   <popup action="file-context-menu" name="file-context-menu">
-    <menuitem action="open" name="open" />
-    <menuitem action="open-in-new-window" name="open-in-new-window" />
-    <menuitem action="open-with" name="open-with" />
-    <separator />
-    <menuitem action="copy" name="copy" />
-    <menuitem action="cut" name="cut" />
-    <menuitem action="delete" name="delete" />
-    <menuitem action="paste-into-folder" name="paste-into-folder" />
-    <separator />
-    <menuitem action="rename" name="rename" />
-    <separator />
-    <placeholder name="placeholder-custom-actions" />
-    <separator />
-    <menuitem action="properties" name="properties" />
+    <placeholder name="placeholder-clipboard-actions">
+      <menuitem action="copy" name="copy" />
+      <menuitem action="cut" name="cut" />
+      <menuitem action="delete" name="delete" />
+      <menuitem action="paste-into-folder" name="paste-into-folder" />
+    </placeholder>
+    <placeholder name="placeholder-edit-actions">
+      <menuitem action="rename" name="rename" />
+    </placeholder>
+    <placeholder name="placeholder-file-actions">
+      <menuitem action="properties" name="properties" />
+    </placeholder>
   </popup>
 
   <popup action="folder-context-menu" name="folder-context-menu">

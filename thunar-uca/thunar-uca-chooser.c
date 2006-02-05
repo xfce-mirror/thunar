@@ -450,7 +450,13 @@ thunar_uca_chooser_delete_clicked (ThunarUcaChooser *uca_chooser)
   /* verify that we have an item selected and determine the iter for that item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (uca_chooser->treeview));
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
-    thunar_uca_model_remove (THUNAR_UCA_MODEL (model), &iter);
+    {
+      /* remove the row from the model */
+      thunar_uca_model_remove (THUNAR_UCA_MODEL (model), &iter);
+
+      /* sync the model to persistent storage */
+      thunar_uca_chooser_save (uca_chooser, THUNAR_UCA_MODEL (model));
+    }
 }
 
 

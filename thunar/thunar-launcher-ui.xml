@@ -1,0 +1,44 @@
+<ui>
+
+  <!--
+    $Id$
+
+    Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+
+    Thunar launcher user interface description file. Do NOT
+    simply edit this file if you don't know how the whole system
+    works, because it's too easy to break something.
+  -->
+
+  <menubar name="main-menu">
+    <menu action="file-menu" name="file-menu">
+      <placeholder name="placeholder-launcher">
+        <menuitem action="open" name="open" />
+        <menuitem action="open-in-new-window" name="open-in-new-window" />
+        <placeholder name="placeholder-applications" />
+        <menuitem action="open-with-other" name="open-with-other" />
+        <menu action="open-with-menu" name="open-with-menu">
+          <placeholder name="placeholder-applications" />
+          <separator />
+          <menuitem action="open-with-other-in-menu" name="open-with-other-in-menu" />
+        </menu>
+        <placeholder name="placeholder-actions" />
+      </placeholder>
+    </menu>
+  </menubar>
+
+  <popup action="file-context-menu" name="file-context-menu">
+    <placeholder name="placeholder-launcher">
+      <menuitem action="open" name="open" />
+      <menuitem action="open-in-new-window" name="open-in-new-window" />
+      <placeholder name="placeholder-applications" />
+      <menuitem action="open-with-other" name="open-with-other" />
+      <menu action="open-with-menu" name="open-with-menu">
+        <placeholder name="placeholder-applications" />
+        <separator />
+        <menuitem action="open-with-other-in-menu" name="open-with-other-in-menu" />
+      </menu>
+      <placeholder name="placeholder-actions" />
+    </placeholder>
+  </popup>
+</ui>

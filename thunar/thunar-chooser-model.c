@@ -208,7 +208,7 @@ thunar_chooser_model_finalize (GObject *object)
       applications = g_thread_join (model->thread);
 
       /* ditch the returned application list */
-      g_list_foreach (applications, (GFunc) thunar_vfs_mime_application_unref, NULL);
+      g_list_foreach (applications, (GFunc) g_object_unref, NULL);
       g_list_free (applications);
     }
 
@@ -308,7 +308,7 @@ thunar_chooser_model_append (ThunarChooserModel *model,
       for (lp = applications; lp != NULL; lp = lp->next)
         {
           /* determine the icon name for the application */
-          icon_name = thunar_vfs_mime_application_lookup_icon_name (lp->data, icon_theme);
+          icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
 
           /* try to load the themed icon for the program */
           icon = thunar_icon_factory_load_icon (icon_factory, icon_name, 24, NULL, FALSE);
@@ -316,7 +316,7 @@ thunar_chooser_model_append (ThunarChooserModel *model,
           /* append the tree row with the program data */
           gtk_tree_store_append (GTK_TREE_STORE (model), &child_iter, &parent_iter);
           gtk_tree_store_set (GTK_TREE_STORE (model), &child_iter,
-                              THUNAR_CHOOSER_MODEL_COLUMN_NAME, thunar_vfs_mime_application_get_name (lp->data),
+                              THUNAR_CHOOSER_MODEL_COLUMN_NAME, thunar_vfs_mime_handler_get_name (lp->data),
                               THUNAR_CHOOSER_MODEL_COLUMN_ICON, icon,
                               THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, lp->data,
                               -1);
@@ -381,7 +381,7 @@ thunar_chooser_model_import (ThunarChooserModel *model,
   thunar_chooser_model_append (model, _("Other Applications:"), "gnome-applications", other);
 
   /* cleanup */
-  g_list_foreach (recommended, (GFunc) thunar_vfs_mime_application_unref, NULL);
+  g_list_foreach (recommended, (GFunc) g_object_unref, NULL);
   g_list_free (recommended);
   g_list_free (other);
 }
@@ -446,7 +446,7 @@ thunar_chooser_model_readdir (ThunarChooserModel *model,
                   if (thunar_vfs_mime_application_get_mime_types (application) != NULL)
                     applications = g_list_append (applications, application);
                   else
-                    thunar_vfs_mime_application_unref (application);
+                    g_object_unref (G_OBJECT (application));
                 }
             }
 
@@ -468,8 +468,8 @@ static gint
 compare_application_by_name (gconstpointer a,
                              gconstpointer b)
 {
-  return strcmp (thunar_vfs_mime_application_get_name (a),
-                 thunar_vfs_mime_application_get_name (b));
+  return strcmp (thunar_vfs_mime_handler_get_name (a),
+                 thunar_vfs_mime_handler_get_name (b));
 }
 
 
@@ -496,9 +496,9 @@ thunar_chooser_model_thread (gpointer user_data)
       for (lp = list; lp != NULL; lp = lp->next)
         {
           /* ignore hidden applications to be compatible with the Nautilus mess */
-          if ((thunar_vfs_mime_application_get_flags (lp->data) & THUNAR_VFS_MIME_APPLICATION_HIDDEN) != 0)
+          if ((thunar_vfs_mime_handler_get_flags (lp->data) & THUNAR_VFS_MIME_HANDLER_HIDDEN) != 0)
             {
-              thunar_vfs_mime_application_unref (lp->data);
+              g_object_unref (G_OBJECT (lp->data));
               continue;
             }
 
@@ -513,7 +513,7 @@ thunar_chooser_model_thread (gpointer user_data)
           /* no need to add if we have it already */
           if (G_UNLIKELY (p != NULL))
             {
-              thunar_vfs_mime_application_unref (lp->data);
+              g_object_unref (G_OBJECT (lp->data));
               continue;
             }
 
@@ -557,7 +557,7 @@ thunar_chooser_model_timer (gpointer user_data)
       g_object_notify (G_OBJECT (model), "loading");
 
       /* free the application list */
-      g_list_foreach (applications, (GFunc) thunar_vfs_mime_application_unref, NULL);
+      g_list_foreach (applications, (GFunc) g_object_unref, NULL);
       g_list_free (applications);
     }
   GDK_THREADS_LEAVE ();

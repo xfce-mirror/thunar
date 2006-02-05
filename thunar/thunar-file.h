@@ -221,9 +221,10 @@ static inline void                 thunar_file_set_thumb_state (ThunarFile      
                                                                 ThunarFileThumbState thumb_state);
 
 
-GList               *thunar_file_list_to_path_list (GList *file_list);
-static inline GList *thunar_file_list_copy         (GList *file_list);
-static inline void   thunar_file_list_free         (GList *file_list);
+GList               *thunar_file_list_get_applications  (GList *file_list);
+GList               *thunar_file_list_to_path_list      (GList *file_list);
+static inline GList *thunar_file_list_copy              (GList *file_list);
+static inline void   thunar_file_list_free              (GList *file_list);
 
 
 /**

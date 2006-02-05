@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -29,6 +29,9 @@ GtkToolItem *thunar_gtk_action_group_create_tool_item     (GtkActionGroup *actio
 void         thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
                                                            const gchar    *action_name,
                                                            gboolean        sensitive) G_GNUC_INTERNAL;
+
+GtkAction   *thunar_gtk_ui_manager_get_action_by_name     (GtkUIManager   *ui_manager,
+                                                           const gchar    *action_name) G_GNUC_INTERNAL;
 
 G_END_DECLS;
 

@@ -24,6 +24,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-details-view.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-text-renderer.h>
 
 
@@ -468,8 +469,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
               if (G_LIKELY (file != NULL))
                 {
                   /* determine the action to perform depending on the type of the file */
-                  action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (details_view)->action_group,
-                                                        thunar_file_is_directory (file) ? "open-in-new-window" : "open");
+                  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager,
+                      thunar_file_is_directory (file) ? "open-in-new-window" : "open");
       
                   /* emit the action */
                   if (G_LIKELY (action != NULL))
@@ -526,7 +527,7 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
   gtk_tree_selection_select_path (selection, path);
 
   /* emit the "open" action */
-  action = gtk_action_group_get_action (THUNAR_STANDARD_VIEW (details_view)->action_group, "open");
+  action = thunar_gtk_ui_manager_get_action_by_name (THUNAR_STANDARD_VIEW (details_view)->ui_manager, "open");
   if (G_LIKELY (action != NULL))
     gtk_action_activate (action);
 }

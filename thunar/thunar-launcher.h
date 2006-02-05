@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +20,7 @@
 #ifndef __THUNAR_LAUNCHER_H__
 #define __THUNAR_LAUNCHER_H__
 
-#include <thunar/thunar-file.h>
+#include <thunar/thunar-component.h>
 
 G_BEGIN_DECLS;
 
@@ -37,14 +37,6 @@ typedef struct _ThunarLauncher      ThunarLauncher;
 GType           thunar_launcher_get_type            (void) G_GNUC_CONST;
 
 ThunarLauncher *thunar_launcher_new                 (void) G_GNUC_MALLOC;
-
-GtkActionGroup *thunar_launcher_get_action_group    (const ThunarLauncher *launcher);
-void            thunar_launcher_set_action_group    (ThunarLauncher       *launcher,
-                                                     GtkActionGroup       *action_group);
-
-GList          *thunar_launcher_get_selected_files  (const ThunarLauncher *launcher);
-void            thunar_launcher_set_selected_files  (ThunarLauncher       *launcher,
-                                                     GList                *selected_files);
 
 GtkWidget      *thunar_launcher_get_widget          (const ThunarLauncher *launcher);
 void            thunar_launcher_set_widget          (ThunarLauncher       *launcher,

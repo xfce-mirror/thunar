@@ -99,7 +99,7 @@ thunar_vfs_file_flags_get_type G_GNUC_CONST
 thunar_vfs_file_mode_get_type G_GNUC_CONST
 thunar_vfs_file_type_get_type G_GNUC_CONST
 thunar_vfs_interactive_job_response_get_type G_GNUC_CONST
-thunar_vfs_mime_application_flags_get_type G_GNUC_CONST
+thunar_vfs_mime_handler_flags_get_type G_GNUC_CONST
 thunar_vfs_monitor_event_get_type G_GNUC_CONST
 thunar_vfs_thumb_size_get_type G_GNUC_CONST
 thunar_vfs_volume_kind_get_type G_GNUC_CONST
@@ -126,22 +126,22 @@ thunar_vfs_job_cancelled
 #endif
 #endif
 
+/* ThunarVfsMimeAction methods */
+#if IN_HEADER(__THUNAR_VFS_MIME_ACTION_H__)
+#if IN_SOURCE(__THUNAR_VFS_MIME_ACTION_C__)
+thunar_vfs_mime_action_get_type G_GNUC_CONST
+#endif
+#endif
+
 /* ThunarVfsMimeApplication methods */
 #if IN_HEADER(__THUNAR_VFS_MIME_APPLICATION_H__)
 #if IN_SOURCE(__THUNAR_VFS_MIME_APPLICATION_C__)
 thunar_vfs_mime_application_get_type G_GNUC_CONST
 thunar_vfs_mime_application_new_from_desktop_id G_GNUC_MALLOC
 thunar_vfs_mime_application_new_from_file G_GNUC_MALLOC
-thunar_vfs_mime_application_ref
-thunar_vfs_mime_application_unref
-thunar_vfs_mime_application_get_command
+thunar_vfs_mime_application_get_actions G_GNUC_MALLOC
 thunar_vfs_mime_application_get_desktop_id
-thunar_vfs_mime_application_get_flags
-thunar_vfs_mime_application_get_name
 thunar_vfs_mime_application_get_mime_types
-thunar_vfs_mime_application_exec
-thunar_vfs_mime_application_exec_with_env
-thunar_vfs_mime_application_lookup_icon_name
 thunar_vfs_mime_application_hash
 thunar_vfs_mime_application_equal
 #endif
@@ -161,6 +161,19 @@ thunar_vfs_mime_database_get_applications
 thunar_vfs_mime_database_get_default_application
 thunar_vfs_mime_database_set_default_application
 thunar_vfs_mime_database_add_application
+#endif
+#endif
+
+/* ThunarVfsMimeHandler methods */
+#if IN_HEADER(__THUNAR_VFS_MIME_HANDLER_H__)
+#if IN_SOURCE(__THUNAR_VFS_MIME_HANDLER_C__)
+thunar_vfs_mime_handler_get_type G_GNUC_CONST
+thunar_vfs_mime_handler_get_command
+thunar_vfs_mime_handler_get_flags
+thunar_vfs_mime_handler_get_name
+thunar_vfs_mime_handler_exec
+thunar_vfs_mime_handler_exec_with_env
+thunar_vfs_mime_handler_lookup_icon_name
 #endif
 #endif
 

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,34 +29,36 @@
 #include <string.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar-vfs/thunar-vfs-exec.h>
+#include <thunar-vfs/thunar-vfs-mime-action-private.h>
 #include <thunar-vfs/thunar-vfs-mime-application.h>
 #include <thunar-vfs/thunar-vfs-util.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
-static gboolean thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *application,
-                                                      GList                          *path_list,
-                                                      gint                           *argc,
-                                                      gchar                        ***argv,
-                                                      GError                        **error);
+static void thunar_vfs_mime_application_class_init  (ThunarVfsMimeApplicationClass  *klass);
+static void thunar_vfs_mime_application_finalize    (GObject                        *object);
 
 
+
+struct _ThunarVfsMimeApplicationClass
+{
+  ThunarVfsMimeHandlerClass __parent__;
+};
 
 struct _ThunarVfsMimeApplication
 {
-  gint                          ref_count;
-  gchar                        *binary_name;
-  gchar                        *desktop_id;
-  gchar                        *exec;
-  gchar                        *icon;
-  gchar                        *name;
-  gchar                       **mime_types;
-  ThunarVfsMimeApplicationFlags flags;
+  ThunarVfsMimeHandler __parent__;
+
+  GList  *actions;
+  gchar  *desktop_id;
+  gchar **mime_types;
 };
+
+
+
+static GObjectClass *thunar_vfs_mime_application_parent_class;
 
 
 
@@ -67,9 +69,21 @@ thunar_vfs_mime_application_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      type = g_boxed_type_register_static (I_("ThunarVfsMimeApplication"),
-                                           (GBoxedCopyFunc) thunar_vfs_mime_application_ref,
-                                           (GBoxedFreeFunc) thunar_vfs_mime_application_unref);
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsMimeApplicationClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_mime_application_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsMimeApplication),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_MIME_HANDLER, I_("ThunarVfsMimeApplication"), &info, 0);
     }
 
   return type;
@@ -77,16 +91,34 @@ thunar_vfs_mime_application_get_type (void)
 
 
 
-static gboolean
-thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *application,
-                                      GList                          *path_list,
-                                      gint                           *argc,
-                                      gchar                        ***argv,
-                                      GError                        **error)
+static void
+thunar_vfs_mime_application_class_init (ThunarVfsMimeApplicationClass *klass)
 {
-  return thunar_vfs_exec_parse (application->exec, path_list, application->icon, application->name, NULL,
-                                (application->flags & THUNAR_VFS_MIME_APPLICATION_REQUIRES_TERMINAL) != 0,
-                                argc, argv, error);
+  GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_vfs_mime_application_parent_class = g_type_class_peek_parent (klass);
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_vfs_mime_application_finalize;
+}
+
+
+
+static void
+thunar_vfs_mime_application_finalize (GObject *object)
+{
+  ThunarVfsMimeApplication *mime_application = THUNAR_VFS_MIME_APPLICATION (object);
+
+  /* release the mime actions */
+  g_list_foreach (mime_application->actions, (GFunc) g_object_unref, NULL);
+  g_list_free (mime_application->actions);
+
+  /* release our attributes */
+  g_strfreev (mime_application->mime_types);
+  g_free (mime_application->desktop_id);
+
+  (*G_OBJECT_CLASS (thunar_vfs_mime_application_parent_class)->finalize) (object);
 }
 
 
@@ -99,7 +131,7 @@ thunar_vfs_mime_application_get_argv (const ThunarVfsMimeApplication *applicatio
  * referenced by @desktop_id. Returns %NULL if @desktop_id is not valid.
  *
  * The caller is responsible to free the returned instance using
- * thunar_vfs_mime_application_unref().
+ * g_object_unref() when no longer needed.
  *
  * Return value: the #ThunarVfsMimeApplication for @desktop_id or %NULL.
  **/
@@ -152,7 +184,7 @@ thunar_vfs_mime_application_new_from_desktop_id (const gchar *desktop_id)
  * described by @path and @desktop_id.
  *
  * The caller is responsible to free the returned instance using
- * thunar_vfs_mime_application_unref().
+ * g_object_unref() when no longer needed.
  *
  * You should really seldomly use this function and always
  * prefer thunar_vfs_mime_application_new_from_desktop_id().
@@ -164,15 +196,19 @@ ThunarVfsMimeApplication*
 thunar_vfs_mime_application_new_from_file (const gchar *path,
                                            const gchar *desktop_id)
 {
+  ThunarVfsMimeHandlerFlags flags = 0;
   ThunarVfsMimeApplication *application = NULL;
+  ThunarVfsMimeAction      *action;
   const gchar              *exec;
   const gchar              *icon;
   const gchar              *name;
   XfceRc                   *rc;
-  gchar                   **argv;
+  gchar                    *command;
+  gchar                   **actions;
+  gchar                    *group;
   gchar                   **ms;
   gchar                   **mt;
-  gint                      argc;
+  guint                     n;
 
   g_return_val_if_fail (g_path_is_absolute (path), NULL);
   g_return_val_if_fail (desktop_id != NULL && *desktop_id != '\0', NULL);
@@ -184,24 +220,34 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
 
   /* parse the file */
   xfce_rc_set_group (rc, "Desktop Entry");
-  exec = xfce_rc_read_entry (rc, "Exec", NULL);
   name = xfce_rc_read_entry (rc, "Name", NULL);
-  icon = xfce_rc_read_entry (rc, "Icon", NULL);
+  exec = xfce_rc_read_entry_untranslated (rc, "Exec", NULL);
+  icon = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
 
   /* generate the application object */
-  if (G_LIKELY (exec != NULL && name != NULL && g_shell_parse_argv (exec, &argc, &argv, NULL)))
+  if (G_LIKELY (exec != NULL && name != NULL && g_utf8_validate (name, -1, NULL)))
     {
-      application = g_new0 (ThunarVfsMimeApplication, 1);
-      application->ref_count = 1;
+      /* we assume %f if the application hasn't set anything else,
+       * as that's also what KDE and Gnome do in this case.
+       */
+      if (strstr (exec, "%f") == NULL && strstr (exec, "%F") == NULL && strstr (exec, "%u") == NULL && strstr (exec, "%U") == NULL)
+        command = g_strconcat (exec, " %f", NULL);
+      else
+        command = g_strdup (exec);
 
-      application->binary_name = g_path_get_basename (argv[0]);
+      /* determine the flags for the application */
+      if (G_UNLIKELY (xfce_rc_read_bool_entry (rc, "Terminal", FALSE)))
+        flags |= THUNAR_VFS_MIME_HANDLER_REQUIRES_TERMINAL;
+      if (xfce_rc_read_bool_entry (rc, "Hidden", FALSE) || xfce_rc_read_bool_entry (rc, "NoDisplay", FALSE))
+        flags |= THUNAR_VFS_MIME_HANDLER_HIDDEN;
+      if (xfce_rc_read_bool_entry (rc, "StartupNotify", FALSE) || xfce_rc_read_bool_entry (rc, "X-KDE-StartupNotify", FALSE))
+        flags |= THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY;
+      if ((strstr (command, "%F") != NULL) || (strstr (command, "%U") != NULL))
+        flags |= THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI;
+
+      /* allocate a new application instance */
+      application = g_object_new (THUNAR_VFS_TYPE_MIME_APPLICATION, "command", command, "flags", flags, "icon", icon, "name", name, NULL);
       application->desktop_id = g_strdup (desktop_id);
-      application->name = g_strdup (name);
-      application->icon = g_strdup (icon);
-
-      /* strip off known suffixes for image files if a themed icon is specified */
-      if (application->icon != NULL && !g_path_is_absolute (application->icon) && g_str_has_suffix (application->icon, ".png"))
-        application->icon[strlen (application->icon) - 4] = '\0';
 
       /* determine the list of mime types supported by the application */
       application->mime_types = xfce_rc_read_list_entry (rc, "MimeType", ";");
@@ -230,27 +276,51 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
             }
         }
 
-      /* we assume %f if the application hasn't set anything else,
-       * as that's also what KDE and Gnome do in this case.
-       */
-      if (strstr (exec, "%f") == NULL && strstr (exec, "%F") == NULL && strstr (exec, "%u") == NULL && strstr (exec, "%U") == NULL)
-        application->exec = g_strconcat (exec, " %f", NULL);
-      else
-        application->exec = g_strdup (exec);
+      /* determine the list of desktop actions supported by the application */
+      actions = xfce_rc_read_list_entry (rc, "Actions", ";");
+      if (G_UNLIKELY (actions != NULL))
+        {
+          /* add ThunarVfsMimeAction's for all specified desktop actions */
+          for (n = 0; actions[n] != NULL; ++n)
+            {
+              /* determine the group name */
+              group = g_strconcat ("Desktop Action ", actions[n], NULL);
+              if (xfce_rc_has_group (rc, group))
+                {
+                  /* determine the attributes for the action */
+                  xfce_rc_set_group (rc, group);
+                  name = xfce_rc_read_entry (rc, "Name", NULL);
+                  exec = xfce_rc_read_entry_untranslated (rc, "Exec", NULL);
+                  icon = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
 
-      if (G_UNLIKELY (xfce_rc_read_bool_entry (rc, "Terminal", FALSE)))
-        application->flags |= THUNAR_VFS_MIME_APPLICATION_REQUIRES_TERMINAL;
+                  /* check if the required attributes were given */
+                  if (exec != NULL && name != NULL && g_utf8_validate (name, -1, NULL))
+                    {
+                      /* check if the actions support multiple files */
+                      if ((strstr (exec, "%F") != NULL) || (strstr (exec, "%U") != NULL))
+                        flags |= THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI;
+                      else
+                        flags &= ~THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI;
 
-      if (xfce_rc_read_bool_entry (rc, "Hidden", FALSE) || xfce_rc_read_bool_entry (rc, "NoDisplay", FALSE))
-        application->flags |= THUNAR_VFS_MIME_APPLICATION_HIDDEN;
+                      /* don't trust application maintainers! :-) */
+                      flags &= ~THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY;
 
-      if (xfce_rc_read_bool_entry (rc, "StartupNotify", FALSE) || xfce_rc_read_bool_entry (rc, "X-KDE-StartupNotify", FALSE))
-        application->flags |= THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY;
+                      /* allocate and add the mime action instance */
+                      action = _thunar_vfs_mime_action_new (exec, name, (icon != NULL) ? icon : THUNAR_VFS_MIME_HANDLER (application)->icon, flags);
+                      application->actions = g_list_append (application->actions, action);
+                    }
+                }
 
-      if ((strstr (application->exec, "%F") != NULL) || (strstr (application->exec, "%U") != NULL))
-        application->flags |= THUNAR_VFS_MIME_APPLICATION_SUPPORTS_MULTI;
+              /* release the group name */
+              g_free (group);
+            }
 
-      g_strfreev (argv);
+          /* cleanup */
+          g_strfreev (actions);
+        }
+
+      /* cleanup */
+      g_free (command);
     }
 
   /* close the file */
@@ -262,291 +332,95 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
 
 
 /**
- * thunar_vfs_mime_application_ref:
- * @application : a #ThunarVfsMimeApplication.
+ * thunar_vfs_mime_application_get_actions:
+ * @mime_application : a #ThunarVfsMimeApplication.
  *
- * Increases the reference count on @application by one
- * and returns the reference to @application.
+ * Returns the list of #ThunarVfsMimeAction<!---->s available
+ * for the @mime_application. The #ThunarVfsMimeAction<!---->s
+ * are an implementation of the desktop actions mentioned in
+ * the desktop entry specification.
  *
- * Return value: a reference to @application.
+ * The caller is responsible to free the returned list using
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) g_object_unref, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ * when no longer needed.
+ *
+ * Return value: the list of #ThunarVfsMimeAction<!---->s
+ *               for the @mime_application.
  **/
-ThunarVfsMimeApplication*
-thunar_vfs_mime_application_ref (ThunarVfsMimeApplication *application)
+GList*
+thunar_vfs_mime_application_get_actions (ThunarVfsMimeApplication *mime_application)
 {
-  exo_atomic_inc (&application->ref_count);
-  return application;
-}
+  GList *mime_actions;
 
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (mime_application), NULL);
 
+  /* take a deep copy of the mime actions list */
+  mime_actions = g_list_copy (mime_application->actions);
+  g_list_foreach (mime_actions, (GFunc) g_object_ref, NULL);
 
-/**
- * thunar_vfs_mime_application_unref:
- * @application : a #ThunarVfsMimeApplication.
- *
- * Decreases the reference count on @application and frees
- * the @application object once the reference count drops
- * to zero.
- **/
-void
-thunar_vfs_mime_application_unref (ThunarVfsMimeApplication *application)
-{
-  if (exo_atomic_dec (&application->ref_count))
-    {
-      /* free resources */
-      g_strfreev (application->mime_types);
-      g_free (application->binary_name);
-      g_free (application->desktop_id);
-      g_free (application->exec);
-      g_free (application->icon);
-      g_free (application->name);
-      g_free (application);
-    }
-}
-
-
-
-/**
- * thunar_vfs_mime_application_get_command:
- * @application : a #ThunarVfsMimeApplication.
- *
- * Returns the command line to run @application.
- *
- * Return value: the command to run @application.
- **/
-const gchar*
-thunar_vfs_mime_application_get_command (const ThunarVfsMimeApplication *application)
-{
-  return application->exec;
+  return mime_actions;
 }
 
 
 
 /**
  * thunar_vfs_mime_application_get_desktop_id:
- * @application : a #ThunarVfsMimeApplication.
+ * @mime_application : a #ThunarVfsMimeApplication.
  *
- * Returns the desktop-id of @application.
+ * Returns the desktop-id of @mime_application.
  *
- * Return value: the desktop-id of @application.
+ * Return value: the desktop-id of @mime_application.
  **/
 const gchar*
-thunar_vfs_mime_application_get_desktop_id (const ThunarVfsMimeApplication *application)
+thunar_vfs_mime_application_get_desktop_id (const ThunarVfsMimeApplication *mime_application)
 {
-  return application->desktop_id;
-}
-
-
-
-/**
- * thunar_vfs_mime_application_get_flags:
- * @application : a #ThunarVfsMimeApplication.
- *
- * Returns the flags for @application.
- *
- * Return value: the flags for @application.
- **/
-ThunarVfsMimeApplicationFlags
-thunar_vfs_mime_application_get_flags (const ThunarVfsMimeApplication *application)
-{
-  return application->flags;
-}
-
-
-
-/**
- * thunar_vfs_mime_application_get_name:
- * @application : a #ThunarVfsMimeApplication.
- *
- * Returns the generic name of @application.
- *
- * Return value: the generic name of @application.
- **/
-const gchar*
-thunar_vfs_mime_application_get_name (const ThunarVfsMimeApplication *application)
-{
-  return application->name;
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (mime_application), NULL);
+  return mime_application->desktop_id;
 }
 
 
 
 /**
  * thunar_vfs_mime_application_get_mime_types:
- * @application : a #ThunarVfsMimeApplication.
+ * @mime_application : a #ThunarVfsMimeApplication.
  *
  * Returns the list of MIME-types supported by @application
- * or %NULL if the @application doesn't support any MIME-types
+ * or %NULL if the @mime_application doesn't support any MIME-types
  * at all.
  *
  * The returned %NULL-terminated string array is owned by
- * @application and must not be free by the caller.
+ * @mime_application and must not be free by the caller.
  *
- * Return value: the list of supported MIME-types for @application.
+ * Return value: the list of supported MIME-types for @mime_application.
  **/
 const gchar* const*
-thunar_vfs_mime_application_get_mime_types (const ThunarVfsMimeApplication *application)
+thunar_vfs_mime_application_get_mime_types (const ThunarVfsMimeApplication *mime_application)
 {
-  return (gconstpointer) application->mime_types;
-}
-
-
-
-/**
- * thunar_vfs_mime_application_exec:
- * @application : a #ThunarVfsMimeApplication.
- * @screen      : a #GdkScreen or %NULL to use the default screen.
- * @path_list   : a list of #ThunarVfsPath<!---->s to open.
- * @error       : return location for errors or %NULL.
- *
- * Wrapper to thunar_vfs_mime_application_exec_with_env(), which
- * simply passes a %NULL pointer for the environment variables.
- *
- * Return value: %TRUE if the execution succeed, else %FALSE.
- **/
-gboolean
-thunar_vfs_mime_application_exec (const ThunarVfsMimeApplication *application,
-                                  GdkScreen                      *screen,
-                                  GList                          *path_list,
-                                  GError                        **error)
-{
-  return thunar_vfs_mime_application_exec_with_env (application, screen, path_list, NULL, error);
-}
-
-
-
-/**
- * thunar_vfs_mime_application_exec_with_env:
- * @application : a #ThunarVfsMimeApplication.
- * @screen      : a #GdkScreen or %NULL to use the default screen.
- * @path_list   : a list of #ThunarVfsPath<!---->s to open.
- * @envp        : child's environment or %NULL to inherit parent's.
- * @error       : return location for errors or %NULL.
- *
- * Executes @application on @screen using the given @path_list. If
- * @path_list contains more than one #ThunarVfsPath and @application
- * doesn't support opening multiple documents at once, one
- * instance of @application will be spawned for every #ThunarVfsPath
- * given in @path_list.
- *
- * Return value: %TRUE if the execution succeed, else %FALSE.
- **/
-gboolean
-thunar_vfs_mime_application_exec_with_env (const ThunarVfsMimeApplication *application,
-                                           GdkScreen                      *screen,
-                                           GList                          *path_list,
-                                           gchar                         **envp,
-                                           GError                        **error)
-{
-  ThunarVfsPath *parent;
-  gboolean       result = TRUE;
-  GList          list;
-  GList         *lp;
-  gchar         *working_directory;
-  gchar        **argv;
-  gint           argc;
-
-  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-
-  /* fallback to the default screen if no screen is given */
-  if (G_UNLIKELY (screen == NULL))
-    screen = gdk_screen_get_default ();
-
-  /* check whether the application can open multiple documents at once */
-  if (G_LIKELY ((application->flags & THUNAR_VFS_MIME_APPLICATION_SUPPORTS_MULTI) == 0))
-    {
-      for (lp = path_list; lp != NULL; lp = lp->next)
-        {
-          /* use a short list with only one entry */
-          list.data = lp->data;
-          list.next = NULL;
-          list.prev = NULL;
-
-          /* figure out the argument vector to run the application */
-          if (!thunar_vfs_mime_application_get_argv (application, &list, &argc, &argv, error))
-            return FALSE;
-
-          /* use the paths base directory as working directory for the application */
-          parent = thunar_vfs_path_get_parent (list.data);
-          working_directory = (parent != NULL) ? thunar_vfs_path_dup_string (parent) : NULL;
-
-          /* try to spawn the application */
-          result = thunar_vfs_exec_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH,
-                                              application->flags & THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY, error);
-
-          /* cleanup */
-          g_free (working_directory);
-          g_strfreev (argv);
-
-          /* check if we succeed */
-          if (G_UNLIKELY (!result))
-            break;
-        }
-    }
-  else
-    {
-      /* we can open all documents at once */
-      if (!thunar_vfs_mime_application_get_argv (application, path_list, &argc, &argv, error))
-        return FALSE;
-
-      /* use the first paths base directory as working directory for the application */
-      parent = (path_list != NULL) ? thunar_vfs_path_get_parent (path_list->data) : NULL;
-      working_directory = (parent != NULL) ? thunar_vfs_path_dup_string (parent) : NULL;
-
-      /* try to spawn the application */
-      result = thunar_vfs_exec_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH,
-                                          application->flags & THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY, error);
-
-      /* cleanup */
-      g_free (working_directory);
-      g_strfreev (argv);
-    }
-
-  return result;
-}
-
-
-
-/**
- * thunar_vfs_mime_application_lookup_icon_name:
- * @application : a #ThunarVfsMimeApplication.
- * @icon_theme  : a #GtkIconTheme.
- *
- * Looks up the icon name for @application in
- * @icon_theme. Returns %NULL if no suitable
- * icon is present in @icon_theme.
- *
- * Return value: the icon name for @application or
- *               %NULL.
- **/
-const gchar*
-thunar_vfs_mime_application_lookup_icon_name (const ThunarVfsMimeApplication *application,
-                                              GtkIconTheme                   *icon_theme)
-{
-  if (application->icon != NULL && (g_path_is_absolute (application->icon) || gtk_icon_theme_has_icon (icon_theme, application->icon)))
-    return application->icon;
-  else if (application->binary_name != NULL && gtk_icon_theme_has_icon (icon_theme, application->binary_name))
-    return application->binary_name;
-  else
-    return NULL;
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (mime_application), NULL);
+  return (gconstpointer) mime_application->mime_types;
 }
 
 
 
 /**
  * thunar_vfs_mime_application_hash:
- * @application : a #ThunarVfsMimeApplication.
+ * @mime_application : a #ThunarVfsMimeApplication.
  *
- * Converts @application to a hash value. It can be passed
- * to g_hash_table_new() as the @hash_func parameter,
+ * Converts @mime_application to a hash value. It can be 
+ * passed to g_hash_table_new() as the @hash_func parameter,
  * when using #ThunarVfsMimeApplication<!---->s as keys
  * in a #GHashTable.
  *
  * Return value: a hash value corresponding to the key.
  **/
 guint
-thunar_vfs_mime_application_hash (gconstpointer application)
+thunar_vfs_mime_application_hash (gconstpointer mime_application)
 {
-  return g_str_hash (((const ThunarVfsMimeApplication *) application)->desktop_id);
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (mime_application), 0);
+  return g_str_hash (THUNAR_VFS_MIME_APPLICATION (mime_application)->desktop_id);
 }
 
 
@@ -564,9 +438,8 @@ gboolean
 thunar_vfs_mime_application_equal (gconstpointer a,
                                    gconstpointer b)
 {
-  const ThunarVfsMimeApplication *a_application = a;
-  const ThunarVfsMimeApplication *b_application = b;
-  return (strcmp (a_application->desktop_id, b_application->desktop_id) == 0);
+  return exo_str_is_equal (THUNAR_VFS_MIME_APPLICATION (a)->desktop_id,
+                           THUNAR_VFS_MIME_APPLICATION (b)->desktop_id);
 }
 
 

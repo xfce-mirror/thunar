@@ -11,21 +11,12 @@ Registered Applications for MIME types.
 
 <!-- ##### SECTION See_Also ##### -->
 <para>
-
+  <link linkend="ThunarVfsMimeHandler">ThunarVfsMimeHandler</link>
+  and <link linkend="ThunarVfsMimeAction">ThunarVfsMimeAction</link>
 </para>
 
 <!-- ##### SECTION Stability_Level ##### -->
 
-
-<!-- ##### ENUM ThunarVfsMimeApplicationFlags ##### -->
-<para>
-
-</para>
-
-@THUNAR_VFS_MIME_APPLICATION_HIDDEN: 
-@THUNAR_VFS_MIME_APPLICATION_REQUIRES_TERMINAL: 
-@THUNAR_VFS_MIME_APPLICATION_SUPPORTS_STARTUP_NOTIFY: 
-@THUNAR_VFS_MIME_APPLICATION_SUPPORTS_MULTI: 
 
 <!-- ##### STRUCT ThunarVfsMimeApplication ##### -->
 <para>
@@ -53,30 +44,24 @@ Registered Applications for MIME types.
 @Returns: 
 
 
-<!-- ##### FUNCTION thunar_vfs_mime_application_ref ##### -->
+<!-- ##### FUNCTION thunar_vfs_mime_application_get_actions ##### -->
 <para>
 
 </para>
 
-@application: 
+@mime_application: 
 @Returns: 
 
 
-<!-- ##### FUNCTION thunar_vfs_mime_application_unref ##### -->
+<!-- ##### MACRO thunar_vfs_mime_application_get_command ##### -->
 <para>
 
 </para>
 
-@application: 
-
-
-<!-- ##### FUNCTION thunar_vfs_mime_application_get_command ##### -->
-<para>
-
-</para>
-
-@application: 
+@mime_application: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@application: 
 
 
 <!-- ##### FUNCTION thunar_vfs_mime_application_get_desktop_id ##### -->
@@ -84,65 +69,32 @@ Registered Applications for MIME types.
 
 </para>
 
-@application: 
-@Returns: 
-
-
-<!-- ##### FUNCTION thunar_vfs_mime_application_get_flags ##### -->
-<para>
-
-</para>
-
-@application: 
-@Returns: 
-
-
-<!-- ##### FUNCTION thunar_vfs_mime_application_get_name ##### -->
-<para>
-
-</para>
-
-@application: 
-@Returns: 
-
-
-<!-- ##### FUNCTION thunar_vfs_mime_application_exec ##### -->
-<para>
-
-</para>
-
-@application: 
-@screen: 
-@path_list: 
-@error: 
+@mime_application: 
 @Returns: 
 <!-- # Unused Parameters # -->
-@uris: 
+@application: 
 
 
-<!-- ##### FUNCTION thunar_vfs_mime_application_exec_with_env ##### -->
+<!-- ##### MACRO thunar_vfs_mime_application_get_flags ##### -->
 <para>
 
 </para>
 
-@application: 
-@screen: 
-@path_list: 
-@envp: 
-@error: 
+@mime_application: 
 @Returns: 
 <!-- # Unused Parameters # -->
-@uris: 
+@application: 
 
 
-<!-- ##### FUNCTION thunar_vfs_mime_application_lookup_icon_name ##### -->
+<!-- ##### MACRO thunar_vfs_mime_application_get_name ##### -->
 <para>
 
 </para>
 
-@application: 
-@icon_theme: 
+@mime_application: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@application: 
 
 
 <!-- ##### FUNCTION thunar_vfs_mime_application_hash ##### -->
@@ -150,8 +102,10 @@ Registered Applications for MIME types.
 
 </para>
 
-@application: 
+@mime_application: 
 @Returns: 
+<!-- # Unused Parameters # -->
+@application: 
 
 
 <!-- ##### FUNCTION thunar_vfs_mime_application_equal ##### -->

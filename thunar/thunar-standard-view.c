@@ -35,7 +35,6 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-icon-renderer.h>
-#include <thunar/thunar-launcher.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
@@ -226,7 +225,6 @@ static void                 thunar_standard_view_drag_timer_destroy         (gpo
 
 struct _ThunarStandardViewPrivate
 {
-  ThunarLauncher         *launcher;
   GtkAction              *action_create_folder;
   GtkAction              *action_create_document;
   GtkAction              *action_properties;
@@ -548,13 +546,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
    * files in our model changes.
    */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::num-files", G_CALLBACK (thunar_standard_view_update_statusbar_text), standard_view);
-
-  /* allocate the launcher support */
-  standard_view->priv->launcher = thunar_launcher_new ();
-  thunar_launcher_set_action_group (standard_view->priv->launcher, standard_view->action_group);
-  thunar_launcher_set_widget (standard_view->priv->launcher, GTK_WIDGET (standard_view));
-  exo_binding_new (G_OBJECT (standard_view), "selected-files", G_OBJECT (standard_view->priv->launcher), "selected-files");
-  g_signal_connect_swapped (G_OBJECT (standard_view->priv->launcher), "open-directory", G_CALLBACK (thunar_navigator_change_directory), standard_view);
 }
 
 
@@ -631,9 +622,6 @@ thunar_standard_view_dispose (GObject *object)
   /* reset the UI manager property */
   thunar_component_set_ui_manager (THUNAR_COMPONENT (standard_view), NULL);
 
-  /* disconnect the widget from the launcher support */
-  thunar_launcher_set_widget (standard_view->priv->launcher, NULL);
-
   (*G_OBJECT_CLASS (thunar_standard_view_parent_class)->dispose) (object);
 }
 
@@ -667,9 +655,6 @@ thunar_standard_view_finalize (GObject *object)
 
   /* release the reference on the action group */
   g_object_unref (G_OBJECT (standard_view->action_group));
-
-  /* release the reference on the launcher */
-  g_object_unref (G_OBJECT (standard_view->priv->launcher));
 
   /* drop any existing "new-files" closure */
   if (G_UNLIKELY (standard_view->priv->new_files_closure != NULL))
