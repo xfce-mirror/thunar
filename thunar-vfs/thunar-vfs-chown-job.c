@@ -167,7 +167,7 @@ thunar_vfs_chown_job_execute (ThunarVfsJob *job)
 
   /* check if we should operate recursively and collect the paths */
   if (G_UNLIKELY (chown_job->recursive))
-    path_list = thunar_vfs_scandir (chown_job->path, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, NULL);
+    path_list = thunar_vfs_scandir (chown_job->path, &job->cancelled, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, NULL);
   path_list = thunar_vfs_path_list_prepend (path_list, chown_job->path);
 
   /* determine the total number of paths (atleast one!) */

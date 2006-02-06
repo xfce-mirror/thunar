@@ -535,7 +535,7 @@ thunar_vfs_transfer_job_collect_pairs (ThunarVfsTransferJob  *transfer_job,
     return NULL;
 
   /* scan the pair directory */
-  paths = thunar_vfs_scandir (pair->source_path, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, &serror);
+  paths = thunar_vfs_scandir (pair->source_path, &THUNAR_VFS_JOB (transfer_job)->cancelled, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, &serror);
   if (G_UNLIKELY (serror != NULL))
     {
       g_propagate_error (error, serror);

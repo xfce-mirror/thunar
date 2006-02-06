@@ -37,6 +37,7 @@ typedef enum /*< flags >*/
 } ThunarVfsScandirFlags;
 
 GList *thunar_vfs_scandir       (ThunarVfsPath        *path,
+                                 volatile gboolean    *cancelled,
                                  ThunarVfsScandirFlags flags,
                                  GCompareFunc          func,
                                  GError              **error) G_GNUC_INTERNAL;

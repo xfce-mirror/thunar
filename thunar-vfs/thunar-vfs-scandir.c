@@ -89,6 +89,7 @@ static gboolean thunar_vfs_scandir_collect_slow (ThunarVfsScandirHandle *handle,
                                                  ThunarVfsPath          *path,
                                                  GList                 **directoriesp);
 static gboolean thunar_vfs_scandir_collect      (ThunarVfsScandirHandle *handle,
+                                                 volatile gboolean      *cancelled,
                                                  ThunarVfsPath          *path);
 
 
@@ -374,6 +375,7 @@ error:
 
 static gboolean
 thunar_vfs_scandir_collect (ThunarVfsScandirHandle *handle,
+                            volatile gboolean      *cancelled,
                             ThunarVfsPath          *path)
 {
   gboolean succeed = FALSE;
@@ -402,7 +404,16 @@ thunar_vfs_scandir_collect (ThunarVfsScandirHandle *handle,
       /* perform the recursion */
       for (lp = directories; lp != NULL && succeed; lp = lp->next)
         {
-          succeed = thunar_vfs_scandir_collect (handle, lp->data);
+          /* check if the user cancelled the scanning */
+          if (G_UNLIKELY (cancelled != NULL && *cancelled))
+            {
+              succeed = FALSE;
+              errno = EINTR;
+              break;
+            }
+
+          /* collect the files for this directory */
+          succeed = thunar_vfs_scandir_collect (handle, cancelled, lp->data);
           if (G_UNLIKELY (!succeed))
             {
               /* we can ignore certain errors here */
@@ -425,6 +436,10 @@ thunar_vfs_scandir_collect (ThunarVfsScandirHandle *handle,
 /**
  * thunar_vfs_scandir:
  * @path
+ * @cancelled : pointer to a volatile boolean variable, which if
+ *              %TRUE means to cancel the scan operation. May be
+ *              %NULL in which case the scanner cannot be
+ *              cancelled.
  * @flags
  * @func
  * @error     : return location for errors or %NULL.
@@ -433,10 +448,14 @@ thunar_vfs_scandir_collect (ThunarVfsScandirHandle *handle,
  * using thunar_vfs_path_list_free() when no longer
  * needed.
  *
+ * If @cancelled becomes true during the scan operation, %NULL
+ * will be returned and @error will be set to %G_FILE_ERROR_INTR.
+ *
  * Return value:
  **/
 GList*
 thunar_vfs_scandir (ThunarVfsPath        *path,
+                    volatile gboolean    *cancelled,
                     ThunarVfsScandirFlags flags,
                     GCompareFunc          func,
                     GError              **error)
@@ -452,7 +471,7 @@ thunar_vfs_scandir (ThunarVfsPath        *path,
   handle.path_list = NULL;
 
   /* collect the paths */
-  if (!thunar_vfs_scandir_collect (&handle, path))
+  if (!thunar_vfs_scandir_collect (&handle, cancelled, path))
     {
       /* forward the error */
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));

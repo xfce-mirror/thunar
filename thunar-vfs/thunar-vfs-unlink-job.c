@@ -165,7 +165,7 @@ thunar_vfs_unlink_job_execute (ThunarVfsJob *job)
   for (lp = unlink_job->path_list; lp != NULL && !thunar_vfs_job_cancelled (job); lp = lp->next)
     {
       /* scan the directory */
-      paths = thunar_vfs_scandir (lp->data, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, &error);
+      paths = thunar_vfs_scandir (lp->data, &job->cancelled, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, &error);
       if (G_UNLIKELY (error != NULL))
         {
           /* we can safely ignore ENOTDIR errors here */

@@ -133,6 +133,8 @@ struct _ThunarIconKey
 
 static GObjectClass *thunar_icon_factory_parent_class = NULL;
 static GQuark        thunar_icon_factory_quark = 0;
+static GQuark        thunar_icon_thumb_path_quark = 0;
+static GQuark        thunar_icon_thumb_time_quark = 0;
 static GQuark        thunar_file_thumb_path_quark = 0;
 
 
@@ -173,6 +175,10 @@ thunar_icon_factory_class_init (ThunarIconFactoryClass *klass)
 
   /* determine the parent type class */
   thunar_icon_factory_parent_class = g_type_class_peek_parent (klass);
+
+  /* setup the thunar-icon-thumb-{path,time} quarks */
+  thunar_icon_thumb_path_quark = g_quark_from_static_string ("thunar-icon-thumb-path");
+  thunar_icon_thumb_time_quark = g_quark_from_static_string ("thunar-icon-thumb-time");
 
   /* setup the thunar-file-thumb-path quark */
   thunar_file_thumb_path_quark = g_quark_from_static_string ("thunar-file-thumb-path");
@@ -837,7 +843,10 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                                     gint                icon_size)
 {
   ThunarFileThumbState thumb_state;
+  ThunarVfsFileTime    time;
   ThunarVfsInfo       *info;
+  ThunarVfsPath       *path;
+  ThunarIconKey        key;
   const gchar         *icon_name;
   GdkPixbuf           *icon;
   gchar               *thumb_path;
@@ -865,6 +874,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
       /* check if we haven't yet determine the thumbnail state */
       if (thumb_state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
         {
+again:
           /* determine the ThunarVfsInfo for the file */
           info = thunar_file_get_info (file);
 
@@ -913,10 +923,46 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
           thumb_path = g_object_get_qdata (G_OBJECT (file), thunar_file_thumb_path_quark);
           if (G_LIKELY (thumb_path != NULL))
             {
-              // FIXME: Check mtime and URI for the returned icon
+              /* try to load the thumbnail for the given path */
               icon = thunar_icon_factory_lookup_icon (factory, thumb_path, icon_size, FALSE);
               if (G_LIKELY (icon != NULL))
-                return icon;
+                {
+                  /* determine the VFS info for the file */
+                  info = thunar_file_get_info (file);
+
+                  /* determine mtime and path for the thumbnail */
+                  path = g_object_get_qdata (G_OBJECT (icon), thunar_icon_thumb_path_quark);
+                  time = GPOINTER_TO_UINT (g_object_get_qdata (G_OBJECT (icon), thunar_icon_thumb_time_quark));
+
+                  /* check if mtime and path was already associated with the thumbnail */
+                  if (G_UNLIKELY (path == NULL))
+                    {
+                      /* just save mtime and path for the thumbnail */
+                      g_object_set_qdata_full (G_OBJECT (icon), thunar_icon_thumb_path_quark,
+                                               thunar_vfs_path_ref (info->path),
+                                               (GDestroyNotify) thunar_vfs_path_unref);
+                      g_object_set_qdata (G_OBJECT (icon), thunar_icon_thumb_time_quark,
+                                          GUINT_TO_POINTER (info->mtime));
+                    }
+                  else if (G_UNLIKELY (time != info->mtime || !thunar_vfs_path_equal (path, info->path)))
+                    {
+                      /* the thumbnail is no longer valid, remove it from our internal cache */
+                      key.name = thumb_path;
+                      key.size = icon_size;
+
+                      /* try to remove based on the key */
+                      if (g_hash_table_remove (factory->icon_cache, &key))
+                        {
+                          /* we only restart the operation if we were successfull, else we could recurse infinitely */
+                          thumb_state = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+                          g_object_unref (G_OBJECT (icon));
+                          goto again;
+                        }
+                    }
+
+                  /* ok, we have a valid thumbnail */
+                  return icon;
+                }
             }
         }
 

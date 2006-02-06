@@ -169,7 +169,7 @@ thunar_vfs_chmod_job_execute (ThunarVfsJob *job)
 
   /* check if we should operate recursively and collect the paths */
   if (G_UNLIKELY (chmod_job->recursive))
-    path_list = thunar_vfs_scandir (chmod_job->path, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, NULL);
+    path_list = thunar_vfs_scandir (chmod_job->path, &job->cancelled, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, NULL);
   path_list = thunar_vfs_path_list_prepend (path_list, chmod_job->path);
 
   /* determine the total number of paths (atleast one!) */

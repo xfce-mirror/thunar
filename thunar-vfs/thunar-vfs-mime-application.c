@@ -199,9 +199,11 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
   ThunarVfsMimeHandlerFlags flags = 0;
   ThunarVfsMimeApplication *application = NULL;
   ThunarVfsMimeAction      *action;
+  const gchar              *tryexec;
   const gchar              *exec;
   const gchar              *icon;
   const gchar              *name;
+  gboolean                  present;
   XfceRc                   *rc;
   gchar                    *command;
   gchar                   **actions;
@@ -223,6 +225,33 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
   name = xfce_rc_read_entry (rc, "Name", NULL);
   exec = xfce_rc_read_entry_untranslated (rc, "Exec", NULL);
   icon = xfce_rc_read_entry_untranslated (rc, "Icon", NULL);
+
+  /* check if we have a TryExec field */
+  tryexec = xfce_rc_read_entry_untranslated (rc, "TryExec", NULL);
+  tryexec = (tryexec != NULL) ? tryexec : exec;
+  if (G_LIKELY (tryexec != NULL && g_shell_parse_argv (tryexec, NULL, &mt, NULL)))
+    {
+      /* check if we have an absolute path to an existing file */
+      present = g_file_test (mt[0], G_FILE_TEST_EXISTS);
+
+      /* else, we may have a program in $PATH */
+      if (G_LIKELY (!present))
+        {
+          command = g_find_program_in_path (mt[0]);
+          present = (command != NULL);
+          g_free (command);
+        }
+
+      /* cleanup */
+      g_strfreev (mt);
+
+      /* if the program is not present, there's no reason to allocate a MimeApplication for it */
+      if (G_UNLIKELY (!present))
+        {
+          xfce_rc_close (rc);
+          return NULL;
+        }
+    }
 
   /* generate the application object */
   if (G_LIKELY (exec != NULL && name != NULL && g_utf8_validate (name, -1, NULL)))

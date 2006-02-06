@@ -179,7 +179,7 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
   guint        n;
 
   /* scan the given directory */
-  list = thunar_vfs_scandir (THUNAR_VFS_LISTDIR_JOB (job)->path, THUNAR_VFS_SCANDIR_FOLLOW_LINKS, pathcmp, &error);
+  list = thunar_vfs_scandir (THUNAR_VFS_LISTDIR_JOB (job)->path, &job->cancelled, THUNAR_VFS_SCANDIR_FOLLOW_LINKS, pathcmp, &error);
   if (G_LIKELY (list != NULL))
     {
       for (lp = hp = list, n = 0; lp != NULL; lp = lp->next, ++n)
