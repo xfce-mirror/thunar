@@ -218,6 +218,8 @@ static void                 thunar_standard_view_error                      (Thu
                                                                              const GError             *error,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_loading_unbound            (gpointer                  user_data);
+static gboolean             thunar_standard_view_drag_scroll_timer          (gpointer                  user_data);
+static void                 thunar_standard_view_drag_scroll_timer_destroy  (gpointer                  user_data);
 static gboolean             thunar_standard_view_drag_timer                 (gpointer                  user_data);
 static void                 thunar_standard_view_drag_timer_destroy         (gpointer                  user_data);
 
@@ -251,6 +253,7 @@ struct _ThunarStandardViewPrivate
 
   /* right-click drag/popup support */
   GList                  *drag_path_list;
+  gint                    drag_scroll_timer_id;
   gint                    drag_timer_id;
   gint                    drag_x;
   gint                    drag_y;
@@ -479,6 +482,7 @@ static void
 thunar_standard_view_init (ThunarStandardView *standard_view)
 {
   standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
+  standard_view->priv->drag_scroll_timer_id = -1;
   standard_view->priv->drag_timer_id = -1;
 
   /* grab a reference on the preferences */
@@ -614,6 +618,10 @@ thunar_standard_view_dispose (GObject *object)
   /* unregister the "loading" binding */
   if (G_UNLIKELY (standard_view->loading_binding != NULL))
     exo_binding_unbind (standard_view->loading_binding);
+
+  /* be sure to cancel any pending drag autoscroll timer */
+  if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id >= 0))
+    g_source_remove (standard_view->priv->drag_scroll_timer_id);
 
   /* be sure to cancel any pending drag timer */
   if (G_UNLIKELY (standard_view->priv->drag_timer_id >= 0))
@@ -2442,6 +2450,10 @@ thunar_standard_view_drag_leave (GtkWidget          *widget,
   /* reset the drop-file for the icon renderer */
   g_object_set (G_OBJECT (standard_view->icon_renderer), "drop-file", NULL, NULL);
 
+  /* stop any running drag autoscroll timer */
+  if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id >= 0))
+    g_source_remove (standard_view->priv->drag_scroll_timer_id);
+
   /* disable the drop highlighting around the view */
   if (G_LIKELY (standard_view->priv->drop_highlight))
     {
@@ -2529,6 +2541,14 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
     {
       /* check whether we can drop at (x,y) */
       thunar_standard_view_get_dest_actions (standard_view, context, x, y, time, NULL);
+
+      /* start the drag autoscroll timer if not already running */
+      if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id < 0))
+        {
+          /* schedule the drag autoscroll timer */
+          standard_view->priv->drag_scroll_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 50, thunar_standard_view_drag_scroll_timer,
+                                                                          standard_view, thunar_standard_view_drag_scroll_timer_destroy);
+        }
     }
 
   return TRUE;
@@ -2603,6 +2623,10 @@ thunar_standard_view_drag_end (GtkWidget          *view,
                                GdkDragContext     *context,
                                ThunarStandardView *standard_view)
 {
+  /* stop any running drag autoscroll timer */
+  if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id >= 0))
+    g_source_remove (standard_view->priv->drag_scroll_timer_id);
+
   /* release the list of dragged URIs */
   thunar_vfs_path_list_free (standard_view->priv->drag_path_list);
   standard_view->priv->drag_path_list = NULL;
@@ -2651,6 +2675,58 @@ thunar_standard_view_loading_unbound (gpointer user_data)
       g_object_notify (G_OBJECT (standard_view), "statusbar-text");
       g_object_thaw_notify (G_OBJECT (standard_view));
     }
+}
+
+
+
+static gboolean
+thunar_standard_view_drag_scroll_timer (gpointer user_data)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
+  GtkAdjustment      *vadjustment;
+  gfloat              value;
+  gint                offset;
+  gint                y, h;
+
+  GDK_THREADS_ENTER ();
+
+  /* verify that we are realized */
+  if (G_LIKELY (GTK_WIDGET_REALIZED (standard_view)))
+    {
+      /* determine pointer location and window geometry */
+      gdk_window_get_pointer (GTK_BIN (standard_view)->child->window, NULL, &y, NULL);
+      gdk_window_get_geometry (GTK_BIN (standard_view)->child->window, NULL, NULL, NULL, &h, NULL);
+
+      /* check if we are near the edge */
+      offset = y - (2 * 20);
+      if (G_UNLIKELY (offset > 0))
+        offset = MAX (y - (h - 2 * 20), 0);
+
+      /* change the vertical adjustment appropriately */
+      if (G_UNLIKELY (offset != 0))
+        {
+          /* determine the vertical adjustment */
+          vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
+
+          /* determine the new value */
+          value = CLAMP (vadjustment->value + 2 * offset, vadjustment->lower, vadjustment->upper - vadjustment->page_size);
+
+          /* apply the new value */
+          gtk_adjustment_set_value (vadjustment, value);
+        }
+    }
+
+  GDK_THREADS_LEAVE ();
+
+  return TRUE;
+}
+
+
+
+static void
+thunar_standard_view_drag_scroll_timer_destroy (gpointer user_data)
+{
+  THUNAR_STANDARD_VIEW (user_data)->priv->drag_scroll_timer_id = -1;
 }
 
 
