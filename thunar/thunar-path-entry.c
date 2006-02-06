@@ -31,6 +31,8 @@
 #include <string.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-list-model.h>
@@ -79,6 +81,8 @@ static gboolean thunar_path_entry_button_release_event          (GtkWidget      
                                                                  GdkEventButton       *event);
 static gboolean thunar_path_entry_motion_notify_event           (GtkWidget            *widget,
                                                                  GdkEventMotion       *event);
+static gboolean thunar_path_entry_key_press_event               (GtkWidget            *widget,
+                                                                 GdkEventKey          *event);
 static void     thunar_path_entry_drag_data_get                 (GtkWidget            *widget,
                                                                  GdkDragContext       *context,
                                                                  GtkSelectionData     *selection_data,
@@ -222,6 +226,7 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
   gtkwidget_class->button_press_event = thunar_path_entry_button_press_event;
   gtkwidget_class->button_release_event = thunar_path_entry_button_release_event;
   gtkwidget_class->motion_notify_event = thunar_path_entry_motion_notify_event;
+  gtkwidget_class->key_press_event = thunar_path_entry_key_press_event;
   gtkwidget_class->drag_data_get = thunar_path_entry_drag_data_get;
 
   gtkentry_class = GTK_ENTRY_CLASS (klass);
@@ -695,6 +700,33 @@ thunar_path_entry_motion_notify_event (GtkWidget      *widget,
     }
 
   return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->motion_notify_event) (widget, event);
+}
+
+
+
+static gboolean
+thunar_path_entry_key_press_event (GtkWidget   *widget,
+                                   GdkEventKey *event)
+{
+  ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
+
+  /* check if we have a tab key press here and control is not pressed */
+  if (G_UNLIKELY (event->keyval == GDK_Tab && (event->state & GDK_CONTROL_MASK) == 0))
+    {
+      /* if we don't have a completion and the cursor is at the end of the line, we just insert the common prefix */
+      if (!path_entry->has_completion && gtk_editable_get_position (GTK_EDITABLE (path_entry)) == GTK_ENTRY (path_entry)->text_length)
+        thunar_path_entry_common_prefix_append (path_entry, FALSE);
+
+      /* place the cursor at the end */
+      gtk_editable_set_position (GTK_EDITABLE (path_entry), GTK_ENTRY (path_entry)->text_length);
+
+      return TRUE;
+    }
+  else
+    {
+      /* let Gtk+ handle the key press event */
+      return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->key_press_event) (widget, event);
+    }
 }
 
 
