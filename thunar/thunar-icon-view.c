@@ -27,11 +27,6 @@
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-icon-view-ui.h>
 
-#if !GTK_CHECK_VERSION(2,7,1) && defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
-#include <cairo/cairo-xlib.h>
-#include <gdk/gdkx.h>
-#endif
-
 
 
 /* Property identifiers */
@@ -635,40 +630,6 @@ thunar_icon_view_button_release_event (ExoIconView    *view,
 
 
 
-#if GTK_CHECK_VERSION(2,7,1)
-static cairo_t*
-get_cairo_context (GdkWindow *window)
-{
-  return gdk_cairo_create (window);
-}
-#elif defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
-static cairo_t*
-get_cairo_context (GdkWindow *window)
-{
-  cairo_surface_t *surface;
-  GdkDrawable     *drawable;
-  cairo_t         *cr;
-  gint             w;
-  gint             h;
-  gint             x;
-  gint             y;
-
-  gdk_window_get_internal_paint_info (window, &drawable, &x, &y);
-  gdk_drawable_get_size (drawable, &w, &h);
-
-  surface = cairo_xlib_surface_create (GDK_DRAWABLE_XDISPLAY (drawable), GDK_DRAWABLE_XID (drawable),
-                                       gdk_x11_visual_get_xvisual (gdk_drawable_get_visual (drawable)), w, h);
-  cr = cairo_create (surface);
-  cairo_surface_destroy (surface);
-
-  cairo_translate (cr, -x, -y);
-
-  return cr;
-}
-#endif
-
-
-
 static gboolean
 thunar_icon_view_expose_event (ExoIconView    *view,
                                GdkEventExpose *event,
@@ -678,7 +639,7 @@ thunar_icon_view_expose_event (ExoIconView    *view,
   GtkAction  *action = NULL;
   GdkPixbuf  *stock_icon = NULL;
   gchar      *stock_id;
-#if GTK_CHECK_VERSION(2,7,1) || (defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO))
+#if GTK_CHECK_VERSION(2,7,1)
   GdkColor    bg;
   cairo_t    *cr;
 #endif
@@ -690,8 +651,8 @@ thunar_icon_view_expose_event (ExoIconView    *view,
   g_return_val_if_fail (icon_view->gesture_release_id > 0, FALSE);
 
   /* shade the icon view content while performing mouse gestures */
-#if GTK_CHECK_VERSION(2,7,1) || (defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO))
-  cr = get_cairo_context (event->window);
+#if GTK_CHECK_VERSION(2,7,1)
+  cr = gdk_cairo_create (event->window);
   bg = GTK_WIDGET (view)->style->base[GTK_STATE_NORMAL];
   cairo_set_source_rgba (cr, bg.red / 65535.0, bg.green / 65535.0, bg.blue / 65535.0, 0.7);
   cairo_rectangle (cr, event->area.x, event->area.y, event->area.width, event->area.height);

@@ -213,6 +213,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   GtkCellRenderer   *renderer;
 
   /* configure the tree view */
+  gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
 
   /* grab a reference on the preferences; be sure to redraw the view

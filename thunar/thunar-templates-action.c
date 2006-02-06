@@ -42,7 +42,7 @@ static GtkWidget *thunar_templates_action_create_menu_item  (GtkAction          
 static void       thunar_templates_action_fill_menu         (ThunarTemplatesAction      *templates_action,
                                                              ThunarVfsPath              *templates_path,
                                                              GtkWidget                  *menu);
-static void       thunar_templates_action_menu_mapped       (GtkWidget                  *menu,
+static void       thunar_templates_action_menu_shown        (GtkWidget                  *menu,
                                                              ThunarTemplatesAction      *templates_action);
 
 
@@ -154,9 +154,9 @@ thunar_templates_action_create_menu_item (GtkAction *action)
   /* let GtkAction allocate the menu item */
   item = (*GTK_ACTION_CLASS (thunar_templates_action_parent_class)->create_menu_item) (action);
 
-  /* associate an empty submenu with the item (will be filled when mapped) */
+  /* associate an empty submenu with the item (will be filled when shown) */
   menu = gtk_menu_new ();
-  g_signal_connect (G_OBJECT (menu), "map", G_CALLBACK (thunar_templates_action_menu_mapped), action);
+  g_signal_connect (G_OBJECT (menu), "show", G_CALLBACK (thunar_templates_action_menu_shown), action);
   gtk_menu_item_set_submenu (GTK_MENU_ITEM (item), menu);
 
   return item;
@@ -343,8 +343,8 @@ thunar_templates_action_fill_menu (ThunarTemplatesAction *templates_action,
 
 
 static void
-thunar_templates_action_menu_mapped (GtkWidget             *menu,
-                                     ThunarTemplatesAction *templates_action)
+thunar_templates_action_menu_shown (GtkWidget             *menu,
+                                    ThunarTemplatesAction *templates_action)
 {
   ThunarVfsPath *templates_path;
   ThunarVfsPath *home_path;
