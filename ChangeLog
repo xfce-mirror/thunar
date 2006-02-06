@@ -1,5 +1,39 @@
 2006-02-06	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-transfer-job.c(thunar_vfs_transfer_job_execute):
+	  Try to use g_rename() first when moving files, and only fallback to
+	  copy&delete if either the target exists (which requires user inter-
+	  action to resolve the issue) or the rename didn't work, i.e. source
+	  and target are not on the same filesystem. Bug #1229.
+	* thunar-vfs/thunar-vfs-volume.{c,h}: Add thunar_vfs_volume_is_disc()
+	  to allow applications to decide whether to eject or unmount a
+	  volume.
+	* thunar/thunar-shortcuts-view.c
+	  (thunar_shortcuts_view_button_press_event): Use the newly added method
+	  thunar_vfs_volume_is_disc() to determine whether to display Eject or
+	  Unmount.
+	* thunar/thunar-side-pane.{c,h}: Derive ThunarSidePane from
+	  ThunarComponent instead of ThunarNavigator.
+	* thunar/thunar-launcher.c, thunar/thunar-standard-view.c,
+	  thunar/thunar-window.c: Use the class name as name for the action
+	  groups.
+	* thunar/thunar-shortcuts-pane-ui.xml, thunar/thunar-shortcuts-pane.c,
+	  thunar/thunar-window.c, thunar/thunar-window-ui.xml,
+	  thunar/Makefile.am: Add new action to add a folder (or a list of
+	  folders, depending on the selection content) to the shortcuts pane.
+	  Bug #1397.
+	* thunar/thunar-throbber.c, thunar/thunar-throbber-fallback.{h,png},
+	  thunar/Makefile.am: Use the "process-working" icon for the throbber,
+	  as specified by the Icon Naming Specification, with an internal
+	  fallback to a modified version of the Tango "process-working" icon.
+	* configure.in.in, icons/Makefile.am, icons/scalable/,
+	  icons/16x16/Thunar.png, icons/16x16/Thunar.png,
+	  icons/24x24/Thunar.png, icons/48x48/Thunar.png: Revert to the previous
+	  Thunar icon.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+
+2006-02-06	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-properties-dialog.c(thunar_properties_dialog_update):
 	  Use G_GINT64_FORMAT instead of "lld" as format for the file size.
 

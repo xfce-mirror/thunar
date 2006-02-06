@@ -104,6 +104,7 @@ Thunar_SOURCES =							\
 	thunar-shortcuts-model.h					\
 	thunar-shortcuts-pane.c						\
 	thunar-shortcuts-pane.h						\
+	thunar-shortcuts-pane-ui.h					\
 	thunar-shortcuts-view.c						\
 	thunar-shortcuts-view.h						\
 	thunar-side-pane.c						\
@@ -121,6 +122,8 @@ Thunar_SOURCES =							\
 	thunar-text-renderer.h						\
 	thunar-throbber.c						\
 	thunar-throbber.h						\
+	thunar-throbber-fallback.c					\
+	thunar-throbber-fallback.h					\
 	thunar-thumbnail-frame.c					\
 	thunar-thumbnail-frame.h					\
 	thunar-thumbnail-generator.c					\
@@ -172,7 +175,9 @@ DISTCLEANFILES =							\
 	stamp-thunar-marshal.h						\
 	thunar-icon-view-ui.h						\
 	thunar-launcher-ui.h						\
+	thunar-shortcuts-pane-ui.h					\
 	thunar-standard-view-ui.h					\
+	thunar-throbber-fallback.c					\
 	thunar-thumbnail-frame.c					\
 	thunar-window-ui.h
 
@@ -180,9 +185,14 @@ BUILT_SOURCES =								\
 	$(thunar_built_sources)						\
 	thunar-icon-view-ui.h						\
 	thunar-launcher-ui.h						\
+	thunar-shortcuts-pane-ui.h					\
 	thunar-standard-view-ui.h					\
+	thunar-throbber-fallback.c					\
 	thunar-thumbnail-frame.c					\
 	thunar-window-ui.h
+
+thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile
+	(echo "#include <thunar/thunar-throbber-fallback.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_throbber_fallback $(srcdir)/thunar-throbber-fallback.png) > thunar-throbber-fallback.c
 
 thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
 	(echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
@@ -192,6 +202,9 @@ thunar-icon-view-ui.h: Makefile $(srcdir)/thunar-icon-view-ui.xml
 
 thunar-launcher-ui.h: Makefile $(srcdir)/thunar-launcher-ui.xml
 	exo-csource --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
+
+thunar-shortcuts-pane-ui.h: Makefile $(srcdir)/thunar-shortcuts-pane-ui.xml
+	exo-csource --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h
 
 thunar-standard-view-ui.h: Makefile $(srcdir)/thunar-standard-view-ui.xml
 	exo-csource --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h

@@ -185,6 +185,7 @@ struct _ThunarWindow
   GtkWidget              *table;
   GtkWidget              *throbber;
   GtkWidget              *paned;
+  GtkWidget              *sidepane;
   GtkWidget              *view_container;
   GtkWidget              *view;
   GtkWidget              *statusbar;
@@ -453,7 +454,7 @@ thunar_window_init (ThunarWindow *window)
   window->icon_factory = thunar_icon_factory_get_default ();
 
   /* setup the action group for this window */
-  window->action_group = gtk_action_group_new ("thunar-window");
+  window->action_group = gtk_action_group_new ("ThunarWindow");
   gtk_action_group_set_translation_domain (window->action_group, GETTEXT_PACKAGE);
   gtk_action_group_add_actions (window->action_group, action_entries, G_N_ELEMENTS (action_entries), GTK_WIDGET (window));
   gtk_action_group_add_toggle_actions (window->action_group, toggle_action_entries, G_N_ELEMENTS (toggle_action_entries), GTK_WIDGET (window));
@@ -1101,23 +1102,30 @@ thunar_window_action_side_pane_changed (GtkRadioAction *action,
                                         GtkRadioAction *current,
                                         ThunarWindow   *window)
 {
-  GtkWidget *widget;
-  GType      type;
+  GType type;
 
   /* drop the previous side pane (if any) */
-  widget = gtk_paned_get_child1 (GTK_PANED (window->paned));
-  if (G_LIKELY (widget != NULL))
-    gtk_widget_destroy (widget);
+  if (G_UNLIKELY (window->sidepane != NULL))
+    {
+      gtk_widget_destroy (window->sidepane);
+      window->sidepane = NULL;
+    }
 
   /* determine the new type of side pane */
   type = gtk_radio_action_get_current_value (action);
   if (G_LIKELY (type != G_TYPE_NONE))
     {
-      widget = g_object_new (type, NULL);
-      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (widget), "current-directory");
-      g_signal_connect_swapped (G_OBJECT (widget), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
-      gtk_paned_pack1 (GTK_PANED (window->paned), widget, FALSE, FALSE);
-      gtk_widget_show (widget);
+      /* allocate the new side pane widget */
+      window->sidepane = g_object_new (type, NULL);
+      thunar_component_set_ui_manager (THUNAR_COMPONENT (window->sidepane), window->ui_manager);
+      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory");
+      g_signal_connect_swapped (G_OBJECT (window->sidepane), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+      gtk_paned_pack1 (GTK_PANED (window->paned), window->sidepane, FALSE, FALSE);
+      gtk_widget_show (window->sidepane);
+
+      /* connect the side pane widget to the view (if any) */
+      if (G_LIKELY (window->view != NULL))
+        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->sidepane), "selected-files");
     }
 
   /* remember the setting */
@@ -1242,6 +1250,10 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       gtk_container_add (GTK_CONTAINER (window->view_container), window->view);
       gtk_widget_grab_focus (window->view);
       gtk_widget_show (window->view);
+
+      /* connect to the sidepane (if any) */
+      if (G_LIKELY (window->sidepane != NULL))
+        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->sidepane), "selected-files");
 
       /* connect to the statusbar (if any) */
       if (G_LIKELY (window->statusbar != NULL))

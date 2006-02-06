@@ -21,18 +21,10 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_MATH_H
-#include <math.h>
-#endif
-
 #include <exo/exo.h>
 
 #include <thunar/thunar-throbber.h>
-
-#if !GTK_CHECK_VERSION(2,7,1) && defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
-#include <cairo/cairo-xlib.h>
-#include <gdk/gdkx.h>
-#endif
+#include <thunar/thunar-throbber-fallback.h>
 
 
 
@@ -56,6 +48,8 @@ static void     thunar_throbber_set_property  (GObject              *object,
                                                guint                 prop_id,
                                                const GValue         *value,
                                                GParamSpec           *pspec);
+static void     thunar_throbber_realize       (GtkWidget            *widget);
+static void     thunar_throbber_unrealize     (GtkWidget            *widget);
 static void     thunar_throbber_size_request  (GtkWidget            *widget,
                                                GtkRequisition       *requisition);
 static gboolean thunar_throbber_expose_event  (GtkWidget            *widget,
@@ -74,9 +68,11 @@ struct _ThunarThrobber
 {
   GtkWidget __parent__;
 
-  gboolean animated;
-  gint     angle;
-  gint     timer_id;
+  GdkPixbuf *icon;
+
+  gboolean   animated;
+  gint       index;
+  gint       timer_id;
 };
 
 
@@ -119,6 +115,7 @@ thunar_throbber_class_init (ThunarThrobberClass *klass)
 {
   GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
+  GdkPixbuf      *icon;
 
   /* determine the parent type class */
   thunar_throbber_parent_class = g_type_class_peek_parent (klass);
@@ -129,6 +126,8 @@ thunar_throbber_class_init (ThunarThrobberClass *klass)
   gobject_class->set_property = thunar_throbber_set_property;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->realize = thunar_throbber_realize;
+  gtkwidget_class->unrealize = thunar_throbber_unrealize;
   gtkwidget_class->size_request = thunar_throbber_size_request;
   gtkwidget_class->expose_event = thunar_throbber_expose_event;
 
@@ -144,6 +143,11 @@ thunar_throbber_class_init (ThunarThrobberClass *klass)
                                                          "animated",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /* register the "process-working" fallback icon */
+  icon = gdk_pixbuf_new_from_inline (-1, thunar_throbber_fallback, FALSE, NULL);
+  gtk_icon_theme_add_builtin_icon ("process-working", 22, icon);
+  g_object_unref (G_OBJECT (icon));
 }
 
 
@@ -216,47 +220,48 @@ thunar_throbber_set_property (GObject      *object,
 
 
 static void
+thunar_throbber_realize (GtkWidget *widget)
+{
+  ThunarThrobber *throbber = THUNAR_THROBBER (widget);
+  GtkIconTheme   *icon_theme;
+
+  /* let Gtk+ realize the widget */
+  (*GTK_WIDGET_CLASS (thunar_throbber_parent_class)->realize) (widget);
+
+  /* determine the icon theme for our screen */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
+
+  /* try to lookup the "process-working" icon */
+  throbber->icon = gtk_icon_theme_load_icon (icon_theme, "process-working", 22, GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_NO_SVG, NULL);
+}
+
+
+
+static void
+thunar_throbber_unrealize (GtkWidget *widget)
+{
+  ThunarThrobber *throbber = THUNAR_THROBBER (widget);
+
+  /* release the icon if any */
+  if (G_LIKELY (throbber->icon != NULL))
+    {
+      g_object_unref (G_OBJECT (throbber->icon));
+      throbber->icon = NULL;
+    }
+
+  /* let Gtk+ unrealize the widget */
+  (*GTK_WIDGET_CLASS (thunar_throbber_parent_class)->unrealize) (widget);
+}
+
+
+
+static void
 thunar_throbber_size_request (GtkWidget      *widget,
                               GtkRequisition *requisition)
 {
-  gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &requisition->width, &requisition->height);
-  requisition->width += 2;
-  requisition->height += 2;
+  requisition->width = 22;
+  requisition->height = 22;
 }
-
-
-
-#if GTK_CHECK_VERSION(2,7,1)
-static cairo_t*
-get_cairo_context (GdkWindow *window)
-{
-  return gdk_cairo_create (window);
-}
-#elif defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO)
-static cairo_t*
-get_cairo_context (GdkWindow *window)
-{
-  cairo_surface_t *surface;
-  GdkDrawable     *drawable;
-  cairo_t         *cr;
-  gint             w;
-  gint             h;
-  gint             x;
-  gint             y;
-
-  gdk_window_get_internal_paint_info (window, &drawable, &x, &y);
-  gdk_drawable_get_size (drawable, &w, &h);
-
-  surface = cairo_xlib_surface_create (GDK_DRAWABLE_XDISPLAY (drawable), GDK_DRAWABLE_XID (drawable),
-                                       gdk_x11_visual_get_xvisual (gdk_drawable_get_visual (drawable)), w, h);
-  cr = cairo_create (surface);
-  cairo_surface_destroy (surface);
-
-  cairo_translate (cr, -x, -y);
-
-  return cr;
-}
-#endif
 
 
 
@@ -264,51 +269,40 @@ static gboolean
 thunar_throbber_expose_event (GtkWidget      *widget,
                               GdkEventExpose *event)
 {
-#if GTK_CHECK_VERSION(2,7,1) || (defined(GDK_WINDOWING_X11) && defined(HAVE_CAIRO))
   ThunarThrobber *throbber = THUNAR_THROBBER (widget);
-  GdkColor        color;
-  cairo_t        *cr;
-  gdouble         a, n;
-  gint            size;
-  gint            x, y;
+  gint            icon_index;
+  gint            icon_cols;
+  gint            icon_rows;
+  gint            icon_x;
+  gint            icon_y;
 
-  /* determine the foreground color */
-  color = widget->style->fg[GTK_STATE_NORMAL];
-
-  /* allocate a cairo context */
-  cr = get_cairo_context (widget->window);
-
-  /* setup clipping area */
-#if GTK_CHECK_VERSION(2,7,1)
-  gdk_cairo_region (cr, event->region);
-  cairo_clip (cr);
-#endif
-
-  /* determine size and position of the throbber */
-  size = MIN (widget->allocation.width, widget->allocation.height);
-  x = widget->allocation.x + (widget->allocation.width - size) / 2;
-  y = widget->allocation.y + (widget->allocation.height - size) / 2;
-
-  /* apply required transformations */
-  cairo_translate (cr, x, y);
-  cairo_scale (cr, size, size);
-  cairo_translate (cr, 0.5, 0.5);
-  cairo_rotate (cr, (throbber->angle * M_PI) / 180.0);
-
-  /* draw the circles */
-  for (n = 0.0; n < 2.0; n += 0.25)
+  /* verify that we have a valid icon */
+  if (G_LIKELY (throbber->icon != NULL))
     {
-      /* determine the alpha based on whether the timer is still active */
-      a = (throbber->timer_id >= 0) ? (n + 0.5) / 3.0 : 0.30;
+      /* determine the icon columns and icon rows */
+      icon_cols = gdk_pixbuf_get_width (throbber->icon) / 22;
+      icon_rows = gdk_pixbuf_get_height (throbber->icon) / 22;
 
-      /* render the circle */
-      cairo_set_source_rgba (cr, color.red / 65535.0, color.green / 65535.0, color.blue / 65535.0, a);
-      cairo_arc (cr, cos (n * M_PI) / 3.0, sin (n * M_PI) /3.0, 0.105, 0.0, 2.0 * M_PI);
-      cairo_fill (cr);
+      /* verify that the icon is usable */
+      if (G_LIKELY (icon_cols > 0 && icon_rows > 0))
+        {
+          /* determine the icon index */
+          icon_index = throbber->index % (icon_cols * icon_rows);
+
+          /* make sure, we don't display the "empty state" while animated */
+          if (G_LIKELY (throbber->timer_id >= 0))
+            icon_index = MAX (icon_index, 1);
+
+          /* determine the icon x/y offset for the icon index */
+          icon_x = (icon_index % icon_cols) * 22;
+          icon_y = (icon_index / icon_cols) * 22;
+
+          /* render the given part of the icon */
+          gdk_draw_pixbuf (event->window, NULL, throbber->icon, icon_x, icon_y,
+                           widget->allocation.x, widget->allocation.y,
+                           22, 22, GDK_RGB_DITHER_NONE, 0, 0);
+        }
     }
-
-  cairo_destroy (cr);
-#endif
 
   return TRUE;
 }
@@ -321,7 +315,7 @@ thunar_throbber_timer (gpointer user_data)
   ThunarThrobber *throbber = THUNAR_THROBBER (user_data);
 
   GDK_THREADS_ENTER ();
-  throbber->angle = (throbber->angle + 45) % 360;
+  throbber->index += 1;
   gtk_widget_queue_draw (GTK_WIDGET (throbber));
   GDK_THREADS_LEAVE ();
 
@@ -333,6 +327,7 @@ thunar_throbber_timer (gpointer user_data)
 static void
 thunar_throbber_timer_destroy (gpointer user_data)
 {
+  THUNAR_THROBBER (user_data)->index = 0;
   THUNAR_THROBBER (user_data)->timer_id = -1;
 }
 
@@ -394,7 +389,7 @@ thunar_throbber_set_animated (ThunarThrobber *throbber,
   if (animated && (throbber->timer_id < 0))
     {
       /* start the animation */
-      throbber->timer_id = g_timeout_add_full (G_PRIORITY_LOW, 60, thunar_throbber_timer,
+      throbber->timer_id = g_timeout_add_full (G_PRIORITY_LOW, 25, thunar_throbber_timer,
                                                throbber, thunar_throbber_timer_destroy);
     }
 

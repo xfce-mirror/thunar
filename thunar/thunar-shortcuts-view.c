@@ -387,8 +387,8 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_show (item);
 
-          /* check if the volume is removable */
-          if (thunar_vfs_volume_is_removable (volume))
+          /* check if the volume is a disc */
+          if (thunar_vfs_volume_is_disc (volume))
             {
               /* append the "Eject Volume" menu action */
               item = gtk_image_menu_item_new_with_mnemonic (_("E_ject Volume"));

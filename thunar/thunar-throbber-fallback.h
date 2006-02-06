@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -17,39 +17,15 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
+#ifndef __THUNAR_THROBBER_FALLBACK_H__
+#define __THUNAR_THROBBER_FALLBACK_H__
 
-#include <thunar/thunar-side-pane.h>
+#include <glib.h>
 
+G_BEGIN_DECLS;
 
+extern const guint8 thunar_throbber_fallback[];
 
-GType
-thunar_side_pane_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
+G_END_DECLS;
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarSidePaneIface),
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        0,
-        0,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarSidePane"), &info, 0);
-      g_type_interface_add_prerequisite (type, GTK_TYPE_WIDGET);
-      g_type_interface_add_prerequisite (type, THUNAR_TYPE_COMPONENT);
-    }
-
-  return type;
-}
-
+#endif /* !__THUNAR_THROBBER_FALLBACK_H__ */

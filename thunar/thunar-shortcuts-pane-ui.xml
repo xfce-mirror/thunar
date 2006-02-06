@@ -1,0 +1,27 @@
+<ui>
+
+  <!--
+    $Id$
+
+    Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+
+    Thunar shortcuts pane user interface description file. Do NOT
+    simply edit this file if you don't know how the whole system
+    works, because it's too easy to break something.
+  -->
+
+  <menubar name="main-menu">
+    <menu action="file-menu" name="file-menu">
+      <placeholder name="placeholder-sidepane">
+        <menuitem action="shortcuts-add" name="shortcuts-add" />
+      </placeholder>
+    </menu>
+  </menubar>
+
+  <popup action="file-context-menu" name="file-context-menu">
+    <placeholder name="placeholder-sidepane">
+      <menuitem action="shortcuts-add" name="shortcuts-add" />
+    </placeholder>
+  </popup>
+
+</ui>

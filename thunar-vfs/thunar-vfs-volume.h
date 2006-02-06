@@ -121,6 +121,7 @@ const gchar          *thunar_vfs_volume_get_name          (ThunarVfsVolume   *vo
 ThunarVfsVolumeStatus thunar_vfs_volume_get_status        (ThunarVfsVolume   *volume);
 ThunarVfsPath        *thunar_vfs_volume_get_mount_point   (ThunarVfsVolume   *volume);
 
+gboolean              thunar_vfs_volume_is_disc           (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_mounted        (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_present        (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_ejectable      (ThunarVfsVolume   *volume);

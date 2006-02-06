@@ -237,7 +237,7 @@ static void
 thunar_launcher_init (ThunarLauncher *launcher)
 {
   /* setup the action group for the launcher actions */
-  launcher->action_group = gtk_action_group_new ("thunar-launcher");
+  launcher->action_group = gtk_action_group_new ("ThunarLauncher");
   gtk_action_group_set_translation_domain (launcher->action_group, GETTEXT_PACKAGE);
   gtk_action_group_add_actions (launcher->action_group, action_entries, G_N_ELEMENTS (action_entries), launcher);
 

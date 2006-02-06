@@ -184,6 +184,38 @@ thunar_vfs_volume_get_mount_point (ThunarVfsVolume *volume)
 
 
 /**
+ * thunar_vfs_volume_is_disc:
+ * @volume : a #ThunarVfsVolume instance.
+ *
+ * Determines whether @volume is a disc, which can be ejected.
+ * Applications should use this method to determine whether to
+ * thunar_vfs_volume_eject() or thunar_vfs_volume_unmount().
+ *
+ * Return value: %TRUE if @volume is a disc.
+ **/
+gboolean
+thunar_vfs_volume_is_disc (ThunarVfsVolume *volume)
+{
+  ThunarVfsVolumeKind kind;
+
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+
+  kind = thunar_vfs_volume_get_kind (volume);
+
+  switch (kind)
+    {
+    case THUNAR_VFS_VOLUME_KIND_CDROM:
+    case THUNAR_VFS_VOLUME_KIND_DVD:
+      return TRUE;
+
+    default:
+      return FALSE;
+    }
+}
+
+
+
+/**
  * thunar_vfs_volume_is_mounted:
  * @volume : a #ThunarVfsVolume instance.
  *
@@ -247,7 +279,7 @@ thunar_vfs_volume_is_ejectable (ThunarVfsVolume *volume)
  * @volume : a #ThunarVfsVolume instance.
  *
  * Determines whether @volume is a removable device, for example
- * a CD-ROM or a floppy drive.
+ * a CD-ROM, an USB stick or a floppy drive.
  *
  * Return value: %TRUE if @volume is a removable device, else %FALSE.
  **/
@@ -263,15 +295,12 @@ thunar_vfs_volume_is_removable (ThunarVfsVolume *volume)
   switch (kind)
     {
     case THUNAR_VFS_VOLUME_KIND_CDROM:
+    case THUNAR_VFS_VOLUME_KIND_DVD:
     case THUNAR_VFS_VOLUME_KIND_FLOPPY:
+    case THUNAR_VFS_VOLUME_KIND_USBSTICK:
       return TRUE;
 
-    case THUNAR_VFS_VOLUME_KIND_UNKNOWN:
-    case THUNAR_VFS_VOLUME_KIND_HARDDISK:
-      return FALSE;
-
     default:
-      g_assert_not_reached ();
       return FALSE;
     }
 }

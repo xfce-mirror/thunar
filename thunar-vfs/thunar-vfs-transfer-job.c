@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,6 +52,7 @@
 #include <glib/gstdio.h>
 #else
 #define g_lstat(path, statb) (lstat ((path), (statb)))
+#define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
 #define g_rmdir(path) (rmdir ((path)))
 #define g_unlink(path) (unlink ((path)))
 #endif
@@ -257,8 +258,10 @@ thunar_vfs_transfer_job_execute (ThunarVfsJob *job)
 {
   ThunarVfsTransferPair *pair;
   ThunarVfsTransferJob  *transfer_job = THUNAR_VFS_TRANSFER_JOB (job);
+  gboolean               result;
   GError                *error;
   gchar                 *source_absolute_path;
+  gchar                 *target_absolute_path;
   gchar                 *display_name;
   GList                 *pairs;
   GList                 *tmp;
@@ -273,8 +276,42 @@ thunar_vfs_transfer_job_execute (ThunarVfsJob *job)
   /* collect pairs recursively */
   for (lp = pairs; lp != NULL; lp = lp->next)
     {
-      // FIXME: Error handling?
+      /* determine the current pair */
       pair = (ThunarVfsTransferPair *) lp->data;
+
+      /* check if we want to move files, and try rename() first */
+      if (G_UNLIKELY (transfer_job->move))
+        {
+          /* determine the absolute source and target paths */
+          source_absolute_path = thunar_vfs_path_dup_string (pair->source_path);
+          target_absolute_path = thunar_vfs_path_dup_string (pair->target_path);
+
+          /* perform the rename if the target does not already exist */
+          result = (!g_file_test (target_absolute_path, G_FILE_TEST_EXISTS) && (g_rename (source_absolute_path, target_absolute_path) == 0));
+
+          /* release the absolute source and target paths */
+          g_free (source_absolute_path);
+          g_free (target_absolute_path);
+
+          /* fallback to copy logic if the simple rename didn't work */
+          if (G_LIKELY (result))
+            {
+              /* schedule a "created" event for the target file */
+              thunar_vfs_monitor_feed (transfer_job->monitor, THUNAR_VFS_MONITOR_EVENT_CREATED, pair->target_path);
+
+              /* schedule a "deleted" event for the source file */
+              thunar_vfs_monitor_feed (transfer_job->monitor, THUNAR_VFS_MONITOR_EVENT_DELETED, pair->source_path);
+            
+              /* add the target file to the new files list */
+              transfer_job->new_files = thunar_vfs_path_list_prepend (transfer_job->new_files, pair->target_path);
+
+              /* rename worked, no need to copy this pair */
+              thunar_vfs_transfer_job_free_pair (transfer_job, pair);
+              continue;
+            }
+        }
+
+      /* prepare the pair for copying */
       tmp = thunar_vfs_transfer_job_collect_pairs (transfer_job, pair, NULL);
       transfer_job->pairs = g_list_concat (transfer_job->pairs, tmp);
       transfer_job->pairs = g_list_append (transfer_job->pairs, pair);
