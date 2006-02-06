@@ -764,7 +764,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
       if (G_LIKELY (size_string != NULL))
         {
           size = thunar_file_get_size (dialog->file);
-          str = g_strdup_printf (_("%s (%lld Bytes)"), size_string, (gint64) size);
+          str = g_strdup_printf (_("%s (%" G_GINT64_FORMAT " Bytes)"), size_string, (gint64) size);
           gtk_label_set_text (GTK_LABEL (dialog->size_label), str);
           gtk_widget_show (dialog->size_label);
           g_free (size_string);
