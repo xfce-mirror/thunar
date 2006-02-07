@@ -26,6 +26,9 @@
  * command to open a file. These .desktop files aren't removed by the package   *
  * manager when the associated applications are removed, so we do this manu-    *
  * ally using this simple tool.                                                 *
+ *                                                                              *
+ * In addition, the defaults.list file will be cleaned and references to dead   *
+ * desktop-ids will be removed from the list.                                   *
  ********************************************************************************/
 
 #ifdef HAVE_CONFIG_H
@@ -35,12 +38,18 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #ifdef HAVE_REGEX_H
 #include <regex.h>
 #endif
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -86,13 +95,226 @@ check_exec (const gchar *exec)
 
 
 
+static GHashTable*
+load_defaults_list (const gchar *directory)
+{
+  const gchar *type;
+  const gchar *ids;
+  GHashTable  *defaults_list;
+  gchar      **id_list;
+  gchar        line[2048];
+  gchar       *path;
+  gchar       *lp;
+  FILE        *fp;
+  gint         n;
+  gint         m;
+
+  /* allocate a new hash table for the defaults.list */
+  defaults_list = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) g_strfreev);
+
+  /* determine the path to the defaults.list */
+  path = g_build_filename (directory, "defaults.list", NULL);
+
+  /* try to open the defaults.list file */
+  fp = fopen (path, "r");
+  if (G_LIKELY (fp != NULL))
+    {
+      /* process the file */
+      while (fgets (line, sizeof (line), fp) != NULL)
+        {
+          /* skip everything that doesn't look like a mime type line */
+          for (lp = line; g_ascii_isspace (*lp); ++lp) ;
+          if (G_UNLIKELY (*lp < 'a' || *lp > 'z'))
+            continue;
+
+          /* lookup the '=' */
+          for (type = lp++; *lp != '\0' && *lp != '='; ++lp) ;
+          if (G_UNLIKELY (*lp != '='))
+            continue;
+          *lp++ = '\0';
+
+          /* extract the application id list */
+          for (ids = lp; g_ascii_isgraph (*lp); ++lp) ;
+          if (G_UNLIKELY (ids == lp))
+            continue;
+          *lp = '\0';
+
+          /* parse the id list */
+          id_list = g_strsplit (ids, ";", -1);
+          for (m = n = 0; id_list[m] != NULL; ++m)
+            {
+              if (G_UNLIKELY (id_list[m][0] == '\0'))
+                g_free (id_list[m]);
+              else
+                id_list[n++] = id_list[m];
+            }
+          id_list[n] = NULL;
+
+          /* verify that the id list is not empty */
+          if (G_UNLIKELY (id_list[0] == NULL))
+            {
+              g_free (id_list);
+              continue;
+            }
+
+          /* insert the line into the hash table */
+          g_hash_table_insert (defaults_list, g_strdup (type), id_list);
+        }
+
+      /* close the file */
+      fclose (fp);
+    }
+
+  /* cleanup */
+  g_free (path);
+
+  return defaults_list;
+}
+
+
+
+static gboolean
+check_desktop_id (const gchar *id)
+{
+  GKeyFile *key_file;
+  gboolean  result;
+  gchar    *path;
+
+  /* check if we can load a .desktop file for the given desktop-id */
+  key_file = g_key_file_new ();
+  path = g_build_filename ("applications", id, NULL);
+  result = g_key_file_load_from_data_dirs (key_file, path, NULL, G_KEY_FILE_NONE, NULL);
+  g_key_file_free (key_file);
+  g_free (path);
+
+  return result;
+}
+
+
+
+typedef struct
+{
+  GHashTable *replacements;
+  FILE       *fp;
+} SaveDescriptor;
+
+
+
+static void
+save_defaults_list_one (const gchar    *type,
+                        gchar         **ids,
+                        SaveDescriptor *save_descriptor)
+{
+  const gchar *replacement_id;
+  gint         i, j, k;
+
+  /* perform the required transformations on the id list */
+  for (i = j = 0; ids[i] != NULL; ++i)
+    {
+      /* check if we have a replacement for this id */
+      replacement_id = g_hash_table_lookup (save_descriptor->replacements, ids[i]);
+      if (G_UNLIKELY (replacement_id != NULL))
+        {
+          g_free (ids[i]);
+          ids[i] = g_strdup (replacement_id);
+        }
+
+      /* check if this id was already present on the list */
+      for (k = 0; k < j; ++k)
+        if (strcmp (ids[k], ids[i]) == 0)
+          break;
+
+      /* we don't need to keep it, if it was already present */
+      if (G_UNLIKELY (k < j))
+        {
+          g_free (ids[i]);
+        }
+      else if (!check_desktop_id (ids[i]))
+        {
+          /* we also don't keep references to dead desktop-ids around */
+          g_free (ids[i]);
+        }
+      else
+        {
+          /* keep it around */
+          ids[j++] = ids[i];
+        }
+    }
+
+  /* null-terminate the list */
+  ids[j] = NULL;
+
+  /* no need to store an empty list */
+  if (G_LIKELY (ids[0] != NULL))
+    {
+      fprintf (save_descriptor->fp, "%s=%s", type, ids[0]);
+      for (i = 1; ids[i] != NULL; ++i)
+        fprintf (save_descriptor->fp, ";%s", ids[i]);
+      fprintf (save_descriptor->fp, "\n");
+    }
+}
+
+
+
+static void
+save_defaults_list (const gchar *directory,
+                    GHashTable  *defaults_list,
+                    GHashTable  *replacements)
+{
+  SaveDescriptor save_descriptor;
+  gchar         *defaults_list_path;
+  gchar         *path;
+  FILE          *fp;
+  gint           fd;
+
+  /* determine the path to the defaults.list */
+  defaults_list_path = g_build_filename (directory, "defaults.list", NULL);
+
+  /* write the default applications list to a temporary file */
+  path = g_strdup_printf ("%s.XXXXXX", defaults_list_path);
+  fd = g_mkstemp (path);
+  if (G_LIKELY (fd >= 0))
+    {
+      /* wrap the descriptor in a file pointer */
+      fp = fdopen (fd, "w");
+
+      /* initialize the save descriptor */
+      save_descriptor.replacements = replacements;
+      save_descriptor.fp = fp;
+
+      /* write the default application list content */
+      fprintf (fp, "[Default Applications]\n");
+      g_hash_table_foreach (defaults_list, (GHFunc) save_defaults_list_one, &save_descriptor);
+      fclose (fp);
+
+      /* try to atomically rename the file */
+      if (G_UNLIKELY (g_rename (path, defaults_list_path) < 0))
+        {
+          /* tell the user that we failed */
+          fprintf (stderr, "thunar-vfs-mime-cleaner: Failed to write defaults.list: %s\n", g_strerror (errno));
+
+          /* be sure to remove the temporary file */
+          g_unlink (path);
+        }
+    }
+
+  /* cleanup */
+  g_free (defaults_list_path);
+  g_free (path);
+}
+
+
+
 int
 main (int argc, char **argv)
 {
+  const gchar *other_name;
   const gchar *exec;
   const gchar *name;
   const gchar *mt1;
   const gchar *mt2;
+  GHashTable  *defaults_list;
+  GHashTable  *replacements;
   GHashTable  *usercreated;
   regex_t      regex;
   XfceRc      *other_rc;
@@ -136,8 +358,14 @@ main (int argc, char **argv)
       return EXIT_FAILURE;
     }
 
+  /* load the defaults.list file */
+  defaults_list = load_defaults_list (directory);
+
   /* allocate a hash table used to combine the <app>-usercreated.desktop files */
-  usercreated = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, (GDestroyNotify) xfce_rc_close);
+  usercreated = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
+
+  /* allocate a hash table for the replacements (old.desktop -> new.desktop) */
+  replacements = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 
   /* process the directory contents, collecting obsolete files */
   for (;;)
@@ -152,7 +380,7 @@ main (int argc, char **argv)
         continue;
 
       /* try to open that file */
-      rc = xfce_rc_simple_open (name, FALSE);
+      rc = xfce_rc_simple_open (name, TRUE);
       if (G_UNLIKELY (rc == NULL))
         continue;
 
@@ -169,7 +397,8 @@ main (int argc, char **argv)
       else if (G_LIKELY (exec != NULL))
         {
           /* check if already present in the usercreated hash table */
-          other_rc = g_hash_table_lookup (usercreated, exec);
+          other_name = g_hash_table_lookup (usercreated, exec);
+          other_rc = (other_name != NULL) ? xfce_rc_simple_open (other_name, FALSE) : NULL;
           if (G_UNLIKELY (other_rc != NULL))
             {
               /* two files with the same "Exec" line, we can combine them by merging the MimeType */
@@ -188,25 +417,32 @@ main (int argc, char **argv)
               if (G_LIKELY (mt != NULL))
                 {
                   xfce_rc_write_entry (other_rc, "MimeType", mt);
-                  xfce_rc_flush (other_rc);
                   g_free (mt);
                 }
+
+              /* remember the replacement for later */
+              g_hash_table_insert (replacements, g_strdup (name), g_strdup (other_name));
 
               /* no need to keep the new file around, now that we merged the stuff */
               if (g_unlink (name) < 0 && errno != ENOENT)
                 fprintf (stderr, "thunar-vfs-mime-cleaner: Failed to unlink %s: %s\n", name, g_strerror (errno));
+
+              /* close the other rc file */
+              xfce_rc_close (other_rc);
             }
           else
             {
               /* just add this one to the usercreated hash table */
-              g_hash_table_insert (usercreated, g_strdup (exec), rc);
-              continue;
+              g_hash_table_insert (usercreated, g_strdup (exec), g_strdup (name));
             }
         }
 
       /* close the file */
       xfce_rc_close (rc);
     }
+
+  /* write a defaults.list, replacing merged desktop-ids and dropping dead ones */
+  save_defaults_list (directory, defaults_list, replacements);
 
   /* release the regular expression */
   regfree (&regex);
@@ -241,7 +477,10 @@ main (int argc, char **argv)
       g_free (command);
     }
 
-  /* release the directory */
+  /* cleanup */
+  g_hash_table_destroy (defaults_list);
+  g_hash_table_destroy (replacements);
+  g_hash_table_destroy (usercreated);
   g_free (directory);
 
   return EXIT_SUCCESS;
