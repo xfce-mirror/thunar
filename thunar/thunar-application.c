@@ -27,6 +27,10 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-progress-dialog.h>
 
+#ifdef HAVE_DBUS
+#include <thunar/thunar-dbus-service.h>
+#endif
+
 
 
 /* Prototype for the Thunar-VFS job launchers */
@@ -73,6 +77,10 @@ struct _ThunarApplication
 
   ThunarPreferences *preferences;
   GList             *windows;
+
+#ifdef HAVE_DBUS
+  ThunarDBusService *dbus_service;
+#endif
 
   gint               show_dialogs_timer_id;
 };
@@ -131,6 +139,11 @@ thunar_application_init (ThunarApplication *application)
 {
   application->preferences = thunar_preferences_get ();
   application->show_dialogs_timer_id = -1;
+
+  /* start the D-BUS service if built with D-BUS support */
+#ifdef HAVE_DBUS
+  application->dbus_service = g_object_new (THUNAR_TYPE_DBUS_SERVICE, NULL);
+#endif
 }
 
 
@@ -140,6 +153,11 @@ thunar_application_finalize (GObject *object)
 {
   ThunarApplication *application = THUNAR_APPLICATION (object);
   GList             *lp;
+
+  /* stop the D-BUS service if built with D-BUS support */
+#ifdef HAVE_DBUS
+  g_object_unref (G_OBJECT (application->dbus_service));
+#endif
 
   /* drop any running "show dialogs" timer */
   if (G_UNLIKELY (application->show_dialogs_timer_id >= 0))
@@ -245,8 +263,7 @@ thunar_application_launch (ThunarApplication *application,
       g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), dialog);
 
       /* hook up the dialog window */
-      g_signal_connect (G_OBJECT (dialog), "destroy", G_CALLBACK (thunar_application_window_destroyed), application);
-      application->windows = g_list_prepend (application->windows, dialog);
+      thunar_application_take_window (application, GTK_WINDOW (dialog));
 
       /* Set up a timer to show the dialog, to make sure we don't
        * just popup and destroy a dialog for a very short job.
@@ -372,6 +389,32 @@ thunar_application_get_windows (ThunarApplication *application)
 
 
 /**
+ * thunar_application_take_window:
+ * @application : a #ThunarApplication.
+ * @window      : a #GtkWindow.
+ *
+ * Lets @application take over control of the specified @window.
+ * @application will not exit until the last controlled #GtkWindow
+ * is closed by the user.
+ **/
+void
+thunar_application_take_window (ThunarApplication *application,
+                                GtkWindow         *window)
+{
+  g_return_if_fail (GTK_IS_WINDOW (window));
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  g_return_if_fail (g_list_find (application->windows, window) == NULL);
+
+  /* connect to the "destroy" signal */
+  g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (thunar_application_window_destroyed), application);
+
+  /* add the window to our internal list */
+  application->windows = g_list_prepend (application->windows, window);
+}
+
+
+
+/**
  * thunar_application_open_window:
  * @application : a #ThunarApplication.
  * @directory   : the directory to open.
@@ -401,8 +444,7 @@ thunar_application_open_window (ThunarApplication *application,
                          NULL);
 
   /* hook up the window */
-  g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (thunar_application_window_destroyed), application);
-  application->windows = g_list_prepend (application->windows, window);
+  thunar_application_take_window (application, GTK_WINDOW (window));
 
   /* show the new window */
   gtk_widget_show (window);

@@ -28,6 +28,7 @@
 #include <string.h>
 #endif
 
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-chooser-model.h>
 #include <thunar/thunar-dialogs.h>
@@ -832,44 +833,6 @@ thunar_chooser_dialog_new (void)
 
 
 /**
- * thunar_show_chooser_dialog:
- * @parent : transient parent of the dialog or %NULL.
- * @file   : the #ThunarFile for which an application should be chosen.
- * @open   : whether to also open the @file.
- *
- * Convenience function to display a #ThunarChooserDialog with the
- * given parameters.
- **/
-void
-thunar_show_chooser_dialog (GtkWidget  *parent,
-                            ThunarFile *file,
-                            gboolean    open)
-{
-  GtkWidget *dialog;
-  GtkWidget *window;
-
-  g_return_if_fail (parent == NULL || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_FILE (file));
-
-  /* determine the toplevel window */
-  window = (parent != NULL) ? gtk_widget_get_toplevel (parent) : NULL;
-
-  /* display the chooser dialog */
-  dialog = g_object_new (THUNAR_TYPE_CHOOSER_DIALOG,
-                         "destroy-with-parent", TRUE,
-                         "file", file,
-                         "modal", TRUE,
-                         "open", open,
-                         NULL);
-  if (G_LIKELY (window != NULL))
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
-  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
-  gtk_widget_show (dialog);
-}
-
-
-
-/**
  * thunar_chooser_dialog_get_file:
  * @dialog : a #ThunarChooserDialog.
  *
@@ -988,5 +951,84 @@ thunar_chooser_dialog_set_open (ThunarChooserDialog *dialog,
   /* notify listeners */
   g_object_notify (G_OBJECT (dialog), "open");
 }
+
+
+
+/**
+ * thunar_show_chooser_dialog:
+ * @parent : the #GtkWidget or the #GdkScreen on which to open the
+ *           dialog. May also be %NULL in which case the default
+ *           #GdkScreen will be used.
+ * @file   : the #ThunarFile for which an application should be chosen.
+ * @open   : whether to also open the @file.
+ *
+ * Convenience function to display a #ThunarChooserDialog with the
+ * given parameters.
+ *
+ * If @parent is a #GtkWidget the chooser dialog will be opened as
+ * modal dialog above the @parent. Else if @parent is a screen (if
+ * @parent is %NULL the default screen is used), the dialog won't
+ * be modal and it will simply popup on the specified screen.
+ **/
+void
+thunar_show_chooser_dialog (gpointer    parent,
+                            ThunarFile *file,
+                            gboolean    open)
+{
+  ThunarApplication *application;
+  GdkScreen         *screen;
+  GtkWidget         *dialog;
+  GtkWidget         *window = NULL;
+
+  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  g_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* determine the screen for the dialog */
+  if (G_UNLIKELY (parent == NULL))
+    {
+      /* just use the default screen, no toplevel window */
+      screen = gdk_screen_get_default ();
+    }
+  else if (GTK_IS_WIDGET (parent))
+    {
+      /* use the screen for the widget and the toplevel window */
+      screen = gtk_widget_get_screen (parent);
+      window = gtk_widget_get_toplevel (parent);
+    }
+  else
+    {
+      /* parent is a screen, no toplevel window */
+      screen = GDK_SCREEN (parent);
+    }
+
+  /* display the chooser dialog */
+  dialog = g_object_new (THUNAR_TYPE_CHOOSER_DIALOG,
+                         "file", file,
+                         "open", open,
+                         "screen", screen,
+                         NULL);
+
+  /* check if we have a toplevel window */
+  if (G_LIKELY (window != NULL && GTK_WIDGET_TOPLEVEL (window)))
+    {
+      /* dialog is transient for toplevel window and modal */
+      gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+    }
+
+  /* destroy the dialog after a user interaction */
+  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), NULL);
+
+  /* let the application handle the dialog */
+  application = thunar_application_get ();
+  thunar_application_take_window (application, GTK_WINDOW (dialog));
+  g_object_unref (G_OBJECT (application));
+
+  /* display the dialog */
+  gtk_widget_show (dialog);
+}
+
+
 
 

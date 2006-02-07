@@ -1,5 +1,28 @@
 2006-02-07	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-application.{c,h}: Add thunar_application_take_window(),
+	  which is used to add a GtkWindow to the internal application windows
+	  list. The application will not exit until the last controlled window
+	  is closed by the user.
+	* thunar/thunar-file.{c,h}: Use a generic parent parameter for the
+	  thunar_file_launch() method.
+	* thunar/thunar-chooser-dialog.{c,h}: Use a generic parent paramter for
+	  the thunar_show_chooser_dialog() method, and let the application take
+	  over control of the dialog window.
+	* thunar/thunar-gdk-extensions.{c,h}, thunar/Makefile.am: Import method
+	  thunar_gdk_screen_open() from Terminal, which opens a GdkScreen from
+	  a full qualified display name.
+	* README, configure.in.in: Add optional check for D-BUS.
+	* thunar/Makefile.am, org.xfce.FileManager.service.in, Makefile.am,
+	  thunar/thunar-dbus-service-infos.xml, thunar/thunar-application.{c,h},
+	  thunar/thunar-dbus-service.{c,h}: Initial import of the basic D-BUS
+	  service for Thunar, the org.xfce.FileManager implementation. See the
+	  thunar-dbus-service-infos.xml file for a description of the current
+	  interface.
+	* po/Thunar.pot, po/*.po: Update the translations.
+
+2006-02-07	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-mime-cleaner.c: Also cleanup the defaults.list
 	  file, replacing previously merged desktop-ids and dropping references
 	  to no longer existing .desktop files.

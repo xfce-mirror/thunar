@@ -123,7 +123,7 @@ gboolean                         thunar_file_execute              (ThunarFile   
                                                                    GError                **error);
 
 gboolean                         thunar_file_launch               (ThunarFile             *file,
-                                                                   GtkWidget              *widget,
+                                                                   gpointer                parent,
                                                                    GError                **error);
 
 gboolean                         thunar_file_rename               (ThunarFile             *file,

@@ -23,6 +23,7 @@ thunar_built_sources =							\
 Thunar_SOURCES =							\
 	$(thunar_include_HEADERS)					\
 	$(thunar_built_sources)						\
+	$(thunar_dbus_sources)						\
 	main.c								\
 	thunar-application.c						\
 	thunar-application.h						\
@@ -52,6 +53,8 @@ Thunar_SOURCES =							\
 	thunar-file.h							\
 	thunar-folder.c							\
 	thunar-folder.h							\
+	thunar-gdk-extensions.c						\
+	thunar-gdk-extensions.h						\
 	thunar-gdk-pixbuf-extensions.c					\
 	thunar-gdk-pixbuf-extensions.h					\
 	thunar-gobject-extensions.c					\
@@ -157,6 +160,22 @@ Thunar_DEPENDENCIES =							\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
 	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la
 
+if HAVE_DBUS
+thunar_built_sources +=							\
+	thunar-dbus-service-infos.h
+
+thunar_dbus_sources =							\
+	thunar-dbus-service.c						\
+	thunar-dbus-service.h
+
+Thunar_CFLAGS +=							\
+	-DDBUS_API_SUBJECT_TO_CHANGE					\
+	$(DBUS_CFLAGS)
+
+Thunar_LDADD +=								\
+	$(DBUS_LIBS)
+endif
+
 # install symlink to 'thunar'
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
@@ -190,6 +209,11 @@ BUILT_SOURCES =								\
 	thunar-throbber-fallback.c					\
 	thunar-thumbnail-frame.c					\
 	thunar-window-ui.h
+
+if HAVE_DBUS
+thunar-dbus-service-infos.h: $(srcdir)/thunar-dbus-service-infos.xml Makefile
+	dbus-binding-tool --prefix=thunar_dbus_service --mode=glib-server $(srcdir)/thunar-dbus-service-infos.xml > thunar-dbus-service-infos.h
+endif
 
 thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile
 	(echo "#include <thunar/thunar-throbber-fallback.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_throbber_fallback $(srcdir)/thunar-throbber-fallback.png) > thunar-throbber-fallback.c
@@ -231,6 +255,7 @@ thunar-marshal.c: thunar-marshal.list Makefile
 endif
 
 EXTRA_DIST =								\
+	thunar-dbus-service-infos.xml					\
 	thunar-icon-view-ui.xml						\
 	thunar-launcher-ui.xml						\
 	thunar-marshal.list						\

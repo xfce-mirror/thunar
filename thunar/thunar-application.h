@@ -41,6 +41,9 @@ ThunarApplication *thunar_application_get           (void);
 
 GList             *thunar_application_get_windows   (ThunarApplication *application);
 
+void               thunar_application_take_window   (ThunarApplication *application,
+                                                     GtkWindow         *window);
+
 void               thunar_application_open_window   (ThunarApplication *application,
                                                      ThunarFile        *directory,
                                                      GdkScreen         *screen);

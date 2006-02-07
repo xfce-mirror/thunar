@@ -759,18 +759,26 @@ thunar_file_execute (ThunarFile *file,
 /**
  * thunar_file_launch:
  * @file   : a #ThunarFile instance.
- * @widget : a #GtkWidget or %NULL.
+ * @parent : a #GtkWidget or a #GdkScreen on which to launch the @file.
+ *           May also be %NULL in which case the default #GdkScreen will
+ *           be used.
  * @error  : return location for errors or %NULL.
  *
  * If @file is an executable file, tries to execute it. Else if @file is
  * a directory, opens a new #ThunarWindow to display the directory. Else,
  * the default handler for @file is determined and run.
  *
+ * The @parent can be either a #GtkWidget or a #GdkScreen, on which to
+ * launch the @file. If @parent is a #GtkWidget, the chooser dialog (if
+ * no default application is available for @file) will be transient for
+ * @parent. Else if @parent is a #GdkScreen it specifies the screen on
+ * which to launch @file.
+ *
  * Return value: %TRUE on success, else %FALSE.
  **/
 gboolean
 thunar_file_launch (ThunarFile *file,
-                    GtkWidget  *widget,
+                    gpointer    parent,
                     GError    **error)
 {
   ThunarVfsMimeApplication *handler;
@@ -782,10 +790,15 @@ thunar_file_launch (ThunarFile *file,
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  g_return_val_if_fail (widget == NULL || GTK_IS_WIDGET (widget), FALSE);
+  g_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), FALSE);
 
-  /* determine the screen for the widget */
-  screen = (widget != NULL) ? gtk_widget_get_screen (widget) : gdk_screen_get_default ();
+  /* determine the screen for the parent */
+  if (G_UNLIKELY (parent == NULL))
+    screen = gdk_screen_get_default ();
+  else if (GTK_IS_WIDGET (parent))
+    screen = gtk_widget_get_screen (parent);
+  else
+    screen = GDK_SCREEN (parent);
 
   /* check if we should execute the file */
   if (thunar_file_is_executable (file))
@@ -808,7 +821,7 @@ thunar_file_launch (ThunarFile *file,
   /* if we don't have any default handler, just popup the application chooser */
   if (G_UNLIKELY (handler == NULL))
     {
-      thunar_show_chooser_dialog (widget, file, TRUE);
+      thunar_show_chooser_dialog (parent, file, TRUE);
       return TRUE;
     }
 

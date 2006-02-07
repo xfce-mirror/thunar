@@ -46,7 +46,7 @@ gboolean    thunar_chooser_dialog_get_open  (ThunarChooserDialog *dialog);
 void        thunar_chooser_dialog_set_open  (ThunarChooserDialog *dialog,
                                              gboolean             open);
 
-void        thunar_show_chooser_dialog      (GtkWidget           *parent,
+void        thunar_show_chooser_dialog      (gpointer             parent,
                                              ThunarFile          *file,
                                              gboolean             open);
 

@@ -163,6 +163,12 @@ XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.6.0])
 XDT_CHECK_PACKAGE([LIBPNG], [libpng12], [1.2.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.2.0])
 
+dnl **********************************
+dnl *** Optional support for D-BUS ***
+dnl **********************************
+XDT_CHECK_OPTIONAL_PACKAGE([DBUS], [dbus-glib-1],
+                           [0.34], [dbus], [D-BUS support])
+
 dnl *******************************************************
 dnl *** Optional support for gconf (GNOME thumbnailers) ***
 dnl *******************************************************
