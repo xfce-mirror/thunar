@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -36,11 +36,11 @@ typedef enum /*< flags >*/
   THUNAR_VFS_SCANDIR_FOLLOW_LINKS = (1L << 1),
 } ThunarVfsScandirFlags;
 
-GList *thunar_vfs_scandir       (ThunarVfsPath        *path,
-                                 volatile gboolean    *cancelled,
-                                 ThunarVfsScandirFlags flags,
-                                 GCompareFunc          func,
-                                 GError              **error) G_GNUC_INTERNAL;
+GList *thunar_vfs_scandir (ThunarVfsPath        *path,
+                           volatile gboolean    *cancelled,
+                           ThunarVfsScandirFlags flags,
+                           GCompareFunc          func,
+                           GError              **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

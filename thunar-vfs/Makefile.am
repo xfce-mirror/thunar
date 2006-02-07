@@ -5,8 +5,10 @@ INCLUDES =								\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"thunar-vfs\"					\
+	-DLIBEXECDIR=\"$(libexecdir)\"					\
 	-DSN_API_NOT_YET_FROZEN						\
 	-DTHUNAR_VFS_COMPILATION					\
+	-DTHUNAR_VFS_VERSION_API=\"$(THUNAR_VERSION_API)\"		\
 	$(PLATFORM_CPPFLAGS)
 
 lib_LTLIBRARIES =							\
@@ -130,6 +132,23 @@ libthunar_vfs_1_la_LIBADD =						\
 	$(LIBJPEG_LIBS)							\
 	$(LIBPNG_LIBS)							\
 	$(LIBSTARTUP_NOTIFICATION_LIBS)
+
+libexec_PROGRAMS =							\
+	thunar-vfs-mime-cleaner-1
+
+thunar_vfs_mime_cleaner_1_SOURCES =					\
+	thunar-vfs-mime-cleaner.c
+
+thunar_vfs_mime_cleaner_1_CFLAGS =					\
+	$(LIBXFCE4UTIL_CFLAGS)						\
+	$(PLATFORM_CFLAGS)
+
+thunar_vfs_mime_cleaner_1_LDADD =					\
+	$(LIBXFCE4UTIL_LIBS)
+
+thunar_vfs_mime_cleaner_1_LDFLAGS =					\
+	-no-undefined							\
+	$(PLATFORM_LDFLAGS)
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunar-vfs-1.pc

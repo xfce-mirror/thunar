@@ -49,7 +49,7 @@ ThunarVfsJob *thunar_vfs_chmod_job_new      (ThunarVfsPath     *path,
                                              ThunarVfsFileMode  file_mask,
                                              ThunarVfsFileMode  file_mode,
                                              gboolean           recursive,
-                                             GError           **error) G_GNUC_INTERNAL G_GNUC_MALLOC;
+                                             GError           **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

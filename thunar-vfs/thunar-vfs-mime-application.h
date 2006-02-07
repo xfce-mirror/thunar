@@ -25,6 +25,7 @@
 #ifndef __THUNAR_VFS_MIME_APPLICATION_H__
 #define __THUNAR_VFS_MIME_APPLICATION_H__
 
+#include <thunar-vfs/thunar-vfs-config.h>
 #include <thunar-vfs/thunar-vfs-mime-handler.h>
 
 G_BEGIN_DECLS;
@@ -41,11 +42,11 @@ typedef struct _ThunarVfsMimeApplication      ThunarVfsMimeApplication;
 
 GType                         thunar_vfs_mime_application_get_type            (void) G_GNUC_CONST;
 
-ThunarVfsMimeApplication     *thunar_vfs_mime_application_new_from_desktop_id (const gchar                    *desktop_id) G_GNUC_MALLOC;
+ThunarVfsMimeApplication     *thunar_vfs_mime_application_new_from_desktop_id (const gchar                    *desktop_id) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsMimeApplication     *thunar_vfs_mime_application_new_from_file       (const gchar                    *path,
-                                                                               const gchar                    *desktop_id) G_GNUC_MALLOC;
+                                                                               const gchar                    *desktop_id) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-GList                        *thunar_vfs_mime_application_get_actions         (ThunarVfsMimeApplication       *mime_application) G_GNUC_MALLOC;
+GList                        *thunar_vfs_mime_application_get_actions         (ThunarVfsMimeApplication       *mime_application) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 const gchar                  *thunar_vfs_mime_application_get_desktop_id      (const ThunarVfsMimeApplication *mime_application);
 const gchar * const          *thunar_vfs_mime_application_get_mime_types      (const ThunarVfsMimeApplication *mime_application);
 

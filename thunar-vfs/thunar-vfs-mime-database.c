@@ -74,6 +74,11 @@
 
 
 
+/* the interval in which thunar-vfs-mime-cleaner is invoked (in ms) */
+#define THUNAR_VFS_MIME_DATABASE_CLEANUP_INTERVAL (5 * 60 * 1000)
+
+
+
 typedef struct _ThunarVfsMimeDesktopStore ThunarVfsMimeDesktopStore;
 typedef struct _ThunarVfsMimeProviderData ThunarVfsMimeProviderData;
 
@@ -115,6 +120,8 @@ static gboolean                  thunar_vfs_mime_database_icon_theme_changed    
                                                                                         guint                       n_param_values,
                                                                                         const GValue               *param_values,
                                                                                         gpointer                    user_data);
+static gboolean                  thunar_vfs_mime_database_cleanup_timer                (gpointer                    user_data);
+static void                      thunar_vfs_mime_database_cleanup_timer_destroy        (gpointer                    user_data);
 
 
 
@@ -148,6 +155,9 @@ struct _ThunarVfsMimeDatabase
   ThunarVfsMimeDesktopStore *stores;
   guint                      n_stores;
   GHashTable                *applications;
+
+  /* the thunar-vfs-mime-cleaner timer id */
+  gint                       cleanup_timer_id;
 };
 
 struct _ThunarVfsMimeDesktopStore
@@ -252,6 +262,13 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
                                                           0, thunar_vfs_mime_database_icon_theme_changed,
                                                           database, NULL);
   g_type_class_unref (klass);
+
+  /* start the timer, which invokes thunar-vfs-mime-cleaner from time to time to cleanup the
+   * user's mime database directories, so we don't keep old junk around for too long.
+   */
+  database->cleanup_timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNAR_VFS_MIME_DATABASE_CLEANUP_INTERVAL,
+                                                   thunar_vfs_mime_database_cleanup_timer, database,
+                                                   thunar_vfs_mime_database_cleanup_timer_destroy);
 }
 
 
@@ -260,6 +277,10 @@ static void
 thunar_vfs_mime_database_finalize (GObject *object)
 {
   ThunarVfsMimeDatabase *database = THUNAR_VFS_MIME_DATABASE (object);
+
+  /* cancel any pending cleanup timer */
+  if (G_LIKELY (database->cleanup_timer_id >= 0))
+    g_source_remove (database->cleanup_timer_id);
 
   /* remove the "changed" emission hook from the GtkIconTheme class */
   g_signal_remove_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME), database->changed_hook_id);
@@ -876,6 +897,26 @@ thunar_vfs_mime_database_icon_theme_changed (GSignalInvocationHint *ihint,
 
   /* keep the emission hook alive */
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_vfs_mime_database_cleanup_timer (gpointer user_data)
+{
+  /* invoke thunar-vfs-mime-cleaner */
+  g_spawn_command_line_async (LIBEXECDIR "/thunar-vfs-mime-cleaner-" THUNAR_VFS_VERSION_API, NULL);
+
+  /* keep the timer alive */
+  return TRUE;
+}
+
+
+
+static void
+thunar_vfs_mime_database_cleanup_timer_destroy (gpointer user_data)
+{
+  THUNAR_VFS_MIME_DATABASE (user_data)->cleanup_timer_id = -1;
 }
 
 

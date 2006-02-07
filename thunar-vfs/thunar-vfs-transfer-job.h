@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,7 +41,7 @@ GType         thunar_vfs_transfer_job_get_type (void) G_GNUC_CONST G_GNUC_INTERN
 ThunarVfsJob *thunar_vfs_transfer_job_new      (GList   *source_path_list,
                                                 GList   *target_path_list,
                                                 gboolean move,
-                                                GError **error) G_GNUC_INTERNAL G_GNUC_MALLOC;
+                                                GError **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

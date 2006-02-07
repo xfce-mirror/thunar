@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -80,7 +80,7 @@ typedef void (*ThunarVfsMonitorCallback)  (ThunarVfsMonitor       *monitor,
 
 GType                   thunar_vfs_monitor_get_type       (void) G_GNUC_CONST;
 
-ThunarVfsMonitor       *thunar_vfs_monitor_get_default    (void);
+ThunarVfsMonitor       *thunar_vfs_monitor_get_default    (void) G_GNUC_WARN_UNUSED_RESULT;
 
 ThunarVfsMonitorHandle *thunar_vfs_monitor_add_directory  (ThunarVfsMonitor        *monitor,
                                                            ThunarVfsPath           *path,

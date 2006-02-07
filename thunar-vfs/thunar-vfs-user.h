@@ -73,14 +73,14 @@ typedef struct _ThunarVfsUserManager      ThunarVfsUserManager;
 
 GType                 thunar_vfs_user_manager_get_type        (void) G_GNUC_CONST;
 
-ThunarVfsUserManager *thunar_vfs_user_manager_get_default     (void);
+ThunarVfsUserManager *thunar_vfs_user_manager_get_default     (void) G_GNUC_WARN_UNUSED_RESULT;
 
 ThunarVfsGroup       *thunar_vfs_user_manager_get_group_by_id (ThunarVfsUserManager *manager,
-                                                               ThunarVfsGroupId      id);
+                                                               ThunarVfsGroupId      id) G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsUser        *thunar_vfs_user_manager_get_user_by_id  (ThunarVfsUserManager *manager,
-                                                               ThunarVfsUserId       id);
+                                                               ThunarVfsUserId       id) G_GNUC_WARN_UNUSED_RESULT;
 
-GList                *thunar_vfs_user_manager_get_all_groups  (ThunarVfsUserManager *manager) G_GNUC_MALLOC;
+GList                *thunar_vfs_user_manager_get_all_groups  (ThunarVfsUserManager *manager) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

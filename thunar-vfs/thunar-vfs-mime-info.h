@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,7 +40,7 @@ struct _ThunarVfsMimeInfo
 GType                            thunar_vfs_mime_info_get_type         (void) G_GNUC_CONST;
 
 ThunarVfsMimeInfo               *thunar_vfs_mime_info_new              (const gchar             *name,
-                                                                        gssize                   len) G_GNUC_MALLOC;
+                                                                        gssize                   len) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_INLINE_FUNC ThunarVfsMimeInfo *thunar_vfs_mime_info_ref              (ThunarVfsMimeInfo       *info);
 void                             thunar_vfs_mime_info_unref            (ThunarVfsMimeInfo       *info);
@@ -48,8 +48,8 @@ void                             thunar_vfs_mime_info_unref            (ThunarVf
 const gchar                     *thunar_vfs_mime_info_get_comment      (ThunarVfsMimeInfo       *info);
 G_INLINE_FUNC const gchar       *thunar_vfs_mime_info_get_name         (const ThunarVfsMimeInfo *info);
 
-gchar                           *thunar_vfs_mime_info_get_media        (const ThunarVfsMimeInfo *info) G_GNUC_MALLOC;
-gchar                           *thunar_vfs_mime_info_get_subtype      (const ThunarVfsMimeInfo *info) G_GNUC_MALLOC;
+gchar                           *thunar_vfs_mime_info_get_media        (const ThunarVfsMimeInfo *info) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar                           *thunar_vfs_mime_info_get_subtype      (const ThunarVfsMimeInfo *info) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 guint                            thunar_vfs_mime_info_hash             (gconstpointer            info);
 gboolean                         thunar_vfs_mime_info_equal            (gconstpointer            a,

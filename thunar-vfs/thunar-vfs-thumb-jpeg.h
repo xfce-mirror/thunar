@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -27,10 +27,12 @@
 
 #include <gdk-pixbuf/gdk-pixbuf.h>
 
+#include <thunar-vfs/thunar-vfs-config.h>
+
 G_BEGIN_DECLS;
 
 GdkPixbuf *thunar_vfs_thumb_jpeg_load (const gchar *path,
-                                       gint         size) G_GNUC_INTERNAL;
+                                       gint         size) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,35 +38,35 @@ typedef struct _ThunarVfsMimeDatabase      ThunarVfsMimeDatabase;
 
 GType                     thunar_vfs_mime_database_get_type                 (void) G_GNUC_CONST;
 
-ThunarVfsMimeDatabase    *thunar_vfs_mime_database_get_default              (void);
+ThunarVfsMimeDatabase    *thunar_vfs_mime_database_get_default              (void) G_GNUC_WARN_UNUSED_RESULT;
 
 ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info                 (ThunarVfsMimeDatabase    *database,
-                                                                             const gchar              *mime_type);
+                                                                             const gchar              *mime_type) G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_data        (ThunarVfsMimeDatabase    *database,
                                                                              gconstpointer             data,
-                                                                             gsize                     length);
+                                                                             gsize                     length) G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_name        (ThunarVfsMimeDatabase    *database,
-                                                                             const gchar              *name);
+                                                                             const gchar              *name) G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsMimeInfo        *thunar_vfs_mime_database_get_info_for_file        (ThunarVfsMimeDatabase    *database,
                                                                              const gchar              *path,
-                                                                             const gchar              *name);
+                                                                             const gchar              *name) G_GNUC_WARN_UNUSED_RESULT;
 
 GList                    *thunar_vfs_mime_database_get_infos_for_info       (ThunarVfsMimeDatabase    *database,
-                                                                             ThunarVfsMimeInfo        *info);
+                                                                             ThunarVfsMimeInfo        *info) G_GNUC_WARN_UNUSED_RESULT;
 
 GList                    *thunar_vfs_mime_database_get_applications         (ThunarVfsMimeDatabase    *database,
-                                                                             ThunarVfsMimeInfo        *info);
+                                                                             ThunarVfsMimeInfo        *info) G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsMimeApplication *thunar_vfs_mime_database_get_default_application  (ThunarVfsMimeDatabase    *database,
-                                                                             ThunarVfsMimeInfo        *info);
+                                                                             ThunarVfsMimeInfo        *info) G_GNUC_WARN_UNUSED_RESULT;
 gboolean                  thunar_vfs_mime_database_set_default_application  (ThunarVfsMimeDatabase    *database,
                                                                              ThunarVfsMimeInfo        *info,
                                                                              ThunarVfsMimeApplication *application,
-                                                                             GError                  **error);
+                                                                             GError                  **error) G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsMimeApplication *thunar_vfs_mime_database_add_application          (ThunarVfsMimeDatabase    *database,
                                                                              ThunarVfsMimeInfo        *info,
                                                                              const gchar              *name,
                                                                              const gchar              *exec,
-                                                                             GError                  **error);
+                                                                             GError                  **error) G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

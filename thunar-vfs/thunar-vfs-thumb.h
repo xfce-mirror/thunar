@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2004-2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2004-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -55,10 +55,10 @@ typedef enum
 
 GType                  thunar_vfs_thumb_factory_get_type              (void) G_GNUC_CONST;
 
-ThunarVfsThumbFactory *thunar_vfs_thumb_factory_new                   (ThunarVfsThumbSize       size) G_GNUC_MALLOC;
+ThunarVfsThumbFactory *thunar_vfs_thumb_factory_new                   (ThunarVfsThumbSize       size) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 gchar                 *thunar_vfs_thumb_factory_lookup_thumbnail      (ThunarVfsThumbFactory   *factory,
-                                                                       const ThunarVfsInfo     *info) G_GNUC_MALLOC;
+                                                                       const ThunarVfsInfo     *info) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 gboolean               thunar_vfs_thumb_factory_can_thumbnail         (ThunarVfsThumbFactory   *factory,
                                                                        const ThunarVfsInfo     *info);
@@ -67,7 +67,7 @@ gboolean               thunar_vfs_thumb_factory_has_failed_thumbnail  (ThunarVfs
                                                                        const ThunarVfsInfo     *info);
 
 GdkPixbuf             *thunar_vfs_thumb_factory_generate_thumbnail    (ThunarVfsThumbFactory   *factory,
-                                                                       const ThunarVfsInfo     *info) G_GNUC_MALLOC;
+                                                                       const ThunarVfsInfo     *info) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 gboolean               thunar_vfs_thumb_factory_store_thumbnail       (ThunarVfsThumbFactory   *factory,
                                                                        const GdkPixbuf         *pixbuf,
@@ -76,7 +76,7 @@ gboolean               thunar_vfs_thumb_factory_store_thumbnail       (ThunarVfs
 
 
 gchar   *thunar_vfs_thumbnail_for_path  (const ThunarVfsPath *path,
-                                         ThunarVfsThumbSize   size) G_GNUC_MALLOC;
+                                         ThunarVfsThumbSize   size) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gboolean thunar_vfs_thumbnail_is_valid  (const gchar         *thumbnail,
                                          const gchar         *uri,
                                          ThunarVfsFileTime    mtime);

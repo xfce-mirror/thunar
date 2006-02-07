@@ -47,7 +47,7 @@ ThunarVfsJob *thunar_vfs_chown_job_new      (ThunarVfsPath *path,
                                              gint           uid,
                                              gint           gid,
                                              gboolean       recursive,
-                                             GError       **error) G_GNUC_INTERNAL G_GNUC_MALLOC;
+                                             GError       **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

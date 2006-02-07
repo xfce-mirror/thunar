@@ -21,14 +21,13 @@
 #ifndef __THUNAR_VFS_UTIL_H__
 #define __THUNAR_VFS_UTIL_H__
 
-#include <glib.h>
-
+#include <thunar-vfs/thunar-vfs-config.h>
 #include <thunar-vfs/thunar-vfs-types.h>
 
 G_BEGIN_DECLS;
 
 gchar *thunar_vfs_expand_filename (const gchar      *filename,
-                                   GError          **error) G_GNUC_MALLOC;
+                                   GError          **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 gchar *thunar_vfs_humanize_size   (ThunarVfsFileSize size,
                                    gchar            *buffer,

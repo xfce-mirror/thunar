@@ -1,5 +1,22 @@
 2006-02-06	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-mime-cleaner.c, thunar-vfs/Makefile.am,
+	  configure.in.in: Add a simple utility program thunar-vfs-mime-cleaner,
+	  which cleans up the user's $XDG_DATA_HOME/applications directory and
+	  removes all automatically generated .desktop files (either generated
+	  by Thunar or Nautilus) whose associated program is no longer installed
+	  on the user's system. In addition, it tries to combine duplicated
+	  .desktop whose Exec values are equal to further the reduce the
+	  overhead.
+	* thunar-vfs/thunar-vfs-mime-database.c: Invoke thunar-vfs-mime-cleaner
+	  every five minutes.
+	* thunar-vfs/thunar-vfs.symbols, thunar-vfs/thunar-vfs-*.h: Add
+	  G_GNUC_WARN_UNUSED_RESULT to all methods, whose return value should
+	  never be ignored. This should help to avoid memory leaks in the
+	  future.
+
+2006-02-06	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-chmod-job.c, thunar-vfs/thunar-vfs-chown-job.c,
 	  thunar-vfs/thunar-vfs-listdir-job.c, thunar-vfs/thunar-vfs-scandir.c,
 	  thunar-vfs/thunar-vfs-scandir.h, thunar-vfs/thunar-vfs-transfer-job.c,

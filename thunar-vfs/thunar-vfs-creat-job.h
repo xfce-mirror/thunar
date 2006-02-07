@@ -43,7 +43,7 @@ typedef struct _ThunarVfsCreatJob      ThunarVfsCreatJob;
 GType         thunar_vfs_creat_job_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 ThunarVfsJob *thunar_vfs_creat_job_new      (GList   *path_list,
-                                             GError **error) G_GNUC_INTERNAL G_GNUC_MALLOC;
+                                             GError **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

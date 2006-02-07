@@ -90,12 +90,12 @@ struct _ThunarVfsInfo
 GType                        thunar_vfs_info_get_type         (void) G_GNUC_CONST;
 
 ThunarVfsInfo               *thunar_vfs_info_new_for_path     (ThunarVfsPath       *path,
-                                                               GError             **error) G_GNUC_MALLOC;
+                                                               GError             **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_INLINE_FUNC ThunarVfsInfo *thunar_vfs_info_ref              (ThunarVfsInfo       *info);
 void                         thunar_vfs_info_unref            (ThunarVfsInfo       *info);
 
-ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsInfo *info) G_GNUC_MALLOC;
+ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsInfo *info) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 gboolean                     thunar_vfs_info_get_free_space   (const ThunarVfsInfo *info,
                                                                ThunarVfsFileSize   *free_space_return);
@@ -103,7 +103,7 @@ gboolean                     thunar_vfs_info_get_free_space   (const ThunarVfsIn
 G_INLINE_FUNC const gchar   *thunar_vfs_info_get_custom_icon  (const ThunarVfsInfo *info);
 
 gchar                       *thunar_vfs_info_read_link        (const ThunarVfsInfo *info,
-                                                               GError             **error) G_GNUC_MALLOC;
+                                                               GError             **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 gboolean                     thunar_vfs_info_execute          (const ThunarVfsInfo *info,
                                                                GdkScreen           *screen,

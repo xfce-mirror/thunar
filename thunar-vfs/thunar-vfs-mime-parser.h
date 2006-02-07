@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -21,12 +21,12 @@
 #ifndef __THUNAR_VFS_MIME_PARSER_H__
 #define __THUNAR_VFS_MIME_PARSER_H__
 
-#include <exo/exo.h>
+#include <thunar-vfs/thunar-vfs-config.h>
 
 G_BEGIN_DECLS;
 
 gchar *_thunar_vfs_mime_parser_load_comment_from_file (const gchar *filename,
-                                                       GError     **error);
+                                                       GError     **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 
