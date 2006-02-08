@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -34,6 +34,7 @@
 #define __THUNAR_VFS_PATH_C__
 #include <thunar-vfs/thunar-vfs-path.h>
 
+#include <thunar-vfs/thunar-vfs-util.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -218,7 +219,7 @@ thunar_vfs_path_new (const gchar *identifier,
   guint          n;
 
   /* check if we have an absolute path or an URI */
-  if (G_UNLIKELY (*identifier != '/'))
+  if (G_UNLIKELY (*identifier != G_DIR_SEPARATOR))
     {
       /* treat the identifier as URI */
       filename = g_filename_from_uri (identifier, NULL, error);
@@ -227,8 +228,8 @@ thunar_vfs_path_new (const gchar *identifier,
     }
   else
     {
-      /* the identifier includes an absolute path */
-      filename = (gchar *) identifier;
+      /* canonicalize the absolute path, to remove additional slashes and dots */
+      filename = thunar_vfs_canonicalize_filename (identifier);
     }
 
   /* start at the root path */
@@ -236,7 +237,7 @@ thunar_vfs_path_new (const gchar *identifier,
   for (n = 1, s = filename + 1; n < n_home_components; ++n)
     {
       /* skip additional slashes */
-      for (; G_UNLIKELY (*s == '/'); ++s)
+      for (; G_UNLIKELY (*s == G_DIR_SEPARATOR); ++s)
         ;
 
       /* check if we have reached the end of the filename */
@@ -246,7 +247,7 @@ thunar_vfs_path_new (const gchar *identifier,
       /* check if the path component equals the next home path component */
       for (s1 = thunar_vfs_path_get_name (home_components[n]), s2 = s; *s1 != '\0' && *s1 == *s2; ++s1, ++s2)
         ;
-      if (*s1 != '\0' || (*s2 != '\0' && *s2 != '/'))
+      if (*s1 != '\0' || (*s2 != '\0' && *s2 != G_DIR_SEPARATOR))
         break;
 
       /* go on with the next home path component */
@@ -255,7 +256,7 @@ thunar_vfs_path_new (const gchar *identifier,
     }
 
   /* skip additional slashes */
-  for (; G_UNLIKELY (*s == '/'); ++s)
+  for (; G_UNLIKELY (*s == G_DIR_SEPARATOR); ++s)
     ;
 
   /* generate the additional path components (if any) */
@@ -265,7 +266,7 @@ thunar_vfs_path_new (const gchar *identifier,
       parent = path;
 
       /* determine the length of the path component in bytes */
-      for (s1 = s + 1; *s1 != '\0' && *s1 != '/'; ++s1)
+      for (s1 = s + 1; *s1 != '\0' && *s1 != G_DIR_SEPARATOR; ++s1)
         ;
       n = (((s1 - s) + sizeof (guint)) / sizeof (guint)) * sizeof (guint);
 
@@ -285,17 +286,16 @@ thunar_vfs_path_new (const gchar *identifier,
       *(((guint *) (((gchar *) path) + sizeof (ThunarVfsPath) + n)) - 1) = 0;
 
       /* copy the path component name */
-      for (t = (gchar *) thunar_vfs_path_get_name (path); *s != '\0' && *s != '/'; )
+      for (t = (gchar *) thunar_vfs_path_get_name (path); *s != '\0' && *s != G_DIR_SEPARATOR; )
         *t++ = *s++;
 
       /* skip additional slashes */
-      for (; G_UNLIKELY (*s == '/'); ++s)
+      for (; G_UNLIKELY (*s == G_DIR_SEPARATOR); ++s)
         ;
     }
 
   /* cleanup */
-  if ((const gchar *) filename != identifier)
-    g_free (filename);
+  g_free (filename);
 
   /* return a reference on the path */
   return thunar_vfs_path_ref (path);

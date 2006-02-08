@@ -294,6 +294,7 @@ thunar_vfs_user_manager_get_all_groups G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 /* thunar-vfs-util functions */
 #if IN_HEADER(__THUNAR_VFS_UTIL_H__)
 #if IN_SOURCE(__THUNAR_VFS_UTIL_C__)
+thunar_vfs_canonicalize_filename G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_expand_filename G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_humanize_size
 #endif
@@ -307,6 +308,7 @@ thunar_vfs_volume_get_kind
 thunar_vfs_volume_get_name
 thunar_vfs_volume_get_status
 thunar_vfs_volume_get_mount_point
+thunar_vfs_volume_is_disc
 thunar_vfs_volume_is_mounted
 thunar_vfs_volume_is_present
 thunar_vfs_volume_is_ejectable

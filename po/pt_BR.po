@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-07 22:04+0100\n"
+"POT-Creation-Date: 2006-02-08 23:51+0100\n"
 "PO-Revision-Date: 2005-11-17 16:55+0900\n"
 "Last-Translator: Joao Pedrosa <joaopedrosa@gmail.com>\n"
 "Language-Team: os-cillation <info@os-cillation.com>\n"
@@ -240,12 +240,12 @@ msgstr ""
 "\n"
 "Você quer pulá-lo?"
 
-#: ../thunar-vfs/thunar-vfs-util.c:68 ../thunar/thunar-path-entry.c:1252
+#: ../thunar-vfs/thunar-vfs-util.c:253 ../thunar/thunar-path-entry.c:1252
 #, fuzzy
 msgid "Invalid path"
 msgstr "Nome de arquivo inválido"
 
-#: ../thunar-vfs/thunar-vfs-util.c:104
+#: ../thunar-vfs/thunar-vfs-util.c:289
 #, c-format
 msgid "Unknown user `%s'"
 msgstr ""
@@ -373,38 +373,69 @@ msgstr "Falha em copiar arquivo especial `%s'"
 msgid "Failed to create symbolic `%s'"
 msgstr "Falha em criar simbólico `%s'"
 
+#: ../thunar/main.c:47
+msgid "Run in daemon mode"
+msgstr ""
+
 #. setup application name
-#: ../thunar/main.c:48
+#: ../thunar/main.c:68
 msgid "Thunar"
 msgstr "Thunar"
 
+#. initialize Gtk+
+#: ../thunar/main.c:78
+msgid "[FILES...]"
+msgstr ""
+
+#: ../thunar/main.c:85
+#, fuzzy, c-format
+msgid "Thunar: Failed to open display: %s\n"
+msgstr "Falha em renomear `%s'"
+
+#. yep, there's an error, so print it
+#: ../thunar/main.c:90
+#, fuzzy, c-format
+msgid "Thunar: %s\n"
+msgstr "Thunar"
+
 #. display an error message to the user
-#: ../thunar/thunar-application.c:240
+#: ../thunar/thunar-application.c:303
 msgid "Failed to launch operation"
 msgstr "Falha em lançar operação"
 
-#: ../thunar/thunar-application.c:487 ../thunar/thunar-application.c:520
+#. tell the user that we were unable to launch the file specified on the cmdline
+#: ../thunar/thunar-application.c:649
+#, fuzzy, c-format
+msgid "Failed to open \"%s\""
+msgstr "Falha em renomear `%s'"
+
+#: ../thunar/thunar-application.c:661
+#, fuzzy, c-format
+msgid "Failed to open \"%s\": %s"
+msgstr "Falha em renomear `%s'"
+
+#: ../thunar/thunar-application.c:698 ../thunar/thunar-application.c:731
 msgid "Copying files..."
 msgstr "Copiando arquivos..."
 
-#: ../thunar/thunar-application.c:554
+#: ../thunar/thunar-application.c:765
 msgid "Creating symbolic links..."
 msgstr "Criando ligações simbólicas..."
 
-#: ../thunar/thunar-application.c:589
+#: ../thunar/thunar-application.c:800
 msgid "Moving files..."
 msgstr "Movendo arquivos..."
 
-#: ../thunar/thunar-application.c:624
+#: ../thunar/thunar-application.c:835
 msgid "Deleting files..."
 msgstr "Deletando arquivos..."
 
-#: ../thunar/thunar-application.c:664
+#: ../thunar/thunar-application.c:875
 #, fuzzy
 msgid "Creating files..."
 msgstr "Coletando arquivos..."
 
-#: ../thunar/thunar-application.c:704
+#: ../thunar/thunar-application.c:915
 msgid "Creating directories..."
 msgstr "Criando diretórios..."
 
@@ -547,7 +578,7 @@ msgstr "Listagem de diretório detalhada"
 msgid "Details view"
 msgstr "Visualização de detalhes"
 
-#: ../thunar/thunar-dialogs.c:74 ../thunar/thunar-dialogs.c:78
+#: ../thunar/thunar-dialogs.c:104 ../thunar/thunar-dialogs.c:112
 #: ../thunar-uca/thunar-uca-chooser.c:414
 #: ../thunar-uca/thunar-uca-provider.c:329
 #, c-format

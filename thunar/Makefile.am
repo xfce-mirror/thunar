@@ -165,6 +165,8 @@ thunar_built_sources +=							\
 	thunar-dbus-service-infos.h
 
 thunar_dbus_sources =							\
+	thunar-dbus-client.c						\
+	thunar-dbus-client.h						\
 	thunar-dbus-service.c						\
 	thunar-dbus-service.h
 

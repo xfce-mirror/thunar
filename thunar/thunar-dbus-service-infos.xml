@@ -21,6 +21,12 @@
 -->
 
 <node name="/org/xfce/FileManager">
+  <!--
+    org.xfce.FileManager
+
+    The generic Xfce File Manager interface, implemented by all Xfce
+    File Managers.
+  -->
   <interface name="org.xfce.FileManager">
     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
 
@@ -70,6 +76,38 @@
                 or "" to use the default screen of the file manager.
     -->
     <method name="DisplayPreferencesDialog">
+      <arg direction="in" name="display" type="s" />
+    </method>
+  </interface>
+
+  <!--
+    org.xfce.Thunar
+
+    The Thunar specific interface, which provides Thunar specific
+    methods, and which should not be implemented by any other
+    file manager.
+
+    This interface is also subject to change. So, unless you know
+    what you are doing, and you want to limit yourself to Thunar,
+    do not use this interface, but use org.xfce.FileManager instead.
+  -->
+  <interface name="org.xfce.Thunar">
+    <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
+
+    <!--
+      LaunchFiles (working-directory : STRING, filenames : ARRAY OF STRING, display : STRING) : VOID
+
+      working-directory : the directory, relative to which filenames should
+                          be interpreted.
+      filenames         : an array of file names to launch. The file names may
+                          be either file:-URIs, absolute paths or paths relative
+                          to the working-directory.
+      display           : the screen on which to launch the filenames or ""
+                          to use the default screen of the file manager.
+    -->
+    <method name="LaunchFiles">
+      <arg direction="in" name="working-directory" type="s" />
+      <arg direction="in" name="filenames" type="as" />
       <arg direction="in" name="display" type="s" />
     </method>
   </interface>

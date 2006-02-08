@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-07 22:04+0100\n"
+"POT-Creation-Date: 2006-02-08 23:51+0100\n"
 "PO-Revision-Date: 2006-02-08 22:25+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -248,11 +248,11 @@ msgstr ""
 "\n"
 "これを飛ばしますか？"
 
-#: ../thunar-vfs/thunar-vfs-util.c:68 ../thunar/thunar-path-entry.c:1252
+#: ../thunar-vfs/thunar-vfs-util.c:253 ../thunar/thunar-path-entry.c:1252
 msgid "Invalid path"
 msgstr "無効なパスです。"
 
-#: ../thunar-vfs/thunar-vfs-util.c:104
+#: ../thunar-vfs/thunar-vfs-util.c:289
 #, c-format
 msgid "Unknown user `%s'"
 msgstr "ユーザー「%s」は不明です。"
@@ -378,38 +378,70 @@ msgstr "特殊ファイル「%s」のコピーに失敗しました。"
 msgid "Failed to create symbolic `%s'"
 msgstr "リンク「%s」の作成に失敗しました。"
 
+#: ../thunar/main.c:47
+msgid "Run in daemon mode"
+msgstr ""
+
 # FIXME: transliteration?
 #. setup application name
-#: ../thunar/main.c:48
+#: ../thunar/main.c:68
 msgid "Thunar"
 msgstr "Thunar"
 
+#. initialize Gtk+
+#: ../thunar/main.c:78
+msgid "[FILES...]"
+msgstr ""
+
+#: ../thunar/main.c:85
+#, fuzzy, c-format
+msgid "Thunar: Failed to open display: %s\n"
+msgstr "ファイル「%s」を開くのに失敗しました。"
+
+# FIXME: transliteration?
+#. yep, there's an error, so print it
+#: ../thunar/main.c:90
+#, fuzzy, c-format
+msgid "Thunar: %s\n"
+msgstr "Thunar"
+
 #. display an error message to the user
-#: ../thunar/thunar-application.c:240
+#: ../thunar/thunar-application.c:303
 msgid "Failed to launch operation"
 msgstr "操作の実行に失敗しました。"
 
-#: ../thunar/thunar-application.c:487 ../thunar/thunar-application.c:520
+#. tell the user that we were unable to launch the file specified on the cmdline
+#: ../thunar/thunar-application.c:649
+#, fuzzy, c-format
+msgid "Failed to open \"%s\""
+msgstr "ファイル「%s」を開くのに失敗しました。"
+
+#: ../thunar/thunar-application.c:661
+#, fuzzy, c-format
+msgid "Failed to open \"%s\": %s"
+msgstr "ファイル「%s」を開くのに失敗しました。"
+
+#: ../thunar/thunar-application.c:698 ../thunar/thunar-application.c:731
 msgid "Copying files..."
 msgstr "ファイルをコピーしています..."
 
-#: ../thunar/thunar-application.c:554
+#: ../thunar/thunar-application.c:765
 msgid "Creating symbolic links..."
 msgstr "リンクを作成しています..."
 
-#: ../thunar/thunar-application.c:589
+#: ../thunar/thunar-application.c:800
 msgid "Moving files..."
 msgstr "ファイルを移動しています..."
 
-#: ../thunar/thunar-application.c:624
+#: ../thunar/thunar-application.c:835
 msgid "Deleting files..."
 msgstr "ファイルを削除しています..."
 
-#: ../thunar/thunar-application.c:664
+#: ../thunar/thunar-application.c:875
 msgid "Creating files..."
 msgstr "ファイルを作成しています..."
 
-#: ../thunar/thunar-application.c:704
+#: ../thunar/thunar-application.c:915
 msgid "Creating directories..."
 msgstr "フォルダを作成しています..."
 
@@ -553,7 +585,7 @@ msgstr "詳細なファイル情報と共にフォルダをリスト表示しま
 msgid "Details view"
 msgstr "詳細表示"
 
-#: ../thunar/thunar-dialogs.c:74 ../thunar/thunar-dialogs.c:78
+#: ../thunar/thunar-dialogs.c:104 ../thunar/thunar-dialogs.c:112
 #: ../thunar-uca/thunar-uca-chooser.c:414
 #: ../thunar-uca/thunar-uca-provider.c:329
 #, c-format

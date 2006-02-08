@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -17,18 +17,18 @@
  * Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
-#ifndef __THUNAR_DIALOGS_H__
-#define __THUNAR_DIALOGS_H__
+#ifndef __THUNAR_DBUS_CLIENT_H__
+#define __THUNAR_DBUS_CLIENT_H__
 
-#include <gtk/gtk.h>
+#include <gdk/gdk.h>
 
 G_BEGIN_DECLS;
 
-void thunar_dialogs_show_error (gpointer      parent,
-                                const GError *error,
-                                const gchar  *format,
-                                ...) G_GNUC_INTERNAL G_GNUC_PRINTF (3, 4);
+gboolean thunar_dbus_client_launch_files (const gchar *working_directory,
+                                          gchar      **filenames,
+                                          GdkScreen   *screen,
+                                          GError     **error);
 
 G_END_DECLS;
 
-#endif /* !__THUNAR_DIALOGS_H__ */
+#endif /* !__THUNAR_DBUS_CLIENT_H__ */

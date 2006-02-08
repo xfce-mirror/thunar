@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-07 22:04+0100\n"
+"POT-Creation-Date: 2006-02-08 23:51+0100\n"
 "PO-Revision-Date: 2005-10-06 22:02+0900\n"
 "Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -240,11 +240,11 @@ msgstr ""
 "\n"
 "Átugrod?"
 
-#: ../thunar-vfs/thunar-vfs-util.c:68 ../thunar/thunar-path-entry.c:1252
+#: ../thunar-vfs/thunar-vfs-util.c:253 ../thunar/thunar-path-entry.c:1252
 msgid "Invalid path"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-util.c:104
+#: ../thunar-vfs/thunar-vfs-util.c:289
 #, c-format
 msgid "Unknown user `%s'"
 msgstr ""
@@ -372,40 +372,71 @@ msgstr "Nem lehet másolni a fájlt: %s"
 msgid "Failed to create symbolic `%s'"
 msgstr "Nem hozható létre e szimlink: %s"
 
+#: ../thunar/main.c:47
+msgid "Run in daemon mode"
+msgstr ""
+
 #. setup application name
-#: ../thunar/main.c:48
+#: ../thunar/main.c:68
 msgid "Thunar"
 msgstr "Thunar"
 
+#. initialize Gtk+
+#: ../thunar/main.c:78
+msgid "[FILES...]"
+msgstr ""
+
+#: ../thunar/main.c:85
+#, fuzzy, c-format
+msgid "Thunar: Failed to open display: %s\n"
+msgstr "Nem törölhető: %s"
+
+#. yep, there's an error, so print it
+#: ../thunar/main.c:90
+#, fuzzy, c-format
+msgid "Thunar: %s\n"
+msgstr "Thunar"
+
 #. display an error message to the user
-#: ../thunar/thunar-application.c:240
+#: ../thunar/thunar-application.c:303
 #, fuzzy
 msgid "Failed to launch operation"
 msgstr "Nem törölhető: %s"
 
-#: ../thunar/thunar-application.c:487 ../thunar/thunar-application.c:520
+#. tell the user that we were unable to launch the file specified on the cmdline
+#: ../thunar/thunar-application.c:649
+#, fuzzy, c-format
+msgid "Failed to open \"%s\""
+msgstr "Nem törölhető: %s"
+
+#: ../thunar/thunar-application.c:661
+#, fuzzy, c-format
+msgid "Failed to open \"%s\": %s"
+msgstr "Nem törölhető: %s"
+
+#: ../thunar/thunar-application.c:698 ../thunar/thunar-application.c:731
 msgid "Copying files..."
 msgstr "Fájlok másolása..."
 
-#: ../thunar/thunar-application.c:554
+#: ../thunar/thunar-application.c:765
 msgid "Creating symbolic links..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:589
+#: ../thunar/thunar-application.c:800
 msgid "Moving files..."
 msgstr "Fájlok mozgatása..."
 
-#: ../thunar/thunar-application.c:624
+#: ../thunar/thunar-application.c:835
 #, fuzzy
 msgid "Deleting files..."
 msgstr "Fájlok gyűjtése..."
 
-#: ../thunar/thunar-application.c:664
+#: ../thunar/thunar-application.c:875
 #, fuzzy
 msgid "Creating files..."
 msgstr "Fájlok gyűjtése..."
 
-#: ../thunar/thunar-application.c:704
+#: ../thunar/thunar-application.c:915
 #, fuzzy
 msgid "Creating directories..."
 msgstr "Jelenlegi könyvtár"
@@ -554,7 +585,7 @@ msgstr "Részletes könyvtárlista"
 msgid "Details view"
 msgstr "Részletes nézet"
 
-#: ../thunar/thunar-dialogs.c:74 ../thunar/thunar-dialogs.c:78
+#: ../thunar/thunar-dialogs.c:104 ../thunar/thunar-dialogs.c:112
 #: ../thunar-uca/thunar-uca-chooser.c:414
 #: ../thunar-uca/thunar-uca-provider.c:329
 #, c-format

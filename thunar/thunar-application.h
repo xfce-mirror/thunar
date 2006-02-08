@@ -35,56 +35,68 @@ typedef struct _ThunarApplication      ThunarApplication;
 #define THUNAR_IS_APPLICATION_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_APPLICATION))
 #define THUNAR_APPLICATION_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_APPLICATION, ThunarApplicationClass))
 
-GType              thunar_application_get_type      (void) G_GNUC_CONST;
+GType              thunar_application_get_type          (void) G_GNUC_CONST;
 
-ThunarApplication *thunar_application_get           (void);
+ThunarApplication *thunar_application_get               (void);
 
-GList             *thunar_application_get_windows   (ThunarApplication *application);
+gboolean           thunar_application_get_daemon        (ThunarApplication *application);
+void               thunar_application_set_daemon        (ThunarApplication *application,
+                                                         gboolean           daemon);
 
-void               thunar_application_take_window   (ThunarApplication *application,
-                                                     GtkWindow         *window);
+GList             *thunar_application_get_windows       (ThunarApplication *application);
 
-void               thunar_application_open_window   (ThunarApplication *application,
-                                                     ThunarFile        *directory,
-                                                     GdkScreen         *screen);
+gboolean           thunar_application_has_windows       (ThunarApplication *application);
 
-void               thunar_application_copy_to       (ThunarApplication *application,
-                                                     GtkWidget         *widget,
-                                                     GList             *source_path_list,
-                                                     GList             *target_path_list,
-                                                     GClosure          *new_files_closure);
+void               thunar_application_take_window       (ThunarApplication *application,
+                                                         GtkWindow         *window);
 
-void               thunar_application_copy_into     (ThunarApplication *application,
-                                                     GtkWidget         *widget,
-                                                     GList             *source_path_list,
-                                                     ThunarVfsPath     *target_path,
-                                                     GClosure          *new_files_closure);
+void               thunar_application_open_window       (ThunarApplication *application,
+                                                         ThunarFile        *directory,
+                                                         GdkScreen         *screen);
 
-void               thunar_application_link_into     (ThunarApplication *application,
-                                                     GtkWidget         *widget,
-                                                     GList             *source_path_list,
-                                                     ThunarVfsPath     *target_path,
-                                                     GClosure          *new_files_closure);
+gboolean           thunar_application_process_filenames (ThunarApplication *application,
+                                                         const gchar       *working_directory,
+                                                         gchar            **filenames,
+                                                         GdkScreen         *screen,
+                                                         GError           **error);
 
-void               thunar_application_move_into     (ThunarApplication *application,
-                                                     GtkWidget         *widget,
-                                                     GList             *source_path_list,
-                                                     ThunarVfsPath     *target_path,
-                                                     GClosure          *new_files_closure);
+void               thunar_application_copy_to           (ThunarApplication *application,
+                                                         GtkWidget         *widget,
+                                                         GList             *source_path_list,
+                                                         GList             *target_path_list,
+                                                         GClosure          *new_files_closure);
 
-void               thunar_application_unlink        (ThunarApplication *application,
-                                                     GtkWidget         *widget,
-                                                     GList             *path_list);
+void               thunar_application_copy_into         (ThunarApplication *application,
+                                                         GtkWidget         *widget,
+                                                         GList             *source_path_list,
+                                                         ThunarVfsPath     *target_path,
+                                                         GClosure          *new_files_closure);
 
-void               thunar_application_creat         (ThunarApplication *application,
-                                                     GtkWidget         *widget,
-                                                     GList             *path_list,
-                                                     GClosure          *new_files_closure);
+void               thunar_application_link_into         (ThunarApplication *application,
+                                                         GtkWidget         *widget,
+                                                         GList             *source_path_list,
+                                                         ThunarVfsPath     *target_path,
+                                                         GClosure          *new_files_closure);
 
-void               thunar_application_mkdir         (ThunarApplication *application,
-                                                     GtkWidget         *widget,
-                                                     GList             *path_list,
-                                                     GClosure          *new_files_closure);
+void               thunar_application_move_into         (ThunarApplication *application,
+                                                         GtkWidget         *widget,
+                                                         GList             *source_path_list,
+                                                         ThunarVfsPath     *target_path,
+                                                         GClosure          *new_files_closure);
+
+void               thunar_application_unlink            (ThunarApplication *application,
+                                                         GtkWidget         *widget,
+                                                         GList             *path_list);
+
+void               thunar_application_creat             (ThunarApplication *application,
+                                                         GtkWidget         *widget,
+                                                         GList             *path_list,
+                                                         GClosure          *new_files_closure);
+
+void               thunar_application_mkdir             (ThunarApplication *application,
+                                                         GtkWidget         *widget,
+                                                         GList             *path_list,
+                                                         GClosure          *new_files_closure);
 
 G_END_DECLS;
 

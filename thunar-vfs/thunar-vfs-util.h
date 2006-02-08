@@ -26,12 +26,14 @@
 
 G_BEGIN_DECLS;
 
-gchar *thunar_vfs_expand_filename (const gchar      *filename,
-                                   GError          **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar *thunar_vfs_canonicalize_filename (const gchar      *filename) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-gchar *thunar_vfs_humanize_size   (ThunarVfsFileSize size,
-                                   gchar            *buffer,
-                                   gsize             buflen);
+gchar *thunar_vfs_expand_filename       (const gchar      *filename,
+                                         GError          **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+
+gchar *thunar_vfs_humanize_size         (ThunarVfsFileSize size,
+                                         gchar            *buffer,
+                                         gsize             buflen);
 
 G_END_DECLS;
 

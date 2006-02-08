@@ -58,6 +58,11 @@ static gboolean thunar_dbus_service_launch                      (ThunarDBusServi
 static gboolean thunar_dbus_service_display_preferences_dialog  (ThunarDBusService      *dbus_service,
                                                                  const gchar            *display,
                                                                  GError                **error);
+static gboolean thunar_dbus_service_launch_files                (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *working_directory,
+                                                                 gchar                 **filenames,
+                                                                 const gchar            *display,
+                                                                 GError                **error);
 
 
 
@@ -137,6 +142,9 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
     {
       /* register the /org/xfce/FileManager object for Thunar */
       dbus_g_connection_register_g_object (dbus_service->connection, "/org/xfce/FileManager", G_OBJECT (dbus_service));
+
+      /* request the org.xfce.Thunar name for Thunar */
+      dbus_bus_request_name (dbus_g_connection_get_connection (dbus_service->connection), "org.xfce.Thunar", DBUS_NAME_FLAG_REPLACE_EXISTING, NULL);
 
       /* request the org.xfce.FileManager name for Thunar */
       dbus_bus_request_name (dbus_g_connection_get_connection (dbus_service->connection), "org.xfce.FileManager", DBUS_NAME_FLAG_REPLACE_EXISTING, NULL);
@@ -321,6 +329,51 @@ thunar_dbus_service_display_preferences_dialog (ThunarDBusService *dbus_service,
   g_object_unref (G_OBJECT (screen));
 
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
+                                  const gchar       *working_directory,
+                                  gchar            **filenames,
+                                  const gchar       *display,
+                                  GError           **error)
+{
+  ThunarApplication *application;
+  GdkScreen         *screen;
+  gboolean           result = FALSE;
+
+  /* verify that a valid working directory is given */
+  if (G_UNLIKELY (!g_path_is_absolute (working_directory)))
+    {
+      /* LaunchFiles() invoked without a valid working directory */
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("The working directory must be an absolute path"));
+      return FALSE;
+    }
+
+  /* verify that atleast one filename is given */
+  if (G_UNLIKELY (filenames == NULL || *filenames == NULL))
+    {
+      /* LaunchFiles() invoked with an empty filename list */
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Atleast one filename must be specified"));
+      return FALSE;
+    }
+
+  /* try to open the screen for the display name */
+  screen = thunar_gdk_screen_open (display, error);
+  if (G_LIKELY (screen != NULL))
+    {
+      /* let the application process the filenames */
+      application = thunar_application_get ();
+      result = thunar_application_process_filenames (application, working_directory, filenames, screen, error);
+      g_object_unref (G_OBJECT (application));
+
+      /* release the screen */
+      g_object_unref (G_OBJECT (screen));
+    }
+
+  return result;
 }
 
 

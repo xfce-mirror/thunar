@@ -1,5 +1,40 @@
 2006-02-08	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-util.{c,h}, thunar-vfs/thunar-vfs.symbols: Add
+	  new function thunar_vfs_canonicalize_filename().
+	* thunar-vfs/thunar-vfs-path.c(thunar_vfs_path_new): Use
+	  thunar_vfs_canonicalize_filename() on absolute paths.
+	* docs/reference/thunar-vfs/: Update the thunar-vfs API docs.
+	* thunar/thunar-dialogs.{c,h}: Use a generic parent parameter instead of
+	  a GtkWidget, so this method is also usable if no GtkWidget is none,
+	  but the dialog must appear on a specific screen.
+	* thunar/thunar-application.{c,h}: Add a "daemon" property, which
+	  determines whether Thunar will exit once the last window is closed.
+	  Remove the D-BUS service here. Add process_filenames() method, to
+	  process the list of filenames given on the command line. Bug #1384.
+	* thunar/main.c: Attach the D-BUS here.
+	* Makefile.am, org.xfce.Thunar.service.in: Add Thunar specific service
+	  file.
+	* thunar/thunar-dbus-service-infos.xml, thunar/thunar-dbus-service.c:
+	  Add the org.xfce.Thunar interface here, with currently only a
+	  LaunchFiles() method, which can process Thunar command line parameters
+	  in a remote instance. Bug #1384.
+	* thunar/thunar-dbus-client.{c,h}, thunar/Makefile.am: Add convenience
+	  wrapper for the D-BUS LaunchFiles() of the org.xfce.Thunar interface,
+	  which is used on startup to first try to reuse an existing instance.
+	  This way new folder windows will popup instantly if an instance of
+	  Thunar is already running.
+	* org.xfce.Thunar.service.in, org.xfce.FileManager.service.in,
+	  thunar/main.c: Add --daemon option and use it when starting from the
+	  message bus. Pass all additional parameters as file names to a run-
+	  ning remote instance or to ThunarApplication as fallback. Bug #1384.
+	* examples/xfce-file-manager.py, examples/Makefile.am: Add a simple
+	  example how to communicate with the file manager using the D-BUS
+	  Python bindings.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+
+2006-02-08	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-window.c(thunar_window_action_about): Fix the copyright
 	  date.
 

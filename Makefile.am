@@ -35,7 +35,7 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
 if HAVE_DBUS
 servicedir = $(datadir)/dbus-1/services
-service_in_files = org.xfce.FileManager.service.in
+service_in_files = org.xfce.FileManager.service.in org.xfce.Thunar.service.in
 service_DATA = $(service_in_files:.service.in=.service)
 %.service: %.service.in
 	sed -e "s,\@bindir\@,$(bindir),g" < $< > $@

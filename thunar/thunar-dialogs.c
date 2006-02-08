@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -33,7 +33,9 @@
 
 /**
  * thunar_dialogs_show_error:
- * @widget : a #GtkWidget on which the error dialog should be shown or %NULL.
+ * @parent : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
+ *           if no #GtkWidget is known. May also be %NULL, in which case the default
+ *           #GdkScreen will be used.
  * @error  : a #GError, which gives a more precise description of the problem or %NULL.
  * @format : the printf()-style format for the primary problem description.
  * @...    : argument list for the @format.
@@ -45,20 +47,48 @@
  * that the toplevel window is visible prior to displaying the error dialog.
  **/
 void
-thunar_dialogs_show_error (GtkWidget    *widget,
+thunar_dialogs_show_error (gpointer      parent,
                            const GError *error,
                            const gchar  *format,
                            ...)
 {
   GtkWidget *dialog;
-  GtkWidget *window;
+  GtkWidget *window = NULL;
+  GdkScreen *screen;
   va_list    args;
   gchar     *primary_text;
 
-  /* determine the toplevel window and make sure it's shown */
-  window = (widget != NULL) ? gtk_widget_get_toplevel (widget) : NULL;
-  if (G_LIKELY (window != NULL))
-    gtk_widget_show_now (window);
+  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+
+  /* determine the proper parent */
+  if (parent == NULL)
+    {
+      /* just use the default screen then */
+      screen = gdk_screen_get_default ();
+    }
+  else if (GDK_IS_SCREEN (parent))
+    {
+      /* yep, that's a screen */
+      screen = GDK_SCREEN (parent);
+    }
+  else
+    {
+      /* parent is a widget, so let's determine the toplevel window */
+      window = gtk_widget_get_toplevel (GTK_WIDGET (parent));
+      if (GTK_WIDGET_TOPLEVEL (window))
+        {
+          /* make sure the toplevel window is shown */
+          gtk_widget_show_now (window);
+        }
+      else
+        {
+          /* no toplevel, not usable then */
+          window = NULL;
+        }
+
+      /* determine the screen for the widget */
+      screen = gtk_widget_get_screen (GTK_WIDGET (parent));
+    }
 
   /* determine the primary error text */
   va_start (args, format);
@@ -72,6 +102,10 @@ thunar_dialogs_show_error (GtkWidget    *widget,
                                    GTK_MESSAGE_ERROR,
                                    GTK_BUTTONS_CLOSE,
                                    _("%s."), primary_text);
+
+  /* move the dialog to the appropriate screen */
+  if (window == NULL && screen != NULL)
+    gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
   /* set secondary text if an error is provided */
   if (G_LIKELY (error != NULL))

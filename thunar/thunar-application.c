@@ -27,10 +27,6 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-progress-dialog.h>
 
-#ifdef HAVE_DBUS
-#include <thunar/thunar-dbus-service.h>
-#endif
-
 
 
 /* Prototype for the Thunar-VFS job launchers */
@@ -40,9 +36,26 @@ typedef ThunarVfsJob *(*Launcher) (GList   *source_path_list,
 
 
 
+/* Property identifiers */
+enum
+{
+  PROP_0,
+  PROP_DAEMON,
+};
+
+
+
 static void     thunar_application_class_init           (ThunarApplicationClass *klass);
 static void     thunar_application_init                 (ThunarApplication      *application);
 static void     thunar_application_finalize             (GObject                *object);
+static void     thunar_application_get_property         (GObject                *object,
+                                                         guint                   prop_id,
+                                                         GValue                 *value,
+                                                         GParamSpec             *pspec);
+static void     thunar_application_set_property         (GObject                *object,
+                                                         guint                   prop_id,
+                                                         const GValue           *value,
+                                                         GParamSpec             *pspec);
 static void     thunar_application_collect_and_launch   (ThunarApplication      *application,
                                                          GtkWidget              *widget,
                                                          const gchar            *icon_name,
@@ -78,9 +91,7 @@ struct _ThunarApplication
   ThunarPreferences *preferences;
   GList             *windows;
 
-#ifdef HAVE_DBUS
-  ThunarDBusService *dbus_service;
-#endif
+  gboolean           daemon;
 
   gint               show_dialogs_timer_id;
 };
@@ -130,6 +141,24 @@ thunar_application_class_init (ThunarApplicationClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_application_finalize;
+  gobject_class->get_property = thunar_application_get_property;
+  gobject_class->set_property = thunar_application_set_property;
+
+  /**
+   * ThunarApplication:daemon:
+   *
+   * %TRUE if the application should be run in daemon mode,
+   * in which case it will never terminate. %FALSE if the
+   * application should terminate once the last window is
+   * closed.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_DAEMON,
+                                   g_param_spec_boolean ("daemon",
+                                                         "daemon",
+                                                         "daemon",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -139,11 +168,6 @@ thunar_application_init (ThunarApplication *application)
 {
   application->preferences = thunar_preferences_get ();
   application->show_dialogs_timer_id = -1;
-
-  /* start the D-BUS service if built with D-BUS support */
-#ifdef HAVE_DBUS
-  application->dbus_service = g_object_new (THUNAR_TYPE_DBUS_SERVICE, NULL);
-#endif
 }
 
 
@@ -153,11 +177,6 @@ thunar_application_finalize (GObject *object)
 {
   ThunarApplication *application = THUNAR_APPLICATION (object);
   GList             *lp;
-
-  /* stop the D-BUS service if built with D-BUS support */
-#ifdef HAVE_DBUS
-  g_object_unref (G_OBJECT (application->dbus_service));
-#endif
 
   /* drop any running "show dialogs" timer */
   if (G_UNLIKELY (application->show_dialogs_timer_id >= 0))
@@ -175,6 +194,50 @@ thunar_application_finalize (GObject *object)
   g_object_unref (G_OBJECT (application->preferences));
   
   (*G_OBJECT_CLASS (thunar_application_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_application_get_property (GObject    *object,
+                                 guint       prop_id,
+                                 GValue     *value,
+                                 GParamSpec *pspec)
+{
+  ThunarApplication *application = THUNAR_APPLICATION (object);
+  
+  switch (prop_id)
+    {
+    case PROP_DAEMON:
+      g_value_set_boolean (value, thunar_application_get_daemon (application));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_application_set_property (GObject      *object,
+                                 guint         prop_id,
+                                 const GValue *value,
+                                 GParamSpec   *pspec)
+{
+  ThunarApplication *application = THUNAR_APPLICATION (object);
+  
+  switch (prop_id)
+    {
+    case PROP_DAEMON:
+      thunar_application_set_daemon (application, g_value_get_boolean (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 
@@ -292,13 +355,10 @@ thunar_application_window_destroyed (GtkWidget         *window,
   application->windows = g_list_remove (application->windows, window);
 
   /* terminate the application if we don't have any more
-   * windows and we don't manage the desktop.
+   * windows and we are not in daemon mode.
    */
-  if (G_UNLIKELY (application->windows == NULL
-        /*&& application->desktop_view == NULL*/))
-    {
-      gtk_main_quit ();
-    }
+  if (G_UNLIKELY (application->windows == NULL && !application->daemon))
+    gtk_main_quit ();
 }
 
 
@@ -362,6 +422,45 @@ thunar_application_get (void)
 
 
 /**
+ * thunar_application_get_daemon:
+ * @application : a #ThunarApplication.
+ *
+ * Returns %TRUE if @application is in daemon mode.
+ *
+ * Return value: %TRUE if @application is in daemon mode.
+ **/
+gboolean
+thunar_application_get_daemon (ThunarApplication *application)
+{
+  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  return application->daemon;
+}
+
+
+
+/**
+ * thunar_application_set_daemon:
+ * @application : a #ThunarApplication.
+ * @daemon      : %TRUE to set @application into daemon mode.
+ *
+ * If @daemon is %TRUE, @application will be set into daemon mode.
+ **/
+void
+thunar_application_set_daemon (ThunarApplication *application,
+                               gboolean           daemon)
+{
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  if (application->daemon != daemon)
+    {
+      application->daemon = daemon;
+      g_object_notify (G_OBJECT (application), "daemon");
+    }
+}
+
+
+
+/**
  * thunar_application_get_windows:
  * @application : a #ThunarApplication.
  *
@@ -384,6 +483,22 @@ thunar_application_get_windows (ThunarApplication *application)
       windows = g_list_prepend (windows, lp->data);
 
   return windows;
+}
+
+
+/**
+ * thunar_application_has_windows:
+ * @application : a #ThunarApplication.
+ *
+ * Returns %TRUE if @application controls atleast one window.
+ *
+ * Return value: %TRUE if @application controls atleast one window.
+ **/
+gboolean
+thunar_application_has_windows (ThunarApplication *application)
+{
+  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  return (application->windows != NULL);
 }
 
 
@@ -451,6 +566,102 @@ thunar_application_open_window (ThunarApplication *application,
 
   /* change the directory */
   thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+}
+
+
+
+/**
+ * thunar_application_process_filenames:
+ * @application       : a #ThunarApplication.
+ * @working_directory : the working directory relative to which the @filenames should
+ *                      be interpreted.
+ * @filenames         : a list of file:-URIs or filenames. If a filename is specified
+ *                      it can be either an absolute path or a path relative to the
+ *                      @working_directory.
+ * @screen            : the #GdkScreen on which to process the @filenames, or %NULL to
+ *                      use the default screen.
+ * @error             : return location for errors or %NULL.
+ *
+ * Tells @application to process the given @filenames and launch them appropriately.
+ *
+ * Return value: %TRUE on success, %FALSE if @error is set.
+ **/
+gboolean
+thunar_application_process_filenames (ThunarApplication *application,
+                                      const gchar       *working_directory,
+                                      gchar            **filenames,
+                                      GdkScreen         *screen,
+                                      GError           **error)
+{
+  ThunarVfsPath *path;
+  ThunarFile    *file;
+  GError        *derror = NULL;
+  gchar         *filename;
+  GList         *file_list = NULL;
+  GList         *lp;
+  gint           n;
+
+  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  g_return_val_if_fail (working_directory != NULL, FALSE);
+  g_return_val_if_fail (filenames != NULL, FALSE);
+  g_return_val_if_fail (*filenames != NULL, FALSE);
+  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* try to process all filenames and convert them to the appropriate file objects */
+  for (n = 0; filenames[n] != NULL; ++n)
+    {
+      /* check if the filename is an absolute path or a file:-URI */
+      if (g_path_is_absolute (filenames[n]) || g_str_has_prefix (filenames[n], "file:"))
+        {
+          /* determine the path for the filename directly */
+          path = thunar_vfs_path_new (filenames[n], &derror);
+        }
+      else
+        {
+          /* translate the filename into an absolute path first */
+          filename = g_build_filename (working_directory, filenames[n], NULL);
+          path = thunar_vfs_path_new (filename, &derror);
+          g_free (filename);
+        }
+
+      /* determine the file for the path */
+      file = (path != NULL) ? thunar_file_get_for_path (path, &derror) : NULL;
+
+      /* release the path (if any) */
+      if (G_LIKELY (path != NULL))
+        thunar_vfs_path_unref (path);
+
+      /* verify that we have a valid file */
+      if (G_LIKELY (file != NULL))
+        file_list = g_list_append (file_list, file);
+      else
+        goto failure;
+    }
+
+  /* ok, let's try to launch the given files then */
+  for (lp = file_list; lp != NULL; lp = lp->next)
+    {
+      /* try to launch this file, display an error dialog if that fails */
+      if (!thunar_file_launch (lp->data, screen, &derror))
+        {
+          /* tell the user that we were unable to launch the file specified on the cmdline */
+          thunar_dialogs_show_error (screen, derror, _("Failed to open \"%s\""), thunar_file_get_display_name (lp->data));
+          g_error_free (derror);
+          break;
+        }
+    }
+
+  /* release all files */
+  thunar_file_list_free (file_list);
+
+  return TRUE;
+
+failure:
+  g_set_error (error, derror->domain, derror->code, _("Failed to open \"%s\": %s"), filenames[n], derror->message);
+  thunar_file_list_free (file_list);
+  g_error_free (derror);
+  return FALSE;
 }
 
 
