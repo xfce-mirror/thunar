@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-02-07 22:04+0100\n"
-"PO-Revision-Date: 2006-02-04 11:49+0900\n"
+"PO-Revision-Date: 2006-02-08 22:25+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -154,30 +154,28 @@ msgid "Failed to load application from file %s"
 msgstr "ファイル %s からアプリケーションを読み込むのに失敗しました。"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:134
-#, fuzzy
 msgid "Command"
-msgstr "コマンド(_C):"
+msgstr "コマンド"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:135
 msgid "The command to run the mime handler"
-msgstr ""
+msgstr "MIMEハンドラーを実行するコマンドです。"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:147
 msgid "Flags"
-msgstr ""
+msgstr "フラッグ"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:148
 msgid "The flags for the mime handler"
-msgstr ""
+msgstr "MIMEハンドラーのフラッグです。"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:163
-#, fuzzy
 msgid "Icon"
-msgstr "アイコン(_I):"
+msgstr "アイコン"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:164
 msgid "The icon of the mime handler"
-msgstr ""
+msgstr "MIMEハンドラーのアイコンです。"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:176
 #: ../thunar/thunar-details-view.c:171
@@ -186,7 +184,7 @@ msgstr "名前"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:177
 msgid "The name of the mime handler"
-msgstr ""
+msgstr "MIMEハンドラーの名前です。"
 
 #: ../thunar-vfs/thunar-vfs-mime-info.c:228
 #, c-format
@@ -418,7 +416,7 @@ msgstr "フォルダを作成しています..."
 #. tell the user that it didn't work
 #. display an error to the user
 #: ../thunar/thunar-chooser-button.c:281 ../thunar/thunar-chooser-dialog.c:480
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "「%s」の標準アプリケーションをセットするのに失敗しました"
 
@@ -438,7 +436,7 @@ msgstr ""
 #. add the "Other Application..." choice
 #: ../thunar/thunar-chooser-button.c:513
 msgid "_Other Application..."
-msgstr "他のアプリケーション(_O)..."
+msgstr "他のアプリ(_O)..."
 
 #: ../thunar/thunar-chooser-dialog.c:205 ../thunar/thunar-launcher.c:122
 msgid "Open With"
@@ -456,13 +454,13 @@ msgstr "参照(_B)"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:458
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "新しいアプリケーション「%s」を追加するのに失敗しました。"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:493
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute \"%s\""
 msgstr "「%s」の実行に失敗しました。"
 
@@ -680,9 +678,8 @@ msgid "_Open"
 msgstr "開く(_O)"
 
 #: ../thunar/thunar-launcher.c:119
-#, fuzzy
 msgid "Open the selected files"
-msgstr "選択したアイテムを開きます。"
+msgstr "選択したファイルを開きます。"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-shortcuts-view.c:371
@@ -694,115 +691,108 @@ msgid "Open the selected directories in new Thunar windows"
 msgstr "選択したフォルダを新しい Thunar ウィンドウで開きます。"
 
 #: ../thunar/thunar-launcher.c:121 ../thunar/thunar-launcher.c:123
-#, fuzzy
 msgid "Open With Other _Application..."
-msgstr "他のアプリケーション..."
+msgstr "他のアプリで開く(_A)..."
 
 #: ../thunar/thunar-launcher.c:121 ../thunar/thunar-launcher.c:123
 #: ../thunar/thunar-launcher.c:832
 msgid "Choose another application with which to open the selected file"
-msgstr ""
+msgstr "選択したファイルを開くために別のプログラムを選びます。"
 
 #: ../thunar/thunar-launcher.c:122
-#, fuzzy
 msgid "Choose a program with which to open the selected file"
-msgstr "選択した最初のファイルへのパス"
+msgstr "選択したファイルを開くためにプログラムを選びます。"
 
 #. display an error message to the user
 #: ../thunar/thunar-launcher.c:496
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute file \"%s\""
-msgstr "「%s」の実行に失敗しました。"
+msgstr "ファイル「%s」の実行に失敗しました。"
 
 #: ../thunar/thunar-launcher.c:591
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open file \"%s\""
-msgstr "「%s」の名前変更に失敗しました。"
+msgstr "ファイル「%s」を開くのに失敗しました。"
 
 #. we can just tell that n files failed to open
 #: ../thunar/thunar-launcher.c:597
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] "%d 個のファイルを開けません。"
+msgstr[0] "%d 個のファイルを開くのに失敗しました。"
 
 #: ../thunar/thunar-launcher.c:633
 msgid "Are you sure you want to open all folders?"
 msgstr "全てのフォルダを開いてもよろしいですか？"
 
 #: ../thunar/thunar-launcher.c:635
-#, fuzzy, c-format
+#, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
-msgstr[0] "%d のウィンドウを別々に開きます。"
+msgstr[0] "%d つのウィンドウを別個に開きます。"
 
 #: ../thunar/thunar-launcher.c:639
-#, fuzzy, c-format
+#, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
-msgstr[0] "%d の新しいウィンドウで開きます。"
+msgstr[0] "%dつの新規ウィンドウを開く"
 
 #. turn "Open" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:733
 #, c-format
 msgid "Open in %d New Window"
 msgid_plural "Open in %d New Windows"
-msgstr[0] "%d の新しいウィンドウで開きます。"
+msgstr[0] "%dつの新規ウィンドウで開く"
 
 #: ../thunar/thunar-launcher.c:734
-#, fuzzy, c-format
+#, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "選択したフォルダを新しい Thunar ウィンドウで開きます。"
+msgstr[0] "選択したフォルダを新しい %d つのウィンドウで開きます。"
 
 #: ../thunar/thunar-launcher.c:751
-#, fuzzy
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
-msgstr[0] "選択したアイテムを開きます。"
+msgstr[0] "選択したファイルを開きます。"
 
 #: ../thunar/thunar-launcher.c:800
 msgid "_Execute"
 msgstr "実行(_E)"
 
 #: ../thunar/thunar-launcher.c:801
-#, fuzzy
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
-msgstr[0] "選択したファイルを切り取ります。"
+msgstr[0] "選択したファイルを実行します。"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:807
-#, fuzzy, c-format
+#, c-format
 msgid "_Open With \"%s\""
-msgstr "アプリで開く"
+msgstr "%sで開く(_O)"
 
 #: ../thunar/thunar-launcher.c:808 ../thunar/thunar-launcher.c:895
-#, fuzzy, c-format
+#, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] "選択したファイルを削除します。"
+msgstr[0] "%s を使用して選択したファイルを開きます。"
 
 #: ../thunar/thunar-launcher.c:831
-#, fuzzy
 msgid "_Open With Other Application..."
-msgstr "他のアプリケーション(_O)..."
+msgstr "他のアプリで開く(_O)..."
 
 #: ../thunar/thunar-launcher.c:840
-#, fuzzy
 msgid "_Open With Default Applications"
-msgstr "他のアプリケーション:"
+msgstr "標準のアプリで開く(_O)"
 
 #: ../thunar/thunar-launcher.c:841
-#, fuzzy
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] "選択した複数のファイル名 (複数のパスを含まない)"
+msgstr[0] "標準のアプリケーションを使用して選択したファイルを開きます。"
 
 #: ../thunar/thunar-launcher.c:894
-#, fuzzy, c-format
+#, c-format
 msgid "Open With \"%s\""
-msgstr "アプリで開く"
+msgstr "%sで開く"
 
 #: ../thunar/thunar-list-model.c:711 ../thunar/thunar-properties-dialog.c:674
 msgid "broken link"
@@ -812,7 +802,7 @@ msgstr "壊れたリンク"
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
-msgstr[0] "%d 個のアイテム, 空き容量: %s"
+msgstr[0] "%d 個のアイテムがあります。空き容量: %s"
 
 #: ../thunar/thunar-list-model.c:2003
 #, c-format
@@ -823,17 +813,17 @@ msgstr[0] "%d 個のアイテムがあります。"
 #: ../thunar/thunar-list-model.c:2019
 #, c-format
 msgid "\"%s\" broken link"
-msgstr "「%s」壊れたリンクです。"
+msgstr "「%s」壊れたリンク"
 
 #: ../thunar/thunar-list-model.c:2023
 #, c-format
 msgid "\"%s\" (%s) link to %s"
-msgstr "「%s」(%s) %sへのリンクです。"
+msgstr "「%1$s」%3$sへのリンク (%2$s)"
 
 #: ../thunar/thunar-list-model.c:2028
 #, c-format
 msgid "\"%s\" (%s) %s"
-msgstr "「%s」(%s) %sです。"
+msgstr "「%1$s」%3$s (%2$s)"
 
 #: ../thunar/thunar-list-model.c:2045 ../thunar/thunar-list-model.c:2050
 #, c-format
@@ -1202,14 +1192,15 @@ msgstr "サイズ:"
 msgid "Emblems"
 msgstr "シンボル"
 
+# FIXME: doesn't work
 #: ../thunar/thunar-properties-dialog.c:767
 msgid "%s (%"
-msgstr ""
+msgstr "%s (%"
 
+# FIXME: doesn't work
 #: ../thunar/thunar-properties-dialog.c:767
-#, fuzzy
 msgid " Bytes)"
-msgstr "%s (%lld バイト)"
+msgstr " バイト)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:815
@@ -1220,14 +1211,12 @@ msgstr "「%s」の名前変更に失敗しました。"
 #: ../thunar/thunar-shortcuts-pane.c:94 ../thunar/thunar-shortcuts-pane.c:400
 msgid "Add Folder to _Shortcuts"
 msgid_plural "Add Folders to _Shortcuts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "ショートカットに追加(_S)"
 
 #: ../thunar/thunar-shortcuts-pane.c:94 ../thunar/thunar-shortcuts-pane.c:402
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "選択したフォルダを隣のショートカットペインに追加します。"
 
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:385
@@ -1252,7 +1241,7 @@ msgstr "ショートカットを削除(_R)"
 #. append the rename menu item
 #: ../thunar/thunar-shortcuts-view.c:465
 msgid "Re_name Shortcut"
-msgstr "ショートカットの名前を変更(_N)"
+msgstr "ショートカットの名前変更(_N)"
 
 #. append the "Display icon emblems" item
 #: ../thunar/thunar-shortcuts-view.c:480
@@ -2070,9 +2059,3 @@ msgstr "ファイルマネージャー"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
-
-#~ msgid "Unable to open \"%s\"."
-#~ msgstr "「%s」を開けません。"
-
-#~ msgid "%s (default)"
-#~ msgstr "%s (標準)"
