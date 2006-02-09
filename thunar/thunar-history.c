@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-navigator.h>
 

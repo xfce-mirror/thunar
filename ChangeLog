@@ -1,3 +1,27 @@
+2006-02-09	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.h: Use cast checks instead of type checks here, as
+	  they will be optimized away with regular builds. Debug builds will
+	  still include the checks.
+	* thunar/thunar-application.c, thunar/thunar-chooser-button.c,
+	  thunar/thunar-chooser-dialog.c, thunar/thunar-chooser-model.c,
+	  thunar/thunar-clipboard-manager.c, thunar/thunar-create-dialog.c,
+	  thunar/thunar-emblem-chooser.c, thunar/thunar-file.c,
+	  thunar/thunar-folder.c, thunar/thunar-gobject-extensions.h,
+	  thunar/thunar-history.c, thunar/thunar-icon-factory.c,
+	  thunar/thunar-icon-renderer.c, thunar/thunar-icon-view.c,
+	  thunar/thunar-launcher.c, thunar/thunar-list-model.c,
+	  thunar/thunar-location-buttons.c, thunar/thunar-location-entry.c,
+	  thunar/thunar-path-entry.c, thunar/thunar-permissions-chooser.c,
+	  thunar/thunar-progress-dialog.c, thunar/thunar-properties-dialog.c,
+	  thunar/thunar-shortcuts-icon-renderer.c,
+	  thunar/thunar-shortcuts-pane.c, thunar/thunar-standard-view.c,
+	  thunar/thunar-statusbar.c, thunar/thunar-text-renderer.c,
+	  thunar/thunar-throbber.c, thunar/thunar-window.c: We don't need
+	  to implement G_OBJECT_WARN_INVALID_PROPERTY_ID() for regular builds,
+	  as GObject will perform the required checks, but we need it for
+	  debug builds to make sure the switch statement is complete.
+
 2006-02-08	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-util.{c,h}, thunar-vfs/thunar-vfs.symbols: Add

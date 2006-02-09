@@ -25,6 +25,7 @@
 #include <time.h>
 #endif
 
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-progress-dialog.h>
 

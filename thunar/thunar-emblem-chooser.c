@@ -29,6 +29,7 @@
 #endif
 
 #include <thunar/thunar-emblem-chooser.h>
+#include <thunar/thunar-gobject-extensions.h>
 
 
 

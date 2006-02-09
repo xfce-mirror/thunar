@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 
 

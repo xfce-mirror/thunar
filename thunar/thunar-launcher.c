@@ -24,6 +24,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-launcher-ui.h>
 

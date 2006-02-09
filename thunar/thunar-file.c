@@ -44,6 +44,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-gobject-extensions.h>
 
 
 

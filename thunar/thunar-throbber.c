@@ -23,6 +23,7 @@
 
 #include <exo/exo.h>
 
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-throbber.h>
 #include <thunar/thunar-throbber-fallback.h>
 

@@ -28,6 +28,7 @@
 #include <string.h>
 #endif
 
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-list-model.h>
 
 

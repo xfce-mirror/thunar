@@ -30,6 +30,7 @@
 
 #include <exo/exo.h>
 
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-text-renderer.h>
 

@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-folder.h>
+#include <thunar/thunar-gobject-extensions.h>
 
 
 

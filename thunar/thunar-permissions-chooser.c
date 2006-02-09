@@ -33,6 +33,7 @@
 
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-chooser.h>
 #include <thunar/thunar-preferences.h>

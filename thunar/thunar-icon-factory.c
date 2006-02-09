@@ -33,6 +33,7 @@
 #endif
 
 #include <thunar/thunar-gdk-pixbuf-extensions.h>
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-thumbnail-frame.h>

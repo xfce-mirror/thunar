@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-path-entry.h>
 

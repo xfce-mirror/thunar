@@ -31,6 +31,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-gobject-extensions.h>
 
 
 

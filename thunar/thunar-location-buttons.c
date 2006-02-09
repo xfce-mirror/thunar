@@ -32,6 +32,7 @@
 #endif
 
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-pango-extensions.h>

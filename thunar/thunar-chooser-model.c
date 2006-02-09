@@ -29,6 +29,7 @@
 #endif
 
 #include <thunar/thunar-chooser-model.h>
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 
 

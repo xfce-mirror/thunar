@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-pane.h>
 #include <thunar/thunar-shortcuts-pane-ui.h>
