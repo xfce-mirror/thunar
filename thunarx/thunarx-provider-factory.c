@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-206 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,10 +38,10 @@
 
 
 static void     thunarx_provider_factory_class_init     (ThunarxProviderFactoryClass *klass);
-static void     thunarx_provider_factory_init           (ThunarxProviderFactory      *manager);
 static void     thunarx_provider_factory_finalize       (GObject                     *object);
-static void     thunarx_provider_factory_add            (ThunarxProviderFactory      *manager,
+static void     thunarx_provider_factory_add            (ThunarxProviderFactory      *factory,
                                                          ThunarxProviderModule       *module);
+static GList   *thunarx_provider_factory_load_modules   (ThunarxProviderFactory      *factory);
 static gboolean thunarx_provider_factory_timer          (gpointer                     user_data);
 static void     thunarx_provider_factory_timer_destroy  (gpointer                     user_data);
 
@@ -92,7 +92,7 @@ thunarx_provider_factory_get_type (void)
         NULL,
         sizeof (ThunarxProviderFactory),
         0,
-        (GInstanceInitFunc) thunarx_provider_factory_init,
+        NULL,
         NULL,
       };
 
@@ -119,77 +119,13 @@ thunarx_provider_factory_class_init (ThunarxProviderFactoryClass *klass)
 
 
 static void
-thunarx_provider_factory_init (ThunarxProviderFactory *factory)
-{
-  ThunarxProviderModule *module;
-  const gchar           *name;
-  GList                 *lp;
-  GDir                  *dp;
-
-  dp = g_dir_open (THUNARX_DIRECTORY, 0, NULL);
-  if (G_LIKELY (dp != NULL))
-    {
-      /* determine the types for all existing plugins */
-      for (;;)
-        {
-          /* read the next entry from the directory */
-          name = g_dir_read_name (dp);
-          if (G_UNLIKELY (name == NULL))
-            break;
-
-          /* check if this is a valid plugin file */
-          if (g_str_has_suffix (name, "." G_MODULE_SUFFIX))
-            {
-              /* check if we already have that module */
-              for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
-                if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
-                  break;
-
-              /* use or allocate a new module for the file */
-              if (G_UNLIKELY (lp != NULL))
-                {
-                  /* just use the existing module */
-                  module = THUNARX_PROVIDER_MODULE (lp->data);
-                }
-              else
-                {
-                  /* allocate the new module and add it to our list */
-                  module = thunarx_provider_module_new (name);
-                  thunarx_provider_modules = g_list_append (thunarx_provider_modules, module);
-                }
-
-              /* try to load the module */
-              if (g_type_module_use (G_TYPE_MODULE (module)))
-                {
-                  /* add the types provided by the module */
-                  thunarx_provider_factory_add (factory, module);
-
-                  /* don't unuse the type plugin if it should be resident in memory */
-                  if (G_LIKELY (!thunarx_provider_plugin_get_resident (THUNARX_PROVIDER_PLUGIN (module))))
-                    g_type_module_unuse (G_TYPE_MODULE (module));
-                }
-            }
-        }
-
-      g_dir_close (dp);
-    }
-
-  /* start the "provider cache" cleanup timer */
-  factory->timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNARX_PROVIDER_FACTORY_INTERVAL,
-                                          thunarx_provider_factory_timer, factory,
-                                          thunarx_provider_factory_timer_destroy);
-}
-
-
-
-static void
 thunarx_provider_factory_finalize (GObject *object)
 {
   ThunarxProviderFactory *factory = THUNARX_PROVIDER_FACTORY (object);
   gint                    n;
 
   /* stop the "provider cache" cleanup timer */
-  if (G_LIKELY (factory->timer_id >= 0))
+  if (G_LIKELY (factory->timer_id > 0))
     g_source_remove (factory->timer_id);
 
   /* release provider infos */
@@ -225,6 +161,67 @@ thunarx_provider_factory_add (ThunarxProviderFactory *factory,
 
 
 
+static GList*
+thunarx_provider_factory_load_modules (ThunarxProviderFactory *factory)
+{
+  ThunarxProviderModule *module;
+  const gchar           *name;
+  GList                 *modules = NULL;
+  GList                 *lp;
+  GDir                  *dp;
+
+  dp = g_dir_open (THUNARX_DIRECTORY, 0, NULL);
+  if (G_LIKELY (dp != NULL))
+    {
+      /* determine the types for all existing plugins */
+      for (;;)
+        {
+          /* read the next entry from the directory */
+          name = g_dir_read_name (dp);
+          if (G_UNLIKELY (name == NULL))
+            break;
+
+          /* check if this is a valid plugin file */
+          if (g_str_has_suffix (name, "." G_MODULE_SUFFIX))
+            {
+              /* check if we already have that module */
+              for (lp = thunarx_provider_modules; lp != NULL; lp = lp->next)
+                if (g_str_equal (G_TYPE_MODULE (lp->data)->name, name))
+                  break;
+
+              /* use or allocate a new module for the file */
+              if (G_UNLIKELY (lp != NULL))
+                {
+                  /* just use the existing module */
+                  module = THUNARX_PROVIDER_MODULE (lp->data);
+                }
+              else
+                {
+                  /* allocate the new module and add it to our list */
+                  module = thunarx_provider_module_new (name);
+                  thunarx_provider_modules = g_list_prepend (thunarx_provider_modules, module);
+                }
+
+              /* try to load the module */
+              if (g_type_module_use (G_TYPE_MODULE (module)))
+                {
+                  /* add the types provided by the module */
+                  thunarx_provider_factory_add (factory, module);
+
+                  /* add the module to our list */
+                  modules = g_list_prepend (modules, module);
+                }
+            }
+        }
+
+      g_dir_close (dp);
+    }
+
+  return modules;
+}
+
+
+
 static gboolean
 thunarx_provider_factory_timer (gpointer user_data)
 {
@@ -255,7 +252,7 @@ thunarx_provider_factory_timer (gpointer user_data)
 static void
 thunarx_provider_factory_timer_destroy (gpointer user_data)
 {
-  THUNARX_PROVIDER_FACTORY (user_data)->timer_id = -1;
+  THUNARX_PROVIDER_FACTORY (user_data)->timer_id = 0;
 }
 
 
@@ -316,8 +313,23 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
 {
   ThunarxProviderInfo *info;
   GList               *providers = NULL;
+  GList               *modules = NULL;
+  GList               *lp;
   gint                 n;
 
+  /* check if the cleanup timer is running (and thereby the factory is initialized) */
+  if (G_UNLIKELY (factory->timer_id == 0))
+    {
+      /* load all available modules (and thereby initialize the factory) */
+      modules = thunarx_provider_factory_load_modules (factory);
+
+      /* start the "provider cache" cleanup timer */
+      factory->timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNARX_PROVIDER_FACTORY_INTERVAL,
+                                              thunarx_provider_factory_timer, factory,
+                                              thunarx_provider_factory_timer_destroy);
+    }
+
+  /* determine all available providers for the type */
   for (info = factory->infos, n = factory->n_infos; --n >= 0; ++info)
     if (G_LIKELY (g_type_is_a (info->type, type)))
       {
@@ -335,6 +347,15 @@ thunarx_provider_factory_list_providers (ThunarxProviderFactory *factory,
         /* add the provider to the result list */
         providers = g_list_append (providers, info->provider);
       }
+
+  /* check if we were initialized by this method invocation */
+  if (G_UNLIKELY (modules != NULL))
+    {
+      /* unload all non-persistent modules */
+      for (lp = modules; lp != NULL; lp = lp->next)
+        if (!thunarx_provider_plugin_get_resident (lp->data))
+          g_type_module_unuse (G_TYPE_MODULE (lp->data));
+    }
 
   return providers;
 }

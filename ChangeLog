@@ -1,5 +1,13 @@
 2006-02-09	Benedikt Meurer <benny@xfce.org>
 
+	* thunarx/thunarx-provider-factory.c: Initialize the factory on demand.
+	* thunar-vfs/thunar-vfs-scandir.c(thunar_vfs_scandir_collect_fast): Use
+	  a larger buffer to speed up loading large directories.
+	* thunar-vfs/thunar-vfs-mime-database.c: Initialize the MIME desktop
+	  stores on demand.
+
+2006-02-09	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.h: Use cast checks instead of type checks here, as
 	  they will be optimized away with regular builds. Debug builds will
 	  still include the checks.

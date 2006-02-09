@@ -158,7 +158,7 @@ thunar_vfs_scandir_collect_fast (ThunarVfsScandirHandle *handle,
     }
 
   /* calculate the directory buffer size */
-  dlen = statb.st_blksize * 4;
+  dlen = statb.st_blksize * 8;
   if (G_UNLIKELY ((dlen % DIRBLKSIZ) != 0))
     dlen = ((dlen + DIRBLKSIZ - 1) / DIRBLKSIZ) * DIRBLKSIZ;
   if (G_UNLIKELY (dlen < sizeof (struct statfs)))

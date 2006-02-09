@@ -251,9 +251,6 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
   /* initialize the MIME providers */
   thunar_vfs_mime_database_initialize_providers (database);
 
-  /* initialize the MIME desktop stores */
-  thunar_vfs_mime_database_initialize_stores (database);
-
   /* connect emission hook for the "changed" signal on the GtkIconTheme class. We use the emission
    * hook to reset the icon names of all mime infos at once.
    */
@@ -262,13 +259,6 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
                                                           0, thunar_vfs_mime_database_icon_theme_changed,
                                                           database, NULL);
   g_type_class_unref (klass);
-
-  /* start the timer, which invokes thunar-vfs-mime-cleaner from time to time to cleanup the
-   * user's mime database directories, so we don't keep old junk around for too long.
-   */
-  database->cleanup_timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNAR_VFS_MIME_DATABASE_CLEANUP_INTERVAL,
-                                                   thunar_vfs_mime_database_cleanup_timer, database,
-                                                   thunar_vfs_mime_database_cleanup_timer_destroy);
 }
 
 
@@ -279,14 +269,15 @@ thunar_vfs_mime_database_finalize (GObject *object)
   ThunarVfsMimeDatabase *database = THUNAR_VFS_MIME_DATABASE (object);
 
   /* cancel any pending cleanup timer */
-  if (G_LIKELY (database->cleanup_timer_id >= 0))
+  if (G_LIKELY (database->cleanup_timer_id > 0))
     g_source_remove (database->cleanup_timer_id);
 
   /* remove the "changed" emission hook from the GtkIconTheme class */
   g_signal_remove_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME), database->changed_hook_id);
 
-  /* shutdown the MIME desktop stores */
-  thunar_vfs_mime_database_shutdown_stores (database);
+  /* shutdown the MIME desktop stores (if initialized) */
+  if (G_LIKELY (database->stores != NULL))
+    thunar_vfs_mime_database_shutdown_stores (database);
 
   /* release the MIME providers */
   thunar_vfs_mime_database_shutdown_providers (database);
@@ -707,6 +698,17 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
       g_free (path);
     }
   g_strfreev (basedirs);
+
+  /* launch the clean up timer if it's not already running */
+  if (G_LIKELY (database->cleanup_timer_id == 0))
+    {
+      /* start the timer, which invokes thunar-vfs-mime-cleaner from time to time to cleanup the
+       * user's mime database directories, so we don't keep old junk around for too long.
+       */
+      database->cleanup_timer_id = g_timeout_add_full (G_PRIORITY_LOW, THUNAR_VFS_MIME_DATABASE_CLEANUP_INTERVAL,
+                                                       thunar_vfs_mime_database_cleanup_timer, database,
+                                                       thunar_vfs_mime_database_cleanup_timer_destroy);
+    }
 }
 
 
@@ -916,7 +918,7 @@ thunar_vfs_mime_database_cleanup_timer (gpointer user_data)
 static void
 thunar_vfs_mime_database_cleanup_timer_destroy (gpointer user_data)
 {
-  THUNAR_VFS_MIME_DATABASE (user_data)->cleanup_timer_id = -1;
+  THUNAR_VFS_MIME_DATABASE (user_data)->cleanup_timer_id = 0;
 }
 
 
@@ -1313,6 +1315,10 @@ thunar_vfs_mime_database_get_applications (ThunarVfsMimeDatabase *database,
   /* determine the mime infos for info */
   infos = thunar_vfs_mime_database_get_infos_for_info_locked (database, info);
 
+  /* be sure to initialize the MIME desktop stores first */
+  if (G_UNLIKELY (database->stores == NULL))
+    thunar_vfs_mime_database_initialize_stores (database);
+
   /* lookup the default applications for the infos */
   for (lp = infos; lp != NULL; lp = lp->next)
     {
@@ -1424,6 +1430,10 @@ thunar_vfs_mime_database_get_default_application (ThunarVfsMimeDatabase *databas
 
   g_mutex_lock (database->lock);
 
+  /* be sure to initialize the MIME desktop stores first */
+  if (G_UNLIKELY (database->stores == NULL))
+    thunar_vfs_mime_database_initialize_stores (database);
+
   infos = thunar_vfs_mime_database_get_infos_for_info_locked (database, info);
   for (lp = infos; application == NULL && lp != NULL; lp = lp->next)
     {
@@ -1514,6 +1524,10 @@ thunar_vfs_mime_database_set_default_application (ThunarVfsMimeDatabase    *data
 
   /* acquire the lock on the database */
   g_mutex_lock (database->lock);
+
+  /* be sure to initialize the MIME desktop stores first */
+  if (G_UNLIKELY (database->stores == NULL))
+    thunar_vfs_mime_database_initialize_stores (database);
 
   /* grab the user's desktop applications store */
   store = database->stores;
