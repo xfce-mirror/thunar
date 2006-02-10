@@ -1,3 +1,20 @@
+2006-02-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-text-renderer.c(thunar_text_renderer_set_widget): Use
+	  the base text direction specified by Gtk+. Also, do not interpret
+	  line separators in file names.
+	* thunar-vfs/thunar-vfs-listdir-job.c,
+	  thunar-vfs/thunar-vfs-marshal.list: Add boolean return value to the
+	  ThunarVfsListdirJob::infos-ready signal, and allow handlers to take
+	  over ownership of the infos list to avoid having to allocate a new
+	  list (which reduces both performance overhead and the negative effects
+	  on the data cache). Handlers must take care when using this feature,
+	  documentation has been updated to explain the details.
+	* thunar/thunar-folder.c: Take over ownership of the list provided by
+	  "infos-ready" and just replace the ThunarVfsInfo's with ThunarFile's
+	  for the initial load case. For the reload case, there's no real gain
+	  in taking over ownership, so we keep the existing behaviour there.
+
 2006-02-09	Benedikt Meurer <benny@xfce.org>
 
 	* thunarx/thunarx-provider-factory.c: Initialize the factory on demand.

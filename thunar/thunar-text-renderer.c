@@ -675,6 +675,12 @@ thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
       context = gtk_widget_get_pango_context (widget);
       text_renderer->layout = pango_layout_new (context);
 
+      /* disable automatic text direction, but use the direction specified by Gtk+ */
+      pango_layout_set_auto_dir (text_renderer->layout, FALSE);
+
+      /* we don't want to interpret line separators in file names */
+      pango_layout_set_single_paragraph_mode (text_renderer->layout, TRUE);
+
       /* calculate the average character dimensions */
       metrics = pango_context_get_metrics (context, widget->style->font_desc, pango_context_get_language (context));
       text_renderer->char_width = PANGO_PIXELS (pango_font_metrics_get_approximate_char_width (metrics));

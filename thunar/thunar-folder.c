@@ -44,33 +44,33 @@ enum
 
 
 
-static void thunar_folder_class_init                  (ThunarFolderClass      *klass);
-static void thunar_folder_init                        (ThunarFolder           *folder);
-static void thunar_folder_finalize                    (GObject                *object);
-static void thunar_folder_get_property                (GObject                *object,
-                                                       guint                   prop_id,
-                                                       GValue                 *value,
-                                                       GParamSpec             *pspec);
-static void thunar_folder_error                       (ThunarVfsJob           *job,
-                                                       GError                 *error,
-                                                       ThunarFolder           *folder);
-static void thunar_folder_infos_ready                 (ThunarVfsJob           *job,
-                                                       GList                  *infos,
-                                                       ThunarFolder           *folder);
-static void thunar_folder_finished                    (ThunarVfsJob           *job,
-                                                       ThunarFolder           *folder);
-static void thunar_folder_corresponding_file_destroy  (ThunarFile             *file,
-                                                       ThunarFolder           *folder);
-static void thunar_folder_corresponding_file_renamed  (ThunarFile             *file,
-                                                       ThunarFolder           *folder);
-static void thunar_folder_file_destroy                (ThunarFile             *file,
-                                                       ThunarFolder           *folder);
-static void thunar_folder_monitor                     (ThunarVfsMonitor       *monitor,
-                                                       ThunarVfsMonitorHandle *handle,
-                                                       ThunarVfsMonitorEvent   event,
-                                                       ThunarVfsPath          *handle_path,
-                                                       ThunarVfsPath          *event_path,
-                                                       gpointer                user_data);
+static void     thunar_folder_class_init                  (ThunarFolderClass      *klass);
+static void     thunar_folder_init                        (ThunarFolder           *folder);
+static void     thunar_folder_finalize                    (GObject                *object);
+static void     thunar_folder_get_property                (GObject                *object,
+                                                           guint                   prop_id,
+                                                           GValue                 *value,
+                                                           GParamSpec             *pspec);
+static void     thunar_folder_error                       (ThunarVfsJob           *job,
+                                                           GError                 *error,
+                                                           ThunarFolder           *folder);
+static gboolean thunar_folder_infos_ready                 (ThunarVfsJob           *job,
+                                                           GList                  *infos,
+                                                           ThunarFolder           *folder);
+static void     thunar_folder_finished                    (ThunarVfsJob           *job,
+                                                           ThunarFolder           *folder);
+static void     thunar_folder_corresponding_file_destroy  (ThunarFile             *file,
+                                                           ThunarFolder           *folder);
+static void     thunar_folder_corresponding_file_renamed  (ThunarFile             *file,
+                                                           ThunarFolder           *folder);
+static void     thunar_folder_file_destroy                (ThunarFile             *file,
+                                                           ThunarFolder           *folder);
+static void     thunar_folder_monitor                     (ThunarVfsMonitor       *monitor,
+                                                           ThunarVfsMonitorHandle *handle,
+                                                           ThunarVfsMonitorEvent   event,
+                                                           ThunarVfsPath          *handle_path,
+                                                           ThunarVfsPath          *event_path,
+                                                           gpointer                user_data);
 
 
 
@@ -324,24 +324,27 @@ thunar_folder_error (ThunarVfsJob *job,
 
 
 
-static void
+static gboolean
 thunar_folder_infos_ready (ThunarVfsJob *job,
                            GList        *infos,
                            ThunarFolder *folder)
 {
   ThunarFile *file;
-  GList      *nfiles = NULL;
+  GList      *nfiles;
   GList      *fp;
   GList      *lp;
 
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (folder->handle == NULL);
-  g_return_if_fail (folder->job == job);
+  g_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
+  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
+  g_return_val_if_fail (folder->handle == NULL, FALSE);
+  g_return_val_if_fail (folder->job == job, FALSE);
 
   /* check if we have any previous files */
   if (G_UNLIKELY (folder->previous_files != NULL))
     {
+      /* start with a fresh list of new files */
+      nfiles = NULL;
+
       /* for every new info, check if we already have it on the previous list */
       for (lp = infos; lp != NULL; lp = lp->next)
         {
@@ -370,14 +373,20 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
     }
   else
     {
+      /* take over ownership of the infos list */
+      nfiles = infos;
+
       /* add the new files to our temporary list of new files */
       for (lp = infos; lp != NULL; lp = lp->next)
         {
-          /* get the file corresponding to the info */
+          /* get the file corresponding to the info... */
           file = thunar_file_get_for_info (lp->data);
 
-          /* add the file to the temporary list of new files */
-          nfiles = g_list_prepend (nfiles, file);
+          /* ...release the info at the list position... */
+          thunar_vfs_info_unref (lp->data);
+
+          /* ...and replace it with the file */
+          lp->data = file;
 
           /* connect the "destroy" signal */
           g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id,
@@ -394,6 +403,9 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
       /* tell the consumers that we have new files */
       g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, nfiles);
     }
+
+  /* return TRUE if we took over ownership of the infos list */
+  return (nfiles == infos);
 }
 
 

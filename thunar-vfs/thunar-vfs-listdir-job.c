@@ -31,6 +31,7 @@
 
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
+#include <thunar-vfs/thunar-vfs-marshal.h>
 #include <thunar-vfs/thunar-vfs-scandir.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -132,13 +133,30 @@ thunar_vfs_listdir_job_class_init (ThunarVfsJobClass *klass)
    * This signal is emitted whenever there's a new bunch of
    * #ThunarVfsInfo<!---->s ready. This signal is garantied
    * to be never emitted with an @infos parameter of %NULL.
+   *
+   * To allow some further optimizations on the handler-side,
+   * the handler is allowed to take over ownership of the @infos
+   * list, i.e. it can reuse the @infos list and just replace
+   * the data elements with it's own objects based on the
+   * #ThunarVfsInfo<!--->s contained within the @infos list (and
+   * of course properly unreffing the previously contained infos).
+   * If a handler takes over ownership of @infos it must return
+   * %TRUE here, and no further handlers will be run. Else, if
+   * the handler doesn't want to take over ownership of @infos,
+   * it must return %FALSE, and other handlers will be run. Use
+   * this feature with care, and only if you can be sure that
+   * you are the only handler connected to this signal for a
+   * given job!
+   *
+   * Return value: %TRUE if the handler took over ownership of
+   *               @infos, else %FALSE.
    **/
   listdir_signals[INFOS_READY] =
     g_signal_new (I_("infos-ready"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
-                  g_cclosure_marshal_VOID__POINTER,
-                  G_TYPE_NONE, 1, G_TYPE_POINTER);
+                  G_TYPE_FROM_CLASS (klass), G_SIGNAL_NO_HOOKS,
+                  0, g_signal_accumulator_true_handled, NULL,
+                  _thunar_vfs_marshal_BOOLEAN__POINTER,
+                  G_TYPE_BOOLEAN, 1, G_TYPE_POINTER);
 }
 
 
@@ -172,6 +190,7 @@ static void
 thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
 {
   GThreadPool *pool;
+  gboolean     handled = FALSE;
   GError      *error = NULL;
   GList       *list = NULL;
   GList       *lp;
@@ -276,11 +295,15 @@ thunar_vfs_listdir_job_execute (ThunarVfsJob *job)
     }
   else if (G_LIKELY (list != NULL))
     {
-      thunar_vfs_job_emit (job, listdir_signals[INFOS_READY], 0, list);
-    }
+      /* emit the "infos-ready" signal with the given list */
+      thunar_vfs_job_emit (job, listdir_signals[INFOS_READY], 0, list, &handled);
 
-  /* cleanup */
-  thunar_vfs_info_list_free (list);
+      /* check if one of the handlers took over ownership of the list, if
+       * not, we still own it and we are responsible to release it.
+       */
+      if (G_UNLIKELY (!handled))
+        thunar_vfs_info_list_free (list);
+    }
 }
 
 
