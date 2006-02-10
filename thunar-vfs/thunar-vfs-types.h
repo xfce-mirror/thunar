@@ -103,6 +103,11 @@ typedef enum { /*< flags >*/
  *                                     whether the symlink is broken or not.
  * @THUNAR_VFS_FILE_FLAGS_EXECUTABLE : The file can most probably be executed
  *                                     by thunar_vfs_info_execute().
+ * @THUNAR_VFS_FILE_FLAGS_HIDDEN     : The file should not be displayed normally,
+ *                                     but only if the user requests to display
+ *                                     hidden files. Hidden files start with a
+ *                                     dot character ('.') or end with a tilde
+ *                                     character ('~').
  *
  * Flags providing additional information about the
  * file system entity.
@@ -111,6 +116,7 @@ typedef enum { /*< flags >*/
   THUNAR_VFS_FILE_FLAGS_NONE       = 0,
   THUNAR_VFS_FILE_FLAGS_SYMLINK    = 1L << 0,
   THUNAR_VFS_FILE_FLAGS_EXECUTABLE = 1L << 1,
+  THUNAR_VFS_FILE_FLAGS_HIDDEN     = 1L << 2,
 } ThunarVfsFileFlags;
 
 typedef dev_t ThunarVfsFileDevice;

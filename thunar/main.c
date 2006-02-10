@@ -119,6 +119,9 @@ main (int argc, char **argv)
       /* try to reuse an existing instance */
       if (thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
         {
+          /* stop any running startup notification */
+          gdk_notify_startup_complete ();
+
           /* that worked, let's get outa here */
           g_free (working_directory);
           g_strfreev (filenames);
@@ -126,10 +129,6 @@ main (int argc, char **argv)
         }
 #endif
     }
-
-  /* initialize the GLib thread support */
-  if (!g_thread_supported ())
-    g_thread_init (NULL);
 
   /* initialize the ThunarVFS library */
   thunar_vfs_init ();

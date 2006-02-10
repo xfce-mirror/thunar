@@ -1793,34 +1793,6 @@ thunar_file_destroy (ThunarFile *file)
 
 
 /**
- * thunar_file_is_hidden:
- * @file : a #ThunarFile instance.
- *
- * Checks whether @file can be considered a hidden file.
- *
- * Return value: %TRUE if @file is a hidden file, else %FALSE.
- **/
-gboolean
-thunar_file_is_hidden (const ThunarFile *file)
-{
-  const gchar *p;
-
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  p = file->info->display_name;
-  if (*p != '.' && *p != '\0')
-    {
-      for (; p[1] != '\0'; ++p)
-        ;
-      return (*p == '~');
-    }
-
-  return TRUE;
-}
-
-
-
-/**
  * thunar_file_cache_lookup:
  * @path : a #ThunarVfsPath.
  *

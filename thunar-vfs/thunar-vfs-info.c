@@ -606,6 +606,12 @@ thunar_vfs_info_rename (ThunarVfsInfo *info,
         g_free (info->display_name);
       info->display_name = g_strdup (name);
 
+      /* check if this is a hidden file now */
+      if (strlen (name) > 1 && (g_str_has_prefix (name, ".") || g_str_has_prefix (name, "~")))
+        info->flags |= THUNAR_VFS_FILE_FLAGS_HIDDEN;
+      else
+        info->flags &= ~THUNAR_VFS_FILE_FLAGS_HIDDEN;
+
       /* update the info's path */
       thunar_vfs_path_unref (info->path);
       info->path = thunar_vfs_path_new (dst_path, NULL);
@@ -774,14 +780,25 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
     {
       /* determine the displayname using various tricks */
       info->display_name = g_filename_display_name (name);
+
+      /* go on until s reaches the end of the string, as
+       * we need it for the hidden file detection below.
+       */
+      for (; *s != '\0'; ++s)
+        ;
     }
+
+  /* check whether we have a hidden file here */
+  if ((s - (const guchar *) name) > 2 && (*name == '.' || *(s - 1) == '~'))
+    info->flags = THUNAR_VFS_FILE_FLAGS_HIDDEN;
+  else
+    info->flags = THUNAR_VFS_FILE_FLAGS_NONE;
 
   /* determine the POSIX file attributes */
   if (G_LIKELY (!S_ISLNK (lsb.st_mode)))
     {
       info->type = (lsb.st_mode & S_IFMT) >> 12;
       info->mode = lsb.st_mode & 07777;
-      info->flags = THUNAR_VFS_FILE_FLAGS_NONE;
       info->uid = lsb.st_uid;
       info->gid = lsb.st_gid;
       info->size = lsb.st_size;
@@ -792,11 +809,14 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
     }
   else
     {
+      /* whatever comes, we have a symlink here */
+      info->flags |= THUNAR_VFS_FILE_FLAGS_SYMLINK;
+
+      /* check if it's a broken link */
       if (stat (absolute_path, &sb) == 0)
         {
           info->type = (sb.st_mode & S_IFMT) >> 12;
           info->mode = sb.st_mode & 07777;
-          info->flags = THUNAR_VFS_FILE_FLAGS_SYMLINK;
           info->uid = sb.st_uid;
           info->gid = sb.st_gid;
           info->size = sb.st_size;
@@ -809,7 +829,6 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
         {
           info->type = THUNAR_VFS_FILE_TYPE_SYMLINK;
           info->mode = lsb.st_mode & 07777;
-          info->flags = THUNAR_VFS_FILE_FLAGS_SYMLINK;
           info->uid = lsb.st_uid;
           info->gid = lsb.st_gid;
           info->size = lsb.st_size;

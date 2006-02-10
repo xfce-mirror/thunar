@@ -182,8 +182,6 @@ void              thunar_file_reload               (ThunarFile             *file
 
 void              thunar_file_destroy              (ThunarFile             *file);
 
-gboolean          thunar_file_is_hidden            (const ThunarFile       *file);
-
 
 ThunarFile       *thunar_file_cache_lookup         (const ThunarVfsPath    *path);
 
@@ -337,6 +335,16 @@ G_STMT_START{                                             \
  * Return value: %TRUE if @file is a directory.
  **/
 #define thunar_file_is_directory(file) (THUNAR_FILE ((file))->info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+
+/**
+ * thunar_file_is_hidden:
+ * @file : a #ThunarFile instance.
+ *
+ * Checks whether @file can be considered a hidden file.
+ *
+ * Return value: %TRUE if @file is a hidden file, else %FALSE.
+ **/
+#define thunar_file_is_hidden(file) ((THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_HIDDEN) != 0)
 
 /**
  * thunar_file_is_home:

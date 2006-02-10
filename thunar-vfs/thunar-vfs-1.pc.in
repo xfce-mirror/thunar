@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: thunar-vfs
 Description: ThunarVFS library
-Requires: exo-0.3
+Requires: exo-0.3 gthread-2.0
 Version: @PACKAGE_VERSION@
 Libs: -L${libdir} -lthunar-vfs-@THUNAR_VERSION_API@
 Cflags: -I${includedir}/thunar-vfs-@THUNAR_VERSION_API@

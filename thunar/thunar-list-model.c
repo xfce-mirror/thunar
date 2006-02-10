@@ -2043,7 +2043,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       if (size_summary > 0)
         {
           size_string = thunar_vfs_humanize_size (size_summary, NULL, 0);
-          text = g_strdup_printf (ngettext ("%d item selected", "%d items selected (%s)", n), n, size_string);
+          text = g_strdup_printf (ngettext ("%d item selected (%s)", "%d items selected (%s)", n), n, size_string);
           g_free (size_string);
         }
       else

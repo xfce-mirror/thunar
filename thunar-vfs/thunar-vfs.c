@@ -50,6 +50,10 @@ thunar_vfs_init (void)
 {
   if (g_atomic_int_exchange_and_add (&thunar_vfs_ref_count, 1) == 0)
     {
+      /* initialize the GThread system */
+      if (!g_thread_supported ())
+        g_thread_init (NULL);
+
       /* initialize the path module */
       _thunar_vfs_path_init ();
 
