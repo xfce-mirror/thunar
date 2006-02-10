@@ -147,7 +147,7 @@ thunar_throbber_class_init (ThunarThrobberClass *klass)
 
   /* register the "process-working" fallback icon */
   icon = gdk_pixbuf_new_from_inline (-1, thunar_throbber_fallback, FALSE, NULL);
-  gtk_icon_theme_add_builtin_icon ("process-working", 22, icon);
+  gtk_icon_theme_add_builtin_icon ("process-working", 16, icon);
   g_object_unref (G_OBJECT (icon));
 }
 
@@ -233,7 +233,7 @@ thunar_throbber_realize (GtkWidget *widget)
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
 
   /* try to lookup the "process-working" icon */
-  throbber->icon = gtk_icon_theme_load_icon (icon_theme, "process-working", 22, GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_NO_SVG, NULL);
+  throbber->icon = gtk_icon_theme_load_icon (icon_theme, "process-working", 16, GTK_ICON_LOOKUP_USE_BUILTIN | GTK_ICON_LOOKUP_NO_SVG, NULL);
 }
 
 
@@ -260,8 +260,8 @@ static void
 thunar_throbber_size_request (GtkWidget      *widget,
                               GtkRequisition *requisition)
 {
-  requisition->width = 22;
-  requisition->height = 22;
+  requisition->width = 16;
+  requisition->height = 16;
 }
 
 
@@ -281,8 +281,8 @@ thunar_throbber_expose_event (GtkWidget      *widget,
   if (G_LIKELY (throbber->icon != NULL))
     {
       /* determine the icon columns and icon rows */
-      icon_cols = gdk_pixbuf_get_width (throbber->icon) / 22;
-      icon_rows = gdk_pixbuf_get_height (throbber->icon) / 22;
+      icon_cols = gdk_pixbuf_get_width (throbber->icon) / 16;
+      icon_rows = gdk_pixbuf_get_height (throbber->icon) / 16;
 
       /* verify that the icon is usable */
       if (G_LIKELY (icon_cols > 0 && icon_rows > 0))
@@ -295,13 +295,13 @@ thunar_throbber_expose_event (GtkWidget      *widget,
             icon_index = MAX (icon_index, 1);
 
           /* determine the icon x/y offset for the icon index */
-          icon_x = (icon_index % icon_cols) * 22;
-          icon_y = (icon_index / icon_cols) * 22;
+          icon_x = (icon_index % icon_cols) * 16;
+          icon_y = (icon_index / icon_cols) * 16;
 
           /* render the given part of the icon */
           gdk_draw_pixbuf (event->window, NULL, throbber->icon, icon_x, icon_y,
                            widget->allocation.x, widget->allocation.y,
-                           22, 22, GDK_RGB_DITHER_NONE, 0, 0);
+                           16, 16, GDK_RGB_DITHER_NONE, 0, 0);
         }
     }
 
