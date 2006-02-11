@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-02-08 23:51+0100\n"
-"PO-Revision-Date: 2006-02-08 22:25+0900\n"
+"PO-Revision-Date: 2006-02-11 09:53+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -380,7 +380,7 @@ msgstr "リンク「%s」の作成に失敗しました。"
 
 #: ../thunar/main.c:47
 msgid "Run in daemon mode"
-msgstr ""
+msgstr "デーモンモードで実行する"
 
 # FIXME: transliteration?
 #. setup application name
@@ -391,19 +391,18 @@ msgstr "Thunar"
 #. initialize Gtk+
 #: ../thunar/main.c:78
 msgid "[FILES...]"
-msgstr ""
+msgstr "[ファイル...]"
 
 #: ../thunar/main.c:85
-#, fuzzy, c-format
+#, c-format
 msgid "Thunar: Failed to open display: %s\n"
-msgstr "ファイル「%s」を開くのに失敗しました。"
+msgstr "Thunar: ディスプレイを開くのに失敗しました: %s\n"
 
-# FIXME: transliteration?
 #. yep, there's an error, so print it
 #: ../thunar/main.c:90
-#, fuzzy, c-format
+#, c-format
 msgid "Thunar: %s\n"
-msgstr "Thunar"
+msgstr "Thunar: %s\n"
 
 #. display an error message to the user
 #: ../thunar/thunar-application.c:303
@@ -412,14 +411,14 @@ msgstr "操作の実行に失敗しました。"
 
 #. tell the user that we were unable to launch the file specified on the cmdline
 #: ../thunar/thunar-application.c:649
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open \"%s\""
-msgstr "ファイル「%s」を開くのに失敗しました。"
+msgstr "「%s」を開くのに失敗しました。"
 
 #: ../thunar/thunar-application.c:661
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open \"%s\": %s"
-msgstr "ファイル「%s」を開くのに失敗しました。"
+msgstr "「%s」を開くのに失敗しました: %s"
 
 #: ../thunar/thunar-application.c:698 ../thunar/thunar-application.c:731
 msgid "Copying files..."
