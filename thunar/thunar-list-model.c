@@ -975,10 +975,6 @@ thunar_list_model_cmp (ThunarListModel *store,
   gboolean isdir_a;
   gboolean isdir_b;
 
-  g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), -1);
-  g_return_val_if_fail (THUNAR_IS_FILE (a), -1);
-  g_return_val_if_fail (THUNAR_IS_FILE (b), -1);
-
   if (G_LIKELY (store->sort_folders_first))
     {
       isdir_a = thunar_file_is_directory (a);
@@ -990,7 +986,7 @@ thunar_list_model_cmp (ThunarListModel *store,
         return 1;
     }
 
-  return store->sort_func (a, b) * store->sort_sign;
+  return (*store->sort_func) (a, b) * store->sort_sign;
 }
 
 
