@@ -44,6 +44,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 
 
@@ -457,6 +458,9 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
 
   /* notify about changes of the display-name property */
   g_object_notify (G_OBJECT (file_info), "display-name");
+
+  /* tell the file monitor that this file changed */
+  thunar_file_monitor_file_changed (THUNAR_FILE (file_info));
 }
 
 
@@ -1787,7 +1791,21 @@ thunar_file_destroy (ThunarFile *file)
   g_return_if_fail (THUNAR_IS_FILE (file));
 
   if (G_LIKELY ((file->flags & THUNAR_FILE_IN_DESTRUCTION) == 0))
-    g_object_run_dispose (G_OBJECT (file));
+    {
+      /* take an additional reference on the file, as the file-destroyed
+       * invocation may already release the last reference.
+       */
+      g_object_ref (G_OBJECT (file));
+
+      /* tell the file monitor that this file was destroyed */
+      thunar_file_monitor_file_destroyed (file);
+
+      /* run the dispose handler */
+      g_object_run_dispose (G_OBJECT (file));
+
+      /* release our reference */
+      g_object_unref (G_OBJECT (file));
+    }
 }
 
 

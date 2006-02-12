@@ -1,5 +1,18 @@
 2006-02-12	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-file-monitor.{c,h}, thunar/Makefile.am: Add new class
+	  ThunarFileMonitor, which allows other objects stay informed about
+	  changes to ThunarFile's without having to connect signal handlers to
+	  every ThunarFile. Bug #1447.
+	* thunar/thunar-file.c: Emit ThunarFileMonitor signals as appropriate.
+	  Bug #1447.
+	* thunar/thunar-folder.c, thunar/thunar-list-model.c: Use the newly
+	  added ThunarFileMonitor to monitor files for changes and deletion
+	  without having to connect and disconnect signal handlers to each and
+	  every file. Bug #1447.
+
+2006-02-12	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-throbber-fallback.png: Import better throbber fallback
 	  icon, thanks to Brian Schott <brian-schott@cox.net>.
 

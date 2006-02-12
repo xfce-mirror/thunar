@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-folder.h>
 #include <thunar/thunar-gobject-extensions.h>
 
@@ -63,7 +64,8 @@ static void     thunar_folder_corresponding_file_destroy  (ThunarFile           
                                                            ThunarFolder           *folder);
 static void     thunar_folder_corresponding_file_renamed  (ThunarFile             *file,
                                                            ThunarFolder           *folder);
-static void     thunar_folder_file_destroy                (ThunarFile             *file,
+static void     thunar_folder_file_destroyed              (ThunarFileMonitor      *file_monitor,
+                                                           ThunarFile             *file,
                                                            ThunarFolder           *folder);
 static void     thunar_folder_monitor                     (ThunarVfsMonitor       *monitor,
                                                            ThunarVfsMonitorHandle *handle,
@@ -97,8 +99,7 @@ struct _ThunarFolder
   GList                  *previous_files;
   GList                  *files;
 
-  GClosure               *file_destroy_closure;
-  gint                    file_destroy_id;
+  ThunarFileMonitor      *file_monitor;
 
   ThunarVfsMonitor       *monitor;
   ThunarVfsMonitorHandle *handle;
@@ -220,13 +221,9 @@ thunar_folder_class_init (ThunarFolderClass *klass)
 static void
 thunar_folder_init (ThunarFolder *folder)
 {
-  /* lookup the id for the "destroy" signal of ThunarFile's */
-  folder->file_destroy_id = g_signal_lookup ("destroy", THUNAR_TYPE_FILE);
-
-  /* generate the closure to connect to the "destroy" signal of all files */
-  folder->file_destroy_closure = g_cclosure_new (G_CALLBACK (thunar_folder_file_destroy), folder, NULL);
-  g_closure_ref (folder->file_destroy_closure);
-  g_closure_sink (folder->file_destroy_closure);
+  /* connect to the ThunarFileMonitor instance */
+  folder->file_monitor = thunar_file_monitor_get_default ();
+  g_signal_connect (G_OBJECT (folder->file_monitor), "file-destroyed", G_CALLBACK (thunar_folder_file_destroyed), folder);
 
   /* connect to the file alteration monitor */
   folder->monitor = thunar_vfs_monitor_get_default ();
@@ -238,7 +235,10 @@ static void
 thunar_folder_finalize (GObject *object)
 {
   ThunarFolder *folder = THUNAR_FOLDER (object);
-  GList        *lp;
+
+  /* disconnect from the ThunarFileMonitor instance */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (folder->file_monitor), thunar_folder_file_destroyed, folder);
+  g_object_unref (G_OBJECT (folder->file_monitor));
 
   /* disconnect from the file alteration monitor */
   if (G_LIKELY (folder->handle != NULL))
@@ -262,25 +262,11 @@ thunar_folder_finalize (GObject *object)
       g_object_unref (G_OBJECT (folder->corresponding_file));
     }
 
-  /* drop all previous files (if any) */
-  if (G_UNLIKELY (folder->previous_files != NULL))
-    {
-      /* actually drop the list of previous files */
-      g_list_foreach (folder->previous_files, (GFunc) g_object_unref, NULL);
-      g_list_free (folder->previous_files);
-    }
+  /* release references to the previous files */
+  thunar_file_list_free (folder->previous_files);
 
   /* release references to the current files */
-  for (lp = folder->files; lp != NULL; lp = lp->next)
-    {
-      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
-                                            folder->file_destroy_id, 0, folder->file_destroy_closure, NULL, NULL);
-      g_object_unref (G_OBJECT (lp->data));
-    }
-  g_list_free (folder->files);
-
-  /* drop the "destroy" closure */
-  g_closure_unref (folder->file_destroy_closure);
+  thunar_file_list_free (folder->files);
 
   (*G_OBJECT_CLASS (thunar_folder_parent_class)->finalize) (object);
 }
@@ -365,10 +351,6 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
               /* yep, that's a new file then */
               nfiles = g_list_prepend (nfiles, file);
             }
-
-          /* connect the "destroy" signal */
-          g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id,
-                                          0, folder->file_destroy_closure, TRUE);
         }
     }
   else
@@ -387,10 +369,6 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
 
           /* ...and replace it with the file */
           lp->data = file;
-
-          /* connect the "destroy" signal */
-          g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id,
-                                          0, folder->file_destroy_closure, TRUE);
         }
     }
 
@@ -427,8 +405,7 @@ thunar_folder_finished (ThunarVfsJob *job,
       g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, folder->previous_files);
 
       /* actually drop the list of previous files */
-      g_list_foreach (folder->previous_files, (GFunc) g_object_unref, NULL);
-      g_list_free (folder->previous_files);
+      thunar_file_list_free (folder->previous_files);
       folder->previous_files = NULL;
     }
 
@@ -469,37 +446,38 @@ thunar_folder_corresponding_file_renamed (ThunarFile   *file,
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
   g_return_if_fail (folder->corresponding_file == file);
 
-  /* re-register the VFS monitor handle if already connected */
-  if (G_LIKELY (folder->handle != NULL))
-    {
-      thunar_vfs_monitor_remove (folder->monitor, folder->handle);
-      folder->handle = thunar_vfs_monitor_add_directory (folder->monitor, thunar_file_get_path (file),
-                                                         thunar_folder_monitor, folder);
-    }
+  /* reload the folder contents as all paths need to be updated */
+  thunar_folder_reload (folder);
 }
 
 
 
 static void
-thunar_folder_file_destroy (ThunarFile   *file,
-                            ThunarFolder *folder)
+thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
+                              ThunarFile        *file,
+                              ThunarFolder      *folder)
 {
-  GList files;
+  GList  files;
+  GList *lp;
 
   g_return_if_fail (THUNAR_IS_FILE (file));
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (g_list_find (folder->files, file) != NULL);
+  g_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
 
-  /* disconnect from the file */
-  g_signal_handlers_disconnect_matched (G_OBJECT (file), G_SIGNAL_MATCH_CLOSURE, 0, 0, folder->file_destroy_closure, NULL, NULL);
-  folder->files = g_list_remove (folder->files, file);
+  /* check if we have that file */
+  lp = g_list_find (folder->files, file);
+  if (G_LIKELY (lp != NULL))
+    {
+      /* remove the file from our list */
+      folder->files = g_list_delete_link (folder->files, lp);
 
-  /* tell everybody that the file is gone */
-  files.data = file; files.next = files.prev = NULL;
-  g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
+      /* tell everybody that the file is gone */
+      files.data = file; files.next = files.prev = NULL;
+      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, &files);
 
-  /* drop our reference to the file */
-  g_object_unref (G_OBJECT (file));
+      /* drop our reference to the file */
+      g_object_unref (G_OBJECT (file));
+    }
 }
 
 
@@ -540,7 +518,6 @@ thunar_folder_monitor (ThunarVfsMonitor       *monitor,
             return;
 
           /* prepend it to our internal list */
-          g_signal_connect_closure_by_id (G_OBJECT (file), folder->file_destroy_id, 0, folder->file_destroy_closure, TRUE);
           folder->files = g_list_prepend (folder->files, file);
 
           /* tell others about the new file */
@@ -691,8 +668,6 @@ thunar_folder_get_loading (const ThunarFolder *folder)
 void
 thunar_folder_reload (ThunarFolder *folder)
 {
-  GList *lp;
-
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
 
   /* check if we are currently connect to a job */
@@ -710,20 +685,8 @@ thunar_folder_reload (ThunarFolder *folder)
       folder->handle = NULL;
     }
 
-  /* drop all previous files (if any) */
-  if (G_UNLIKELY (folder->previous_files != NULL))
-    {
-      /* actually drop the list of previous files */
-      g_list_foreach (folder->previous_files, (GFunc) g_object_unref, NULL);
-      g_list_free (folder->previous_files);
-    }
-
-  /* disconnect signals from the current files */
-  for (lp = folder->files; lp != NULL; lp = lp->next)
-    {
-      g_signal_handlers_disconnect_matched (G_OBJECT (lp->data), G_SIGNAL_MATCH_ID | G_SIGNAL_MATCH_CLOSURE,
-                                            folder->file_destroy_id, 0, folder->file_destroy_closure, NULL, NULL);
-    }
+  /* drop all previous files */
+  thunar_file_list_free (folder->previous_files);
 
   /* remember the current files as previous files */
   folder->previous_files = folder->files;

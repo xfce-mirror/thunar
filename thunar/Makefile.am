@@ -51,6 +51,8 @@ Thunar_SOURCES =							\
 	thunar-enum-types.h						\
 	thunar-file.c							\
 	thunar-file.h							\
+	thunar-file-monitor.c						\
+	thunar-file-monitor.h						\
 	thunar-folder.c							\
 	thunar-folder.h							\
 	thunar-gdk-extensions.c						\
