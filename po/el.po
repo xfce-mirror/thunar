@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-11 20:28+0900\n"
-"PO-Revision-Date: 2006-02-05 00:53+0200\n"
+"POT-Creation-Date: 2006-02-12 03:13+0200\n"
+"PO-Revision-Date: 2006-02-12 03:05+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
 "MIME-Version: 1.0\n"
@@ -147,9 +147,8 @@ msgid "Failed to load application from file %s"
 msgstr "Η φόρτωση της εφαρμογής από το αρχείο %s απέτυχε"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:134
-#, fuzzy
 msgid "Command"
-msgstr "_Εντολή:"
+msgstr "Εντολή"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:135
 msgid "The command to run the mime handler"
@@ -164,9 +163,8 @@ msgid "The flags for the mime handler"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:163
-#, fuzzy
 msgid "Icon"
-msgstr "Εικονίδ_ιο:"
+msgstr "Εικονίδιο"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:164
 msgid "The icon of the mime handler"
@@ -387,18 +385,18 @@ msgstr "Thunar"
 #. initialize Gtk+
 #: ../thunar/main.c:78
 msgid "[FILES...]"
-msgstr ""
+msgstr "[ΑΡΧΕΙΑ...]"
 
 #: ../thunar/main.c:85
-#, fuzzy, c-format
+#, c-format
 msgid "Thunar: Failed to open display: %s\n"
-msgstr "Η μετονομασία του `%s' απέτυχε"
+msgstr ""
 
 #. yep, there's an error, so print it
 #: ../thunar/main.c:90
-#, fuzzy, c-format
+#, c-format
 msgid "Thunar: %s\n"
-msgstr "Thunar"
+msgstr ""
 
 #. display an error message to the user
 #: ../thunar/thunar-application.c:304
@@ -407,14 +405,14 @@ msgstr "Η εκκίνηση της ενέργειας απέτυχε"
 
 #. tell the user that we were unable to launch the file specified on the cmdline
 #: ../thunar/thunar-application.c:650
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open \"%s\""
-msgstr "Η μετονομασία του `%s' απέτυχε"
+msgstr "Το άνοιγμα του \"%s\" απέτυχε"
 
 #: ../thunar/thunar-application.c:662
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open \"%s\": %s"
-msgstr "Η μετονομασία του `%s' απέτυχε"
+msgstr "Η διαγραφή του \"%s\" απέτυχε: %s"
 
 #: ../thunar/thunar-application.c:699 ../thunar/thunar-application.c:732
 msgid "Copying files..."
@@ -443,9 +441,9 @@ msgstr "Δημιουργία καταλόγων..."
 #. tell the user that it didn't work
 #. display an error to the user
 #: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:481
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to set default application for \"%s\""
-msgstr "Ο ορισμός της προκαθορισμένης εφαρμογής για το `%s' απέτυχε."
+msgstr "Ο ορισμός της προκαθορισμένης εφαρμογής για το \"%s\" απέτυχε."
 
 #: ../thunar/thunar-chooser-button.c:368
 msgid "No application selected"
@@ -481,15 +479,15 @@ msgstr "_Περιήγηση"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to add new application \"%s\""
-msgstr "Η προσθήκη της εφαρμογής `%s' απέτυχε."
+msgstr "Η προσθήκη της εφαρμογής \"%s\" απέτυχε."
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:494
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute \"%s\""
-msgstr "Η εκτέλεση του `%s' απέτυχε"
+msgstr "Η εκτέλεση του \"%s\" απέτυχε"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:615
@@ -704,9 +702,8 @@ msgid "_Open"
 msgstr "_Άνοιγμα"
 
 #: ../thunar/thunar-launcher.c:120
-#, fuzzy
 msgid "Open the selected files"
-msgstr "Εκτέλεση των επιλεγμένων αντικειμένων"
+msgstr "Άνοιγμα των επιλεγμένων αρχείων"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:121 ../thunar/thunar-shortcuts-view.c:371
@@ -718,56 +715,55 @@ msgid "Open the selected directories in new Thunar windows"
 msgstr "Άνοιγμα των επιλεγμένων καταλόγων σε νέα παράθυρα του Thunar"
 
 #: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
-#, fuzzy
 msgid "Open With Other _Application..."
-msgstr "Άλλη Εφαρμογή..."
+msgstr "Άνοιγμα Με Άλλη Ε_φαρμογή..."
 
 #: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
 #: ../thunar/thunar-launcher.c:833
 msgid "Choose another application with which to open the selected file"
 msgstr ""
+"Επιλέξτε μια άλλη εφαρμογή με την οποία θα ανοίξετε το επιλεγμένο αρχείο"
 
 #: ../thunar/thunar-launcher.c:123
-#, fuzzy
 msgid "Choose a program with which to open the selected file"
-msgstr "η διαδρομή προς το πρώτο επιλεγμένο αρχείο"
+msgstr "Επιλέξτε ένα πρόγραμμα για να ανοίξετε το επιλεγμένο αρχείο"
 
 #. display an error message to the user
 #: ../thunar/thunar-launcher.c:497
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute file \"%s\""
-msgstr "Η εκτέλεση του `%s' απέτυχε"
+msgstr "Η εκτέλεση του \"%s\" απέτυχε"
 
 #: ../thunar/thunar-launcher.c:592
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open file \"%s\""
-msgstr "Η μετονομασία του `%s' απέτυχε"
+msgstr "Το άνοιγμα του αρχείου \"%s\" απέτυχε"
 
 #. we can just tell that n files failed to open
 #: ../thunar/thunar-launcher.c:598
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
-msgstr[0] "Αδύνατο το άνοιγμα %d αρχείου."
-msgstr[1] "Αδύνατο το άνοιγμα %d αρχείων."
+msgstr[0] "Δεν ήταν δυνατό το άνοιγμα %d αρχείου"
+msgstr[1] "Δεν ήταν δυνατό το άνοιγμα %d αρχείων"
 
 #: ../thunar/thunar-launcher.c:634
 msgid "Are you sure you want to open all folders?"
 msgstr "Είσαστε βέβαιοι ότι θέλετε να ανοίξετε όλους τους φακέλους;"
 
 #: ../thunar/thunar-launcher.c:636
-#, fuzzy, c-format
+#, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Αυτό θα ανοίξει %d διαφορετικό παράθυρο."
 msgstr[1] "Αυτό θα ανοίξει %d διαφορετικά παράθυρα."
 
 #: ../thunar/thunar-launcher.c:640
-#, fuzzy, c-format
+#, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
-msgstr[0] "Άνοιγμα σε %d Νέο Παράθυρο"
-msgstr[1] "Άνοιγμα σε %d Νέα Παράθυρα"
+msgstr[0] "Άνοιγμα %d Νέου Παραθύρου"
+msgstr[1] "Άνοιγμα %d Νέων Παραθύρων"
 
 #. turn "Open" into "Open in n New Windows"
 #: ../thunar/thunar-launcher.c:734
@@ -778,64 +774,59 @@ msgstr[0] "Άνοιγμα σε %d Νέο Παράθυρο"
 msgstr[1] "Άνοιγμα σε %d Νέα Παράθυρα"
 
 #: ../thunar/thunar-launcher.c:735
-#, fuzzy, c-format
+#, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Άνοιγμα των επιλεγμένων καταλόγων σε νέα παράθυρα του Thunar"
-msgstr[1] "Άνοιγμα των επιλεγμένων καταλόγων σε νέα παράθυρα του Thunar"
+msgstr[0] "Άνοιγμα του επιλεγμένου καταλόγου σε %d νέο παράθυρο"
+msgstr[1] "Άνοιγμα των επιλεγμένων καταλόγων σε %d νέα παράθυρα"
 
 #: ../thunar/thunar-launcher.c:752
-#, fuzzy
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
-msgstr[0] "Εκτέλεση των επιλεγμένων αντικειμένων"
-msgstr[1] "Εκτέλεση των επιλεγμένων αντικειμένων"
+msgstr[0] "Άνοιγμα του επιλεγμένου αρχείου"
+msgstr[1] "Άνοιγμα των επιλεγμένων αρχείων"
 
 #: ../thunar/thunar-launcher.c:801
 msgid "_Execute"
 msgstr "_Εκτέλεση"
 
 #: ../thunar/thunar-launcher.c:802
-#, fuzzy
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
-msgstr[0] "Αποκοπή των επιλεγμένων αρχείων"
-msgstr[1] "Αποκοπή των επιλεγμένων αρχείων"
+msgstr[0] "Εκτέλεση του επιλεγμένου αρχείου"
+msgstr[1] "Εκτέλεση των επιλεγμένων αρχείων"
 
 #. turn the "Open" action into "Open With DEFAULT"
 #: ../thunar/thunar-launcher.c:808
-#, fuzzy, c-format
+#, c-format
 msgid "_Open With \"%s\""
-msgstr "Άνοιγμα Με"
+msgstr "_Άνοιγμα Με το \"%s\""
 
 #: ../thunar/thunar-launcher.c:809 ../thunar/thunar-launcher.c:896
-#, fuzzy, c-format
+#, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] "Διαγραφή των επιλεγμένων αρχείων"
-msgstr[1] "Διαγραφή των επιλεγμένων αρχείων"
+msgstr[0] "Χρήση του \"%s\" για το άνοιγμα του επιλεγμένου αρχείου"
+msgstr[1] "Χρήση του \"%s\" για το άνοιγμα των επιλεγμένων αρχείων"
 
 #: ../thunar/thunar-launcher.c:832
-#, fuzzy
 msgid "_Open With Other Application..."
-msgstr "Άλλη Εφαρμογή..."
+msgstr "Άνοιγμα Με Ά_λλη Εφαρμογή..."
 
 #: ../thunar/thunar-launcher.c:841
-#, fuzzy
 msgid "_Open With Default Applications"
-msgstr "Άλλες Εφαρμογές:"
+msgstr "Άνοιγμα Με Τις Προκαθορισμένες _Εφαρμογές"
 
 #: ../thunar/thunar-launcher.c:842
-#, fuzzy
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
-msgstr[0] "τα επιλεγμένα αρχεία (χωρίς τις διαδρομές)"
-msgstr[1] "τα επιλεγμένα αρχεία (χωρίς τις διαδρομές)"
+msgstr[0] "Άνοιγμα του επιλεγμένου αρχείου με την προκαθορισμένη εφαρμογή"
+msgstr[1] "Άνοιγμα των επιλεγμένων αρχείων με τις προκαθορισμένες εφαρμογές"
 
 #: ../thunar/thunar-launcher.c:895
-#, fuzzy, c-format
+#, c-format
 msgid "Open With \"%s\""
-msgstr "Άνοιγμα Με"
+msgstr "Άνοιγμα Με το \"%s\""
 
 #: ../thunar/thunar-list-model.c:712 ../thunar/thunar-properties-dialog.c:675
 msgid "broken link"
@@ -1054,6 +1045,8 @@ msgid ""
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
 msgstr ""
+"Θα επαναφερθεί η συνοχή των δικαιωμάτων του φακέλου. Μόνο οι χρήστες που "
+"έχουν δικαίωμα ανάγνωσης των περιεχομένων θα έχουν και πρόσβαση στο φάκελο."
 
 #: ../thunar/thunar-permissions-chooser.c:1174
 #: ../thunar/thunar-progress-dialog.c:320
@@ -1118,15 +1111,16 @@ msgstr ""
 "ταξινόμηση ενός φακέλου."
 
 #: ../thunar/thunar-preferences-dialog.c:255
-#, fuzzy
 msgid "_Show thumbnails"
-msgstr "Εμφάνιση _thumbnails:"
+msgstr "Εμφάνιση _μικρογραφιών:"
 
 #: ../thunar/thunar-preferences-dialog.c:257
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
 msgstr ""
+"Ενεργοποιήστε αυτή την επιλογή για να δημιουργούνται και να εμφανίζονται "
+"αυτόματα μικρογραφίες όσων αρχείων γίνεται."
 
 #: ../thunar/thunar-preferences-dialog.c:278
 msgid "_Text beside icons"
@@ -1137,6 +1131,8 @@ msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
 msgstr ""
+"Ενεργοποιήστε αυτή την επιλογή για να προβάλλεται το κείμενο πλάι στα "
+"εικονίδια, και όχι από κάτω."
 
 #.
 #. Advanced
@@ -1259,14 +1255,14 @@ msgstr "Η μετονομασία του `%s' απέτυχε"
 #: ../thunar/thunar-shortcuts-pane.c:95 ../thunar/thunar-shortcuts-pane.c:401
 msgid "Add Folder to _Shortcuts"
 msgid_plural "Add Folders to _Shortcuts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Προσθήκη Φακέλου στις _Συντομεύσεις"
+msgstr[1] "Προσθήκη Φακέλων στις _Συντομεύσεις"
 
 #: ../thunar/thunar-shortcuts-pane.c:95 ../thunar/thunar-shortcuts-pane.c:403
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Προσθήκη του επιλεγμένου φακέλου στη μπάρα συντομεύσεων"
+msgstr[1] "Προσθήκη των επιλεγμένων φακέλων στη μπάρα συντομεύσεων"
 
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:385
@@ -1303,6 +1299,7 @@ msgid ""
 "Display emblem icons in the shortcuts list for all files for which emblems "
 "have been defined in the file properties dialog."
 msgstr ""
+"Εμφανίζει τα εμβλήματα σε όσα αρχεία έχουν τεθεί μέσω των ιδιοτήτων τους."
 
 #: ../thunar/thunar-shortcuts-view.c:789
 #, c-format
@@ -1495,7 +1492,7 @@ msgstr[1] ""
 
 #: ../thunar/thunar-standard-view.c:1776
 msgid "If you delete a file, it is permanently lost."
-msgstr "Εάν διαγράψετε ένα αρχείο, χάνετε για πάντα."
+msgstr "Εάν διαγράψετε ένα αρχείο, χάνεται για πάντα."
 
 #: ../thunar/thunar-standard-view.c:1841
 msgid "Select by Pattern"
@@ -1781,6 +1778,12 @@ msgid ""
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
 msgstr ""
+"Εάν δημιουργείτε συχνά συγκεκριμένους τύπους εγγράφων, αντιγράψτε ένα μέσα "
+"σε αυτό το φάκελο. Ο Thunar θα προσθέσει μια επιλογή για αυτό το έγγραφο στο "
+"μενού \"Δημιουργία Εγγράφου\".\n"
+"\n"
+"Όταν κάνετε την επιλογή από το μενού \"Δημιουργία Εγγράφου\" θα δημιουργηθεί "
+"ένα αντίγραφο αυτού του εγγράφου στον τρέχοντα φάκελο."
 
 #: ../thunar/thunar-window.c:1418
 msgid "Do _not display this message again"
@@ -1911,10 +1914,18 @@ msgid ""
 "if more than one item is selected. Else the action will only be applicable "
 "if exactly one item is selected."
 msgstr ""
+"Η εντολή (μαζί με τα απαραίτητα ορίσματα) που θα εκτελεί η δράση. Δείτε το "
+"υπόμνημα παραμέτρων παρακάτω για τη λίστα με τα υποστηριζόμενα ορίσματα, που "
+"θα αντικατασταθούν καθώς εκτελείται η εντολή. Όταν χρησιμοποιούνται κεφαλαία "
+"γράμματα (π.χ. %F, %D, %N), η δράση θα είναι διαθέσιμη ακόμα και εάν είναι "
+"παραπάνω από ένα αντικείμενα επιλεγμένα. Αλλιώς η δράση θα εμφανίζεται μόνο "
+"όταν είναι επιλεγμένο μόνο ένα αντικείμενο."
 
 #: ../thunar-uca/thunar-uca-editor.c:201
 msgid "Browse the file system to select an application to use for this action."
 msgstr ""
+"Ερευνήστε το σύστημα αρχείων για να επιλέξετε την εφαρμογή που θα "
+"χρησιμοποιείτε για αυτή την ενέργεια."
 
 #: ../thunar-uca/thunar-uca-editor.c:217
 msgid "_Icon:"
@@ -1930,12 +1941,16 @@ msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
 msgstr ""
+"Πιέστε αυτό το κουμπί για να επιλέξετε το εικονίδιο που θα εμφανίζεται στο "
+"μενού δίπλα από το όνομα της ενέργειας."
 
 #: ../thunar-uca/thunar-uca-editor.c:257
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
 msgstr ""
+"Οι παρακάτω παράμετροι θα μεταβιβαστούν\n"
+"στην εντολή κατά την εκτέλεσή της:"
 
 #: ../thunar-uca/thunar-uca-editor.c:295
 msgid "the path to the first selected file"
@@ -1948,12 +1963,12 @@ msgstr "οι διαδρομές προς όλα τα επιλεγμένα αρχ
 #: ../thunar-uca/thunar-uca-editor.c:319
 #, c-format
 msgid "directory containing the file that is passed in %f"
-msgstr ""
+msgstr "ο κατάλογος που περιέχει το αρχείο στην %f"
 
 #: ../thunar-uca/thunar-uca-editor.c:331
 #, c-format
 msgid "directories containing the files that are passed in %F"
-msgstr ""
+msgstr "οι κατάλογοι που περιέχουν τα αρχεία στην %F"
 
 #: ../thunar-uca/thunar-uca-editor.c:343
 msgid "the first selected filename (without path)"
@@ -1978,10 +1993,14 @@ msgid ""
 "pattern here, the list items must be separated with semicolons (e.g. *.txt;*."
 "doc)."
 msgstr ""
+"Εισάγετε μια λίστα από μάσκες που θα χρησιμοποιηθούν για να προσδιοριστεί "
+"εάν θα εμφανίζεται η ενέργεια για το επιλεγμένο αρχείο. Εάν ορίσετε παραπάνω "
+"από μια μάσκα εδώ, τα αντικείμενα στη λίστα θα πρέπει να χωρίζονται με "
+"ερωτηματικά (π.χ. *.txt;*.doc)."
 
 #: ../thunar-uca/thunar-uca-editor.c:401
 msgid "Appears if selection contains:"
-msgstr ""
+msgstr "Εμφανίζεται εάν η επιλογή περιέχει:"
 
 #: ../thunar-uca/thunar-uca-editor.c:414
 msgid "_Directories"
@@ -2020,6 +2039,16 @@ msgid ""
 "action should only appear for certain kinds of\n"
 "files."
 msgstr ""
+"Αυτή η σελίδα περιλαμβάνει τις προϋποθέσεις κάτω\n"
+"από τις οποίες η ενέργεια θα εμφανίζεται στα μενού\n"
+"του διαχειριστή αρχείων. Οι μάσκες αρχείων ορίζονται\n"
+"ως λίστα απλών μασκών αρχείων χωρισμένων με ελληνικά\n"
+"ερωτηματικά (π.χ. *.txt;*.doc). Για να εμφανιστεί η\n"
+"ενέργεια στο μενού ενός αρχείου ή ενός φακέλου, θα\n"
+"πρέπει τουλάχιστον μια μάσκα να ταιριάζει το όνομα του\n"
+"αρχείου ή του φακέλου. Επί πλέον, μπορείτε να ορίσετε\n"
+"ότι η ενέργεια μπορεί να εμφανίζεται μόνο για ορισμένα\n"
+"είδη αρχείων."
 
 #: ../thunar-uca/thunar-uca-editor.c:630
 msgid "Select an Icon"
@@ -2059,6 +2088,8 @@ msgstr "Ρυθμίσεις προσαρμο_σμένων ενεργειών..."
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
 msgstr ""
+"Ρύθμιση προσαρμοσμένων ενεργειών που θα εμφανίζονται στα μενού του "
+"διαχειριστή αρχείων"
 
 #: ../thunar-uca/thunar-uca-provider.c:328
 #, c-format
