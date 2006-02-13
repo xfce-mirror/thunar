@@ -172,16 +172,16 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          NULL);
   gtk_tree_view_column_pack_start (column, THUNAR_STANDARD_VIEW (details_view)->icon_renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
-                                       "file", THUNAR_LIST_MODEL_COLUMN_FILE,
+                                       "file", THUNAR_COLUMN_FILE,
                                        NULL);
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
                 "xalign", 0.0,
                 NULL);
   gtk_tree_view_column_pack_start (column, THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, THUNAR_STANDARD_VIEW (details_view)->name_renderer,
-                                       "text", THUNAR_LIST_MODEL_COLUMN_NAME,
+                                       "text", THUNAR_COLUMN_NAME,
                                        NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_NAME);
+  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_NAME);
   gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* second column (size) */
@@ -194,9 +194,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_LIST_MODEL_COLUMN_SIZE,
+                                       "text", THUNAR_COLUMN_SIZE,
                                        NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_SIZE);
+  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_SIZE);
   gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* third column (permissions) */
@@ -209,9 +209,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                            NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_LIST_MODEL_COLUMN_PERMISSIONS,
+                                       "text", THUNAR_COLUMN_PERMISSIONS,
                                        NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_PERMISSIONS);
+  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_PERMISSIONS);
   gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* fourth column (type) */
@@ -221,9 +221,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_LIST_MODEL_COLUMN_TYPE,
+                                       "text", THUNAR_COLUMN_TYPE,
                                        NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_TYPE);
+  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_TYPE);
   gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* fifth column (modification date) */
@@ -233,9 +233,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
                          NULL);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED,
+                                       "text", THUNAR_COLUMN_DATE_MODIFIED,
                                        NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED);
+  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_DATE_MODIFIED);
   gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
 
   /* configure the tree selection */
@@ -397,7 +397,7 @@ thunar_details_view_notify_model (GtkTreeView       *tree_view,
   /* We need to set the search column here, as GtkTreeView resets it
    * whenever a new model is set.
    */
-  gtk_tree_view_set_search_column (tree_view, THUNAR_LIST_MODEL_COLUMN_NAME);
+  gtk_tree_view_set_search_column (tree_view, THUNAR_COLUMN_NAME);
 }
 
 

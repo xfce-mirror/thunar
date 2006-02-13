@@ -33,13 +33,14 @@
 #include <string.h>
 #endif
 
-#include <glib-object.h>
+#include <exo/exo.h>
 
 #include <thunar/thunar-gobject-extensions.h>
 
 
 
 static void transform_string_to_boolean (const GValue *src, GValue *dst);
+static void transform_string_to_enum    (const GValue *src, GValue *dst);
 static void transform_string_to_int     (const GValue *src, GValue *dst);
 
 
@@ -49,6 +50,30 @@ transform_string_to_boolean (const GValue *src,
                              GValue       *dst)
 {
   g_value_set_boolean (dst, strcmp (g_value_get_string (src), "FALSE") != 0);
+}
+
+
+
+static void
+transform_string_to_enum (const GValue *src,
+                          GValue       *dst)
+{
+  GEnumClass *klass;
+  gint        value = 0;
+  gint        n;
+
+  /* determine the enum value matching the src... */
+  klass = g_type_class_ref (G_VALUE_TYPE (dst));
+  for (n = 0; n < klass->n_values; ++n)
+    {
+      value = klass->values[n].value;
+      if (exo_str_is_equal (klass->values[n].value_name, g_value_get_string (src)))
+        break;
+    }
+  g_type_class_unref (klass);
+
+  /* ...and return that value */
+  g_value_set_enum (dst, value);
 }
 
 
@@ -76,4 +101,6 @@ thunar_g_initialize_transformations (void)
     g_value_register_transform_func (G_TYPE_STRING, G_TYPE_BOOLEAN, transform_string_to_boolean);
   if (!g_value_type_transformable (G_TYPE_STRING, G_TYPE_INT))
     g_value_register_transform_func (G_TYPE_STRING, G_TYPE_INT, transform_string_to_int);
+  if (!g_value_type_transformable (G_TYPE_STRING, GTK_TYPE_SORT_TYPE))
+    g_value_register_transform_func (G_TYPE_STRING, GTK_TYPE_SORT_TYPE, transform_string_to_enum);
 }

@@ -124,10 +124,10 @@ static const GtkActionEntry action_entries[] =
 
 static const GtkRadioActionEntry column_action_entries[] =
 {
-  { "sort-by-name", NULL, N_ ("Sort By _Name"), NULL, N_ ("Keep items sorted by their name in rows"), THUNAR_LIST_MODEL_COLUMN_NAME, },
-  { "sort-by-size", NULL, N_ ("Sort By _Size"), NULL, N_ ("Keep items sorted by their size in rows"), THUNAR_LIST_MODEL_COLUMN_SIZE, },
-  { "sort-by-type", NULL, N_ ("Sort By _Type"), NULL, N_ ("Keep items sorted by their type in rows"), THUNAR_LIST_MODEL_COLUMN_TYPE, },
-  { "sort-by-mtime", NULL, N_ ("Sort By Modification _Date"), NULL, N_ ("Keep items sorted by their modification date in rows"), THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED, },
+  { "sort-by-name", NULL, N_ ("Sort By _Name"), NULL, N_ ("Keep items sorted by their name in rows"), THUNAR_COLUMN_NAME, },
+  { "sort-by-size", NULL, N_ ("Sort By _Size"), NULL, N_ ("Keep items sorted by their size in rows"), THUNAR_COLUMN_SIZE, },
+  { "sort-by-type", NULL, N_ ("Sort By _Type"), NULL, N_ ("Keep items sorted by their type in rows"), THUNAR_COLUMN_TYPE, },
+  { "sort-by-mtime", NULL, N_ ("Sort By Modification _Date"), NULL, N_ ("Keep items sorted by their modification date in rows"), THUNAR_COLUMN_DATE_MODIFIED, },
 };
 
 static const GtkRadioActionEntry order_action_entries[] =
@@ -244,7 +244,7 @@ thunar_icon_view_init (ThunarIconView *icon_view)
                 NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer, FALSE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->icon_renderer,
-                                 "file", THUNAR_LIST_MODEL_COLUMN_FILE);
+                                 "file", THUNAR_COLUMN_FILE);
 
   /* add the name renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->name_renderer),
@@ -255,14 +255,14 @@ thunar_icon_view_init (ThunarIconView *icon_view)
                 NULL);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->name_renderer, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (view), THUNAR_STANDARD_VIEW (icon_view)->name_renderer,
-                                 "text", THUNAR_LIST_MODEL_COLUMN_NAME);
+                                 "text", THUNAR_COLUMN_NAME);
 
   /* setup the icon view actions */
   gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (icon_view)->action_group,
                                 action_entries, G_N_ELEMENTS (action_entries),
                                 GTK_WIDGET (icon_view));
   gtk_action_group_add_radio_actions (THUNAR_STANDARD_VIEW (icon_view)->action_group, column_action_entries,
-                                      G_N_ELEMENTS (column_action_entries), THUNAR_LIST_MODEL_COLUMN_NAME,
+                                      G_N_ELEMENTS (column_action_entries), THUNAR_COLUMN_NAME,
                                       G_CALLBACK (thunar_icon_view_action_sort), icon_view);
   gtk_action_group_add_radio_actions (THUNAR_STANDARD_VIEW (icon_view)->action_group, order_action_entries,
                                       G_N_ELEMENTS (order_action_entries), GTK_SORT_ASCENDING,

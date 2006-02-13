@@ -44,6 +44,40 @@ typedef enum
 GType thunar_color_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
+#define THUNAR_TYPE_COLUMN (thunar_column_get_type ())
+
+/**
+ * ThunarColumn:
+ * @THUNAR_COLUMN_DATE_ACCESSED : last access time.
+ * @THUNAR_COLUMN_DATE_MODIFIED : last modification time.
+ * @THUNAR_COLUMN_FILE          : #ThunarFile object.
+ * @THUNAR_COLUMN_MIME_TYPE     : mime type (i.e. "text/plain").
+ * @THUNAR_COLUMN_NAME          : display name.
+ * @THUNAR_COLUMN_PERMISSIONS   : permissions bits.
+ * @THUNAR_COLUMN_REAL_NAME     : real file name.
+ * @THUNAR_COLUMN_SIZE          : file size.
+ * @THUNAR_COLUMN_TYPE          : file type (i.e. 'plain text document').
+ *
+ * Columns exported by #ThunarListModel using the #GtkTreeModel
+ * interface.
+ **/
+typedef enum
+{
+  THUNAR_COLUMN_DATE_ACCESSED,
+  THUNAR_COLUMN_DATE_MODIFIED,
+  THUNAR_COLUMN_FILE,
+  THUNAR_COLUMN_MIME_TYPE,
+  THUNAR_COLUMN_NAME,
+  THUNAR_COLUMN_PERMISSIONS,
+  THUNAR_COLUMN_REAL_NAME,
+  THUNAR_COLUMN_SIZE,
+  THUNAR_COLUMN_TYPE,
+  THUNAR_N_COLUMNS,
+} ThunarColumn;
+
+GType thunar_column_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
 #define THUNAR_TYPE_ICON_SIZE (thunar_icon_size_get_type ())
 
 /**

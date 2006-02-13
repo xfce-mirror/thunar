@@ -53,6 +53,28 @@ thunar_color_style_get_type (void)
 
 
 GType
+thunar_column_get_type (void)
+{
+  static const GEnumValue values[] =
+  {
+    { THUNAR_COLUMN_DATE_ACCESSED, "THUNAR_COLUMN_DATE_ACCESSED", "date-accessed", },
+    { THUNAR_COLUMN_DATE_MODIFIED, "THUNAR_COLUMN_DATE_MODIFIED", "date-modified", },
+    { THUNAR_COLUMN_FILE,          "THUNAR_COLUMN_FILE",          "file",          },
+    { THUNAR_COLUMN_MIME_TYPE,     "THUNAR_COLUMN_MIME_TYPE",     "mime-type",     },
+    { THUNAR_COLUMN_NAME,          "THUNAR_COLUMN_NAME",          "name",          },
+    { THUNAR_COLUMN_PERMISSIONS,   "THUNAR_COLUMN_PERMISSIONS",   "permissions",   },
+    { THUNAR_COLUMN_REAL_NAME,     "THUNAR_COLUMN_REAL_NAME",     "real-name",     },
+    { THUNAR_COLUMN_SIZE,          "THUNAR_COLUMN_SIZE",          "size",          },
+    { THUNAR_COLUMN_TYPE,          "THUNAR_COLUMN_TYPE",          "type",          },
+    { 0,                           NULL,                          NULL,            },
+  };
+
+  return thunar_enum_register_type ("ThunarColumn", values);
+}
+
+
+
+GType
 thunar_icon_size_get_type (void)
 {
   static const GEnumValue values[] =

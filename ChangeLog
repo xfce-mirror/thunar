@@ -1,3 +1,20 @@
+2006-02-13	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-enum-types.{c,h}, thunar/thunar-list-model.h: Rename
+	  ThunarListModelColumn to ThunarColumn and add an enum type for it.
+	* thunar/thunar-details-view.c, thunar/thunar-icon-view.c,
+	  thunar/thunar-list-model.c, thunar/thunar-path-entry.c: Use the new
+	  ThunarColumn enum type.
+	* thunar/thunar-gobject-extensions.c: Add transformation function for
+	  GtkSortType to string.
+	* thunar/thunar-preferences.c, docs/README.thunarrc: Add LastSortColumn
+	  and LastSortOrder preferences, which contain the last selected sort
+	  settings. Bug #1342.
+	* thunar/thunar-standard-view.c: Apply default sort settings on con-
+	  struction and save new defaults whenever the sort settings are
+	  changed by the user. Bug #1342.
+	* po/Thunar.pot, po/*.po: Update translations.
+
 2006-02-12	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-file-monitor.{c,h}, thunar/Makefile.am: Add new class

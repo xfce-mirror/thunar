@@ -20,6 +20,7 @@
 #ifndef __THUNAR_LIST_MODEL_H__
 #define __THUNAR_LIST_MODEL_H__
 
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-folder.h>
 
 G_BEGIN_DECLS;
@@ -33,26 +34,6 @@ typedef struct _ThunarListModel      ThunarListModel;
 #define THUNAR_IS_LIST_MODEL(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_LIST_MODEL))
 #define THUNAR_IS_LIST_MODEL_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_LIST_MODEL))
 #define THUNAR_LIST_MODEL_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LIST_MODEL, ThunarListModelClass))
-
-/**
- * ThunarListModelColumn:
- *
- * Columns exported by #ThunarListModel using the #GtkTreeModel
- * interface.
- **/
-typedef enum
-{
-  THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED,
-  THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED,
-  THUNAR_LIST_MODEL_COLUMN_FILE,
-  THUNAR_LIST_MODEL_COLUMN_MIME_TYPE,
-  THUNAR_LIST_MODEL_COLUMN_NAME,
-  THUNAR_LIST_MODEL_COLUMN_REAL_NAME,
-  THUNAR_LIST_MODEL_COLUMN_PERMISSIONS,
-  THUNAR_LIST_MODEL_COLUMN_SIZE,
-  THUNAR_LIST_MODEL_COLUMN_TYPE,
-  THUNAR_LIST_MODEL_N_COLUMNS,
-} ThunarListModelColumn;
 
 GType            thunar_list_model_get_type               (void) G_GNUC_CONST;
 

@@ -34,6 +34,7 @@
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-marshal.h>
@@ -217,6 +218,8 @@ static void                 thunar_standard_view_drag_end                   (Gtk
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_error                      (ThunarListModel          *model,
                                                                              const GError             *error,
+                                                                             ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_sort_column_changed        (GtkTreeSortable          *tree_sortable,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_loading_unbound            (gpointer                  user_data);
 static gboolean             thunar_standard_view_drag_scroll_timer          (gpointer                  user_data);
@@ -561,9 +564,11 @@ thunar_standard_view_constructor (GType                  type,
                                   GObjectConstructParam *construct_properties)
 {
   ThunarStandardView *standard_view;
-  ThunarZoomLevel    zoom_level;
-  GtkWidget         *view;
-  GObject           *object;
+  ThunarZoomLevel     zoom_level;
+  ThunarColumn        sort_column;
+  GtkSortType         sort_order;
+  GtkWidget          *view;
+  GObject            *object;
 
   /* let the GObject constructor create the instance */
   object = G_OBJECT_CLASS (thunar_standard_view_parent_class)->constructor (type,
@@ -587,6 +592,13 @@ thunar_standard_view_constructor (GType                  type,
    * we therefore assume that all real views have the "model" property.
    */
   g_object_set (G_OBJECT (view), "model", standard_view->model, NULL);
+
+  /* apply the default sort column and sort order */
+  g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
+
+  /* stay informed about changes to the sort column/order */
+  g_signal_connect (G_OBJECT (standard_view->model), "sort-column-changed", G_CALLBACK (thunar_standard_view_sort_column_changed), standard_view);
 
   /* setup support to navigate using a horizontal mouse wheel */
   g_signal_connect (G_OBJECT (view), "scroll-event", G_CALLBACK (thunar_standard_view_scroll_event), object);
@@ -2655,6 +2667,29 @@ thunar_standard_view_error (ThunarListModel    *model,
   thunar_dialogs_show_error (GTK_WIDGET (standard_view), error,
                              _("Failed to open directory `%s'"),
                              thunar_file_get_display_name (file));
+}
+
+
+
+static void
+thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
+                                          ThunarStandardView *standard_view)
+{
+  GtkSortType sort_order;
+  gint        sort_column;
+
+  g_return_if_fail (GTK_IS_TREE_SORTABLE (tree_sortable));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* determine the new sort column and sort order */
+  if (gtk_tree_sortable_get_sort_column_id (tree_sortable, &sort_column, &sort_order))
+    {
+      /* remember the new values as default */
+      g_object_set (G_OBJECT (standard_view->preferences),
+                    "last-sort-column", sort_column,
+                    "last-sort-order", sort_order,
+                    NULL);
+    }
 }
 
 

@@ -55,6 +55,8 @@ enum
   PROP_LAST_LOCATION_BAR,
   PROP_LAST_SHOW_HIDDEN,
   PROP_LAST_SIDE_PANE,
+  PROP_LAST_SORT_COLUMN,
+  PROP_LAST_SORT_ORDER,
   PROP_LAST_STATUSBAR_VISIBLE,
   PROP_LAST_VIEW,
   PROP_LAST_WINDOW_HEIGHT,
@@ -257,6 +259,33 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         "ThunarShortcutsPane",
                                                         EXO_PARAM_READWRITE));
 
+  /**
+   * ThunarPreferences:last-sort-column:
+   *
+   * The default sort column for new views.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_SORT_COLUMN,
+                                   g_param_spec_enum ("last-sort-column",
+                                                      "last-sort-column",
+                                                      "last-sort-column",
+                                                      THUNAR_TYPE_COLUMN,
+                                                      THUNAR_COLUMN_NAME,
+                                                      EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-sort-order:
+   *
+   * The default sort order for new views.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_SORT_ORDER,
+                                   g_param_spec_enum ("last-sort-order",
+                                                      "last-sort-order",
+                                                      "last-sort-order",
+                                                      GTK_TYPE_SORT_TYPE,
+                                                      GTK_SORT_ASCENDING,
+                                                      EXO_PARAM_READWRITE));
   /**
    * ThunarPreferences:last-statusbar-visible:
    *

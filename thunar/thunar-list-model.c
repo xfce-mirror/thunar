@@ -541,7 +541,7 @@ thunar_list_model_get_flags (GtkTreeModel *model)
 static gint
 thunar_list_model_get_n_columns (GtkTreeModel *model)
 {
-  return THUNAR_LIST_MODEL_N_COLUMNS;
+  return THUNAR_N_COLUMNS;
 }
 
 
@@ -552,31 +552,31 @@ thunar_list_model_get_column_type (GtkTreeModel *model,
 {
   switch (index)
     {
-    case THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED:
+    case THUNAR_COLUMN_DATE_ACCESSED:
       return G_TYPE_STRING;
 
-    case THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED:
+    case THUNAR_COLUMN_DATE_MODIFIED:
       return G_TYPE_STRING;
 
-    case THUNAR_LIST_MODEL_COLUMN_FILE:
+    case THUNAR_COLUMN_FILE:
       return THUNAR_TYPE_FILE;
 
-    case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
+    case THUNAR_COLUMN_MIME_TYPE:
       return G_TYPE_STRING;
 
-    case THUNAR_LIST_MODEL_COLUMN_NAME:
+    case THUNAR_COLUMN_NAME:
       return G_TYPE_STRING;
 
-    case THUNAR_LIST_MODEL_COLUMN_REAL_NAME:
+    case THUNAR_COLUMN_REAL_NAME:
       return G_TYPE_STRING;
 
-    case THUNAR_LIST_MODEL_COLUMN_PERMISSIONS:
+    case THUNAR_COLUMN_PERMISSIONS:
       return G_TYPE_STRING;
 
-    case THUNAR_LIST_MODEL_COLUMN_SIZE:
+    case THUNAR_COLUMN_SIZE:
       return G_TYPE_STRING;
 
-    case THUNAR_LIST_MODEL_COLUMN_TYPE:
+    case THUNAR_COLUMN_TYPE:
       return G_TYPE_STRING;
     }
 
@@ -663,51 +663,51 @@ thunar_list_model_get_value (GtkTreeModel *model,
 
   switch (column)
     {
-    case THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED:
+    case THUNAR_COLUMN_DATE_ACCESSED:
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_date_string (row->file, THUNAR_FILE_DATE_ACCESSED);
       g_value_take_string (value, str);
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED:
+    case THUNAR_COLUMN_DATE_MODIFIED:
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_date_string (row->file, THUNAR_FILE_DATE_MODIFIED);
       g_value_take_string (value, str);
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_FILE:
+    case THUNAR_COLUMN_FILE:
       g_value_init (value, THUNAR_TYPE_FILE);
       g_value_set_object (value, row->file);
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
+    case THUNAR_COLUMN_MIME_TYPE:
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
       g_value_set_static_string (value, thunar_vfs_mime_info_get_name (mime_info));
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_NAME:
+    case THUNAR_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
       g_value_set_static_string (value, thunar_file_get_display_name (row->file));
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_REAL_NAME:
+    case THUNAR_COLUMN_REAL_NAME:
       g_value_init (value, G_TYPE_STRING);
       g_value_take_string (value, g_filename_display_name (thunar_vfs_path_get_name (thunar_file_get_path (row->file))));
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_PERMISSIONS:
+    case THUNAR_COLUMN_PERMISSIONS:
       g_value_init (value, G_TYPE_STRING);
       g_value_take_string (value, thunar_file_get_mode_string (row->file));
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_SIZE:
+    case THUNAR_COLUMN_SIZE:
       g_value_init (value, G_TYPE_STRING);
       str = thunar_file_get_size_string (row->file);
       g_value_take_string (value, str);
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_TYPE:
+    case THUNAR_COLUMN_TYPE:
       g_value_init (value, G_TYPE_STRING);
       mime_info = thunar_file_get_mime_info (row->file);
       if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (mime_info), "inode/symlink") == 0))
@@ -852,21 +852,21 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
   g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), FALSE);
 
   if (store->sort_func == sort_by_mime_type)
-    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_MIME_TYPE;
+    *sort_column_id = THUNAR_COLUMN_MIME_TYPE;
   else if (store->sort_func == sort_by_name)
-    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_NAME;
+    *sort_column_id = THUNAR_COLUMN_NAME;
   else if (store->sort_func == sort_by_real_name)
-    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_REAL_NAME;
+    *sort_column_id = THUNAR_COLUMN_REAL_NAME;
   else if (store->sort_func == sort_by_permissions)
-    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_PERMISSIONS;
+    *sort_column_id = THUNAR_COLUMN_PERMISSIONS;
   else if (store->sort_func == sort_by_size)
-    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_SIZE;
+    *sort_column_id = THUNAR_COLUMN_SIZE;
   else if (store->sort_func == sort_by_date_accessed)
-    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED;
+    *sort_column_id = THUNAR_COLUMN_DATE_ACCESSED;
   else if (store->sort_func == sort_by_date_modified)
-    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED;
+    *sort_column_id = THUNAR_COLUMN_DATE_MODIFIED;
   else if (store->sort_func == sort_by_type)
-    *sort_column_id = THUNAR_LIST_MODEL_COLUMN_TYPE;
+    *sort_column_id = THUNAR_COLUMN_TYPE;
   else
     g_assert_not_reached ();
 
@@ -891,35 +891,35 @@ thunar_list_model_set_sort_column_id (GtkTreeSortable *sortable,
 
   switch (sort_column_id)
     {
-    case THUNAR_LIST_MODEL_COLUMN_DATE_ACCESSED:
+    case THUNAR_COLUMN_DATE_ACCESSED:
       store->sort_func = sort_by_date_accessed;
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_DATE_MODIFIED:
+    case THUNAR_COLUMN_DATE_MODIFIED:
       store->sort_func = sort_by_date_modified;
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_MIME_TYPE:
+    case THUNAR_COLUMN_MIME_TYPE:
       store->sort_func = sort_by_mime_type;
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_NAME:
+    case THUNAR_COLUMN_NAME:
       store->sort_func = sort_by_name;
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_REAL_NAME:
+    case THUNAR_COLUMN_REAL_NAME:
       store->sort_func = sort_by_real_name;
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_PERMISSIONS:
+    case THUNAR_COLUMN_PERMISSIONS:
       store->sort_func = sort_by_permissions;
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_SIZE:
+    case THUNAR_COLUMN_SIZE:
       store->sort_func = sort_by_size;
       break;
 
-    case THUNAR_LIST_MODEL_COLUMN_TYPE:
+    case THUNAR_COLUMN_TYPE:
       store->sort_func = sort_by_type;
       break;
 
