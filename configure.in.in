@@ -102,7 +102,7 @@ dnl **********************************
 dnl *** Check for standard headers ***
 dnl **********************************
 AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h \
-                  locale.h math.h memory.h mmintrin.h pwd.h regex.h sched.h setjmp.h \
+                  locale.h math.h memory.h mmintrin.h mntent.h pwd.h regex.h sched.h setjmp.h \
                   stdarg.h stdlib.h string.h sys/xattr.h sys/extattr.h \
                   sys/cdio.h sys/mman.h sys/mount.h sys/param.h sys/stat.h \
                   sys/statfs.h sys/statvfs.h sys/time.h sys/uio.h \
@@ -241,6 +241,23 @@ AC_MSG_CHECKING([for system flavour])
 case "$target_os" in
 *bsd*)
   FLAVOUR="bsd"
+  ;;
+*linux*)
+  # on Linux, we try to use HAL first, and fallback to generic
+  XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.4],
+  [
+    # we also need D-BUS GLib bindings, but 0.23 will do
+    XDT_CHECK_PACKAGE([HAL_DBUS], [dbus-glib-1], [0.23],
+    [
+      FLAVOUR="hal"
+    ],
+    [
+      FLAVOUR="sysv"
+    ])
+  ],
+  [
+    FLAVOUR="sysv"
+  ])
   ;;
 *)
   FLAVOUR="sysv"

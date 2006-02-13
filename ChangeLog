@@ -1,5 +1,25 @@
 2006-02-13	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-info.c(_thunar_vfs_info_new_internal): Fix
+	  typo in hidden file detection.
+	* thunar-vfs/thunar-vfs-volume.{c,h}: Add a few new volume types.
+	* docs/reference/thunar-vfs/tmpl/thunar-vfs-volume.sgml: Update API
+	  docs.
+	* thunar-vfs/thunar-vfs-volume-hal.{c,h}, thunar-vfs/Makefile.am,
+	  configure.in.in: Import the Linux/HAL implementation of the volume
+	  manager. It's still a bit rough, but it seems to work ok. Works only
+	  with pmount-hal currently, but that shouldn't be a problem. Bug #999.
+	* thunar/thunar-shortcuts-model.c: Handle the addition/removal of
+	  volumes and do not open a file for volume shortcuts as that may
+	  prevent the volume from being unmounted properly.
+	* thunar-vfs/thunar-vfs-volume.c: Setup a watch cursor on the given
+	  window when ejecting, mounting or unmounting a volume, so the user
+	  gets some feedback during the time it takes to perform the operation.
+	* po/POTFILES.in: Add new file.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+
+2006-02-13	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-enum-types.{c,h}, thunar/thunar-list-model.h: Rename
 	  ThunarListModelColumn to ThunarColumn and add an enum type for it.
 	* thunar/thunar-details-view.c, thunar/thunar-icon-view.c,

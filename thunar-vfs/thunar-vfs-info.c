@@ -789,7 +789,7 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
     }
 
   /* check whether we have a hidden file here */
-  if ((s - (const guchar *) name) > 2 && (*name == '.' || *(s - 1) == '~'))
+  if ((s - (const guchar *) name) > 1 && (*name == '.' || *(s - 1) == '~'))
     info->flags = THUNAR_VFS_FILE_FLAGS_HIDDEN;
   else
     info->flags = THUNAR_VFS_FILE_FLAGS_NONE;

@@ -112,6 +112,8 @@ libthunar_vfs_1_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
 	$(GCONF_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
+	$(HAL_CFLAGS)							\
+	$(HAL_DBUS_CFLAGS)						\
 	$(LIBFAM_CFLAGS)						\
 	$(LIBJPEG_CFLAGS)						\
 	$(LIBPNG_CFLAGS)						\
@@ -128,6 +130,8 @@ libthunar_vfs_1_la_LIBADD =						\
 	$(EXO_LIBS)							\
 	$(GCONF_LIBS)							\
 	$(GTHREAD_LIBS)							\
+	$(HAL_LIBS)							\
+	$(HAL_DBUS_LIBS)						\
 	$(LIBFAM_LIBS)							\
 	$(LIBJPEG_LIBS)							\
 	$(LIBPNG_LIBS)							\
@@ -162,6 +166,8 @@ EXTRA_DIST =								\
 	thunar-vfs-marshal.list						\
 	thunar-vfs-volume-bsd.c						\
 	thunar-vfs-volume-bsd.h						\
+	thunar-vfs-volume-hal.c						\
+	thunar-vfs-volume-hal.h						\
 	thunar-vfs-volume-sysv.c					\
 	thunar-vfs-volume-sysv.h
 

@@ -42,7 +42,7 @@ static void thunar_vfs_volume_base_init  (gpointer klass);
 
 
 
-static guint volume_signals[THUNAR_VFS_VOLUME_CHANGED];
+static guint volume_signals[THUNAR_VFS_VOLUME_LAST_SIGNAL];
 
 
 
@@ -202,15 +202,7 @@ thunar_vfs_volume_is_disc (ThunarVfsVolume *volume)
 
   kind = thunar_vfs_volume_get_kind (volume);
 
-  switch (kind)
-    {
-    case THUNAR_VFS_VOLUME_KIND_CDROM:
-    case THUNAR_VFS_VOLUME_KIND_DVD:
-      return TRUE;
-
-    default:
-      return FALSE;
-    }
+  return (kind >= THUNAR_VFS_VOLUME_KIND_CDROM && kind <= THUNAR_VFS_VOLUME_KIND_DVDPLUSRW);
 }
 
 
@@ -295,9 +287,17 @@ thunar_vfs_volume_is_removable (ThunarVfsVolume *volume)
   switch (kind)
     {
     case THUNAR_VFS_VOLUME_KIND_CDROM:
-    case THUNAR_VFS_VOLUME_KIND_DVD:
+    case THUNAR_VFS_VOLUME_KIND_CDR:
+    case THUNAR_VFS_VOLUME_KIND_CDRW:
+    case THUNAR_VFS_VOLUME_KIND_DVDROM:
+    case THUNAR_VFS_VOLUME_KIND_DVDRAM:
+    case THUNAR_VFS_VOLUME_KIND_DVDR:
+    case THUNAR_VFS_VOLUME_KIND_DVDRW:
+    case THUNAR_VFS_VOLUME_KIND_DVDPLUSR:
+    case THUNAR_VFS_VOLUME_KIND_DVDPLUSRW:
     case THUNAR_VFS_VOLUME_KIND_FLOPPY:
     case THUNAR_VFS_VOLUME_KIND_USBSTICK:
+    case THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER:
       return TRUE;
 
     default:
@@ -342,15 +342,51 @@ thunar_vfs_volume_lookup_icon_name (ThunarVfsVolume *volume,
   kind = thunar_vfs_volume_get_kind (volume);
   switch (kind)
     {
-    case THUNAR_VFS_VOLUME_KIND_DVD:
-      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-dvd"))
-        return "gnome-dev-dvd";
-      /* FALL-THROUGH */
-
+cdrom:
     case THUNAR_VFS_VOLUME_KIND_CDROM:
       if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-cdrom"))
         return "gnome-dev-cdrom";
       break;
+
+    case THUNAR_VFS_VOLUME_KIND_CDR:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-disc-cdr"))
+        return "gnome-dev-disc-cdr";
+      goto cdrom;
+
+    case THUNAR_VFS_VOLUME_KIND_CDRW:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-disc-cdrw"))
+        return "gnome-dev-disc-cdrw";
+      goto cdrom;
+
+dvdrom:
+    case THUNAR_VFS_VOLUME_KIND_DVDROM:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-disc-dvdrom"))
+        return "gnome-dev-dvdrom";
+      else if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-dvd"))
+        return "gnome-dev-dvd";
+      goto cdrom;
+
+    case THUNAR_VFS_VOLUME_KIND_DVDRAM:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-disc-dvdram"))
+        return "gnome-dev-disc-dvdram";
+      goto dvdrom;
+
+dvdr:
+    case THUNAR_VFS_VOLUME_KIND_DVDR:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-disc-dvdr"))
+        return "gnome-dev-disc-dvdr";
+      goto dvdrom;
+
+    case THUNAR_VFS_VOLUME_KIND_DVDRW:
+    case THUNAR_VFS_VOLUME_KIND_DVDPLUSRW:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-disc-dvdrw"))
+        return "gnome-dev-disc-dvdrw";
+      goto dvdrom;
+
+    case THUNAR_VFS_VOLUME_KIND_DVDPLUSR:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-disc-dvdr-plus"))
+        return "gnome-dev-disc-dvdr-plus";
+      goto dvdr;
 
     case THUNAR_VFS_VOLUME_KIND_FLOPPY:
       if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-floppy"))
@@ -367,6 +403,11 @@ thunar_vfs_volume_lookup_icon_name (ThunarVfsVolume *volume,
         return "gnome-dev-removable-usb";
       else if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-harddisk-usb"))
         return "gnome-dev-harddisk-usb";
+      break;
+
+    case THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-ipod"))
+        return "gnome-dev-ipod";
       break;
 
     default:
@@ -404,10 +445,33 @@ thunar_vfs_volume_eject (ThunarVfsVolume *volume,
                          GtkWidget       *window,
                          GError         **error)
 {
+  GdkCursor *cursor;
+  gboolean   result;
+
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->eject) (volume, window, error);
+
+  /* setup a watch cursor on the window */
+  if (window != NULL && GTK_WIDGET_REALIZED (window))
+    {
+      /* setup the watch cursor */
+      cursor = gdk_cursor_new (GDK_WATCH);
+      gdk_window_set_cursor (window->window, cursor);
+      gdk_cursor_unref (cursor);
+
+      /* flush the changes */
+      gdk_flush ();
+    }
+
+  /* try to mount the volume */
+  result = (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->eject) (volume, window, error);
+
+  /* reset the cursor */
+  if (window != NULL && GTK_WIDGET_REALIZED (window))
+    gdk_window_set_cursor (window->window, NULL);
+
+  return result;
 }
 
 
@@ -439,10 +503,33 @@ thunar_vfs_volume_mount (ThunarVfsVolume *volume,
                          GtkWidget       *window,
                          GError         **error)
 {
+  GdkCursor *cursor;
+  gboolean   result;
+
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->mount) (volume, window, error);
+
+  /* setup a watch cursor on the window */
+  if (window != NULL && GTK_WIDGET_REALIZED (window))
+    {
+      /* setup the watch cursor */
+      cursor = gdk_cursor_new (GDK_WATCH);
+      gdk_window_set_cursor (window->window, cursor);
+      gdk_cursor_unref (cursor);
+
+      /* flush the changes */
+      gdk_flush ();
+    }
+
+  /* try to mount the volume */
+  result = (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->mount) (volume, window, error);
+
+  /* reset the cursor */
+  if (window != NULL && GTK_WIDGET_REALIZED (window))
+    gdk_window_set_cursor (window->window, NULL);
+
+  return result;
 }
 
 
@@ -474,10 +561,33 @@ thunar_vfs_volume_unmount (ThunarVfsVolume *volume,
                            GtkWidget       *window,
                            GError         **error)
 {
+  GdkCursor *cursor;
+  gboolean   result;
+
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->unmount) (volume, window, error);
+
+  /* setup a watch cursor on the window */
+  if (window != NULL && GTK_WIDGET_REALIZED (window))
+    {
+      /* setup the watch cursor */
+      cursor = gdk_cursor_new (GDK_WATCH);
+      gdk_window_set_cursor (window->window, cursor);
+      gdk_cursor_unref (cursor);
+
+      /* flush the changes */
+      gdk_flush ();
+    }
+
+  /* try to mount the volume */
+  result = (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->unmount) (volume, window, error);
+
+  /* reset the cursor */
+  if (window != NULL && GTK_WIDGET_REALIZED (window))
+    gdk_window_set_cursor (window->window, NULL);
+
+  return result;
 }
 
 
@@ -509,7 +619,7 @@ enum
 
 
 
-static void thunar_vfs_volume_manager_base_init  (gpointer klass);
+static void thunar_vfs_volume_manager_base_init (gpointer klass);
 
 
 
@@ -571,7 +681,7 @@ thunar_vfs_volume_manager_base_init (gpointer klass)
        * different condition!
        **/
       manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_ADDED] =
-        g_signal_new ("volumes-added",
+        g_signal_new (I_("volumes-added"),
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
                       G_STRUCT_OFFSET (ThunarVfsVolumeManagerIface, volumes_added),
@@ -588,7 +698,7 @@ thunar_vfs_volume_manager_base_init (gpointer klass)
        * been detached from the system.
        **/
       manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_REMOVED] =
-        g_signal_new ("volumes-removed",
+        g_signal_new (I_("volumes-removed"),
                       G_TYPE_FROM_INTERFACE (klass),
                       G_SIGNAL_RUN_LAST,
                       G_STRUCT_OFFSET (ThunarVfsVolumeManagerIface, volumes_removed),

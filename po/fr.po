@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-13 13:23+0100\n"
+"POT-Creation-Date: 2006-02-13 18:53+0100\n"
 "PO-Revision-Date: 2006-01-01 15:02+0100\n"
 "Last-Translator: Stephane Roy <sroy@j2n.net>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -253,9 +253,23 @@ msgstr "Élément <%s> inconnu"
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-volume-bsd.c:303
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:218
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:276
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:391
 #, fuzzy
 msgid "Unknown error"
 msgstr "Élément <%s> inconnu"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:332
+#, fuzzy, c-format
+msgid "Unable to determine the mount point for %s"
+msgstr "Échec à la détermination d'informations sur le fichier `%s'"
+
+#. if we cannot read /proc/mounts, we cannot where the volume was mounted
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:340
+#, fuzzy, c-format
+msgid "Failed to open /proc/mounts: %s"
+msgstr "Échec au changement de nom de `%s'"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:157
 #, c-format

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-13 13:23+0100\n"
+"POT-Creation-Date: 2006-02-13 18:53+0100\n"
 "PO-Revision-Date: 2006-01-29 17:47+0500\n"
 "Last-Translator: Andrey Fedoseev <andrey.fedoseev@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -254,9 +254,23 @@ msgstr "Неизвестный пользователь '%s'"
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-volume-bsd.c:303
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:218
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:276
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:391
 #, fuzzy
 msgid "Unknown error"
 msgstr "Неизвестный пользователь '%s'"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:332
+#, fuzzy, c-format
+msgid "Unable to determine the mount point for %s"
+msgstr "Не удалось определить информацию о файле '%s'"
+
+#. if we cannot read /proc/mounts, we cannot where the volume was mounted
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:340
+#, fuzzy, c-format
+msgid "Failed to open /proc/mounts: %s"
+msgstr "Не удалось переименовать `%s'"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:157
 #, c-format

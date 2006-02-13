@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-13 13:23+0100\n"
+"POT-Creation-Date: 2006-02-13 18:53+0100\n"
 "PO-Revision-Date: 2006-02-11 20:29+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -259,8 +259,22 @@ msgstr "ユーザー「%s」は不明です。"
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-volume-bsd.c:303
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:218
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:276
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:391
 msgid "Unknown error"
 msgstr "原因不明のエラーが発生しました。"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:332
+#, fuzzy, c-format
+msgid "Unable to determine the mount point for %s"
+msgstr "「%s」のファイル情報を確定するのに失敗しました。"
+
+#. if we cannot read /proc/mounts, we cannot where the volume was mounted
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:340
+#, fuzzy, c-format
+msgid "Failed to open /proc/mounts: %s"
+msgstr "「%s」を開くのに失敗しました: %s"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:157
 #, c-format

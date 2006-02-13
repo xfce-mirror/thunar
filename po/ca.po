@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-13 13:23+0100\n"
+"POT-Creation-Date: 2006-02-13 18:53+0100\n"
 "PO-Revision-Date: 2006-01-29 15:14+0900\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
@@ -254,9 +254,23 @@ msgstr "Usuari `%s' desconegut"
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-volume-bsd.c:303
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:218
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:276
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:391
 #, fuzzy
 msgid "Unknown error"
 msgstr "Desconegut fitxer propietari"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:332
+#, fuzzy, c-format
+msgid "Unable to determine the mount point for %s"
+msgstr "No s'ha pogut determinar l'informació de `%s'"
+
+#. if we cannot read /proc/mounts, we cannot where the volume was mounted
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:340
+#, fuzzy, c-format
+msgid "Failed to open /proc/mounts: %s"
+msgstr "Ha fallat"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:157
 #, c-format
