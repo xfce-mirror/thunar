@@ -226,6 +226,16 @@ thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
       g_free (standard_error);
     }
 
+  /* check if we were successfull */
+  if (G_LIKELY (result))
+    {
+      /* reset the status */
+      volume_hal->status &= ~(THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT);
+
+      /* emit "changed" on the volume */
+      thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
+    }
+
   /* cleanup */
   g_free (command_line);
 
@@ -397,6 +407,16 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
 
       /* release the stderr output */
       g_free (standard_error);
+    }
+
+  /* check if we were successfull */
+  if (G_LIKELY (result))
+    {
+      /* reset the status */
+      volume_hal->status &= ~THUNAR_VFS_VOLUME_STATUS_MOUNTED;
+
+      /* emit "changed" on the volume */
+      thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
     }
 
   /* cleanup */
