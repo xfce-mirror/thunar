@@ -1,5 +1,12 @@
 2006-02-13	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-dbus-service.c: Print a warning to stderr, instead of
+	  using g_warning() if unable to connect to the session bus.
+	* configure.in.in, thunar-vfs/thunar-vfs-volume-hal.c: Update to use
+	  HAL 0.5.x API.
+
+2006-02-13	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-folder.c(thunar_folder_reload): Properly cancel any
 	  previous job to make sure it will terminate as soon as possible.
 	  Bug #1457.

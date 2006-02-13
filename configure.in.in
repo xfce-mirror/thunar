@@ -237,14 +237,13 @@ AC_SUBST([LIBFAM_LIBS])
 dnl ************************************
 dnl *** Check for the system flavour ***
 dnl ************************************
-AC_MSG_CHECKING([for system flavour])
 case "$target_os" in
 *bsd*)
   FLAVOUR="bsd"
   ;;
 *linux*)
   # on Linux, we try to use HAL first, and fallback to generic
-  XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.4],
+  XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.5.0],
   [
     # we also need D-BUS GLib bindings, but 0.23 will do
     XDT_CHECK_PACKAGE([HAL_DBUS], [dbus-glib-1], [0.23],
@@ -263,6 +262,7 @@ case "$target_os" in
   FLAVOUR="sysv"
   ;;
 esac
+AC_MSG_CHECKING([for system flavour])
 AC_MSG_RESULT([$FLAVOUR])
 
 dnl **********************************************************

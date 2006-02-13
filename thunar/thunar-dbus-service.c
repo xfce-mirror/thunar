@@ -25,6 +25,8 @@
 #include <dbus/dbus-glib-lowlevel.h>
 #include <dbus/dbus.h>
 
+#include <glib/gstdio.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-file.h>
@@ -152,7 +154,7 @@ thunar_dbus_service_init (ThunarDBusService *dbus_service)
   else
     {
       /* notify the user that D-BUS service won't be available */
-      g_warning ("Failed to connect to the D-BUS session bus: %s", error->message);
+      g_fprintf (stderr, "Thunar: Failed to connect to the D-BUS session bus: %s\n", error->message);
       g_error_free (error);
     }
 }
