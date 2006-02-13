@@ -675,6 +675,7 @@ thunar_folder_reload (ThunarFolder *folder)
     {
       /* disconnect from the job */
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+      thunar_vfs_job_cancel (THUNAR_VFS_JOB (folder->job));
       g_object_unref (G_OBJECT (folder->job));
     }
 
