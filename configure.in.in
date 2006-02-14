@@ -206,33 +206,10 @@ dnl *** Check for gtk-doc ***
 dnl *************************
 GTK_DOC_CHECK([1.0])
 
-dnl ***************************
-dnl *** Check for Gamin/FAM ***
-dnl ***************************
-LIBFAM_CFLAGS=""
-LIBFAM_LIBS=""
-have_libfam=no
-XDT_CHECK_PACKAGE([LIBFAM], [gamin], [0.1.0], [have_libfam=yes],
-[
-  dnl Fallback to a generic FAM check
-  AC_CHECK_HEADERS([fam.h],
-  [
-    AC_CHECK_LIB([fam], [FAMOpen], [have_libfam="yes" LIBFAM_LIBS="-lfam"])
-  ])
-])
-if test x"$have_libfam" = x"yes"; then
-  dnl Define appropriate symbols
-  AC_DEFINE([HAVE_FAM_H], [1], [Define to 1 if you have the <fam.h> header file.])
-  AC_DEFINE([HAVE_LIBFAM], [1], [Define to 1 if the File Alteration Monitor is available.])
-
-  dnl Check for FAMNoExists (currently Gamin only)
-  save_LIBS="$LIBS"
-  LIBS="$LIBS $LIBFAM_LIBS"
-  AC_CHECK_FUNCS([FAMNoExists])
-  LIBS="$save_LIBS"
-fi
-AC_SUBST([LIBFAM_CFLAGS])
-AC_SUBST([LIBFAM_LIBS])
+dnl ****************************************************
+dnl *** Check for file system monitor implementation ***
+dnl ****************************************************
+BM_THUNAR_VFS_MONITOR_IMPL()
 
 dnl ***********************************************
 dnl *** Check for volume manager implementation ***
@@ -377,3 +354,29 @@ thunarx/Makefile
 thunarx/thunarx-1.pc
 thunarx/thunarx-config.h
 ])
+
+dnl ***************************
+dnl *** Print configuration ***
+dnl ***************************
+echo
+echo "Build Configuration:"
+echo
+if test x"$DBUS_FOUND" = x"yes"; then
+echo "* D-BUS support:        yes"
+else
+echo "* D-BUS support:        no"
+fi
+echo "* File System Monitor:  $ac_bm_thunar_vfs_monitor_impl"
+if test x"$GCONF_FOUND" = x"yes"; then
+echo "* GNOME Thumbnailers:   yes"
+else
+echo "* GNOME Thumbnailers:   no"
+fi
+if test x"$LIBSTARTUP_NOTIFICATION_FOUND" = x"yes"; then
+echo "* Startup Notification: yes"
+else
+echo "* Startup Notification: no"
+fi
+echo "* Volume Manager:       $ac_bm_thunar_vfs_volume_impl"
+echo
+

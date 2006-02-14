@@ -8,10 +8,64 @@ dnl
 
 
 
+dnl # BM_THUNAR_VFS_MONITOR_IMPL()
+dnl #
+dnl # Determine the file system monitoring to use for
+dnl # thunar-vfs.
+dnl #
+dnl # Sets LIBFAM_CFLAGS and LIBFAM_LIBS and defines
+dnl # HAVE_FAM_H and HAVE_LIBFAM if FAM/Gamin were
+dnl # found.
+dnl #
+dnl # Sets $ac_bm_thunar_vfs_monitor_impl to "FAM",
+dnl # "Gamin" or "none".
+dnl #
+AC_DEFUN([BM_THUNAR_VFS_MONITOR_IMPL],
+[
+LIBFAM_CFLAGS=""
+LIBFAM_LIBS=""
+have_libfam=no
+ac_bm_thunar_vfs_monitor_impl="none"
+XDT_CHECK_PACKAGE([LIBFAM], [gamin], [0.1.0],
+[
+  have_libfam=yes
+  ac_bm_thunar_vfs_monitor_impl="Gamin"
+],
+[
+  dnl Fallback to a generic FAM check
+  AC_CHECK_HEADERS([fam.h],
+  [
+    AC_CHECK_LIB([fam], [FAMOpen],
+    [
+      have_libfam="yes" LIBFAM_LIBS="-lfam"
+      ac_bm_thunar_vfs_monitor_impl="FAM"
+    ])
+  ])
+])
+if test x"$have_libfam" = x"yes"; then
+  dnl Define appropriate symbols
+  AC_DEFINE([HAVE_FAM_H], [1], [Define to 1 if you have the <fam.h> header file.])
+  AC_DEFINE([HAVE_LIBFAM], [1], [Define to 1 if the File Alteration Monitor is available.])
+
+  dnl Check for FAMNoExists (currently Gamin only)
+  save_LIBS="$LIBS"
+  LIBS="$LIBS $LIBFAM_LIBS"
+  AC_CHECK_FUNCS([FAMNoExists])
+  LIBS="$save_LIBS"
+fi
+AC_SUBST([LIBFAM_CFLAGS])
+AC_SUBST([LIBFAM_LIBS])
+])
+
+
+
 dnl # BM_THUNAR_VFS_VOLUME_IMPL()
 dnl #
 dnl # Determines the volume manager implementation to
 dnl # use for thunar-vfs.
+dnl #
+dnl # Sets ac_bm_thunar_vfs_volume_impl to "freebsd",
+dnl # "hal" or "none".
 dnl #
 AC_DEFUN([BM_THUNAR_VFS_VOLUME_IMPL],
 [
@@ -21,29 +75,33 @@ AC_HELP_STRING([--with-volume-manager=@<:@auto/freebsd/hal/none@:>@], [The volum
     [], [with_volume_manager=auto])
 
   dnl # Check if we should try to auto-detect
-  if test x"$with_volume_manager" = x"auto"; then
-    dnl # Check target platform
+  if test x"$with_volume_manager" = x"freebsd"; then
+    ac_bm_thunar_vfs_volume_impl=freebsd
+  elif test x"$with_volume_manager" = x"hal"; then
+    ac_bm_thunar_vfs_volume_impl=hal
+  else
+    dnl # Check target platform (auto-detection)
     case "$target_os" in
     freebsd*)
       dnl # FreeBSD is fully supported
-      with_volume_manager=freebsd
+      ac_bm_thunar_vfs_volume_impl=freebsd
       ;;
     *)
       dnl # Otherwise, check if we have HAL
-      XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.5.0], [with_volume_manager=hal], [with_volume_manager=none])
+      XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.5.0], [ac_bm_thunar_vfs_volume_impl=hal], [ac_bm_thunar_vfs_volume_impl=none])
       ;;
     esac
   fi
 
   dnl # We need HAL >= 0.5.x and D-BUS >= 0.23 for the HAL volume manager
-  if test x"$with_volume_manager" = x"hal"; then
+  if test x"$ac_bm_thunar_vfs_volume_impl" = x"hal"; then
     XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.5.0])
     XDT_CHECK_PACKAGE([HAL_DBUS], [dbus-glib-1], [0.23])
   fi
 
   dnl # Set config.h variables depending on what we're going to use
   AC_MSG_CHECKING([for the volume manager implemenation])
-  case "$with_volume_manager" in
+  case "$ac_bm_thunar_vfs_volume_impl" in
   freebsd)
     AC_DEFINE([THUNAR_VFS_VOLUME_IMPL_FREEBSD], [1], [Define to 1 if the FreeBSD volume manager implementation should be used])
     ;;
@@ -54,13 +112,12 @@ AC_HELP_STRING([--with-volume-manager=@<:@auto/freebsd/hal/none@:>@], [The volum
 
   *)
     AC_DEFINE([THUNAR_VFS_VOLUME_IMPL_NONE], [1], [Define to 1 if no volume manager implementation should be used])
-    with_volume_manager=none
     ;;
   esac
-  AC_MSG_RESULT([$with_volume_manager])
+  AC_MSG_RESULT([$ac_bm_thunar_vfs_volume_impl])
 
   dnl # Set automake conditionals appropriately
-  AM_CONDITIONAL([THUNAR_VFS_VOLUME_IMPL_FREEBSD], [test x"$with_volume_manager" = x"freebsd"])
-  AM_CONDITIONAL([THUNAR_VFS_VOLUME_IMPL_HAL], [test x"$with_volume_manager" = x"hal"])
-  AM_CONDITIONAL([THUNAR_VFS_VOLUME_IMPL_NONE], [test x"$with_volume_manager" = x"none"])
+  AM_CONDITIONAL([THUNAR_VFS_VOLUME_IMPL_FREEBSD], [test x"$ac_bm_thunar_vfs_volume_impl" = x"freebsd"])
+  AM_CONDITIONAL([THUNAR_VFS_VOLUME_IMPL_HAL], [test x"$ac_bm_thunar_vfs_volume_impl" = x"hal"])
+  AM_CONDITIONAL([THUNAR_VFS_VOLUME_IMPL_NONE], [test x"$ac_bm_thunar_vfs_volume_impl" = x"none"])
 ])
