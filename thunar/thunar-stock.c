@@ -37,9 +37,7 @@
 /* keep in sync with thunar-stock.h */
 static const gchar *thunar_stock_icons[] =
 {
-  THUNAR_STOCK_GROUP,
   THUNAR_STOCK_TEMPLATES,
-  THUNAR_STOCK_USER,
 };
 
 

@@ -52,7 +52,6 @@ enum
 /* Column identifiers for the group combo box */
 enum
 {
-  THUNAR_PERMISSIONS_STORE_COLUMN_STOCK_ID,
   THUNAR_PERMISSIONS_STORE_COLUMN_NAME,
   THUNAR_PERMISSIONS_STORE_COLUMN_GID,
   THUNAR_PERMISSIONS_STORE_N_COLUMNS,
@@ -218,7 +217,6 @@ thunar_permissions_chooser_class_init (ThunarPermissionsChooserClass *klass)
 static void
 thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 {
-  GtkCellRenderer *renderer_pixbuf;
   GtkCellRenderer *renderer_text;
   AtkRelationSet  *relations;
   GtkListStore    *store;
@@ -250,8 +248,7 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_list_store_append (store, &iter); /* 0006 */
   gtk_list_store_set (store, &iter, 0, _("Read & Write"), -1);
 
-  /* allocate the shared renderers for the various combo boxes */
-  renderer_pixbuf = gtk_cell_renderer_pixbuf_new ();
+  /* allocate the shared renderer for the various combo boxes */
   renderer_text = gtk_cell_renderer_text_new ();
 
   chooser->table = gtk_table_new (2, 2, FALSE);
@@ -269,10 +266,6 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   hbox = gtk_hbox_new (FALSE, 6);
   gtk_table_attach (GTK_TABLE (chooser->table), hbox, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 6);
   gtk_widget_show (hbox);
-
-  image = gtk_image_new_from_stock (THUNAR_STOCK_USER, GTK_ICON_SIZE_MENU);
-  gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
-  gtk_widget_show (image);
 
   chooser->user_label = gtk_label_new (_("Unknown"));
   gtk_misc_set_alignment (GTK_MISC (chooser->user_label), 0.0f, 0.5f);
@@ -324,8 +317,6 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   gtk_widget_show (label);
 
   chooser->group_combo = gtk_combo_box_new ();
-  gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->group_combo), renderer_pixbuf, FALSE);
-  gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->group_combo), renderer_pixbuf, "stock-id", THUNAR_PERMISSIONS_STORE_COLUMN_STOCK_ID);
   gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (chooser->group_combo), renderer_text, TRUE);
   gtk_cell_layout_add_attribute (GTK_CELL_LAYOUT (chooser->group_combo), renderer_text, "text", THUNAR_PERMISSIONS_STORE_COLUMN_NAME);
   gtk_combo_box_set_row_separator_func (GTK_COMBO_BOX (chooser->group_combo), thunar_permissions_chooser_row_separator, NULL, NULL);
@@ -869,7 +860,7 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
 
   /* allocate a new store for the group combo box */
   g_signal_handlers_block_by_func (G_OBJECT (chooser->group_combo), thunar_permissions_chooser_group_changed, chooser);
-  store = gtk_list_store_new (THUNAR_PERMISSIONS_STORE_N_COLUMNS, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_UINT);
+  store = gtk_list_store_new (THUNAR_PERMISSIONS_STORE_N_COLUMNS, G_TYPE_STRING, G_TYPE_UINT);
   gtk_combo_box_set_model (GTK_COMBO_BOX (chooser->group_combo), GTK_TREE_MODEL (store));
 
   /* determine the owner of the new file */
@@ -916,7 +907,6 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
               /* append a new item for the group */
               gtk_list_store_append (store, &iter);
               gtk_list_store_set (store, &iter,
-                                  THUNAR_PERMISSIONS_STORE_COLUMN_STOCK_ID, THUNAR_STOCK_GROUP,
                                   THUNAR_PERMISSIONS_STORE_COLUMN_NAME, thunar_vfs_group_get_name (lp->data),
                                   THUNAR_PERMISSIONS_STORE_COLUMN_GID, thunar_vfs_group_get_id (lp->data),
                                   -1);

@@ -2,9 +2,7 @@
 
 stockdir = $(datadir)/icons/hicolor/16x16/stock/generic
 stock_DATA =								\
-	stock_thunar-group.png						\
-	stock_thunar-templates.png					\
-	stock_thunar-user.png
+	stock_thunar-templates.png
 
 EXTRA_DIST =								\
 	$(stock_DATA)

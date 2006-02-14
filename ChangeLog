@@ -1,5 +1,14 @@
 2006-02-14	Benedikt Meurer <benny@xfce.org>
 
+	* icons/16x16/Makefile.am, icons/16x16/stock_thunar-group.png,
+	  icons/16x16/stock_thunar-user.png: Remove the "thunar-user" and
+	  "thunar-group" stock icons.
+	* thunar/thunar-permissions-chooser.c, thunar/thunar-stock.{c,h}: Do
+	  not display "thunar-user" and "thunar-group" stock icons in the
+	  permissions chooser any more, as it makes the dialog look busy.
+
+2006-02-14	Benedikt Meurer <benny@xfce.org>
+
 	* acinclude.m4, configure.in.in: Print build configuration summary.
 
 2006-02-14	Benedikt Meurer <benny@xfce.org>
