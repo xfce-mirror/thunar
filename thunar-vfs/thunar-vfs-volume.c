@@ -25,11 +25,28 @@
 #include <exo/exo.h>
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
+#include <thunar-vfs/thunar-vfs-volume-freebsd.h>
+#include <thunar-vfs/thunar-vfs-volume-hal.h>
+#include <thunar-vfs/thunar-vfs-volume-none.h>
 #include <thunar-vfs/thunar-vfs-volume.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
+/* determine the default thunar vfs volume manager type */
+#if defined(THUNAR_VFS_VOLUME_IMPL_FREEBSD)
+#define THUNAR_VFS_TYPE_VOLUME_MANAGER_IMPL THUNAR_VFS_TYPE_VOLUME_MANAGER_FREEBSD
+#elif defined(THUNAR_VFS_VOLUME_IMPL_HAL)
+#define THUNAR_VFS_TYPE_VOLUME_MANAGER_IMPL THUNAR_VFS_TYPE_VOLUME_MANAGER_HAL
+#elif defined(THUNAR_VFS_VOLUME_IMPL_NONE)
+#define THUNAR_VFS_TYPE_VOLUME_MANAGER_IMPL THUNAR_VFS_TYPE_VOLUME_MANAGER_NONE
+#else
+#error "Add your volume manager implemenation here!"
+#endif
+
+
+
+/* Signal identifiers */
 enum
 {
   THUNAR_VFS_VOLUME_CHANGED,
@@ -38,7 +55,7 @@ enum
 
 
 
-static void thunar_vfs_volume_base_init  (gpointer klass);
+static void thunar_vfs_volume_base_init (gpointer klass);
 
 
 
@@ -734,7 +751,7 @@ thunar_vfs_volume_manager_get_default (void)
 
   if (G_UNLIKELY (manager == NULL))
     {
-      manager = g_object_new (_thunar_vfs_volume_manager_impl_get_type (), NULL);
+      manager = g_object_new (THUNAR_VFS_TYPE_VOLUME_MANAGER_IMPL, NULL);
       g_object_add_weak_pointer (G_OBJECT (manager), (gpointer) &manager);
     }
   else

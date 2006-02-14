@@ -51,6 +51,7 @@ libthunar_vfs_include_HEADERS =						\
 	thunar-vfs.h
 
 libthunar_vfs_1_la_SOURCES =						\
+	$(libthunar_vfs_volume_impl_sources)				\
 	$(libthunar_vfs_built_sources)					\
 	$(libthunar_vfs_headers)					\
 	thunar-vfs-chmod-job.c						\
@@ -102,8 +103,6 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-user.c						\
 	thunar-vfs-util.c						\
 	thunar-vfs-volume.c						\
-	thunar-vfs-volume-impl.c					\
-	thunar-vfs-volume-impl.h					\
 	thunar-vfs-xfer.c						\
 	thunar-vfs-xfer.h						\
 	thunar-vfs.c
@@ -112,8 +111,6 @@ libthunar_vfs_1_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
 	$(GCONF_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
-	$(HAL_CFLAGS)							\
-	$(HAL_DBUS_CFLAGS)						\
 	$(LIBFAM_CFLAGS)						\
 	$(LIBJPEG_CFLAGS)						\
 	$(LIBPNG_CFLAGS)						\
@@ -130,8 +127,6 @@ libthunar_vfs_1_la_LIBADD =						\
 	$(EXO_LIBS)							\
 	$(GCONF_LIBS)							\
 	$(GTHREAD_LIBS)							\
-	$(HAL_LIBS)							\
-	$(HAL_DBUS_LIBS)						\
 	$(LIBFAM_LIBS)							\
 	$(LIBJPEG_LIBS)							\
 	$(LIBPNG_LIBS)							\
@@ -164,12 +159,39 @@ EXTRA_DIST =								\
 	thunar-vfs-alias.h						\
 	thunar-vfs-aliasdef.c						\
 	thunar-vfs-marshal.list						\
-	thunar-vfs-volume-bsd.c						\
-	thunar-vfs-volume-bsd.h						\
+	thunar-vfs-volume-freebsd.c					\
+	thunar-vfs-volume-freebsd.h					\
 	thunar-vfs-volume-hal.c						\
 	thunar-vfs-volume-hal.h						\
-	thunar-vfs-volume-sysv.c					\
-	thunar-vfs-volume-sysv.h
+	thunar-vfs-volume-none.c					\
+	thunar-vfs-volume-none.h
+
+if THUNAR_VFS_VOLUME_IMPL_FREEBSD
+libthunar_vfs_volume_impl_sources =					\
+	thunar-vfs-volume-freebsd.c					\
+	thunar-vfs-volume-freebsd.h
+endif
+
+if THUNAR_VFS_VOLUME_IMPL_HAL
+libthunar_vfs_volume_impl_sources =					\
+	thunar-vfs-volume-hal.c						\
+	thunar-vfs-volume-hal.h
+
+libthunar_vfs_1_la_CFLAGS +=						\
+	$(HAL_CFLAGS)							\
+	$(HAL_DBUS_CFLAGS)
+
+libthunar_vfs_1_la_LIBADD +=						\
+	$(HAL_LIBS)							\
+	$(HAL_DBUS_LIBS)
+endif
+
+if THUNAR_VFS_VOLUME_IMPL_NONE
+libthunar_vfs_volume_impl_sources =					\
+	thunar-vfs-volume-none.c					\
+	thunar-vfs-volume-none.h
+endif
+
 
 ##
 ## Rules to auto-generate built sources

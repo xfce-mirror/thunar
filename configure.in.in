@@ -234,45 +234,10 @@ fi
 AC_SUBST([LIBFAM_CFLAGS])
 AC_SUBST([LIBFAM_LIBS])
 
-dnl ************************************
-dnl *** Check for the system flavour ***
-dnl ************************************
-case "$target_os" in
-*bsd*)
-  FLAVOUR="bsd"
-  ;;
-*linux*)
-  # on Linux, we try to use HAL first, and fallback to generic
-  XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.5.0],
-  [
-    # we also need D-BUS GLib bindings, but 0.23 will do
-    XDT_CHECK_PACKAGE([HAL_DBUS], [dbus-glib-1], [0.23],
-    [
-      FLAVOUR="hal"
-    ],
-    [
-      FLAVOUR="sysv"
-    ])
-  ],
-  [
-    FLAVOUR="sysv"
-  ])
-  ;;
-*)
-  FLAVOUR="sysv"
-  ;;
-esac
-AC_MSG_CHECKING([for system flavour])
-AC_MSG_RESULT([$FLAVOUR])
-
-dnl **********************************************************
-dnl *** Create links for the volume manager implementation ***
-dnl **********************************************************
-AC_CONFIG_LINKS(
-[
-  thunar-vfs/thunar-vfs-volume-impl.c:thunar-vfs/thunar-vfs-volume-$FLAVOUR.c
-  thunar-vfs/thunar-vfs-volume-impl.h:thunar-vfs/thunar-vfs-volume-$FLAVOUR.h
-])
+dnl ***********************************************
+dnl *** Check for volume manager implementation ***
+dnl ***********************************************
+BM_THUNAR_VFS_VOLUME_IMPL()
 
 dnl ***********************************
 dnl *** Check for debugging support ***

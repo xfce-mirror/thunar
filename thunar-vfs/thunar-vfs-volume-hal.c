@@ -1058,13 +1058,4 @@ thunar_vfs_volume_manager_hal_device_property_modified (LibHalContext *context,
 
 
 
-GType
-_thunar_vfs_volume_manager_impl_get_type (void)
-{
-  return THUNAR_VFS_TYPE_VOLUME_MANAGER_HAL;
-}
-
-
-
-
 
