@@ -431,7 +431,7 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
   g_free (quoted);
 
   /* execute the pumount command */
-  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
+  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, NULL);
   if (G_LIKELY (result))
     {
       /* check if the command failed */

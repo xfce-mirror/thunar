@@ -1,5 +1,13 @@
 2006-02-14	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-volume-hal.c: Pass NULL for error on first
+	  attempt to launch pumount.
+	* thunar/thunar-folder.c: Properly merge the current files with the
+	  previous files when reloading the folder content. This finally fixes
+	  bug #1457.
+
+2006-02-14	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-volume-hal.c: Fallback to mount/umount if
 	  pmount is not available. Requires fstab-sync to synchronize with HAL
 	  volumes.

@@ -668,6 +668,8 @@ thunar_folder_get_loading (const ThunarFolder *folder)
 void
 thunar_folder_reload (ThunarFolder *folder)
 {
+  GList *lp;
+
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
 
   /* check if we are currently connect to a job */
@@ -686,11 +688,35 @@ thunar_folder_reload (ThunarFolder *folder)
       folder->handle = NULL;
     }
 
-  /* drop all previous files */
-  thunar_file_list_free (folder->previous_files);
+  /* merge current files with previous files */
+  if (G_LIKELY (folder->previous_files == NULL))
+    {
+      /* just use the current files as previous files */
+      folder->previous_files = folder->files;
+    }
+  else if (G_UNLIKELY (folder->files != NULL))
+    {
+      /* process all current files */
+      for (lp = folder->files; lp != NULL; lp = lp->next)
+        {
+          /* check if it's on the list of previous files */
+          if (g_list_find (folder->previous_files, lp->data) == NULL)
+            {
+              /* add it to the previous files list */
+              folder->previous_files = g_list_prepend (folder->previous_files, lp->data);
+            }
+          else
+            {
+              /* we already have it, no need to keep it around */
+              g_object_unref (G_OBJECT (lp->data));
+            }
+        }
 
-  /* remember the current files as previous files */
-  folder->previous_files = folder->files;
+      /* drop the list structure itself */
+      g_list_free (folder->files);
+    }
+
+  /* start out with a clean list */
   folder->files = NULL;
 
   /* start a new job */
