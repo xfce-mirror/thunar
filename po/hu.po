@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-14 00:36+0100\n"
+"POT-Creation-Date: 2006-02-14 17:32+0100\n"
 "PO-Revision-Date: 2005-10-06 22:02+0900\n"
 "Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -63,14 +63,15 @@ msgstr "Nem törölhető: %s"
 #: ../thunar-vfs/thunar-vfs-creat-job.c:188
 #, c-format
 msgid ""
-"The file `%s' already exists. Do you want to replace it with an empty file?"
+"The file \"%s\" already exists. Do you want to replace it with an empty file?"
 msgstr ""
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:199
+#: ../thunar-vfs/thunar-vfs-unlink-job.c:235
 #, fuzzy, c-format
 msgid ""
-"Unable to remove `%s'.\n"
+"Failed to remove \"%s\".\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
@@ -82,7 +83,7 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-creat-job.c:216
 #, fuzzy, c-format
 msgid ""
-"Failed to create empty file `%s'.\n"
+"Failed to create empty file \"%s\".\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
@@ -106,7 +107,7 @@ msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-info.c:406
 #, fuzzy
-msgid "Unable to parse file"
+msgid "Failed to parse file"
 msgstr "Nem nyitható meg e fájl: %s"
 
 #: ../thunar-vfs/thunar-vfs-info.c:496
@@ -116,7 +117,7 @@ msgstr ""
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
 #: ../thunar-vfs/thunar-vfs-info.c:758
 #, fuzzy, c-format
-msgid "Failed to stat file `%s': %s"
+msgid "Failed to stat file \"%s\": %s"
 msgstr "Nem törölhető: %s"
 
 #. ask the user whether we should remove the target first
@@ -184,7 +185,7 @@ msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
 #, fuzzy, c-format
-msgid "Unable to create directory `%s': %s"
+msgid "Failed to create directory \"%s\": %s"
 msgstr "Nem hozható létre ez a könyvtár: %s"
 
 #: ../thunar-vfs/thunar-vfs-path.c:657
@@ -211,13 +212,13 @@ msgstr "Fájlok gyűjtése..."
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:386
 #, fuzzy, c-format
-msgid "Unable to remove directory `%s': %s"
+msgid "Failed to remove directory \"%s\": %s"
 msgstr "Nem hozható létre ez a könyvtár: %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:664
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:717
 #, fuzzy, c-format
-msgid "Unable to remove `%s': %s"
+msgid "Failed to remove \"%s\": %s"
 msgstr "Nem törölhető: %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:910
@@ -228,17 +229,6 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:162
 msgid "Preparing..."
 msgstr ""
-
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:235
-#, c-format
-msgid ""
-"Unable to remove %s.\n"
-"\n"
-"Do you want to skip it?"
-msgstr ""
-"Nem törölhető: %s.\n"
-"\n"
-"Átugrod?"
 
 #: ../thunar-vfs/thunar-vfs-util.c:253 ../thunar/thunar-path-entry.c:1253
 msgid "Invalid path"
@@ -251,19 +241,21 @@ msgstr ""
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-volume-freebsd.c:303
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:218
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:286
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:221
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:290
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:333
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:452
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:492
 msgid "Unknown error"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:342
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:393
 #, fuzzy, c-format
-msgid "Unable to determine the mount point for %s"
+msgid "Failed to determine the mount point for %s"
 msgstr "Nem sikerült meghatározni a szülő URI-t ehhez: %s"
 
 #. if we cannot read /proc/mounts, we cannot where the volume was mounted
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:350
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
 #, fuzzy, c-format
 msgid "Failed to open /proc/mounts: %s"
 msgstr "Nem törölhető: %s"
@@ -620,10 +612,11 @@ msgid "_Link here"
 msgstr ""
 
 #. display an error to the user
-#: ../thunar/thunar-dnd.c:191
+#. display an error message to the user
+#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:497
 #, fuzzy, c-format
-msgid "Unable to execute file `%s'"
-msgstr "Nem lehet másolni a fájlt: %s"
+msgid "Failed to execute file \"%s\""
+msgstr "Nem törölhető: %s"
 
 #: ../thunar/thunar-file.c:727
 msgid "The root folder has no parent"
@@ -752,12 +745,6 @@ msgstr ""
 #, fuzzy
 msgid "Choose a program with which to open the selected file"
 msgstr "A kijelölt elem tulajdonságai"
-
-#. display an error message to the user
-#: ../thunar/thunar-launcher.c:497
-#, fuzzy, c-format
-msgid "Failed to execute file \"%s\""
-msgstr "Nem törölhető: %s"
 
 #: ../thunar/thunar-launcher.c:592
 #, fuzzy, c-format
@@ -2148,6 +2135,28 @@ msgstr "Fájlkezelő"
 #, fuzzy
 msgid "Thunar File Manager"
 msgstr "Fájlkezelő"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to remove `%s'.\n"
+#~ "\n"
+#~ "Do you want to skip it?"
+#~ msgstr ""
+#~ "Nem törölhető: %s.\n"
+#~ "\n"
+#~ "Átugrod?"
+
+#, fuzzy
+#~ msgid "Unable to create directory `%s': %s"
+#~ msgstr "Nem hozható létre ez a könyvtár: %s"
+
+#, fuzzy
+#~ msgid "Unable to remove `%s': %s"
+#~ msgstr "Nem törölhető: %s"
+
+#, fuzzy
+#~ msgid "Unable to execute file `%s'"
+#~ msgstr "Nem lehet másolni a fájlt: %s"
 
 #, fuzzy
 #~ msgid "Unable to open \"%s\"."

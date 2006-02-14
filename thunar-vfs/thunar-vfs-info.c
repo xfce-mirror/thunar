@@ -403,7 +403,7 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
         }
       else
         {
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Unable to parse file"));
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Failed to parse file"));
         }
     }
   else
@@ -755,7 +755,7 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    /* TRANSLATORS: See man page of stat(1) or stat(2) for more details. */
-                   _("Failed to stat file `%s': %s"),
+                   _("Failed to stat file \"%s\": %s"),
                    absolute_path, g_strerror (errno));
       return NULL;
     }

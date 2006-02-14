@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-14 00:36+0100\n"
+"POT-Creation-Date: 2006-02-14 17:32+0100\n"
 "PO-Revision-Date: 2006-01-13 14:21+0100\n"
 "Last-Translator: Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -64,14 +64,15 @@ msgstr "Nie udało się zmienić praw dostępu do '%s'"
 #: ../thunar-vfs/thunar-vfs-creat-job.c:188
 #, c-format
 msgid ""
-"The file `%s' already exists. Do you want to replace it with an empty file?"
+"The file \"%s\" already exists. Do you want to replace it with an empty file?"
 msgstr ""
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:199
+#: ../thunar-vfs/thunar-vfs-unlink-job.c:235
 #, fuzzy, c-format
 msgid ""
-"Unable to remove `%s'.\n"
+"Failed to remove \"%s\".\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
@@ -83,7 +84,7 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-creat-job.c:216
 #, fuzzy, c-format
 msgid ""
-"Failed to create empty file `%s'.\n"
+"Failed to create empty file \"%s\".\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
@@ -107,7 +108,8 @@ msgid "Invalid desktop file"
 msgstr "Nieprawidłowy plik .desktop"
 
 #: ../thunar-vfs/thunar-vfs-info.c:406
-msgid "Unable to parse file"
+#, fuzzy
+msgid "Failed to parse file"
 msgstr "Nie mogę wczytać pliku"
 
 #: ../thunar-vfs/thunar-vfs-info.c:496
@@ -116,8 +118,8 @@ msgstr "Nieprawidłowa nazwa pliku"
 
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
 #: ../thunar-vfs/thunar-vfs-info.c:758
-#, c-format
-msgid "Failed to stat file `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to stat file \"%s\": %s"
 msgstr "Nie mogę odczytać atrybutów pliku '%s': %s"
 
 #. ask the user whether we should remove the target first
@@ -185,8 +187,8 @@ msgstr "Dokument %s"
 
 #: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
 #, fuzzy, c-format
-msgid "Unable to create directory `%s': %s"
-msgstr "Nie można usunąć katalogu '%s': %s"
+msgid "Failed to create directory \"%s\": %s"
+msgstr "Nie udało się utworzyć katalogu '%s'"
 
 #: ../thunar-vfs/thunar-vfs-path.c:657
 msgid "Path too long to fit into buffer"
@@ -210,15 +212,15 @@ msgid "Deleting directories..."
 msgstr "Usuwam katalogi..."
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:386
-#, c-format
-msgid "Unable to remove directory `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to remove directory \"%s\": %s"
 msgstr "Nie można usunąć katalogu '%s': %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:664
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:717
-#, c-format
-msgid "Unable to remove `%s': %s"
-msgstr "Nie mogę usunąć pliku '%s': %s"
+#, fuzzy, c-format
+msgid "Failed to remove \"%s\": %s"
+msgstr "Nie udało się usunąć pliku '%s': %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:910
 msgid "Cannot transfer the root directory"
@@ -228,17 +230,6 @@ msgstr "Nie mogę przenieść katalogu głównego"
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:162
 msgid "Preparing..."
 msgstr "Przygotowuję..."
-
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:235
-#, c-format
-msgid ""
-"Unable to remove %s.\n"
-"\n"
-"Do you want to skip it?"
-msgstr ""
-"Nie można usunąć %s.\n"
-"\n"
-"Czy chcesz go pominąć?"
 
 #: ../thunar-vfs/thunar-vfs-util.c:253 ../thunar/thunar-path-entry.c:1253
 #, fuzzy
@@ -252,20 +243,22 @@ msgstr ""
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-volume-freebsd.c:303
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:218
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:286
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:221
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:290
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:333
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:452
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:492
 #, fuzzy
 msgid "Unknown error"
 msgstr "data nieznana"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:342
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:393
 #, fuzzy, c-format
-msgid "Unable to determine the mount point for %s"
+msgid "Failed to determine the mount point for %s"
 msgstr "Nie udało się odczytać atrybutów pliku '%s'"
 
 #. if we cannot read /proc/mounts, we cannot where the volume was mounted
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:350
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
 #, fuzzy, c-format
 msgid "Failed to open /proc/mounts: %s"
 msgstr "Nie udało się zmienić nazwy %s."
@@ -617,10 +610,11 @@ msgid "_Link here"
 msgstr "Utwórz _łacze"
 
 #. display an error to the user
-#: ../thunar/thunar-dnd.c:191
+#. display an error message to the user
+#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:497
 #, fuzzy, c-format
-msgid "Unable to execute file `%s'"
-msgstr "Nie mogę wykonać pliku \"%s\"."
+msgid "Failed to execute file \"%s\""
+msgstr "Nie udało się uruchomić %s"
 
 #: ../thunar/thunar-file.c:727
 msgid "The root folder has no parent"
@@ -749,12 +743,6 @@ msgstr ""
 #, fuzzy
 msgid "Choose a program with which to open the selected file"
 msgstr "Wyświetl właściwości zaznaczonego elementu"
-
-#. display an error message to the user
-#: ../thunar/thunar-launcher.c:497
-#, fuzzy, c-format
-msgid "Failed to execute file \"%s\""
-msgstr "Nie udało się uruchomić %s"
 
 #: ../thunar/thunar-launcher.c:592
 #, fuzzy, c-format
@@ -2151,6 +2139,27 @@ msgstr "Menedżer plików"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Menedżer plików Thunar"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to remove `%s'.\n"
+#~ "\n"
+#~ "Do you want to skip it?"
+#~ msgstr ""
+#~ "Nie można usunąć %s.\n"
+#~ "\n"
+#~ "Czy chcesz go pominąć?"
+
+#, fuzzy
+#~ msgid "Unable to create directory `%s': %s"
+#~ msgstr "Nie można usunąć katalogu '%s': %s"
+
+#~ msgid "Unable to remove `%s': %s"
+#~ msgstr "Nie mogę usunąć pliku '%s': %s"
+
+#, fuzzy
+#~ msgid "Unable to execute file `%s'"
+#~ msgstr "Nie mogę wykonać pliku \"%s\"."
 
 #~ msgid "Unable to open \"%s\"."
 #~ msgstr "Nie mogę otworzyć \"%s\""

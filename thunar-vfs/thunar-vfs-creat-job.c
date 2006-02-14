@@ -185,7 +185,7 @@ again:
           if (G_UNLIKELY (errno == EEXIST))
             {
               /* ask the user whether to override this path */
-              message = g_strdup_printf (_("The file `%s' already exists. Do you want to replace it with an empty file?"), display_name);
+              message = g_strdup_printf (_("The file \"%s\" already exists. Do you want to replace it with an empty file?"), display_name);
               overwrite = thunar_vfs_interactive_job_overwrite (THUNAR_VFS_INTERACTIVE_JOB (job), message);
               g_free (message);
 
@@ -196,7 +196,7 @@ again:
                   if (unlink (absolute_path) < 0)
                     {
                       /* ask the user whether to skip this path */
-                      message = g_strdup_printf (_("Unable to remove `%s'.\n\nDo you want to skip it?"), display_name);
+                      message = g_strdup_printf (_("Failed to remove \"%s\".\n\nDo you want to skip it?"), display_name);
                       skip = thunar_vfs_interactive_job_skip (THUNAR_VFS_INTERACTIVE_JOB (job), message);
                       g_free (message);
 
@@ -213,7 +213,7 @@ again:
           else
             {
               /* ask the user whether to skip this path */
-              message = g_strdup_printf (_("Failed to create empty file `%s'.\n\nDo you want to skip it?"), display_name);
+              message = g_strdup_printf (_("Failed to create empty file \"%s\".\n\nDo you want to skip it?"), display_name);
               skip = thunar_vfs_interactive_job_skip (THUNAR_VFS_INTERACTIVE_JOB (job), message);
               g_free (message);
 

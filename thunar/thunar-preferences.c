@@ -688,7 +688,7 @@ thunar_preferences_load_idle (gpointer user_data)
   rc = xfce_rc_config_open (XFCE_RESOURCE_CONFIG, "Thunar/thunarrc", TRUE);
   if (G_UNLIKELY (rc == NULL))
     {
-      g_warning ("Unable to load thunar preferences.");
+      g_warning ("Failed to load thunar preferences.");
       return FALSE;
     }
 
@@ -726,7 +726,7 @@ thunar_preferences_load_idle (gpointer user_data)
         }
       else
         {
-          g_warning ("Unable to load property \"%s\"", spec->name);
+          g_warning ("Failed to load property \"%s\"", spec->name);
         }
 
       g_value_unset (&src);
@@ -769,7 +769,7 @@ thunar_preferences_store_idle (gpointer user_data)
   rc = xfce_rc_config_open (XFCE_RESOURCE_CONFIG, "Thunar/thunarrc", FALSE);
   if (G_UNLIKELY (rc == NULL))
     {
-      g_warning ("Unable to store thunar preferences.");
+      g_warning ("Failed to store thunar preferences.");
       return FALSE;
     }
 

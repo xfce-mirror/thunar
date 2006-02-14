@@ -390,7 +390,7 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
 
           /* check if we were unable to figure out the mount point */
           if (G_UNLIKELY (!result))
-            g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unable to determine the mount point for %s"), volume_hal->device_file);
+            g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Failed to determine the mount point for %s"), volume_hal->device_file);
 
           /* close the file handle */
           fclose (fp);

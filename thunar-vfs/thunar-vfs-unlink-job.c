@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -232,7 +232,7 @@ thunar_vfs_unlink_job_remove (ThunarVfsUnlinkJob *unlink_job,
       /* try to unlink the file */
       if (G_UNLIKELY (g_remove (absolute_path) < 0 && errno != ENOENT))
         {
-          message = g_strdup_printf (_("Unable to remove %s.\n\nDo you want to skip it?"), info->display_name);
+          message = g_strdup_printf (_("Failed to remove \"%s\".\n\nDo you want to skip it?"), info->display_name);
           thunar_vfs_interactive_job_skip (THUNAR_VFS_INTERACTIVE_JOB (unlink_job), message);
           g_free (message);
         }

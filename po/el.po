@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-14 00:36+0100\n"
+"POT-Creation-Date: 2006-02-14 17:32+0100\n"
 "PO-Revision-Date: 2006-02-12 03:05+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -64,17 +64,18 @@ msgstr "Η αλλαγή του γκρουπ του `%s' απέτυχε: %s"
 
 #. ask the user whether to override this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:188
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"The file `%s' already exists. Do you want to replace it with an empty file?"
+"The file \"%s\" already exists. Do you want to replace it with an empty file?"
 msgstr ""
 "Το αρχείο `%s' υπάρχει ήδη. Θέλετε να το αντικαταστήσετε με ένα κενό αρχείο;"
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:199
-#, c-format
+#: ../thunar-vfs/thunar-vfs-unlink-job.c:235
+#, fuzzy, c-format
 msgid ""
-"Unable to remove `%s'.\n"
+"Failed to remove \"%s\".\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
@@ -84,9 +85,9 @@ msgstr ""
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:216
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Failed to create empty file `%s'.\n"
+"Failed to create empty file \"%s\".\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
@@ -109,7 +110,8 @@ msgid "Invalid desktop file"
 msgstr "Μη έγκυρο αρχείο συντόμευσης"
 
 #: ../thunar-vfs/thunar-vfs-info.c:406
-msgid "Unable to parse file"
+#, fuzzy
+msgid "Failed to parse file"
 msgstr "Δεν ήταν δυνατή η ανάγνωση του αρχείου"
 
 #: ../thunar-vfs/thunar-vfs-info.c:496
@@ -118,8 +120,8 @@ msgstr "Μη έγκυρο όνομα αρχείου"
 
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
 #: ../thunar-vfs/thunar-vfs-info.c:758
-#, c-format
-msgid "Failed to stat file `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to stat file \"%s\": %s"
 msgstr "Δεν ήταν δυνατή η λήψη της κατάστασης του αρχείου `%s': %s"
 
 #. ask the user whether we should remove the target first
@@ -185,9 +187,9 @@ msgid "%s document"
 msgstr "έγγραφο %s"
 
 #: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
-#, c-format
-msgid "Unable to create directory `%s': %s"
-msgstr "Δεν ήταν δυνατή η δημιουργία του καταλόγου `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to create directory \"%s\": %s"
+msgstr "Η δημιουργία του καταλόγου `%s' απέτυχε"
 
 #: ../thunar-vfs/thunar-vfs-path.c:657
 msgid "Path too long to fit into buffer"
@@ -211,15 +213,15 @@ msgid "Deleting directories..."
 msgstr "Διαγραφή καταλόγων..."
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:386
-#, c-format
-msgid "Unable to remove directory `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to remove directory \"%s\": %s"
 msgstr "Δεν ήταν δυνατή η διαγραφή του καταλόγου `%s': %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:664
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:717
-#, c-format
-msgid "Unable to remove `%s': %s"
-msgstr "Δεν ήταν δυνατή η διαγραφή του `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to remove \"%s\": %s"
+msgstr "Η διαγραφή του `%s' απέτυχε: %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:910
 msgid "Cannot transfer the root directory"
@@ -229,17 +231,6 @@ msgstr "Δεν είναι δυνατή η μεταφορά του ριζικού
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:162
 msgid "Preparing..."
 msgstr "Προετοιμασία..."
-
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:235
-#, c-format
-msgid ""
-"Unable to remove %s.\n"
-"\n"
-"Do you want to skip it?"
-msgstr ""
-"Δεν ήταν δυνατή η διαγραφή του %s.\n"
-"\n"
-"Θέλετε να το προσπεράσετε;"
 
 #: ../thunar-vfs/thunar-vfs-util.c:253 ../thunar/thunar-path-entry.c:1253
 msgid "Invalid path"
@@ -252,19 +243,21 @@ msgstr "Άγνωστος χρήστης `%s'"
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-volume-freebsd.c:303
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:218
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:286
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:221
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:290
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:333
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:452
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:492
 msgid "Unknown error"
 msgstr "Άγνωστο σφάλμα"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:342
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:393
 #, fuzzy, c-format
-msgid "Unable to determine the mount point for %s"
+msgid "Failed to determine the mount point for %s"
 msgstr "Ο προσδιορισμός των πληροφοριών αρχείου για το `%s' απέτυχε"
 
 #. if we cannot read /proc/mounts, we cannot where the volume was mounted
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:350
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
 #, fuzzy, c-format
 msgid "Failed to open /proc/mounts: %s"
 msgstr "Η διαγραφή του \"%s\" απέτυχε: %s"
@@ -613,10 +606,11 @@ msgid "_Link here"
 msgstr "Δ_ημιουργία δεσμού εδώ"
 
 #. display an error to the user
-#: ../thunar/thunar-dnd.c:191
+#. display an error message to the user
+#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:497
 #, c-format
-msgid "Unable to execute file `%s'"
-msgstr "Δεν ήταν δυνατή η εκτέλεση του αρχείου `%s'"
+msgid "Failed to execute file \"%s\""
+msgstr "Η εκτέλεση του \"%s\" απέτυχε"
 
 #: ../thunar/thunar-file.c:727
 msgid "The root folder has no parent"
@@ -741,12 +735,6 @@ msgstr ""
 #: ../thunar/thunar-launcher.c:123
 msgid "Choose a program with which to open the selected file"
 msgstr "Επιλέξτε ένα πρόγραμμα για να ανοίξετε το επιλεγμένο αρχείο"
-
-#. display an error message to the user
-#: ../thunar/thunar-launcher.c:497
-#, c-format
-msgid "Failed to execute file \"%s\""
-msgstr "Η εκτέλεση του \"%s\" απέτυχε"
 
 #: ../thunar/thunar-launcher.c:592
 #, c-format
@@ -2129,6 +2117,24 @@ msgstr "Διαχειριστής Αρχείων"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Διαχειριστής Αρχείων Thunar"
+
+#~ msgid ""
+#~ "Unable to remove `%s'.\n"
+#~ "\n"
+#~ "Do you want to skip it?"
+#~ msgstr ""
+#~ "Δεν ήταν δυνατή η διαγραφή του %s.\n"
+#~ "\n"
+#~ "Θέλετε να το προσπεράσετε;"
+
+#~ msgid "Unable to create directory `%s': %s"
+#~ msgstr "Δεν ήταν δυνατή η δημιουργία του καταλόγου `%s': %s"
+
+#~ msgid "Unable to remove `%s': %s"
+#~ msgstr "Δεν ήταν δυνατή η διαγραφή του `%s': %s"
+
+#~ msgid "Unable to execute file `%s'"
+#~ msgstr "Δεν ήταν δυνατή η εκτέλεση του αρχείου `%s'"
 
 #~ msgid "Unable to open \"%s\"."
 #~ msgstr "Αδυναμία ανοίγματος του αρχείου \"%s\"."

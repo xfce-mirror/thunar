@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -162,7 +162,7 @@ thunar_vfs_mkdir_job_execute (ThunarVfsJob *job)
           /* generate an error describing the problem */
           display_name = g_filename_display_name (absolute_path);
           error = g_error_new (G_FILE_ERROR, g_file_error_from_errno (errno),
-                               _("Unable to create directory `%s': %s"),
+                               _("Failed to create directory \"%s\": %s"),
                                display_name, g_strerror (errno));
           g_free (display_name);
 

@@ -383,7 +383,7 @@ thunar_vfs_transfer_job_execute (ThunarVfsJob *job)
               /* ask the user whether we should skip this directory */
               display_name = g_filename_display_name (source_absolute_path);
               error = g_error_new (G_FILE_ERROR, g_file_error_from_errno (errno),
-                                   _("Unable to remove directory `%s': %s"),
+                                   _("Failed to remove directory \"%s\": %s"),
                                    display_name, g_strerror (errno));
               thunar_vfs_transfer_job_skip (transfer_job, error);
               g_clear_error (&error);
@@ -661,7 +661,7 @@ thunar_vfs_transfer_job_copy_pair (ThunarVfsTransferJob  *transfer_job,
                       /* ask the user whether we should skip the file (used for cancellation only) */
                       display_name = g_filename_display_name (absolute_path);
                       error = g_error_new (G_FILE_ERROR, g_file_error_from_errno (errno),
-                                           _("Unable to remove `%s': %s"), display_name,
+                                           _("Failed to remove \"%s\": %s"), display_name,
                                            g_strerror (errno));
                       thunar_vfs_transfer_job_skip (transfer_job, error);
                       g_clear_error (&error);
@@ -714,7 +714,7 @@ thunar_vfs_transfer_job_copy_pair (ThunarVfsTransferJob  *transfer_job,
                   /* ask the user whether we should skip the file */
                   display_name = g_filename_display_name (absolute_path);
                   error = g_error_new (G_FILE_ERROR, g_file_error_from_errno (errno),
-                                       _("Unable to remove `%s': %s"), display_name,
+                                       _("Failed to remove \"%s\": %s"), display_name,
                                        g_strerror (errno));
                   skip = thunar_vfs_transfer_job_skip (transfer_job, error);
                   g_free (display_name);

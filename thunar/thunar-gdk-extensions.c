@@ -123,7 +123,7 @@ thunar_gdk_screen_open (const gchar *display_name,
 
   /* check if we were successfull here */
   if (G_UNLIKELY (screen == NULL))
-    g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "Unable to open display \"%s\"", display_name);
+    g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "Failed to open display \"%s\"", display_name);
 
   return screen;
 }

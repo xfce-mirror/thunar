@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-14 00:36+0100\n"
+"POT-Creation-Date: 2006-02-14 17:32+0100\n"
 "PO-Revision-Date: 2006-01-29 15:14+0900\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
@@ -66,14 +66,15 @@ msgstr "No s'ha pogut canviar el grup de `%s': %s"
 #: ../thunar-vfs/thunar-vfs-creat-job.c:188
 #, c-format
 msgid ""
-"The file `%s' already exists. Do you want to replace it with an empty file?"
+"The file \"%s\" already exists. Do you want to replace it with an empty file?"
 msgstr ""
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:199
+#: ../thunar-vfs/thunar-vfs-unlink-job.c:235
 #, fuzzy, c-format
 msgid ""
-"Unable to remove `%s'.\n"
+"Failed to remove \"%s\".\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
@@ -85,7 +86,7 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-creat-job.c:216
 #, fuzzy, c-format
 msgid ""
-"Failed to create empty file `%s'.\n"
+"Failed to create empty file \"%s\".\n"
 "\n"
 "Do you want to skip it?"
 msgstr ""
@@ -109,7 +110,8 @@ msgid "Invalid desktop file"
 msgstr "El nom de l'escriptori no és vàlid"
 
 #: ../thunar-vfs/thunar-vfs-info.c:406
-msgid "Unable to parse file"
+#, fuzzy
+msgid "Failed to parse file"
 msgstr "No s'ha pogut analitzar el fitxer"
 
 #: ../thunar-vfs/thunar-vfs-info.c:496
@@ -118,8 +120,8 @@ msgstr "El nom del fitxer no és vàlid"
 
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
 #: ../thunar-vfs/thunar-vfs-info.c:758
-#, c-format
-msgid "Failed to stat file `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to stat file \"%s\": %s"
 msgstr "No s'ha pogut saber l'estat del fitxer `%s': %s"
 
 #. ask the user whether we should remove the target first
@@ -187,9 +189,9 @@ msgid "%s document"
 msgstr "document %s"
 
 #: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
-#, c-format
-msgid "Unable to create directory `%s': %s"
-msgstr "No s'ha pogut crear el directori `%s' : %s"
+#, fuzzy, c-format
+msgid "Failed to create directory \"%s\": %s"
+msgstr "No s'ha pogut crear el directori `%s'"
 
 #: ../thunar-vfs/thunar-vfs-path.c:657
 msgid "Path too long to fit into buffer"
@@ -213,15 +215,15 @@ msgid "Deleting directories..."
 msgstr "S'està suprimint directoris..."
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:386
-#, c-format
-msgid "Unable to remove directory `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to remove directory \"%s\": %s"
 msgstr "No s'ha pogut suprimir el directori `%s': %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:664
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:717
-#, c-format
-msgid "Unable to remove `%s': %s"
-msgstr "No s'ha pogut suprimir `%s': %s"
+#, fuzzy, c-format
+msgid "Failed to remove \"%s\": %s"
+msgstr "No s'ha pogut suprimr `%s': %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:910
 msgid "Cannot transfer the root directory"
@@ -231,17 +233,6 @@ msgstr "No s'ha pogut transferí el directori arrel"
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:162
 msgid "Preparing..."
 msgstr "S'està preparant..."
-
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:235
-#, c-format
-msgid ""
-"Unable to remove %s.\n"
-"\n"
-"Do you want to skip it?"
-msgstr ""
-"No s'ha pogut suprimir %s.\n"
-"\n"
-"El voleu ometre?"
 
 #: ../thunar-vfs/thunar-vfs-util.c:253 ../thunar/thunar-path-entry.c:1253
 msgid "Invalid path"
@@ -254,20 +245,22 @@ msgstr "Usuari `%s' desconegut"
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-volume-freebsd.c:303
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:218
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:286
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:221
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:290
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:333
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:452
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:492
 #, fuzzy
 msgid "Unknown error"
 msgstr "Desconegut fitxer propietari"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:342
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:393
 #, fuzzy, c-format
-msgid "Unable to determine the mount point for %s"
+msgid "Failed to determine the mount point for %s"
 msgstr "No s'ha pogut determinar l'informació de `%s'"
 
 #. if we cannot read /proc/mounts, we cannot where the volume was mounted
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:350
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
 #, fuzzy, c-format
 msgid "Failed to open /proc/mounts: %s"
 msgstr "Ha fallat"
@@ -615,10 +608,11 @@ msgid "_Link here"
 msgstr "_Enllaça aquí"
 
 #. display an error to the user
-#: ../thunar/thunar-dnd.c:191
-#, c-format
-msgid "Unable to execute file `%s'"
-msgstr "No s'ha pogut executar el fitxer `%s'"
+#. display an error message to the user
+#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:497
+#, fuzzy, c-format
+msgid "Failed to execute file \"%s\""
+msgstr "No s'ha pogut executar `%s'"
 
 #: ../thunar/thunar-file.c:727
 msgid "The root folder has no parent"
@@ -757,12 +751,6 @@ msgstr ""
 #, fuzzy
 msgid "Choose a program with which to open the selected file"
 msgstr "primer seleccionat fitxer"
-
-#. display an error message to the user
-#: ../thunar/thunar-launcher.c:497
-#, fuzzy, c-format
-msgid "Failed to execute file \"%s\""
-msgstr "No s'ha pogut executar `%s'"
 
 #: ../thunar/thunar-launcher.c:592
 #, fuzzy, c-format
@@ -2246,6 +2234,25 @@ msgstr "Gestor de fitxers"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Gestor de fitxers Thunar"
+
+#, fuzzy
+#~ msgid ""
+#~ "Unable to remove `%s'.\n"
+#~ "\n"
+#~ "Do you want to skip it?"
+#~ msgstr ""
+#~ "No s'ha pogut suprimir %s.\n"
+#~ "\n"
+#~ "El voleu ometre?"
+
+#~ msgid "Unable to create directory `%s': %s"
+#~ msgstr "No s'ha pogut crear el directori `%s' : %s"
+
+#~ msgid "Unable to remove `%s': %s"
+#~ msgstr "No s'ha pogut suprimir `%s': %s"
+
+#~ msgid "Unable to execute file `%s'"
+#~ msgstr "No s'ha pogut executar el fitxer `%s'"
 
 #, fuzzy
 #~ msgid "Unable to open \"%s\"."

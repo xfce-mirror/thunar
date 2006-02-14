@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -188,7 +188,7 @@ thunar_dnd_perform (GtkWidget    *widget,
       if (G_UNLIKELY (!succeed))
         {
           /* display an error to the user */
-          thunar_dialogs_show_error (widget, error, _("Unable to execute file `%s'"), thunar_file_get_display_name (file));
+          thunar_dialogs_show_error (widget, error, _("Failed to execute file \"%s\""), thunar_file_get_display_name (file));
 
           /* release the error */
           g_error_free (error);
