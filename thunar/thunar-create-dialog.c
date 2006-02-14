@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
@@ -58,12 +59,12 @@ static void thunar_create_dialog_text_changed (GtkWidget               *entry,
 
 struct _ThunarCreateDialogClass
 {
-  GtkDialogClass __parent__;
+  ThunarAbstractDialogClass __parent__;
 };
 
 struct _ThunarCreateDialog
 {
-  GtkDialog __parent__;
+  ThunarAbstractDialog __parent__;
 
   GtkWidget         *image;
   GtkWidget         *entry;
@@ -98,7 +99,7 @@ thunar_create_dialog_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_DIALOG, I_("ThunarCreateDialog"), &info, 0);
+      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarCreateDialog"), &info, 0);
     }
 
   return type;

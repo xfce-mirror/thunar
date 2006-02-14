@@ -25,6 +25,8 @@ Thunar_SOURCES =							\
 	$(thunar_built_sources)						\
 	$(thunar_dbus_sources)						\
 	main.c								\
+	thunar-abstract-dialog.c					\
+	thunar-abstract-dialog.h					\
 	thunar-application.c						\
 	thunar-application.h						\
 	thunar-chooser-button.c						\

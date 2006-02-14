@@ -28,6 +28,7 @@
 #include <string.h>
 #endif
 
+#include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-chooser-model.h>
@@ -85,12 +86,12 @@ static void     thunar_chooser_dialog_row_activated   (GtkTreeView              
 
 struct _ThunarChooserDialogClass
 {
-  GtkDialogClass __parent__;
+  ThunarAbstractDialogClass __parent__;
 };
 
 struct _ThunarChooserDialog
 {
-  GtkDialog __parent__;
+  ThunarAbstractDialog __parent__;
 
   ThunarFile *file;
   gboolean    open;
@@ -131,7 +132,7 @@ thunar_chooser_dialog_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_DIALOG, I_("ThunarChooserDialog"), &info, 0);
+      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarChooserDialog"), &info, 0);
     }
 
   return type;

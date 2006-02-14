@@ -786,7 +786,7 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
               uri_string = thunar_vfs_path_dup_string (lp->data);
               display_string = g_filename_display_name (uri_string);
               g_set_error (&error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR,
-                           _("The path '%s' does not refer to a directory"),
+                           _("The path \"%s\" does not refer to a directory"),
                            display_string);
               g_object_unref (G_OBJECT (file));
               g_free (display_string);

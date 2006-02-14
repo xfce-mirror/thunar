@@ -248,7 +248,7 @@ thunar_vfs_chown_job_operate (ThunarVfsChownJob *chown_job,
       if (G_UNLIKELY (errno == ENOENT))
         return TRUE;
 
-      message = _("Failed to determine file info of `%s': %s");
+      message = _("Failed to determine file info of \"%s\": %s");
       goto error;
     }
 
@@ -264,9 +264,9 @@ thunar_vfs_chown_job_operate (ThunarVfsChownJob *chown_job,
         return TRUE;
 
       if (chown_job->uid < 0)
-        message = _("Failed to change file owner of `%s': %s");
+        message = _("Failed to change file owner of \"%s\": %s");
       else
-        message = _("Failed to change file group of `%s': %s");
+        message = _("Failed to change file group of \"%s\": %s");
       goto error;
     }
 

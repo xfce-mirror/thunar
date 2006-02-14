@@ -1,5 +1,25 @@
 2006-02-14	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-xfer.c, thunar-vfs/thunar-vfs-chmod-job.c,
+	  thunar-vfs/thunar-vfs-chown-job.c: Be more consistent with error
+	  messages.
+	* thunar/thunar-shortcuts-view.c: Even more consistency.
+	* thunar/thunar-abstract-dialog.{c,h}, thunar/Makefile.am: Add new
+	  abstract class ThunarAbstractDialog, which overrides GtkDialog::close
+	  and provides additional keybindings for the "close" action. Bug #1380.
+	* thunar/thunar-chooser-dialog.c, thunar/thunar-create-dialog.c,
+	  thunar/thunar-location-dialog.c, thunar/thunar-preferences-dialog.c,
+	  thunar/thunar-properties-dialog.c: Derive from ThunarAbstractDialog,
+	  so all dialogs/windows in Thunar can be closed using the same
+	  keyboard shortcuts and people can customize these shortcuts using
+	  the standard GtkBindingSet mechanism. Bug #1380.
+	* po/Thunar.pot, po/*.po: Update translations.
+	* po/de.po: "Gerät auswerfen" is probably not the best translation
+	  for "Eject Volume". ;-)
+	* po/de.po: Even more love for the german translation.
+
+2006-02-14	Benedikt Meurer <benny@xfce.org>
+
 	* icons/16x16/Makefile.am, icons/16x16/stock_thunar-group.png,
 	  icons/16x16/stock_thunar-user.png: Remove the "thunar-user" and
 	  "thunar-group" stock icons.

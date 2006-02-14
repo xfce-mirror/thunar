@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-path-entry.h>
 
@@ -32,12 +33,12 @@ static void thunar_location_dialog_init (ThunarLocationDialog      *location_dia
 
 struct _ThunarLocationDialogClass
 {
-  GtkDialogClass __parent__;
+  ThunarAbstractDialogClass __parent__;
 };
 
 struct _ThunarLocationDialog
 {
-  GtkDialog __parent__;
+  ThunarAbstractDialog __parent__;
 
   GtkWidget *entry;
 };
@@ -65,7 +66,7 @@ thunar_location_dialog_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_DIALOG, I_("ThunarLocationDialog"), &info, 0);
+      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarLocationDialog"), &info, 0);
     }
   
   return type;

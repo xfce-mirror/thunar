@@ -250,7 +250,7 @@ thunar_vfs_chmod_job_operate (ThunarVfsChmodJob *chmod_job,
       if (G_UNLIKELY (errno == ENOENT))
         return TRUE;
 
-      message = _("Failed to determine file info of `%s': %s");
+      message = _("Failed to determine file info of \"%s\": %s");
       goto error;
     }
 
@@ -276,7 +276,7 @@ thunar_vfs_chmod_job_operate (ThunarVfsChmodJob *chmod_job,
       if (G_UNLIKELY (errno == ENOENT))
         return TRUE;
 
-      message = _("Failed to change permissions of `%s': %s");
+      message = _("Failed to change permissions of \"%s\": %s");
       goto error;
     }
 

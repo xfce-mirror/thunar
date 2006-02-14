@@ -30,6 +30,7 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-chooser-button.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-emblem-chooser.h>
@@ -41,6 +42,7 @@
 
 
 
+/* Property identifiers */
 enum
 {
   PROP_0,
@@ -61,8 +63,6 @@ static void     thunar_properties_dialog_set_property         (GObject          
                                                                guint                        prop_id,
                                                                const GValue                *value,
                                                                GParamSpec                  *pspec);
-static gboolean thunar_properties_dialog_key_press_event      (GtkWidget                   *widget,
-                                                               GdkEventKey                 *event);
 static void     thunar_properties_dialog_response             (GtkDialog                   *dialog,
                                                                gint                         response);
 static void     thunar_properties_dialog_activate             (GtkWidget                   *entry,
@@ -79,12 +79,12 @@ static void     thunar_properties_dialog_rename_idle_destroy  (gpointer         
 
 struct _ThunarPropertiesDialogClass
 {
-  GtkDialogClass __parent__;
+  ThunarAbstractDialogClass __parent__;
 };
 
 struct _ThunarPropertiesDialog
 {
-  GtkDialog __parent__;
+  ThunarAbstractDialog    __parent__;
 
   ThunarxProviderFactory *provider_factory;
   GList                  *provider_pages;
@@ -135,7 +135,7 @@ thunar_properties_dialog_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_DIALOG, I_("ThunarPropertiesDialog"), &info, 0);
+      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarPropertiesDialog"), &info, 0);
     }
 
   return type;
@@ -147,7 +147,6 @@ static void
 thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
 {
   GtkDialogClass *gtkdialog_class;
-  GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
 
   /* determine the parent type class */
@@ -158,9 +157,6 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
   gobject_class->finalize = thunar_properties_dialog_finalize;
   gobject_class->get_property = thunar_properties_dialog_get_property;
   gobject_class->set_property = thunar_properties_dialog_set_property;
-
-  gtkwidget_class = GTK_WIDGET_CLASS (klass);
-  gtkwidget_class->key_press_event = thunar_properties_dialog_key_press_event;
 
   gtkdialog_class = GTK_DIALOG_CLASS (klass);
   gtkdialog_class->response = thunar_properties_dialog_response;
@@ -505,21 +501,6 @@ thunar_properties_dialog_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
-}
-
-
-
-static gboolean
-thunar_properties_dialog_key_press_event (GtkWidget   *widget,
-                                          GdkEventKey *event)
-{
-  if (event->keyval == GDK_Escape || ((event->keyval == GDK_w || event->keyval == GDK_W) && (event->state & GDK_CONTROL_MASK) != 0))
-    {
-      gtk_widget_destroy (widget);
-      return TRUE;
-    }
-
-  return (*GTK_WIDGET_CLASS (thunar_properties_dialog_parent_class)->key_press_event) (widget, event);
 }
 
 

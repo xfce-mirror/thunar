@@ -260,7 +260,7 @@ thunar_vfs_xfer_copy_directory (const gchar          *source_absolute_path,
     {
 error:
       /* setup the error return */
-      tvxc_set_error_from_errno (error, _("Failed to create directory `%s'"), target_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to create directory \"%s\""), target_absolute_path);
       return FALSE;
     }
 
@@ -284,7 +284,7 @@ thunar_vfs_xfer_copy_fifo (const gchar          *source_absolute_path,
   if (mkfifo (target_absolute_path, source_statb->st_mode) < 0)
     {
       /* TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'. */
-      tvxc_set_error_from_errno (error, _("Failed to create named fifo `%s'"), target_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to create named fifo \"%s\""), target_absolute_path);
       return FALSE;
     }
 
@@ -316,7 +316,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
   source_fd = open (source_absolute_path, O_RDONLY);
   if (G_UNLIKELY (source_fd < 0))
     {
-      tvxc_set_error_from_errno (error, _("Failed to open `%s' for reading"), source_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to open \"%s\" for reading"), source_absolute_path);
       goto end0;
     }
 
@@ -328,7 +328,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
       if (G_UNLIKELY (errno == EISDIR || errno == EMLINK || errno == ETXTBSY))
         errno = EEXIST;
 
-      tvxc_set_error_from_errno (error, _("Failed to open `%s' for writing"), target_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to open \"%s\" for writing"), target_absolute_path);
       goto end1;
     }
 
@@ -347,7 +347,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
           if (G_UNLIKELY (errno == EAGAIN || errno == EINTR))
             continue;
 
-          tvxc_set_error_from_errno (error, _("Failed to read data from `%s'"), source_absolute_path);
+          tvxc_set_error_from_errno (error, _("Failed to read data from \"%s\""), source_absolute_path);
           goto end2;
         }
       else if (n == 0)
@@ -363,7 +363,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
               if (G_UNLIKELY (errno == EAGAIN || errno == EINTR))
                 continue;
 
-              tvxc_set_error_from_errno (error, _("Failed to write data to `%s'"), target_absolute_path);
+              tvxc_set_error_from_errno (error, _("Failed to write data to \"%s\""), target_absolute_path);
               goto end2;
             }
           else
@@ -382,7 +382,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
           /* unlink the not yet completely written target file */
           if (done < source_statb->st_size && g_unlink (target_absolute_path) < 0)
             {
-              tvxc_set_error_from_errno (error, _("Failed to remove `%s'"), target_absolute_path);
+              tvxc_set_error_from_errno (error, _("Failed to remove \"%s\""), target_absolute_path);
               goto end2;
             }
 
@@ -427,7 +427,7 @@ thunar_vfs_xfer_copy_symlink (const gchar          *source_absolute_path,
   link_target_len = readlink (source_absolute_path, link_target, sizeof (link_target) - 1);
   if (G_UNLIKELY (link_target_len < 0))
     {
-      tvxc_set_error_from_errno (error, _("Failed to read link target from `%s'"), source_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to read link target from \"%s\""), source_absolute_path);
       return FALSE;
     }
   link_target[link_target_len] = '\0';
@@ -435,7 +435,7 @@ thunar_vfs_xfer_copy_symlink (const gchar          *source_absolute_path,
   /* try to create the symbolic link */
   if (symlink (link_target, target_absolute_path) < 0)
     {
-      tvxc_set_error_from_errno (error, _("Failed to create symbolic link `%s'"), target_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to create symbolic link \"%s\""), target_absolute_path);
       return FALSE;
     }
 
@@ -443,7 +443,7 @@ thunar_vfs_xfer_copy_symlink (const gchar          *source_absolute_path,
   /* apply the file mode which was found for the source */
   if (lchmod (target_absolute_path, source_statb->st_mode) < 0)
     {
-      tvxc_set_error_from_errno (error, _("Failed to change mode of `%s'"), target_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to change mode of \"%s\""), target_absolute_path);
       return FALSE;
     }
 #endif
@@ -477,7 +477,7 @@ thunar_vfs_xfer_copy_internal (const ThunarVfsPath   *source_path,
   /* stat the source path */
   if (lstat (source_absolute_path, &source_statb) < 0)
     {
-      tvxc_set_error_from_errno (error, _("Failed to determine file info for `%s'"), source_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to determine file info for \"%s\""), source_absolute_path);
       return FALSE;
     }
 
@@ -506,7 +506,7 @@ thunar_vfs_xfer_copy_internal (const ThunarVfsPath   *source_path,
 
     default:
       display_name = g_filename_display_name (source_absolute_path);
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Failed to copy special file `%s'"), display_name);
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Failed to copy special file \"%s\""), display_name);
       g_free (display_name);
       return FALSE;
     }
@@ -537,7 +537,7 @@ thunar_vfs_xfer_link_internal (const ThunarVfsPath *source_path,
   /* stat the source path */
   if (lstat (source_absolute_path, &source_statb) < 0)
     {
-      tvxc_set_error_from_errno (error, _("Failed to determine file info for `%s'"), source_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to determine file info for \"%s\""), source_absolute_path);
       return FALSE;
     }
 
@@ -548,7 +548,7 @@ thunar_vfs_xfer_link_internal (const ThunarVfsPath *source_path,
   /* try to create the symlink */
   if (symlink (source_absolute_path, target_absolute_path) < 0)
     {
-      tvxc_set_error_from_errno (error, _("Failed to create symbolic `%s'"), target_absolute_path);
+      tvxc_set_error_from_errno (error, _("Failed to create symbolic link \"%s\""), target_absolute_path);
       return FALSE;
     }
 
