@@ -1,3 +1,12 @@
+2006-02-14	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-shortcuts-model.c: Include non-removable volumes in
+	  the list of hidden volumes.
+	* thunar-vfs/thunar-vfs-volume-hal.c: Determine the volumes from the
+	  drives on startup, instead of FindDeviceByCapability(volume), as
+	  that seems to be what GNOME does. Maybe one day, there'll be a
+	  usable HAL documentation, and hardware will really just work.
+
 2006-02-13	Benedikt Meurer <benny@xfce.org>
 
 	* acinclude.m4, configure.in.in, thunar-vfs/Makefile.am,

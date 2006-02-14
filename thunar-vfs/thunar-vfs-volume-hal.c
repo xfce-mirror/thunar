@@ -720,10 +720,13 @@ thunar_vfs_volume_manager_hal_manager_init (ThunarVfsVolumeManagerIface *iface)
 static void
 thunar_vfs_volume_manager_hal_init (ThunarVfsVolumeManagerHal *manager_hal)
 {
-  DBusError error;
-  gchar   **udis;
-  gint      n_udis;
-  gint      n;
+  LibHalDrive *hd;
+  DBusError    error;
+  gchar      **drive_udis;
+  gchar      **udis;
+  gint         n_drive_udis;
+  gint         n_udis;
+  gint         n, m;
 
   /* initialize the D-BUS error */
   dbus_error_init (&error);
@@ -758,16 +761,36 @@ thunar_vfs_volume_manager_hal_init (ThunarVfsVolumeManagerHal *manager_hal)
   /* setup the D-BUS connection with the GLib main loop */
   dbus_connection_setup_with_g_main (manager_hal->dbus_connection, NULL);
 
-  /* lookup all volumes currently known to HAL */
-  udis = libhal_find_device_by_capability (manager_hal->context, "volume", &n_udis, NULL);
-  if (G_LIKELY (udis != NULL))
+  /* lookup all drives currently known to HAL */
+  drive_udis = libhal_find_device_by_capability (manager_hal->context, "storage", &n_drive_udis, &error);
+  if (G_LIKELY (drive_udis != NULL))
     {
-      /* add volumes for all given UDIs */
-      for (n = 0; n < n_udis; ++n)
-        thunar_vfs_volume_manager_hal_device_added (manager_hal->context, udis[n]);
+      /* process all drives UDIs */
+      for (m = 0; m < n_drive_udis; ++m)
+        {
+          /* determine the LibHalDrive for the drive UDI */
+          hd = libhal_drive_from_udi (manager_hal->context, drive_udis[m]);
+          if (G_UNLIKELY (hd == NULL))
+            continue;
 
-      /* release the UDIs */
-      libhal_free_string_array (udis);
+          /* determine all volumes for the given drive */
+          udis = libhal_drive_find_all_volumes (manager_hal->context, hd, &n_udis);
+          if (G_LIKELY (udis != NULL))
+            {
+              /* add volumes for all given UDIs */
+              for (n = 0; n < n_udis; ++n)
+                thunar_vfs_volume_manager_hal_device_added (manager_hal->context, udis[n]);
+
+              /* release the UDIs */
+              libhal_free_string_array (udis);
+            }
+
+          /* release the hal drive */
+          libhal_drive_free (hd);
+        }
+
+      /* release the drive UDIs */
+      libhal_free_string_array (drive_udis);
     }
 
   /* watch all devices for changes */

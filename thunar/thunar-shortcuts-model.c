@@ -302,35 +302,32 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   volumes = thunar_vfs_volume_manager_get_volumes (model->volume_manager);
   for (lp = volumes; lp != NULL; lp = lp->next)
     {
-      /* we list only removable devices here */
+      /* monitor the volume for changes */
       volume = THUNAR_VFS_VOLUME (lp->data);
-      if (thunar_vfs_volume_is_removable (volume))
+      g_object_ref (G_OBJECT (volume));
+      g_signal_connect (G_OBJECT (volume), "changed",
+                        G_CALLBACK (thunar_shortcuts_model_volume_changed), model);
+
+      /* we list only present, removable devices here */
+      if (thunar_vfs_volume_is_removable (volume) && thunar_vfs_volume_is_present (volume))
         {
-          /* monitor the volume for changes */
-          g_object_ref (G_OBJECT (volume));
-          g_signal_connect (G_OBJECT (volume), "changed",
-                            G_CALLBACK (thunar_shortcuts_model_volume_changed), model);
+          /* generate the shortcut (w/o a file, else we might
+           * prevent the volume from being unmounted)
+           */
+          shortcut = g_new (ThunarShortcut, 1);
+          shortcut->type = THUNAR_SHORTCUT_REMOVABLE_MEDIA;
+          shortcut->file = NULL;
+          shortcut->name = NULL;
+          shortcut->volume = volume;
 
-          if (thunar_vfs_volume_is_present (volume))
-            {
-              /* generate the shortcut (w/o a file, else we might
-               * prevent the volume from being unmounted)
-               */
-              shortcut = g_new (ThunarShortcut, 1);
-              shortcut->type = THUNAR_SHORTCUT_REMOVABLE_MEDIA;
-              shortcut->file = NULL;
-              shortcut->name = NULL;
-              shortcut->volume = volume;
-
-              /* link the shortcut to the list */
-              thunar_shortcuts_model_add_shortcut (model, shortcut, path);
-              gtk_tree_path_next (path);
-            }
-          else
-            {
-              /* schedule the volume for later checking, there's no medium present */
-              model->hidden_volumes = g_list_prepend (model->hidden_volumes, volume);
-            }
+          /* link the shortcut to the list */
+          thunar_shortcuts_model_add_shortcut (model, shortcut, path);
+          gtk_tree_path_next (path);
+        }
+      else
+        {
+          /* schedule the volume for later checking, not removable or there's no medium present */
+          model->hidden_volumes = g_list_prepend (model->hidden_volumes, volume);
         }
     }
 
@@ -365,6 +362,7 @@ static void
 thunar_shortcuts_model_finalize (GObject *object)
 {
   ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (object);
+  GList                *lp;
 
   g_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
 
@@ -373,7 +371,11 @@ thunar_shortcuts_model_finalize (GObject *object)
   g_list_free (model->shortcuts);
 
   /* free all hidden volumes */
-  g_list_foreach (model->hidden_volumes, (GFunc) g_object_unref, NULL);
+  for (lp = model->hidden_volumes; lp != NULL; lp = lp->next)
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_shortcuts_model_volume_changed, model);
+      g_object_unref (G_OBJECT (lp->data));
+    }
   g_list_free (model->hidden_volumes);
 
   /* detach from the VFS monitor */
@@ -1021,7 +1023,7 @@ thunar_shortcuts_model_volume_changed (ThunarVfsVolume      *volume,
   if (lp != NULL)
     {
       /* check if we need to display the volume now */
-      if (thunar_vfs_volume_is_present (volume))
+      if (thunar_vfs_volume_is_present (volume) && thunar_vfs_volume_is_removable (volume))
         {
           /* remove the volume from the list of hidden volumes */
           model->hidden_volumes = g_list_delete_link (model->hidden_volumes, lp);
@@ -1063,7 +1065,7 @@ thunar_shortcuts_model_volume_changed (ThunarVfsVolume      *volume,
       g_assert (shortcut->volume == volume);
 
       /* check if we need to hide the volume now */
-      if (!thunar_vfs_volume_is_present (volume))
+      if (!thunar_vfs_volume_is_present (volume) || !thunar_vfs_volume_is_removable (volume))
         {
           /* need to ref here, because the file_destroy() handler will drop the refcount. */
           g_object_ref (G_OBJECT (volume));
