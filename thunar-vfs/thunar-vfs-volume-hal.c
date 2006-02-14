@@ -258,6 +258,7 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
   gboolean            result;
   gchar              *standard_error;
   gchar              *command_line;
+  gchar              *mount_point;
   gchar              *quoted;
   FILE               *fp;
   gint                exit_status;
@@ -268,7 +269,7 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
   g_free (quoted);
 
   /* execute the mount command */
-  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
+  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, NULL);
   if (G_LIKELY (result))
     {
       /* check if the command failed */
@@ -295,6 +296,53 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
 
       /* release the stderr output */
       g_free (standard_error);
+    }
+  else /* pmount-hal is not available, so retry with simple "mount <mount-point>" */
+    {
+      /* release the previous command line */
+      g_free (command_line);
+      command_line = NULL;
+
+      /* determine the absolute path to the mount point */
+      mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
+
+      /* generate the command line for the mount command */
+      quoted = g_shell_quote (mount_point);
+      command_line = g_strconcat ("mount ", quoted, NULL);
+      g_free (quoted);
+
+      /* execute the mount command */
+      result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
+      if (G_LIKELY (result))
+        {
+          /* check if the command failed */
+          if (G_UNLIKELY (exit_status != 0))
+            {
+              /* drop additional whitespace from the stderr output */
+              g_strstrip (standard_error);
+
+              /* check if stderr output is usable as error message */
+              if (G_LIKELY (*standard_error != '\0'))
+                {
+                  /* use standard error message if not empty */
+                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, standard_error);
+                }
+              else
+                {
+                  /* no useful information, *narf* */
+                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
+                }
+
+              /* and yes, we failed */
+              result = FALSE;
+            }
+
+          /* release the stderr output */
+          g_free (standard_error);
+        }
+
+      /* release the absolute path to the mount point */
+      g_free (mount_point);
     }
 
   /* cleanup */
@@ -382,7 +430,7 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
   command_line = g_strconcat ("pumount ", quoted, NULL);
   g_free (quoted);
 
-  /* execute the mount command */
+  /* execute the pumount command */
   result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
   if (G_LIKELY (result))
     {
@@ -410,6 +458,47 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
 
       /* release the stderr output */
       g_free (standard_error);
+    }
+  else /* pumount not available, retry with plain umount */
+    {
+      /* release the previous command line */
+      g_free (command_line);
+      command_line = NULL;
+
+      /* generate the mount command */
+      quoted = g_shell_quote (absolute_path);
+      command_line = g_strconcat ("umount ", quoted, NULL);
+      g_free (quoted);
+
+      /* execute the pumount command */
+      result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
+      if (G_LIKELY (result))
+        {
+          /* check if the command failed */
+          if (G_UNLIKELY (exit_status != 0))
+            {
+              /* drop additional whitespace from the stderr output */
+              g_strstrip (standard_error);
+
+              /* check if stderr output is usable as error message */
+              if (G_LIKELY (*standard_error != '\0'))
+                {
+                  /* use standard error message if not empty */
+                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, standard_error);
+                }
+              else
+                {
+                  /* no useful information, *narf* */
+                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
+                }
+
+              /* and yes, we failed */
+              result = FALSE;
+            }
+
+          /* release the stderr output */
+          g_free (standard_error);
+        }
     }
 
   /* check if we were successfull */
