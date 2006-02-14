@@ -29,6 +29,9 @@
 #include <mntent.h>
 #endif
 #include <stdio.h>
+#ifdef HAVE_STDLIB_H
+#include <stdlib.h>
+#endif
 
 #include <dbus/dbus-glib-lowlevel.h>
 
@@ -779,10 +782,16 @@ thunar_vfs_volume_manager_hal_init (ThunarVfsVolumeManagerHal *manager_hal)
             {
               /* add volumes for all given UDIs */
               for (n = 0; n < n_udis; ++n)
-                thunar_vfs_volume_manager_hal_device_added (manager_hal->context, udis[n]);
+                {
+                  /* add the volume based on the UDI */
+                  thunar_vfs_volume_manager_hal_device_added (manager_hal->context, udis[n]);
+                  
+                  /* release the UDI (HAL bug #5279) */
+                  free (udis[n]);
+                }
 
-              /* release the UDIs */
-              libhal_free_string_array (udis);
+              /* release the UDIs array (HAL bug #5279) */
+              free (udis);
             }
 
           /* release the hal drive */
