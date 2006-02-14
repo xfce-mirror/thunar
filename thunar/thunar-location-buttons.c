@@ -32,6 +32,7 @@
 #endif
 
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-buttons.h>
@@ -91,6 +92,9 @@ static GtkWidget     *thunar_location_buttons_make_button            (ThunarLoca
                                                                       ThunarFile                 *file);
 static void           thunar_location_buttons_remove_1               (GtkContainer               *container,
                                                                       GtkWidget                  *widget);
+static void           thunar_location_buttons_file_destroyed         (ThunarFileMonitor          *file_monitor,
+                                                                      ThunarFile                 *file,
+                                                                      ThunarLocationButtons      *buttons);
 static gboolean       thunar_location_buttons_scroll_timeout         (gpointer                    user_data);
 static void           thunar_location_buttons_scroll_timeout_destroy (gpointer                    user_data);
 static void           thunar_location_buttons_stop_scrolling         (ThunarLocationButtons      *buttons);
@@ -156,27 +160,29 @@ struct _ThunarLocationButtons
 {
   GtkContainer __parent__;
 
-  GtkWidget     *left_slider;
-  GtkWidget     *right_slider;
+  GtkWidget         *left_slider;
+  GtkWidget         *right_slider;
 
-  ThunarFile    *current_directory;
+  ThunarFileMonitor *file_monitor;
 
-  gint           slider_width;
-  gboolean       ignore_click : 1;
+  ThunarFile        *current_directory;
 
-  GList         *list;
-  GList         *first_scrolled_button;
+  gint               slider_width;
+  gboolean           ignore_click : 1;
 
-  gint           scroll_timeout_id;
+  GList             *list;
+  GList             *first_scrolled_button;
+
+  gint               scroll_timeout_id;
 
   /* enter directories using DnD */
-  GtkWidget     *enter_button;
-  gint           enter_timeout_id;
+  GtkWidget         *enter_button;
+  gint               enter_timeout_id;
 
   /* Drop support for the buttons */
-  GList         *drop_path_list;
-  guint          drop_data_ready : 1;
-  guint          drop_occurred : 1;
+  GList             *drop_path_list;
+  guint              drop_data_ready : 1;
+  guint              drop_occurred : 1;
 };
 
 
@@ -312,6 +318,10 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
 {
   GtkWidget *arrow;
 
+  /* connect to the file monitor */
+  buttons->file_monitor = thunar_file_monitor_get_default ();
+  g_signal_connect (G_OBJECT (buttons->file_monitor), "file-destroyed", G_CALLBACK (thunar_location_buttons_file_destroyed), buttons);
+
   GTK_WIDGET_SET_FLAGS (buttons, GTK_NO_WINDOW);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
 
@@ -372,6 +382,10 @@ thunar_location_buttons_finalize (GObject *object)
 
   /* release from the current_directory */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (buttons), NULL);
+
+  /* disconnect from the file monitor */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (buttons->file_monitor), thunar_location_buttons_file_destroyed, buttons);
+  g_object_unref (G_OBJECT (buttons->file_monitor));
 
   (*G_OBJECT_CLASS (thunar_location_buttons_parent_class)->finalize) (object);
 }
@@ -863,10 +877,10 @@ thunar_location_buttons_forall (GtkContainer *container,
       (*callback) (child, callback_data);
     }
 
-  if (buttons->left_slider != NULL)
+  if (buttons->left_slider != NULL && include_internals)
     (*callback) (buttons->left_slider, callback_data);
 
-  if (buttons->right_slider != NULL)
+  if (buttons->right_slider != NULL && include_internals)
     (*callback) (buttons->right_slider, callback_data);
 }
 
@@ -956,6 +970,48 @@ thunar_location_buttons_remove_1 (GtkContainer *container,
   gtk_widget_unparent (widget);
   if (G_LIKELY (need_resize))
     gtk_widget_queue_resize (GTK_WIDGET (container));
+}
+
+
+
+static void
+thunar_location_buttons_file_destroyed (ThunarFileMonitor     *file_monitor,
+                                        ThunarFile            *file,
+                                        ThunarLocationButtons *buttons)
+{
+  GList *children;
+  GList *lp;
+
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  g_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
+
+  /* check all buttons whether one of them refers to the destroyed file,
+   * remember the children list is in reversed order. That is, the last
+   * button displayed in the path bar, is the first entry in the child
+   * list.
+   */
+  children = gtk_container_get_children (GTK_CONTAINER (buttons));
+  for (lp = children; lp != NULL; lp = lp->next)
+    {
+      /* stop as soon as we reach the current-directory button */
+      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lp->data)))
+        {
+          lp = NULL;
+          break;
+        }
+
+      /* check if the button is for the destroyed file */
+      if (g_object_get_qdata (G_OBJECT (lp->data), thunar_file_quark) == file)
+        break;
+    }
+
+  /* remove all buttons after (and including) the destroyed file */
+  for (; lp != NULL; lp = lp->prev)
+    gtk_widget_destroy (GTK_WIDGET (lp->data));
+
+  /* release the list of children */
+  g_list_free (children);
 }
 
 
