@@ -465,6 +465,11 @@ thunar_icon_view_gesture_action (ThunarIconView *icon_view)
     {
       return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (icon_view)->ui_manager, "/main-menu/go-menu/forward");
     }
+  else if (icon_view->gesture_current_y - icon_view->gesture_start_y > 40
+      && ABS (icon_view->gesture_start_x - icon_view->gesture_current_x) < 40)
+    {
+      return gtk_ui_manager_get_action (THUNAR_STANDARD_VIEW (icon_view)->ui_manager, "/main-menu/view-menu/reload");
+    }
 
   return NULL;
 }
