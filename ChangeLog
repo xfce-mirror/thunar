@@ -1,5 +1,20 @@
 2006-02-15	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-unlink-job.c(thunar_vfs_unlink_job_execute):
+	  Ignore ENOENT errors returned by thunar_vfs_scandir() as well, to
+	  fix the problem with not being able to delete broken links on
+	  Linux.
+	* thunar/thunar-application.c: Generate unique roles for the Thunar
+	  toplevel windows in preparation of session management support.
+	* thunar/thunar-dbus-service-infos.xml, thunar/thunar-dbus-service.c:
+	  Add Terminate() method to the org.xfce.Thunar interface, which allows
+	  to properly shutdown a daemon instance.
+	* thunar/main.c, thunar/thunar-dbus-client.{c,h}: Add -q/--quit command
+	  line option, which terminates a running daemon instance. Also cleanup
+	  the --daemon handling.
+
+2006-02-15	Benedikt Meurer <benny@xfce.org>
+
 	* FAQ, thunar/thunar-icon-view.c: Add mouse gesture for "Reload" as
 	  "move mouse down". The mouse gesture can still be canceled by placing
 	  the cursor back to its initial position (+/- 40px).

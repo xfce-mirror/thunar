@@ -22,6 +22,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
@@ -46,37 +50,41 @@ enum
 
 
 
-static void     thunar_application_class_init           (ThunarApplicationClass *klass);
-static void     thunar_application_init                 (ThunarApplication      *application);
-static void     thunar_application_finalize             (GObject                *object);
-static void     thunar_application_get_property         (GObject                *object,
-                                                         guint                   prop_id,
-                                                         GValue                 *value,
-                                                         GParamSpec             *pspec);
-static void     thunar_application_set_property         (GObject                *object,
-                                                         guint                   prop_id,
-                                                         const GValue           *value,
-                                                         GParamSpec             *pspec);
-static void     thunar_application_collect_and_launch   (ThunarApplication      *application,
-                                                         GtkWidget              *widget,
-                                                         const gchar            *icon_name,
-                                                         const gchar            *title,
-                                                         Launcher                launcher,
-                                                         GList                  *source_path_list,
-                                                         ThunarVfsPath          *target_path,
-                                                         GClosure               *new_files_closure);
-static void     thunar_application_launch               (ThunarApplication      *application,
-                                                         GtkWidget              *widget,
-                                                         const gchar            *icon_name,
-                                                         const gchar            *title,
-                                                         Launcher                launcher,
-                                                         GList                  *source_path_list,
-                                                         GList                  *target_path_list,
-                                                         GClosure               *new_files_closure);
-static void     thunar_application_window_destroyed     (GtkWidget              *window,
-                                                         ThunarApplication      *application);
-static gboolean thunar_application_show_dialogs         (gpointer                user_data);
-static void     thunar_application_show_dialogs_destroy (gpointer                user_data);
+static void     thunar_application_class_init             (ThunarApplicationClass *klass);
+static void     thunar_application_init                   (ThunarApplication      *application);
+static void     thunar_application_finalize               (GObject                *object);
+static void     thunar_application_get_property           (GObject                *object,
+                                                           guint                   prop_id,
+                                                           GValue                 *value,
+                                                           GParamSpec             *pspec);
+static void     thunar_application_set_property           (GObject                *object,
+                                                           guint                   prop_id,
+                                                           const GValue           *value,
+                                                           GParamSpec             *pspec);
+static void     thunar_application_collect_and_launch     (ThunarApplication      *application,
+                                                           GtkWidget              *widget,
+                                                           const gchar            *icon_name,
+                                                           const gchar            *title,
+                                                           Launcher                launcher,
+                                                           GList                  *source_path_list,
+                                                           ThunarVfsPath          *target_path,
+                                                           GClosure               *new_files_closure);
+static void     thunar_application_launch                 (ThunarApplication      *application,
+                                                           GtkWidget              *widget,
+                                                           const gchar            *icon_name,
+                                                           const gchar            *title,
+                                                           Launcher                launcher,
+                                                           GList                  *source_path_list,
+                                                           GList                  *target_path_list,
+                                                           GClosure               *new_files_closure);
+static void     thunar_application_open_window_with_role  (ThunarApplication      *application,
+                                                           const gchar            *role,
+                                                           ThunarFile             *directory,
+                                                           GdkScreen              *screen);
+static void     thunar_application_window_destroyed       (GtkWidget              *window,
+                                                           ThunarApplication      *application);
+static gboolean thunar_application_show_dialogs           (gpointer                user_data);
+static void     thunar_application_show_dialogs_destroy   (gpointer                user_data);
 
 
 
@@ -346,6 +354,35 @@ thunar_application_launch (ThunarApplication *application,
 
 
 static void
+thunar_application_open_window_with_role (ThunarApplication *application,
+                                          const gchar       *role,
+                                          ThunarFile        *directory,
+                                          GdkScreen         *screen)
+{
+  GtkWidget *window;
+
+  if (G_UNLIKELY (screen == NULL))
+    screen = gdk_screen_get_default ();
+
+  /* allocate the window */
+  window = g_object_new (THUNAR_TYPE_WINDOW,
+                         "role", role,
+                         "screen", screen,
+                         NULL);
+
+  /* hook up the window */
+  thunar_application_take_window (application, GTK_WINDOW (window));
+
+  /* show the new window */
+  gtk_widget_show (window);
+
+  /* change the directory */
+  thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+}
+
+
+
+static void
 thunar_application_window_destroyed (GtkWidget         *window,
                                      ThunarApplication *application)
 {
@@ -545,28 +582,16 @@ thunar_application_open_window (ThunarApplication *application,
                                 ThunarFile        *directory,
                                 GdkScreen         *screen)
 {
-  GtkWidget *window;
+  gchar *role;
 
   g_return_if_fail (THUNAR_IS_APPLICATION (application));
   g_return_if_fail (THUNAR_IS_FILE (directory));
   g_return_if_fail (screen == NULL || GDK_IS_SCREEN (screen));
 
-  if (G_UNLIKELY (screen == NULL))
-    screen = gdk_screen_get_default ();
-
-  /* allocate the window */
-  window = g_object_new (THUNAR_TYPE_WINDOW,
-                         "screen", screen,
-                         NULL);
-
-  /* hook up the window */
-  thunar_application_take_window (application, GTK_WINDOW (window));
-
-  /* show the new window */
-  gtk_widget_show (window);
-
-  /* change the directory */
-  thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+  /* generate a unique role for the new window (for session management) */
+  role = g_strdup_printf ("Thunar-%u-%u", (guint) time (NULL), (guint) g_random_int ());
+  thunar_application_open_window_with_role (application, role, directory, screen);
+  g_free (role);
 }
 
 

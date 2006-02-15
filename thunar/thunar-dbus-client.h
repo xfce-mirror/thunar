@@ -29,6 +29,8 @@ gboolean thunar_dbus_client_launch_files (const gchar *working_directory,
                                           GdkScreen   *screen,
                                           GError     **error);
 
+gboolean thunar_dbus_client_terminate    (GError     **error);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_DBUS_CLIENT_H__ */

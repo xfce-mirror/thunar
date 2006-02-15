@@ -168,8 +168,8 @@ thunar_vfs_unlink_job_execute (ThunarVfsJob *job)
       paths = thunar_vfs_scandir (lp->data, &job->cancelled, THUNAR_VFS_SCANDIR_RECURSIVE, NULL, &error);
       if (G_UNLIKELY (error != NULL))
         {
-          /* we can safely ignore ENOTDIR errors here */
-          if (error->domain != G_FILE_ERROR || error->code != G_FILE_ERROR_NOTDIR)
+          /* we can safely ignore ENOENT/ENOTDIR errors here */
+          if (error->domain != G_FILE_ERROR || (error->code != G_FILE_ERROR_NOENT && error->code != G_FILE_ERROR_NOTDIR))
             {
               /* inform the user about the problem and abort the job */
               thunar_vfs_job_error (job, error);

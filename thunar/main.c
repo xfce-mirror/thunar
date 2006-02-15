@@ -39,12 +39,22 @@
 
 /* --- globals --- */
 static gboolean opt_daemon = FALSE;
+static gboolean opt_quit = FALSE;
 
 
 /* --- command line options --- */
 static GOptionEntry option_entries[] =
 {
+#ifdef HAVE_DBUS
   { "daemon", 0, 0, G_OPTION_ARG_NONE, &opt_daemon, N_ ("Run in daemon mode"), NULL, },
+#else
+  { "daemon", 0, 0, G_OPTION_ARG_NONE, &opt_daemon, N_ ("Run in daemon mode (not supported)"), NULL, },
+#endif
+#ifdef HAVE_DBUS
+  { "quit", 'q', 0, G_OPTION_ARG_NONE, &opt_quit, N_ ("Quit a running Thunar instance"), NULL, },
+#else
+  { "quit", 'q', 0, G_OPTION_ARG_NONE, &opt_quit, N_ ("Quit a running Thunar instance (not supported)"), NULL, },
+#endif
   { NULL, },
 };
 
@@ -58,7 +68,7 @@ main (int argc, char **argv)
 #endif
   ThunarApplication *application;
   GError            *error = NULL;
-  gchar             *working_directory = NULL;
+  gchar             *working_directory;
   gchar            **filenames = NULL;
 
   /* setup translation domain */
@@ -93,42 +103,55 @@ main (int argc, char **argv)
       return EXIT_FAILURE;
     }
 
-  /* do not try to connect to a running instance, or
-   * open any windows if run as daemon.
-   */
-  if (G_LIKELY (!opt_daemon))
+#ifdef HAVE_DBUS
+  /* check if we should terminate a running Thunar instance */
+  if (G_UNLIKELY (opt_quit))
     {
-      /* determine the current working directory */
-      working_directory = g_get_current_dir ();
+      /* try to terminate whatever is running */
+      if (!thunar_dbus_client_terminate (&error))
+        {
+          g_fprintf (stderr, "Thunar: Failed to terminate running instance: %s\n", error->message);
+          g_error_free (error);
+          return EXIT_FAILURE;
+        }
 
-      /* check if atleast one filename was specified */
-      if (G_LIKELY (argc > 1))
-        {
-          /* use the specified filenames */
-          filenames = g_strdupv (argv + 1);
-        }
-      else
-        {
-          /* use the current working directory */
-          filenames = g_new (gchar *, 2);
-          filenames[0] = g_strdup (working_directory);
-          filenames[1] = NULL;
-        }
+      return EXIT_SUCCESS;
+    }
+#endif
+
+  /* determine the current working directory */
+  working_directory = g_get_current_dir ();
+
+  /* check if atleast one filename was specified, else
+   * fall back to opening the current working directory
+   * if daemon mode is not requested.
+   */
+  if (G_LIKELY (argc > 1))
+    {
+      /* use the specified filenames */
+      filenames = g_strdupv (argv + 1);
+    }
+  else if (!opt_daemon)
+    {
+      /* use the current working directory */
+      filenames = g_new (gchar *, 2);
+      filenames[0] = g_strdup (working_directory);
+      filenames[1] = NULL;
+    }
 
 #ifdef HAVE_DBUS
-      /* try to reuse an existing instance */
-      if (thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
-        {
-          /* stop any running startup notification */
-          gdk_notify_startup_complete ();
+  /* try to reuse an existing instance (if any files were specified) */
+  if (filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
+    {
+      /* stop any running startup notification */
+      gdk_notify_startup_complete ();
 
-          /* that worked, let's get outa here */
-          g_free (working_directory);
-          g_strfreev (filenames);
-          return EXIT_SUCCESS;
-        }
-#endif
+      /* that worked, let's get outa here */
+      g_free (working_directory);
+      g_strfreev (filenames);
+      return EXIT_SUCCESS;
     }
+#endif
 
   /* initialize the ThunarVFS library */
   thunar_vfs_init ();
@@ -139,31 +162,27 @@ main (int argc, char **argv)
   /* acquire a reference on the global application */
   application = thunar_application_get ();
 
+#ifdef HAVE_DBUS
+  /* setup daemon mode if requested and supported */
+  thunar_application_set_daemon (application, opt_daemon);
+#endif
+
   /* use the Thunar icon as default for new windows */
   gtk_window_set_default_icon_name ("Thunar");
 
-  /* if not in daemon mode, try to process the filenames here */
-  if (G_LIKELY (!opt_daemon))
+  /* try to process the given filenames (if any files were specified) */
+  if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, &error))
     {
-      /* try to process the given filenames */
-      if (!thunar_application_process_filenames (application, working_directory, filenames, NULL, &error))
-        {
-          g_fprintf (stderr, "Thunar: %s\n", error->message);
-          g_object_unref (G_OBJECT (application));
-          thunar_vfs_shutdown ();
-          g_error_free (error);
-          return EXIT_FAILURE;
-        }
+      g_fprintf (stderr, "Thunar: %s\n", error->message);
+      g_object_unref (G_OBJECT (application));
+      thunar_vfs_shutdown ();
+      g_error_free (error);
+      return EXIT_FAILURE;
+    }
 
-      /* release working directory and filenames */
-      g_free (working_directory);
-      g_strfreev (filenames);
-    }
-  else
-    {
-      /* run in daemon mode, since we were started by the message bus */
-      thunar_application_set_daemon (application, TRUE);
-    }
+  /* release working directory and filenames */
+  g_free (working_directory);
+  g_strfreev (filenames);
 
   /* do not enter the main loop, unless we have atleast one window or we are in daemon mode */
   if (thunar_application_has_windows (application) || thunar_application_get_daemon (application))

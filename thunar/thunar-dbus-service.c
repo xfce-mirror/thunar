@@ -65,6 +65,8 @@ static gboolean thunar_dbus_service_launch_files                (ThunarDBusServi
                                                                  gchar                 **filenames,
                                                                  const gchar            *display,
                                                                  GError                **error);
+static gboolean thunar_dbus_service_terminate                   (ThunarDBusService      *dbus_service,
+                                                                 GError                **error);
 
 
 
@@ -376,6 +378,19 @@ thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
     }
 
   return result;
+}
+
+
+
+static gboolean
+thunar_dbus_service_terminate (ThunarDBusService *dbus_service,
+                               GError           **error)
+{
+  /* leave the Gtk main loop as soon as possible */
+  gtk_main_quit ();
+
+  /* we cannot fail */
+  return TRUE;
 }
 
 
