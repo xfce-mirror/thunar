@@ -724,16 +724,6 @@ thunar_uca_editor_set_icon_name (ThunarUcaEditor *uca_editor,
     {
       /* load the icon from the file */
       icon = gdk_pixbuf_new_from_file (icon_name, NULL);
-
-      /* scale down the icon if required */
-      icon_width = gdk_pixbuf_get_width (icon);
-      icon_height = gdk_pixbuf_get_height (icon);
-      if (G_UNLIKELY (icon_width > 48 || icon_height > 48))
-        {
-          icon_scaled = exo_gdk_pixbuf_scale_ratio (icon, 48);
-          g_object_unref (G_OBJECT (icon));
-          icon = icon_scaled;
-        }
     }
   else if (icon_name != NULL)
     {
@@ -750,6 +740,16 @@ thunar_uca_editor_set_icon_name (ThunarUcaEditor *uca_editor,
   /* setup the icon button */
   if (G_LIKELY (icon != NULL))
     {
+      /* scale down the icon if required */
+      icon_width = gdk_pixbuf_get_width (icon);
+      icon_height = gdk_pixbuf_get_height (icon);
+      if (G_UNLIKELY (icon_width > 48 || icon_height > 48))
+        {
+          icon_scaled = exo_gdk_pixbuf_scale_ratio (icon, 48);
+          g_object_unref (G_OBJECT (icon));
+          icon = icon_scaled;
+        }
+
       /* setup an image for the icon */
       image = gtk_image_new_from_pixbuf (icon);
       gtk_container_add (GTK_CONTAINER (uca_editor->icon_button), image);
