@@ -35,7 +35,7 @@ typedef struct _ThunarVfsVolumeNone      ThunarVfsVolumeNone;
 #define THUNAR_VFS_IS_VOLUME_NONE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_VOLUME_NONE))
 #define THUNAR_VFS_VOLUME_NONE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_VOLUME_NONE, ThunarVfsVolumeNONEClass))
 
-GType thunar_vfs_volume_none_get_type (void) G_GNUC_CONST;
+GType thunar_vfs_volume_none_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
 typedef struct _ThunarVfsVolumeManagerNoneClass ThunarVfsVolumeManagerNoneClass;
@@ -48,7 +48,7 @@ typedef struct _ThunarVfsVolumeManagerNone      ThunarVfsVolumeManagerNone;
 #define THUNAR_VFS_IS_VOLUME_MANAGER_NONE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_VOLUME_MANAGER_NONE))
 #define THUNAR_VFS_VOLUME_MANAGER_NONE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_VOLUME_MANAGER_NONE, ThunarVfsVolumeManagerNONEClass))
 
-GType thunar_vfs_volume_manager_none_get_type (void) G_GNUC_CONST;
+GType thunar_vfs_volume_manager_none_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 G_END_DECLS;
 
