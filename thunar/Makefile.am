@@ -81,6 +81,8 @@ Thunar_SOURCES =							\
 	thunar-list-model.h						\
 	thunar-location-bar.c						\
 	thunar-location-bar.h						\
+	thunar-location-button.c					\
+	thunar-location-button.h					\
 	thunar-location-buttons.c					\
 	thunar-location-buttons.h					\
 	thunar-location-dialog.c					\

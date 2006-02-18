@@ -24,19 +24,10 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_MEMORY_H
-#include <memory.h>
-#endif
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-
-#include <thunar/thunar-dnd.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-location-button.h>
 #include <thunar/thunar-location-buttons.h>
-#include <thunar/thunar-pango-extensions.h>
 
 
 
@@ -76,8 +67,6 @@ static void           thunar_location_buttons_size_allocate          (GtkWidget 
                                                                       GtkAllocation              *allocation);
 static void           thunar_location_buttons_state_changed          (GtkWidget                  *widget,
                                                                       GtkStateType                previous_state);
-static void           thunar_location_buttons_style_set              (GtkWidget                  *widget,
-                                                                      GtkStyle                   *previous_style);
 static void           thunar_location_buttons_grab_notify            (GtkWidget                  *widget,
                                                                       gboolean                    was_grabbed);
 static void           thunar_location_buttons_add                    (GtkContainer               *container,
@@ -109,45 +98,8 @@ static void           thunar_location_buttons_scroll_left            (GtkWidget 
                                                                       ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_scroll_right           (GtkWidget                  *button,
                                                                       ThunarLocationButtons      *buttons);
-static void           thunar_location_buttons_clicked                (GtkWidget                  *button,
+static void           thunar_location_buttons_clicked                (ThunarLocationButton       *button,
                                                                       ThunarLocationButtons      *buttons);
-static GdkDragAction  thunar_location_buttons_get_dest_actions       (ThunarLocationButtons      *buttons,
-                                                                      GdkDragContext             *context,
-                                                                      GtkWidget                  *button,
-                                                                      guint                       time,
-                                                                      ThunarFile                **file_return);
-static gboolean       thunar_location_buttons_drag_drop              (GtkWidget                  *button,
-                                                                      GdkDragContext             *context,
-                                                                      gint                        x,
-                                                                      gint                        y,
-                                                                      guint                       time,
-                                                                      ThunarLocationButtons      *buttons);
-static void           thunar_location_buttons_drag_data_get          (GtkWidget                  *button,
-                                                                      GdkDragContext             *context,
-                                                                      GtkSelectionData           *selection_data,
-                                                                      guint                       info,
-                                                                      guint                       time,
-                                                                      ThunarLocationButtons      *buttons);
-static void           thunar_location_buttons_drag_data_received     (GtkWidget                  *button,
-                                                                      GdkDragContext             *context,
-                                                                      gint                        x,
-                                                                      gint                        y,
-                                                                      GtkSelectionData           *selection_data,
-                                                                      guint                       info,
-                                                                      guint                       time,
-                                                                      ThunarLocationButtons      *buttons);
-static void           thunar_location_buttons_drag_leave             (GtkWidget                  *button,
-                                                                      GdkDragContext             *context,
-                                                                      guint                       time,
-                                                                      ThunarLocationButtons      *buttons);
-static gboolean       thunar_location_buttons_drag_motion            (GtkWidget                  *button,
-                                                                      GdkDragContext             *context,
-                                                                      gint                        x,
-                                                                      gint                        y,
-                                                                      guint                       time,
-                                                                      ThunarLocationButtons      *buttons);
-static gboolean       thunar_location_buttons_enter_timeout          (gpointer                    user_data);
-static void           thunar_location_buttons_enter_timeout_destroy  (gpointer                    user_data);
 
 
 
@@ -174,24 +126,6 @@ struct _ThunarLocationButtons
   GList             *first_scrolled_button;
 
   gint               scroll_timeout_id;
-
-  /* enter directories using DnD */
-  GtkWidget         *enter_button;
-  gint               enter_timeout_id;
-
-  /* Drop support for the buttons */
-  GList             *drop_path_list;
-  guint              drop_data_ready : 1;
-  guint              drop_occurred : 1;
-};
-
-
-static GQuark gtk_label_quark = 0;
-static GQuark thunar_file_quark = 0;
-
-static const GtkTargetEntry drag_targets[] =
-{
-  { "text/uri-list", 0, 0 },
 };
 
 
@@ -255,9 +189,6 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
   /* determine the parent type class */
   thunar_location_buttons_parent_class = g_type_class_peek_parent (klass);
 
-  gtk_label_quark = g_quark_from_static_string ("gtk-label");
-  thunar_file_quark = g_quark_from_static_string ("thunar-file");
-
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_location_buttons_finalize;
   gobject_class->get_property = thunar_location_buttons_get_property;
@@ -268,7 +199,6 @@ thunar_location_buttons_class_init (ThunarLocationButtonsClass *klass)
   gtkwidget_class->size_request = thunar_location_buttons_size_request;
   gtkwidget_class->size_allocate = thunar_location_buttons_size_allocate;
   gtkwidget_class->state_changed = thunar_location_buttons_state_changed;
-  gtkwidget_class->style_set = thunar_location_buttons_style_set;
   gtkwidget_class->grab_notify = thunar_location_buttons_grab_notify;
 
   gtkcontainer_class = GTK_CONTAINER_CLASS (klass);
@@ -325,7 +255,6 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   GTK_WIDGET_SET_FLAGS (buttons, GTK_NO_WINDOW);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
 
-  buttons->enter_timeout_id = -1;
   buttons->scroll_timeout_id = -1;
 
   gtk_widget_push_composite_child ();
@@ -369,13 +298,6 @@ thunar_location_buttons_finalize (GObject *object)
   ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (object);
 
   g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
-
-  /* release the drop path list (just in case the drag-leave wasn't fired before) */
-  thunar_vfs_path_list_free (buttons->drop_path_list);
-
-  /* be sure to cancel any enter timeout */
-  if (G_UNLIKELY (buttons->enter_timeout_id >= 0))
-    g_source_remove (buttons->enter_timeout_id);
 
   /* be sure to cancel the scrolling */
   thunar_location_buttons_stop_scrolling (buttons);
@@ -464,14 +386,14 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
 
   /* check if we already have a button for that directory */
   for (lp = buttons->list; lp != NULL; lp = lp->next)
-    if (g_object_get_qdata (G_OBJECT (lp->data), thunar_file_quark) == current_directory)
+    if (thunar_location_button_get_file (lp->data) == current_directory)
       break;
 
   /* if we already have a button for that directory, just activate it */
   if (G_UNLIKELY (lp != NULL))
     {
       /* fake a "clicked" event for that button */
-      gtk_button_clicked (GTK_BUTTON (lp->data));
+      thunar_location_button_clicked (THUNAR_LOCATION_BUTTON (lp->data));
     }
   else
     {
@@ -761,49 +683,6 @@ thunar_location_buttons_state_changed (GtkWidget   *widget,
 
 
 static void
-thunar_location_buttons_style_set (GtkWidget *widget,
-                                   GtkStyle  *previous_style)
-{
-  ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (widget);
-  ThunarIconFactory     *icon_factory;
-  GtkIconTheme          *icon_theme;
-  ThunarFile            *file;
-  GdkPixbuf             *icon;
-  GList                 *children;
-  GList                 *lp;
-  gint                   size;
-
-  if (G_LIKELY (GTK_WIDGET_REALIZED (widget)))
-    {
-      /* lookup the icon size for buttons */
-      gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &size, &size);
-
-      /* determine the icon factory to use */
-      icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-
-      /* update the icons for every button */
-      for (lp = buttons->list; lp != NULL; lp = lp->next)
-        {
-          file = g_object_get_qdata (G_OBJECT (lp->data), thunar_file_quark);
-          children = gtk_container_get_children (GTK_CONTAINER (GTK_BIN (lp->data)->child));
-          icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, size);
-          gtk_drag_source_set_icon_pixbuf (GTK_WIDGET (lp->data), icon);
-          gtk_image_set_from_pixbuf (GTK_IMAGE (children->data), icon);
-          g_object_unref (G_OBJECT (icon));
-          g_list_free (children);
-        }
-
-      /* release the icon factory */
-      g_object_unref (G_OBJECT (icon_factory));
-    }
-
-  (*GTK_WIDGET_CLASS (thunar_location_buttons_parent_class)->style_set) (widget, previous_style);
-}
-
-
-
-static void
 thunar_location_buttons_grab_notify (GtkWidget *widget,
                                      gboolean   was_grabbed)
 {
@@ -890,72 +769,19 @@ static GtkWidget*
 thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
                                      ThunarFile            *file)
 {
-  ThunarIconFactory *icon_factory;
-  GtkWidget         *button;
-  GtkWidget         *image;
-  GtkWidget         *label;
-  GtkWidget         *hbox;
-  GdkPixbuf         *icon;
-  gint               size;
-
-  gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &size, &size);
+  GtkWidget *button;
 
   /* allocate the button */
-  button = gtk_toggle_button_new ();
+  button = thunar_location_button_new ();
 
-  /* don't allow location buttons to grab the focus */
-  GTK_WIDGET_UNSET_FLAGS (button, GTK_CAN_FOCUS);
+  /* connect to the file */
+  thunar_location_button_set_file (THUNAR_LOCATION_BUTTON (button), file);
 
-  /* setup drag support for the button */
-  gtk_drag_source_set (GTK_WIDGET (button), GDK_BUTTON1_MASK, drag_targets,
-                       G_N_ELEMENTS (drag_targets), GDK_ACTION_LINK);
-  gtk_drag_dest_set (GTK_WIDGET (button), GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_MOTION, drag_targets,
-                     G_N_ELEMENTS (drag_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
-  g_signal_connect (G_OBJECT (button), "drag-drop", G_CALLBACK (thunar_location_buttons_drag_drop), buttons);
-  g_signal_connect (G_OBJECT (button), "drag-data-get", G_CALLBACK (thunar_location_buttons_drag_data_get), buttons);
-  g_signal_connect (G_OBJECT (button), "drag-data-received", G_CALLBACK (thunar_location_buttons_drag_data_received), buttons);
-  g_signal_connect (G_OBJECT (button), "drag-leave", G_CALLBACK (thunar_location_buttons_drag_leave), buttons);
-  g_signal_connect (G_OBJECT (button), "drag-motion", G_CALLBACK (thunar_location_buttons_drag_motion), buttons);
-
-  hbox = gtk_hbox_new (FALSE, 2);
-  gtk_container_add (GTK_CONTAINER (button), hbox);
-  gtk_widget_show (hbox);
-
-  image = gtk_image_new ();
-  gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
-  gtk_widget_show (image);
-
-  icon_factory = thunar_icon_factory_get_default ();
-  icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, size);
-  gtk_drag_source_set_icon_pixbuf (button, icon);
-  gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
-  g_object_unref (G_OBJECT (icon_factory));
-  g_object_unref (G_OBJECT (icon));
-
-  if (!thunar_file_is_root (file))
-    {
-      /* only non-root nodes have a label */
-      label = g_object_new (GTK_TYPE_LABEL, NULL);
-      exo_binding_new (G_OBJECT (file), "display-name", G_OBJECT (label), "label");
-      g_object_set_qdata (G_OBJECT (button), gtk_label_quark, label);
-      gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
-      gtk_widget_show (label);
-
-      /* current directory gets a bold label */
-      if (file == buttons->current_directory)
-        gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-    }
-
-  /* the current directory is toggled */
-  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), (file == buttons->current_directory));
-
-  /* take a reference on the ThunarFile for the button */
-  g_object_set_qdata_full (G_OBJECT (button), thunar_file_quark, file, g_object_unref);
-  g_object_ref (G_OBJECT (file));
+  /* the current directory is active */
+  thunar_location_button_set_active (THUNAR_LOCATION_BUTTON (button), (file == buttons->current_directory));
 
   /* get notifications about user actions */
-  g_signal_connect (G_OBJECT (button), "clicked",
-                    G_CALLBACK (thunar_location_buttons_clicked), buttons);
+  g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_location_buttons_clicked), buttons);
 
   return button;
 }
@@ -995,14 +821,14 @@ thunar_location_buttons_file_destroyed (ThunarFileMonitor     *file_monitor,
   for (lp = children; lp != NULL; lp = lp->next)
     {
       /* stop as soon as we reach the current-directory button */
-      if (gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON (lp->data)))
+      if (thunar_location_button_get_active (THUNAR_LOCATION_BUTTON (lp->data)))
         {
           lp = NULL;
           break;
         }
 
       /* check if the button is for the destroyed file */
-      if (g_object_get_qdata (G_OBJECT (lp->data), thunar_file_quark) == file)
+      if (thunar_location_button_get_file (THUNAR_LOCATION_BUTTON (lp->data)) == file)
         break;
     }
 
@@ -1218,18 +1044,17 @@ thunar_location_buttons_scroll_right (GtkWidget             *button,
 
 
 static void
-thunar_location_buttons_clicked (GtkWidget             *button,
+thunar_location_buttons_clicked (ThunarLocationButton  *button,
                                  ThunarLocationButtons *buttons)
 {
   ThunarFile *directory;
-  GtkWidget  *label;
   GList      *lp;
 
-  g_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
+  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
   g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* determine the directory associated with the clicked button */
-  directory = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
+  directory = thunar_location_button_get_file (button);
 
   /* disconnect from previous current directory (if any) */
   if (G_LIKELY (buttons->current_directory != NULL))
@@ -1237,29 +1062,21 @@ thunar_location_buttons_clicked (GtkWidget             *button,
 
   /* setup the new current directory */
   buttons->current_directory = directory;
-  g_object_ref (G_OBJECT (directory));
+
+  /* take a reference on the new directory (if any) */
+  if (G_LIKELY (directory != NULL))
+    g_object_ref (G_OBJECT (directory));
 
   /* update all buttons */
   for (lp = buttons->list; lp != NULL; lp = lp->next)
     {
-      /* query button data */
-      button = GTK_WIDGET (lp->data);
-      label = g_object_get_qdata (G_OBJECT (button), gtk_label_quark);
-      directory = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
+      /* determine the directory for this button */
+      button = THUNAR_LOCATION_BUTTON (lp->data);
+      directory = thunar_location_button_get_file (button);
 
-      /* update the label (if any) */
-      if (G_LIKELY (label != NULL))
-        {
-          /* current directory gets a bold label */
-          if (directory == buttons->current_directory)
-            gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-          else
-            gtk_label_set_attributes (GTK_LABEL (label), NULL);
-        }
-
-      /* update the toggle button state (making sure to not recurse with the "clicked" handler) */
+      /* update the location button state (making sure to not recurse with the "clicked" handler) */
       g_signal_handlers_block_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
-      gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), directory == buttons->current_directory);
+      thunar_location_button_set_active (button, directory == buttons->current_directory);
       g_signal_handlers_unblock_by_func (G_OBJECT (button), thunar_location_buttons_clicked, buttons);
     }
 
@@ -1267,285 +1084,6 @@ thunar_location_buttons_clicked (GtkWidget             *button,
    * to a different directory.
    */
   thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), buttons->current_directory);
-}
-
-
-
-static GdkDragAction
-thunar_location_buttons_get_dest_actions (ThunarLocationButtons *buttons,
-                                          GdkDragContext        *context,
-                                          GtkWidget             *button,
-                                          guint                  time,
-                                          ThunarFile           **file_return)
-{
-  GdkDragAction actions = 0;
-  GdkDragAction action = 0;
-  ThunarFile   *file;
-
-  /* determine the file for the given button */
-  file = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
-
-  /* check if we can drop here */
-  if (G_LIKELY (file != NULL))
-    {
-      /* determine the possible drop actions for the file (and the suggested action if any) */
-      actions = thunar_file_accepts_drop (file, buttons->drop_path_list, context, &action);
-      if (G_LIKELY (actions != 0))
-        {
-          /* tell the caller about the file (if it's interested) */
-          if (G_UNLIKELY (file_return != NULL))
-            *file_return = g_object_ref (G_OBJECT (file));
-        }
-    }
-
-  /* tell Gdk whether we can drop here */
-  gdk_drag_status (context, action, time);
-
-  return actions;
-}
-
-
-
-static gboolean
-thunar_location_buttons_drag_drop (GtkWidget             *button,
-                                   GdkDragContext        *context,
-                                   gint                   x,
-                                   gint                   y,
-                                   guint                  time,
-                                   ThunarLocationButtons *buttons)
-{
-  GdkAtom target;
-
-  g_return_val_if_fail (GTK_IS_WIDGET (button), FALSE);
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons), FALSE);
-
-  /* determine the DnD target and see if we can handle it */
-  target = gtk_drag_dest_find_target (button, context, NULL);
-  if (G_UNLIKELY (target != gdk_atom_intern ("text/uri-list", FALSE)))
-    return FALSE;
-
-  /* set state so drag-data-received knows that
-   * this is really a drop this time.
-   */
-  buttons->drop_occurred = TRUE;
-
-  /* request the drag data from the source */
-  gtk_drag_get_data (button, context, target, time);
-
-  /* we'll call gtk_drag_finish() later */
-  return TRUE;
-}
-
-
-
-static void
-thunar_location_buttons_drag_data_get (GtkWidget             *button,
-                                       GdkDragContext        *context,
-                                       GtkSelectionData      *selection_data,
-                                       guint                  info,
-                                       guint                  time,
-                                       ThunarLocationButtons *buttons)
-{
-  ThunarFile *file;
-  GList       path_list;
-  gchar      *uri_string;
-
-  g_return_if_fail (GTK_IS_WIDGET (button));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
-
-  /* determine the uri of the file in question */
-  file = g_object_get_qdata (G_OBJECT (button), thunar_file_quark);
-
-  /* transform the path into an uri list string */
-  path_list.data = thunar_file_get_path (file); path_list.next = path_list.prev = NULL;
-  uri_string = thunar_vfs_path_list_to_string (&path_list);
-
-  /* set the uri list for the drag selection */
-  gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
-
-  /* cleanup */
-  g_free (uri_string);
-}
-
-
-
-static void
-thunar_location_buttons_drag_data_received (GtkWidget             *button,
-                                            GdkDragContext        *context,
-                                            gint                   x,
-                                            gint                   y,
-                                            GtkSelectionData      *selection_data,
-                                            guint                  info,
-                                            guint                  time,
-                                            ThunarLocationButtons *buttons)
-{
-  GdkDragAction actions;
-  GdkDragAction action;
-  ThunarFile   *file;
-  gboolean      succeed = FALSE;
-
-  /* check if we don't already know the drop data */
-  if (G_LIKELY (!buttons->drop_data_ready))
-    {
-      /* extract the URI list from the selection data (if valid) */
-      if (selection_data->format == 8 && selection_data->length > 0)
-        buttons->drop_path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
-
-      /* reset the state */
-      buttons->drop_data_ready = TRUE;
-    }
-
-  /* check if the data was dropped */
-  if (G_UNLIKELY (buttons->drop_occurred))
-    {
-      /* reset the state */
-      buttons->drop_occurred = FALSE;
-
-      /* determine the drop dest actions */
-      actions = thunar_location_buttons_get_dest_actions (buttons, context, button, time, &file);
-      if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
-        {
-          /* as the user what to do with the drop data */
-          action = (context->action == GDK_ACTION_ASK) ? thunar_dnd_ask (button, time, actions) : context->action;
-
-          /* perform the requested action */
-          if (G_LIKELY (action != 0))
-            succeed = thunar_dnd_perform (button, file, buttons->drop_path_list, action, NULL);
-        }
-
-      /* release the file reference */
-      if (G_LIKELY (file != NULL))
-        g_object_unref (G_OBJECT (file));
-
-      /* tell the peer that we handled the drop */
-      gtk_drag_finish (context, succeed, FALSE, time);
-
-      /* disable the highlighting and release the drag data */
-      thunar_location_buttons_drag_leave (button, context, time, buttons);
-    }
-}
-
-
-
-static void
-thunar_location_buttons_drag_leave (GtkWidget             *button,
-                                    GdkDragContext        *context,
-                                    guint                  time,
-                                    ThunarLocationButtons *buttons)
-{
-  g_return_if_fail (GTK_IS_BUTTON (button));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
-
-  /* reset the "drop data ready" status and free the path list */
-  if (G_LIKELY (buttons->drop_data_ready))
-    {
-      thunar_vfs_path_list_free (buttons->drop_path_list);
-      buttons->drop_data_ready = FALSE;
-      buttons->drop_path_list = NULL;
-    }
-
-  /* be sure to cancel any running enter timeout */
-  if (G_LIKELY (buttons->enter_timeout_id >= 0))
-    g_source_remove (buttons->enter_timeout_id);
-}
-
-
-
-static gboolean
-thunar_location_buttons_drag_motion (GtkWidget             *button,
-                                     GdkDragContext        *context,
-                                     gint                   x,
-                                     gint                   y,
-                                     guint                  time,
-                                     ThunarLocationButtons *buttons)
-{
-  GtkSettings *settings;
-  GdkAtom      target;
-  gint         delay;
-
-  g_return_val_if_fail (GTK_IS_BUTTON (button), FALSE);
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons), FALSE);
-
-  /* schedule the enter timeout if not already done */
-  if (G_UNLIKELY (buttons->enter_timeout_id < 0))
-    {
-      /* remember the new button */
-      buttons->enter_button = button;
-      g_object_add_weak_pointer (G_OBJECT (button), (gpointer) &buttons->enter_button);
-
-      /* we use the gtk-menu-popdown-delay here, which seems to be sane for our purpose */
-      settings = gtk_settings_get_for_screen (gtk_widget_get_screen (button));
-      g_object_get (G_OBJECT (settings), "gtk-menu-popdown-delay", &delay, NULL);
-
-      /* schedule the timeout */
-      buttons->enter_timeout_id = g_timeout_add_full (G_PRIORITY_DEFAULT, delay, thunar_location_buttons_enter_timeout,
-                                                      buttons, thunar_location_buttons_enter_timeout_destroy);
-    }
-
-  /* request the drop on-demand (if we don't have it already) */
-  if (G_UNLIKELY (!buttons->drop_data_ready))
-    {
-      /* check if we can handle that drag data (can only drop text/uri-list) */
-      target = gtk_drag_dest_find_target (button, context, NULL);
-      if (G_LIKELY (target == gdk_atom_intern ("text/uri-list", FALSE)))
-        {
-          /* request the drop data from the source */
-          gtk_drag_get_data (button, context, target, time);
-        }
-
-      /* tell GDK that it cannot drop here (yet!) */
-      gdk_drag_status (context, 0, time);
-    }
-  else
-    {
-      /* check whether we can drop into the buttons' folder */
-      thunar_location_buttons_get_dest_actions (buttons, context, button, time, NULL);
-    }
-
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_location_buttons_enter_timeout (gpointer user_data)
-{
-  ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (user_data);
-
-  GDK_THREADS_ENTER ();
-
-  /* We emulate a "clicked" event here, because else the buttons
-   * would be destroyed and replaced by new buttons, which causes
-   * the Gtk DND code to dump core once the mouse leaves the area
-   * of the new button.
-   *
-   * Besides that, handling this as "clicked" event allows the user
-   * to go back to the initial directory.
-   */
-  if (G_LIKELY (buttons->enter_button != NULL))
-    thunar_location_buttons_clicked (buttons->enter_button, buttons);
-
-  GDK_THREADS_LEAVE ();
-
-  return FALSE;
-}
-
-
-
-static void
-thunar_location_buttons_enter_timeout_destroy (gpointer user_data)
-{
-  ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (user_data);
-
-  /* disconnect from the remembered button */
-  if (G_LIKELY (buttons->enter_button != NULL))
-    {
-      g_object_remove_weak_pointer (G_OBJECT (buttons->enter_button), (gpointer) &buttons->enter_button);
-      buttons->enter_button = NULL;
-    }
-
-  /* reset the timeout id */
-  buttons->enter_timeout_id = -1;
 }
 
 
