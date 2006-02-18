@@ -72,6 +72,9 @@ static GdkDragAction  thunar_location_button_get_dest_actions       (ThunarLocat
                                                                      guint                       time);
 static void           thunar_location_button_file_changed           (ThunarLocationButton       *location_button,
                                                                      ThunarFile                 *file);
+static gboolean       thunar_location_button_button_press_event     (GtkWidget                  *button,
+                                                                     GdkEventButton             *event,
+                                                                     ThunarLocationButton       *location_button);
 static gboolean       thunar_location_button_button_release_event   (GtkWidget                  *button,
                                                                      GdkEventButton             *event,
                                                                      ThunarLocationButton       *location_button);
@@ -260,6 +263,7 @@ thunar_location_button_init (ThunarLocationButton *location_button)
   gtk_drag_source_set (GTK_WIDGET (button), GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), GDK_ACTION_LINK);
   gtk_drag_dest_set (GTK_WIDGET (button), GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_MOTION, drag_targets,
                      G_N_ELEMENTS (drag_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
+  g_signal_connect (G_OBJECT (button), "button-press-event", G_CALLBACK (thunar_location_button_button_press_event), location_button);
   g_signal_connect (G_OBJECT (button), "button-release-event", G_CALLBACK (thunar_location_button_button_release_event), location_button);
   g_signal_connect (G_OBJECT (button), "drag-drop", G_CALLBACK (thunar_location_button_drag_drop), location_button);
   g_signal_connect (G_OBJECT (button), "drag-data-get", G_CALLBACK (thunar_location_button_drag_data_get), location_button);
@@ -440,6 +444,22 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
 
 
 static gboolean
+thunar_location_button_button_press_event (GtkWidget            *button,
+                                           GdkEventButton       *event,
+                                           ThunarLocationButton *location_button)
+{
+  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
+
+  /* set button state to inconsistent while holding down the middle-mouse-button */
+  if (G_UNLIKELY (event->button == 2))
+    gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (button), TRUE);
+
+  return FALSE;
+}
+
+
+
+static gboolean
 thunar_location_button_button_release_event (GtkWidget            *button,
                                              GdkEventButton       *event,
                                              ThunarLocationButton *location_button)
@@ -448,13 +468,20 @@ thunar_location_button_button_release_event (GtkWidget            *button,
 
   g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
 
-  /* open folder in window on middle-click events */
-  if (G_UNLIKELY (event->button == 2 && location_button->file != NULL))
+  /* reset inconsistent button state after releasing the middle-mouse-button */
+  if (G_UNLIKELY (event->button == 2))
     {
-      /* popup a new window */
-      application = thunar_application_get ();
-      thunar_application_open_window (application, location_button->file, gtk_widget_get_screen (button));
-      g_object_unref (G_OBJECT (application));
+      /* reset button state */
+      gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (button), FALSE);
+
+      /* open folder in window on middle-click events */
+      if (G_LIKELY (location_button->file != NULL))
+        {
+          /* popup a new window */
+          application = thunar_application_get ();
+          thunar_application_open_window (application, location_button->file, gtk_widget_get_screen (button));
+          g_object_unref (G_OBJECT (application));
+        }
     }
 
   return FALSE;
