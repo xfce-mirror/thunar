@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-15 00:56+0100\n"
+"POT-Creation-Date: 2006-02-19 23:54+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -360,68 +360,80 @@ msgstr ""
 msgid "Failed to copy special file \"%s\""
 msgstr ""
 
-#: ../thunar/main.c:47
+#: ../thunar/main.c:49
 msgid "Run in daemon mode"
 msgstr ""
 
+#: ../thunar/main.c:51
+msgid "Run in daemon mode (not supported)"
+msgstr ""
+
+#: ../thunar/main.c:54
+msgid "Quit a running Thunar instance"
+msgstr ""
+
+#: ../thunar/main.c:56
+msgid "Quit a running Thunar instance (not supported)"
+msgstr ""
+
 #. setup application name
-#: ../thunar/main.c:68
+#: ../thunar/main.c:78
 msgid "Thunar"
 msgstr ""
 
 #. initialize Gtk+
-#: ../thunar/main.c:78
+#: ../thunar/main.c:88
 msgid "[FILES...]"
 msgstr ""
 
-#: ../thunar/main.c:85
+#: ../thunar/main.c:95
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr ""
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:90
+#: ../thunar/main.c:100
 #, c-format
 msgid "Thunar: %s\n"
 msgstr ""
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:304
+#: ../thunar/thunar-application.c:312
 msgid "Failed to launch operation"
 msgstr ""
 
 #. tell the user that we were unable to launch the file specified on the cmdline
-#: ../thunar/thunar-application.c:650
+#: ../thunar/thunar-application.c:675
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-application.c:662
+#: ../thunar/thunar-application.c:687
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr ""
 
-#: ../thunar/thunar-application.c:699 ../thunar/thunar-application.c:732
+#: ../thunar/thunar-application.c:724 ../thunar/thunar-application.c:757
 msgid "Copying files..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:766
+#: ../thunar/thunar-application.c:791
 msgid "Creating symbolic links..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:801
+#: ../thunar/thunar-application.c:826
 msgid "Moving files..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:836
+#: ../thunar/thunar-application.c:861
 msgid "Deleting files..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:876
+#: ../thunar/thunar-application.c:901
 msgid "Creating files..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:916
+#: ../thunar/thunar-application.c:941
 msgid "Creating directories..."
 msgstr ""
 
@@ -679,8 +691,10 @@ msgstr ""
 msgid "Icon view"
 msgstr ""
 
+#. append the "Open" action
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:750
+#: ../thunar/thunar-location-button.c:527
 #: ../thunar/thunar-shortcuts-view.c:360
 msgid "_Open"
 msgstr ""
@@ -689,8 +703,10 @@ msgstr ""
 msgid "Open the selected files"
 msgstr ""
 
+#. append the "Open in New Window" action
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-shortcuts-view.c:371
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-button.c:539
+#: ../thunar/thunar-shortcuts-view.c:371
 msgid "Open in New Window"
 msgstr ""
 
@@ -852,11 +868,16 @@ msgid_plural "%d items selected"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-location-buttons.c:290
+#. append the "Paste Files Here" action
+#: ../thunar/thunar-location-button.c:550
+msgid "_Paste Files Here"
+msgstr ""
+
+#: ../thunar/thunar-location-buttons.c:220
 msgid "Spacing"
 msgstr ""
 
-#: ../thunar/thunar-location-buttons.c:291
+#: ../thunar/thunar-location-buttons.c:221
 msgid "The amount of space between the path buttons"
 msgstr ""
 

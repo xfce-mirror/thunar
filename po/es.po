@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-15 00:56+0100\n"
+"POT-Creation-Date: 2006-02-19 23:54+0900\n"
 "PO-Revision-Date: 2005-10-14 23:57+0900\n"
 "Last-Translator: Pablo Hernández-M. Saiz <homeless3d@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -376,70 +376,82 @@ msgstr "Imposible renombrar %s."
 msgid "Failed to copy special file \"%s\""
 msgstr "Imposible copiar el archivo %s."
 
-#: ../thunar/main.c:47
+#: ../thunar/main.c:49
 msgid "Run in daemon mode"
 msgstr ""
 
+#: ../thunar/main.c:51
+msgid "Run in daemon mode (not supported)"
+msgstr ""
+
+#: ../thunar/main.c:54
+msgid "Quit a running Thunar instance"
+msgstr ""
+
+#: ../thunar/main.c:56
+msgid "Quit a running Thunar instance (not supported)"
+msgstr ""
+
 #. setup application name
-#: ../thunar/main.c:68
+#: ../thunar/main.c:78
 msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:78
+#: ../thunar/main.c:88
 msgid "[FILES...]"
 msgstr ""
 
-#: ../thunar/main.c:85
+#: ../thunar/main.c:95
 #, fuzzy, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Imposible renombrar %s."
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:90
+#: ../thunar/main.c:100
 #, fuzzy, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:304
+#: ../thunar/thunar-application.c:312
 #, fuzzy
 msgid "Failed to launch operation"
 msgstr "Imposible renombrar %s."
 
 #. tell the user that we were unable to launch the file specified on the cmdline
-#: ../thunar/thunar-application.c:650
+#: ../thunar/thunar-application.c:675
 #, fuzzy, c-format
 msgid "Failed to open \"%s\""
 msgstr "Imposible renombrar %s."
 
-#: ../thunar/thunar-application.c:662
+#: ../thunar/thunar-application.c:687
 #, fuzzy, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Imposible renombrar %s."
 
-#: ../thunar/thunar-application.c:699 ../thunar/thunar-application.c:732
+#: ../thunar/thunar-application.c:724 ../thunar/thunar-application.c:757
 msgid "Copying files..."
 msgstr "Copiando archivos..."
 
-#: ../thunar/thunar-application.c:766
+#: ../thunar/thunar-application.c:791
 msgid "Creating symbolic links..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:801
+#: ../thunar/thunar-application.c:826
 msgid "Moving files..."
 msgstr "Moviendo archivos..."
 
-#: ../thunar/thunar-application.c:836
+#: ../thunar/thunar-application.c:861
 msgid "Deleting files..."
 msgstr "Borrando archivos..."
 
-#: ../thunar/thunar-application.c:876
+#: ../thunar/thunar-application.c:901
 #, fuzzy
 msgid "Creating files..."
 msgstr "Borrando archivos..."
 
-#: ../thunar/thunar-application.c:916
+#: ../thunar/thunar-application.c:941
 #, fuzzy
 msgid "Creating directories..."
 msgstr "Directorio actual"
@@ -707,8 +719,10 @@ msgstr "listado de directorio con iconos"
 msgid "Icon view"
 msgstr "Vista de iconos"
 
+#. append the "Open" action
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:750
+#: ../thunar/thunar-location-button.c:527
 #: ../thunar/thunar-shortcuts-view.c:360
 msgid "_Open"
 msgstr "_Abrir"
@@ -718,8 +732,10 @@ msgstr "_Abrir"
 msgid "Open the selected files"
 msgstr "Abrir el elemento seleccionado"
 
+#. append the "Open in New Window" action
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-shortcuts-view.c:371
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-button.c:539
+#: ../thunar/thunar-shortcuts-view.c:371
 msgid "Open in New Window"
 msgstr "Abrir en una ventana nueva"
 
@@ -888,11 +904,17 @@ msgid_plural "%d items selected"
 msgstr[0] "%d elemento seleccionado"
 msgstr[1] "%d elementos seleccionados"
 
-#: ../thunar/thunar-location-buttons.c:290
+#. append the "Paste Files Here" action
+#: ../thunar/thunar-location-button.c:550
+#, fuzzy
+msgid "_Paste Files Here"
+msgstr "_Pegar archivos"
+
+#: ../thunar/thunar-location-buttons.c:220
 msgid "Spacing"
 msgstr "Espaciado"
 
-#: ../thunar/thunar-location-buttons.c:291
+#: ../thunar/thunar-location-buttons.c:221
 msgid "The amount of space between the path buttons"
 msgstr "Espacio entre los botones del path"
 
@@ -2136,47 +2158,3 @@ msgstr "Gestor de archivos"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Gestor de archivos Thunar"
-
-#, fuzzy
-#~ msgid "Failed to create symbolic \"%s\""
-#~ msgstr "Imposible crear el enlace de %s."
-
-#, fuzzy
-#~ msgid "Failed to create directory `%s'"
-#~ msgstr "Imposible crear el directorio %s."
-
-#, fuzzy
-#~ msgid "Failed to remove `%s'"
-#~ msgstr "Imposible renombrar %s."
-
-#, fuzzy
-#~ msgid ""
-#~ "Unable to remove `%s'.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "No se puede eliminar %s.\n"
-#~ "\n"
-#~ "¿Quiere dejarlo como está?"
-
-#, fuzzy
-#~ msgid "Unable to create directory `%s': %s"
-#~ msgstr "Imposible crear el directorio %s."
-
-#, fuzzy
-#~ msgid "Unable to remove `%s': %s"
-#~ msgstr "Imposible eliminar %s."
-
-#, fuzzy
-#~ msgid "Unable to execute file `%s'"
-#~ msgstr "No se puede ejecutar el archivo \"%s\"."
-
-#~ msgid "Unable to open \"%s\"."
-#~ msgstr "No se puede abrir \"%s\"."
-
-#~ msgid "%s (default)"
-#~ msgstr "%s (Por defecto)"
-
-#, fuzzy
-#~ msgid "Show hidden and _backup files"
-#~ msgstr "Mostrar los archivos _ocultos"

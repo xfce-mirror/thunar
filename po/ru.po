@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-15 00:56+0100\n"
+"POT-Creation-Date: 2006-02-19 23:54+0900\n"
 "PO-Revision-Date: 2006-01-29 17:47+0500\n"
 "Last-Translator: Andrey Fedoseev <andrey.fedoseev@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -378,68 +378,80 @@ msgstr "Не удалось определить информацию о фай�
 msgid "Failed to copy special file \"%s\""
 msgstr "Не удалось переименовать `%s'"
 
-#: ../thunar/main.c:47
+#: ../thunar/main.c:49
 msgid "Run in daemon mode"
 msgstr ""
 
+#: ../thunar/main.c:51
+msgid "Run in daemon mode (not supported)"
+msgstr ""
+
+#: ../thunar/main.c:54
+msgid "Quit a running Thunar instance"
+msgstr ""
+
+#: ../thunar/main.c:56
+msgid "Quit a running Thunar instance (not supported)"
+msgstr ""
+
 #. setup application name
-#: ../thunar/main.c:68
+#: ../thunar/main.c:78
 msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:78
+#: ../thunar/main.c:88
 msgid "[FILES...]"
 msgstr ""
 
-#: ../thunar/main.c:85
+#: ../thunar/main.c:95
 #, fuzzy, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Не удалось переименовать `%s'"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:90
+#: ../thunar/main.c:100
 #, fuzzy, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:304
+#: ../thunar/thunar-application.c:312
 msgid "Failed to launch operation"
 msgstr ""
 
 #. tell the user that we were unable to launch the file specified on the cmdline
-#: ../thunar/thunar-application.c:650
+#: ../thunar/thunar-application.c:675
 #, fuzzy, c-format
 msgid "Failed to open \"%s\""
 msgstr "Не удалось переименовать `%s'"
 
-#: ../thunar/thunar-application.c:662
+#: ../thunar/thunar-application.c:687
 #, fuzzy, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Не удалось переименовать `%s'"
 
-#: ../thunar/thunar-application.c:699 ../thunar/thunar-application.c:732
+#: ../thunar/thunar-application.c:724 ../thunar/thunar-application.c:757
 msgid "Copying files..."
 msgstr "Копирование файлов..."
 
-#: ../thunar/thunar-application.c:766
+#: ../thunar/thunar-application.c:791
 msgid "Creating symbolic links..."
 msgstr "Создание символических ссылок..."
 
-#: ../thunar/thunar-application.c:801
+#: ../thunar/thunar-application.c:826
 msgid "Moving files..."
 msgstr "Перемещение файлов..."
 
-#: ../thunar/thunar-application.c:836
+#: ../thunar/thunar-application.c:861
 msgid "Deleting files..."
 msgstr "Удаление файлов..."
 
-#: ../thunar/thunar-application.c:876
+#: ../thunar/thunar-application.c:901
 msgid "Creating files..."
 msgstr "Создание файлов..."
 
-#: ../thunar/thunar-application.c:916
+#: ../thunar/thunar-application.c:941
 msgid "Creating directories..."
 msgstr "Создание каталогов..."
 
@@ -699,8 +711,10 @@ msgstr ""
 msgid "Icon view"
 msgstr ""
 
+#. append the "Open" action
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:750
+#: ../thunar/thunar-location-button.c:527
 #: ../thunar/thunar-shortcuts-view.c:360
 msgid "_Open"
 msgstr "_Открыть"
@@ -710,8 +724,10 @@ msgstr "_Открыть"
 msgid "Open the selected files"
 msgstr "Открыть выбранные файлы"
 
+#. append the "Open in New Window" action
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-shortcuts-view.c:371
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-button.c:539
+#: ../thunar/thunar-shortcuts-view.c:371
 msgid "Open in New Window"
 msgstr "Открыть в новом окне"
 
@@ -887,11 +903,17 @@ msgid_plural "%d items selected"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-location-buttons.c:290
+#. append the "Paste Files Here" action
+#: ../thunar/thunar-location-button.c:550
+#, fuzzy
+msgid "_Paste Files Here"
+msgstr "Вст_авить файлы"
+
+#: ../thunar/thunar-location-buttons.c:220
 msgid "Spacing"
 msgstr ""
 
-#: ../thunar/thunar-location-buttons.c:291
+#: ../thunar/thunar-location-buttons.c:221
 msgid "The amount of space between the path buttons"
 msgstr ""
 
@@ -2088,34 +2110,3 @@ msgstr "Файловый менеджер"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Файловый менеджер Thunar"
-
-#, fuzzy
-#~ msgid "Failed to create symbolic \"%s\""
-#~ msgstr "Не удалось создать символическую ссылку '%s'"
-
-#~ msgid "Failed to create directory `%s'"
-#~ msgstr "Не удалось создать каталог `%s'"
-
-#~ msgid "Failed to remove `%s'"
-#~ msgstr "Не удалось удалить `%s'"
-
-#~ msgid ""
-#~ "Unable to remove `%s'.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "Невозможно удалить %s.\n"
-#~ "\n"
-#~ "Пропустить?"
-
-#~ msgid "Unable to create directory `%s': %s"
-#~ msgstr "Не удалось создать каталог `%s': %s"
-
-#~ msgid "Unable to remove `%s': %s"
-#~ msgstr "Не удалось удалить `%s': %s"
-
-#~ msgid "Unable to execute file `%s'"
-#~ msgstr "Не удалось запустить файл `%s'"
-
-#~ msgid "Unable to open \"%s\"."
-#~ msgstr "Не удалось открыть \"%s\"."
