@@ -102,8 +102,7 @@ static void     thunar_window_action_reload               (GtkAction          *a
 static void     thunar_window_action_location_bar_changed (GtkRadioAction     *action,
                                                            GtkRadioAction     *current,
                                                            ThunarWindow       *window);
-static void     thunar_window_action_side_pane_changed    (GtkRadioAction     *action,
-                                                           GtkRadioAction     *current,
+static void     thunar_window_action_shortcuts_changed    (GtkToggleAction    *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_statusbar_changed    (GtkToggleAction    *action,
                                                            ThunarWindow       *window);
@@ -240,6 +239,7 @@ static const GtkActionEntry action_entries[] =
 static const GtkToggleActionEntry toggle_action_entries[] =
 {
   { "show-hidden", NULL, N_ ("Show _Hidden Files"), "<control>H", N_ ("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_window_action_show_hidden), FALSE, },
+  { "view-side-pane-shortcuts", NULL, N_ ("_Shortcuts"), "<control>B", N_ ("Toggles the visibility of the shortcuts pane"), G_CALLBACK (thunar_window_action_shortcuts_changed), FALSE, },
   { "view-statusbar", NULL, N_ ("St_atusbar"), NULL, N_ ("Change the visibility of this window's statusbar"), G_CALLBACK (thunar_window_action_statusbar_changed), FALSE, },
 };
 
@@ -474,21 +474,6 @@ thunar_window_init (ThunarWindow *window)
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->history), "current-directory");
 
   /*
-   * add the side pane options
-   */
-  radio_action = gtk_radio_action_new ("view-side-pane-shortcuts", _("_Shortcuts"), NULL, NULL, THUNAR_TYPE_SHORTCUTS_PANE);
-  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
-  gtk_radio_action_set_group (radio_action, NULL);
-  group = gtk_radio_action_get_group (radio_action);
-  g_object_unref (G_OBJECT (radio_action));
-
-  radio_action = gtk_radio_action_new ("view-side-pane-hidden", _("_Hidden"), NULL, NULL, G_TYPE_NONE);
-  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
-  gtk_radio_action_set_group (radio_action, group);
-  group = gtk_radio_action_get_group (radio_action);
-  g_object_unref (G_OBJECT (radio_action));
-
-  /*
    * add the location selector options
    */
   radio_action = gtk_radio_action_new ("view-location-selector-pathbar", _("_Pathbar Style"),
@@ -599,16 +584,17 @@ thunar_window_init (ThunarWindow *window)
   g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_location_bar_changed), window);
   thunar_window_action_location_bar_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 
-  /* determine the selected side pane */
+  /* determine the selected side pane (FIXME: Should probably be last-shortcuts-visible and last-tree-visible preferences) */
   g_object_get (G_OBJECT (window->preferences), "last-side-pane", &type_name, NULL);
-  type = g_type_from_name (type_name);
+  if (exo_str_is_equal (type_name, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)))
+    type = THUNAR_TYPE_SHORTCUTS_PANE;
+  else
+    type = G_TYPE_NONE;
   g_free (type_name);
 
   /* activate the selected side pane */
   action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
-  exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), g_type_is_a (type, THUNAR_TYPE_SIDE_PANE) ? type : G_TYPE_NONE);
-  g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_side_pane_changed), window);
-  thunar_window_action_side_pane_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_SHORTCUTS_PANE));
 
   /* determine the default view */
   g_object_get (G_OBJECT (window->preferences), "default-view", &type_name, NULL);
@@ -1099,9 +1085,8 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
 
 
 static void
-thunar_window_action_side_pane_changed (GtkRadioAction *action,
-                                        GtkRadioAction *current,
-                                        ThunarWindow   *window)
+thunar_window_action_shortcuts_changed (GtkToggleAction *action,
+                                        ThunarWindow    *window)
 {
   GType type;
 
@@ -1113,7 +1098,7 @@ thunar_window_action_side_pane_changed (GtkRadioAction *action,
     }
 
   /* determine the new type of side pane */
-  type = gtk_radio_action_get_current_value (action);
+  type = gtk_toggle_action_get_active (action) ? THUNAR_TYPE_SHORTCUTS_PANE : G_TYPE_NONE;
   if (G_LIKELY (type != G_TYPE_NONE))
     {
       /* allocate the new side pane widget */
