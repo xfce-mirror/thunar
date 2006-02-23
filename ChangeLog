@@ -1,5 +1,26 @@
 2006-02-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-icon-view-ui.xml, thunar/thunar-launcher-ui.xml,
+	  thunar/thunar-shortcuts-pane-ui.xml, thunar/thunar-window-ui.xml,
+	  thunar/thunar-standard-view-ui.xml: Cleanup the ui description files.
+	* thunar-vfs/thunar-vfs-link-job.c, thunar-vfs/thunar-vfs-util.c,
+	  thunar/thunar-create-dialog.c, thunar/thunar-icon-factory.c,
+	  thunar/thunar-location-entry.c, thunar/thunar-window.c,
+	  thunar/thunar-properties-dialog.c, thunar/thunar-standard-view.c,
+	  thunar-uca/thunar-uca-provider.c: Further string cleanups.
+	* thunar/thunar-location-bar.{c.h}, thunar/thunar-window.c:
+	  ThunarLocationBar derives from ThunarComponent now, so the location
+	  bar widget is able to add its own custom actions to the ui manager.
+	* thunar/thunar-location-entry.c: Implement ThunarComponent here.
+	* thunar/Makefile.am, thunar/thunar-location-buttons-ui.xml,
+	  thunar/thunar-location-buttons.c, thunar/thunar-location-button.c:
+	  Let ThunarLocationButtons handle the menu for ThunarLocationButton
+	  managed by it. Also add a accelerator <Alt>Down for "down-folder",
+	  similar to GtkFileChooser. Bug #1472.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+
+2006-02-24	Benedikt Meurer <benny@xfce.org>
+
 	* THANKS, configure.in.in, icons/: Import new Thunar icon, designed by
 	  Young Hahn <youngjin.hahn@gmail.com>.
 

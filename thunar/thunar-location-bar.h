@@ -20,7 +20,7 @@
 #ifndef __THUNAR_LOCATION_BAR_H__
 #define __THUNAR_LOCATION_BAR_H__
 
-#include <thunar/thunar-navigator.h>
+#include <thunar/thunar-component.h>
 
 G_BEGIN_DECLS;
 

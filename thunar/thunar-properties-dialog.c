@@ -794,7 +794,7 @@ thunar_properties_dialog_rename_idle (gpointer user_data)
           gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), old_name);
 
           /* display an error message */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename `%s'"), old_name);
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\""), old_name);
 
           /* release the error */
           g_error_free (error);

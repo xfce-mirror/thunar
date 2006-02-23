@@ -11,8 +11,8 @@
   -->
 
   <menubar name="main-menu">
-    <menu action="file-menu" name="file-menu">
-      <menuitem action="open-new-window" name="open-new-window" />
+    <menu action="file-menu">
+      <menuitem action="open-new-window" />
       <placeholder name="placeholder-create-actions" />
       <separator />
       <placeholder name="placeholder-launcher" />
@@ -21,11 +21,11 @@
       <separator />
       <placeholder name="placeholder-file-properties" />
       <separator />
-      <menuitem action="close-all-windows" name="close-all-windows" />
-      <menuitem action="close" name="close" />
+      <menuitem action="close-all-windows" />
+      <menuitem action="close" />
     </menu>
 
-    <menu action="edit-menu" name="edit-menu">
+    <menu action="edit-menu">
       <placeholder name="placeholder-edit-clipboard-actions" />
       <separator />
       <placeholder name="placeholder-edit-select-actions" />
@@ -33,50 +33,50 @@
       <placeholder name="placeholder-edit-alter-actions" />
       <separator />
       <placeholder name="placeholder-custom-preferences" />
-      <menuitem action="preferences" name="preferences" />
+      <menuitem action="preferences" />
     </menu>
 
-    <menu action="view-menu" name="view-menu">
-      <menuitem action="reload" name="reload" />
+    <menu action="view-menu">
+      <menuitem action="reload" />
       <separator />
-      <menu action="view-location-selector-menu" name="view-location-selector-menu">
-        <menuitem action="view-location-selector-pathbar" name="view-location-selector-pathbar" />
-        <menuitem action="view-location-selector-toolbar" name="view-location-selector-toolbar" />
-        <menuitem action="view-location-selector-hidden" name="view-location-selector-hidden" />
+      <menu action="view-location-selector-menu">
+        <menuitem action="view-location-selector-pathbar" />
+        <menuitem action="view-location-selector-toolbar" />
+        <menuitem action="view-location-selector-hidden" />
       </menu>
-      <menu action="view-side-pane-menu" name="view-side-pane-menu">
-        <menuitem action="view-side-pane-shortcuts" name="view-side-pane-shortcuts" />
+      <menu action="view-side-pane-menu">
+        <menuitem action="view-side-pane-shortcuts" />
       </menu>
-      <menuitem action="view-statusbar" name="view-statusbar" />
+      <menuitem action="view-statusbar" />
       <separator />
-      <menuitem action="show-hidden" name="show-hidden" />
+      <menuitem action="show-hidden" />
       <separator />
       <placeholder name="placeholder-view-items-actions" />
       <separator />
-      <menuitem action="zoom-in" name="zoom-in" />
-      <menuitem action="zoom-out" name="zoom-out" />
-      <menuitem action="zoom-reset" name="zoom-reset" />
+      <menuitem action="zoom-in" />
+      <menuitem action="zoom-out" />
+      <menuitem action="zoom-reset" />
       <separator />
-      <menuitem action="view-as-icons" name="view-as-icons" />
-      <menuitem action="view-as-detailed-list" name="view-as-detailed-list" />
+      <menuitem action="view-as-icons" />
+      <menuitem action="view-as-detailed-list" />
     </menu>
 
-    <menu action="go-menu" name="go-menu">
-      <menuitem action="open-parent" name="open-parent" />
-      <menuitem action="back" name="back" />
-      <menuitem action="forward" name="forward" />
+    <menu action="go-menu">
+      <menuitem action="open-parent" />
+      <menuitem action="back" />
+      <menuitem action="forward" />
       <separator />
-      <menuitem action="open-home" name="open-home" />
-      <menuitem action="open-templates" name="open-templates" />
-      <menuitem action="open-location" name="open-location" />
+      <menuitem action="open-home" />
+      <menuitem action="open-templates" />
+      <menuitem action="open-location" />
     </menu>
 
-    <menu action="help-menu" name="help-menu">
-      <menuitem action="about" name="about" />
+    <menu action="help-menu">
+      <menuitem action="about" />
     </menu>
   </menubar>
 
-  <popup action="file-context-menu" name="file-context-menu">
+  <popup action="file-context-menu">
     <placeholder name="placeholder-launcher" />
     <separator />
     <placeholder name="placeholder-sidepane" />

@@ -29,7 +29,6 @@
 #endif
 
 #include <thunar/thunar-application.h>
-#include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-button.h>
@@ -49,6 +48,7 @@ enum
 enum
 {
   CLICKED,
+  CONTEXT_MENU,
   LAST_SIGNAL,
 };
 
@@ -71,8 +71,6 @@ static GdkDragAction  thunar_location_button_get_dest_actions       (ThunarLocat
                                                                      GdkDragContext             *context,
                                                                      GtkWidget                  *button,
                                                                      guint                       time);
-static void           thunar_location_button_open_in_new_window     (ThunarLocationButton       *location_button);
-static void           thunar_location_button_paste_files_here       (ThunarLocationButton       *location_button);
 static void           thunar_location_button_file_changed           (ThunarLocationButton       *location_button,
                                                                      ThunarFile                 *file);
 static gboolean       thunar_location_button_button_press_event     (GtkWidget                  *button,
@@ -243,6 +241,22 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
                   0, NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+
+  /**
+   * ThunarLocationButton::context-menu:
+   * @location_button : a #ThunarLocationButton.
+   * @event           : a #GdkEventButton.
+   *
+   * Emitted by @location_button when the user requests to open
+   * the context menu for @location_button.
+   **/
+  location_button_signals[CONTEXT_MENU] =
+    g_signal_new (I_("context-menu"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL,
+                  g_cclosure_marshal_VOID__BOXED,
+                  G_TYPE_NONE, 1, GDK_TYPE_EVENT);
 }
 
 
@@ -409,44 +423,6 @@ thunar_location_button_get_dest_actions (ThunarLocationButton *location_button,
 
 
 static void
-thunar_location_button_open_in_new_window (ThunarLocationButton *location_button)
-{
-  ThunarApplication *application;
-
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
-
-  /* verify that we still have a valid file */
-  if (G_LIKELY (location_button->file != NULL))
-    {
-      /* open a new window for the folder */
-      application = thunar_application_get ();
-      thunar_application_open_window (application, location_button->file, gtk_widget_get_screen (GTK_WIDGET (location_button)));
-      g_object_unref (G_OBJECT (application));
-    }
-}
-
-
-
-static void
-thunar_location_button_paste_files_here (ThunarLocationButton *location_button)
-{
-  ThunarClipboardManager *clipboard;
-
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
-
-  /* verify that we still have a valid file */
-  if (G_LIKELY (location_button->file != NULL))
-    {
-      /* paste files from the clipboard to the folder represented by this button */
-      clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (GTK_WIDGET (location_button)));
-      thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_path (location_button->file), GTK_WIDGET (location_button), NULL);
-      g_object_unref (G_OBJECT (clipboard));
-    }
-}
-
-
-
-static void
 thunar_location_button_file_changed (ThunarLocationButton *location_button,
                                      ThunarFile           *file)
 {
@@ -492,12 +468,6 @@ thunar_location_button_button_press_event (GtkWidget            *button,
                                            GdkEventButton       *event,
                                            ThunarLocationButton *location_button)
 {
-  ThunarClipboardManager *clipboard;
-  GtkWidget              *image;
-  GtkWidget              *item;
-  GtkWidget              *menu;
-  GMainLoop              *loop;
-
   g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
 
   /* check if we can handle the button event */
@@ -508,74 +478,8 @@ thunar_location_button_button_press_event (GtkWidget            *button,
     }
   else if (event->button == 3)
     {
-      /* prepare the internal main loop */
-      loop = g_main_loop_new (NULL, FALSE);
-
-      /* make sure the location button isn't deleted in the meantime */
-      g_object_ref (G_OBJECT (location_button));
-
-      /* grab a reference on the clipboard manager for this display */
-      clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (button));
-
-      /* prepare the popup menu */
-      menu = gtk_menu_new ();
-      gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (button));
-      g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-      exo_gtk_object_ref_sink (GTK_OBJECT (menu));
-
-      /* append the "Open" action */
-      item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
-      exo_binding_new_with_negation (G_OBJECT (location_button), "active", G_OBJECT (item), "sensitive");
-      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_location_button_clicked), location_button);
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-      gtk_widget_show (item);
-
-      /* add the image for the open action */
-      image = gtk_image_new_from_stock (GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU);
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-      gtk_widget_show (image);
-
-      /* append the "Open in New Window" action */
-      item = gtk_menu_item_new_with_label (_("Open in New Window"));
-      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_location_button_open_in_new_window), location_button);
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-      gtk_widget_show (item);
-
-      /* append a separator item */
-      item = gtk_separator_menu_item_new ();
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-      gtk_widget_show (item);
-
-      /* append the "Paste Files Here" action */
-      item = gtk_image_menu_item_new_with_mnemonic (_("_Paste Files Here"));
-      exo_binding_new (G_OBJECT (clipboard), "can-paste", G_OBJECT (item), "sensitive");
-      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_location_button_paste_files_here), location_button);
-      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-      gtk_widget_show (item);
-
-      /* add the image for the paste action */
-      image = gtk_image_new_from_stock (GTK_STOCK_PASTE, GTK_ICON_SIZE_MENU);
-      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-      gtk_widget_show (image);
-
-      /* set button state to inconsistent while the menu is open */
-      gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (button), TRUE);
-
-      /* run the internal loop */
-      gtk_grab_add (menu);
-      gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, event->time);
-      g_main_loop_run (loop);
-      gtk_grab_remove (menu);
-
-      /* reset the button state to default */
-      gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (button), FALSE);
-
-      /* cleanup */
-      g_object_unref (G_OBJECT (location_button));
-      g_object_unref (G_OBJECT (clipboard));
-      g_object_unref (G_OBJECT (menu));
-      g_main_loop_unref (loop);
-
+      /* emit the "context-menu" signal and let the surrounding ThunarLocationButtons popup a menu */
+      g_signal_emit (G_OBJECT (location_button), location_button_signals[CONTEXT_MENU], 0, event);
       return TRUE;
     }
 
@@ -589,6 +493,8 @@ thunar_location_button_button_release_event (GtkWidget            *button,
                                              GdkEventButton       *event,
                                              ThunarLocationButton *location_button)
 {
+  ThunarApplication *application;
+
   g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
 
   /* reset inconsistent button state after releasing the middle-mouse-button */
@@ -597,8 +503,14 @@ thunar_location_button_button_release_event (GtkWidget            *button,
       /* reset button state */
       gtk_toggle_button_set_inconsistent (GTK_TOGGLE_BUTTON (button), FALSE);
 
-      /* open folder in window on middle-click events */
-      thunar_location_button_open_in_new_window (location_button);
+      /* verify that we still have a valid file */
+      if (G_LIKELY (location_button->file != NULL))
+        {
+          /* open a new window for the folder */
+          application = thunar_application_get ();
+          thunar_application_open_window (application, location_button->file, gtk_widget_get_screen (GTK_WIDGET (location_button)));
+          g_object_unref (G_OBJECT (application));
+        }
     }
 
   return FALSE;

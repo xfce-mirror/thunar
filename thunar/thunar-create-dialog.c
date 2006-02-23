@@ -519,7 +519,7 @@ thunar_show_create_dialog (GtkWidget         *parent,
       if (G_UNLIKELY (name == NULL))
         {
           /* display an error message */
-          thunar_dialogs_show_error (dialog, error, _("Cannot convert filename `%s' to the local encoding"), filename);
+          thunar_dialogs_show_error (dialog, error, _("Cannot convert filename \"%s\" to the local encoding"), filename);
 
           /* release the error */
           g_error_free (error);

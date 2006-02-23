@@ -32,11 +32,14 @@ enum
 {
   PROP_0,
   PROP_CURRENT_DIRECTORY,
+  PROP_SELECTED_FILES,
+  PROP_UI_MANAGER,
 };
 
 
 
 static void        thunar_location_entry_class_init            (ThunarLocationEntryClass *klass);
+static void        thunar_location_entry_component_init        (ThunarComponentIface     *iface);
 static void        thunar_location_entry_navigator_init        (ThunarNavigatorIface     *iface);
 static void        thunar_location_entry_location_bar_init     (ThunarLocationBarIface   *iface);
 static void        thunar_location_entry_init                  (ThunarLocationEntry      *location_entry);
@@ -97,6 +100,13 @@ thunar_location_entry_get_type (void)
         NULL,
       };
 
+      static const GInterfaceInfo component_info =
+      {
+        (GInterfaceInitFunc) thunar_location_entry_component_init,
+        NULL,
+        NULL,
+      };
+
       static const GInterfaceInfo navigator_info =
       {
         (GInterfaceInitFunc) thunar_location_entry_navigator_init,
@@ -113,6 +123,7 @@ thunar_location_entry_get_type (void)
 
       type = g_type_register_static (GTK_TYPE_HBOX, I_("ThunarLocationEntry"), &info, 0);
       g_type_add_interface_static (type, THUNAR_TYPE_NAVIGATOR, &navigator_info);
+      g_type_add_interface_static (type, THUNAR_TYPE_COMPONENT, &component_info);
       g_type_add_interface_static (type, THUNAR_TYPE_LOCATION_BAR, &location_bar_info);
     }
 
@@ -134,9 +145,23 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
   gobject_class->get_property = thunar_location_entry_get_property;
   gobject_class->set_property = thunar_location_entry_set_property;
 
-  g_object_class_override_property (gobject_class,
-                                    PROP_CURRENT_DIRECTORY,
-                                    "current-directory");
+  /* override ThunarNavigator's properties */
+  g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");
+
+  /* override ThunarComponent's properties */
+  g_object_class_override_property (gobject_class, PROP_SELECTED_FILES, "selected-files");
+  g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
+}
+
+
+
+static void
+thunar_location_entry_component_init (ThunarComponentIface *iface)
+{
+  iface->get_selected_files = (gpointer) exo_noop_null;
+  iface->set_selected_files = (gpointer) exo_noop;
+  iface->get_ui_manager = (gpointer) exo_noop_null;
+  iface->set_ui_manager = (gpointer) exo_noop;
 }
 
 
@@ -206,10 +231,15 @@ thunar_location_entry_finalize (GObject *object)
 {
   ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (object);
 
+  /* disconnect from the selected files and the UI manager */
+  thunar_component_set_selected_files (THUNAR_COMPONENT (location_entry), NULL);
+  thunar_component_set_ui_manager (THUNAR_COMPONENT (location_entry), NULL);
+
+  /* disconnect from the current directory */
   if (G_LIKELY (location_entry->current_directory != NULL))
     g_object_unref (G_OBJECT (location_entry->current_directory));
 
-  G_OBJECT_CLASS (thunar_location_entry_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_location_entry_parent_class)->finalize) (object);
 }
 
 
@@ -220,12 +250,18 @@ thunar_location_entry_get_property (GObject    *object,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  ThunarNavigator *navigator = THUNAR_NAVIGATOR (object);
-
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      g_value_set_object (value, thunar_navigator_get_current_directory (navigator));
+      g_value_set_object (value, thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object)));
+      break;
+
+    case PROP_SELECTED_FILES:
+      g_value_set_boxed (value, thunar_component_get_selected_files (THUNAR_COMPONENT (object)));
+      break;
+
+    case PROP_UI_MANAGER:
+      g_value_set_object (value, thunar_component_get_ui_manager (THUNAR_COMPONENT (object)));
       break;
 
     default:
@@ -242,12 +278,18 @@ thunar_location_entry_set_property (GObject      *object,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  ThunarNavigator *navigator = THUNAR_NAVIGATOR (object);
-
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (navigator, g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
+      break;
+
+    case PROP_SELECTED_FILES:
+      thunar_component_set_selected_files (THUNAR_COMPONENT (object), g_value_get_boxed (value));
+      break;
+
+    case PROP_UI_MANAGER:
+      thunar_component_set_ui_manager (THUNAR_COMPONENT (object), g_value_get_object (value));
       break;
 
     default:
@@ -324,7 +366,7 @@ thunar_location_entry_activate (ThunarLocationEntry *location_entry)
           /* try to launch the selected file */
           if (!thunar_file_launch (file, GTK_WIDGET (location_entry), &error))
             {
-              thunar_dialogs_show_error (GTK_WIDGET (location_entry), error, _("Failed to launch `%s'"), thunar_file_get_display_name (file));
+              thunar_dialogs_show_error (GTK_WIDGET (location_entry), error, _("Failed to launch \"%s\""), thunar_file_get_display_name (file));
               g_error_free (error);
             }
 

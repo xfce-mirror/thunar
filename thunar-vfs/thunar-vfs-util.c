@@ -286,7 +286,7 @@ thunar_vfs_expand_filename (const gchar *filename,
       if (G_UNLIKELY (passwd == NULL))
         {
           username = g_strndup (remainder, slash - remainder);
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Unknown user `%s'"), username);
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Unknown user \"%s\""), username);
           g_free (username);
           return NULL;
         }

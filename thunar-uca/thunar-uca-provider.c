@@ -325,7 +325,7 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
                                        | GTK_DIALOG_MODAL,
                                        GTK_MESSAGE_ERROR,
                                        GTK_BUTTONS_CLOSE,
-                                       _("Failed to launch action `%s'."), label);
+                                       _("Failed to launch action \"%s\"."), label);
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("%s."), error->message);
       gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);

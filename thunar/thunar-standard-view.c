@@ -2665,7 +2665,7 @@ thunar_standard_view_error (ThunarListModel    *model,
 
   /* inform the user about the problem */
   thunar_dialogs_show_error (GTK_WIDGET (standard_view), error,
-                             _("Failed to open directory `%s'"),
+                             _("Failed to open directory \"%s\""),
                              thunar_file_get_display_name (file));
 }
 

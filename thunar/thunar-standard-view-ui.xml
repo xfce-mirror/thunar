@@ -11,65 +11,65 @@
   -->
 
   <menubar name="main-menu">
-    <menu action="file-menu" name="file-menu">
+    <menu action="file-menu">
       <placeholder name="placeholder-create-actions">
-        <menuitem action="create-folder" name="create-folder" />
-        <menuitem action="create-document" name="create-document" />
+        <menuitem action="create-folder" />
+        <menuitem action="create-document" />
       </placeholder>
       <placeholder name="placeholder-file-properties">
-        <menuitem action="properties" name="properties" />
+        <menuitem action="properties" />
       </placeholder>
     </menu>
 
-    <menu action="edit-menu" name="edit-menu">
+    <menu action="edit-menu">
       <placeholder name="placeholder-edit-clipboard-actions">
-        <menuitem action="copy" name="copy" />
-        <menuitem action="cut" name="cut" />
-        <menuitem action="paste" name="paste" />
-        <menuitem action="delete" name="delete" />
+        <menuitem action="copy" />
+        <menuitem action="cut" />
+        <menuitem action="paste" />
+        <menuitem action="delete" />
       </placeholder>
       <placeholder name="placeholder-edit-select-actions">
-        <menuitem action="select-all-files" name="select-all-files" />
-        <menuitem action="select-by-pattern" name="select-by-pattern" />
+        <menuitem action="select-all-files" />
+        <menuitem action="select-by-pattern" />
       </placeholder>
       <placeholder name="placeholder-edit-alter-actions">
-        <menuitem action="duplicate" name="duplicate" />
-        <menuitem action="make-link" name="make-link" />
-        <menuitem action="rename" name="rename" />
+        <menuitem action="duplicate" />
+        <menuitem action="make-link" />
+        <menuitem action="rename" />
       </placeholder>
     </menu>
   </menubar>
 
-  <popup action="file-context-menu" name="file-context-menu">
+  <popup action="file-context-menu">
     <placeholder name="placeholder-clipboard-actions">
-      <menuitem action="copy" name="copy" />
-      <menuitem action="cut" name="cut" />
-      <menuitem action="delete" name="delete" />
-      <menuitem action="paste-into-folder" name="paste-into-folder" />
+      <menuitem action="copy" />
+      <menuitem action="cut" />
+      <menuitem action="delete" />
+      <menuitem action="paste-into-folder" />
     </placeholder>
     <placeholder name="placeholder-edit-actions">
-      <menuitem action="rename" name="rename" />
+      <menuitem action="rename" />
     </placeholder>
     <placeholder name="placeholder-file-actions">
-      <menuitem action="properties" name="properties" />
+      <menuitem action="properties" />
     </placeholder>
   </popup>
 
-  <popup action="folder-context-menu" name="folder-context-menu">
-    <menuitem action="create-folder" name="create-folder" />
-    <menuitem action="create-document" name="create-document" />
+  <popup action="folder-context-menu">
+    <menuitem action="create-folder" />
+    <menuitem action="create-document" />
     <separator />
-    <menuitem action="paste" name="paste" />
+    <menuitem action="paste" />
     <separator />
     <placeholder name="placeholder-custom-actions" />
     <separator />
     <placeholder name="placeholder-view-items-actions" />
     <separator />
-    <menuitem action="zoom-in" name="zoom-in" />
-    <menuitem action="zoom-out" name="zoom-out" />
-    <menuitem action="zoom-reset" name="zoom-reset" />
+    <menuitem action="zoom-in" />
+    <menuitem action="zoom-out" />
+    <menuitem action="zoom-reset" />
     <separator />
-    <menuitem action="properties" name="properties" />
+    <menuitem action="properties" />
   </popup>
 
 </ui>

@@ -1010,9 +1010,13 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
   if (G_LIKELY (type != G_TYPE_NONE))
     {
       /* initialize the new location bar widget */
-      window->location_bar = g_object_new (type, NULL);
+      window->location_bar = g_object_new (type, "ui-manager", window->ui_manager, NULL);
       exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory");
       g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+
+      /* connect the location bar widget to the view (if any) */
+      if (G_LIKELY (window->view != NULL))
+        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->location_bar), "selected-files");
 
       /* check if the location bar should be placed into a toolbar */
       if (!thunar_location_bar_is_standalone (THUNAR_LOCATION_BAR (window->location_bar)))
@@ -1236,6 +1240,10 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       gtk_container_add (GTK_CONTAINER (window->view_container), window->view);
       gtk_widget_grab_focus (window->view);
       gtk_widget_show (window->view);
+
+      /* connect to the location bar (if any) */
+      if (G_LIKELY (window->location_bar != NULL))
+        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->location_bar), "selected-files");
 
       /* connect to the sidepane (if any) */
       if (G_LIKELY (window->sidepane != NULL))

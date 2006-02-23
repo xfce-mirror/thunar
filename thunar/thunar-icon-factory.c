@@ -672,7 +672,7 @@ thunar_icon_factory_load_fallback (gint size)
   /* verify that it was loaded */
   if (G_UNLIKELY (pixbuf == NULL))
     {
-      g_error (_("Failed to load fallback icon from `%s' (%s). Check your installation!"), THUNAR_FALLBACK_ICON_PATH, error->message);
+      g_error (_("Failed to load fallback icon from \"%s\" (%s). Check your installation!"), THUNAR_FALLBACK_ICON_PATH, error->message);
       g_error_free (error);
     }
 

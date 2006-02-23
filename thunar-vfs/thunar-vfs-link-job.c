@@ -197,7 +197,7 @@ error_and_cancel:
               if (g_unlink (target_absolute_path) < 0 && errno != ENOENT)
                 {
                   error = g_error_new (G_FILE_ERROR, g_file_error_from_errno (errno),
-                                       _("Failed to remove `%s': %s"), target_absolute_path,
+                                       _("Failed to remove \"%s\": %s"), target_absolute_path,
                                        g_strerror (errno));
                   goto error_and_cancel;
                 }

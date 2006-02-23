@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-02-19 23:54+0900\n"
+"POT-Creation-Date: 2006-02-23 20:13+0100\n"
 "PO-Revision-Date: 2006-01-29 17:47+0500\n"
 "Last-Translator: Andrey Fedoseev <andrey.fedoseev@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -138,8 +138,10 @@ msgstr ""
 "Перезаписать?"
 
 #: ../thunar-vfs/thunar-vfs-link-job.c:200
-#, c-format
-msgid "Failed to remove `%s': %s"
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:664
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:717
+#, fuzzy, c-format
+msgid "Failed to remove \"%s\": %s"
 msgstr "Не удалось удалить `%s': %s"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1711
@@ -218,12 +220,6 @@ msgstr "Удаление каталогов..."
 msgid "Failed to remove directory \"%s\": %s"
 msgstr "Не удалось удалить каталог `%s': %s"
 
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:664
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:717
-#, fuzzy, c-format
-msgid "Failed to remove \"%s\": %s"
-msgstr "Не удалось удалить `%s': %s"
-
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:910
 #, fuzzy
 msgid "Cannot transfer the root directory"
@@ -239,8 +235,8 @@ msgid "Invalid path"
 msgstr "Неверный путь"
 
 #: ../thunar-vfs/thunar-vfs-util.c:289
-#, c-format
-msgid "Unknown user `%s'"
+#, fuzzy, c-format
+msgid "Unknown user \"%s\""
 msgstr "Неизвестный пользователь '%s'"
 
 #. no useful information, *narf*
@@ -567,7 +563,7 @@ msgstr "Введите новое имя:"
 #. display an error message
 #: ../thunar/thunar-create-dialog.c:522
 #, c-format
-msgid "Cannot convert filename `%s' to the local encoding"
+msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr ""
 
 #.
@@ -648,7 +644,7 @@ msgstr ""
 
 #: ../thunar/thunar-icon-factory.c:675
 #, c-format
-msgid "Failed to load fallback icon from `%s' (%s). Check your installation!"
+msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
 
 #: ../thunar/thunar-icon-view.c:122
@@ -711,10 +707,9 @@ msgstr ""
 msgid "Icon view"
 msgstr ""
 
-#. append the "Open" action
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:750
-#: ../thunar/thunar-location-button.c:527
+#: ../thunar/thunar-location-buttons.c:1268
 #: ../thunar/thunar-shortcuts-view.c:360
 msgid "_Open"
 msgstr "_Открыть"
@@ -724,9 +719,8 @@ msgstr "_Открыть"
 msgid "Open the selected files"
 msgstr "Открыть выбранные файлы"
 
-#. append the "Open in New Window" action
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-button.c:539
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1281
 #: ../thunar/thunar-shortcuts-view.c:371
 msgid "Open in New Window"
 msgstr "Открыть в новом окне"
@@ -903,19 +897,36 @@ msgid_plural "%d items selected"
 msgstr[0] ""
 msgstr[1] ""
 
-#. append the "Paste Files Here" action
-#: ../thunar/thunar-location-button.c:550
-#, fuzzy
-msgid "_Paste Files Here"
-msgstr "Вст_авить файлы"
-
-#: ../thunar/thunar-location-buttons.c:220
+#: ../thunar/thunar-location-buttons.c:260
 msgid "Spacing"
 msgstr ""
 
-#: ../thunar/thunar-location-buttons.c:221
+#: ../thunar/thunar-location-buttons.c:261
 msgid "The amount of space between the path buttons"
 msgstr ""
+
+#. add the "Open" action
+#: ../thunar/thunar-location-buttons.c:1267
+#, fuzzy, c-format
+msgid "Open \"%s\" in this window"
+msgstr "Открыть в новом окне"
+
+#. add the "Open in New Window" action
+#: ../thunar/thunar-location-buttons.c:1280
+#, fuzzy, c-format
+msgid "Open \"%s\" in a new window"
+msgstr "Открыть в новом окне"
+
+#. add the "Open in New Window" action
+#: ../thunar/thunar-location-buttons.c:1295
+#, fuzzy, c-format
+msgid "Paste files from the clipboard into \"%s\""
+msgstr "Буфер обмена пуст"
+
+#: ../thunar/thunar-location-buttons.c:1296
+#, fuzzy
+msgid "_Paste Files Here"
+msgstr "Вст_авить файлы"
 
 #: ../thunar/thunar-location-dialog.c:103
 msgid "Open Location"
@@ -925,10 +936,10 @@ msgstr ""
 msgid "_Location:"
 msgstr ""
 
-#: ../thunar/thunar-location-entry.c:327 ../thunar/thunar-window.c:1476
-#, c-format
-msgid "Failed to launch `%s'"
-msgstr ""
+#: ../thunar/thunar-location-entry.c:369
+#, fuzzy, c-format
+msgid "Failed to launch \"%s\""
+msgstr "Не удалось переименовать `%s'"
 
 #: ../thunar/thunar-path-entry.c:256
 msgid "Icon size"
@@ -1273,8 +1284,9 @@ msgstr "%s (%u байт)"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:797
-#, c-format
-msgid "Failed to rename `%s'"
+#: ../thunar/thunar-standard-view.c:2078
+#, fuzzy, c-format
+msgid "Failed to rename \"%s\""
 msgstr "Не удалось переименовать `%s'"
 
 #: ../thunar/thunar-shortcuts-pane.c:95 ../thunar/thunar-shortcuts-pane.c:401
@@ -1530,15 +1542,9 @@ msgstr "Шаблон:"
 msgid "Rename \"%s\""
 msgstr "_Переименовать"
 
-#. display an error message
-#: ../thunar/thunar-standard-view.c:2078
-#, fuzzy, c-format
-msgid "Failed to rename \"%s\""
-msgstr "Не удалось переименовать `%s'"
-
 #: ../thunar/thunar-standard-view.c:2668
-#, c-format
-msgid "Failed to open directory `%s'"
+#, fuzzy, c-format
+msgid "Failed to open directory \"%s\""
 msgstr "Не удалось открыть папку: '%s'"
 
 #: ../thunar/thunar-standard-view.c:2993
@@ -1573,151 +1579,160 @@ msgstr "Нет шаблонов"
 msgid "_Empty File"
 msgstr "Пустой _файл"
 
-#: ../thunar/thunar-window.c:218
+#: ../thunar/thunar-window.c:217
 msgid "_File"
 msgstr "_Файл"
 
-#: ../thunar/thunar-window.c:219
+#: ../thunar/thunar-window.c:218
 msgid "Open New _Window"
 msgstr "Открыть _новое окно"
 
-#: ../thunar/thunar-window.c:219
+#: ../thunar/thunar-window.c:218
 #, fuzzy
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Открыть новое окно Thunar для текущего адреса"
 
-#: ../thunar/thunar-window.c:220
+#: ../thunar/thunar-window.c:219
 msgid "Close _All Windows"
 msgstr "Закрыть вс_е окна"
 
-#: ../thunar/thunar-window.c:220
+#: ../thunar/thunar-window.c:219
 msgid "Close all Thunar windows"
 msgstr "Закрыть все окна Thunar"
 
-#: ../thunar/thunar-window.c:221
+#: ../thunar/thunar-window.c:220
 msgid "_Close"
 msgstr "_Закрыть"
 
-#: ../thunar/thunar-window.c:221
+#: ../thunar/thunar-window.c:220
 msgid "Close this window"
 msgstr "Закрыть это окно"
 
-#: ../thunar/thunar-window.c:222
+#: ../thunar/thunar-window.c:221
 msgid "_Edit"
 msgstr "_Правка"
 
-#: ../thunar/thunar-window.c:223
+#: ../thunar/thunar-window.c:222
 msgid "Pr_eferences..."
 msgstr "_Настройки..."
 
-#: ../thunar/thunar-window.c:223
+#: ../thunar/thunar-window.c:222
 msgid "Edit Thunars Preferences"
 msgstr "Редактировать настройки Thunar"
 
-#: ../thunar/thunar-window.c:224
+#: ../thunar/thunar-window.c:223
 msgid "_View"
 msgstr "_Вид"
 
-#: ../thunar/thunar-window.c:225
+#: ../thunar/thunar-window.c:224
 msgid "_Reload"
 msgstr ""
 
-#: ../thunar/thunar-window.c:225
+#: ../thunar/thunar-window.c:224
 #, fuzzy
 msgid "Reload the current folder"
 msgstr "Открыть родительский каталог"
 
-#: ../thunar/thunar-window.c:226
+#: ../thunar/thunar-window.c:225
 msgid "_Location Selector"
 msgstr ""
 
-#: ../thunar/thunar-window.c:227
+#: ../thunar/thunar-window.c:226
 msgid "_Side Pane"
 msgstr "_Боковая панель"
 
-#: ../thunar/thunar-window.c:228
+#: ../thunar/thunar-window.c:227
 msgid "Zoom _In"
 msgstr ""
 
-#: ../thunar/thunar-window.c:228
+#: ../thunar/thunar-window.c:227
 msgid "Show the contents in more detail"
 msgstr ""
 
-#: ../thunar/thunar-window.c:229
+#: ../thunar/thunar-window.c:228
 msgid "Zoom _Out"
 msgstr ""
 
-#: ../thunar/thunar-window.c:229
+#: ../thunar/thunar-window.c:228
 msgid "Show the contents in less detail"
 msgstr ""
 
-#: ../thunar/thunar-window.c:230
+#: ../thunar/thunar-window.c:229
 msgid "Normal Si_ze"
 msgstr ""
 
-#: ../thunar/thunar-window.c:230
+#: ../thunar/thunar-window.c:229
 msgid "Show the contents at the normal size"
 msgstr ""
 
-#: ../thunar/thunar-window.c:231
+#: ../thunar/thunar-window.c:230
 msgid "_Go"
 msgstr "_Переход"
 
-#: ../thunar/thunar-window.c:232
+#: ../thunar/thunar-window.c:231
 msgid "Open _Parent"
 msgstr "_Родительский каталог"
 
-#: ../thunar/thunar-window.c:232
+#: ../thunar/thunar-window.c:231
 msgid "Open the parent folder"
 msgstr "Открыть родительский каталог"
 
-#: ../thunar/thunar-window.c:233
+#: ../thunar/thunar-window.c:232
 msgid "_Home"
 msgstr "_Домашний каталог"
 
-#: ../thunar/thunar-window.c:233
+#: ../thunar/thunar-window.c:232
 #, fuzzy
 msgid "Go to the home folder"
 msgstr "Открыть домашний каталог"
 
-#: ../thunar/thunar-window.c:234
+#: ../thunar/thunar-window.c:233
 #, fuzzy
 msgid "T_emplates"
 msgstr "_Шаблоны"
 
-#: ../thunar/thunar-window.c:234
+#: ../thunar/thunar-window.c:233
 #, fuzzy
 msgid "Go to the templates folder"
 msgstr "Перейти в каталог шаблонов"
 
-#: ../thunar/thunar-window.c:235
+#: ../thunar/thunar-window.c:234
 msgid "Open _Location..."
 msgstr ""
 
-#: ../thunar/thunar-window.c:235
+#: ../thunar/thunar-window.c:234
 msgid "Specify a location to open"
 msgstr ""
 
-#: ../thunar/thunar-window.c:236
+#: ../thunar/thunar-window.c:235
 msgid "_Help"
 msgstr "_Справка"
 
-#: ../thunar/thunar-window.c:237
+#: ../thunar/thunar-window.c:236
 msgid "_About"
 msgstr "_О программе"
 
-#: ../thunar/thunar-window.c:237
+#: ../thunar/thunar-window.c:236
 msgid "Display information about Thunar"
 msgstr "Показать информацию о Thunar"
 
-#: ../thunar/thunar-window.c:242
+#: ../thunar/thunar-window.c:241
 msgid "Show _Hidden Files"
 msgstr "Показывать _скрытые файлы"
 
-#: ../thunar/thunar-window.c:242
+#: ../thunar/thunar-window.c:241
 #, fuzzy
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Показывать скрытые файлы"
+
+#: ../thunar/thunar-window.c:242
+#, fuzzy
+msgid "_Shortcuts"
+msgstr "_Значки"
+
+#: ../thunar/thunar-window.c:242
+msgid "Toggles the visibility of the shortcuts pane"
+msgstr ""
 
 #: ../thunar/thunar-window.c:243
 msgid "St_atusbar"
@@ -1728,79 +1743,71 @@ msgid "Change the visibility of this window's statusbar"
 msgstr ""
 
 #.
-#. * add the side pane options
+#. * add the location selector options
 #.
 #: ../thunar/thunar-window.c:479
-#, fuzzy
-msgid "_Shortcuts"
-msgstr "_Значки"
+msgid "_Pathbar Style"
+msgstr ""
 
-#: ../thunar/thunar-window.c:485 ../thunar/thunar-window.c:508
+#: ../thunar/thunar-window.c:480
+msgid "Modern approach with buttons that correspond to folders"
+msgstr ""
+
+#: ../thunar/thunar-window.c:486
+msgid "_Toolbar Style"
+msgstr ""
+
+#: ../thunar/thunar-window.c:487
+msgid "Traditional approach with location bar and navigation buttons"
+msgstr ""
+
+#: ../thunar/thunar-window.c:493
 #, fuzzy
 msgid "_Hidden"
 msgstr "_Скрыть"
 
-#.
-#. * add the location selector options
-#.
-#: ../thunar/thunar-window.c:494
-msgid "_Pathbar Style"
-msgstr ""
-
-#: ../thunar/thunar-window.c:495
-msgid "Modern approach with buttons that correspond to folders"
-msgstr ""
-
-#: ../thunar/thunar-window.c:501
-msgid "_Toolbar Style"
-msgstr ""
-
-#: ../thunar/thunar-window.c:502
-msgid "Traditional approach with location bar and navigation buttons"
-msgstr ""
-
-#: ../thunar/thunar-window.c:508
+#: ../thunar/thunar-window.c:493
 msgid "Don't display any location selector"
 msgstr ""
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:502
 msgid "View as _Icons"
 msgstr ""
 
-#: ../thunar/thunar-window.c:517
+#: ../thunar/thunar-window.c:502
 msgid "Display folder content in an icon view"
 msgstr ""
 
-#: ../thunar/thunar-window.c:524
+#: ../thunar/thunar-window.c:509
 msgid "View as _Detailed List"
 msgstr ""
 
-#: ../thunar/thunar-window.c:524
+#: ../thunar/thunar-window.c:509
 msgid "Display folder content in a detailed list view"
 msgstr ""
 
-#: ../thunar/thunar-window.c:1290
+#: ../thunar/thunar-window.c:1283
 msgid "Failed to open parent folder"
 msgstr "Не удалось открыть родительский каталог"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1316
+#: ../thunar/thunar-window.c:1309
 msgid "Failed to open home directory"
 msgstr "Не удалось открыть домашний каталог"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:1378
+#: ../thunar/thunar-window.c:1371
 msgid "About Templates"
 msgstr ""
 
-#: ../thunar/thunar-window.c:1399
+#: ../thunar/thunar-window.c:1392
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 
-#: ../thunar/thunar-window.c:1406
+#: ../thunar/thunar-window.c:1399
 msgid ""
 "If you frequently create certain kinds of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -1810,22 +1817,27 @@ msgid ""
 "of the document will be created in the directory you are viewing."
 msgstr ""
 
-#: ../thunar/thunar-window.c:1418
+#: ../thunar/thunar-window.c:1411
 msgid "Do _not display this message again"
 msgstr ""
 
-#: ../thunar/thunar-window.c:1431
+#: ../thunar/thunar-window.c:1424
 #, fuzzy
 msgid "Failed to open templates folder"
 msgstr "Не удалось открыть родительский каталог"
 
-#: ../thunar/thunar-window.c:1522
+#: ../thunar/thunar-window.c:1469
+#, c-format
+msgid "Failed to launch `%s'"
+msgstr ""
+
+#: ../thunar/thunar-window.c:1515
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr ""
 
-#: ../thunar/thunar-window.c:1527
+#: ../thunar/thunar-window.c:1520
 msgid "translator-credits"
 msgstr ""
 "Андрей Федосеев <andrey.fedoseev@gmail.com>\n"
@@ -2087,9 +2099,9 @@ msgid ""
 msgstr ""
 
 #: ../thunar-uca/thunar-uca-provider.c:328
-#, c-format
-msgid "Failed to launch action `%s'."
-msgstr ""
+#, fuzzy, c-format
+msgid "Failed to launch action \"%s\"."
+msgstr "Не удалось добавить приложение `%s'"
 
 #: ../thunar-uca/uca.xml.in.h:1
 msgid "Example for a custom action"
@@ -2110,3 +2122,9 @@ msgstr "Файловый менеджер"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Файловый менеджер Thunar"
+
+#~ msgid "Failed to remove `%s': %s"
+#~ msgstr "Не удалось удалить `%s': %s"
+
+#~ msgid "Failed to rename `%s'"
+#~ msgstr "Не удалось переименовать `%s'"
