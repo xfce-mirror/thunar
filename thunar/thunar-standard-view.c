@@ -546,6 +546,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* setup the name renderer */
   standard_view->name_renderer = thunar_text_renderer_new ();
   exo_gtk_object_ref_sink (GTK_OBJECT (standard_view->name_renderer));
+  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (standard_view->name_renderer), "follow-prelit");
 
   /* be sure to update the selection whenever the folder changes */
   g_signal_connect_swapped (G_OBJECT (standard_view->model), "notify::folder", G_CALLBACK (thunar_standard_view_selection_changed), standard_view);

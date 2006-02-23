@@ -1481,6 +1481,12 @@ static void
 thunar_window_action_about (GtkAction    *action,
                             ThunarWindow *window)
 {
+  static const gchar *artists[] =
+  {
+    "Young Hahn <youngjin.hahn@gmail.com>",
+    NULL,
+  };
+
   static const gchar *authors[] =
   {
     "Benedikt Meurer <benny@xfce.org>",
@@ -1511,6 +1517,7 @@ thunar_window_action_about (GtkAction    *action,
   gtk_about_dialog_set_email_hook (exo_url_about_dialog_hook, NULL, NULL);
   gtk_about_dialog_set_url_hook (exo_url_about_dialog_hook, NULL, NULL);
   gtk_show_about_dialog (GTK_WINDOW (window),
+                         "artists", artists,
                          "authors", authors,
                          "comments", _("Thunar is a fast and easy to use file manager\nfor the Xfce Desktop Environment."),
                          "copyright", "Copyright \302\251 2004-2006 Benedikt Meurer",

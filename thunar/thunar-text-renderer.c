@@ -32,6 +32,7 @@
 
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-marshal.h>
+#include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-text-renderer.h>
 
 
@@ -39,6 +40,7 @@
 enum
 {
   PROP_0,
+  PROP_FOLLOW_PRELIT,
   PROP_FOLLOW_STATE,
   PROP_TEXT,
   PROP_WRAP_MODE,
@@ -129,6 +131,9 @@ struct _ThunarTextRenderer
   gboolean      follow_state;
   gint          focus_width;;
 
+  /* underline prelited rows */
+  gboolean      follow_prelit;
+
   /* cell editing support */
   GtkWidget    *entry;
   gboolean      entry_menu_active;
@@ -189,6 +194,20 @@ thunar_text_renderer_class_init (ThunarTextRendererClass *klass)
   gtkcell_renderer_class->get_size = thunar_text_renderer_get_size;
   gtkcell_renderer_class->render = thunar_text_renderer_render;
   gtkcell_renderer_class->start_editing = thunar_text_renderer_start_editing;
+
+  /**
+   * ThunarTextRenderer:follow-prelit:
+   *
+   * Whether to underline prelited cells. This is used for the single
+   * click support in the detailed list view.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FOLLOW_PRELIT,
+                                   g_param_spec_boolean ("follow-prelit",
+                                                         "follow-prelit",
+                                                         "follow-prelit",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarTextRenderer:follow-state:
@@ -307,6 +326,10 @@ thunar_text_renderer_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_FOLLOW_PRELIT:
+      g_value_set_boolean (value, text_renderer->follow_prelit);
+      break;
+
     case PROP_FOLLOW_STATE:
       g_value_set_boolean (value, text_renderer->follow_state);
       break;
@@ -342,6 +365,10 @@ thunar_text_renderer_set_property (GObject      *object,
 
   switch (prop_id)
     {
+    case PROP_FOLLOW_PRELIT:
+      text_renderer->follow_prelit = g_value_get_boolean (value);
+      break;
+
     case PROP_FOLLOW_STATE:
       text_renderer->follow_state = g_value_get_boolean (value);
       break;
@@ -488,6 +515,12 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
       else
         state = GTK_STATE_NORMAL;
     }
+
+  /* check if we should follow the prelit state (used for single click support) */
+  if (text_renderer->follow_prelit && (flags & GTK_CELL_RENDERER_PRELIT) != 0)
+    pango_layout_set_attributes (text_renderer->layout, thunar_pango_attr_list_underline_single ());
+  else
+    pango_layout_set_attributes (text_renderer->layout, NULL);
 
   /* setup the wrapping */
   if (text_renderer->wrap_width < 0)

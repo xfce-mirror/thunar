@@ -66,6 +66,7 @@ enum
   PROP_MISC_RECURSIVE_PERMISSIONS,
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
   PROP_MISC_SHOW_THUMBNAILS,
+  PROP_MISC_SINGLE_CLICK,
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
@@ -408,6 +409,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          "misc-show-thumbnails",
                                                          "misc-show-thumbnails",
                                                          TRUE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-single-click:
+   *
+   * Whether to use single click navigation.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_SINGLE_CLICK,
+                                   g_param_spec_boolean ("misc-single-click",
+                                                         "misc-single-click",
+                                                         "misc-single-click",
+                                                         FALSE,
                                                          EXO_PARAM_READWRITE));
 
   /**

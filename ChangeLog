@@ -1,5 +1,27 @@
 2006-02-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-window.c(thunar_window_action_about): Add credits for
+	  Young Hahn <youngjin.hahn@gmail.com> to the about dialog.
+	* thunar/thunar-preferences.c, docs/README.thunarrc: Add new preference
+	  MiscSingleClick, which controls whether single click navigation
+	  should be used.
+	* thunar/thunar-preferences-dialog.c(thunar_preferences_dialog_init):
+	  Add single/double-click options to the preferences dialog.
+	* thunar/thunar-pango-extensions.{c,h}: Add new helper function
+	  thunar_pango_attr_list_underline_single(), which returns a Pango
+	  attribute list for single-underlined text rendering.
+	* thunar/thunar-text-renderer.c: Add "follow-prelit" property, which
+	  controls whether the text renderer should highlight text using the
+	  single underline attribute when a row/item is highlighted.
+	* thunar/thunar-details-view.c, thunar/thunar-icon-view.c,
+	  thunar/thunar-shortcuts-view.c, thunar/thunar-standard-view.c: Add
+	  support for single click navigation to the details and icon views,
+	  and also to the shortcuts view. Bug #1396.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
+2006-02-24	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-icon-view-ui.xml, thunar/thunar-launcher-ui.xml,
 	  thunar/thunar-shortcuts-pane-ui.xml, thunar/thunar-window-ui.xml,
 	  thunar/thunar-standard-view-ui.xml: Cleanup the ui description files.

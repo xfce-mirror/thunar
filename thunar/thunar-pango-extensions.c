@@ -157,3 +157,21 @@ thunar_pango_attr_list_small_italic (void)
 }
 
 
+
+/**
+ * thunar_pango_attr_list_underline_single:
+ *
+ * Returns a #PangoAttrList for underlining text using a single line.
+ * The returned list is owned by the callee and must not be freed
+ * or modified by the caller.
+ *
+ * Return value: a #PangoAttrList for underlining text using a single line.
+ **/
+PangoAttrList*
+thunar_pango_attr_list_underline_single (void)
+{
+  static PangoAttrList *attr_list = NULL;
+  if (G_UNLIKELY (attr_list == NULL))
+    attr_list = thunar_pango_attr_list_wrap (pango_attr_underline_new (PANGO_UNDERLINE_SINGLE), NULL);
+  return attr_list;
+}

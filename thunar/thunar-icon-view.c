@@ -231,6 +231,7 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_icon_view_key_press_event), icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_icon_view_item_activated), icon_view);
   g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), icon_view);
+  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences), "misc-single-click", G_OBJECT (view), "single-click");
   gtk_container_add (GTK_CONTAINER (icon_view), view);
   gtk_widget_show (view);
 
@@ -550,8 +551,10 @@ thunar_icon_view_button_press_event (ExoIconView    *view,
           /* select only the path to the item on which the user clicked */
           exo_icon_view_select_path (view, path);
 
-          /* if the event was a double-click, then we'll open the file or folder (folder's are opened in new windows) */
-          if (G_LIKELY (event->type == GDK_2BUTTON_PRESS))
+          /* if the event was a double-click or we are in single-click mode, then
+           * we'll open the file or folder (folder's are opened in new windows)
+           */
+          if (G_LIKELY (event->type == GDK_2BUTTON_PRESS || exo_icon_view_get_single_click (view)))
             {
               /* determine the file for the path */
               gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (icon_view)->model), &iter, path);
