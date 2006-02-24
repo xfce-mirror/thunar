@@ -215,7 +215,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_widget_show (image);
 
   uca_chooser->up_button = gtk_button_new ();
-  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->up_button, _("Move the currently selection action up by one row."), NULL);
+  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->up_button, _("Move the currently selected action up by one row."), NULL);
   gtk_box_pack_start (GTK_BOX (vbox), uca_chooser->up_button, FALSE, FALSE, 0);
   g_signal_connect_swapped (G_OBJECT (uca_chooser->up_button), "clicked", G_CALLBACK (thunar_uca_chooser_up_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->up_button);
@@ -225,7 +225,7 @@ thunar_uca_chooser_init (ThunarUcaChooser *uca_chooser)
   gtk_widget_show (image);
 
   uca_chooser->down_button = gtk_button_new ();
-  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->down_button, _("Move the currently selection action down by one row."), NULL);
+  gtk_tooltips_set_tip (uca_chooser->tooltips, uca_chooser->down_button, _("Move the currently selected action down by one row."), NULL);
   gtk_box_pack_start (GTK_BOX (vbox), uca_chooser->down_button, FALSE, FALSE, 0);
   g_signal_connect_swapped (G_OBJECT (uca_chooser->down_button), "clicked", G_CALLBACK (thunar_uca_chooser_down_clicked), uca_chooser);
   gtk_widget_show (uca_chooser->down_button);
