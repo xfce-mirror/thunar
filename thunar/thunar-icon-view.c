@@ -69,6 +69,9 @@ static GtkAction   *thunar_icon_view_gesture_action         (ThunarIconView     
 static void         thunar_icon_view_action_sort            (GtkAction           *action,
                                                              GtkAction           *current,
                                                              ThunarStandardView  *standard_view);
+static void         thunar_icon_view_notify_model           (ExoIconView         *view,
+                                                             GParamSpec          *pspec,
+                                                             ThunarIconView      *icon_view);
 static gboolean     thunar_icon_view_button_press_event     (ExoIconView         *view,
                                                              GdkEventButton      *event,
                                                              ThunarIconView      *icon_view);
@@ -227,6 +230,7 @@ thunar_icon_view_init (ThunarIconView *icon_view)
 
   /* create the real view */
   view = exo_icon_view_new ();
+  g_signal_connect (G_OBJECT (view), "notify::model", G_CALLBACK (thunar_icon_view_notify_model), icon_view);
   g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_icon_view_button_press_event), icon_view);
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_icon_view_key_press_event), icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_icon_view_item_activated), icon_view);
@@ -236,6 +240,7 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   gtk_widget_show (view);
 
   /* initialize the icon view properties */
+  exo_icon_view_set_enable_search (EXO_ICON_VIEW (view), TRUE);
   exo_icon_view_set_selection_mode (EXO_ICON_VIEW (view), GTK_SELECTION_MULTIPLE);
 
   /* add the icon renderer */
@@ -495,6 +500,19 @@ thunar_icon_view_action_sort (GtkAction          *action,
 
   /* apply the new settings */
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), column, order);
+}
+
+
+
+static void
+thunar_icon_view_notify_model (ExoIconView    *view,
+                               GParamSpec     *pspec,
+                               ThunarIconView *icon_view)
+{
+  /* We need to set the search column here, as ExoIconView resets it
+   * whenever a new model is set.
+   */
+  exo_icon_view_set_search_column (view, THUNAR_COLUMN_NAME);
 }
 
 

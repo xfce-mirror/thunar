@@ -1,5 +1,14 @@
 2006-02-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-details-view.c(thunar_details_view_button_press_event),
+	  thunar/thunar-shortcuts-view.c
+	  (thunar_shortcuts_view_button_press_event): Properly verify the event
+	  modifier state according to the default modifier mask.
+	* thunar/thunar-icon-view.c: Add interactive search capabilities to the
+	  ThunarIconView based on the latest changes to ExoIconView. Bug #1359.
+
+2006-02-24	Benedikt Meurer <benny@xfce.org>
+
 	* autogen.sh: Be sure to run svn info with LC_ALL=C.
 
 2006-02-24	Benedikt Meurer <benny@xfce.org>

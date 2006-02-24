@@ -438,7 +438,8 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-single-click", &single_click, NULL);
 
   /* check if the next button-release-event should activate the selected row (single click support) */
-  details_view->button_release_activates = (single_click && event->type == GDK_BUTTON_PRESS && event->button == 1 && event->state == 0);
+  details_view->button_release_activates = (single_click && event->type == GDK_BUTTON_PRESS && event->button == 1
+                                         && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0);
 
   /* we unselect all selected items if the user clicks on an empty
    * area of the treeview and no modifier key is active.

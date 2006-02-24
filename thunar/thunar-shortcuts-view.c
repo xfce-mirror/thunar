@@ -335,8 +335,8 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
   g_object_get (G_OBJECT (view->preferences), "misc-single-click", &single_click, NULL);
 
   /* check if the next button-release-event should activate the selected row (single click support) */
-  view->button_release_activates = (single_click && event->type == GDK_BUTTON_PRESS
-                                 && event->button == 1 && event->state == 0);
+  view->button_release_activates = (single_click && event->type == GDK_BUTTON_PRESS && event->button == 1
+                                 && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0);
 
   /* ignore all kinds of double click events in single-click mode */
   if (G_UNLIKELY (single_click && event->type == GDK_2BUTTON_PRESS))
