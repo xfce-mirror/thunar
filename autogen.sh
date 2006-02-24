@@ -2,7 +2,7 @@
 #
 # $Id$
 #
-# Copyright (c) 2002-2005
+# Copyright (c) 2002-2006
 #         The Thunar development team. All rights reserved.
 #
 # Written for Thunar by Benedikt Meurer <benny@xfce.org>.
@@ -19,7 +19,7 @@ EOF
 }
 
 # substitute revision and date
-revision=`svn info $0 | awk '/^Revision: / {printf "%05d\n", $2}'`
+revision=`LC_ALL=C svn info $0 | awk '/^Revision: / {printf "%05d\n", $2}'`
 sed -e "s/@REVISION@/${revision}/g" < "configure.in.in" > "configure.in"
 
 exec xdt-autogen $@
