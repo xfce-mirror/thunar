@@ -1471,34 +1471,31 @@ thunar_shortcuts_model_remove (ThunarShortcutsModel *model,
 /**
  * thunar_shortcuts_model_rename:
  * @model : a #ThunarShortcutsModel.
- * @path  : the #GtkTreePath which refers to the shortcut that
+ * @iter  : the #GtkTreeIter which refers to the shortcut that
  *          should be renamed to @name.
  * @name  : the new name for the shortcut at @path or %NULL to
  *          return to the default name.
  *
- * Renames the shortcut at @path to the new @name in @model.
+ * Renames the shortcut at @iter to the new @name in @model.
  *
  * @name may be %NULL or an empty to reset the shortcut to
  * its default name.
  **/
 void
 thunar_shortcuts_model_rename (ThunarShortcutsModel *model,
-                               GtkTreePath          *path,
+                               GtkTreeIter          *iter,
                                const gchar          *name)
 {
   ThunarShortcut *shortcut;
-  GtkTreeIter      iter;
-  GList           *lp;
+  GtkTreePath    *path;
 
-  g_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
-  g_return_if_fail (gtk_tree_path_get_depth (path) > 0);
-  g_return_if_fail (gtk_tree_path_get_indices (path)[0] >= 0);
-  g_return_if_fail (gtk_tree_path_get_indices (path)[0] < g_list_length (model->shortcuts));
   g_return_if_fail (name == NULL || g_utf8_validate (name, -1, NULL));
+  g_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
+  g_return_if_fail (iter->stamp == model->stamp);
+  g_return_if_fail (iter->user_data != NULL);
 
   /* lookup the shortcut for the given path */
-  lp = g_list_nth (model->shortcuts, gtk_tree_path_get_indices (path)[0]);
-  shortcut = THUNAR_SHORTCUT (lp->data);
+  shortcut = THUNAR_SHORTCUT (((GList *) iter->user_data)->data);
 
   /* verify the shortcut */
   g_assert (shortcut->type == THUNAR_SHORTCUT_USER_DEFINED);
@@ -1513,9 +1510,9 @@ thunar_shortcuts_model_rename (ThunarShortcutsModel *model,
     shortcut->name = g_strdup (name);
 
   /* notify the views about the change */
-  iter.stamp = model->stamp;
-  iter.user_data = lp;
-  gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), iter);
+  gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, iter);
+  gtk_tree_path_free (path);
 
   /* save the changes to the model */
   thunar_shortcuts_model_save (model);

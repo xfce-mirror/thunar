@@ -1,5 +1,12 @@
 2006-02-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-shortcuts-model.{c,h}, thunar/thunar-shortcuts-view.c:
+	  Make sure the path is still valid when renaming. Update the shortcuts
+	  rename to alter the mode of ThunarTextRenderer, rather than the
+	  "editable" property, which is not valid for ThunarTextRenderer.
+
+2006-02-24	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-location-bar.{c,h}, thunar/thunar-window.c,
 	  thunar/thunar-location-buttons.c, thunar/thunar-location-dialog.{c,h},
 	  thunar/thunar-location-entry.c, thunar/thunar-standard-view.{c,h}:

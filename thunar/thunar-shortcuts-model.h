@@ -75,7 +75,7 @@ void                   thunar_shortcuts_model_move          (ThunarShortcutsMode
 void                   thunar_shortcuts_model_remove        (ThunarShortcutsModel *model,
                                                              GtkTreePath          *path);
 void                   thunar_shortcuts_model_rename        (ThunarShortcutsModel *model,
-                                                             GtkTreePath          *path,
+                                                             GtkTreeIter          *iter,
                                                              const gchar          *name);
 
 G_END_DECLS;

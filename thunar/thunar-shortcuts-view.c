@@ -85,8 +85,6 @@ static void         thunar_shortcuts_view_remove_activated       (GtkWidget     
                                                                   ThunarShortcutsView      *view);
 static void         thunar_shortcuts_view_rename_activated       (GtkWidget                *item,
                                                                   ThunarShortcutsView      *view);
-static void         thunar_shortcuts_view_rename_canceled        (GtkCellRenderer          *renderer,
-                                                                  ThunarShortcutsView      *view);
 static void         thunar_shortcuts_view_renamed                (GtkCellRenderer          *renderer,
                                                                   const gchar              *path_string,
                                                                   const gchar              *text,
@@ -270,7 +268,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER, "xalign", 0.0f, NULL);
   exo_binding_new (G_OBJECT (view->preferences), "misc-single-click", G_OBJECT (renderer), "follow-prelit");
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (thunar_shortcuts_view_renamed), view);
-  g_signal_connect (G_OBJECT (renderer), "editing-canceled", G_CALLBACK (thunar_shortcuts_view_rename_canceled), view);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
                                        "text", THUNAR_SHORTCUTS_MODEL_COLUMN_NAME,
@@ -770,6 +767,7 @@ thunar_shortcuts_view_rename_activated (GtkWidget           *item,
                                         ThunarShortcutsView *view)
 {
   GtkTreeRowReference *row;
+  GtkCellRendererMode  mode;
   GtkTreeViewColumn   *column;
   GtkCellRenderer     *renderer;
   GtkTreePath         *path;
@@ -779,24 +777,25 @@ thunar_shortcuts_view_rename_activated (GtkWidget           *item,
   path = gtk_tree_row_reference_get_path (row);
   if (G_LIKELY (path != NULL))
     {
+      /* determine the text renderer */
       column = gtk_tree_view_get_column (GTK_TREE_VIEW (view), 0);
       renderers = gtk_tree_view_column_get_cell_renderers (column);
       renderer = g_list_nth_data (renderers, 1);
-      g_object_set (G_OBJECT (renderer), "editable", TRUE, NULL);
+
+      /* make sure the text renderer is editable */
+      mode = renderer->mode;
+      renderer->mode = GTK_CELL_RENDERER_MODE_EDITABLE;
+
+      /* tell the tree view to start editing the given row */
       gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (view), path, column, renderer, TRUE);
+
+      /* reset the text renderer mode */
+      renderer->mode = mode;
+
+      /* cleanup */
       gtk_tree_path_free (path);
       g_list_free (renderers);
     }
-}
-
-
-
-static void
-thunar_shortcuts_view_rename_canceled (GtkCellRenderer     *renderer,
-                                       ThunarShortcutsView *view)
-{
-  /* disable the editing support on the name cell again */
-  g_object_set (G_OBJECT (renderer), "editable", FALSE, NULL);
 }
 
 
@@ -808,16 +807,12 @@ thunar_shortcuts_view_renamed (GtkCellRenderer     *renderer,
                                ThunarShortcutsView *view)
 {
   GtkTreeModel *model;
-  GtkTreePath  *path;
-
-  /* disable the editing support on the name cell again */
-  g_object_set (G_OBJECT (renderer), "editable", FALSE, NULL);
+  GtkTreeIter   iter;
 
   /* perform the rename */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-  path = gtk_tree_path_new_from_string (path_string);
-  thunar_shortcuts_model_rename (THUNAR_SHORTCUTS_MODEL (model), path, text);
-  gtk_tree_path_free (path);
+  if (gtk_tree_model_get_iter_from_string (model, &iter, path_string))
+    thunar_shortcuts_model_rename (THUNAR_SHORTCUTS_MODEL (model), &iter, text);
 }
 
 
