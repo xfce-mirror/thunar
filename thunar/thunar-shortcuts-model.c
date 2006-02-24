@@ -1249,19 +1249,36 @@ thunar_shortcuts_model_iter_for_file (ThunarShortcutsModel *model,
                                       ThunarFile           *file,
                                       GtkTreeIter          *iter)
 {
-  GList *lp;
+  ThunarVfsPath *mount_point;
+  GList         *lp;
   
   g_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   g_return_val_if_fail (iter != NULL, FALSE);
 
   for (lp = model->shortcuts; lp != NULL; lp = lp->next)
-    if (THUNAR_SHORTCUT (lp->data)->file == file)
-      {
-        iter->stamp = model->stamp;
-        iter->user_data = lp;
-        return TRUE;
-      }
+    {
+      /* check if we have a file that matches */
+      if (THUNAR_SHORTCUT (lp->data)->file == file)
+        {
+          iter->stamp = model->stamp;
+          iter->user_data = lp;
+          return TRUE;
+        }
+
+      /* but maybe we have a mounted(!) volume with a matching mount point */
+      if (THUNAR_SHORTCUT (lp->data)->volume != NULL && thunar_vfs_volume_is_mounted (THUNAR_SHORTCUT (lp->data)->volume))
+        {
+          /* check if we have a mount point for the volume */
+          mount_point = thunar_vfs_volume_get_mount_point (THUNAR_SHORTCUT (lp->data)->volume);
+          if (G_LIKELY (mount_point != NULL && thunar_vfs_path_equal (mount_point, thunar_file_get_path (file))))
+            {
+              iter->stamp = model->stamp;
+              iter->user_data = lp;
+              return TRUE;
+            }
+        }
+    }
 
   return FALSE;
 }

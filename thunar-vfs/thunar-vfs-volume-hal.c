@@ -627,20 +627,18 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
       volume_hal->kind = THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER;
       break;
 
-    case LIBHAL_DRIVE_TYPE_MEMORY_STICK:
-    case LIBHAL_DRIVE_TYPE_REMOVABLE_DISK:
+    default:
       /* check if the drive is connected to the USB bus */
       if (libhal_drive_get_bus (hd) == LIBHAL_DRIVE_BUS_USB)
         {
           /* we consider the drive to be an USB stick */
           volume_hal->kind = THUNAR_VFS_VOLUME_KIND_USBSTICK;
-          break;
         }
-      /* FALL-THROUGH */
-
-    default:
-      /* fallback to harddisk drive */
-      volume_hal->kind = THUNAR_VFS_VOLUME_KIND_HARDDISK;
+      else
+        {
+          /* fallback to harddisk drive */
+          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_HARDDISK;
+        }
       break;
     }
 
