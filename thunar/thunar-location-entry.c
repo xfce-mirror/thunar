@@ -21,19 +21,30 @@
 #include <config.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-location-entry.h>
+#include <thunar/thunar-marshal.h>
 #include <thunar/thunar-path-entry.h>
 
 
 
+/* Property identifiers */
 enum
 {
   PROP_0,
   PROP_CURRENT_DIRECTORY,
   PROP_SELECTED_FILES,
   PROP_UI_MANAGER,
+};
+
+/* Signal identifiers */
+enum
+{
+  RESET,
+  LAST_SIGNAL,
 };
 
 
@@ -55,14 +66,19 @@ static void        thunar_location_entry_set_property          (GObject         
 static ThunarFile *thunar_location_entry_get_current_directory (ThunarNavigator          *navigator);
 static void        thunar_location_entry_set_current_directory (ThunarNavigator          *navigator,
                                                                 ThunarFile               *current_directory);
-static gboolean    thunar_location_entry_accept_focus          (ThunarLocationBar        *location_bar);
+static gboolean    thunar_location_entry_accept_focus          (ThunarLocationBar        *location_bar,
+                                                                const gchar              *initial_text);
 static void        thunar_location_entry_activate              (ThunarLocationEntry      *location_entry);
+static gboolean    thunar_location_entry_reset                 (ThunarLocationEntry      *location_entry);
 
 
 
 struct _ThunarLocationEntryClass
 {
   GtkHBoxClass __parent__;
+
+  /* internal action signals */
+  gboolean (*reset) (ThunarLocationEntry *location_entry);
 };
 
 struct _ThunarLocationEntry
@@ -76,6 +92,7 @@ struct _ThunarLocationEntry
 
 
 static GObjectClass *thunar_location_entry_parent_class;
+static guint         location_entry_signals[LAST_SIGNAL];
 
 
 
@@ -135,7 +152,8 @@ thunar_location_entry_get_type (void)
 static void
 thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
 {
-  GObjectClass *gobject_class;
+  GtkBindingSet *binding_set;
+  GObjectClass  *gobject_class;
 
   /* determine the parent type class */
   thunar_location_entry_parent_class = g_type_class_peek_parent (klass);
@@ -145,12 +163,35 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
   gobject_class->get_property = thunar_location_entry_get_property;
   gobject_class->set_property = thunar_location_entry_set_property;
 
+  klass->reset = thunar_location_entry_reset;
+
   /* override ThunarNavigator's properties */
   g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");
 
   /* override ThunarComponent's properties */
   g_object_class_override_property (gobject_class, PROP_SELECTED_FILES, "selected-files");
   g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
+
+  /**
+   * ThunarLocationEntry::reset:
+   * @location_entry : a #ThunarLocationEntry.
+   *
+   * Emitted by @location_entry whenever the user requests to
+   * reset the @location_entry contents to the current directory.
+   * This is an internal signal used to bind the action to keys.
+   **/
+  location_entry_signals[RESET] =
+    g_signal_new (I_("reset"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarLocationEntryClass, reset),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /* setup the key bindings for the location entry */
+  binding_set = gtk_binding_set_by_class (klass);
+  gtk_binding_entry_add_signal (binding_set, GDK_Escape, 0, "reset", 0);
 }
 
 
@@ -330,15 +371,28 @@ thunar_location_entry_set_current_directory (ThunarNavigator *navigator,
 
 
 static gboolean
-thunar_location_entry_accept_focus (ThunarLocationBar *location_bar)
+thunar_location_entry_accept_focus (ThunarLocationBar *location_bar,
+                                    const gchar       *initial_text)
 {
   ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (location_bar);
 
-  /* select the whole path in the path entry */
-  gtk_editable_select_region (GTK_EDITABLE (location_entry->path_entry), 0, -1);
-
   /* give the keyboard focus to the path entry */
   gtk_widget_grab_focus (location_entry->path_entry);
+
+  /* check if we have an initial text for the location bar */
+  if (G_LIKELY (initial_text != NULL))
+    {
+      /* setup the new text */
+      gtk_entry_set_text (GTK_ENTRY (location_entry->path_entry), initial_text);
+
+      /* move the cursor to the end of the text */
+      gtk_editable_set_position (GTK_EDITABLE (location_entry->path_entry), -1);
+    }
+  else
+    {
+      /* select the whole path in the path entry */
+      gtk_editable_select_region (GTK_EDITABLE (location_entry->path_entry), 0, -1);
+    }
 
   return TRUE;
 }
@@ -375,6 +429,20 @@ thunar_location_entry_activate (ThunarLocationEntry *location_entry)
             thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry), location_entry->current_directory);
         }
     }
+}
+
+
+
+static gboolean
+thunar_location_entry_reset (ThunarLocationEntry *location_entry)
+{
+  /* just reset the path entry to our current directory... */
+  thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry), location_entry->current_directory);
+
+  /* ...and select the whole text again */
+  gtk_editable_select_region (GTK_EDITABLE (location_entry->path_entry), 0, -1);
+
+  return TRUE;
 }
 
 

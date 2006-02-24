@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -37,13 +37,15 @@ struct _ThunarLocationBarIface
   GTypeInterface __parent__;
 
   /* virtual methods */
-  gboolean (*accept_focus)  (ThunarLocationBar *location_bar);
+  gboolean (*accept_focus)  (ThunarLocationBar *location_bar,
+                             const gchar       *initial_text);
   gboolean (*is_standalone) (ThunarLocationBar *location_bar);
 };
 
 GType    thunar_location_bar_get_type     (void) G_GNUC_CONST;
 
-gboolean thunar_location_bar_accept_focus  (ThunarLocationBar *location_bar);
+gboolean thunar_location_bar_accept_focus  (ThunarLocationBar *location_bar,
+                                            const gchar       *initial_text);
 gboolean thunar_location_bar_is_standalone (ThunarLocationBar *location_bar);
 
 G_END_DECLS;

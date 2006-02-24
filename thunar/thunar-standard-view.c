@@ -67,6 +67,7 @@ enum
 enum
 {
   DELETE_SELECTED_FILES,
+  START_OPEN_LOCATION,
   LAST_SIGNAL,
 };
 
@@ -173,6 +174,9 @@ static gboolean             thunar_standard_view_button_release_event       (Gtk
                                                                              ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_motion_notify_event        (GtkWidget                *view,
                                                                              GdkEventMotion           *event,
+                                                                             ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_key_press_event            (GtkWidget                *view,
+                                                                             GdkEventKey              *event,
                                                                              ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_scroll_event               (GtkWidget                *view,
                                                                              GdkEventScroll           *event,
@@ -423,6 +427,26 @@ thunar_standard_view_class_init (ThunarStandardViewClass *klass)
   g_object_class_override_property (gobject_class, PROP_ZOOM_LEVEL, "zoom-level");
 
   /**
+   * ThunarStandardView::start-opn-location:
+   * @standard_view : a #ThunarStandardView.
+   * @initial_text  : the inital location text.
+   *
+   * Emitted by @standard_view, whenever the user requests to
+   * select a custom location (using either the "Open Location"
+   * dialog or the location entry widget) by specifying an
+   * @initial_text (i.e. if the user types "/" into the
+   * view).
+   **/
+  standard_view_signals[START_OPEN_LOCATION] =
+    g_signal_new (I_("start-open-location"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarStandardViewClass, start_open_location),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__STRING,
+                  G_TYPE_NONE, 1, G_TYPE_STRING);
+
+  /**
    * ThunarStandardView::delete-selected-files:
    * @standard_view : a #ThunarStandardView.
    *
@@ -603,6 +627,9 @@ thunar_standard_view_constructor (GType                  type,
 
   /* setup support to navigate using a horizontal mouse wheel */
   g_signal_connect (G_OBJECT (view), "scroll-event", G_CALLBACK (thunar_standard_view_scroll_event), object);
+
+  /* need to catch certain keys for the internal view widget */
+  g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_standard_view_key_press_event), object);
 
   /* setup the real view as drop site */
   gtk_drag_dest_set (view, 0, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_ASK | GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
@@ -2270,6 +2297,26 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
     }
 
   /* next please... */
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_standard_view_key_press_event (GtkWidget          *view,
+                                      GdkEventKey        *event,
+                                      ThunarStandardView *standard_view)
+{
+  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+
+  /* need to catch "/" and "~" first, as the views would otherwise start interactive search */
+  if ((event->keyval == GDK_slash || event->keyval == GDK_asciitilde) && !(event->state & (~GDK_SHIFT_MASK & gtk_accelerator_get_default_mod_mask ())))
+    {
+      /* popup the location selector (in whatever way) */
+      g_signal_emit (G_OBJECT (standard_view), standard_view_signals[START_OPEN_LOCATION], 0, event->string);
+      return TRUE;
+    }
+
   return FALSE;
 }
 

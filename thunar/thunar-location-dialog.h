@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,6 +20,7 @@
 #ifndef __THUNAR_LOCATION_DIALOG_H__
 #define __THUNAR_LOCATION_DIALOG_H__
 
+#include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
@@ -34,9 +35,20 @@ typedef struct _ThunarLocationDialog      ThunarLocationDialog;
 #define THUNAR_IS_LOCATION_DIALOG_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_LOCATION_DIALOG))
 #define THUNAR_LOCATION_DIALOG_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_LOCATION_DIALOG, ThunarLocationDialogClass))
 
+struct _ThunarLocationDialogClass
+{
+  ThunarAbstractDialogClass __parent__;
+};
+
+struct _ThunarLocationDialog
+{
+  ThunarAbstractDialog __parent__;
+  GtkWidget           *entry;
+};
+
 GType       thunar_location_dialog_get_type          (void) G_GNUC_CONST;
 
-GtkWidget  *thunar_location_dialog_new               (void);
+GtkWidget  *thunar_location_dialog_new               (void) G_GNUC_MALLOC;
 
 ThunarFile *thunar_location_dialog_get_selected_file (ThunarLocationDialog *location_dialog);
 void        thunar_location_dialog_set_selected_file (ThunarLocationDialog *location_dialog,

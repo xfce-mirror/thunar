@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -57,6 +57,10 @@ thunar_location_bar_get_type (void)
 /**
  * thunar_location_bar_accept_focus:
  * @location_bar : a #ThunarLocationBar.
+ * @initial_text : the inital text for @location_bar if
+ *                 focus is accepted, or %NULL if the
+ *                 text of @location_bar shouldn't be
+ *                 altered.
  *
  * If the implementation of the #ThunarLocationBar interface
  * supports entering a location into a text widget, then the
@@ -74,10 +78,11 @@ thunar_location_bar_get_type (void)
  *               else %FALSE.
  **/
 gboolean
-thunar_location_bar_accept_focus (ThunarLocationBar *location_bar)
+thunar_location_bar_accept_focus (ThunarLocationBar *location_bar,
+                                  const gchar       *initial_text)
 {
   g_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
-  return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->accept_focus) (location_bar);
+  return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->accept_focus) (location_bar, initial_text);
 }
 
 

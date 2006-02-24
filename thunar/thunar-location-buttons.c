@@ -68,7 +68,6 @@ static void           thunar_location_buttons_set_ui_manager            (ThunarC
 static ThunarFile    *thunar_location_buttons_get_current_directory     (ThunarNavigator            *navigator);
 static void           thunar_location_buttons_set_current_directory     (ThunarNavigator            *navigator,
                                                                          ThunarFile                 *current_directory);
-static gboolean       thunar_location_buttons_accept_focus              (ThunarLocationBar          *location_bar);
 static void           thunar_location_buttons_unmap                     (GtkWidget                  *widget);
 static void           thunar_location_buttons_size_request              (GtkWidget                  *widget,
                                                                          GtkRequisition             *requisition);
@@ -288,7 +287,7 @@ thunar_location_buttons_navigator_init (ThunarNavigatorIface *iface)
 static void
 thunar_location_buttons_location_bar_init (ThunarLocationBarIface *iface)
 {
-  iface->accept_focus = thunar_location_buttons_accept_focus;
+  iface->accept_focus = (gpointer) exo_noop_false;
   iface->is_standalone = (gpointer) exo_noop_true;
 }
 
@@ -568,14 +567,6 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
     }
 
   g_object_notify (G_OBJECT (buttons), "current-directory");
-}
-
-
-
-static gboolean
-thunar_location_buttons_accept_focus (ThunarLocationBar *location_bar)
-{
-  return FALSE;
 }
 
 

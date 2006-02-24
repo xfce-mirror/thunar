@@ -21,27 +21,12 @@
 #include <config.h>
 #endif
 
-#include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-path-entry.h>
 
 
 
 static void thunar_location_dialog_init (ThunarLocationDialog      *location_dialog);
-
-
-
-struct _ThunarLocationDialogClass
-{
-  ThunarAbstractDialogClass __parent__;
-};
-
-struct _ThunarLocationDialog
-{
-  ThunarAbstractDialog __parent__;
-
-  GtkWidget *entry;
-};
 
 
 

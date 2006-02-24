@@ -93,6 +93,10 @@ struct _ThunarStandardViewClass
   void         (*highlight_path)        (ThunarStandardView  *standard_view,
                                          GtkTreePath         *path);
 
+  /* external signals */
+  void         (*start_open_location)   (ThunarStandardView *standard_view,
+                                         const gchar        *initial_text);
+
   /* Internal action signals */
   gboolean     (*delete_selected_files) (ThunarStandardView *standard_view);
 

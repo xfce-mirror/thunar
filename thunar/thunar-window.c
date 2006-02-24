@@ -89,6 +89,8 @@ static void     thunar_window_unrealize                   (GtkWidget          *w
 static gboolean thunar_window_configure_event             (GtkWidget          *widget,
                                                            GdkEventConfigure  *event);
 static void     thunar_window_merge_custom_preferences    (ThunarWindow       *window);
+static void     thunar_window_start_open_location         (ThunarWindow       *window,
+                                                           const gchar        *initial_text);
 static void     thunar_window_action_open_new_window      (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_close_all_windows    (GtkAction          *action,
@@ -911,6 +913,65 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
 
 
 static void
+thunar_window_start_open_location (ThunarWindow *window,
+                                   const gchar  *initial_text)
+{
+  ThunarFile *selected_file;
+  GtkWidget  *dialog;
+  GError     *error = NULL;
+
+  /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
+   * in the window does not support text entry by the user.
+   */
+  if (window->location_bar == NULL || !thunar_location_bar_accept_focus (THUNAR_LOCATION_BAR (window->location_bar), initial_text))
+    {
+      /* allocate the "Open Location" dialog */
+      dialog = thunar_location_dialog_new ();
+      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+      gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
+      thunar_location_dialog_set_selected_file (THUNAR_LOCATION_DIALOG (dialog), thunar_window_get_current_directory (window));
+
+      /* setup the initial text (if any) */
+      if (G_UNLIKELY (initial_text != NULL))
+        {
+          /* show, grab focus, set text and move cursor to the end */
+          gtk_widget_show_now (dialog);
+          gtk_widget_grab_focus (THUNAR_LOCATION_DIALOG (dialog)->entry);
+          gtk_entry_set_text (GTK_ENTRY (THUNAR_LOCATION_DIALOG (dialog)->entry), initial_text);
+          gtk_editable_set_position (GTK_EDITABLE (THUNAR_LOCATION_DIALOG (dialog)->entry), -1);
+        }
+
+      /* run the dialog */
+      if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+        {
+          /* check if we have a new directory or a file to launch */
+          selected_file = thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog));
+          if (thunar_file_is_directory (selected_file))
+            {
+              /* open the new directory */
+              thunar_window_set_current_directory (window, selected_file);
+            }
+          else
+            {
+              /* be sure to hide the location dialog first */
+              gtk_widget_hide (dialog);
+
+              /* try to launch the selected file */
+              if (!thunar_file_launch (selected_file, GTK_WIDGET (window), &error))
+                {
+                  thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to launch \"%s\""), thunar_file_get_display_name (selected_file));
+                  g_error_free (error);
+                }
+            }
+        }
+      gtk_widget_destroy (dialog);
+    }
+}
+
+
+
+static void
 thunar_window_action_open_new_window (GtkAction    *action,
                                       ThunarWindow *window)
 {
@@ -1231,6 +1292,7 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       /* allocate and setup a new view */
       window->view = g_object_new (type, "ui-manager", window->ui_manager, NULL);
       g_signal_connect (G_OBJECT (window->view), "notify::loading", G_CALLBACK (thunar_window_notify_loading), window);
+      g_signal_connect_swapped (G_OBJECT (window->view), "start-open-location", G_CALLBACK (thunar_window_start_open_location), window);
       g_signal_connect_swapped (G_OBJECT (window->view), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
       exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->view), "current-directory");
       exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->view), "show-hidden");
@@ -1435,44 +1497,8 @@ static void
 thunar_window_action_open_location (GtkAction    *action,
                                     ThunarWindow *window)
 {
-  ThunarFile *selected_file;
-  GtkWidget  *dialog;
-  GError     *error = NULL;
-
-  /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
-   * in the window does not support text entry by the user.
-   */
-  if (window->location_bar == NULL || !thunar_location_bar_accept_focus (THUNAR_LOCATION_BAR (window->location_bar)))
-    {
-      dialog = thunar_location_dialog_new ();
-      gtk_window_set_modal (GTK_WINDOW (dialog), TRUE);
-      gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
-      gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (window));
-      thunar_location_dialog_set_selected_file (THUNAR_LOCATION_DIALOG (dialog), thunar_window_get_current_directory (window));
-      if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-        {
-          /* check if we have a new directory or a file to launch */
-          selected_file = thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog));
-          if (thunar_file_is_directory (selected_file))
-            {
-              /* open the new directory */
-              thunar_window_set_current_directory (window, selected_file);
-            }
-          else
-            {
-              /* be sure to hide the location dialog first */
-              gtk_widget_hide (dialog);
-
-              /* try to launch the selected file */
-              if (!thunar_file_launch (selected_file, GTK_WIDGET (window), &error))
-                {
-                  thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to launch `%s'"), thunar_file_get_display_name (selected_file));
-                  g_error_free (error);
-                }
-            }
-        }
-      gtk_widget_destroy (dialog);
-    }
+  /* just use the "start-open-location" callback */
+  thunar_window_start_open_location (window, NULL);
 }
 
 
