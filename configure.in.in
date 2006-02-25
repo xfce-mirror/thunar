@@ -30,7 +30,7 @@ AC_COPYRIGHT([Copyright (c) 2004-2006
         The Thunar development team. All rights reserved.
         
 Written for Thunar by Benedikt Meurer <benny@xfce.org>.])
-AC_INIT([Thunar], [thunar_version()], [benny@xfce.org], [Thunar])
+AC_INIT([Thunar], [thunar_version()], [thunar-dev@xfce.org], [Thunar])
 AC_PREREQ([2.50])
 AC_CANONICAL_TARGET()
 AC_REVISION([$Id$])
@@ -151,7 +151,7 @@ AC_TRY_LINK([#include <sys/mman.h>], posix_madvise_test(),
 dnl ******************************
 dnl *** Check for i18n support ***
 dnl ******************************
-XDT_I18N([ca de el es fi fr hu it ja nl pl pt_BR ru])
+XDT_I18N([ca de el es eu fi fr hu it ja nl pl pt_BR ru sv])
 
 dnl ***********************************
 dnl *** Check for required packages ***
