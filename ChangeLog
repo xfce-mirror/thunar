@@ -1,5 +1,15 @@
 2006-02-25	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in: Bump soname.
+	* thunar-vfs/thunar-vfs-info.{c,h}: Add working_directory parameter to
+	  thunar_vfs_info_execute() to allow xfdesktop to launch applications
+	  with $HOME as working directory, as requested on the xfce mailing
+	  list. Bug #1473.
+	* docs/reference/thunar-vfs/tmpl/thunar-vfs-info.sgml: Update API docs.
+	* thunar/thunar-file.c(thunar_file_execute): Update to the new API.
+
+2006-02-25	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: And of course eu and sv.
 	* configure.in.in: Set PACKAGE_BUGREPORT to thunar-dev@xfce.org.
 

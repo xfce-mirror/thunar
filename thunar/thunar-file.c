@@ -756,7 +756,7 @@ thunar_file_execute (ThunarFile *file,
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   g_return_val_if_fail (GDK_IS_SCREEN (screen), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  return thunar_vfs_info_execute (file->info, screen, path_list, error);
+  return thunar_vfs_info_execute (file->info, screen, path_list, NULL, error);
 }
 
 

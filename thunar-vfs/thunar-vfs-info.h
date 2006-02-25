@@ -108,6 +108,7 @@ gchar                       *thunar_vfs_info_read_link        (const ThunarVfsIn
 gboolean                     thunar_vfs_info_execute          (const ThunarVfsInfo *info,
                                                                GdkScreen           *screen,
                                                                GList               *path_list,
+                                                               const gchar         *working_directory,
                                                                GError             **error);
 
 gboolean                     thunar_vfs_info_rename           (ThunarVfsInfo       *info,

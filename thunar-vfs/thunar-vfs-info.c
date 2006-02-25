@@ -297,16 +297,21 @@ thunar_vfs_info_read_link (const ThunarVfsInfo *info,
 
 /**
  * thunar_vfs_info_execute:
- * @info      : a #ThunarVfsInfo.
- * @screen    : a #GdkScreen or %NULL to use the default #GdkScreen.
- * @path_list : the list of #ThunarVfsPath<!---->s to give as parameters
- *              to the file referred to by @info on execution.
- * @error     : return location for errors or %NULL.
+ * @info              : a #ThunarVfsInfo.
+ * @screen            : a #GdkScreen or %NULL to use the default #GdkScreen.
+ * @path_list         : the list of #ThunarVfsPath<!---->s to give as parameters
+ *                      to the file referred to by @info on execution.
+ * @working_directory : the working directory in which to execute @info or %NULL.
+ * @error             : return location for errors or %NULL.
  *
  * Executes the file referred to by @info, given @path_list as parameters,
  * on the specified @screen. @info may refer to either a regular,
  * executable file, or a <filename>.desktop</filename> file, whose
  * type is <literal>Application</literal>.
+ *
+ * If @working_directory is %NULL, the directory of the first path in @path_list
+ * will be used as working directory. If @path_list is also %NULL, the directory
+ * of @info will be used.
  *
  * Return value: %TRUE on success, else %FALSE.
  **/
@@ -314,6 +319,7 @@ gboolean
 thunar_vfs_info_execute (const ThunarVfsInfo *info,
                          GdkScreen           *screen,
                          GList               *path_list,
+                         const gchar         *working_directory,
                          GError             **error)
 {
   ThunarVfsPath *parent;
@@ -326,15 +332,16 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
   gboolean       result = FALSE;
   XfceRc        *rc;
   gchar          absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
-  gchar         *working_directory;
   gchar         *path_escaped;
+  gchar         *directory;
   gchar        **argv = NULL;
   gchar         *exec;
 
   g_return_val_if_fail (info != NULL, FALSE);
   g_return_val_if_fail (info->ref_count > 0, FALSE);
-  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
+  g_return_val_if_fail (working_directory == NULL || g_path_is_absolute (working_directory), FALSE);
 
   /* fallback to the default screen if none given */
   if (G_UNLIKELY (screen == NULL))
@@ -419,23 +426,28 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
   if (G_LIKELY (result))
     {
       /* determine the working directory */
-      if (G_LIKELY (path_list != NULL))
+      if (working_directory != NULL)
+        {
+          /* use the supplied working directory */
+          directory = g_strdup (working_directory);
+        }
+      else if (G_LIKELY (path_list != NULL))
         {
           /* use the directory of the first list item */
           parent = thunar_vfs_path_get_parent (path_list->data);
-          working_directory = (parent != NULL) ? thunar_vfs_path_dup_string (parent) : NULL;
+          directory = (parent != NULL) ? thunar_vfs_path_dup_string (parent) : NULL;
         }
       else
         {
           /* use the directory of the executable file */
-          working_directory = g_path_get_dirname (absolute_path);
+          directory = g_path_get_dirname (absolute_path);
         }
 
       /* execute the command */
-      result = thunar_vfs_exec_on_screen (screen, working_directory, argv, NULL, G_SPAWN_SEARCH_PATH, startup_notify, error);
+      result = thunar_vfs_exec_on_screen (screen, directory, argv, NULL, G_SPAWN_SEARCH_PATH, startup_notify, error);
 
       /* release the working directory */
-      g_free (working_directory);
+      g_free (directory);
     }
 
   /* clean up */
