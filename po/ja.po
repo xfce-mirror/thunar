@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-02-25 10:57+0900\n"
-"PO-Revision-Date: 2006-02-18 18:52+0900\n"
+"PO-Revision-Date: 2006-02-25 10:51+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -239,7 +239,7 @@ msgid "Invalid path"
 msgstr "無効なパスです。"
 
 #: ../thunar-vfs/thunar-vfs-util.c:289
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown user \"%s\""
 msgstr "ユーザー「%s」は不明です。"
 
@@ -380,17 +380,16 @@ msgid "Run in daemon mode"
 msgstr "デーモンモードで実行する"
 
 #: ../thunar/main.c:51
-#, fuzzy
 msgid "Run in daemon mode (not supported)"
-msgstr "デーモンモードで実行する"
+msgstr "デーモンモードで実行する (未サポート)"
 
 #: ../thunar/main.c:54
 msgid "Quit a running Thunar instance"
-msgstr ""
+msgstr "実行中の Thunar のインスタンスを終了させる"
 
 #: ../thunar/main.c:56
 msgid "Quit a running Thunar instance (not supported)"
-msgstr ""
+msgstr "実行中の Thunar のインスタンスを終了させる (未サポート)"
 
 # FIXME: transliteration?
 #. setup application name
@@ -566,7 +565,7 @@ msgstr "新しい名前を入力して下さい:"
 
 #. display an error message
 #: ../thunar/thunar-create-dialog.c:522
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "ファイル名「%s」をあなたのエンコード方式に変換できません。"
 
@@ -647,7 +646,7 @@ msgid "Go to the next visited folder"
 msgstr "次のフォルダに移動します。"
 
 #: ../thunar/thunar-icon-factory.c:675
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
 "「%s」(%s) から代用アイコンを読み込むのに失敗しました。きちんとインストールさ"
@@ -885,26 +884,25 @@ msgstr "パスボタン間のスペースです。"
 
 #. add the "Open" action
 #: ../thunar/thunar-location-buttons.c:1258
-#, fuzzy, c-format
+#, c-format
 msgid "Open \"%s\" in this window"
-msgstr "新規ウィンドウで開く"
+msgstr "「%s」をこのウィンドウで開く"
 
 #. add the "Open in New Window" action
 #: ../thunar/thunar-location-buttons.c:1271
-#, fuzzy, c-format
+#, c-format
 msgid "Open \"%s\" in a new window"
-msgstr "新規ウィンドウで開く"
+msgstr "「%s」を新規ウィンドウで開く"
 
 #. add the "Open in New Window" action
 #: ../thunar/thunar-location-buttons.c:1286
-#, fuzzy, c-format
+#, c-format
 msgid "Paste files from the clipboard into \"%s\""
-msgstr "クリップボードに貼り付けるものはありません。"
+msgstr "クリップボードにあるファイルを「%s」に貼り付ける"
 
 #: ../thunar/thunar-location-buttons.c:1287
-#, fuzzy
 msgid "_Paste Files Here"
-msgstr "貼り付け(_P)"
+msgstr "ここにファイルを貼り付け(_P)"
 
 #: ../thunar/thunar-location-dialog.c:88
 msgid "Open Location"
@@ -915,7 +913,7 @@ msgid "_Location:"
 msgstr "フォルダの位置(_L):"
 
 #: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:963
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to launch \"%s\""
 msgstr "「%s」の実行に失敗しました。"
 
@@ -1164,15 +1162,15 @@ msgstr ""
 #: ../thunar/thunar-preferences-dialog.c:284
 #: ../thunar/thunar-preferences-dialog.c:294
 msgid "Behaviour"
-msgstr ""
+msgstr "振る舞い"
 
 #: ../thunar/thunar-preferences-dialog.c:306
 msgid "_Single click to activate items"
-msgstr ""
+msgstr "シングルクリックでアイテムを有効にする(_S)"
 
 #: ../thunar/thunar-preferences-dialog.c:312
 msgid "_Double click to activate items"
-msgstr ""
+msgstr "ダブルクリックでアイテムを有効にする(_D)"
 
 #.
 #. Advanced
@@ -1543,7 +1541,7 @@ msgid "Rename \"%s\""
 msgstr "「%s」の名前変更"
 
 #: ../thunar/thunar-standard-view.c:2716
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "フォルダ「%s」を開くのに失敗しました。"
 
@@ -1717,9 +1715,8 @@ msgid "_Shortcuts"
 msgstr "ショートカット(_S)"
 
 #: ../thunar/thunar-window.c:244
-#, fuzzy
 msgid "Toggles the visibility of the shortcuts pane"
-msgstr "ウィンドウのステータスバーを表示/隠します。"
+msgstr "ショートカットペインを表示/隠します。"
 
 #: ../thunar/thunar-window.c:245
 msgid "St_atusbar"
@@ -1880,12 +1877,10 @@ msgid "Delete the currently selected action."
 msgstr "選択されているアクションをを削除します。"
 
 #: ../thunar-uca/thunar-uca-chooser.c:218
-#, fuzzy
 msgid "Move the currently selected action up by one row."
 msgstr "選択されているアクションを一つ上に移動します。"
 
 #: ../thunar-uca/thunar-uca-chooser.c:228
-#, fuzzy
 msgid "Move the currently selected action down by one row."
 msgstr "選択されているアクションを一つ下に移動します。"
 
@@ -2118,7 +2113,7 @@ msgid ""
 msgstr "右クリックメニューに表示されるアクションを設定します。"
 
 #: ../thunar-uca/thunar-uca-provider.c:328
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to launch action \"%s\"."
 msgstr "アクション「%s」の実行に失敗しました。"
 
