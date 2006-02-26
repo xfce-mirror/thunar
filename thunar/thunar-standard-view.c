@@ -618,6 +618,9 @@ thunar_standard_view_constructor (GType                  type,
    */
   g_object_set (G_OBJECT (view), "model", standard_view->model, NULL);
 
+  /* apply the single-click mode to the view */
+  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click");
+
   /* apply the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (standard_view->model), sort_column, sort_order);
@@ -2626,7 +2629,8 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
   GdkPixbuf  *icon;
   gint        size;
 
-  g_return_if_fail (standard_view->priv->drag_path_list == NULL);
+  /* release the drag path list (just in case the drag-end wasn't fired before) */
+  thunar_vfs_path_list_free (standard_view->priv->drag_path_list);
 
   /* query the list of selected URIs */
   standard_view->priv->drag_path_list = thunar_file_list_to_path_list (standard_view->selected_files);

@@ -235,7 +235,6 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_icon_view_key_press_event), icon_view);
   g_signal_connect (G_OBJECT (view), "item-activated", G_CALLBACK (thunar_icon_view_item_activated), icon_view);
   g_signal_connect_swapped (G_OBJECT (view), "selection-changed", G_CALLBACK (thunar_standard_view_selection_changed), icon_view);
-  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->preferences), "misc-single-click", G_OBJECT (view), "single-click");
   gtk_container_add (GTK_CONTAINER (icon_view), view);
   gtk_widget_show (view);
 

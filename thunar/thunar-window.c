@@ -1107,6 +1107,11 @@ thunar_window_action_location_bar_changed (GtkRadioAction *action,
           gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
           gtk_widget_show (GTK_WIDGET (toolitem));
 
+          /* add the "reload" action */
+          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "reload");
+          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
+          gtk_widget_show (GTK_WIDGET (toolitem));
+
           /* add a separator */
           toolitem = gtk_separator_tool_item_new ();
           gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);

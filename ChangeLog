@@ -1,3 +1,17 @@
+2006-02-26	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-standard-view.c(thunar_standard_view_drag_begin):
+	  Release the drag path list, just in case drag_end() wasn't called
+	  before (Gtk+ is somewhat buggy here, but I wasn't able to locate
+	  the bug yet).
+	* thunar/thunar-window.c(thunar_window_action_location_bar_changed):
+	  Add "reload" button to the toolbar.
+	* thunar/thunar-shortcuts-view.c, thunar/thunar-details-view.c: Use
+	  ExoTreeView, which provides a tree view with single-click support.
+	* thunar/thunar-standard-view.c, thunar/thunar-icon-view.c: The internal
+	  widgets now both provide the "single-click" property, so we can
+	  connect it in the ThunarStandardView constructor.
+
 2006-02-25	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in: Bump soname.

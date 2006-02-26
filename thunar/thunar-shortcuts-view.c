@@ -55,10 +55,6 @@ static void         thunar_shortcuts_view_init                   (ThunarShortcut
 static void         thunar_shortcuts_view_finalize               (GObject                  *object);
 static gboolean     thunar_shortcuts_view_button_press_event     (GtkWidget                *widget,
                                                                   GdkEventButton           *event);
-static gboolean     thunar_shortcuts_view_button_release_event   (GtkWidget                *widget,
-                                                                  GdkEventButton           *event);
-static gboolean     thunar_shortcuts_view_motion_notify_event    (GtkWidget                *widget,
-                                                                  GdkEventMotion           *event);
 static void         thunar_shortcuts_view_drag_data_received     (GtkWidget                *widget,
                                                                   GdkDragContext           *context,
                                                                   gint                      x,
@@ -76,8 +72,6 @@ static gboolean     thunar_shortcuts_view_drag_motion            (GtkWidget     
                                                                   gint                      x,
                                                                   gint                      y,
                                                                   guint                     time);
-static void         thunar_shortcuts_view_drag_begin             (GtkWidget                *widget,
-                                                                  GdkDragContext           *context);
 static void         thunar_shortcuts_view_row_activated          (GtkTreeView              *tree_view,
                                                                   GtkTreePath              *path,
                                                                   GtkTreeViewColumn        *column);
@@ -108,18 +102,13 @@ static gboolean     thunar_shortcuts_view_separator_func         (GtkTreeModel  
 
 struct _ThunarShortcutsViewClass
 {
-  GtkTreeViewClass __parent__;
+  ExoTreeViewClass __parent__;
 };
 
 struct _ThunarShortcutsView
 {
-  GtkTreeView        __parent__;
+  ExoTreeView        __parent__;
   ThunarPreferences *preferences;
-
-  /* TRUE if the next button_release_event should
-   * fire a "row-activated" (single click support).
-   */
-  gboolean button_release_activates;
 
 #if GTK_CHECK_VERSION(2,8,0)
   /* id of the signal used to queue a resize on the
@@ -170,7 +159,7 @@ thunar_shortcuts_view_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (GTK_TYPE_TREE_VIEW, I_("ThunarShortcutsView"), &info, 0);
+      type = g_type_register_static (EXO_TYPE_TREE_VIEW, I_("ThunarShortcutsView"), &info, 0);
     }
 
   return type;
@@ -193,12 +182,9 @@ thunar_shortcuts_view_class_init (ThunarShortcutsViewClass *klass)
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->button_press_event = thunar_shortcuts_view_button_press_event;
-  gtkwidget_class->button_release_event = thunar_shortcuts_view_button_release_event;
-  gtkwidget_class->motion_notify_event = thunar_shortcuts_view_motion_notify_event;
   gtkwidget_class->drag_data_received = thunar_shortcuts_view_drag_data_received;
   gtkwidget_class->drag_drop = thunar_shortcuts_view_drag_drop;
   gtkwidget_class->drag_motion = thunar_shortcuts_view_drag_motion;
-  gtkwidget_class->drag_begin = thunar_shortcuts_view_drag_begin;
 
   gtktree_view_class = GTK_TREE_VIEW_CLASS (klass);
   gtktree_view_class->row_activated = thunar_shortcuts_view_row_activated;
@@ -234,6 +220,9 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
    */
   view->preferences = thunar_preferences_get ();
   g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::shortcuts-icon-emblems", G_CALLBACK (gtk_widget_queue_draw), view);
+
+  /* apply the single-click mode setting */
+  exo_binding_new (G_OBJECT (view->preferences), "misc-single-click", G_OBJECT (view), "single-click");
 
   /* allocate a single column for our renderers */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -333,14 +322,6 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
 
   /* check if we are in single-click mode */
   g_object_get (G_OBJECT (view->preferences), "misc-single-click", &single_click, NULL);
-
-  /* check if the next button-release-event should activate the selected row (single click support) */
-  view->button_release_activates = (single_click && event->type == GDK_BUTTON_PRESS && event->button == 1
-                                 && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0);
-
-  /* ignore all kinds of double click events in single-click mode */
-  if (G_UNLIKELY (single_click && event->type == GDK_2BUTTON_PRESS))
-    return TRUE;
 
   /* let the widget process the event first (handles focussing and scrolling) */
   result = (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->button_press_event) (widget, event);
@@ -538,68 +519,6 @@ thunar_shortcuts_view_button_press_event (GtkWidget      *widget,
 
 
 
-static gboolean
-thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
-                                            GdkEventButton *event)
-{
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
-  GtkTreeViewColumn   *column;
-  GtkTreePath         *path;
-  gboolean             single_click;
-
-  /* check if we're in single-click mode */
-  g_object_get (G_OBJECT (view->preferences), "misc-single-click", &single_click, NULL);
-  if (G_UNLIKELY (single_click && view->button_release_activates))
-    {
-      /* reset button_release_activates state */
-      view->button_release_activates = FALSE;
-
-      /* determine the path to the row that should be activated */
-      if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (view), event->x, event->y, &path, &column, NULL, NULL))
-        {
-          /* emit row-activated for the determined row */
-          gtk_tree_view_row_activated (GTK_TREE_VIEW (view), path, column);
-
-          /* cleanup */
-          gtk_tree_path_free (path);
-        }
-    }
-
-  return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->button_release_event) (widget, event);
-}
-
-
-
-static gboolean
-thunar_shortcuts_view_motion_notify_event (GtkWidget      *widget,
-                                           GdkEventMotion *event)
-{
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
-  GdkCursor           *cursor;
-  gboolean             single_click;
-
-  /* check if we're in single-click mode */
-  g_object_get (G_OBJECT (view->preferences), "misc-single-click", &single_click, NULL);
-
-  /* check if we are in single-click mode and have a path for the mouse pointer position */
-  if (G_UNLIKELY (single_click && gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (widget), event->x, event->y, NULL, NULL, NULL, NULL)))
-    {
-      /* setup hand cursor */
-      cursor = gdk_cursor_new (GDK_HAND2);
-      gdk_window_set_cursor (widget->window, cursor);
-      gdk_cursor_unref (cursor);
-    }
-  else
-    {
-      /* reset the cursor to its default */
-      gdk_window_set_cursor (widget->window, NULL);
-    }
-
-  return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->motion_notify_event) (widget, event);
-}
-
-
-
 static void
 thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
                                           GdkDragContext   *context,
@@ -707,22 +626,6 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
 
   gdk_drag_status (context, action, time);
   return TRUE;
-}
-
-
-
-static void
-thunar_shortcuts_view_drag_begin (GtkWidget      *widget,
-                                  GdkDragContext *context)
-{
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
-
-  /* Do not activate the selected row on the next button_release_event,
-   * as the user started a drag operation with the mouse instead.
-   */
-  view->button_release_activates = FALSE;
-
-  (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->drag_begin) (widget, context);
 }
 
 

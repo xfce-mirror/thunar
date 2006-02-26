@@ -52,17 +52,8 @@ static void         thunar_details_view_notify_model          (GtkTreeView      
 static gboolean     thunar_details_view_button_press_event    (GtkTreeView            *tree_view,
                                                                GdkEventButton         *event,
                                                                ThunarDetailsView      *details_view);
-static gboolean     thunar_details_view_button_release_event  (GtkTreeView            *tree_view,
-                                                               GdkEventButton         *event,
-                                                               ThunarDetailsView      *details_view);
-static gboolean     thunar_details_view_motion_notify_event   (GtkTreeView            *tree_view,
-                                                               GdkEventMotion         *event,
-                                                               ThunarDetailsView      *details_view);
 static gboolean     thunar_details_view_key_press_event       (GtkTreeView            *tree_view,
                                                                GdkEventKey            *event,
-                                                               ThunarDetailsView      *details_view);
-static void         thunar_details_view_drag_begin            (GtkWidget              *tree_view,
-                                                               GdkDragContext         *context,
                                                                ThunarDetailsView      *details_view);
 static void         thunar_details_view_row_activated         (GtkTreeView            *tree_view,
                                                                GtkTreePath            *path,
@@ -80,11 +71,6 @@ struct _ThunarDetailsViewClass
 struct _ThunarDetailsView
 {
   ThunarStandardView __parent__;
-
-  /* TRUE if the next button_release_event should activate
-   * the row below the pointer (for single click support).
-   */
-  gboolean button_release_activates;
 };
 
 
@@ -162,19 +148,13 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   g_signal_connect (G_OBJECT (details_view), "notify::zoom-level", G_CALLBACK (thunar_details_view_zoom_level_changed), NULL);
 
   /* create the tree view to embed */
-  tree_view = gtk_tree_view_new ();
+  tree_view = exo_tree_view_new ();
   g_signal_connect (G_OBJECT (tree_view), "notify::model",
                     G_CALLBACK (thunar_details_view_notify_model), details_view);
   g_signal_connect (G_OBJECT (tree_view), "button-press-event",
                     G_CALLBACK (thunar_details_view_button_press_event), details_view);
-  g_signal_connect (G_OBJECT (tree_view), "button-release-event",
-                    G_CALLBACK (thunar_details_view_button_release_event), details_view);
-  g_signal_connect (G_OBJECT (tree_view), "motion-notify-event",
-                    G_CALLBACK (thunar_details_view_motion_notify_event), details_view);
   g_signal_connect (G_OBJECT (tree_view), "key-press-event",
                     G_CALLBACK (thunar_details_view_key_press_event), details_view);
-  g_signal_connect (G_OBJECT (tree_view), "drag-begin",
-                    G_CALLBACK (thunar_details_view_drag_begin), details_view);
   g_signal_connect (G_OBJECT (tree_view), "row-activated",
                     G_CALLBACK (thunar_details_view_row_activated), details_view);
   gtk_container_add (GTK_CONTAINER (details_view), tree_view);
@@ -432,14 +412,6 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreeIter       iter;
   ThunarFile       *file;
   GtkAction        *action;
-  gboolean          single_click;
-
-  /* check if we're in single click mode */
-  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-single-click", &single_click, NULL);
-
-  /* check if the next button-release-event should activate the selected row (single click support) */
-  details_view->button_release_activates = (single_click && event->type == GDK_BUTTON_PRESS && event->button == 1
-                                         && (event->state & gtk_accelerator_get_default_mod_mask ()) == 0);
 
   /* we unselect all selected items if the user clicks on an empty
    * area of the treeview and no modifier key is active.
@@ -491,7 +463,7 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
           /* if the event was a double-click or we are in single-click mode, then
            * we'll open the file or folder (folder's are opened in new windows)
            */
-          if (G_LIKELY (event->type == GDK_2BUTTON_PRESS || single_click))
+          if (G_LIKELY (event->type == GDK_2BUTTON_PRESS || exo_tree_view_get_single_click (EXO_TREE_VIEW (tree_view))))
             {
               /* determine the file for the path */
               gtk_tree_model_get_iter (GTK_TREE_MODEL (THUNAR_STANDARD_VIEW (details_view)->model), &iter, path);
@@ -518,81 +490,6 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
       return TRUE;
     }
 
-  /* ignore double click events in single-click mode */
-  if (G_UNLIKELY (single_click && event->type == GDK_2BUTTON_PRESS))
-    {
-      details_view->button_release_activates = FALSE;
-      return TRUE;
-    }
-
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_details_view_button_release_event (GtkTreeView       *tree_view,
-                                          GdkEventButton    *event,
-                                          ThunarDetailsView *details_view)
-{
-  GtkTreeViewColumn *column;
-  GtkTreePath       *path;
-  gboolean           single_click;
-
-  /* check if we're in single click mode */
-  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-single-click", &single_click, NULL);
-
-  /* check if this button release should generate a "row-activated" event (single click support) */
-  if (G_UNLIKELY (single_click && details_view->button_release_activates))
-    {
-      /* reset button_release_activates state */
-      details_view->button_release_activates = FALSE;
-
-      /* determine the path to the row that should be activated */
-      if (gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, &path, &column, NULL, NULL))
-        {
-          /* emit row-activated for the determined row */
-          gtk_tree_view_row_activated (tree_view, path, column);
-
-          /* cleanup */
-          gtk_tree_path_free (path);
-        }
-    }
-
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_details_view_motion_notify_event (GtkTreeView       *tree_view,
-                                         GdkEventMotion    *event,
-                                         ThunarDetailsView *details_view)
-{
-  GdkCursor *cursor;
-  gboolean   single_click;
-
-  /* check if we're in single click mode */
-  g_object_get (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences), "misc-single-click", &single_click, NULL);
-
-  /* check if the event occurred on the tree view internal window */
-  if (event->window != gtk_tree_view_get_bin_window (tree_view))
-    return FALSE;
-  
-  /* check if we are in single click mode and check if a row is located at the event coordinates */
-  if (single_click && gtk_tree_view_get_path_at_pos (tree_view, event->x, event->y, NULL, NULL, NULL, NULL))
-    {
-      /* setup a hand cursor */
-      cursor = gdk_cursor_new (GDK_HAND2);
-      gdk_window_set_cursor (GTK_WIDGET (tree_view)->window, cursor);
-      gdk_cursor_unref (cursor);
-    }
-  else
-    {
-      /* reset the cursor to its default */
-      gdk_window_set_cursor (GTK_WIDGET (tree_view)->window, NULL);
-    }
-
   return FALSE;
 }
 
@@ -611,19 +508,6 @@ thunar_details_view_key_press_event (GtkTreeView       *tree_view,
     }
 
   return FALSE;
-}
-
-
-
-static void
-thunar_details_view_drag_begin (GtkWidget         *tree_view,
-                                GdkDragContext    *context,
-                                ThunarDetailsView *details_view)
-{
-  /* Do not activate the selected row on the next button_release_event,
-   * as the user started a drag operation with the mouse instead.
-   */
-  details_view->button_release_activates = FALSE;
 }
 
 
