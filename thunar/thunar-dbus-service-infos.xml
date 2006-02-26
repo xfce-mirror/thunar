@@ -112,6 +112,16 @@
     </method>
 
     <!--
+      RestoreSession (session-data : STRING) : VOID
+
+      session-data : the session data, the exact format depends on the version
+                     of Thunar and is expected to change with future versions.
+    -->
+    <method name="RestoreSession">
+      <arg direction="in" name="session-data" type="s" />
+    </method>
+
+    <!--
       Terminate () : VOID
 
       Tells a running Thunar instance to terminate immediately.

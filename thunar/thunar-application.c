@@ -22,12 +22,19 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-progress-dialog.h>
@@ -81,6 +88,8 @@ static void     thunar_application_open_window_with_role  (ThunarApplication    
                                                            const gchar            *role,
                                                            ThunarFile             *directory,
                                                            GdkScreen              *screen);
+static void     thunar_application_save_yourself          (ExoXsessionClient      *xsession_client,
+                                                           ThunarApplication      *application);
 static void     thunar_application_window_destroyed       (GtkWidget              *window,
                                                            ThunarApplication      *application);
 static gboolean thunar_application_show_dialogs           (gpointer                user_data);
@@ -100,6 +109,10 @@ struct _ThunarApplication
   ThunarPreferences *preferences;
   GList             *windows;
 
+  /* session management support */
+  ExoXsessionClient *xsession_client;
+
+  /* daemon mode */
   gboolean           daemon;
 
   gint               show_dialogs_timer_id;
@@ -198,6 +211,13 @@ thunar_application_finalize (GObject *object)
       gtk_widget_destroy (GTK_WIDGET (lp->data));
     }
   g_list_free (application->windows);
+
+  /* release our reference on the X session client */
+  if (G_LIKELY (application->xsession_client != NULL))
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (application->xsession_client), thunar_application_save_yourself, application);
+      g_object_unref (G_OBJECT (application->xsession_client));
+    }
 
   /* release our reference on the preferences */
   g_object_unref (G_OBJECT (application->preferences));
@@ -360,6 +380,7 @@ thunar_application_open_window_with_role (ThunarApplication *application,
                                           GdkScreen         *screen)
 {
   GtkWidget *window;
+  GdkWindow *leader;
 
   if (G_UNLIKELY (screen == NULL))
     screen = gdk_screen_get_default ();
@@ -378,6 +399,104 @@ thunar_application_open_window_with_role (ThunarApplication *application,
 
   /* change the directory */
   thunar_window_set_current_directory (THUNAR_WINDOW (window), directory);
+
+  /* register with session manager on first display
+   * opened by Thunar. This is to ensure that we
+   * get restarted by only _one_ session manager (the
+   * one running on the first display).
+   */
+  if (G_UNLIKELY (application->xsession_client == NULL))
+    {
+      leader = gdk_display_get_default_group (gdk_screen_get_display (screen));
+      application->xsession_client = exo_xsession_client_new_with_group (leader);
+      g_signal_connect (G_OBJECT (application->xsession_client), "save-yourself",
+                        G_CALLBACK (thunar_application_save_yourself), application);
+    }
+}
+
+
+
+static void
+thunar_application_save_yourself (ExoXsessionClient *xsession_client,
+                                  ThunarApplication *application)
+{
+  ThunarFile *current_directory;
+  GString    *session_data;
+  gchar      *display_name;
+  gchar     **oargv;
+  gchar     **argv;
+  gchar      *uri;
+  GList      *lp;
+  gint        argc = 1;
+
+  g_return_if_fail (EXO_IS_XSESSION_CLIENT (xsession_client));
+  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  /* generate the session data from the ThunarWindow's */
+  session_data = g_string_sized_new (1024);
+  for (lp = application->windows; lp != NULL; lp = lp->next)
+    {
+      /* ignore everything except ThunarWindows */
+      if (!THUNAR_IS_WINDOW (lp->data))
+        continue;
+
+      /* determine the current directory for the window */
+      current_directory = thunar_window_get_current_directory (THUNAR_WINDOW (lp->data));
+      if (G_UNLIKELY (current_directory == NULL))
+        continue;
+
+      /* prepend the separator if not first */
+      if (*session_data->str != '\0')
+        g_string_append_c (session_data, '|');
+
+      /* append the display name for the window */
+      display_name = gdk_screen_make_display_name (gtk_widget_get_screen (GTK_WIDGET (lp->data)));
+      g_string_append_printf (session_data, "%s;", display_name);
+      g_free (display_name);
+
+      /* append the role for the window */
+      g_string_append_printf (session_data, "%s;", gtk_window_get_role (GTK_WINDOW (lp->data)));
+
+      /* append the URI for the window */
+      uri = thunar_vfs_path_dup_uri (thunar_file_get_path (current_directory));
+      g_string_append (session_data, uri);
+      g_free (uri);
+    }
+
+  /* allocate the argument vector */
+  argv = g_new (gchar *, 5);
+
+  /* determine the binary from the previous restart command */
+  if (exo_xsession_client_get_restart_command (xsession_client, &oargv, NULL))
+    {
+      argv[0] = g_strdup (oargv[0]);
+      g_strfreev (oargv);
+    }
+  else
+    {
+      argv[0] = g_strdup ("Thunar");
+    }
+
+  /* append --daemon option if we're in daemon mode */
+  if (thunar_application_get_daemon (application))
+    argv[argc++] = g_strdup ("--daemon");
+
+  /* append --restore-session if we have any session data */
+  if (G_LIKELY (*session_data->str != '\0'))
+    {
+      argv[argc++] = g_strdup ("--restore-session");
+      argv[argc++] = g_strdup_printf ("[%s]", session_data->str);
+    }
+
+  /* NULL-terminate the argument vector */
+  argv[argc] = NULL;
+
+  /* setup the new restart command */
+  exo_xsession_client_set_restart_command (xsession_client, argv, argc);
+
+  /* cleanup */
+  g_string_free (session_data, TRUE);
+  g_strfreev (argv);
 }
 
 
@@ -589,7 +708,7 @@ thunar_application_open_window (ThunarApplication *application,
   g_return_if_fail (screen == NULL || GDK_IS_SCREEN (screen));
 
   /* generate a unique role for the new window (for session management) */
-  role = g_strdup_printf ("Thunar-%u-%u", (guint) time (NULL), (guint) g_random_int ());
+  role = g_strdup_printf ("Thunar-%x-%x", (guint) time (NULL), (guint) g_random_int ());
   thunar_application_open_window_with_role (application, role, directory, screen);
   g_free (role);
 }
@@ -687,6 +806,102 @@ failure:
   g_set_error (error, derror->domain, derror->code, _("Failed to open \"%s\": %s"), filenames[n], derror->message);
   thunar_file_list_free (file_list);
   g_error_free (derror);
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_application_restore_session:
+ * @application  : a #ThunarApplication.
+ * @session_data : the session data in the private encoding.
+ * @error        : return location for errors or %NULL.
+ *
+ * Tries to restore a previous session from the provided @session_data.
+ * Returns %TRUE if the session was restored successfully, otherwise %FALSE
+ * will be returned and @error will be set.
+ *
+ * Return value: %TRUE on success, %FALSE otherwise.
+ **/
+gboolean
+thunar_application_restore_session (ThunarApplication *application,
+                                    const gchar       *session_data,
+                                    GError           **error)
+{
+  ThunarVfsPath *path;
+  ThunarFile    *file;
+  GdkScreen     *screen;
+  gchar        **pairs = NULL;
+  gchar        **data = NULL;
+  gchar        *tmp;
+  gint          n;
+
+  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (session_data != NULL, FALSE);
+
+  /* make sure the session data is enclosed in [...] */
+  if (!g_str_has_prefix (session_data, "[") || !g_str_has_suffix (session_data, "]"))
+    goto error0;
+
+  /* decode the session data pairs */
+  tmp = g_strdup (session_data + 1);
+  tmp[strlen (tmp) - 1] = '\0';
+  pairs = g_strsplit (tmp, "|", -1);
+  g_free (tmp);
+
+  /* process all pairs */
+  for (n = 0; pairs[n] != NULL; ++n)
+    {
+      /* split the pair's components */
+      data = g_strsplit (pairs[n], ";", -1);
+
+      /* verify that we have exactly 3 components */
+      if (data[0] == NULL || data[1] == NULL || data[2] == NULL || data[3] != NULL)
+        goto error0;
+
+      /* try to open the screen */
+      screen = thunar_gdk_screen_open (data[0], error);
+      if (G_UNLIKELY (screen == NULL))
+        goto error1;
+
+      /* try to parse the URI */
+      path = thunar_vfs_path_new (data[2], error);
+      if (G_UNLIKELY (path == NULL))
+        {
+          g_object_unref (G_OBJECT (screen));
+          goto error1;
+        }
+
+      /* determine the file for the path */
+      file = thunar_file_get_for_path (path, NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          /* tell the application to popup a new window */
+          thunar_application_open_window_with_role (application, data[1], file, screen);
+
+          /* release the file */
+          g_object_unref (G_OBJECT (file));
+        }
+
+      /* reset the data array */
+      g_strfreev (data);
+      data = NULL;
+
+      /* cleanup screen and path */
+      g_object_unref (G_OBJECT (screen));
+      thunar_vfs_path_unref (path);
+    }
+
+  /* release the pairs */
+  g_strfreev (pairs);
+  return TRUE;
+
+error0:
+  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid session data"));
+error1:
+  g_strfreev (pairs);
+  g_strfreev (data);
   return FALSE;
 }
 

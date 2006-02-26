@@ -24,12 +24,15 @@
 
 G_BEGIN_DECLS;
 
-gboolean thunar_dbus_client_launch_files (const gchar *working_directory,
-                                          gchar      **filenames,
-                                          GdkScreen   *screen,
-                                          GError     **error);
+gboolean thunar_dbus_client_launch_files    (const gchar *working_directory,
+                                             gchar      **filenames,
+                                             GdkScreen   *screen,
+                                             GError     **error);
 
-gboolean thunar_dbus_client_terminate    (GError     **error);
+gboolean thunar_dbus_client_restore_session (const gchar *session_data,
+                                             GError     **error);
+
+gboolean thunar_dbus_client_terminate       (GError     **error);
 
 G_END_DECLS;
 
