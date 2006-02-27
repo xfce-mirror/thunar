@@ -972,7 +972,7 @@ thunar_path_entry_common_prefix_append (ThunarPathEntry *path_entry,
   if (G_LIKELY (file != NULL))
     {
       /* we only append slashes for directories */
-      if (thunar_file_is_directory (file))
+      if (thunar_file_is_directory (file) && file != path_entry->current_file)
         {
           tmp = g_strconcat (prefix, G_DIR_SEPARATOR_S, NULL);
           g_free (prefix);

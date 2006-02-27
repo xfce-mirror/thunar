@@ -1,5 +1,13 @@
 2006-02-27	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-path-entry.c(thunar_path_entry_common_prefix_append): Do
+	  not append a slash for the current directory. Otherwise a slash will
+	  automatically be appended while browsing folders under certain
+	  conditions, and the slash will be selected, but that is not what we
+	  want.
+
+2006-02-27	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-create-dialog.c(thunar_create_dialog_init): Use "Create"
 	  instead of "Ok" for the button label.
 	* thunar/thunar-standard-view.c: Add tooltip for the "Paste Files"
