@@ -288,9 +288,9 @@ static const GtkActionEntry action_entries[] =
   { "properties", GTK_STOCK_PROPERTIES, N_ ("_Properties..."), "<alt>Return", N_ ("View the properties of the selected file"), G_CALLBACK (thunar_standard_view_action_properties), },
   { "copy", GTK_STOCK_COPY, N_ ("_Copy Files"), NULL, N_ ("Copy the selected files"), G_CALLBACK (thunar_standard_view_action_copy), },
   { "cut", GTK_STOCK_CUT, N_ ("Cu_t Files"), NULL, N_ ("Cut the selected files"), G_CALLBACK (thunar_standard_view_action_cut), },
-  { "paste", GTK_STOCK_PASTE, N_ ("_Paste Files"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_paste), },
+  { "paste", GTK_STOCK_PASTE, N_ ("_Paste Files"), NULL, N_ ("Move or Copy files previously selected by a Cut or Copy command"), G_CALLBACK (thunar_standard_view_action_paste), },
   { "delete", GTK_STOCK_DELETE, N_ ("_Delete Files"), NULL, N_ ("Delete the selected files"), G_CALLBACK (thunar_standard_view_action_delete), },
-  { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Files into Folder"), NULL, N_ ("Paste files into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
+  { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Files into Folder"), NULL, N_ ("Move or Copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), "<control>A", N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
   { "select-by-pattern", NULL, N_ ("Select _by Pattern..."), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
   { "duplicate", NULL, N_ ("Du_plicate File"), NULL, N_ ("Duplicate each selected file"), G_CALLBACK (thunar_standard_view_action_duplicate), },
@@ -1589,7 +1589,7 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
   mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/directory");
 
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), mime_info, _("New Folder"), _("New Folder..."));
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), mime_info, _("New Folder"), _("Create New Folder"));
   if (G_LIKELY (name != NULL))
     {
       /* determine the ThunarFile for the current directory */
@@ -2043,7 +2043,7 @@ thunar_standard_view_action_rename (GtkAction          *action,
                                             | GTK_DIALOG_NO_SEPARATOR
                                             | GTK_DIALOG_DESTROY_WITH_PARENT,
                                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                            GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                            _("Rename"), GTK_RESPONSE_OK,
                                             NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
       gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
