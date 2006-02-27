@@ -60,10 +60,6 @@ gboolean           thunar_application_process_filenames (ThunarApplication *appl
                                                          GdkScreen         *screen,
                                                          GError           **error);
 
-gboolean           thunar_application_restore_session   (ThunarApplication *application,
-                                                         const gchar       *session_data,
-                                                         GError           **error);
-
 void               thunar_application_copy_to           (ThunarApplication *application,
                                                          GtkWidget         *widget,
                                                          GList             *source_path_list,

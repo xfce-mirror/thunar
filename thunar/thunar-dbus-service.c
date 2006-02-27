@@ -65,9 +65,6 @@ static gboolean thunar_dbus_service_launch_files                (ThunarDBusServi
                                                                  gchar                 **filenames,
                                                                  const gchar            *display,
                                                                  GError                **error);
-static gboolean thunar_dbus_service_restore_session             (ThunarDBusService      *dbus_service,
-                                                                 const gchar            *session_data,
-                                                                 GError                **error);
 static gboolean thunar_dbus_service_terminate                   (ThunarDBusService      *dbus_service,
                                                                  GError                **error);
 
@@ -379,24 +376,6 @@ thunar_dbus_service_launch_files (ThunarDBusService *dbus_service,
       /* release the screen */
       g_object_unref (G_OBJECT (screen));
     }
-
-  return result;
-}
-
-
-
-static gboolean
-thunar_dbus_service_restore_session (ThunarDBusService *dbus_service,
-                                     const gchar       *session_data,
-                                     GError           **error)
-{
-  ThunarApplication *application;
-  gboolean           result;
-
-  /* tell the application to restore the session */
-  application = thunar_application_get ();
-  result = thunar_application_restore_session (application, session_data, error);
-  g_object_unref (G_OBJECT (application));
 
   return result;
 }

@@ -35,17 +35,11 @@
 #include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-stock.h>
 
-#ifdef GDK_WINDOWING_X11
-#include <X11/Xlib.h>
-#endif
-
 
 
 /* --- globals --- */
-static ThunarApplication *application = NULL;
-static gboolean           opt_daemon = FALSE;
-static gboolean           opt_quit = FALSE;
-static gchar             *opt_session_data = NULL;
+static gboolean opt_daemon = FALSE;
+static gboolean opt_quit = FALSE;
 
 
 /* --- command line options --- */
@@ -56,7 +50,6 @@ static GOptionEntry option_entries[] =
 #else
   { "daemon", 0, 0, G_OPTION_ARG_NONE, &opt_daemon, N_ ("Run in daemon mode (not supported)"), NULL, },
 #endif
-  { "restore-session", 0, 0, G_OPTION_ARG_FILENAME, &opt_session_data, N_ ("Restore a previous session (internal)"), NULL, },
 #ifdef HAVE_DBUS
   { "quit", 'q', 0, G_OPTION_ARG_NONE, &opt_quit, N_ ("Quit a running Thunar instance"), NULL, },
 #else
@@ -67,35 +60,15 @@ static GOptionEntry option_entries[] =
 
 
 
-#ifdef GDK_WINDOWING_X11
-static gint
-x_io_error_handler (Display *display)
-{
-  /* check if the application is still alive */
-  if (G_LIKELY (application != NULL))
-    {
-      /* release the application */
-      g_object_unref (G_OBJECT (application));
-
-      /* shutdown the VFS library */
-      thunar_vfs_shutdown ();
-    }
-
-  /* terminate the process */
-  exit (EXIT_SUCCESS);
-}
-#endif
-
-
-
 int
 main (int argc, char **argv)
 {
 #ifdef HAVE_DBUS
   ThunarDBusService *dbus_service;
 #endif
+  ThunarApplication *application;
   GError            *error = NULL;
-  gchar             *working_directory = NULL;
+  gchar             *working_directory;
   gchar            **filenames = NULL;
 
   /* setup translation domain */
@@ -144,53 +117,41 @@ main (int argc, char **argv)
 
       return EXIT_SUCCESS;
     }
-
-  /* check if we should restore a previous session */
-  if (G_UNLIKELY (opt_session_data != NULL))
-    {
-      /* try to restore in a running instance */
-      if (thunar_dbus_client_restore_session (opt_session_data, NULL))
-        return EXIT_SUCCESS;
-    }
 #endif
 
-  /* check if we should not restore a session */
-  if (G_LIKELY (opt_session_data == NULL))
-    {
-      /* determine the current working directory */
-      working_directory = g_get_current_dir ();
+  /* determine the current working directory */
+  working_directory = g_get_current_dir ();
 
-      /* check if atleast one filename was specified, else
-       * fall back to opening the current working directory
-       * if daemon mode is not requested.
-       */
-      if (G_LIKELY (argc > 1))
-        {
-          /* use the specified filenames */
-          filenames = g_strdupv (argv + 1);
-        }
-      else if (!opt_daemon)
-        {
-          /* use the current working directory */
-          filenames = g_new (gchar *, 2);
-          filenames[0] = g_strdup (working_directory);
-          filenames[1] = NULL;
-        }
+  /* check if atleast one filename was specified, else
+   * fall back to opening the current working directory
+   * if daemon mode is not requested.
+   */
+  if (G_LIKELY (argc > 1))
+    {
+      /* use the specified filenames */
+      filenames = g_strdupv (argv + 1);
+    }
+  else if (!opt_daemon)
+    {
+      /* use the current working directory */
+      filenames = g_new (gchar *, 2);
+      filenames[0] = g_strdup (working_directory);
+      filenames[1] = NULL;
+    }
 
 #ifdef HAVE_DBUS
-      /* try to reuse an existing instance (if any files were specified) */
-      if (filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
-        {
-          /* stop any running startup notification */
-          gdk_notify_startup_complete ();
+  /* try to reuse an existing instance (if any files were specified) */
+  if (filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
+    {
+      /* stop any running startup notification */
+      gdk_notify_startup_complete ();
 
-          /* that worked, let's get outa here */
-          g_free (working_directory);
-          g_strfreev (filenames);
-          return EXIT_SUCCESS;
-        }
-#endif
+      /* that worked, let's get outa here */
+      g_free (working_directory);
+      g_strfreev (filenames);
+      return EXIT_SUCCESS;
     }
+#endif
 
   /* initialize the ThunarVFS library */
   thunar_vfs_init ();
@@ -200,7 +161,6 @@ main (int argc, char **argv)
 
   /* acquire a reference on the global application */
   application = thunar_application_get ();
-  g_object_add_weak_pointer (G_OBJECT (application), (gpointer) &application);
 
 #ifdef HAVE_DBUS
   /* setup daemon mode if requested and supported */
@@ -210,38 +170,19 @@ main (int argc, char **argv)
   /* use the Thunar icon as default for new windows */
   gtk_window_set_default_icon_name ("Thunar");
 
-  /* check if we should try to restore a previous session */
-  if (G_UNLIKELY (opt_session_data != NULL))
+  /* try to process the given filenames (if any files were specified) */
+  if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, &error))
     {
-      /* try to restore the session */
-      if (!thunar_application_restore_session (application, opt_session_data, &error))
-        {
-          g_fprintf (stderr, "Thunar: %s\n", error->message);
-          g_object_unref (G_OBJECT (application));
-          thunar_vfs_shutdown ();
-          g_error_free (error);
-          return EXIT_FAILURE;
-        }
-
-      /* release the session data */
-      g_free (opt_session_data);
+      g_fprintf (stderr, "Thunar: %s\n", error->message);
+      g_object_unref (G_OBJECT (application));
+      thunar_vfs_shutdown ();
+      g_error_free (error);
+      return EXIT_FAILURE;
     }
-  else
-    {
-      /* try to process the given filenames (if any files were specified) */
-      if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, &error))
-        {
-          g_fprintf (stderr, "Thunar: %s\n", error->message);
-          g_object_unref (G_OBJECT (application));
-          thunar_vfs_shutdown ();
-          g_error_free (error);
-          return EXIT_FAILURE;
-        }
 
-      /* release working directory and filenames */
-      g_free (working_directory);
-      g_strfreev (filenames);
-    }
+  /* release working directory and filenames */
+  g_free (working_directory);
+  g_strfreev (filenames);
 
   /* do not enter the main loop, unless we have atleast one window or we are in daemon mode */
   if (thunar_application_has_windows (application) || thunar_application_get_daemon (application))
@@ -249,14 +190,6 @@ main (int argc, char **argv)
       /* attach the D-BUS service */
 #ifdef HAVE_DBUS
       dbus_service = g_object_new (THUNAR_TYPE_DBUS_SERVICE, NULL);
-#endif
-
-#ifdef GDK_WINDOWING_X11
-      /* connect the X I/O error handler, so we
-       * can shutdown cleanly when the connection
-       * to the Xserver is lost.
-       */
-      XSetIOErrorHandler (x_io_error_handler);
 #endif
 
       /* enter the main loop */
