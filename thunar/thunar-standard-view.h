@@ -78,7 +78,10 @@ struct _ThunarStandardViewClass
    * scroll the view to the given path.
    */
   void         (*scroll_to_path)        (ThunarStandardView *standard_view,
-                                         GtkTreePath        *path);
+                                         GtkTreePath        *path,
+                                         gboolean            use_align,
+                                         gfloat              row_align,
+                                         gfloat              col_align);
 
   /* Returns the path at the given position or NULL if no item/row
    * is located at that coordinates. The path is freed by the caller.
@@ -86,6 +89,11 @@ struct _ThunarStandardViewClass
   GtkTreePath *(*get_path_at_pos)       (ThunarStandardView *standard_view,
                                          gint                x,
                                          gint                y);
+
+  /* Returns the visible range */
+  gboolean     (*get_visible_range)     (ThunarStandardView *standard_view,
+                                         GtkTreePath       **start_path,
+                                         GtkTreePath       **end_path);
 
   /* Sets the item/row that is highlighted for feedback. NULL is
    * passed for path to disable the highlighting.

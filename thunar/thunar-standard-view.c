@@ -113,6 +113,8 @@ static ThunarFile          *thunar_standard_view_get_current_directory      (Thu
 static void                 thunar_standard_view_set_current_directory      (ThunarNavigator          *navigator,
                                                                              ThunarFile               *current_directory);
 static gboolean             thunar_standard_view_get_loading                (ThunarView               *view);
+static void                 thunar_standard_view_set_loading                (ThunarStandardView       *standard_view,
+                                                                             gboolean                  loading);
 static const gchar         *thunar_standard_view_get_statusbar_text         (ThunarView               *view);
 static gboolean             thunar_standard_view_get_show_hidden            (ThunarView               *view);
 static void                 thunar_standard_view_set_show_hidden            (ThunarView               *view,
@@ -276,6 +278,9 @@ struct _ThunarStandardViewPrivate
    * new files are created by a ThunarVfsJob associated with this view
    */
   GClosure               *new_files_closure;
+
+  /* scroll offsets (-> GtkTreePath indices) per VFS path */
+  GHashTable             *scroll_offsets;
 };
 
 
@@ -513,6 +518,10 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->drag_scroll_timer_id = -1;
   standard_view->priv->drag_timer_id = -1;
 
+  /* setup the scroll paths offset table */
+  standard_view->priv->scroll_offsets = g_hash_table_new_full (thunar_vfs_path_hash, thunar_vfs_path_equal,
+                                                               (GDestroyNotify) thunar_vfs_path_unref, NULL);
+
   /* grab a reference on the preferences */
   standard_view->preferences = thunar_preferences_get ();
 
@@ -726,6 +735,9 @@ thunar_standard_view_finalize (GObject *object)
   /* release our list of currently selected files */
   thunar_file_list_free (standard_view->selected_files);
 
+  /* destroy the scroll offset table */
+  g_hash_table_destroy (standard_view->priv->scroll_offsets);
+
   /* free the statusbar text (if any) */
   g_free (standard_view->statusbar_text);
 
@@ -785,7 +797,6 @@ thunar_standard_view_set_property (GObject      *object,
                                    GParamSpec   *pspec)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
-  gboolean            loading;
 
   switch (prop_id)
     {
@@ -794,13 +805,8 @@ thunar_standard_view_set_property (GObject      *object,
       break;
 
     case PROP_LOADING:
-      loading = g_value_get_boolean (value);
-      if (G_LIKELY (loading != standard_view->loading))
-        {
-          standard_view->loading = loading;
-          g_object_notify (object, "loading");
-          g_object_notify (object, "statusbar-text");
-        }
+      thunar_standard_view_set_loading (standard_view, g_value_get_boolean (value));
+      break;
       break;
       
     case PROP_SELECTED_FILES:
@@ -973,7 +979,7 @@ thunar_standard_view_set_selected_files (ThunarComponent *component,
         }
 
       /* scroll to the first path (previously determined) */
-      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, first_path);
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, first_path, FALSE, 0.0f, 0.0f);
 
       /* release the tree paths */
       g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
@@ -1084,9 +1090,33 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (navigator);
   ThunarFolder       *folder;
+  GtkTreePath        *path;
+  ThunarFile         *file;
+  gint                offset;
 
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
+  
+  /* determine the (previous) current directory */
+  file = thunar_navigator_get_current_directory (navigator);
+  if (G_LIKELY (file != NULL))
+    {
+      /* determine the first visible tree path */
+      if ((*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_visible_range) (standard_view, &path, NULL))
+        {
+          /* determine the scroll offset from the tree path */
+          offset = gtk_tree_path_get_indices (path)[0] + 1;
+          gtk_tree_path_free (path);
+        }
+      else
+        {
+          /* just use the first available path */
+          offset = 0;
+        }
+
+      /* remember the scroll offset for the directory */
+      g_hash_table_replace (standard_view->priv->scroll_offsets, thunar_vfs_path_ref (thunar_file_get_path (file)), GINT_TO_POINTER (offset));
+    }
 
   /* disconnect any previous "loading" binding */
   if (G_LIKELY (standard_view->loading_binding != NULL))
@@ -1130,6 +1160,49 @@ static gboolean
 thunar_standard_view_get_loading (ThunarView *view)
 {
   return THUNAR_STANDARD_VIEW (view)->loading;
+}
+
+
+
+static void
+thunar_standard_view_set_loading (ThunarStandardView *standard_view,
+                                  gboolean            loading)
+{
+  GtkTreePath *path;
+  ThunarFile  *file;
+  gint         offset;
+
+  loading = !!loading;
+
+  /* check if we're already in that state */
+  if (G_UNLIKELY (standard_view->loading == loading))
+    return;
+
+  /* apply the new state */
+  standard_view->loading = loading;
+
+  /* check if this state change was due to a "loading complete" event */
+  if (G_LIKELY (!loading))
+    {
+      /* determine the current directory */
+      file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+      if (G_LIKELY (file != NULL))
+        {
+          /* determine the scroll offset for this folder */
+          offset = GPOINTER_TO_INT (g_hash_table_lookup (standard_view->priv->scroll_offsets, thunar_file_get_path (file)));
+          if (G_LIKELY (offset > 0))
+            {
+              /* scroll to the path for the offset */
+              path = gtk_tree_path_new_from_indices (offset - 1, -1);
+              (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, path, TRUE, 0.0f, 0.0f);
+              gtk_tree_path_free (path);
+            }
+        }
+    }
+
+  /* notify listeners */
+  g_object_notify (G_OBJECT (standard_view), "loading");
+  g_object_notify (G_OBJECT (standard_view), "statusbar-text");
 }
 
 
@@ -2123,7 +2196,7 @@ thunar_standard_view_action_rename (GtkAction          *action,
                   if (G_LIKELY (path_list != NULL))
                     {
                       /* place the cursor on the file and scroll the new position */
-                      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, path_list->data);
+                      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, path_list->data, FALSE, 0.0f, 0.0f);
 
                       /* update the selection, so we get updated actions, statusbar,
                        * etc. with the new file name and probably new mime type.

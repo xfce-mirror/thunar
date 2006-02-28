@@ -59,10 +59,16 @@ static void         thunar_icon_view_set_cursor             (ThunarStandardView 
                                                              GtkTreePath         *path,
                                                              gboolean             start_editing);
 static void         thunar_icon_view_scroll_to_path         (ThunarStandardView  *standard_view,
-                                                             GtkTreePath         *path);
+                                                             GtkTreePath         *path,
+                                                             gboolean             use_align,
+                                                             gfloat               row_align,
+                                                             gfloat               col_align);
 static GtkTreePath *thunar_icon_view_get_path_at_pos        (ThunarStandardView  *standard_view,
                                                              gint                 x,
                                                              gint                 y);
+static gboolean     thunar_icon_view_get_visible_range      (ThunarStandardView  *standard_view,
+                                                             GtkTreePath        **start_path,
+                                                             GtkTreePath        **end_path);
 static void         thunar_icon_view_highlight_path         (ThunarStandardView  *standard_view,
                                                              GtkTreePath         *path);
 static GtkAction   *thunar_icon_view_gesture_action         (ThunarIconView      *icon_view);
@@ -200,6 +206,7 @@ thunar_icon_view_class_init (ThunarIconViewClass *klass)
   thunarstandard_view_class->set_cursor = thunar_icon_view_set_cursor;
   thunarstandard_view_class->scroll_to_path = thunar_icon_view_scroll_to_path;
   thunarstandard_view_class->get_path_at_pos = thunar_icon_view_get_path_at_pos;
+  thunarstandard_view_class->get_visible_range = thunar_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_icon_view_highlight_path;
   thunarstandard_view_class->zoom_level_property_name = "last-icon-view-zoom-level";
 
@@ -423,10 +430,13 @@ thunar_icon_view_set_cursor (ThunarStandardView *standard_view,
 
 static void
 thunar_icon_view_scroll_to_path (ThunarStandardView *standard_view,
-                                 GtkTreePath        *path)
+                                 GtkTreePath        *path,
+                                 gboolean            use_align,
+                                 gfloat              row_align,
+                                 gfloat              col_align)
 {
   g_return_if_fail (THUNAR_IS_ICON_VIEW (standard_view));
-  exo_icon_view_scroll_to_path (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path, FALSE, 0.0f, 0.0f);
+  exo_icon_view_scroll_to_path (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path, use_align, row_align, col_align);
 }
 
 
@@ -438,6 +448,17 @@ thunar_icon_view_get_path_at_pos (ThunarStandardView *standard_view,
 {
   g_return_val_if_fail (THUNAR_IS_ICON_VIEW (standard_view), NULL);
   return exo_icon_view_get_path_at_pos (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), x, y);
+}
+
+
+
+static gboolean
+thunar_icon_view_get_visible_range (ThunarStandardView *standard_view,
+                                    GtkTreePath       **start_path,
+                                    GtkTreePath       **end_path)
+{
+  g_return_val_if_fail (THUNAR_IS_ICON_VIEW (standard_view), FALSE);
+  return exo_icon_view_get_visible_range (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), start_path, end_path);
 }
 
 

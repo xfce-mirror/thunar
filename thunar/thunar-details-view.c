@@ -40,10 +40,16 @@ static void         thunar_details_view_set_cursor            (ThunarStandardVie
                                                                GtkTreePath            *path,
                                                                gboolean                start_editing);
 static void         thunar_details_view_scroll_to_path        (ThunarStandardView     *standard_view,
-                                                               GtkTreePath            *path);
+                                                               GtkTreePath            *path,
+                                                               gboolean                use_align,
+                                                               gfloat                  row_align,
+                                                               gfloat                  col_align);
 static GtkTreePath *thunar_details_view_get_path_at_pos       (ThunarStandardView     *standard_view,
                                                                gint                    x,
                                                                gint                    y);
+static gboolean     thunar_details_view_get_visible_range     (ThunarStandardView     *standard_view,
+                                                               GtkTreePath           **start_path,
+                                                               GtkTreePath           **end_path);
 static void         thunar_details_view_highlight_path        (ThunarStandardView     *standard_view,
                                                                GtkTreePath            *path);
 static void         thunar_details_view_notify_model          (GtkTreeView            *tree_view,
@@ -128,6 +134,7 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->set_cursor = thunar_details_view_set_cursor;
   thunarstandard_view_class->scroll_to_path = thunar_details_view_scroll_to_path;
   thunarstandard_view_class->get_path_at_pos = thunar_details_view_get_path_at_pos;
+  thunarstandard_view_class->get_visible_range = thunar_details_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_details_view_highlight_path;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
 }
@@ -349,7 +356,10 @@ thunar_details_view_set_cursor (ThunarStandardView *standard_view,
 
 static void
 thunar_details_view_scroll_to_path (ThunarStandardView *standard_view,
-                                    GtkTreePath        *path)
+                                    GtkTreePath        *path,
+                                    gboolean            use_align,
+                                    gfloat              row_align,
+                                    gfloat              col_align)
 {
   GtkTreeViewColumn *column;
 
@@ -357,7 +367,7 @@ thunar_details_view_scroll_to_path (ThunarStandardView *standard_view,
 
   /* tell the tree view to scroll to the given row */
   column = gtk_tree_view_get_column (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), 0);
-  gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), path, column, FALSE, 0.0f, 0.0f);
+  gtk_tree_view_scroll_to_cell (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), path, column, use_align, row_align, col_align);
 }
 
 
@@ -375,6 +385,22 @@ thunar_details_view_get_path_at_pos (ThunarStandardView *standard_view,
     return path;
 
   return NULL;
+}
+
+
+
+static gboolean
+thunar_details_view_get_visible_range (ThunarStandardView *standard_view,
+                                       GtkTreePath       **start_path,
+                                       GtkTreePath       **end_path)
+{
+  g_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view), FALSE);
+
+#if GTK_CHECK_VERSION(2,8,0)
+  return gtk_tree_view_get_visible_range (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), start_path, end_path);
+#else
+  return FALSE;
+#endif
 }
 
 
