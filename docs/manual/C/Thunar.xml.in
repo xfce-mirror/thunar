@@ -174,6 +174,84 @@
   </sect1>
 
 
+  <sect1 id="faq">
+    <title>Frequently Asked Questions</title>
+
+    <para>
+      The intent of this section is to collect the quite numerous frequently asked
+      questions that relate to working with Thunar. If you know of a question that
+      is missing from this page, please <ulink type="http"
+      url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">file
+      a request</ulink>.
+    </para>
+
+    <sect3 id="faq-executables">
+      <title>Why doesn't Thunar execute files marked as executable?</title>
+
+      <para>
+        For security reasons Thunar only executes files of type <literal>application/x-desktop</literal>,
+        <literal>application/x-executable</literal> and <literal>application/x-shellscript</literal>. For
+        desktop files the execution feature will only be enabled if the desktop file is of type
+        <literal>Application</literal> and a valid <literal>Exec</literal> line is given or of type
+        <literal>Link</literal> and a valid <literal>URL</literal> is given. For the other types the feature
+        is available if the file is marked executable for the current user.
+      </para>
+
+      <para>
+        Also note that for <literal>application/x-executable</literal> and <literal>application/x-shellscript</literal>,
+        the types of the file don't really need to match these types exactly, but it is suffice if the detected
+        type has a parent that matches one of the two types listed above, or if the MIME-type is an alias for
+        one of the above.
+      </para>
+    </sect3>
+
+    <sect3 id="faq-metadata">
+      <title>Where does Thunar store the metadata associated with files?</title>
+
+      <para>
+        Thunar associates various settings with files/folders, which we call metadata.
+        This metadata for all files is stored in tdb database file, which is called
+        the metafile. The database file is stored in
+        <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> and can be examined
+        using the <command>tdbtool</command>, which is part of the Thunar distribution
+        (located in the <filename role="directory">tdb/</filename> subdirectory).
+      </para>
+    </sect3>
+
+    <sect3 id="faq-thunarrc">
+      <title>Where does Thunar store its preferences?</title>
+
+      <para>
+        Thunar stores the user configurable preferences (and hidden settings) in
+        an <filename>.ini</filename> file, which is located at
+        <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename> and can be examined
+        using a text editor. See <filename>docs/README.thunarrc</filename> for an
+        overview of the various preferences.
+      </para>
+    </sect3>
+
+    <sect3 id="faq-mouse-gestures">
+      <title>How to use mouse gestures in Thunar?</title>
+
+      <para>
+        Thunar currently features basic support for so called <emphasis>mouse gestures</emphasis>
+        in its icon view. You can use these <emphasis>mouse gestures</emphasis> by holding down
+        the middle mouse button (usually the mouse wheel) while the mouse pointer is on the
+        background area of the icon view component (any area that is not covered by
+        an icon or a text). Now you can move the cursor into four directions to
+        perform certain actions, which are described below.
+      </para>
+
+      <simplelist>
+        <member><guilabel>Left</guilabel> - opens the previous visited folder</member>
+        <member><guilabel>Up</guilabel> - opens the parent folder</member>
+        <member><guilabel>Right</guilabel> - opens the next visited folder</member>
+        <member><guilabel>Down</guilabel> - reloads the current folder</member>
+      </simplelist>
+    </sect3>
+  </sect1>
+
+
   <sect1 id="support">
     <title>Support</title>
 

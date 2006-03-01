@@ -29,6 +29,10 @@ void thunar_dialogs_show_error (gpointer      parent,
                                 const gchar  *format,
                                 ...) G_GNUC_INTERNAL G_GNUC_PRINTF (3, 4);
 
+void thunar_dialogs_show_help  (gpointer      parent,
+                                const gchar  *page,
+                                const gchar  *offset) G_GNUC_INTERNAL;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_DIALOGS_H__ */

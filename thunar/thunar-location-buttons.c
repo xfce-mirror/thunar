@@ -1120,7 +1120,7 @@ thunar_location_buttons_scroll_right (GtkWidget             *button,
   border_width = GTK_CONTAINER (buttons)->border_width;
   direction = gtk_widget_get_direction (GTK_WIDGET (buttons));
 
-  /* find the button at the 'left' end that we have to make visible */
+  /* find the button at the 'right' end that we have to make visible */
   for (lp = buttons->list; lp != NULL; lp = lp->next)
     if (lp->next != NULL && gtk_widget_get_child_visible (GTK_WIDGET (lp->next->data)))
       {
@@ -1128,7 +1128,7 @@ thunar_location_buttons_scroll_right (GtkWidget             *button,
         break;
       }
 
-  /* find the last visible button on the 'right' end */
+  /* find the last visible button on the 'left' end */
   for (lp = g_list_last (buttons->list); lp != NULL; lp = lp->prev)
     if (gtk_widget_get_child_visible (GTK_WIDGET (lp->data)))
       {
@@ -1185,6 +1185,14 @@ thunar_location_buttons_clicked (ThunarLocationButton  *button,
   /* take a reference on the new directory (if any) */
   if (G_LIKELY (directory != NULL))
     g_object_ref (G_OBJECT (directory));
+
+  /* check if the button is visible on the button bar */
+  if (!gtk_widget_get_child_visible (GTK_WIDGET (button)))
+    {
+      /* scroll to the button */
+      buttons->first_scrolled_button = g_list_find (buttons->list, button);
+      gtk_widget_queue_resize (GTK_WIDGET (buttons));
+    }
 
   /* update all buttons */
   for (lp = buttons->list; lp != NULL; lp = lp->next)

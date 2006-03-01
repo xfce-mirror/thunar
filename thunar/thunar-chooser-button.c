@@ -371,7 +371,7 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
 
   /* setup a useful tooltip and ATK description */
   text = g_strdup_printf (_("The selected application is used to open "
-                            "this and other files or type \"%s\"."),
+                            "this and other files of type \"%s\"."),
                           thunar_vfs_mime_info_get_comment (info));
   atk_object_set_name (gtk_widget_get_accessible (chooser_button->button), text);
   gtk_tooltips_set_tip (chooser_button->tooltips, chooser_button->button, text, NULL);

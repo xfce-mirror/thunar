@@ -121,3 +121,68 @@ thunar_dialogs_show_error (gpointer      parent,
 
 
 
+/**
+ * thunar_dialogs_show_help:
+ * @parent : a #GtkWidget on which the user manual should be shown, or a #GdkScreen
+ *           if no #GtkWidget is known. May also be %NULL, in which case the default
+ *           #GdkScreen will be used.
+ * @page   : the name of the page of the user manual to display or %NULL to display
+ *           the overview page.
+ * @offset : the offset of the topic in the @page to display or %NULL to just display
+ *           @page.
+ *
+ * Displays the Thunar user manual. If @page is not %NULL it specifies the basename
+ * of the HTML file to display. @offset may refer to a anchor in the @page.
+ **/
+void
+thunar_dialogs_show_help (gpointer     parent,
+                          const gchar *page,
+                          const gchar *offset)
+{
+  GdkScreen *screen;
+  GError    *error = NULL;
+  gchar     *command;
+  gchar     *tmp;
+
+  /* determine the screen on which to launch the help */
+  if (G_UNLIKELY (parent == NULL))
+    screen = gdk_screen_get_default ();
+  else if (GDK_IS_SCREEN (parent))
+    screen = GDK_SCREEN (parent);
+  else
+    screen = gtk_widget_get_screen (GTK_WIDGET (parent));
+
+  /* generate the command for the documentation browser */
+  command = g_strdup (LIBEXECDIR "/ThunarHelp");
+
+  /* check if a page is given */
+  if (G_UNLIKELY (page != NULL))
+    {
+      /* append page as second parameter */
+      tmp = g_strconcat (command, " ", page, NULL);
+      g_free (command);
+      command = tmp;
+
+      /* check if an offset is given */
+      if (G_UNLIKELY (offset != NULL))
+        {
+          /* append offset as third parameter */
+          tmp = g_strconcat (command, " ", offset, NULL);
+          g_free (command);
+          command = tmp;
+        }
+    }
+
+  /* try to run the documentation browser */
+  if (!gdk_spawn_command_line_on_screen (screen, command, &error))
+    {
+      /* display an error message to the user */
+      thunar_dialogs_show_error (parent, error, _("Failed to open the documentation browser"));
+      g_error_free (error);
+    }
+
+  /* cleanup */
+  g_free (command);
+}
+
+

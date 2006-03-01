@@ -125,6 +125,8 @@ static void     thunar_window_action_open_templates       (GtkAction          *a
                                                            ThunarWindow       *window);
 static void     thunar_window_action_open_location        (GtkAction          *action,
                                                            ThunarWindow       *window);
+static void     thunar_window_action_contents             (GtkAction          *action,
+                                                           ThunarWindow       *window);
 static void     thunar_window_action_about                (GtkAction          *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_show_hidden          (GtkToggleAction    *action,
@@ -235,6 +237,7 @@ static const GtkActionEntry action_entries[] =
   { "open-templates", THUNAR_STOCK_TEMPLATES, N_ ("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (thunar_window_action_open_templates), },
   { "open-location", NULL, N_ ("Open _Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_open_location), },
   { "help-menu", NULL, N_ ("_Help"), NULL, },
+  { "contents", GTK_STOCK_HELP, N_ ("_Contents"), "F1", N_ ("Display Thunar user manual"), G_CALLBACK (thunar_window_action_contents), },
   { "about", GTK_STOCK_ABOUT, N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (thunar_window_action_about), },
 };
 
@@ -1509,6 +1512,16 @@ thunar_window_action_open_location (GtkAction    *action,
 
 
 static void
+thunar_window_action_contents (GtkAction    *action,
+                               ThunarWindow *window)
+{
+  /* display the documentation index */
+  thunar_dialogs_show_help (window, NULL, NULL);
+}
+
+
+
+static void
 thunar_window_action_about (GtkAction    *action,
                             ThunarWindow *window)
 {
@@ -1519,6 +1532,12 @@ thunar_window_action_about (GtkAction    *action,
   };
 
   static const gchar *authors[] =
+  {
+    "Benedikt Meurer <benny@xfce.org>",
+    NULL,
+  };
+  
+  static const gchar *documenters[] =
   {
     "Benedikt Meurer <benny@xfce.org>",
     NULL,
@@ -1552,6 +1571,7 @@ thunar_window_action_about (GtkAction    *action,
                          "authors", authors,
                          "comments", _("Thunar is a fast and easy to use file manager\nfor the Xfce Desktop Environment."),
                          "copyright", "Copyright \302\251 2004-2006 Benedikt Meurer",
+                         "documenters", documenters,
                          "license", license,
                          "logo", logo,
                          "name", PACKAGE_NAME,

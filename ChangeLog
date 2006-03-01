@@ -1,5 +1,22 @@
 2006-03-01	Benedikt Meurer <benny@xfce.org>
 
+	* docs/manual/C/Thunar.xml.in: Add "Frequently Asked Questions".
+	* thunar/thunar-location-buttons.c(thunar_location_buttons_clicked):
+	  Make sure the new active button is visible on the location button bar.
+	* ThunarHelp.in, Makefile.am: Add ThunarHelp script, which is used to
+	  display the Thunar user manual.
+	* thunar/thunar-dialogs.{c,h}, thunar/Makefile.am: Add new helper method
+	  thunar_dialogs_show_help(), which is used to open the documentation
+	  browser.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Add "Contents"
+	  item to the "Help" menu.
+	* thunar/thunar-chooser-button.c(thunar_chooser_button_file_changed):
+	  Fix typo.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Updated the german translations.
+
+2006-03-01	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in, docs/Makefile.am, docs/manual/: Import initial parts
 	  of the user manual.
 	* HACKING: Update repository URLs.

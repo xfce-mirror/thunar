@@ -28,6 +28,16 @@ rpm: dist
 	rpmbuild -ta $(PACKAGE)-$(VERSION).tar.gz
 	@rm -f $(PACKAGE)-$(VERSION).tar.gz
 
+libexec_SCRIPTS =							\
+	ThunarHelp
+
+ThunarHelp: ThunarHelp.in Makefile
+	rm -f ThunarHelp.gen ThunarHelp
+	sed -e "s,\@datadir\@,$(datadir),g" 				\
+		< $(srcdir)/ThunarHelp.in				\
+		> ThunarHelp.gen
+	mv ThunarHelp.gen ThunarHelp
+
 desktopdir = $(datadir)/applications
 desktop_in_files = Thunar.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
@@ -44,6 +54,7 @@ endif
 EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
+	ThunarHelp.in							\
 	intltool-extract.in						\
 	intltool-merge.in						\
 	intltool-update.in						\
@@ -51,12 +62,13 @@ EXTRA_DIST =								\
 	$(service_in_files)
 
 DISTCLEANFILES =							\
+	ThunarHelp							\
 	intltool-extract						\
 	intltool-merge							\
 	intltool-update							\
 	$(desktop_DATA)							\
 	$(service_DATA)
 
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc
+DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-xsltproc
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
