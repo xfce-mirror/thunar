@@ -3,8 +3,7 @@ The Thunar Volume Manager
 
  The Thunar-VFS library contains an abstract interface to volume managers
  and implementations of this interface for some platforms (currently only
- FreeBSD is known to work properly, although Net- and OpenBSD should also
- work fine).
+ FreeBSD and Linux with HAL is known to work properly).
 
  Using this abstract interface (in fact the platform specific implementations
  of the interface), Thunar is able to display mounted and mountable volumes
@@ -17,9 +16,9 @@ The Thunar Volume Manager
  Unfortunately, this functionality is currently only available to BSD users.
  I'm looking for people to provide implementations of ThunarVfsVolume and
  ThunarVfsVolumeManager (see thunar-vfs-volume.h) for other platforms. If
- you need a starting point, you should have a look at the BSD implementation
- in thunar-vfs-volume-bsd.c, it's a bit tricky when it comes to details,
- but it should give you the basic idea.
+ you need a starting point, you should have a look at the FreeBSD implemen-
+ tation in thunar-vfs-volume-freebsd.c, it's a bit tricky when it comes to
+ details, but it should give you the basic idea.
 
 
  Notes for FreeBSD users
@@ -42,3 +41,16 @@ The Thunar Volume Manager
 
   In order to be able to eject removable devices, you will need to install
   the eject utility from the sysutils/eject port.
+
+
+ Notes for Linux users
+ ---------------------
+
+  On Linux platforms, Thunar requires HAL 0.5 or better to provide information
+  about volumes.
+
+  To be able to mount and unmount volumes, you will also need either the pmount
+  utility or HAL with fstab-sync. Thunar may also support gnome-mount in the
+  future.
+
+  To be able to eject dics, you will need the eject utility program.
