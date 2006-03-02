@@ -1407,8 +1407,19 @@ thunar_standard_view_get_drop_file (ThunarStandardView *standard_view,
       /* determine the file for the path */
       gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, path);
       file = thunar_list_model_get_file (standard_view->model, &iter);
+
+      /* we can only drop to directories and executable files */
+      if (!thunar_file_is_directory (file) && !thunar_file_is_executable (file))
+        {
+          /* drop to the folder instead */
+          g_object_unref (G_OBJECT (file));
+          gtk_tree_path_free (path);
+          path = NULL;
+        }
     }
-  else
+
+  /* if we don't have a path yet, we'll drop to the folder instead */
+  if (G_UNLIKELY (path == NULL))
     {
       /* determine the current directory */
       file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
