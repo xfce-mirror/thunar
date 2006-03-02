@@ -41,6 +41,7 @@
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
+#include <thunar/thunar-stock.h>
 #include <thunar/thunar-templates-action.h>
 #include <thunar/thunar-text-renderer.h>
 
@@ -2127,7 +2128,7 @@ thunar_standard_view_action_rename (GtkAction          *action,
                                             | GTK_DIALOG_NO_SEPARATOR
                                             | GTK_DIALOG_DESTROY_WITH_PARENT,
                                             GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                            _("Rename"), GTK_RESPONSE_OK,
+                                            THUNAR_STOCK_RENAME, GTK_RESPONSE_OK,
                                             NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
       gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);

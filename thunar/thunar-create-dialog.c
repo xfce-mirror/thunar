@@ -26,6 +26,7 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-stock.h>
 
 
 
@@ -161,7 +162,7 @@ thunar_create_dialog_init (ThunarCreateDialog *dialog)
   /* configure the dialog itself */
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                          _("Create"), GTK_RESPONSE_OK,
+                          THUNAR_STOCK_CREATE, GTK_RESPONSE_OK,
                           NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);

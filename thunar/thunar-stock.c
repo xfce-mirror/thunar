@@ -28,16 +28,32 @@
 #include <string.h>
 #endif
 
-#include <gtk/gtk.h>
+#include <exo/exo.h>
 
 #include <thunar/thunar-stock.h>
 
 
 
-/* keep in sync with thunar-stock.h */
-static const gchar *thunar_stock_icons[] =
+typedef struct
 {
-  THUNAR_STOCK_TEMPLATES,
+  const gchar *name;
+  const gchar *icon;
+} ThunarStockIcon;
+
+
+
+/* keep in sync with thunar-stock.h */
+static const ThunarStockIcon thunar_stock_icons[] =
+{
+  { THUNAR_STOCK_CREATE,    "gtk-ok",                 },
+  { THUNAR_STOCK_RENAME,    "gtk-ok",                 },
+  { THUNAR_STOCK_TEMPLATES, "stock_thunar-templates", },
+};
+
+static const GtkStockItem thunar_stock_items[] =
+{
+  { THUNAR_STOCK_CREATE, N_ ("Create"), 0, 0, GETTEXT_PACKAGE, },
+  { THUNAR_STOCK_RENAME, N_ ("Rename"), 0, 0, GETTEXT_PACKAGE, },
 };
 
 
@@ -54,14 +70,10 @@ thunar_stock_init (void)
   GtkIconFactory *icon_factory;
   GtkIconSource  *icon_source;
   GtkIconSet     *icon_set;
-  gchar           icon_name[128];
   guint           n;
 
   /* allocate a new icon factory for the thunar stock icons */
   icon_factory = gtk_icon_factory_new ();
-
-  /* all icon names start with "stock_" */
-  memcpy (icon_name, "stock_", sizeof ("stock_") - 1);
 
   /* allocate an icon source */
   icon_source = gtk_icon_source_new ();
@@ -69,19 +81,19 @@ thunar_stock_init (void)
   /* register our stock icons */
   for (n = 0; n < G_N_ELEMENTS (thunar_stock_icons); ++n)
     {
-      /* determine the icon name */
-      strcpy (icon_name + (sizeof ("stock_") - 1), thunar_stock_icons[n]);
-      gtk_icon_source_set_icon_name (icon_source, icon_name);
-
       /* setup the icon set */
       icon_set = gtk_icon_set_new ();
+      gtk_icon_source_set_icon_name (icon_source, thunar_stock_icons[n].icon);
       gtk_icon_set_add_source (icon_set, icon_source);
-      gtk_icon_factory_add (icon_factory, thunar_stock_icons[n], icon_set);
+      gtk_icon_factory_add (icon_factory, thunar_stock_icons[n].name, icon_set);
       gtk_icon_set_unref (icon_set);
     }
 
   /* register our icon factory as default */
   gtk_icon_factory_add_default (icon_factory);
+
+  /* register our stock items */
+  gtk_stock_add_static (thunar_stock_items, G_N_ELEMENTS (thunar_stock_items));
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
