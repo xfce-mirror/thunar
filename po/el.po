@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-01 16:34+0100\n"
+"POT-Creation-Date: 2006-03-02 11:47+0100\n"
 "PO-Revision-Date: 2006-02-19 17:53+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -450,7 +450,7 @@ msgstr "Δημιουργία καταλόγων..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:482
+#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:484
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Ο ορισμός της προκαθορισμένης εφαρμογής για το \"%s\" απέτυχε."
@@ -478,74 +478,76 @@ msgid "Open With"
 msgstr "Άνοιγμα Με"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:269
+#: ../thunar/thunar-chooser-dialog.c:271
 msgid "Use a _custom command:"
 msgstr "Χρήση _προσαρμοσμένης εντολής:"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:287
+#: ../thunar/thunar-chooser-dialog.c:289
 msgid "_Browse"
 msgstr "_Περιήγηση"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:460
+#: ../thunar/thunar-chooser-dialog.c:462
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Η προσθήκη της εφαρμογής \"%s\" απέτυχε."
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:495
+#: ../thunar/thunar-chooser-dialog.c:497
 #, c-format
 msgid "Failed to execute \"%s\""
 msgstr "Η εκτέλεση του \"%s\" απέτυχε"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:616
+#: ../thunar/thunar-chooser-dialog.c:618
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Άνοιγμα του <i>%s</i> και των άλλων αρχείων του τύπου \"%s\" με:"
 
-#: ../thunar/thunar-chooser-dialog.c:638 ../thunar-uca/thunar-uca-editor.c:491
+#: ../thunar/thunar-chooser-dialog.c:640 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Επιλογή Εφαρμογής"
 
-#: ../thunar/thunar-chooser-dialog.c:648 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:501
 #: ../thunar-uca/thunar-uca-editor.c:640
 msgid "All Files"
 msgstr "Όλα τα Αρχεία"
 
-#: ../thunar/thunar-chooser-dialog.c:653 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:655 ../thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Εκτελέσιμα Αρχεία"
 
-#: ../thunar/thunar-chooser-dialog.c:668 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:670 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Δέσμες Ενεργειών Perl"
 
-#: ../thunar/thunar-chooser-dialog.c:674 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:676 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Δέσμες Ενεργειών Python"
 
-#: ../thunar/thunar-chooser-dialog.c:680 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:682 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Δέσμες Ενεργειών Ruby"
 
-#: ../thunar/thunar-chooser-dialog.c:686 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:688 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Δέσμες Ενεργειών Κέλυφους"
 
-#: ../thunar/thunar-chooser-model.c:335
+#: ../thunar/thunar-chooser-model.c:339
 msgid "None available"
 msgstr "Κανένα διαθέσιμο"
 
 #. append the "Recommended Applications:" category
-#: ../thunar/thunar-chooser-model.c:379
-msgid "Recommended Applications:"
+#: ../thunar/thunar-chooser-model.c:383
+#, fuzzy
+msgid "Recommended Applications"
 msgstr "Προτεινόμενες Εφαρμογές:"
 
 #. append the "Other Applications:" category
-#: ../thunar/thunar-chooser-model.c:382
-msgid "Other Applications:"
+#: ../thunar/thunar-chooser-model.c:386
+#, fuzzy
+msgid "Other Applications"
 msgstr "Άλλες Εφαρμογές:"
 
 #. tell the user that we cannot paste
@@ -593,13 +595,6 @@ msgstr "Λεπτομερής απεικόνιση καταλόγων"
 #: ../thunar/thunar-details-view.c:269
 msgid "Details view"
 msgstr "Προβολή λεπτομεριών"
-
-#: ../thunar/thunar-dialogs.c:104 ../thunar/thunar-dialogs.c:112
-#: ../thunar-uca/thunar-uca-chooser.c:414
-#: ../thunar-uca/thunar-uca-provider.c:329
-#, c-format
-msgid "%s."
-msgstr ""
 
 #. display an error message to the user
 #: ../thunar/thunar-dialogs.c:180
@@ -1907,7 +1902,7 @@ msgstr "Να μην αποφορτώνεται το πρόσθετο από τη
 msgid "Custom Actions"
 msgstr "Προσαρμοσμένες Ενέργειες"
 
-#: ../thunar-uca/thunar-uca-chooser.c:142
+#: ../thunar-uca/thunar-uca-chooser.c:141
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
@@ -1915,37 +1910,37 @@ msgstr ""
 "Μπορείτε να ορίσετε προσαρμοσμένες ενέργειες που θα εμφανίζονται στα\n"
 "μενού ενεργειών του διαχειριστή αρχείων για ορισμένα είδη αρχείων."
 
-#: ../thunar-uca/thunar-uca-chooser.c:188
+#: ../thunar-uca/thunar-uca-chooser.c:187
 msgid "Add a new custom action."
 msgstr "Προσθέτει μια νέα προσαρμοσμένη ενέργεια."
 
-#: ../thunar-uca/thunar-uca-chooser.c:198
+#: ../thunar-uca/thunar-uca-chooser.c:197
 msgid "Edit the currently selected action."
 msgstr "Επεξεργασία της επιλεγμένης ενέργειας."
 
-#: ../thunar-uca/thunar-uca-chooser.c:208
+#: ../thunar-uca/thunar-uca-chooser.c:207
 msgid "Delete the currently selected action."
 msgstr "Διαγραφή της επιλεγμένης ενέργειας."
 
-#: ../thunar-uca/thunar-uca-chooser.c:218
+#: ../thunar-uca/thunar-uca-chooser.c:217
 #, fuzzy
 msgid "Move the currently selected action up by one row."
 msgstr "Μετακινεί την επιλεγμένη ενέργεια μια γραμμή επάνω."
 
-#: ../thunar-uca/thunar-uca-chooser.c:228
+#: ../thunar-uca/thunar-uca-chooser.c:227
 #, fuzzy
 msgid "Move the currently selected action down by one row."
 msgstr "Μετακινεί την επιλεγμένη ενέργεια μια γραμμή κάτω."
 
-#: ../thunar-uca/thunar-uca-chooser.c:364
+#: ../thunar-uca/thunar-uca-chooser.c:363
 msgid "Edit Action"
 msgstr "Επεξεργασία Ενέργειας"
 
-#: ../thunar-uca/thunar-uca-chooser.c:364
+#: ../thunar-uca/thunar-uca-chooser.c:363
 msgid "Create Action"
 msgstr "Δημιουργία Ενέργειας"
 
-#: ../thunar-uca/thunar-uca-chooser.c:413
+#: ../thunar-uca/thunar-uca-chooser.c:412
 msgid "Failed to save actions to disk."
 msgstr "Η αποθήκευση των ενεργειών στο δίσκο απέτυχε."
 

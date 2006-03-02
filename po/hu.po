@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-01 16:34+0100\n"
+"POT-Creation-Date: 2006-03-02 11:47+0100\n"
 "PO-Revision-Date: 2005-10-06 22:02+0900\n"
 "Last-Translator: SZERVÁC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -452,7 +452,7 @@ msgstr "Jelenlegi könyvtár"
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:482
+#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:484
 #, fuzzy, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Nem törölhető: %s"
@@ -480,79 +480,80 @@ msgid "Open With"
 msgstr ""
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:269
+#: ../thunar/thunar-chooser-dialog.c:271
 msgid "Use a _custom command:"
 msgstr ""
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:287
+#: ../thunar/thunar-chooser-dialog.c:289
 #, fuzzy
 msgid "_Browse"
 msgstr "_Bezárás"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:460
+#: ../thunar/thunar-chooser-dialog.c:462
 #, fuzzy, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Nem törölhető: %s"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:495
+#: ../thunar/thunar-chooser-dialog.c:497
 #, fuzzy, c-format
 msgid "Failed to execute \"%s\""
 msgstr "Nem törölhető: %s"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:616
+#: ../thunar/thunar-chooser-dialog.c:618
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:638 ../thunar-uca/thunar-uca-editor.c:491
+#: ../thunar/thunar-chooser-dialog.c:640 ../thunar-uca/thunar-uca-editor.c:491
 #, fuzzy
 msgid "Select an Application"
 msgstr "_Hely megnyitása..."
 
-#: ../thunar/thunar-chooser-dialog.c:648 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:501
 #: ../thunar-uca/thunar-uca-editor.c:640
 #, fuzzy
 msgid "All Files"
 msgstr "Fájlok"
 
-#: ../thunar/thunar-chooser-dialog.c:653 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:655 ../thunar-uca/thunar-uca-editor.c:506
 #, fuzzy
 msgid "Executable Files"
 msgstr "Minden fájl kiválasztása"
 
-#: ../thunar/thunar-chooser-dialog.c:668 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:670 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:674 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:676 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:680 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:682 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:686 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:688 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr ""
 
-#: ../thunar/thunar-chooser-model.c:335
+#: ../thunar/thunar-chooser-model.c:339
 msgid "None available"
 msgstr ""
 
 #. append the "Recommended Applications:" category
-#: ../thunar/thunar-chooser-model.c:379
-msgid "Recommended Applications:"
-msgstr ""
+#: ../thunar/thunar-chooser-model.c:383
+#, fuzzy
+msgid "Recommended Applications"
+msgstr "_Hely megnyitása..."
 
 #. append the "Other Applications:" category
-#: ../thunar/thunar-chooser-model.c:382
+#: ../thunar/thunar-chooser-model.c:386
 #, fuzzy
-msgid "Other Applications:"
+msgid "Other Applications"
 msgstr "_Hely megnyitása..."
 
 #. tell the user that we cannot paste
@@ -597,13 +598,6 @@ msgstr "Részletes könyvtárlista"
 #: ../thunar/thunar-details-view.c:269
 msgid "Details view"
 msgstr "Részletes nézet"
-
-#: ../thunar/thunar-dialogs.c:104 ../thunar/thunar-dialogs.c:112
-#: ../thunar-uca/thunar-uca-chooser.c:414
-#: ../thunar-uca/thunar-uca-provider.c:329
-#, c-format
-msgid "%s."
-msgstr ""
 
 #. display an error message to the user
 #: ../thunar/thunar-dialogs.c:180
@@ -1934,45 +1928,45 @@ msgstr ""
 msgid "Custom Actions"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-chooser.c:142
+#: ../thunar-uca/thunar-uca-chooser.c:141
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-chooser.c:188
+#: ../thunar-uca/thunar-uca-chooser.c:187
 msgid "Add a new custom action."
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-chooser.c:198
+#: ../thunar-uca/thunar-uca-chooser.c:197
 #, fuzzy
 msgid "Edit the currently selected action."
 msgstr "A most megjelenített fájl"
 
-#: ../thunar-uca/thunar-uca-chooser.c:208
+#: ../thunar-uca/thunar-uca-chooser.c:207
 #, fuzzy
 msgid "Delete the currently selected action."
 msgstr "A kijelölt elem tulajdonságai"
 
-#: ../thunar-uca/thunar-uca-chooser.c:218
+#: ../thunar-uca/thunar-uca-chooser.c:217
 #, fuzzy
 msgid "Move the currently selected action up by one row."
 msgstr "A kijelölt elem tulajdonságai"
 
-#: ../thunar-uca/thunar-uca-chooser.c:228
+#: ../thunar-uca/thunar-uca-chooser.c:227
 #, fuzzy
 msgid "Move the currently selected action down by one row."
 msgstr "A kijelölt elem tulajdonságai"
 
-#: ../thunar-uca/thunar-uca-chooser.c:364
+#: ../thunar-uca/thunar-uca-chooser.c:363
 msgid "Edit Action"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-chooser.c:364
+#: ../thunar-uca/thunar-uca-chooser.c:363
 msgid "Create Action"
 msgstr ""
 
-#: ../thunar-uca/thunar-uca-chooser.c:413
+#: ../thunar-uca/thunar-uca-chooser.c:412
 #, fuzzy
 msgid "Failed to save actions to disk."
 msgstr "Nem törölhető: %s"

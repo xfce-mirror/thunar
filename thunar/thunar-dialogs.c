@@ -101,7 +101,7 @@ thunar_dialogs_show_error (gpointer      parent,
                                    | GTK_DIALOG_MODAL,
                                    GTK_MESSAGE_ERROR,
                                    GTK_BUTTONS_CLOSE,
-                                   _("%s."), primary_text);
+                                   "%s.", primary_text);
 
   /* move the dialog to the appropriate screen */
   if (window == NULL && screen != NULL)
@@ -109,7 +109,7 @@ thunar_dialogs_show_error (gpointer      parent,
 
   /* set secondary text if an error is provided */
   if (G_LIKELY (error != NULL))
-    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("%s."), error->message);
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s.", error->message);
 
   /* display the dialog */
   gtk_dialog_run (GTK_DIALOG (dialog));

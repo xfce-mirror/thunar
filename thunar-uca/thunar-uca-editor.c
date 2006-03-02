@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -554,7 +554,7 @@ thunar_uca_editor_command_clicked (ThunarUcaEditor *uca_editor)
       if (G_UNLIKELY (s != NULL))
         *s = '\0';
 
-      if (G_LIKELY (*filename != '\0'))
+      if (G_LIKELY (g_path_is_absolute (filename)))
         gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), filename);
       g_free (filename);
     }
@@ -675,7 +675,7 @@ thunar_uca_editor_icon_clicked (ThunarUcaEditor *uca_editor)
 
   /* setup the currently selected icon file */
   filename = g_object_get_data (G_OBJECT (uca_editor->icon_button), "thunar-uca-icon-filename");
-  if (G_LIKELY (filename != NULL && *filename != '\0'))
+  if (G_LIKELY (filename != NULL && g_path_is_absolute (filename)))
     gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), filename);
 
   /* run the chooser dialog */

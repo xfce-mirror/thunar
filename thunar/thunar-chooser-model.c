@@ -174,6 +174,8 @@ thunar_chooser_model_init (ThunarChooserModel *model)
     THUNAR_VFS_TYPE_MIME_APPLICATION,
     PANGO_TYPE_STYLE,
     G_TYPE_BOOLEAN,
+    PANGO_TYPE_WEIGHT,
+    G_TYPE_BOOLEAN,
   };
 
   /* register the column types */
@@ -298,6 +300,8 @@ thunar_chooser_model_append (ThunarChooserModel *model,
   gtk_tree_store_set (GTK_TREE_STORE (model), &parent_iter,
                       THUNAR_CHOOSER_MODEL_COLUMN_NAME, title,
                       THUNAR_CHOOSER_MODEL_COLUMN_ICON, icon,
+                      THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT, PANGO_WEIGHT_SEMIBOLD,
+                      THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT_SET, TRUE,
                       -1);
   if (G_LIKELY (icon != NULL))
     g_object_unref (G_OBJECT (icon));
@@ -376,10 +380,10 @@ thunar_chooser_model_import (ThunarChooserModel *model,
     }
 
   /* append the "Recommended Applications:" category */
-  thunar_chooser_model_append (model, _("Recommended Applications:"), "gnome-settings-default-applications", recommended);
+  thunar_chooser_model_append (model, _("Recommended Applications"), "gnome-settings-default-applications", recommended);
 
   /* append the "Other Applications:" category */
-  thunar_chooser_model_append (model, _("Other Applications:"), "gnome-applications", other);
+  thunar_chooser_model_append (model, _("Other Applications"), "gnome-applications", other);
 
   /* cleanup */
   g_list_foreach (recommended, (GFunc) g_object_unref, NULL);

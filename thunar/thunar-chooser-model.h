@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>.
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -52,6 +52,8 @@ typedef enum
   THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION,
   THUNAR_CHOOSER_MODEL_COLUMN_STYLE,
   THUNAR_CHOOSER_MODEL_COLUMN_STYLE_SET,
+  THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT,
+  THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT_SET,
   THUNAR_CHOOSER_MODEL_N_COLUMNS,
 } ThunarChooserModelColumn;
 

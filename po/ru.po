@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-01 16:34+0100\n"
+"POT-Creation-Date: 2006-03-02 11:47+0100\n"
 "PO-Revision-Date: 2006-02-24 16:14+0500\n"
 "Last-Translator: Sergey Fedoseev <fedoseev.sergey@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -451,7 +451,7 @@ msgstr "Создание каталогов..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:482
+#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:484
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Не удалось назначить приложение по умолчанию для \"%s\""
@@ -479,74 +479,76 @@ msgid "Open With"
 msgstr "Открыть с помощью"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:269
+#: ../thunar/thunar-chooser-dialog.c:271
 msgid "Use a _custom command:"
 msgstr "Использовать _команду:"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:287
+#: ../thunar/thunar-chooser-dialog.c:289
 msgid "_Browse"
 msgstr "_Обзор"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:460
+#: ../thunar/thunar-chooser-dialog.c:462
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Не удалось добавить приложение \"%s\""
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:495
+#: ../thunar/thunar-chooser-dialog.c:497
 #, c-format
 msgid "Failed to execute \"%s\""
 msgstr "Не удалось запустить \"%s\""
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:616
+#: ../thunar/thunar-chooser-dialog.c:618
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Открывать <i>%s</i> и другие файлы типа \"%s\" при помощи:"
 
-#: ../thunar/thunar-chooser-dialog.c:638 ../thunar-uca/thunar-uca-editor.c:491
+#: ../thunar/thunar-chooser-dialog.c:640 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Выберите приложение"
 
-#: ../thunar/thunar-chooser-dialog.c:648 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:501
 #: ../thunar-uca/thunar-uca-editor.c:640
 msgid "All Files"
 msgstr "Все файлы"
 
-#: ../thunar/thunar-chooser-dialog.c:653 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:655 ../thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Исполняемые файлы"
 
-#: ../thunar/thunar-chooser-dialog.c:668 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:670 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Скрипты Perl"
 
-#: ../thunar/thunar-chooser-dialog.c:674 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:676 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Скрипты Python"
 
-#: ../thunar/thunar-chooser-dialog.c:680 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:682 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Скрипты Ruby"
 
-#: ../thunar/thunar-chooser-dialog.c:686 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:688 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Скрипты Shell"
 
-#: ../thunar/thunar-chooser-model.c:335
+#: ../thunar/thunar-chooser-model.c:339
 msgid "None available"
 msgstr "Нет доступных"
 
 #. append the "Recommended Applications:" category
-#: ../thunar/thunar-chooser-model.c:379
-msgid "Recommended Applications:"
+#: ../thunar/thunar-chooser-model.c:383
+#, fuzzy
+msgid "Recommended Applications"
 msgstr "Рекомендуемые приложения:"
 
 #. append the "Other Applications:" category
-#: ../thunar/thunar-chooser-model.c:382
-msgid "Other Applications:"
+#: ../thunar/thunar-chooser-model.c:386
+#, fuzzy
+msgid "Other Applications"
 msgstr "Другие приложения:"
 
 #. tell the user that we cannot paste
@@ -592,13 +594,6 @@ msgstr "Подробный список"
 #: ../thunar/thunar-details-view.c:269
 msgid "Details view"
 msgstr "Просмотр в виде списка"
-
-#: ../thunar/thunar-dialogs.c:104 ../thunar/thunar-dialogs.c:112
-#: ../thunar-uca/thunar-uca-chooser.c:414
-#: ../thunar-uca/thunar-uca-provider.c:329
-#, c-format
-msgid "%s."
-msgstr "%s."
 
 #. display an error message to the user
 #: ../thunar/thunar-dialogs.c:180
@@ -1921,7 +1916,7 @@ msgstr "Не выгружать расширение из памяти"
 msgid "Custom Actions"
 msgstr "Особые действия"
 
-#: ../thunar-uca/thunar-uca-chooser.c:142
+#: ../thunar-uca/thunar-uca-chooser.c:141
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
@@ -1929,37 +1924,37 @@ msgstr ""
 "Вы можете настроить особые действия, которые будут появляться в контекстном "
 "меню файлового менеджера при выборе определенных типов файлов."
 
-#: ../thunar-uca/thunar-uca-chooser.c:188
+#: ../thunar-uca/thunar-uca-chooser.c:187
 msgid "Add a new custom action."
 msgstr "Добавить особое действие"
 
-#: ../thunar-uca/thunar-uca-chooser.c:198
+#: ../thunar-uca/thunar-uca-chooser.c:197
 msgid "Edit the currently selected action."
 msgstr "Изменить выбранное действие"
 
-#: ../thunar-uca/thunar-uca-chooser.c:208
+#: ../thunar-uca/thunar-uca-chooser.c:207
 msgid "Delete the currently selected action."
 msgstr "Удалить выбранное действие"
 
-#: ../thunar-uca/thunar-uca-chooser.c:218
+#: ../thunar-uca/thunar-uca-chooser.c:217
 #, fuzzy
 msgid "Move the currently selected action up by one row."
 msgstr "Сдвинуть выбранное действие на одну позицию выше"
 
-#: ../thunar-uca/thunar-uca-chooser.c:228
+#: ../thunar-uca/thunar-uca-chooser.c:227
 #, fuzzy
 msgid "Move the currently selected action down by one row."
 msgstr "Сдвинуть выбранное действие на одну позицию ниже"
 
-#: ../thunar-uca/thunar-uca-chooser.c:364
+#: ../thunar-uca/thunar-uca-chooser.c:363
 msgid "Edit Action"
 msgstr "Редактировать действие"
 
-#: ../thunar-uca/thunar-uca-chooser.c:364
+#: ../thunar-uca/thunar-uca-chooser.c:363
 msgid "Create Action"
 msgstr "Создать действие"
 
-#: ../thunar-uca/thunar-uca-chooser.c:413
+#: ../thunar-uca/thunar-uca-chooser.c:412
 msgid "Failed to save actions to disk."
 msgstr "Не удалось сохранить действия на диск"
 
@@ -2191,6 +2186,9 @@ msgstr "Файловый менеджер"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Файловый менеджер Thunar"
+
+#~ msgid "%s."
+#~ msgstr "%s."
 
 #~ msgid "Paste files into the selected folder"
 #~ msgstr "Вставить файлы в выбранный каталог"

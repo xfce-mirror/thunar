@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-01 16:34+0100\n"
+"POT-Creation-Date: 2006-03-02 11:47+0100\n"
 "PO-Revision-Date: 2006-02-22 12:03+0100\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -449,7 +449,7 @@ msgstr "Direktorioak sortzen..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:482
+#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:484
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Huts \"%s\"-ren aplikazio lehenetsia ezartzerakoan"
@@ -477,74 +477,76 @@ msgid "Open With"
 msgstr "Honekin Ireki"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:269
+#: ../thunar/thunar-chooser-dialog.c:271
 msgid "Use a _custom command:"
 msgstr "Komando pert_sonalizatu bat erabili:"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:287
+#: ../thunar/thunar-chooser-dialog.c:289
 msgid "_Browse"
 msgstr "_Nabigatu"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:460
+#: ../thunar/thunar-chooser-dialog.c:462
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Huts \"%s\" aplikazio berria gehitzerakoan"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:495
+#: ../thunar/thunar-chooser-dialog.c:497
 #, c-format
 msgid "Failed to execute \"%s\""
 msgstr "Huts \"%s\" abiarazterakoan"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:616
+#: ../thunar/thunar-chooser-dialog.c:618
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "<i>%s</i> eta \"%s\" motako fitxategiak honekin ireki:"
 
-#: ../thunar/thunar-chooser-dialog.c:638 ../thunar-uca/thunar-uca-editor.c:491
+#: ../thunar/thunar-chooser-dialog.c:640 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Aplikazio bat hautatu"
 
-#: ../thunar/thunar-chooser-dialog.c:648 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:501
 #: ../thunar-uca/thunar-uca-editor.c:640
 msgid "All Files"
 msgstr "Fitxategi Guztiak"
 
-#: ../thunar/thunar-chooser-dialog.c:653 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:655 ../thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Fitxategi Exekutagarriak"
 
-#: ../thunar/thunar-chooser-dialog.c:668 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:670 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Perl Skript-ak"
 
-#: ../thunar/thunar-chooser-dialog.c:674 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:676 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Python Skript-ak"
 
-#: ../thunar/thunar-chooser-dialog.c:680 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:682 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Ruby Skript-ak"
 
-#: ../thunar/thunar-chooser-dialog.c:686 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:688 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Shell Skript-ak"
 
-#: ../thunar/thunar-chooser-model.c:335
+#: ../thunar/thunar-chooser-model.c:339
 msgid "None available"
 msgstr "Bat ere ez erabilgarri"
 
 #. append the "Recommended Applications:" category
-#: ../thunar/thunar-chooser-model.c:379
-msgid "Recommended Applications:"
+#: ../thunar/thunar-chooser-model.c:383
+#, fuzzy
+msgid "Recommended Applications"
 msgstr "Gomendaturiko Aplikazioak:"
 
 #. append the "Other Applications:" category
-#: ../thunar/thunar-chooser-model.c:382
-msgid "Other Applications:"
+#: ../thunar/thunar-chooser-model.c:386
+#, fuzzy
+msgid "Other Applications"
 msgstr "BEste Aplikazioak:"
 
 #. tell the user that we cannot paste
@@ -590,13 +592,6 @@ msgstr "Xeheturiko direktorio zerrendatzea"
 #: ../thunar/thunar-details-view.c:269
 msgid "Details view"
 msgstr "Xeheturiko ikuspegia"
-
-#: ../thunar/thunar-dialogs.c:104 ../thunar/thunar-dialogs.c:112
-#: ../thunar-uca/thunar-uca-chooser.c:414
-#: ../thunar-uca/thunar-uca-provider.c:329
-#, c-format
-msgid "%s."
-msgstr "%s."
 
 #. display an error message to the user
 #: ../thunar/thunar-dialogs.c:180
@@ -1899,7 +1894,7 @@ msgstr "Ez deskargatu plugin-a memoriatik"
 msgid "Custom Actions"
 msgstr "Ekintza Pertsonalizatuak"
 
-#: ../thunar-uca/thunar-uca-chooser.c:142
+#: ../thunar-uca/thunar-uca-chooser.c:141
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
@@ -1907,37 +1902,37 @@ msgstr ""
 "Fixtategi kudeatzaile menuan zenbait fitxategi\n"
 "motentzat agertzen diren ekintza pertsonalizatuak konfiguratu ditzakezu."
 
-#: ../thunar-uca/thunar-uca-chooser.c:188
+#: ../thunar-uca/thunar-uca-chooser.c:187
 msgid "Add a new custom action."
 msgstr "Ekintza pertsonalizatu berri bat gehitu."
 
-#: ../thunar-uca/thunar-uca-chooser.c:198
+#: ../thunar-uca/thunar-uca-chooser.c:197
 msgid "Edit the currently selected action."
 msgstr "Hautaturiko ekintza editatu."
 
-#: ../thunar-uca/thunar-uca-chooser.c:208
+#: ../thunar-uca/thunar-uca-chooser.c:207
 msgid "Delete the currently selected action."
 msgstr "Hautaturiko ekintza ezabatu."
 
-#: ../thunar-uca/thunar-uca-chooser.c:218
+#: ../thunar-uca/thunar-uca-chooser.c:217
 #, fuzzy
 msgid "Move the currently selected action up by one row."
 msgstr "Hautaturiko ekintza lerro bat gora mugitu."
 
-#: ../thunar-uca/thunar-uca-chooser.c:228
+#: ../thunar-uca/thunar-uca-chooser.c:227
 #, fuzzy
 msgid "Move the currently selected action down by one row."
 msgstr "Hautaturiko ekintza lerro bat behera mugitu."
 
-#: ../thunar-uca/thunar-uca-chooser.c:364
+#: ../thunar-uca/thunar-uca-chooser.c:363
 msgid "Edit Action"
 msgstr "Ekintza Editatu"
 
-#: ../thunar-uca/thunar-uca-chooser.c:364
+#: ../thunar-uca/thunar-uca-chooser.c:363
 msgid "Create Action"
 msgstr "Ekintza Sortu"
 
-#: ../thunar-uca/thunar-uca-chooser.c:413
+#: ../thunar-uca/thunar-uca-chooser.c:412
 msgid "Failed to save actions to disk."
 msgstr "Huts ekintzak diskan gordetzerakoan."
 
@@ -2155,6 +2150,9 @@ msgstr "Fitxategi Kudeatzailea"
 #: ../Thunar.desktop.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar Fitxategi Kudeatzailea"
+
+#~ msgid "%s."
+#~ msgstr "%s."
 
 #~ msgid "Paste files into the selected folder"
 #~ msgstr "Fitxategiak aukeratutako karpeta barruan itsasi"

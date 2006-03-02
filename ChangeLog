@@ -1,3 +1,21 @@
+2006-03-02	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-uca/thunar-uca-chooser.c(thunar_uca_chooser_init): Fix the
+	  vertical icon alignment.
+	* thunar-uca/thunar-uca-editor.c(thunar_uca_editor_command_clicked):
+	  Verify that an absolute filename is given. Else GtkFileChooser will
+	  complain.
+	* thunar-uca/thunar-uca-editor.c(thunar_uca_editor_icon_clicked): Same
+	  story.
+	* thunar/thunar-dialogs.c, thunar/thunar-dialogs.c, 
+	  thunar-uca/thunar-uca-chooser.c, thunar-uca/thunar-uca-provider.c:
+	  "%s." is really not something that must be translated.
+	* thunar/thunar-chooser-dialog.c, thunar/thunar-chooser-model.{c,h}: Use
+	  bold font for the titles.
+	* po/Thunar.pot, po/*.po: Update po files.
+	* po/de.po: Updated the german translations. Thanks to Fabian Nowak
+	  <timystery@arcor.de>.
+
 2006-03-01	Benedikt Meurer <benny@xfce.org>
 
 	* docs/manual/C/Thunar.xml.in: Add "Frequently Asked Questions".
