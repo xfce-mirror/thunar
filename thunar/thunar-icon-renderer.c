@@ -417,14 +417,14 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
       if (thunar_clipboard_manager_has_cutted_file (clipboard, icon_renderer->file))
         {
           /* 50% translucent for cutted files */
-          temp = thunar_gdk_pixbuf_lucent (icon, 50);
+          temp = exo_gdk_pixbuf_lucent (icon, 50);
           g_object_unref (G_OBJECT (icon));
           icon = temp;
         }
       else if (thunar_file_is_hidden (icon_renderer->file))
         {
           /* 75% translucent for hidden files */
-          temp = thunar_gdk_pixbuf_lucent (icon, 75);
+          temp = exo_gdk_pixbuf_lucent (icon, 75);
           g_object_unref (G_OBJECT (icon));
           icon = temp;
         }
@@ -436,14 +436,14 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
           if ((flags & GTK_CELL_RENDERER_SELECTED) != 0)
             {
               state = GTK_WIDGET_HAS_FOCUS (widget) ? GTK_STATE_SELECTED : GTK_STATE_ACTIVE;
-              temp = thunar_gdk_pixbuf_colorize (icon, &widget->style->base[state]);
+              temp = exo_gdk_pixbuf_colorize (icon, &widget->style->base[state]);
               g_object_unref (G_OBJECT (icon));
               icon = temp;
             }
 
           if ((flags & GTK_CELL_RENDERER_PRELIT) != 0)
             {
-              temp = thunar_gdk_pixbuf_spotlight (icon);
+              temp = exo_gdk_pixbuf_spotlight (icon);
               g_object_unref (G_OBJECT (icon));
               icon = temp;
             }

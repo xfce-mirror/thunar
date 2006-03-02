@@ -20,12 +20,9 @@
 #ifndef __THUNAR_GDK_PIXBUF_EXTENSIONS_H__
 #define __THUNAR_GDK_PIXBUF_EXTENSIONS_H__
 
-#include <gdk/gdk.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 
 G_BEGIN_DECLS;
-
-GdkPixbuf *thunar_gdk_pixbuf_colorize  (const GdkPixbuf *src,
-                                        const GdkColor  *color);
 
 GdkPixbuf *thunar_gdk_pixbuf_frame     (GdkPixbuf       *src,
                                         GdkPixbuf       *frame,
@@ -33,11 +30,6 @@ GdkPixbuf *thunar_gdk_pixbuf_frame     (GdkPixbuf       *src,
                                         gint             top_offset,
                                         gint             right_offset,
                                         gint             bottom_offset);
-
-GdkPixbuf *thunar_gdk_pixbuf_lucent    (const GdkPixbuf *src,
-                                        guint            percent);
-
-GdkPixbuf *thunar_gdk_pixbuf_spotlight (const GdkPixbuf *src);
 
 G_END_DECLS;
 
