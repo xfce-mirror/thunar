@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-04 12:23+0900\n"
-"PO-Revision-Date: 2006-02-25 10:51+0900\n"
+"PO-Revision-Date: 2006-03-04 12:45+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -466,7 +466,7 @@ msgstr "アプリケーションは選択されていません"
 
 #. setup a useful tooltip and ATK description
 #: ../thunar/thunar-chooser-button.c:373
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
 msgstr ""
@@ -595,9 +595,8 @@ msgstr "詳細表示"
 
 #. display an error message to the user
 #: ../thunar/thunar-dialogs.c:180
-#, fuzzy
 msgid "Failed to open the documentation browser"
-msgstr "テンプレートフォルダを開くのに失敗しました。"
+msgstr "文書を表示するブラウザーの起動に失敗しました。"
 
 #: ../thunar/thunar-dnd.c:62
 msgid "_Copy here"
@@ -1412,6 +1411,7 @@ msgstr "貼り付け(_P)"
 #: ../thunar/thunar-standard-view.c:297
 msgid "Move or Copy files previously selected by a Cut or Copy command"
 msgstr ""
+"既に切り取りまたはコピーで選択されているファイルを移動またはコピーします。"
 
 #: ../thunar/thunar-standard-view.c:298
 msgid "_Delete Files"
@@ -1430,6 +1430,8 @@ msgid ""
 "Move or Copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr ""
+"既に切り取りまたはコピーで選択されているファイルを選択したフォルダに移動また"
+"はコピーします。"
 
 #: ../thunar/thunar-standard-view.c:300
 msgid "Select _all Files"
@@ -1497,9 +1499,8 @@ msgid "New Folder"
 msgstr "新規フォルダ"
 
 #: ../thunar/thunar-standard-view.c:1677
-#, fuzzy
 msgid "Create New Folder"
-msgstr "フォルダを作成(_F)..."
+msgstr "新規フォルダを作成します。"
 
 #. generate a title for the create dialog
 #: ../thunar/thunar-standard-view.c:1726
@@ -1567,14 +1568,12 @@ msgid_plural "_Delete Files"
 msgstr[0] "削除(_D)"
 
 #: ../thunar/thunar-stock.c:55
-#, fuzzy
 msgid "Create"
-msgstr "アクションを作成"
+msgstr "作成"
 
 #: ../thunar/thunar-stock.c:56
-#, fuzzy
 msgid "Rename"
-msgstr "名前変更(_R)..."
+msgstr "名前変更"
 
 #. tell the user that no templates were found
 #: ../thunar/thunar-templates-action.c:375
@@ -1712,11 +1711,11 @@ msgstr "ヘルプ(_H)"
 
 #: ../thunar/thunar-window.c:240
 msgid "_Contents"
-msgstr ""
+msgstr "目次(_C)"
 
 #: ../thunar/thunar-window.c:240
 msgid "Display Thunar user manual"
-msgstr ""
+msgstr "Thunar のユーザーマニュアルを表示します。"
 
 #: ../thunar/thunar-window.c:241
 msgid "_About"
