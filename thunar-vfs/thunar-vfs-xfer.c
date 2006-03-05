@@ -387,7 +387,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
             }
 
           /* tell the caller that the job was cancelled */
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INTR, _("Operation cancelled"));
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INTR, _("Operation canceled"));
           goto end2;
         }
     }
