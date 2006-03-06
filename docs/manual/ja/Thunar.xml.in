@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY date "March 2006">
+<!ENTITY version "@PACKAGE_VERSION@">
+<!ENTITY application "@PACKAGE_NAME@">
+]>
+<article id="index" lang="ja">
+
+  <!-- Header -->
+  <articleinfo>
+    <title>Thunar ファイルマネージャー</title>
+
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2004</year>
+      <year>2005</year>
+      <year>2006</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright><copyright><year>2006.</year><holder>Daichi Kawahata (daichi@xfce.org)</holder></copyright>
+
+    <legalnotice id="legalnotice">
+      <para>フリーソフトウェア財団が公表する GNU フリー文書利用許諾契約書の第1.1版、あるいはそれ以降のいずれかの版の条件下において、この文書の複製、配布および/または変更が許可されます。変更出来ない箇所、表紙文および裏表紙文があってはいけません。この利用許諾契約書の全文は<ulink type="http" url="http://www.gnu.org/">フリーソフトウェア財団</ulink>から取得する事ができます。</para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>システム開発</orgdiv>
+          <jobtitle>ソフトウェア開発者</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+    <releaseinfo>この説明書は @PACKAGE_NAME@ のバージョン @PACKAGE_VERSION@ について書かれています。</releaseinfo>
+  </articleinfo>
+
+  <sect1 id="intro">
+    <title>@PACKAGE_NAME@ の紹介</title>
+
+    <para>Thunar は Xfce デスクトップ環境のために、軽快かつ手軽に使えるようゼロから設計されている、今風の新しいファイルマネージャーです。そのユーザーインターフェイスは簡潔かつ直観的で、紛らわしい、あるいは無駄なオプションは標準では一切組み込まれていません。素早く起動してフォルダの読み込みに対する感度も上々です。</para>
+
+    <para>その結果としてではありますが、ファイルマネージャー Thunar はあなたのファイルやアプリケーションのための統合された一つのアクセス拠点を提供します。以下の事柄が行うためにこのファイルマネージャーを利用することができます:</para>
+
+    <itemizedlist>
+      <listitem>フォルダおよび文書の作成。</listitem>
+      <listitem>ファイルおよびフォルダの表示。</listitem>
+      <listitem>ファイルおよびフォルダの管理。</listitem>
+      <listitem>個別に設定したアクションの実行および管理。</listitem>
+      <listitem>持ち運び可能なメディアへのアクセス。</listitem>
+    </itemizedlist>
+  </sect1>
+
+
+  <sect1 id="advanced-topics">
+    <title>高度な話題</title>
+
+    <sect2 id="the-unix-file-system">
+      <title>UNIX ファイルシステム</title>
+
+      <para>ファイルマネージャー Thunar は、基本的なファイルシステムの抽象的な些事を何の問題も無くこなしますので、利用者はこれらを気にする必要はありません。とは言いながら、全体像を掴むために基礎概念を理解しておくと、後々役立つ場合があります。この章では、UNIX ファイルシステムの概念を手短に紹介します。これは、今日における Linux を含むあらゆる UNIX の生まれ変わりで用いられています。</para>
+
+      <sect3 id="folders-and-paths">
+        <title>フォルダとパス</title>
+
+        <para>UNIX ファイルシステムでは、全てのファルダは一つの最上位フォルダから下へ向かって枝分かれしながら配置されていきます、逆さになった樹木の構造を想像してみて下さい。この最上位にあるフォルダは<emphasis>ルートディレクトリ</emphasis> (<emphasis>ディレクトリ</emphasis>という用語は<emphasis>フォルダ</emphasis>の代わりによく使われます) と呼ばれ、Thunar では<guilabel>ファイルシステム</guilabel>として表示されます。つまり、ある地点に到達するまでフォルダからフォルダへとこの木構造を登って行きます、その後に目標とする場所に着くまでサブフォルダを下って行くのです。</para>
+
+        <para>この木構造でのファイルやフォルダの位置はその<emphasis>パス</emphasis>で記すことができます。このパスというのは、目標とするフォルダやファイルにたどり着くために通過していかなければいけないパスのリストで、最上部のフォルダから始まります。例えば、<filename role="directory">/home/luke</filename> は最上部フォルダのサブフォルダ <filename role="directory">home</filename> のサブフォルダ <filename role="directory">luke</filename> になります。<filename>/home/luke/myfile.txt</filename> はそのサブフォルダにある <filename>myfile.txt</filename> というファイルです。これらのパスの先頭にある <filename role="directory">/</filename> は最上部フォルダを表します。</para>
+
+        <para>すべての利用者が個人用のファイルや設定を保管するための個別のフォルダを持ちます。このフォルダは<emphasis>ホームディレクトリ</emphasis>と呼ばれ、Thunar では利用者のログイン名と共に特別なアイコンで表示されます。Windows で知られる<guilabel>ﾏｲﾌｧｲﾙ</guilabel>と似ています。それぞれの利用者の<emphasis>ホームディレクトリ</emphasis>は通常 <filename role="directory">/home</filename> の下にあります。例として上げると、ログイン名 <filename role="directory">luke</filename> のホームディレクトリは <filename role="directory">/home/luke</filename> になる一方、<filename role="directory">/home/jane</filename> はログイン名が <filename role="directory">jane</filename> のホームディレクトリになります。</para>
+      </sect3>
+
+      <sect3 id="file-types">
+        <title>ファイルの種類</title>
+
+        <para>もう御存知かもしれませんが、UNIX ではあらゆるものがファイルとして取り扱われます。これは今日の UNIX システムに存在する物理的な存在に対しても当てはまります、実際の所、各種装置や周辺機器も特殊ファイルとして表されるのです。一見意味の無いように思われるかもしれませんが、これは UNIX の強味の一つでその語源でもあります。UNIX はシンプルなコアを何年にもわたって保守するだけでよいのに対して、他のオペレーティングシステムは新しいテクノロジーが紹介される度に、新しい概念を導入しなければなりませんでした。</para>
+
+        <para>UNIX ファイルシステムにおけるファイルの種類には、四つの重要なものがあります。</para>
+
+        <sect4 id="file-types-ordinary-files">
+          <title>普通のファイル</title>
+
+          <para>普通のファイルは文字データを含んでいたり、プログラムまたは他のデータであったりします。ここには画像ファイル、オーディオファイル、オフィス文書および動画ファイルも入ります。<emphasis>ファイル</emphasis>という用語がこれら普通のファイルを指すのによく使用されます。</para>
+        </sect4>
+
+        <sect4 id="file-types-folder-files">
+          <title>フォルダファイル</title>
+
+          <para>UNIX ファイルシステムではフォルダもファイルです。正確に言えばフォルダは特殊ファイルになります、このフォルダ内にある全てのファイルを参照するためのファイル名のマップが含まれています。</para>
+        </sect4>
+
+        <sect4 id="file-types-symbolic-link-files">
+          <title>シンボリックリンク・ファイル</title>
+
+          <para>シンボリックリンク (よく<emphasis>リンク</emphasis>と呼ばれます) はファイルシステムで、他のファイルへのパスを含む特殊ファイルです。従ってシンボリックファイル自身は特に意味のある情報を持ちません、単に他のファイルを参照するだけです。</para>
+        </sect4>
+
+        <sect4 id="file-types-device-files">
+          <title>デバイスファイル</title>
+
+          <para>始めの方で述べたように (殆んどの) デバイスもファイルシステム経由でアクセスされます。これら特殊デバイスファイルは通常 <filename role="directory">/dev</filename> フォルダにあります。例えば、特殊ファイル <filename>/dev/hda</filename> は Linux 上での一番目の IDE ディスクを表します。</para>
+        </sect4>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="faq">
+    <title>よく聞かれる質問</title>
+
+    <para>この章では @PACKAGE_NAME@ を使用するにあたって、かなりの頻度で尋ねられる質問に回答します。このページにない質問があるのでしたら、<ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">要望</ulink>を出して下さるようお願いします。</para>
+
+    <sect3 id="faq-executables">
+      <title>実行可能になっているファイルを実行しないのは何故ですか？</title>
+
+      <para>セキュリティ上の理由から、Thunar は種類が <literal>application/x-desktop</literal>, <literal>application/x-executable</literal> および <literal>application/x-shellscript</literal> のファイルのみを実行します。デスクトップファイルに対しては、種類が <literal>Application</literal> かつ適正な <literal>Exec</literal> 行が指定されているか、あるいは種類が <literal>Link</literal> かつ適正な <literal>URL</literal> が指定されている場合に限って実行機能が有効になります。その他に対しては、当該ファイルが現在の利用者にとって実行可能なようにマークされている場合に利用できます。</para>
+
+      <para><literal>application/x-executable</literal> および <literal>application/x-shellscript</literal> に関しては次のことを覚えておいて下さい、この種類のファイルは実際にはこの種類に正確に一致する必要がありません、しかし、チェックされた種類に上記二つの種類に該当する親があるなら、あるいは MIME タイプが上にあるものの内の一つへの別名ならば、それで事足ります。</para>
+    </sect3>
+
+    <sect3 id="faq-metadata">
+      <title>ファイルに関連付けられているメタデータは何処に保存されていますか？</title>
+
+      <para>Thunar はファイルやフォルダに様々な設定事項を関連付けます。これらはメタデータと呼ばれ、全ファイルのメタデータは (メタファイルと呼ばれる) tdb データベース・ファイルに保管されます。このデータベース・ファイルは <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> に保存されていて、<command>tdbtool</command> を使うことで変更できます。このツールは配布される Thunar パッケージの一部として、サブディレクトリ <filename role="directory">tdb/</filename> にあります。</para>
+    </sect3>
+
+    <sect3 id="faq-thunarrc">
+      <title>Thunar の環境設定が保存されているのは何処ですか？</title>
+
+      <para>Thunar は <filename>.ini</filename> ファイルに利用者が変更可能な環境設定 (および隠し設定) を保管します。このファイルは <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename> にあり、テキストエディターを使って色々な設定を実験してみることができます。各環境設定の概要は <filename>docs/README.thunarrc</filename> にあります。</para>
+    </sect3>
+
+    <sect3 id="faq-mouse-gestures">
+      <title>Thunar でマウスジェスチャーを使うには？</title>
+
+      <para>現在のところ、Thunar はアイコン表示で、いわゆる<emphasis>マウスジェスチャー</emphasis>と呼ばれるものを最低限サポートする機能が備わっています。マウスポインターがアイコン表示コンポーネントの背景となる場所 (アイコンや文字が無い所ならどこでも該当します) にある間は、マウスの中央ボタン (通常はマウスホイール) を押しっ放しにすることで、これら<emphasis>マウスジェスチャー</emphasis>の機能を使うことができます。これである決まった動作を実行するために、カーソルを四方に移動することができます。以下でこれらの動作を説明します。</para>
+
+      <simplelist>
+        <member><guilabel>左</guilabel> - 前のフォルダを開きます</member>
+        <member><guilabel>上</guilabel> - 上位のフォルダを開きます</member>
+        <member><guilabel>右</guilabel> - 次のフォルダを開きます</member>
+        <member><guilabel>下</guilabel> - 現在のフォルダをリロードします</member>
+      </simplelist>
+    </sect3>
+  </sect1>
+
+
+  <sect1 id="support">
+    <title>サポート</title>
+
+    <para>このアプリケーションあるいは説明書に関するバグを報告したり何か提案をするなら、<ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink> にあるバグ追跡システムを御利用下さい。意味のあるバグ報告こそがバグを修正するのだという事を忘れないで下さい、ではどういったものが該当するかというと、二つの特質があります:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">再現可能であること。</emphasis>開発者自身がバグの存在を確認することができない場合は、それを修正するのはほぼ不可能に近くなります。どんな細かいことでも役立ちますので、詳細を余さず伝えて下さい。</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">具体的であること。</emphasis>開発者が問題を特定の箇所により早く絞れる程、その修正措置を取りやすくなります。</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>新機能の追加を要望する場合、何故それがアプリケーションにとって有意義だと考えるのか明らかにして下さるようお願いします。その機能について納得のいく議論を行えるのでしたら、追加される可能性は高くなります。要求する機能を実装したパッチを提供して下さるなら更に高くなりますが、事前にファイル <ulink url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> を忘れずに読んで下さい。特に <emphasis>Coding Style</emphasis> と題されている箇所に目を通すようにして下さい。</para>
+
+    <para>それ以外、利用方法やこのソフトウェアのインストールに関する質問があるのでしたら、<ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev メーリングリスト</ulink>で質問するか、IRC クライアントで <emphasis role="bold">irc.freenode.net</emphasis> のチャンネル <emphasis role="bold">#thunar</emphasis> に参加して手助けを求めてみて下さい。</para>
+  </sect1>
+
+  <sect1 id="copyright">
+    <title>@PACKAGE_NAME@ について</title>
+
+    <para>@PACKAGE_NAME@ は Benedikt Meurer (<email>benny@xfce.org</email>) が製作しました。より詳しい情報を得るには <ulink url="http://thunar.xfce.org/" type="http">Thunar のウェブサイト</ulink>を訪れて下さい。</para>
+
+    <para>Benedikt Meurer (<email>benny@xfce.org</email>) がこの文書を製作しました。最新版は <ulink type="http" url="http://thunar.xfce.org/">Thunar のウェブサイト</ulink>にあります。</para>
+
+    <para>このソフトウェアはフリーソフトウェア財団が公表する GNU 一般公衆利用許諾契約書の条件下に配布されています。第2版あるいは、あなたが選ぶそれ以降の版のいずれかが適用されます。</para>
+
+    <para>このプログラムには、GNU 一般公衆利用許諾契約書のコピーが附属するはずですが、もし無いのであればフリーソフトウェア財団に連絡して下さい。59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
+  </sect1>
+
+</article>
+<!--
+	vim:set ts=2 sw=2 et ai:
+-->

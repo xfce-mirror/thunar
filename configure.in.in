@@ -151,7 +151,7 @@ AC_TRY_LINK([#include <sys/mman.h>], posix_madvise_test(),
 dnl ******************************
 dnl *** Check for i18n support ***
 dnl ******************************
-XDT_I18N([ca de el es eu fi fr hu it ja nl pl pt_BR ru sv zh_TW])
+XDT_I18N([@LINGUAS@])
 
 dnl ***********************************
 dnl *** Check for required packages ***
@@ -217,6 +217,18 @@ if test x"$enable_xsltproc" = x"yes"; then
   fi
 fi
 AM_CONDITIONAL([ENABLE_XSLTPROC], [test x"$enable_xsltproc" = x"yes"])
+
+dnl ************************
+dnl *** Check for xml2po ***
+dnl ************************
+AC_ARG_ENABLE([xml2po], [AC_HELP_STRING([--enable-xml2po], [Use xml2po to translate documentation @<:@default=no@:>@])],, [enable_xml2po=no])
+if test x"$enable_xml2po" = x"yes"; then
+  AC_PATH_PROG([XML2PO], [xml2po], [no])
+  if test x"$XML2PO" = x"no"; then
+    enable_xml2po=no
+  fi
+fi
+AM_CONDITIONAL([ENABLE_XML2PO], [test x"$enable_xml2po" = x"yes"])
 
 dnl ****************************************************
 dnl *** Check for file system monitor implementation ***
@@ -343,6 +355,9 @@ docs/manual/Makefile
 docs/manual/C/Makefile
 docs/manual/C/Thunar.xml
 docs/manual/C/images/Makefile
+docs/manual/ja/Makefile
+docs/manual/ja/Thunar.xml
+docs/manual/ja/images/Makefile
 docs/papers/Makefile
 docs/reference/Makefile
 docs/reference/thunar-vfs/Makefile
@@ -357,6 +372,7 @@ icons/24x24/Makefile
 icons/48x48/Makefile
 icons/scalable/Makefile
 po/Makefile.in
+po-doc/Makefile
 tdb/Makefile
 tdb/tdbconfig.h
 pixmaps/Makefile

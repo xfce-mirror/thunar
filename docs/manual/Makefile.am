@@ -1,7 +1,8 @@
 # $Id$
 
 SUBDIRS =								\
-	C
+	C								\
+	ja
 
 cssdir = $(datadir)/doc/Thunar/html
 css_DATA =								\

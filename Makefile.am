@@ -8,6 +8,7 @@ SUBDIRS =								\
 	icons								\
 	pixmaps								\
 	po								\
+	po-doc								\
 	tdb								\
 	thunarx								\
 	thunar-vfs							\
@@ -69,6 +70,9 @@ DISTCLEANFILES =							\
 	$(desktop_DATA)							\
 	$(service_DATA)
 
-DISTCHECK_CONFIGURE_FLAGS = --enable-gtk-doc --enable-xsltproc
+DISTCHECK_CONFIGURE_FLAGS =						\
+	--enable-gtk-doc						\
+	--enable-xml2po							\
+	--enable-xsltproc
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
