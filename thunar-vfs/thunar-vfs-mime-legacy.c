@@ -1071,7 +1071,7 @@ thunar_vfs_mime_legacy_parse_magic_line (ThunarVfsMimeLegacy      *legacy,
   bytes_read = fread (buffer, 1, matchlet->value_length, fp);
   if (bytes_read != matchlet->value_length)
     return feof (fp) ? THUNAR_VFS_MIME_LEGACY_MAGIC_EOF : THUNAR_VFS_MIME_LEGACY_MAGIC_ERROR;
-  matchlet->value = g_string_chunk_insert_len (legacy->string_chunk, buffer, matchlet->value_length);
+  matchlet->value = (guchar *) g_string_chunk_insert_len (legacy->string_chunk, buffer, matchlet->value_length);
 
   c = getc_unlocked (fp);
   if (c == '&')
@@ -1081,7 +1081,7 @@ thunar_vfs_mime_legacy_parse_magic_line (ThunarVfsMimeLegacy      *legacy,
       if (bytes_read != matchlet->value_length)
         return feof (fp) ? THUNAR_VFS_MIME_LEGACY_MAGIC_EOF : THUNAR_VFS_MIME_LEGACY_MAGIC_ERROR;
 
-      matchlet->mask = g_string_chunk_insert_len (legacy->string_chunk, buffer, matchlet->value_length);
+      matchlet->mask = (guchar *) g_string_chunk_insert_len (legacy->string_chunk, buffer, matchlet->value_length);
 
       c = getc_unlocked (fp);
     }

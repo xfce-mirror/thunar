@@ -135,12 +135,12 @@ static ThunarVfsMonitor *thunar_vfs_xfer_monitor = NULL;
 static gboolean
 tvxc_mounted_readonly (const gchar *path)
 {
-#if defined(HAVE_STATFS) && !defined(__sgi__)
-  struct statfs statfsb;
-  return (statfs (path, &statfsb) == 0 && (statfsb.f_flags & MNT_RDONLY) != 0);
-#elif defined(HAVE_STATVFS)
+#if defined(HAVE_STATVFS)
   struct statvfs statvfsb;
   return (statvfs (path, &statvfsb) == 0 && (statvfsb.f_flag & ST_RDONLY) != 0);
+#elif defined(HAVE_STATFS)
+  struct statfs statfsb;
+  return (statfs (path, &statfsb) == 0 && (statfsb.f_flags & MNT_RDONLY) != 0);
 #else
   return FALSE;
 #endif

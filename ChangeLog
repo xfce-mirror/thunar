@@ -1,5 +1,11 @@
 2006-03-07	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-mime-legacy.c: Fix gcc4 warnings. Bug #1556.
+	* thunar-vfs/thunar-vfs-xfer.c: Prefer statvfs() over statfs() on
+	  systems that provide both. Bug #1556.
+
+2006-03-07	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-mime-legacy.c: Implement magic handling for
 	  the legacy backend (shared-mime-info <= 0.16). Bug #1106.
 
