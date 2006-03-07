@@ -22,11 +22,26 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+#ifdef HAVE_SYS_MOUNT_H
+#include <sys/mount.h>
+#endif
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_STATFS_H
+#include <sys/statfs.h>
+#endif
+#ifdef HAVE_SYS_STATVFS_H
+#include <sys/statvfs.h>
+#endif
+#ifdef HAVE_SYS_VFS_H
+#include <sys/vfs.h>
 #endif
 
 #ifdef HAVE_ERRNO_H
@@ -66,6 +81,7 @@ typedef enum
 
 
 
+static gboolean         tvxc_mounted_readonly           (const gchar          *path);
 static void             tvxc_set_error_from_errno       (GError              **error,
                                                          const gchar          *message,
                                                          const gchar          *path);
@@ -113,6 +129,22 @@ static inline gboolean  thunar_vfs_xfer_link_internal   (const ThunarVfsPath  *s
 
 /* reference to the global ThunarVfsMonitor instance */
 static ThunarVfsMonitor *thunar_vfs_xfer_monitor = NULL;
+
+
+
+static gboolean
+tvxc_mounted_readonly (const gchar *path)
+{
+#if defined(HAVE_STATFS) && !defined(__sgi__)
+  struct statfs statfsb;
+  return (statfs (path, &statfsb) == 0 && (statfsb.f_flags & MNT_RDONLY) != 0);
+#elif defined(HAVE_STATVFS)
+  struct statvfs statvfsb;
+  return (statvfs (path, &statvfsb) == 0 && (statvfsb.f_flag & ST_RDONLY) != 0);
+#else
+  return FALSE;
+#endif
+}
 
 
 
@@ -246,6 +278,17 @@ thunar_vfs_xfer_copy_directory (const gchar          *source_absolute_path,
                                 gboolean              merge_directories,
                                 GError              **error)
 {
+  mode_t mode;
+
+  /* default to the source dir permissions */
+  mode = (source_statb->st_mode & ~S_IFMT);
+
+  /* if the source is located on a rdonly medium, we
+   * automatically chmod +rw the destination file.
+   */
+  if (tvxc_mounted_readonly (source_absolute_path))
+    mode |= (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_WRITE);
+
   /* check if the directory exists */
   if (g_file_test (target_absolute_path, G_FILE_TEST_IS_DIR))
     {
@@ -256,7 +299,7 @@ thunar_vfs_xfer_copy_directory (const gchar          *source_absolute_path,
           goto error;
         }
     }
-  else if (g_mkdir (target_absolute_path, source_statb->st_mode & ~S_IFMT) < 0)
+  else if (g_mkdir (target_absolute_path, mode) < 0)
     {
 error:
       /* setup the error return */
@@ -305,6 +348,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
                               GError              **error)
 {
   gboolean succeed = FALSE;
+  mode_t   mode;
   gsize    done;
   gsize    bufsize;
   gchar   *buffer;
@@ -320,8 +364,17 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
       goto end0;
     }
 
+  /* default to the permissions of the source file */
+  mode = source_statb->st_mode;
+
+  /* if the source is located on a rdonly medium, we
+   * automatically chmod +rw the destination file.
+   */
+  if (tvxc_mounted_readonly (source_absolute_path))
+    mode |= (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_WRITE);
+
   /* try to open the target file for writing */
-  target_fd = open (target_absolute_path, O_CREAT | O_EXCL | O_NOFOLLOW | O_WRONLY, source_statb->st_mode);
+  target_fd = open (target_absolute_path, O_CREAT | O_EXCL | O_NOFOLLOW | O_WRONLY, mode);
   if (G_UNLIKELY (target_fd < 0))
     {
       /* translate EISDIR, EMLINK and ETXTBSY to EEXIST */
