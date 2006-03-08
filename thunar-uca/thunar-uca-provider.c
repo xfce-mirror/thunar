@@ -65,6 +65,7 @@ struct _ThunarUcaProvider
 
 
 static GQuark thunar_uca_context_quark;
+static GQuark thunar_uca_folder_quark;
 static GQuark thunar_uca_row_quark;
 
 
@@ -84,8 +85,9 @@ thunar_uca_provider_class_init (ThunarUcaProviderClass *klass)
 {
   GObjectClass *gobject_class;
 
-  /* setup the "thunar-uca-context" and "thunar-uca-row" quarks */
+  /* setup the "thunar-uca-context", "thunar-uca-folder" and "thunar-uca-row" quarks */
   thunar_uca_context_quark = g_quark_from_string ("thunar-uca-context");
+  thunar_uca_folder_quark = g_quark_from_string ("thunar-uca-folder");
   thunar_uca_row_quark = g_quark_from_string ("thunar-uca-row");
 
   gobject_class = G_OBJECT_CLASS (klass);
@@ -241,7 +243,9 @@ thunar_uca_provider_get_folder_actions (ThunarxMenuProvider *menu_provider,
                                         GtkWidget           *window,
                                         ThunarxFileInfo     *folder)
 {
-  GList files;
+  GList *actions;
+  GList  files;
+  GList *lp;
 
   /* fake a file list... */
   files.data = folder;
@@ -249,7 +253,13 @@ thunar_uca_provider_get_folder_actions (ThunarxMenuProvider *menu_provider,
   files.prev = NULL;
 
   /* ...and use the get_file_actions() method */
-  return thunarx_menu_provider_get_file_actions (menu_provider, window, &files);
+  actions = thunarx_menu_provider_get_file_actions (menu_provider, window, &files);
+
+  /* mark the actions, so we can properly detect the working directory */
+  for (lp = actions; lp != NULL; lp = lp->next)
+    g_object_set_qdata (G_OBJECT (lp->data), thunar_uca_folder_quark, GUINT_TO_POINTER (TRUE));
+
+  return actions;
 }
 
 
@@ -299,10 +309,22 @@ thunar_uca_provider_activated (ThunarUcaProvider *uca_provider,
       /* determine the working from the first file */
       if (G_LIKELY (files != NULL))
         {
+          /* determine the filename of the first selected file */
           uri = thunarx_file_info_get_uri (files->data);
           filename = g_filename_from_uri (uri, NULL, NULL);
           if (G_LIKELY (filename != NULL))
-            working_directory = g_path_get_dirname (filename);
+            {
+              /* if this is a folder action, we just use the filename as working directory */
+              if (g_object_get_qdata (G_OBJECT (action), thunar_uca_folder_quark) != NULL)
+                {
+                  working_directory = filename;
+                  filename = NULL;
+                }
+              else
+                {
+                  working_directory = g_path_get_dirname (filename);
+                }
+            }
           g_free (filename);
           g_free (uri);
         }
