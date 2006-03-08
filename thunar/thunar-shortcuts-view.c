@@ -694,7 +694,6 @@ thunar_shortcuts_view_rename_activated (GtkWidget           *item,
                                         ThunarShortcutsView *view)
 {
   GtkTreeRowReference *row;
-  GtkCellRendererMode  mode;
   GtkTreeViewColumn   *column;
   GtkCellRenderer     *renderer;
   GtkTreePath         *path;
@@ -710,14 +709,10 @@ thunar_shortcuts_view_rename_activated (GtkWidget           *item,
       renderer = g_list_nth_data (renderers, 1);
 
       /* make sure the text renderer is editable */
-      mode = renderer->mode;
-      renderer->mode = GTK_CELL_RENDERER_MODE_EDITABLE;
+      g_object_set (G_OBJECT (renderer), "editable", TRUE, NULL);
 
       /* tell the tree view to start editing the given row */
       gtk_tree_view_set_cursor_on_cell (GTK_TREE_VIEW (view), path, column, renderer, TRUE);
-
-      /* reset the text renderer mode */
-      renderer->mode = mode;
 
       /* cleanup */
       gtk_tree_path_free (path);
@@ -735,6 +730,9 @@ thunar_shortcuts_view_renamed (GtkCellRenderer     *renderer,
 {
   GtkTreeModel *model;
   GtkTreeIter   iter;
+
+  /* reset the editable flag */
+  g_object_set (G_OBJECT (renderer), "editable", FALSE, NULL);
 
   /* perform the rename */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
