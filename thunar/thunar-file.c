@@ -1594,7 +1594,8 @@ thunar_file_get_icon_name (const ThunarFile   *file,
   icon_name = thunar_vfs_mime_info_lookup_icon_name (file->info->mime_info, icon_theme);
 
   /* check if we have an accept icon for the icon we found */
-  if (icon_state == THUNAR_FILE_ICON_STATE_DROP && strcmp (icon_name, "gnome-fs-directory") == 0
+  if ((icon_state == THUNAR_FILE_ICON_STATE_DROP || icon_state == THUNAR_FILE_ICON_STATE_OPEN)
+      && strcmp (icon_name, "gnome-fs-directory") == 0
       && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-directory-accept"))
     {
       return "gnome-fs-directory-accept";

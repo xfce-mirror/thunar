@@ -35,6 +35,7 @@ enum
   PROP_0,
   PROP_CURRENT_DIRECTORY,
   PROP_SELECTED_FILES,
+  PROP_SHOW_HIDDEN,
   PROP_UI_MANAGER,
 };
 
@@ -172,6 +173,9 @@ thunar_shortcuts_pane_class_init (ThunarShortcutsPaneClass *klass)
   /* override ThunarComponent's properties */
   g_object_class_override_property (gobject_class, PROP_SELECTED_FILES, "selected-files");
   g_object_class_override_property (gobject_class, PROP_UI_MANAGER, "ui-manager");
+
+  /* override ThunarSidePane's properties */
+  g_object_class_override_property (gobject_class, PROP_SHOW_HIDDEN, "show-hidden");
 }
 
 
@@ -199,6 +203,8 @@ thunar_shortcuts_pane_navigator_init (ThunarNavigatorIface *iface)
 static void
 thunar_shortcuts_pane_side_pane_init (ThunarSidePaneIface *iface)
 {
+  iface->get_show_hidden = (gpointer) exo_noop_false;
+  iface->set_show_hidden = (gpointer) exo_noop;
 }
 
 
@@ -261,20 +267,22 @@ thunar_shortcuts_pane_get_property (GObject    *object,
                                     GValue     *value,
                                     GParamSpec *pspec)
 {
-  ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (object);
-
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      g_value_set_object (value, thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (shortcuts_pane)));
+      g_value_set_object (value, thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (object)));
       break;
 
     case PROP_SELECTED_FILES:
-      g_value_set_boxed (value, thunar_component_get_selected_files (THUNAR_COMPONENT (shortcuts_pane)));
+      g_value_set_boxed (value, thunar_component_get_selected_files (THUNAR_COMPONENT (object)));
+      break;
+
+    case PROP_SHOW_HIDDEN:
+      g_value_set_boolean (value, thunar_side_pane_get_show_hidden (THUNAR_SIDE_PANE (object)));
       break;
 
     case PROP_UI_MANAGER:
-      g_value_set_object (value, thunar_component_get_ui_manager (THUNAR_COMPONENT (shortcuts_pane)));
+      g_value_set_object (value, thunar_component_get_ui_manager (THUNAR_COMPONENT (object)));
       break;
 
     default:
@@ -291,20 +299,22 @@ thunar_shortcuts_pane_set_property (GObject      *object,
                                     const GValue *value,
                                     GParamSpec   *pspec)
 {
-  ThunarShortcutsPane *shortcuts_pane = THUNAR_SHORTCUTS_PANE (object);
-
   switch (prop_id)
     {
     case PROP_CURRENT_DIRECTORY:
-      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (shortcuts_pane), g_value_get_object (value));
+      thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (object), g_value_get_object (value));
       break;
 
     case PROP_SELECTED_FILES:
-      thunar_component_set_selected_files (THUNAR_COMPONENT (shortcuts_pane), g_value_get_boxed (value));
+      thunar_component_set_selected_files (THUNAR_COMPONENT (object), g_value_get_boxed (value));
+      break;
+
+    case PROP_SHOW_HIDDEN:
+      thunar_side_pane_set_show_hidden (THUNAR_SIDE_PANE (object), g_value_get_boolean (value));
       break;
 
     case PROP_UI_MANAGER:
-      thunar_component_set_ui_manager (THUNAR_COMPONENT (shortcuts_pane), g_value_get_object (value));
+      thunar_component_set_ui_manager (THUNAR_COMPONENT (object), g_value_get_object (value));
       break;
 
     default:

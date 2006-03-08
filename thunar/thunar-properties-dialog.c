@@ -232,6 +232,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   dialog->name_entry = g_object_new (GTK_TYPE_ENTRY, "editable", FALSE, NULL);
+  exo_binding_new (G_OBJECT (dialog->name_entry), "text", G_OBJECT (dialog), "title");
   g_signal_connect (G_OBJECT (dialog->name_entry), "activate", G_CALLBACK (thunar_properties_dialog_activate), dialog);
   g_signal_connect (G_OBJECT (dialog->name_entry), "focus-out-event", G_CALLBACK (thunar_properties_dialog_focus_out_event), dialog);
   gtk_table_attach (GTK_TABLE (table), dialog->name_entry, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -632,7 +633,6 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   if (G_LIKELY (strcmp (name, gtk_entry_get_text (GTK_ENTRY (dialog->name_entry))) != 0))
     {
       gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), name);
-      gtk_window_set_title (GTK_WINDOW (dialog), name);
 
       /* grab the input focus to the name entry */
       gtk_widget_grab_focus (dialog->name_entry);

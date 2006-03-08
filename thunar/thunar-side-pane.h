@@ -35,9 +35,18 @@ typedef struct _ThunarSidePane      ThunarSidePane;
 struct _ThunarSidePaneIface
 {
   GTypeInterface __parent__;
+
+  /* virtual methods */
+  gboolean (*get_show_hidden) (ThunarSidePane *side_pane);
+  void     (*set_show_hidden) (ThunarSidePane *side_pane,
+                               gboolean        show_hidden);
 };
 
-GType thunar_side_pane_get_type (void) G_GNUC_CONST;
+GType    thunar_side_pane_get_type        (void) G_GNUC_CONST;
+
+gboolean thunar_side_pane_get_show_hidden (ThunarSidePane *side_pane);
+void     thunar_side_pane_set_show_hidden (ThunarSidePane *side_pane,
+                                           gboolean        show_hidden);
 
 G_END_DECLS;
 

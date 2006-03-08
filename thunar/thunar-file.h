@@ -56,14 +56,16 @@ typedef enum
  * ThunarFileIconState:
  * @THUNAR_FILE_ICON_STATE_DEFAULT : the default icon for the file.
  * @THUNAR_FILE_ICON_STATE_DROP    : the drop accept icon for the file.
+ * @THUNAR_FILE_ICON_STATE_OPEN    : the folder is expanded.
  *
  * The various file icon states that are used within the file manager
  * views.
  **/
-typedef enum /*< flags >*/
+typedef enum /*< enum >*/
 {
   THUNAR_FILE_ICON_STATE_DEFAULT,
   THUNAR_FILE_ICON_STATE_DROP,
+  THUNAR_FILE_ICON_STATE_OPEN,
 } ThunarFileIconState;
 
 /**
