@@ -125,6 +125,15 @@ static void                 thunar_standard_view_set_zoom_level             (Thu
                                                                              ThunarZoomLevel           zoom_level);
 static void                 thunar_standard_view_reset_zoom_level           (ThunarView               *view);
 static void                 thunar_standard_view_reload                     (ThunarView               *view);
+static gboolean             thunar_standard_view_get_visible_range          (ThunarView               *view,
+                                                                             ThunarFile              **start_file,
+                                                                             ThunarFile              **end_file);
+static void                 thunar_standard_view_scroll_to_file             (ThunarView               *view,
+                                                                             ThunarFile               *file,
+                                                                             gboolean                  select,
+                                                                             gboolean                  use_align,
+                                                                             gfloat                    row_align,
+                                                                             gfloat                    col_align);
 static gboolean             thunar_standard_view_delete_selected_files      (ThunarStandardView       *standard_view);
 static GdkDragAction        thunar_standard_view_get_dest_actions           (ThunarStandardView       *standard_view,
                                                                              GdkDragContext           *context,
@@ -280,8 +289,12 @@ struct _ThunarStandardViewPrivate
    */
   GClosure               *new_files_closure;
 
-  /* scroll offsets (-> GtkTreePath indices) per VFS path */
-  GHashTable             *scroll_offsets;
+  /* scroll-to-file support */
+  ThunarFile             *scroll_to_file;
+  guint                   scroll_to_select : 1;
+  guint                   scroll_to_use_align : 1;
+  gfloat                  scroll_to_row_align;
+  gfloat                  scroll_to_col_align;
 };
 
 
@@ -508,6 +521,8 @@ thunar_standard_view_view_init (ThunarViewIface *iface)
   iface->set_zoom_level = thunar_standard_view_set_zoom_level;
   iface->reset_zoom_level = thunar_standard_view_reset_zoom_level;
   iface->reload = thunar_standard_view_reload;
+  iface->get_visible_range = thunar_standard_view_get_visible_range;
+  iface->scroll_to_file = thunar_standard_view_scroll_to_file;
 }
 
 
@@ -518,10 +533,6 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv = THUNAR_STANDARD_VIEW_GET_PRIVATE (standard_view);
   standard_view->priv->drag_scroll_timer_id = -1;
   standard_view->priv->drag_timer_id = -1;
-
-  /* setup the scroll paths offset table */
-  standard_view->priv->scroll_offsets = g_hash_table_new_full (thunar_vfs_path_hash, thunar_vfs_path_equal,
-                                                               (GDestroyNotify) thunar_vfs_path_unref, NULL);
 
   /* grab a reference on the preferences */
   standard_view->preferences = thunar_preferences_get ();
@@ -700,6 +711,10 @@ thunar_standard_view_finalize (GObject *object)
   g_assert (standard_view->ui_manager == NULL);
   g_assert (standard_view->clipboard == NULL);
 
+  /* release the scroll_to_file reference (if any) */
+  if (G_UNLIKELY (standard_view->priv->scroll_to_file != NULL))
+    g_object_unref (G_OBJECT (standard_view->priv->scroll_to_file));
+
   /* release our reference on the provider factory */
   g_object_unref (G_OBJECT (standard_view->priv->provider_factory));
 
@@ -735,9 +750,6 @@ thunar_standard_view_finalize (GObject *object)
   
   /* release our list of currently selected files */
   thunar_file_list_free (standard_view->selected_files);
-
-  /* destroy the scroll offset table */
-  g_hash_table_destroy (standard_view->priv->scroll_offsets);
 
   /* free the statusbar text (if any) */
   g_free (standard_view->statusbar_text);
@@ -1091,34 +1103,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (navigator);
   ThunarFolder       *folder;
-  GtkTreePath        *path;
-  ThunarFile         *file;
-  gint                offset;
 
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
   
-  /* determine the (previous) current directory */
-  file = thunar_navigator_get_current_directory (navigator);
-  if (G_LIKELY (file != NULL))
-    {
-      /* determine the first visible tree path */
-      if ((*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_visible_range) (standard_view, &path, NULL))
-        {
-          /* determine the scroll offset from the tree path */
-          offset = gtk_tree_path_get_indices (path)[0] + 1;
-          gtk_tree_path_free (path);
-        }
-      else
-        {
-          /* just use the first available path */
-          offset = 0;
-        }
-
-      /* remember the scroll offset for the directory */
-      g_hash_table_replace (standard_view->priv->scroll_offsets, thunar_vfs_path_ref (thunar_file_get_path (file)), GINT_TO_POINTER (offset));
-    }
-
   /* disconnect any previous "loading" binding */
   if (G_LIKELY (standard_view->loading_binding != NULL))
     exo_binding_unbind (standard_view->loading_binding);
@@ -1129,6 +1117,10 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
       thunar_list_model_set_folder (standard_view->model, NULL);
       return;
     }
+
+  /* scroll to top-left when changing folder */
+  gtk_adjustment_set_value (gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (standard_view)), 0.0);
+  gtk_adjustment_set_value (gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view)), 0.0);
 
   /* We drop the model from the view as a simple optimization to speed up
    * the process of disconnecting the model data from the view.
@@ -1169,9 +1161,7 @@ static void
 thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                                   gboolean            loading)
 {
-  GtkTreePath *path;
-  ThunarFile  *file;
-  gint         offset;
+  ThunarFile *file;
 
   loading = !!loading;
 
@@ -1182,28 +1172,29 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
   /* apply the new state */
   standard_view->loading = loading;
 
-  /* check if this state change was due to a "loading complete" event */
-  if (G_LIKELY (!loading))
+  /* check if we're done loading and have a scheduled scroll_to_file */
+  if (G_UNLIKELY (!loading && standard_view->priv->scroll_to_file != NULL))
     {
-      /* determine the current directory */
-      file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
-      if (G_LIKELY (file != NULL))
-        {
-          /* determine the scroll offset for this folder */
-          offset = GPOINTER_TO_INT (g_hash_table_lookup (standard_view->priv->scroll_offsets, thunar_file_get_path (file)));
-          if (G_LIKELY (offset > 0))
-            {
-              /* scroll to the path for the offset */
-              path = gtk_tree_path_new_from_indices (offset - 1, -1);
-              (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, path, TRUE, 0.0f, 0.0f);
-              gtk_tree_path_free (path);
-            }
-        }
+      /* remember and reset the scroll_to_file reference */
+      file = standard_view->priv->scroll_to_file;
+      standard_view->priv->scroll_to_file = NULL;
+
+      /* and try again */
+      thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file,
+                                  standard_view->priv->scroll_to_select,
+                                  standard_view->priv->scroll_to_use_align,
+                                  standard_view->priv->scroll_to_row_align,
+                                  standard_view->priv->scroll_to_col_align);
+
+      /* cleanup */
+      g_object_unref (G_OBJECT (file));
     }
 
   /* notify listeners */
+  g_object_freeze_notify (G_OBJECT (standard_view));
   g_object_notify (G_OBJECT (standard_view), "loading");
   g_object_notify (G_OBJECT (standard_view), "statusbar-text");
+  g_object_thaw_notify (G_OBJECT (standard_view));
 }
 
 
@@ -1308,6 +1299,105 @@ thunar_standard_view_reload (ThunarView *view)
   folder = thunar_list_model_get_folder (standard_view->model);
   if (G_LIKELY (folder != NULL))
     thunar_folder_reload (folder);
+}
+
+
+
+static gboolean
+thunar_standard_view_get_visible_range (ThunarView  *view,
+                                        ThunarFile **start_file,
+                                        ThunarFile **end_file)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  GtkTreePath        *start_path;
+  GtkTreePath        *end_path;
+  GtkTreeIter         iter;
+
+  /* determine the visible range as tree paths */
+  if ((*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_visible_range) (standard_view, &start_path, &end_path))
+    {
+      /* determine the file for the start path */
+      if (G_LIKELY (start_file != NULL))
+        {
+          gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, start_path);
+          *start_file = thunar_list_model_get_file (standard_view->model, &iter);
+        }
+
+      /* determine the file for the end path */
+      if (G_LIKELY (end_file != NULL))
+        {
+          gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, end_path);
+          *end_file = thunar_list_model_get_file (standard_view->model, &iter);
+        }
+
+      /* release the tree paths */
+      gtk_tree_path_free (start_path);
+      gtk_tree_path_free (end_path);
+
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_standard_view_scroll_to_file (ThunarView *view,
+                                     ThunarFile *file,
+                                     gboolean    select,
+                                     gboolean    use_align,
+                                     gfloat      row_align,
+                                     gfloat      col_align)
+{
+  ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
+  GList               files;
+  GList              *paths;
+
+  /* release the previous scroll_to_file reference (if any) */
+  if (G_UNLIKELY (standard_view->priv->scroll_to_file != NULL))
+    {
+      g_object_unref (G_OBJECT (standard_view->priv->scroll_to_file));
+      standard_view->priv->scroll_to_file = NULL;
+    }
+
+  /* check if we're still loading */
+  if (thunar_view_get_loading (view))
+    {
+      /* remember a reference for the new file and settings */
+      standard_view->priv->scroll_to_file = g_object_ref (G_OBJECT (file));
+      standard_view->priv->scroll_to_select = select;
+      standard_view->priv->scroll_to_use_align = use_align;
+      standard_view->priv->scroll_to_row_align = row_align;
+      standard_view->priv->scroll_to_col_align = col_align;
+    }
+  else
+    {
+      /* fake a file list */
+      files.data = file;
+      files.next = NULL;
+      files.prev = NULL;
+
+      /* determine the path for the file */
+      paths = thunar_list_model_get_paths_for_files (standard_view->model, &files);
+      if (G_LIKELY (paths != NULL))
+        {
+          /* scroll to the path */
+          (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, paths->data, use_align, row_align, col_align);
+
+          /* check if we should also alter the selection */
+          if (G_UNLIKELY (select))
+            {
+              /* select only the file in question */
+              (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->unselect_all) (standard_view);
+              (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, paths->data);
+            }
+
+          /* cleanup */
+          g_list_foreach (paths, (GFunc) gtk_tree_path_free, NULL);
+          g_list_free (paths);
+        }
+    }
 }
 
 

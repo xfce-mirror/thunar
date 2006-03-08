@@ -52,6 +52,17 @@ struct _ThunarViewIface
   void            (*reset_zoom_level)   (ThunarView     *view);
 
   void            (*reload)             (ThunarView     *view);
+
+  gboolean        (*get_visible_range)  (ThunarView     *view,
+                                         ThunarFile    **start_file,
+                                         ThunarFile    **end_file);
+
+  void            (*scroll_to_file)     (ThunarView     *view,
+                                         ThunarFile     *file,
+                                         gboolean        select,
+                                         gboolean        use_align,
+                                         gfloat          row_align,
+                                         gfloat          col_align);
 };
 
 GType           thunar_view_get_type            (void) G_GNUC_CONST;
@@ -69,6 +80,17 @@ void            thunar_view_set_zoom_level      (ThunarView     *view,
 void            thunar_view_reset_zoom_level    (ThunarView     *view);
 
 void            thunar_view_reload              (ThunarView     *view);
+
+gboolean        thunar_view_get_visible_range   (ThunarView     *view,
+                                                 ThunarFile    **start_file,
+                                                 ThunarFile    **end_file);
+
+void            thunar_view_scroll_to_file      (ThunarView     *view,
+                                                 ThunarFile     *file,
+                                                 gboolean        select,
+                                                 gboolean        use_align,
+                                                 gfloat          row_align,
+                                                 gfloat          col_align);
 
 G_END_DECLS;
 

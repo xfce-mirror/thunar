@@ -21,6 +21,13 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <dbus/dbus-glib-bindings.h>
 #include <dbus/dbus-glib-lowlevel.h>
 #include <dbus/dbus.h>
@@ -47,6 +54,11 @@ static gboolean thunar_dbus_service_parse_uri_and_display       (ThunarDBusServi
                                                                  GError                **error);
 static gboolean thunar_dbus_service_display_folder              (ThunarDBusService      *dbus_service,
                                                                  const gchar            *uri,
+                                                                 const gchar            *display,
+                                                                 GError                **error);
+static gboolean thunar_dbus_service_display_folder_and_select   (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *uri,
+                                                                 const gchar            *filename,
                                                                  const gchar            *display,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_display_file_properties     (ThunarDBusService      *dbus_service,
@@ -238,6 +250,64 @@ thunar_dbus_service_display_folder (ThunarDBusService *dbus_service,
   /* cleanup */
   g_object_unref (G_OBJECT (screen));
   g_object_unref (G_OBJECT (file));
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_display_folder_and_select (ThunarDBusService *dbus_service,
+                                               const gchar       *uri,
+                                               const gchar       *filename,
+                                               const gchar       *display,
+                                               GError           **error)
+{
+  ThunarApplication *application;
+  ThunarVfsPath     *path;
+  ThunarFile        *file;
+  ThunarFile        *folder;
+  GdkScreen         *screen;
+  GtkWidget         *window;
+
+  /* verify that filename is valid */
+  if (G_UNLIKELY (filename == NULL || *filename == '\0' || strchr (filename, '/') != NULL))
+    {
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid filename \"%s\""), filename);
+      return FALSE;
+    }
+
+  /* parse uri and display parameters */
+  if (!thunar_dbus_service_parse_uri_and_display (dbus_service, uri, display, &folder, &screen, error))
+    return FALSE;
+
+  /* popup a new window for the folder */
+  application = thunar_application_get ();
+  window = thunar_application_open_window (application, folder, screen);
+  g_object_unref (G_OBJECT (application));
+
+  /* determine the path for the filename relative to the folder */
+  path = thunar_vfs_path_relative (thunar_file_get_path (folder), filename);
+  if (G_LIKELY (path != NULL))
+    {
+      /* try to determine the file for the path */
+      file = thunar_file_get_for_path (path, NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          /* tell the window to scroll to the given file and select it */
+          thunar_window_scroll_to_file (THUNAR_WINDOW (window), file, TRUE, TRUE, 0.5f, 0.5f);
+
+          /* release the file reference */
+          g_object_unref (G_OBJECT (file));
+        }
+
+      /* release the path */
+      thunar_vfs_path_unref (path);
+    }
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (screen));
+  g_object_unref (G_OBJECT (folder));
 
   return TRUE;
 }

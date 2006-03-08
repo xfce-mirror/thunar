@@ -50,7 +50,7 @@ gboolean           thunar_application_has_windows       (ThunarApplication *appl
 void               thunar_application_take_window       (ThunarApplication *application,
                                                          GtkWindow         *window);
 
-void               thunar_application_open_window       (ThunarApplication *application,
+GtkWidget         *thunar_application_open_window       (ThunarApplication *application,
                                                          ThunarFile        *directory,
                                                          GdkScreen         *screen);
 

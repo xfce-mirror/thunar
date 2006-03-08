@@ -268,3 +268,58 @@ thunar_view_reload (ThunarView *view)
 
 
 
+/**
+ * thunar_view_get_visible_range:
+ * @view       : a #ThunarView instance.
+ * @start_file : return location for start of region, or %NULL.
+ * @end_file   : return location for end of region, or %NULL.
+ *
+ * Sets @start_file and @end_file to be the first and last visible
+ * #ThunarFile.
+ *
+ * The files should be freed with g_object_unref() when no
+ * longer needed.
+ *
+ * Return value: %TRUE if valid files were placed in @start_file
+ *               and @end_file.
+ **/
+gboolean
+thunar_view_get_visible_range (ThunarView  *view,
+                               ThunarFile **start_file,
+                               ThunarFile **end_file)
+{
+  g_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
+  return (*THUNAR_VIEW_GET_IFACE (view)->get_visible_range) (view, start_file, end_file);
+}
+
+
+
+/**
+ * thunar_view_scroll_to_file:
+ * @view      : a #ThunarView instance.
+ * @file      : the #ThunarFile to scroll to.
+ * @select    : %TRUE to also select the @file in the @view.
+ * @use_align : whether to use alignment arguments.
+ * @row_align : the vertical alignment.
+ * @col_align : the horizontal alignment.
+ *
+ * Tells @view to scroll to the @file. If @view is currently
+ * loading, it'll remember to scroll to @file later when
+ * the contents are loaded.
+ **/
+void
+thunar_view_scroll_to_file (ThunarView *view,
+                            ThunarFile *file,
+                            gboolean    select,
+                            gboolean    use_align,
+                            gfloat      row_align,
+                            gfloat      col_align)
+{
+  g_return_if_fail (THUNAR_IS_VIEW (view));
+  g_return_if_fail (THUNAR_IS_FILE (file));
+  g_return_if_fail (row_align >= 0.0f && row_align <= 1.0f);
+  g_return_if_fail (col_align >= 0.0f && col_align <= 1.0f);
+  (*THUNAR_VIEW_GET_IFACE (view)->scroll_to_file) (view, file, select, use_align, row_align, col_align);
+}
+
+

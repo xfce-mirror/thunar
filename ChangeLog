@@ -1,5 +1,23 @@
 2006-03-08	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-view.{c,h}: Add new methods get_visible_range() and
+	  scroll_to_file().
+	* thunar/thunar-standard-view.c: Implement get_visible_range() and
+	  scroll_to_file(). Drop the scroll_offsets, will be handled in
+	  ThunarWindow.
+	* thunar/thunar-window.{c,h}: Remember the first visible file whenever
+	  leaving a directory and scroll to it when entering the directory
+	  again.
+	* thunar/thunar-application.{c,h}: Return the created window from the
+	  thunar_application_open_window() method.
+	* thunar/thunar-dbus-service-infos.xml, thunar/thunar-dbus-service.c:
+	  Add DisplayFolderAndSelect() to the org.xfce.FileManager interface.
+	  File managers that cannot scroll and select to a given file can
+	  silently ignore the filename parameter and handle it like an
+	  invocation of DisplayFolder(). Bug #1553.
+
+2006-03-08	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-shortcuts-view.c: Fix shortcut rename.
 
 2006-03-08	Benedikt Meurer <benny@xfce.org>

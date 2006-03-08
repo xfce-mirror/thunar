@@ -212,6 +212,9 @@ struct _ThunarWindow
 
   /* support to remember window geometry */
   gint                    save_geometry_timer_id;
+
+  /* scroll_to_file support */
+  GHashTable             *scroll_to_files;
 };
 
 
@@ -446,6 +449,9 @@ thunar_window_init (ThunarWindow *window)
 
   /* grab a reference on the preferences */
   window->preferences = thunar_preferences_get ();
+
+  /* allocate the scroll_to_files mapping */
+  window->scroll_to_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
 
   /* allocate a closure for the menu_item_selected() callback */
   window->menu_item_selected_closure = g_cclosure_new_object (G_CALLBACK (thunar_window_menu_item_selected), G_OBJECT (window));
@@ -682,6 +688,9 @@ thunar_window_finalize (GObject *object)
 
   /* release the preferences reference */
   g_object_unref (G_OBJECT (window->preferences));
+
+  /* release the scroll_to_files hash table */
+  g_hash_table_destroy (window->scroll_to_files);
 
   (*G_OBJECT_CLASS (thunar_window_parent_class)->finalize) (object);
 }
@@ -979,11 +988,24 @@ thunar_window_action_open_new_window (GtkAction    *action,
                                       ThunarWindow *window)
 {
   ThunarApplication *application;
+  ThunarFile        *start_file;
+  GtkWidget         *new_window;
 
+  /* popup a new window */
   application = thunar_application_get ();
-  thunar_application_open_window (application, window->current_directory,
-                                  gtk_widget_get_screen (GTK_WIDGET (window)));
+  new_window = thunar_application_open_window (application, window->current_directory,
+                                               gtk_widget_get_screen (GTK_WIDGET (window)));
   g_object_unref (G_OBJECT (application));
+
+  /* determine the first visible file in the current window */
+  if (window->view != NULL && thunar_view_get_visible_range (THUNAR_VIEW (window->view), &start_file, NULL))
+    {
+      /* scroll the new window to the same file */
+      thunar_window_scroll_to_file (THUNAR_WINDOW (new_window), start_file, FALSE, TRUE, 0.0f, 0.0f);
+
+      /* release the file reference */
+      g_object_unref (G_OBJECT (start_file));
+    }
 }
 
 
@@ -1279,11 +1301,16 @@ thunar_window_action_view_changed (GtkRadioAction *action,
                                    GtkRadioAction *current,
                                    ThunarWindow   *window)
 {
-  GType type;
+  ThunarFile *file = NULL;
+  GType       type;
 
   /* drop the previous view (if any) */
   if (G_LIKELY (window->view != NULL))
     {
+      /* get first visible file in the previous view */
+      if (!thunar_view_get_visible_range (THUNAR_VIEW (window->view), &file, NULL))
+        file = NULL;
+
       /* destroy and disconnect the previous view */
       gtk_widget_destroy (window->view);
 
@@ -1322,6 +1349,10 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       /* connect to the statusbar (if any) */
       if (G_LIKELY (window->statusbar != NULL))
         exo_binding_new (G_OBJECT (window->view), "statusbar-text", G_OBJECT (window->statusbar), "text");
+
+      /* scroll to the previously visible file in the old view */
+      if (G_UNLIKELY (file != NULL))
+        thunar_view_scroll_to_file (THUNAR_VIEW (window->view), file, FALSE, TRUE, 0.0f, 0.0f);
     }
   else
     {
@@ -1331,6 +1362,10 @@ thunar_window_action_view_changed (GtkRadioAction *action,
 
   /* remember the setting */
   g_object_set (G_OBJECT (window->preferences), "last-view", g_type_name (type), NULL);
+
+  /* release the file reference */
+  if (G_UNLIKELY (file != NULL))
+    g_object_unref (G_OBJECT (file));
 }
 
 
@@ -1837,6 +1872,8 @@ void
 thunar_window_set_current_directory (ThunarWindow *window,
                                      ThunarFile   *current_directory)
 {
+  ThunarFile *file;
+
   g_return_if_fail (THUNAR_IS_WINDOW (window));
   g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
@@ -1847,6 +1884,13 @@ thunar_window_set_current_directory (ThunarWindow *window,
   /* disconnect from the previously active directory */
   if (G_LIKELY (window->current_directory != NULL))
     {
+      /* determine the fist visible file in the previous directory */
+      if (window->view != NULL && thunar_view_get_visible_range (THUNAR_VIEW (window->view), &file, NULL))
+        {
+          /* add the file to our internal mapping of directories to scroll files */
+          g_hash_table_replace (window->scroll_to_files, g_object_ref (G_OBJECT (window->current_directory)), file);
+        }
+
       g_signal_handlers_disconnect_by_func (G_OBJECT (window->current_directory), thunar_window_current_directory_changed, window);
       g_object_unref (G_OBJECT (window->current_directory));
     }
@@ -1876,6 +1920,15 @@ thunar_window_set_current_directory (ThunarWindow *window,
    * state already while the folder view is loading.
    */
   g_object_notify (G_OBJECT (window), "current-directory");
+
+  /* check if we have a valid current directory */
+  if (G_LIKELY (window->current_directory != NULL))
+    {
+      /* check if we have a scroll_to_file for the new directory and scroll to the file */
+      file = g_hash_table_lookup (window->scroll_to_files, window->current_directory);
+      if (G_LIKELY (file != NULL))
+        thunar_window_scroll_to_file (window, file, FALSE, TRUE, 0.0f, 0.0f);
+    }
 }
 
 
@@ -1924,6 +1977,36 @@ thunar_window_set_zoom_level (ThunarWindow   *window,
       /* notify listeners */
       g_object_notify (G_OBJECT (window), "zoom-level");
     }
+}
+
+
+
+/**
+ * thunar_window_scroll_to_file:
+ * @window    : a #ThunarWindow instance.
+ * @file      : a #ThunarFile.
+ * @select    : if %TRUE the @file will also be selected.
+ * @use_align : %TRUE to use the alignment arguments.
+ * @row_align : the vertical alignment.
+ * @col_align : the horizontal alignment.
+ *
+ * Tells the @window to scroll to the @file
+ * in the current view.
+ **/
+void
+thunar_window_scroll_to_file (ThunarWindow *window,
+                              ThunarFile   *file,
+                              gboolean      select,
+                              gboolean      use_align,
+                              gfloat        row_align,
+                              gfloat        col_align)
+{
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  g_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* verify that we have a valid view */
+  if (G_LIKELY (window->view != NULL))
+    thunar_view_scroll_to_file (THUNAR_VIEW (window->view), file, select, use_align, row_align, col_align);
 }
 
 

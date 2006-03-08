@@ -44,6 +44,29 @@
 
 
     <!--
+      DisplayFolderAndSelect (uri : STRING, filename : STRING, display : STRING) : VOID
+
+      uri        : either a file:-URI or an absolute path.
+      filename   : the name of the file in the folder which should
+                   be selected by the file manager after loading the
+                   folder. The file manager will also scroll the view
+                   to ensure that the file is visible. The filename
+                   must be a name relative to the folder URI.
+      display    : the screen on which to display the folder or ""
+                   to use the default screen of the file manager.
+
+      Note to implementors: Not all file managers may be able to
+      implement this method properly for whatever reasons. If you
+      cannot implement it properly, handle this method like an
+      invocation of DisplayFolder() and ignore the filename.
+    -->
+    <method name="DisplayFolderAndSelect">
+      <arg direction="in" name="uri" type="s" />
+      <arg direction="in" name="filename" type="s" />
+      <arg direction="in" name="display" type="s" />
+    </method>
+
+    <!--
       DisplayFileProperties (uri : STRING, display : STRING) : VOID
 
       uri     : either a file:-URI or an absolute path.

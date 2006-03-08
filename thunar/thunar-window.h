@@ -47,6 +47,13 @@ ThunarZoomLevel thunar_window_get_zoom_level        (ThunarWindow   *window);
 void            thunar_window_set_zoom_level        (ThunarWindow   *window,
                                                      ThunarZoomLevel zoom_level);
 
+void            thunar_window_scroll_to_file        (ThunarWindow   *window,
+                                                     ThunarFile     *file,
+                                                     gboolean        select,
+                                                     gboolean        use_align,
+                                                     gfloat          row_align,
+                                                     gfloat          col_align);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_WINDOW_H__ */
