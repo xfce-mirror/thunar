@@ -27,6 +27,7 @@
 
 #include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-details-view.h>
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
@@ -86,6 +87,41 @@ thunar_preferences_dialog_get_type (void)
     }
 
   return type;
+}
+
+
+
+static gboolean
+transform_icon_size_to_index (const GValue *src_value,
+                              GValue       *dst_value,
+                              gpointer      user_data)
+{
+  GEnumClass *klass;
+  gint        n;
+
+  klass = g_type_class_ref (THUNAR_TYPE_ICON_SIZE);
+  for (n = 0; n < klass->n_values; ++n)
+    if (klass->values[n].value == g_value_get_enum (src_value))
+      g_value_set_int (dst_value, n);
+  g_type_class_unref (klass);
+
+  return TRUE;
+}
+
+
+
+static gboolean
+transform_index_to_icon_size (const GValue *src_value,
+                              GValue       *dst_value,
+                              gpointer      user_data)
+{
+  GEnumClass *klass;
+
+  klass = g_type_class_ref (THUNAR_TYPE_ICON_SIZE);
+  g_value_set_enum (dst_value, klass->values[g_value_get_int (src_value)].value);
+  g_type_class_unref (klass);
+
+  return TRUE;
 }
 
 
@@ -279,6 +315,67 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
 
   /*
+     Side Pane
+   */
+  label = gtk_label_new (_("Side Pane"));
+  vbox = g_object_new (GTK_TYPE_VBOX, "border-width", 12, "spacing", 12, NULL);
+  gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
+  gtk_widget_show (label);
+  gtk_widget_show (vbox);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Shortcuts Pane"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  table = gtk_table_new (2, 2, FALSE);
+  gtk_table_set_row_spacings (GTK_TABLE (table), 6);
+  gtk_table_set_col_spacings (GTK_TABLE (table), 12);
+  gtk_container_set_border_width (GTK_CONTAINER (table), 12);
+  gtk_container_add (GTK_CONTAINER (frame), table);
+  gtk_widget_show (table);
+
+  label = gtk_label_new_with_mnemonic (_("Shortcut _Icon Size:"));
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_new_text ();
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Small"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Smaller"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Small"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Normal"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Large"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Larger"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Large"));
+#if !GTK_CHECK_VERSION(2,9,0)
+  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
+#endif
+  exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "shortcuts-icon-size", G_OBJECT (combo), "active",
+                               transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
+  gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
+
+  /* set Atk label relation for the combo */
+  object = gtk_widget_get_accessible (combo);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
+
+  button = gtk_check_button_new_with_mnemonic (_("Show Icon _Emblems"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "shortcuts-icon-emblems", G_OBJECT (button), "active");
+  gtk_tooltips_set_tip (dialog->tooltips, button, _("Select this option to display icon emblems in the shortcuts pane for all folders "
+                                                    "for which emblems have been defined in the folders properties dialog."), NULL);
+  gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (button);
+
+
+  /*
      Behavior
    */
   label = gtk_label_new (_("Behavior"));
@@ -329,32 +426,34 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
   gtk_widget_show (frame);
 
-  label = gtk_label_new (_("Miscellaneous"));
+  label = gtk_label_new (_("Folder Permissions"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
-  table = gtk_table_new (1, 2, FALSE);
+  table = gtk_table_new (2, 2, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 12);
   gtk_container_set_border_width (GTK_CONTAINER (table), 12);
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  label = gtk_label_new_with_mnemonic (_("Apply permissions _recursively:"));
+  label = gtk_label_new_with_mnemonic (_("When changing the permissions of a folder, you\n"
+                                         "can also apply the changes to the contents of the\n"
+                                         "folder. Select the default behavior below:"));
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
   combo = gtk_combo_box_new_text ();
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Ask everytime"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Always"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Never"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Apply to Folder Only"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Apply to Folder and Contents"));
 #if !GTK_CHECK_VERSION(2,9,0)
   g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
 #endif
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-recursive-permissions", G_OBJECT (combo), "active");
-  gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_table_attach (GTK_TABLE (table), combo, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (combo);
 
   /* set Atk label relation for the combo */
