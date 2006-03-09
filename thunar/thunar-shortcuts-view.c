@@ -26,6 +26,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-dnd.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-shortcuts-model.h>
@@ -49,54 +50,64 @@ enum
 
 
 
-static void         thunar_shortcuts_view_class_init             (ThunarShortcutsViewClass *klass);
-static void         thunar_shortcuts_view_init                   (ThunarShortcutsView      *view);
-static void         thunar_shortcuts_view_finalize               (GObject                  *object);
-static gboolean     thunar_shortcuts_view_button_press_event     (GtkWidget                *widget,
-                                                                  GdkEventButton           *event);
-static gboolean     thunar_shortcuts_view_button_release_event   (GtkWidget                *widget,
-                                                                  GdkEventButton           *event);
-static void         thunar_shortcuts_view_drag_begin             (GtkWidget                *widget,
-                                                                  GdkDragContext           *context);
-static void         thunar_shortcuts_view_drag_data_received     (GtkWidget                *widget,
-                                                                  GdkDragContext           *context,
-                                                                  gint                      x,
-                                                                  gint                      y,
-                                                                  GtkSelectionData         *selection_data,
-                                                                  guint                     info,
-                                                                  guint                     time);
-static gboolean     thunar_shortcuts_view_drag_drop              (GtkWidget                *widget,
-                                                                  GdkDragContext           *context,
-                                                                  gint                      x,
-                                                                  gint                      y,
-                                                                  guint                     time);
-static gboolean     thunar_shortcuts_view_drag_motion            (GtkWidget                *widget,
-                                                                  GdkDragContext           *context,
-                                                                  gint                      x,
-                                                                  gint                      y,
-                                                                  guint                     time);
-static void         thunar_shortcuts_view_remove_activated       (GtkWidget                *item,
-                                                                  ThunarShortcutsView      *view);
-static void         thunar_shortcuts_view_rename_activated       (GtkWidget                *item,
-                                                                  ThunarShortcutsView      *view);
-static void         thunar_shortcuts_view_renamed                (GtkCellRenderer          *renderer,
-                                                                  const gchar              *path_string,
-                                                                  const gchar              *text,
-                                                                  ThunarShortcutsView      *view);
-static GtkTreePath *thunar_shortcuts_view_compute_drop_position  (ThunarShortcutsView      *view,
-                                                                  gint                      x,
-                                                                  gint                      y);
-static void         thunar_shortcuts_view_drop_uri_list          (ThunarShortcutsView      *view,
-                                                                  const gchar              *uri_list,
-                                                                  GtkTreePath              *dst_path);
-static void         thunar_shortcuts_view_open                   (ThunarShortcutsView      *view);
-static void         thunar_shortcuts_view_open_in_new_window     (ThunarShortcutsView      *view);
-static gboolean     thunar_shortcuts_view_eject                  (ThunarShortcutsView      *view);
-static gboolean     thunar_shortcuts_view_mount                  (ThunarShortcutsView      *view);
-static gboolean     thunar_shortcuts_view_unmount                (ThunarShortcutsView      *view);
-static gboolean     thunar_shortcuts_view_separator_func         (GtkTreeModel             *model,
-                                                                  GtkTreeIter              *iter,
-                                                                  gpointer                  user_data);
+static void           thunar_shortcuts_view_class_init            (ThunarShortcutsViewClass *klass);
+static void           thunar_shortcuts_view_init                  (ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_finalize              (GObject                  *object);
+static gboolean       thunar_shortcuts_view_button_press_event    (GtkWidget                *widget,
+                                                                   GdkEventButton           *event);
+static gboolean       thunar_shortcuts_view_button_release_event  (GtkWidget                *widget,
+                                                                   GdkEventButton           *event);
+static void           thunar_shortcuts_view_drag_begin            (GtkWidget                *widget,
+                                                                   GdkDragContext           *context);
+static void           thunar_shortcuts_view_drag_data_received    (GtkWidget                *widget,
+                                                                   GdkDragContext           *context,
+                                                                   gint                      x,
+                                                                   gint                      y,
+                                                                   GtkSelectionData         *selection_data,
+                                                                   guint                     info,
+                                                                   guint                     time);
+static gboolean       thunar_shortcuts_view_drag_drop             (GtkWidget                *widget,
+                                                                   GdkDragContext           *context,
+                                                                   gint                      x,
+                                                                   gint                      y,
+                                                                   guint                     time);
+static gboolean       thunar_shortcuts_view_drag_motion           (GtkWidget                *widget,
+                                                                   GdkDragContext           *context,
+                                                                   gint                      x,
+                                                                   gint                      y,
+                                                                   guint                     time);
+static void           thunar_shortcuts_view_drag_leave            (GtkWidget                *widget,
+                                                                   GdkDragContext           *context,
+                                                                   guint                     time);
+static void           thunar_shortcuts_view_remove_activated      (GtkWidget                *item,
+                                                                   ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_rename_activated      (GtkWidget                *item,
+                                                                   ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_renamed               (GtkCellRenderer          *renderer,
+                                                                   const gchar              *path_string,
+                                                                   const gchar              *text,
+                                                                   ThunarShortcutsView      *view);
+static GdkDragAction  thunar_shortcuts_view_compute_drop_actions  (ThunarShortcutsView      *view,
+                                                                   GdkDragContext           *context,
+                                                                   gint                      x,
+                                                                   gint                      y,
+                                                                   GtkTreePath             **path_return,
+                                                                   GdkDragAction            *action_return,
+                                                                   GtkTreeViewDropPosition  *position_return);
+static GtkTreePath   *thunar_shortcuts_view_compute_drop_position (ThunarShortcutsView      *view,
+                                                                   gint                      x,
+                                                                   gint                      y);
+static void           thunar_shortcuts_view_drop_uri_list         (ThunarShortcutsView      *view,
+                                                                   GList                    *path_list,
+                                                                   GtkTreePath              *dst_path);
+static void           thunar_shortcuts_view_open                  (ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_open_in_new_window    (ThunarShortcutsView      *view);
+static gboolean       thunar_shortcuts_view_eject                 (ThunarShortcutsView      *view);
+static gboolean       thunar_shortcuts_view_mount                 (ThunarShortcutsView      *view);
+static gboolean       thunar_shortcuts_view_unmount               (ThunarShortcutsView      *view);
+static gboolean       thunar_shortcuts_view_separator_func        (GtkTreeModel             *model,
+                                                                   GtkTreeIter              *iter,
+                                                                   gpointer                  user_data);
 
 
 
@@ -109,12 +120,18 @@ struct _ThunarShortcutsView
 {
   GtkTreeView        __parent__;
   ThunarPreferences *preferences;
+  GtkCellRenderer   *icon_renderer;
 
   /* the currently pressed mouse button, set in the
    * button-press-event handler if the associated
    * button-release-event should activate.
    */
   gint pressed_button;
+
+  /* drop site support */
+  guint  drop_data_ready : 1; /* whether the drop data was received already */
+  guint  drop_occurred : 1;
+  GList *drop_path_list;      /* the list of URIs that are contained in the drop data */
 
 #if GTK_CHECK_VERSION(2,8,0)
   /* id of the signal used to queue a resize on the
@@ -192,6 +209,7 @@ thunar_shortcuts_view_class_init (ThunarShortcutsViewClass *klass)
   gtkwidget_class->drag_data_received = thunar_shortcuts_view_drag_data_received;
   gtkwidget_class->drag_drop = thunar_shortcuts_view_drag_drop;
   gtkwidget_class->drag_motion = thunar_shortcuts_view_drag_motion;
+  gtkwidget_class->drag_leave = thunar_shortcuts_view_drag_leave;
 
   /**
    * ThunarShortcutsView:shortcut-activated:
@@ -241,9 +259,9 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 #endif
 
   /* allocate the special icon renderer */
-  renderer = thunar_shortcuts_icon_renderer_new ();
-  gtk_tree_view_column_pack_start (column, renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, renderer,
+  view->icon_renderer = thunar_shortcuts_icon_renderer_new ();
+  gtk_tree_view_column_pack_start (column, view->icon_renderer, FALSE);
+  gtk_tree_view_column_set_attributes (column, view->icon_renderer,
                                        "file", THUNAR_SHORTCUTS_MODEL_COLUMN_FILE,
                                        "volume", THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME,
                                        NULL);
@@ -251,8 +269,8 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   /* sync the "emblems" property of the icon renderer with the "shortcuts-icon-emblems" preference
    * and the "size" property of the renderer with the "shortcuts-icon-size" preference.
    */
-  exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-size", G_OBJECT (renderer), "size");
-  exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-emblems", G_OBJECT (renderer), "emblems");
+  exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-size", G_OBJECT (view->icon_renderer), "size");
+  exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-emblems", G_OBJECT (view->icon_renderer), "emblems");
 
   /* allocate the text renderer */
   renderer = gtk_cell_renderer_text_new ();
@@ -269,8 +287,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   /* enable drop support for the shortcuts view (both internal reordering
    * and adding new shortcuts from other widgets)
    */
-  gtk_drag_dest_set (GTK_WIDGET (view), GTK_DEST_DEFAULT_ALL,
-                     drop_targets, G_N_ELEMENTS (drop_targets),
+  gtk_drag_dest_set (GTK_WIDGET (view), 0, drop_targets, G_N_ELEMENTS (drop_targets),
                      GDK_ACTION_COPY | GDK_ACTION_LINK | GDK_ACTION_MOVE);
 
   /* setup a row separator function to tell GtkTreeView about the separator */
@@ -283,6 +300,9 @@ static void
 thunar_shortcuts_view_finalize (GObject *object)
 {
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (object);
+
+  /* release drop path list (if drag_leave wasn't called) */
+  thunar_vfs_path_list_free (view->drop_path_list);
 
   /* disconnect the queue resize signal handler */
 #if GTK_CHECK_VERSION(2,8,0)
@@ -567,24 +587,137 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
                                           guint             info,
                                           guint             time)
 {
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
-  GtkTreeSelection     *selection;
-  GtkTreeModel         *model;
-  GtkTreePath          *dst_path;
-  GtkTreePath          *src_path;
-  GtkTreeIter           iter;
+  GtkTreeViewDropPosition position = GTK_TREE_VIEW_DROP_BEFORE;
+  ThunarShortcutsView    *view = THUNAR_SHORTCUTS_VIEW (widget);
+  GdkDragAction           actions;
+  GdkDragAction           action;
+  GtkTreeModel           *model;
+  GtkTreePath            *path;
+  GtkTreeIter             iter;
+  ThunarFile             *file;
+  gboolean                succeed = FALSE;
 
   g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
-  /* compute the drop position */
-  dst_path = thunar_shortcuts_view_compute_drop_position (view, x, y);
+  /* check if we don't already know the drop data */
+  if (G_LIKELY (!view->drop_data_ready))
+    {
+      /* extract the URI list from the selection data (if valid) */
+      if (info == TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
+        view->drop_path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
 
-  if (selection_data->target == gdk_atom_intern ("text/uri-list", FALSE))
-    {
-      thunar_shortcuts_view_drop_uri_list (view, (gchar *) selection_data->data, dst_path);
+      /* reset the state */
+      view->drop_data_ready = TRUE;
     }
-  else if (selection_data->target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
+
+  /* check if the data was droppped */
+  if (G_UNLIKELY (view->drop_occurred))
     {
+      /* reset the state */
+      view->drop_occurred = FALSE;
+
+      /* verify that we only handle text/uri-list here */
+      if (G_LIKELY (info == TEXT_URI_LIST))
+        {
+          /* determine the drop actions */
+          actions = thunar_shortcuts_view_compute_drop_actions (view, context, x, y, &path, &action, &position);
+          if (G_LIKELY (actions != 0))
+            {
+              /* check if we should add a shortcut */
+              if (position == GTK_TREE_VIEW_DROP_BEFORE || position == GTK_TREE_VIEW_DROP_AFTER)
+                {
+                  /* if position is "after", we need to advance the path,
+                   * as the drop_uri_list() will insert "at" the path.
+                   */
+                  if (position == GTK_TREE_VIEW_DROP_AFTER)
+                    gtk_tree_path_next (path);
+
+                  /* just add the required shortcuts then */
+                  thunar_shortcuts_view_drop_uri_list (view, view->drop_path_list, path);
+                }
+              else if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
+                {
+                  /* ask the user what to do with the drop data */
+                  if (G_UNLIKELY (action == GDK_ACTION_ASK))
+                    action = thunar_dnd_ask (widget, time, actions);
+
+                  /* perform the requested action */
+                  if (G_LIKELY (action != 0))
+                    {
+                      /* get the shortcuts model */
+                      model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+
+                      /* determine the iterator for the path */
+                      if (gtk_tree_model_get_iter (model, &iter, path))
+                        {
+                          /* determine the file for the iter */
+                          gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file, -1);
+                          if (G_LIKELY (file != NULL))
+                            {
+                              /* really perform the drop :-) */
+                              succeed = thunar_dnd_perform (widget, file, view->drop_path_list, action, NULL);
+
+                              /* release the file */
+                              g_object_unref (G_OBJECT (file));
+                            }
+                        }
+                    }
+                }
+
+              /* release the tree path */
+              gtk_tree_path_free (path);
+            }
+        }
+
+      /* disable the drop highlighting */
+      thunar_shortcuts_view_drag_leave (widget, context, time);
+
+      /* tell the peer that we handled the drop */
+      gtk_drag_finish (context, succeed, FALSE, time);
+    }
+  else
+    {
+      gdk_drag_status (context, 0, time);
+    }
+}
+
+
+
+static gboolean
+thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
+                                 GdkDragContext *context,
+                                 gint            x,
+                                 gint            y,
+                                 guint           time)
+{
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
+  GtkTreeSelection    *selection;
+  GtkTreeModel        *model;
+  GtkTreePath         *dst_path;
+  GtkTreePath         *src_path;
+  GtkTreeIter          iter;
+  GdkAtom              target;
+
+  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
+
+  /* determine the drop target */
+  target = gtk_drag_dest_find_target (widget, context, NULL);
+  if (G_LIKELY (target == gdk_atom_intern ("text/uri-list", FALSE)))
+    {
+      /* set state so the drag-data-received handler
+       * knows that this is really a drop this time.
+       */
+      view->drop_occurred = TRUE;
+
+      /* request the drag data from the source. */
+      gtk_drag_get_data (widget, context, target, time);
+    }
+  else if (target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
+    {
+      /* compute the drop position */
+      dst_path = thunar_shortcuts_view_compute_drop_position (view, x, y);
+
+      /* determine the source path */
       selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
       if (gtk_tree_selection_get_selected (selection, &model, &iter))
         {
@@ -601,21 +734,19 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
           thunar_shortcuts_model_move (THUNAR_SHORTCUTS_MODEL (model), src_path, dst_path);
           gtk_tree_path_free (src_path);
         }
+
+      /* release the dst path */
+      gtk_tree_path_free (dst_path);
+
+      /* finish the dnd operation */
+      gtk_drag_finish (context, TRUE, FALSE, time);
+    }
+  else
+    {
+      /* we cannot handle the drop */
+      return FALSE;
     }
 
-  gtk_tree_path_free (dst_path);
-}
-
-
-
-static gboolean
-thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
-                                 GdkDragContext *context,
-                                 gint            x,
-                                 gint            y,
-                                 guint           time)
-{
-  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (widget), FALSE);
   return TRUE;
 }
 
@@ -630,41 +761,102 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
 {
   GtkTreeViewDropPosition position = GTK_TREE_VIEW_DROP_BEFORE;
   ThunarShortcutsView    *view = THUNAR_SHORTCUTS_VIEW (widget);
-  GdkDragAction           action;
+  GdkDragAction           action = 0;
   GtkTreeModel           *model;
-  GtkTreePath            *path;
+  GtkTreePath            *path = NULL;
+  GdkAtom                 target;
 
-  /* check the action that should be performed */
-  if (context->suggested_action == GDK_ACTION_LINK || (context->actions & GDK_ACTION_LINK) != 0)
-    action = GDK_ACTION_LINK;
-  else if (context->suggested_action == GDK_ACTION_COPY || (context->actions & GDK_ACTION_COPY) != 0)
-    action = GDK_ACTION_COPY;
-  else if (context->suggested_action == GDK_ACTION_MOVE || (context->actions & GDK_ACTION_MOVE) != 0)
-    action = GDK_ACTION_MOVE;
-  else
-    return FALSE;
+  /* reset the "drop-file" of the icon renderer */
+  g_object_set (G_OBJECT (view->icon_renderer), "drop-file", NULL, NULL);
 
-  /* compute the drop position for the coordinates */
-  path = thunar_shortcuts_view_compute_drop_position (view, x, y);
-
-  /* check if path is about to append to the model */
-  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-  if (gtk_tree_path_get_indices (path)[0] >= gtk_tree_model_iter_n_children (model, NULL))
+  /* determine the drag target */
+  target = gtk_drag_dest_find_target (widget, context, NULL);
+  if (target == gdk_atom_intern ("text/uri-list", FALSE))
     {
-      /* set the position to "after" and move the path to
-       * point to the previous row instead; required to
-       * get the highlighting in GtkTreeView correct.
-       */
-      position = GTK_TREE_VIEW_DROP_AFTER;
-      gtk_tree_path_prev (path);
+      /* request the drop data on-demand (if we don't have it already) */
+      if (G_UNLIKELY (!view->drop_data_ready))
+        {
+          /* request the drag data from the source */
+          gtk_drag_get_data (widget, context, target, time);
+
+          /* gdk_drag_status() will be called by drag_data_received */
+          return TRUE;
+        }
+      else
+        {
+          /* compute the drop position */
+          thunar_shortcuts_view_compute_drop_actions (view, context, x, y, &path, &action, &position);
+        }
+    }
+  else if (target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
+    {
+      /* check the action that should be performed */
+      if (context->suggested_action == GDK_ACTION_LINK || (context->actions & GDK_ACTION_LINK) != 0)
+        action = GDK_ACTION_LINK;
+      else if (context->suggested_action == GDK_ACTION_COPY || (context->actions & GDK_ACTION_COPY) != 0)
+        action = GDK_ACTION_COPY;
+      else if (context->suggested_action == GDK_ACTION_MOVE || (context->actions & GDK_ACTION_MOVE) != 0)
+        action = GDK_ACTION_MOVE;
+      else
+        return FALSE;
+
+      /* compute the drop position for the coordinates */
+      path = thunar_shortcuts_view_compute_drop_position (view, x, y);
+
+      /* check if path is about to append to the model */
+      model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+      if (gtk_tree_path_get_indices (path)[0] >= gtk_tree_model_iter_n_children (model, NULL))
+        {
+          /* set the position to "after" and move the path to
+           * point to the previous row instead; required to
+           * get the highlighting in GtkTreeView correct.
+           */
+          position = GTK_TREE_VIEW_DROP_AFTER;
+          gtk_tree_path_prev (path);
+        }
+    }
+  else
+    {
+      /* we cannot handle the drop */
+      return FALSE;
     }
 
-  /* highlight the appropriate row */
-  gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (view), path, position);
-  gtk_tree_path_free (path);
+  /* check if we have a drop path */
+  if (G_LIKELY (path != NULL))
+    {
+      /* highlight the appropriate row */
+      gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (view), path, position);
+      gtk_tree_path_free (path);
+    }
 
+  /* tell Gdk whether we can drop here */
   gdk_drag_status (context, action, time);
+
   return TRUE;
+}
+
+
+
+static void
+thunar_shortcuts_view_drag_leave (GtkWidget      *widget,
+                                  GdkDragContext *context,
+                                  guint           time)
+{
+  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (widget);
+
+  /* reset the "drop-file" of the icon renderer */
+  g_object_set (G_OBJECT (view->icon_renderer), "drop-file", NULL, NULL);
+
+  /* reset the "drop data ready" status and free the URI list */
+  if (G_LIKELY (view->drop_data_ready))
+    {
+      thunar_vfs_path_list_free (view->drop_path_list);
+      view->drop_data_ready = FALSE;
+      view->drop_path_list = NULL;
+    }
+
+  /* call the parent's handler */
+  return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->drag_leave) (widget, context, time);
 }
 
 
@@ -742,6 +934,104 @@ thunar_shortcuts_view_renamed (GtkCellRenderer     *renderer,
 
 
 
+static GdkDragAction
+thunar_shortcuts_view_compute_drop_actions (ThunarShortcutsView     *view,
+                                            GdkDragContext          *context,
+                                            gint                     x,
+                                            gint                     y,
+                                            GtkTreePath            **path_return,
+                                            GdkDragAction           *action_return,
+                                            GtkTreeViewDropPosition *position_return)
+{
+  GtkTreeViewColumn *column;
+  GdkDragAction      actions = 0;
+  GdkRectangle       cell_area;
+  GtkTreeModel      *model;
+  GtkTreePath       *path;
+  GtkTreeIter        iter;
+  ThunarFile        *file;
+  gint               cell_y;
+
+  /* determine the shortcuts model */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+
+  /* determine the path for x/y */
+  if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (view), x, y, &path, &column, NULL, &cell_y))
+    {
+      /* determine the background area of the column */
+      gtk_tree_view_get_background_area (GTK_TREE_VIEW (view), path, column, &cell_area);
+
+      /* check if 1/6th inside the cell and the path is within the model */
+      if ((cell_y > (cell_area.height / 6) && cell_y < (cell_area.height - cell_area.height / 6))
+          && gtk_tree_model_get_iter (model, &iter, path))
+        {
+          /* determine the file for the iterator */
+          gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file, -1);
+          if (G_LIKELY (file != NULL))
+            {
+              /* check if the file accepts the drop */
+              actions = thunar_file_accepts_drop (file, view->drop_path_list, context, action_return);
+              if (G_LIKELY (actions != 0))
+                {
+                  /* we can drop into this location */
+                  *position_return = GTK_TREE_VIEW_DROP_INTO_OR_AFTER;
+                  *path_return = gtk_tree_path_copy (path);
+
+                  /* display a drop icon for the file */
+                  g_object_set (G_OBJECT (view->icon_renderer), "drop-file", file, NULL);
+                }
+
+              /* release the file */
+              g_object_unref (G_OBJECT (file));
+            }
+        }
+
+      /* release the path */
+      gtk_tree_path_free (path);
+    }
+
+  /* check if we cannot drop into the shortcut */
+  if (G_UNLIKELY (actions == 0))
+    {
+      /* check the action that should be performed */
+      if (context->suggested_action == GDK_ACTION_LINK || (context->actions & GDK_ACTION_LINK) != 0)
+        actions = GDK_ACTION_LINK;
+      else if (context->suggested_action == GDK_ACTION_COPY || (context->actions & GDK_ACTION_COPY) != 0)
+        actions = GDK_ACTION_COPY;
+      else if (context->suggested_action == GDK_ACTION_MOVE || (context->actions & GDK_ACTION_MOVE) != 0)
+        actions = GDK_ACTION_MOVE;
+      else
+        return 0;
+
+      /* but maybe we can add as shortcut */
+      path = thunar_shortcuts_view_compute_drop_position (view, x, y);
+
+      /* check if path is about to append to the model */
+      if (gtk_tree_path_get_indices (path)[0] >= gtk_tree_model_iter_n_children (model, NULL))
+        {
+          /* set the position to "after" and move the path to
+           * point to the previous row instead; required to
+           * get the highlighting in GtkTreeView correct.
+           */
+          *position_return = GTK_TREE_VIEW_DROP_AFTER;
+          gtk_tree_path_prev (path);
+        }
+      else
+        {
+          /* drop before the path */
+          *position_return = GTK_TREE_VIEW_DROP_BEFORE;
+        }
+
+      /* got it */
+      *action_return = actions;
+      *path_return = path;
+    }
+
+  return actions;
+}
+
+
+
 static GtkTreePath*
 thunar_shortcuts_view_compute_drop_position (ThunarShortcutsView *view,
                                              gint                 x,
@@ -788,49 +1078,49 @@ thunar_shortcuts_view_compute_drop_position (ThunarShortcutsView *view,
 
 static void
 thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
-                                     const gchar         *uri_list,
+                                     GList               *path_list,
                                      GtkTreePath         *dst_path)
 {
   GtkTreeModel *model;
+  GtkTreePath  *path;
   ThunarFile   *file;
   GError       *error = NULL;
   gchar        *display_string;
   gchar        *uri_string;
-  GList        *path_list;
   GList        *lp;
 
-  path_list = thunar_vfs_path_list_from_string (uri_list, &error);
-  if (G_LIKELY (error == NULL))
+  /* take a copy of the destination path */
+  path = gtk_tree_path_copy (dst_path);
+
+  /* process the URIs one-by-one and stop on error */
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
+  for (lp = path_list; lp != NULL; lp = lp->next)
     {
-      /* process the URIs one-by-one and stop on error */
-      model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-      for (lp = path_list; lp != NULL; lp = lp->next)
+      file = thunar_file_get_for_path (lp->data, &error);
+      if (G_UNLIKELY (file == NULL))
+        break;
+
+      /* make sure, that only directories gets added to the shortcuts list */
+      if (G_UNLIKELY (!thunar_file_is_directory (file)))
         {
-          file = thunar_file_get_for_path (lp->data, &error);
-          if (G_UNLIKELY (file == NULL))
-            break;
-
-          /* make sure, that only directories gets added to the shortcuts list */
-          if (G_UNLIKELY (!thunar_file_is_directory (file)))
-            {
-              uri_string = thunar_vfs_path_dup_string (lp->data);
-              display_string = g_filename_display_name (uri_string);
-              g_set_error (&error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR,
-                           _("The path \"%s\" does not refer to a directory"),
-                           display_string);
-              g_object_unref (G_OBJECT (file));
-              g_free (display_string);
-              g_free (uri_string);
-              break;
-            }
-
-          thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (model), dst_path, file);
+          uri_string = thunar_vfs_path_dup_string (lp->data);
+          display_string = g_filename_display_name (uri_string);
+          g_set_error (&error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR,
+                       _("The path \"%s\" does not refer to a directory"),
+                       display_string);
           g_object_unref (G_OBJECT (file));
-          gtk_tree_path_next (dst_path);
+          g_free (display_string);
+          g_free (uri_string);
+          break;
         }
 
-      thunar_vfs_path_list_free (path_list);
+      thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (model), path, file);
+      g_object_unref (G_OBJECT (file));
+      gtk_tree_path_next (path);
     }
+
+  /* release the tree path copy */
+  gtk_tree_path_free (path);
 
   if (G_UNLIKELY (error != NULL))
     {
