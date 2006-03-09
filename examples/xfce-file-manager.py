@@ -43,6 +43,11 @@ xfce_file_manager = dbus.Interface(xfce_file_manager_object, 'org.xfce.FileManag
 #
 # xfce_file_manager.DisplayFolder('/tmp', '')
 #
+# or, if you also want to pre-select a file in the folder, you
+# can use:
+#
+# xfce_file_manager.DisplayFolderAndSelect('/tmp', 'file.txt', '')
+#
 # else if you want to display the file managers preferences
 # dialog, you'd use
 #
