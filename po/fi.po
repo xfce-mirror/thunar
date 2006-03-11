@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-09 19:24+0100\n"
+"POT-Creation-Date: 2006-03-11 18:15+0100\n"
 "PO-Revision-Date: 2006-03-01 21:36+0200\n"
 "Last-Translator: jari <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -446,7 +446,7 @@ msgstr "Luodaan hakemistoja..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:484
+#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:513
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Oletussovelluksen asettaminen tiedostotyypille \"%s\" epäonnistui"
@@ -469,64 +469,91 @@ msgstr ""
 msgid "_Other Application..."
 msgstr "_Muussa sovelluksessa..."
 
-#: ../thunar/thunar-chooser-dialog.c:207 ../thunar/thunar-launcher.c:123
+#: ../thunar/thunar-chooser-dialog.c:216 ../thunar/thunar-launcher.c:123
 msgid "Open With"
 msgstr "Avaa sovelluksessa"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:271
+#: ../thunar/thunar-chooser-dialog.c:280
 msgid "Use a _custom command:"
 msgstr "Käytä _mukautettua komentoa:"
 
+#: ../thunar/thunar-chooser-dialog.c:281
+msgid ""
+"Use a custom command for an application that is not available from the above "
+"application list."
+msgstr ""
+
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:289
-msgid "_Browse"
+#: ../thunar/thunar-chooser-dialog.c:300
+#, fuzzy
+msgid "_Browse..."
 msgstr "_Selaa"
 
+#. create the "Use as default for this kind of file" button
+#: ../thunar/thunar-chooser-dialog.c:306
+msgid "Use as _default for this kind of file"
+msgstr ""
+
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:462
+#: ../thunar/thunar-chooser-dialog.c:488
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Uuden sovelluksen \"%s\" lisääminen epäonnistui"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:497
+#: ../thunar/thunar-chooser-dialog.c:533
 #, c-format
 msgid "Failed to execute \"%s\""
 msgstr "Kohteen \"%s\" suorittaminen epäonnistui"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:618
+#: ../thunar/thunar-chooser-dialog.c:650
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Avaa <i>%s</i> ja muut tyypin \"%s\" tiedostot sovelluksessa:"
 
-#: ../thunar/thunar-chooser-dialog.c:640 ../thunar-uca/thunar-uca-editor.c:491
+#. update the "Browse..." tooltip
+#: ../thunar/thunar-chooser-dialog.c:657
+#, fuzzy, c-format
+msgid ""
+"Browse the file system to select an application to open files of type \"%s\"."
+msgstr "Selaa tiedostojärjestelmää valitaksesi sovelluksen toiminnolle."
+
+#. update the "Use as default for this kind of file" tooltip
+#: ../thunar/thunar-chooser-dialog.c:663
+#, c-format
+msgid ""
+"Change the default application for files of type \"%s\" to the selected "
+"application."
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:684 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Valitse sovellus"
 
-#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:501
-#: ../thunar-uca/thunar-uca-editor.c:640
+#: ../thunar/thunar-chooser-dialog.c:694 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar-uca/thunar-uca-editor.c:660
 msgid "All Files"
 msgstr "Kaikki tiedostot"
 
-#: ../thunar/thunar-chooser-dialog.c:655 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:699 ../thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Suoritettavat tiedostot"
 
-#: ../thunar/thunar-chooser-dialog.c:670 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:714 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Perl-skriptit"
 
-#: ../thunar/thunar-chooser-dialog.c:676 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:720 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Python-skriptit"
 
-#: ../thunar/thunar-chooser-dialog.c:682 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:726 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Ruby-skriptit"
 
-#: ../thunar/thunar-chooser-dialog.c:688 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:732 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Shell-skriptit"
 
@@ -2039,7 +2066,7 @@ msgid "_Icon:"
 msgstr "_Kuvake:"
 
 #. setup a label to tell that no icon was selected
-#: ../thunar-uca/thunar-uca-editor.c:225 ../thunar-uca/thunar-uca-editor.c:770
+#: ../thunar-uca/thunar-uca-editor.c:225 ../thunar-uca/thunar-uca-editor.c:790
 msgid "No icon"
 msgstr "Ei kuvaketta"
 
@@ -2155,11 +2182,11 @@ msgstr ""
 "kansion nimeä. Lisäksi voit määrittää toiminnon\n"
 "näkymään ainoastaan tietyille tiedostotyypeille"
 
-#: ../thunar-uca/thunar-uca-editor.c:630
+#: ../thunar-uca/thunar-uca-editor.c:650
 msgid "Select an Icon"
 msgstr "Valitse kuvake"
 
-#: ../thunar-uca/thunar-uca-editor.c:645
+#: ../thunar-uca/thunar-uca-editor.c:665
 msgid "Image Files"
 msgstr "Kuvatiedostot"
 

@@ -554,8 +554,28 @@ thunar_uca_editor_command_clicked (ThunarUcaEditor *uca_editor)
       if (G_UNLIKELY (s != NULL))
         *s = '\0';
 
-      if (G_LIKELY (g_path_is_absolute (filename)))
-        gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), filename);
+      /* check if we have a file name */
+      if (G_LIKELY (*filename != '\0'))
+        {
+          /* check if the filename is not an absolute path */
+          if (G_LIKELY (!g_path_is_absolute (filename)))
+            {
+              /* try to lookup the filename in $PATH */
+              s = g_find_program_in_path (filename);
+              if (G_LIKELY (s != NULL))
+                {
+                  /* use the absolute path instead */
+                  g_free (filename);
+                  filename = s;
+                }
+            }
+
+          /* check if we have an absolute path now */
+          if (G_LIKELY (g_path_is_absolute (filename)))
+            gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), filename);
+        }
+
+      /* release the filename */
       g_free (filename);
     }
 

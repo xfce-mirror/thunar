@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-09 19:24+0100\n"
-"PO-Revision-Date: 2006-03-09 19:25+0100\n"
+"POT-Creation-Date: 2006-03-11 18:15+0100\n"
+"PO-Revision-Date: 2006-03-11 18:16+0100\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -449,7 +449,7 @@ msgstr "Erstelle Verzeichnisse..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:484
+#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:513
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Die Standardanwendung für »%s« konnte nicht gesetzt werden"
@@ -472,64 +472,96 @@ msgstr ""
 msgid "_Other Application..."
 msgstr "_Andere Anwendung..."
 
-#: ../thunar/thunar-chooser-dialog.c:207 ../thunar/thunar-launcher.c:123
+#: ../thunar/thunar-chooser-dialog.c:216 ../thunar/thunar-launcher.c:123
 msgid "Open With"
 msgstr "Öffnen Mit"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:271
+#: ../thunar/thunar-chooser-dialog.c:280
 msgid "Use a _custom command:"
 msgstr "Einen _benutzerdefinierten Befehl benutzen:"
 
+#: ../thunar/thunar-chooser-dialog.c:281
+msgid ""
+"Use a custom command for an application that is not available from the above "
+"application list."
+msgstr ""
+"Einen benutzerdefinierten Befehl für eine Anwendung eingeben, die nicht in "
+"der obigen Liste enthalten ist."
+
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:289
-msgid "_Browse"
-msgstr "_Durchsuchen"
+#: ../thunar/thunar-chooser-dialog.c:300
+msgid "_Browse..."
+msgstr "_Durchsuchen..."
+
+#. create the "Use as default for this kind of file" button
+#: ../thunar/thunar-chooser-dialog.c:306
+msgid "Use as _default for this kind of file"
+msgstr "Standardmäßig für Dateien dieses Typs benutzen"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:462
+#: ../thunar/thunar-chooser-dialog.c:488
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Die Anwendung »%s« konnte nicht hinzugefügt werden"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:497
+#: ../thunar/thunar-chooser-dialog.c:533
 #, c-format
 msgid "Failed to execute \"%s\""
 msgstr "Die Datei »%s« konnte nicht ausgeführt werden"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:618
+#: ../thunar/thunar-chooser-dialog.c:650
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "<i>%s</i> und andere Dateien vom Typ »%s« öffnen mit:"
 
-#: ../thunar/thunar-chooser-dialog.c:640 ../thunar-uca/thunar-uca-editor.c:491
+#. update the "Browse..." tooltip
+#: ../thunar/thunar-chooser-dialog.c:657
+#, c-format
+msgid ""
+"Browse the file system to select an application to open files of type \"%s\"."
+msgstr ""
+"Das Dateisystem durchsuchen, um eine Anwendung auszuwählen, mit der Dateien "
+"vom Typ »%s« geöffnet werden können."
+
+#. update the "Use as default for this kind of file" tooltip
+#: ../thunar/thunar-chooser-dialog.c:663
+#, c-format
+msgid ""
+"Change the default application for files of type \"%s\" to the selected "
+"application."
+msgstr ""
+"Die ausgewählte Anwendung soll standardmäßig zum Öffnen von Dateien des Typs "
+"»%s« benutzt werden."
+
+#: ../thunar/thunar-chooser-dialog.c:684 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Anwendung auswählen"
 
-#: ../thunar/thunar-chooser-dialog.c:650 ../thunar-uca/thunar-uca-editor.c:501
-#: ../thunar-uca/thunar-uca-editor.c:640
+#: ../thunar/thunar-chooser-dialog.c:694 ../thunar-uca/thunar-uca-editor.c:501
+#: ../thunar-uca/thunar-uca-editor.c:660
 msgid "All Files"
 msgstr "Alle Dateien"
 
-#: ../thunar/thunar-chooser-dialog.c:655 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:699 ../thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Ausführbare Dateien"
 
-#: ../thunar/thunar-chooser-dialog.c:670 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:714 ../thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Perl Skripte"
 
-#: ../thunar/thunar-chooser-dialog.c:676 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:720 ../thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Python Skripte"
 
-#: ../thunar/thunar-chooser-dialog.c:682 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:726 ../thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Ruby Skripte"
 
-#: ../thunar/thunar-chooser-dialog.c:688 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:732 ../thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Shell Skripte"
 
@@ -2060,7 +2092,7 @@ msgid "_Icon:"
 msgstr "_Symbol:"
 
 #. setup a label to tell that no icon was selected
-#: ../thunar-uca/thunar-uca-editor.c:225 ../thunar-uca/thunar-uca-editor.c:770
+#: ../thunar-uca/thunar-uca-editor.c:225 ../thunar-uca/thunar-uca-editor.c:790
 msgid "No icon"
 msgstr "Kein Symbol"
 
@@ -2178,11 +2210,11 @@ msgstr ""
 "Weiterhin kann angegeben werden, daß eine Aktion\n"
 "nur für bestimmte Dateitypen erscheinen soll."
 
-#: ../thunar-uca/thunar-uca-editor.c:630
+#: ../thunar-uca/thunar-uca-editor.c:650
 msgid "Select an Icon"
 msgstr "Symbol auswählen"
 
-#: ../thunar-uca/thunar-uca-editor.c:645
+#: ../thunar-uca/thunar-uca-editor.c:665
 msgid "Image Files"
 msgstr "Bilddateien"
 
