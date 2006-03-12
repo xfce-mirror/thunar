@@ -289,6 +289,9 @@ thunar_details_view_init (ThunarDetailsView *details_view)
           gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
                                                "text", THUNAR_COLUMN_NAME,
                                                NULL);
+
+          /* add some spacing between the icon and the name */
+          gtk_tree_view_column_set_spacing (details_view->columns[column], 2);
         }
       else
         {
