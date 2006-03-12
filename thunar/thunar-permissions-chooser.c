@@ -1081,8 +1081,8 @@ thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
       /* determine the current mode */
       mode = thunar_file_get_mode (chooser->file);
 
-      /* determine the new mode */
-      mode = (((mode & THUNAR_VFS_FILE_MODE_USR_READ) != 0) ? THUNAR_VFS_FILE_MODE_USR_EXEC : 0)
+      /* determine the new mode (making sure the owner can read/enter the folder) */
+      mode = (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_EXEC)
            | (((mode & THUNAR_VFS_FILE_MODE_GRP_READ) != 0) ? THUNAR_VFS_FILE_MODE_GRP_EXEC : 0)
            | (((mode & THUNAR_VFS_FILE_MODE_OTH_READ) != 0) ? THUNAR_VFS_FILE_MODE_OTH_EXEC : 0);
 
