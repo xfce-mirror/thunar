@@ -174,7 +174,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   gtk_widget_show (table);
 
   /* create the top label for the column editor dialog */
-  label = gtk_label_new (_("Chooser the order of information to appear in the\ndetailed list view."));
+  label = gtk_label_new (_("Choose the order of information to appear in the\ndetailed list view."));
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
