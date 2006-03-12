@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-11 18:15+0100\n"
-"PO-Revision-Date: 2006-03-04 12:45+0900\n"
+"PO-Revision-Date: 2006-03-12 18:48+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -492,17 +492,18 @@ msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
 msgstr ""
+"上のアプリケーション一覧にないアプリケーションのコマンドを指定して使用しま"
+"す。"
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:300
-#, fuzzy
 msgid "_Browse..."
-msgstr "参照(_B)"
+msgstr "参照(_B)..."
 
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:306
 msgid "Use as _default for this kind of file"
-msgstr ""
+msgstr "この種類のファイルの標準アプリケーションにする(_D)"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:488
@@ -525,12 +526,12 @@ msgstr ""
 
 #. update the "Browse..." tooltip
 #: ../thunar/thunar-chooser-dialog.c:657
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
 msgstr ""
-"このアクションに使用するアプリケーションを選択するためにファイルシステムを参"
-"照します。"
+"種類が「%s」のファイルを開くアプリケーションを選択するためにファイルシステム"
+"を参照します。"
 
 #. update the "Use as default for this kind of file" tooltip
 #: ../thunar/thunar-chooser-dialog.c:663
@@ -539,6 +540,8 @@ msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr ""
+"種類が「%s」のファイルを開く標準のアプリケーションを選択したものに変更しま"
+"す。"
 
 #: ../thunar/thunar-chooser-dialog.c:684 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
@@ -1187,62 +1190,56 @@ msgstr ""
 #. Side Pane
 #.
 #: ../thunar/thunar-preferences-dialog.c:320
-#, fuzzy
 msgid "Side Pane"
-msgstr "サイドペイン(_S)"
+msgstr "サイドペイン"
 
 #: ../thunar/thunar-preferences-dialog.c:330
-#, fuzzy
 msgid "Shortcuts Pane"
-msgstr "ショートカット(_S)"
+msgstr "ショートカットペイン"
 
 #: ../thunar/thunar-preferences-dialog.c:342
-#, fuzzy
 msgid "Shortcut _Icon Size:"
-msgstr "サイズで並べ替え(_S)"
+msgstr "ショートカットのアイコンサイズ(_I):"
 
 #: ../thunar/thunar-preferences-dialog.c:347
 msgid "Very Small"
-msgstr ""
+msgstr "とても小さい"
 
 #: ../thunar/thunar-preferences-dialog.c:348
 msgid "Smaller"
-msgstr ""
+msgstr "より小さい"
 
 #: ../thunar/thunar-preferences-dialog.c:349
 msgid "Small"
-msgstr ""
+msgstr "小さい"
 
 #: ../thunar/thunar-preferences-dialog.c:350
-#, fuzzy
 msgid "Normal"
-msgstr "普通のサイズ(_Z)"
+msgstr "普通"
 
 #: ../thunar/thunar-preferences-dialog.c:351
 msgid "Large"
-msgstr ""
+msgstr "大きい"
 
 #: ../thunar/thunar-preferences-dialog.c:352
 msgid "Larger"
-msgstr ""
+msgstr "より大きい"
 
 #: ../thunar/thunar-preferences-dialog.c:353
 msgid "Very Large"
-msgstr ""
+msgstr "とても大きい"
 
 #: ../thunar/thunar-preferences-dialog.c:370
-#, fuzzy
 msgid "Show Icon _Emblems"
-msgstr "シンボルアイコンを表示(_E)"
+msgstr "アイコンのシンボルを表示(_E)"
 
 #: ../thunar/thunar-preferences-dialog.c:372
-#, fuzzy
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"ショートカットのリストにある全てのファイルにシンボルアイコンを表示します。こ"
-"れらのシンボルはファイルプロパティのダイアログで定義されています。"
+"ショートカットペインにある全てのフォルダにシンボルアイコンを表示します。これ"
+"らのシンボルはフォルダのプロパティのダイアログで定義されています。"
 
 #.
 #. Behavior
@@ -1268,9 +1265,8 @@ msgid "Advanced"
 msgstr "詳細..."
 
 #: ../thunar/thunar-preferences-dialog.c:429
-#, fuzzy
 msgid "Folder Permissions"
-msgstr "アクセス権"
+msgstr "フォルダのアクセス権"
 
 #: ../thunar/thunar-preferences-dialog.c:441
 msgid ""
@@ -1278,18 +1274,21 @@ msgid ""
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr ""
+"フォルダのアクセス権を変更する場合、フォルダ内の\n"
+"ファイルにもこの変更を適用することができます。\n"
+"以下から、標準で行うことを選択して下さい:"
 
 #: ../thunar/thunar-preferences-dialog.c:449
 msgid "Ask everytime"
-msgstr "毎回尋ねる"
+msgstr "毎回質問する"
 
 #: ../thunar/thunar-preferences-dialog.c:450
 msgid "Apply to Folder Only"
-msgstr ""
+msgstr "フォルダのみに適用する"
 
 #: ../thunar/thunar-preferences-dialog.c:451
 msgid "Apply to Folder and Contents"
-msgstr ""
+msgstr "フォルダ内のファイルにも適用する"
 
 #: ../thunar/thunar-progress-dialog.c:458
 #, c-format
@@ -2242,27 +2241,9 @@ msgid "Thunar File Manager"
 msgstr "Thunar ファイルマネージャー"
 
 #: ../Thunar-folder-handler.desktop.in.h:1
-#, fuzzy
 msgid "Open Folder"
-msgstr "新規フォルダ"
+msgstr "フォルダを開く"
 
 #: ../Thunar-folder-handler.desktop.in.h:2
-#, fuzzy
 msgid "Open the specified folders in Thunar"
-msgstr "選択したフォルダを新しい Thunar ウィンドウで開きます。"
-
-#, fuzzy
-#~ msgid "Largest"
-#~ msgstr "リンク先:"
-
-#~ msgid "Miscellaneous"
-#~ msgstr "その他"
-
-#~ msgid "Apply permissions _recursively:"
-#~ msgstr "アクセス権を再帰的に変更する(_R):"
-
-#~ msgid "Always"
-#~ msgstr "常に行う"
-
-#~ msgid "Never"
-#~ msgstr "行わない"
+msgstr "指定したフォルダを Thunar で開きます"
