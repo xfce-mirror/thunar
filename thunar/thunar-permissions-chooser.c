@@ -1087,7 +1087,7 @@ thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
            | (((mode & THUNAR_VFS_FILE_MODE_OTH_READ) != 0) ? THUNAR_VFS_FILE_MODE_OTH_EXEC : 0);
 
       /* try to allocate the new job */
-      job = thunar_vfs_change_mode (thunar_file_get_path (chooser->file), 0111, mode, 0000, 0000, FALSE, &error);
+      job = thunar_vfs_change_mode (thunar_file_get_path (chooser->file), 0511, mode, 0000, 0000, FALSE, &error);
       if (G_UNLIKELY (job == NULL))
         {
           /* display an error to the user */
