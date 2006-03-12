@@ -20,7 +20,7 @@
 #ifndef __THUNAR_ENUM_TYPES_H__
 #define __THUNAR_ENUM_TYPES_H__
 
-#include <glib-object.h>
+#include <exo/exo.h>
 
 G_BEGIN_DECLS;
 
@@ -50,29 +50,41 @@ GType thunar_color_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
  * ThunarColumn:
  * @THUNAR_COLUMN_DATE_ACCESSED : last access time.
  * @THUNAR_COLUMN_DATE_MODIFIED : last modification time.
- * @THUNAR_COLUMN_FILE          : #ThunarFile object.
+ * @THUNAR_COLUMN_GROUP         : group's name.
  * @THUNAR_COLUMN_MIME_TYPE     : mime type (i.e. "text/plain").
  * @THUNAR_COLUMN_NAME          : display name.
+ * @THUNAR_COLUMN_OWNER         : owner's name.
  * @THUNAR_COLUMN_PERMISSIONS   : permissions bits.
- * @THUNAR_COLUMN_REAL_NAME     : real file name.
  * @THUNAR_COLUMN_SIZE          : file size.
  * @THUNAR_COLUMN_TYPE          : file type (i.e. 'plain text document').
+ * @THUNAR_COLUMN_FILE          : #ThunarFile object.
+ * @THUNAR_COLUMN_FILE_NAME     : real file name.
  *
  * Columns exported by #ThunarListModel using the #GtkTreeModel
  * interface.
  **/
 typedef enum
 {
+  /* visible columns */
   THUNAR_COLUMN_DATE_ACCESSED,
   THUNAR_COLUMN_DATE_MODIFIED,
-  THUNAR_COLUMN_FILE,
+  THUNAR_COLUMN_GROUP,
   THUNAR_COLUMN_MIME_TYPE,
   THUNAR_COLUMN_NAME,
+  THUNAR_COLUMN_OWNER,
   THUNAR_COLUMN_PERMISSIONS,
-  THUNAR_COLUMN_REAL_NAME,
   THUNAR_COLUMN_SIZE,
   THUNAR_COLUMN_TYPE,
+
+  /* special internal columns */
+  THUNAR_COLUMN_FILE,
+  THUNAR_COLUMN_FILE_NAME,
+
+  /* number of columns */
   THUNAR_N_COLUMNS,
+
+  /* number of visible columns */
+  THUNAR_N_VISIBLE_COLUMNS = THUNAR_COLUMN_FILE,
 } ThunarColumn;
 
 GType thunar_column_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;

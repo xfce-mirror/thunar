@@ -57,16 +57,18 @@ thunar_column_get_type (void)
 {
   static const GEnumValue values[] =
   {
-    { THUNAR_COLUMN_DATE_ACCESSED, "THUNAR_COLUMN_DATE_ACCESSED", "date-accessed", },
-    { THUNAR_COLUMN_DATE_MODIFIED, "THUNAR_COLUMN_DATE_MODIFIED", "date-modified", },
-    { THUNAR_COLUMN_FILE,          "THUNAR_COLUMN_FILE",          "file",          },
-    { THUNAR_COLUMN_MIME_TYPE,     "THUNAR_COLUMN_MIME_TYPE",     "mime-type",     },
-    { THUNAR_COLUMN_NAME,          "THUNAR_COLUMN_NAME",          "name",          },
-    { THUNAR_COLUMN_PERMISSIONS,   "THUNAR_COLUMN_PERMISSIONS",   "permissions",   },
-    { THUNAR_COLUMN_REAL_NAME,     "THUNAR_COLUMN_REAL_NAME",     "real-name",     },
-    { THUNAR_COLUMN_SIZE,          "THUNAR_COLUMN_SIZE",          "size",          },
-    { THUNAR_COLUMN_TYPE,          "THUNAR_COLUMN_TYPE",          "type",          },
-    { 0,                           NULL,                          NULL,            },
+    { THUNAR_COLUMN_DATE_ACCESSED, "THUNAR_COLUMN_DATE_ACCESSED", N_ ("Date Accessed"), },
+    { THUNAR_COLUMN_DATE_MODIFIED, "THUNAR_COLUMN_DATE_MODIFIED", N_ ("Date Modified"), },
+    { THUNAR_COLUMN_GROUP,         "THUNAR_COLUMN_GROUP",         N_ ("Group"),         },
+    { THUNAR_COLUMN_MIME_TYPE,     "THUNAR_COLUMN_MIME_TYPE",     N_ ("MIME Type"),     },
+    { THUNAR_COLUMN_NAME,          "THUNAR_COLUMN_NAME",          N_ ("Name"),          },
+    { THUNAR_COLUMN_OWNER,         "THUNAR_COLUMN_OWNER",         N_ ("Owner"),         },
+    { THUNAR_COLUMN_PERMISSIONS,   "THUNAR_COLUMN_PERMISSIONS",   N_ ("Permissions"),   },
+    { THUNAR_COLUMN_SIZE,          "THUNAR_COLUMN_SIZE",          N_ ("Size"),          },
+    { THUNAR_COLUMN_TYPE,          "THUNAR_COLUMN_TYPE",          N_ ("Type"),          },
+    { THUNAR_COLUMN_FILE,          "THUNAR_COLUMN_FILE",          N_ ("File"),          },
+    { THUNAR_COLUMN_FILE_NAME,     "THUNAR_COLUMN_FILE_NAME",     N_ ("File Name"),     },
+    { 0,                           NULL,                          NULL,                 },
   };
 
   return thunar_enum_register_type ("ThunarColumn", values);

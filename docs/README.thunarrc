@@ -24,6 +24,48 @@ The Thunar Configuration File (thunarrc)
 
      The last selected zoom level for the detailed list view.
 
+   * LastDetailsViewColumnOrder
+
+     A comma separated list of columns, which specifies the order of
+     information that appears in the detailed list view. Valid names
+     for the detailed list columns are:
+
+	- THUNAR_COLUMN_DATE_ACCESSED
+        - THUNAR_COLUMN_DATE_MODIFIED
+        - THUNAR_COLUMN_GROUP
+        - THUNAR_COLUMN_MIME_TYPE
+        - THUNAR_COLUMN_NAME
+        - THUNAR_COLUMN_OWNER
+        - THUNAR_COLUMN_PERMISSIONS
+        - THUNAR_COLUMN_SIZE
+        - THUNAR_COLUMN_TYPE
+
+   * LastDetailsViewColumnWidths
+
+     A comma separated list of column widths, used if the details view
+     is in fixed column mode. The exact format of this list should be
+     considered an implementation detail and may change in future
+     versions of Thunar.
+
+   * LastDetailsViewFixedColumns (FALSE/TRUE)
+
+     Whether to use fixed column widths in the detailed list view.
+
+   * LastDetailsViewVisibleColumns
+
+     The comma separated list of visible columns in the detailed list
+     view. Valid names for the detailed list columns are:
+
+	- THUNAR_COLUMN_DATE_ACCESSED
+        - THUNAR_COLUMN_DATE_MODIFIED
+        - THUNAR_COLUMN_GROUP
+        - THUNAR_COLUMN_MIME_TYPE
+        - THUNAR_COLUMN_NAME
+        - THUNAR_COLUMN_OWNER
+        - THUNAR_COLUMN_PERMISSIONS
+        - THUNAR_COLUMN_SIZE
+        - THUNAR_COLUMN_TYPE
+
    * LastIconViewZoomLevel (THUNAR_ZOOM_LEVEL_SMALLEST/
    			    THUNAR_ZOOM_LEVEL_SMALLER/
    			    THUNAR_ZOOM_LEVEL_SMALL/
@@ -51,8 +93,10 @@ The Thunar Configuration File (thunarrc)
 
    * LastSortColumn (THUNAR_COLUMN_DATE_ACCESSED/
                      THUNAR_COLUMN_DATE_MODIFIED/
+                     THUNAR_COLUMN_GROUP/
                      THUNAR_COLUMN_MIME_TYPE/
                      THUNAR_COLUMN_NAME/
+                     THUNAR_COLUMN_OWNER/
                      THUNAR_COLUMN_PERMISSIONS/
                      THUNAR_COLUMN_SIZE/
                      THUNAR_COLUMN_TYPE)

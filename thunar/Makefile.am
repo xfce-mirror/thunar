@@ -38,10 +38,15 @@ Thunar_SOURCES =							\
 	thunar-chooser-model.h						\
 	thunar-clipboard-manager.c					\
 	thunar-clipboard-manager.h					\
+	thunar-column-editor.c						\
+	thunar-column-editor.h						\
+	thunar-column-model.c						\
+	thunar-column-model.h						\
 	thunar-component.c						\
 	thunar-component.h						\
 	thunar-create-dialog.c						\
 	thunar-create-dialog.h						\
+	thunar-details-view-ui.h					\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
 	thunar-dialogs.c						\
@@ -202,6 +207,7 @@ CLEANFILES =								\
 DISTCLEANFILES =							\
 	$(thunar_built_sources)						\
 	stamp-thunar-marshal.h						\
+	thunar-details-view-ui.h					\
 	thunar-icon-view-ui.h						\
 	thunar-launcher-ui.h						\
 	thunar-location-buttons-ui.h					\
@@ -213,6 +219,7 @@ DISTCLEANFILES =							\
 
 BUILT_SOURCES =								\
 	$(thunar_built_sources)						\
+	thunar-details-view-ui.h					\
 	thunar-icon-view-ui.h						\
 	thunar-launcher-ui.h						\
 	thunar-location-buttons-ui.h					\
@@ -232,6 +239,9 @@ thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile
 
 thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
 	(echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
+
+thunar-details-view-ui.h: Makefile $(srcdir)/thunar-details-view-ui.xml
+	exo-csource --static --name=thunar_details_view_ui $(srcdir)/thunar-details-view-ui.xml > thunar-details-view-ui.h
 
 thunar-icon-view-ui.h: Makefile $(srcdir)/thunar-icon-view-ui.xml
 	exo-csource --static --name=thunar_icon_view_ui $(srcdir)/thunar-icon-view-ui.xml > thunar-icon-view-ui.h
@@ -271,6 +281,7 @@ endif
 
 EXTRA_DIST =								\
 	thunar-dbus-service-infos.xml					\
+	thunar-details-view-ui.xml					\
 	thunar-icon-view-ui.xml						\
 	thunar-launcher-ui.xml						\
 	thunar-location-buttons-ui.xml					\

@@ -23,49 +23,81 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <thunar/thunar-column-editor.h>
 #include <thunar/thunar-details-view.h>
+#include <thunar/thunar-details-view-ui.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-text-renderer.h>
 
 
-static void         thunar_details_view_class_init            (ThunarDetailsViewClass *klass);
-static void         thunar_details_view_init                  (ThunarDetailsView      *details_view);
-static AtkObject   *thunar_details_view_get_accessible        (GtkWidget              *widget);
-static GList       *thunar_details_view_get_selected_items    (ThunarStandardView     *standard_view);
-static void         thunar_details_view_select_all            (ThunarStandardView     *standard_view);
-static void         thunar_details_view_unselect_all          (ThunarStandardView     *standard_view);
-static void         thunar_details_view_select_path           (ThunarStandardView     *standard_view,
-                                                               GtkTreePath            *path);
-static void         thunar_details_view_set_cursor            (ThunarStandardView     *standard_view,
-                                                               GtkTreePath            *path,
-                                                               gboolean                start_editing);
-static void         thunar_details_view_scroll_to_path        (ThunarStandardView     *standard_view,
-                                                               GtkTreePath            *path,
-                                                               gboolean                use_align,
-                                                               gfloat                  row_align,
-                                                               gfloat                  col_align);
-static GtkTreePath *thunar_details_view_get_path_at_pos       (ThunarStandardView     *standard_view,
-                                                               gint                    x,
-                                                               gint                    y);
-static gboolean     thunar_details_view_get_visible_range     (ThunarStandardView     *standard_view,
-                                                               GtkTreePath           **start_path,
-                                                               GtkTreePath           **end_path);
-static void         thunar_details_view_highlight_path        (ThunarStandardView     *standard_view,
-                                                               GtkTreePath            *path);
-static void         thunar_details_view_notify_model          (GtkTreeView            *tree_view,
-                                                               GParamSpec             *pspec,
-                                                               ThunarDetailsView      *details_view);
-static gboolean     thunar_details_view_button_press_event    (GtkTreeView            *tree_view,
-                                                               GdkEventButton         *event,
-                                                               ThunarDetailsView      *details_view);
-static gboolean     thunar_details_view_key_press_event       (GtkTreeView            *tree_view,
-                                                               GdkEventKey            *event,
-                                                               ThunarDetailsView      *details_view);
-static void         thunar_details_view_row_activated         (GtkTreeView            *tree_view,
-                                                               GtkTreePath            *path,
-                                                               GtkTreeViewColumn      *column,
-                                                               ThunarDetailsView      *details_view);
-static void         thunar_details_view_zoom_level_changed    (ThunarDetailsView      *details_view);
+
+/* Property identifiers */
+enum
+{
+  PROP_0,
+  PROP_FIXED_COLUMNS,
+};
+
+
+
+static void         thunar_details_view_class_init              (ThunarDetailsViewClass *klass);
+static void         thunar_details_view_init                    (ThunarDetailsView      *details_view);
+static void         thunar_details_view_finalize                (GObject                *object);
+static void         thunar_details_view_get_property            (GObject                *object,
+                                                                 guint                   prop_id,
+                                                                 GValue                 *value,
+                                                                 GParamSpec             *pspec);
+static void         thunar_details_view_set_property            (GObject                *object,
+                                                                 guint                   prop_id,
+                                                                 const GValue           *value,
+                                                                 GParamSpec             *pspec);
+static AtkObject   *thunar_details_view_get_accessible          (GtkWidget              *widget);
+static void         thunar_details_view_connect_ui_manager      (ThunarStandardView     *standard_view,
+                                                                 GtkUIManager           *ui_manager);
+static void         thunar_details_view_disconnect_ui_manager   (ThunarStandardView     *standard_view,
+                                                                 GtkUIManager           *ui_manager);
+static GList       *thunar_details_view_get_selected_items      (ThunarStandardView     *standard_view);
+static void         thunar_details_view_select_all              (ThunarStandardView     *standard_view);
+static void         thunar_details_view_unselect_all            (ThunarStandardView     *standard_view);
+static void         thunar_details_view_select_path             (ThunarStandardView     *standard_view,
+                                                                 GtkTreePath            *path);
+static void         thunar_details_view_set_cursor              (ThunarStandardView     *standard_view,
+                                                                 GtkTreePath            *path,
+                                                                 gboolean                start_editing);
+static void         thunar_details_view_scroll_to_path          (ThunarStandardView     *standard_view,
+                                                                 GtkTreePath            *path,
+                                                                 gboolean                use_align,
+                                                                 gfloat                  row_align,
+                                                                 gfloat                  col_align);
+static GtkTreePath *thunar_details_view_get_path_at_pos         (ThunarStandardView     *standard_view,
+                                                                 gint                    x,
+                                                                 gint                    y);
+static gboolean     thunar_details_view_get_visible_range       (ThunarStandardView     *standard_view,
+                                                                 GtkTreePath           **start_path,
+                                                                 GtkTreePath           **end_path);
+static void         thunar_details_view_highlight_path          (ThunarStandardView     *standard_view,
+                                                                 GtkTreePath            *path);
+static void         thunar_details_view_notify_model            (GtkTreeView            *tree_view,
+                                                                 GParamSpec             *pspec,
+                                                                 ThunarDetailsView      *details_view);
+static void         thunar_details_view_notify_width            (GtkTreeViewColumn      *tree_view_column,
+                                                                 GParamSpec             *pspec,
+                                                                 ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_button_press_event      (GtkTreeView            *tree_view,
+                                                                 GdkEventButton         *event,
+                                                                 ThunarDetailsView      *details_view);
+static gboolean     thunar_details_view_key_press_event         (GtkTreeView            *tree_view,
+                                                                 GdkEventKey            *event,
+                                                                 ThunarDetailsView      *details_view);
+static void         thunar_details_view_row_activated           (GtkTreeView            *tree_view,
+                                                                 GtkTreePath            *path,
+                                                                 GtkTreeViewColumn      *column,
+                                                                 ThunarDetailsView      *details_view);
+static void         thunar_details_view_columns_changed         (ThunarColumnModel      *column_model,
+                                                                 ThunarDetailsView      *details_view);
+static void         thunar_details_view_zoom_level_changed      (ThunarDetailsView      *details_view);
+static void         thunar_details_view_action_setup_columns    (GtkAction              *action,
+                                                                 ThunarDetailsView      *details_view);
 
 
 
@@ -77,9 +109,26 @@ struct _ThunarDetailsViewClass
 struct _ThunarDetailsView
 {
   ThunarStandardView __parent__;
+
+  /* the column model */
+  ThunarColumnModel *column_model;
+
+  /* the tree view columns */
+  GtkTreeViewColumn *columns[THUNAR_N_VISIBLE_COLUMNS];
+
+  /* whether to use fixed column widths */
+  gboolean           fixed_columns;
+
+  /* the UI manager merge id for the details view */
+  guint              ui_merge_id;
 };
 
 
+
+static const GtkActionEntry action_entries[] =
+{
+  { "setup-columns", NULL, N_ ("Configure _Columns..."), NULL, N_ ("Configure the columns in the detailed list view"), G_CALLBACK (thunar_details_view_action_setup_columns), },
+};
 
 static GObjectClass *thunar_details_view_parent_class;
 
@@ -119,14 +168,22 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 {
   ThunarStandardViewClass *thunarstandard_view_class;
   GtkWidgetClass          *gtkwidget_class;
+  GObjectClass            *gobject_class;
 
   /* determine the parent type class */
   thunar_details_view_parent_class = g_type_class_peek_parent (klass);
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_details_view_finalize;
+  gobject_class->get_property = thunar_details_view_get_property;
+  gobject_class->set_property = thunar_details_view_set_property;
 
   gtkwidget_class = GTK_WIDGET_CLASS (klass);
   gtkwidget_class->get_accessible = thunar_details_view_get_accessible;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
+  thunarstandard_view_class->connect_ui_manager = thunar_details_view_connect_ui_manager;
+  thunarstandard_view_class->disconnect_ui_manager = thunar_details_view_disconnect_ui_manager;
   thunarstandard_view_class->get_selected_items = thunar_details_view_get_selected_items;
   thunarstandard_view_class->select_all = thunar_details_view_select_all;
   thunarstandard_view_class->unselect_all = thunar_details_view_unselect_all;
@@ -137,6 +194,19 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
   thunarstandard_view_class->get_visible_range = thunar_details_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_details_view_highlight_path;
   thunarstandard_view_class->zoom_level_property_name = "last-details-view-zoom-level";
+
+  /**
+   * ThunarDetailsView:fixed-columns:
+   *
+   * %TRUE to use fixed column widths.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_FIXED_COLUMNS,
+                                   g_param_spec_boolean ("fixed-columns",
+                                                         "fixed-columns",
+                                                         "fixed-columns",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -144,15 +214,22 @@ thunar_details_view_class_init (ThunarDetailsViewClass *klass)
 static void
 thunar_details_view_init (ThunarDetailsView *details_view)
 {
-  GtkTreeViewColumn *column;
-  GtkTreeSelection  *selection;
-  GtkCellRenderer   *renderer;
-  GtkWidget         *tree_view;
+  GtkTreeSelection *selection;
+  GtkCellRenderer  *right_aligned_renderer;
+  GtkCellRenderer  *left_aligned_renderer;
+  GtkCellRenderer  *renderer;
+  ThunarColumn      column;
+  GtkWidget        *tree_view;
 
   /* we need to force the GtkTreeView to recalculate column sizes
    * whenever the zoom-level changes, so we connect a handler here.
    */
   g_signal_connect (G_OBJECT (details_view), "notify::zoom-level", G_CALLBACK (thunar_details_view_zoom_level_changed), NULL);
+
+  /* setup the details view actions */
+  gtk_action_group_add_actions (THUNAR_STANDARD_VIEW (details_view)->action_group,
+                                action_entries, G_N_ELEMENTS (action_entries),
+                                GTK_WIDGET (details_view));
 
   /* create the tree view to embed */
   tree_view = exo_tree_view_new ();
@@ -171,85 +248,151 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (tree_view), TRUE);
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
 
-  /* first column (icon, name) */
-  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "expand", TRUE,
-                         "resizable", TRUE,
-                         "title", _("Name"),
-                         NULL);
-  gtk_tree_view_column_pack_start (column, THUNAR_STANDARD_VIEW (details_view)->icon_renderer, FALSE);
-  gtk_tree_view_column_set_attributes (column, THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
-                                       "file", THUNAR_COLUMN_FILE,
-                                       NULL);
-  g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer),
-                "xalign", 0.0,
-                NULL);
-  gtk_tree_view_column_pack_start (column, THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, THUNAR_STANDARD_VIEW (details_view)->name_renderer,
-                                       "text", THUNAR_COLUMN_NAME,
-                                       NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_NAME);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
+  /* connect to the default column model */
+  details_view->column_model = thunar_column_model_get_default ();
+  g_signal_connect (G_OBJECT (details_view->column_model), "columns-changed", G_CALLBACK (thunar_details_view_columns_changed), details_view);
 
-  /* second column (size) */
-  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "resizable", TRUE,
-                         "title", _("Size"),
-                         NULL);
-  renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
-                           "xalign", 1.0,
-                           NULL);
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_COLUMN_SIZE,
-                                       NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_SIZE);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
+  /* allocate the shared right-aligned text renderer */
+  right_aligned_renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER, "xalign", 1.0f, NULL);
+  exo_gtk_object_ref_sink (GTK_OBJECT (right_aligned_renderer));
 
-  /* third column (permissions) */
-  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "resizable", TRUE,
-                         "title", _("Permissions"),
-                         NULL);
-  renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER,
-                           "xalign", 0.0,
-                           NULL);
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_COLUMN_PERMISSIONS,
-                                       NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_PERMISSIONS);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
+  /* allocate the shared left-aligned text renderer */
+  left_aligned_renderer = g_object_new (THUNAR_TYPE_TEXT_RENDERER, "xalign", 0.0f, NULL);
+  exo_gtk_object_ref_sink (GTK_OBJECT (left_aligned_renderer));
 
-  /* fourth column (type) */
-  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "resizable", TRUE,
-                         "title", _("Type"),
-                         NULL);
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_COLUMN_TYPE,
-                                       NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_TYPE);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
+  /* allocate the tree view columns */
+  for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
+    {
+      /* allocate the tree view column */
+      details_view->columns[column] = gtk_tree_view_column_new ();
+      exo_gtk_object_ref_sink (GTK_OBJECT (details_view->columns[column]));
+      gtk_tree_view_column_set_min_width (details_view->columns[column], 50);
+      gtk_tree_view_column_set_resizable (details_view->columns[column], TRUE);
+      gtk_tree_view_column_set_sort_column_id (details_view->columns[column], column);
+      gtk_tree_view_column_set_title (details_view->columns[column], thunar_column_model_get_column_name (details_view->column_model, column));
 
-  /* fifth column (modification date) */
-  column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
-                         "resizable", TRUE,
-                         "title", _("Date modified"),
-                         NULL);
-  gtk_tree_view_column_pack_start (column, renderer, TRUE);
-  gtk_tree_view_column_set_attributes (column, renderer,
-                                       "text", THUNAR_COLUMN_DATE_MODIFIED,
-                                       NULL);
-  gtk_tree_view_column_set_sort_column_id (column, THUNAR_COLUMN_DATE_MODIFIED);
-  gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), column);
+      /* stay informed whenever the width of the column is changed */
+      g_signal_connect (G_OBJECT (details_view->columns[column]), "notify::width", G_CALLBACK (thunar_details_view_notify_width), details_view);
+
+      /* name column gets special renderers */
+      if (G_UNLIKELY (column == THUNAR_COLUMN_NAME))
+        {
+          /* add the icon renderer */
+          gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->icon_renderer, FALSE);
+          gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->icon_renderer,
+                                               "file", THUNAR_COLUMN_FILE,
+                                               NULL);
+
+          /* add the name renderer */
+          g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->name_renderer), "xalign", 0.0, NULL);
+          gtk_tree_view_column_pack_start (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer, TRUE);
+          gtk_tree_view_column_set_attributes (details_view->columns[column], THUNAR_STANDARD_VIEW (details_view)->name_renderer,
+                                               "text", THUNAR_COLUMN_NAME,
+                                               NULL);
+        }
+      else
+        {
+          /* size is right aligned, everything else is left aligned */
+          renderer = (column == THUNAR_COLUMN_SIZE) ? right_aligned_renderer : left_aligned_renderer;
+
+          /* add the renderer */
+          gtk_tree_view_column_pack_start (details_view->columns[column], renderer, TRUE);
+          gtk_tree_view_column_set_attributes (details_view->columns[column], renderer, "text", column, NULL);
+        }
+
+      /* append the tree view column to the tree view */
+      gtk_tree_view_append_column (GTK_TREE_VIEW (tree_view), details_view->columns[column]);
+    }
 
   /* configure the tree selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
   gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
   g_signal_connect_swapped (G_OBJECT (selection), "changed",
                             G_CALLBACK (thunar_standard_view_selection_changed), details_view);
+
+  /* apply the initial column order and visibility from the column model */
+  thunar_details_view_columns_changed (details_view->column_model, details_view);
+
+  /* synchronize the "fixed-columns" property */
+  exo_binding_new (G_OBJECT (THUNAR_STANDARD_VIEW (details_view)->preferences),
+                   "last-details-view-fixed-columns",
+                   G_OBJECT (details_view),
+                   "fixed-columns");
+
+  /* apply fixed column widths if we start in fixed column mode */
+  if (G_UNLIKELY (details_view->fixed_columns))
+    {
+      /* apply to all columns */
+      for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
+        gtk_tree_view_column_set_fixed_width (details_view->columns[column], thunar_column_model_get_column_width (details_view->column_model, column));
+    }
+
+  /* release the shared text renderers */
+  g_object_unref (G_OBJECT (right_aligned_renderer));
+  g_object_unref (G_OBJECT (left_aligned_renderer));
+}
+
+
+
+static void
+thunar_details_view_get_property (GObject    *object,
+                                  guint       prop_id,
+                                  GValue     *value,
+                                  GParamSpec *pspec)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (object);
+
+  switch (prop_id)
+    {
+    case PROP_FIXED_COLUMNS:
+      g_value_set_boolean (value, thunar_details_view_get_fixed_columns (details_view));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_details_view_set_property (GObject      *object,
+                                  guint         prop_id,
+                                  const GValue *value,
+                                  GParamSpec   *pspec)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (object);
+
+  switch (prop_id)
+    {
+    case PROP_FIXED_COLUMNS:
+      thunar_details_view_set_fixed_columns (details_view, g_value_get_boolean (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_details_view_finalize (GObject *object)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (object);
+  ThunarColumn       column;
+
+  /* release the tree view columns array */
+  for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
+    g_object_unref (G_OBJECT (details_view->columns[column]));
+
+  /* disconnect from the default column model */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (details_view->column_model), thunar_details_view_columns_changed, details_view);
+  g_object_unref (G_OBJECT (details_view->column_model));
+
+  (*G_OBJECT_CLASS (thunar_details_view_parent_class)->finalize) (object);
 }
 
 
@@ -271,6 +414,33 @@ thunar_details_view_get_accessible (GtkWidget *widget)
     }
 
   return object;
+}
+
+
+
+static void
+thunar_details_view_connect_ui_manager (ThunarStandardView *standard_view,
+                                        GtkUIManager       *ui_manager)
+{
+  ThunarDetailsView *details_view = THUNAR_DETAILS_VIEW (standard_view);
+  GError            *error = NULL;
+
+  details_view->ui_merge_id = gtk_ui_manager_add_ui_from_string (ui_manager, thunar_details_view_ui,
+                                                                 thunar_details_view_ui_length, &error);
+  if (G_UNLIKELY (details_view->ui_merge_id == 0))
+    {
+      g_error ("Failed to merge ThunarDetailsView menus: %s", error->message);
+      g_error_free (error);
+    }
+}
+
+
+
+static void
+thunar_details_view_disconnect_ui_manager (ThunarStandardView *standard_view,
+                                           GtkUIManager       *ui_manager)
+{
+  gtk_ui_manager_remove_ui (ui_manager, THUNAR_DETAILS_VIEW (standard_view)->ui_merge_id);
 }
 
 
@@ -428,6 +598,28 @@ thunar_details_view_notify_model (GtkTreeView       *tree_view,
 
 
 
+static void
+thunar_details_view_notify_width (GtkTreeViewColumn *tree_view_column,
+                                  GParamSpec        *pspec,
+                                  ThunarDetailsView *details_view)
+{
+  ThunarColumn column;
+
+  g_return_if_fail (GTK_IS_TREE_VIEW_COLUMN (tree_view_column));
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  /* lookup the column no for the given tree view column */
+  for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
+    if (details_view->columns[column] == tree_view_column)
+      {
+        /* save the new width as default fixed width */
+        thunar_column_model_set_column_width (details_view->column_model, column, gtk_tree_view_column_get_width (tree_view_column));
+        break;
+      }
+}
+
+
+
 static gboolean
 thunar_details_view_button_press_event (GtkTreeView       *tree_view,
                                         GdkEventButton    *event,
@@ -438,6 +630,10 @@ thunar_details_view_button_press_event (GtkTreeView       *tree_view,
   GtkTreeIter       iter;
   ThunarFile       *file;
   GtkAction        *action;
+
+  /* check if the event is for the bin window */
+  if (G_UNLIKELY (event->window != gtk_tree_view_get_bin_window (tree_view)))
+    return FALSE;
 
   /* we unselect all selected items if the user clicks on an empty
    * area of the treeview and no modifier key is active.
@@ -563,23 +759,53 @@ thunar_details_view_row_activated (GtkTreeView       *tree_view,
 
 
 static void
+thunar_details_view_columns_changed (ThunarColumnModel *column_model,
+                                     ThunarDetailsView *details_view)
+{
+  const ThunarColumn *column_order;
+  ThunarColumn        column;
+
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+  g_return_if_fail (THUNAR_IS_COLUMN_MODEL (column_model));
+  g_return_if_fail (details_view->column_model == column_model);
+
+  /* determine the new column order */
+  column_order = thunar_column_model_get_column_order (column_model);
+
+  /* apply new order and visibility */
+  for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
+    {
+      /* apply the new visibility for the tree view column */
+      gtk_tree_view_column_set_visible (details_view->columns[column], thunar_column_model_get_column_visible (column_model, column));
+
+      /* change the order of the column relative to its predecessor */
+      if (G_LIKELY (column > 0))
+        {
+          gtk_tree_view_move_column_after (GTK_TREE_VIEW (GTK_BIN (details_view)->child),
+                                           details_view->columns[column_order[column]],
+                                           details_view->columns[column_order[column - 1]]);
+        }
+    }
+}
+
+
+
+static void
 thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
 {
-  GList *columns;
-  GList *lp;
+  ThunarColumn column;
 
   g_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
 
   /* determine the list of tree view columns */
-  columns = gtk_tree_view_get_columns (GTK_TREE_VIEW (GTK_BIN (details_view)->child));
-  for (lp = columns; lp != NULL; lp = lp->next)
+  for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
     {
 #if GTK_CHECK_VERSION(2,8,0)
       /* just queue a resize on this column */
-      gtk_tree_view_column_queue_resize (lp->data);
+      gtk_tree_view_column_queue_resize (details_view->columns[column]);
 #else
       /* determine the renderers for this column */
-      GList *renderers = gtk_tree_view_column_get_cell_renderers (lp->data);
+      GList *renderers = gtk_tree_view_column_get_cell_renderers (details_view->columns[column]);
       if (G_LIKELY (renderers != NULL))
         {
           /* this is really an awfull hack, but it works! It forces GtkTreeView to recalculate
@@ -591,7 +817,19 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
         }
 #endif
     }
-  g_list_free (columns);
+}
+
+
+
+static void
+thunar_details_view_action_setup_columns (GtkAction         *action,
+                                          ThunarDetailsView *details_view)
+{
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+  g_return_if_fail (GTK_IS_ACTION (action));
+
+  /* popup the column editor dialog */
+  thunar_show_column_editor (details_view);
 }
 
 
@@ -610,5 +848,80 @@ thunar_details_view_new (void)
   return g_object_new (THUNAR_TYPE_DETAILS_VIEW, NULL);
 }
 
+
+
+/**
+ * thunar_details_view_get_fixed_columns:
+ * @details_view : a #ThunarDetailsView.
+ *
+ * Returns %TRUE if @details_view uses fixed column widths.
+ *
+ * Return value: %TRUE if @details_view uses fixed column widths.
+ **/
+gboolean
+thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view)
+{
+  g_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (details_view), FALSE);
+  return details_view->fixed_columns;
+}
+
+
+
+/**
+ * thunar_details_view_set_fixed_columns:
+ * @details_view  : a #ThunarDetailsView.
+ * @fixed_columns : %TRUE to use fixed column widths.
+ *
+ * Applies @fixed_columns to @details_view.
+ **/
+void
+thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
+                                       gboolean           fixed_columns)
+{
+  ThunarColumn column;
+  gint         width;
+
+  g_return_if_fail (THUNAR_IS_DETAILS_VIEW (details_view));
+
+  /* normalize the value */
+  fixed_columns = !!fixed_columns;
+
+  /* check if we have a new value */
+  if (G_LIKELY (details_view->fixed_columns != fixed_columns))
+    {
+      /* apply the new value */
+      details_view->fixed_columns = fixed_columns;
+
+      /* apply the new setting to all columns */
+      for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
+        {
+          /* apply the new column mode */
+          if (G_LIKELY (fixed_columns))
+            {
+              /* apply "width" as "fixed-width" for fixed columns mode */
+              width = gtk_tree_view_column_get_width (details_view->columns[column]);
+              if (G_UNLIKELY (width <= 0))
+                width = thunar_column_model_get_column_width (details_view->column_model, column);
+              gtk_tree_view_column_set_fixed_width (details_view->columns[column], MAX (width, 1));
+
+              /* set column to fixed width */
+              gtk_tree_view_column_set_sizing (details_view->columns[column], GTK_TREE_VIEW_COLUMN_FIXED);
+            }
+          else
+            {
+              /* reset column to grow-only mode */
+              gtk_tree_view_column_set_sizing (details_view->columns[column], GTK_TREE_VIEW_COLUMN_GROW_ONLY);
+            }
+        }
+
+      /* for fixed columns mode, we can enable the fixed height
+       * mode to improve the performance of the GtkTreeVeiw.
+       */
+      gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (GTK_BIN (details_view)->child), fixed_columns);
+
+      /* notify listeners */
+      g_object_notify (G_OBJECT (details_view), "fixed-columns");
+    }
+}
 
 

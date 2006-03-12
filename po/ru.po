@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-11 18:15+0100\n"
+"POT-Creation-Date: 2006-03-12 18:55+0100\n"
 "PO-Revision-Date: 2006-02-24 16:14+0500\n"
 "Last-Translator: Sergey Fedoseev <fedoseev.sergey@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -174,7 +174,7 @@ msgid "The icon of the mime handler"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:176
-#: ../thunar/thunar-details-view.c:178
+#: ../thunar/thunar-enum-types.c:64
 msgid "Name"
 msgstr "Имя"
 
@@ -200,7 +200,7 @@ msgstr "Слишком длинный путь, чтобы поместить е
 msgid "URI too long to fit into buffer"
 msgstr "Слишком длинный URI, чтобы поместить его в буфер"
 
-#: ../thunar-vfs/thunar-vfs-thumb.c:176 ../thunar/thunar-details-view.c:197
+#: ../thunar-vfs/thunar-vfs-thumb.c:176 ../thunar/thunar-enum-types.c:67
 msgid "Size"
 msgstr "Размер"
 
@@ -262,7 +262,7 @@ msgstr "Не удалось открыть /proc/mounts: %s"
 msgid "copy of %s"
 msgstr "копия %s"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:190 ../thunar/thunar-list-model.c:716
+#: ../thunar-vfs/thunar-vfs-xfer.c:190 ../thunar/thunar-list-model.c:752
 #: ../thunar/thunar-properties-dialog.c:658
 #, c-format
 msgid "link to %s"
@@ -583,6 +583,71 @@ msgstr "Другие приложения"
 msgid "There is nothing on the clipboard to paste"
 msgstr "Буфер обмена пуст"
 
+#: ../thunar/thunar-column-editor.c:153
+msgid "Configure Columns in the Detailed List View"
+msgstr ""
+
+#: ../thunar/thunar-column-editor.c:164
+msgid "Visible Columns"
+msgstr ""
+
+#. create the top label for the column editor dialog
+#: ../thunar/thunar-column-editor.c:177
+msgid ""
+"Chooser the order of information to appear in the\n"
+"detailed list view."
+msgstr ""
+
+#. create the "Move Up" button
+#: ../thunar/thunar-column-editor.c:218
+msgid "Move _Up"
+msgstr ""
+
+#. create the "Move Down" button
+#: ../thunar/thunar-column-editor.c:228
+msgid "Move Dow_n"
+msgstr ""
+
+#. create the "Show" button
+#: ../thunar/thunar-column-editor.c:238
+msgid "_Show"
+msgstr ""
+
+#. create the "Hide" button
+#: ../thunar/thunar-column-editor.c:244
+#, fuzzy
+msgid "Hi_de"
+msgstr "_Скрыть"
+
+#. create the "Use Default" button
+#: ../thunar/thunar-column-editor.c:255
+msgid "Use De_fault"
+msgstr ""
+
+#: ../thunar/thunar-column-editor.c:264
+msgid "Column Sizing"
+msgstr ""
+
+#. create the label that explains the column sizing option
+#: ../thunar/thunar-column-editor.c:277
+msgid ""
+"By default columns will be automatically expanded if\n"
+"needed to ensure the text is fully visible. If you dis-\n"
+"able this behavior below the file manager will always\n"
+"use the user defined column widths."
+msgstr ""
+
+#. create the "Automatically expand columns as needed" button
+#: ../thunar/thunar-column-editor.c:286
+msgid "Automatically _expand columns as needed"
+msgstr ""
+
+#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:702
+#: ../thunar/thunar-list-model.c:731
+#: ../thunar/thunar-permissions-chooser.c:270
+msgid "Unknown"
+msgstr "Неизвестно"
+
 #: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
 msgid "Enter the new name:"
 msgstr "Введите имя:"
@@ -593,27 +658,21 @@ msgstr "Введите имя:"
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Не удается преобразовать имя \"%s\" файла в локальную кодировку"
 
-#.
-#. Permissions chooser
-#.
-#: ../thunar/thunar-details-view.c:212
-#: ../thunar/thunar-properties-dialog.c:414
-msgid "Permissions"
-msgstr "Права"
+#: ../thunar/thunar-details-view.c:130
+#, fuzzy
+msgid "Configure _Columns..."
+msgstr "Настроить особые действия..."
 
-#: ../thunar/thunar-details-view.c:227
-msgid "Type"
-msgstr "Тип"
+#: ../thunar/thunar-details-view.c:130
+#, fuzzy
+msgid "Configure the columns in the detailed list view"
+msgstr "Отображает содержимое текущей папки в виде списка"
 
-#: ../thunar/thunar-details-view.c:239
-msgid "Date modified"
-msgstr "Дата изменения"
-
-#: ../thunar/thunar-details-view.c:268
+#: ../thunar/thunar-details-view.c:411
 msgid "Detailed directory listing"
 msgstr "Подробный список"
 
-#: ../thunar/thunar-details-view.c:269
+#: ../thunar/thunar-details-view.c:412
 msgid "Details view"
 msgstr "Просмотр в виде списка"
 
@@ -641,6 +700,51 @@ msgstr "Создать ссылку здесь"
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "Не удалось запустить \"%s\""
+
+#: ../thunar/thunar-enum-types.c:60
+msgid "Date Accessed"
+msgstr ""
+
+#: ../thunar/thunar-enum-types.c:61
+#, fuzzy
+msgid "Date Modified"
+msgstr "Дата изменения"
+
+#: ../thunar/thunar-enum-types.c:62
+#, fuzzy
+msgid "Group"
+msgstr "Группа:"
+
+#: ../thunar/thunar-enum-types.c:63
+#, fuzzy
+msgid "MIME Type"
+msgstr "Тип"
+
+#: ../thunar/thunar-enum-types.c:65
+#, fuzzy
+msgid "Owner"
+msgstr "Владелец:"
+
+#.
+#. Permissions chooser
+#.
+#: ../thunar/thunar-enum-types.c:66 ../thunar/thunar-properties-dialog.c:414
+msgid "Permissions"
+msgstr "Права"
+
+#: ../thunar/thunar-enum-types.c:68
+msgid "Type"
+msgstr "Тип"
+
+#: ../thunar/thunar-enum-types.c:69
+#, fuzzy
+msgid "File"
+msgstr "_Файл"
+
+#: ../thunar/thunar-enum-types.c:70
+#, fuzzy
+msgid "File Name"
+msgstr "Файловый менеджер"
 
 #: ../thunar/thunar-file.c:727
 msgid "The root folder has no parent"
@@ -870,11 +974,11 @@ msgstr[2] "Открыть выбранные файлы в приложении 
 msgid "Open With \"%s\""
 msgstr "Открыть с помощью \"%s\""
 
-#: ../thunar/thunar-list-model.c:714 ../thunar/thunar-properties-dialog.c:656
+#: ../thunar/thunar-list-model.c:750 ../thunar/thunar-properties-dialog.c:656
 msgid "broken link"
 msgstr "битая ссылка"
 
-#: ../thunar/thunar-list-model.c:1989
+#: ../thunar/thunar-list-model.c:2075
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
@@ -882,7 +986,7 @@ msgstr[0] "%d объект, свободного места: %s"
 msgstr[1] "%d объекта, свободного места: %s"
 msgstr[2] "%d объектов, свободного места: %s"
 
-#: ../thunar/thunar-list-model.c:1994
+#: ../thunar/thunar-list-model.c:2080
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
@@ -890,22 +994,22 @@ msgstr[0] "%d объект"
 msgstr[1] "%d объекта"
 msgstr[2] "%d объектов"
 
-#: ../thunar/thunar-list-model.c:2010
+#: ../thunar/thunar-list-model.c:2096
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "\"%s\" битая ссылка"
 
-#: ../thunar/thunar-list-model.c:2014
+#: ../thunar/thunar-list-model.c:2100
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) ссылается на %s"
 
-#: ../thunar/thunar-list-model.c:2019
+#: ../thunar/thunar-list-model.c:2105
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2036
+#: ../thunar/thunar-list-model.c:2122
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
@@ -913,7 +1017,7 @@ msgstr[0] "выбран %d объект (%s)"
 msgstr[1] "выбрано %d объекта (%s)"
 msgstr[2] "выбрано %d объектов (%s)"
 
-#: ../thunar/thunar-list-model.c:2041
+#: ../thunar/thunar-list-model.c:2127
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -995,10 +1099,6 @@ msgstr "Чтение/Запись"
 #: ../thunar/thunar-permissions-chooser.c:260
 msgid "Owner:"
 msgstr "Владелец:"
-
-#: ../thunar/thunar-permissions-chooser.c:270
-msgid "Unknown"
-msgstr "Неизвестно"
 
 #: ../thunar/thunar-permissions-chooser.c:284
 #: ../thunar/thunar-permissions-chooser.c:337

@@ -34,9 +34,13 @@ typedef struct _ThunarDetailsView      ThunarDetailsView;
 #define THUNAR_IS_DETAILS_VIEW_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_DETAILS_VIEW))
 #define THUNAR_DETAILS_VIEW_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DETAILS_VIEW, ThunarDetailsViewClass))
 
-GType      thunar_details_view_get_type (void) G_GNUC_CONST;
+GType      thunar_details_view_get_type          (void) G_GNUC_CONST;
 
-GtkWidget *thunar_details_view_new      (void);
+GtkWidget *thunar_details_view_new               (void);
+
+gboolean   thunar_details_view_get_fixed_columns (ThunarDetailsView *details_view);
+void       thunar_details_view_set_fixed_columns (ThunarDetailsView *details_view,
+                                                  gboolean           fixed_columns);
 
 G_END_DECLS;
 

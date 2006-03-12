@@ -304,7 +304,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   preferences = thunar_preferences_get ();
   exo_binding_new (G_OBJECT (preferences), "last-show-hidden", G_OBJECT (store), "show-hidden");
   exo_binding_new (G_OBJECT (preferences), "misc-folders-first", G_OBJECT (store), "folders-first");
-  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_REAL_NAME, GTK_SORT_ASCENDING);
+  gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_FILE_NAME, GTK_SORT_ASCENDING);
   gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
   g_object_unref (G_OBJECT (preferences));
   g_object_unref (G_OBJECT (store));
@@ -1055,7 +1055,7 @@ thunar_path_entry_common_prefix_lookup (ThunarPathEntry *path_entry,
       do 
         {
           /* determine the real file name for the iter */
-          gtk_tree_model_get (model, &iter, THUNAR_COLUMN_REAL_NAME, &name, -1);
+          gtk_tree_model_get (model, &iter, THUNAR_COLUMN_FILE_NAME, &name, -1);
 
           /* check if we have a valid prefix here */
           if (g_str_has_prefix (name, text))
@@ -1121,7 +1121,7 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
 
   /* determine the real file name for the iter */
   model = gtk_entry_completion_get_model (completion);
-  gtk_tree_model_get (model, iter, THUNAR_COLUMN_REAL_NAME, &name, -1);
+  gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE_NAME, &name, -1);
   name_normalized = g_utf8_normalize (name, -1, G_NORMALIZE_ALL);
   g_free (name);
 
@@ -1158,7 +1158,7 @@ thunar_path_entry_match_selected (GtkEntryCompletion *completion,
   gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE, &file, -1);
   
   /* determine the real name for the file */
-  gtk_tree_model_get (model, iter, THUNAR_COLUMN_REAL_NAME, &real_name, -1);
+  gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE_NAME, &real_name, -1);
 
   /* append a slash if we have a folder here */
   if (G_LIKELY (thunar_file_is_directory (file)))

@@ -50,6 +50,10 @@ enum
 {
   PROP_0,
   PROP_DEFAULT_VIEW,
+  PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
+  PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
+  PROP_LAST_DETAILS_VIEW_FIXED_COLUMNS,
+  PROP_LAST_DETAILS_VIEW_VISIBLE_COLUMNS,
   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
@@ -187,6 +191,61 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         "default-view",
                                                         "default-view",
                                                         "void",
+                                                        EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-details-view-column-order:
+   *
+   * The comma separated list of columns that specifies the order of the
+   * columns in the #ThunarDetailsView.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
+                                   g_param_spec_string ("last-details-view-column-order",
+                                                        "last-details-view-column-order",
+                                                        "last-details-view-column-order",
+                                                        "THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED",
+                                                        EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-details-view-column-widths:
+   *
+   * The comma separated list of column widths used for fixed width
+   * #ThunarDetailsView<!---->s.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
+                                   g_param_spec_string ("last-details-view-column-widths",
+                                                        "last-details-view-column-widths",
+                                                        "last-details-view-column-widths",
+                                                        "",
+                                                        EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-details-view-fixed-columns:
+   *
+   * %TRUE to use fixed column widths in the #ThunarDetailsView. Else the
+   * column widths will be automatically determined from the model contents.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_DETAILS_VIEW_FIXED_COLUMNS,
+                                   g_param_spec_boolean ("last-details-view-fixed-columns",
+                                                         "last-details-view-fixed-columns",
+                                                         "last-details-view-fixed-columns",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-details-view-visible-columns:
+   *
+   * The comma separated list of visible columns in the #ThunarDetailsView.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_DETAILS_VIEW_VISIBLE_COLUMNS,
+                                   g_param_spec_string ("last-details-view-visible-columns",
+                                                        "last-details-view-visible-columns",
+                                                        "last-details-view-visible-columns",
+                                                        "THUNAR_COLUMN_DATE_MODIFIED,THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE",
                                                         EXO_PARAM_READWRITE));
 
   /**

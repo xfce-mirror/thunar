@@ -423,6 +423,9 @@ thunar_text_renderer_get_size (GtkCellRenderer *renderer,
       /* determine the text_length in characters */
       text_length = g_utf8_strlen (text_renderer->text, -1);
 
+      /* the approximation is usually 1-2 chars wrong, so wth */
+      text_length += 2;
+
       /* calculate the appromixate text width/height */
       text_width = text_renderer->char_width * text_length;
       text_height = text_renderer->char_height;
@@ -719,6 +722,9 @@ thunar_text_renderer_set_widget (ThunarTextRenderer *text_renderer,
       text_renderer->char_width = PANGO_PIXELS (pango_font_metrics_get_approximate_char_width (metrics));
       text_renderer->char_height = PANGO_PIXELS (pango_font_metrics_get_ascent (metrics) + pango_font_metrics_get_descent (metrics));
       pango_font_metrics_unref (metrics);
+
+      /* tell the cell renderer about the fixed height */
+      gtk_cell_renderer_set_fixed_size (GTK_CELL_RENDERER (text_renderer), -1, text_renderer->char_height);
 
       /* determine the focus-padding and focus-line-width style properties from the widget */
       gtk_widget_style_get (widget, "focus-padding", &focus_padding, "focus-line-width", &focus_line_width, NULL);

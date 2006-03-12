@@ -1,3 +1,33 @@
+2006-03-12	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-enum-types.{c,h}, thunar/thunar-list-model.c,
+	  thunar/thunar-path-entry.c: Rename THUNAR_COLUMN_REAL_NAME to
+	  THUNAR_COLUMN_FILE_NAME.
+	* thunar/thunar-enum-types.{c,h}, thunar/thunar-list-model.c: Add new
+	  list model columns THUNAR_COLUMN_GROUP and THUNAR_COLUMN_OWNER.
+	* thunar/thunar-enum-types.{c,h}: Divide ThunarColumns into visible and
+	  special columns.
+	* thunar/thunar-text-renderer.c(thunar_text_renderer_get_size): Improve
+	  guessing the required width for text columns.
+	* thunar/thunar-text-renderer.c(thunar_text_renderer_set_widget): Set
+	  fixed height for the text render.
+	* thunar/thunar-preferences.c, docs/README.thunarrc: Add preferences for
+	  the configurable detailed list view columns. Bug #1351.
+	* thunar/thunar-column-editor.{c,h}, thunar/thunar-column-model.{c,h},
+	  thunar/Makefile.am: Import ThunarColumnModel and ThunarColumnEditor
+	  classes. The ThunarColumnModel class handles the order, visibility and
+	  fixed widths of columns. The ThunarColumnEditor class provides a
+	  dialog to configure the ThunarColumnModel. Bug #1351.
+	* thunar/thunar-details-view.{c,h}, thunar/thunar-details-view-ui.xml,
+	  thunar/Makefile.am: Use column order and visibility from the
+	  ThunarColumnOrder. Add "Configure Columns..." menu item to "View",
+	  which pops up the ThunarColumnEditor. For fixed column mode, we use
+	  the fixed height mode provided by GtkTreeView, which speeds up the
+	  detailed list view a lot, esp. with older Pango version. Bug #1351.
+	* po/POTFILES.in: Add new files here.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update the german translations.
+
 2006-03-11	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-uca/thunar-uca-editor.c(thunar_uca_editor_command_clicked),
