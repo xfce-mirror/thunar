@@ -38,7 +38,6 @@
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-path-entry.h>
-#include <thunar/thunar-preferences.h>
 
 
 
@@ -275,7 +274,6 @@ static void
 thunar_path_entry_init (ThunarPathEntry *path_entry)
 {
   GtkEntryCompletion *completion;
-  ThunarPreferences  *preferences;
   GtkCellRenderer    *renderer;
   ThunarListModel    *store;
 
@@ -301,12 +299,10 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
 
   /* allocate a new list mode for the completion */
   store = thunar_list_model_new ();
-  preferences = thunar_preferences_get ();
-  exo_binding_new (G_OBJECT (preferences), "last-show-hidden", G_OBJECT (store), "show-hidden");
-  exo_binding_new (G_OBJECT (preferences), "misc-folders-first", G_OBJECT (store), "folders-first");
+  thunar_list_model_set_show_hidden (store, TRUE);
+  thunar_list_model_set_folders_first (store, TRUE);
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_FILE_NAME, GTK_SORT_ASCENDING);
   gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
-  g_object_unref (G_OBJECT (preferences));
   g_object_unref (G_OBJECT (store));
 
   /* setup the new completion */
