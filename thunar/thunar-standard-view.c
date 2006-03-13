@@ -2780,14 +2780,14 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
     {
       /* check whether we can drop at (x,y) */
       thunar_standard_view_get_dest_actions (standard_view, context, x, y, time, NULL);
+    }
 
-      /* start the drag autoscroll timer if not already running */
-      if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id < 0))
-        {
-          /* schedule the drag autoscroll timer */
-          standard_view->priv->drag_scroll_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 50, thunar_standard_view_drag_scroll_timer,
-                                                                          standard_view, thunar_standard_view_drag_scroll_timer_destroy);
-        }
+  /* start the drag autoscroll timer if not already running */
+  if (G_UNLIKELY (standard_view->priv->drag_scroll_timer_id < 0))
+    {
+      /* schedule the drag autoscroll timer */
+      standard_view->priv->drag_scroll_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 50, thunar_standard_view_drag_scroll_timer,
+                                                                      standard_view, thunar_standard_view_drag_scroll_timer_destroy);
     }
 
   return TRUE;
