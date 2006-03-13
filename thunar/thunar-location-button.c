@@ -298,7 +298,7 @@ thunar_location_button_init (ThunarLocationButton *location_button)
 
   /* create the button image */
   location_button->image = gtk_image_new ();
-  gtk_box_pack_start (GTK_BOX (hbox), location_button->image, FALSE, FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), location_button->image, TRUE, FALSE, 0);
   gtk_widget_show (location_button->image);
 
   /* create the button label */
