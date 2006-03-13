@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-13 19:21+0900\n"
-"PO-Revision-Date: 2006-03-01 21:36+0200\n"
-"Last-Translator: jari <jari.rahkonen@pp1.inet.fi>\n"
+"PO-Revision-Date: 2006-03-12 19:03+0200\n"
+"Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -483,17 +483,18 @@ msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
 msgstr ""
+"Käytä mukautettua komentoa sellaiselle sovellukselle, jota ei löydy "
+"yläpuoliselta sovelluslistalta."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:300
-#, fuzzy
 msgid "_Browse..."
-msgstr "_Selaa"
+msgstr "_Selaa..."
 
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:306
 msgid "Use as _default for this kind of file"
-msgstr ""
+msgstr "Käytä _oletuksena tälle tiedostotyypille"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:488
@@ -515,10 +516,12 @@ msgstr "Avaa <i>%s</i> ja muut tyypin \"%s\" tiedostot sovelluksessa:"
 
 #. update the "Browse..." tooltip
 #: ../thunar/thunar-chooser-dialog.c:657
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
-msgstr "Selaa tiedostojärjestelmää valitaksesi sovelluksen toiminnolle."
+msgstr ""
+"Selaa tiedostojärjestelmää valitaksesi sovelluksen, jolla tyypin \"%s\" "
+"tiedostot avataan."
 
 #. update the "Use as default for this kind of file" tooltip
 #: ../thunar/thunar-chooser-dialog.c:663
@@ -526,7 +529,7 @@ msgstr "Selaa tiedostojärjestelmää valitaksesi sovelluksen toiminnolle."
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
-msgstr ""
+msgstr "Vaihda valittu sovellus tiedostotyypin \"%s\" oletussovellukseksi."
 
 #: ../thunar/thunar-chooser-dialog.c:684 ../thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
@@ -586,11 +589,10 @@ msgstr ""
 
 #. create the top label for the column editor dialog
 #: ../thunar/thunar-column-editor.c:177
-#, fuzzy
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
-msgstr "Näytä hakemiston sisältö yksityiskohtaisessa listanäkymässä"
+msgstr ""
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:218
@@ -1289,62 +1291,56 @@ msgstr ""
 #. Side Pane
 #.
 #: ../thunar/thunar-preferences-dialog.c:320
-#, fuzzy
 msgid "Side Pane"
-msgstr "Si_vupaneeli"
+msgstr "Sivupaneeli"
 
 #: ../thunar/thunar-preferences-dialog.c:330
-#, fuzzy
 msgid "Shortcuts Pane"
-msgstr "_Kirjanmerkit"
+msgstr "Kirjanmerkkipaneeli"
 
 #: ../thunar/thunar-preferences-dialog.c:342
-#, fuzzy
 msgid "Shortcut _Icon Size:"
-msgstr "_Koon mukaan"
+msgstr "Kirjanmerkki_kuvakkeiden koko"
 
 #: ../thunar/thunar-preferences-dialog.c:347
 msgid "Very Small"
-msgstr ""
+msgstr "Erittäin pieni"
 
 #: ../thunar/thunar-preferences-dialog.c:348
 msgid "Smaller"
-msgstr ""
+msgstr "Pienempi"
 
 #: ../thunar/thunar-preferences-dialog.c:349
 msgid "Small"
-msgstr ""
+msgstr "Pieni"
 
 #: ../thunar/thunar-preferences-dialog.c:350
-#, fuzzy
 msgid "Normal"
-msgstr "_Normaalikoko"
+msgstr "Normaali"
 
 #: ../thunar/thunar-preferences-dialog.c:351
 msgid "Large"
-msgstr ""
+msgstr "Suuri"
 
 #: ../thunar/thunar-preferences-dialog.c:352
 msgid "Larger"
-msgstr ""
+msgstr "Suurempi"
 
 #: ../thunar/thunar-preferences-dialog.c:353
 msgid "Very Large"
-msgstr ""
+msgstr "Erittäin suuri"
 
 #: ../thunar/thunar-preferences-dialog.c:370
-#, fuzzy
 msgid "Show Icon _Emblems"
 msgstr "Näytä _tunnuskuvat"
 
 #: ../thunar/thunar-preferences-dialog.c:372
-#, fuzzy
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"Näytä tunnuskuvat kirjanmerkkilistassa niille tiedostoille, joille on "
-"sellaisia tiedoston ominaisuusdialogissa asetettu."
+"Valitse tämä näyttääksesi kirjanmerkkilistassa tunnuskuvat niille "
+"kansioille, joille on sellaisia kansion ominaisuusdialogissa asetettu."
 
 #.
 #. Behavior
@@ -1370,9 +1366,8 @@ msgid "Advanced"
 msgstr "Lisäasetukset"
 
 #: ../thunar/thunar-preferences-dialog.c:429
-#, fuzzy
 msgid "Folder Permissions"
-msgstr "Käyttöoikeudet"
+msgstr "Hakemiston käyttöoikeudet"
 
 #: ../thunar/thunar-preferences-dialog.c:441
 msgid ""
@@ -1380,18 +1375,21 @@ msgid ""
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr ""
+"Muuttaessasi hakemiston käyttöoikeuksia voit\n"
+"asettaa samat oikeudet myös sen sisällölle.\n"
+"Alta voit valita oletustoimintatavan."
 
 #: ../thunar/thunar-preferences-dialog.c:449
 msgid "Ask everytime"
-msgstr "Kysy"
+msgstr "Kysy aina"
 
 #: ../thunar/thunar-preferences-dialog.c:450
 msgid "Apply to Folder Only"
-msgstr ""
+msgstr "Aseta vain hakemistolle"
 
 #: ../thunar/thunar-preferences-dialog.c:451
 msgid "Apply to Folder and Contents"
-msgstr ""
+msgstr "Aseta myös hakemiston sisällölle"
 
 #: ../thunar/thunar-progress-dialog.c:458
 #, c-format
@@ -2351,11 +2349,9 @@ msgid "Thunar File Manager"
 msgstr "Thunar-tiedostonhallinta"
 
 #: ../Thunar-folder-handler.desktop.in.h:1
-#, fuzzy
 msgid "Open Folder"
-msgstr "Uusi hakemisto"
+msgstr "Avaa hakemisto"
 
 #: ../Thunar-folder-handler.desktop.in.h:2
-#, fuzzy
 msgid "Open the specified folders in Thunar"
-msgstr "Avaa valitut hakemistot uusissa Thunar-ikkunoissa"
+msgstr "Avaa valitut hakemistot Thunarissa"
