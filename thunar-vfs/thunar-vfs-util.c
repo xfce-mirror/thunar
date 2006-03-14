@@ -40,8 +40,6 @@
 #include <string.h>
 #endif
 
-#include <libxfce4util/libxfce4util.h>
-
 #include <thunar-vfs/thunar-vfs-util.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
