@@ -43,6 +43,7 @@
 #include <thunar/thunar-throbber.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-stock.h>
+#include <thunar/thunar-tree-pane.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-window-ui.h>
 
@@ -89,6 +90,8 @@ static void     thunar_window_unrealize                   (GtkWidget          *w
 static gboolean thunar_window_configure_event             (GtkWidget          *widget,
                                                            GdkEventConfigure  *event);
 static void     thunar_window_merge_custom_preferences    (ThunarWindow       *window);
+static void     thunar_window_install_sidepane            (ThunarWindow       *window,
+                                                           GType               type);
 static void     thunar_window_start_open_location         (ThunarWindow       *window,
                                                            const gchar        *initial_text);
 static void     thunar_window_action_open_new_window      (GtkAction          *action,
@@ -105,6 +108,8 @@ static void     thunar_window_action_location_bar_changed (GtkRadioAction     *a
                                                            GtkRadioAction     *current,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_shortcuts_changed    (GtkToggleAction    *action,
+                                                           ThunarWindow       *window);
+static void     thunar_window_action_tree_changed         (GtkToggleAction    *action,
                                                            ThunarWindow       *window);
 static void     thunar_window_action_statusbar_changed    (GtkToggleAction    *action,
                                                            ThunarWindow       *window);
@@ -248,6 +253,7 @@ static const GtkToggleActionEntry toggle_action_entries[] =
 {
   { "show-hidden", NULL, N_ ("Show _Hidden Files"), "<control>H", N_ ("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_window_action_show_hidden), FALSE, },
   { "view-side-pane-shortcuts", NULL, N_ ("_Shortcuts"), "<control>B", N_ ("Toggles the visibility of the shortcuts pane"), G_CALLBACK (thunar_window_action_shortcuts_changed), FALSE, },
+  { "view-side-pane-tree", NULL, N_ ("_Tree"), "<control>T", N_ ("Toggles the visibility of the tree pane"), G_CALLBACK (thunar_window_action_tree_changed), FALSE, },
   { "view-statusbar", NULL, N_ ("St_atusbar"), NULL, N_ ("Change the visibility of this window's statusbar"), G_CALLBACK (thunar_window_action_statusbar_changed), FALSE, },
 };
 
@@ -441,6 +447,7 @@ thunar_window_init (ThunarWindow *window)
   GSList         *group;
   gchar          *type_name;
   GType           type;
+  gint            position;
   gint            width;
   gint            height;
 
@@ -572,6 +579,13 @@ thunar_window_init (ThunarWindow *window)
   gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (window->paned);
 
+  /* determine the last separator position and apply it to the paned view */
+  g_object_get (G_OBJECT (window->preferences), "last-separator-position", &position, NULL);
+  gtk_paned_set_position (GTK_PANED (window->paned), position);
+
+  /* always remember the last separator position for newly opened windows */
+  exo_binding_new (G_OBJECT (window->paned), "position", G_OBJECT (window->preferences), "last-separator-position");
+
   vbox = gtk_vbox_new (FALSE, 6);
   gtk_paned_pack2 (GTK_PANED (window->paned), vbox, TRUE, FALSE);
   gtk_widget_show (vbox);
@@ -599,6 +613,8 @@ thunar_window_init (ThunarWindow *window)
   g_object_get (G_OBJECT (window->preferences), "last-side-pane", &type_name, NULL);
   if (exo_str_is_equal (type_name, g_type_name (THUNAR_TYPE_SHORTCUTS_PANE)))
     type = THUNAR_TYPE_SHORTCUTS_PANE;
+  else if (exo_str_is_equal (type_name, g_type_name (THUNAR_TYPE_TREE_PANE)))
+    type = THUNAR_TYPE_TREE_PANE;
   else
     type = G_TYPE_NONE;
   g_free (type_name);
@@ -606,6 +622,8 @@ thunar_window_init (ThunarWindow *window)
   /* activate the selected side pane */
   action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
   gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_SHORTCUTS_PANE));
+  action = gtk_action_group_get_action (window->action_group, "view-side-pane-tree");
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (type == THUNAR_TYPE_TREE_PANE));
 
   /* determine the default view */
   g_object_get (G_OBJECT (window->preferences), "default-view", &type_name, NULL);
@@ -867,6 +885,43 @@ thunar_window_configure_event (GtkWidget         *widget,
 
   /* let Gtk+ handle the configure event */
   return (*GTK_WIDGET_CLASS (thunar_window_parent_class)->configure_event) (widget, event);
+}
+
+
+
+static void
+thunar_window_install_sidepane (ThunarWindow *window,
+                                GType         type)
+{
+  g_return_if_fail (type == G_TYPE_NONE || g_type_is_a (type, THUNAR_TYPE_SIDE_PANE));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* drop the previous side pane (if any) */
+  if (G_UNLIKELY (window->sidepane != NULL))
+    {
+      gtk_widget_destroy (window->sidepane);
+      window->sidepane = NULL;
+    }
+
+  /* check if we have a new sidepane widget */
+  if (G_LIKELY (type != G_TYPE_NONE))
+    {
+      /* allocate the new side pane widget */
+      window->sidepane = g_object_new (type, NULL);
+      thunar_component_set_ui_manager (THUNAR_COMPONENT (window->sidepane), window->ui_manager);
+      exo_binding_new (G_OBJECT (window), "show-hidden", G_OBJECT (window->sidepane), "show-hidden");
+      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory");
+      g_signal_connect_swapped (G_OBJECT (window->sidepane), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+      gtk_paned_pack1 (GTK_PANED (window->paned), window->sidepane, FALSE, FALSE);
+      gtk_widget_show (window->sidepane);
+
+      /* connect the side pane widget to the view (if any) */
+      if (G_LIKELY (window->view != NULL))
+        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->sidepane), "selected-files");
+    }
+
+  /* remember the setting */
+  g_object_set (G_OBJECT (window->preferences), "last-side-pane", g_type_name (type), NULL);
 }
 
 
@@ -1183,34 +1238,50 @@ static void
 thunar_window_action_shortcuts_changed (GtkToggleAction *action,
                                         ThunarWindow    *window)
 {
-  GType type;
-
-  /* drop the previous side pane (if any) */
-  if (G_UNLIKELY (window->sidepane != NULL))
-    {
-      gtk_widget_destroy (window->sidepane);
-      window->sidepane = NULL;
-    }
+  GtkAction *other_action;
+  GType      type;
 
   /* determine the new type of side pane */
   type = gtk_toggle_action_get_active (action) ? THUNAR_TYPE_SHORTCUTS_PANE : G_TYPE_NONE;
+
+  /* install the new sidepane */
+  thunar_window_install_sidepane (window, type);
+
+  /* check if we actually installed anything */
   if (G_LIKELY (type != G_TYPE_NONE))
     {
-      /* allocate the new side pane widget */
-      window->sidepane = g_object_new (type, NULL);
-      thunar_component_set_ui_manager (THUNAR_COMPONENT (window->sidepane), window->ui_manager);
-      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->sidepane), "current-directory");
-      g_signal_connect_swapped (G_OBJECT (window->sidepane), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
-      gtk_paned_pack1 (GTK_PANED (window->paned), window->sidepane, FALSE, FALSE);
-      gtk_widget_show (window->sidepane);
-
-      /* connect the side pane widget to the view (if any) */
-      if (G_LIKELY (window->view != NULL))
-        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->sidepane), "selected-files");
+      /* reset the state of the tree pane action (without firing the handler) */
+      other_action = gtk_action_group_get_action (window->action_group, "view-side-pane-tree");
+      g_signal_handlers_block_by_func (G_OBJECT (other_action), thunar_window_action_tree_changed, window);
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (other_action), FALSE);
+      g_signal_handlers_unblock_by_func (G_OBJECT (other_action), thunar_window_action_tree_changed, window);
     }
+}
 
-  /* remember the setting */
-  g_object_set (G_OBJECT (window->preferences), "last-side-pane", g_type_name (type), NULL);
+
+
+static void
+thunar_window_action_tree_changed (GtkToggleAction *action,
+                                   ThunarWindow    *window)
+{
+  GtkAction *other_action;
+  GType      type;
+
+  /* determine the new type of side pane */
+  type = gtk_toggle_action_get_active (action) ? THUNAR_TYPE_TREE_PANE : G_TYPE_NONE;
+
+  /* install the new sidepane */
+  thunar_window_install_sidepane (window, type);
+
+  /* check if we actually installed anything */
+  if (G_LIKELY (type != G_TYPE_NONE))
+    {
+      /* reset the state of the shortcuts pane action (without firing the handler) */
+      other_action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
+      g_signal_handlers_block_by_func (G_OBJECT (other_action), thunar_window_action_shortcuts_changed, window);
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (other_action), FALSE);
+      g_signal_handlers_unblock_by_func (G_OBJECT (other_action), thunar_window_action_shortcuts_changed, window);
+    }
 }
 
 

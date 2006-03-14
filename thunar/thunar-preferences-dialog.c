@@ -339,7 +339,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  label = gtk_label_new_with_mnemonic (_("Shortcut _Icon Size:"));
+  label = gtk_label_new_with_mnemonic (_("_Icon Size:"));
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
@@ -370,6 +370,57 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   button = gtk_check_button_new_with_mnemonic (_("Show Icon _Emblems"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "shortcuts-icon-emblems", G_OBJECT (button), "active");
   gtk_tooltips_set_tip (dialog->tooltips, button, _("Select this option to display icon emblems in the shortcuts pane for all folders "
+                                                    "for which emblems have been defined in the folders properties dialog."), NULL);
+  gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (button);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Tree Pane"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  table = gtk_table_new (2, 2, FALSE);
+  gtk_table_set_row_spacings (GTK_TABLE (table), 6);
+  gtk_table_set_col_spacings (GTK_TABLE (table), 12);
+  gtk_container_set_border_width (GTK_CONTAINER (table), 12);
+  gtk_container_add (GTK_CONTAINER (frame), table);
+  gtk_widget_show (table);
+
+  label = gtk_label_new_with_mnemonic (_("Icon _Size:"));
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_new_text ();
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Small"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Smaller"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Small"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Normal"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Large"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Larger"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Large"));
+#if !GTK_CHECK_VERSION(2,9,0)
+  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
+#endif
+  exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "tree-icon-size", G_OBJECT (combo), "active",
+                               transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
+  gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
+
+  /* set Atk label relation for the combo */
+  object = gtk_widget_get_accessible (combo);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
+
+  button = gtk_check_button_new_with_mnemonic (_("Show Icon E_mblems"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "tree-icon-emblems", G_OBJECT (button), "active");
+  gtk_tooltips_set_tip (dialog->tooltips, button, _("Select this option to display icon emblems in the tree pane for all folders "
                                                     "for which emblems have been defined in the folders properties dialog."), NULL);
   gtk_table_attach (GTK_TABLE (table), button, 0, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);

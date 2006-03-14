@@ -1,5 +1,30 @@
 2006-03-14	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-path.{c,h}, thunar-vfs/thunar-vfs.symbols: Add
+	  convenience method thunar_vfs_path_is_ancestor(), used to implement
+	  the auto-expand in the tree pane.
+	* docs/reference/thunar-vfs/: Update thunar-vfs API docs.
+	* thunar/thunar-file.h: Add thunar_file_is_ancestor().
+	* docs/README.thunarrc, thunar/thunar-preferences.c,
+	  thunar/thunar-window.c: Add new preference LastSeparatorPosition,
+	  which includes the last position of the gutter that separates the
+	  side pane and the main view.
+	* docs/README.thunarrc, thunar/thunar-preferences.c,
+	  thunar/thunar-preferences-dialog.c: Add new preferences
+	  TreeIconEmblems and TreeIconSize, similar to their shortcuts
+	  counterparts.
+	* thunar/thunar-tree-model.{c,h}, thunar/thunar-tree-pane.{c,h},
+	  thunar/thunar-tree-view.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-window-ui.xml, thunar/thunar-window.c: Initial import
+	  of the tree side pane. Still missing a lot of features, but the basics
+	  are in place and the performance and memory overhead is quite good
+	  already. Bug #1363.
+	* po/POTFILES.in: Add new files.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
+2006-03-14	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-util.c: Do not include
 	  <libxfce4util/libxfce4util.h> directly.
 

@@ -78,6 +78,8 @@ gboolean                     thunar_vfs_path_equal        (gconstpointer        
 ThunarVfsPath               *thunar_vfs_path_relative     (ThunarVfsPath        *parent,
                                                            const gchar          *name) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
+gboolean                     thunar_vfs_path_is_ancestor  (const ThunarVfsPath  *path,
+                                                           const ThunarVfsPath  *ancestor);
 gboolean                     thunar_vfs_path_is_home      (const ThunarVfsPath  *path);
 G_INLINE_FUNC gboolean       thunar_vfs_path_is_root      (const ThunarVfsPath  *path);
 

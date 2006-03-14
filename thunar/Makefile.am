@@ -144,6 +144,12 @@ Thunar_SOURCES =							\
 	thunar-thumbnail-frame.h					\
 	thunar-thumbnail-generator.c					\
 	thunar-thumbnail-generator.h					\
+	thunar-tree-model.c						\
+	thunar-tree-model.h						\
+	thunar-tree-pane.c						\
+	thunar-tree-pane.h						\
+	thunar-tree-view.c						\
+	thunar-tree-view.h						\
 	thunar-view.c							\
 	thunar-view.h							\
 	thunar-window.c							\

@@ -329,6 +329,19 @@ G_STMT_START{                                             \
 
 
 /**
+ * thunar_file_is_ancestor:
+ * @file     : a #ThunarFile instance.
+ * @ancestor : another #ThunarFile instance.
+ *
+ * Determines whether @file is somewhere inside @ancestor,
+ * possibly with intermediate folders.
+ *
+ * Return value: %TRUE if @ancestor contains @file as a
+ *               child, grandchild, great grandchild, etc.
+ **/
+#define thunar_file_is_ancestor(file, ancestor) (thunar_vfs_path_is_ancestor (thunar_file_get_path ((file)), thunar_file_get_path ((ancestor))))
+
+/**
  * thunar_file_is_directory:
  * @file : a #ThunarFile instance.
  *

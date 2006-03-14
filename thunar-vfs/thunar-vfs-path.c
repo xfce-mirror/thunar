@@ -524,6 +524,33 @@ thunar_vfs_path_relative (ThunarVfsPath *parent,
 
 
 /**
+ * thunar_vfs_path_is_ancestor:
+ * @path     : a #ThunarVfsPath.
+ * @ancestor : another #ThunarVfsPath.
+ *
+ * Determines whether @path is somewhere below @ancestor,
+ * possible with intermediate folders.
+ *
+ * Return value: %TRUE if @ancestor contains @path as a
+ *               child, grandchild, great grandchild, etc.
+ **/
+gboolean
+thunar_vfs_path_is_ancestor (const ThunarVfsPath *path,
+                             const ThunarVfsPath *ancestor)
+{
+  g_return_val_if_fail (path != NULL, FALSE);
+  g_return_val_if_fail (ancestor != NULL, FALSE);
+
+  for (path = path->parent; path != NULL; path = path->parent)
+    if (thunar_vfs_path_equal (path, ancestor))
+      return TRUE;
+
+  return FALSE;
+}
+
+
+
+/**
  * thunar_vfs_path_is_home:
  * @path : a #ThunarVfsPath.
  *

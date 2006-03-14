@@ -57,6 +57,7 @@ enum
   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
   PROP_LAST_LOCATION_BAR,
+  PROP_LAST_SEPARATOR_POSITION,
   PROP_LAST_SHOW_HIDDEN,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_SORT_COLUMN,
@@ -74,6 +75,8 @@ enum
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
+  PROP_TREE_ICON_EMBLEMS,
+  PROP_TREE_ICON_SIZE,
   N_PROPERTIES,
 };
 
@@ -290,6 +293,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         "last-location-bar",
                                                         "ThunarLocationButtons",
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-separator-position:
+   *
+   * The last position of the gutter in the main window,
+   * which separates the side pane from the main view.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_SEPARATOR_POSITION,
+                                   g_param_spec_int ("last-separator-position",
+                                                     "last-separator-position",
+                                                     "last-separator-position",
+                                                     0, G_MAXINT, 170,
+                                                     EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:last-show-hidden:
@@ -524,6 +541,35 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                       "shortcuts-icon-size",
                                                       THUNAR_TYPE_ICON_SIZE,
                                                       THUNAR_ICON_SIZE_SMALLER,
+                                                      EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:tree-icon-emblems:
+   *
+   * Whether to display emblems for file icons (if defined) in the
+   * tree side pane.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_TREE_ICON_EMBLEMS,
+                                   g_param_spec_boolean ("tree-icon-emblems",
+                                                         "tree-icon-emblems",
+                                                         "tree-icon-emblems",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:tree-icon-size:
+   *
+   * The icon size to use for the icons displayed in the
+   * tree side pane.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_TREE_ICON_SIZE,
+                                   g_param_spec_enum ("tree-icon-size",
+                                                      "tree-icon-size",
+                                                      "tree-icon-size",
+                                                      THUNAR_TYPE_ICON_SIZE,
+                                                      THUNAR_ICON_SIZE_SMALLEST,
                                                       EXO_PARAM_READWRITE));
 }
 

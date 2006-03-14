@@ -81,6 +81,11 @@ The Thunar Configuration File (thunarrc)
      The name of the widget class which should be used for the location bar
      in Thunar windows or "void" to hide the location bar completely.
 
+   * LastSeparatorPosition (0...)
+
+     The position of the gutter in the main window, which separates the
+     side pane from the main view.
+
    * LastShowHidden (FALSE/TRUE)
 
      Determines whether hidden files should be shown by default in newly
@@ -178,3 +183,19 @@ The Thunar Configuration File (thunarrc)
 
      The icon size to use for the icons displayed in the shortcuts side
      pane.
+
+   * TreeIconEmblems (FALSE/TRUE)
+
+     Determines whether to display emblems for file icons (if defined) in
+     the tree side pane.
+
+   * TreeIconSize (THUNAR_ICON_SIZE_SMALLEST/
+		   THUNAR_ICON_SIZE_SMALLER/
+		   THUNAR_ICON_SIZE_SMALL/
+		   THUNAR_ICON_SIZE_NORMAL/
+		   THUNAR_ICON_SIZE_LARGE/
+		   THUNAR_ICON_SIZE_LARGER/
+		   THUNAR_ICON_SIZE_LARGEST)
+
+     The icon size to use for the icons displayed in the tree side pane.
+
