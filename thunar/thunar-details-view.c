@@ -815,7 +815,7 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
            * the dimensions of this column, and that's all that matters. We don't use it with
            * newer Gtk+ versions either, so what the f*ck...
            */
-          gtk_tree_view_column_set_cell_data_func (lp->data, renderers->data, NULL, NULL, NULL);
+          gtk_tree_view_column_set_cell_data_func (details_view->columns[column], renderers->data, NULL, NULL, NULL);
           g_list_free (renderers);
         }
 #endif
