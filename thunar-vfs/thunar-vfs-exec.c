@@ -32,6 +32,9 @@
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
+#ifdef HAVE_STDARG_H
+#include <stdarg.h>
+#endif
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
@@ -451,6 +454,72 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
     g_strfreev (sn_envp);
 
   return succeed;
+}
+
+
+
+/**
+ * thunar_vfs_exec_sync:
+ * @command_fmt : the command to execute (can be a printf
+ *                format string).
+ * @error       : return location for errors or %NULL.
+ * @...         : additional parameters to fill into 
+ *                @command_fmt.
+ *
+ * Executes the given @command_fmt and returns %TRUE if the
+ * command terminated successfully. Else, the @error is set
+ * to the standard error output.
+ *
+ * Return value: %TRUE if the @command_line was executed
+ *               successfully, %FALSE if @error is set.
+ **/
+gboolean
+thunar_vfs_exec_sync (const gchar *command_fmt,
+                      GError     **error,
+                      ...)
+{
+  gboolean result;
+  va_list  args;
+  gchar   *standard_error;
+  gchar   *command_line;
+  gint     exit_status;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (command_fmt != NULL, FALSE);
+
+  /* determine the command line */
+  va_start (args, error);
+  command_line = g_strdup_vprintf (command_fmt, args);
+  va_end (args);
+
+  /* try to execute the command line */
+  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
+  if (G_UNLIKELY (result))
+    {
+      /* check if the command failed */
+      if (G_UNLIKELY (exit_status != 0))
+        {
+          /* drop additional whitespace from the stderr output */
+          g_strstrip (standard_error);
+
+          /* generate an error from the stderr output */
+          if (G_LIKELY (*standard_error != '\0'))
+            g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, "%s", standard_error);
+          else
+            g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
+
+          /* and yes, we failed */
+          result = FALSE;
+        }
+
+      /* release the stderr output */
+      g_free (standard_error);
+    }
+
+  /* cleanup */
+  g_free (command_line);
+
+  return result;
 }
 
 

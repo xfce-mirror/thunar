@@ -43,6 +43,10 @@ gboolean thunar_vfs_exec_on_screen (GdkScreen      *screen,
                                     gboolean        startup_notify,
                                     GError        **error) G_GNUC_INTERNAL;
 
+gboolean thunar_vfs_exec_sync      (const gchar    *command_line,
+                                    GError        **error,
+                                    ...) G_GNUC_INTERNAL;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_VFS_EXEC_H__ */
