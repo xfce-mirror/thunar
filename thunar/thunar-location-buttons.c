@@ -1291,8 +1291,8 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu", "separator", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
 
   /* add the "Open in New Window" action */
-  tooltip = g_strdup_printf (_("Paste files from the clipboard into \"%s\""), thunar_file_get_display_name (file));
-  action = gtk_action_new ("ThunarLocationButtons::paste-files-here", _("_Paste Files Here"), tooltip, GTK_STOCK_PASTE);
+  tooltip = g_strdup_printf (_("Move or copy files previously selected by a Cut or Copy command into \"%s\""), thunar_file_get_display_name (file));
+  action = gtk_action_new ("ThunarLocationButtons::paste-into-folder", _("_Paste Into Folder"), tooltip, GTK_STOCK_PASTE);
   g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
   g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_location_buttons_action_paste_files_here), buttons);
   exo_binding_new (G_OBJECT (clipboard), "can-paste", G_OBJECT (action), "sensitive");

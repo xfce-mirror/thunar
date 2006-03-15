@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-14 02:27+0100\n"
-"PO-Revision-Date: 2006-03-14 02:42+0100\n"
+"POT-Creation-Date: 2006-03-16 00:15+0100\n"
+"PO-Revision-Date: 2006-03-16 00:20+0100\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -94,6 +94,16 @@ msgstr ""
 "Konnte leere Datei »%s« nicht anlegen.\n"
 "\n"
 "Wollen Sie diese überspringen?"
+
+#. no useful information, *narf*
+#: ../thunar-vfs/thunar-vfs-exec.c:509
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:237
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:304
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:347
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:436
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:476
+msgid "Unknown error"
+msgstr "Unbekannter Fehler"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:381
@@ -190,7 +200,7 @@ msgstr "%s Dokument"
 #: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Konnte Verzeichnis »%s« nicht anlegen: %s"
+msgstr "Konnte Ordner »%s« nicht anlegen: %s"
 
 #: ../thunar-vfs/thunar-vfs-path.c:684
 msgid "Path too long to fit into buffer"
@@ -211,16 +221,16 @@ msgstr "Die gewünschte Vorschaugröße"
 #. display info message
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:366
 msgid "Deleting directories..."
-msgstr "Verzeichnisse werden gelöscht..."
+msgstr "Ordner werden gelöscht..."
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:386
 #, c-format
 msgid "Failed to remove directory \"%s\": %s"
-msgstr "Das Verzeichnis »%s« konnte nicht gelöscht werden: %s"
+msgstr "Der Ordner »%s« konnte nicht gelöscht werden: %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:910
 msgid "Cannot transfer the root directory"
-msgstr "Das Wurzelverzeichnis kann nicht verschoben oder kopiert werden"
+msgstr "Der Wurzelordner kann nicht verschoben oder kopiert werden"
 
 #. tell the user that we're preparing the unlink job
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:162
@@ -236,26 +246,11 @@ msgstr "Ungültiger Pfad"
 msgid "Unknown user \"%s\""
 msgstr "Unbekannter Benutzer »%s«"
 
-#. no useful information, *narf*
-#: ../thunar-vfs/thunar-vfs-volume-freebsd.c:303
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:221
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:290
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:333
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:452
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:492
-msgid "Unknown error"
-msgstr "Unbekannter Fehler"
-
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:393
+#. something went wrong, for sure
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:385
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Der Einhängepunkt für %s konnte nicht bestimmt werden"
-
-#. if we cannot read /proc/mounts, we cannot where the volume was mounted
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:401
-#, c-format
-msgid "Failed to open /proc/mounts: %s"
-msgstr "Konnte /proc/mounts nicht öffnen: %s"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:189
 #, c-format
@@ -307,7 +302,7 @@ msgstr[1] "%ute Verknüpfung mit %s"
 #: ../thunar-vfs/thunar-vfs-xfer.c:306
 #, c-format
 msgid "Failed to create directory \"%s\""
-msgstr "Konnte Verzeichnis »%s« nicht anlegen"
+msgstr "Konnte Ordner »%s« nicht anlegen"
 
 #. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
 #: ../thunar-vfs/thunar-vfs-xfer.c:330
@@ -445,7 +440,7 @@ msgstr "Erstelle Dateien..."
 
 #: ../thunar/thunar-application.c:948
 msgid "Creating directories..."
-msgstr "Erstelle Verzeichnisse..."
+msgstr "Erstelle Ordner..."
 
 #. tell the user that it didn't work
 #. display an error to the user
@@ -678,7 +673,7 @@ msgstr "Die Listenspalten in der Detailansicht festlegen"
 
 #: ../thunar/thunar-details-view.c:414
 msgid "Detailed directory listing"
-msgstr "Detailierte Verzeichnisansicht"
+msgstr "Detailierte Ordneransicht"
 
 #: ../thunar/thunar-details-view.c:415
 msgid "Details view"
@@ -749,7 +744,7 @@ msgstr "Dateiname"
 
 #: ../thunar/thunar-file.c:727
 msgid "The root folder has no parent"
-msgstr "Das Wurzelverzeichnis hat kein übergeordnetes Verzeichnis"
+msgstr "Der Wurzelordner hat keinen übergeordneten Ordner"
 
 #: ../thunar/thunar-file.c:1029
 msgid "File System"
@@ -834,7 +829,7 @@ msgstr "Symbole in aufsteigender Richtung sortieren"
 
 #: ../thunar/thunar-icon-view.c:336
 msgid "Icon based directory listing"
-msgstr "Symbolbasierte Verzeichnisansicht"
+msgstr "Symbolbasierte Ordneransicht"
 
 #: ../thunar/thunar-icon-view.c:337
 msgid "Icon view"
@@ -843,7 +838,7 @@ msgstr "Symbolansicht"
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:750
 #: ../thunar/thunar-location-buttons.c:1267
-#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:595
+#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:898
 msgid "_Open"
 msgstr "Ö_ffnen"
 
@@ -853,13 +848,13 @@ msgstr "Die ausgewählten Dateien öffnen"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1280
-#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:607
+#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:910
 msgid "Open in New Window"
 msgstr "In neuem Fenster öffnen"
 
 #: ../thunar/thunar-launcher.c:121
 msgid "Open the selected directories in new Thunar windows"
-msgstr "Die ausgewählten Verzeichnisse in neuen Thunar Fenstern öffnen"
+msgstr "Die ausgewählten Ordner in neuen Thunar Fenstern öffnen"
 
 #: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
 msgid "Open With Other _Application..."
@@ -893,7 +888,7 @@ msgstr[1] "%d Dateien konnten nicht geöffnet werden"
 
 #: ../thunar/thunar-launcher.c:634
 msgid "Are you sure you want to open all folders?"
-msgstr "Sind Sie sicher, daß alle Verzeichnisse geöffnet werden sollen?"
+msgstr "Sind Sie sicher, daß alle Ordner geöffnet werden sollen?"
 
 #: ../thunar/thunar-launcher.c:636
 #, c-format
@@ -921,8 +916,8 @@ msgstr[1] "In %d neuen Fenstern öffnen"
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Das ausgewählte Verzeichnis in %d neuen Fenster anzeigen"
-msgstr[1] "Die ausgewählten Verzeichnisse in %d neuen Fenstern anzeigen"
+msgstr[0] "Den ausgewählten Ordner in %d neuen Fenster anzeigen"
+msgstr[1] "Die ausgewählten Ordner in %d neuen Fenstern anzeigen"
 
 #: ../thunar/thunar-launcher.c:752
 msgid "Open the selected file"
@@ -1031,23 +1026,27 @@ msgstr "Der Abstand zwischen den Knöpfen für die Pfade"
 #: ../thunar/thunar-location-buttons.c:1266
 #, c-format
 msgid "Open \"%s\" in this window"
-msgstr "Verzeichnis »%s« in diesem Fenster darstellen"
+msgstr "Ordner »%s« in diesem Fenster darstellen"
 
 #. add the "Open in New Window" action
 #: ../thunar/thunar-location-buttons.c:1279
 #, c-format
 msgid "Open \"%s\" in a new window"
-msgstr "Verzeichnis »%s« in einem neuen Fenster darstellen"
+msgstr "Ordner »%s« in einem neuen Fenster darstellen"
 
 #. add the "Open in New Window" action
 #: ../thunar/thunar-location-buttons.c:1294
 #, c-format
-msgid "Paste files from the clipboard into \"%s\""
-msgstr "Dateien aus der Zwischenablage in »%s« einfügen"
+msgid ""
+"Move or copy files previously selected by a Cut or Copy command into \"%s\""
+msgstr ""
+"Zuvor durch »Ausschneiden« oder »Kopieren« ausgewählte Dateien nach »%s« verschieben "
+"oder kopieren"
 
-#: ../thunar/thunar-location-buttons.c:1295
-msgid "_Paste Files Here"
-msgstr "Dateien hier _einfügen"
+#. append the "Paste Into Folder" menu action
+#: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:958
+msgid "_Paste Into Folder"
+msgstr "In Ordner e_infügen"
 
 #: ../thunar/thunar-location-dialog.c:88
 msgid "Open Location"
@@ -1057,7 +1056,7 @@ msgstr "Ort öffnen"
 msgid "_Location:"
 msgstr "_Ort:"
 
-#: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:1030
+#: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:1044
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Konnte »%s« nicht ausführen"
@@ -1129,18 +1128,18 @@ msgid ""
 "The folder permissions are inconsistent, you\n"
 "may not be able to work with files in this folder."
 msgstr ""
-"Die Berechtigungen in diesem Verzeichnis sind inkonsistent;\n"
-"eventuell können Sie mit den Dateien in diesem Verzeichnis\n"
+"Die Berechtigungen in diesem Ordner sind inkonsistent;\n"
+"eventuell können Sie mit den Dateien in diesem Ordner\n"
 "nicht arbeiten."
 
 #: ../thunar/thunar-permissions-chooser.c:455
 msgid "Correct folder permissions..."
-msgstr "Verzeichnisberechtigungen korrigieren..."
+msgstr "Ordner-Berechtigungen korrigieren..."
 
 #: ../thunar/thunar-permissions-chooser.c:456
 msgid "Click here to automatically fix the folder permissions."
 msgstr ""
-"Hier klicken, um die Berrechtigungen für dieses Verzeichnis automatisch zu "
+"Hier klicken, um die Berrechtigungen für diesesn Ordner automatisch zu "
 "korrigieren."
 
 #: ../thunar/thunar-permissions-chooser.c:467
@@ -1168,7 +1167,7 @@ msgid ""
 "all files and subfolder below the selected folder?"
 msgstr ""
 "Möchten Sie Ihre Änderungen rekursiv auf alle\n"
-"Dateien und Unterverzeichnisse anwenden?"
+"Dateien und Unterordner anwenden?"
 
 #: ../thunar/thunar-permissions-chooser.c:625
 msgid "Do _not ask me again"
@@ -1201,11 +1200,11 @@ msgstr "Unbekannter Dateibesitzer"
 
 #: ../thunar/thunar-permissions-chooser.c:1068
 msgid "Correct folder permissions automatically?"
-msgstr "Verzeichnisrechte automatisch korrigieren?"
+msgstr "Ordner-Berechtigungen automatisch korrigieren?"
 
 #: ../thunar/thunar-permissions-chooser.c:1070
 msgid "Correct folder permissions"
-msgstr "Verzeichnisrechte korrigieren"
+msgstr "Ordner-Berechtigungen korrigieren"
 
 #: ../thunar/thunar-permissions-chooser.c:1072
 msgid ""
@@ -1213,9 +1212,9 @@ msgid ""
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
 msgstr ""
-"Die Berechtigungen für dieses Verzeichnis werden in einen konsistenten "
-"Zustand überführt. Anschließend können nur Benutzer, die den Inhalt dieses "
-"Verzeichnisses lesen dürfen, dieses Verzeichnis auch betreten."
+"Die Berechtigungen für diesen Ordner werden in einen konsistenten Zustand "
+"überführt. Anschließend können nur Benutzer, die den Inhalt dieses Ordners "
+"lesen dürfen, diesen Ordner auch betreten."
 
 #: ../thunar/thunar-permissions-chooser.c:1164
 #: ../thunar/thunar-progress-dialog.c:320
@@ -1271,13 +1270,13 @@ msgstr "Zuletzt aktiver Ansicht"
 
 #: ../thunar/thunar-preferences-dialog.c:280
 msgid "Sort _folders before files"
-msgstr "_Verzeichnis vor Dateien anzeigen"
+msgstr "_Ordner vor Dateien anzeigen"
 
 #: ../thunar/thunar-preferences-dialog.c:282
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
-"Wird diese Einstellung ausgewählt, werden Verzeichnisse grundsätzlich vor "
-"allen anderen Dateien angezeigt."
+"Wird diese Einstellung ausgewählt, werden Ordner grundsätzlich vor allen "
+"anderen Dateien angezeigt."
 
 #: ../thunar/thunar-preferences-dialog.c:286
 msgid "_Show thumbnails"
@@ -1289,8 +1288,8 @@ msgid ""
 "automatically generated thumbnail icons."
 msgstr ""
 "Wählen Sie diese Option, um Dateien, für die eine Vorschau erstellt werden "
-"kann, innerhalb eines Verzeichnisses als automatisch erzeugte "
-"Vorschausymbole darzustellen."
+"kann, innerhalb eines Ordners als automatisch erzeugte Vorschausymbole "
+"darzustellen."
 
 #: ../thunar/thunar-preferences-dialog.c:309
 msgid "_Text beside icons"
@@ -1363,7 +1362,7 @@ msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"Zeige Embleme in der Lesezeichenliste für alle Verzeichnisse, für die im "
+"Zeige Embleme in der Lesezeichenliste für alle Ordner, für die im "
 "Dateieigenschaftendialog Embleme ausgewählt wurden."
 
 #: ../thunar/thunar-preferences-dialog.c:381
@@ -1376,14 +1375,14 @@ msgstr "Symbol_größe"
 
 #: ../thunar/thunar-preferences-dialog.c:421
 msgid "Show Icon E_mblems"
-msgstr "Embleme für _Verzeichnisse anzeigen"
+msgstr "Embleme für _Ordner anzeigen"
 
 #: ../thunar/thunar-preferences-dialog.c:423
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"Zeige Embleme in der Baumansicht für alle Verzeichnisse, für die im "
+"Zeige Embleme in der Baumansicht für alle Ordner, für die im "
 "Dateieigenschaftendialog Embleme ausgewählt wurden."
 
 #.
@@ -1411,7 +1410,7 @@ msgstr "Fortgeschritten"
 
 #: ../thunar/thunar-preferences-dialog.c:480
 msgid "Folder Permissions"
-msgstr "Verzeichnis-Berechtigungen"
+msgstr "Ordner-Berechtigungen"
 
 #: ../thunar/thunar-preferences-dialog.c:492
 msgid ""
@@ -1419,9 +1418,9 @@ msgid ""
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr ""
-"Beim Ändern von Verzeichnis-Berechtigungen kann\n"
-"diese Änderung auch auf den Inhalt des Verzeichnis-\n"
-"ses angewandt werden. Das Standardverhalten kann\n"
+"Beim Ändern der Ordner-Berechtigungen kann\n"
+"diese Änderung auch auf den Inhalt des Ordner\n"
+"angewandt werden. Das Standardverhalten kann\n"
 "hier festgelegt werden:"
 
 #: ../thunar/thunar-preferences-dialog.c:500
@@ -1430,11 +1429,11 @@ msgstr "Jedes mal nachfragen"
 
 #: ../thunar/thunar-preferences-dialog.c:501
 msgid "Apply to Folder Only"
-msgstr "Nur auf Verzeichnis anwenden"
+msgstr "Nur auf Ordner anwenden"
 
 #: ../thunar/thunar-preferences-dialog.c:502
 msgid "Apply to Folder and Contents"
-msgstr "Auf Verzeichnis und Inhalt anwenden"
+msgstr "Auf Ordner und Inhalt anwenden"
 
 #: ../thunar/thunar-progress-dialog.c:458
 #, c-format
@@ -1531,14 +1530,14 @@ msgstr "Die Datei »%s« konnte nicht umbenannt werden"
 #: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:411
 msgid "Add Folder to _Shortcuts"
 msgid_plural "Add Folders to _Shortcuts"
-msgstr[0] "Lese_zeichen für Verzeichnis erstellen"
-msgstr[1] "Lese_zeichen für Verzeichnisse erstellen"
+msgstr[0] "Lese_zeichen für Ordner erstellen"
+msgstr[1] "Lese_zeichen für Ordner erstellen"
 
 #: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:413
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] "Neues Lesezeichen für das ausgewählte Verzeichnis erstellen"
-msgstr[1] "Neue Lesezeichen für die ausgewählten Verzeichnisse erstellen"
+msgstr[0] "Neues Lesezeichen für den ausgewählten Ordner erstellen"
+msgstr[1] "Neue Lesezeichen für die ausgewählten Ordner erstellen"
 
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:819
@@ -1568,7 +1567,7 @@ msgstr "Lesezeichen _umbenennen"
 #: ../thunar/thunar-shortcuts-view.c:1140
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
-msgstr "Der Pfad »%s« verweist nicht auf ein Verzeichnis"
+msgstr "Der Pfad »%s« verweist nicht auf einen Ordner"
 
 #. display an error message to the user
 #: ../thunar/thunar-shortcuts-view.c:1159
@@ -1599,19 +1598,18 @@ msgstr "Dateimenü"
 
 #: ../thunar/thunar-standard-view.c:305
 msgid "Folder Context Menu"
-msgstr "Verzeichnismenü"
+msgstr "Ordnermenü"
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-standard-view.c:306 ../thunar/thunar-tree-view.c:619
+#: ../thunar/thunar-standard-view.c:306 ../thunar/thunar-tree-view.c:922
 msgid "Create _Folder..."
-msgstr "_Verzeichnis erstellen..."
+msgstr "_Ordner erstellen..."
 
 #: ../thunar/thunar-standard-view.c:306
 msgid "Create an empty folder within the current folder"
-msgstr "Eine leere Datei im aktuellen Verzeichnis anlegen"
+msgstr "Eine leere Datei im aktuellen Ordner anlegen"
 
-#. append the "Properties" menu action
-#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:631
+#: ../thunar/thunar-standard-view.c:307
 msgid "_Properties..."
 msgstr "_Eigenschaften..."
 
@@ -1619,51 +1617,41 @@ msgstr "_Eigenschaften..."
 msgid "View the properties of the selected file"
 msgstr "Die Eigenschaften der ausgewählten Datei anzeigen/ändern"
 
-#: ../thunar/thunar-standard-view.c:308
-msgid "_Copy Files"
-msgstr "Dateien _kopieren"
+#. append the "Cut" menu action
+#: ../thunar/thunar-standard-view.c:308 ../thunar/thunar-tree-view.c:934
+msgid "Cu_t"
+msgstr "_Ausschneiden"
 
-#: ../thunar/thunar-standard-view.c:308
-msgid "Copy the selected files"
-msgstr "Ausgewählte Dateien kopieren"
-
-#: ../thunar/thunar-standard-view.c:309
-msgid "Cu_t Files"
-msgstr "Dateien _ausschneiden"
-
-#: ../thunar/thunar-standard-view.c:309
-msgid "Cut the selected files"
-msgstr "Ausgewählte Dateien ausschneiden"
+#. append the "Copy" menu action
+#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:946
+msgid "_Copy"
+msgstr "_Kopieren"
 
 #: ../thunar/thunar-standard-view.c:310
-msgid "_Paste Files"
-msgstr "Dateien e_infügen"
+msgid "_Paste"
+msgstr "E_infügen"
 
 #: ../thunar/thunar-standard-view.c:310
-msgid "Move or Copy files previously selected by a Cut or Copy command"
+msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "Zuvor durch »Ausschneiden« oder »Kopieren« ausgewählte Dateien verschieben "
 "oder kopieren"
 
 #: ../thunar/thunar-standard-view.c:311
-msgid "_Delete Files"
-msgstr "Dateien _löschen"
-
-#: ../thunar/thunar-standard-view.c:311
-msgid "Delete the selected files"
-msgstr "Ausgewählte Dateien löschen"
+msgid "_Delete"
+msgstr "_Löschen"
 
 #: ../thunar/thunar-standard-view.c:312
-msgid "Paste Files into Folder"
-msgstr "Dateien in Verzeichnis einfügen"
+msgid "Paste Into Folder"
+msgstr "In Ordner einfügen"
 
 #: ../thunar/thunar-standard-view.c:312
 msgid ""
-"Move or Copy files previously selected by a Cut or Copy command into the "
+"Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr ""
-"Zuvor durch »Ausschneiden« oder »Kopieren« ausgewählte Dateien in das "
-"gewählte Verzeichnis verschieben oder kopieren"
+"Zuvor durch »Ausschneiden« oder »Kopieren« ausgewählte Dateien in den "
+"gewählten Ordner verschieben oder kopieren"
 
 #: ../thunar/thunar-standard-view.c:313
 msgid "Select _all Files"
@@ -1681,25 +1669,15 @@ msgstr "_Muster auswählen..."
 msgid "Select all files that match a certain pattern"
 msgstr "Alle Dateien auswählen, die einem bestimmten Muster entsprechen"
 
-#: ../thunar/thunar-standard-view.c:315 ../thunar/thunar-standard-view.c:3247
-msgid "Du_plicate File"
-msgid_plural "Du_plicate Files"
-msgstr[0] "Datei _duplizieren"
-msgstr[1] "Dateien _duplizieren"
-
 #: ../thunar/thunar-standard-view.c:315
-msgid "Duplicate each selected file"
-msgstr "Ausgewählte Dateien duplizieren"
+msgid "Du_plicate"
+msgstr "_Duplizieren"
 
-#: ../thunar/thunar-standard-view.c:316 ../thunar/thunar-standard-view.c:3253
+#: ../thunar/thunar-standard-view.c:316 ../thunar/thunar-standard-view.c:3261
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "_Verknüpfung anlegen"
 msgstr[1] "_Verknüpfungen anlegen"
-
-#: ../thunar/thunar-standard-view.c:316
-msgid "Create a symbolic link for each selected file"
-msgstr "Eine symbolische Verknüpfung für jede ausgewählte Datei anlegen"
 
 #: ../thunar/thunar-standard-view.c:317
 msgid "_Rename..."
@@ -1716,7 +1694,7 @@ msgstr "_Dokument anlegen"
 
 #: ../thunar/thunar-standard-view.c:1220
 msgid "Loading folder contents..."
-msgstr "Verzeichnis wird geladen..."
+msgstr "Ordnerinhalt wird geladen..."
 
 #. ask the user to enter a name for the new empty file
 #: ../thunar/thunar-standard-view.c:1716
@@ -1728,13 +1706,13 @@ msgid "New Empty File..."
 msgstr "Neue leere Datei..."
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-standard-view.c:1767 ../thunar/thunar-tree-view.c:762
+#: ../thunar/thunar-standard-view.c:1767 ../thunar/thunar-tree-view.c:1222
 msgid "New Folder"
-msgstr "Neues Verzeichnis"
+msgstr "Neuen Ordner"
 
-#: ../thunar/thunar-standard-view.c:1767 ../thunar/thunar-tree-view.c:762
+#: ../thunar/thunar-standard-view.c:1767 ../thunar/thunar-tree-view.c:1222
 msgid "Create New Folder"
-msgstr "Neues Verzeichnis anlegen"
+msgstr "Neuen Ordner anlegen"
 
 #. generate a title for the create dialog
 #: ../thunar/thunar-standard-view.c:1816
@@ -1769,7 +1747,8 @@ msgstr[1] ""
 #: ../thunar/thunar-standard-view.c:1994
 msgid "If you delete a file, it is permanently lost."
 msgstr ""
-"Wenn Sie eine Datei oder ein Verzeichnis löschen, ist es dauerhaft verloren."
+"Wenn Sie eine Datei oder einen Ordner löschen, gehen die Daten dauerhaft "
+"verloren."
 
 #: ../thunar/thunar-standard-view.c:2059
 msgid "Select by Pattern"
@@ -1788,25 +1767,37 @@ msgstr "»%s« umbennen"
 #: ../thunar/thunar-standard-view.c:2895
 #, c-format
 msgid "Failed to open directory \"%s\""
-msgstr "Das Verzeichnis »%s« konnte nicht geöffnet werden"
+msgstr "Der Ordner »%s« konnte nicht geöffnet werden"
 
-#: ../thunar/thunar-standard-view.c:3220
-msgid "_Copy File"
-msgid_plural "_Copy Files"
-msgstr[0] "Datei _kopieren"
-msgstr[1] "Dateien _kopieren"
+#: ../thunar/thunar-standard-view.c:3221
+msgid "Prepare the selected file to be moved with a Paste command"
+msgid_plural "Prepare the selected files to be moved with a Paste command"
+msgstr[0] "Die ausgewählte Datei beim nächsten »Einfügen« an neuen Ort verschieben"
+msgstr[1] "Die ausgewählten Dateien beim nächsten »Einfügen« an neuen Ort verschieben"
 
-#: ../thunar/thunar-standard-view.c:3226
-msgid "Cu_t File"
-msgid_plural "Cu_t Files"
-msgstr[0] "Datei _ausschneiden"
-msgstr[1] "Dateien _ausschneiden"
+#: ../thunar/thunar-standard-view.c:3229
+msgid "Prepare the selected file to be copied with a Paste command"
+msgid_plural "Prepare the selected files to be copied with a Paste command"
+msgstr[0] "Die ausgewählte Datei beim nächsten »Einfügen« an neuen Ort kopieren"
+msgstr[1] "Die ausgewählten Dateien beim nächsten »Einfügen« an neuen Ort kopieren"
 
-#: ../thunar/thunar-standard-view.c:3235
-msgid "_Delete File"
-msgid_plural "_Delete Files"
-msgstr[0] "Datei _löschen"
-msgstr[1] "Dateien _löschen"
+#: ../thunar/thunar-standard-view.c:3240
+msgid "Delete the selected file permanently"
+msgid_plural "Delete the selected files permanently"
+msgstr[0] "Ausgewählte Datei dauerhaft löschen"
+msgstr[1] "Ausgewählte Dateien dauerhaft löschen"
+
+#: ../thunar/thunar-standard-view.c:3254
+msgid "Duplicate the selected file"
+msgid_plural "Duplicate each selected file"
+msgstr[0] "Ausgewählte Datei duplizieren"
+msgstr[1] "Ausgewählte Dateien duplizieren"
+
+#: ../thunar/thunar-standard-view.c:3263
+msgid "Create a symbolic link for the selected file"
+msgid_plural "Create a symbolic link for each selected file"
+msgstr[0] "Eine symbolische Verknüpfung für die ausgewählte Datei anlegen"
+msgstr[1] "Eine symbolische Verknüpfung für jede ausgewählte Datei anlegen"
 
 #: ../thunar/thunar-stock.c:55
 msgid "Create"
@@ -1830,244 +1821,248 @@ msgstr "_Leere Datei"
 msgid "Loading..."
 msgstr "Wird geladen..."
 
-#: ../thunar/thunar-window.c:229
+#. append the "Properties" menu action
+#: ../thunar/thunar-tree-view.c:975
+msgid "P_roperties..."
+msgstr "_Eigenschaften..."
+
+#: ../thunar/thunar-window.c:235
 msgid "_File"
 msgstr "_Datei"
 
-#: ../thunar/thunar-window.c:230
+#: ../thunar/thunar-window.c:236
 msgid "Open New _Window"
 msgstr "_Neues Fenster öffnen"
 
-#: ../thunar/thunar-window.c:230
+#: ../thunar/thunar-window.c:236
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Ein weiteres Fenster für diesen Ort öffnen"
 
-#: ../thunar/thunar-window.c:231
+#: ../thunar/thunar-window.c:237
 msgid "Close _All Windows"
 msgstr "_Alle Fenster schließen"
 
-#: ../thunar/thunar-window.c:231
+#: ../thunar/thunar-window.c:237
 msgid "Close all Thunar windows"
 msgstr "Alle Thunar Fenster schließen"
 
-#: ../thunar/thunar-window.c:232
+#: ../thunar/thunar-window.c:238
 msgid "_Close"
 msgstr "_Schließen"
 
-#: ../thunar/thunar-window.c:232
+#: ../thunar/thunar-window.c:238
 msgid "Close this window"
 msgstr "Dieses Fenster schließen"
 
-#: ../thunar/thunar-window.c:233
+#: ../thunar/thunar-window.c:239
 msgid "_Edit"
 msgstr "_Bearbeiten"
 
-#: ../thunar/thunar-window.c:234
+#: ../thunar/thunar-window.c:240
 msgid "Pr_eferences..."
 msgstr "_Einstellungen..."
 
-#: ../thunar/thunar-window.c:234
+#: ../thunar/thunar-window.c:240
 msgid "Edit Thunars Preferences"
 msgstr "Thunars Einstellungen bearbeiten"
 
-#: ../thunar/thunar-window.c:235
+#: ../thunar/thunar-window.c:241
 msgid "_View"
 msgstr "_Anzeige"
 
-#: ../thunar/thunar-window.c:236
+#: ../thunar/thunar-window.c:242
 msgid "_Reload"
 msgstr "_Neu laden"
 
-#: ../thunar/thunar-window.c:236
+#: ../thunar/thunar-window.c:242
 msgid "Reload the current folder"
-msgstr "Das aktuelle Verzeichnis neuladen"
+msgstr "Den aktuellen Ordner neuladen"
 
-#: ../thunar/thunar-window.c:237
+#: ../thunar/thunar-window.c:243
 msgid "_Location Selector"
 msgstr "_Adressleiste"
 
-#: ../thunar/thunar-window.c:238
+#: ../thunar/thunar-window.c:244
 msgid "_Side Pane"
 msgstr "S_eitenleiste"
 
-#: ../thunar/thunar-window.c:239
+#: ../thunar/thunar-window.c:245
 msgid "Zoom _In"
 msgstr "Ver_größern"
 
-#: ../thunar/thunar-window.c:239
+#: ../thunar/thunar-window.c:245
 msgid "Show the contents in more detail"
 msgstr "Den Inhalt detailierter anzeigen"
 
-#: ../thunar/thunar-window.c:240
+#: ../thunar/thunar-window.c:246
 msgid "Zoom _Out"
 msgstr "Ver_kleinern"
 
-#: ../thunar/thunar-window.c:240
+#: ../thunar/thunar-window.c:246
 msgid "Show the contents in less detail"
 msgstr "Den Inhalt weniger detailiert anzeigen"
 
-#: ../thunar/thunar-window.c:241
+#: ../thunar/thunar-window.c:247
 msgid "Normal Si_ze"
 msgstr "_Normale Größe"
 
-#: ../thunar/thunar-window.c:241
+#: ../thunar/thunar-window.c:247
 msgid "Show the contents at the normal size"
 msgstr "Den Inhalt in normaler Größe anzeigen"
 
-#: ../thunar/thunar-window.c:242
+#: ../thunar/thunar-window.c:248
 msgid "_Go"
 msgstr "_Gehe zu"
 
-#: ../thunar/thunar-window.c:243
+#: ../thunar/thunar-window.c:249
 msgid "Open _Parent"
-msgstr "_Eltern-Verzeichnis öffnen"
+msgstr "_Eltern-Ordner öffnen"
 
-#: ../thunar/thunar-window.c:243
+#: ../thunar/thunar-window.c:249
 msgid "Open the parent folder"
-msgstr "Das Eltern-Verzeichnis öffnen"
+msgstr "Den übergeordneten Ordner öffnen"
 
-#: ../thunar/thunar-window.c:244
+#: ../thunar/thunar-window.c:250
 msgid "_Home"
 msgstr "_Persönlicher Ordner"
 
-#: ../thunar/thunar-window.c:244
+#: ../thunar/thunar-window.c:250
 msgid "Go to the home folder"
 msgstr "Zum persönlichen Ordner gehen"
 
-#: ../thunar/thunar-window.c:245
+#: ../thunar/thunar-window.c:251
 msgid "T_emplates"
 msgstr "_Vorlagen"
 
-#: ../thunar/thunar-window.c:245
+#: ../thunar/thunar-window.c:251
 msgid "Go to the templates folder"
 msgstr "Zum Vorlagenordner gehen"
 
-#: ../thunar/thunar-window.c:246
+#: ../thunar/thunar-window.c:252
 msgid "Open _Location..."
 msgstr "_Ort öffnen..."
 
-#: ../thunar/thunar-window.c:246
+#: ../thunar/thunar-window.c:252
 msgid "Specify a location to open"
 msgstr "Einen Ort eingeben, der geöffnet werden soll"
 
-#: ../thunar/thunar-window.c:247
+#: ../thunar/thunar-window.c:253
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: ../thunar/thunar-window.c:248
+#: ../thunar/thunar-window.c:254
 msgid "_Contents"
 msgstr "_Inhalt"
 
-#: ../thunar/thunar-window.c:248
+#: ../thunar/thunar-window.c:254
 msgid "Display Thunar user manual"
 msgstr "Thunar Benutzerdokumentation anzeigen"
 
-#: ../thunar/thunar-window.c:249
+#: ../thunar/thunar-window.c:255
 msgid "_About"
 msgstr "Ü_ber"
 
-#: ../thunar/thunar-window.c:249
+#: ../thunar/thunar-window.c:255
 msgid "Display information about Thunar"
 msgstr "Würdigungen für die Schöpfer von Thunar anzeigen"
 
-#: ../thunar/thunar-window.c:254
+#: ../thunar/thunar-window.c:260
 msgid "Show _Hidden Files"
 msgstr "_Verborgene Dateien anzeigen"
 
-#: ../thunar/thunar-window.c:254
+#: ../thunar/thunar-window.c:260
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Verborgene Dateien im momentan geöffneten Fenster anzeigen/verbergen"
 
-#: ../thunar/thunar-window.c:255
+#: ../thunar/thunar-window.c:261
 msgid "_Shortcuts"
 msgstr "_Lesezeichen"
 
-#: ../thunar/thunar-window.c:255
+#: ../thunar/thunar-window.c:261
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Die Sichtbarkeit der Lesezeichen in diesem Fensters ändern"
 
-#: ../thunar/thunar-window.c:256
+#: ../thunar/thunar-window.c:262
 msgid "_Tree"
 msgstr "_Baumansicht"
 
-#: ../thunar/thunar-window.c:256
+#: ../thunar/thunar-window.c:262
 msgid "Toggles the visibility of the tree pane"
 msgstr "Die Sichtbarkeit der Baumansicht in diesem Fensters ändern"
 
-#: ../thunar/thunar-window.c:257
+#: ../thunar/thunar-window.c:263
 msgid "St_atusbar"
 msgstr "St_atusleiste"
 
-#: ../thunar/thunar-window.c:257
+#: ../thunar/thunar-window.c:263
 msgid "Change the visibility of this window's statusbar"
 msgstr "Die Sichtbarkeit der Statusleiste dieses Fensters ändern"
 
 #.
 #. * add the location selector options
 #.
-#: ../thunar/thunar-window.c:497
+#: ../thunar/thunar-window.c:507
 msgid "_Pathbar Style"
 msgstr "_Pfadleisten-Stil"
 
-#: ../thunar/thunar-window.c:498
+#: ../thunar/thunar-window.c:508
 msgid "Modern approach with buttons that correspond to folders"
-msgstr "Moderner Ansatz mit Knöpfe, die Verzeichnissen entsprechen "
+msgstr "Moderner Ansatz mit Knöpfen, die Ordnern entsprechen "
 
-#: ../thunar/thunar-window.c:504
+#: ../thunar/thunar-window.c:514
 msgid "_Toolbar Style"
 msgstr "_Werkzeugleisten-Stil"
 
-#: ../thunar/thunar-window.c:505
+#: ../thunar/thunar-window.c:515
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "Herkömmlicher Ansatz mit Pfadleiste und Navigationsknöpfen"
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:521
 msgid "_Hidden"
 msgstr "_Verstecken"
 
-#: ../thunar/thunar-window.c:511
+#: ../thunar/thunar-window.c:521
 msgid "Don't display any location selector"
 msgstr "Keine Adressleiste anzeigen"
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:520
+#: ../thunar/thunar-window.c:530
 msgid "View as _Icons"
 msgstr "_Symbolansicht"
 
-#: ../thunar/thunar-window.c:520
+#: ../thunar/thunar-window.c:530
 msgid "Display folder content in an icon view"
-msgstr "Verzeichnisinhalte in der Symbolansicht darstellen"
+msgstr "Ordnerinhalte in der Symbolansicht darstellen"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:537
 msgid "View as _Detailed List"
 msgstr "_Detailansicht"
 
-#: ../thunar/thunar-window.c:527
+#: ../thunar/thunar-window.c:537
 msgid "Display folder content in a detailed list view"
-msgstr "Verzeichnisinhalte in der Detailansicht darstellen"
+msgstr "Ordnerinhalte in der Detailansicht darstellen"
 
-#: ../thunar/thunar-window.c:1459
+#: ../thunar/thunar-window.c:1473
 msgid "Failed to open parent folder"
-msgstr "Das Eltern-Verzeichnis konnte nicht geöffnet werden"
+msgstr "Der Eltern-Ordner konnte nicht geöffnet werden"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1485
+#: ../thunar/thunar-window.c:1499
 msgid "Failed to open home directory"
 msgstr "Der persönliche Ordner konnte nicht geöffnet werden"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:1547
+#: ../thunar/thunar-window.c:1561
 msgid "About Templates"
 msgstr "Über Vorlagen"
 
-#: ../thunar/thunar-window.c:1568
+#: ../thunar/thunar-window.c:1582
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr ""
-"Alle Dateien in diesem Verzeichnis erscheinen im »Dokument anlegen« Menü."
+msgstr "Alle Dateien in diesem Ordner erscheinen im »Dokument anlegen« Menü."
 
-#: ../thunar/thunar-window.c:1575
+#: ../thunar/thunar-window.c:1589
 msgid ""
 "If you frequently create certain kinds of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2077,21 +2072,21 @@ msgid ""
 "of the document will be created in the directory you are viewing."
 msgstr ""
 "Falls Sie häufig eine bestimmte Art von Dokument anlegen, legen Sie eine "
-"Kopie davon in diesem Verzeichnis ab. Thunar erstellt einen Eintrag für "
-"dieses Dokument in dem »Dokument anlegen« Menü.\n"
+"Kopie davon in diesem Ordner ab. Thunar erstellt einen Eintrag für dieses "
+"Dokument in dem »Dokument anlegen« Menü.\n"
 "\n"
 "Sie können diesen Eintrag in dem »Dokument anlegen« Menü wählen und eine "
-"Kopie dieses Dokuments wird im gerade angezeigten Verzeichnis angelegt."
+"Kopie dieses Dokuments wird im gerade angezeigten Ordner angelegt."
 
-#: ../thunar/thunar-window.c:1587
+#: ../thunar/thunar-window.c:1601
 msgid "Do _not display this message again"
 msgstr "Diese Meldung in Zukunft _nicht mehr anzeigen"
 
-#: ../thunar/thunar-window.c:1600
+#: ../thunar/thunar-window.c:1614
 msgid "Failed to open templates folder"
-msgstr "Das Verzeichnis mit den Vorlagen konnte nicht geöffnet werden"
+msgstr "Der Ordner mit den Vorlagen konnte nicht geöffnet werden"
 
-#: ../thunar/thunar-window.c:1678
+#: ../thunar/thunar-window.c:1692
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2099,7 +2094,7 @@ msgstr ""
 "Thunar ist ein schneller und einfach zu bedienender\n"
 "Dateimanager für die Xfce Desktop Umgebung."
 
-#: ../thunar/thunar-window.c:1684
+#: ../thunar/thunar-window.c:1698
 msgid "translator-credits"
 msgstr ""
 "Benedikt Meurer <benny@xfce.org>\n"
@@ -2262,12 +2257,12 @@ msgstr "Pfade zu allen ausgewählten Dateien"
 #: ../thunar-uca/thunar-uca-editor.c:319
 #, c-format
 msgid "directory containing the file that is passed in %f"
-msgstr "Verzeichnis der ersten ausgewählten Datei (aus »%f«)"
+msgstr "Ordner der ersten ausgewählten Datei (aus »%f«)"
 
 #: ../thunar-uca/thunar-uca-editor.c:331
 #, c-format
 msgid "directories containing the files that are passed in %F"
-msgstr "Verzeichnisse aller ausgewählten Dateien (aus »%F«)"
+msgstr "Ordner aller ausgewählten Dateien (aus »%F«)"
 
 #: ../thunar-uca/thunar-uca-editor.c:343
 msgid "the first selected filename (without path)"
@@ -2303,7 +2298,7 @@ msgstr "Erscheint, falls ausgewählt:"
 
 #: ../thunar-uca/thunar-uca-editor.c:414
 msgid "_Directories"
-msgstr "_Verzeichnisse"
+msgstr "_Ordner"
 
 #: ../thunar-uca/thunar-uca-editor.c:418
 msgid "_Audio Files"
@@ -2344,8 +2339,8 @@ msgstr ""
 "cher Muster getrennt durch Strichpunkt angegeben\n"
 "(z.B. *.txt;*.doc). Damit eine Aktion im Kontextmenü\n"
 "einer Datei oder eines Ordners erscheint, muß min-\n"
-"destens ein Muster zum Datei- oder Verzeichnisna-\n"
-"men passen.\n"
+"destens ein Muster zum Datei- oder Ordnernamen\n"
+"passen.\n"
 "Weiterhin kann angegeben werden, daß eine Aktion\n"
 "nur für bestimmte Dateitypen erscheinen soll."
 
@@ -2418,9 +2413,8 @@ msgstr "Thunar Dateimanager"
 
 #: ../Thunar-folder-handler.desktop.in.h:1
 msgid "Open Folder"
-msgstr "Verzeichnis öffnen"
+msgstr "Ordner öffnen"
 
 #: ../Thunar-folder-handler.desktop.in.h:2
 msgid "Open the specified folders in Thunar"
-msgstr "Angegebene Verzeichnisse mit Thunar öffnen"
-
+msgstr "Angegebene Ordner mit Thunar öffnen"

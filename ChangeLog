@@ -1,3 +1,18 @@
+2006-03-16	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-location-buttons.c, thunar/thunar-standard-view-ui.xml,
+	  thunar/thunar-standard-view.c: Yet another attempt to set appropriate
+	  labels/tooltips for the cut/copy/paste actions. Cut/copy/paste in file
+	  manager is really different to other applications, not the actual data
+	  is stored in the clipboard, but only the location where to find the
+	  data.
+	* thunar/thunar-tree-view.c: Add drop site support and clipboard
+	  actions.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations. Use "Ordner" instead of
+	  "Verzeichnis" to be consistent with the shared-mime-info and Gtk+
+	  translations.
+
 2006-03-15	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-debug.{c,h}, thunar/Makefile.am: Add THUNAR_DEBUG_MARK()

@@ -157,9 +157,9 @@ static void                 thunar_standard_view_action_create_template     (Gtk
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_properties          (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_action_copy                (GtkAction                *action,
-                                                                             ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_cut                 (GtkAction                *action,
+                                                                             ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_copy                (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_paste               (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
@@ -250,8 +250,8 @@ struct _ThunarStandardViewPrivate
   GtkAction              *action_create_folder;
   GtkAction              *action_create_document;
   GtkAction              *action_properties;
-  GtkAction              *action_copy;
   GtkAction              *action_cut;
+  GtkAction              *action_copy;
   GtkAction              *action_paste;
   GtkAction              *action_delete;
   GtkAction              *action_paste_into_folder;
@@ -305,15 +305,15 @@ static const GtkActionEntry action_entries[] =
   { "folder-context-menu", NULL, N_ ("Folder Context Menu"), NULL, NULL, NULL, },
   { "create-folder", NULL, N_ ("Create _Folder..."), "<control><shift>N", N_ ("Create an empty folder within the current folder"), G_CALLBACK (thunar_standard_view_action_create_folder), },
   { "properties", GTK_STOCK_PROPERTIES, N_ ("_Properties..."), "<alt>Return", N_ ("View the properties of the selected file"), G_CALLBACK (thunar_standard_view_action_properties), },
-  { "copy", GTK_STOCK_COPY, N_ ("_Copy Files"), NULL, N_ ("Copy the selected files"), G_CALLBACK (thunar_standard_view_action_copy), },
-  { "cut", GTK_STOCK_CUT, N_ ("Cu_t Files"), NULL, N_ ("Cut the selected files"), G_CALLBACK (thunar_standard_view_action_cut), },
-  { "paste", GTK_STOCK_PASTE, N_ ("_Paste Files"), NULL, N_ ("Move or Copy files previously selected by a Cut or Copy command"), G_CALLBACK (thunar_standard_view_action_paste), },
-  { "delete", GTK_STOCK_DELETE, N_ ("_Delete Files"), NULL, N_ ("Delete the selected files"), G_CALLBACK (thunar_standard_view_action_delete), },
-  { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Files into Folder"), NULL, N_ ("Move or Copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
+  { "cut", GTK_STOCK_CUT, N_ ("Cu_t"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_cut), },
+  { "copy", GTK_STOCK_COPY, N_ ("_Copy"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_copy), },
+  { "paste", GTK_STOCK_PASTE, N_ ("_Paste"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command"), G_CALLBACK (thunar_standard_view_action_paste), },
+  { "delete", GTK_STOCK_DELETE, N_ ("_Delete"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_delete), },
+  { "paste-into-folder", GTK_STOCK_PASTE, N_ ("Paste Into Folder"), NULL, N_ ("Move or copy files previously selected by a Cut or Copy command into the selected folder"), G_CALLBACK (thunar_standard_view_action_paste_into_folder), },
   { "select-all-files", NULL, N_ ("Select _all Files"), "<control>A", N_ ("Select all files in this window"), G_CALLBACK (thunar_standard_view_action_select_all_files), },
   { "select-by-pattern", NULL, N_ ("Select _by Pattern..."), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
-  { "duplicate", NULL, N_ ("Du_plicate File"), NULL, N_ ("Duplicate each selected file"), G_CALLBACK (thunar_standard_view_action_duplicate), },
-  { "make-link", NULL, N_ ("Ma_ke Link"), NULL, N_ ("Create a symbolic link for each selected file"), G_CALLBACK (thunar_standard_view_action_make_link), },
+  { "duplicate", NULL, N_ ("Du_plicate"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_duplicate), },
+  { "make-link", NULL, N_ ("Ma_ke Link"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_make_link), },
   { "rename", NULL, N_ ("_Rename..."), "F2", N_ ("Rename the selected file"), G_CALLBACK (thunar_standard_view_action_rename), },
 };
 
@@ -558,8 +558,8 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* lookup all actions to speed up access later */
   standard_view->priv->action_create_folder = gtk_action_group_get_action (standard_view->action_group, "create-folder");
   standard_view->priv->action_properties = gtk_action_group_get_action (standard_view->action_group, "properties");
-  standard_view->priv->action_copy = gtk_action_group_get_action (standard_view->action_group, "copy");
   standard_view->priv->action_cut = gtk_action_group_get_action (standard_view->action_group, "cut");
+  standard_view->priv->action_copy = gtk_action_group_get_action (standard_view->action_group, "copy");
   standard_view->priv->action_paste = gtk_action_group_get_action (standard_view->action_group, "paste");
   standard_view->priv->action_delete = gtk_action_group_get_action (standard_view->action_group, "delete");
   standard_view->priv->action_paste_into_folder = gtk_action_group_get_action (standard_view->action_group, "paste-into-folder");
@@ -1897,19 +1897,6 @@ thunar_standard_view_action_properties (GtkAction          *action,
 
 
 static void
-thunar_standard_view_action_copy (GtkAction          *action,
-                                  ThunarStandardView *standard_view)
-{
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
-
-  thunar_clipboard_manager_copy_files (standard_view->clipboard, standard_view->selected_files);
-}
-
-
-
-static void
 thunar_standard_view_action_cut (GtkAction          *action,
                                  ThunarStandardView *standard_view)
 {
@@ -1918,6 +1905,19 @@ thunar_standard_view_action_cut (GtkAction          *action,
   g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
 
   thunar_clipboard_manager_cut_files (standard_view->clipboard, standard_view->selected_files);
+}
+
+
+
+static void
+thunar_standard_view_action_copy (GtkAction          *action,
+                                  ThunarStandardView *standard_view)
+{
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
+
+  thunar_clipboard_manager_copy_files (standard_view->clipboard, standard_view->selected_files);
 }
 
 
@@ -3215,28 +3215,34 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* update the "Properties" action */
   gtk_action_set_sensitive (standard_view->priv->action_properties, (n_selected_files == 1 || (n_selected_files == 0 && current_directory != NULL)));
 
-  /* update the "Copy File(s)" action */
-  g_object_set (G_OBJECT (standard_view->priv->action_copy),
-                "label", ngettext ("_Copy File", "_Copy Files", n_selected_files),
-                "sensitive", (n_selected_files > 0),
-                NULL);
-
-  /* update the "Cut File(s)" action */
+  /* update the "Cut" action */
   g_object_set (G_OBJECT (standard_view->priv->action_cut),
-                "label", ngettext ("Cu_t File", "Cu_t Files", n_selected_files),
                 "sensitive", (n_selected_files > 0) && writable,
+                "tooltip", ngettext ("Prepare the selected file to be moved with a Paste command",
+                                     "Prepare the selected files to be moved with a Paste command",
+                                     n_selected_files),
                 NULL);
 
-  /* update the "Paste File(s)" action */
+  /* update the "Copy" action */
+  g_object_set (G_OBJECT (standard_view->priv->action_copy),
+                "sensitive", (n_selected_files > 0),
+                "tooltip", ngettext ("Prepare the selected file to be copied with a Paste command",
+                                     "Prepare the selected files to be copied with a Paste command",
+                                     n_selected_files),
+                NULL);
+
+  /* update the "Paste" action */
   gtk_action_set_sensitive (standard_view->priv->action_paste, writable && pastable);
 
-  /* update the "Delete File(s)" action */
+  /* update the "Delete" action */
   g_object_set (G_OBJECT (standard_view->priv->action_delete),
-                "label", ngettext ("_Delete File", "_Delete Files", n_selected_files),
                 "sensitive", (n_selected_files > 0) && writable,
+                "tooltip", ngettext ("Delete the selected file permanently",
+                                     "Delete the selected files permanently",
+                                     n_selected_files),
                 NULL);
 
-  /* update the "Paste File(s) Into Folder" action */
+  /* update the "Paste Into Folder" action */
   g_object_set (G_OBJECT (standard_view->priv->action_paste_into_folder),
                 "sensitive", pastable,
                 "visible", can_paste_into_folder,
@@ -3244,14 +3250,19 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* update the "Duplicate File(s)" action */
   g_object_set (G_OBJECT (standard_view->priv->action_duplicate),
-                "label", ngettext ("Du_plicate File", "Du_plicate Files", n_selected_files),
                 "sensitive", (n_selected_files > 0) && writable,
+                "tooltip", ngettext ("Duplicate the selected file",
+                                     "Duplicate each selected file",
+                                     n_selected_files),
                 NULL);
 
   /* update the "Make Link(s)" action */
   g_object_set (G_OBJECT (standard_view->priv->action_make_link),
                 "label", ngettext ("Ma_ke Link", "Ma_ke Links", n_selected_files),
                 "sensitive", (n_selected_files > 0) && writable,
+                "tooltip", ngettext ("Create a symbolic link for the selected file",
+                                     "Create a symbolic link for each selected file",
+                                     n_selected_files),
                 NULL);
 
   /* update the "Rename" action */
