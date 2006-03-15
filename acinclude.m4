@@ -79,6 +79,8 @@ AC_HELP_STRING([--with-volume-manager=@<:@auto/freebsd/hal/none@:>@], [The volum
     ac_bm_thunar_vfs_volume_impl=freebsd
   elif test x"$with_volume_manager" = x"hal"; then
     ac_bm_thunar_vfs_volume_impl=hal
+  elif test x"$with_volume_manager" = x"none"; then
+    ac_bm_thunar_vfs_volume_impl=none
   else
     dnl # Check target platform (auto-detection)
     case "$target_os" in

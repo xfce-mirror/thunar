@@ -386,7 +386,6 @@ thunar_vfs_humanize_size
 <TITLE>ThunarVfsVolume</TITLE>
 ThunarVfsVolumeKind
 ThunarVfsVolumeStatus
-ThunarVfsVolumeIface
 ThunarVfsVolume
 thunar_vfs_volume_get_kind
 thunar_vfs_volume_get_name
@@ -400,14 +399,16 @@ thunar_vfs_volume_lookup_icon_name
 thunar_vfs_volume_eject
 thunar_vfs_volume_mount
 thunar_vfs_volume_unmount
-thunar_vfs_volume_changed
 <SUBSECTION Standard>
+ThunarVfsVolumeClass
 THUNAR_VFS_TYPE_VFS_VOLUME_KIND
 THUNAR_VFS_TYPE_VFS_VOLUME_STATUS
 THUNAR_VFS_TYPE_VOLUME
 THUNAR_VFS_VOLUME
+THUNAR_VFS_VOLUME_CLASS
 THUNAR_VFS_IS_VOLUME
-THUNAR_VFS_VOLUME_GET_IFACE
+THUNAR_VFS_IS_VOLUME_CLASS
+THUNAR_VFS_VOLUME_GET_CLASS
 <SUBSECTION Private>
 thunar_vfs_volume_kind_get_type
 thunar_vfs_volume_status_get_type
@@ -418,18 +419,18 @@ thunar_vfs_volume_get_type
 <SECTION>
 <FILE>thunar-vfs-volume-manager</FILE>
 <TITLE>ThunarVfsVolumeManager</TITLE>
-ThunarVfsVolumeManagerIface
 ThunarVfsVolumeManager
 thunar_vfs_volume_manager_get_default
 thunar_vfs_volume_manager_get_volume_by_info
 thunar_vfs_volume_manager_get_volumes
-thunar_vfs_volume_manager_volumes_added
-thunar_vfs_volume_manager_volumes_removed
 <SUBSECTION Standard>
+ThunarVfsVolumeManagerClass
 THUNAR_VFS_TYPE_VOLUME_MANAGER
 THUNAR_VFS_VOLUME_MANAGER
+THUNAR_VFS_VOLUME_MANAGER_CLASS
 THUNAR_VFS_IS_VOLUME_MANAGER
-THUNAR_VFS_VOLUME_MANAGER_GET_IFACE
+THUNAR_VFS_IS_VOLUME_MANAGER_CLASS
+THUNAR_VFS_VOLUME_MANAGER_GET_CLASS
 <SUBSECTION Private>
 thunar_vfs_volume_manager_get_type
 </SECTION>

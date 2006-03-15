@@ -318,10 +318,13 @@ thunar_vfs_volume_lookup_icon_name
 thunar_vfs_volume_eject
 thunar_vfs_volume_mount
 thunar_vfs_volume_unmount
+#endif
+#if IN_SOURCE(__THUNAR_VFS_VOLUME_MANAGER_C__)
 thunar_vfs_volume_manager_get_type G_GNUC_CONST
 thunar_vfs_volume_manager_get_default
 thunar_vfs_volume_manager_get_volume_by_info
 thunar_vfs_volume_manager_get_volumes
 #endif
 #endif
+
 

@@ -70,93 +70,96 @@ enum
 
 
 
-static void     thunar_window_class_init                  (ThunarWindowClass  *klass);
-static void     thunar_window_init                        (ThunarWindow       *window);
-static void     thunar_window_dispose                     (GObject            *object);
-static void     thunar_window_finalize                    (GObject            *object);
-static void     thunar_window_get_property                (GObject            *object,
-                                                           guint               prop_id,
-                                                           GValue             *value,
-                                                           GParamSpec         *pspec);
-static void     thunar_window_set_property                (GObject            *object,
-                                                           guint               prop_id,
-                                                           const GValue       *value,
-                                                           GParamSpec         *pspec);
-static gboolean thunar_window_reload                      (ThunarWindow       *window);
-static gboolean thunar_window_zoom_in                     (ThunarWindow       *window);
-static gboolean thunar_window_zoom_out                    (ThunarWindow       *window);
-static void     thunar_window_realize                     (GtkWidget          *widget);
-static void     thunar_window_unrealize                   (GtkWidget          *widget);
-static gboolean thunar_window_configure_event             (GtkWidget          *widget,
-                                                           GdkEventConfigure  *event);
-static void     thunar_window_merge_custom_preferences    (ThunarWindow       *window);
-static void     thunar_window_install_sidepane            (ThunarWindow       *window,
-                                                           GType               type);
-static void     thunar_window_start_open_location         (ThunarWindow       *window,
-                                                           const gchar        *initial_text);
-static void     thunar_window_action_open_new_window      (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_close_all_windows    (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_close                (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_preferences          (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_reload               (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_location_bar_changed (GtkRadioAction     *action,
-                                                           GtkRadioAction     *current,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_shortcuts_changed    (GtkToggleAction    *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_tree_changed         (GtkToggleAction    *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_statusbar_changed    (GtkToggleAction    *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_zoom_in              (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_zoom_out             (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_zoom_reset           (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_view_changed         (GtkRadioAction     *action,
-                                                           GtkRadioAction     *current,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_go_up                (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_open_home            (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_open_templates       (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_open_location        (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_contents             (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_about                (GtkAction          *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_action_show_hidden          (GtkToggleAction    *action,
-                                                           ThunarWindow       *window);
-static void     thunar_window_current_directory_changed   (ThunarFile         *current_directory,
-                                                           ThunarWindow       *window);
-static void     thunar_window_connect_proxy               (GtkUIManager       *manager,
-                                                           GtkAction          *action,
-                                                           GtkWidget          *proxy,
-                                                           ThunarWindow       *window);
-static void     thunar_window_disconnect_proxy            (GtkUIManager       *manager,
-                                                           GtkAction          *action,
-                                                           GtkWidget          *proxy,
-                                                           ThunarWindow       *window);
-static void     thunar_window_menu_item_selected          (GtkWidget          *menu_item,
-                                                           ThunarWindow       *window);
-static void     thunar_window_menu_item_deselected        (GtkWidget          *menu_item,
-                                                           ThunarWindow       *window);
-static void     thunar_window_notify_loading              (ThunarView         *view,
-                                                           GParamSpec         *pspec,
-                                                           ThunarWindow       *window);
-static gboolean thunar_window_merge_idle                  (gpointer            user_data);
-static void     thunar_window_merge_idle_destroy          (gpointer            user_data);
-static gboolean thunar_window_save_geometry_timer         (gpointer            user_data);
-static void     thunar_window_save_geometry_timer_destroy (gpointer            user_data);
+static void     thunar_window_class_init                  (ThunarWindowClass      *klass);
+static void     thunar_window_init                        (ThunarWindow           *window);
+static void     thunar_window_dispose                     (GObject                *object);
+static void     thunar_window_finalize                    (GObject                *object);
+static void     thunar_window_get_property                (GObject                *object,
+                                                           guint                   prop_id,
+                                                           GValue                 *value,
+                                                           GParamSpec             *pspec);
+static void     thunar_window_set_property                (GObject                *object,
+                                                           guint                   prop_id,
+                                                           const GValue           *value,
+                                                           GParamSpec             *pspec);
+static gboolean thunar_window_reload                      (ThunarWindow           *window);
+static gboolean thunar_window_zoom_in                     (ThunarWindow           *window);
+static gboolean thunar_window_zoom_out                    (ThunarWindow           *window);
+static void     thunar_window_realize                     (GtkWidget              *widget);
+static void     thunar_window_unrealize                   (GtkWidget              *widget);
+static gboolean thunar_window_configure_event             (GtkWidget              *widget,
+                                                           GdkEventConfigure      *event);
+static void     thunar_window_merge_custom_preferences    (ThunarWindow           *window);
+static void     thunar_window_install_sidepane            (ThunarWindow           *window,
+                                                           GType                   type);
+static void     thunar_window_start_open_location         (ThunarWindow           *window,
+                                                           const gchar            *initial_text);
+static void     thunar_window_action_open_new_window      (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_close_all_windows    (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_close                (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_preferences          (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_reload               (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_location_bar_changed (GtkRadioAction         *action,
+                                                           GtkRadioAction         *current,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_shortcuts_changed    (GtkToggleAction        *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_tree_changed         (GtkToggleAction        *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_statusbar_changed    (GtkToggleAction        *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_zoom_in              (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_zoom_out             (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_zoom_reset           (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_view_changed         (GtkRadioAction         *action,
+                                                           GtkRadioAction         *current,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_go_up                (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_home            (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_templates       (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_location        (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_contents             (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_about                (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_show_hidden          (GtkToggleAction        *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_current_directory_changed   (ThunarFile             *current_directory,
+                                                           ThunarWindow           *window);
+static void     thunar_window_connect_proxy               (GtkUIManager           *manager,
+                                                           GtkAction              *action,
+                                                           GtkWidget              *proxy,
+                                                           ThunarWindow           *window);
+static void     thunar_window_disconnect_proxy            (GtkUIManager           *manager,
+                                                           GtkAction              *action,
+                                                           GtkWidget              *proxy,
+                                                           ThunarWindow           *window);
+static void     thunar_window_menu_item_selected          (GtkWidget              *menu_item,
+                                                           ThunarWindow           *window);
+static void     thunar_window_menu_item_deselected        (GtkWidget              *menu_item,
+                                                           ThunarWindow           *window);
+static void     thunar_window_notify_loading              (ThunarView             *view,
+                                                           GParamSpec             *pspec,
+                                                           ThunarWindow           *window);
+static void     thunar_window_volume_pre_unmount          (ThunarVfsVolumeManager *volume_manager,
+                                                           ThunarVfsVolume        *volume,
+                                                           ThunarWindow           *window);
+static gboolean thunar_window_merge_idle                  (gpointer                user_data);
+static void     thunar_window_merge_idle_destroy          (gpointer                user_data);
+static gboolean thunar_window_save_geometry_timer         (gpointer                user_data);
+static void     thunar_window_save_geometry_timer_destroy (gpointer                user_data);
 
 
 
@@ -186,6 +189,9 @@ struct _ThunarWindow
 
   GtkActionGroup         *action_group;
   GtkUIManager           *ui_manager;
+
+  /* to be able to change folder on "volume-pre-unmount" if required */
+  ThunarVfsVolumeManager *volume_manager;
 
   /* closures for the menu_item_selected()/menu_item_deselected() callbacks */
   GClosure               *menu_item_selected_closure;
@@ -460,6 +466,10 @@ thunar_window_init (ThunarWindow *window)
   /* allocate the scroll_to_files mapping */
   window->scroll_to_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
 
+  /* connect to the volume manager */
+  window->volume_manager = thunar_vfs_volume_manager_get_default ();
+  g_signal_connect (G_OBJECT (window->volume_manager), "volume-pre-unmount", G_CALLBACK (thunar_window_volume_pre_unmount), window);
+
   /* allocate a closure for the menu_item_selected() callback */
   window->menu_item_selected_closure = g_cclosure_new_object (G_CALLBACK (thunar_window_menu_item_selected), G_OBJECT (window));
   g_closure_ref (window->menu_item_selected_closure);
@@ -691,6 +701,10 @@ thunar_window_finalize (GObject *object)
   /* drop our references on the menu_item_selected()/menu_item_deselected() closures */
   g_closure_unref (window->menu_item_deselected_closure);
   g_closure_unref (window->menu_item_selected_closure);
+
+  /* disconnect from the volume manager */
+  g_signal_handlers_disconnect_matched (G_OBJECT (window->volume_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+  g_object_unref (G_OBJECT (window->volume_manager));
 
   /* disconnect from the ui manager */
   g_signal_handlers_disconnect_matched (G_OBJECT (window->ui_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
@@ -1832,6 +1846,45 @@ thunar_window_notify_loading (ThunarView   *view,
     }
 }
   
+
+
+static void
+thunar_window_volume_pre_unmount (ThunarVfsVolumeManager *volume_manager,
+                                  ThunarVfsVolume        *volume,
+                                  ThunarWindow           *window)
+{
+  ThunarVfsPath *path;
+  ThunarFile    *file;
+  GtkAction     *action;
+
+  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  g_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* nothing to do if we don't have a current directory */
+  if (G_UNLIKELY (window->current_directory == NULL))
+    return;
+
+  /* determine the mount point for the volume */
+  path = thunar_vfs_volume_get_mount_point (volume);
+  if (G_UNLIKELY (path == NULL))
+    return;
+
+  /* check if a ThunarFile is known for the mount point */
+  file = thunar_file_cache_lookup (path);
+  if (G_UNLIKELY (file == NULL))
+    return;
+
+  /* check if the file is the current directory or an ancestor of the current directory */
+  if (window->current_directory == file || thunar_file_is_ancestor (window->current_directory, file))
+    {
+      /* change to the home folder */
+      action = gtk_action_group_get_action (window->action_group, "open-home");
+      if (G_LIKELY (action != NULL))
+        gtk_action_activate (action);
+    }
+}
+
 
 
 static gboolean

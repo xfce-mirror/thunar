@@ -35,19 +35,16 @@
 
 #include <dbus/dbus-glib-lowlevel.h>
 
-#include <exo/exo.h>
-
 #include <libhal.h>
 #include <libhal-storage.h>
 
 #include <thunar-vfs/thunar-vfs-volume-hal.h>
+#include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
 static void                  thunar_vfs_volume_hal_class_init       (ThunarVfsVolumeHalClass *klass);
-static void                  thunar_vfs_volume_hal_volume_init      (ThunarVfsVolumeIface    *iface);
-static void                  thunar_vfs_volume_hal_init             (ThunarVfsVolumeHal      *volume_hal);
 static void                  thunar_vfs_volume_hal_finalize         (GObject                 *object);
 static ThunarVfsVolumeKind   thunar_vfs_volume_hal_get_kind         (ThunarVfsVolume         *volume);
 static const gchar          *thunar_vfs_volume_hal_get_name         (ThunarVfsVolume         *volume);
@@ -62,6 +59,8 @@ static gboolean              thunar_vfs_volume_hal_mount            (ThunarVfsVo
 static gboolean              thunar_vfs_volume_hal_unmount          (ThunarVfsVolume         *volume,
                                                                      GtkWidget               *window,
                                                                      GError                 **error);
+static ThunarVfsPath        *thunar_vfs_volume_hal_find_mount_point (ThunarVfsVolumeHal      *volume_hal,
+                                                                     const gchar             *file);
 static void                  thunar_vfs_volume_hal_update           (ThunarVfsVolumeHal      *volume_hal,
                                                                      LibHalContext           *context,
                                                                      LibHalVolume            *hv,
@@ -71,12 +70,12 @@ static void                  thunar_vfs_volume_hal_update           (ThunarVfsVo
 
 struct _ThunarVfsVolumeHalClass
 {
-  GObjectClass __parent__;
+  ThunarVfsVolumeClass __parent__;
 };
 
 struct _ThunarVfsVolumeHal
 {
-  GObject __parent__;
+  ThunarVfsVolume       __parent__;
 
   gchar                *udi;
   gchar                *drive_udi;
@@ -90,42 +89,59 @@ struct _ThunarVfsVolumeHal
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarVfsVolumeHal,
-                         thunar_vfs_volume_hal,
-                         G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (THUNAR_VFS_TYPE_VOLUME,
-                                                thunar_vfs_volume_hal_volume_init));
+static GObjectClass *thunar_vfs_volume_hal_parent_class;
+
+
+
+GType
+thunar_vfs_volume_hal_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsVolumeHalClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_volume_hal_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsVolumeHal),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME, I_("ThunarVfsVolumeHal"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
 static void
 thunar_vfs_volume_hal_class_init (ThunarVfsVolumeHalClass *klass)
 {
-  GObjectClass *gobject_class;
+  ThunarVfsVolumeClass *thunarvfs_volume_class;
+  GObjectClass         *gobject_class;
+
+  /* determine the parent type class */
+  thunar_vfs_volume_hal_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_volume_hal_finalize;
-}
 
-
-
-static void
-thunar_vfs_volume_hal_volume_init (ThunarVfsVolumeIface *iface)
-{
-  iface->get_kind = thunar_vfs_volume_hal_get_kind;
-  iface->get_name = thunar_vfs_volume_hal_get_name;
-  iface->get_status = thunar_vfs_volume_hal_get_status;
-  iface->get_mount_point = thunar_vfs_volume_hal_get_mount_point;
-  iface->eject = thunar_vfs_volume_hal_eject;
-  iface->mount = thunar_vfs_volume_hal_mount;
-  iface->unmount = thunar_vfs_volume_hal_unmount;
-}
-
-
-
-static void
-thunar_vfs_volume_hal_init (ThunarVfsVolumeHal *volume_hal)
-{
+  thunarvfs_volume_class = THUNAR_VFS_VOLUME_CLASS (klass);
+  thunarvfs_volume_class->get_kind = thunar_vfs_volume_hal_get_kind;
+  thunarvfs_volume_class->get_name = thunar_vfs_volume_hal_get_name;
+  thunarvfs_volume_class->get_status = thunar_vfs_volume_hal_get_status;
+  thunarvfs_volume_class->get_mount_point = thunar_vfs_volume_hal_get_mount_point;
+  thunarvfs_volume_class->eject = thunar_vfs_volume_hal_eject;
+  thunarvfs_volume_class->mount = thunar_vfs_volume_hal_mount;
+  thunarvfs_volume_class->unmount = thunar_vfs_volume_hal_unmount;
 }
 
 
@@ -254,13 +270,11 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
 {
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
   ThunarVfsPath      *path;
-  struct mntent      *mntent;
   gboolean            result;
   gchar              *standard_error;
   gchar              *command_line;
   gchar              *mount_point;
   gchar              *quoted;
-  FILE               *fp;
   gint                exit_status;
 
   /* generate the mount command */
@@ -352,53 +366,23 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
   if (G_LIKELY (result))
     {
       /* try to figure out where the device was mounted */
-      fp = setmntent ("/proc/mounts", "r");
-      if (G_LIKELY (fp != NULL))
+      path = thunar_vfs_volume_hal_find_mount_point (volume_hal, "/proc/mounts");
+      if (G_LIKELY (path != NULL))
         {
-          /* assume that we failed */
-          result = FALSE;
+          /* we must have been mounted successfully */
+          volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT;
 
-          /* lookup the mount entry for our device */
-          for (;;)
-            {
-              /* read the next entry */
-              mntent = getmntent (fp);
-              if (mntent == NULL)
-                break;
+          /* replace the existing mount point */
+          thunar_vfs_path_unref (volume_hal->mount_point);
+          volume_hal->mount_point = path;
 
-              /* check if this is the entry we are looking for */
-              if (exo_str_is_equal (mntent->mnt_fsname, volume_hal->device_file))
-                {
-                  /* transform the mount point to a path */
-                  path = thunar_vfs_path_new (mntent->mnt_dir, NULL);
-                  if (G_LIKELY (path != NULL))
-                    {
-                      /* we must have been mounted successfully */
-                      volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT;
-                      result = TRUE;
-
-                      /* replace the existing mount point */
-                      thunar_vfs_path_unref (volume_hal->mount_point);
-                      volume_hal->mount_point = path;
-
-                      /* tell everybody that we have a new state */
-                      thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
-                    }
-                  break;
-                }
-            }
-
-          /* check if we were unable to figure out the mount point */
-          if (G_UNLIKELY (!result))
-            g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Failed to determine the mount point for %s"), volume_hal->device_file);
-
-          /* close the file handle */
-          fclose (fp);
+          /* tell everybody that we have a new state */
+          thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
         }
       else
         {
-          /* if we cannot read /proc/mounts, we cannot where the volume was mounted */
-          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), _("Failed to open /proc/mounts: %s"), g_strerror (errno));
+          /* something went wrong, for sure */
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Failed to determine the mount point for %s"), volume_hal->device_file);
           result = FALSE;
         }
     }
@@ -519,6 +503,43 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
 
 
 
+static ThunarVfsPath*
+thunar_vfs_volume_hal_find_mount_point (ThunarVfsVolumeHal *volume_hal,
+                                        const gchar        *file)
+{
+  ThunarVfsPath *mount_point = NULL;
+  struct mntent *mntent;
+  FILE          *fp;
+
+  /* try to open that file as mnt entry list */
+  fp = setmntent (file, "r");
+  if (G_LIKELY (fp != NULL))
+    {
+      /* process all mnt entries */
+      while (mount_point == NULL)
+        {
+          /* read the next entry */
+          mntent = getmntent (fp);
+          if (mntent == NULL)
+            break;
+
+          /* check if this is the entry we are looking for */
+          if (exo_str_is_equal (mntent->mnt_fsname, volume_hal->device_file))
+            {
+              /* and there's our mount point */
+              mount_point = thunar_vfs_path_new (mntent->mnt_dir, NULL);
+            }
+        }
+
+      /* close the file handle */
+      endmntent (fp);
+    }
+
+  return mount_point;
+}
+
+
+
 static void
 thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
                               LibHalContext      *context,
@@ -526,13 +547,11 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
                               LibHalDrive        *hd)
 {
   LibHalStoragePolicy *policy;
-  struct mntent       *mntent;
   const gchar         *desired_mount_point;
   const gchar         *volume_label;
   gchar               *mount_root;
   gchar               *basename;
   gchar               *filename;
-  FILE                *fp;
 
   g_return_if_fail (THUNAR_VFS_IS_VOLUME_HAL (volume_hal));
   g_return_if_fail (hv != NULL);
@@ -656,6 +675,15 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
       if (G_LIKELY (volume_hal->mount_point != NULL))
         volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT;
     }
+  else
+    {
+      /* we don't trust HAL, so let's see what /proc/mounts says about the volume */
+      volume_hal->mount_point = thunar_vfs_volume_hal_find_mount_point (volume_hal, "/proc/mounts");
+
+      /* we must have been mounted successfully if we have a mount point */
+      if (G_LIKELY (volume_hal->mount_point != NULL))
+        volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT;
+    }
 
   /* check if we have to figure out the mount point ourself */
   if (G_UNLIKELY (volume_hal->mount_point == NULL))
@@ -670,29 +698,7 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
         }
 
       /* lets see, maybe /etc/fstab knows where to mount */
-      fp = setmntent ("/etc/fstab", "r");
-      if (G_LIKELY (fp != NULL))
-        {
-          /* check all entries */
-          for (;;)
-            {
-              /* read the next entry */
-              mntent = getmntent (fp);
-              if (mntent == NULL)
-                break;
-
-              /* check if the entry is for our device */
-              if (exo_str_is_equal (mntent->mnt_fsname, volume_hal->device_file))
-                {
-                  /* transform to a path object */
-                  volume_hal->mount_point = thunar_vfs_path_new (mntent->mnt_dir, NULL);
-                  break;
-                }
-            }
-
-          /* close the /etc/fstab file handle */
-          endmntent (fp);
-        }
+      volume_hal->mount_point = thunar_vfs_volume_hal_find_mount_point (volume_hal, "/etc/fstab");
 
       /* if we still don't have a mount point, ask HAL */
       if (G_UNLIKELY (volume_hal->mount_point == NULL))
@@ -736,12 +742,8 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
 
 
 static void                thunar_vfs_volume_manager_hal_class_init               (ThunarVfsVolumeManagerHalClass *klass);
-static void                thunar_vfs_volume_manager_hal_manager_init             (ThunarVfsVolumeManagerIface    *iface);
 static void                thunar_vfs_volume_manager_hal_init                     (ThunarVfsVolumeManagerHal      *manager_hal);
 static void                thunar_vfs_volume_manager_hal_finalize                 (GObject                        *object);
-static ThunarVfsVolume    *thunar_vfs_volume_manager_hal_get_volume_by_info       (ThunarVfsVolumeManager         *manager,
-                                                                                   const ThunarVfsInfo            *info);
-static GList              *thunar_vfs_volume_manager_hal_get_volumes              (ThunarVfsVolumeManager         *manager);
 static ThunarVfsVolumeHal *thunar_vfs_volume_manager_hal_get_volume_by_udi        (ThunarVfsVolumeManagerHal      *manager_hal,
                                                                                    const gchar                    *udi);
 static void                thunar_vfs_volume_manager_hal_update_volume_by_udi     (ThunarVfsVolumeManagerHal      *manager_hal,
@@ -766,24 +768,49 @@ static void                thunar_vfs_volume_manager_hal_device_property_modifie
 
 struct _ThunarVfsVolumeManagerHalClass
 {
-  GObjectClass __parent__;
+  ThunarVfsVolumeManagerClass __parent__;
 };
 
 struct _ThunarVfsVolumeManagerHal
 {
-  GObject         __parent__;
-  DBusConnection *dbus_connection;
-  LibHalContext  *context;
-  GList          *volumes;
+  ThunarVfsVolumeManager __parent__;
+  DBusConnection        *dbus_connection;
+  LibHalContext         *context;
+  GList                 *volumes;
 };
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarVfsVolumeManagerHal,
-                         thunar_vfs_volume_manager_hal,
-                         G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (THUNAR_VFS_TYPE_VOLUME_MANAGER,
-                                                thunar_vfs_volume_manager_hal_manager_init));
+static GObjectClass *thunar_vfs_volume_manager_hal_parent_class;
+
+
+
+GType
+thunar_vfs_volume_manager_hal_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsVolumeManagerHalClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_volume_manager_hal_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsVolumeManagerHal),
+        0,
+        (GInstanceInitFunc) thunar_vfs_volume_manager_hal_init,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME_MANAGER, I_("ThunarVfsVolumeManagerHal"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
@@ -792,17 +819,11 @@ thunar_vfs_volume_manager_hal_class_init (ThunarVfsVolumeManagerHalClass *klass)
 {
   GObjectClass *gobject_class;
 
+  /* determine the parent type class */
+  thunar_vfs_volume_manager_hal_parent_class = g_type_class_peek_parent (klass);
+
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_volume_manager_hal_finalize;
-}
-
-
-
-static void
-thunar_vfs_volume_manager_hal_manager_init (ThunarVfsVolumeManagerIface *iface)
-{
-  iface->get_volume_by_info = thunar_vfs_volume_manager_hal_get_volume_by_info;
-  iface->get_volumes = thunar_vfs_volume_manager_hal_get_volumes;
 }
 
 
@@ -940,31 +961,13 @@ thunar_vfs_volume_manager_hal_finalize (GObject *object)
 
 
 
-static ThunarVfsVolume*
-thunar_vfs_volume_manager_hal_get_volume_by_info (ThunarVfsVolumeManager *manager,
-                                                  const ThunarVfsInfo    *info)
-{
-  // FIXME: No idea how to implement this on Linux right now.
-  return NULL;
-}
-
-
-
-static GList*
-thunar_vfs_volume_manager_hal_get_volumes (ThunarVfsVolumeManager *manager)
-{
-  return THUNAR_VFS_VOLUME_MANAGER_HAL (manager)->volumes;
-}
-
-
-
 static ThunarVfsVolumeHal*
 thunar_vfs_volume_manager_hal_get_volume_by_udi (ThunarVfsVolumeManagerHal *manager_hal,
                                                  const gchar               *udi)
 {
   GList *lp;
 
-  for (lp = manager_hal->volumes; lp != NULL; lp = lp->next)
+  for (lp = THUNAR_VFS_VOLUME_MANAGER (manager_hal)->volumes; lp != NULL; lp = lp->next)
     if (exo_str_is_equal (THUNAR_VFS_VOLUME_HAL (lp->data)->udi, udi))
       return THUNAR_VFS_VOLUME_HAL (lp->data);
 
@@ -1034,7 +1037,6 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
   LibHalVolume              *hv;
   LibHalDrive               *hd;
   const gchar               *drive_udi;
-  GList                      volume_list;
 
   g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
   g_return_if_fail (manager_hal->context == context);
@@ -1073,16 +1075,13 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
           thunar_vfs_volume_hal_update (volume_hal, context, hv, hd);
 
           /* add the volume object to our list if we allocated a new one */
-          if (g_list_find (manager_hal->volumes, volume_hal) == NULL)
+          if (g_list_find (THUNAR_VFS_VOLUME_MANAGER (manager_hal)->volumes, volume_hal) == NULL)
             {
-              /* just prepend the volume object... */
-              manager_hal->volumes = g_list_prepend (manager_hal->volumes, volume_hal);
+              /* add the volume to the volume manager */
+              thunar_vfs_volume_manager_add (THUNAR_VFS_VOLUME_MANAGER (manager_hal), THUNAR_VFS_VOLUME (volume_hal));
 
-              /* ...and emit "volumes-added" */
-              volume_list.data = volume_hal;
-              volume_list.next = NULL;
-              volume_list.prev = NULL;
-              thunar_vfs_volume_manager_volumes_added (THUNAR_VFS_VOLUME_MANAGER (manager_hal), &volume_list);
+              /* release the reference on the volume */
+              g_object_unref (G_OBJECT (volume_hal));
             }
 
           /* release the HAL drive */
@@ -1102,7 +1101,6 @@ thunar_vfs_volume_manager_hal_device_removed (LibHalContext *context,
 {
   ThunarVfsVolumeManagerHal *manager_hal = libhal_ctx_get_user_data (context);
   ThunarVfsVolumeHal        *volume_hal;
-  GList                      volume_list;
 
   g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
   g_return_if_fail (manager_hal->context == context);
@@ -1111,17 +1109,8 @@ thunar_vfs_volume_manager_hal_device_removed (LibHalContext *context,
   volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);
   if (G_LIKELY (volume_hal != NULL))
     {
-      /* remove that volume from our list */
-      manager_hal->volumes = g_list_remove (manager_hal->volumes, volume_hal);
-
-      /* tell listeners that we dropped the volume */
-      volume_list.data = volume_hal;
-      volume_list.next = NULL;
-      volume_list.prev = NULL;
-      thunar_vfs_volume_manager_volumes_removed (THUNAR_VFS_VOLUME_MANAGER (manager_hal), &volume_list);
-
-      /* drop our reference on the volume */
-      g_object_unref (G_OBJECT (volume_hal));
+      /* remove the volume from the volume manager */
+      thunar_vfs_volume_manager_remove (THUNAR_VFS_VOLUME_MANAGER (manager_hal), THUNAR_VFS_VOLUME (volume_hal));
     }
 }
 
@@ -1177,4 +1166,5 @@ thunar_vfs_volume_manager_hal_device_property_modified (LibHalContext *context,
 
 
 
-
+#define __THUNAR_VFS_VOLUME_HAL_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

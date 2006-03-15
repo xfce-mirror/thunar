@@ -27,13 +27,15 @@
 
 G_BEGIN_DECLS;
 
-typedef struct _ThunarVfsVolumeIface ThunarVfsVolumeIface;
+typedef struct _ThunarVfsVolumeClass ThunarVfsVolumeClass;
 typedef struct _ThunarVfsVolume      ThunarVfsVolume;
 
 #define THUNAR_VFS_TYPE_VOLUME            (thunar_vfs_volume_get_type ())
 #define THUNAR_VFS_VOLUME(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_VOLUME, ThunarVfsVolume))
+#define THUNAR_VFS_VOLUME_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_VOLUME, ThunarVfsVolumeClass))
 #define THUNAR_VFS_IS_VOLUME(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_VOLUME))
-#define THUNAR_VFS_VOLUME_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_VFS_TYPE_VOLUME, ThunarVfsVolumeIface))
+#define THUNAR_VFS_IS_VOLUME_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_VOLUME))
+#define THUNAR_VFS_VOLUME_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_VOLUME, ThunarVfsVolumeClass))
 
 /**
  * ThunarVfsVolumeKind:
@@ -85,51 +87,6 @@ typedef enum /*< flags >*/
   THUNAR_VFS_VOLUME_STATUS_PRESENT = 1 << 1,
 } ThunarVfsVolumeStatus;
 
-struct _ThunarVfsVolumeIface
-{
-  /*< private >*/
-  GTypeInterface __parent__;
-
-  /*< public >*/
-
-  /* methods */
-  ThunarVfsVolumeKind   (*get_kind)         (ThunarVfsVolume   *volume);
-  const gchar          *(*get_name)         (ThunarVfsVolume   *volume);
-  ThunarVfsVolumeStatus (*get_status)       (ThunarVfsVolume   *volume);
-  ThunarVfsPath        *(*get_mount_point)  (ThunarVfsVolume   *volume);
-  const gchar          *(*lookup_icon_name) (ThunarVfsVolume   *volume,
-                                             GtkIconTheme      *icon_theme);
-
-  gboolean              (*eject)            (ThunarVfsVolume   *volume,
-                                             GtkWidget         *window,
-                                             GError           **error);
-  gboolean              (*mount)            (ThunarVfsVolume   *volume,
-                                             GtkWidget         *window,
-                                             GError           **error);
-  gboolean              (*unmount)          (ThunarVfsVolume   *volume,
-                                             GtkWidget         *window,
-                                             GError           **error);
-
-  /*< private >*/
-  void (*reserved0) (void);
-  void (*reserved1) (void);
-  void (*reserved2) (void);
-  void (*reserved3) (void);
-  void (*reserved4) (void);
-  void (*reserved5) (void);
-
-  /*< public >*/
-
-  /* signals */
-  void (*changed) (ThunarVfsVolume *volume);
-  
-  /*< private >*/
-  void (*reserved6) (void);
-  void (*reserved7) (void);
-  void (*reserved8) (void);
-  void (*reserved9) (void);
-};
-
 GType                 thunar_vfs_volume_get_type          (void) G_GNUC_CONST;
 
 ThunarVfsVolumeKind   thunar_vfs_volume_get_kind          (ThunarVfsVolume   *volume);
@@ -156,51 +113,16 @@ gboolean              thunar_vfs_volume_unmount           (ThunarVfsVolume   *vo
                                                            GtkWidget         *window,
                                                            GError           **error);
 
-void                  thunar_vfs_volume_changed           (ThunarVfsVolume   *volume) G_GNUC_INTERNAL;
 
-
-typedef struct _ThunarVfsVolumeManagerIface ThunarVfsVolumeManagerIface;
+typedef struct _ThunarVfsVolumeManagerClass ThunarVfsVolumeManagerClass;
 typedef struct _ThunarVfsVolumeManager      ThunarVfsVolumeManager;
 
 #define THUNAR_VFS_TYPE_VOLUME_MANAGER            (thunar_vfs_volume_manager_get_type ())
 #define THUNAR_VFS_VOLUME_MANAGER(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_VFS_TYPE_VOLUME_MANAGER, ThunarVfsVolumeManager))
+#define THUNAR_VFS_VOLUME_MANAGER_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_VFS_TYPE_VOLUME_MANAGER, ThunarVfsVolumeManagerClass))
 #define THUNAR_VFS_IS_VOLUME_MANAGER(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_VFS_TYPE_VOLUME_MANAGER))
-#define THUNAR_VFS_VOLUME_MANAGER_GET_IFACE(obj)  (G_TYPE_INSTANCE_GET_INTERFACE ((obj), THUNAR_VFS_TYPE_VOLUME_MANAGER, ThunarVfsVolumeManagerIface))
-
-struct _ThunarVfsVolumeManagerIface
-{
-  /*< private >*/
-  GTypeInterface __parent__;
-
-  /*< public >*/
-
-  /* methods */
-  ThunarVfsVolume *(*get_volume_by_info) (ThunarVfsVolumeManager *manager,
-                                          const ThunarVfsInfo    *info);
-  GList           *(*get_volumes)        (ThunarVfsVolumeManager *manager);
-
-  /*< private >*/
-  void (*reserved0) (void);
-  void (*reserved1) (void);
-  void (*reserved2) (void);
-  void (*reserved3) (void);
-  void (*reserved4) (void);
-  void (*reserved5) (void);
-
-  /*< public >*/
-
-  /* signals */
-  void (*volumes_added)   (ThunarVfsVolumeManager *manager,
-                           GList                  *volumes);
-  void (*volumes_removed) (ThunarVfsVolumeManager *manager,
-                           GList                  *volumes);
-
-  /*< private >*/
-  void (*reserved6) (void);
-  void (*reserved7) (void);
-  void (*reserved8) (void);
-  void (*reserved9) (void);
-};
+#define THUNAR_VFS_IS_VOLUME_MANAGER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_VOLUME_MANAGER))
+#define THUNAR_VFS_VOLUME_MANAGER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_VOLUME_MANAGER, ThunarVfsVolumeManagerClass))
 
 GType                   thunar_vfs_volume_manager_get_type            (void) G_GNUC_CONST;
 
@@ -209,11 +131,6 @@ ThunarVfsVolumeManager *thunar_vfs_volume_manager_get_default         (void);
 ThunarVfsVolume        *thunar_vfs_volume_manager_get_volume_by_info  (ThunarVfsVolumeManager *manager,
                                                                        const ThunarVfsInfo    *info);
 GList                  *thunar_vfs_volume_manager_get_volumes         (ThunarVfsVolumeManager *manager);
-
-void                    thunar_vfs_volume_manager_volumes_added       (ThunarVfsVolumeManager *manager,
-                                                                       GList                  *volumes) G_GNUC_INTERNAL;
-void                    thunar_vfs_volume_manager_volumes_removed     (ThunarVfsVolumeManager *manager,
-                                                                       GList                  *volumes) G_GNUC_INTERNAL;
 
 G_END_DECLS;
 

@@ -103,6 +103,8 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-user.c						\
 	thunar-vfs-util.c						\
 	thunar-vfs-volume.c						\
+	thunar-vfs-volume-manager.c					\
+	thunar-vfs-volume-private.h					\
 	thunar-vfs-xfer.c						\
 	thunar-vfs-xfer.h						\
 	thunar-vfs.c

@@ -17,21 +17,52 @@ ThunarVfsVolumeManager
 <!-- ##### SECTION Stability_Level ##### -->
 
 
-<!-- ##### STRUCT ThunarVfsVolumeManagerIface ##### -->
-<para>
-
-</para>
-
-@get_volume_by_info: 
-@get_volumes: 
-@volumes_added: 
-@volumes_removed: 
-
 <!-- ##### STRUCT ThunarVfsVolumeManager ##### -->
 <para>
 
 </para>
 
+@volumes: 
+
+<!-- ##### SIGNAL ThunarVfsVolumeManager::volume-mounted ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolumemanager: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL ThunarVfsVolumeManager::volume-pre-unmount ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolumemanager: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL ThunarVfsVolumeManager::volume-unmounted ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolumemanager: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL ThunarVfsVolumeManager::volumes-added ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolumemanager: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL ThunarVfsVolumeManager::volumes-removed ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolumemanager: the object which received the signal.
+@arg1: 
 
 <!-- ##### FUNCTION thunar_vfs_volume_manager_get_default ##### -->
 <para>
@@ -58,23 +89,5 @@ ThunarVfsVolumeManager
 
 @manager: 
 @Returns: 
-
-
-<!-- ##### FUNCTION thunar_vfs_volume_manager_volumes_added ##### -->
-<para>
-
-</para>
-
-@manager: 
-@volumes: 
-
-
-<!-- ##### FUNCTION thunar_vfs_volume_manager_volumes_removed ##### -->
-<para>
-
-</para>
-
-@manager: 
-@volumes: 
 
 

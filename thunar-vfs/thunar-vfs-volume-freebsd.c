@@ -45,17 +45,14 @@
 #include <unistd.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar-vfs/thunar-vfs-exec.h>
 #include <thunar-vfs/thunar-vfs-volume-freebsd.h>
+#include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
 static void                     thunar_vfs_volume_freebsd_class_init       (ThunarVfsVolumeFreeBSDClass *klass);
-static void                     thunar_vfs_volume_freebsd_volume_init      (ThunarVfsVolumeIface        *iface);
-static void                     thunar_vfs_volume_freebsd_init             (ThunarVfsVolumeFreeBSD      *volume_freebsd);
 static void                     thunar_vfs_volume_freebsd_finalize         (GObject                     *object);
 static ThunarVfsVolumeKind      thunar_vfs_volume_freebsd_get_kind         (ThunarVfsVolume             *volume);
 static const gchar             *thunar_vfs_volume_freebsd_get_name         (ThunarVfsVolume             *volume);
@@ -78,12 +75,12 @@ static ThunarVfsVolumeFreeBSD  *thunar_vfs_volume_freebsd_new              (cons
 
 struct _ThunarVfsVolumeFreeBSDClass
 {
-  GObjectClass __parent__;
+  ThunarVfsVolumeClass __parent__;
 };
 
 struct _ThunarVfsVolumeFreeBSD
 {
-  GObject __parent__;
+  ThunarVfsVolume       __parent__;
 
   gchar                *device_path;
   const gchar          *device_name;
@@ -102,42 +99,59 @@ struct _ThunarVfsVolumeFreeBSD
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarVfsVolumeFreeBSD,
-                         thunar_vfs_volume_freebsd,
-                         G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (THUNAR_VFS_TYPE_VOLUME,
-                                                thunar_vfs_volume_freebsd_volume_init));
+static GObjectClass *thunar_vfs_volume_freebsd_parent_class;
+
+
+
+GType
+thunar_vfs_volume_freebsd_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsVolumeFreeBSDClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_volume_freebsd_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsVolumeFreeBSD),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME, I_("ThunarVfsVolumeFreeBSD"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
 static void
 thunar_vfs_volume_freebsd_class_init (ThunarVfsVolumeFreeBSDClass *klass)
 {
-  GObjectClass *gobject_class;
+  ThunarVfsVolumeClass *thunarvfs_volume_class;
+  GObjectClass         *gobject_class;
+
+  /* determine the parent type class */
+  thunar_vfs_volume_freebsd_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_volume_freebsd_finalize;
-}
 
-
-
-static void
-thunar_vfs_volume_freebsd_volume_init (ThunarVfsVolumeIface *iface)
-{
-  iface->get_kind = thunar_vfs_volume_freebsd_get_kind;
-  iface->get_name = thunar_vfs_volume_freebsd_get_name;
-  iface->get_status = thunar_vfs_volume_freebsd_get_status;
-  iface->get_mount_point = thunar_vfs_volume_freebsd_get_mount_point;
-  iface->eject = thunar_vfs_volume_freebsd_eject;
-  iface->mount = thunar_vfs_volume_freebsd_mount;
-  iface->unmount = thunar_vfs_volume_freebsd_unmount;
-}
-
-
-
-static void
-thunar_vfs_volume_freebsd_init (ThunarVfsVolumeFreeBSD *volume_freebsd)
-{
+  thunarvfs_volume_class = THUNAR_VFS_VOLUME_CLASS (klass);
+  thunarvfs_volume_class->get_kind = thunar_vfs_volume_freebsd_get_kind;
+  thunarvfs_volume_class->get_name = thunar_vfs_volume_freebsd_get_name;
+  thunarvfs_volume_class->get_status = thunar_vfs_volume_freebsd_get_status;
+  thunarvfs_volume_class->get_mount_point = thunar_vfs_volume_freebsd_get_mount_point;
+  thunarvfs_volume_class->eject = thunar_vfs_volume_freebsd_eject;
+  thunarvfs_volume_class->mount = thunar_vfs_volume_freebsd_mount;
+  thunarvfs_volume_class->unmount = thunar_vfs_volume_freebsd_unmount;
 }
 
 
@@ -147,9 +161,7 @@ thunar_vfs_volume_freebsd_finalize (GObject *object)
 {
   ThunarVfsVolumeFreeBSD *volume_freebsd = THUNAR_VFS_VOLUME_FREEBSD (object);
 
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_FREEBSD (volume_freebsd));
-
-  if (G_LIKELY (volume_freebsd->update_timer_id >= 0))
+  if (G_LIKELY (volume_freebsd->update_timer_id > 0))
     g_source_remove (volume_freebsd->update_timer_id);
 
   if (G_LIKELY (volume_freebsd->mount_point != NULL))
@@ -158,7 +170,7 @@ thunar_vfs_volume_freebsd_finalize (GObject *object)
   g_free (volume_freebsd->device_path);
   g_free (volume_freebsd->label);
 
-  G_OBJECT_CLASS (thunar_vfs_volume_freebsd_parent_class)->finalize (object);
+  (*G_OBJECT_CLASS (thunar_vfs_volume_freebsd_parent_class)->finalize) (object);
 }
 
 
@@ -175,7 +187,6 @@ static const gchar*
 thunar_vfs_volume_freebsd_get_name (ThunarVfsVolume *volume)
 {
   ThunarVfsVolumeFreeBSD *volume_freebsd = THUNAR_VFS_VOLUME_FREEBSD (volume);
-
   return (volume_freebsd->label != NULL) ? volume_freebsd->label : volume_freebsd->device_name;
 }
 
@@ -405,52 +416,60 @@ thunar_vfs_volume_freebsd_new (const gchar *device_path,
 
 
 static void             thunar_vfs_volume_manager_freebsd_class_init         (ThunarVfsVolumeManagerFreeBSDClass *klass);
-static void             thunar_vfs_volume_manager_freebsd_manager_init       (ThunarVfsVolumeManagerIface        *iface);
 static void             thunar_vfs_volume_manager_freebsd_init               (ThunarVfsVolumeManagerFreeBSD      *manager_freebsd);
-static void             thunar_vfs_volume_manager_freebsd_finalize           (GObject                            *object);
 static ThunarVfsVolume *thunar_vfs_volume_manager_freebsd_get_volume_by_info (ThunarVfsVolumeManager             *manager,
                                                                               const ThunarVfsInfo                *info);
-static GList           *thunar_vfs_volume_manager_freebsd_get_volumes        (ThunarVfsVolumeManager             *manager);
 
 
 
 struct _ThunarVfsVolumeManagerFreeBSDClass
 {
-  GObjectClass __parent__;
+  ThunarVfsVolumeManagerClass __parent__;
 };
 
 struct _ThunarVfsVolumeManagerFreeBSD
 {
-  GObject __parent__;
-  GList  *volumes;
+  ThunarVfsVolumeManager __parent__;
 };
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarVfsVolumeManagerFreeBSD,
-                         thunar_vfs_volume_manager_freebsd,
-                         G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (THUNAR_VFS_TYPE_VOLUME_MANAGER,
-                                                thunar_vfs_volume_manager_freebsd_manager_init));
+GType
+thunar_vfs_volume_manager_freebsd_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsVolumeManagerFreeBSDClass),
+        NULL,
+        NULL,
+        (GClassInitFunc) thunar_vfs_volume_manager_freebsd_class_init,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsVolumeManagerFreeBSD),
+        0,
+        (GInstanceInitFunc) thunar_vfs_volume_manager_freebsd_init,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME_MANAGER, I_("ThunarVfsVolumeManagerFreeBSD"), &info, 0);
+    }
+
+  return type;
+}
 
 
 
 static void
 thunar_vfs_volume_manager_freebsd_class_init (ThunarVfsVolumeManagerFreeBSDClass *klass)
 {
-  GObjectClass *gobject_class;
+  ThunarVfsVolumeManagerClass *thunarvfs_volume_manager_class;
 
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_vfs_volume_manager_freebsd_finalize;
-}
-
-
-
-static void
-thunar_vfs_volume_manager_freebsd_manager_init (ThunarVfsVolumeManagerIface *iface)
-{
-  iface->get_volume_by_info = thunar_vfs_volume_manager_freebsd_get_volume_by_info;
-  iface->get_volumes = thunar_vfs_volume_manager_freebsd_get_volumes;
+  thunarvfs_volume_manager_class = THUNAR_VFS_VOLUME_MANAGER_CLASS (klass);
+  thunarvfs_volume_manager_class->get_volume_by_info = thunar_vfs_volume_manager_freebsd_get_volume_by_info;
 }
 
 
@@ -480,7 +499,10 @@ thunar_vfs_volume_manager_freebsd_init (ThunarVfsVolumeManagerFreeBSD *manager_f
 
       volume_freebsd = thunar_vfs_volume_freebsd_new (fs->fs_spec, fs->fs_file);
       if (G_LIKELY (volume_freebsd != NULL))
-        manager_freebsd->volumes = g_list_append (manager_freebsd->volumes, volume_freebsd);
+        {
+          thunar_vfs_volume_manager_add (THUNAR_VFS_VOLUME_MANAGER (manager_freebsd), THUNAR_VFS_VOLUME (volume_freebsd));
+          g_object_unref (G_OBJECT (volume_freebsd));
+        }
     }
 
   /* unload the fstab database */
@@ -489,32 +511,14 @@ thunar_vfs_volume_manager_freebsd_init (ThunarVfsVolumeManagerFreeBSD *manager_f
 
 
 
-static void
-thunar_vfs_volume_manager_freebsd_finalize (GObject *object)
-{
-  ThunarVfsVolumeManagerFreeBSD *manager_freebsd = THUNAR_VFS_VOLUME_MANAGER_FREEBSD (object);
-  GList                         *lp;
-
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager_freebsd));
-
-  for (lp = manager_freebsd->volumes; lp != NULL; lp = lp->next)
-    g_object_unref (G_OBJECT (lp->data));
-  g_list_free (manager_freebsd->volumes);
-
-  G_OBJECT_CLASS (thunar_vfs_volume_manager_freebsd_parent_class)->finalize (object);
-}
-
-
-
 static ThunarVfsVolume*
 thunar_vfs_volume_manager_freebsd_get_volume_by_info (ThunarVfsVolumeManager *manager,
-                                                  const ThunarVfsInfo    *info)
+                                                      const ThunarVfsInfo    *info)
 {
-  ThunarVfsVolumeManagerFreeBSD *manager_freebsd = THUNAR_VFS_VOLUME_MANAGER_FREEBSD (manager);
-  ThunarVfsVolumeFreeBSD        *volume_freebsd = NULL;
-  GList                         *lp;
+  ThunarVfsVolumeFreeBSD *volume_freebsd = NULL;
+  GList                  *lp;
 
-  for (lp = manager_freebsd->volumes; lp != NULL; lp = lp->next)
+  for (lp = manager->volumes; lp != NULL; lp = lp->next)
     {
       volume_freebsd = THUNAR_VFS_VOLUME_FREEBSD (lp->data);
       if ((volume_freebsd->status & THUNAR_VFS_VOLUME_STATUS_MOUNTED) != 0 && volume_freebsd->device_id == info->device)
@@ -526,12 +530,5 @@ thunar_vfs_volume_manager_freebsd_get_volume_by_info (ThunarVfsVolumeManager *ma
 
 
 
-static GList*
-thunar_vfs_volume_manager_freebsd_get_volumes (ThunarVfsVolumeManager *manager)
-{
-  return THUNAR_VFS_VOLUME_MANAGER_FREEBSD (manager)->volumes;
-}
-
-
-
-
+#define __THUNAR_VFS_VOLUME_FREEBSD_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

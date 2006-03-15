@@ -45,26 +45,39 @@ ThunarVfsVolume
 @THUNAR_VFS_VOLUME_STATUS_MOUNTED: 
 @THUNAR_VFS_VOLUME_STATUS_PRESENT: 
 
-<!-- ##### STRUCT ThunarVfsVolumeIface ##### -->
-<para>
-
-</para>
-
-@get_kind: 
-@get_name: 
-@get_status: 
-@get_mount_point: 
-@lookup_icon_name: 
-@eject: 
-@mount: 
-@unmount: 
-@changed: 
-
 <!-- ##### STRUCT ThunarVfsVolume ##### -->
 <para>
 
 </para>
 
+
+<!-- ##### SIGNAL ThunarVfsVolume::changed ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolume: the object which received the signal.
+
+<!-- ##### SIGNAL ThunarVfsVolume::mounted ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolume: the object which received the signal.
+
+<!-- ##### SIGNAL ThunarVfsVolume::pre-unmount ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolume: the object which received the signal.
+
+<!-- ##### SIGNAL ThunarVfsVolume::unmounted ##### -->
+<para>
+
+</para>
+
+@thunarvfsvolume: the object which received the signal.
 
 <!-- ##### FUNCTION thunar_vfs_volume_get_kind ##### -->
 <para>
@@ -179,13 +192,5 @@ ThunarVfsVolume
 @window: 
 @error: 
 @Returns: 
-
-
-<!-- ##### FUNCTION thunar_vfs_volume_changed ##### -->
-<para>
-
-</para>
-
-@volume: 
 
 

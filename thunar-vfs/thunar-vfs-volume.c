@@ -22,44 +22,29 @@
 #include <config.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar-vfs/thunar-vfs-enum-types.h>
-#include <thunar-vfs/thunar-vfs-volume-freebsd.h>
-#include <thunar-vfs/thunar-vfs-volume-hal.h>
-#include <thunar-vfs/thunar-vfs-volume-none.h>
-#include <thunar-vfs/thunar-vfs-volume.h>
+#include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
-
-
-
-/* determine the default thunar vfs volume manager type */
-#if defined(THUNAR_VFS_VOLUME_IMPL_FREEBSD)
-#define THUNAR_VFS_TYPE_VOLUME_MANAGER_IMPL THUNAR_VFS_TYPE_VOLUME_MANAGER_FREEBSD
-#elif defined(THUNAR_VFS_VOLUME_IMPL_HAL)
-#define THUNAR_VFS_TYPE_VOLUME_MANAGER_IMPL THUNAR_VFS_TYPE_VOLUME_MANAGER_HAL
-#elif defined(THUNAR_VFS_VOLUME_IMPL_NONE)
-#define THUNAR_VFS_TYPE_VOLUME_MANAGER_IMPL THUNAR_VFS_TYPE_VOLUME_MANAGER_NONE
-#else
-#error "Add your volume manager implemenation here!"
-#endif
 
 
 
 /* Signal identifiers */
 enum
 {
-  THUNAR_VFS_VOLUME_CHANGED,
-  THUNAR_VFS_VOLUME_LAST_SIGNAL,
+  CHANGED,
+  MOUNTED,
+  PRE_UNMOUNT,
+  UNMOUNTED,
+  LAST_SIGNAL,
 };
 
 
 
-static void thunar_vfs_volume_base_init (gpointer klass);
+static void thunar_vfs_volume_class_init (ThunarVfsVolumeClass *klass);
 
 
 
-static guint volume_signals[THUNAR_VFS_VOLUME_LAST_SIGNAL];
+static guint volume_signals[LAST_SIGNAL];
 
 
 
@@ -72,20 +57,19 @@ thunar_vfs_volume_get_type (void)
     {
       static const GTypeInfo info =
       {
-        sizeof (ThunarVfsVolumeIface),
-        (GBaseInitFunc) thunar_vfs_volume_base_init,
+        sizeof (ThunarVfsVolumeClass),
         NULL,
         NULL,
+        (GClassInitFunc) thunar_vfs_volume_class_init,
         NULL,
         NULL,
-        0,
+        sizeof (ThunarVfsVolume),
         0,
         NULL,
         NULL,
       };
 
-      type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarVfsVolume"), &info, 0);
-      g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
+      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsVolume"), &info, G_TYPE_FLAG_ABSTRACT);
     }
 
   return type;
@@ -94,29 +78,70 @@ thunar_vfs_volume_get_type (void)
 
 
 static void
-thunar_vfs_volume_base_init (gpointer klass)
+thunar_vfs_volume_class_init (ThunarVfsVolumeClass *klass)
 {
-  static gboolean initialized = FALSE;
+  /**
+   * ThunarVfsVolume::changed:
+   * @volume : the #ThunarVfsVolume instance.
+   *
+   * Emitted whenever the state of @volume changed.
+   **/
+  volume_signals[CHANGED] =
+    g_signal_new (I_("changed"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarVfsVolumeClass, changed),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
 
-  if (G_UNLIKELY (!initialized))
-    {
-      /**
-       * ThunarVfsVolume::changed:
-       * @volume : the #ThunarVfsVolume instance.
-       *
-       * Emitted whenever the state of @volume changed.
-       **/
-      volume_signals[THUNAR_VFS_VOLUME_CHANGED] =
-        g_signal_new (I_("changed"),
-                      G_TYPE_FROM_INTERFACE (klass),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarVfsVolumeIface, changed),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__VOID,
-                      G_TYPE_NONE, 0);
+  /**
+   * ThunarVfsVolume::mounted:
+   * @volume : the #ThunarVfsVolume instance.
+   *
+   * Emitted by @volume after a successfull mount
+   * operation.
+   **/
+  volume_signals[MOUNTED] =
+    g_signal_new (I_("mounted"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarVfsVolumeClass, mounted),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
 
-      initialized = TRUE;
-    }
+  /**
+   * ThunarVfsVolume::pre-unmount:
+   * @volume : the #ThunarVfsVolume instance.
+   *
+   * Emitted by @volume right before an attempt
+   * is made to unmount the @volume.
+   **/
+  volume_signals[PRE_UNMOUNT] =
+    g_signal_new (I_("pre-unmount"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarVfsVolumeClass, pre_unmount),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
+
+  /**
+   * ThunarVfsVolume::unmounted:
+   * @volume : the #ThunarVfsVolume instance.
+   *
+   * Emitted by @volume right after the @volume
+   * was successfully unmounted.
+   **/
+  volume_signals[UNMOUNTED] =
+    g_signal_new (I_("unmounted"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarVfsVolumeClass, unmounted),
+                  NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
 }
 
 
@@ -133,7 +158,7 @@ ThunarVfsVolumeKind
 thunar_vfs_volume_get_kind (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), THUNAR_VFS_VOLUME_KIND_UNKNOWN);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_kind) (volume);
+  return (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->get_kind) (volume);
 }
 
 
@@ -152,7 +177,7 @@ const gchar*
 thunar_vfs_volume_get_name (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), NULL);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_name) (volume);
+  return (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->get_name) (volume);
 }
 
 
@@ -171,7 +196,7 @@ ThunarVfsVolumeStatus
 thunar_vfs_volume_get_status (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), 0);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status) (volume);
+  return (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->get_status) (volume);
 }
 
 
@@ -195,7 +220,7 @@ ThunarVfsPath*
 thunar_vfs_volume_get_mount_point (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), NULL);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_mount_point) (volume);
+  return (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->get_mount_point) (volume);
 }
 
 
@@ -237,7 +262,7 @@ gboolean
 thunar_vfs_volume_is_mounted (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status) (volume) & THUNAR_VFS_VOLUME_STATUS_MOUNTED;
+  return (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->get_status) (volume) & THUNAR_VFS_VOLUME_STATUS_MOUNTED;
 }
 
 
@@ -256,7 +281,7 @@ gboolean
 thunar_vfs_volume_is_present (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
-  return (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->get_status) (volume) & THUNAR_VFS_VOLUME_STATUS_PRESENT;
+  return (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->get_status) (volume) & THUNAR_VFS_VOLUME_STATUS_PRESENT;
 }
 
 
@@ -340,7 +365,7 @@ const gchar*
 thunar_vfs_volume_lookup_icon_name (ThunarVfsVolume *volume,
                                     GtkIconTheme    *icon_theme)
 {
-  ThunarVfsVolumeIface *iface;
+  ThunarVfsVolumeClass *klass;
   ThunarVfsVolumeKind   kind;
   const gchar          *icon_name;
 
@@ -348,10 +373,10 @@ thunar_vfs_volume_lookup_icon_name (ThunarVfsVolume *volume,
   g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
   /* allow the implementing class to provide a custom icon */
-  iface = THUNAR_VFS_VOLUME_GET_IFACE (volume);
-  if (iface->lookup_icon_name != NULL)
+  klass = THUNAR_VFS_VOLUME_GET_CLASS (volume);
+  if (klass->lookup_icon_name != NULL)
     {
-      icon_name = (*iface->lookup_icon_name) (volume, icon_theme);
+      icon_name = (*klass->lookup_icon_name) (volume, icon_theme);
       if (G_LIKELY (icon_name != NULL))
         return icon_name;
     }
@@ -469,6 +494,9 @@ thunar_vfs_volume_eject (ThunarVfsVolume *volume,
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
 
+  /* we're about to unmount (and eject) the volume */
+  g_signal_emit (G_OBJECT (volume), volume_signals[PRE_UNMOUNT], 0);
+
   /* setup a watch cursor on the window */
   if (window != NULL && GTK_WIDGET_REALIZED (window))
     {
@@ -482,11 +510,15 @@ thunar_vfs_volume_eject (ThunarVfsVolume *volume,
     }
 
   /* try to mount the volume */
-  result = (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->eject) (volume, window, error);
+  result = (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->eject) (volume, window, error);
 
   /* reset the cursor */
   if (window != NULL && GTK_WIDGET_REALIZED (window))
     gdk_window_set_cursor (window->window, NULL);
+
+  /* check if we unmounted successfully */
+  if (G_LIKELY (result))
+    g_signal_emit (G_OBJECT (volume), volume_signals[UNMOUNTED], 0);
 
   return result;
 }
@@ -540,11 +572,15 @@ thunar_vfs_volume_mount (ThunarVfsVolume *volume,
     }
 
   /* try to mount the volume */
-  result = (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->mount) (volume, window, error);
+  result = (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->mount) (volume, window, error);
 
   /* reset the cursor */
   if (window != NULL && GTK_WIDGET_REALIZED (window))
     gdk_window_set_cursor (window->window, NULL);
+
+  /* check if we successfully mounted the volume */
+  if (G_LIKELY (result))
+    g_signal_emit (G_OBJECT (volume), volume_signals[MOUNTED], 0);
 
   return result;
 }
@@ -585,6 +621,9 @@ thunar_vfs_volume_unmount (ThunarVfsVolume *volume,
   g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
 
+  /* we're about to unmount the volume */
+  g_signal_emit (G_OBJECT (volume), volume_signals[PRE_UNMOUNT], 0);
+
   /* setup a watch cursor on the window */
   if (window != NULL && GTK_WIDGET_REALIZED (window))
     {
@@ -598,11 +637,15 @@ thunar_vfs_volume_unmount (ThunarVfsVolume *volume,
     }
 
   /* try to mount the volume */
-  result = (*THUNAR_VFS_VOLUME_GET_IFACE (volume)->unmount) (volume, window, error);
+  result = (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->unmount) (volume, window, error);
 
   /* reset the cursor */
   if (window != NULL && GTK_WIDGET_REALIZED (window))
     gdk_window_set_cursor (window->window, NULL);
+
+  /* check if we unmounted successfully */
+  if (G_LIKELY (result))
+    g_signal_emit (G_OBJECT (volume), volume_signals[UNMOUNTED], 0);
 
   return result;
 }
@@ -621,235 +664,9 @@ void
 thunar_vfs_volume_changed (ThunarVfsVolume *volume)
 {
   g_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
-  g_signal_emit (G_OBJECT (volume), volume_signals[THUNAR_VFS_VOLUME_CHANGED], 0);
+  g_signal_emit (G_OBJECT (volume), volume_signals[CHANGED], 0);
 }
 
-
-
-
-enum
-{
-  THUNAR_VFS_VOLUME_MANAGER_VOLUMES_ADDED,
-  THUNAR_VFS_VOLUME_MANAGER_VOLUMES_REMOVED,
-  THUNAR_VFS_VOLUME_MANAGER_LAST_SIGNAL,
-};
-
-
-
-static void thunar_vfs_volume_manager_base_init (gpointer klass);
-
-
-
-static guint manager_signals[THUNAR_VFS_VOLUME_MANAGER_LAST_SIGNAL];
-
-
-
-GType
-thunar_vfs_volume_manager_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsVolumeManagerIface),
-        (GBaseInitFunc) thunar_vfs_volume_manager_base_init,
-        NULL,
-        NULL,
-        NULL,
-        NULL,
-        0,
-        0,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_INTERFACE,
-                                     "ThunarVfsVolumeManager",
-                                     &info, 0);
-
-      g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-    }
-
-  return type;
-}
-
-
-
-static void
-thunar_vfs_volume_manager_base_init (gpointer klass)
-{
-  static gboolean initialized = FALSE;
-
-  if (G_UNLIKELY (!initialized))
-    {
-      /**
-       * ThunarVfsVolumeManager::volumes-added:
-       * @manager : a #ThunarVfsVolumeManager instance.
-       * @volumes : a list of #ThunarVfsVolume<!---->s.
-       *
-       * Invoked by the @manager whenever new volumes have been
-       * attached to the system or the administrator changes the
-       * /etc/fstab file, or some other condition, depending
-       * on the manager implementation.
-       *
-       * Note that the implementation should not invoke this
-       * method when a volume is mounted, as that's a completely
-       * different condition!
-       **/
-      manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_ADDED] =
-        g_signal_new (I_("volumes-added"),
-                      G_TYPE_FROM_INTERFACE (klass),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarVfsVolumeManagerIface, volumes_added),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__POINTER,
-                      G_TYPE_NONE, 1, G_TYPE_POINTER);
-
-      /**
-       * ThunarVfsVolumeManager::volumes-removed:
-       * @manager : a #ThunarVfsVolume instance.
-       * @volumes : a list of #ThunarVfsVolume<!---->s.
-       *
-       * Invoked whenever the @manager notices that @volumes have
-       * been detached from the system.
-       **/
-      manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_REMOVED] =
-        g_signal_new (I_("volumes-removed"),
-                      G_TYPE_FROM_INTERFACE (klass),
-                      G_SIGNAL_RUN_LAST,
-                      G_STRUCT_OFFSET (ThunarVfsVolumeManagerIface, volumes_removed),
-                      NULL, NULL,
-                      g_cclosure_marshal_VOID__POINTER,
-                      G_TYPE_NONE, 1, G_TYPE_POINTER);
-
-      initialized = TRUE;
-    }
-}
-
-
-
-/**
- * thunar_vfs_volume_manager_get_default:
- * 
- * Returns the default, shared #ThunarVfsVolumeManager instance
- * for this system. This function automatically determines, which
- * implementation of #ThunarVfsVolumeManager should be used for
- * the target system and returns an instance of that class, which
- * is shared among all modules using the volume manager facility.
- *
- * Call g_object_unref() on the returned object when you are
- * done with it.
- *
- * Return value: the shared #ThunarVfsVolumeManager instance.
- **/
-ThunarVfsVolumeManager*
-thunar_vfs_volume_manager_get_default (void)
-{
-  extern GType _thunar_vfs_volume_manager_impl_get_type (void);
-  static ThunarVfsVolumeManager *manager = NULL;
-
-  if (G_UNLIKELY (manager == NULL))
-    {
-      manager = g_object_new (THUNAR_VFS_TYPE_VOLUME_MANAGER_IMPL, NULL);
-      g_object_add_weak_pointer (G_OBJECT (manager), (gpointer) &manager);
-    }
-  else
-    {
-      g_object_ref (G_OBJECT (manager));
-    }
-
-  return manager;
-}
-
-
-
-/**
- * thunar_vfs_volume_manager_get_volume_by_info:
- * @manager : a #ThunarVfsVolumeManager instance.
- * @info    : a #ThunarVfsInfo.
- *
- * Tries to lookup the #ThunarVfsVolume on which @info is
- * located. If @manager doesn't know a #ThunarVfsVolume
- * for @info, %NULL will be returned.
- *
- * The returned #ThunarVfsVolume (if any) is owned by
- * @manager and must not be freed by the caller.
- *
- * Return value: the #ThunarVfsVolume, on which @info is
- *               located or %NULL.
- **/
-ThunarVfsVolume*
-thunar_vfs_volume_manager_get_volume_by_info (ThunarVfsVolumeManager *manager,
-                                              const ThunarVfsInfo    *info)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager), NULL);
-  g_return_val_if_fail (info != NULL, NULL);
-  return (*THUNAR_VFS_VOLUME_MANAGER_GET_IFACE (manager)->get_volume_by_info) (manager, info);
-}
-
-
-
-/**
- * thunar_vfs_volume_manager_get_volumes:
- * @manager : a #ThunarVfsVolumeManager instance.
- *
- * Returns all #ThunarVfsVolume<!---->s currently known for
- * @manager. The returned list is owned by @manager and should
- * therefore considered constant in the caller.
- *
- * Return value: the list of volumes known for @manager.
- **/
-GList*
-thunar_vfs_volume_manager_get_volumes (ThunarVfsVolumeManager *manager)
-{
-  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager), NULL);
-  return (*THUNAR_VFS_VOLUME_MANAGER_GET_IFACE (manager)->get_volumes) (manager);
-}
-
-
-
-/**
- * thunar_vfs_volume_manager_volumes_added:
- * @manager : a #ThunarVfsVolumeManager instance.
- * @volumes : a list of #ThunarVfsVolume<!---->s.
- *
- * Emits the "volumes-added" signal on @manager using the
- * given @volumes.
- *
- * This method should only be used by classes implementing
- * the #ThunarVfsVolumeManager interface.
- **/
-void
-thunar_vfs_volume_manager_volumes_added (ThunarVfsVolumeManager *manager,
-                                         GList                  *volumes)
-{
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager));
-  g_return_if_fail (g_list_length (volumes) > 0);
-  g_signal_emit (G_OBJECT (manager), manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_ADDED], 0, volumes);
-}
-
-
-
-/**
- * thunar_vfs_volume_manager_volumes_removed:
- * @manager : a #ThunarVfsVolumeManager instance.
- * @volumes : a list of #ThunarVfsVolume<!---->s.
- *
- * Emits the "volumes-removed" signal on @manager using
- * the given @volumes.
- *
- * This method should only be used by classes implementing
- * the #ThunarVfsVolumeManager interface.
- **/
-void
-thunar_vfs_volume_manager_volumes_removed (ThunarVfsVolumeManager *manager,
-                                           GList                  *volumes)
-{
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (manager));
-  g_return_if_fail (g_list_length (volumes) > 0);
-  g_signal_emit (G_OBJECT (manager), manager_signals[THUNAR_VFS_VOLUME_MANAGER_VOLUMES_REMOVED], 0, volumes);
-}
 
 
 

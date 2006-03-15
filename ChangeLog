@@ -1,3 +1,26 @@
+2006-03-15	Benedikt Meurer <benny@xfce.org>
+
+	* acinclude.m4(BM_THUNAR_VFS_VOLUME_IMPL): Handle "none" properly.
+	* thunar-vfs/thunar-vfs-volume-manager.c, thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs-volume-private.h, thunar-vfs/thunar-vfs.symbols,
+	  thunar-vfs/thunar-vfs-volume.c, thunar-vfs/thunar-vfs-volume-none.c,
+	  thunar-vfs/thunar-vfs-volume.h, thunar-vfs/thunar-vfs-volume-hal.c,
+	  thunar-vfs/thunar-vfs-volume-freebsd.c: Improve the volume manager
+	  implemenation. The ThunarVfsVolumeManager and ThunarVfsVolume inter-
+	  faces are now abstract base classes, with the implementation API
+	  completely separated from the public API. The HAL backend was fixed
+	  to work around a strange HAL bug, where 'volume.is_mounted' is FALSE
+	  for mounted volumes (instead of trusting HAL, we ask the kernel to
+	  make sure we always display the proper state). Also, new signals
+	  "mounted", "pre-unmount" and "unmounted" were added to both
+	  ThunarVfsVolume and ThunarVfsVolumeManager, to allow applications to
+	  perform certain actions for these events.
+	* docs/reference/thunar-vfs/: Update the API documentation.
+	* thunar/thunar-window.c: Whenever the user requests to unmount a
+	  volume, check if the window displays a folder on this volume and if
+	  so, go to the home folder, to make sure we don't display a probably
+	  no longer existing mount point afterwards.
+
 2006-03-14	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-exec.{c,h}: Add thunar_vfs_exec_sync() helper

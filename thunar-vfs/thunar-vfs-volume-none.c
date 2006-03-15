@@ -23,76 +23,51 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-volume-none.h>
+#include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
-
-
-
-static void             thunar_vfs_volume_manager_none_class_init         (ThunarVfsVolumeManagerNoneClass *klass);
-static void             thunar_vfs_volume_manager_none_manager_init       (ThunarVfsVolumeManagerIface     *iface);
-static void             thunar_vfs_volume_manager_none_init               (ThunarVfsVolumeManagerNone      *manager_none);
-static ThunarVfsVolume *thunar_vfs_volume_manager_none_get_volume_by_info (ThunarVfsVolumeManager          *manager,
-                                                                           const ThunarVfsInfo             *info);
-static GList           *thunar_vfs_volume_manager_none_get_volumes        (ThunarVfsVolumeManager          *manager);
 
 
 
 struct _ThunarVfsVolumeManagerNoneClass
 {
-  GObjectClass __parent__;
+  ThunarVfsVolumeManagerClass __parent__;
 };
 
 struct _ThunarVfsVolumeManagerNone
 {
-  GObject __parent__;
+  ThunarVfsVolumeClass __parent__;
 };
 
 
 
-G_DEFINE_TYPE_WITH_CODE (ThunarVfsVolumeManagerNone,
-                         thunar_vfs_volume_manager_none,
-                         G_TYPE_OBJECT,
-                         G_IMPLEMENT_INTERFACE (THUNAR_VFS_TYPE_VOLUME_MANAGER,
-                                                thunar_vfs_volume_manager_none_manager_init));
-
-
-static void
-thunar_vfs_volume_manager_none_class_init (ThunarVfsVolumeManagerNoneClass *klass)
+GType
+thunar_vfs_volume_manager_none_get_type (void)
 {
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GTypeInfo info =
+      {
+        sizeof (ThunarVfsVolumeManagerNoneClass),
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        NULL,
+        sizeof (ThunarVfsVolumeManagerNone),
+        0,
+        NULL,
+        NULL,
+      };
+
+      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME_MANAGER, I_("ThunarVfsVolumeManagerNone"), &info, 0);
+    }
+
+  return type;
 }
 
 
 
-static void
-thunar_vfs_volume_manager_none_manager_init (ThunarVfsVolumeManagerIface *iface)
-{
-  iface->get_volume_by_info = thunar_vfs_volume_manager_none_get_volume_by_info;
-  iface->get_volumes = thunar_vfs_volume_manager_none_get_volumes;
-}
-
-
-
-static void
-thunar_vfs_volume_manager_none_init (ThunarVfsVolumeManagerNone *manager_none)
-{
-}
-
-
-
-static ThunarVfsVolume*
-thunar_vfs_volume_manager_none_get_volume_by_info (ThunarVfsVolumeManager *manager,
-                                                   const ThunarVfsInfo    *info)
-{
-  return NULL;
-}
-
-
-
-static GList*
-thunar_vfs_volume_manager_none_get_volumes (ThunarVfsVolumeManager *manager)
-{
-  return NULL;
-}
-
-
-
-
+#define __THUNAR_VFS_VOLUME_NONE_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>
