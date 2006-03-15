@@ -46,6 +46,8 @@ Thunar_SOURCES =							\
 	thunar-component.h						\
 	thunar-create-dialog.c						\
 	thunar-create-dialog.h						\
+	thunar-debug.h							\
+	thunar-debug.c							\
 	thunar-details-view-ui.h					\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
