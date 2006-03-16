@@ -403,7 +403,7 @@ cdrom:
 dvdrom:
     case THUNAR_VFS_VOLUME_KIND_DVDROM:
       if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-disc-dvdrom"))
-        return "gnome-dev-dvdrom";
+        return "gnome-dev-disc-dvdrom";
       else if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-dvd"))
         return "gnome-dev-dvd";
       goto cdrom;
