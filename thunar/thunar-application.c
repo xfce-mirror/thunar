@@ -175,8 +175,20 @@ thunar_application_class_init (ThunarApplicationClass *klass)
 static void
 thunar_application_init (ThunarApplication *application)
 {
+  gchar *path;
+
+  /* initialize the application */
   application->preferences = thunar_preferences_get ();
   application->show_dialogs_timer_id = -1;
+
+  /* check if we have a saved accel map */
+  path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm");
+  if (G_LIKELY (path != NULL))
+    {
+      /* load the accel map */
+      gtk_accel_map_load (path);
+      g_free (path);
+    }
 }
 
 
@@ -185,7 +197,17 @@ static void
 thunar_application_finalize (GObject *object)
 {
   ThunarApplication *application = THUNAR_APPLICATION (object);
+  gchar             *path;
   GList             *lp;
+
+  /* save the current accel map */
+  path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm", TRUE);
+  if (G_LIKELY (path != NULL))
+    {
+      /* save the accel map */
+      gtk_accel_map_save (path);
+      g_free (path);
+    }
 
   /* drop any running "show dialogs" timer */
   if (G_UNLIKELY (application->show_dialogs_timer_id >= 0))

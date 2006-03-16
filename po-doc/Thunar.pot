@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2006-03-04 13:45JST\n"
+"POT-Creation-Date: 2006-03-16 01:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -241,47 +241,87 @@ msgstr ""
 msgid "<placeholder-1/> - reloads the current folder"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:256(title) 
-msgid "Support"
+#: ../docs/manual/C/Thunar.xml.in:254(title) 
+msgid "How do I assign different keyboard shortcuts?"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:258(para) 
-msgid "To report a bug or to make a suggestion regarding this application or this manual, use the bug tracking system at <ulink url=\"http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided\">http://bugzilla.xfce.org/</ulink>. Remember that useful bug reports are ones that get bugs fixed, so a useful bug report has two qualities:"
+#: ../docs/manual/C/Thunar.xml.in:256(para) 
+msgid "If you want to rebind a shortcut, Thunar supports the standard GTK+ way of changing shortcuts: simply hover over the menu option with the mouse pointer and press the keyboard shortcut you want to rebind it to."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:266(para) 
-msgid "<emphasis role=\"bold\">Reproducible.</emphasis> If the developer cannot see the bug himself to prove that it exists, he will most probably not be able to fix it at all. Every detail you can provide helps."
+#: ../docs/manual/C/Thunar.xml.in:262(para) 
+msgid "To delete a keyboard assignment, press the <keycap>Backspace</keycap> key while you are on the menu entry."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:273(para) 
-msgid "<emphasis role=\"bold\">Specific.</emphasis> The quicker the developer can isolate the problem to a specific area, the more likely he will expediently fix it."
+#: ../docs/manual/C/Thunar.xml.in:267(para) 
+msgid "If the shortcut doesn't change, then you need to enable the feature in GTK+. This can be achieved in 3 ways:"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:280(para) 
-msgid "In case you want to request a new feature, please make clear why you consider it a worth addition for the application. It is more likely that a new feature gets added if you provide good arguments for the feature. It will increase the chance of addition even more if you provide a patch that implements the requested feature, but make sure that you read the file <ulink type=\"http\" url=\"http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING\">HACKING</ulink> - especially the section labeled <emphasis>Coding Style</emphasis> - before you start hacking up the source."
+#: ../docs/manual/C/Thunar.xml.in:274(para) 
+msgid "If you are running Xfce 4.3 or above then you can enable <guilabel>Editable menu accelerators</guilabel> in the <guilabel>User Interface Preferences</guilabel> dialog."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:282(para) 
+msgid "If you are running GNOME then you can enable <guilabel>Editable menu accelerators</guilabel> in the <guilabel>Menu and Toolbars</guilabel> control center dialog."
 msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:290(para) 
-msgid "Else, if you have questions about the use or installation of this software, please ask on the <ulink type=\"http\" url=\"http://foo-projects.org/mailman/listinfo/thunar-dev\">thunar-dev mailing list</ulink> or point your IRC client to <emphasis role=\"bold\">irc.freenode.net</emphasis>, join the channel <emphasis role=\"bold\">#thunar</emphasis> and ask for help."
+msgid "Otherwise put the following in your <filename>~/.gtkrc-2.0</filename> file (create the file if it doesn't exist):<screen>gtk-can-change-accels=1</screen>"
 msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:299(title) 
-msgid "About @PACKAGE_NAME@"
+msgid "Where does Thunar store the keyboard shortcuts?"
 msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:301(para) 
+msgid "The custom keyboard shortcuts are stored in the standard GTK+ accel map format in a file located at <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename>. Lines starting with <literal>;</literal> are comments. See the GTK+ documentation for details about the file format."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:308(para) 
+msgid "If you are a packager or a system administrator and want to provide a system wide default for the keyboard shortcuts, that is different from the default shortcuts in Thunar, you can create a file <filename>Thunar/accels.scm</filename> in one of the <envar>$XDG_CONFIG_DIRS</envar>. For example, if <filename role=\"directory\">/etc/xdg</filename> is part of <envar>$XDG_CONFIG_DIRS</envar> (the default for most Linux distributions), you can install system wide defaults to <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar will then load shortcuts from this file on first startup."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:321(title) 
+msgid "Support"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:323(para) 
+msgid "To report a bug or to make a suggestion regarding this application or this manual, use the bug tracking system at <ulink url=\"http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided\">http://bugzilla.xfce.org/</ulink>. Remember that useful bug reports are ones that get bugs fixed, so a useful bug report has two qualities:"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:331(para) 
+msgid "<emphasis role=\"bold\">Reproducible.</emphasis> If the developer cannot see the bug himself to prove that it exists, he will most probably not be able to fix it at all. Every detail you can provide helps."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:338(para) 
+msgid "<emphasis role=\"bold\">Specific.</emphasis> The quicker the developer can isolate the problem to a specific area, the more likely he will expediently fix it."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:345(para) 
+msgid "In case you want to request a new feature, please make clear why you consider it a worth addition for the application. It is more likely that a new feature gets added if you provide good arguments for the feature. It will increase the chance of addition even more if you provide a patch that implements the requested feature, but make sure that you read the file <ulink type=\"http\" url=\"http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING\">HACKING</ulink> - especially the section labeled <emphasis>Coding Style</emphasis> - before you start hacking up the source."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:355(para) 
+msgid "Else, if you have questions about the use or installation of this software, please ask on the <ulink type=\"http\" url=\"http://foo-projects.org/mailman/listinfo/thunar-dev\">thunar-dev mailing list</ulink> or point your IRC client to <emphasis role=\"bold\">irc.freenode.net</emphasis>, join the channel <emphasis role=\"bold\">#thunar</emphasis> and ask for help."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:364(title) 
+msgid "About @PACKAGE_NAME@"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:366(para) 
 msgid "@PACKAGE_NAME@ was written by Benedikt Meurer (<email>benny@xfce.org</email>). Visit the <ulink url=\"http://thunar.xfce.org/\" type=\"http\">Thunar website</ulink> for more information."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:306(para) 
+#: ../docs/manual/C/Thunar.xml.in:371(para) 
 msgid "This documentation was written by Benedikt Meurer (<email>benny@xfce.org</email>). The latest version of this document is always available from the <ulink type=\"http\" url=\"http://thunar.xfce.org/\">Thunar website</ulink>."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:312(para) 
+#: ../docs/manual/C/Thunar.xml.in:377(para) 
 msgid "This software is distributed under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:318(para) 
+#: ../docs/manual/C/Thunar.xml.in:383(para) 
 msgid "You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA."
 msgstr ""
 

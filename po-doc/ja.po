@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.1svn-r20203\n"
-"POT-Creation-Date: 2006-03-06 16:33+0100\n"
+"POT-Creation-Date: 2006-03-16 01:31+0100\n"
 "PO-Revision-Date: 2006-03-06 00:30+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -457,11 +457,80 @@ msgstr "下"
 msgid "<placeholder-1/> - reloads the current folder"
 msgstr "<placeholder-1/> - 現在のフォルダをリロードします"
 
-#: ../docs/manual/C/Thunar.xml.in:256 (title)
+#: ../docs/manual/C/Thunar.xml.in:254 (title)
+msgid "How do I assign different keyboard shortcuts?"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:256 (para)
+msgid ""
+"If you want to rebind a shortcut, Thunar supports the standard GTK+ way of "
+"changing shortcuts: simply hover over the menu option with the mouse pointer "
+"and press the keyboard shortcut you want to rebind it to."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:262 (para)
+msgid ""
+"To delete a keyboard assignment, press the <keycap>Backspace</keycap> key "
+"while you are on the menu entry."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:267 (para)
+msgid ""
+"If the shortcut doesn't change, then you need to enable the feature in GTK+. "
+"This can be achieved in 3 ways:"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:274 (para)
+msgid ""
+"If you are running Xfce 4.3 or above then you can enable <guilabel>Editable "
+"menu accelerators</guilabel> in the <guilabel>User Interface Preferences</"
+"guilabel> dialog."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:282 (para)
+msgid ""
+"If you are running GNOME then you can enable <guilabel>Editable menu "
+"accelerators</guilabel> in the <guilabel>Menu and Toolbars</guilabel> "
+"control center dialog."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:290 (para)
+msgid ""
+"Otherwise put the following in your <filename>~/.gtkrc-2.0</filename> file "
+"(create the file if it doesn't exist):<screen>gtk-can-change-accels=1</"
+"screen>"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:299 (title)
+#, fuzzy
+msgid "Where does Thunar store the keyboard shortcuts?"
+msgstr "ファイルに関連付けられているメタデータは何処に保存されていますか？"
+
+#: ../docs/manual/C/Thunar.xml.in:301 (para)
+msgid ""
+"The custom keyboard shortcuts are stored in the standard GTK+ accel map "
+"format in a file located at <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</"
+"filename>. Lines starting with <literal>;</literal> are comments. See the GTK"
+"+ documentation for details about the file format."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:308 (para)
+msgid ""
+"If you are a packager or a system administrator and want to provide a system "
+"wide default for the keyboard shortcuts, that is different from the default "
+"shortcuts in Thunar, you can create a file <filename>Thunar/accels.scm</"
+"filename> in one of the <envar>$XDG_CONFIG_DIRS</envar>. For example, if "
+"<filename role=\"directory\">/etc/xdg</filename> is part of <envar>"
+"$XDG_CONFIG_DIRS</envar> (the default for most Linux distributions), you can "
+"install system wide defaults to <filename>/etc/xdg/Thunar/accels.scm</"
+"filename>. Thunar will then load shortcuts from this file on first startup."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:321 (title)
 msgid "Support"
 msgstr "サポート"
 
-#: ../docs/manual/C/Thunar.xml.in:258 (para)
+#: ../docs/manual/C/Thunar.xml.in:323 (para)
 msgid ""
 "To report a bug or to make a suggestion regarding this application or this "
 "manual, use the bug tracking system at <ulink url=\"http://bugzilla.xfce.org/"
@@ -475,7 +544,7 @@ msgstr ""
 "利用下さい。意味のあるバグ報告こそがバグを修正するのだという事を忘れないで下"
 "さい、ではどういったものが該当するかというと、二つの特質があります:"
 
-#: ../docs/manual/C/Thunar.xml.in:266 (para)
+#: ../docs/manual/C/Thunar.xml.in:331 (para)
 msgid ""
 "<emphasis role=\"bold\">Reproducible.</emphasis> If the developer cannot see "
 "the bug himself to prove that it exists, he will most probably not be able "
@@ -485,7 +554,7 @@ msgstr ""
 "を確認することができない場合は、それを修正するのはほぼ不可能に近くなります。"
 "どんな細かいことでも役立ちますので、詳細を余さず伝えて下さい。"
 
-#: ../docs/manual/C/Thunar.xml.in:273 (para)
+#: ../docs/manual/C/Thunar.xml.in:338 (para)
 msgid ""
 "<emphasis role=\"bold\">Specific.</emphasis> The quicker the developer can "
 "isolate the problem to a specific area, the more likely he will expediently "
@@ -494,7 +563,7 @@ msgstr ""
 "<emphasis role=\"bold\">具体的であること。</emphasis>開発者が問題を特定の箇所"
 "により早く絞れる程、その修正措置を取りやすくなります。"
 
-#: ../docs/manual/C/Thunar.xml.in:280 (para)
+#: ../docs/manual/C/Thunar.xml.in:345 (para)
 msgid ""
 "In case you want to request a new feature, please make clear why you "
 "consider it a worth addition for the application. It is more likely that a "
@@ -513,7 +582,7 @@ msgstr ""
 "で下さい。特に <emphasis>Coding Style</emphasis> と題されている箇所に目を通す"
 "ようにして下さい。"
 
-#: ../docs/manual/C/Thunar.xml.in:290 (para)
+#: ../docs/manual/C/Thunar.xml.in:355 (para)
 msgid ""
 "Else, if you have questions about the use or installation of this software, "
 "please ask on the <ulink type=\"http\" url=\"http://foo-projects.org/mailman/"
@@ -528,11 +597,11 @@ msgstr ""
 "<emphasis role=\"bold\">#thunar</emphasis> に参加して手助けを求めてみて下さ"
 "い。"
 
-#: ../docs/manual/C/Thunar.xml.in:299 (title)
+#: ../docs/manual/C/Thunar.xml.in:364 (title)
 msgid "About @PACKAGE_NAME@"
 msgstr "@PACKAGE_NAME@ について"
 
-#: ../docs/manual/C/Thunar.xml.in:301 (para)
+#: ../docs/manual/C/Thunar.xml.in:366 (para)
 msgid ""
 "@PACKAGE_NAME@ was written by Benedikt Meurer (<email>benny@xfce.org</"
 "email>). Visit the <ulink url=\"http://thunar.xfce.org/\" type=\"http"
@@ -542,7 +611,7 @@ msgstr ""
 "した。より詳しい情報を得るには <ulink url=\"http://thunar.xfce.org/\" type="
 "\"http\">Thunar のウェブサイト</ulink>を訪れて下さい。"
 
-#: ../docs/manual/C/Thunar.xml.in:306 (para)
+#: ../docs/manual/C/Thunar.xml.in:371 (para)
 msgid ""
 "This documentation was written by Benedikt Meurer (<email>benny@xfce.org</"
 "email>). The latest version of this document is always available from the "
@@ -552,7 +621,7 @@ msgstr ""
 "新版は <ulink type=\"http\" url=\"http://thunar.xfce.org/\">Thunar のウェブサ"
 "イト</ulink>にあります。"
 
-#: ../docs/manual/C/Thunar.xml.in:312 (para)
+#: ../docs/manual/C/Thunar.xml.in:377 (para)
 msgid ""
 "This software is distributed under the terms of the GNU General Public "
 "License as published by the Free Software Foundation; either version 2 of "
@@ -562,7 +631,7 @@ msgstr ""
 "の条件下に配布されています。第2版あるいは、あなたが選ぶそれ以降の版のいずれか"
 "が適用されます。"
 
-#: ../docs/manual/C/Thunar.xml.in:318 (para)
+#: ../docs/manual/C/Thunar.xml.in:383 (para)
 msgid ""
 "You should have received a copy of the GNU General Public License along with "
 "this program; if not, write to the Free Software Foundation, Inc., 59 Temple "

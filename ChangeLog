@@ -1,5 +1,14 @@
 2006-03-16	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-window.c: Add backspace as shortcut for "Back".
+	* thunar/thunar-application.c: Save accelerators on exit and restore
+	  them on startup. This way users can customize all shortcuts to their
+	  needs and Thunar will remember those shortcuts.
+	* FAQ, docs/manual/C/Thunar.xml.in: Update the documentation.
+	* po-doc/Thunar.pot, po-doc/*.po: Merge new strings.
+
+2006-03-16	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-location-buttons.c, thunar/thunar-standard-view-ui.xml,
 	  thunar/thunar-standard-view.c: Yet another attempt to set appropriate
 	  labels/tooltips for the cut/copy/paste actions. Cut/copy/paste in file

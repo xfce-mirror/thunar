@@ -62,6 +62,7 @@ enum
 /* Signal identifiers */
 enum
 {
+  BACK,
   RELOAD,
   ZOOM_IN,
   ZOOM_OUT,
@@ -82,6 +83,7 @@ static void     thunar_window_set_property                (GObject              
                                                            guint                   prop_id,
                                                            const GValue           *value,
                                                            GParamSpec             *pspec);
+static gboolean thunar_window_back                        (ThunarWindow           *window);
 static gboolean thunar_window_reload                      (ThunarWindow           *window);
 static gboolean thunar_window_zoom_in                     (ThunarWindow           *window);
 static gboolean thunar_window_zoom_out                    (ThunarWindow           *window);
@@ -168,6 +170,7 @@ struct _ThunarWindowClass
   GtkWindowClass __parent__;
 
   /* internal action signals */
+  gboolean (*back)   (ThunarWindow *window);
   gboolean (*reload)   (ThunarWindow *window);
   gboolean (*zoom_in)  (ThunarWindow *window);
   gboolean (*zoom_out) (ThunarWindow *window);
@@ -320,6 +323,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   gtkwidget_class->unrealize = thunar_window_unrealize;
   gtkwidget_class->configure_event = thunar_window_configure_event;
 
+  klass->back = thunar_window_back;
   klass->reload = thunar_window_reload;
   klass->zoom_in = thunar_window_zoom_in;
   klass->zoom_out = thunar_window_zoom_out;
@@ -382,6 +386,23 @@ thunar_window_class_init (ThunarWindowClass *klass)
                                                       EXO_PARAM_READWRITE));
 
   /**
+   * ThunarWindow::back:
+   * @window : a #ThunarWindow instance.
+   *
+   * Emitted whenever the user requests to go to the
+   * previous visited folder. This is an internal
+   * signal used to bind the action to keys.
+   **/
+  window_signals[BACK] =
+    g_signal_new (I_("back"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarWindowClass, back),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /**
    * ThunarWindow::reload:
    * @window : a #ThunarWindow instance.
    *
@@ -432,6 +453,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
   /* setup the key bindings for the windows */
   binding_set = gtk_binding_set_by_class (klass);
+  gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, 0, "back", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_F5, 0, "reload", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
@@ -787,6 +809,26 @@ thunar_window_set_property (GObject            *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static gboolean
+thunar_window_back (ThunarWindow *window)
+{
+  GtkAction *action;
+
+  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* activate the "back" action */
+  action = thunar_gtk_ui_manager_get_action_by_name (window->ui_manager, "back");
+  if (G_LIKELY (action != NULL))
+    {
+      gtk_action_activate (action);
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 

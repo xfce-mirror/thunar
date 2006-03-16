@@ -249,6 +249,71 @@
         <member><guilabel>Down</guilabel> - reloads the current folder</member>
       </simplelist>
     </sect3>
+
+    <sect3 id="faq-assign-keyboard-shortcuts">
+      <title>How do I assign different keyboard shortcuts?</title>
+
+      <para>
+        If you want to rebind a shortcut, Thunar supports the standard GTK+ way
+        of changing shortcuts: simply hover over the menu option with the mouse
+        pointer and press the keyboard shortcut you want to rebind it to.
+      </para>
+
+      <para>
+        To delete a keyboard assignment, press the <keycap>Backspace</keycap> key
+        while you are on the menu entry.
+      </para>
+
+      <para>
+        If the shortcut doesn't change, then you need to enable the feature in
+        GTK+. This can be achieved in 3 ways:
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>
+            If you are running Xfce 4.3 or above then you can enable <guilabel>Editable
+            menu accelerators</guilabel> in the <guilabel>User Interface Preferences</guilabel>
+            dialog.
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            If you are running GNOME then you can enable <guilabel>Editable menu
+            accelerators</guilabel> in the <guilabel>Menu and Toolbars</guilabel> control
+            center dialog.
+          </para>
+        </listitem>
+
+        <listitem>
+          <para>
+            Otherwise put the following in your <filename>~/.gtkrc-2.0</filename> file
+            (create the file if it doesn't exist):<screen>gtk-can-change-accels=1</screen>
+          </para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3 id="faq-store-keyboard-shortcuts">
+      <title>Where does Thunar store the keyboard shortcuts?</title>
+
+      <para>
+        The custom keyboard shortcuts are stored in the standard GTK+ accel map format in a
+        file located at <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename>. Lines starting
+        with <literal>;</literal> are comments. See the GTK+ documentation for details about the
+        file format.
+      </para>
+
+      <para>
+        If you are a packager or a system administrator and want to provide a system wide default
+        for the keyboard shortcuts, that is different from the default shortcuts in Thunar, you
+        can create a file <filename>Thunar/accels.scm</filename> in one of the <envar>$XDG_CONFIG_DIRS</envar>.
+        For example, if <filename role="directory">/etc/xdg</filename> is part of <envar>$XDG_CONFIG_DIRS</envar>
+        (the default for most Linux distributions), you can install system wide defaults to
+        <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar will then load shortcuts from this file on first startup.
+      </para>
+    </sect3>
   </sect1>
 
 
