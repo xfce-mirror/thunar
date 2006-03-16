@@ -1562,12 +1562,14 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (user_data);
   GtkAdjustment  *vadjustment;
+#if GTK_CHECK_VERSION(2,8,0)
   GtkTreePath    *start_path;
   GtkTreePath    *end_path;
   GtkTreePath    *path;
-  gfloat         value;
-  gint           offset;
-  gint           y, h;
+#endif
+  gfloat          value;
+  gint            offset;
+  gint            y, h;
 
   GDK_THREADS_ENTER ();
 
@@ -1598,6 +1600,7 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
               /* apply the new value */
               gtk_adjustment_set_value (vadjustment, value);
 
+#if GTK_CHECK_VERSION(2,8,0)
               /* drop any pending expand timer source, as its confusing
                * if a path is expanded while scrolling through the view.
                * reschedule it if the drag dest path is still visible.
@@ -1632,6 +1635,7 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
                       gtk_tree_path_free (end_path);
                     }
                 }
+#endif
             }
         }
     }
