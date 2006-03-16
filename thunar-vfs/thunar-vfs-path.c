@@ -777,7 +777,6 @@ thunar_vfs_path_to_uri (const ThunarVfsPath *path,
 
   g_return_val_if_fail (path != NULL, -1);
   g_return_val_if_fail (buffer != NULL, -1);
-  g_return_val_if_fail (bufsize > 0, -1);
   g_return_val_if_fail (error == NULL || *error == NULL, -1);
 
   /* verify that the buffer is large enough */

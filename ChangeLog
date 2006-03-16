@@ -1,5 +1,12 @@
 2006-03-16	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-xfer.c: Also chmod u+rw the target file if we
+	  are not the owner of the source file.
+	* thunar-vfs/thunar-vfs-path.c(thunar_vfs_path_to_uri): Double checking
+	  bufsize doesn't make much sense.
+
+2006-03-16	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-window.c: Add backspace as shortcut for "Back".
 	* thunar/thunar-application.c: Save accelerators on exit and restore
 	  them on startup. This way users can customize all shortcuts to their

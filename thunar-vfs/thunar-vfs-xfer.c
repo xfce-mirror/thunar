@@ -283,10 +283,10 @@ thunar_vfs_xfer_copy_directory (const gchar          *source_absolute_path,
   /* default to the source dir permissions */
   mode = (source_statb->st_mode & ~S_IFMT);
 
-  /* if the source is located on a rdonly medium, we
-   * automatically chmod +rw the destination file.
+  /* if the source is located on a rdonly medium or we are not the owner of
+   * the source directory, we automatically chmod +rw the destination file.
    */
-  if (tvxc_mounted_readonly (source_absolute_path))
+  if (tvxc_mounted_readonly (source_absolute_path) || source_statb->st_uid != getuid ())
     mode |= (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_WRITE);
 
   /* check if the directory exists */
@@ -367,10 +367,10 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
   /* default to the permissions of the source file */
   mode = source_statb->st_mode;
 
-  /* if the source is located on a rdonly medium, we
-   * automatically chmod +rw the destination file.
+  /* if the source is located on a rdonly medium or we are not the owner
+   * of the source file, we automatically chmod +rw the destination file.
    */
-  if (tvxc_mounted_readonly (source_absolute_path))
+  if (tvxc_mounted_readonly (source_absolute_path) || source_statb->st_uid != getuid ())
     mode |= (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_WRITE);
 
   /* try to open the target file for writing */
