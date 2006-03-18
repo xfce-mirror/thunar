@@ -15,7 +15,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
 "10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: KBabel 1.11.2\n"
 
@@ -157,7 +157,7 @@ msgstr "Не удалось удалить \"%s\": %s"
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1711
 #, c-format
 msgid "Failed to load application from file %s"
-msgstr ""
+msgstr "Не удалось загрузить приложение из файла %s"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:134
 msgid "Command"
@@ -200,7 +200,7 @@ msgstr "%s документ"
 #: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "Не удалось создать каталог \"%s\": %s"
+msgstr "Не удалось создать папку \"%s\": %s"
 
 #: ../thunar-vfs/thunar-vfs-path.c:684
 msgid "Path too long to fit into buffer"
@@ -221,12 +221,12 @@ msgstr ""
 #. display info message
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:366
 msgid "Deleting directories..."
-msgstr "Удаление каталогов..."
+msgstr "Удаление папок..."
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:386
 #, c-format
 msgid "Failed to remove directory \"%s\": %s"
-msgstr "Не удалось удалить каталог \"%s\": %s"
+msgstr "Не удалось удалить папку \"%s\": %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:910
 msgid "Cannot transfer the root directory"
@@ -304,7 +304,7 @@ msgstr[2] "%u-ая ссылка на %s"
 #: ../thunar-vfs/thunar-vfs-xfer.c:306
 #, c-format
 msgid "Failed to create directory \"%s\""
-msgstr "Не удалось создать каталог \"%s\""
+msgstr "Не удалось создать папку \"%s\""
 
 #. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
 #: ../thunar-vfs/thunar-vfs-xfer.c:330
@@ -323,7 +323,7 @@ msgid "Failed to open \"%s\" for writing"
 msgstr "Не удалось открыть \"%s\" для записи"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:403
-#, c-format
+#, fuzzy, c-format
 msgid "Failed to read data from \"%s\""
 msgstr "Не удалось прочитать данные из \"%s\""
 
@@ -442,7 +442,7 @@ msgstr "Создание файлов..."
 
 #: ../thunar/thunar-application.c:970
 msgid "Creating directories..."
-msgstr "Создание каталогов..."
+msgstr "Создание папок..."
 
 #. tell the user that it didn't work
 #. display an error to the user
@@ -457,12 +457,12 @@ msgstr "Приложения не выбраны"
 
 #. setup a useful tooltip and ATK description
 #: ../thunar/thunar-chooser-button.c:373
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
 msgstr ""
-"Выбранное приложение используется для открытия этого файла и файлов такого "
-"же типа \"%s\"."
+"Выбранное приложение будеи использоваться для открытия этого файла и файлов "
+"этого типа \"%s\"."
 
 #. add the "Other Application..." choice
 #: ../thunar/thunar-chooser-button.c:514
@@ -486,7 +486,6 @@ msgstr ""
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:300
-#, fuzzy
 msgid "_Browse..."
 msgstr "_Обзор"
 
@@ -520,7 +519,7 @@ msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
 msgstr ""
 "Просмотреть файловую систему, чтобы выбрать приложение, которые будет "
-"использовано в этом действии."
+"использоваться для открытия файлов этого типа."
 
 #. update the "Use as default for this kind of file" tooltip
 #: ../thunar/thunar-chooser-dialog.c:663
@@ -566,12 +565,12 @@ msgstr "Нет доступных"
 #. append the "Recommended Applications:" category
 #: ../thunar/thunar-chooser-model.c:383
 msgid "Recommended Applications"
-msgstr "Рекомендуемые приложения"
+msgstr "Рекомендуемые приложения:"
 
 #. append the "Other Applications:" category
 #: ../thunar/thunar-chooser-model.c:386
 msgid "Other Applications"
-msgstr "Другие приложения"
+msgstr "Другие приложения:"
 
 #. tell the user that we cannot paste
 #: ../thunar/thunar-clipboard-manager.c:361
@@ -588,11 +587,10 @@ msgstr ""
 
 #. create the top label for the column editor dialog
 #: ../thunar/thunar-column-editor.c:177
-#, fuzzy
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
-msgstr "Отображает содержимое текущей папки в виде списка"
+msgstr ""
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:218
@@ -611,7 +609,6 @@ msgstr ""
 
 #. create the "Hide" button
 #: ../thunar/thunar-column-editor.c:244
-#, fuzzy
 msgid "Hi_de"
 msgstr "_Скрыть"
 
@@ -657,12 +654,11 @@ msgstr "Не удается преобразовать имя \"%s\" файла 
 #: ../thunar/thunar-details-view.c:130
 #, fuzzy
 msgid "Configure _Columns..."
-msgstr "Настроить особые действия..."
+msgstr "Настроить столбцы..."
 
 #: ../thunar/thunar-details-view.c:130
-#, fuzzy
 msgid "Configure the columns in the detailed list view"
-msgstr "Отображает содержимое текущей папки в виде списка"
+msgstr "Настроить столбцы для просмотра в виде списка"
 
 #: ../thunar/thunar-details-view.c:414
 msgid "Detailed directory listing"
@@ -674,9 +670,8 @@ msgstr "Просмотр в виде списка"
 
 #. display an error message to the user
 #: ../thunar/thunar-dialogs.c:180
-#, fuzzy
 msgid "Failed to open the documentation browser"
-msgstr "Не удалось открыть каталог с шаблонами"
+msgstr "Не удалось открыть программу для просмотра документации"
 
 #: ../thunar/thunar-dnd.c:62
 msgid "_Copy here"
@@ -699,27 +694,23 @@ msgstr "Не удалось запустить \"%s\""
 
 #: ../thunar/thunar-enum-types.c:60
 msgid "Date Accessed"
-msgstr ""
+msgstr "Доступ"
 
 #: ../thunar/thunar-enum-types.c:61
-#, fuzzy
 msgid "Date Modified"
 msgstr "Дата изменения"
 
 #: ../thunar/thunar-enum-types.c:62
-#, fuzzy
 msgid "Group"
-msgstr "Группа:"
+msgstr "Группа"
 
 #: ../thunar/thunar-enum-types.c:63
-#, fuzzy
 msgid "MIME Type"
 msgstr "Тип"
 
 #: ../thunar/thunar-enum-types.c:65
-#, fuzzy
 msgid "Owner"
-msgstr "Владелец:"
+msgstr "Владелец"
 
 #.
 #. Permissions chooser
@@ -733,14 +724,12 @@ msgid "Type"
 msgstr "Тип"
 
 #: ../thunar/thunar-enum-types.c:69
-#, fuzzy
 msgid "File"
-msgstr "_Файл"
+msgstr "Файл"
 
 #: ../thunar/thunar-enum-types.c:70
-#, fuzzy
 msgid "File Name"
-msgstr "Файловый менеджер"
+msgstr "Имя файла"
 
 #: ../thunar/thunar-file.c:727
 msgid "The root folder has no parent"
@@ -757,7 +746,7 @@ msgstr "Назад"
 
 #: ../thunar/thunar-history.c:179
 msgid "Go to the previous visited folder"
-msgstr "Перейти к предыдущему посещённому каталогу"
+msgstr "Перейти к предыдущей посещённой папке"
 
 #. create the "forward" action
 #: ../thunar/thunar-history.c:184
@@ -766,7 +755,7 @@ msgstr "Вперёд"
 
 #: ../thunar/thunar-history.c:184
 msgid "Go to the next visited folder"
-msgstr "Перейти к следующему посещённому каталогу"
+msgstr "Перейти к следующей посещённой папке"
 
 #: ../thunar/thunar-icon-factory.c:675
 #, c-format
@@ -852,7 +841,7 @@ msgstr "Открыть в новом окне"
 
 #: ../thunar/thunar-launcher.c:121
 msgid "Open the selected directories in new Thunar windows"
-msgstr "Открыть выбранные каталоги в новых окнах"
+msgstr "Открыть выбранные папки в новых окнах"
 
 #: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
 msgid "Open With Other _Application..."
@@ -883,7 +872,7 @@ msgstr[2] "Не удалось открыть %d файлов"
 
 #: ../thunar/thunar-launcher.c:634
 msgid "Are you sure you want to open all folders?"
-msgstr "Вы уверены, что хотите открыть все каталоги?"
+msgstr "Вы уверены, что хотите открыть все папки?"
 
 #: ../thunar/thunar-launcher.c:636
 #, c-format
@@ -914,9 +903,9 @@ msgstr[2] "Открыть в %d новых окнах"
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
-msgstr[0] "Открыть выбранный каталог в %d новом окне"
-msgstr[1] "Открыть выбранные каталоги в %d новых окнах"
-msgstr[2] "Открыть выбранные каталоги в %d новых окнах"
+msgstr[0] "Открыть выбранную папку в %d новом окне"
+msgstr[1] "Открыть выбранные папки в %d новых окнах"
+msgstr[2] "Открыть выбранные папки в %d новых окнах"
 
 #: ../thunar/thunar-launcher.c:752
 msgid "Open the selected file"
@@ -1043,16 +1032,17 @@ msgstr "Открыть \"%s\" в новом окне"
 
 #. add the "Open in New Window" action
 #: ../thunar/thunar-location-buttons.c:1294
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr ""
+"Переместить или копировать выбранные файлы командой Вырезать или Копировать"
 
 #. append the "Paste Into Folder" menu action
 #: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:958
 #, fuzzy
 msgid "_Paste Into Folder"
-msgstr "Вставить файлы в каталог"
+msgstr "Вставить файлы в папку"
 
 #: ../thunar/thunar-location-dialog.c:88
 msgid "Open Location"
@@ -1136,11 +1126,11 @@ msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:455
 msgid "Correct folder permissions..."
-msgstr "Исправление прав для каталога..."
+msgstr "Корректировка прав для папки..."
 
 #: ../thunar/thunar-permissions-chooser.c:456
 msgid "Click here to automatically fix the folder permissions."
-msgstr "Нажмите, чтобы автоматически исправить права для каталога."
+msgstr "Нажмите, чтобы автоматически исправить права для папки."
 
 #: ../thunar/thunar-permissions-chooser.c:467
 msgid "Please wait..."
@@ -1267,11 +1257,11 @@ msgstr "Последний активный режим просмотра"
 
 #: ../thunar/thunar-preferences-dialog.c:280
 msgid "Sort _folders before files"
-msgstr "Отображать _каталоги перед файлами"
+msgstr "Отображать _папки перед файлами"
 
 #: ../thunar/thunar-preferences-dialog.c:282
 msgid "Select this option to list folders before files when you sort a folder."
-msgstr "Используйте эту настройку, чтобы каталоги отображались перед файлами."
+msgstr "Используйте эту настройку, чтобы папки отображались перед файлами."
 
 #: ../thunar/thunar-preferences-dialog.c:286
 msgid "_Show thumbnails"
@@ -1301,89 +1291,81 @@ msgstr ""
 #. Side Pane
 #.
 #: ../thunar/thunar-preferences-dialog.c:320
-#, fuzzy
 msgid "Side Pane"
-msgstr "_Боковая панель"
+msgstr "Боковая панель"
 
 #: ../thunar/thunar-preferences-dialog.c:330
-#, fuzzy
 msgid "Shortcuts Pane"
-msgstr "_Закладки"
+msgstr "Панель закладок"
 
 #: ../thunar/thunar-preferences-dialog.c:342
-#, fuzzy
 msgid "_Icon Size:"
-msgstr "Размер значков"
+msgstr "Размер значков:"
 
 #: ../thunar/thunar-preferences-dialog.c:347
 #: ../thunar/thunar-preferences-dialog.c:398
 msgid "Very Small"
-msgstr ""
+msgstr "Крошечные"
 
 #: ../thunar/thunar-preferences-dialog.c:348
 #: ../thunar/thunar-preferences-dialog.c:399
 msgid "Smaller"
-msgstr ""
+msgstr "Очень маленькие"
 
 #: ../thunar/thunar-preferences-dialog.c:349
 #: ../thunar/thunar-preferences-dialog.c:400
 msgid "Small"
-msgstr ""
+msgstr "Маленькие"
 
 #: ../thunar/thunar-preferences-dialog.c:350
 #: ../thunar/thunar-preferences-dialog.c:401
-#, fuzzy
 msgid "Normal"
-msgstr "_Нормальный размер"
+msgstr "Нормальные"
 
 #: ../thunar/thunar-preferences-dialog.c:351
 #: ../thunar/thunar-preferences-dialog.c:402
 msgid "Large"
-msgstr ""
+msgstr "Крупные"
 
 #: ../thunar/thunar-preferences-dialog.c:352
 #: ../thunar/thunar-preferences-dialog.c:403
 msgid "Larger"
-msgstr ""
+msgstr "Большие"
 
 #: ../thunar/thunar-preferences-dialog.c:353
 #: ../thunar/thunar-preferences-dialog.c:404
 msgid "Very Large"
-msgstr ""
+msgstr "Очень большие"
 
 #: ../thunar/thunar-preferences-dialog.c:370
-#, fuzzy
 msgid "Show Icon _Emblems"
-msgstr "Отображать эмблемы"
+msgstr "Отображать эмблемы на значках"
 
 #: ../thunar/thunar-preferences-dialog.c:372
 #, fuzzy
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
-msgstr "Отображать эмблемы для закладок."
+msgstr ""
+"Используйте эту настроку для отображения эмблем на значках в панели закладок."
 
 #: ../thunar/thunar-preferences-dialog.c:381
-#, fuzzy
 msgid "Tree Pane"
-msgstr "_Боковая панель"
+msgstr "Дерево"
 
 #: ../thunar/thunar-preferences-dialog.c:393
-#, fuzzy
 msgid "Icon _Size:"
-msgstr "Размер значков"
+msgstr "Размер значков:"
 
 #: ../thunar/thunar-preferences-dialog.c:421
-#, fuzzy
 msgid "Show Icon E_mblems"
-msgstr "Отображать эмблемы"
+msgstr "Отображать эмблемы на значках"
 
 #: ../thunar/thunar-preferences-dialog.c:423
-#, fuzzy
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
-msgstr "Отображать эмблемы для закладок."
+msgstr "Используйте эту настроку для отображения эмблем на значках в дереве."
 
 #.
 #. Behavior
@@ -1409,7 +1391,6 @@ msgid "Advanced"
 msgstr "Дополнительно"
 
 #: ../thunar/thunar-preferences-dialog.c:480
-#, fuzzy
 msgid "Folder Permissions"
 msgstr "Права"
 
@@ -1419,6 +1400,9 @@ msgid ""
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr ""
+"При изменении прав для папки, вы также можете\n"
+"применять изменения к ее содержимому. Выберите\n"
+"поведение по умолчанию:"
 
 #: ../thunar/thunar-preferences-dialog.c:500
 msgid "Ask everytime"
@@ -1426,11 +1410,11 @@ msgstr "Каждый раз спрашивать"
 
 #: ../thunar/thunar-preferences-dialog.c:501
 msgid "Apply to Folder Only"
-msgstr ""
+msgstr "Применять только к самой папке"
 
 #: ../thunar/thunar-preferences-dialog.c:502
 msgid "Apply to Folder and Contents"
-msgstr ""
+msgstr "Применять к папке и ее содержимому"
 
 #: ../thunar/thunar-progress-dialog.c:458
 #, c-format
@@ -1477,7 +1461,7 @@ msgstr "Открывать с помощью:"
 
 #: ../thunar/thunar-properties-dialog.c:282
 msgid "Link Target:"
-msgstr ""
+msgstr "Цель ссылки:"
 
 #.
 #. Third box (modified, accessed)
@@ -1600,16 +1584,16 @@ msgstr "Контекстное меню файла"
 
 #: ../thunar/thunar-standard-view.c:305
 msgid "Folder Context Menu"
-msgstr "Контекстное меню каталога"
+msgstr "Контекстное меню папки"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-standard-view.c:306 ../thunar/thunar-tree-view.c:922
 msgid "Create _Folder..."
-msgstr "Создать _каталог..."
+msgstr "Создать _папку..."
 
 #: ../thunar/thunar-standard-view.c:306
 msgid "Create an empty folder within the current folder"
-msgstr "Создать пустой каталог внутри текущего"
+msgstr "Создать пустую папку внутри текущей"
 
 #: ../thunar/thunar-standard-view.c:307
 msgid "_Properties..."
@@ -1637,8 +1621,10 @@ msgid "_Paste"
 msgstr "Вст_авить файлы"
 
 #: ../thunar/thunar-standard-view.c:310
+#, fuzzy
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
+"Переместить или копировать выбранные файлы командой Вырезать или Копировать"
 
 #: ../thunar/thunar-standard-view.c:311
 #, fuzzy
@@ -1648,13 +1634,16 @@ msgstr "_Удалить файл"
 #: ../thunar/thunar-standard-view.c:312
 #, fuzzy
 msgid "Paste Into Folder"
-msgstr "Вставить файлы в каталог"
+msgstr "Вставить файлы в папку"
 
 #: ../thunar/thunar-standard-view.c:312
+#, fuzzy
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr ""
+"Переместить или копировать выбранные файлы в указанную папку командой "
+"Вырезать или Копировать"
 
 #: ../thunar/thunar-standard-view.c:313
 msgid "Select _all Files"
@@ -1699,7 +1688,7 @@ msgstr "Создать _документ"
 
 #: ../thunar/thunar-standard-view.c:1220
 msgid "Loading folder contents..."
-msgstr "Загрузка содержимого каталога..."
+msgstr "Загрузка содержимого папки..."
 
 #. ask the user to enter a name for the new empty file
 #: ../thunar/thunar-standard-view.c:1716
@@ -1713,12 +1702,11 @@ msgstr "Новый файл..."
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-standard-view.c:1767 ../thunar/thunar-tree-view.c:1222
 msgid "New Folder"
-msgstr "Новый каталог"
+msgstr "Новая папка"
 
 #: ../thunar/thunar-standard-view.c:1767 ../thunar/thunar-tree-view.c:1222
-#, fuzzy
 msgid "Create New Folder"
-msgstr "Создать _каталог..."
+msgstr "Создать новую папку"
 
 #. generate a title for the create dialog
 #: ../thunar/thunar-standard-view.c:1816
@@ -1769,7 +1757,7 @@ msgstr "Переименовать \"%s\""
 #: ../thunar/thunar-standard-view.c:2895
 #, c-format
 msgid "Failed to open directory \"%s\""
-msgstr "Не удалось открыть каталог: \"%s\""
+msgstr "Не удалось открыть папку: \"%s\""
 
 #: ../thunar/thunar-standard-view.c:3221
 #, fuzzy
@@ -1784,6 +1772,7 @@ msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
 msgstr[1] ""
+msgstr[2] ""
 
 #: ../thunar/thunar-standard-view.c:3240
 #, fuzzy
@@ -1810,14 +1799,12 @@ msgstr[1] "Создать символическую ссылку для каж�
 msgstr[2] "Создать символическую ссылку для каждого выбранного файла"
 
 #: ../thunar/thunar-stock.c:55
-#, fuzzy
 msgid "Create"
-msgstr "Создать действие"
+msgstr "Создать"
 
 #: ../thunar/thunar-stock.c:56
-#, fuzzy
 msgid "Rename"
-msgstr "_Переименовать..."
+msgstr "Переименовать"
 
 #. tell the user that no templates were found
 #: ../thunar/thunar-templates-action.c:375
@@ -1830,9 +1817,8 @@ msgid "_Empty File"
 msgstr "Пустой _файл"
 
 #: ../thunar/thunar-tree-model.c:467
-#, fuzzy
 msgid "Loading..."
-msgstr "Подготовка..."
+msgstr "Загрузка..."
 
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:975
@@ -1849,9 +1835,8 @@ msgid "Open New _Window"
 msgstr "Открыть _новое окно"
 
 #: ../thunar/thunar-window.c:239
-#, fuzzy
 msgid "Open a new Thunar window for the displayed location"
-msgstr "Открыть новое окно Thunar для текущего адреса"
+msgstr "Открыть новое окно Thunar для отображаемого адреса"
 
 #: ../thunar/thunar-window.c:240
 msgid "Close _All Windows"
@@ -1891,7 +1876,7 @@ msgstr "_Обновить"
 
 #: ../thunar/thunar-window.c:245
 msgid "Reload the current folder"
-msgstr "Обновить текущий каталог"
+msgstr "Обновить текущую папку"
 
 #: ../thunar/thunar-window.c:246
 msgid "_Location Selector"
@@ -1967,11 +1952,11 @@ msgstr "_Справка"
 
 #: ../thunar/thunar-window.c:257
 msgid "_Contents"
-msgstr ""
+msgstr "_Содержимое"
 
 #: ../thunar/thunar-window.c:257
 msgid "Display Thunar user manual"
-msgstr ""
+msgstr "Показать руководство пользователя Thunar"
 
 #: ../thunar/thunar-window.c:258
 msgid "_About"
@@ -1999,12 +1984,11 @@ msgstr "Включает/выключает панель закладок"
 
 #: ../thunar/thunar-window.c:265
 msgid "_Tree"
-msgstr ""
+msgstr "_Дерево"
 
 #: ../thunar/thunar-window.c:265
-#, fuzzy
 msgid "Toggles the visibility of the tree pane"
-msgstr "Включает/выключает панель закладок"
+msgstr "Включает/выключает дерево"
 
 #: ../thunar/thunar-window.c:266
 msgid "St_atusbar"
@@ -2167,12 +2151,10 @@ msgid "Delete the currently selected action."
 msgstr "Удалить выбранное действие"
 
 #: ../thunar-uca/thunar-uca-chooser.c:217
-#, fuzzy
 msgid "Move the currently selected action up by one row."
 msgstr "Сдвинуть выбранное действие на одну позицию выше"
 
 #: ../thunar-uca/thunar-uca-chooser.c:227
-#, fuzzy
 msgid "Move the currently selected action down by one row."
 msgstr "Сдвинуть выбранное действие на одну позицию ниже"
 
@@ -2309,13 +2291,12 @@ msgstr ""
 "нескольких шаблонов, разделяйте их точкой с запятой (напр. *.txt;*.doc)."
 
 #: ../thunar-uca/thunar-uca-editor.c:401
-#, fuzzy
 msgid "Appears if selection contains:"
 msgstr "Появляться, если выделение содержит:"
 
 #: ../thunar-uca/thunar-uca-editor.c:414
 msgid "_Directories"
-msgstr "_Каталоги"
+msgstr "_Папки"
 
 #: ../thunar-uca/thunar-uca-editor.c:418
 msgid "_Audio Files"
@@ -2418,49 +2399,9 @@ msgid "Thunar File Manager"
 msgstr "Файловый менеджер Thunar"
 
 #: ../Thunar-folder-handler.desktop.in.h:1
-#, fuzzy
 msgid "Open Folder"
-msgstr "Новый каталог"
+msgstr "Окрыть папку"
 
 #: ../Thunar-folder-handler.desktop.in.h:2
-#, fuzzy
 msgid "Open the specified folders in Thunar"
-msgstr "Открыть выбранные каталоги в новых окнах"
-
-#~ msgid "Failed to open /proc/mounts: %s"
-#~ msgstr "Не удалось открыть /proc/mounts: %s"
-
-#~ msgid "Paste files from the clipboard into \"%s\""
-#~ msgstr "Вставить файлы из буфера обмена в \"%s\""
-
-#~ msgid "_Paste Files Here"
-#~ msgstr "Вст_авить файлы сюда"
-
-#~ msgid "_Copy Files"
-#~ msgstr "_Копировать файлы"
-
-#~ msgid "Copy the selected files"
-#~ msgstr "Копировать выбранные файлы"
-
-#~ msgid "Cu_t Files"
-#~ msgstr "_Вырезать файлы"
-
-#~ msgid "Cut the selected files"
-#~ msgstr "Вырезать выбранные файлы"
-
-#~ msgid "_Delete Files"
-#~ msgstr "_Удалить файлы"
-
-#~ msgid "_Copy File"
-#~ msgid_plural "_Copy Files"
-#~ msgstr[0] "_Копировать файл"
-#~ msgstr[1] "_Копировать файлы"
-#~ msgstr[2] "_Копировать файлы"
-
-#, fuzzy
-#~ msgid "Home Folder"
-#~ msgstr "Новый каталог"
-
-#, fuzzy
-#~ msgid "Shortcut _Icon Size:"
-#~ msgstr "Сортировать по _размеру"
+msgstr "Открыть выбранные папки в новых окнах"
