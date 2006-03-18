@@ -81,7 +81,7 @@ typedef enum
 
 
 
-static gboolean         tvxc_mounted_readonly           (const gchar          *path);
+static gboolean         tvxc_mounted_readonly           (gint                  fd);
 static void             tvxc_set_error_from_errno       (GError              **error,
                                                          const gchar          *message,
                                                          const gchar          *path);
@@ -133,14 +133,14 @@ static ThunarVfsMonitor *thunar_vfs_xfer_monitor = NULL;
 
 
 static gboolean
-tvxc_mounted_readonly (const gchar *path)
+tvxc_mounted_readonly (gint fd)
 {
 #if defined(HAVE_STATVFS)
   struct statvfs statvfsb;
-  return (statvfs (path, &statvfsb) == 0 && (statvfsb.f_flag & ST_RDONLY) != 0);
+  return (fstatvfs (fd, &statvfsb) == 0 && (statvfsb.f_flag & ST_RDONLY) != 0);
 #elif defined(HAVE_STATFS)
   struct statfs statfsb;
-  return (statfs (path, &statfsb) == 0 && (statfsb.f_flags & MNT_RDONLY) != 0);
+  return (fstatfs (fd, &statfsb) == 0 && (statfsb.f_flags & MNT_RDONLY) != 0);
 #else
   return FALSE;
 #endif
@@ -283,11 +283,8 @@ thunar_vfs_xfer_copy_directory (const gchar          *source_absolute_path,
   /* default to the source dir permissions */
   mode = (source_statb->st_mode & ~S_IFMT);
 
-  /* if the source is located on a rdonly medium or we are not the owner of
-   * the source directory, we automatically chmod +rw the destination file.
-   */
-  if (tvxc_mounted_readonly (source_absolute_path) || source_statb->st_uid != getuid ())
-    mode |= (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_WRITE);
+  /* always make sure that we can write to newly created directories */
+  mode |= (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_WRITE);
 
   /* check if the directory exists */
   if (g_file_test (target_absolute_path, G_FILE_TEST_IS_DIR))
@@ -370,7 +367,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
   /* if the source is located on a rdonly medium or we are not the owner
    * of the source file, we automatically chmod +rw the destination file.
    */
-  if (tvxc_mounted_readonly (source_absolute_path) || source_statb->st_uid != getuid ())
+  if (tvxc_mounted_readonly (source_fd) || source_statb->st_uid != getuid ())
     mode |= (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_WRITE);
 
   /* try to open the target file for writing */
