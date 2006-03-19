@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-18 17:49+0900\n"
-"PO-Revision-Date: 2006-03-13 21:23+0900\n"
+"PO-Revision-Date: 2006-03-19 10:40+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -1019,17 +1019,17 @@ msgstr "「%s」を新規ウィンドウで開く"
 
 #. add the "Open in New Window" action
 #: ../thunar/thunar-location-buttons.c:1294
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr ""
-"既に切り取りまたはコピーで選択されているファイルを移動またはコピーします。"
+"以前に「切り取り」または「コピー」で選択されているファイルを「%s」に「移動」"
+"または「コピー」します。"
 
 #. append the "Paste Into Folder" menu action
 #: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:958
-#, fuzzy
 msgid "_Paste Into Folder"
-msgstr "ファイルをフォルダに貼り付け"
+msgstr "フォルダに貼り付け(_P)"
 
 #: ../thunar/thunar-location-dialog.c:88
 msgid "Open Location"
@@ -1291,9 +1291,8 @@ msgid "Shortcuts Pane"
 msgstr "ショートカットペイン"
 
 #: ../thunar/thunar-preferences-dialog.c:342
-#, fuzzy
 msgid "_Icon Size:"
-msgstr "アイコンのサイズ"
+msgstr "アイコンのサイズ(_I):"
 
 #: ../thunar/thunar-preferences-dialog.c:347
 #: ../thunar/thunar-preferences-dialog.c:398
@@ -1343,28 +1342,24 @@ msgstr ""
 "らのシンボルはフォルダのプロパティのダイアログで定義されています。"
 
 #: ../thunar/thunar-preferences-dialog.c:381
-#, fuzzy
 msgid "Tree Pane"
-msgstr "サイドペイン"
+msgstr "ツリーペイン"
 
 #: ../thunar/thunar-preferences-dialog.c:393
-#, fuzzy
 msgid "Icon _Size:"
-msgstr "アイコンのサイズ"
+msgstr "アイコンのサイズ(_S):"
 
 #: ../thunar/thunar-preferences-dialog.c:421
-#, fuzzy
 msgid "Show Icon E_mblems"
-msgstr "アイコンのシンボルを表示(_E)"
+msgstr "シンボルを表示(_M)"
 
 #: ../thunar/thunar-preferences-dialog.c:423
-#, fuzzy
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"ショートカットペインにある全てのフォルダにシンボルアイコンを表示します。これ"
-"らのシンボルはフォルダのプロパティのダイアログで定義されています。"
+"ツリーペインにある全てのフォルダにシンボルアイコンを表示します。これらのシン"
+"ボルはフォルダのプロパティのダイアログで定義されています。"
 
 #.
 #. Behavior
@@ -1596,45 +1591,39 @@ msgstr "選択したファイルのプロパティを表示します。"
 
 #. append the "Cut" menu action
 #: ../thunar/thunar-standard-view.c:308 ../thunar/thunar-tree-view.c:934
-#, fuzzy
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
 #. append the "Copy" menu action
 #: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:946
-#, fuzzy
 msgid "_Copy"
-msgstr "ここにコピー(_C)"
+msgstr "コピー(_C)"
 
 #: ../thunar/thunar-standard-view.c:310
-#, fuzzy
 msgid "_Paste"
 msgstr "貼り付け(_P)"
 
 #: ../thunar/thunar-standard-view.c:310
-#, fuzzy
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
-"既に切り取りまたはコピーで選択されているファイルを移動またはコピーします。"
+"以前に「切り取り」または「コピー」で選択されているファイルを「移動」または"
+"「コピー」します。"
 
 #: ../thunar/thunar-standard-view.c:311
-#, fuzzy
 msgid "_Delete"
 msgstr "削除(_D)"
 
 #: ../thunar/thunar-standard-view.c:312
-#, fuzzy
 msgid "Paste Into Folder"
-msgstr "ファイルをフォルダに貼り付け"
+msgstr "フォルダに貼り付け"
 
 #: ../thunar/thunar-standard-view.c:312
-#, fuzzy
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr ""
-"既に切り取りまたはコピーで選択されているファイルを選択したフォルダに移動また"
-"はコピーします。"
+"以前に「切り取り」または「コピー」で選択されているファイルを選択したフォルダ"
+"に「移動」または「コピー」します。"
 
 #: ../thunar/thunar-standard-view.c:313
 msgid "Select _all Files"
@@ -1653,7 +1642,6 @@ msgid "Select all files that match a certain pattern"
 msgstr "ある特定のパターンに一致する全てのファイルを選択します。"
 
 #: ../thunar/thunar-standard-view.c:315
-#, fuzzy
 msgid "Du_plicate"
 msgstr "コピーを作成(_P)"
 
@@ -1748,34 +1736,30 @@ msgid "Failed to open directory \"%s\""
 msgstr "フォルダ「%s」を開くのに失敗しました。"
 
 #: ../thunar/thunar-standard-view.c:3221
-#, fuzzy
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
-msgstr[0] "標準のアプリケーションを使用して選択したファイルを開きます。"
+msgstr[0] "選択したファイルを移動します。"
 
 #: ../thunar/thunar-standard-view.c:3229
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
-msgstr[0] ""
+msgstr[0] "選択したファイルをコピーします。"
 msgstr[1] ""
 
 #: ../thunar/thunar-standard-view.c:3240
-#, fuzzy
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "選択したファイルを削除します。"
 
 #: ../thunar/thunar-standard-view.c:3254
-#, fuzzy
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
-msgstr[0] "選択したそれぞれのファイルのコピーを作成します。"
+msgstr[0] "選択したファイルのコピーを作成します。"
 
 #: ../thunar/thunar-standard-view.c:3263
-#, fuzzy
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
-msgstr[0] "選択したそれぞれのファイルのリンクを作成します。"
+msgstr[0] "選択したファイルのリンクを作成します。"
 
 #: ../thunar/thunar-stock.c:55
 msgid "Create"
@@ -1796,15 +1780,13 @@ msgid "_Empty File"
 msgstr "空のファイル(_E)"
 
 #: ../thunar/thunar-tree-model.c:467
-#, fuzzy
 msgid "Loading..."
-msgstr "準備しています..."
+msgstr "読み込んでいます..."
 
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:975
-#, fuzzy
 msgid "P_roperties..."
-msgstr "プロパティ(_P)..."
+msgstr "プロパティ(_R)..."
 
 #: ../thunar/thunar-window.c:238
 msgid "_File"
@@ -1964,12 +1946,11 @@ msgstr "ショートカットペインを表示/隠します。"
 
 #: ../thunar/thunar-window.c:265
 msgid "_Tree"
-msgstr ""
+msgstr "ツリー(_T)"
 
 #: ../thunar/thunar-window.c:265
-#, fuzzy
 msgid "Toggles the visibility of the tree pane"
-msgstr "ショートカットペインを表示/隠します。"
+msgstr "ツリーペインを表示/隠します。"
 
 #: ../thunar/thunar-window.c:266
 msgid "St_atusbar"
