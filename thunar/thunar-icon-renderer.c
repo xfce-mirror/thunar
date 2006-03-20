@@ -354,6 +354,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
   ThunarFileIconState     icon_state;
   ThunarIconRenderer     *icon_renderer = THUNAR_ICON_RENDERER (renderer);
   ThunarIconFactory      *icon_factory;
+  GtkIconSource          *icon_source;
   GtkIconTheme           *icon_theme;
   GdkRectangle            emblem_area;
   GdkRectangle            icon_area;
@@ -449,6 +450,25 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               g_object_unref (G_OBJECT (icon));
               icon = temp;
             }
+        }
+
+      /* check if we should render an insensitive icon */
+      if (G_UNLIKELY (GTK_WIDGET_STATE (widget) == GTK_STATE_INSENSITIVE || !renderer->sensitive))
+        {
+          /* allocate an icon source */
+          icon_source = gtk_icon_source_new ();
+          gtk_icon_source_set_pixbuf (icon_source, icon);
+          gtk_icon_source_set_size_wildcarded (icon_source, FALSE);
+          gtk_icon_source_set_size (icon_source, GTK_ICON_SIZE_SMALL_TOOLBAR);
+
+          /* render the insensitive icon */
+          temp = gtk_style_render_icon (widget->style, icon_source, gtk_widget_get_direction (widget),
+                                        GTK_STATE_INSENSITIVE, -1, widget, "gtkcellrendererpixbuf");
+          g_object_unref (G_OBJECT (icon));
+          icon = temp;
+
+          /* release the icon source */
+          gtk_icon_source_free (icon_source);
         }
 
       /* render the invalid parts of the icon */
