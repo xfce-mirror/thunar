@@ -2,7 +2,9 @@
 
 INCLUDES =								\
 	-I$(top_builddir)						\
+	-I$(top_builddir)/plugins					\
 	-I$(top_srcdir)							\
+	-I$(top_srcdir)/plugins						\
 	-DBINDIR=\"$(bindir)\"						\
 	-DDATADIR=\"$(datadir)\"					\
 	-DEXO_API_SUBJECT_TO_CHANGE					\

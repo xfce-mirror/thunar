@@ -1,9 +1,5 @@
 # $Id$
 
-if ENABLE_UCA_PLUGIN
-SUBDIRS_THUNAR_UCA = thunar-uca
-endif
-
 SUBDIRS =								\
 	icons								\
 	pixmaps								\
@@ -16,7 +12,7 @@ SUBDIRS =								\
 	tests								\
 	docs								\
 	examples							\
-	$(SUBDIRS_THUNAR_UCA)
+	plugins
 
 AUTOMAKE_OPTIONS =							\
 	1.8								\
