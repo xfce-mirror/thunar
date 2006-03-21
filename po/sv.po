@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-18 17:49+0900\n"
+"POT-Creation-Date: 2006-03-21 22:27+0900\n"
 "PO-Revision-Date: 2006-02-22 16:28+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -181,7 +181,7 @@ msgid "The icon of the mime handler"
 msgstr "Ikonen för mime-handtaget"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:176
-#: ../thunar/thunar-enum-types.c:64
+#: ../thunar/thunar-enum-types.c:94
 msgid "Name"
 msgstr "Namn"
 
@@ -207,7 +207,7 @@ msgstr "Sökväg för lång för att passa i buffert"
 msgid "URI too long to fit into buffer"
 msgstr "URI för lång för att passa i buffert"
 
-#: ../thunar-vfs/thunar-vfs-thumb.c:176 ../thunar/thunar-enum-types.c:67
+#: ../thunar-vfs/thunar-vfs-thumb.c:176 ../thunar/thunar-enum-types.c:97
 msgid "Size"
 msgstr "Storlek"
 
@@ -296,105 +296,105 @@ msgstr[0] "länk nummer %u till %s"
 msgstr[1] "länk nummer %u till %s"
 
 #. setup the error return
-#: ../thunar-vfs/thunar-vfs-xfer.c:306
+#: ../thunar-vfs/thunar-vfs-xfer.c:303
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Misslyckades att skapa katalogen \"%s\""
 
 #. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
-#: ../thunar-vfs/thunar-vfs-xfer.c:330
+#: ../thunar-vfs/thunar-vfs-xfer.c:327
 #, c-format
 msgid "Failed to create named fifo \"%s\""
 msgstr "Misslyckades att skapa namngivet rör \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:363
+#: ../thunar-vfs/thunar-vfs-xfer.c:360
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Misslyckades att öppna \"%s\" för läsning"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:384
+#: ../thunar-vfs/thunar-vfs-xfer.c:381
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Misslyckades att öppna \"%s\" för skrivning"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:403
+#: ../thunar-vfs/thunar-vfs-xfer.c:400
 #, c-format
 msgid "Failed to read data from \"%s\""
 msgstr "Misslyckades att läsa data från \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:419
+#: ../thunar-vfs/thunar-vfs-xfer.c:416
 #, c-format
 msgid "Failed to write data to \"%s\""
 msgstr "Misslyckades att skriva data till \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:438
+#: ../thunar-vfs/thunar-vfs-xfer.c:435
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "misslyckades att ta bort \"%s\""
 
 #. tell the caller that the job was cancelled
-#: ../thunar-vfs/thunar-vfs-xfer.c:443
+#: ../thunar-vfs/thunar-vfs-xfer.c:440
 msgid "Operation canceled"
 msgstr "Operationen avbröts"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:483
+#: ../thunar-vfs/thunar-vfs-xfer.c:480
 #, c-format
 msgid "Failed to read link target from \"%s\""
 msgstr "Misslyckades att läsa länkmål från \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:491 ../thunar-vfs/thunar-vfs-xfer.c:604
+#: ../thunar-vfs/thunar-vfs-xfer.c:488 ../thunar-vfs/thunar-vfs-xfer.c:601
 #, c-format
 msgid "Failed to create symbolic link \"%s\""
 msgstr "Misslyckades att skapa symbolisk länk \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:499
+#: ../thunar-vfs/thunar-vfs-xfer.c:496
 #, c-format
 msgid "Failed to change mode of \"%s\""
 msgstr "Misslyckades att ändra rättigheter på \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:533 ../thunar-vfs/thunar-vfs-xfer.c:593
+#: ../thunar-vfs/thunar-vfs-xfer.c:530 ../thunar-vfs/thunar-vfs-xfer.c:590
 #, c-format
 msgid "Failed to determine file info for \"%s\""
 msgstr "Misslyckades att fastställa filinformation för \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:562
+#: ../thunar-vfs/thunar-vfs-xfer.c:559
 #, c-format
 msgid "Failed to copy special file \"%s\""
 msgstr "Misslyckades att kopiera specialfil \"%s\""
 
-#: ../thunar/main.c:49
+#: ../thunar/main.c:50
 msgid "Run in daemon mode"
 msgstr "Kör i demonläge"
 
-#: ../thunar/main.c:51
+#: ../thunar/main.c:52
 msgid "Run in daemon mode (not supported)"
 msgstr "Kör i demonläge (stöds ej)"
 
-#: ../thunar/main.c:54
+#: ../thunar/main.c:55
 msgid "Quit a running Thunar instance"
 msgstr "Avsluta en körande instans av Thunar"
 
-#: ../thunar/main.c:56
+#: ../thunar/main.c:57
 msgid "Quit a running Thunar instance (not supported)"
 msgstr "Avsluta en körande instans av Thunar (stöds ej)"
 
 #. setup application name
-#: ../thunar/main.c:78
+#: ../thunar/main.c:79
 msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:88
+#: ../thunar/main.c:89
 msgid "[FILES...]"
 msgstr "[FILER...]"
 
-#: ../thunar/main.c:95
+#: ../thunar/main.c:96
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Thunar: Misslyckades att öppna display: %s\n"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:100
+#: ../thunar/main.c:101
 #, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar: %s\n"
@@ -525,32 +525,39 @@ msgid ""
 "application."
 msgstr ""
 
-#: ../thunar/thunar-chooser-dialog.c:684 ../thunar-uca/thunar-uca-editor.c:491
+#: ../thunar/thunar-chooser-dialog.c:684
+#: ../plugins/thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Välj ett program"
 
-#: ../thunar/thunar-chooser-dialog.c:694 ../thunar-uca/thunar-uca-editor.c:501
-#: ../thunar-uca/thunar-uca-editor.c:660
+#: ../thunar/thunar-chooser-dialog.c:694
+#: ../plugins/thunar-uca/thunar-uca-editor.c:501
+#: ../plugins/thunar-uca/thunar-uca-editor.c:660
 msgid "All Files"
 msgstr "Alla filer"
 
-#: ../thunar/thunar-chooser-dialog.c:699 ../thunar-uca/thunar-uca-editor.c:506
+#: ../thunar/thunar-chooser-dialog.c:699
+#: ../plugins/thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Körbara filer"
 
-#: ../thunar/thunar-chooser-dialog.c:714 ../thunar-uca/thunar-uca-editor.c:521
+#: ../thunar/thunar-chooser-dialog.c:714
+#: ../plugins/thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Perl-skript"
 
-#: ../thunar/thunar-chooser-dialog.c:720 ../thunar-uca/thunar-uca-editor.c:527
+#: ../thunar/thunar-chooser-dialog.c:720
+#: ../plugins/thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Python-skript"
 
-#: ../thunar/thunar-chooser-dialog.c:726 ../thunar-uca/thunar-uca-editor.c:533
+#: ../thunar/thunar-chooser-dialog.c:726
+#: ../plugins/thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Ruby-skript"
 
-#: ../thunar/thunar-chooser-dialog.c:732 ../thunar-uca/thunar-uca-editor.c:539
+#: ../thunar/thunar-chooser-dialog.c:732
+#: ../plugins/thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Skalskript"
 
@@ -692,27 +699,40 @@ msgstr "_Länka hit"
 msgid "Failed to execute file \"%s\""
 msgstr "Misslyckades att starta filen \"%s\""
 
-#: ../thunar/thunar-enum-types.c:60
+#: ../thunar/thunar-enum-types.c:44
+#, fuzzy
+msgid "Name only"
+msgstr "Endast läsa"
+
+#: ../thunar/thunar-enum-types.c:45
+msgid "Suffix only"
+msgstr ""
+
+#: ../thunar/thunar-enum-types.c:46
+msgid "Name and Suffix"
+msgstr ""
+
+#: ../thunar/thunar-enum-types.c:90
 #, fuzzy
 msgid "Date Accessed"
 msgstr "Åtkommen:"
 
-#: ../thunar/thunar-enum-types.c:61
+#: ../thunar/thunar-enum-types.c:91
 #, fuzzy
 msgid "Date Modified"
 msgstr "Ändringsdatum"
 
-#: ../thunar/thunar-enum-types.c:62
+#: ../thunar/thunar-enum-types.c:92
 #, fuzzy
 msgid "Group"
 msgstr "Grupp:"
 
-#: ../thunar/thunar-enum-types.c:63
+#: ../thunar/thunar-enum-types.c:93
 #, fuzzy
 msgid "MIME Type"
 msgstr "Typ"
 
-#: ../thunar/thunar-enum-types.c:65
+#: ../thunar/thunar-enum-types.c:95
 #, fuzzy
 msgid "Owner"
 msgstr "Ägare:"
@@ -720,20 +740,20 @@ msgstr "Ägare:"
 #.
 #. Permissions chooser
 #.
-#: ../thunar/thunar-enum-types.c:66 ../thunar/thunar-properties-dialog.c:414
+#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:414
 msgid "Permissions"
 msgstr "Rättigheter"
 
-#: ../thunar/thunar-enum-types.c:68
+#: ../thunar/thunar-enum-types.c:98
 msgid "Type"
 msgstr "Typ"
 
-#: ../thunar/thunar-enum-types.c:69
+#: ../thunar/thunar-enum-types.c:99
 #, fuzzy
 msgid "File"
 msgstr "_Arkiv"
 
-#: ../thunar/thunar-enum-types.c:70
+#: ../thunar/thunar-enum-types.c:100
 #, fuzzy
 msgid "File Name"
 msgstr "Filhanterare"
@@ -2127,11 +2147,11 @@ msgstr "Kvarlämnad"
 msgid "Don't unload the plugin from memory"
 msgstr "Läs inte ur insticksmodulen från minnet"
 
-#: ../thunar-uca/thunar-uca-chooser.c:125
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
 msgstr "Anpassade åtgärder"
 
-#: ../thunar-uca/thunar-uca-chooser.c:141
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:141
 msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
@@ -2139,60 +2159,60 @@ msgstr ""
 "Du kan konfigurera anpassade åtgärdet som kommer att\n"
 "visas i filhanterarens kontextmenyer för vissa sorters filer."
 
-#: ../thunar-uca/thunar-uca-chooser.c:187
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:187
 msgid "Add a new custom action."
 msgstr "Lägg till en ny anpassad åtgärd."
 
-#: ../thunar-uca/thunar-uca-chooser.c:197
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:197
 msgid "Edit the currently selected action."
 msgstr "Redigera aktuellt markerad åtgärd."
 
-#: ../thunar-uca/thunar-uca-chooser.c:207
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:207
 msgid "Delete the currently selected action."
 msgstr "Ta bort aktuellt markerad åtgärd."
 
-#: ../thunar-uca/thunar-uca-chooser.c:217
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:217
 #, fuzzy
 msgid "Move the currently selected action up by one row."
 msgstr "Flytta aktuellt markerad åtgärd en rad upp."
 
-#: ../thunar-uca/thunar-uca-chooser.c:227
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:227
 #, fuzzy
 msgid "Move the currently selected action down by one row."
 msgstr "Flytta aktuellt markerad åtgärd en rad ned."
 
-#: ../thunar-uca/thunar-uca-chooser.c:363
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:363
 msgid "Edit Action"
 msgstr "Redigera åtgärd"
 
-#: ../thunar-uca/thunar-uca-chooser.c:363
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:363
 msgid "Create Action"
 msgstr "Skapa åtgärd"
 
-#: ../thunar-uca/thunar-uca-chooser.c:412
+#: ../plugins/thunar-uca/thunar-uca-chooser.c:412
 msgid "Failed to save actions to disk."
 msgstr "Misslyckades att spara åtgärder till disk."
 
 #.
 #. Basic
 #.
-#: ../thunar-uca/thunar-uca-editor.c:136
+#: ../plugins/thunar-uca/thunar-uca-editor.c:136
 msgid "Basic"
 msgstr "Enkel"
 
-#: ../thunar-uca/thunar-uca-editor.c:145
+#: ../plugins/thunar-uca/thunar-uca-editor.c:145
 msgid "_Name:"
 msgstr "_Namn:"
 
-#: ../thunar-uca/thunar-uca-editor.c:150
+#: ../plugins/thunar-uca/thunar-uca-editor.c:150
 msgid "The name of the action that will be displayed in the context menu."
 msgstr "Namnet på åtgärden som ska visas i kontextmenyn."
 
-#: ../thunar-uca/thunar-uca-editor.c:163
+#: ../plugins/thunar-uca/thunar-uca-editor.c:163
 msgid "_Description:"
 msgstr "_Beskrivning:"
 
-#: ../thunar-uca/thunar-uca-editor.c:168
+#: ../plugins/thunar-uca/thunar-uca-editor.c:168
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
@@ -2200,11 +2220,11 @@ msgstr ""
 "Beskrivningen för åtgärden som kommer att visas som verktygstips i "
 "statuslisten när objektet markeras från kontextmenyn."
 
-#: ../thunar-uca/thunar-uca-editor.c:181
+#: ../plugins/thunar-uca/thunar-uca-editor.c:181
 msgid "_Command:"
 msgstr "_Kommando:"
 
-#: ../thunar-uca/thunar-uca-editor.c:190
+#: ../plugins/thunar-uca/thunar-uca-editor.c:190
 msgid ""
 "The command (including the necessary parameters) to perform the action. See "
 "the command parameter legend below for a list of supported parameter "
@@ -2220,22 +2240,23 @@ msgstr ""
 "genomförbara även om fler än ett objekt är markerat. Annars kommer åtgärden "
 "endast vara genomförbar om exakt ett objekt är markerat."
 
-#: ../thunar-uca/thunar-uca-editor.c:201
+#: ../plugins/thunar-uca/thunar-uca-editor.c:201
 msgid "Browse the file system to select an application to use for this action."
 msgstr ""
 "Bläddra i filsystemet för att välja ett program att använda för den här "
 "åtgärden."
 
-#: ../thunar-uca/thunar-uca-editor.c:217
+#: ../plugins/thunar-uca/thunar-uca-editor.c:217
 msgid "_Icon:"
 msgstr "_Ikon:"
 
 #. setup a label to tell that no icon was selected
-#: ../thunar-uca/thunar-uca-editor.c:225 ../thunar-uca/thunar-uca-editor.c:790
+#: ../plugins/thunar-uca/thunar-uca-editor.c:225
+#: ../plugins/thunar-uca/thunar-uca-editor.c:790
 msgid "No icon"
 msgstr "Ingen ikon"
 
-#: ../thunar-uca/thunar-uca-editor.c:226
+#: ../plugins/thunar-uca/thunar-uca-editor.c:226
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
@@ -2243,7 +2264,7 @@ msgstr ""
 "Klicka på den här knappen för att välja en ikonfil som kommer att visas i "
 "kontextmenyn i tillägg till åtgärdsnamnet som anges ovan."
 
-#: ../thunar-uca/thunar-uca-editor.c:257
+#: ../plugins/thunar-uca/thunar-uca-editor.c:257
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
@@ -2251,41 +2272,41 @@ msgstr ""
 "Följande kommandoparametrar kommer att\n"
 "ersättas när åtgärden startas:"
 
-#: ../thunar-uca/thunar-uca-editor.c:295
+#: ../plugins/thunar-uca/thunar-uca-editor.c:295
 msgid "the path to the first selected file"
 msgstr "sökvägen till den första markerade filen"
 
-#: ../thunar-uca/thunar-uca-editor.c:307
+#: ../plugins/thunar-uca/thunar-uca-editor.c:307
 msgid "the paths to all selected files"
 msgstr "sökvägarna till alla markerade filer"
 
-#: ../thunar-uca/thunar-uca-editor.c:319
+#: ../plugins/thunar-uca/thunar-uca-editor.c:319
 #, c-format
 msgid "directory containing the file that is passed in %f"
 msgstr "katalog som innehåller filen som skickas i %f"
 
-#: ../thunar-uca/thunar-uca-editor.c:331
+#: ../plugins/thunar-uca/thunar-uca-editor.c:331
 #, c-format
 msgid "directories containing the files that are passed in %F"
 msgstr "kataloger som innehåller filerna som skickas i %F"
 
-#: ../thunar-uca/thunar-uca-editor.c:343
+#: ../plugins/thunar-uca/thunar-uca-editor.c:343
 msgid "the first selected filename (without path)"
 msgstr "det första markerade filnamnet (utan sökväg)"
 
-#: ../thunar-uca/thunar-uca-editor.c:355
+#: ../plugins/thunar-uca/thunar-uca-editor.c:355
 msgid "the selected filenames (without paths)"
 msgstr "de markerade filnamnen (utan sökvägar)"
 
-#: ../thunar-uca/thunar-uca-editor.c:369
+#: ../plugins/thunar-uca/thunar-uca-editor.c:369
 msgid "Appearance Conditions"
 msgstr "Beteendevillkor"
 
-#: ../thunar-uca/thunar-uca-editor.c:377
+#: ../plugins/thunar-uca/thunar-uca-editor.c:377
 msgid "_File Pattern:"
 msgstr "_Filmönster:"
 
-#: ../thunar-uca/thunar-uca-editor.c:382
+#: ../plugins/thunar-uca/thunar-uca-editor.c:382
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -2296,35 +2317,35 @@ msgstr ""
 "här åtgärden ska visas för en markerad fil. Om du anger fler än ett mönster "
 "här måste listobjekten avgränsas med semikolon (exempelvis *.txt;*.doc)."
 
-#: ../thunar-uca/thunar-uca-editor.c:401
+#: ../plugins/thunar-uca/thunar-uca-editor.c:401
 msgid "Appears if selection contains:"
 msgstr "Visas om markeringen innehåller:"
 
-#: ../thunar-uca/thunar-uca-editor.c:414
+#: ../plugins/thunar-uca/thunar-uca-editor.c:414
 msgid "_Directories"
 msgstr "_Kataloger"
 
-#: ../thunar-uca/thunar-uca-editor.c:418
+#: ../plugins/thunar-uca/thunar-uca-editor.c:418
 msgid "_Audio Files"
 msgstr "_Ljudfiler"
 
-#: ../thunar-uca/thunar-uca-editor.c:422
+#: ../plugins/thunar-uca/thunar-uca-editor.c:422
 msgid "_Image Files"
 msgstr "_Bildfiler"
 
-#: ../thunar-uca/thunar-uca-editor.c:426
+#: ../plugins/thunar-uca/thunar-uca-editor.c:426
 msgid "_Text Files"
 msgstr "_Textfiler"
 
-#: ../thunar-uca/thunar-uca-editor.c:431
+#: ../plugins/thunar-uca/thunar-uca-editor.c:431
 msgid "_Video Files"
 msgstr "_Videofiler"
 
-#: ../thunar-uca/thunar-uca-editor.c:435
+#: ../plugins/thunar-uca/thunar-uca-editor.c:435
 msgid "_Other Files"
 msgstr "Ö_vriga filer"
 
-#: ../thunar-uca/thunar-uca-editor.c:452
+#: ../plugins/thunar-uca/thunar-uca-editor.c:452
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
@@ -2346,57 +2367,57 @@ msgstr ""
 "matcha namnet på filen eller mappen. Du kan även\n"
 "ange att åtgärden endast ska visas för vissa sorters filer. "
 
-#: ../thunar-uca/thunar-uca-editor.c:650
+#: ../plugins/thunar-uca/thunar-uca-editor.c:650
 msgid "Select an Icon"
 msgstr "Välj en ikon"
 
-#: ../thunar-uca/thunar-uca-editor.c:665
+#: ../plugins/thunar-uca/thunar-uca-editor.c:665
 msgid "Image Files"
 msgstr "Bildfiler"
 
-#: ../thunar-uca/thunar-uca-model.c:770
+#: ../plugins/thunar-uca/thunar-uca-model.c:770
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Okänt element <%s>"
 
-#: ../thunar-uca/thunar-uca-model.c:788
+#: ../plugins/thunar-uca/thunar-uca-model.c:788
 msgid "End element handler called while in root context"
 msgstr "Slutelementhandtag anropad inne i rotkontext"
 
-#: ../thunar-uca/thunar-uca-model.c:876
+#: ../plugins/thunar-uca/thunar-uca-model.c:876
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Okänt avslutselement <%s>"
 
-#: ../thunar-uca/thunar-uca-model.c:1301
+#: ../plugins/thunar-uca/thunar-uca-model.c:1301
 msgid "Failed to determine save location for uca.xml"
 msgstr "Misslyckades att fastställa plats för att spara uca.xml"
 
-#: ../thunar-uca/thunar-uca-model.c:1417
+#: ../plugins/thunar-uca/thunar-uca-model.c:1417
 msgid "Command not configured"
 msgstr "Kommando inte konfigurerat"
 
-#: ../thunar-uca/thunar-uca-provider.c:157
+#: ../plugins/thunar-uca/thunar-uca-provider.c:157
 msgid "Configure c_ustom actions..."
 msgstr "Konfigurera a_npassade åtgärder..."
 
-#: ../thunar-uca/thunar-uca-provider.c:158
+#: ../plugins/thunar-uca/thunar-uca-provider.c:158
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
 msgstr ""
 "Ställ in anpassade åtgärder som kommer att visas i filhanterarens "
 "kontextmenyer"
 
-#: ../thunar-uca/thunar-uca-provider.c:350
+#: ../plugins/thunar-uca/thunar-uca-provider.c:350
 #, fuzzy, c-format
 msgid "Failed to launch action \"%s\"."
 msgstr "Misslyckades att starta åtgärden \"%s\"."
 
-#: ../thunar-uca/uca.xml.in.h:1
+#: ../plugins/thunar-uca/uca.xml.in.h:1
 msgid "Example for a custom action"
 msgstr "Exempel på en anpassad åtgärd"
 
-#: ../thunar-uca/uca.xml.in.h:2
+#: ../plugins/thunar-uca/uca.xml.in.h:2
 msgid "Open Terminal Here"
 msgstr "Öppna terminal här"
 
