@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-21 22:27+0900\n"
-"PO-Revision-Date: 2006-01-31 14:07+0100\n"
+"PO-Revision-Date: 2006-03-21 09:06+0100\n"
 "Last-Translator: Vincent Tunru <imnotb@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
@@ -173,16 +173,18 @@ msgid "Command"
 msgstr "_Commando:"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:135
+#, fuzzy
 msgid "The command to run the mime handler"
-msgstr ""
+msgstr "Commando om mime <handler> uit te voeren"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:147
 msgid "Flags"
-msgstr ""
+msgstr "Vaandels"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:148
+#, fuzzy
 msgid "The flags for the mime handler"
-msgstr ""
+msgstr "Vaandels van mime <handler>"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:163
 #, fuzzy
@@ -190,8 +192,9 @@ msgid "Icon"
 msgstr "_Icoon:"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:164
+#, fuzzy
 msgid "The icon of the mime handler"
-msgstr ""
+msgstr "Icoon van mime <handler>"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:176
 #: ../thunar/thunar-enum-types.c:94
@@ -199,8 +202,9 @@ msgid "Name"
 msgstr "Naam:"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:177
+#, fuzzy
 msgid "The name of the mime handler"
-msgstr ""
+msgstr "Naam van mime <handler>"
 
 #: ../thunar-vfs/thunar-vfs-mime-info.c:228
 #, c-format
@@ -378,20 +382,22 @@ msgid "Failed to copy special file \"%s\""
 msgstr "Fout bij het kopiëren van speciaal bestand `%s'"
 
 #: ../thunar/main.c:50
+#, fuzzy
 msgid "Run in daemon mode"
-msgstr ""
+msgstr "In daemon modus draaien"
 
 #: ../thunar/main.c:52
+#, fuzzy
 msgid "Run in daemon mode (not supported)"
-msgstr ""
+msgstr "In daemon modus draaien"
 
 #: ../thunar/main.c:55
 msgid "Quit a running Thunar instance"
-msgstr ""
+msgstr "Sluit een ander Thunar venster"
 
 #: ../thunar/main.c:57
 msgid "Quit a running Thunar instance (not supported)"
-msgstr ""
+msgstr "Sluit een ander Thunar venster (niet ondersteund)"
 
 #. setup application name
 #: ../thunar/main.c:79
@@ -401,7 +407,7 @@ msgstr "Thunar"
 #. initialize Gtk+
 #: ../thunar/main.c:89
 msgid "[FILES...]"
-msgstr ""
+msgstr "[BESTANDEN...]"
 
 #: ../thunar/main.c:96
 #, fuzzy, c-format
@@ -493,6 +499,8 @@ msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
 msgstr ""
+"Gebruik een alternatief commando voor een applicatie die niet in "
+"bovenstaande lijst beschikbaar is."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:300
@@ -503,7 +511,7 @@ msgstr "_Bladeren"
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:306
 msgid "Use as _default for this kind of file"
-msgstr ""
+msgstr "_Standaard voor dit type bestand gebruiken"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:488
@@ -539,6 +547,8 @@ msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr ""
+"Gebruik de geselecteerde applicatie om standaard bestanden van type \"%s\" "
+"te openen."
 
 #: ../thunar/thunar-chooser-dialog.c:684
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
@@ -597,11 +607,11 @@ msgstr "Er is niets op het klembord om te plakken"
 
 #: ../thunar/thunar-column-editor.c:153
 msgid "Configure Columns in the Detailed List View"
-msgstr ""
+msgstr "Stel kolommen in gedetailleerde lijstweergavemodus in"
 
 #: ../thunar/thunar-column-editor.c:164
 msgid "Visible Columns"
-msgstr ""
+msgstr "Zichtbare kolommen"
 
 #. create the top label for the column editor dialog
 #: ../thunar/thunar-column-editor.c:177
@@ -614,17 +624,17 @@ msgstr "Mapinhoud weergeven als gedetailleerde lijst"
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:218
 msgid "Move _Up"
-msgstr ""
+msgstr "_Omhoog verplaatsen"
 
 #. create the "Move Down" button
 #: ../thunar/thunar-column-editor.c:228
 msgid "Move Dow_n"
-msgstr ""
+msgstr "Omla_ag verplaatsen"
 
 #. create the "Show" button
 #: ../thunar/thunar-column-editor.c:238
 msgid "_Show"
-msgstr ""
+msgstr "_Weergeven"
 
 #. create the "Hide" button
 #: ../thunar/thunar-column-editor.c:244
@@ -635,11 +645,11 @@ msgstr "_Verborgen"
 #. create the "Use Default" button
 #: ../thunar/thunar-column-editor.c:255
 msgid "Use De_fault"
-msgstr ""
+msgstr "St_andaardoptie gebruiken"
 
 #: ../thunar/thunar-column-editor.c:264
 msgid "Column Sizing"
-msgstr ""
+msgstr "Kolomgrootte"
 
 #. create the label that explains the column sizing option
 #: ../thunar/thunar-column-editor.c:277
@@ -649,11 +659,15 @@ msgid ""
 "able this behavior below the file manager will always\n"
 "use the user defined column widths."
 msgstr ""
+"Kolommen worden standaard uitgeklapt wanneer\n"
+"nodig om ervoor te zorgen dat te tekst volledig zichtbaar is. Als u deze\n"
+"optie uitschakelt zal Thunar altijd\n"
+"de door de gebruiker gespecificeerde breedte gebruiken."
 
 #. create the "Automatically expand columns as needed" button
 #: ../thunar/thunar-column-editor.c:286
 msgid "Automatically _expand columns as needed"
-msgstr ""
+msgstr "Kolommen automatisch _uitklappen wanneer nodig"
 
 #: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:702
 #: ../thunar/thunar-list-model.c:731
@@ -896,7 +910,7 @@ msgstr "Ander Programma..."
 #: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
 #: ../thunar/thunar-launcher.c:833
 msgid "Choose another application with which to open the selected file"
-msgstr ""
+msgstr "Kies een andere applicatie om het geselecteerde bestand mee te openen"
 
 #: ../thunar/thunar-launcher.c:123
 #, fuzzy
@@ -1074,7 +1088,7 @@ msgstr "Openen in Nieuw Venster"
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
-msgstr ""
+msgstr "Verplaats of kopiëer bestanden naar \"%s\""
 
 #. append the "Paste Into Folder" menu action
 #: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:958
@@ -1162,14 +1176,16 @@ msgid ""
 "The folder permissions are inconsistent, you\n"
 "may not be able to work with files in this folder."
 msgstr ""
+"De rechten van de map zijn onsamenhangend, het kan zijn\n"
+"dat u niet meer met bestanden in deze map kunt werken."
 
 #: ../thunar/thunar-permissions-chooser.c:455
 msgid "Correct folder permissions..."
-msgstr ""
+msgstr "Rechten verbeteren..."
 
 #: ../thunar/thunar-permissions-chooser.c:456
 msgid "Click here to automatically fix the folder permissions."
-msgstr ""
+msgstr "Klik hier om de rechten van de map automatisch te verbeteren."
 
 #: ../thunar/thunar-permissions-chooser.c:467
 msgid "Please wait..."
@@ -1228,18 +1244,21 @@ msgstr "Onbekende eigenaar"
 
 #: ../thunar/thunar-permissions-chooser.c:1068
 msgid "Correct folder permissions automatically?"
-msgstr ""
+msgstr "Rechten automatisch verbeteren?"
 
 #: ../thunar/thunar-permissions-chooser.c:1070
 msgid "Correct folder permissions"
-msgstr ""
+msgstr "Rechten verbeteren"
 
 #: ../thunar/thunar-permissions-chooser.c:1072
+#, fuzzy
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
 "folder afterwards."
 msgstr ""
+"Wanneer u de rechten herstelt naar de standaardinstellingen zullen alleen "
+"gebruikers met toestemming om de inhoud te lezen toegang tot de map krijgen."
 
 #: ../thunar/thunar-permissions-chooser.c:1164
 #: ../thunar/thunar-progress-dialog.c:320
@@ -1348,17 +1367,17 @@ msgstr "Icoongrootte"
 #: ../thunar/thunar-preferences-dialog.c:347
 #: ../thunar/thunar-preferences-dialog.c:398
 msgid "Very Small"
-msgstr ""
+msgstr "Zeer klein"
 
 #: ../thunar/thunar-preferences-dialog.c:348
 #: ../thunar/thunar-preferences-dialog.c:399
 msgid "Smaller"
-msgstr ""
+msgstr "Kleiner"
 
 #: ../thunar/thunar-preferences-dialog.c:349
 #: ../thunar/thunar-preferences-dialog.c:400
 msgid "Small"
-msgstr ""
+msgstr "Klein"
 
 #: ../thunar/thunar-preferences-dialog.c:350
 #: ../thunar/thunar-preferences-dialog.c:401
@@ -1369,17 +1388,17 @@ msgstr "Normale Gr_ootte"
 #: ../thunar/thunar-preferences-dialog.c:351
 #: ../thunar/thunar-preferences-dialog.c:402
 msgid "Large"
-msgstr ""
+msgstr "Groot"
 
 #: ../thunar/thunar-preferences-dialog.c:352
 #: ../thunar/thunar-preferences-dialog.c:403
 msgid "Larger"
-msgstr ""
+msgstr "Groter"
 
 #: ../thunar/thunar-preferences-dialog.c:353
 #: ../thunar/thunar-preferences-dialog.c:404
 msgid "Very Large"
-msgstr ""
+msgstr "Zeer groot"
 
 #: ../thunar/thunar-preferences-dialog.c:370
 #, fuzzy
@@ -1425,15 +1444,15 @@ msgstr ""
 #: ../thunar/thunar-preferences-dialog.c:432
 #: ../thunar/thunar-preferences-dialog.c:442
 msgid "Behavior"
-msgstr ""
+msgstr "Gedrag"
 
 #: ../thunar/thunar-preferences-dialog.c:454
 msgid "_Single click to activate items"
-msgstr ""
+msgstr "_Eenmaal klikken om mappen of bestanden te openen"
 
 #: ../thunar/thunar-preferences-dialog.c:460
 msgid "_Double click to activate items"
-msgstr ""
+msgstr "_Dubbelklikken om mappen of bestanden te openen"
 
 #.
 #. Advanced
@@ -1453,6 +1472,9 @@ msgid ""
 "can also apply the changes to the contents of the\n"
 "folder. Select the default behavior below:"
 msgstr ""
+"Wanneer u de rechten van een map verandert, kunt\n"
+"u die veranderingen ook toepassen op\n"
+"de inhoud van de folder. Selecteer de standaardoptie hier:"
 
 #: ../thunar/thunar-preferences-dialog.c:500
 msgid "Ask everytime"
@@ -1460,11 +1482,11 @@ msgstr "Elke keer vragen"
 
 #: ../thunar/thunar-preferences-dialog.c:501
 msgid "Apply to Folder Only"
-msgstr ""
+msgstr "Alleen op map toepassen"
 
 #: ../thunar/thunar-preferences-dialog.c:502
 msgid "Apply to Folder and Contents"
-msgstr ""
+msgstr "Toepassen op map en inhoud"
 
 #: ../thunar/thunar-progress-dialog.c:458
 #, c-format
@@ -1526,7 +1548,7 @@ msgstr "Geopend:"
 #.
 #: ../thunar/thunar-properties-dialog.c:343
 msgid "Free Space:"
-msgstr ""
+msgstr "Vrij ruimte: "
 
 #: ../thunar/thunar-properties-dialog.c:356
 msgid "Volume:"
@@ -1545,7 +1567,7 @@ msgstr "Emblemen"
 
 #: ../thunar/thunar-properties-dialog.c:749
 msgid "%s (%"
-msgstr ""
+msgstr "%s (%"
 
 #: ../thunar/thunar-properties-dialog.c:749
 #, fuzzy
@@ -1562,29 +1584,30 @@ msgstr "Fout bij het wijzigen van de naam van `%s'"
 #: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:411
 msgid "Add Folder to _Shortcuts"
 msgid_plural "Add Folders to _Shortcuts"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Map toevoegen aan _snelkoppelingen"
+msgstr[1] "Mappen toevoegen aan _snelkoppelingen"
 
 #: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:413
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] ""
+msgstr[0] "Voeg de geselecteerde map toe aan het zijpaneel met snelkoppelingen"
 msgstr[1] ""
+"Voeg de geselecteerde mappen toe aan het zijpaneel met snelkoppelingen"
 
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:819
 msgid "_Mount Volume"
-msgstr ""
+msgstr "Schijf _aansluiten"
 
 #. append the "Eject Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:829
 msgid "E_ject Volume"
-msgstr ""
+msgstr "Schijf u_itwerpen"
 
 #. append the "Unmount Volume" menu item
 #: ../thunar/thunar-shortcuts-view.c:838
 msgid "_Unmount Volume"
-msgstr ""
+msgstr "Schijf l_oskoppelen"
 
 #. append the remove menu item
 #: ../thunar/thunar-shortcuts-view.c:852
@@ -1668,7 +1691,7 @@ msgstr "Bestanden _Plakken"
 
 #: ../thunar/thunar-standard-view.c:310
 msgid "Move or copy files previously selected by a Cut or Copy command"
-msgstr ""
+msgstr "Verplaats of kopiëer bestanden"
 
 #: ../thunar/thunar-standard-view.c:311
 #, fuzzy
@@ -1684,7 +1707,7 @@ msgstr "Bestanden in Map Plakken"
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
-msgstr ""
+msgstr "Plak bestanden naar de geselecteerde map."
 
 #: ../thunar/thunar-standard-view.c:313
 msgid "Select _all Files"
@@ -1813,8 +1836,8 @@ msgstr[1] "geselecteerde bestandsnamen (zonder paden)"
 #: ../thunar/thunar-standard-view.c:3229
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Bereidt het geselecteerde bestand voor om te plakken"
+msgstr[1] "Bereidt de geselecteerde bestanden voor om te plakken"
 
 #: ../thunar/thunar-standard-view.c:3240
 #, fuzzy
@@ -1994,11 +2017,11 @@ msgstr "_Help"
 
 #: ../thunar/thunar-window.c:257
 msgid "_Contents"
-msgstr ""
+msgstr "_Inhoud"
 
 #: ../thunar/thunar-window.c:257
 msgid "Display Thunar user manual"
-msgstr ""
+msgstr "Geef de gebruikershandleiding van Thunar weer"
 
 #: ../thunar/thunar-window.c:258
 msgid "_About"
@@ -2026,8 +2049,9 @@ msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Zichtbaarheid van de statusbalk van dit venster veranderen"
 
 #: ../thunar/thunar-window.c:265
+#, fuzzy
 msgid "_Tree"
-msgstr ""
+msgstr "_Stam"
 
 #: ../thunar/thunar-window.c:265
 #, fuzzy
