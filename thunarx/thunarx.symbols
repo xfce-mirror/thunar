@@ -124,3 +124,26 @@ thunarx_provider_plugin_register_flags
 #endif
 #endif
 
+/* ThunarxRenamer methods */
+#if IN_HEADER(__THUNARX_RENAMER_H__)
+#if IN_SOURCE(__THUNARX_RENAMER_C__)
+thunarx_renamer_get_type G_GNUC_CONST
+thunarx_renamer_get_help_url
+thunarx_renamer_set_help_url
+thunarx_renamer_get_name
+thunarx_renamer_set_name
+thunarx_renamer_process G_GNUC_MALLOC
+thunarx_renamer_save
+thunarx_renamer_load
+thunarx_renamer_changed
+#endif
+#endif
+
+/* ThunarxRenamerProvider methods */
+#if IN_HEADER(__THUNARX_RENAMER_PROVIDER_H__)
+#if IN_SOURCE(__THUNARX_RENAMER_PROVIDER_C__)
+thunarx_renamer_provider_get_type G_GNUC_CONST
+thunarx_renamer_provider_get_renamers G_GNUC_MALLOC
+#endif
+#endif
+

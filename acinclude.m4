@@ -8,6 +8,25 @@ dnl
 
 
 
+dnl # BM_THUNAR_PLUGIN_SBR()
+dnl #
+dnl # Check whether the "Simple Builtin Renamers" plugin
+dnl # should be built and installed.
+dnl #
+AC_DEFUN([BM_THUNAR_PLUGIN_SBR],
+[
+AC_ARG_ENABLE([sbr-plugin], AC_HELP_STRING([--disable-sbr-plugin], [Don't build the thunar-sbr plugin, see plugins/thunar-sbr/README]),
+  [ac_bm_thunar_plugin_sbr=$enable_val], [ac_bm_thunar_plugin_sbr=yes])
+AC_MSG_CHECKING([whether to build the thunar-sbr plugin])
+AM_CONDITIONAL([THUNAR_PLUGIN_SBR], [test x"$ac_bm_thunar_plugin_sbr" = x"yes"])
+AC_MSG_RESULT([$ac_bm_thunar_plugin_sbr])
+
+dnl Check for PCRE (for the "Search & Replace" renamer)
+XDT_CHECK_OPTIONAL_PACKAGE([PCRE], [libpcre], [6.0], [pcre], [Regular expression support])
+])
+
+
+
 dnl # BM_THUNAR_PLUGIN_UCA()
 dnl #
 dnl # Check whether the "User Customizable Actions" plugin

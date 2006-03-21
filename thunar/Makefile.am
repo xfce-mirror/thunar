@@ -116,6 +116,14 @@ Thunar_SOURCES =							\
 	thunar-progress-dialog.h					\
 	thunar-properties-dialog.c					\
 	thunar-properties-dialog.h					\
+	thunar-renamer-dialog.c						\
+	thunar-renamer-dialog.h						\
+	thunar-renamer-model.c						\
+	thunar-renamer-model.h						\
+	thunar-renamer-pair.c						\
+	thunar-renamer-pair.h						\
+	thunar-renamer-progress.c					\
+	thunar-renamer-progress.h					\
 	thunar-shortcuts-icon-renderer.c				\
 	thunar-shortcuts-icon-renderer.h				\
 	thunar-shortcuts-model.c					\

@@ -341,6 +341,7 @@ AC_SUBST([PLATFORM_LDFLAGS])
 dnl ************************************
 dnl *** Check for additional plugins ***
 dnl ************************************
+BM_THUNAR_PLUGIN_SBR()
 BM_THUNAR_PLUGIN_UCA()
 
 AC_OUTPUT([
@@ -369,6 +370,7 @@ icons/48x48/Makefile
 icons/scalable/Makefile
 pixmaps/Makefile
 plugins/Makefile
+plugins/thunar-sbr/Makefile
 plugins/thunar-uca/Makefile
 po/Makefile.in
 po-doc/Makefile
@@ -411,5 +413,6 @@ echo "* Volume Manager:            $ac_bm_thunar_vfs_volume_impl"
 echo
 echo "Additional Plugins:"
 echo
+echo "* Simple Builting Renamers:  $ac_bm_thunar_plugin_sbr"
 echo "* User Customizable Actions: $ac_bm_thunar_plugin_uca"
 echo

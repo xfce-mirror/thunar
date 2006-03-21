@@ -39,6 +39,7 @@
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-properties-dialog.h>
+#include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
 #include <thunar/thunar-stock.h>
@@ -2180,7 +2181,6 @@ thunar_standard_view_action_rename (GtkAction          *action,
   GtkIconTheme      *icon_theme;
   const gchar       *filename;
   const gchar       *text;
-  GtkTreeIter        iter;
   ThunarFile        *file;
   GtkWidget         *window;
   GtkWidget         *dialog;
@@ -2190,9 +2190,6 @@ thunar_standard_view_action_rename (GtkAction          *action,
   GtkWidget         *table;
   GdkPixbuf         *icon;
   GError            *error = NULL;
-  GList             *selected_items;
-  GList             *path_list;
-  GList              file_list;
   glong              offset;
   gchar             *title;
   gint               response;
@@ -2201,12 +2198,10 @@ thunar_standard_view_action_rename (GtkAction          *action,
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* start renaming if we have exactly one selected file */
-  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-  if (G_LIKELY (selected_items != NULL && selected_items->next == NULL))
+  if (G_LIKELY (standard_view->selected_files != NULL && standard_view->selected_files->next == NULL))
     {
       /* determine the file in question */
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, selected_items->data);
-      file = thunar_list_model_get_file (standard_view->model, &iter);
+      file = g_object_ref (G_OBJECT (standard_view->selected_files->data));
       filename = thunar_file_get_display_name (file);
 
       /* create a new dialog window */
@@ -2288,27 +2283,13 @@ thunar_standard_view_action_rename (GtkAction          *action,
                 }
               else
                 {
-                  /* fake a file list with only the file in it */
-                  file_list.data = file;
-                  file_list.next = NULL;
-                  file_list.prev = NULL;
+                  /* make sure the file is still visible */
+                  thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, TRUE, FALSE, 0.0f, 0.0f);
 
-                  /* determine the path for the file */
-                  path_list = thunar_list_model_get_paths_for_files (standard_view->model, &file_list);
-                  if (G_LIKELY (path_list != NULL))
-                    {
-                      /* place the cursor on the file and scroll the new position */
-                      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->scroll_to_path) (standard_view, path_list->data, FALSE, 0.0f, 0.0f);
-
-                      /* update the selection, so we get updated actions, statusbar,
-                       * etc. with the new file name and probably new mime type.
-                       */
-                      thunar_standard_view_selection_changed (standard_view);
-
-                      /* release the path list */
-                      g_list_foreach (path_list, (GFunc) gtk_tree_path_free, NULL);
-                      g_list_free (path_list);
-                    }
+                  /* update the selection, so we get updated actions, statusbar,
+                   * etc. with the new file name and probably new mime type.
+                   */
+                  thunar_standard_view_selection_changed (standard_view);
                 }
             }
         }
@@ -2317,10 +2298,11 @@ thunar_standard_view_action_rename (GtkAction          *action,
       g_object_unref (G_OBJECT (file));
       gtk_widget_destroy (dialog);
     }
-
-  /* release the selected items */
-  g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
-  g_list_free (selected_items);
+  else if (g_list_length (standard_view->selected_files) > 1)
+    {
+      /* display the bulk rename dialog */
+      thunar_show_renamer_dialog (GTK_WIDGET (standard_view), standard_view->selected_files);
+    }
 }
 
 
@@ -3266,8 +3248,9 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
                 NULL);
 
   /* update the "Rename" action */
-  gtk_action_set_sensitive (standard_view->priv->action_rename, (n_selected_files == 1
-                            && thunar_file_is_renameable (selected_files->data)));
+  gtk_action_set_sensitive (standard_view->priv->action_rename,
+                            (n_selected_files > 0 && current_directory != NULL
+                             && thunar_file_is_writable (current_directory)));
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);

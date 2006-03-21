@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,12 @@
 #include <config.h>
 #endif
 
-#include <glib-object.h>
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 
 #include <thunarx/thunarx-private.h>
 
@@ -50,4 +55,36 @@ thunarx_object_list_take_reference (GList   *object_list,
     }
 }
 
+
+
+/* Returns the option name for the param spec, used by thunarx_renamer_real_load/save() */
+gchar*
+thunarx_param_spec_get_option_name (GParamSpec *pspec)
+{
+  const gchar *s;
+  gboolean     upper = TRUE;
+  gchar       *name;
+  gchar       *t;
+
+  name = g_new (gchar, strlen (pspec->name) + 1);
+  for (s = pspec->name, t = name; *s != '\0'; ++s)
+    {
+      if (*s == '-')
+        {
+          upper = TRUE;
+        }
+      else if (upper)
+        {
+          *t++ = g_ascii_toupper (*s);
+          upper = FALSE;
+        }
+      else
+        {
+          *t++ = *s;
+        }
+    }
+  *t = '\0';
+
+  return name;
+}
 

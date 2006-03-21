@@ -1,5 +1,29 @@
 2006-03-21	Benedikt Meurer <benny@xfce.org>
 
+	* plugins/thunar-uca/README: Fix typos.
+	* thunarx/thunarx-private.{c,h}: Import new helper function
+	  thunarx_param_spec_get_option_name().
+	* thunarx/Makefile.am, thunarx/thunarx.h, thunarx/thunarx-renamer.{c,h},
+	  thunarx/thunarx-renamer-provider.{c,h}, thunarx/thunarx.symbols:
+	  Merge the ThunarxRenamer extension point, which can be used to hook
+	  additional bulk renamers into Thunar. Bug #1416.
+	* thunar/thunar-renamer-dialog.{c,h}, thunar/thunar-renamer-model.{c,h},
+	  thunar/thunar-renamer-pair.{c,h},thunar/thunar-renamer-progress.{c,h},
+	  thunar/Makefile.am, thunar/thunar-standard-view.c: Merge the bulk
+	  rename framework for Thunar, which uses the ThunarxRenamers to
+	  rename multiple files at once. Bug #1416.
+	* acinclude.m4, configure.in.in, plugins/thunar-sbr/, 
+	  plugins/Makefile.am: Merge stable version of the thunar-sbr exten-
+	  sion ("Simple Builtin Renamers"), which provides "Search & Replace",
+	  which optionally uses PCRE to support regular expressions, and
+	  "Convert upper/lowercase". Additional renamers will be merged once
+	  ready. Bug #1416.
+	* po/POTFILES.in: Add new files.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
+2006-03-21	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-gobject-extensions.c
 	  (thunar_g_initialize_transformations): Register one string->enum
 	  transformation function that is used by all GEnum derived types.

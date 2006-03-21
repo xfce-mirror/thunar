@@ -20,7 +20,9 @@ libthunarx_headers =							\
 	thunarx-property-page.h						\
 	thunarx-property-page-provider.h				\
 	thunarx-provider-factory.h					\
-	thunarx-provider-plugin.h
+	thunarx-provider-plugin.h					\
+	thunarx-renamer.h						\
+	thunarx-renamer-provider.h
 
 libthunarx_includedir =							\
 	$(includedir)/thunarx-$(THUNAR_VERSION_API)/thunarx
@@ -45,7 +47,9 @@ libthunarx_1_la_SOURCES =						\
 	thunarx-provider-factory.c					\
 	thunarx-provider-module.c					\
 	thunarx-provider-module.h					\
-	thunarx-provider-plugin.c
+	thunarx-provider-plugin.c					\
+	thunarx-renamer.c						\
+	thunarx-renamer-provider.c
 
 libthunarx_1_la_CFLAGS =						\
 	$(GTK_CFLAGS)							\

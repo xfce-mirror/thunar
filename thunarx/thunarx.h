@@ -31,6 +31,8 @@
 #include <thunarx/thunarx-property-page-provider.h>
 #include <thunarx/thunarx-provider-factory.h>
 #include <thunarx/thunarx-provider-plugin.h>
+#include <thunarx/thunarx-renamer.h>
+#include <thunarx/thunarx-renamer-provider.h>
 
 #undef THUNARX_INSIDE_THUNARX_H
 

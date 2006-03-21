@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-21 22:27+0900\n"
+"POT-Creation-Date: 2006-03-22 00:15+0100\n"
 "PO-Revision-Date: 2006-03-15 00:56+0800\n"
 "Last-Translator: Hydonsingore Cia <hydonsingore@mail.educities.edu.tw>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -181,7 +181,8 @@ msgid "The icon of the mime handler"
 msgstr "mime 處置程式的圖示"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:176
-#: ../thunar/thunar-enum-types.c:94
+#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:215
+#: ../thunarx/thunarx-renamer.c:173
 msgid "Name"
 msgstr "名稱"
 
@@ -640,7 +641,7 @@ msgstr "依需求自動延展欄位(_E)"
 msgid "Unknown"
 msgstr "未知的"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2237
 msgid "Enter the new name:"
 msgstr "鍵入新名稱："
 
@@ -667,7 +668,8 @@ msgid "Details view"
 msgstr "詳細檢視"
 
 #. display an error message to the user
-#: ../thunar/thunar-dialogs.c:180
+#. tell the user that we failed
+#: ../thunar/thunar-dialogs.c:180 ../thunar/thunar-renamer-dialog.c:527
 msgid "Failed to open the documentation browser"
 msgstr "無法開啟文件瀏覽器"
 
@@ -1474,9 +1476,69 @@ msgstr ""
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:797
-#: ../thunar/thunar-standard-view.c:2284
+#: ../thunar/thunar-standard-view.c:2279
 #, c-format
 msgid "Failed to rename \"%s\""
+msgstr ""
+
+#: ../thunar/thunar-renamer-dialog.c:181
+msgid "Rename Multiple Files"
+msgstr ""
+
+#. add the "Rename Files" button
+#: ../thunar/thunar-renamer-dialog.c:184
+#, fuzzy
+msgid "_Rename Files"
+msgstr "可執行檔"
+
+#: ../thunar/thunar-renamer-dialog.c:187
+msgid ""
+"Click here to actually rename the files listed above to their new names."
+msgstr ""
+
+#: ../thunar/thunar-renamer-dialog.c:231
+#, fuzzy
+msgid "New Name"
+msgstr "檔案名稱"
+
+#: ../thunar/thunar-renamer-dialog.c:295
+msgid "Click here to view the documentation for the selected rename operation."
+msgstr ""
+
+#. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
+#. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
+#.
+#: ../thunar/thunar-renamer-dialog.c:390
+msgid ""
+"No renamer modules were found on your system. Please check your\n"
+"installation or contact your system administrator. If you install Thunar\n"
+"from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
+msgstr ""
+
+#: ../thunar/thunar-renamer-progress.c:214
+#, fuzzy, c-format
+msgid "Failed to rename \"%s\" to \"%s\"."
+msgstr "無法移除 \"%s\"：%s"
+
+#: ../thunar/thunar-renamer-progress.c:221
+msgid ""
+"You can either choose to skip this file and continue to rename the remaining "
+"files, or revert the previously renamed files to their previous names, or "
+"cancel the operation without reverting previous changes."
+msgstr ""
+
+#: ../thunar/thunar-renamer-progress.c:226
+msgid "_Revert Changes"
+msgstr ""
+
+#: ../thunar/thunar-renamer-progress.c:227
+#: ../thunar/thunar-renamer-progress.c:236
+msgid "_Skip This File"
+msgstr ""
+
+#: ../thunar/thunar-renamer-progress.c:233
+msgid ""
+"Do you want to skip this file and continue to rename the remaining files?"
 msgstr ""
 
 #: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:411
@@ -1544,139 +1606,139 @@ msgstr ""
 msgid "Failed to unmount \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:304
+#: ../thunar/thunar-standard-view.c:305
 msgid "File Context Menu"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:305
+#: ../thunar/thunar-standard-view.c:306
 msgid "Folder Context Menu"
 msgstr ""
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-standard-view.c:306 ../thunar/thunar-tree-view.c:922
+#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:922
 msgid "Create _Folder..."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:306
+#: ../thunar/thunar-standard-view.c:307
 msgid "Create an empty folder within the current folder"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:307
+#: ../thunar/thunar-standard-view.c:308
 msgid "_Properties..."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:307
+#: ../thunar/thunar-standard-view.c:308
 msgid "View the properties of the selected file"
 msgstr ""
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:308 ../thunar/thunar-tree-view.c:934
+#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:934
 msgid "Cu_t"
 msgstr ""
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:946
+#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:946
 #, fuzzy
 msgid "_Copy"
 msgstr "複製到這裡(_C)"
 
-#: ../thunar/thunar-standard-view.c:310
+#: ../thunar/thunar-standard-view.c:311
 msgid "_Paste"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:310
+#: ../thunar/thunar-standard-view.c:311
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:311
+#: ../thunar/thunar-standard-view.c:312
 msgid "_Delete"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:312
+#: ../thunar/thunar-standard-view.c:313
 msgid "Paste Into Folder"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:312
+#: ../thunar/thunar-standard-view.c:313
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-standard-view.c:314
 msgid "Select _all Files"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-standard-view.c:314
 msgid "Select all files in this window"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:314
+#: ../thunar/thunar-standard-view.c:315
 msgid "Select _by Pattern..."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:314
+#: ../thunar/thunar-standard-view.c:315
 msgid "Select all files that match a certain pattern"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:315
+#: ../thunar/thunar-standard-view.c:316
 msgid "Du_plicate"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:316 ../thunar/thunar-standard-view.c:3261
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3243
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:317
+#: ../thunar/thunar-standard-view.c:318
 msgid "_Rename..."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:317
+#: ../thunar/thunar-standard-view.c:318
 msgid "Rename the selected file"
 msgstr ""
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:573
+#: ../thunar/thunar-standard-view.c:574
 msgid "Create _Document"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1220
+#: ../thunar/thunar-standard-view.c:1221
 msgid "Loading folder contents..."
 msgstr ""
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1716
+#: ../thunar/thunar-standard-view.c:1717
 msgid "New Empty File"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1716
+#: ../thunar/thunar-standard-view.c:1717
 msgid "New Empty File..."
 msgstr ""
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-standard-view.c:1767 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1768 ../thunar/thunar-tree-view.c:1222
 msgid "New Folder"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1767 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1768 ../thunar/thunar-tree-view.c:1222
 msgid "Create New Folder"
 msgstr ""
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1816
+#: ../thunar/thunar-standard-view.c:1817
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1967
+#: ../thunar/thunar-standard-view.c:1968
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1972
+#: ../thunar/thunar-standard-view.c:1973
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1687,54 +1749,54 @@ msgid_plural ""
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:1994
+#: ../thunar/thunar-standard-view.c:1995
 msgid "If you delete a file, it is permanently lost."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2059
+#: ../thunar/thunar-standard-view.c:2060
 msgid "Select by Pattern"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2074
+#: ../thunar/thunar-standard-view.c:2075
 msgid "Pattern:"
 msgstr ""
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2213
+#: ../thunar/thunar-standard-view.c:2208
 #, c-format
 msgid "Rename \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2895
+#: ../thunar/thunar-standard-view.c:2877
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:3221
+#: ../thunar/thunar-standard-view.c:3203
 #, fuzzy
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "以預設的應用程式開啟所選取的檔案"
 
-#: ../thunar/thunar-standard-view.c:3229
+#: ../thunar/thunar-standard-view.c:3211
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:3240
+#: ../thunar/thunar-standard-view.c:3222
 #, fuzzy
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "執行所選取的檔案"
 
-#: ../thunar/thunar-standard-view.c:3254
+#: ../thunar/thunar-standard-view.c:3236
 #, fuzzy
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "開啟所選取的檔案"
 
-#: ../thunar/thunar-standard-view.c:3263
+#: ../thunar/thunar-standard-view.c:3245
 #, fuzzy
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
@@ -2055,6 +2117,91 @@ msgstr ""
 
 #: ../thunarx/thunarx-provider-plugin.c:80
 msgid "Don't unload the plugin from memory"
+msgstr ""
+
+#: ../thunarx/thunarx-renamer.c:158
+msgid "Help URL"
+msgstr ""
+
+#: ../thunarx/thunarx-renamer.c:159
+#, fuzzy
+msgid "The URL to the documentation of the renamer"
+msgstr "無法開啟文件瀏覽器"
+
+#: ../thunarx/thunarx-renamer.c:174
+#, fuzzy
+msgid "The user visible name of the renamer"
+msgstr "mime 處置程式的名稱"
+
+#: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:119
+msgid "Con_vert to:"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:264
+msgid "Convert upper/lowercase"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:48
+msgid "lowercase"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:49
+msgid "UPPERCASE"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:50
+msgid "Camelcase"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:209
+msgid "_Search For:"
+msgstr ""
+
+#. reset to default tooltip
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:217
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:652
+msgid "Enter the text to search for in the file names."
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:229
+msgid "Regular _Expression"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:231
+msgid ""
+"If you enable this option, the pattern will be treated as a regular "
+"expression and matched using the Perl-compatible regular expressions (PCRE). "
+"Check the documentation for details about the regular expression syntax."
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:238
+#, fuzzy
+msgid "Replace _With:"
+msgstr "以...開啟"
+
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:246
+msgid ""
+"Enter the text that should be used as replacement for the pattern above."
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
+msgid "C_ase Sensitive Search"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:260
+msgid ""
+"If you enable this option, the pattern will be searched in a case-sensitive "
+"manner. The default is to use a case-insensitive search."
+msgstr ""
+
+#. setup a tooltip with the error message
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:620
+#, c-format
+msgid "Invalid regular expression, at character position %ld: %s"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:670
+msgid "Search & Replace"
 msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
