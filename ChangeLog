@@ -1,3 +1,14 @@
+2006-03-21	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-gobject-extensions.c
+	  (thunar_g_initialize_transformations): Register one string->enum
+	  transformation function that is used by all GEnum derived types.
+	* thunar/thunar-enum-types.{c,h}: Import ThunarRenamerMode enum. Don't
+	  need to register a transformation for each and every enum type.
+	* thunar/thunar-preferences.c(thunar_preferences_class_init),
+	  thunar/main.c(main): Initialize the additional GType transformations
+	  on startup, rather than in the ThunarPreferences class constructor.
+
 2006-03-20	Benedikt Meurer <benny@xfce.org>
 
 	* Makefile.am, acinclude.m4, configure.in.in, po/POTFILES.in,

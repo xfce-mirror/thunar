@@ -33,6 +33,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dbus-client.h>
 #include <thunar/thunar-dbus-service.h>
+#include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-stock.h>
 
 
@@ -102,6 +103,9 @@ main (int argc, char **argv)
         }
       return EXIT_FAILURE;
     }
+
+  /* register additional transformation functions */
+  thunar_g_initialize_transformations ();
 
 #ifdef HAVE_DBUS
   /* check if we should terminate a running Thunar instance */

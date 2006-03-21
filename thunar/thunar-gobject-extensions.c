@@ -101,6 +101,7 @@ thunar_g_initialize_transformations (void)
     g_value_register_transform_func (G_TYPE_STRING, G_TYPE_BOOLEAN, transform_string_to_boolean);
   if (!g_value_type_transformable (G_TYPE_STRING, G_TYPE_INT))
     g_value_register_transform_func (G_TYPE_STRING, G_TYPE_INT, transform_string_to_int);
-  if (!g_value_type_transformable (G_TYPE_STRING, GTK_TYPE_SORT_TYPE))
-    g_value_register_transform_func (G_TYPE_STRING, GTK_TYPE_SORT_TYPE, transform_string_to_enum);
+
+  /* register a transformation function string->enum unconditionally */
+  g_value_register_transform_func (G_TYPE_STRING, G_TYPE_ENUM, transform_string_to_enum);
 }

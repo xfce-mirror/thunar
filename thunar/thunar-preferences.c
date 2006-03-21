@@ -178,9 +178,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   gobject_class->get_property = thunar_preferences_get_property;
   gobject_class->set_property = thunar_preferences_set_property;
 
-  /* register additional transformation functions */
-  thunar_g_initialize_transformations ();
-
   /**
    * ThunarPreferences:default-view:
    *

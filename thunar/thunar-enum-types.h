@@ -24,6 +24,26 @@
 
 G_BEGIN_DECLS;
 
+#define THUNAR_TYPE_RENAMER_MODE (thunar_renamer_mode_get_type ())
+
+/**
+ * ThunarRenamerMode:
+ * @THUNAR_RENAMER_MODE_NAME   : only the name should be renamed.
+ * @THUNAR_RENAMER_MODE_SUFFIX : only the suffix should be renamed.
+ * @THUNAR_RENAMER_MODE_BOTH   : the name and the suffix should be renamed.
+ *
+ * The rename mode for a #ThunarRenamerModel instance.
+ **/
+typedef enum
+{
+  THUNAR_RENAMER_MODE_NAME,
+  THUNAR_RENAMER_MODE_SUFFIX,
+  THUNAR_RENAMER_MODE_BOTH,
+} ThunarRenamerMode;
+
+GType thunar_renamer_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
 #define THUNAR_TYPE_COLOR_STYLE (thunar_color_style_get_type ())
 
 /**
