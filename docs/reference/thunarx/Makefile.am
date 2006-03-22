@@ -36,6 +36,7 @@ EXTRA_HFILES=
 # Images to copy into HTML directory
 HTML_IMAGES =								\
 	$(srcdir)/images/abstraction.png				\
+	$(srcdir)/images/bulk-rename.png				\
 	$(srcdir)/images/menu-provider.png				\
 	$(srcdir)/images/say-hello.png
 

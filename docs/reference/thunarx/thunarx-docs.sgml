@@ -9,6 +9,8 @@
 <!ENTITY ThunarxPropertyPageProvider SYSTEM "xml/thunarx-property-page-provider.xml">
 <!ENTITY ThunarxProviderFactory SYSTEM "xml/thunarx-provider-factory.xml">
 <!ENTITY ThunarxProviderPlugin SYSTEM "xml/thunarx-provider-plugin.xml">
+<!ENTITY ThunarxRenamer SYSTEM "xml/thunarx-renamer.xml">
+<!ENTITY ThunarxRenamerProvider SYSTEM "xml/thunarx-renamer-provider.xml">
 <!ENTITY thunarx-version-information SYSTEM "xml/thunarx-version-information.xml">
 
 <!ENTITY version SYSTEM "version.xml">
@@ -145,9 +147,11 @@
           include the <link linkend="ThunarxMenuProvider"><type>ThunarxMenuProvider</type></link> for adding context menu
           items to the file views, the <link
           linkend="ThunarxPropertyPageProvider"><type>ThunarxPropertyPageProvider</type></link> for adding pages to the
-          file properties dialog and the <link
+          file properties dialog, the <link
           linkend="ThunarxPreferencesProvider"><type>ThunarxPreferencesProvider</type></link> for adding actions to the
-          preferences section of the main menu.
+          preferences section of the main menu, and the <link
+          linkend="ThunarxRenamerProvider"><type>ThunarxRenamerProvider</type></link> for adding renamers to the bulk
+          rename dialog.
         </para>
       </sect2>
 
@@ -425,14 +429,18 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
       the file manager, the class <link
       linkend="ThunarxPropertyPage"><type>ThunarxPropertyPage</type></link>, which
       is the base class for widgets that can be added to the properties dialog by
-      extensions, and the interface <link
+      extensions, the interface <link
       linkend="ThunarxProviderPlugin"><type>ThunarxProviderPlugin</type></link>, which
-      hides the details of dynamic type registration from the extensions.
+      hides the details of dynamic type registration from the extensions, and the
+      class <link linkend="ThunarxRenamer"><type>ThunarxRenamer</type></link>, which
+      is the abstract base class for renamers that can be used in the bulk rename
+      dialog provided by Thunar to rename multiple files at once.
     </para>
 
     &ThunarxFileInfo;
     &ThunarxPropertyPage;
     &ThunarxProviderPlugin;
+    &ThunarxRenamer;
   </part>
 
   <part id="thunarx-providers">
@@ -459,6 +467,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
     &ThunarxMenuProvider;
     &ThunarxPropertyPageProvider;
     &ThunarxPreferencesProvider;
+    &ThunarxRenamerProvider;
   </part>
 
   <part id="thunarx-using-extensions">
