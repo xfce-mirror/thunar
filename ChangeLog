@@ -1,5 +1,22 @@
 2006-03-22	Benedikt Meurer <benny@xfce.org>
 
+	* docs/reference/thunarx/tmpl/thunarx-renamer.sgml: Fix a typo.
+	* thunar/thunar-renamer-model.c: Only invalidate items on "file-changed"
+	  signals if the file changed on the disk, to avoid invalidating items
+	  constantly while generating thumbnails.
+	* thunar/thunar-gobject-extensions.c: Register a transformation func-
+	  tion string->uint.
+	* plugins/thunar-sbr/thunar-sbr-case-renamer.c
+	  (thunar_sbr_case_renamer_new): More consistent naming scheme for the
+	  renamer titles.
+	* plugins/thunar-sbr/: Import additional renamers "Insert / Overwrite"
+	  and "Remove Characters". Bug #1599.
+	* po/POTFILES.in: Add new files.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
+2006-03-22	Benedikt Meurer <benny@xfce.org>
+
 	* docs/reference/thunarx/: Update the thunarx API documentation. 100%
 	  symbol docs coverage!
 

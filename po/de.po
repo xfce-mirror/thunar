@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-22 00:15+0100\n"
-"PO-Revision-Date: 2006-03-22 00:15+0100\n"
+"POT-Creation-Date: 2006-03-22 16:55+0100\n"
+"PO-Revision-Date: 2006-03-22 17:00+0100\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -2232,20 +2232,60 @@ msgid "Con_vert to:"
 msgstr "U_mwandeln in:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:264
-msgid "Convert upper/lowercase"
-msgstr "Groß/Kleinschreibung ändern"
+msgid "Uppercase / Lowercase"
+msgstr "Groß-/Kleinschreibung"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:48
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:66
 msgid "lowercase"
 msgstr "kleinbuchstaben"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:49
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:67
 msgid "UPPERCASE"
 msgstr "GROSSBUCHSTABEN"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:50
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:68
 msgid "Camelcase"
 msgstr "Überschrift"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:74
+msgid "Insert"
+msgstr "Einfügen"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:75
+msgid "Overwrite"
+msgstr "Überschreiben mit"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:81
+msgid "From left"
+msgstr "Von rechts"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:82
+msgid "From right"
+msgstr "Von links"
+
+#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
+msgid "_Text:"
+msgstr "_Text:"
+
+#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
+msgid "_At position:"
+msgstr "_Bei Position:"
+
+#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:387
+msgid "Insert / Overwrite"
+msgstr "Einfügen / Überschreiben"
+
+#: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:177
+msgid "Remove _From Positon:"
+msgstr "_Entferne Zeichen ab Position:"
+
+#: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
+msgid "_To Positon:"
+msgstr "_Bis Position:"
+
+#: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:428
+msgid "Remove Characters"
+msgstr "Zeichen entfernen"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:209
 msgid "_Search For:"
@@ -2286,7 +2326,7 @@ msgstr ""
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
 msgid "C_ase Sensitive Search"
-msgstr "_Groß/Kleinschreibung beachten"
+msgstr "_Groß-/Kleinschreibung beachten"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:260
 msgid ""
@@ -2294,8 +2334,8 @@ msgid ""
 "manner. The default is to use a case-insensitive search."
 msgstr ""
 "Wenn diese Option deaktiviert ist, wird das Suchmuster unabhängig von der "
-"Groß/Kleinschreibung im Dateinamen verglichen. Ansonsten, wenn diese Option "
-"aktiviert ist, muß die Groß/Kleinschreibung im Suchmuster mit dem Text im "
+"Groß-/Kleinschreibung im Dateinamen verglichen. Ansonsten, wenn diese Option "
+"aktiviert ist, muß die Groß-/Kleinschreibung im Suchmuster mit dem Text im "
 "Dateinamen übereinstimmen."
 
 #. setup a tooltip with the error message
@@ -2602,3 +2642,4 @@ msgstr "Ordner öffnen"
 #: ../Thunar-folder-handler.desktop.in.h:2
 msgid "Open the specified folders in Thunar"
 msgstr "Angegebene Ordner mit Thunar öffnen"
+

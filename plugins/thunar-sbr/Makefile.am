@@ -18,9 +18,13 @@ thunar_sbr_la_SOURCES =							\
 	thunar-sbr-case-renamer.h					\
 	thunar-sbr-enum-types.c						\
 	thunar-sbr-enum-types.h						\
+	thunar-sbr-insert-renamer.c					\
+	thunar-sbr-insert-renamer.h					\
 	thunar-sbr-plugin.c						\
 	thunar-sbr-provider.c						\
 	thunar-sbr-provider.h						\
+	thunar-sbr-remove-renamer.c					\
+	thunar-sbr-remove-renamer.h					\
 	thunar-sbr-replace-renamer.c					\
 	thunar-sbr-replace-renamer.h
 

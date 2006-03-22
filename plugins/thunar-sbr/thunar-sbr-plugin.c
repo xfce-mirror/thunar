@@ -23,8 +23,9 @@
 #endif
 
 #include <thunar-sbr/thunar-sbr-case-renamer.h>
-#include <thunar-sbr/thunar-sbr-enum-types.h>
+#include <thunar-sbr/thunar-sbr-insert-renamer.h>
 #include <thunar-sbr/thunar-sbr-provider.h>
+#include <thunar-sbr/thunar-sbr-remove-renamer.h>
 #include <thunar-sbr/thunar-sbr-replace-renamer.h>
 
 
@@ -55,7 +56,9 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 
   /* register the classes provided by this plugin */
   thunar_sbr_case_renamer_register_type (plugin);
+  thunar_sbr_insert_renamer_register_type (plugin);
   thunar_sbr_provider_register_type (plugin);
+  thunar_sbr_remove_renamer_register_type (plugin);
   thunar_sbr_replace_renamer_register_type (plugin);
 
   /* setup the plugin provider type list */

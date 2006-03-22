@@ -33,7 +33,7 @@ G_BEGIN_DECLS;
  * @THUNAR_SBR_CASE_RENAMER_MODE_UPPER : convert to upper case.
  * @THUNAR_SBR_CASE_RENAMER_MODE_CAMEL : convert to camel case.
  *
- * The oepration mode for the #ThunarSbrCaseRenamer.
+ * The operation mode for the #ThunarSbrCaseRenamer.
  **/
 typedef enum
 {
@@ -43,6 +43,43 @@ typedef enum
 } ThunarSbrCaseRenamerMode;
 
 GType thunar_sbr_case_renamer_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
+#define THUNAR_SBR_TYPE_INSERT_MODE (thunar_sbr_insert_mode_get_type ())
+
+/**
+ * ThunarSbrInsertMode:
+ * @THUNAR_SBR_INSERT_MODE_INSERT    : insert characters.
+ * @THUNAR_SBR_INSERT_MODE_OVERWRITE : overwrite existing characters.
+ *
+ * The operation mode for the #ThunarSbrInsertRenamer.
+ **/
+typedef enum
+{
+  THUNAR_SBR_INSERT_MODE_INSERT,
+  THUNAR_SBR_INSERT_MODE_OVERWRITE,
+} ThunarSbrInsertMode;
+
+GType thunar_sbr_insert_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
+#define THUNAR_SBR_TYPE_OFFSET_MODE (thunar_sbr_offset_mode_get_type ())
+
+/**
+ * ThunarSbrOffsetMode:
+ * @THUNAR_SBR_OFFSET_MODE_LEFT  : offset starting from the left.
+ * @THUNAR_SBR_OFFSET_MODE_RIGHT : offset starting from the right.
+ *
+ * The offset mode for the #ThunarSbrInsertRenamer and the
+ * #ThunarSbrRemoveRenamer.
+ **/
+typedef enum
+{
+  THUNAR_SBR_OFFSET_MODE_LEFT,
+  THUNAR_SBR_OFFSET_MODE_RIGHT,
+} ThunarSbrOffsetMode;
+
+GType thunar_sbr_offset_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
 void thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin) G_GNUC_INTERNAL;

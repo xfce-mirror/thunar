@@ -29,6 +29,8 @@
 
 
 static GType case_renamer_mode_type;
+static GType insert_mode_type;
+static GType offset_mode_type;
 
 
 
@@ -36,6 +38,22 @@ GType
 thunar_sbr_case_renamer_mode_get_type (void)
 {
   return case_renamer_mode_type;
+}
+
+
+
+GType
+thunar_sbr_insert_mode_get_type (void)
+{
+  return insert_mode_type;
+}
+
+
+
+GType
+thunar_sbr_offset_mode_get_type (void)
+{
+  return offset_mode_type;
 }
 
 
@@ -51,8 +69,25 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
     { 0,                                  NULL,                                 NULL,             },
   };
 
+  static const GEnumValue insert_mode_values[] =
+  {
+    { THUNAR_SBR_INSERT_MODE_INSERT,    "THUNAR_SBR_INSERT_MODE_INSERT",    N_ ("Insert"),    },
+    { THUNAR_SBR_INSERT_MODE_OVERWRITE, "THUNAR_SBR_INSERT_MODE_OVERWRITE", N_ ("Overwrite"), },
+    { 0,                                NULL,                               NULL,             },
+  };
+
+  static const GEnumValue offset_mode_values[] =
+  {
+    { THUNAR_SBR_OFFSET_MODE_LEFT,  "THUNAR_SBR_OFFSET_MODE_LEFT",  N_ ("From left"),  },
+    { THUNAR_SBR_OFFSET_MODE_RIGHT, "THUNAR_SBR_OFFSET_MODE_RIGHT", N_ ("From right"), },
+    { 0,                            NULL,                           NULL,              },
+  };
+
   case_renamer_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrCaseRenamerMode", case_renamer_mode_values);
+  insert_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrInsertMode", insert_mode_values);
+  offset_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrOffsetMode", offset_mode_values);
 }
+
 
 
 

@@ -261,7 +261,7 @@ ThunarSbrCaseRenamer*
 thunar_sbr_case_renamer_new (void)
 {
   return g_object_new (THUNAR_SBR_TYPE_CASE_RENAMER,
-                       "name", _("Convert upper/lowercase"),
+                       "name", _("Uppercase / Lowercase"),
                        NULL);
 }
 

@@ -42,6 +42,7 @@
 static void transform_string_to_boolean (const GValue *src, GValue *dst);
 static void transform_string_to_enum    (const GValue *src, GValue *dst);
 static void transform_string_to_int     (const GValue *src, GValue *dst);
+static void transform_string_to_uint    (const GValue *src, GValue *dst);
 
 
 
@@ -82,7 +83,16 @@ static void
 transform_string_to_int (const GValue *src,
                          GValue       *dst)
 {
-  g_value_set_int (dst, strtol (g_value_get_string (src), NULL, 10));
+  g_value_set_int (dst, (gint) strtol (g_value_get_string (src), NULL, 10));
+}
+
+
+
+static void
+transform_string_to_uint (const GValue *src,
+                          GValue       *dst)
+{
+  g_value_set_uint (dst, (guint) strtoul (g_value_get_string (src), NULL, 10));
 }
 
 
@@ -101,6 +111,8 @@ thunar_g_initialize_transformations (void)
     g_value_register_transform_func (G_TYPE_STRING, G_TYPE_BOOLEAN, transform_string_to_boolean);
   if (!g_value_type_transformable (G_TYPE_STRING, G_TYPE_INT))
     g_value_register_transform_func (G_TYPE_STRING, G_TYPE_INT, transform_string_to_int);
+  if (!g_value_type_transformable (G_TYPE_STRING, G_TYPE_UINT))
+    g_value_register_transform_func (G_TYPE_STRING, G_TYPE_UINT, transform_string_to_uint);
 
   /* register a transformation function string->enum unconditionally */
   g_value_register_transform_func (G_TYPE_STRING, G_TYPE_ENUM, transform_string_to_enum);
