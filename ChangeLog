@@ -1,3 +1,11 @@
+2006-03-23	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-dialogs.c, thunar/thunar-window.{c,h}: Move the generic
+	  parts of the about dialog to thunar-dialogs.c.
+	* thunar/thunar-properties-dialog.c
+	  (thunar_properties_dialog_update_providers): Fix missing
+	  gtk_widget_show() for the provided pages.
+
 2006-03-22	Benedikt Meurer <benny@xfce.org>
 
 	* docs/reference/thunarx/tmpl/thunarx-renamer.sgml: Fix a typo.

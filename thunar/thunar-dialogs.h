@@ -24,6 +24,11 @@
 
 G_BEGIN_DECLS;
 
+void thunar_dialogs_show_about (GtkWindow    *parent,
+                                const gchar  *title,
+                                const gchar  *format,
+                                ...) G_GNUC_INTERNAL G_GNUC_PRINTF (3, 4);
+
 void thunar_dialogs_show_error (gpointer      parent,
                                 const GError *error,
                                 const gchar  *format,

@@ -32,6 +32,96 @@
 
 
 /**
+ * thunar_dialogs_show_about:
+ * @parent : the parent #GtkWindow or %NULL.
+ * @title  : the software title.
+ * @format : the printf()-style format for the main text in the about dialog.
+ * @...    : argument list for the @format.
+ *
+ * Displays the Thunar about dialog with @format as main text.
+ **/
+void
+thunar_dialogs_show_about (GtkWindow   *parent,
+                           const gchar *title,
+                           const gchar *format,
+                           ...)
+{
+  static const gchar *artists[] =
+  {
+    "Young Hahn <youngjin.hahn@gmail.com>",
+    NULL,
+  };
+
+  static const gchar *authors[] =
+  {
+    "Benedikt Meurer <benny@xfce.org>",
+    NULL,
+  };
+  
+  static const gchar *documenters[] =
+  {
+    "Benedikt Meurer <benny@xfce.org>",
+    NULL,
+  };
+
+  static const gchar license[] =
+    "This program is free software; you can redistribute it and/or modify it\n"
+    "under the terms of the GNU General Public License as published by the Free\n"
+    "Software Foundation; either version 2 of the License, or (at your option)\n"
+    "any later version.\n"
+    "\n"
+    "This program is distributed in the hope that it will be useful, but WITHOUT\n"
+    "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\n"
+    "FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for\n"
+    "more details.\n"
+    "\n"
+    "You should have received a copy of the GNU General Public License along with\n"
+    "this program; if not, write to the Free Software Foundation, Inc., 59 Temple\n"
+    "Place, Suite 330, Boston, MA  02111-1307  USA.\n";
+
+  GdkPixbuf *logo;
+  va_list    args;
+  gchar     *comments;
+
+  g_return_if_fail (parent == NULL || GTK_IS_WINDOW (parent));
+
+  /* determine the comments */
+  va_start (args, format);
+  comments = g_strdup_vprintf (format, args);
+  va_end (args);
+
+  
+  /* try to load the about logo */
+  logo = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/Thunar/Thunar-about-logo.png", NULL);
+
+  /* open the about dialog */
+  gtk_about_dialog_set_email_hook (exo_url_about_dialog_hook, NULL, NULL);
+  gtk_about_dialog_set_url_hook (exo_url_about_dialog_hook, NULL, NULL);
+  gtk_show_about_dialog (parent,
+                         "artists", artists,
+                         "authors", authors,
+                         "comments", comments,
+                         "copyright", "Copyright \302\251 2004-2006 Benedikt Meurer",
+                         "destroy-with-parent", TRUE,
+                         "documenters", documenters,
+                         "license", license,
+                         "logo", logo,
+                         "modal", TRUE,
+                         "name", title,
+                         "translator-credits", _("translator-credits"),
+                         "version", PACKAGE_VERSION,
+                         "website", "http://thunar.xfce.org/",
+                         NULL);
+
+  /* cleanup */
+  if (G_LIKELY (logo != NULL))
+    g_object_unref (G_OBJECT (logo));
+  g_free (comments);
+}
+
+
+
+/**
  * thunar_dialogs_show_error:
  * @parent : a #GtkWidget on which the error dialog should be shown, or a #GdkScreen
  *           if no #GtkWidget is known. May also be %NULL, in which case the default

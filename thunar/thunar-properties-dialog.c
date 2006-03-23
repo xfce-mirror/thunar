@@ -593,6 +593,7 @@ thunar_properties_dialog_update_providers (ThunarPropertiesDialog *dialog)
       label_widget = thunarx_property_page_get_label_widget (THUNARX_PROPERTY_PAGE (lp->data));
       gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), GTK_WIDGET (lp->data), label_widget);
       g_object_ref (G_OBJECT (lp->data));
+      gtk_widget_show (lp->data);
     }
 }
 

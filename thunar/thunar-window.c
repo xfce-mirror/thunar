@@ -1687,64 +1687,10 @@ static void
 thunar_window_action_about (GtkAction    *action,
                             ThunarWindow *window)
 {
-  static const gchar *artists[] =
-  {
-    "Young Hahn <youngjin.hahn@gmail.com>",
-    NULL,
-  };
-
-  static const gchar *authors[] =
-  {
-    "Benedikt Meurer <benny@xfce.org>",
-    NULL,
-  };
-  
-  static const gchar *documenters[] =
-  {
-    "Benedikt Meurer <benny@xfce.org>",
-    NULL,
-  };
-
-  static const gchar license[] =
-    "This program is free software; you can redistribute it and/or modify it\n"
-    "under the terms of the GNU General Public License as published by the Free\n"
-    "Software Foundation; either version 2 of the License, or (at your option)\n"
-    "any later version.\n"
-    "\n"
-    "This program is distributed in the hope that it will be useful, but WITHOUT\n"
-    "ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or\n"
-    "FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for\n"
-    "more details.\n"
-    "\n"
-    "You should have received a copy of the GNU General Public License along with\n"
-    "this program; if not, write to the Free Software Foundation, Inc., 59 Temple\n"
-    "Place, Suite 330, Boston, MA  02111-1307  USA.\n";
-
-  GdkPixbuf *logo;
-  
-  /* try to load the about logo */
-  logo = gdk_pixbuf_new_from_file (DATADIR "/pixmaps/Thunar/Thunar-about-logo.png", NULL);
-
-  /* open the about dialog */
-  gtk_about_dialog_set_email_hook (exo_url_about_dialog_hook, NULL, NULL);
-  gtk_about_dialog_set_url_hook (exo_url_about_dialog_hook, NULL, NULL);
-  gtk_show_about_dialog (GTK_WINDOW (window),
-                         "artists", artists,
-                         "authors", authors,
-                         "comments", _("Thunar is a fast and easy to use file manager\nfor the Xfce Desktop Environment."),
-                         "copyright", "Copyright \302\251 2004-2006 Benedikt Meurer",
-                         "documenters", documenters,
-                         "license", license,
-                         "logo", logo,
-                         "name", PACKAGE_NAME,
-                         "translator-credits", _("translator-credits"),
-                         "version", PACKAGE_VERSION,
-                         "website", "http://thunar.xfce.org/",
-                         NULL);
-
-  /* release the about logo (if any) */
-  if (G_LIKELY (logo != NULL))
-    g_object_unref (G_OBJECT (logo));
+  /* just popup the about dialog */
+  thunar_dialogs_show_about (GTK_WINDOW (window), PACKAGE_NAME,
+                             _("Thunar is a fast and easy to use file manager\n"
+                               "for the Xfce Desktop Environment."));
 }
 
 
