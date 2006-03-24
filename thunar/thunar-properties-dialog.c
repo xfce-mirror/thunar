@@ -39,6 +39,7 @@
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-chooser.h>
 #include <thunar/thunar-properties-dialog.h>
+#include <thunar/thunar-size-label.h>
 
 
 
@@ -103,7 +104,6 @@ struct _ThunarPropertiesDialog
   GtkWidget              *freespace_label;
   GtkWidget              *volume_image;
   GtkWidget              *volume_label;
-  GtkWidget              *size_label;
 
   gint                    rename_idle_id;
 };
@@ -259,6 +259,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->kind_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->kind_label), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->kind_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->kind_label);
@@ -286,6 +287,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   dialog->link_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->link_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->link_label), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->link_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->link_label);
@@ -310,6 +312,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   dialog->modified_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->modified_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->modified_label), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->modified_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->modified_label);
@@ -323,6 +326,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   dialog->accessed_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->accessed_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->accessed_label), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->accessed_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->accessed_label);
@@ -347,6 +351,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   dialog->freespace_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->freespace_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->freespace_label), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->freespace_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (dialog->freespace_label);
@@ -370,6 +375,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (dialog->volume_image);
 
   dialog->volume_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->volume_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->volume_label), "visible", G_OBJECT (dialog->volume_image), "visible");
   gtk_box_pack_start (GTK_BOX (box), dialog->volume_label, TRUE, TRUE, 0);
   gtk_widget_show (dialog->volume_label);
@@ -382,10 +388,10 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (label);
 
-  dialog->size_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
-  exo_binding_new (G_OBJECT (dialog->size_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->size_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-  gtk_widget_show (dialog->size_label);
+  label = thunar_size_label_new ();
+  exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (label), "file");
+  gtk_table_attach (GTK_TABLE (table), label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
 
   ++row;
 
@@ -738,29 +744,6 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   else
     {
       gtk_widget_hide (dialog->volume_label);
-    }
-
-  /* update the size (only for regular files) */
-  if (thunar_file_is_regular (dialog->file))
-    {
-      size_string = thunar_file_get_size_string (dialog->file);
-      if (G_LIKELY (size_string != NULL))
-        {
-          size = thunar_file_get_size (dialog->file);
-          str = g_strdup_printf (_("%s (%" G_GINT64_FORMAT " Bytes)"), size_string, (gint64) size);
-          gtk_label_set_text (GTK_LABEL (dialog->size_label), str);
-          gtk_widget_show (dialog->size_label);
-          g_free (size_string);
-          g_free (str);
-        }
-      else
-        {
-          gtk_widget_hide (dialog->size_label);
-        }
-    }
-  else
-    {
-      gtk_widget_hide (dialog->size_label);
     }
 
   /* cleanup */

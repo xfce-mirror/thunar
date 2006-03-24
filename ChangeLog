@@ -1,5 +1,23 @@
 2006-03-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-marshal.list: Add a marshaller for the
+	  "status-ready" signal for the upcoming ThunarVfsDeepCountJob.
+	* thunar-vfs/thunar-vfs.{c,h}, thunar-vfs/thunar-vfs.symbols,
+	  thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-deep-count-job.{c,h}:
+	  Add ThunarVfsDeepCountJob, which calculates the number of items and
+	  the total size of the items in a given directory. Bug #1603.
+	* thunar/Makefile.am, thunar/thunar-size-label.{c,h},
+	  thunar/thunar-properties-dialog.c: Add ThunarSizeLabel widget class,
+	  which handles the ThunarVfsDeepCountJob and displays the total size
+	  of a file for the properties dialog. Bug #1603.
+	* thunar/thunar-gtk-extensions.c: Make sure tooltips are shown for
+	  the toolbar items. Bug #1593.
+	* po/POTFILES.in: Add new files.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
+2006-03-24	Benedikt Meurer <benny@xfce.org>
+
 	* plugins/thunar-sbr/thunar-sbr-case-renamer.h,
 	  plugins/thunar-sbr/thunar-sbr-insert-renamer.h,
 	  plugins/thunar-sbr/thunar-sbr-remove-renamer.h,

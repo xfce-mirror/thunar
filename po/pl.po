@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-24 02:35+0100\n"
+"POT-Creation-Date: 2006-03-24 23:50+0100\n"
 "PO-Revision-Date: 2006-01-13 14:21+0100\n"
 "Last-Translator: Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>\n"
 "Language-Team: Polish <pl@li.org>\n"
@@ -91,6 +91,12 @@ msgstr ""
 "Nie można usunąć %s.\n"
 "\n"
 "Czy chcesz go pominąć?"
+
+#. base directory not readable
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:218
+#, fuzzy
+msgid "Failed to read folder contents"
+msgstr "Wczytuję zawartość katalogu..."
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-exec.c:509
@@ -185,7 +191,7 @@ msgid "The icon of the mime handler"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:176
-#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:379
+#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:385
 #: ../thunarx/thunarx-renamer.c:177
 msgid "Name"
 msgstr "Nazwa"
@@ -261,7 +267,7 @@ msgid "copy of %s"
 msgstr "kopia %s"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:190 ../thunar/thunar-list-model.c:752
-#: ../thunar/thunar-properties-dialog.c:659
+#: ../thunar/thunar-properties-dialog.c:665
 #, c-format
 msgid "link to %s"
 msgstr "łącze do %s"
@@ -545,7 +551,7 @@ msgid "Select an Application"
 msgstr "Wybierz aplikację"
 
 #: ../thunar/thunar-chooser-dialog.c:694
-#: ../thunar/thunar-renamer-dialog.c:1013
+#: ../thunar/thunar-renamer-dialog.c:1019
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
 #: ../plugins/thunar-uca/thunar-uca-editor.c:660
 msgid "All Files"
@@ -693,7 +699,7 @@ msgstr "Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:899
+#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:905
 #, fuzzy
 msgid "Failed to open the documentation browser"
 msgstr "Otwórz katalog nadrzędny"
@@ -756,7 +762,7 @@ msgstr ""
 #.
 #. Permissions chooser
 #.
-#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:414
+#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:420
 msgid "Permissions"
 msgstr "Prawa dostępu"
 
@@ -1015,7 +1021,7 @@ msgstr[1] ""
 msgid "Open With \"%s\""
 msgstr "Otwórz z"
 
-#: ../thunar/thunar-list-model.c:750 ../thunar/thunar-properties-dialog.c:657
+#: ../thunar/thunar-list-model.c:750 ../thunar/thunar-properties-dialog.c:663
 msgid "broken link"
 msgstr "nieprawidłowe łącze"
 
@@ -1507,12 +1513,12 @@ msgstr "Nazwa:"
 msgid "Kind:"
 msgstr "Typ:"
 
-#: ../thunar/thunar-properties-dialog.c:268
+#: ../thunar/thunar-properties-dialog.c:269
 #, fuzzy
 msgid "Open With:"
 msgstr "Otwórz z"
 
-#: ../thunar/thunar-properties-dialog.c:282
+#: ../thunar/thunar-properties-dialog.c:283
 #, fuzzy
 msgid "Link Target:"
 msgstr "Utwórz _łacze"
@@ -1520,126 +1526,117 @@ msgstr "Utwórz _łacze"
 #.
 #. Third box (modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:306
+#: ../thunar/thunar-properties-dialog.c:308
 msgid "Modified:"
 msgstr "Ostatnio zmodyfikowany:"
 
-#: ../thunar/thunar-properties-dialog.c:319
+#: ../thunar/thunar-properties-dialog.c:322
 msgid "Accessed:"
 msgstr "Ostatnio otwarty:"
 
 #.
 #. Fourth box (free space, volume, size)
 #.
-#: ../thunar/thunar-properties-dialog.c:343
+#: ../thunar/thunar-properties-dialog.c:347
 msgid "Free Space:"
 msgstr ""
 
-#: ../thunar/thunar-properties-dialog.c:356
+#: ../thunar/thunar-properties-dialog.c:361
 msgid "Volume:"
 msgstr "Urządzenie:"
 
-#: ../thunar/thunar-properties-dialog.c:379
+#: ../thunar/thunar-properties-dialog.c:385
 msgid "Size:"
 msgstr "Rozmiar:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:403
+#: ../thunar/thunar-properties-dialog.c:409
 msgid "Emblems"
 msgstr "Symbole"
 
-#: ../thunar/thunar-properties-dialog.c:750
-msgid "%s (%"
-msgstr ""
-
-#: ../thunar/thunar-properties-dialog.c:750
-#, fuzzy
-msgid " Bytes)"
-msgstr "%s (%u bajtów)"
-
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:798
+#: ../thunar/thunar-properties-dialog.c:781
 #: ../thunar/thunar-standard-view.c:2279
 #, fuzzy, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Nie udało się zmienić nazwy %s."
 
-#: ../thunar/thunar-renamer-dialog.c:135 ../thunar/thunar-window.c:238
+#: ../thunar/thunar-renamer-dialog.c:140 ../thunar/thunar-window.c:238
 msgid "_File"
 msgstr "_Plik"
 
-#: ../thunar/thunar-renamer-dialog.c:136 ../thunar/thunar-standard-view.c:305
+#: ../thunar/thunar-renamer-dialog.c:141 ../thunar/thunar-standard-view.c:305
 msgid "File Context Menu"
 msgstr "Menu kontekstowe pliku"
 
-#: ../thunar/thunar-renamer-dialog.c:137
+#: ../thunar/thunar-renamer-dialog.c:142
 #, fuzzy
 msgid "_Add Files..."
 msgstr "Wszystkie pliki"
 
-#: ../thunar/thunar-renamer-dialog.c:137
+#: ../thunar/thunar-renamer-dialog.c:142
 msgid "Include additional files in the list of files should be renamed"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:139
+#: ../thunar/thunar-renamer-dialog.c:144
 msgid "Clear"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:139
+#: ../thunar/thunar-renamer-dialog.c:144
 msgid "Clear the file list below"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:140 ../thunar/thunar-window.c:258
+#: ../thunar/thunar-renamer-dialog.c:145 ../thunar/thunar-window.c:258
 msgid "_About"
 msgstr "O progr_amie"
 
-#: ../thunar/thunar-renamer-dialog.c:140
+#: ../thunar/thunar-renamer-dialog.c:145
 #, fuzzy
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Wyświetl informacje o programie Thunar"
 
-#: ../thunar/thunar-renamer-dialog.c:141 ../thunar/thunar-standard-view.c:308
+#: ../thunar/thunar-renamer-dialog.c:146 ../thunar/thunar-standard-view.c:308
 #, fuzzy
 msgid "_Properties..."
 msgstr "_Właściwości"
 
-#: ../thunar/thunar-renamer-dialog.c:141 ../thunar/thunar-standard-view.c:308
+#: ../thunar/thunar-renamer-dialog.c:146 ../thunar/thunar-standard-view.c:308
 msgid "View the properties of the selected file"
 msgstr "Wyświetl właściwości zaznaczonego elementu"
 
-#: ../thunar/thunar-renamer-dialog.c:313
-#: ../thunar/thunar-renamer-dialog.c:1478
+#: ../thunar/thunar-renamer-dialog.c:318
+#: ../thunar/thunar-renamer-dialog.c:1503
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
 #, fuzzy
 msgid "Rename Multiple Files"
 msgstr "Zmień nazwę zaznaczonego pliku"
 
 #. add the "Rename Files" button
-#: ../thunar/thunar-renamer-dialog.c:321
+#: ../thunar/thunar-renamer-dialog.c:326
 #, fuzzy
 msgid "_Rename Files"
 msgstr "W_klej pliki"
 
-#: ../thunar/thunar-renamer-dialog.c:324
+#: ../thunar/thunar-renamer-dialog.c:329
 msgid ""
 "Click here to actually rename the files listed above to their new names."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:395
+#: ../thunar/thunar-renamer-dialog.c:401
 #, fuzzy
 msgid "New Name"
 msgstr "Menedżer plików"
 
-#: ../thunar/thunar-renamer-dialog.c:460
+#: ../thunar/thunar-renamer-dialog.c:466
 msgid "Click here to view the documentation for the selected rename operation."
 msgstr ""
 
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
 #. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
 #.
-#: ../thunar/thunar-renamer-dialog.c:562
+#: ../thunar/thunar-renamer-dialog.c:568
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
@@ -1647,41 +1644,41 @@ msgid ""
 msgstr ""
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1002
+#: ../thunar/thunar-renamer-dialog.c:1008
 #, fuzzy
 msgid "Select files to rename"
 msgstr "Nie udało się zmienić nazwy %s."
 
-#: ../thunar/thunar-renamer-dialog.c:1018
+#: ../thunar/thunar-renamer-dialog.c:1024
 #, fuzzy
 msgid "Audio Files"
 msgstr "S_kopiuj pliki"
 
-#: ../thunar/thunar-renamer-dialog.c:1023
+#: ../thunar/thunar-renamer-dialog.c:1029
 #: ../plugins/thunar-uca/thunar-uca-editor.c:665
 #, fuzzy
 msgid "Image Files"
 msgstr "W_klej pliki"
 
-#: ../thunar/thunar-renamer-dialog.c:1028
+#: ../thunar/thunar-renamer-dialog.c:1034
 #, fuzzy
 msgid "Video Files"
 msgstr "S_kopiuj pliki"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1158
+#: ../thunar/thunar-renamer-dialog.c:1164
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 #, fuzzy
 msgid "Bulk Rename"
 msgstr "Zmień _nazwę"
 
-#: ../thunar/thunar-renamer-dialog.c:1159
+#: ../thunar/thunar-renamer-dialog.c:1165
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:1325
+#: ../thunar/thunar-renamer-dialog.c:1350
 #, fuzzy
 msgid "Remove File"
 msgid_plural "Remove Files"
@@ -1689,7 +1686,7 @@ msgstr[0] "W_klej pliki"
 msgstr[1] "W_klej pliki"
 msgstr[2] "W_klej pliki"
 
-#: ../thunar/thunar-renamer-dialog.c:1327
+#: ../thunar/thunar-renamer-dialog.c:1352
 msgid "Remove the selected file from the list of files that should be renamed"
 msgid_plural ""
 "Remove the selected files from the list of files that should be renamed"
@@ -1697,7 +1694,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1478
+#: ../thunar/thunar-renamer-dialog.c:1503
 #, fuzzy
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Zmień nazwę zaznaczonego pliku"
@@ -1795,6 +1792,24 @@ msgstr "Nie udało się zmienić nazwy %s."
 #, fuzzy, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Nie udało się zmienić nazwy %s."
+
+#. tell the user that we started calculation
+#: ../thunar/thunar-size-label.c:297
+#, fuzzy
+msgid "Calculating..."
+msgstr "Wyszukuję pliki..."
+
+#: ../thunar/thunar-size-label.c:307
+#, fuzzy, c-format
+msgid "%s Bytes"
+msgstr "%s (%u bajtów)"
+
+#: ../thunar/thunar-size-label.c:399
+#, c-format
+msgid "%u item, totalling %s"
+msgid_plural "%u items, totalling %s"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../thunar/thunar-standard-view.c:306
 msgid "Folder Context Menu"

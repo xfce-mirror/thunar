@@ -25,6 +25,17 @@
 
 
 
+static void
+parent_set (GtkWidget *toolitem,
+            GtkWidget *old_parent,
+            GtkAction *action)
+{
+  /* the tooltips cannot be set before the toolitem has a parent */
+  g_object_notify (G_OBJECT (action), "tooltip");
+}
+
+
+
 /**
  * thunar_gtk_action_group_create_tool_item:
  * @action_group : a #GtkActionGroup.
@@ -40,6 +51,7 @@ thunar_gtk_action_group_create_tool_item (GtkActionGroup *action_group,
                                           const gchar    *action_name)
 {
   GtkAction *action;
+  GtkWidget *widget;
 
   g_return_val_if_fail (GTK_IS_ACTION_GROUP (action_group), NULL);
   g_return_val_if_fail (action_name != NULL, NULL);
@@ -48,7 +60,11 @@ thunar_gtk_action_group_create_tool_item (GtkActionGroup *action_group,
   if (G_UNLIKELY (action == NULL))
     return NULL;
 
-  return GTK_TOOL_ITEM (gtk_action_create_tool_item (action));
+  /* create the toolitem and take care of the tooltip work-around */
+  widget = gtk_action_create_tool_item (action);
+  g_signal_connect_object (G_OBJECT (widget), "parent-set", G_CALLBACK (parent_set), G_OBJECT (action), G_CONNECT_AFTER);
+
+  return GTK_TOOL_ITEM (widget);
 }
 
 

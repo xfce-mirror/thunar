@@ -103,6 +103,9 @@ ThunarVfsJob *thunar_vfs_change_owner     (ThunarVfsPath    *path,
                                            gboolean          recursive,
                                            GError          **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
+ThunarVfsJob *thunar_vfs_deep_count       (ThunarVfsPath    *path,
+                                           GError          **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_VFS_H__ */

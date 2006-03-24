@@ -136,6 +136,8 @@ Thunar_SOURCES =							\
 	thunar-shortcuts-view.h						\
 	thunar-side-pane.c						\
 	thunar-side-pane.h						\
+	thunar-size-label.c						\
+	thunar-size-label.h						\
 	thunar-standard-view.c						\
 	thunar-standard-view.h						\
 	thunar-standard-view-ui.h					\

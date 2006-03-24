@@ -26,6 +26,7 @@
 #include <thunar-vfs/thunar-vfs-chmod-job.h>
 #include <thunar-vfs/thunar-vfs-chown-job.h>
 #include <thunar-vfs/thunar-vfs-creat-job.h>
+#include <thunar-vfs/thunar-vfs-deep-count-job.h>
 #include <thunar-vfs/thunar-vfs-link-job.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
 #include <thunar-vfs/thunar-vfs-mkdir-job.h>
@@ -709,6 +710,44 @@ thunar_vfs_change_owner (ThunarVfsPath  *path,
 
   /* allocate and launch the new job */
   job = thunar_vfs_chown_job_new (path, uid, -1, recursive, error);
+  if (G_LIKELY (job != NULL))
+    thunar_vfs_job_launch (job);
+
+  return job;
+}
+
+
+
+/**
+ * thunar_vfs_deep_count:
+ * @path  : the base #ThunarVfsPath.
+ * @error : return location for errors or %NULL.
+ *
+ * Starts a #ThunarVfsJob, which will count the number of items
+ * in the directory specified by @path and also determine the
+ * total size. If @path is not a directory, then the size of the
+ * item at @path will be determined.
+ *
+ * The caller is responsible to free the returned job using
+ * g_object_unref() when no longer needed.
+ *
+ * Note, that the returned job is launched right away, so you don't
+ * need to call thunar_vfs_job_launch() on it.
+ *
+ * Return value: the newly allocated #ThunarVfsDeepCountJob or %NULL
+ *               if an error occurs while creating the job.
+ **/
+ThunarVfsJob*
+thunar_vfs_deep_count (ThunarVfsPath *path,
+                       GError       **error)
+{
+  ThunarVfsJob *job;
+  
+  g_return_val_if_fail (path != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* allocate and launch the new job */
+  job = thunar_vfs_deep_count_job_new (path);
   if (G_LIKELY (job != NULL))
     thunar_vfs_job_launch (job);
 
