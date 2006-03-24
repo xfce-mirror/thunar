@@ -31,6 +31,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-progress-dialog.h>
+#include <thunar/thunar-renamer-dialog.h>
 
 
 
@@ -626,6 +627,96 @@ thunar_application_open_window (ThunarApplication *application,
 
 
 /**
+ * thunar_application_bulk_rename:
+ * @application       : a #ThunarApplication.
+ * @working_directory : the default working directory for the bulk rename dialog.
+ * @filenames         : the list of file names that should be renamed or the empty
+ *                      list to start with an empty rename dialog. The file names
+ *                      can either be absolute paths, file:-URIs or relative file
+ *                      names to @working_directory.
+ * @standalone        : %TRUE to display the bulk rename dialog like a standalone
+ *                      application.
+ * @screen            : the #GdkScreen on which to rename the @filenames or %NULL
+ *                      to use the default #GdkScreen.
+ * @error             : return location for errors or %NULL.
+ *
+ * Tries to popup the bulk rename dialog.
+ *
+ * Return value: %TRUE if the dialog was opened successfully, otherwise %FALSE.
+ **/
+gboolean
+thunar_application_bulk_rename (ThunarApplication *application,
+                                const gchar       *working_directory,
+                                gchar            **filenames,
+                                gboolean           standalone,
+                                GdkScreen         *screen,
+                                GError           **error)
+{
+  ThunarFile *current_directory = NULL;
+  ThunarFile *file;
+  gboolean    result = FALSE;
+  GList      *file_list = NULL;
+  gchar      *filename;
+  gint        n;
+
+  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
+  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (working_directory != NULL, FALSE);
+
+  /* determine the file for the working directory */
+  current_directory = thunar_file_get_for_uri (working_directory, error);
+  if (G_UNLIKELY (current_directory == NULL))
+    return FALSE;
+
+  /* check if we should use the default screen */
+  if (G_LIKELY (screen == NULL))
+    screen = gdk_screen_get_default ();
+
+  /* try to process all filenames and convert them to the appropriate file objects */
+  for (n = 0; filenames[n] != NULL; ++n)
+    {
+      /* check if the filename is an absolute path or a file:-URI */
+      if (g_path_is_absolute (filenames[n]) || g_str_has_prefix (filenames[n], "file:"))
+        {
+          /* determine the file for the filename directly */
+          file = thunar_file_get_for_uri (filenames[n], error);
+        }
+      else
+        {
+          /* translate the filename into an absolute path first */
+          filename = g_build_filename (working_directory, filenames[n], NULL);
+          file = thunar_file_get_for_uri (filename, error);
+          g_free (filename);
+        }
+
+      /* verify that we have a valid file */
+      if (G_LIKELY (file != NULL))
+        file_list = g_list_append (file_list, file);
+      else
+        break;
+    }
+
+  /* check if the filenames where resolved successfully */
+  if (G_LIKELY (filenames[n] == NULL))
+    {
+      /* popup the bulk rename dialog */
+      thunar_show_renamer_dialog (screen, current_directory, file_list, standalone);
+
+      /* we succeed */
+      result = TRUE;
+    }
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (current_directory));
+  thunar_file_list_free (file_list);
+
+  return result;
+}
+
+
+
+/**
  * thunar_application_process_filenames:
  * @application       : a #ThunarApplication.
  * @working_directory : the working directory relative to which the @filenames should
@@ -648,13 +739,12 @@ thunar_application_process_filenames (ThunarApplication *application,
                                       GdkScreen         *screen,
                                       GError           **error)
 {
-  ThunarVfsPath *path;
-  ThunarFile    *file;
-  GError        *derror = NULL;
-  gchar         *filename;
-  GList         *file_list = NULL;
-  GList         *lp;
-  gint           n;
+  ThunarFile *file;
+  GError     *derror = NULL;
+  gchar      *filename;
+  GList      *file_list = NULL;
+  GList      *lp;
+  gint        n;
 
   g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
   g_return_val_if_fail (working_directory != NULL, FALSE);
@@ -669,23 +759,16 @@ thunar_application_process_filenames (ThunarApplication *application,
       /* check if the filename is an absolute path or a file:-URI */
       if (g_path_is_absolute (filenames[n]) || g_str_has_prefix (filenames[n], "file:"))
         {
-          /* determine the path for the filename directly */
-          path = thunar_vfs_path_new (filenames[n], &derror);
+          /* determine the file for the filename directly */
+          file = thunar_file_get_for_uri (filenames[n], &derror);
         }
       else
         {
           /* translate the filename into an absolute path first */
           filename = g_build_filename (working_directory, filenames[n], NULL);
-          path = thunar_vfs_path_new (filename, &derror);
+          file = thunar_file_get_for_uri (filename, &derror);
           g_free (filename);
         }
-
-      /* determine the file for the path */
-      file = (path != NULL) ? thunar_file_get_for_path (path, &derror) : NULL;
-
-      /* release the path (if any) */
-      if (G_LIKELY (path != NULL))
-        thunar_vfs_path_unref (path);
 
       /* verify that we have a valid file */
       if (G_LIKELY (file != NULL))

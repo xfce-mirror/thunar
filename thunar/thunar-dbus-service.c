@@ -77,6 +77,12 @@ static gboolean thunar_dbus_service_launch_files                (ThunarDBusServi
                                                                  gchar                 **filenames,
                                                                  const gchar            *display,
                                                                  GError                **error);
+static gboolean thunar_dbus_service_bulk_rename                 (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *working_directory,
+                                                                 gchar                 **filenames,
+                                                                 gboolean                standalone,
+                                                                 const gchar            *display,
+                                                                 GError                **error);
 static gboolean thunar_dbus_service_terminate                   (ThunarDBusService      *dbus_service,
                                                                  GError                **error);
 
@@ -197,26 +203,13 @@ thunar_dbus_service_parse_uri_and_display (ThunarDBusService *dbus_service,
                                            GdkScreen        **screen_return,
                                            GError           **error)
 {
-  ThunarVfsPath *path;
-
   /* try to open the display */
   *screen_return = thunar_gdk_screen_open (display, error);
   if (G_UNLIKELY (*screen_return == NULL))
     return FALSE;
 
-  /* try to determine the path for the URI */
-  path = thunar_vfs_path_new (uri, error);
-  if (G_UNLIKELY (path == NULL))
-    {
-      g_object_unref (G_OBJECT (*screen_return));
-      return FALSE;
-    }
-
-  /* try to determine the file for the path */
-  *file_return = thunar_file_get_for_path (path, error);
-  thunar_vfs_path_unref (path);
-
-  /* check if we have a file */
+  /* try to determine the file for the URI */
+  *file_return = thunar_file_get_for_uri (uri, error);
   if (G_UNLIKELY (*file_return == NULL))
     {
       g_object_unref (G_OBJECT (*screen_return));
@@ -403,6 +396,45 @@ thunar_dbus_service_display_preferences_dialog (ThunarDBusService *dbus_service,
   g_object_unref (G_OBJECT (screen));
 
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_bulk_rename (ThunarDBusService *dbus_service,
+                                 const gchar       *working_directory,
+                                 gchar            **filenames,
+                                 gboolean           standalone,
+                                 const gchar       *display,
+                                 GError           **error)
+{
+  ThunarApplication *application;
+  GdkScreen         *screen;
+  gboolean           result = FALSE;
+  gchar             *cwd;
+
+  /* determine a proper working directory */
+  cwd = (working_directory != NULL && *working_directory != '\0')
+      ? g_strdup (working_directory)
+      : g_get_current_dir ();
+
+  /* try to open the screen for the display name */
+  screen = thunar_gdk_screen_open (display, error);
+  if (G_LIKELY (screen != NULL))
+    {
+      /* tell the application to display the bulk rename dialog */
+      application = thunar_application_get ();
+      result = thunar_application_bulk_rename (application, cwd, filenames, standalone, screen, error);
+      g_object_unref (G_OBJECT (application));
+
+      /* release the screen */
+      g_object_unref (G_OBJECT (screen));
+    }
+
+  /* release the cwd */
+  g_free (cwd);
+
+  return result;
 }
 
 

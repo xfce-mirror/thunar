@@ -74,6 +74,8 @@ void                 thunar_renamer_model_set_renamer    (ThunarRenamerModel *re
 void                 thunar_renamer_model_append         (ThunarRenamerModel *renamer_model,
                                                           ThunarFile         *file);
 void                 thunar_renamer_model_clear          (ThunarRenamerModel *renamer_model);
+void                 thunar_renamer_model_remove         (ThunarRenamerModel *renamer_model,
+                                                          GtkTreePath        *path);
 
 G_END_DECLS;
 

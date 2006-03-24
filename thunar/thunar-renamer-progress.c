@@ -153,8 +153,7 @@ thunar_renamer_progress_destroy (GtkObject *object)
   ThunarRenamerProgress *renamer_progress = THUNAR_RENAMER_PROGRESS (object);
 
   /* exit the internal main loop on destroy */
-  if (G_UNLIKELY (renamer_progress->next_idle_loop != NULL))
-    g_main_loop_quit (renamer_progress->next_idle_loop);
+  thunar_renamer_progress_cancel (renamer_progress);
 
   (*GTK_OBJECT_CLASS (thunar_renamer_progress_parent_class)->destroy) (object);
 }
@@ -319,6 +318,24 @@ thunar_renamer_progress_new (void)
 
 
 /**
+ * thunar_renamer_progress_cancel:
+ * @renamer_progress : a #ThunarRenamerProgress.
+ *
+ * Cancels any pending rename operation for @renamer_progress.
+ **/
+void
+thunar_renamer_progress_cancel (ThunarRenamerProgress *renamer_progress)
+{
+  g_return_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress));
+
+  /* exit the internal main loop (if any) */
+  if (G_UNLIKELY (renamer_progress->next_idle_loop != NULL))
+    g_main_loop_quit (renamer_progress->next_idle_loop);
+}
+
+
+
+/**
  * thunar_renamer_progress_run:
  * @renamer_progress : a #ThunarRenamerProgress.
  * @pair_list        : a #GList of #ThunarRenamePair<!---->s.
@@ -342,7 +359,12 @@ thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
   /* take an additional reference on the progress */
   g_object_ref (G_OBJECT (renamer_progress));
 
+  /* make sure to release the list of completed items first */
+  thunar_renamer_pair_list_free (renamer_progress->pairs_done);
+  renamer_progress->pairs_done = NULL;
+
   /* set the pairs on the todo list */
+  thunar_renamer_pair_list_free (renamer_progress->pairs_todo);
   renamer_progress->pairs_todo = thunar_renamer_pair_list_copy (pairs);
 
   /* schedule the idle source */

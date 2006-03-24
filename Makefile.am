@@ -26,7 +26,15 @@ rpm: dist
 	@rm -f $(PACKAGE)-$(VERSION).tar.gz
 
 libexec_SCRIPTS =							\
+	ThunarBulkRename						\
 	ThunarHelp
+
+ThunarBulkRename: ThunarBulkRename.in Makefile
+	rm -f ThunarBulkRename.gen ThunarBulkRename
+	sed -e "s,\@bindir\@,$(bindir),g" 				\
+		< $(srcdir)/ThunarBulkRename.in				\
+		> ThunarBulkRename.gen
+	mv ThunarBulkRename.gen ThunarBulkRename
 
 ThunarHelp: ThunarHelp.in Makefile
 	rm -f ThunarHelp.gen ThunarHelp
@@ -36,7 +44,13 @@ ThunarHelp: ThunarHelp.in Makefile
 	mv ThunarHelp.gen ThunarHelp
 
 desktopdir = $(datadir)/applications
-desktop_in_files = Thunar.desktop.in Thunar-folder-handler.desktop.in
+desktop_in_in_files = 							\
+	Thunar.desktop.in.in						\
+	Thunar-bulk-rename.desktop.in.in				\
+	Thunar-folder-handler.desktop.in.in
+desktop_in_files = $(desktop_in_in_files:.desktop.in.in=.desktop.in)
+%.desktop.in: %.desktop.in.in
+	sed -e "s,\@libexecdir\@,$(libexecdir),g" < $< > $@
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 @INTLTOOL_DESKTOP_RULE@
 
@@ -51,18 +65,21 @@ endif
 EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
+	ThunarBulkRename.in						\
 	ThunarHelp.in							\
 	intltool-extract.in						\
 	intltool-merge.in						\
 	intltool-update.in						\
-	$(desktop_in_files)						\
+	$(desktop_in_in_files)						\
 	$(service_in_files)
 
 DISTCLEANFILES =							\
+	ThunarBulkRename						\
 	ThunarHelp							\
 	intltool-extract						\
 	intltool-merge							\
 	intltool-update							\
+	$(desktop_in_files)						\
 	$(desktop_DATA)							\
 	$(service_DATA)
 

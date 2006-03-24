@@ -50,14 +50,19 @@ struct _ThunarxRenamerClass
   /*< public >*/
 
   /* virtual methods */
-  gchar *(*process) (ThunarxRenamer  *renamer,
-                     ThunarxFileInfo *file,
-                     const gchar     *text,
-                     guint            index);
-  void   (*load)    (ThunarxRenamer  *renamer,
-                     GHashTable      *settings);
-  void   (*save)    (ThunarxRenamer  *renamer,
-                     GHashTable      *settings);
+  gchar *(*process)     (ThunarxRenamer  *renamer,
+                         ThunarxFileInfo *file,
+                         const gchar     *text,
+                         guint            index);
+
+  void   (*load)        (ThunarxRenamer  *renamer,
+                         GHashTable      *settings);
+  void   (*save)        (ThunarxRenamer  *renamer,
+                         GHashTable      *settings);
+
+  GList *(*get_actions) (ThunarxRenamer  *renamer,
+                         GtkWindow       *window,
+                         GList           *files);
 
   /*< private >*/
   void (*reserved0) (void);
@@ -65,7 +70,6 @@ struct _ThunarxRenamerClass
   void (*reserved2) (void);
   void (*reserved3) (void);
   void (*reserved4) (void);
-  void (*reserved5) (void);
 
   /*< public >*/
 
@@ -105,6 +109,10 @@ void         thunarx_renamer_load         (ThunarxRenamer   *renamer,
                                            GHashTable       *settings);
 void         thunarx_renamer_save         (ThunarxRenamer   *renamer,
                                            GHashTable       *settings);
+
+GList       *thunarx_renamer_get_actions  (ThunarxRenamer   *renamer,
+                                           GtkWindow        *window,
+                                           GList            *files) G_GNUC_MALLOC;
 
 void         thunarx_renamer_changed      (ThunarxRenamer   *renamer);
 

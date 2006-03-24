@@ -39,6 +39,7 @@
 
 
 /* --- globals --- */
+static gboolean opt_bulk_rename = FALSE;
 static gboolean opt_daemon = FALSE;
 static gboolean opt_quit = FALSE;
 
@@ -46,6 +47,7 @@ static gboolean opt_quit = FALSE;
 /* --- command line options --- */
 static GOptionEntry option_entries[] =
 {
+  { "bulk-rename", 'B', 0, G_OPTION_ARG_NONE, &opt_bulk_rename, N_ ("Open the bulk rename dialog"), NULL, },
 #ifdef HAVE_DBUS
   { "daemon", 0, 0, G_OPTION_ARG_NONE, &opt_daemon, N_ ("Run in daemon mode"), NULL, },
 #else
@@ -135,6 +137,12 @@ main (int argc, char **argv)
       /* use the specified filenames */
       filenames = g_strdupv (argv + 1);
     }
+  else if (opt_bulk_rename)
+    {
+      /* default to an empty list */
+      filenames = g_new (gchar *, 1);
+      filenames[0] = NULL;
+    }
   else if (!opt_daemon)
     {
       /* use the current working directory */
@@ -144,8 +152,9 @@ main (int argc, char **argv)
     }
 
 #ifdef HAVE_DBUS
-  /* try to reuse an existing instance (if any files were specified) */
-  if (filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
+  /* check if we can reuse an existing instance */
+  if ((!opt_bulk_rename && filenames != NULL && thunar_dbus_client_launch_files (working_directory, filenames, NULL, NULL))
+      || (opt_bulk_rename && thunar_dbus_client_bulk_rename (working_directory, filenames, TRUE, NULL, NULL)))
     {
       /* stop any running startup notification */
       gdk_notify_startup_complete ();
@@ -174,9 +183,17 @@ main (int argc, char **argv)
   /* use the Thunar icon as default for new windows */
   gtk_window_set_default_icon_name ("Thunar");
 
-  /* try to process the given filenames (if any files were specified) */
-  if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, &error))
+  /* check if we should open the bulk rename dialog */
+  if (G_UNLIKELY (opt_bulk_rename))
     {
+      /* try to open the bulk rename dialog */
+      if (!thunar_application_bulk_rename (application, working_directory, filenames, TRUE, NULL, &error))
+        goto error0;
+    }
+  else if (filenames != NULL && !thunar_application_process_filenames (application, working_directory, filenames, NULL, &error))
+    {
+      /* we failed to process the filenames or the bulk rename failed */
+error0:
       g_fprintf (stderr, "Thunar: %s\n", error->message);
       g_object_unref (G_OBJECT (application));
       thunar_vfs_shutdown ();

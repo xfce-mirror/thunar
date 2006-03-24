@@ -38,6 +38,8 @@ GType      thunar_renamer_progress_get_type (void) G_GNUC_CONST;
 
 GtkWidget *thunar_renamer_progress_new      (void) G_GNUC_MALLOC;
 
+void       thunar_renamer_progress_cancel   (ThunarRenamerProgress *renamer_progress);
+
 void       thunar_renamer_progress_run      (ThunarRenamerProgress *renamer_progress,
                                              GList                 *pair_list);
 

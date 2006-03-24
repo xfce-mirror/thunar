@@ -2300,8 +2300,11 @@ thunar_standard_view_action_rename (GtkAction          *action,
     }
   else if (g_list_length (standard_view->selected_files) > 1)
     {
+      /* determine the current directory of the view */
+      file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
+
       /* display the bulk rename dialog */
-      thunar_show_renamer_dialog (GTK_WIDGET (standard_view), standard_view->selected_files);
+      thunar_show_renamer_dialog (GTK_WIDGET (standard_view), file, standard_view->selected_files, FALSE);
     }
 }
 

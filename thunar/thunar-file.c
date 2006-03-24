@@ -700,6 +700,46 @@ thunar_file_get_for_path (ThunarVfsPath *path,
 
 
 /**
+ * thunar_file_get_for_uri:
+ * @uri   : an URI or an absolute filename.
+ * @error : return location for errors or %NULL.
+ *
+ * Convenience wrapper function for thunar_file_get_for_path(), as its
+ * often required to determine a #ThunarFile for a given @uri.
+ *
+ * The caller is responsible to free the returned object using
+ * g_object_unref() when no longer needed.
+ *
+ * Return value: the #ThunarFile for the given @uri or %NULL if
+ *               unable to determine.
+ **/
+ThunarFile*
+thunar_file_get_for_uri (const gchar *uri,
+                         GError     **error)
+{
+  ThunarVfsPath *path;
+  ThunarFile    *file;
+
+  g_return_val_if_fail (uri != NULL, NULL);
+  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* determine the path for the URI */
+  path = thunar_vfs_path_new (uri, error);
+  if (G_UNLIKELY (path == NULL))
+    return NULL;
+
+  /* determine the file for the path */
+  file = thunar_file_get_for_path (path, error);
+
+  /* release the path */
+  thunar_vfs_path_unref (path);
+
+  return file;
+}
+
+
+
+/**
  * thunar_file_get_parent:
  * @file  : a #ThunarFile instance.
  * @error : return location for errors.

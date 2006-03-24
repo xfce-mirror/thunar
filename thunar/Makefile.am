@@ -118,6 +118,7 @@ Thunar_SOURCES =							\
 	thunar-properties-dialog.h					\
 	thunar-renamer-dialog.c						\
 	thunar-renamer-dialog.h						\
+	thunar-renamer-dialog-ui.h					\
 	thunar-renamer-model.c						\
 	thunar-renamer-model.h						\
 	thunar-renamer-pair.c						\
@@ -228,6 +229,7 @@ DISTCLEANFILES =							\
 	thunar-launcher-ui.h						\
 	thunar-location-buttons-ui.h					\
 	thunar-shortcuts-pane-ui.h					\
+	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
 	thunar-throbber-fallback.c					\
 	thunar-thumbnail-frame.c					\
@@ -240,6 +242,7 @@ BUILT_SOURCES =								\
 	thunar-launcher-ui.h						\
 	thunar-location-buttons-ui.h					\
 	thunar-shortcuts-pane-ui.h					\
+	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
 	thunar-throbber-fallback.c					\
 	thunar-thumbnail-frame.c					\
@@ -270,6 +273,9 @@ thunar-location-buttons-ui.h: Makefile $(srcdir)/thunar-location-buttons-ui.xml
 
 thunar-shortcuts-pane-ui.h: Makefile $(srcdir)/thunar-shortcuts-pane-ui.xml
 	exo-csource --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h
+
+thunar-renamer-dialog-ui.h: Makefile $(srcdir)/thunar-renamer-dialog-ui.xml
+	exo-csource --static --name=thunar_renamer_dialog_ui $(srcdir)/thunar-renamer-dialog-ui.xml > thunar-renamer-dialog-ui.h
 
 thunar-standard-view-ui.h: Makefile $(srcdir)/thunar-standard-view-ui.xml
 	exo-csource --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h
@@ -302,6 +308,7 @@ EXTRA_DIST =								\
 	thunar-launcher-ui.xml						\
 	thunar-location-buttons-ui.xml					\
 	thunar-marshal.list						\
+	thunar-renamer-dialog-ui.xml					\
 	thunar-standard-view-ui.xml					\
 	thunar-thumbnail-frame.png					\
 	thunar-window-ui.xml

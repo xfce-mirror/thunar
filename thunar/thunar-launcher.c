@@ -745,9 +745,15 @@ thunar_launcher_update (ThunarLauncher *launcher)
         }
       else
         {
-          /* the "Open" action is sensitive if we have atleast one selected file */
+          /* the "Open" action is sensitive if we have atleast one selected file,
+           * the label is set to "Open in New Window" if we're not in a regular
+           * view (i.e. current_directory is not set) and have only one directory
+           * selected to reflect that this action will open a new window.
+           */
           g_object_set (G_OBJECT (launcher->action_open),
-                        "label", _("_Open"),
+                        "label", (launcher->current_directory == NULL && n_directories == n_selected_files && n_directories == 1)
+                                 ? _("_Open in New Window")
+                                 : _("_Open"),
                         "sensitive", (n_selected_files > 0),
                         "tooltip", ngettext ("Open the selected file", "Open the selected files", n_selected_files),
                         NULL);
@@ -756,7 +762,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
       /* the "Open in New Window" action is visible if we have exactly one directory */
       g_object_set (G_OBJECT (launcher->action_open_in_new_window),
                     "sensitive", (n_directories == 1),
-                    "visible", (n_directories == n_selected_files && n_selected_files <= 1),
+                    "visible", (n_directories == n_selected_files && n_selected_files <= 1 && launcher->current_directory != NULL),
                     NULL);
 
       /* hide the "Open With Other Application" actions */
@@ -1025,8 +1031,17 @@ thunar_launcher_action_open (GtkAction      *action,
     }
   else if (g_list_length (launcher->selected_files) == 1 && thunar_file_is_directory (launcher->selected_files->data))
     {
-      /* we want to open one directory, so just emit "change-directory" here */
-      thunar_navigator_change_directory (THUNAR_NAVIGATOR (launcher), launcher->selected_files->data);
+      /* check if we're in a regular view (i.e. current_directory is set) */
+      if (G_LIKELY (launcher->current_directory != NULL))
+        {
+          /* we want to open one directory, so just emit "change-directory" here */
+          thunar_navigator_change_directory (THUNAR_NAVIGATOR (launcher), launcher->selected_files->data);
+        }
+      else
+        {
+          /* open the selected directories in new windows */
+          thunar_launcher_open_windows (launcher, launcher->selected_files);
+        }
     }
   else
     {

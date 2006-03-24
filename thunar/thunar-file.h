@@ -114,6 +114,8 @@ GType             thunar_file_get_type             (void) G_GNUC_CONST;
 ThunarFile       *thunar_file_get_for_info         (ThunarVfsInfo          *info);
 ThunarFile       *thunar_file_get_for_path         (ThunarVfsPath          *path,
                                                     GError                **error);
+ThunarFile       *thunar_file_get_for_uri          (const gchar            *uri,
+                                                    GError                **error);
 
 ThunarFile       *thunar_file_get_parent           (const ThunarFile       *file,
                                                     GError                **error);

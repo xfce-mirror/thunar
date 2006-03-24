@@ -1,3 +1,47 @@
+2006-03-24	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add wrapper method thunar_file_get_for_uri()
+	  which is a rather common operation.
+	* thunar/thunar-dbus-service.c
+	  (thunar_dbus_service_parse_uri_and_display): Use the newly added
+	  method thunar_file_get_for_uri().
+	* thunar/thunar-launcher.c: If no current directory is set, directories
+	  will always be opened in new windows.
+	* thunar/thunar-renamer-progress.{c,h}: Add support for explicit
+	  cancellation of the rename operation.
+	* thunar/thunar-renamer-dialog-ui.xml,thunar/thunar-renamer-model.{c,h},
+	  thunar/thunar-renamer-dialog.{c,h}, thunar/Makefile.am: Some polish on
+	  the dialog and the model. Allow users to add/remove files using the
+	  context menu. Add a standalone mode in which the bulk rename dialog
+	  appears as standalone application and which can be invoked through the
+	  D-BUS service. Bug #1597.
+	* thunar/thunar-standard-view.c(thunar_standard_view_action_rename):
+	  Keep up with the ThunarRenamerDialog changes.
+	* thunar/main.c, thunar/thunar-application.{c,h},
+	  thunar/thunar-dbus-client.{c,h}, thunar/thunar-dbus-service-infos.xml,
+	  thunar/thunar-dbus-service.c: Add BulkRename() method to the D-BUS
+	  interface org.xfce.Thunar and add command line option -B to Thunar,
+	  which allows to open the bulk rename dialog directly. Bug #1597.
+	* Thunar-folder-handler.desktop.in.in, Thunar.desktop.in.in,
+	  Makefile.am: Rearrange the .desktop file handling.
+	* Makefile.am, Thunar-bulk-rename.desktop.in.in, ThunarBulkRename.in:
+	  Add launcher for the bulk rename utility. Bug #1597.
+	* examples/thunar-file-manager.py, examples/Makefile.am: Add example
+	  for the usage of the org.xfce.Thunar interface.
+	* thunarx/thunarx-renamer.{c,h}, thunarx/thunarx.symbols: Add new method
+	  get_actions() to ThunarxRenamer, as discussed with Jannis, to allow
+	  plugin writers to add custom actions to the renamers tree view
+	  context menu (i.e. "Edit Tags" for the thunar-media-tag-plugin). First
+	  part of bug #1602.
+	* docs/reference/thunarx/: Update the API docs.
+	* thunar/thunar-renamer-dialog.c(thunar_renamer_dialog_context_menu),
+	  thunar/thunar-renamer-dialog-ui.xml: Add custom actions provided by
+	  the active ThunarxRenamer to the file context menu in the renamer
+	  dialog. Second part of bug #1602.
+	* po/POTFILES.in: Add new files.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-03-23	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-dialogs.c, thunar/thunar-window.{c,h}: Move the generic

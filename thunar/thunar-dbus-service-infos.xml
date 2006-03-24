@@ -118,6 +118,35 @@
     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
 
     <!--
+      BulkRename (working-directory : STRING, filenames : ARRAY OF STRING, standalone : BOOLEAN, display : STRING) : VOID
+
+      working-directory : the default directory for the "Add Files" dialog of the
+                          bulk rename window. May also be the empty string, in
+                          which case the current working directory of the file
+                          manager process will be used. This is also used to
+                          translated relative file paths in the filenames below
+                          to absolute paths.
+      filenames         : the list of file:-URIs or absolute paths that should
+                          appear in the bulk renamer list by default. May also
+                          be an empty list. any file that is neither an absolute
+                          path nor a file:-URI will be translated into an
+                          absolute path relative to the working-directory.
+      standalone        : TRUE if the bulk rename dialog should appear like a
+                          standalone application. This is usually what you want.
+                          It should only be FALSE when invoked from another file
+                          management tool and its obvious to the user that a
+                          bunch of selected files will be renamed.
+      display           : the screen on which to launch the filenames or ""
+                          to use the default screen of the file manager.
+    -->
+    <method name="BulkRename">
+      <arg direction="in" name="working-directory" type="s" />
+      <arg direction="in" name="filenames" type="as" />
+      <arg direction="in" name="standalone" type="b" />
+      <arg direction="in" name="display" type="s" />
+    </method>
+
+    <!--
       LaunchFiles (working-directory : STRING, filenames : ARRAY OF STRING, display : STRING) : VOID
 
       working-directory : the directory, relative to which filenames should

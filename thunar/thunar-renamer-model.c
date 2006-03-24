@@ -734,6 +734,23 @@ thunar_renamer_model_invalidate_item (ThunarRenamerModel     *renamer_model,
 
 
 static gboolean
+trm_same_directory (ThunarFile *a,
+                    ThunarFile *b)
+{
+  ThunarVfsPath *parent_a;
+  ThunarVfsPath *parent_b;
+
+  /* determine the parent paths for both files */
+  parent_a = thunar_vfs_path_get_parent (thunar_file_get_path (a));
+  parent_b = thunar_vfs_path_get_parent (thunar_file_get_path (b));
+
+  /* check if both files have the same parent */
+  return (parent_a != NULL && parent_b != NULL && thunar_vfs_path_equal (parent_a, parent_b));
+}
+
+
+
+static gboolean
 thunar_renamer_model_conflict_item (ThunarRenamerModel     *renamer_model,
                                     ThunarRenamerModelItem *item)
 {
@@ -750,10 +767,11 @@ thunar_renamer_model_conflict_item (ThunarRenamerModel     *renamer_model,
       if (G_UNLIKELY (oitem == item || oitem->dirty))
         continue;
 
-      /* check if this other item conflicts with the item in question */
-      if ((item->name != NULL && oitem->name == NULL && strcmp (item->name, thunar_file_get_display_name (oitem->file)) == 0)
-          || (item->name == NULL && oitem->name != NULL && strcmp (thunar_file_get_display_name (item->file), oitem->name) == 0)
-          || (item->name != NULL && oitem->name != NULL && strcmp (item->name, oitem->name) == 0))
+      /* check if this other item conflicts with the item in question (can only conflict if in same directory) */
+      if (trm_same_directory (item->file, oitem->file)
+          && ((item->name != NULL && oitem->name == NULL && strcmp (item->name, thunar_file_get_display_name (oitem->file)) == 0)
+           || (item->name == NULL && oitem->name != NULL && strcmp (thunar_file_get_display_name (item->file), oitem->name) == 0)
+           || (item->name != NULL && oitem->name != NULL && strcmp (item->name, oitem->name) == 0)))
         {
           /* check if the other item is already in conflict state */
           if (G_LIKELY (!oitem->conflict))
@@ -1304,4 +1322,40 @@ thunar_renamer_model_clear (ThunarRenamerModel *renamer_model)
   g_object_unref (G_OBJECT (renamer_model));
 }
 
- 
+
+
+/**
+ * thunar_renamer_model_remove:
+ * @renamer_model : a #ThunarRenamerModel.
+ * @path          : a #GtkTreePath in the @renamer_model.
+ *
+ * Removes the item identified by the given @path from
+ * the @renamer_model.
+ **/
+void
+thunar_renamer_model_remove (ThunarRenamerModel *renamer_model,
+                             GtkTreePath        *path)
+{
+  GList *lp;
+
+  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  g_return_if_fail (gtk_tree_path_get_depth (path) == 1);
+
+  /* determine the list item for the path and verify that its valid */
+  lp = g_list_nth (renamer_model->items, gtk_tree_path_get_indices (path)[0]);
+  if (G_UNLIKELY (lp == NULL))
+    return;
+
+  /* free the item data */
+  thunar_renamer_model_item_free (lp->data);
+
+  /* drop the item from the list */
+  renamer_model->items = g_list_delete_link (renamer_model->items, lp);
+
+  /* tell the view that the item is gone */
+  gtk_tree_model_row_deleted (GTK_TREE_MODEL (renamer_model), path);
+
+  /* invalidate all other items */
+  thunar_renamer_model_invalidate_all (renamer_model);
+}
+
