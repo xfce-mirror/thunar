@@ -38,10 +38,6 @@ enum
 
 
 
-static void thunarx_file_info_base_init (gpointer klass);
-
-
-
 static guint file_info_signals[LAST_SIGNAL];
 
 
@@ -56,7 +52,7 @@ thunarx_file_info_get_type (void)
       static const GTypeInfo info =
       {
         sizeof (ThunarxFileInfoIface),
-        (GBaseInitFunc) thunarx_file_info_base_init,
+        NULL,
         NULL,
         NULL,
         NULL,
@@ -67,22 +63,12 @@ thunarx_file_info_get_type (void)
         NULL,
       };
 
+      /* register the interface type */
       type = g_type_register_static (G_TYPE_INTERFACE, I_("ThunarxFileInfo"), &info, 0);
+
+      /* implementations must inherit GObject */
       g_type_interface_add_prerequisite (type, G_TYPE_OBJECT);
-    }
 
-  return type;
-}
-
-
-
-static void
-thunarx_file_info_base_init (gpointer klass)
-{
-  static gboolean initialized = FALSE;
-
-  if (G_UNLIKELY (!initialized))
-    {
       /**
        * ThunarxFileInfo::changed:
        * @file_info : a #ThunarxFileInfo.
@@ -96,7 +82,7 @@ thunarx_file_info_base_init (gpointer klass)
        **/
       file_info_signals[CHANGED] =
         g_signal_new (I_("changed"),
-                      G_TYPE_FROM_CLASS (klass),
+                      type,
                       G_SIGNAL_RUN_FIRST,
                       G_STRUCT_OFFSET (ThunarxFileInfoIface, changed),
                       NULL, NULL,
@@ -116,16 +102,15 @@ thunarx_file_info_base_init (gpointer klass)
        **/
       file_info_signals[RENAMED] =
         g_signal_new (I_("renamed"),
-                      G_TYPE_FROM_CLASS (klass),
+                      type,
                       G_SIGNAL_RUN_FIRST,
                       G_STRUCT_OFFSET (ThunarxFileInfoIface, renamed),
                       NULL, NULL,
                       g_cclosure_marshal_VOID__VOID,
                       G_TYPE_NONE, 0);
-
-      /* yep, we're initialized now */
-      initialized = TRUE;
     }
+
+  return type;
 }
 
 

@@ -38,7 +38,7 @@ typedef struct _ThunarSbrInsertRenamer      ThunarSbrInsertRenamer;
 GType                   thunar_sbr_insert_renamer_get_type        (void) G_GNUC_CONST G_GNUC_INTERNAL;
 void                    thunar_sbr_insert_renamer_register_type   (ThunarxProviderPlugin  *plugin) G_GNUC_INTERNAL;
 
-ThunarSbrInsertRenamer *thunar_sbr_insert_renamer_new             (void) G_GNUC_CONST G_GNUC_INTERNAL G_GNUC_MALLOC;
+ThunarSbrInsertRenamer *thunar_sbr_insert_renamer_new             (void) G_GNUC_INTERNAL G_GNUC_MALLOC;
 
 ThunarSbrInsertMode     thunar_sbr_insert_renamer_get_mode        (ThunarSbrInsertRenamer *insert_renamer) G_GNUC_INTERNAL;
 void                    thunar_sbr_insert_renamer_set_mode        (ThunarSbrInsertRenamer *insert_renamer,

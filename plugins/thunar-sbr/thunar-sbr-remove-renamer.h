@@ -38,7 +38,7 @@ typedef struct _ThunarSbrRemoveRenamer      ThunarSbrRemoveRenamer;
 GType                   thunar_sbr_remove_renamer_get_type              (void) G_GNUC_CONST G_GNUC_INTERNAL;
 void                    thunar_sbr_remove_renamer_register_type         (ThunarxProviderPlugin  *plugin) G_GNUC_INTERNAL;
 
-ThunarSbrRemoveRenamer *thunar_sbr_remove_renamer_new                   (void) G_GNUC_CONST G_GNUC_INTERNAL G_GNUC_MALLOC;
+ThunarSbrRemoveRenamer *thunar_sbr_remove_renamer_new                   (void) G_GNUC_INTERNAL G_GNUC_MALLOC;
 
 guint                   thunar_sbr_remove_renamer_get_end_offset        (ThunarSbrRemoveRenamer *remove_renamer) G_GNUC_INTERNAL;
 void                    thunar_sbr_remove_renamer_set_end_offset        (ThunarSbrRemoveRenamer *remove_renamer,  

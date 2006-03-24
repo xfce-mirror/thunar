@@ -38,7 +38,7 @@ typedef struct _ThunarSbrReplaceRenamer      ThunarSbrReplaceRenamer;
 GType                    thunar_sbr_replace_renamer_get_type            (void) G_GNUC_CONST G_GNUC_INTERNAL;
 void                     thunar_sbr_replace_renamer_register_type       (ThunarxProviderPlugin   *plugin) G_GNUC_INTERNAL;
 
-ThunarSbrReplaceRenamer *thunar_sbr_replace_renamer_new                 (void) G_GNUC_CONST G_GNUC_INTERNAL G_GNUC_MALLOC;
+ThunarSbrReplaceRenamer *thunar_sbr_replace_renamer_new                 (void) G_GNUC_INTERNAL G_GNUC_MALLOC;
 
 gboolean                 thunar_sbr_replace_renamer_get_case_sensitive  (ThunarSbrReplaceRenamer *replace_renamer) G_GNUC_INTERNAL;
 void                     thunar_sbr_replace_renamer_set_case_sensitive  (ThunarSbrReplaceRenamer *replace_renamer,
