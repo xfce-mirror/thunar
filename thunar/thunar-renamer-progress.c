@@ -336,6 +336,23 @@ thunar_renamer_progress_cancel (ThunarRenamerProgress *renamer_progress)
 
 
 /**
+ * thunar_renamer_progress_running:
+ * @renamer_progress : a #ThunarRenamerProgress.
+ *
+ * Returns %TRUE if @renamer_progress is running.
+ *
+ * Return value: %TRUE if @renamer_progress is running.
+ **/
+gboolean
+thunar_renamer_progress_running (ThunarRenamerProgress *renamer_progress)
+{
+  g_return_val_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress), FALSE);
+  return (renamer_progress->next_idle_loop != NULL);
+}
+
+
+
+/**
  * thunar_renamer_progress_run:
  * @renamer_progress : a #ThunarRenamerProgress.
  * @pair_list        : a #GList of #ThunarRenamePair<!---->s.

@@ -4,6 +4,7 @@ SUBDIRS =								\
 	tex-open-terminal
 
 EXTRA_DIST =								\
+	nautilus-bulk-rename.py						\
 	thunar-file-manager.py						\
 	xfce-file-manager.py
 

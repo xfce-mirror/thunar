@@ -1,5 +1,15 @@
 2006-03-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-renamer-progress.{c,h}: Add new helper method
+	  thunar_renamer_progress_running(), which tells whether the rename
+	  operation is currently in progress.
+	* thunar/thunar-renamer-dialog.c(thunar_renamer_dialog_response): Fix
+	  the Cancel/Close button handling.
+	* examples/nautilus-bulk-rename.py, examples/Makefile.am: Add an ex-
+	  ample how to use Thunar Bulk Rename as Nautilus extension. Bug #1597.
+
+2006-03-24	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add wrapper method thunar_file_get_for_uri()
 	  which is a rather common operation.
 	* thunar/thunar-dbus-service.c

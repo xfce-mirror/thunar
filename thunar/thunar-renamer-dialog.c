@@ -751,12 +751,12 @@ thunar_renamer_dialog_response (GtkDialog *dialog,
           gtk_widget_destroy (GTK_WIDGET (dialog));
         }
     }
-  else if (!thunar_renamer_dialog_get_standalone (renamer_dialog) || response == GTK_RESPONSE_CANCEL)
+  else if (thunar_renamer_progress_running (THUNAR_RENAMER_PROGRESS (renamer_dialog->progress)))
     {
       /* cancel the rename operation */
       thunar_renamer_progress_cancel (THUNAR_RENAMER_PROGRESS (renamer_dialog->progress));
     }
-  else if (thunar_renamer_dialog_get_standalone (renamer_dialog))
+  else
     {
       /* hide and destroy the dialog window */
       gtk_widget_hide (GTK_WIDGET (dialog));
