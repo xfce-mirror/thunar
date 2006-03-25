@@ -64,6 +64,7 @@ enum
 {
   BACK,
   RELOAD,
+  TOGGLE_SIDEPANE,
   ZOOM_IN,
   ZOOM_OUT,
   LAST_SIGNAL,
@@ -85,6 +86,7 @@ static void     thunar_window_set_property                (GObject              
                                                            GParamSpec             *pspec);
 static gboolean thunar_window_back                        (ThunarWindow           *window);
 static gboolean thunar_window_reload                      (ThunarWindow           *window);
+static gboolean thunar_window_toggle_sidepane             (ThunarWindow           *window);
 static gboolean thunar_window_zoom_in                     (ThunarWindow           *window);
 static gboolean thunar_window_zoom_out                    (ThunarWindow           *window);
 static void     thunar_window_realize                     (GtkWidget              *widget);
@@ -170,10 +172,11 @@ struct _ThunarWindowClass
   GtkWindowClass __parent__;
 
   /* internal action signals */
-  gboolean (*back)   (ThunarWindow *window);
-  gboolean (*reload)   (ThunarWindow *window);
-  gboolean (*zoom_in)  (ThunarWindow *window);
-  gboolean (*zoom_out) (ThunarWindow *window);
+  gboolean (*back)            (ThunarWindow *window);
+  gboolean (*reload)          (ThunarWindow *window);
+  gboolean (*toggle_sidepane) (ThunarWindow *window);
+  gboolean (*zoom_in)         (ThunarWindow *window);
+  gboolean (*zoom_out)        (ThunarWindow *window);
 };
 
 struct _ThunarWindow
@@ -229,6 +232,11 @@ struct _ThunarWindow
 
   /* scroll_to_file support */
   GHashTable             *scroll_to_files;
+
+  /* support to toggle side pane using F9,
+   * see the toggle_sidepane() function.
+   */
+  GType                   toggle_sidepane_type;
 };
 
 
@@ -325,6 +333,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
   klass->back = thunar_window_back;
   klass->reload = thunar_window_reload;
+  klass->toggle_sidepane = thunar_window_toggle_sidepane;
   klass->zoom_in = thunar_window_zoom_in;
   klass->zoom_out = thunar_window_zoom_out;
 
@@ -420,6 +429,23 @@ thunar_window_class_init (ThunarWindowClass *klass)
                   G_TYPE_BOOLEAN, 0);
 
   /**
+   * ThunarWindow::reload:
+   * @window : a #ThunarWindow instance.
+   *
+   * Emitted whenever the user toggles the visibility of the
+   * sidepane. This is an internal signal used to bind the
+   * action to keys.
+   **/
+  window_signals[TOGGLE_SIDEPANE] =
+    g_signal_new (I_("toggle-sidepane"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarWindowClass, toggle_sidepane),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /**
    * ThunarWindow::zoom-in:
    * @window : a #ThunarWindow instance.
    *
@@ -455,6 +481,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   binding_set = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, 0, "back", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_F5, 0, "reload", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_F9, 0, "toggle-sidepane", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
 }
@@ -846,6 +873,52 @@ thunar_window_reload (ThunarWindow *window)
     }
 
   return FALSE;
+}
+
+
+
+static gboolean
+thunar_window_toggle_sidepane (ThunarWindow *window)
+{
+  GtkAction *action;
+  gchar     *type_name;
+
+  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* check if a side pane is currently active */
+  if (G_LIKELY (window->sidepane != NULL))
+    {
+      /* determine the currently active side pane type */
+      window->toggle_sidepane_type = G_OBJECT_TYPE (window->sidepane);
+
+      /* just reset both side pane actions */
+      action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), FALSE);
+      action = gtk_action_group_get_action (window->action_group, "view-side-pane-tree");
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), FALSE);
+    }
+  else
+    {
+      /* check if we have a previously remembered toggle type */
+      if (G_UNLIKELY (window->toggle_sidepane_type == G_TYPE_INVALID))
+        {
+          /* guess type based on the last-side-pane preference, default to shortcuts */
+          g_object_get (G_OBJECT (window->preferences), "last-side-pane", &type_name, NULL);
+          if (exo_str_is_equal (type_name, g_type_name (THUNAR_TYPE_TREE_PANE)))
+            window->toggle_sidepane_type = THUNAR_TYPE_TREE_PANE;
+          else
+            window->toggle_sidepane_type = THUNAR_TYPE_SHORTCUTS_PANE;
+          g_free (type_name);
+        }
+
+      /* activate the given side pane */
+      action = gtk_action_group_get_action (window->action_group, "view-side-pane-shortcuts");
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (window->toggle_sidepane_type == THUNAR_TYPE_SHORTCUTS_PANE));
+      action = gtk_action_group_get_action (window->action_group, "view-side-pane-tree");
+      gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), (window->toggle_sidepane_type == THUNAR_TYPE_TREE_PANE));
+    }
+
+  return TRUE;
 }
 
 
