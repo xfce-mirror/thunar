@@ -721,6 +721,8 @@ thunar_vfs_change_owner (ThunarVfsPath  *path,
 /**
  * thunar_vfs_deep_count:
  * @path  : the base #ThunarVfsPath.
+ * @flags : the #ThunarVfsDeepCountFlags which control the behaviour
+ *          of the returned job.
  * @error : return location for errors or %NULL.
  *
  * Starts a #ThunarVfsJob, which will count the number of items
@@ -738,8 +740,9 @@ thunar_vfs_change_owner (ThunarVfsPath  *path,
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
-thunar_vfs_deep_count (ThunarVfsPath *path,
-                       GError       **error)
+thunar_vfs_deep_count (ThunarVfsPath          *path,
+                       ThunarVfsDeepCountFlags flags,
+                       GError                **error)
 {
   ThunarVfsJob *job;
   
@@ -747,7 +750,7 @@ thunar_vfs_deep_count (ThunarVfsPath *path,
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* allocate and launch the new job */
-  job = thunar_vfs_deep_count_job_new (path);
+  job = thunar_vfs_deep_count_job_new (path, flags);
   if (G_LIKELY (job != NULL))
     thunar_vfs_job_launch (job);
 

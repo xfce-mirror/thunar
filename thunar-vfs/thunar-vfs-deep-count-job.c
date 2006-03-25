@@ -77,17 +77,19 @@ struct _ThunarVfsDeepCountJobClass
 
 struct _ThunarVfsDeepCountJob
 {
-  ThunarVfsJob   __parent__;
-  ThunarVfsPath *path;
+  ThunarVfsJob            __parent__;
+
+  ThunarVfsDeepCountFlags flags;
+  ThunarVfsPath          *path;
 
   /* the time of the last "status-ready" emission */
-  GTimeVal       last_time;
+  GTimeVal                last_time;
 
   /* status information */
-  guint64        total_size;
-  guint          file_count;
-  guint          directory_count;
-  guint          unreadable_directory_count;
+  guint64                 total_size;
+  guint                   file_count;
+  guint                   directory_count;
+  guint                   unreadable_directory_count;
 };
 
 
@@ -267,16 +269,25 @@ thunar_vfs_deep_count_job_process (ThunarVfsDeepCountJob *deep_count_job,
           /* check if we have a directory here */
           if (S_ISDIR (statb->st_mode))
             {
-              /* process the directory recursively */
-              if (thunar_vfs_deep_count_job_process (deep_count_job, path, statb))
+              /* check if this is a symlink to a folder */
+              if (g_lstat (path, statb) == 0 && (!S_ISLNK (statb->st_mode) || (deep_count_job->flags & THUNAR_VFS_DEEP_COUNT_FLAGS_FOLLOW_SYMLINKS) != 0))
                 {
-                  /* directory was readable */
-                  deep_count_job->directory_count += 1;
+                  /* process the directory recursively */
+                  if (thunar_vfs_deep_count_job_process (deep_count_job, path, statb))
+                    {
+                      /* directory was readable */
+                      deep_count_job->directory_count += 1;
+                    }
+                  else
+                    {
+                      /* directory was unreadable */
+                      deep_count_job->unreadable_directory_count += 1;
+                    }
                 }
               else
                 {
-                  /* directory was unreadable */
-                  deep_count_job->unreadable_directory_count += 1;
+                  /* count the symlink as file */
+                  deep_count_job->file_count += 1;
                 }
             }
           else
@@ -338,7 +349,9 @@ thunar_vfs_deep_count_job_status_ready (ThunarVfsDeepCountJob *deep_count_job)
 
 /**
  * thunar_vfs_deep_count_job_new:
- * @path : a #ThunarVfsPath.
+ * @path  : a #ThunarVfsPath.
+ * @flags : the #ThunarVfsDeepCountFlags which control the
+ *          behavior of the returned job.
  *
  * Allocates a new #ThunarVfsDeepCountJob, which counts
  * the size of the file at @path or if @path is a directory
@@ -351,7 +364,8 @@ thunar_vfs_deep_count_job_status_ready (ThunarVfsDeepCountJob *deep_count_job)
  * Return value: the newly allocated #ThunarVfsDeepCountJob.
  **/
 ThunarVfsJob*
-thunar_vfs_deep_count_job_new (ThunarVfsPath *path)
+thunar_vfs_deep_count_job_new (ThunarVfsPath          *path,
+                               ThunarVfsDeepCountFlags flags)
 {
   ThunarVfsDeepCountJob *deep_count_job;
 
@@ -360,6 +374,7 @@ thunar_vfs_deep_count_job_new (ThunarVfsPath *path)
   /* allocate the new job */
   deep_count_job = g_object_new (THUNAR_VFS_TYPE_DEEP_COUNT_JOB, NULL);
   deep_count_job->path = thunar_vfs_path_ref (path);
+  deep_count_job->flags = flags;
 
   return THUNAR_VFS_JOB (deep_count_job);
 }

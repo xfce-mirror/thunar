@@ -29,6 +29,21 @@
 G_BEGIN_DECLS;
 
 /**
+ * ThunarVfsDeepCountFlags:
+ * @THUNAR_VFS_DEEP_COUNT_FLAGS_NONE            : no special behavior.
+ * @THUNAR_VFS_DEEP_COUNT_FLAGS_FOLLOW_SYMLINKS : follow symlinks to folders. If this flag is set, the
+ *                                                job will also count symlinked folders recursively.
+ *
+ * Additional flags to pass to thunar_vfs_deep_count(), which
+ * control the exact behavior of the job.
+ **/
+typedef enum /*< flags >*/
+{
+  THUNAR_VFS_DEEP_COUNT_FLAGS_NONE            = 0L,
+  THUNAR_VFS_DEEP_COUNT_FLAGS_FOLLOW_SYMLINKS = 1L << 0,
+} ThunarVfsDeepCountFlags;
+
+/**
  * ThunarVfsFileType:
  * @THUNAR_VFS_FILE_TYPE_FIFO     : A named FIFO.
  * @THUNAR_VFS_FILE_TYPE_CHARDEV  : A character device node.
@@ -45,7 +60,8 @@ G_BEGIN_DECLS;
  *
  * Describes the type of a file.
  **/
-typedef enum {
+typedef enum
+{
   THUNAR_VFS_FILE_TYPE_SOCKET     = 0140000 >> 12,
   THUNAR_VFS_FILE_TYPE_SYMLINK    = 0120000 >> 12,
   THUNAR_VFS_FILE_TYPE_REGULAR    = 0100000 >> 12,
@@ -76,7 +92,8 @@ typedef enum {
  *
  * Special flags and permissions of a filesystem entity.
  **/
-typedef enum { /*< flags >*/
+typedef enum /*< flags >*/
+{
   THUNAR_VFS_FILE_MODE_SUID       = 04000,
   THUNAR_VFS_FILE_MODE_SGID       = 02000,
   THUNAR_VFS_FILE_MODE_STICKY     = 01000,
@@ -112,7 +129,8 @@ typedef enum { /*< flags >*/
  * Flags providing additional information about the
  * file system entity.
  **/
-typedef enum { /*< flags >*/
+typedef enum /*< flags >*/
+{
   THUNAR_VFS_FILE_FLAGS_NONE       = 0,
   THUNAR_VFS_FILE_FLAGS_SYMLINK    = 1L << 0,
   THUNAR_VFS_FILE_FLAGS_EXECUTABLE = 1L << 1,

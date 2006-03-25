@@ -27,6 +27,7 @@
 
 #include <thunar-vfs/thunar-vfs-job.h>
 #include <thunar-vfs/thunar-vfs-path.h>
+#include <thunar-vfs/thunar-vfs-types.h>
 
 G_BEGIN_DECLS;
 
@@ -42,7 +43,8 @@ typedef struct _ThunarVfsDeepCountJob      ThunarVfsDeepCountJob;
 
 GType         thunar_vfs_deep_count_job_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
-ThunarVfsJob *thunar_vfs_deep_count_job_new      (ThunarVfsPath *path) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsJob *thunar_vfs_deep_count_job_new      (ThunarVfsPath          *path,
+                                                  ThunarVfsDeepCountFlags flags) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

@@ -278,8 +278,8 @@ thunar_size_label_file_changed (ThunarFile      *file,
   /* check if the file is a directory */
   if (thunar_file_is_directory (file))
     {
-      /* schedule a new job to determine the total size of the directory */
-      size_label->job = thunar_vfs_deep_count (thunar_file_get_path (file), &error);
+      /* schedule a new job to determine the total size of the directory (not following symlinks) */
+      size_label->job = thunar_vfs_deep_count (thunar_file_get_path (file), THUNAR_VFS_DEEP_COUNT_FLAGS_NONE, &error);
       if (G_UNLIKELY (size_label->job == NULL))
         {
           /* display the error to the user */

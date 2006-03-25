@@ -1,5 +1,14 @@
 2006-03-25	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-deep-count-job.{c,h},
+	  thunar-vfs/thunar-vfs-types.h, thunar-vfs/thunar-vfs.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Allow caller to specify whether the
+	  ThunarVfsDeepCountJob should follow symlinks to folders. Bug #1606.
+	* thunar/thunar-size-label.c(thunar_size_label_file_changed): Do not
+	  follow symlinks when calculating the size of folders. Bug #1606.
+
+2006-03-25	Benedikt Meurer <benny@xfce.org>
+
 	* Thunar.desktop.in.in(Exec): Support dragging files and folders to
 	  the Thunar application icon, which will then be opened using Thunar.
 
