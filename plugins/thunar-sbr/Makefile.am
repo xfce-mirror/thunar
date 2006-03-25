@@ -20,6 +20,8 @@ thunar_sbr_la_SOURCES =							\
 	thunar-sbr-enum-types.h						\
 	thunar-sbr-insert-renamer.c					\
 	thunar-sbr-insert-renamer.h					\
+	thunar-sbr-number-renamer.c					\
+	thunar-sbr-number-renamer.h					\
 	thunar-sbr-plugin.c						\
 	thunar-sbr-provider.c						\
 	thunar-sbr-provider.h						\

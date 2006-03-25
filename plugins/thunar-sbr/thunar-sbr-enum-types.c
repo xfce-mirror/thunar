@@ -30,7 +30,9 @@
 
 static GType case_renamer_mode_type;
 static GType insert_mode_type;
+static GType number_mode_type;
 static GType offset_mode_type;
+static GType text_mode_type;
 
 
 
@@ -51,9 +53,25 @@ thunar_sbr_insert_mode_get_type (void)
 
 
 GType
+thunar_sbr_number_mode_get_type (void)
+{
+  return number_mode_type;
+}
+
+
+
+GType
 thunar_sbr_offset_mode_get_type (void)
 {
   return offset_mode_type;
+}
+
+
+
+GType
+thunar_sbr_text_mode_get_type (void)
+{
+  return text_mode_type;
 }
 
 
@@ -76,16 +94,37 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
     { 0,                                NULL,                               NULL,             },
   };
 
+  static const GEnumValue number_mode_values[] =
+  {
+    { THUNAR_SBR_NUMBER_MODE_123,           "THUNAR_SBR_NUMBER_MODE_123",          N_ ("1, 2, 3, ..."),          },
+    { THUNAR_SBR_NUMBER_MODE_010203,        "THUNAR_SBR_NUMBER_MODE_010203",       N_ ("01, 02, 03, ..."),       },
+    { THUNAR_SBR_NUMBER_MODE_001002003,     "THUNAR_SBR_NUMBER_MODE_001002003",    N_ ("001, 002, 003, ..."),    },
+    { THUNAR_SBR_NUMBER_MODE_000100020003,  "THUNAR_SBR_NUMBER_MODE_000100020003", N_ ("0001, 0002, 0003, ..."), },
+    { THUNAR_SBR_NUMBER_MODE_ABC,           "THUNAR_SBR_NUMBER_MODE_ABC",          N_ ("a, b, c, d, ..."),       },
+    { 0,                                    NULL,                                  NULL,                         },
+  };
+
   static const GEnumValue offset_mode_values[] =
   {
-    { THUNAR_SBR_OFFSET_MODE_LEFT,  "THUNAR_SBR_OFFSET_MODE_LEFT",  N_ ("From left"),  },
-    { THUNAR_SBR_OFFSET_MODE_RIGHT, "THUNAR_SBR_OFFSET_MODE_RIGHT", N_ ("From right"), },
+    { THUNAR_SBR_OFFSET_MODE_LEFT,  "THUNAR_SBR_OFFSET_MODE_LEFT",  N_ ("From the front (left)"),  },
+    { THUNAR_SBR_OFFSET_MODE_RIGHT, "THUNAR_SBR_OFFSET_MODE_RIGHT", N_ ("From the back (right)"), },
     { 0,                            NULL,                           NULL,              },
+  };
+
+  static const GEnumValue text_mode_values[] =
+  {
+    { THUNAR_SBR_TEXT_MODE_OTN, "THUNAR_SBR_TEXT_MODE_OTN", N_ ("Old Name - Text - Number"), },
+    { THUNAR_SBR_TEXT_MODE_NTO, "THUNAR_SBR_TEXT_MODE_NTO", N_ ("Number - Text - Old Name"), },
+    { THUNAR_SBR_TEXT_MODE_TN,  "THUNAR_SBR_TEXT_MODE_TN",  N_ ("Text - Number"),            },
+    { THUNAR_SBR_TEXT_MODE_NT,  "THUNAR_SBR_TEXT_MODE_NT",  N_ ("Number - Text"),            },
+    { 0,                        NULL,                       NULL,                            },
   };
 
   case_renamer_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrCaseRenamerMode", case_renamer_mode_values);
   insert_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrInsertMode", insert_mode_values);
+  number_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrNumberMode", number_mode_values);
   offset_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrOffsetMode", offset_mode_values);
+  text_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrTextMode", text_mode_values);
 }
 
 

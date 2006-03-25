@@ -32,6 +32,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -71,6 +72,8 @@ static void     thunar_renamer_dialog_set_property        (GObject              
                                                            guint                     prop_id,
                                                            const GValue             *value,
                                                            GParamSpec               *pspec);
+static void     thunar_renamer_dialog_realize             (GtkWidget                *widget);
+static void     thunar_renamer_dialog_unrealize           (GtkWidget                *widget);
 static void     thunar_renamer_dialog_response            (GtkDialog                *dialog,
                                                            gint                      response);
 static void     thunar_renamer_dialog_context_menu        (ThunarRenamerDialog      *renamer_dialog,
@@ -131,6 +134,9 @@ struct _ThunarRenamerDialogClass
 struct _ThunarRenamerDialog
 {
   ThunarAbstractDialog __parent__;
+
+  /* need to grab a reference on the icon factory for the standalone version */
+  ThunarIconFactory   *icon_factory;
 
   ThunarRenamerModel  *model;
 
@@ -218,6 +224,7 @@ static void
 thunar_renamer_dialog_class_init (ThunarRenamerDialogClass *klass)
 {
   GtkDialogClass *gtkdialog_class;
+  GtkWidgetClass *gtkwidget_class;
   GObjectClass   *gobject_class;
 
   /* determine the parent type class */
@@ -228,6 +235,10 @@ thunar_renamer_dialog_class_init (ThunarRenamerDialogClass *klass)
   gobject_class->finalize = thunar_renamer_dialog_finalize;
   gobject_class->get_property = thunar_renamer_dialog_get_property;
   gobject_class->set_property = thunar_renamer_dialog_set_property;
+
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->realize = thunar_renamer_dialog_realize;
+  gtkwidget_class->unrealize = thunar_renamer_dialog_unrealize;
 
   gtkdialog_class = GTK_DIALOG_CLASS (klass);
   gtkdialog_class->response = thunar_renamer_dialog_response;
@@ -419,7 +430,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_tree_view_column_set_min_width (column, 100);
   gtk_tree_view_column_set_title (column, _("Name"));
   gtk_tree_view_column_set_resizable (column, TRUE);
-  gtk_tree_view_column_set_fixed_width (column, 225);
+  gtk_tree_view_column_set_fixed_width (column, 250);
   gtk_tree_view_column_set_sizing (column, GTK_TREE_VIEW_COLUMN_FIXED);
   renderer = g_object_new (THUNAR_TYPE_ICON_RENDERER, "size", 16, NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
@@ -716,6 +727,37 @@ thunar_renamer_dialog_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static void
+thunar_renamer_dialog_realize (GtkWidget *widget)
+{
+  ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (widget);
+  GtkIconTheme        *icon_theme;
+
+  /* realize the widget */
+  (*GTK_WIDGET_CLASS (thunar_renamer_dialog_parent_class)->realize) (widget);
+
+  /* grab a reference on the icon factory for the screen */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (widget));
+  renamer_dialog->icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+}
+
+
+
+static void
+thunar_renamer_dialog_unrealize (GtkWidget *widget)
+{
+  ThunarRenamerDialog *renamer_dialog = THUNAR_RENAMER_DIALOG (widget);
+
+  /* release the reference on the icon factory */
+  g_object_unref (G_OBJECT (renamer_dialog->icon_factory));
+  renamer_dialog->icon_factory = NULL;
+
+  /* unrealize the dialog */
+  (*GTK_WIDGET_CLASS (thunar_renamer_dialog_parent_class)->unrealize) (widget);
 }
 
 

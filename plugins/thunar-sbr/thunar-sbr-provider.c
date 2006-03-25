@@ -24,6 +24,7 @@
 
 #include <thunar-sbr/thunar-sbr-case-renamer.h>
 #include <thunar-sbr/thunar-sbr-insert-renamer.h>
+#include <thunar-sbr/thunar-sbr-number-renamer.h>
 #include <thunar-sbr/thunar-sbr-provider.h>
 #include <thunar-sbr/thunar-sbr-remove-renamer.h>
 #include <thunar-sbr/thunar-sbr-replace-renamer.h>
@@ -86,6 +87,7 @@ thunar_sbr_provider_get_renamers (ThunarxRenamerProvider *renamer_provider)
 
   renamers = g_list_prepend (renamers, thunar_sbr_replace_renamer_new ());
   renamers = g_list_prepend (renamers, thunar_sbr_remove_renamer_new ());
+  renamers = g_list_prepend (renamers, thunar_sbr_number_renamer_new ());
   renamers = g_list_prepend (renamers, thunar_sbr_insert_renamer_new ());
   renamers = g_list_prepend (renamers, thunar_sbr_case_renamer_new ());
 

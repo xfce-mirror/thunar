@@ -2063,21 +2063,22 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
                                         | GTK_DIALOG_NO_SEPARATOR
                                         | GTK_DIALOG_DESTROY_WITH_PARENT,
                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                        GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                        _("_Select"), GTK_RESPONSE_OK,
                                         NULL);
   gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
-  gtk_container_set_border_width (GTK_CONTAINER (dialog), 6);
+  gtk_window_set_default_size (GTK_WINDOW (dialog), 290, -1);
 
   hbox = g_object_new (GTK_TYPE_HBOX, "border-width", 6, "spacing", 10, NULL);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, TRUE, TRUE, 0);
   gtk_widget_show (hbox);
 
-  label = gtk_label_new (_("Pattern:"));
+  label = gtk_label_new_with_mnemonic (_("_Pattern:"));
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 
   entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, NULL);
   gtk_box_pack_start (GTK_BOX (hbox), entry, TRUE, TRUE, 0);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), entry);
   gtk_widget_show (entry);
 
   response = gtk_dialog_run (GTK_DIALOG (dialog));

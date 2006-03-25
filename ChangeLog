@@ -1,5 +1,21 @@
 2006-03-25	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c
+	  (thunar_standard_view_action_select_by_pattern): Fix the appearance
+	  of the "Select by Pattern" dialog.
+	* thunar/thunar-renamer-dialog.c: Need to grab a reference on the
+	  ThunarIconFactory instance for the screen of the dialog, else the
+	  standalone dialog will not generate thumbnails properly.
+	* plugins/thunar-sbr/thunar-sbr-enum-types.c
+	  (thunar_sbr_register_enum_types): Improve the offset mode labels.
+	* plugins/thunar-sbr/: Import the last pending renamer, the "Numbering"
+	  renamer. Bug #1609.
+	* po/POTFILES.in: Add new files.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
+2006-03-25	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-window.c: Add F9 shortcut to toggle the visibility of
 	  the side pane. Bug #1568.
 

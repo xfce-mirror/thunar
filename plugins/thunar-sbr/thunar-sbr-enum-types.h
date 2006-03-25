@@ -63,6 +63,30 @@ typedef enum
 GType thunar_sbr_insert_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
+#define THUNAR_SBR_TYPE_NUMBER_MODE (thunar_sbr_number_mode_get_type ())
+
+/**
+ * ThunarSbrNumberMode:
+ * @THUNAR_SBR_NUMBER_MODE_123          : 1, 2, 3, ...
+ * @THUNAR_SBR_NUMBER_MODE_010203       : 01, 02, 03, ...
+ * @THUNAR_SBR_NUMBER_MODE_001002003    : 001, 002, 003, ...
+ * @THUNAR_SBR_NUMBER_MODE_000100020003 : 0001, 0002, 0003, ...
+ * @THUNAR_SBR_NUMBER_MODE_ABC          : a, b, c, ...
+ *
+ * The numbering mode for the #ThunarSbrNumberRenamer.
+ **/
+typedef enum
+{
+  THUNAR_SBR_NUMBER_MODE_123,
+  THUNAR_SBR_NUMBER_MODE_010203,
+  THUNAR_SBR_NUMBER_MODE_001002003,
+  THUNAR_SBR_NUMBER_MODE_000100020003,
+  THUNAR_SBR_NUMBER_MODE_ABC,
+} ThunarSbrNumberMode;
+
+GType thunar_sbr_number_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
 #define THUNAR_SBR_TYPE_OFFSET_MODE (thunar_sbr_offset_mode_get_type ())
 
 /**
@@ -80,6 +104,28 @@ typedef enum
 } ThunarSbrOffsetMode;
 
 GType thunar_sbr_offset_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
+#define THUNAR_SBR_TYPE_TEXT_MODE (thunar_sbr_text_mode_get_type ())
+
+/**
+ * ThunarSbrTextMode:
+ * @THUNAR_SBR_TEXT_MODE_OTN : Old Name - Text - Number
+ * @THUNAR_SBR_TEXT_MODE_NTO : Number - Text - Old Name
+ * @THUNAR_SBR_TEXT_MODE_TN  : Text - Number
+ * @THUNAR_SBR_TEXT_MODE_NT  : Number - Text
+ *
+ * The text mode for the #ThunarSbrNumberRenamer.
+ **/
+typedef enum
+{
+  THUNAR_SBR_TEXT_MODE_OTN,
+  THUNAR_SBR_TEXT_MODE_NTO,
+  THUNAR_SBR_TEXT_MODE_TN,
+  THUNAR_SBR_TEXT_MODE_NT,
+} ThunarSbrTextMode;
+
+GType thunar_sbr_text_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
 void thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin) G_GNUC_INTERNAL;
