@@ -6,6 +6,8 @@
 # Daichi Kawahata <daichi@xfce.org>, 2005-2006.
 #
 # 対訳一覧:
+#
+# bulk            一括
 # context menu    右クリックメニュー
 # directory       フォルダ
 # emblem          シンボル
@@ -15,7 +17,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-24 23:50+0100\n"
-"PO-Revision-Date: 2006-03-21 23:53+0900\n"
+"PO-Revision-Date: 2006-03-25 09:37+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -104,9 +106,8 @@ msgstr ""
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:218
-#, fuzzy
 msgid "Failed to read folder contents"
-msgstr "フォルダの内容を読み込んでいます..."
+msgstr "フォルダの内容を読み込むのに失敗しました。"
 
 #. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-exec.c:509
@@ -378,9 +379,8 @@ msgid "Failed to copy special file \"%s\""
 msgstr "特殊ファイル「%s」のコピーに失敗しました。"
 
 #: ../thunar/main.c:50
-#, fuzzy
 msgid "Open the bulk rename dialog"
-msgstr "選択したファイルを開きます。"
+msgstr "一括リネームダイアログを開く"
 
 #: ../thunar/main.c:52
 msgid "Run in daemon mode"
@@ -948,9 +948,8 @@ msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "選択したフォルダを新しい %d つのウィンドウで開きます。"
 
 #: ../thunar/thunar-launcher.c:755
-#, fuzzy
 msgid "_Open in New Window"
-msgstr "新規ウィンドウで開く"
+msgstr "新規ウィンドウで開く(_O)"
 
 #: ../thunar/thunar-launcher.c:758
 msgid "Open the selected file"
@@ -1161,7 +1160,7 @@ msgstr "フォルダのアクセス権を直します..."
 
 #: ../thunar/thunar-permissions-chooser.c:456
 msgid "Click here to automatically fix the folder permissions."
-msgstr "フォルダのアクセス権を自動的に直すにはここをクリックして下さい。"
+msgstr "ここをクリックすると、フォルダのアクセス権を自動的に直します。"
 
 #: ../thunar/thunar-permissions-chooser.c:467
 msgid "Please wait..."
@@ -1549,30 +1548,28 @@ msgid "File Context Menu"
 msgstr "ファイルの右クリックメニュー"
 
 #: ../thunar/thunar-renamer-dialog.c:142
-#, fuzzy
 msgid "_Add Files..."
-msgstr "全てのファイル"
+msgstr "ファイルを追加(_A)..."
 
 #: ../thunar/thunar-renamer-dialog.c:142
 msgid "Include additional files in the list of files should be renamed"
-msgstr ""
+msgstr "名前変更するファイルのリストにファイルを追加します。"
 
 #: ../thunar/thunar-renamer-dialog.c:144
 msgid "Clear"
-msgstr ""
+msgstr "クリア"
 
 #: ../thunar/thunar-renamer-dialog.c:144
 msgid "Clear the file list below"
-msgstr ""
+msgstr "以下のファイル一覧をクリアします。"
 
 #: ../thunar/thunar-renamer-dialog.c:145 ../thunar/thunar-window.c:258
 msgid "_About"
 msgstr "このプログラムについて(_A)"
 
 #: ../thunar/thunar-renamer-dialog.c:145
-#, fuzzy
 msgid "Display information about Thunar Bulk Rename"
-msgstr "Thunar についての情報を表示します。"
+msgstr "Thunar 一括リネームについての情報を表示します。"
 
 #: ../thunar/thunar-renamer-dialog.c:146 ../thunar/thunar-standard-view.c:308
 msgid "_Properties..."
@@ -1585,30 +1582,28 @@ msgstr "選択したファイルのプロパティを表示します。"
 #: ../thunar/thunar-renamer-dialog.c:318
 #: ../thunar/thunar-renamer-dialog.c:1503
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
-#, fuzzy
 msgid "Rename Multiple Files"
-msgstr "選択したファイルの名前を変更します。"
+msgstr "複数のファイル名を変更します"
 
 #. add the "Rename Files" button
 #: ../thunar/thunar-renamer-dialog.c:326
-#, fuzzy
 msgid "_Rename Files"
-msgstr "画像ファイル(_I)"
+msgstr "複数のファイル名を変更(_R)"
 
 #: ../thunar/thunar-renamer-dialog.c:329
 msgid ""
 "Click here to actually rename the files listed above to their new names."
 msgstr ""
+"ここをクリックすると、上にリストされているファイルの名前を実際に変更します。"
 
 #: ../thunar/thunar-renamer-dialog.c:401
-#, fuzzy
 msgid "New Name"
-msgstr "ファイル名"
+msgstr "新しい名前"
 
 #: ../thunar/thunar-renamer-dialog.c:466
-#, fuzzy
 msgid "Click here to view the documentation for the selected rename operation."
-msgstr "フォルダのアクセス権を自動的に直すにはここをクリックして下さい。"
+msgstr ""
+"ここをクリックすると、選択したリネーム操作についての文書が表示されます。"
 
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
 #. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
@@ -1619,17 +1614,19 @@ msgid ""
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
+"名前変更モジュールが見つかりませんでした、インストールされているか\n"
+"確認して下さい。またはシステム管理者に伝えて下さい。Thunar をソース\n"
+"からコンパイルしてインストールしたのでしたら、「組み込まれている\n"
+"シンプルな名前変更」プラグインが有効になっているか確認して下さい。"
 
 #. allocate the file chooser
 #: ../thunar/thunar-renamer-dialog.c:1008
-#, fuzzy
 msgid "Select files to rename"
-msgstr "「%s」の名前変更に失敗しました。"
+msgstr "名前変更するファイルを選択して下さい"
 
 #: ../thunar/thunar-renamer-dialog.c:1024
-#, fuzzy
 msgid "Audio Files"
-msgstr "音楽ファイル(_A)"
+msgstr "音楽ファイル"
 
 #: ../thunar/thunar-renamer-dialog.c:1029
 #: ../plugins/thunar-uca/thunar-uca-editor.c:665
@@ -1637,46 +1634,43 @@ msgid "Image Files"
 msgstr "画像ファイル"
 
 #: ../thunar/thunar-renamer-dialog.c:1034
-#, fuzzy
 msgid "Video Files"
-msgstr "動画ファイル(_V)"
+msgstr "動画ファイル"
 
 #. just popup the about dialog
 #: ../thunar/thunar-renamer-dialog.c:1164
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
-#, fuzzy
 msgid "Bulk Rename"
-msgstr "名前変更"
+msgstr "一括リネーム"
 
 #: ../thunar/thunar-renamer-dialog.c:1165
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr ""
+"Thunar 一括リネームは一度に複数のファイル名を\n"
+"変更する強力で拡張性のあるツールです。"
 
 #: ../thunar/thunar-renamer-dialog.c:1350
-#, fuzzy
 msgid "Remove File"
 msgid_plural "Remove Files"
-msgstr[0] "画像ファイル(_I)"
+msgstr[0] "ファイルを削除"
 
 #: ../thunar/thunar-renamer-dialog.c:1352
 msgid "Remove the selected file from the list of files that should be renamed"
 msgid_plural ""
 "Remove the selected files from the list of files that should be renamed"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "名前変更するファイルのリストから選択したファイルを削除します。"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1503
-#, fuzzy
 msgid "Bulk Rename - Rename Multiple Files"
-msgstr "選択したファイルの名前を変更します。"
+msgstr "一括リネーム - ファイルをまとめてリネームします"
 
 #: ../thunar/thunar-renamer-progress.c:213
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to rename \"%s\" to \"%s\"."
-msgstr "「%s」の名前変更に失敗しました。"
+msgstr "「%s」の名前を「%s」に変更するのに失敗しました。"
 
 #: ../thunar/thunar-renamer-progress.c:220
 msgid ""
@@ -1684,20 +1678,23 @@ msgid ""
 "files, or revert the previously renamed files to their previous names, or "
 "cancel the operation without reverting previous changes."
 msgstr ""
+"このファイルを飛ばして残りのファイルの名前変更を続行するか、既に名前変更され"
+"ているファイルを元に戻すか、あるいはこれまでの変更を元に戻さずにこの操作を取"
+"り消すことができます。"
 
 #: ../thunar/thunar-renamer-progress.c:225
 msgid "_Revert Changes"
-msgstr ""
+msgstr "元に戻す(_R)"
 
 #: ../thunar/thunar-renamer-progress.c:226
 #: ../thunar/thunar-renamer-progress.c:235
 msgid "_Skip This File"
-msgstr ""
+msgstr "このファイルを飛ばす(_S)"
 
 #: ../thunar/thunar-renamer-progress.c:232
 msgid ""
 "Do you want to skip this file and continue to rename the remaining files?"
-msgstr ""
+msgstr "このファイルを飛ばして残りのファイル名の変更を続けますか？"
 
 #: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:411
 msgid "Add Folder to _Shortcuts"
@@ -1707,7 +1704,7 @@ msgstr[0] "ショートカットに追加(_S)"
 #: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:413
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
-msgstr[0] "選択したフォルダを隣のショートカットペインに追加します。"
+msgstr[0] "選択したフォルダを左のショートカットペインに追加します。"
 
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:819
@@ -1764,22 +1761,19 @@ msgstr "「%s」のマウント解除に失敗しました。"
 
 #. tell the user that we started calculation
 #: ../thunar/thunar-size-label.c:297
-#, fuzzy
 msgid "Calculating..."
-msgstr "ファイルを集めています..."
+msgstr "計算しています..."
 
-# FIXME: doesn't work
 #: ../thunar/thunar-size-label.c:307
-#, fuzzy, c-format
+#, c-format
 msgid "%s Bytes"
-msgstr " バイト)"
+msgstr "%s バイト"
 
 #: ../thunar/thunar-size-label.c:399
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%u 個のアイテム、合計 %s"
 
 #: ../thunar/thunar-standard-view.c:306
 msgid "Folder Context Menu"
@@ -2279,95 +2273,90 @@ msgid "Don't unload the plugin from memory"
 msgstr "一度読み込まれたプラグインはメモリーに残しておきます。"
 
 #: ../thunarx/thunarx-renamer.c:162
-#, fuzzy
 msgid "Help URL"
-msgstr "ヘルプ(_H)"
+msgstr "ヘルプURL"
 
 #: ../thunarx/thunarx-renamer.c:163
-#, fuzzy
 msgid "The URL to the documentation of the renamer"
-msgstr "文書を表示するブラウザーの起動に失敗しました。"
+msgstr ""
 
 #: ../thunarx/thunarx-renamer.c:178
-#, fuzzy
 msgid "The user visible name of the renamer"
-msgstr "MIMEハンドラーの名前です。"
+msgstr ""
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:119
 msgid "Con_vert to:"
-msgstr ""
+msgstr "次に変換(_V):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:264
 msgid "Uppercase / Lowercase"
-msgstr ""
+msgstr "大文字/小文字"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:66
 msgid "lowercase"
-msgstr ""
+msgstr "lowercase"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:67
 msgid "UPPERCASE"
-msgstr ""
+msgstr "UPPERCASE"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:68
 msgid "Camelcase"
-msgstr ""
+msgstr "CamelCase"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:74
 msgid "Insert"
-msgstr ""
+msgstr "挿入"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:75
 msgid "Overwrite"
-msgstr ""
+msgstr "上書き"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:81
 msgid "From left"
-msgstr ""
+msgstr "左から"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:82
 msgid "From right"
-msgstr ""
+msgstr "右から"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 msgid "_Text:"
-msgstr ""
+msgstr "文字(_T):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
-#, fuzzy
 msgid "_At position:"
-msgstr "説明(_D):"
+msgstr "位置(_A):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:387
 msgid "Insert / Overwrite"
-msgstr ""
+msgstr "挿入/上書き"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:177
 msgid "Remove _From Positon:"
-msgstr ""
+msgstr "この位置から削除(_F):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
 msgid "_To Positon:"
-msgstr ""
+msgstr "この位置へ(_T):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:428
-#, fuzzy
 msgid "Remove Characters"
-msgstr "ショートカットを削除(_R)"
+msgstr "文字の削除"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:209
 msgid "_Search For:"
-msgstr ""
+msgstr "検索(_S):"
 
 #. reset to default tooltip
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:217
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:652
 msgid "Enter the text to search for in the file names."
-msgstr ""
+msgstr "検索するファイル名に含まれる文字を入力して下さい。"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:229
 msgid "Regular _Expression"
-msgstr ""
+msgstr "正規表現(_E)"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:231
 msgid ""
@@ -2375,36 +2364,40 @@ msgid ""
 "expression and matched using the Perl-compatible regular expressions (PCRE). "
 "Check the documentation for details about the regular expression syntax."
 msgstr ""
+"このオプションを有効にすると、入力したパターンは正規表現として取り扱われ、"
+"Perl互換の正規表現 (PCRE) に一致します。正規表現の書き方については、該当文書"
+"にあたって下さい。"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:238
-#, fuzzy
 msgid "Replace _With:"
-msgstr "これで開く:"
+msgstr "置換(_W):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:246
 msgid ""
 "Enter the text that should be used as replacement for the pattern above."
-msgstr ""
+msgstr "上のパターンを置き換える文字を入力して下さい。"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
 msgid "C_ase Sensitive Search"
-msgstr ""
+msgstr "大・小文字を区別(_A)"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:260
 msgid ""
 "If you enable this option, the pattern will be searched in a case-sensitive "
 "manner. The default is to use a case-insensitive search."
 msgstr ""
+"このオプションを有効にすると、入力したパターンの大文字と小文字の区別をつけて"
+"検索します。標準では大文字と小文字は区別されません。"
 
 #. setup a tooltip with the error message
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:620
 #, c-format
 msgid "Invalid regular expression, at character position %ld: %s"
-msgstr ""
+msgstr "%ld にある文字は誤った正規表現です: %s"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:670
 msgid "Search & Replace"
-msgstr ""
+msgstr "検索と置換"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
@@ -2517,8 +2510,8 @@ msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
 msgstr ""
-"アイコンを選ぶにはこのボタンをクリックして下さい。このアイコンは、上で付けら"
-"れたアクション名に加えて、右クリックメニューで表示されます。"
+"このボタンをクリックすると、アイコンを選択できます。このアイコンは右クリック"
+"メニューで、上のアクション名の横に表示されます。"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:257
 msgid ""
@@ -2695,19 +2688,3 @@ msgstr "フォルダを開く"
 #: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
 msgstr "指定したフォルダを Thunar で開きます"
-
-# FIXME: doesn't work
-#~ msgid "%s (%"
-#~ msgstr "%s (%"
-
-#, fuzzy
-#~ msgid "Rename multiple files at once"
-#~ msgstr "選択したファイルの名前を変更します。"
-
-#, fuzzy
-#~ msgid "_Remove Files"
-#~ msgstr "画像ファイル(_I)"
-
-#, fuzzy
-#~ msgid "About"
-#~ msgstr "このプログラムについて(_A)"
