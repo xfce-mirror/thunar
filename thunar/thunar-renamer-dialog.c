@@ -51,6 +51,12 @@ enum
   PROP_STANDALONE,
 };
 
+/* Identifiers for DnD target types */
+enum
+{
+  TARGET_TEXT_URI_LIST,
+};
+
 
 
 static void     thunar_renamer_dialog_class_init          (ThunarRenamerDialogClass *klass);
@@ -84,6 +90,24 @@ static void     thunar_renamer_dialog_action_properties   (GtkAction            
                                                            ThunarRenamerDialog      *renamer_dialog);
 static gboolean thunar_renamer_dialog_button_press_event  (GtkWidget                *tree_view,
                                                            GdkEventButton           *event,
+                                                           ThunarRenamerDialog      *renamer_dialog);
+static void     thunar_renamer_dialog_drag_data_received  (GtkWidget                *tree_view,
+                                                           GdkDragContext           *context,
+                                                           gint                      x,
+                                                           gint                      y,
+                                                           GtkSelectionData         *selection_data,
+                                                           guint                     info,
+                                                           guint                     time,
+                                                           ThunarRenamerDialog      *renamer_dialog);
+static void     thunar_renamer_dialog_drag_leave          (GtkWidget                *tree_view,
+                                                           GdkDragContext           *context,
+                                                           guint                     time,
+                                                           ThunarRenamerDialog      *renamer_dialog);
+static gboolean thunar_renamer_dialog_drag_motion         (GtkWidget                *tree_view,
+                                                           GdkDragContext           *context,
+                                                           gint                      x,
+                                                           gint                      y,
+                                                           guint                     time,
                                                            ThunarRenamerDialog      *renamer_dialog);
 static void     thunar_renamer_dialog_notify_page         (GtkNotebook              *notebook,
                                                            GParamSpec               *pspec,
@@ -131,6 +155,9 @@ struct _ThunarRenamerDialog
 
   /* whether the dialog should act like a standalone application */
   gboolean             standalone;
+
+  /* TRUE while drop highlighting */
+  gboolean             drag_highlighted;
 };
 
 
@@ -145,6 +172,14 @@ static const GtkActionEntry action_entries[] =
   { "about", GTK_STOCK_ABOUT, N_ ("_About"), NULL, N_ ("Display information about Thunar Bulk Rename"), G_CALLBACK (thunar_renamer_dialog_action_about), },
   { "properties", GTK_STOCK_PROPERTIES, N_ ("_Properties..."), "<alt>Return", N_ ("View the properties of the selected file"), G_CALLBACK (thunar_renamer_dialog_action_properties), },
 };
+
+/* Target types for dropping to the tree view */
+static const GtkTargetEntry drop_targets[] =
+{
+  { "text/uri-list", 0, TARGET_TEXT_URI_LIST, },
+};
+
+
 
 static GObjectClass *thunar_renamer_dialog_parent_class;
 
@@ -540,6 +575,12 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
       /* close the config handle */
       xfce_rc_close (rc);
   
+      /* setup drop support for the tree view */
+      gtk_drag_dest_set (renamer_dialog->tree_view, GTK_DEST_DEFAULT_DROP, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_COPY);
+      g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "drag-data-received", G_CALLBACK (thunar_renamer_dialog_drag_data_received), renamer_dialog);
+      g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "drag-leave", G_CALLBACK (thunar_renamer_dialog_drag_leave), renamer_dialog);
+      g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "drag-motion", G_CALLBACK (thunar_renamer_dialog_drag_motion), renamer_dialog);
+
       /* setup the tree selection */
       selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (renamer_dialog->tree_view));
       gtk_tree_selection_set_mode (selection, GTK_SELECTION_MULTIPLE);
@@ -1245,6 +1286,129 @@ thunar_renamer_dialog_button_press_event (GtkWidget           *tree_view,
   return FALSE;
 }
 
+
+
+static void
+thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
+                                          GdkDragContext      *context,
+                                          gint                 x,
+                                          gint                 y,
+                                          GtkSelectionData    *selection_data,
+                                          guint                info,
+                                          guint                time,
+                                          ThunarRenamerDialog *renamer_dialog)
+{
+  ThunarFile *file;
+  GList      *path_list;
+  GList      *lp;
+
+  g_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
+  g_return_if_fail (GTK_IS_TREE_VIEW (tree_view));
+
+  /* we only accept text/uri-list drops with format 8 and atleast one byte of data */
+  if (info == TARGET_TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
+    {
+      /* determine the path list from the selection_data */
+      path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
+
+      /* add all paths to the model */
+      for (lp = path_list; lp != NULL; lp = lp->next)
+        {
+          /* determine the file for the path */
+          file = thunar_file_get_for_path (lp->data, NULL);
+          if (G_LIKELY (file != NULL))
+            {
+              /* append the file to the model */
+              thunar_renamer_model_append (renamer_dialog->model, file);
+
+              /* release the file */
+              g_object_unref (G_OBJECT (file));
+            }
+
+          /* release the path */
+          thunar_vfs_path_unref (lp->data);
+        }
+
+      /* release the list */
+      g_list_free (path_list);
+    }
+
+  /* stop the emission of the "drag-data-received" signal */
+  g_signal_stop_emission_by_name (G_OBJECT (tree_view), "drag-data-received");
+}
+
+
+
+static void
+thunar_renamer_dialog_drag_leave (GtkWidget           *tree_view,
+                                  GdkDragContext      *context,
+                                  guint                time,
+                                  ThunarRenamerDialog *renamer_dialog)
+{
+  g_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
+  g_return_if_fail (GTK_IS_TREE_VIEW (tree_view));
+
+  /* disable the highlighting */
+  if (renamer_dialog->drag_highlighted)
+    {
+      /* we use the tree view parent (the scrolled window),
+       * as the drag_highlight doesn't work for tree views.
+       */
+      gtk_drag_unhighlight (tree_view->parent);
+      renamer_dialog->drag_highlighted = FALSE;
+    }
+}
+
+
+
+static gboolean
+thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
+                                   GdkDragContext      *context,
+                                   gint                 x,
+                                   gint                 y,
+                                   guint                time,
+                                   ThunarRenamerDialog *renamer_dialog)
+{
+  GdkAtom target;
+
+  g_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
+  g_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
+
+  /* determine the drop target */
+  target = gtk_drag_dest_find_target (tree_view, context, NULL);
+  if (G_UNLIKELY (target != gdk_atom_intern ("text/uri-list", FALSE)))
+    {
+      /* unhighlight the widget if highlighted */
+      if (renamer_dialog->drag_highlighted)
+        {
+          /* we use the tree view parent (the scrolled window),
+           * as the drag_highlight doesn't work for tree views.
+           */
+          gtk_drag_unhighlight (tree_view->parent);
+          renamer_dialog->drag_highlighted = FALSE;
+        }
+
+      /* we cannot handle the drop */
+      return FALSE;
+    }
+  else
+    {
+      /* highlight the widget */
+      if (!renamer_dialog->drag_highlighted)
+        {
+          /* we use the tree view parent (the scrolled window),
+           * as the drag_highlight doesn't work for tree views.
+           */
+          gtk_drag_highlight (tree_view->parent);
+          renamer_dialog->drag_highlighted = TRUE;
+        }
+
+      /* we can handle the drop */
+      gdk_drag_status (context, GDK_ACTION_COPY, time);
+      return TRUE;
+    }
+}
+                                  
 
 
 static void
