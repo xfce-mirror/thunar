@@ -38,6 +38,7 @@
 #include <libhal.h>
 #include <libhal-storage.h>
 
+#include <thunar-vfs/thunar-vfs-exec.h>
 #include <thunar-vfs/thunar-vfs-volume-hal.h>
 #include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
@@ -205,44 +206,32 @@ thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
 {
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
   gboolean            result;
-  gchar              *standard_error;
-  gchar              *command_line;
+  gchar              *program;
   gchar              *quoted;
-  gint                exit_status;
 
-  /* generate the mount command */
-  quoted = g_path_get_basename (volume_hal->device_file);
-  command_line = g_strconcat ("eject ", quoted, NULL);
-  g_free (quoted);
-
-  /* execute the mount command */
-  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
-  if (G_LIKELY (result))
+  /* check if gnome-eject is present */
+  program = g_find_program_in_path ("gnome-eject");
+  if (G_LIKELY (program != NULL))
     {
-      /* check if the command failed */
-      if (G_UNLIKELY (exit_status != 0))
+      /* gnome-eject doesn't seem to unmount properly first */
+      result = thunar_vfs_volume_hal_unmount (volume, window, error);
+      if (G_LIKELY (result))
         {
-          /* drop additional whitespace from the stderr output */
-          g_strstrip (standard_error);
-
-          /* check if stderr output is usable as error message */
-          if (G_LIKELY (*standard_error != '\0'))
-            {
-              /* use standard error message if not empty */
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, standard_error);
-            }
-          else
-            {
-              /* no useful information, *narf* */
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
-            }
-
-          /* and yes, we failed */
-          result = FALSE;
+          /* try to use gnome-eject then */
+          quoted = g_shell_quote (volume_hal->udi);
+          result = thunar_vfs_exec_sync ("%s -t -h %s", error, program, quoted);
+          g_free (quoted);
         }
 
-      /* release the stderr output */
-      g_free (standard_error);
+      /* cleanup */
+      g_free (program);
+    }
+  else
+    {
+      /* use eject */
+      quoted = g_path_get_basename (volume_hal->device_file);
+      result = thunar_vfs_exec_sync ("eject %s", error, quoted);
+      g_free (quoted);
     }
 
   /* check if we were successfull */
@@ -254,9 +243,6 @@ thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
       /* emit "changed" on the volume */
       thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
     }
-
-  /* cleanup */
-  g_free (command_line);
 
   return result;
 }
@@ -271,96 +257,42 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
   ThunarVfsPath      *path;
   gboolean            result;
-  gchar              *standard_error;
-  gchar              *command_line;
   gchar              *mount_point;
+  gchar              *program;
   gchar              *quoted;
-  gint                exit_status;
 
-  /* generate the mount command */
-  quoted = g_shell_quote (volume_hal->udi);
-  command_line = g_strconcat ("pmount-hal ", quoted, NULL);
-  g_free (quoted);
-
-  /* execute the mount command */
-  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, NULL);
-  if (G_LIKELY (result))
+  /* check if pmount-hal is present */
+  program = g_find_program_in_path ("pmount-hal");
+  if (G_LIKELY (program != NULL))
     {
-      /* check if the command failed */
-      if (G_UNLIKELY (exit_status != 0))
-        {
-          /* drop additional whitespace from the stderr output */
-          g_strstrip (standard_error);
-
-          /* check if stderr output is usable as error message */
-          if (G_LIKELY (*standard_error != '\0'))
-            {
-              /* use standard error message if not empty */
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, standard_error);
-            }
-          else
-            {
-              /* no useful information, *narf* */
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
-            }
-
-          /* and yes, we failed */
-          result = FALSE;
-        }
-
-      /* release the stderr output */
-      g_free (standard_error);
-    }
-  else /* pmount-hal is not available, so retry with simple "mount <mount-point>" */
-    {
-      /* release the previous command line */
-      g_free (command_line);
-      command_line = NULL;
-
-      /* determine the absolute path to the mount point */
-      mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
-
-      /* generate the command line for the mount command */
-      quoted = g_shell_quote (mount_point);
-      command_line = g_strconcat ("mount ", quoted, NULL);
+      /* try to use pmount-hal then */
+      quoted = g_shell_quote (volume_hal->udi);
+      result = thunar_vfs_exec_sync ("%s %s", error, program, quoted);
+      g_free (program);
       g_free (quoted);
-
-      /* execute the mount command */
-      result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
-      if (G_LIKELY (result))
-        {
-          /* check if the command failed */
-          if (G_UNLIKELY (exit_status != 0))
-            {
-              /* drop additional whitespace from the stderr output */
-              g_strstrip (standard_error);
-
-              /* check if stderr output is usable as error message */
-              if (G_LIKELY (*standard_error != '\0'))
-                {
-                  /* use standard error message if not empty */
-                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, standard_error);
-                }
-              else
-                {
-                  /* no useful information, *narf* */
-                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
-                }
-
-              /* and yes, we failed */
-              result = FALSE;
-            }
-
-          /* release the stderr output */
-          g_free (standard_error);
-        }
-
-      /* release the absolute path to the mount point */
-      g_free (mount_point);
     }
-
-  /* cleanup */
-  g_free (command_line);
+  else
+    {
+      /* check if gnome-mount is present */
+      program = g_find_program_in_path ("gnome-mount");
+      if (G_LIKELY (program != NULL))
+        {
+          /* try to use gnome-mount then */
+          quoted = g_shell_quote (volume_hal->udi);
+          result = thunar_vfs_exec_sync ("%s -t -h %s", error, program, quoted);
+          g_free (program);
+          g_free (quoted);
+        }
+      else
+        {
+          /* fallback to plain mount */
+          mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
+          quoted = g_shell_quote (mount_point);
+          result = thunar_vfs_exec_sync ("mount %s", error, quoted);
+          g_free (mount_point);
+          g_free (quoted);
+        }
+    }
 
   /* check if we were successfull */
   if (G_LIKELY (result))
@@ -399,89 +331,42 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
 {
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
   gboolean            result;
-  gchar               absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
-  gchar              *standard_error;
-  gchar              *command_line;
+  gchar              *mount_point;
+  gchar              *program;
   gchar              *quoted;
-  gint                exit_status;
 
-  /* determine the absolute path to the mount point */
-  if (thunar_vfs_path_to_string (volume_hal->mount_point, absolute_path, sizeof (absolute_path), error) < 0)
-    return FALSE;
-
-  /* generate the mount command */
-  quoted = g_shell_quote (absolute_path);
-  command_line = g_strconcat ("pumount ", quoted, NULL);
-  g_free (quoted);
-
-  /* execute the pumount command */
-  result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, NULL);
-  if (G_LIKELY (result))
+  /* check if pumount is present */
+  program = g_find_program_in_path ("pumount");
+  if (G_LIKELY (program != NULL))
     {
-      /* check if the command failed */
-      if (G_UNLIKELY (exit_status != 0))
-        {
-          /* drop additional whitespace from the stderr output */
-          g_strstrip (standard_error);
-
-          /* check if stderr output is usable as error message */
-          if (G_LIKELY (*standard_error != '\0'))
-            {
-              /* use standard error message if not empty */
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, standard_error);
-            }
-          else
-            {
-              /* no useful information, *narf* */
-              g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
-            }
-
-          /* and yes, we failed */
-          result = FALSE;
-        }
-
-      /* release the stderr output */
-      g_free (standard_error);
-    }
-  else /* pumount not available, retry with plain umount */
-    {
-      /* release the previous command line */
-      g_free (command_line);
-      command_line = NULL;
-
-      /* generate the mount command */
-      quoted = g_shell_quote (absolute_path);
-      command_line = g_strconcat ("umount ", quoted, NULL);
+      /* try to use pumount then */
+      mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
+      quoted = g_shell_quote (mount_point);
+      result = thunar_vfs_exec_sync ("%s %s", error, program, quoted);
+      g_free (mount_point);
+      g_free (program);
       g_free (quoted);
-
-      /* execute the pumount command */
-      result = g_spawn_command_line_sync (command_line, NULL, &standard_error, &exit_status, error);
-      if (G_LIKELY (result))
+    }
+  else
+    {
+      /* check if gnome-umount is present */
+      program = g_find_program_in_path ("gnome-umount");
+      if (G_LIKELY (program != NULL))
         {
-          /* check if the command failed */
-          if (G_UNLIKELY (exit_status != 0))
-            {
-              /* drop additional whitespace from the stderr output */
-              g_strstrip (standard_error);
-
-              /* check if stderr output is usable as error message */
-              if (G_LIKELY (*standard_error != '\0'))
-                {
-                  /* use standard error message if not empty */
-                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, standard_error);
-                }
-              else
-                {
-                  /* no useful information, *narf* */
-                  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_FAILED, _("Unknown error"));
-                }
-
-              /* and yes, we failed */
-              result = FALSE;
-            }
-
-          /* release the stderr output */
-          g_free (standard_error);
+          /* try to use gnome-umount then */
+          quoted = g_shell_quote (volume_hal->udi);
+          result = thunar_vfs_exec_sync ("%s -t -h %s", error, program, quoted);
+          g_free (program);
+          g_free (quoted);
+        }
+      else
+        {
+          /* fallback to plain umount */
+          mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
+          quoted = g_shell_quote (mount_point);
+          result = thunar_vfs_exec_sync ("umount %s", error, quoted);
+          g_free (mount_point);
+          g_free (quoted);
         }
     }
 
@@ -494,9 +379,6 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
       /* emit "changed" on the volume */
       thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
     }
-
-  /* cleanup */
-  g_free (command_line);
 
   return result;
 }
@@ -927,7 +809,7 @@ failed:
   /* print a warning message */
   if (dbus_error_is_set (&error))
     {
-      g_warning ("Failed to connect to the HAL daemon: %s", error.message);
+      g_warning (_("Failed to connect to the HAL daemon: %s"), error.message);
       dbus_error_free (&error);
     }
 }
