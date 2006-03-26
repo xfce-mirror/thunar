@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-03-26 14:23+0200\n"
-"PO-Revision-Date: 2006-03-26 12:17+0900\n"
+"PO-Revision-Date: 2006-03-26 23:42+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -270,9 +270,9 @@ msgid "Failed to determine the mount point for %s"
 msgstr "「%s」のマウント位置を確定できません。"
 
 #: ../thunar-vfs/thunar-vfs-volume-hal.c:812
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to connect to the HAL daemon: %s"
-msgstr "「%s」のモードを変更するのに失敗しました。"
+msgstr "HAL デーモンとの接続に失敗しました: %s"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:189
 #, c-format
@@ -338,7 +338,7 @@ msgstr "読み込むために「%s」を開くのに失敗しました。"
 #: ../thunar-vfs/thunar-vfs-xfer.c:385
 #, c-format
 msgid "The file \"%s\" already exists"
-msgstr ""
+msgstr "ファイル「%s」は既に存在します。"
 
 #. use the generic error message
 #: ../thunar-vfs/thunar-vfs-xfer.c:390
@@ -411,7 +411,6 @@ msgstr "実行中の Thunar のインスタンスを終了させる"
 msgid "Quit a running Thunar instance (not supported)"
 msgstr "実行中の Thunar のインスタンスを終了させる (未サポート)"
 
-# FIXME: transliteration?
 #. setup application name
 #: ../thunar/main.c:81
 msgid "Thunar"
@@ -566,7 +565,7 @@ msgstr ""
 #: ../thunar/thunar-chooser-dialog.c:684
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
-msgstr "アプリケーションを選択して下さい"
+msgstr "アプリケーションを選択してください"
 
 #: ../thunar/thunar-chooser-dialog.c:694
 #: ../thunar/thunar-renamer-dialog.c:1102
@@ -632,7 +631,7 @@ msgstr "表示欄"
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
-msgstr "リスト表示で表示する情報の順序を選んで下さい。"
+msgstr "リスト表示で表示する情報の順序を選んでください。"
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:218
@@ -688,7 +687,7 @@ msgstr "不明"
 
 #: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2238
 msgid "Enter the new name:"
-msgstr "新しい名前を入力して下さい:"
+msgstr "新しい名前を入力してください:"
 
 #. display an error message
 #: ../thunar/thunar-create-dialog.c:523
@@ -823,7 +822,7 @@ msgstr "次のフォルダに移動します。"
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
 "「%s」(%s) から代用アイコンを読み込むのに失敗しました。きちんとインストールさ"
-"れているか確認して下さい！"
+"れているか確認してください！"
 
 #: ../thunar/thunar-icon-view.c:131
 msgid "Arran_ge Items"
@@ -1089,7 +1088,7 @@ msgstr "フォルダに貼り付け(_P)"
 
 #: ../thunar/thunar-location-dialog.c:88
 msgid "Open Location"
-msgstr "開く位置を指定して下さい"
+msgstr "開く位置を指定してください"
 
 #: ../thunar/thunar-location-dialog.c:102
 msgid "_Location:"
@@ -1181,7 +1180,7 @@ msgstr "ここをクリックすると、フォルダのアクセス権を自動
 
 #: ../thunar/thunar-permissions-chooser.c:467
 msgid "Please wait..."
-msgstr "お待ち下さい..."
+msgstr "お待ちください..."
 
 #: ../thunar/thunar-permissions-chooser.c:472
 msgid "Stop applying permissions recursively."
@@ -1217,7 +1216,7 @@ msgid ""
 "afterwards."
 msgstr ""
 "このオプションを選ぶと、あなたの選択は記憶され同じ質問を尋ねられる事はありま"
-"せん。今後これを変更するには環境設定ダイアログをご使用下さい。"
+"せん。今後これを変更するには環境設定ダイアログをご使用ください。"
 
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:706
@@ -1311,7 +1310,7 @@ msgstr "フォルダをファイルの前にする(_F)"
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "フォルダを並べ替える時にフォルダをファイルの前に並べるなら、このオプションを"
-"選択して下さい。"
+"選択してください。"
 
 #: ../thunar/thunar-preferences-dialog.c:286
 msgid "_Show thumbnails"
@@ -1323,7 +1322,7 @@ msgid ""
 "automatically generated thumbnail icons."
 msgstr ""
 "フォルダ内のプレビュー可能なファイルを表示するにはこのオプションを有効にして"
-"下さい。これらは自動的に作成されるサムネイルアイコンとして表示されます。"
+"ください。これらは自動的に作成されるサムネイルアイコンとして表示されます。"
 
 #: ../thunar/thunar-preferences-dialog.c:309
 msgid "_Text beside icons"
@@ -1335,7 +1334,7 @@ msgid ""
 "rather than below the icon."
 msgstr ""
 "アイテムのアイコン・キャプションをアイコンの下ではなく隣に置くなら、このオプ"
-"ションを選択して下さい。"
+"ションを選択してください。"
 
 #.
 #. Side Pane
@@ -1461,7 +1460,7 @@ msgid ""
 msgstr ""
 "フォルダのアクセス権を変更する場合、フォルダ内の\n"
 "ファイルにもこの変更を適用することができます。\n"
-"以下から、標準で行うことを選択して下さい:"
+"以下から、標準で行うことを選択してください:"
 
 #: ../thunar/thunar-preferences-dialog.c:500
 msgid "Ask everytime"
@@ -1632,15 +1631,15 @@ msgid ""
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
 "リネーム・プラグインが見つかりませんでした。このプラグインが\n"
-"インストールされているか確認して下さい。またはシステム管理者に\n"
-"伝えて下さい。Thunar をソースからコンパイルしてインストール\n"
+"インストールされているか確認してください。またはシステム管理者に\n"
+"伝えてください。Thunar をソースからコンパイルしてインストール\n"
 "するのでしたら、「Simple Builting Renamers」プラグインが\n"
-"「Yes」になっているかを確認して下さい。"
+"「Yes」になっているかを確認してください。"
 
 #. allocate the file chooser
 #: ../thunar/thunar-renamer-dialog.c:1091
 msgid "Select files to rename"
-msgstr "名前変更するファイルを選択して下さい"
+msgstr "名前変更するファイルを選択してください"
 
 #: ../thunar/thunar-renamer-dialog.c:1107
 msgid "Audio Files"
@@ -2248,8 +2247,8 @@ msgid ""
 "of the document will be created in the directory you are viewing."
 msgstr ""
 "ある決まった種類の文書を頻繁に作成するのでしたら、そのコピーを作成してこの"
-"フォルダに置いて下さい。メニュー「文書を作成」にこの文書のための項目が加えら"
-"れます。\n"
+"フォルダに置いてください。メニュー「文書を作成」にこの文書のための項目が加え"
+"られます。\n"
 "\n"
 "その後で「文書を作成」メニューからこの項目を選択する事ができ、御覧になってい"
 "るフォルダに文書のコピーが作成されます。"
@@ -2436,7 +2435,7 @@ msgstr "検索(_S):"
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:217
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:652
 msgid "Enter the text to search for in the file names."
-msgstr "検索するファイル名に含まれる文字を入力して下さい。"
+msgstr "検索するファイル名に含まれる文字を入力してください。"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:229
 msgid "Regular _Expression"
@@ -2450,7 +2449,7 @@ msgid ""
 msgstr ""
 "このオプションを有効にすると、入力したパターンは正規表現として取り扱われ、"
 "Perl互換の正規表現 (PCRE) に一致します。正規表現の書き方については、該当文書"
-"にあたって下さい。"
+"にあたってください。"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:238
 msgid "Replace _With:"
@@ -2459,7 +2458,7 @@ msgstr "次で置換(_W):"
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:246
 msgid ""
 "Enter the text that should be used as replacement for the pattern above."
-msgstr "上のパターンを置き換える文字を入力して下さい。"
+msgstr "上のパターンを置き換える文字を入力してください。"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
 msgid "C_ase Sensitive Search"
@@ -2568,8 +2567,8 @@ msgid ""
 "if exactly one item is selected."
 msgstr ""
 "アクションを実行するための (必要なパラメーターを含む) コマンドです。サポート"
-"されているパラメーター変数のリストは以下にある凡例を御覧下さい。コマンドを実"
-"行する時には、実際のファイル名やフォルダ名がこれらの変数に入ります。大文字 "
+"されているパラメーター変数のリストは以下にある凡例を御覧ください。コマンドを"
+"実行する時には、実際のファイル名やフォルダ名がこれらの変数に入ります。大文字 "
 "(例えば %F, %D, %N) が使用される場合、アクションは複数のアイテムが選択されて"
 "も適用可能になります。小文字の場合はただ一つのアイテムにのみ適用されます。"
 
@@ -2646,9 +2645,9 @@ msgid ""
 "pattern here, the list items must be separated with semicolons (e.g. *.txt;*."
 "doc)."
 msgstr ""
-"パターンのリストを入力して下さい。これは、このアクションを選択したファイルで"
-"表示すべきかどうかを決めるために使用されます。一つ以上のパターンを指定するな"
-"ら (例えば「*.txt;*.doc」のように) セミコロンで区切る必要があります。"
+"パターンのリストを入力してください。これは、このアクションを選択したファイル"
+"で表示すべきかどうかを決めるために使用されます。一つ以上のパターンを指定する"
+"なら (例えば「*.txt;*.doc」のように) セミコロンで区切る必要があります。"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:401
 msgid "Appears if selection contains:"
@@ -2707,7 +2706,7 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:650
 msgid "Select an Icon"
-msgstr "アイコンを選択して下さい"
+msgstr "アイコンを選択してください"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:770
 #, c-format
