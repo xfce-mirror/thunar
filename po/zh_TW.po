@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-25 22:21+0100\n"
+"POT-Creation-Date: 2006-03-26 14:23+0200\n"
 "PO-Revision-Date: 2006-03-15 00:56+0800\n"
 "Last-Translator: Hydonsingore Cia <hydonsingore@mail.educities.edu.tw>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -98,13 +98,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "無法從 \"%s\" 讀取資料"
 
-#. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-exec.c:509
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:237
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:304
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:347
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:436
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:476
 msgid "Unknown error"
 msgstr "未知的錯誤"
 
@@ -251,10 +245,15 @@ msgid "Unknown user \"%s\""
 msgstr "未知的使用者 \"%s\""
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:385
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "無法決定 %s 的掛載點"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:812
+#, fuzzy, c-format
+msgid "Failed to connect to the HAL daemon: %s"
+msgstr "無法更改 \"%s\" 的模式"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:189
 #, c-format
@@ -317,52 +316,58 @@ msgstr ""
 msgid "Failed to open \"%s\" for reading"
 msgstr "無法開啟 \"%s\" 來讀取"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:381
+#: ../thunar-vfs/thunar-vfs-xfer.c:385
+#, c-format
+msgid "The file \"%s\" already exists"
+msgstr ""
+
+#. use the generic error message
+#: ../thunar-vfs/thunar-vfs-xfer.c:390
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "無法開啟 \"%s\" 來寫入"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:400
+#: ../thunar-vfs/thunar-vfs-xfer.c:411
 #, c-format
 msgid "Failed to read data from \"%s\""
 msgstr "無法從 \"%s\" 讀取資料"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:416
+#: ../thunar-vfs/thunar-vfs-xfer.c:427
 #, c-format
 msgid "Failed to write data to \"%s\""
 msgstr "無法將資料寫入 \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:435
+#: ../thunar-vfs/thunar-vfs-xfer.c:446
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "無法移除 \"%s\""
 
 #. tell the caller that the job was cancelled
-#: ../thunar-vfs/thunar-vfs-xfer.c:440
+#: ../thunar-vfs/thunar-vfs-xfer.c:451
 msgid "Operation canceled"
 msgstr "操作取消"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:480
+#: ../thunar-vfs/thunar-vfs-xfer.c:491
 #, c-format
 msgid "Failed to read link target from \"%s\""
 msgstr "無法讀取連結目標 \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:488 ../thunar-vfs/thunar-vfs-xfer.c:601
+#: ../thunar-vfs/thunar-vfs-xfer.c:499 ../thunar-vfs/thunar-vfs-xfer.c:612
 #, c-format
 msgid "Failed to create symbolic link \"%s\""
 msgstr "無法建立符號連結 \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:496
+#: ../thunar-vfs/thunar-vfs-xfer.c:507
 #, c-format
 msgid "Failed to change mode of \"%s\""
 msgstr "無法更改 \"%s\" 的模式"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:530 ../thunar-vfs/thunar-vfs-xfer.c:590
+#: ../thunar-vfs/thunar-vfs-xfer.c:541 ../thunar-vfs/thunar-vfs-xfer.c:601
 #, c-format
 msgid "Failed to determine file info for \"%s\""
 msgstr "無法決定 \"%s\" 的檔案資訊"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:559
+#: ../thunar-vfs/thunar-vfs-xfer.c:570
 #, c-format
 msgid "Failed to copy special file \"%s\""
 msgstr "無法複製特殊檔案 \"%s\""
@@ -1148,7 +1153,7 @@ msgstr ""
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:590
 #: ../thunar/thunar-permissions-chooser.c:1135
-#: ../thunar/thunar-progress-dialog.c:294
+#: ../thunar/thunar-progress-dialog.c:305
 msgid "Question"
 msgstr ""
 
@@ -1204,22 +1209,22 @@ msgid ""
 msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:1164
-#: ../thunar/thunar-progress-dialog.c:320
+#: ../thunar/thunar-progress-dialog.c:372
 msgid "_Yes"
 msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:1168
-#: ../thunar/thunar-progress-dialog.c:324
+#: ../thunar/thunar-progress-dialog.c:377
 msgid "Yes to _all"
 msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:1172
-#: ../thunar/thunar-progress-dialog.c:328
+#: ../thunar/thunar-progress-dialog.c:382
 msgid "_No"
 msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:1176
-#: ../thunar/thunar-progress-dialog.c:332
+#: ../thunar/thunar-progress-dialog.c:387
 msgid "_Cancel"
 msgstr ""
 
@@ -1410,21 +1415,21 @@ msgstr ""
 msgid "Apply to Folder and Contents"
 msgstr ""
 
-#: ../thunar/thunar-progress-dialog.c:458
+#: ../thunar/thunar-progress-dialog.c:523
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-progress-dialog.c:463
+#: ../thunar/thunar-progress-dialog.c:528
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-progress-dialog.c:468
+#: ../thunar/thunar-progress-dialog.c:533
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"

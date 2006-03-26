@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-25 22:21+0100\n"
+"POT-Creation-Date: 2006-03-26 14:23+0200\n"
 "PO-Revision-Date: 2006-03-26 10:26+0100\n"
 "Last-Translator: SZERVÑC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -99,13 +99,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "A mappa olvasása sikertelen"
 
-#. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-exec.c:509
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:237
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:304
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:347
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:436
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:476
 msgid "Unknown error"
 msgstr "Ismeretlen hiba"
 
@@ -252,10 +246,15 @@ msgid "Unknown user \"%s\""
 msgstr "Ismeretlen felhasználó: \"%s\""
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:385
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Nem sikerült meghatározni a csatolási pontot ehhez: %s"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:812
+#, fuzzy, c-format
+msgid "Failed to connect to the HAL daemon: %s"
+msgstr "Nem módosíthatók a jogok: \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:189
 #, c-format
@@ -318,52 +317,58 @@ msgstr "Nem hozható létre e fifo: \"%s\""
 msgid "Failed to open \"%s\" for reading"
 msgstr "Nem tudom megnyitni \"%s\"-t olvasásra"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:381
+#: ../thunar-vfs/thunar-vfs-xfer.c:385
+#, c-format
+msgid "The file \"%s\" already exists"
+msgstr ""
+
+#. use the generic error message
+#: ../thunar-vfs/thunar-vfs-xfer.c:390
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Nem tudom megnyitni \"%s\"-t írásra"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:400
+#: ../thunar-vfs/thunar-vfs-xfer.c:411
 #, c-format
 msgid "Failed to read data from \"%s\""
 msgstr "Nem tudok adatot olvasni innen: \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:416
+#: ../thunar-vfs/thunar-vfs-xfer.c:427
 #, c-format
 msgid "Failed to write data to \"%s\""
 msgstr "Nem tudok adatot írni ide: \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:435
+#: ../thunar-vfs/thunar-vfs-xfer.c:446
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Nem törölhető: \"%s\""
 
 #. tell the caller that the job was cancelled
-#: ../thunar-vfs/thunar-vfs-xfer.c:440
+#: ../thunar-vfs/thunar-vfs-xfer.c:451
 msgid "Operation canceled"
 msgstr "Művelet törölve"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:480
+#: ../thunar-vfs/thunar-vfs-xfer.c:491
 #, c-format
 msgid "Failed to read link target from \"%s\""
 msgstr "A lánc céljának olvasása sikertelen: \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:488 ../thunar-vfs/thunar-vfs-xfer.c:601
+#: ../thunar-vfs/thunar-vfs-xfer.c:499 ../thunar-vfs/thunar-vfs-xfer.c:612
 #, c-format
 msgid "Failed to create symbolic link \"%s\""
 msgstr "Nem hozható létre jelképes lánc: \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:496
+#: ../thunar-vfs/thunar-vfs-xfer.c:507
 #, c-format
 msgid "Failed to change mode of \"%s\""
 msgstr "Nem módosíthatók a jogok: \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:530 ../thunar-vfs/thunar-vfs-xfer.c:590
+#: ../thunar-vfs/thunar-vfs-xfer.c:541 ../thunar-vfs/thunar-vfs-xfer.c:601
 #, c-format
 msgid "Failed to determine file info for \"%s\""
 msgstr "Nem sikerült meghatározni a fájl infót ehhez: %s"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:559
+#: ../thunar-vfs/thunar-vfs-xfer.c:570
 #, c-format
 msgid "Failed to copy special file \"%s\""
 msgstr "Nem sikerült e speciális fájl másolása: \"%s\""
@@ -1161,7 +1166,7 @@ msgstr "Jogok rekurzív alkalmazásának leállítása."
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:590
 #: ../thunar/thunar-permissions-chooser.c:1135
-#: ../thunar/thunar-progress-dialog.c:294
+#: ../thunar/thunar-progress-dialog.c:305
 msgid "Question"
 msgstr "Kérdés"
 
@@ -1223,22 +1228,22 @@ msgstr ""
 "olvasni jogosult felhasználók léphetnek majd bele."
 
 #: ../thunar/thunar-permissions-chooser.c:1164
-#: ../thunar/thunar-progress-dialog.c:320
+#: ../thunar/thunar-progress-dialog.c:372
 msgid "_Yes"
 msgstr "_Igen"
 
 #: ../thunar/thunar-permissions-chooser.c:1168
-#: ../thunar/thunar-progress-dialog.c:324
+#: ../thunar/thunar-progress-dialog.c:377
 msgid "Yes to _all"
 msgstr "_Mind"
 
 #: ../thunar/thunar-permissions-chooser.c:1172
-#: ../thunar/thunar-progress-dialog.c:328
+#: ../thunar/thunar-progress-dialog.c:382
 msgid "_No"
 msgstr "_Nem"
 
 #: ../thunar/thunar-permissions-chooser.c:1176
-#: ../thunar/thunar-progress-dialog.c:332
+#: ../thunar/thunar-progress-dialog.c:387
 msgid "_Cancel"
 msgstr "_Csendet!"
 
@@ -1434,19 +1439,19 @@ msgstr "Csak a könyvtárra"
 msgid "Apply to Folder and Contents"
 msgstr "A könyvtárra és tartalmára"
 
-#: ../thunar/thunar-progress-dialog.c:458
+#: ../thunar/thunar-progress-dialog.c:523
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] "(%lu óra van hátra)"
 
-#: ../thunar/thunar-progress-dialog.c:463
+#: ../thunar/thunar-progress-dialog.c:528
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] "(%lu perc van hátra)"
 
-#: ../thunar/thunar-progress-dialog.c:468
+#: ../thunar/thunar-progress-dialog.c:533
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"

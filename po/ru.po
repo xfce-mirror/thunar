@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-25 22:21+0100\n"
+"POT-Creation-Date: 2006-03-26 14:23+0200\n"
 "PO-Revision-Date: 2006-02-24 16:14+0500\n"
 "Last-Translator: Sergey Fedoseev <fedoseev.sergey@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -101,13 +101,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "Загрузка содержимого папки..."
 
-#. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-exec.c:509
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:237
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:304
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:347
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:436
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:476
 msgid "Unknown error"
 msgstr "Неизвестная ошибка"
 
@@ -254,10 +248,15 @@ msgid "Unknown user \"%s\""
 msgstr "Неизвестный пользователь \"%s\""
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:385
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Не удалось определить точку монтирования для %s"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:812
+#, fuzzy, c-format
+msgid "Failed to connect to the HAL daemon: %s"
+msgstr "Не удалось изменить права \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:189
 #, c-format
@@ -324,52 +323,58 @@ msgstr "Не удалось создать fifo \"%s\""
 msgid "Failed to open \"%s\" for reading"
 msgstr "Не удалось открыть \"%s\" для чтения"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:381
+#: ../thunar-vfs/thunar-vfs-xfer.c:385
+#, c-format
+msgid "The file \"%s\" already exists"
+msgstr ""
+
+#. use the generic error message
+#: ../thunar-vfs/thunar-vfs-xfer.c:390
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Не удалось открыть \"%s\" для записи"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:400
+#: ../thunar-vfs/thunar-vfs-xfer.c:411
 #, fuzzy, c-format
 msgid "Failed to read data from \"%s\""
 msgstr "Не удалось прочитать данные из \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:416
+#: ../thunar-vfs/thunar-vfs-xfer.c:427
 #, c-format
 msgid "Failed to write data to \"%s\""
 msgstr "Не удалось записать данные в \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:435
+#: ../thunar-vfs/thunar-vfs-xfer.c:446
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Не удалось удалить \"%s\""
 
 #. tell the caller that the job was cancelled
-#: ../thunar-vfs/thunar-vfs-xfer.c:440
+#: ../thunar-vfs/thunar-vfs-xfer.c:451
 msgid "Operation canceled"
 msgstr "Операция отменена"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:480
+#: ../thunar-vfs/thunar-vfs-xfer.c:491
 #, c-format
 msgid "Failed to read link target from \"%s\""
 msgstr "Не удалось прочитать данные из \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:488 ../thunar-vfs/thunar-vfs-xfer.c:601
+#: ../thunar-vfs/thunar-vfs-xfer.c:499 ../thunar-vfs/thunar-vfs-xfer.c:612
 #, c-format
 msgid "Failed to create symbolic link \"%s\""
 msgstr "Не удалось создать символическую ссылку \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:496
+#: ../thunar-vfs/thunar-vfs-xfer.c:507
 #, c-format
 msgid "Failed to change mode of \"%s\""
 msgstr "Не удалось изменить права \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:530 ../thunar-vfs/thunar-vfs-xfer.c:590
+#: ../thunar-vfs/thunar-vfs-xfer.c:541 ../thunar-vfs/thunar-vfs-xfer.c:601
 #, c-format
 msgid "Failed to determine file info for \"%s\""
 msgstr "Не удалось определить информацию о файле \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:559
+#: ../thunar-vfs/thunar-vfs-xfer.c:570
 #, c-format
 msgid "Failed to copy special file \"%s\""
 msgstr "Не удалось cкопировать специальный файл \"%s\""
@@ -1188,7 +1193,7 @@ msgstr "Прекратить рекурсивное изменение прав.
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:590
 #: ../thunar/thunar-permissions-chooser.c:1135
-#: ../thunar/thunar-progress-dialog.c:294
+#: ../thunar/thunar-progress-dialog.c:305
 msgid "Question"
 msgstr "Вопрос"
 
@@ -1249,22 +1254,22 @@ msgid ""
 msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:1164
-#: ../thunar/thunar-progress-dialog.c:320
+#: ../thunar/thunar-progress-dialog.c:372
 msgid "_Yes"
 msgstr "_Да"
 
 #: ../thunar/thunar-permissions-chooser.c:1168
-#: ../thunar/thunar-progress-dialog.c:324
+#: ../thunar/thunar-progress-dialog.c:377
 msgid "Yes to _all"
 msgstr "Да для _всех"
 
 #: ../thunar/thunar-permissions-chooser.c:1172
-#: ../thunar/thunar-progress-dialog.c:328
+#: ../thunar/thunar-progress-dialog.c:382
 msgid "_No"
 msgstr "_Нет"
 
 #: ../thunar/thunar-permissions-chooser.c:1176
-#: ../thunar/thunar-progress-dialog.c:332
+#: ../thunar/thunar-progress-dialog.c:387
 msgid "_Cancel"
 msgstr "_Отменить"
 
@@ -1461,7 +1466,7 @@ msgstr "Применять только к самой папке"
 msgid "Apply to Folder and Contents"
 msgstr "Применять к папке и ее содержимому"
 
-#: ../thunar/thunar-progress-dialog.c:458
+#: ../thunar/thunar-progress-dialog.c:523
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
@@ -1469,7 +1474,7 @@ msgstr[0] "(остаётся %lu час)"
 msgstr[1] "(остаётся %lu часа)"
 msgstr[2] "(остаётся %lu часов)"
 
-#: ../thunar/thunar-progress-dialog.c:463
+#: ../thunar/thunar-progress-dialog.c:528
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
@@ -1477,7 +1482,7 @@ msgstr[0] "(остаётся %lu минута)"
 msgstr[1] "(остаётся %lu минуты)"
 msgstr[2] "(остаётся %lu минут)"
 
-#: ../thunar/thunar-progress-dialog.c:468
+#: ../thunar/thunar-progress-dialog.c:533
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"

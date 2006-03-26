@@ -378,7 +378,18 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
       if (G_UNLIKELY (errno == EISDIR || errno == EMLINK || errno == ETXTBSY))
         errno = EEXIST;
 
-      tvxc_set_error_from_errno (error, _("Failed to open \"%s\" for writing"), target_absolute_path);
+      /* EEXIST gets a better error message */
+      if (G_LIKELY (errno == EEXIST))
+        {
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
+                       _("The file \"%s\" already exists"), target_absolute_path);
+        }
+      else
+        {
+          /* use the generic error message */
+          tvxc_set_error_from_errno (error, _("Failed to open \"%s\" for writing"), target_absolute_path);
+        }
+
       goto end1;
     }
 

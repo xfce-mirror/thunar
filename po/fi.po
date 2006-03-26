@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-25 22:21+0100\n"
+"POT-Creation-Date: 2006-03-26 14:23+0200\n"
 "PO-Revision-Date: 2006-03-12 19:03+0200\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -98,13 +98,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "Ladataan hakemiston sisältöä..."
 
-#. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-exec.c:509
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:237
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:304
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:347
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:436
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:476
 msgid "Unknown error"
 msgstr "Tuntematon virhe"
 
@@ -251,10 +245,15 @@ msgid "Unknown user \"%s\""
 msgstr "Tuntematon käyttäjä \"%s\""
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:385
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Liitoskohdan määrittäminen kohteelle %s epäonnistui"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:812
+#, fuzzy, c-format
+msgid "Failed to connect to the HAL daemon: %s"
+msgstr "Kohteen \"%s\" tilan muuttaminen epäonnistui"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:189
 #, c-format
@@ -319,52 +318,58 @@ msgstr "Nimetyn putken \"%s\" luominen epäonnistui"
 msgid "Failed to open \"%s\" for reading"
 msgstr "Kohteen \"%s\" avaaminen luettavaksi epäonnistui"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:381
+#: ../thunar-vfs/thunar-vfs-xfer.c:385
+#, c-format
+msgid "The file \"%s\" already exists"
+msgstr ""
+
+#. use the generic error message
+#: ../thunar-vfs/thunar-vfs-xfer.c:390
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Kohteen \"%s\" avaaminen kirjoitettavaksi epäonnistui"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:400
+#: ../thunar-vfs/thunar-vfs-xfer.c:411
 #, c-format
 msgid "Failed to read data from \"%s\""
 msgstr "Kohteesta \"%s\" ei voi lukea"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:416
+#: ../thunar-vfs/thunar-vfs-xfer.c:427
 #, c-format
 msgid "Failed to write data to \"%s\""
 msgstr "Kohteeseen \"%s\" ei voi kirjoittaa"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:435
+#: ../thunar-vfs/thunar-vfs-xfer.c:446
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Kohdetta \"%s\" ei voi poistaa"
 
 #. tell the caller that the job was cancelled
-#: ../thunar-vfs/thunar-vfs-xfer.c:440
+#: ../thunar-vfs/thunar-vfs-xfer.c:451
 msgid "Operation canceled"
 msgstr "Toiminto peruutettu"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:480
+#: ../thunar-vfs/thunar-vfs-xfer.c:491
 #, c-format
 msgid "Failed to read link target from \"%s\""
 msgstr "Linkin kohteen lukeminen lähteestä \"%s\" epäonnistui"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:488 ../thunar-vfs/thunar-vfs-xfer.c:601
+#: ../thunar-vfs/thunar-vfs-xfer.c:499 ../thunar-vfs/thunar-vfs-xfer.c:612
 #, c-format
 msgid "Failed to create symbolic link \"%s\""
 msgstr "Symbolisen linkin \"%s\" luominen epäonnistui"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:496
+#: ../thunar-vfs/thunar-vfs-xfer.c:507
 #, c-format
 msgid "Failed to change mode of \"%s\""
 msgstr "Kohteen \"%s\" tilan muuttaminen epäonnistui"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:530 ../thunar-vfs/thunar-vfs-xfer.c:590
+#: ../thunar-vfs/thunar-vfs-xfer.c:541 ../thunar-vfs/thunar-vfs-xfer.c:601
 #, c-format
 msgid "Failed to determine file info for \"%s\""
 msgstr "Tiedoston \"%s\" tietojen selvittäminen epäonnistui"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:559
+#: ../thunar-vfs/thunar-vfs-xfer.c:570
 #, c-format
 msgid "Failed to copy special file \"%s\""
 msgstr "Erikoistiedoston \"%s\" kopioiminen epäonnistui"
@@ -1181,7 +1186,7 @@ msgstr "Keskeytä oikeuksien muuttaminen alikansioista."
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:590
 #: ../thunar/thunar-permissions-chooser.c:1135
-#: ../thunar/thunar-progress-dialog.c:294
+#: ../thunar/thunar-progress-dialog.c:305
 msgid "Question"
 msgstr "Kysymys"
 
@@ -1243,22 +1248,22 @@ msgstr ""
 "pääsevät vain sellaiset käyttäjät, joilla on oikeus lukea hakemiston sisältö."
 
 #: ../thunar/thunar-permissions-chooser.c:1164
-#: ../thunar/thunar-progress-dialog.c:320
+#: ../thunar/thunar-progress-dialog.c:372
 msgid "_Yes"
 msgstr "_Kyllä"
 
 #: ../thunar/thunar-permissions-chooser.c:1168
-#: ../thunar/thunar-progress-dialog.c:324
+#: ../thunar/thunar-progress-dialog.c:377
 msgid "Yes to _all"
 msgstr "Kyllä k_aikkiin"
 
 #: ../thunar/thunar-permissions-chooser.c:1172
-#: ../thunar/thunar-progress-dialog.c:328
+#: ../thunar/thunar-progress-dialog.c:382
 msgid "_No"
 msgstr "_Ei"
 
 #: ../thunar/thunar-permissions-chooser.c:1176
-#: ../thunar/thunar-progress-dialog.c:332
+#: ../thunar/thunar-progress-dialog.c:387
 msgid "_Cancel"
 msgstr "_Peruuta"
 
@@ -1464,21 +1469,21 @@ msgstr "Aseta vain hakemistolle"
 msgid "Apply to Folder and Contents"
 msgstr "Aseta myös hakemiston sisällölle"
 
-#: ../thunar/thunar-progress-dialog.c:458
+#: ../thunar/thunar-progress-dialog.c:523
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] "(%lu tunti jäljellä)"
 msgstr[1] "(%lu tuntia jäljellä)"
 
-#: ../thunar/thunar-progress-dialog.c:463
+#: ../thunar/thunar-progress-dialog.c:528
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] "(%lu minuutti jäljellä)"
 msgstr[1] "(%lu minuuttia jäljellä)"
 
-#: ../thunar/thunar-progress-dialog.c:468
+#: ../thunar/thunar-progress-dialog.c:533
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"

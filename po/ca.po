@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ca\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-25 22:21+0100\n"
+"POT-Creation-Date: 2006-03-26 14:23+0200\n"
 "PO-Revision-Date: 2006-03-19 17:52+0100\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
@@ -94,13 +94,7 @@ msgstr "Fallit a  buit fitxer n tu a ?"
 msgid "Failed to read folder contents"
 msgstr "S'estan carregant els continguts de la carpeta..."
 
-#. no useful information, *narf*
 #: ../thunar-vfs/thunar-vfs-exec.c:509
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:237
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:304
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:347
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:436
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:476
 #, fuzzy
 msgid "Unknown error"
 msgstr "Error desconegut"
@@ -256,10 +250,15 @@ msgid "Unknown user \"%s\""
 msgstr "Desconegut usuari"
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:385
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
 #, fuzzy, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Fallit a    punt per a"
+
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:812
+#, fuzzy, c-format
+msgid "Failed to connect to the HAL daemon: %s"
+msgstr "Fallit a  mode de"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:189
 #, c-format
@@ -324,52 +323,58 @@ msgstr "Fallit a "
 msgid "Failed to open \"%s\" for reading"
 msgstr "Fallit a  obre per a"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:381
+#: ../thunar-vfs/thunar-vfs-xfer.c:385
+#, c-format
+msgid "The file \"%s\" already exists"
+msgstr ""
+
+#. use the generic error message
+#: ../thunar-vfs/thunar-vfs-xfer.c:390
 #, fuzzy, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Fallit a  obre per a"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:400
+#: ../thunar-vfs/thunar-vfs-xfer.c:411
 #, fuzzy, c-format
 msgid "Failed to read data from \"%s\""
 msgstr "Fallit a  dades de"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:416
+#: ../thunar-vfs/thunar-vfs-xfer.c:427
 #, fuzzy, c-format
 msgid "Failed to write data to \"%s\""
 msgstr "Fallit a  dades a "
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:435
+#: ../thunar-vfs/thunar-vfs-xfer.c:446
 #, fuzzy, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Fallit a  elimina"
 
 #. tell the caller that the job was cancelled
-#: ../thunar-vfs/thunar-vfs-xfer.c:440
+#: ../thunar-vfs/thunar-vfs-xfer.c:451
 msgid "Operation canceled"
 msgstr "S'ha cancel·lat l'operació"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:480
+#: ../thunar-vfs/thunar-vfs-xfer.c:491
 #, fuzzy, c-format
 msgid "Failed to read link target from \"%s\""
 msgstr "Fallit a  enllaç de"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:488 ../thunar-vfs/thunar-vfs-xfer.c:601
+#: ../thunar-vfs/thunar-vfs-xfer.c:499 ../thunar-vfs/thunar-vfs-xfer.c:612
 #, fuzzy, c-format
 msgid "Failed to create symbolic link \"%s\""
 msgstr "Fallit a  enllaç"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:496
+#: ../thunar-vfs/thunar-vfs-xfer.c:507
 #, fuzzy, c-format
 msgid "Failed to change mode of \"%s\""
 msgstr "Fallit a  mode de"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:530 ../thunar-vfs/thunar-vfs-xfer.c:590
+#: ../thunar-vfs/thunar-vfs-xfer.c:541 ../thunar-vfs/thunar-vfs-xfer.c:601
 #, fuzzy, c-format
 msgid "Failed to determine file info for \"%s\""
 msgstr "Fallit a  fitxer per a"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:559
+#: ../thunar-vfs/thunar-vfs-xfer.c:570
 #, fuzzy, c-format
 msgid "Failed to copy special file \"%s\""
 msgstr "Fallit a  còpia fitxer"
@@ -1237,7 +1242,7 @@ msgstr "Atura permisos."
 #. allocate the question dialog
 #: ../thunar/thunar-permissions-chooser.c:590
 #: ../thunar/thunar-permissions-chooser.c:1135
-#: ../thunar/thunar-progress-dialog.c:294
+#: ../thunar/thunar-progress-dialog.c:305
 msgid "Question"
 msgstr "Pregunta"
 
@@ -1305,23 +1310,23 @@ msgstr ""
 "carpeta a  entra   carpeta."
 
 #: ../thunar/thunar-permissions-chooser.c:1164
-#: ../thunar/thunar-progress-dialog.c:320
+#: ../thunar/thunar-progress-dialog.c:372
 msgid "_Yes"
 msgstr "_Sí"
 
 #: ../thunar/thunar-permissions-chooser.c:1168
-#: ../thunar/thunar-progress-dialog.c:324
+#: ../thunar/thunar-progress-dialog.c:377
 #, fuzzy
 msgid "Yes to _all"
 msgstr "Sí a  all"
 
 #: ../thunar/thunar-permissions-chooser.c:1172
-#: ../thunar/thunar-progress-dialog.c:328
+#: ../thunar/thunar-progress-dialog.c:382
 msgid "_No"
 msgstr "_No"
 
 #: ../thunar/thunar-permissions-chooser.c:1176
-#: ../thunar/thunar-progress-dialog.c:332
+#: ../thunar/thunar-progress-dialog.c:387
 msgid "_Cancel"
 msgstr "_Cancel·la"
 
@@ -1543,21 +1548,21 @@ msgstr "Aplica a  Carpeta Només"
 msgid "Apply to Folder and Contents"
 msgstr "Aplica a  Carpeta i Contingut"
 
-#: ../thunar/thunar-progress-dialog.c:458
+#: ../thunar/thunar-progress-dialog.c:523
 #, fuzzy, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] "hora"
 msgstr[1] "hora"
 
-#: ../thunar/thunar-progress-dialog.c:463
+#: ../thunar/thunar-progress-dialog.c:528
 #, fuzzy, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] "minut"
 msgstr[1] "minut"
 
-#: ../thunar/thunar-progress-dialog.c:468
+#: ../thunar/thunar-progress-dialog.c:533
 #, fuzzy, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"

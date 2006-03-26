@@ -21,6 +21,12 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
@@ -272,11 +278,16 @@ thunar_progress_dialog_ask (ThunarProgressDialog           *dialog,
                             ThunarVfsJob                   *job)
 {
   const gchar *mnemonic;
+  const gchar *messagep;
+  const gchar *stock_id;
   GtkWidget   *question;
   GtkWidget   *hbox;
+  GtkWidget   *vbox;
   GtkWidget   *image;
   GtkWidget   *label;
   GtkWidget   *button;
+  gchar       *title;
+  gchar       *text;
   gint         response;
   gint         n;
 
@@ -295,17 +306,58 @@ thunar_progress_dialog_ask (ThunarProgressDialog           *dialog,
                            NULL);
   gtk_window_set_transient_for (GTK_WINDOW (question), GTK_WINDOW (dialog));
 
-  hbox = g_object_new (GTK_TYPE_HBOX, "border-width", 12, "spacing", 12, NULL);
+  hbox = gtk_hbox_new (FALSE, 12);
+  gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (question)->vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
   image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
+  gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
   gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
   gtk_widget_show (image);
 
-  label = g_object_new (GTK_TYPE_LABEL, "label", message, "xalign", 0, "yalign", 0, NULL);
-  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+  vbox = gtk_vbox_new (FALSE, 12);
+  gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
+  gtk_widget_show (vbox);
+
+  /* split the message */
+  messagep = strstr (message, "\n\n");
+  if (G_LIKELY (messagep != NULL))
+    {
+      title = g_strndup (message, messagep - message);
+      text = g_strdup (messagep + 2);
+    }
+  else
+    {
+      title = g_strdup (message);
+      text = NULL;
+    }
+
+  label = gtk_label_new (title);
+  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+  gtk_label_set_selectable (GTK_LABEL (label), TRUE);
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
+  gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 0);
   gtk_widget_show (label);
+
+  /* check if we have two parts */
+  if (G_LIKELY (text != NULL))
+    {
+      /* make the title bold */
+      gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+
+      /* add the text */
+      label = gtk_label_new (text);
+      gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+      gtk_label_set_selectable (GTK_LABEL (label), TRUE);
+      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
+      gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
+      gtk_widget_show (label);
+    }
+
+  /* cleanup */
+  g_free (title);
+  g_free (text);
 
   /* add the buttons based on the possible choices */
   for (n = 3; n >= 0; --n)
@@ -318,18 +370,23 @@ thunar_progress_dialog_ask (ThunarProgressDialog           *dialog,
         {
         case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES:
           mnemonic = _("_Yes");
+          stock_id = GTK_STOCK_YES;
           break;
 
         case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES_ALL:
           mnemonic = _("Yes to _all");
+          stock_id = NULL;
           break;
 
         case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_NO:
           mnemonic = _("_No");
+          stock_id = GTK_STOCK_NO;
           break;
 
         case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL:
           mnemonic = _("_Cancel");
+          stock_id = GTK_STOCK_CANCEL;
+          break;
           break;
 
         default:
@@ -341,6 +398,14 @@ thunar_progress_dialog_ask (ThunarProgressDialog           *dialog,
       GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
       gtk_dialog_add_action_widget (GTK_DIALOG (question), button, response);
       gtk_widget_show (button);
+
+      /* check if we should add an image to the button */
+      if (G_LIKELY (stock_id != NULL))
+        {
+          image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_BUTTON);
+          gtk_button_set_image (GTK_BUTTON (button), image);
+          gtk_widget_show (image);
+        }
 
       gtk_dialog_set_default_response (GTK_DIALOG (question), response);
     }
