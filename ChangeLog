@@ -1,5 +1,11 @@
 2006-03-28	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in: Check for limits.h and localeconv().
+	* thunar/thunar-size-label.c: Format the size summary string properly
+	  according to the current locale.
+
+2006-03-28	Benedikt Meurer <benny@xfce.org>
+
 	* docs/README.thunarrc, thunar/thunar-preferences.c: Add new hidden
 	  setting MiscCaseSensitive, which controls whether sorting is done
 	  in a case-sensitive manner.

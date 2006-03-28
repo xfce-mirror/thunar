@@ -102,8 +102,8 @@ dnl **********************************
 dnl *** Check for standard headers ***
 dnl **********************************
 AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h \
-                  locale.h math.h memory.h mntent.h pwd.h regex.h sched.h setjmp.h \
-                  stdarg.h stdlib.h string.h sys/xattr.h sys/extattr.h \
+                  limits.h locale.h math.h memory.h mntent.h pwd.h regex.h sched.h \
+                  setjmp.h stdarg.h stdlib.h string.h sys/xattr.h sys/extattr.h \
                   sys/cdio.h sys/mman.h sys/mount.h sys/param.h sys/stat.h \
                   sys/statfs.h sys/statvfs.h sys/time.h sys/uio.h \
                   sys/vfs.h sys/wait.h time.h wchar.h wctype.h])
@@ -112,9 +112,9 @@ dnl ************************************
 dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
-AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr lchmod localtime_r \
-                mbrtowc pread pwrite readdir_r sched_yield setgroupent \
-                setpassent statfs statvfs strcoll])
+AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr lchmod localeconv \
+                localtime_r mbrtowc pread pwrite readdir_r sched_yield \
+                setgroupent setpassent statfs statvfs strcoll])
 
 dnl ***************************************
 dnl *** Check for working posix_madvise ***

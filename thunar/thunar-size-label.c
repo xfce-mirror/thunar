@@ -21,6 +21,13 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_LIMITS_H
+#include <limits.h>
+#endif
+#ifdef HAVE_LOCALE_H
+#include <locale.h>
+#endif
+
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-size-label.h>
 #include <thunar/thunar-throbber.h>
@@ -244,6 +251,52 @@ thunar_size_label_set_property (GObject      *object,
 
 
 
+static gchar*
+tsl_format_size_string (ThunarVfsFileSize size)
+{
+  GString *result;
+  gchar   *grouping;
+  gchar   *thousep;
+  gint     ndigits = 0;
+
+#ifdef HAVE_LOCALECONV
+  grouping = localeconv ()->grouping;
+  thousep = localeconv ()->thousands_sep;
+#else
+  grouping = "\3\0";
+  thousep = ",";
+#endif
+
+  result = g_string_sized_new (32);
+  do
+    {
+      /* prepend the next digit to the string */
+      g_string_prepend_c (result, '0' + (size % 10));
+      ++ndigits;
+      
+      /* check if we should add the thousands separator */
+      if (ndigits == *grouping && *grouping != CHAR_MAX && size > 9)
+        {
+          g_string_prepend (result, thousep);
+          ndigits = 0;
+
+          /* if *(grouping+1) == '\0' then we have to use the
+           * *grouping character (last grouping rule) for all
+           * following cases.
+           */
+          if (*(grouping + 1) != '\0')
+            ++grouping;
+        }
+
+      size /= 10;
+    }
+  while (size > 0);
+
+  return g_string_free (result, FALSE);
+}
+
+
+
 static void
 thunar_size_label_file_changed (ThunarFile      *file,
                                 ThunarSizeLabel *size_label)
@@ -303,7 +356,7 @@ thunar_size_label_file_changed (ThunarFile      *file,
       size = thunar_file_get_size (file);
 
       /* determine the size in bytes */
-      text = g_strdup_printf ("%" G_GINT64_FORMAT, (gint64) size);
+      text = tsl_format_size_string (size);
       size_string = g_strdup_printf (_("%s Bytes"), text);
       g_free (text);
 
