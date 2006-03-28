@@ -31,6 +31,7 @@
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-folder.h>
 #include <thunar/thunar-pango-extensions.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-tree-model.h>
 
 
@@ -38,6 +39,15 @@
 /* convenience macros */
 #define G_NODE(node)                 ((GNode *) (node))
 #define THUNAR_TREE_MODEL_ITEM(item) ((ThunarTreeModelItem *) (item))
+
+
+
+/* Property identifiers */
+enum
+{
+  PROP_0,
+  PROP_CASE_SENSITIVE,
+};
 
 
 
@@ -49,6 +59,14 @@ static void                 thunar_tree_model_class_init              (ThunarTre
 static void                 thunar_tree_model_tree_model_init         (GtkTreeModelIface    *iface);
 static void                 thunar_tree_model_init                    (ThunarTreeModel      *model);
 static void                 thunar_tree_model_finalize                (GObject              *object);
+static void                 thunar_tree_model_get_property            (GObject              *object,
+                                                                       guint                 prop_id,
+                                                                       GValue               *value,
+                                                                       GParamSpec           *pspec);
+static void                 thunar_tree_model_set_property            (GObject              *object,
+                                                                       guint                 prop_id,
+                                                                       const GValue         *value,
+                                                                       GParamSpec           *pspec);
 static GtkTreeModelFlags    thunar_tree_model_get_flags               (GtkTreeModel         *tree_model);
 static gint                 thunar_tree_model_get_n_columns           (GtkTreeModel         *tree_model);
 static GType                thunar_tree_model_get_column_type         (GtkTreeModel         *tree_model,
@@ -112,6 +130,8 @@ static gboolean             thunar_tree_model_node_traverse_changed   (GNode    
                                                                        gpointer              user_data);
 static gboolean             thunar_tree_model_node_traverse_remove    (GNode                *node,
                                                                        gpointer              user_data);
+static gboolean             thunar_tree_model_node_traverse_sort      (GNode                *node,
+                                                                       gpointer              user_data);
 static gboolean             thunar_tree_model_node_traverse_free      (GNode                *node,
                                                                        gpointer              user_data);
 
@@ -127,6 +147,8 @@ struct _ThunarTreeModel
   GObject __parent__;
 
   ThunarFileMonitor *file_monitor;
+
+  gboolean           sort_case_sensitive;
 
   GNode             *root;
   guint              stamp;
@@ -200,6 +222,22 @@ thunar_tree_model_class_init (ThunarTreeModelClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_tree_model_finalize;
+  gobject_class->get_property = thunar_tree_model_get_property;
+  gobject_class->set_property = thunar_tree_model_set_property;
+
+  /**
+   * ThunarTreeModel:case-sensitive:
+   *
+   * Whether the sorting of the folder items will be done
+   * in a case-sensitive manner.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_CASE_SENSITIVE,
+                                   g_param_spec_boolean ("case-sensitive",
+                                                         "case-sensitive",
+                                                         "case-sensitive",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 }
 
 
@@ -233,7 +271,8 @@ thunar_tree_model_init (ThunarTreeModel *model)
   ThunarFile          *file;
   GNode               *node;
 
-  /* generate a random stamp */
+  /* initialize the model data */
+  model->sort_case_sensitive = TRUE;
   model->stamp = g_random_int ();
 
   /* connect to the file monitor */
@@ -290,6 +329,50 @@ thunar_tree_model_finalize (GObject *object)
   g_node_destroy (model->root);
 
   (*G_OBJECT_CLASS (thunar_tree_model_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_tree_model_get_property (GObject    *object,
+                                guint       prop_id,
+                                GValue     *value,
+                                GParamSpec *pspec)
+{
+  ThunarTreeModel *model = THUNAR_TREE_MODEL (object);
+
+  switch (prop_id)
+    {
+    case PROP_CASE_SENSITIVE:
+      g_value_set_boolean (value, thunar_tree_model_get_case_sensitive (model));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_tree_model_set_property (GObject      *object,
+                                guint         prop_id,
+                                const GValue *value,
+                                GParamSpec   *pspec)
+{
+  ThunarTreeModel *model = THUNAR_TREE_MODEL (object);
+
+  switch (prop_id)
+    {
+    case PROP_CASE_SENSITIVE:
+      thunar_tree_model_set_case_sensitive (model, g_value_get_boolean (value));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
 }
 
 
@@ -685,9 +768,10 @@ thunar_tree_model_cmp_array (gconstpointer a,
                              gconstpointer b,
                              gpointer      user_data)
 {
-  /* just sort by name */
-  return strcmp (thunar_file_get_display_name (THUNAR_TREE_MODEL_ITEM (((const SortTuple *) a)->node->data)->file),
-                 thunar_file_get_display_name (THUNAR_TREE_MODEL_ITEM (((const SortTuple *) b)->node->data)->file));
+  /* just sort by name (case-sensitive) */
+  return thunar_file_compare_by_name (THUNAR_TREE_MODEL_ITEM (((const SortTuple *) a)->node->data)->file,
+                                      THUNAR_TREE_MODEL_ITEM (((const SortTuple *) b)->node->data)->file,
+                                      THUNAR_TREE_MODEL (user_data)->sort_case_sensitive);
 }
 
 
@@ -1149,6 +1233,21 @@ thunar_tree_model_node_traverse_remove (GNode   *node,
 
 
 static gboolean
+thunar_tree_model_node_traverse_sort (GNode   *node,
+                                      gpointer user_data)
+{
+  ThunarTreeModel *model = THUNAR_TREE_MODEL (user_data);
+
+  /* we don't want to sort the children of the root node */
+  if (G_LIKELY (node != model->root))
+    thunar_tree_model_sort (model, node);
+
+  return FALSE;
+}
+
+
+
+static gboolean
 thunar_tree_model_node_traverse_free (GNode   *node,
                                       gpointer user_data)
 {
@@ -1173,12 +1272,18 @@ ThunarTreeModel*
 thunar_tree_model_get_default (void)
 {
   static ThunarTreeModel *model = NULL;
+  ThunarPreferences      *preferences;
 
   if (G_LIKELY (model == NULL))
     {
       /* allocate the shared model on-demand */
       model = g_object_new (THUNAR_TYPE_TREE_MODEL, NULL);
       g_object_add_weak_pointer (G_OBJECT (model), (gpointer) &model);
+
+      /* synchronize the the global "misc-case-sensitive" preference */
+      preferences = thunar_preferences_get ();
+      g_object_set_data_full (G_OBJECT (model), I_("thunar-preferences"), preferences, g_object_unref);
+      exo_binding_new (G_OBJECT (preferences), "misc-case-sensitive", G_OBJECT (model), "case-sensitive");
     }
   else
     {
@@ -1189,4 +1294,54 @@ thunar_tree_model_get_default (void)
   return model;
 }
 
+
+
+/**
+ * thunar_tree_model_get_case_sensitive:
+ * @model : a #ThunarTreeModel.
+ *
+ * Returns %TRUE if the sorting for @model is done
+ * in a case-sensitive manner.
+ *
+ * Return value: %TRUE if @model is sorted case-sensitive.
+ **/
+gboolean
+thunar_tree_model_get_case_sensitive (ThunarTreeModel *model)
+{
+  g_return_val_if_fail (THUNAR_IS_TREE_MODEL (model), FALSE);
+  return model->sort_case_sensitive;
+}
+
+
+
+/**
+ * thunar_tree_model_set_case_sensitive:
+ * @model          : a #ThunarTreeModel.
+ * @case_sensitive : %TRUE to sort @model case-sensitive.
+ *
+ * If @case_sensitive is %TRUE the @model will be sorted
+ * in a case-sensitive manner.
+ **/
+void
+thunar_tree_model_set_case_sensitive (ThunarTreeModel *model,
+                                      gboolean         case_sensitive)
+{
+  g_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+
+  /* normalize the setting */
+  case_sensitive = !!case_sensitive;
+
+  /* check if we have a new setting */
+  if (model->sort_case_sensitive != case_sensitive)
+    {
+      /* apply the new setting */
+      model->sort_case_sensitive = case_sensitive;
+
+      /* resort the model with the new setting */
+      g_node_traverse (model->root, G_POST_ORDER, G_TRAVERSE_NON_LEAVES, -1, thunar_tree_model_node_traverse_sort, model);
+
+      /* notify listeners */
+      g_object_notify (G_OBJECT (model), "case-sensitive");
+    }
+}
 

@@ -40,6 +40,10 @@ GType            thunar_list_model_get_type               (void) G_GNUC_CONST;
 ThunarListModel *thunar_list_model_new                    (void);
 ThunarListModel *thunar_list_model_new_with_folder        (ThunarFolder     *folder);
 
+gboolean         thunar_list_model_get_case_sensitive     (ThunarListModel  *store);
+void             thunar_list_model_set_case_sensitive     (ThunarListModel  *store,
+                                                           gboolean          case_sensitive);
+
 ThunarFolder    *thunar_list_model_get_folder             (ThunarListModel  *store);
 void             thunar_list_model_set_folder             (ThunarListModel  *store,
                                                            ThunarFolder     *folder);

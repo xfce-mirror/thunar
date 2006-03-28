@@ -51,9 +51,13 @@ typedef enum
   THUNAR_TREE_MODEL_N_COLUMNS,
 } ThunarTreeModelColumn;
 
-GType            thunar_tree_model_get_type    (void) G_GNUC_CONST;
+GType            thunar_tree_model_get_type           (void) G_GNUC_CONST;
 
-ThunarTreeModel *thunar_tree_model_get_default (void);
+ThunarTreeModel *thunar_tree_model_get_default        (void);
+
+gboolean         thunar_tree_model_get_case_sensitive (ThunarTreeModel *model);
+void             thunar_tree_model_set_case_sensitive (ThunarTreeModel *model,
+                                                       gboolean         case_sensitive);
 
 G_END_DECLS;
 

@@ -1,3 +1,22 @@
+2006-03-28	Benedikt Meurer <benny@xfce.org>
+
+	* docs/README.thunarrc, thunar/thunar-preferences.c: Add new hidden
+	  setting MiscCaseSensitive, which controls whether sorting is done
+	  in a case-sensitive manner.
+	* configure.in.in: Check for strcoll().
+	* thunar/thunar-file.{c,h}: Add thunar_file_compare_by_name(), which
+	  implements a rather complex but very efficient and smart comparison
+	  function for file names.
+	* thunar/thunar-tree-model.c(thunar_tree_model_cmp_array): Use
+	  thunar_file_compare_by_name() here.
+	* thunar/thunar-list-model.{c,h}: Add "case-sensitive" property and
+	  use thunar_file_compare_by_name().
+	* thunar/thunar-standard-view.c(thunar_standard_view_init): Synchronize
+	  the "misc-case-sensitive" preference with the "case-sensitive" pro-
+	  perty of the list model.
+	* thunar/thunar-tree-model.{c,h}: Add "case-sensitive" property and
+	  synchronize with the global "misc-case-sensitive" preference.
+
 2006-03-26	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-xfer.c(thunar_vfs_xfer_copy_regular): Use a

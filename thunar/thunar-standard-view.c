@@ -582,6 +582,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   /* setup the list model */
   standard_view->model = thunar_list_model_new ();
   g_signal_connect (G_OBJECT (standard_view->model), "error", G_CALLBACK (thunar_standard_view_error), standard_view);
+  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-case-sensitive", G_OBJECT (standard_view->model), "case-sensitive");
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-folders-first", G_OBJECT (standard_view->model), "folders-first");
 
   /* setup the icon renderer */

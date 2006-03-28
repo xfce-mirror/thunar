@@ -187,6 +187,11 @@ void              thunar_file_reload               (ThunarFile             *file
 void              thunar_file_destroy              (ThunarFile             *file);
 
 
+gint              thunar_file_compare_by_name      (const ThunarFile       *file_a,
+                                                    const ThunarFile       *file_b,
+                                                    gboolean                case_sensitive);
+
+
 ThunarFile       *thunar_file_cache_lookup         (const ThunarVfsPath    *path);
 
 

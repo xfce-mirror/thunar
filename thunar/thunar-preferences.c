@@ -66,6 +66,7 @@ enum
   PROP_LAST_VIEW,
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
+  PROP_MISC_CASE_SENSITIVE,
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_RECURSIVE_PERMISSIONS,
@@ -414,6 +415,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                      "last-window-width",
                                                      1, G_MAXINT, 640,
                                                      EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-case-sensitive:
+   *
+   * Whether to use case-sensitive sort.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_CASE_SENSITIVE,
+                                   g_param_spec_boolean ("misc-case-sensitive",
+                                                         "misc-case-sensitive",
+                                                         "misc-case-sensitive",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:misc-folders-first:
