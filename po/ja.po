@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-26 14:23+0200\n"
+"POT-Creation-Date: 2006-03-30 21:54+0900\n"
 "PO-Revision-Date: 2006-03-26 23:42+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -279,7 +279,7 @@ msgstr "HAL デーモンとの接続に失敗しました: %s"
 msgid "copy of %s"
 msgstr "%s のコピー"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:190 ../thunar/thunar-list-model.c:752
+#: ../thunar-vfs/thunar-vfs-xfer.c:190 ../thunar/thunar-list-model.c:787
 #: ../thunar/thunar-properties-dialog.c:665
 #, c-format
 msgid "link to %s"
@@ -679,13 +679,13 @@ msgstr ""
 msgid "Automatically _expand columns as needed"
 msgstr "必要に応じて表示欄を自動的に拡げる(_E)"
 
-#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:702
-#: ../thunar/thunar-list-model.c:731
+#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:737
+#: ../thunar/thunar-list-model.c:766
 #: ../thunar/thunar-permissions-chooser.c:270
 msgid "Unknown"
 msgstr "不明"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2238
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2239
 msgid "Enter the new name:"
 msgstr "新しい名前を入力してください:"
 
@@ -791,11 +791,11 @@ msgstr "ファイル"
 msgid "File Name"
 msgstr "ファイル名"
 
-#: ../thunar/thunar-file.c:767
+#: ../thunar/thunar-file.c:770
 msgid "The root folder has no parent"
 msgstr "ルートフォルダに上位のフォルダがありません。"
 
-#: ../thunar/thunar-file.c:1069
+#: ../thunar/thunar-file.c:1072
 msgid "File System"
 msgstr "ファイルシステム"
 
@@ -1007,44 +1007,44 @@ msgstr[0] "標準のアプリケーションを使用して選択したファイ
 msgid "Open With \"%s\""
 msgstr "%sで開く"
 
-#: ../thunar/thunar-list-model.c:750 ../thunar/thunar-properties-dialog.c:663
+#: ../thunar/thunar-list-model.c:785 ../thunar/thunar-properties-dialog.c:663
 msgid "broken link"
 msgstr "壊れたリンク"
 
-#: ../thunar/thunar-list-model.c:2075
+#: ../thunar/thunar-list-model.c:2175
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d 個のアイテムがあります。空き容量: %s"
 
-#: ../thunar/thunar-list-model.c:2080
+#: ../thunar/thunar-list-model.c:2180
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d 個のアイテムがあります。"
 
-#: ../thunar/thunar-list-model.c:2096
+#: ../thunar/thunar-list-model.c:2196
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "「%s」壊れたリンク"
 
-#: ../thunar/thunar-list-model.c:2100
+#: ../thunar/thunar-list-model.c:2200
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "「%1$s」%3$sへのリンク (%2$s)"
 
-#: ../thunar/thunar-list-model.c:2105
+#: ../thunar/thunar-list-model.c:2205
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "「%1$s」%3$s (%2$s)"
 
-#: ../thunar/thunar-list-model.c:2122
+#: ../thunar/thunar-list-model.c:2222
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d 個のアイテム (%s) が選択されています。"
 
-#: ../thunar/thunar-list-model.c:2127
+#: ../thunar/thunar-list-model.c:2227
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1550,7 +1550,7 @@ msgstr "シンボル"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:781
-#: ../thunar/thunar-standard-view.c:2280
+#: ../thunar/thunar-standard-view.c:2281
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "「%s」の名前変更に失敗しました。"
@@ -1777,16 +1777,16 @@ msgid "Failed to unmount \"%s\""
 msgstr "「%s」のマウント解除に失敗しました。"
 
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:297
+#: ../thunar/thunar-size-label.c:350
 msgid "Calculating..."
 msgstr "計算しています..."
 
-#: ../thunar/thunar-size-label.c:307
+#: ../thunar/thunar-size-label.c:360
 #, c-format
 msgid "%s Bytes"
 msgstr "%s バイト"
 
-#: ../thunar/thunar-size-label.c:399
+#: ../thunar/thunar-size-label.c:452
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -1861,7 +1861,7 @@ msgstr "ある特定のパターンに一致する全てのファイルを選択
 msgid "Du_plicate"
 msgstr "コピーを作成(_P)"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3247
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3248
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "リンクを作成(_K)"
@@ -1879,35 +1879,35 @@ msgstr "選択したファイルの名前を変更します。"
 msgid "Create _Document"
 msgstr "文書を作成(_D)"
 
-#: ../thunar/thunar-standard-view.c:1221
+#: ../thunar/thunar-standard-view.c:1222
 msgid "Loading folder contents..."
 msgstr "フォルダの内容を読み込んでいます..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1717
+#: ../thunar/thunar-standard-view.c:1718
 msgid "New Empty File"
 msgstr "新規ファイル"
 
-#: ../thunar/thunar-standard-view.c:1717
+#: ../thunar/thunar-standard-view.c:1718
 msgid "New Empty File..."
 msgstr "新規ファイル..."
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-standard-view.c:1768 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
 msgid "New Folder"
 msgstr "新規フォルダ"
 
-#: ../thunar/thunar-standard-view.c:1768 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
 msgid "Create New Folder"
 msgstr "新規フォルダを作成します。"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1817
+#: ../thunar/thunar-standard-view.c:1818
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "テンプレート「%s」から文書を作成"
 
-#: ../thunar/thunar-standard-view.c:1968
+#: ../thunar/thunar-standard-view.c:1969
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1916,7 +1916,7 @@ msgstr ""
 "「%s」は永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-standard-view.c:1973
+#: ../thunar/thunar-standard-view.c:1974
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1928,54 +1928,54 @@ msgstr[0] ""
 "選択したファイルは永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-standard-view.c:1995
+#: ../thunar/thunar-standard-view.c:1996
 msgid "If you delete a file, it is permanently lost."
 msgstr "削除されたファイルは永久に失われます。"
 
-#: ../thunar/thunar-standard-view.c:2060
+#: ../thunar/thunar-standard-view.c:2061
 msgid "Select by Pattern"
 msgstr "パターンで選択します"
 
-#: ../thunar/thunar-standard-view.c:2066
+#: ../thunar/thunar-standard-view.c:2067
 msgid "_Select"
 msgstr "選択(_S)"
 
-#: ../thunar/thunar-standard-view.c:2075
+#: ../thunar/thunar-standard-view.c:2076
 msgid "_Pattern:"
 msgstr "パターン(_P):"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2209
+#: ../thunar/thunar-standard-view.c:2210
 #, c-format
 msgid "Rename \"%s\""
 msgstr "「%s」の名前変更"
 
-#: ../thunar/thunar-standard-view.c:2881
+#: ../thunar/thunar-standard-view.c:2882
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "フォルダ「%s」を開くのに失敗しました。"
 
-#: ../thunar/thunar-standard-view.c:3207
+#: ../thunar/thunar-standard-view.c:3208
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "選択したファイルを移動します。"
 
-#: ../thunar/thunar-standard-view.c:3215
+#: ../thunar/thunar-standard-view.c:3216
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "選択したファイルをコピーします。"
 
-#: ../thunar/thunar-standard-view.c:3226
+#: ../thunar/thunar-standard-view.c:3227
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "選択したファイルを削除します。"
 
-#: ../thunar/thunar-standard-view.c:3240
+#: ../thunar/thunar-standard-view.c:3241
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "選択したファイルのコピーを作成します。"
 
-#: ../thunar/thunar-standard-view.c:3249
+#: ../thunar/thunar-standard-view.c:3250
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "選択したファイルのリンクを作成します。"
@@ -1998,7 +1998,7 @@ msgstr "テンプレートはインストールされていません"
 msgid "_Empty File"
 msgstr "空のファイル(_E)"
 
-#: ../thunar/thunar-tree-model.c:467
+#: ../thunar/thunar-tree-model.c:550
 msgid "Loading..."
 msgstr "読み込んでいます..."
 

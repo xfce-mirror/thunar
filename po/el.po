@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-03-26 14:23+0200\n"
+"POT-Creation-Date: 2006-03-30 21:54+0900\n"
 "PO-Revision-Date: 2006-03-26 02:12+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -263,7 +263,7 @@ msgstr "Η αλλαγή της κατάστασης του \"%s\" απέτυχε
 msgid "copy of %s"
 msgstr "αντίγραφο του %s"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:190 ../thunar/thunar-list-model.c:752
+#: ../thunar-vfs/thunar-vfs-xfer.c:190 ../thunar/thunar-list-model.c:787
 #: ../thunar/thunar-properties-dialog.c:665
 #, c-format
 msgid "link to %s"
@@ -659,13 +659,13 @@ msgstr ""
 msgid "Automatically _expand columns as needed"
 msgstr "Αυτόματη _επέκταση στηλών"
 
-#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:702
-#: ../thunar/thunar-list-model.c:731
+#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:737
+#: ../thunar/thunar-list-model.c:766
 #: ../thunar/thunar-permissions-chooser.c:270
 msgid "Unknown"
 msgstr "Άγνωστο"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2238
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2239
 msgid "Enter the new name:"
 msgstr "Εισάγετε νέο όνομα:"
 
@@ -773,11 +773,11 @@ msgstr "Αρχείο"
 msgid "File Name"
 msgstr "Όνομα αρχείου"
 
-#: ../thunar/thunar-file.c:767
+#: ../thunar/thunar-file.c:770
 msgid "The root folder has no parent"
 msgstr "Ο ριζικός φάκελος δεν έχει γονεϊκό φάκελο"
 
-#: ../thunar/thunar-file.c:1069
+#: ../thunar/thunar-file.c:1072
 msgid "File System"
 msgstr "Σύστημα Αρχείων"
 
@@ -997,47 +997,47 @@ msgstr[1] "Άνοιγμα των επιλεγμένων αρχείων με τι
 msgid "Open With \"%s\""
 msgstr "Άνοιγμα Με το \"%s\""
 
-#: ../thunar/thunar-list-model.c:750 ../thunar/thunar-properties-dialog.c:663
+#: ../thunar/thunar-list-model.c:785 ../thunar/thunar-properties-dialog.c:663
 msgid "broken link"
 msgstr "σπασμένος δεσμός"
 
-#: ../thunar/thunar-list-model.c:2075
+#: ../thunar/thunar-list-model.c:2175
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d αντικείμενο, Ελεύθερος χώρος: %s"
 msgstr[1] "%d αντικείμενα, Ελεύθερος χώρος: %s"
 
-#: ../thunar/thunar-list-model.c:2080
+#: ../thunar/thunar-list-model.c:2180
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d αντικείμενο"
 msgstr[1] "%d αντικείμενα"
 
-#: ../thunar/thunar-list-model.c:2096
+#: ../thunar/thunar-list-model.c:2196
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "σπασμένος δεσμός \"%s\""
 
-#: ../thunar/thunar-list-model.c:2100
+#: ../thunar/thunar-list-model.c:2200
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) δεσμός προς το %s"
 
-#: ../thunar/thunar-list-model.c:2105
+#: ../thunar/thunar-list-model.c:2205
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2122
+#: ../thunar/thunar-list-model.c:2222
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d επιλεγμένο αντικείμενο (%s)"
 msgstr[1] "%d επιλεγμένα αντικείμενα (%s)"
 
-#: ../thunar/thunar-list-model.c:2127
+#: ../thunar/thunar-list-model.c:2227
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1535,7 +1535,7 @@ msgstr "Εμβλήματα"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:781
-#: ../thunar/thunar-standard-view.c:2280
+#: ../thunar/thunar-standard-view.c:2281
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Η μετονομασία του \"%s\" απέτυχε"
@@ -1760,16 +1760,16 @@ msgid "Failed to unmount \"%s\""
 msgstr "Η αποσύνδεση του \"%s\" απέτυχε"
 
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:297
+#: ../thunar/thunar-size-label.c:350
 msgid "Calculating..."
 msgstr "Επεξεργασία..."
 
-#: ../thunar/thunar-size-label.c:307
+#: ../thunar/thunar-size-label.c:360
 #, c-format
 msgid "%s Bytes"
 msgstr "%s Bytes"
 
-#: ../thunar/thunar-size-label.c:399
+#: ../thunar/thunar-size-label.c:452
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -1845,7 +1845,7 @@ msgstr "Επιλογή όλων των αρχείων που ταιριάζου�
 msgid "Du_plicate"
 msgstr "Δημιουργία Αν_τιγράφου"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3247
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3248
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Δημιουργία _Δεσμού"
@@ -1864,35 +1864,35 @@ msgstr "Μετονομασία του επιλεγμένου αρχείου"
 msgid "Create _Document"
 msgstr "Δημιουργία _Εγγράφου"
 
-#: ../thunar/thunar-standard-view.c:1221
+#: ../thunar/thunar-standard-view.c:1222
 msgid "Loading folder contents..."
 msgstr "Φόρτωμα περιεχομένων φακέλου..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1717
+#: ../thunar/thunar-standard-view.c:1718
 msgid "New Empty File"
 msgstr "Νέο Κενό Αρχείο"
 
-#: ../thunar/thunar-standard-view.c:1717
+#: ../thunar/thunar-standard-view.c:1718
 msgid "New Empty File..."
 msgstr "Νέο Κενό Αρχείο..."
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-standard-view.c:1768 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
 msgid "New Folder"
 msgstr "Νέος Φάκελος"
 
-#: ../thunar/thunar-standard-view.c:1768 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
 msgid "Create New Folder"
 msgstr "Δημιουργία Νέου Φακέλου"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1817
+#: ../thunar/thunar-standard-view.c:1818
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Δημιουργία εγγράφου από πρότυπο \"%s\""
 
-#: ../thunar/thunar-standard-view.c:1968
+#: ../thunar/thunar-standard-view.c:1969
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1901,7 +1901,7 @@ msgstr ""
 "Είστε σίγουρος/η ότι θέλετε να διαγράψετε\n"
 "οριστικά το \"%s\";"
 
-#: ../thunar/thunar-standard-view.c:1973
+#: ../thunar/thunar-standard-view.c:1974
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1916,34 +1916,34 @@ msgstr[1] ""
 "Είστε σίγουρος/η ότι θέλετε να διαγράψετε\n"
 "οριστικά τα %u επιλεγμένα αρχεία;"
 
-#: ../thunar/thunar-standard-view.c:1995
+#: ../thunar/thunar-standard-view.c:1996
 msgid "If you delete a file, it is permanently lost."
 msgstr "Εάν διαγράψετε ένα αρχείο, χάνεται για πάντα."
 
-#: ../thunar/thunar-standard-view.c:2060
+#: ../thunar/thunar-standard-view.c:2061
 msgid "Select by Pattern"
 msgstr "Επιλογή βάσει Μοτίβου"
 
-#: ../thunar/thunar-standard-view.c:2066
+#: ../thunar/thunar-standard-view.c:2067
 msgid "_Select"
 msgstr "Επιλο_γή"
 
-#: ../thunar/thunar-standard-view.c:2075
+#: ../thunar/thunar-standard-view.c:2076
 msgid "_Pattern:"
 msgstr "_Μοτίβο:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2209
+#: ../thunar/thunar-standard-view.c:2210
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Μετονομασία \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2881
+#: ../thunar/thunar-standard-view.c:2882
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Το άνοιγμα του καταλόγου \"%s\" απέτυχε"
 
-#: ../thunar/thunar-standard-view.c:3207
+#: ../thunar/thunar-standard-view.c:3208
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -1953,7 +1953,7 @@ msgstr[1] ""
 "Προετοιμασία των επιλεγμένων αρχείων για μετακίνηση με μια εντολή "
 "Επικόλλησης Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3215
+#: ../thunar/thunar-standard-view.c:3216
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -1963,19 +1963,19 @@ msgstr[1] ""
 "Προετοιμασία των επιλεγμένων αρχείων για αντιγραφή με μια  εντολή "
 "Επικόλλησης Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3226
+#: ../thunar/thunar-standard-view.c:3227
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Οριστική διαγραφή του επιλεγμένου αρχείου"
 msgstr[1] "Οριστική διαγραφή των επιλεγμένων αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3240
+#: ../thunar/thunar-standard-view.c:3241
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Δημιουργία αντιγράφου για το επιλεγμένο αρχείο"
 msgstr[1] "Δημιουργία αντιγράφου για κάθε επιλεγμένο αρχείο"
 
-#: ../thunar/thunar-standard-view.c:3249
+#: ../thunar/thunar-standard-view.c:3250
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Δημιουργεί ένα συμβολικό δεσμό για το επιλεγμένο αρχείο"
@@ -1999,7 +1999,7 @@ msgstr "Δεν υπάρχουν εγκατεστημένα πρότυπα"
 msgid "_Empty File"
 msgstr "_Κενό Αρχείο"
 
-#: ../thunar/thunar-tree-model.c:467
+#: ../thunar/thunar-tree-model.c:550
 msgid "Loading..."
 msgstr "Φόρτωση..."
 
