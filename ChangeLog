@@ -1,3 +1,13 @@
+2006-03-30	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-folder.c: Reload the folder when the corresponding
+	  file changes. Use the ThunarFileMonitor to stay informed about
+	  changes to the corresponding rather than connecting additional
+	  signal handlers to the file.
+	* plugins/thunar-uca/thunar-uca-provider.c: Schedule a "changed"
+	  event for the working directory once the custom command
+	  terminates. Bug #1625.
+
 2006-03-28	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in: Check for limits.h and localeconv().
