@@ -236,6 +236,7 @@ struct _Row
 
 struct _SortTuple
 {
+  /* the order is important, see thunar_list_model_sort() */
   gint offset;
   Row *row;
 };
@@ -1200,8 +1201,21 @@ thunar_list_model_sort (ThunarListModel *store)
   /* sort the array using QuickSort */
   g_qsort_with_data (sort_array, store->nrows, sizeof (SortTuple), thunar_list_model_cmp_array, store);
 
-  /* update our internals and generate the new order */
-  new_order = g_newa (gint, store->nrows);
+  /* update our internals and generate the new order,
+   * we reuse the memory for ths sort_array here, as
+   * the sort_array items are larger (2x on ia32) than
+   * the new_order items.
+   */
+  new_order = (gpointer) sort_array;
+
+  /* need to grab the first row before grabbing the
+   * remaining ones as sort_array[0].row will be
+   * overwritten with the new_order[1] item on the
+   * second run of the loop.
+   */
+  store->rows = sort_array[0].row;
+
+  /* generate new_order and concat the rows */
   for (n = 0; n < store->nrows - 1; ++n)
     {
       new_order[n] = sort_array[n].offset;
@@ -1209,7 +1223,6 @@ thunar_list_model_sort (ThunarListModel *store)
     }
   new_order[n] = sort_array[n].offset;
   sort_array[n].row->next = NULL;
-  store->rows = sort_array[0].row;
 
   /* tell the view about the new item order */
   path = gtk_tree_path_new ();
@@ -1231,6 +1244,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
   GtkTreePath *path;
   GtkTreeIter  iter;
   gint         n;
+  Row         *prev;
   Row         *row;
 
   g_return_if_fail (THUNAR_IS_FILE (file));
@@ -1238,7 +1252,7 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
   g_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
 
   /* check if we have a row for that file */
-  for (n = 0, row = store->rows; row != NULL; ++n, row = row->next)
+  for (n = 0, prev = NULL, row = store->rows; row != NULL; ++n, prev = row, row = row->next)
     if (G_UNLIKELY (row->file == file))
       {
         /* generate the iterator for this row */
@@ -1250,8 +1264,13 @@ thunar_list_model_file_changed (ThunarFileMonitor *file_monitor,
         gtk_tree_model_row_changed (GTK_TREE_MODEL (store), path, &iter);
         gtk_tree_path_free (path);
 
-        /* re-sort the model as the file may have changed its name */
-        thunar_list_model_sort (store);
+        /* check if the position of the row changed (because of its name may have changed) */
+        if ((row->next != NULL && thunar_list_model_cmp (store, row->file, row->next->file) > 0)
+            || (prev != NULL && thunar_list_model_cmp (store, row->file, prev->file) < 0))
+          {
+            /* re-sort the model with the new name for the file */
+            thunar_list_model_sort (store);
+          }
 
         return;
       }

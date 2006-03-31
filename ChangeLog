@@ -1,3 +1,13 @@
+2006-03-31	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-list-model.c(thunar_list_model_file_changed): Do not
+	  re-sort the model unless the name of the file (and thereby its
+	  position) has changed. Greatly improves the performance of the
+	  internal bulk renamer.
+	* thunar/thunar-list-model.c(thunar_list_model_sort): Reuse the memory
+	  of the sort_array for new_order to reduce stack usage with large
+	  folders.
+
 2006-03-30	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-folder.c: Reload the folder when the corresponding
