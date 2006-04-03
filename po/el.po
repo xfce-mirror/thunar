@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-01 17:39+0900\n"
+"POT-Creation-Date: 2006-04-04 00:25+0200\n"
 "PO-Revision-Date: 2006-03-26 02:12+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -665,7 +665,7 @@ msgstr "Αυτόματη _επέκταση στηλών"
 msgid "Unknown"
 msgstr "Άγνωστο"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2239
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2241
 msgid "Enter the new name:"
 msgstr "Εισάγετε νέο όνομα:"
 
@@ -867,7 +867,7 @@ msgstr "Εικονίδια"
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
 #: ../thunar/thunar-location-buttons.c:1267
-#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:898
+#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:957
 msgid "_Open"
 msgstr "_Άνοιγμα"
 
@@ -877,7 +877,7 @@ msgstr "Άνοιγμα των επιλεγμένων αρχείων"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1280
-#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:910
+#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:969
 msgid "Open in New Window"
 msgstr "Άνοιγμα σε Νέο Παράθυρο"
 
@@ -1074,7 +1074,7 @@ msgstr ""
 "Αποκοπή Αρχείων ή Αντιγραφή Αρχείων στο \"%s\""
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:958
+#: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:1065
 msgid "_Paste Into Folder"
 msgstr "_Επικόλληση στο Φάκελο"
 
@@ -1535,7 +1535,7 @@ msgstr "Εμβλήματα"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:781
-#: ../thunar/thunar-standard-view.c:2281
+#: ../thunar/thunar-standard-view.c:2283
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Η μετονομασία του \"%s\" απέτυχε"
@@ -1707,17 +1707,17 @@ msgstr[0] "Προσθήκη του επιλεγμένου φακέλου στη 
 msgstr[1] "Προσθήκη των επιλεγμένων φακέλων στη μπάρα συντομεύσεων"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:819
+#: ../thunar/thunar-shortcuts-view.c:819 ../thunar/thunar-tree-view.c:983
 msgid "_Mount Volume"
 msgstr "Προ_σάρτηση Τόμου"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:829
+#: ../thunar/thunar-shortcuts-view.c:829 ../thunar/thunar-tree-view.c:993
 msgid "E_ject Volume"
 msgstr "Ε_ξαγωγή Τόμου"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:838
+#: ../thunar/thunar-shortcuts-view.c:838 ../thunar/thunar-tree-view.c:1002
 msgid "_Unmount Volume"
 msgstr "Αποπρο_σάρτηση Τόμου"
 
@@ -1742,19 +1742,21 @@ msgid "Failed to add new shortcut"
 msgstr "Η προσθήκη νέας συντόμευσης απέτυχε"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1262
+#: ../thunar/thunar-shortcuts-view.c:1262 ../thunar/thunar-tree-view.c:1426
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Η εξαγωγή του \"%s\" απέτυχε"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1308
+#: ../thunar/thunar-shortcuts-view.c:1308 ../thunar/thunar-tree-view.c:905
+#: ../thunar/thunar-tree-view.c:1462
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Η προσάρτηση του \"%s\" απέτυχε"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1352
+#. display an error dialog
+#: ../thunar/thunar-shortcuts-view.c:1352 ../thunar/thunar-tree-view.c:1602
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Η αποσύνδεση του \"%s\" απέτυχε"
@@ -1781,7 +1783,7 @@ msgid "Folder Context Menu"
 msgstr "Μενού Ενεργειών Φακέλων"
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:922
+#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
 msgid "Create _Folder..."
 msgstr "Δημιουργία _Φακέλου..."
 
@@ -1790,12 +1792,12 @@ msgid "Create an empty folder within the current folder"
 msgstr "Δημιουργία ενός άδειου φακέλου μέσα στον τρέχον φάκελο"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:934
+#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:1036
 msgid "Cu_t"
 msgstr "_Αποκοπή"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:946
+#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:1048
 msgid "_Copy"
 msgstr "Α_ντιγραφή"
 
@@ -1845,7 +1847,7 @@ msgstr "Επιλογή όλων των αρχείων που ταιριάζου�
 msgid "Du_plicate"
 msgstr "Δημιουργία Αν_τιγράφου"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3248
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3250
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Δημιουργία _Δεσμού"
@@ -1860,39 +1862,39 @@ msgid "Rename the selected file"
 msgstr "Μετονομασία του επιλεγμένου αρχείου"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:574
+#: ../thunar/thunar-standard-view.c:576
 msgid "Create _Document"
 msgstr "Δημιουργία _Εγγράφου"
 
-#: ../thunar/thunar-standard-view.c:1222
+#: ../thunar/thunar-standard-view.c:1224
 msgid "Loading folder contents..."
 msgstr "Φόρτωμα περιεχομένων φακέλου..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1718
+#: ../thunar/thunar-standard-view.c:1720
 msgid "New Empty File"
 msgstr "Νέο Κενό Αρχείο"
 
-#: ../thunar/thunar-standard-view.c:1718
+#: ../thunar/thunar-standard-view.c:1720
 msgid "New Empty File..."
 msgstr "Νέο Κενό Αρχείο..."
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1771 ../thunar/thunar-tree-view.c:1348
 msgid "New Folder"
 msgstr "Νέος Φάκελος"
 
-#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1771 ../thunar/thunar-tree-view.c:1348
 msgid "Create New Folder"
 msgstr "Δημιουργία Νέου Φακέλου"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1818
+#: ../thunar/thunar-standard-view.c:1820
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Δημιουργία εγγράφου από πρότυπο \"%s\""
 
-#: ../thunar/thunar-standard-view.c:1969
+#: ../thunar/thunar-standard-view.c:1971
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1901,7 +1903,7 @@ msgstr ""
 "Είστε σίγουρος/η ότι θέλετε να διαγράψετε\n"
 "οριστικά το \"%s\";"
 
-#: ../thunar/thunar-standard-view.c:1974
+#: ../thunar/thunar-standard-view.c:1976
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1916,34 +1918,34 @@ msgstr[1] ""
 "Είστε σίγουρος/η ότι θέλετε να διαγράψετε\n"
 "οριστικά τα %u επιλεγμένα αρχεία;"
 
-#: ../thunar/thunar-standard-view.c:1996
+#: ../thunar/thunar-standard-view.c:1998
 msgid "If you delete a file, it is permanently lost."
 msgstr "Εάν διαγράψετε ένα αρχείο, χάνεται για πάντα."
 
-#: ../thunar/thunar-standard-view.c:2061
+#: ../thunar/thunar-standard-view.c:2063
 msgid "Select by Pattern"
 msgstr "Επιλογή βάσει Μοτίβου"
 
-#: ../thunar/thunar-standard-view.c:2067
+#: ../thunar/thunar-standard-view.c:2069
 msgid "_Select"
 msgstr "Επιλο_γή"
 
-#: ../thunar/thunar-standard-view.c:2076
+#: ../thunar/thunar-standard-view.c:2078
 msgid "_Pattern:"
 msgstr "_Μοτίβο:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2210
+#: ../thunar/thunar-standard-view.c:2212
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Μετονομασία \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2882
+#: ../thunar/thunar-standard-view.c:2884
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Το άνοιγμα του καταλόγου \"%s\" απέτυχε"
 
-#: ../thunar/thunar-standard-view.c:3208
+#: ../thunar/thunar-standard-view.c:3210
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -1953,7 +1955,7 @@ msgstr[1] ""
 "Προετοιμασία των επιλεγμένων αρχείων για μετακίνηση με μια εντολή "
 "Επικόλλησης Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3216
+#: ../thunar/thunar-standard-view.c:3218
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -1963,19 +1965,19 @@ msgstr[1] ""
 "Προετοιμασία των επιλεγμένων αρχείων για αντιγραφή με μια  εντολή "
 "Επικόλλησης Αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3227
+#: ../thunar/thunar-standard-view.c:3229
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Οριστική διαγραφή του επιλεγμένου αρχείου"
 msgstr[1] "Οριστική διαγραφή των επιλεγμένων αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3241
+#: ../thunar/thunar-standard-view.c:3243
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Δημιουργία αντιγράφου για το επιλεγμένο αρχείο"
 msgstr[1] "Δημιουργία αντιγράφου για κάθε επιλεγμένο αρχείο"
 
-#: ../thunar/thunar-standard-view.c:3250
+#: ../thunar/thunar-standard-view.c:3252
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Δημιουργεί ένα συμβολικό δεσμό για το επιλεγμένο αρχείο"
@@ -1999,12 +2001,12 @@ msgstr "Δεν υπάρχουν εγκατεστημένα πρότυπα"
 msgid "_Empty File"
 msgstr "_Κενό Αρχείο"
 
-#: ../thunar/thunar-tree-model.c:550
+#: ../thunar/thunar-tree-model.c:600
 msgid "Loading..."
 msgstr "Φόρτωση..."
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:975
+#: ../thunar/thunar-tree-view.c:1083
 msgid "P_roperties..."
 msgstr "_Ιδιότητες..."
 

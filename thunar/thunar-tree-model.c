@@ -55,85 +55,99 @@ typedef struct _ThunarTreeModelItem ThunarTreeModelItem;
 
 
 
-static void                 thunar_tree_model_class_init              (ThunarTreeModelClass *klass);
-static void                 thunar_tree_model_tree_model_init         (GtkTreeModelIface    *iface);
-static void                 thunar_tree_model_init                    (ThunarTreeModel      *model);
-static void                 thunar_tree_model_finalize                (GObject              *object);
-static void                 thunar_tree_model_get_property            (GObject              *object,
-                                                                       guint                 prop_id,
-                                                                       GValue               *value,
-                                                                       GParamSpec           *pspec);
-static void                 thunar_tree_model_set_property            (GObject              *object,
-                                                                       guint                 prop_id,
-                                                                       const GValue         *value,
-                                                                       GParamSpec           *pspec);
-static GtkTreeModelFlags    thunar_tree_model_get_flags               (GtkTreeModel         *tree_model);
-static gint                 thunar_tree_model_get_n_columns           (GtkTreeModel         *tree_model);
-static GType                thunar_tree_model_get_column_type         (GtkTreeModel         *tree_model,
-                                                                       gint                  column);
-static gboolean             thunar_tree_model_get_iter                (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter,
-                                                                       GtkTreePath          *path);
-static GtkTreePath         *thunar_tree_model_get_path                (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter);
-static void                 thunar_tree_model_get_value               (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter,
-                                                                       gint                  column,
-                                                                       GValue               *value);
-static gboolean             thunar_tree_model_iter_next               (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter);
-static gboolean             thunar_tree_model_iter_children           (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter,
-                                                                       GtkTreeIter          *parent);
-static gboolean             thunar_tree_model_iter_has_child          (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter);
-static gint                 thunar_tree_model_iter_n_children         (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter);
-static gboolean             thunar_tree_model_iter_nth_child          (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter,
-                                                                       GtkTreeIter          *parent,
-                                                                       gint                  n);
-static gboolean             thunar_tree_model_iter_parent             (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter,
-                                                                       GtkTreeIter          *child);
-static void                 thunar_tree_model_ref_node                (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter);
-static void                 thunar_tree_model_unref_node              (GtkTreeModel         *tree_model,
-                                                                       GtkTreeIter          *iter);
-static gint                 thunar_tree_model_cmp_array               (gconstpointer         a,
-                                                                       gconstpointer         b,
-                                                                       gpointer              user_data);
-static void                 thunar_tree_model_sort                    (ThunarTreeModel      *model,
-                                                                       GNode                *node);
-static void                 thunar_tree_model_file_changed            (ThunarFileMonitor    *file_monitor,
-                                                                       ThunarFile           *file,
-                                                                       ThunarTreeModel      *model);
-static ThunarTreeModelItem *thunar_tree_model_item_new                (ThunarTreeModel      *model,
-                                                                       ThunarFile           *file) G_GNUC_MALLOC;
-static void                 thunar_tree_model_item_free               (ThunarTreeModelItem  *item);
-static void                 thunar_tree_model_item_load_folder        (ThunarTreeModelItem  *item);
-static void                 thunar_tree_model_item_unload_folder      (ThunarTreeModelItem  *item);
-static void                 thunar_tree_model_item_files_added        (ThunarTreeModelItem  *item,
-                                                                       GList                *files,
-                                                                       ThunarFolder         *folder);
-static void                 thunar_tree_model_item_files_removed      (ThunarTreeModelItem  *item,
-                                                                       GList                *files,
-                                                                       ThunarFolder         *folder);
-static gboolean             thunar_tree_model_item_load_idle          (gpointer              user_data);
-static void                 thunar_tree_model_item_load_idle_destroy  (gpointer              user_data);
-static void                 thunar_tree_model_item_notify_loading     (ThunarTreeModelItem  *item,
-                                                                       GParamSpec           *pspec,
-                                                                       ThunarFolder         *folder);
-static void                 thunar_tree_model_node_drop_dummy         (GNode                *node,
-                                                                       ThunarTreeModel      *model);
-static gboolean             thunar_tree_model_node_traverse_changed   (GNode                *node,
-                                                                       gpointer              user_data);
-static gboolean             thunar_tree_model_node_traverse_remove    (GNode                *node,
-                                                                       gpointer              user_data);
-static gboolean             thunar_tree_model_node_traverse_sort      (GNode                *node,
-                                                                       gpointer              user_data);
-static gboolean             thunar_tree_model_node_traverse_free      (GNode                *node,
-                                                                       gpointer              user_data);
+static void                 thunar_tree_model_class_init              (ThunarTreeModelClass   *klass);
+static void                 thunar_tree_model_tree_model_init         (GtkTreeModelIface      *iface);
+static void                 thunar_tree_model_init                    (ThunarTreeModel        *model);
+static void                 thunar_tree_model_finalize                (GObject                *object);
+static void                 thunar_tree_model_get_property            (GObject                *object,
+                                                                       guint                   prop_id,
+                                                                       GValue                 *value,
+                                                                       GParamSpec             *pspec);
+static void                 thunar_tree_model_set_property            (GObject                *object,
+                                                                       guint                   prop_id,
+                                                                       const GValue           *value,
+                                                                       GParamSpec             *pspec);
+static GtkTreeModelFlags    thunar_tree_model_get_flags               (GtkTreeModel           *tree_model);
+static gint                 thunar_tree_model_get_n_columns           (GtkTreeModel           *tree_model);
+static GType                thunar_tree_model_get_column_type         (GtkTreeModel           *tree_model,
+                                                                       gint                    column);
+static gboolean             thunar_tree_model_get_iter                (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter,
+                                                                       GtkTreePath            *path);
+static GtkTreePath         *thunar_tree_model_get_path                (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter);
+static void                 thunar_tree_model_get_value               (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter,
+                                                                       gint                    column,
+                                                                       GValue                 *value);
+static gboolean             thunar_tree_model_iter_next               (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter);
+static gboolean             thunar_tree_model_iter_children           (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter,
+                                                                       GtkTreeIter            *parent);
+static gboolean             thunar_tree_model_iter_has_child          (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter);
+static gint                 thunar_tree_model_iter_n_children         (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter);
+static gboolean             thunar_tree_model_iter_nth_child          (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter,
+                                                                       GtkTreeIter            *parent,
+                                                                       gint                    n);
+static gboolean             thunar_tree_model_iter_parent             (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter,
+                                                                       GtkTreeIter            *child);
+static void                 thunar_tree_model_ref_node                (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter);
+static void                 thunar_tree_model_unref_node              (GtkTreeModel           *tree_model,
+                                                                       GtkTreeIter            *iter);
+static gint                 thunar_tree_model_cmp_array               (gconstpointer           a,
+                                                                       gconstpointer           b,
+                                                                       gpointer                user_data);
+static void                 thunar_tree_model_sort                    (ThunarTreeModel        *model,
+                                                                       GNode                  *node);
+static void                 thunar_tree_model_file_changed            (ThunarFileMonitor      *file_monitor,
+                                                                       ThunarFile             *file,
+                                                                       ThunarTreeModel        *model);
+static void                 thunar_tree_model_volume_changed          (ThunarVfsVolume        *volume,
+                                                                       ThunarTreeModel        *model);
+static void                 thunar_tree_model_volume_pre_unmount      (ThunarVfsVolumeManager *volume_manager,
+                                                                       ThunarVfsVolume        *volume,
+                                                                       ThunarTreeModel        *model);
+static void                 thunar_tree_model_volumes_added           (ThunarVfsVolumeManager *volume_manager,
+                                                                       GList                  *volumes,
+                                                                       ThunarTreeModel        *model);
+static void                 thunar_tree_model_volumes_removed         (ThunarVfsVolumeManager *volume_manager,
+                                                                       GList                  *volumes,
+                                                                       ThunarTreeModel        *model);
+static ThunarTreeModelItem *thunar_tree_model_item_new_with_file      (ThunarTreeModel        *model,
+                                                                       ThunarFile             *file) G_GNUC_MALLOC;
+static ThunarTreeModelItem *thunar_tree_model_item_new_with_volume    (ThunarTreeModel        *model,
+                                                                       ThunarVfsVolume        *volume) G_GNUC_MALLOC;
+static void                 thunar_tree_model_item_free               (ThunarTreeModelItem    *item);
+static void                 thunar_tree_model_item_reset              (ThunarTreeModelItem    *item);
+static void                 thunar_tree_model_item_load_folder        (ThunarTreeModelItem    *item);
+static void                 thunar_tree_model_item_unload_folder      (ThunarTreeModelItem    *item);
+static void                 thunar_tree_model_item_files_added        (ThunarTreeModelItem    *item,
+                                                                       GList                  *files,
+                                                                       ThunarFolder           *folder);
+static void                 thunar_tree_model_item_files_removed      (ThunarTreeModelItem    *item,
+                                                                       GList                  *files,
+                                                                       ThunarFolder           *folder);
+static gboolean             thunar_tree_model_item_load_idle          (gpointer                user_data);
+static void                 thunar_tree_model_item_load_idle_destroy  (gpointer                user_data);
+static void                 thunar_tree_model_item_notify_loading     (ThunarTreeModelItem    *item,
+                                                                       GParamSpec             *pspec,
+                                                                       ThunarFolder           *folder);
+static void                 thunar_tree_model_node_drop_dummy         (GNode                  *node,
+                                                                       ThunarTreeModel        *model);
+static gboolean             thunar_tree_model_node_traverse_changed   (GNode                  *node,
+                                                                       gpointer                user_data);
+static gboolean             thunar_tree_model_node_traverse_remove    (GNode                  *node,
+                                                                       gpointer                user_data);
+static gboolean             thunar_tree_model_node_traverse_sort      (GNode                  *node,
+                                                                       gpointer                user_data);
+static gboolean             thunar_tree_model_node_traverse_free      (GNode                  *node,
+                                                                       gpointer                user_data);
 
 
 
@@ -144,14 +158,18 @@ struct _ThunarTreeModelClass
 
 struct _ThunarTreeModel
 {
-  GObject __parent__;
+  GObject                 __parent__;
 
-  ThunarFileMonitor *file_monitor;
+  /* removable volumes */
+  ThunarVfsVolumeManager *volume_manager;
+  GList                  *hidden_volumes;
 
-  gboolean           sort_case_sensitive;
+  ThunarFileMonitor      *file_monitor;
 
-  GNode             *root;
-  guint              stamp;
+  gboolean                sort_case_sensitive;
+
+  GNode                  *root;
+  guint                   stamp;
 };
 
 struct _ThunarTreeModelItem
@@ -160,6 +178,7 @@ struct _ThunarTreeModelItem
   gint             load_idle_id;
   ThunarFile      *file;
   ThunarFolder    *folder;
+  ThunarVfsVolume *volume;
   ThunarTreeModel *model;
 };
 
@@ -269,6 +288,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
   ThunarTreeModelItem *item;
   ThunarVfsPath       *path;
   ThunarFile          *file;
+  GList               *volumes;
   GNode               *node;
 
   /* initialize the model data */
@@ -282,13 +302,19 @@ thunar_tree_model_init (ThunarTreeModel *model)
   /* allocate the "virtual root node" */
   model->root = g_node_new (NULL);
 
+  /* connect to the volume manager */
+  model->volume_manager = thunar_vfs_volume_manager_get_default ();
+  g_signal_connect (G_OBJECT (model->volume_manager), "volumes-added", G_CALLBACK (thunar_tree_model_volumes_added), model);
+  g_signal_connect (G_OBJECT (model->volume_manager), "volumes-removed", G_CALLBACK (thunar_tree_model_volumes_removed), model);
+  g_signal_connect (G_OBJECT (model->volume_manager), "volume-pre-unmount", G_CALLBACK (thunar_tree_model_volume_pre_unmount), model);
+
   /* allocate the home node */
   path = thunar_vfs_path_get_for_home ();
   file = thunar_file_get_for_path (path, NULL);
   if (G_LIKELY (file != NULL))
     {
       /* add the home node */
-      item = thunar_tree_model_item_new (model, file);
+      item = thunar_tree_model_item_new_with_file (model, file);
       node = g_node_append_data (model->root, item);
       g_object_unref (G_OBJECT (file));
 
@@ -303,7 +329,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
   if (G_LIKELY (file != NULL))
     {
       /* add the root node */
-      item = thunar_tree_model_item_new (model, file);
+      item = thunar_tree_model_item_new_with_file (model, file);
       node = g_node_append_data (model->root, item);
       g_object_unref (G_OBJECT (file));
 
@@ -311,6 +337,11 @@ thunar_tree_model_init (ThunarTreeModel *model)
       g_node_append_data (node, NULL);
     }
   thunar_vfs_path_unref (path);
+
+  /* setup the initial volumes */
+  volumes = thunar_vfs_volume_manager_get_volumes (model->volume_manager);
+  if (G_LIKELY (volumes != NULL))
+    thunar_tree_model_volumes_added (model->volume_manager, volumes, model);
 }
 
 
@@ -319,14 +350,27 @@ static void
 thunar_tree_model_finalize (GObject *object)
 {
   ThunarTreeModel *model = THUNAR_TREE_MODEL (object);
+  GList           *lp;
 
   /* disconnect from the file monitor */
   g_signal_handlers_disconnect_by_func (G_OBJECT (model->file_monitor), thunar_tree_model_file_changed, model);
   g_object_unref (G_OBJECT (model->file_monitor));
 
+  /* release all hidden volumes */
+  for (lp = model->hidden_volumes; lp != NULL; lp = lp->next)
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_tree_model_volume_changed, model);
+      g_object_unref (G_OBJECT (lp->data));
+    }
+  g_list_free (model->hidden_volumes);
+
   /* release all resources allocated to the model */
   g_node_traverse (model->root, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_free, NULL);
   g_node_destroy (model->root);
+
+  /* disconnect from the volume manager */
+  g_signal_handlers_disconnect_matched (G_OBJECT (model->volume_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+  g_object_unref (G_OBJECT (model->volume_manager));
 
   (*G_OBJECT_CLASS (thunar_tree_model_parent_class)->finalize) (object);
 }
@@ -407,10 +451,14 @@ thunar_tree_model_get_column_type (GtkTreeModel *tree_model,
 
     case THUNAR_TREE_MODEL_COLUMN_ATTR:
       return PANGO_TYPE_ATTR_LIST;
-    }
 
-  g_assert_not_reached ();
-  return G_TYPE_INVALID;
+    case THUNAR_TREE_MODEL_COLUMN_VOLUME:
+      return THUNAR_VFS_TYPE_VOLUME;
+
+    default:
+      g_assert_not_reached ();
+      return G_TYPE_INVALID;
+    }
 }
 
 
@@ -544,7 +592,9 @@ thunar_tree_model_get_value (GtkTreeModel *tree_model,
 
     case THUNAR_TREE_MODEL_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
-      if (G_LIKELY (item != NULL))
+      if (G_LIKELY (item != NULL && item->volume != NULL))
+        g_value_set_static_string (value, thunar_vfs_volume_get_name (item->volume));
+      else if (G_LIKELY (item != NULL && item->file != NULL))
         g_value_set_static_string (value, thunar_file_get_display_name (item->file));
       else
         g_value_set_static_string (value, _("Loading..."));
@@ -556,6 +606,11 @@ thunar_tree_model_get_value (GtkTreeModel *tree_model,
         g_value_set_boxed (value, thunar_pango_attr_list_bold ());
       else if (G_UNLIKELY (item == NULL))
         g_value_set_boxed (value, thunar_pango_attr_list_italic ());
+      break;
+
+    case THUNAR_TREE_MODEL_COLUMN_VOLUME:
+      g_value_init (value, THUNAR_VFS_TYPE_VOLUME);
+      g_value_set_object (value, (item != NULL) ? item->volume : NULL);
       break;
 
     default:
@@ -858,9 +913,261 @@ thunar_tree_model_file_changed (ThunarFileMonitor *file_monitor,
 
 
 
+static void
+thunar_tree_model_volume_changed (ThunarVfsVolume *volume,
+                                  ThunarTreeModel *model)
+{
+  ThunarTreeModelItem *item = NULL;
+  GtkTreePath         *path;
+  GtkTreeIter          iter;
+  GNode               *dummy;
+  GNode               *node;
+  GList                list;
+  GList               *lp;
+
+  g_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  g_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+
+  /* check if the volume is on the hidden list */
+  lp = g_list_find (model->hidden_volumes, volume);
+  if (G_LIKELY (lp != NULL))
+    {
+      /* check if we need to display the volume now */
+      if (thunar_vfs_volume_is_present (volume) && thunar_vfs_volume_is_removable (volume))
+        {
+          /* remove the volume from the list of hidden volumes */
+          model->hidden_volumes = g_list_delete_link (model->hidden_volumes, lp);
+
+          /* allocate a new item for the volume */
+          item = thunar_tree_model_item_new_with_volume (model, volume);
+
+          /* insert before the last child of the root (the "File System" node) */
+          node = g_node_last_child (model->root);
+          node = g_node_insert_data_before (model->root, node, item);
+
+          /* determine the iterator for the new node */
+          iter.stamp = model->stamp;
+          iter.user_data = node;
+
+          /* tell the view about the new node */
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+          gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
+          gtk_tree_path_free (path);
+
+          /* add the dummy node */
+          node = g_node_append_data (node, NULL);
+
+          /* determine the iterator for the dummy node */
+          iter.stamp = model->stamp;
+          iter.user_data = node;
+
+          /* tell the view about the dummy node */
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+          gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
+          gtk_tree_path_free (path);
+
+          /* drop our reference on the volume */
+          g_object_unref (G_OBJECT (volume));
+        }
+    }
+  else
+    {
+      /* lookup the volume in the item list */
+      for (node = model->root->children; node != NULL; node = node->next)
+        {
+          item = THUNAR_TREE_MODEL_ITEM (node->data);
+          if (item->volume == volume)
+            break;
+        }
+
+      /* verify that we actually found the item */
+      g_assert (item != NULL);
+      g_assert (item->volume == volume);
+
+      /* check if we need to hide the volume now */
+      if (!thunar_vfs_volume_is_present (volume) || !thunar_vfs_volume_is_removable (volume))
+        {
+          /* need to ref here, because the volumes_removed() handler will drop the reference */
+          g_object_ref (G_OBJECT (volume));
+
+          /* fake a list with only the volume */
+          list.next = list.prev = NULL;
+          list.data = volume;
+
+          /* use "volumes-removed" handler to hide the volume */
+          thunar_tree_model_volumes_removed (model->volume_manager, &list, model);
+
+          /* need to reconnect to the volume as the item removable drops the handler */
+          g_signal_connect (G_OBJECT (volume), "changed", G_CALLBACK (thunar_tree_model_volume_changed), model);
+
+          /* move the volume to the hidden list */
+          model->hidden_volumes = g_list_prepend (model->hidden_volumes, volume);
+        }
+      else
+        {
+          /* check if the volume is mounted and we don't have a file yet */
+          if (thunar_vfs_volume_is_mounted (volume) && item->file == NULL)
+            {
+              /* try to determine the file for the mount point */
+              item->file = thunar_file_get_for_path (thunar_vfs_volume_get_mount_point (volume), NULL);
+            }
+          else if (!thunar_vfs_volume_is_mounted (volume) && item->file != NULL)
+            {
+              /* reset the item for the node */
+              thunar_tree_model_item_reset (item);
+
+              /* release all child nodes */
+              while (node->children != NULL)
+                g_node_traverse (node->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
+
+              /* append the dummy node */
+              dummy = g_node_append_data (node, NULL);
+
+              /* determine the iterator for the dummy node */
+              iter.stamp = model->stamp;
+              iter.user_data = dummy;
+
+              /* tell the view about the dummy node */
+              path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+              gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
+              gtk_tree_path_free (path);
+            }
+
+          /* generate an iterator for the item */
+          iter.stamp = model->stamp;
+          iter.user_data = node;
+
+          /* tell the view that the volume has changed in some way */
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+          gtk_tree_model_row_changed (GTK_TREE_MODEL (model), path, &iter);
+          gtk_tree_path_free (path);
+        }
+    }
+}
+
+
+
+static void
+thunar_tree_model_volume_pre_unmount (ThunarVfsVolumeManager *volume_manager,
+                                      ThunarVfsVolume        *volume,
+                                      ThunarTreeModel        *model)
+{
+  GtkTreePath *path;
+  GtkTreeIter  iter;
+  GNode       *node;
+
+  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  g_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  g_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+
+  /* lookup the node for the volume (if visible) */
+  for (node = model->root->children; node != NULL; node = node->next)
+    if (THUNAR_TREE_MODEL_ITEM (node->data)->volume == volume)
+      break;
+
+  /* check if we have a node */
+  if (G_UNLIKELY (node == NULL))
+    return;
+
+  /* reset the item for the node */
+  thunar_tree_model_item_reset (node->data);
+
+  /* remove all child nodes */
+  while (node->children != NULL)
+    g_node_traverse (node->children, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
+
+  /* add the dummy node */
+  node = g_node_append_data (node, NULL);
+
+  /* determine the iterator for the dummy node */
+  iter.stamp = model->stamp;
+  iter.user_data = node;
+
+  /* tell the view about the dummy node */
+  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+  gtk_tree_model_row_inserted (GTK_TREE_MODEL (model), path, &iter);
+  gtk_tree_path_free (path);
+}
+
+
+
+static void
+thunar_tree_model_volumes_added (ThunarVfsVolumeManager *volume_manager,
+                                 GList                  *volumes,
+                                 ThunarTreeModel        *model)
+{
+  GList *lp;
+
+  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  g_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+
+  /* process all newly added volumes */
+  for (lp = volumes; lp != NULL; lp = lp->next)
+    {
+      /* take a reference on the volume... */
+      g_object_ref (G_OBJECT (lp->data));
+
+      /* ...place the volume on the hidden list... */
+      model->hidden_volumes = g_list_prepend (model->hidden_volumes, lp->data);
+
+      /* ...connect the "changed" signal handler... */
+      g_signal_connect (G_OBJECT (lp->data), "changed", G_CALLBACK (thunar_tree_model_volume_changed), model);
+
+      /* ...and let the "changed" handler place the volume where appropriate */
+      thunar_tree_model_volume_changed (lp->data, model);
+    }
+}
+
+
+
+static void
+thunar_tree_model_volumes_removed (ThunarVfsVolumeManager *volume_manager,
+                                   GList                  *volumes,
+                                   ThunarTreeModel        *model)
+{
+  GNode *node;
+  GList *hp;
+  GList *lp;
+
+  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  g_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+
+  /* process all removed volumes */
+  for (lp = volumes; lp != NULL; lp = lp->next)
+    {
+      /* check if the volume is on the hidden list */
+      hp = g_list_find (model->hidden_volumes, lp->data);
+      if (G_LIKELY (hp != NULL))
+        {
+          /* disconnect the "changed" signal handler from the volume */
+          g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_tree_model_volume_changed, model);
+
+          /* drop the volume from the hidden list and drop our reference */
+          model->hidden_volumes = g_list_delete_link (model->hidden_volumes, hp);
+          g_object_unref (G_OBJECT (lp->data));
+        }
+      else
+        {
+          /* must be a visible volume then... */
+          for (node = model->root->children; node != NULL; node = node->next)
+            if (THUNAR_TREE_MODEL_ITEM (node->data)->volume == lp->data)
+              break;
+
+          /* something is broken if we don't have an item here */
+          g_assert (node != NULL);
+          g_assert (THUNAR_TREE_MODEL_ITEM (node->data)->volume == lp->data);
+
+          /* drop the node from the model */
+          g_node_traverse (node, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
+        }
+    }
+}
+
+
+
 static ThunarTreeModelItem*
-thunar_tree_model_item_new (ThunarTreeModel *model,
-                            ThunarFile      *file)
+thunar_tree_model_item_new_with_file (ThunarTreeModel *model,
+                                      ThunarFile      *file)
 {
   ThunarTreeModelItem *item;
 
@@ -873,10 +1180,53 @@ thunar_tree_model_item_new (ThunarTreeModel *model,
 
 
 
+static ThunarTreeModelItem*
+thunar_tree_model_item_new_with_volume (ThunarTreeModel *model,
+                                        ThunarVfsVolume *volume)
+{
+  ThunarTreeModelItem *item;
+  ThunarVfsPath       *path;
+
+  item = g_new0 (ThunarTreeModelItem, 1);
+  item->volume = g_object_ref (G_OBJECT (volume));
+  item->model = model;
+
+  /* check if the volume is mounted */
+  if (thunar_vfs_volume_is_mounted (volume))
+    {
+      /* try to determine the file for the mount point */
+      path = thunar_vfs_volume_get_mount_point (volume);
+      item->file = thunar_file_get_for_path (path, NULL);
+    }
+
+  return item;
+}
+
+
+
 static void
 thunar_tree_model_item_free (ThunarTreeModelItem *item)
 {
-  /* cancel any pending "load" idle source */
+  /* disconnect from the volume */
+  if (G_UNLIKELY (item->volume != NULL))
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (item->volume), thunar_tree_model_volume_changed, item->model);
+      g_object_unref (G_OBJECT (item->volume));
+    }
+
+  /* reset the remaining resources */
+  thunar_tree_model_item_reset (item);
+
+  /* release the item */
+  g_free (item);
+}
+
+
+
+static void
+thunar_tree_model_item_reset (ThunarTreeModelItem *item)
+{
+  /* cancel any pending load idle source */
   if (G_UNLIKELY (item->load_idle_id != 0))
     g_source_remove (item->load_idle_id);
 
@@ -885,14 +1235,15 @@ thunar_tree_model_item_free (ThunarTreeModelItem *item)
     {
       g_signal_handlers_disconnect_matched (G_OBJECT (item->folder), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, item);
       g_object_unref (G_OBJECT (item->folder));
+      item->folder = NULL;
     }
 
   /* disconnect from the file */
   if (G_LIKELY (item->file != NULL))
-    g_object_unref (G_OBJECT (item->file));
-
-  /* release the item */
-  g_free (item);
+    {
+      g_object_unref (G_OBJECT (item->file));
+      item->file = NULL;
+    }
 }
 
 
@@ -948,7 +1299,7 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
         node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
 
       /* allocate a new item for the file */
-      child_item = thunar_tree_model_item_new (model, file);
+      child_item = thunar_tree_model_item_new_with_file (model, file);
 
       /* check if the node has only the dummy child */
       if (g_node_n_children (node) == 1 && g_node_first_child (node)->data == NULL)
@@ -1072,33 +1423,39 @@ thunar_tree_model_item_load_idle (gpointer user_data)
 {
   ThunarTreeModelItem *item = user_data;
   GList               *files;
-  GNode               *node;
 
   g_return_val_if_fail (item->folder == NULL, FALSE);
 
   GDK_THREADS_ENTER ();
 
-  /* open the folder for the item */
-  item->folder = thunar_folder_get_for_file (item->file);
-
-  /* connect signals */
-  g_signal_connect_swapped (G_OBJECT (item->folder), "files-added", G_CALLBACK (thunar_tree_model_item_files_added), item);
-  g_signal_connect_swapped (G_OBJECT (item->folder), "files-removed", G_CALLBACK (thunar_tree_model_item_files_removed), item);
-  g_signal_connect_swapped (G_OBJECT (item->folder), "notify::loading", G_CALLBACK (thunar_tree_model_item_notify_loading), item);
-
-  /* load the initial set of files (if any) */
-  files = thunar_folder_get_files (item->folder);
-  if (G_UNLIKELY (files != NULL))
-    thunar_tree_model_item_files_added (item, files, item->folder);
-
-  /* drop the dummy item if the folder is already loaded */
-  if (!thunar_folder_get_loading (item->folder))
+  /* check if we don't have a file yet and this is a mounted volume */
+  if (item->file == NULL && item->volume != NULL && thunar_vfs_volume_is_mounted (item->volume))
     {
-      /* lookup the node for the item... */
-      node = g_node_find (item->model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+      /* try to determine the file for the mount point */
+      item->file = thunar_file_get_for_path (thunar_vfs_volume_get_mount_point (item->volume), NULL);
+    }
 
-      /* ...and drop the dummy for the node */
-      thunar_tree_model_node_drop_dummy (node, item->model);
+  /* verify that we have a file */
+  if (G_LIKELY (item->file != NULL))
+    {
+      /* open the folder for the item */
+      item->folder = thunar_folder_get_for_file (item->file);
+      if (G_LIKELY (item->folder != NULL))
+        {
+          /* connect signals */
+          g_signal_connect_swapped (G_OBJECT (item->folder), "files-added", G_CALLBACK (thunar_tree_model_item_files_added), item);
+          g_signal_connect_swapped (G_OBJECT (item->folder), "files-removed", G_CALLBACK (thunar_tree_model_item_files_removed), item);
+          g_signal_connect_swapped (G_OBJECT (item->folder), "notify::loading", G_CALLBACK (thunar_tree_model_item_notify_loading), item);
+
+          /* load the initial set of files (if any) */
+          files = thunar_folder_get_files (item->folder);
+          if (G_UNLIKELY (files != NULL))
+            thunar_tree_model_item_files_added (item, files, item->folder);
+
+          /* notify for "loading" if already loaded */
+          if (!thunar_folder_get_loading (item->folder))
+            g_object_notify (G_OBJECT (item->folder), "loading");
+        }
     }
 
   GDK_THREADS_LEAVE ();

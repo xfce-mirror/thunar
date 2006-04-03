@@ -36,9 +36,10 @@ typedef struct _ThunarTreeModel      ThunarTreeModel;
 
 /**
  * ThunarTreeModelColumn:
- * @THUNAR_TREE_MODEL_COLUMN_FILE : the index of the file column.
- * @THUNAR_TREE_MODEL_COLUMN_NAME : the index of the name column.
- * @THUNAR_TREE_MODEL_COLUMN_ATTR : the index of the #PangoAttrList column.
+ * @THUNAR_TREE_MODEL_COLUMN_FILE   : the index of the file column.
+ * @THUNAR_TREE_MODEL_COLUMN_NAME   : the index of the name column.
+ * @THUNAR_TREE_MODEL_COLUMN_ATTR   : the index of the #PangoAttrList column.
+ * @THUNAR_TREE_MODEL_COLUMN_VOLUME : the index of the #ThunarVfsVolume column.
  *
  * Columns exported by the #ThunarTreeModel using the
  * #GtkTreeModel interface.
@@ -48,6 +49,7 @@ typedef enum
   THUNAR_TREE_MODEL_COLUMN_FILE,
   THUNAR_TREE_MODEL_COLUMN_NAME,
   THUNAR_TREE_MODEL_COLUMN_ATTR,
+  THUNAR_TREE_MODEL_COLUMN_VOLUME,
   THUNAR_TREE_MODEL_N_COLUMNS,
 } ThunarTreeModelColumn;
 

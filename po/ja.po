@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-01 17:39+0900\n"
+"POT-Creation-Date: 2006-04-04 00:25+0200\n"
 "PO-Revision-Date: 2006-03-26 23:42+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -685,7 +685,7 @@ msgstr "必要に応じて表示欄を自動的に拡げる(_E)"
 msgid "Unknown"
 msgstr "不明"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2239
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2241
 msgid "Enter the new name:"
 msgstr "新しい名前を入力してください:"
 
@@ -887,7 +887,7 @@ msgstr "アイコン表示"
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
 #: ../thunar/thunar-location-buttons.c:1267
-#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:898
+#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:957
 msgid "_Open"
 msgstr "開く(_O)"
 
@@ -897,7 +897,7 @@ msgstr "選択したファイルを開きます。"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1280
-#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:910
+#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:969
 msgid "Open in New Window"
 msgstr "新規ウィンドウで開く"
 
@@ -1082,7 +1082,7 @@ msgstr ""
 "または「コピー」します。"
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:958
+#: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:1065
 msgid "_Paste Into Folder"
 msgstr "フォルダに貼り付け(_P)"
 
@@ -1550,7 +1550,7 @@ msgstr "シンボル"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:781
-#: ../thunar/thunar-standard-view.c:2281
+#: ../thunar/thunar-standard-view.c:2283
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "「%s」の名前変更に失敗しました。"
@@ -1724,17 +1724,17 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "選択したフォルダを左のショートカットペインに追加します。"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:819
+#: ../thunar/thunar-shortcuts-view.c:819 ../thunar/thunar-tree-view.c:983
 msgid "_Mount Volume"
 msgstr "マウント(_M)"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:829
+#: ../thunar/thunar-shortcuts-view.c:829 ../thunar/thunar-tree-view.c:993
 msgid "E_ject Volume"
 msgstr "取り出し(_J)"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:838
+#: ../thunar/thunar-shortcuts-view.c:838 ../thunar/thunar-tree-view.c:1002
 msgid "_Unmount Volume"
 msgstr "マウント解除(_U)"
 
@@ -1759,19 +1759,21 @@ msgid "Failed to add new shortcut"
 msgstr "ショートカットの追加に失敗しました。"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1262
+#: ../thunar/thunar-shortcuts-view.c:1262 ../thunar/thunar-tree-view.c:1426
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "「%s」の取り出しに失敗しました。"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1308
+#: ../thunar/thunar-shortcuts-view.c:1308 ../thunar/thunar-tree-view.c:905
+#: ../thunar/thunar-tree-view.c:1462
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "「%s」のマウントに失敗しました。"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1352
+#. display an error dialog
+#: ../thunar/thunar-shortcuts-view.c:1352 ../thunar/thunar-tree-view.c:1602
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "「%s」のマウント解除に失敗しました。"
@@ -1797,7 +1799,7 @@ msgid "Folder Context Menu"
 msgstr "フォルダの右クリックメニュー"
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:922
+#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
 msgid "Create _Folder..."
 msgstr "フォルダを作成(_F)..."
 
@@ -1806,12 +1808,12 @@ msgid "Create an empty folder within the current folder"
 msgstr "現在のフォルダに空のフォルダを作成します。"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:934
+#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:1036
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:946
+#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:1048
 msgid "_Copy"
 msgstr "コピー(_C)"
 
@@ -1861,7 +1863,7 @@ msgstr "ある特定のパターンに一致する全てのファイルを選択
 msgid "Du_plicate"
 msgstr "コピーを作成(_P)"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3248
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3250
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "リンクを作成(_K)"
@@ -1875,39 +1877,39 @@ msgid "Rename the selected file"
 msgstr "選択したファイルの名前を変更します。"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:574
+#: ../thunar/thunar-standard-view.c:576
 msgid "Create _Document"
 msgstr "文書を作成(_D)"
 
-#: ../thunar/thunar-standard-view.c:1222
+#: ../thunar/thunar-standard-view.c:1224
 msgid "Loading folder contents..."
 msgstr "フォルダの内容を読み込んでいます..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1718
+#: ../thunar/thunar-standard-view.c:1720
 msgid "New Empty File"
 msgstr "新規ファイル"
 
-#: ../thunar/thunar-standard-view.c:1718
+#: ../thunar/thunar-standard-view.c:1720
 msgid "New Empty File..."
 msgstr "新規ファイル..."
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1771 ../thunar/thunar-tree-view.c:1348
 msgid "New Folder"
 msgstr "新規フォルダ"
 
-#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1771 ../thunar/thunar-tree-view.c:1348
 msgid "Create New Folder"
 msgstr "新規フォルダを作成します。"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1818
+#: ../thunar/thunar-standard-view.c:1820
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "テンプレート「%s」から文書を作成"
 
-#: ../thunar/thunar-standard-view.c:1969
+#: ../thunar/thunar-standard-view.c:1971
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1916,7 +1918,7 @@ msgstr ""
 "「%s」は永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-standard-view.c:1974
+#: ../thunar/thunar-standard-view.c:1976
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1928,54 +1930,54 @@ msgstr[0] ""
 "選択したファイルは永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-standard-view.c:1996
+#: ../thunar/thunar-standard-view.c:1998
 msgid "If you delete a file, it is permanently lost."
 msgstr "削除されたファイルは永久に失われます。"
 
-#: ../thunar/thunar-standard-view.c:2061
+#: ../thunar/thunar-standard-view.c:2063
 msgid "Select by Pattern"
 msgstr "パターンで選択します"
 
-#: ../thunar/thunar-standard-view.c:2067
+#: ../thunar/thunar-standard-view.c:2069
 msgid "_Select"
 msgstr "選択(_S)"
 
-#: ../thunar/thunar-standard-view.c:2076
+#: ../thunar/thunar-standard-view.c:2078
 msgid "_Pattern:"
 msgstr "パターン(_P):"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2210
+#: ../thunar/thunar-standard-view.c:2212
 #, c-format
 msgid "Rename \"%s\""
 msgstr "「%s」の名前変更"
 
-#: ../thunar/thunar-standard-view.c:2882
+#: ../thunar/thunar-standard-view.c:2884
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "フォルダ「%s」を開くのに失敗しました。"
 
-#: ../thunar/thunar-standard-view.c:3208
+#: ../thunar/thunar-standard-view.c:3210
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "選択したファイルを移動します。"
 
-#: ../thunar/thunar-standard-view.c:3216
+#: ../thunar/thunar-standard-view.c:3218
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "選択したファイルをコピーします。"
 
-#: ../thunar/thunar-standard-view.c:3227
+#: ../thunar/thunar-standard-view.c:3229
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "選択したファイルを削除します。"
 
-#: ../thunar/thunar-standard-view.c:3241
+#: ../thunar/thunar-standard-view.c:3243
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "選択したファイルのコピーを作成します。"
 
-#: ../thunar/thunar-standard-view.c:3250
+#: ../thunar/thunar-standard-view.c:3252
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "選択したファイルのリンクを作成します。"
@@ -1998,12 +2000,12 @@ msgstr "テンプレートはインストールされていません"
 msgid "_Empty File"
 msgstr "空のファイル(_E)"
 
-#: ../thunar/thunar-tree-model.c:550
+#: ../thunar/thunar-tree-model.c:600
 msgid "Loading..."
 msgstr "読み込んでいます..."
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:975
+#: ../thunar/thunar-tree-view.c:1083
 msgid "P_roperties..."
 msgstr "プロパティ(_R)..."
 
