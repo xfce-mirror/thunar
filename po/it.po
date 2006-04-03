@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-04 00:25+0200\n"
+"POT-Creation-Date: 2006-04-04 00:56+0200\n"
 "PO-Revision-Date: 2006-03-04 13:55+0100\n"
 "Last-Translator: Roberto Pariset <r.pariset@gmail.com>\n"
 "Language-Team: GUFI <traduzioni@gufi.org>\n"
@@ -1017,43 +1017,52 @@ msgstr "Apri con \"%s\""
 msgid "broken link"
 msgstr "link rotto"
 
-#: ../thunar/thunar-list-model.c:2194
+#. generate a text which includes the size of all items in the folder
+#: ../thunar/thunar-list-model.c:2209
+#, fuzzy, c-format
+msgid "%d item (%s), Free space: %s"
+msgid_plural "%d items (%s), Free space: %s"
+msgstr[0] "%d elemento, spazio libero %s"
+msgstr[1] "%d elementi, spazio libero %s"
+
+#. just the standard text
+#: ../thunar/thunar-list-model.c:2218
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d elemento, spazio libero %s"
 msgstr[1] "%d elementi, spazio libero %s"
 
-#: ../thunar/thunar-list-model.c:2199
+#: ../thunar/thunar-list-model.c:2226
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d elemento"
 msgstr[1] "%d elementi"
 
-#: ../thunar/thunar-list-model.c:2215
+#: ../thunar/thunar-list-model.c:2242
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "\"%s\" link rotto"
 
-#: ../thunar/thunar-list-model.c:2219
+#: ../thunar/thunar-list-model.c:2246
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) punta a %s"
 
-#: ../thunar/thunar-list-model.c:2224
+#: ../thunar/thunar-list-model.c:2251
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2241
+#: ../thunar/thunar-list-model.c:2268
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d elemento selezionato (%s)"
 msgstr[1] "%d elementi selezionati (%s)"
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2273
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"

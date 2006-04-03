@@ -2176,9 +2176,11 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   GtkTreeIter        iter;
   ThunarFile        *file;
   GList             *lp;
+  gchar             *fspace_string;
   gchar             *size_string;
   gchar             *text;
   gint               n;
+  Row               *row;
 
   g_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
@@ -2190,9 +2192,34 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       /* check if we can determine the amount of free space for the volume */
       if (G_LIKELY (file != NULL && thunar_file_get_free_space (file, &size)))
         {
-          size_string = thunar_vfs_humanize_size (size, NULL, 0);
-          text = g_strdup_printf (ngettext ("%d item, Free space: %s", "%d items, Free space: %s", store->nrows), store->nrows, size_string);
-          g_free (size_string);
+          /* humanize the free space */
+          fspace_string = thunar_vfs_humanize_size (size, NULL, 0);
+
+          /* check if we have atleast one file in this folder */
+          if (G_LIKELY (store->nrows > 0))
+            {
+              /* calculate the size of all items */
+              for (row = store->rows, size_summary = 0; row != NULL; row = row->next)
+                size_summary += thunar_file_get_size (row->file);
+
+              /* humanize the size summary */
+              size_string = thunar_vfs_humanize_size (size_summary, NULL, 0);
+
+              /* generate a text which includes the size of all items in the folder */
+              text = g_strdup_printf (ngettext ("%d item (%s), Free space: %s", "%d items (%s), Free space: %s", store->nrows),
+                                      store->nrows, size_string, fspace_string);
+
+              /* cleanup */
+              g_free (size_string);
+            }
+          else
+            {
+              /* just the standard text */
+              text = g_strdup_printf (ngettext ("%d item, Free space: %s", "%d items, Free space: %s", store->nrows), store->nrows, fspace_string);
+            }
+
+          /* cleanup */
+          g_free (fspace_string);
         }
       else
         {

@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-04 00:25+0200\n"
+"POT-Creation-Date: 2006-04-04 00:56+0200\n"
 "PO-Revision-Date: 2006-03-26 23:42+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -1011,40 +1011,48 @@ msgstr "%sで開く"
 msgid "broken link"
 msgstr "壊れたリンク"
 
-#: ../thunar/thunar-list-model.c:2194
+#. generate a text which includes the size of all items in the folder
+#: ../thunar/thunar-list-model.c:2209
+#, fuzzy, c-format
+msgid "%d item (%s), Free space: %s"
+msgid_plural "%d items (%s), Free space: %s"
+msgstr[0] "%d 個のアイテムがあります。空き容量: %s"
+
+#. just the standard text
+#: ../thunar/thunar-list-model.c:2218
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d 個のアイテムがあります。空き容量: %s"
 
-#: ../thunar/thunar-list-model.c:2199
+#: ../thunar/thunar-list-model.c:2226
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d 個のアイテムがあります。"
 
-#: ../thunar/thunar-list-model.c:2215
+#: ../thunar/thunar-list-model.c:2242
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "「%s」壊れたリンク"
 
-#: ../thunar/thunar-list-model.c:2219
+#: ../thunar/thunar-list-model.c:2246
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "「%1$s」%3$sへのリンク (%2$s)"
 
-#: ../thunar/thunar-list-model.c:2224
+#: ../thunar/thunar-list-model.c:2251
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "「%1$s」%3$s (%2$s)"
 
-#: ../thunar/thunar-list-model.c:2241
+#: ../thunar/thunar-list-model.c:2268
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d 個のアイテム (%s) が選択されています。"
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2273
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"

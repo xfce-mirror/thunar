@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-04 00:25+0200\n"
-"PO-Revision-Date: 2006-03-26 14:35+0100\n"
+"POT-Creation-Date: 2006-04-04 00:56+0200\n"
+"PO-Revision-Date: 2006-04-04 00:55+0100\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1017,43 +1017,52 @@ msgstr "Mit »%s« öffnen"
 msgid "broken link"
 msgstr "Verknüpfung (fehlerhaft)"
 
-#: ../thunar/thunar-list-model.c:2194
+#. generate a text which includes the size of all items in the folder
+#: ../thunar/thunar-list-model.c:2209
+#, c-format
+msgid "%d item (%s), Free space: %s"
+msgid_plural "%d items (%s), Free space: %s"
+msgstr[0] "%d Objekt (%s), Freier Speicher: %s"
+msgstr[1] "%d Objekte (%s), Freier Speicher: %s"
+
+#. just the standard text
+#: ../thunar/thunar-list-model.c:2218
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d Objekt, Freier Speicher: %s"
 msgstr[1] "%d Objekte, Freier Speicher: %s"
 
-#: ../thunar/thunar-list-model.c:2199
+#: ../thunar/thunar-list-model.c:2226
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d Objekt"
 msgstr[1] "%d Objekte"
 
-#: ../thunar/thunar-list-model.c:2215
+#: ../thunar/thunar-list-model.c:2242
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "»%s« Verknüpfung (fehlerhaft)"
 
-#: ../thunar/thunar-list-model.c:2219
+#: ../thunar/thunar-list-model.c:2246
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "»%s« (%s) Verknüpfung mit %s"
 
-#: ../thunar/thunar-list-model.c:2224
+#: ../thunar/thunar-list-model.c:2251
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "»%s« (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2241
+#: ../thunar/thunar-list-model.c:2268
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d Objekt ausgewählt (%s)"
 msgstr[1] "%d Objekte ausgewählt (%s)"
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2273
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
