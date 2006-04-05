@@ -84,12 +84,8 @@ static ThunarVfsMimeDatabase *mime_database;
 static ThunarVfsMimeInfo     *mime_application_x_shellscript;
 static ThunarVfsMimeInfo     *mime_application_x_executable;
 static ThunarVfsMimeInfo     *mime_application_x_desktop;
-static ThunarVfsMimeInfo     *mime_inode_blockdevice;
-static ThunarVfsMimeInfo     *mime_inode_chardevice;
 static ThunarVfsMimeInfo     *mime_inode_directory;
 static ThunarVfsMimeInfo     *mime_inode_symlink;
-static ThunarVfsMimeInfo     *mime_inode_socket;
-static ThunarVfsMimeInfo     *mime_inode_fifo;
 
 
 
@@ -696,12 +692,8 @@ _thunar_vfs_info_init (void)
   mime_database = thunar_vfs_mime_database_get_default ();
 
   /* pre-determine the most important mime types */
-  mime_inode_fifo = thunar_vfs_mime_database_get_info (mime_database, "inode/fifo");
-  mime_inode_socket = thunar_vfs_mime_database_get_info (mime_database, "inode/socket");
   mime_inode_symlink = thunar_vfs_mime_database_get_info (mime_database, "inode/symlink");
   mime_inode_directory = thunar_vfs_mime_database_get_info (mime_database, "inode/directory");
-  mime_inode_chardevice = thunar_vfs_mime_database_get_info (mime_database, "inode/chardevice");
-  mime_inode_blockdevice = thunar_vfs_mime_database_get_info (mime_database, "inode/blockdevice");
   mime_application_x_desktop = thunar_vfs_mime_database_get_info (mime_database, "application/x-desktop");
   mime_application_x_executable = thunar_vfs_mime_database_get_info (mime_database, "application/x-executable");
   mime_application_x_shellscript = thunar_vfs_mime_database_get_info (mime_database, "application/x-shellscript");
@@ -722,12 +714,8 @@ _thunar_vfs_info_shutdown (void)
   thunar_vfs_mime_info_unref (mime_application_x_shellscript);
   thunar_vfs_mime_info_unref (mime_application_x_executable);
   thunar_vfs_mime_info_unref (mime_application_x_desktop);
-  thunar_vfs_mime_info_unref (mime_inode_blockdevice);
-  thunar_vfs_mime_info_unref (mime_inode_chardevice);
   thunar_vfs_mime_info_unref (mime_inode_directory);
   thunar_vfs_mime_info_unref (mime_inode_symlink);
-  thunar_vfs_mime_info_unref (mime_inode_socket);
-  thunar_vfs_mime_info_unref (mime_inode_fifo);
 
   /* release the reference on the mime database */
   g_object_unref (G_OBJECT (mime_database));
@@ -854,8 +842,16 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
   /* determine the file's mime type */
   switch (info->type)
     {
+    case THUNAR_VFS_FILE_TYPE_PORT:
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/port");
+      break;
+
+    case THUNAR_VFS_FILE_TYPE_DOOR:
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/door");
+      break;
+
     case THUNAR_VFS_FILE_TYPE_SOCKET:
-      info->mime_info = thunar_vfs_mime_info_ref (mime_inode_socket);
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/socket");
       break;
 
     case THUNAR_VFS_FILE_TYPE_SYMLINK:
@@ -863,7 +859,7 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
       break;
 
     case THUNAR_VFS_FILE_TYPE_BLOCKDEV:
-      info->mime_info = thunar_vfs_mime_info_ref (mime_inode_blockdevice);
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/blockdevice");
       break;
 
     case THUNAR_VFS_FILE_TYPE_DIRECTORY:
@@ -871,11 +867,11 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
       break;
 
     case THUNAR_VFS_FILE_TYPE_CHARDEV:
-      info->mime_info = thunar_vfs_mime_info_ref (mime_inode_chardevice);
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/chardevice");
       break;
 
     case THUNAR_VFS_FILE_TYPE_FIFO:
-      info->mime_info = thunar_vfs_mime_info_ref (mime_inode_fifo);
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/fifo");
       break;
 
     case THUNAR_VFS_FILE_TYPE_REGULAR:

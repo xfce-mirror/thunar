@@ -1173,6 +1173,8 @@ thunar_file_get_mode_string (const ThunarFile *file)
   /* file type */
   switch (kind)
     {
+    case THUNAR_VFS_FILE_TYPE_PORT:       text[0] = 'P'; break;
+    case THUNAR_VFS_FILE_TYPE_DOOR:       text[0] = 'D'; break;
     case THUNAR_VFS_FILE_TYPE_SOCKET:     text[0] = 's'; break;
     case THUNAR_VFS_FILE_TYPE_SYMLINK:    text[0] = 'l'; break;
     case THUNAR_VFS_FILE_TYPE_REGULAR:    text[0] = '-'; break;

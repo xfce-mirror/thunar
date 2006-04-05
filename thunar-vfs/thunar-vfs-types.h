@@ -55,6 +55,8 @@ typedef enum /*< flags >*/
  *                                  #ThunarVfsInfo object would have the type
  *                                  of the target).
  * @THUNAR_VFS_FILE_TYPE_SOCKET   : A unix domain socket.
+ * @THUNAR_VFS_FILE_TYPE_DOOR     : A door (Solaris IPC mechanism).
+ * @THUNAR_VFS_FILE_TYPE_PORT     : An event port (Solaris event framework).
  * @THUNAR_VFS_FILE_TYPE_UNKNOWN  : The exact type of the file could not be
  *                                  determined.
  *
@@ -62,6 +64,8 @@ typedef enum /*< flags >*/
  **/
 typedef enum
 {
+  THUNAR_VFS_FILE_TYPE_PORT       = 0160000 >> 12,
+  THUNAR_VFS_FILE_TYPE_DOOR       = 0150000 >> 12,
   THUNAR_VFS_FILE_TYPE_SOCKET     = 0140000 >> 12,
   THUNAR_VFS_FILE_TYPE_SYMLINK    = 0120000 >> 12,
   THUNAR_VFS_FILE_TYPE_REGULAR    = 0100000 >> 12,
