@@ -69,9 +69,11 @@
 
 
 
-/* %&§$!# IRIX */
+/* %&§$!# IRIX and Solaris */
 #if defined(__sgi__) && !defined(dirfd)
-#define dirfd(dp) (((DIR *) dp)->__dd_fd)
+#define dirfd(dp) (((DIR *) (dp))->__dd_fd)
+#elif defined(__sun__) && !defined(dirfd)
+#define dirfd(dp) (((DIR *) (dp))->dd_fd)
 #endif
 
 

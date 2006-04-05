@@ -1,3 +1,11 @@
+2006-04-05	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-info.c(thunar_vfs_info_get_free_space): Use
+	  statvfs() on Solaris.
+	* thunar-vfs/thunar-vfs-scandir.c: Solaris also lacks dirfd().
+	* plugins/thunar-uca/thunar-uca-model.c(thunar_uca_model_item_reset):
+	  Use memset() instead of bzero().
+
 2006-04-04	Benedikt Meurer <benny@xfce.org>
 
 	* docs/manual/ja/Thunar.xml.in: Update the docbook version of the

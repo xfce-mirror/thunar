@@ -600,7 +600,7 @@ thunar_uca_model_item_reset (ThunarUcaModelItem *item)
   g_free (item->icon);
 
   /* ...and reset the item memory */
-  bzero (item, sizeof (*item));
+  memset (item, 0, sizeof (*item));
 }
 
 
