@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-01 17:39+0900\n"
+"POT-Creation-Date: 2006-04-04 00:56+0200\n"
 "PO-Revision-Date: 2006-03-29 17:57+0300\n"
 "Last-Translator: Peeter Vois <Peeter.Vois@proekspert.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -661,7 +661,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "Tundmatu"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2239
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2241
 msgid "Enter the new name:"
 msgstr "Sisesta uus nimi:"
 
@@ -873,7 +873,7 @@ msgstr "Ikooni vaade"
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
 #: ../thunar/thunar-location-buttons.c:1267
-#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:898
+#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:957
 msgid "_Open"
 msgstr "_Ava"
 
@@ -883,7 +883,7 @@ msgstr "Ava valitud failid"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1280
-#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:910
+#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:969
 msgid "Open in New Window"
 msgstr "Ava uues aknas"
 
@@ -1010,43 +1010,52 @@ msgstr "Ava \"%s\"-ga"
 msgid "broken link"
 msgstr "katkine viide"
 
-#: ../thunar/thunar-list-model.c:2194
+#. generate a text which includes the size of all items in the folder
+#: ../thunar/thunar-list-model.c:2209
+#, fuzzy, c-format
+msgid "%d item (%s), Free space: %s"
+msgid_plural "%d items (%s), Free space: %s"
+msgstr[0] "%d asi, Vaba ruumi %s"
+msgstr[1] "%d asi, Vaba ruumi %s"
+
+#. just the standard text
+#: ../thunar/thunar-list-model.c:2218
 #, fuzzy, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d asi, Vaba ruumi %s"
 msgstr[1] "%d asi, Vaba ruumi %s"
 
-#: ../thunar/thunar-list-model.c:2199
+#: ../thunar/thunar-list-model.c:2226
 #, fuzzy, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d asi"
 msgstr[1] "%d asi"
 
-#: ../thunar/thunar-list-model.c:2215
+#: ../thunar/thunar-list-model.c:2242
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "\"%s\" katkine viide"
 
-#: ../thunar/thunar-list-model.c:2219
+#: ../thunar/thunar-list-model.c:2246
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) viitab %s-le"
 
-#: ../thunar/thunar-list-model.c:2224
+#: ../thunar/thunar-list-model.c:2251
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2241
+#: ../thunar/thunar-list-model.c:2268
 #, fuzzy, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d asi valitud (%s)"
 msgstr[1] "%d asi valitud (%s)"
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2273
 #, fuzzy, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1083,7 +1092,7 @@ msgstr ""
 "kopeeri käsuga"
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:958
+#: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:1065
 #, fuzzy
 msgid "_Paste Into Folder"
 msgstr "Pane failid siia kataloogi"
@@ -1550,7 +1559,7 @@ msgstr "Embleemid"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:781
-#: ../thunar/thunar-standard-view.c:2281
+#: ../thunar/thunar-standard-view.c:2283
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "\"%s\" ümbernimetamine läks nässu"
@@ -1729,17 +1738,17 @@ msgstr[0] "Lisa valitud kaust lühiteede kõrvalpaanile"
 msgstr[1] "Lisa valitud kaust lühiteede kõrvalpaanile"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:819
+#: ../thunar/thunar-shortcuts-view.c:819 ../thunar/thunar-tree-view.c:983
 msgid "_Mount Volume"
 msgstr "_Haagi seade"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:829
+#: ../thunar/thunar-shortcuts-view.c:829 ../thunar/thunar-tree-view.c:993
 msgid "E_ject Volume"
 msgstr "_Väljasta seade"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:838
+#: ../thunar/thunar-shortcuts-view.c:838 ../thunar/thunar-tree-view.c:1002
 msgid "_Unmount Volume"
 msgstr "Haagi _lahti seade"
 
@@ -1764,19 +1773,21 @@ msgid "Failed to add new shortcut"
 msgstr "Uue lühitee lisamine läks nässu"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1262
+#: ../thunar/thunar-shortcuts-view.c:1262 ../thunar/thunar-tree-view.c:1426
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\" väljastamine läks nässu"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1308
+#: ../thunar/thunar-shortcuts-view.c:1308 ../thunar/thunar-tree-view.c:905
+#: ../thunar/thunar-tree-view.c:1462
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "\"%s\"-i haakimine läks nässu"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1352
+#. display an error dialog
+#: ../thunar/thunar-shortcuts-view.c:1352 ../thunar/thunar-tree-view.c:1602
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\"-i lahtihaakimine läks nässu"
@@ -1804,7 +1815,7 @@ msgid "Folder Context Menu"
 msgstr "Kataloogi kontekstimenüü"
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:922
+#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
 msgid "Create _Folder..."
 msgstr "Tekita _Kaust..."
 
@@ -1813,13 +1824,13 @@ msgid "Create an empty folder within the current folder"
 msgstr "Tekita tühi kaust avatud kausta sisse"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:934
+#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:1036
 #, fuzzy
 msgid "Cu_t"
 msgstr "_Lõika fail"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:946
+#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:1048
 #, fuzzy
 msgid "_Copy"
 msgstr "_Kopeeri siia"
@@ -1876,7 +1887,7 @@ msgstr "Vali kõik failid, mis klapivad määratud kirjeldusega"
 msgid "Du_plicate"
 msgstr "Klooni fail"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3248
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3250
 #, fuzzy
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
@@ -1892,39 +1903,39 @@ msgid "Rename the selected file"
 msgstr "Nimeta valitud fail ümber"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:574
+#: ../thunar/thunar-standard-view.c:576
 msgid "Create _Document"
 msgstr "Tekita _dokument"
 
-#: ../thunar/thunar-standard-view.c:1222
+#: ../thunar/thunar-standard-view.c:1224
 msgid "Loading folder contents..."
 msgstr "Laen kataloogi sisu..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1718
+#: ../thunar/thunar-standard-view.c:1720
 msgid "New Empty File"
 msgstr "Uus tühi fail"
 
-#: ../thunar/thunar-standard-view.c:1718
+#: ../thunar/thunar-standard-view.c:1720
 msgid "New Empty File..."
 msgstr "Uus tühi fail..."
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1771 ../thunar/thunar-tree-view.c:1348
 msgid "New Folder"
 msgstr "Uus kataloog"
 
-#: ../thunar/thunar-standard-view.c:1769 ../thunar/thunar-tree-view.c:1222
+#: ../thunar/thunar-standard-view.c:1771 ../thunar/thunar-tree-view.c:1348
 msgid "Create New Folder"
 msgstr "Tekita uus kataloog"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1818
+#: ../thunar/thunar-standard-view.c:1820
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Tekita dokument malli \"%s\" järgi"
 
-#: ../thunar/thunar-standard-view.c:1969
+#: ../thunar/thunar-standard-view.c:1971
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1933,7 +1944,7 @@ msgstr ""
 "Olete te kindel, et te soovite\n"
 "igaveseks hävitada \"%s\"-i ?"
 
-#: ../thunar/thunar-standard-view.c:1974
+#: ../thunar/thunar-standard-view.c:1976
 #, fuzzy, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1948,62 +1959,62 @@ msgstr[1] ""
 "Olete te kindel, et te soovite\n"
 "igaveseks hävitada \"%s\"-i ?"
 
-#: ../thunar/thunar-standard-view.c:1996
+#: ../thunar/thunar-standard-view.c:1998
 msgid "If you delete a file, it is permanently lost."
 msgstr "Kui te hävitate faili, siis see kaob jäädavalt."
 
-#: ../thunar/thunar-standard-view.c:2061
+#: ../thunar/thunar-standard-view.c:2063
 msgid "Select by Pattern"
 msgstr "Vali kirjelduse järgi"
 
-#: ../thunar/thunar-standard-view.c:2067
+#: ../thunar/thunar-standard-view.c:2069
 msgid "_Select"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2076
+#: ../thunar/thunar-standard-view.c:2078
 #, fuzzy
 msgid "_Pattern:"
 msgstr "Kirjeldus:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2210
+#: ../thunar/thunar-standard-view.c:2212
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Nimeta \"%s\" ümber"
 
-#: ../thunar/thunar-standard-view.c:2882
+#: ../thunar/thunar-standard-view.c:2884
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Kataloogi \"%s\" avamine läks nässu"
 
-#: ../thunar/thunar-standard-view.c:3208
+#: ../thunar/thunar-standard-view.c:3210
 #, fuzzy
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Ava valitud fail esmase rakendusega"
 msgstr[1] "Ava valitud fail esmase rakendusega"
 
-#: ../thunar/thunar-standard-view.c:3216
+#: ../thunar/thunar-standard-view.c:3218
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:3227
+#: ../thunar/thunar-standard-view.c:3229
 #, fuzzy
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Kustuta valitud failid"
 msgstr[1] "Kustuta valitud failid"
 
-#: ../thunar/thunar-standard-view.c:3241
+#: ../thunar/thunar-standard-view.c:3243
 #, fuzzy
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Klooni kõik valitud failid"
 msgstr[1] "Klooni kõik valitud failid"
 
-#: ../thunar/thunar-standard-view.c:3250
+#: ../thunar/thunar-standard-view.c:3252
 #, fuzzy
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
@@ -2028,13 +2039,13 @@ msgstr "Malle pole installitud"
 msgid "_Empty File"
 msgstr "_Tühi fail"
 
-#: ../thunar/thunar-tree-model.c:550
+#: ../thunar/thunar-tree-model.c:600
 #, fuzzy
 msgid "Loading..."
 msgstr "Valmistan ette..."
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:975
+#: ../thunar/thunar-tree-view.c:1083
 #, fuzzy
 msgid "P_roperties..."
 msgstr "_Omadused..."
