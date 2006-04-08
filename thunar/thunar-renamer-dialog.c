@@ -172,7 +172,7 @@ static const GtkActionEntry action_entries[] =
 {
   { "file-menu", NULL, N_ ("_File"), NULL, },
   { "file-context-menu", NULL, N_ ("File Context Menu"), NULL, },
-  { "add-files", GTK_STOCK_ADD, N_ ("_Add Files..."), NULL, N_ ("Include additional files in the list of files should be renamed"), G_CALLBACK (thunar_renamer_dialog_action_add_files), },
+  { "add-files", GTK_STOCK_ADD, N_ ("_Add Files..."), NULL, N_ ("Include additional files in the list of files to be renamed"), G_CALLBACK (thunar_renamer_dialog_action_add_files), },
   { "remove-files", GTK_STOCK_REMOVE, NULL, NULL, NULL, G_CALLBACK (thunar_renamer_dialog_action_remove_files), },
   { "clear", GTK_STOCK_CLEAR, N_ ("Clear"), NULL, N_ ("Clear the file list below"), G_CALLBACK (thunar_renamer_dialog_action_clear), },
   { "about", GTK_STOCK_ABOUT, N_ ("_About"), NULL, N_ ("Display information about Thunar Bulk Rename"), G_CALLBACK (thunar_renamer_dialog_action_about), },
@@ -1555,8 +1555,8 @@ thunar_renamer_dialog_selection_changed (GtkTreeSelection    *selection,
   g_object_set (G_OBJECT (action),
                 "label", ngettext ("Remove File", "Remove Files", n_selected_files),
                 "sensitive", (n_selected_files > 0),
-                "tooltip", ngettext ("Remove the selected file from the list of files that should be renamed",
-                                     "Remove the selected files from the list of files that should be renamed",
+                "tooltip", ngettext ("Remove the selected file from the list of files to be renamed",
+                                     "Remove the selected files from the list of files to be renamed",
                                      n_selected_files),
                 NULL);
 
