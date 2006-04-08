@@ -26,6 +26,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
+#include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-location-button.h>
@@ -110,6 +111,8 @@ static void           thunar_location_buttons_clicked                   (ThunarL
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_context_menu              (ThunarLocationButton       *button,
                                                                          GdkEventButton             *event,
+                                                                         ThunarLocationButtons      *buttons);
+static void           thunar_location_buttons_action_create_folder      (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_down_folder        (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
@@ -1288,7 +1291,23 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   g_free (tooltip);
 
   /* add a separator */
-  gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu", "separator", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
+  gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu", "separator1", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
+
+  /* add the "Create Folder" action */
+  tooltip = g_strdup_printf (_("Create a new folder in \"%s\""), thunar_file_get_display_name (file));
+  action = gtk_action_new ("ThunarLocationButtons::create-folder", _("Create _Folder..."), tooltip, NULL);
+  g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+  g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_location_buttons_action_create_folder), buttons);
+  gtk_action_set_sensitive (action, thunar_file_is_writable (file));
+  gtk_action_group_add_action (action_group, action);
+  gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu",
+                         gtk_action_get_name (action), gtk_action_get_name (action),
+                         GTK_UI_MANAGER_MENUITEM, FALSE);
+  g_object_unref (G_OBJECT (action));
+  g_free (tooltip);
+
+  /* add a separator */
+  gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu", "separator2", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
 
   /* add the "Open in New Window" action */
   tooltip = g_strdup_printf (_("Move or copy files previously selected by a Cut or Copy command into \"%s\""), thunar_file_get_display_name (file));
@@ -1334,6 +1353,57 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   g_object_unref (G_OBJECT (buttons));
   g_object_unref (G_OBJECT (button));
   g_object_unref (G_OBJECT (menu));
+}
+
+
+
+static void
+thunar_location_buttons_action_create_folder (GtkAction             *action,
+                                              ThunarLocationButtons *buttons)
+{
+  ThunarVfsMimeDatabase *mime_database;
+  ThunarVfsMimeInfo     *mime_info;
+  ThunarApplication     *application;
+  ThunarFile            *directory;
+  GList                  path_list;
+  gchar                 *name;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+
+  /* determine the directory for the action */
+  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  if (G_UNLIKELY (directory == NULL))
+    return;
+
+  /* lookup "inode/directory" mime info */
+  mime_database = thunar_vfs_mime_database_get_default ();
+  mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/directory");
+
+  /* ask the user to enter a name for the new folder */
+  name = thunar_show_create_dialog (GTK_WIDGET (buttons), mime_info, _("New Folder"), _("Create New Folder"));
+  if (G_LIKELY (name != NULL))
+    {
+      /* fake the path list */
+      path_list.data = thunar_vfs_path_relative (thunar_file_get_path (directory), name);
+      path_list.next = path_list.prev = NULL;
+
+      /* launch the operation */
+      application = thunar_application_get ();
+      thunar_application_mkdir (application, GTK_WIDGET (buttons), &path_list, NULL);
+      g_object_unref (G_OBJECT (application));
+
+      /* release the path */
+      thunar_vfs_path_unref (path_list.data);
+
+      /* release the file name */
+      g_free (name);
+    }
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (mime_database));
+  thunar_vfs_mime_info_unref (mime_info);
+  g_object_unref (G_OBJECT (directory));
 }
 
 
