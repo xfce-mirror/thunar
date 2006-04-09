@@ -1,3 +1,15 @@
+2006-04-09	Benedikt Meurer <benny@xfce.org>
+
+	* docs/README.thunarrc, thunar/thunar-preferences.c: Add new option
+	  "MiscSingleClickTimeout", which specifies the delay after which
+	  items are automatically selected in single-click mode.
+	* thunar/thunar-preferences-dialog.c(thunar_preferences_dialog_init):
+	  Add "MiscSingleClickTimeout" setting to the preferences dialog.
+	* thunar/thunar-standard-view.c(thunar_standard_view_constructor):
+	  Apply global single-click timeout setting to the view.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-04-08	Benedikt Meurer <benny@xfce.org>
 
 	* *.desktop.in.in: It's a FileManager.

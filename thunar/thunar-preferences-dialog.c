@@ -193,14 +193,19 @@ static void
 thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 {
   AtkRelationSet *relations;
+  GtkAdjustment  *adjustment;
   AtkRelation    *relation;
   AtkObject      *object;
   GtkWidget      *notebook;
   GtkWidget      *button;
+  GtkWidget      *align;
   GtkWidget      *combo;
   GtkWidget      *frame;
   GtkWidget      *label;
+  GtkWidget      *range;
   GtkWidget      *table;
+  GtkWidget      *hbox;
+  GtkWidget      *ibox;
   GtkWidget      *vbox;
 
   /* grab a reference on the preferences */
@@ -444,7 +449,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_frame_set_label_widget (GTK_FRAME (frame), label);
   gtk_widget_show (label);
 
-  table = gtk_table_new (1, 2, FALSE);
+  table = gtk_table_new (3, 1, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);
   gtk_table_set_col_spacings (GTK_TABLE (table), 12);
   gtk_container_set_border_width (GTK_CONTAINER (table), 12);
@@ -454,13 +459,81 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   button = gtk_radio_button_new_with_mnemonic (NULL, _("_Single click to activate items"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-single-click", G_OBJECT (button), "active");
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
-  gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, 0, 0, 0);
   gtk_widget_show (button);
+
+  align = gtk_alignment_new (0.0f, 0.0f, 1.0f, 1.0f);
+  gtk_alignment_set_padding (GTK_ALIGNMENT (align), 0, 6, 18, 0);
+  exo_binding_new (G_OBJECT (button), "active", G_OBJECT (align), "sensitive");
+  gtk_table_attach (GTK_TABLE (table), align, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, 0, 0, 0);
+  gtk_widget_show (align);
+
+  hbox = gtk_hbox_new (FALSE, 0);
+  gtk_container_add (GTK_CONTAINER (align), hbox);
+  gtk_widget_show (hbox);
+
+  ibox = gtk_vbox_new (FALSE, 0);
+  gtk_box_pack_start (GTK_BOX (hbox), ibox, FALSE, FALSE, 0);
+  gtk_widget_show (ibox);
+
+  label = gtk_label_new_with_mnemonic (_("Specify the d_elay before an item gets selected\n"
+                                         "when the mouse pointer is paused over it:"));
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
+  gtk_box_pack_start (GTK_BOX (ibox), label, FALSE, FALSE, 0);
+  gtk_widget_show (label);
+
+  align = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 6, NULL);
+  gtk_box_pack_start (GTK_BOX (ibox), align, FALSE, FALSE, 0);
+  gtk_widget_show (align);
+
+  range = gtk_hscale_new_with_range (0.0, 2000.0, 100.0);
+  gtk_scale_set_draw_value (GTK_SCALE (range), FALSE);
+  gtk_tooltips_set_tip (dialog->tooltips, range, _("When single-click activation is enabled, pausing the mouse pointer over an item "
+                                                   "will automatically select that item after the chosen delay. You can disable this "
+                                                   "behavior by moving the slider to the left-most position. This behavior may be "
+                                                   "useful when single clicks activate items, and you want only to select the item "
+                                                   "without activating it."), NULL);
+  gtk_box_pack_start (GTK_BOX (ibox), range, FALSE, FALSE, 0);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), range);
+  gtk_widget_show (range);
+
+  /* connect the range's adjustment to the preferences */
+  adjustment = gtk_range_get_adjustment (GTK_RANGE (range));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-single-click-timeout", G_OBJECT (adjustment), "value");
+
+  /* set Atk label relation for the range */
+  object = gtk_widget_get_accessible (range);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
+
+  hbox = gtk_hbox_new (TRUE, 6);
+  gtk_box_pack_start (GTK_BOX (ibox), hbox, FALSE, FALSE, 0);
+  gtk_widget_show (hbox);
+
+  label = gtk_label_new (_("Disabled"));
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_small_italic ());
+  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+  gtk_widget_show (label);
+
+  label = gtk_label_new (_("Medium"));
+  gtk_misc_set_alignment (GTK_MISC (label), 0.5f, 0.5f);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_small_italic ());
+  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+  gtk_widget_show (label);
+
+  label = gtk_label_new (_("Long"));
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_small_italic ());
+  gtk_box_pack_start (GTK_BOX (hbox), label, TRUE, TRUE, 0);
+  gtk_widget_show (label);
 
   button = gtk_radio_button_new_with_mnemonic_from_widget (GTK_RADIO_BUTTON (button), _("_Double click to activate items"));
   exo_mutual_binding_new_with_negation (G_OBJECT (dialog->preferences), "misc-single-click", G_OBJECT (button), "active");
   g_signal_connect (G_OBJECT (button), "toggled", G_CALLBACK (g_object_notify), "active");
-  gtk_table_attach (GTK_TABLE (table), button, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), button, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, 0, 0, 0);
   gtk_widget_show (button);
 
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-08 12:26+0200\n"
+"POT-Creation-Date: 2006-04-09 19:17+0200\n"
 "PO-Revision-Date: 2006-04-02 14:05+0100\n"
 "Last-Translator: Stephane Roy <sroy@j2n.net>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -662,7 +662,7 @@ msgstr ""
 msgid "Unknown"
 msgstr "Inconnu"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2241
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
 msgid "Enter the new name:"
 msgstr "Entrer le nouveau nom :"
 
@@ -861,7 +861,7 @@ msgstr "Vue d'icônes"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
-#: ../thunar/thunar-location-buttons.c:1267
+#: ../thunar/thunar-location-buttons.c:1270
 #: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:957
 msgid "_Open"
 msgstr "_Ouvrir"
@@ -871,7 +871,7 @@ msgid "Open the selected files"
 msgstr "Ouvrir les fichiers sélectionnés"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1280
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1283
 #: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:969
 msgid "Open in New Window"
 msgstr "Ouvrir dans une nouvelle fenêtre"
@@ -1049,28 +1049,40 @@ msgid_plural "%d items selected"
 msgstr[0] "%d élément sélectionné"
 msgstr[1] "%d éléments sélectionnés"
 
-#: ../thunar/thunar-location-buttons.c:259
+#: ../thunar/thunar-location-buttons.c:262
 msgid "Spacing"
 msgstr "Espace"
 
-#: ../thunar/thunar-location-buttons.c:260
+#: ../thunar/thunar-location-buttons.c:263
 msgid "The amount of space between the path buttons"
 msgstr "Quantité d'espace entre les boutons du chemin"
 
 #. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1266
+#: ../thunar/thunar-location-buttons.c:1269
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "Ouvrir \"%s\" dans cette fenêtre"
 
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1279
+#: ../thunar/thunar-location-buttons.c:1282
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "Ouvrir \"%s\" dans une nouvelle fenêtre"
 
+#. add the "Create Folder" action
+#: ../thunar/thunar-location-buttons.c:1297
+#, fuzzy, c-format
+msgid "Create a new folder in \"%s\""
+msgstr "Créer un nouveau dossier"
+
+#. append the "Create Folder" menu action
+#: ../thunar/thunar-location-buttons.c:1298
+#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
+msgid "Create _Folder..."
+msgstr "Création d'un _dossier..."
+
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1294
+#: ../thunar/thunar-location-buttons.c:1313
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
@@ -1079,9 +1091,20 @@ msgstr ""
 "couper ou copier dans \"%s\""
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1295 ../thunar/thunar-tree-view.c:1065
+#: ../thunar/thunar-location-buttons.c:1314 ../thunar/thunar-tree-view.c:1065
 msgid "_Paste Into Folder"
 msgstr "C_oller dans le dossier"
+
+#. ask the user to enter a name for the new folder
+#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
+msgid "New Folder"
+msgstr "Nouveau dossier"
+
+#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
+msgid "Create New Folder"
+msgstr "Créer un nouveau dossier"
 
 #: ../thunar/thunar-location-dialog.c:88
 msgid "Open Location"
@@ -1268,53 +1291,53 @@ msgstr "_Non"
 msgid "_Cancel"
 msgstr "_Annuler"
 
-#: ../thunar/thunar-preferences-dialog.c:217
+#: ../thunar/thunar-preferences-dialog.c:222
 msgid "File Manager Preferences"
 msgstr "Préférences du gestionnaire de fichier"
 
 #.
 #. Views
 #.
-#: ../thunar/thunar-preferences-dialog.c:234
+#: ../thunar/thunar-preferences-dialog.c:239
 msgid "Views"
 msgstr "Vues"
 
-#: ../thunar/thunar-preferences-dialog.c:244
+#: ../thunar/thunar-preferences-dialog.c:249
 msgid "Default View"
 msgstr "Vue par défaut"
 
-#: ../thunar/thunar-preferences-dialog.c:256
+#: ../thunar/thunar-preferences-dialog.c:261
 msgid "View _new folders using:"
 msgstr "Voir un _nouveau dossier en utilisant :"
 
-#: ../thunar/thunar-preferences-dialog.c:261
-#: ../thunar/thunar-preferences-dialog.c:297
+#: ../thunar/thunar-preferences-dialog.c:266
+#: ../thunar/thunar-preferences-dialog.c:302
 msgid "Icon View"
 msgstr "Vue d'icônes"
 
-#: ../thunar/thunar-preferences-dialog.c:262
+#: ../thunar/thunar-preferences-dialog.c:267
 msgid "Detailed List View"
 msgstr "liste détaillée"
 
-#: ../thunar/thunar-preferences-dialog.c:263
+#: ../thunar/thunar-preferences-dialog.c:268
 msgid "Last Active View"
 msgstr "dernière vue active"
 
-#: ../thunar/thunar-preferences-dialog.c:280
+#: ../thunar/thunar-preferences-dialog.c:285
 msgid "Sort _folders before files"
 msgstr "Trier les _dossiers avant les fichiers"
 
-#: ../thunar/thunar-preferences-dialog.c:282
+#: ../thunar/thunar-preferences-dialog.c:287
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "Sélectionner cette option pour lister les dossiers avant les fichiers quand "
 "vous trier un dossier."
 
-#: ../thunar/thunar-preferences-dialog.c:286
+#: ../thunar/thunar-preferences-dialog.c:291
 msgid "_Show thumbnails"
 msgstr "_Montrer les miniatures"
 
-#: ../thunar/thunar-preferences-dialog.c:288
+#: ../thunar/thunar-preferences-dialog.c:293
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
@@ -1322,11 +1345,11 @@ msgstr ""
 "Choisir cette option pour afficher les fichiers prévisionnables dans un "
 "dossier par des icônes de miniatures générées automatiquement."
 
-#: ../thunar/thunar-preferences-dialog.c:309
+#: ../thunar/thunar-preferences-dialog.c:314
 msgid "_Text beside icons"
 msgstr "_Texte à côté des icônes"
 
-#: ../thunar/thunar-preferences-dialog.c:311
+#: ../thunar/thunar-preferences-dialog.c:316
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1337,58 +1360,58 @@ msgstr ""
 #.
 #. Side Pane
 #.
-#: ../thunar/thunar-preferences-dialog.c:320
+#: ../thunar/thunar-preferences-dialog.c:325
 msgid "Side Pane"
 msgstr "Panneau latéral"
 
-#: ../thunar/thunar-preferences-dialog.c:330
+#: ../thunar/thunar-preferences-dialog.c:335
 msgid "Shortcuts Pane"
 msgstr "Panneau des raccourcis"
 
-#: ../thunar/thunar-preferences-dialog.c:342
+#: ../thunar/thunar-preferences-dialog.c:347
 msgid "_Icon Size:"
 msgstr "Taille d'i_cône :"
 
-#: ../thunar/thunar-preferences-dialog.c:347
-#: ../thunar/thunar-preferences-dialog.c:398
+#: ../thunar/thunar-preferences-dialog.c:352
+#: ../thunar/thunar-preferences-dialog.c:403
 msgid "Very Small"
 msgstr "très petit"
 
-#: ../thunar/thunar-preferences-dialog.c:348
-#: ../thunar/thunar-preferences-dialog.c:399
+#: ../thunar/thunar-preferences-dialog.c:353
+#: ../thunar/thunar-preferences-dialog.c:404
 msgid "Smaller"
 msgstr "plus petit"
 
-#: ../thunar/thunar-preferences-dialog.c:349
-#: ../thunar/thunar-preferences-dialog.c:400
+#: ../thunar/thunar-preferences-dialog.c:354
+#: ../thunar/thunar-preferences-dialog.c:405
 msgid "Small"
 msgstr "petit"
 
-#: ../thunar/thunar-preferences-dialog.c:350
-#: ../thunar/thunar-preferences-dialog.c:401
+#: ../thunar/thunar-preferences-dialog.c:355
+#: ../thunar/thunar-preferences-dialog.c:406
 msgid "Normal"
 msgstr "normal"
 
-#: ../thunar/thunar-preferences-dialog.c:351
-#: ../thunar/thunar-preferences-dialog.c:402
+#: ../thunar/thunar-preferences-dialog.c:356
+#: ../thunar/thunar-preferences-dialog.c:407
 msgid "Large"
 msgstr "grand"
 
-#: ../thunar/thunar-preferences-dialog.c:352
-#: ../thunar/thunar-preferences-dialog.c:403
+#: ../thunar/thunar-preferences-dialog.c:357
+#: ../thunar/thunar-preferences-dialog.c:408
 msgid "Larger"
 msgstr "plus grand"
 
-#: ../thunar/thunar-preferences-dialog.c:353
-#: ../thunar/thunar-preferences-dialog.c:404
+#: ../thunar/thunar-preferences-dialog.c:358
+#: ../thunar/thunar-preferences-dialog.c:409
 msgid "Very Large"
 msgstr "très grand"
 
-#: ../thunar/thunar-preferences-dialog.c:370
+#: ../thunar/thunar-preferences-dialog.c:375
 msgid "Show Icon _Emblems"
 msgstr "Afficher l'icône de l'_emblème"
 
-#: ../thunar/thunar-preferences-dialog.c:372
+#: ../thunar/thunar-preferences-dialog.c:377
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
@@ -1397,19 +1420,19 @@ msgstr ""
 "des raccourcis pour tous les dossiers pour lesquels des emblèmes ont été "
 "définies dans les propriétés de dossiers."
 
-#: ../thunar/thunar-preferences-dialog.c:381
+#: ../thunar/thunar-preferences-dialog.c:386
 msgid "Tree Pane"
 msgstr "Panneau d'arborescence"
 
-#: ../thunar/thunar-preferences-dialog.c:393
+#: ../thunar/thunar-preferences-dialog.c:398
 msgid "Icon _Size:"
 msgstr "Taille d'i_cône :"
 
-#: ../thunar/thunar-preferences-dialog.c:421
+#: ../thunar/thunar-preferences-dialog.c:426
 msgid "Show Icon E_mblems"
 msgstr "Afficher l'icône de l'e_mblème"
 
-#: ../thunar/thunar-preferences-dialog.c:423
+#: ../thunar/thunar-preferences-dialog.c:428
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
@@ -1418,31 +1441,58 @@ msgstr ""
 #.
 #. Behavior
 #.
-#: ../thunar/thunar-preferences-dialog.c:432
-#: ../thunar/thunar-preferences-dialog.c:442
+#: ../thunar/thunar-preferences-dialog.c:437
+#: ../thunar/thunar-preferences-dialog.c:447
 msgid "Behavior"
 msgstr "Comportement"
 
-#: ../thunar/thunar-preferences-dialog.c:454
+#: ../thunar/thunar-preferences-dialog.c:459
 msgid "_Single click to activate items"
 msgstr "_Simple clic pour activer les éléments"
 
-#: ../thunar/thunar-preferences-dialog.c:460
+#: ../thunar/thunar-preferences-dialog.c:479
+msgid ""
+"Specify the d_elay before an item gets selected\n"
+"when the mouse pointer is paused over it:"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:491
+msgid ""
+"When single-click activation is enabled, pausing the mouse pointer over an "
+"item will automatically select that item after the chosen delay. You can "
+"disable this behavior by moving the slider to the left-most position. This "
+"behavior may be useful when single clicks activate items, and you want only "
+"to select the item without activating it."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:515
+msgid "Disabled"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:521
+msgid "Medium"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:527
+msgid "Long"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:533
 msgid "_Double click to activate items"
 msgstr "_Double clic pour activer les éléments"
 
 #.
 #. Advanced
 #.
-#: ../thunar/thunar-preferences-dialog.c:470
+#: ../thunar/thunar-preferences-dialog.c:543
 msgid "Advanced"
 msgstr "Avancé"
 
-#: ../thunar/thunar-preferences-dialog.c:480
+#: ../thunar/thunar-preferences-dialog.c:553
 msgid "Folder Permissions"
 msgstr "Permissions de dossier"
 
-#: ../thunar/thunar-preferences-dialog.c:492
+#: ../thunar/thunar-preferences-dialog.c:565
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
@@ -1452,15 +1502,15 @@ msgstr ""
 "vous pouvez appliquer ces changements au contenu\n"
 "du dossier. Sélectionner le comportement par défaut :"
 
-#: ../thunar/thunar-preferences-dialog.c:500
+#: ../thunar/thunar-preferences-dialog.c:573
 msgid "Ask everytime"
 msgstr "demander tout le temps"
 
-#: ../thunar/thunar-preferences-dialog.c:501
+#: ../thunar/thunar-preferences-dialog.c:574
 msgid "Apply to Folder Only"
 msgstr "appliquer au dossier uniquement"
 
-#: ../thunar/thunar-preferences-dialog.c:502
+#: ../thunar/thunar-preferences-dialog.c:575
 msgid "Apply to Folder and Contents"
 msgstr "appliquer au dossier et son contenu"
 
@@ -1543,7 +1593,7 @@ msgstr "Emblèmes"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:781
-#: ../thunar/thunar-standard-view.c:2283
+#: ../thunar/thunar-standard-view.c:2284
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Échec au changement de nom de \"%s\""
@@ -1786,11 +1836,6 @@ msgstr[1] "%u éléments, totalisant %s"
 msgid "Folder Context Menu"
 msgstr "Menu contextuel de dossier"
 
-#. append the "Create Folder" menu action
-#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
-msgid "Create _Folder..."
-msgstr "Création d'un _dossier..."
-
 #: ../thunar/thunar-standard-view.c:307
 msgid "Create an empty folder within the current folder"
 msgstr "Crée un dossier vide dans le dossier courant"
@@ -1851,7 +1896,7 @@ msgstr "Sélectionner tous les fichiers qui correspondent à un certain motif"
 msgid "Du_plicate"
 msgstr "Du_pliquer"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3250
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3251
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "C_réer un lien"
@@ -1870,35 +1915,26 @@ msgstr "Renommer le fichier sélectionné"
 msgid "Create _Document"
 msgstr "Créer un _document"
 
-#: ../thunar/thunar-standard-view.c:1224
+#: ../thunar/thunar-standard-view.c:1225
 msgid "Loading folder contents..."
 msgstr "Chargement du contenu du dossier..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1720
+#: ../thunar/thunar-standard-view.c:1721
 msgid "New Empty File"
 msgstr "Nouveau fichier vide"
 
-#: ../thunar/thunar-standard-view.c:1720
+#: ../thunar/thunar-standard-view.c:1721
 msgid "New Empty File..."
 msgstr "Nouveau fichier vide..."
 
-#. ask the user to enter a name for the new folder
-#: ../thunar/thunar-standard-view.c:1771 ../thunar/thunar-tree-view.c:1348
-msgid "New Folder"
-msgstr "Nouveau dossier"
-
-#: ../thunar/thunar-standard-view.c:1771 ../thunar/thunar-tree-view.c:1348
-msgid "Create New Folder"
-msgstr "Créer un nouveau dossier"
-
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1820
+#: ../thunar/thunar-standard-view.c:1821
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Créer un document avec le modèle \"%s\""
 
-#: ../thunar/thunar-standard-view.c:1971
+#: ../thunar/thunar-standard-view.c:1972
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1907,7 +1943,7 @@ msgstr ""
 "Êtes-vous certain que vous voulez\n"
 "effacer \"%s\" définitivement ?"
 
-#: ../thunar/thunar-standard-view.c:1976
+#: ../thunar/thunar-standard-view.c:1977
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -1922,34 +1958,34 @@ msgstr[1] ""
 "Êtes-vous certain de vouloir effacer de manière\n"
 "permanente les %u fichiers sélectionnés ?"
 
-#: ../thunar/thunar-standard-view.c:1998
+#: ../thunar/thunar-standard-view.c:1999
 msgid "If you delete a file, it is permanently lost."
 msgstr "Si vous supprimez ce fichier, il sera définitivement perdu."
 
-#: ../thunar/thunar-standard-view.c:2063
+#: ../thunar/thunar-standard-view.c:2064
 msgid "Select by Pattern"
 msgstr "Sélectionner par motif"
 
-#: ../thunar/thunar-standard-view.c:2069
+#: ../thunar/thunar-standard-view.c:2070
 msgid "_Select"
 msgstr "_Sélectionner"
 
-#: ../thunar/thunar-standard-view.c:2078
+#: ../thunar/thunar-standard-view.c:2079
 msgid "_Pattern:"
 msgstr "_Motif :"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2212
+#: ../thunar/thunar-standard-view.c:2213
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Renommer \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2884
+#: ../thunar/thunar-standard-view.c:2885
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Échec à l'ouverture du répertoire \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3210
+#: ../thunar/thunar-standard-view.c:3211
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -1957,7 +1993,7 @@ msgstr[0] ""
 msgstr[1] ""
 "Prépare les fichiers sélectionnés à être déplacé par la commande Coller"
 
-#: ../thunar/thunar-standard-view.c:3218
+#: ../thunar/thunar-standard-view.c:3219
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -1965,19 +2001,19 @@ msgstr[0] ""
 msgstr[1] ""
 "Préparer les fichiers sélectionnés à être copiés par une commande Coller"
 
-#: ../thunar/thunar-standard-view.c:3229
+#: ../thunar/thunar-standard-view.c:3230
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Supprime définitivement le fichier sélectionné"
 msgstr[1] "Supprime définitivement les fichiers sélectionnés"
 
-#: ../thunar/thunar-standard-view.c:3243
+#: ../thunar/thunar-standard-view.c:3244
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplique le fichier sélectionné"
 msgstr[1] "Duplique les fichiers sélectionnés"
 
-#: ../thunar/thunar-standard-view.c:3252
+#: ../thunar/thunar-standard-view.c:3253
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Créer un lien symbolique pour chaque fichier sélectionné"

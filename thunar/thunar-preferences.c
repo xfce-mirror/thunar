@@ -73,6 +73,7 @@ enum
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
   PROP_MISC_SHOW_THUMBNAILS,
   PROP_MISC_SINGLE_CLICK,
+  PROP_MISC_SINGLE_CLICK_TIMEOUT,
   PROP_MISC_TEXT_BESIDE_ICONS,
   PROP_SHORTCUTS_ICON_EMBLEMS,
   PROP_SHORTCUTS_ICON_SIZE,
@@ -510,6 +511,22 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          "misc-single-click",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-single-click-timeout:
+   *
+   * If single-click mode is enabled this is the amount of time
+   * in milliseconds after which the item under the mouse cursor
+   * will be selected automatically. A value of %0 disables the
+   * automatic selection.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_SINGLE_CLICK_TIMEOUT,
+                                   g_param_spec_uint ("misc-single-click-timeout",
+                                                      "misc-single-click-timeout",
+                                                      "misc-single-click-timeout",
+                                                      0u, G_MAXUINT, 500u,
+                                                      EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:misc-text-beside-icons:

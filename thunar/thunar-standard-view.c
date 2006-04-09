@@ -643,8 +643,9 @@ thunar_standard_view_constructor (GType                  type,
    */
   g_object_set (G_OBJECT (view), "model", standard_view->model, NULL);
 
-  /* apply the single-click mode to the view */
+  /* apply the single-click settings to the view */
   exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click", G_OBJECT (view), "single-click");
+  exo_binding_new (G_OBJECT (standard_view->preferences), "misc-single-click-timeout", G_OBJECT (view), "single-click-timeout");
 
   /* apply the default sort column and sort order */
   g_object_get (G_OBJECT (standard_view->preferences), "last-sort-column", &sort_column, "last-sort-order", &sort_order, NULL);
