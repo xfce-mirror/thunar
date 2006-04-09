@@ -1,5 +1,11 @@
 2006-04-09	Benedikt Meurer <benny@xfce.org>
 
+	* icons/Makefile.am: Be sure to run gtk-update-icon-cache after
+	  installing new icons into the hicolor icon theme (skipped if $DESTDIR
+	  is set).
+
+2006-04-09	Benedikt Meurer <benny@xfce.org>
+
 	* docs/README.thunarrc, thunar/thunar-preferences.c: Add new option
 	  "MiscSingleClickTimeout", which specifies the delay after which
 	  items are automatically selected in single-click mode.
