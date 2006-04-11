@@ -326,13 +326,14 @@ thunar_vfs_deep_count_job_status_ready (ThunarVfsDeepCountJob *deep_count_job)
   GTimeVal current_time;
 
   /* check if we should update (at most every 128 files, but not more than fourth per second) */
-  if (((deep_count_job->unreadable_directory_count + deep_count_job->directory_count + deep_count_job->file_count)) % 128)
+  if (((deep_count_job->unreadable_directory_count + deep_count_job->directory_count + deep_count_job->file_count) % 128) == 0)
     {
       /* determine the current time */
       g_get_current_time (&current_time);
 
       /* check if more than 250ms elapsed since the last "status-ready" */
-      if (((current_time.tv_sec - deep_count_job->last_time.tv_sec) * 1000 + (current_time.tv_usec - deep_count_job->last_time.tv_usec) / 1000) >= 250)
+      if (((current_time.tv_sec - deep_count_job->last_time.tv_sec) * 1000ull
+            + (current_time.tv_usec - deep_count_job->last_time.tv_usec) / 1000ull) >= 250ull)
         {
           /* remember the current time */
           deep_count_job->last_time = current_time;

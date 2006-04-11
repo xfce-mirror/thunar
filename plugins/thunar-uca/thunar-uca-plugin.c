@@ -39,7 +39,8 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
   const gchar *mismatch;
 
   /* verify that the thunarx versions are compatible */
-  mismatch = thunarx_check_version (THUNARX_MAJOR_VERSION, THUNARX_MINOR_VERSION, THUNARX_MICRO_VERSION);   if (G_UNLIKELY (mismatch != NULL))
+  mismatch = thunarx_check_version (THUNARX_MAJOR_VERSION, THUNARX_MINOR_VERSION, THUNARX_MICRO_VERSION);
+  if (G_UNLIKELY (mismatch != NULL))
     {
       g_warning ("Version mismatch: %s", mismatch);
       return;

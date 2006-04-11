@@ -81,6 +81,7 @@
 
 
 static ThunarVfsMimeDatabase *mime_database;
+static ThunarVfsMimeInfo     *mime_application_octet_stream;
 static ThunarVfsMimeInfo     *mime_application_x_shellscript;
 static ThunarVfsMimeInfo     *mime_application_x_executable;
 static ThunarVfsMimeInfo     *mime_application_x_desktop;
@@ -697,6 +698,7 @@ _thunar_vfs_info_init (void)
   mime_application_x_desktop = thunar_vfs_mime_database_get_info (mime_database, "application/x-desktop");
   mime_application_x_executable = thunar_vfs_mime_database_get_info (mime_database, "application/x-executable");
   mime_application_x_shellscript = thunar_vfs_mime_database_get_info (mime_database, "application/x-shellscript");
+  mime_application_octet_stream = thunar_vfs_mime_database_get_info (mime_database, "application/octet-stream");
 }
 
 
@@ -711,6 +713,7 @@ void
 _thunar_vfs_info_shutdown (void)
 {
   /* release the mime type references */
+  thunar_vfs_mime_info_unref (mime_application_octet_stream);
   thunar_vfs_mime_info_unref (mime_application_x_shellscript);
   thunar_vfs_mime_info_unref (mime_application_x_executable);
   thunar_vfs_mime_info_unref (mime_application_x_desktop);
@@ -737,16 +740,17 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
                                const gchar   *absolute_path,
                                GError       **error)
 {
-  ThunarVfsInfo *info;
-  const guchar  *s;
-  const gchar   *name;
-  const gchar   *str;
-  struct stat    lsb;
-  struct stat    sb;
-  XfceRc        *rc;
-  GList         *mime_infos;
-  GList         *lp;
-  gchar         *p;
+  ThunarVfsMimeInfo *fake_mime_info;
+  ThunarVfsInfo     *info;
+  const guchar      *s;
+  const gchar       *name;
+  const gchar       *str;
+  struct stat        lsb;
+  struct stat        sb;
+  XfceRc            *rc;
+  GList             *mime_infos;
+  GList             *lp;
+  gchar             *p;
 
   g_return_val_if_fail (g_path_is_absolute (absolute_path), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -921,18 +925,6 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
                     }
                 }
 
-              /* check if we have a valid name info */
-              str = xfce_rc_read_entry (rc, "Name", NULL);
-              if (G_LIKELY (str != NULL && *str != '\0'))
-                {
-                  /* release the previous display name */
-                  if (G_UNLIKELY (info->display_name != thunar_vfs_path_get_name (info->path)))
-                    g_free (info->display_name);
-
-                  /* use the name specified by the .desktop file as display name */
-                  info->display_name = g_strdup (str);
-                }
-
               /* determine the type of the .desktop file */
               str = xfce_rc_read_entry_untranslated (rc, "Type", "Application");
 
@@ -949,6 +941,52 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
                   && xfce_rc_read_entry (rc, "URL", NULL) != NULL)
                 {
                   info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
+                }
+
+              /* check if we have a valid name info */
+              str = xfce_rc_read_entry (rc, "Name", NULL);
+              if (G_LIKELY (str != NULL && *str != '\0' && g_utf8_validate (str, -1, NULL)))
+                {
+                  /* check if we declared the file as executable */
+                  if ((info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE) != 0)
+                    {
+                      /* check if the file tries to look like a regular document (i.e.
+                       * a display name of 'file.png'), maybe a virus or other malware.
+                       */
+                      fake_mime_info = thunar_vfs_mime_database_get_info_for_name (mime_database, str);
+                      if (fake_mime_info != mime_application_octet_stream && fake_mime_info != info->mime_info)
+                        {
+                          /* release the previous mime info */
+                          thunar_vfs_mime_info_unref (info->mime_info);
+
+                          /* set the MIME type of the file to 'x-thunar/suspected-malware' to indicate that
+                           * it's not safe to trust the file content and execute it or otherwise operate on it.
+                           */
+                          info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "x-thunar/suspected-malware");
+
+                          /* reset the executable flag */
+                          info->flags &= ~THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
+
+                          /* reset the custom icon */
+                          g_free (info->custom_icon);
+                          info->custom_icon = NULL;
+
+                          /* reset the name str, so we display the real file name */
+                          str = NULL;
+                        }
+                      thunar_vfs_mime_info_unref (fake_mime_info);
+                    }
+
+                  /* check if the name str wasn't reset */
+                  if (G_LIKELY (str != NULL))
+                    {
+                      /* release the previous display name */
+                      if (G_UNLIKELY (info->display_name != thunar_vfs_path_get_name (info->path)))
+                        g_free (info->display_name);
+
+                      /* use the name specified by the .desktop file as display name */
+                      info->display_name = g_strdup (str);
+                    }
                 }
 
               /* close the file */
