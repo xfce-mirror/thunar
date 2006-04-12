@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-11 20:15+0900\n"
+"POT-Creation-Date: 2006-04-12 22:10+0200\n"
 "PO-Revision-Date: 2006-03-25 18:02+0100\n"
 "Last-Translator: Vincent Tunru <imnotb@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -107,7 +107,7 @@ msgstr "Onbekende eigenaar"
 # Unknown word "Exec"
 # Obekend woord: "Exec"
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:377
+#: ../thunar-vfs/thunar-vfs-info.c:378
 #, fuzzy
 msgid "No Exec field specified"
 msgstr "Geen <Exec> veld geselecteerd"
@@ -115,28 +115,28 @@ msgstr "Geen <Exec> veld geselecteerd"
 # Unknown word "Exec"
 # Obekend woord: "Exec"
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:396
+#: ../thunar-vfs/thunar-vfs-info.c:397
 #, fuzzy
 msgid "No URL field specified"
 msgstr "Geen <Exec> veld geselecteerd"
 
-#: ../thunar-vfs/thunar-vfs-info.c:401 ../thunar-vfs/thunar-vfs-info.c:526
+#: ../thunar-vfs/thunar-vfs-info.c:402 ../thunar-vfs/thunar-vfs-info.c:527
 msgid "Invalid desktop file"
 msgstr "Ongeldig bureublad-bestand"
 
-#: ../thunar-vfs/thunar-vfs-info.c:409
+#: ../thunar-vfs/thunar-vfs-info.c:410
 #, fuzzy
 msgid "Failed to parse file"
 msgstr "Verwerken van bestand niet mogelijk"
 
-#: ../thunar-vfs/thunar-vfs-info.c:504
+#: ../thunar-vfs/thunar-vfs-info.c:505
 msgid "Invalid file name"
 msgstr "Ongeldige bestandsnaam"
 
 # Unknown word "stat"
 # Obekend woord: "stat"
 #. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
-#: ../thunar-vfs/thunar-vfs-info.c:758
+#: ../thunar-vfs/thunar-vfs-info.c:762
 #, fuzzy, c-format
 msgid "Failed to stat file \"%s\": %s"
 msgstr "Het <stat> van bestand `%s' is mislukt: %s"
@@ -687,9 +687,14 @@ msgstr ""
 msgid "Automatically _expand columns as needed"
 msgstr "Kolommen automatisch _uitklappen wanneer nodig"
 
+#. reset page title
+#. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:738
 #: ../thunar/thunar-list-model.c:767
 #: ../thunar/thunar-permissions-chooser.c:270
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:286
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:287
 msgid "Unknown"
 msgstr "Onbekend"
 
@@ -2460,6 +2465,149 @@ msgstr "Fout bij het openen van de sjablonen map"
 #, fuzzy
 msgid "The user visible name of the renamer"
 msgstr "Naam van mime <handler>"
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:158
+#, fuzzy
+msgid "Description:"
+msgstr "_Beschrijving:"
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:165
+msgid ""
+"The generic name of the entry, for example \"Web Browser\" in case of "
+"Firefox."
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
+#, fuzzy
+msgid "Command:"
+msgstr "_Commando:"
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:188
+msgid "The program to execute, possibly with arguments."
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:203
+msgid "URL:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:210
+msgid "The URL to access."
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:225
+#, fuzzy
+msgid "Comment:"
+msgstr "_Commando:"
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:232
+msgid ""
+"Tooltip for the entry, for example \"View sites on the Internet\" in case of "
+"Firefox. Should not be redundant with the name or the description."
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
+msgid "Options:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
+msgid "Use _startup notification"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:259
+msgid ""
+"Select this option to enable startup notification when the command is run "
+"from the file manager or the menu. Not every application supports startup "
+"notification."
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:266
+msgid "Run in _terminal"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:267
+msgid "Select this option to run the command in a terminal window."
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:342
+msgid "Launcher"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:344
+msgid "Link"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-desktop-page.c:560
+#, fuzzy, c-format
+msgid "Failed to save \"%s\"."
+msgstr "Het verwijderen van `%s' is mislukt: %s"
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:49
+msgid "Date Taken:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:50
+msgid "Camera Brand:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:51
+msgid "Camera Model:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:52
+msgid "Exposure Time:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:53
+#, fuzzy
+msgid "Exposure Program:"
+msgstr "Programma:"
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:54
+msgid "Aperture Value:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:55
+msgid "Metering Mode:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:56
+msgid "Flash Fired:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:57
+msgid "Focal Length:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:58
+msgid "Shutter Speed:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:59
+msgid "Software:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:115
+#, fuzzy
+msgid "Image"
+msgstr "Afbeeldingen"
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:130
+#, fuzzy
+msgid "Image Type:"
+msgstr "Afbeeldingen"
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:150
+#, fuzzy
+msgid "Image Size:"
+msgstr "Afbeeldingen"
+
+#. update the "Image Size" label
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:244
+#, c-format
+msgid "%dx%d pixel"
+msgid_plural "%dx%d pixels"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:119
 msgid "Con_vert to:"

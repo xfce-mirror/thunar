@@ -8,6 +8,25 @@ dnl
 
 
 
+dnl # BM_THUNAR_PLUGIN_APR()
+dnl #
+dnl # Check whether the "Advanced Properties" plugin
+dnl # should be built and installed.
+dnl #
+AC_DEFUN([BM_THUNAR_PLUGIN_APR],
+[
+AC_ARG_ENABLE([apr-plugin], [AC_HELP_STRING([--disable-apr-plugin], [Don't build the thunar-apr plugin, see plugins/thunar-apr/README])],
+  [ac_bm_thunar_plugin_apr=$enable_val], [ac_bm_thunar_plugin_apr=yes])
+AC_MSG_CHECKING([whether to build the thunar-apr plugin])
+AM_CONDITIONAL([THUNAR_PLUGIN_APR], [test x"$ac_bm_thunar_plugin_apr" = x"yes"])
+AC_MSG_RESULT([$ac_bm_thunar_plugin_apr])
+
+dnl Check for libexif (for the "Image" properties page)
+XDT_CHECK_OPTIONAL_PACKAGE([EXIF], [libexif], [0.6.0], [exif], [Exif support])
+])
+
+
+
 dnl # BM_THUNAR_PLUGIN_SBR()
 dnl #
 dnl # Check whether the "Simple Builtin Renamers" plugin
