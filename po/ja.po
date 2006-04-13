@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-04-12 22:10+0200\n"
-"PO-Revision-Date: 2006-04-08 21:38+0900\n"
+"PO-Revision-Date: 2006-04-13 22:43+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -1087,9 +1087,9 @@ msgstr "「%s」を新規ウィンドウで開く"
 
 #. add the "Create Folder" action
 #: ../thunar/thunar-location-buttons.c:1297
-#, fuzzy, c-format
+#, c-format
 msgid "Create a new folder in \"%s\""
-msgstr "新規フォルダを作成します。"
+msgstr "「%s」に新規フォルダを作成"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:1298
@@ -1478,6 +1478,8 @@ msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr ""
+"マウスがアイテム上にある時\n"
+"選択状態になるまでの時間(_E):"
 
 #: ../thunar/thunar-preferences-dialog.c:491
 msgid ""
@@ -1487,18 +1489,25 @@ msgid ""
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
 msgstr ""
+"シングルクリックでアイテムを有効にする場合、マウスをアイテム上に移動するとそ"
+"のアイテムが自動的に有効になります。このアイテムが選択状態になるまでの遅延時"
+"間をここで指定します。スライダーを左端に移動するとこの機能を無効にすることが"
+"できますので、アイテムを有効にせずただ選択したいのでしたら、そうしてくださ"
+"い。"
 
 #: ../thunar/thunar-preferences-dialog.c:515
 msgid "Disabled"
-msgstr ""
+msgstr "無効"
 
+# XXX: how long does it take in millisecond?
 #: ../thunar/thunar-preferences-dialog.c:521
 msgid "Medium"
-msgstr ""
+msgstr "中間"
 
+# XXX: how long does it take in millisecond?
 #: ../thunar/thunar-preferences-dialog.c:527
 msgid "Long"
-msgstr ""
+msgstr "長い"
 
 #: ../thunar/thunar-preferences-dialog.c:533
 msgid "_Double click to activate items"
@@ -2365,51 +2374,52 @@ msgid "The user visible name of the renamer"
 msgstr "リネーム・プラグインの表示名です。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:158
-#, fuzzy
 msgid "Description:"
-msgstr "説明(_D):"
+msgstr "説明:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:165
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
 msgstr ""
+"エントリーの一般的な名称です、例えば Firefox なら「ウェブブラウザー」になりま"
+"す。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
-#, fuzzy
 msgid "Command:"
-msgstr "コマンド(_C):"
+msgstr "コマンド:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:188
 msgid "The program to execute, possibly with arguments."
-msgstr ""
+msgstr "実行するコマンドです、引数が付くこともあります。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:203
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:210
 msgid "The URL to access."
-msgstr ""
+msgstr "アクセスするURLです。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:225
-#, fuzzy
 msgid "Comment:"
-msgstr "コマンド(_C):"
+msgstr "コメント:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:232
 msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of "
 "Firefox. Should not be redundant with the name or the description."
 msgstr ""
+"エントリーのツールチップです、例えば Firefox なら「インターネットのサイトを表"
+"示します」になります。名前や説明と重なる内容は入れません。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
 msgid "Options:"
-msgstr ""
+msgstr "オプション:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
 msgid "Use _startup notification"
-msgstr ""
+msgstr "起動通知を行う(_S)"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:259
 msgid ""
@@ -2417,95 +2427,94 @@ msgid ""
 "from the file manager or the menu. Not every application supports startup "
 "notification."
 msgstr ""
+"このオプションを選択すると、ファイルマネージャーやメニューからコマンドが実行"
+"される時に起動通知を行います。全てのアプリケーションが起動通知に対応している"
+"わけではありません。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:266
 msgid "Run in _terminal"
-msgstr ""
+msgstr "ターミナルで実行する(_T)"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:267
 msgid "Select this option to run the command in a terminal window."
 msgstr ""
+"このオプションを選択すると、コマンドがターミナルウィンドウで実行されます。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:342
 msgid "Launcher"
-msgstr ""
+msgstr "ランチャー"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:344
 msgid "Link"
-msgstr ""
+msgstr "リンク"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:560
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to save \"%s\"."
-msgstr "「%s」の削除に失敗しました。"
+msgstr "「%s」の保存に失敗しました。"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:49
 msgid "Date Taken:"
-msgstr ""
+msgstr "撮影日時:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:50
 msgid "Camera Brand:"
-msgstr ""
+msgstr "メーカー名:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:51
 msgid "Camera Model:"
-msgstr ""
+msgstr "型式:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:52
 msgid "Exposure Time:"
-msgstr ""
+msgstr "露出時間:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:53
-#, fuzzy
 msgid "Exposure Program:"
-msgstr "プログラム:"
+msgstr "露出プログラム:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:54
 msgid "Aperture Value:"
-msgstr ""
+msgstr "Ｆ値/絞り:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:55
 msgid "Metering Mode:"
-msgstr ""
+msgstr "自動露出の測光モード:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:56
 msgid "Flash Fired:"
-msgstr ""
+msgstr "フラッシュ使用:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:57
 msgid "Focal Length:"
-msgstr ""
+msgstr "焦点距離:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:58
 msgid "Shutter Speed:"
-msgstr ""
+msgstr "シャッター速度:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:59
 msgid "Software:"
-msgstr ""
+msgstr "ソフトウェア:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:115
-#, fuzzy
 msgid "Image"
-msgstr "画像ファイル"
+msgstr "画像"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:130
-#, fuzzy
 msgid "Image Type:"
-msgstr "画像ファイル"
+msgstr "画像型式:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:150
-#, fuzzy
 msgid "Image Size:"
-msgstr "画像ファイル"
+msgstr "画像サイズ:"
 
 #. update the "Image Size" label
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:244
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%dx%d ピクセル"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:119
 msgid "Con_vert to:"
