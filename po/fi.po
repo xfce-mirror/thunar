@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-04-12 22:10+0200\n"
-"PO-Revision-Date: 2006-04-10 23:11+0300\n"
+"PO-Revision-Date: 2006-04-13 14:42+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -375,7 +375,7 @@ msgstr "Erikoistiedoston \"%s\" kopioiminen epäonnistui"
 
 #: ../thunar/main.c:50
 msgid "Open the bulk rename dialog"
-msgstr "Avaa massanimeämisdialogi"
+msgstr "Avaa joukkonimeämisdialogi"
 
 #: ../thunar/main.c:52
 msgid "Run in daemon mode"
@@ -809,7 +809,8 @@ msgstr "Siirry seuraavaan hakemistoon"
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
-"Varmistuskuvaketta ei voi ladata kohteesta \"%s\" (%s). Tarkista asennus!"
+"Varmistuskuvakeen lataaminen kohteesta \"%s\" epäonnistui (%s). Tarkista "
+"asennus!"
 
 #: ../thunar/thunar-icon-view.c:131
 msgid "Arran_ge Items"
@@ -1644,7 +1645,7 @@ msgstr "_Tietoja"
 
 #: ../thunar/thunar-renamer-dialog.c:178
 msgid "Display information about Thunar Bulk Rename"
-msgstr "Näytä tietoja Thunarin massanimeäjästä"
+msgstr "Näytä tietoja Thunarin joukkonimeäjästä"
 
 #: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:308
 msgid "_Properties..."
@@ -1714,14 +1715,14 @@ msgstr "Videotiedostot"
 #: ../thunar/thunar-renamer-dialog.c:1247
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
-msgstr "Massanimeäjä"
+msgstr "Joukkonimeäjä"
 
 #: ../thunar/thunar-renamer-dialog.c:1248
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr ""
-"Thunarin massanimeäjä on tehokas ja laajennettavissa\n"
+"Thunarin joukkonimeäjä on tehokas ja laajennettavissa\n"
 "oleva työkalu useiden tiedostojen uudelleennimeämiseen."
 
 #: ../thunar/thunar-renamer-dialog.c:1556
@@ -1739,7 +1740,7 @@ msgstr[1] "Poista valitut tiedostot nimettävien tiedostojen listalta"
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1709
 msgid "Bulk Rename - Rename Multiple Files"
-msgstr "Massanimeäjä - nimeä useita tiedostoja"
+msgstr "Joukkonimeäjä - nimeä useita tiedostoja"
 
 #: ../thunar/thunar-renamer-progress.c:213
 #, c-format
@@ -2362,51 +2363,51 @@ msgid "The user visible name of the renamer"
 msgstr "Nimeäjän käyttäjälle näkyvä nimi"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:158
-#, fuzzy
 msgid "Description:"
-msgstr "_Kuvaus:"
+msgstr "Kuvaus:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:165
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
 msgstr ""
+"Kohteen yleinen nimi, esimerkiksi Firefoxille tämä olisi \"Web-selain\"."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
-#, fuzzy
 msgid "Command:"
-msgstr "_Komento:"
+msgstr "Komento:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:188
 msgid "The program to execute, possibly with arguments."
-msgstr ""
+msgstr "Suoritettava sovellus, mahdollisesti määritteineen."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:203
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:210
 msgid "The URL to access."
-msgstr ""
+msgstr "Avattava URL."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:225
-#, fuzzy
 msgid "Comment:"
-msgstr "_Komento:"
+msgstr "Kommentti:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:232
 msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of "
 "Firefox. Should not be redundant with the name or the description."
 msgstr ""
+"Kohteen työkaluvihje, esimerkiksi \"Selaa Internetin web-sivuja\" "
+"Firefoxille. Ei pitäisi toistaa nimi- tai kuvauskentän sisältöä."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
 msgid "Options:"
-msgstr ""
+msgstr "Asetukset:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
 msgid "Use _startup notification"
-msgstr ""
+msgstr "Käytä _käynnistyksen huomautusta"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:259
 msgid ""
@@ -2414,95 +2415,94 @@ msgid ""
 "from the file manager or the menu. Not every application supports startup "
 "notification."
 msgstr ""
+"Valitse tämä ottaaksesi käyttöön käynnistyksen huomautuksen, kun komento "
+"suoritetaan tiedostonhallinnasta tai valikosta. Kaikki sovellukset eivät tue "
+"käynnistyksen huomautusta."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:266
 msgid "Run in _terminal"
-msgstr ""
+msgstr "Suorita _päätteessä"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:267
 msgid "Select this option to run the command in a terminal window."
-msgstr ""
+msgstr "Valitse tämä suorittaaksesi komennon pääteikkunassa."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:342
 msgid "Launcher"
-msgstr ""
+msgstr "Käynnistin"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:344
 msgid "Link"
-msgstr ""
+msgstr "Linkki"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:560
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to save \"%s\"."
-msgstr "Kohdetta \"%s\" ei voi poistaa"
+msgstr "Kohteen \"%s\" tallennus epäonnistui."
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:49
 msgid "Date Taken:"
-msgstr ""
+msgstr "Kuvattu:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:50
 msgid "Camera Brand:"
-msgstr ""
+msgstr "Kameran merkki:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:51
 msgid "Camera Model:"
-msgstr ""
+msgstr "Kameran malli:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:52
 msgid "Exposure Time:"
-msgstr ""
+msgstr "Valotusaika:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:53
-#, fuzzy
 msgid "Exposure Program:"
-msgstr "Sovellus:"
+msgstr "Valotusohjelma:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:54
 msgid "Aperture Value:"
-msgstr ""
+msgstr "Aukkoarvo:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:55
 msgid "Metering Mode:"
-msgstr ""
+msgstr "Valon mittaustapa:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:56
 msgid "Flash Fired:"
-msgstr ""
+msgstr "Salama:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:57
 msgid "Focal Length:"
-msgstr ""
+msgstr "Polttoväli:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:58
 msgid "Shutter Speed:"
-msgstr ""
+msgstr "Sulkijan nopeus:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:59
 msgid "Software:"
-msgstr ""
+msgstr "Ohjelmisto:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:115
-#, fuzzy
 msgid "Image"
-msgstr "Kuvatiedostot"
+msgstr "Kuva"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:130
-#, fuzzy
 msgid "Image Type:"
-msgstr "Kuvatiedostot"
+msgstr "Kuvatyyppi:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:150
-#, fuzzy
 msgid "Image Size:"
-msgstr "Kuvatiedostot"
+msgstr "Kuvan koko:"
 
 #. update the "Image Size" label
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:244
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%dx%d kuvapiste"
+msgstr[1] "%dx%d kuvapistettä"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:119
 msgid "Con_vert to:"
@@ -2958,33 +2958,3 @@ msgstr "Avaa hakemisto"
 #: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open the specified folders in Thunar"
 msgstr "Avaa valitut hakemistot Thunarissa"
-
-#~ msgid "Failed to open /proc/mounts: %s"
-#~ msgstr "Kohteen /proc/mounts avaaminen epäonnistui: %s"
-
-#~ msgid "Paste files from the clipboard into \"%s\""
-#~ msgstr "Liitä tiedostot leikepöydältä kohteeseen \"%s\""
-
-#~ msgid "_Paste Files Here"
-#~ msgstr "_Liitä tiedostot tähän"
-
-#~ msgid "Shortcut _Icon Size:"
-#~ msgstr "Kirjanmerkki_kuvakkeiden koko"
-
-#~ msgid "%s (%"
-#~ msgstr "%s (%"
-
-#~ msgid "_Copy Files"
-#~ msgstr "_Kopioi tiedostot"
-
-#~ msgid "Copy the selected files"
-#~ msgstr "Kopioi valitut tiedostot"
-
-#~ msgid "Cu_t Files"
-#~ msgstr "L_eikkaa tiedostot"
-
-#~ msgid "Cut the selected files"
-#~ msgstr "Leikkaa valitut tiedostot"
-
-#~ msgid "_Delete Files"
-#~ msgstr "_Poista tiedostot"
