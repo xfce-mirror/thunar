@@ -26,6 +26,7 @@
 #include <exo/exo.h>
 
 #include <thunar/thunar-abstract-dialog.h>
+#include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-icon-view.h>
@@ -138,8 +139,10 @@ transform_view_string_to_index (const GValue *src_value,
     g_value_set_int (dst_value, 0);
   else if (type == THUNAR_TYPE_DETAILS_VIEW)
     g_value_set_int (dst_value, 1);
-  else
+  else if (type == THUNAR_TYPE_COMPACT_VIEW)
     g_value_set_int (dst_value, 2);
+  else
+    g_value_set_int (dst_value, 3);
 
   return TRUE;
 }
@@ -159,6 +162,10 @@ transform_view_index_to_string (const GValue *src_value,
 
     case 1:
       g_value_set_static_string (dst_value, g_type_name (THUNAR_TYPE_DETAILS_VIEW));
+      break;
+
+    case 2:
+      g_value_set_static_string (dst_value, g_type_name (THUNAR_TYPE_COMPACT_VIEW));
       break;
 
     default:
@@ -265,6 +272,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   combo = gtk_combo_box_new_text ();
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Icon View"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Detailed List View"));
+  gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Compact List View"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Last Active View"));
 #if !GTK_CHECK_VERSION(2,9,0)
   g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
