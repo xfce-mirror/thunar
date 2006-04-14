@@ -1,5 +1,11 @@
 2006-04-14	Benedikt Meurer <benny@xfce.org>
 
+	* plugins/thunar-apr/thunar-apr-desktop-page.c
+	  (thunar_apr_desktop_page_save): Fix invalid parameter to fopen() in
+	  GTK+ 2.6 codepath.
+
+2006-04-14	Benedikt Meurer <benny@xfce.org>
+
 	* po/Thunar.pot, po/*.po: Merge new strings.
 	* po/de.po: Update german translations.
 

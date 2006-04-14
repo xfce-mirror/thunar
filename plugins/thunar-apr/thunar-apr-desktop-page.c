@@ -530,7 +530,7 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
 #if GLIB_CHECK_VERSION(2,8,0)
           g_file_set_contents (filename, data, data_length, &error);
 #else
-          fp = fopen (src_path, "w");
+          fp = fopen (filename, "w");
           if (G_LIKELY (fp != NULL))
             {
               fwrite (data, data_length, 1, fp);
