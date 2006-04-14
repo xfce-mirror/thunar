@@ -25,6 +25,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
+#include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-shortcuts-pane.h>
@@ -585,6 +586,13 @@ thunar_window_init (ThunarWindow *window)
 
   radio_action = gtk_radio_action_new ("view-as-detailed-list", _("View as _Detailed List"), _("Display folder content in a detailed list view"),
                                        NULL, THUNAR_TYPE_DETAILS_VIEW);
+  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
+  gtk_radio_action_set_group (radio_action, group);
+  group = gtk_radio_action_get_group (radio_action);
+  g_object_unref (G_OBJECT (radio_action));
+
+  radio_action = gtk_radio_action_new ("view-as-compact-list", _("View as _Compact List"), _("Display folder content in a compact list view"),
+                                       NULL, THUNAR_TYPE_COMPACT_VIEW);
   gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);

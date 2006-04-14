@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +20,7 @@
 #ifndef __THUNAR_ICON_VIEW_H__
 #define __THUNAR_ICON_VIEW_H__
 
-#include <thunar/thunar-standard-view.h>
+#include <thunar/thunar-abstract-icon-view.h>
 
 G_BEGIN_DECLS;
 
@@ -34,9 +34,7 @@ typedef struct _ThunarIconView      ThunarIconView;
 #define THUNAR_IS_ICON_VIEW_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((obj), THUNAR_TYPE_ICON_VIEW))
 #define THUNAR_ICON_VIEW_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_ICON_VIEW, ThunarIconViewClass))
 
-GType      thunar_icon_view_get_type        (void) G_GNUC_CONST;
-
-GtkWidget *thunar_icon_view_new             (void);
+GType thunar_icon_view_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

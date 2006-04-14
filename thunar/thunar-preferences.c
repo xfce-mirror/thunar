@@ -50,6 +50,7 @@ enum
 {
   PROP_0,
   PROP_DEFAULT_VIEW,
+  PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
   PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
   PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
   PROP_LAST_DETAILS_VIEW_FIXED_COLUMNS,
@@ -194,6 +195,21 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                         "default-view",
                                                         "void",
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-compact-view-zoom-level:
+   *
+   * The last selected #ThunarZoomLevel for the #ThunarCompactView.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
+                                   g_param_spec_enum ("last-compact-view-zoom-level",
+                                                      "last-compact-view-zoom-level",
+                                                      "last-compact-view-zoom-level",
+                                                      THUNAR_TYPE_ZOOM_LEVEL,
+                                                      THUNAR_ZOOM_LEVEL_SMALLEST,
+                                                      EXO_PARAM_READWRITE));
+
 
   /**
    * ThunarPreferences:last-details-view-column-order:

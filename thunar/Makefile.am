@@ -28,6 +28,9 @@ Thunar_SOURCES =							\
 	main.c								\
 	thunar-abstract-dialog.c					\
 	thunar-abstract-dialog.h					\
+	thunar-abstract-icon-view-ui.h					\
+	thunar-abstract-icon-view.c					\
+	thunar-abstract-icon-view.h					\
 	thunar-application.c						\
 	thunar-application.h						\
 	thunar-chooser-button.c						\
@@ -42,6 +45,8 @@ Thunar_SOURCES =							\
 	thunar-column-editor.h						\
 	thunar-column-model.c						\
 	thunar-column-model.h						\
+	thunar-compact-view.c						\
+	thunar-compact-view.h						\
 	thunar-component.c						\
 	thunar-component.h						\
 	thunar-create-dialog.c						\
@@ -81,7 +86,6 @@ Thunar_SOURCES =							\
 	thunar-icon-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
-	thunar-icon-view-ui.h						\
 	thunar-launcher.c						\
 	thunar-launcher.h						\
 	thunar-launcher-ui.h						\
@@ -226,8 +230,8 @@ CLEANFILES =								\
 DISTCLEANFILES =							\
 	$(thunar_built_sources)						\
 	stamp-thunar-marshal.h						\
+	thunar-abstract-icon-view-ui.h					\
 	thunar-details-view-ui.h					\
-	thunar-icon-view-ui.h						\
 	thunar-launcher-ui.h						\
 	thunar-location-buttons-ui.h					\
 	thunar-shortcuts-pane-ui.h					\
@@ -239,8 +243,8 @@ DISTCLEANFILES =							\
 
 BUILT_SOURCES =								\
 	$(thunar_built_sources)						\
+	thunar-abstract-icon-view-ui.h					\
 	thunar-details-view-ui.h					\
-	thunar-icon-view-ui.h						\
 	thunar-launcher-ui.h						\
 	thunar-location-buttons-ui.h					\
 	thunar-shortcuts-pane-ui.h					\
@@ -261,11 +265,11 @@ thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile
 thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
 	(echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
 
+thunar-abstract-icon-view-ui.h: Makefile $(srcdir)/thunar-abstract-icon-view-ui.xml
+	exo-csource --static --name=thunar_abstract_icon_view_ui $(srcdir)/thunar-abstract-icon-view-ui.xml > thunar-abstract-icon-view-ui.h
+
 thunar-details-view-ui.h: Makefile $(srcdir)/thunar-details-view-ui.xml
 	exo-csource --static --name=thunar_details_view_ui $(srcdir)/thunar-details-view-ui.xml > thunar-details-view-ui.h
-
-thunar-icon-view-ui.h: Makefile $(srcdir)/thunar-icon-view-ui.xml
-	exo-csource --static --name=thunar_icon_view_ui $(srcdir)/thunar-icon-view-ui.xml > thunar-icon-view-ui.h
 
 thunar-launcher-ui.h: Makefile $(srcdir)/thunar-launcher-ui.xml
 	exo-csource --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
@@ -304,9 +308,9 @@ thunar-marshal.c: thunar-marshal.list Makefile
 endif
 
 EXTRA_DIST =								\
+	thunar-abstract-icon-view-ui.xml				\
 	thunar-dbus-service-infos.xml					\
 	thunar-details-view-ui.xml					\
-	thunar-icon-view-ui.xml						\
 	thunar-launcher-ui.xml						\
 	thunar-location-buttons-ui.xml					\
 	thunar-marshal.list						\

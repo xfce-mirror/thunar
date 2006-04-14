@@ -1,3 +1,18 @@
+2006-04-14	Benedikt Meurer <benny@xfce.org>
+
+	* docs/README.thunarrc, thunar/thunar-preferences.c: Add new option
+	  LastCompactViewZoomLevel.
+	* thunar/thunar-abstract-icon-view-ui.xml, thunar/Makefile.am,
+	  thunar/thunar-abstract-icon-view.{c,h}, thunar/thunar-window.c
+	  thunar/thunar-compact-view.{c,h}, thunar/thunar-window-ui.xml,
+	  thunar/thunar-icon-view.{c,h}: Add a "Compact View", which uses
+	  ExoIconView with EXO_ICON_VIEW_LAYOUT_COLS layout mode. Based on
+	  patches from Matt McClinch <mattmcclinch@gmail.com>.
+	* THANKS: Add Matt McClinch.
+	* po/POTFILES.in: Add new files.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-04-12	Benedikt Meurer <benny@xfce.org>
 
 	* plugins/thunar-apr/, acinclude.m4, plugins/Makefile.am,
