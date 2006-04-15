@@ -1,28 +1,12 @@
 Important for Thunar 1.0
 ========================
 
- - Add ThunarVfsFlags, which specifies various flags for the job starters
-   (like thunar_vfs_copy_files, etc.). One important flag would be
-   THUNAR_VFS_FLAG_ERROR_ON_OVERWRITE, which tells the job not to ask the
-   user when the target exists, but to fail directly (the flags could also
-   be part of thunar-vfs-interactive-job.h, as they're only interesting
-   for interactive jobs).
-
- - We need a way to "refresh" folders after a "Cut"-operation with Nautilus.
-   With local folders - with not many files inside - the move is too fast!
-
- - Use better way to handle system flavours than simply (mis)using
-   AC_CONFIG_LINKS(), which is pretty messy for this purpose.
-
  - Check getmntinfo() or getfsstat() for ThunarVfsVolumeManagerBSD, which
    might be faster than several statfs() calls.
 
  - The layouting code for ThunarLocationButtons is still buggy. Problem shows
    with paths that include a very long directory; you cannot scroll to the
    last path component then.
-
- - A design for the ThunarTreePane framework must be developed and later
-   be implemented.
 
  - A design for the ThunarDesktopView module must be developed and later
    be implemented.
