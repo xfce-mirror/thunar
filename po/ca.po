@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-04-14 22:30+0200\n"
-"PO-Revision-Date: 2006-04-08 00:18+0200\n"
+"PO-Revision-Date: 2006-04-15 21:29+0200\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -424,36 +424,32 @@ msgid "Sort By _Name"
 msgstr "Ordena per _nom"
 
 #: ../thunar/thunar-abstract-icon-view.c:119
-#, fuzzy
 msgid "Keep items sorted by their name"
-msgstr "Manté els elements ordenats en columnes segons el nom"
+msgstr "Manté els elements ordenats segons el nom"
 
 #: ../thunar/thunar-abstract-icon-view.c:120
 msgid "Sort By _Size"
 msgstr "Ordena per mida"
 
 #: ../thunar/thunar-abstract-icon-view.c:120
-#, fuzzy
 msgid "Keep items sorted by their size"
-msgstr "Manté l'ordre dels elements per files segons el tamany "
+msgstr "Manté l'ordre dels elements segons el tamany "
 
 #: ../thunar/thunar-abstract-icon-view.c:121
 msgid "Sort By _Type"
 msgstr "Ordena per tipus"
 
 #: ../thunar/thunar-abstract-icon-view.c:121
-#, fuzzy
 msgid "Keep items sorted by their type"
-msgstr "Manté els elements ordenats per files segons el tipus"
+msgstr "Manté els elements ordenats segons el tipus"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
 msgid "Sort By Modification _Date"
 msgstr "Ordena per _data de modificació"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
-#, fuzzy
 msgid "Keep items sorted by their modification date"
-msgstr "Manté els elements ordenats per files segons la data de modificació"
+msgstr "Manté els elements ordenats segons la data de modificació"
 
 #: ../thunar/thunar-abstract-icon-view.c:127
 msgid "_Ascending"
@@ -732,13 +728,12 @@ msgid "Unknown"
 msgstr "Desconegut"
 
 #: ../thunar/thunar-compact-view.c:134
-#, fuzzy
 msgid "Compact directory listing"
-msgstr "Mostra el llistat amb icones"
+msgstr "Mostra el llistat compacte"
 
 #: ../thunar/thunar-compact-view.c:135
 msgid "Compact view"
-msgstr ""
+msgstr "Visualització compacta"
 
 #: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
 msgid "Enter the new name:"
@@ -1098,9 +1093,9 @@ msgstr "Obre \"%s\" a una finestra nova"
 
 #. add the "Create Folder" action
 #: ../thunar/thunar-location-buttons.c:1297
-#, fuzzy, c-format
+#, c-format
 msgid "Create a new folder in \"%s\""
-msgstr "Crea una carpeta nova"
+msgstr "Crea una carpeta nova a \"%s\""
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:1298
@@ -1345,9 +1340,8 @@ msgid "Detailed List View"
 msgstr "Vista de llistat detallat"
 
 #: ../thunar/thunar-preferences-dialog.c:275
-#, fuzzy
 msgid "Compact List View"
-msgstr "Visualitza com un llistat _detallat"
+msgstr "Visualització de llistat compacte"
 
 #: ../thunar/thunar-preferences-dialog.c:276
 msgid "Last Active View"
@@ -1487,6 +1481,8 @@ msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr ""
+"Especifiqueu el r_etard abans de que els elements\n"
+"es seleccionin en posar el cursor sobre ells:"
 
 #: ../thunar/thunar-preferences-dialog.c:499
 msgid ""
@@ -1495,19 +1491,19 @@ msgid ""
 "disable this behavior by moving the slider to the left-most position. This "
 "behavior may be useful when single clicks activate items, and you want only "
 "to select the item without activating it."
-msgstr ""
+msgstr "Quan l'activació amb un clic senzill està activada bastarà deixar el cursor sobre un element i automàticament el seleccionareu després d'un restràs que podeu determinar. Podeu desactivar aquest comportament movent la barra del tot a l'esquerra. Aquest comportament pot ser útil si teniu activat els clics senzills i sols voleu seleccionar els elements sense activar-los."
 
 #: ../thunar/thunar-preferences-dialog.c:523
 msgid "Disabled"
-msgstr ""
+msgstr "Desactivat"
 
 #: ../thunar/thunar-preferences-dialog.c:529
 msgid "Medium"
-msgstr ""
+msgstr "Mitjà"
 
 #: ../thunar/thunar-preferences-dialog.c:535
 msgid "Long"
-msgstr ""
+msgstr "Llarg"
 
 #: ../thunar/thunar-preferences-dialog.c:541
 msgid "_Double click to activate items"
@@ -1643,9 +1639,8 @@ msgid "_Add Files..."
 msgstr "_Afegeix fitxers"
 
 #: ../thunar/thunar-renamer-dialog.c:175
-#, fuzzy
 msgid "Include additional files in the list of files to be renamed"
-msgstr "Inclou al llistat fitxers adicionals se'ls hauria de canviar el nom"
+msgstr "Inclou fitxers adicionals al llistat de fitxers a canviar el nom"
 
 #: ../thunar/thunar-renamer-dialog.c:177
 msgid "Clear"
@@ -1748,11 +1743,10 @@ msgstr[0] "Suprimeix el fitxer"
 msgstr[1] "Suprimeix els fitxers"
 
 #: ../thunar/thunar-renamer-dialog.c:1558
-#, fuzzy
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
-msgstr[0] "Suprimeix el fitxer seleccionat del llistat"
-msgstr[1] "Suprimeix els fitxers seleccionats del llistat"
+msgstr[0] "Suprimeix el fitxer seleccionat del llistat de fitxers a canviar el nom"
+msgstr[1] "Suprimeix els fitxers seleccionats del llistat de fitxers a canviar el nom"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1709
@@ -2114,7 +2108,7 @@ msgstr "_Edita"
 
 #: ../thunar/thunar-window.c:252
 msgid "Pr_eferences..."
-msgstr "Pr_efercències"
+msgstr "Pr_eferències"
 
 #: ../thunar/thunar-window.c:252
 msgid "Edit Thunars Preferences"
@@ -2296,14 +2290,12 @@ msgid "Display folder content in a detailed list view"
 msgstr "Visualitza el contingut de la carpeta amb una llista detallada"
 
 #: ../thunar/thunar-window.c:594
-#, fuzzy
 msgid "View as _Compact List"
-msgstr "Visualitza com un llistat _detallat"
+msgstr "Visualitza com un llistat _compacte"
 
 #: ../thunar/thunar-window.c:594
-#, fuzzy
 msgid "Display folder content in a compact list view"
-msgstr "Visualitza el contingut de la carpeta amb una llista detallada"
+msgstr "Visualitza el contingut de la carpeta amb una llista compacta"
 
 #: ../thunar/thunar-window.c:1596
 msgid "Failed to open parent folder"
@@ -2393,139 +2385,132 @@ msgid "The user visible name of the renamer"
 msgstr "El nom que l'usuari veu pel canviador de nom"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:158
-#, fuzzy
 msgid "Description:"
-msgstr "_Descripció:"
+msgstr "Descripció:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:165
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
-msgstr ""
+msgstr "El nom genèric per l'entrada, per exemple \"Navegador web\" per Firefox."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
-#, fuzzy
 msgid "Command:"
-msgstr "_Ordre:"
+msgstr "Ordre:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:188
 msgid "The program to execute, possibly with arguments."
-msgstr ""
+msgstr "El programa a executar, probablement amb més arguments."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:203
 msgid "URL:"
-msgstr ""
+msgstr "URL:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:210
 msgid "The URL to access."
-msgstr ""
+msgstr "L'URL per accedir-hi."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:225
-#, fuzzy
 msgid "Comment:"
-msgstr "_Ordre:"
+msgstr "Comentari:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:232
 msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of "
 "Firefox. Should not be redundant with the name or the description."
-msgstr ""
+msgstr "Ajuda emergent per l'entrada, per exemple \"Per visitar planes a la xarxa\" en cas de Firefox. No hauria de ser redundant amb el nom o la descripció."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
 msgid "Options:"
-msgstr ""
+msgstr "Opcions:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
 msgid "Use _startup notification"
-msgstr ""
+msgstr "U_sa notificació d'engegada"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:259
 msgid ""
 "Select this option to enable startup notification when the command is run "
 "from the file manager or the menu. Not every application supports startup "
 "notification."
-msgstr ""
+msgstr "Seleccioneu aquesta opció per habilitar la notificicació d'engegada quan s'executi una ordre des del gestor de fitxers o des del menú. No totes les apliacions permeten notificacions d'engegada."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:266
 msgid "Run in _terminal"
-msgstr ""
+msgstr "Executa en un _terminal"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:267
 msgid "Select this option to run the command in a terminal window."
-msgstr ""
+msgstr "Seleccioneu aquesta opció per executar l'ordre a una finestra de terminal."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:342
 msgid "Launcher"
-msgstr ""
+msgstr "Llançador"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:344
 msgid "Link"
-msgstr ""
+msgstr "Enllaç"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:560
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to save \"%s\"."
-msgstr "No s'ha pogut suprimir \"%s\""
+msgstr "No s'ha pogut desar \"%s\"."
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:49
 msgid "Date Taken:"
-msgstr ""
+msgstr "Data presa:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:50
 msgid "Camera Brand:"
-msgstr ""
+msgstr "Marca de la càmera:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:51
 msgid "Camera Model:"
-msgstr ""
+msgstr "Model de la càmera:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:52
 msgid "Exposure Time:"
-msgstr ""
+msgstr "Temps d'exposició:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:53
-#, fuzzy
 msgid "Exposure Program:"
-msgstr "Programa:"
+msgstr "Programa d'exposició:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:54
 msgid "Aperture Value:"
-msgstr ""
+msgstr "Valor d'apertura"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:55
 msgid "Metering Mode:"
-msgstr ""
+msgstr "Mode de mesura:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:56
 msgid "Flash Fired:"
-msgstr ""
+msgstr "Flaix llançat:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:57
 msgid "Focal Length:"
-msgstr ""
+msgstr "Longitud de focus:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:58
 msgid "Shutter Speed:"
-msgstr ""
+msgstr "Velocitat d'obturació:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:59
 msgid "Software:"
-msgstr ""
+msgstr "Programa:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:115
-#, fuzzy
 msgid "Image"
-msgstr "Fitxers d'imatge"
+msgstr "Imatge"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:130
-#, fuzzy
 msgid "Image Type:"
-msgstr "Fitxers d'imatge"
+msgstr "Tipus d'imatge:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:150
-#, fuzzy
 msgid "Image Size:"
-msgstr "Fitxers d'imatge"
+msgstr "Tamany de la imatge:"
 
 #. update the "Image Size" label
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:244
@@ -2995,9 +2980,8 @@ msgid "Open Folder"
 msgstr "Obre la carpeta"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:2
-#, fuzzy
 msgid "Open Folder with Thunar"
-msgstr "Obre la carpeta"
+msgstr "Obri el directori amb Thunar"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
