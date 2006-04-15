@@ -42,6 +42,7 @@
 static gboolean opt_bulk_rename = FALSE;
 static gboolean opt_daemon = FALSE;
 static gboolean opt_quit = FALSE;
+static gboolean opt_version = FALSE;
 
 
 /* --- command line options --- */
@@ -58,6 +59,7 @@ static GOptionEntry option_entries[] =
 #else
   { "quit", 'q', 0, G_OPTION_ARG_NONE, &opt_quit, N_ ("Quit a running Thunar instance (not supported)"), NULL, },
 #endif
+  { "version", 'v', 0, G_OPTION_ARG_NONE, &opt_version, N_ ("Print version information and exit"), NULL, },
   { NULL, },
 };
 
@@ -104,6 +106,21 @@ main (int argc, char **argv)
           g_error_free (error);
         }
       return EXIT_FAILURE;
+    }
+
+  /* check if we should print version information */
+  if (G_UNLIKELY (opt_version))
+    {
+      g_printf ("%s %s (Xfce %s)\n", PACKAGE_NAME, PACKAGE_VERSION, xfce_version_string ());
+      g_printf ("\n");
+      g_printf ("%s\n", _("Copyright (c) 2004-2006"));
+      g_printf ("\t%s\n", _("The Thunar development team. All rights reserved."));
+      g_printf ("\n");
+      g_printf ("%s\n", _("Written by Benedikt Meurer <benny@xfce.org>."));
+      g_printf ("\n");
+      g_printf (_("Please report bugs to <%s>."), PACKAGE_BUGREPORT);
+      g_printf ("\n");
+      return EXIT_SUCCESS;
     }
 
   /* register additional transformation functions */
