@@ -4,7 +4,7 @@ appsdir = $(datadir)/icons/hicolor/16x16/apps
 apps_DATA =								\
 	Thunar.png
 
-stockdir = $(datadir)/icons/hicolor/16x16/stock/generic
+stockdir = $(datadir)/icons/hicolor/16x16/stock/navigation
 stock_DATA =								\
 	stock_thunar-templates.png
 
