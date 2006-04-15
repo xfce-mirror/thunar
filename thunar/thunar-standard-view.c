@@ -2936,10 +2936,11 @@ static gboolean
 thunar_standard_view_drag_scroll_timer (gpointer user_data)
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (user_data);
-  GtkAdjustment      *vadjustment;
+  GtkAdjustment      *adjustment;
   gfloat              value;
   gint                offset;
-  gint                y, h;
+  gint                y, x;
+  gint                w, h;
 
   GDK_THREADS_ENTER ();
 
@@ -2947,10 +2948,10 @@ thunar_standard_view_drag_scroll_timer (gpointer user_data)
   if (G_LIKELY (GTK_WIDGET_REALIZED (standard_view)))
     {
       /* determine pointer location and window geometry */
-      gdk_window_get_pointer (GTK_BIN (standard_view)->child->window, NULL, &y, NULL);
-      gdk_window_get_geometry (GTK_BIN (standard_view)->child->window, NULL, NULL, NULL, &h, NULL);
+      gdk_window_get_pointer (GTK_BIN (standard_view)->child->window, &x, &y, NULL);
+      gdk_window_get_geometry (GTK_BIN (standard_view)->child->window, NULL, NULL, &w, &h, NULL);
 
-      /* check if we are near the edge */
+      /* check if we are near the edge (vertical) */
       offset = y - (2 * 20);
       if (G_UNLIKELY (offset > 0))
         offset = MAX (y - (h - 2 * 20), 0);
@@ -2959,13 +2960,31 @@ thunar_standard_view_drag_scroll_timer (gpointer user_data)
       if (G_UNLIKELY (offset != 0))
         {
           /* determine the vertical adjustment */
-          vadjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
+          adjustment = gtk_scrolled_window_get_vadjustment (GTK_SCROLLED_WINDOW (standard_view));
 
           /* determine the new value */
-          value = CLAMP (vadjustment->value + 2 * offset, vadjustment->lower, vadjustment->upper - vadjustment->page_size);
+          value = CLAMP (adjustment->value + 2 * offset, adjustment->lower, adjustment->upper - adjustment->page_size);
 
           /* apply the new value */
-          gtk_adjustment_set_value (vadjustment, value);
+          gtk_adjustment_set_value (adjustment, value);
+        }
+
+      /* check if we are near the edge (horizontal) */
+      offset = x - (2 * 20);
+      if (G_UNLIKELY (offset > 0))
+        offset = MAX (x - (w - 2 * 20), 0);
+
+      /* change the horizontal adjustment appropriately */
+      if (G_UNLIKELY (offset != 0))
+        {
+          /* determine the vertical adjustment */
+          adjustment = gtk_scrolled_window_get_hadjustment (GTK_SCROLLED_WINDOW (standard_view));
+
+          /* determine the new value */
+          value = CLAMP (adjustment->value + 2 * offset, adjustment->lower, adjustment->upper - adjustment->page_size);
+
+          /* apply the new value */
+          gtk_adjustment_set_value (adjustment, value);
         }
     }
 
