@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-14 22:30+0200\n"
-"PO-Revision-Date: 2006-04-14 18:33+0300\n"
+"POT-Creation-Date: 2006-04-16 10:06+0300\n"
+"PO-Revision-Date: 2006-04-16 10:12+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -373,46 +373,67 @@ msgstr "Tiedoston \"%s\" tietojen selvittäminen epäonnistui"
 msgid "Failed to copy special file \"%s\""
 msgstr "Erikoistiedoston \"%s\" kopioiminen epäonnistui"
 
-#: ../thunar/main.c:50
+#: ../thunar/main.c:51
 msgid "Open the bulk rename dialog"
 msgstr "Avaa joukkonimeämisdialogi"
 
-#: ../thunar/main.c:52
+#: ../thunar/main.c:53
 msgid "Run in daemon mode"
 msgstr "Suorita taustaprosessina"
 
-#: ../thunar/main.c:54
+#: ../thunar/main.c:55
 msgid "Run in daemon mode (not supported)"
 msgstr "Suorita taustaprosessina (ei tuettu)"
 
-#: ../thunar/main.c:57
+#: ../thunar/main.c:58
 msgid "Quit a running Thunar instance"
 msgstr "Lopeta käynnissä oleva Thunar-instanssi"
 
-#: ../thunar/main.c:59
+#: ../thunar/main.c:60
 msgid "Quit a running Thunar instance (not supported)"
 msgstr "Lopeta käynnissä oleva Thunar-instanssi (ei tuettu)"
 
+#: ../thunar/main.c:62
+msgid "Print version information and exit"
+msgstr "Tulosta versiotiedot ja poistu"
+
 #. setup application name
-#: ../thunar/main.c:81
+#: ../thunar/main.c:83
 msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:91
+#: ../thunar/main.c:93
 msgid "[FILES...]"
 msgstr "[TIEDOSTOT...]"
 
-#: ../thunar/main.c:98
+#: ../thunar/main.c:100
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Thunar: Näytön %s avaaminen epäonnistui\n"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:103
+#: ../thunar/main.c:105
 #, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar: %s\n"
+
+#: ../thunar/main.c:116
+msgid "Copyright (c) 2004-2006"
+msgstr "Copyright (c) 2004-2006"
+
+#: ../thunar/main.c:117
+msgid "The Thunar development team. All rights reserved."
+msgstr "Thunarin kehitystyöryhmä. Kaikki oikeudet pidätetään."
+
+#: ../thunar/main.c:119
+msgid "Written by Benedikt Meurer <benny@xfce.org>."
+msgstr "Kirjoittanut Benedikt Meurer <benny@xfce.org>."
+
+#: ../thunar/main.c:121
+#, c-format
+msgid "Please report bugs to <%s>."
+msgstr "Ilmoita vioista osoitteeseen <%s>"
 
 #: ../thunar/thunar-abstract-icon-view.c:114
 msgid "Arran_ge Items"
@@ -1930,7 +1951,7 @@ msgstr "Valitse kaikki tiedostot, jotka sopivat tiettyyn hakukaavaan"
 msgid "Du_plicate"
 msgstr "Luo k_opio"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3251
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3270
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "_Luo linkki"
@@ -2019,31 +2040,31 @@ msgstr "Nimeä \"%s\" uudelleen"
 msgid "Failed to open directory \"%s\""
 msgstr "Hakemiston \"%s\" avaaminen epäonnistui"
 
-#: ../thunar/thunar-standard-view.c:3211
+#: ../thunar/thunar-standard-view.c:3230
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Merkitse valittu tiedosto siirrettäväksi liitä-komennolla"
 msgstr[1] "Merkitse valitut tiedostot siirrettäväksi liitä-komennolla"
 
-#: ../thunar/thunar-standard-view.c:3219
+#: ../thunar/thunar-standard-view.c:3238
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Merkitse valittu tiedosto kopioitavaksi liitä-komennolla"
 msgstr[1] "Merkitse valitut tiedostot kopioitavaksi liitä-komennolla"
 
-#: ../thunar/thunar-standard-view.c:3230
+#: ../thunar/thunar-standard-view.c:3249
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Poista valittu tiedosto lopullisesti"
 msgstr[1] "Poista valitut tiedostot lopullisesti"
 
-#: ../thunar/thunar-standard-view.c:3244
+#: ../thunar/thunar-standard-view.c:3263
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Luo kopio valitusta tiedostosta"
 msgstr[1] "Luo kopiot valituista tiedostoista"
 
-#: ../thunar/thunar-standard-view.c:3253
+#: ../thunar/thunar-standard-view.c:3272
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Luo symbolinen linkki valittuun tiedostoon"
@@ -2976,9 +2997,8 @@ msgid "Open Folder"
 msgstr "Avaa hakemisto"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:2
-#, fuzzy
 msgid "Open Folder with Thunar"
-msgstr "Avaa hakemisto"
+msgstr "Avaa hakemisto Thunarissa"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
