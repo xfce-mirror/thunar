@@ -68,6 +68,7 @@ enum
   TOGGLE_SIDEPANE,
   ZOOM_IN,
   ZOOM_OUT,
+  ZOOM_RESET,
   LAST_SIGNAL,
 };
 
@@ -90,6 +91,7 @@ static gboolean thunar_window_reload                      (ThunarWindow         
 static gboolean thunar_window_toggle_sidepane             (ThunarWindow           *window);
 static gboolean thunar_window_zoom_in                     (ThunarWindow           *window);
 static gboolean thunar_window_zoom_out                    (ThunarWindow           *window);
+static gboolean thunar_window_zoom_reset                  (ThunarWindow           *window);
 static void     thunar_window_realize                     (GtkWidget              *widget);
 static void     thunar_window_unrealize                   (GtkWidget              *widget);
 static gboolean thunar_window_configure_event             (GtkWidget              *widget,
@@ -178,6 +180,7 @@ struct _ThunarWindowClass
   gboolean (*toggle_sidepane) (ThunarWindow *window);
   gboolean (*zoom_in)         (ThunarWindow *window);
   gboolean (*zoom_out)        (ThunarWindow *window);
+  gboolean (*zoom_reset)      (ThunarWindow *window);
 };
 
 struct _ThunarWindow
@@ -337,6 +340,7 @@ thunar_window_class_init (ThunarWindowClass *klass)
   klass->toggle_sidepane = thunar_window_toggle_sidepane;
   klass->zoom_in = thunar_window_zoom_in;
   klass->zoom_out = thunar_window_zoom_out;
+  klass->zoom_reset = thunar_window_zoom_reset;
 
   /**
    * ThunarWindow:current-directory:
@@ -478,6 +482,22 @@ thunar_window_class_init (ThunarWindowClass *klass)
                   _thunar_marshal_BOOLEAN__VOID,
                   G_TYPE_BOOLEAN, 0);
 
+  /**
+   * ThunarWindow::zoom-reset:
+   * @window : a #ThunarWindow instance.
+   *
+   * Emitted whenever the user requests reset the zoom level.
+   * This is an internal signal used to bind the action to keys.
+   **/
+  window_signals[ZOOM_RESET] =
+    g_signal_new (I_("zoom-reset"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarWindowClass, zoom_reset),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
   /* setup the key bindings for the windows */
   binding_set = gtk_binding_set_by_class (klass);
   gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, 0, "back", 0);
@@ -485,6 +505,8 @@ thunar_window_class_init (ThunarWindowClass *klass)
   gtk_binding_entry_add_signal (binding_set, GDK_F9, 0, "toggle-sidepane", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Add, GDK_CONTROL_MASK, "zoom-in", 0);
   gtk_binding_entry_add_signal (binding_set, GDK_KP_Subtract, GDK_CONTROL_MASK, "zoom-out", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KP_0, GDK_CONTROL_MASK, "zoom-reset", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KP_Insert, GDK_CONTROL_MASK, "zoom-reset", 0);
 }
 
 
@@ -957,6 +979,23 @@ thunar_window_zoom_out (ThunarWindow *window)
   if (G_LIKELY (window->zoom_level > 0))
     {
       thunar_window_set_zoom_level (window, window->zoom_level - 1);
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_window_zoom_reset (ThunarWindow *window)
+{
+  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+
+  /* tell the view to reset it's zoom level */
+  if (G_LIKELY (window->view != NULL))
+    {
+      thunar_view_reset_zoom_level (THUNAR_VIEW (window->view));
       return TRUE;
     }
 
@@ -1494,12 +1533,13 @@ static void
 thunar_window_action_zoom_reset (GtkAction    *action,
                                  ThunarWindow *window)
 {
+  gboolean result;
+
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* tell the view to reset it's zoom level */
-  if (G_LIKELY (window->view != NULL))
-    thunar_view_reset_zoom_level (THUNAR_VIEW (window->view));
+  /* reset zoom level */
+  g_signal_emit (G_OBJECT (window), window_signals[ZOOM_RESET], 0, &result);
 }
 
 
