@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY date "April 2006">
+<!ENTITY version "@PACKAGE_VERSION@">
+<!ENTITY application "@PACKAGE_NAME@">
+]>
+<article id="index" lang="fr">
+
+  <!-- Header -->
+  <articleinfo>
+    <title>Gestionnaire de fichier Thunar</title>
+
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2004</year>
+      <year>2005</year>
+      <year>2006</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright>
+
+    <legalnotice id="legalnotice">
+      <para>Permission est accordée de copier, distribuer et/ou modifier ce document selon les termes de la Licence de Documentation Libre GNU (GNU Free Documentation License), version 1.1 ou toute version ultérieure publiée par la Free Software Foundation ; sans Sections Invariables, sans Texte de Première de Couverture, et sans Texte de Quatrième de Couverture. Le texte complet de cette licence est disponible sur le site de la <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.</para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>Développement système</orgdiv>
+          <jobtitle>Développeur logiciel</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+    <releaseinfo>Ce manuel décrit la version @PACKAGE_VERSION@ de @PACKAGE_NAME@.</releaseinfo>
+  </articleinfo>
+
+  <sect1 id="intro">
+    <title>Introduction à @PACKAGE_NAME@</title>
+
+    <para>Thunar est un nouveau gestionnaire de fichier moderne pour l'environnement de bureau Xfce. Thunar a été conçu dès le départ pour être rapide et facile d'utilisation. Son interfeca utilisateur est claire et intuitive, et n'inclut aucune option confuse ou inutile par défaut. Thunar est rapide et répond avec un bon temps de démarrage et de chargement de dossier.</para>
+
+    <para>Le gestionnaire de fichier Thunar fournit de ce fait un point d'accès intégré à vos fichiers et applications. Vous pouvez utiliser le gestionnaire de fichier pour faire ce qui suit :</para>
+
+    <itemizedlist>
+      <listitem>Créer des dossiers et des documents.</listitem>
+      <listitem>Afficher vos fichiers et vos dossiers.</listitem>
+      <listitem>Gérer vos fichiers et vos dossiers.</listitem>
+      <listitem>Exécuter et gérer des actions personnalisées.</listitem>
+      <listitem>Accéder à vos périphériques amovibles.</listitem>
+    </itemizedlist>
+  </sect1>
+
+
+  <sect1 id="advanced-topics">
+    <title>Sujets avancés</title>
+
+    <sect2 id="the-unix-file-system">
+      <title>Le système de fichiers UNIX</title>
+
+      <para>While the Thunar file manager does a good job at abstracting the details of the underlying file system, so the user does not need to care about them, it is sometimes useful to understand the basic concepts to get the whole picture. This section tries to give a brief introduction to the concepts of the UNIX file system, which is used today by all incarnations of UNIX, including Linux.</para>
+
+      <sect3 id="folders-and-paths">
+        <title>Dossiers et chemins</title>
+
+        <para>Dans un système de fichier UNIX tous les dossiers sont arrangés dans une structure en forme d'arbre simple inversé descendant et héritant d'un dossier unique de plus haut niveau, appelé le <emphasis>répertoire racine</emphasis> (le terme <emphasis>répertoire</emphasis> est souvent utilisé à la place de <emphasis>dossier</emphasis>) et affiché comme <guilabel>Système de fichier</guilabel> dans Thunar. Ce qui signifie que vous pouvez aller de n'importe quel dossier vers n'importe quel autre en en remontant dans l'arbre jusqu'à un point commun, puis vous descendez à travers les sous-dossiers appropriés jusqu'à atteindre votre but.</para>
+
+        <para>The position of any file or folder in the tree can be described by its <emphasis>path</emphasis>. The path is the list of folders you would have to descend through to get to the target folder or file, starting from the top level folder. For example <filename role="directory">/home/luke</filename> is the subfolder <filename role="directory">luke</filename> of the subfolder <filename role="directory">home</filename> of the top level folder, and <filename>/home/luke/myfile.txt</filename> is the file <filename>myfile.txt</filename> in that subfolder. The leading <filename role="directory">/</filename> in these paths represents the top level folder.</para>
+
+        <para>Every user has their own folder to hold their personal files and settings. This folder is called the <emphasis>home directory</emphasis> and is displayed in Thunar as special icon with the users login name. The folder is similar to the <guilabel>My Files</guilabel> folder known from Windows. The <emphasis>home directories</emphasis> of the various users in a system are usually located below the <filename role="directory">/home</filename> folder. For example <filename role="directory">/home/luke</filename> would be the home directory of the user with the login name <filename role="directory">luke</filename>, while <filename role="directory">/home/jane</filename> would be the home directory for the user with the login name <filename role="directory">jane</filename>.</para>
+      </sect3>
+
+      <sect3 id="file-types">
+        <title>Types de fichier</title>
+
+        <para>You may have already heard that everything is a file in UNIX. This is true for most objects present in UNIX systems today. In fact even devices are represented as a special files. While this may not make sense at first sight, it is one of the strengths of UNIX and its derivates, and has helped it to maintain a simple core over the years where other operating systems had to introduce new concepts for every new technology.</para>
+
+        <para>Voici les quatre types les plus importants de fichiers dans le système de fichiers UNIX.</para>
+
+        <sect4 id="file-types-ordinary-files">
+          <title>Fichiers ordinaires</title>
+
+          <para>Un fichier ordinaire peut contenir un texte, un programme ou d'autres données. Ceci inclut les fichiers d'images, de sons, les documents office et les vidéos. Le terme <emphasis>fichier</emphasis> est souvent utilisé pour faire référence à un fichier ordinaire.</para>
+        </sect4>
+
+        <sect4 id="file-types-folder-files">
+          <title>Fichier de dossier</title>
+
+          <para>Les dossiers sont aussi des fichiers dans le système de fichier UNIX. Pour être exact le dossier est un fichier spécial, qui contient une carte des références aux noms de tous les fichiers à l'intérieur.</para>
+        </sect4>
+
+        <sect4 id="file-types-symbolic-link-files">
+          <title>Fichier de lien symbolique</title>
+
+          <para>Un lien symbolique (souvent appelé un <emphasis>symlink</emphasis>) est un fichier spécial qui contient un chemin vers un autre fichier dans le système de fichier. Un fichier lien symbolique ne contient donc aucune information utile en lui-même, mais est juste une référence à un autre fichier.</para>
+        </sect4>
+
+        <sect4 id="file-types-device-files">
+          <title>Fichiers de périphérique</title>
+
+          <para>Comme mentionné plus tôt (la plupart) des périphériques sont aussi accessibles à travers le système de fichiers. Ces fichiers de périphériques spéciaux sont situés dans le dossier <filename role="directory">/dev</filename>. Par exemple, le fichier spécial <filename>/dev/hda</filename> représente le premier disque IDE pour Linux.</para>
+        </sect4>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="faq">
+    <title>Foire aux Questions</title>
+
+    <para>The intent of this section is to collect the quite numerous frequently asked questions that relate to working with Thunar. If you know of a question that is missing from this page, please <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">file a request</ulink>.</para>
+
+    <sect3 id="faq-executables">
+      <title>Pourquoi Thunar n'exécutent pas les fichiers indiqués comme exécutable ?</title>
+
+      <para>For security reasons Thunar only executes files of type <literal>application/x-desktop</literal>, <literal>application/x-executable</literal> and <literal>application/x-shellscript</literal>. For desktop files the execution feature will only be enabled if the desktop file is of type <literal>Application</literal> and a valid <literal>Exec</literal> line is given or of type <literal>Link</literal> and a valid <literal>URL</literal> is given. For the other types the feature is available if the file is marked executable for the current user.</para>
+
+      <para>Also note that for <literal>application/x-executable</literal> and <literal>application/x-shellscript</literal>, the types of the file don't really need to match these types exactly, but it is suffice if the detected type has a parent that matches one of the two types listed above, or if the MIME-type is an alias for one of the above.</para>
+    </sect3>
+
+    <sect3 id="faq-metadata">
+      <title>Où Thunar stocke les métadonnées associées à un fichier ?</title>
+
+      <para>Thunar associe différents paramètres avec des fichiers/dossiers, que nous appelons métadonnées. Ces métadonnées sont stockés dans un fichier base de données tbd, qui est appelé le métafichier. Ce fichier de base de données est <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> et peut être examiné en utilisant <command>tdbtool</command>, qui est un composant de Thunar (situé dans le sous-répertoire <filename role="directory">tdb/</filename>).</para>
+    </sect3>
+
+    <sect3 id="faq-thunarrc">
+      <title>Où Thunar stocke ses préférences ?</title>
+
+      <para>Thunar stocke les préférences modifiables de l'utilisateur (et les paramètres cachés) dans un fichier <filename>.ini</filename>, qui est <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename> et peut être examiné en utilisant un éditeur de texte. Voyez <filename>docs/README.thunarrc</filename> pour une vue d'ensemble des différentes préférences.</para>
+    </sect3>
+
+    <sect3 id="faq-mouse-gestures">
+      <title>How to use mouse gestures in Thunar?</title>
+
+      <para>Thunar currently features basic support for so called <emphasis>mouse gestures</emphasis> in its icon view. You can use these <emphasis>mouse gestures</emphasis> by holding down the middle mouse button (usually the mouse wheel) while the mouse pointer is on the background area of the icon view component (any area that is not covered by an icon or a text). Now you can move the cursor into four directions to perform certain actions, which are described below.</para>
+
+      <simplelist>
+        <member><guilabel>Gauche</guilabel> - ouvrir le dossier précédemment visité</member>
+        <member><guilabel>Haut</guilabel> - ouvrir le père du dossier</member>
+        <member><guilabel>Droite</guilabel> - ouvrir le prochain dossier visité</member>
+        <member><guilabel>Bas</guilabel> - rafraîchir le dossier courant</member>
+      </simplelist>
+    </sect3>
+
+    <sect3 id="faq-assign-keyboard-shortcuts">
+      <title>Comment puis-je assigner différents raccourcis clavier ?</title>
+
+      <para>If you want to rebind a shortcut, Thunar supports the standard GTK+ way of changing shortcuts: simply hover over the menu option with the mouse pointer and press the keyboard shortcut you want to rebind it to.</para>
+
+      <para>To delete a keyboard assignment, press the <keycap>Backspace</keycap> key while you are on the menu entry.</para>
+
+      <para>Si le raccourci ne change pas, alors vous avez besoin d'activer la fonctionnalité dans GTK+. Vous pouvez le faire de 3 manières :</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Si vous utilisez Xfce 4.3 ou plus alors vous pouvez activer <guilabel>Editable menu accelerators</guilabel> dans la fenêtre de dialogue des <guilabel>Préférences de l'interface utilisateur</guilabel>.</para>
+        </listitem>
+
+        <listitem>
+          <para>Si vous utilisez GNOME alors vous pouvez activer <guilabel>Editable menu accelerators</guilabel> dans la fenêtre de dialogue du centre de contrôle <guilabel>Menu et barre d'outils</guilabel></para>
+        </listitem>
+
+        <listitem>
+          <para>Autrement placez ce qui suit dans votre fichier <filename>~/.gtkrc-2.0</filename>(créez le fichiez s'il n'existe pas) : <screen>gtk-can-change-accels=1</screen></para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3 id="faq-store-keyboard-shortcuts">
+      <title>Où Thunar stocke les raccourcis clavier ?</title>
+
+      <para>Les raccourcis clavier personnalisés sont stockés dans le format 'accel map' standard de GTK+ dans le fichier  <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename>. Les lignes commençant avec <literal>;</literal> sont des commentaires. Voyez la documentation de GTK+ pour les détails à propos de ce format de fichier.</para>
+
+      <para>If you are a packager or a system administrator and want to provide a system wide default for the keyboard shortcuts, that is different from the default shortcuts in Thunar, you can create a file <filename>Thunar/accels.scm</filename> in one of the <envar>$XDG_CONFIG_DIRS</envar>. For example, if <filename role="directory">/etc/xdg</filename> is part of <envar>$XDG_CONFIG_DIRS</envar> (the default for most Linux distributions), you can install system wide defaults to <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar will then load shortcuts from this file on first startup.</para>
+    </sect3>
+  </sect1>
+
+
+  <sect1 id="support">
+    <title>Support</title>
+
+    <para>Pour reporter un bogue ou pour faire une suggestion concernant cette application ou sur son manuel, utiliser le système de suivi de bogue à l'adresse <ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink>. Souvenez-vous qu'un rapport de bogue utile est un rappoirt qui permet de corriger le problème, pour cela le rapport doit possèder deux qualités :</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">Reproductible.</emphasis> Si le développeur ne peut pas voir le bogue lui-même pour prouver qu'il existe, il ne sera probablement pas du tout capable de le corriger. Chaque détail que vous pouvez fournir aide.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">Spécifique.</emphasis> Plus le développeur isole rapidement le problème à une zone spécifique, plus il sera probable probable qu'il le corriger rapidement.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Dans le cas ou vous voulez demander une nouvelle fonctionnalité, je vous pris de dire clairement pourquoi vous considérez cela comme un ajout de valeur pour l'application. Il est plus probable qu'une nouvelle fonctionnalité soit ajouté si vous fournissez de bons arguments. Les chances de l'ajouter augmentent encore plus si vous fournissez un patch qui implémente la fonctionnalité demandée, mais avant lisez bien le fichier  <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> - particulièrement la section  <emphasis>Coding Style</emphasis> - avant de commencer à modifier les sources.</para>
+
+    <para>Sinon, si vous avez des questions à propos de l'utilisation ou de l'installation de ce logiciel, je vous pris de demander sur la <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">liste de diffusion thunar-dev</ulink> ou de faire pointer votre client IRC vers <emphasis role="bold">irc.freenode.net</emphasis>, de joindre le canal <emphasis role="bold">#thunar</emphasis> et de demander de l'aider.</para>
+  </sect1>
+
+  <sect1 id="copyright">
+    <title>À propos de @PACKAGE_NAME@</title>
+
+    <para>@PACKAGE_NAME@ a été écrit par Benedikt Meurer (<email>benny@xfce.org</email>). Visitez le <ulink url="http://thunar.xfce.org/" type="http">site de Thunar</ulink> pour plus d'informations.</para>
+
+    <para>Cette documentation a été écrite par Benedikt Meurer (<email>benny@xfce.org</email>). La dernière version de ce document est toujours disponible sur le <ulink type="http" url="http://thunar.xfce.org/">site de Thunar</ulink>.</para>
+
+    <para>Ce logiciel est distribué sous les termes de la License Publique Générale GNU (GPL) comme publiée par la Free Software Fondation ; de la version 2, ou ultérieures (selon votre choix).</para>
+
+    <para>Vous devez avoir reçu une copie de la Licence Publique Générale GNU en même temps que ce programme ; si ce n'est pas le cas, écrivez à la Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307, États-Unis.</para>
+  </sect1>
+
+</article>
+<!--
+	vim:set ts=2 sw=2 et ai:
+-->
