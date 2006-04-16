@@ -111,15 +111,15 @@ main (int argc, char **argv)
   /* check if we should print version information */
   if (G_UNLIKELY (opt_version))
     {
-      g_printf ("%s %s (Xfce %s)\n", PACKAGE_NAME, PACKAGE_VERSION, xfce_version_string ());
-      g_printf ("\n");
-      g_printf ("%s\n", _("Copyright (c) 2004-2006"));
-      g_printf ("\t%s\n", _("The Thunar development team. All rights reserved."));
-      g_printf ("\n");
-      g_printf ("%s\n", _("Written by Benedikt Meurer <benny@xfce.org>."));
-      g_printf ("\n");
-      g_printf (_("Please report bugs to <%s>."), PACKAGE_BUGREPORT);
-      g_printf ("\n");
+      g_print ("%s %s (Xfce %s)\n", PACKAGE_NAME, PACKAGE_VERSION, xfce_version_string ());
+      g_print ("\n");
+      g_print ("%s\n", _("Copyright (c) 2004-2006"));
+      g_print ("\t%s\n", _("The Thunar development team. All rights reserved."));
+      g_print ("\n");
+      g_print ("%s\n", _("Written by Benedikt Meurer <benny@xfce.org>."));
+      g_print ("\n");
+      g_print (_("Please report bugs to <%s>."), PACKAGE_BUGREPORT);
+      g_print ("\n");
       return EXIT_SUCCESS;
     }
 
