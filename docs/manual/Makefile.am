@@ -2,6 +2,8 @@
 
 SUBDIRS =								\
 	C								\
+	es								\
+	fr								\
 	ja
 
 cssdir = $(datadir)/doc/Thunar/html
