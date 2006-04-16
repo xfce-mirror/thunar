@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-14 22:30+0200\n"
+"POT-Creation-Date: 2006-04-16 09:25+0200\n"
 "PO-Revision-Date: 2006-04-14 22:09+0100\n"
 "Last-Translator: SZERVÑC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -373,46 +373,67 @@ msgstr "Nem sikerült meghatározni a fájl infót ehhez: %s"
 msgid "Failed to copy special file \"%s\""
 msgstr "Nem sikerült e speciális fájl másolása: \"%s\""
 
-#: ../thunar/main.c:50
+#: ../thunar/main.c:51
 msgid "Open the bulk rename dialog"
 msgstr "Csoportos átnevezés párbeszéd megnyitása"
 
-#: ../thunar/main.c:52
+#: ../thunar/main.c:53
 msgid "Run in daemon mode"
 msgstr "Futtatás démon módban"
 
-#: ../thunar/main.c:54
+#: ../thunar/main.c:55
 msgid "Run in daemon mode (not supported)"
 msgstr "Futtatás démon módban (nem támogatott)"
 
-#: ../thunar/main.c:57
+#: ../thunar/main.c:58
 msgid "Quit a running Thunar instance"
 msgstr "Kilépés egy futó Thunar példányból"
 
-#: ../thunar/main.c:59
+#: ../thunar/main.c:60
 msgid "Quit a running Thunar instance (not supported)"
 msgstr "Kilépés egy futó Thunar példányból (nem támogatott)"
 
+#: ../thunar/main.c:62
+msgid "Print version information and exit"
+msgstr ""
+
 #. setup application name
-#: ../thunar/main.c:81
+#: ../thunar/main.c:83
 msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:91
+#: ../thunar/main.c:93
 msgid "[FILES...]"
 msgstr "[FÁJLOK...]"
 
-#: ../thunar/main.c:98
+#: ../thunar/main.c:100
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Thunar: nem sikerült megnyitni a képernyőt: %s\n"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:103
+#: ../thunar/main.c:105
 #, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar: %s\n"
+
+#: ../thunar/main.c:116
+msgid "Copyright (c) 2004-2006"
+msgstr ""
+
+#: ../thunar/main.c:117
+msgid "The Thunar development team. All rights reserved."
+msgstr ""
+
+#: ../thunar/main.c:119
+msgid "Written by Benedikt Meurer <benny@xfce.org>."
+msgstr ""
+
+#: ../thunar/main.c:121
+#, c-format
+msgid "Please report bugs to <%s>."
+msgstr ""
 
 #: ../thunar/thunar-abstract-icon-view.c:114
 msgid "Arran_ge Items"
@@ -1116,7 +1137,7 @@ msgstr "Hely megnyitása"
 msgid "_Location:"
 msgstr "_Hely:"
 
-#: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:1167
+#: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:1206
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Nem futtatható: \"%s\""
@@ -1597,7 +1618,7 @@ msgstr "Jelkép"
 msgid "Failed to rename \"%s\""
 msgstr "Nem átnevezhető: \"%s\""
 
-#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:247
+#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:250
 msgid "_File"
 msgstr "_Fájl"
 
@@ -1621,7 +1642,7 @@ msgstr "Ürít"
 msgid "Clear the file list below"
 msgstr "Kiüríti az alábbi fájl listát"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:267
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:270
 msgid "_About"
 msgstr "_Névjegy"
 
@@ -1891,7 +1912,7 @@ msgstr "Egy adott mintára illő valamennyi fájl kiválasztása"
 msgid "Du_plicate"
 msgstr "Kettőzés"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3251
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3270
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Lánc _készítése"
@@ -1974,28 +1995,28 @@ msgstr "\"%s\" átnevezése"
 msgid "Failed to open directory \"%s\""
 msgstr "Nem megnyitható könyvtár: \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3211
+#: ../thunar/thunar-standard-view.c:3230
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
 "Előkészíti a kijelölt fájlt a Beillesztés paranccsal való mozgatáshoz"
 
-#: ../thunar/thunar-standard-view.c:3219
+#: ../thunar/thunar-standard-view.c:3238
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Kijelölt fájlok előkészítése a Beillesztés parancshoz"
 
-#: ../thunar/thunar-standard-view.c:3230
+#: ../thunar/thunar-standard-view.c:3249
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Kijelölt fájl végleges törlése"
 
-#: ../thunar/thunar-standard-view.c:3244
+#: ../thunar/thunar-standard-view.c:3263
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Kijelölt fájl megkettőzése"
 
-#: ../thunar/thunar-standard-view.c:3253
+#: ../thunar/thunar-standard-view.c:3272
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Jelképes lánc készítése a kijelölt fájlokhoz"
@@ -2027,243 +2048,243 @@ msgstr "Betöltés..."
 msgid "P_roperties..."
 msgstr "Tulajdonságok..."
 
-#: ../thunar/thunar-window.c:248
+#: ../thunar/thunar-window.c:251
 msgid "Open New _Window"
 msgstr "Új _Ablak"
 
-#: ../thunar/thunar-window.c:248
+#: ../thunar/thunar-window.c:251
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Új Thunar ablak az adott helyhez"
 
-#: ../thunar/thunar-window.c:249
+#: ../thunar/thunar-window.c:252
 msgid "Close _All Windows"
 msgstr "_Minden ablak bezárása"
 
-#: ../thunar/thunar-window.c:249
+#: ../thunar/thunar-window.c:252
 msgid "Close all Thunar windows"
 msgstr "Bezár minden Thunar ablakot"
 
-#: ../thunar/thunar-window.c:250
+#: ../thunar/thunar-window.c:253
 msgid "_Close"
 msgstr "_Bezárás"
 
-#: ../thunar/thunar-window.c:250
+#: ../thunar/thunar-window.c:253
 msgid "Close this window"
 msgstr "Bezárja ezt az ablakot"
 
-#: ../thunar/thunar-window.c:251
+#: ../thunar/thunar-window.c:254
 msgid "_Edit"
 msgstr "Sz_erkesztés"
 
-#: ../thunar/thunar-window.c:252
+#: ../thunar/thunar-window.c:255
 msgid "Pr_eferences..."
 msgstr "Tulajdonságok..."
 
-#: ../thunar/thunar-window.c:252
+#: ../thunar/thunar-window.c:255
 msgid "Edit Thunars Preferences"
 msgstr "Thunar tulajdonságainak szerkesztése"
 
-#: ../thunar/thunar-window.c:253
+#: ../thunar/thunar-window.c:256
 msgid "_View"
 msgstr "_Nézet"
 
-#: ../thunar/thunar-window.c:254
+#: ../thunar/thunar-window.c:257
 msgid "_Reload"
 msgstr "Új_ratöltés"
 
-#: ../thunar/thunar-window.c:254
+#: ../thunar/thunar-window.c:257
 msgid "Reload the current folder"
 msgstr "Mappa frissítése"
 
-#: ../thunar/thunar-window.c:255
+#: ../thunar/thunar-window.c:258
 msgid "_Location Selector"
 msgstr "Helyválasztó"
 
-#: ../thunar/thunar-window.c:256
+#: ../thunar/thunar-window.c:259
 msgid "_Side Pane"
 msgstr "Oldalpanel"
 
-#: ../thunar/thunar-window.c:257
+#: ../thunar/thunar-window.c:260
 msgid "Zoom _In"
 msgstr "Nagyítás"
 
-#: ../thunar/thunar-window.c:257
+#: ../thunar/thunar-window.c:260
 msgid "Show the contents in more detail"
 msgstr "Tartalom több részlettel"
 
-#: ../thunar/thunar-window.c:258
+#: ../thunar/thunar-window.c:261
 msgid "Zoom _Out"
 msgstr "Kicsinyítés"
 
-#: ../thunar/thunar-window.c:258
+#: ../thunar/thunar-window.c:261
 msgid "Show the contents in less detail"
 msgstr "Tartalom kevesebb részlettel"
 
-#: ../thunar/thunar-window.c:259
+#: ../thunar/thunar-window.c:262
 msgid "Normal Si_ze"
 msgstr "Normál méret"
 
-#: ../thunar/thunar-window.c:259
+#: ../thunar/thunar-window.c:262
 msgid "Show the contents at the normal size"
 msgstr "Tartalom normál méretben"
 
-#: ../thunar/thunar-window.c:260
+#: ../thunar/thunar-window.c:263
 msgid "_Go"
 msgstr "_Ugrás"
 
-#: ../thunar/thunar-window.c:261
+#: ../thunar/thunar-window.c:264
 msgid "Open _Parent"
 msgstr "_Szülő megnyitása"
 
-#: ../thunar/thunar-window.c:261
+#: ../thunar/thunar-window.c:264
 msgid "Open the parent folder"
 msgstr "Szülőmappa megnyitása"
 
-#: ../thunar/thunar-window.c:262
+#: ../thunar/thunar-window.c:265
 msgid "_Home"
 msgstr "Saját könyvtár"
 
-#: ../thunar/thunar-window.c:262
+#: ../thunar/thunar-window.c:265
 msgid "Go to the home folder"
 msgstr "Ugrás a saját könyvtárba"
 
-#: ../thunar/thunar-window.c:263
+#: ../thunar/thunar-window.c:266
 msgid "T_emplates"
 msgstr "Sablonok"
 
-#: ../thunar/thunar-window.c:263
+#: ../thunar/thunar-window.c:266
 msgid "Go to the templates folder"
 msgstr "Ugrás a sablon könyvtárba"
 
-#: ../thunar/thunar-window.c:264
+#: ../thunar/thunar-window.c:267
 msgid "Open _Location..."
 msgstr "_Hely megnyitása..."
 
-#: ../thunar/thunar-window.c:264
+#: ../thunar/thunar-window.c:267
 msgid "Specify a location to open"
 msgstr "Adott hely megnyitása"
 
-#: ../thunar/thunar-window.c:265
+#: ../thunar/thunar-window.c:268
 msgid "_Help"
 msgstr "_Súgó"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:269
 msgid "_Contents"
 msgstr "Tartalom"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:269
 msgid "Display Thunar user manual"
 msgstr "Thunar felhasználói kézikönyv"
 
-#: ../thunar/thunar-window.c:267
+#: ../thunar/thunar-window.c:270
 msgid "Display information about Thunar"
 msgstr "A Thunar adatainak megjelenítése"
 
-#: ../thunar/thunar-window.c:272
+#: ../thunar/thunar-window.c:275
 msgid "Show _Hidden Files"
 msgstr "Rejtett fájlok mutatása"
 
-#: ../thunar/thunar-window.c:272
+#: ../thunar/thunar-window.c:275
 msgid "Toggles the display of hidden files in the current window"
 msgstr "A rejtett fájlok mutatását váltja a jelen ablakban"
 
-#: ../thunar/thunar-window.c:273
+#: ../thunar/thunar-window.c:276
 msgid "_Shortcuts"
 msgstr "Könyvjelzők"
 
-#: ../thunar/thunar-window.c:273
+#: ../thunar/thunar-window.c:276
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Könyvjelző panel megjelenítésének váltása"
 
-#: ../thunar/thunar-window.c:274
+#: ../thunar/thunar-window.c:277
 msgid "_Tree"
 msgstr "Fa"
 
-#: ../thunar/thunar-window.c:274
+#: ../thunar/thunar-window.c:277
 msgid "Toggles the visibility of the tree pane"
 msgstr "Fa panel megjelenítésének váltása"
 
-#: ../thunar/thunar-window.c:275
+#: ../thunar/thunar-window.c:278
 msgid "St_atusbar"
 msgstr "Állapotsor"
 
-#: ../thunar/thunar-window.c:275
+#: ../thunar/thunar-window.c:278
 msgid "Change the visibility of this window's statusbar"
 msgstr "Ablak állapotsora láthatóságának váltása"
 
 #.
 #. * add the location selector options
 #.
-#: ../thunar/thunar-window.c:557
+#: ../thunar/thunar-window.c:579
 msgid "_Pathbar Style"
 msgstr "Ösvénysáv stílus"
 
-#: ../thunar/thunar-window.c:558
+#: ../thunar/thunar-window.c:580
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Korszerű, gombos útvonal"
 
-#: ../thunar/thunar-window.c:564
+#: ../thunar/thunar-window.c:586
 msgid "_Toolbar Style"
 msgstr "Eszközsáv stílus"
 
-#: ../thunar/thunar-window.c:565
+#: ../thunar/thunar-window.c:587
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "Régi stílusú címsor és vezérlőgombok"
 
-#: ../thunar/thunar-window.c:571
+#: ../thunar/thunar-window.c:593
 msgid "_Hidden"
 msgstr "_Rejtett"
 
-#: ../thunar/thunar-window.c:571
+#: ../thunar/thunar-window.c:593
 msgid "Don't display any location selector"
 msgstr "Ne mutass semmilyen helyválasztót"
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:580
+#: ../thunar/thunar-window.c:602
 msgid "View as _Icons"
 msgstr "_Ikonnézet"
 
-#: ../thunar/thunar-window.c:580
+#: ../thunar/thunar-window.c:602
 msgid "Display folder content in an icon view"
 msgstr "Mappa megjelenítése ikonnézetben"
 
-#: ../thunar/thunar-window.c:587
+#: ../thunar/thunar-window.c:609
 msgid "View as _Detailed List"
 msgstr "_Részletes lista"
 
-#: ../thunar/thunar-window.c:587
+#: ../thunar/thunar-window.c:609
 msgid "Display folder content in a detailed list view"
 msgstr "Mappa megjelenítése részletes lista nézetben"
 
-#: ../thunar/thunar-window.c:594
+#: ../thunar/thunar-window.c:616
 msgid "View as _Compact List"
 msgstr "Nézet tömör listaként"
 
-#: ../thunar/thunar-window.c:594
+#: ../thunar/thunar-window.c:616
 msgid "Display folder content in a compact list view"
 msgstr "A mappa tartalmát tömör lista nézetben mutatja"
 
-#: ../thunar/thunar-window.c:1596
+#: ../thunar/thunar-window.c:1636
 msgid "Failed to open parent folder"
 msgstr "Szülőmappa megnyitása sikertelen"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1622
+#: ../thunar/thunar-window.c:1662
 msgid "Failed to open home directory"
 msgstr "Saját mappa megnyitása sikertelen"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:1684
+#: ../thunar/thunar-window.c:1724
 msgid "About Templates"
 msgstr "A Sablonokról"
 
-#: ../thunar/thunar-window.c:1705
+#: ../thunar/thunar-window.c:1745
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "E mappa minden fájlja megjelenik a \"Dokumentum létrehozása\" menüben."
 
-#: ../thunar/thunar-window.c:1712
+#: ../thunar/thunar-window.c:1752
 msgid ""
 "If you frequently create certain kinds of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2278,15 +2299,15 @@ msgstr ""
 "Ezután a \"Dokumentum létrehozása\" menüben létre tudsz hozni egy ilyen "
 "dokumentumot a választott könyvtárban."
 
-#: ../thunar/thunar-window.c:1724
+#: ../thunar/thunar-window.c:1764
 msgid "Do _not display this message again"
 msgstr "_Ne mutasd ismét"
 
-#: ../thunar/thunar-window.c:1737
+#: ../thunar/thunar-window.c:1777
 msgid "Failed to open templates folder"
 msgstr "Sablonmappa megnyitása sikertelen"
 
-#: ../thunar/thunar-window.c:1773
+#: ../thunar/thunar-window.c:1813
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
