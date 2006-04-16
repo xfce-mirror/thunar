@@ -9,19 +9,19 @@ dnl
 dnl ***************************
 dnl *** Version information ***
 dnl ***************************
-m4_define([thunar_verinfo], [2:1:0])
+m4_define([thunar_verinfo], [3:0:1])
 m4_define([thunar_version_api], [1])
 m4_define([thunar_version_major], [0])
-m4_define([thunar_version_minor], [2])
-m4_define([thunar_version_micro], [3])
+m4_define([thunar_version_minor], [3])
+m4_define([thunar_version_micro], [0])
 m4_define([thunar_version_build], [r@REVISION@])
-m4_define([thunar_version_tag], [svn])
-m4_define([thunar_version], [thunar_version_major().thunar_version_minor().thunar_version_micro()ifelse(thunar_version_tag(), [], [], [thunar_version_tag()-thunar_version_build()])])
+m4_define([thunar_version_tag], [beta1])
+m4_define([thunar_version], [thunar_version_major().thunar_version_minor().thunar_version_micro()ifelse(thunar_version_tag(), [svn], [thunar_version_tag()-thunar_version_build()], [thunar_version_tag()])])
 
 dnl *******************************************
 dnl *** Debugging support for SVN snapshots ***
 dnl *******************************************
-m4_define([thunar_debug_default], [ifelse(thunar_version_tag(), [], [minimum], [yes])])
+m4_define([thunar_debug_default], [ifelse(thunar_version_tag(), [svn], [yes], [minimum])])
 
 dnl ***************************
 dnl *** Initialize autoconf ***
@@ -156,12 +156,12 @@ XDT_I18N([@LINGUAS@])
 dnl ***********************************
 dnl *** Check for required packages ***
 dnl ***********************************
-XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1.4])
+XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1.6])
 XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.6.0])
 XDT_CHECK_PACKAGE([LIBPNG], [libpng12], [1.2.0])
-XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.2.0])
+XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.2.2])
 
 dnl **********************************
 dnl *** Optional support for D-BUS ***
@@ -347,6 +347,7 @@ BM_THUNAR_PLUGIN_UCA()
 
 AC_OUTPUT([
 Makefile
+Thunar.spec
 docs/Makefile
 docs/design/Makefile
 docs/manual/Makefile

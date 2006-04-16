@@ -66,6 +66,7 @@ EXTRA_DIST =								\
 	FAQ								\
 	HACKING								\
 	ThunarBulkRename.in						\
+	Thunar.spec.in							\
 	ThunarHelp.in							\
 	intltool-extract.in						\
 	intltool-merge.in						\
@@ -75,6 +76,7 @@ EXTRA_DIST =								\
 
 DISTCLEANFILES =							\
 	ThunarBulkRename						\
+	Thunar.spec							\
 	ThunarHelp							\
 	intltool-extract						\
 	intltool-merge							\
