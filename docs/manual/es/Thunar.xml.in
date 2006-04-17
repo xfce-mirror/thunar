@@ -20,7 +20,7 @@
     </copyright><copyright><year>2006</year><holder>José M (josem88@gmail.com)</holder></copyright>
 
     <legalnotice id="legalnotice">
-      <para>La copia, distribución y/o modificación de este documento está permitida bajos los términos de la GNU Free Documentation License, Versión 1.1 o posterior publicada por la Free Software Foundation;  sin Secciones Invariantes, sin textos de la cubierda delantera y sin textos de la cubierta trasera. La licencia completa está disponible en la <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.</para>
+      <para>Permission is granted to copy, distribute and/or modify this document under the terms of the GNU Free Documentation License, Version 1.1 or any later version published by the Free Software Foundation; with no Invariant Sections, with no Front-Cover Texts, and with no Back-Cover Texts. The complete license text is available from the <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.</para>
     </legalnotice>
 
     <authorgroup>
@@ -36,13 +36,13 @@
       </author>
     </authorgroup>
 
-    <releaseinfo>Este manual describe la versión de @PACKAGE_VERSION@ de @PACKAGE_NAME@</releaseinfo>
+    <releaseinfo>Este manual describe la versión @PACKAGE_VERSION@ de @PACKAGE_NAME@</releaseinfo>
   </articleinfo>
 
   <sect1 id="intro">
     <title>Introdución a @PACKAGE_NAME@</title>
 
-    <para>Thunar es un nuevo y moderno manejador de archivos para el Entorno de Escritorio Xfce. Thunar ha sido diseñado para que sea rápido y fácil de usar. Su interfaz de usuario es limpia e intuitiva, y no incluye ninguna opción confusa o inútil de forma predeterminada. Thunar is rápido y responsivo, con una buena velocidad de inicio y de carga de directorio.</para>
+    <para>Thunar is a new modern file manager for the Xfce Desktop Environment. Thunar has been designed from the ground up to be fast and easy-to-use. Its user interface is clean and intuitive, and does not include any confusing or useless options by default. Thunar is fast and responsive with a good start up time and folder load time.</para>
 
     <para>El gestor de archivos Thunar de tal modo proporciona un punto de acceso integrado a tus archivos y aplicaciones. Puede usar el gestor de archivos para lo siguiente:</para>
 
@@ -51,7 +51,7 @@
       <listitem>Mostrar sus archivos y directorios.</listitem>
       <listitem>Manipular sus archivos y directorios</listitem>
       <listitem>Ejecutar y manejar actiones personalizadas.</listitem>
-      <listitem>Acceder a medios removibles.</listitem>
+      <listitem>Acceder a medios extraíbles.</listitem>
     </itemizedlist>
   </sect1>
 
@@ -65,7 +65,7 @@
       <para>Aunque que el gestor de archivos Thunar hace un buen trabajo en la abstracción de los detalles del sistema de archivos subyacentes, de modo que el susuario no tiene que preocuparse de ellos, es, a veces útil entender los conceptos básicos para entender el cuadro completo. Esta sección intenta dar una introducción a los conceptos del sistema de archivos UNIX, el cual es usado hoy en día por todas las encarnaciones de UNIX, incluyendo Linux.</para>
 
       <sect3 id="folders-and-paths">
-        <title>directorios y rutas</title>
+        <title>Directorios y rutas</title>
 
         <para>En un sistema de archivos UNIX todos los directorios se ordenan en una estructura de árbol invertido que se ramifica hacia abajo desde un direcotrio único superior, llamado <emphasis>directorio raíz (root)</emphasis> (el término <emphasis>directorio</emphasis> es usuado a menudo en ligar de <emphasis>carpeta</emphasis>) y mostrado como <guilabel>Sistema de Archivos</guilabel> en Thunar. Esto significa que puede llegar desde un directorio a otro cualquiera recorriendo el árbol hacia arriba hasta encontrar un punto comúm, y después bajar por el árbol a través de los apropiados subdirectorios hasta alcanzar su objetivo.</para>
 
@@ -82,19 +82,19 @@
         <para>Estas son los cuatro tipos de archivos más importantes en un sistema de archivos UNIX.</para>
 
         <sect4 id="file-types-ordinary-files">
-          <title>Arvhicos Corrientes</title>
+          <title>Arvhicos corrientes</title>
 
-          <para>Un archivo corriente puede contener texto, un programa, o otros datos, esto incluye imágenes, archivos de audio, documentos de oficina y archivos de vídeo. El término <emphasis>archivo</emphasis> es a menudo usado para referirse a un archivo ordinario.</para>
+          <para>Un archivo corriente puede contener texto, un programa, u otros datos, esto incluye imágenes, archivos de audio, documentos de oficina y archivos de vídeo. El término <emphasis>archivo</emphasis> es a menudo usado para referirse a un archivo ordinario.</para>
         </sect4>
 
         <sect4 id="file-types-folder-files">
-          <title>Directorios</title>
+          <title>Folder Files</title>
 
           <para>Las carpetas son también archivos en un sitema de archivos UNIX. Para ser exactos, una carpeta es un archivo especial, que contiene un mapa con el nombre y una referencia de cada archivo contenido dentro de esta carpeta.</para>
         </sect4>
 
         <sect4 id="file-types-symbolic-link-files">
-          <title>Enlaces Simbólicos</title>
+          <title>Symbolic Link Files</title>
 
           <para>Un enlace simbólico (a menudo llamado <emphasis>symlink</emphasis>) es un archivi especial que contiene una ruta a otro archivo en el sistema de archivos. Por lo tanto, los enlaces simbólicos no contienen información útil, sólo apuntan a otro archivo.</para>
         </sect4>
@@ -110,7 +110,7 @@
 
 
   <sect1 id="faq">
-    <title>Preguntas Frecuentes</title>
+    <title>Preguntas frecuentes</title>
 
     <para>Esta sección intenta reunir las numerasosas preguntas frecuentes que tienen que ver con el trabajo con Thunar. Si conoce alguna pregunta que no está en esta página, por favor <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">archive una petición</ulink>.</para>
 
@@ -195,7 +195,7 @@
       </listitem>
     </itemizedlist>
 
-    <para>En el caso de que quiera solicitar una característica, por favor deje claro por qué considera usted que merece la pena esa característica para la aplicación. Es más probable que una nueva característica sea añadida si usted ofrece buenos argumentos. Las posibilidades de que se añanda una característica son aún más si proporciona un parche que implemente esa característica, pero asegúrese de leer el archivo <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> - especialmente la sección <emphasis>Coding Style</emphasis> - antes de que empiece a modificar el código.</para>
+    <para>In case you want to request a new feature, please make clear why you consider it a worth addition for the application. It is more likely that a new feature gets added if you provide good arguments for the feature. It will increase the chance of addition even more if you provide a patch that implements the requested feature, but make sure that you read the file <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> - especially the section labeled <emphasis>Coding Style</emphasis> - before you start hacking up the source.</para>
 
     <para>Si tiene preguntas acerca del uso o la instalación de este software, por favor, pregunte en la <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">lista de correo thunar-dev</ulink> o conecte su cliente IRC a <emphasis role="bold">irc.freenode.net</emphasis>, únase al canal <emphasis role="bold">#thunar</emphasis> y pida ayuda.</para>
   </sect1>
@@ -203,13 +203,13 @@
   <sect1 id="copyright">
     <title>Acerca de @PACKAGE_NAME@</title>
 
-    <para>@PACKAGE_NAME@ ha sido escrito por Benedikt Meurer (<email>benny@xfce.org</email>). Visite el <ulink url="http://thunar.xfce.org/" type="http">Sitio web de thunar</ulink> para más información.</para>
+    <para>@PACKAGE_NAME@ ha sido escrito por Benedikt Meurer (<email>benny@xfce.org</email>). Visite el <ulink url="http://thunar.xfce.org/" type="http">sitio web de thunar</ulink> para más información.</para>
 
     <para>Esta documentación fue escrita por Benedikt Meurer (<email>benny@xfce.org</email>). La última versión de este documento está siempre disponible desde el <ulink type="http" url="http://thunar.xfce.org/">sitio web de Thunar</ulink>.</para>
 
-    <para>Este software está distribuido bajo los términos de la GNU General Public License según lo publicado por la Free Software Foundation; en la versión 2 de la licencia o cualquiera posterior.</para>
+    <para>This software is distributed under the terms of the GNU General Public License as published by the Free Software Foundation; either version 2 of the License, or (at your option) any later version.</para>
 
-    <para>Usted debería haber recivido una copia de la GNU General Public License con este programa; si no la ha recibido ,esriba a la Free Sofware Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 022111-1307, USA</para>
+    <para>You should have received a copy of the GNU General Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
   </sect1>
 
 </article>
