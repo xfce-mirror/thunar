@@ -54,6 +54,9 @@ static void     thunar_size_label_set_property          (GObject              *o
                                                          guint                 prop_id,
                                                          const GValue         *value,
                                                          GParamSpec           *pspec);
+static gboolean thunar_size_label_button_press_event    (GtkWidget            *ebox,
+                                                         GdkEventButton       *event,
+                                                         ThunarSizeLabel      *size_label);
 static void     thunar_size_label_file_changed          (ThunarFile           *file,
                                                          ThunarSizeLabel      *size_label);
 static void     thunar_size_label_error                 (ThunarVfsJob         *job,
@@ -83,6 +86,8 @@ struct _ThunarSizeLabel
   ThunarVfsJob *job;
 
   ThunarFile   *file;
+
+  GtkTooltips  *tooltips;
 
   GtkWidget    *label;
   GtkWidget    *throbber;
@@ -157,16 +162,31 @@ thunar_size_label_class_init (ThunarSizeLabelClass *klass)
 static void
 thunar_size_label_init (ThunarSizeLabel *size_label)
 {
+  GtkWidget *ebox;
+
   size_label->animate_timer_id = -1;
+
+  /* allocate shared tooltips */
+  size_label->tooltips = gtk_tooltips_new ();
+  exo_gtk_object_ref_sink (GTK_OBJECT (size_label->tooltips));
 
   gtk_widget_push_composite_child ();
 
   /* configure the box */
   gtk_box_set_spacing (GTK_BOX (size_label), 6);
 
+  /* add an evenbox for the throbber */
+  ebox = gtk_event_box_new ();
+  gtk_event_box_set_visible_window (GTK_EVENT_BOX (ebox), FALSE);
+  g_signal_connect (G_OBJECT (ebox), "button-press-event", G_CALLBACK (thunar_size_label_button_press_event), size_label);
+  gtk_tooltips_set_tip (size_label->tooltips, ebox, _("Click here to stop calculating the total size of the folder."), NULL);
+  gtk_box_pack_start (GTK_BOX (size_label), ebox, FALSE, FALSE, 0);
+  gtk_widget_show (ebox);
+
   /* add the throbber widget */
   size_label->throbber = thunar_throbber_new ();
-  gtk_box_pack_start (GTK_BOX (size_label), size_label->throbber, FALSE, FALSE, 0);
+  exo_binding_new (G_OBJECT (size_label->throbber), "visible", G_OBJECT (ebox), "visible");
+  gtk_container_add (GTK_CONTAINER (ebox), size_label->throbber);
   gtk_widget_show (size_label->throbber);
 
   /* add the label widget */
@@ -201,6 +221,9 @@ thunar_size_label_finalize (GObject *object)
   /* be sure to cancel any pending animate timer */
   if (G_UNLIKELY (size_label->animate_timer_id >= 0))
     g_source_remove (size_label->animate_timer_id);
+
+  /* release shared tooltips */
+  g_object_unref (G_OBJECT (size_label->tooltips));
 
   (*G_OBJECT_CLASS (thunar_size_label_parent_class)->finalize) (object);
 }
@@ -247,6 +270,46 @@ thunar_size_label_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static gboolean
+thunar_size_label_button_press_event (GtkWidget       *ebox,
+                                      GdkEventButton  *event,
+                                      ThunarSizeLabel *size_label)
+{
+  g_return_val_if_fail (GTK_IS_EVENT_BOX (ebox), FALSE);
+  g_return_val_if_fail (THUNAR_IS_SIZE_LABEL (size_label), FALSE);
+
+  /* left button press on the throbber cancels the calculation */
+  if (G_LIKELY (event->button == 1))
+    {
+      /* be sure to cancel the animate timer */
+      if (G_UNLIKELY (size_label->animate_timer_id >= 0))
+        g_source_remove (size_label->animate_timer_id);
+
+      /* cancel the pending job (if any) */
+      if (G_UNLIKELY (size_label->job != NULL))
+        {
+          g_signal_handlers_disconnect_matched (G_OBJECT (size_label->job), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, size_label);
+          thunar_vfs_job_cancel (THUNAR_VFS_JOB (size_label->job));
+          g_object_unref (G_OBJECT (size_label->job));
+          size_label->job = NULL;
+        }
+
+      /* be sure to stop and hide the throbber */
+      thunar_throbber_set_animated (THUNAR_THROBBER (size_label->throbber), FALSE);
+      gtk_widget_hide (size_label->throbber);
+
+      /* tell the user that the operation was canceled */
+      gtk_label_set_text (GTK_LABEL (size_label->label), _("Calculation aborted"));
+
+      /* we handled the event */
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 

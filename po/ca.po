@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-16 09:25+0200\n"
+"POT-Creation-Date: 2006-04-19 19:49+0200\n"
 "PO-Revision-Date: 2006-04-15 21:29+0200\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
@@ -782,13 +782,13 @@ msgstr "Llistat detallat de directoris"
 msgid "Details view"
 msgstr "Mostra detalls"
 
-#: ../thunar/thunar-dialogs.c:111
+#: ../thunar/thunar-dialogs.c:96
 msgid "translator-credits"
 msgstr "Crèdits de traductors"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
 msgid "Failed to open the documentation browser"
 msgstr "No s'ha pogut obrir el visor de documentació"
 
@@ -1877,17 +1877,28 @@ msgstr "No s'ha pogut muntar \"%s\""
 msgid "Failed to unmount \"%s\""
 msgstr "No s'ha pogut desmuntar \"%s\""
 
+#: ../thunar/thunar-size-label.c:182
+#, fuzzy
+msgid "Click here to stop calculating the total size of the folder."
+msgstr "Feu clic aquí per arreglar automàticament els permisos del directori"
+
+#. tell the user that the operation was canceled
+#: ../thunar/thunar-size-label.c:306
+#, fuzzy
+msgid "Calculation aborted"
+msgstr "S'està calculant"
+
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:350
+#: ../thunar/thunar-size-label.c:413
 msgid "Calculating..."
 msgstr "S'està calculant"
 
-#: ../thunar/thunar-size-label.c:360
+#: ../thunar/thunar-size-label.c:423
 #, c-format
 msgid "%s Bytes"
 msgstr "%s octets"
 
-#: ../thunar/thunar-size-label.c:452
+#: ../thunar/thunar-size-label.c:515
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -2950,27 +2961,27 @@ msgstr ""
 msgid "Select an Icon"
 msgstr "Seleccioneu una icona"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:770
+#: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Element desconegut <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:788
+#: ../plugins/thunar-uca/thunar-uca-model.c:798
 msgid "End element handler called while in root context"
 msgstr ""
 "Final de l'element identificador del fitxer mentre estava dins el contexte "
 "arrel"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:876
+#: ../plugins/thunar-uca/thunar-uca-model.c:886
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Element de tancament desconegut <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1301
+#: ../plugins/thunar-uca/thunar-uca-model.c:1311
 msgid "Failed to determine save location for uca.xml"
 msgstr "No s'ha pogut determinar la ubicació pel fitxer uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1417
+#: ../plugins/thunar-uca/thunar-uca-model.c:1426
 msgid "Command not configured"
 msgstr "Ordre no configurat"
 

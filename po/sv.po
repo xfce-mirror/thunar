@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-16 09:25+0200\n"
+"POT-Creation-Date: 2006-04-19 19:49+0200\n"
 "PO-Revision-Date: 2006-02-22 16:28+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -783,13 +783,13 @@ msgstr "Detaljerad kataloglistning"
 msgid "Details view"
 msgstr "Detaljvy"
 
-#: ../thunar/thunar-dialogs.c:111
+#: ../thunar/thunar-dialogs.c:96
 msgid "translator-credits"
 msgstr "Daniel Nylander <po@danielnylander.se>"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
 #, fuzzy
 msgid "Failed to open the documentation browser"
 msgstr "Misslyckades att öppna mallmapp"
@@ -1890,18 +1890,29 @@ msgstr "Misslyckades att montera \"%s\""
 msgid "Failed to unmount \"%s\""
 msgstr "Misslyckades att avmontera \"%s\""
 
+#: ../thunar/thunar-size-label.c:182
+#, fuzzy
+msgid "Click here to stop calculating the total size of the folder."
+msgstr "Klicka här för att automatiskt rätta till mapprättigheterna."
+
+#. tell the user that the operation was canceled
+#: ../thunar/thunar-size-label.c:306
+#, fuzzy
+msgid "Calculation aborted"
+msgstr "Samlar in filer..."
+
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:350
+#: ../thunar/thunar-size-label.c:413
 #, fuzzy
 msgid "Calculating..."
 msgstr "Samlar in filer..."
 
-#: ../thunar/thunar-size-label.c:360
+#: ../thunar/thunar-size-label.c:423
 #, fuzzy, c-format
 msgid "%s Bytes"
 msgstr " byte)"
 
-#: ../thunar/thunar-size-label.c:452
+#: ../thunar/thunar-size-label.c:515
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -2975,25 +2986,25 @@ msgstr ""
 msgid "Select an Icon"
 msgstr "Välj en ikon"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:770
+#: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Okänt element <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:788
+#: ../plugins/thunar-uca/thunar-uca-model.c:798
 msgid "End element handler called while in root context"
 msgstr "Slutelementhandtag anropad inne i rotkontext"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:876
+#: ../plugins/thunar-uca/thunar-uca-model.c:886
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Okänt avslutselement <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1301
+#: ../plugins/thunar-uca/thunar-uca-model.c:1311
 msgid "Failed to determine save location for uca.xml"
 msgstr "Misslyckades att fastställa plats för att spara uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1417
+#: ../plugins/thunar-uca/thunar-uca-model.c:1426
 msgid "Command not configured"
 msgstr "Kommando inte konfigurerat"
 

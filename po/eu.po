@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-16 09:25+0200\n"
+"POT-Creation-Date: 2006-04-19 19:49+0200\n"
 "PO-Revision-Date: 2006-02-22 12:03+0100\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -785,13 +785,13 @@ msgstr "Xeheturiko direktorio zerrendatzea"
 msgid "Details view"
 msgstr "Xeheturiko ikuspegia"
 
-#: ../thunar/thunar-dialogs.c:111
+#: ../thunar/thunar-dialogs.c:96
 msgid "translator-credits"
 msgstr "itzulpena-kredituak"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
 #, fuzzy
 msgid "Failed to open the documentation browser"
 msgstr "Huts txantiloi karpeta irekitzerakoan"
@@ -1881,18 +1881,29 @@ msgstr "Huts \"%s\" muntatzerakoan"
 msgid "Failed to unmount \"%s\""
 msgstr "Huts \"%s\" desmuntatzerakoan"
 
+#: ../thunar/thunar-size-label.c:182
+#, fuzzy
+msgid "Click here to stop calculating the total size of the folder."
+msgstr "Hemen klikatu karpeta baimenak automatikoki konpontzeko."
+
+#. tell the user that the operation was canceled
+#: ../thunar/thunar-size-label.c:306
+#, fuzzy
+msgid "Calculation aborted"
+msgstr "Fitxategiak eskuratzen..."
+
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:350
+#: ../thunar/thunar-size-label.c:413
 #, fuzzy
 msgid "Calculating..."
 msgstr "Fitxategiak eskuratzen..."
 
-#: ../thunar/thunar-size-label.c:360
+#: ../thunar/thunar-size-label.c:423
 #, fuzzy, c-format
 msgid "%s Bytes"
 msgstr " Byte)"
 
-#: ../thunar/thunar-size-label.c:452
+#: ../thunar/thunar-size-label.c:515
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -2944,25 +2955,25 @@ msgstr ""
 msgid "Select an Icon"
 msgstr "Ikono bat Hautatu"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:770
+#: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Elementu ezezaguna <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:788
+#: ../plugins/thunar-uca/thunar-uca-model.c:798
 msgid "End element handler called while in root context"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:876
+#: ../plugins/thunar-uca/thunar-uca-model.c:886
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Itxiera elementu ezezaguna <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1301
+#: ../plugins/thunar-uca/thunar-uca-model.c:1311
 msgid "Failed to determine save location for uca.xml"
 msgstr "Huts uca.xml fitxategiaren gordetze kokapena zehazterakoan"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1417
+#: ../plugins/thunar-uca/thunar-uca-model.c:1426
 msgid "Command not configured"
 msgstr "Komandoa ez da konfiguratu"
 

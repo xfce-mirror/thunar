@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-16 09:25+0200\n"
+"POT-Creation-Date: 2006-04-19 19:49+0200\n"
 "PO-Revision-Date: 2006-04-16 19:52+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -797,13 +797,13 @@ msgstr "詳細なファイル情報と共にフォルダをリスト表示しま
 msgid "Details view"
 msgstr "詳細表示"
 
-#: ../thunar/thunar-dialogs.c:111
+#: ../thunar/thunar-dialogs.c:96
 msgid "translator-credits"
 msgstr "Daichi Kawahata <daichi@xfce.org>"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
 msgid "Failed to open the documentation browser"
 msgstr "文書を表示するブラウザーの起動に失敗しました。"
 
@@ -1882,17 +1882,28 @@ msgstr "「%s」のマウントに失敗しました。"
 msgid "Failed to unmount \"%s\""
 msgstr "「%s」のマウント解除に失敗しました。"
 
+#: ../thunar/thunar-size-label.c:182
+#, fuzzy
+msgid "Click here to stop calculating the total size of the folder."
+msgstr "ここをクリックすると、フォルダのアクセス権を自動的に直します。"
+
+#. tell the user that the operation was canceled
+#: ../thunar/thunar-size-label.c:306
+#, fuzzy
+msgid "Calculation aborted"
+msgstr "計算しています..."
+
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:350
+#: ../thunar/thunar-size-label.c:413
 msgid "Calculating..."
 msgstr "計算しています..."
 
-#: ../thunar/thunar-size-label.c:360
+#: ../thunar/thunar-size-label.c:423
 #, c-format
 msgid "%s Bytes"
 msgstr "%s バイト"
 
-#: ../thunar/thunar-size-label.c:452
+#: ../thunar/thunar-size-label.c:515
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -2951,25 +2962,25 @@ msgstr ""
 msgid "Select an Icon"
 msgstr "アイコンを選択してください"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:770
+#: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "不明な要素 <%s> があります"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:788
+#: ../plugins/thunar-uca/thunar-uca-model.c:798
 msgid "End element handler called while in root context"
 msgstr "ルートコンテキストで終了要素ハンドラーが呼び出されました。"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:876
+#: ../plugins/thunar-uca/thunar-uca-model.c:886
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "不明な閉じ要素 <%s> があります"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1301
+#: ../plugins/thunar-uca/thunar-uca-model.c:1311
 msgid "Failed to determine save location for uca.xml"
 msgstr "ファイル「uca.xml」を保存する場所を確定するのに失敗しました。"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1417
+#: ../plugins/thunar-uca/thunar-uca-model.c:1426
 msgid "Command not configured"
 msgstr "コマンドが設定されていません。"
 

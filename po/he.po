@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-16 09:25+0200\n"
+"POT-Creation-Date: 2006-04-19 19:49+0200\n"
 "PO-Revision-Date: 2006-04-15 04:16+0300\n"
 "Last-Translator: Yo'av Moshe <black_jesus@myrealbox.com>\n"
 "Language-Team: Hebrew\n"
@@ -770,13 +770,13 @@ msgstr "תרשים ספרייה מפורט"
 msgid "Details view"
 msgstr "תצוגת רשימה מפורטת"
 
-#: ../thunar/thunar-dialogs.c:111
+#: ../thunar/thunar-dialogs.c:96
 msgid "translator-credits"
 msgstr "תודות למתרגמים"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
 msgid "Failed to open the documentation browser"
 msgstr "לא יכול לפתוח את דפדפן התיעוד"
 
@@ -1835,17 +1835,27 @@ msgstr "לא יכול לעגן את \"%s\""
 msgid "Failed to unmount \"%s\""
 msgstr "לא יכול לנתק את \"%s\""
 
+#: ../thunar/thunar-size-label.c:182
+msgid "Click here to stop calculating the total size of the folder."
+msgstr ""
+
+#. tell the user that the operation was canceled
+#: ../thunar/thunar-size-label.c:306
+#, fuzzy
+msgid "Calculation aborted"
+msgstr "מחשב..."
+
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:350
+#: ../thunar/thunar-size-label.c:413
 msgid "Calculating..."
 msgstr "מחשב..."
 
-#: ../thunar/thunar-size-label.c:360
+#: ../thunar/thunar-size-label.c:423
 #, c-format
 msgid "%s Bytes"
 msgstr "%s בייתים"
 
-#: ../thunar/thunar-size-label.c:452
+#: ../thunar/thunar-size-label.c:515
 #, fuzzy, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -2857,25 +2867,25 @@ msgstr ""
 msgid "Select an Icon"
 msgstr "בחר סמל"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:770
+#: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
 msgid "Unknown element <%s>"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:788
+#: ../plugins/thunar-uca/thunar-uca-model.c:798
 msgid "End element handler called while in root context"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:876
+#: ../plugins/thunar-uca/thunar-uca-model.c:886
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1301
+#: ../plugins/thunar-uca/thunar-uca-model.c:1311
 msgid "Failed to determine save location for uca.xml"
 msgstr ""
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1417
+#: ../plugins/thunar-uca/thunar-uca-model.c:1426
 msgid "Command not configured"
 msgstr "פקודה לא מוגדרת"
 

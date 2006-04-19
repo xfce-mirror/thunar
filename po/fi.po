@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-16 09:25+0200\n"
+"POT-Creation-Date: 2006-04-19 19:49+0200\n"
 "PO-Revision-Date: 2006-04-16 10:12+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -780,13 +780,13 @@ msgstr "Yksityiskohtainen hakemistolistaus"
 msgid "Details view"
 msgstr "Yksityiskohtainen näkymä"
 
-#: ../thunar/thunar-dialogs.c:111
+#: ../thunar/thunar-dialogs.c:96
 msgid "translator-credits"
 msgstr "Jari Rahkonen <jari.rahkonen@pp1.inet.fi>"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
 msgid "Failed to open the documentation browser"
 msgstr "Dokumentaatioselaimen avaaminen epäonnistui"
 
@@ -1872,17 +1872,28 @@ msgstr "Kohteen \"%s\" liittäminen epäonnistui"
 msgid "Failed to unmount \"%s\""
 msgstr "Kohteen \"%s\" irrottaminen epäonnistui"
 
+#: ../thunar/thunar-size-label.c:182
+#, fuzzy
+msgid "Click here to stop calculating the total size of the folder."
+msgstr "Napsauta tästä korjataksesi hakemiston käyttöoikeudet automaattisesti."
+
+#. tell the user that the operation was canceled
+#: ../thunar/thunar-size-label.c:306
+#, fuzzy
+msgid "Calculation aborted"
+msgstr "Lasketaan..."
+
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:350
+#: ../thunar/thunar-size-label.c:413
 msgid "Calculating..."
 msgstr "Lasketaan..."
 
-#: ../thunar/thunar-size-label.c:360
+#: ../thunar/thunar-size-label.c:423
 #, c-format
 msgid "%s Bytes"
 msgstr "%s tavua"
 
-#: ../thunar/thunar-size-label.c:452
+#: ../thunar/thunar-size-label.c:515
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -2934,25 +2945,25 @@ msgstr ""
 msgid "Select an Icon"
 msgstr "Valitse kuvake"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:770
+#: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Tuntematon elementti <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:788
+#: ../plugins/thunar-uca/thunar-uca-model.c:798
 msgid "End element handler called while in root context"
 msgstr "Sulkuelementin käsittelijää kutsuttiin juurikontekstissa"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:876
+#: ../plugins/thunar-uca/thunar-uca-model.c:886
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Tuntematon sulkuelementti <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1301
+#: ../plugins/thunar-uca/thunar-uca-model.c:1311
 msgid "Failed to determine save location for uca.xml"
 msgstr "Tallennuskohteen selvittäminen tiedostolle uca.xml epäonnistui"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1417
+#: ../plugins/thunar-uca/thunar-uca-model.c:1426
 msgid "Command not configured"
 msgstr "Komentoa ei ole asetettu"
 

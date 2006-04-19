@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-16 09:25+0200\n"
-"PO-Revision-Date: 2006-04-14 22:30+0100\n"
+"POT-Creation-Date: 2006-04-19 19:49+0200\n"
+"PO-Revision-Date: 2006-04-19 19:50+0100\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -789,7 +789,7 @@ msgstr "Detaillierte Ordneransicht"
 msgid "Details view"
 msgstr "Detailansicht"
 
-#: ../thunar/thunar-dialogs.c:111
+#: ../thunar/thunar-dialogs.c:96
 msgid "translator-credits"
 msgstr ""
 "Benedikt Meurer <benny@xfce.org>\n"
@@ -798,7 +798,7 @@ msgstr ""
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:270 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
 msgid "Failed to open the documentation browser"
 msgstr "Die Dokumentation konnte nicht angezeigt werden"
 
@@ -1904,17 +1904,26 @@ msgstr "Das Medium »%s« konnte nicht eingebunden werden"
 msgid "Failed to unmount \"%s\""
 msgstr "Das Medium »%s« konnte nicht ausgelöst werden"
 
+#: ../thunar/thunar-size-label.c:182
+msgid "Click here to stop calculating the total size of the folder."
+msgstr "Hier klicken um die Berechnung der Verzeichnisgröße abzubrechen."
+
+#. tell the user that the operation was canceled
+#: ../thunar/thunar-size-label.c:306
+msgid "Calculation aborted"
+msgstr "Berechnung abgebrochen"
+
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:350
+#: ../thunar/thunar-size-label.c:413
 msgid "Calculating..."
 msgstr "Berechne..."
 
-#: ../thunar/thunar-size-label.c:360
+#: ../thunar/thunar-size-label.c:423
 #, c-format
 msgid "%s Bytes"
 msgstr "%s Byte"
 
-#: ../thunar/thunar-size-label.c:452
+#: ../thunar/thunar-size-label.c:515
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
@@ -2987,26 +2996,26 @@ msgstr ""
 msgid "Select an Icon"
 msgstr "Symbol auswählen"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:770
+#: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
 msgid "Unknown element <%s>"
 msgstr "Unbekanntes Element <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:788
+#: ../plugins/thunar-uca/thunar-uca-model.c:798
 msgid "End element handler called while in root context"
 msgstr ""
 "Der Handler für das Element wurde während des obersten Kontextes aufgerufen"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:876
+#: ../plugins/thunar-uca/thunar-uca-model.c:886
 #, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Unbekanntes schließendes Element <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1301
+#: ../plugins/thunar-uca/thunar-uca-model.c:1311
 msgid "Failed to determine save location for uca.xml"
 msgstr "Konnte den Speicherort für »uca.xml« nicht bestimmen"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1417
+#: ../plugins/thunar-uca/thunar-uca-model.c:1426
 msgid "Command not configured"
 msgstr "Befehl nicht angegeben"
 
