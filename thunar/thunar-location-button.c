@@ -864,6 +864,10 @@ thunar_location_button_set_file (ThunarLocationButton *location_button,
   /* disconnect from the previous file */
   if (location_button->file != NULL)
     {
+      /* stop watching the file */
+      thunar_file_unwatch (location_button->file);
+
+      /* disconnect signals and release reference */
       g_signal_handlers_disconnect_by_func (G_OBJECT (location_button->file), thunar_location_button_file_changed, location_button);
       g_object_unref (G_OBJECT (location_button->file));
     }
@@ -876,6 +880,9 @@ thunar_location_button_set_file (ThunarLocationButton *location_button,
     {
       /* take a reference on the new file */
       g_object_ref (G_OBJECT (file));
+
+      /* watch the file for changes */
+      thunar_file_watch (file);
 
       /* stay informed about changes to the file */
       g_signal_connect_swapped (G_OBJECT (file), "changed", G_CALLBACK (thunar_location_button_file_changed), location_button);

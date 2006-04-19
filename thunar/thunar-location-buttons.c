@@ -32,6 +32,7 @@
 #include <thunar/thunar-location-button.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-buttons-ui.h>
+#include <thunar/thunar-properties-dialog.h>
 
 
 
@@ -121,6 +122,8 @@ static void           thunar_location_buttons_action_open               (GtkActi
 static void           thunar_location_buttons_action_open_in_new_window (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_paste_files_here   (GtkAction                  *action,
+                                                                         ThunarLocationButtons      *buttons);
+static void           thunar_location_buttons_action_properties         (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
 
 
@@ -1309,12 +1312,27 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   /* add a separator */
   gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu", "separator2", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
 
-  /* add the "Open in New Window" action */
+  /* add the "Paste Into Folder" action */
   tooltip = g_strdup_printf (_("Move or copy files previously selected by a Cut or Copy command into \"%s\""), thunar_file_get_display_name (file));
-  action = gtk_action_new ("ThunarLocationButtons::paste-into-folder", _("_Paste Into Folder"), tooltip, GTK_STOCK_PASTE);
+  action = gtk_action_new ("ThunarLocationButtons::paste-into-folder", _("Paste Into Folder"), tooltip, GTK_STOCK_PASTE);
   g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
   g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_location_buttons_action_paste_files_here), buttons);
   exo_binding_new (G_OBJECT (clipboard), "can-paste", G_OBJECT (action), "sensitive");
+  gtk_action_group_add_action (action_group, action);
+  gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu",
+                         gtk_action_get_name (action), gtk_action_get_name (action),
+                         GTK_UI_MANAGER_MENUITEM, FALSE);
+  g_object_unref (G_OBJECT (action));
+  g_free (tooltip);
+
+  /* add a separator */
+  gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu", "separator3", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
+
+  /* add the "Properties" action */
+  tooltip = g_strdup_printf (_("View the properties of the folder \"%s\""), thunar_file_get_display_name (file));
+  action = gtk_action_new ("ThunarLocationButtons::properties", _("_Properties"), tooltip, GTK_STOCK_PROPERTIES);
+  g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+  g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_location_buttons_action_properties), buttons);
   gtk_action_group_add_action (action_group, action);
   gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu",
                          gtk_action_get_name (action), gtk_action_get_name (action),
@@ -1479,7 +1497,7 @@ thunar_location_buttons_action_paste_files_here (GtkAction             *action,
                                                  ThunarLocationButtons *buttons)
 {
   ThunarClipboardManager *clipboard;
-  ThunarFile        *directory;
+  ThunarFile             *directory;
 
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
@@ -1492,6 +1510,37 @@ thunar_location_buttons_action_paste_files_here (GtkAction             *action,
       clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (GTK_WIDGET (buttons)));
       thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_path (directory), GTK_WIDGET (buttons), NULL);
       g_object_unref (G_OBJECT (clipboard));
+    }
+}
+
+
+
+static void
+thunar_location_buttons_action_properties (GtkAction             *action,
+                                           ThunarLocationButtons *buttons)
+{
+  ThunarFile *directory;
+  GtkWidget  *toplevel;
+  GtkWidget  *dialog;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+
+  /* determine the directory for the action */
+  directory = g_object_get_data (G_OBJECT (action), "thunar-file");
+  if (G_LIKELY (directory != NULL))
+    {
+      /* determine the toplevel window */
+      toplevel = gtk_widget_get_toplevel (GTK_WIDGET (buttons));
+      if (G_LIKELY (toplevel != NULL && GTK_WIDGET_TOPLEVEL (toplevel)))
+        {
+          /* popup the properties dialog */
+          dialog = thunar_properties_dialog_new ();
+          gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+          thunar_properties_dialog_set_file (THUNAR_PROPERTIES_DIALOG (dialog), directory);
+          gtk_window_set_transient_for (GTK_WINDOW (dialog), GTK_WINDOW (toplevel));
+          gtk_widget_show (dialog);
+        }
     }
 }
 
