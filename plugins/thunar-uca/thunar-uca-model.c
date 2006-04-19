@@ -31,6 +31,9 @@
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
+#ifdef HAVE_PATHS_H
+#include <paths.h>
+#endif
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
@@ -43,6 +46,13 @@
 
 #include <thunar-uca/thunar-uca-model.h>
 #include <thunar-vfs/thunar-vfs.h>
+
+
+
+/* not all systems define _PATH_BSHELL */
+#ifndef _PATH_BSHELL
+#define _PATH_BSHELL "/bin/sh"
+#endif
 
 
 
@@ -1398,7 +1408,6 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
 {
   ThunarUcaModelItem *item;
   const gchar        *p;
-  gboolean            result = FALSE;
   GString            *command_line = g_string_new (NULL);
   GList              *lp;
   gchar              *dirname;
@@ -1415,7 +1424,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
   if (item->command == NULL || *item->command == '\0')
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Command not configured"));
-      goto done;
+      goto error;
     }
 
   /* generate the command line */
@@ -1433,7 +1442,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                   g_free (uri);
 
                   if (G_UNLIKELY (path == NULL))
-                    goto done;
+                    goto error;
 
                   quoted = g_shell_quote (path);
                   g_string_append (command_line, quoted);
@@ -1453,7 +1462,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                   g_free (uri);
 
                   if (G_UNLIKELY (path == NULL))
-                    goto done;
+                    goto error;
 
                   quoted = g_shell_quote (path);
                   g_string_append (command_line, quoted);
@@ -1495,7 +1504,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                   g_free (uri);
 
                   if (G_UNLIKELY (path == NULL))
-                    goto done;
+                    goto error;
 
                   dirname = g_path_get_dirname (path);
                   quoted = g_shell_quote (path);
@@ -1517,7 +1526,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                   g_free (uri);
 
                   if (G_UNLIKELY (path == NULL))
-                    goto done;
+                    goto error;
 
                   dirname = g_path_get_dirname (path);
                   quoted = g_shell_quote (path);
@@ -1564,11 +1573,22 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
         }
     }
 
-  result = g_shell_parse_argv (command_line->str, argcp, argvp, error);
+  /* we run the command using the bourne shell (or the systems
+   * replacement for the bourne shell), so environment variables
+   * and backticks can be used for the action commands.
+   */
+  (*argcp) = 3;
+  (*argvp) = g_new (gchar *, 4);
+  (*argvp)[0] = g_strdup (_PATH_BSHELL);
+  (*argvp)[1] = g_strdup ("-c");
+  (*argvp)[2] = g_string_free (command_line, FALSE);
+  (*argvp)[3] = NULL;
 
-done:
+  return TRUE;
+
+error:
   g_string_free (command_line, TRUE);
-  return result;
+  return FALSE;
 }
 
 

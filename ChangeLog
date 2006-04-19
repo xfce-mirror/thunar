@@ -1,3 +1,11 @@
+2006-04-19	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in: Check for paths.h.
+	* plugins/thunar-uca/thunar-uca-model.c: Run the action commands using
+	  the bourne shell (or the systems replacement), so environment variables
+	  and backticks can be used.
+	* NEWS: Update NEWS.
+
 2006-04-18	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-dialogs.c(thunar_dialogs_show_about): Use (translatable)
