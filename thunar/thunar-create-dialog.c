@@ -408,6 +408,11 @@ thunar_create_dialog_set_filename (ThunarCreateDialog *dialog,
       if (G_LIKELY (offset > 0))
         gtk_entry_select_region (GTK_ENTRY (dialog->entry), 0, offset);
     }
+  else
+    {
+      /* select the whole file name */
+      gtk_entry_select_region (GTK_ENTRY (dialog->entry), 0, -1);
+    }
 
   /* notify listeners */
   g_object_notify (G_OBJECT (dialog), "filename");
