@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-19 19:49+0200\n"
-"PO-Revision-Date: 2006-04-16 10:12+0300\n"
+"POT-Creation-Date: 2006-04-20 17:45+0300\n"
+"PO-Revision-Date: 2006-04-20 17:46+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -903,7 +903,7 @@ msgstr "Kuvakenäkymä"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
-#: ../thunar/thunar-location-buttons.c:1270
+#: ../thunar/thunar-location-buttons.c:1273
 #: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:957
 msgid "_Open"
 msgstr "_Avaa"
@@ -913,7 +913,7 @@ msgid "Open the selected files"
 msgstr "Avaa valitut tiedostot"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1283
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1286
 #: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:969
 msgid "Open in New Window"
 msgstr "Avaa uudessa ikkunassa"
@@ -1089,40 +1089,40 @@ msgid_plural "%d items selected"
 msgstr[0] "%d kohde valittu"
 msgstr[1] "%d kohdetta valittu"
 
-#: ../thunar/thunar-location-buttons.c:262
+#: ../thunar/thunar-location-buttons.c:265
 msgid "Spacing"
 msgstr "Välit"
 
-#: ../thunar/thunar-location-buttons.c:263
+#: ../thunar/thunar-location-buttons.c:266
 msgid "The amount of space between the path buttons"
 msgstr "Polkupainikkeiden välinen tyhjä tila"
 
 #. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1269
+#: ../thunar/thunar-location-buttons.c:1272
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "Avaa \"%s\" tässä ikkunassa"
 
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1282
+#: ../thunar/thunar-location-buttons.c:1285
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "Avaa \"%s\" uudessa ikkunassa"
 
 #. add the "Create Folder" action
-#: ../thunar/thunar-location-buttons.c:1297
+#: ../thunar/thunar-location-buttons.c:1300
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "Luo uusi hakemisto kohteeseen \"%s\""
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1298
+#: ../thunar/thunar-location-buttons.c:1301
 #: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
 msgid "Create _Folder..."
 msgstr "Luo _hakemisto..."
 
-#. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1313
+#. add the "Paste Into Folder" action
+#: ../thunar/thunar-location-buttons.c:1316
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
@@ -1130,18 +1130,28 @@ msgstr ""
 "Siirrä tai kopioi leikkaa- tai kopioi-komennolla valittuja tiedostoja "
 "kohteeseen \"%s\""
 
-#. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1314 ../thunar/thunar-tree-view.c:1065
-msgid "_Paste Into Folder"
-msgstr "_Liitä hakemistoon"
+#: ../thunar/thunar-location-buttons.c:1317
+#: ../thunar/thunar-standard-view.c:313
+msgid "Paste Into Folder"
+msgstr "Liitä hakemistoon"
+
+#. add the "Properties" action
+#: ../thunar/thunar-location-buttons.c:1332
+#, c-format
+msgid "View the properties of the folder \"%s\""
+msgstr "Näytä hakemiston \"%s\" ominaisuudet"
+
+#: ../thunar/thunar-location-buttons.c:1333
+msgid "_Properties"
+msgstr "_Ominaisuudet"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-location-buttons.c:1402
 #: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
 msgid "New Folder"
 msgstr "Uusi hakemisto"
 
-#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-location-buttons.c:1402
 #: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
 msgid "Create New Folder"
 msgstr "Luo uusi hakemisto"
@@ -1873,15 +1883,13 @@ msgid "Failed to unmount \"%s\""
 msgstr "Kohteen \"%s\" irrottaminen epäonnistui"
 
 #: ../thunar/thunar-size-label.c:182
-#, fuzzy
 msgid "Click here to stop calculating the total size of the folder."
-msgstr "Napsauta tästä korjataksesi hakemiston käyttöoikeudet automaattisesti."
+msgstr "Napsauta tästä keskeyttääksesi hakemiston koon laskemisen."
 
 #. tell the user that the operation was canceled
 #: ../thunar/thunar-size-label.c:306
-#, fuzzy
 msgid "Calculation aborted"
-msgstr "Lasketaan..."
+msgstr "Laskenta peruutettu"
 
 #. tell the user that we started calculation
 #: ../thunar/thunar-size-label.c:413
@@ -1929,10 +1937,6 @@ msgstr "Siirrä tai kopioi leikkaa- tai kopioi-komennolla valittuja tiedostoja"
 #: ../thunar/thunar-standard-view.c:312
 msgid "_Delete"
 msgstr "_Poista"
-
-#: ../thunar/thunar-standard-view.c:313
-msgid "Paste Into Folder"
-msgstr "Liitä hakemistoon"
 
 #: ../thunar/thunar-standard-view.c:313
 msgid ""
@@ -2102,6 +2106,11 @@ msgstr "T_yhjä tiedosto"
 #: ../thunar/thunar-tree-model.c:600
 msgid "Loading..."
 msgstr "Ladataan..."
+
+#. append the "Paste Into Folder" menu action
+#: ../thunar/thunar-tree-view.c:1065
+msgid "_Paste Into Folder"
+msgstr "_Liitä hakemistoon"
 
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:1083
