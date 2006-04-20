@@ -944,12 +944,21 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
                 }
 
               /* check if we have a valid name info */
-              str = xfce_rc_read_entry (rc, "Name", NULL);
-              if (G_LIKELY (str != NULL && *str != '\0' && g_utf8_validate (str, -1, NULL)))
+              name = xfce_rc_read_entry (rc, "Name", NULL);
+              if (G_LIKELY (name != NULL && *name != '\0' && g_utf8_validate (name, -1, NULL)))
                 {
                   /* check if we declared the file as executable */
                   if ((info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE) != 0)
                     {
+                      /* if the name contains a dir separator, use only the part after
+                       * the dir separator for checking.
+                       */
+                      str = strrchr (name, G_DIR_SEPARATOR);
+                      if (G_LIKELY (str == NULL))
+                        str = (gchar *) name;
+                      else
+                        str += 1;
+
                       /* check if the file tries to look like a regular document (i.e.
                        * a display name of 'file.png'), maybe a virus or other malware.
                        */
@@ -972,20 +981,20 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
                           info->custom_icon = NULL;
 
                           /* reset the name str, so we display the real file name */
-                          str = NULL;
+                          name = NULL;
                         }
                       thunar_vfs_mime_info_unref (fake_mime_info);
                     }
 
                   /* check if the name str wasn't reset */
-                  if (G_LIKELY (str != NULL))
+                  if (G_LIKELY (name != NULL))
                     {
                       /* release the previous display name */
                       if (G_UNLIKELY (info->display_name != thunar_vfs_path_get_name (info->path)))
                         g_free (info->display_name);
 
                       /* use the name specified by the .desktop file as display name */
-                      info->display_name = g_strdup (str);
+                      info->display_name = g_strdup (name);
                     }
                 }
 
