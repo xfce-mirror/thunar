@@ -5,9 +5,9 @@
 # Yo'av Moshe <bjesusATgmailDOTcom>, 2006.
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar svn\n"
+"Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-19 19:49+0200\n"
+"POT-Creation-Date: 2006-04-22 18:22+0900\n"
 "PO-Revision-Date: 2006-04-15 04:16+0300\n"
 "Last-Translator: Yo'av Moshe <black_jesus@myrealbox.com>\n"
 "Language-Team: Hebrew\n"
@@ -749,7 +749,7 @@ msgid "Enter the new name:"
 msgstr "הזן שם חדש:"
 
 #. display an error message
-#: ../thunar/thunar-create-dialog.c:523
+#: ../thunar/thunar-create-dialog.c:528
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "לא יכול להמיר את שם הקובץ \"%s\" לקידוד הנוכחי"
@@ -891,7 +891,7 @@ msgstr "תצוגת סמלים"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
-#: ../thunar/thunar-location-buttons.c:1270
+#: ../thunar/thunar-location-buttons.c:1273
 #: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:957
 msgid "_Open"
 msgstr "_פתח"
@@ -901,7 +901,7 @@ msgid "Open the selected files"
 msgstr "פתח את הקבצים שנבחרו"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1283
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1286
 #: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:969
 msgid "Open in New Window"
 msgstr "פתח בחלון חדש"
@@ -1079,57 +1079,68 @@ msgid_plural "%d items selected"
 msgstr[0] "פריט %d נבחר"
 msgstr[1] "%d פריטים נבחרו"
 
-#: ../thunar/thunar-location-buttons.c:262
+#: ../thunar/thunar-location-buttons.c:265
 msgid "Spacing"
 msgstr ""
 
-#: ../thunar/thunar-location-buttons.c:263
+#: ../thunar/thunar-location-buttons.c:266
 msgid "The amount of space between the path buttons"
 msgstr ""
 
 #. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1269
+#: ../thunar/thunar-location-buttons.c:1272
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "פתח את \"%s\" בחלון זה"
 
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1282
+#: ../thunar/thunar-location-buttons.c:1285
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "פתח את \"%s\" בחלון חדש"
 
 #. add the "Create Folder" action
-#: ../thunar/thunar-location-buttons.c:1297
+#: ../thunar/thunar-location-buttons.c:1300
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "צור תיקייה חדשה בתוך  \"%s\""
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1298
+#: ../thunar/thunar-location-buttons.c:1301
 #: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
 msgid "Create _Folder..."
 msgstr "צור _תיקייה..."
 
-#. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1313
+#. add the "Paste Into Folder" action
+#: ../thunar/thunar-location-buttons.c:1316
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr "העבר או הדבק את הקבצים שבחרת קודם בעזרת גזירה או העתקה אל \"%s\""
 
-#. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1314 ../thunar/thunar-tree-view.c:1065
-msgid "_Paste Into Folder"
-msgstr "_הדבק אל תוך התיקייה"
+#: ../thunar/thunar-location-buttons.c:1317
+#: ../thunar/thunar-standard-view.c:313
+msgid "Paste Into Folder"
+msgstr "הדבק אל תוך התיקייה"
+
+#. add the "Properties" action
+#: ../thunar/thunar-location-buttons.c:1332
+#, fuzzy, c-format
+msgid "View the properties of the folder \"%s\""
+msgstr "הצג את המאפיינים של הקובץ שנבחר"
+
+#: ../thunar/thunar-location-buttons.c:1333
+#, fuzzy
+msgid "_Properties"
+msgstr "מאפיינים..."
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-location-buttons.c:1402
 #: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
 msgid "New Folder"
 msgstr "תיקייה חדשה"
 
-#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-location-buttons.c:1402
 #: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
 msgid "Create New Folder"
 msgstr "צור תיקייה חדשה"
@@ -1893,10 +1904,6 @@ msgid "_Delete"
 msgstr "_מחק"
 
 #: ../thunar/thunar-standard-view.c:313
-msgid "Paste Into Folder"
-msgstr "הדבק אל תוך התיקייה"
-
-#: ../thunar/thunar-standard-view.c:313
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -2065,6 +2072,11 @@ msgstr "קובץ _ריק"
 #: ../thunar/thunar-tree-model.c:600
 msgid "Loading..."
 msgstr "טוען..."
+
+#. append the "Paste Into Folder" menu action
+#: ../thunar/thunar-tree-view.c:1065
+msgid "_Paste Into Folder"
+msgstr "_הדבק אל תוך התיקייה"
 
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:1083
@@ -2934,13 +2946,3 @@ msgstr "פתח תיקייה עם Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "פתח את התיקיות שצויינו עם Thunar"
-
-#, fuzzy
-#~ msgid ""
-#~ "Are you sure that you want to permanently\n"
-#~ "delete the selected file?Are you sure that you want to permanently\n"
-#~ "delete the %u selected files?"
-#~ msgstr ""
-#~ "האם אתה בטוח שברצונך למחוק לגמרי\n"
-#~ "את הקובץ שנבחר?האם אתה בטוח שברצונך למחוק לגמרי\n"
-#~ "את הקבצים שנבחרו?"

@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar 0.2.3svn\n"
+"Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-19 19:49+0200\n"
+"POT-Creation-Date: 2006-04-22 18:22+0900\n"
 "PO-Revision-Date: 2006-03-04 13:55+0100\n"
 "Last-Translator: Roberto Pariset <r.pariset@gmail.com>\n"
 "Language-Team: GUFI <traduzioni@gufi.org>\n"
@@ -765,7 +765,7 @@ msgid "Enter the new name:"
 msgstr "Inserire il nuovo nome:"
 
 #. display an error message
-#: ../thunar/thunar-create-dialog.c:523
+#: ../thunar/thunar-create-dialog.c:528
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Impossibile convertire il nome del file \"%s\" nella codifica locale"
@@ -921,7 +921,7 @@ msgstr "Visualizzazione a icone"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
-#: ../thunar/thunar-location-buttons.c:1270
+#: ../thunar/thunar-location-buttons.c:1273
 #: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:957
 msgid "_Open"
 msgstr "_Apri"
@@ -931,7 +931,7 @@ msgid "Open the selected files"
 msgstr "Apri i file selezionati"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1283
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1286
 #: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:969
 msgid "Open in New Window"
 msgstr "Apri in una nuova finestra"
@@ -1108,59 +1108,70 @@ msgid_plural "%d items selected"
 msgstr[0] "%d elemento selezionato"
 msgstr[1] "%d elementi selezionati"
 
-#: ../thunar/thunar-location-buttons.c:262
+#: ../thunar/thunar-location-buttons.c:265
 msgid "Spacing"
 msgstr "Separatore"
 
-#: ../thunar/thunar-location-buttons.c:263
+#: ../thunar/thunar-location-buttons.c:266
 msgid "The amount of space between the path buttons"
 msgstr "Quantità di spazio tra i bottoni della path"
 
 #. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1269
+#: ../thunar/thunar-location-buttons.c:1272
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "Apri \"%s\" in questa finestra"
 
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1282
+#: ../thunar/thunar-location-buttons.c:1285
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "Apri \"%s\" in una nuova finestra"
 
 #. add the "Create Folder" action
-#: ../thunar/thunar-location-buttons.c:1297
+#: ../thunar/thunar-location-buttons.c:1300
 #, fuzzy, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "Crea nuova directory"
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1298
+#: ../thunar/thunar-location-buttons.c:1301
 #: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
 msgid "Create _Folder..."
 msgstr "Crea _directory..."
 
-#. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1313
+#. add the "Paste Into Folder" action
+#: ../thunar/thunar-location-buttons.c:1316
 #, fuzzy, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr ""
 "Sposta o Copia i file selezionati precedentemente dal comando Taglia o Copia"
 
-#. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1314 ../thunar/thunar-tree-view.c:1065
+#: ../thunar/thunar-location-buttons.c:1317
+#: ../thunar/thunar-standard-view.c:313
 #, fuzzy
-msgid "_Paste Into Folder"
+msgid "Paste Into Folder"
 msgstr "Incolla file dentro la directory"
 
+#. add the "Properties" action
+#: ../thunar/thunar-location-buttons.c:1332
+#, fuzzy, c-format
+msgid "View the properties of the folder \"%s\""
+msgstr "Visualizza le proprietà dell'elemento selezionato"
+
+#: ../thunar/thunar-location-buttons.c:1333
+#, fuzzy
+msgid "_Properties"
+msgstr "_Proprietà..."
+
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-location-buttons.c:1402
 #: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
 msgid "New Folder"
 msgstr "Nuova directory"
 
-#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-location-buttons.c:1402
 #: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
 msgid "Create New Folder"
 msgstr "Crea nuova directory"
@@ -1967,11 +1978,6 @@ msgstr "_Elimina file"
 
 #: ../thunar/thunar-standard-view.c:313
 #, fuzzy
-msgid "Paste Into Folder"
-msgstr "Incolla file dentro la directory"
-
-#: ../thunar/thunar-standard-view.c:313
-#, fuzzy
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -2147,6 +2153,12 @@ msgstr "File _vuoto"
 #, fuzzy
 msgid "Loading..."
 msgstr "In preparazione..."
+
+#. append the "Paste Into Folder" menu action
+#: ../thunar/thunar-tree-view.c:1065
+#, fuzzy
+msgid "_Paste Into Folder"
+msgstr "Incolla file dentro la directory"
 
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:1083

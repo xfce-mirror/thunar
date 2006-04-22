@@ -5,9 +5,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar 0.2.3svn\n"
+"Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-19 19:49+0200\n"
+"POT-Creation-Date: 2006-04-22 18:22+0900\n"
 "PO-Revision-Date: 2006-04-16 10:10+0100\n"
 "Last-Translator: SZERVÑC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -757,7 +757,7 @@ msgid "Enter the new name:"
 msgstr "Új fájlnév megadása:"
 
 #. display an error message
-#: ../thunar/thunar-create-dialog.c:523
+#: ../thunar/thunar-create-dialog.c:528
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Nem tudom átalakítani helyi kódolásra e fájlnevet: \"%s\""
@@ -900,7 +900,7 @@ msgstr "Ikonnézet"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
-#: ../thunar/thunar-location-buttons.c:1270
+#: ../thunar/thunar-location-buttons.c:1273
 #: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:957
 msgid "_Open"
 msgstr "_Megnyit"
@@ -910,7 +910,7 @@ msgid "Open the selected files"
 msgstr "Kijelölt fájlok megnyitása"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1283
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1286
 #: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:969
 msgid "Open in New Window"
 msgstr "Megnyitás új ablakban"
@@ -1072,40 +1072,40 @@ msgid "%d item selected"
 msgid_plural "%d items selected"
 msgstr[0] "%d elem kijelölve"
 
-#: ../thunar/thunar-location-buttons.c:262
+#: ../thunar/thunar-location-buttons.c:265
 msgid "Spacing"
 msgstr "Távolság"
 
-#: ../thunar/thunar-location-buttons.c:263
+#: ../thunar/thunar-location-buttons.c:266
 msgid "The amount of space between the path buttons"
 msgstr "Ösvénygombok közti táv"
 
 #. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1269
+#: ../thunar/thunar-location-buttons.c:1272
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "\"%s\" megnyitása itt"
 
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1282
+#: ../thunar/thunar-location-buttons.c:1285
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "\"%s\" megnyitása új ablakban"
 
 #. add the "Create Folder" action
-#: ../thunar/thunar-location-buttons.c:1297
+#: ../thunar/thunar-location-buttons.c:1300
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "Új mappa létrehozása itt: \"%s\""
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1298
+#: ../thunar/thunar-location-buttons.c:1301
 #: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1016
 msgid "Create _Folder..."
 msgstr "Mappa létrehozása..."
 
-#. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1313
+#. add the "Paste Into Folder" action
+#: ../thunar/thunar-location-buttons.c:1316
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
@@ -1113,18 +1113,29 @@ msgstr ""
 "A Vágás vagy Másolás paranccsal legutóbb kijelölt fájlok mozgatása vagy "
 "másolása ide: \"%s\""
 
-#. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1314 ../thunar/thunar-tree-view.c:1065
-msgid "_Paste Into Folder"
-msgstr "Ma_ppába illesztés"
+#: ../thunar/thunar-location-buttons.c:1317
+#: ../thunar/thunar-standard-view.c:313
+msgid "Paste Into Folder"
+msgstr "Mappába illesztés"
+
+#. add the "Properties" action
+#: ../thunar/thunar-location-buttons.c:1332
+#, fuzzy, c-format
+msgid "View the properties of the folder \"%s\""
+msgstr "A kijelölt fájl tulajdonságainak megtekintése"
+
+#: ../thunar/thunar-location-buttons.c:1333
+#, fuzzy
+msgid "_Properties"
+msgstr "Tulajdonságok..."
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-location-buttons.c:1402
 #: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
 msgid "New Folder"
 msgstr "Új mappa"
 
-#: ../thunar/thunar-location-buttons.c:1384
+#: ../thunar/thunar-location-buttons.c:1402
 #: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1348
 msgid "Create New Folder"
 msgstr "Új mappa létrehozása"
@@ -1892,10 +1903,6 @@ msgid "_Delete"
 msgstr "Törlése"
 
 #: ../thunar/thunar-standard-view.c:313
-msgid "Paste Into Folder"
-msgstr "Mappába illesztés"
-
-#: ../thunar/thunar-standard-view.c:313
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -2053,6 +2060,11 @@ msgstr "Üres fájl"
 #: ../thunar/thunar-tree-model.c:600
 msgid "Loading..."
 msgstr "Betöltés..."
+
+#. append the "Paste Into Folder" menu action
+#: ../thunar/thunar-tree-view.c:1065
+msgid "_Paste Into Folder"
+msgstr "Ma_ppába illesztés"
 
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:1083
