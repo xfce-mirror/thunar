@@ -36,6 +36,7 @@
 #include <thunar/thunar-emblem-chooser.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-chooser.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -48,6 +49,13 @@ enum
 {
   PROP_0,
   PROP_FILE,
+};
+
+/* Signal identifiers */
+enum
+{
+  RELOAD,
+  LAST_SIGNAL,
 };
 
 
@@ -66,6 +74,7 @@ static void     thunar_properties_dialog_set_property         (GObject          
                                                                GParamSpec                  *pspec);
 static void     thunar_properties_dialog_response             (GtkDialog                   *dialog,
                                                                gint                         response);
+static gboolean thunar_properties_dialog_reload               (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_activate             (GtkWidget                   *entry,
                                                                ThunarPropertiesDialog      *dialog);
 static gboolean thunar_properties_dialog_focus_out_event      (GtkWidget                   *entry,
@@ -81,6 +90,9 @@ static void     thunar_properties_dialog_rename_idle_destroy  (gpointer         
 struct _ThunarPropertiesDialogClass
 {
   ThunarAbstractDialogClass __parent__;
+
+  /* signals */
+  gboolean (*reload) (ThunarPropertiesDialog *dialog);
 };
 
 struct _ThunarPropertiesDialog
@@ -111,6 +123,7 @@ struct _ThunarPropertiesDialog
 
 
 static GObjectClass *thunar_properties_dialog_parent_class;
+static guint         properties_dialog_signals[LAST_SIGNAL];
 
 
 
@@ -147,6 +160,7 @@ static void
 thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
 {
   GtkDialogClass *gtkdialog_class;
+  GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
 
   /* determine the parent type class */
@@ -161,6 +175,8 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
   gtkdialog_class = GTK_DIALOG_CLASS (klass);
   gtkdialog_class->response = thunar_properties_dialog_response;
 
+  klass->reload = thunar_properties_dialog_reload;
+
   /**
    * ThunarPropertiesDialog:file:
    *
@@ -173,6 +189,28 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
                                    g_param_spec_object ("file", "file", "file",
                                                         THUNAR_TYPE_FILE,
                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPropertiesDialog::reload:
+   * @dialog : a #ThunarPropertiesDialog.
+   *
+   * Emitted whenever the user requests reset the reload the
+   * file properties. This is an internal signal used to bind
+   * the action to keys.
+   **/
+  properties_dialog_signals[RELOAD] =
+    g_signal_new (I_("reload"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarPropertiesDialogClass, reload),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /* setup the key bindings for the properties dialog */
+  binding_set = gtk_binding_set_by_class (klass);
+  gtk_binding_entry_add_signal (binding_set, GDK_F5, 0, "reload", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_r, GDK_CONTROL_MASK, "reload", 0);
 }
 
 
@@ -523,6 +561,27 @@ thunar_properties_dialog_response (GtkDialog *dialog,
   else if (GTK_DIALOG_CLASS (thunar_properties_dialog_parent_class)->response != NULL)
     {
       (*GTK_DIALOG_CLASS (thunar_properties_dialog_parent_class)->response) (dialog, response);
+    }
+}
+
+
+
+static gboolean
+thunar_properties_dialog_reload (ThunarPropertiesDialog *dialog)
+{
+  /* verify that we still have a file */
+  if (G_LIKELY (dialog->file != NULL))
+    {
+      /* reload the file status */
+      thunar_file_reload (dialog->file);
+
+      /* we handled the event */
+      return TRUE;
+    }
+  else
+    {
+      /* did not handle the event */
+      return FALSE;
     }
 }
 
