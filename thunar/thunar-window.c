@@ -145,6 +145,8 @@ static void     thunar_window_action_show_hidden          (GtkToggleAction      
                                                            ThunarWindow           *window);
 static void     thunar_window_current_directory_changed   (ThunarFile             *current_directory,
                                                            ThunarWindow           *window);
+static void     thunar_window_current_directory_destroy   (ThunarFile             *current_directory,
+                                                           ThunarWindow           *window);
 static void     thunar_window_connect_proxy               (GtkUIManager           *manager,
                                                            GtkAction              *action,
                                                            GtkWidget              *proxy,
@@ -1851,6 +1853,50 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
 
 
 static void
+thunar_window_current_directory_destroy (ThunarFile   *current_directory,
+                                         ThunarWindow *window)
+{
+  ThunarVfsPath *path;
+  ThunarVfsInfo *info;
+  ThunarFile    *file = NULL;
+
+  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  g_return_if_fail (THUNAR_IS_FILE (current_directory));
+  g_return_if_fail (window->current_directory == current_directory);
+
+  /* determine the path of the current directory */
+  path = thunar_file_get_path (current_directory);
+
+  /* determine the first still present parent directory */
+  for (path = thunar_vfs_path_get_parent (path); file == NULL && path != NULL; path = thunar_vfs_path_get_parent (path))
+    {
+      /* try to determine the info for the path */
+      info = thunar_vfs_info_new_for_path (path, NULL);
+      if (G_LIKELY (info != NULL))
+        {
+          /* check if we have a directory here */
+          if (info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+            file = thunar_file_get_for_info (info);
+
+          /* release the file info */
+          thunar_vfs_info_unref (info);
+        }
+    }
+
+  /* check if we have a new folder */
+  if (G_LIKELY (file != NULL))
+    {
+      /* enter the new folder */
+      thunar_window_set_current_directory (window, file);
+
+      /* release the file reference */
+      g_object_unref (G_OBJECT (file));
+    }
+}
+
+
+
+static void
 thunar_window_connect_proxy (GtkUIManager *manager,
                              GtkAction    *action,
                              GtkWidget    *proxy,
@@ -2124,17 +2170,21 @@ thunar_window_set_current_directory (ThunarWindow *window,
           g_hash_table_replace (window->scroll_to_files, g_object_ref (G_OBJECT (window->current_directory)), file);
         }
 
+      /* disconnect signals and release reference */
+      g_signal_handlers_disconnect_by_func (G_OBJECT (window->current_directory), thunar_window_current_directory_destroy, window);
       g_signal_handlers_disconnect_by_func (G_OBJECT (window->current_directory), thunar_window_current_directory_changed, window);
       g_object_unref (G_OBJECT (window->current_directory));
     }
 
+  /* activate the new directory */
   window->current_directory = current_directory;
 
   /* connect to the new directory */
   if (G_LIKELY (current_directory != NULL))
     {
-      /* take a reference on the file and connect the "changed" signal */
+      /* take a reference on the file and connect the "changed"/"destroy" signals */
       g_signal_connect (G_OBJECT (current_directory), "changed", G_CALLBACK (thunar_window_current_directory_changed), window);
+      g_signal_connect (G_OBJECT (current_directory), "destroy", G_CALLBACK (thunar_window_current_directory_destroy), window);
       g_object_ref (G_OBJECT (current_directory));
     
       /* update window icon and title */

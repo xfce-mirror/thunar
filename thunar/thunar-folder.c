@@ -95,7 +95,7 @@ struct _ThunarFolder
   ThunarVfsJob           *job;
 
   ThunarFile             *corresponding_file;
-  GList                  *previous_files;
+  GList                  *new_files;
   GList                  *files;
 
   ThunarFileMonitor      *file_monitor;
@@ -263,8 +263,8 @@ thunar_folder_finalize (GObject *object)
       g_object_unref (G_OBJECT (folder->corresponding_file));
     }
 
-  /* release references to the previous files */
-  thunar_file_list_free (folder->previous_files);
+  /* release references to the new files */
+  thunar_file_list_free (folder->new_files);
 
   /* release references to the current files */
   thunar_file_list_free (folder->files);
@@ -317,8 +317,6 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
                            ThunarFolder *folder)
 {
   ThunarFile *file;
-  GList      *nfiles;
-  GList      *fp;
   GList      *lp;
 
   g_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
@@ -326,65 +324,24 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
   g_return_val_if_fail (folder->handle == NULL, FALSE);
   g_return_val_if_fail (folder->job == job, FALSE);
 
-  /* check if we have any previous files */
-  if (G_UNLIKELY (folder->previous_files != NULL))
+  /* turn the info list into a file list */
+  for (lp = infos; lp != NULL; lp = lp->next)
     {
-      /* start with a fresh list of new files */
-      nfiles = NULL;
+      /* get the file corresponding to the info... */
+      file = thunar_file_get_for_info (lp->data);
 
-      /* for every new info, check if we already have it on the previous list */
-      for (lp = infos; lp != NULL; lp = lp->next)
-        {
-          /* get the file corresponding to the info */
-          file = thunar_file_get_for_info (lp->data);
+      /* ...release the info at the list position... */
+      thunar_vfs_info_unref (lp->data);
 
-          /* check if we have that file on the previous list */
-          fp = g_list_find (folder->previous_files, file);
-          if (G_LIKELY (fp != NULL))
-            {
-              /* move it back to the current list */
-              folder->previous_files = g_list_delete_link (folder->previous_files, fp);
-              folder->files = g_list_prepend (folder->files, file);
-              g_object_unref (G_OBJECT (file));
-            }
-          else
-            {
-              /* yep, that's a new file then */
-              nfiles = g_list_prepend (nfiles, file);
-            }
-        }
-    }
-  else
-    {
-      /* take over ownership of the infos list */
-      nfiles = infos;
-
-      /* add the new files to our temporary list of new files */
-      for (lp = infos; lp != NULL; lp = lp->next)
-        {
-          /* get the file corresponding to the info... */
-          file = thunar_file_get_for_info (lp->data);
-
-          /* ...release the info at the list position... */
-          thunar_vfs_info_unref (lp->data);
-
-          /* ...and replace it with the file */
-          lp->data = file;
-        }
+      /* ...and replace it with the file */
+      lp->data = file;
     }
 
-  /* check if we have any new files */
-  if (G_LIKELY (nfiles != NULL))
-    {
-      /* add the new files to our existing list of files */
-      folder->files = g_list_concat (folder->files, nfiles);
+  /* merge the list with the existing list of new files */
+  folder->new_files = g_list_concat (folder->new_files, infos);
 
-      /* tell the consumers that we have new files */
-      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, nfiles);
-    }
-
-  /* return TRUE if we took over ownership of the infos list */
-  return (nfiles == infos);
+  /* TRUE to indicate that we took over ownership of the infos list */
+  return TRUE;
 }
 
 
@@ -393,21 +350,66 @@ static void
 thunar_folder_finished (ThunarVfsJob *job,
                         ThunarFolder *folder)
 {
+  GList *files;
+  GList *lp;
+
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
   g_return_if_fail (THUNAR_VFS_IS_JOB (job));
   g_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
   g_return_if_fail (folder->handle == NULL);
   g_return_if_fail (folder->job == job);
 
-  /* check if we have any previous files */
-  if (G_UNLIKELY (folder->previous_files != NULL))
+  /* check if we need to merge new files with existing files */
+  if (G_UNLIKELY (folder->files != NULL))
     {
-      /* emit a "files-removed" signal for the previous files */
-      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, folder->previous_files);
+      /* determine all added files (files on new_files, but not on files) */
+      for (files = NULL, lp = folder->new_files; lp != NULL; lp = lp->next)
+        if (g_list_find (folder->files, lp->data) == NULL)
+          {
+            /* put the file on the added list */
+            files = g_list_prepend (files, lp->data);
 
-      /* actually drop the list of previous files */
-      thunar_file_list_free (folder->previous_files);
-      folder->previous_files = NULL;
+            /* add to the internal files list */
+            folder->files = g_list_prepend (folder->files, lp->data);
+            g_object_ref (G_OBJECT (lp->data));
+          }
+
+      /* emit a "files-added" signal for the added files */
+      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
+
+      /* release the added files list */
+      g_list_free (files);
+
+      /* determine all removed files (files on files, but not on new_files) */
+      for (files = NULL, lp = folder->files; lp != NULL; lp = lp->next)
+        if (g_list_find (folder->new_files, lp->data) == NULL)
+          {
+            /* put the file on the removed list */
+            files = g_list_prepend (files, lp->data);
+
+            /* remove from the internal files list */
+            folder->files = g_list_remove (folder->files, lp->data);
+            g_object_unref (G_OBJECT (lp->data));
+          }
+
+      /* emit a "files-removed" signal for the removed files */
+      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
+
+      /* release the removed files list */
+      g_list_free (files);
+
+      /* drop the temporary new_files list */
+      thunar_file_list_free (folder->new_files);
+      folder->new_files = NULL;
+    }
+  else
+    {
+      /* just use the new files for the files list */
+      folder->files = folder->new_files;
+      folder->new_files = NULL;
+
+      /* emit a "files-added" signal for the new files */
+      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, folder->files);
     }
 
   /* we did it, the folder is loaded */
@@ -667,8 +669,6 @@ thunar_folder_get_loading (const ThunarFolder *folder)
 void
 thunar_folder_reload (ThunarFolder *folder)
 {
-  GList *lp;
-
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
 
   /* check if we are currently connect to a job */
@@ -687,36 +687,9 @@ thunar_folder_reload (ThunarFolder *folder)
       folder->handle = NULL;
     }
 
-  /* merge current files with previous files */
-  if (G_LIKELY (folder->previous_files == NULL))
-    {
-      /* just use the current files as previous files */
-      folder->previous_files = folder->files;
-    }
-  else if (G_UNLIKELY (folder->files != NULL))
-    {
-      /* process all current files */
-      for (lp = folder->files; lp != NULL; lp = lp->next)
-        {
-          /* check if it's on the list of previous files */
-          if (g_list_find (folder->previous_files, lp->data) == NULL)
-            {
-              /* add it to the previous files list */
-              folder->previous_files = g_list_prepend (folder->previous_files, lp->data);
-            }
-          else
-            {
-              /* we already have it, no need to keep it around */
-              g_object_unref (G_OBJECT (lp->data));
-            }
-        }
-
-      /* drop the list structure itself */
-      g_list_free (folder->files);
-    }
-
-  /* start out with a clean list */
-  folder->files = NULL;
+  /* reset the new_files list */
+  thunar_file_list_free (folder->new_files);
+  folder->new_files = NULL;
 
   /* start a new job */
   folder->job = thunar_vfs_listdir (thunar_file_get_path (folder->corresponding_file), NULL);

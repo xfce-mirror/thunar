@@ -21,11 +21,14 @@
 #include <config.h>
 #endif
 
+#include <gdk/gdkkeysyms.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-marshal.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-properties-dialog.h>
@@ -45,6 +48,13 @@ enum
   PROP_0,
   PROP_CURRENT_DIRECTORY,
   PROP_SHOW_HIDDEN,
+};
+
+/* Signal identifiers */
+enum
+{
+  DELETE_SELECTED_FILES,
+  LAST_SIGNAL,
 };
 
 /* Identifiers for DnD target types */
@@ -103,6 +113,7 @@ static void             thunar_tree_view_row_activated              (GtkTreeView
 static gboolean         thunar_tree_view_test_expand_row            (GtkTreeView          *tree_view,
                                                                      GtkTreeIter          *iter,
                                                                      GtkTreePath          *path);
+static gboolean         thunar_tree_view_delete_selected_files      (ThunarTreeView       *view);
 static void             thunar_tree_view_context_menu               (ThunarTreeView       *view,
                                                                      GdkEventButton       *event,
                                                                      GtkTreeModel         *filter,
@@ -122,6 +133,7 @@ static ThunarVfsVolume *thunar_tree_view_get_selected_volume        (ThunarTreeV
 static void             thunar_tree_view_action_copy                (ThunarTreeView       *view);
 static void             thunar_tree_view_action_create_folder       (ThunarTreeView       *view);
 static void             thunar_tree_view_action_cut                 (ThunarTreeView       *view);
+static void             thunar_tree_view_action_delete              (ThunarTreeView       *view);
 static void             thunar_tree_view_action_eject               (ThunarTreeView       *view);
 static gboolean         thunar_tree_view_action_mount               (ThunarTreeView       *view);
 static void             thunar_tree_view_action_open                (ThunarTreeView       *view);
@@ -153,6 +165,9 @@ static void             thunar_tree_view_expand_timer_destroy       (gpointer   
 struct _ThunarTreeViewClass
 {
   GtkTreeViewClass __parent__;
+
+  /* signals */
+  gboolean (*delete_selected_files) (ThunarTreeView *view);
 };
 
 struct _ThunarTreeView
@@ -210,6 +225,7 @@ static const GtkTargetEntry drop_targets[] = {
 
 
 static GObjectClass *thunar_tree_view_parent_class;
+static guint         tree_view_signals[LAST_SIGNAL];
 
 
 
@@ -255,6 +271,7 @@ thunar_tree_view_class_init (ThunarTreeViewClass *klass)
 {
   GtkTreeViewClass *gtktree_view_class;
   GtkWidgetClass   *gtkwidget_class;
+  GtkBindingSet    *binding_set;
   GObjectClass     *gobject_class;
 
   /* determine the parent type class */
@@ -280,6 +297,8 @@ thunar_tree_view_class_init (ThunarTreeViewClass *klass)
   gtktree_view_class->row_activated = thunar_tree_view_row_activated;
   gtktree_view_class->test_expand_row = thunar_tree_view_test_expand_row;
 
+  klass->delete_selected_files = thunar_tree_view_delete_selected_files;
+
   /* Override ThunarNavigator's properties */
   g_object_class_override_property (gobject_class, PROP_CURRENT_DIRECTORY, "current-directory");
 
@@ -296,6 +315,30 @@ thunar_tree_view_class_init (ThunarTreeViewClass *klass)
                                                          "show-hidden",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarTreeView::delete-selected-files:
+   * @tree_view : a #ThunarTreeView.
+   *
+   * Emitted whenever the user presses the Delete key. This
+   * is an internal signal used to bind the action to keys.
+   **/
+  tree_view_signals[DELETE_SELECTED_FILES] =
+    g_signal_new (I_("delete-selected-files"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                  G_STRUCT_OFFSET (ThunarTreeViewClass, delete_selected_files),
+                  g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__VOID,
+                  G_TYPE_BOOLEAN, 0);
+
+  /* setup the key bindings for the tree view */
+  binding_set = gtk_binding_set_by_class (klass);
+  gtk_binding_entry_add_signal (binding_set, GDK_BackSpace, GDK_CONTROL_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_Delete, 0, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KP_Delete, 0, "delete-selected-files", 0);
+  gtk_binding_entry_add_signal (binding_set, GDK_KP_Delete, GDK_SHIFT_MASK, "delete-selected-files", 0);
 }
 
 
@@ -920,6 +963,20 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
 
 
 
+static gboolean
+thunar_tree_view_delete_selected_files (ThunarTreeView *view)
+{
+  g_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
+
+  /* ask the user whether to delete the folder... */
+  thunar_tree_view_action_delete (view);
+
+  /* ...and we're done */
+  return TRUE;
+}
+
+
+
 static void
 thunar_tree_view_context_menu (ThunarTreeView *view,
                                GdkEventButton *event,
@@ -1072,6 +1129,29 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       image = gtk_image_new_from_stock (GTK_STOCK_PASTE, GTK_ICON_SIZE_MENU);
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
       gtk_widget_show (image);
+
+      /* "Delete" doesn't make much sense for volumes */
+      if (G_LIKELY (volume == NULL))
+        {
+          /* determine the parent file (required to determine "Delete" sensitivity) */
+          parent_file = thunar_file_get_parent (file, NULL);
+
+          /* append the "Delete" menu action */
+          item = gtk_image_menu_item_new_with_mnemonic (_("_Delete"));
+          g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_delete), view);
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+          gtk_widget_set_sensitive (item, (parent_file != NULL && thunar_file_is_writable (parent_file)));
+          gtk_widget_show (item);
+
+          /* set the stock icon */
+          image = gtk_image_new_from_stock (GTK_STOCK_DELETE, GTK_ICON_SIZE_MENU);
+          gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+          gtk_widget_show (image);
+
+          /* cleanup */
+          if (G_LIKELY (parent_file != NULL))
+            g_object_unref (G_OBJECT (parent_file));
+        }
 
       /* append a separator item */
       item = gtk_separator_menu_item_new ();
@@ -1399,6 +1479,60 @@ thunar_tree_view_action_cut (ThunarTreeView *view)
       /* release the file reference */
       g_object_unref (G_OBJECT (file));
     }
+}
+
+
+
+static void
+thunar_tree_view_action_delete (ThunarTreeView *view)
+{
+  ThunarApplication *application;
+  ThunarFile        *file;
+  GtkWidget         *dialog;
+  GtkWidget         *window;
+  GList              paths;
+  gint               response;
+
+  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+
+  /* determine the selected file */
+  file = thunar_tree_view_get_selected_file (view);
+  if (G_UNLIKELY (file == NULL))
+    return;
+
+  /* ask the user to confirm the delete operation */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+  dialog = gtk_message_dialog_new (GTK_WINDOW (window),
+                                   GTK_DIALOG_MODAL
+                                   | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                   GTK_MESSAGE_QUESTION,
+                                   GTK_BUTTONS_NONE,
+                                   _("Are you sure that you want to\npermanently delete \"%s\"?"),
+                                   thunar_file_get_display_name (file));
+  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
+                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                          GTK_STOCK_DELETE, GTK_RESPONSE_YES,
+                          NULL);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
+  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a file, it is permanently lost."));
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  /* perform the delete operation */
+  if (G_LIKELY (response == GTK_RESPONSE_YES))
+    {
+      /* fake a path list with only the folders path */
+      paths.data = thunar_file_get_path (file);
+      paths.next = paths.prev = NULL;
+
+      /* really delete the folder */
+      application = thunar_application_get ();
+      thunar_application_unlink (application, window, &paths);
+      g_object_unref (G_OBJECT (application));
+    }
+
+  /* release the file reference */
+  g_object_unref (G_OBJECT (file));
 }
 
 

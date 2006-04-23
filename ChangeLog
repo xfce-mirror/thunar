@@ -1,3 +1,12 @@
+2006-04-23	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-tree-view.c: Allow to delete folders in the tree view
+	  using the context menu or the usual keyboard shortcuts. Bug #1712.
+	* thunar/thunar-folder.c: Do not try to process the new files before
+	  the job finishes. This fixes a possible race condition.
+	* thunar/thunar-window.c: Go to the parent folder when the current
+	  directory is deleted.
+
 2006-04-20	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-info.c(_thunar_vfs_info_new_internal): Be sure
