@@ -1,5 +1,12 @@
 2006-04-23	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-launcher.c, thunar/thunar-permissions-chooser.c,
+	  thunar/thunar-standard-view.c: Use indirect string passing for
+	  gtk_message_dialog_new() in case the strings (i.e. filenames)
+	  contain printf() parameter specifications. Bug #1704.
+
+2006-04-23	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-properties-dialog.c: Add reload keyboard shortcuts to
 	  the properties dialog. Bug #1674.
 

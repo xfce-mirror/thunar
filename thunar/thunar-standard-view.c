@@ -1990,7 +1990,7 @@ thunar_standard_view_action_delete (GtkAction          *action,
                                    | GTK_DIALOG_DESTROY_WITH_PARENT,
                                    GTK_MESSAGE_QUESTION,
                                    GTK_BUTTONS_NONE,
-                                   message);
+                                   "%.s", message);
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
                           GTK_STOCK_DELETE, GTK_RESPONSE_YES,
