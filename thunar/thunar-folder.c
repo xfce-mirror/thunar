@@ -350,8 +350,9 @@ static void
 thunar_folder_finished (ThunarVfsJob *job,
                         ThunarFolder *folder)
 {
-  GList *files;
-  GList *lp;
+  ThunarFile *file;
+  GList      *files;
+  GList      *lp;
 
   g_return_if_fail (THUNAR_IS_FOLDER (folder));
   g_return_if_fail (THUNAR_VFS_IS_JOB (job));
@@ -374,29 +375,45 @@ thunar_folder_finished (ThunarVfsJob *job,
             g_object_ref (G_OBJECT (lp->data));
           }
 
-      /* emit a "files-added" signal for the added files */
-      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
+      /* check if any files were added */
+      if (G_UNLIKELY (files != NULL))
+        {
+          /* emit a "files-added" signal for the added files */
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, files);
 
-      /* release the added files list */
-      g_list_free (files);
+          /* release the added files list */
+          g_list_free (files);
+        }
 
       /* determine all removed files (files on files, but not on new_files) */
-      for (files = NULL, lp = folder->files; lp != NULL; lp = lp->next)
-        if (g_list_find (folder->new_files, lp->data) == NULL)
-          {
-            /* put the file on the removed list */
-            files = g_list_prepend (files, lp->data);
+      for (files = NULL, lp = folder->files; lp != NULL; )
+        {
+          /* determine the file */
+          file = THUNAR_FILE (lp->data);
 
-            /* remove from the internal files list */
-            folder->files = g_list_remove (folder->files, lp->data);
-            g_object_unref (G_OBJECT (lp->data));
-          }
+          /* determine the next list item */
+          lp = lp->next;
 
-      /* emit a "files-removed" signal for the removed files */
-      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
+          /* check if the file is not on new_files */
+          if (g_list_find (folder->new_files, file) == NULL)
+            {
+              /* put the file on the removed list (owns the reference now) */
+              files = g_list_prepend (files, file);
 
-      /* release the removed files list */
-      g_list_free (files);
+              /* remove from the internal files list */
+              folder->files = g_list_remove (folder->files, file);
+            }
+        }
+
+      /* check if any files were removed */
+      if (G_UNLIKELY (files != NULL))
+        {
+          /* emit a "files-removed" signal for the removed files */
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_REMOVED], 0, files);
+
+          /* release the removed files list */
+          thunar_file_list_free (files);
+        }
 
       /* drop the temporary new_files list */
       thunar_file_list_free (folder->new_files);
