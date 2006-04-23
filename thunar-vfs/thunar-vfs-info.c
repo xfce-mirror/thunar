@@ -86,7 +86,6 @@ static ThunarVfsMimeInfo     *mime_application_x_shellscript;
 static ThunarVfsMimeInfo     *mime_application_x_executable;
 static ThunarVfsMimeInfo     *mime_application_x_desktop;
 static ThunarVfsMimeInfo     *mime_inode_directory;
-static ThunarVfsMimeInfo     *mime_inode_symlink;
 
 
 
@@ -693,7 +692,6 @@ _thunar_vfs_info_init (void)
   mime_database = thunar_vfs_mime_database_get_default ();
 
   /* pre-determine the most important mime types */
-  mime_inode_symlink = thunar_vfs_mime_database_get_info (mime_database, "inode/symlink");
   mime_inode_directory = thunar_vfs_mime_database_get_info (mime_database, "inode/directory");
   mime_application_x_desktop = thunar_vfs_mime_database_get_info (mime_database, "application/x-desktop");
   mime_application_x_executable = thunar_vfs_mime_database_get_info (mime_database, "application/x-executable");
@@ -718,7 +716,6 @@ _thunar_vfs_info_shutdown (void)
   thunar_vfs_mime_info_unref (mime_application_x_executable);
   thunar_vfs_mime_info_unref (mime_application_x_desktop);
   thunar_vfs_mime_info_unref (mime_inode_directory);
-  thunar_vfs_mime_info_unref (mime_inode_symlink);
 
   /* release the reference on the mime database */
   g_object_unref (G_OBJECT (mime_database));
@@ -859,7 +856,7 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
       break;
 
     case THUNAR_VFS_FILE_TYPE_SYMLINK:
-      info->mime_info = thunar_vfs_mime_info_ref (mime_inode_symlink);
+      info->mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/symlink");
       break;
 
     case THUNAR_VFS_FILE_TYPE_BLOCKDEV:
