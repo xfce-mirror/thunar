@@ -36,6 +36,8 @@
 
 static void         thunar_abstract_icon_view_class_init            (ThunarAbstractIconViewClass  *klass);
 static void         thunar_abstract_icon_view_init                  (ThunarAbstractIconView       *abstract_icon_view);
+static void         thunar_abstract_icon_view_style_set             (GtkWidget                    *widget,
+                                                                     GtkStyle                     *previous_style);
 static void         thunar_abstract_icon_view_connect_ui_manager    (ThunarStandardView           *standard_view,
                                                                      GtkUIManager                 *ui_manager);
 static void         thunar_abstract_icon_view_disconnect_ui_manager (ThunarStandardView           *standard_view,
@@ -130,6 +132,10 @@ static const GtkRadioActionEntry order_action_entries[] =
 
 
 
+static GObjectClass *thunar_abstract_icon_view_parent_class;
+
+
+
 GType
 thunar_abstract_icon_view_get_type (void)
 {
@@ -163,9 +169,16 @@ static void
 thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
 {
   ThunarStandardViewClass *thunarstandard_view_class;
+  GtkWidgetClass          *gtkwidget_class;
 
   /* add private data to the instance type */
   g_type_class_add_private (klass, sizeof (ThunarAbstractIconViewPrivate));
+
+  /* determine the parent type class */
+  thunar_abstract_icon_view_parent_class = g_type_class_peek_parent (klass);
+
+  gtkwidget_class = GTK_WIDGET_CLASS (klass);
+  gtkwidget_class->style_set = thunar_abstract_icon_view_style_set;
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->connect_ui_manager = thunar_abstract_icon_view_connect_ui_manager;
@@ -179,6 +192,32 @@ thunar_abstract_icon_view_class_init (ThunarAbstractIconViewClass *klass)
   thunarstandard_view_class->get_path_at_pos = thunar_abstract_icon_view_get_path_at_pos;
   thunarstandard_view_class->get_visible_range = thunar_abstract_icon_view_get_visible_range;
   thunarstandard_view_class->highlight_path = thunar_abstract_icon_view_highlight_path;
+
+  /**
+   * ThunarAbstractIconView:column-spacing:
+   *
+   * The additional space inserted between columns in the
+   * icon views.
+   **/
+  gtk_widget_class_install_style_property (gtkwidget_class,
+                                           g_param_spec_int ("column-spacing",
+                                                             "column-spacing",
+                                                             "column-spacing",
+                                                             0, G_MAXINT, 6,
+                                                             EXO_PARAM_READABLE));
+
+  /**
+   * ThunarAbstractIconView:row-spacing:
+   *
+   * The additional space inserted between rows in the
+   * icon views.
+   **/
+  gtk_widget_class_install_style_property (gtkwidget_class,
+                                           g_param_spec_int ("row-spacing",
+                                                             "row-spacing",
+                                                             "row-spacing",
+                                                             0, G_MAXINT, 6,
+                                                             EXO_PARAM_READABLE));
 }
 
 
@@ -235,6 +274,26 @@ thunar_abstract_icon_view_init (ThunarAbstractIconView *abstract_icon_view)
   g_signal_connect (G_OBJECT (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), "sort-column-changed",
                     G_CALLBACK (thunar_abstract_icon_view_sort_column_changed), abstract_icon_view);
   thunar_abstract_icon_view_sort_column_changed (GTK_TREE_SORTABLE (THUNAR_STANDARD_VIEW (abstract_icon_view)->model), abstract_icon_view);
+}
+
+
+
+static void
+thunar_abstract_icon_view_style_set (GtkWidget *widget,
+                                     GtkStyle  *previous_style)
+{
+  gint column_spacing;
+  gint row_spacing;
+
+  /* determine the column/row spacing from the style */
+  gtk_widget_style_get (widget, "column-spacing", &column_spacing, "row-spacing", &row_spacing, NULL);
+
+  /* apply the column/row spacing to the icon view */
+  exo_icon_view_set_column_spacing (EXO_ICON_VIEW (GTK_BIN (widget)->child), column_spacing);
+  exo_icon_view_set_row_spacing (EXO_ICON_VIEW (GTK_BIN (widget)->child), row_spacing);
+
+  /* call the parent handler */
+  (*GTK_WIDGET_CLASS (thunar_abstract_icon_view_parent_class)->style_set) (widget, previous_style);
 }
 
 

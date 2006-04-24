@@ -90,6 +90,10 @@ thunar_compact_view_class_init (ThunarCompactViewClass *klass)
 
   thunarstandard_view_class = THUNAR_STANDARD_VIEW_CLASS (klass);
   thunarstandard_view_class->zoom_level_property_name = "last-compact-view-zoom-level";
+
+  /* override ThunarAbstractIconView default row spacing */
+  gtk_rc_parse_string ("style\"thunar-compact-view-style\"{ThunarCompactView::row-spacing=0}\n"
+                       "class\"ThunarCompactView\"style\"thunar-compact-view-style\"\n");
 }
 
 
@@ -99,8 +103,6 @@ thunar_compact_view_init (ThunarCompactView *compact_view)
 {
  /* initialize the icon view properties */
   exo_icon_view_set_margin (EXO_ICON_VIEW (GTK_BIN (compact_view)->child), 3);
-  exo_icon_view_set_row_spacing (EXO_ICON_VIEW (GTK_BIN (compact_view)->child), 0);
-  exo_icon_view_set_column_spacing (EXO_ICON_VIEW (GTK_BIN (compact_view)->child), 6);
   exo_icon_view_set_layout_mode (EXO_ICON_VIEW (GTK_BIN (compact_view)->child), EXO_ICON_VIEW_LAYOUT_COLS);
   exo_icon_view_set_orientation (EXO_ICON_VIEW (GTK_BIN (compact_view)->child), GTK_ORIENTATION_HORIZONTAL);
 

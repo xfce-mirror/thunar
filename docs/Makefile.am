@@ -8,6 +8,7 @@ SUBDIRS =								\
 
 docdir = $(datadir)/doc/Thunar
 doc_DATA =								\
+	README.gtkrc							\
 	README.thunarrc							\
 	README.volumes
 

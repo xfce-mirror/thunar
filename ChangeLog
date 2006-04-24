@@ -1,5 +1,16 @@
 2006-04-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c(thunar_standard_view_action_delete):
+	  Fix typo.
+	* docs/README.thunarrc: Add link to "Advanced Settings" page on the
+	  project wiki.
+	* docs/Makefile.am, docs/README.gtkrc, thunar/thunar-compact-view.c,
+	  thunar/thunar-abstract-icon-view.c: Add style properties "row-spacing"
+	  and "column-spacing" to ThunarAbstractIconView to allow customizing
+	  the spacings in the icon/compact views. Bug #1698.
+
+2006-04-24	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-info.c, thunar-vfs/thunar-vfs-link-job.c,
 	  thunar-vfs/thunar-vfs-mime-cache.c, thunar-vfs/thunar-vfs-scandir.c,
 	  thunar-vfs/thunar-vfs-mime-database.c, thunar-vfs/thunar-vfs-thumb.c,
