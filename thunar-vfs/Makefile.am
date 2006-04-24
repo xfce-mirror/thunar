@@ -97,6 +97,8 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-scandir.h						\
 	thunar-vfs-thumb-jpeg.c						\
 	thunar-vfs-thumb-jpeg.h						\
+	thunar-vfs-thumb-pixbuf.c					\
+	thunar-vfs-thumb-pixbuf.h					\
 	thunar-vfs-thumb.c						\
 	thunar-vfs-transfer-job.c					\
 	thunar-vfs-transfer-job.h					\

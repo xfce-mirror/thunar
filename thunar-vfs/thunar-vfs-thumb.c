@@ -54,6 +54,7 @@
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
 #include <thunar-vfs/thunar-vfs-thumb-jpeg.h>
+#include <thunar-vfs/thunar-vfs-thumb-pixbuf.h>
 #include <thunar-vfs/thunar-vfs-thumb.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -681,7 +682,7 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory *factory,
 
   /* fallback to GdkPixbuf based loading */
   if (G_LIKELY (pixbuf == NULL))
-    pixbuf = gdk_pixbuf_new_from_file (path, NULL);
+    pixbuf = thunar_vfs_thumb_pixbuf_load (path, thunar_vfs_mime_info_get_name (info->mime_info), size);
 
   /* check if we need to scale the image */
   if (pixbuf != NULL && (gdk_pixbuf_get_width (pixbuf) > size || gdk_pixbuf_get_height (pixbuf) > size))
