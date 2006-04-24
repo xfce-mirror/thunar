@@ -631,7 +631,7 @@ thunar_launcher_open_windows (ThunarLauncher *launcher,
                                        | GTK_DIALOG_MODAL,
                                        GTK_MESSAGE_QUESTION,
                                        GTK_BUTTONS_NONE,
-                                       "%s.", _("Are you sure you want to open all folders?"));
+                                       _("Are you sure you want to open all folders?"));
       gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
                                                 ngettext ("This will open %d separate file manager window.",
                                                           "This will open %d separate file manager windows.",
