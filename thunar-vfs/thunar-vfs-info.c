@@ -64,15 +64,17 @@
 #include <thunar-vfs/thunar-vfs-mime-database.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-/* Use g_access() if possible */
-#if GLIB_CHECK_VERSION(2,8,0)
+/* Use g_access(), g_lstat() and g_stat() on win32 */
+#if GLIB_CHECK_VERSION(2,8,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_access(path, mode) (access ((path), (mode)))
+#define g_lstat(path, statb) (lstat ((path), (statb)))
+#define g_stat(path, statb) (stat ((path), (statb)))
 #endif
 
-/* Use g_rename() if possible */
-#if GLIB_CHECK_VERSION(2,6,0)
+/* Use g_rename() on win32 */
+#if GLIB_CHECK_VERSION(2,6,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_rename(from, to) (rename ((from), (to)))
@@ -752,7 +754,7 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
   g_return_val_if_fail (g_path_is_absolute (absolute_path), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  if (G_UNLIKELY (lstat (absolute_path, &lsb) < 0))
+  if (G_UNLIKELY (g_lstat (absolute_path, &lsb) < 0))
     {
       g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno),
                    /* TRANSLATORS: See man page of stat(1) or stat(2) for more details. */
@@ -814,7 +816,7 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
       info->flags |= THUNAR_VFS_FILE_FLAGS_SYMLINK;
 
       /* check if it's a broken link */
-      if (stat (absolute_path, &sb) == 0)
+      if (g_stat (absolute_path, &sb) == 0)
         {
           info->type = (sb.st_mode & S_IFMT) >> 12;
           info->mode = sb.st_mode & 07777;
@@ -839,6 +841,14 @@ _thunar_vfs_info_new_internal (ThunarVfsPath *path,
           info->device = lsb.st_dev;
         }
     }
+
+  /* check if we can read the file */
+  if ((info->mode & 00444) != 0 && g_access (absolute_path, R_OK) == 0)
+    info->flags |= THUNAR_VFS_FILE_FLAGS_READABLE;
+
+  /* check if we can write to the file */
+  if ((info->mode & 00222) != 0 && g_access (absolute_path, W_OK) == 0)
+    info->flags |= THUNAR_VFS_FILE_FLAGS_WRITABLE;
 
   /* determine the file's mime type */
   switch (info->type)

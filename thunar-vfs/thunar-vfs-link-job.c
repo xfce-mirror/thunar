@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -33,7 +33,8 @@
 #include <thunar-vfs/thunar-vfs-xfer.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-#if GLIB_CHECK_VERSION(2,6,0)
+/* use g_unlink() on win32 */
+#if GLIB_CHECK_VERSION(2,6,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_unlink(path) (unlink ((path)))

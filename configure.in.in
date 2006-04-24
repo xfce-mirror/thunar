@@ -114,8 +114,9 @@ dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
 AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr lchmod localeconv \
-                localtime_r mbrtowc pread pwrite readdir_r sched_yield \
-                setgroupent setpassent statfs statvfs strcoll])
+                localtime_r mbrtowc mkfifo pread pwrite readdir_r readlink \
+                sched_yield setgroupent setpassent statfs statvfs strcoll \
+                symlink])
 
 dnl ***************************************
 dnl *** Check for working posix_madvise ***

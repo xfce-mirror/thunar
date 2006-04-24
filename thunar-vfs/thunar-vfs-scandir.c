@@ -60,8 +60,8 @@
 #include <thunar-vfs/thunar-vfs-scandir.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-/* Use g_access() if possible */
-#if GLIB_CHECK_VERSION(2,8,0)
+/* Use g_access() on win32 */
+#if GLIB_CHECK_VERSION(2,8,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_access(path, mode) (access ((path), (mode)))

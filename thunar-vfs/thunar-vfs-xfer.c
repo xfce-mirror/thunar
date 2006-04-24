@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -59,11 +59,14 @@
 #include <thunar-vfs/thunar-vfs-xfer.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-#if GLIB_CHECK_VERSION(2,6,0)
+/* use g_lstat(), g_mkdir(), g_open() and g_unlink() on win32 */
+#if GLIB_CHECK_VERSION(2,6,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_lstat(path, buffer) (lstat ((path), (buffer)))
 #define g_mkdir(path, mode) (mkdir ((path), (mode)))
+#define g_open(path, flags, mode) (open ((path), (flags), (mode)))
+#define g_unlink(path) (unlink ((path)))
 #endif
 
 #ifndef O_NOFOLLOW
@@ -320,6 +323,7 @@ thunar_vfs_xfer_copy_fifo (const gchar          *source_absolute_path,
                            gpointer              user_data,
                            GError              **error)
 {
+#ifdef HAVE_MKFIFO
   /* try to create the named fifo */
   if (mkfifo (target_absolute_path, source_statb->st_mode) < 0)
     {
@@ -332,6 +336,10 @@ thunar_vfs_xfer_copy_fifo (const gchar          *source_absolute_path,
   (*callback) (source_statb->st_size, source_statb->st_size, user_data);
 
   return TRUE;
+#else
+  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Named pipes are not supported"));
+  return FALSE;
+#endif
 }
 
 
@@ -354,7 +362,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
   gint     n, m, l;
 
   /* try to open the source file for reading */
-  source_fd = open (source_absolute_path, O_RDONLY);
+  source_fd = g_open (source_absolute_path, O_RDONLY, 0000);
   if (G_UNLIKELY (source_fd < 0))
     {
       tvxc_set_error_from_errno (error, _("Failed to open \"%s\" for reading"), source_absolute_path);
@@ -371,7 +379,7 @@ thunar_vfs_xfer_copy_regular (const gchar          *source_absolute_path,
     mode |= (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_WRITE);
 
   /* try to open the target file for writing */
-  target_fd = open (target_absolute_path, O_CREAT | O_EXCL | O_NOFOLLOW | O_WRONLY, mode);
+  target_fd = g_open (target_absolute_path, O_CREAT | O_EXCL | O_NOFOLLOW | O_WRONLY, mode);
   if (G_UNLIKELY (target_fd < 0))
     {
       /* translate EISDIR, EMLINK and ETXTBSY to EEXIST */
@@ -481,6 +489,7 @@ thunar_vfs_xfer_copy_symlink (const gchar          *source_absolute_path,
                               gpointer              user_data,
                               GError              **error)
 {
+#if defined(HAVE_SYMLINK) && defined(HAVE_READLINK)
   gchar link_target[THUNAR_VFS_PATH_MAXSTRLEN * 2 + 1];
   gint  link_target_len;
 
@@ -513,6 +522,10 @@ thunar_vfs_xfer_copy_symlink (const gchar          *source_absolute_path,
   (*callback) (source_statb->st_size, source_statb->st_size, user_data);
 
   return TRUE;
+#else
+  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Symbolic links are not supported"));
+  return FALSE;
+#endif
 }
 
 
@@ -536,7 +549,7 @@ thunar_vfs_xfer_copy_internal (const ThunarVfsPath   *source_path,
     return FALSE;
 
   /* stat the source path */
-  if (lstat (source_absolute_path, &source_statb) < 0)
+  if (g_lstat (source_absolute_path, &source_statb) < 0)
     {
       tvxc_set_error_from_errno (error, _("Failed to determine file info for \"%s\""), source_absolute_path);
       return FALSE;
@@ -587,6 +600,7 @@ thunar_vfs_xfer_link_internal (const ThunarVfsPath *source_path,
                                ThunarVfsPath       *target_path,
                                GError             **error)
 {
+#ifdef HAVE_SYMLINK
   struct stat source_statb;
   gchar       source_absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
   gchar       target_absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
@@ -596,7 +610,7 @@ thunar_vfs_xfer_link_internal (const ThunarVfsPath *source_path,
     return FALSE;
 
   /* stat the source path */
-  if (lstat (source_absolute_path, &source_statb) < 0)
+  if (g_lstat (source_absolute_path, &source_statb) < 0)
     {
       tvxc_set_error_from_errno (error, _("Failed to determine file info for \"%s\""), source_absolute_path);
       return FALSE;
@@ -617,6 +631,10 @@ thunar_vfs_xfer_link_internal (const ThunarVfsPath *source_path,
   thunar_vfs_monitor_feed (thunar_vfs_xfer_monitor, THUNAR_VFS_MONITOR_EVENT_CREATED, target_path);
 
   return TRUE;
+#else
+  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Symbolic links are not supported"));
+  return FALSE;
+#endif
 }
 
 

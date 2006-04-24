@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2004-2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2004-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -61,7 +61,8 @@
 #include <gconf/gconf-client.h>
 #endif
 
-#if GLIB_CHECK_VERSION(2,6,0)
+/* use g_rename() and g_unlink() on win32 */
+#if GLIB_CHECK_VERSION(2,6,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
@@ -70,6 +71,7 @@
 
 
 
+/* Property identifiers */
 enum
 {
   PROP_0,

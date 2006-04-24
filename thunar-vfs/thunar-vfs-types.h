@@ -129,6 +129,10 @@ typedef enum /*< flags >*/
  *                                     hidden files. Hidden files start with a
  *                                     dot character ('.') or end with a tilde
  *                                     character ('~').
+ * @THUNAR_VFS_FILE_FLAGS_READABLE   : The file can most probably be read by the
+ *                                     current user.
+ * @THUNAR_VFS_FILE_FLAGS_WRITABLE   : The file can most probably be written by
+ *                                     the current user.
  *
  * Flags providing additional information about the
  * file system entity.
@@ -139,6 +143,8 @@ typedef enum /*< flags >*/
   THUNAR_VFS_FILE_FLAGS_SYMLINK    = 1L << 0,
   THUNAR_VFS_FILE_FLAGS_EXECUTABLE = 1L << 1,
   THUNAR_VFS_FILE_FLAGS_HIDDEN     = 1L << 2,
+  THUNAR_VFS_FILE_FLAGS_READABLE   = 1L << 3,
+  THUNAR_VFS_FILE_FLAGS_WRITABLE   = 1L << 4,
 } ThunarVfsFileFlags;
 
 typedef dev_t ThunarVfsFileDevice;

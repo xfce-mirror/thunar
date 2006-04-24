@@ -48,7 +48,8 @@
 #include <thunar-vfs/thunar-vfs-xfer.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-#if GLIB_CHECK_VERSION(2,6,0)
+/* use g_lstat(), g_rename(), g_rmdir() and g_unlink() on win32 */
+#if GLIB_CHECK_VERSION(2,6,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_lstat(path, statb) (lstat ((path), (statb)))

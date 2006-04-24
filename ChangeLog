@@ -1,5 +1,20 @@
 2006-04-24	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-info.c, thunar-vfs/thunar-vfs-link-job.c,
+	  thunar-vfs/thunar-vfs-mime-cache.c, thunar-vfs/thunar-vfs-scandir.c,
+	  thunar-vfs/thunar-vfs-mime-database.c, thunar-vfs/thunar-vfs-thumb.c,
+	  thunar-vfs/thunar-vfs-transfer-job.c, thunar-vfs/thunar-vfs-xfer.c,
+	  thunar-vfs/thunar-vfs-unlink-job.c, configure.in.in: Properly use GLib
+	  replacements for POSIX functions on Windows. Properly check whether
+	  symlinks and named pipes are supported on the target platform.
+	* thunar-vfs/thunar-vfs-types.h, thunar-vfs/thunar-vfs-info.c,
+	  thunar/thunar-file.{c,h}: Determine the real access permissions
+	  for files and add them as flags to the ThunarVfsInfo, instead of
+	  guessing them from the mode and the uid/gid. Bug #1670.
+	* docs/reference/thunar-vfs/tmpl/thunar-vfs-types.sgml: Update API docs.
+
+2006-04-24	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-info.c: No need to cache inode/symlink, as users
 	  file systems shouldn't be full of broken links.
 

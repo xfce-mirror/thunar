@@ -500,30 +500,43 @@ thunar_file_denies_access_permission (const ThunarFile *file,
     {
       /* we're the owner, so the usr permissions must be granted */
       result = ((mode & usr_permissions) == 0);
+  
+      /* release the user */
+      g_object_unref (G_OBJECT (user));
     }
   else
     {
       group = thunar_file_get_group (file);
       if (G_LIKELY (group != NULL))
         {
-          /* check the group permissions */
-          groups = thunar_vfs_user_get_groups (user);
-          for (lp = groups; lp != NULL; lp = lp->next)
-            if (THUNAR_VFS_GROUP (lp->data) == group)
-              {
-                g_object_unref (G_OBJECT (user));
-                g_object_unref (G_OBJECT (group));
-                return ((mode & grp_permissions) == 0);
-              }
+          /* release the file owner */
+          g_object_unref (G_OBJECT (user));
 
+          /* determine the effective user */
+          user = thunar_vfs_user_manager_get_user_by_id (user_manager, effective_user_id);
+          if (G_LIKELY (user != NULL))
+            {
+              /* check the group permissions */
+              groups = thunar_vfs_user_get_groups (user);
+              for (lp = groups; lp != NULL; lp = lp->next)
+                if (THUNAR_VFS_GROUP (lp->data) == group)
+                  {
+                    g_object_unref (G_OBJECT (user));
+                    g_object_unref (G_OBJECT (group));
+                    return ((mode & grp_permissions) == 0);
+                  }
+          
+              /* release the effective user */
+              g_object_unref (G_OBJECT (user));
+            }
+
+          /* release the file group */
           g_object_unref (G_OBJECT (group));
         }
 
       /* check other permissions */
       result = ((mode & oth_permissions) == 0);
     }
-
-  g_object_unref (G_OBJECT (user));
 
   return result;
 }
@@ -1330,46 +1343,6 @@ thunar_file_is_chmodable (const ThunarFile *file)
 
 
 /**
- * thunar_file_is_executable:
- * @file : a #ThunarFile instance.
- *
- * Determines whether the owner of the current process is allowed
- * to execute the @file (or enter the directory refered to by
- * @file).
- *
- * Return value: %TRUE if @file can be executed.
- **/
-gboolean
-thunar_file_is_executable (const ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return ((file->info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE) != 0);
-}
-
-
-
-/**
- * thunar_file_is_readable:
- * @file : a #ThunarFile instance.
- *
- * Determines whether the owner of the current process is allowed
- * to read the @file.
- *
- * Return value: %TRUE if @file can be read.
- **/
-gboolean
-thunar_file_is_readable (const ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return !thunar_file_denies_access_permission (file,
-                                                THUNAR_VFS_FILE_MODE_USR_READ,
-                                                THUNAR_VFS_FILE_MODE_GRP_READ,
-                                                THUNAR_VFS_FILE_MODE_OTH_READ);
-}
-
-
-
-/**
  * thunar_file_is_renameable:
  * @file : a #ThunarFile instance.
  *
@@ -1400,29 +1373,6 @@ thunar_file_is_renameable (const ThunarFile *file)
     }
 
   return renameable;
-}
-
-
-
-/**
- * thunar_file_is_writable:
- * @file : a #ThunarFile instance.
- *
- * Determines whether the owner of the current process is allowed
- * to write the @file.
- *
- * Return value: %TRUE if @file can be read.
- **/
-gboolean
-thunar_file_is_writable (const ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return !thunar_file_denies_access_permission (file,
-                                                THUNAR_VFS_FILE_MODE_USR_WRITE,
-                                                THUNAR_VFS_FILE_MODE_GRP_WRITE,
-                                                THUNAR_VFS_FILE_MODE_OTH_WRITE);
-
-
 }
 
 

@@ -64,10 +64,11 @@
 #include <thunar-vfs/thunar-vfs-monitor.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-#if GLIB_CHECK_VERSION(2,6,0)
+/* use g_open(), g_rename() and g_unlink() on win32 */
+#if GLIB_CHECK_VERSION(2,6,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
-#define g_open(path, flagsremove, mode) (open ((path), (flags), (mode)))
+#define g_open(path, flags, mode) (open ((path), (flags), (mode)))
 #define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
 #define g_unlink(path) (unlink ((path)))
 #endif

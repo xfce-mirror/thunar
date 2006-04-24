@@ -49,7 +49,8 @@
 #include <thunar-vfs/thunar-vfs-unlink-job.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-#if GLIB_CHECK_VERSION(2,6,0)
+/* use g_remove() and g_unlink() on win32 */
+#if GLIB_CHECK_VERSION(2,6,0) && defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
 #define g_remove(path) (remove ((path)))

@@ -155,10 +155,7 @@ ThunarVfsGroup   *thunar_file_get_group            (const ThunarFile       *file
 ThunarVfsUser    *thunar_file_get_user             (const ThunarFile       *file);
 
 gboolean          thunar_file_is_chmodable         (const ThunarFile       *file);
-gboolean          thunar_file_is_executable        (const ThunarFile       *file);
-gboolean          thunar_file_is_readable          (const ThunarFile       *file);
 gboolean          thunar_file_is_renameable        (const ThunarFile       *file);
-gboolean          thunar_file_is_writable          (const ThunarFile       *file);
 
 GList            *thunar_file_get_actions          (ThunarFile             *file,
                                                     GtkWidget              *window);
@@ -357,6 +354,40 @@ G_STMT_START{                                             \
  * Return value: %TRUE if @file is a directory.
  **/
 #define thunar_file_is_directory(file) (THUNAR_FILE ((file))->info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
+
+/**
+ * thunar_file_is_executable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to execute the @file (or enter the directory refered to by
+ * @file).
+ *
+ * Return value: %TRUE if @file can be executed.
+ **/
+#define thunar_file_is_executable(file) (THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE)
+
+/**
+ * thunar_file_is_readable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to read the @file.
+ *
+ * Return value: %TRUE if @file can be read.
+ **/
+#define thunar_file_is_readable(file) (THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_READABLE)
+
+/**
+ * thunar_file_is_writable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to write the @file.
+ *
+ * Return value: %TRUE if @file can be read.
+ **/
+#define thunar_file_is_writable(file) (THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_WRITABLE)
 
 /**
  * thunar_file_is_hidden:
