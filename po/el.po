@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-24 19:50+0300\n"
+"POT-Creation-Date: 2006-04-25 00:52+0200\n"
 "PO-Revision-Date: 2006-04-24 19:52+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -212,11 +212,11 @@ msgstr "Η διαδρομή είναι υπερβολικά μεγάλη για 
 msgid "URI too long to fit into buffer"
 msgstr "Το URI είναι υπερβολικά μεγάλο για να χωρέσει στην προσωρινή μνήμη"
 
-#: ../thunar-vfs/thunar-vfs-thumb.c:178 ../thunar/thunar-enum-types.c:97
+#: ../thunar-vfs/thunar-vfs-thumb.c:179 ../thunar/thunar-enum-types.c:97
 msgid "Size"
 msgstr "Μέγεθος"
 
-#: ../thunar-vfs/thunar-vfs-thumb.c:179
+#: ../thunar-vfs/thunar-vfs-thumb.c:180
 msgid "The desired thumbnail size"
 msgstr "Το επιθυμητό μέγεθος μικρογραφιών"
 
@@ -265,7 +265,7 @@ msgid "copy of %s"
 msgstr "αντίγραφο του %s"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:788
-#: ../thunar/thunar-properties-dialog.c:724
+#: ../thunar/thunar-properties-dialog.c:726
 #, c-format
 msgid "link to %s"
 msgstr "δεσμός προς το %s"
@@ -862,7 +862,7 @@ msgstr "Ιδιοκτήτης"
 #.
 #. Permissions chooser
 #.
-#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:458
+#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:455
 msgid "Permissions"
 msgstr "Δικαιώματα"
 
@@ -1052,7 +1052,7 @@ msgstr[1] "Άνοιγμα των επιλεγμένων αρχείων με τι
 msgid "Open With \"%s\""
 msgstr "Άνοιγμα με το \"%s\""
 
-#: ../thunar/thunar-list-model.c:786 ../thunar/thunar-properties-dialog.c:722
+#: ../thunar/thunar-list-model.c:786 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
 msgstr "σπασμένος δεσμός"
 
@@ -1616,64 +1616,70 @@ msgid_plural "(%lu seconds remaining)"
 msgstr[0] "(απομένει %lu δευτερόλεπτο)"
 msgstr[1] "(απομένουν %lu δευτερόλεπτα)"
 
-#: ../thunar/thunar-properties-dialog.c:249
+#: ../thunar/thunar-properties-dialog.c:245
 msgid "General"
 msgstr "Γενικές"
 
-#: ../thunar/thunar-properties-dialog.c:266
+#: ../thunar/thunar-properties-dialog.c:264
 msgid "Name:"
 msgstr "Όνομα:"
 
 #.
 #. Second box (kind, open with, link target)
 #.
-#: ../thunar/thunar-properties-dialog.c:292
+#: ../thunar/thunar-properties-dialog.c:289
 msgid "Kind:"
 msgstr "Είδος:"
 
-#: ../thunar/thunar-properties-dialog.c:307
+#: ../thunar/thunar-properties-dialog.c:304
 msgid "Open With:"
 msgstr "Άνοιγμα με:"
 
-#: ../thunar/thunar-properties-dialog.c:321
+#: ../thunar/thunar-properties-dialog.c:318
 msgid "Link Target:"
 msgstr "Προορισμός δεσμού:"
 
 #.
 #. Third box (modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:346
+#: ../thunar/thunar-properties-dialog.c:343
 msgid "Modified:"
 msgstr "Τροποποιήθηκε:"
 
-#: ../thunar/thunar-properties-dialog.c:360
+#: ../thunar/thunar-properties-dialog.c:357
 msgid "Accessed:"
 msgstr "Προσπελάστηκε:"
 
 #.
-#. Fourth box (free space, volume, size)
+#. Fourth box (size, volume, free space)
 #.
-#: ../thunar/thunar-properties-dialog.c:385
-msgid "Free Space:"
-msgstr "Ελεύθερος χώρος:"
+#: ../thunar/thunar-properties-dialog.c:382
+msgid "Size:"
+msgstr "Μέγεθος:"
 
-#: ../thunar/thunar-properties-dialog.c:399
+#: ../thunar/thunar-properties-dialog.c:395
 msgid "Volume:"
 msgstr "Τόμος:"
 
-#: ../thunar/thunar-properties-dialog.c:423
-msgid "Size:"
-msgstr "Μέγεθος:"
+#: ../thunar/thunar-properties-dialog.c:419
+msgid "Free Space:"
+msgstr "Ελεύθερος χώρος:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:447
+#: ../thunar/thunar-properties-dialog.c:444
 msgid "Emblems"
 msgstr "Εμβλήματα"
 
+#. update the properties dialog title
+#: ../thunar/thunar-properties-dialog.c:687
+#, fuzzy, c-format
+msgid "%s - Properties"
+msgstr "_Ιδιότητες"
+
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:840
+#: ../thunar/thunar-properties-dialog.c:842
 #: ../thunar/thunar-standard-view.c:2284
 #, c-format
 msgid "Failed to rename \"%s\""

@@ -241,12 +241,10 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), dialog->notebook, TRUE, TRUE, 0);
   gtk_widget_show (dialog->notebook);
 
-  table = g_object_new (GTK_TYPE_TABLE,
-                        "border-width", 6,
-                        "column-spacing", 12,
-                        "row-spacing", 6,
-                        NULL);
+  table = gtk_table_new (2, 2, FALSE);
   label = gtk_label_new (_("General"));
+  gtk_table_set_col_spacings (GTK_TABLE (table), 12);
+  gtk_container_set_border_width (GTK_CONTAINER (table), 6);
   gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), table, label);
   gtk_widget_show (label);
   gtk_widget_show (table);
@@ -256,7 +254,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
      First box (icon, name)
    */
   box = gtk_hbox_new (FALSE, 6);
-  gtk_table_attach (GTK_TABLE (table), box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (box);
 
   dialog->icon_image = gtk_image_new ();
@@ -270,17 +268,16 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_widget_show (label);
 
   dialog->name_entry = g_object_new (GTK_TYPE_ENTRY, "editable", FALSE, NULL);
-  exo_binding_new (G_OBJECT (dialog->name_entry), "text", G_OBJECT (dialog), "title");
   g_signal_connect (G_OBJECT (dialog->name_entry), "activate", G_CALLBACK (thunar_properties_dialog_activate), dialog);
   g_signal_connect (G_OBJECT (dialog->name_entry), "focus-out-event", G_CALLBACK (thunar_properties_dialog_focus_out_event), dialog);
-  gtk_table_attach (GTK_TABLE (table), dialog->name_entry, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), dialog->name_entry, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->name_entry);
 
   ++row;
 
 
   spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (spacer);
 
   ++row;
@@ -293,13 +290,13 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   exo_binding_new (G_OBJECT (label), "visible", G_OBJECT (spacer), "visible");
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->kind_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->kind_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->kind_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), dialog->kind_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->kind_label);
 
   ++row;
@@ -307,13 +304,13 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Open With:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   dialog->openwith_chooser = thunar_chooser_button_new ();
   exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (dialog->openwith_chooser), "file");
   exo_binding_new (G_OBJECT (dialog->openwith_chooser), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->openwith_chooser, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), dialog->openwith_chooser, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->openwith_chooser);
 
   ++row;
@@ -321,20 +318,20 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Link Target:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   dialog->link_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->link_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->link_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->link_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), dialog->link_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->link_label);
 
   ++row;
 
 
   spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (spacer);
 
   ++row;
@@ -346,13 +343,13 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Modified:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   dialog->modified_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->modified_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->modified_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->modified_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), dialog->modified_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->modified_label);
 
   ++row;
@@ -360,51 +357,50 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Accessed:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   dialog->accessed_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->accessed_label), TRUE);
   exo_binding_new (G_OBJECT (dialog->accessed_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->accessed_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), dialog->accessed_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->accessed_label);
 
   ++row;
 
 
   spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (spacer);
 
   ++row;
 
 
   /*
-     Fourth box (free space, volume, size)
+     Fourth box (size, volume, free space)
    */
-  label = gtk_label_new (_("Free Space:"));
+  label = gtk_label_new (_("Size:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
-  dialog->freespace_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
-  gtk_label_set_selectable (GTK_LABEL (dialog->freespace_label), TRUE);
-  exo_binding_new (G_OBJECT (dialog->freespace_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->freespace_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-  gtk_widget_show (dialog->freespace_label);
+  label = thunar_size_label_new ();
+  exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (label), "file");
+  gtk_table_attach (GTK_TABLE (table), label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (label);
 
   ++row;
 
   label = gtk_label_new (_("Volume:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
   box = gtk_hbox_new (FALSE, 6);
   exo_binding_new (G_OBJECT (box), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), box, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), box, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (box);
 
   dialog->volume_image = gtk_image_new ();
@@ -420,22 +416,23 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   ++row;
 
-  label = gtk_label_new (_("Size:"));
+  label = gtk_label_new (_("Free Space:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
-  label = thunar_size_label_new ();
-  exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (label), "file");
-  gtk_table_attach (GTK_TABLE (table), label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-  gtk_widget_show (label);
+  dialog->freespace_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->freespace_label), TRUE);
+  exo_binding_new (G_OBJECT (dialog->freespace_label), "visible", G_OBJECT (label), "visible");
+  gtk_table_attach (GTK_TABLE (table), dialog->freespace_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (dialog->freespace_label);
 
   ++row;
 
 
   spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
-  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (spacer);
 
   ++row;
@@ -685,6 +682,11 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (dialog)));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+
+  /* update the properties dialog title */
+  str = g_strdup_printf (_("%s - Properties"), thunar_file_get_display_name (dialog->file));
+  gtk_window_set_title (GTK_WINDOW (dialog), str);
+  g_free (str);
 
   /* update the icon */
   icon = thunar_icon_factory_load_file_icon (icon_factory, dialog->file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
