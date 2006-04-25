@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,6 +40,7 @@
 
 
 
+#define THUNAR_VFS_JOB_SOURCE(source)   ((ThunarVfsJobSource *) (source))
 #define THUNAR_VFS_JOB_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNAR_VFS_TYPE_JOB, ThunarVfsJobPrivate))
 
 
@@ -54,41 +55,63 @@ enum
 
 
 
-/* signal emission details */
-typedef struct
+typedef struct _ThunarVfsJobEmitDetails ThunarVfsJobEmitDetails;
+typedef struct _ThunarVfsJobSource      ThunarVfsJobSource;
+
+
+
+static void     thunar_vfs_job_class_init       (ThunarVfsJobClass *klass);
+static void     thunar_vfs_job_init             (ThunarVfsJob      *job);
+static void     thunar_vfs_job_execute          (gpointer           data,
+                                                 gpointer           user_data);
+static gboolean thunar_vfs_job_source_prepare   (GSource           *source,
+                                                 gint              *timeout);
+static gboolean thunar_vfs_job_source_check     (GSource           *source);
+static gboolean thunar_vfs_job_source_dispatch  (GSource           *source,
+                                                 GSourceFunc        callback,
+                                                 gpointer           user_data);
+static void     thunar_vfs_job_source_finalize  (GSource           *source);
+
+
+
+struct _ThunarVfsJobPrivate
+{
+  ThunarVfsJobEmitDetails *details;
+  volatile gboolean        running;
+};
+
+struct _ThunarVfsJobEmitDetails
 {
   ThunarVfsJob     *job;
   guint             signal_id;
   GQuark            signal_detail;
   va_list           var_args;
   volatile gboolean pending;
-} ThunarVfsJobEmitDetails;
+};
 
-
-
-static void     thunar_vfs_job_class_init  (ThunarVfsJobClass *klass);
-static void     thunar_vfs_job_init        (ThunarVfsJob      *job);
-static void     thunar_vfs_job_finalize    (GObject           *object);
-static void     thunar_vfs_job_execute     (gpointer           data,
-                                            gpointer           user_data);
-static gboolean thunar_vfs_job_emit_idle   (gpointer           user_data);
-static gboolean thunar_vfs_job_launch_idle (gpointer           user_data);
-
-
-
-struct _ThunarVfsJobPrivate
+struct _ThunarVfsJobSource
 {
-  GCond     *cond;
-  GMutex    *mutex;
-  GMainLoop *loop;
-  gint       launch_idle_id;
+  GSource       source;
+  ThunarVfsJob *job;
 };
 
 
 
-static GObjectClass *thunar_vfs_job_parent_class;
-static guint         job_signals[LAST_SIGNAL];
-static GThreadPool  *job_pool = NULL;
+static GSourceFuncs thunar_vfs_job_source_funcs =
+{
+  thunar_vfs_job_source_prepare,
+  thunar_vfs_job_source_check,
+  thunar_vfs_job_source_dispatch,
+  thunar_vfs_job_source_finalize,
+  NULL,
+};
+
+static GObjectClass  *thunar_vfs_job_parent_class;
+static guint          job_signals[LAST_SIGNAL];
+static GThreadPool   *job_pool = NULL;
+static GCond         *job_cond = NULL;
+static GMutex        *job_mutex = NULL;
+static volatile guint jobs_running = 0;
 
 
 
@@ -124,16 +147,11 @@ thunar_vfs_job_get_type (void)
 static void
 thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
 {
-  GObjectClass *gobject_class;
-
   /* add our private data for this class */
   g_type_class_add_private (klass, sizeof (ThunarVfsJobPrivate));
 
   /* determine the parent class */
   thunar_vfs_job_parent_class = g_type_class_peek_parent (klass);
-
-  gobject_class = G_OBJECT_CLASS (klass);
-  gobject_class->finalize = thunar_vfs_job_finalize;
 
   /**
    * ThunarVfsJob::error:
@@ -173,31 +191,6 @@ static void
 thunar_vfs_job_init (ThunarVfsJob *job)
 {
   job->priv = THUNAR_VFS_JOB_GET_PRIVATE (job);
-  job->priv->cond = g_cond_new ();
-  job->priv->mutex = g_mutex_new ();
-  job->priv->launch_idle_id = -1;
-}
-
-
-
-static void
-thunar_vfs_job_finalize (GObject *object)
-{
-  ThunarVfsJob *job = THUNAR_VFS_JOB (object);
-
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (job->priv->loop == NULL);
-
-  /* drop the launch idle source if it's active */
-  if (G_LIKELY (job->priv->launch_idle_id >= 0))
-    g_source_remove (job->priv->launch_idle_id);
-
-  /* destroy the synchronization entities */
-  g_mutex_free (job->priv->mutex);
-  g_cond_free (job->priv->cond);
-
-  /* invoke the parent's finalize method */
-  (*G_OBJECT_CLASS (thunar_vfs_job_parent_class)->finalize) (object);
 }
 
 
@@ -209,74 +202,102 @@ thunar_vfs_job_execute (gpointer data,
   ThunarVfsJob *job = THUNAR_VFS_JOB (data);
 
   g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (job->priv->loop != NULL);
+  g_return_if_fail (job->priv->running);
 
   /* perform the real work */
   (*THUNAR_VFS_JOB_GET_CLASS (job)->execute) (job);
 
-  /* exit from the execution loop */
-  g_main_loop_quit (job->priv->loop);
+  /* mark the job as done */
+  job->priv->running = FALSE;
+
+  /* wake up the main event loop */
+  g_main_context_wakeup (NULL);
 }
 
 
 
 static gboolean
-thunar_vfs_job_emit_idle (gpointer user_data)
+thunar_vfs_job_source_prepare (GSource *source,
+                               gint    *timeout)
 {
-  ThunarVfsJobEmitDetails *details = user_data;
-  ThunarVfsJob            *job = details->job;
+  *timeout = -1;
+  return thunar_vfs_job_source_check (source);
+}
 
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
 
-  g_mutex_lock (job->priv->mutex);
 
-  /* emit the signal */
+static gboolean
+thunar_vfs_job_source_check (GSource *source)
+{
+  ThunarVfsJob *job = THUNAR_VFS_JOB_SOURCE (source)->job;
+
+  /* check if the job is done or has a pending emit */
+  return (!job->priv->running || job->priv->details != NULL);
+}
+
+
+
+static gboolean
+thunar_vfs_job_source_dispatch (GSource    *source,
+                                GSourceFunc callback,
+                                gpointer    user_data)
+{
+  ThunarVfsJobEmitDetails *details;
+  ThunarVfsJob            *job = THUNAR_VFS_JOB_SOURCE (source)->job;
+
+  /* check if the job is done */
+  if (!job->priv->running)
+    {
+      /* emit the "finished" signal */
+      GDK_THREADS_ENTER ();
+      g_signal_emit (G_OBJECT (job), job_signals[FINISHED], 0);
+      GDK_THREADS_LEAVE ();
+
+      /* drop the source */
+      return FALSE;
+    }
+
+  /* check if the job has a pending emit */
+  if (G_LIKELY (job->priv->details != NULL))
+    {
+      /* acquire the job mutex */
+      g_mutex_lock (job_mutex);
+
+      /* determine and reset the emission details */
+      details = job->priv->details;
+      job->priv->details = NULL;
+
+      /* emit the signal */
+      GDK_THREADS_ENTER ();
+      g_signal_emit_valist (job, details->signal_id, details->signal_detail, details->var_args);
+      GDK_THREADS_LEAVE ();
+
+      /* tell the other thread, that we're done */
+      details->pending = FALSE;
+      g_cond_broadcast (job_cond);
+      g_mutex_unlock (job_mutex);
+    }
+
+  /* keep the source alive */
+  return TRUE;
+}
+
+
+
+static void
+thunar_vfs_job_source_finalize (GSource *source)
+{
+  ThunarVfsJob *job = THUNAR_VFS_JOB_SOURCE (source)->job;
+
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
+
+  /* decrement the number of running jobs */
+  jobs_running -= 1;
+
+  /* release the job reference */
   GDK_THREADS_ENTER ();
-  g_signal_emit_valist (job, details->signal_id, details->signal_detail, details->var_args);
-  GDK_THREADS_LEAVE ();
-
-  /* tell the other thread, that we're done */
-  details->pending = FALSE;
-  g_cond_signal (job->priv->cond);
-  g_mutex_unlock (job->priv->mutex);
-
-  /* remove the idle source */
-  return FALSE;
-}
-
-
-
-static gboolean
-thunar_vfs_job_launch_idle (gpointer user_data)
-{
-  ThunarVfsJob *job = THUNAR_VFS_JOB (user_data);
-
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
-  g_return_val_if_fail (job_pool != NULL, FALSE);
-
-  /* take an additional reference on the job */
-  g_object_ref (G_OBJECT (job));
-
-  /* allocate a main loop for this job */
-  job->priv->loop = g_main_loop_new (NULL, FALSE);
-
-  /* schedule a thread to handle the job */
-  g_thread_pool_push (job_pool, job, NULL);
-
-  /* wait for the job to finish */
-  g_main_loop_run (job->priv->loop);
-
-  /* emit the "finished" signal */
-  g_signal_emit (G_OBJECT (job), job_signals[FINISHED], 0);
-
-  /* drop the main loop */
-  g_main_loop_unref (job->priv->loop);
-  job->priv->loop = NULL;
-
-  /* drop the additional reference on the job */
   g_object_unref (G_OBJECT (job));
-
-  return FALSE;
+  GDK_THREADS_LEAVE ();
 }
 
 
@@ -293,12 +314,33 @@ thunar_vfs_job_launch_idle (gpointer user_data)
 ThunarVfsJob*
 thunar_vfs_job_launch (ThunarVfsJob *job)
 {
+  GSource *source;
+
   g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), NULL);
-  g_return_val_if_fail (job->priv->launch_idle_id < 0, NULL);
+  g_return_val_if_fail (!job->priv->running, NULL);
   g_return_val_if_fail (job_pool != NULL, NULL);
 
-  /* schedule the launch idle source */
-  job->priv->launch_idle_id = g_idle_add_full (G_PRIORITY_HIGH, thunar_vfs_job_launch_idle, job, NULL);
+  /* allocate and initialize the watch source */
+  source = g_source_new (&thunar_vfs_job_source_funcs, sizeof (ThunarVfsJobSource));
+  g_source_set_priority (source, G_PRIORITY_HIGH);
+
+  /* connect the source to the job */
+  THUNAR_VFS_JOB_SOURCE (source)->job = g_object_ref (G_OBJECT (job));
+
+  /* increment the number of running jobs */
+  jobs_running += 1;
+
+  /* mark the job as running */
+  job->priv->running = TRUE;
+
+  /* schedule a thread to handle the job */
+  g_thread_pool_push (job_pool, job, NULL);
+
+  /* attach the source to the main context */
+  g_source_attach (source, NULL);
+
+  /* the main context now keeps the reference */
+  g_source_unref (source);
 
   return job;
 }
@@ -348,8 +390,10 @@ thunar_vfs_job_emit_valist (ThunarVfsJob *job,
   ThunarVfsJobEmitDetails details;
 
   g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (job->priv->loop != NULL);
+  g_return_if_fail (job->priv->details == NULL);
+  g_return_if_fail (job->priv->running);
 
+  /* prepare the emission details */
   details.job = job;
   details.signal_id = signal_id;
   details.signal_detail = signal_detail;
@@ -358,11 +402,13 @@ thunar_vfs_job_emit_valist (ThunarVfsJob *job,
   /* copy the variable argument list (portable) */
   G_VA_COPY (details.var_args, var_args);
 
-  g_mutex_lock (job->priv->mutex);
-  g_idle_add_full (G_PRIORITY_HIGH, thunar_vfs_job_emit_idle, &details, NULL);
+  /* emit the signal using our source */
+  g_mutex_lock (job_mutex);
+  g_main_context_wakeup (NULL);
+  job->priv->details = &details;
   while (G_UNLIKELY (details.pending))
-    g_cond_wait (job->priv->cond, job->priv->mutex);
-  g_mutex_unlock (job->priv->mutex);
+    g_cond_wait (job_cond, job_mutex);
+  g_mutex_unlock (job_mutex);
 }
 
 
@@ -425,6 +471,11 @@ _thunar_vfs_job_init (void)
 {
   g_return_if_fail (job_pool == NULL);
 
+  /* allocate the synchronization entities */
+  job_cond = g_cond_new ();
+  job_mutex = g_mutex_new ();
+
+  /* allocate the shared thread pool */
   job_pool = g_thread_pool_new (thunar_vfs_job_execute, NULL, 8, FALSE, NULL);
 }
 
@@ -441,8 +492,17 @@ _thunar_vfs_job_shutdown (void)
 {
   g_return_if_fail (job_pool != NULL);
 
+  /* wait for all jobs to terminate */
+  while (G_UNLIKELY (jobs_running > 0))
+    g_main_context_iteration (NULL, TRUE);
+
+  /* release the thread pool */
   g_thread_pool_free (job_pool, FALSE, TRUE);
   job_pool = NULL;
+
+  /* release the synchronization entities */
+  g_mutex_free (job_mutex);
+  g_cond_free (job_cond);
 }
 
 
