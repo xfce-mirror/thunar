@@ -1002,7 +1002,9 @@ thunar_file_accepts_drop (ThunarFile     *file,
 {
   ThunarVfsPath *parent_path;
   ThunarVfsPath *path;
+  GdkDragAction  suggested_action;
   GdkDragAction  actions;
+  ThunarFile    *ofile;
   GList         *lp;
   guint          n;
 
@@ -1013,43 +1015,80 @@ thunar_file_accepts_drop (ThunarFile     *file,
   if (G_UNLIKELY (path_list == NULL))
     return 0;
 
+  /* default to whatever GTK+ thinks for the suggested action */
+  suggested_action = context->suggested_action;
+
   /* check if we have a writable directory here or an executable file */
   if (thunar_file_is_directory (file) && thunar_file_is_writable (file))
-    actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK);
-  else if (thunar_file_is_executable (file))
-    actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE);
-  else
-    return 0;
-
-  /* determine the path of the file */
-  path = thunar_file_get_path (file);
-
-  /* check up to 500 of the paths (just in case somebody tries to
-   * drag around his music collection with 5000 files).
-   */
-  for (lp = path_list, n = 0; lp != NULL && n < 500; lp = lp->next, ++n)
     {
-      /* we cannot drop a file on itself */
-      if (G_UNLIKELY (thunar_vfs_path_equal (path, lp->data)))
-        return 0;
+      /* determine the possible actions */
+      actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK);
 
-      /* check whether source and destination are the same */
-      parent_path = thunar_vfs_path_get_parent (lp->data);
-      if (G_LIKELY (parent_path != NULL))
+      /* determine the path of the file */
+      path = thunar_file_get_path (file);
+
+      /* check up to 100 of the paths (just in case somebody tries to
+       * drag around his music collection with 5000 files).
+       */
+      for (lp = path_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
         {
-          if (thunar_vfs_path_equal (path, parent_path))
+          /* we cannot drop a file on itself */
+          if (G_UNLIKELY (thunar_vfs_path_equal (path, lp->data)))
             return 0;
+
+          /* check whether source and destination are the same */
+          parent_path = thunar_vfs_path_get_parent (lp->data);
+          if (G_LIKELY (parent_path != NULL))
+            {
+              if (thunar_vfs_path_equal (path, parent_path))
+                return 0;
+            }
+        }
+
+      /* if the source offers both copy and move and the GTK+ suggested action is copy, try to be smart telling whether
+       * we should copy or move by default by checking whether the source and target are on the same disk.
+       */
+      if ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE)) != 0 && (suggested_action == GDK_ACTION_COPY))
+        {
+          /* default to move as suggested action */
+          suggested_action = GDK_ACTION_MOVE;
+
+          /* check for up to 100 files, for the reason state above */
+          for (lp = path_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
+            {
+              /* determine the cached version of the source file */
+              ofile = thunar_file_cache_lookup (lp->data);
+
+              /* we have only move if we know the source and both the source and the target
+               * are on the same disk, and the source file is owned by the current user.
+               */
+              if (ofile == NULL || (ofile->info->device != file->info->device) || (ofile->info->uid != effective_user_id))
+                {
+                  /* default to copy and get outa here */
+                  suggested_action = GDK_ACTION_COPY;
+                  break;
+                }
+            }
         }
     }
+  else if (thunar_file_is_executable (file))
+    {
+      /* determine the possible actions */
+      actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_PRIVATE);
+    }
+  else
+    return 0;
 
   /* determine the preferred action based on the context */
   if (G_LIKELY (suggested_action_return != NULL))
     {
       /* determine a working action */
-      if (G_LIKELY ((context->suggested_action & actions) != 0))
-        *suggested_action_return = context->suggested_action;
+      if (G_LIKELY ((suggested_action & actions) != 0))
+        *suggested_action_return = suggested_action;
       else if ((actions & GDK_ACTION_ASK) != 0)
         *suggested_action_return = GDK_ACTION_ASK;
+      else if ((actions & suggested_action) != 0)
+        *suggested_action_return = suggested_action;
       else if ((actions & GDK_ACTION_COPY) != 0)
         *suggested_action_return = GDK_ACTION_COPY;
       else if ((actions & GDK_ACTION_LINK) != 0)
