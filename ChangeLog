@@ -1,5 +1,10 @@
 2006-04-26	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-file.c(thunar_file_accepts_drop): Ups, no need to check
+	  the suggested action twice.
+
+2006-04-26	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.c(thunar_file_accepts_drop): Be a bit smarter in
 	  guessing the default action for a folder drop operation. For example
 	  it will default to move now if both the source and the target are on

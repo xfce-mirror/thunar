@@ -1087,8 +1087,6 @@ thunar_file_accepts_drop (ThunarFile     *file,
         *suggested_action_return = suggested_action;
       else if ((actions & GDK_ACTION_ASK) != 0)
         *suggested_action_return = GDK_ACTION_ASK;
-      else if ((actions & suggested_action) != 0)
-        *suggested_action_return = suggested_action;
       else if ((actions & GDK_ACTION_COPY) != 0)
         *suggested_action_return = GDK_ACTION_COPY;
       else if ((actions & GDK_ACTION_LINK) != 0)
