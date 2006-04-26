@@ -1,5 +1,15 @@
 2006-04-26	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-folder.c: No need to reset the folder in the dispose()
+	  method, instead we can do that when finalize() is called.
+	* thunar/thunar-standard-view.c
+	  (thunar_standard_view_set_current_directory): Resetting the folder
+	  for the model with a view connected can take a lot of time, so we
+	  temporarily disconnect the model from the view while resetting the
+	  folder.
+
+2006-04-26	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.c(thunar_file_accepts_drop): Ups, no need to check
 	  the suggested action twice.
 
