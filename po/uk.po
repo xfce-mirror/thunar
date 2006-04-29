@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-25 00:52+0200\n"
+"POT-Creation-Date: 2006-04-29 20:52+0900\n"
 "PO-Revision-Date: 2006-04-20 17:07+0300\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -260,7 +260,7 @@ msgstr "Не вдається з'єднатися зі службою HAL: %s"
 msgid "copy of %s"
 msgstr "копія %s"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:788
+#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:776
 #: ../thunar/thunar-properties-dialog.c:726
 #, c-format
 msgid "link to %s"
@@ -749,8 +749,8 @@ msgstr "_Автоматично збільшувати ширину стовпч
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:738
-#: ../thunar/thunar-list-model.c:767
+#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:726
+#: ../thunar/thunar-list-model.c:755
 #: ../thunar/thunar-permissions-chooser.c:270
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -766,7 +766,7 @@ msgstr "Компактний список"
 msgid "Compact view"
 msgstr "Компактний вигляд"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2254
 msgid "Enter the new name:"
 msgstr "Введіть нову назву:"
 
@@ -876,7 +876,7 @@ msgstr "Назва файлу"
 msgid "The root folder has no parent"
 msgstr "Кореневий каталог не має батьківського каталогу"
 
-#: ../thunar/thunar-file.c:1085
+#: ../thunar/thunar-file.c:1122
 msgid "File System"
 msgstr "Файлова система"
 
@@ -1054,12 +1054,12 @@ msgstr[2] "Відкрити виділені файли у типовій про
 msgid "Open With \"%s\""
 msgstr "Відкрити програмою \"%s\""
 
-#: ../thunar/thunar-list-model.c:786 ../thunar/thunar-properties-dialog.c:724
+#: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
 msgstr "неправильне посилання"
 
 #. generate a text which includes the size of all items in the folder
-#: ../thunar/thunar-list-model.c:2209
+#: ../thunar/thunar-list-model.c:2197
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
@@ -1068,7 +1068,7 @@ msgstr[1] "%d об'єкти (%s), вільного простору: %s"
 msgstr[2] "%d об'єктів (%s), вільного простору: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2218
+#: ../thunar/thunar-list-model.c:2206
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
@@ -1076,7 +1076,7 @@ msgstr[0] "%d об'єкт, вільного простору: %s"
 msgstr[1] "%d об'єкти, вільного простору: %s"
 msgstr[2] "%d об'єктів, вільного простору: %s"
 
-#: ../thunar/thunar-list-model.c:2226
+#: ../thunar/thunar-list-model.c:2214
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
@@ -1084,22 +1084,22 @@ msgstr[0] "%d елемент"
 msgstr[1] "%d елементи"
 msgstr[2] "%d елементів"
 
-#: ../thunar/thunar-list-model.c:2242
+#: ../thunar/thunar-list-model.c:2230
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "\"%s\" неправильне посилання"
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2234
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) посилається на %s"
 
-#: ../thunar/thunar-list-model.c:2251
+#: ../thunar/thunar-list-model.c:2239
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2268
+#: ../thunar/thunar-list-model.c:2256
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
@@ -1107,7 +1107,7 @@ msgstr[0] "виділено %d об'єкт (%s)"
 msgstr[1] "виділено %d об'єкти (%s)"
 msgstr[2] "виділено %d об'єктів (%s)"
 
-#: ../thunar/thunar-list-model.c:2273
+#: ../thunar/thunar-list-model.c:2261
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1174,12 +1174,12 @@ msgstr "В_ластивості..."
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 msgid "New Folder"
 msgstr "Нова тека"
 
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 msgid "Create New Folder"
 msgstr "Створити нову теку"
 
@@ -1685,7 +1685,7 @@ msgstr "В_ластивості..."
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:842
-#: ../thunar/thunar-standard-view.c:2284
+#: ../thunar/thunar-standard-view.c:2296
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Не вдається перейменувати \"%s\""
@@ -2009,7 +2009,7 @@ msgstr "Виділити усі файли, що відповідають зад
 msgid "Du_plicate"
 msgstr "Створити к_опію файлу"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3270
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3282
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Створити _посилання"
@@ -2029,26 +2029,26 @@ msgstr "Перейменувати вибраний файл"
 msgid "Create _Document"
 msgstr "Створити _документ"
 
-#: ../thunar/thunar-standard-view.c:1225
+#: ../thunar/thunar-standard-view.c:1237
 msgid "Loading folder contents..."
 msgstr "Завантаження змісту теки..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File"
 msgstr "Новий файл"
 
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File..."
 msgstr "Новий файл..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1821
+#: ../thunar/thunar-standard-view.c:1833
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Створити документ з шаблону \"%s\""
 
-#: ../thunar/thunar-standard-view.c:1972 ../thunar/thunar-tree-view.c:1510
+#: ../thunar/thunar-standard-view.c:1984 ../thunar/thunar-tree-view.c:1510
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -2057,7 +2057,7 @@ msgstr ""
 "Ви дійсно бажаєте\n"
 "остаточно видалити \"%s\"?"
 
-#: ../thunar/thunar-standard-view.c:1977
+#: ../thunar/thunar-standard-view.c:1989
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -2075,62 +2075,62 @@ msgstr[2] ""
 "Ви дійсно бажаєте остаточно\n"
 "остаточно видалити %u виділених файлів?"
 
-#: ../thunar/thunar-standard-view.c:1999 ../thunar/thunar-tree-view.c:1517
+#: ../thunar/thunar-standard-view.c:2011 ../thunar/thunar-tree-view.c:1517
 msgid "If you delete a file, it is permanently lost."
 msgstr "Якщо ви видалите файл, він буде остаточно втрачений."
 
-#: ../thunar/thunar-standard-view.c:2064
+#: ../thunar/thunar-standard-view.c:2076
 msgid "Select by Pattern"
 msgstr "Виділення за шаблоном"
 
-#: ../thunar/thunar-standard-view.c:2070
+#: ../thunar/thunar-standard-view.c:2082
 msgid "_Select"
 msgstr "Виді_лити"
 
-#: ../thunar/thunar-standard-view.c:2079
+#: ../thunar/thunar-standard-view.c:2091
 msgid "_Pattern:"
 msgstr "_Шаблон:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2213
+#: ../thunar/thunar-standard-view.c:2225
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Перейменувати \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2885
+#: ../thunar/thunar-standard-view.c:2897
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Не вдається відкрити теку \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3230
+#: ../thunar/thunar-standard-view.c:3242
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Підготувати виділений файл до переміщення командою \"Вставити\""
 msgstr[1] "Підготувати виділені файли до переміщення командою \"Вставити\""
 msgstr[2] "Підготувати виділені файли до переміщення командою \"Вставити\""
 
-#: ../thunar/thunar-standard-view.c:3238
+#: ../thunar/thunar-standard-view.c:3250
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Підготувати виділений файл до копіювання командою \"Вставити\""
 msgstr[1] "Підготувати виділені файли до копіювання командою \"Вставити\""
 msgstr[2] "Підготувати виділені файли до копіювання командою \"Вставити\""
 
-#: ../thunar/thunar-standard-view.c:3249
+#: ../thunar/thunar-standard-view.c:3261
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Остаточно видалити виділений файл"
 msgstr[1] "Остаточно видалити виділені файли"
 msgstr[2] "Остаточно видалити виділені файли"
 
-#: ../thunar/thunar-standard-view.c:3263
+#: ../thunar/thunar-standard-view.c:3275
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Створити копію виділеного файлу"
 msgstr[1] "Створити копію кожного виділеного файлу"
 msgstr[2] "Створити копію кожного виділеного файлу"
 
-#: ../thunar/thunar-standard-view.c:3272
+#: ../thunar/thunar-standard-view.c:3284
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Створити символьне посилання для виділеного файлу"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.2.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-25 00:52+0200\n"
+"POT-Creation-Date: 2006-04-29 20:52+0900\n"
 "PO-Revision-Date: 2006-04-26 18:20+0800\n"
 "Last-Translator: Cosmo Chene <cosmolax@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -260,7 +260,7 @@ msgstr "無法連結至·HAL·服務:·%s"
 msgid "copy of %s"
 msgstr "%s 的拷貝"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:788
+#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:776
 #: ../thunar/thunar-properties-dialog.c:726
 #, c-format
 msgid "link to %s"
@@ -738,8 +738,8 @@ msgstr "依需求自動延展欄位(_E)"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:738
-#: ../thunar/thunar-list-model.c:767
+#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:726
+#: ../thunar/thunar-list-model.c:755
 #: ../thunar/thunar-permissions-chooser.c:270
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -755,7 +755,7 @@ msgstr "目錄清單"
 msgid "Compact view"
 msgstr "簡潔檢視"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2254
 msgid "Enter the new name:"
 msgstr "輸入新名稱："
 
@@ -865,7 +865,7 @@ msgstr "檔案名稱"
 msgid "The root folder has no parent"
 msgstr "沒有比根目錄更上層的目錄"
 
-#: ../thunar/thunar-file.c:1085
+#: ../thunar/thunar-file.c:1122
 msgid "File System"
 msgstr "檔案系統"
 
@@ -1023,52 +1023,52 @@ msgstr[0] "以預設的應用程式開啟所選取的檔案"
 msgid "Open With \"%s\""
 msgstr "以 \"%s\" 開啟"
 
-#: ../thunar/thunar-list-model.c:786 ../thunar/thunar-properties-dialog.c:724
+#: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
 msgstr "連結失效"
 
 #. generate a text which includes the size of all items in the folder
-#: ../thunar/thunar-list-model.c:2209
+#: ../thunar/thunar-list-model.c:2197
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
 msgstr[0] "%d 個項目，可用空間 %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2218
+#: ../thunar/thunar-list-model.c:2206
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d 個項目，可用空間 %s"
 
-#: ../thunar/thunar-list-model.c:2226
+#: ../thunar/thunar-list-model.c:2214
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d 個項目"
 
-#: ../thunar/thunar-list-model.c:2242
+#: ../thunar/thunar-list-model.c:2230
 #, c-format
 msgid "\"%s\" broken link"
 msgstr " \"%s\" 連結失效"
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2234
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) 連結至 %s"
 
-#: ../thunar/thunar-list-model.c:2251
+#: ../thunar/thunar-list-model.c:2239
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2268
+#: ../thunar/thunar-list-model.c:2256
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "已選取 %d 個項目(%s)"
 
-#: ../thunar/thunar-list-model.c:2273
+#: ../thunar/thunar-list-model.c:2261
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1130,12 +1130,12 @@ msgstr "內容(_P)"
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 msgid "New Folder"
 msgstr "新資料夾"
 
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 msgid "Create New Folder"
 msgstr "建立新資料夾"
 
@@ -1631,7 +1631,7 @@ msgstr "%s - 內容資訊"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:842
-#: ../thunar/thunar-standard-view.c:2284
+#: ../thunar/thunar-standard-view.c:2296
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "無法重新命名 \"%s\""
@@ -1937,7 +1937,7 @@ msgstr "選取所有符合關鍵字的檔案"
 msgid "Du_plicate"
 msgstr "翻製檔案(_P)"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3270
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3282
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "建立連結(_K)"
@@ -1955,26 +1955,26 @@ msgstr "重新命名所選的檔案"
 msgid "Create _Document"
 msgstr "建立新文件(_D)"
 
-#: ../thunar/thunar-standard-view.c:1225
+#: ../thunar/thunar-standard-view.c:1237
 msgid "Loading folder contents..."
 msgstr "正在載入資料夾內容..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File"
 msgstr "新建空白文件"
 
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File..."
 msgstr "新建空白文件..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1821
+#: ../thunar/thunar-standard-view.c:1833
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "從模板·\"%s\" 中建立新的文件"
 
-#: ../thunar/thunar-standard-view.c:1972 ../thunar/thunar-tree-view.c:1510
+#: ../thunar/thunar-standard-view.c:1984 ../thunar/thunar-tree-view.c:1510
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1983,8 +1983,8 @@ msgstr ""
 "您確定要徹底刪除\n"
 "所選的檔案·\"%s\"?"
 
-#: ../thunar/thunar-standard-view.c:1977
-#, c-format
+#: ../thunar/thunar-standard-view.c:1989
+#, fuzzy, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
 "delete the selected file?"
@@ -1995,54 +1995,54 @@ msgstr[0] ""
 "您確定要徹底刪除\n"
 "所選的檔案 \"%s\" ？"
 
-#: ../thunar/thunar-standard-view.c:1999 ../thunar/thunar-tree-view.c:1517
+#: ../thunar/thunar-standard-view.c:2011 ../thunar/thunar-tree-view.c:1517
 msgid "If you delete a file, it is permanently lost."
 msgstr "如果您刪除了檔案，將再也找不回來。"
 
-#: ../thunar/thunar-standard-view.c:2064
+#: ../thunar/thunar-standard-view.c:2076
 msgid "Select by Pattern"
 msgstr "依關鍵字選取"
 
-#: ../thunar/thunar-standard-view.c:2070
+#: ../thunar/thunar-standard-view.c:2082
 msgid "_Select"
 msgstr "選取(_S)"
 
-#: ../thunar/thunar-standard-view.c:2079
+#: ../thunar/thunar-standard-view.c:2091
 msgid "_Pattern:"
 msgstr "關鍵字(_P):"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2213
+#: ../thunar/thunar-standard-view.c:2225
 #, c-format
 msgid "Rename \"%s\""
 msgstr "重新命名·\"%s\""
 
-#: ../thunar/thunar-standard-view.c:2885
+#: ../thunar/thunar-standard-view.c:2897
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "無法開啟目錄·\"%s\""
 
-#: ../thunar/thunar-standard-view.c:3230
+#: ../thunar/thunar-standard-view.c:3242
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "準備將選取的檔案以貼上指令移動"
 
-#: ../thunar/thunar-standard-view.c:3238
+#: ../thunar/thunar-standard-view.c:3250
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "準備所選的檔案將被複製到緩衝區以便於貼上"
 
-#: ../thunar/thunar-standard-view.c:3249
+#: ../thunar/thunar-standard-view.c:3261
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "永久刪除所選的檔案"
 
-#: ../thunar/thunar-standard-view.c:3263
+#: ../thunar/thunar-standard-view.c:3275
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "重製所選檔案"
 
-#: ../thunar/thunar-standard-view.c:3272
+#: ../thunar/thunar-standard-view.c:3284
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "為所選的檔案建立符號連結"

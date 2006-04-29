@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-25 00:52+0200\n"
+"POT-Creation-Date: 2006-04-29 20:52+0900\n"
 "PO-Revision-Date: 2005-10-14 23:57+0900\n"
 "Last-Translator: Miguel Angel Ruiz Manzano <debianized@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -266,7 +266,7 @@ msgstr "No se pudo conectar con el demonio HAL: %s."
 msgid "copy of %s"
 msgstr "copia de %s"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:788
+#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:776
 #: ../thunar/thunar-properties-dialog.c:726
 #, c-format
 msgid "link to %s"
@@ -762,8 +762,8 @@ msgstr "Automáticamente _expandir las columnas según se requiera"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:738
-#: ../thunar/thunar-list-model.c:767
+#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:726
+#: ../thunar/thunar-list-model.c:755
 #: ../thunar/thunar-permissions-chooser.c:270
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -780,7 +780,7 @@ msgstr "listado de directorio con iconos"
 msgid "Compact view"
 msgstr ""
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2254
 msgid "Enter the new name:"
 msgstr "Ingrese el nuevo nombre"
 
@@ -898,7 +898,7 @@ msgstr "Gestor de archivos"
 msgid "The root folder has no parent"
 msgstr ""
 
-#: ../thunar/thunar-file.c:1085
+#: ../thunar/thunar-file.c:1122
 #, fuzzy
 msgid "File System"
 msgstr "Raíz"
@@ -1075,12 +1075,12 @@ msgstr[1] ""
 msgid "Open With \"%s\""
 msgstr "Abrir con"
 
-#: ../thunar/thunar-list-model.c:786 ../thunar/thunar-properties-dialog.c:724
+#: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
 msgstr ""
 
 #. generate a text which includes the size of all items in the folder
-#: ../thunar/thunar-list-model.c:2209
+#: ../thunar/thunar-list-model.c:2197
 #, fuzzy, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
@@ -1088,43 +1088,43 @@ msgstr[0] "%d elemento, espacio libre %s"
 msgstr[1] "%d elementos, espacio libre %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2218
+#: ../thunar/thunar-list-model.c:2206
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d elemento, espacio libre %s"
 msgstr[1] "%d elementos, espacio libre %s"
 
-#: ../thunar/thunar-list-model.c:2226
+#: ../thunar/thunar-list-model.c:2214
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d elemento"
 msgstr[1] "%d elementos"
 
-#: ../thunar/thunar-list-model.c:2242
+#: ../thunar/thunar-list-model.c:2230
 #, c-format
 msgid "\"%s\" broken link"
 msgstr ""
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2234
 #, fuzzy, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2251
+#: ../thunar/thunar-list-model.c:2239
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2268
+#: ../thunar/thunar-list-model.c:2256
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d elemento seleccionado (%s)"
 msgstr[1] "%d elementos seleccionados (%s)"
 
-#: ../thunar/thunar-list-model.c:2273
+#: ../thunar/thunar-list-model.c:2261
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1189,13 +1189,13 @@ msgstr "_Propiedades..."
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 #, fuzzy
 msgid "New Folder"
 msgstr "Carpeta"
 
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 #, fuzzy
 msgid "Create New Folder"
 msgstr "Carpeta"
@@ -1689,7 +1689,7 @@ msgstr "_Propiedades..."
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:842
-#: ../thunar/thunar-standard-view.c:2284
+#: ../thunar/thunar-standard-view.c:2296
 #, fuzzy, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Imposible renombrar %s."
@@ -2014,7 +2014,7 @@ msgstr "Selecciona todos los archivos que coinciden con un patrón"
 msgid "Du_plicate"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3270
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3282
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] ""
@@ -2035,34 +2035,34 @@ msgstr "Renombra el elemento seleccionado"
 msgid "Create _Document"
 msgstr "Crear _Documento"
 
-#: ../thunar/thunar-standard-view.c:1225
+#: ../thunar/thunar-standard-view.c:1237
 msgid "Loading folder contents..."
 msgstr "Cargando el contenido de la carpeta..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File"
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 #, fuzzy
 msgid "New Empty File..."
 msgstr "Carpeta"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1821
+#: ../thunar/thunar-standard-view.c:1833
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:1972 ../thunar/thunar-tree-view.c:1510
+#: ../thunar/thunar-standard-view.c:1984 ../thunar/thunar-tree-view.c:1510
 #, fuzzy, c-format
 msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr "¿Esta seguro de que desea borrar todos los elementos de la papelera?"
 
-#: ../thunar/thunar-standard-view.c:1977
+#: ../thunar/thunar-standard-view.c:1989
 #, fuzzy, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -2075,63 +2075,63 @@ msgstr[0] ""
 msgstr[1] ""
 "¿Esta seguro de que desea borrar todos los elementos de la papelera?"
 
-#: ../thunar/thunar-standard-view.c:1999 ../thunar/thunar-tree-view.c:1517
+#: ../thunar/thunar-standard-view.c:2011 ../thunar/thunar-tree-view.c:1517
 msgid "If you delete a file, it is permanently lost."
 msgstr ""
 
-#: ../thunar/thunar-standard-view.c:2064
+#: ../thunar/thunar-standard-view.c:2076
 #, fuzzy
 msgid "Select by Pattern"
 msgstr "Patrón de selección"
 
-#: ../thunar/thunar-standard-view.c:2070
+#: ../thunar/thunar-standard-view.c:2082
 #, fuzzy
 msgid "_Select"
 msgstr "Archivos seleccionados"
 
-#: ../thunar/thunar-standard-view.c:2079
+#: ../thunar/thunar-standard-view.c:2091
 #, fuzzy
 msgid "_Pattern:"
 msgstr "Patrón:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2213
+#: ../thunar/thunar-standard-view.c:2225
 #, fuzzy, c-format
 msgid "Rename \"%s\""
 msgstr "_Renombrar..."
 
-#: ../thunar/thunar-standard-view.c:2885
+#: ../thunar/thunar-standard-view.c:2897
 #, fuzzy, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Imposible abrir el directorio %s."
 
-#: ../thunar/thunar-standard-view.c:3230
+#: ../thunar/thunar-standard-view.c:3242
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:3238
+#: ../thunar/thunar-standard-view.c:3250
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-standard-view.c:3249
+#: ../thunar/thunar-standard-view.c:3261
 #, fuzzy
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Abrir el elemento seleccionado"
 msgstr[1] "Abrir el elemento seleccionado"
 
-#: ../thunar/thunar-standard-view.c:3263
+#: ../thunar/thunar-standard-view.c:3275
 #, fuzzy
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Abrir el elemento seleccionado"
 msgstr[1] "Abrir el elemento seleccionado"
 
-#: ../thunar/thunar-standard-view.c:3272
+#: ../thunar/thunar-standard-view.c:3284
 #, fuzzy
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"

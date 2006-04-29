@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-25 00:52+0200\n"
+"POT-Creation-Date: 2006-04-29 20:52+0900\n"
 "PO-Revision-Date: 2006-04-15 04:16+0300\n"
 "Last-Translator: Yo'av Moshe <black_jesus@myrealbox.com>\n"
 "Language-Team: Hebrew\n"
@@ -259,7 +259,7 @@ msgstr "לא יכול להתחבר אל HAL: %s"
 msgid "copy of %s"
 msgstr "העתק של %s"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:788
+#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:776
 #: ../thunar/thunar-properties-dialog.c:726
 #, c-format
 msgid "link to %s"
@@ -735,8 +735,8 @@ msgstr "ה_רחב את גדלי העמודות אוטומטית לפי הצור�
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:738
-#: ../thunar/thunar-list-model.c:767
+#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:726
+#: ../thunar/thunar-list-model.c:755
 #: ../thunar/thunar-permissions-chooser.c:270
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -752,7 +752,7 @@ msgstr "תרשים ספרייה קומפקטי"
 msgid "Compact view"
 msgstr "תצוגה קומפקטית"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2254
 msgid "Enter the new name:"
 msgstr "הזן שם חדש:"
 
@@ -862,7 +862,7 @@ msgstr "שם קובץ"
 msgid "The root folder has no parent"
 msgstr "לתיקיית השורש אין הורה"
 
-#: ../thunar/thunar-file.c:1085
+#: ../thunar/thunar-file.c:1122
 msgid "File System"
 msgstr "מערכת קבצים"
 
@@ -1031,12 +1031,12 @@ msgstr[1] "פתח את הקובץ שנבחר עם תוכנת ברירת המחד
 msgid "Open With \"%s\""
 msgstr "פתח בעזרת \"%s\""
 
-#: ../thunar/thunar-list-model.c:786 ../thunar/thunar-properties-dialog.c:724
+#: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
 msgstr "קישור שבור"
 
 #. generate a text which includes the size of all items in the folder
-#: ../thunar/thunar-list-model.c:2209
+#: ../thunar/thunar-list-model.c:2197
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
@@ -1044,43 +1044,43 @@ msgstr[0] "פריט %d (%s), מקום פנוי: %s"
 msgstr[1] "%d פריטים (%s), מקום פנוי: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2218
+#: ../thunar/thunar-list-model.c:2206
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "פריט %d, מקום פנוי: %s"
 msgstr[1] "%d פריטים, מקום פנוי: %s"
 
-#: ../thunar/thunar-list-model.c:2226
+#: ../thunar/thunar-list-model.c:2214
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "פריט %d"
 msgstr[1] "%d פריטים"
 
-#: ../thunar/thunar-list-model.c:2242
+#: ../thunar/thunar-list-model.c:2230
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "קישור שבור \"%s\""
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2234
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) קישור אל %s"
 
-#: ../thunar/thunar-list-model.c:2251
+#: ../thunar/thunar-list-model.c:2239
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2268
+#: ../thunar/thunar-list-model.c:2256
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "פריט %d נבחר (%s)"
 msgstr[1] "%d פריטים נבחרו (%s)"
 
-#: ../thunar/thunar-list-model.c:2273
+#: ../thunar/thunar-list-model.c:2261
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1144,12 +1144,12 @@ msgstr "מאפיינים..."
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 msgid "New Folder"
 msgstr "תיקייה חדשה"
 
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 msgid "Create New Folder"
 msgstr "צור תיקייה חדשה"
 
@@ -1640,7 +1640,7 @@ msgstr "מאפיינים..."
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:842
-#: ../thunar/thunar-standard-view.c:2284
+#: ../thunar/thunar-standard-view.c:2296
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "לא יכול לשנות את שם \"%s\""
@@ -1945,7 +1945,7 @@ msgstr "בחר בכל הקבצים שתואמים לתבנית מסויימת"
 msgid "Du_plicate"
 msgstr "_שכפל"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3270
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3282
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "צור _קישור"
@@ -1964,26 +1964,26 @@ msgstr "שנה את שם הקובץ הנבחר"
 msgid "Create _Document"
 msgstr "צור _מסמך"
 
-#: ../thunar/thunar-standard-view.c:1225
+#: ../thunar/thunar-standard-view.c:1237
 msgid "Loading folder contents..."
 msgstr "טוען את תוכן התיקייה..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File"
 msgstr "קובץ ריק חדש"
 
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File..."
 msgstr "קובץ ריק חדש..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1821
+#: ../thunar/thunar-standard-view.c:1833
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "יצירת מסמך בעזרת התבנית \"%s\""
 
-#: ../thunar/thunar-standard-view.c:1972 ../thunar/thunar-tree-view.c:1510
+#: ../thunar/thunar-standard-view.c:1984 ../thunar/thunar-tree-view.c:1510
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1992,7 +1992,7 @@ msgstr ""
 "האם אתה בטוח שברצונך\n"
 "למחוק לגמרי את \"%s\"?"
 
-#: ../thunar/thunar-standard-view.c:1977
+#: ../thunar/thunar-standard-view.c:1989
 #, fuzzy, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -2007,60 +2007,60 @@ msgstr[1] ""
 "האם אתה בטוח שברצונך\n"
 "למחוק לגמרי את \"%s\"?"
 
-#: ../thunar/thunar-standard-view.c:1999 ../thunar/thunar-tree-view.c:1517
+#: ../thunar/thunar-standard-view.c:2011 ../thunar/thunar-tree-view.c:1517
 msgid "If you delete a file, it is permanently lost."
 msgstr "אם תמחק את הקובץ, הוא יאבד לתמיד ולא תוכל לגשת אליו לעולם."
 
-#: ../thunar/thunar-standard-view.c:2064
+#: ../thunar/thunar-standard-view.c:2076
 msgid "Select by Pattern"
 msgstr "בחר לפי תבנית"
 
-#: ../thunar/thunar-standard-view.c:2070
+#: ../thunar/thunar-standard-view.c:2082
 msgid "_Select"
 msgstr "_בחר"
 
-#: ../thunar/thunar-standard-view.c:2079
+#: ../thunar/thunar-standard-view.c:2091
 msgid "_Pattern:"
 msgstr "_תבנית:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2213
+#: ../thunar/thunar-standard-view.c:2225
 #, c-format
 msgid "Rename \"%s\""
 msgstr "שנה את שם \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2885
+#: ../thunar/thunar-standard-view.c:2897
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "לא יכול לפתח את הסיפרייה \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3230
+#: ../thunar/thunar-standard-view.c:3242
 #, fuzzy
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "הכן את הקובץ שבחרת להיות מועבר למיקום חדש בעזרת הדבקה"
 msgstr[1] "הכן את הקובץ שבחרת להיות מועבר למיקום חדש בעזרת הדבקה"
 
-#: ../thunar/thunar-standard-view.c:3238
+#: ../thunar/thunar-standard-view.c:3250
 #, fuzzy
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "הכן את הקובץ שבחרת להיות מועתק למקום חדש בעזרת הדבקה"
 msgstr[1] "הכן את הקובץ שבחרת להיות מועתק למקום חדש בעזרת הדבקה"
 
-#: ../thunar/thunar-standard-view.c:3249
+#: ../thunar/thunar-standard-view.c:3261
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "למחוק לגמרי את הקובץ הנבחר"
 msgstr[1] "למחוק לגמרי את הקבצים הנבחרים"
 
-#: ../thunar/thunar-standard-view.c:3263
+#: ../thunar/thunar-standard-view.c:3275
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "שכפל את הקובץ שנבחר"
 msgstr[1] "שכפל את הקבצים שנבחרו"
 
-#: ../thunar/thunar-standard-view.c:3272
+#: ../thunar/thunar-standard-view.c:3284
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "צור קישור סימבולי עבור הקובץ שנבחר"

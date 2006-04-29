@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-04-25 11:10+0300\n"
+"POT-Creation-Date: 2006-04-29 20:52+0900\n"
 "PO-Revision-Date: 2006-04-25 11:12+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -259,7 +259,7 @@ msgstr "HAL-taustaprosessiin yhdistäminen epäonnistui: %s"
 msgid "copy of %s"
 msgstr "kopio kohteesta %s"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:788
+#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:776
 #: ../thunar/thunar-properties-dialog.c:726
 #, c-format
 msgid "link to %s"
@@ -745,8 +745,8 @@ msgstr "_Laajenna sarakkeet automaattisesti tarvittaessa"
 
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:738
-#: ../thunar/thunar-list-model.c:767
+#: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:726
+#: ../thunar/thunar-list-model.c:755
 #: ../thunar/thunar-permissions-chooser.c:270
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:286
@@ -762,7 +762,7 @@ msgstr "Kompakti hakemistonäkymä"
 msgid "Compact view"
 msgstr "Kompakti näkymä"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2242
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2254
 msgid "Enter the new name:"
 msgstr "Syötä uusi nimi:"
 
@@ -872,7 +872,7 @@ msgstr "Tiedostonimi"
 msgid "The root folder has no parent"
 msgstr "Juurella ei ole ylähakemistoa"
 
-#: ../thunar/thunar-file.c:1085
+#: ../thunar/thunar-file.c:1122
 msgid "File System"
 msgstr "Tiedostojärjestelmä"
 
@@ -1041,12 +1041,12 @@ msgstr[1] "Avaa valitut tiedostot oletussovelluksissa"
 msgid "Open With \"%s\""
 msgstr "Avaa sovelluksessa \"%s\""
 
-#: ../thunar/thunar-list-model.c:786 ../thunar/thunar-properties-dialog.c:724
+#: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
 msgstr "rikkinäinen linkki"
 
 #. generate a text which includes the size of all items in the folder
-#: ../thunar/thunar-list-model.c:2209
+#: ../thunar/thunar-list-model.c:2197
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
@@ -1054,43 +1054,43 @@ msgstr[0] "%d kohde (%s), vapaata tilaa: %s"
 msgstr[1] "%d kohdetta (%s), vapaata tilaa: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2218
+#: ../thunar/thunar-list-model.c:2206
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d kohde, vapaata tilaa: %s"
 msgstr[1] "%d kohdetta, vapaata tilaa: %s"
 
-#: ../thunar/thunar-list-model.c:2226
+#: ../thunar/thunar-list-model.c:2214
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d kohde"
 msgstr[1] "%d kohdetta"
 
-#: ../thunar/thunar-list-model.c:2242
+#: ../thunar/thunar-list-model.c:2230
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "\"%s\" rikkinäinen linkki"
 
-#: ../thunar/thunar-list-model.c:2246
+#: ../thunar/thunar-list-model.c:2234
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) linkki kohteeseen %s"
 
-#: ../thunar/thunar-list-model.c:2251
+#: ../thunar/thunar-list-model.c:2239
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
 
-#: ../thunar/thunar-list-model.c:2268
+#: ../thunar/thunar-list-model.c:2256
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d kohde valittu (%s)"
 msgstr[1] "%d kohdetta valittu (%s)"
 
-#: ../thunar/thunar-list-model.c:2273
+#: ../thunar/thunar-list-model.c:2261
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1155,12 +1155,12 @@ msgstr "_Ominaisuudet"
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 msgid "New Folder"
 msgstr "Uusi hakemisto"
 
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1772 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
 msgid "Create New Folder"
 msgstr "Luo uusi hakemisto"
 
@@ -1667,7 +1667,7 @@ msgstr "%s - Ominaisuudet"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:842
-#: ../thunar/thunar-standard-view.c:2284
+#: ../thunar/thunar-standard-view.c:2296
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Tiedoston \"%s\" nimeäminen epäonnistui"
@@ -1981,7 +1981,7 @@ msgstr "Valitse kaikki tiedostot, jotka sopivat tiettyyn hakukaavaan"
 msgid "Du_plicate"
 msgstr "Luo k_opio"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3270
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3282
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "_Luo linkki"
@@ -2000,26 +2000,26 @@ msgstr "Nimeä valittu tiedosto uudelleen"
 msgid "Create _Document"
 msgstr "Luo _asiakirja"
 
-#: ../thunar/thunar-standard-view.c:1225
+#: ../thunar/thunar-standard-view.c:1237
 msgid "Loading folder contents..."
 msgstr "Ladataan hakemiston sisältöä..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File"
 msgstr "Luo tyhjä tiedosto"
 
-#: ../thunar/thunar-standard-view.c:1721
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File..."
 msgstr "Uusi tyhjä tiedosto..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1821
+#: ../thunar/thunar-standard-view.c:1833
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Luo asiakirja mallin \"%s\" pohjalta"
 
-#: ../thunar/thunar-standard-view.c:1972 ../thunar/thunar-tree-view.c:1510
+#: ../thunar/thunar-standard-view.c:1984 ../thunar/thunar-tree-view.c:1510
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -2028,7 +2028,7 @@ msgstr ""
 "Haluatko todella poistaa kohteen\n"
 "\"%s\" pysyvästi?"
 
-#: ../thunar/thunar-standard-view.c:1977
+#: ../thunar/thunar-standard-view.c:1989
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -2043,58 +2043,58 @@ msgstr[1] ""
 "Haluatko todella poistaa valitut\n"
 "tiedostot pysyvästi?"
 
-#: ../thunar/thunar-standard-view.c:1999 ../thunar/thunar-tree-view.c:1517
+#: ../thunar/thunar-standard-view.c:2011 ../thunar/thunar-tree-view.c:1517
 msgid "If you delete a file, it is permanently lost."
 msgstr "Tiedoston poistoa ei voi peruuttaa."
 
-#: ../thunar/thunar-standard-view.c:2064
+#: ../thunar/thunar-standard-view.c:2076
 msgid "Select by Pattern"
 msgstr "Valitse hakukaavan avulla"
 
-#: ../thunar/thunar-standard-view.c:2070
+#: ../thunar/thunar-standard-view.c:2082
 msgid "_Select"
 msgstr "_Valitse"
 
-#: ../thunar/thunar-standard-view.c:2079
+#: ../thunar/thunar-standard-view.c:2091
 msgid "_Pattern:"
 msgstr "_Hakukaava:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2213
+#: ../thunar/thunar-standard-view.c:2225
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Nimeä \"%s\" uudelleen"
 
-#: ../thunar/thunar-standard-view.c:2885
+#: ../thunar/thunar-standard-view.c:2897
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Hakemiston \"%s\" avaaminen epäonnistui"
 
-#: ../thunar/thunar-standard-view.c:3230
+#: ../thunar/thunar-standard-view.c:3242
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Merkitse valittu tiedosto siirrettäväksi liitä-komennolla"
 msgstr[1] "Merkitse valitut tiedostot siirrettäväksi liitä-komennolla"
 
-#: ../thunar/thunar-standard-view.c:3238
+#: ../thunar/thunar-standard-view.c:3250
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Merkitse valittu tiedosto kopioitavaksi liitä-komennolla"
 msgstr[1] "Merkitse valitut tiedostot kopioitavaksi liitä-komennolla"
 
-#: ../thunar/thunar-standard-view.c:3249
+#: ../thunar/thunar-standard-view.c:3261
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Poista valittu tiedosto lopullisesti"
 msgstr[1] "Poista valitut tiedostot lopullisesti"
 
-#: ../thunar/thunar-standard-view.c:3263
+#: ../thunar/thunar-standard-view.c:3275
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Luo kopio valitusta tiedostosta"
 msgstr[1] "Luo kopiot valituista tiedostoista"
 
-#: ../thunar/thunar-standard-view.c:3272
+#: ../thunar/thunar-standard-view.c:3284
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Luo symbolinen linkki valittuun tiedostoon"
