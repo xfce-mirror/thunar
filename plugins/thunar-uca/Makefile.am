@@ -9,6 +9,7 @@ INCLUDES =								\
 	-DDATADIR=\"$(datadir)\"					\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DG_LOG_DOMAIN=\"thunar-uca\"					\
+	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	$(PLATFORM_CPPFLAGS)
 
 extensionsdir = $(libdir)/thunarx-$(THUNAR_VERSION_API)
@@ -25,6 +26,8 @@ thunar_uca_la_SOURCES =							\
 	thunar-uca-model.c						\
 	thunar-uca-model.h						\
 	thunar-uca-plugin.c						\
+	thunar-uca-private.c						\
+	thunar-uca-private.h						\
 	thunar-uca-provider.c						\
 	thunar-uca-provider.h
 

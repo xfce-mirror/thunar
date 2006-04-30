@@ -7,6 +7,7 @@ INCLUDES =								\
 	-I$(top_srcdir)/plugins						\
 	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DG_LOG_DOMAIN=\"thunar-apr\"					\
+	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	$(PLATFORM_CPPFLAGS)
 
 extensionsdir = $(libdir)/thunarx-$(THUNAR_VERSION_API)
@@ -21,6 +22,8 @@ thunar_apr_la_SOURCES =							\
 	thunar-apr-image-page.c						\
 	thunar-apr-image-page.h						\
 	thunar-apr-plugin.c						\
+	thunar-apr-private.c						\
+	thunar-apr-private.h						\
 	thunar-apr-provider.c						\
 	thunar-apr-provider.h
 

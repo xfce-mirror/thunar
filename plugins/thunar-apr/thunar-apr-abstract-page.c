@@ -23,6 +23,7 @@
 #endif
 
 #include <thunar-apr/thunar-apr-abstract-page.h>
+#include <thunar-apr/thunar-apr-private.h>
 
 
 
@@ -114,6 +115,8 @@ thunar_apr_abstract_page_class_init (ThunarAprAbstractPageClass *klass)
 static void
 thunar_apr_abstract_page_init (ThunarAprAbstractPage *abstract_page)
 {
+  /* be sure to setup the i18n support for the thunar-apr plugin */
+  thunar_apr_i18n_init ();
 }
 
 

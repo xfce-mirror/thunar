@@ -27,6 +27,7 @@
 #include <thunar-uca/thunar-uca-chooser.h>
 #include <thunar-uca/thunar-uca-context.h>
 #include <thunar-uca/thunar-uca-model.h>
+#include <thunar-uca/thunar-uca-private.h>
 #include <thunar-uca/thunar-uca-provider.h>
 
 
@@ -127,6 +128,9 @@ thunar_uca_provider_preferences_provider_init (ThunarxPreferencesProviderIface *
 static void
 thunar_uca_provider_init (ThunarUcaProvider *uca_provider)
 {
+  /* setup the i18n support first */
+  thunar_uca_i18n_init ();
+
   /* grab a reference on the default model */
   uca_provider->model = thunar_uca_model_get_default ();
 
