@@ -491,9 +491,7 @@ thunar_vfs_info_rename (ThunarVfsInfo *info,
   gchar               *dir_name;
   gchar               *dst_name;
   gchar               *dst_path;
-#if !GLIB_CHECK_VERSION(2,8,0)
   FILE                *fp;
-#endif
 
   g_return_val_if_fail (info != NULL, FALSE);
   g_return_val_if_fail (info->ref_count > 0, FALSE);
@@ -553,14 +551,7 @@ thunar_vfs_info_rename (ThunarVfsInfo *info,
       if (G_UNLIKELY (data == NULL))
         return FALSE;
 
-      /* write the data back to the file */
-#if GLIB_CHECK_VERSION(2,8,0)
-      if (!g_file_set_contents (src_path, data, data_length, error))
-        {
-          g_free (data);
-          return FALSE;
-        }
-#else
+      /* try to open the file for writing */
       fp = fopen (src_path, "w");
       if (G_UNLIKELY (fp == NULL))
         {
@@ -568,9 +559,18 @@ thunar_vfs_info_rename (ThunarVfsInfo *info,
           g_free (data);
           return FALSE;
         }
-      fwrite (data, data_length, 1, fp);
+      
+      /* write the data back to the file */
+      if (fwrite (data, data_length, 1, fp) != 1)
+        {
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+          g_free (data);
+          fclose (fp);
+          return FALSE;
+        }
+
+      /* close the file */
       fclose (fp);
-#endif
 
       /* release the previous display name */
       if (G_LIKELY (info->display_name != thunar_vfs_path_get_name (info->path)))

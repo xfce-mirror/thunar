@@ -496,9 +496,7 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
   gchar     *data;
   gchar     *uri;
   gsize      data_length;
-#if !GLIB_CHECK_VERSION(2,8,0)
   FILE      *fp;
-#endif
 
   /* verify that we still have a valid file */
   if (THUNAR_APR_ABSTRACT_PAGE (desktop_page)->file == NULL)
@@ -527,20 +525,17 @@ thunar_apr_desktop_page_save (ThunarAprDesktopPage *desktop_page,
       if (G_LIKELY (data != NULL))
         {
           /* try to save the key file content to disk */
-#if GLIB_CHECK_VERSION(2,8,0)
-          g_file_set_contents (filename, data, data_length, &error);
-#else
           fp = fopen (filename, "w");
           if (G_LIKELY (fp != NULL))
             {
-              fwrite (data, data_length, 1, fp);
+              if (fwrite (data, data_length, 1, fp) != 1)
+                error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
               fclose (fp);
             }
           else
             {
               error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
             }
-#endif
 
           /* cleanup */
           g_free (data);
