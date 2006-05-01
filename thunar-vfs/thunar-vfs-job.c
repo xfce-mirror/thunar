@@ -76,8 +76,8 @@ static void     thunar_vfs_job_source_finalize  (GSource           *source);
 
 struct _ThunarVfsJobPrivate
 {
-  ThunarVfsJobEmitDetails *details;
-  volatile gboolean        running;
+  volatile ThunarVfsJobEmitDetails *details;
+  volatile gboolean                 running;
 };
 
 struct _ThunarVfsJobEmitDetails
@@ -220,8 +220,16 @@ static gboolean
 thunar_vfs_job_source_prepare (GSource *source,
                                gint    *timeout)
 {
-  *timeout = -1;
-  return thunar_vfs_job_source_check (source);
+  if (thunar_vfs_job_source_check (source))
+    {
+      *timeout = 0;
+      return TRUE;
+    }
+  else
+    {
+      *timeout = -1;
+      return FALSE;
+    }
 }
 
 
@@ -242,8 +250,8 @@ thunar_vfs_job_source_dispatch (GSource    *source,
                                 GSourceFunc callback,
                                 gpointer    user_data)
 {
-  ThunarVfsJobEmitDetails *details;
-  ThunarVfsJob            *job = THUNAR_VFS_JOB_SOURCE (source)->job;
+  volatile ThunarVfsJobEmitDetails *details;
+  ThunarVfsJob                     *job = THUNAR_VFS_JOB_SOURCE (source)->job;
 
   /* check if the job is done */
   if (!job->priv->running)
@@ -404,8 +412,8 @@ thunar_vfs_job_emit_valist (ThunarVfsJob *job,
 
   /* emit the signal using our source */
   g_mutex_lock (job_mutex);
-  g_main_context_wakeup (NULL);
   job->priv->details = &details;
+  g_main_context_wakeup (NULL);
   while (G_UNLIKELY (details.pending))
     g_cond_wait (job_cond, job_mutex);
   g_mutex_unlock (job_mutex);
