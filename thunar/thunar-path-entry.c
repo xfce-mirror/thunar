@@ -226,7 +226,6 @@ thunar_path_entry_class_init (ThunarPathEntryClass *klass)
   gtkwidget_class->button_press_event = thunar_path_entry_button_press_event;
   gtkwidget_class->button_release_event = thunar_path_entry_button_release_event;
   gtkwidget_class->motion_notify_event = thunar_path_entry_motion_notify_event;
-  gtkwidget_class->key_press_event = thunar_path_entry_key_press_event;
   gtkwidget_class->drag_data_get = thunar_path_entry_drag_data_get;
 
   gtkentry_class = GTK_ENTRY_CLASS (klass);
@@ -304,6 +303,11 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
   gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), THUNAR_COLUMN_FILE_NAME, GTK_SORT_ASCENDING);
   gtk_entry_completion_set_model (completion, GTK_TREE_MODEL (store));
   g_object_unref (G_OBJECT (store));
+
+  /* need to connect the "key-press-event" before the GtkEntry class connects the completion signals, so
+   * we get the Tab key before its handled as part of the completion stuff.
+   */
+  g_signal_connect (G_OBJECT (path_entry), "key-press-event", G_CALLBACK (thunar_path_entry_key_press_event), NULL);
 
   /* setup the new completion */
   gtk_entry_set_completion (GTK_ENTRY (path_entry), completion);
@@ -717,13 +721,14 @@ thunar_path_entry_key_press_event (GtkWidget   *widget,
       /* place the cursor at the end */
       gtk_editable_set_position (GTK_EDITABLE (path_entry), GTK_ENTRY (path_entry)->text_length);
 
+      /* emit "changed", so the completion window is popped up */
+      g_signal_emit_by_name (G_OBJECT (path_entry), "changed", 0);
+
+      /* we handled the event */
       return TRUE;
     }
-  else
-    {
-      /* let Gtk+ handle the key press event */
-      return (*GTK_WIDGET_CLASS (thunar_path_entry_parent_class)->key_press_event) (widget, event);
-    }
+
+  return FALSE;
 }
 
 
@@ -1096,10 +1101,14 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
 {
   GtkTreeModel *model;
   const gchar  *last_slash;
-  gboolean      matched = FALSE;
+  ThunarFile   *file;
+  gboolean      matched;
   gchar        *text_normalized;
   gchar        *name_normalized;
   gchar        *name;
+
+  /* determine the model from the completion */
+  model = gtk_entry_completion_get_model (completion);
 
   /* determine the current text (UTF-8 normalized) */
   text_normalized = g_utf8_normalize (gtk_entry_get_text (GTK_ENTRY (user_data)), -1, G_NORMALIZE_ALL);
@@ -1107,25 +1116,31 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
   /* lookup the last slash character in the key */
   last_slash = strrchr (text_normalized, G_DIR_SEPARATOR);
   if (G_UNLIKELY (last_slash != NULL && last_slash[1] == '\0'))
-    goto done;
-  else if (G_UNLIKELY (last_slash == NULL))
-    last_slash = text_normalized;
+    {
+      /* check if the file is hidden */
+      gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE, &file, -1);
+      matched = !thunar_file_is_hidden (file);
+      g_object_unref (G_OBJECT (file));
+    }
   else
-    last_slash += 1;
+    {
+      if (G_UNLIKELY (last_slash == NULL))
+        last_slash = text_normalized;
+      else
+        last_slash += 1;
 
-  /* determine the real file name for the iter */
-  model = gtk_entry_completion_get_model (completion);
-  gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE_NAME, &name, -1);
-  name_normalized = g_utf8_normalize (name, -1, G_NORMALIZE_ALL);
-  g_free (name);
+      /* determine the real file name for the iter */
+      gtk_tree_model_get (model, iter, THUNAR_COLUMN_FILE_NAME, &name, -1);
+      name_normalized = g_utf8_normalize (name, -1, G_NORMALIZE_ALL);
+      g_free (name);
 
-  /* check if we have a match here */
-  matched = g_str_has_prefix (name_normalized, last_slash);
+      /* check if we have a match here */
+      matched = g_str_has_prefix (name_normalized, last_slash);
 
-  /* cleanup */
-  g_free (name_normalized);
+      /* cleanup */
+      g_free (name_normalized);
+    }
 
-done:
   /* cleanup */
   g_free (text_normalized);
 
