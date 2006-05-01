@@ -766,11 +766,9 @@ thunar_path_entry_activate (GtkEntry *entry)
       /* place cursor at the end of the text if we have completion set */
       gtk_editable_set_position (GTK_EDITABLE (path_entry), -1);
     }
-  else
-    {
-      /* emit the "activate" signal */
-      (*GTK_ENTRY_CLASS (thunar_path_entry_parent_class)->activate) (entry);
-    }
+
+  /* emit the "activate" signal */
+  (*GTK_ENTRY_CLASS (thunar_path_entry_parent_class)->activate) (entry);
 }
 
 
