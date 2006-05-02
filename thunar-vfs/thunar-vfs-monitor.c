@@ -58,7 +58,7 @@ static void     thunar_vfs_monitor_class_init           (ThunarVfsMonitorClass *
 static void     thunar_vfs_monitor_init                 (ThunarVfsMonitor      *monitor);
 static void     thunar_vfs_monitor_finalize             (GObject               *object);
 static void     thunar_vfs_monitor_queue_notification   (ThunarVfsMonitor      *monitor,
-                                                         gint                   id,
+                                                         gint                   reqnum,
                                                          gint                   tag,
                                                          ThunarVfsMonitorEvent  event,
                                                          const gchar           *filename);
@@ -91,8 +91,8 @@ struct _ThunarVfsMonitor
   GCond                        *cond;
   GMutex                       *lock;
 
-  /* the current handle id */
-  gint                          current_id;
+  /* the current handle request number */
+  gint                          current_reqnum;
 
 #ifdef HAVE_LIBFAM
   /* FAM/Gamin support */
@@ -108,18 +108,19 @@ struct _ThunarVfsMonitorHandle
   ThunarVfsPath           *path;
   gboolean                 directory;
 
-  union
-  {
 #ifdef HAVE_LIBFAM
-    FAMRequest             fr;
+  FAMRequest               fr;
+#else
+  struct 
+  {
+    gint                   reqnum;
+  } fr;
 #endif
-    gint                   id;
-  };
 };
 
 struct _ThunarVfsMonitorNotification
 {
-  gint                          id;       /* the unique id of the handle */
+  gint                          reqnum;   /* the unique request number of the handle */
   gint                          tag;      /* the notification source tag */
   gchar                        *filename; /* the name/path of the file that changed or NULL if the handle path should be used */
   ThunarVfsMonitorEvent         event;    /* the type of the event */
@@ -253,7 +254,7 @@ thunar_vfs_monitor_finalize (GObject *object)
 
 static void
 thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
-                                       gint                  id,
+                                       gint                  reqnum,
                                        gint                  tag,
                                        ThunarVfsMonitorEvent event,
                                        const gchar          *filename)
@@ -262,11 +263,11 @@ thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
   gint                          length;
 
   g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  g_return_if_fail (id > 0 && id <= monitor->current_id);
+  g_return_if_fail (reqnum > 0 && reqnum <= monitor->current_reqnum);
 
   /* check if we already have a matching notification */
   for (notification = monitor->notifications; notification != NULL; notification = notification->next)
-    if (notification->id == id && exo_str_is_equal (filename, notification->filename))
+    if (notification->reqnum == reqnum && exo_str_is_equal (filename, notification->filename))
       {
         if (tag >= notification->tag)
           {
@@ -291,7 +292,7 @@ thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
     }
 
   /* prepend the notification to the queue */
-  notification->id = id;
+  notification->reqnum = reqnum;
   notification->tag = tag;
   notification->next = monitor->notifications;
   notification->event = event;
@@ -333,7 +334,7 @@ thunar_vfs_monitor_notifications_timer (gpointer user_data)
 
       /* lookup the handle for the current notification */
       for (lp = monitor->handles; lp != NULL; lp = lp->next)
-        if (((ThunarVfsMonitorHandle *) lp->data)->id == notification->id)
+        if (((ThunarVfsMonitorHandle *) lp->data)->fr.reqnum == notification->reqnum)
           break;
 
       /* check if there's a valid handle */
@@ -526,7 +527,7 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
   handle->callback = callback;
   handle->user_data = user_data;
   handle->directory = TRUE;
-  handle->id = ++monitor->current_id;
+  handle->fr.reqnum = ++monitor->current_reqnum;
 
 #ifdef HAVE_LIBFAM
   if (G_LIKELY (monitor->fc_watch_id >= 0))
@@ -590,7 +591,7 @@ thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
   handle->callback = callback;
   handle->user_data = user_data;
   handle->directory = FALSE;
-  handle->id = ++monitor->current_id;
+  handle->fr.reqnum = ++monitor->current_reqnum;
 
 #ifdef HAVE_LIBFAM
   if (G_LIKELY (monitor->fc_watch_id >= 0))
@@ -684,7 +685,7 @@ thunar_vfs_monitor_feed (ThunarVfsMonitor     *monitor,
     {
       handle = (ThunarVfsMonitorHandle *) lp->data;
       if (thunar_vfs_path_equal (handle->path, path))
-        thunar_vfs_monitor_queue_notification (monitor, handle->id, THUNAR_VFS_MONITOR_TAG_FEED, event, NULL);
+        thunar_vfs_monitor_queue_notification (monitor, handle->fr.reqnum, THUNAR_VFS_MONITOR_TAG_FEED, event, NULL);
     }
 
   /* schedule notifications for all directory handles affected indirectly */
@@ -695,7 +696,7 @@ thunar_vfs_monitor_feed (ThunarVfsMonitor     *monitor,
         {
           handle = (ThunarVfsMonitorHandle *) lp->data;
           if (handle->directory && thunar_vfs_path_equal (handle->path, parent))
-            thunar_vfs_monitor_queue_notification (monitor, handle->id, THUNAR_VFS_MONITOR_TAG_FEED, event, thunar_vfs_path_get_name (path));
+            thunar_vfs_monitor_queue_notification (monitor, handle->fr.reqnum, THUNAR_VFS_MONITOR_TAG_FEED, event, thunar_vfs_path_get_name (path));
         }
     }
 

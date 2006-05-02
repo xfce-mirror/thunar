@@ -270,7 +270,7 @@ if test x"$enable_debug" = x"full" -o x"$enable_debug" = x"yes"; then
   dnl Paranoia for --enable-debug=full
   if test x"$enable_debug" = x"full"; then
     PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3"
-    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_DEPRECATED -DG_ENABLE_DEBUG"
+    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_ENABLE_DEBUG"
   fi
 else
   dnl Disable object cast checks
