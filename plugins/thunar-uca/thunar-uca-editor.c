@@ -637,13 +637,7 @@ thunar_uca_editor_icon_clicked (ThunarUcaEditor *uca_editor)
   GtkFileFilter *filter;
   GtkWidget     *chooser;
   GtkWidget     *image;
-  gchar        **extensions;
-  gchar        **mime_types;
   gchar         *filename;
-  gchar         *pattern;
-  GSList        *formats;
-  GSList        *lp;
-  gint           n;
 
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
 
@@ -663,24 +657,7 @@ thunar_uca_editor_icon_clicked (ThunarUcaEditor *uca_editor)
 
   filter = gtk_file_filter_new ();
   gtk_file_filter_set_name (filter, _("Image Files"));
-  formats = gdk_pixbuf_get_formats ();
-  for (lp = formats; lp != NULL; lp = lp->next)
-    {
-      extensions = gdk_pixbuf_format_get_extensions (lp->data);
-      for (n = 0; extensions[n] != NULL; ++n)
-        {
-          pattern = g_strconcat ("*.", extensions[n], NULL);
-          gtk_file_filter_add_pattern (filter, pattern);
-          g_free (pattern);
-        }
-      g_strfreev (extensions);
-
-      mime_types = gdk_pixbuf_format_get_mime_types (lp->data);
-      for (n = 0; mime_types[n] != NULL; ++n)
-        gtk_file_filter_add_mime_type (filter, mime_types[n]);
-      g_strfreev (mime_types);
-    }
-  g_slist_free (formats);
+  gtk_file_filter_add_pixbuf_formats (filter);
   gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser), filter);
   gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (chooser), filter);
 
