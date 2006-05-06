@@ -1421,7 +1421,6 @@ thunar_location_buttons_action_create_folder (GtkAction             *action,
   /* cleanup */
   g_object_unref (G_OBJECT (mime_database));
   thunar_vfs_mime_info_unref (mime_info);
-  g_object_unref (G_OBJECT (directory));
 }
 
 
