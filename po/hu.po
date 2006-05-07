@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-02 20:36+0900\n"
+"POT-Creation-Date: 2006-05-07 13:25+0200\n"
 "PO-Revision-Date: 2006-04-25 08:34+0100\n"
 "Last-Translator: SZERVÑC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -630,7 +630,7 @@ msgstr "Válassz alkalmazást"
 #: ../thunar/thunar-chooser-dialog.c:694
 #: ../thunar/thunar-renamer-dialog.c:1102
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
-#: ../plugins/thunar-uca/thunar-uca-editor.c:660
+#: ../plugins/thunar-uca/thunar-uca-editor.c:654
 msgid "All Files"
 msgstr "Minden fájl"
 
@@ -760,7 +760,7 @@ msgstr "Tömör könyvtár lista"
 msgid "Compact view"
 msgstr "Tömör nézet"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2254
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2260
 msgid "Enter the new name:"
 msgstr "Új fájlnév megadása:"
 
@@ -1108,7 +1108,7 @@ msgstr "Új mappa létrehozása itt: \"%s\""
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:1301
-#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1073
+#: ../thunar/thunar-standard-view.c:312 ../thunar/thunar-tree-view.c:1073
 msgid "Create _Folder..."
 msgstr "Mappa létrehozása..."
 
@@ -1122,7 +1122,7 @@ msgstr ""
 "másolása ide: \"%s\""
 
 #: ../thunar/thunar-location-buttons.c:1317
-#: ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-standard-view.c:318
 msgid "Paste Into Folder"
 msgstr "Mappába illesztés"
 
@@ -1138,12 +1138,12 @@ msgstr "Tulajdonságok"
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
 msgid "New Folder"
 msgstr "Új mappa"
 
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
 msgid "Create New Folder"
 msgstr "Új mappa létrehozása"
 
@@ -1641,7 +1641,7 @@ msgstr "%s - Tulajdonságok"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:842
-#: ../thunar/thunar-standard-view.c:2296
+#: ../thunar/thunar-standard-view.c:2302
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Nem átnevezhető: \"%s\""
@@ -1650,7 +1650,7 @@ msgstr "Nem átnevezhető: \"%s\""
 msgid "_File"
 msgstr "_Fájl"
 
-#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:305
+#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:310
 msgid "File Context Menu"
 msgstr "Helyi fájl menü"
 
@@ -1678,11 +1678,11 @@ msgstr "_Névjegy"
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Információkat nyújt a Thunar csoportos átnevezésről"
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:308
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
 msgid "_Properties..."
 msgstr "Tulajdonságok..."
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:308
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
 msgid "View the properties of the selected file"
 msgstr "A kijelölt fájl tulajdonságainak megtekintése"
 
@@ -1730,7 +1730,7 @@ msgid "Audio Files"
 msgstr "Hang fájlok"
 
 #: ../thunar/thunar-renamer-dialog.c:1112
-#: ../plugins/thunar-uca/thunar-uca-editor.c:665
+#: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr "Képfájlok"
 
@@ -1885,40 +1885,40 @@ msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
 msgstr[0] "%u elem, összesen %s"
 
-#: ../thunar/thunar-standard-view.c:306
+#: ../thunar/thunar-standard-view.c:311
 msgid "Folder Context Menu"
 msgstr "Helyi mappa menü"
 
-#: ../thunar/thunar-standard-view.c:307
+#: ../thunar/thunar-standard-view.c:312
 msgid "Create an empty folder within the current folder"
 msgstr "Üres mappa létrehozása e mappán belül"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:1093
+#: ../thunar/thunar-standard-view.c:314 ../thunar/thunar-tree-view.c:1093
 msgid "Cu_t"
 msgstr "Vágás"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:1105
+#: ../thunar/thunar-standard-view.c:315 ../thunar/thunar-tree-view.c:1105
 msgid "_Copy"
 msgstr "Másolás"
 
-#: ../thunar/thunar-standard-view.c:311
+#: ../thunar/thunar-standard-view.c:316
 msgid "_Paste"
 msgstr "Beillesztés"
 
-#: ../thunar/thunar-standard-view.c:311
+#: ../thunar/thunar-standard-view.c:316
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "A Vágás vagy Másolás paranccsal legutóbb kijelölt fájlok mozgatása vagy "
 "másolása"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:312 ../thunar/thunar-tree-view.c:1140
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-tree-view.c:1140
 msgid "_Delete"
 msgstr "Törlése"
 
-#: ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-standard-view.c:318
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -1926,64 +1926,64 @@ msgstr ""
 "A Vágás vagy Másolás paranccsal legutóbb kijelölt fájlok mozgatása vagy "
 "másolása a kijelölt mappába"
 
-#: ../thunar/thunar-standard-view.c:314
+#: ../thunar/thunar-standard-view.c:319
 msgid "Select _all Files"
 msgstr "Minden fájl kijelölése"
 
-#: ../thunar/thunar-standard-view.c:314
+#: ../thunar/thunar-standard-view.c:319
 msgid "Select all files in this window"
 msgstr "Minden fájlt kiválaszt ebből az ablakból"
 
-#: ../thunar/thunar-standard-view.c:315
+#: ../thunar/thunar-standard-view.c:320
 msgid "Select _by Pattern..."
 msgstr "Kijelölés mintával"
 
-#: ../thunar/thunar-standard-view.c:315
+#: ../thunar/thunar-standard-view.c:320
 msgid "Select all files that match a certain pattern"
 msgstr "Egy adott mintára illő valamennyi fájl kiválasztása"
 
-#: ../thunar/thunar-standard-view.c:316
+#: ../thunar/thunar-standard-view.c:321
 msgid "Du_plicate"
 msgstr "Kettőzés"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3282
+#: ../thunar/thunar-standard-view.c:322 ../thunar/thunar-standard-view.c:3384
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Lánc _készítése"
 
-#: ../thunar/thunar-standard-view.c:318
+#: ../thunar/thunar-standard-view.c:323
 msgid "_Rename..."
 msgstr "Átnevezés..."
 
-#: ../thunar/thunar-standard-view.c:318
+#: ../thunar/thunar-standard-view.c:323
 msgid "Rename the selected file"
 msgstr "A kijelölt fájl átnevezése"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:576
+#: ../thunar/thunar-standard-view.c:582
 msgid "Create _Document"
 msgstr "_Dokumentum létrehozása"
 
-#: ../thunar/thunar-standard-view.c:1237
+#: ../thunar/thunar-standard-view.c:1243
 msgid "Loading folder contents..."
 msgstr "Mappa beolvasása..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1733
+#: ../thunar/thunar-standard-view.c:1739
 msgid "New Empty File"
 msgstr "Új üres fájl"
 
-#: ../thunar/thunar-standard-view.c:1733
+#: ../thunar/thunar-standard-view.c:1739
 msgid "New Empty File..."
 msgstr "Új üres fájl..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1833
+#: ../thunar/thunar-standard-view.c:1839
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Dokumentum létrehozása e sablonból: \"%s\""
 
-#: ../thunar/thunar-standard-view.c:1984 ../thunar/thunar-tree-view.c:1510
+#: ../thunar/thunar-standard-view.c:1990 ../thunar/thunar-tree-view.c:1510
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -1992,7 +1992,7 @@ msgstr ""
 "Biztos vagy benne, hogy végleg\n"
 "törölni akarod?: \"%s\"?"
 
-#: ../thunar/thunar-standard-view.c:1989
+#: ../thunar/thunar-standard-view.c:1995
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -2002,55 +2002,61 @@ msgid_plural ""
 "delete the %u selected files?"
 msgstr[0] "Végleg törlöd a kijelölt %u fájlt?"
 
-#: ../thunar/thunar-standard-view.c:2011 ../thunar/thunar-tree-view.c:1517
+#: ../thunar/thunar-standard-view.c:2017 ../thunar/thunar-tree-view.c:1517
 msgid "If you delete a file, it is permanently lost."
 msgstr "Ha törölsz egy fájlt, végleg elvész."
 
-#: ../thunar/thunar-standard-view.c:2076
+#: ../thunar/thunar-standard-view.c:2082
 msgid "Select by Pattern"
 msgstr "Kijelölés mintával"
 
-#: ../thunar/thunar-standard-view.c:2082
+#: ../thunar/thunar-standard-view.c:2088
 msgid "_Select"
 msgstr "Kijelöl"
 
-#: ../thunar/thunar-standard-view.c:2091
+#: ../thunar/thunar-standard-view.c:2097
 msgid "_Pattern:"
 msgstr "Minta:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2225
+#: ../thunar/thunar-standard-view.c:2231
 #, c-format
 msgid "Rename \"%s\""
 msgstr "\"%s\" átnevezése"
 
-#: ../thunar/thunar-standard-view.c:2897
+#. display an error dialog to the user
+#: ../thunar/thunar-standard-view.c:2736
+#, fuzzy, c-format
+msgid "Failed to create a link for the URL \"%s\""
+msgstr "Nem hozható létre e fifo: \"%s\""
+
+#: ../thunar/thunar-standard-view.c:2999
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Nem megnyitható könyvtár: \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3242
+#: ../thunar/thunar-standard-view.c:3344
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
 "Előkészíti a kijelölt fájlt a Beillesztés paranccsal való mozgatáshoz"
 
-#: ../thunar/thunar-standard-view.c:3250
+#: ../thunar/thunar-standard-view.c:3352
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Kijelölt fájlok előkészítése a Beillesztés parancshoz"
 
-#: ../thunar/thunar-standard-view.c:3261
+#: ../thunar/thunar-standard-view.c:3363
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Kijelölt fájl végleges törlése"
 
-#: ../thunar/thunar-standard-view.c:3275
+#: ../thunar/thunar-standard-view.c:3377
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Kijelölt fájl megkettőzése"
 
-#: ../thunar/thunar-standard-view.c:3284
+#: ../thunar/thunar-standard-view.c:3386
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Jelképes lánc készítése a kijelölt fájlokhoz"
@@ -2796,7 +2802,7 @@ msgstr "Ikon:"
 
 #. setup a label to tell that no icon was selected
 #: ../plugins/thunar-uca/thunar-uca-editor.c:225
-#: ../plugins/thunar-uca/thunar-uca-editor.c:790
+#: ../plugins/thunar-uca/thunar-uca-editor.c:767
 msgid "No icon"
 msgstr "Nincs ikon"
 
@@ -2911,7 +2917,7 @@ msgstr ""
 "kell a fájl vagy mappa nevére. Megadhatod, hogy a\n"
 "művelet csak bizonyos fajta fájlokra jelenjen meg."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:650
+#: ../plugins/thunar-uca/thunar-uca-editor.c:644
 msgid "Select an Icon"
 msgstr "Válassz ikont"
 

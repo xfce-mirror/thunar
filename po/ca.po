@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-02 20:36+0900\n"
+"POT-Creation-Date: 2006-05-07 13:25+0200\n"
 "PO-Revision-Date: 2006-04-15 21:29+0200\n"
 "Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
@@ -635,7 +635,7 @@ msgstr "Seleccioneu una aplicació"
 #: ../thunar/thunar-chooser-dialog.c:694
 #: ../thunar/thunar-renamer-dialog.c:1102
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
-#: ../plugins/thunar-uca/thunar-uca-editor.c:660
+#: ../plugins/thunar-uca/thunar-uca-editor.c:654
 msgid "All Files"
 msgstr "Tots els fitxers"
 
@@ -766,7 +766,7 @@ msgstr "Mostra el llistat compacte"
 msgid "Compact view"
 msgstr "Visualització compacta"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2254
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2260
 msgid "Enter the new name:"
 msgstr "Introduïu el nom nou:"
 
@@ -1130,7 +1130,7 @@ msgstr "Crea una carpeta nova a \"%s\""
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:1301
-#: ../thunar/thunar-standard-view.c:307 ../thunar/thunar-tree-view.c:1073
+#: ../thunar/thunar-standard-view.c:312 ../thunar/thunar-tree-view.c:1073
 msgid "Create _Folder..."
 msgstr "Crea carpeta"
 
@@ -1144,7 +1144,7 @@ msgstr ""
 "dins \"%s\""
 
 #: ../thunar/thunar-location-buttons.c:1317
-#: ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-standard-view.c:318
 msgid "Paste Into Folder"
 msgstr "Enganxa adins la carpeta"
 
@@ -1161,12 +1161,12 @@ msgstr "_Propietats..."
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
 msgid "New Folder"
 msgstr "Carpeta nova"
 
 #: ../thunar/thunar-location-buttons.c:1402
-#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
 msgid "Create New Folder"
 msgstr "Crea una carpeta nova"
 
@@ -1674,7 +1674,7 @@ msgstr "_Propietats..."
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:842
-#: ../thunar/thunar-standard-view.c:2296
+#: ../thunar/thunar-standard-view.c:2302
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "No s'ha pogut canviar el nom \"%s\""
@@ -1683,7 +1683,7 @@ msgstr "No s'ha pogut canviar el nom \"%s\""
 msgid "_File"
 msgstr "_Fitxers"
 
-#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:305
+#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:310
 msgid "File Context Menu"
 msgstr "Fitxer del menú contextual"
 
@@ -1711,11 +1711,11 @@ msgstr "_Quant a"
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Visualitza la informació quant al canviador de nom en bloc de Thunar"
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:308
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
 msgid "_Properties..."
 msgstr "_Propietats..."
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:308
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
 msgid "View the properties of the selected file"
 msgstr "Visualitza les propietats del fitxer seleccionat"
 
@@ -1767,7 +1767,7 @@ msgid "Audio Files"
 msgstr "Fitxers d'audio"
 
 #: ../thunar/thunar-renamer-dialog.c:1112
-#: ../plugins/thunar-uca/thunar-uca-editor.c:665
+#: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr "Fitxers d'imatge"
 
@@ -1932,40 +1932,40 @@ msgid_plural "%u items, totalling %s"
 msgstr[0] "%u element, en total %s"
 msgstr[1] "%u elements, en total %s"
 
-#: ../thunar/thunar-standard-view.c:306
+#: ../thunar/thunar-standard-view.c:311
 msgid "Folder Context Menu"
 msgstr "Carpeta del menú contextual"
 
-#: ../thunar/thunar-standard-view.c:307
+#: ../thunar/thunar-standard-view.c:312
 msgid "Create an empty folder within the current folder"
 msgstr "Crea una carpeta buida dins la carpeta actual"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:309 ../thunar/thunar-tree-view.c:1093
+#: ../thunar/thunar-standard-view.c:314 ../thunar/thunar-tree-view.c:1093
 msgid "Cu_t"
 msgstr "Re_talla"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:310 ../thunar/thunar-tree-view.c:1105
+#: ../thunar/thunar-standard-view.c:315 ../thunar/thunar-tree-view.c:1105
 msgid "_Copy"
 msgstr "_Copia"
 
-#: ../thunar/thunar-standard-view.c:311
+#: ../thunar/thunar-standard-view.c:316
 msgid "_Paste"
 msgstr "_Enganxa"
 
-#: ../thunar/thunar-standard-view.c:311
+#: ../thunar/thunar-standard-view.c:316
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "Mou o copia els fitxers prèviament seleccionats mitjançant l'ordre de "
 "Retalla o Copia"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:312 ../thunar/thunar-tree-view.c:1140
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-tree-view.c:1140
 msgid "_Delete"
 msgstr "_Suprimeix"
 
-#: ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-standard-view.c:318
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -1973,65 +1973,65 @@ msgstr ""
 "Mou o copia a la carpeta seleccionada els fitxers prèviament seleccionats "
 "mitjançant l'ordre Retalla o Copia"
 
-#: ../thunar/thunar-standard-view.c:314
+#: ../thunar/thunar-standard-view.c:319
 msgid "Select _all Files"
 msgstr "Seleccion_a tots els fitxers"
 
-#: ../thunar/thunar-standard-view.c:314
+#: ../thunar/thunar-standard-view.c:319
 msgid "Select all files in this window"
 msgstr "Seleccion_a tots els fitxers de la finestra"
 
-#: ../thunar/thunar-standard-view.c:315
+#: ../thunar/thunar-standard-view.c:320
 msgid "Select _by Pattern..."
 msgstr "Selecciona per patró"
 
-#: ../thunar/thunar-standard-view.c:315
+#: ../thunar/thunar-standard-view.c:320
 msgid "Select all files that match a certain pattern"
 msgstr "Selecciona tots els fitxers que coincideixen amb un patró"
 
-#: ../thunar/thunar-standard-view.c:316
+#: ../thunar/thunar-standard-view.c:321
 msgid "Du_plicate"
 msgstr "Du_plica"
 
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-standard-view.c:3282
+#: ../thunar/thunar-standard-view.c:322 ../thunar/thunar-standard-view.c:3384
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Crea un _enllaç"
 msgstr[1] "Crea _enllaços"
 
-#: ../thunar/thunar-standard-view.c:318
+#: ../thunar/thunar-standard-view.c:323
 msgid "_Rename..."
 msgstr "_Canvia de nom"
 
-#: ../thunar/thunar-standard-view.c:318
+#: ../thunar/thunar-standard-view.c:323
 msgid "Rename the selected file"
 msgstr "Canvia el nom al fitxer seleccionat"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:576
+#: ../thunar/thunar-standard-view.c:582
 msgid "Create _Document"
 msgstr "Crea un _document"
 
-#: ../thunar/thunar-standard-view.c:1237
+#: ../thunar/thunar-standard-view.c:1243
 msgid "Loading folder contents..."
 msgstr "S'estan carregant els continguts de la carpeta"
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1733
+#: ../thunar/thunar-standard-view.c:1739
 msgid "New Empty File"
 msgstr "Fitxer buit nou"
 
-#: ../thunar/thunar-standard-view.c:1733
+#: ../thunar/thunar-standard-view.c:1739
 msgid "New Empty File..."
 msgstr "Fitxer buit nou"
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1833
+#: ../thunar/thunar-standard-view.c:1839
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Crea un document a partir de la plantilla «%s»"
 
-#: ../thunar/thunar-standard-view.c:1984 ../thunar/thunar-tree-view.c:1510
+#: ../thunar/thunar-standard-view.c:1990 ../thunar/thunar-tree-view.c:1510
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -2040,7 +2040,7 @@ msgstr ""
 "Esteu segur de voler suprimir\n"
 "de manera permanent \"%s\"?"
 
-#: ../thunar/thunar-standard-view.c:1989
+#: ../thunar/thunar-standard-view.c:1995
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -2055,60 +2055,66 @@ msgstr[1] ""
 "Esteu segur de voler suprimir de manera \n"
 "permanent els fitxers seleccionats?"
 
-#: ../thunar/thunar-standard-view.c:2011 ../thunar/thunar-tree-view.c:1517
+#: ../thunar/thunar-standard-view.c:2017 ../thunar/thunar-tree-view.c:1517
 msgid "If you delete a file, it is permanently lost."
 msgstr "Si suprimiu un fitxer és una pèrdua permanent."
 
-#: ../thunar/thunar-standard-view.c:2076
+#: ../thunar/thunar-standard-view.c:2082
 msgid "Select by Pattern"
 msgstr "Selecciona per patró"
 
-#: ../thunar/thunar-standard-view.c:2082
+#: ../thunar/thunar-standard-view.c:2088
 msgid "_Select"
 msgstr "_Selecciona"
 
-#: ../thunar/thunar-standard-view.c:2091
+#: ../thunar/thunar-standard-view.c:2097
 msgid "_Pattern:"
 msgstr "_Patró:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2225
+#: ../thunar/thunar-standard-view.c:2231
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Canvia el nom \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2897
+#. display an error dialog to the user
+#: ../thunar/thunar-standard-view.c:2736
+#, fuzzy, c-format
+msgid "Failed to create a link for the URL \"%s\""
+msgstr "No s'ha pogut crear la sortida del conducte \"%s\""
+
+#: ../thunar/thunar-standard-view.c:2999
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "No s'ha pogut obrir el directori \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3242
+#: ../thunar/thunar-standard-view.c:3344
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Prepara el fitxer seleccionat i serà mogut amb l'ordre d'Enganxar"
 msgstr[1] ""
 "Prepara els fitxers seleccionats i seran moguts amb l'ordre d'Enganxar"
 
-#: ../thunar/thunar-standard-view.c:3250
+#: ../thunar/thunar-standard-view.c:3352
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Prepara el fitxer seleccionat i serà copiat amb l'ordre d'Enganxar"
 msgstr[1] ""
 "Prepara els fitxers seleccionats i seran copiats amb l'ordre d'Enganxar"
 
-#: ../thunar/thunar-standard-view.c:3261
+#: ../thunar/thunar-standard-view.c:3363
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Suprimeix permanentment el fitxer seleccionat"
 msgstr[1] "Suprimeix permanentment els fitxers seleccionat"
 
-#: ../thunar/thunar-standard-view.c:3275
+#: ../thunar/thunar-standard-view.c:3377
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplica el fitxer seleccionat"
 msgstr[1] "Duplica els fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3284
+#: ../thunar/thunar-standard-view.c:3386
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Crea un enllaç simbòlic del fitxer seleccionat"
@@ -2869,7 +2875,7 @@ msgstr "_Icona:"
 
 #. setup a label to tell that no icon was selected
 #: ../plugins/thunar-uca/thunar-uca-editor.c:225
-#: ../plugins/thunar-uca/thunar-uca-editor.c:790
+#: ../plugins/thunar-uca/thunar-uca-editor.c:767
 msgid "No icon"
 msgstr "Sense icona"
 
@@ -2986,7 +2992,7 @@ msgstr ""
 "d'especificar que l'acció s'haurà de dur a terme\n"
 "segons el tipus de fitxers."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:650
+#: ../plugins/thunar-uca/thunar-uca-editor.c:644
 msgid "Select an Icon"
 msgstr "Seleccioneu una icona"
 
