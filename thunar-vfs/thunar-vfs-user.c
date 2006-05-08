@@ -800,6 +800,9 @@ thunar_vfs_user_manager_get_all_groups (ThunarVfsUserManager *manager)
 
   g_return_val_if_fail (THUNAR_VFS_IS_USER_MANAGER (manager), NULL);
 
+  /* make sure we reload the groups list */
+  endgrent ();
+
   /* iterate through all groups in the system */
   for (;;)
     {
