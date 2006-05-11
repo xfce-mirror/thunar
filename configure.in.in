@@ -162,8 +162,16 @@ XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1.6])
 XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.6.0])
-XDT_CHECK_PACKAGE([LIBPNG], [libpng12], [1.2.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.2.2])
+
+dnl *********************************************
+dnl *** Check for libpng (with various names) ***
+dnl *********************************************
+XDT_CHECK_PACKAGE([LIBPNG], [libpng], [1.2.0], [],
+[
+  dnl # libpng.pc not found, try with libpng12.pc
+  XDT_CHECK_PACKAGE([LIBPNG], [libpng12], [1.2.0])
+])
 
 dnl **********************************
 dnl *** Optional support for D-BUS ***
