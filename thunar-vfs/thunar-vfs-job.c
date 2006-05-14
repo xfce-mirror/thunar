@@ -76,8 +76,8 @@ static void     thunar_vfs_job_source_finalize  (GSource           *source);
 
 struct _ThunarVfsJobPrivate
 {
-  volatile ThunarVfsJobEmitDetails *details;
-  volatile gboolean                 running;
+  ThunarVfsJobEmitDetails *details;
+  gboolean                 running;
 };
 
 struct _ThunarVfsJobEmitDetails
@@ -250,8 +250,8 @@ thunar_vfs_job_source_dispatch (GSource    *source,
                                 GSourceFunc callback,
                                 gpointer    user_data)
 {
-  volatile ThunarVfsJobEmitDetails *details;
-  ThunarVfsJob                     *job = THUNAR_VFS_JOB_SOURCE (source)->job;
+  ThunarVfsJobEmitDetails *details;
+  ThunarVfsJob            *job = THUNAR_VFS_JOB_SOURCE (source)->job;
 
   /* check if the job is done */
   if (!job->priv->running)
