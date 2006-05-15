@@ -34,6 +34,7 @@
 #include <thunar/thunar-dbus-client.h>
 #include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-session-client.h>
 #include <thunar/thunar-stock.h>
 
 
@@ -41,8 +42,10 @@
 /* --- globals --- */
 static gboolean opt_bulk_rename = FALSE;
 static gboolean opt_daemon = FALSE;
+static gchar   *opt_sm_client_id = NULL;
 static gboolean opt_quit = FALSE;
 static gboolean opt_version = FALSE;
+
 
 
 /* --- command line options --- */
@@ -54,6 +57,7 @@ static GOptionEntry option_entries[] =
 #else
   { "daemon", 0, 0, G_OPTION_ARG_NONE, &opt_daemon, N_ ("Run in daemon mode (not supported)"), NULL, },
 #endif
+  { "sm-client-id", 0, G_OPTION_FLAG_HIDDEN, G_OPTION_ARG_STRING, &opt_sm_client_id, NULL, NULL, },
 #ifdef HAVE_DBUS
   { "quit", 'q', 0, G_OPTION_ARG_NONE, &opt_quit, N_ ("Quit a running Thunar instance"), NULL, },
 #else
@@ -68,13 +72,14 @@ static GOptionEntry option_entries[] =
 int
 main (int argc, char **argv)
 {
+  ThunarSessionClient *session_client;
 #ifdef HAVE_DBUS
-  ThunarDBusService *dbus_service;
+  ThunarDBusService   *dbus_service;
 #endif
-  ThunarApplication *application;
-  GError            *error = NULL;
-  gchar             *working_directory;
-  gchar            **filenames = NULL;
+  ThunarApplication   *application;
+  GError              *error = NULL;
+  gchar               *working_directory;
+  gchar              **filenames = NULL;
 
   /* setup translation domain */
   xfce_textdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
@@ -111,13 +116,10 @@ main (int argc, char **argv)
   /* check if we should print version information */
   if (G_UNLIKELY (opt_version))
     {
-      g_print ("%s %s (Xfce %s)\n", PACKAGE_NAME, PACKAGE_VERSION, xfce_version_string ());
-      g_print ("\n");
+      g_print ("%s %s (Xfce %s)\n\n", PACKAGE_NAME, PACKAGE_VERSION, xfce_version_string ());
       g_print ("%s\n", _("Copyright (c) 2004-2006"));
-      g_print ("\t%s\n", _("The Thunar development team. All rights reserved."));
-      g_print ("\n");
-      g_print ("%s\n", _("Written by Benedikt Meurer <benny@xfce.org>."));
-      g_print ("\n");
+      g_print ("\t%s\n\n", _("The Thunar development team. All rights reserved."));
+      g_print ("%s\n\n", _("Written by Benedikt Meurer <benny@xfce.org>."));
       g_print (_("Please report bugs to <%s>."), PACKAGE_BUGREPORT);
       g_print ("\n");
       return EXIT_SUCCESS;
@@ -222,6 +224,9 @@ error0:
   g_free (working_directory);
   g_strfreev (filenames);
 
+  /* connect to the session manager */
+  session_client = thunar_session_client_new (opt_sm_client_id);
+
   /* do not enter the main loop, unless we have atleast one window or we are in daemon mode */
   if (thunar_application_has_windows (application) || thunar_application_get_daemon (application))
     {
@@ -238,6 +243,9 @@ error0:
       g_object_unref (G_OBJECT (dbus_service));
 #endif
     }
+
+  /* disconnect from the session manager */
+  g_object_unref (G_OBJECT (session_client));
 
   /* release the application reference */
   g_object_unref (G_OBJECT (application));

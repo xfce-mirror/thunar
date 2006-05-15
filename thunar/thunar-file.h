@@ -299,6 +299,16 @@ GList            *thunar_file_list_to_path_list      (GList *file_list);
  **/
 #define thunar_file_get_free_space(file, free_space_return) (thunar_vfs_info_get_free_space (THUNAR_FILE ((file))->info, (free_space_return)))
 
+/**
+ * thunar_file_dup_uri:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the URI for the @file. The caller is responsible
+ * to free the returned string when no longer needed.
+ *
+ * Return value: the URI for @file.
+ **/
+#define thunar_file_dup_uri(file) (thunar_vfs_path_dup_uri (thunar_file_get_path ((file))))
 
 
 /**

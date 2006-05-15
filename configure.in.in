@@ -173,6 +173,11 @@ XDT_CHECK_PACKAGE([LIBPNG], [libpng], [1.2.0], [],
   XDT_CHECK_PACKAGE([LIBPNG], [libpng12], [1.2.0])
 ])
 
+dnl ********************************************
+dnl *** Check for session management support ***
+dnl ********************************************
+XDT_CHECK_LIBSM()
+
 dnl **********************************
 dnl *** Optional support for D-BUS ***
 dnl **********************************

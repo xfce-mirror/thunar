@@ -80,6 +80,8 @@ Thunar_SOURCES =							\
 	thunar-gtk-extensions.h						\
 	thunar-history.c						\
 	thunar-history.h						\
+	thunar-ice.c							\
+	thunar-ice.h							\
 	thunar-icon-factory.c						\
 	thunar-icon-factory.h						\
 	thunar-icon-renderer.c						\
@@ -129,6 +131,8 @@ Thunar_SOURCES =							\
 	thunar-renamer-pair.h						\
 	thunar-renamer-progress.c					\
 	thunar-renamer-progress.h					\
+	thunar-session-client.c						\
+	thunar-session-client.h						\
 	thunar-shortcuts-icon-renderer.c				\
 	thunar-shortcuts-icon-renderer.h				\
 	thunar-shortcuts-model.c					\
@@ -174,22 +178,23 @@ Thunar_SOURCES =							\
 	thunar-window-ui.h
 
 Thunar_CFLAGS =								\
-	$(CAIRO_CFLAGS)							\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
+	$(LIBSM_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
 Thunar_LDFLAGS =							\
 	-no-undefined							\
+	$(LIBSM_LDFLAGS)						\
 	$(PLATFORM_LDFLAGS)
 
 Thunar_LDADD =								\
 	$(top_builddir)/tdb/libtdb.la					\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la \
 	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la	\
-	$(CAIRO_LIBS)							\
 	$(EXO_LIBS)							\
-	$(GTHREAD_LIBS)
+	$(GTHREAD_LIBS)							\
+	$(LIBSM_LIBS)
 
 Thunar_DEPENDENCIES =							\
 	$(top_builddir)/tdb/libtdb.la					\
