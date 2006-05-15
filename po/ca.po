@@ -3,25 +3,26 @@
 # Copyright (C) 2004-2006 Benedikt Meurer.
 # This file is distributed under the same license as the Thunar package.
 # Pau Rul·lan Ferragut <paurullan@bulma.net> 2005, 2006.
+# Carles Muñoz Gorriz <carlesmu@internautas.org>, 2006.
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-05-07 13:25+0200\n"
-"PO-Revision-Date: 2006-05-13 22:09+0200\n"
-"Last-Translator: Pau Rul·lan Ferragut <paurullan@bulma.net>\n"
+"PO-Revision-Date: 2006-05-15 00:00+0100\n"
+"Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n!=1;X-Generator: KBabel 1.11.2\n"
+"Plural-Forms: Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: KBabel 1.11.2\n"
 
 #: ../thunar-vfs/thunar-vfs-chmod-job.c:168
 #: ../thunar-vfs/thunar-vfs-chown-job.c:166
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:271
 msgid "Collecting files..."
-msgstr "S'estan recollint fitxers"
+msgstr "S'estan recollint fitxers…"
 
 #. ask the user whether we should skip the file
 #. ask the user whether to skip this file (used for cancellation only)
@@ -44,29 +45,29 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-chown-job.c:251
 #, c-format
 msgid "Failed to determine file info of \"%s\": %s"
-msgstr "No s'ha pogut determinar la informació del fitxer \"%s\": %s"
+msgstr "No s'ha pogut determinar la informació del fitxer «%s»: %s"
 
 #: ../thunar-vfs/thunar-vfs-chmod-job.c:279
 #, c-format
 msgid "Failed to change permissions of \"%s\": %s"
-msgstr "No s'han pogut canviar els permisos del fitxer \"%s\": %s"
+msgstr "No s'han pogut canviar els permisos del fitxer «%s»: %s"
 
 #: ../thunar-vfs/thunar-vfs-chown-job.c:267
 #, c-format
 msgid "Failed to change file owner of \"%s\": %s"
-msgstr "No s'ha pogut canviar el propietari del fitxer \"%s\": %s"
+msgstr "No s'ha pogut canviar el propietari del fitxer «%s»: %s"
 
 #: ../thunar-vfs/thunar-vfs-chown-job.c:269
 #, c-format
 msgid "Failed to change file group of \"%s\": %s"
-msgstr "No s'ha pogut canviar el grup del fitxer \"%s\": %s"
+msgstr "No s'ha pogut canviar el grup del fitxer «%s»: %s"
 
 #. ask the user whether to override this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:188
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Do you want to replace it with an empty file?"
-msgstr "El fitxer \"%s\" ja existeix. Voleu reemplaçar-lo amb un fitxer buit?"
+msgstr "El fitxer «%s» ja existeix. Voleu reemplaçar-lo amb un fitxer buit?"
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:199
@@ -77,9 +78,9 @@ msgid ""
 "\n"
 "Do you want to skip it?"
 msgstr ""
-"Impossible eliminar \"%s\".\n"
+"Impossible eliminar «%s».\n"
 "\n"
-"Voleu ometrer-lo?"
+"El voleu ometre?"
 
 #. ask the user whether to skip this path
 #: ../thunar-vfs/thunar-vfs-creat-job.c:216
@@ -89,9 +90,9 @@ msgid ""
 "\n"
 "Do you want to skip it?"
 msgstr ""
-"No s'ha pogut creat un fitxer buit \"%s\".\n"
+"No s'ha pogut creat un fitxer buit «%s».\n"
 "\n"
-"Voleu ometrer-ho?"
+"El voleu ometre?"
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:220
@@ -128,7 +129,7 @@ msgstr "El nom del fitxer no és vàlid"
 #: ../thunar-vfs/thunar-vfs-info.c:761
 #, c-format
 msgid "Failed to stat file \"%s\": %s"
-msgstr "No s'ha pogut consultar l'estat del fitxer \"%s\": %s"
+msgstr "No s'ha pogut consultar l'estat del fitxer «%s»: %s"
 
 #. ask the user whether we should remove the target first
 #. ask the user whether to overwrite
@@ -149,7 +150,7 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:718
 #, c-format
 msgid "Failed to remove \"%s\": %s"
-msgstr "No s'ha pogut eliminar \"%s\": %s"
+msgstr "No s'ha pogut eliminar «%s»: %s"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1712
 #, c-format
@@ -198,7 +199,7 @@ msgstr "document %s"
 #: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
-msgstr "No s'ha pogut crear el directory \"%s\": %s"
+msgstr "No s'ha pogut crear el directori «%s»: %s"
 
 #: ../thunar-vfs/thunar-vfs-path.c:684
 msgid "Path too long to fit into buffer"
@@ -219,12 +220,12 @@ msgstr "Tamany de les miniatures"
 #. display info message
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:367
 msgid "Deleting directories..."
-msgstr "S'està suprimint directoris..."
+msgstr "S'està suprimint directoris…"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:387
 #, c-format
 msgid "Failed to remove directory \"%s\": %s"
-msgstr "No s'ha pogut suprimer el directory \"%s\": %s"
+msgstr "No s'ha pogut suprimir el directori «%s»: %s"
 
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:911
 msgid "Cannot transfer the root directory"
@@ -233,7 +234,7 @@ msgstr "No s'ha pogut transferí el directori arrel"
 #. tell the user that we're preparing the unlink job
 #: ../thunar-vfs/thunar-vfs-unlink-job.c:163
 msgid "Preparing..."
-msgstr "S'està preparant..."
+msgstr "S'està preparant…"
 
 #: ../thunar-vfs/thunar-vfs-util.c:251 ../thunar/thunar-path-entry.c:1262
 msgid "Invalid path"
@@ -242,7 +243,7 @@ msgstr "Camí invàlid"
 #: ../thunar-vfs/thunar-vfs-util.c:287
 #, c-format
 msgid "Unknown user \"%s\""
-msgstr "Usuari desconegut \"%s\""
+msgstr "Usuari desconegut «%s»"
 
 #. something went wrong, for sure
 #: ../thunar-vfs/thunar-vfs-volume-hal.c:317
@@ -305,13 +306,13 @@ msgstr[1] "%ua enllaç a %s"
 #: ../thunar-vfs/thunar-vfs-xfer.c:306
 #, c-format
 msgid "Failed to create directory \"%s\""
-msgstr "No s'ha pogut crear el directori \"%s\""
+msgstr "No s'ha pogut crear el directori «%s»"
 
 #. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
 #: ../thunar-vfs/thunar-vfs-xfer.c:331
 #, c-format
 msgid "Failed to create named fifo \"%s\""
-msgstr "No s'ha pogut crear la sortida del conducte \"%s\""
+msgstr "No s'ha pogut crear la sortida del conducte «%s»"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:340
 msgid "Named pipes are not supported"
@@ -320,53 +321,53 @@ msgstr "Els conductes amb nom no estan suportats"
 #: ../thunar-vfs/thunar-vfs-xfer.c:368
 #, c-format
 msgid "Failed to open \"%s\" for reading"
-msgstr "No s'ha pogut obrir \"%s\" per lectura"
+msgstr "No s'ha pogut obrir «%s» per lectura"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:393
 #, c-format
 msgid "The file \"%s\" already exists"
-msgstr "El fitxer \"%s\" ja existeix"
+msgstr "El fitxer «%s» ja existeix"
 
 #. use the generic error message
 #: ../thunar-vfs/thunar-vfs-xfer.c:398
 #, c-format
 msgid "Failed to open \"%s\" for writing"
-msgstr "No s'ha pogut obrir \"%s\" per escriptura"
+msgstr "No s'ha pogut obrir «%s» per escriptura"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:419
 #, c-format
 msgid "Failed to read data from \"%s\""
-msgstr "No s'ha pogut llegir des de \"%s\""
+msgstr "No s'ha pogut llegir des de «%s»"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:435
 #, c-format
 msgid "Failed to write data to \"%s\""
-msgstr "No s'ha pogut escriure a \"%s\""
+msgstr "No s'ha pogut escriure a «%s»"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:454
 #, c-format
 msgid "Failed to remove \"%s\""
-msgstr "No s'ha pogut suprimir \"%s\""
+msgstr "No s'ha pogut suprimir «%s»"
 
 #. tell the caller that the job was cancelled
 #: ../thunar-vfs/thunar-vfs-xfer.c:459
 msgid "Operation canceled"
-msgstr "S'ha cancel·lat l'operació"
+msgstr "S'ha canceŀlat l'operació"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:500
 #, c-format
 msgid "Failed to read link target from \"%s\""
-msgstr "No s'ha pogut llegir l'enllaç de \"%s\""
+msgstr "No s'ha pogut llegir l'enllaç de «%s»"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:508 ../thunar-vfs/thunar-vfs-xfer.c:626
 #, c-format
 msgid "Failed to create symbolic link \"%s\""
-msgstr "No s'ha pogut crear l'enllaç de \"%s\""
+msgstr "No s'ha pogut crear l'enllaç de «%s»"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:516
 #, c-format
 msgid "Failed to change mode of \"%s\""
-msgstr "No s'ha pogut canviar el mode per \"%s\""
+msgstr "No s'ha pogut canviar el mode per «%s»"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:526 ../thunar-vfs/thunar-vfs-xfer.c:635
 msgid "Symbolic links are not supported"
@@ -375,16 +376,16 @@ msgstr "Els enllaços simbòlics no estan suportats"
 #: ../thunar-vfs/thunar-vfs-xfer.c:554 ../thunar-vfs/thunar-vfs-xfer.c:615
 #, c-format
 msgid "Failed to determine file info for \"%s\""
-msgstr "No s'ha pogut determinar la informació del fitxer per \"%s\""
+msgstr "No s'ha pogut determinar la informació del fitxer per «%s»"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:583
 #, c-format
 msgid "Failed to copy special file \"%s\""
-msgstr "No s'ha pogut copiar el fitxer especial \"%s\""
+msgstr "No s'ha pogut copiar el fitxer especial «%s»"
 
 #: ../thunar/main.c:51
 msgid "Open the bulk rename dialog"
-msgstr "Obre el diàl·leg per renomenar blocs"
+msgstr "Obre el diàleg per renomenar blocs"
 
 #: ../thunar/main.c:53
 msgid "Run in daemon mode"
@@ -414,7 +415,7 @@ msgstr "Thunar"
 #. initialize Gtk+
 #: ../thunar/main.c:93
 msgid "[FILES...]"
-msgstr "[Fitxers...]"
+msgstr "[FITXERS…]"
 
 #: ../thunar/main.c:100
 #, c-format
@@ -505,43 +506,43 @@ msgstr "No s'ha pogut executar l'operació"
 #: ../thunar/thunar-application.c:787
 #, c-format
 msgid "Failed to open \"%s\""
-msgstr "No s'ha pogut obrir \"%s\""
+msgstr "No s'ha pogut obrir «%s»"
 
 #: ../thunar/thunar-application.c:799
 #, c-format
 msgid "Failed to open \"%s\": %s"
-msgstr "No s'ha pogut obrir \"%s\": %s"
+msgstr "No s'ha pogut obrir «%s»: %s"
 
 #: ../thunar/thunar-application.c:836 ../thunar/thunar-application.c:869
 msgid "Copying files..."
-msgstr "S'estan copiant els fitxers..."
+msgstr "S'estan copiant els fitxers…"
 
 #: ../thunar/thunar-application.c:903
 msgid "Creating symbolic links..."
-msgstr "S'estan creant els enllaços simbòlics..."
+msgstr "S'estan creant els enllaços simbòlics…"
 
 #: ../thunar/thunar-application.c:938
 msgid "Moving files..."
-msgstr "S'estan movent els fitxers..."
+msgstr "S'estan movent els fitxers…"
 
 #: ../thunar/thunar-application.c:973
 msgid "Deleting files..."
-msgstr "S'estan suprimint els fitxers..."
+msgstr "S'estan suprimint els fitxers…"
 
 #: ../thunar/thunar-application.c:1013
 msgid "Creating files..."
-msgstr "S'estan creant els fitxers..."
+msgstr "S'estan creant els fitxers…"
 
 #: ../thunar/thunar-application.c:1053
 msgid "Creating directories..."
-msgstr "S'estan creant els directoris..."
+msgstr "S'estan creant els directoris…"
 
 #. tell the user that it didn't work
 #. display an error to the user
 #: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:513
 #, c-format
 msgid "Failed to set default application for \"%s\""
-msgstr "No s'ha pogut especificar l'aplicació per defecte per \"%s\""
+msgstr "No s'ha pogut especificar l'aplicació per defecte per «%s»"
 
 #: ../thunar/thunar-chooser-button.c:368
 msgid "No application selected"
@@ -553,13 +554,13 @@ msgstr "No s'ha seleccionat cap aplicació"
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
 msgstr ""
-"L'apliació seleccionada s'usa per obrir aquest i altres fitxers del tipus \"%"
-"s\"."
+"L'aplicació seleccionada s'usa per obrir aquest i altres fitxers del tipus «%"
+"s»."
 
 #. add the "Other Application..." choice
 #: ../thunar/thunar-chooser-button.c:514
 msgid "_Other Application..."
-msgstr "Altres Aplicaci_ons..."
+msgstr "Altres Aplicaci_ons…"
 
 #: ../thunar/thunar-chooser-dialog.c:216 ../thunar/thunar-launcher.c:123
 msgid "Open With"
@@ -568,7 +569,7 @@ msgstr "Obre amb"
 #. create the "Custom command" expand
 #: ../thunar/thunar-chooser-dialog.c:280
 msgid "Use a _custom command:"
-msgstr "Usa una ordre _personalitzada"
+msgstr "Usa una ordre _personalitzada:"
 
 #: ../thunar/thunar-chooser-dialog.c:281
 msgid ""
@@ -581,7 +582,7 @@ msgstr ""
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:300
 msgid "_Browse..."
-msgstr "_Navega..."
+msgstr "_Navega…"
 
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:306
@@ -592,13 +593,13 @@ msgstr "Utilitza per _defecte per a aquest tipus de fitxer"
 #: ../thunar/thunar-chooser-dialog.c:488
 #, c-format
 msgid "Failed to add new application \"%s\""
-msgstr "No s'ha pogut afegir una nova aplicació \"%s\""
+msgstr "No s'ha pogut afegir una nova aplicació «%s»"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:533
 #, c-format
 msgid "Failed to execute \"%s\""
-msgstr "No s'ha pogut executar \"%s\""
+msgstr "No s'ha pogut executar «%s»"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:650
@@ -613,7 +614,7 @@ msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
 msgstr ""
 "Navegueu pel sistema de fitxer i seleccioneu l'aplicació per obrir els "
-"fitxers del tipus \"%s\"."
+"fitxers del tipus «%s»."
 
 #. update the "Use as default for this kind of file" tooltip
 #: ../thunar/thunar-chooser-dialog.c:663
@@ -622,7 +623,7 @@ msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr ""
-"Canvia l'apliació per defecte pels fitxers del tipus \"%s\" per l'aplicació "
+"Canvia l'aplicació per defecte pels fitxers del tipus «%s» per l'aplicació "
 "seleccionada"
 
 #: ../thunar/thunar-chooser-dialog.c:684
@@ -772,11 +773,11 @@ msgstr "Introduïu el nom nou:"
 #: ../thunar/thunar-create-dialog.c:528
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
-msgstr "No s'ha pogut convertit el nom \"%s\" a la codificació local"
+msgstr "No s'ha pogut convertit el nom «%s» a la codificació local"
 
 #: ../thunar/thunar-details-view.c:130
 msgid "Configure _Columns..."
-msgstr "Configura _Columnes."
+msgstr "Configura _Columnes…"
 
 #: ../thunar/thunar-details-view.c:130
 msgid "Configure the columns in the detailed list view"
@@ -817,7 +818,7 @@ msgstr "_Enllaça aquí"
 #: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:497
 #, c-format
 msgid "Failed to execute file \"%s\""
-msgstr "No s'ha pogut executar el fitxer \"%s\""
+msgstr "No s'ha pogut executar el fitxer «%s»"
 
 #: ../thunar/thunar-enum-types.c:44
 msgid "Name only"
@@ -900,8 +901,8 @@ msgstr "Vés a la carpeta visitada posteriorment"
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
-"No s'ha pogut carregar l'icona alternativa per \"%s\" (%s). Reviseu la "
-"vostra instal·lació."
+"No s'ha pogut carregar la icona alternativa per «%s» (%s). Reviseu la vostra "
+"instaŀlació."
 
 #: ../thunar/thunar-icon-view.c:191
 msgid "Icon based directory listing"
@@ -934,7 +935,7 @@ msgstr "Obri els directoris seleccionats a finestres de Thunar noves"
 
 #: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
 msgid "Open With Other _Application..."
-msgstr "Obri amb una altra _aplicació"
+msgstr "Obre amb una altra _aplicació…"
 
 #: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
 #: ../thunar/thunar-launcher.c:839
@@ -949,7 +950,7 @@ msgstr "Seleccioni un programa amb la qual obrireu el fitxer seleccionat"
 #: ../thunar/thunar-launcher.c:592
 #, c-format
 msgid "Failed to open file \"%s\""
-msgstr "No s'ha pogut obrir el fitxer \"%s\""
+msgstr "No s'ha pogut obrir el fitxer «%s»"
 
 #. we can just tell that n files failed to open
 #: ../thunar/thunar-launcher.c:598
@@ -1016,18 +1017,18 @@ msgstr[1] "Executa els fitxers seleccionats"
 #: ../thunar/thunar-launcher.c:814
 #, c-format
 msgid "_Open With \"%s\""
-msgstr "_Obre amb \"%s\""
+msgstr "_Obre amb «%s»"
 
 #: ../thunar/thunar-launcher.c:815 ../thunar/thunar-launcher.c:902
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
-msgstr[0] "Utilitza \"%s\" per obrir el fitxer seleccionat"
-msgstr[1] "Utilitza \"%s\" per obrir els fitxers seleccionats"
+msgstr[0] "Empra «%s» per obrir el fitxer seleccionat"
+msgstr[1] "Empra «%s» per obrir els fitxers seleccionats"
 
 #: ../thunar/thunar-launcher.c:838
 msgid "_Open With Other Application..."
-msgstr "_Obre amb una altra aplicació"
+msgstr "_Obre amb una altra aplicació…"
 
 #: ../thunar/thunar-launcher.c:847
 msgid "_Open With Default Applications"
@@ -1042,7 +1043,7 @@ msgstr[1] "Obre els fitxers seleccionats amb l'aplicació predeterminada"
 #: ../thunar/thunar-launcher.c:901
 #, c-format
 msgid "Open With \"%s\""
-msgstr "Obre amb \"%s\""
+msgstr "Obre amb «%s»"
 
 #: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
@@ -1074,17 +1075,17 @@ msgstr[1] "%d elements"
 #: ../thunar/thunar-list-model.c:2230
 #, c-format
 msgid "\"%s\" broken link"
-msgstr "\"%s\" enllaç romput"
+msgstr "«%s» enllaç romput"
 
 #: ../thunar/thunar-list-model.c:2234
 #, c-format
 msgid "\"%s\" (%s) link to %s"
-msgstr "\"%s\" (%s) enllaça cap a %s"
+msgstr "«%s» (%s) enllaça cap a %s"
 
 #: ../thunar/thunar-list-model.c:2239
 #, c-format
 msgid "\"%s\" (%s) %s"
-msgstr "\"%s\" (%s) %s"
+msgstr "«%s» (%s) %s"
 
 #: ../thunar/thunar-list-model.c:2256
 #, c-format
@@ -1112,25 +1113,25 @@ msgstr "L'espai entre els botons de camí"
 #: ../thunar/thunar-location-buttons.c:1272
 #, c-format
 msgid "Open \"%s\" in this window"
-msgstr "Obre \"%s\" dins aquesta finestra"
+msgstr "Obre «%s» dins aquesta finestra"
 
 #. add the "Open in New Window" action
 #: ../thunar/thunar-location-buttons.c:1285
 #, c-format
 msgid "Open \"%s\" in a new window"
-msgstr "Obre \"%s\" a una finestra nova"
+msgstr "Obre «%s» a una finestra nova"
 
 #. add the "Create Folder" action
 #: ../thunar/thunar-location-buttons.c:1300
 #, c-format
 msgid "Create a new folder in \"%s\""
-msgstr "Crea una carpeta nova a \"%s\""
+msgstr "Crea una carpeta nova a «%s»"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:1301
 #: ../thunar/thunar-standard-view.c:312 ../thunar/thunar-tree-view.c:1073
 msgid "Create _Folder..."
-msgstr "Crea car_peta"
+msgstr "Crea una car_peta…"
 
 #. add the "Paste Into Folder" action
 #: ../thunar/thunar-location-buttons.c:1316
@@ -1139,7 +1140,7 @@ msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr ""
 "Mou o copia els arxius seleccionats abans amb les ordres Retalla o Copia "
-"dins \"%s\""
+"dins «%s»"
 
 #: ../thunar/thunar-location-buttons.c:1317
 #: ../thunar/thunar-standard-view.c:318
@@ -1150,7 +1151,7 @@ msgstr "Enganxa adins la carpeta"
 #: ../thunar/thunar-location-buttons.c:1332
 #, c-format
 msgid "View the properties of the folder \"%s\""
-msgstr "Visualitza les propietats del directori \"%s\""
+msgstr "Visualitza les propietats del directori «%s»"
 
 #: ../thunar/thunar-location-buttons.c:1333
 msgid "_Properties"
@@ -1178,7 +1179,7 @@ msgstr "_Ubicació:"
 #: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:1208
 #, c-format
 msgid "Failed to launch \"%s\""
-msgstr "No s'ha pogut llançar \"%s\""
+msgstr "No s'ha pogut llançar «%s»"
 
 #: ../thunar/thunar-path-entry.c:254
 msgid "Icon size"
@@ -1251,7 +1252,7 @@ msgstr ""
 
 #: ../thunar/thunar-permissions-chooser.c:455
 msgid "Correct folder permissions..."
-msgstr "Arregla els permisos del directori"
+msgstr "Arregla els permisos del directori…"
 
 #: ../thunar/thunar-permissions-chooser.c:456
 msgid "Click here to automatically fix the folder permissions."
@@ -1259,7 +1260,7 @@ msgstr "Feu clic aquí per arreglar automàticament els permisos del directori"
 
 #: ../thunar/thunar-permissions-chooser.c:467
 msgid "Please wait..."
-msgstr "Espereu"
+msgstr "Espereu…"
 
 #: ../thunar/thunar-permissions-chooser.c:472
 msgid "Stop applying permissions recursively."
@@ -1348,7 +1349,7 @@ msgstr "_No"
 #: ../thunar/thunar-permissions-chooser.c:1176
 #: ../thunar/thunar-progress-dialog.c:387
 msgid "_Cancel"
-msgstr "_Cancel·la"
+msgstr "_Canceŀla"
 
 #: ../thunar/thunar-preferences-dialog.c:229
 msgid "File Manager Preferences"
@@ -1674,7 +1675,7 @@ msgstr "%s - Propietats"
 #: ../thunar/thunar-standard-view.c:2302
 #, c-format
 msgid "Failed to rename \"%s\""
-msgstr "No s'ha pogut canviar el nom \"%s\""
+msgstr "No s'ha pogut canviar el nom «%s»"
 
 #: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:252
 msgid "_File"
@@ -1686,7 +1687,7 @@ msgstr "Fitxer del menú contextual"
 
 #: ../thunar/thunar-renamer-dialog.c:175
 msgid "_Add Files..."
-msgstr "_Afegeix fitxers"
+msgstr "_Afegeix fitxers…"
 
 #: ../thunar/thunar-renamer-dialog.c:175
 msgid "Include additional files in the list of files to be renamed"
@@ -1710,7 +1711,7 @@ msgstr "Visualitza la informació quant al canviador de nom en bloc de Thunar"
 
 #: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
 msgid "_Properties..."
-msgstr "_Propietats..."
+msgstr "_Propietats…"
 
 #: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
 msgid "View the properties of the selected file"
@@ -1749,10 +1750,9 @@ msgid ""
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
-"No s'han trobat el mòduls per canviar el nom. Si us plau repasseu la\n"
-" vostra instal·lació o contacteu amb el vostra administrador de\n"
-" sistemes. Si heu instal·lat Thunar des del codi font comproveu que heu\n"
-" activat el connector \"Simple Builtin Renamers\"."
+"No es troban el mòduls de canvi el nom. Repasseu la vostra instaŀlació\n"
+"o contacteu amb l'administrador del sistema. Si heu instaŀlat Thunar des\n"
+"del codi font mireu si heu activat el connector «Simple Builtin Renamers»."
 
 #. allocate the file chooser
 #: ../thunar/thunar-renamer-dialog.c:1091
@@ -1808,7 +1808,7 @@ msgstr "Canvi de nom en bloc - Canvia el nom de múltiples fitxers"
 #: ../thunar/thunar-renamer-progress.c:213
 #, c-format
 msgid "Failed to rename \"%s\" to \"%s\"."
-msgstr "No s'ha pogut canviar al nom de \"%s\" a \"%s\"."
+msgstr "No s'ha pogut canviar al nom de «%s» a «%s»."
 
 #: ../thunar/thunar-renamer-progress.c:220
 msgid ""
@@ -1874,7 +1874,7 @@ msgstr "Ca_nvia el nom a la drecera"
 #: ../thunar/thunar-shortcuts-view.c:1140
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
-msgstr "El camí \"%s\" no és correspon amb un directori"
+msgstr "El camí «%s» no és correspon amb un directori"
 
 #. display an error message to the user
 #: ../thunar/thunar-shortcuts-view.c:1159
@@ -1885,21 +1885,21 @@ msgstr "No s'ha pogut afegir una drecera nova"
 #: ../thunar/thunar-shortcuts-view.c:1262 ../thunar/thunar-tree-view.c:1560
 #, c-format
 msgid "Failed to eject \"%s\""
-msgstr "No s'ha pogut expulsar \"%s\""
+msgstr "No s'ha pogut expulsar «%s»"
 
 #. display an error dialog to inform the user
 #: ../thunar/thunar-shortcuts-view.c:1308 ../thunar/thunar-tree-view.c:948
 #: ../thunar/thunar-tree-view.c:1596
 #, c-format
 msgid "Failed to mount \"%s\""
-msgstr "No s'ha pogut muntar \"%s\""
+msgstr "No s'ha pogut muntar «%s»"
 
 #. display an error dialog to inform the user
 #. display an error dialog
 #: ../thunar/thunar-shortcuts-view.c:1352 ../thunar/thunar-tree-view.c:1736
 #, c-format
 msgid "Failed to unmount \"%s\""
-msgstr "No s'ha pogut desmuntar \"%s\""
+msgstr "No s'ha pogut desmuntar «%s»"
 
 #: ../thunar/thunar-size-label.c:182
 msgid "Click here to stop calculating the total size of the folder."
@@ -1913,7 +1913,7 @@ msgstr "S'ha aturat el càlcul"
 #. tell the user that we started calculation
 #: ../thunar/thunar-size-label.c:413
 msgid "Calculating..."
-msgstr "S'està calculant"
+msgstr "S'està calculant…"
 
 #: ../thunar/thunar-size-label.c:423
 #, c-format
@@ -1978,7 +1978,7 @@ msgstr "Selecciona tots els fitxers de la finestra"
 
 #: ../thunar/thunar-standard-view.c:320
 msgid "Select _by Pattern..."
-msgstr "Selecciona per _patró"
+msgstr "Selecciona per _patró…"
 
 #: ../thunar/thunar-standard-view.c:320
 msgid "Select all files that match a certain pattern"
@@ -1996,7 +1996,7 @@ msgstr[1] "Crea _enllaços"
 
 #: ../thunar/thunar-standard-view.c:323
 msgid "_Rename..."
-msgstr "_Canvia de nom"
+msgstr "_Canvia de nom…"
 
 #: ../thunar/thunar-standard-view.c:323
 msgid "Rename the selected file"
@@ -2009,7 +2009,7 @@ msgstr "Crea un _document"
 
 #: ../thunar/thunar-standard-view.c:1243
 msgid "Loading folder contents..."
-msgstr "S'estan carregant els continguts de la carpeta"
+msgstr "S'estan carregant els continguts de la carpeta…"
 
 #. ask the user to enter a name for the new empty file
 #: ../thunar/thunar-standard-view.c:1739
@@ -2018,7 +2018,7 @@ msgstr "Fitxer buit nou"
 
 #: ../thunar/thunar-standard-view.c:1739
 msgid "New Empty File..."
-msgstr "Fitxer buit nou"
+msgstr "Fitxer buit nou…"
 
 #. generate a title for the create dialog
 #: ../thunar/thunar-standard-view.c:1839
@@ -2032,8 +2032,8 @@ msgid ""
 "Are you sure that you want to\n"
 "permanently delete \"%s\"?"
 msgstr ""
-"Esteu segur de voler suprimir\n"
-"de manera permanent \"%s\"?"
+"Voleu suprimir de manera\n"
+"permanent «%s»?"
 
 #: ../thunar/thunar-standard-view.c:1995
 #, c-format
@@ -2070,18 +2070,18 @@ msgstr "_Patró:"
 #: ../thunar/thunar-standard-view.c:2231
 #, c-format
 msgid "Rename \"%s\""
-msgstr "Canvia el nom \"%s\""
+msgstr "Canvia el nom de «%s»"
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:2736
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
-msgstr "No s'ha pogut crear l'enllaç per l'URL \"%s\""
+msgstr "No s'ha pogut crear l'enllaç per l'URL «%s»"
 
 #: ../thunar/thunar-standard-view.c:2999
 #, c-format
 msgid "Failed to open directory \"%s\""
-msgstr "No s'ha pogut obrir el directori \"%s\""
+msgstr "No s'ha pogut obrir el directori «%s»"
 
 #: ../thunar/thunar-standard-view.c:3344
 msgid "Prepare the selected file to be moved with a Paste command"
@@ -2135,7 +2135,7 @@ msgstr "Fitx_er buit"
 
 #: ../thunar/thunar-tree-model.c:600
 msgid "Loading..."
-msgstr "S'està carregant"
+msgstr "S'està carregant…"
 
 #. append the "Paste Into Folder" menu action
 #: ../thunar/thunar-tree-view.c:1122
@@ -2145,7 +2145,7 @@ msgstr "Enganxa a la car_peta"
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:1163
 msgid "P_roperties..."
-msgstr "P_ropietats"
+msgstr "P_ropietats…"
 
 #: ../thunar/thunar-window.c:253
 msgid "Open New _Window"
@@ -2177,7 +2177,7 @@ msgstr "_Edita"
 
 #: ../thunar/thunar-window.c:257
 msgid "Pr_eferences..."
-msgstr "Pr_eferències"
+msgstr "Pr_eferències…"
 
 #: ../thunar/thunar-window.c:257
 msgid "Edit Thunars Preferences"
@@ -2257,7 +2257,7 @@ msgstr "Vés a la carpeta de les plantilles"
 
 #: ../thunar/thunar-window.c:269
 msgid "Open _Location..."
-msgstr "Obre una _ubicació..."
+msgstr "Obre una _ubicació…"
 
 #: ../thunar/thunar-window.c:269
 msgid "Specify a location to open"
@@ -2382,8 +2382,7 @@ msgstr "Quan a les plantilles"
 
 #: ../thunar/thunar-window.c:1747
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr ""
-"Tots els fitxers dins aquesta carpeta apereixeran al menú \"Crea document\"."
+msgstr "Tots els fitxers d'aquesta carpeta sortiran al menú «Crea document»."
 
 #: ../thunar/thunar-window.c:1754
 msgid ""
@@ -2394,12 +2393,12 @@ msgid ""
 "You can then select the entry from the \"Create Document\" menu and a copy "
 "of the document will be created in the directory you are viewing."
 msgstr ""
-"Si feis certs tipus de documents freqüentment, feu una còpia i poseu-la dins "
-"aquest directori. Thunar crearà una entrada d'aquest document al menú \"Crea "
-"document\".\n"
+"Si amb certa freqüència creeu certs tipus de documents, feu una còpia i "
+"poseu-la dins d'aquest directori. Thunar crearà una entrada d'aquest "
+"document al menú «Crea document».\n"
 "\n"
-"Podreu seleccionar l'entrada dins el menú \"Crea document\" i llavors es "
-"crearà una còpia dins el directori que esteis actualment."
+"Podreu seleccionar l'entrada dins el menú «Crea document» i llavors es "
+"crearà una còpia dins el directori en que esteu."
 
 #: ../thunar/thunar-window.c:1766
 msgid "Do _not display this message again"
@@ -2461,8 +2460,7 @@ msgstr "Descripció:"
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
-msgstr ""
-"El nom genèric per l'entrada, per exemple \"Navegador web\" per Firefox."
+msgstr "El nom genèric per l'entrada, per exemple «Navegador web» per Firefox."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
 msgid "Command:"
@@ -2489,8 +2487,8 @@ msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of "
 "Firefox. Should not be redundant with the name or the description."
 msgstr ""
-"Ajuda emergent per l'entrada, per exemple \"Per visitar planes a la xarxa\" "
-"en cas de Firefox. No hauria de ser redundant amb el nom o la descripció."
+"Ajuda emergent per l'entrada, per exemple «Visita planes a la xarxa» en cas "
+"de Firefox. No hauria de ser redundant amb el nom o la descripció."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
 msgid "Options:"
@@ -2530,7 +2528,7 @@ msgstr "Enllaç"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:555
 #, c-format
 msgid "Failed to save \"%s\"."
-msgstr "No s'ha pogut desar \"%s\"."
+msgstr "No s'ha pogut desar «%s»."
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:49
 msgid "Date Taken:"
@@ -2593,8 +2591,8 @@ msgstr "Tamany de la imatge:"
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%dx%d píxel"
+msgstr[1] "%dx%d píxels"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:119
 msgid "Con_vert to:"
@@ -2626,23 +2624,23 @@ msgstr "Sobreescriu"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:99
 msgid "1, 2, 3, ..."
-msgstr "1, 2, 3, ..."
+msgstr "1, 2, 3…"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:100
 msgid "01, 02, 03, ..."
-msgstr "01, 02, 03, ..."
+msgstr "01, 02, 03…"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:101
 msgid "001, 002, 003, ..."
-msgstr "001, 002, 003, ..."
+msgstr "001, 002, 003…"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "0001, 0002, 0003, ..."
-msgstr "0001, 0002, 0003, ..."
+msgstr "0001, 0002, 0003…"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:103
 msgid "a, b, c, d, ..."
-msgstr "a, b, c, d, ..."
+msgstr "a, b, c, d…"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:109
 msgid "From the front (left)"
@@ -3017,7 +3015,7 @@ msgstr "Ordre no configurat"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:188
 msgid "Configure c_ustom actions..."
-msgstr "Config_ura accions personalitzades..."
+msgstr "Config_ura accions personalitzades…"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:189
 msgid ""
@@ -3029,7 +3027,7 @@ msgstr ""
 #: ../plugins/thunar-uca/thunar-uca-provider.c:406
 #, c-format
 msgid "Failed to launch action \"%s\"."
-msgstr "No s'ha pogut llançar l'acció \"%s\"."
+msgstr "No s'ha pogut llançar l'acció «%s»."
 
 #: ../plugins/thunar-uca/uca.xml.in.h:1
 msgid "Example for a custom action"
