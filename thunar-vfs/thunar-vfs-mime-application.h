@@ -46,13 +46,15 @@ ThunarVfsMimeApplication     *thunar_vfs_mime_application_new_from_desktop_id (c
 ThunarVfsMimeApplication     *thunar_vfs_mime_application_new_from_file       (const gchar                    *path,
                                                                                const gchar                    *desktop_id) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-GList                        *thunar_vfs_mime_application_get_actions         (ThunarVfsMimeApplication       *mime_application) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-const gchar                  *thunar_vfs_mime_application_get_desktop_id      (const ThunarVfsMimeApplication *mime_application);
-const gchar * const          *thunar_vfs_mime_application_get_mime_types      (const ThunarVfsMimeApplication *mime_application);
+gboolean                      thunar_vfs_mime_application_is_usercreated      (const ThunarVfsMimeApplication *mime_application) G_GNUC_WARN_UNUSED_RESULT;
 
-guint                         thunar_vfs_mime_application_hash                (gconstpointer                   mime_application);
+GList                        *thunar_vfs_mime_application_get_actions         (ThunarVfsMimeApplication       *mime_application) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+const gchar                  *thunar_vfs_mime_application_get_desktop_id      (const ThunarVfsMimeApplication *mime_application) G_GNUC_WARN_UNUSED_RESULT;
+const gchar * const          *thunar_vfs_mime_application_get_mime_types      (const ThunarVfsMimeApplication *mime_application) G_GNUC_WARN_UNUSED_RESULT;
+
+guint                         thunar_vfs_mime_application_hash                (gconstpointer                   mime_application) G_GNUC_WARN_UNUSED_RESULT;
 gboolean                      thunar_vfs_mime_application_equal               (gconstpointer                   a,
-                                                                               gconstpointer                   b);
+                                                                               gconstpointer                   b) G_GNUC_WARN_UNUSED_RESULT;
 
 /**
  * thunar_vfs_mime_application_get_command:

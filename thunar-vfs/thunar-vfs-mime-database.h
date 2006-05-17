@@ -67,6 +67,9 @@ ThunarVfsMimeApplication *thunar_vfs_mime_database_add_application          (Thu
                                                                              const gchar              *name,
                                                                              const gchar              *exec,
                                                                              GError                  **error) G_GNUC_WARN_UNUSED_RESULT;
+gboolean                  thunar_vfs_mime_database_remove_application       (ThunarVfsMimeDatabase    *database,
+                                                                             ThunarVfsMimeApplication *application,
+                                                                             GError                  **error) G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

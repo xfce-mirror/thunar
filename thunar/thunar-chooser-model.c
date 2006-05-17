@@ -630,3 +630,49 @@ thunar_chooser_model_get_mime_info (ThunarChooserModel *model)
   return model->mime_info;
 }
 
+
+
+/**
+ * thunar_chooser_model_remove:
+ * @model : a #ThunarChooserModel.
+ * @iter  : the #GtkTreeIter for the application to remove.
+ * @error : return location for errors or %NULL.
+ *
+ * Tries to remove the application at the specified @iter from
+ * the systems application database. Returns %TRUE on success,
+ * otherwise %FALSE is returned.
+ *
+ * Return value: %TRUE on success, %FALSE otherwise.
+ **/
+gboolean
+thunar_chooser_model_remove (ThunarChooserModel *model,
+                             GtkTreeIter        *iter,
+                             GError            **error)
+{
+  ThunarVfsMimeApplication *mime_application;
+  ThunarVfsMimeDatabase    *mime_database;
+  gboolean                  succeed;
+
+  g_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), FALSE);
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (model), iter), FALSE);
+
+  /* determine the mime application for the iter */
+  gtk_tree_model_get (GTK_TREE_MODEL (model), iter, THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &mime_application, -1);
+  if (G_UNLIKELY (mime_application == NULL))
+    return TRUE;
+
+  /* try to remove the application from the database */
+  mime_database = thunar_vfs_mime_database_get_default ();
+  succeed = thunar_vfs_mime_database_remove_application (mime_database, mime_application, error);
+  g_object_unref (G_OBJECT (mime_application));
+  g_object_unref (G_OBJECT (mime_database));
+
+  /* if the removal was successfull, delete the row from the model */
+  if (G_LIKELY (succeed))
+    gtk_tree_store_remove (GTK_TREE_STORE (model), iter);
+
+  return succeed;
+}
+
+

@@ -1695,7 +1695,7 @@ thunar_vfs_mime_database_add_application (ThunarVfsMimeDatabase *database,
       fclose (fp);
 
       /* update the mimeinfo.cache file for the directory */
-      command = g_strdup_printf ("update-desktop-database %s", directory);
+      command = g_strdup_printf ("update-desktop-database \"%s\"", directory);
       succeed = g_spawn_command_line_sync (command, NULL, NULL, NULL, error);
       g_free (command);
 
@@ -1718,6 +1718,87 @@ thunar_vfs_mime_database_add_application (ThunarVfsMimeDatabase *database,
   g_free (file);
 
   return application;
+}
+
+
+
+/**
+ * thunar_vfs_mime_database_remove_application:
+ * @database    : a #ThunarVfsMimeDatabase.
+ * @application : a #ThunarVfsMimeApplication.
+ * @error       : return location for errors or %NULL.
+ *
+ * Undoes the effect of thunar_vfs_mime_database_add_application() by removing
+ * the user created @application from the @database. The @application must be
+ * user created, and the removal will fail if its not (for example if its a
+ * system-wide installed application launcher). See the documentation for
+ * thunar_vfs_mime_application_is_usercreated() for details.
+ *
+ * Return value: %TRUE if the removal was successfull, %FALSE otherwise and
+ *               @error will be set.
+ **/
+gboolean
+thunar_vfs_mime_database_remove_application (ThunarVfsMimeDatabase    *database,
+                                             ThunarVfsMimeApplication *application,
+                                             GError                  **error)
+{
+  const gchar *desktop_id;
+  gboolean     succeed = FALSE;
+  gchar       *directory;
+  gchar       *command;
+  gchar       *file;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_DATABASE (database), FALSE);
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (application), FALSE);
+
+  /* verify that the application is usercreated */
+  if (!thunar_vfs_mime_application_is_usercreated (application))
+    {
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, g_strerror (EINVAL));
+      return FALSE;
+    }
+
+  /* determine the desktop-id of the application */
+  desktop_id = thunar_vfs_mime_application_get_desktop_id (application);
+  
+  /* determine the save location for applications */
+  directory = xfce_resource_save_location (XFCE_RESOURCE_DATA, "applications/", TRUE);
+  if (G_UNLIKELY (directory == NULL))
+    {
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR, g_strerror (ENOTDIR));
+      return FALSE;
+    }
+
+  /* try to delete the desktop file */
+  file = g_build_filename (directory, desktop_id, NULL);
+  if (G_UNLIKELY (g_unlink (file) < 0))
+    {
+      /* tell the user that we failed to delete the application launcher */
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Failed to remove \"%s\": %s"), file, g_strerror (errno));
+    }
+  else
+    {
+      /* update the mimeinfo.cache file for the directory */
+      command = g_strdup_printf ("update-desktop-database \"%s\"", directory);
+      succeed = g_spawn_command_line_sync (command, NULL, NULL, NULL, error);
+      g_free (command);
+
+      /* check if we succeed */
+      if (G_LIKELY (succeed))
+        {
+          /* clear the application cache */
+          g_mutex_lock (database->lock);
+          g_hash_table_foreach_remove (database->applications, (GHRFunc) exo_noop_true, NULL);
+          g_mutex_unlock (database->lock);
+        }
+    }
+
+  /* cleanup */
+  g_free (directory);
+  g_free (file);
+
+  return succeed;
 }
 
 

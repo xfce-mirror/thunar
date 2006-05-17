@@ -361,6 +361,25 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
 
 
 /**
+ * thunar_vfs_mime_application_is_usercreated:
+ * @mime_application : a #ThunarVfsMimeApplication.
+ *
+ * Returns %TRUE if the @mime_application was created by the user
+ * using a file manager, i.e. through the "Open With" dialog in
+ * Thunar.
+ *
+ * Return value: %TRUE if @mime_application is usercreated.
+ **/
+gboolean
+thunar_vfs_mime_application_is_usercreated (const ThunarVfsMimeApplication *mime_application)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_MIME_APPLICATION (mime_application), FALSE);
+  return (strstr (mime_application->desktop_id, "-usercreated") != NULL);
+}
+
+
+
+/**
  * thunar_vfs_mime_application_get_actions:
  * @mime_application : a #ThunarVfsMimeApplication.
  *

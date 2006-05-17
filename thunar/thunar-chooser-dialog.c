@@ -48,42 +48,51 @@ enum
 
 
 
-static void     thunar_chooser_dialog_class_init        (ThunarChooserDialogClass *klass);
-static void     thunar_chooser_dialog_init              (ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_dispose           (GObject                  *object);
-static void     thunar_chooser_dialog_finalize          (GObject                  *object);
-static void     thunar_chooser_dialog_get_property      (GObject                  *object,
-                                                         guint                     prop_id,
-                                                         GValue                   *value,
-                                                         GParamSpec               *pspec);
-static void     thunar_chooser_dialog_set_property      (GObject                  *object,
-                                                         guint                     prop_id,
-                                                         const GValue             *value,
-                                                         GParamSpec               *pspec);
-static void     thunar_chooser_dialog_realize           (GtkWidget                *widget);
-static void     thunar_chooser_dialog_response          (GtkDialog                *widget,
-                                                         gint                      response);
-static gboolean thunar_chooser_dialog_selection_func    (GtkTreeSelection         *selection,
-                                                         GtkTreeModel             *model,
-                                                         GtkTreePath              *path,
-                                                         gboolean                  path_currently_selected,
-                                                         gpointer                  user_data);
-static void     thunar_chooser_dialog_update_accept     (ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_update_header     (ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_browse            (GtkWidget                *button,
-                                                         ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_notify_expanded   (GtkExpander              *expander,
-                                                         GParamSpec               *pspec,
-                                                         ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_notify_loading    (ThunarChooserModel       *model,
-                                                         GParamSpec               *pspec,
-                                                         ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_row_activated     (GtkTreeView              *treeview,
-                                                         GtkTreePath              *path,
-                                                         GtkTreeViewColumn        *column,
-                                                         ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_selection_changed (GtkTreeSelection         *selection,
-                                                         ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_class_init          (ThunarChooserDialogClass *klass);
+static void     thunar_chooser_dialog_init                (ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_dispose             (GObject                  *object);
+static void     thunar_chooser_dialog_finalize            (GObject                  *object);
+static void     thunar_chooser_dialog_get_property        (GObject                  *object,
+                                                           guint                     prop_id,
+                                                           GValue                   *value,
+                                                           GParamSpec               *pspec);
+static void     thunar_chooser_dialog_set_property        (GObject                  *object,
+                                                           guint                     prop_id,
+                                                           const GValue             *value,
+                                                           GParamSpec               *pspec);
+static void     thunar_chooser_dialog_realize             (GtkWidget                *widget);
+static void     thunar_chooser_dialog_response            (GtkDialog                *widget,
+                                                           gint                      response);
+static gboolean thunar_chooser_dialog_selection_func      (GtkTreeSelection         *selection,
+                                                           GtkTreeModel             *model,
+                                                           GtkTreePath              *path,
+                                                           gboolean                  path_currently_selected,
+                                                           gpointer                  user_data);
+static gboolean thunar_chooser_dialog_context_menu        (ThunarChooserDialog      *dialog,
+                                                           guint                     button,
+                                                           guint32                   time);
+static void     thunar_chooser_dialog_update_accept       (ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_update_header       (ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_action_remove       (ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_browse_clicked      (GtkWidget                *button,
+                                                           ThunarChooserDialog      *dialog);
+static gboolean thunar_chooser_dialog_button_press_event  (GtkWidget                *tree_view,
+                                                           GdkEventButton           *event,
+                                                           ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_notify_expanded     (GtkExpander              *expander,
+                                                           GParamSpec               *pspec,
+                                                           ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_notify_loading      (ThunarChooserModel       *model,
+                                                           GParamSpec               *pspec,
+                                                           ThunarChooserDialog      *dialog);
+static gboolean thunar_chooser_dialog_popup_menu          (GtkWidget                *tree_view,
+                                                           ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_row_activated       (GtkTreeView              *treeview,
+                                                           GtkTreePath              *path,
+                                                           GtkTreeViewColumn        *column,
+                                                           ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_selection_changed   (GtkTreeSelection         *selection,
+                                                           ThunarChooserDialog      *dialog);
 
 
 
@@ -253,6 +262,8 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* create the tree view */
   dialog->tree_view = g_object_new (GTK_TYPE_TREE_VIEW, "headers-visible", FALSE, NULL);
+  g_signal_connect (G_OBJECT (dialog->tree_view), "button-press-event", G_CALLBACK (thunar_chooser_dialog_button_press_event), dialog);
+  g_signal_connect (G_OBJECT (dialog->tree_view), "popup-menu", G_CALLBACK (thunar_chooser_dialog_popup_menu), dialog);
   g_signal_connect (G_OBJECT (dialog->tree_view), "row-activated", G_CALLBACK (thunar_chooser_dialog_row_activated), dialog);
   gtk_container_add (GTK_CONTAINER (swin), dialog->tree_view);
   gtk_widget_show (dialog->tree_view);
@@ -298,7 +309,7 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* create the "Custom command" button */
   dialog->custom_button = gtk_button_new_with_mnemonic (_("_Browse..."));
-  g_signal_connect (G_OBJECT (dialog->custom_button), "clicked", G_CALLBACK (thunar_chooser_dialog_browse), dialog);
+  g_signal_connect (G_OBJECT (dialog->custom_button), "clicked", G_CALLBACK (thunar_chooser_dialog_browse_clicked), dialog);
   gtk_box_pack_start (GTK_BOX (hbox), dialog->custom_button, FALSE, FALSE, 0);
   gtk_widget_show (dialog->custom_button);
 
@@ -572,6 +583,68 @@ thunar_chooser_dialog_selection_func (GtkTreeSelection *selection,
 
 
 
+static gboolean
+thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
+                                    guint                button,
+                                    guint32              time)
+{
+  ThunarVfsMimeApplication *mime_application;
+  GtkTreeSelection         *selection;
+  GtkTreeModel             *model;
+  GtkTreeIter               iter;
+  GtkWidget                *image;
+  GtkWidget                *item;
+  GtkWidget                *menu;
+  GMainLoop                *loop;
+
+  g_return_val_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog), FALSE);
+
+  /* determine the selected row */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->tree_view));
+  if (!gtk_tree_selection_get_selected (selection, &model, &iter))
+    return FALSE;
+
+  /* determine the mime application for the row */
+  gtk_tree_model_get (model, &iter, THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &mime_application, -1);
+  if (G_UNLIKELY (mime_application == NULL))
+    return FALSE;
+
+  /* prepare the internal loop */
+  loop = g_main_loop_new (NULL, FALSE);
+
+  /* prepare the popup menu */
+  menu = gtk_menu_new ();
+  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (dialog)));
+  g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
+
+  /* append the "Remove Launcher" item */
+  item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Launcher"));
+  gtk_widget_set_sensitive (item, thunar_vfs_mime_application_is_usercreated (mime_application));
+  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_chooser_dialog_action_remove), dialog);
+  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+  gtk_widget_show (item);
+
+  image = gtk_image_new_from_stock (GTK_STOCK_REMOVE, GTK_ICON_SIZE_MENU);
+  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+  gtk_widget_show (image);
+
+  /* run the internal loop */
+  gtk_grab_add (menu);
+  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, button, time);
+  g_main_loop_run (loop);
+  gtk_grab_remove (menu);
+
+  /* clean up */
+  g_object_unref (G_OBJECT (mime_application));
+  g_object_unref (G_OBJECT (menu));
+  g_main_loop_unref (loop);
+
+  return TRUE;
+}
+
+
+
 static void
 thunar_chooser_dialog_update_accept (ThunarChooserDialog *dialog)
 {
@@ -673,8 +746,82 @@ thunar_chooser_dialog_update_header (ThunarChooserDialog *dialog)
 
 
 static void
-thunar_chooser_dialog_browse (GtkWidget           *button,
-                              ThunarChooserDialog *dialog)
+thunar_chooser_dialog_action_remove (ThunarChooserDialog *dialog)
+{
+  ThunarVfsMimeApplication *mime_application;
+  GtkTreeSelection         *selection;
+  GtkTreeModel             *model;
+  GtkTreeIter               iter;
+  const gchar              *name;
+  GtkWidget                *message;
+  GError                   *error = NULL;
+  gint                      response;
+
+  g_return_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog));
+
+  /* determine the selected row */
+  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (dialog->tree_view));
+  if (!gtk_tree_selection_get_selected (selection, &model, &iter))
+    return;
+
+  /* determine the mime application for the row */
+  gtk_tree_model_get (model, &iter, THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &mime_application, -1);
+  if (G_UNLIKELY (mime_application == NULL))
+    return;
+
+  /* verify that the application is usercreated */
+  if (thunar_vfs_mime_application_is_usercreated (mime_application))
+    {
+      /* determine the name of the mime application */
+      name = thunar_vfs_mime_handler_get_name (THUNAR_VFS_MIME_HANDLER (mime_application));
+
+      /* ask the user whether to remove the application launcher */
+      message = gtk_message_dialog_new (GTK_WINDOW (dialog),
+                                        GTK_DIALOG_DESTROY_WITH_PARENT
+                                        | GTK_DIALOG_MODAL,
+                                        GTK_MESSAGE_QUESTION,
+                                        GTK_BUTTONS_NONE,
+                                        _("Are you sure that you want to remove \"%s\"?"), name);
+      gtk_dialog_add_buttons (GTK_DIALOG (message),
+                              GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                              GTK_STOCK_REMOVE, GTK_RESPONSE_YES,
+                              NULL);
+      gtk_dialog_set_default_response (GTK_DIALOG (message), GTK_RESPONSE_YES);
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), _("This will remove the application launcher that appears in the file "
+                                                                                "context menu, but will not uninstall the application itself.\n\n"
+                                                                                "You can only remove application launchers that were created using "
+                                                                                "the custom command box in the \"Open With\" dialog of the file "
+                                                                                "manager."));
+      response = gtk_dialog_run (GTK_DIALOG (message));
+      gtk_widget_destroy (message);
+
+      /* check if the user confirmed the removal */
+      if (G_LIKELY (response == GTK_RESPONSE_YES))
+        {
+          /* try to delete the application from the model */
+          if (!thunar_chooser_model_remove (THUNAR_CHOOSER_MODEL (model), &iter, &error))
+            {
+              /* display an error to the user */
+              thunar_dialogs_show_error (dialog, error, _("Failed to remove \"%s\""), name);
+              g_error_free (error);
+            }
+          else if (G_LIKELY (dialog->file != NULL))
+            {
+              /* emit "changed" for the file, so the context menu is updated */
+              thunar_file_changed (dialog->file);
+            }
+        }
+    }
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (mime_application));
+}
+
+
+
+static void
+thunar_chooser_dialog_browse_clicked (GtkWidget           *button,
+                                      ThunarChooserDialog *dialog)
 {
   GtkFileFilter *filter;
   GtkWidget     *chooser;
@@ -785,6 +932,40 @@ thunar_chooser_dialog_browse (GtkWidget           *button,
 
 
 
+static gboolean
+thunar_chooser_dialog_button_press_event (GtkWidget           *tree_view,
+                                          GdkEventButton      *event,
+                                          ThunarChooserDialog *dialog)
+{
+  GtkTreeSelection *selection;
+  GtkTreePath      *path;
+
+  g_return_val_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog), FALSE);
+  g_return_val_if_fail (dialog->tree_view == tree_view, FALSE);
+  g_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
+
+  /* check if we should popup the context menu */
+  if (G_LIKELY (event->button == 3 && event->type == GDK_BUTTON_PRESS))
+    {
+      /* determine the path for the clicked row */
+      if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (tree_view), event->x, event->y, &path, NULL, NULL, NULL))
+        {
+          /* be sure to select exactly this row... */
+          selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
+          gtk_tree_selection_unselect_all (selection);
+          gtk_tree_selection_select_path (selection, path);
+          gtk_tree_path_free (path);
+
+          /* ...and popup the context menu */
+          return thunar_chooser_dialog_context_menu (dialog, event->button, event->time);
+        }
+    }
+
+  return FALSE;
+}
+
+
+
 static void
 thunar_chooser_dialog_notify_expanded (GtkExpander         *expander,
                                        GParamSpec          *pspec,
@@ -836,6 +1017,20 @@ thunar_chooser_dialog_notify_loading (ThunarChooserModel  *model,
   /* grab focus to the tree view widget */
   if (G_LIKELY (GTK_WIDGET_REALIZED (dialog->tree_view)))
     gtk_widget_grab_focus (dialog->tree_view);
+}
+
+
+
+static gboolean
+thunar_chooser_dialog_popup_menu (GtkWidget           *tree_view,
+                                  ThunarChooserDialog *dialog)
+{
+  g_return_val_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog), FALSE);
+  g_return_val_if_fail (dialog->tree_view == tree_view, FALSE);
+  g_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
+
+  /* popup the context menu */
+  return thunar_chooser_dialog_context_menu (dialog, 0, gtk_get_current_event_time ());
 }
 
 

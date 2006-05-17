@@ -1,3 +1,22 @@
+2006-05-17	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-mime-application.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Add new method
+	  thunar_vfs_mime_application_is_usercreated(), which tells whether
+	  a given mime application was automatically created by the user
+	  via the "custom command" box in the file manager(s).
+	* thunar-vfs/thunar-vfs-mime-database.{c,h},
+	  thunar-vfs/thunar-vfs.symbols: Add new method
+	  thunar_vfs_mime_database_remove_application() to remove a previously
+	  added mime application (user-created) from the mime database.
+	* thunar/thunar-chooser-dialog.c, thunar/thunar-chooser-model.{c,h}:
+	  Add a context menu to the chooser dialog with a "Remove Launcher"
+	  item, which allows to remove previously added (user-created)
+	  application launchers from the mime database. Bug #1814.
+	* docs/reference/thunar-vfs/: Update the API documentation.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-05-15	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-file.h: Add convenience macro thunar_file_dup_uri().

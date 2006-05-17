@@ -65,6 +65,10 @@ gboolean            thunar_chooser_model_get_loading    (ThunarChooserModel *mod
 
 ThunarVfsMimeInfo  *thunar_chooser_model_get_mime_info  (ThunarChooserModel *model);
 
+gboolean            thunar_chooser_model_remove         (ThunarChooserModel *model,
+                                                         GtkTreeIter        *iter,
+                                                         GError            **error);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_CHOOSER_MODEL_H__ */

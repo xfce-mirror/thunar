@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-07 13:25+0200\n"
+"POT-Creation-Date: 2006-05-17 23:48+0200\n"
 "PO-Revision-Date: 2006-05-08 17:13+0100\n"
 "Last-Translator: Michal Várady <miko.vaji@gmail.com>\n"
 "Language-Team: Čeština <translation-team-cs@lists.sourceforge.net>\n"
@@ -144,7 +144,9 @@ msgstr ""
 "\n"
 "Chcete jej přepsat?"
 
+#. tell the user that we failed to delete the application launcher
 #: ../thunar-vfs/thunar-vfs-link-job.c:201
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1778
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:665
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:718
 #, c-format
@@ -345,7 +347,8 @@ msgstr "Čtení dat ze souboru \"%s\" selhalo"
 msgid "Failed to write data to \"%s\""
 msgstr "Zápis dat do souboru \"%s\" selhal"
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:454
+#. display an error to the user
+#: ../thunar-vfs/thunar-vfs-xfer.c:454 ../thunar/thunar-chooser-dialog.c:805
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Nepodařilo se odstranit soubor \"%s\""
@@ -384,64 +387,64 @@ msgstr "Nepodařilo se získat informace o souboru \"%s\""
 msgid "Failed to copy special file \"%s\""
 msgstr "Nepodařilo se zkopírovat speciální soubor \"%s\""
 
-#: ../thunar/main.c:51
+#: ../thunar/main.c:54
 msgid "Open the bulk rename dialog"
 msgstr "Otevřít dialog pro přejmenování"
 
-#: ../thunar/main.c:53
+#: ../thunar/main.c:56
 msgid "Run in daemon mode"
 msgstr "Spustit jako démona"
 
-#: ../thunar/main.c:55
+#: ../thunar/main.c:58
 msgid "Run in daemon mode (not supported)"
 msgstr "Spustit jako démona (nepodporováno)"
 
-#: ../thunar/main.c:58
+#: ../thunar/main.c:62
 msgid "Quit a running Thunar instance"
 msgstr "Ukončit běžící instanci aplikace Thunar"
 
-#: ../thunar/main.c:60
+#: ../thunar/main.c:64
 msgid "Quit a running Thunar instance (not supported)"
 msgstr "Ukončit běžící instanci aplikace Thunar (nepodporováno)"
 
-#: ../thunar/main.c:62
+#: ../thunar/main.c:66
 msgid "Print version information and exit"
 msgstr "Zobrazit informace o verzi a ukončit"
 
 #. setup application name
-#: ../thunar/main.c:83
+#: ../thunar/main.c:88
 msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:93
+#: ../thunar/main.c:98
 msgid "[FILES...]"
 msgstr "[SOUBORY...]"
 
-#: ../thunar/main.c:100
+#: ../thunar/main.c:105
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Thunar: Nepodařilo se otevřít display: %s\n"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:105
+#: ../thunar/main.c:110
 #, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar: %s\n"
 
-#: ../thunar/main.c:116
+#: ../thunar/main.c:120
 msgid "Copyright (c) 2004-2006"
 msgstr "Copyright (c) 2004-2006"
 
-#: ../thunar/main.c:117
+#: ../thunar/main.c:121
 msgid "The Thunar development team. All rights reserved."
 msgstr "Tým vývojářů aplikace Thunar. Všechna práva vyhrazena."
 
-#: ../thunar/main.c:119
+#: ../thunar/main.c:122
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr "Napsal Benedikt Meurer <benny@xfce.org>."
 
-#: ../thunar/main.c:121
+#: ../thunar/main.c:123
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr "Prosíme, nahlaste chyby na adresu <%s>."
@@ -540,7 +543,7 @@ msgstr "Vytvářím adresáře..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:513
+#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:524
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "Nepodařilo se nastavit výchozí aplikaci pro \"%s\""
@@ -563,16 +566,16 @@ msgstr ""
 msgid "_Other Application..."
 msgstr "Jiná _aplikace..."
 
-#: ../thunar/thunar-chooser-dialog.c:216 ../thunar/thunar-launcher.c:123
+#: ../thunar/thunar-chooser-dialog.c:225 ../thunar/thunar-launcher.c:123
 msgid "Open With"
 msgstr "Otevřít pomocí"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:280
+#: ../thunar/thunar-chooser-dialog.c:291
 msgid "Use a _custom command:"
 msgstr "Použít _vlastní příkaz"
 
-#: ../thunar/thunar-chooser-dialog.c:281
+#: ../thunar/thunar-chooser-dialog.c:292
 msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
@@ -580,81 +583,103 @@ msgstr ""
 "Použije vlastní příkaz pro aplikaci, která není dostupná v seznamu výše."
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:300
+#: ../thunar/thunar-chooser-dialog.c:311
 msgid "_Browse..."
 msgstr "_Procházet..."
 
 #. create the "Use as default for this kind of file" button
-#: ../thunar/thunar-chooser-dialog.c:306
+#: ../thunar/thunar-chooser-dialog.c:317
 msgid "Use as _default for this kind of file"
 msgstr "Použít jako _výchozí pro tento typ souboru"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:488
+#: ../thunar/thunar-chooser-dialog.c:499
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "Nepodařilo se přidat novou aplikaci \"%s\""
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:533
+#: ../thunar/thunar-chooser-dialog.c:544
 #, c-format
 msgid "Failed to execute \"%s\""
 msgstr "Nepodařilo se spustit \"%s\""
 
+#. append the "Remove Launcher" item
+#: ../thunar/thunar-chooser-dialog.c:622
+#, fuzzy
+msgid "_Remove Launcher"
+msgstr "Spouštěč"
+
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:650
+#: ../thunar/thunar-chooser-dialog.c:723
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Otevřít <i>%s</i> a další soubory typu \"%s\" pomocí:"
 
 #. update the "Browse..." tooltip
-#: ../thunar/thunar-chooser-dialog.c:657
+#: ../thunar/thunar-chooser-dialog.c:730
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
 msgstr "Vybrat aplikaci pro soubory typu \"%s\" procházením systému souborů"
 
 #. update the "Use as default for this kind of file" tooltip
-#: ../thunar/thunar-chooser-dialog.c:663
+#: ../thunar/thunar-chooser-dialog.c:736
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr "Změnit výchozí aplikaci pro soubory typu \"%s\" na vybranou aplikaci."
 
-#: ../thunar/thunar-chooser-dialog.c:684
+#: ../thunar/thunar-chooser-dialog.c:784
+#, fuzzy, c-format
+msgid "Are you sure that you want to remove \"%s\"?"
+msgstr ""
+"Jste si jisti, že chcete trvale\n"
+"odstranit \"%s\"?"
+
+#: ../thunar/thunar-chooser-dialog.c:790
+msgid ""
+"This will remove the application launcher that appears in the file context "
+"menu, but will not uninstall the application itself.\n"
+"\n"
+"You can only remove application launchers that were created using the custom "
+"command box in the \"Open With\" dialog of the file manager."
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:831
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "Vyberte aplikaci"
 
-#: ../thunar/thunar-chooser-dialog.c:694
+#: ../thunar/thunar-chooser-dialog.c:841
 #: ../thunar/thunar-renamer-dialog.c:1102
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
 #: ../plugins/thunar-uca/thunar-uca-editor.c:654
 msgid "All Files"
 msgstr "Všechny soubory"
 
-#: ../thunar/thunar-chooser-dialog.c:699
+#: ../thunar/thunar-chooser-dialog.c:846
 #: ../plugins/thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "Spustitelné soubory"
 
-#: ../thunar/thunar-chooser-dialog.c:714
+#: ../thunar/thunar-chooser-dialog.c:861
 #: ../plugins/thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Skripty jazyka perl"
 
-#: ../thunar/thunar-chooser-dialog.c:720
+#: ../thunar/thunar-chooser-dialog.c:867
 #: ../plugins/thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Skripty jazyka python"
 
-#: ../thunar/thunar-chooser-dialog.c:726
+#: ../thunar/thunar-chooser-dialog.c:873
 #: ../plugins/thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Skripty jazyka ruby"
 
-#: ../thunar/thunar-chooser-dialog.c:732
+#: ../thunar/thunar-chooser-dialog.c:879
 #: ../plugins/thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Shellové skripty"

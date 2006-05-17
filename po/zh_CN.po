@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-07 13:25+0200\n"
+"POT-Creation-Date: 2006-05-17 23:48+0200\n"
 "PO-Revision-Date: 2006-03-29 21:20+0700\n"
 "Last-Translator: kangkang <kanger@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <postmaster@inlsd.org>\n"
@@ -144,7 +144,9 @@ msgstr ""
 "\n"
 "您想要覆盖它吗？"
 
+#. tell the user that we failed to delete the application launcher
 #: ../thunar-vfs/thunar-vfs-link-job.c:201
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1778
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:665
 #: ../thunar-vfs/thunar-vfs-transfer-job.c:718
 #, c-format
@@ -342,7 +344,8 @@ msgstr "无法从 \"%s\" 读取资料"
 msgid "Failed to write data to \"%s\""
 msgstr "无法将资料写入 \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-xfer.c:454
+#. display an error to the user
+#: ../thunar-vfs/thunar-vfs-xfer.c:454 ../thunar/thunar-chooser-dialog.c:805
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "无法移除 \"%s\""
@@ -382,65 +385,65 @@ msgstr "无法决定 \"%s\" 的文件信息"
 msgid "Failed to copy special file \"%s\""
 msgstr "无法复制特殊文件 \"%s\""
 
-#: ../thunar/main.c:51
+#: ../thunar/main.c:54
 #, fuzzy
 msgid "Open the bulk rename dialog"
 msgstr "打开所选择的文件"
 
-#: ../thunar/main.c:53
+#: ../thunar/main.c:56
 msgid "Run in daemon mode"
 msgstr "以 daemon 模式执行"
 
-#: ../thunar/main.c:55
+#: ../thunar/main.c:58
 msgid "Run in daemon mode (not supported)"
 msgstr "以 daemon 模式执行 (未支援)"
 
-#: ../thunar/main.c:58
+#: ../thunar/main.c:62
 msgid "Quit a running Thunar instance"
 msgstr "跳出一执行中的 Thunar 事件"
 
-#: ../thunar/main.c:60
+#: ../thunar/main.c:64
 msgid "Quit a running Thunar instance (not supported)"
 msgstr "跳出一执行中的 Thunar 事件 (未支持)"
 
-#: ../thunar/main.c:62
+#: ../thunar/main.c:66
 msgid "Print version information and exit"
 msgstr ""
 
 #. setup application name
-#: ../thunar/main.c:83
+#: ../thunar/main.c:88
 msgid "Thunar"
 msgstr "Thunar"
 
 #. initialize Gtk+
-#: ../thunar/main.c:93
+#: ../thunar/main.c:98
 msgid "[FILES...]"
 msgstr "文件"
 
-#: ../thunar/main.c:100
+#: ../thunar/main.c:105
 #, c-format
 msgid "Thunar: Failed to open display: %s\n"
 msgstr "Thunar: 无法打开显示：%s\n"
 
 #. yep, there's an error, so print it
-#: ../thunar/main.c:105
+#: ../thunar/main.c:110
 #, c-format
 msgid "Thunar: %s\n"
 msgstr "Thunar: %s\n"
 
-#: ../thunar/main.c:116
+#: ../thunar/main.c:120
 msgid "Copyright (c) 2004-2006"
 msgstr ""
 
-#: ../thunar/main.c:117
+#: ../thunar/main.c:121
 msgid "The Thunar development team. All rights reserved."
 msgstr ""
 
-#: ../thunar/main.c:119
+#: ../thunar/main.c:122
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
 msgstr ""
 
-#: ../thunar/main.c:121
+#: ../thunar/main.c:123
 #, c-format
 msgid "Please report bugs to <%s>."
 msgstr ""
@@ -543,7 +546,7 @@ msgstr "建立目录中..."
 
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:513
+#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:524
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "无法为 \"%s\" 设定预设应用程序"
@@ -564,97 +567,117 @@ msgstr "选择的应用程序用来打开本文件和其他 \"%s\" 形式的文�
 msgid "_Other Application..."
 msgstr "其他应用程序(_O)"
 
-#: ../thunar/thunar-chooser-dialog.c:216 ../thunar/thunar-launcher.c:123
+#: ../thunar/thunar-chooser-dialog.c:225 ../thunar/thunar-launcher.c:123
 msgid "Open With"
 msgstr "以...打开"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:280
+#: ../thunar/thunar-chooser-dialog.c:291
 msgid "Use a _custom command:"
 msgstr "使用自订的指令："
 
-#: ../thunar/thunar-chooser-dialog.c:281
+#: ../thunar/thunar-chooser-dialog.c:292
 msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
 msgstr "使用一自订的指令来执行上面应用程序清单中所没有的应用程序。"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:300
+#: ../thunar/thunar-chooser-dialog.c:311
 msgid "_Browse..."
 msgstr "浏览(_B)..."
 
 #. create the "Use as default for this kind of file" button
-#: ../thunar/thunar-chooser-dialog.c:306
+#: ../thunar/thunar-chooser-dialog.c:317
 msgid "Use as _default for this kind of file"
 msgstr "设为此类文件的预设模式(_D)"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:488
+#: ../thunar/thunar-chooser-dialog.c:499
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "无法新增新的应用程序\"%s\""
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:533
+#: ../thunar/thunar-chooser-dialog.c:544
 #, c-format
 msgid "Failed to execute \"%s\""
 msgstr "无法执行\"%s\""
 
+#. append the "Remove Launcher" item
+#: ../thunar/thunar-chooser-dialog.c:622
+#, fuzzy
+msgid "_Remove Launcher"
+msgstr "删除快捷方式"
+
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:650
+#: ../thunar/thunar-chooser-dialog.c:723
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "打开 <i>%s</i> 和其他 \"%s\" 类型的文件，使用： "
 
 #. update the "Browse..." tooltip
-#: ../thunar/thunar-chooser-dialog.c:657
+#: ../thunar/thunar-chooser-dialog.c:730
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
 msgstr "浏览文件系统以选择一应用程序来打开 \"%s\" 类型的文件"
 
 #. update the "Use as default for this kind of file" tooltip
-#: ../thunar/thunar-chooser-dialog.c:663
+#: ../thunar/thunar-chooser-dialog.c:736
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
 "application."
 msgstr "将打开 \"%s\" 类型文件的预设应用程序改设为所选择程序。"
 
-#: ../thunar/thunar-chooser-dialog.c:684
+#: ../thunar/thunar-chooser-dialog.c:784
+#, fuzzy, c-format
+msgid "Are you sure that you want to remove \"%s\"?"
+msgstr "你确定真的要彻底删除文件\"%s\"吗?"
+
+#: ../thunar/thunar-chooser-dialog.c:790
+msgid ""
+"This will remove the application launcher that appears in the file context "
+"menu, but will not uninstall the application itself.\n"
+"\n"
+"You can only remove application launchers that were created using the custom "
+"command box in the \"Open With\" dialog of the file manager."
+msgstr ""
+
+#: ../thunar/thunar-chooser-dialog.c:831
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "选择一个应用程序"
 
-#: ../thunar/thunar-chooser-dialog.c:694
+#: ../thunar/thunar-chooser-dialog.c:841
 #: ../thunar/thunar-renamer-dialog.c:1102
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
 #: ../plugins/thunar-uca/thunar-uca-editor.c:654
 msgid "All Files"
 msgstr "所有文件"
 
-#: ../thunar/thunar-chooser-dialog.c:699
+#: ../thunar/thunar-chooser-dialog.c:846
 #: ../plugins/thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "可执行文件"
 
-#: ../thunar/thunar-chooser-dialog.c:714
+#: ../thunar/thunar-chooser-dialog.c:861
 #: ../plugins/thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Perl 脚本"
 
-#: ../thunar/thunar-chooser-dialog.c:720
+#: ../thunar/thunar-chooser-dialog.c:867
 #: ../plugins/thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Python 脚本"
 
-#: ../thunar/thunar-chooser-dialog.c:726
+#: ../thunar/thunar-chooser-dialog.c:873
 #: ../plugins/thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Ruby 脚本"
 
-#: ../thunar/thunar-chooser-dialog.c:732
+#: ../thunar/thunar-chooser-dialog.c:879
 #: ../plugins/thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "Shell 脚本"
