@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-05-17 23:48+0200\n"
-"PO-Revision-Date: 2006-05-07 19:50+0200\n"
+"PO-Revision-Date: 2006-05-20 21:10+0200\n"
 "Last-Translator: Szymon Kałasz <szymon_maestro@gazeta.pl>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -607,9 +607,8 @@ msgstr "Nie udało się uruchomić \"%s\""
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:622
-#, fuzzy
 msgid "_Remove Launcher"
-msgstr "Wyzwalacz"
+msgstr "_Usuń wyzwalacz"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:723
@@ -634,9 +633,9 @@ msgid ""
 msgstr "Zmień domyślną aplikację dla plików typu \"%s\" na wybraną."
 
 #: ../thunar/thunar-chooser-dialog.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
-msgstr "Czy na pewno chcesz trwale usunąć \"%s\"?"
+msgstr "Czy na pewno chcesz usunąć \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:790
 msgid ""
@@ -646,6 +645,11 @@ msgid ""
 "You can only remove application launchers that were created using the custom "
 "command box in the \"Open With\" dialog of the file manager."
 msgstr ""
+"Zostanie usunięty aktywator aplikacji z menu kontekstowego pliku, ale nie "
+"zostanie odinstalowana sama aplikacja."
+"\n"
+"Możesz usuwać tylko aktywatory utworzone opcją \"Użyj polecenia "
+"użytkownika\" w oknie dialogowym \"Otwórz za pomocą innej aplikacji\"."
 
 #: ../thunar/thunar-chooser-dialog.c:831
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
@@ -1083,9 +1087,9 @@ msgstr "nieprawidłowe łącze"
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
-msgstr[0] "%d element, dostępna przestrzeń: %s"
-msgstr[1] "%d elementy, dostępna przestrzeń: %s"
-msgstr[2] "%d elementów, dostępna przestrzeń: %s"
+msgstr[0] "%d element (%s), dostępna przestrzeń: %s"
+msgstr[1] "%d elementy (%s), dostępna przestrzeń: %s"
+msgstr[2] "%d elementów (%s), dostępna przestrzeń: %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2206
@@ -2102,9 +2106,9 @@ msgstr "Zmień nazwę \"%s\""
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:2736
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create a link for the URL \"%s\""
-msgstr "Nie udało się utworzyć kolejki FIFO \"%s\""
+msgstr "Nie udało się utworzyć łącza do URLa \"%s\""
 
 #: ../thunar/thunar-standard-view.c:2999
 #, c-format
