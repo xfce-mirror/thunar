@@ -267,7 +267,7 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
     {
       /* try to use pmount-hal then */
       quoted = g_shell_quote (volume_hal->udi);
-      result = thunar_vfs_exec_sync ("%s %s", error, program, quoted);
+      thunar_vfs_exec_sync ("%s %s", NULL, program, quoted);
       g_free (program);
       g_free (quoted);
 
