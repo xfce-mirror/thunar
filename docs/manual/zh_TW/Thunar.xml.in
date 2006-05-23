@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY date "April 2006">
+<!ENTITY version "@PACKAGE_VERSION@">
+<!ENTITY application "@PACKAGE_NAME@">
+]>
+<article id="index" lang="zh_TW">
+
+  <!-- Header -->
+  <articleinfo>
+    <title>Thunar 檔案總管</title>
+
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2004</year>
+      <year>2005</year>
+      <year>2006</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright>
+
+    <legalnotice id="legalnotice">
+      <para>您可以複製、散布、「及/或」更改文件內容，其成立條件為遵照GNU 自由文件授權(GFDL) 版本 1.1 或之後自由軟體基金會的更新授權版本。所附授權條款內文章節不可更動，不應附有封面文字，也不應附有封底文字。完整的授權條款內容可自這裡 <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>取得。</para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>系統發展</orgdiv>
+          <jobtitle>軟體發展人員</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+    <releaseinfo>本手冊說明@PACKAGE_VERSION@ 版本的 @PACKAGE_NAME@ 操作方式</releaseinfo>
+  </articleinfo>
+
+  <sect1 id="intro">
+    <title>介紹 @PACKAGE_NAME@ </title>
+
+    <para>Thunar 是 Xfce 桌面環境嶄新的檔案總管。 Thunar 以快速且易於使用為設計的原則。它的使用介面清爽又直覺，也沒有什麼奇奇怪怪的東西或預設一些無用的額外功能。Thunar 在啟動程式及載入目錄時的反應時間都奇快無比。</para>
+
+    <para>Thunar 檔案總管能夠讓您很直覺地管理自己的檔案與程式。您可以使用檔案總管從事以下的操作:</para>
+
+    <itemizedlist>
+      <listitem>建立目錄與文件</listitem>
+      <listitem>檢視您的檔案和資料夾。</listitem>
+      <listitem>管理您的檔案與資料夾。</listitem>
+      <listitem>可以執行並管理自定的動作。</listitem>
+      <listitem>存取隨身型的儲存媒體。</listitem>
+    </itemizedlist>
+  </sect1>
+
+
+  <sect1 id="advanced-topics">
+    <title>進階內容</title>
+
+    <sect2 id="the-unix-file-system">
+      <title> UNIX 檔案系統</title>
+
+      <para>既然 Thunar 檔案總管已經幫您把使用檔案的瑣碎細節給處理好了，一般使用者其實可以不必管這些細節的東西。不過稍微了解一下整體性的觀點，有時候對您也會十分有用的哦。本章節將會初淺地介紹 UNIX 檔案系統的基本概念，這些概念在每一種 UNIX 上都可以套用，當然也包括了 Linux。</para>
+
+      <sect3 id="folders-and-paths">
+        <title>檔案與路徑</title>
+
+        <para>在 UNIX 檔案系統中，所有的資料夾都可以像摸藤找地瓜一樣 ；匯歸到同一個最初始的源頭目錄。這一個目錄，我們叫它 <emphasis>根目錄</emphasis> (我們比較常用 <emphasis>目錄</emphasis>這個字眼而不是用 <emphasis>資料夾</emphasis>)而在 Thunar 裡則是顯示為<guilabel>檔案系統</guilabel> 。這表示在開枝散葉的樹狀結構中，您可以很有條理地在各個資料夾裡層層往上推，最後都是殊途同歸；然後再來清楚地往下尋找您想要找到的資料夾，一切都有條不紊。</para>
+
+        <para>在系統裡任何檔案或資料夾的位置都能用所謂的 <emphasis>路徑</emphasis> 來描述。 路徑會以根目錄為起始，條列出您指定的檔案或資料夾的精確位置。舉個例子來看： <filename role="directory">/home/luke</filename> 就是表示從根目錄算起，<filename role="directory">luke</filename> 是位於 <filename role="directory">home</filename> 底下的子目錄，而<filename>/home/luke/myfile.txt</filename> 表示檔案 <filename>myfile.txt</filename> 就放在子目錄裡。最前面的反斜線 <filename role="directory">/</filename> 就是代表根目錄的意思。</para>
+
+        <para>每位使用者都擁有自己的目錄以置放自己的檔案和相關的設定。這個目錄稱為<emphasis>家目錄</emphasis> ，您在 Thunar 工具列上會看到一個標示著您登入帳號的特別小圖示。這個目錄有點類似您在Windows 底下常看到的 <guilabel>我的文件夾</guilabel>。 系統使用者的<emphasis>家目錄</emphasis> 通常是被放在 <filename role="directory">/home</filename> 這個目錄底下。比如說 <filename role="directory">/home/luke</filename> 這個目錄就是登入帳號為 <filename role="directory">luke</filename>這個用戶的家目錄。同樣地 <filename role="directory">/home/jane</filename>也就是登入帳號為<filename role="directory">jane</filename>這個使用者的家目錄。</para>
+      </sect3>
+
+      <sect3 id="file-types">
+        <title>檔案類型</title>
+
+        <para>也許您有聽說在 UNIX 底下任何東西都是「檔案」， 時至今日 UNIX 的本色依然如此。事實上就連硬體設備也被當作特別的「檔案」。或許乍聽之下會有點奇怪，這卻正是 Unix 具有韌性和延展性的強項之一。如此安排讓 Unix 數十年來不管面對怎樣的新科技，核心架構依然單純合理。不像其他的作業系統需要不斷花時間更改它們的架構內容才有辦法跟上時代。</para>
+
+        <para>在 UNIX 系統中，有四種最重要的檔案類型您不可不知。</para>
+
+        <sect4 id="file-types-ordinary-files">
+          <title>實質檔案</title>
+
+          <para>實質檔案的定義包含文字、程式、或其他具體的資料。像是圖片、音樂檔、office 文件，以及影片檔這些親切的東西。一般我們講的 <emphasis>檔案</emphasis> 其實就是在說這些實質檔案。</para>
+        </sect4>
+
+        <sect4 id="file-types-folder-files">
+          <title>目錄檔</title>
+
+          <para>資料夾在 UNIX 裡也是一種檔案。我們要把它視作一種特殊檔案，主要的功用在於儲存資料夾中每個實質檔案依照其檔名所產生的對應關係並且處理和安置這些關聯性。</para>
+        </sect4>
+
+        <sect4 id="file-types-symbolic-link-files">
+          <title>符號連結檔</title>
+
+          <para>符號連結（常被稱為 <emphasis>symlink</emphasis>）是一種特殊的檔案，內含檔案系統上另一個檔案的路徑。符號連結檔案除了指向其他檔案以外，本身並未包含太多有用的資訊。</para>
+        </sect4>
+
+        <sect4 id="file-types-device-files">
+          <title>裝置檔</title>
+
+          <para>前面提到既然硬體是「檔案」，它們當然也位於檔案系統之中。這些特殊的「硬體檔」通常都擺在 <filename role="directory">/dev</filename> 這個資料夾。比方說「硬體檔」 <filename>/dev/hda</filename> 就代表您的Linux 裡頭第一顆(a) IDE 硬碟(hd)。</para>
+        </sect4>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="faq">
+    <title>常見問題集</title>
+
+    <para>以下章節的內容，是我們在各方搜集整理當您在使用 Thunar 時，可能會遇上的常見狀況及其簡易解答。如果您知道一些有用的問題卻沒列在裡頭，請經由 <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">file a request</ulink>告訴我們。</para>
+
+    <sect3 id="faq-executables">
+      <title>在 Thunar 裡頭看到的可執行檔為什麼不能執行？</title>
+
+      <para>為了系統安全 Thunar 只能夠執行 <literal>application/x-desktop</literal>、 <literal>application/x-executable</literal> 還有<literal>application/x-shellscript</literal>這幾種執行檔。放在桌面上的程式圖示除非在<literal>Application</literal>這欄有設定並且有標明 <literal>Exec</literal> 這一行否則無法執行，此外像 <literal>Link</literal>(連結) 這種桌面圖示沒有輸入正確的 <literal>URL</literal> (網址)的話也會執行失敗。其他類型的執行檔除非目前的使用者有為它們加上可執行的內容屬性，不然也是不會動的。</para>
+
+      <para>另外也要注意屬於 <literal>application/x-executable</literal> 以及 <literal>application/x-shellscript</literal>的執行檔。這些類型的程式碼不需要真的符合內建對應的檔案類型就能執行。只要執行檔的父程序符合上述兩種執行檔之一，或者其 MIME-類型是上述執行檔類型的別名的話，就能夠被執行。</para>
+    </sect3>
+
+    <sect3 id="faq-metadata">
+      <title>Thunar 都把設定檔案關聯類型的資料放在哪裡呢？</title>
+
+      <para>Thunar 能夠處理許多類型的檔案與資料夾，全靠我們叫作元始資料的法寶。這種聯繫所有檔案類型的元始資料是以 tdb 資料庫型式儲存的，而這個資料庫檔又稱為元始檔案(metafile)。儲存的檔案放在 <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> 這裡，您可以用<command>tdbtool</command>來檢查一下，在 Thunar 公布的原始碼中附有這個工具。(放在原始碼解開後的 <filename role="directory">tdb/</filename> 子目錄裡)。</para>
+    </sect3>
+
+    <sect3 id="faq-thunarrc">
+      <title>請問 Thunar 的功能設定放在哪裡呢？</title>
+
+      <para>Thunar 將可供使用者調整的設定 (以及隱含的設定) 放在一個類似 <filename>.ini</filename> 的檔案中，我們把它放在 <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename> 這個檔案裡頭，您可以使用文字編輯器來直接加以修改。請參考 <filename>docs/README.thunarrc</filename> 說明檔案以便認識這些設定選項。</para>
+    </sect3>
+
+    <sect3 id="faq-mouse-gestures">
+      <title>要怎麼在 Thunar 裡頭使用滑鼠手勢？</title>
+
+      <para>Thunar 現在使用圖示檢視模式時可以玩到一種叫作 <emphasis>滑鼠手勢</emphasis> 的新功能。要使用 <emphasis>滑鼠手勢</emphasis> 您需要按住滑鼠中鍵 (也就是滾輪的地方) 不放，然後在檔案總管空白的地方就會出現之前沒看過的箭頭游標 (請注意不要點到任何檔案圖示或文字)。 現在您可以上下左右動動看這個游標，我們將為您說明指到這四個方向有什麼作用。</para>
+
+      <simplelist>
+        <member><guilabel>向左</guilabel> - 回去前一個目錄</member>
+        <member><guilabel>往上</guilabel> - 跳到往上一層的目錄</member>
+        <member><guilabel>向右</guilabel> - 跳到往後一個目錄</member>
+        <member><guilabel>往下</guilabel> - 重新整理現在這個目錄</member>
+      </simplelist>
+    </sect3>
+
+    <sect3 id="faq-assign-keyboard-shortcuts">
+      <title>我要怎樣才能改成我想要的快速鍵？</title>
+
+      <para>如果您想要更改快速鍵，Thunar 支援標準的 GTK+  行為方便您改動快速鍵：只要將滑鼠游標指到程式選單中您可以反白的操作選項那裡，然後馬上按下您想要的快速鍵組合就行了。</para>
+
+      <para>要消除您不想要的快速鍵，同樣也是滑鼠擺到程式選單可以反白的操作選項那裡然後按下消去鍵( <keycap>Backspace</keycap> )即可。</para>
+
+      <para>如果設定的快速鍵沒有更動，那麼您需要自行啟用 GTK+ 的這個好用之處。有3種方法可以幫您做到:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>如果您有執行 Xfce 4.3 或更新的版本，請在<guilabel>使用者介面自定</guilabel> 設定中心的地方勾選 <guilabel>自定程式選單功能</guilabel> 選項即可。</para>
+        </listitem>
+
+        <listitem>
+          <para>如果您在執行 GNOME 桌面，則在控制台中 <guilabel>選單及工具列</guilabel> 的地方勾選 <guilabel>自定程式選單功能</guilabel> 。</para>
+        </listitem>
+
+        <listitem>
+          <para>最後手段就是在您的 <filename>~/.gtkrc-2.0</filename> 設定檔(沒有的話請自行建立)裡加上這一段 :<screen>gtk-can-change-accels=1</screen></para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3 id="faq-store-keyboard-shortcuts">
+      <title>那麼 Thunar 是把快速鍵的設定放在哪裡呢？</title>
+
+      <para>自定的快速鍵會存成標準的 GTK+ accel 對映格式然後擺在 <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename>這個檔案裡。您若看到每行最前面有 <literal>;</literal> 就是註解停用的。請參考 GTK+ 文件以便深入了解這種檔案格式的細節。</para>
+
+      <para>如果您是軟體包裝人員或是系統管理員，那麼也許會想要提供一組全域適用的預設快速鍵，而不是採用Thunar 原始碼中提供的設定。您可以建立像 <filename>Thunar/accels.scm</filename> 的檔案，放在 <envar>$XDG_CONFIG_DIRS</envar> 的資料夾裡。舉例來說，如果 <filename role="directory">/etc/xdg</filename> 屬於 <envar>$XDG_CONFIG_DIRS</envar> (大多數 Linux 套件的預設路徑)的話，您就可以把全域使用的快速鍵放在<filename>/etc/xdg/Thunar/accels.scm</filename>這邊。Thunar 在初次啟動時就會載入這裡的快速鍵設定。</para>
+    </sect3>
+  </sect1>
+
+
+  <sect1 id="support">
+    <title>程式支援</title>
+
+    <para>對這份手冊以及介紹的程式若發現錯誤或有其他建議，請用錯誤回報系統<ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink>告訴我們。一份描述妥當的錯誤回報，能夠加快我們改善的進度。而妥當的回報主要有兩項重點:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">出錯屢試不爽</emphasis> 如果開發人員在他那邊沒有辦法重現出錯的步驟，也就無從得知如何修理了。請儘量提供您如何操作時的細節。</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">軟硬體環境</emphasis> The quicker the developer can isolate the problem to a specific area, the more likely he will expediently fix it.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>如果您想要下一版能加入一些新功能，請清楚地跟我們講為何加入的功能可以讓程式更好用。假若您提出的新功能真地讓我們覺得夠好夠讚非加不可，下一版的程式可能就會有哦。懂得修改程式的您如果能夠提供實作新功能的 patch ，那麼下一版會出現的機會就更大了。不過請先閱讀網站上的 <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> 說明- 尤其是 <emphasis>Coding Style</emphasis> 這一節- 這樣合作起來才會更愉快哦。</para>
+
+    <para>最後，如果您在使用或安裝本軟體時有什麼問題，請洽詢 <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev mailing list</ulink> ，或是使用 IRC 聊天軟體連上 <emphasis role="bold">irc.freenode.net</emphasis>，加入我們的頻道 <emphasis role="bold">#thunar</emphasis> ，裡面會有熱心的人幫您。</para>
+  </sect1>
+
+  <sect1 id="copyright">
+    <title>關於 @PACKAGE_NAME@</title>
+
+    <para>@PACKAGE_NAME@ 是由 Benedikt Meurer (<email>benny@xfce.org</email>)所撰寫。請造訪 <ulink url="http://thunar.xfce.org/" type="http">Thunar 網站</ulink>以獲得更多資訊。</para>
+
+    <para>本文件撰寫人為 Benedikt Meurer (<email>benny@xfce.org</email>)。最新版本的文件內容可自這裡 <ulink type="http" url="http://thunar.xfce.org/">Thunar website</ulink>取得。</para>
+
+    <para>本軟體依自由軟體基金會所訂立的 GNU General Public License 授權條款散布 ;乃依版本 授權2 版為基準， (如您有意願)亦准許展延至其後版本。</para>
+
+    <para>本軟體應有隨附一份 GNU General Public License 授權條款; 如果您沒有找到，請來信告知 Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
+  </sect1>
+
+</article>
+<!--
+	vim:set ts=2 sw=2 et ai:
+-->
