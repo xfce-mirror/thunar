@@ -270,6 +270,13 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
       result = thunar_vfs_exec_sync ("%s %s", error, program, quoted);
       g_free (program);
       g_free (quoted);
+
+      /* pmount-hal returns error if already mounted, so
+       * we set result to TRUE, which means it will always
+       * be looked up in /proc/mounts below.
+       * See http://bugzilla.xfce.org/show_bug.cgi?id=1833.
+       */
+      result = TRUE;
     }
   else
     {
