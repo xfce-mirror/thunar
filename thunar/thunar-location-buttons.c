@@ -27,7 +27,6 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-create-dialog.h>
-#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-location-button.h>
 #include <thunar/thunar-location-buttons.h>
@@ -91,9 +90,6 @@ static GtkWidget     *thunar_location_buttons_make_button               (ThunarL
                                                                          ThunarFile                 *file);
 static void           thunar_location_buttons_remove_1                  (GtkContainer               *container,
                                                                          GtkWidget                  *widget);
-static void           thunar_location_buttons_file_destroyed            (ThunarFileMonitor          *file_monitor,
-                                                                         ThunarFile                 *file,
-                                                                         ThunarLocationButtons      *buttons);
 static gboolean       thunar_location_buttons_scroll_timeout            (gpointer                    user_data);
 static void           thunar_location_buttons_scroll_timeout_destroy    (gpointer                    user_data);
 static void           thunar_location_buttons_stop_scrolling            (ThunarLocationButtons      *buttons);
@@ -143,8 +139,6 @@ struct _ThunarLocationButtons
 
   GtkWidget         *left_slider;
   GtkWidget         *right_slider;
-
-  ThunarFileMonitor *file_monitor;
 
   ThunarFile        *current_directory;
 
@@ -308,10 +302,6 @@ thunar_location_buttons_init (ThunarLocationButtons *buttons)
   buttons->action_group = gtk_action_group_new ("ThunarLocationButtons");
   gtk_action_group_add_actions (buttons->action_group, action_entries, G_N_ELEMENTS (action_entries), buttons);
 
-  /* connect to the file monitor */
-  buttons->file_monitor = thunar_file_monitor_get_default ();
-  g_signal_connect (G_OBJECT (buttons->file_monitor), "file-destroyed", G_CALLBACK (thunar_location_buttons_file_destroyed), buttons);
-
   GTK_WIDGET_SET_FLAGS (buttons, GTK_NO_WINDOW);
   gtk_widget_set_redraw_on_allocate (GTK_WIDGET (buttons), FALSE);
 
@@ -368,10 +358,6 @@ thunar_location_buttons_finalize (GObject *object)
 
   /* release from the current_directory */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (buttons), NULL);
-
-  /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (buttons->file_monitor), thunar_location_buttons_file_destroyed, buttons);
-  g_object_unref (G_OBJECT (buttons->file_monitor));
 
   /* release our action group */
   g_object_unref (G_OBJECT (buttons->action_group));
@@ -921,48 +907,6 @@ thunar_location_buttons_remove_1 (GtkContainer *container,
   gtk_widget_unparent (widget);
   if (G_LIKELY (need_resize))
     gtk_widget_queue_resize (GTK_WIDGET (container));
-}
-
-
-
-static void
-thunar_location_buttons_file_destroyed (ThunarFileMonitor     *file_monitor,
-                                        ThunarFile            *file,
-                                        ThunarLocationButtons *buttons)
-{
-  GList *children;
-  GList *lp;
-
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
-  g_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
-
-  /* check all buttons whether one of them refers to the destroyed file,
-   * remember the children list is in reversed order. That is, the last
-   * button displayed in the path bar, is the first entry in the child
-   * list.
-   */
-  children = gtk_container_get_children (GTK_CONTAINER (buttons));
-  for (lp = children; lp != NULL; lp = lp->next)
-    {
-      /* stop as soon as we reach the current-directory button */
-      if (thunar_location_button_get_active (THUNAR_LOCATION_BUTTON (lp->data)))
-        {
-          lp = NULL;
-          break;
-        }
-
-      /* check if the button is for the destroyed file */
-      if (thunar_location_button_get_file (THUNAR_LOCATION_BUTTON (lp->data)) == file)
-        break;
-    }
-
-  /* remove all buttons after (and including) the destroyed file */
-  for (; lp != NULL; lp = lp->prev)
-    gtk_widget_destroy (GTK_WIDGET (lp->data));
-
-  /* release the list of children */
-  g_list_free (children);
 }
 
 

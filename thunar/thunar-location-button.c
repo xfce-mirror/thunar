@@ -73,6 +73,8 @@ static GdkDragAction  thunar_location_button_get_dest_actions       (ThunarLocat
                                                                      guint                       time);
 static void           thunar_location_button_file_changed           (ThunarLocationButton       *location_button,
                                                                      ThunarFile                 *file);
+static void           thunar_location_button_file_destroy           (ThunarLocationButton       *location_button,
+                                                                     ThunarFile                 *file);
 static gboolean       thunar_location_button_button_press_event     (GtkWidget                  *button,
                                                                      GdkEventButton             *event,
                                                                      ThunarLocationButton       *location_button);
@@ -459,6 +461,20 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
       gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
       gtk_widget_show (location_button->label);
     }
+}
+
+
+
+static void
+thunar_location_button_file_destroy (ThunarLocationButton *location_button,
+                                     ThunarFile           *file)
+{
+  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+  g_return_if_fail (location_button->file == file);
+  g_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* the file is gone, no need to keep the button around anymore */
+  gtk_widget_destroy (GTK_WIDGET (location_button));
 }
 
 
@@ -868,6 +884,7 @@ thunar_location_button_set_file (ThunarLocationButton *location_button,
       thunar_file_unwatch (location_button->file);
 
       /* disconnect signals and release reference */
+      g_signal_handlers_disconnect_by_func (G_OBJECT (location_button->file), thunar_location_button_file_destroy, location_button);
       g_signal_handlers_disconnect_by_func (G_OBJECT (location_button->file), thunar_location_button_file_changed, location_button);
       g_object_unref (G_OBJECT (location_button->file));
     }
@@ -886,6 +903,7 @@ thunar_location_button_set_file (ThunarLocationButton *location_button,
 
       /* stay informed about changes to the file */
       g_signal_connect_swapped (G_OBJECT (file), "changed", G_CALLBACK (thunar_location_button_file_changed), location_button);
+      g_signal_connect_swapped (G_OBJECT (file), "destroy", G_CALLBACK (thunar_location_button_file_destroy), location_button);
 
       /* update our internal state for the new file (if realized) */
       if (GTK_WIDGET_REALIZED (location_button))
