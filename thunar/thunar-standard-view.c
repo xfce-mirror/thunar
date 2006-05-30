@@ -2544,23 +2544,34 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
               prop_text = g_realloc (prop_text, prop_len + 1);
               prop_text[prop_len] = '\0';
 
-              /* allocate the relative path for the target */
-              path = thunar_vfs_path_relative (thunar_file_get_path (file), (const gchar *) prop_text);
+              /* verify that the file name provided by the source is valid */
+              if (G_LIKELY (*prop_text != '\0' && strchr (prop_text, G_DIR_SEPARATOR) == NULL))
+                {
+                  /* allocate the relative path for the target */
+                  path = thunar_vfs_path_relative (thunar_file_get_path (file), (const gchar *) prop_text);
 
-              /* determine the new URI */
-              uri = thunar_vfs_path_dup_uri (path);
+                  /* determine the new URI */
+                  uri = thunar_vfs_path_dup_uri (path);
 
-              /* setup the property */
-              gdk_property_change (GDK_DRAWABLE (context->source_window),
-                                   gdk_atom_intern ("XdndDirectSave0", FALSE),
-                                   gdk_atom_intern ("text/plain", FALSE), 8,
-                                   GDK_PROP_MODE_REPLACE, (const guchar *) uri,
-                                   strlen (uri));
+                  /* setup the property */
+                  gdk_property_change (GDK_DRAWABLE (context->source_window),
+                                       gdk_atom_intern ("XdndDirectSave0", FALSE),
+                                       gdk_atom_intern ("text/plain", FALSE), 8,
+                                       GDK_PROP_MODE_REPLACE, (const guchar *) uri,
+                                       strlen (uri));
+
+                  /* cleanup */
+                  thunar_vfs_path_unref (path);
+                  g_free (uri);
+                }
+              else
+                {
+                  /* tell the user that the file name provided by the X Direct Save source is invalid */
+                  thunar_dialogs_show_error (GTK_WIDGET (standard_view), NULL, _("Invalid filename provided by XDS drag site"));
+                }
 
               /* cleanup */
-              thunar_vfs_path_unref (path);
               g_free (prop_text);
-              g_free (uri);
             }
 
           /* release the file reference */
