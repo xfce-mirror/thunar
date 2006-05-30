@@ -2545,7 +2545,7 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
               prop_text[prop_len] = '\0';
 
               /* verify that the file name provided by the source is valid */
-              if (G_LIKELY (*prop_text != '\0' && strchr (prop_text, G_DIR_SEPARATOR) == NULL))
+              if (G_LIKELY (*prop_text != '\0' && strchr ((const gchar *) prop_text, G_DIR_SEPARATOR) == NULL))
                 {
                   /* allocate the relative path for the target */
                   path = thunar_vfs_path_relative (thunar_file_get_path (file), (const gchar *) prop_text);
