@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-21 17:53+0300\n"
+"POT-Creation-Date: 2006-05-31 21:02+0900\n"
 "PO-Revision-Date: 2006-05-21 17:51+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -251,12 +251,12 @@ msgid "Unknown user \"%s\""
 msgstr "Άγνωστος χρήστης \"%s\""
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:324
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Ο προσδιορισμός του σημείου σύνδεσης για το `%s' απέτυχε"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:812
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:819
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "Απέτυχε η σύνδεση με το δαίμονα HAL: %s"
@@ -948,7 +948,7 @@ msgstr "Εικονίδια"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
-#: ../thunar/thunar-location-buttons.c:1273
+#: ../thunar/thunar-location-buttons.c:1217
 #: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:1014
 msgid "_Open"
 msgstr "_Άνοιγμα"
@@ -958,7 +958,7 @@ msgid "Open the selected files"
 msgstr "Άνοιγμα των επιλεγμένων αρχείων"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1286
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1230
 #: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:1026
 msgid "Open in New Window"
 msgstr "Άνοιγμα σε νέο παράθυρο"
@@ -1135,40 +1135,40 @@ msgid_plural "%d items selected"
 msgstr[0] "%d επιλεγμένο αντικείμενο"
 msgstr[1] "%d επιλεγμένα αντικείμενα"
 
-#: ../thunar/thunar-location-buttons.c:265
+#: ../thunar/thunar-location-buttons.c:259
 msgid "Spacing"
 msgstr "Διάστιχο"
 
-#: ../thunar/thunar-location-buttons.c:266
+#: ../thunar/thunar-location-buttons.c:260
 msgid "The amount of space between the path buttons"
 msgstr "Το μέγεθος του διαστήματος μεταξύ κουμπιών διαδρομής"
 
 #. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1272
+#: ../thunar/thunar-location-buttons.c:1216
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "Άνοιγμα του \"%s\" σε αυτό το παράθυρο"
 
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1285
+#: ../thunar/thunar-location-buttons.c:1229
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "Άνοιγμα του \"%s\" σε νέο το παράθυρο"
 
 #. add the "Create Folder" action
-#: ../thunar/thunar-location-buttons.c:1300
+#: ../thunar/thunar-location-buttons.c:1244
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "Δημιουργία νέου φακέλου στο \"%s\""
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1301
+#: ../thunar/thunar-location-buttons.c:1245
 #: ../thunar/thunar-standard-view.c:312 ../thunar/thunar-tree-view.c:1073
 msgid "Create _Folder..."
 msgstr "Δημιουργία _φακέλου..."
 
 #. add the "Paste Into Folder" action
-#: ../thunar/thunar-location-buttons.c:1316
+#: ../thunar/thunar-location-buttons.c:1260
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
@@ -1176,28 +1176,28 @@ msgstr ""
 "Μετακίνηση ή αντιγραφή αρχείων που προηγουμένως επιλέχθηκαν με εντολή "
 "Αποκοπή αρχείων ή Αντιγραφή αρχείων στο \"%s\""
 
-#: ../thunar/thunar-location-buttons.c:1317
+#: ../thunar/thunar-location-buttons.c:1261
 #: ../thunar/thunar-standard-view.c:318
 msgid "Paste Into Folder"
 msgstr "Επικόλληση στο φάκελο"
 
 #. add the "Properties" action
-#: ../thunar/thunar-location-buttons.c:1332
+#: ../thunar/thunar-location-buttons.c:1276
 #, c-format
 msgid "View the properties of the folder \"%s\""
 msgstr "Προβολή των ιδιοτήτων του φακέλου \"%s\""
 
-#: ../thunar/thunar-location-buttons.c:1333
+#: ../thunar/thunar-location-buttons.c:1277
 msgid "_Properties"
 msgstr "_Ιδιότητες"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1402
+#: ../thunar/thunar-location-buttons.c:1346
 #: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
 msgid "New Folder"
 msgstr "Νέος φάκελος"
 
-#: ../thunar/thunar-location-buttons.c:1402
+#: ../thunar/thunar-location-buttons.c:1346
 #: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
 msgid "Create New Folder"
 msgstr "Δημιουργία νέου φακέλου"
@@ -2028,7 +2028,7 @@ msgstr "Επιλογή όλων των αρχείων που ταιριάζου�
 msgid "Du_plicate"
 msgstr "Δημιουργία αν_τιγράφου"
 
-#: ../thunar/thunar-standard-view.c:322 ../thunar/thunar-standard-view.c:3384
+#: ../thunar/thunar-standard-view.c:322 ../thunar/thunar-standard-view.c:3395
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Δημιουργία _δεσμού"
@@ -2112,18 +2112,23 @@ msgstr "_Μοτίβο:"
 msgid "Rename \"%s\""
 msgstr "Μετονομασία \"%s\""
 
+#. tell the user that the file name provided by the X Direct Save source is invalid
+#: ../thunar/thunar-standard-view.c:2570
+msgid "Invalid filename provided by XDS drag site"
+msgstr ""
+
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2736
+#: ../thunar/thunar-standard-view.c:2747
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Δεν ήταν δυνατή η δημιουργία δεσμού για τη διεύθυνση \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2999
+#: ../thunar/thunar-standard-view.c:3010
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Το άνοιγμα του καταλόγου \"%s\" απέτυχε"
 
-#: ../thunar/thunar-standard-view.c:3344
+#: ../thunar/thunar-standard-view.c:3355
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -2133,7 +2138,7 @@ msgstr[1] ""
 "Προετοιμασία των επιλεγμένων αρχείων για μετακίνηση με μια εντολή "
 "Επικόλλησης αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3352
+#: ../thunar/thunar-standard-view.c:3363
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -2143,19 +2148,19 @@ msgstr[1] ""
 "Προετοιμασία των επιλεγμένων αρχείων για αντιγραφή με μια  εντολή "
 "Επικόλλησης αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3363
+#: ../thunar/thunar-standard-view.c:3374
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "Οριστική διαγραφή του επιλεγμένου αρχείου"
 msgstr[1] "Οριστική διαγραφή των επιλεγμένων αρχείων"
 
-#: ../thunar/thunar-standard-view.c:3377
+#: ../thunar/thunar-standard-view.c:3388
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Δημιουργία αντιγράφου για το επιλεγμένο αρχείο"
 msgstr[1] "Δημιουργία αντιγράφου για κάθε επιλεγμένο αρχείο"
 
-#: ../thunar/thunar-standard-view.c:3386
+#: ../thunar/thunar-standard-view.c:3397
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Δημιουργεί ένα συμβολικό δεσμό για το επιλεγμένο αρχείο"

@@ -8,14 +8,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-05-17 23:48+0200\n"
+"POT-Creation-Date: 2006-05-31 21:02+0900\n"
 "PO-Revision-Date: 2006-05-21 17:38+0800\n"
 "Last-Translator: Cosmo Chene <cosmolax@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../thunar-vfs/thunar-vfs-chmod-job.c:168
 #: ../thunar-vfs/thunar-vfs-chown-job.c:166
@@ -247,12 +247,12 @@ msgid "Unknown user \"%s\""
 msgstr "未知的使用者 \"%s\""
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:324
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "無法決定 %s 的掛載點"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:812
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:819
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "無法連結至·HAL·服務:·%s"
@@ -640,11 +640,10 @@ msgid ""
 "You can only remove application launchers that were created using the custom "
 "command box in the \"Open With\" dialog of the file manager."
 msgstr ""
-"將會移除右鍵選單中快速啟動的選項， "
-"不過並不會移除選項所關聯的程式。\n"
+"將會移除右鍵選單中快速啟動的選項， 不過並不會移除選項所關聯的程式。\n"
 "\n"
-"您可以選擇只移除透過在檔案總管中利用 \"以其他程式開啟\" 的選項所建立"
-"的檔案開啟方式。"
+"您可以選擇只移除透過在檔案總管中利用 \"以其他程式開啟\" 的選項所建立的檔案開"
+"啟方式。"
 
 #: ../thunar/thunar-chooser-dialog.c:831
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
@@ -929,7 +928,7 @@ msgstr "圖示檢視"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
-#: ../thunar/thunar-location-buttons.c:1273
+#: ../thunar/thunar-location-buttons.c:1217
 #: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:1014
 msgid "_Open"
 msgstr "開啟(_O)"
@@ -939,7 +938,7 @@ msgid "Open the selected files"
 msgstr "開啟選擇的檔案"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1286
+#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1230
 #: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:1026
 msgid "Open in New Window"
 msgstr "在新視窗中開啟"
@@ -1101,67 +1100,67 @@ msgid "%d item selected"
 msgid_plural "%d items selected"
 msgstr[0] "已選取 %d 個項目"
 
-#: ../thunar/thunar-location-buttons.c:265
+#: ../thunar/thunar-location-buttons.c:259
 msgid "Spacing"
 msgstr "間隔"
 
-#: ../thunar/thunar-location-buttons.c:266
+#: ../thunar/thunar-location-buttons.c:260
 msgid "The amount of space between the path buttons"
 msgstr "路徑按鈕之間間隔的大小"
 
 #. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1272
+#: ../thunar/thunar-location-buttons.c:1216
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "在本視窗中開啟 \"%s\""
 
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1285
+#: ../thunar/thunar-location-buttons.c:1229
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "在新視窗中開啟 \"%s\""
 
 #. add the "Create Folder" action
-#: ../thunar/thunar-location-buttons.c:1300
+#: ../thunar/thunar-location-buttons.c:1244
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "在此 \"%s\" 建立新的資料夾"
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1301
+#: ../thunar/thunar-location-buttons.c:1245
 #: ../thunar/thunar-standard-view.c:312 ../thunar/thunar-tree-view.c:1073
 msgid "Create _Folder..."
 msgstr "建立資料夾(_F)..."
 
 #. add the "Paste Into Folder" action
-#: ../thunar/thunar-location-buttons.c:1316
+#: ../thunar/thunar-location-buttons.c:1260
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr "將之前複製或剪下的檔案在此複製或移動到·\"%s\""
 
-#: ../thunar/thunar-location-buttons.c:1317
+#: ../thunar/thunar-location-buttons.c:1261
 #: ../thunar/thunar-standard-view.c:318
 msgid "Paste Into Folder"
 msgstr "貼到資料夾中"
 
 #. add the "Properties" action
-#: ../thunar/thunar-location-buttons.c:1332
+#: ../thunar/thunar-location-buttons.c:1276
 #, c-format
 msgid "View the properties of the folder \"%s\""
 msgstr "檢視資料夾 \"%s\" 內容資訊"
 
-#: ../thunar/thunar-location-buttons.c:1333
+#: ../thunar/thunar-location-buttons.c:1277
 msgid "_Properties"
 msgstr "內容(_P)"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1402
+#: ../thunar/thunar-location-buttons.c:1346
 #: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
 msgid "New Folder"
 msgstr "新資料夾"
 
-#: ../thunar/thunar-location-buttons.c:1402
+#: ../thunar/thunar-location-buttons.c:1346
 #: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
 msgid "Create New Folder"
 msgstr "建立新資料夾"
@@ -1964,7 +1963,7 @@ msgstr "選取所有符合關鍵字的檔案"
 msgid "Du_plicate"
 msgstr "翻製檔案(_P)"
 
-#: ../thunar/thunar-standard-view.c:322 ../thunar/thunar-standard-view.c:3384
+#: ../thunar/thunar-standard-view.c:322 ../thunar/thunar-standard-view.c:3395
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "建立連結(_K)"
@@ -2044,38 +2043,43 @@ msgstr "關鍵字(_P):"
 msgid "Rename \"%s\""
 msgstr "重新命名·\"%s\""
 
+#. tell the user that the file name provided by the X Direct Save source is invalid
+#: ../thunar/thunar-standard-view.c:2570
+msgid "Invalid filename provided by XDS drag site"
+msgstr ""
+
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2736
+#: ../thunar/thunar-standard-view.c:2747
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "無法為URL \"%s\" 建立連結"
 
-#: ../thunar/thunar-standard-view.c:2999
+#: ../thunar/thunar-standard-view.c:3010
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "無法開啟目錄·\"%s\""
 
-#: ../thunar/thunar-standard-view.c:3344
+#: ../thunar/thunar-standard-view.c:3355
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "準備將選取的檔案以貼上指令移動"
 
-#: ../thunar/thunar-standard-view.c:3352
+#: ../thunar/thunar-standard-view.c:3363
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "準備所選的檔案將被複製到緩衝區以便於貼上"
 
-#: ../thunar/thunar-standard-view.c:3363
+#: ../thunar/thunar-standard-view.c:3374
 msgid "Delete the selected file permanently"
 msgid_plural "Delete the selected files permanently"
 msgstr[0] "永久刪除所選的檔案"
 
-#: ../thunar/thunar-standard-view.c:3377
+#: ../thunar/thunar-standard-view.c:3388
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "重製所選檔案"
 
-#: ../thunar/thunar-standard-view.c:3386
+#: ../thunar/thunar-standard-view.c:3397
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "為所選的檔案建立符號連結"
@@ -3009,4 +3013,3 @@ msgstr "以 Thunar 開啟資料夾"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "在·Thunar中開啟指定的資料夾"
-
