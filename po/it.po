@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-05-31 21:02+0900\n"
-"PO-Revision-Date: 2006-04-30 11:47+0100\n"
+"PO-Revision-Date: 2006-05-31 00:55+0100\n"
 "Last-Translator: Roberto Pariset <r.pariset@gmail.com>\n"
 "Language-Team: GUFI <traduzioni@gufi.org>\n"
 "MIME-Version: 1.0\n"
@@ -318,9 +318,8 @@ msgid "Failed to create named fifo \"%s\""
 msgstr "Impossibile creare pipe con nome \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:340
-#, fuzzy
 msgid "Named pipes are not supported"
-msgstr "Esegui in background (non supportato)"
+msgstr "Le pipe con nome non sono supportate"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:368
 #, c-format
@@ -375,9 +374,8 @@ msgid "Failed to change mode of \"%s\""
 msgstr "Impossibile cambiare modalità di \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:526 ../thunar-vfs/thunar-vfs-xfer.c:635
-#, fuzzy
 msgid "Symbolic links are not supported"
-msgstr "Esegui in background (non supportato)"
+msgstr "I link simbolici non sono supportati"
 
 #: ../thunar-vfs/thunar-vfs-xfer.c:554 ../thunar-vfs/thunar-vfs-xfer.c:615
 #, c-format
@@ -609,9 +607,8 @@ msgstr "Impossibile eseguire \"%s\""
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:622
-#, fuzzy
 msgid "_Remove Launcher"
-msgstr "Launcher dell'applicazione"
+msgstr "_Rimuovi launcher dell'applicazione"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:723
@@ -639,11 +636,9 @@ msgstr ""
 "l'applicazione selezionata."
 
 #: ../thunar/thunar-chooser-dialog.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
-msgstr ""
-"Sei sicuro di voler eliminare\n"
-"permanentemente \"%s\"?"
+msgstr "Sei sicuro di voler eliminare \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:790
 msgid ""
@@ -653,6 +648,11 @@ msgid ""
 "You can only remove application launchers that were created using the custom "
 "command box in the \"Open With\" dialog of the file manager."
 msgstr ""
+"Verrà rimosso il launcher dell'applicazione che compare nel menu contestuale "
+"del file, mentre l'applicazione stessa non sarà disinstallata.\n"
+"\n"
+"È possibile rimuovere solo i launcher che sono stati creati usando l'opzione "
+"Comando Personalizzato nella finestra \"Apri con\" del file manager."
 
 #: ../thunar/thunar-chooser-dialog.c:831
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
@@ -1176,14 +1176,13 @@ msgstr "Incolla dentro la directory"
 
 #. add the "Properties" action
 #: ../thunar/thunar-location-buttons.c:1276
-#, fuzzy, c-format
+#, c-format
 msgid "View the properties of the folder \"%s\""
-msgstr "Visualizza le proprietà dell'elemento selezionato"
+msgstr "Visualizza le proprietà della directory \"%s\""
 
 #: ../thunar/thunar-location-buttons.c:1277
-#, fuzzy
 msgid "_Properties"
-msgstr "_Proprietà..."
+msgstr "_Proprietà"
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1346
@@ -1697,9 +1696,9 @@ msgstr "Emblemi"
 
 #. update the properties dialog title
 #: ../thunar/thunar-properties-dialog.c:687
-#, fuzzy, c-format
+#, c-format
 msgid "%s - Properties"
-msgstr "_Proprietà..."
+msgstr "%s - Proprietà"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:842
@@ -1939,16 +1938,15 @@ msgid "Failed to unmount \"%s\""
 msgstr "Impossibile smontare \"%s\""
 
 #: ../thunar/thunar-size-label.c:182
-#, fuzzy
 msgid "Click here to stop calculating the total size of the folder."
 msgstr ""
-"Fare un clic qui per correggere automaticamente i permessi della directory."
+"Fare un clic qui per interrompere il calcolo della dimensione della "
+"directory."
 
 #. tell the user that the operation was canceled
 #: ../thunar/thunar-size-label.c:306
-#, fuzzy
 msgid "Calculation aborted"
-msgstr "Calcolo in corso..."
+msgstr "Calcolo annullato"
 
 #. tell the user that we started calculation
 #: ../thunar/thunar-size-label.c:413
@@ -2119,9 +2117,9 @@ msgstr ""
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:2747
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create a link for the URL \"%s\""
-msgstr "Impossibile creare pipe con nome \"%s\""
+msgstr "Impossibile creare un link per l'URL \"%s\""
 
 #: ../thunar/thunar-standard-view.c:3010
 #, c-format
