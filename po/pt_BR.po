@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-05-31 21:02+0900\n"
-"PO-Revision-Date: 2006-05-04 22:17-0300\n"
+"PO-Revision-Date: 2006-06-04 15:12-0300\n"
 "Last-Translator: Adriano Winter Bess <awbess@gmail.com>\n"
 "Language-Team: os-cillation <info@os-cillation.com>\n"
 "MIME-Version: 1.0\n"
@@ -606,9 +606,8 @@ msgstr "Falhou ao executar \"%s\""
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:622
-#, fuzzy
 msgid "_Remove Launcher"
-msgstr "Lançador"
+msgstr "_Remover Lançador"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:723
@@ -636,11 +635,9 @@ msgstr ""
 "selecionada."
 
 #: ../thunar/thunar-chooser-dialog.c:784
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
-msgstr ""
-"Você tem certeza que deseja\n"
-"remover permanentemente \"%s\"?"
+msgstr "Você tem certeza que deseja remover \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:790
 msgid ""
@@ -650,6 +647,12 @@ msgid ""
 "You can only remove application launchers that were created using the custom "
 "command box in the \"Open With\" dialog of the file manager."
 msgstr ""
+"Isto irá remover o lançador da aplicação que aparece no menu de contexto de "
+"arquivo, mas não irá desinstalar a própria aplicação.\n"
+"\n"
+"Você só pode remover lançadores de aplicações que foram criados usando a "
+"caixa de comando personalizado no diálogo \"Abrir Com\" do gerenciador de "
+"arquivos."
 
 #: ../thunar/thunar-chooser-dialog.c:831
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
@@ -2109,7 +2112,7 @@ msgstr "Renomear \"%s\""
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2570
 msgid "Invalid filename provided by XDS drag site"
-msgstr ""
+msgstr "Nome de arquivo inválido provido pelo sítio XDS."
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:2747
