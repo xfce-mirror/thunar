@@ -6,6 +6,7 @@ apps_DATA =								\
 
 stockdir = $(datadir)/icons/hicolor/16x16/stock/navigation
 stock_DATA =								\
+	stock_thunar-shortcuts.png					\
 	stock_thunar-templates.png
 
 EXTRA_DIST =								\

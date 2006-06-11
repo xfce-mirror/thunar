@@ -26,8 +26,14 @@ G_BEGIN_DECLS;
 #define THUNAR_STOCK_CREATE "thunar-create"
 #define THUNAR_STOCK_RENAME "thunar-rename"
 
+/* stock icons for the ThunarLauncher */
+#define THUNAR_STOCK_DESKTOP "thunar-desktop"
+
+/* stock icons for the ThunarShortcutsPane */
+#define THUNAR_STOCK_SHORTCUTS "thunar-shortcuts"
+
 /* stock icons for the ThunarPermissionsChooser */
-#define THUNAR_STOCK_TEMPLATES  "thunar-templates"
+#define THUNAR_STOCK_TEMPLATES "thunar-templates"
 
 void thunar_stock_init (void) G_GNUC_INTERNAL;
 

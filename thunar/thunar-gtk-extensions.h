@@ -30,6 +30,10 @@ void         thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *actio
                                                            const gchar    *action_name,
                                                            gboolean        sensitive) G_GNUC_INTERNAL;
 
+void         thunar_gtk_icon_factory_insert_icon          (GtkIconFactory *icon_factory,
+                                                           const gchar    *stock_id,
+                                                           const gchar    *icon_name) G_GNUC_INTERNAL;
+
 GtkAction   *thunar_gtk_ui_manager_get_action_by_name     (GtkUIManager   *ui_manager,
                                                            const gchar    *action_name) G_GNUC_INTERNAL;
 

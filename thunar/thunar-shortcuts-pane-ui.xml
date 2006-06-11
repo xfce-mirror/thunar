@@ -12,16 +12,20 @@
 
   <menubar name="main-menu">
     <menu action="file-menu">
-      <placeholder name="placeholder-sidepane">
-        <menuitem action="shortcuts-add" />
-      </placeholder>
+      <menu action="sendto-menu">
+        <placeholder name="placeholder-sendto-sidepane">
+          <menuitem action="sendto-shortcuts" />
+        </placeholder>
+      </menu>
     </menu>
   </menubar>
 
   <popup action="file-context-menu">
-    <placeholder name="placeholder-sidepane">
-      <menuitem action="shortcuts-add" />
-    </placeholder>
+    <menu action="sendto-menu">
+      <placeholder name="placeholder-sendto-sidepane">
+        <menuitem action="sendto-shortcuts" />
+      </placeholder>
+    </menu>
   </popup>
 
 </ui>

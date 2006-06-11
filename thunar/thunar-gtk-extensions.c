@@ -102,6 +102,44 @@ thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
 
 
 /**
+ * thunar_gtk_icon_factory_insert_icon:
+ * @icon_factory : a #GtkIconFactory.
+ * @stock_id     : the stock id of the icon to be inserted.
+ * @icon_name    : the name of the themed icon or an absolute
+ *                 path to an icon file.
+ *
+ * Inserts an entry into the @icon_factory, with the specified
+ * @stock_id, for the given @icon_name, which can be either an
+ * icon name (of a themed icon) or an absolute path to an icon
+ * file.
+ **/
+void
+thunar_gtk_icon_factory_insert_icon (GtkIconFactory *icon_factory,
+                                     const gchar    *stock_id,
+                                     const gchar    *icon_name)
+{
+  GtkIconSource *icon_source;
+  GtkIconSet    *icon_set;
+
+  g_return_if_fail (GTK_IS_ICON_FACTORY (icon_factory));
+  g_return_if_fail (icon_name != NULL);
+  g_return_if_fail (stock_id != NULL);
+
+  icon_set = gtk_icon_set_new ();
+  icon_source = gtk_icon_source_new ();
+  if (G_UNLIKELY (g_path_is_absolute (icon_name)))
+    gtk_icon_source_set_filename (icon_source, icon_name);
+  else
+    gtk_icon_source_set_icon_name (icon_source, icon_name);
+  gtk_icon_set_add_source (icon_set, icon_source);
+  gtk_icon_factory_add (icon_factory, stock_id, icon_set);
+  gtk_icon_source_free (icon_source);
+  gtk_icon_set_unref (icon_set);
+}
+
+
+
+/**
  * thunar_gtk_ui_manager_get_action_by_name:
  * @ui_manager  : a #GtkUIManager.
  * @action_name : the name of a #GtkAction in @ui_manager.

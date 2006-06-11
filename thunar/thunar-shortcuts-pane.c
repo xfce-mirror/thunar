@@ -27,6 +27,7 @@
 #include <thunar/thunar-shortcuts-pane-ui.h>
 #include <thunar/thunar-shortcuts-view.h>
 #include <thunar/thunar-side-pane.h>
+#include <thunar/thunar-stock.h>
 
 
 
@@ -93,7 +94,7 @@ struct _ThunarShortcutsPane
 
 static const GtkActionEntry action_entries[] =
 {
-  { "shortcuts-add", NULL, N_ ("Add Folder to _Shortcuts"), NULL, N_ ("Add the selected folder to the shortcuts side pane"), G_CALLBACK (thunar_shortcuts_pane_action_shortcuts_add), },
+  { "sendto-shortcuts", THUNAR_STOCK_SHORTCUTS, "", NULL, NULL, G_CALLBACK (thunar_shortcuts_pane_action_shortcuts_add), },
 };
 
 static GObjectClass *thunar_shortcuts_pane_parent_class;
@@ -393,7 +394,7 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
       break;
 
   /* change the visibility of the "shortcuts-add" action appropriately */
-  action = gtk_action_group_get_action (shortcuts_pane->action_group, "shortcuts-add");
+  action = gtk_action_group_get_action (shortcuts_pane->action_group, "sendto-shortcuts");
   if (lp == NULL && selected_files != NULL)
     {
       /* check if atleast one of the selected folders is not already present in the model */
@@ -408,7 +409,7 @@ thunar_shortcuts_pane_set_selected_files (ThunarComponent *component,
 
       /* display the action and change the label appropriately */
       g_object_set (G_OBJECT (action),
-                    "label", ngettext ("Add Folder to _Shortcuts", "Add Folders to _Shortcuts", n),
+                    "label", ngettext ("Side Pane (Create Shortcut)", "Side Pane (Create Shortcuts)", n),
                     "sensitive", (lp != NULL),
                     "tooltip", ngettext ("Add the selected folder to the shortcuts side pane",
                                          "Add the selected folders to the shortcuts side pane", n),

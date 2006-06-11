@@ -25,8 +25,11 @@
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-launcher-ui.h>
+#include <thunar/thunar-sendto-model.h>
+#include <thunar/thunar-stock.h>
 
 
 
@@ -81,8 +84,12 @@ static void          thunar_launcher_action_open_with_other     (GtkAction      
                                                                  ThunarLauncher           *launcher);
 static void          thunar_launcher_action_open_in_new_window  (GtkAction                *action,
                                                                  ThunarLauncher           *launcher);
+static void          thunar_launcher_action_sendto_desktop      (GtkAction                *action,
+                                                                 ThunarLauncher           *launcher);
 static void          thunar_launcher_widget_destroyed           (ThunarLauncher           *launcher,
                                                                  GtkWidget                *widget);
+static gboolean      thunar_launcher_sendto_idle                (gpointer                  user_data);
+static void          thunar_launcher_sendto_idle_destroy        (gpointer                  user_data);
 
 
 
@@ -95,33 +102,36 @@ struct _ThunarLauncher
 {
   GObject __parent__;
 
-  ThunarFile     *current_directory;
-  GList          *selected_files;
+  ThunarFile        *current_directory;
+  GList             *selected_files;
 
-  GtkIconFactory *icon_factory;
-  GtkActionGroup *action_group_addons;
-  GtkActionGroup *action_group;
-  GtkUIManager   *ui_manager;
-  guint           ui_merge_id;
-  guint           ui_addons_merge_id;
+  GtkIconFactory    *icon_factory;
+  GtkActionGroup    *action_group;
+  GtkUIManager      *ui_manager;
+  guint              ui_merge_id;
+  guint              ui_addons_merge_id;
 
-  GtkAction      *action_open;
-  GtkAction      *action_open_with_other;
-  GtkAction      *action_open_in_new_window;
-  GtkAction      *action_open_with_other_in_menu;
+  GtkAction         *action_open;
+  GtkAction         *action_open_with_other;
+  GtkAction         *action_open_in_new_window;
+  GtkAction         *action_open_with_other_in_menu;
 
-  GtkWidget      *widget;
+  GtkWidget         *widget;
+
+  ThunarSendtoModel *sendto_model;
+  gint               sendto_idle_id;
 };
 
 
 
 static const GtkActionEntry action_entries[] =
 {
-  { "open", GTK_STOCK_OPEN, N_ ("_Open"), "<control>O", N_ ("Open the selected files"), G_CALLBACK (thunar_launcher_action_open), },
-  { "open-in-new-window", NULL, N_ ("Open in New Window"), "<control><shift>O", N_ ("Open the selected directories in new Thunar windows"), G_CALLBACK (thunar_launcher_action_open_in_new_window), },
+  { "open", GTK_STOCK_OPEN, N_ ("_Open"), "<control>O", NULL, G_CALLBACK (thunar_launcher_action_open), },
+  { "open-in-new-window", NULL, N_ ("Open in New Window"), "<control><shift>O", N_ ("Open the selected directory in a new window"), G_CALLBACK (thunar_launcher_action_open_in_new_window), },
   { "open-with-other", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (thunar_launcher_action_open_with_other), },
-  { "open-with-menu", NULL, N_ ("Open With"), NULL, N_ ("Choose a program with which to open the selected file"), NULL, },
+  { "open-with-menu", NULL, N_ ("Open With"), NULL, NULL, NULL, },
   { "open-with-other-in-menu", NULL, N_ ("Open With Other _Application..."), NULL, N_ ("Choose another application with which to open the selected file"), G_CALLBACK (thunar_launcher_action_open_with_other), },
+  { "sendto-desktop", THUNAR_STOCK_DESKTOP, "", NULL, NULL, G_CALLBACK (thunar_launcher_action_sendto_desktop), },
 };
 
 static GObjectClass *thunar_launcher_parent_class;
@@ -251,6 +261,10 @@ thunar_launcher_init (ThunarLauncher *launcher)
   /* initialize and add our custom icon factory for the application/action icons */
   launcher->icon_factory = gtk_icon_factory_new ();
   gtk_icon_factory_add_default (launcher->icon_factory);
+
+  /* setup the "Send To" support */
+  launcher->sendto_model = thunar_sendto_model_get_default ();
+  launcher->sendto_idle_id = -1;
 }
 
 
@@ -276,12 +290,19 @@ thunar_launcher_finalize (GObject *object)
 {
   ThunarLauncher *launcher = THUNAR_LAUNCHER (object);
 
+  /* be sure to cancel the sendto idle source */
+  if (G_UNLIKELY (launcher->sendto_idle_id >= 0))
+    g_source_remove (launcher->sendto_idle_id);
+
   /* drop our custom icon factory for the application/action icons */
   gtk_icon_factory_remove_default (launcher->icon_factory);
   g_object_unref (G_OBJECT (launcher->icon_factory));
 
   /* release the reference on the action group */
   g_object_unref (G_OBJECT (launcher->action_group));
+
+  /* release the reference on the sendto model */
+  g_object_unref (G_OBJECT (launcher->sendto_model));
 
   (*G_OBJECT_CLASS (thunar_launcher_parent_class)->finalize) (object);
 }
@@ -669,25 +690,23 @@ thunar_launcher_open_windows (ThunarLauncher *launcher,
 static void
 thunar_launcher_update (ThunarLauncher *launcher)
 {
-  GtkIconSource *icon_source;
-  GtkIconTheme  *icon_theme;
-  GtkIconSet    *icon_set;
-  const gchar   *icon_name;
-  const gchar   *context_menu_path;
-  const gchar   *file_menu_path;
-  GtkAction     *action;
-  gboolean       default_is_open_with_other = FALSE;
-  GList         *applications;
-  GList         *actions;
-  GList         *lp;
-  gchar         *tooltip;
-  gchar         *label;
-  gchar         *name;
-  gint           n_directories = 0;
-  gint           n_executables = 0;
-  gint           n_regulars = 0;
-  gint           n_selected_files = 0;
-  gint           n;
+  GtkIconTheme *icon_theme;
+  const gchar  *icon_name;
+  const gchar  *context_menu_path;
+  const gchar  *file_menu_path;
+  GtkAction    *action;
+  gboolean      default_is_open_with_other = FALSE;
+  GList        *applications;
+  GList        *actions;
+  GList        *lp;
+  gchar        *tooltip;
+  gchar        *label;
+  gchar        *name;
+  gint          n_directories = 0;
+  gint          n_executables = 0;
+  gint          n_regulars = 0;
+  gint          n_selected_files = 0;
+  gint          n;
 
   /* verify that we're connected to an UI manager */
   if (G_UNLIKELY (launcher->ui_manager == NULL))
@@ -850,7 +869,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
                         NULL);
         }
 
-      /* place the other applications in the "Open With" submenu if we have more than 3 other applications */
+      /* place the other applications in the "Open With" submenu if we have more than 2 other applications */
       if (G_UNLIKELY (g_list_length (applications) > 3))
         {
           /* determine the base paths for the actions */
@@ -897,7 +916,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
               actions = g_list_concat (actions, thunar_vfs_mime_application_get_actions (lp->data));
 
               /* generate a unique label, unique id and tooltip for the application's action */
-              name = g_strdup_printf ("thunar-launcher-addon-application%d", n);
+              name = g_strdup_printf ("thunar-launcher-addon-application%d-%p", n, launcher);
               label = g_strdup_printf (_("Open With \"%s\""), thunar_vfs_mime_application_get_name (lp->data));
               tooltip = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
                                                    "Use \"%s\" to open the selected files",
@@ -906,19 +925,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
               /* check if we have an icon for this application */
               icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
               if (G_LIKELY (icon_name != NULL))
-                {
-                  /* allocate and initialize an icon set for the application */
-                  icon_set = gtk_icon_set_new ();
-                  icon_source = gtk_icon_source_new ();
-                  if (G_UNLIKELY (g_path_is_absolute (icon_name)))
-                    gtk_icon_source_set_filename (icon_source, icon_name);
-                  else
-                    gtk_icon_source_set_icon_name (icon_source, icon_name);
-                  gtk_icon_set_add_source (icon_set, icon_source);
-                  gtk_icon_factory_add (launcher->icon_factory, name, icon_set);
-                  gtk_icon_source_free (icon_source);
-                  gtk_icon_set_unref (icon_set);
-                }
+                thunar_gtk_icon_factory_insert_icon (launcher->icon_factory, name, icon_name);
 
               /* allocate a new action for the application */
               action = gtk_action_new (name, label, tooltip, (icon_name != NULL) ? name : NULL);
@@ -958,24 +965,12 @@ thunar_launcher_update (ThunarLauncher *launcher)
           for (lp = actions, n = 0; lp != NULL; lp = lp->next, ++n)
             {
               /* generate a unique name for the mime action */
-              name = g_strdup_printf ("thunar-launcher-addon-action%d", n);
+              name = g_strdup_printf ("thunar-launcher-addon-action%d-%p", n, launcher);
 
               /* check if we have an icon for this action */
               icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
               if (G_LIKELY (icon_name != NULL))
-                {
-                  /* allocate and initialize an icon set for the action */
-                  icon_set = gtk_icon_set_new ();
-                  icon_source = gtk_icon_source_new ();
-                  if (G_UNLIKELY (g_path_is_absolute (icon_name)))
-                    gtk_icon_source_set_filename (icon_source, icon_name);
-                  else
-                    gtk_icon_source_set_icon_name (icon_source, icon_name);
-                  gtk_icon_set_add_source (icon_set, icon_source);
-                  gtk_icon_factory_add (launcher->icon_factory, name, icon_set);
-                  gtk_icon_source_free (icon_source);
-                  gtk_icon_set_unref (icon_set);
-                }
+                thunar_gtk_icon_factory_insert_icon (launcher->icon_factory, name, icon_name);
 
               /* allocate a new ui action for the mime action */
               action = gtk_action_new (name, thunar_vfs_mime_handler_get_name (lp->data), NULL, (icon_name != NULL) ? name : NULL);
@@ -997,6 +992,13 @@ thunar_launcher_update (ThunarLauncher *launcher)
           /* cleanup */
           g_list_free (actions);
         }
+    }
+
+  /* schedule an update of the "Send To" menu */
+  if (G_LIKELY (launcher->sendto_idle_id < 0))
+    {
+      launcher->sendto_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_launcher_sendto_idle,
+                                                  launcher, thunar_launcher_sendto_idle_destroy);
     }
 }
 
@@ -1125,6 +1127,40 @@ thunar_launcher_action_open_in_new_window (GtkAction      *action,
 
 
 static void
+thunar_launcher_action_sendto_desktop (GtkAction      *action,
+                                       ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+  ThunarVfsPath     *desktop_path;
+  ThunarVfsPath     *home_path;
+  GList             *paths;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* determine the source paths */
+  paths = thunar_file_list_to_path_list (launcher->selected_files);
+  if (G_UNLIKELY (paths == NULL))
+    return;
+
+  /* determine the path to the ~/Desktop folder */
+  home_path = thunar_vfs_path_get_for_home ();
+  desktop_path = thunar_vfs_path_relative (home_path, "Desktop");
+  thunar_vfs_path_unref (home_path);
+
+  /* launch the link job */
+  application = thunar_application_get ();
+  thunar_application_link_into (application, launcher->widget, paths, desktop_path, NULL);
+  g_object_unref (G_OBJECT (application));
+
+  /* cleanup */
+  thunar_vfs_path_unref (desktop_path);
+  thunar_vfs_path_list_free (paths);
+}
+
+
+
+static void
 thunar_launcher_widget_destroyed (ThunarLauncher *launcher,
                                   GtkWidget      *widget)
 {
@@ -1134,6 +1170,114 @@ thunar_launcher_widget_destroyed (ThunarLauncher *launcher,
 
   /* just reset the widget property for the launcher */
   thunar_launcher_set_widget (launcher, NULL);
+}
+
+
+
+static gboolean
+thunar_launcher_sendto_idle (gpointer user_data)
+{
+  ThunarLauncher *launcher = THUNAR_LAUNCHER (user_data);
+  GtkIconTheme   *icon_theme;
+  const gchar    *icon_name;
+  const gchar    *label;
+  GtkAction      *action;
+  GList          *handlers;
+  GList          *lp;
+  gchar          *name;
+  gchar          *tooltip;
+  gint            n_selected_files;
+  gint            n;
+
+  /* verify that we have an UI manager */
+  if (launcher->ui_manager == NULL)
+    return FALSE;
+
+  GDK_THREADS_ENTER ();
+
+  /* determine the number of selected files */
+  n_selected_files = g_list_length (launcher->selected_files);
+
+  /* update the "Desktop (Create Link)" sendto action */
+  action = gtk_action_group_get_action (launcher->action_group, "sendto-desktop");
+  g_object_set (G_OBJECT (action),
+                "label", ngettext ("Desktop (Create Link)", "Desktop (Create Links)", n_selected_files),
+                "tooltip", ngettext ("Create a link to the selected file on the desktop",
+                                     "Create links to the selected files on the desktop",
+                                     n_selected_files),
+                "visible", (n_selected_files > 0),
+                NULL);
+
+  /* re-add the content to "Send To" if we have any files */
+  if (G_LIKELY (n_selected_files > 0))
+    {
+      /* drop all previous sendto actions from the action group */
+      handlers = gtk_action_group_list_actions (launcher->action_group);
+      for (lp = handlers; lp != NULL; lp = lp->next)
+        if (g_str_has_prefix (gtk_action_get_name (lp->data), "thunar-launcher-sendto"))
+          gtk_action_group_remove_action (launcher->action_group, lp->data);
+      g_list_free (handlers);
+
+      /* determine the sendto handlers for the selected files */
+      handlers = thunar_sendto_model_get_matching (launcher->sendto_model, launcher->selected_files);
+      if (G_LIKELY (handlers != NULL))
+        {
+          /* determine a the default icon theme for handler icon lookups */
+          icon_theme = gtk_icon_theme_get_default ();
+
+          /* allocate a new merge id from the UI manager (if not already done) */
+          if (G_UNLIKELY (launcher->ui_addons_merge_id == 0))
+            launcher->ui_addons_merge_id = gtk_ui_manager_new_merge_id (launcher->ui_manager);
+
+          /* add all handlers to the user interface */
+          for (lp = handlers, n = 0; lp != NULL; lp = lp->next, ++n)
+            {
+              /* generate a unique name and tooltip for the handler */
+              label = thunar_vfs_mime_handler_get_name (lp->data);
+              name = g_strdup_printf ("thunar-launcher-sendto%d-%p", n, launcher);
+              tooltip = g_strdup_printf (ngettext ("Send the selected file to \"%s\"",
+                                                   "Send the selected files to \"%s\"",
+                                                   n_selected_files), label);
+
+              /* check if we have an icon for this handler */
+              icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
+              if (G_LIKELY (icon_name != NULL))
+                thunar_gtk_icon_factory_insert_icon (launcher->icon_factory, name, icon_name);
+
+              /* allocate a new action for the handler */
+              action = gtk_action_new (name, label, tooltip, (icon_name != NULL) ? name : NULL);
+              g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
+              g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
+              gtk_action_group_add_action (launcher->action_group, action);
+              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                     "/main-menu/file-menu/sendto-menu/placeholder-sendto-actions",
+                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                     "/file-context-menu/sendto-menu/placeholder-sendto-actions",
+                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+              g_object_unref (G_OBJECT (action));
+
+              /* cleanup */
+              g_free (tooltip);
+              g_free (name);
+            }
+
+          /* release the handler list */
+          g_list_free (handlers);
+        }
+    }
+
+  GDK_THREADS_LEAVE ();
+
+  return FALSE;
+}
+
+
+
+static void
+thunar_launcher_sendto_idle_destroy (gpointer user_data)
+{
+  THUNAR_LAUNCHER (user_data)->sendto_idle_id = -1;
 }
 
 

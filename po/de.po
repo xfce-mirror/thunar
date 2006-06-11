@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-11 14:51+0900\n"
-"PO-Revision-Date: 2006-05-17 23:45+0100\n"
+"POT-Creation-Date: 2006-06-11 16:36+0200\n"
+"PO-Revision-Date: 2006-06-11 16:40+0100\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -567,7 +567,7 @@ msgstr ""
 msgid "_Other Application..."
 msgstr "_Andere Anwendung..."
 
-#: ../thunar/thunar-chooser-dialog.c:225 ../thunar/thunar-launcher.c:123
+#: ../thunar/thunar-chooser-dialog.c:225 ../thunar/thunar-launcher.c:132
 msgid "Open With"
 msgstr "Öffnen Mit"
 
@@ -852,7 +852,7 @@ msgstr "Hierher verknü_pfen"
 
 #. display an error to the user
 #. display an error message to the user
-#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:497
+#: ../thunar/thunar-dnd.c:191 ../thunar/thunar-launcher.c:518
 #, c-format
 msgid "Failed to execute file \"%s\""
 msgstr "Konnte »%s« nicht umbenennen"
@@ -950,68 +950,58 @@ msgid "Icon view"
 msgstr "Symbolansicht"
 
 #. append the "Open" menu action
-#: ../thunar/thunar-launcher.c:120 ../thunar/thunar-launcher.c:756
+#: ../thunar/thunar-launcher.c:129 ../thunar/thunar-launcher.c:775
 #: ../thunar/thunar-location-buttons.c:1217
 #: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:1014
 msgid "_Open"
 msgstr "Ö_ffnen"
 
-#: ../thunar/thunar-launcher.c:120
-msgid "Open the selected files"
-msgstr "Die ausgewählten Dateien öffnen"
-
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:121 ../thunar/thunar-location-buttons.c:1230
+#: ../thunar/thunar-launcher.c:130 ../thunar/thunar-location-buttons.c:1230
 #: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:1026
 msgid "Open in New Window"
 msgstr "In neuem Fenster öffnen"
 
-#: ../thunar/thunar-launcher.c:121
-msgid "Open the selected directories in new Thunar windows"
-msgstr "Die ausgewählten Ordner in neuen Thunar-Fenstern öffnen"
+#: ../thunar/thunar-launcher.c:130
+msgid "Open the selected directory in a new window"
+msgstr "Den ausgewählten Ordner in neuem Fenster anzeigen"
 
-#: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
+#: ../thunar/thunar-launcher.c:131 ../thunar/thunar-launcher.c:133
 msgid "Open With Other _Application..."
 msgstr "Mit anderer A_nwendung öffnen..."
 
-#: ../thunar/thunar-launcher.c:122 ../thunar/thunar-launcher.c:124
-#: ../thunar/thunar-launcher.c:839
+#: ../thunar/thunar-launcher.c:131 ../thunar/thunar-launcher.c:133
+#: ../thunar/thunar-launcher.c:858
 msgid "Choose another application with which to open the selected file"
 msgstr ""
 "Eine andere Anwendung wählen, mit der die ausgewählte Datei geöffnet werden "
 "soll"
 
-#: ../thunar/thunar-launcher.c:123
-msgid "Choose a program with which to open the selected file"
-msgstr ""
-"Geben Sie ein Programm an, mit dem die ausgewählten Dateien geöffnet werden "
-"sollen"
-
-#: ../thunar/thunar-launcher.c:592
+#: ../thunar/thunar-launcher.c:613
 #, c-format
 msgid "Failed to open file \"%s\""
 msgstr "Konnte »%s« nicht umbenennen"
 
 #. we can just tell that n files failed to open
-#: ../thunar/thunar-launcher.c:598
+#: ../thunar/thunar-launcher.c:619
 #, c-format
 msgid "Failed to open %d file"
 msgid_plural "Failed to open %d files"
 msgstr[0] "%d Datei konnte nicht geöffnet werden"
 msgstr[1] "%d Dateien konnten nicht geöffnet werden"
 
-#: ../thunar/thunar-launcher.c:634
+#: ../thunar/thunar-launcher.c:655
 msgid "Are you sure you want to open all folders?"
 msgstr "Sind Sie sicher, dass alle Ordner geöffnet werden sollen?"
 
-#: ../thunar/thunar-launcher.c:636
+#: ../thunar/thunar-launcher.c:657
 #, c-format
 msgid "This will open %d separate file manager window."
 msgid_plural "This will open %d separate file manager windows."
 msgstr[0] "Es wird %d separates Dateimanager Fenster geöffnet."
 msgstr[1] "Es werden %d separate Dateimanager Fenster geöffnet."
 
-#: ../thunar/thunar-launcher.c:640
+#: ../thunar/thunar-launcher.c:661
 #, c-format
 msgid "Open %d New Window"
 msgid_plural "Open %d New Windows"
@@ -1019,71 +1009,94 @@ msgstr[0] "%d neues Fenster öffnen"
 msgstr[1] "%d neue Fenster öffnen"
 
 #. turn "Open" into "Open in n New Windows"
-#: ../thunar/thunar-launcher.c:734
+#: ../thunar/thunar-launcher.c:753
 #, c-format
 msgid "Open in %d New Window"
 msgid_plural "Open in %d New Windows"
 msgstr[0] "In %d neuem Fenster öffnen"
 msgstr[1] "In %d neuen Fenstern öffnen"
 
-#: ../thunar/thunar-launcher.c:735
+#: ../thunar/thunar-launcher.c:754
 #, c-format
 msgid "Open the selected directory in %d new window"
 msgid_plural "Open the selected directories in %d new windows"
 msgstr[0] "Den ausgewählten Ordner in %d neuen Fenster anzeigen"
 msgstr[1] "Die ausgewählten Ordner in %d neuen Fenstern anzeigen"
 
-#: ../thunar/thunar-launcher.c:755
+#: ../thunar/thunar-launcher.c:774
 msgid "_Open in New Window"
 msgstr "In neuem Fenster ö_ffnen"
 
-#: ../thunar/thunar-launcher.c:758
+#: ../thunar/thunar-launcher.c:777
 msgid "Open the selected file"
 msgid_plural "Open the selected files"
 msgstr[0] "Die ausgewählte Datei öffnen"
 msgstr[1] "Die ausgewählten Dateien öffnen"
 
-#: ../thunar/thunar-launcher.c:807
+#: ../thunar/thunar-launcher.c:826
 msgid "_Execute"
 msgstr "_Ausführen"
 
-#: ../thunar/thunar-launcher.c:808
+#: ../thunar/thunar-launcher.c:827
 msgid "Execute the selected file"
 msgid_plural "Execute the selected files"
 msgstr[0] "Die ausgewählte Datei ausführen"
 msgstr[1] "Die ausgewählten Dateien ausführen"
 
 #. turn the "Open" action into "Open With DEFAULT"
-#: ../thunar/thunar-launcher.c:814
+#: ../thunar/thunar-launcher.c:833
 #, c-format
 msgid "_Open With \"%s\""
 msgstr "Mit »%s« ö_ffnen"
 
-#: ../thunar/thunar-launcher.c:815 ../thunar/thunar-launcher.c:902
+#: ../thunar/thunar-launcher.c:834 ../thunar/thunar-launcher.c:921
 #, c-format
 msgid "Use \"%s\" to open the selected file"
 msgid_plural "Use \"%s\" to open the selected files"
 msgstr[0] "»%s« verwendem, um die ausgewählte Datei zu öffnen"
 msgstr[1] "»%s« verwenden, um die ausgewählten Dateien zu öffnen"
 
-#: ../thunar/thunar-launcher.c:838
+#: ../thunar/thunar-launcher.c:857
 msgid "_Open With Other Application..."
 msgstr "Mit _anderer Anwendung öffnen..."
 
-#: ../thunar/thunar-launcher.c:847
+#: ../thunar/thunar-launcher.c:866
 msgid "_Open With Default Applications"
 msgstr "Mit der Standardanwendung ö_ffnen"
 
-#: ../thunar/thunar-launcher.c:848
+#: ../thunar/thunar-launcher.c:867
 msgid "Open the selected file with the default application"
 msgid_plural "Open the selected files with the default applications"
 msgstr[0] "Die ausgewählte Datei mit der Standardanwendung öffnen"
 msgstr[1] "Die ausgewählten Dateien mit den Standardanwendungen öffnen"
 
-#: ../thunar/thunar-launcher.c:901
+#: ../thunar/thunar-launcher.c:920
 #, c-format
 msgid "Open With \"%s\""
 msgstr "Mit »%s« öffnen"
+
+#: ../thunar/thunar-launcher.c:1204
+msgid "Desktop (Create Link)"
+msgid_plural "Desktop (Create Links)"
+msgstr[0] "Arbeitsplatz (Verknüpfung erstellen)"
+msgstr[1] "Arbeitsplatz (Verknüpfungen erstellen)"
+
+#: ../thunar/thunar-launcher.c:1205
+msgid "Create a link to the selected file on the desktop"
+msgid_plural "Create links to the selected files on the desktop"
+msgstr[0] ""
+"Eine symbolische Verknüpfung für die ausgewählte Datei auf dem Arbeitsplatz "
+"erstellen"
+msgstr[1] ""
+"Eine symbolische Verknüpfung für jede ausgewählte Datei auf dem Arbeitsplatz "
+"erstellen"
+
+#: ../thunar/thunar-launcher.c:1238
+#, c-format
+msgid "Send the selected file to \"%s\""
+msgid_plural "Send the selected files to \"%s\""
+msgstr[0] "Die ausgewählte Datei an »%s« senden"
+msgstr[1] "Die ausgewählten Dateien an »%s« senden"
 
 #: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
@@ -1216,7 +1229,7 @@ msgstr "Ort öffnen"
 msgid "_Location:"
 msgstr "_Ort:"
 
-#: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:1208
+#: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:1209
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Konnte »%s« nicht ausführen"
@@ -1322,7 +1335,6 @@ msgid "Apply recursively?"
 msgstr "Rekursiv anwenden?"
 
 #: ../thunar/thunar-permissions-chooser.c:620
-#, fuzzy
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
@@ -1748,7 +1760,7 @@ msgstr "Liste leeren"
 msgid "Clear the file list below"
 msgstr "Die Liste der unten angezeigten Dateien leeren"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:272
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:273
 msgid "_About"
 msgstr "Ü_ber"
 
@@ -1890,13 +1902,13 @@ msgstr ""
 "Soll diese Datei übersprungen werden und mit den restlichen Dateien "
 "fortgefahren wreden?"
 
-#: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:411
-msgid "Add Folder to _Shortcuts"
-msgid_plural "Add Folders to _Shortcuts"
-msgstr[0] "Lese_zeichen für Ordner erstellen"
-msgstr[1] "Lese_zeichen für Ordner erstellen"
+#: ../thunar/thunar-shortcuts-pane.c:412
+msgid "Side Pane (Create Shortcut)"
+msgid_plural "Side Pane (Create Shortcuts)"
+msgstr[0] "Seitenleiste (Lesezeichen erstellen)"
+msgstr[1] "Seitenleiste (Lesezeichen erstellen)"
 
-#: ../thunar/thunar-shortcuts-pane.c:96 ../thunar/thunar-shortcuts-pane.c:413
+#: ../thunar/thunar-shortcuts-pane.c:414
 msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Neues Lesezeichen für den ausgewählten Ordner erstellen"
@@ -2133,7 +2145,7 @@ msgstr "»%s« umbenennen"
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2570
 msgid "Invalid filename provided by XDS drag site"
-msgstr ""
+msgstr "Ungültiger Dateinamen von XDS Drag Site gesendet"
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:2747
@@ -2180,11 +2192,11 @@ msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Eine symbolische Verknüpfung für die ausgewählte Datei erstellen"
 msgstr[1] "Eine symbolische Verknüpfung für jede ausgewählte Datei erstellen"
 
-#: ../thunar/thunar-stock.c:55
+#: ../thunar/thunar-stock.c:57
 msgid "Create"
 msgstr "Anlegen"
 
-#: ../thunar/thunar-stock.c:56
+#: ../thunar/thunar-stock.c:58
 msgid "Rename"
 msgstr "Umbenennen"
 
@@ -2221,235 +2233,239 @@ msgid "Open a new Thunar window for the displayed location"
 msgstr "Ein weiteres Fenster für diesen Ort öffnen"
 
 #: ../thunar/thunar-window.c:254
+msgid "_Send To"
+msgstr "_Senden an"
+
+#: ../thunar/thunar-window.c:255
 msgid "Close _All Windows"
 msgstr "_Alle Fenster schließen"
 
-#: ../thunar/thunar-window.c:254
+#: ../thunar/thunar-window.c:255
 msgid "Close all Thunar windows"
 msgstr "Alle Thunar Fenster schließen"
 
-#: ../thunar/thunar-window.c:255
+#: ../thunar/thunar-window.c:256
 msgid "_Close"
 msgstr "_Schließen"
 
-#: ../thunar/thunar-window.c:255
+#: ../thunar/thunar-window.c:256
 msgid "Close this window"
 msgstr "Dieses Fenster schließen"
 
-#: ../thunar/thunar-window.c:256
+#: ../thunar/thunar-window.c:257
 msgid "_Edit"
 msgstr "_Bearbeiten"
 
-#: ../thunar/thunar-window.c:257
+#: ../thunar/thunar-window.c:258
 msgid "Pr_eferences..."
 msgstr "_Einstellungen..."
 
-#: ../thunar/thunar-window.c:257
+#: ../thunar/thunar-window.c:258
 msgid "Edit Thunars Preferences"
 msgstr "Thunars Einstellungen bearbeiten"
 
-#: ../thunar/thunar-window.c:258
+#: ../thunar/thunar-window.c:259
 msgid "_View"
 msgstr "_Anzeige"
 
-#: ../thunar/thunar-window.c:259
+#: ../thunar/thunar-window.c:260
 msgid "_Reload"
 msgstr "_Neu laden"
 
-#: ../thunar/thunar-window.c:259
+#: ../thunar/thunar-window.c:260
 msgid "Reload the current folder"
 msgstr "Den aktuellen Ordner neu einlesen"
 
-#: ../thunar/thunar-window.c:260
+#: ../thunar/thunar-window.c:261
 msgid "_Location Selector"
 msgstr "_Adressleiste"
 
-#: ../thunar/thunar-window.c:261
+#: ../thunar/thunar-window.c:262
 msgid "_Side Pane"
 msgstr "S_eitenleiste"
 
-#: ../thunar/thunar-window.c:262
+#: ../thunar/thunar-window.c:263
 msgid "Zoom _In"
 msgstr "Ver_größern"
 
-#: ../thunar/thunar-window.c:262
+#: ../thunar/thunar-window.c:263
 msgid "Show the contents in more detail"
 msgstr "Den Inhalt detaillierter anzeigen"
 
-#: ../thunar/thunar-window.c:263
+#: ../thunar/thunar-window.c:264
 msgid "Zoom _Out"
 msgstr "Ver_kleinern"
 
-#: ../thunar/thunar-window.c:263
+#: ../thunar/thunar-window.c:264
 msgid "Show the contents in less detail"
 msgstr "Den Inhalt weniger detailliert anzeigen"
 
-#: ../thunar/thunar-window.c:264
+#: ../thunar/thunar-window.c:265
 msgid "Normal Si_ze"
 msgstr "_Normale Größe"
 
-#: ../thunar/thunar-window.c:264
+#: ../thunar/thunar-window.c:265
 msgid "Show the contents at the normal size"
 msgstr "Den Inhalt in normaler Größe anzeigen"
 
-#: ../thunar/thunar-window.c:265
+#: ../thunar/thunar-window.c:266
 msgid "_Go"
 msgstr "_Gehe zu"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:267
 msgid "Open _Parent"
 msgstr "_Eltern-Ordner öffnen"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:267
 msgid "Open the parent folder"
 msgstr "Den übergeordneten Ordner öffnen"
 
-#: ../thunar/thunar-window.c:267
+#: ../thunar/thunar-window.c:268
 msgid "_Home"
 msgstr "_Persönlicher Ordner"
 
-#: ../thunar/thunar-window.c:267
+#: ../thunar/thunar-window.c:268
 msgid "Go to the home folder"
 msgstr "Zum persönlichen Ordner gehen"
 
-#: ../thunar/thunar-window.c:268
+#: ../thunar/thunar-window.c:269
 msgid "T_emplates"
 msgstr "_Vorlagen"
 
-#: ../thunar/thunar-window.c:268
+#: ../thunar/thunar-window.c:269
 msgid "Go to the templates folder"
 msgstr "Zum Vorlagenordner gehen"
 
-#: ../thunar/thunar-window.c:269
+#: ../thunar/thunar-window.c:270
 msgid "Open _Location..."
 msgstr "_Ort öffnen..."
 
-#: ../thunar/thunar-window.c:269
+#: ../thunar/thunar-window.c:270
 msgid "Specify a location to open"
 msgstr "Einen Ort eingeben, der geöffnet werden soll"
 
-#: ../thunar/thunar-window.c:270
+#: ../thunar/thunar-window.c:271
 msgid "_Help"
 msgstr "_Hilfe"
 
-#: ../thunar/thunar-window.c:271
+#: ../thunar/thunar-window.c:272
 msgid "_Contents"
 msgstr "_Inhalt"
 
-#: ../thunar/thunar-window.c:271
+#: ../thunar/thunar-window.c:272
 msgid "Display Thunar user manual"
 msgstr "Thunar Benutzerdokumentation anzeigen"
 
-#: ../thunar/thunar-window.c:272
+#: ../thunar/thunar-window.c:273
 msgid "Display information about Thunar"
 msgstr "Würdigungen für die Schöpfer von Thunar anzeigen"
 
-#: ../thunar/thunar-window.c:277
+#: ../thunar/thunar-window.c:278
 msgid "Show _Hidden Files"
 msgstr "_Verborgene Dateien anzeigen"
 
-#: ../thunar/thunar-window.c:277
+#: ../thunar/thunar-window.c:278
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Verborgene Dateien im momentan geöffneten Fenster anzeigen/verbergen"
 
-#: ../thunar/thunar-window.c:278
+#: ../thunar/thunar-window.c:279
 msgid "_Shortcuts"
 msgstr "_Lesezeichen"
 
-#: ../thunar/thunar-window.c:278
+#: ../thunar/thunar-window.c:279
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Die Sichtbarkeit der Lesezeichen in diesem Fensters ändern"
 
-#: ../thunar/thunar-window.c:279
+#: ../thunar/thunar-window.c:280
 msgid "_Tree"
 msgstr "_Baumansicht"
 
-#: ../thunar/thunar-window.c:279
+#: ../thunar/thunar-window.c:280
 msgid "Toggles the visibility of the tree pane"
 msgstr "Die Sichtbarkeit der Baumansicht in diesem Fensters ändern"
 
-#: ../thunar/thunar-window.c:280
+#: ../thunar/thunar-window.c:281
 msgid "St_atusbar"
 msgstr "St_atusleiste"
 
-#: ../thunar/thunar-window.c:280
+#: ../thunar/thunar-window.c:281
 msgid "Change the visibility of this window's statusbar"
 msgstr "Die Sichtbarkeit der Statusleiste dieses Fensters ändern"
 
 #.
 #. * add the location selector options
 #.
-#: ../thunar/thunar-window.c:581
+#: ../thunar/thunar-window.c:582
 msgid "_Pathbar Style"
 msgstr "_Pfadleisten-Stil"
 
-#: ../thunar/thunar-window.c:582
+#: ../thunar/thunar-window.c:583
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Moderner Ansatz mit Knöpfen, die Ordnern entsprechen"
 
-#: ../thunar/thunar-window.c:588
+#: ../thunar/thunar-window.c:589
 msgid "_Toolbar Style"
 msgstr "_Werkzeugleisten-Stil"
 
-#: ../thunar/thunar-window.c:589
+#: ../thunar/thunar-window.c:590
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "Herkömmlicher Ansatz mit Pfadleiste und Navigationsknöpfen"
 
-#: ../thunar/thunar-window.c:595
+#: ../thunar/thunar-window.c:596
 msgid "_Hidden"
 msgstr "_Verstecken"
 
-#: ../thunar/thunar-window.c:595
+#: ../thunar/thunar-window.c:596
 msgid "Don't display any location selector"
 msgstr "Keine Adressleiste anzeigen"
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:604
+#: ../thunar/thunar-window.c:605
 msgid "View as _Icons"
 msgstr "_Symbolansicht"
 
-#: ../thunar/thunar-window.c:604
+#: ../thunar/thunar-window.c:605
 msgid "Display folder content in an icon view"
 msgstr "Ordnerinhalte in der Symbolansicht darstellen"
 
-#: ../thunar/thunar-window.c:611
+#: ../thunar/thunar-window.c:612
 msgid "View as _Detailed List"
 msgstr "_Detailansicht"
 
-#: ../thunar/thunar-window.c:611
+#: ../thunar/thunar-window.c:612
 msgid "Display folder content in a detailed list view"
 msgstr "Ordnerinhalte in der Detailansicht darstellen"
 
-#: ../thunar/thunar-window.c:618
+#: ../thunar/thunar-window.c:619
 msgid "View as _Compact List"
 msgstr "_Listenansicht"
 
-#: ../thunar/thunar-window.c:618
+#: ../thunar/thunar-window.c:619
 msgid "Display folder content in a compact list view"
 msgstr "Ordnerinhalte in der Listenansicht darstellen"
 
-#: ../thunar/thunar-window.c:1638
+#: ../thunar/thunar-window.c:1639
 msgid "Failed to open parent folder"
 msgstr "Der Eltern-Ordner konnte nicht geöffnet werden"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1664
+#: ../thunar/thunar-window.c:1665
 msgid "Failed to open home directory"
 msgstr "Der persönliche Ordner konnte nicht geöffnet werden"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:1726
+#: ../thunar/thunar-window.c:1727
 msgid "About Templates"
 msgstr "Über Vorlagen"
 
-#: ../thunar/thunar-window.c:1747
+#: ../thunar/thunar-window.c:1748
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Alle Dateien in diesem Ordner erscheinen im Menü »Neues Dokument erstellen«."
 
-#: ../thunar/thunar-window.c:1754
+#: ../thunar/thunar-window.c:1755
 msgid ""
 "If you frequently create certain kinds of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2465,15 +2481,15 @@ msgstr ""
 "Sie können diesen Eintrag in dem Menü »Neues Dokument erstellen« wählen und "
 "eine Kopie dieses Dokuments wird im gerade angezeigten Ordner angelegt."
 
-#: ../thunar/thunar-window.c:1766
+#: ../thunar/thunar-window.c:1767
 msgid "Do _not display this message again"
 msgstr "Diese Meldung in Zukunft _nicht mehr anzeigen"
 
-#: ../thunar/thunar-window.c:1779
+#: ../thunar/thunar-window.c:1780
 msgid "Failed to open templates folder"
 msgstr "Der Ordner mit den Vorlagen konnte nicht geöffnet werden"
 
-#: ../thunar/thunar-window.c:1815
+#: ../thunar/thunar-window.c:1816
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2766,12 +2782,10 @@ msgid "Numbering"
 msgstr "Nummerieren"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:177
-#, fuzzy
 msgid "Remove _From Position:"
 msgstr "_Entferne Zeichen ab Position:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
-#, fuzzy
 msgid "_To Position:"
 msgstr "_Bis Position:"
 
@@ -2839,6 +2853,92 @@ msgstr "Ungültiger regulärer Ausdruck, Fehler an Zeichenposition %ld: %s"
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:670
 msgid "Search & Replace"
 msgstr "Suchen & Ersetzen"
+
+#: ../plugins/thunar-sendto-email/main.c:163
+#, c-format
+msgid "Send \"%s\" as compressed archive?"
+msgstr "»%s« als komprimiertes Archiv senden?"
+
+#: ../plugins/thunar-sendto-email/main.c:165
+#: ../plugins/thunar-sendto-email/main.c:184
+msgid "Send _directly"
+msgstr "_Direkt senden"
+
+#: ../plugins/thunar-sendto-email/main.c:166
+msgid "Send com_pressed"
+msgstr "_Komprimiert senden"
+
+#: ../plugins/thunar-sendto-email/main.c:168
+msgid ""
+"When sending a file via email, you can either choose to send the file "
+"directly, as is, or compress the file before attaching it to an email. It is "
+"highly recommended to compress large files before sending them."
+msgstr ""
+"Wenn eine Datei via E-Mail versendet werden soll, kann die Datei entweder "
+"direkt an die E-Mail angehängt werden, oder vorher komprimiert werden. Für "
+"größere Dateien wird empfohlen, die Dateien vorher zu komprimieren."
+
+#: ../plugins/thunar-sendto-email/main.c:179
+#, c-format
+msgid "Send %d file as compressed archive?"
+msgid_plural "Send %d files as compressed archive?"
+msgstr[0] "%d Datei als komprimiertes Archiv senden?"
+msgstr[1] "%d Dateien als komprimiertes Archiv senden?"
+
+#: ../plugins/thunar-sendto-email/main.c:185
+msgid "Send as _archive"
+msgstr "Als A_rchiv senden"
+
+#: ../plugins/thunar-sendto-email/main.c:187
+msgid ""
+"When sending multiple files via email, you can either choose to send the "
+"files directly, attaching multiple files to an email, or send all files "
+"compressed into a single archive file and attach the archive. It is highly "
+"recommended to send multiple large files as archive."
+msgstr ""
+"Beim Versenden mehrerer Dateien via E-Mail, können die Dateien entweder "
+"einzeln an die E-Mail angehängt werden, oder als komprimiertes Archiv. Wenn "
+"mehrere größere Dateien via E-Mail versendet werden sollen, wird empfohlen "
+"diese als komprimiertes Archiv zu versenden."
+
+#. allocate the progress dialog
+#. setup the label
+#: ../plugins/thunar-sendto-email/main.c:236
+#: ../plugins/thunar-sendto-email/main.c:261
+msgid "Compressing files..."
+msgstr "Dateien werden komprimiert..."
+
+#. tell the user that the command failed
+#: ../plugins/thunar-sendto-email/main.c:286
+#, c-format
+msgid "ZIP command terminated with error %d"
+msgstr "ZIP Kommando abgebrochen mit Fehler %d"
+
+#: ../plugins/thunar-sendto-email/main.c:333
+msgid "Failed to create temporary directory"
+msgstr "Temporäres Verzeichnis konnte nicht erstellt werden"
+
+#: ../plugins/thunar-sendto-email/main.c:384
+#, c-format
+msgid "Failed to create symbolic link for \"%s\""
+msgstr "Verknüpfung für »%s« konnte nicht erstellt werden"
+
+#. tell the user that we failed to compress the file(s)
+#: ../plugins/thunar-sendto-email/main.c:407
+#, c-format
+msgid "Failed to compress %d file"
+msgid_plural "Failed to compress %d files"
+msgstr[0] "%d Datei konnte nicht komprimiert werden"
+msgstr[1] "%d Dateien konnten nicht komprimiert werden"
+
+#. tell the user that we failed
+#: ../plugins/thunar-sendto-email/main.c:548
+msgid "Failed to compose new email"
+msgstr "Konnte neue Email nicht erstellen"
+
+#: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
+msgid "Mail Recipient"
+msgstr "E-Mail-Empfänger"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"

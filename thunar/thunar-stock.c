@@ -47,6 +47,8 @@ static const ThunarStockIcon thunar_stock_icons[] =
 {
   { THUNAR_STOCK_CREATE,    "gtk-ok",                 },
   { THUNAR_STOCK_RENAME,    "gtk-ok",                 },
+  { THUNAR_STOCK_DESKTOP,   "gnome-fs-desktop",       },
+  { THUNAR_STOCK_SHORTCUTS, "stock_thunar-shortcuts", },
   { THUNAR_STOCK_TEMPLATES, "stock_thunar-templates", },
 };
 

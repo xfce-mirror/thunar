@@ -1,3 +1,33 @@
+2006-06-11	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-gtk-extensions.{c,h}, thunar/thunar-launcher.c: Add
+	  utility function thunar_gtk_icon_factory_insert_icon(), which inserts
+	  a named icon or an icon file to a GtkIconFactory with a given name.
+	  This is used in ThunarLauncher to add icons for the various launcher
+	  GtkAction's.
+	* thunar/thunar-sendto-model.{c,h}, thunar/Makefile.am: Import class
+	  ThunarSendtoModel, which provides access to additional "Send To"
+	  targets registered as .desktop files in $XDG_DATA_DIRS/Thunar/sendto.
+	* icons/16x16/Makefile.am, icons/16x16/stock_thunar-shortcuts.png:
+	  Add stock icon for the shortcuts pane.
+	* thunar/thunar-stock.{c,h}: Add stock icons for the desktop and
+	  shortcuts side pane "Send To" targets.
+	* thunar/thunar-launcher-ui.xml, thunar/thunar-launcher.c,
+	  thunar/thunar-shortcuts-pane-ui.xml, thunar/thunar-shortcuts-pane.c,
+	  thunar/thunar-window-ui.xml, thunar/thunar-window.c: Add "Send To"
+	  sub menu to the "File" and file context menus. Turn "Add Folder to
+	  Shortcuts" into a sendto target, named "Side Pane (Create Shortcut)".
+	  Use ThunarSendtoModel to load additional sendto targets, represented
+	  as ThunarVfsMimeHandlers, and add them to the "Send To" menu (will be
+	  loaded only on-demand).
+	* configure.in.in, plugins/thunar-sendto-email/, plugins/Makefile.am:
+	  Import the sendto-email plugin, which adds an entry to the new "Send
+	  To" menu, named "Mail Recipient", and allows to attach files to mails
+	  from within the file manager.
+	* po/POTFILES.in: Add new files here.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-06-11	Daichi Kawahata <daichi@xfce.org>
 
 	* plugins/thunar-sbr/thunar-sbr-remove-renamer.c,

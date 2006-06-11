@@ -131,6 +131,8 @@ Thunar_SOURCES =							\
 	thunar-renamer-pair.h						\
 	thunar-renamer-progress.c					\
 	thunar-renamer-progress.h					\
+	thunar-sendto-model.c						\
+	thunar-sendto-model.h						\
 	thunar-session-client.c						\
 	thunar-session-client.h						\
 	thunar-shortcuts-icon-renderer.c				\

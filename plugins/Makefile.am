@@ -15,6 +15,7 @@ endif
 SUBDIRS =								\
 	$(THUNAR_APR_SUBDIRS)						\
 	$(THUNAR_SBR_SUBDIRS)						\
-	$(THUNAR_UCA_SUBDIRS)
+	$(THUNAR_UCA_SUBDIRS)						\
+	thunar-sendto-email
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
