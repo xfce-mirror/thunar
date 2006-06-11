@@ -174,7 +174,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   gtk_box_pack_start (GTK_BOX (remove_renamer), table, TRUE, TRUE, 0);
   gtk_widget_show (table);
 
-  label = gtk_label_new_with_mnemonic (_("Remove _From Positon:"));
+  label = gtk_label_new_with_mnemonic (_("Remove _From Position:"));
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, 0, 0, 0);
   gtk_widget_show (label);
@@ -209,7 +209,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   g_type_class_unref (klass);
   gtk_widget_show (combo);
 
-  label = gtk_label_new_with_mnemonic (_("_To Positon:"));
+  label = gtk_label_new_with_mnemonic (_("_To Position:"));
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2, GTK_FILL, 0, 0, 0);
   gtk_widget_show (label);

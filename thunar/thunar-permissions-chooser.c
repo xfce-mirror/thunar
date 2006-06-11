@@ -617,7 +617,7 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
       gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
       gtk_widget_show (label);
 
-      label = gtk_label_new (_("Do you want to apply your changes recursively to\nall files and subfolder below the selected folder?"));
+      label = gtk_label_new (_("Do you want to apply your changes recursively to\nall files and subfolders below the selected folder?"));
       gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
       gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
       gtk_widget_show (label);
