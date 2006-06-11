@@ -131,6 +131,7 @@ tse_ask_compress (GList *infos)
   GtkWidget        *message;
   GList            *lp;
   gint              response = TSE_RESPONSE_PLAIN;
+  gint              n_archives = 0;
   gint              n_infos = 0;
   gint              n;
 
@@ -142,22 +143,30 @@ tse_ask_compress (GList *infos)
       if (info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
         return TSE_RESPONSE_COMPRESS;
 
+      /* check if the single file is already an archive */
+      for (n = 0; n < G_N_ELEMENTS (TSE_MIME_TYPES); ++n)
+        {
+          /* check if this mime type matches */
+          if (strcmp (thunar_vfs_mime_info_get_name (info->mime_info), TSE_MIME_TYPES[n]) == 0)
+            {
+              /* yep, that's a match then */
+              ++n_archives;
+              break;
+            }
+        }
+
       /* add file size to total */
       total_size += info->size;
     }
 
-  /* check if the total size is larger than 200KiB, or we have more than one file */
-  if (G_LIKELY (n_infos > 1 || total_size > 200 * 1024))
+  /* check if the total size is larger than 200KiB, or we have more than
+   * one file, and atleast one of the files is not already an archive.
+   */
+  if ((n_infos > 1 || total_size > 200 * 1024) && n_infos != n_archives)
     {
       /* check if we have more than one file */
       if (G_LIKELY (n_infos == 1))
         {
-          /* check if the single file is already an archive */
-          info = (ThunarVfsInfo *) infos->data;
-          for (n = 0; n < G_N_ELEMENTS (TSE_MIME_TYPES); ++n)
-            if (strcmp (thunar_vfs_mime_info_get_name (info->mime_info), TSE_MIME_TYPES[n]) == 0)
-              return TSE_RESPONSE_PLAIN;
-
           /* ask the user whether to compress the file */
           message = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
                                             _("Send \"%s\" as compressed archive?"), info->display_name);
