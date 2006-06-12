@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-13 03:43+0900\n"
-"PO-Revision-Date: 2006-05-19 17:20+0300\n"
+"POT-Creation-Date: 2006-06-12 22:19+0300\n"
+"PO-Revision-Date: 2006-06-12 22:28+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp2.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -950,9 +950,8 @@ msgid "Open in New Window"
 msgstr "Avaa uudessa ikkunassa"
 
 #: ../thunar/thunar-launcher.c:130
-#, fuzzy
 msgid "Open the selected directory in a new window"
-msgstr "Avaa %d valittu hakemisto uudessa ikkunassa"
+msgstr "Avaa valittu hakemisto uudessa ikkunassa"
 
 #: ../thunar/thunar-launcher.c:131 ../thunar/thunar-launcher.c:133
 msgid "Open With Other _Application..."
@@ -1064,22 +1063,21 @@ msgstr "Avaa sovelluksessa \"%s\""
 #: ../thunar/thunar-launcher.c:1204
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Työpöydälle (luo linkki)"
+msgstr[1] "Työpöydälle (luo linkit)"
 
 #: ../thunar/thunar-launcher.c:1205
-#, fuzzy
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "Luo symbolinen linkki valittuun tiedostoon"
-msgstr[1] "Luo symboliset linkit valittuihin tiedostoihin"
+msgstr[0] "Luo työpöydälle linkki valittuun tiedostoon"
+msgstr[1] "Luo työpöydälle linkit valittuihin tiedostoihin"
 
 #: ../thunar/thunar-launcher.c:1238
-#, fuzzy, c-format
+#, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] "Avaa valitut tiedostot"
-msgstr[1] "Avaa valitut tiedostot"
+msgstr[0] "Lähetä valittu tiedosto kohteeseen \"%s\""
+msgstr[1] "Lähetä valitut tiedostot kohteeseen \"%s\""
 
 #: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
@@ -1314,7 +1312,6 @@ msgid "Apply recursively?"
 msgstr "Asetetaanko alihakemistoille?"
 
 #: ../thunar/thunar-permissions-chooser.c:620
-#, fuzzy
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
@@ -1768,7 +1765,7 @@ msgstr "_Nimeä uudelleen"
 msgid ""
 "Click here to actually rename the files listed above to their new names."
 msgstr ""
-"Napsauta tästä vahvistaaksesi ylläolevan listan tiedostojen nimeäminen."
+"Napsauta tästä vahvistaaksesi ylläolevan listan tiedostojen nimeämisen."
 
 #: ../thunar/thunar-renamer-dialog.c:447
 msgid "New Name"
@@ -1852,7 +1849,7 @@ msgid ""
 "cancel the operation without reverting previous changes."
 msgstr ""
 "Voit joko ohittaa tämän tiedoston ja jatkaa loppujen tiedostojen nimeämistä, "
-"palauttaa alkuperäiset nimet jo nimetyille tiedostoille, tai peruuttaa "
+"palauttaa alkuperäiset nimet jo nimetyille tiedostoille tai peruuttaa "
 "toiminnon palauttamatta edeltäviä muutoksia."
 
 #: ../thunar/thunar-renamer-progress.c:225
@@ -1871,11 +1868,10 @@ msgstr ""
 "Haluatko ohittaa tämän tiedoston ja jatkaa loppujen tiedostojen nimeämistä?"
 
 #: ../thunar/thunar-shortcuts-pane.c:412
-#, fuzzy
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] "_Nimeä kirjanmerkki uudelleen"
-msgstr[1] "_Nimeä kirjanmerkki uudelleen"
+msgstr[0] "Sivupaneeliin (luo kirjanmerkki)"
+msgstr[1] "Sivupaneeliin (luo kirjanmerkit)"
 
 #: ../thunar/thunar-shortcuts-pane.c:414
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2040,7 +2036,7 @@ msgstr "Nimeä valittu tiedosto uudelleen"
 #. add the "Create Document" sub menu action
 #: ../thunar/thunar-standard-view.c:582
 msgid "Create _Document"
-msgstr "Luo _asiakirja"
+msgstr "Luo asiaki_rja"
 
 #: ../thunar/thunar-standard-view.c:1243
 msgid "Loading folder contents..."
@@ -2195,7 +2191,7 @@ msgstr "Avaa uusi Thunar-ikkuna nykyisessä sijainnissa"
 
 #: ../thunar/thunar-window.c:254
 msgid "_Send To"
-msgstr ""
+msgstr "_Lähetä"
 
 #: ../thunar/thunar-window.c:255
 msgid "Close _All Windows"
@@ -2423,8 +2419,7 @@ msgstr "Tietoja asiakirjamalleista"
 
 #: ../thunar/thunar-window.c:1748
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr ""
-"Kaikki tämän kansion tiedostot näkyvät \"Luo asiakirja\" -hakemistossa."
+msgstr "Kaikki tämän kansion tiedostot näkyvät \"Luo asiakirja\" -valikossa."
 
 #: ../thunar/thunar-window.c:1755
 msgid ""
@@ -2739,12 +2734,10 @@ msgid "Numbering"
 msgstr "Numerointi"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:177
-#, fuzzy
 msgid "Remove _From Position:"
 msgstr "Poista _sijainnista"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
-#, fuzzy
 msgid "_To Position:"
 msgstr "Sij_aintiin:"
 
@@ -2810,16 +2803,16 @@ msgstr "Etsi ja korvaa"
 #: ../plugins/thunar-sendto-email/main.c:172
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
-msgstr ""
+msgstr "Lähetetäänkö \"%s\" pakattuna arkistona?"
 
 #: ../plugins/thunar-sendto-email/main.c:174
 #: ../plugins/thunar-sendto-email/main.c:193
 msgid "Send _directly"
-msgstr ""
+msgstr "Lähetä _suoraan"
 
 #: ../plugins/thunar-sendto-email/main.c:175
 msgid "Send com_pressed"
-msgstr ""
+msgstr "Lähetä _pakattuna"
 
 #: ../plugins/thunar-sendto-email/main.c:177
 msgid ""
@@ -2827,17 +2820,20 @@ msgid ""
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
 msgstr ""
+"Lähettäessäsi tiedoston sähköpostilla voit valita, lähetetäänkö se suoraan "
+"eli sellaisenaan vai pakataanko se ennen sähköpostiviestiin liittämistä. On "
+"suositeltavaa, että suuret tiedostot lähetetään pakattuina."
 
 #: ../plugins/thunar-sendto-email/main.c:188
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Lähetetäänkö %d tiedosto pakattuna arkistona?"
+msgstr[1] "Lähetetäänkö %d tiedostoa pakattuna arkistona?"
 
 #: ../plugins/thunar-sendto-email/main.c:194
 msgid "Send as _archive"
-msgstr ""
+msgstr "Lähetä _arkistona"
 
 #: ../plugins/thunar-sendto-email/main.c:196
 msgid ""
@@ -2846,48 +2842,49 @@ msgid ""
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
 msgstr ""
+"Lähettäessäsi useita tiedostoja sähköpostilla voit valita, lähetetäänkö ne "
+"suoraan eli erillisinä liitteinä, vai liitetäänkö ne viestiin yhtenä "
+"pakattuna arkistona. On suositeltavaa, että suuret tiedostot lähetetään "
+"arkistona."
 
 #. allocate the progress dialog
 #. setup the label
 #: ../plugins/thunar-sendto-email/main.c:245
 #: ../plugins/thunar-sendto-email/main.c:270
-#, fuzzy
 msgid "Compressing files..."
-msgstr "Kopioidaan tiedostoja..."
+msgstr "Pakataan tiedostoja..."
 
 #. tell the user that the command failed
 #: ../plugins/thunar-sendto-email/main.c:295
 #, c-format
 msgid "ZIP command terminated with error %d"
-msgstr ""
+msgstr "ZIP-komennon suoritus epäonnistui (virhe %d)"
 
 #: ../plugins/thunar-sendto-email/main.c:342
-#, fuzzy
 msgid "Failed to create temporary directory"
-msgstr "Hakemiston \"%s\" luominen epäonnistui"
+msgstr "Väliaikaishakemiston luominen epäonnistui"
 
 #: ../plugins/thunar-sendto-email/main.c:393
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "Symbolisen linkin \"%s\" luominen epäonnistui"
+msgstr "Symbolisen linkin luominen kohteelle \"%s\" epäonnistui"
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:416
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "%d tiedoston avaaminen epäonnistui."
-msgstr[1] "%d tiedoston avaaminen epäonnistui."
+msgstr[0] "%d tiedoston pakkaaminen epäonnistui"
+msgstr[1] "%d tiedoston pakkaaminen epäonnistui"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:557
-#, fuzzy
 msgid "Failed to compose new email"
-msgstr "%d tiedoston avaaminen epäonnistui."
+msgstr "Sähköpostiviestin luominen epäonnistui"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
-msgstr ""
+msgstr "Postin vastaanottaja"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
@@ -3179,3 +3176,4 @@ msgstr "Avaa hakemisto Thunarissa"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Avaa valitut hakemistot Thunarissa"
+
