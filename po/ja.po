@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-06-13 03:43+0900\n"
-"PO-Revision-Date: 2006-06-11 15:23+0900\n"
+"PO-Revision-Date: 2006-06-13 04:11+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -967,9 +967,8 @@ msgid "Open in New Window"
 msgstr "新規ウィンドウで開く"
 
 #: ../thunar/thunar-launcher.c:130
-#, fuzzy
 msgid "Open the selected directory in a new window"
-msgstr "選択したフォルダを新しい%dつのウィンドウで開きます。"
+msgstr "選択したフォルダを新しいウィンドウで開きます。"
 
 #: ../thunar/thunar-launcher.c:131 ../thunar/thunar-launcher.c:133
 msgid "Open With Other _Application..."
@@ -1072,20 +1071,18 @@ msgstr "%sで開く"
 #: ../thunar/thunar-launcher.c:1204
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "デスクトップ (リンクを作成)"
 
 #: ../thunar/thunar-launcher.c:1205
-#, fuzzy
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "選択したファイルのリンクを作成します。"
+msgstr[0] "選択したファイルのリンクをデスクトップに作成します。"
 
 #: ../thunar/thunar-launcher.c:1238
-#, fuzzy, c-format
+#, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] "選択したファイルを開きます。"
+msgstr[0] "選択したファイルを「%s」に送信します。"
 
 #: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
@@ -1880,10 +1877,9 @@ msgid ""
 msgstr "このファイルを飛ばして残りのファイル名の変更を続けますか？"
 
 #: ../thunar/thunar-shortcuts-pane.c:412
-#, fuzzy
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] "ショートカットの名前変更(_N)"
+msgstr[0] "サイドペイン (ショートカットの作成)"
 
 #: ../thunar/thunar-shortcuts-pane.c:414
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2195,7 +2191,7 @@ msgstr "表示されている場所のウィンドウを新しく開きます。
 
 #: ../thunar/thunar-window.c:254
 msgid "_Send To"
-msgstr ""
+msgstr "送信(_S)"
 
 #: ../thunar/thunar-window.c:255
 msgid "Close _All Windows"
@@ -2818,16 +2814,16 @@ msgstr "検索と置換"
 #: ../plugins/thunar-sendto-email/main.c:172
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
-msgstr ""
+msgstr "「%s」を圧縮アーカイブとして送信しますか？"
 
 #: ../plugins/thunar-sendto-email/main.c:174
 #: ../plugins/thunar-sendto-email/main.c:193
 msgid "Send _directly"
-msgstr ""
+msgstr "直に送信(_D)"
 
 #: ../plugins/thunar-sendto-email/main.c:175
 msgid "Send com_pressed"
-msgstr ""
+msgstr "圧縮して送信(_P)"
 
 #: ../plugins/thunar-sendto-email/main.c:177
 msgid ""
@@ -2835,17 +2831,19 @@ msgid ""
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
 msgstr ""
+"ファイルをメール経由で送信する場合、メールに添付する前に、そのまま送信する"
+"か、あるいは圧縮するかのどちらかを選択できます。大きなファイルを送信するのな"
+"ら圧縮することを勧めます。"
 
 #: ../plugins/thunar-sendto-email/main.c:188
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "%d個のファイルを圧縮アーカイブとして送信しますか？"
 
 #: ../plugins/thunar-sendto-email/main.c:194
 msgid "Send as _archive"
-msgstr ""
+msgstr "アーカイブとして送信(_A)"
 
 #: ../plugins/thunar-sendto-email/main.c:196
 msgid ""
@@ -2854,47 +2852,47 @@ msgid ""
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
 msgstr ""
+"複数のファイルをメール経由で送信する場合、メールに添付する前に、そのまま送信"
+"するか、あるいはアーカイブにまとめて圧縮するかのどちらかを選択できます。複数"
+"の大きなファイルを送信するのならアーカイブとして送信することを勧めます。"
 
 #. allocate the progress dialog
 #. setup the label
 #: ../plugins/thunar-sendto-email/main.c:245
 #: ../plugins/thunar-sendto-email/main.c:270
-#, fuzzy
 msgid "Compressing files..."
-msgstr "ファイルをコピーしています..."
+msgstr "ファイルを圧縮しています..."
 
 #. tell the user that the command failed
 #: ../plugins/thunar-sendto-email/main.c:295
 #, c-format
 msgid "ZIP command terminated with error %d"
-msgstr ""
+msgstr "ZIPコマンドがエラー%dで中断されました。"
 
 #: ../plugins/thunar-sendto-email/main.c:342
-#, fuzzy
 msgid "Failed to create temporary directory"
-msgstr "フォルダ「%s」の作成に失敗しました。"
+msgstr "一時作業フォルダの作成に失敗しました。"
 
 #: ../plugins/thunar-sendto-email/main.c:393
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "リンク「%s」の作成に失敗しました。"
+msgstr "「%s」へのシンボリックリンク作成に失敗しました。"
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:416
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "%d個のファイルを開くのに失敗しました。"
+msgstr[0] "%d個のファイルを圧縮するのに失敗しました。"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:557
-#, fuzzy
 msgid "Failed to compose new email"
-msgstr "%d個のファイルを開くのに失敗しました。"
+msgstr "新規メールの作成に失敗しました。"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
-msgstr ""
+msgstr "メールの受け取り"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
