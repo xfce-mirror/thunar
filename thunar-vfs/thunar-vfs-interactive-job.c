@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -29,6 +29,7 @@
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-interactive-job.h>
 #include <thunar-vfs/thunar-vfs-marshal.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -68,21 +69,13 @@ thunar_vfs_interactive_job_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsInteractiveJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_interactive_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsInteractiveJob),
-        0,
-        (GInstanceInitFunc) thunar_vfs_interactive_job_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_JOB, I_("ThunarVfsInteractiveJob"), &info, G_TYPE_FLAG_ABSTRACT);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_JOB,
+                                                 "ThunarVfsInteractiveJob",
+                                                 sizeof (ThunarVfsInteractiveJobClass),
+                                                 thunar_vfs_interactive_job_class_init,
+                                                 sizeof (ThunarVfsInteractiveJob),
+                                                 thunar_vfs_interactive_job_init,
+                                                 G_TYPE_FLAG_ABSTRACT);
     }
 
   return type;

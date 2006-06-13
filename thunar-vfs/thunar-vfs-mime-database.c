@@ -62,6 +62,7 @@
 #include <thunar-vfs/thunar-vfs-mime-legacy.h>
 #include <thunar-vfs/thunar-vfs-mime-sniffer.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 /* use g_open(), g_rename() and g_unlink() on win32 */
@@ -192,21 +193,13 @@ thunar_vfs_mime_database_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsMimeDatabaseClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_mime_database_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsMimeDatabase),
-        0,
-        (GInstanceInitFunc) thunar_vfs_mime_database_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsMimeDatabase"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsMimeDatabase",
+                                                 sizeof (ThunarVfsMimeDatabaseClass),
+                                                 thunar_vfs_mime_database_class_init,
+                                                 sizeof (ThunarVfsMimeDatabase),
+                                                 thunar_vfs_mime_database_init,
+                                                 0);
     }
 
   return type;

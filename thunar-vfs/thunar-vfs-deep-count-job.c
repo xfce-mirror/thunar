@@ -40,6 +40,7 @@
 
 #include <thunar-vfs/thunar-vfs-deep-count-job.h>
 #include <thunar-vfs/thunar-vfs-marshal.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -106,21 +107,13 @@ thunar_vfs_deep_count_job_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsDeepCountJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_deep_count_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsDeepCountJob),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_JOB, I_("ThunarVfsDeepCountJob"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_JOB,
+                                                 "ThunarVfsDeepCountJob",
+                                                 sizeof (ThunarVfsDeepCountJobClass),
+                                                 thunar_vfs_deep_count_job_class_init,
+                                                 sizeof (ThunarVfsDeepCountJob),
+                                                 NULL,
+                                                 0);
     }
 
   return type;

@@ -93,6 +93,8 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-mkdir-job.h						\
 	thunar-vfs-monitor.c						\
 	thunar-vfs-path.c						\
+	thunar-vfs-private.c						\
+	thunar-vfs-private.h						\
 	thunar-vfs-scandir.c						\
 	thunar-vfs-scandir.h						\
 	thunar-vfs-thumb-jpeg.c						\

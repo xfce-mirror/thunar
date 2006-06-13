@@ -34,6 +34,7 @@
 
 #include <thunar-vfs/thunar-vfs-creat-job.h>
 #include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -71,22 +72,13 @@ thunar_vfs_creat_job_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsCreatJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_creat_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsCreatJob),
-        0,
-        (GInstanceInitFunc) thunar_vfs_creat_job_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                     I_("ThunarVfsCreatJob"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                                 "ThunarVfsCreatJob",
+                                                 sizeof (ThunarVfsCreatJobClass),
+                                                 thunar_vfs_creat_job_class_init,
+                                                 sizeof (ThunarVfsCreatJob),
+                                                 thunar_vfs_creat_job_init,
+                                                 0);
     }
 
   return type;

@@ -30,6 +30,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-mkdir-job.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 #if GLIB_CHECK_VERSION(2,6,0)
@@ -71,22 +72,13 @@ thunar_vfs_mkdir_job_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsMkdirJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_mkdir_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsMkdirJob),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                     I_("ThunarVfsMkdirJob"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                                 "ThunarVfsMkdirJob",
+                                                 sizeof (ThunarVfsMkdirJobClass),
+                                                 thunar_vfs_mkdir_job_class_init,
+                                                 sizeof (ThunarVfsMkdirJob),
+                                                 NULL,
+                                                 0);
     }
 
   return type;

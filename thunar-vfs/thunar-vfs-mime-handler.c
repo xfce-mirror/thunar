@@ -34,6 +34,7 @@
 #include <thunar-vfs/thunar-vfs-mime-handler-private.h>
 #include <thunar-vfs/thunar-vfs-mime-handler.h>
 #include <thunar-vfs/thunar-vfs-path.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -88,21 +89,13 @@ thunar_vfs_mime_handler_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsMimeHandlerClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_mime_handler_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsMimeHandler),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsMimeHandler"), &info, G_TYPE_FLAG_ABSTRACT);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsMimeHandler",
+                                                 sizeof (ThunarVfsMimeHandlerClass),
+                                                 thunar_vfs_mime_handler_class_init,
+                                                 sizeof (ThunarVfsMimeHandler),
+                                                 NULL,
+                                                 0);
     }
 
   return type;

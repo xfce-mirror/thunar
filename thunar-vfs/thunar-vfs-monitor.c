@@ -32,9 +32,8 @@
 #include <string.h>
 #endif
 
-#include <gdk/gdk.h>
-
 #include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -140,21 +139,13 @@ thunar_vfs_monitor_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsMonitorClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_monitor_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsMonitor),
-        0,
-        (GInstanceInitFunc) thunar_vfs_monitor_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsMonitor"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsMonitor",
+                                                 sizeof (ThunarVfsMonitorClass),
+                                                 thunar_vfs_monitor_class_init,
+                                                 sizeof (ThunarVfsMonitor),
+                                                 thunar_vfs_monitor_init,
+                                                 0);
     }
 
   return type;

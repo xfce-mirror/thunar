@@ -23,6 +23,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-volume-freebsd.h>
 #include <thunar-vfs/thunar-vfs-volume-hal.h>
 #include <thunar-vfs/thunar-vfs-volume-none.h>
@@ -82,20 +83,13 @@ thunar_vfs_volume_manager_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsVolumeManagerClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_volume_manager_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsVolumeManager),
-        0,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsVolumeManager"), &info, G_TYPE_FLAG_ABSTRACT);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsVolumeManager",
+                                                 sizeof (ThunarVfsVolumeManagerClass),
+                                                 thunar_vfs_volume_manager_class_init,
+                                                 sizeof (ThunarVfsVolumeManager),
+                                                 NULL,
+                                                 G_TYPE_FLAG_ABSTRACT);
     }
 
   return type;

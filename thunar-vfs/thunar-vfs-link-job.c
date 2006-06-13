@@ -30,6 +30,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-link-job.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-xfer.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -75,22 +76,13 @@ thunar_vfs_link_job_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsLinkJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_link_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsLinkJob),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                     I_("ThunarVfsLinkJob"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                                 "ThunarVfsLinkJob",
+                                                 sizeof (ThunarVfsLinkJobClass),
+                                                 thunar_vfs_link_job_class_init,
+                                                 sizeof (ThunarVfsLinkJob),
+                                                 NULL,
+                                                 0);
     }
 
   return type;

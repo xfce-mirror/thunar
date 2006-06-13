@@ -44,6 +44,7 @@
 
 #include <thunar-vfs/thunar-vfs-monitor.h>
 #include <thunar-vfs/thunar-vfs-scandir.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-transfer-job.h>
 #include <thunar-vfs/thunar-vfs-xfer.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
@@ -161,23 +162,13 @@ thunar_vfs_transfer_job_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsTransferJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_transfer_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsTransferJob),
-        0,
-        (GInstanceInitFunc) thunar_vfs_transfer_job_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
-                                     I_("ThunarVfsTransferJob"),
-                                     &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                                 "ThunarVfsTransferJob",
+                                                 sizeof (ThunarVfsTransferJobClass),
+                                                 thunar_vfs_transfer_job_class_init,
+                                                 sizeof (ThunarVfsTransferJob),
+                                                 thunar_vfs_transfer_job_init,
+                                                 0);
     }
 
   return type;

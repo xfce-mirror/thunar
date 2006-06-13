@@ -32,6 +32,7 @@
 #include <thunar-vfs/thunar-vfs-info.h>
 #include <thunar-vfs/thunar-vfs-listdir-job.h>
 #include <thunar-vfs/thunar-vfs-marshal.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-scandir.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -88,23 +89,13 @@ thunar_vfs_listdir_job_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsListdirJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_listdir_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsListdirJob),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_JOB,
-                                     I_("ThunarVfsListdirJob"),
-                                     &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_JOB,
+                                                 "ThunarVfsListdirJob",
+                                                 sizeof (ThunarVfsListdirJobClass),
+                                                 thunar_vfs_listdir_job_class_init,
+                                                 sizeof (ThunarVfsListdirJob),
+                                                 NULL,
+                                                 0);
     }
 
   return type;

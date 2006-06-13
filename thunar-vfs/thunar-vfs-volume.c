@@ -23,6 +23,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -55,21 +56,13 @@ thunar_vfs_volume_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsVolumeClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_volume_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsVolume),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsVolume"), &info, G_TYPE_FLAG_ABSTRACT);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsVolume",
+                                                 sizeof (ThunarVfsVolumeClass),
+                                                 thunar_vfs_volume_class_init,
+                                                 sizeof (ThunarVfsVolume),
+                                                 NULL,
+                                                 G_TYPE_FLAG_ABSTRACT);
     }
 
   return type;

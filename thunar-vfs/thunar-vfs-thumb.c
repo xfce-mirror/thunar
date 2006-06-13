@@ -53,6 +53,7 @@
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-thumb-jpeg.h>
 #include <thunar-vfs/thunar-vfs-thumb-pixbuf.h>
 #include <thunar-vfs/thunar-vfs-thumb.h>
@@ -132,21 +133,13 @@ thunar_vfs_thumb_factory_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsThumbFactoryClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_thumb_factory_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsThumbFactory),
-        0,
-        (GInstanceInitFunc) thunar_vfs_thumb_factory_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsThumbFactory"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsThumbFactory",
+                                                 sizeof (ThunarVfsThumbFactoryClass),
+                                                 thunar_vfs_thumb_factory_class_init,
+                                                 sizeof (ThunarVfsThumbFactory),
+                                                 thunar_vfs_thumb_factory_init,
+                                                 0);
     }
 
   return type;
@@ -923,7 +916,7 @@ thunar_vfs_thumbnail_is_valid (const gchar      *thumbnail,
       if (strcmp (text_ptr[n].key, "Thumb::MTime") == 0)
         {
           /* verify the modification time */
-          if (G_UNLIKELY (atol (text_ptr[n].text) != mtime))
+          if (G_UNLIKELY (strtol (text_ptr[n].text, NULL, 10) != mtime))
             goto done1;
           ++n_checked;
         }

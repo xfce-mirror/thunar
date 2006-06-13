@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -52,6 +52,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-mime-cache.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 /* use g_open() on win32 */
@@ -121,23 +122,13 @@ thunar_vfs_mime_cache_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsMimeCacheClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_mime_cache_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsMimeCache),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_MIME_PROVIDER,
-                                     I_("ThunarVfsMimeCache"),
-                                     &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_MIME_PROVIDER,
+                                                 "ThunarVfsMimeCache",
+                                                 sizeof (ThunarVfsMimeCacheClass),
+                                                 thunar_vfs_mime_cache_class_init,
+                                                 sizeof (ThunarVfsMimeCache),
+                                                 NULL,
+                                                 0);
     }
 
   return type;

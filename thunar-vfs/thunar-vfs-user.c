@@ -45,6 +45,7 @@
 #include <unistd.h>
 #endif
 
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-user.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -88,21 +89,13 @@ thunar_vfs_group_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsGroupClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_group_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsGroup),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsGroup"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsGroup",
+                                                 sizeof (ThunarVfsGroupClass),
+                                                 thunar_vfs_group_class_init,
+                                                 sizeof (ThunarVfsGroup),
+                                                 NULL,
+                                                 0);
     }
 
   return type;
@@ -237,21 +230,13 @@ thunar_vfs_user_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsUserClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_user_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsUser),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsUser"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsUser",
+                                                 sizeof (ThunarVfsUserClass),
+                                                 thunar_vfs_user_class_init,
+                                                 sizeof (ThunarVfsUser),
+                                                 NULL,
+                                                 0);
     }
 
   return type;
@@ -568,7 +553,28 @@ struct _ThunarVfsUserManager
 
 
 
-G_DEFINE_TYPE (ThunarVfsUserManager, thunar_vfs_user_manager, G_TYPE_OBJECT);
+static GObjectClass *thunar_vfs_user_manager_parent_class;
+
+
+
+GType
+thunar_vfs_user_manager_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsUserManager",
+                                                 sizeof (ThunarVfsUserManagerClass),
+                                                 thunar_vfs_user_manager_class_init,
+                                                 sizeof (ThunarVfsUserManager),
+                                                 thunar_vfs_user_manager_init,
+                                                 0);
+    }
+
+  return type;
+}
 
 
 
@@ -576,6 +582,9 @@ static void
 thunar_vfs_user_manager_class_init (ThunarVfsUserManagerClass *klass)
 {
   GObjectClass *gobject_class;
+
+  /* determine the parent type class */
+  thunar_vfs_user_manager_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_user_manager_finalize;

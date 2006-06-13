@@ -34,9 +34,8 @@
 #define __THUNAR_VFS_JOB_C__
 #include <thunar-vfs/thunar-vfs-job.h>
 
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
-
-#include <exo/exo.h>
 
 
 
@@ -122,21 +121,13 @@ thunar_vfs_job_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsJobClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_job_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsJob),
-        0,
-        (GInstanceInitFunc) thunar_vfs_job_init,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarVfsJob"), &info, G_TYPE_FLAG_ABSTRACT);
+      type = _thunar_vfs_g_type_register_simple (G_TYPE_OBJECT,
+                                                 "ThunarVfsJob",
+                                                 sizeof (ThunarVfsJobClass),
+                                                 thunar_vfs_job_class_init,
+                                                 sizeof (ThunarVfsJob),
+                                                 thunar_vfs_job_init,
+                                                 G_TYPE_FLAG_ABSTRACT);
     }
 
   return type;

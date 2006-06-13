@@ -39,6 +39,7 @@
 #include <libhal-storage.h>
 
 #include <thunar-vfs/thunar-vfs-exec.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-volume-hal.h>
 #include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
@@ -101,21 +102,13 @@ thunar_vfs_volume_hal_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsVolumeHalClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_volume_hal_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsVolumeHal),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME, I_("ThunarVfsVolumeHal"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_VOLUME,
+                                                 "ThunarVfsVolumeHal",
+                                                 sizeof (ThunarVfsVolumeHalClass),
+                                                 thunar_vfs_volume_hal_class_init,
+                                                 sizeof (ThunarVfsVolumeHal),
+                                                 NULL,
+                                                 0);
     }
 
   return type;
@@ -681,21 +674,13 @@ thunar_vfs_volume_manager_hal_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsVolumeManagerHalClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_volume_manager_hal_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsVolumeManagerHal),
-        0,
-        (GInstanceInitFunc) thunar_vfs_volume_manager_hal_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME_MANAGER, I_("ThunarVfsVolumeManagerHal"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_VOLUME_MANAGER,
+                                                 "ThunarVfsVolumeManagerHal",
+                                                 sizeof (ThunarVfsVolumeManagerHalClass),
+                                                 thunar_vfs_volume_manager_hal_class_init,
+                                                 sizeof (ThunarVfsVolumeManagerHal),
+                                                 thunar_vfs_volume_manager_hal_init,
+                                                 0);
     }
 
   return type;

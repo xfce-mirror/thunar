@@ -46,6 +46,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-exec.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-volume-freebsd.h>
 #include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
@@ -110,21 +111,13 @@ thunar_vfs_volume_freebsd_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsVolumeFreeBSDClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_volume_freebsd_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsVolumeFreeBSD),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME, I_("ThunarVfsVolumeFreeBSD"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_VOLUME,
+                                                 "ThunarVfsVolumeFreeBSD",
+                                                 sizeof (ThunarVfsVolumeFreeBSDClass),
+                                                 thunar_vfs_volume_freebsd_class_init,
+                                                 sizeof (ThunarVfsVolumeFreeBSD),
+                                                 NULL,
+                                                 0);
     }
 
   return type;
@@ -441,21 +434,13 @@ thunar_vfs_volume_manager_freebsd_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarVfsVolumeManagerFreeBSDClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_vfs_volume_manager_freebsd_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarVfsVolumeManagerFreeBSD),
-        0,
-        (GInstanceInitFunc) thunar_vfs_volume_manager_freebsd_init,
-        NULL,
-      };
-
-      type = g_type_register_static (THUNAR_VFS_TYPE_VOLUME_MANAGER, I_("ThunarVfsVolumeManagerFreeBSD"), &info, 0);
+      type = _thunar_vfs_g_type_register_simple (THUNAR_VFS_TYPE_VOLUME_MANAGER,
+                                                 "ThunarVfsVolumeManagerFreeBSD",
+                                                 sizeof (ThunarVfsVolumeManagerFreeBSDClass),
+                                                 thunar_vfs_volume_manager_freebsd_class_init,
+                                                 sizeof (ThunarVfsVolumeManagerFreeBSD),
+                                                 thunar_vfs_volume_manager_freebsd_init,
+                                                 0);
     }
 
   return type;
