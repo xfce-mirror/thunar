@@ -168,6 +168,7 @@ tse_ask_compress (GList *infos)
       if (G_LIKELY (n_infos == 1))
         {
           /* ask the user whether to compress the file */
+          info = (ThunarVfsInfo *) infos->data;
           message = gtk_message_dialog_new (NULL, 0, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
                                             _("Send \"%s\" as compressed archive?"), info->display_name);
           gtk_dialog_add_button (GTK_DIALOG (message), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);

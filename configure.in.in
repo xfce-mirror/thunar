@@ -299,6 +299,16 @@ AC_MSG_RESULT([$enable_debug])
 dnl **************************************
 dnl *** Check for linker optimizations ***
 dnl **************************************
+AC_MSG_CHECKING([whether $LD accepts --as-needed])
+case `$LD --as-needed -v 2>&1 </dev/null` in
+*GNU* | *'with BFD'*)
+  LDFLAGS="$LDFLAGS -Wl,--as-needed"
+  AC_MSG_RESULT([yes])
+  ;;
+*)
+  AC_MSG_RESULT([no])
+  ;;
+esac
 AC_MSG_CHECKING([whether $LD accepts -O1])
 case `$LD -O1 -v 2>&1 </dev/null` in
 *GNU* | *'with BFD'*)
