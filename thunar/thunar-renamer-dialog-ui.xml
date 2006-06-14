@@ -22,11 +22,19 @@
   <menubar name="main-menu">
     <menu action="file-menu">
       <placeholder name="placeholder-launcher" />
+      <separator />
+      <menu action="sendto-menu">
+        <placeholder name="placeholder-sendto-actions" />
+      </menu>
     </menu>
   </menubar>
 
   <popup action="file-context-menu">
     <placeholder name="placeholder-launcher" />
+    <separator />
+    <menu action="sendto-menu">
+      <placeholder name="placeholder-sendto-actions" />
+    </menu>
     <separator />
     <placeholder name="placeholder-renamer-actions" />
     <separator />

@@ -171,6 +171,7 @@ struct _ThunarRenamerDialog
 static const GtkActionEntry action_entries[] =
 {
   { "file-menu", NULL, N_ ("_File"), NULL, },
+  { "sendto-menu", NULL, N_ ("_Send To"), NULL, },
   { "file-context-menu", NULL, N_ ("File Context Menu"), NULL, },
   { "add-files", GTK_STOCK_ADD, N_ ("_Add Files..."), NULL, N_ ("Include additional files in the list of files to be renamed"), G_CALLBACK (thunar_renamer_dialog_action_add_files), },
   { "remove-files", GTK_STOCK_REMOVE, NULL, NULL, NULL, G_CALLBACK (thunar_renamer_dialog_action_remove_files), },
