@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-06-15 20:42+0900\n"
-"PO-Revision-Date: 2006-06-11 10:45+0100\n"
+"PO-Revision-Date: 2006-06-14 22:39+0100\n"
 "Last-Translator: Roberto Pariset <r.pariset@gmail.com>\n"
 "Language-Team: GUFI <traduzioni@gufi.org>\n"
 "MIME-Version: 1.0\n"
@@ -954,9 +954,8 @@ msgid "Open in New Window"
 msgstr "Apri in una nuova finestra"
 
 #: ../thunar/thunar-launcher.c:130
-#, fuzzy
 msgid "Open the selected directory in a new window"
-msgstr "Apri la directory selezionata in %d nuova finestra"
+msgstr "Apri la directory selezionata in nuova finestra"
 
 #: ../thunar/thunar-launcher.c:131 ../thunar/thunar-launcher.c:133
 msgid "Open With Other _Application..."
@@ -1068,22 +1067,21 @@ msgstr "Apri con \"%s\""
 #: ../thunar/thunar-launcher.c:1204
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Desktop (Crea link)"
+msgstr[1] "Desktop (Crea link)"
 
 #: ../thunar/thunar-launcher.c:1205
-#, fuzzy
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "Crea un link simbolico per il file selezionato"
-msgstr[1] "Crea un link simbolico per i file selezionati"
+msgstr[0] "Crea un link sul desktop al file selezionato"
+msgstr[1] "Crea un link sul desktop ai file selezionati"
 
 #: ../thunar/thunar-launcher.c:1238
-#, fuzzy, c-format
+#, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] "Apri i file selezionati"
-msgstr[1] "Apri i file selezionati"
+msgstr[0] "Invia il file selezionato a \"%s\""
+msgstr[1] "Invia i file selezionati a \"%s\""
 
 #: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
@@ -1726,7 +1724,7 @@ msgstr "_File"
 
 #: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-window.c:254
 msgid "_Send To"
-msgstr ""
+msgstr "_Invia a"
 
 #: ../thunar/thunar-renamer-dialog.c:175 ../thunar/thunar-standard-view.c:310
 msgid "File Context Menu"
@@ -1886,11 +1884,10 @@ msgstr ""
 "Si desidera saltare questo file e continuare a rinominare i file rimanenti?"
 
 #: ../thunar/thunar-shortcuts-pane.c:412
-#, fuzzy
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] "Ri_nomina scorciatoia"
-msgstr[1] "Ri_nomina scorciatoia"
+msgstr[0] "Pannello laterale (Crea scorciatoia)"
+msgstr[1] "Pannello laterale (Crea scorciatoie)"
 
 #: ../thunar/thunar-shortcuts-pane.c:414
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2295,7 +2292,7 @@ msgstr "Va_i"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open _Parent"
-msgstr "_Apri superiore"
+msgstr "Apri _superiore"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open the parent folder"
@@ -2835,16 +2832,16 @@ msgstr "Cerca e sostituisci"
 #: ../plugins/thunar-sendto-email/main.c:174
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
-msgstr ""
+msgstr "Inviare \"%s\" come un archivio compresso?"
 
 #: ../plugins/thunar-sendto-email/main.c:176
 #: ../plugins/thunar-sendto-email/main.c:195
 msgid "Send _directly"
-msgstr ""
+msgstr "Invia _direttamente"
 
 #: ../plugins/thunar-sendto-email/main.c:177
 msgid "Send com_pressed"
-msgstr ""
+msgstr "Invia com_presso"
 
 #: ../plugins/thunar-sendto-email/main.c:179
 msgid ""
@@ -2852,17 +2849,21 @@ msgid ""
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
 msgstr ""
+"Quando si manda un file per email, è possibile scegliere di inviarlo "
+"direttamente, così com'è, oppure di comprimerlo prima di allegarlo "
+"all'email. È caldamente raccomandato di comprimere file grandi prima di "
+"inviarli."
 
 #: ../plugins/thunar-sendto-email/main.c:190
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Inviare %d file come archivio compresso?"
+msgstr[1] "Inviare %d file come archivio compresso?"
 
 #: ../plugins/thunar-sendto-email/main.c:196
 msgid "Send as _archive"
-msgstr ""
+msgstr "Invia come _archivio"
 
 #: ../plugins/thunar-sendto-email/main.c:198
 msgid ""
@@ -2871,48 +2872,49 @@ msgid ""
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
 msgstr ""
+"Quando si mandano più file per email, è possibile scegliere di inviarli "
+"direttamente, allegando più file all'email, oppure di inviare tutti i file "
+"compressi in un unico archivio, e quindi allegare tale archivio. È "
+"caldamente raccomandato di comprimere file grandi prima di inviarli."
 
 #. allocate the progress dialog
 #. setup the label
 #: ../plugins/thunar-sendto-email/main.c:247
 #: ../plugins/thunar-sendto-email/main.c:272
-#, fuzzy
 msgid "Compressing files..."
-msgstr "Copia dei file in corso..."
+msgstr "Compressione dei file in corso..."
 
 #. tell the user that the command failed
 #: ../plugins/thunar-sendto-email/main.c:297
 #, c-format
 msgid "ZIP command terminated with error %d"
-msgstr ""
+msgstr "Programma di compressione terminato con errore %d"
 
 #: ../plugins/thunar-sendto-email/main.c:344
-#, fuzzy
 msgid "Failed to create temporary directory"
-msgstr "Impossibile creare la directory \"%s\""
+msgstr "Impossibile creare la directory temporanea"
 
 #: ../plugins/thunar-sendto-email/main.c:395
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "Impossibile creare link simbolico \"%s\""
+msgstr "Impossibile creare link simbolico per \"%s\""
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:418
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "Impossibile aprire %d file."
-msgstr[1] "Impossibile aprire %d file."
+msgstr[0] "Impossibile comprimere %d file"
+msgstr[1] "Impossibile comprimere %d file"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:559
-#, fuzzy
 msgid "Failed to compose new email"
-msgstr "Impossibile aprire %d file."
+msgstr "Impossibile comporre una nuova email"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
-msgstr ""
+msgstr "Destinatario"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
