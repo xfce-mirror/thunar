@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-13 03:43+0900\n"
+"POT-Creation-Date: 2006-06-15 20:42+0900\n"
 "PO-Revision-Date: 2006-06-02 19:13+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
@@ -19,19 +19,19 @@ msgstr ""
 "X-Poedit-Country: GREECE\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:168
-#: ../thunar-vfs/thunar-vfs-chown-job.c:166
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:271
+#: ../thunar-vfs/thunar-vfs-chmod-job.c:160
+#: ../thunar-vfs/thunar-vfs-chown-job.c:158
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:262
 msgid "Collecting files..."
 msgstr "Συλλογή αρχείων..."
 
 #. ask the user whether we should skip the file
 #. ask the user whether to skip this file (used for cancellation only)
 #. ask the user whether to skip
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:189
-#: ../thunar-vfs/thunar-vfs-chown-job.c:187
-#: ../thunar-vfs/thunar-vfs-link-job.c:213
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:785
+#: ../thunar-vfs/thunar-vfs-chmod-job.c:181
+#: ../thunar-vfs/thunar-vfs-chown-job.c:179
+#: ../thunar-vfs/thunar-vfs-link-job.c:205
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:776
 #, c-format
 msgid ""
 "%s.\n"
@@ -42,29 +42,29 @@ msgstr ""
 "\n"
 "Θέλετε να το προσπεράσετε;"
 
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:253
-#: ../thunar-vfs/thunar-vfs-chown-job.c:251
+#: ../thunar-vfs/thunar-vfs-chmod-job.c:245
+#: ../thunar-vfs/thunar-vfs-chown-job.c:243
 #, c-format
 msgid "Failed to determine file info of \"%s\": %s"
 msgstr "Ο προσδιορισμός των πληροφοριών για το αρχείο \"%s\" απέτυχε: %s"
 
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:279
+#: ../thunar-vfs/thunar-vfs-chmod-job.c:271
 #, c-format
 msgid "Failed to change permissions of \"%s\": %s"
 msgstr "Η αλλαγή των δικαιωμάτων του \"%s\" απέτυχε: %s"
 
-#: ../thunar-vfs/thunar-vfs-chown-job.c:267
+#: ../thunar-vfs/thunar-vfs-chown-job.c:259
 #, c-format
 msgid "Failed to change file owner of \"%s\": %s"
 msgstr "Η αλλαγή του ιδιοκτήτη του \"%s\" απέτυχε: %s"
 
-#: ../thunar-vfs/thunar-vfs-chown-job.c:269
+#: ../thunar-vfs/thunar-vfs-chown-job.c:261
 #, c-format
 msgid "Failed to change file group of \"%s\": %s"
 msgstr "Η αλλαγή της ομάδας του \"%s\" απέτυχε: %s"
 
 #. ask the user whether to override this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:188
+#: ../thunar-vfs/thunar-vfs-creat-job.c:180
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Do you want to replace it with an empty file?"
@@ -73,8 +73,8 @@ msgstr ""
 "αρχείο;"
 
 #. ask the user whether to skip this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:199
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:236
+#: ../thunar-vfs/thunar-vfs-creat-job.c:191
+#: ../thunar-vfs/thunar-vfs-unlink-job.c:227
 #, c-format
 msgid ""
 "Failed to remove \"%s\".\n"
@@ -86,7 +86,7 @@ msgstr ""
 "Θέλετε να το προσπεράσετε;"
 
 #. ask the user whether to skip this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:216
+#: ../thunar-vfs/thunar-vfs-creat-job.c:208
 #, c-format
 msgid ""
 "Failed to create empty file \"%s\".\n"
@@ -98,7 +98,7 @@ msgstr ""
 "Θέλετε να το προσπεράσετε;"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:220
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:213
 msgid "Failed to read folder contents"
 msgstr "Η λήψη των περιεχομένων του φακέλου απέτυχε"
 
@@ -136,8 +136,8 @@ msgstr "Δεν ήταν δυνατή η λήψη της κατάστασης τ�
 
 #. ask the user whether we should remove the target first
 #. ask the user whether to overwrite
-#: ../thunar-vfs/thunar-vfs-link-job.c:177
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:765
+#: ../thunar-vfs/thunar-vfs-link-job.c:169
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:756
 #, c-format
 msgid ""
 "%s.\n"
@@ -149,50 +149,50 @@ msgstr ""
 "Θέλετε να αντικατασταθεί;"
 
 #. tell the user that we failed to delete the application launcher
-#: ../thunar-vfs/thunar-vfs-link-job.c:201
-#: ../thunar-vfs/thunar-vfs-mime-database.c:1778
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:665
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:718
+#: ../thunar-vfs/thunar-vfs-link-job.c:193
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1771
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:656
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:709
 #, c-format
 msgid "Failed to remove \"%s\": %s"
 msgstr "Η διαγραφή του \"%s\" απέτυχε: %s"
 
-#: ../thunar-vfs/thunar-vfs-mime-database.c:1712
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1705
 #, c-format
 msgid "Failed to load application from file %s"
 msgstr "Η φόρτωση της εφαρμογής από το αρχείο %s απέτυχε"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:134
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:127
 msgid "Command"
 msgstr "Εντολή"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:135
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:128
 msgid "The command to run the mime handler"
 msgstr "Η εντολή για να εκτελεστεί ο χειριστής mime"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:147
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:140
 msgid "Flags"
 msgstr "Σημαίες"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:148
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:141
 msgid "The flags for the mime handler"
 msgstr "Οι σημαίες του χειριστή mime"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:163
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:156
 msgid "Icon"
 msgstr "Εικονίδιο"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:164
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:157
 msgid "The icon of the mime handler"
 msgstr "Το εικονίδιο του χειριστή mime"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:176
-#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:431
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:169
+#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:432
 #: ../thunarx/thunarx-renamer.c:177
 msgid "Name"
 msgstr "Όνομα"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:177
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:170
 msgid "The name of the mime handler"
 msgstr "Το όνομα του χειριστή mime"
 
@@ -201,7 +201,7 @@ msgstr "Το όνομα του χειριστή mime"
 msgid "%s document"
 msgstr "έγγραφο %s"
 
-#: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
+#: ../thunar-vfs/thunar-vfs-mkdir-job.c:157
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "Η δημιουργία του καταλόγου \"%s\" απέτυχε: %s"
@@ -214,30 +214,30 @@ msgstr "Η διαδρομή είναι υπερβολικά μεγάλη για 
 msgid "URI too long to fit into buffer"
 msgstr "Το URI είναι υπερβολικά μεγάλο για να χωρέσει στην προσωρινή μνήμη"
 
-#: ../thunar-vfs/thunar-vfs-thumb.c:179 ../thunar/thunar-enum-types.c:97
+#: ../thunar-vfs/thunar-vfs-thumb.c:172 ../thunar/thunar-enum-types.c:97
 msgid "Size"
 msgstr "Μέγεθος"
 
-#: ../thunar-vfs/thunar-vfs-thumb.c:180
+#: ../thunar-vfs/thunar-vfs-thumb.c:173
 msgid "The desired thumbnail size"
 msgstr "Το επιθυμητό μέγεθος μικρογραφιών"
 
 #. display info message
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:367
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:358
 msgid "Deleting directories..."
 msgstr "Διαγραφή καταλόγων..."
 
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:387
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:378
 #, c-format
 msgid "Failed to remove directory \"%s\": %s"
 msgstr "Δεν ήταν δυνατή η διαγραφή του καταλόγου \"%s\": %s"
 
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:911
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:902
 msgid "Cannot transfer the root directory"
 msgstr "Δεν είναι δυνατή η μεταφορά του ριζικού (root) καταλόγου"
 
 #. tell the user that we're preparing the unlink job
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:163
+#: ../thunar-vfs/thunar-vfs-unlink-job.c:154
 msgid "Preparing..."
 msgstr "Προετοιμασία..."
 
@@ -251,12 +251,12 @@ msgid "Unknown user \"%s\""
 msgstr "Άγνωστος χρήστης \"%s\""
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:324
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Ο προσδιορισμός του σημείου σύνδεσης για το `%s' απέτυχε"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:819
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:804
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "Απέτυχε η σύνδεση με το δαίμονα HAL: %s"
@@ -662,7 +662,7 @@ msgid "Select an Application"
 msgstr "Επιλογή εφαρμογής"
 
 #: ../thunar/thunar-chooser-dialog.c:841
-#: ../thunar/thunar-renamer-dialog.c:1102
+#: ../thunar/thunar-renamer-dialog.c:1103
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
 #: ../plugins/thunar-uca/thunar-uca-editor.c:654
 msgid "All Files"
@@ -831,7 +831,7 @@ msgstr ""
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:989
 msgid "Failed to open the documentation browser"
 msgstr "Το άνοιγμα του αναγνώστη τεκμηρίωσης απέτυχε"
 
@@ -1730,63 +1730,67 @@ msgstr "Η μετονομασία του \"%s\" απέτυχε"
 msgid "_File"
 msgstr "_Αρχείο"
 
-#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:310
+#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-window.c:254
+msgid "_Send To"
+msgstr ""
+
+#: ../thunar/thunar-renamer-dialog.c:175 ../thunar/thunar-standard-view.c:310
 msgid "File Context Menu"
 msgstr "Μενού ενεργειών αρχείων"
 
-#: ../thunar/thunar-renamer-dialog.c:175
+#: ../thunar/thunar-renamer-dialog.c:176
 msgid "_Add Files..."
 msgstr "_Προσθήκη αρχείων..."
 
-#: ../thunar/thunar-renamer-dialog.c:175
+#: ../thunar/thunar-renamer-dialog.c:176
 msgid "Include additional files in the list of files to be renamed"
 msgstr "Περίληψη επί πλέον αρχείων στη λίστα αρχείων προς μετονομασία"
 
-#: ../thunar/thunar-renamer-dialog.c:177
+#: ../thunar/thunar-renamer-dialog.c:178
 msgid "Clear"
 msgstr "Καθαρισμός"
 
-#: ../thunar/thunar-renamer-dialog.c:177
+#: ../thunar/thunar-renamer-dialog.c:178
 msgid "Clear the file list below"
 msgstr "Καθαρισμός της παρακάτω λίστας αρχείων"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:273
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-window.c:273
 msgid "_About"
 msgstr "_Περί"
 
-#: ../thunar/thunar-renamer-dialog.c:178
+#: ../thunar/thunar-renamer-dialog.c:179
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Εμφάνιση πληροφοριών σχετικά με τη Μαζική μετονομασία του Thunar"
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:180 ../thunar/thunar-standard-view.c:313
 msgid "_Properties..."
 msgstr "_Ιδιότητες..."
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:180 ../thunar/thunar-standard-view.c:313
 msgid "View the properties of the selected file"
 msgstr "Προβολή των ιδιοτήτων του επιλεγμένου αρχείου"
 
-#: ../thunar/thunar-renamer-dialog.c:364
-#: ../thunar/thunar-renamer-dialog.c:1709
+#: ../thunar/thunar-renamer-dialog.c:365
+#: ../thunar/thunar-renamer-dialog.c:1710
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "Μετονομασία πολλαπλών αρχείων"
 
 #. add the "Rename Files" button
-#: ../thunar/thunar-renamer-dialog.c:372
+#: ../thunar/thunar-renamer-dialog.c:373
 msgid "_Rename Files"
 msgstr "_Μετονομασία αρχείων"
 
-#: ../thunar/thunar-renamer-dialog.c:375
+#: ../thunar/thunar-renamer-dialog.c:376
 msgid ""
 "Click here to actually rename the files listed above to their new names."
 msgstr "Κάντε κλικ εδώ για να μετονομάσετε τα παραπάνω αρχεία."
 
-#: ../thunar/thunar-renamer-dialog.c:447
+#: ../thunar/thunar-renamer-dialog.c:448
 msgid "New Name"
 msgstr "Νέο όνομα "
 
-#: ../thunar/thunar-renamer-dialog.c:512
+#: ../thunar/thunar-renamer-dialog.c:513
 msgid "Click here to view the documentation for the selected rename operation."
 msgstr ""
 "Πατήστε εδώ για να δείτε την τεκμηρίωση της επιλεγμένης λειτουργίας "
@@ -1795,7 +1799,7 @@ msgstr ""
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
 #. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
 #.
-#: ../thunar/thunar-renamer-dialog.c:620
+#: ../thunar/thunar-renamer-dialog.c:621
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
@@ -1807,30 +1811,30 @@ msgstr ""
 "ότι θα ενεργοποιηθεί το πρόσθετο \"Simple Builtin Renamers\"."
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1091
+#: ../thunar/thunar-renamer-dialog.c:1092
 msgid "Select files to rename"
 msgstr "Επιλογή αρχείων για μετονομασία"
 
-#: ../thunar/thunar-renamer-dialog.c:1107
+#: ../thunar/thunar-renamer-dialog.c:1108
 msgid "Audio Files"
 msgstr "Αρχεία ήχου"
 
-#: ../thunar/thunar-renamer-dialog.c:1112
+#: ../thunar/thunar-renamer-dialog.c:1113
 #: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr "Αρχεία εικόνων"
 
-#: ../thunar/thunar-renamer-dialog.c:1117
+#: ../thunar/thunar-renamer-dialog.c:1118
 msgid "Video Files"
 msgstr "Αρχεία βίντεο"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1247
+#: ../thunar/thunar-renamer-dialog.c:1248
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "Μαζική μετονομασία"
 
-#: ../thunar/thunar-renamer-dialog.c:1248
+#: ../thunar/thunar-renamer-dialog.c:1249
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
@@ -1838,13 +1842,13 @@ msgstr ""
 "Η μαζική μετονομασία είναι ένα ισχυρό και επεκτάσιμο\n"
 "εργαλείο για τη μετονομασία πολλών αρχείων ταυτόχρονα."
 
-#: ../thunar/thunar-renamer-dialog.c:1556
+#: ../thunar/thunar-renamer-dialog.c:1557
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "Διαγραφή αρχείου"
 msgstr[1] "Διαγραφή αρχείων"
 
-#: ../thunar/thunar-renamer-dialog.c:1558
+#: ../thunar/thunar-renamer-dialog.c:1559
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] ""
@@ -1853,7 +1857,7 @@ msgstr[1] ""
 "Αφαίρεση των επιλεγμένων αρχείων από τη λίστα αρχείων που θα μετονομαστούν"
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1709
+#: ../thunar/thunar-renamer-dialog.c:1710
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Μαζική μετονομασία - Μετονομασία πολλαπλών αρχείων"
 
@@ -2220,10 +2224,6 @@ msgstr "Άνοιγμα νέου _παραθύρου"
 #: ../thunar/thunar-window.c:253
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Άνοιγμα ενός άλλου παράθυρου του Thunar για την προβαλλόμενη τοποθεσία"
-
-#: ../thunar/thunar-window.c:254
-msgid "_Send To"
-msgstr ""
 
 #: ../thunar/thunar-window.c:255
 msgid "Close _All Windows"
@@ -2840,39 +2840,39 @@ msgstr "Μη έγκυρη κανονική έκφραση, στη θέση χα�
 msgid "Search & Replace"
 msgstr "Εύρεση & Αντικατάσταση"
 
-#: ../plugins/thunar-sendto-email/main.c:172
+#: ../plugins/thunar-sendto-email/main.c:174
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:174
-#: ../plugins/thunar-sendto-email/main.c:193
+#: ../plugins/thunar-sendto-email/main.c:176
+#: ../plugins/thunar-sendto-email/main.c:195
 msgid "Send _directly"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:175
+#: ../plugins/thunar-sendto-email/main.c:177
 msgid "Send com_pressed"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:177
+#: ../plugins/thunar-sendto-email/main.c:179
 msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:188
+#: ../plugins/thunar-sendto-email/main.c:190
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../plugins/thunar-sendto-email/main.c:194
+#: ../plugins/thunar-sendto-email/main.c:196
 msgid "Send as _archive"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:196
+#: ../plugins/thunar-sendto-email/main.c:198
 msgid ""
 "When sending multiple files via email, you can either choose to send the "
 "files directly, attaching multiple files to an email, or send all files "
@@ -2882,30 +2882,30 @@ msgstr ""
 
 #. allocate the progress dialog
 #. setup the label
-#: ../plugins/thunar-sendto-email/main.c:245
-#: ../plugins/thunar-sendto-email/main.c:270
+#: ../plugins/thunar-sendto-email/main.c:247
+#: ../plugins/thunar-sendto-email/main.c:272
 #, fuzzy
 msgid "Compressing files..."
 msgstr "Αντιγραφή αρχείων..."
 
 #. tell the user that the command failed
-#: ../plugins/thunar-sendto-email/main.c:295
+#: ../plugins/thunar-sendto-email/main.c:297
 #, c-format
 msgid "ZIP command terminated with error %d"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:342
+#: ../plugins/thunar-sendto-email/main.c:344
 #, fuzzy
 msgid "Failed to create temporary directory"
 msgstr "Η δημιουργία του καταλόγου \"%s\" απέτυχε"
 
-#: ../plugins/thunar-sendto-email/main.c:393
+#: ../plugins/thunar-sendto-email/main.c:395
 #, fuzzy, c-format
 msgid "Failed to create symbolic link for \"%s\""
 msgstr "Η δημιουργία συμβολικού δεσμού \"%s\" απέτυχε"
 
 #. tell the user that we failed to compress the file(s)
-#: ../plugins/thunar-sendto-email/main.c:416
+#: ../plugins/thunar-sendto-email/main.c:418
 #, fuzzy, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
@@ -2913,7 +2913,7 @@ msgstr[0] "Δεν ήταν δυνατό το άνοιγμα %d αρχείου"
 msgstr[1] "Δεν ήταν δυνατό το άνοιγμα %d αρχείων"
 
 #. tell the user that we failed
-#: ../plugins/thunar-sendto-email/main.c:557
+#: ../plugins/thunar-sendto-email/main.c:559
 #, fuzzy
 msgid "Failed to compose new email"
 msgstr "Δεν ήταν δυνατό το άνοιγμα %d αρχείου"

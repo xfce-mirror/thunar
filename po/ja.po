@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-13 03:43+0900\n"
+"POT-Creation-Date: 2006-06-15 20:42+0900\n"
 "PO-Revision-Date: 2006-06-13 04:11+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -25,19 +25,19 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:168
-#: ../thunar-vfs/thunar-vfs-chown-job.c:166
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:271
+#: ../thunar-vfs/thunar-vfs-chmod-job.c:160
+#: ../thunar-vfs/thunar-vfs-chown-job.c:158
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:262
 msgid "Collecting files..."
 msgstr "ファイルを集めています..."
 
 #. ask the user whether we should skip the file
 #. ask the user whether to skip this file (used for cancellation only)
 #. ask the user whether to skip
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:189
-#: ../thunar-vfs/thunar-vfs-chown-job.c:187
-#: ../thunar-vfs/thunar-vfs-link-job.c:213
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:785
+#: ../thunar-vfs/thunar-vfs-chmod-job.c:181
+#: ../thunar-vfs/thunar-vfs-chown-job.c:179
+#: ../thunar-vfs/thunar-vfs-link-job.c:205
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:776
 #, c-format
 msgid ""
 "%s.\n"
@@ -49,29 +49,29 @@ msgstr ""
 "これを飛ばしますか？"
 
 # FIXME: stat?
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:253
-#: ../thunar-vfs/thunar-vfs-chown-job.c:251
+#: ../thunar-vfs/thunar-vfs-chmod-job.c:245
+#: ../thunar-vfs/thunar-vfs-chown-job.c:243
 #, c-format
 msgid "Failed to determine file info of \"%s\": %s"
 msgstr "「%s」のファイル情報を取得するのに失敗しました: %s"
 
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:279
+#: ../thunar-vfs/thunar-vfs-chmod-job.c:271
 #, c-format
 msgid "Failed to change permissions of \"%s\": %s"
 msgstr "「%s」のアクセス権を変更するのに失敗しました: %s"
 
-#: ../thunar-vfs/thunar-vfs-chown-job.c:267
+#: ../thunar-vfs/thunar-vfs-chown-job.c:259
 #, c-format
 msgid "Failed to change file owner of \"%s\": %s"
 msgstr "「%s」の所有者を変更するのに失敗しました: %s"
 
-#: ../thunar-vfs/thunar-vfs-chown-job.c:269
+#: ../thunar-vfs/thunar-vfs-chown-job.c:261
 #, c-format
 msgid "Failed to change file group of \"%s\": %s"
 msgstr "「%s」の所属グループを変更するのに失敗しました: %s"
 
 #. ask the user whether to override this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:188
+#: ../thunar-vfs/thunar-vfs-creat-job.c:180
 #, c-format
 msgid ""
 "The file \"%s\" already exists. Do you want to replace it with an empty file?"
@@ -80,8 +80,8 @@ msgstr ""
 "か？"
 
 #. ask the user whether to skip this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:199
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:236
+#: ../thunar-vfs/thunar-vfs-creat-job.c:191
+#: ../thunar-vfs/thunar-vfs-unlink-job.c:227
 #, c-format
 msgid ""
 "Failed to remove \"%s\".\n"
@@ -93,7 +93,7 @@ msgstr ""
 "これを飛ばしますか？"
 
 #. ask the user whether to skip this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:216
+#: ../thunar-vfs/thunar-vfs-creat-job.c:208
 #, c-format
 msgid ""
 "Failed to create empty file \"%s\".\n"
@@ -105,7 +105,7 @@ msgstr ""
 "これを飛ばしますか？"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:220
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:213
 msgid "Failed to read folder contents"
 msgstr "フォルダの内容を読み込むのに失敗しました。"
 
@@ -143,8 +143,8 @@ msgstr "ファイル「%s」の状態を取得するのに失敗しました: %s
 
 #. ask the user whether we should remove the target first
 #. ask the user whether to overwrite
-#: ../thunar-vfs/thunar-vfs-link-job.c:177
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:765
+#: ../thunar-vfs/thunar-vfs-link-job.c:169
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:756
 #, c-format
 msgid ""
 "%s.\n"
@@ -156,57 +156,57 @@ msgstr ""
 "上書きしますか？"
 
 #. tell the user that we failed to delete the application launcher
-#: ../thunar-vfs/thunar-vfs-link-job.c:201
-#: ../thunar-vfs/thunar-vfs-mime-database.c:1778
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:665
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:718
+#: ../thunar-vfs/thunar-vfs-link-job.c:193
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1771
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:656
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:709
 #, c-format
 msgid "Failed to remove \"%s\": %s"
 msgstr "「%s」の削除に失敗しました: %s"
 
-#: ../thunar-vfs/thunar-vfs-mime-database.c:1712
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1705
 #, c-format
 msgid "Failed to load application from file %s"
 msgstr "ファイル「%s」からアプリケーションを読み込むのに失敗しました。"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:134
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:127
 msgid "Command"
 msgstr "コマンド"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:135
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:128
 msgid "The command to run the mime handler"
 msgstr "MIMEハンドラーを実行するコマンドです。"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:147
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:140
 msgid "Flags"
 msgstr "フラッグ"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:148
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:141
 msgid "The flags for the mime handler"
 msgstr "MIMEハンドラーのフラッグです。"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:163
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:156
 msgid "Icon"
 msgstr "アイコン"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:164
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:157
 msgid "The icon of the mime handler"
 msgstr "MIMEハンドラーのアイコンです。"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:176
-#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:431
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:169
+#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:432
 #: ../thunarx/thunarx-renamer.c:177
 msgid "Name"
 msgstr "名前"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:177
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:170
 msgid "The name of the mime handler"
 msgstr "MIMEハンドラーの名前です。"
 
@@ -215,7 +215,7 @@ msgstr "MIMEハンドラーの名前です。"
 msgid "%s document"
 msgstr "%s 文書"
 
-#: ../thunar-vfs/thunar-vfs-mkdir-job.c:165
+#: ../thunar-vfs/thunar-vfs-mkdir-job.c:157
 #, c-format
 msgid "Failed to create directory \"%s\": %s"
 msgstr "フォルダ「%s」の作成に失敗しました: %s"
@@ -228,31 +228,31 @@ msgstr "バッファに格納するにはパスが長すぎます。"
 msgid "URI too long to fit into buffer"
 msgstr "バッファに格納するには URI が長すぎます。"
 
-#: ../thunar-vfs/thunar-vfs-thumb.c:179 ../thunar/thunar-enum-types.c:97
+#: ../thunar-vfs/thunar-vfs-thumb.c:172 ../thunar/thunar-enum-types.c:97
 msgid "Size"
 msgstr "サイズ"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-thumb.c:180
+#: ../thunar-vfs/thunar-vfs-thumb.c:173
 msgid "The desired thumbnail size"
 msgstr "お望みのサムネイルサイズです。"
 
 #. display info message
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:367
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:358
 msgid "Deleting directories..."
 msgstr "フォルダを削除しています..."
 
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:387
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:378
 #, c-format
 msgid "Failed to remove directory \"%s\": %s"
 msgstr "フォルダ「%s」の削除に失敗しました: %s"
 
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:911
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:902
 msgid "Cannot transfer the root directory"
 msgstr "ルートフォルダを転送できません。"
 
 #. tell the user that we're preparing the unlink job
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:163
+#: ../thunar-vfs/thunar-vfs-unlink-job.c:154
 msgid "Preparing..."
 msgstr "準備しています..."
 
@@ -266,12 +266,12 @@ msgid "Unknown user \"%s\""
 msgstr "ユーザー「%s」は不明です。"
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:324
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "「%s」のマウント位置を確定できません。"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:819
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:804
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "HAL デーモンとの接続に失敗しました: %s"
@@ -676,7 +676,7 @@ msgid "Select an Application"
 msgstr "アプリケーションを選択してください"
 
 #: ../thunar/thunar-chooser-dialog.c:841
-#: ../thunar/thunar-renamer-dialog.c:1102
+#: ../thunar/thunar-renamer-dialog.c:1103
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
 #: ../plugins/thunar-uca/thunar-uca-editor.c:654
 msgid "All Files"
@@ -838,7 +838,7 @@ msgstr "Daichi Kawahata <daichi@xfce.org>"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:989
 msgid "Failed to open the documentation browser"
 msgstr "文書を表示するブラウザーの起動に失敗しました。"
 
@@ -1723,64 +1723,68 @@ msgstr "「%s」の名前変更に失敗しました。"
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:310
+#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-window.c:254
+msgid "_Send To"
+msgstr "送信(_S)"
+
+#: ../thunar/thunar-renamer-dialog.c:175 ../thunar/thunar-standard-view.c:310
 msgid "File Context Menu"
 msgstr "ファイルの右クリックメニュー"
 
-#: ../thunar/thunar-renamer-dialog.c:175
+#: ../thunar/thunar-renamer-dialog.c:176
 msgid "_Add Files..."
 msgstr "ファイルを追加(_A)..."
 
-#: ../thunar/thunar-renamer-dialog.c:175
+#: ../thunar/thunar-renamer-dialog.c:176
 msgid "Include additional files in the list of files to be renamed"
 msgstr "名前変更するファイルのリストにファイルを追加します。"
 
-#: ../thunar/thunar-renamer-dialog.c:177
+#: ../thunar/thunar-renamer-dialog.c:178
 msgid "Clear"
 msgstr "クリア"
 
-#: ../thunar/thunar-renamer-dialog.c:177
+#: ../thunar/thunar-renamer-dialog.c:178
 msgid "Clear the file list below"
 msgstr "以下のファイル一覧をクリアします。"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:273
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-window.c:273
 msgid "_About"
 msgstr "このプログラムについて(_A)"
 
-#: ../thunar/thunar-renamer-dialog.c:178
+#: ../thunar/thunar-renamer-dialog.c:179
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Thunar 一括リネームについての情報を表示します。"
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:180 ../thunar/thunar-standard-view.c:313
 msgid "_Properties..."
 msgstr "プロパティ(_P)..."
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:180 ../thunar/thunar-standard-view.c:313
 msgid "View the properties of the selected file"
 msgstr "選択したファイルのプロパティを表示します。"
 
-#: ../thunar/thunar-renamer-dialog.c:364
-#: ../thunar/thunar-renamer-dialog.c:1709
+#: ../thunar/thunar-renamer-dialog.c:365
+#: ../thunar/thunar-renamer-dialog.c:1710
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "複数のファイル名を変更します"
 
 #. add the "Rename Files" button
-#: ../thunar/thunar-renamer-dialog.c:372
+#: ../thunar/thunar-renamer-dialog.c:373
 msgid "_Rename Files"
 msgstr "複数のファイル名を変更(_R)"
 
-#: ../thunar/thunar-renamer-dialog.c:375
+#: ../thunar/thunar-renamer-dialog.c:376
 msgid ""
 "Click here to actually rename the files listed above to their new names."
 msgstr ""
 "ここをクリックすると、上にリストされているファイルの名前を実際に変更します。"
 
-#: ../thunar/thunar-renamer-dialog.c:447
+#: ../thunar/thunar-renamer-dialog.c:448
 msgid "New Name"
 msgstr "新しい名前"
 
-#: ../thunar/thunar-renamer-dialog.c:512
+#: ../thunar/thunar-renamer-dialog.c:513
 msgid "Click here to view the documentation for the selected rename operation."
 msgstr ""
 "ここをクリックすると、選択したリネーム操作についての文書が表示されます。"
@@ -1788,7 +1792,7 @@ msgstr ""
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
 #. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
 #.
-#: ../thunar/thunar-renamer-dialog.c:620
+#: ../thunar/thunar-renamer-dialog.c:621
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
@@ -1801,30 +1805,30 @@ msgstr ""
 "「Yes」になっているかを確認してください。"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1091
+#: ../thunar/thunar-renamer-dialog.c:1092
 msgid "Select files to rename"
 msgstr "名前変更するファイルを選択してください"
 
-#: ../thunar/thunar-renamer-dialog.c:1107
+#: ../thunar/thunar-renamer-dialog.c:1108
 msgid "Audio Files"
 msgstr "音楽ファイル"
 
-#: ../thunar/thunar-renamer-dialog.c:1112
+#: ../thunar/thunar-renamer-dialog.c:1113
 #: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr "画像ファイル"
 
-#: ../thunar/thunar-renamer-dialog.c:1117
+#: ../thunar/thunar-renamer-dialog.c:1118
 msgid "Video Files"
 msgstr "動画ファイル"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1247
+#: ../thunar/thunar-renamer-dialog.c:1248
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "一括リネーム"
 
-#: ../thunar/thunar-renamer-dialog.c:1248
+#: ../thunar/thunar-renamer-dialog.c:1249
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
@@ -1832,18 +1836,18 @@ msgstr ""
 "Thunar 一括リネームは一度に複数のファイル名を\n"
 "変更する強力で拡張性のあるツールです。"
 
-#: ../thunar/thunar-renamer-dialog.c:1556
+#: ../thunar/thunar-renamer-dialog.c:1557
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "ファイルを削除"
 
-#: ../thunar/thunar-renamer-dialog.c:1558
+#: ../thunar/thunar-renamer-dialog.c:1559
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "名前変更するファイルのリストから選択したファイルを削除します。"
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1709
+#: ../thunar/thunar-renamer-dialog.c:1710
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "一括リネーム - ファイルをまとめてリネームします"
 
@@ -2188,10 +2192,6 @@ msgstr "新規ウィンドウを開く(_W)"
 #: ../thunar/thunar-window.c:253
 msgid "Open a new Thunar window for the displayed location"
 msgstr "表示されている場所のウィンドウを新しく開きます。"
-
-#: ../thunar/thunar-window.c:254
-msgid "_Send To"
-msgstr "送信(_S)"
 
 #: ../thunar/thunar-window.c:255
 msgid "Close _All Windows"
@@ -2811,21 +2811,21 @@ msgstr "%ld にある文字は誤った正規表現です: %s"
 msgid "Search & Replace"
 msgstr "検索と置換"
 
-#: ../plugins/thunar-sendto-email/main.c:172
+#: ../plugins/thunar-sendto-email/main.c:174
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
 msgstr "「%s」を圧縮アーカイブとして送信しますか？"
 
-#: ../plugins/thunar-sendto-email/main.c:174
-#: ../plugins/thunar-sendto-email/main.c:193
+#: ../plugins/thunar-sendto-email/main.c:176
+#: ../plugins/thunar-sendto-email/main.c:195
 msgid "Send _directly"
 msgstr "直に送信(_D)"
 
-#: ../plugins/thunar-sendto-email/main.c:175
+#: ../plugins/thunar-sendto-email/main.c:177
 msgid "Send com_pressed"
 msgstr "圧縮して送信(_P)"
 
-#: ../plugins/thunar-sendto-email/main.c:177
+#: ../plugins/thunar-sendto-email/main.c:179
 msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is "
@@ -2835,17 +2835,17 @@ msgstr ""
 "か、あるいは圧縮するかのどちらかを選択できます。大きなファイルを送信するのな"
 "ら圧縮することを勧めます。"
 
-#: ../plugins/thunar-sendto-email/main.c:188
+#: ../plugins/thunar-sendto-email/main.c:190
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "%d個のファイルを圧縮アーカイブとして送信しますか？"
 
-#: ../plugins/thunar-sendto-email/main.c:194
+#: ../plugins/thunar-sendto-email/main.c:196
 msgid "Send as _archive"
 msgstr "アーカイブとして送信(_A)"
 
-#: ../plugins/thunar-sendto-email/main.c:196
+#: ../plugins/thunar-sendto-email/main.c:198
 msgid ""
 "When sending multiple files via email, you can either choose to send the "
 "files directly, attaching multiple files to an email, or send all files "
@@ -2858,35 +2858,35 @@ msgstr ""
 
 #. allocate the progress dialog
 #. setup the label
-#: ../plugins/thunar-sendto-email/main.c:245
-#: ../plugins/thunar-sendto-email/main.c:270
+#: ../plugins/thunar-sendto-email/main.c:247
+#: ../plugins/thunar-sendto-email/main.c:272
 msgid "Compressing files..."
 msgstr "ファイルを圧縮しています..."
 
 #. tell the user that the command failed
-#: ../plugins/thunar-sendto-email/main.c:295
+#: ../plugins/thunar-sendto-email/main.c:297
 #, c-format
 msgid "ZIP command terminated with error %d"
 msgstr "ZIPコマンドがエラー%dで中断されました。"
 
-#: ../plugins/thunar-sendto-email/main.c:342
+#: ../plugins/thunar-sendto-email/main.c:344
 msgid "Failed to create temporary directory"
 msgstr "一時作業フォルダの作成に失敗しました。"
 
-#: ../plugins/thunar-sendto-email/main.c:393
+#: ../plugins/thunar-sendto-email/main.c:395
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
 msgstr "「%s」へのシンボリックリンク作成に失敗しました。"
 
 #. tell the user that we failed to compress the file(s)
-#: ../plugins/thunar-sendto-email/main.c:416
+#: ../plugins/thunar-sendto-email/main.c:418
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
 msgstr[0] "%d個のファイルを圧縮するのに失敗しました。"
 
 #. tell the user that we failed
-#: ../plugins/thunar-sendto-email/main.c:557
+#: ../plugins/thunar-sendto-email/main.c:559
 msgid "Failed to compose new email"
 msgstr "新規メールの作成に失敗しました。"
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-14 01:09+0200\n"
+"POT-Creation-Date: 2006-06-15 20:42+0900\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -171,7 +171,7 @@ msgid "The icon of the mime handler"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:169
-#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:431
+#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:432
 #: ../thunarx/thunarx-renamer.c:177
 msgid "Name"
 msgstr ""
@@ -633,7 +633,7 @@ msgid "Select an Application"
 msgstr ""
 
 #: ../thunar/thunar-chooser-dialog.c:841
-#: ../thunar/thunar-renamer-dialog.c:1102
+#: ../thunar/thunar-renamer-dialog.c:1103
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
 #: ../plugins/thunar-uca/thunar-uca-editor.c:654
 msgid "All Files"
@@ -792,7 +792,7 @@ msgstr ""
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:988
+#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:989
 msgid "Failed to open the documentation browser"
 msgstr ""
 
@@ -1650,70 +1650,74 @@ msgstr ""
 msgid "_File"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:310
+#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-window.c:254
+msgid "_Send To"
+msgstr ""
+
+#: ../thunar/thunar-renamer-dialog.c:175 ../thunar/thunar-standard-view.c:310
 msgid "File Context Menu"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:175
+#: ../thunar/thunar-renamer-dialog.c:176
 msgid "_Add Files..."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:175
+#: ../thunar/thunar-renamer-dialog.c:176
 msgid "Include additional files in the list of files to be renamed"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:177
+#: ../thunar/thunar-renamer-dialog.c:178
 msgid "Clear"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:177
+#: ../thunar/thunar-renamer-dialog.c:178
 msgid "Clear the file list below"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:273
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-window.c:273
 msgid "_About"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:178
+#: ../thunar/thunar-renamer-dialog.c:179
 msgid "Display information about Thunar Bulk Rename"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:180 ../thunar/thunar-standard-view.c:313
 msgid "_Properties..."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:180 ../thunar/thunar-standard-view.c:313
 msgid "View the properties of the selected file"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:364
-#: ../thunar/thunar-renamer-dialog.c:1709
+#: ../thunar/thunar-renamer-dialog.c:365
+#: ../thunar/thunar-renamer-dialog.c:1710
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr ""
 
 #. add the "Rename Files" button
-#: ../thunar/thunar-renamer-dialog.c:372
+#: ../thunar/thunar-renamer-dialog.c:373
 msgid "_Rename Files"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:375
+#: ../thunar/thunar-renamer-dialog.c:376
 msgid ""
 "Click here to actually rename the files listed above to their new names."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:447
+#: ../thunar/thunar-renamer-dialog.c:448
 msgid "New Name"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:512
+#: ../thunar/thunar-renamer-dialog.c:513
 msgid "Click here to view the documentation for the selected rename operation."
 msgstr ""
 
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
 #. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
 #.
-#: ../thunar/thunar-renamer-dialog.c:620
+#: ../thunar/thunar-renamer-dialog.c:621
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
@@ -1721,49 +1725,49 @@ msgid ""
 msgstr ""
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1091
+#: ../thunar/thunar-renamer-dialog.c:1092
 msgid "Select files to rename"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:1107
+#: ../thunar/thunar-renamer-dialog.c:1108
 msgid "Audio Files"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:1112
+#: ../thunar/thunar-renamer-dialog.c:1113
 #: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:1117
+#: ../thunar/thunar-renamer-dialog.c:1118
 msgid "Video Files"
 msgstr ""
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1247
+#: ../thunar/thunar-renamer-dialog.c:1248
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:1248
+#: ../thunar/thunar-renamer-dialog.c:1249
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr ""
 
-#: ../thunar/thunar-renamer-dialog.c:1556
+#: ../thunar/thunar-renamer-dialog.c:1557
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../thunar/thunar-renamer-dialog.c:1558
+#: ../thunar/thunar-renamer-dialog.c:1559
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] ""
 msgstr[1] ""
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1709
+#: ../thunar/thunar-renamer-dialog.c:1710
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr ""
 
@@ -2105,10 +2109,6 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:253
 msgid "Open a new Thunar window for the displayed location"
-msgstr ""
-
-#: ../thunar/thunar-window.c:254
-msgid "_Send To"
 msgstr ""
 
 #: ../thunar/thunar-window.c:255
@@ -2698,39 +2698,39 @@ msgstr ""
 msgid "Search & Replace"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:173
+#: ../plugins/thunar-sendto-email/main.c:174
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:175
-#: ../plugins/thunar-sendto-email/main.c:194
+#: ../plugins/thunar-sendto-email/main.c:176
+#: ../plugins/thunar-sendto-email/main.c:195
 msgid "Send _directly"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:176
+#: ../plugins/thunar-sendto-email/main.c:177
 msgid "Send com_pressed"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:178
+#: ../plugins/thunar-sendto-email/main.c:179
 msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:189
+#: ../plugins/thunar-sendto-email/main.c:190
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../plugins/thunar-sendto-email/main.c:195
+#: ../plugins/thunar-sendto-email/main.c:196
 msgid "Send as _archive"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:197
+#: ../plugins/thunar-sendto-email/main.c:198
 msgid ""
 "When sending multiple files via email, you can either choose to send the "
 "files directly, attaching multiple files to an email, or send all files "
@@ -2740,28 +2740,28 @@ msgstr ""
 
 #. allocate the progress dialog
 #. setup the label
-#: ../plugins/thunar-sendto-email/main.c:246
-#: ../plugins/thunar-sendto-email/main.c:271
+#: ../plugins/thunar-sendto-email/main.c:247
+#: ../plugins/thunar-sendto-email/main.c:272
 msgid "Compressing files..."
 msgstr ""
 
 #. tell the user that the command failed
-#: ../plugins/thunar-sendto-email/main.c:296
+#: ../plugins/thunar-sendto-email/main.c:297
 #, c-format
 msgid "ZIP command terminated with error %d"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:343
+#: ../plugins/thunar-sendto-email/main.c:344
 msgid "Failed to create temporary directory"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:394
+#: ../plugins/thunar-sendto-email/main.c:395
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
 msgstr ""
 
 #. tell the user that we failed to compress the file(s)
-#: ../plugins/thunar-sendto-email/main.c:417
+#: ../plugins/thunar-sendto-email/main.c:418
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
@@ -2769,7 +2769,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. tell the user that we failed
-#: ../plugins/thunar-sendto-email/main.c:558
+#: ../plugins/thunar-sendto-email/main.c:559
 msgid "Failed to compose new email"
 msgstr ""
 
