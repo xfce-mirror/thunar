@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-15 20:42+0900\n"
-"PO-Revision-Date: 2006-06-02 19:13+0200\n"
+"POT-Creation-Date: 2006-06-25 14:17+0300\n"
+"PO-Revision-Date: 2006-06-25 14:35+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
 "MIME-Version: 1.0\n"
@@ -960,9 +960,8 @@ msgid "Open in New Window"
 msgstr "Άνοιγμα σε νέο παράθυρο"
 
 #: ../thunar/thunar-launcher.c:130
-#, fuzzy
 msgid "Open the selected directory in a new window"
-msgstr "Άνοιγμα του επιλεγμένου καταλόγου σε %d νέο παράθυρο"
+msgstr "Άνοιγμα του επιλεγμένου καταλόγου σε νέο παράθυρο"
 
 #: ../thunar/thunar-launcher.c:131 ../thunar/thunar-launcher.c:133
 msgid "Open With Other _Application..."
@@ -1075,22 +1074,24 @@ msgstr "Άνοιγμα με το \"%s\""
 #: ../thunar/thunar-launcher.c:1204
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Επιφάνεια εργασίας (δημιουργία δεσμού)"
+msgstr[1] "Επιφάνεια εργασίας (δημιουργία δεσμών)"
 
 #: ../thunar/thunar-launcher.c:1205
-#, fuzzy
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "Δημιουργεί ένα συμβολικό δεσμό για το επιλεγμένο αρχείο"
-msgstr[1] "Δημιουργεί ένα συμβολικό δεσμό για κάθε επιλεγμένο αρχείο"
+msgstr[0] ""
+"Δημιουργεί συμβολικό δεσμό για το επιλεγμένο αρχείο στην επιφάνεια εργασίας"
+msgstr[1] ""
+"Δημιουργεί συμβολικούς δεσμούς για τα επιλεγμένα αρχεία στην επιφάνεια "
+"εργασίας"
 
 #: ../thunar/thunar-launcher.c:1238
-#, fuzzy, c-format
+#, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] "Άνοιγμα των επιλεγμένων αρχείων"
-msgstr[1] "Άνοιγμα των επιλεγμένων αρχείων"
+msgstr[0] "Αποστολή επιλεγμένου αρχείου στο \"%s\""
+msgstr[1] "Αποστολή επιλεγμένων αρχείων στο \"%s\""
 
 #: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
 msgid "broken link"
@@ -1326,7 +1327,6 @@ msgid "Apply recursively?"
 msgstr "Να εφαρμοστεί και στους υποφακέλους;"
 
 #: ../thunar/thunar-permissions-chooser.c:620
-#, fuzzy
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
@@ -1732,7 +1732,7 @@ msgstr "_Αρχείο"
 
 #: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-window.c:254
 msgid "_Send To"
-msgstr ""
+msgstr "Απο_στολή προς"
 
 #: ../thunar/thunar-renamer-dialog.c:175 ../thunar/thunar-standard-view.c:310
 msgid "File Context Menu"
@@ -1893,11 +1893,10 @@ msgstr ""
 "υπόλοιπων;"
 
 #: ../thunar/thunar-shortcuts-pane.c:412
-#, fuzzy
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] "Μετο_νομασία συντόμευσης"
-msgstr[1] "Μετο_νομασία συντόμευσης"
+msgstr[0] "Πλευρικό ταμπλό (δημιουργία συντόμευσης)"
+msgstr[1] "Πλευρικό ταμπλό (δημιουργία συντομεύσεων)"
 
 #: ../thunar/thunar-shortcuts-pane.c:414
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2771,14 +2770,12 @@ msgid "Numbering"
 msgstr "Αρίθμηση"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:177
-#, fuzzy
 msgid "Remove _From Position:"
-msgstr "_Απομάκρυνση από τη θέση:"
+msgstr "_Αφαίρεση από τη θέση:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
-#, fuzzy
 msgid "_To Position:"
-msgstr "Στη _Θέση:"
+msgstr "Στη _θέση:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:428
 msgid "Remove Characters"
@@ -2840,39 +2837,39 @@ msgstr "Μη έγκυρη κανονική έκφραση, στη θέση χα�
 msgid "Search & Replace"
 msgstr "Εύρεση & Αντικατάσταση"
 
-#: ../plugins/thunar-sendto-email/main.c:174
+#: ../plugins/thunar-sendto-email/main.c:173
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:176
-#: ../plugins/thunar-sendto-email/main.c:195
+#: ../plugins/thunar-sendto-email/main.c:175
+#: ../plugins/thunar-sendto-email/main.c:194
 msgid "Send _directly"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:177
+#: ../plugins/thunar-sendto-email/main.c:176
 msgid "Send com_pressed"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:179
+#: ../plugins/thunar-sendto-email/main.c:178
 msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:190
+#: ../plugins/thunar-sendto-email/main.c:189
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../plugins/thunar-sendto-email/main.c:196
+#: ../plugins/thunar-sendto-email/main.c:195
 msgid "Send as _archive"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:198
+#: ../plugins/thunar-sendto-email/main.c:197
 msgid ""
 "When sending multiple files via email, you can either choose to send the "
 "files directly, attaching multiple files to an email, or send all files "
@@ -2882,45 +2879,42 @@ msgstr ""
 
 #. allocate the progress dialog
 #. setup the label
-#: ../plugins/thunar-sendto-email/main.c:247
-#: ../plugins/thunar-sendto-email/main.c:272
-#, fuzzy
+#: ../plugins/thunar-sendto-email/main.c:246
+#: ../plugins/thunar-sendto-email/main.c:271
 msgid "Compressing files..."
-msgstr "Αντιγραφή αρχείων..."
+msgstr "Συμπίεση αρχείων..."
 
 #. tell the user that the command failed
-#: ../plugins/thunar-sendto-email/main.c:297
+#: ../plugins/thunar-sendto-email/main.c:296
 #, c-format
 msgid "ZIP command terminated with error %d"
 msgstr ""
 
-#: ../plugins/thunar-sendto-email/main.c:344
-#, fuzzy
+#: ../plugins/thunar-sendto-email/main.c:343
 msgid "Failed to create temporary directory"
-msgstr "Η δημιουργία του καταλόγου \"%s\" απέτυχε"
+msgstr "Η δημιουργία του προσωρινού καταλόγου απέτυχε"
 
-#: ../plugins/thunar-sendto-email/main.c:395
-#, fuzzy, c-format
+#: ../plugins/thunar-sendto-email/main.c:394
+#, c-format
 msgid "Failed to create symbolic link for \"%s\""
 msgstr "Η δημιουργία συμβολικού δεσμού \"%s\" απέτυχε"
 
 #. tell the user that we failed to compress the file(s)
-#: ../plugins/thunar-sendto-email/main.c:418
-#, fuzzy, c-format
+#: ../plugins/thunar-sendto-email/main.c:417
+#, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "Δεν ήταν δυνατό το άνοιγμα %d αρχείου"
-msgstr[1] "Δεν ήταν δυνατό το άνοιγμα %d αρχείων"
+msgstr[0] "Η συμπίεση %d αρχείου απέτυχε"
+msgstr[1] "Η συμπίεση %d αρχείων απέτυχε"
 
 #. tell the user that we failed
-#: ../plugins/thunar-sendto-email/main.c:559
-#, fuzzy
+#: ../plugins/thunar-sendto-email/main.c:558
 msgid "Failed to compose new email"
-msgstr "Δεν ήταν δυνατό το άνοιγμα %d αρχείου"
+msgstr "Δεν ήταν δυνατή η σύνθεση νέου email"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
-msgstr ""
+msgstr "Παραλήπτης"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
