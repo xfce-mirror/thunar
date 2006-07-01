@@ -71,6 +71,7 @@ enum
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_RECURSIVE_PERMISSIONS,
+  PROP_MISC_REMEMBER_GEOMETRY,
   PROP_MISC_SHOW_ABOUT_TEMPLATES,
   PROP_MISC_SHOW_THUMBNAILS,
   PROP_MISC_SINGLE_CLICK,
@@ -487,6 +488,23 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                       THUNAR_TYPE_RECURSIVE_PERMISSIONS,
                                                       THUNAR_RECURSIVE_PERMISSIONS_ASK,
                                                       EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-remember-geometry:
+   *
+   * Whether Thunar should remember the size of windows and apply
+   * that size to new windows. If %TRUE the width and height are
+   * saved to "last-window-width" and "last-window-height". If
+   * %FALSE the user may specify the start size in "last-window-with"
+   * and "last-window-height".
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_REMEMBER_GEOMETRY,
+                                   g_param_spec_boolean ("misc-remember-geometry",
+                                                         "misc-remember-geometry",
+                                                         "misc-remember-geometry",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:misc-show-about-templates:

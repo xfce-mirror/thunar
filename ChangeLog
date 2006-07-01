@@ -1,3 +1,11 @@
+2006-07-01	Benedikt Meurer <benny@xfce.org>
+
+	* docs/README.thunarrc, thunar/thunar-preferences.c: Add a new option
+	  MiscRememberGeometry, which controls whether Thunar will store the
+	  window size whenever the user resizes the window.
+	* thunar/thunar-window.c: Don't save the window geometry unless the
+	  MiscRememberGeometry setting is TRUE.
+
 2006-06-14	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-renamer-dialog-ui.xml, thunar/thunar-renamer-dialog.c:
