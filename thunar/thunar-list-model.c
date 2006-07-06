@@ -944,10 +944,13 @@ thunar_list_model_get_sort_column_id (GtkTreeSortable *sortable,
   else
     g_assert_not_reached ();
 
-  if (store->sort_sign > 0)
-    *order = GTK_SORT_ASCENDING;
-  else
-    *order = GTK_SORT_DESCENDING;
+  if (order != NULL)
+    {
+      if (store->sort_sign > 0)
+        *order = GTK_SORT_ASCENDING;
+      else
+        *order = GTK_SORT_DESCENDING;
+    }
 
   return TRUE;
 }
