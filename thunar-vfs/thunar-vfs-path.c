@@ -122,13 +122,22 @@ thunar_vfs_path_escape_uri (const ThunarVfsPath *path,
 
   ThunarVfsPathItem *item;
   ThunarVfsPathItem *root = NULL;
-  const gchar       *s = "file:///";
+  const gchar       *s;
   guchar             c;
   gchar             *t = buffer + 8;
 
-  /* prepend the 'file:///' string */
+  /* prepend the 'file:///' string (using a simple optimization on i386/ppc) */
+#if defined(__GNUC__) && (defined(__i386__) || defined(__ppc__))
+  s = "file:///";
   ((guint32 *) buffer)[0] = ((const guint32 *) s)[0];
   ((guint32 *) buffer)[1] = ((const guint32 *) s)[1];
+#else
+  /* hopefully the compiler will be able to optimize this */
+  buffer[0] = 'f'; buffer[1] = 'i';
+  buffer[2] = 'l'; buffer[3] = 'e';
+  buffer[4] = ':'; buffer[5] = '/';
+  buffer[6] = '/'; buffer[7] = '/';
+#endif
 
   /* generate the path item list (reverse parent relation) */
   for (; path->parent != NULL; path = path->parent)
