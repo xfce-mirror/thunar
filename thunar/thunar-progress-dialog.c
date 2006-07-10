@@ -496,7 +496,7 @@ thunar_progress_dialog_percent (ThunarProgressDialog *dialog,
   GTimeVal current_time;
   gulong   remaining_time;
   gulong   elapsed_time;
-  gchar    text[32];
+  gchar    text[512];
 
   g_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   g_return_if_fail (percent >= 0.0 && percent <= 100.0);

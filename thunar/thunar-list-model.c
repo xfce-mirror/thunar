@@ -1358,14 +1358,14 @@ thunar_list_model_files_added (ThunarFolder    *folder,
               prev->next = row;
             }
 
+          store->nrows += 1;
+
           iter.stamp = store->stamp;
           iter.user_data = row;
 
           path = gtk_tree_path_new_from_indices (index, -1);
           gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
           gtk_tree_path_free (path);
-
-          store->nrows += 1;
         }
     }
 
@@ -1787,7 +1787,15 @@ thunar_list_model_set_folder (ThunarListModel *store,
       files = g_list_copy (thunar_folder_get_files (folder));
       if (G_LIKELY (files != NULL))
         {
+          /* check if we have any handlers connected for "row-inserted" */
+          has_handler = g_signal_has_handler_pending (G_OBJECT (store), store->row_inserted_id, 0, FALSE);
+
+          /* sort the files before inserting them into the model */
           files = g_list_sort_with_data (files, thunar_list_model_cmp_list, store);
+
+          /* setup path/iter for "row-inserted" */
+          path = gtk_tree_path_new_from_indices (0, -1);
+          iter.stamp = store->stamp;
 
           /* insert the files */
           for (lp = files; lp != NULL; lp = lp->next)
@@ -1809,40 +1817,29 @@ thunar_list_model_set_folder (ThunarListModel *store,
 
                   store->rows = row;
                   store->nrows += 1;
-                }
-            }
 
-          /* check if we have any handlers connected for "row-inserted" */
-          if (g_signal_has_handler_pending (G_OBJECT (store), store->row_inserted_id, 0, FALSE))
-            {
-              /* notify other parties only if anyone is actually
-               * interested in the "row-inserted" signal.
-               */
-              path = gtk_tree_path_new ();
-              gtk_tree_path_append_index (path, 0);
-              for (row = store->rows; row != NULL; row = row->next)
-                {
-                  iter.stamp = store->stamp;
-                  iter.user_data = row;
-                  gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
-                  gtk_tree_path_next (path);
+                  /* check if we need to notify a view */
+                  if (G_UNLIKELY (has_handler))
+                    {
+                      /* update the iter for the new row */
+                      iter.user_data = row;
+
+                      /* tell the view about the new row */
+                      gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
+                    }
                 }
-              gtk_tree_path_free (path);
             }
 
           /* cleanup */
+          gtk_tree_path_free (path);
           g_list_free (files);
         }
 
       /* connect signals to the new folder */
-      g_signal_connect (G_OBJECT (store->folder), "destroy",
-                        G_CALLBACK (thunar_list_model_folder_destroy), store);
-      g_signal_connect (G_OBJECT (store->folder), "error",
-                        G_CALLBACK (thunar_list_model_folder_error), store);
-      g_signal_connect (G_OBJECT (store->folder), "files-added",
-                        G_CALLBACK (thunar_list_model_files_added), store);
-      g_signal_connect (G_OBJECT (store->folder), "files-removed",
-                        G_CALLBACK (thunar_list_model_files_removed), store);
+      g_signal_connect (G_OBJECT (store->folder), "destroy", G_CALLBACK (thunar_list_model_folder_destroy), store);
+      g_signal_connect (G_OBJECT (store->folder), "error", G_CALLBACK (thunar_list_model_folder_error), store);
+      g_signal_connect (G_OBJECT (store->folder), "files-added", G_CALLBACK (thunar_list_model_files_added), store);
+      g_signal_connect (G_OBJECT (store->folder), "files-removed", G_CALLBACK (thunar_list_model_files_removed), store);
     }
 
   /* notify listeners that we have a new folder */
@@ -1961,14 +1958,14 @@ thunar_list_model_set_show_hidden (ThunarListModel *store,
               prev->next = row;
             }
 
+          store->nrows += 1;
+
           iter.stamp = store->stamp;
           iter.user_data = row;
 
           path = thunar_list_model_get_path (GTK_TREE_MODEL (store), &iter);
           gtk_tree_model_row_inserted (GTK_TREE_MODEL (store), path, &iter);
           gtk_tree_path_free (path);
-
-          store->nrows += 1;
         }
       g_list_free (store->hidden);
       store->hidden = NULL;

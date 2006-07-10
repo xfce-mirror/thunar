@@ -1,3 +1,12 @@
+2006-07-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-thumb-pixbuf.c: sys/types.h must be included
+	  before sys/mman.h to compile properly on OpenBSD.
+	* thunar/thunar-progress-dialog.c(thunar_progress_dialog_percent): Do
+	  not truncate the text in the progress bar. Bug #2003.
+	* thunar/thunar-list-model.c: Fix improper behaviour of ThunarListModel
+	  with GtkEntryCompletion and GtkTreeView. Bug #1891.
+
 2006-07-09	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in: Post-release version bump.
