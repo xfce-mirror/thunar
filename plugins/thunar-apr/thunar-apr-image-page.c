@@ -46,17 +46,18 @@ static const struct
   ExifTag      tag;
 } TAIP_EXIF[] =
 {
-  { N_ ("Date Taken:"),       EXIF_TAG_DATE_TIME,           },
-  { N_ ("Camera Brand:"),     EXIF_TAG_MAKE,                },
-  { N_ ("Camera Model:"),     EXIF_TAG_MODEL,               },
-  { N_ ("Exposure Time:"),    EXIF_TAG_EXPOSURE_TIME,       },
-  { N_ ("Exposure Program:"), EXIF_TAG_EXPOSURE_PROGRAM,    },
-  { N_ ("Aperture Value:"),   EXIF_TAG_APERTURE_VALUE,      },
-  { N_ ("Metering Mode:"),    EXIF_TAG_METERING_MODE,       },
-  { N_ ("Flash Fired:"),      EXIF_TAG_FLASH,               },
-  { N_ ("Focal Length:"),     EXIF_TAG_FOCAL_LENGTH,        },
-  { N_ ("Shutter Speed:"),    EXIF_TAG_SHUTTER_SPEED_VALUE, },
-  { N_ ("Software:"),         EXIF_TAG_SOFTWARE,            },
+  { N_ ("Date Taken:"),        EXIF_TAG_DATE_TIME,           },
+  { N_ ("Camera Brand:"),      EXIF_TAG_MAKE,                },
+  { N_ ("Camera Model:"),      EXIF_TAG_MODEL,               },
+  { N_ ("Exposure Time:"),     EXIF_TAG_EXPOSURE_TIME,       },
+  { N_ ("Exposure Program:"),  EXIF_TAG_EXPOSURE_PROGRAM,    },
+  { N_ ("Aperture Value:"),    EXIF_TAG_APERTURE_VALUE,      },
+  { N_ ("Metering Mode:"),     EXIF_TAG_METERING_MODE,       },
+  { N_ ("Flash Fired:"),       EXIF_TAG_FLASH,               },
+  { N_ ("Focal Length:"),      EXIF_TAG_FOCAL_LENGTH,        },
+  { N_ ("Shutter Speed:"),     EXIF_TAG_SHUTTER_SPEED_VALUE, },
+  { N_ ("ISO Speed Ratings:"), EXIF_TAG_ISO_SPEED_RATINGS,   },
+  { N_ ("Software:"),          EXIF_TAG_SOFTWARE,            },
 };
 #endif
 
