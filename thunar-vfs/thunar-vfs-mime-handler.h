@@ -45,6 +45,7 @@ typedef struct _ThunarVfsMimeHandler      ThunarVfsMimeHandler;
  * @THUNAR_VFS_MIME_HANDLER_REQUIRES_TERMINAL       : the handler must be run in a terminal.
  * @THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY : the handler supports startup notification.
  * @THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI          : the handler supports opening multiple documents at once (%F or %U).
+ * @THUNAR_VFS_MIME_HANDLER_SUPPORTS_URIS           : the handler supports opening URIs (%u or %U).
  *
  * Various flags associated with a #ThunarVfsMimeHandler.
  **/
@@ -54,6 +55,7 @@ typedef enum /*< flags >*/
   THUNAR_VFS_MIME_HANDLER_REQUIRES_TERMINAL       = (1 << 1L),
   THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY = (1 << 2L),
   THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI          = (1 << 3L),
+  THUNAR_VFS_MIME_HANDLER_SUPPORTS_URIS           = (1 << 4L),
 } ThunarVfsMimeHandlerFlags;
 
 GType                     thunar_vfs_mime_handler_get_type          (void) G_GNUC_CONST;

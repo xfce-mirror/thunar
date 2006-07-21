@@ -266,6 +266,8 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
         flags |= THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY;
       if ((strstr (command, "%F") != NULL) || (strstr (command, "%U") != NULL))
         flags |= THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI;
+      if ((strstr (command, "%u") != NULL) || (strstr (command, "%U") != NULL))
+        flags |= THUNAR_VFS_MIME_HANDLER_SUPPORTS_URIS;
 
       /* allocate a new application instance */
       application = g_object_new (THUNAR_VFS_TYPE_MIME_APPLICATION, "command", command, "flags", flags, "icon", icon, "name", name, NULL);
@@ -323,6 +325,12 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
                         flags |= THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI;
                       else
                         flags &= ~THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI;
+
+                      /* check if the actions support URIs */
+                      if ((strstr (exec, "%u") != NULL) || (strstr (exec, "%U") != NULL))
+                        flags |= THUNAR_VFS_MIME_HANDLER_SUPPORTS_URIS;
+                      else
+                        flags &= ~THUNAR_VFS_MIME_HANDLER_SUPPORTS_URIS;
 
                       /* don't trust application maintainers! :-) */
                       flags &= ~THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY;
