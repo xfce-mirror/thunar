@@ -199,7 +199,7 @@ thunar_renamer_progress_next_idle (gpointer user_data)
       oldname = g_strdup (thunar_file_get_display_name (pair->file));
 
       /* try to rename the file */
-      if (!thunar_file_rename (pair->file, pair->name, NULL))
+      if (!thunar_file_rename (pair->file, pair->name, &error))
         {
           /* determine the toplevel widget */
           toplevel = (GtkWindow *) gtk_widget_get_toplevel (GTK_WIDGET (renamer_progress));
