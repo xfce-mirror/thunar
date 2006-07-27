@@ -200,7 +200,7 @@ tvilx_copy_regular (const gchar                   *source_absolute_path,
     {
 #ifdef HAVE_POSIX_MADVISE
       /* tell the system that the data will be read sequentially */
-      posix_madvise (buffer, source_statb->st_size, MADV_SEQUENTIAL);
+      posix_madvise (buffer, source_statb->st_size, POSIX_MADV_SEQUENTIAL);
 #endif
 
       /* write the data to the target file */

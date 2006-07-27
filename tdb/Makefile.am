@@ -7,9 +7,6 @@ INCLUDES =								\
 noinst_LTLIBRARIES =							\
 	libtdb.la
 
-libtdb_la_CFLAGS =							\
-	-D_XOPEN_SOURCE=500
-
 libtdb_la_SOURCES =							\
 	spinlock.c							\
 	spinlock.h							\
