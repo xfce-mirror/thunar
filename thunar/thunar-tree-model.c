@@ -1473,32 +1473,33 @@ thunar_tree_model_node_drop_dummy (GNode           *node,
   GtkTreeIter  iter;
 
   /* check if we still have the dummy child node */
-  if (g_node_n_children (node) == 1 && g_node_first_child (node)->data == NULL)
+  if (g_node_n_children (node) == 1 && node->children->data == NULL)
     {
       /* determine the iterator for the dummy */
       iter.stamp = model->stamp;
-      iter.user_data = g_node_first_child (node);
+      iter.user_data = node->children;
 
       /* determine the path for the iterator */
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
       if (G_LIKELY (path != NULL))
         {
           /* drop the dummy from the model */
-          g_node_destroy (iter.user_data);
+          g_node_destroy (node->children);
 
           /* notify the view */
           gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
-
-          /* release the path */
-          gtk_tree_path_free (path);
 
           /* determine the iter to the parent node */
           iter.stamp = model->stamp;
           iter.user_data = node;
 
+          /* determine the path to the parent node */
+          gtk_tree_path_up (path);
+
           /* emit a "row-has-child-toggled" for the parent */
-          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
           gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model), path, &iter);
+
+          /* release the path */
           gtk_tree_path_free (path);
         }
     }
