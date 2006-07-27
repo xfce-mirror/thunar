@@ -96,8 +96,6 @@ AC_MSG_RESULT([$TDB_U32_TYPE])
 dnl ***********************************************
 dnl *** Work-around system-specific limitations ***
 dnl ***********************************************
-AC_DEFINE([_XOPEN_SOURCE], [600], [Required to make glibc usable])
-AC_DEFINE([_BSD_SOURCE], [1], [Required to make glibc usable])
 AC_SYS_LARGEFILE()
 
 dnl **********************************
@@ -117,8 +115,46 @@ dnl ************************************
 AC_FUNC_MMAP()
 AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr lchmod localeconv \
                 localtime_r mbrtowc mkfifo posix_madvise pread pwrite \
-		readdir_r sched_yield setgroupent setpassent statfs \
-		statvfs strcoll strlcpy strptime symlink])
+                readdir_r sched_yield setgroupent setpassent statfs \
+                statvfs strcoll strlcpy strptime symlink])
+
+dnl ******************************************
+dnl *** Linux/glibc specified work-arounds ***
+dnl ******************************************
+m4_define([glibc_workaround_test],
+[
+posix_madvise (0, 0, POSIX_MADV_NORMAL);
+posix_madvise (0, 0, POSIX_MADV_SEQUENTIAL);
+posix_madvise (0, 0, POSIX_MADV_RANDOM);
+posix_madvise (0, 0, POSIX_MADV_WILLNEED);
+posix_madvise (0, 0, POSIX_MADV_DONTNEED);
+strptime (0, 0, 0);
+dirfd (0);
+])
+AC_MSG_CHECKING([whether we need _BSD_SOURCE and _XOPEN_SOURCE])
+AC_TRY_LINK([#include <sys/types.h>
+#include <sys/mman.h>
+#include <dirent.h>
+#include <time.h>], glibc_workaround_test(),
+[
+  AC_MSG_RESULT([no])
+],
+[
+  AC_TRY_LINK([#define _XOPEN_SOURCE 600
+#define _BSD_SOURCE
+#include <sys/types.h>
+#include <sys/mman.h>
+#include <dirent.h>
+#include <time.h>], glibc_workaround_test(),
+  [
+    AC_DEFINE([_XOPEN_SOURCE], [600], [Required to unbreak glibc])
+    AC_DEFINE([_BSD_SOURCE], [1], [Required to unbreak glibc])
+    AC_MSG_RESULT([yes])
+  ],
+  [
+    AC_MSG_RESULT([no])
+  ])
+])
 
 dnl ******************************
 dnl *** Check for i18n support ***

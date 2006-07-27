@@ -113,7 +113,7 @@ thunar_vfs_thumb_pixbuf_load (const gchar *path,
   GdkPixbufLoader *loader;
   struct stat      statb;
   GdkPixbuf       *pixbuf = NULL;
-  gboolean         succeed;
+  gboolean         succeed = FALSE;
   guchar          *buffer;
   gint             fd;
   gint             n;
@@ -143,6 +143,11 @@ thunar_vfs_thumb_pixbuf_load (const gchar *path,
       buffer = mmap (NULL, statb.st_size, PROT_READ, MAP_SHARED, fd, 0);
       if (G_UNLIKELY (buffer == MAP_FAILED))
         goto nommap;
+
+      /* tell the kernel that we'll read sequentially */
+#ifdef HAVE_POSIX_MADVISE
+      posix_madvise (buffer, statb.st_size, POSIX_MADV_SEQUENTIAL);
+#endif
 
       /* feed the data into the loader */
       succeed = gdk_pixbuf_loader_write (loader, buffer, statb.st_size, NULL);
@@ -177,11 +182,8 @@ nommap:
     }
 #endif
 
-  /* tell the loader that we're done */
-  succeed = (succeed && gdk_pixbuf_loader_close (loader, NULL));
-
   /* check if we succeed */
-  if (G_LIKELY (succeed))
+  if (G_LIKELY (succeed && gdk_pixbuf_loader_close (loader, NULL)))
     {
       /* determine the pixbuf... */
       pixbuf = gdk_pixbuf_loader_get_pixbuf (loader);
@@ -194,6 +196,9 @@ nommap:
 end2:
   close (fd);
 end1:
+  /* need to close the loader first if we failed */
+  if (G_UNLIKELY (!succeed))
+    gdk_pixbuf_loader_close (loader, NULL);
   g_object_unref (G_OBJECT (loader));
 end0:
   return pixbuf;
