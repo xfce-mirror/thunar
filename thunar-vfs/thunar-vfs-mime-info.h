@@ -58,7 +58,7 @@ gboolean                         thunar_vfs_mime_info_equal            (gconstpo
 const gchar                     *thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo       *info,
                                                                         GtkIconTheme            *icon_theme);
 
-G_INLINE_FUNC void               thunar_vfs_mime_info_list_free        (GList                   *info_list);
+void                             thunar_vfs_mime_info_list_free        (GList                   *info_list);
 
 
 #if defined(THUNAR_VFS_COMPILATION)
@@ -97,20 +97,6 @@ G_INLINE_FUNC const gchar*
 thunar_vfs_mime_info_get_name (const ThunarVfsMimeInfo *info)
 {
   return ((const gchar *) info) + sizeof (*info);
-}
-
-/**
- * thunar_vfs_mime_info_list_free:
- * @info_list : a #GList of #ThunarVfsMimeInfo<!---->s
- *
- * Frees the list and all #ThunarVfsMimeInfo<!---->s
- * contained within the list.
- **/
-G_INLINE_FUNC void
-thunar_vfs_mime_info_list_free (GList *info_list)
-{
-  g_list_foreach (info_list, (GFunc) thunar_vfs_mime_info_unref, NULL);
-  g_list_free (info_list);
 }
 #endif /* G_CAN_INLINE || __THUNAR_VFS_MIME_INFO_C__ */
 

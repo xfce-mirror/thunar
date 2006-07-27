@@ -30,6 +30,28 @@
 G_BEGIN_DECLS;
 
 /**
+ * ThunarVfsPathScheme:
+ * @THUNAR_VFS_PATH_SCHEME_FILE  : path to local files.
+ * @THUNAR_VFS_PATH_SCHEME_TRASH : path to files in the trash can.
+ * @THUNAR_VFS_PATH_SCHEME_MASK  : bit mask for path scheme, an
+ *                                 implementation detail, should
+ *                                 not be used outside ThunarVFS.
+ *
+ * The scheme, or the type, of resource a #ThunarVfsPath refers to.
+ * This currently includes local files which are accessible via
+ * standard Unix paths, and trashed files, which are accessible
+ * via trash:-URIs.
+ *
+ * Since: 0.3.3
+ **/
+typedef enum /*< skip >*/
+{
+  THUNAR_VFS_PATH_SCHEME_FILE   = 0x00000000,
+  THUNAR_VFS_PATH_SCHEME_TRASH  = 0x40000000,
+  THUNAR_VFS_PATH_SCHEME_MASK   = 0x40000000,
+} ThunarVfsPathScheme;
+
+/**
  * THUNAR_VFS_PATH_MAXSTRLEN:
  *
  * The maximum length of a path string in bytes that
@@ -50,8 +72,25 @@ G_BEGIN_DECLS;
  **/
 #define THUNAR_VFS_PATH_MAXURILEN (THUNAR_VFS_PATH_MAXSTRLEN * 3 - 2)
 
+/**
+ * THUNAR_VFS_TYPE_PATH:
+ *
+ * Returns the type id of the #ThunarVfsPath type, which is a boxed
+ * type.
+ **/
 #define THUNAR_VFS_TYPE_PATH (thunar_vfs_path_get_type ())
 
+/**
+ * THUNAR_VFS_TYPE_PATH_LIST:
+ *
+ * Returns the type id for #GList<!---->s of #ThunarVfsPath<!---->s,
+ * which is a boxed type.
+ *
+ * Since: 0.3.3
+ **/
+#define THUNAR_VFS_TYPE_PATH_LIST (thunar_vfs_path_list_get_type ())
+
+#define THUNAR_VFS_PATH(obj) ((ThunarVfsPath *) (obj))
 typedef struct _ThunarVfsPath ThunarVfsPath;
 struct _ThunarVfsPath
 {
@@ -60,54 +99,57 @@ struct _ThunarVfsPath
   ThunarVfsPath *parent;
 };
 
-GType                        thunar_vfs_path_get_type     (void) G_GNUC_CONST;
+GType                             thunar_vfs_path_get_type         (void) G_GNUC_CONST;
+GType                             thunar_vfs_path_list_get_type    (void) G_GNUC_CONST;
 
-ThunarVfsPath               *thunar_vfs_path_new          (const gchar          *identifier,
-                                                           GError              **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsPath                    *thunar_vfs_path_new              (const gchar          *identifier,
+                                                                    GError              **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-ThunarVfsPath               *thunar_vfs_path_get_for_home (void) G_GNUC_WARN_UNUSED_RESULT;
-ThunarVfsPath               *thunar_vfs_path_get_for_root (void) G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsPath                    *thunar_vfs_path_get_for_home     (void) G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsPath                    *thunar_vfs_path_get_for_root     (void) G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsPath                    *thunar_vfs_path_get_for_trash    (void) G_GNUC_WARN_UNUSED_RESULT;
 
-G_INLINE_FUNC ThunarVfsPath *thunar_vfs_path_ref          (ThunarVfsPath        *path);
-void                         thunar_vfs_path_unref        (ThunarVfsPath        *path);
+G_INLINE_FUNC ThunarVfsPath      *thunar_vfs_path_ref              (ThunarVfsPath        *path);
+void                              thunar_vfs_path_unref            (ThunarVfsPath        *path);
 
-guint                        thunar_vfs_path_hash         (gconstpointer         path_ptr);
-gboolean                     thunar_vfs_path_equal        (gconstpointer         path_ptr_a,
-                                                           gconstpointer         path_ptr_b);
+guint                             thunar_vfs_path_hash             (gconstpointer         path_ptr);
+gboolean                          thunar_vfs_path_equal            (gconstpointer         path_ptr_a,
+                                                                    gconstpointer         path_ptr_b);
 
-ThunarVfsPath               *thunar_vfs_path_relative     (ThunarVfsPath        *parent,
-                                                           const gchar          *name) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsPath                    *thunar_vfs_path_relative         (ThunarVfsPath        *parent,
+                                                                    const gchar          *name) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-gboolean                     thunar_vfs_path_is_ancestor  (const ThunarVfsPath  *path,
-                                                           const ThunarVfsPath  *ancestor);
-gboolean                     thunar_vfs_path_is_home      (const ThunarVfsPath  *path);
-G_INLINE_FUNC gboolean       thunar_vfs_path_is_root      (const ThunarVfsPath  *path);
+gboolean                          thunar_vfs_path_is_ancestor      (const ThunarVfsPath  *path,
+                                                                    const ThunarVfsPath  *ancestor);
+gboolean                          thunar_vfs_path_is_home          (const ThunarVfsPath  *path);
+G_INLINE_FUNC gboolean            thunar_vfs_path_is_root          (const ThunarVfsPath  *path);
 
-G_INLINE_FUNC const gchar   *thunar_vfs_path_get_name     (const ThunarVfsPath  *path);
-G_INLINE_FUNC ThunarVfsPath *thunar_vfs_path_get_parent   (const ThunarVfsPath  *path);
+G_INLINE_FUNC const gchar        *thunar_vfs_path_get_name         (const ThunarVfsPath  *path);
+G_INLINE_FUNC ThunarVfsPath      *thunar_vfs_path_get_parent       (const ThunarVfsPath  *path);
+G_INLINE_FUNC ThunarVfsPathScheme thunar_vfs_path_get_scheme       (const ThunarVfsPath  *path);
 
-gchar                       *thunar_vfs_path_dup_string   (const ThunarVfsPath  *path) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-gssize                       thunar_vfs_path_to_string    (const ThunarVfsPath  *path,
-                                                           gchar                *buffer,
-                                                           gsize                 bufsize,
-                                                           GError              **error);
+gchar                            *thunar_vfs_path_dup_string       (const ThunarVfsPath  *path) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gssize                            thunar_vfs_path_to_string        (const ThunarVfsPath  *path,
+                                                                    gchar                *buffer,
+                                                                    gsize                 bufsize,
+                                                                    GError              **error);
 
-gchar                       *thunar_vfs_path_dup_uri      (const ThunarVfsPath  *path) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-gssize                       thunar_vfs_path_to_uri       (const ThunarVfsPath  *path,
-                                                           gchar                *buffer,
-                                                           gsize                 bufsize,
-                                                           GError              **error);
+gchar                            *thunar_vfs_path_dup_uri          (const ThunarVfsPath  *path) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gssize                            thunar_vfs_path_to_uri           (const ThunarVfsPath  *path,
+                                                                    gchar                *buffer,
+                                                                    gsize                 bufsize,
+                                                                    GError              **error);
 
 
-GList                       *thunar_vfs_path_list_from_string (const gchar          *uri_string,
-                                                               GError              **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-gchar                       *thunar_vfs_path_list_to_string   (GList                *path_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-G_INLINE_FUNC GList         *thunar_vfs_path_list_append      (GList                *path_list,
-                                                               ThunarVfsPath        *path) G_GNUC_WARN_UNUSED_RESULT;
-G_INLINE_FUNC GList         *thunar_vfs_path_list_prepend     (GList                *path_list,
-                                                               ThunarVfsPath        *path) G_GNUC_WARN_UNUSED_RESULT;
-G_INLINE_FUNC GList         *thunar_vfs_path_list_copy        (GList                *path_list) G_GNUC_WARN_UNUSED_RESULT;
-G_INLINE_FUNC void           thunar_vfs_path_list_free        (GList                *path_list);
+GList                            *thunar_vfs_path_list_from_string (const gchar          *uri_string,
+                                                                    GError              **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar                            *thunar_vfs_path_list_to_string   (GList                *path_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+G_INLINE_FUNC GList              *thunar_vfs_path_list_append      (GList                *path_list,
+                                                                    ThunarVfsPath        *path) G_GNUC_WARN_UNUSED_RESULT;
+G_INLINE_FUNC GList              *thunar_vfs_path_list_prepend     (GList                *path_list,
+                                                                    ThunarVfsPath        *path) G_GNUC_WARN_UNUSED_RESULT;
+GList                            *thunar_vfs_path_list_copy        (GList                *path_list) G_GNUC_WARN_UNUSED_RESULT;
+void                              thunar_vfs_path_list_free        (GList                *path_list);
 
 
 /* inline function implementations */
@@ -179,6 +221,23 @@ thunar_vfs_path_get_parent (const ThunarVfsPath *path)
 }
 
 /**
+ * thunar_vfs_path_get_scheme:
+ * @path : a #ThunarVfsPath.
+ *
+ * Returns the #ThunarVfsPathScheme of the specified
+ * @path.
+ *
+ * Return value: the scheme of the @path.
+ *
+ * Since: 0.3.3
+ **/
+G_INLINE_FUNC ThunarVfsPathScheme
+thunar_vfs_path_get_scheme (const ThunarVfsPath *path)
+{
+  return (path->ref_count & THUNAR_VFS_PATH_SCHEME_MASK);
+}
+
+/**
  * thunar_vfs_path_list_append:
  * @path_list : a list of #ThunarVfsPath<!---->s.
  * @path      : a #ThunarVfsPath.
@@ -213,54 +272,7 @@ thunar_vfs_path_list_prepend (GList         *path_list,
   thunar_vfs_path_ref (path);
   return g_list_prepend (path_list, path);
 }
-
-/**
- * thunar_vfs_path_list_copy:
- * @path_list : a list of #ThunarVfsPath<!---->s.
- *
- * Takes a deep copy of @path_list and returns the
- * result. The caller is responsible to free the
- * returned list using thunar_vfs_path_list_free().
- *
- * Return value: a deep copy of @path_list.
- **/
-G_INLINE_FUNC GList*
-thunar_vfs_path_list_copy (GList *path_list)
-{
-  GList *list;
-  GList *lp;
-
-  for (list = NULL, lp = g_list_last (path_list); lp != NULL; lp = lp->prev)
-    {
-      list = g_list_prepend (list, lp->data);
-      thunar_vfs_path_ref (lp->data);
-    }
-
-  return list;
-}
-
-/**
- * thunar_vfs_path_list_free:
- * @path_list : a list of #ThunarVfsPath<!---->s.
- *
- * Frees the #ThunarVfsPath<!---->s in @path_list and
- * the @path_list itself.
- **/
-G_INLINE_FUNC void
-thunar_vfs_path_list_free (GList *path_list)
-{
-  GList *lp;
-  for (lp = path_list; lp != NULL; lp = lp->next)
-    thunar_vfs_path_unref (lp->data);
-  g_list_free (path_list);
-}
 #endif /* G_CAN_INLINE || __THUNAR_VFS_PATH_C__ */
-
-
-#if defined(THUNAR_VFS_COMPILATION)
-void _thunar_vfs_path_init     (void) G_GNUC_INTERNAL;
-void _thunar_vfs_path_shutdown (void) G_GNUC_INTERNAL;
-#endif
 
 G_END_DECLS;
 

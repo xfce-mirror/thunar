@@ -183,6 +183,8 @@ static void                 thunar_standard_view_action_make_link           (Gtk
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_rename              (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_action_restore             (GtkAction                *action,
+                                                                             ThunarStandardView       *standard_view);
 static GClosure            *thunar_standard_view_new_files_closure          (ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_new_files                  (ThunarVfsJob             *job,
                                                                              GList                    *path_list,
@@ -266,6 +268,7 @@ struct _ThunarStandardViewPrivate
   GtkAction              *action_duplicate;
   GtkAction              *action_make_link;
   GtkAction              *action_rename;
+  GtkAction              *action_restore;
 
   /* support for file manager extensions */
   ThunarxProviderFactory *provider_factory;
@@ -320,7 +323,8 @@ static const GtkActionEntry action_entries[] =
   { "select-by-pattern", NULL, N_ ("Select _by Pattern..."), "<control>S", N_ ("Select all files that match a certain pattern"), G_CALLBACK (thunar_standard_view_action_select_by_pattern), },
   { "duplicate", NULL, N_ ("Du_plicate"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_duplicate), },
   { "make-link", NULL, N_ ("Ma_ke Link"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_make_link), },
-  { "rename", NULL, N_ ("_Rename..."), "F2", N_ ("Rename the selected file"), G_CALLBACK (thunar_standard_view_action_rename), },
+  { "rename", NULL, N_ ("_Rename..."), "F2", NULL, G_CALLBACK (thunar_standard_view_action_rename), },
+  { "restore", NULL, N_ ("_Restore"), NULL, NULL, G_CALLBACK (thunar_standard_view_action_restore), },
 };
 
 /* Target types for dragging from the view */
@@ -577,6 +581,7 @@ thunar_standard_view_init (ThunarStandardView *standard_view)
   standard_view->priv->action_duplicate = gtk_action_group_get_action (standard_view->action_group, "duplicate");
   standard_view->priv->action_make_link = gtk_action_group_get_action (standard_view->action_group, "make-link");
   standard_view->priv->action_rename = gtk_action_group_get_action (standard_view->action_group, "rename");
+  standard_view->priv->action_restore = gtk_action_group_get_action (standard_view->action_group, "restore");
 
   /* add the "Create Document" sub menu action */
   standard_view->priv->action_create_document = thunar_templates_action_new ("create-document", _("Create _Document"));
@@ -1114,6 +1119,7 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 {
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (navigator);
   ThunarFolder       *folder;
+  gboolean            trashed;
 
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
@@ -1165,6 +1171,19 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
 
   /* reconnect our model to the view */
   g_object_set (G_OBJECT (GTK_BIN (standard_view)->child), "model", standard_view->model, NULL);
+
+  /* check if the new directory is in the trash */
+  trashed = thunar_file_is_trashed (current_directory);
+
+  /* update the "Create Folder"/"Create Document" actions */
+  gtk_action_set_visible (standard_view->priv->action_create_folder, !trashed);
+  gtk_action_set_visible (standard_view->priv->action_create_document, !trashed);
+
+  /* update the "Rename" action */
+  gtk_action_set_visible (standard_view->priv->action_rename, !trashed);
+
+  /* update the "Restore" action */
+  gtk_action_set_visible (standard_view->priv->action_restore, trashed);
 
   /* notify all listeners about the new/old current directory */
   g_object_notify (G_OBJECT (standard_view), "current-directory");
@@ -1611,31 +1630,6 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
         thunar_file_list_free (files);
     }
 
-  /* determine the currently selected file/folder for which to load custom actions */
-  if (G_LIKELY (selected_items != NULL && selected_items->next == NULL))
-    {
-      gtk_tree_model_get_iter (GTK_TREE_MODEL (standard_view->model), &iter, selected_items->data);
-      file = thunar_list_model_get_file (standard_view->model, &iter);
-    }
-  else if (selected_items == NULL)
-    {
-      file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
-      if (G_LIKELY (file != NULL))
-        g_object_ref (G_OBJECT (file));
-    }
-  else
-    {
-      file = NULL;
-    }
-
-  /* load the custom actions for the currently selected file/folder */
-  if (G_LIKELY (file != NULL))
-    {
-      tmp = thunar_file_get_actions (file, window);
-      actions = g_list_concat (actions, tmp);
-      g_object_unref (G_OBJECT (file));
-    }
-
   /* remove the previously determined menu actions from the UI manager */
   if (G_LIKELY (standard_view->priv->custom_merge_id != 0))
     {
@@ -1969,66 +1963,14 @@ thunar_standard_view_action_delete (GtkAction          *action,
                                     ThunarStandardView *standard_view)
 {
   ThunarApplication *application;
-  GtkWidget         *dialog;
-  GtkWidget         *window;
-  GList             *selected_paths;
-  guint              n_selected_files;
-  gchar             *message;
-  gint               response;
 
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* determine the number of currently selected files */
-  n_selected_files = g_list_length (standard_view->selected_files);
-  if (G_UNLIKELY (n_selected_files <= 0))
-    return;
-
-  /* generate the question to confirm the delete operation */
-  if (G_LIKELY (n_selected_files == 1))
-    {
-      message = g_strdup_printf (_("Are you sure that you want to\npermanently delete \"%s\"?"),
-                                 thunar_file_get_display_name (THUNAR_FILE (standard_view->selected_files->data)));
-    }
-  else
-    {
-      message = g_strdup_printf (ngettext ("Are you sure that you want to permanently\ndelete the selected file?",
-                                           "Are you sure that you want to permanently\ndelete the %u selected files?",
-                                           n_selected_files),
-                                 n_selected_files);
-    }
-
-  /* determine the selected paths, just in case the selection changes in the meantime */
-  selected_paths = thunar_file_list_to_path_list (standard_view->selected_files);
-
-  /* ask the user to confirm the delete operation */
-  window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-  dialog = gtk_message_dialog_new (GTK_WINDOW (window),
-                                   GTK_DIALOG_MODAL
-                                   | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_QUESTION,
-                                   GTK_BUTTONS_NONE,
-                                   "%s", message);
-  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                          GTK_STOCK_DELETE, GTK_RESPONSE_YES,
-                          NULL);
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a file, it is permanently lost."));
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
-  g_free (message);
-
-  /* perform the delete operation */
-  if (G_LIKELY (response == GTK_RESPONSE_YES))
-    {
-      application = thunar_application_get ();
-      thunar_application_unlink (application, window, selected_paths);
-      g_object_unref (G_OBJECT (application));
-    }
-
-  /* release the path list */
-  thunar_vfs_path_list_free (selected_paths);
+  /* delete the selected files */
+  application = thunar_application_get ();
+  thunar_application_unlink_files (application, GTK_WIDGET (standard_view), standard_view->selected_files);
+  g_object_unref (G_OBJECT (application));
 }
 
 
@@ -2057,6 +1999,10 @@ thunar_standard_view_action_select_all_files (GtkAction          *action,
   g_return_if_fail (GTK_IS_ACTION (action));
   g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
+  /* grab the focus to the view */
+  gtk_widget_grab_focus (GTK_WIDGET (standard_view));
+
+  /* select all files in the real view */
   (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_all) (standard_view);
 }
 
@@ -2329,6 +2275,24 @@ thunar_standard_view_action_rename (GtkAction          *action,
       /* display the bulk rename dialog */
       thunar_show_renamer_dialog (GTK_WIDGET (standard_view), file, standard_view->selected_files, FALSE);
     }
+}
+
+
+
+static void
+thunar_standard_view_action_restore (GtkAction          *action,
+                                     ThunarStandardView *standard_view)
+{
+  ThunarApplication *application;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* restore the selected files */
+  application = thunar_application_get ();
+  thunar_application_restore_files (application, GTK_WIDGET (standard_view), standard_view->selected_files,
+                                    thunar_standard_view_new_files_closure (standard_view));
+  g_object_unref (G_OBJECT (application));
 }
 
 
@@ -3294,8 +3258,10 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   GtkTreeIter iter;
   ThunarFile *current_directory;
   gboolean    can_paste_into_folder;
+  gboolean    restorable;
   gboolean    pastable;
   gboolean    writable;
+  gboolean    trashed;
   GList      *lp, *selected_files;
   gint        n_selected_files = 0;
 
@@ -3329,9 +3295,18 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* and setup the new selected files list */
   standard_view->selected_files = selected_files;
 
-  /* check whether the folder displayed by the view is writable */
+  /* enable "Restore" if we have only trashed files (atleast one file) */
+  for (lp = selected_files, restorable = (lp != NULL); lp != NULL; lp = lp->next)
+    if (!thunar_file_is_trashed (lp->data))
+      {
+        restorable = FALSE;
+        break;
+      }
+
+  /* check whether the folder displayed by the view is writable/in the trash */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   writable = (current_directory != NULL && thunar_file_is_writable (current_directory));
+  trashed = (current_directory != NULL && thunar_file_is_trashed (current_directory));
 
   /* check whether the clipboard contains data that can be pasted here */
   pastable = (standard_view->clipboard != NULL && thunar_clipboard_manager_get_can_paste (standard_view->clipboard));
@@ -3343,8 +3318,8 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
                        && thunar_file_is_writable (selected_files->data);
 
   /* update the "Create Folder"/"Create Document" actions */
-  gtk_action_set_sensitive (standard_view->priv->action_create_folder, writable);
-  gtk_action_set_sensitive (standard_view->priv->action_create_document, writable);
+  gtk_action_set_sensitive (standard_view->priv->action_create_folder, !trashed && writable);
+  gtk_action_set_sensitive (standard_view->priv->action_create_document, !trashed && writable);
 
   /* update the "Properties" action */
   gtk_action_set_sensitive (standard_view->priv->action_properties, (n_selected_files == 1 || (n_selected_files == 0 && current_directory != NULL)));
@@ -3371,8 +3346,8 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* update the "Delete" action */
   g_object_set (G_OBJECT (standard_view->priv->action_delete),
                 "sensitive", (n_selected_files > 0) && writable,
-                "tooltip", ngettext ("Delete the selected file permanently",
-                                     "Delete the selected files permanently",
+                "tooltip", ngettext ("Delete the selected file",
+                                     "Delete the selected files",
                                      n_selected_files),
                 NULL);
 
@@ -3384,7 +3359,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
 
   /* update the "Duplicate File(s)" action */
   g_object_set (G_OBJECT (standard_view->priv->action_duplicate),
-                "sensitive", (n_selected_files > 0) && writable,
+                "sensitive", (n_selected_files > 0) && !restorable && writable,
                 "tooltip", ngettext ("Duplicate the selected file",
                                      "Duplicate each selected file",
                                      n_selected_files),
@@ -3393,16 +3368,27 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   /* update the "Make Link(s)" action */
   g_object_set (G_OBJECT (standard_view->priv->action_make_link),
                 "label", ngettext ("Ma_ke Link", "Ma_ke Links", n_selected_files),
-                "sensitive", (n_selected_files > 0) && writable,
+                "sensitive", (n_selected_files > 0) && !restorable && writable,
                 "tooltip", ngettext ("Create a symbolic link for the selected file",
                                      "Create a symbolic link for each selected file",
                                      n_selected_files),
                 NULL);
 
   /* update the "Rename" action */
-  gtk_action_set_sensitive (standard_view->priv->action_rename,
-                            (n_selected_files > 0 && current_directory != NULL
-                             && thunar_file_is_writable (current_directory)));
+  g_object_set (G_OBJECT (standard_view->priv->action_rename),
+                "sensitive", (n_selected_files > 0 && !restorable && writable),
+                "tooltip", ngettext ("Rename the selected file",
+                                     "Rename the selected files",
+                                     n_selected_files),
+                NULL);
+
+  /* update the "Restore" action */
+  g_object_set (G_OBJECT (standard_view->priv->action_restore),
+                "sensitive", (n_selected_files > 0 && restorable),
+                "tooltip", ngettext ("Restore the selected file",
+                                     "Restore the selected files",
+                                     n_selected_files),
+                NULL);
 
   /* update the statusbar text */
   thunar_standard_view_update_statusbar_text (standard_view);

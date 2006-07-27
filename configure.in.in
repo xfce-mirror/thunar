@@ -9,7 +9,7 @@ dnl
 dnl ***************************
 dnl *** Version information ***
 dnl ***************************
-m4_define([thunar_verinfo], [3:0:1])
+m4_define([thunar_verinfo], [4:0:2])
 m4_define([thunar_version_api], [1])
 m4_define([thunar_version_major], [0])
 m4_define([thunar_version_minor], [3])
@@ -114,9 +114,9 @@ dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
 AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr lchmod localeconv \
-                localtime_r mbrtowc mkfifo pread pwrite readdir_r readlink \
+                localtime_r mbrtowc mkfifo pread pwrite readdir_r \
                 sched_yield setgroupent setpassent statfs statvfs strcoll \
-                symlink])
+                strlcpy symlink])
 
 dnl ***************************************
 dnl *** Check for working posix_madvise ***
@@ -149,6 +149,38 @@ AC_TRY_LINK([#include <sys/mman.h>], posix_madvise_test(),
     AC_MSG_RESULT([no])
   ])
 ])
+
+dnl **********************************
+dnl *** Check for working strptime ***
+dnl **********************************
+if test x"$GCC" = x"yes"; then
+  ac_save_CFLAGS="$CFLAGS"
+  CFLAGS="$CFLAGS -Werror" # to detect a protected declaration
+  m4_define([strptime_test], [ strptime (0, 0, 0); ])
+  AC_MSG_CHECKING([for working strptime])
+  AC_TRY_LINK([#include <time.h>], strptime_test,
+  [
+    AC_DEFINE([HAVE_STRPTIME], [1], [Define if strptime is working])
+    AC_MSG_RESULT([yes])
+  ],
+  [
+    dnl As usual, Linux/glibc doesn't work properly out-of-the-box
+    ac_save_CPPFLAGS="$CPPFLAGS"
+    CPPFLAGS="$CPPFLAGS -D__USE_XOPEN"
+    AC_TRY_LINK([#include <time.h>], strptime_test,
+    [
+      AC_DEFINE([HAVE_STRPTIME], [1], [Define if strptime is working])
+      AC_MSG_RESULT([yes])
+    ],
+    [
+      CPPFLAGS="$ac_save_CPPFLAGS"
+      AC_MSG_RESULT([no])
+    ])
+  ])
+  CFLAGS="$ac_save_CFLAGS"
+else
+  AC_CHECK_FUNCS([strptime])
+fi
 
 dnl ******************************
 dnl *** Check for i18n support ***
@@ -244,6 +276,11 @@ if test x"$enable_xml2po" = x"yes"; then
   fi
 fi
 AM_CONDITIONAL([ENABLE_XML2PO], [test x"$enable_xml2po" = x"yes"])
+
+dnl ******************************************
+dnl *** Check for operating system support ***
+dnl ******************************************
+BM_THUNAR_VFS_OS_IMPL()
 
 dnl ****************************************************
 dnl *** Check for file system monitor implementation ***
@@ -368,6 +405,7 @@ dnl *** Check for additional plugins ***
 dnl ************************************
 BM_THUNAR_PLUGIN_APR()
 BM_THUNAR_PLUGIN_SBR()
+BM_THUNAR_PLUGIN_TPA()
 BM_THUNAR_PLUGIN_UCA()
 
 AC_OUTPUT([
@@ -412,6 +450,7 @@ plugins/Makefile
 plugins/thunar-apr/Makefile
 plugins/thunar-sbr/Makefile
 plugins/thunar-sendto-email/Makefile
+plugins/thunar-tpa/Makefile
 plugins/thunar-uca/Makefile
 po/Makefile.in
 po-doc/Makefile
@@ -434,6 +473,7 @@ dnl ***************************
 echo
 echo "Build Configuration:"
 echo
+echo "* Operating system support:  $ac_bm_thunar_vfs_os_impl"
 if test x"$DBUS_FOUND" = x"yes"; then
 echo "* D-BUS support:             yes"
 else
@@ -456,5 +496,6 @@ echo "Additional Plugins:"
 echo
 echo "* Advanced Properties:       $ac_bm_thunar_plugin_apr"
 echo "* Simple Builting Renamers:  $ac_bm_thunar_plugin_sbr"
+echo "* Trash Panel Applet:        $ac_bm_thunar_plugin_tpa"
 echo "* User Customizable Actions: $ac_bm_thunar_plugin_uca"
 echo

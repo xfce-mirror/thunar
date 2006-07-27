@@ -444,7 +444,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                    g_param_spec_boolean ("misc-case-sensitive",
                                                          "misc-case-sensitive",
                                                          "misc-case-sensitive",
-                                                         TRUE,
+                                                         FALSE,
                                                          EXO_PARAM_READWRITE));
 
   /**

@@ -37,6 +37,10 @@ void         thunar_gtk_icon_factory_insert_icon          (GtkIconFactory *icon_
 GtkAction   *thunar_gtk_ui_manager_get_action_by_name     (GtkUIManager   *ui_manager,
                                                            const gchar    *action_name) G_GNUC_INTERNAL;
 
+void         thunar_gtk_widget_set_tooltip                (GtkWidget      *widget,
+                                                           const gchar    *format,
+                                                           ...) G_GNUC_INTERNAL G_GNUC_PRINTF (2, 3);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_GTK_EXTENSIONS_H__ */

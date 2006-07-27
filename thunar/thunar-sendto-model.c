@@ -308,6 +308,19 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
       if ((flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI) == 0 && files->next != NULL)
         continue;
 
+      /* ignore the handler if it doesn't support URIs, but we don't have a local file */
+      if ((flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_URIS) == 0)
+        {
+          /* check if we have any non-local files */
+          for (fp = files; fp != NULL; fp = fp->next)
+            if (!thunar_file_is_local (fp->data))
+              break;
+
+          /* check if the test failed */
+          if (G_UNLIKELY (fp != NULL))
+            continue;
+        }
+
       /* check if we need to test mime types for this handler */
       mime_types = thunar_vfs_mime_application_get_mime_types (hp->data);
       if (G_LIKELY (mime_types != NULL && *mime_types != NULL))

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-generator.h>
 
 
@@ -277,7 +278,7 @@ thunar_thumbnail_info_free (ThunarThumbnailInfo *info)
 {
   g_object_unref (G_OBJECT (info->file));
   thunar_vfs_info_unref (info->info);
-  g_free (info);
+  _thunar_slice_free (ThunarThumbnailInfo, info);
 }
 
 
@@ -339,7 +340,7 @@ thunar_thumbnail_generator_enqueue (ThunarThumbnailGenerator *generator,
   if (G_LIKELY (lp == NULL))
     {
       /* allocate a thumbnail info for the file */
-      info = g_new (ThunarThumbnailInfo, 1);
+      info = _thunar_slice_new (ThunarThumbnailInfo);
       info->file = g_object_ref (G_OBJECT (file));
       info->info = thunar_vfs_info_copy (thunar_file_get_info (file));
 

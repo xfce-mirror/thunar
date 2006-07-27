@@ -8,6 +8,10 @@ if THUNAR_PLUGIN_SBR
 THUNAR_SBR_SUBDIRS = thunar-sbr
 endif
 
+if THUNAR_PLUGIN_TPA
+THUNAR_TPA_SUBDIRS = thunar-tpa
+endif
+
 if THUNAR_PLUGIN_UCA
 THUNAR_UCA_SUBDIRS = thunar-uca
 endif
@@ -15,6 +19,7 @@ endif
 SUBDIRS =								\
 	$(THUNAR_APR_SUBDIRS)						\
 	$(THUNAR_SBR_SUBDIRS)						\
+	$(THUNAR_TPA_SUBDIRS)						\
 	$(THUNAR_UCA_SUBDIRS)						\
 	thunar-sendto-email
 

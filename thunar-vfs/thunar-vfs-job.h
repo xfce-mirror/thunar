@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -40,52 +40,59 @@ typedef struct _ThunarVfsJob        ThunarVfsJob;
 #define THUNAR_VFS_IS_JOB_CLASS(klass)  (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_VFS_TYPE_JOB))
 #define THUNAR_VFS_JOB_GET_CLASS(obj)   (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_VFS_TYPE_JOB, ThunarVfsJobClass))
 
+/**
+ * ThunarVfsJobResponse:
+ * @THUNAR_VFS_JOB_RESPONSE_YES     :
+ * @THUNAR_VFS_JOB_RESPONSE_YES_ALL :
+ * @THUNAR_VFS_JOB_RESPONSE_NO      :
+ * @THUNAR_VFS_JOB_RESPONSE_NO_ALL  :
+ * @THUNAR_VFS_JOB_RESPONSE_CANCEL  :
+ *
+ * Possible responses for the ThunarVfsJob::ask signal.
+ **/
+typedef enum /*< flags >*/
+{
+  THUNAR_VFS_JOB_RESPONSE_YES     = 1 << 0,
+  THUNAR_VFS_JOB_RESPONSE_YES_ALL = 1 << 1,
+  THUNAR_VFS_JOB_RESPONSE_NO      = 1 << 2,
+  THUNAR_VFS_JOB_RESPONSE_CANCEL  = 1 << 3,
+  THUNAR_VFS_JOB_RESPONSE_NO_ALL  = 1 << 4,
+} ThunarVfsJobResponse;
+
 struct _ThunarVfsJobClass
 {
+  /*< private >*/
   GObjectClass __parent__;
 
+  /*< public >*/
+
   /* virtual methods */
-  void (*execute)  (ThunarVfsJob *job);
+  void                 (*execute)  (ThunarVfsJob        *job);
 
   /* signals */
-  void (*finished) (ThunarVfsJob *job);
+  void                 (*finished) (ThunarVfsJob        *job);
+  ThunarVfsJobResponse (*ask)      (ThunarVfsJob        *job,
+                                    const gchar         *message,
+                                    ThunarVfsJobResponse choices);
 
   /*< private >*/
   void (*reserved1) (void);
   void (*reserved2) (void);
   void (*reserved3) (void);
-  void (*reserved4) (void);
 };
 
 struct _ThunarVfsJob
 {
-  GObject __parent__;
-
   /*< private >*/
+  GObject              __parent__;
   volatile gboolean    cancelled;
   ThunarVfsJobPrivate *priv;
 };
 
 GType                  thunar_vfs_job_get_type     (void) G_GNUC_CONST;
-
-/* public API */
 ThunarVfsJob          *thunar_vfs_job_launch       (ThunarVfsJob       *job);
 void                   thunar_vfs_job_cancel       (ThunarVfsJob       *job);
 G_INLINE_FUNC gboolean thunar_vfs_job_cancelled    (const ThunarVfsJob *job);
-
-
-
-/* module API */
-void                   thunar_vfs_job_emit_valist  (ThunarVfsJob       *job,
-                                                    guint               signal_id,
-                                                    GQuark              signal_detail,
-                                                    va_list             var_args) G_GNUC_INTERNAL;
-void                   thunar_vfs_job_emit         (ThunarVfsJob       *job,
-                                                    guint               signal_id,
-                                                    GQuark              signal_detail,
-                                                    ...) G_GNUC_INTERNAL;
-void                   thunar_vfs_job_error        (ThunarVfsJob       *job,
-                                                    GError             *error) G_GNUC_INTERNAL;
 
 
 /* inline function implementations */
@@ -107,11 +114,6 @@ thunar_vfs_job_cancelled (const ThunarVfsJob *job)
 }
 #endif /* G_CAN_INLINE || __THUNAR_VFS_JOB_C__ */
 
-
-#if defined(THUNAR_VFS_COMPILATION)
-void _thunar_vfs_job_init     (void) G_GNUC_INTERNAL;
-void _thunar_vfs_job_shutdown (void) G_GNUC_INTERNAL;
-#endif
 
 G_END_DECLS;
 

@@ -118,6 +118,7 @@ Thunar_SOURCES =							\
 	thunar-preferences-dialog.h					\
 	thunar-preferences.c						\
 	thunar-preferences.h						\
+	thunar-private.h						\
 	thunar-progress-dialog.c					\
 	thunar-progress-dialog.h					\
 	thunar-properties-dialog.c					\
@@ -173,6 +174,8 @@ Thunar_SOURCES =							\
 	thunar-tree-pane.h						\
 	thunar-tree-view.c						\
 	thunar-tree-view.h						\
+	thunar-util.c							\
+	thunar-util.h							\
 	thunar-view.c							\
 	thunar-view.h							\
 	thunar-window.c							\

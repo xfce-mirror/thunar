@@ -33,7 +33,7 @@
 #include <thunar-vfs/thunar-vfs-exec.h>
 #include <thunar-vfs/thunar-vfs-mime-handler-private.h>
 #include <thunar-vfs/thunar-vfs-mime-handler.h>
-#include <thunar-vfs/thunar-vfs-path.h>
+#include <thunar-vfs/thunar-vfs-path-private.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -61,6 +61,11 @@ static void         thunar_vfs_mime_handler_set_property  (GObject              
                                                            guint                       prop_id,
                                                            const GValue               *value,
                                                            GParamSpec                 *pspec);
+static gboolean     thunar_vfs_mime_handler_execute       (const ThunarVfsMimeHandler *mime_handler,
+                                                           GdkScreen                  *screen,
+                                                           GList                      *path_list,
+                                                           gchar                     **envp,
+                                                           GError                    **error);
 static gboolean     thunar_vfs_mime_handler_get_argv      (const ThunarVfsMimeHandler *mime_handler,
                                                            GList                      *path_list,
                                                            gint                       *argc,
@@ -259,6 +264,40 @@ thunar_vfs_mime_handler_set_property (GObject      *object,
 
 
 static gboolean
+thunar_vfs_mime_handler_execute (const ThunarVfsMimeHandler *mime_handler,
+                                 GdkScreen                  *screen,
+                                 GList                      *path_list,
+                                 gchar                     **envp,
+                                 GError                    **error)
+{
+  ThunarVfsPath *parent;
+  gboolean       result;
+  gchar         *working_directory;
+  gchar        **argv;
+  gint           argc;
+
+  /* parse the command line */
+  if (!thunar_vfs_mime_handler_get_argv (mime_handler, path_list, &argc, &argv, error))
+    return FALSE;
+
+  /* use the first paths base directory as working directory for the application */
+  parent = (path_list != NULL) ? thunar_vfs_path_get_parent (path_list->data) : NULL;
+  working_directory = (parent != NULL) ? _thunar_vfs_path_translate_dup_string (parent, THUNAR_VFS_PATH_SCHEME_FILE, NULL) : NULL;
+
+  /* try to spawn the application */
+  result = thunar_vfs_exec_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH,
+                                      mime_handler->flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY, error);
+
+  /* cleanup */
+  g_free (working_directory);
+  g_strfreev (argv);
+
+  return result;
+}
+
+
+
+static gboolean
 thunar_vfs_mime_handler_get_argv (const ThunarVfsMimeHandler *mime_handler,
                                   GList                      *path_list,
                                   gint                       *argc,
@@ -447,13 +486,9 @@ thunar_vfs_mime_handler_exec_with_env (const ThunarVfsMimeHandler *mime_handler,
                                        gchar                     **envp,
                                        GError                    **error)
 {
-  ThunarVfsPath *parent;
-  gboolean       result = TRUE;
-  GList          list;
-  GList         *lp;
-  gchar         *working_directory;
-  gchar        **argv;
-  gint           argc;
+  gboolean succeed = TRUE;
+  GList    list;
+  GList   *lp;
 
   g_return_val_if_fail (THUNAR_VFS_IS_MIME_HANDLER (mime_handler), FALSE);
   g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
@@ -464,56 +499,29 @@ thunar_vfs_mime_handler_exec_with_env (const ThunarVfsMimeHandler *mime_handler,
     screen = gdk_screen_get_default ();
 
   /* check whether the application can open multiple documents at once */
-  if (G_LIKELY ((mime_handler->flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI) == 0))
+  if (G_LIKELY ((mime_handler->flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI) == 0 && path_list != NULL))
     {
-      for (lp = path_list; lp != NULL; lp = lp->next)
+      /* fake an empty list */
+      list.next = NULL;
+      list.prev = NULL;
+
+      /* spawn a new instance for each path item */
+      for (lp = path_list; lp != NULL && succeed; lp = lp->next)
         {
-          /* use a short list with only one entry */
+          /* "insert" into faked list */
           list.data = lp->data;
-          list.next = NULL;
-          list.prev = NULL;
 
-          /* figure out the argument vector to run the application */
-          if (!thunar_vfs_mime_handler_get_argv (mime_handler, &list, &argc, &argv, error))
-            return FALSE;
-
-          /* use the paths base directory as working directory for the application */
-          parent = thunar_vfs_path_get_parent (list.data);
-          working_directory = (parent != NULL) ? thunar_vfs_path_dup_string (parent) : NULL;
-
-          /* try to spawn the application */
-          result = thunar_vfs_exec_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH,
-                                              mime_handler->flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY, error);
-
-          /* cleanup */
-          g_free (working_directory);
-          g_strfreev (argv);
-
-          /* check if we succeed */
-          if (G_UNLIKELY (!result))
-            break;
+          /* spawn the instance */
+          succeed = thunar_vfs_mime_handler_execute (mime_handler, screen, &list, envp, error);
         }
     }
   else
     {
-      /* we can open all documents at once */
-      if (!thunar_vfs_mime_handler_get_argv (mime_handler, path_list, &argc, &argv, error))
-        return FALSE;
-
-      /* use the first paths base directory as working directory for the application */
-      parent = (path_list != NULL) ? thunar_vfs_path_get_parent (path_list->data) : NULL;
-      working_directory = (parent != NULL) ? thunar_vfs_path_dup_string (parent) : NULL;
-
-      /* try to spawn the application */
-      result = thunar_vfs_exec_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH,
-                                          mime_handler->flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY, error);
-
-      /* cleanup */
-      g_free (working_directory);
-      g_strfreev (argv);
+      /* spawn a single instance for all path items */
+      succeed = thunar_vfs_mime_handler_execute (mime_handler, screen, path_list, envp, error);
     }
 
-  return result;
+  return succeed;
 }
 
 

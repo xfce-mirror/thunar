@@ -22,17 +22,20 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
+
 #include <thunar-vfs/thunar-vfs.h>
-#include <thunar-vfs/thunar-vfs-chmod-job.h>
-#include <thunar-vfs/thunar-vfs-chown-job.h>
-#include <thunar-vfs/thunar-vfs-creat-job.h>
 #include <thunar-vfs/thunar-vfs-deep-count-job.h>
-#include <thunar-vfs/thunar-vfs-link-job.h>
-#include <thunar-vfs/thunar-vfs-listdir-job.h>
-#include <thunar-vfs/thunar-vfs-mkdir-job.h>
+#include <thunar-vfs/thunar-vfs-io-jobs.h>
+#include <thunar-vfs/thunar-vfs-io-trash.h>
+#include <thunar-vfs/thunar-vfs-job-private.h>
+#include <thunar-vfs/thunar-vfs-mime-database-private.h>
+#include <thunar-vfs/thunar-vfs-monitor-private.h>
+#include <thunar-vfs/thunar-vfs-private.h>
+#include <thunar-vfs/thunar-vfs-simple-job.h>
 #include <thunar-vfs/thunar-vfs-transfer-job.h>
-#include <thunar-vfs/thunar-vfs-unlink-job.h>
-#include <thunar-vfs/thunar-vfs-xfer.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -58,11 +61,21 @@ thunar_vfs_init (void)
       /* initialize the path module */
       _thunar_vfs_path_init ();
 
-      /* initialize the xfer module */
-      _thunar_vfs_xfer_init ();
+      /* allocate the shared monitor instance */
+      _thunar_vfs_monitor = g_object_new (THUNAR_VFS_TYPE_MONITOR, NULL);
 
-      /* initialize the info module */
-      _thunar_vfs_info_init ();
+      /* allocate the shared mime database instance */
+      _thunar_vfs_mime_database = g_object_new (THUNAR_VFS_TYPE_MIME_DATABASE, NULL);
+
+      /* pre-determine the most important mime types */
+      _thunar_vfs_mime_inode_directory = thunar_vfs_mime_database_get_info (_thunar_vfs_mime_database, "inode/directory");
+      _thunar_vfs_mime_application_x_desktop = thunar_vfs_mime_database_get_info (_thunar_vfs_mime_database, "application/x-desktop");
+      _thunar_vfs_mime_application_x_executable = thunar_vfs_mime_database_get_info (_thunar_vfs_mime_database, "application/x-executable");
+      _thunar_vfs_mime_application_x_shellscript = thunar_vfs_mime_database_get_info (_thunar_vfs_mime_database, "application/x-shellscript");
+      _thunar_vfs_mime_application_octet_stream = thunar_vfs_mime_database_get_info (_thunar_vfs_mime_database, "application/octet-stream");
+
+      /* initialize the trash subsystem */
+      _thunar_vfs_io_trash_init ();
 
       /* initialize the jobs framework */
       _thunar_vfs_job_init ();
@@ -84,11 +97,23 @@ thunar_vfs_shutdown (void)
       /* shutdown the jobs framework */
       _thunar_vfs_job_shutdown ();
 
-      /* release the info module */
-      _thunar_vfs_info_shutdown ();
+      /* shutdown the trash subsystem */
+      _thunar_vfs_io_trash_shutdown ();
 
-      /* shutdown the xfer module */
-      _thunar_vfs_xfer_shutdown ();
+      /* release the mime type references */
+      thunar_vfs_mime_info_unref (_thunar_vfs_mime_application_octet_stream);
+      thunar_vfs_mime_info_unref (_thunar_vfs_mime_application_x_shellscript);
+      thunar_vfs_mime_info_unref (_thunar_vfs_mime_application_x_executable);
+      thunar_vfs_mime_info_unref (_thunar_vfs_mime_application_x_desktop);
+      thunar_vfs_mime_info_unref (_thunar_vfs_mime_inode_directory);
+
+      /* release the reference on the mime database */
+      g_object_unref (G_OBJECT (_thunar_vfs_mime_database));
+      _thunar_vfs_mime_database = NULL;
+
+      /* release the reference on the monitor */
+      g_object_unref (G_OBJECT (_thunar_vfs_monitor));
+      _thunar_vfs_monitor = NULL;
 
       /* shutdown the path module */
       _thunar_vfs_path_shutdown ();
@@ -102,27 +127,26 @@ thunar_vfs_shutdown (void)
  * @path  : the #ThunarVfsPath for the folder that should be listed.
  * @error : return location for errors or %NULL.
  *
- * Generates a #ThunarVfsListdirJob, which can be used to list the
- * contents of a directory (as specified by @path). If the creation
- * of the job failes for some reason, %NULL will be returned and
- * @error will be set to point to a #GError describing the cause.
- * Else the newly allocated #ThunarVfsListdirJob will be returned
- * and the caller is responsible to call g_object_unref().
+ * Generates a #ThunarVfsJob, which lists the contents of the folder
+ * at the specified @path. If the job could not be launched for
+ * some reason, %NULL will be returned and @error will be set to
+ * point to a #GError describing the cause. Otherwise the newly
+ * allocated #ThunarVfsJob will be returned and the caller is
+ * responsible to call g_object_unref().
  *
  * Note, that the returned job is launched right away, so you
  * don't need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsListdirJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
 thunar_vfs_listdir (ThunarVfsPath *path,
                     GError       **error)
 {
-  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
-
-  /* allocate the job */
-  return thunar_vfs_job_launch (thunar_vfs_listdir_job_new (path));
+  /* allocate and launch the listdir job */
+  return thunar_vfs_simple_job_launch (_thunar_vfs_io_jobs_listdir, 1,
+                                       THUNAR_VFS_TYPE_PATH, path);
 }
 
 
@@ -132,7 +156,7 @@ thunar_vfs_listdir (ThunarVfsPath *path,
  * @path  : the #ThunarVfsPath of the file to create.
  * @error : return location for errors or %NULL.
  *
- * Allocates a new #ThunarVfsCreateJob, which creates a new 
+ * Allocates a new #ThunarVfsJob, which creates a new empty
  * file at @path.
  *
  * The caller is responsible to free the returned job using
@@ -141,8 +165,8 @@ thunar_vfs_listdir (ThunarVfsPath *path,
  * Note that the returned job is launched right away, so you
  * don't need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsCreateJob or
- *               %NULL if an error occurs while creating the job.
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
+ *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
 thunar_vfs_create_file (ThunarVfsPath *path,
@@ -169,8 +193,8 @@ thunar_vfs_create_file (ThunarVfsPath *path,
  * @path_list : a list of #ThunarVfsPath<!---->s for files to create.
  * @error     : return location for errors or %NULL.
  *
- * Allocates a new #ThunarVfsCreateJob, which creates new 
- * files for all #ThunarVfsPath<!---->s in @path_list.
+ * Allocates a new #ThunarVfsJob which creates new empty files for all
+ * #ThunarVfsPath<!---->s in @path_list.
  *
  * The caller is responsible to free the returned job using
  * g_object_unref() when no longer needed.
@@ -178,23 +202,22 @@ thunar_vfs_create_file (ThunarVfsPath *path,
  * Note that the returned job is launched right away, so you
  * don't need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsCreateJob or
- *               %NULL if an error occurs while creating the job.
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
+ *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
 thunar_vfs_create_files (GList   *path_list,
                          GError **error)
 {
-  ThunarVfsJob *job;
-
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  /* allocate/launch the job */
-  job = thunar_vfs_creat_job_new (path_list, error);
-  if (G_LIKELY (job != NULL))
-    thunar_vfs_job_launch (job);
+  /* verify that we have only local paths here */
+  if (!_thunar_vfs_check_only_local (path_list, error))
+    return NULL;
 
-  return job;
+  /* allocate and launch the create job */
+  return thunar_vfs_simple_job_launch (_thunar_vfs_io_jobs_create, 1,
+                                       THUNAR_VFS_TYPE_PATH_LIST, path_list);
 }
 
 
@@ -289,7 +312,7 @@ thunar_vfs_copy_files (GList   *source_path_list,
  * @target_path : the target #ThunarVfsPath.
  * @error       : return location for errors or %NULL.
  *
- * Allocates a new #ThunarVfsLinkJob, which creates a symbolic
+ * Allocates a new #ThunarVfsJob, which creates a symbolic
  * link from @source_path to @target_path.
  *
  * If @source_path and @target_path refer to the same file,
@@ -301,7 +324,7 @@ thunar_vfs_copy_files (GList   *source_path_list,
  * Note, that the returned job is launched right away, so you don't
  * need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsLinkJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
@@ -337,8 +360,12 @@ thunar_vfs_link_file (ThunarVfsPath *source_path,
  * @target_path_list : list of #ThunarVfsPath<!---->s to the target files.
  * @error            : return location for errors or %NULL.
  *
- * Like thunar_vfs_link_file(), but works on path lists, rather than
- * a single path.
+ * Like thunar_vfs_link_file(), but works on path lists, rather than a single
+ * path. The length of the @source_path_list and @target_path_list must match,
+ * otherwise the behaviour is undefined, but its likely to crash the application.
+ *
+ * Right now links can only be created from local files to local files (with
+ * path scheme %THUNAR_VFS_PATH_SCHEME_FILE).
  *
  * The caller is responsible to free the returned job using
  * g_object_unref() when no longer needed.
@@ -346,7 +373,7 @@ thunar_vfs_link_file (ThunarVfsPath *source_path,
  * Note, that the returned job is launched right away, so you don't
  * need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsLinkJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
@@ -354,16 +381,13 @@ thunar_vfs_link_files (GList   *source_path_list,
                        GList   *target_path_list,
                        GError **error)
 {
-  ThunarVfsJob *job;
-
+  g_return_val_if_fail (g_list_length (source_path_list) == g_list_length (target_path_list), NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  /* allocate/launch the job */
-  job = thunar_vfs_link_job_new (source_path_list, target_path_list, error);
-  if (G_LIKELY (job != NULL))
-    thunar_vfs_job_launch (job);
-
-  return job;
+  /* allocate and launch the job */
+  return thunar_vfs_simple_job_launch (_thunar_vfs_io_jobs_link, 2,
+                                       THUNAR_VFS_TYPE_PATH_LIST, source_path_list,
+                                       THUNAR_VFS_TYPE_PATH_LIST, target_path_list);
 }
 
 
@@ -465,7 +489,7 @@ thunar_vfs_move_files (GList   *source_path_list,
  * is responsible to free the returned object using g_object_unref()
  * when no longer needed.
  *
- * Return value: the newly allocated #ThunarVfsUnlinkJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
@@ -493,33 +517,25 @@ thunar_vfs_unlink_file (ThunarVfsPath *path,
  * @path_list : a list of #ThunarVfsPath<!---->s, that should be unlinked.
  * @error     : return location for errors or %NULL.
  *
- * Generates a #ThunarVfsInteractiveJob, which can be used to unlink
- * all files referenced by the @path_list. If the creation of the job
- * failes for some reason, %NULL will be returned and @error will
- * be set to point to a #GError describing the cause. Else, the
- * newly allocated #ThunarVfsUnlinkJob will be returned, and the
- * caller is responsible to call g_object_unref().
+ * Allocates a new #ThunarVfsJob which recursively unlinks all files
+ * referenced by the @path_list. If the job cannot be launched for
+ * some reason, %NULL will be returned and @error will be set to point to
+ * a #GError describing the cause. Else, the newly allocated #ThunarVfsJob
+ * will be returned, and the caller is responsible to free it using
+ * g_object_unref() when no longer needed.
  *
  * Note, that the returned job is launched right away, so you
  * don't need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsUnlinkJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
 thunar_vfs_unlink_files (GList   *path_list,
                          GError **error)
 {
-  ThunarVfsJob *job;
-
-  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
-
-  /* try to allocate the job */
-  job = thunar_vfs_unlink_job_new (path_list, error);
-  if (G_LIKELY (job != NULL))
-    thunar_vfs_job_launch (job);
-
-  return job;
+  return thunar_vfs_simple_job_launch (_thunar_vfs_io_jobs_unlink, 1,
+                                       THUNAR_VFS_TYPE_PATH_LIST, path_list);
 }
 
 
@@ -529,18 +545,9 @@ thunar_vfs_unlink_files (GList   *path_list,
  * @path  : the #ThunarVfsPath to the directory to create.
  * @error : return location for errors or %NULL.
  *
- * Generates a #ThunarVfsMkdirJob, which can be used to
- * asynchronously create a new directory at the given @path. If
- * the creation of the job fails for some reason, %NULL will be
- * returned and @error will be set to point to a #GError
- * describing the cause of the problem. Else the newly allocated
- * #ThunarVfsMkdirJob will be returned, and the caller is responsible
- * to call g_object_unref().
+ * Simple wrapper for thunar_vfs_make_directories().
  *
- * Note, that the returned job is launched right away, so you
- * don't need to call thunar_vfs_job_launch() on it.
- *
- * Return value: the newly allocated #ThunarVfsMkdirJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
@@ -569,32 +576,32 @@ thunar_vfs_make_directory (ThunarVfsPath *path,
  *              to the directories which should be created.
  * @error     : return location for errors or %NULL.
  *
- * Similar to thunar_vfs_make_directory(), but allows the creation
- * of multiple directories using a single #ThunarVfsJob.
- *
- * The caller is responsible to free the returned job using
- * g_object_unref() when no longer needed.
+ * Allocates a new #ThunarVfsJob to create new directories at all
+ * #ThunarVfsPath<!---->s specified in @path_list. Returns %NULL if
+ * the job could not be launched for some reason, and @error will be
+ * set to point to a #GError describing the cause. Otherwise the
+ * job will be returned and the caller is responsible to free the
+ * returned object using g_object_unref() when no longer needed.
  *
  * Note, that the returned job is launched right away, so you don't
  * need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsMkdirJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
 thunar_vfs_make_directories (GList   *path_list,
                              GError **error)
 {
-  ThunarVfsJob *job;
-
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  /* allocate and launch the new job */
-  job = thunar_vfs_mkdir_job_new (path_list, error);
-  if (G_LIKELY (job != NULL))
-    thunar_vfs_job_launch (job);
+  /* verify that we have only local paths here */
+  if (!_thunar_vfs_check_only_local (path_list, error))
+    return NULL;
 
-  return job;
+  /* allocate and launch the mkdir job */
+  return thunar_vfs_simple_job_launch (_thunar_vfs_io_jobs_mkdir, 1,
+                                       THUNAR_VFS_TYPE_PATH_LIST, path_list);
 }
 
 
@@ -615,7 +622,7 @@ thunar_vfs_make_directories (GList   *path_list,
  * Note, that the returned job is launched right away, so you don't
  * need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsChmodJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
@@ -627,17 +634,31 @@ thunar_vfs_change_mode (ThunarVfsPath    *path,
                         gboolean          recursive,
                         GError          **error)
 {
-  ThunarVfsJob *job;
+  GList path_list;
 
   g_return_val_if_fail (path != NULL, NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  /* allocate and launch the new job */
-  job = thunar_vfs_chmod_job_new (path, dir_mask, dir_mode, file_mask, file_mode, recursive, error);
-  if (G_LIKELY (job != NULL))
-    thunar_vfs_job_launch (job);
+  /* verify that we have only local paths here */
+  if (G_UNLIKELY (!_thunar_vfs_path_is_local (path)))
+    {
+      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      return NULL;
+    }
 
-  return job;
+  /* fake a path list */
+  path_list.data = path;
+  path_list.next = NULL;
+  path_list.prev = NULL;
+
+  /* allocate and launch the new job */
+  return thunar_vfs_simple_job_launch (_thunar_vfs_io_jobs_chmod, 6,
+                                       THUNAR_VFS_TYPE_PATH_LIST, &path_list,
+                                       THUNAR_VFS_TYPE_VFS_FILE_MODE, dir_mask,
+                                       THUNAR_VFS_TYPE_VFS_FILE_MODE, dir_mode,
+                                       THUNAR_VFS_TYPE_VFS_FILE_MODE, file_mask,
+                                       THUNAR_VFS_TYPE_VFS_FILE_MODE, file_mode,
+                                       G_TYPE_BOOLEAN, recursive);
 }
 
 
@@ -655,7 +676,7 @@ thunar_vfs_change_mode (ThunarVfsPath    *path,
  * Note, that the returned job is launched right away, so you don't
  * need to call thunar_vfs_job_launch() on it.
  *
- * Return value: the newly allocated #ThunarVfsChownJob or %NULL
+ * Return value: the newly allocated #ThunarVfsJob or %NULL
  *               if an error occurs while creating the job.
  **/
 ThunarVfsJob*
@@ -664,18 +685,30 @@ thunar_vfs_change_group (ThunarVfsPath   *path,
                          gboolean         recursive,
                          GError         **error)
 {
-  ThunarVfsJob *job;
+  GList path_list;
 
+  g_return_val_if_fail (gid >= 0, NULL);
   g_return_val_if_fail (path != NULL, NULL);
-  g_return_val_if_fail ((gint) gid >= 0, NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  /* allocate and launch the new job */
-  job = thunar_vfs_chown_job_new (path, -1, gid, recursive, error);
-  if (G_LIKELY (job != NULL))
-    thunar_vfs_job_launch (job);
+  /* verify that we have only local paths here */
+  if (G_UNLIKELY (!_thunar_vfs_path_is_local (path)))
+    {
+      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      return NULL;
+    }
 
-  return job;
+  /* fake a path list */
+  path_list.data = path;
+  path_list.next = NULL;
+  path_list.prev = NULL;
+
+  /* allocate and launch the new job */
+  return thunar_vfs_simple_job_launch (_thunar_vfs_io_jobs_chown, 4,
+                                       THUNAR_VFS_TYPE_PATH_LIST, &path_list,
+                                       G_TYPE_INT, (gint) -1,
+                                       G_TYPE_INT, (gint) gid,
+                                       G_TYPE_BOOLEAN, recursive);
 }
 
 
@@ -702,18 +735,30 @@ thunar_vfs_change_owner (ThunarVfsPath  *path,
                          gboolean        recursive,
                          GError        **error)
 {
-  ThunarVfsJob *job;
+  GList path_list;
 
+  g_return_val_if_fail (uid >= 0, NULL);
   g_return_val_if_fail (path != NULL, NULL);
-  g_return_val_if_fail ((gint) uid >= 0, NULL);
   g_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  /* allocate and launch the new job */
-  job = thunar_vfs_chown_job_new (path, uid, -1, recursive, error);
-  if (G_LIKELY (job != NULL))
-    thunar_vfs_job_launch (job);
+  /* verify that we have only local paths here */
+  if (G_UNLIKELY (!_thunar_vfs_path_is_local (path)))
+    {
+      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      return NULL;
+    }
 
-  return job;
+  /* fake a path list */
+  path_list.data = path;
+  path_list.next = NULL;
+  path_list.prev = NULL;
+
+  /* allocate and launch the new job */
+  return thunar_vfs_simple_job_launch (_thunar_vfs_io_jobs_chown, 4,
+                                       THUNAR_VFS_TYPE_PATH_LIST, &path_list,
+                                       G_TYPE_INT, (gint) uid,
+                                       G_TYPE_INT, (gint) -1,
+                                       G_TYPE_BOOLEAN, recursive);
 }
 
 

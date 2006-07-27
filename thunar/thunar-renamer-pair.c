@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-renamer-pair.h>
 
 
@@ -65,11 +66,7 @@ thunar_renamer_pair_new (ThunarFile  *file,
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (g_utf8_validate (name, -1, NULL), NULL);
 
-#if GLIB_CHECK_VERSION(2,10,0)
-  renamer_pair = g_slice_new (ThunarRenamerPair);
-#else
-  renamer_pair = g_new (ThunarRenamerPair, 1);
-#endif
+  renamer_pair = _thunar_slice_new (ThunarRenamerPair);
   renamer_pair->file = g_object_ref (G_OBJECT (file));
   renamer_pair->name = g_strdup (name);
 
@@ -112,11 +109,7 @@ thunar_renamer_pair_free (ThunarRenamerPair *renamer_pair)
     {
       g_object_unref (G_OBJECT (renamer_pair->file));
       g_free (renamer_pair->name);
-#if GLIB_CHECK_VERSION(2,10,0)
-      g_slice_free (ThunarRenamerPair, renamer_pair);
-#else
-      g_free (renamer_pair);
-#endif
+      _thunar_slice_free (ThunarRenamerPair, renamer_pair);
     }
 }
 

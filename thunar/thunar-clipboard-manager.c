@@ -32,6 +32,7 @@
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -368,7 +369,7 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
     g_closure_unref (request->new_files_closure);
   g_object_unref (G_OBJECT (request->manager));
   thunar_vfs_path_unref (request->target_path);
-  g_free (request);
+  _thunar_slice_free (ThunarClipboardPasteRequest, request);
 }
 
 
@@ -680,7 +681,7 @@ thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
   g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
 
   /* prepare the paste request */
-  request = g_new0 (ThunarClipboardPasteRequest, 1);
+  request = _thunar_slice_new0 (ThunarClipboardPasteRequest);
   request->manager = g_object_ref (G_OBJECT (manager));
   request->target_path = thunar_vfs_path_ref (target_path);
   request->widget = widget;

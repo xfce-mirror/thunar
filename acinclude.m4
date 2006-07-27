@@ -46,6 +46,34 @@ XDT_CHECK_OPTIONAL_PACKAGE([PCRE], [libpcre], [6.0], [pcre], [Regular expression
 
 
 
+dnl # BM_THUNAR_PLUGIN_TPA()
+dnl #
+dnl # Check whether the "Trash Panel Applet" plugin should
+dnl # be built and installed (this is actually a plugin
+dnl # for the Xfce panel, not for Thunar).
+dnl #
+AC_DEFUN([BM_THUNAR_PLUGIN_TPA],
+[
+AC_ARG_ENABLE([tpa-plugin], AC_HELP_STRING([--disable-tpa-plugin], [Don't build the thunar-tpa plugin, see plugins/thunar-tpa/README]),
+  [ac_bm_thunar_plugin_tpa=$enable_val], [ac_bm_thunar_plugin_tpa=yes])
+if test x"$ac_bm_thunar_plugin_tpa" = x"yes"; then
+  XDT_CHECK_PACKAGE([LIBXFCE4PANEL], [libxfce4panel-1.0], [4.3.90],
+  [
+    dnl # Can only build thunar-tpa if D-BUS was found previously
+    ac_bm_thunar_plugin_tpa=$DBUS_FOUND
+  ],
+  [
+    dnl # Cannot build thunar-tpa if xfce4-panel is not installed
+    ac_bm_thunar_plugin_tpa=no
+  ])
+fi
+AC_MSG_CHECKING([whether to build the thunar-tpa plugin])
+AM_CONDITIONAL([THUNAR_PLUGIN_TPA], [test x"$ac_bm_thunar_plugin_tpa" = x"yes"])
+AC_MSG_RESULT([$ac_bm_thunar_plugin_tpa])
+])
+
+
+
 dnl # BM_THUNAR_PLUGIN_UCA()
 dnl #
 dnl # Check whether the "User Customizable Actions" plugin
@@ -109,6 +137,36 @@ if test x"$have_libfam" = x"yes"; then
 fi
 AC_SUBST([LIBFAM_CFLAGS])
 AC_SUBST([LIBFAM_LIBS])
+])
+
+
+
+dnl # BM_THUNAR_VFS_OS_IMPL()
+dnl #
+dnl # Determine the operating system support to use
+dnl # for thunar-vfs.
+dnl #
+dnl # Sets ac_bm_thunar_vfs_os_impl to "bsd" or "generic" and
+dnl # defines the automake conditional THUNAR_VFS_OS_IMPL_BSD.
+dnl #
+AC_DEFUN([BM_THUNAR_VFS_OS_IMPL],
+[
+  dnl # Auto-detect target operating system support
+  AC_MSG_CHECKING([for operating system support])
+  case "$target_os" in
+  dragonfly*|freebsd*|netbsd*|openbsd*|darwin*)
+    dnl # The BSD Family is fully supported
+    ac_bm_thunar_vfs_os_impl=bsd
+    ;;
+
+  *)
+    dnl # Otherwise fallback to generic OS support
+    ac_bm_thunar_vfs_os_impl=generic
+  esac
+  AC_MSG_RESULT([$ac_bm_thunar_vfs_os_impl])
+
+  dnl # Set automake conditionals appropriately
+  AM_CONDITIONAL([THUNAR_VFS_OS_IMPL_BSD], [test x"$ac_bm_thunar_vfs_os_impl" = x"bsd"])
 ])
 
 

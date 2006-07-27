@@ -25,6 +25,7 @@
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-pango-extensions.h>
 
@@ -74,8 +75,6 @@ struct _ThunarChooserButton
   GtkWidget             *button;
 
   ThunarFile            *file;
-
-  GtkTooltips           *tooltips;
 
   ThunarVfsMimeDatabase *database;
 };
@@ -153,10 +152,6 @@ thunar_chooser_button_init (ThunarChooserButton *chooser_button)
   /* grab a reference on the mime database */
   chooser_button->database = thunar_vfs_mime_database_get_default ();
 
-  /* allocate tooltips */
-  chooser_button->tooltips = gtk_tooltips_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (chooser_button->tooltips));
-
   gtk_widget_push_composite_child ();
 
   chooser_button->button = gtk_button_new ();
@@ -199,9 +194,6 @@ thunar_chooser_button_finalize (GObject *object)
 
   /* disconnect from the mime database */
   g_object_unref (G_OBJECT (chooser_button->database));
-
-  /* release the tooltips */
-  g_object_unref (G_OBJECT (chooser_button->tooltips));
 
   (*G_OBJECT_CLASS (thunar_chooser_button_parent_class)->finalize) (object);
 }
@@ -326,7 +318,6 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
   GtkIconTheme             *icon_theme;
   const gchar              *icon_name;
   GdkPixbuf                *icon = NULL;
-  gchar                    *text;
   gint                      icon_size;
 
   g_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
@@ -369,13 +360,11 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
       gtk_image_set_from_pixbuf (GTK_IMAGE (chooser_button->image), NULL);
     }
 
-  /* setup a useful tooltip and ATK description */
-  text = g_strdup_printf (_("The selected application is used to open "
-                            "this and other files of type \"%s\"."),
-                          thunar_vfs_mime_info_get_comment (info));
-  atk_object_set_name (gtk_widget_get_accessible (chooser_button->button), text);
-  gtk_tooltips_set_tip (chooser_button->tooltips, chooser_button->button, text, NULL);
-  g_free (text);
+  /* setup a useful tooltip for the button */
+  thunar_gtk_widget_set_tooltip (chooser_button->button,
+                                 _("The selected application is used to open "
+                                   "this and other files of type \"%s\"."),
+                                 thunar_vfs_mime_info_get_comment (info));
 }
 
 

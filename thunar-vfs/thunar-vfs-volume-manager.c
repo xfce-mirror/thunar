@@ -23,6 +23,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
+#include <thunar-vfs/thunar-vfs-path-private.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-volume-freebsd.h>
 #include <thunar-vfs/thunar-vfs-volume-hal.h>
@@ -243,27 +244,36 @@ thunar_vfs_volume_manager_real_get_volume_by_info (ThunarVfsVolumeManager *manag
 {
   ThunarVfsVolume *best_volume = NULL;
   ThunarVfsPath   *best_path = NULL;
+  ThunarVfsPath   *info_path;
   ThunarVfsPath   *path;
   GList           *lp;
 
-  /* otherwise try to find it the hard way */
-  for (lp = manager->volumes; lp != NULL; lp = lp->next)
+  /* translate the info's path to a local path */
+  info_path = _thunar_vfs_path_translate (info->path, THUNAR_VFS_PATH_SCHEME_FILE, NULL);
+  if (G_LIKELY (info_path != NULL))
     {
-      /* check if the volume is mounted */
-      if (!thunar_vfs_volume_is_mounted (lp->data))
-        continue;
-
-      /* check if the mount point is an ancestor of the info path */
-      path = thunar_vfs_volume_get_mount_point (lp->data);
-      if (path == NULL || (!thunar_vfs_path_equal (info->path, path) && !thunar_vfs_path_is_ancestor (info->path, path)))
-        continue;
-
-      /* possible match, check if better than previous match */
-      if (best_volume == NULL || thunar_vfs_path_equal (path, best_path) || thunar_vfs_path_is_ancestor (path, best_path))
+      /* otherwise try to find it the hard way */
+      for (lp = manager->volumes; lp != NULL; lp = lp->next)
         {
-          best_volume = lp->data;
-          best_path = path;
+          /* check if the volume is mounted */
+          if (!thunar_vfs_volume_is_mounted (lp->data))
+            continue;
+
+          /* check if the mount point is an ancestor of the info path */
+          path = thunar_vfs_volume_get_mount_point (lp->data);
+          if (path == NULL || (!thunar_vfs_path_equal (info_path, path) && !thunar_vfs_path_is_ancestor (info_path, path)))
+            continue;
+
+          /* possible match, check if better than previous match */
+          if (best_volume == NULL || thunar_vfs_path_equal (path, best_path) || thunar_vfs_path_is_ancestor (path, best_path))
+            {
+              best_volume = lp->data;
+              best_path = path;
+            }
         }
+
+      /* cleanup */
+      thunar_vfs_path_unref (info_path);
     }
 
   return best_volume;

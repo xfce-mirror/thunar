@@ -1031,6 +1031,13 @@ thunar_uca_model_match (ThunarUcaModel *uca_model,
   for (lp = file_infos, n = 0; lp != NULL; lp = lp->next, ++n)
     {
       info = thunarx_file_info_get_vfs_info (lp->data);
+      if (thunar_vfs_path_get_scheme (info->path) != THUNAR_VFS_PATH_SCHEME_FILE)
+        {
+          /* cannot handle non-local files */
+          thunar_vfs_info_unref (info);
+          g_free (files);
+          return NULL;
+        }
       mime_type = thunar_vfs_mime_info_get_name (info->mime_info);
       files[n].name = thunar_vfs_path_get_name (info->path);
       files[n].types = types_from_mime_type (mime_type);

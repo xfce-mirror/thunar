@@ -83,13 +83,14 @@ thunar_vfs_info_copy G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_info_get_custom_icon
 #endif
 thunar_vfs_info_get_free_space
+thunar_vfs_info_get_metadata G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
+#ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_info_read_link G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
+#endif
 thunar_vfs_info_execute
 thunar_vfs_info_rename
 thunar_vfs_info_matches
-#ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_info_list_free
-#endif
 #endif
 #endif
 
@@ -100,7 +101,7 @@ thunar_vfs_deep_count_flags_get_type G_GNUC_CONST
 thunar_vfs_file_flags_get_type G_GNUC_CONST
 thunar_vfs_file_mode_get_type G_GNUC_CONST
 thunar_vfs_file_type_get_type G_GNUC_CONST
-thunar_vfs_interactive_job_response_get_type G_GNUC_CONST
+thunar_vfs_job_response_get_type G_GNUC_CONST
 thunar_vfs_mime_handler_flags_get_type G_GNUC_CONST
 thunar_vfs_monitor_event_get_type G_GNUC_CONST
 thunar_vfs_thumb_size_get_type G_GNUC_CONST
@@ -112,6 +113,7 @@ thunar_vfs_volume_status_get_type G_GNUC_CONST
 /* ThunarVfsInteractiveJob methods */
 #if IN_HEADER(__THUNAR_VFS_INTERACTIVE_JOB_H__)
 #if IN_SOURCE(__THUNAR_VFS_INTERACTIVE_JOB_C__)
+thunar_vfs_interactive_job_response_get_type G_GNUC_CONST
 thunar_vfs_interactive_job_get_type G_GNUC_CONST
 #endif
 #endif
@@ -199,9 +201,7 @@ thunar_vfs_mime_info_get_subtype G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_mime_info_hash
 thunar_vfs_mime_info_equal
 thunar_vfs_mime_info_lookup_icon_name
-#ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_mime_info_list_free
-#endif
 #endif
 #endif
 
@@ -222,9 +222,11 @@ thunar_vfs_monitor_wait
 #if IN_HEADER(__THUNAR_VFS_PATH_H__)
 #if IN_SOURCE(__THUNAR_VFS_PATH_C__)
 thunar_vfs_path_get_type G_GNUC_CONST
+thunar_vfs_path_list_get_type G_GNUC_CONST
 thunar_vfs_path_new G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_path_get_for_home G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_path_get_for_root G_GNUC_WARN_UNUSED_RESULT
+thunar_vfs_path_get_for_trash G_GNUC_WARN_UNUSED_RESULT
 #ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_path_ref
 #endif
@@ -238,6 +240,7 @@ thunar_vfs_path_is_home
 thunar_vfs_path_is_root
 thunar_vfs_path_get_name
 thunar_vfs_path_get_parent
+thunar_vfs_path_get_scheme
 #endif
 thunar_vfs_path_dup_string G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_path_to_string
@@ -248,9 +251,9 @@ thunar_vfs_path_list_to_string G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 #ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_path_list_append G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_path_list_prepend G_GNUC_WARN_UNUSED_RESULT
+#endif
 thunar_vfs_path_list_copy G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_path_list_free
-#endif
 #endif
 #endif
 

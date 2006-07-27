@@ -40,13 +40,70 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-exec.h>
-#include <thunar-vfs/thunar-vfs-path.h>
+#include <thunar-vfs/thunar-vfs-path-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 #ifdef GDK_WINDOWING_X11
 #include <X11/Xatom.h>
 #include <gdk/gdkx.h>
 #endif
+
+
+
+static void     tve_string_append_quoted      (GString             *string,
+                                               const gchar         *unquoted);
+static gboolean tve_string_append_quoted_path (GString             *string,
+                                               ThunarVfsPath       *path,
+                                               GError             **error);
+static void     tve_string_append_quoted_uri  (GString             *string,
+                                               const ThunarVfsPath *path);
+
+
+
+static void
+tve_string_append_quoted (GString     *string,
+                          const gchar *unquoted)
+{
+  gchar *quoted;
+
+  quoted = g_shell_quote (unquoted);
+  g_string_append (string, quoted);
+  g_free (quoted);
+}
+
+
+
+static gboolean
+tve_string_append_quoted_path (GString       *string,
+                               ThunarVfsPath *path,
+                               GError       **error)
+{
+  gchar *absolute_path;
+
+  /* append the absolute, local, quoted path to the string */
+  absolute_path = _thunar_vfs_path_translate_dup_string (path, THUNAR_VFS_PATH_SCHEME_FILE, error);
+  if (G_LIKELY (absolute_path != NULL))
+    {
+      tve_string_append_quoted (string, absolute_path);
+      g_free (absolute_path);
+    }
+
+  return (absolute_path != NULL);
+}
+
+
+
+static void
+tve_string_append_quoted_uri (GString             *string,
+                              const ThunarVfsPath *path)
+{
+  gchar *uri;
+
+  /* append the quoted URI for the path */
+  uri = thunar_vfs_path_dup_uri (path);
+  tve_string_append_quoted (string, uri);
+  g_free (uri);
+}
 
 
 
@@ -89,13 +146,11 @@ thunar_vfs_exec_parse (const gchar *exec,
                        gchar     ***argv,
                        GError     **error)
 {
-  const ThunarVfsPath *parent;
-  const gchar         *p;
-  gboolean             result = FALSE;
-  GString             *command_line = g_string_new (NULL);
-  GList               *lp;
-  gchar                buffer[THUNAR_VFS_PATH_MAXURILEN];
-  gchar               *quoted;
+  ThunarVfsPath *parent;
+  const gchar   *p;
+  gboolean       result = FALSE;
+  GString       *command_line = g_string_new (NULL);
+  GList         *lp;
 
   /* prepend terminal command if required */
   if (G_UNLIKELY (terminal))
@@ -108,15 +163,9 @@ thunar_vfs_exec_parse (const gchar *exec,
           switch (*++p)
             {
             case 'f':
-              if (G_LIKELY (path_list != NULL))
-                {
-                  if (thunar_vfs_path_to_string (path_list->data, buffer, sizeof (buffer), error) < 0)
-                    goto done;
-
-                  quoted = g_shell_quote (buffer);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                }
+              /* append the absolute local path of the first path object */
+              if (path_list != NULL && !tve_string_append_quoted_path (command_line, path_list->data, error))
+                goto done;
               break;
 
             case 'F':
@@ -124,26 +173,14 @@ thunar_vfs_exec_parse (const gchar *exec,
                 {
                   if (G_LIKELY (lp != path_list))
                     g_string_append_c (command_line, ' ');
-
-                  if (thunar_vfs_path_to_string (lp->data, buffer, sizeof (buffer), error) < 0)
+                  if (!tve_string_append_quoted_path (command_line, lp->data, error))
                     goto done;
-
-                  quoted = g_shell_quote (buffer);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
                 }
               break;
 
             case 'u':
               if (G_LIKELY (path_list != NULL))
-                {
-                  if (thunar_vfs_path_to_uri (path_list->data, buffer, sizeof (buffer), error) < 0)
-                    goto done;
-
-                  quoted = g_shell_quote (buffer);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                }
+                tve_string_append_quoted_uri (command_line, path_list->data);
               break;
 
             case 'U':
@@ -151,13 +188,7 @@ thunar_vfs_exec_parse (const gchar *exec,
                 {
                   if (G_LIKELY (lp != path_list))
                     g_string_append_c (command_line, ' ');
-
-                  if (thunar_vfs_path_to_uri (lp->data, buffer, sizeof (buffer), error) < 0)
-                    goto done;
-
-                  quoted = g_shell_quote (buffer);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
+                  tve_string_append_quoted_uri (command_line, lp->data);
                 }
               break;
 
@@ -165,15 +196,8 @@ thunar_vfs_exec_parse (const gchar *exec,
               if (G_LIKELY (path_list != NULL))
                 {
                   parent = thunar_vfs_path_get_parent (path_list->data);
-                  if (G_LIKELY (parent != NULL))
-                    {
-                      if (thunar_vfs_path_to_string (parent, buffer, sizeof (buffer), error) < 0)
-                        goto done;
-
-                      quoted = g_shell_quote (buffer);
-                      g_string_append (command_line, quoted);
-                      g_free (quoted);
-                    }
+                  if (parent != NULL && !tve_string_append_quoted_path (command_line, parent, error))
+                    goto done;
                 }
               break;
 
@@ -185,24 +209,15 @@ thunar_vfs_exec_parse (const gchar *exec,
                     {
                       if (G_LIKELY (lp != path_list))
                         g_string_append_c (command_line, ' ');
-
-                      if (thunar_vfs_path_to_string (parent, buffer, sizeof (buffer), error) < 0)
+                      if (!tve_string_append_quoted_path (command_line, parent, error))
                         goto done;
-
-                      quoted = g_shell_quote (buffer);
-                      g_string_append (command_line, quoted);
-                      g_free (quoted);
                     }
                 }
               break;
 
             case 'n':
               if (G_LIKELY (path_list != NULL))
-                {
-                  quoted = g_shell_quote (thunar_vfs_path_get_name (path_list->data));
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                }
+                tve_string_append_quoted (command_line, thunar_vfs_path_get_name (path_list->data));
               break;
 
             case 'N':
@@ -210,38 +225,26 @@ thunar_vfs_exec_parse (const gchar *exec,
                 {
                   if (G_LIKELY (lp != path_list))
                     g_string_append_c (command_line, ' ');
-                  quoted = g_shell_quote (thunar_vfs_path_get_name (lp->data));
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
+                  tve_string_append_quoted (command_line, thunar_vfs_path_get_name (lp->data));
                 }
               break;
 
             case 'i':
               if (G_LIKELY (icon != NULL))
                 {
-                  quoted = g_shell_quote (icon);
                   g_string_append (command_line, "--icon ");
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
+                  tve_string_append_quoted (command_line, icon);
                 }
               break;
 
             case 'c':
               if (G_LIKELY (name != NULL))
-                {
-                  quoted = g_shell_quote (name);
-                  g_string_append (command_line, quoted);
-                  g_free (quoted);
-                }
+                tve_string_append_quoted (command_line, name);
               break;
 
             case 'k':
               if (G_LIKELY (path != NULL))
-                {
-                  quoted = g_shell_quote (path);
-                  g_string_append (command_line, path);
-                  g_free (quoted);
-                }
+                tve_string_append_quoted (command_line, path);
               break;
 
             case '%':
@@ -523,3 +526,6 @@ thunar_vfs_exec_sync (const gchar *command_fmt,
 }
 
 
+
+#define __THUNAR_VFS_EXEC_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

@@ -49,6 +49,7 @@
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -386,7 +387,18 @@ thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 {
-  return g_strdup ("file");
+  switch (thunar_vfs_path_get_scheme (thunar_file_get_path (file_info)))
+    {
+    case THUNAR_VFS_PATH_SCHEME_FILE:
+      return g_strdup ("file");
+
+    case THUNAR_VFS_PATH_SCHEME_TRASH:
+      return g_strdup ("trash");
+
+    default:
+      g_assert_not_reached ();
+      return NULL;
+    }
 }
 
 
@@ -1027,6 +1039,10 @@ thunar_file_accepts_drop (ThunarFile     *file,
       /* determine the path of the file */
       path = thunar_file_get_path (file);
 
+      /* cannot create symbolic links in the trash or copy to the trash */
+      if (thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_TRASH)
+        actions &= ~(GDK_ACTION_COPY | GDK_ACTION_LINK);
+
       /* check up to 100 of the paths (just in case somebody tries to
        * drag around his music collection with 5000 files).
        */
@@ -1043,6 +1059,14 @@ thunar_file_accepts_drop (ThunarFile     *file,
               if (thunar_vfs_path_equal (path, parent_path))
                 return 0;
             }
+
+          /* check if both source and target is in the trash */
+          if (G_UNLIKELY (thunar_vfs_path_get_scheme (lp->data) == THUNAR_VFS_PATH_SCHEME_TRASH
+                       && thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_TRASH))
+            {
+              /* copy/move/link within the trash not possible */
+              return 0;
+            }
         }
 
       /* if the source offers both copy and move and the GTK+ suggested action is copy, try to be smart telling whether
@@ -1056,6 +1080,10 @@ thunar_file_accepts_drop (ThunarFile     *file,
           /* check for up to 100 files, for the reason state above */
           for (lp = path_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
             {
+              /* dropping from the trash always suggests move */
+              if (G_UNLIKELY (thunar_vfs_path_get_scheme (lp->data) == THUNAR_VFS_PATH_SCHEME_TRASH))
+                break;
+
               /* determine the cached version of the source file */
               ofile = thunar_file_cache_lookup (lp->data);
 
@@ -1104,29 +1132,6 @@ thunar_file_accepts_drop (ThunarFile     *file,
 
 
 /**
- * thunar_file_get_display_name:
- * @file : a #ThunarFile instance.
- *
- * Returns the @file name in the UTF-8 encoding, which is
- * suitable for displaying the file name in the GUI.
- *
- * Return value: the @file name suitable for display.
- **/
-const gchar*
-thunar_file_get_display_name (const ThunarFile *file)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* root directory is always displayed as 'Filesystem' */
-  if (thunar_file_is_root (file))
-    return _("File System");
-
-  return file->info->display_name;
-}
-
-
-
-/**
  * thunar_file_get_date:
  * @file        : a #ThunarFile instance.
  * @date_type   : the kind of date you are interested in.
@@ -1170,30 +1175,7 @@ gchar*
 thunar_file_get_date_string (const ThunarFile  *file,
                              ThunarFileDateType date_type)
 {
-  ThunarVfsFileTime time;
-#ifdef HAVE_LOCALTIME_R
-  struct tm         tmbuf;
-#endif
-  struct tm        *tm;
-  gchar            *result;
-
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* query the date on the given file */
-  time = thunar_file_get_date (file, date_type);
-
-  /* convert to local time */
-#ifdef HAVE_LOCALTIME_R
-  tm = localtime_r (&time, &tmbuf);
-#else
-  tm = localtime (&time);
-#endif
-
-  /* convert to string */
-  result = g_new (gchar, 20);
-  strftime (result, 20, "%Y-%m-%d %H:%M:%S", tm);
-
-  return result;
+  return thunar_util_humanize_file_time (thunar_file_get_date (file, date_type));
 }
 
 
@@ -1356,6 +1338,77 @@ thunar_file_get_user (const ThunarFile *file)
 
 
 /**
+ * thunar_file_get_deletion_date:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the deletion date of the @file if the @file
+ * is located in the trash. Otherwise %NULL will be
+ * returned.
+ *
+ * The caller is responsible to free the returned string
+ * using g_free() when no longer needed.
+ *
+ * Return value: the deletion date of @file if @file is
+ *               in the trash, %NULL otherwise.
+ **/
+gchar*
+thunar_file_get_deletion_date (const ThunarFile *file)
+{
+#ifdef HAVE_STRPTIME
+  struct tm tm;
+#endif
+  time_t    time;
+  gchar    *date;
+
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  /* query the DeletionDate from the trash backend */
+  date = thunar_vfs_info_get_metadata (file->info, THUNAR_VFS_INFO_METADATA_TRASH_DELETION_DATE, NULL);
+  if (G_UNLIKELY (date == NULL))
+    return NULL;
+
+  /* try to parse the DeletionDate (ISO date string) */
+#ifdef HAVE_STRPTIME
+  time = (strptime (date, "%FT%T", &tm) != NULL) ? mktime (&tm) : 0;
+#else
+  time = 0;
+#endif
+
+  /* release the DeletionDate */
+  g_free (date);
+
+  /* humanize the time value */
+  return thunar_util_humanize_file_time (time);
+}
+
+
+
+/**
+ * thunar_file_get_original_path:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the original path of the @file if the @file
+ * is located in the trash. Otherwise %NULL will be
+ * returned.
+ *
+ * The caller is responsible to free the returned string
+ * using g_free() when no longer needed.
+ *
+ * Return value: the original path of @file if @file is
+ *               in the trash, %NULL otherwise.
+ **/
+gchar*
+thunar_file_get_original_path (const ThunarFile *file)
+{
+  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  /* query the OriginalPath from the trash backend */
+  return thunar_vfs_info_get_metadata (file->info, THUNAR_VFS_INFO_METADATA_TRASH_ORIGINAL_PATH, NULL);
+}
+
+
+
+/**
  * thunar_file_is_chmodable:
  * @file : a #ThunarFile instance.
  *
@@ -1372,9 +1425,10 @@ thunar_file_is_chmodable (const ThunarFile *file)
   /* we can only change the mode if we the euid is
    *   a) equal to the file owner id
    * or
-   *   b) the super-user id.
+   *   b) the super-user id
+   * and the file is not in the trash.
    */
-  return (effective_user_id == 0 || effective_user_id == file->info->uid);
+  return ((effective_user_id == 0 || effective_user_id == file->info->uid) && !thunar_file_is_trashed (file));
 }
 
 
@@ -1397,8 +1451,8 @@ thunar_file_is_renameable (const ThunarFile *file)
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
-  /* we cannot rename root nodes */
-  if (G_LIKELY (!thunar_file_is_root (file)))
+  /* we cannot the node node or trashed files */
+  if (!thunar_file_is_root (file) && !thunar_file_is_trashed (file))
     {
       /* we just do a guess here, by checking whether the folder is writable */
       file = thunar_file_get_parent (file, NULL);
@@ -1410,33 +1464,6 @@ thunar_file_is_renameable (const ThunarFile *file)
     }
 
   return renameable;
-}
-
-
-
-/**
- * thunar_file_get_actions:
- * @file   : a #ThunarFile instance.
- * @window : a #GdkWindow instance.
- *
- * Returns additional #GtkAction<!---->s for @file.
- *
- * The caller is responsible to free the returned list
- * using
- * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) g_object_unref, NULL);
- * g_list_free (list);
- * </programlisting></informalexample>
- *
- * Return value: additional #GtkAction<!---->s for @file.
- **/
-GList*
-thunar_file_get_actions (ThunarFile *file,
-                         GtkWidget  *window)
-{
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
-  return NULL;
 }
 
 
@@ -1595,13 +1622,6 @@ thunar_file_get_icon_name (const ThunarFile   *file,
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
-
-  /* special icon for the root node */
-  if (G_UNLIKELY (thunar_file_is_root (file))
-      && gtk_icon_theme_has_icon (icon_theme, "gnome-dev-harddisk"))
-    {
-      return "gnome-dev-harddisk";
-    }
 
   /* special icon for the home node */
   if (G_UNLIKELY (thunar_file_is_home (file))

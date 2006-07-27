@@ -1,3 +1,39 @@
+2006-07-27	Benedikt Meurer <benny@xfce.org>
+
+	* README, acinclude.m4, configure.in.in, thunar-vfs/, thunar/,
+	  plugins/thunar-apr/thunar-apr-provider.c,
+	  plugins/thunar-uca/thunar-uca-model.c: Import the trash framework,
+	  based on the XDG trash specification, but currently limited to the
+	  home trash.
+	* thunar/thunar-file.{c,h}, thunar/thunar-standard-view.c
+	  (thunar_standard_view_merge_custom_actions): Remove obsolete
+	  thunar_file_get_actions(). Bug #1241.
+	* thunar/thunar-file.c, thunar/thunar-util.{c,h}: Use localized
+	  human readable format for file dates. Bug #2057.
+	* thunar/thunar-private.h, thunar/thunar-tree-model.c,
+	  thunar/thunar-thumbnail-generator.c, thunar/thunar-shortcuts-model.c,
+	  thunar/thunar-renamer-pair.c, thunar/thunar-renamer-model.c,
+	  thunar/thunar-clipboard-manager.c: Use the slice allocator to reduce
+	  the memory overhead.
+	* thunar/thunar-gtk-extensions.{c,h}, thunar/thunar-chooser-button.c,
+	  thunar/thunar-permissions-chooser.c, thunar/thunar-chooser-dialog.c,
+	  thunar/thunar-preferences-dialog.c, thunar/thunar-renamer-dialog.c,
+	  thunar/thunar-size-label.c: Use a single shared GtkTooltips instance
+	  for the whole application.
+	* thunar/thunar-path-entry.c: Update the path entry icon and text
+	  whenever the current file changes.
+	* README, acinclude.m4, configure.in.in, plugins/thunar-tpa/: Add a
+	  trash panel applet, that communicates with Thunar via D-BUS to
+	  display the current state of the trash can and move files to the
+	  trash by dropping them to the panel applet.
+	* thunar/thunar-preferences.c(thunar_preferences_class_init),
+	  docs/README.thunarrc: Disable case-sensitive sorting of the
+	  files by default. Bug #2064.
+	* docs/reference/thunar-vfs/: Update the API documentation.
+	* po/POTFILES.in: Add new files here.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-07-22	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-renamer-progress.c(thunar_renamer_progress_next_idle):

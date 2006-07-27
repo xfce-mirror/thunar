@@ -23,6 +23,16 @@ ThunarVfsJob
 </para>
 
 
+<!-- ##### SIGNAL ThunarVfsJob::ask ##### -->
+<para>
+
+</para>
+
+@thunarvfsjob: the object which received the signal.
+@arg1: 
+@arg2: 
+@Returns: 
+
 <!-- ##### SIGNAL ThunarVfsJob::error ##### -->
 <para>
 
@@ -37,6 +47,39 @@ ThunarVfsJob
 </para>
 
 @thunarvfsjob: the object which received the signal.
+
+<!-- ##### SIGNAL ThunarVfsJob::info-message ##### -->
+<para>
+
+</para>
+
+@thunarvfsjob: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL ThunarVfsJob::infos-ready ##### -->
+<para>
+
+</para>
+
+@thunarvfsjob: the object which received the signal.
+@arg1: 
+@Returns: 
+
+<!-- ##### SIGNAL ThunarVfsJob::new-files ##### -->
+<para>
+
+</para>
+
+@thunarvfsjob: the object which received the signal.
+@arg1: 
+
+<!-- ##### SIGNAL ThunarVfsJob::percent ##### -->
+<para>
+
+</para>
+
+@thunarvfsjob: the object which received the signal.
+@arg1: 
 
 <!-- ##### FUNCTION thunar_vfs_job_launch ##### -->
 <para>
@@ -62,36 +105,5 @@ ThunarVfsJob
 
 @job: 
 @Returns: 
-
-
-<!-- ##### FUNCTION thunar_vfs_job_emit_valist ##### -->
-<para>
-
-</para>
-
-@job: 
-@signal_id: 
-@signal_detail: 
-@var_args: 
-
-
-<!-- ##### FUNCTION thunar_vfs_job_emit ##### -->
-<para>
-
-</para>
-
-@job: 
-@signal_id: 
-@signal_detail: 
-@Varargs: 
-
-
-<!-- ##### FUNCTION thunar_vfs_job_error ##### -->
-<para>
-
-</para>
-
-@job: 
-@error: 
 
 

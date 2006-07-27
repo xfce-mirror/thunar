@@ -55,13 +55,12 @@
 #include <unistd.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar-vfs/thunar-vfs-mime-cache.h>
-#include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-mime-database-private.h>
 #include <thunar-vfs/thunar-vfs-mime-legacy.h>
 #include <thunar-vfs/thunar-vfs-mime-sniffer.h>
-#include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-monitor-private.h>
+#include <thunar-vfs/thunar-vfs-path-private.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
@@ -136,9 +135,7 @@ struct _ThunarVfsMimeDatabase
 {
   GObject __parent__;
 
-  GMutex           *lock;
-
-  ThunarVfsMonitor *monitor;
+  GMutex                   *lock;
 
   /* GtkIconTheme changed hook id */
   gulong                    changed_hook_id;
@@ -229,9 +226,6 @@ thunar_vfs_mime_database_init (ThunarVfsMimeDatabase *database)
   /* create the lock for this object */
   database->lock = g_mutex_new ();
 
-  /* acquire a reference on the file alteration monitor */
-  database->monitor = thunar_vfs_monitor_get_default ();
-
   /* allocate the hash table for the mime infos */
   database->infos = g_hash_table_new_full (g_str_hash, g_str_equal, NULL, (GDestroyNotify) thunar_vfs_mime_info_unref);
 
@@ -285,9 +279,6 @@ thunar_vfs_mime_database_finalize (GObject *object)
 
   /* free all mime infos */
   g_hash_table_destroy (database->infos);
-
-  /* release the reference on the file alteration monitor */
-  g_object_unref (G_OBJECT (database->monitor));
 
   /* release the mutex for this object */
   g_mutex_free (database->lock);
@@ -575,7 +566,7 @@ thunar_vfs_mime_database_initialize_providers (ThunarVfsMimeDatabase *database)
       directory = g_build_filename (basedirs[n], "mime", NULL);
 
       /* allocate the provider data for the directory */
-      data = g_new (ThunarVfsMimeProviderData, 1);
+      data = _thunar_vfs_slice_new (ThunarVfsMimeProviderData);
       data->handle = NULL;
       data->path = thunar_vfs_path_new (directory, NULL);
 
@@ -637,7 +628,7 @@ thunar_vfs_mime_database_shutdown_providers (ThunarVfsMimeDatabase *database)
       if (G_LIKELY (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider != NULL))
         g_object_unref (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->provider);
       thunar_vfs_path_unref (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data)->path);
-      g_free (THUNAR_VFS_MIME_PROVIDER_DATA (lp->data));
+      _thunar_vfs_slice_free (ThunarVfsMimeProviderData, lp->data);
     }
   g_list_free (database->providers);
 
@@ -674,7 +665,7 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
                                                     (GDestroyNotify) thunar_vfs_mime_info_unref,
                                                     (GDestroyNotify) g_strfreev);
       store->defaults_list_path = thunar_vfs_path_new (path, NULL);
-      store->defaults_list_handle = thunar_vfs_monitor_add_file (database->monitor, store->defaults_list_path,
+      store->defaults_list_handle = thunar_vfs_monitor_add_file (_thunar_vfs_monitor, store->defaults_list_path,
                                                                  thunar_vfs_mime_database_store_changed, database);
       thunar_vfs_mime_database_store_parse_file (database, store->defaults_list_path, store->defaults_list);
       g_free (path);
@@ -686,7 +677,7 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
                                                      (GDestroyNotify) thunar_vfs_mime_info_unref,
                                                      (GDestroyNotify) g_strfreev);
       store->mimeinfo_cache_path = thunar_vfs_path_new (path, NULL);
-      store->mimeinfo_cache_handle = thunar_vfs_monitor_add_file (database->monitor, store->mimeinfo_cache_path,
+      store->mimeinfo_cache_handle = thunar_vfs_monitor_add_file (_thunar_vfs_monitor, store->mimeinfo_cache_path,
                                                                   thunar_vfs_mime_database_store_changed, database);
       thunar_vfs_mime_database_store_parse_file (database, store->mimeinfo_cache_path, store->mimeinfo_cache);
       g_free (path);
@@ -717,12 +708,12 @@ thunar_vfs_mime_database_shutdown_stores (ThunarVfsMimeDatabase *database)
   for (n = 0, store = database->stores; n < database->n_stores; ++n, ++store)
     {
       /* release the defaults.list part */
-      thunar_vfs_monitor_remove (database->monitor, store->defaults_list_handle);
+      thunar_vfs_monitor_remove (_thunar_vfs_monitor, store->defaults_list_handle);
       thunar_vfs_path_unref (store->defaults_list_path);
       g_hash_table_destroy (store->defaults_list);
 
       /* release the mimeinfo.cache part */
-      thunar_vfs_monitor_remove (database->monitor, store->mimeinfo_cache_handle);
+      thunar_vfs_monitor_remove (_thunar_vfs_monitor, store->mimeinfo_cache_handle);
       thunar_vfs_path_unref (store->mimeinfo_cache_path);
       g_hash_table_destroy (store->mimeinfo_cache);
     }
@@ -929,19 +920,7 @@ thunar_vfs_mime_database_cleanup_timer_destroy (gpointer user_data)
 ThunarVfsMimeDatabase*
 thunar_vfs_mime_database_get_default (void)
 {
-  static ThunarVfsMimeDatabase *database = NULL;
-
-  if (G_UNLIKELY (database == NULL))
-    {
-      database = g_object_new (THUNAR_VFS_TYPE_MIME_DATABASE, NULL);
-      g_object_add_weak_pointer (G_OBJECT (database), (gpointer) &database);
-    }
-  else
-    {
-      g_object_ref (G_OBJECT (database));
-    }
-
-  return database;
+  return g_object_ref (G_OBJECT (_thunar_vfs_mime_database));
 }
 
 
@@ -1586,7 +1565,7 @@ thunar_vfs_mime_database_set_default_application (ThunarVfsMimeDatabase    *data
           fclose (fp);
 
           /* disable the monitor handle for the defaults.list, so we don't unneccessary reload it */
-          thunar_vfs_monitor_remove (database->monitor, store->defaults_list_handle);
+          thunar_vfs_monitor_remove (_thunar_vfs_monitor, store->defaults_list_handle);
 
           /* try to atomically rename the file */
           if (G_UNLIKELY (g_rename (path, absolute_path) < 0))
@@ -1600,7 +1579,7 @@ thunar_vfs_mime_database_set_default_application (ThunarVfsMimeDatabase    *data
             }
 
           /* re-enable the monitor handle for the defaults.list */
-          store->defaults_list_handle = thunar_vfs_monitor_add_file (database->monitor, store->defaults_list_path,
+          store->defaults_list_handle = thunar_vfs_monitor_add_file (_thunar_vfs_monitor, store->defaults_list_path,
                                                                      thunar_vfs_mime_database_store_changed, database);
         }
       else
@@ -1793,6 +1772,66 @@ thunar_vfs_mime_database_remove_application (ThunarVfsMimeDatabase    *database,
 
   return succeed;
 }
+
+
+
+/**
+ * _thunar_vfs_mime_database:
+ *
+ * The shared reference to the global mime database. Only valid between
+ * calls to thunar_vfs_init() and thunar_vfs_shutdown().
+ **/
+ThunarVfsMimeDatabase *_thunar_vfs_mime_database = NULL;
+
+
+
+/**
+ * _thunar_vfs_mime_inode_directory:
+ *
+ * The shared #ThunarVfsMimeInfo instance for "inode/directory". Only valid
+ * between calls to thunar_vfs_init() and thunar_vfs_shutdown().
+ **/
+ThunarVfsMimeInfo *_thunar_vfs_mime_inode_directory = NULL;
+
+
+
+/**
+ * _thunar_vfs_mime_application_x_desktop:
+ *
+ * The shared #ThunarVfsMimeInfo instance for "application/x-desktop". Only valid
+ * between calls to thunar_vfs_init() and thunar_vfs_shutdown().
+ **/
+ThunarVfsMimeInfo *_thunar_vfs_mime_application_x_desktop = NULL;
+
+
+
+/**
+ * _thunar_vfs_mime_application_x_executable:
+ *
+ * The shared #ThunarVfsMimeInfo instance for "application/x-executable". Only valid
+ * between calls to thunar_vfs_init() and thunar_vfs_shutdown().
+ **/
+ThunarVfsMimeInfo *_thunar_vfs_mime_application_x_executable = NULL;
+
+
+
+/**
+ * _thunar_vfs_mime_application_x_shellscript:
+ *
+ * The shared #ThunarVfsMimeInfo instance for "application/x-shellscript". Only valid
+ * between calls to thunar_vfs_init() and thunar_vfs_shutdown().
+ **/
+ThunarVfsMimeInfo *_thunar_vfs_mime_application_x_shellscript = NULL;
+
+
+
+/**
+ * _thunar_vfs_mime_application_octet_stream:
+ *
+ * The shared #ThunarVfsMimeInfo instance for "application/octet-stream". Only valid
+ * between calls to thunar_vfs_init() and thunar_vfs_shutdown().
+ **/
+ThunarVfsMimeInfo *_thunar_vfs_mime_application_octet_stream = NULL;
 
 
 

@@ -144,9 +144,9 @@ ThunarVfsFileTime thunar_file_get_date             (const ThunarFile       *file
                                                     ThunarFileDateType      date_type);
 
 gchar            *thunar_file_get_date_string      (const ThunarFile       *file,
-                                                    ThunarFileDateType      date_type);
-gchar            *thunar_file_get_mode_string      (const ThunarFile       *file);
-gchar            *thunar_file_get_size_string      (const ThunarFile       *file);
+                                                    ThunarFileDateType      date_type) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar            *thunar_file_get_mode_string      (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar            *thunar_file_get_size_string      (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 ThunarVfsVolume  *thunar_file_get_volume           (const ThunarFile       *file,
                                                     ThunarVfsVolumeManager *volume_manager);
@@ -154,11 +154,11 @@ ThunarVfsVolume  *thunar_file_get_volume           (const ThunarFile       *file
 ThunarVfsGroup   *thunar_file_get_group            (const ThunarFile       *file);
 ThunarVfsUser    *thunar_file_get_user             (const ThunarFile       *file);
 
+gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar            *thunar_file_get_original_path    (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+
 gboolean          thunar_file_is_chmodable         (const ThunarFile       *file);
 gboolean          thunar_file_is_renameable        (const ThunarFile       *file);
-
-GList            *thunar_file_get_actions          (ThunarFile             *file,
-                                                    GtkWidget              *window);
 
 GList            *thunar_file_get_emblem_names     (ThunarFile              *file);
 void              thunar_file_set_emblem_names     (ThunarFile              *file,
@@ -343,6 +343,29 @@ G_STMT_START{                                             \
 
 
 /**
+ * thunar_file_is_local:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns %TRUE if @file is a local file with the
+ * %THUNAR_VFS_PATH_SCHEME_FILE scheme.
+ *
+ * Return value: %TRUE if @file is local.
+ **/
+#define thunar_file_is_local(file) (thunar_vfs_path_get_scheme (thunar_file_get_path ((file))) == THUNAR_VFS_PATH_SCHEME_FILE)
+
+/**
+ * thunar_file_is_trashed:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns %TRUE if @file is a local file with the
+ * %THUNAR_VFS_PATH_SCHEME_TRASH scheme.
+ *
+ * Return value: %TRUE if @file is in the trash, or
+ *               the trash folder itself.
+ **/
+#define thunar_file_is_trashed(file) (thunar_vfs_path_get_scheme (thunar_file_get_path ((file))) == THUNAR_VFS_PATH_SCHEME_TRASH)
+
+/**
  * thunar_file_is_ancestor:
  * @file     : a #ThunarFile instance.
  * @ancestor : another #ThunarFile instance.
@@ -448,6 +471,17 @@ G_STMT_START{                                             \
  * Return value: %TRUE if @file is a symbolic link.
  **/
 #define thunar_file_is_symlink(file) ((THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
+
+/**
+ * thunar_file_get_display_name:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the @file name in the UTF-8 encoding, which is
+ * suitable for displaying the file name in the GUI.
+ *
+ * Return value: the @file name suitable for display.
+ **/
+#define thunar_file_get_display_name(file) (THUNAR_FILE ((file))->info->display_name)
 
 /**
  * thunar_file_read_link:

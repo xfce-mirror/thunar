@@ -111,11 +111,14 @@ struct _ThunarPropertiesDialog
   GtkWidget              *kind_label;
   GtkWidget              *openwith_chooser;
   GtkWidget              *link_label;
+  GtkWidget              *origin_label;
+  GtkWidget              *deleted_label;
   GtkWidget              *modified_label;
   GtkWidget              *accessed_label;
   GtkWidget              *freespace_label;
   GtkWidget              *volume_image;
   GtkWidget              *volume_label;
+  GtkWidget              *permissions_chooser;
 
   gint                    rename_idle_id;
 };
@@ -329,6 +332,24 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   ++row;
 
+  /* TRANSLATORS: Try to come up with a short translation of "Original Path" (which is the path
+   * where the trashed file/folder was located before it was moved to the trash), otherwise the
+   * properties dialog width will be messed up.
+   */
+  label = gtk_label_new (_("Original Path:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (label);
+
+  dialog->origin_label = g_object_new (GTK_TYPE_LABEL, "ellipsize", PANGO_ELLIPSIZE_START, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->origin_label), TRUE);
+  exo_binding_new (G_OBJECT (dialog->origin_label), "visible", G_OBJECT (label), "visible");
+  gtk_table_attach (GTK_TABLE (table), dialog->origin_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (dialog->origin_label);
+
+  ++row;
+
 
   spacer = g_object_new (GTK_TYPE_ALIGNMENT, "height-request", 12, NULL);
   gtk_table_attach (GTK_TABLE (table), spacer, 0, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
@@ -338,8 +359,22 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
 
   /*
-     Third box (modified, accessed)
+     Third box (deleted, modified, accessed)
    */
+  label = gtk_label_new (_("Deleted:"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (label);
+
+  dialog->deleted_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
+  gtk_label_set_selectable (GTK_LABEL (dialog->deleted_label), TRUE);
+  exo_binding_new (G_OBJECT (dialog->deleted_label), "visible", G_OBJECT (label), "visible");
+  gtk_table_attach (GTK_TABLE (table), dialog->deleted_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (dialog->deleted_label);
+
+  ++row;
+
   label = gtk_label_new (_("Modified:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
@@ -453,10 +488,10 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
      Permissions chooser
    */
   label = gtk_label_new (_("Permissions"));
-  chooser = thunar_permissions_chooser_new ();
-  exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (chooser), "file");
-  gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), chooser, label);
-  gtk_widget_show (chooser);
+  dialog->permissions_chooser = thunar_permissions_chooser_new ();
+  exo_binding_new (G_OBJECT (dialog), "file", G_OBJECT (dialog->permissions_chooser), "file");
+  gtk_notebook_append_page (GTK_NOTEBOOK (dialog->notebook), dialog->permissions_chooser, label);
+  gtk_widget_show (dialog->permissions_chooser);
   gtk_widget_show (label);
 
 
@@ -749,6 +784,34 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
       gtk_widget_hide (dialog->link_label);
     }
 
+  /* update the original path */
+  str = thunar_file_get_original_path (dialog->file);
+  if (G_UNLIKELY (str != NULL))
+    {
+      display_name = g_filename_display_name (str);
+      gtk_label_set_text (GTK_LABEL (dialog->origin_label), display_name);
+      gtk_widget_show (dialog->origin_label);
+      g_free (display_name);
+      g_free (str);
+    }
+  else
+    {
+      gtk_widget_hide (dialog->origin_label);
+    }
+
+  /* update the deleted time */
+  str = thunar_file_get_deletion_date (dialog->file);
+  if (G_LIKELY (str != NULL))
+    {
+      gtk_label_set_text (GTK_LABEL (dialog->deleted_label), str);
+      gtk_widget_show (dialog->deleted_label);
+      g_free (str);
+    }
+  else
+    {
+      gtk_widget_hide (dialog->deleted_label);
+    }
+
   /* update the modified time */
   str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED);
   if (G_LIKELY (str != NULL))
@@ -789,7 +852,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the volume */
-  volume = thunar_file_get_volume (dialog->file, dialog->volume_manager);
+  volume = thunar_file_is_local (dialog->file) ? thunar_file_get_volume (dialog->file, dialog->volume_manager) : NULL;
   if (G_LIKELY (volume != NULL))
     {
       icon_name = thunar_vfs_volume_lookup_icon_name (volume, icon_theme);
@@ -951,6 +1014,12 @@ thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
 
       /* update the provider property pages */
       thunar_properties_dialog_update_providers (dialog);
+
+      /* hide the permissions chooser for trashed files */
+      if (thunar_file_is_trashed (file))
+        gtk_widget_hide (dialog->permissions_chooser);
+      else
+        gtk_widget_show (dialog->permissions_chooser);
     }
 
   /* tell everybody that we have a new file here */

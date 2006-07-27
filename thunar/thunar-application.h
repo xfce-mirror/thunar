@@ -68,41 +68,49 @@ gboolean           thunar_application_process_filenames (ThunarApplication *appl
                                                          GError           **error);
 
 void               thunar_application_copy_to           (ThunarApplication *application,
-                                                         GtkWidget         *widget,
+                                                         gpointer           parent,
                                                          GList             *source_path_list,
                                                          GList             *target_path_list,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_copy_into         (ThunarApplication *application,
-                                                         GtkWidget         *widget,
+                                                         gpointer           parent,
                                                          GList             *source_path_list,
                                                          ThunarVfsPath     *target_path,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_link_into         (ThunarApplication *application,
-                                                         GtkWidget         *widget,
+                                                         gpointer           parent,
                                                          GList             *source_path_list,
                                                          ThunarVfsPath     *target_path,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_move_into         (ThunarApplication *application,
-                                                         GtkWidget         *widget,
+                                                         gpointer           parent,
                                                          GList             *source_path_list,
                                                          ThunarVfsPath     *target_path,
                                                          GClosure          *new_files_closure);
 
-void               thunar_application_unlink            (ThunarApplication *application,
-                                                         GtkWidget         *widget,
-                                                         GList             *path_list);
+void               thunar_application_unlink_files      (ThunarApplication *application,
+                                                         gpointer           parent,
+                                                         GList             *file_list);
 
 void               thunar_application_creat             (ThunarApplication *application,
-                                                         GtkWidget         *widget,
+                                                         gpointer           parent,
                                                          GList             *path_list,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_mkdir             (ThunarApplication *application,
-                                                         GtkWidget         *widget,
+                                                         gpointer           parent,
                                                          GList             *path_list,
+                                                         GClosure          *new_files_closure);
+
+void               thunar_application_empty_trash       (ThunarApplication *application,
+                                                         gpointer           parent);
+
+void               thunar_application_restore_files     (ThunarApplication *application,
+                                                         gpointer           parent,
+                                                         GList             *trash_file_list,
                                                          GClosure          *new_files_closure);
 
 G_END_DECLS;

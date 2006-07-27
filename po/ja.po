@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-06-15 20:42+0900\n"
+"POT-Creation-Date: 2006-07-27 17:59+0200\n"
 "PO-Revision-Date: 2006-06-13 04:11+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -25,208 +25,303 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:160
-#: ../thunar-vfs/thunar-vfs-chown-job.c:158
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:262
-msgid "Collecting files..."
-msgstr "ファイルを集めています..."
-
-#. ask the user whether we should skip the file
-#. ask the user whether to skip this file (used for cancellation only)
-#. ask the user whether to skip
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:181
-#: ../thunar-vfs/thunar-vfs-chown-job.c:179
-#: ../thunar-vfs/thunar-vfs-link-job.c:205
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:776
-#, c-format
-msgid ""
-"%s.\n"
-"\n"
-"Do you want to skip it?"
-msgstr ""
-"%s。\n"
-"\n"
-"これを飛ばしますか？"
-
-# FIXME: stat?
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:245
-#: ../thunar-vfs/thunar-vfs-chown-job.c:243
-#, c-format
-msgid "Failed to determine file info of \"%s\": %s"
-msgstr "「%s」のファイル情報を取得するのに失敗しました: %s"
-
-#: ../thunar-vfs/thunar-vfs-chmod-job.c:271
-#, c-format
-msgid "Failed to change permissions of \"%s\": %s"
-msgstr "「%s」のアクセス権を変更するのに失敗しました: %s"
-
-#: ../thunar-vfs/thunar-vfs-chown-job.c:259
-#, c-format
-msgid "Failed to change file owner of \"%s\": %s"
-msgstr "「%s」の所有者を変更するのに失敗しました: %s"
-
-#: ../thunar-vfs/thunar-vfs-chown-job.c:261
-#, c-format
-msgid "Failed to change file group of \"%s\": %s"
-msgstr "「%s」の所属グループを変更するのに失敗しました: %s"
-
-#. ask the user whether to override this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:180
-#, c-format
-msgid ""
-"The file \"%s\" already exists. Do you want to replace it with an empty file?"
-msgstr ""
-"ファイル「%s」は既に存在します。これを空のファイルで置き換えてもよろしいです"
-"か？"
-
-#. ask the user whether to skip this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:191
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:227
-#, c-format
-msgid ""
-"Failed to remove \"%s\".\n"
-"\n"
-"Do you want to skip it?"
-msgstr ""
-"「%s」を削除できません。\n"
-"\n"
-"これを飛ばしますか？"
-
-#. ask the user whether to skip this path
-#: ../thunar-vfs/thunar-vfs-creat-job.c:208
-#, c-format
-msgid ""
-"Failed to create empty file \"%s\".\n"
-"\n"
-"Do you want to skip it?"
-msgstr ""
-"空のファイル「%s」を作成するのに失敗しました。\n"
-"\n"
-"これを飛ばしますか？"
-
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:213
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
 msgid "Failed to read folder contents"
 msgstr "フォルダの内容を読み込むのに失敗しました。"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:509
+#: ../thunar-vfs/thunar-vfs-exec.c:512
 msgid "Unknown error"
 msgstr "原因不明のエラーが発生しました。"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:379
+#: ../thunar-vfs/thunar-vfs-info.c:338
 msgid "No Exec field specified"
 msgstr "デスクトップファイルの「Exec」フィールドが指定されていません。"
 
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:398
+#: ../thunar-vfs/thunar-vfs-info.c:357
 msgid "No URL field specified"
 msgstr "デスクトップファイルの「URL」フィールドが指定されていません。"
 
-#: ../thunar-vfs/thunar-vfs-info.c:403 ../thunar-vfs/thunar-vfs-info.c:526
+#: ../thunar-vfs/thunar-vfs-info.c:362 ../thunar-vfs/thunar-vfs-io-local.c:868
 msgid "Invalid desktop file"
 msgstr "無効なデスクトップファイルです。"
 
-#: ../thunar-vfs/thunar-vfs-info.c:411
+#: ../thunar-vfs/thunar-vfs-info.c:370
 msgid "Failed to parse file"
 msgstr "ファイルを解析できません。"
 
-#: ../thunar-vfs/thunar-vfs-info.c:504
+#: ../thunar-vfs/thunar-vfs-info.c:451
 msgid "Invalid file name"
 msgstr "無効なファイル名です。"
 
-#. TRANSLATORS: See man page of stat(1) or stat(2) for more details.
-#: ../thunar-vfs/thunar-vfs-info.c:761
-#, c-format
-msgid "Failed to stat file \"%s\": %s"
-msgstr "ファイル「%s」の状態を取得するのに失敗しました: %s"
+#: ../thunar-vfs/thunar-vfs-info.c:458
+#, fuzzy
+msgid "Only local files may be renamed"
+msgstr "名前変更するファイルを選択してください"
 
-#. ask the user whether we should remove the target first
-#. ask the user whether to overwrite
-#: ../thunar-vfs/thunar-vfs-link-job.c:169
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:756
+#. tell the user that we're preparing to unlink the files
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:81
+msgid "Preparing..."
+msgstr "準備しています..."
+
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:226
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:517
+#, fuzzy, c-format
+msgid "Failed to change permissions of \"%s\""
+msgstr "「%s」のアクセス権を変更するのに失敗しました: %s"
+
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:347
+#, fuzzy, c-format
+msgid "Failed to change file owenr of \"%s\""
+msgstr "「%s」の所有者を変更するのに失敗しました: %s"
+
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:348
+#, fuzzy, c-format
+msgid "Failed to change file group of \"%s\""
+msgstr "「%s」の所属グループを変更するのに失敗しました: %s"
+
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:432
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:182
 #, c-format
-msgid ""
-"%s.\n"
-"\n"
-"Do you want to overwrite it?"
+msgid "The file \"%s\" already exists"
+msgstr "ファイル「%s」は既に存在します。"
+
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:450
+#, fuzzy, c-format
+msgid "Failed to create empty file \"%s\""
+msgstr "名前つきパイプ「%s」の作成に失敗しました。"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:157
+#, c-format
+msgid "Failed to open \"%s\" for reading"
+msgstr "読み込むために「%s」を開くのに失敗しました。"
+
+#. use the generic error message
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:188
+#: ../thunar-vfs/thunar-vfs-io-trash.c:459
+#, c-format
+msgid "Failed to open \"%s\" for writing"
+msgstr "書き込むために「%s」を開くのに失敗しました。"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:215
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:278
+#, c-format
+msgid "Failed to write data to \"%s\""
+msgstr "「%s」へデータを書き込むのに失敗しました。"
+
+#. display an error to the user
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:231
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:294
+#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:786
+#, c-format
+msgid "Failed to remove \"%s\""
+msgstr "「%s」の削除に失敗しました。"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:261
+#, c-format
+msgid "Failed to read data from \"%s\""
+msgstr "「%s」からデータを読み込むのに失敗しました。"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:343
+#, c-format
+msgid "copy of %s"
+msgstr "%s のコピー"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:344
+#: ../thunar/thunar-list-model.c:776 ../thunar/thunar-properties-dialog.c:761
+#, c-format
+msgid "link to %s"
+msgstr "%s へのリンク"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:347
+#, c-format
+msgid "another copy of %s"
+msgstr "%s の別のコピー"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:348
+#, c-format
+msgid "another link to %s"
+msgstr "%s への別のリンク"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:351
+#, c-format
+msgid "third copy of %s"
+msgstr "%s の 3 番目のコピー"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:352
+#, c-format
+msgid "third link to %s"
+msgstr "%s への 3 番目のリンク"
+
+#. if we had no match on the NAMES, try the "%uth copy of %s" pattern
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:391
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:407
+#, c-format
+msgid "%uth copy of %s"
+msgid_plural "%uth copy of %s"
+msgstr[0] "%2$s の %1$u 番目のコピー"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:409
+#, c-format
+msgid "%uth link to %s"
+msgid_plural "%uth link to %s"
+msgstr[0] "%2$s への %1$u 番目のリンク"
+
+#. unable to stat source file, impossible to copy then
+#. the file does not exist, don't try to create a symlink then
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:469
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:586
+#: ../thunar-vfs/thunar-vfs-io-ops.c:144
+#, c-format
+msgid "Failed to determine file info for \"%s\""
+msgstr "「%s」のファイル情報を確定するのに失敗しました。"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:485
+#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#, c-format
+msgid "Failed to create directory \"%s\""
+msgstr "フォルダ「%s」の作成に失敗しました。"
+
+#. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:494
+#, c-format
+msgid "Failed to create named fifo \"%s\""
+msgstr "名前つきパイプ「%s」の作成に失敗しました。"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:512
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:592
+#, c-format
+msgid "Failed to create symbolic link \"%s\""
+msgstr "リンク「%s」の作成に失敗しました。"
+
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:525
+msgid "Special files cannot be copied"
 msgstr ""
-"%s。\n"
-"\n"
-"上書きしますか？"
 
-#. tell the user that we failed to delete the application launcher
-#: ../thunar-vfs/thunar-vfs-link-job.c:193
-#: ../thunar-vfs/thunar-vfs-mime-database.c:1771
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:656
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:709
-#, c-format
-msgid "Failed to remove \"%s\": %s"
-msgstr "「%s」の削除に失敗しました: %s"
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:605
+msgid "Symbolic links are not supported"
+msgstr "シンボリックリンクがサポートされていません。"
 
-#: ../thunar-vfs/thunar-vfs-mime-database.c:1705
+#. ...and a special display name
+#: ../thunar-vfs/thunar-vfs-io-local.c:304
+msgid "File System"
+msgstr "ファイルシステム"
+
+#. generate a useful error message
+#: ../thunar-vfs/thunar-vfs-io-ops.c:223
+#, fuzzy, c-format
+msgid "Failed to copy \"%s\" to \"%s\""
+msgstr "「%s」の名前を「%s」に変更するのに失敗しました。"
+
+#. impossible to perform the link operation
+#: ../thunar-vfs/thunar-vfs-io-ops.c:271
+msgid "Links from or to resources in the trash are not supported"
+msgstr ""
+
+#. generate a useful error message
+#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#, fuzzy, c-format
+msgid "Failed to link \"%s\" to \"%s\""
+msgstr "「%s」の名前を「%s」に変更するのに失敗しました。"
+
+#. generate a useful error message
+#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#, fuzzy, c-format
+msgid "Failed to move \"%s\" to \"%s\""
+msgstr "「%s」の名前を「%s」に変更するのに失敗しました。"
+
+#: ../thunar-vfs/thunar-vfs-io-trash.c:601
+#, fuzzy, c-format
+msgid "The URI \"%s\" does not refer to a valid resource in the trash"
+msgstr "パス「%s」はフォルダを参照していません。"
+
+#: ../thunar-vfs/thunar-vfs-io-trash.c:778
+msgid "Trash"
+msgstr ""
+
+#. we don't support copying files within the trash
+#. we don't support moving files within the trash
+#: ../thunar-vfs/thunar-vfs-io-trash.c:972
+#: ../thunar-vfs/thunar-vfs-io-trash.c:1086
+msgid "Cannot move or copy files within the trash"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1684
 #, c-format
 msgid "Failed to load application from file %s"
 msgstr "ファイル「%s」からアプリケーションを読み込むのに失敗しました。"
 
+#. tell the user that we failed to delete the application launcher
+#: ../thunar-vfs/thunar-vfs-mime-database.c:1750
+#, c-format
+msgid "Failed to remove \"%s\": %s"
+msgstr "「%s」の削除に失敗しました: %s"
+
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:127
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:132
 msgid "Command"
 msgstr "コマンド"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:128
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:133
 msgid "The command to run the mime handler"
 msgstr "MIMEハンドラーを実行するコマンドです。"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:140
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:145
 msgid "Flags"
 msgstr "フラッグ"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:141
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:146
 msgid "The flags for the mime handler"
 msgstr "MIMEハンドラーのフラッグです。"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:156
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:161
 msgid "Icon"
 msgstr "アイコン"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:157
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:162
 msgid "The icon of the mime handler"
 msgstr "MIMEハンドラーのアイコンです。"
 
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:169
-#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:432
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:174
+#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:426
 #: ../thunarx/thunarx-renamer.c:177
 msgid "Name"
 msgstr "名前"
 
 # NOTE: GObject property
-#: ../thunar-vfs/thunar-vfs-mime-handler.c:170
+#: ../thunar-vfs/thunar-vfs-mime-handler.c:175
 msgid "The name of the mime handler"
 msgstr "MIMEハンドラーの名前です。"
 
-#: ../thunar-vfs/thunar-vfs-mime-info.c:228
+#: ../thunar-vfs/thunar-vfs-mime-info.c:229
 #, c-format
 msgid "%s document"
 msgstr "%s 文書"
 
-#: ../thunar-vfs/thunar-vfs-mkdir-job.c:157
+#: ../thunar-vfs/thunar-vfs-path.c:362
 #, c-format
-msgid "Failed to create directory \"%s\": %s"
-msgstr "フォルダ「%s」の作成に失敗しました: %s"
+msgid "The URI \"%s\" is invalid"
+msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-path.c:684
+#: ../thunar-vfs/thunar-vfs-path.c:835
 msgid "Path too long to fit into buffer"
 msgstr "バッファに格納するにはパスが長すぎます。"
 
-#: ../thunar-vfs/thunar-vfs-path.c:787
+#: ../thunar-vfs/thunar-vfs-path.c:938
 msgid "URI too long to fit into buffer"
 msgstr "バッファに格納するには URI が長すぎます。"
+
+#. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
+#: ../thunar-vfs/thunar-vfs-private.c:295
+msgid "Invalidly escaped characters"
+msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-thumb.c:172 ../thunar/thunar-enum-types.c:97
 msgid "Size"
@@ -237,26 +332,12 @@ msgstr "サイズ"
 msgid "The desired thumbnail size"
 msgstr "お望みのサムネイルサイズです。"
 
-#. display info message
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:358
-msgid "Deleting directories..."
-msgstr "フォルダを削除しています..."
+#. update the progress information
+#: ../thunar-vfs/thunar-vfs-transfer-job.c:174
+msgid "Collecting files..."
+msgstr "ファイルを集めています..."
 
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:378
-#, c-format
-msgid "Failed to remove directory \"%s\": %s"
-msgstr "フォルダ「%s」の削除に失敗しました: %s"
-
-#: ../thunar-vfs/thunar-vfs-transfer-job.c:902
-msgid "Cannot transfer the root directory"
-msgstr "ルートフォルダを転送できません。"
-
-#. tell the user that we're preparing the unlink job
-#: ../thunar-vfs/thunar-vfs-unlink-job.c:154
-msgid "Preparing..."
-msgstr "準備しています..."
-
-#: ../thunar-vfs/thunar-vfs-util.c:251 ../thunar/thunar-path-entry.c:1262
+#: ../thunar-vfs/thunar-vfs-util.c:251
 msgid "Invalid path"
 msgstr "無効なパスです。"
 
@@ -275,132 +356,6 @@ msgstr "「%s」のマウント位置を確定できません。"
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "HAL デーモンとの接続に失敗しました: %s"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:192
-#, c-format
-msgid "copy of %s"
-msgstr "%s のコピー"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:193 ../thunar/thunar-list-model.c:776
-#: ../thunar/thunar-properties-dialog.c:726
-#, c-format
-msgid "link to %s"
-msgstr "%s へのリンク"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:196
-#, c-format
-msgid "another copy of %s"
-msgstr "%s の別のコピー"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:197
-#, c-format
-msgid "another link to %s"
-msgstr "%s への別のリンク"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:200
-#, c-format
-msgid "third copy of %s"
-msgstr "%s の 3 番目のコピー"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:201
-#, c-format
-msgid "third link to %s"
-msgstr "%s への 3 番目のリンク"
-
-#. if we had no match on the NAMES, try the "%uth copy of %s" pattern
-#: ../thunar-vfs/thunar-vfs-xfer.c:240 ../thunar-vfs/thunar-vfs-xfer.c:256
-#, c-format
-msgid "%uth copy of %s"
-msgid_plural "%uth copy of %s"
-msgstr[0] "%2$s の %1$u 番目のコピー"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:258
-#, c-format
-msgid "%uth link to %s"
-msgid_plural "%uth link to %s"
-msgstr[0] "%2$s への %1$u 番目のリンク"
-
-#. setup the error return
-#: ../thunar-vfs/thunar-vfs-xfer.c:306
-#, c-format
-msgid "Failed to create directory \"%s\""
-msgstr "フォルダ「%s」の作成に失敗しました。"
-
-#. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
-#: ../thunar-vfs/thunar-vfs-xfer.c:331
-#, c-format
-msgid "Failed to create named fifo \"%s\""
-msgstr "名前つきパイプ「%s」の作成に失敗しました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:340
-msgid "Named pipes are not supported"
-msgstr "名前つきパイプがサポートされていません。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:368
-#, c-format
-msgid "Failed to open \"%s\" for reading"
-msgstr "読み込むために「%s」を開くのに失敗しました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:393
-#, c-format
-msgid "The file \"%s\" already exists"
-msgstr "ファイル「%s」は既に存在します。"
-
-#. use the generic error message
-#: ../thunar-vfs/thunar-vfs-xfer.c:398
-#, c-format
-msgid "Failed to open \"%s\" for writing"
-msgstr "書き込むために「%s」を開くのに失敗しました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:419
-#, c-format
-msgid "Failed to read data from \"%s\""
-msgstr "「%s」からデータを読み込むのに失敗しました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:435
-#, c-format
-msgid "Failed to write data to \"%s\""
-msgstr "「%s」へデータを書き込むのに失敗しました。"
-
-#. display an error to the user
-#: ../thunar-vfs/thunar-vfs-xfer.c:454 ../thunar/thunar-chooser-dialog.c:805
-#, c-format
-msgid "Failed to remove \"%s\""
-msgstr "「%s」の削除に失敗しました。"
-
-#. tell the caller that the job was cancelled
-#: ../thunar-vfs/thunar-vfs-xfer.c:459
-msgid "Operation canceled"
-msgstr "操作は取り消されました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:500
-#, c-format
-msgid "Failed to read link target from \"%s\""
-msgstr "「%s」のリンク先の読み込みに失敗しました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:508 ../thunar-vfs/thunar-vfs-xfer.c:626
-#, c-format
-msgid "Failed to create symbolic link \"%s\""
-msgstr "リンク「%s」の作成に失敗しました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:516
-#, c-format
-msgid "Failed to change mode of \"%s\""
-msgstr "「%s」のモードを変更するのに失敗しました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:526 ../thunar-vfs/thunar-vfs-xfer.c:635
-msgid "Symbolic links are not supported"
-msgstr "シンボリックリンクがサポートされていません。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:554 ../thunar-vfs/thunar-vfs-xfer.c:615
-#, c-format
-msgid "Failed to determine file info for \"%s\""
-msgstr "「%s」のファイル情報を確定するのに失敗しました。"
-
-#: ../thunar-vfs/thunar-vfs-xfer.c:583
-#, c-format
-msgid "Failed to copy special file \"%s\""
-msgstr "特殊ファイル「%s」のコピーに失敗しました。"
 
 #: ../thunar/main.c:54
 msgid "Open the bulk rename dialog"
@@ -517,58 +472,145 @@ msgid "Sort items in descending order"
 msgstr "アイテムを降順 (おえういあ Z-a の順) で並べ替えます。"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:335
+#: ../thunar/thunar-application.c:379
 msgid "Failed to launch operation"
 msgstr "操作の実行に失敗しました。"
 
 #. tell the user that we were unable to launch the file specified on the cmdline
-#: ../thunar/thunar-application.c:787
+#: ../thunar/thunar-application.c:832
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "「%s」を開くのに失敗しました。"
 
-#: ../thunar/thunar-application.c:799
+#: ../thunar/thunar-application.c:844
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "「%s」を開くのに失敗しました: %s"
 
-#: ../thunar/thunar-application.c:836 ../thunar/thunar-application.c:869
+#: ../thunar/thunar-application.c:881 ../thunar/thunar-application.c:914
 msgid "Copying files..."
 msgstr "ファイルをコピーしています..."
 
-#: ../thunar/thunar-application.c:903
+#: ../thunar/thunar-application.c:948
 msgid "Creating symbolic links..."
 msgstr "リンクを作成しています..."
 
-#: ../thunar/thunar-application.c:938
+#: ../thunar/thunar-application.c:988
+#, fuzzy
+msgid "Moving files into the trash..."
+msgstr "ファイルを移動しています..."
+
+#: ../thunar/thunar-application.c:993
 msgid "Moving files..."
 msgstr "ファイルを移動しています..."
 
-#: ../thunar/thunar-application.c:973
+#: ../thunar/thunar-application.c:1073
+#, c-format
+msgid ""
+"Are you sure that you want to\n"
+"permanently delete \"%s\"?"
+msgstr ""
+"「%s」は永久に削除されます\n"
+"それでもよろしいですか？"
+
+#: ../thunar/thunar-application.c:1078
+#, c-format
+msgid ""
+"Are you sure that you want to permanently\n"
+"delete the selected file?"
+msgid_plural ""
+"Are you sure that you want to permanently\n"
+"delete the %u selected files?"
+msgstr[0] ""
+"選択したファイルは永久に削除されます\n"
+"それでもよろしいですか？"
+
+#: ../thunar/thunar-application.c:1098
+msgid "If you delete a file, it is permanently lost."
+msgstr "削除されたファイルは永久に失われます。"
+
+#: ../thunar/thunar-application.c:1108
 msgid "Deleting files..."
 msgstr "ファイルを削除しています..."
 
-#: ../thunar/thunar-application.c:1013
+#: ../thunar/thunar-application.c:1160
 msgid "Creating files..."
 msgstr "ファイルを作成しています..."
 
-#: ../thunar/thunar-application.c:1053
+#: ../thunar/thunar-application.c:1200
 msgid "Creating directories..."
 msgstr "フォルダを作成しています..."
 
+#: ../thunar/thunar-application.c:1238
+msgid "Remove all files and folders from the Trash?"
+msgstr ""
+
+#. add the "Empty Trash" action
+#. append the "Empty Trash" menu action
+#. add the "Empty Trash" menu item
+#: ../thunar/thunar-application.c:1243
+#: ../thunar/thunar-location-buttons.c:1264
+#: ../thunar/thunar-shortcuts-view.c:854 ../thunar/thunar-tree-view.c:1075
+#: ../plugins/thunar-tpa/main.c:49
+#, fuzzy
+msgid "_Empty Trash"
+msgstr "空のファイル(_E)"
+
+#: ../thunar/thunar-application.c:1247
+msgid ""
+"If you choose to empty the Trash, all items in it will be permanently lost. "
+"Please note that you can also delete them separately."
+msgstr ""
+
+#: ../thunar/thunar-application.c:1264
+msgid "Emptying the Trash..."
+msgstr ""
+
+#: ../thunar/thunar-application.c:1318
+#, fuzzy, c-format
+msgid "Failed to determine the original path for \"%s\""
+msgstr "「%s」のマウント位置を確定できません。"
+
+#: ../thunar/thunar-application.c:1346
+#, fuzzy, c-format
+msgid "Create the folder \"%s\"?"
+msgstr "「%s」に新規フォルダを作成"
+
+#: ../thunar/thunar-application.c:1350
+#, fuzzy
+msgid "C_reate Folder"
+msgstr "フォルダを作成(_F)..."
+
+#: ../thunar/thunar-application.c:1356
+#, c-format
+msgid ""
+"The folder \"%s\" does not exist anymore, but it is required to restore the "
+"file \"%s\" from the trash. Do you want to create the folder again?"
+msgstr ""
+
+#. display an error dialog
+#: ../thunar/thunar-application.c:1393
+#, fuzzy, c-format
+msgid "Failed to restore \"%s\""
+msgstr "「%s」の削除に失敗しました。"
+
+#: ../thunar/thunar-application.c:1400
+#, fuzzy
+msgid "Restoring files..."
+msgstr "ファイルを削除しています..."
+
 #. tell the user that it didn't work
 #. display an error to the user
-#: ../thunar/thunar-chooser-button.c:282 ../thunar/thunar-chooser-dialog.c:524
+#: ../thunar/thunar-chooser-button.c:274 ../thunar/thunar-chooser-dialog.c:505
 #, c-format
 msgid "Failed to set default application for \"%s\""
 msgstr "「%s」の標準アプリケーションをセットするのに失敗しました。"
 
-#: ../thunar/thunar-chooser-button.c:368
+#: ../thunar/thunar-chooser-button.c:359
 msgid "No application selected"
 msgstr "アプリケーションは選択されていません"
 
-#. setup a useful tooltip and ATK description
-#: ../thunar/thunar-chooser-button.c:373
+#: ../thunar/thunar-chooser-button.c:365
 #, c-format
 msgid ""
 "The selected application is used to open this and other files of type \"%s\"."
@@ -577,20 +619,20 @@ msgstr ""
 "s」のファイルを開くのに使用されます。"
 
 #. add the "Other Application..." choice
-#: ../thunar/thunar-chooser-button.c:514
+#: ../thunar/thunar-chooser-button.c:503
 msgid "_Other Application..."
 msgstr "他のアプリ(_O)..."
 
-#: ../thunar/thunar-chooser-dialog.c:225 ../thunar/thunar-launcher.c:132
+#: ../thunar/thunar-chooser-dialog.c:219 ../thunar/thunar-launcher.c:132
 msgid "Open With"
 msgstr "アプリで開く"
 
 #. create the "Custom command" expand
-#: ../thunar/thunar-chooser-dialog.c:291
+#: ../thunar/thunar-chooser-dialog.c:285
 msgid "Use a _custom command:"
 msgstr "指定コマンドを使用する(_C):"
 
-#: ../thunar/thunar-chooser-dialog.c:292
+#: ../thunar/thunar-chooser-dialog.c:286
 msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
@@ -599,41 +641,40 @@ msgstr ""
 "す。"
 
 #. create the "Custom command" button
-#: ../thunar/thunar-chooser-dialog.c:311
+#: ../thunar/thunar-chooser-dialog.c:305
 msgid "_Browse..."
 msgstr "参照(_B)..."
 
 #. create the "Use as default for this kind of file" button
-#: ../thunar/thunar-chooser-dialog.c:317
+#: ../thunar/thunar-chooser-dialog.c:311
 msgid "Use as _default for this kind of file"
 msgstr "この種類のファイルの標準アプリケーションにする(_D)"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:499
+#: ../thunar/thunar-chooser-dialog.c:480
 #, c-format
 msgid "Failed to add new application \"%s\""
 msgstr "新しいアプリケーション「%s」を追加するのに失敗しました。"
 
 #. display an error to the user
-#: ../thunar/thunar-chooser-dialog.c:544
+#: ../thunar/thunar-chooser-dialog.c:525
 #, c-format
 msgid "Failed to execute \"%s\""
 msgstr "「%s」の実行に失敗しました。"
 
 #. append the "Remove Launcher" item
-#: ../thunar/thunar-chooser-dialog.c:622
+#: ../thunar/thunar-chooser-dialog.c:603
 msgid "_Remove Launcher"
 msgstr "ランチャーを削除(_R)"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:723
+#: ../thunar/thunar-chooser-dialog.c:704
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr ""
 "<i>%s</i> とタイプが「%s」の他のファイルを以下のアプリケーションで開きます:"
 
-#. update the "Browse..." tooltip
-#: ../thunar/thunar-chooser-dialog.c:730
+#: ../thunar/thunar-chooser-dialog.c:712
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
@@ -641,8 +682,7 @@ msgstr ""
 "種類が「%s」のファイルを開くアプリケーションを選択するためにファイルシステム"
 "を参照します。"
 
-#. update the "Use as default for this kind of file" tooltip
-#: ../thunar/thunar-chooser-dialog.c:736
+#: ../thunar/thunar-chooser-dialog.c:718
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
@@ -651,12 +691,12 @@ msgstr ""
 "種類が「%s」のファイルを開く標準のアプリケーションを選択したものに変更しま"
 "す。"
 
-#: ../thunar/thunar-chooser-dialog.c:784
+#: ../thunar/thunar-chooser-dialog.c:765
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "「%s」を削除しますがよろしいですか？"
 
-#: ../thunar/thunar-chooser-dialog.c:790
+#: ../thunar/thunar-chooser-dialog.c:771
 msgid ""
 "This will remove the application launcher that appears in the file context "
 "menu, but will not uninstall the application itself.\n"
@@ -670,39 +710,39 @@ msgstr ""
 "このファイルマネージャーの「これで開く」ダイアログにあるカスタム・コマンド"
 "ボックスを利用して作成されたアプリケーション・ランチャーのみが削除されます。"
 
-#: ../thunar/thunar-chooser-dialog.c:831
+#: ../thunar/thunar-chooser-dialog.c:812
 #: ../plugins/thunar-uca/thunar-uca-editor.c:491
 msgid "Select an Application"
 msgstr "アプリケーションを選択してください"
 
-#: ../thunar/thunar-chooser-dialog.c:841
-#: ../thunar/thunar-renamer-dialog.c:1103
+#: ../thunar/thunar-chooser-dialog.c:822
+#: ../thunar/thunar-renamer-dialog.c:1094
 #: ../plugins/thunar-uca/thunar-uca-editor.c:501
 #: ../plugins/thunar-uca/thunar-uca-editor.c:654
 msgid "All Files"
 msgstr "全てのファイル"
 
-#: ../thunar/thunar-chooser-dialog.c:846
+#: ../thunar/thunar-chooser-dialog.c:827
 #: ../plugins/thunar-uca/thunar-uca-editor.c:506
 msgid "Executable Files"
 msgstr "実行可能ファイル"
 
-#: ../thunar/thunar-chooser-dialog.c:861
+#: ../thunar/thunar-chooser-dialog.c:842
 #: ../plugins/thunar-uca/thunar-uca-editor.c:521
 msgid "Perl Scripts"
 msgstr "Perlスクリプト"
 
-#: ../thunar/thunar-chooser-dialog.c:867
+#: ../thunar/thunar-chooser-dialog.c:848
 #: ../plugins/thunar-uca/thunar-uca-editor.c:527
 msgid "Python Scripts"
 msgstr "Pythonスクリプト"
 
-#: ../thunar/thunar-chooser-dialog.c:873
+#: ../thunar/thunar-chooser-dialog.c:854
 #: ../plugins/thunar-uca/thunar-uca-editor.c:533
 msgid "Ruby Scripts"
 msgstr "Rubyスクリプト"
 
-#: ../thunar/thunar-chooser-dialog.c:879
+#: ../thunar/thunar-chooser-dialog.c:860
 #: ../plugins/thunar-uca/thunar-uca-editor.c:539
 msgid "Shell Scripts"
 msgstr "シェルスクリプト"
@@ -722,7 +762,7 @@ msgid "Other Applications"
 msgstr "他のアプリケーション"
 
 #. tell the user that we cannot paste
-#: ../thunar/thunar-clipboard-manager.c:361
+#: ../thunar/thunar-clipboard-manager.c:362
 msgid "There is nothing on the clipboard to paste"
 msgstr "クリップボードに貼り付けるものはありません。"
 
@@ -787,14 +827,15 @@ msgstr ""
 msgid "Automatically _expand columns as needed"
 msgstr "必要に応じて表示欄を自動的に拡げる(_E)"
 
+#. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:894 ../thunar/thunar-list-model.c:726
 #: ../thunar/thunar-list-model.c:755
-#: ../thunar/thunar-permissions-chooser.c:270
+#: ../thunar/thunar-permissions-chooser.c:270 ../thunar/thunar-util.c:112
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:286
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:287
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:288
 msgid "Unknown"
 msgstr "不明"
 
@@ -806,7 +847,7 @@ msgstr "フォルダをリスト表示します。"
 msgid "Compact view"
 msgstr "リスト表示"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2260
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2206
 msgid "Enter the new name:"
 msgstr "新しい名前を入力してください:"
 
@@ -832,15 +873,31 @@ msgstr "詳細なファイル情報と共にフォルダをリスト表示しま
 msgid "Details view"
 msgstr "詳細表示"
 
-#: ../thunar/thunar-dialogs.c:96
+#: ../thunar/thunar-dialogs.c:101
 msgid "translator-credits"
 msgstr "Daichi Kawahata <daichi@xfce.org>"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:255 ../thunar/thunar-renamer-dialog.c:989
+#: ../thunar/thunar-dialogs.c:228 ../thunar/thunar-renamer-dialog.c:980
 msgid "Failed to open the documentation browser"
 msgstr "文書を表示するブラウザーの起動に失敗しました。"
+
+#: ../thunar/thunar-dialogs.c:321
+msgid "_Yes"
+msgstr "はい(_Y)"
+
+#: ../thunar/thunar-dialogs.c:325
+msgid "Yes to _all"
+msgstr "全てにはい(_A)"
+
+#: ../thunar/thunar-dialogs.c:329
+msgid "_No"
+msgstr "いいえ(_N)"
+
+#: ../thunar/thunar-dialogs.c:334
+msgid "_Cancel"
+msgstr "キャンセル(_C)"
 
 #: ../thunar/thunar-dnd.c:62
 msgid "_Copy here"
@@ -896,7 +953,7 @@ msgstr "ファイル所有者"
 #.
 #. Permissions chooser
 #.
-#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:455
+#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:490
 msgid "Permissions"
 msgstr "アクセス権"
 
@@ -912,13 +969,9 @@ msgstr "ファイル"
 msgid "File Name"
 msgstr "ファイル名"
 
-#: ../thunar/thunar-file.c:783
+#: ../thunar/thunar-file.c:795
 msgid "The root folder has no parent"
 msgstr "ルートフォルダに上位のフォルダがありません。"
-
-#: ../thunar/thunar-file.c:1122
-msgid "File System"
-msgstr "ファイルシステム"
 
 #. create the "back" action
 #: ../thunar/thunar-history.c:179
@@ -955,14 +1008,14 @@ msgstr "アイコン表示"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:129 ../thunar/thunar-launcher.c:775
-#: ../thunar/thunar-location-buttons.c:1217
-#: ../thunar/thunar-shortcuts-view.c:794 ../thunar/thunar-tree-view.c:1014
+#: ../thunar/thunar-location-buttons.c:1219
+#: ../thunar/thunar-shortcuts-view.c:795 ../thunar/thunar-tree-view.c:1015
 msgid "_Open"
 msgstr "開く(_O)"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:130 ../thunar/thunar-location-buttons.c:1230
-#: ../thunar/thunar-shortcuts-view.c:805 ../thunar/thunar-tree-view.c:1026
+#: ../thunar/thunar-launcher.c:130 ../thunar/thunar-location-buttons.c:1232
+#: ../thunar/thunar-shortcuts-view.c:806 ../thunar/thunar-tree-view.c:1027
 msgid "Open in New Window"
 msgstr "新規ウィンドウで開く"
 
@@ -1084,93 +1137,111 @@ msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "選択したファイルを「%s」に送信します。"
 
-#: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:724
+#: ../thunar/thunar-list-model.c:774 ../thunar/thunar-properties-dialog.c:759
 msgid "broken link"
 msgstr "壊れたリンク"
 
 #. generate a text which includes the size of all items in the folder
-#: ../thunar/thunar-list-model.c:2197
+#: ../thunar/thunar-list-model.c:2202
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
 msgstr[0] "%d個のアイテム (%s) があります。空き容量: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2206
+#: ../thunar/thunar-list-model.c:2211
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "%d個のアイテムがあります。空き容量: %s"
 
-#: ../thunar/thunar-list-model.c:2214
+#: ../thunar/thunar-list-model.c:2219
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "%d個のアイテムがあります。"
 
-#: ../thunar/thunar-list-model.c:2230
+#: ../thunar/thunar-list-model.c:2235
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "「%s」壊れたリンク"
 
-#: ../thunar/thunar-list-model.c:2234
+#: ../thunar/thunar-list-model.c:2239
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "「%1$s」%3$sへのリンク (%2$s)"
 
-#: ../thunar/thunar-list-model.c:2239
+#: ../thunar/thunar-list-model.c:2244
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "「%1$s」%3$s (%2$s)"
 
-#: ../thunar/thunar-list-model.c:2256
+#. TRANSLATORS: Try to come up with a short translation of "Original Path" (which is the path
+#. * where the trashed file/folder was located before it was moved to the trash), otherwise the
+#. * properties dialog width will be messed up.
+#.
+#: ../thunar/thunar-list-model.c:2255 ../thunar/thunar-properties-dialog.c:339
+msgid "Original Path:"
+msgstr ""
+
+#. append the image dimensions to the statusbar text
+#: ../thunar/thunar-list-model.c:2267
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:151
+msgid "Image Size:"
+msgstr "画像サイズ:"
+
+#: ../thunar/thunar-list-model.c:2286
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "%d個のアイテム (%s) が選択されています。"
 
-#: ../thunar/thunar-list-model.c:2261
+#: ../thunar/thunar-list-model.c:2291
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
 msgstr[0] "%d個のアイテムが選択されています。"
 
 # NOTE: GObject property
-#: ../thunar/thunar-location-buttons.c:259
+#: ../thunar/thunar-location-buttons.c:261
 msgid "Spacing"
 msgstr "間隔"
 
 # NOTE: GObject property
-#: ../thunar/thunar-location-buttons.c:260
+#: ../thunar/thunar-location-buttons.c:262
 msgid "The amount of space between the path buttons"
 msgstr "パスボタン間のスペースです。"
 
 #. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1216
+#: ../thunar/thunar-location-buttons.c:1218
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "「%s」をこのウィンドウで開く"
 
 #. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1229
+#: ../thunar/thunar-location-buttons.c:1231
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "「%s」を新規ウィンドウで開く"
 
 #. add the "Create Folder" action
-#: ../thunar/thunar-location-buttons.c:1244
+#: ../thunar/thunar-location-buttons.c:1249
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "「%s」に新規フォルダを作成"
 
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1245
-#: ../thunar/thunar-standard-view.c:312 ../thunar/thunar-tree-view.c:1073
+#: ../thunar/thunar-location-buttons.c:1250
+#: ../thunar/thunar-standard-view.c:315 ../thunar/thunar-tree-view.c:1091
 msgid "Create _Folder..."
 msgstr "フォルダを作成(_F)..."
 
+#: ../thunar/thunar-location-buttons.c:1264
+msgid "Delete all files and folders in the Trash"
+msgstr ""
+
 #. add the "Paste Into Folder" action
-#: ../thunar/thunar-location-buttons.c:1260
+#: ../thunar/thunar-location-buttons.c:1279
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
@@ -1178,29 +1249,29 @@ msgstr ""
 "以前に「切り取り」または「コピー」で選択されているファイルを「%s」に「移動」"
 "または「コピー」します。"
 
-#: ../thunar/thunar-location-buttons.c:1261
-#: ../thunar/thunar-standard-view.c:318
+#: ../thunar/thunar-location-buttons.c:1280
+#: ../thunar/thunar-standard-view.c:321
 msgid "Paste Into Folder"
 msgstr "フォルダに貼り付け"
 
 #. add the "Properties" action
-#: ../thunar/thunar-location-buttons.c:1276
+#: ../thunar/thunar-location-buttons.c:1295
 #, c-format
 msgid "View the properties of the folder \"%s\""
 msgstr "フォルダ「%s」のプロパティを表示します。"
 
-#: ../thunar/thunar-location-buttons.c:1277
+#: ../thunar/thunar-location-buttons.c:1296
 msgid "_Properties"
 msgstr "プロパティ(_P)"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1346
-#: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-location-buttons.c:1365
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1447
 msgid "New Folder"
 msgstr "新規フォルダ"
 
-#: ../thunar/thunar-location-buttons.c:1346
-#: ../thunar/thunar-standard-view.c:1790 ../thunar/thunar-tree-view.c:1428
+#: ../thunar/thunar-location-buttons.c:1365
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1447
 msgid "Create New Folder"
 msgstr "新規フォルダを作成します。"
 
@@ -1218,12 +1289,12 @@ msgid "Failed to launch \"%s\""
 msgstr "「%s」の実行に失敗しました。"
 
 # NOTE: GObject property
-#: ../thunar/thunar-path-entry.c:254
+#: ../thunar/thunar-path-entry.c:258
 msgid "Icon size"
 msgstr "アイコンのサイズ"
 
 # NOTE: GObject property
-#: ../thunar/thunar-path-entry.c:255
+#: ../thunar/thunar-path-entry.c:259
 msgid "The icon size for the path entry"
 msgstr "パスエントリーのアイコンサイズです。"
 
@@ -1305,17 +1376,15 @@ msgid "Stop applying permissions recursively."
 msgstr "アクセス権を再帰的に変更していくのを止めます。"
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:590
-#: ../thunar/thunar-permissions-chooser.c:1135
-#: ../thunar/thunar-progress-dialog.c:305
+#: ../thunar/thunar-permissions-chooser.c:587
 msgid "Question"
 msgstr "質問"
 
-#: ../thunar/thunar-permissions-chooser.c:614
+#: ../thunar/thunar-permissions-chooser.c:611
 msgid "Apply recursively?"
 msgstr "再帰的に変更しますか？"
 
-#: ../thunar/thunar-permissions-chooser.c:620
+#: ../thunar/thunar-permissions-chooser.c:617
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
@@ -1323,11 +1392,11 @@ msgstr ""
 "選択したフォルダの中にある全てのファイルや\n"
 "サブフォルダにも変更を適用しますか？"
 
-#: ../thunar/thunar-permissions-chooser.c:625
+#: ../thunar/thunar-permissions-chooser.c:622
 msgid "Do _not ask me again"
 msgstr "再び質問しない(_N)"
 
-#: ../thunar/thunar-permissions-chooser.c:626
+#: ../thunar/thunar-permissions-chooser.c:623
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
@@ -1337,29 +1406,29 @@ msgstr ""
 "せん。今後これを変更するには環境設定ダイアログをご使用ください。"
 
 #. display an error to the user
-#: ../thunar/thunar-permissions-chooser.c:706
+#: ../thunar/thunar-permissions-chooser.c:703
 msgid "Failed to change group"
 msgstr "「%s」のグループを変更するのに失敗しました。"
 
 #. display an error to the user
-#: ../thunar/thunar-permissions-chooser.c:759
-#: ../thunar/thunar-permissions-chooser.c:1094
+#: ../thunar/thunar-permissions-chooser.c:756
+#: ../thunar/thunar-permissions-chooser.c:1091
 msgid "Failed to apply new permissions"
 msgstr "新しいアクセス権を有効にするのに失敗しました。"
 
-#: ../thunar/thunar-permissions-chooser.c:937
+#: ../thunar/thunar-permissions-chooser.c:934
 msgid "Unknown file owner"
 msgstr "不明なファイル所有者です。"
 
-#: ../thunar/thunar-permissions-chooser.c:1068
+#: ../thunar/thunar-permissions-chooser.c:1065
 msgid "Correct folder permissions automatically?"
 msgstr "フォルダのアクセス権を自動的に直しますか？"
 
-#: ../thunar/thunar-permissions-chooser.c:1070
+#: ../thunar/thunar-permissions-chooser.c:1067
 msgid "Correct folder permissions"
 msgstr "フォルダのアクセス権を直す"
 
-#: ../thunar/thunar-permissions-chooser.c:1072
+#: ../thunar/thunar-permissions-chooser.c:1069
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -1368,77 +1437,57 @@ msgstr ""
 "このフォルダのアクセス権が一貫するようににリセットします。ユーザーのみがこの"
 "フォルダの内容を見られます、また、後でこのフォルダに入る事ができます。"
 
-#: ../thunar/thunar-permissions-chooser.c:1164
-#: ../thunar/thunar-progress-dialog.c:372
-msgid "_Yes"
-msgstr "はい(_Y)"
-
-#: ../thunar/thunar-permissions-chooser.c:1168
-#: ../thunar/thunar-progress-dialog.c:377
-msgid "Yes to _all"
-msgstr "全てにはい(_A)"
-
-#: ../thunar/thunar-permissions-chooser.c:1172
-#: ../thunar/thunar-progress-dialog.c:382
-msgid "_No"
-msgstr "いいえ(_N)"
-
-#: ../thunar/thunar-permissions-chooser.c:1176
-#: ../thunar/thunar-progress-dialog.c:387
-msgid "_Cancel"
-msgstr "キャンセル(_C)"
-
-#: ../thunar/thunar-preferences-dialog.c:229
+#: ../thunar/thunar-preferences-dialog.c:222
 msgid "File Manager Preferences"
 msgstr "ファイルマネージャーの環境設定"
 
 #.
 #. Views
 #.
-#: ../thunar/thunar-preferences-dialog.c:246
+#: ../thunar/thunar-preferences-dialog.c:239
 msgid "Views"
 msgstr "表示"
 
-#: ../thunar/thunar-preferences-dialog.c:256
+#: ../thunar/thunar-preferences-dialog.c:249
 msgid "Default View"
 msgstr "標準の表示"
 
-#: ../thunar/thunar-preferences-dialog.c:268
+#: ../thunar/thunar-preferences-dialog.c:261
 msgid "View _new folders using:"
 msgstr "新規フォルダの表示方法(_N):"
 
-#: ../thunar/thunar-preferences-dialog.c:273
-#: ../thunar/thunar-preferences-dialog.c:310
+#: ../thunar/thunar-preferences-dialog.c:266
+#: ../thunar/thunar-preferences-dialog.c:303
 msgid "Icon View"
 msgstr "アイコン表示"
 
-#: ../thunar/thunar-preferences-dialog.c:274
+#: ../thunar/thunar-preferences-dialog.c:267
 msgid "Detailed List View"
 msgstr "詳細リスト表示"
 
-#: ../thunar/thunar-preferences-dialog.c:275
+#: ../thunar/thunar-preferences-dialog.c:268
 msgid "Compact List View"
 msgstr "リスト表示"
 
-#: ../thunar/thunar-preferences-dialog.c:276
+#: ../thunar/thunar-preferences-dialog.c:269
 msgid "Last Active View"
 msgstr "最後に使用した表示方法"
 
-#: ../thunar/thunar-preferences-dialog.c:293
+#: ../thunar/thunar-preferences-dialog.c:286
 msgid "Sort _folders before files"
 msgstr "フォルダをファイルの前にする(_F)"
 
-#: ../thunar/thunar-preferences-dialog.c:295
+#: ../thunar/thunar-preferences-dialog.c:288
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "フォルダを並べ替える時にフォルダをファイルの前に並べるなら、このオプションを"
 "選択してください。"
 
-#: ../thunar/thunar-preferences-dialog.c:299
+#: ../thunar/thunar-preferences-dialog.c:292
 msgid "_Show thumbnails"
 msgstr "サムネイルを表示する(_S)"
 
-#: ../thunar/thunar-preferences-dialog.c:301
+#: ../thunar/thunar-preferences-dialog.c:294
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
@@ -1446,11 +1495,11 @@ msgstr ""
 "フォルダ内のプレビュー可能なファイルを表示するにはこのオプションを有効にして"
 "ください。これらは自動的に作成されるサムネイルアイコンとして表示されます。"
 
-#: ../thunar/thunar-preferences-dialog.c:322
+#: ../thunar/thunar-preferences-dialog.c:315
 msgid "_Text beside icons"
 msgstr "文字をアイコンの隣に置く(_T)"
 
-#: ../thunar/thunar-preferences-dialog.c:324
+#: ../thunar/thunar-preferences-dialog.c:317
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1461,65 +1510,65 @@ msgstr ""
 #.
 #. Side Pane
 #.
-#: ../thunar/thunar-preferences-dialog.c:333
+#: ../thunar/thunar-preferences-dialog.c:326
 msgid "Side Pane"
 msgstr "サイドペイン"
 
-#: ../thunar/thunar-preferences-dialog.c:343
+#: ../thunar/thunar-preferences-dialog.c:336
 msgid "Shortcuts Pane"
 msgstr "ショートカットペイン"
 
-#: ../thunar/thunar-preferences-dialog.c:355
+#: ../thunar/thunar-preferences-dialog.c:348
 msgid "_Icon Size:"
 msgstr "アイコンのサイズ(_I):"
 
 # NOTE: 25%
-#: ../thunar/thunar-preferences-dialog.c:360
-#: ../thunar/thunar-preferences-dialog.c:411
+#: ../thunar/thunar-preferences-dialog.c:353
+#: ../thunar/thunar-preferences-dialog.c:404
 msgid "Very Small"
 msgstr "とても小さい"
 
 # NOTE: 50%
-#: ../thunar/thunar-preferences-dialog.c:361
-#: ../thunar/thunar-preferences-dialog.c:412
+#: ../thunar/thunar-preferences-dialog.c:354
+#: ../thunar/thunar-preferences-dialog.c:405
 msgid "Smaller"
 msgstr "小さい"
 
 # NOTE: 75%
-#: ../thunar/thunar-preferences-dialog.c:362
-#: ../thunar/thunar-preferences-dialog.c:413
+#: ../thunar/thunar-preferences-dialog.c:355
+#: ../thunar/thunar-preferences-dialog.c:406
 msgid "Small"
 msgstr "少し小さい"
 
 # NOTE: 100%
-#: ../thunar/thunar-preferences-dialog.c:363
-#: ../thunar/thunar-preferences-dialog.c:414
+#: ../thunar/thunar-preferences-dialog.c:356
+#: ../thunar/thunar-preferences-dialog.c:407
 msgid "Normal"
 msgstr "普通"
 
 # NOTE: 125%
-#: ../thunar/thunar-preferences-dialog.c:364
-#: ../thunar/thunar-preferences-dialog.c:415
+#: ../thunar/thunar-preferences-dialog.c:357
+#: ../thunar/thunar-preferences-dialog.c:408
 msgid "Large"
 msgstr "少し大きい"
 
 # NOTE: 150%
-#: ../thunar/thunar-preferences-dialog.c:365
-#: ../thunar/thunar-preferences-dialog.c:416
+#: ../thunar/thunar-preferences-dialog.c:358
+#: ../thunar/thunar-preferences-dialog.c:409
 msgid "Larger"
 msgstr "大きい"
 
 # NOTE: 200%
-#: ../thunar/thunar-preferences-dialog.c:366
-#: ../thunar/thunar-preferences-dialog.c:417
+#: ../thunar/thunar-preferences-dialog.c:359
+#: ../thunar/thunar-preferences-dialog.c:410
 msgid "Very Large"
 msgstr "とても大きい"
 
-#: ../thunar/thunar-preferences-dialog.c:383
+#: ../thunar/thunar-preferences-dialog.c:376
 msgid "Show Icon _Emblems"
 msgstr "アイコンのシンボルを表示(_E)"
 
-#: ../thunar/thunar-preferences-dialog.c:385
+#: ../thunar/thunar-preferences-dialog.c:378
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
@@ -1527,19 +1576,19 @@ msgstr ""
 "ショートカットペインにある全てのフォルダにシンボルアイコンを表示します。これ"
 "らのシンボルはフォルダのプロパティのダイアログで定義されています。"
 
-#: ../thunar/thunar-preferences-dialog.c:394
+#: ../thunar/thunar-preferences-dialog.c:387
 msgid "Tree Pane"
 msgstr "ツリーペイン"
 
-#: ../thunar/thunar-preferences-dialog.c:406
+#: ../thunar/thunar-preferences-dialog.c:399
 msgid "Icon _Size:"
 msgstr "アイコンのサイズ(_S):"
 
-#: ../thunar/thunar-preferences-dialog.c:434
+#: ../thunar/thunar-preferences-dialog.c:427
 msgid "Show Icon E_mblems"
 msgstr "シンボルを表示(_M)"
 
-#: ../thunar/thunar-preferences-dialog.c:436
+#: ../thunar/thunar-preferences-dialog.c:429
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
@@ -1550,16 +1599,19 @@ msgstr ""
 #.
 #. Behavior
 #.
-#: ../thunar/thunar-preferences-dialog.c:445
-#: ../thunar/thunar-preferences-dialog.c:455
+#: ../thunar/thunar-preferences-dialog.c:438
 msgid "Behavior"
 msgstr "振る舞い"
 
-#: ../thunar/thunar-preferences-dialog.c:467
+#: ../thunar/thunar-preferences-dialog.c:448
+msgid "Navigation"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:460
 msgid "_Single click to activate items"
 msgstr "シングルクリックでアイテムを有効にする(_S)"
 
-#: ../thunar/thunar-preferences-dialog.c:487
+#: ../thunar/thunar-preferences-dialog.c:480
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
@@ -1567,7 +1619,7 @@ msgstr ""
 "マウスがアイテム上にある時\n"
 "選択状態になるまでの時間(_E):"
 
-#: ../thunar/thunar-preferences-dialog.c:499
+#: ../thunar/thunar-preferences-dialog.c:492
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1581,36 +1633,36 @@ msgstr ""
 "できますので、アイテムを有効にせずただ選択したいのでしたら、そうしてくださ"
 "い。"
 
-#: ../thunar/thunar-preferences-dialog.c:523
+#: ../thunar/thunar-preferences-dialog.c:516
 msgid "Disabled"
 msgstr "無効"
 
 # XXX: how long does it take in millisecond?
-#: ../thunar/thunar-preferences-dialog.c:529
+#: ../thunar/thunar-preferences-dialog.c:522
 msgid "Medium"
 msgstr "中間"
 
 # XXX: how long does it take in millisecond?
-#: ../thunar/thunar-preferences-dialog.c:535
+#: ../thunar/thunar-preferences-dialog.c:528
 msgid "Long"
 msgstr "長い"
 
-#: ../thunar/thunar-preferences-dialog.c:541
+#: ../thunar/thunar-preferences-dialog.c:534
 msgid "_Double click to activate items"
 msgstr "ダブルクリックでアイテムを有効にする(_D)"
 
 #.
 #. Advanced
 #.
-#: ../thunar/thunar-preferences-dialog.c:551
+#: ../thunar/thunar-preferences-dialog.c:544
 msgid "Advanced"
 msgstr "詳細..."
 
-#: ../thunar/thunar-preferences-dialog.c:561
+#: ../thunar/thunar-preferences-dialog.c:554
 msgid "Folder Permissions"
 msgstr "フォルダのアクセス権"
 
-#: ../thunar/thunar-preferences-dialog.c:573
+#: ../thunar/thunar-preferences-dialog.c:566
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
@@ -1620,171 +1672,176 @@ msgstr ""
 "ファイルにもこの変更を適用することができます。\n"
 "以下から、標準で行うことを選択してください:"
 
-#: ../thunar/thunar-preferences-dialog.c:581
+#: ../thunar/thunar-preferences-dialog.c:574
 msgid "Ask everytime"
 msgstr "毎回質問する"
 
-#: ../thunar/thunar-preferences-dialog.c:582
+#: ../thunar/thunar-preferences-dialog.c:575
 msgid "Apply to Folder Only"
 msgstr "フォルダのみに適用する"
 
-#: ../thunar/thunar-preferences-dialog.c:583
+#: ../thunar/thunar-preferences-dialog.c:576
 msgid "Apply to Folder and Contents"
 msgstr "フォルダ内のファイルにも適用する"
 
-#: ../thunar/thunar-progress-dialog.c:523
+#: ../thunar/thunar-progress-dialog.c:374
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] "(残り %lu 時間)"
 
-#: ../thunar/thunar-progress-dialog.c:528
+#: ../thunar/thunar-progress-dialog.c:379
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] "(残り %lu 分)"
 
-#: ../thunar/thunar-progress-dialog.c:533
+#: ../thunar/thunar-progress-dialog.c:384
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"
 msgstr[0] "(残り %lu 秒)"
 
-#: ../thunar/thunar-properties-dialog.c:245
+#: ../thunar/thunar-properties-dialog.c:248
 msgid "General"
 msgstr "一般"
 
-#: ../thunar/thunar-properties-dialog.c:264
+#: ../thunar/thunar-properties-dialog.c:267
 msgid "Name:"
 msgstr "名前:"
 
 #.
 #. Second box (kind, open with, link target)
 #.
-#: ../thunar/thunar-properties-dialog.c:289
+#: ../thunar/thunar-properties-dialog.c:292
 msgid "Kind:"
 msgstr "種類:"
 
-#: ../thunar/thunar-properties-dialog.c:304
+#: ../thunar/thunar-properties-dialog.c:307
 msgid "Open With:"
 msgstr "これで開く:"
 
-#: ../thunar/thunar-properties-dialog.c:318
+#: ../thunar/thunar-properties-dialog.c:321
 msgid "Link Target:"
 msgstr "リンク先:"
 
 #.
-#. Third box (modified, accessed)
+#. Third box (deleted, modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:343
+#: ../thunar/thunar-properties-dialog.c:364
+#, fuzzy
+msgid "Deleted:"
+msgstr "削除(_D)"
+
+#: ../thunar/thunar-properties-dialog.c:378
 msgid "Modified:"
 msgstr "変更日時:"
 
-#: ../thunar/thunar-properties-dialog.c:357
+#: ../thunar/thunar-properties-dialog.c:392
 msgid "Accessed:"
 msgstr "アクセス日時:"
 
 #.
 #. Fourth box (size, volume, free space)
 #.
-#: ../thunar/thunar-properties-dialog.c:382
+#: ../thunar/thunar-properties-dialog.c:417
 msgid "Size:"
 msgstr "サイズ:"
 
-#: ../thunar/thunar-properties-dialog.c:395
+#: ../thunar/thunar-properties-dialog.c:430
 msgid "Volume:"
 msgstr "容量:"
 
-#: ../thunar/thunar-properties-dialog.c:419
+#: ../thunar/thunar-properties-dialog.c:454
 msgid "Free Space:"
 msgstr "空き容量:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:444
+#: ../thunar/thunar-properties-dialog.c:479
 msgid "Emblems"
 msgstr "シンボル"
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:687
+#: ../thunar/thunar-properties-dialog.c:722
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - プロパティ"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:842
-#: ../thunar/thunar-standard-view.c:2302
+#: ../thunar/thunar-properties-dialog.c:905
+#: ../thunar/thunar-standard-view.c:2248
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "「%s」の名前変更に失敗しました。"
 
-#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:252
+#: ../thunar/thunar-renamer-dialog.c:171 ../thunar/thunar-window.c:252
 msgid "_File"
 msgstr "ファイル(_F)"
 
-#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-window.c:254
+#: ../thunar/thunar-renamer-dialog.c:172 ../thunar/thunar-window.c:254
 msgid "_Send To"
 msgstr "送信(_S)"
 
-#: ../thunar/thunar-renamer-dialog.c:175 ../thunar/thunar-standard-view.c:310
+#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-standard-view.c:313
 msgid "File Context Menu"
 msgstr "ファイルの右クリックメニュー"
 
-#: ../thunar/thunar-renamer-dialog.c:176
+#: ../thunar/thunar-renamer-dialog.c:174
 msgid "_Add Files..."
 msgstr "ファイルを追加(_A)..."
 
-#: ../thunar/thunar-renamer-dialog.c:176
+#: ../thunar/thunar-renamer-dialog.c:174
 msgid "Include additional files in the list of files to be renamed"
 msgstr "名前変更するファイルのリストにファイルを追加します。"
 
-#: ../thunar/thunar-renamer-dialog.c:178
+#: ../thunar/thunar-renamer-dialog.c:176
 msgid "Clear"
 msgstr "クリア"
 
-#: ../thunar/thunar-renamer-dialog.c:178
+#: ../thunar/thunar-renamer-dialog.c:176
 msgid "Clear the file list below"
 msgstr "以下のファイル一覧をクリアします。"
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-window.c:273
+#: ../thunar/thunar-renamer-dialog.c:177 ../thunar/thunar-window.c:273
 msgid "_About"
 msgstr "このプログラムについて(_A)"
 
-#: ../thunar/thunar-renamer-dialog.c:179
+#: ../thunar/thunar-renamer-dialog.c:177
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Thunar 一括リネームについての情報を表示します。"
 
-#: ../thunar/thunar-renamer-dialog.c:180 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-standard-view.c:316
 msgid "_Properties..."
 msgstr "プロパティ(_P)..."
 
-#: ../thunar/thunar-renamer-dialog.c:180 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-standard-view.c:316
 msgid "View the properties of the selected file"
 msgstr "選択したファイルのプロパティを表示します。"
 
-#: ../thunar/thunar-renamer-dialog.c:365
-#: ../thunar/thunar-renamer-dialog.c:1710
+#: ../thunar/thunar-renamer-dialog.c:359
+#: ../thunar/thunar-renamer-dialog.c:1701
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "複数のファイル名を変更します"
 
 #. add the "Rename Files" button
-#: ../thunar/thunar-renamer-dialog.c:373
+#: ../thunar/thunar-renamer-dialog.c:367
 msgid "_Rename Files"
 msgstr "複数のファイル名を変更(_R)"
 
-#: ../thunar/thunar-renamer-dialog.c:376
+#: ../thunar/thunar-renamer-dialog.c:370
 msgid ""
 "Click here to actually rename the files listed above to their new names."
 msgstr ""
 "ここをクリックすると、上にリストされているファイルの名前を実際に変更します。"
 
-#: ../thunar/thunar-renamer-dialog.c:448
+#: ../thunar/thunar-renamer-dialog.c:442
 msgid "New Name"
 msgstr "新しい名前"
 
-#: ../thunar/thunar-renamer-dialog.c:513
+#: ../thunar/thunar-renamer-dialog.c:507
 msgid "Click here to view the documentation for the selected rename operation."
 msgstr ""
 "ここをクリックすると、選択したリネーム操作についての文書が表示されます。"
@@ -1792,7 +1849,7 @@ msgstr ""
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
 #. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
 #.
-#: ../thunar/thunar-renamer-dialog.c:621
+#: ../thunar/thunar-renamer-dialog.c:615
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
@@ -1805,30 +1862,30 @@ msgstr ""
 "「Yes」になっているかを確認してください。"
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1092
+#: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Select files to rename"
 msgstr "名前変更するファイルを選択してください"
 
-#: ../thunar/thunar-renamer-dialog.c:1108
+#: ../thunar/thunar-renamer-dialog.c:1099
 msgid "Audio Files"
 msgstr "音楽ファイル"
 
-#: ../thunar/thunar-renamer-dialog.c:1113
+#: ../thunar/thunar-renamer-dialog.c:1104
 #: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr "画像ファイル"
 
-#: ../thunar/thunar-renamer-dialog.c:1118
+#: ../thunar/thunar-renamer-dialog.c:1109
 msgid "Video Files"
 msgstr "動画ファイル"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1248
+#: ../thunar/thunar-renamer-dialog.c:1239
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "一括リネーム"
 
-#: ../thunar/thunar-renamer-dialog.c:1249
+#: ../thunar/thunar-renamer-dialog.c:1240
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
@@ -1836,18 +1893,18 @@ msgstr ""
 "Thunar 一括リネームは一度に複数のファイル名を\n"
 "変更する強力で拡張性のあるツールです。"
 
-#: ../thunar/thunar-renamer-dialog.c:1557
+#: ../thunar/thunar-renamer-dialog.c:1548
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "ファイルを削除"
 
-#: ../thunar/thunar-renamer-dialog.c:1559
+#: ../thunar/thunar-renamer-dialog.c:1550
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "名前変更するファイルのリストから選択したファイルを削除します。"
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1710
+#: ../thunar/thunar-renamer-dialog.c:1701
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "一括リネーム - ファイルをまとめてリネームします"
 
@@ -1891,119 +1948,119 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "選択したフォルダを左のショートカットペインに追加します。"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:819 ../thunar/thunar-tree-view.c:1040
+#: ../thunar/thunar-shortcuts-view.c:820 ../thunar/thunar-tree-view.c:1041
 msgid "_Mount Volume"
 msgstr "マウント(_M)"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:829 ../thunar/thunar-tree-view.c:1050
+#: ../thunar/thunar-shortcuts-view.c:830 ../thunar/thunar-tree-view.c:1051
 msgid "E_ject Volume"
 msgstr "取り出し(_J)"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:838 ../thunar/thunar-tree-view.c:1059
+#: ../thunar/thunar-shortcuts-view.c:839 ../thunar/thunar-tree-view.c:1060
 msgid "_Unmount Volume"
 msgstr "マウント解除(_U)"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:852
+#: ../thunar/thunar-shortcuts-view.c:867
 msgid "_Remove Shortcut"
 msgstr "ショートカットを削除(_R)"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:867
+#: ../thunar/thunar-shortcuts-view.c:882
 msgid "Re_name Shortcut"
 msgstr "ショートカットの名前変更(_N)"
 
-#: ../thunar/thunar-shortcuts-view.c:1140
+#: ../thunar/thunar-shortcuts-view.c:1155
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "パス「%s」はフォルダを参照していません。"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1159
+#: ../thunar/thunar-shortcuts-view.c:1174
 msgid "Failed to add new shortcut"
 msgstr "ショートカットの追加に失敗しました。"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1262 ../thunar/thunar-tree-view.c:1560
+#: ../thunar/thunar-shortcuts-view.c:1292 ../thunar/thunar-tree-view.c:1555
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "「%s」の取り出しに失敗しました。"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1308 ../thunar/thunar-tree-view.c:948
-#: ../thunar/thunar-tree-view.c:1596
+#: ../thunar/thunar-shortcuts-view.c:1338 ../thunar/thunar-tree-view.c:949
+#: ../thunar/thunar-tree-view.c:1606
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "「%s」のマウントに失敗しました。"
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1352 ../thunar/thunar-tree-view.c:1736
+#: ../thunar/thunar-shortcuts-view.c:1382 ../thunar/thunar-tree-view.c:1746
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "「%s」のマウント解除に失敗しました。"
 
-#: ../thunar/thunar-size-label.c:182
+#: ../thunar/thunar-size-label.c:176
 msgid "Click here to stop calculating the total size of the folder."
 msgstr "ここをクリックすると、フォルダの合計サイズの計算を中止します。"
 
 #. tell the user that the operation was canceled
-#: ../thunar/thunar-size-label.c:306
+#: ../thunar/thunar-size-label.c:297
 msgid "Calculation aborted"
 msgstr "計算を中断しました。"
 
 #. tell the user that we started calculation
-#: ../thunar/thunar-size-label.c:413
+#: ../thunar/thunar-size-label.c:404
 msgid "Calculating..."
 msgstr "計算しています..."
 
-#: ../thunar/thunar-size-label.c:423
+#: ../thunar/thunar-size-label.c:414
 #, c-format
 msgid "%s Bytes"
 msgstr "%s バイト"
 
-#: ../thunar/thunar-size-label.c:515
+#: ../thunar/thunar-size-label.c:506
 #, c-format
 msgid "%u item, totalling %s"
 msgid_plural "%u items, totalling %s"
 msgstr[0] "%u 個のアイテム、合計 %s"
 
-#: ../thunar/thunar-standard-view.c:311
+#: ../thunar/thunar-standard-view.c:314
 msgid "Folder Context Menu"
 msgstr "フォルダの右クリックメニュー"
 
-#: ../thunar/thunar-standard-view.c:312
+#: ../thunar/thunar-standard-view.c:315
 msgid "Create an empty folder within the current folder"
 msgstr "現在のフォルダに空のフォルダを作成します。"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:314 ../thunar/thunar-tree-view.c:1093
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-tree-view.c:1112
 msgid "Cu_t"
 msgstr "切り取り(_T)"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:315 ../thunar/thunar-tree-view.c:1105
+#: ../thunar/thunar-standard-view.c:318 ../thunar/thunar-tree-view.c:1124
 msgid "_Copy"
 msgstr "コピー(_C)"
 
-#: ../thunar/thunar-standard-view.c:316
+#: ../thunar/thunar-standard-view.c:319
 msgid "_Paste"
 msgstr "貼り付け(_P)"
 
-#: ../thunar/thunar-standard-view.c:316
+#: ../thunar/thunar-standard-view.c:319
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "以前に「切り取り」または「コピー」で選択されているファイルを「移動」または"
 "「コピー」します。"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-tree-view.c:1140
+#: ../thunar/thunar-standard-view.c:320 ../thunar/thunar-tree-view.c:1159
 msgid "_Delete"
 msgstr "削除(_D)"
 
-#: ../thunar/thunar-standard-view.c:318
+#: ../thunar/thunar-standard-view.c:321
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -2011,147 +2068,135 @@ msgstr ""
 "以前に「切り取り」または「コピー」で選択されているファイルを選択したフォルダ"
 "に「移動」または「コピー」します。"
 
-#: ../thunar/thunar-standard-view.c:319
+#: ../thunar/thunar-standard-view.c:322
 msgid "Select _all Files"
 msgstr "全てのファイルを選択(_A)"
 
-#: ../thunar/thunar-standard-view.c:319
+#: ../thunar/thunar-standard-view.c:322
 msgid "Select all files in this window"
 msgstr "このウィンドウの全てのファイルを選択します。"
 
-#: ../thunar/thunar-standard-view.c:320
+#: ../thunar/thunar-standard-view.c:323
 msgid "Select _by Pattern..."
 msgstr "パターンで選択(_B)..."
 
-#: ../thunar/thunar-standard-view.c:320
+#: ../thunar/thunar-standard-view.c:323
 msgid "Select all files that match a certain pattern"
 msgstr "ある特定のパターンに一致する全てのファイルを選択します。"
 
-#: ../thunar/thunar-standard-view.c:321
+#: ../thunar/thunar-standard-view.c:324
 msgid "Du_plicate"
 msgstr "コピーを作成(_P)"
 
-#: ../thunar/thunar-standard-view.c:322 ../thunar/thunar-standard-view.c:3395
+#: ../thunar/thunar-standard-view.c:325 ../thunar/thunar-standard-view.c:3370
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "リンクを作成(_K)"
 
-#: ../thunar/thunar-standard-view.c:323
+#: ../thunar/thunar-standard-view.c:326
 msgid "_Rename..."
 msgstr "名前変更(_R)..."
 
-#: ../thunar/thunar-standard-view.c:323
-msgid "Rename the selected file"
-msgstr "選択したファイルの名前を変更します。"
+#: ../thunar/thunar-standard-view.c:327
+msgid "_Restore"
+msgstr ""
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:582
+#: ../thunar/thunar-standard-view.c:587
 msgid "Create _Document"
 msgstr "文書を作成(_D)"
 
-#: ../thunar/thunar-standard-view.c:1243
+#: ../thunar/thunar-standard-view.c:1262
 msgid "Loading folder contents..."
 msgstr "フォルダの内容を読み込んでいます..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1739
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File"
 msgstr "新規ファイル"
 
-#: ../thunar/thunar-standard-view.c:1739
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File..."
 msgstr "新規ファイル..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1839
+#: ../thunar/thunar-standard-view.c:1833
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "テンプレート「%s」から文書を作成"
 
-#: ../thunar/thunar-standard-view.c:1990 ../thunar/thunar-tree-view.c:1510
-#, c-format
-msgid ""
-"Are you sure that you want to\n"
-"permanently delete \"%s\"?"
-msgstr ""
-"「%s」は永久に削除されます\n"
-"それでもよろしいですか？"
-
-#: ../thunar/thunar-standard-view.c:1995
-#, c-format
-msgid ""
-"Are you sure that you want to permanently\n"
-"delete the selected file?"
-msgid_plural ""
-"Are you sure that you want to permanently\n"
-"delete the %u selected files?"
-msgstr[0] ""
-"選択したファイルは永久に削除されます\n"
-"それでもよろしいですか？"
-
-#: ../thunar/thunar-standard-view.c:2017 ../thunar/thunar-tree-view.c:1517
-msgid "If you delete a file, it is permanently lost."
-msgstr "削除されたファイルは永久に失われます。"
-
-#: ../thunar/thunar-standard-view.c:2082
+#: ../thunar/thunar-standard-view.c:2028
 msgid "Select by Pattern"
 msgstr "パターンで選択します"
 
-#: ../thunar/thunar-standard-view.c:2088
+#: ../thunar/thunar-standard-view.c:2034
 msgid "_Select"
 msgstr "選択(_S)"
 
-#: ../thunar/thunar-standard-view.c:2097
+#: ../thunar/thunar-standard-view.c:2043
 msgid "_Pattern:"
 msgstr "パターン(_P):"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2231
+#: ../thunar/thunar-standard-view.c:2177
 #, c-format
 msgid "Rename \"%s\""
 msgstr "「%s」の名前変更"
 
 # FIXME: should be revised
 #. tell the user that the file name provided by the X Direct Save source is invalid
-#: ../thunar/thunar-standard-view.c:2570
+#: ../thunar/thunar-standard-view.c:2534
 msgid "Invalid filename provided by XDS drag site"
 msgstr "XDSで不正なファイル名をドラッグしています。"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2747
+#: ../thunar/thunar-standard-view.c:2711
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "URL「%s」のリンクの作成に失敗しました。"
 
-#: ../thunar/thunar-standard-view.c:3010
+#: ../thunar/thunar-standard-view.c:2974
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "フォルダ「%s」を開くのに失敗しました。"
 
-#: ../thunar/thunar-standard-view.c:3355
+#: ../thunar/thunar-standard-view.c:3330
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "選択したファイルを「貼り付け」コマンドで移動できるようにします。"
 
-#: ../thunar/thunar-standard-view.c:3363
+#: ../thunar/thunar-standard-view.c:3338
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "選択したファイルを「貼り付け」コマンドでコピーできるようにします。"
 
-#: ../thunar/thunar-standard-view.c:3374
-msgid "Delete the selected file permanently"
-msgid_plural "Delete the selected files permanently"
-msgstr[0] "選択したファイルを削除します。"
+#: ../thunar/thunar-standard-view.c:3349
+#, fuzzy
+msgid "Delete the selected file"
+msgid_plural "Delete the selected files"
+msgstr[0] "選択したファイルのコピーを作成します。"
 
-#: ../thunar/thunar-standard-view.c:3388
+#: ../thunar/thunar-standard-view.c:3363
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "選択したファイルのコピーを作成します。"
 
-#: ../thunar/thunar-standard-view.c:3397
+#: ../thunar/thunar-standard-view.c:3372
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "選択したファイルのリンクを作成します。"
+
+#: ../thunar/thunar-standard-view.c:3380
+#, fuzzy
+msgid "Rename the selected file"
+msgid_plural "Rename the selected files"
+msgstr[0] "選択したファイルの名前を変更します。"
+
+#: ../thunar/thunar-standard-view.c:3388
+#, fuzzy
+msgid "Restore the selected file"
+msgid_plural "Restore the selected files"
+msgstr[0] "選択したファイルの名前を変更します。"
 
 #: ../thunar/thunar-stock.c:57
 msgid "Create"
@@ -2171,19 +2216,29 @@ msgstr "テンプレートはインストールされていません"
 msgid "_Empty File"
 msgstr "空のファイル(_E)"
 
-#: ../thunar/thunar-tree-model.c:600
+#: ../thunar/thunar-tree-model.c:592
 msgid "Loading..."
 msgstr "読み込んでいます..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1122
+#: ../thunar/thunar-tree-view.c:1141
 msgid "_Paste Into Folder"
 msgstr "フォルダに貼り付け(_P)"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1163
+#: ../thunar/thunar-tree-view.c:1182
 msgid "P_roperties..."
 msgstr "プロパティ(_R)..."
+
+#. TRANSLATORS: file was modified less than one day ago
+#: ../thunar/thunar-util.c:89
+msgid "Today"
+msgstr ""
+
+#. TRANSLATORS: file was modified less than two days ago
+#: ../thunar/thunar-util.c:94
+msgid "Yesterday"
+msgstr ""
 
 #: ../thunar/thunar-window.c:253
 msgid "Open New _Window"
@@ -2621,23 +2676,23 @@ msgid "Shutter Speed:"
 msgstr "シャッター速度:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:59
+msgid "ISO Speed Ratings:"
+msgstr ""
+
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:60
 msgid "Software:"
 msgstr "ソフトウェア:"
 
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:115
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:116
 msgid "Image"
 msgstr "画像"
 
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:130
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:131
 msgid "Image Type:"
 msgstr "画像型式:"
 
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:150
-msgid "Image Size:"
-msgstr "画像サイズ:"
-
 #. update the "Image Size" label
-#: ../plugins/thunar-apr/thunar-apr-image-page.c:244
+#: ../plugins/thunar-apr/thunar-apr-image-page.c:245
 #, c-format
 msgid "%dx%d pixel"
 msgid_plural "%dx%d pixels"
@@ -2811,21 +2866,21 @@ msgstr "%ld にある文字は誤った正規表現です: %s"
 msgid "Search & Replace"
 msgstr "検索と置換"
 
-#: ../plugins/thunar-sendto-email/main.c:174
+#: ../plugins/thunar-sendto-email/main.c:173
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
 msgstr "「%s」を圧縮アーカイブとして送信しますか？"
 
-#: ../plugins/thunar-sendto-email/main.c:176
-#: ../plugins/thunar-sendto-email/main.c:195
+#: ../plugins/thunar-sendto-email/main.c:175
+#: ../plugins/thunar-sendto-email/main.c:194
 msgid "Send _directly"
 msgstr "直に送信(_D)"
 
-#: ../plugins/thunar-sendto-email/main.c:177
+#: ../plugins/thunar-sendto-email/main.c:176
 msgid "Send com_pressed"
 msgstr "圧縮して送信(_P)"
 
-#: ../plugins/thunar-sendto-email/main.c:179
+#: ../plugins/thunar-sendto-email/main.c:178
 msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is "
@@ -2835,17 +2890,17 @@ msgstr ""
 "か、あるいは圧縮するかのどちらかを選択できます。大きなファイルを送信するのな"
 "ら圧縮することを勧めます。"
 
-#: ../plugins/thunar-sendto-email/main.c:190
+#: ../plugins/thunar-sendto-email/main.c:189
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
 msgstr[0] "%d個のファイルを圧縮アーカイブとして送信しますか？"
 
-#: ../plugins/thunar-sendto-email/main.c:196
+#: ../plugins/thunar-sendto-email/main.c:195
 msgid "Send as _archive"
 msgstr "アーカイブとして送信(_A)"
 
-#: ../plugins/thunar-sendto-email/main.c:198
+#: ../plugins/thunar-sendto-email/main.c:197
 msgid ""
 "When sending multiple files via email, you can either choose to send the "
 "files directly, attaching multiple files to an email, or send all files "
@@ -2858,41 +2913,68 @@ msgstr ""
 
 #. allocate the progress dialog
 #. setup the label
-#: ../plugins/thunar-sendto-email/main.c:247
-#: ../plugins/thunar-sendto-email/main.c:272
+#: ../plugins/thunar-sendto-email/main.c:246
+#: ../plugins/thunar-sendto-email/main.c:271
 msgid "Compressing files..."
 msgstr "ファイルを圧縮しています..."
 
 #. tell the user that the command failed
-#: ../plugins/thunar-sendto-email/main.c:297
+#: ../plugins/thunar-sendto-email/main.c:296
 #, c-format
 msgid "ZIP command terminated with error %d"
 msgstr "ZIPコマンドがエラー%dで中断されました。"
 
-#: ../plugins/thunar-sendto-email/main.c:344
+#: ../plugins/thunar-sendto-email/main.c:343
 msgid "Failed to create temporary directory"
 msgstr "一時作業フォルダの作成に失敗しました。"
 
-#: ../plugins/thunar-sendto-email/main.c:395
+#: ../plugins/thunar-sendto-email/main.c:394
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
 msgstr "「%s」へのシンボリックリンク作成に失敗しました。"
 
 #. tell the user that we failed to compress the file(s)
-#: ../plugins/thunar-sendto-email/main.c:418
+#: ../plugins/thunar-sendto-email/main.c:417
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
 msgstr[0] "%d個のファイルを圧縮するのに失敗しました。"
 
 #. tell the user that we failed
-#: ../plugins/thunar-sendto-email/main.c:559
+#: ../plugins/thunar-sendto-email/main.c:558
 msgid "Failed to compose new email"
 msgstr "新規メールの作成に失敗しました。"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
 msgstr "メールの受け取り"
+
+#. tell the user that we failed to connect to the trash
+#. display an error message to the user
+#: ../plugins/thunar-tpa/thunar-tpa-icon.c:272
+#: ../plugins/thunar-tpa/thunar-tpa-icon.c:317
+#: ../plugins/thunar-tpa/thunar-tpa-icon.c:346
+#: ../plugins/thunar-tpa/thunar-tpa-icon.c:380
+#, fuzzy
+msgid "Failed to connect to the Trash"
+msgstr "HAL デーモンとの接続に失敗しました: %s"
+
+#. tell the user whether the trash is full or empty
+#: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
+msgid "Trash is full"
+msgstr ""
+
+#: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
+msgid "Trash is empty"
+msgstr ""
+
+#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:1
+msgid "Display the trash can"
+msgstr ""
+
+#: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
+msgid "Trash Applet"
+msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
@@ -3134,11 +3216,11 @@ msgstr "ルートコンテキストで終了要素ハンドラーが呼び出さ
 msgid "Unknown closing element <%s>"
 msgstr "不明な閉じ要素 <%s> があります"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1311
+#: ../plugins/thunar-uca/thunar-uca-model.c:1318
 msgid "Failed to determine save location for uca.xml"
 msgstr "ファイル「uca.xml」を保存する場所を確定するのに失敗しました。"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1426
+#: ../plugins/thunar-uca/thunar-uca-model.c:1433
 msgid "Command not configured"
 msgstr "コマンドが設定されていません。"
 
@@ -3187,3 +3269,88 @@ msgstr "Thunarでフォルダを開く"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "指定したフォルダを Thunar で開きます"
+
+#~ msgid "Delete the selected file permanently"
+#~ msgid_plural "Delete the selected files permanently"
+#~ msgstr[0] "選択したファイルを削除します。"
+
+#, fuzzy
+#~ msgid "Failed to change permisions of \"%s\""
+#~ msgstr "「%s」のアクセス権を変更するのに失敗しました: %s"
+
+#~ msgid ""
+#~ "%s.\n"
+#~ "\n"
+#~ "Do you want to skip it?"
+#~ msgstr ""
+#~ "%s。\n"
+#~ "\n"
+#~ "これを飛ばしますか？"
+
+# FIXME: stat?
+#~ msgid "Failed to determine file info of \"%s\": %s"
+#~ msgstr "「%s」のファイル情報を取得するのに失敗しました: %s"
+
+#~ msgid ""
+#~ "The file \"%s\" already exists. Do you want to replace it with an empty "
+#~ "file?"
+#~ msgstr ""
+#~ "ファイル「%s」は既に存在します。これを空のファイルで置き換えてもよろしいで"
+#~ "すか？"
+
+#~ msgid ""
+#~ "Failed to remove \"%s\".\n"
+#~ "\n"
+#~ "Do you want to skip it?"
+#~ msgstr ""
+#~ "「%s」を削除できません。\n"
+#~ "\n"
+#~ "これを飛ばしますか？"
+
+#~ msgid ""
+#~ "Failed to create empty file \"%s\".\n"
+#~ "\n"
+#~ "Do you want to skip it?"
+#~ msgstr ""
+#~ "空のファイル「%s」を作成するのに失敗しました。\n"
+#~ "\n"
+#~ "これを飛ばしますか？"
+
+#~ msgid "Failed to stat file \"%s\": %s"
+#~ msgstr "ファイル「%s」の状態を取得するのに失敗しました: %s"
+
+#~ msgid ""
+#~ "%s.\n"
+#~ "\n"
+#~ "Do you want to overwrite it?"
+#~ msgstr ""
+#~ "%s。\n"
+#~ "\n"
+#~ "上書きしますか？"
+
+#~ msgid "Failed to create directory \"%s\": %s"
+#~ msgstr "フォルダ「%s」の作成に失敗しました: %s"
+
+#~ msgid "Deleting directories..."
+#~ msgstr "フォルダを削除しています..."
+
+#~ msgid "Failed to remove directory \"%s\": %s"
+#~ msgstr "フォルダ「%s」の削除に失敗しました: %s"
+
+#~ msgid "Cannot transfer the root directory"
+#~ msgstr "ルートフォルダを転送できません。"
+
+#~ msgid "Named pipes are not supported"
+#~ msgstr "名前つきパイプがサポートされていません。"
+
+#~ msgid "Operation canceled"
+#~ msgstr "操作は取り消されました。"
+
+#~ msgid "Failed to read link target from \"%s\""
+#~ msgstr "「%s」のリンク先の読み込みに失敗しました。"
+
+#~ msgid "Failed to change mode of \"%s\""
+#~ msgstr "「%s」のモードを変更するのに失敗しました。"
+
+#~ msgid "Failed to copy special file \"%s\""
+#~ msgstr "特殊ファイル「%s」のコピーに失敗しました。"

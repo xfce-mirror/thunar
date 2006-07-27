@@ -435,9 +435,9 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
   gchar               *basename;
   gchar               *filename;
 
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_HAL (volume_hal));
-  g_return_if_fail (hv != NULL);
-  g_return_if_fail (hd != NULL);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_HAL (volume_hal));
+  _thunar_vfs_return_if_fail (hv != NULL);
+  _thunar_vfs_return_if_fail (hd != NULL);
 
   /* just allocate a policy (doesn't seem to be very useful) */
   policy = libhal_storage_policy_new ();
@@ -912,8 +912,8 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
   LibHalDrive               *hd;
   const gchar               *drive_udi;
 
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
-  g_return_if_fail (manager_hal->context == context);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
+  _thunar_vfs_return_if_fail (manager_hal->context == context);
 
   /* check if we have a volume here */
   hv = libhal_volume_from_udi (context, udi);
@@ -976,8 +976,8 @@ thunar_vfs_volume_manager_hal_device_removed (LibHalContext *context,
   ThunarVfsVolumeManagerHal *manager_hal = libhal_ctx_get_user_data (context);
   ThunarVfsVolumeHal        *volume_hal;
 
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
-  g_return_if_fail (manager_hal->context == context);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
+  _thunar_vfs_return_if_fail (manager_hal->context == context);
 
   /* check if we already have a volume object for the UDI */
   volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);
@@ -997,8 +997,8 @@ thunar_vfs_volume_manager_hal_device_new_capability (LibHalContext *context,
 {
   ThunarVfsVolumeManagerHal *manager_hal = libhal_ctx_get_user_data (context);
 
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
-  g_return_if_fail (manager_hal->context == context);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
+  _thunar_vfs_return_if_fail (manager_hal->context == context);
 
   /* update the volume for the device (if any) */
   thunar_vfs_volume_manager_hal_update_volume_by_udi (manager_hal, udi);
@@ -1013,8 +1013,8 @@ thunar_vfs_volume_manager_hal_device_lost_capability (LibHalContext *context,
 {
   ThunarVfsVolumeManagerHal *manager_hal = libhal_ctx_get_user_data (context);
 
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
-  g_return_if_fail (manager_hal->context == context);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
+  _thunar_vfs_return_if_fail (manager_hal->context == context);
 
   /* update the volume for the device (if any) */
   thunar_vfs_volume_manager_hal_update_volume_by_udi (manager_hal, udi);
@@ -1031,8 +1031,8 @@ thunar_vfs_volume_manager_hal_device_property_modified (LibHalContext *context,
 {
   ThunarVfsVolumeManagerHal *manager_hal = libhal_ctx_get_user_data (context);
 
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
-  g_return_if_fail (manager_hal->context == context);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
+  _thunar_vfs_return_if_fail (manager_hal->context == context);
 
   /* update the volume for the device (if any) */
   thunar_vfs_volume_manager_hal_update_volume_by_udi (manager_hal, udi);

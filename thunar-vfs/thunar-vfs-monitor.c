@@ -32,14 +32,15 @@
 #include <string.h>
 #endif
 
-#include <thunar-vfs/thunar-vfs-monitor.h>
+#include <thunar-vfs/thunar-vfs-monitor-private.h>
+#include <thunar-vfs/thunar-vfs-path-private.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
 
 /* minimum timer interval (in ms) */
-#define THUNAR_VFS_MONITOR_TIMER_INTERVAL (250)
+#define THUNAR_VFS_MONITOR_TIMER_INTERVAL (200)
 
 /* tagging for notifications, so we can make sure that
  * (slow) FAM events don't override properly feeded events.
@@ -80,7 +81,6 @@ struct _ThunarVfsMonitor
 {
   GObject __parent__;
 
-  GMemChunk                    *handle_chunk;
   GList                        *handles;
 
   gint                          notifications_timer_id;
@@ -195,9 +195,6 @@ thunar_vfs_monitor_init (ThunarVfsMonitor *monitor)
       monitor->fc_watch_id = -1;
     }
 #endif
-
-  /* allocate the memory chunk for the handles */
-  monitor->handle_chunk = g_mem_chunk_create (ThunarVfsMonitorHandle, 64, G_ALLOC_AND_FREE);
 }
 
 
@@ -228,11 +225,12 @@ thunar_vfs_monitor_finalize (GObject *object)
 
   /* drop all handles */
   for (lp = monitor->handles; lp != NULL; lp = lp->next)
-    thunar_vfs_path_unref (((ThunarVfsMonitorHandle *) lp->data)->path);
+    {
+      /* release the path and the handle memory */
+      thunar_vfs_path_unref (((ThunarVfsMonitorHandle *) lp->data)->path);
+      _thunar_vfs_slice_free (ThunarVfsMonitorHandle, lp->data);
+    }
   g_list_free (monitor->handles);
-
-  /* release the memory chunk */
-  g_mem_chunk_destroy (monitor->handle_chunk);
 
   /* release the monitor lock */
   g_mutex_free (monitor->lock);
@@ -461,19 +459,7 @@ error:
 ThunarVfsMonitor*
 thunar_vfs_monitor_get_default (void)
 {
-  static ThunarVfsMonitor *monitor = NULL;
-
-  if (G_UNLIKELY (monitor == NULL))
-    {
-      monitor = g_object_new (THUNAR_VFS_TYPE_MONITOR, NULL);
-      g_object_add_weak_pointer (G_OBJECT (monitor), (gpointer) &monitor);
-    }
-  else
-    {
-      g_object_ref (G_OBJECT (monitor));
-    }
-
-  return monitor;
+  return g_object_ref (G_OBJECT (_thunar_vfs_monitor));
 }
 
 
@@ -513,7 +499,7 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
   g_mutex_lock (monitor->lock);
 
   /* allocate a new handle */
-  handle = g_chunk_new (ThunarVfsMonitorHandle, monitor->handle_chunk);
+  handle = _thunar_vfs_slice_new (ThunarVfsMonitorHandle);
   handle->path = thunar_vfs_path_ref (path);
   handle->callback = callback;
   handle->user_data = user_data;
@@ -521,7 +507,7 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
   handle->fr.reqnum = ++monitor->current_reqnum;
 
 #ifdef HAVE_LIBFAM
-  if (G_LIKELY (monitor->fc_watch_id >= 0))
+  if (G_LIKELY (monitor->fc_watch_id >= 0 && _thunar_vfs_path_is_local (path)))
     {
       /* schedule the watch on the FAM daemon */
       absolute_path = thunar_vfs_path_dup_string (path);
@@ -577,7 +563,7 @@ thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
   g_mutex_lock (monitor->lock);
 
   /* allocate a new handle */
-  handle = g_chunk_new (ThunarVfsMonitorHandle, monitor->handle_chunk);
+  handle = _thunar_vfs_slice_new (ThunarVfsMonitorHandle);
   handle->path = thunar_vfs_path_ref (path);
   handle->callback = callback;
   handle->user_data = user_data;
@@ -585,7 +571,7 @@ thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
   handle->fr.reqnum = ++monitor->current_reqnum;
 
 #ifdef HAVE_LIBFAM
-  if (G_LIKELY (monitor->fc_watch_id >= 0))
+  if (G_LIKELY (monitor->fc_watch_id >= 0 && _thunar_vfs_path_is_local (path)))
     {
       /* schedule the watch on the FAM daemon */
       absolute_path = thunar_vfs_path_dup_string (path);
@@ -625,7 +611,7 @@ thunar_vfs_monitor_remove (ThunarVfsMonitor       *monitor,
 
 #ifdef HAVE_LIBFAM
   /* drop the FAM request from the daemon */
-  if (G_LIKELY (monitor->fc_watch_id >= 0))
+  if (G_LIKELY (monitor->fc_watch_id >= 0 && _thunar_vfs_path_is_local (handle->path)))
     {
       if (FAMCancelMonitor (&monitor->fc, &handle->fr) < 0)
         thunar_vfs_monitor_fam_cancel (monitor);
@@ -635,9 +621,11 @@ thunar_vfs_monitor_remove (ThunarVfsMonitor       *monitor,
   /* unlink the handle */
   monitor->handles = g_list_remove (monitor->handles, handle);
 
-  /* free the handle */
+  /* release the path */
   thunar_vfs_path_unref (handle->path);
-  g_mem_chunk_free (monitor->handle_chunk, handle);
+
+  /* release the handle */
+  _thunar_vfs_slice_free (ThunarVfsMonitorHandle, handle);
 
   /* release the monitor lock */
   g_mutex_unlock (monitor->lock);
@@ -720,6 +708,18 @@ thunar_vfs_monitor_wait (ThunarVfsMonitor *monitor)
     g_cond_timed_wait (monitor->cond, monitor->lock, (GTimeVal *) &tv);
   g_mutex_unlock (monitor->lock);
 }
+
+
+
+/**
+ * _thunar_vfs_monitor:
+ *
+ * The shared #ThunarVfsMonitor instance, which is used by all modules that
+ * need to watch files for changes or manually need to feed changes into the
+ * monitor. Only valid between class to thunar_vfs_init() and
+ * thunar_vfs_shutdown().
+ **/
+ThunarVfsMonitor *_thunar_vfs_monitor = NULL;
 
 
 

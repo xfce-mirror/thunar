@@ -142,8 +142,6 @@ struct _ThunarRenamerDialog
 
   ThunarLauncher      *launcher;
 
-  GtkTooltips         *tooltips;
-
   GtkActionGroup      *action_group;
   GtkUIManager        *ui_manager;
 
@@ -341,10 +339,6 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   /* allocate a new bulk rename model */
   renamer_dialog->model = thunar_renamer_model_new ();
 
-  /* allocate tooltips for the dialog */
-  renamer_dialog->tooltips = gtk_tooltips_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (renamer_dialog->tooltips));
-
   /* determine the list of available renamers (using the renamer providers) */
   provider_factory = thunarx_provider_factory_get_default ();
   providers = thunarx_provider_factory_list_providers (provider_factory, THUNARX_TYPE_RENAMER_PROVIDER);
@@ -373,7 +367,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   button = gtk_dialog_add_button (GTK_DIALOG (renamer_dialog), _("_Rename Files"), GTK_RESPONSE_ACCEPT);
   exo_binding_new (G_OBJECT (renamer_dialog->model), "can-rename", G_OBJECT (button), "sensitive");
   gtk_dialog_set_default_response (GTK_DIALOG (renamer_dialog), GTK_RESPONSE_ACCEPT);
-  gtk_tooltips_set_tip (renamer_dialog->tooltips, button, _("Click here to actually rename the files listed above to their new names."), NULL);
+  thunar_gtk_widget_set_tooltip (button, _("Click here to actually rename the files listed above to their new names."));
 
   /* setup the action group for this dialog */
   renamer_dialog->action_group = gtk_action_group_new ("ThunarRenamerDialog");
@@ -510,7 +504,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
 
       /* add a "Help" button */
       button = gtk_button_new ();
-      gtk_tooltips_set_tip (renamer_dialog->tooltips, button, _("Click here to view the documentation for the selected rename operation."), NULL);
+      thunar_gtk_widget_set_tooltip (button, _("Click here to view the documentation for the selected rename operation."));
       g_signal_connect_swapped (G_OBJECT (button), "clicked", G_CALLBACK (thunar_renamer_dialog_help), renamer_dialog);
       gtk_box_pack_start (GTK_BOX (rbox), button, FALSE, FALSE, 0);
       gtk_widget_show (button);
@@ -661,9 +655,6 @@ thunar_renamer_dialog_finalize (GObject *object)
   /* release the action group and the ui manager */
   g_object_unref (G_OBJECT (renamer_dialog->action_group));
   g_object_unref (G_OBJECT (renamer_dialog->ui_manager));
-
-  /* release the shared tooltips */
-  g_object_unref (G_OBJECT (renamer_dialog->tooltips));
 
   /* release our bulk rename model */
   g_object_unref (G_OBJECT (renamer_dialog->model));

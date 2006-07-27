@@ -18,8 +18,8 @@
  * Boston, MA 02111-1307, USA.
  */
 
-#if !defined (THUNAR_VFS_INSIDE_THUNAR_VFS_H) && !defined (THUNAR_VFS_COMPILATION)
-#error "Only <thunar-vfs/thunar-vfs.h> can be included directly, this file may disappear or change contents."
+#if !defined(THUNAR_VFS_COMPILATION)
+#error "Only <thunar-vfs/thunar-vfs.h> can be included directly, this file is not part of the public API."
 #endif
 
 #ifndef __THUNAR_VFS_DEEP_COUNT_JOB_H__

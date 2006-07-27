@@ -34,6 +34,7 @@
 #include <thunar/thunar-chooser-model.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 
 
@@ -51,7 +52,6 @@ enum
 static void     thunar_chooser_dialog_class_init          (ThunarChooserDialogClass *klass);
 static void     thunar_chooser_dialog_init                (ThunarChooserDialog      *dialog);
 static void     thunar_chooser_dialog_dispose             (GObject                  *object);
-static void     thunar_chooser_dialog_finalize            (GObject                  *object);
 static void     thunar_chooser_dialog_get_property        (GObject                  *object,
                                                            guint                     prop_id,
                                                            GValue                   *value,
@@ -108,7 +108,6 @@ struct _ThunarChooserDialog
   ThunarFile  *file;
   gboolean     open;
 
-  GtkTooltips *tooltips;
   GtkWidget   *header_image;
   GtkWidget   *header_label;
   GtkWidget   *tree_view;
@@ -167,7 +166,6 @@ thunar_chooser_dialog_class_init (ThunarChooserDialogClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_chooser_dialog_dispose;
-  gobject_class->finalize = thunar_chooser_dialog_finalize;
   gobject_class->get_property = thunar_chooser_dialog_get_property;
   gobject_class->set_property = thunar_chooser_dialog_set_property;
 
@@ -213,10 +211,6 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   GtkWidget         *vbox;
   GtkWidget         *box;
   GtkWidget         *swin;
-
-  /* allocate tooltips */
-  dialog->tooltips = gtk_tooltips_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (dialog->tooltips));
 
   /* setup basic window properties */
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
@@ -289,8 +283,8 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* create the "Custom command" expand */
   dialog->custom_expander = gtk_expander_new_with_mnemonic (_("Use a _custom command:"));
-  gtk_tooltips_set_tip (dialog->tooltips, dialog->custom_expander, _("Use a custom command for an application that is not "
-                                                                     "available from the above application list."), NULL);
+  thunar_gtk_widget_set_tooltip (dialog->custom_expander, _("Use a custom command for an application that is not "
+                                                            "available from the above application list."));
   exo_binding_new_with_negation (G_OBJECT (dialog->custom_expander), "expanded", G_OBJECT (dialog->tree_view), "sensitive");
   g_signal_connect (G_OBJECT (dialog->custom_expander), "notify::expanded", G_CALLBACK (thunar_chooser_dialog_notify_expanded), dialog);
   gtk_box_pack_start (GTK_BOX (box), dialog->custom_expander, FALSE, FALSE, 0);
@@ -345,19 +339,6 @@ thunar_chooser_dialog_dispose (GObject *object)
   thunar_chooser_dialog_set_file (dialog, NULL);
 
   (*G_OBJECT_CLASS (thunar_chooser_dialog_parent_class)->dispose) (object);
-}
-
-
-
-static void
-thunar_chooser_dialog_finalize (GObject *object)
-{
-  ThunarChooserDialog *dialog = THUNAR_CHOOSER_DIALOG (object);
-
-  /* release the tooltips */
-  g_object_unref (G_OBJECT (dialog->tooltips));
-
-  (*G_OBJECT_CLASS (thunar_chooser_dialog_parent_class)->finalize) (object);
 }
 
 
@@ -727,16 +708,16 @@ thunar_chooser_dialog_update_header (ThunarChooserDialog *dialog)
       g_free (text);
 
       /* update the "Browse..." tooltip */
-      text = g_strdup_printf (_("Browse the file system to select an application to open files of type \"%s\"."),
-                              thunar_vfs_mime_info_get_comment (mime_info));
-      gtk_tooltips_set_tip (dialog->tooltips, dialog->custom_button, text, NULL);
-      g_free (text);
+      thunar_gtk_widget_set_tooltip (dialog->custom_button,
+                                     _("Browse the file system to select an "
+                                       "application to open files of type \"%s\"."),
+                                     thunar_vfs_mime_info_get_comment (mime_info));
 
       /* update the "Use as default for this kind of file" tooltip */
-      text = g_strdup_printf (_("Change the default application for files of type \"%s\" to the selected application."),
-                              thunar_vfs_mime_info_get_comment (mime_info));
-      gtk_tooltips_set_tip (dialog->tooltips, dialog->default_button, text, NULL);
-      g_free (text);
+      thunar_gtk_widget_set_tooltip (dialog->default_button,
+                                     _("Change the default application for files "
+                                       "of type \"%s\" to the selected application."),
+                                     thunar_vfs_mime_info_get_comment (mime_info));
 
       /* cleanup */
       g_object_unref (G_OBJECT (icon_factory));

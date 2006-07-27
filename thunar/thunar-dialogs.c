@@ -21,13 +21,18 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #ifdef HAVE_STDARG_H
 #include <stdarg.h>
 #endif
-
-#include <exo/exo.h>
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
 
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -128,42 +133,15 @@ thunar_dialogs_show_error (gpointer      parent,
                            ...)
 {
   GtkWidget *dialog;
-  GtkWidget *window = NULL;
+  GtkWindow *window;
   GdkScreen *screen;
   va_list    args;
   gchar     *primary_text;
 
   g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
-  /* determine the proper parent */
-  if (parent == NULL)
-    {
-      /* just use the default screen then */
-      screen = gdk_screen_get_default ();
-    }
-  else if (GDK_IS_SCREEN (parent))
-    {
-      /* yep, that's a screen */
-      screen = GDK_SCREEN (parent);
-    }
-  else
-    {
-      /* parent is a widget, so let's determine the toplevel window */
-      window = gtk_widget_get_toplevel (GTK_WIDGET (parent));
-      if (GTK_WIDGET_TOPLEVEL (window))
-        {
-          /* make sure the toplevel window is shown */
-          gtk_widget_show_now (window);
-        }
-      else
-        {
-          /* no toplevel, not usable then */
-          window = NULL;
-        }
-
-      /* determine the screen for the widget */
-      screen = gtk_widget_get_screen (GTK_WIDGET (parent));
-    }
+  /* parse the parent pointer */
+  screen = thunar_util_parse_parent (parent, &window);
 
   /* determine the primary error text */
   va_start (args, format);
@@ -171,7 +149,7 @@ thunar_dialogs_show_error (gpointer      parent,
   va_end (args);
 
   /* allocate the error dialog */
-  dialog = gtk_message_dialog_new ((GtkWindow *) window,
+  dialog = gtk_message_dialog_new (window,
                                    GTK_DIALOG_DESTROY_WITH_PARENT
                                    | GTK_DIALOG_MODAL,
                                    GTK_MESSAGE_ERROR,
@@ -179,7 +157,7 @@ thunar_dialogs_show_error (gpointer      parent,
                                    "%s.", primary_text);
 
   /* move the dialog to the appropriate screen */
-  if (window == NULL && screen != NULL)
+  if (G_UNLIKELY (window == NULL && screen != NULL))
     gtk_window_set_screen (GTK_WINDOW (dialog), screen);
 
   /* set secondary text if an error is provided */
@@ -220,12 +198,7 @@ thunar_dialogs_show_help (gpointer     parent,
   gchar     *tmp;
 
   /* determine the screen on which to launch the help */
-  if (G_UNLIKELY (parent == NULL))
-    screen = gdk_screen_get_default ();
-  else if (GDK_IS_SCREEN (parent))
-    screen = GDK_SCREEN (parent);
-  else
-    screen = gtk_widget_get_screen (GTK_WIDGET (parent));
+  screen = thunar_util_parse_parent (parent, NULL);
 
   /* generate the command for the documentation browser */
   command = g_strdup (LIBEXECDIR "/ThunarHelp");
@@ -260,4 +233,194 @@ thunar_dialogs_show_help (gpointer     parent,
   g_free (command);
 }
 
+
+
+/**
+ * thunar_dialogs_show_job_ask:
+ * @parent   : the parent #GtkWindow or %NULL.
+ * @question : the question text.
+ * @choices  : possible responses.
+ *
+ * Utility function to display a question dialog for the ThunarVfsJob::ask
+ * signal.
+ *
+ * Return value: the #ThunarVfsJobResponse.
+ **/
+ThunarVfsJobResponse
+thunar_dialogs_show_job_ask (GtkWindow           *parent,
+                             const gchar         *question,
+                             ThunarVfsJobResponse choices)
+{
+  const gchar *separator;
+  const gchar *mnemonic;
+  GtkWidget   *message;
+  GtkWidget   *button;
+  GString     *secondary = g_string_sized_new (256);
+  GString     *primary = g_string_sized_new (256);
+  gint         response;
+  gint         n;
+
+  g_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  g_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+
+  /* try to separate the question into primary and secondary parts */
+  separator = strstr (question, ": ");
+  if (G_LIKELY (separator != NULL))
+    {
+      /* primary is everything before the colon, plus a dot */
+      g_string_append_len (primary, question, separator - question);
+      g_string_append_c (primary, '.');
+
+      /* secondary is everything after the colon (skipping whitespace) */
+      do
+        ++separator;
+      while (g_ascii_isspace (*separator));
+      g_string_append (secondary, separator);
+    }
+  else
+    {
+      /* otherwise separate based on the \n\n */
+      separator = strstr (question, "\n\n");
+      if (G_LIKELY (separator != NULL))
+        {
+          /* primary is everything before the newlines */
+          g_string_append_len (primary, question, separator - question);
+
+          /* secondary is everything after the newlines (skipping whitespace) */
+          while (g_ascii_isspace (*separator))
+            ++separator;
+          g_string_append (secondary, separator);
+        }
+      else
+        {
+          /* everything is primary */
+          g_string_append (primary, question);
+        }
+    }
+
+  /* allocate the question message dialog */
+  message = gtk_message_dialog_new (parent,
+                                    GTK_DIALOG_MODAL |
+                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_QUESTION,
+                                    GTK_BUTTONS_NONE,
+                                    "%s", primary->str);
+  if (G_LIKELY (*secondary->str != '\0'))
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
+
+  /* add the buttons based on the possible choices */
+  for (n = 3; n >= 0; --n)
+    {
+      response = choices & (1 << n);
+      if (response == 0)
+        continue;
+
+      switch (response)
+        {
+        case THUNAR_VFS_JOB_RESPONSE_YES:
+          mnemonic = _("_Yes");
+          break;
+
+        case THUNAR_VFS_JOB_RESPONSE_YES_ALL:
+          mnemonic = _("Yes to _all");
+          break;
+
+        case THUNAR_VFS_JOB_RESPONSE_NO:
+          mnemonic = _("_No");
+          break;
+
+        case THUNAR_VFS_JOB_RESPONSE_CANCEL:
+          response = GTK_RESPONSE_CANCEL;
+          mnemonic = _("_Cancel");
+          break;
+
+        default:
+          g_assert_not_reached ();
+          break;
+        }
+
+      button = gtk_button_new_with_mnemonic (mnemonic);
+      GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
+      gtk_dialog_add_action_widget (GTK_DIALOG (message), button, response);
+      gtk_widget_show (button);
+
+      gtk_dialog_set_default_response (GTK_DIALOG (message), response);
+    }
+
+  /* run the question dialog */
+  response = gtk_dialog_run (GTK_DIALOG (message));
+  gtk_widget_destroy (message);
+
+  /* transform the result as required */
+  if (G_UNLIKELY (response <= 0))
+    response = THUNAR_VFS_JOB_RESPONSE_CANCEL;
+
+  /* cleanup */
+  g_string_free (secondary, TRUE);
+  g_string_free (primary, TRUE);
+
+  return response;
+}
+
+
+
+/**
+ * thunar_dialogs_show_job_error:
+ * @parent : the parent #GtkWindow or %NULL.
+ * @error  : the #GError provided by the #ThunarVfsJob.
+ *
+ * Utility function to display a message dialog for the
+ * ThunarVfsJob::error signal.
+ **/
+void
+thunar_dialogs_show_job_error (GtkWindow *parent,
+                               GError    *error)
+{
+  const gchar *separator;
+  GtkWidget   *message;
+  GString     *secondary = g_string_sized_new (256);
+  GString     *primary = g_string_sized_new (256);
+
+  g_return_if_fail (parent == NULL || GTK_IS_WINDOW (parent));
+  g_return_if_fail (error != NULL && error->message != NULL);
+
+  /* try to separate the message into primary and secondary parts */
+  separator = strstr (error->message, ": ");
+  if (G_LIKELY (separator != NULL))
+    {
+      /* primary is everything before the colon, plus a dot */
+      g_string_append_len (primary, error->message, separator - error->message);
+      g_string_append_c (primary, '.');
+
+      /* secondary is everything after the colon (plus a dot) */
+      do
+        ++separator;
+      while (g_ascii_isspace (*separator));
+      g_string_append (secondary, separator);
+      if (!g_str_has_suffix (separator, "."))
+        g_string_append_c (secondary, '.');
+    }
+  else
+    {
+      /* primary is everything, secondary is empty */
+      g_string_append (primary, error->message);
+    }
+
+  /* allocate and display the error message dialog */
+  message = gtk_message_dialog_new (parent,
+                                    GTK_DIALOG_MODAL |
+                                    GTK_DIALOG_DESTROY_WITH_PARENT,
+                                    GTK_MESSAGE_ERROR,
+                                    GTK_BUTTONS_NONE,
+                                    "%s", primary->str);
+  if (G_LIKELY (*secondary->str != '\0'))
+    gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
+  gtk_dialog_add_button (GTK_DIALOG (message), GTK_STOCK_CLOSE, GTK_RESPONSE_CANCEL);
+  gtk_dialog_run (GTK_DIALOG (message));
+  gtk_widget_destroy (message);
+
+  /* cleanup */
+  g_string_free (secondary, TRUE);
+  g_string_free (primary, TRUE);
+}
 

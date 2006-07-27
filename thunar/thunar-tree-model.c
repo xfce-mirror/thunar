@@ -32,6 +32,7 @@
 #include <thunar/thunar-folder.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-tree-model.h>
 
 
@@ -286,10 +287,11 @@ static void
 thunar_tree_model_init (ThunarTreeModel *model)
 {
   ThunarTreeModelItem *item;
-  ThunarVfsPath       *path;
+  ThunarVfsPath       *system_path_list[3] = { thunar_vfs_path_get_for_home (), thunar_vfs_path_get_for_trash (), thunar_vfs_path_get_for_root () };
   ThunarFile          *file;
   GList               *volumes;
   GNode               *node;
+  guint                n;
 
   /* initialize the model data */
   model->sort_case_sensitive = TRUE;
@@ -308,35 +310,25 @@ thunar_tree_model_init (ThunarTreeModel *model)
   g_signal_connect (G_OBJECT (model->volume_manager), "volumes-removed", G_CALLBACK (thunar_tree_model_volumes_removed), model);
   g_signal_connect (G_OBJECT (model->volume_manager), "volume-pre-unmount", G_CALLBACK (thunar_tree_model_volume_pre_unmount), model);
 
-  /* allocate the home node */
-  path = thunar_vfs_path_get_for_home ();
-  file = thunar_file_get_for_path (path, NULL);
-  if (G_LIKELY (file != NULL))
+  /* append the system defined nodes ('Home', 'Trash', 'File System') */
+  for (n = 0; n < G_N_ELEMENTS (system_path_list); ++n)
     {
-      /* add the home node */
-      item = thunar_tree_model_item_new_with_file (model, file);
-      node = g_node_append_data (model->root, item);
-      g_object_unref (G_OBJECT (file));
+      /* determine the file for the path */
+      file = thunar_file_get_for_path (system_path_list[n], NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          /* create and append the new node */
+          item = thunar_tree_model_item_new_with_file (model, file);
+          node = g_node_append_data (model->root, item);
+          g_object_unref (G_OBJECT (file));
 
-      /* add the dummy node */
-      g_node_append_data (node, NULL);
+          /* add the dummy node */
+          g_node_append_data (node, NULL);
+        }
+
+      /* release the system defined path */
+      thunar_vfs_path_unref (system_path_list[n]);
     }
-  thunar_vfs_path_unref (path);
-
-  /* allocate the root node */
-  path = thunar_vfs_path_get_for_root ();
-  file = thunar_file_get_for_path (path, NULL);
-  if (G_LIKELY (file != NULL))
-    {
-      /* add the root node */
-      item = thunar_tree_model_item_new_with_file (model, file);
-      node = g_node_append_data (model->root, item);
-      g_object_unref (G_OBJECT (file));
-
-      /* add the dummy node */
-      g_node_append_data (node, NULL);
-    }
-  thunar_vfs_path_unref (path);
 
   /* setup the initial volumes */
   volumes = thunar_vfs_volume_manager_get_volumes (model->volume_manager);
@@ -1171,7 +1163,7 @@ thunar_tree_model_item_new_with_file (ThunarTreeModel *model,
 {
   ThunarTreeModelItem *item;
 
-  item = g_new0 (ThunarTreeModelItem, 1);
+  item = _thunar_slice_new0 (ThunarTreeModelItem);
   item->file = g_object_ref (G_OBJECT (file));
   item->model = model;
 
@@ -1187,7 +1179,7 @@ thunar_tree_model_item_new_with_volume (ThunarTreeModel *model,
   ThunarTreeModelItem *item;
   ThunarVfsPath       *path;
 
-  item = g_new0 (ThunarTreeModelItem, 1);
+  item = _thunar_slice_new0 (ThunarTreeModelItem);
   item->volume = g_object_ref (G_OBJECT (volume));
   item->model = model;
 
@@ -1218,7 +1210,7 @@ thunar_tree_model_item_free (ThunarTreeModelItem *item)
   thunar_tree_model_item_reset (item);
 
   /* release the item */
-  g_free (item);
+  _thunar_slice_free (ThunarTreeModelItem, item);
 }
 
 

@@ -25,8 +25,6 @@
 #ifndef __THUNAR_VFS_THUMB_JPEG_H__
 #define __THUNAR_VFS_THUMB_JPEG_H__
 
-#include <gdk-pixbuf/gdk-pixbuf.h>
-
 #include <thunar-vfs/thunar-vfs-config.h>
 
 G_BEGIN_DECLS;

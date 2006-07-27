@@ -46,12 +46,16 @@
 static void     thunar_dbus_service_class_init                  (ThunarDBusServiceClass *klass);
 static void     thunar_dbus_service_init                        (ThunarDBusService      *dbus_service);
 static void     thunar_dbus_service_finalize                    (GObject                *object);
+static gboolean thunar_dbus_service_connect_trash_bin           (ThunarDBusService      *dbus_service,
+                                                                 GError                **error);
 static gboolean thunar_dbus_service_parse_uri_and_display       (ThunarDBusService      *dbus_service,
                                                                  const gchar            *uri,
                                                                  const gchar            *display,
                                                                  ThunarFile            **file_return,
                                                                  GdkScreen             **screen_return,
                                                                  GError                **error);
+static void     thunar_dbus_service_trash_bin_changed           (ThunarDBusService      *dbus_service,
+                                                                 ThunarFile             *trash_bin);
 static gboolean thunar_dbus_service_display_folder              (ThunarDBusService      *dbus_service,
                                                                  const gchar            *uri,
                                                                  const gchar            *display,
@@ -72,15 +76,28 @@ static gboolean thunar_dbus_service_launch                      (ThunarDBusServi
 static gboolean thunar_dbus_service_display_preferences_dialog  (ThunarDBusService      *dbus_service,
                                                                  const gchar            *display,
                                                                  GError                **error);
-static gboolean thunar_dbus_service_launch_files                (ThunarDBusService      *dbus_service,
-                                                                 const gchar            *working_directory,
+static gboolean thunar_dbus_service_display_trash               (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *display,
+                                                                 GError                **error);
+static gboolean thunar_dbus_service_empty_trash                 (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *display,
+                                                                 GError                **error);
+static gboolean thunar_dbus_service_move_to_trash               (ThunarDBusService      *dbus_service,
                                                                  gchar                 **filenames,
                                                                  const gchar            *display,
+                                                                 GError                **error);
+static gboolean thunar_dbus_service_query_trash                 (ThunarDBusService      *dbus_service,
+                                                                 gboolean               *empty,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_bulk_rename                 (ThunarDBusService      *dbus_service,
                                                                  const gchar            *working_directory,
                                                                  gchar                 **filenames,
                                                                  gboolean                standalone,
+                                                                 const gchar            *display,
+                                                                 GError                **error);
+static gboolean thunar_dbus_service_launch_files                (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *working_directory,
+                                                                 gchar                 **filenames,
                                                                  const gchar            *display,
                                                                  GError                **error);
 static gboolean thunar_dbus_service_terminate                   (ThunarDBusService      *dbus_service,
@@ -98,6 +115,7 @@ struct _ThunarDBusService
   GObject __parent__;
 
   DBusGConnection *connection;
+  ThunarFile      *trash_bin;
 };
 
 
@@ -149,6 +167,23 @@ thunar_dbus_service_class_init (ThunarDBusServiceClass *klass)
 
   /* install the D-BUS info for our class */
   dbus_g_object_type_install_info (G_TYPE_FROM_CLASS (klass), &dbus_glib_thunar_dbus_service_object_info);
+
+  /**
+   * ThunarDBusService::trash-changed:
+   * @dbus_service : a #ThunarDBusService.
+   * @full         : %TRUE if the trash bin now contains atleast
+   *                 one item, %FALSE otherwise.
+   *
+   * This signal is emitted whenever the state of the trash bin
+   * changes. Note that this signal is only emitted after the
+   * trash has previously been queried by a D-BUS client.
+   **/
+  g_signal_new (I_("trash-changed"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                0, NULL, NULL,
+                g_cclosure_marshal_VOID__BOOLEAN,
+                G_TYPE_NONE, 1, G_TYPE_BOOLEAN);
 }
 
 
@@ -190,7 +225,41 @@ thunar_dbus_service_finalize (GObject *object)
   if (G_LIKELY (dbus_service->connection != NULL))
     dbus_g_connection_unref (dbus_service->connection);
 
+  /* release the trash bin object */
+  if (G_LIKELY (dbus_service->trash_bin != NULL))
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (dbus_service->trash_bin), thunar_dbus_service_trash_bin_changed, dbus_service);
+      g_object_unref (G_OBJECT (dbus_service->trash_bin));
+    }
+
   (*G_OBJECT_CLASS (thunar_dbus_service_parent_class)->finalize) (object);
+}
+
+
+
+static gboolean
+thunar_dbus_service_connect_trash_bin (ThunarDBusService *dbus_service,
+                                       GError           **error)
+{
+  ThunarVfsPath *trash_bin_path;
+
+  /* check if we're not already connected to the trash bin */
+  if (G_UNLIKELY (dbus_service->trash_bin == NULL))
+    {
+      /* try to connect to the trash bin */
+      trash_bin_path = thunar_vfs_path_get_for_trash ();
+      dbus_service->trash_bin = thunar_file_get_for_path (trash_bin_path, error);
+      if (G_LIKELY (dbus_service->trash_bin != NULL))
+        {
+          /* stay informed about changes to the trash bin */
+          g_signal_connect_swapped (G_OBJECT (dbus_service->trash_bin), "changed",
+                                    G_CALLBACK (thunar_dbus_service_trash_bin_changed),
+                                    dbus_service);
+        }
+      thunar_vfs_path_unref (trash_bin_path);
+    }
+
+  return (dbus_service->trash_bin != NULL);
 }
 
 
@@ -217,6 +286,20 @@ thunar_dbus_service_parse_uri_and_display (ThunarDBusService *dbus_service,
     }
 
   return TRUE;
+}
+
+
+
+static void
+thunar_dbus_service_trash_bin_changed (ThunarDBusService *dbus_service,
+                                       ThunarFile        *trash_bin)
+{
+  g_return_if_fail (THUNAR_IS_DBUS_SERVICE (dbus_service));
+  g_return_if_fail (dbus_service->trash_bin == trash_bin);
+  g_return_if_fail (THUNAR_IS_FILE (trash_bin));
+
+  /* emit the "trash-changed" signal with the new state */
+  g_signal_emit_by_name (G_OBJECT (dbus_service), "trash-changed", (thunar_file_get_size (trash_bin) > 0));
 }
 
 
@@ -396,6 +479,147 @@ thunar_dbus_service_display_preferences_dialog (ThunarDBusService *dbus_service,
   g_object_unref (G_OBJECT (screen));
 
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_display_trash (ThunarDBusService *dbus_service,
+                                   const gchar       *display,
+                                   GError           **error)
+{
+  ThunarApplication *application;
+  GdkScreen         *screen;
+
+  /* connect to the trash bin on-demand */
+  if (!thunar_dbus_service_connect_trash_bin (dbus_service, error))
+    return FALSE;
+
+  /* try to open the screen for the display name */
+  screen = thunar_gdk_screen_open (display, error);
+  if (G_LIKELY (screen != NULL))
+    {
+      /* tell the application to display the trash bin */
+      application = thunar_application_get ();
+      thunar_application_open_window (application, dbus_service->trash_bin, screen);
+      g_object_unref (G_OBJECT (application));
+
+      /* release the screen */
+      g_object_unref (G_OBJECT (screen));
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_empty_trash (ThunarDBusService *dbus_service,
+                                 const gchar       *display,
+                                 GError           **error)
+{
+  ThunarApplication *application;
+  GdkScreen         *screen;
+
+  /* try to open the screen for the display name */
+  screen = thunar_gdk_screen_open (display, error);
+  if (G_LIKELY (screen != NULL))
+    {
+      /* tell the application to empty the trash bin */
+      application = thunar_application_get ();
+      thunar_application_empty_trash (application, screen);
+      g_object_unref (G_OBJECT (application));
+
+      /* release the screen */
+      g_object_unref (G_OBJECT (screen));
+      return TRUE;
+    }
+
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
+                                   gchar            **filenames,
+                                   const gchar       *display,
+                                   GError           **error)
+{
+  ThunarApplication *application;
+  ThunarVfsPath     *target_path;
+  ThunarVfsPath     *path;
+  GdkScreen         *screen;
+  GError            *err = NULL;
+  GList             *path_list = NULL;
+  gchar             *filename;
+  guint              n;
+
+  /* try to open the screen for the display name */
+  screen = thunar_gdk_screen_open (display, &err);
+  if (G_LIKELY (screen != NULL))
+    {
+      /* try to parse the specified filenames */
+      for (n = 0; err == NULL && filenames[n] != NULL; ++n)
+        {
+          /* decode the filename (D-BUS uses UTF-8) */
+          filename = g_filename_from_utf8 (filenames[n], -1, NULL, NULL, &err);
+          if (G_LIKELY (err == NULL))
+            {
+              /* determine the path for the filename */
+              path = thunar_vfs_path_new (filename, &err);
+              if (G_LIKELY (path != NULL))
+                path_list = g_list_append (path_list, path);
+            }
+
+          /* cleanup */
+          g_free (filename);
+        }
+
+      /* check if we succeed */
+      if (G_LIKELY (err == NULL))
+        {
+          /* tell the application to move the specified files to the trash */
+          application = thunar_application_get ();
+          target_path = thunar_vfs_path_get_for_trash ();
+          thunar_application_move_into (application, screen, path_list, target_path, NULL);
+          g_object_unref (G_OBJECT (application));
+          thunar_vfs_path_unref (target_path);
+        }
+
+      /* cleanup */
+      thunar_vfs_path_list_free (path_list);
+      g_object_unref (G_OBJECT (screen));
+    }
+
+  /* check if we failed */
+  if (G_UNLIKELY (err != NULL))
+    {
+      /* propagate the error */
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_dbus_service_query_trash (ThunarDBusService *dbus_service,
+                                 gboolean          *full,
+                                 GError           **error)
+{
+  /* connect to the trash bin on-demand */
+  if (thunar_dbus_service_connect_trash_bin (dbus_service, error))
+    {
+      /* check whether the trash bin is not empty */
+      *full = (thunar_file_get_size (dbus_service->trash_bin) > 0);
+      return TRUE;
+    }
+
+  return FALSE;
 }
 
 

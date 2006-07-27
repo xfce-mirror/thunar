@@ -21,6 +21,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_STDARG_H
+#include <stdarg.h>
+#endif
+
 #include <thunar/thunar-gtk-extensions.h>
 
 
@@ -171,5 +175,46 @@ thunar_gtk_ui_manager_get_action_by_name (GtkUIManager *ui_manager,
 
   return NULL;
 }
+
+
+
+/**
+ * thunar_gtk_widget_set_tooltip:
+ * @widget : a #GtkWidget for which to set the tooltip.
+ * @format : a printf(3)-style format string.
+ * @...    : additional arguments for @format.
+ *
+ * Sets the tooltip for the @widget to a string generated
+ * from the @format and the additional arguments in @...<!--->,
+ * utilizing the shared #GtkTooltips instance.
+ **/
+void
+thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
+                               const gchar *format,
+                               ...)
+{
+  static GtkTooltips *tooltips = NULL;
+  va_list             var_args;
+  gchar              *tooltip;
+
+  g_return_if_fail (GTK_IS_WIDGET (widget));
+  g_return_if_fail (g_utf8_validate (format, -1, NULL));
+
+  /* allocate the shared tooltips on-demand */
+  if (G_UNLIKELY (tooltips == NULL))
+    tooltips = gtk_tooltips_new ();
+
+  /* determine the tooltip */
+  va_start (var_args, format);
+  tooltip = g_strdup_vprintf (format, var_args);
+  va_end (var_args);
+
+  /* setup the tooltip for the widget */
+  gtk_tooltips_set_tip (tooltips, widget, tooltip, NULL);
+
+  /* release the tooltip */
+  g_free (tooltip);
+}
+
 
 

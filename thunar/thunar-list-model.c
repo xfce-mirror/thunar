@@ -2164,9 +2164,14 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
   GtkTreeIter        iter;
   ThunarFile        *file;
   GList             *lp;
+  gchar             *absolute_path;
   gchar             *fspace_string;
+  gchar             *display_name;
   gchar             *size_string;
   gchar             *text;
+  gchar             *s;
+  gint               height;
+  gint               width;
   gint               n;
   Row               *row;
 
@@ -2240,6 +2245,31 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                   size_string, thunar_vfs_mime_info_get_comment (mime_info));
         }
       g_free (size_string);
+
+      /* append the original path (if any) */
+      absolute_path = thunar_file_get_original_path (file);
+      if (G_UNLIKELY (absolute_path != NULL))
+        {
+          /* append the original path to the statusbar text */
+          display_name = g_filename_display_name (absolute_path);
+          s = g_strdup_printf ("%s, %s %s", text, _("Original Path:"), display_name);
+          g_free (display_name);
+          g_free (text);
+          text = s;
+        }
+      else if (thunar_file_is_local (file))
+        {
+          /* check if we can determine the dimension of this file (only for image files) */
+          absolute_path = thunar_vfs_path_dup_string (thunar_file_get_path (file));
+          if (gdk_pixbuf_get_file_info (absolute_path, &width, &height) != NULL)
+            {
+              /* append the image dimensions to the statusbar text */
+              s = g_strdup_printf ("%s, %s %dx%d", text, _("Image Size:"), width, height);
+              g_free (text);
+              text = s;
+            }
+        }
+      g_free (absolute_path);
     }
   else
     {

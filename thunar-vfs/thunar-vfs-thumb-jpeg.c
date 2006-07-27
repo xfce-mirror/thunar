@@ -55,8 +55,6 @@
 #include<jpeglib.h>
 #endif
 
-#include <exo/exo.h>
-
 #include <thunar-vfs/thunar-vfs-thumb-jpeg.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 

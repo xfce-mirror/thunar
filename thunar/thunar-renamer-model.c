@@ -30,6 +30,7 @@
 
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-renamer-model.h>
 
 
@@ -989,7 +990,7 @@ thunar_renamer_model_item_new (ThunarFile *file)
 {
   ThunarRenamerModelItem *item;
 
-  item = g_new0 (ThunarRenamerModelItem, 1);
+  item = _thunar_slice_new0 (ThunarRenamerModelItem);
   item->info = thunar_vfs_info_ref (thunar_file_get_info (file));
   item->file = g_object_ref (G_OBJECT (file));
   item->dirty = TRUE;
@@ -1005,7 +1006,7 @@ thunar_renamer_model_item_free (ThunarRenamerModelItem *item)
   g_object_unref (G_OBJECT (item->file));
   thunar_vfs_info_unref (item->info);
   g_free (item->name);
-  g_free (item);
+  _thunar_slice_free (ThunarRenamerModelItem, item);
 }
 
 

@@ -36,12 +36,21 @@
 #include <unistd.h>
 #endif
 
-#include <glib/gstdio.h>
-
 #include <thunar-vfs/thunar-vfs-deep-count-job.h>
+#include <thunar-vfs/thunar-vfs-io-trash.h>
+#include <thunar-vfs/thunar-vfs-job-private.h>
 #include <thunar-vfs/thunar-vfs-marshal.h>
+#include <thunar-vfs/thunar-vfs-path-private.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
+
+/* use g_lstat() and g_stat() on win32 */
+#if defined(G_OS_WIN32)
+#include <glib/gstdio.h>
+#else
+#define g_lstat(path, statb) (lstat ((path), (statb)))
+#define g_stat(path, statb) (stat ((path), (statb)))
+#endif
 
 
 
@@ -78,19 +87,19 @@ struct _ThunarVfsDeepCountJobClass
 
 struct _ThunarVfsDeepCountJob
 {
-  ThunarVfsJob            __parent__;
+  ThunarVfsJob    __parent__;
 
-  ThunarVfsDeepCountFlags flags;
-  ThunarVfsPath          *path;
+  gboolean        follow_links;
+  ThunarVfsPath  *path;
 
   /* the time of the last "status-ready" emission */
-  GTimeVal                last_time;
+  GTimeVal        last_time;
 
   /* status information */
-  guint64                 total_size;
-  guint                   file_count;
-  guint                   directory_count;
-  guint                   unreadable_directory_count;
+  guint64         total_size;
+  guint           file_count;
+  guint           directory_count;
+  guint           unreadable_directory_count;
 };
 
 
@@ -179,45 +188,77 @@ thunar_vfs_deep_count_job_execute (ThunarVfsJob *job)
 {
   ThunarVfsDeepCountJob *deep_count_job = THUNAR_VFS_DEEP_COUNT_JOB (job);
   struct stat            statb;
-  GError                *error;
+  GError                *err = NULL;
   gchar                 *absolute_path;
+  GList                 *path_list;
+  GList                 *lp;
 
-  /* try to stat the base path */
-  absolute_path = thunar_vfs_path_dup_string (deep_count_job->path);
-  if (G_UNLIKELY (g_stat (absolute_path, &statb) < 0))
+  /* check if we should count the trash root folder */
+  if (G_UNLIKELY (_thunar_vfs_path_is_trash (deep_count_job->path)))
     {
-      /* tell the listeners that the job failed */
-      error = g_error_new_literal (G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
-      thunar_vfs_job_error (job, error);
-      g_error_free (error);
-    }
-  else if (!S_ISDIR (statb.st_mode))
-    {
-      /* the base path is not a directory */
-      deep_count_job->total_size += statb.st_size;
-      deep_count_job->file_count += 1;
+      /* count the trash root folder as directory */
+      deep_count_job->directory_count += 1;
+
+      /* scan the trash root folder */
+      path_list = _thunar_vfs_io_trash_scandir (deep_count_job->path, deep_count_job->follow_links, NULL, &err);
     }
   else
     {
-      /* process the directory recursively */
-      if (thunar_vfs_deep_count_job_process (deep_count_job, absolute_path, &statb))
+      /* just count the single item */
+      path_list = thunar_vfs_path_list_prepend (NULL, deep_count_job->path);
+    }
+
+  /* process all paths */
+  for (lp = path_list; err == NULL && lp != NULL; lp = lp->next)
+    {
+      /* try to translate the path object to an absolute local path */
+      absolute_path = _thunar_vfs_path_translate_dup_string (lp->data, THUNAR_VFS_PATH_SCHEME_FILE, &err);
+      if (G_LIKELY (absolute_path != NULL))
         {
-          /* emit "status-ready" signal */
-          thunar_vfs_job_emit (THUNAR_VFS_JOB (deep_count_job), deep_count_signals[STATUS_READY],
-                               0, deep_count_job->total_size, deep_count_job->file_count,
-                               deep_count_job->directory_count, deep_count_job->unreadable_directory_count);
-        }
-      else
-        {
-          /* base directory not readable */
-          error = g_error_new_literal (G_FILE_ERROR, G_FILE_ERROR_IO, _("Failed to read folder contents"));
-          thunar_vfs_job_error (job, error);
-          g_error_free (error);
+          /* try to stat the file (handle broken links properly) */
+          if (g_stat (absolute_path, &statb) < 0 && g_lstat (absolute_path, &statb) < 0)
+            {
+              /* tell the listeners that the job failed */
+              _thunar_vfs_set_g_error_from_errno (&err, errno);
+            }
+          else if (!S_ISDIR (statb.st_mode))
+            {
+              /* the base path is not a directory */
+              deep_count_job->total_size += statb.st_size;
+              deep_count_job->file_count += 1;
+            }
+          else
+            {
+              /* process the directory recursively */
+              if (!thunar_vfs_deep_count_job_process (deep_count_job, absolute_path, &statb))
+                {
+                  /* base directory not readable */
+                  g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_IO, _("Failed to read folder contents"));
+                }
+            }
+
+          /* release the base path */
+          g_free (absolute_path);
         }
     }
 
-  /* release the base path */
-  g_free (absolute_path);
+  /* check if we had an error */
+  if (G_UNLIKELY (err != NULL))
+    {
+      /* forward the error to the job owner */
+      _thunar_vfs_job_error (job, err);
+      g_error_free (err);
+    }
+  else
+    {
+      /* emit "status-ready" signal */
+      _thunar_vfs_job_emit (THUNAR_VFS_JOB (deep_count_job), deep_count_signals[STATUS_READY],
+                            0, deep_count_job->total_size, deep_count_job->file_count,
+                            deep_count_job->directory_count, deep_count_job->unreadable_directory_count);
+    }
+
+  /* release the path_list */
+  thunar_vfs_path_list_free (path_list);
 }
 
 
@@ -263,7 +304,7 @@ thunar_vfs_deep_count_job_process (ThunarVfsDeepCountJob *deep_count_job,
           if (S_ISDIR (statb->st_mode))
             {
               /* check if this is a symlink to a folder */
-              if (g_lstat (path, statb) == 0 && (!S_ISLNK (statb->st_mode) || (deep_count_job->flags & THUNAR_VFS_DEEP_COUNT_FLAGS_FOLLOW_SYMLINKS) != 0))
+              if (g_lstat (path, statb) == 0 && (!S_ISLNK (statb->st_mode) || deep_count_job->follow_links))
                 {
                   /* process the directory recursively */
                   if (thunar_vfs_deep_count_job_process (deep_count_job, path, statb))
@@ -332,9 +373,9 @@ thunar_vfs_deep_count_job_status_ready (ThunarVfsDeepCountJob *deep_count_job)
           deep_count_job->last_time = current_time;
 
           /* emit "status-ready" signal */
-          thunar_vfs_job_emit (THUNAR_VFS_JOB (deep_count_job), deep_count_signals[STATUS_READY],
-                               0, deep_count_job->total_size, deep_count_job->file_count,
-                               deep_count_job->directory_count, deep_count_job->unreadable_directory_count);
+          _thunar_vfs_job_emit (THUNAR_VFS_JOB (deep_count_job), deep_count_signals[STATUS_READY],
+                                0, deep_count_job->total_size, deep_count_job->file_count,
+                                deep_count_job->directory_count, deep_count_job->unreadable_directory_count);
         }
     }
 }
@@ -368,8 +409,12 @@ thunar_vfs_deep_count_job_new (ThunarVfsPath          *path,
   /* allocate the new job */
   deep_count_job = g_object_new (THUNAR_VFS_TYPE_DEEP_COUNT_JOB, NULL);
   deep_count_job->path = thunar_vfs_path_ref (path);
-  deep_count_job->flags = flags;
+  deep_count_job->follow_links = (flags & THUNAR_VFS_DEEP_COUNT_FLAGS_FOLLOW_SYMLINKS);
 
   return THUNAR_VFS_JOB (deep_count_job);
 }
 
+
+
+#define __THUNAR_VFS_DEEP_COUNT_JOB_C__
+#include <thunar-vfs/thunar-vfs-aliasdef.c>

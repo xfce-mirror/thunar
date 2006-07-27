@@ -56,7 +56,7 @@
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-thumb-jpeg.h>
 #include <thunar-vfs/thunar-vfs-thumb-pixbuf.h>
-#include <thunar-vfs/thunar-vfs-thumb.h>
+#include <thunar-vfs/thunar-vfs-thumb-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 #ifdef HAVE_GCONF
@@ -64,11 +64,11 @@
 #endif
 
 /* use g_rename() and g_unlink() on win32 */
-#if GLIB_CHECK_VERSION(2,6,0) && defined(G_OS_WIN32)
+#if defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
-#define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
-#define g_unlink(filename) (unlink ((filename)))
+#define g_rename(from, to) (rename ((from), (to)))
+#define g_unlink(path) (unlink ((path)))
 #endif
 
 
@@ -937,6 +937,30 @@ done1:
 done0:
   fclose (fp);
   return is_valid;
+}
+
+
+
+/**
+ * _thunar_vfs_thumbnail_remove_for_path:
+ * @path : the #ThunarVfsPath to the file whose thumbnails should be removed.
+ *
+ * Removes any existing thumbnails for the file at the specified @path.
+ **/
+void
+_thunar_vfs_thumbnail_remove_for_path (const ThunarVfsPath *path)
+{
+  ThunarVfsThumbSize size;
+  gchar             *thumbnail_path;
+
+  /* drop the normal and large thumbnails for the path */
+  for (size = THUNAR_VFS_THUMB_SIZE_NORMAL; size < THUNAR_VFS_THUMB_SIZE_LARGE; ++size)
+    {
+      /* the thumbnail may not exist, so simply ignore errors here */
+      thumbnail_path = thunar_vfs_thumbnail_for_path (path, size);
+      g_unlink (thumbnail_path);
+      g_free (thumbnail_path);
+    }
 }
 
 

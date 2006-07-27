@@ -110,6 +110,7 @@ static void           thunar_shortcuts_view_drop_uri_list         (ThunarShortcu
                                                                    GtkTreePath              *dst_path);
 static void           thunar_shortcuts_view_open                  (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_open_in_new_window    (ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_empty_trash           (ThunarShortcutsView      *view);
 static gboolean       thunar_shortcuts_view_eject                 (ThunarShortcutsView      *view);
 static gboolean       thunar_shortcuts_view_mount                 (ThunarShortcutsView      *view);
 static gboolean       thunar_shortcuts_view_unmount               (ThunarShortcutsView      *view);
@@ -847,6 +848,20 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
     }
+  else if (G_UNLIKELY (file != NULL && thunar_file_is_trashed (file) && thunar_file_is_root (file)))
+    {
+      /* append the "Empty Trash" menu action */
+      item = gtk_image_menu_item_new_with_mnemonic (_("_Empty Trash"));
+      gtk_widget_set_sensitive (item, (thunar_file_get_size (file) > 0));
+      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_empty_trash), view);
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+
+      /* append a menu separator */
+      item = gtk_separator_menu_item_new ();
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+    }
 
   /* append the remove menu item */
   item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Shortcut"));
@@ -1226,6 +1241,21 @@ thunar_shortcuts_view_open_in_new_window (ThunarShortcutsView *view)
           g_object_unref (G_OBJECT (file));
         }
     }
+}
+
+
+
+static void
+thunar_shortcuts_view_empty_trash (ThunarShortcutsView *view)
+{
+  ThunarApplication *application;
+
+  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+
+  /* empty the trash bin (asking the user first) */
+  application = thunar_application_get ();
+  thunar_application_empty_trash (application, GTK_WIDGET (view));
+  g_object_unref (G_OBJECT (application));
 }
 
 

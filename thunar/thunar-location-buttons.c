@@ -111,6 +111,8 @@ static void           thunar_location_buttons_context_menu              (ThunarL
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_create_folder      (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
+static void           thunar_location_buttons_action_empty_trash        (GtkAction                  *action,
+                                                                         ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_down_folder        (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_open               (GtkAction                  *action,
@@ -1240,18 +1242,35 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   /* add a separator */
   gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu", "separator1", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
 
-  /* add the "Create Folder" action */
-  tooltip = g_strdup_printf (_("Create a new folder in \"%s\""), thunar_file_get_display_name (file));
-  action = gtk_action_new ("ThunarLocationButtons::create-folder", _("Create _Folder..."), tooltip, NULL);
-  g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
-  g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_location_buttons_action_create_folder), buttons);
-  gtk_action_set_sensitive (action, thunar_file_is_writable (file));
-  gtk_action_group_add_action (action_group, action);
-  gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu",
-                         gtk_action_get_name (action), gtk_action_get_name (action),
-                         GTK_UI_MANAGER_MENUITEM, FALSE);
-  g_object_unref (G_OBJECT (action));
-  g_free (tooltip);
+  /* check if we don't have a trashed resource here */
+  if (G_LIKELY (!thunar_file_is_trashed (file)))
+    {
+      /* add the "Create Folder" action */
+      tooltip = g_strdup_printf (_("Create a new folder in \"%s\""), thunar_file_get_display_name (file));
+      action = gtk_action_new ("ThunarLocationButtons::create-folder", _("Create _Folder..."), tooltip, NULL);
+      g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+      g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_location_buttons_action_create_folder), buttons);
+      gtk_action_set_sensitive (action, thunar_file_is_writable (file));
+      gtk_action_group_add_action (action_group, action);
+      gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu",
+                             gtk_action_get_name (action), gtk_action_get_name (action),
+                             GTK_UI_MANAGER_MENUITEM, FALSE);
+      g_object_unref (G_OBJECT (action));
+      g_free (tooltip);
+    }
+  else if (thunar_file_is_root (file))
+    {
+      /* add the "Empty Trash" action */
+      action = gtk_action_new ("ThunarLocationButtons::empty-trash", _("_Empty Trash"), _("Delete all files and folders in the Trash"), NULL);
+      g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
+      g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_location_buttons_action_empty_trash), buttons);
+      gtk_action_set_sensitive (action, (thunar_file_get_size (file) > 0));
+      gtk_action_group_add_action (action_group, action);
+      gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu",
+                             gtk_action_get_name (action), gtk_action_get_name (action),
+                             GTK_UI_MANAGER_MENUITEM, FALSE);
+      g_object_unref (G_OBJECT (action));
+    }
 
   /* add a separator */
   gtk_ui_manager_add_ui (ui_manager, merge_id, "/ThunarLocationButtons::context-menu", "separator2", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
@@ -1365,6 +1384,23 @@ thunar_location_buttons_action_create_folder (GtkAction             *action,
   /* cleanup */
   g_object_unref (G_OBJECT (mime_database));
   thunar_vfs_mime_info_unref (mime_info);
+}
+
+
+
+static void
+thunar_location_buttons_action_empty_trash (GtkAction             *action,
+                                            ThunarLocationButtons *buttons)
+{
+  ThunarApplication *application;
+
+  g_return_if_fail (GTK_IS_ACTION (action));
+  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+
+  /* launch the operation */
+  application = thunar_application_get ();
+  thunar_application_empty_trash (application, GTK_WIDGET (buttons));
+  g_object_unref (G_OBJECT (application));
 }
 
 

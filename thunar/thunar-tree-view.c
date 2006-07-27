@@ -135,6 +135,7 @@ static void             thunar_tree_view_action_create_folder       (ThunarTreeV
 static void             thunar_tree_view_action_cut                 (ThunarTreeView       *view);
 static void             thunar_tree_view_action_delete              (ThunarTreeView       *view);
 static void             thunar_tree_view_action_eject               (ThunarTreeView       *view);
+static void             thunar_tree_view_action_empty_trash         (ThunarTreeView       *view);
 static gboolean         thunar_tree_view_action_mount               (ThunarTreeView       *view);
 static void             thunar_tree_view_action_open                (ThunarTreeView       *view);
 static void             thunar_tree_view_action_open_in_new_window  (ThunarTreeView       *view);
@@ -1068,18 +1069,36 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
     }
+  else if (G_UNLIKELY (file != NULL && thunar_file_is_trashed (file) && thunar_file_is_root (file)))
+    {
+      /* append the "Empty Trash" menu action */
+      item = gtk_image_menu_item_new_with_mnemonic (_("_Empty Trash"));
+      gtk_widget_set_sensitive (item, (thunar_file_get_size (file) > 0));
+      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_empty_trash), view);
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
 
-  /* append the "Create Folder" menu action */
-  item = gtk_image_menu_item_new_with_mnemonic (_("Create _Folder..."));
-  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_create_folder), view);
-  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-  gtk_widget_set_sensitive (item, (file != NULL && thunar_file_is_writable (file)));
-  gtk_widget_show (item);
+      /* append a menu separator */
+      item = gtk_separator_menu_item_new ();
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+    }
 
-  /* append a separator item */
-  item = gtk_separator_menu_item_new ();
-  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
-  gtk_widget_show (item);
+  /* check if we have a non-trashed resource */
+  if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file)))
+    {
+      /* append the "Create Folder" menu action */
+      item = gtk_image_menu_item_new_with_mnemonic (_("Create _Folder..."));
+      gtk_widget_set_sensitive (item, thunar_file_is_writable (file));
+      g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_create_folder), view);
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+
+      /* append a separator item */
+      item = gtk_separator_menu_item_new ();
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+    }
 
   if (G_LIKELY (file != NULL))
     {
@@ -1488,51 +1507,27 @@ thunar_tree_view_action_delete (ThunarTreeView *view)
 {
   ThunarApplication *application;
   ThunarFile        *file;
-  GtkWidget         *dialog;
-  GtkWidget         *window;
-  GList              paths;
-  gint               response;
+  GList              file_list;
 
   g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* determine the selected file */
   file = thunar_tree_view_get_selected_file (view);
-  if (G_UNLIKELY (file == NULL))
-    return;
-
-  /* ask the user to confirm the delete operation */
-  window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-  dialog = gtk_message_dialog_new (GTK_WINDOW (window),
-                                   GTK_DIALOG_MODAL
-                                   | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                   GTK_MESSAGE_QUESTION,
-                                   GTK_BUTTONS_NONE,
-                                   _("Are you sure that you want to\npermanently delete \"%s\"?"),
-                                   thunar_file_get_display_name (file));
-  gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                          GTK_STOCK_DELETE, GTK_RESPONSE_YES,
-                          NULL);
-  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
-  gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a file, it is permanently lost."));
-  response = gtk_dialog_run (GTK_DIALOG (dialog));
-  gtk_widget_destroy (dialog);
-
-  /* perform the delete operation */
-  if (G_LIKELY (response == GTK_RESPONSE_YES))
+  if (G_LIKELY (file != NULL))
     {
-      /* fake a path list with only the folders path */
-      paths.data = thunar_file_get_path (file);
-      paths.next = paths.prev = NULL;
+      /* fake a file list */
+      file_list.data = file;
+      file_list.next = NULL;
+      file_list.prev = NULL;
 
-      /* really delete the folder */
+      /* delete the file */
       application = thunar_application_get ();
-      thunar_application_unlink (application, window, &paths);
+      thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list);
       g_object_unref (G_OBJECT (application));
-    }
 
-  /* release the file reference */
-  g_object_unref (G_OBJECT (file));
+      /* release the file */
+      g_object_unref (G_OBJECT (file));
+    }
 }
 
 
@@ -1564,6 +1559,21 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
       /* release the volume */
       g_object_unref (G_OBJECT (volume));
     }
+}
+
+
+
+static void
+thunar_tree_view_action_empty_trash (ThunarTreeView *view)
+{
+  ThunarApplication *application;
+
+  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+
+  /* empty the trash bin (asking the user first) */
+  application = thunar_application_get ();
+  thunar_application_empty_trash (application, GTK_WIDGET (view));
+  g_object_unref (G_OBJECT (application));
 }
 
 

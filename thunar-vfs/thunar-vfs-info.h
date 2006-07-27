@@ -31,13 +31,37 @@
 
 G_BEGIN_DECLS;
 
+/**
+ * ThunarVfsInfoMetadata:
+ * @THUNAR_VFS_INFO_METADATA_FILE_LINK_TARGET    : the target of a symbolic link.
+ * @THUNAR_VFS_INFO_METADATA_TRASH_ORIGINAL_PATH : the original path of a trashed resource.
+ * @THUNAR_VFS_INFO_METADATA_TRASH_DELETION_DATE : the deletion date of a trashed resource as date string.
+ *
+ * Metadata categories for thunar_vfs_info_get_metadata().
+ *
+ * Since: 0.3.3
+ **/
+typedef enum /*< skip >*/
+{
+  THUNAR_VFS_INFO_METADATA_FILE_LINK_TARGET    = 0,
+  THUNAR_VFS_INFO_METADATA_TRASH_ORIGINAL_PATH = 64,
+  THUNAR_VFS_INFO_METADATA_TRASH_DELETION_DATE = 65,
+} ThunarVfsInfoMetadata;
+
+
+/**
+ * THUNAR_VFS_TYPE_INFO:
+ *
+ * Returns the type if for #ThunarVfsInfo<!---->s, which is
+ * a boxed type.
+ **/
+#define THUNAR_VFS_TYPE_INFO (thunar_vfs_info_get_type ())
+
 /* Used to avoid a dependency of thunarx on thunar-vfs */
 #ifndef __THUNAR_VFS_INFO_DEFINED__
 #define __THUNAR_VFS_INFO_DEFINED__
 typedef struct _ThunarVfsInfo ThunarVfsInfo;
 #endif
-
-#define THUNAR_VFS_TYPE_INFO (thunar_vfs_info_get_type ())
 
 struct _ThunarVfsInfo
 {
@@ -89,36 +113,40 @@ struct _ThunarVfsInfo
 
 GType                        thunar_vfs_info_get_type         (void) G_GNUC_CONST;
 
-ThunarVfsInfo               *thunar_vfs_info_new_for_path     (ThunarVfsPath       *path,
-                                                               GError             **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsInfo               *thunar_vfs_info_new_for_path     (ThunarVfsPath        *path,
+                                                               GError              **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-G_INLINE_FUNC ThunarVfsInfo *thunar_vfs_info_ref              (ThunarVfsInfo       *info);
-void                         thunar_vfs_info_unref            (ThunarVfsInfo       *info);
+G_INLINE_FUNC ThunarVfsInfo *thunar_vfs_info_ref              (ThunarVfsInfo        *info);
+void                         thunar_vfs_info_unref            (ThunarVfsInfo        *info);
 
-ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsInfo *info) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsInfo  *info) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-gboolean                     thunar_vfs_info_get_free_space   (const ThunarVfsInfo *info,
-                                                               ThunarVfsFileSize   *free_space_return);
+G_INLINE_FUNC const gchar   *thunar_vfs_info_get_custom_icon  (const ThunarVfsInfo  *info) G_GNUC_WARN_UNUSED_RESULT;
 
-G_INLINE_FUNC const gchar   *thunar_vfs_info_get_custom_icon  (const ThunarVfsInfo *info);
+gboolean                     thunar_vfs_info_get_free_space   (const ThunarVfsInfo  *info,
+                                                               ThunarVfsFileSize    *free_space_return) G_GNUC_WARN_UNUSED_RESULT;
 
-gchar                       *thunar_vfs_info_read_link        (const ThunarVfsInfo *info,
-                                                               GError             **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar                       *thunar_vfs_info_get_metadata     (const ThunarVfsInfo  *info,
+                                                               ThunarVfsInfoMetadata metadata,
+                                                               GError              **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-gboolean                     thunar_vfs_info_execute          (const ThunarVfsInfo *info,
-                                                               GdkScreen           *screen,
-                                                               GList               *path_list,
-                                                               const gchar         *working_directory,
-                                                               GError             **error);
+G_INLINE_FUNC gchar         *thunar_vfs_info_read_link        (const ThunarVfsInfo  *info,
+                                                               GError              **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-gboolean                     thunar_vfs_info_rename           (ThunarVfsInfo       *info,
-                                                               const gchar         *name,
-                                                               GError             **error);
+gboolean                     thunar_vfs_info_execute          (const ThunarVfsInfo  *info,
+                                                               GdkScreen            *screen,
+                                                               GList                *path_list,
+                                                               const gchar          *working_directory,
+                                                               GError              **error);
 
-gboolean                     thunar_vfs_info_matches          (const ThunarVfsInfo *a,
-                                                               const ThunarVfsInfo *b);
+gboolean                     thunar_vfs_info_rename           (ThunarVfsInfo        *info,
+                                                               const gchar          *name,
+                                                               GError              **error);
 
-G_INLINE_FUNC void           thunar_vfs_info_list_free        (GList               *info_list);
+gboolean                     thunar_vfs_info_matches          (const ThunarVfsInfo  *a,
+                                                               const ThunarVfsInfo  *b) G_GNUC_WARN_UNUSED_RESULT;
+
+void                         thunar_vfs_info_list_free        (GList                *info_list);
 
 
 /* inline functions implementations */
@@ -159,30 +187,28 @@ thunar_vfs_info_get_custom_icon (const ThunarVfsInfo *info)
 }
 
 /**
- * thunar_vfs_info_list_free:
- * @info_list : a list of #ThunarVfsInfo<!---->s.
+ * thunar_vfs_info_read_link:
+ * @info  : a #ThunarVfsInfo.
+ * @error : return location for errors or %NULL.
  *
- * Unrefs all #ThunarVfsInfo<!---->s in @info_list and
- * frees the list itself.
+ * Reads the contents of the symbolic link to which @info refers to,
+ * like the POSIX readlink() function. The returned string is in the
+ * encoding used for filenames.
+ *
+ * The caller is responsible to free the returned string using g_free()
+ * when no longer needed.
+ *
+ * Return value: a newly allocated string with the contents of the
+ *               symbolic link, or %NULL if an error occurred.
  **/
-G_INLINE_FUNC void
-thunar_vfs_info_list_free (GList *info_list)
+G_INLINE_FUNC gchar*
+thunar_vfs_info_read_link (const ThunarVfsInfo *info,
+                           GError             **error)
 {
-  GList *lp;
-  for (lp = info_list; lp != NULL; lp = lp->next)
-    thunar_vfs_info_unref (lp->data);
-  g_list_free (info_list);
+  return thunar_vfs_info_get_metadata (info, THUNAR_VFS_INFO_METADATA_FILE_LINK_TARGET, error);
 }
 #endif /* G_CAN_INLINE || __THUNAR_VFS_INFO_C__ */
 
-
-#if defined(THUNAR_VFS_COMPILATION)
-void           _thunar_vfs_info_init          (void) G_GNUC_INTERNAL;
-void           _thunar_vfs_info_shutdown      (void) G_GNUC_INTERNAL;
-ThunarVfsInfo *_thunar_vfs_info_new_internal  (ThunarVfsPath *path,
-                                               const gchar   *absolute_path,
-                                               GError       **error) G_GNUC_INTERNAL;
-#endif
 
 G_END_DECLS;
 

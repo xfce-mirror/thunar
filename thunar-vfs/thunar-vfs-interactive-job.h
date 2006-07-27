@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,7 +22,6 @@
 #define __THUNAR_VFS_INTERACTIVE_JOB_H__
 
 #include <thunar-vfs/thunar-vfs-job.h>
-#include <thunar-vfs/thunar-vfs-monitor.h>
 
 G_BEGIN_DECLS;
 
@@ -42,8 +41,10 @@ typedef struct _ThunarVfsInteractiveJob      ThunarVfsInteractiveJob;
  * @THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES_ALL :
  * @THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_NO      :
  * @THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL  :
+ *
+ * Deprecated: 0.3.3: Use #ThunarVfsJobResponse instead.
  **/
-typedef enum /*< flags >*/
+typedef enum /*< skip >*/
 {
   THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES     = 1 << 0,
   THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES_ALL = 1 << 1,
@@ -51,49 +52,30 @@ typedef enum /*< flags >*/
   THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL  = 1 << 3,
 } ThunarVfsInteractiveJobResponse;
 
+#define THUNAR_VFS_TYPE_VFS_INTERACTIVE_JOB_RESPONSE (thunar_vfs_interactive_job_response_get_type ())
+GType thunar_vfs_interactive_job_response_get_type (void) G_GNUC_CONST;
+
 struct _ThunarVfsInteractiveJobClass
 {
-  ThunarVfsJobClass __parent__;
-
-  /* signals */
-  ThunarVfsInteractiveJobResponse (*ask) (ThunarVfsInteractiveJob        *interactive_job,
-                                          const gchar                    *message,
-                                          ThunarVfsInteractiveJobResponse choices);
-
   /*< private >*/
+  ThunarVfsJobClass __parent__;
   void (*reserved1) (void);
   void (*reserved2) (void);
   void (*reserved3) (void);
+  void (*reserved4) (void);
 };
 
 struct _ThunarVfsInteractiveJob
 {
+  /*< private >*/
   ThunarVfsJob __parent__;
-
-  /* the last time we fired the "percent" signal (in msecs) */
-  guint64 last_percent_time;
-
-  /* connection to the default ThunarVfsMonitor */
-  ThunarVfsMonitor *monitor;
-
-  guint overwrite_all : 1;
-  guint skip_all : 1;
+  guint64      reserved0; /* backward ABI compatibility */
+  gpointer     reserved1;
+  guint        reserved2 : 1;
+  guint        reserved3 : 1;
 };
 
-GType     thunar_vfs_interactive_job_get_type     (void) G_GNUC_CONST;
-
-void      thunar_vfs_interactive_job_info_message (ThunarVfsInteractiveJob *interactive_job,
-                                                   const gchar             *message) G_GNUC_INTERNAL;
-void      thunar_vfs_interactive_job_percent      (ThunarVfsInteractiveJob *interactive_job,
-                                                   gdouble                  percent) G_GNUC_INTERNAL;
-
-void      thunar_vfs_interactive_job_new_files    (ThunarVfsInteractiveJob *interactive_job,
-                                                   const GList             *path_list) G_GNUC_INTERNAL;
-
-gboolean  thunar_vfs_interactive_job_overwrite    (ThunarVfsInteractiveJob *interactive_job,
-                                                   const gchar             *message) G_GNUC_INTERNAL;
-gboolean  thunar_vfs_interactive_job_skip         (ThunarVfsInteractiveJob *interactive_job,
-                                                   const gchar             *message) G_GNUC_INTERNAL;
+GType thunar_vfs_interactive_job_get_type (void) G_GNUC_CONST;
 
 G_END_DECLS;
 

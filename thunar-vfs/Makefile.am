@@ -32,6 +32,30 @@ libthunar_vfs_headers =							\
 	thunar-vfs-util.h						\
 	thunar-vfs-volume.h
 
+libthunar_vfs_io_sources =						\
+	thunar-vfs-io-jobs.c						\
+	thunar-vfs-io-jobs.h						\
+	thunar-vfs-io-local.c						\
+	thunar-vfs-io-local.h						\
+	thunar-vfs-io-local-xfer.c					\
+	thunar-vfs-io-local-xfer.h					\
+	thunar-vfs-io-ops.c						\
+	thunar-vfs-io-ops.h						\
+	thunar-vfs-io-scandir.c						\
+	thunar-vfs-io-scandir.h						\
+	thunar-vfs-io-trash.c						\
+	thunar-vfs-io-trash.h
+
+libthunar_vfs_os_sources =						\
+	thunar-vfs-os.h
+if THUNAR_VFS_OS_IMPL_BSD
+libthunar_vfs_os_sources +=						\
+	thunar-vfs-os-bsd.c
+else
+libthunar_vfs_os_sources +=						\
+	thunar-vfs-os-generic.c
+endif
+
 libthunar_vfs_public_built_sources =					\
 	thunar-vfs-enum-types.h
 
@@ -53,14 +77,10 @@ libthunar_vfs_include_HEADERS =						\
 libthunar_vfs_1_la_SOURCES =						\
 	$(libthunar_vfs_volume_impl_sources)				\
 	$(libthunar_vfs_built_sources)					\
+	$(libthunar_vfs_io_sources)					\
+	$(libthunar_vfs_os_sources)					\
 	$(libthunar_vfs_headers)					\
-	thunar-vfs-chmod-job.c						\
-	thunar-vfs-chmod-job.h						\
-	thunar-vfs-chown-job.c						\
-	thunar-vfs-chown-job.h						\
 	thunar-vfs-config.c						\
-	thunar-vfs-creat-job.c						\
-	thunar-vfs-creat-job.h						\
 	thunar-vfs-deep-count-job.c					\
 	thunar-vfs-deep-count-job.h					\
 	thunar-vfs-exec.c						\
@@ -68,16 +88,14 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-info.c						\
 	thunar-vfs-interactive-job.c					\
 	thunar-vfs-job.c						\
-	thunar-vfs-link-job.c						\
-	thunar-vfs-link-job.h						\
-	thunar-vfs-listdir-job.c					\
-	thunar-vfs-listdir-job.h					\
+	thunar-vfs-job-private.h					\
 	thunar-vfs-mime-action-private.h				\
 	thunar-vfs-mime-action.c					\
 	thunar-vfs-mime-application.c					\
 	thunar-vfs-mime-cache.c						\
 	thunar-vfs-mime-cache.h						\
 	thunar-vfs-mime-database.c					\
+	thunar-vfs-mime-database-private.h				\
 	thunar-vfs-mime-handler-private.h				\
 	thunar-vfs-mime-handler.c					\
 	thunar-vfs-mime-info.c						\
@@ -89,30 +107,27 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-mime-provider.h					\
 	thunar-vfs-mime-sniffer.c					\
 	thunar-vfs-mime-sniffer.h					\
-	thunar-vfs-mkdir-job.c						\
-	thunar-vfs-mkdir-job.h						\
 	thunar-vfs-monitor.c						\
+	thunar-vfs-monitor-private.h					\
+	thunar-vfs-path-private.h					\
 	thunar-vfs-path.c						\
 	thunar-vfs-private.c						\
 	thunar-vfs-private.h						\
-	thunar-vfs-scandir.c						\
-	thunar-vfs-scandir.h						\
+	thunar-vfs-simple-job.c						\
+	thunar-vfs-simple-job.h						\
 	thunar-vfs-thumb-jpeg.c						\
 	thunar-vfs-thumb-jpeg.h						\
 	thunar-vfs-thumb-pixbuf.c					\
 	thunar-vfs-thumb-pixbuf.h					\
+	thunar-vfs-thumb-private.h					\
 	thunar-vfs-thumb.c						\
 	thunar-vfs-transfer-job.c					\
 	thunar-vfs-transfer-job.h					\
-	thunar-vfs-unlink-job.c						\
-	thunar-vfs-unlink-job.h						\
 	thunar-vfs-user.c						\
 	thunar-vfs-util.c						\
 	thunar-vfs-volume.c						\
 	thunar-vfs-volume-manager.c					\
 	thunar-vfs-volume-private.h					\
-	thunar-vfs-xfer.c						\
-	thunar-vfs-xfer.h						\
 	thunar-vfs.c
 
 libthunar_vfs_1_la_CFLAGS =						\
@@ -267,7 +282,8 @@ thunar-vfs-marshal.h: stamp-thunar-vfs-marshal.h
 stamp-thunar-vfs-marshal.h: thunar-vfs-marshal.list Makefile
 	( cd $(srcdir) && glib-genmarshal \
 		--prefix=_thunar_vfs_marshal \
-		--header thunar-vfs-marshal.list ) >> xgen-tvmh \
+		--header thunar-vfs-marshal.list \
+	     | sed -e 's/marshal_data);$$/marshal_data) G_GNUC_INTERNAL;/' ) >> xgen-tvmh \
 	&& ( cmp -s xgen-tvmh thunar-vfs-marshal.h || cp xgen-tvmh thunar-vfs-marshal.h ) \
 	&& rm -f xgen-tvmh \
 	&& echo timestamp > $(@F)

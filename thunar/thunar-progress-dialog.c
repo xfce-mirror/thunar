@@ -21,16 +21,7 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_MEMORY_H
-#include <memory.h>
-#endif
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-#ifdef HAVE_TIME_H
-#include <time.h>
-#endif
-
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-progress-dialog.h>
@@ -45,34 +36,34 @@ enum
 
 
 
-static void                             thunar_progress_dialog_class_init   (ThunarProgressDialogClass      *klass);
-static void                             thunar_progress_dialog_init         (ThunarProgressDialog           *dialog);
-static void                             thunar_progress_dialog_dispose      (GObject                        *object);
-static void                             thunar_progress_dialog_get_property (GObject                        *object,
-                                                                             guint                           prop_id,
-                                                                             GValue                         *value,
-                                                                             GParamSpec                     *pspec);
-static void                             thunar_progress_dialog_set_property (GObject                        *object,
-                                                                             guint                           prop_id,
-                                                                             const GValue                   *value,
-                                                                             GParamSpec                     *pspec);
-static void                             thunar_progress_dialog_response     (GtkDialog                      *dialog,
-                                                                             gint                            response);
-static ThunarVfsInteractiveJobResponse  thunar_progress_dialog_ask          (ThunarProgressDialog           *dialog,
-                                                                             const gchar                    *message,
-                                                                             ThunarVfsInteractiveJobResponse choices,
-                                                                             ThunarVfsJob                   *job);
-static void                             thunar_progress_dialog_error        (ThunarProgressDialog           *dialog,
-                                                                             GError                         *error,
-                                                                             ThunarVfsJob                   *job);
-static void                             thunar_progress_dialog_finished     (ThunarProgressDialog           *dialog,
-                                                                             ThunarVfsJob                   *job);
-static void                             thunar_progress_dialog_info_message (ThunarProgressDialog           *dialog,
-                                                                             const gchar                    *message,
-                                                                             ThunarVfsJob                   *job);
-static void                             thunar_progress_dialog_percent      (ThunarProgressDialog           *dialog,
-                                                                             gdouble                         percent,
-                                                                             ThunarVfsJob                   *job);
+static void                 thunar_progress_dialog_class_init   (ThunarProgressDialogClass  *klass);
+static void                 thunar_progress_dialog_init         (ThunarProgressDialog       *dialog);
+static void                 thunar_progress_dialog_dispose      (GObject                    *object);
+static void                 thunar_progress_dialog_get_property (GObject                    *object,
+                                                                 guint                       prop_id,
+                                                                 GValue                     *value,
+                                                                 GParamSpec                 *pspec);
+static void                 thunar_progress_dialog_set_property (GObject                    *object,
+                                                                 guint                       prop_id,
+                                                                 const GValue               *value,
+                                                                 GParamSpec                 *pspec);
+static void                 thunar_progress_dialog_response     (GtkDialog                  *dialog,
+                                                                 gint                        response);
+static ThunarVfsJobResponse thunar_progress_dialog_ask          (ThunarProgressDialog       *dialog,
+                                                                 const gchar                *message,
+                                                                 ThunarVfsJobResponse        choices,
+                                                                 ThunarVfsJob               *job);
+static void                 thunar_progress_dialog_error        (ThunarProgressDialog       *dialog,
+                                                                 GError                     *error,
+                                                                 ThunarVfsJob               *job);
+static void                 thunar_progress_dialog_finished     (ThunarProgressDialog       *dialog,
+                                                                 ThunarVfsJob               *job);
+static void                 thunar_progress_dialog_info_message (ThunarProgressDialog       *dialog,
+                                                                 const gchar                *message,
+                                                                 ThunarVfsJob               *job);
+static void                 thunar_progress_dialog_percent      (ThunarProgressDialog       *dialog,
+                                                                 gdouble                     percent,
+                                                                 ThunarVfsJob               *job);
 
 
 
@@ -149,13 +140,13 @@ thunar_progress_dialog_class_init (ThunarProgressDialogClass *klass)
   /**
    * ThunarProgressDialog:job:
    *
-   * The #ThunarVfsInteractiveJob, whose progress is displayed by
+   * The #ThunarVfsJob, whose progress is displayed by
    * this dialog, or %NULL if no job is set.
    **/
   g_object_class_install_property (gobject_class,
                                    PROP_JOB,
                                    g_param_spec_object ("job", "job", "job",
-                                                        THUNAR_VFS_TYPE_INTERACTIVE_JOB,
+                                                        THUNAR_VFS_TYPE_JOB,
                                                         EXO_PARAM_READWRITE));
 }
 
@@ -271,154 +262,22 @@ thunar_progress_dialog_set_property (GObject      *object,
 
 
 
-static ThunarVfsInteractiveJobResponse
-thunar_progress_dialog_ask (ThunarProgressDialog           *dialog,
-                            const gchar                    *message,
-                            ThunarVfsInteractiveJobResponse choices,
-                            ThunarVfsJob                   *job)
+static ThunarVfsJobResponse
+thunar_progress_dialog_ask (ThunarProgressDialog *dialog,
+                            const gchar          *message,
+                            ThunarVfsJobResponse  choices,
+                            ThunarVfsJob         *job)
 {
-  const gchar *mnemonic;
-  const gchar *messagep;
-  const gchar *stock_id;
-  GtkWidget   *question;
-  GtkWidget   *hbox;
-  GtkWidget   *vbox;
-  GtkWidget   *image;
-  GtkWidget   *label;
-  GtkWidget   *button;
-  gchar       *title;
-  gchar       *text;
-  gint         response;
-  gint         n;
-
-  g_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL);
-  g_return_val_if_fail (g_utf8_validate (message, -1, NULL), THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL);
-  g_return_val_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (job), THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL);
-  g_return_val_if_fail (dialog->job == job, THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL);
+  g_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  g_return_val_if_fail (g_utf8_validate (message, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  g_return_val_if_fail (dialog->job == job, THUNAR_VFS_JOB_RESPONSE_CANCEL);
 
   /* be sure to display the progress dialog prior to opening the question dialog */
   gtk_widget_show_now (GTK_WIDGET (dialog));
 
-  question = g_object_new (GTK_TYPE_DIALOG,
-                           "has-separator", FALSE,
-                           "resizable", FALSE,
-                           "title", _("Question"),
-                           NULL);
-  gtk_window_set_transient_for (GTK_WINDOW (question), GTK_WINDOW (dialog));
-
-  hbox = gtk_hbox_new (FALSE, 12);
-  gtk_container_set_border_width (GTK_CONTAINER (hbox), 12);
-  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (question)->vbox), hbox, FALSE, FALSE, 0);
-  gtk_widget_show (hbox);
-
-  image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_QUESTION, GTK_ICON_SIZE_DIALOG);
-  gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
-  gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
-  gtk_widget_show (image);
-
-  vbox = gtk_vbox_new (FALSE, 12);
-  gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
-  gtk_widget_show (vbox);
-
-  /* split the message */
-  messagep = strstr (message, "\n\n");
-  if (G_LIKELY (messagep != NULL))
-    {
-      title = g_strndup (message, messagep - message);
-      text = g_strdup (messagep + 2);
-    }
-  else
-    {
-      title = g_strdup (message);
-      text = NULL;
-    }
-
-  label = gtk_label_new (title);
-  gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-  gtk_label_set_selectable (GTK_LABEL (label), TRUE);
-  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
-  gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, FALSE, 0);
-  gtk_widget_show (label);
-
-  /* check if we have two parts */
-  if (G_LIKELY (text != NULL))
-    {
-      /* make the title bold */
-      gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
-
-      /* add the text */
-      label = gtk_label_new (text);
-      gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-      gtk_label_set_selectable (GTK_LABEL (label), TRUE);
-      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
-      gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
-      gtk_widget_show (label);
-    }
-
-  /* cleanup */
-  g_free (title);
-  g_free (text);
-
-  /* add the buttons based on the possible choices */
-  for (n = 3; n >= 0; --n)
-    {
-      response = choices & (1 << n);
-      if (response == 0)
-        continue;
-
-      switch (response)
-        {
-        case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES:
-          mnemonic = _("_Yes");
-          stock_id = GTK_STOCK_YES;
-          break;
-
-        case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_YES_ALL:
-          mnemonic = _("Yes to _all");
-          stock_id = NULL;
-          break;
-
-        case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_NO:
-          mnemonic = _("_No");
-          stock_id = GTK_STOCK_NO;
-          break;
-
-        case THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL:
-          mnemonic = _("_Cancel");
-          stock_id = GTK_STOCK_CANCEL;
-          break;
-          break;
-
-        default:
-          g_assert_not_reached ();
-          break;
-        }
-
-      button = gtk_button_new_with_mnemonic (mnemonic);
-      GTK_WIDGET_SET_FLAGS (button, GTK_CAN_DEFAULT);
-      gtk_dialog_add_action_widget (GTK_DIALOG (question), button, response);
-      gtk_widget_show (button);
-
-      /* check if we should add an image to the button */
-      if (G_LIKELY (stock_id != NULL))
-        {
-          image = gtk_image_new_from_stock (stock_id, GTK_ICON_SIZE_BUTTON);
-          gtk_button_set_image (GTK_BUTTON (button), image);
-          gtk_widget_show (image);
-        }
-
-      gtk_dialog_set_default_response (GTK_DIALOG (question), response);
-    }
-
-  /* run the question */
-  response = gtk_dialog_run (GTK_DIALOG (question));
-  gtk_widget_destroy (question);
-
-  /* transform the result as required */
-  if (G_UNLIKELY (response <= 0))
-    response = THUNAR_VFS_INTERACTIVE_JOB_RESPONSE_CANCEL;
-
-  return response;
+  /* display the question dialog */
+  return thunar_dialogs_show_job_ask (GTK_WINDOW (dialog), message, choices);
 }
 
 
@@ -428,24 +287,16 @@ thunar_progress_dialog_error (ThunarProgressDialog *dialog,
                               GError               *error,
                               ThunarVfsJob         *job)
 {
-  GtkWidget *message;
-
   g_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   g_return_if_fail (error != NULL && error->message != NULL);
-  g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (job));
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
   g_return_if_fail (dialog->job == job);
 
   /* be sure to display the progress dialog prior to opening the error dialog */
   gtk_widget_show_now (GTK_WIDGET (dialog));
 
-  message = gtk_message_dialog_new (GTK_WINDOW (dialog),
-                                    GTK_DIALOG_MODAL |
-                                    GTK_DIALOG_DESTROY_WITH_PARENT,
-                                    GTK_MESSAGE_ERROR,
-                                    GTK_BUTTONS_CLOSE,
-                                    "%s", error->message);
-  gtk_dialog_run (GTK_DIALOG (message));
-  gtk_widget_destroy (message);
+  /* display the error message */
+  thunar_dialogs_show_job_error (GTK_WINDOW (dialog), error);
 }
 
 
@@ -455,7 +306,7 @@ thunar_progress_dialog_finished (ThunarProgressDialog *dialog,
                                  ThunarVfsJob         *job)
 {
   g_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
-  g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (job));
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
   g_return_if_fail (dialog->job == job);
 
   gtk_dialog_response (GTK_DIALOG (dialog), GTK_RESPONSE_ACCEPT);
@@ -470,7 +321,7 @@ thunar_progress_dialog_info_message (ThunarProgressDialog *dialog,
 {
   g_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   g_return_if_fail (g_utf8_validate (message, -1, NULL));
-  g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (job));
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
   g_return_if_fail (dialog->job == job);
 
   gtk_label_set_text (GTK_LABEL (dialog->progress_label), message);
@@ -500,7 +351,7 @@ thunar_progress_dialog_percent (ThunarProgressDialog *dialog,
 
   g_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   g_return_if_fail (percent >= 0.0 && percent <= 100.0);
-  g_return_if_fail (THUNAR_VFS_IS_INTERACTIVE_JOB (job));
+  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
   g_return_if_fail (dialog->job == job);
 
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (dialog->progress_bar), percent / 100.0);
@@ -590,7 +441,7 @@ thunar_progress_dialog_new (void)
 
 /**
  * thunar_progress_dialog_new_with_job:
- * @job : a #ThunarVfsInteractiveJob or %NULL.
+ * @job : a #ThunarVfsJob or %NULL.
  *
  * Allocates a new #ThunarProgressDialog and associates it with
  * the @job.
@@ -600,7 +451,7 @@ thunar_progress_dialog_new (void)
 GtkWidget*
 thunar_progress_dialog_new_with_job (ThunarVfsJob *job)
 {
-  g_return_val_if_fail (job == NULL || THUNAR_VFS_IS_INTERACTIVE_JOB (job), NULL);
+  g_return_val_if_fail (job == NULL || THUNAR_VFS_IS_JOB (job), NULL);
   return g_object_new (THUNAR_TYPE_PROGRESS_DIALOG, "job", job, NULL);
 }
 
@@ -610,7 +461,7 @@ thunar_progress_dialog_new_with_job (ThunarVfsJob *job)
  * thunar_progress_dialog_get_job:
  * @dialog : a #ThunarProgressDialog.
  *
- * Returns the #ThunarVfsInteractiveJob associated with @dialog
+ * Returns the #ThunarVfsJob associated with @dialog
  * or %NULL if no job is currently associated with @dialog.
  *
  * Return value: the job associated with @dialog or %NULL.
@@ -627,7 +478,7 @@ thunar_progress_dialog_get_job (ThunarProgressDialog *dialog)
 /**
  * thunar_progress_dialog_set_job:
  * @dialog : a #ThunarProgressDialog.
- * @job    : a #ThunarVfsInteractiveJob or %NULL.
+ * @job    : a #ThunarVfsJob or %NULL.
  *
  * Associates @job with @dialog.
  **/
@@ -636,7 +487,7 @@ thunar_progress_dialog_set_job (ThunarProgressDialog *dialog,
                                 ThunarVfsJob         *job)
 {
   g_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
-  g_return_if_fail (job == NULL || THUNAR_VFS_IS_INTERACTIVE_JOB (job));
+  g_return_if_fail (job == NULL || THUNAR_VFS_IS_JOB (job));
 
   /* check if we're already on that job */
   if (G_UNLIKELY (dialog->job == job))

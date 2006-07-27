@@ -35,6 +35,7 @@
 #include <thunar-vfs/thunar-vfs-mime-info.h>
 
 #include <thunar-vfs/thunar-vfs-mime-parser.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 
@@ -137,7 +138,7 @@ thunar_vfs_mime_info_new (const gchar *name,
     len = strlen (name);
 
   /* allocate the new object */
-  info = g_malloc (sizeof (*info) + len + 1);
+  info = _thunar_vfs_slice_alloc (sizeof (*info) + len + 1);
   info->ref_count = 1;
   info->comment = NULL;
   info->icon_name = NULL;
@@ -182,8 +183,8 @@ thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
           g_free (info->icon_name);
         }
 
-      /* free the info struct */
-      g_free (info);
+      /* free the info struct (need to determine the block size for the slice allocator) */
+      _thunar_vfs_slice_free1 (sizeof (*info) + strlen (((const gchar *) info) + sizeof (*info)) + 1, info);
     }
 }
 
@@ -428,6 +429,22 @@ thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
     }
 
   return info->icon_name;
+}
+
+
+
+/**
+ * thunar_vfs_mime_info_list_free:
+ * @info_list : a #GList of #ThunarVfsMimeInfo<!---->s
+ *
+ * Frees the list and all #ThunarVfsMimeInfo<!---->s
+ * contained within the list.
+ **/
+void
+thunar_vfs_mime_info_list_free (GList *info_list)
+{
+  g_list_foreach (info_list, (GFunc) thunar_vfs_mime_info_unref, NULL);
+  g_list_free (info_list);
 }
 
 

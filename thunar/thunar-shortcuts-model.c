@@ -29,8 +29,9 @@
 #include <stdlib.h>
 #endif
 
-#include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-shortcuts-model.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -245,14 +246,16 @@ thunar_shortcuts_model_drag_source_init (GtkTreeDragSourceIface *iface)
 static void
 thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 {
-  ThunarShortcut *shortcut;
   ThunarVfsVolume *volume;
+  ThunarShortcut  *shortcut;
+  ThunarVfsPath   *system_path_list[3] = { thunar_vfs_path_get_for_home (), thunar_vfs_path_get_for_trash (), thunar_vfs_path_get_for_root () };
   ThunarVfsPath   *fhome;
   ThunarVfsPath   *fpath;
   GtkTreePath     *path;
   ThunarFile      *file;
   GList           *volumes;
   GList           *lp;
+  guint            n;
 
   model->stamp = g_random_int ();
 
@@ -264,39 +267,26 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   /* will be used to append the shortcuts to the list */
   path = gtk_tree_path_new_from_indices (0, -1);
 
-  /* append the 'Home' shortcut */
-  fpath = thunar_vfs_path_get_for_home ();
-  file = thunar_file_get_for_path (fpath, NULL);
-  if (G_LIKELY (file != NULL))
+  /* append the system defined items ('Home', 'Trash', 'File System') */
+  for (n = 0; n < G_N_ELEMENTS (system_path_list); ++n)
     {
-      shortcut = g_new (ThunarShortcut, 1);
-      shortcut->type = THUNAR_SHORTCUT_SYSTEM_DEFINED;
-      shortcut->file = file;
-      shortcut->name = NULL;
-      shortcut->volume = NULL;
+      /* determine the file for the path */
+      file = thunar_file_get_for_path (system_path_list[n], NULL);
+      if (G_LIKELY (file != NULL))
+        {
+          /* create the shortcut */
+          shortcut = _thunar_slice_new0 (ThunarShortcut);
+          shortcut->type = THUNAR_SHORTCUT_SYSTEM_DEFINED;
+          shortcut->file = file;
 
-      /* append the shortcut to the list */
-      thunar_shortcuts_model_add_shortcut (model, shortcut, path);
-      gtk_tree_path_next (path);
+          /* append the shortcut to the list */
+          thunar_shortcuts_model_add_shortcut (model, shortcut, path);
+          gtk_tree_path_next (path);
+        }
+
+      /* release the system defined path */
+      thunar_vfs_path_unref (system_path_list[n]);
     }
-  thunar_vfs_path_unref (fpath);
-
-  /* append the 'Filesystem' shortcut */
-  fpath = thunar_vfs_path_get_for_root ();
-  file = thunar_file_get_for_path (fpath, NULL);
-  if (G_LIKELY (file != NULL))
-    {
-      shortcut = g_new (ThunarShortcut, 1);
-      shortcut->type = THUNAR_SHORTCUT_SYSTEM_DEFINED;
-      shortcut->file = file;
-      shortcut->name = NULL;
-      shortcut->volume = NULL;
-
-      /* append the shortcut to the list */
-      thunar_shortcuts_model_add_shortcut (model, shortcut, path);
-      gtk_tree_path_next (path);
-    }
-  thunar_vfs_path_unref (fpath);
 
   /* prepend the removable media volumes */
   volumes = thunar_vfs_volume_manager_get_volumes (model->volume_manager);
@@ -314,10 +304,8 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
           /* generate the shortcut (w/o a file, else we might
            * prevent the volume from being unmounted)
            */
-          shortcut = g_new (ThunarShortcut, 1);
+          shortcut = _thunar_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_REMOVABLE_MEDIA;
-          shortcut->file = NULL;
-          shortcut->name = NULL;
           shortcut->volume = volume;
 
           /* link the shortcut to the list */
@@ -333,7 +321,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 
   /* prepend the row separator (only supported with Gtk+ 2.6) */
 #if GTK_CHECK_VERSION(2,6,0)
-  shortcut = g_new0 (ThunarShortcut, 1);
+  shortcut = _thunar_slice_new0 (ThunarShortcut);
   shortcut->type = THUNAR_SHORTCUT_SEPARATOR;
   thunar_shortcuts_model_add_shortcut (model, shortcut, path);
   gtk_tree_path_next (path);
@@ -802,10 +790,9 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
             }
 
           /* create the shortcut entry */
-          shortcut = g_new (ThunarShortcut, 1);
+          shortcut = _thunar_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
           shortcut->file = file;
-          shortcut->volume = NULL;
           shortcut->name = (*name != '\0') ? g_strdup (name) : NULL;
 
           /* append the shortcut to the list */
@@ -1038,10 +1025,8 @@ thunar_shortcuts_model_volume_changed (ThunarVfsVolume      *volume,
             }
 
           /* allocate a new shortcut */
-          shortcut = g_new (ThunarShortcut, 1);
+          shortcut = _thunar_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_REMOVABLE_MEDIA;
-          shortcut->file = NULL;
-          shortcut->name = NULL;
           shortcut->volume = volume;
 
           /* the volume is present now, so we have to display it */
@@ -1194,8 +1179,11 @@ thunar_shortcut_free (ThunarShortcut       *shortcut,
       g_object_unref (G_OBJECT (shortcut->volume));
     }
 
+  /* release the shortcut name */
   g_free (shortcut->name);
-  g_free (shortcut);
+
+  /* release the shortcut itself */
+  _thunar_slice_free (ThunarShortcut, shortcut);
 }
 
 
@@ -1348,7 +1336,7 @@ thunar_shortcuts_model_add (ThunarShortcutsModel *model,
       return;
 
   /* create the new shortcut that will be inserted */
-  shortcut = g_new0 (ThunarShortcut, 1);
+  shortcut = _thunar_slice_new0 (ThunarShortcut);
   shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
   shortcut->file = g_object_ref (G_OBJECT (file));
 

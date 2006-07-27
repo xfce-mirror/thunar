@@ -297,6 +297,8 @@ thunar_vfs_file_flags_get_type
 <FILE>thunar-vfs-path</FILE>
 <TITLE>ThunarVfsPath</TITLE>
 ThunarVfsPath
+THUNAR_VFS_TYPE_PATH
+THUNAR_VFS_TYPE_PATH_LIST
 thunar_vfs_path_new
 thunar_vfs_path_get_for_home
 thunar_vfs_path_get_for_root
@@ -320,10 +322,9 @@ thunar_vfs_path_list_append
 thunar_vfs_path_list_prepend
 thunar_vfs_path_list_copy
 thunar_vfs_path_list_free
-<SUBSECTION Standard>
-THUNAR_VFS_TYPE_PATH
 <SUBSECTION Private>
 thunar_vfs_path_get_type
+thunar_vfs_path_list_get_type
 </SECTION>
 
 

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -263,8 +263,10 @@ thunar_metafile_fetch (ThunarMetafile   *metafile,
   if (G_UNLIKELY (metafile->context == NULL))
     goto use_default_value;
 
-  /* determine the string representation of the path */
-  key_size = thunar_vfs_path_to_string (path, key_path, sizeof (key_path), NULL);
+  /* determine the string representation of the path (using the URI for non-local paths) */
+  key_size = (thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_FILE)
+           ? thunar_vfs_path_to_string (path, key_path, sizeof (key_path), NULL)
+           : thunar_vfs_path_to_uri (path, key_path, sizeof (key_path), NULL);
   if (G_UNLIKELY (key_size <= 0))
     goto use_default_value;
 
@@ -352,8 +354,10 @@ thunar_metafile_store (ThunarMetafile   *metafile,
   if (G_UNLIKELY (metafile->context == NULL))
     return;
 
-  /* determine the string representation of the path */
-  key_size = thunar_vfs_path_to_string (path, key_path, sizeof (key_path), NULL);
+  /* determine the string representation of the path (using the URI for non-local paths) */
+  key_size = (thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_FILE)
+           ? thunar_vfs_path_to_string (path, key_path, sizeof (key_path), NULL)
+           : thunar_vfs_path_to_uri (path, key_path, sizeof (key_path), NULL);
   if (G_UNLIKELY (key_size <= 0))
     return;
 

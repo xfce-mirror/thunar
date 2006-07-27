@@ -24,6 +24,9 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
@@ -38,6 +41,7 @@
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-path-entry.h>
+#include <thunar/thunar-util.h>
 
 
 
@@ -333,7 +337,10 @@ thunar_path_entry_finalize (GObject *object)
 
   /* release the current-file reference */
   if (G_LIKELY (path_entry->current_file != NULL))
-    g_object_unref (G_OBJECT (path_entry->current_file));
+    {
+      g_signal_handlers_disconnect_by_func (G_OBJECT (path_entry->current_file), thunar_path_entry_set_current_file, path_entry);
+      g_object_unref (G_OBJECT (path_entry->current_file));
+    }
 
   /* drop the check_completion_idle source */
   if (G_UNLIKELY (path_entry->check_completion_idle_id >= 0))
@@ -786,6 +793,7 @@ thunar_path_entry_changed (GtkEditable *editable)
   ThunarVfsPath      *folder_path = NULL;
   ThunarVfsPath      *file_path = NULL;
   ThunarFolder       *folder;
+  const gchar        *text;
   ThunarFile         *current_folder;
   ThunarFile         *current_file;
   gchar              *folder_part = NULL;
@@ -795,8 +803,25 @@ thunar_path_entry_changed (GtkEditable *editable)
   if (G_UNLIKELY (path_entry->in_change))
     return;
 
-  /* parse the entered string */
-  if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
+  /* parse the entered string (handling URIs properly) */
+  text = gtk_entry_get_text (GTK_ENTRY (path_entry));
+  if (G_UNLIKELY (thunar_util_looks_like_an_uri (text)))
+    {
+      /* try to parse the URI text */
+      file_path = thunar_vfs_path_new (text, NULL);
+      if (G_LIKELY (file_path != NULL))
+        {
+          /* check if the file_path ends with a separator */
+          if (g_str_has_suffix (text, "/"))
+            folder_path = file_path;
+          else if (!thunar_vfs_path_is_root (file_path))
+            folder_path = thunar_vfs_path_get_parent (file_path);
+
+          /* need to take a reference for the folder_path */
+          thunar_vfs_path_ref (folder_path);
+        }
+    }
+  else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
     {
       /* determine the folder path */
       folder_path = thunar_vfs_path_new (folder_part, NULL);
@@ -842,10 +867,16 @@ thunar_path_entry_changed (GtkEditable *editable)
   if (current_file != path_entry->current_file)
     {
       if (G_UNLIKELY (path_entry->current_file != NULL))
-        g_object_unref (G_OBJECT (path_entry->current_file));
+        {
+          g_signal_handlers_disconnect_by_func (G_OBJECT (path_entry->current_file), thunar_path_entry_set_current_file, path_entry);
+          g_object_unref (G_OBJECT (path_entry->current_file));
+        }
       path_entry->current_file = current_file;
       if (G_UNLIKELY (current_file != NULL))
-        g_object_ref (G_OBJECT (current_file));
+        {
+          g_object_ref (G_OBJECT (current_file));
+          g_signal_connect_swapped (G_OBJECT (current_file), "changed", G_CALLBACK (thunar_path_entry_set_current_file), path_entry);
+        }
       g_object_notify (G_OBJECT (path_entry), "current-file");
     }
 
@@ -1259,7 +1290,7 @@ thunar_path_entry_parse (ThunarPathEntry *path_entry,
         }
       else
         {
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid path"));
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, g_strerror (EINVAL));
         }
     }
 
@@ -1361,33 +1392,36 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
                                     ThunarFile      *current_file)
 {
   ThunarVfsPath *path;
-  gchar         *uri_string;
-  gchar          text[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar         *text;
 
   g_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
   g_return_if_fail (current_file == NULL || THUNAR_IS_FILE (current_file));
 
   path = (current_file != NULL) ? thunar_file_get_path (current_file) : NULL;
-  if (G_UNLIKELY (path == NULL || thunar_vfs_path_to_string (path, text, sizeof (text), NULL) < 0))
+  if (G_UNLIKELY (path == NULL))
     {
-      gtk_entry_set_text (GTK_ENTRY (path_entry), "");
+      /* invalid file */
+      text = g_strdup ("");
+    }
+  else if (thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_FILE)
+    {
+      /* try absolute path, fallback to URI if not valid UTF-8 */
+      text = thunar_vfs_path_dup_string (path);
+      if (!g_utf8_validate (text, -1, NULL))
+        {
+          g_free (text);
+          goto uri;
+        }
     }
   else
     {
-      /* check whether the path text is valid UTF8 */
-      if (g_utf8_validate (text, -1, NULL))
-        {
-          /* we'll display the path if we have valid UTF-8 */
-          gtk_entry_set_text (GTK_ENTRY (path_entry), text);
-        }
-      else
-        {
-          /* display the full URI */
-          uri_string = thunar_vfs_path_dup_uri (path);
-          gtk_entry_set_text (GTK_ENTRY (path_entry), uri_string);
-          g_free (uri_string);
-        }
+uri:  /* display the URI for the path */
+      text = thunar_vfs_path_dup_uri (path);
     }
+
+  /* setup the entry text */
+  gtk_entry_set_text (GTK_ENTRY (path_entry), text);
+  g_free (text);
 
   gtk_editable_set_position (GTK_EDITABLE (path_entry), -1);
 
