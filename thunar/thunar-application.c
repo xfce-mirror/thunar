@@ -22,6 +22,9 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_ERRNO_H
+#include <errno.h>
+#endif
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
 #endif
@@ -293,6 +296,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
 {
   ThunarVfsInfo *info;
   ThunarVfsPath *path;
+  GError        *err = NULL;
   GList         *target_path_list = NULL;
   GList         *lp;
   gchar         *original_path;
@@ -303,46 +307,67 @@ thunar_application_collect_and_launch (ThunarApplication *application,
     return;
 
   /* generate the target path list */
-  for (lp = g_list_last (source_path_list); lp != NULL; lp = lp->prev)
+  for (lp = g_list_last (source_path_list); err == NULL && lp != NULL; lp = lp->prev)
     {
       /* reset the path */
       path = NULL;
 
-      /* check if we're copying from a location in the trash */
-      if (G_UNLIKELY (thunar_vfs_path_get_scheme (lp->data) == THUNAR_VFS_PATH_SCHEME_TRASH))
+      /* verify that we're not trying to collect a root node */
+      if (G_UNLIKELY (thunar_vfs_path_is_root (lp->data)))
         {
-          /* determine the info for the trashed resource */
-          info = thunar_vfs_info_new_for_path (lp->data, NULL);
-          if (G_LIKELY (info != NULL))
-            {
-              /* try to use the basename of the original path */
-              original_path = thunar_vfs_info_get_metadata (info, THUNAR_VFS_INFO_METADATA_TRASH_ORIGINAL_PATH, NULL);
-              if (G_LIKELY (original_path != NULL))
-                {
-                  /* g_path_get_basename() may return '.' or '/' */
-                  original_name = g_path_get_basename (original_path);
-                  if (strcmp (original_name, ".") != 0 && strchr (original_name, G_DIR_SEPARATOR) == NULL)
-                    path = thunar_vfs_path_relative (target_path, original_name);
-                  g_free (original_name);
-                  g_free (original_path);
-                }
-
-              /* release the info */
-              thunar_vfs_info_unref (info);
-            }
+          /* tell the user that we cannot perform the requested operation */
+          g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL, g_strerror (EINVAL));
         }
+      else
+        {
+          /* check if we're copying from a location in the trash */
+          if (G_UNLIKELY (thunar_vfs_path_get_scheme (lp->data) == THUNAR_VFS_PATH_SCHEME_TRASH))
+            {
+              /* determine the info for the trashed resource */
+              info = thunar_vfs_info_new_for_path (lp->data, NULL);
+              if (G_LIKELY (info != NULL))
+                {
+                  /* try to use the basename of the original path */
+                  original_path = thunar_vfs_info_get_metadata (info, THUNAR_VFS_INFO_METADATA_TRASH_ORIGINAL_PATH, NULL);
+                  if (G_LIKELY (original_path != NULL))
+                    {
+                      /* g_path_get_basename() may return '.' or '/' */
+                      original_name = g_path_get_basename (original_path);
+                      if (strcmp (original_name, ".") != 0 && strchr (original_name, G_DIR_SEPARATOR) == NULL)
+                        path = thunar_vfs_path_relative (target_path, original_name);
+                      g_free (original_name);
+                      g_free (original_path);
+                    }
 
-      /* fallback to the path's basename */
-      if (G_LIKELY (path == NULL))
-        path = thunar_vfs_path_relative (target_path, thunar_vfs_path_get_name (lp->data));
+                  /* release the info */
+                  thunar_vfs_info_unref (info);
+                }
+            }
 
-      /* add to the target path list */
-      target_path_list = g_list_prepend (target_path_list, path);
+          /* fallback to the path's basename */
+          if (G_LIKELY (path == NULL))
+            path = thunar_vfs_path_relative (target_path, thunar_vfs_path_get_name (lp->data));
+
+          /* add to the target path list */
+          target_path_list = g_list_prepend (target_path_list, path);
+        }
     }
 
-  /* launch the operation */
-  thunar_application_launch (application, parent, icon_name, title, launcher,
-                             source_path_list, target_path_list, new_files_closure);
+  /* check if we failed */
+  if (G_UNLIKELY (err != NULL))
+    {
+      /* display an error message to the user */
+      thunar_dialogs_show_error (parent, err, _("Failed to launch operation"));
+
+      /* release the error */
+      g_error_free (err);
+    }
+  else
+    {
+      /* launch the operation */
+      thunar_application_launch (application, parent, icon_name, title, launcher,
+                                 source_path_list, target_path_list, new_files_closure);
+    }
 
   /* release the target path list */
   thunar_vfs_path_list_free (target_path_list);

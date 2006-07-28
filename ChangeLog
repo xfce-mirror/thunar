@@ -1,3 +1,10 @@
+2006-07-29	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-application.c(thunar_application_collect_and_launch):
+	  Always sanity check the list of paths when collecting files for a
+	  copy or move operation, as applications might provide invalid URI
+	  lists during a DnD operation.
+
 2006-07-28	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-icon-factory.c(thunar_icon_factory_load_file_icon): Do
