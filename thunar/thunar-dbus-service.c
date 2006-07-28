@@ -225,9 +225,13 @@ thunar_dbus_service_finalize (GObject *object)
   if (G_LIKELY (dbus_service->connection != NULL))
     dbus_g_connection_unref (dbus_service->connection);
 
-  /* release the trash bin object */
+  /* check if we are connected to the trash bin */
   if (G_LIKELY (dbus_service->trash_bin != NULL))
     {
+      /* unwatch the trash bin */
+      thunar_file_unwatch (dbus_service->trash_bin);
+
+      /* release the trash bin */
       g_signal_handlers_disconnect_by_func (G_OBJECT (dbus_service->trash_bin), thunar_dbus_service_trash_bin_changed, dbus_service);
       g_object_unref (G_OBJECT (dbus_service->trash_bin));
     }
@@ -251,6 +255,9 @@ thunar_dbus_service_connect_trash_bin (ThunarDBusService *dbus_service,
       dbus_service->trash_bin = thunar_file_get_for_path (trash_bin_path, error);
       if (G_LIKELY (dbus_service->trash_bin != NULL))
         {
+          /* watch the trash bin for changes */
+          thunar_file_watch (dbus_service->trash_bin);
+
           /* stay informed about changes to the trash bin */
           g_signal_connect_swapped (G_OBJECT (dbus_service->trash_bin), "changed",
                                     G_CALLBACK (thunar_dbus_service_trash_bin_changed),
