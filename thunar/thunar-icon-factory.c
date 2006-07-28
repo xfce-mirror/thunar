@@ -867,7 +867,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
     }
 
   /* check if thumbnails are enabled and we can display a thumbnail for the item */
-  if (G_LIKELY (factory->show_thumbnails && thunar_file_is_regular (file)))
+  if (G_LIKELY (factory->show_thumbnails && thunar_file_is_regular (file) && !thunar_file_is_trashed (file)))
     {
       /* determine the thumbnail state */
       thumb_state = thunar_file_get_thumb_state (file);

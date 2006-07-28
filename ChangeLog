@@ -1,5 +1,10 @@
 2006-07-28	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-icon-factory.c(thunar_icon_factory_load_file_icon): Do
+	  not try to load or generate thumbnails for files in the trash.
+
+2006-07-28	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-dbus-service.c, thunar/thunar-tree-model.c: Monitor
 	  the trash bin for changes.
 
