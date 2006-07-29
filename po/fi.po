@@ -1,15 +1,15 @@
 # Finnish translations for Thunar package.
 # Copyright (C) 2004-2006 Benedikt Meurer.
 # This file is distributed under the same license as the Thunar package.
-# Jari Rahkonen <jari.rahkonen@pp2.inet.fi>, 2006.
+# Jari Rahkonen <jari.rahkonen@pp1.inet.fi>, 2006.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-07-27 17:59+0200\n"
-"PO-Revision-Date: 2006-06-12 22:28+0300\n"
-"Last-Translator: Jari Rahkonen <jari.rahkonen@pp2.inet.fi>\n"
+"POT-Creation-Date: 2006-07-29 12:43+0300\n"
+"PO-Revision-Date: 2006-07-29 12:53+0300\n"
+"Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -48,9 +48,8 @@ msgid "Invalid file name"
 msgstr "Tiedostonimi ei kelpaa"
 
 #: ../thunar-vfs/thunar-vfs-info.c:458
-#, fuzzy
 msgid "Only local files may be renamed"
-msgstr "Valitse nimettävät tiedostot"
+msgstr "Voit nimetä uudelleen vain paikallisia tiedostoja"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:81
@@ -59,19 +58,19 @@ msgstr "Valmistellaan..."
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:226
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:517
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change permissions of \"%s\""
-msgstr "Tiedoston \"%s\" käyttöoikeuksien muuttaminen epäonnistui: %s"
+msgstr "Tiedoston \"%s\" käyttöoikeuksien muuttaminen epäonnistui"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:347
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file owenr of \"%s\""
-msgstr "Tiedoston \"%s\" omistajan vaihtaminen epäonnistui: %s"
+msgstr "Tiedoston \"%s\" omistajan vaihtaminen epäonnistui"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:348
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file group of \"%s\""
-msgstr "Tiedoston \"%s\" ryhmän vaihtaminen epäonnistui: %s"
+msgstr "Tiedoston \"%s\" ryhmän vaihtaminen epäonnistui"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:432
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:182
@@ -80,9 +79,9 @@ msgid "The file \"%s\" already exists"
 msgstr "Tiedosto \"%s\" on jo olemassa"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:450
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\""
-msgstr "Nimetyn putken \"%s\" luominen epäonnistui"
+msgstr "Tyhjän tiedoston \"%s\" luominen epäonnistui"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:157
 #, c-format
@@ -191,7 +190,7 @@ msgstr "Symbolisen linkin \"%s\" luominen epäonnistui"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:525
 msgid "Special files cannot be copied"
-msgstr ""
+msgstr "Erikoistiedostoja ei voi kopioida"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:605
 msgid "Symbolic links are not supported"
@@ -204,42 +203,42 @@ msgstr "Tiedostojärjestelmä"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:223
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to copy \"%s\" to \"%s\""
-msgstr "Tiedoston \"%s\" nimeäminen muotoon \"%s\" epäonnistui."
+msgstr "Tiedoston \"%s\" kopioiminen kohteeseen \"%s\" epäonnistui."
 
 #. impossible to perform the link operation
 #: ../thunar-vfs/thunar-vfs-io-ops.c:271
 msgid "Links from or to resources in the trash are not supported"
-msgstr ""
+msgstr "Linkkejä roskakorin sisältöön tai sen sisältä ei tueta."
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:289
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to link \"%s\" to \"%s\""
-msgstr "Tiedoston \"%s\" nimeäminen muotoon \"%s\" epäonnistui."
+msgstr "Tiedoston \"%s\" linkittäminen kohteeseen \"%s\" epäonnistui."
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:366
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to move \"%s\" to \"%s\""
-msgstr "Tiedoston \"%s\" nimeäminen muotoon \"%s\" epäonnistui."
+msgstr "Tiedoston \"%s\" siirto kohteeseen \"%s\" epäonnistui."
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:601
-#, fuzzy, c-format
+#, c-format
 msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-msgstr "Polku \"%s\" ei osoita hakemistoon"
+msgstr "URI \"%s\" ei osoita kelvolliseen kohteeseen roskakorissa"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:778
 msgid "Trash"
-msgstr ""
+msgstr "Roskakori"
 
 #. we don't support copying files within the trash
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:972
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
-msgstr ""
+msgstr "Tiedostoja ei voi kopioida tai siirtää roskakorissa"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1684
 #, c-format
@@ -294,7 +293,7 @@ msgstr "%s-tiedosto"
 #: ../thunar-vfs/thunar-vfs-path.c:362
 #, c-format
 msgid "The URI \"%s\" is invalid"
-msgstr ""
+msgstr "URI \"%s\" ei kelpaa"
 
 #: ../thunar-vfs/thunar-vfs-path.c:835
 msgid "Path too long to fit into buffer"
@@ -307,7 +306,7 @@ msgstr "URI ei mahdu puskuriin"
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:295
 msgid "Invalidly escaped characters"
-msgstr ""
+msgstr "Virheellisiä pakomerkkejä"
 
 #: ../thunar-vfs/thunar-vfs-thumb.c:172 ../thunar/thunar-enum-types.c:97
 msgid "Size"
@@ -335,7 +334,7 @@ msgstr "Tuntematon käyttäjä \"%s\""
 #: ../thunar-vfs/thunar-vfs-volume-hal.c:317
 #, c-format
 msgid "Failed to determine the mount point for %s"
-msgstr "Liitoskohdan määrittäminen kohteelle %s epäonnistui"
+msgstr "Liitoskohdan määritys kohteelle %s epäonnistui"
 
 #: ../thunar-vfs/thunar-vfs-volume-hal.c:804
 #, c-format
@@ -457,39 +456,38 @@ msgid "Sort items in descending order"
 msgstr "Järjestä hakemiston sisältö laskevaan järjestykseen"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:379
+#: ../thunar/thunar-application.c:360 ../thunar/thunar-application.c:404
 msgid "Failed to launch operation"
 msgstr "Toiminnon käynnistys epäonnistui"
 
 #. tell the user that we were unable to launch the file specified on the cmdline
-#: ../thunar/thunar-application.c:832
+#: ../thunar/thunar-application.c:857
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "Kohteen \"%s\" avaaminen epäonnistui"
 
-#: ../thunar/thunar-application.c:844
+#: ../thunar/thunar-application.c:869
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "Kohteen \"%s\" avaaminen epäonnistui: %s"
 
-#: ../thunar/thunar-application.c:881 ../thunar/thunar-application.c:914
+#: ../thunar/thunar-application.c:906 ../thunar/thunar-application.c:939
 msgid "Copying files..."
 msgstr "Kopioidaan tiedostoja..."
 
-#: ../thunar/thunar-application.c:948
+#: ../thunar/thunar-application.c:973
 msgid "Creating symbolic links..."
 msgstr "Luodaan symbolisia linkkejä..."
 
-#: ../thunar/thunar-application.c:988
-#, fuzzy
+#: ../thunar/thunar-application.c:1013
 msgid "Moving files into the trash..."
-msgstr "Siirretään tiedostoja..."
+msgstr "Siirretään tiedostoja roskakoriin..."
 
-#: ../thunar/thunar-application.c:993
+#: ../thunar/thunar-application.c:1018
 msgid "Moving files..."
 msgstr "Siirretään tiedostoja..."
 
-#: ../thunar/thunar-application.c:1073
+#: ../thunar/thunar-application.c:1098
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -498,7 +496,7 @@ msgstr ""
 "Haluatko todella poistaa kohteen\n"
 "\"%s\" pysyvästi?"
 
-#: ../thunar/thunar-application.c:1078
+#: ../thunar/thunar-application.c:1103
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -513,79 +511,80 @@ msgstr[1] ""
 "Haluatko todella poistaa valitut\n"
 "tiedostot pysyvästi?"
 
-#: ../thunar/thunar-application.c:1098
+#: ../thunar/thunar-application.c:1123
 msgid "If you delete a file, it is permanently lost."
 msgstr "Tiedoston poistoa ei voi peruuttaa."
 
-#: ../thunar/thunar-application.c:1108
+#: ../thunar/thunar-application.c:1133
 msgid "Deleting files..."
 msgstr "Poistetaan tiedostoja..."
 
-#: ../thunar/thunar-application.c:1160
+#: ../thunar/thunar-application.c:1185
 msgid "Creating files..."
 msgstr "Luodaan tiedostoja..."
 
-#: ../thunar/thunar-application.c:1200
+#: ../thunar/thunar-application.c:1225
 msgid "Creating directories..."
 msgstr "Luodaan hakemistoja..."
 
-#: ../thunar/thunar-application.c:1238
+#: ../thunar/thunar-application.c:1263
 msgid "Remove all files and folders from the Trash?"
-msgstr ""
+msgstr "Poistetaanko kaikki tiedostot ja hakemistot roskakorista?"
 
 #. add the "Empty Trash" action
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
-#: ../thunar/thunar-application.c:1243
+#: ../thunar/thunar-application.c:1268
 #: ../thunar/thunar-location-buttons.c:1264
 #: ../thunar/thunar-shortcuts-view.c:854 ../thunar/thunar-tree-view.c:1075
 #: ../plugins/thunar-tpa/main.c:49
-#, fuzzy
 msgid "_Empty Trash"
-msgstr "T_yhjä tiedosto"
+msgstr "_Tyhjennä roskakori"
 
-#: ../thunar/thunar-application.c:1247
+#: ../thunar/thunar-application.c:1272
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
+"Jos valitset roskakorin tyhjennyksen, sen sisältö häviää lopullisesti. "
+"Huomaa, että voit poistaa roskakorista tiedostoja myös yksitellen."
 
-#: ../thunar/thunar-application.c:1264
+#: ../thunar/thunar-application.c:1289
 msgid "Emptying the Trash..."
-msgstr ""
+msgstr "Tyhjennetään roskakoria..."
 
-#: ../thunar/thunar-application.c:1318
-#, fuzzy, c-format
+#: ../thunar/thunar-application.c:1343
+#, c-format
 msgid "Failed to determine the original path for \"%s\""
-msgstr "Liitoskohdan määrittäminen kohteelle %s epäonnistui"
+msgstr "Kohteen \"%s\" alkuperäisen polun määritys epäonnistui"
 
-#: ../thunar/thunar-application.c:1346
-#, fuzzy, c-format
+#: ../thunar/thunar-application.c:1371
+#, c-format
 msgid "Create the folder \"%s\"?"
-msgstr "Luo uusi hakemisto kohteeseen \"%s\""
+msgstr "Luodaanko hakemisto \"%s\"?"
 
-#: ../thunar/thunar-application.c:1350
-#, fuzzy
+#: ../thunar/thunar-application.c:1375
 msgid "C_reate Folder"
-msgstr "Luo _hakemisto..."
+msgstr "Luo _hakemisto"
 
-#: ../thunar/thunar-application.c:1356
+#: ../thunar/thunar-application.c:1381
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore, but it is required to restore the "
 "file \"%s\" from the trash. Do you want to create the folder again?"
 msgstr ""
+"Hakemistoa \"%s\" ei ole enää olemassa, mutta se tarvitaan tiedoston \"%s\" "
+"palauttamiseksi roskakorista. Luodaanko hakemisto uudelleen?"
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1393
-#, fuzzy, c-format
+#: ../thunar/thunar-application.c:1418
+#, c-format
 msgid "Failed to restore \"%s\""
-msgstr "Kohdetta \"%s\" ei voi poistaa"
+msgstr "Kohteen \"%s\" palauttaminen epäonnistui"
 
-#: ../thunar/thunar-application.c:1400
-#, fuzzy
+#: ../thunar/thunar-application.c:1425
 msgid "Restoring files..."
-msgstr "Poistetaan tiedostoja..."
+msgstr "Palautetaan tiedostoja..."
 
 #. tell the user that it didn't work
 #. display an error to the user
@@ -925,7 +924,7 @@ msgstr "Käytetty"
 
 #: ../thunar/thunar-enum-types.c:91
 msgid "Date Modified"
-msgstr "Muokkattu"
+msgstr "Muokattu"
 
 #: ../thunar/thunar-enum-types.c:92
 msgid "Group"
@@ -1186,7 +1185,7 @@ msgstr "\"%s\" (%s) %s"
 #.
 #: ../thunar/thunar-list-model.c:2255 ../thunar/thunar-properties-dialog.c:339
 msgid "Original Path:"
-msgstr ""
+msgstr "Alkuperäinen polku:"
 
 #. append the image dimensions to the statusbar text
 #: ../thunar/thunar-list-model.c:2267
@@ -1242,7 +1241,7 @@ msgstr "Luo _hakemisto..."
 
 #: ../thunar/thunar-location-buttons.c:1264
 msgid "Delete all files and folders in the Trash"
-msgstr ""
+msgstr "Poista kaikki tiedostot ja hakemistot roskakorista"
 
 #. add the "Paste Into Folder" action
 #: ../thunar/thunar-location-buttons.c:1279
@@ -1601,7 +1600,7 @@ msgstr "Käytös"
 
 #: ../thunar/thunar-preferences-dialog.c:448
 msgid "Navigation"
-msgstr ""
+msgstr "Navigointi"
 
 #: ../thunar/thunar-preferences-dialog.c:460
 msgid "_Single click to activate items"
@@ -1726,9 +1725,8 @@ msgstr "Linkin kohde:"
 #. Third box (deleted, modified, accessed)
 #.
 #: ../thunar/thunar-properties-dialog.c:364
-#, fuzzy
 msgid "Deleted:"
-msgstr "_Poista"
+msgstr "Poistettu:"
 
 #: ../thunar/thunar-properties-dialog.c:378
 msgid "Modified:"
@@ -2098,7 +2096,7 @@ msgstr "_Nimeä uudelleen..."
 
 #: ../thunar/thunar-standard-view.c:327
 msgid "_Restore"
-msgstr ""
+msgstr "_Palauta"
 
 #. add the "Create Document" sub menu action
 #: ../thunar/thunar-standard-view.c:587
@@ -2171,11 +2169,10 @@ msgstr[0] "Merkitse valittu tiedosto kopioitavaksi liitä-komennolla"
 msgstr[1] "Merkitse valitut tiedostot kopioitavaksi liitä-komennolla"
 
 #: ../thunar/thunar-standard-view.c:3349
-#, fuzzy
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
-msgstr[0] "Luo kopio valitusta tiedostosta"
-msgstr[1] "Luo kopiot valituista tiedostoista"
+msgstr[0] "Poista valittu tiedosto"
+msgstr[1] "Poista valitut tiedostot"
 
 #: ../thunar/thunar-standard-view.c:3363
 msgid "Duplicate the selected file"
@@ -2190,18 +2187,16 @@ msgstr[0] "Luo symbolinen linkki valittuun tiedostoon"
 msgstr[1] "Luo symboliset linkit valittuihin tiedostoihin"
 
 #: ../thunar/thunar-standard-view.c:3380
-#, fuzzy
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Nimeä valittu tiedosto uudelleen"
-msgstr[1] "Nimeä valittu tiedosto uudelleen"
+msgstr[1] "Nimeä valitut tiedostot uudelleen"
 
 #: ../thunar/thunar-standard-view.c:3388
-#, fuzzy
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
-msgstr[0] "Nimeä valittu tiedosto uudelleen"
-msgstr[1] "Nimeä valittu tiedosto uudelleen"
+msgstr[0] "Palauta valittu tiedosto"
+msgstr[1] "Palauta valitut tiedostot"
 
 #: ../thunar/thunar-stock.c:57
 msgid "Create"
@@ -2221,7 +2216,7 @@ msgstr "Ei asiakirjamalleja asennettuna"
 msgid "_Empty File"
 msgstr "T_yhjä tiedosto"
 
-#: ../thunar/thunar-tree-model.c:592
+#: ../thunar/thunar-tree-model.c:596
 msgid "Loading..."
 msgstr "Ladataan..."
 
@@ -2238,12 +2233,12 @@ msgstr "_Ominaisuudet..."
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:89
 msgid "Today"
-msgstr ""
+msgstr "Tänään"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:94
 msgid "Yesterday"
-msgstr ""
+msgstr "Eilen"
 
 #: ../thunar/thunar-window.c:253
 msgid "Open New _Window"
@@ -2670,7 +2665,7 @@ msgstr "Sulkijan nopeus:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:59
 msgid "ISO Speed Ratings:"
-msgstr ""
+msgstr "ISO-nopeusluokitus:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:60
 msgid "Software:"
@@ -2952,26 +2947,25 @@ msgstr "Postin vastaanottaja"
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:317
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:346
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:380
-#, fuzzy
 msgid "Failed to connect to the Trash"
-msgstr "HAL-taustaprosessiin yhdistäminen epäonnistui: %s"
+msgstr "Roskakoriin yhdistäminen epäonnistui"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is full"
-msgstr ""
+msgstr "Roskakori on täynnä"
 
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is empty"
-msgstr ""
+msgstr "Roskakori on tyhjä"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:1
 msgid "Display the trash can"
-msgstr ""
+msgstr "Näytä roskakorin sisältö"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
 msgid "Trash Applet"
-msgstr ""
+msgstr "Roskakorisovelma"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
@@ -3263,87 +3257,3 @@ msgstr "Avaa hakemisto Thunarissa"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Avaa valitut hakemistot Thunarissa"
-
-#~ msgid "Delete the selected file permanently"
-#~ msgid_plural "Delete the selected files permanently"
-#~ msgstr[0] "Poista valittu tiedosto lopullisesti"
-#~ msgstr[1] "Poista valitut tiedostot lopullisesti"
-
-#, fuzzy
-#~ msgid "Failed to change permisions of \"%s\""
-#~ msgstr "Tiedoston \"%s\" käyttöoikeuksien muuttaminen epäonnistui: %s"
-
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Ohitetaanko tiedosto?"
-
-#~ msgid "Failed to determine file info of \"%s\": %s"
-#~ msgstr "Tiedoston \"%s\" tietojen selvittäminen epäonnistui: %s"
-
-#~ msgid ""
-#~ "The file \"%s\" already exists. Do you want to replace it with an empty "
-#~ "file?"
-#~ msgstr ""
-#~ "Tiedosto \"%s\" on jo olemassa. Korvataanko se tyhjällä tiedostolla?"
-
-#~ msgid ""
-#~ "Failed to remove \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "Kohteen \"%s\" poistaminen epäonnistui.\n"
-#~ "\n"
-#~ "Ohitetaanko kohde?"
-
-#~ msgid ""
-#~ "Failed to create empty file \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "Tyhjän tiedoston \"%s\" luominen epäonnistui.\n"
-#~ "\n"
-#~ "Ohitetaanko tiedosto?"
-
-#~ msgid "Failed to stat file \"%s\": %s"
-#~ msgstr "Tiedoston \"%s\" stat epäonnistui: %s"
-
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Korvataanko tiedosto?"
-
-#~ msgid "Failed to create directory \"%s\": %s"
-#~ msgstr "Hakemiston \"%s\" luominen epäonnistui: %s"
-
-#~ msgid "Deleting directories..."
-#~ msgstr "Poistetaan hakemistoja..."
-
-#~ msgid "Failed to remove directory \"%s\": %s"
-#~ msgstr "Hakemiston \"%s\" poistaminen epäonnistui: %s"
-
-#~ msgid "Cannot transfer the root directory"
-#~ msgstr "Juurihakemistoa ei voi siirtää"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "Nimettyjä putkia ei tueta"
-
-#~ msgid "Operation canceled"
-#~ msgstr "Toiminto peruutettu"
-
-#~ msgid "Failed to read link target from \"%s\""
-#~ msgstr "Linkin kohteen lukeminen lähteestä \"%s\" epäonnistui"
-
-#~ msgid "Failed to change mode of \"%s\""
-#~ msgstr "Kohteen \"%s\" tilan muuttaminen epäonnistui"
-
-#~ msgid "Failed to copy special file \"%s\""
-#~ msgstr "Erikoistiedoston \"%s\" kopioiminen epäonnistui"
