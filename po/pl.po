@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-07-27 17:59+0200\n"
-"PO-Revision-Date: 2006-06-15 21:01+0200\n"
+"PO-Revision-Date: 2006-07-29 12:14+0200\n"
 "Last-Translator: Szymon Kałasz <szymon_maestro@gazeta.pl>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -53,7 +53,7 @@ msgstr "Nieprawidłowa nazwa pliku"
 #: ../thunar-vfs/thunar-vfs-info.c:458
 #, fuzzy
 msgid "Only local files may be renamed"
-msgstr "Wybierz pliki do zmiany nazwy"
+msgstr "Tylko lokalne pliki mogą zostać zmienione"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:81
@@ -62,19 +62,19 @@ msgstr "Przygotowuję..."
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:226
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:517
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change permissions of \"%s\""
-msgstr "Nie udało się zmienić praw dostępu do \"%s\": %s"
+msgstr "Nie udało się zmienić uprawnień do \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:347
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file owenr of \"%s\""
-msgstr "Nie udało się zmienić właściciela dla \"%s\": %s"
+msgstr "Nie udało się zmienić właściciela dla \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:348
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file group of \"%s\""
-msgstr "Nie udało się zmienić grupy dla \"%s\": %s"
+msgstr "Nie udało się zmienić grupy dla \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:432
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:182
@@ -83,9 +83,9 @@ msgid "The file \"%s\" already exists"
 msgstr "Plik \"%s\" już istnieje"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:450
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\""
-msgstr "Nie udało się utworzyć kolejki FIFO \"%s\""
+msgstr "Nie udało się utworzyć pustego pliku \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:157
 #, c-format
@@ -196,7 +196,7 @@ msgstr "Nie udało się utworzyć dowiązania symbolicznego \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:525
 msgid "Special files cannot be copied"
-msgstr ""
+msgstr "Pliki specjalne nie mogą być kopiowane"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:605
 msgid "Symbolic links are not supported"
@@ -209,42 +209,42 @@ msgstr "System plików"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:223
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to copy \"%s\" to \"%s\""
-msgstr "Nie udało się zmienić nazwy \"%s\" na \"%s\"."
+msgstr "Nie udało się skopiować \"%s\" do \"%s\""
 
 #. impossible to perform the link operation
 #: ../thunar-vfs/thunar-vfs-io-ops.c:271
 msgid "Links from or to resources in the trash are not supported"
-msgstr ""
+msgstr "Dowiązania z lub do śmietnika nie są obsługiwane"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:289
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to link \"%s\" to \"%s\""
-msgstr "Nie udało się zmienić nazwy \"%s\" na \"%s\"."
+msgstr "Nie udało się dowiązać \"%s\" do \"%s\""
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:366
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to move \"%s\" to \"%s\""
-msgstr "Nie udało się zmienić nazwy \"%s\" na \"%s\"."
+msgstr "Nie udało się przenieść \"%s\" do \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:601
-#, fuzzy, c-format
+#, c-format
 msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-msgstr "Ścieżka \"%s\" nie wskazuje na katalog"
+msgstr "URI \"%s\" nie wskazuje na prawidłowy zasób w śmietniku"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:778
 msgid "Trash"
-msgstr ""
+msgstr "Śmietnik"
 
 #. we don't support copying files within the trash
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:972
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
-msgstr ""
+msgstr "Nie można przenosić ani kopiować plików w śmietniku"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1684
 #, c-format
@@ -299,7 +299,7 @@ msgstr "dokument %s"
 #: ../thunar-vfs/thunar-vfs-path.c:362
 #, c-format
 msgid "The URI \"%s\" is invalid"
-msgstr ""
+msgstr "URI \"%s\" jest nieprawidłowy"
 
 #: ../thunar-vfs/thunar-vfs-path.c:835
 msgid "Path too long to fit into buffer"
@@ -312,7 +312,7 @@ msgstr "Identyfikator URI jest zbyt długi"
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:295
 msgid "Invalidly escaped characters"
-msgstr ""
+msgstr "Niepoprawne sekwencje sterujące"
 
 #: ../thunar-vfs/thunar-vfs-thumb.c:172 ../thunar/thunar-enum-types.c:97
 msgid "Size"
@@ -486,9 +486,8 @@ msgid "Creating symbolic links..."
 msgstr "Tworzenie dowiązań..."
 
 #: ../thunar/thunar-application.c:988
-#, fuzzy
 msgid "Moving files into the trash..."
-msgstr "Przenoszenie plików..."
+msgstr "Przenoszenie plików do śmietnika..."
 
 #: ../thunar/thunar-application.c:993
 msgid "Moving files..."
@@ -531,7 +530,7 @@ msgstr "Tworzę katalogi..."
 
 #: ../thunar/thunar-application.c:1238
 msgid "Remove all files and folders from the Trash?"
-msgstr ""
+msgstr "Opróżnić śmietnik ze wszystkich plików i folderów?"
 
 #. add the "Empty Trash" action
 #. append the "Empty Trash" menu action
@@ -542,30 +541,31 @@ msgstr ""
 #: ../plugins/thunar-tpa/main.c:49
 #, fuzzy
 msgid "_Empty Trash"
-msgstr "_Pusty plik"
+msgstr "_Opróżnij śmietnik"
 
 #: ../thunar/thunar-application.c:1247
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
+"Jeżeli zostanie wybrane opróżnienie śmietnika, wszystkie elementy zostaną "
+"z niego trwale usunięte. Zauważ, że możesz je także usuwać pojedynczo."
 
 #: ../thunar/thunar-application.c:1264
 msgid "Emptying the Trash..."
-msgstr ""
+msgstr "Opróżnianie śmietnika"
 
 #: ../thunar/thunar-application.c:1318
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the original path for \"%s\""
-msgstr "Nie udało się określić punktu montowania dla %s"
+msgstr "Nie udało się ustalić pierwotnej ścieżki dla \"%s\""
 
 #: ../thunar/thunar-application.c:1346
-#, fuzzy, c-format
+#, c-format
 msgid "Create the folder \"%s\"?"
-msgstr "Stwórz nowy folder w \"%s\""
+msgstr "Utworzyć nowy folder \"%s\"?"
 
 #: ../thunar/thunar-application.c:1350
-#, fuzzy
 msgid "C_reate Folder"
 msgstr "Stwórz _Folder..."
 
@@ -575,17 +575,18 @@ msgid ""
 "The folder \"%s\" does not exist anymore, but it is required to restore the "
 "file \"%s\" from the trash. Do you want to create the folder again?"
 msgstr ""
+"Folder \"%s\" już nie istnieje, lecz jest potrzebny do przywrócenia pliku "
+"\"%s\" z śmietnika. Czy chcesz utworzyć ten folder na nowo?"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1393
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore \"%s\""
-msgstr "Nie udało się usunąć \"%s\""
+msgstr "Nie udało się przywrócić \"%s\""
 
 #: ../thunar/thunar-application.c:1400
-#, fuzzy
 msgid "Restoring files..."
-msgstr "Usuwanie plików..."
+msgstr "Przywracanie plików..."
 
 #. tell the user that it didn't work
 #. display an error to the user
@@ -906,7 +907,7 @@ msgstr "Nie udało się uruchomić \"%s\""
 
 #: ../thunar/thunar-enum-types.c:44
 msgid "Name only"
-msgstr "Tylko Nazwa"
+msgstr "Tylko nazwa"
 
 #: ../thunar/thunar-enum-types.c:45
 msgid "Suffix only"
@@ -1196,7 +1197,7 @@ msgstr "\"%s\" (%s) %s"
 #.
 #: ../thunar/thunar-list-model.c:2255 ../thunar/thunar-properties-dialog.c:339
 msgid "Original Path:"
-msgstr ""
+msgstr "Pierwotna ścieżka:"
 
 #. append the image dimensions to the statusbar text
 #: ../thunar/thunar-list-model.c:2267
@@ -1254,7 +1255,7 @@ msgstr "Stwórz _Folder..."
 
 #: ../thunar/thunar-location-buttons.c:1264
 msgid "Delete all files and folders in the Trash"
-msgstr ""
+msgstr "Usuń wszystkie pliki i foldery ze śmietnika"
 
 #. add the "Paste Into Folder" action
 #: ../thunar/thunar-location-buttons.c:1279
@@ -1608,7 +1609,7 @@ msgstr "Zachowanie"
 
 #: ../thunar/thunar-preferences-dialog.c:448
 msgid "Navigation"
-msgstr ""
+msgstr "Nawigacja"
 
 #: ../thunar/thunar-preferences-dialog.c:460
 msgid "_Single click to activate items"
@@ -1733,9 +1734,8 @@ msgstr "Cel dowiązania:"
 #. Third box (deleted, modified, accessed)
 #.
 #: ../thunar/thunar-properties-dialog.c:364
-#, fuzzy
 msgid "Deleted:"
-msgstr "_Usuń"
+msgstr "Usunięto:"
 
 #: ../thunar/thunar-properties-dialog.c:378
 msgid "Modified:"
@@ -2112,7 +2112,7 @@ msgstr "Zmień _nazwę..."
 
 #: ../thunar/thunar-standard-view.c:327
 msgid "_Restore"
-msgstr ""
+msgstr "_Przywróć"
 
 #. add the "Create Document" sub menu action
 #: ../thunar/thunar-standard-view.c:587
@@ -2190,12 +2190,11 @@ msgstr[1] "Przygotuj zaznaczone pliki do skopiowania za pomocą polecenia Wklej"
 msgstr[2] "Przygotuj zaznaczone pliki do skopiowania za pomocą polecenia Wklej"
 
 #: ../thunar/thunar-standard-view.c:3349
-#, fuzzy
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
-msgstr[0] "Zduplikuj zaznaczony plik"
-msgstr[1] "Zduplikuj wszystkie zaznaczone pliki"
-msgstr[2] "Zduplikuj wszystkie zaznaczone pliki"
+msgstr[0] "Usuń zaznaczony plik"
+msgstr[1] "Usuń zaznaczone pliki"
+msgstr[2] "Usuń zaznaczone pliki"
 
 #: ../thunar/thunar-standard-view.c:3363
 msgid "Duplicate the selected file"
@@ -2212,20 +2211,18 @@ msgstr[1] "Utwórz dowiązania do wszystkich zaznaczonych plików"
 msgstr[2] "Utwórz dowiązania do wszystkich zaznaczonych plików"
 
 #: ../thunar/thunar-standard-view.c:3380
-#, fuzzy
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Zmień nazwę zaznaczonego pliku"
-msgstr[1] "Zmień nazwę zaznaczonego pliku"
-msgstr[2] "Zmień nazwę zaznaczonego pliku"
+msgstr[1] "Zmień nazwę zaznaczonych plików"
+msgstr[2] "Zmień nazwę zaznaczonych plików"
 
 #: ../thunar/thunar-standard-view.c:3388
-#, fuzzy
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
-msgstr[0] "Zmień nazwę zaznaczonego pliku"
-msgstr[1] "Zmień nazwę zaznaczonego pliku"
-msgstr[2] "Zmień nazwę zaznaczonego pliku"
+msgstr[0] "Przywróć zaznaczony plik"
+msgstr[1] "Przywróć zaznaczone pliki"
+msgstr[2] "Przywróć zaznaczone pliki"
 
 #: ../thunar/thunar-stock.c:57
 msgid "Create"
@@ -2262,12 +2259,12 @@ msgstr "_Właściwości..."
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:89
 msgid "Today"
-msgstr ""
+msgstr "Dzisiaj"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:94
 msgid "Yesterday"
-msgstr ""
+msgstr "Wczoraj"
 
 #: ../thunar/thunar-window.c:253
 msgid "Open New _Window"
@@ -2691,7 +2688,7 @@ msgstr "Szybkość migawki:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:59
 msgid "ISO Speed Ratings:"
-msgstr ""
+msgstr "Czułość ISO:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:60
 msgid "Software:"
@@ -2978,24 +2975,24 @@ msgstr "Odbiorca poczty elektronicznej"
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:380
 #, fuzzy
 msgid "Failed to connect to the Trash"
-msgstr "Nie można połączyć się z daemonem HAL: %s"
+msgstr "Nie można połączyć się ze śmietnikiem"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is full"
-msgstr ""
+msgstr "Śmietnik jest pełen"
 
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is empty"
-msgstr ""
+msgstr "Śmietnik jest pusty"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:1
 msgid "Display the trash can"
-msgstr ""
+msgstr "Pokaż ikonę śmietnika"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
 msgid "Trash Applet"
-msgstr ""
+msgstr "Aplet śmietnika"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
