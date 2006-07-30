@@ -35,6 +35,7 @@
 #include <glib/gstdio.h>
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-gdk-extensions.h>
@@ -56,6 +57,11 @@ static gboolean thunar_dbus_service_parse_uri_and_display       (ThunarDBusServi
                                                                  GError                **error);
 static void     thunar_dbus_service_trash_bin_changed           (ThunarDBusService      *dbus_service,
                                                                  ThunarFile             *trash_bin);
+static gboolean thunar_dbus_service_display_chooser_dialog      (ThunarDBusService      *dbus_service,
+                                                                 const gchar            *uri,
+                                                                 gboolean                open,
+                                                                 const gchar            *display,
+                                                                 GError                **error);
 static gboolean thunar_dbus_service_display_folder              (ThunarDBusService      *dbus_service,
                                                                  const gchar            *uri,
                                                                  const gchar            *display,
@@ -307,6 +313,32 @@ thunar_dbus_service_trash_bin_changed (ThunarDBusService *dbus_service,
 
   /* emit the "trash-changed" signal with the new state */
   g_signal_emit_by_name (G_OBJECT (dbus_service), "trash-changed", (thunar_file_get_size (trash_bin) > 0));
+}
+
+
+
+static gboolean
+thunar_dbus_service_display_chooser_dialog (ThunarDBusService *dbus_service,
+                                            const gchar       *uri,
+                                            gboolean           open,
+                                            const gchar       *display,
+                                            GError           **error)
+{
+  ThunarFile *file;
+  GdkScreen  *screen;
+
+  /* parse uri and display parameters */
+  if (!thunar_dbus_service_parse_uri_and_display (dbus_service, uri, display, &file, &screen, error))
+    return FALSE;
+
+  /* popup the chooser dialog */
+  thunar_show_chooser_dialog (screen, file, open);
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (screen));
+  g_object_unref (G_OBJECT (file));
+
+  return TRUE;
 }
 
 

@@ -1,5 +1,12 @@
 2006-07-31	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-dbus-service-infos.xml, thunar/thunar-dbus-service.c:
+	  Add DisplayChooserDialog() to the org.xfce.FileManager interface,
+	  which pops up the "Open With" dialog, optionally allowing the user
+	  to open the file with the choosen application. Bug #1811.
+
+2006-07-31	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in, plugins/thunar-sendto-email/main.c: Check for
 	  missing mkdtemp, and use a fallback implementation if missing
 	  from the system. Bug #2070.

@@ -31,6 +31,28 @@
     <annotation name="org.freedesktop.DBus.GLib.CSymbol" value="thunar_dbus_service" />
 
     <!--
+      DisplayChooserDialog (uri : STRING, open : BOOLEAN, display : STRING) : VOID
+
+      uri     : either a file:-URI or an absolute path.
+      open    : TRUE to let the user open the file identified by the
+                uri after choosing an application, FALSE to only update
+                the mime database.
+      display : the screen on which to display the chooser dialog or
+                "" to use the default screen of the file manager.
+
+      Displays the chooser dialog, which lets the user select an application
+      to handle the file identified by the uri (and all other files of the
+      same mime type). If open is TRUE the user will also be able to open
+      the file after choosing an application.
+    -->
+    <method name="DisplayChooserDialog">
+      <arg direction="in" name="uri" type="s" />
+      <arg direction="in" name="open" type="b" />
+      <arg direction="in" name="display" type="s" />
+    </method>
+
+
+    <!--
       DisplayFolder (uri : STRING, display : STRING) : VOID
 
       uri     : either a file:-URI or an absolute path.
