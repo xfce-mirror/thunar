@@ -66,6 +66,8 @@ if test x"$ac_bm_thunar_plugin_tpa" = x"yes"; then
     dnl # Cannot build thunar-tpa if xfce4-panel is not installed
     ac_bm_thunar_plugin_tpa=no
   ])
+else
+  ac_bm_thunar_plugin_tpa=no
 fi
 AC_MSG_CHECKING([whether to build the thunar-tpa plugin])
 AM_CONDITIONAL([THUNAR_PLUGIN_TPA], [test x"$ac_bm_thunar_plugin_tpa" = x"yes"])
