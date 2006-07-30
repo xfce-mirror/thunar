@@ -1,3 +1,9 @@
+2006-07-31	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in, plugins/thunar-sendto-email/main.c: Check for
+	  missing mkdtemp, and use a fallback implementation if missing
+	  from the system. Bug #2070.
+
 2006-07-30	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-tree-model.c: Emit "row-deleted" prior to deleting the

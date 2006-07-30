@@ -46,6 +46,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_TIME_H
+#include <time.h>
+#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -314,6 +317,45 @@ tse_progress (const gchar *working_directory,
 
   return succeed;
 }
+
+
+
+#ifndef HAVE_MKDTEMP
+static gchar*
+mkdtemp (gchar *tmpl)
+{
+  static const gchar LETTERS[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+  static guint64     value;
+  guint64            v;
+  gint               len;
+  gint               i, j;
+
+  len = strlen (tmpl);
+  if (len < 6 || strcmp (&tmpl[len - 6], "XXXXXX") != 0)
+    {
+      errno = EINVAL;
+      return NULL;
+    }
+
+  value += ((guint64) time (NULL)) ^ getpid ();
+
+  for (i = 0; i < TMP_MAX; ++i, value += 7777)
+    {
+      /* fill in the random bits */
+      for (j = 0, v = value; j < 6; ++j)
+        tmpl[(len - 6) + j] = LETTERS[v % 62]; v /= 62;
+
+      /* try to create the directory */
+      if (g_mkdir (tmpl, 0700) == 0)
+        return tmpl;
+      else if (errno != EEXIST)
+        return NULL;
+    }
+
+  errno = EEXIST;
+  return NULL;
+}
+#endif
 
 
 
