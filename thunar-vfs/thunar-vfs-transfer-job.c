@@ -298,6 +298,14 @@ thunar_vfs_transfer_job_copy_file (ThunarVfsTransferJob *transfer_job,
           /* try to remove the target file if we should overwrite */
           if (response == THUNAR_VFS_JOB_RESPONSE_YES && !_thunar_vfs_io_ops_remove (target_path, THUNAR_VFS_IO_OPS_IGNORE_ENOENT, &err))
             break;
+
+          /* check if we should skip this file */
+          if (response == THUNAR_VFS_JOB_RESPONSE_NO)
+            {
+              /* tell the caller that we skipped this one */
+              *target_path_return = NULL;
+              return TRUE;
+            }
         }
     }
 
@@ -356,30 +364,34 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
       /* copy the item specified by this node (not recursive!) */
       if (thunar_vfs_transfer_job_copy_file (transfer_job, transfer_node->source_path, target_path, &target_path_return, &err))
         {
-          /* check if we have children to copy */
-          if (transfer_node->children != NULL)
+          /* target_path_return == NULL: skip this file */
+          if (G_LIKELY (target_path_return != NULL))
             {
-              /* copy all children for this node */
-              thunar_vfs_transfer_job_node_copy (transfer_job, transfer_node->children, NULL, target_path_return, NULL);
+              /* check if we have children to copy */
+              if (transfer_node->children != NULL)
+                {
+                  /* copy all children for this node */
+                  thunar_vfs_transfer_job_node_copy (transfer_job, transfer_node->children, NULL, target_path_return, NULL);
 
-              /* free the resources allocated to the children */
-              thunar_vfs_transfer_node_free (transfer_node->children);
-              transfer_node->children = NULL;
+                  /* free the resources allocated to the children */
+                  thunar_vfs_transfer_node_free (transfer_node->children);
+                  transfer_node->children = NULL;
+                }
+
+              /* add the real target path to the return list */
+              if (G_LIKELY (target_path_list_return != NULL))
+                *target_path_list_return = g_list_prepend (*target_path_list_return, target_path_return);
+              else
+                thunar_vfs_path_unref (target_path_return);
+
+              /* try to remove the source directory if we should move instead of just copy */
+              if (transfer_job->move && !_thunar_vfs_io_ops_remove (transfer_node->source_path, THUNAR_VFS_IO_OPS_IGNORE_ENOENT, &err))
+                {
+                  /* we can ignore ENOTEMPTY (which is mapped to G_FILE_ERROR_FAILED) */
+                  if (err->domain == G_FILE_ERROR && err->code == G_FILE_ERROR_FAILED)
+                    g_clear_error (&err);
+                }
             }
-
-          /* add the real target path to the return list */
-          if (G_LIKELY (target_path_list_return != NULL))
-            *target_path_list_return = g_list_prepend (*target_path_list_return, target_path_return);
-          else
-            thunar_vfs_path_unref (target_path_return);
-        }
-
-      /* try to remove the source directory if we should move and didn't fail so far */
-      if (err == NULL && transfer_job->move && !_thunar_vfs_io_ops_remove (transfer_node->source_path, THUNAR_VFS_IO_OPS_IGNORE_ENOENT, &err))
-        {
-          /* we can ignore ENOTEMPTY (which is mapped to G_FILE_ERROR_FAILED) */
-          if (err->domain == G_FILE_ERROR && err->code == G_FILE_ERROR_FAILED)
-            g_clear_error (&err);
         }
 
       /* check if we failed (ENOSPC cannot be skipped) */

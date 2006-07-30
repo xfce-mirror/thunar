@@ -258,7 +258,7 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
   GString     *secondary = g_string_sized_new (256);
   GString     *primary = g_string_sized_new (256);
   gint         response;
-  gint         n;
+  gint         n, m;
 
   g_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_VFS_JOB_RESPONSE_CANCEL);
   g_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
@@ -309,9 +309,13 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
 
   /* add the buttons based on the possible choices */
-  for (n = 3; n >= 0; --n)
+  for (n = 4; n >= 0; --n)
     {
-      response = choices & (1 << n);
+      /* "Cancel" should be the last button, but "No to all" was added last */
+      m = (n == 4) ? 3 : (n == 3) ? 4 : n;
+
+      /* check if the response is set */
+      response = choices & (1 << m);
       if (response == 0)
         continue;
 
@@ -327,6 +331,10 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
 
         case THUNAR_VFS_JOB_RESPONSE_NO:
           mnemonic = _("_No");
+          break;
+
+        case THUNAR_VFS_JOB_RESPONSE_NO_ALL:
+          mnemonic = _("N_o to all");
           break;
 
         case THUNAR_VFS_JOB_RESPONSE_CANCEL:
