@@ -1,5 +1,10 @@
 2006-07-30	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-tree-model.c: Emit "row-deleted" prior to deleting the
+	  node from the tree structure, as required for GTK+ 2.10.
+
+2006-07-30	Benedikt Meurer <benny@xfce.org>
+
 	* acinclude.m4(BM_THUNAR_PLUGIN_TPA): Display "no" if the tpa plugin
 	  should not be build.
 	* configure.in.in: Finally fix the glibc detection.

@@ -1492,11 +1492,11 @@ thunar_tree_model_node_drop_dummy (GNode           *node,
       path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
       if (G_LIKELY (path != NULL))
         {
-          /* drop the dummy from the model */
-          g_node_destroy (node->children);
-
           /* notify the view */
           gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
+
+          /* drop the dummy from the model */
+          g_node_destroy (node->children);
 
           /* determine the iter to the parent node */
           iter.stamp = model->stamp;
@@ -1573,14 +1573,14 @@ thunar_tree_model_node_traverse_remove (GNode   *node,
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
   if (G_LIKELY (path != NULL))
     {
+      /* emit a "row-deleted" */
+      gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
+
       /* release the item for the node */
       thunar_tree_model_node_traverse_free (node, user_data);
 
       /* remove the node from the tree */
       g_node_destroy (node);
-
-      /* emit a "row-deleted" */
-      gtk_tree_model_row_deleted (GTK_TREE_MODEL (model), path);
 
       /* release the path */
       gtk_tree_path_free (path);
