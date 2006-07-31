@@ -94,7 +94,10 @@ static inline void  tvilx_copy_regular        (const gchar                   *so
 static gboolean
 tvilx_mounted_readonly (gint fd)
 {
-#if defined(HAVE_STATVFS)
+#if defined(HAVE_STATVFS1)
+  struct statvfs statvfsb;
+  return (fstatvfs1 (fd, &statvfsb, ST_NOWAIT) == 0 && (statvfsb.f_flag & ST_RDONLY) != 0);
+#elif defined(HAVE_STATVFS)
   struct statvfs statvfsb;
   return (fstatvfs (fd, &statvfsb) == 0 && (statvfsb.f_flag & ST_RDONLY) != 0);
 #elif defined(HAVE_STATFS)

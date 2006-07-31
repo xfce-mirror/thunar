@@ -1,5 +1,11 @@
 2006-07-31	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in, thunar-vfs/thunar-vfs-io-local-xfer.c,
+	  thunar-vfs/thunar-vfs-io-local.c: Use statvfs1()/fstatvfs1() on
+	  NetBSD 2.99 and above.
+
+2006-07-31	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-permissions-chooser.c
 	  (thunar_permissions_chooser_file_changed): Make sure that the file's
 	  group is included in the "Group" box. Bug #1838.
