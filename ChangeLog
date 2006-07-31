@@ -1,5 +1,11 @@
 2006-07-31	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-permissions-chooser.c
+	  (thunar_permissions_chooser_file_changed): Make sure that the file's
+	  group is included in the "Group" box. Bug #1838.
+
+2006-07-31	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-transfer-job.c, thunar/thunar-dialogs.c:
 	  Add "No to all" response to the transfer progress dialog, which
 	  allows to skip all further overwrite dialogs. Bug #1666.

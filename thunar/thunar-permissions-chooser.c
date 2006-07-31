@@ -883,6 +883,10 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
               g_list_foreach (groups, (GFunc) g_object_ref, NULL);
             }
 
+          /* make sure that the group list includes the file group */
+          if (G_UNLIKELY (g_list_find (groups, group) == NULL))
+            groups = g_list_prepend (groups, g_object_ref (G_OBJECT (group)));
+
           /* sort the groups according to group_compare() */
           groups = g_list_sort_with_data (groups, group_compare, group);
 
