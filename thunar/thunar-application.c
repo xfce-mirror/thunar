@@ -1077,8 +1077,8 @@ thunar_application_unlink_files (ThunarApplication *application,
       /* prepend the path to the path list */
       path_list = thunar_vfs_path_list_prepend (path_list, thunar_file_get_path (lp->data));
 
-      /* check if the file is in the trash already */
-      if (thunar_file_is_trashed (lp->data))
+      /* check if the file is not a local file */
+      if (!thunar_file_is_local (lp->data))
         permanently = TRUE;
     }
 

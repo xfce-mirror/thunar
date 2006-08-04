@@ -809,17 +809,6 @@ thunar_path_entry_changed (GtkEditable *editable)
     {
       /* try to parse the URI text */
       file_path = thunar_vfs_path_new (text, NULL);
-      if (G_LIKELY (file_path != NULL))
-        {
-          /* check if the file_path ends with a separator */
-          if (g_str_has_suffix (text, "/"))
-            folder_path = file_path;
-          else if (!thunar_vfs_path_is_root (file_path))
-            folder_path = thunar_vfs_path_get_parent (file_path);
-
-          /* need to take a reference for the folder_path */
-          thunar_vfs_path_ref (folder_path);
-        }
     }
   else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
     {

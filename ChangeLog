@@ -1,3 +1,12 @@
+2006-08-05	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-application.c(thunar_application_unlink_files): Unlink
+	  permanently if atleast one non-local (not necessary trash) file is
+	  included in the file list.
+	* thunar/thunar-path-entry.c(thunar_path_entry_changed): Do not try
+	  to autocomplete non-local paths, as that's not going to work pro-
+	  perly with trash paths anyway.
+
 2006-08-04	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-file.c(thunar_file_info_get_uri_scheme): Use a more
