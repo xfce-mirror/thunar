@@ -65,6 +65,9 @@ gboolean
 _thunar_vfs_os_is_dir_empty (const gchar *absolute_path)
 {
   struct dirent *dp;
+#ifndef HAVE_GETDENTS
+  glong          basep = 0;
+#endif
   gchar          dbuf[8 * DIRBLKSIZ];
   gint           size = 0;
   gint           loc = 0;
@@ -80,8 +83,15 @@ _thunar_vfs_os_is_dir_empty (const gchar *absolute_path)
           /* check if we need to fill the buffer again */
           if (loc >= size)
             {
-              /* read the next chunk */
+#ifdef HAVE_GETDENTS
+              /* read the next chunk (no base pointer needed) */
               size = getdents (fd, dbuf, sizeof (dbuf));
+#else
+              /* read the next chunk (OpenBSD fallback) */
+              size = getdirentries (fd, dbuf, sizeof (dbuf), &basep);
+#endif
+
+              /* check for eof/error */
               if (size <= 0)
                 break;
               loc = 0;
@@ -103,9 +113,15 @@ invalid:
           /* adjust the location pointer */
           loc += dp->d_reclen;
 
-          /* verify the inode and type */
-          if (G_UNLIKELY (dp->d_fileno == 0 || dp->d_type == DT_WHT))
+          /* verify the inode */
+          if (G_UNLIKELY (dp->d_fileno == 0))
             continue;
+
+#ifdef DT_WHT
+          /* verify the type (OpenBSD lacks whiteout) */
+          if (G_UNLIKELY (dp->d_type == DT_WHT))
+            continue;
+#endif
 
           /* ignore '.' and '..' entries */
           if (G_UNLIKELY (dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || (dp->d_name[1] == '.' && dp->d_name[2] == '\0'))))
@@ -163,6 +179,9 @@ _thunar_vfs_os_scandir (ThunarVfsPath  *path,
 {
   struct dirent *dp;
   struct stat    statb;
+#ifndef HAVE_GETDENTS
+  glong          basep = 0;
+#endif
   GList         *path_list = NULL;
   gchar         *filename;
   gchar         *dbuf;
@@ -229,8 +248,15 @@ error0:
       /* check if we need to fill the buffer again */
       if (loc >= size)
         {
-          /* read the next chunk */
+#ifdef HAVE_GETDENTS
+          /* read the next chunk (no need for a base pointer) */
           size = getdents (fd, dbuf, dlen);
+#else
+          /* read the next chunk (OpenBSD fallback) */
+          size = getdirentries (fd, dbuf, dlen, &basep);
+#endif
+
+          /* check for eof/error */
           if (size <= 0)
             break;
           loc = 0;
@@ -248,9 +274,15 @@ error0:
       /* adjust the location pointer */
       loc += dp->d_reclen;
 
-      /* verify the inode and type */
-      if (G_UNLIKELY (dp->d_fileno == 0 || dp->d_type == DT_WHT))
+      /* verify the inode */
+      if (G_UNLIKELY (dp->d_fileno == 0))
         continue;
+
+#ifdef DT_WHT
+      /* verify the type (OpenBSD lacks whiteout) */
+      if (G_UNLIKELY (dp->d_type == DT_WHT))
+        continue;
+#endif
 
       /* ignore '.' and '..' entries */
       if (G_UNLIKELY (dp->d_name[0] == '.' && (dp->d_name[1] == '\0' || (dp->d_name[1] == '.' && dp->d_name[2] == '\0'))))
