@@ -387,18 +387,18 @@ thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 {
-  switch (thunar_vfs_path_get_scheme (thunar_file_get_path (file_info)))
-    {
-    case THUNAR_VFS_PATH_SCHEME_FILE:
-      return g_strdup ("file");
+  gchar *colon;
+  gchar *uri;
 
-    case THUNAR_VFS_PATH_SCHEME_TRASH:
-      return g_strdup ("trash");
+  /* determine the URI for the file... */
+  uri = thunar_file_info_get_uri (file_info);
 
-    default:
-      g_assert_not_reached ();
-      return NULL;
-    }
+  /* ...and strip off everything after the colon */
+  colon = strchr (uri, ':');
+  if (G_LIKELY (colon != NULL))
+    *colon = '\0';
+
+  return uri;
 }
 
 

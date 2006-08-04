@@ -1,5 +1,12 @@
 2006-08-04	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-file.c(thunar_file_info_get_uri_scheme): Use a more
+	  generic implementation here.
+	* thunar/thunar-location-button.c(thunar_location_button_file_changed):
+	  Hide the label only for the file system root node.
+
+2006-08-04	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in, thunar-vfs/thunar-vfs-os-bsd.c: OpenBSD doesn't
 	  support getdents() and whiteout inodes, instead getdirentries()
 	  will be used on OpenBSD.

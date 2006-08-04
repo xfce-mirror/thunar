@@ -449,8 +449,8 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   g_object_unref (G_OBJECT (icon_factory));
   g_object_unref (G_OBJECT (icon));
 
-  /* the label is only visible for non-root folders */
-  if (thunar_file_is_root (file))
+  /* the label is hidden for the file system root */
+  if (thunar_file_is_local (file) && thunar_file_is_root (file))
     {
       /* hide the label widget */
       gtk_widget_hide (location_button->label);
