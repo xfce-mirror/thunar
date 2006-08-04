@@ -31,6 +31,8 @@ gchar     *thunar_util_humanize_file_time (ThunarVfsFileTime file_time) G_GNUC_I
 GdkScreen *thunar_util_parse_parent       (gpointer          parent,
                                            GtkWindow       **window_return) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
 
+time_t     thunar_util_time_from_rfc3339  (const gchar      *date_string) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_UTIL_H__ */

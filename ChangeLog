@@ -1,3 +1,14 @@
+2006-08-04	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-file.c, thunar/thunar-util.{c,h}: Add new helper method
+	  thunar_util_time_from_rfc3339(), which parses a date string to a time
+	  value, using strptime() if available. Use the method to parse the
+	  deletion date string for trashed resources, so the deletion date will
+	  be displayed properly even on systems that lack strptime().
+	* thunar/thunar-util.c(thunar_util_humanize_file_time): Use
+	  g_date_set_time() to enable compilation with GLib 2.6/2.8.
+	  Hopefully nobody will still use GLib 2.6/2.8 in 2038.
+
 2006-07-31	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in, thunar-vfs/thunar-vfs-io-local-xfer.c,

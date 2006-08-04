@@ -1354,11 +1354,8 @@ thunar_file_get_user (const ThunarFile *file)
 gchar*
 thunar_file_get_deletion_date (const ThunarFile *file)
 {
-#ifdef HAVE_STRPTIME
-  struct tm tm;
-#endif
-  time_t    time;
-  gchar    *date;
+  time_t time;
+  gchar *date;
 
   g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
@@ -1367,12 +1364,8 @@ thunar_file_get_deletion_date (const ThunarFile *file)
   if (G_UNLIKELY (date == NULL))
     return NULL;
 
-  /* try to parse the DeletionDate (ISO date string) */
-#ifdef HAVE_STRPTIME
-  time = (strptime (date, "%FT%T", &tm) != NULL) ? mktime (&tm) : 0;
-#else
-  time = 0;
-#endif
+  /* try to parse the DeletionDate (RFC 3339 string) */
+  time = thunar_util_time_from_rfc3339 (date);
 
   /* release the DeletionDate */
   g_free (date);
