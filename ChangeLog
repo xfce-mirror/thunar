@@ -1,5 +1,11 @@
 2006-08-06	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-launcher.c(thunar_launcher_update): Place additional
+	  "Open With" action into a submenu if either more than 2 are available
+	  or the default action for the file is "Execute".
+
+2006-08-06	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-thumb.c
 	  (thunar_vfs_thumb_factory_lookup_thumbnail): Fix an invalid return
 	  value.

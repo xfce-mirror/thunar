@@ -876,8 +876,10 @@ thunar_launcher_update (ThunarLauncher *launcher)
                         NULL);
         }
 
-      /* place the other applications in the "Open With" submenu if we have more than 2 other applications */
-      if (G_UNLIKELY (g_list_length (applications) > 3))
+      /* place the other applications in the "Open With" submenu if we have more than 2 other applications, or the
+       * default action for the file is "Execute", in which case the "Open With" actions aren't that relevant either
+       */
+      if (G_UNLIKELY (g_list_length (applications) > 2 || n_executables == n_selected_files))
         {
           /* determine the base paths for the actions */
           file_menu_path = "/main-menu/file-menu/placeholder-launcher/open-with-menu/placeholder-applications";
