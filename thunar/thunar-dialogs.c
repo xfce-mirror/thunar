@@ -394,7 +394,7 @@ thunar_dialogs_show_job_error (GtkWindow *parent,
 
   /* try to separate the message into primary and secondary parts */
   separator = strstr (error->message, ": ");
-  if (G_LIKELY (separator != NULL))
+  if (G_LIKELY (separator > error->message))
     {
       /* primary is everything before the colon, plus a dot */
       g_string_append_len (primary, error->message, separator - error->message);
@@ -405,7 +405,7 @@ thunar_dialogs_show_job_error (GtkWindow *parent,
         ++separator;
       while (g_ascii_isspace (*separator));
       g_string_append (secondary, separator);
-      if (!g_str_has_suffix (separator, "."))
+      if (separator[strlen (separator - 1)] != '.')
         g_string_append_c (secondary, '.');
     }
   else

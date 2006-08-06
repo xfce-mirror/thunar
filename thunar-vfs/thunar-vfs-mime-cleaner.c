@@ -410,7 +410,7 @@ main (int argc, char **argv)
               mt2 = xfce_rc_read_entry_untranslated (rc, "MimeType", NULL);
 
               /* combine the MimeTypes to a single list */
-              if (G_LIKELY (mt1 != NULL && g_str_has_suffix (mt1, ";")))
+              if (G_LIKELY (mt1 != NULL && mt1[strlen (mt1) - 1] == ';'))
                 mt = g_strconcat (mt1, mt2, NULL);
               else if (G_LIKELY (mt1 != NULL))
                 mt = g_strconcat (mt1, ";", mt2, NULL);

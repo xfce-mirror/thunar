@@ -1,3 +1,28 @@
+2006-08-06	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-thumb.c
+	  (thunar_vfs_thumb_factory_lookup_thumbnail): Fix an invalid return
+	  value.
+	* thunar-vfs/thunar-vfs-thumb.c
+	  (thunar_vfs_thumb_factory_generate_thumbnail),
+	  thunar/thunar-icon-factory.c(thunar_icon_factory_load_file_icon):
+	  Add support for generating and loading thumbnails for files in the
+	  trash.
+	* thunar-vfs/thunar-vfs-info.c(_thunar_vfs_io_local_rename),
+	  thunar-vfs/thunar-vfs-mime-application.c
+	  (thunar_vfs_mime_application_new_from_file),
+	  thunar-vfs/thunar-vfs-mime-cleaner.c(main),
+	  thunar-vfs/thunar-vfs-mime-handler.c
+	  (thunar_vfs_mime_handler_set_icon),
+	  thunar/thunar-dialogs.c(thunar_dialogs_show_job_error),
+	  thunar/thunar-launcher.c,
+	  thunar/thunar-path-entry.c(thunar_path_entry_check_completion_idle):
+	  Use strncmp() instead of g_str_has_prefix() where it makes sense. Try
+	  to avoid g_str_has_suffix() if checking only for a single character.
+	* thunar/thunar-standard-view.c(thunar_standard_view_drag_motion):
+	  Deny XdndDirectSave0 and _NETSCAPE_URL drops to locations in the
+	  trash.
+
 2006-08-05	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-application.c(thunar_application_unlink_files): Unlink

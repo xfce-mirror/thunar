@@ -53,6 +53,7 @@
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
 #include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-path-private.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-thumb-jpeg.h>
 #include <thunar-vfs/thunar-vfs-thumb-pixbuf.h>
@@ -412,20 +413,20 @@ thunar_vfs_thumb_factory_lookup_thumbnail (ThunarVfsThumbFactory *factory,
   g_return_val_if_fail (info != NULL, NULL);
 
   /* determine the URI for the path */
-  if (thunar_vfs_path_to_uri (info->path, uri, sizeof (uri), NULL) < 0)
-    return FALSE;
+  if (thunar_vfs_path_to_uri (info->path, uri, sizeof (uri), NULL) >= 0)
+    {
+      /* determine the path to the thumbnail for the factory */
+      md5 = exo_str_get_md5_str (uri);
+      path = g_strconcat (factory->base_path, md5, ".png", NULL);
+      g_free (md5);
 
-  /* determine the path to the thumbnail for the factory */
-  md5 = exo_str_get_md5_str (uri);
-  path = g_strconcat (factory->base_path, md5, ".png", NULL);
-  g_free (md5);
+      /* check if the path contains a valid thumbnail */
+      if (thunar_vfs_thumbnail_is_valid (path, uri, info->mtime))
+        return path;
 
-  /* check if the path contains a valid thumbnail */
-  if (thunar_vfs_thumbnail_is_valid (path, uri, info->mtime))
-    return path;
-
-  /* no valid thumbnail in the global repository */
-  g_free (path);
+      /* no valid thumbnail in the global repository */
+      g_free (path);
+    }
 
   return NULL;
 }
@@ -659,8 +660,10 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory *factory,
   /* determine the pixel size of the thumbnail */
   size = G_LIKELY (factory->size == THUNAR_VFS_THUMB_SIZE_NORMAL) ? 128 : 256;
 
-  /* determine the absolute path to the file */
-  path = thunar_vfs_path_dup_string (info->path);
+  /* determine the absolute local path to the file */
+  path = _thunar_vfs_path_translate_dup_string (info->path, THUNAR_VFS_PATH_SCHEME_FILE, NULL);
+  if (G_UNLIKELY (path == NULL))
+    return NULL;
 
 #ifdef HAVE_GCONF
   /* check if we have a GNOME thumbnailer for the given mime info */

@@ -2817,7 +2817,7 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
 
           /* check if we can save here */
-          if (G_LIKELY (file != NULL && thunar_file_is_directory (file) && thunar_file_is_writable (file)))
+          if (G_LIKELY (file != NULL && thunar_file_is_local (file) && thunar_file_is_directory (file) && thunar_file_is_writable (file)))
             action = context->suggested_action;
 
           /* reset path if we cannot drop */

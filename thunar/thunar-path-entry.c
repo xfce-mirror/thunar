@@ -1313,7 +1313,7 @@ thunar_path_entry_check_completion_idle (gpointer user_data)
 
   /* check if the user entered atleast part of a filename */
   text = gtk_entry_get_text (GTK_ENTRY (path_entry));
-  if (*text != '\0' && !g_str_has_suffix (text, "/"))
+  if (*text != '\0' && text[strlen (text) - 1] != '/')
     {
       /* automatically insert the common prefix */
       thunar_path_entry_common_prefix_append (path_entry, TRUE);

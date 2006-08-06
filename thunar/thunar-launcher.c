@@ -21,6 +21,13 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-dialogs.h>
@@ -799,7 +806,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
       /* drop all previous addon actions from the action group */
       actions = gtk_action_group_list_actions (launcher->action_group);
       for (lp = actions; lp != NULL; lp = lp->next)
-        if (g_str_has_prefix (gtk_action_get_name (lp->data), "thunar-launcher-addon-"))
+        if (strncmp (gtk_action_get_name (lp->data), "thunar-launcher-addon-", 22) == 0)
           gtk_action_group_remove_action (launcher->action_group, lp->data);
       g_list_free (actions);
 
@@ -1214,7 +1221,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
       /* drop all previous sendto actions from the action group */
       handlers = gtk_action_group_list_actions (launcher->action_group);
       for (lp = handlers; lp != NULL; lp = lp->next)
-        if (g_str_has_prefix (gtk_action_get_name (lp->data), "thunar-launcher-sendto"))
+        if (strncmp (gtk_action_get_name (lp->data), "thunar-launcher-sendto", 22) == 0)
           gtk_action_group_remove_action (launcher->action_group, lp->data);
       g_list_free (handlers);
 

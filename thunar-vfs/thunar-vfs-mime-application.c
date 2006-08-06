@@ -281,7 +281,7 @@ thunar_vfs_mime_application_new_from_file (const gchar *path,
           for (ms = mt = application->mime_types; *ms != NULL; ++ms)
             {
               /* ignore empty entries, GNOME pseudo mime types and KDE junk */
-              if (**ms == '\0' || g_str_equal (*ms, "x-directory/gnome-default-handler") || g_str_has_prefix (*ms, "print/"))
+              if (**ms == '\0' || g_str_equal (*ms, "x-directory/gnome-default-handler") || strncmp (*ms, "print/", 6) == 0)
                 g_free (*ms);
               else
                 *mt++ = *ms;

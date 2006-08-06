@@ -362,6 +362,8 @@ static void
 thunar_vfs_mime_handler_set_icon (ThunarVfsMimeHandler *mime_handler,
                                   const gchar          *icon)
 {
+  gint icon_len;
+
   /* release the previous icon */
   g_free (mime_handler->icon);
 
@@ -369,8 +371,13 @@ thunar_vfs_mime_handler_set_icon (ThunarVfsMimeHandler *mime_handler,
   mime_handler->icon = g_strdup (icon);
 
   /* strip off known suffixes for image files if a themed icon is specified */
-  if (mime_handler->icon != NULL && !g_path_is_absolute (mime_handler->icon) && g_str_has_suffix (mime_handler->icon, ".png"))
-    mime_handler->icon[strlen (mime_handler->icon) - 4] = '\0';
+  if (mime_handler->icon != NULL && !g_path_is_absolute (mime_handler->icon))
+    {
+      /* check if the icon name ends in .png */
+      icon_len = strlen (mime_handler->icon);
+      if (G_LIKELY (icon_len > 4) && strcmp (mime_handler->icon + (icon_len - 4), ".png") == 0)
+        mime_handler->icon[icon_len - 4] = '\0';
+    }
 }
 
 

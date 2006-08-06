@@ -959,7 +959,7 @@ error2:
       info->display_name = g_strdup (name);
 
       /* check if this is a hidden file now */
-      if (strlen (name) > 1 && (g_str_has_prefix (name, ".") || g_str_has_prefix (name, "~")))
+      if (strlen (name) > 1 && (name[0] == '.' || name[strlen (name) - 1] == '~'))
         info->flags |= THUNAR_VFS_FILE_FLAGS_HIDDEN;
       else
         info->flags &= ~THUNAR_VFS_FILE_FLAGS_HIDDEN;
