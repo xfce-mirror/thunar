@@ -25,6 +25,18 @@
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
+#ifdef HAVE_SYS_MMAN_H
+#include <sys/mman.h>
+#endif
+#ifdef HAVE_SYS_RESOURCE_H
+#include <sys/resource.h>
+#endif
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
 #ifdef HAVE_SYS_WAIT_H
 #include <sys/wait.h>
 #endif
@@ -52,25 +64,44 @@
 #include <png.h>
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
-#include <thunar-vfs/thunar-vfs-mime-database.h>
+#include <thunar-vfs/thunar-vfs-monitor-private.h>
 #include <thunar-vfs/thunar-vfs-path-private.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-thumb-jpeg.h>
-#include <thunar-vfs/thunar-vfs-thumb-pixbuf.h>
 #include <thunar-vfs/thunar-vfs-thumb-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-#ifdef HAVE_GCONF
-#include <gconf/gconf-client.h>
-#endif
-
-/* use g_rename() and g_unlink() on win32 */
+/* use g_open(), g_rename() and g_unlink() on win32 */
 #if defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
-#define g_rename(from, to) (rename ((from), (to)))
-#define g_unlink(path) (unlink ((path)))
+#define g_open(filename, flags, mode) (open ((filename), (flags), (mode)))
+#define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
+#define g_unlink(filename) (unlink ((filename)))
 #endif
+
+
+
+/* thumbnailers cache support */
+#define CACHE_MAJOR_VERSION (1)
+#define CACHE_MINOR_VERSION (0)
+#define CACHE_READ32(cache, offset) (GUINT32_FROM_BE (*((guint32 *) ((cache) + (offset)))))
+
+/* fallback cache if the loading fails */
+static const guint32 CACHE_FALLBACK[4] =
+{
+#if G_BYTE_ORDER == G_BIG_ENDIAN
+  CACHE_MAJOR_VERSION,
+  CACHE_MINOR_VERSION,
+  0,
+  0,
+#else
+  GUINT32_SWAP_LE_BE_CONSTANT (CACHE_MAJOR_VERSION),
+  GUINT32_SWAP_LE_BE_CONSTANT (CACHE_MINOR_VERSION),
+  GUINT32_SWAP_LE_BE_CONSTANT (0),
+  GUINT32_SWAP_LE_BE_CONSTANT (0),
+#endif
+};
 
 
 
@@ -83,17 +114,37 @@ enum
 
 
 
-static void thunar_vfs_thumb_factory_class_init   (ThunarVfsThumbFactoryClass *klass);
-static void thunar_vfs_thumb_factory_init         (ThunarVfsThumbFactory      *factory);
-static void thunar_vfs_thumb_factory_finalize     (GObject                    *object);
-static void thunar_vfs_thumb_factory_get_property (GObject                    *object,
-                                                   guint                       prop_id,
-                                                   GValue                     *value,
-                                                   GParamSpec                 *pspec);
-static void thunar_vfs_thumb_factory_set_property (GObject                    *object,
-                                                   guint                       prop_id,
-                                                   const GValue               *value,
-                                                   GParamSpec                 *pspec);
+static void     thunar_vfs_thumb_factory_class_init           (ThunarVfsThumbFactoryClass *klass);
+static void     thunar_vfs_thumb_factory_init                 (ThunarVfsThumbFactory      *factory);
+static void     thunar_vfs_thumb_factory_finalize             (GObject                    *object);
+static void     thunar_vfs_thumb_factory_get_property         (GObject                    *object,
+                                                               guint                       prop_id,
+                                                               GValue                     *value,
+                                                               GParamSpec                 *pspec);
+static void     thunar_vfs_thumb_factory_set_property         (GObject                    *object,
+                                                               guint                       prop_id,
+                                                               const GValue               *value,
+                                                               GParamSpec                 *pspec);
+static gboolean thunar_vfs_thumb_factory_cache_lookup         (ThunarVfsThumbFactory      *factory,
+                                                               const gchar                *mime_type,
+                                                               gint                        mime_type_len,
+                                                               gchar                     **script_return) G_GNUC_WARN_UNUSED_RESULT;
+static void     thunar_vfs_thumb_factory_cache_load           (ThunarVfsThumbFactory      *factory,
+                                                               const gchar                *cache_file);
+static void     thunar_vfs_thumb_factory_cache_unload         (ThunarVfsThumbFactory      *factory);
+static void     thunar_vfs_thumb_factory_cache_monitor        (ThunarVfsMonitor           *monitor,
+                                                               ThunarVfsMonitorHandle     *handle,
+                                                               ThunarVfsMonitorEvent       event,
+                                                               ThunarVfsPath              *handle_path,
+                                                               ThunarVfsPath              *event_path,
+                                                               gpointer                    user_data);
+static void     thunar_vfs_thumb_factory_cache_update         (ThunarVfsThumbFactory      *factory);
+static gboolean thunar_vfs_thumb_factory_cache_timer          (gpointer                    user_data);
+static void     thunar_vfs_thumb_factory_cache_timer_destroy  (gpointer                    user_data);
+static void     thunar_vfs_thumb_factory_cache_watch          (GPid                        pid,
+                                                               gint                        status,
+                                                               gpointer                    user_data);
+static void     thunar_vfs_thumb_factory_cache_watch_destroy  (gpointer                    user_data);
 
 
 
@@ -106,19 +157,17 @@ struct _ThunarVfsThumbFactory
 {
   GObject __parent__;
 
-  ThunarVfsMimeDatabase *mime_database;
-  ThunarVfsMimeInfo     *mime_image_jpeg;
+  gchar                  *base_path;
+  gchar                  *fail_path;
+  ThunarVfsThumbSize      size;
 
-  GHashTable            *pixbuf_mime_infos;
-
-  gchar                 *base_path;
-  gchar                 *fail_path;
-  ThunarVfsThumbSize     size;
-
-#ifdef HAVE_GCONF
-  GConfClient           *client;
-  GHashTable            *scripts;
-#endif
+  gchar                  *cache;
+  guint                   cache_size;
+  GMutex                 *cache_lock;
+  guint                   cache_timer_id;
+  guint                   cache_watch_id;
+  guint                   cache_was_mapped : 1;
+  ThunarVfsMonitorHandle *cache_handle;
 };
 
 
@@ -182,17 +231,8 @@ thunar_vfs_thumb_factory_class_init (ThunarVfsThumbFactoryClass *klass)
 static void
 thunar_vfs_thumb_factory_init (ThunarVfsThumbFactory *factory)
 {
-  ThunarVfsMimeInfo *mime_info;
-  GSList            *formats;
-  GSList            *lp;
-  gchar            **mime_types;
-  guint              n;
-
-  /* take a reference on the mime database */
-  factory->mime_database = thunar_vfs_mime_database_get_default ();
-
-  /* take a reference on the image/jpeg mime info */
-  factory->mime_image_jpeg = thunar_vfs_mime_database_get_info (factory->mime_database, "image/jpeg");
+  ThunarVfsPath *cache_path;
+  gchar         *cache_file;
 
   /* pre-allocate the failed path, so we don't need to do that on every method call */
   factory->fail_path = g_strconcat (xfce_get_homedir (),
@@ -205,81 +245,26 @@ thunar_vfs_thumb_factory_init (ThunarVfsThumbFactory *factory)
   factory->base_path = g_strconcat (xfce_get_homedir (), G_DIR_SEPARATOR_S ".thumbnails" G_DIR_SEPARATOR_S "normal" G_DIR_SEPARATOR_S, NULL);
   factory->size = THUNAR_VFS_THUMB_SIZE_NORMAL;
 
-  /* determine the MIME types supported by GdkPixbuf */
-  factory->pixbuf_mime_infos = g_hash_table_new_full (g_direct_hash, g_direct_equal, (GDestroyNotify) thunar_vfs_mime_info_unref, NULL);
-  formats = gdk_pixbuf_get_formats ();
-  for (lp = formats; lp != NULL; lp = lp->next)
-    if (!gdk_pixbuf_format_is_disabled (lp->data))
-      {
-        mime_types = gdk_pixbuf_format_get_mime_types (lp->data);
-        for (n = 0; mime_types[n] != NULL; ++n)
-          {
-            mime_info = thunar_vfs_mime_database_get_info (factory->mime_database, mime_types[n]);
-            if (G_LIKELY (mime_info != NULL))
-              g_hash_table_replace (factory->pixbuf_mime_infos, mime_info, GUINT_TO_POINTER (1));
-          }
-        g_strfreev (mime_types);
-      }
-  g_slist_free (formats);
+  /* allocate the cache mutex */
+  factory->cache_lock = g_mutex_new ();
 
-#ifdef HAVE_GCONF
-  /* grab a reference on the default GConf client */
-  factory->client = gconf_client_get_default ();
+  /* determine the thumbnailers.cache file */
+  cache_file = xfce_resource_save_location (XFCE_RESOURCE_CACHE, "Thunar/thumbnailers.cache", FALSE);
 
-  /* allocate the hash table for the GNOME thumbnailer scripts */
-  factory->scripts = g_hash_table_new_full (g_direct_hash, g_direct_equal, (GDestroyNotify) thunar_vfs_mime_info_unref, g_free);
+  /* monitor the thumbnailers.cache file for changes */
+  cache_path = thunar_vfs_path_new (cache_file, NULL);
+  factory->cache_handle = thunar_vfs_monitor_add_file (_thunar_vfs_monitor, cache_path, thunar_vfs_thumb_factory_cache_monitor, factory);
+  _thunar_vfs_path_unref_nofree (cache_path);
 
-  /* check if the GNOME thumbnailers are enabled */
-  if (!gconf_client_get_bool (factory->client, "/desktop/gnome/thumbnailers/disable_all", NULL))
-    {
-      /* determine the MIME types supported by the GNOME thumbnailers */
-      formats = gconf_client_all_dirs (factory->client, "/desktop/gnome/thumbnailers", NULL);
-      for (lp = formats; lp != NULL; lp = lp->next)
-        {
-          gchar *mime_type;
-          gchar *script;
-          gchar *format = lp->data;
-          gchar  key[1024];
+  /* initially load the thumbnailers.cache file */
+  thunar_vfs_thumb_factory_cache_load (factory, cache_file);
 
-          /* check if the given thumbnailer is enabled */
-          g_snprintf (key, sizeof (key), "%s/enable", format);
-          if (gconf_client_get_bool (factory->client, key, NULL))
-            {
-              /* determine the command */
-              g_snprintf (key, sizeof (key), "%s/command", format);
-              script = gconf_client_get_string (factory->client, key, NULL);
-              if (G_LIKELY (script != NULL))
-                {
-                  mime_type = strrchr (format, '/');
-                  if (G_LIKELY (mime_type != NULL))
-                    {
-                      /* skip past slash */
-                      ++mime_type;
+  /* schedule a timer to update the thumbnailers.cache every 5 minutes */
+  factory->cache_timer_id = g_timeout_add_full (G_PRIORITY_LOW, 5 * 60 * 1000, thunar_vfs_thumb_factory_cache_timer,
+                                                factory, thunar_vfs_thumb_factory_cache_timer_destroy);
 
-                      /* convert '@' to slash in the mime_type */
-                      for (n = 0; mime_type[n] != '\0'; ++n)
-                        if (G_UNLIKELY (mime_type[n] == '@'))
-                          mime_type[n] = '/';
-
-                      /* determine the mime info for the given mime_type */
-                      mime_info = thunar_vfs_mime_database_get_info (factory->mime_database, mime_type);
-                      if (G_LIKELY (mime_info != NULL))
-                        {
-                          g_hash_table_replace (factory->scripts, mime_info, script);
-                          script = NULL;
-                        }
-                    }
-                }
-
-              g_free (script);
-            }
-
-          g_free (format);
-        }
-
-      g_slist_free (formats);
-    }
-#endif
+  /* cleanup */
+  g_free (cache_file);
 }
 
 
@@ -289,22 +274,20 @@ thunar_vfs_thumb_factory_finalize (GObject *object)
 {
   ThunarVfsThumbFactory *factory = THUNAR_VFS_THUMB_FACTORY (object);
 
-#ifdef HAVE_GCONF
-  /* disconnect from the GConf client */
-  g_object_unref (G_OBJECT (factory->client));
+  /* be sure to unload the cache file */
+  thunar_vfs_thumb_factory_cache_unload (factory);
 
-  /* release the scripts hash table */
-  g_hash_table_destroy (factory->scripts);
-#endif
+  /* stop any pending cache sources */
+  if (G_LIKELY (factory->cache_timer_id != 0))
+    g_source_remove (factory->cache_timer_id);
+  if (G_UNLIKELY (factory->cache_watch_id != 0))
+    g_source_remove (factory->cache_watch_id);
 
-  /* release the image/jpeg mime info */
-  thunar_vfs_mime_info_unref (factory->mime_image_jpeg);
+  /* unregister the monitor handle */
+  thunar_vfs_monitor_remove (_thunar_vfs_monitor, factory->cache_handle);
 
-  /* release the reference on the mime database */
-  g_object_unref (G_OBJECT (factory->mime_database));
-
-  /* destroy the hash table with mime infos supported by GdkPixbuf */
-  g_hash_table_destroy (factory->pixbuf_mime_infos);
+  /* release the cache lock */
+  g_mutex_free (factory->cache_lock);
 
   /* free the thumbnail paths */
   g_free (factory->base_path);
@@ -363,6 +346,300 @@ thunar_vfs_thumb_factory_set_property (GObject      *object,
       G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
       break;
     }
+}
+
+
+
+static gboolean
+thunar_vfs_thumb_factory_cache_lookup (ThunarVfsThumbFactory *factory,
+                                       const gchar           *mime_type,
+                                       gint                   mime_type_len,
+                                       gchar                **script_return)
+{
+  const gchar *cache;
+  gint         max;
+  gint         mid;
+  gint         min;
+  gint         n;
+
+  _thunar_vfs_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
+  _thunar_vfs_return_val_if_fail (mime_type_len > 0, FALSE);
+  _thunar_vfs_return_val_if_fail (mime_type != NULL, FALSE);
+
+  /* acquire the cache lock */
+  g_mutex_lock (factory->cache_lock);
+
+  /* binary search on the mime types */
+  for (cache = factory->cache, max = ((gint) CACHE_READ32 (cache, 8)) - 1, min = 0; max >= min; )
+    {
+      mid = (min + max) / 2;
+
+      /* compare the string length */
+      n = (gint) (CACHE_READ32 (cache, 16 + 8 * mid)) - mime_type_len;
+      if (G_UNLIKELY (n == 0))
+        {
+          /* compare the strings themselves */
+          n = strcmp (cache + CACHE_READ32 (cache, 16 + 8 * mid + 4), mime_type);
+        }
+
+      /* where to search next */
+      if (n < 0)
+        min = mid + 1;
+      else if (n > 0)
+        max = mid - 1;
+      else
+        {
+          /* check if we should return the script */
+          if (G_UNLIKELY (script_return != NULL))
+            *script_return = g_strdup (cache + CACHE_READ32 (cache + CACHE_READ32 (cache, 12) + mid * 4, 0));
+
+          /* we found it */
+          break;
+        }
+    }
+
+  /* release the cache lock */
+  g_mutex_unlock (factory->cache_lock);
+
+  return (max >= min);
+}
+
+
+
+static void
+thunar_vfs_thumb_factory_cache_load (ThunarVfsThumbFactory *factory,
+                                     const gchar           *cache_file)
+{
+  struct stat statb;
+  gssize      m;
+  gsize       n;
+  gint        fd;
+
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory));
+  _thunar_vfs_return_if_fail (g_path_is_absolute (cache_file));
+  _thunar_vfs_return_if_fail (factory->cache == NULL);
+
+  /* try to open the thumbnailers.cache file */
+  fd = g_open (cache_file, O_RDONLY, 0000);
+  if (G_LIKELY (fd >= 0))
+    {
+      /* stat the file to get proper size info */
+      if (fstat (fd, &statb) == 0 && statb.st_size >= 16)
+        {
+          /* remember the size of the cache */
+          factory->cache_size = statb.st_size;
+
+#ifdef HAVE_MMAP
+          /* try to mmap() the file into memory */
+          factory->cache = mmap (NULL, statb.st_size, PROT_READ, MAP_SHARED, fd, 0);
+          if (G_LIKELY (factory->cache != MAP_FAILED))
+            {
+              /* remember that mmap() succeed */
+              factory->cache_was_mapped = TRUE;
+
+#ifdef HAVE_POSIX_MADVISE
+              /* tell the system that we'll use this buffer quite often */
+              posix_madvise (factory->cache, statb.st_size, POSIX_MADV_WILLNEED);
+#endif
+            }
+          else
+#endif
+            {
+              /* remember that mmap() failed */
+              factory->cache_was_mapped = FALSE;
+
+              /* allocate memory for the cache */
+              factory->cache = g_malloc (statb.st_size);
+
+              /* read the cache file */
+              for (n = 0; n < statb.st_size; n += m)
+                {
+                  /* read the next chunk */
+                  m = read (fd, factory->cache + n, statb.st_size - n);
+                  if (G_UNLIKELY (m <= 0))
+                    {
+                      /* reset the cache */
+                      g_free (factory->cache);
+                      factory->cache = NULL;
+                      break;
+                    }
+                }
+            }
+        }
+
+      /* close the file handle */
+      close (fd);
+    }
+
+  /* check if the cache was loaded successfully */
+  if (G_LIKELY (factory->cache != NULL))
+    {
+      /* check that we actually support the file version */
+      if (CACHE_READ32 (factory->cache, 0) != CACHE_MAJOR_VERSION || CACHE_READ32 (factory->cache, 4) != CACHE_MINOR_VERSION)
+        thunar_vfs_thumb_factory_cache_unload (factory);
+    }
+  else
+    {
+      /* run the thunar-vfs-update-thumbnailers-cache-1 utility */
+      thunar_vfs_thumb_factory_cache_update (factory);
+    }
+
+  /* use the fallback cache if the loading failed */
+  if (G_UNLIKELY (factory->cache == NULL))
+    {
+      factory->cache = (gchar *) CACHE_FALLBACK;
+      factory->cache_size = 16;
+    }
+}
+
+
+
+static void
+thunar_vfs_thumb_factory_cache_unload (ThunarVfsThumbFactory *factory)
+{
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory));
+  _thunar_vfs_return_if_fail (factory->cache != NULL);
+
+  /* check if any cache is loaded (and not using the fallback cache) */
+  if (factory->cache != (gchar *) CACHE_FALLBACK)
+    {
+#ifdef HAVE_MMAP
+      /* check if mmap() succeed */
+      if (factory->cache_was_mapped)
+        {
+          /* just unmap the memory */
+          munmap (factory->cache, factory->cache_size);
+        }
+      else
+#endif
+        {
+          /* need to release the memory */
+          g_free (factory->cache);
+        }
+    }
+
+  /* reset the cache pointer */
+  factory->cache = NULL;
+}
+
+
+
+static void
+thunar_vfs_thumb_factory_cache_monitor (ThunarVfsMonitor       *monitor,
+                                        ThunarVfsMonitorHandle *handle,
+                                        ThunarVfsMonitorEvent   event,
+                                        ThunarVfsPath          *handle_path,
+                                        ThunarVfsPath          *event_path,
+                                        gpointer                user_data)
+{
+  ThunarVfsThumbFactory *factory = THUNAR_VFS_THUMB_FACTORY (user_data);
+  gchar                 *cache_file;
+
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory));
+  _thunar_vfs_return_if_fail (factory->cache_handle == handle);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+
+  /* check the event */
+  if (G_UNLIKELY (event == THUNAR_VFS_MONITOR_EVENT_DELETED))
+    {
+      /* some idiot deleted the cache file, regenerate it */
+      thunar_vfs_thumb_factory_cache_update (factory);
+    }
+  else
+    {
+      /* determine the thumbnailers.cache file */
+      cache_file = thunar_vfs_path_dup_string (handle_path);
+      
+      /* the thumbnailers.cache file was changed, reload it */
+      g_mutex_lock (factory->cache_lock);
+      thunar_vfs_thumb_factory_cache_unload (factory);
+      thunar_vfs_thumb_factory_cache_load (factory, cache_file);
+      g_mutex_unlock (factory->cache_lock);
+
+      /* release the file path */
+      g_free (cache_file);
+    }
+}
+
+
+
+static void
+thunar_vfs_thumb_factory_cache_update (ThunarVfsThumbFactory *factory)
+{
+  gchar *argv[2] = { LIBEXECDIR G_DIR_SEPARATOR_S "/thunar-vfs-update-thumbnailers-cache-1", NULL };
+  GPid   pid;
+
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory));
+
+  /* check if we're already updating the cache */
+  if (G_LIKELY (factory->cache_watch_id == 0))
+    {
+      /* try to spawn the command */
+      if (g_spawn_async (NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD, NULL, NULL, &pid, NULL))
+        {
+          /* add a child watch for the updater process */
+          factory->cache_watch_id = g_child_watch_add_full (G_PRIORITY_LOW, pid, thunar_vfs_thumb_factory_cache_watch,
+                                                            factory, thunar_vfs_thumb_factory_cache_watch_destroy);
+
+#ifdef HAVE_SETPRIORITY
+          /* decrease the priority of the updater process */
+          setpriority (PRIO_PROCESS, pid, 10);
+#endif
+        }
+    }
+}
+
+
+
+static gboolean
+thunar_vfs_thumb_factory_cache_timer (gpointer user_data)
+{
+  /* run the thunar-vfs-update-thumbnailers-cache-1 utility... */
+  thunar_vfs_thumb_factory_cache_update (THUNAR_VFS_THUMB_FACTORY (user_data));
+
+  /* ...and keep the timer running */
+  return TRUE;
+}
+
+
+
+static void
+thunar_vfs_thumb_factory_cache_timer_destroy (gpointer user_data)
+{
+  THUNAR_VFS_THUMB_FACTORY (user_data)->cache_timer_id = 0;
+}
+
+
+
+static void
+thunar_vfs_thumb_factory_cache_watch (GPid     pid,
+                                      gint     status,
+                                      gpointer user_data)
+{
+  ThunarVfsThumbFactory *factory = THUNAR_VFS_THUMB_FACTORY (user_data);
+
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory));
+
+  /* a return value of 33 means that the thumbnailers.cache was updated by the
+   * thunar-vfs-update-thumbnailers-cache-1 utilitiy and must be reloaded.
+   */
+  if (WIFEXITED (status) && WEXITSTATUS (status) == 33)
+    {
+      /* schedule a "changed" event for the thumbnailers.cache */
+      thunar_vfs_monitor_feed (_thunar_vfs_monitor, THUNAR_VFS_MONITOR_EVENT_CHANGED,
+                               _thunar_vfs_monitor_handle_get_path (factory->cache_handle));
+    }
+
+  /* close the PID (win32) */
+  g_spawn_close_pid (pid);
+}
+
+
+
+static void
+thunar_vfs_thumb_factory_cache_watch_destroy (gpointer user_data)
+{
+  THUNAR_VFS_THUMB_FACTORY (user_data)->cache_watch_id = 0;
 }
 
 
@@ -451,6 +728,7 @@ thunar_vfs_thumb_factory_can_thumbnail (ThunarVfsThumbFactory *factory,
 {
   ThunarVfsPath *path;
   const gchar   *name;
+  gint           name_len;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), FALSE);
   g_return_val_if_fail (info != NULL, FALSE);
@@ -463,20 +741,20 @@ thunar_vfs_thumb_factory_can_thumbnail (ThunarVfsThumbFactory *factory,
   for (path = info->path; path != NULL; path = thunar_vfs_path_get_parent (path))
     {
       name = thunar_vfs_path_get_name (path);
-      if (strcmp (name, ".thumbnails") == 0 || strcmp (name, ".thumblocal") == 0)
+      if (*name == '.' && (strcmp (name + 1, "thumbnails") == 0 || strcmp (name + 1, "thumblocal") == 0))
         return FALSE;
     }
 
-  /* check GdkPixbuf supports the given mime info */
-  if (g_hash_table_lookup (factory->pixbuf_mime_infos, info->mime_info))
+  /* determine the length of the mime type */
+  name = thunar_vfs_mime_info_get_name (info->mime_info);
+  name_len = strlen (name);
+
+  /* image/jpeg should never be a problem, otherwise check if we have a thumbnailer in the cache */
+  if (G_LIKELY (name_len == 10 && memcmp (name, "image/jpeg", 10) == 0)
+      || thunar_vfs_thumb_factory_cache_lookup (factory, name, name_len, NULL))
     return !thunar_vfs_thumb_factory_has_failed_thumbnail (factory, info);
 
-#ifdef HAVE_GCONF
-  /* check if we have a GNOME thumbnailer for the given mime info */
-  if (g_hash_table_lookup (factory->scripts, info->mime_info) != NULL)
-    return !thunar_vfs_thumb_factory_has_failed_thumbnail (factory, info);
-#endif
-
+  /* we cannot handle the mime type */
   return FALSE;
 }
 
@@ -520,12 +798,11 @@ thunar_vfs_thumb_factory_has_failed_thumbnail (ThunarVfsThumbFactory *factory,
 
 
 
-#ifdef HAVE_GCONF
 static gchar*
-gnome_thumbnailer_script_expand (const gchar *script,
-                                 const gchar *ipath,
-                                 const gchar *opath,
-                                 gint         size)
+thumbnailer_script_expand (const gchar *script,
+                           const gchar *ipath,
+                           const gchar *opath,
+                           gint         size)
 {
   const gchar *p;
   GString     *s;
@@ -582,47 +859,9 @@ gnome_thumbnailer_script_expand (const gchar *script,
           break;
         }
     }
+
   return g_string_free (s, FALSE);
 }
-
-static GdkPixbuf*
-gnome_thumbnailer_script_run (const gchar *script,
-                              const gchar *path,
-                              gint         size)
-{
-  GdkPixbuf *pixbuf = NULL;
-  gchar     *tmp_path;
-  gchar     *command;
-  gint       status;
-  gint       fd;
-
-  /* create a temporary file for the thumbnailer */
-  fd = g_file_open_tmp (".thunar-vfs-thumbnail.XXXXXX", &tmp_path, NULL);
-  if (G_UNLIKELY (fd < 0))
-    return NULL;
-
-  /* determine the command for the script */
-  command = gnome_thumbnailer_script_expand (script, path, tmp_path, size);
-  if (G_LIKELY (command != NULL))
-    {
-      /* run the thumbnailer script and load the generated file */
-      if (g_spawn_command_line_sync (command, NULL, NULL, &status, NULL) && WIFEXITED (status) && WEXITSTATUS (status) == 0)
-        pixbuf = gdk_pixbuf_new_from_file (tmp_path, NULL);
-    }
-
-  /* unlink the temporary file */
-  g_unlink (tmp_path);
-
-  /* close the temporary file */
-  close (fd);
-
-  /* cleanup */
-  g_free (tmp_path);
-  g_free (command);
-
-  return pixbuf;
-}
-#endif
 
 
 
@@ -646,13 +885,17 @@ GdkPixbuf*
 thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory *factory,
                                              const ThunarVfsInfo   *info)
 {
-  GdkPixbuf *pixbuf = NULL;
-  GdkPixbuf *scaled;
-#ifdef HAVE_GCONF
-  gchar     *script;
-#endif
-  gchar     *path;
-  gint       size;
+  const gchar *name;
+  GdkPixbuf   *pixbuf = NULL;
+  GdkPixbuf   *scaled;
+  gchar       *tmp_path;
+  gchar       *command;
+  gchar       *script;
+  gchar       *path;
+  gint         name_len;
+  gint         status;
+  gint         size;
+  gint         fd;
 
   g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), NULL);
   g_return_val_if_fail (info != NULL, NULL);
@@ -665,20 +908,42 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory *factory,
   if (G_UNLIKELY (path == NULL))
     return NULL;
 
-#ifdef HAVE_GCONF
-  /* check if we have a GNOME thumbnailer for the given mime info */
-  script = g_hash_table_lookup (factory->scripts, info->mime_info);
-  if (G_UNLIKELY (script != NULL))
-    pixbuf = gnome_thumbnailer_script_run (script, path, size);
-#endif
+  /* determine the length of the mime type */
+  name = thunar_vfs_mime_info_get_name (info->mime_info);
+  name_len = strlen (name);
 
   /* try the fast JPEG thumbnailer */
-  if (G_LIKELY (pixbuf == NULL && info->mime_info == factory->mime_image_jpeg))
+  if (G_LIKELY (name_len == 10 && memcmp (name, "image/jpeg", 10) == 0))
     pixbuf = thunar_vfs_thumb_jpeg_load (path, size);
 
-  /* fallback to GdkPixbuf based loading */
-  if (G_LIKELY (pixbuf == NULL))
-    pixbuf = thunar_vfs_thumb_pixbuf_load (path, thunar_vfs_mime_info_get_name (info->mime_info), size);
+  /* otherwise check if we have a thumbnailer script in the cache */
+  if (pixbuf == NULL && thunar_vfs_thumb_factory_cache_lookup (factory, name, name_len, &script))
+    {
+      /* create a temporary file for the thumbnailer */
+      fd = g_file_open_tmp (".thunar-vfs-thumbnail.XXXXXX", &tmp_path, NULL);
+      if (G_LIKELY (fd >= 0))
+        {
+          /* determine the command for the script */
+          command = thumbnailer_script_expand (script, path, tmp_path, size);
+
+          /* run the thumbnailer script and load the generated file */
+          if (g_spawn_command_line_sync (command, NULL, NULL, &status, NULL) && WIFEXITED (status) && WEXITSTATUS (status) == 0)
+            {
+              pixbuf = gdk_pixbuf_new_from_file (tmp_path, NULL);
+            }
+
+          /* unlink the temporary file */
+          g_unlink (tmp_path);
+
+          /* cleanup */
+          g_free (tmp_path);
+          g_free (command);
+          close (fd);
+        }
+
+      /* cleanup */
+      g_free (script);
+    }
 
   /* check if we need to scale the image */
   if (pixbuf != NULL && (gdk_pixbuf_get_width (pixbuf) > size || gdk_pixbuf_get_height (pixbuf) > size))

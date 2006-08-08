@@ -1,3 +1,34 @@
+2006-08-08	Benedikt Meurer <benny@xfce.org>
+
+	* configure.in.in, docs/ThumbnailersCacheFormat.txt, docs/Makefile.am,
+	  thunar-vfs/thunar-vfs-thumb.c, thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs-update-thumbnailers-cache.c: Drop the dependen-
+	  cy of libthunar-vfs on GConf, which was required to load the GNOME
+	  thumbnailers. Instead there's now an external program, which genera-
+	  tes an mmap()able file that contains a mapping between a mime type
+	  and the thumbnailer used to generate thumbnails for that mime type.
+	  Bug #2131.
+	* thunar-vfs/thunar-vfs-pixbuf-thumbnailer.c, thunar-vfs/Makefile.am,
+	  thunar-vfs/thunar-vfs-thumb-pixbuf.{c,h},
+	  thunar-vfs/thunar-vfs-thumb.c: Put the gdk-pixbuf thumbnailer into
+	  a separate program, which gets registered via the thumbnailers.cache
+	  file, so we don't need any extra overhead for thumbnails that can be
+	  generated using gdk-pixbuf.
+	* thunar-vfs/thunar-vfs-monitor-private.h,
+	  thunar-vfs/thunar-vfs-monitor.c: Add a simple helper method
+	  _thunar_vfs_monitor_handle_get_path() that returns the path for
+	  a given monitor handle so we don't need to keep around both the
+	  path and the handle.
+	* thunar-vfs/thunar-vfs-mime-database.c: Do not keep both the handle
+	  and the path around for monitored resources.
+	* thunar-vfs/thunar-vfs-io-jobs.c(_thunar_vfs_io_jobs_chown): Fix
+	  typo. Thanks to Roberto Pariset <robdebian@gmail.com> for the hint.
+	* po/POTFILES.in: Remove no longer existing file.
+	* po/Thunar.pot, po/*.po: Update translations.
+	* po/de.po: Update german translations.
+	* po/it.po: Update italian translations by Roberto Pariset
+	  <robdebian@gmail.com>.
+
 2006-08-06	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-launcher.c(thunar_launcher_update): Place additional

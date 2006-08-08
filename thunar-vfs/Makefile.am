@@ -117,8 +117,6 @@ libthunar_vfs_1_la_SOURCES =						\
 	thunar-vfs-simple-job.h						\
 	thunar-vfs-thumb-jpeg.c						\
 	thunar-vfs-thumb-jpeg.h						\
-	thunar-vfs-thumb-pixbuf.c					\
-	thunar-vfs-thumb-pixbuf.h					\
 	thunar-vfs-thumb-private.h					\
 	thunar-vfs-thumb.c						\
 	thunar-vfs-transfer-job.c					\
@@ -132,7 +130,6 @@ libthunar_vfs_1_la_SOURCES =						\
 
 libthunar_vfs_1_la_CFLAGS =						\
 	$(EXO_CFLAGS)							\
-	$(GCONF_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
 	$(LIBFAM_CFLAGS)						\
 	$(LIBJPEG_CFLAGS)						\
@@ -148,7 +145,6 @@ libthunar_vfs_1_la_LDFLAGS =						\
 
 libthunar_vfs_1_la_LIBADD =						\
 	$(EXO_LIBS)							\
-	$(GCONF_LIBS)							\
 	$(GTHREAD_LIBS)							\
 	$(LIBFAM_LIBS)							\
 	$(LIBJPEG_LIBS)							\
@@ -156,7 +152,9 @@ libthunar_vfs_1_la_LIBADD =						\
 	$(LIBSTARTUP_NOTIFICATION_LIBS)
 
 libexec_PROGRAMS =							\
-	thunar-vfs-mime-cleaner-1
+	thunar-vfs-mime-cleaner-1					\
+	thunar-vfs-pixbuf-thumbnailer-1					\
+	thunar-vfs-update-thumbnailers-cache-1
 
 thunar_vfs_mime_cleaner_1_SOURCES =					\
 	thunar-vfs-mime-cleaner.c
@@ -169,6 +167,38 @@ thunar_vfs_mime_cleaner_1_LDADD =					\
 	$(LIBXFCE4UTIL_LIBS)
 
 thunar_vfs_mime_cleaner_1_LDFLAGS =					\
+	-no-undefined							\
+	$(PLATFORM_LDFLAGS)
+
+thunar_vfs_update_thumbnailers_cache_1_SOURCES =			\
+	thunar-vfs-update-thumbnailers-cache.c
+
+thunar_vfs_update_thumbnailers_cache_1_CFLAGS =				\
+	$(GCONF_CFLAGS)							\
+	$(GDK_PIXBUF_CFLAGS)						\
+	$(LIBXFCE4UTIL_CFLAGS)						\
+	$(PLATFORM_CFLAGS)
+
+thunar_vfs_update_thumbnailers_cache_1_LDADD =				\
+	$(GCONF_LIBS)							\
+	$(GDK_PIXBUF_LIBS)						\
+	$(LIBXFCE4UTIL_LIBS)
+
+thunar_vfs_update_thumbnailers_cache_1_LDFLAGS =			\
+	-no-undefined							\
+	$(PLATFORM_LDFLAGS)
+
+thunar_vfs_pixbuf_thumbnailer_1_SOURCES =				\
+	thunar-vfs-pixbuf-thumbnailer.c
+
+thunar_vfs_pixbuf_thumbnailer_1_CFLAGS =				\
+	$(GDK_PIXBUF_CFLAGS)						\
+	$(PLATFORM_CFLAGS)
+
+thunar_vfs_pixbuf_thumbnailer_1_LDADD =					\
+	$(GDK_PIXBUF_LIBS)
+
+thunar_vfs_pixbuf_thumbnailer_1_LDFLAGS =				\
 	-no-undefined							\
 	$(PLATFORM_LDFLAGS)
 

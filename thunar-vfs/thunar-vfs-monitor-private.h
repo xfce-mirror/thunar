@@ -32,6 +32,9 @@ G_BEGIN_DECLS;
 /* shared monitor instance */
 extern ThunarVfsMonitor *_thunar_vfs_monitor G_GNUC_INTERNAL;
 
+/* internal routines */
+ThunarVfsPath *_thunar_vfs_monitor_handle_get_path (const ThunarVfsMonitorHandle *handle) G_GNUC_INTERNAL;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_VFS_MONITOR_PRIVATE_H__ */

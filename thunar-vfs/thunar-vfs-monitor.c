@@ -723,5 +723,22 @@ ThunarVfsMonitor *_thunar_vfs_monitor = NULL;
 
 
 
+/**
+ * _thunar_vfs_monitor_handle_get_path:
+ * @handle : a #ThunarVfsMonitorHandle.
+ *
+ * Returns the #ThunarVfsPath for the @handle. Note that no additional
+ * reference is taken on the returned path.
+ *
+ * Return value: the #ThunarVfsPath for @handle.
+ **/
+ThunarVfsPath*
+_thunar_vfs_monitor_handle_get_path (const ThunarVfsMonitorHandle *handle)
+{
+  return handle->path;
+}
+
+
+
 #define __THUNAR_VFS_MONITOR_C__
 #include <thunar-vfs/thunar-vfs-aliasdef.c>

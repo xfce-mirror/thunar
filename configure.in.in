@@ -104,8 +104,8 @@ dnl **********************************
 AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h \
                   limits.h locale.h math.h memory.h mntent.h paths.h pwd.h \
                   regex.h sched.h setjmp.h signal.h stdarg.h stdlib.h \
-                  string.h sys/xattr.h sys/extattr.h \
-                  sys/cdio.h sys/mman.h sys/mount.h sys/param.h sys/stat.h \
+                  string.h sys/xattr.h sys/extattr.h sys/cdio.h sys/mman.h \
+                  sys/mount.h sys/param.h sys/resource.h sys/stat.h \
                   sys/statfs.h sys/statvfs.h sys/time.h sys/uio.h \
                   sys/vfs.h sys/wait.h time.h wchar.h wctype.h])
 
@@ -116,7 +116,8 @@ AC_FUNC_MMAP()
 AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr getdents lchmod localeconv \
                 localtime_r mbrtowc mkdtemp mkfifo posix_madvise pread \
                 pwrite readdir_r sched_yield setgroupent setpassent \
-                statfs statvfs statvfs1 strcoll strlcpy strptime symlink])
+                setpriority statfs statvfs statvfs1 strcoll strlcpy strptime \
+                symlink])
 
 dnl ******************************************
 dnl *** Linux/glibc specified work-arounds ***
@@ -147,6 +148,7 @@ XDT_CHECK_PACKAGE([EXO], [exo-0.3], [0.3.1.8])
 XDT_CHECK_PACKAGE([GLIB], [glib-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTHREAD], [gthread-2.0], [2.6.4])
 XDT_CHECK_PACKAGE([GTK], [gtk+-2.0], [2.6.0])
+XDT_CHECK_PACKAGE([GDK_PIXBUF], [gdk-pixbuf-2.0], [2.6.0])
 XDT_CHECK_PACKAGE([LIBXFCE4UTIL], [libxfce4util-1.0], [4.2.2])
 
 dnl *********************************************

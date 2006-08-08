@@ -1,0 +1,111 @@
+The Thumbnailers Cache Format
+=============================
+
+Date:		2006-08-08
+Author:		Benedikt Meurer <benny@xfce.org>
+Revision:	$Rev$
+
+
+Motivation
+----------
+
+In order to avoid a dependency of libthunar-vfs-1.so on GConf and in order to
+stay flexible wrt thumbnailers w/o adding more overhead to libthunar-vfs-1.so
+(and thereby to all applications using the library), the available thumbnailers
+for the ThunarVfsThumbFactory are determined by a separate utility program,
+named thunar-vfs-update-thumbnailers-cache-1, which is installed to the 
+$(libexecdir).
+
+This program generates a thumbnailers.cache file in the users home directory,
+in $XDG_CACHE_HOME/Thunar/ (usually ~/.cache/Thunar/), which is a binary file
+that lists all mime types for a thumbnailer is available. For each thumbnailer
+the command required to run it is specified, where the command can contain
+various special parameters that are substituted when the command is run.
+
+This thumbnailers.cache is generated initially when the thumbnail factory is
+loaded and no cache file is present, and afterwards the utility is run every
+5 minutes to check if new thumbnailers are available (or existing thumbnailers
+have been removed).
+
+
+Special Thumbnailer Parameters
+------------------------------
+
+The following special parameters are supported in thumbnailer commands and
+will be substituted when ThunarVfsThumbFactory runs the command:
+
+	%u	The URL of the input file for which to create a thumbnail.
+	%i	The absolute path to the input file.
+	%o	The absolute path to the output file where to save the generated
+		thumbnail to (as PNG image).
+	%s	The desired size of the thumbnail in pixel (usually 128 or 256).
+	%%	Will be substituted with a single '%'.
+
+
+The thunar-vfs-update-thumbnailers-cache-1 Utility
+--------------------------------------------------
+
+When compiled with support for GConf, the utility will first query all available
+thumbnailers that have been registered with GConf. Otherwise, the utility checks
+for several well-known thumbnailers (i.e. evince-thumbnailer, ...) and adds them
+if the programs were found on the system.
+
+Afterwards the available gdk-pixbuf formats will be queried and for each of the
+returned mime types, the thunar-vfs-pixbuf-thumbnailer-1 will be registered. If
+any such mime type was already registered by a thumbnailer queried from the
+GConf database, the pixbuf thumbnailer will overwrite the previously registered
+one.
+
+The last step is to add all internal thumbnails (again overwriting previously
+registered thumbnailers).
+
+
+The thumbnailers.cache File Format
+----------------------------------
+
+The thumbnailers.cache file is a binary file, that maps mime types to thumbnai-
+ler commands. The file format is designed to be mmap()ed into processes using
+the thumbnailers.cache. All numbers are 32bit integers in big endian. All
+strings are zero-terminated ASCII strings.
+
+The current version of the file format is 1.0. Newer versions will either be
+backward compatible with the current format or use a new file name.
+
+The file starts with a header that contains the file format version, the number
+of mime types stored in the file and the offset of the thumbnailers table:
+
+	Bits	Meaning
+	----	-------
+
+	32	FORMAT MAJOR VERSION (currently 1)
+	32	FORMAT MINOR VERSION (currently 0)
+	32	NUMER OF MIME TYPES (and thereby NUMBER OF THUMBNAILERS)
+	32	OFFSET OF THE THUMBNAILERS TABLE
+
+Next comes the table of mime types, where each entry contains the length of the
+mime type in bytes (excluding the trailing zero) and the offset (relative to the
+cache file start) where the name of the mime type is stored. The mime types are
+sorted by strlen() and strcmp(), which means that binary search can be used to
+find a mime type, trying the length first (so string comparisons are reduced to
+a minimum to make the search cache-friendly) and performing a string comparison
+when the lengths are equal (see thunar_vfs_thumb_factory_cache_lookup() for an
+example implementation of the search).
+
+	Bits	Meaning
+	----	-------
+
+	32	LENGTH OF MIME TYPE STRING
+	32	OFFSET OF MIME TYPE STRING
+
+Once you successfully detected a mime type, you can use the index of the mime
+type in the table above to locate the thumbnailer command for this mime type.
+Therefore determine the OFFSET OF THE THUMBNAILERS TABLE (at offset 12 in the
+cache) and look at that offset plus the index * 4 for the offset of the thumb-
+nailer command string.
+
+	Bits	Meaning
+	----	-------
+	32	OFFSET OF THUMBNAILER STRING
+
+Afterwards substitute the special parameters as mentioned in "Special Thumbnai-
+ler Parameters" above.

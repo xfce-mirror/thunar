@@ -344,7 +344,7 @@ sverror:
           /* generate an error */
           display_name = _thunar_vfs_path_dup_display_name (lp->data);
           _thunar_vfs_set_g_error_from_errno2 (&err, sverrno, G_LIKELY (uid >= 0)
-                                               ? _("Failed to change file owenr of \"%s\"")
+                                               ? _("Failed to change file owner of \"%s\"")
                                                : _("Failed to change file group of \"%s\""),
                                                display_name);
           g_free (display_name);
