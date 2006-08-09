@@ -25,6 +25,7 @@
 #include <dbus/dbus-glib-lowlevel.h>
 
 #include <thunar/thunar-dbus-client.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -60,10 +61,10 @@ thunar_dbus_client_bulk_rename (const gchar *working_directory,
   DBusError       derror;
   gchar          *display_name;
 
-  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
-  g_return_val_if_fail (g_path_is_absolute (working_directory), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  g_return_val_if_fail (filenames != NULL, FALSE);
+  _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
+  _thunar_return_val_if_fail (g_path_is_absolute (working_directory), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (filenames != NULL, FALSE);
 
   /* initialize the DBusError struct */
   dbus_error_init (&derror);
@@ -156,10 +157,10 @@ thunar_dbus_client_launch_files (const gchar *working_directory,
   DBusError       derror;
   gchar          *display_name;
 
-  g_return_val_if_fail (g_path_is_absolute (working_directory), FALSE);
-  g_return_val_if_fail (filenames != NULL && *filenames != NULL, FALSE);
-  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (g_path_is_absolute (working_directory), FALSE);
+  _thunar_return_val_if_fail (filenames != NULL && *filenames != NULL, FALSE);
+  _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* initialize the DBusError struct */
   dbus_error_init (&derror);
@@ -239,7 +240,7 @@ thunar_dbus_client_terminate (GError **error)
   DBusMessage    *result;
   DBusError       derror;
 
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* initialize the DBusError struct */
   dbus_error_init (&derror);

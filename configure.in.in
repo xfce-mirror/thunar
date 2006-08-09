@@ -255,29 +255,42 @@ AC_HELP_STRING([--enable-debug=@<:@no/minimum/yes/full@:>@], [Turn on debugging 
   [], [enable_debug=thunar_debug_default])
 AC_MSG_CHECKING([whether to enable debugging support])
 if test x"$enable_debug" = x"full" -o x"$enable_debug" = x"yes"; then
-  dnl Check whether the compiler accepts the -fno-strict-aliasing
-  dnl switch, as certain packages - like Glib - still don't work
-  dnl properly with newer compilers.
+  dnl Print the result
+  AC_MSG_RESULT([$enable_debug])
+
+  dnl Make sure we detect possible errors (if supported)
   save_CFLAGS="$CFLAGS"
-  CFLAGS="$CFLAGS -fno-strict-aliasing"
-  AC_MSG_CHECKING([whether $CC accepts -fno-strict-aliasing])
+  CFLAGS="$CFLAGS -Wall -Werror"
+  AC_MSG_CHECKING([whether $CC accepts -Wall -Werror])
   AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
     AC_MSG_RESULT([yes])
-    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -fno-strict-aliasing"
+    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -Wall -Werror"
   ], [
     AC_MSG_RESULT([no])
   ])
   CFLAGS="$save_CFLAGS"
 
-  dnl Make sure we detect possible errors
-  PLATFORM_CFLAGS="$PLATFORM_CFLAGS -Werror -Wall"
+  dnl Enable extensive debugging
+  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_ENABLE_DEBUG"
 
   dnl Paranoia for --enable-debug=full
   if test x"$enable_debug" = x"full"; then
-    PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3"
-    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_ENABLE_DEBUG"
+    dnl Use -O0 -g3 if the compiler supports it
+    save_CFLAGS="$CFLAGS"
+    CFLAGS="$CFLAGS -O0 -g3"
+    AC_MSG_CHECKING([whether $CC accepts -O0 -g3])
+    AC_COMPILE_IFELSE(AC_LANG_SOURCE([int x;]), [
+      AC_MSG_RESULT([yes])
+      PLATFORM_CFLAGS="$PLATFORM_CFLAGS -O0 -g3"
+    ], [
+      AC_MSG_RESULT([no])
+    ])
+    CFLAGS="$save_CFLAGS"
   fi
 else
+  dnl Print the result
+  AC_MSG_RESULT([$enable_debug])
+
   dnl Disable object cast checks
   PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_CAST_CHECKS"
 
@@ -286,7 +299,6 @@ else
     PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_ASSERT -DG_DISABLE_CHECKS"
   fi
 fi
-AC_MSG_RESULT([$enable_debug])
 
 dnl **************************************
 dnl *** Check for linker optimizations ***

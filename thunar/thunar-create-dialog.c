@@ -26,6 +26,7 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-stock.h>
 
 
@@ -322,9 +323,9 @@ thunar_create_dialog_text_changed (GtkWidget          *entry,
   const gchar *text;
   const gchar *p;
 
-  g_return_if_fail (GTK_IS_ENTRY (entry));
-  g_return_if_fail (THUNAR_IS_CREATE_DIALOG (dialog));
-  g_return_if_fail (dialog->entry == entry);
+  _thunar_return_if_fail (GTK_IS_ENTRY (entry));
+  _thunar_return_if_fail (THUNAR_IS_CREATE_DIALOG (dialog));
+  _thunar_return_if_fail (dialog->entry == entry);
 
   /* verify the new text */
   text = gtk_entry_get_text (GTK_ENTRY (entry));
@@ -364,7 +365,7 @@ thunar_create_dialog_new (void)
 const gchar*
 thunar_create_dialog_get_filename (const ThunarCreateDialog *dialog)
 {
-  g_return_val_if_fail (THUNAR_IS_CREATE_DIALOG (dialog), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_CREATE_DIALOG (dialog), NULL);
   return gtk_entry_get_text (GTK_ENTRY (dialog->entry));
 }
 
@@ -385,8 +386,8 @@ thunar_create_dialog_set_filename (ThunarCreateDialog *dialog,
   const gchar *dot;
   glong        offset;
 
-  g_return_if_fail (THUNAR_IS_CREATE_DIALOG (dialog));
-  g_return_if_fail (filename != NULL);
+  _thunar_return_if_fail (THUNAR_IS_CREATE_DIALOG (dialog));
+  _thunar_return_if_fail (filename != NULL);
       
   /* setup the new filename */
   gtk_entry_set_text (GTK_ENTRY (dialog->entry), filename);
@@ -432,7 +433,7 @@ thunar_create_dialog_set_filename (ThunarCreateDialog *dialog,
 ThunarVfsMimeInfo*
 thunar_create_dialog_get_mime_info (const ThunarCreateDialog *dialog)
 {
-  g_return_val_if_fail (THUNAR_IS_CREATE_DIALOG (dialog), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_CREATE_DIALOG (dialog), NULL);
   return dialog->mime_info;
 }
 
@@ -449,7 +450,7 @@ void
 thunar_create_dialog_set_mime_info (ThunarCreateDialog *dialog,
                                     ThunarVfsMimeInfo  *mime_info)
 {
-  g_return_if_fail (THUNAR_IS_CREATE_DIALOG (dialog));
+  _thunar_return_if_fail (THUNAR_IS_CREATE_DIALOG (dialog));
 
   /* release the previous mime info */
   if (G_UNLIKELY (dialog->mime_info != NULL))
@@ -500,7 +501,7 @@ thunar_show_create_dialog (GtkWidget         *parent,
   GError    *error = NULL;
   gchar     *name = NULL;
 
-  g_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
+  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WIDGET (parent), NULL);
 
   /* determine the toplevel window */
   window = (parent != NULL) ? gtk_widget_get_toplevel (parent) : NULL;

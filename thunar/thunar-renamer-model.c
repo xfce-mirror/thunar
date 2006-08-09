@@ -424,7 +424,7 @@ thunar_renamer_model_get_column_type (GtkTreeModel *tree_model,
       return G_TYPE_STRING;
 
     default:
-      g_assert_not_reached ();
+      _thunar_assert_not_reached ();
       return G_TYPE_INVALID;
     }
 }
@@ -439,8 +439,8 @@ thunar_renamer_model_get_iter (GtkTreeModel *tree_model,
   ThunarRenamerModel *renamer_model = THUNAR_RENAMER_MODEL (tree_model);
   GList              *lp;
 
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
-  g_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
+  _thunar_return_val_if_fail (gtk_tree_path_get_depth (path) > 0, FALSE);
 
   lp = g_list_nth (renamer_model->items, gtk_tree_path_get_indices (path)[0]);
   if (G_LIKELY (lp != NULL))
@@ -462,8 +462,8 @@ thunar_renamer_model_get_path (GtkTreeModel *tree_model,
   ThunarRenamerModel *renamer_model = THUNAR_RENAMER_MODEL (tree_model);
   gint                index;
 
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), NULL);
-  g_return_val_if_fail (iter->stamp == renamer_model->stamp, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), NULL);
+  _thunar_return_val_if_fail (iter->stamp == renamer_model->stamp, NULL);
 
   /* determine the index of the item */
   index = g_list_position (renamer_model->items, iter->user_data);
@@ -482,10 +482,9 @@ thunar_renamer_model_get_value (GtkTreeModel *tree_model,
                                 GValue       *value)
 {
   ThunarRenamerModelItem *item;
-  ThunarRenamerModel     *renamer_model = THUNAR_RENAMER_MODEL (tree_model);
 
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
-  g_return_if_fail (iter->stamp == renamer_model->stamp);
+  _thunar_return_if_fail (iter->stamp == THUNAR_RENAMER_MODEL (tree_model)->stamp);
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (tree_model));
 
   item = g_list_nth_data (iter->user_data, 0);
 
@@ -517,7 +516,7 @@ thunar_renamer_model_get_value (GtkTreeModel *tree_model,
       break;
 
     default:
-      g_assert_not_reached ();
+      _thunar_assert_not_reached ();
       break;
     }
 }
@@ -528,8 +527,8 @@ static gboolean
 thunar_renamer_model_iter_next (GtkTreeModel *tree_model,
                                 GtkTreeIter  *iter)
 {
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (tree_model), FALSE);
-  g_return_val_if_fail (iter->stamp == THUNAR_RENAMER_MODEL (tree_model)->stamp, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (tree_model), FALSE);
+  _thunar_return_val_if_fail (iter->stamp == THUNAR_RENAMER_MODEL (tree_model)->stamp, FALSE);
 
   iter->user_data = g_list_next (iter->user_data);
   return (iter->user_data != NULL);
@@ -544,7 +543,7 @@ thunar_renamer_model_iter_children (GtkTreeModel *tree_model,
 {
   ThunarRenamerModel *renamer_model = THUNAR_RENAMER_MODEL (tree_model);
 
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
 
   if (G_LIKELY (parent == NULL && renamer_model->items != NULL))
     {
@@ -584,7 +583,7 @@ thunar_renamer_model_iter_nth_child (GtkTreeModel *tree_model,
 {
   ThunarRenamerModel *renamer_model = THUNAR_RENAMER_MODEL (tree_model);
 
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
 
   if (G_LIKELY (parent != NULL))
     {
@@ -618,10 +617,10 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
   GtkTreeIter             iter;
   GList                  *lp;
 
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
-  g_return_if_fail (renamer_model->file_monitor == file_monitor);
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  _thunar_return_if_fail (renamer_model->file_monitor == file_monitor);
 
   /* check if we have that file */
   for (lp = renamer_model->items; lp != NULL; lp = lp->next)
@@ -670,10 +669,10 @@ thunar_renamer_model_file_destroyed (ThunarRenamerModel *renamer_model,
   GList       *lp;
   gint         index;
 
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
-  g_return_if_fail (renamer_model->file_monitor == file_monitor);
-  g_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  _thunar_return_if_fail (renamer_model->file_monitor == file_monitor);
+  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* check if we have that file */
   for (lp = renamer_model->items; lp != NULL; lp = lp->next)
@@ -871,7 +870,7 @@ thunar_renamer_model_process_item (ThunarRenamerModel     *renamer_model,
           break;
 
         default:
-          g_assert_not_reached ();
+          _thunar_assert_not_reached ();
           break;
         }
     }
@@ -1046,7 +1045,7 @@ thunar_renamer_model_get_can_rename (ThunarRenamerModel *renamer_model)
   gboolean can_rename = FALSE;
   GList   *lp;
 
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
 
   if (G_LIKELY (renamer_model->renamer != NULL && !renamer_model->frozen && renamer_model->update_idle_id < 0))
     {
@@ -1081,7 +1080,7 @@ thunar_renamer_model_get_can_rename (ThunarRenamerModel *renamer_model)
 gboolean
 thunar_renamer_model_get_frozen (ThunarRenamerModel *renamer_model)
 {
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
   return renamer_model->frozen;
 }
 
@@ -1100,7 +1099,7 @@ void
 thunar_renamer_model_set_frozen (ThunarRenamerModel *renamer_model,
                                  gboolean            frozen)
 {
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
 
   /* normalize the value */
   frozen = !!frozen;
@@ -1146,7 +1145,7 @@ thunar_renamer_model_set_frozen (ThunarRenamerModel *renamer_model,
 ThunarRenamerMode
 thunar_renamer_model_get_mode (ThunarRenamerModel *renamer_model)
 {
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), THUNAR_RENAMER_MODE_NAME);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), THUNAR_RENAMER_MODE_NAME);
   return renamer_model->mode;
 }
 
@@ -1164,7 +1163,7 @@ void
 thunar_renamer_model_set_mode (ThunarRenamerModel *renamer_model,
                                ThunarRenamerMode   mode)
 {
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
 
   /* check if we're already in the requested mode */
   if (G_UNLIKELY (renamer_model->mode == mode))
@@ -1194,7 +1193,7 @@ thunar_renamer_model_set_mode (ThunarRenamerModel *renamer_model,
 ThunarxRenamer*
 thunar_renamer_model_get_renamer (ThunarRenamerModel *renamer_model)
 {
-  g_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), NULL);
   return renamer_model->renamer;
 }
 
@@ -1212,8 +1211,8 @@ void
 thunar_renamer_model_set_renamer (ThunarRenamerModel *renamer_model,
                                   ThunarxRenamer     *renamer)
 {
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
-  g_return_if_fail (renamer == NULL || THUNARX_IS_RENAMER (renamer));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  _thunar_return_if_fail (renamer == NULL || THUNARX_IS_RENAMER (renamer));
 
   /* verify that we do not already use the renamer */
   if (G_UNLIKELY (renamer_model->renamer == renamer))
@@ -1261,8 +1260,8 @@ thunar_renamer_model_append (ThunarRenamerModel *renamer_model,
   GtkTreeIter             iter;
   GList                  *lp;
 
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* check if we already have that file */
   for (lp = renamer_model->items; lp != NULL; lp = lp->next)
@@ -1300,7 +1299,7 @@ thunar_renamer_model_append (ThunarRenamerModel *renamer_model,
 void
 thunar_renamer_model_clear (ThunarRenamerModel *renamer_model)
 {
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
 
   /* grab an additional reference on the model */
   g_object_ref (G_OBJECT (renamer_model));
@@ -1339,8 +1338,8 @@ thunar_renamer_model_remove (ThunarRenamerModel *renamer_model,
 {
   GList *lp;
 
-  g_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
-  g_return_if_fail (gtk_tree_path_get_depth (path) == 1);
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model));
+  _thunar_return_if_fail (gtk_tree_path_get_depth (path) == 1);
 
   /* determine the list item for the path and verify that its valid */
   lp = g_list_nth (renamer_model->items, gtk_tree_path_get_indices (path)[0]);

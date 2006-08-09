@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-pane.h>
 #include <thunar/thunar-shortcuts-pane-ui.h>
@@ -491,8 +492,8 @@ thunar_shortcuts_pane_action_shortcuts_add (GtkAction           *action,
   GtkTreePath  *path;
   GList        *lp;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_SHORTCUTS_PANE (shortcuts_pane));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_PANE (shortcuts_pane));
 
   /* determine the shortcuts model for the view */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (shortcuts_pane->view));

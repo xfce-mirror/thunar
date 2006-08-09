@@ -29,9 +29,10 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-marshal.h>
-#include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
+#include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-tree-model.h>
 #include <thunar/thunar-tree-view.h>
 
@@ -967,7 +968,7 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
 static gboolean
 thunar_tree_view_delete_selected_files (ThunarTreeView *view)
 {
-  g_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
 
   /* ask the user whether to delete the folder... */
   thunar_tree_view_action_delete (view);
@@ -1397,7 +1398,7 @@ thunar_tree_view_action_copy (ThunarTreeView *view)
   ThunarFile *file;
   GList       list;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* verify that we're connected to the clipboard */
   if (G_UNLIKELY (view->clipboard == NULL))
@@ -1432,7 +1433,7 @@ thunar_tree_view_action_create_folder (ThunarTreeView *view)
   GList                  path_list;
   gchar                 *name;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* determine the selected directory */
   directory = thunar_tree_view_get_selected_file (view);
@@ -1477,7 +1478,7 @@ thunar_tree_view_action_cut (ThunarTreeView *view)
   ThunarFile *file;
   GList       list;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* verify that we're connected to the clipboard */
   if (G_UNLIKELY (view->clipboard == NULL))
@@ -1509,7 +1510,7 @@ thunar_tree_view_action_delete (ThunarTreeView *view)
   ThunarFile        *file;
   GList              file_list;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* determine the selected file */
   file = thunar_tree_view_get_selected_file (view);
@@ -1539,7 +1540,7 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
   GtkWidget       *window;
   GError          *error = NULL;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* determine the selected volume */
   volume = thunar_tree_view_get_selected_volume (view);
@@ -1568,7 +1569,7 @@ thunar_tree_view_action_empty_trash (ThunarTreeView *view)
 {
   ThunarApplication *application;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* empty the trash bin (asking the user first) */
   application = thunar_application_get ();
@@ -1586,7 +1587,7 @@ thunar_tree_view_action_mount (ThunarTreeView *view)
   gboolean         result = TRUE;
   GError          *error = NULL;
 
-  g_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
 
   /* determine the selected volume */
   volume = thunar_tree_view_get_selected_volume (view);
@@ -1622,7 +1623,7 @@ thunar_tree_view_action_open (ThunarTreeView *view)
 {
   ThunarFile *file;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* if its a volume, make sure its mounted */
   if (!thunar_tree_view_action_mount (view))
@@ -1646,7 +1647,7 @@ thunar_tree_view_action_open_in_new_window (ThunarTreeView *view)
   ThunarApplication *application;
   ThunarFile        *file;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* if its a volume, make sure its mounted */
   if (!thunar_tree_view_action_mount (view))
@@ -1671,7 +1672,7 @@ thunar_tree_view_action_paste_into_folder (ThunarTreeView *view)
 {
   ThunarFile *file;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* verify that we're connected to the clipboard */
   if (G_UNLIKELY (view->clipboard == NULL))
@@ -1698,7 +1699,7 @@ thunar_tree_view_action_properties (ThunarTreeView *view)
   GtkWidget  *dialog;
   GtkWidget  *toplevel;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* determine the selected file */
   file = thunar_tree_view_get_selected_file (view);
@@ -1730,7 +1731,7 @@ thunar_tree_view_action_unmount (ThunarTreeView *view)
   GtkWidget       *window;
   GError          *error = NULL;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* determine the selected volume */
   volume = thunar_tree_view_get_selected_volume (view);
@@ -2111,7 +2112,7 @@ thunar_tree_view_new (void)
 gboolean
 thunar_tree_view_get_show_hidden (ThunarTreeView *view)
 {
-  g_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
   return view->show_hidden;
 }
 
@@ -2131,7 +2132,7 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
 {
   GtkTreeModel *filter;
 
-  g_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
 
   /* normalize the value */
   show_hidden = !!show_hidden;

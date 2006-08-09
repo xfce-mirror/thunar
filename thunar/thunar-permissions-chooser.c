@@ -38,7 +38,10 @@
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-chooser.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-stock.h>
+
+
 
 /* Use native strlcpy() if available */
 #if defined(HAVE_STRLCPY)
@@ -672,8 +675,8 @@ thunar_permissions_chooser_change_group (ThunarPermissionsChooser *chooser,
   GError       *error = NULL;
   gint          response;
 
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (THUNAR_IS_FILE (chooser->file));
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (THUNAR_IS_FILE (chooser->file));
 
   /* check if we should operate recursively */
   if (thunar_file_is_directory (chooser->file))
@@ -725,8 +728,8 @@ thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
   GError       *error = NULL;
   gint          response;
 
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (THUNAR_IS_FILE (chooser->file));
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (THUNAR_IS_FILE (chooser->file));
 
   /* check if we should operate recursively */
   if (thunar_file_is_directory (chooser->file))
@@ -776,8 +779,8 @@ thunar_permissions_chooser_access_changed (ThunarPermissionsChooser *chooser,
   ThunarVfsFileMode dir_mode;
   guint             n;
 
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (GTK_IS_COMBO_BOX (combo));
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (GTK_IS_COMBO_BOX (combo));
 
   /* verify that we have a valid file */
   if (G_UNLIKELY (chooser->file == NULL))
@@ -851,9 +854,9 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
   gchar                 buffer[1024];
   guint                 n;
 
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (chooser->file == file);
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (chooser->file == file);
 
   /* allocate a new store for the group combo box */
   g_signal_handlers_block_by_func (G_OBJECT (chooser->group_combo), thunar_permissions_chooser_group_changed, chooser);
@@ -989,9 +992,9 @@ thunar_permissions_chooser_group_changed (ThunarPermissionsChooser *chooser,
   GtkTreeModel    *model;
   GtkTreeIter      iter;
 
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (chooser->group_combo == combo);
-  g_return_if_fail (GTK_IS_COMBO_BOX (combo));
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (chooser->group_combo == combo);
+  _thunar_return_if_fail (GTK_IS_COMBO_BOX (combo));
 
   /* verify that we have a valid file */
   if (G_UNLIKELY (chooser->file == NULL))
@@ -1019,9 +1022,9 @@ thunar_permissions_chooser_program_toggled (ThunarPermissionsChooser *chooser,
 {
   ThunarVfsFileMode mode;
 
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (chooser->program_button == button);
-  g_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (chooser->program_button == button);
+  _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
 
   /* verify that we have a valid file */
   if (G_UNLIKELY (chooser->file == NULL))
@@ -1047,9 +1050,9 @@ thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
   GError           *error = NULL;
   gint              response;
 
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (chooser->fixperm_button == button);
-  g_return_if_fail (GTK_IS_BUTTON (button));
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (chooser->fixperm_button == button);
+  _thunar_return_if_fail (GTK_IS_BUTTON (button));
 
   /* verify that we have a valid file */
   if (G_UNLIKELY (chooser->file == NULL))
@@ -1114,10 +1117,10 @@ thunar_permissions_chooser_job_ask (ThunarPermissionsChooser *chooser,
 {
   GtkWidget *toplevel;
 
-  g_return_val_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser), THUNAR_VFS_JOB_RESPONSE_CANCEL);
-  g_return_val_if_fail (g_utf8_validate (message, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), THUNAR_VFS_JOB_RESPONSE_CANCEL);
-  g_return_val_if_fail (chooser->job == job, THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (g_utf8_validate (message, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (THUNAR_VFS_IS_JOB (job), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (chooser->job == job, THUNAR_VFS_JOB_RESPONSE_CANCEL);
 
   /* be sure to display the progress bar prior to opening the question dialog */
   gtk_widget_show_now (chooser->job_progress);
@@ -1136,7 +1139,7 @@ thunar_permissions_chooser_job_ask (ThunarPermissionsChooser *chooser,
 static void
 thunar_permissions_chooser_job_cancel (ThunarPermissionsChooser *chooser)
 {
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
 
   /* verify that we have a job to cancel */
   if (G_UNLIKELY (chooser->job == NULL))
@@ -1166,10 +1169,10 @@ thunar_permissions_chooser_job_error (ThunarPermissionsChooser *chooser,
 {
   GtkWidget *toplevel;
   
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (error != NULL && error->message != NULL);
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (chooser->job == job);
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (error != NULL && error->message != NULL);
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (chooser->job == job);
 
   /* be sure to display the progress bar prior to opening the error dialog */
   gtk_widget_show_now (chooser->job_progress);
@@ -1189,9 +1192,9 @@ static void
 thunar_permissions_chooser_job_finished (ThunarPermissionsChooser *chooser,
                                          ThunarVfsJob             *job)
 {
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (chooser->job == job);
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (chooser->job == job);
 
   /* we can just use job_cancel(), since the job is already done */
   thunar_permissions_chooser_job_cancel (chooser);
@@ -1204,9 +1207,9 @@ thunar_permissions_chooser_job_percent (ThunarPermissionsChooser *chooser,
                                         gdouble                   percent,
                                         ThunarVfsJob             *job)
 {
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (chooser->job == job);
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (chooser->job == job);
 
   gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (chooser->job_progress), percent / 100.0);
   gtk_widget_show (chooser->job_progress);
@@ -1219,9 +1222,9 @@ thunar_permissions_chooser_job_start (ThunarPermissionsChooser *chooser,
                                       ThunarVfsJob             *job,
                                       gboolean                  recursive)
 {
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (chooser->job == NULL);
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (chooser->job == NULL);
 
   /* take a reference to the job and connect signals */
   chooser->job = g_object_ref (G_OBJECT (job));
@@ -1288,7 +1291,7 @@ thunar_permissions_chooser_new (void)
 ThunarFile*
 thunar_permissions_chooser_get_file (ThunarPermissionsChooser *chooser)
 {
-  g_return_val_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser), NULL);
   return chooser->file;
 }
 
@@ -1305,8 +1308,8 @@ void
 thunar_permissions_chooser_set_file (ThunarPermissionsChooser *chooser,
                                      ThunarFile               *file)
 {
-  g_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
-  g_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
+  _thunar_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
 
   /* check if we already use that file */
   if (G_UNLIKELY (chooser->file == file))

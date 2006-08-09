@@ -30,6 +30,7 @@
 
 #include <thunar/thunar-emblem-chooser.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -298,8 +299,8 @@ thunar_emblem_chooser_button_toggled (GtkToggleButton     *button,
   GList *children;
   GList *lp;
 
-  g_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
-  g_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
+  _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
+  _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
 
   /* we just ignore toggle events if no file is set */
   if (G_LIKELY (chooser->file == NULL))
@@ -334,9 +335,9 @@ thunar_emblem_chooser_file_changed (ThunarFile          *file,
   GList       *children;
   GList       *lp;
 
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
-  g_return_if_fail (chooser->file == file);
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
+  _thunar_return_if_fail (chooser->file == file);
 
   /* temporarily reset the file attribute */
   chooser->file = NULL;
@@ -366,9 +367,9 @@ static void
 thunar_emblem_chooser_theme_changed (GtkIconTheme        *icon_theme,
                                      ThunarEmblemChooser *chooser)
 {
-  g_return_if_fail (GTK_IS_ICON_THEME (icon_theme));
-  g_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
-  g_return_if_fail (chooser->icon_theme == icon_theme);
+  _thunar_return_if_fail (GTK_IS_ICON_THEME (icon_theme));
+  _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
+  _thunar_return_if_fail (chooser->icon_theme == icon_theme);
 
   /* drop the current buttons */
   gtk_container_foreach (GTK_CONTAINER (chooser->table), (GtkCallback) gtk_widget_destroy, NULL);
@@ -505,7 +506,7 @@ thunar_emblem_chooser_new (void)
 ThunarFile*
 thunar_emblem_chooser_get_file (const ThunarEmblemChooser *chooser)
 {
-  g_return_val_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser), NULL);
   return chooser->file;
 }
 
@@ -522,8 +523,8 @@ void
 thunar_emblem_chooser_set_file (ThunarEmblemChooser *chooser,
                                 ThunarFile          *file)
 {
-  g_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
-  g_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_EMBLEM_CHOOSER (chooser));
+  _thunar_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
 
   if (G_LIKELY (chooser->file != file))
     {

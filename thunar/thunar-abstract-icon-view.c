@@ -23,10 +23,11 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include <thunar/thunar-gobject-extensions.h>
-#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-abstract-icon-view.h>
 #include <thunar/thunar-abstract-icon-view-ui.h>
+#include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -336,7 +337,7 @@ thunar_abstract_icon_view_get_selected_items (ThunarStandardView *standard_view)
 static void
 thunar_abstract_icon_view_select_all (ThunarStandardView *standard_view)
 {
-  g_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   exo_icon_view_select_all (EXO_ICON_VIEW (GTK_BIN (standard_view)->child));
 }
 
@@ -345,7 +346,7 @@ thunar_abstract_icon_view_select_all (ThunarStandardView *standard_view)
 static void
 thunar_abstract_icon_view_unselect_all (ThunarStandardView *standard_view)
 {
-  g_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   exo_icon_view_unselect_all (EXO_ICON_VIEW (GTK_BIN (standard_view)->child));
 }
 
@@ -355,7 +356,7 @@ static void
 thunar_abstract_icon_view_select_path (ThunarStandardView *standard_view,
                                        GtkTreePath        *path)
 {
-  g_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   exo_icon_view_select_path (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path);
 }
 
@@ -368,7 +369,7 @@ thunar_abstract_icon_view_set_cursor (ThunarStandardView *standard_view,
 {
   GtkCellRendererMode mode;
 
-  g_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
 
   /* make sure the name renderer is editable */
   mode = standard_view->name_renderer->mode;
@@ -390,7 +391,7 @@ thunar_abstract_icon_view_scroll_to_path (ThunarStandardView *standard_view,
                                           gfloat              row_align,
                                           gfloat              col_align)
 {
-  g_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   exo_icon_view_scroll_to_path (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path, use_align, row_align, col_align);
 }
 
@@ -401,7 +402,7 @@ thunar_abstract_icon_view_get_path_at_pos (ThunarStandardView *standard_view,
                                            gint                x,
                                            gint                y)
 {
-  g_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view), NULL);
   return exo_icon_view_get_path_at_pos (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), x, y);
 }
 
@@ -412,7 +413,7 @@ thunar_abstract_icon_view_get_visible_range (ThunarStandardView *standard_view,
                                              GtkTreePath       **start_path,
                                              GtkTreePath       **end_path)
 {
-  g_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view), FALSE);
   return exo_icon_view_get_visible_range (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), start_path, end_path);
 }
 
@@ -422,7 +423,7 @@ static void
 thunar_abstract_icon_view_highlight_path (ThunarStandardView *standard_view,
                                           GtkTreePath        *path)
 {
-  g_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (standard_view));
   exo_icon_view_set_drag_dest_item (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), path, EXO_ICON_VIEW_DROP_INTO);
 }
 
@@ -601,11 +602,11 @@ thunar_abstract_icon_view_button_release_event (ExoIconView            *view,
 {
   GtkAction *action;
 
-  g_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
-  g_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_expose_id > 0, FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
+  _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_expose_id > 0, FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
 
   /* run the selected action (if any) */
   action = thunar_abstract_icon_view_gesture_action (abstract_icon_view);
@@ -646,11 +647,11 @@ thunar_abstract_icon_view_expose_event (ExoIconView            *view,
   cairo_t    *cr;
 #endif
 
-  g_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
-  g_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_expose_id > 0, FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
+  _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_expose_id > 0, FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
 
   /* shade the abstract_icon view content while performing mouse gestures */
 #if GTK_CHECK_VERSION(2,7,1)
@@ -727,11 +728,11 @@ thunar_abstract_icon_view_motion_notify_event (ExoIconView            *view,
 {
   GdkRectangle area;
 
-  g_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
-  g_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_expose_id > 0, FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
-  g_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
+  _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_expose_id > 0, FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_motion_id > 0, FALSE);
+  _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
 
   /* schedule a complete redraw on the first motion event */
   if (abstract_icon_view->priv->gesture_current_x == abstract_icon_view->priv->gesture_start_x
@@ -765,7 +766,7 @@ thunar_abstract_icon_view_item_activated (ExoIconView            *view,
 {
   GtkAction *action;
 
-  g_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
 
   /* be sure to have only the double clicked item selected */
   exo_icon_view_unselect_all (view);
@@ -804,7 +805,7 @@ thunar_abstract_icon_view_sort_column_changed (GtkTreeSortable        *sortable,
 static void
 thunar_abstract_icon_view_zoom_level_changed (ThunarAbstractIconView *abstract_icon_view)
 {
-  g_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
+  _thunar_return_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view));
 
   /* we use the same trick as with ThunarDetailsView here, simply because its simple :-) */
   gtk_cell_layout_set_cell_data_func (GTK_CELL_LAYOUT (GTK_BIN (abstract_icon_view)->child),

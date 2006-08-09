@@ -35,6 +35,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-launcher.h>
 #include <thunar/thunar-launcher-ui.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-sendto-model.h>
 #include <thunar/thunar-stock.h>
 
@@ -1025,8 +1026,8 @@ thunar_launcher_action_open (GtkAction      *action,
   GList                *files = NULL;
   GList                *lp;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* determine the screen on which to open the new windows */
   screen = (launcher->widget != NULL) ? gtk_widget_get_screen (launcher->widget) : NULL;
@@ -1109,8 +1110,8 @@ static void
 thunar_launcher_action_open_with_other (GtkAction      *action,
                                         ThunarLauncher *launcher)
 {
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* verify that we have atleast one selected file */
   if (G_LIKELY (launcher->selected_files != NULL))
@@ -1126,8 +1127,8 @@ static void
 thunar_launcher_action_open_in_new_window (GtkAction      *action,
                                            ThunarLauncher *launcher)
 {
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* open the selected directories in new windows */
   thunar_launcher_open_windows (launcher, launcher->selected_files);
@@ -1144,8 +1145,8 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
   ThunarVfsPath     *home_path;
   GList             *paths;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* determine the source paths */
   paths = thunar_file_list_to_path_list (launcher->selected_files);
@@ -1173,9 +1174,9 @@ static void
 thunar_launcher_widget_destroyed (ThunarLauncher *launcher,
                                   GtkWidget      *widget)
 {
-  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-  g_return_if_fail (launcher->widget == widget);
-  g_return_if_fail (GTK_IS_WIDGET (widget));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (launcher->widget == widget);
+  _thunar_return_if_fail (GTK_IS_WIDGET (widget));
 
   /* just reset the widget property for the launcher */
   thunar_launcher_set_widget (launcher, NULL);
@@ -1317,7 +1318,7 @@ thunar_launcher_new (void)
 GtkWidget*
 thunar_launcher_get_widget (const ThunarLauncher *launcher)
 {
-  g_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
   return launcher->widget;
 }
 
@@ -1334,8 +1335,8 @@ void
 thunar_launcher_set_widget (ThunarLauncher *launcher,
                             GtkWidget      *widget)
 {
-  g_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
-  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
 
   /* disconnect from the previous widget */
   if (G_UNLIKELY (launcher->widget != NULL))

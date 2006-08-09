@@ -26,6 +26,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -548,7 +549,7 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
                   break;
 
                 default:
-                  g_assert_not_reached ();
+                  _thunar_assert_not_reached ();
                 }
 
               /* render the emblem */

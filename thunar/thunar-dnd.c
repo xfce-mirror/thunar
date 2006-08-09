@@ -24,6 +24,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -69,7 +70,7 @@ thunar_dnd_ask (GtkWidget    *widget,
   GMainLoop    *loop;
   guint         n;
 
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
+  _thunar_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
 
   /* prepare the internal loop */
   loop = g_main_loop_new (NULL, FALSE);
@@ -153,9 +154,9 @@ thunar_dnd_perform (GtkWidget    *widget,
   gboolean           succeed = TRUE;
   GError            *error = NULL;
 
-  g_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  g_return_val_if_fail (GTK_WIDGET_REALIZED (widget), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_WIDGET (widget), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (GTK_WIDGET_REALIZED (widget), FALSE);
 
   /* query a reference on the application object */
   application = thunar_application_get ();

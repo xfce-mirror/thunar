@@ -301,7 +301,7 @@ thunar_thumbnail_generator_new (ThunarVfsThumbFactory *factory)
 {
   ThunarThumbnailGenerator *generator;
 
-  g_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), NULL);
+  _thunar_return_val_if_fail (THUNAR_VFS_IS_THUMB_FACTORY (factory), NULL);
 
   /* allocate the generator object */
   generator = g_object_new (THUNAR_TYPE_THUMBNAIL_GENERATOR, NULL);
@@ -325,8 +325,8 @@ thunar_thumbnail_generator_enqueue (ThunarThumbnailGenerator *generator,
   GError              *error = NULL;
   GList               *lp;
 
-  g_return_if_fail (THUNAR_IS_THUMBNAIL_GENERATOR (generator));
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_THUMBNAIL_GENERATOR (generator));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* acquire the generator lock */
   g_mutex_lock (generator->lock);

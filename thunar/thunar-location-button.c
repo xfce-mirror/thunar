@@ -33,6 +33,7 @@
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-button.h>
 #include <thunar/thunar-pango-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -433,9 +434,9 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   GdkPixbuf         *icon;
   gint               size;
 
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
-  g_return_if_fail (location_button->file == file);
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+  _thunar_return_if_fail (location_button->file == file);
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* determine the icon size for buttons */
   gtk_icon_size_lookup (GTK_ICON_SIZE_BUTTON, &size, &size);
@@ -469,9 +470,9 @@ static void
 thunar_location_button_file_destroy (ThunarLocationButton *location_button,
                                      ThunarFile           *file)
 {
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
-  g_return_if_fail (location_button->file == file);
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+  _thunar_return_if_fail (location_button->file == file);
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* the file is gone, no need to keep the button around anymore */
   gtk_widget_destroy (GTK_WIDGET (location_button));
@@ -484,7 +485,7 @@ thunar_location_button_button_press_event (GtkWidget            *button,
                                            GdkEventButton       *event,
                                            ThunarLocationButton *location_button)
 {
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
 
   /* check if we can handle the button event */
   if (G_UNLIKELY (event->button == 2))
@@ -511,7 +512,7 @@ thunar_location_button_button_release_event (GtkWidget            *button,
 {
   ThunarApplication *application;
 
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
 
   /* reset inconsistent button state after releasing the middle-mouse-button */
   if (G_UNLIKELY (event->button == 2))
@@ -544,8 +545,8 @@ thunar_location_button_drag_drop (GtkWidget            *button,
 {
   GdkAtom target;
 
-  g_return_val_if_fail (GTK_IS_WIDGET (button), FALSE);
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_WIDGET (button), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
 
   /* determine the DnD target and see if we can handle it */
   target = gtk_drag_dest_find_target (button, context, NULL);
@@ -577,8 +578,8 @@ thunar_location_button_drag_data_get (GtkWidget            *button,
   gchar *uri_string;
   GList  path_list;
 
-  g_return_if_fail (GTK_IS_WIDGET (button));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+  _thunar_return_if_fail (GTK_IS_WIDGET (button));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
 
   /* verify that we have a valid file */
   if (G_LIKELY (location_button->file != NULL))
@@ -656,8 +657,8 @@ thunar_location_button_drag_leave (GtkWidget            *button,
                                    guint                 time,
                                    ThunarLocationButton *location_button)
 {
-  g_return_if_fail (GTK_IS_BUTTON (button));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+  _thunar_return_if_fail (GTK_IS_BUTTON (button));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
 
   /* reset the file icon state to default appearance */
   if (G_LIKELY (location_button->file_icon_state != THUNAR_FILE_ICON_STATE_DEFAULT))
@@ -699,8 +700,8 @@ thunar_location_button_drag_motion (GtkWidget            *button,
   GdkAtom             target;
   gint                delay;
 
-  g_return_val_if_fail (GTK_IS_BUTTON (button), FALSE);
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_BUTTON (button), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
 
   /* schedule the enter timeout if not already done */
   if (G_UNLIKELY (location_button->enter_timeout_id < 0))
@@ -811,7 +812,7 @@ thunar_location_button_new (void)
 gboolean
 thunar_location_button_get_active (ThunarLocationButton *location_button)
 {
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), FALSE);
   return location_button->active;
 }
 
@@ -828,7 +829,7 @@ void
 thunar_location_button_set_active (ThunarLocationButton *location_button,
                                    gboolean              active)
 {
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
 
   /* apply the new state */
   location_button->active = active;
@@ -853,7 +854,7 @@ thunar_location_button_set_active (ThunarLocationButton *location_button,
 ThunarFile*
 thunar_location_button_get_file (ThunarLocationButton *location_button)
 {
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button), NULL);
   return location_button->file;
 }
 
@@ -870,8 +871,8 @@ void
 thunar_location_button_set_file (ThunarLocationButton *location_button,
                                  ThunarFile           *file)
 {
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
-  g_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+  _thunar_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
 
   /* check if we already use that file */
   if (G_UNLIKELY (location_button->file == file))
@@ -925,7 +926,7 @@ thunar_location_button_set_file (ThunarLocationButton *location_button,
 void
 thunar_location_button_clicked (ThunarLocationButton *location_button)
 {
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (location_button));
   g_signal_emit (G_OBJECT (location_button), location_button_signals[CLICKED], 0);
 }
 

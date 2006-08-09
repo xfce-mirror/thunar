@@ -28,6 +28,7 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-shortcuts-view.h>
@@ -445,7 +446,7 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
   ThunarFile             *file;
   gboolean                succeed = FALSE;
 
-  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* check if we don't already know the drop data */
   if (G_LIKELY (!view->drop_data_ready))
@@ -546,7 +547,7 @@ thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
   GtkTreeIter          iter;
   GdkAtom              target;
 
-  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
 
   /* determine the drop target */
   target = gtk_drag_dest_find_target (widget, context, NULL);
@@ -1089,8 +1090,8 @@ thunar_shortcuts_view_compute_drop_position (ThunarShortcutsView *view,
   GtkTreePath       *path;
   gint               n_rows;
 
-  g_return_val_if_fail (gtk_tree_view_get_model (GTK_TREE_VIEW (view)) != NULL, NULL);
-  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), NULL);
+  _thunar_return_val_if_fail (gtk_tree_view_get_model (GTK_TREE_VIEW (view)) != NULL, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), NULL);
 
   /* query the number of rows in the model */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
@@ -1188,7 +1189,7 @@ thunar_shortcuts_view_open (ThunarShortcutsView *view)
   GtkTreeIter       iter;
   ThunarFile       *file;
 
-  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* make sure to mount the volume first (if it's a volume) */
   if (!thunar_shortcuts_view_mount (view))
@@ -1220,7 +1221,7 @@ thunar_shortcuts_view_open_in_new_window (ThunarShortcutsView *view)
   GtkTreeIter        iter;
   ThunarFile        *file;
 
-  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* make sure to mount the volume first (if it's a volume) */
   if (!thunar_shortcuts_view_mount (view))
@@ -1250,7 +1251,7 @@ thunar_shortcuts_view_empty_trash (ThunarShortcutsView *view)
 {
   ThunarApplication *application;
 
-  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* empty the trash bin (asking the user first) */
   application = thunar_application_get ();
@@ -1271,7 +1272,7 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
   gboolean          result = TRUE;
   GError           *error = NULL;
 
-  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
 
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
@@ -1314,7 +1315,7 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view)
   gboolean          result = TRUE;
   GError           *error = NULL;
 
-  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
 
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
@@ -1361,7 +1362,7 @@ thunar_shortcuts_view_unmount (ThunarShortcutsView *view)
   gboolean          result = TRUE;
   GError           *error = NULL;
 
-  g_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), FALSE);
 
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
@@ -1445,8 +1446,8 @@ thunar_shortcuts_view_select_by_file (ThunarShortcutsView *view,
   GtkTreeModel     *model;
   GtkTreeIter       iter;
 
-  g_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* clear the selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));

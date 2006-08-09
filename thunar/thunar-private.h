@@ -25,6 +25,19 @@
 
 G_BEGIN_DECLS;
 
+/* support macros for debugging */
+#ifdef G_ENABLE_DEBUG
+#define _thunar_assert(expr)                  g_assert (expr)
+#define _thunar_assert_not_reached()          g_assert_not_reached ()
+#define _thunar_return_if_fail(expr)          g_return_if_fail (expr)
+#define _thunar_return_val_if_fail(expr, val) g_return_val_if_fail (expr, (val))
+#else
+#define _thunar_assert(expr)                  G_STMT_START{ (void)0; }G_STMT_END
+#define _thunar_assert_not_reached()          G_STMT_START{ (void)0; }G_STMT_END
+#define _thunar_return_if_fail(expr)          G_STMT_START{ (void)0; }G_STMT_END
+#define _thunar_return_val_if_fail(expr, val) G_STMT_START{ (void)0; }G_STMT_END
+#endif
+
 /* support macros for the slice allocator */
 #if GLIB_CHECK_VERSION(2,10,0)
 #define _thunar_slice_alloc(block_size)             (g_slice_alloc ((block_size)))

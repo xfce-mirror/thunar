@@ -34,6 +34,7 @@
 #include <time.h>
 #endif
 
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
 
@@ -50,7 +51,7 @@
 gboolean
 thunar_util_looks_like_an_uri (const gchar *string)
 {
-  g_return_val_if_fail (string != NULL, FALSE);
+  _thunar_return_val_if_fail (string != NULL, FALSE);
 
   /* <scheme> starts with an alpha character */
   if (g_ascii_isalpha (*string))
@@ -151,7 +152,7 @@ thunar_util_parse_parent (gpointer    parent,
   GdkScreen *screen;
   GtkWidget *window = NULL;
 
-  g_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
+  _thunar_return_val_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent), NULL);
 
   /* determine the proper parent */
   if (parent == NULL)

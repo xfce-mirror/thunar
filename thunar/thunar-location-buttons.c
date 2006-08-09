@@ -31,6 +31,7 @@
 #include <thunar/thunar-location-button.h>
 #include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-buttons-ui.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 
 
@@ -349,7 +350,7 @@ thunar_location_buttons_finalize (GObject *object)
 {
   ThunarLocationButtons *buttons = THUNAR_LOCATION_BUTTONS (object);
 
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* disconnect from the selected files and the UI manager */
   thunar_component_set_selected_files (THUNAR_COMPONENT (buttons), NULL);
@@ -498,7 +499,7 @@ thunar_location_buttons_set_current_directory (ThunarNavigator *navigator,
   GtkWidget             *button;
   GList                 *lp;
 
-  g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
+  _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
   /* verify that we're not already using the new directory */
   if (G_UNLIKELY (buttons->current_directory == current_directory))
@@ -857,8 +858,8 @@ thunar_location_buttons_forall (GtkContainer *container,
   GtkWidget             *child;
   GList                 *lp;
 
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
-  g_return_if_fail (callback != NULL);
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (callback != NULL);
 
   for (lp = buttons->list; lp != NULL; )
     {
@@ -1121,8 +1122,8 @@ thunar_location_buttons_clicked (ThunarLocationButton  *button,
   ThunarFile *directory;
   GList      *lp;
 
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* determine the directory associated with the clicked button */
   directory = thunar_location_button_get_file (button);
@@ -1183,8 +1184,8 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   guint                   signal_id;
   guint                   merge_id;
 
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* determine the file for the button */
   file = thunar_location_button_get_file (button);
@@ -1349,8 +1350,8 @@ thunar_location_buttons_action_create_folder (GtkAction             *action,
   GList                  path_list;
   gchar                 *name;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* determine the directory for the action */
   directory = g_object_get_data (G_OBJECT (action), "thunar-file");
@@ -1394,8 +1395,8 @@ thunar_location_buttons_action_empty_trash (GtkAction             *action,
 {
   ThunarApplication *application;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* launch the operation */
   application = thunar_application_get ();
@@ -1411,8 +1412,8 @@ thunar_location_buttons_action_down_folder (GtkAction             *action,
 {
   GList *lp;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* lookup the active button */
   for (lp = buttons->list; lp != NULL; lp = lp->next)
@@ -1437,8 +1438,8 @@ thunar_location_buttons_action_open (GtkAction             *action,
 {
   ThunarLocationButton *button;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* just emit "clicked" for the button associated with the action */
   button = g_object_get_data (G_OBJECT (action), "thunar-location-button");
@@ -1455,8 +1456,8 @@ thunar_location_buttons_action_open_in_new_window (GtkAction             *action
   ThunarApplication *application;
   ThunarFile        *directory;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* determine the directory for the action */
   directory = g_object_get_data (G_OBJECT (action), "thunar-file");
@@ -1478,8 +1479,8 @@ thunar_location_buttons_action_paste_files_here (GtkAction             *action,
   ThunarClipboardManager *clipboard;
   ThunarFile             *directory;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* determine the directory for the action */
   directory = g_object_get_data (G_OBJECT (action), "thunar-file");
@@ -1502,8 +1503,8 @@ thunar_location_buttons_action_properties (GtkAction             *action,
   GtkWidget  *toplevel;
   GtkWidget  *dialog;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
 
   /* determine the directory for the action */
   directory = g_object_get_data (G_OBJECT (action), "thunar-file");

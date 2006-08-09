@@ -39,6 +39,7 @@
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-chooser.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-size-label.h>
 
@@ -712,8 +713,8 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   gchar             *size_string;
   gchar             *str;
 
-  g_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
-  g_return_if_fail (THUNAR_IS_FILE (dialog->file));
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+  _thunar_return_if_fail (THUNAR_IS_FILE (dialog->file));
 
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (dialog)));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
@@ -956,7 +957,7 @@ thunar_properties_dialog_new (void)
 ThunarFile*
 thunar_properties_dialog_get_file (ThunarPropertiesDialog *dialog)
 {
-  g_return_val_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog), NULL);
   return dialog->file;
 }
 
@@ -974,8 +975,8 @@ void
 thunar_properties_dialog_set_file (ThunarPropertiesDialog *dialog,
                                    ThunarFile             *file)
 {
-  g_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
-  g_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+  _thunar_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
 
   /* check if we already display that file */
   if (G_UNLIKELY (dialog->file == file))

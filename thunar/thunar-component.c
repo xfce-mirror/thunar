@@ -24,6 +24,7 @@
 #include <exo/exo.h>
 
 #include <thunar/thunar-component.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -117,7 +118,7 @@ thunar_component_class_init (gpointer klass)
 GList*
 thunar_component_get_selected_files (ThunarComponent *component)
 {
-  g_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);
   return (*THUNAR_COMPONENT_GET_IFACE (component)->get_selected_files) (component);
 }
 
@@ -136,7 +137,7 @@ void
 thunar_component_set_selected_files (ThunarComponent *component,
                                      GList           *selected_files)
 {
-  g_return_if_fail (THUNAR_IS_COMPONENT (component));
+  _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
   (*THUNAR_COMPONENT_GET_IFACE (component)->set_selected_files) (component, selected_files);
 }
 
@@ -156,7 +157,7 @@ thunar_component_set_selected_files (ThunarComponent *component,
 GtkUIManager*
 thunar_component_get_ui_manager (ThunarComponent *component)
 {
-  g_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_COMPONENT (component), NULL);
   return (*THUNAR_COMPONENT_GET_IFACE (component)->get_ui_manager) (component);
 }
 
@@ -178,8 +179,8 @@ void
 thunar_component_set_ui_manager (ThunarComponent *component,
                                  GtkUIManager    *ui_manager)
 {
-  g_return_if_fail (THUNAR_IS_COMPONENT (component));
-  g_return_if_fail (ui_manager == NULL || GTK_IS_UI_MANAGER (ui_manager));
+  _thunar_return_if_fail (THUNAR_IS_COMPONENT (component));
+  _thunar_return_if_fail (ui_manager == NULL || GTK_IS_UI_MANAGER (ui_manager));
   (*THUNAR_COMPONENT_GET_IFACE (component)->set_ui_manager) (component, ui_manager);
 }
 

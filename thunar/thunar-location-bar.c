@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-location-bar.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -81,7 +82,7 @@ gboolean
 thunar_location_bar_accept_focus (ThunarLocationBar *location_bar,
                                   const gchar       *initial_text)
 {
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
   return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->accept_focus) (location_bar, initial_text);
 }
 
@@ -102,6 +103,6 @@ thunar_location_bar_accept_focus (ThunarLocationBar *location_bar,
 gboolean
 thunar_location_bar_is_standalone (ThunarLocationBar *location_bar)
 {
-  g_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_BAR (location_bar), FALSE);
   return (*THUNAR_LOCATION_BAR_GET_IFACE (location_bar)->is_standalone) (location_bar);
 }

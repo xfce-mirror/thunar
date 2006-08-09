@@ -41,9 +41,10 @@
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
-#include <thunar/thunar-throbber.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-stock.h>
+#include <thunar/thunar-throbber.h>
 #include <thunar/thunar-tree-pane.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-window-ui.h>
@@ -878,7 +879,7 @@ thunar_window_back (ThunarWindow *window)
 {
   GtkAction *action;
 
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* activate the "back" action */
   action = thunar_gtk_ui_manager_get_action_by_name (window->ui_manager, "back");
@@ -896,7 +897,7 @@ thunar_window_back (ThunarWindow *window)
 static gboolean
 thunar_window_reload (ThunarWindow *window)
 {
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* force the view to reload */
   if (G_LIKELY (window->view != NULL))
@@ -916,7 +917,7 @@ thunar_window_toggle_sidepane (ThunarWindow *window)
   GtkAction *action;
   gchar     *type_name;
 
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* check if a side pane is currently active */
   if (G_LIKELY (window->sidepane != NULL))
@@ -959,7 +960,7 @@ thunar_window_toggle_sidepane (ThunarWindow *window)
 static gboolean
 thunar_window_zoom_in (ThunarWindow *window)
 {
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* check if we can still zoom in */
   if (G_LIKELY (window->zoom_level < THUNAR_ZOOM_N_LEVELS - 1))
@@ -976,7 +977,7 @@ thunar_window_zoom_in (ThunarWindow *window)
 static gboolean
 thunar_window_zoom_out (ThunarWindow *window)
 {
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* check if we can still zoom out */
   if (G_LIKELY (window->zoom_level > 0))
@@ -993,7 +994,7 @@ thunar_window_zoom_out (ThunarWindow *window)
 static gboolean
 thunar_window_zoom_reset (ThunarWindow *window)
 {
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), FALSE);
 
   /* tell the view to reset it's zoom level */
   if (G_LIKELY (window->view != NULL))
@@ -1072,8 +1073,8 @@ static void
 thunar_window_install_sidepane (ThunarWindow *window,
                                 GType         type)
 {
-  g_return_if_fail (type == G_TYPE_NONE || g_type_is_a (type, THUNAR_TYPE_SIDE_PANE));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (type == G_TYPE_NONE || g_type_is_a (type, THUNAR_TYPE_SIDE_PANE));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* drop the previous side pane (if any) */
   if (G_UNLIKELY (window->sidepane != NULL))
@@ -1112,8 +1113,8 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
   GList *actions;
   GList *ap, *pp;
 
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
-  g_return_if_fail (window->custom_preferences_merge_id == 0);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (window->custom_preferences_merge_id == 0);
 
   /* determine the available preferences providers */
   providers = thunarx_provider_factory_list_providers (window->provider_factory, THUNARX_TYPE_PREFERENCES_PROVIDER);
@@ -1278,8 +1279,8 @@ thunar_window_action_preferences (GtkAction    *action,
 {
   GtkWidget *dialog;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* allocate and display a preferences dialog */
   dialog = thunar_preferences_dialog_new (GTK_WINDOW (window));
@@ -1294,8 +1295,8 @@ thunar_window_action_reload (GtkAction    *action,
 {
   gboolean result;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* force the view to reload */
   g_signal_emit (G_OBJECT (window), window_signals[RELOAD], 0, &result);
@@ -1471,8 +1472,8 @@ thunar_window_action_statusbar_changed (GtkToggleAction *action,
 {
   gboolean active;
 
-  g_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the new state of the action */
   active = gtk_toggle_action_get_active (action);
@@ -1508,8 +1509,8 @@ thunar_window_action_zoom_in (GtkAction    *action,
 {
   gboolean result;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* increase the zoom level */
   g_signal_emit (G_OBJECT (window), window_signals[ZOOM_IN], 0, &result);
@@ -1523,8 +1524,8 @@ thunar_window_action_zoom_out (GtkAction    *action,
 {
   gboolean result;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* decrease the zoom level */
   g_signal_emit (G_OBJECT (window), window_signals[ZOOM_OUT], 0, &result);
@@ -1538,8 +1539,8 @@ thunar_window_action_zoom_reset (GtkAction    *action,
 {
   gboolean result;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* reset zoom level */
   g_signal_emit (G_OBJECT (window), window_signals[ZOOM_RESET], 0, &result);
@@ -1651,8 +1652,8 @@ thunar_window_action_open_home (GtkAction    *action,
   ThunarFile    *home_file;
   GError        *error = NULL;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the home directory */
   home_path = thunar_vfs_path_get_for_home ();
@@ -1695,8 +1696,8 @@ thunar_window_action_open_templates (GtkAction    *action,
   GError        *error = NULL;
   gchar         *absolute_path;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the ~/Templates folder */
   home_path = thunar_vfs_path_get_for_home ();
@@ -1823,8 +1824,8 @@ static void
 thunar_window_action_show_hidden (GtkToggleAction *action,
                                   ThunarWindow    *window)
 {
-  g_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* just emit the "notify" signal for the "show-hidden"
    * signal and the view will automatically sync its state.
@@ -1840,9 +1841,9 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
 {
   GdkPixbuf *icon;
 
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
-  g_return_if_fail (THUNAR_IS_FILE (current_directory));
-  g_return_if_fail (window->current_directory == current_directory);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
+  _thunar_return_if_fail (window->current_directory == current_directory);
 
   /* set window title and icon */
   icon = thunar_icon_factory_load_file_icon (window->icon_factory, current_directory, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
@@ -1861,9 +1862,9 @@ thunar_window_current_directory_destroy (ThunarFile   *current_directory,
   ThunarVfsInfo *info;
   ThunarFile    *file = NULL;
 
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
-  g_return_if_fail (THUNAR_IS_FILE (current_directory));
-  g_return_if_fail (window->current_directory == current_directory);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
+  _thunar_return_if_fail (window->current_directory == current_directory);
 
   /* determine the path of the current directory */
   path = thunar_file_get_path (current_directory);
@@ -1982,9 +1983,9 @@ thunar_window_notify_loading (ThunarView   *view,
 {
   GdkCursor *cursor;
 
-  g_return_if_fail (THUNAR_IS_VIEW (view));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
-  g_return_if_fail (THUNAR_VIEW (window->view) == view);
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_VIEW (window->view) == view);
 
   if (GTK_WIDGET_REALIZED (window))
     {
@@ -2013,9 +2014,9 @@ thunar_window_volume_pre_unmount (ThunarVfsVolumeManager *volume_manager,
   ThunarFile    *file;
   GtkAction     *action;
 
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* nothing to do if we don't have a current directory */
   if (G_UNLIKELY (window->current_directory == NULL))
@@ -2143,7 +2144,7 @@ thunar_window_new (void)
 ThunarFile*
 thunar_window_get_current_directory (ThunarWindow *window)
 {
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), NULL);
   return window->current_directory;
 }
 
@@ -2160,8 +2161,8 @@ thunar_window_set_current_directory (ThunarWindow *window,
 {
   ThunarFile *file;
 
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
-  g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
 
   /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
@@ -2234,7 +2235,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
 ThunarZoomLevel
 thunar_window_get_zoom_level (ThunarWindow *window)
 {
-  g_return_val_if_fail (THUNAR_IS_WINDOW (window), THUNAR_ZOOM_LEVEL_NORMAL);
+  _thunar_return_val_if_fail (THUNAR_IS_WINDOW (window), THUNAR_ZOOM_LEVEL_NORMAL);
   return window->zoom_level;
 }
 
@@ -2251,8 +2252,8 @@ void
 thunar_window_set_zoom_level (ThunarWindow   *window,
                               ThunarZoomLevel zoom_level)
 {
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
-  g_return_if_fail (zoom_level >= 0 && zoom_level < THUNAR_ZOOM_N_LEVELS);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (zoom_level >= 0 && zoom_level < THUNAR_ZOOM_N_LEVELS);
 
   /* check if we have a new zoom level */
   if (G_LIKELY (window->zoom_level != zoom_level))
@@ -2291,8 +2292,8 @@ thunar_window_scroll_to_file (ThunarWindow *window,
                               gfloat        row_align,
                               gfloat        col_align)
 {
-  g_return_if_fail (THUNAR_IS_WINDOW (window));
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* verify that we have a valid view */
   if (G_LIKELY (window->view != NULL))

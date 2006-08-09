@@ -327,12 +327,12 @@ tvsn_get_active_workspace_number (GdkScreen *screen)
   if (XGetWindowProperty (GDK_WINDOW_XDISPLAY (root), GDK_WINDOW_XWINDOW (root),
                           _NET_CURRENT_DESKTOP, 0, 32, False, XA_CARDINAL,
                           &type_ret, &format_ret, &nitems_ret, &bytes_after_ret,
-                          (unsigned char **) &prop_ret) != Success)
+                          (gpointer) &prop_ret) != Success)
     {
       if (XGetWindowProperty (GDK_WINDOW_XDISPLAY (root), GDK_WINDOW_XWINDOW (root),
                               _WIN_WORKSPACE, 0, 32, False, XA_CARDINAL,
                               &type_ret, &format_ret, &nitems_ret, &bytes_after_ret,
-                              (unsigned char **) &prop_ret) != Success)
+                              (gpointer) &prop_ret) != Success)
         {
           if (G_UNLIKELY (prop_ret != NULL))
             {

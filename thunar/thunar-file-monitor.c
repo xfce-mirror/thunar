@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-file-monitor.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -176,7 +177,7 @@ thunar_file_monitor_get_default (void)
 void
 thunar_file_monitor_file_changed (ThunarFile *file)
 {
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   if (G_LIKELY (file_monitor_default != NULL))
     g_signal_emit (G_OBJECT (file_monitor_default), file_monitor_signals[FILE_CHANGED], 0, file);
@@ -195,7 +196,7 @@ thunar_file_monitor_file_changed (ThunarFile *file)
 void
 thunar_file_monitor_file_destroyed (ThunarFile *file)
 {
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   if (G_LIKELY (file_monitor_default != NULL))
     g_signal_emit (G_OBJECT (file_monitor_default), file_monitor_signals[FILE_DESTROYED], 0, file);

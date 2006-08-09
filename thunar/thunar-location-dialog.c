@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-path-entry.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -151,7 +152,7 @@ thunar_location_dialog_new (void)
 ThunarFile*
 thunar_location_dialog_get_selected_file (ThunarLocationDialog *location_dialog)
 {
-  g_return_val_if_fail (THUNAR_IS_LOCATION_DIALOG (location_dialog), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_LOCATION_DIALOG (location_dialog), NULL);
   return thunar_path_entry_get_current_file (THUNAR_PATH_ENTRY (location_dialog->entry));
 }
 
@@ -168,8 +169,8 @@ void
 thunar_location_dialog_set_selected_file (ThunarLocationDialog *location_dialog,
                                           ThunarFile           *selected_file)
 {
-  g_return_if_fail (THUNAR_IS_LOCATION_DIALOG (location_dialog));
-  g_return_if_fail (selected_file == NULL || THUNAR_IS_FILE (selected_file));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_DIALOG (location_dialog));
+  _thunar_return_if_fail (selected_file == NULL || THUNAR_IS_FILE (selected_file));
   thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_dialog->entry), selected_file);
 }
 

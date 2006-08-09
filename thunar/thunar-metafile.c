@@ -40,6 +40,7 @@
 #include <tdb/tdb.h>
 
 #include <thunar/thunar-metafile.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -255,9 +256,9 @@ thunar_metafile_fetch (ThunarMetafile   *metafile,
   gssize        key_size;
   gchar         key_path[THUNAR_VFS_PATH_MAXSTRLEN];
 
-  g_return_val_if_fail (THUNAR_IS_METAFILE (metafile), NULL);
-  g_return_val_if_fail (key < THUNAR_METAFILE_N_KEYS, NULL);
-  g_return_val_if_fail (path != NULL, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_METAFILE (metafile), NULL);
+  _thunar_return_val_if_fail (key < THUNAR_METAFILE_N_KEYS, NULL);
+  _thunar_return_val_if_fail (path != NULL, NULL);
 
   /* check if the database handle is available */
   if (G_UNLIKELY (metafile->context == NULL))
@@ -344,11 +345,11 @@ thunar_metafile_store (ThunarMetafile   *metafile,
   gchar   *bp;
   gchar    key_path[THUNAR_VFS_PATH_MAXSTRLEN];
 
-  g_return_if_fail (THUNAR_IS_METAFILE (metafile));
-  g_return_if_fail (key < THUNAR_METAFILE_N_KEYS);
-  g_return_if_fail (default_value != NULL);
-  g_return_if_fail (value != NULL);
-  g_return_if_fail (path != NULL);
+  _thunar_return_if_fail (THUNAR_IS_METAFILE (metafile));
+  _thunar_return_if_fail (key < THUNAR_METAFILE_N_KEYS);
+  _thunar_return_if_fail (default_value != NULL);
+  _thunar_return_if_fail (value != NULL);
+  _thunar_return_if_fail (path != NULL);
 
   /* check if the database handle is available */
   if (G_UNLIKELY (metafile->context == NULL))
@@ -403,8 +404,8 @@ thunar_metafile_store (ThunarMetafile   *metafile,
             ;
 
           /* verify the vx pointer */
-          g_assert (vx <= vend);
-          g_assert (vx > vp);
+          _thunar_assert (vx <= vend);
+          _thunar_assert (vx > vp);
 
           /* check if we should copy the entry */
           if (*vp != key)
@@ -415,8 +416,8 @@ thunar_metafile_store (ThunarMetafile   *metafile,
         }
 
       /* verify the buffer space */
-      g_assert (bp <= buffer + value_data.dsize + value_size);
-      g_assert ((bp - buffer) % sizeof (guint32) == 0);
+      _thunar_assert (bp <= buffer + value_data.dsize + value_size);
+      _thunar_assert ((bp - buffer) % sizeof (guint32) == 0);
 
       /* release the previous value set */
       free (value_data.dptr);

@@ -21,11 +21,12 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-view.h>
 
 
 
-static void thunar_view_class_init  (gpointer klass);
+static void thunar_view_class_init (gpointer klass);
 
 
 
@@ -139,7 +140,7 @@ thunar_view_class_init (gpointer klass)
 gboolean
 thunar_view_get_loading (ThunarView *view)
 {
-  g_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
   return (*THUNAR_VIEW_GET_IFACE (view)->get_loading) (view);
 }
 
@@ -158,7 +159,7 @@ thunar_view_get_loading (ThunarView *view)
 const gchar*
 thunar_view_get_statusbar_text (ThunarView *view)
 {
-  g_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), NULL);
   return (*THUNAR_VIEW_GET_IFACE (view)->get_statusbar_text) (view);
 }
 
@@ -176,7 +177,7 @@ thunar_view_get_statusbar_text (ThunarView *view)
 gboolean
 thunar_view_get_show_hidden (ThunarView *view)
 {
-  g_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
   return (*THUNAR_VIEW_GET_IFACE (view)->get_show_hidden) (view);
 }
 
@@ -195,7 +196,7 @@ void
 thunar_view_set_show_hidden (ThunarView *view,
                              gboolean    show_hidden)
 {
-  g_return_if_fail (THUNAR_IS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   (*THUNAR_VIEW_GET_IFACE (view)->set_show_hidden) (view, show_hidden);
 }
 
@@ -212,7 +213,7 @@ thunar_view_set_show_hidden (ThunarView *view,
 ThunarZoomLevel
 thunar_view_get_zoom_level (ThunarView *view)
 {
-  g_return_val_if_fail (THUNAR_IS_VIEW (view), THUNAR_ZOOM_LEVEL_NORMAL);
+  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), THUNAR_ZOOM_LEVEL_NORMAL);
   return (*THUNAR_VIEW_GET_IFACE (view)->get_zoom_level) (view);
 }
 
@@ -229,8 +230,8 @@ void
 thunar_view_set_zoom_level (ThunarView     *view,
                             ThunarZoomLevel zoom_level)
 {
-  g_return_if_fail (THUNAR_IS_VIEW (view));
-  g_return_if_fail (zoom_level >= 0 && zoom_level < THUNAR_ZOOM_N_LEVELS);
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
+  _thunar_return_if_fail (zoom_level >= 0 && zoom_level < THUNAR_ZOOM_N_LEVELS);
   (*THUNAR_VIEW_GET_IFACE (view)->set_zoom_level) (view, zoom_level);
 }
 
@@ -246,7 +247,7 @@ thunar_view_set_zoom_level (ThunarView     *view,
 void
 thunar_view_reset_zoom_level (ThunarView *view)
 {
-  g_return_if_fail (THUNAR_IS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   (*THUNAR_VIEW_GET_IFACE (view)->reset_zoom_level) (view);
 }
 
@@ -262,7 +263,7 @@ thunar_view_reset_zoom_level (ThunarView *view)
 void
 thunar_view_reload (ThunarView *view)
 {
-  g_return_if_fail (THUNAR_IS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
   (*THUNAR_VIEW_GET_IFACE (view)->reload) (view);
 }
 
@@ -288,7 +289,7 @@ thunar_view_get_visible_range (ThunarView  *view,
                                ThunarFile **start_file,
                                ThunarFile **end_file)
 {
-  g_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_VIEW (view), FALSE);
   return (*THUNAR_VIEW_GET_IFACE (view)->get_visible_range) (view, start_file, end_file);
 }
 
@@ -315,10 +316,10 @@ thunar_view_scroll_to_file (ThunarView *view,
                             gfloat      row_align,
                             gfloat      col_align)
 {
-  g_return_if_fail (THUNAR_IS_VIEW (view));
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (row_align >= 0.0f && row_align <= 1.0f);
-  g_return_if_fail (col_align >= 0.0f && col_align <= 1.0f);
+  _thunar_return_if_fail (THUNAR_IS_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (row_align >= 0.0f && row_align <= 1.0f);
+  _thunar_return_if_fail (col_align >= 0.0f && col_align <= 1.0f);
   (*THUNAR_VIEW_GET_IFACE (view)->scroll_to_file) (view, file, select, use_align, row_align, col_align);
 }
 

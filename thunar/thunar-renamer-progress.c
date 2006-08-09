@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-renamer-progress.h>
 
 
@@ -135,8 +136,8 @@ thunar_renamer_progress_finalize (GObject *object)
   ThunarRenamerProgress *renamer_progress = THUNAR_RENAMER_PROGRESS (object);
 
   /* make sure we're not finalized while the main loop is active */
-  g_assert (renamer_progress->next_idle_id < 0);
-  g_assert (renamer_progress->next_idle_loop == NULL);
+  _thunar_assert (renamer_progress->next_idle_id < 0);
+  _thunar_assert (renamer_progress->next_idle_loop == NULL);
 
   /* release the pairs */
   thunar_renamer_pair_list_free (renamer_progress->pairs_done);
@@ -326,7 +327,7 @@ thunar_renamer_progress_new (void)
 void
 thunar_renamer_progress_cancel (ThunarRenamerProgress *renamer_progress)
 {
-  g_return_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress));
 
   /* exit the internal main loop (if any) */
   if (G_UNLIKELY (renamer_progress->next_idle_loop != NULL))
@@ -346,7 +347,7 @@ thunar_renamer_progress_cancel (ThunarRenamerProgress *renamer_progress)
 gboolean
 thunar_renamer_progress_running (ThunarRenamerProgress *renamer_progress)
 {
-  g_return_val_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress), FALSE);
   return (renamer_progress->next_idle_loop != NULL);
 }
 
@@ -367,7 +368,7 @@ void
 thunar_renamer_progress_run (ThunarRenamerProgress *renamer_progress,
                              GList                 *pairs)
 {
-  g_return_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress));
+  _thunar_return_if_fail (THUNAR_IS_RENAMER_PROGRESS (renamer_progress));
 
   /* make sure we're not already renaming */
   if (G_UNLIKELY (renamer_progress->next_idle_id >= 0 || renamer_progress->next_idle_loop != NULL))

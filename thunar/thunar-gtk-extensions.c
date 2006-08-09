@@ -26,6 +26,7 @@
 #endif
 
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -57,8 +58,8 @@ thunar_gtk_action_group_create_tool_item (GtkActionGroup *action_group,
   GtkAction *action;
   GtkWidget *widget;
 
-  g_return_val_if_fail (GTK_IS_ACTION_GROUP (action_group), NULL);
-  g_return_val_if_fail (action_name != NULL, NULL);
+  _thunar_return_val_if_fail (GTK_IS_ACTION_GROUP (action_group), NULL);
+  _thunar_return_val_if_fail (action_name != NULL, NULL);
 
   action = gtk_action_group_get_action (action_group, action_name);
   if (G_UNLIKELY (action == NULL))
@@ -89,8 +90,8 @@ thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
 {
   GtkAction *action;
 
-  g_return_if_fail (GTK_IS_ACTION_GROUP (action_group));
-  g_return_if_fail (action_name != NULL && *action_name != '\0');
+  _thunar_return_if_fail (GTK_IS_ACTION_GROUP (action_group));
+  _thunar_return_if_fail (action_name != NULL && *action_name != '\0');
 
   /* query the action from the group */
   action = gtk_action_group_get_action (action_group, action_name);
@@ -125,9 +126,9 @@ thunar_gtk_icon_factory_insert_icon (GtkIconFactory *icon_factory,
   GtkIconSource *icon_source;
   GtkIconSet    *icon_set;
 
-  g_return_if_fail (GTK_IS_ICON_FACTORY (icon_factory));
-  g_return_if_fail (icon_name != NULL);
-  g_return_if_fail (stock_id != NULL);
+  _thunar_return_if_fail (GTK_IS_ICON_FACTORY (icon_factory));
+  _thunar_return_if_fail (icon_name != NULL);
+  _thunar_return_if_fail (stock_id != NULL);
 
   icon_set = gtk_icon_set_new ();
   icon_source = gtk_icon_source_new ();
@@ -162,8 +163,8 @@ thunar_gtk_ui_manager_get_action_by_name (GtkUIManager *ui_manager,
   GtkAction *action;
   GList     *lp;
 
-  g_return_val_if_fail (GTK_IS_UI_MANAGER (ui_manager), NULL);
-  g_return_val_if_fail (action_name != NULL, NULL);
+  _thunar_return_val_if_fail (GTK_IS_UI_MANAGER (ui_manager), NULL);
+  _thunar_return_val_if_fail (action_name != NULL, NULL);
 
   /* check all action groups associated with the ui manager */
   for (lp = gtk_ui_manager_get_action_groups (ui_manager); lp != NULL; lp = lp->next)
@@ -197,8 +198,8 @@ thunar_gtk_widget_set_tooltip (GtkWidget   *widget,
   va_list             var_args;
   gchar              *tooltip;
 
-  g_return_if_fail (GTK_IS_WIDGET (widget));
-  g_return_if_fail (g_utf8_validate (format, -1, NULL));
+  _thunar_return_if_fail (GTK_IS_WIDGET (widget));
+  _thunar_return_if_fail (g_utf8_validate (format, -1, NULL));
 
   /* allocate the shared tooltips on-demand */
   if (G_UNLIKELY (tooltips == NULL))

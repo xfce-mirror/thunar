@@ -29,6 +29,7 @@
 #endif
 
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-size-label.h>
 #include <thunar/thunar-throbber.h>
 
@@ -270,8 +271,8 @@ thunar_size_label_button_press_event (GtkWidget       *ebox,
                                       GdkEventButton  *event,
                                       ThunarSizeLabel *size_label)
 {
-  g_return_val_if_fail (GTK_IS_EVENT_BOX (ebox), FALSE);
-  g_return_val_if_fail (THUNAR_IS_SIZE_LABEL (size_label), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_EVENT_BOX (ebox), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_SIZE_LABEL (size_label), FALSE);
 
   /* left button press on the throbber cancels the calculation */
   if (G_LIKELY (event->button == 1))
@@ -361,9 +362,9 @@ thunar_size_label_file_changed (ThunarFile      *file,
   gchar            *size_string;
   gchar            *text;
 
-  g_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
-  g_return_if_fail (size_label->file == file);
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
+  _thunar_return_if_fail (size_label->file == file);
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* be sure to cancel the animate timer */
   if (G_UNLIKELY (size_label->animate_timer_id >= 0))
@@ -440,9 +441,9 @@ thunar_size_label_error (ThunarVfsJob    *job,
                          const GError    *error,
                          ThunarSizeLabel *size_label)
 {
-  g_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (size_label->job == job);
+  _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (size_label->job == job);
 
   /* setup the error text as label */
   gtk_label_set_text (GTK_LABEL (size_label->label), error->message);
@@ -454,9 +455,9 @@ static void
 thunar_size_label_finished (ThunarVfsJob    *job,
                             ThunarSizeLabel *size_label)
 {
-  g_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (size_label->job == job);
+  _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (size_label->job == job);
 
   /* be sure to cancel the animate timer */
   if (G_UNLIKELY (size_label->animate_timer_id >= 0))
@@ -486,9 +487,9 @@ thunar_size_label_status_ready (ThunarVfsJob    *job,
   gchar *text;
   guint  n;
 
-  g_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (size_label->job == job);
+  _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (size_label->job == job);
 
   /* check if the animate timer is already running */
   if (G_UNLIKELY (size_label->animate_timer_id < 0))
@@ -563,7 +564,7 @@ thunar_size_label_new (void)
 ThunarFile*
 thunar_size_label_get_file (ThunarSizeLabel *size_label)
 {
-  g_return_val_if_fail (THUNAR_IS_SIZE_LABEL (size_label), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_SIZE_LABEL (size_label), NULL);
   return size_label->file;
 }
 
@@ -580,8 +581,8 @@ void
 thunar_size_label_set_file (ThunarSizeLabel *size_label,
                             ThunarFile      *file)
 {
-  g_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
-  g_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_SIZE_LABEL (size_label));
+  _thunar_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
 
   /* check if we already display that file */
   if (G_UNLIKELY (size_label->file == file))

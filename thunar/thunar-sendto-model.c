@@ -28,6 +28,7 @@
 #include <string.h>
 #endif
 
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-sendto-model.h>
 
 
@@ -266,7 +267,7 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
   GList                    *fp;
   guint                     n;
 
-  g_return_val_if_fail (THUNAR_IS_SENDTO_MODEL (sendto_model), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_SENDTO_MODEL (sendto_model), NULL);
 
   /* no files, no sendto actions */
   if (G_UNLIKELY (files == NULL))

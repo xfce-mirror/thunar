@@ -35,6 +35,7 @@
 #endif
 
 #include <thunar/thunar-gdk-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -71,8 +72,8 @@ thunar_gdk_screen_open (const gchar *display_name,
   gchar       *end;
   gint         num = 0;
 
-  g_return_val_if_fail (display_name != NULL, NULL);
-  g_return_val_if_fail (error == NULL || *error == NULL, NULL);
+  _thunar_return_val_if_fail (display_name != NULL, NULL);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* check if the default screen should be opened */
   if (G_UNLIKELY (*display_name == '\0'))

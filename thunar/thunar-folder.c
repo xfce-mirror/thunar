@@ -24,6 +24,7 @@
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-folder.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -301,9 +302,9 @@ thunar_folder_error (ThunarVfsJob *job,
                      GError       *error,
                      ThunarFolder *folder)
 {
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (folder->job == job);
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (folder->job == job);
 
   /* tell the consumer about the problem */
   g_signal_emit (G_OBJECT (folder), folder_signals[ERROR], 0, error);
@@ -319,10 +320,10 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
   ThunarFile *file;
   GList      *lp;
 
-  g_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
-  g_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
-  g_return_val_if_fail (folder->handle == NULL, FALSE);
-  g_return_val_if_fail (folder->job == job, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
+  _thunar_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (folder->handle == NULL, FALSE);
+  _thunar_return_val_if_fail (folder->job == job, FALSE);
 
   /* turn the info list into a file list */
   for (lp = infos; lp != NULL; lp = lp->next)
@@ -354,11 +355,11 @@ thunar_folder_finished (ThunarVfsJob *job,
   GList      *files;
   GList      *lp;
 
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
-  g_return_if_fail (folder->handle == NULL);
-  g_return_if_fail (folder->job == job);
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
+  _thunar_return_if_fail (folder->handle == NULL);
+  _thunar_return_if_fail (folder->job == job);
 
   /* check if we need to merge new files with existing files */
   if (G_UNLIKELY (folder->files != NULL))
@@ -449,9 +450,9 @@ thunar_folder_file_changed (ThunarFileMonitor *file_monitor,
                             ThunarFile        *file,
                             ThunarFolder      *folder)
 {
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
 
   /* check if the corresponding file changed... */
   if (G_UNLIKELY (folder->corresponding_file == file))
@@ -471,9 +472,9 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
   GList  files;
   GList *lp;
 
-  g_return_if_fail (THUNAR_IS_FILE (file));
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (file_monitor));
 
   /* check if the corresponding file was destroyed */
   if (G_UNLIKELY (folder->corresponding_file == file))
@@ -515,11 +516,11 @@ thunar_folder_monitor (ThunarVfsMonitor       *monitor,
   GList        *lp;
   GList         list;
 
-  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
-  g_return_if_fail (folder->monitor == monitor);
-  g_return_if_fail (folder->handle == handle);
-  g_return_if_fail (folder->job == NULL);
+  _thunar_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
+  _thunar_return_if_fail (folder->monitor == monitor);
+  _thunar_return_if_fail (folder->handle == handle);
+  _thunar_return_if_fail (folder->job == NULL);
 
   /* check on which file the event occurred */
   if (!thunar_vfs_path_equal (event_path, thunar_file_get_path (folder->corresponding_file)))
@@ -584,8 +585,8 @@ thunar_folder_get_for_file (ThunarFile *file)
 {
   ThunarFolder *folder;
 
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  g_return_val_if_fail (thunar_file_is_directory (file), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (thunar_file_is_directory (file), NULL);
 
   /* determine the "thunar-folder" quark on-demand */
   if (G_UNLIKELY (thunar_folder_quark == 0))
@@ -634,7 +635,7 @@ thunar_folder_get_for_file (ThunarFile *file)
 ThunarFile*
 thunar_folder_get_corresponding_file (const ThunarFolder *folder)
 {
-  g_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
   return folder->corresponding_file;
 }
 
@@ -652,7 +653,7 @@ thunar_folder_get_corresponding_file (const ThunarFolder *folder)
 GList*
 thunar_folder_get_files (const ThunarFolder *folder)
 {
-  g_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), NULL);
   return folder->files;
 }
 
@@ -670,7 +671,7 @@ thunar_folder_get_files (const ThunarFolder *folder)
 gboolean
 thunar_folder_get_loading (const ThunarFolder *folder)
 {
-  g_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
   return (folder->job != NULL);
 }
 
@@ -686,7 +687,7 @@ thunar_folder_get_loading (const ThunarFolder *folder)
 void
 thunar_folder_reload (ThunarFolder *folder)
 {
-  g_return_if_fail (THUNAR_IS_FOLDER (folder));
+  _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
 
   /* check if we are currently connect to a job */
   if (G_UNLIKELY (folder->job != NULL))

@@ -38,6 +38,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-ice.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-session-client.h>
 
 
@@ -351,8 +352,8 @@ static void
 thunar_session_client_die (SmcConn              connection,
                            ThunarSessionClient *session_client)
 {
-  g_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
-  g_return_if_fail (session_client->connection == connection);
+  _thunar_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
+  _thunar_return_if_fail (session_client->connection == connection);
 
   /* terminate the application */
   gtk_main_quit ();
@@ -364,8 +365,8 @@ static void
 thunar_session_client_save_complete (SmcConn              connection,
                                      ThunarSessionClient *session_client)
 {
-  g_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
-  g_return_if_fail (session_client->connection == connection);
+  _thunar_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
+  _thunar_return_if_fail (session_client->connection == connection);
 }
 
 
@@ -386,8 +387,8 @@ thunar_session_client_save_yourself (SmcConn              connection,
   gchar             *uri;
   FILE              *fp;
 
-  g_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
-  g_return_if_fail (session_client->connection == connection);
+  _thunar_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
+  _thunar_return_if_fail (session_client->connection == connection);
 
   /* check if we should save our current state */
   if (save_type == SmSaveLocal || save_type == SmSaveBoth)
@@ -435,8 +436,8 @@ static void
 thunar_session_client_shutdown_cancelled (SmcConn              connection,
                                           ThunarSessionClient *session_client)
 {
-  g_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
-  g_return_if_fail (session_client->connection == connection);
+  _thunar_return_if_fail (THUNAR_IS_SESSION_CLIENT (session_client));
+  _thunar_return_if_fail (session_client->connection == connection);
 }
 #endif /* !HAVE_LIBSM */
 

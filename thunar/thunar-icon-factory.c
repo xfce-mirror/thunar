@@ -36,6 +36,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-frame.h>
 #include <thunar/thunar-thumbnail-generator.h>
 
@@ -246,7 +247,7 @@ thunar_icon_factory_dispose (GObject *object)
 {
   ThunarIconFactory *factory = THUNAR_ICON_FACTORY (object);
 
-  g_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
+  _thunar_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
 
   if (G_UNLIKELY (factory->changed_idle_id >= 0))
     g_source_remove (factory->changed_idle_id);
@@ -265,7 +266,7 @@ thunar_icon_factory_finalize (GObject *object)
   ThunarIconFactory *factory = THUNAR_ICON_FACTORY (object);
   guint              n;
 
-  g_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
+  _thunar_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
 
   /* clear the recently used list */
   for (n = 0; n < MAX_RECENTLY; ++n)
@@ -386,7 +387,7 @@ thunar_icon_factory_sweep_timer (gpointer user_data)
 {
   ThunarIconFactory *factory = THUNAR_ICON_FACTORY (user_data);
 
-  g_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), FALSE);
 
   GDK_THREADS_ENTER ();
 
@@ -531,9 +532,9 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
   GtkIconInfo   *icon_info;
   GdkPixbuf     *pixbuf = NULL;
 
-  g_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
-  g_return_val_if_fail (name != NULL && *name != '\0', NULL);
-  g_return_val_if_fail (size > 0, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
+  _thunar_return_val_if_fail (name != NULL && *name != '\0', NULL);
+  _thunar_return_val_if_fail (size > 0, NULL);
 
   /* prepare the lookup key */
   lookup_key.name = (gchar *) name;
@@ -593,8 +594,8 @@ thunar_icon_factory_mark_recently_used (ThunarIconFactory *factory,
 {
   guint n;
 
-  g_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
-  g_return_if_fail (GDK_IS_PIXBUF (pixbuf));
+  _thunar_return_if_fail (THUNAR_IS_ICON_FACTORY (factory));
+  _thunar_return_if_fail (GDK_IS_PIXBUF (pixbuf));
 
   /* check if the icon is already on the list */
   for (n = 0; n < MAX_RECENTLY; ++n)
@@ -731,7 +732,7 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
   ThunarPreferences *preferences;
   ThunarIconFactory *factory;
 
-  g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
+  _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
   /* generate the quark on-demand */
   if (G_UNLIKELY (thunar_icon_factory_quark == 0))
@@ -772,7 +773,7 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
 GtkIconTheme*
 thunar_icon_factory_get_icon_theme (const ThunarIconFactory *factory)
 {
-  g_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   return factory->icon_theme;
 }
 
@@ -804,8 +805,8 @@ thunar_icon_factory_load_icon (ThunarIconFactory        *factory,
                                ThunarEmblemAttachPoints *attach_points,
                                gboolean                  wants_default)
 {
-  g_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
-  g_return_val_if_fail (size > 0, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
+  _thunar_return_val_if_fail (size > 0, NULL);
   
   /* cannot happen unless there's no XSETTINGS manager
    * for the default screen, but just in case...
@@ -852,9 +853,9 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   GdkPixbuf           *icon;
   gchar               *thumb_path;
 
-  g_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
-  g_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  g_return_val_if_fail (icon_size > 0, NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (icon_size > 0, NULL);
 
   /* check if there's a custom icon for the file */
   icon_name = thunar_file_get_custom_icon (file);

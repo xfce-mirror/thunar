@@ -42,6 +42,7 @@
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -784,10 +785,10 @@ thunar_preferences_monitor (ThunarVfsMonitor       *monitor,
 {
   ThunarPreferences *preferences = THUNAR_PREFERENCES (user_data);
 
-  g_return_if_fail (THUNAR_IS_PREFERENCES (preferences));
-  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  g_return_if_fail (preferences->monitor == monitor);
-  g_return_if_fail (preferences->handle == handle);
+  _thunar_return_if_fail (THUNAR_IS_PREFERENCES (preferences));
+  _thunar_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  _thunar_return_if_fail (preferences->monitor == monitor);
+  _thunar_return_if_fail (preferences->handle == handle);
 
   /* schedule a reload whenever the file is created/changed */
   if (event == THUNAR_VFS_MONITOR_EVENT_CHANGED || event == THUNAR_VFS_MONITOR_EVENT_CREATED)

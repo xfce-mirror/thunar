@@ -41,6 +41,7 @@
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-path-entry.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
 
@@ -1233,10 +1234,10 @@ thunar_path_entry_parse (ThunarPathEntry *path_entry,
   gchar       *filename;
   gchar       *path;
 
-  g_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  g_return_val_if_fail (folder_part != NULL, FALSE);
-  g_return_val_if_fail (file_part != NULL, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (folder_part != NULL, FALSE);
+  _thunar_return_val_if_fail (file_part != NULL, FALSE);
 
   /* expand the filename */
   filename = thunar_vfs_expand_filename (gtk_entry_get_text (GTK_ENTRY (path_entry)), error);
@@ -1362,7 +1363,7 @@ thunar_path_entry_new (void)
 ThunarFile*
 thunar_path_entry_get_current_file (ThunarPathEntry *path_entry)
 {
-  g_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_PATH_ENTRY (path_entry), NULL);
   return path_entry->current_file;
 }
 
@@ -1383,8 +1384,8 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
   ThunarVfsPath *path;
   gchar         *text;
 
-  g_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
-  g_return_if_fail (current_file == NULL || THUNAR_IS_FILE (current_file));
+  _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
+  _thunar_return_if_fail (current_file == NULL || THUNAR_IS_FILE (current_file));
 
   path = (current_file != NULL) ? thunar_file_get_path (current_file) : NULL;
   if (G_UNLIKELY (path == NULL))

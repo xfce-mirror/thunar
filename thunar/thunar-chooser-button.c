@@ -28,6 +28,7 @@
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-pango-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -252,8 +253,8 @@ thunar_chooser_button_activate (ThunarChooserButton *chooser_button,
   ThunarVfsMimeInfo        *info;
   GError                   *error = NULL;
 
-  g_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
-  g_return_if_fail (GTK_IS_MENU_ITEM (item));
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
+  _thunar_return_if_fail (GTK_IS_MENU_ITEM (item));
 
   /* verify that we still have a valid file */
   if (G_UNLIKELY (chooser_button->file == NULL))
@@ -290,7 +291,7 @@ thunar_chooser_button_activate_other (ThunarChooserButton *chooser_button)
   GtkWidget *toplevel;
   GtkWidget *dialog;
 
-  g_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
 
   /* determine the toplevel window for the chooser */
   toplevel = gtk_widget_get_toplevel (GTK_WIDGET (chooser_button));
@@ -320,9 +321,9 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
   GdkPixbuf                *icon = NULL;
   gint                      icon_size;
 
-  g_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
-  g_return_if_fail (chooser_button->file == file);
-  g_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
+  _thunar_return_if_fail (chooser_button->file == file);
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
   /* determine the mime info for the file */
   info = thunar_file_get_mime_info (file);
@@ -428,9 +429,9 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
   GList                    *lp;
   gint                      icon_size;
 
-  g_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
-  g_return_if_fail (chooser_button->button == button);
-  g_return_if_fail (GTK_IS_BUTTON (button));
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
+  _thunar_return_if_fail (chooser_button->button == button);
+  _thunar_return_if_fail (GTK_IS_BUTTON (button));
 
   /* verify that we have a valid file */
   if (G_UNLIKELY (chooser_button->file == NULL))
@@ -556,7 +557,7 @@ thunar_chooser_button_new (void)
 ThunarFile*
 thunar_chooser_button_get_file (ThunarChooserButton *chooser_button)
 {
-  g_return_val_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button), NULL);
   return chooser_button->file;
 }
 
@@ -573,8 +574,8 @@ void
 thunar_chooser_button_set_file (ThunarChooserButton *chooser_button,
                                 ThunarFile          *file)
 {
-  g_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
-  g_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
+  _thunar_return_if_fail (file == NULL || THUNAR_IS_FILE (file));
 
   /* check if we already use that file */
   if (G_UNLIKELY (chooser_button->file == file))

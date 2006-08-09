@@ -24,6 +24,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-navigator.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -341,8 +342,8 @@ static void
 thunar_history_action_back (GtkAction     *action,
                             ThunarHistory *history)
 {
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_HISTORY (history));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
 
   /* make sure the "back" list isn't empty */
   if (G_UNLIKELY (history->back_list == NULL))
@@ -372,8 +373,8 @@ static void
 thunar_history_action_forward (GtkAction     *action,
                                ThunarHistory *history)
 {
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_HISTORY (history));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
 
   /* make sure the "forward" list isn't empty */
   if (G_UNLIKELY (history->forward_list == NULL))
@@ -428,7 +429,7 @@ thunar_history_new (void)
 GtkActionGroup*
 thunar_history_get_action_group (const ThunarHistory *history)
 {
-  g_return_val_if_fail (THUNAR_IS_HISTORY (history), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_HISTORY (history), NULL);
   return history->action_group;
 }
 
@@ -448,8 +449,8 @@ void
 thunar_history_set_action_group (ThunarHistory  *history,
                                  GtkActionGroup *action_group)
 {
-  g_return_if_fail (THUNAR_IS_HISTORY (history));
-  g_return_if_fail (action_group == NULL || GTK_IS_ACTION_GROUP (action_group));
+  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
+  _thunar_return_if_fail (action_group == NULL || GTK_IS_ACTION_GROUP (action_group));
 
   /* verify that we don't already use that action group */
   if (G_UNLIKELY (history->action_group == action_group))

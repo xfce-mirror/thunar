@@ -32,6 +32,7 @@
 #endif
 
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
 
@@ -73,7 +74,7 @@ thunar_dialogs_show_about (GtkWindow   *parent,
   va_list    args;
   gchar     *comments;
 
-  g_return_if_fail (parent == NULL || GTK_IS_WINDOW (parent));
+  _thunar_return_if_fail (parent == NULL || GTK_IS_WINDOW (parent));
 
   /* determine the comments */
   va_start (args, format);
@@ -138,7 +139,7 @@ thunar_dialogs_show_error (gpointer      parent,
   va_list    args;
   gchar     *primary_text;
 
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
   /* parse the parent pointer */
   screen = thunar_util_parse_parent (parent, &window);
@@ -260,8 +261,8 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
   gint         response;
   gint         n, m;
 
-  g_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_VFS_JOB_RESPONSE_CANCEL);
-  g_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
 
   /* try to separate the question into primary and secondary parts */
   separator = strstr (question, ": ");
@@ -389,8 +390,8 @@ thunar_dialogs_show_job_error (GtkWindow *parent,
   GString     *secondary = g_string_sized_new (256);
   GString     *primary = g_string_sized_new (256);
 
-  g_return_if_fail (parent == NULL || GTK_IS_WINDOW (parent));
-  g_return_if_fail (error != NULL && error->message != NULL);
+  _thunar_return_if_fail (parent == NULL || GTK_IS_WINDOW (parent));
+  _thunar_return_if_fail (error != NULL && error->message != NULL);
 
   /* try to separate the message into primary and secondary parts */
   separator = strstr (error->message, ": ");

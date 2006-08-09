@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-navigator.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -154,7 +155,7 @@ thunar_navigator_class_init (gpointer klass)
 ThunarFile*
 thunar_navigator_get_current_directory (ThunarNavigator *navigator)
 {
-  g_return_val_if_fail (THUNAR_IS_NAVIGATOR (navigator), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_NAVIGATOR (navigator), NULL);
   return THUNAR_NAVIGATOR_GET_IFACE (navigator)->get_current_directory (navigator);
 }
 
@@ -172,8 +173,8 @@ void
 thunar_navigator_set_current_directory (ThunarNavigator *navigator,
                                         ThunarFile      *current_directory)
 {
-  g_return_if_fail (THUNAR_IS_NAVIGATOR (navigator));
-  g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
+  _thunar_return_if_fail (THUNAR_IS_NAVIGATOR (navigator));
+  _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
   THUNAR_NAVIGATOR_GET_IFACE (navigator)->set_current_directory (navigator, current_directory);
 }
 
@@ -200,9 +201,9 @@ void
 thunar_navigator_change_directory (ThunarNavigator *navigator,
                                    ThunarFile      *directory)
 {
-  g_return_if_fail (THUNAR_IS_NAVIGATOR (navigator));
-  g_return_if_fail (THUNAR_IS_FILE (directory));
-  g_return_if_fail (thunar_file_is_directory (directory));
+  _thunar_return_if_fail (THUNAR_IS_NAVIGATOR (navigator));
+  _thunar_return_if_fail (THUNAR_IS_FILE (directory));
+  _thunar_return_if_fail (thunar_file_is_directory (directory));
 
   g_signal_emit (G_OBJECT (navigator), navigator_signals[CHANGE_DIRECTORY], 0, directory);
 }

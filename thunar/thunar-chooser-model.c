@@ -31,6 +31,7 @@
 #include <thunar/thunar-chooser-model.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -286,9 +287,9 @@ thunar_chooser_model_append (ThunarChooserModel *model,
   GdkPixbuf         *icon;
   GList             *lp;
 
-  g_return_if_fail (THUNAR_IS_CHOOSER_MODEL (model));
-  g_return_if_fail (title != NULL);
-  g_return_if_fail (icon_name != NULL);
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_MODEL (model));
+  _thunar_return_if_fail (title != NULL);
+  _thunar_return_if_fail (icon_name != NULL);
 
   /* query the default icon theme/factory */
   icon_theme = gtk_icon_theme_get_default ();
@@ -358,8 +359,8 @@ thunar_chooser_model_import (ThunarChooserModel *model,
   GList                 *lp;
   GList                 *p;
 
-  g_return_if_fail (THUNAR_IS_CHOOSER_MODEL (model));
-  g_return_if_fail (model->mime_info != NULL);
+  _thunar_return_if_fail (THUNAR_IS_CHOOSER_MODEL (model));
+  _thunar_return_if_fail (model->mime_info != NULL);
 
   /* determine the recommended applications for the mime info */
   mime_database = thunar_vfs_mime_database_get_default ();
@@ -406,9 +407,9 @@ thunar_chooser_model_readdir (ThunarChooserModel *model,
   gchar                    *p;
   GDir                     *dp;
 
-  g_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), NULL);
-  g_return_val_if_fail (reldir == NULL || !g_path_is_absolute (reldir), NULL);
-  g_return_val_if_fail (g_path_is_absolute (absdir), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), NULL);
+  _thunar_return_val_if_fail (reldir == NULL || !g_path_is_absolute (reldir), NULL);
+  _thunar_return_val_if_fail (g_path_is_absolute (absdir), NULL);
 
   /* try to open the directory */
   dp = g_dir_open (absdir, 0, NULL);
@@ -609,7 +610,7 @@ thunar_chooser_model_new (ThunarVfsMimeInfo *mime_info)
 gboolean
 thunar_chooser_model_get_loading (ThunarChooserModel *model)
 {
-  g_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), FALSE);
   return (model->thread != NULL);
 }
 
@@ -626,7 +627,7 @@ thunar_chooser_model_get_loading (ThunarChooserModel *model)
 ThunarVfsMimeInfo*
 thunar_chooser_model_get_mime_info (ThunarChooserModel *model)
 {
-  g_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), NULL);
   return model->mime_info;
 }
 
@@ -653,9 +654,9 @@ thunar_chooser_model_remove (ThunarChooserModel *model,
   ThunarVfsMimeDatabase    *mime_database;
   gboolean                  succeed;
 
-  g_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  g_return_val_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (model), iter), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (gtk_tree_store_iter_is_valid (GTK_TREE_STORE (model), iter), FALSE);
 
   /* determine the mime application for the iter */
   gtk_tree_model_get (GTK_TREE_MODEL (model), iter, THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, &mime_application, -1);

@@ -1,5 +1,21 @@
 2006-08-09	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-exec.c(tvsn_get_active_workspace_number),
+	  configure.in.in: Enable compilation with -fstrict-aliasing without
+	  breaking the strict aliasing rules of the compiler.
+	* configure.in.in: Enable compilation with --enable-debug=yes or
+	  --enable-debug=full and compilers other than gcc.
+	* configure.in.in, thunar/thunar-private.h, thunar/thunar-*.c:
+	  Disable extra debugging in release builds, Thunar received
+	  quite a lot of stabilization now. This affects only the internals
+	  of the binary. The public API is still fully sanity checked.
+	* thunar/thunar-column-model.c, thunar/thunar-renamer-model.c,
+	  thunar/thunar-shortcuts-model.c, thunar/thunar-tree-model.c:
+	  Remove unused variables when building with --enable-debug=no or
+	  --enable-debug=minimum now.
+
+2006-08-09	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-details-view.c(thunar_details_view_init): Enable
 	  rubberband selection with GTK+ 2.9.0 and above. Bug #1996.
 	* configure.in.in: Depend on exo 0.3.1.9svn.

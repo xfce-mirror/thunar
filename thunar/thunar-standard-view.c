@@ -38,6 +38,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-marshal.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-standard-view.h>
@@ -722,10 +723,10 @@ thunar_standard_view_finalize (GObject *object)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (object);
 
   /* some safety checks */
-  g_assert (standard_view->loading_binding == NULL);
-  g_assert (standard_view->icon_factory == NULL);
-  g_assert (standard_view->ui_manager == NULL);
-  g_assert (standard_view->clipboard == NULL);
+  _thunar_assert (standard_view->loading_binding == NULL);
+  _thunar_assert (standard_view->icon_factory == NULL);
+  _thunar_assert (standard_view->ui_manager == NULL);
+  _thunar_assert (standard_view->clipboard == NULL);
 
   /* release the scroll_to_file reference (if any) */
   if (G_UNLIKELY (standard_view->priv->scroll_to_file != NULL))
@@ -1101,7 +1102,7 @@ thunar_standard_view_get_current_directory (ThunarNavigator *navigator)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (navigator);
   ThunarFolder       *folder;
 
-  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
 
   /* try to determine the current folder from the model */
   folder = thunar_list_model_get_folder (standard_view->model);
@@ -1121,8 +1122,8 @@ thunar_standard_view_set_current_directory (ThunarNavigator *navigator,
   ThunarFolder       *folder;
   gboolean            trashed;
 
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  g_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
   
   /* disconnect any previous "loading" binding */
   if (G_LIKELY (standard_view->loading_binding != NULL))
@@ -1247,7 +1248,7 @@ thunar_standard_view_get_statusbar_text (ThunarView *view)
   ThunarStandardView *standard_view = THUNAR_STANDARD_VIEW (view);
   GList              *items;
 
-  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), NULL);
 
   /* generate the statusbar text on-demand */
   if (standard_view->statusbar_text == NULL)
@@ -1447,7 +1448,7 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
 static gboolean
 thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
 {
-  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* just emit the "activate" signal on the "delete" action */
   gtk_action_activate (standard_view->priv->action_delete);
@@ -1699,7 +1700,7 @@ thunar_standard_view_merge_custom_actions (ThunarStandardView *standard_view,
 static void
 thunar_standard_view_update_statusbar_text (ThunarStandardView *standard_view)
 {
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* clear the current status text (will be recalculated on-demand) */
   g_free (standard_view->statusbar_text);
@@ -1722,8 +1723,8 @@ thunar_standard_view_action_create_empty_file (GtkAction          *action,
   GList                  path_list;
   gchar                 *name;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* lookup "text/plain" mime info */
   mime_database = thunar_vfs_mime_database_get_default ();
@@ -1773,8 +1774,8 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
   GList                  path_list;
   gchar                 *name;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* lookup "inode/directory" mime info */
   mime_database = thunar_vfs_mime_database_get_default ();
@@ -1825,9 +1826,9 @@ thunar_standard_view_action_create_template (GtkAction           *action,
   gchar             *title;
   gchar             *name;
 
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (info != NULL);
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (info != NULL);
 
   /* generate a title for the create dialog */
   title = g_strdup_printf (_("Create Document from template \"%s\""), info->display_name);
@@ -1878,8 +1879,8 @@ thunar_standard_view_action_properties (GtkAction          *action,
   GtkWidget  *toplevel;
   GtkWidget  *dialog;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* check if no files are currently selected */
   if (standard_view->selected_files == NULL)
@@ -1917,9 +1918,9 @@ static void
 thunar_standard_view_action_cut (GtkAction          *action,
                                  ThunarStandardView *standard_view)
 {
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
 
   thunar_clipboard_manager_cut_files (standard_view->clipboard, standard_view->selected_files);
 }
@@ -1930,9 +1931,9 @@ static void
 thunar_standard_view_action_copy (GtkAction          *action,
                                   ThunarStandardView *standard_view)
 {
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (standard_view->clipboard));
 
   thunar_clipboard_manager_copy_files (standard_view->clipboard, standard_view->selected_files);
 }
@@ -1945,8 +1946,8 @@ thunar_standard_view_action_paste (GtkAction          *action,
 {
   ThunarFile *current_directory;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   if (G_LIKELY (current_directory != NULL))
@@ -1964,8 +1965,8 @@ thunar_standard_view_action_delete (GtkAction          *action,
 {
   ThunarApplication *application;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* delete the selected files */
   application = thunar_application_get ();
@@ -1981,8 +1982,8 @@ thunar_standard_view_action_paste_into_folder (GtkAction          *action,
 {
   ThunarFile *file;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the first selected file and verify that it's a folder */
   file = g_list_nth_data (standard_view->selected_files, 0);
@@ -1996,8 +1997,8 @@ static void
 thunar_standard_view_action_select_all_files (GtkAction          *action,
                                               ThunarStandardView *standard_view)
 {
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* grab the focus to the view */
   gtk_widget_grab_focus (GTK_WIDGET (standard_view));
@@ -2021,8 +2022,8 @@ thunar_standard_view_action_select_by_pattern (GtkAction          *action,
   GList     *lp;
   gint       response;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
   dialog = gtk_dialog_new_with_buttons (_("Select by Pattern"),
@@ -2077,8 +2078,8 @@ thunar_standard_view_action_duplicate (GtkAction          *action,
   GClosure          *new_files_closure;
   GList             *selected_paths;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the file for the current directory */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
@@ -2114,8 +2115,8 @@ thunar_standard_view_action_make_link (GtkAction          *action,
   GClosure          *new_files_closure;
   GList             *selected_paths;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the file for the current directory */
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
@@ -2163,8 +2164,8 @@ thunar_standard_view_action_rename (GtkAction          *action,
   gchar             *title;
   gint               response;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* start renaming if we have exactly one selected file */
   if (G_LIKELY (standard_view->selected_files != NULL && standard_view->selected_files->next == NULL))
@@ -2285,8 +2286,8 @@ thunar_standard_view_action_restore (GtkAction          *action,
 {
   ThunarApplication *application;
 
-  g_return_if_fail (GTK_IS_ACTION (action));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* restore the selected files */
   application = thunar_application_get ();
@@ -2327,8 +2328,8 @@ thunar_standard_view_new_files (ThunarVfsJob       *job,
   GList     *file_list = NULL;
   GList     *lp;
 
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* verify that we have a non-empty path_list */
   if (G_UNLIKELY (path_list == NULL))
@@ -2363,8 +2364,8 @@ thunar_standard_view_button_release_event (GtkWidget          *view,
                                            GdkEventButton     *event,
                                            ThunarStandardView *standard_view)
 {
-  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
-  g_return_val_if_fail (standard_view->priv->drag_timer_id >= 0, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (standard_view->priv->drag_timer_id >= 0, FALSE);
 
   /* cancel the pending drag timer */
   g_source_remove (standard_view->priv->drag_timer_id);
@@ -2385,8 +2386,8 @@ thunar_standard_view_motion_notify_event (GtkWidget          *view,
   GdkDragContext *context;
   GtkTargetList  *target_list;
 
-  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
-  g_return_val_if_fail (standard_view->priv->drag_timer_id >= 0, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (standard_view->priv->drag_timer_id >= 0, FALSE);
 
   /* check if we passed the DnD threshold */
   if (gtk_drag_check_threshold (view, standard_view->priv->drag_x, standard_view->priv->drag_y, event->x, event->y))
@@ -2416,7 +2417,7 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
   GtkAction *action = NULL;
   gboolean   misc_horizontal_wheel_navigates;
 
-  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* check if we should use the horizontal mouse wheel for navigation */
   g_object_get (G_OBJECT (standard_view->preferences), "misc-horizontal-wheel-navigates", &misc_horizontal_wheel_navigates, NULL);
@@ -2457,7 +2458,7 @@ thunar_standard_view_key_press_event (GtkWidget          *view,
                                       GdkEventKey        *event,
                                       ThunarStandardView *standard_view)
 {
-  g_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
   /* need to catch "/" and "~" first, as the views would otherwise start interactive search */
   if ((event->keyval == GDK_slash || event->keyval == GDK_asciitilde) && !(event->state & (~GDK_SHIFT_MASK & gtk_accelerator_get_default_mod_mask ())))
@@ -2960,9 +2961,9 @@ thunar_standard_view_error (ThunarListModel    *model,
 {
   ThunarFile *file;
 
-  g_return_if_fail (THUNAR_IS_LIST_MODEL (model));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  g_return_if_fail (standard_view->model == model);
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (model));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (standard_view->model == model);
 
   /* determine the ThunarFile for the current directory */
   file = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
@@ -2984,8 +2985,8 @@ thunar_standard_view_sort_column_changed (GtkTreeSortable    *tree_sortable,
   GtkSortType sort_order;
   gint        sort_column;
 
-  g_return_if_fail (GTK_IS_TREE_SORTABLE (tree_sortable));
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (GTK_IS_TREE_SORTABLE (tree_sortable));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the new sort column and sort order */
   if (gtk_tree_sortable_get_sort_column_id (tree_sortable, &sort_column, &sort_order))
@@ -3141,7 +3142,7 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
   GList      *selected_items;
   guint       id;
 
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* determine the selected items */
   selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
@@ -3213,8 +3214,8 @@ thunar_standard_view_queue_popup (ThunarStandardView *standard_view,
   GtkWidget   *view;
   gint         delay;
 
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
-  g_return_if_fail (event != NULL);
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (event != NULL);
 
   /* check if we have already scheduled a drag timer */
   if (G_LIKELY (standard_view->priv->drag_timer_id < 0))
@@ -3265,7 +3266,7 @@ thunar_standard_view_selection_changed (ThunarStandardView *standard_view)
   GList      *lp, *selected_files;
   gint        n_selected_files = 0;
 
-  g_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* drop any existing "new-files" closure */
   if (G_UNLIKELY (standard_view->priv->new_files_closure != NULL))

@@ -23,6 +23,7 @@
 
 #include <thunar-vfs/thunar-vfs.h>
 
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-templates-action.h>
 
 
@@ -149,7 +150,7 @@ thunar_templates_action_create_menu_item (GtkAction *action)
   GtkWidget *item;
   GtkWidget *menu;
 
-  g_return_val_if_fail (THUNAR_IS_TEMPLATES_ACTION (action), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_TEMPLATES_ACTION (action), NULL);
 
   /* let GtkAction allocate the menu item */
   item = (*GTK_ACTION_CLASS (thunar_templates_action_parent_class)->create_menu_item) (action);
@@ -198,8 +199,8 @@ item_activated (GtkWidget             *item,
 {
   const ThunarVfsInfo *info;
 
-  g_return_if_fail (THUNAR_IS_TEMPLATES_ACTION (templates_action));
-  g_return_if_fail (GTK_IS_WIDGET (item));
+  _thunar_return_if_fail (THUNAR_IS_TEMPLATES_ACTION (templates_action));
+  _thunar_return_if_fail (GTK_IS_WIDGET (item));
 
   /* check if an info is set for the item (else it's the "Empty File" item) */
   info = g_object_get_data (G_OBJECT (item), I_("thunar-vfs-info"));
@@ -352,8 +353,8 @@ thunar_templates_action_menu_shown (GtkWidget             *menu,
   GtkWidget     *item;
   GList         *children;
 
-  g_return_if_fail (THUNAR_IS_TEMPLATES_ACTION (templates_action));
-  g_return_if_fail (GTK_IS_MENU_SHELL (menu));
+  _thunar_return_if_fail (THUNAR_IS_TEMPLATES_ACTION (templates_action));
+  _thunar_return_if_fail (GTK_IS_MENU_SHELL (menu));
 
   /* drop all existing children of the menu first */
   children = gtk_container_get_children (GTK_CONTAINER (menu));
@@ -414,8 +415,8 @@ GtkAction*
 thunar_templates_action_new (const gchar *name,
                              const gchar *label)
 {
-  g_return_val_if_fail (name != NULL, NULL);
-  g_return_val_if_fail (label != NULL, NULL);
+  _thunar_return_val_if_fail (name != NULL, NULL);
+  _thunar_return_val_if_fail (label != NULL, NULL);
 
   return g_object_new (THUNAR_TYPE_TEMPLATES_ACTION,
                        "hide-if-empty", FALSE,

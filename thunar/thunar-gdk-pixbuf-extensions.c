@@ -25,6 +25,7 @@
 #endif
 
 #include <thunar/thunar-gdk-pixbuf-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -107,8 +108,8 @@ thunar_gdk_pixbuf_frame (GdkPixbuf *src,
   gint       src_width;
   gint       src_height;
 
-  g_return_val_if_fail (GDK_IS_PIXBUF (src), NULL);
-  g_return_val_if_fail (GDK_IS_PIXBUF (frame), NULL);
+  _thunar_return_val_if_fail (GDK_IS_PIXBUF (src), NULL);
+  _thunar_return_val_if_fail (GDK_IS_PIXBUF (frame), NULL);
 
   src_width = gdk_pixbuf_get_width (src);
   src_height = gdk_pixbuf_get_height (src);

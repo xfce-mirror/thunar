@@ -258,8 +258,8 @@ static void
 thunar_clipboard_manager_file_destroyed (ThunarFile             *file,
                                          ThunarClipboardManager *manager)
 {
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (g_list_find (manager->files, file) != NULL);
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  _thunar_return_if_fail (g_list_find (manager->files, file) != NULL);
 
   /* remove the file from our list */
   manager->files = g_list_remove (manager->files, file);
@@ -276,9 +276,9 @@ thunar_clipboard_manager_owner_changed (GtkClipboard           *clipboard,
                                         GdkEventOwnerChange    *event,
                                         ThunarClipboardManager *manager)
 {
-  g_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (manager->clipboard == clipboard);
+  _thunar_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  _thunar_return_if_fail (manager->clipboard == clipboard);
 
   /* need to take a reference on the manager, because the clipboards
    * "targets received callback" mechanism is not cancellable.
@@ -384,9 +384,9 @@ thunar_clipboard_manager_targets_received (GtkClipboard     *clipboard,
   gint                    n_targets;
   gint                    n;
 
-  g_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (manager->clipboard == clipboard);
+  _thunar_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  _thunar_return_if_fail (manager->clipboard == clipboard);
 
   /* reset the "can-paste" state */
   manager->can_paste = FALSE;
@@ -425,9 +425,9 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
   gchar                  *string_list;
   gchar                  *data;
 
-  g_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (manager->clipboard == clipboard);
+  _thunar_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  _thunar_return_if_fail (manager->clipboard == clipboard);
 
   /* determine the path list from the file list */
   path_list = thunar_file_list_to_path_list (manager->files);
@@ -448,7 +448,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
       break;
 
     default:
-      g_assert_not_reached ();
+      _thunar_assert_not_reached ();
     }
 
   /* cleanup */
@@ -465,9 +465,9 @@ thunar_clipboard_manager_clear_callback (GtkClipboard *clipboard,
   ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
   GList                  *lp;
 
-  g_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (manager->clipboard == clipboard);
+  _thunar_return_if_fail (GTK_IS_CLIPBOARD (clipboard));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  _thunar_return_if_fail (manager->clipboard == clipboard);
 
   /* release the pending files */
   for (lp = manager->files; lp != NULL; lp = lp->next)
@@ -544,7 +544,7 @@ thunar_clipboard_manager_get_for_display (GdkDisplay *display)
   ThunarClipboardManager *manager;
   GtkClipboard           *clipboard;
 
-  g_return_val_if_fail (GDK_IS_DISPLAY (display), NULL);
+  _thunar_return_val_if_fail (GDK_IS_DISPLAY (display), NULL);
 
   /* generate the quark on-demand */
   if (G_UNLIKELY (thunar_clipboard_manager_quark == 0))
@@ -589,7 +589,7 @@ thunar_clipboard_manager_get_for_display (GdkDisplay *display)
 gboolean
 thunar_clipboard_manager_get_can_paste (ThunarClipboardManager *manager)
 {
-  g_return_val_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager), FALSE);
   return manager->can_paste;
 }
 
@@ -608,8 +608,8 @@ gboolean
 thunar_clipboard_manager_has_cutted_file (ThunarClipboardManager *manager,
                                           const ThunarFile       *file)
 {
-  g_return_val_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager), FALSE);
-  g_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
   return (manager->files_cutted && g_list_find (manager->files, file) != NULL);
 }
@@ -629,7 +629,7 @@ void
 thunar_clipboard_manager_copy_files (ThunarClipboardManager *manager,
                                      GList                  *files)
 {
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
   thunar_clipboard_manager_transfer_files (manager, TRUE, files);
 }
 
@@ -648,7 +648,7 @@ void
 thunar_clipboard_manager_cut_files (ThunarClipboardManager *manager,
                                     GList                  *files)
 {
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
   thunar_clipboard_manager_transfer_files (manager, FALSE, files);
 }
 
@@ -677,8 +677,8 @@ thunar_clipboard_manager_paste_files (ThunarClipboardManager *manager,
 {
   ThunarClipboardPasteRequest *request;
 
-  g_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
-  g_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
+  _thunar_return_if_fail (THUNAR_IS_CLIPBOARD_MANAGER (manager));
+  _thunar_return_if_fail (widget == NULL || GTK_IS_WIDGET (widget));
 
   /* prepare the paste request */
   request = _thunar_slice_new0 (ThunarClipboardPasteRequest);

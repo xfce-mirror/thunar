@@ -40,6 +40,7 @@
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 
 
@@ -307,9 +308,9 @@ static void
 thunar_dbus_service_trash_bin_changed (ThunarDBusService *dbus_service,
                                        ThunarFile        *trash_bin)
 {
-  g_return_if_fail (THUNAR_IS_DBUS_SERVICE (dbus_service));
-  g_return_if_fail (dbus_service->trash_bin == trash_bin);
-  g_return_if_fail (THUNAR_IS_FILE (trash_bin));
+  _thunar_return_if_fail (THUNAR_IS_DBUS_SERVICE (dbus_service));
+  _thunar_return_if_fail (dbus_service->trash_bin == trash_bin);
+  _thunar_return_if_fail (THUNAR_IS_FILE (trash_bin));
 
   /* emit the "trash-changed" signal with the new state */
   g_signal_emit_by_name (G_OBJECT (dbus_service), "trash-changed", (thunar_file_get_size (trash_bin) > 0));

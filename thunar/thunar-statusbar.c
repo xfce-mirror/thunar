@@ -24,6 +24,7 @@
 #include <exo/exo.h>
 
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-statusbar.h>
 
 
@@ -170,8 +171,8 @@ void
 thunar_statusbar_set_text (ThunarStatusbar *statusbar,
                            const gchar     *text)
 {
-  g_return_if_fail (THUNAR_IS_STATUSBAR (statusbar));
-  g_return_if_fail (text != NULL);
+  _thunar_return_if_fail (THUNAR_IS_STATUSBAR (statusbar));
+  _thunar_return_if_fail (text != NULL);
 
   gtk_statusbar_pop (GTK_STATUSBAR (statusbar), statusbar->context_id);
   gtk_statusbar_push (GTK_STATUSBAR (statusbar), statusbar->context_id, text);

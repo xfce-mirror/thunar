@@ -24,6 +24,7 @@
 #include <exo/exo.h>
 
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-throbber.h>
 #include <thunar/thunar-throbber-fallback.h>
 
@@ -360,7 +361,7 @@ thunar_throbber_new (void)
 gboolean
 thunar_throbber_get_animated (const ThunarThrobber *throbber)
 {
-  g_return_val_if_fail (THUNAR_IS_THROBBER (throbber), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_THROBBER (throbber), FALSE);
   return throbber->animated;
 }
 
@@ -377,7 +378,7 @@ void
 thunar_throbber_set_animated (ThunarThrobber *throbber,
                               gboolean        animated)
 {
-  g_return_if_fail (THUNAR_IS_THROBBER (throbber));
+  _thunar_return_if_fail (THUNAR_IS_THROBBER (throbber));
 
   /* check if we're already in the requested state */
   if (G_UNLIKELY (throbber->animated == animated))

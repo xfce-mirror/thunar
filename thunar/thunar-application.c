@@ -39,6 +39,7 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-progress-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-util.h>
@@ -391,7 +392,7 @@ thunar_application_launch (ThunarApplication *application,
   GdkScreen    *screen;
   GError       *error = NULL;
 
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
   /* parse the parent pointer */
   screen = thunar_util_parse_parent (parent, &window);
@@ -481,9 +482,9 @@ static void
 thunar_application_window_destroyed (GtkWidget         *window,
                                      ThunarApplication *application)
 {
-  g_return_if_fail (GTK_IS_WINDOW (window));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (g_list_find (application->windows, window) != NULL);
+  _thunar_return_if_fail (GTK_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (g_list_find (application->windows, window) != NULL);
 
   application->windows = g_list_remove (application->windows, window);
 
@@ -565,7 +566,7 @@ thunar_application_get (void)
 gboolean
 thunar_application_get_daemon (ThunarApplication *application)
 {
-  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
   return application->daemon;
 }
 
@@ -582,7 +583,7 @@ void
 thunar_application_set_daemon (ThunarApplication *application,
                                gboolean           daemon)
 {
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   if (application->daemon != daemon)
     {
@@ -609,7 +610,7 @@ thunar_application_get_windows (ThunarApplication *application)
   GList *windows = NULL;
   GList *lp;
 
-  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
 
   for (lp = application->windows; lp != NULL; lp = lp->next)
     if (G_LIKELY (THUNAR_IS_WINDOW (lp->data)))
@@ -630,7 +631,7 @@ thunar_application_get_windows (ThunarApplication *application)
 gboolean
 thunar_application_has_windows (ThunarApplication *application)
 {
-  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
   return (application->windows != NULL);
 }
 
@@ -649,9 +650,9 @@ void
 thunar_application_take_window (ThunarApplication *application,
                                 GtkWindow         *window)
 {
-  g_return_if_fail (GTK_IS_WINDOW (window));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (g_list_find (application->windows, window) == NULL);
+  _thunar_return_if_fail (GTK_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (g_list_find (application->windows, window) == NULL);
 
   /* connect to the "destroy" signal */
   g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (thunar_application_window_destroyed), application);
@@ -682,9 +683,9 @@ thunar_application_open_window (ThunarApplication *application,
   GtkWidget *window;
   gchar     *role;
 
-  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
-  g_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
-  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), NULL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (directory), NULL);
+  _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), NULL);
 
   /* generate a unique role for the new window (for session management) */
   role = g_strdup_printf ("Thunar-%u-%u", (guint) time (NULL), (guint) g_random_int ());
@@ -729,10 +730,10 @@ thunar_application_bulk_rename (ThunarApplication *application,
   gchar      *filename;
   gint        n;
 
-  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
-  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
-  g_return_val_if_fail (working_directory != NULL, FALSE);
+  _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (working_directory != NULL, FALSE);
 
   /* determine the file for the working directory */
   current_directory = thunar_file_get_for_uri (working_directory, error);
@@ -816,12 +817,12 @@ thunar_application_process_filenames (ThunarApplication *application,
   GList      *lp;
   gint        n;
 
-  g_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
-  g_return_val_if_fail (working_directory != NULL, FALSE);
-  g_return_val_if_fail (filenames != NULL, FALSE);
-  g_return_val_if_fail (*filenames != NULL, FALSE);
-  g_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
-  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  _thunar_return_val_if_fail (working_directory != NULL, FALSE);
+  _thunar_return_val_if_fail (filenames != NULL, FALSE);
+  _thunar_return_val_if_fail (*filenames != NULL, FALSE);
+  _thunar_return_val_if_fail (screen == NULL || GDK_IS_SCREEN (screen), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* try to process all filenames and convert them to the appropriate file objects */
   for (n = 0; filenames[n] != NULL; ++n)
@@ -897,9 +898,9 @@ thunar_application_copy_to (ThunarApplication *application,
                             GList             *target_path_list,
                             GClosure          *new_files_closure)
 {
-  g_return_if_fail (g_list_length (source_path_list) == g_list_length (target_path_list));
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (g_list_length (source_path_list) == g_list_length (target_path_list));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* launch the operation */
   thunar_application_launch (application, parent, "stock_folder-copy",
@@ -930,9 +931,9 @@ thunar_application_copy_into (ThunarApplication *application,
                               ThunarVfsPath     *target_path,
                               GClosure          *new_files_closure)
 {
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (target_path != NULL);
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (target_path != NULL);
 
   /* collect the target paths and launch the job */
   thunar_application_collect_and_launch (application, parent, "stock_folder-copy",
@@ -964,9 +965,9 @@ thunar_application_link_into (ThunarApplication *application,
                               ThunarVfsPath     *target_path,
                               GClosure          *new_files_closure)
 {
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (target_path != NULL);
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (target_path != NULL);
 
   /* collect the target paths and launch the job */
   thunar_application_collect_and_launch (application, parent, "stock_link",
@@ -1002,9 +1003,9 @@ thunar_application_move_into (ThunarApplication *application,
   const gchar *icon;
   const gchar *text;
 
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (target_path != NULL);
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (target_path != NULL);
 
   /* determine the appropriate message text and the icon based on the target_path */
   if (thunar_vfs_path_get_scheme (target_path) == THUNAR_VFS_PATH_SCHEME_TRASH)
@@ -1065,8 +1066,8 @@ thunar_application_unlink_files (ThunarApplication *application,
   guint           n_path_list = 0;
   gint            response;
 
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* check if we should permanently delete the files (user holds shift) */
   permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
@@ -1177,8 +1178,8 @@ thunar_application_creat (ThunarApplication *application,
                           GList             *path_list,
                           GClosure          *new_files_closure)
 {
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* launch the operation */
   thunar_application_launch (application, parent, "stock_new",
@@ -1217,8 +1218,8 @@ thunar_application_mkdir (ThunarApplication *application,
                           GList             *path_list,
                           GClosure          *new_files_closure)
 {
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* launch the operation */
   thunar_application_launch (application, parent, "stock_folder",
@@ -1248,8 +1249,8 @@ thunar_application_empty_trash (ThunarApplication *application,
   GList      path_list;
   gint       response;
 
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
   /* parse the parent pointer */
   screen = thunar_util_parse_parent (parent, &window);
@@ -1328,8 +1329,8 @@ thunar_application_restore_files (ThunarApplication *application,
   gchar         *display_name;
   gint           response = GTK_RESPONSE_YES;
 
-  g_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-  g_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* determine the target paths for all files */
   for (lp = trash_file_list; err == NULL && lp != NULL && response == GTK_RESPONSE_YES; lp = lp->next)
