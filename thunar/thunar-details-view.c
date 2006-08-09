@@ -248,6 +248,11 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (tree_view), TRUE);
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
 
+  /* enable rubberbanding (if supported) */
+#if GTK_CHECK_VERSION(2,9,0)
+  gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (tree_view), TRUE);
+#endif
+
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();
   g_signal_connect (G_OBJECT (details_view->column_model), "columns-changed", G_CALLBACK (thunar_details_view_columns_changed), details_view);
