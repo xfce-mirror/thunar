@@ -234,8 +234,8 @@ clean-local:
 
 if MAINTAINER_MODE
 CLEANFILES =								\
-	xgen-tvmc							\
-	xgen-tvmh
+	xgen-tmc							\
+	xgen-tmh
 
 DISTCLEANFILES =							\
 	$(thunar_built_sources)						\
