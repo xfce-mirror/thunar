@@ -1,3 +1,14 @@
+2006-08-12	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-history-action.{c,h}, thunar/thunar-history.c,
+	  thunar/Makefile.am: Add "back" and "forward" menus to the history
+	  support module. Bug #1782.
+	* thunar/thunar-create-dialog.c, thunar/thunar-standard-view.c,
+	  thunar/thunar-stock.{c,h}: We don't really need stock items for
+	  create and rename. Instead use labels with mnemonics.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-08-11	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/Makefile.am: Fix typo.

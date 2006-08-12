@@ -22,7 +22,9 @@
 #endif
 
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-history-action.h>
 #include <thunar/thunar-history.h>
+#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-navigator.h>
 #include <thunar/thunar-private.h>
 
@@ -54,9 +56,20 @@ static void         thunar_history_set_property           (GObject              
 static ThunarFile  *thunar_history_get_current_directory  (ThunarNavigator      *navigator);
 static void         thunar_history_set_current_directory  (ThunarNavigator      *navigator,
                                                            ThunarFile           *current_directory);
+static void         thunar_history_go_back                (ThunarHistory        *history,
+                                                           guint                 n);
+static void         thunar_history_go_forward             (ThunarHistory        *history,
+                                                           guint                 n);
 static void         thunar_history_action_back            (GtkAction            *action,
                                                            ThunarHistory        *history);
+static void         thunar_history_action_back_nth        (GtkWidget            *item,
+                                                           ThunarHistory        *history);
 static void         thunar_history_action_forward         (GtkAction            *action,
+                                                           ThunarHistory        *history);
+static void         thunar_history_action_forward_nth     (GtkWidget            *item,
+                                                           ThunarHistory        *history);
+static void         thunar_history_show_menu              (GtkAction            *action,
+                                                           GtkWidget            *menu,
                                                            ThunarHistory        *history);
 
 
@@ -177,13 +190,15 @@ static void
 thunar_history_init (ThunarHistory *history)
 {
   /* create the "back" action */
-  history->action_back = gtk_action_new ("back", _("Back"), _("Go to the previous visited folder"), GTK_STOCK_GO_BACK);
+  history->action_back = thunar_history_action_new ("back", _("Back"), _("Go to the previous visited folder"), GTK_STOCK_GO_BACK);
   g_signal_connect (G_OBJECT (history->action_back), "activate", G_CALLBACK (thunar_history_action_back), history);
+  g_signal_connect (G_OBJECT (history->action_back), "show-menu", G_CALLBACK (thunar_history_show_menu), history);
   gtk_action_set_sensitive (history->action_back, FALSE);
 
   /* create the "forward" action */
-  history->action_forward = gtk_action_new ("forward", _("Forward"), _("Go to the next visited folder"), GTK_STOCK_GO_FORWARD);
+  history->action_forward = thunar_history_action_new ("forward", _("Forward"), _("Go to the next visited folder"), GTK_STOCK_GO_FORWARD);
   g_signal_connect (G_OBJECT (history->action_forward), "activate", G_CALLBACK (thunar_history_action_forward), history);
+  g_signal_connect (G_OBJECT (history->action_forward), "show-menu", G_CALLBACK (thunar_history_show_menu), history);
   gtk_action_set_sensitive (history->action_forward, FALSE);
 }
 
@@ -211,11 +226,11 @@ thunar_history_finalize (GObject *object)
   ThunarHistory *history = THUNAR_HISTORY (object);
 
   /* disconnect from the "forward" action */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (history->action_forward), thunar_history_action_forward, history);
+  g_signal_handlers_disconnect_matched (G_OBJECT (history->action_forward), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, history);
   g_object_unref (G_OBJECT (history->action_forward));
 
   /* disconnect from the "back" action */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (history->action_back), thunar_history_action_back, history);
+  g_signal_handlers_disconnect_matched (G_OBJECT (history->action_back), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, history);
   g_object_unref (G_OBJECT (history->action_back));
 
   /* release the "forward" and "back" lists */
@@ -282,8 +297,7 @@ thunar_history_set_property (GObject      *object,
 static ThunarFile*
 thunar_history_get_current_directory (ThunarNavigator *navigator)
 {
-  ThunarHistory *history = THUNAR_HISTORY (navigator);
-  return history->current_directory;
+  return THUNAR_HISTORY (navigator)->current_directory;
 }
 
 
@@ -304,11 +318,13 @@ thunar_history_set_current_directory (ThunarNavigator *navigator,
    */
   if (history->back_list != NULL && history->back_list->data == current_directory)
     {
-      thunar_history_action_back (history->action_back, history);
+      /* go back one step */
+      thunar_history_go_back (history, 1);
     }
   else if (history->forward_list != NULL && history->forward_list->data == current_directory)
     {
-      thunar_history_action_forward (history->action_forward, history);
+      /* go forward one step */
+      thunar_history_go_forward (history, 1);
     }
   else
     {
@@ -339,32 +355,90 @@ thunar_history_set_current_directory (ThunarNavigator *navigator,
 
 
 static void
+thunar_history_go_back (ThunarHistory *history,
+                        guint          n)
+{
+  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
+  _thunar_return_if_fail (n > 0);
+
+  /* go back up to n steps */
+  for (; n > 0 && history->back_list != NULL; --n)
+    {
+      /* prepend the previous current directory to the "forward" list */
+      if (G_LIKELY (history->current_directory != NULL))
+        history->forward_list = g_list_prepend (history->forward_list, history->current_directory);
+
+      /* remove the first directory from the "back" list and make it the current directory */
+      history->current_directory = history->back_list->data;
+      history->back_list = g_list_delete_link (history->back_list, history->back_list);
+    }
+
+  /* tell the other modules to change the current directory */
+  if (G_LIKELY (history->current_directory != NULL))
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
+
+  /* update the sensitivity of the actions */
+  gtk_action_set_sensitive (history->action_back, (history->back_list != NULL));
+  gtk_action_set_sensitive (history->action_forward, (history->forward_list != NULL));
+}
+
+
+
+static void
+thunar_history_go_forward (ThunarHistory *history,
+                           guint          n)
+{
+  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
+  _thunar_return_if_fail (n > 0);
+
+  /* go forward up to n steps */
+  for (; n > 0 && history->forward_list != NULL; --n)
+    {
+      /* prepend the previous current directory to the "back" list */
+      if (G_LIKELY (history->current_directory != NULL))
+        history->back_list = g_list_prepend (history->back_list, history->current_directory);
+
+      /* remove the first directory from the "forward" list and make it the current directory */
+      history->current_directory = history->forward_list->data;
+      history->forward_list = g_list_delete_link (history->forward_list, history->forward_list);
+    }
+
+  /* tell the other modules to change the current directory */
+  if (G_LIKELY (history->current_directory != NULL))
+    thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
+
+  /* update the sensitivity of the actions */
+  gtk_action_set_sensitive (history->action_back, (history->back_list != NULL));
+  gtk_action_set_sensitive (history->action_forward, (history->forward_list != NULL));
+}
+
+
+
+static void
 thunar_history_action_back (GtkAction     *action,
                             ThunarHistory *history)
 {
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
+  
+  /* go back one step */
+  thunar_history_go_back (history, 1);
+}
 
-  /* make sure the "back" list isn't empty */
-  if (G_UNLIKELY (history->back_list == NULL))
-    return;
 
-  /* prepend the previous current directory to the "forward" list */
-  if (G_LIKELY (history->current_directory != NULL))
-    {
-      history->forward_list = g_list_prepend (history->forward_list, history->current_directory);
-      gtk_action_set_sensitive (history->action_forward, TRUE);
-    }
 
-  /* remove the first directory from the "back" list
-   * and make it the current directory.
-   */
-  history->current_directory = history->back_list->data;
-  history->back_list = g_list_delete_link (history->back_list, history->back_list);
-  gtk_action_set_sensitive (history->action_back, (history->back_list != NULL));
+static void
+thunar_history_action_back_nth (GtkWidget     *item,
+                                ThunarHistory *history)
+{
+  guint n;
 
-  /* tell the other modules to change the current directory */
-  thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
+  _thunar_return_if_fail (GTK_IS_MENU_ITEM (item));
+  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
+
+  n = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (item), "thunar-history-index"));
+  if (G_LIKELY (n > 0))
+    thunar_history_go_back (history, n);
 }
 
 
@@ -376,26 +450,88 @@ thunar_history_action_forward (GtkAction     *action,
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
 
-  /* make sure the "forward" list isn't empty */
-  if (G_UNLIKELY (history->forward_list == NULL))
-    return;
+  /* go forward one step */
+  thunar_history_go_forward (history, 1);
+}
 
-  /* prepend the previous current directory to the "back" list */
-  if (G_LIKELY (history->current_directory != NULL))
+
+
+static void
+thunar_history_action_forward_nth (GtkWidget     *item,
+                                   ThunarHistory *history)
+{
+  guint n;
+
+  _thunar_return_if_fail (GTK_IS_MENU_ITEM (item));
+  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
+
+  n = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (item), "thunar-history-index"));
+  if (G_LIKELY (n > 0))
+    thunar_history_go_forward (history, n);
+}
+
+
+
+static void
+thunar_history_show_menu (GtkAction     *action,
+                          GtkWidget     *menu,
+                          ThunarHistory *history)
+{
+  ThunarIconFactory *icon_factory;
+  GtkIconTheme      *icon_theme;
+  GCallback          handler;
+  GtkWidget         *image;
+  GtkWidget         *item;
+  GdkPixbuf         *icon;
+  GList             *lp;
+  guint              n;
+
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (GTK_IS_MENU_SHELL (menu));
+  _thunar_return_if_fail (THUNAR_IS_HISTORY (history));
+
+  /* determine the icon factory to use to load the icons */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (menu));
+  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+
+  /* check if we have "Back" or "Forward" here */
+  if (action == history->action_back)
     {
-      history->back_list = g_list_prepend (history->back_list, history->current_directory);
-      gtk_action_set_sensitive (history->action_back, TRUE);
+      /* display the "back" list */
+      lp = history->back_list;
+      handler = G_CALLBACK (thunar_history_action_back_nth);
+    }
+  else
+    {
+      /* display the "forward" list */
+      lp = history->forward_list;
+      handler = G_CALLBACK (thunar_history_action_forward_nth);
     }
 
-  /* remove the first directory from the "forward" list
-   * and make it the current directory.
-   */
-  history->current_directory = history->forward_list->data;
-  history->forward_list = g_list_delete_link (history->forward_list, history->forward_list);
-  gtk_action_set_sensitive (history->action_forward, (history->forward_list != NULL));
+  /* add menu items for all list items */
+  for (n = 1; lp != NULL; lp = lp->next, ++n)
+    {
+      /* load the icon for the file */
+      icon = thunar_icon_factory_load_file_icon (icon_factory, lp->data, THUNAR_FILE_ICON_STATE_DEFAULT, 16);
 
-  /* tell the other modules to change the current directory */
-  thunar_navigator_change_directory (THUNAR_NAVIGATOR (history), history->current_directory);
+      /* add an item for this file */
+      item = gtk_image_menu_item_new_with_label (thunar_file_get_display_name (lp->data));
+      g_object_set_data (G_OBJECT (item), I_("thunar-history-index"), GUINT_TO_POINTER (n));
+      g_signal_connect_object (G_OBJECT (item), "activate", handler, history, 0);
+      gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+      gtk_widget_show (item);
+
+      /* setup the image for the file */
+      image = gtk_image_new_from_pixbuf (icon);
+      gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+      gtk_widget_show (image);
+
+      /* release the icon */
+      g_object_unref (G_OBJECT (icon));
+    }
+
+  /* release the icon factory */
+  g_object_unref (G_OBJECT (icon_factory));
 }
 
 

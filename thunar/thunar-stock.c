@@ -45,17 +45,9 @@ typedef struct
 /* keep in sync with thunar-stock.h */
 static const ThunarStockIcon thunar_stock_icons[] =
 {
-  { THUNAR_STOCK_CREATE,    "gtk-ok",                 },
-  { THUNAR_STOCK_RENAME,    "gtk-ok",                 },
   { THUNAR_STOCK_DESKTOP,   "gnome-fs-desktop",       },
   { THUNAR_STOCK_SHORTCUTS, "stock_thunar-shortcuts", },
   { THUNAR_STOCK_TEMPLATES, "stock_thunar-templates", },
-};
-
-static const GtkStockItem thunar_stock_items[] =
-{
-  { THUNAR_STOCK_CREATE, N_ ("Create"), 0, 0, GETTEXT_PACKAGE, },
-  { THUNAR_STOCK_RENAME, N_ ("Rename"), 0, 0, GETTEXT_PACKAGE, },
 };
 
 
@@ -93,9 +85,6 @@ thunar_stock_init (void)
 
   /* register our icon factory as default */
   gtk_icon_factory_add_default (icon_factory);
-
-  /* register our stock items */
-  gtk_stock_add_static (thunar_stock_items, G_N_ELEMENTS (thunar_stock_items));
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));

@@ -22,10 +22,6 @@
 
 G_BEGIN_DECLS;
 
-/* stock items for custom actions in Thunar */
-#define THUNAR_STOCK_CREATE "thunar-create"
-#define THUNAR_STOCK_RENAME "thunar-rename"
-
 /* stock icons for the ThunarLauncher */
 #define THUNAR_STOCK_DESKTOP "thunar-desktop"
 
