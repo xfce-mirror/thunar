@@ -556,8 +556,8 @@ thunar_vfs_transfer_job_new (GList   *source_path_list,
       /* verify that we don't transfer the root directory */
       if (G_UNLIKELY (thunar_vfs_path_is_root (sp->data) || thunar_vfs_path_is_root (tp->data)))
         {
-          /* just return EINVAL, as the file manager will prevent this anyway */
-          _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+          /* we don't support this, the file manager will prevent this anyway */
+          _thunar_vfs_set_g_error_not_supported (error);
           g_object_unref (G_OBJECT (transfer_job));
           return NULL;
         }

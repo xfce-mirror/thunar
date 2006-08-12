@@ -141,7 +141,7 @@ _thunar_vfs_os_scandir (ThunarVfsPath *path,
   dirp = opendir (absolute_path);
   if (G_UNLIKELY (dirp == NULL))
     {
-      _thunar_vfs_set_g_error_from_errno (error, errno);
+      _thunar_vfs_set_g_error_from_errno3 (error);
       return NULL;
     }
 
@@ -215,7 +215,7 @@ done:
   return path_list;
 
 error:
-  _thunar_vfs_set_g_error_from_errno (error, errno);
+  _thunar_vfs_set_g_error_from_errno3 (error);
   goto done;
 }
 

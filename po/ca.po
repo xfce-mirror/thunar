@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-06-05 15:07+0100\n"
 "Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
 "Language-Team: Catalan\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: KBabel 1.11.2\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "No s'ha pogut llegir el contigut de la carpeta"
 
@@ -107,7 +107,7 @@ msgstr "No s'ha pogut escriure a «%s»"
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "No s'ha pogut suprimir «%s»"
@@ -174,7 +174,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "No s'ha pogut determinar la informació del fitxer per «%s»"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "No s'ha pogut crear el directori «%s»"
@@ -210,19 +210,14 @@ msgstr "Sistema de fitxers"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "No s'ha pogut canviar al nom de «%s» a «%s»."
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, fuzzy, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "No s'ha pogut canviar al nom de «%s» a «%s»."
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, fuzzy, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "No s'ha pogut canviar al nom de «%s» a «%s»."
@@ -242,6 +237,22 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"u%s.\n"
+"\n"
+"El voleu sobreescriure?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Voleu ometre-ho?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -306,8 +317,13 @@ msgstr "El camí és massa llarg per caber a la memòria intermèdia"
 msgid "URI too long to fit into buffer"
 msgstr "La URI és massa llarg per caber a la memòria intermèdia"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "Els conductes amb nom no estan suportats"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 
@@ -3299,15 +3315,6 @@ msgstr "Obre les carpetes especificades dins Thunar"
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "No s'han pogut canviar els permisos del fitxer «%s»: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Voleu ometre-ho?"
-
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "No s'ha pogut determinar la informació del fitxer «%s»: %s"
 
@@ -3337,15 +3344,6 @@ msgstr "Obre les carpetes especificades dins Thunar"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "No s'ha pogut consultar l'estat del fitxer «%s»: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "u%s.\n"
-#~ "\n"
-#~ "El voleu sobreescriure?"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "No s'ha pogut crear el directori «%s»: %s"
 
@@ -3357,9 +3355,6 @@ msgstr "Obre les carpetes especificades dins Thunar"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "No s'ha pogut transferí el directori arrel"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "Els conductes amb nom no estan suportats"
 
 #~ msgid "Operation canceled"
 #~ msgstr "S'ha canceŀlat l'operació"

@@ -206,7 +206,7 @@ _thunar_vfs_os_scandir (ThunarVfsPath  *path,
   if (G_UNLIKELY (fstat (fd, &statb) < 0))
     {
 error0:
-      _thunar_vfs_set_g_error_from_errno (error, errno);
+      _thunar_vfs_set_g_error_from_errno3 (error);
       goto done;
     }
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-08-08 11:02+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "Hakemiston sisällön lukeminen epäonnistui"
 
@@ -104,7 +104,7 @@ msgstr "Kohteeseen \"%s\" ei voi kirjoittaa"
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Kohdetta \"%s\" ei voi poistaa"
@@ -171,7 +171,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "Tiedoston \"%s\" tietojen selvittäminen epäonnistui"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Hakemiston \"%s\" luominen epäonnistui"
@@ -207,19 +207,14 @@ msgstr "Tiedostojärjestelmä"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "Tiedoston \"%s\" kopioiminen kohteeseen \"%s\" epäonnistui."
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr "Linkkejä roskakorin sisältöön tai sen sisältä ei tueta."
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "Tiedoston \"%s\" linkittäminen kohteeseen \"%s\" epäonnistui."
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Tiedoston \"%s\" siirto kohteeseen \"%s\" epäonnistui."
@@ -239,6 +234,14 @@ msgstr "Roskakori"
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr "Tiedostoja ei voi kopioida tai siirtää roskakorissa"
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+msgid "Do you want to overwrite it?"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+msgid "Do you want to skip it?"
+msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -303,8 +306,12 @@ msgstr "Polku ei mahdu puskuriin"
 msgid "URI too long to fit into buffer"
 msgstr "URI ei mahdu puskuriin"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+msgid "Operation not supported"
+msgstr ""
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr "Virheellisiä pakomerkkejä"
 
@@ -3263,3 +3270,6 @@ msgstr "Avaa hakemisto Thunarissa"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Avaa valitut hakemistot Thunarissa"
+
+#~ msgid "Links from or to resources in the trash are not supported"
+#~ msgstr "Linkkejä roskakorin sisältöön tai sen sisältä ei tueta."

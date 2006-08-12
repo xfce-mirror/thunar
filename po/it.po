@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.3svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-08-07 14:56+0100\n"
 "Last-Translator: Roberto Pariset <robdebian@gmail.com>\n"
 "Language-Team: GUFI <traduzioni@gufi.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Poedit-SourceCharset: utf-8\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "Impossibile leggere i contenuti della directory"
 
@@ -107,7 +107,7 @@ msgstr "Impossibile scrivere dati su \"%s\""
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Impossibile rimuovere \"%s\""
@@ -174,7 +174,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "Impossibile reperire informazioni per il file \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Impossibile creare la directory \"%s\""
@@ -210,19 +210,14 @@ msgstr "Filesystem"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "Impossibile copiare \"%s\" in \"%s\""
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr "Non sono supportati collegamenti da o a risorse che sono nel Cestino"
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "Impossibile collegare \"%s\" a \"%s\""
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Impossibile spostare \"%s\" in \"%s\""
@@ -242,6 +237,22 @@ msgstr "Cestino"
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr "Impossibile spostare o copiare file all'interno del Cestino"
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Si desidera sovrascrivere?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s. \n"
+"\n"
+"Si desidera saltarlo?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -306,8 +317,13 @@ msgstr "Path troppo lunga per entrare nel buffer"
 msgid "URI too long to fit into buffer"
 msgstr "URI troppo lunga per entrare nel buffer"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "Le pipe con nome non sono supportate"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr "Caratteri di escape non validi"
 
@@ -3300,6 +3316,10 @@ msgstr "Apri directory con Thunar"
 msgid "Open the specified folders in Thunar"
 msgstr "Apri le directory specificate con Thunar"
 
+#~ msgid "Links from or to resources in the trash are not supported"
+#~ msgstr ""
+#~ "Non sono supportati collegamenti da o a risorse che sono nel Cestino"
+
 #~ msgid "Delete the selected file permanently"
 #~ msgid_plural "Delete the selected files permanently"
 #~ msgstr[0] "Elimina l'elemento selezionato permanentemente"
@@ -3308,15 +3328,6 @@ msgstr "Apri le directory specificate con Thunar"
 #, fuzzy
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "Impossibile cambiare permessi di \"%s\": %s"
-
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s. \n"
-#~ "\n"
-#~ "Si desidera saltarlo?"
 
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "Impossibile reperire informazioni del file \"%s\": %s"
@@ -3348,15 +3359,6 @@ msgstr "Apri le directory specificate con Thunar"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "Stat del file \"%s\" fallito: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Si desidera sovrascrivere?"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "Impossibile creare la directory \"%s\": %s"
 
@@ -3368,9 +3370,6 @@ msgstr "Apri le directory specificate con Thunar"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "Impossibile trasferire la directory radice"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "Le pipe con nome non sono supportate"
 
 #~ msgid "Operation canceled"
 #~ msgstr "Operazione annullata"

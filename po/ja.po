@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-06-13 04:11+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "フォルダの内容を読み込むのに失敗しました。"
 
@@ -114,7 +114,7 @@ msgstr "「%s」へデータを書き込むのに失敗しました。"
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "「%s」の削除に失敗しました。"
@@ -179,7 +179,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "「%s」のファイル情報を確定するのに失敗しました。"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "フォルダ「%s」の作成に失敗しました。"
@@ -215,19 +215,14 @@ msgstr "ファイルシステム"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "「%s」の名前を「%s」に変更するのに失敗しました。"
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, fuzzy, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "「%s」の名前を「%s」に変更するのに失敗しました。"
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, fuzzy, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "「%s」の名前を「%s」に変更するのに失敗しました。"
@@ -247,6 +242,22 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s。\n"
+"\n"
+"上書きしますか？"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s。\n"
+"\n"
+"これを飛ばしますか？"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -318,8 +329,13 @@ msgstr "バッファに格納するにはパスが長すぎます。"
 msgid "URI too long to fit into buffer"
 msgstr "バッファに格納するには URI が長すぎます。"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "名前つきパイプがサポートされていません。"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 
@@ -3285,15 +3301,6 @@ msgstr "指定したフォルダを Thunar で開きます"
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "「%s」のアクセス権を変更するのに失敗しました: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s。\n"
-#~ "\n"
-#~ "これを飛ばしますか？"
-
 # FIXME: stat?
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "「%s」のファイル情報を取得するのに失敗しました: %s"
@@ -3326,15 +3333,6 @@ msgstr "指定したフォルダを Thunar で開きます"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "ファイル「%s」の状態を取得するのに失敗しました: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s。\n"
-#~ "\n"
-#~ "上書きしますか？"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "フォルダ「%s」の作成に失敗しました: %s"
 
@@ -3346,9 +3344,6 @@ msgstr "指定したフォルダを Thunar で開きます"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "ルートフォルダを転送できません。"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "名前つきパイプがサポートされていません。"
 
 #~ msgid "Operation canceled"
 #~ msgstr "操作は取り消されました。"

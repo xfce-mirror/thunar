@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-05-03 15:08+0000\n"
 "Last-Translator: Li Linxiao <linxiao.li@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <postmaster@inlsd.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "无法读取文件夹内容"
 
@@ -105,7 +105,7 @@ msgstr "无法将数据写入 \"%s\""
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "无法移除 \"%s\""
@@ -170,7 +170,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "无法确定 \"%s\" 的文件信息"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "无法创建目录 \"%s\""
@@ -206,19 +206,14 @@ msgstr "文件系统"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "无法打开 \"%s\": %s"
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, fuzzy, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "无法打开 \"%s\": %s"
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, fuzzy, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "无法移除 \"%s\"：%s"
@@ -238,6 +233,22 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"您想要覆盖它吗？"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"您想要跳过吗？"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -302,8 +313,13 @@ msgstr "路径太长，无法放入缓冲区"
 msgid "URI too long to fit into buffer"
 msgstr "URI 太长，无法放入缓冲区"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "不支持命名管道"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 
@@ -3187,15 +3203,6 @@ msgstr "在新的 Thunar 窗口中打开选择的目录"
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "无法更改 \"%s\" 的权限设定： %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "您想要跳过吗？"
-
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "无法确定 \"%s\" 的文件信息：%s"
 
@@ -3225,15 +3232,6 @@ msgstr "在新的 Thunar 窗口中打开选择的目录"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "无法 stat 文件 \"%s\"：%s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "您想要覆盖它吗？"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "无法创建目录 \"%s\"：%s"
 
@@ -3245,9 +3243,6 @@ msgstr "在新的 Thunar 窗口中打开选择的目录"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "无法转移根目录"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "不支持命名管道"
 
 #~ msgid "Operation canceled"
 #~ msgstr "撤销上次操作"

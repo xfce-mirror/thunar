@@ -618,7 +618,7 @@ _thunar_vfs_io_jobs_listdir (ThunarVfsJob *job,
       break;
 
     default:
-      _thunar_vfs_assert_not_reached ();
+      _thunar_vfs_set_g_error_not_supported (error);
       return FALSE;
     }
 

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr ""
 
@@ -105,7 +105,7 @@ msgstr ""
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr ""
@@ -172,7 +172,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr ""
@@ -208,19 +208,14 @@ msgstr ""
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr ""
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr ""
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr ""
@@ -239,6 +234,14 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:972
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+msgid "Do you want to overwrite it?"
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+msgid "Do you want to skip it?"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
@@ -304,8 +307,12 @@ msgstr ""
 msgid "URI too long to fit into buffer"
 msgstr ""
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+msgid "Operation not supported"
+msgstr ""
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 

@@ -22,10 +22,6 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
-
 #include <thunar-vfs/thunar-vfs.h>
 #include <thunar-vfs/thunar-vfs-deep-count-job.h>
 #include <thunar-vfs/thunar-vfs-io-jobs.h>
@@ -642,7 +638,7 @@ thunar_vfs_change_mode (ThunarVfsPath    *path,
   /* verify that we have only local paths here */
   if (G_UNLIKELY (!_thunar_vfs_path_is_local (path)))
     {
-      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      _thunar_vfs_set_g_error_not_supported (error);
       return NULL;
     }
 
@@ -694,7 +690,7 @@ thunar_vfs_change_group (ThunarVfsPath   *path,
   /* verify that we have only local paths here */
   if (G_UNLIKELY (!_thunar_vfs_path_is_local (path)))
     {
-      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      _thunar_vfs_set_g_error_not_supported (error);
       return NULL;
     }
 
@@ -744,7 +740,7 @@ thunar_vfs_change_owner (ThunarVfsPath  *path,
   /* verify that we have only local paths here */
   if (G_UNLIKELY (!_thunar_vfs_path_is_local (path)))
     {
-      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      _thunar_vfs_set_g_error_not_supported (error);
       return NULL;
     }
 

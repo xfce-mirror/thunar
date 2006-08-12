@@ -137,7 +137,7 @@ _thunar_vfs_check_only_local (GList       *path_list,
   /* check if any path failed the check */
   if (G_UNLIKELY (lp != NULL))
     {
-      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      _thunar_vfs_set_g_error_not_supported (error);
       return FALSE;
     }
 
@@ -191,6 +191,38 @@ _thunar_vfs_set_g_error_from_errno2 (GError     **error,
                "%s: %s", message, g_strerror (serrno));
   va_end (var_args);
   g_free (message);
+}
+
+
+
+/**
+ * _thunar_vfs_set_g_error_from_errno3:
+ * @error : pointer to a #GError to set, or %NULL.
+ *
+ * Similar to _thunar_vfs_set_g_error_from_errno(), but uses
+ * the global errno value for this thread instead of taking
+ * the errno value from a parameter.
+ **/
+void
+_thunar_vfs_set_g_error_from_errno3 (GError **error)
+{
+  /* allocate a GError for the global errno value */
+  _thunar_vfs_set_g_error_from_errno (error, errno);
+}
+
+
+
+/**
+ * _thunar_vfs_set_g_error_not_supported:
+ * @error : pointer to a #GError to set, or %NULL.
+ *
+ * Sets @error to point to a #GError telling that a
+ * certain operation is not supported.
+ **/
+void
+_thunar_vfs_set_g_error_not_supported (GError **error)
+{
+  g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOSYS, _("Operation not supported"));
 }
 
 

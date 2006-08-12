@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-05-05 22:28+0300\n"
 "Last-Translator: Yuval Tanny <tanai@int.gov.il>\n"
 "Language-Team: Hebrew\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: KBabel 1.11.2\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "לא יכול לקרוא את תוכן התיקייה"
 
@@ -107,7 +107,7 @@ msgstr "לא יכול לכתוב נתונים אל \"%s\""
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "לא יכול למחוק את \"%s\""
@@ -174,7 +174,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "לא יכול לקרוא את מאפייני הקובץ \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "לא יכול ליצור ספרייה \"%s\""
@@ -210,19 +210,14 @@ msgstr "מערכת קבצים"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "לא יכול לשנות את שם \"%s\" אל \"%s\"."
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, fuzzy, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "לא יכול לשנות את שם \"%s\" אל \"%s\"."
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, fuzzy, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "לא יכול לשנות את שם \"%s\" אל \"%s\"."
@@ -242,6 +237,22 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"האם לדרוס את הקובץ הקיים?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"האם ברצונך לדלג על הקובץ?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -306,8 +317,13 @@ msgstr ""
 msgid "URI too long to fit into buffer"
 msgstr ""
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "הפעולה בוטלה"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 
@@ -3204,15 +3220,6 @@ msgstr "פתח את התיקיות שצויינו עם Thunar"
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "לא יכול לשנות את ההרשאות של \"%s\": %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "האם ברצונך לדלג על הקובץ?"
-
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "לא יכול לטעון מידע אודות הקובץ \"%s\": %s"
 
@@ -3239,15 +3246,6 @@ msgstr "פתח את התיקיות שצויינו עם Thunar"
 #~ "\n"
 #~ "האם ברצונך לדלג עליו?"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "האם לדרוס את הקובץ הקיים?"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "לא יכול ליצור ספרייה \"%s\": %s"
 
@@ -3259,9 +3257,6 @@ msgstr "פתח את התיקיות שצויינו עם Thunar"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "לא יכול להעביר את ספריית השורש"
-
-#~ msgid "Operation canceled"
-#~ msgstr "הפעולה בוטלה"
 
 #~ msgid "Failed to read link target from \"%s\""
 #~ msgstr "לא יכול לקרוא את מטרת הקישור מתוך \"%s\""

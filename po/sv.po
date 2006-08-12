@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-02-22 16:28+0100\n"
 "Last-Translator: Alexander Toresson <alexander.toresson@gmail.com>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "Kunde inte läsa in innehållet i katalogen"
 
@@ -106,7 +106,7 @@ msgstr "Misslyckades att skriva data till \"%s\""
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Misslyckades att ta bort \"%s\""
@@ -173,7 +173,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "Misslyckades att fastställa filinformation för \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Misslyckades att skapa katalogen \"%s\""
@@ -209,19 +209,14 @@ msgstr "Filsystem"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "Misslyckades att byta namn på \"%s\" till \"%s\"."
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, fuzzy, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "Misslyckades att byta namn på \"%s\" till \"%s\"."
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, fuzzy, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Misslyckades att byta namn på \"%s\" till \"%s\"."
@@ -241,6 +236,22 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Vill du skriva över den?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Vill du hoppa över den?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -305,8 +316,13 @@ msgstr "Sökväg för lång för att passa i buffert"
 msgid "URI too long to fit into buffer"
 msgstr "URI för lång för att passa i buffert"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "Namngedda pipes stödjs inte"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 
@@ -3288,15 +3304,6 @@ msgstr "Öppna de markerade katalogerna i Thunar"
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "Misslyckades att ändra rättigheter för \"%s\": %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Vill du hoppa över den?"
-
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "Misslyckades att fastställa filinformation för \"%s\": %s"
 
@@ -3326,15 +3333,6 @@ msgstr "Öppna de markerade katalogerna i Thunar"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "Misslyckades att läsa status på \"%s\": %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Vill du skriva över den?"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "Misslyckades att skapa katalog \"%s\": %s"
 
@@ -3346,9 +3344,6 @@ msgstr "Öppna de markerade katalogerna i Thunar"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "Kan inte överföra rotkatalogen"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "Namngedda pipes stödjs inte"
 
 #~ msgid "Operation canceled"
 #~ msgstr "Operationen avbröts"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-07-06 17:34+0100\n"
 "Last-Translator: Michal Várady <miko.vaji@gmail.com>\n"
 "Language-Team: Čeština <translation-team-cs@lists.sourceforge.net>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "Obsah adresaáře se nepozřilo přečíst"
 
@@ -105,7 +105,7 @@ msgstr "Zápis dat do souboru \"%s\" se nezdařil"
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Nezdařilo se odstranit soubor \"%s\""
@@ -174,7 +174,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "Nezdařilo se získat informace o souboru \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Nezdařilo se vytvořit adresář \"%s\""
@@ -210,19 +210,14 @@ msgstr "Systém souborů"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "Nepodařilo se přejmenovat \"%s\" na \"%s\"."
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, fuzzy, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "Nepodařilo se přejmenovat \"%s\" na \"%s\"."
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, fuzzy, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Nepodařilo se přejmenovat \"%s\" na \"%s\"."
@@ -242,6 +237,22 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Chcete jej přepsat?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Chcete jej přeskočit?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -306,8 +317,13 @@ msgstr "Cesta je příliš dlouhá k uložení do vyrovnávací paměti"
 msgid "URI too long to fit into buffer"
 msgstr "Adresa URI je příliš dlouhá k uložení do vyrovnávací paměti"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "Pojmenované roury nejsou podporovány"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 
@@ -3305,15 +3321,6 @@ msgstr "Otevřít adresář aplikací Thunar"
 msgid "Open the specified folders in Thunar"
 msgstr "Otevřít specifikované adresáře aplikací Thunar"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Chcete jej přeskočit?"
-
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "Nezdařilo se získat informace o souboru \"%s\": %s"
 
@@ -3344,15 +3351,6 @@ msgstr "Otevřít specifikované adresáře aplikací Thunar"
 #~ msgstr ""
 #~ "Nezdařilo se získat informace o stavu souboru \"%s\" příkazem stat: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Chcete jej přepsat?"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "Nezdařilo se vytvořit adresář \"%s\": %s"
 
@@ -3364,9 +3362,6 @@ msgstr "Otevřít specifikované adresáře aplikací Thunar"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "Nelze přenést kořenový adresář"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "Pojmenované roury nejsou podporovány"
 
 #~ msgid "Operation canceled"
 #~ msgstr "Operace byla zrušena"

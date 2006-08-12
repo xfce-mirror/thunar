@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-08-08 08:31+0100\n"
 "Last-Translator: SZERVÑC Attila <sas@321.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Poedit-Country: HUNGARY\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "A mappa olvasása sikertelen"
 
@@ -106,7 +106,7 @@ msgstr "Nem tudok adatot írni ide: \"%s\""
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Nem törölhető: \"%s\""
@@ -171,7 +171,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "Nem sikerült meghatározni a fájl infót ehhez: %s"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Nem hozható létre ez a könyvtár: \"%s\""
@@ -207,19 +207,14 @@ msgstr "Fájlrendszer"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "Nem sikerült \"%s\"-t ide másolni: \"%s\"."
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr "A kuka és más erőforrások közti láncok nem támogatottak"
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "Nem sikerült \"%s\"-t ide láncolni: \"%s\""
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Nem sikerül \"%s\"-t mozgatása ide: \"%s\"."
@@ -239,6 +234,22 @@ msgstr "Kuka"
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr "A kukában való másolás vagy áthelyezés nem támogatott"
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Felülírod?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Kihagyod?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -303,8 +314,13 @@ msgstr "Az ösvény túl hosszú"
 msgid "URI too long to fit into buffer"
 msgstr "Az URI túl hosszú"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "A megnevezett csövek nem támogatottak"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr "Érvénytelen 'escape' karakterek"
 
@@ -3198,6 +3214,9 @@ msgstr "Mappa megnyitása a Thunar-ral"
 msgid "Open the specified folders in Thunar"
 msgstr "Kijelölt mappák megnyitása a Thunar-ban"
 
+#~ msgid "Links from or to resources in the trash are not supported"
+#~ msgstr "A kuka és más erőforrások közti láncok nem támogatottak"
+
 #~ msgid "Delete the selected file permanently"
 #~ msgid_plural "Delete the selected files permanently"
 #~ msgstr[0] "Kijelölt fájl végleges törlése"
@@ -3205,15 +3224,6 @@ msgstr "Kijelölt mappák megnyitása a Thunar-ban"
 #, fuzzy
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "\"%s\" jogainak cseréje sikertelen: %s"
-
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Kihagyod?"
 
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "\"%s\" fájlinfó meghatározása sikertelen: %s"
@@ -3244,15 +3254,6 @@ msgstr "Kijelölt mappák megnyitása a Thunar-ban"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "\"%s\" elérése sikertelen: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Felülírod?"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "Az alábbi könyvtár létrehozása nem sikerült: \"%s\": %s"
 
@@ -3264,9 +3265,6 @@ msgstr "Kijelölt mappák megnyitása a Thunar-ban"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "A gyökér könyvtár nem mozgatható"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "A megnevezett csövek nem támogatottak"
 
 #~ msgid "Operation canceled"
 #~ msgstr "Művelet törölve"

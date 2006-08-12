@@ -201,7 +201,7 @@ _thunar_vfs_io_ops_copy_file (ThunarVfsPath                 *source_path,
     }
   else
     {
-      _thunar_vfs_assert_not_reached ();
+      _thunar_vfs_set_g_error_not_supported (error);
       return FALSE;
     }
 
@@ -252,7 +252,7 @@ _thunar_vfs_io_ops_link_file (ThunarVfsPath  *source_path,
                               ThunarVfsPath **target_path_return,
                               GError        **error)
 {
-  gboolean succeed = FALSE;
+  gboolean succeed;
   GError  *err = NULL;
 
   _thunar_vfs_return_val_if_fail (!thunar_vfs_path_is_root (source_path), FALSE);
@@ -268,7 +268,8 @@ _thunar_vfs_io_ops_link_file (ThunarVfsPath  *source_path,
   else
     {
       /* impossible to perform the link operation */
-      g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Links from or to resources in the trash are not supported"));
+      _thunar_vfs_set_g_error_not_supported (&err);
+      succeed = FALSE;
     }
 
   /* check if we succeed */
@@ -338,7 +339,7 @@ _thunar_vfs_io_ops_move_file (ThunarVfsPath      *source_path,
     }
   else
     {
-      _thunar_vfs_assert_not_reached ();
+      _thunar_vfs_set_g_error_not_supported (error);
       return FALSE;
     }
 
@@ -460,7 +461,7 @@ _thunar_vfs_io_ops_remove (ThunarVfsPath      *path,
       absolute_path = thunar_vfs_path_dup_string (path);
       succeed = (g_remove (absolute_path) == 0);
       if (G_UNLIKELY (!succeed))
-        _thunar_vfs_set_g_error_from_errno (&err, errno);
+        _thunar_vfs_set_g_error_from_errno3 (&err);
       g_free (absolute_path);
       break;
 
@@ -469,7 +470,7 @@ _thunar_vfs_io_ops_remove (ThunarVfsPath      *path,
       break;
 
     default:
-      _thunar_vfs_assert_not_reached ();
+      _thunar_vfs_set_g_error_not_supported (error);
       return FALSE;
     }
 

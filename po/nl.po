@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-03-25 18:02+0100\n"
 "Last-Translator: Vincent Tunru <imnotb@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 #, fuzzy
 msgid "Failed to read folder contents"
 msgstr "Inhoud van de map aan het laden..."
@@ -116,7 +116,7 @@ msgstr "Fout bij het schrijven naar `%s'"
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, fuzzy, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Het verwijderen van `%s' is mislukt: %s"
@@ -183,7 +183,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "Fout bij het ophalen van bestandsinfo van `%s'"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, fuzzy, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Fout bij het maken van map `%s'"
@@ -222,19 +222,14 @@ msgstr "Bestandssysteem"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "Fout bij het wijzigen van de naam van `%s'"
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, fuzzy, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "Fout bij het wijzigen van de naam van `%s'"
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, fuzzy, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Fout bij het wijzigen van de naam van `%s'"
@@ -254,6 +249,22 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Wilt u dit bestand overschrijven?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Wilt u dit bestand overslaan?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -324,8 +335,13 @@ msgstr "Pad te lang voor buffer"
 msgid "URI too long to fit into buffer"
 msgstr "URI te lang voor buffer"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "In daemon modus draaien"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 
@@ -3411,15 +3427,6 @@ msgstr "De geselecteerde mappen in nieuwe Thunar-vensters openen"
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "Het veranderen van de toestemmingen van `%s' is mislukt: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Wilt u dit bestand overslaan?"
-
 #, fuzzy
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "Het definieren van bestandsinfo `%s' is mislukt: %s"
@@ -3457,15 +3464,6 @@ msgstr "De geselecteerde mappen in nieuwe Thunar-vensters openen"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "Het <stat> van bestand `%s' is mislukt: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Wilt u dit bestand overschrijven?"
-
 #, fuzzy
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "Fout bij het maken van map `%s'"
@@ -3479,10 +3477,6 @@ msgstr "De geselecteerde mappen in nieuwe Thunar-vensters openen"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "Kan de hoofdmap niet verplaatsen"
-
-#, fuzzy
-#~ msgid "Named pipes are not supported"
-#~ msgstr "In daemon modus draaien"
 
 #~ msgid "Operation canceled"
 #~ msgstr "Actie geannulleerd"

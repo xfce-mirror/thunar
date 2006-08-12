@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-08-10 09:45+0100\n"
 "Last-Translator: Piarres Beobide Egaña <pi@beobide.net>\n"
 "Language-Team: librezale <librezale@librezale.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Generator: KBabel 1.11.2\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "Huts karpeta edukiak irakurtzerakoan"
 
@@ -107,7 +107,7 @@ msgstr "Huts \"%s\"-ra datuak idazterakoan"
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Huts \"%s\" ezabatzerakoan"
@@ -174,7 +174,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "Huts \"%s\"-ren fitxategi argibideak zehazterakoan"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Huts \"%s\" direktorioa sortzerakoan"
@@ -210,19 +210,14 @@ msgstr "Fitxategi Sistema"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "Huts \"%s\" \"%s\"-ra kopiatzerakoan"
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr "Zakarrontzitik edo zakarrontzira loturak ez dira onartzen"
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "Huts \"%s\" \"%s\"-era lotzerakoan"
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Huts \"%s\" \"%s\"-era mugitzerakoan"
@@ -242,6 +237,22 @@ msgstr "Zakarrontzia"
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr "Ezinda zakarrontzi gabe fitxategirik mugitu edo kopiatu"
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Gainidatzi nahi al duzu?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Salto egin nahi al duzu?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -306,8 +317,13 @@ msgstr "Bidea luzeegia buferrean sartzeko"
 msgid "URI too long to fit into buffer"
 msgstr "URI-a luzeegia buferrean sartzeko"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "Izendun tutuak ez dira onartzen"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr "Irteera karkatere baliogabea"
 
@@ -3280,6 +3296,9 @@ msgstr "Karpeta Ireki Thunar-ekin"
 msgid "Open the specified folders in Thunar"
 msgstr "Hautatutako direktorioak thunar-en ireki"
 
+#~ msgid "Links from or to resources in the trash are not supported"
+#~ msgstr "Zakarrontzitik edo zakarrontzira loturak ez dira onartzen"
+
 #~ msgid "Delete the selected file permanently"
 #~ msgid_plural "Delete the selected files permanently"
 #~ msgstr[0] "Hautatutako fitxategia betirako ezabatu"
@@ -3288,15 +3307,6 @@ msgstr "Hautatutako direktorioak thunar-en ireki"
 #, fuzzy
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "Huts \"%s\"-ren baimenak aldatzerakoan: %s"
-
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Salto egin nahi al duzu?"
 
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "Huts \"%s\" fitxategi argibideak zehazterakoan: %s"
@@ -3329,15 +3339,6 @@ msgstr "Hautatutako direktorioak thunar-en ireki"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "Huts \"%s\" fitxategiaren egoera eskuratzekoan: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Gainidatzi nahi al duzu?"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "Huts \"%s\" direktorioa sortzerakoan: %s"
 
@@ -3349,9 +3350,6 @@ msgstr "Hautatutako direktorioak thunar-en ireki"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "Ezin da erro direktorioa aldatu"
-
-#~ msgid "Named pipes are not supported"
-#~ msgstr "Izendun tutuak ez dira onartzen"
 
 #~ msgid "Operation canceled"
 #~ msgstr "Ekintza ezeztaturik"

@@ -29,9 +29,6 @@
 #include <sys/stat.h>
 #endif
 
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
 #endif
@@ -219,7 +216,7 @@ thunar_vfs_deep_count_job_execute (ThunarVfsJob *job)
           if (g_stat (absolute_path, &statb) < 0 && g_lstat (absolute_path, &statb) < 0)
             {
               /* tell the listeners that the job failed */
-              _thunar_vfs_set_g_error_from_errno (&err, errno);
+              _thunar_vfs_set_g_error_from_errno3 (&err);
             }
           else if (!S_ISDIR (statb.st_mode))
             {

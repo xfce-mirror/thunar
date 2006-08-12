@@ -176,7 +176,7 @@ _thunar_vfs_io_local_get_info (ThunarVfsPath *path,
   /* try to stat the file */
   if (G_UNLIKELY (g_lstat (absolute_path, &lsb) < 0))
     {
-      _thunar_vfs_set_g_error_from_errno (error, errno);
+      _thunar_vfs_set_g_error_from_errno3 (error);
       return NULL;
     }
 
@@ -488,7 +488,7 @@ _thunar_vfs_io_local_get_metadata (ThunarVfsPath        *path,
       break;
 
     default:
-      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      _thunar_vfs_set_g_error_not_supported (error);
       break;
     }
 
@@ -790,7 +790,7 @@ _thunar_vfs_io_local_move_file (const ThunarVfsPath *source_path,
       if (G_UNLIKELY (!succeed))
         {
           /* we cannot perform the rename */
-          _thunar_vfs_set_g_error_from_errno (error, errno);
+          _thunar_vfs_set_g_error_from_errno3 (error);
         }
       g_free (source_absolute_path);
     }
@@ -898,7 +898,7 @@ error0:
       fp = fopen (src_path, "w");
       if (G_UNLIKELY (fp == NULL))
         {
-          _thunar_vfs_set_g_error_from_errno (error, errno);
+          _thunar_vfs_set_g_error_from_errno3 (error);
 error1:
           g_free (data);
           return FALSE;
@@ -907,7 +907,7 @@ error1:
       /* write the data back to the file */
       if (fwrite (data, data_length, 1, fp) != 1)
         {
-          _thunar_vfs_set_g_error_from_errno (error, errno);
+          _thunar_vfs_set_g_error_from_errno3 (error);
           fclose (fp);
           goto error1;
         }
@@ -944,7 +944,7 @@ error1:
           /* tell the user that the file already exists */
           errno = EEXIST;
 error2:
-          _thunar_vfs_set_g_error_from_errno (error, errno);
+          _thunar_vfs_set_g_error_from_errno3 (error);
           g_free (dst_path);
           return FALSE;
         }

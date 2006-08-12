@@ -849,7 +849,7 @@ _thunar_vfs_io_trash_get_metadata (ThunarVfsPath        *path,
       break;
 
     default:
-      _thunar_vfs_set_g_error_from_errno (error, EINVAL);
+      _thunar_vfs_set_g_error_not_supported (error);
       break;
     }
 
@@ -1197,7 +1197,7 @@ _thunar_vfs_io_trash_remove (ThunarVfsPath *path,
       /* try to remove the file or folder in the trash */
       absolute_path = g_build_filename (trash_dir, "files", file_id, relative_path, NULL);
       if (g_remove (absolute_path) < 0 && errno != ENOENT)
-        _thunar_vfs_set_g_error_from_errno (&err, errno);
+        _thunar_vfs_set_g_error_from_errno3 (&err);
       g_free (absolute_path);
 
       /* check if need to remove the matching .trashinfo file */

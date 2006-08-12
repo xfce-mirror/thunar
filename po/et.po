@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-12 23:43+0200\n"
+"POT-Creation-Date: 2006-08-13 00:53+0200\n"
 "PO-Revision-Date: 2006-04-18 16:37+0300\n"
 "Last-Translator: Peeter Vois <Peeter.Vois@proekspert.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #. base directory not readable
-#: ../thunar-vfs/thunar-vfs-deep-count-job.c:236
+#: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 msgid "Failed to read folder contents"
 msgstr "Kataloogi sisu lugemine läks nässu"
 
@@ -105,7 +105,7 @@ msgstr "Andmete kirjutamine \"%s\"-i läka nässu"
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:495 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "\"%s\"-i eemaldamine läks nässu"
@@ -172,7 +172,7 @@ msgid "Failed to determine file info for \"%s\""
 msgstr "Faili \"%s\" info hankimine läks nässu."
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
-#: ../thunar-vfs/thunar-vfs-io-ops.c:415
+#: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Kataloogi \"%s\" loomine läks nässu"
@@ -209,19 +209,14 @@ msgstr "Failisüsteem"
 msgid "Failed to copy \"%s\" to \"%s\""
 msgstr "\"%s\" ümbernimetamine \"%s\"-ks läks nässu."
 
-#. impossible to perform the link operation
-#: ../thunar-vfs/thunar-vfs-io-ops.c:271
-msgid "Links from or to resources in the trash are not supported"
-msgstr ""
-
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:289
+#: ../thunar-vfs/thunar-vfs-io-ops.c:290
 #, fuzzy, c-format
 msgid "Failed to link \"%s\" to \"%s\""
 msgstr "\"%s\" ümbernimetamine \"%s\"-ks läks nässu."
 
 #. generate a useful error message
-#: ../thunar-vfs/thunar-vfs-io-ops.c:366
+#: ../thunar-vfs/thunar-vfs-io-ops.c:367
 #, fuzzy, c-format
 msgid "Failed to move \"%s\" to \"%s\""
 msgstr "\"%s\" ümbernimetamine \"%s\"-ks läks nässu."
@@ -241,6 +236,22 @@ msgstr ""
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
 msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:831
+#, fuzzy
+msgid "Do you want to overwrite it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Kas te soovite seda üle kirjutada?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:896
+#, fuzzy
+msgid "Do you want to skip it?"
+msgstr ""
+"%s.\n"
+"\n"
+"Kas te soovite seda vahele jätta?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -305,8 +316,13 @@ msgstr "Teekond on liialt pikk, et mahtuda eraldatud mällu"
 msgid "URI too long to fit into buffer"
 msgstr "URI on liialt pikk, et mahtuda eraldatud mällu"
 
+#: ../thunar-vfs/thunar-vfs-private.c:225
+#, fuzzy
+msgid "Operation not supported"
+msgstr "Käivita deemoni viisil (pole toetatud)"
+
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:295
+#: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
 msgstr ""
 
@@ -3277,15 +3293,6 @@ msgstr "Ava valitud kaustad thunaris"
 #~ msgid "Failed to change permisions of \"%s\""
 #~ msgstr "Faili \"%s\" õiguste muutmine ebaõnnestus: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Kas te soovite seda vahele jätta?"
-
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "Faili \"%s\" info määramine ebaõnnestus: %s"
 
@@ -3315,15 +3322,6 @@ msgstr "Ava valitud kaustad thunaris"
 #~ msgid "Failed to stat file \"%s\": %s"
 #~ msgstr "Faili \"%s\" info hankimine läks nässu: %s"
 
-#~ msgid ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Do you want to overwrite it?"
-#~ msgstr ""
-#~ "%s.\n"
-#~ "\n"
-#~ "Kas te soovite seda üle kirjutada?"
-
 #~ msgid "Failed to create directory \"%s\": %s"
 #~ msgstr "Kataloogi \"%s\" loomine läks nässu: %s"
 
@@ -3335,10 +3333,6 @@ msgstr "Ava valitud kaustad thunaris"
 
 #~ msgid "Cannot transfer the root directory"
 #~ msgstr "Faili panek juurkataloogi läks nässu"
-
-#, fuzzy
-#~ msgid "Named pipes are not supported"
-#~ msgstr "Käivita deemoni viisil (pole toetatud)"
 
 #~ msgid "Operation canceled"
 #~ msgstr "Tegevus katkestati"

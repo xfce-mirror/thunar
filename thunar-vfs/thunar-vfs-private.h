@@ -105,6 +105,8 @@ void      _thunar_vfs_set_g_error_from_errno2   (GError     **error,
                                                  gint         serrno,
                                                  const gchar *format,
                                                  ...) G_GNUC_INTERNAL G_GNUC_PRINTF (3, 4);
+void      _thunar_vfs_set_g_error_from_errno3   (GError     **error) G_GNUC_INTERNAL;
+void      _thunar_vfs_set_g_error_not_supported (GError     **error) G_GNUC_INTERNAL;
 
 /* RFC 2396 support routines */
 gchar    *_thunar_vfs_unescape_rfc2396_string   (const gchar *escaped_string,

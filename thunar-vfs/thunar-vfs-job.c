@@ -828,7 +828,7 @@ _thunar_vfs_job_ask_overwrite (ThunarVfsJob *job,
   /* ask the user using the provided format string */
   va_start (var_args, format);
   response = _thunar_vfs_job_ask_valist (job, format, var_args,
-                                         "Do you want to overwrite it?",
+                                         _("Do you want to overwrite it?"),
                                          THUNAR_VFS_JOB_RESPONSE_YES
                                          | THUNAR_VFS_JOB_RESPONSE_YES_ALL
                                          | THUNAR_VFS_JOB_RESPONSE_NO
@@ -893,7 +893,7 @@ _thunar_vfs_job_ask_skip (ThunarVfsJob *job,
   /* ask the user using the provided format string */
   va_start (var_args, format);
   response = _thunar_vfs_job_ask_valist (job, format, var_args,
-                                         "Do you want to skip it?",
+                                         _("Do you want to skip it?"),
                                          THUNAR_VFS_JOB_RESPONSE_YES
                                          | THUNAR_VFS_JOB_RESPONSE_YES_ALL
                                          | THUNAR_VFS_JOB_RESPONSE_CANCEL);
