@@ -1052,14 +1052,14 @@ thunar_vfs_path_list_to_string (GList *path_list)
   gint   n;
 
   /* allocate initial buffer */
-  buffer = g_new (gchar, bufsize + 1);
+  buffer = g_malloc (bufsize + 1);
 
   for (lp = path_list; lp != NULL; lp = lp->next)
     {
       for (;;)
         {
           /* increase the buffer automatically if required (already including the line break) */
-          n = thunar_vfs_path_to_uri (lp->data, buffer + bufpos, bufsize - (bufpos + 1), NULL);
+          n = thunar_vfs_path_to_uri (lp->data, buffer + bufpos, bufsize - (bufpos + 2), NULL);
           if (G_UNLIKELY (n < 0))
             {
               bufsize += 512;
@@ -1071,6 +1071,7 @@ thunar_vfs_path_list_to_string (GList *path_list)
           bufpos += (n - 1);
 
           /* append a line break */
+          buffer[bufpos++] = '\r';
           buffer[bufpos++] = '\n';
           break;
         }
