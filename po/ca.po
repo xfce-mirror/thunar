@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-08-13 00:53+0200\n"
-"PO-Revision-Date: 2006-06-05 15:07+0100\n"
-"Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
+"PO-Revision-Date: 2006-08-24 08:54+0200\n"
+"Last-Translator: Pau Ruŀlan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -50,9 +50,8 @@ msgid "Invalid file name"
 msgstr "El nom del fitxer no és vàlid"
 
 #: ../thunar-vfs/thunar-vfs-info.c:458
-#, fuzzy
 msgid "Only local files may be renamed"
-msgstr "Seleccioneu fitxers per canviar el nom"
+msgstr "Sols podeu canviar el nom als fitxers locals"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:81
@@ -61,19 +60,19 @@ msgstr "S'està preparant…"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:226
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:520
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change permissions of \"%s\""
-msgstr "No s'han pogut canviar els permisos del fitxer «%s»: %s"
+msgstr "No s'han pogut canviar els permisos del fitxer «%s»"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:347
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file owner of \"%s\""
-msgstr "No s'ha pogut canviar el propietari del fitxer «%s»: %s"
+msgstr "No s'ha pogut canviar el propietari del fitxer «%s»"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:348
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file group of \"%s\""
-msgstr "No s'ha pogut canviar el grup del fitxer «%s»: %s"
+msgstr "No s'ha pogut canviar el grup del fitxer «%s»"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:432
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:185
@@ -82,9 +81,9 @@ msgid "The file \"%s\" already exists"
 msgstr "El fitxer «%s» ja existeix"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:450
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\""
-msgstr "No s'ha pogut crear la sortida del conducte «%s»"
+msgstr "No s'ha pogut crear el fitxer buit «%s»"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:160
 #, c-format
@@ -193,7 +192,7 @@ msgstr "No s'ha pogut crear l'enllaç de «%s»"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:528
 msgid "Special files cannot be copied"
-msgstr ""
+msgstr "No es poden copiar fitxers especials"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:608
 msgid "Symbolic links are not supported"
@@ -206,53 +205,45 @@ msgstr "Sistema de fitxers"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:223
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to copy \"%s\" to \"%s\""
-msgstr "No s'ha pogut canviar al nom de «%s» a «%s»."
+msgstr "No s'ha pogut copiar «%s» a «%s»"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:290
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to link \"%s\" to \"%s\""
-msgstr "No s'ha pogut canviar al nom de «%s» a «%s»."
+msgstr "No s'ha pogut enllaçar «%s» a «%s»"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:367
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to move \"%s\" to \"%s\""
-msgstr "No s'ha pogut canviar al nom de «%s» a «%s»."
+msgstr "No s'ha pogut moure «%s» a «%s»"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:601
-#, fuzzy, c-format
+#, c-format
 msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-msgstr "El camí «%s» no és correspon amb un directori"
+msgstr "L’URI «%s» no es correspon a recurs vàlid de la paperera"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:778
 msgid "Trash"
-msgstr ""
+msgstr "Paperera"
 
 #. we don't support copying files within the trash
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:972
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
-msgstr ""
+msgstr "No es pot ni copiar ni moure fitxers dintre la paperera"
 
 #: ../thunar-vfs/thunar-vfs-job.c:831
-#, fuzzy
 msgid "Do you want to overwrite it?"
-msgstr ""
-"u%s.\n"
-"\n"
-"El voleu sobreescriure?"
+msgstr "Voleu sobreescriure-ho?"
 
 #: ../thunar-vfs/thunar-vfs-job.c:896
-#, fuzzy
 msgid "Do you want to skip it?"
-msgstr ""
-"%s.\n"
-"\n"
-"Voleu ometre-ho?"
+msgstr "Voleu ometre-ho?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -307,7 +298,7 @@ msgstr "document %s"
 #: ../thunar-vfs/thunar-vfs-path.c:362
 #, c-format
 msgid "The URI \"%s\" is invalid"
-msgstr ""
+msgstr "La URI «%s» és invàlida"
 
 #: ../thunar-vfs/thunar-vfs-path.c:835
 msgid "Path too long to fit into buffer"
@@ -318,14 +309,13 @@ msgid "URI too long to fit into buffer"
 msgstr "La URI és massa llarg per caber a la memòria intermèdia"
 
 #: ../thunar-vfs/thunar-vfs-private.c:225
-#, fuzzy
 msgid "Operation not supported"
-msgstr "Els conductes amb nom no estan suportats"
+msgstr "Operació no permesa"
 
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:327
 msgid "Invalidly escaped characters"
-msgstr ""
+msgstr "Caràcter alternat incorrecte"
 
 #: ../thunar-vfs/thunar-vfs-thumb.c:222 ../thunar/thunar-enum-types.c:97
 msgid "Size"
@@ -499,7 +489,6 @@ msgid "Creating symbolic links..."
 msgstr "S'estan creant els enllaços simbòlics…"
 
 #: ../thunar/thunar-application.c:1014
-#, fuzzy
 msgid "Moving files into the trash..."
 msgstr "S'estan movent els fitxers…"
 
@@ -529,7 +518,7 @@ msgstr[0] ""
 "permanent el fitxer seleccionat?"
 msgstr[1] ""
 "Esteu segur de voler suprimir de manera \n"
-"permanent els fitxers seleccionats?"
+"permanent els %u fitxers seleccionats?"
 
 #: ../thunar/thunar-application.c:1124
 msgid "If you delete a file, it is permanently lost."
@@ -549,7 +538,7 @@ msgstr "S'estan creant els directoris…"
 
 #: ../thunar/thunar-application.c:1264
 msgid "Remove all files and folders from the Trash?"
-msgstr ""
+msgstr "Voleu esborrar tots els fitxers i directoris de la paperera?"
 
 #. add the "Empty Trash" action
 #. append the "Empty Trash" menu action
@@ -558,52 +547,49 @@ msgstr ""
 #: ../thunar/thunar-location-buttons.c:1265
 #: ../thunar/thunar-shortcuts-view.c:855 ../thunar/thunar-tree-view.c:1076
 #: ../plugins/thunar-tpa/main.c:49
-#, fuzzy
 msgid "_Empty Trash"
-msgstr "Fitx_er buit"
+msgstr "Buida la pap_erera"
 
 #: ../thunar/thunar-application.c:1273
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
-msgstr ""
+msgstr "Si esculliu buidar la paperera es perdran tots els fitxers permanentment. Recordeu que els podeu esborrar per separat."
 
 #: ../thunar/thunar-application.c:1290
 msgid "Emptying the Trash..."
-msgstr ""
+msgstr "S’està buidant la paperera…"
 
 #: ../thunar/thunar-application.c:1344
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the original path for \"%s\""
-msgstr "No s'ha pogut determinar el punt de muntatge per %s"
+msgstr "No s'ha pogut determinar el camí original per «%s»"
 
 #: ../thunar/thunar-application.c:1372
-#, fuzzy, c-format
+#, c-format
 msgid "Create the folder \"%s\"?"
-msgstr "Crea una carpeta nova a «%s»"
+msgstr "Voleu crear la nova carpeta «%s»?"
 
 #: ../thunar/thunar-application.c:1376
-#, fuzzy
 msgid "C_reate Folder"
-msgstr "Crea una _carpeta…"
+msgstr "C_rea una carpeta"
 
 #: ../thunar/thunar-application.c:1382
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore, but it is required to restore the "
 "file \"%s\" from the trash. Do you want to create the folder again?"
-msgstr ""
+msgstr "El directori «%s» ja no existeix però sel necessita per recuperar el fitxer «%s» de la paperera. Voleu crear del directori de  nou?"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1419
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore \"%s\""
-msgstr "No s'ha pogut suprimir «%s»"
+msgstr "No s'ha pogut recuperar «%s»"
 
 #: ../thunar/thunar-application.c:1426
-#, fuzzy
 msgid "Restoring files..."
-msgstr "S'estan suprimint els fitxers…"
+msgstr "S'estan recuperant els fitxers…"
 
 #. tell the user that it didn't work
 #. display an error to the user
@@ -856,9 +842,8 @@ msgid "Compact view"
 msgstr "Visualització compacta"
 
 #: ../thunar/thunar-create-dialog.c:166
-#, fuzzy
 msgid "C_reate"
-msgstr "Crea"
+msgstr "C_rea"
 
 #: ../thunar/thunar-create-dialog.c:181 ../thunar/thunar-standard-view.c:2207
 msgid "Enter the new name:"
@@ -909,9 +894,8 @@ msgid "_No"
 msgstr "_No"
 
 #: ../thunar/thunar-dialogs.c:338
-#, fuzzy
 msgid "N_o to all"
-msgstr "Si _a tot"
+msgstr "N_o a tot"
 
 #: ../thunar/thunar-dialogs.c:343
 msgid "_Cancel"
@@ -1038,9 +1022,8 @@ msgid "Open in New Window"
 msgstr "Obre-ho en una nova finestra"
 
 #: ../thunar/thunar-launcher.c:138
-#, fuzzy
 msgid "Open the selected directory in a new window"
-msgstr "Obre els directoris seleccionats dins %d finestra nova"
+msgstr "Obre els directoris seleccionats dins una finestra nova"
 
 #: ../thunar/thunar-launcher.c:139 ../thunar/thunar-launcher.c:141
 msgid "Open With Other _Application..."
@@ -1089,7 +1072,7 @@ msgstr[1] "Obre dins %d finestres"
 msgid "Open in %d New Window"
 msgid_plural "Open in %d New Windows"
 msgstr[0] "Obre en una finestra nova"
-msgstr[1] "Obre en una finestra nova"
+msgstr[1] "Obre en %d finestres noves"
 
 #: ../thunar/thunar-launcher.c:762
 #, c-format
@@ -1153,22 +1136,21 @@ msgstr "Obre amb «%s»"
 #: ../thunar/thunar-launcher.c:1214
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Escriptori (crea enllaç)"
+msgstr[1] "Escriptori (crea enllaços)"
 
 #: ../thunar/thunar-launcher.c:1215
-#, fuzzy
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "Crea un enllaç simbòlic del fitxer seleccionat"
-msgstr[1] "Crea un enllaç simbòlic dels fitxers seleccionats"
+msgstr[0] "Crea un enllaç simbòlic a l’escriptori del fitxer seleccionat"
+msgstr[1] "Crea un enllaç simbòlic a l’escriptori dels fitxers seleccionats"
 
 #: ../thunar/thunar-launcher.c:1248
-#, fuzzy, c-format
+#, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] "Obri els fitxers seleccionats"
-msgstr[1] "Obri els fitxers seleccionats"
+msgstr[0] "Envia el fitxer seleccionat a «%s»"
+msgstr[1] "Envia els fitxers seleccionats a «%s»"
 
 #: ../thunar/thunar-list-model.c:775 ../thunar/thunar-properties-dialog.c:760
 msgid "broken link"
@@ -1218,7 +1200,7 @@ msgstr "«%s» (%s) %s"
 #.
 #: ../thunar/thunar-list-model.c:2256 ../thunar/thunar-properties-dialog.c:340
 msgid "Original Path:"
-msgstr ""
+msgstr "Camí original:"
 
 #. append the image dimensions to the statusbar text
 #: ../thunar/thunar-list-model.c:2268
@@ -1274,7 +1256,7 @@ msgstr "Crea una _carpeta…"
 
 #: ../thunar/thunar-location-buttons.c:1265
 msgid "Delete all files and folders in the Trash"
-msgstr ""
+msgstr "Suprimeix tots els fitxers i directoris de la paperera"
 
 #. add the "Paste Into Folder" action
 #: ../thunar/thunar-location-buttons.c:1280
@@ -1419,13 +1401,12 @@ msgid "Apply recursively?"
 msgstr "Voleu aplicar-ho recursivament?"
 
 #: ../thunar/thunar-permissions-chooser.c:620
-#, fuzzy
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
 msgstr ""
-"Voleu aplicar els canvis a tots els fitxers i\n"
-"subdirectoris més avall del directori seleccionat?"
+"Voleu aplicar els canvis recursivament a tots els\n"
+"fitxers i subdirectoris més avall del directori seleccionat?"
 
 #: ../thunar/thunar-permissions-chooser.c:625
 msgid "Do _not ask me again"
@@ -1635,7 +1616,7 @@ msgstr "Comportament"
 
 #: ../thunar/thunar-preferences-dialog.c:448
 msgid "Navigation"
-msgstr ""
+msgstr "Navegació"
 
 #: ../thunar/thunar-preferences-dialog.c:460
 msgid "_Single click to activate items"
@@ -1760,9 +1741,8 @@ msgstr "Objectiu de l'enllaç:"
 #. Third box (deleted, modified, accessed)
 #.
 #: ../thunar/thunar-properties-dialog.c:365
-#, fuzzy
 msgid "Deleted:"
-msgstr "_Suprimeix"
+msgstr "_Suprimit:"
 
 #: ../thunar/thunar-properties-dialog.c:379
 msgid "Modified:"
@@ -1813,7 +1793,7 @@ msgstr "_Fitxers"
 
 #: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:255
 msgid "_Send To"
-msgstr ""
+msgstr "_Enviar a"
 
 #: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:314
 msgid "File Context Menu"
@@ -1969,11 +1949,10 @@ msgid ""
 msgstr "Voleu ometre aquest fitxer i continuar canviant el nom als que queden?"
 
 #: ../thunar/thunar-shortcuts-pane.c:413
-#, fuzzy
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] "Ca_nvia el nom a la drecera"
-msgstr[1] "Ca_nvia el nom a la drecera"
+msgstr[0] "Subfinestra lateral (afegeix dreçera)"
+msgstr[1] "Subfinestra lateral (afegeix dreçeres)"
 
 #: ../thunar/thunar-shortcuts-pane.c:415
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2135,7 +2114,7 @@ msgstr "_Canvia de nom…"
 
 #: ../thunar/thunar-standard-view.c:328
 msgid "_Restore"
-msgstr ""
+msgstr "_Restaurar"
 
 #. add the "Create Document" sub menu action
 #: ../thunar/thunar-standard-view.c:588
@@ -2180,9 +2159,8 @@ msgid "Rename \"%s\""
 msgstr "Canvia el nom de «%s»"
 
 #: ../thunar/thunar-standard-view.c:2186
-#, fuzzy
 msgid "_Rename"
-msgstr "Canvia el nom"
+msgstr "_Canvia el nom"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2535
@@ -2215,11 +2193,10 @@ msgstr[1] ""
 "Prepara els fitxers seleccionats i seran copiats amb l'ordre d'Enganxar"
 
 #: ../thunar/thunar-standard-view.c:3350
-#, fuzzy
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
-msgstr[0] "Duplica el fitxer seleccionat"
-msgstr[1] "Duplica els fitxers seleccionats"
+msgstr[0] "Suprimeix el fitxer seleccionat"
+msgstr[1] "Suprimeix els fitxers seleccionats"
 
 #: ../thunar/thunar-standard-view.c:3364
 msgid "Duplicate the selected file"
@@ -2234,18 +2211,16 @@ msgstr[0] "Crea un enllaç simbòlic del fitxer seleccionat"
 msgstr[1] "Crea un enllaç simbòlic dels fitxers seleccionats"
 
 #: ../thunar/thunar-standard-view.c:3381
-#, fuzzy
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Canvia el nom al fitxer seleccionat"
-msgstr[1] "Canvia el nom al fitxer seleccionat"
+msgstr[1] "Canvia el nom als fitxers seleccionats"
 
 #: ../thunar/thunar-standard-view.c:3389
-#, fuzzy
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
-msgstr[0] "Canvia el nom al fitxer seleccionat"
-msgstr[1] "Canvia el nom al fitxer seleccionat"
+msgstr[0] "Restaura el fitxer seleccionat"
+msgstr[1] "Restaura els fitxers seleccionats"
 
 #. tell the user that no templates were found
 #: ../thunar/thunar-templates-action.c:376
@@ -2274,12 +2249,12 @@ msgstr "P_ropietats…"
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:108
 msgid "Today"
-msgstr ""
+msgstr "Avui"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:113
 msgid "Yesterday"
-msgstr ""
+msgstr "Ahir"
 
 #: ../thunar/thunar-window.c:254
 msgid "Open New _Window"
@@ -2706,7 +2681,7 @@ msgstr "Velocitat d'obturació:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:59
 msgid "ISO Speed Ratings:"
-msgstr ""
+msgstr "Velocitat d’ISO:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:60
 msgid "Software:"
@@ -2830,14 +2805,12 @@ msgid "Numbering"
 msgstr "Numeració"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:177
-#, fuzzy
 msgid "Remove _From Position:"
-msgstr "_Suprimeix des de:"
+msgstr "_Suprimeix des de la posició:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
-#, fuzzy
 msgid "_To Position:"
-msgstr "_fins a:"
+msgstr "_a la posició:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:428
 msgid "Remove Characters"
@@ -2904,34 +2877,34 @@ msgstr "Cerca reemplaça"
 #: ../plugins/thunar-sendto-email/main.c:176
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
-msgstr ""
+msgstr "Voleu enviar «%s» com un fitxer comprimit?"
 
 #: ../plugins/thunar-sendto-email/main.c:178
 #: ../plugins/thunar-sendto-email/main.c:197
 msgid "Send _directly"
-msgstr ""
+msgstr "Envia _directament"
 
 #: ../plugins/thunar-sendto-email/main.c:179
 msgid "Send com_pressed"
-msgstr ""
+msgstr "Enviar com un com_primit"
 
 #: ../plugins/thunar-sendto-email/main.c:181
 msgid ""
 "When sending a file via email, you can either choose to send the file "
 "directly, as is, or compress the file before attaching it to an email. It is "
 "highly recommended to compress large files before sending them."
-msgstr ""
+msgstr "Quan envieu fitxers per correu podeu escollir enviar-los directament o comprimir-los abans d’adjuntar-los al correu. Es molt recomenable comprimir els fitxers grans abans d’enviar-los."
 
 #: ../plugins/thunar-sendto-email/main.c:192
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Voleu enviar %d fitxer com un arxiu comprimit?"
+msgstr[1] "Voleu enviar %d fitxers com un arxiu comprimit?"
 
 #: ../plugins/thunar-sendto-email/main.c:198
 msgid "Send as _archive"
-msgstr ""
+msgstr "Envi_a com un fitxer"
 
 #: ../plugins/thunar-sendto-email/main.c:200
 msgid ""
@@ -2939,49 +2912,46 @@ msgid ""
 "files directly, attaching multiple files to an email, or send all files "
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
-msgstr ""
+msgstr "Quan envieu multíples fitxers per correu podeu enviar els fitxers directament adjuntant els fitxers a un correu o podeu enviar-los tots amb un sol fitxer comprimit. Es molt recomenable enviar els múltiples fitxers com un arxiu."
 
 #. allocate the progress dialog
 #. setup the label
 #: ../plugins/thunar-sendto-email/main.c:249
 #: ../plugins/thunar-sendto-email/main.c:274
-#, fuzzy
 msgid "Compressing files..."
-msgstr "S'estan copiant els fitxers…"
+msgstr "S'estan comprimint els fitxers…"
 
 #. tell the user that the command failed
 #: ../plugins/thunar-sendto-email/main.c:299
 #, c-format
 msgid "ZIP command terminated with error %d"
-msgstr ""
+msgstr "L’ordre ZIP ha acabat amb l’error %d"
 
 #: ../plugins/thunar-sendto-email/main.c:385
-#, fuzzy
 msgid "Failed to create temporary directory"
-msgstr "No s'ha pogut crear el directori «%s»"
+msgstr "No s'ha pogut crear el directori temporal"
 
 #: ../plugins/thunar-sendto-email/main.c:436
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "No s'ha pogut crear l'enllaç de «%s»"
+msgstr "No s'ha pogut crear l'enllaç per «%s»"
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "No s'ha pogut obrir %d fitxer"
-msgstr[1] "No s'han pogut obrir %d fitxers"
+msgstr[0] "No s'ha pogut comprimir %d fitxer"
+msgstr[1] "No s'han pogut comprimir %d fitxers"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:600
-#, fuzzy
 msgid "Failed to compose new email"
-msgstr "No s'ha pogut obrir %d fitxer"
+msgstr "No s'ha pogut redactar un correu nou"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
-msgstr ""
+msgstr "S’ha rebut un correu"
 
 #. tell the user that we failed to connect to the trash
 #. display an error message to the user
@@ -2989,26 +2959,25 @@ msgstr ""
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:317
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:346
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:380
-#, fuzzy
 msgid "Failed to connect to the Trash"
-msgstr "No s'ha pogut connectar al dimoni HAL: %s"
+msgstr "No s'ha pogut connectar a la paperera"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is full"
-msgstr ""
+msgstr "La paperera és plena"
 
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is empty"
-msgstr ""
+msgstr "La paperera és buida"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:1
 msgid "Display the trash can"
-msgstr ""
+msgstr "Mostra la paperera"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
 msgid "Trash Applet"
-msgstr ""
+msgstr "Miniaplicació de paperera"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
@@ -3305,65 +3274,3 @@ msgstr "Obri el directori amb Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Obre les carpetes especificades dins Thunar"
-
-#~ msgid "Delete the selected file permanently"
-#~ msgid_plural "Delete the selected files permanently"
-#~ msgstr[0] "Suprimeix permanentment el fitxer seleccionat"
-#~ msgstr[1] "Suprimeix permanentment els fitxers seleccionat"
-
-#, fuzzy
-#~ msgid "Failed to change permisions of \"%s\""
-#~ msgstr "No s'han pogut canviar els permisos del fitxer «%s»: %s"
-
-#~ msgid "Failed to determine file info of \"%s\": %s"
-#~ msgstr "No s'ha pogut determinar la informació del fitxer «%s»: %s"
-
-#~ msgid ""
-#~ "The file \"%s\" already exists. Do you want to replace it with an empty "
-#~ "file?"
-#~ msgstr "El fitxer «%s» ja existeix. Voleu reemplaçar-lo amb un fitxer buit?"
-
-#~ msgid ""
-#~ "Failed to remove \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "Impossible eliminar «%s».\n"
-#~ "\n"
-#~ "El voleu ometre?"
-
-#~ msgid ""
-#~ "Failed to create empty file \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "No s'ha pogut creat un fitxer buit «%s».\n"
-#~ "\n"
-#~ "El voleu ometre?"
-
-#~ msgid "Failed to stat file \"%s\": %s"
-#~ msgstr "No s'ha pogut consultar l'estat del fitxer «%s»: %s"
-
-#~ msgid "Failed to create directory \"%s\": %s"
-#~ msgstr "No s'ha pogut crear el directori «%s»: %s"
-
-#~ msgid "Deleting directories..."
-#~ msgstr "S'està suprimint directoris…"
-
-#~ msgid "Failed to remove directory \"%s\": %s"
-#~ msgstr "No s'ha pogut suprimir el directori «%s»: %s"
-
-#~ msgid "Cannot transfer the root directory"
-#~ msgstr "No s'ha pogut transferí el directori arrel"
-
-#~ msgid "Operation canceled"
-#~ msgstr "S'ha canceŀlat l'operació"
-
-#~ msgid "Failed to read link target from \"%s\""
-#~ msgstr "No s'ha pogut llegir l'enllaç de «%s»"
-
-#~ msgid "Failed to change mode of \"%s\""
-#~ msgstr "No s'ha pogut canviar el mode per «%s»"
-
-#~ msgid "Failed to copy special file \"%s\""
-#~ msgstr "No s'ha pogut copiar el fitxer especial «%s»"
