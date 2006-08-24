@@ -583,7 +583,7 @@ thunar_shortcuts_model_iter_n_children (GtkTreeModel *tree_model,
 {
   ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (tree_model);
 
-  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), 0);
 
   return (iter == NULL) ? g_list_length (model->shortcuts) : 0;
 }
@@ -600,7 +600,7 @@ thunar_shortcuts_model_iter_nth_child (GtkTreeModel *tree_model,
 
   _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model), FALSE);
 
-  if (G_LIKELY (parent != NULL))
+  if (G_LIKELY (parent == NULL))
     {
       iter->stamp = model->stamp;
       iter->user_data = g_list_nth (model->shortcuts, n);

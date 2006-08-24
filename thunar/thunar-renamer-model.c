@@ -585,7 +585,7 @@ thunar_renamer_model_iter_nth_child (GtkTreeModel *tree_model,
 
   _thunar_return_val_if_fail (THUNAR_IS_RENAMER_MODEL (renamer_model), FALSE);
 
-  if (G_LIKELY (parent != NULL))
+  if (G_LIKELY (parent == NULL))
     {
       iter->stamp = renamer_model->stamp;
       iter->user_data = g_list_nth (renamer_model->items, n);

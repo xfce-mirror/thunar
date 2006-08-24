@@ -30,7 +30,7 @@
 G_BEGIN_DECLS;
 
 /* support macros for debugging */
-#ifdef G_ENABLE_DEBUG
+#ifndef NDEBUG
 #define _thunar_vfs_assert(expr)                  g_assert (expr)
 #define _thunar_vfs_assert_not_reached()          g_assert_not_reached ()
 #define _thunar_vfs_return_if_fail(expr)          g_return_if_fail (expr)
@@ -60,7 +60,7 @@ G_BEGIN_DECLS;
 #endif
 
 /* avoid trivial g_value_get_*() function calls */
-#ifndef G_ENABLE_DEBUG
+#ifdef NDEBUG
 #define g_value_get_boolean(v)  (((const GValue *) (v))->data[0].v_int)
 #define g_value_get_char(v)     (((const GValue *) (v))->data[0].v_int)
 #define g_value_get_uchar(v)    (((const GValue *) (v))->data[0].v_uint)

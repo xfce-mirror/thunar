@@ -270,11 +270,11 @@ if test x"$enable_debug" = x"full" -o x"$enable_debug" = x"yes"; then
   ])
   CFLAGS="$save_CFLAGS"
 
-  dnl Enable extensive debugging
-  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_ENABLE_DEBUG"
-
   dnl Paranoia for --enable-debug=full
   if test x"$enable_debug" = x"full"; then
+    dnl Enable extensive debugging
+    PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_ENABLE_DEBUG"
+
     dnl Use -O0 -g3 if the compiler supports it
     save_CFLAGS="$CFLAGS"
     CFLAGS="$CFLAGS -O0 -g3"
@@ -290,6 +290,9 @@ if test x"$enable_debug" = x"full" -o x"$enable_debug" = x"yes"; then
 else
   dnl Print the result
   AC_MSG_RESULT([$enable_debug])
+
+  dnl Disable debugging (release build)
+  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -NDEBUG"
 
   dnl Disable object cast checks
   PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_CAST_CHECKS"
@@ -458,6 +461,7 @@ else
 echo "* Startup Notification:      no"
 fi
 echo "* Volume Manager:            $ac_bm_thunar_vfs_volume_impl"
+echo "* Debug Support:             $enable_debug"
 echo
 echo "Additional Plugins:"
 echo
