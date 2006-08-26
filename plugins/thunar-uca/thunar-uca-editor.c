@@ -29,8 +29,6 @@
 #include <string.h>
 #endif
 
-#include <glib/gi18n-lib.h>
-
 #include <exo/exo.h>
 
 #include <thunar-uca/thunar-uca-editor.h>
@@ -115,6 +113,7 @@ thunar_uca_editor_init (ThunarUcaEditor *uca_editor)
   /* configure the dialog properties */
   gtk_dialog_add_button (GTK_DIALOG (uca_editor), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL);
   gtk_dialog_add_button (GTK_DIALOG (uca_editor), GTK_STOCK_OK, GTK_RESPONSE_OK);
+  gtk_dialog_set_alternative_button_order (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK, GTK_RESPONSE_CANCEL, -1);
   gtk_dialog_set_default_response (GTK_DIALOG (uca_editor), GTK_RESPONSE_OK);
   gtk_dialog_set_has_separator (GTK_DIALOG (uca_editor), FALSE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (uca_editor), TRUE);
@@ -595,95 +594,45 @@ thunar_uca_editor_command_clicked (ThunarUcaEditor *uca_editor)
 
 
 static void
-update_preview (GtkFileChooser *chooser,
-                GtkWidget      *image)
-{
-  GdkPixbuf *pixbuf;
-  GdkPixbuf *scaled;
-  gchar     *filename;
-  gint       height;
-  gint       width;
-
-  filename = gtk_file_chooser_get_filename (chooser);
-  pixbuf = (filename != NULL) ? gdk_pixbuf_new_from_file (filename, NULL) : NULL;
-  if (G_LIKELY (pixbuf != NULL))
-    {
-      width = gdk_pixbuf_get_width (pixbuf);
-      height = gdk_pixbuf_get_height (pixbuf);
-      if (G_UNLIKELY (width > 128 || height > 128))
-        {
-          scaled = exo_gdk_pixbuf_scale_ratio (pixbuf, 128);
-          g_object_unref (G_OBJECT (pixbuf));
-          pixbuf = scaled;
-        }
-
-      gtk_file_chooser_set_preview_widget_active (chooser, TRUE);
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf);
-      g_object_unref (G_OBJECT (pixbuf));
-    }
-  else
-    {
-      gtk_file_chooser_set_preview_widget_active (chooser, FALSE);
-    }
-
-  g_free (filename);
-}
-
-
-
-static void
 thunar_uca_editor_icon_clicked (ThunarUcaEditor *uca_editor)
 {
-  GtkFileFilter *filter;
-  GtkWidget     *chooser;
-  GtkWidget     *image;
-  gchar         *filename;
+  const gchar *name;
+  GtkWidget   *chooser;
+  gchar       *title;
+  gchar       *icon;
 
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
 
-  chooser = gtk_file_chooser_dialog_new (_("Select an Icon"),
-                                         GTK_WINDOW (uca_editor),
-                                         GTK_FILE_CHOOSER_ACTION_OPEN,
+  /* determine the name of the action being edited */
+  name = gtk_entry_get_text (GTK_ENTRY (uca_editor->name_entry));
+  if (G_UNLIKELY (name == NULL || *name == '\0'))
+    name = _("Unknown");
+
+  /* allocate the chooser dialog */
+  title = g_strdup_printf (_("Select an Icon for \"%s\""), name);
+  chooser = exo_icon_chooser_dialog_new (title, GTK_WINDOW (uca_editor),
                                          GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                         GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
                                          NULL);
-  gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER (chooser), TRUE);
+  gtk_dialog_set_alternative_button_order (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT, GTK_RESPONSE_CANCEL, -1);
+  gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT);
+  g_free (title);
 
-  /* add file chooser filters */
-  filter = gtk_file_filter_new ();
-  gtk_file_filter_set_name (filter, _("All Files"));
-  gtk_file_filter_add_pattern (filter, "*");
-  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser), filter);
+  /* setup the currently selected icon */
+  icon = g_object_get_data (G_OBJECT (uca_editor->icon_button), "thunar-uca-icon-name");
+  if (G_LIKELY (icon != NULL && *icon != '\0'))
+    exo_icon_chooser_dialog_set_icon (EXO_ICON_CHOOSER_DIALOG (chooser), icon);
 
-  filter = gtk_file_filter_new ();
-  gtk_file_filter_set_name (filter, _("Image Files"));
-  gtk_file_filter_add_pixbuf_formats (filter);
-  gtk_file_chooser_add_filter (GTK_FILE_CHOOSER (chooser), filter);
-  gtk_file_chooser_set_filter (GTK_FILE_CHOOSER (chooser), filter);
-
-  image = g_object_new (GTK_TYPE_IMAGE, "height-request", 128 + 2 * 12, "width-request", 128 + 2 * 12, NULL);
-  g_signal_connect (G_OBJECT (chooser), "update-preview", G_CALLBACK (update_preview), image);
-  gtk_file_chooser_set_preview_widget_active (GTK_FILE_CHOOSER (chooser), FALSE);
-  gtk_file_chooser_set_preview_widget (GTK_FILE_CHOOSER (chooser), image);
-  gtk_widget_show (image);
-
-  /* use the datadir/pixmaps as default folder */
-  gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER (chooser), DATADIR "/pixmaps");
-
-  /* setup the currently selected icon file */
-  filename = g_object_get_data (G_OBJECT (uca_editor->icon_button), "thunar-uca-icon-filename");
-  if (G_LIKELY (filename != NULL && g_path_is_absolute (filename)))
-    gtk_file_chooser_set_filename (GTK_FILE_CHOOSER (chooser), filename);
-
-  /* run the chooser dialog */
+  /* run the icon chooser dialog */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
-      /* remember the selected file for the icon */
-      filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
-      thunar_uca_editor_set_icon_name (uca_editor, filename);
-      g_free (filename);
+      /* remember the selected icon from the chooser */
+      icon = exo_icon_chooser_dialog_get_icon (EXO_ICON_CHOOSER_DIALOG (chooser));
+      thunar_uca_editor_set_icon_name (uca_editor, icon);
+      g_free (icon);
     }
 
+  /* destroy the chooser */
   gtk_widget_destroy (chooser);
 }
 
@@ -707,8 +656,6 @@ thunar_uca_editor_set_icon_name (ThunarUcaEditor *uca_editor,
   GdkPixbuf    *icon = NULL;
   GtkWidget    *image;
   GtkWidget    *label;
-  gint          icon_height;
-  gint          icon_width;
 
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
 
@@ -720,7 +667,7 @@ thunar_uca_editor_set_icon_name (ThunarUcaEditor *uca_editor,
   if (G_LIKELY (icon_name != NULL && g_path_is_absolute (icon_name)))
     {
       /* load the icon from the file */
-      icon = gdk_pixbuf_new_from_file (icon_name, NULL);
+      icon = exo_gdk_pixbuf_new_from_file_at_max_size (icon_name, 48, 48, TRUE, NULL);
     }
   else if (icon_name != NULL)
     {
@@ -738,14 +685,9 @@ thunar_uca_editor_set_icon_name (ThunarUcaEditor *uca_editor,
   if (G_LIKELY (icon != NULL))
     {
       /* scale down the icon if required */
-      icon_width = gdk_pixbuf_get_width (icon);
-      icon_height = gdk_pixbuf_get_height (icon);
-      if (G_UNLIKELY (icon_width > 48 || icon_height > 48))
-        {
-          icon_scaled = exo_gdk_pixbuf_scale_ratio (icon, 48);
-          g_object_unref (G_OBJECT (icon));
-          icon = icon_scaled;
-        }
+      icon_scaled = exo_gdk_pixbuf_scale_down (icon, TRUE, 48, 48);
+      g_object_unref (G_OBJECT (icon));
+      icon = icon_scaled;
 
       /* setup an image for the icon */
       image = gtk_image_new_from_pixbuf (icon);

@@ -186,6 +186,25 @@ XDT_CHECK_OPTIONAL_PACKAGE([LIBSTARTUP_NOTIFICATION],
                            [0.4], [startup-notification],
                            [startup notification library])
 
+dnl ******************************
+dnl *** Check for FreeType 2.x ***
+dnl ******************************
+FREETYPE_LIBS=""
+FREETYPE_CFLAGS=""
+AC_PATH_PROG([FREETYPE_CONFIG], [freetype-config], [no])
+if test x"$FREETYPE_CONFIG" != x"no"; then
+  AC_MSG_CHECKING([FREETYPE_CFLAGS])
+  FREETYPE_CFLAGS="`$FREETYPE_CONFIG --cflags`"
+  AC_MSG_RESULT([$FREETYPE_CFLAGS])
+
+  AC_MSG_CHECKING([FREETYPE_LIBS])
+  FREETYPE_LIBS="`$FREETYPE_CONFIG --libs`"
+  AC_MSG_RESULT([$FREETYPE_LIBS])
+fi
+AM_CONDITIONAL([HAVE_FREETYPE], [test x"$FREETYPE_CONFIG" != x"no"])
+AC_SUBST([FREETYPE_CFLAGS])
+AC_SUBST([FREETYPE_LIBS])
+
 dnl *************************
 dnl *** Check for libjpeg ***
 dnl *************************

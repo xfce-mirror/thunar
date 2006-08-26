@@ -22,7 +22,6 @@
 #endif
 
 #include <thunar/thunar-clipboard-manager.h>
-#include <thunar/thunar-gdk-pixbuf-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-icon-renderer.h>

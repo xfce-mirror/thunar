@@ -170,6 +170,20 @@ thunar_vfs_mime_cleaner_1_LDFLAGS =					\
 	-no-undefined							\
 	$(PLATFORM_LDFLAGS)
 
+thunar_vfs_pixbuf_thumbnailer_1_SOURCES =				\
+	thunar-vfs-pixbuf-thumbnailer.c
+
+thunar_vfs_pixbuf_thumbnailer_1_CFLAGS =				\
+	$(EXO_CFLAGS)							\
+	$(PLATFORM_CFLAGS)
+
+thunar_vfs_pixbuf_thumbnailer_1_LDADD =					\
+	$(EXO_LIBS)
+
+thunar_vfs_pixbuf_thumbnailer_1_LDFLAGS =				\
+	-no-undefined							\
+	$(PLATFORM_LDFLAGS)
+
 thunar_vfs_update_thumbnailers_cache_1_SOURCES =			\
 	thunar-vfs-update-thumbnailers-cache.c
 
@@ -188,19 +202,30 @@ thunar_vfs_update_thumbnailers_cache_1_LDFLAGS =			\
 	-no-undefined							\
 	$(PLATFORM_LDFLAGS)
 
-thunar_vfs_pixbuf_thumbnailer_1_SOURCES =				\
-	thunar-vfs-pixbuf-thumbnailer.c
+##
+## The font thumbnailer can only be built if freetype 2.x is available,
+## because there's not really a way to make it work w/o freetype.
+##
+if HAVE_FREETYPE
+libexec_PROGRAMS +=							\
+	thunar-vfs-font-thumbnailer-1
 
-thunar_vfs_pixbuf_thumbnailer_1_CFLAGS =				\
+thunar_vfs_font_thumbnailer_1_SOURCES =					\
+	thunar-vfs-font-thumbnailer.c
+
+thunar_vfs_font_thumbnailer_1_CFLAGS =					\
+	$(FREETYPE_CFLAGS)						\
 	$(GDK_PIXBUF_CFLAGS)						\
 	$(PLATFORM_CFLAGS)
 
-thunar_vfs_pixbuf_thumbnailer_1_LDADD =					\
+thunar_vfs_font_thumbnailer_1_LDADD =					\
+	$(FREETYPE_LIBS)						\
 	$(GDK_PIXBUF_LIBS)
 
-thunar_vfs_pixbuf_thumbnailer_1_LDFLAGS =				\
+thunar_vfs_font_thumbnailer_1_LDFLAGS =					\
 	-no-undefined							\
 	$(PLATFORM_LDFLAGS)
+endif
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunar-vfs-1.pc

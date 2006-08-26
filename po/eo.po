@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-13 00:53+0200\n"
+"POT-Creation-Date: 2006-08-26 17:25+0200\n"
 "PO-Revision-Date: 2006-07-20 22:42+0200\n"
 "Last-Translator: Antono Vasiljev <antono.vasiljev@gmail.com>\n"
 "Language-Team: Esperanto <eo@li.org>\n"
@@ -711,39 +711,38 @@ msgstr ""
 "per\" dialogo de la dosier-administrilo."
 
 #: ../thunar/thunar-chooser-dialog.c:813
-#: ../plugins/thunar-uca/thunar-uca-editor.c:491
+#: ../plugins/thunar-uca/thunar-uca-editor.c:490
 msgid "Select an Application"
 msgstr "Selektu aplikaĵon"
 
 #: ../thunar/thunar-chooser-dialog.c:823
 #: ../thunar/thunar-renamer-dialog.c:1095
-#: ../plugins/thunar-uca/thunar-uca-editor.c:501
-#: ../plugins/thunar-uca/thunar-uca-editor.c:654
+#: ../plugins/thunar-uca/thunar-uca-editor.c:500
 msgid "All Files"
 msgstr "Ĉiuj dosieroj"
 
 #: ../thunar/thunar-chooser-dialog.c:828
-#: ../plugins/thunar-uca/thunar-uca-editor.c:506
+#: ../plugins/thunar-uca/thunar-uca-editor.c:505
 msgid "Executable Files"
 msgstr "Lanĉeblaj dosieroj"
 
 #: ../thunar/thunar-chooser-dialog.c:843
-#: ../plugins/thunar-uca/thunar-uca-editor.c:521
+#: ../plugins/thunar-uca/thunar-uca-editor.c:520
 msgid "Perl Scripts"
 msgstr "Perl skriptoj"
 
 #: ../thunar/thunar-chooser-dialog.c:849
-#: ../plugins/thunar-uca/thunar-uca-editor.c:527
+#: ../plugins/thunar-uca/thunar-uca-editor.c:526
 msgid "Python Scripts"
 msgstr "Python skriptoj"
 
 #: ../thunar/thunar-chooser-dialog.c:855
-#: ../plugins/thunar-uca/thunar-uca-editor.c:533
+#: ../plugins/thunar-uca/thunar-uca-editor.c:532
 msgid "Ruby Scripts"
 msgstr "Ruby skriptoj"
 
 #: ../thunar/thunar-chooser-dialog.c:861
-#: ../plugins/thunar-uca/thunar-uca-editor.c:539
+#: ../plugins/thunar-uca/thunar-uca-editor.c:538
 msgid "Shell Scripts"
 msgstr "Shell skriptoj"
 
@@ -837,6 +836,7 @@ msgstr "Aŭtomat_e pligrandigu kolonetojn kiel necese"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:287
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:288
+#: ../plugins/thunar-uca/thunar-uca-editor.c:609
 msgid "Unknown"
 msgstr "Nekonata"
 
@@ -1004,7 +1004,7 @@ msgstr "Antaŭen"
 msgid "Go to the next visited folder"
 msgstr "Iru al la sekva vizitita dosierujo"
 
-#: ../thunar/thunar-icon-factory.c:676
+#: ../thunar/thunar-icon-factory.c:675
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr "Ne eblas ŝarĝigi emblemeton el \"%s\" (%s). Kontrolu vian instalaĵon!"
@@ -1880,7 +1880,6 @@ msgid "Audio Files"
 msgstr "Aŭdeblaj Dosieroj"
 
 #: ../thunar/thunar-renamer-dialog.c:1105
-#: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr "Bildo-dosieroj"
 
@@ -3032,23 +3031,23 @@ msgstr "Malsukcesis savi agojn al dosiero."
 #.
 #. Basic
 #.
-#: ../plugins/thunar-uca/thunar-uca-editor.c:136
+#: ../plugins/thunar-uca/thunar-uca-editor.c:135
 msgid "Basic"
 msgstr "Simpla"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:145
+#: ../plugins/thunar-uca/thunar-uca-editor.c:144
 msgid "_Name:"
 msgstr "_Nomo:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:150
+#: ../plugins/thunar-uca/thunar-uca-editor.c:149
 msgid "The name of the action that will be displayed in the context menu."
 msgstr "La nomo de la ago kiu estos montrita en ĉirkaŭteksta menuo."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:163
+#: ../plugins/thunar-uca/thunar-uca-editor.c:162
 msgid "_Description:"
 msgstr "_Priskribo:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:168
+#: ../plugins/thunar-uca/thunar-uca-editor.c:167
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
@@ -3056,11 +3055,11 @@ msgstr ""
 "La priskribo de la ago, montrota kiel konsilo kiam vi elektos la agon en la "
 "kunteksta menuo."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:181
+#: ../plugins/thunar-uca/thunar-uca-editor.c:180
 msgid "_Command:"
 msgstr "_Komando:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:190
+#: ../plugins/thunar-uca/thunar-uca-editor.c:189
 msgid ""
 "The command (including the necessary parameters) to perform the action. See "
 "the command parameter legend below for a list of supported parameter "
@@ -3076,22 +3075,22 @@ msgstr ""
 "estos elektita. En alia okazo la ago aperos nur se nur unu dosiero estos "
 "elektita. "
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:201
+#: ../plugins/thunar-uca/thunar-uca-editor.c:200
 msgid "Browse the file system to select an application to use for this action."
 msgstr ""
 "Rigardu tra la dosier-sistemo por trovi aplikaĵon per kiu farota ti ĉiu ago."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:217
+#: ../plugins/thunar-uca/thunar-uca-editor.c:216
 msgid "_Icon:"
 msgstr "P_iktogramo:"
 
 #. setup a label to tell that no icon was selected
-#: ../plugins/thunar-uca/thunar-uca-editor.c:225
-#: ../plugins/thunar-uca/thunar-uca-editor.c:767
+#: ../plugins/thunar-uca/thunar-uca-editor.c:224
+#: ../plugins/thunar-uca/thunar-uca-editor.c:709
 msgid "No icon"
 msgstr "Mankas piktogramo"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:226
+#: ../plugins/thunar-uca/thunar-uca-editor.c:225
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
@@ -3099,7 +3098,7 @@ msgstr ""
 "Klaku ĉi tiun butonon por elekti piktogramon, kiu aperas apud la ago-nomo en "
 "la kunteksta menuo."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:257
+#: ../plugins/thunar-uca/thunar-uca-editor.c:256
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
@@ -3107,41 +3106,41 @@ msgstr ""
 "La sekvantaj parametroj de programo estos uzataj\n"
 "kiam vi ekvolos lanĉi la agon:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:295
+#: ../plugins/thunar-uca/thunar-uca-editor.c:294
 msgid "the path to the first selected file"
 msgstr "la vojo al la unua selektita dosiero"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:307
+#: ../plugins/thunar-uca/thunar-uca-editor.c:306
 msgid "the paths to all selected files"
 msgstr "la vojoj al ĉiuj selektitaj dosieroj"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:319
+#: ../plugins/thunar-uca/thunar-uca-editor.c:318
 #, c-format
 msgid "directory containing the file that is passed in %f"
 msgstr "dosierujo enhavanta la dosieron, kiu kongruas kun %f"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:331
+#: ../plugins/thunar-uca/thunar-uca-editor.c:330
 #, c-format
 msgid "directories containing the files that are passed in %F"
 msgstr "dosierujoj enhavanta la dosierojn, kiuj kongruas kun %F"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:343
+#: ../plugins/thunar-uca/thunar-uca-editor.c:342
 msgid "the first selected filename (without path)"
 msgstr "la unua selektita dosiernomo (sen vojo)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:355
+#: ../plugins/thunar-uca/thunar-uca-editor.c:354
 msgid "the selected filenames (without paths)"
 msgstr "la selektitaj dosier-nomoj (sen vojoj)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:369
+#: ../plugins/thunar-uca/thunar-uca-editor.c:368
 msgid "Appearance Conditions"
 msgstr "Kondiĉoj de apero"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:377
+#: ../plugins/thunar-uca/thunar-uca-editor.c:376
 msgid "_File Pattern:"
 msgstr "_Dosiera ŝablono:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:382
+#: ../plugins/thunar-uca/thunar-uca-editor.c:381
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -3152,35 +3151,35 @@ msgstr ""
 "elektita dosiero. Se vi skribas ĉi tie plurajn ŝablonojn, bonvolu apartigi "
 "ilin per punktokomoj (ekz. *.txt;*.doc)."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:401
+#: ../plugins/thunar-uca/thunar-uca-editor.c:400
 msgid "Appears if selection contains:"
 msgstr "Aperos nur se selektaĵo enhavos:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:414
+#: ../plugins/thunar-uca/thunar-uca-editor.c:413
 msgid "_Directories"
 msgstr "_Dosierujoj"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:418
+#: ../plugins/thunar-uca/thunar-uca-editor.c:417
 msgid "_Audio Files"
 msgstr "_Audeblaj dosieroj"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:422
+#: ../plugins/thunar-uca/thunar-uca-editor.c:421
 msgid "_Image Files"
 msgstr "B_ildaj dosieroj"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:426
+#: ../plugins/thunar-uca/thunar-uca-editor.c:425
 msgid "_Text Files"
 msgstr "_Tekstaj dosieroj"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:431
+#: ../plugins/thunar-uca/thunar-uca-editor.c:430
 msgid "_Video Files"
 msgstr "_Vidaĵ-dosieroj"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:435
+#: ../plugins/thunar-uca/thunar-uca-editor.c:434
 msgid "_Other Files"
 msgstr "Aliaj d_osieroj"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:452
+#: ../plugins/thunar-uca/thunar-uca-editor.c:451
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
@@ -3202,8 +3201,10 @@ msgstr ""
 "almenaŭ unu regula esprimo el la listo. Plie, vi povas\n"
 "specifi ke la ago aperu nur por difinitaj dosier-tipoj."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:644
-msgid "Select an Icon"
+#. allocate the chooser dialog
+#: ../plugins/thunar-uca/thunar-uca-editor.c:612
+#, fuzzy, c-format
+msgid "Select an Icon for \"%s\""
 msgstr "Selektu piktogramon"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:780

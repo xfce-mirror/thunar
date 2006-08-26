@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-13 00:53+0200\n"
+"POT-Creation-Date: 2006-08-26 17:25+0200\n"
 "PO-Revision-Date: 2006-06-05 00:42+0300\n"
 "Last-Translator: Mişu Moldovan <dumol@gnome.ro>\n"
 "Language-Team: Romanian <gnomero-list@lists.sourceforge.net>\n"
@@ -720,39 +720,38 @@ msgstr ""
 "personalizate în dialogul „Deschide cu” al administratorului de fişiere."
 
 #: ../thunar/thunar-chooser-dialog.c:813
-#: ../plugins/thunar-uca/thunar-uca-editor.c:491
+#: ../plugins/thunar-uca/thunar-uca-editor.c:490
 msgid "Select an Application"
 msgstr "Selectaţi o aplicaţie"
 
 #: ../thunar/thunar-chooser-dialog.c:823
 #: ../thunar/thunar-renamer-dialog.c:1095
-#: ../plugins/thunar-uca/thunar-uca-editor.c:501
-#: ../plugins/thunar-uca/thunar-uca-editor.c:654
+#: ../plugins/thunar-uca/thunar-uca-editor.c:500
 msgid "All Files"
 msgstr "Toate fişierele"
 
 #: ../thunar/thunar-chooser-dialog.c:828
-#: ../plugins/thunar-uca/thunar-uca-editor.c:506
+#: ../plugins/thunar-uca/thunar-uca-editor.c:505
 msgid "Executable Files"
 msgstr "Fişiere executabile"
 
 #: ../thunar/thunar-chooser-dialog.c:843
-#: ../plugins/thunar-uca/thunar-uca-editor.c:521
+#: ../plugins/thunar-uca/thunar-uca-editor.c:520
 msgid "Perl Scripts"
 msgstr "Scripturi Perl"
 
 #: ../thunar/thunar-chooser-dialog.c:849
-#: ../plugins/thunar-uca/thunar-uca-editor.c:527
+#: ../plugins/thunar-uca/thunar-uca-editor.c:526
 msgid "Python Scripts"
 msgstr "Scripturi Python"
 
 #: ../thunar/thunar-chooser-dialog.c:855
-#: ../plugins/thunar-uca/thunar-uca-editor.c:533
+#: ../plugins/thunar-uca/thunar-uca-editor.c:532
 msgid "Ruby Scripts"
 msgstr "Scripturi Ruby"
 
 #: ../thunar/thunar-chooser-dialog.c:861
-#: ../plugins/thunar-uca/thunar-uca-editor.c:539
+#: ../plugins/thunar-uca/thunar-uca-editor.c:538
 msgid "Shell Scripts"
 msgstr "Scripturi shell"
 
@@ -848,6 +847,7 @@ msgstr "E_xtinde coloanele automat după nevoie"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:287
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:288
+#: ../plugins/thunar-uca/thunar-uca-editor.c:609
 msgid "Unknown"
 msgstr "Necunoscut(ă)"
 
@@ -1013,7 +1013,7 @@ msgstr "Înainte"
 msgid "Go to the next visited folder"
 msgstr "Înainte în următorul director vizitat"
 
-#: ../thunar/thunar-icon-factory.c:676
+#: ../thunar/thunar-icon-factory.c:675
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
@@ -1925,7 +1925,6 @@ msgid "Audio Files"
 msgstr "Fişiere audio"
 
 #: ../thunar/thunar-renamer-dialog.c:1105
-#: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr "Fişiere imagini"
 
@@ -3100,23 +3099,23 @@ msgstr "Nu s-au putut salva pe disc acţiunile."
 #.
 #. Basic
 #.
-#: ../plugins/thunar-uca/thunar-uca-editor.c:136
+#: ../plugins/thunar-uca/thunar-uca-editor.c:135
 msgid "Basic"
 msgstr "Iniţiale"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:145
+#: ../plugins/thunar-uca/thunar-uca-editor.c:144
 msgid "_Name:"
 msgstr "_Nume:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:150
+#: ../plugins/thunar-uca/thunar-uca-editor.c:149
 msgid "The name of the action that will be displayed in the context menu."
 msgstr "Numele acţiunii pentru afişarea în meniul contextual. "
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:163
+#: ../plugins/thunar-uca/thunar-uca-editor.c:162
 msgid "_Description:"
 msgstr "_Descriere:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:168
+#: ../plugins/thunar-uca/thunar-uca-editor.c:167
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
@@ -3124,11 +3123,11 @@ msgstr ""
 "Descriere a acţiunii pentru afişarea ca indiciu în bara de stare când acest "
 "element este selectat în meniul contextual."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:181
+#: ../plugins/thunar-uca/thunar-uca-editor.c:180
 msgid "_Command:"
 msgstr "_Comandă:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:190
+#: ../plugins/thunar-uca/thunar-uca-editor.c:189
 msgid ""
 "The command (including the necessary parameters) to perform the action. See "
 "the command parameter legend below for a list of supported parameter "
@@ -3144,23 +3143,23 @@ msgstr ""
 "multe elemente. Altfel, acţiunea se va aplica doar dacă un singur element "
 "este selectat."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:201
+#: ../plugins/thunar-uca/thunar-uca-editor.c:200
 msgid "Browse the file system to select an application to use for this action."
 msgstr ""
 "Navigare în sistemul de fişiere pentru selectarea unei aplicaţii de utilizat "
 "pentru această acţiune."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:217
+#: ../plugins/thunar-uca/thunar-uca-editor.c:216
 msgid "_Icon:"
 msgstr "_Iconiţă:"
 
 #. setup a label to tell that no icon was selected
-#: ../plugins/thunar-uca/thunar-uca-editor.c:225
-#: ../plugins/thunar-uca/thunar-uca-editor.c:767
+#: ../plugins/thunar-uca/thunar-uca-editor.c:224
+#: ../plugins/thunar-uca/thunar-uca-editor.c:709
 msgid "No icon"
 msgstr "Fără iconiţă"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:226
+#: ../plugins/thunar-uca/thunar-uca-editor.c:225
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
@@ -3168,7 +3167,7 @@ msgstr ""
 "Daţi click pe acest buton pentru a selecta o iconiţă ce va fi afişată în "
 "meniul contextual în dreptul numelui acţiunii selectate mai sus."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:257
+#: ../plugins/thunar-uca/thunar-uca-editor.c:256
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
@@ -3176,41 +3175,41 @@ msgstr ""
 "Următorii parametri în linie de comandă\n"
 "vor fi substituiţi la lansarea acţiunii:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:295
+#: ../plugins/thunar-uca/thunar-uca-editor.c:294
 msgid "the path to the first selected file"
 msgstr "calea primului fişier selectat"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:307
+#: ../plugins/thunar-uca/thunar-uca-editor.c:306
 msgid "the paths to all selected files"
 msgstr "căile către toate fişierele selectate"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:319
+#: ../plugins/thunar-uca/thunar-uca-editor.c:318
 #, c-format
 msgid "directory containing the file that is passed in %f"
 msgstr "directorul conţinând fişierul precizat în %f"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:331
+#: ../plugins/thunar-uca/thunar-uca-editor.c:330
 #, c-format
 msgid "directories containing the files that are passed in %F"
 msgstr "directoarele conţinând fişierele precizate în %F"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:343
+#: ../plugins/thunar-uca/thunar-uca-editor.c:342
 msgid "the first selected filename (without path)"
 msgstr "primul fişier selectat (fără cale)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:355
+#: ../plugins/thunar-uca/thunar-uca-editor.c:354
 msgid "the selected filenames (without paths)"
 msgstr "fişierele selectate (fără căi)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:369
+#: ../plugins/thunar-uca/thunar-uca-editor.c:368
 msgid "Appearance Conditions"
 msgstr "Condiţii de afişare"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:377
+#: ../plugins/thunar-uca/thunar-uca-editor.c:376
 msgid "_File Pattern:"
 msgstr "Tip de _fişiere:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:382
+#: ../plugins/thunar-uca/thunar-uca-editor.c:381
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -3222,35 +3221,35 @@ msgstr ""
 "specificaţi mai mult de un tip de fişiere aici, elementele listei trebuie "
 "separate prin „punct şi virgulă” (de ex.: *.txt;*.doc)."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:401
+#: ../plugins/thunar-uca/thunar-uca-editor.c:400
 msgid "Appears if selection contains:"
 msgstr "Apare dacă selecţia conţine:"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:414
+#: ../plugins/thunar-uca/thunar-uca-editor.c:413
 msgid "_Directories"
 msgstr "_Directoare"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:418
+#: ../plugins/thunar-uca/thunar-uca-editor.c:417
 msgid "_Audio Files"
 msgstr "Fişiere _audio"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:422
+#: ../plugins/thunar-uca/thunar-uca-editor.c:421
 msgid "_Image Files"
 msgstr "Fişiere _imagini"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:426
+#: ../plugins/thunar-uca/thunar-uca-editor.c:425
 msgid "_Text Files"
 msgstr "Fişiere _text"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:431
+#: ../plugins/thunar-uca/thunar-uca-editor.c:430
 msgid "_Video Files"
 msgstr "Fişiere _video"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:435
+#: ../plugins/thunar-uca/thunar-uca-editor.c:434
 msgid "_Other Files"
 msgstr "A_lte fişiere"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:452
+#: ../plugins/thunar-uca/thunar-uca-editor.c:451
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
@@ -3274,8 +3273,10 @@ msgstr ""
 "În plus, puteţi specifica ca afişarea acţiunii să\n"
 "se facă doar pentru anumite tipuri de fişiere."
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:644
-msgid "Select an Icon"
+#. allocate the chooser dialog
+#: ../plugins/thunar-uca/thunar-uca-editor.c:612
+#, fuzzy, c-format
+msgid "Select an Icon for \"%s\""
 msgstr "Selectaţi o iconiţă"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:780

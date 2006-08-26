@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-13 00:53+0200\n"
+"POT-Creation-Date: 2006-08-26 17:25+0200\n"
 "PO-Revision-Date: 2006-05-03 15:08+0000\n"
 "Last-Translator: Li Linxiao <linxiao.li@gmail.com>\n"
 "Language-Team: Chinese (Simplified) <postmaster@inlsd.org>\n"
@@ -697,39 +697,38 @@ msgid ""
 msgstr ""
 
 #: ../thunar/thunar-chooser-dialog.c:813
-#: ../plugins/thunar-uca/thunar-uca-editor.c:491
+#: ../plugins/thunar-uca/thunar-uca-editor.c:490
 msgid "Select an Application"
 msgstr "选择一个应用程序"
 
 #: ../thunar/thunar-chooser-dialog.c:823
 #: ../thunar/thunar-renamer-dialog.c:1095
-#: ../plugins/thunar-uca/thunar-uca-editor.c:501
-#: ../plugins/thunar-uca/thunar-uca-editor.c:654
+#: ../plugins/thunar-uca/thunar-uca-editor.c:500
 msgid "All Files"
 msgstr "所有文件"
 
 #: ../thunar/thunar-chooser-dialog.c:828
-#: ../plugins/thunar-uca/thunar-uca-editor.c:506
+#: ../plugins/thunar-uca/thunar-uca-editor.c:505
 msgid "Executable Files"
 msgstr "可执行文件"
 
 #: ../thunar/thunar-chooser-dialog.c:843
-#: ../plugins/thunar-uca/thunar-uca-editor.c:521
+#: ../plugins/thunar-uca/thunar-uca-editor.c:520
 msgid "Perl Scripts"
 msgstr "Perl 脚本"
 
 #: ../thunar/thunar-chooser-dialog.c:849
-#: ../plugins/thunar-uca/thunar-uca-editor.c:527
+#: ../plugins/thunar-uca/thunar-uca-editor.c:526
 msgid "Python Scripts"
 msgstr "Python 脚本"
 
 #: ../thunar/thunar-chooser-dialog.c:855
-#: ../plugins/thunar-uca/thunar-uca-editor.c:533
+#: ../plugins/thunar-uca/thunar-uca-editor.c:532
 msgid "Ruby Scripts"
 msgstr "Ruby 脚本"
 
 #: ../thunar/thunar-chooser-dialog.c:861
-#: ../plugins/thunar-uca/thunar-uca-editor.c:539
+#: ../plugins/thunar-uca/thunar-uca-editor.c:538
 msgid "Shell Scripts"
 msgstr "Shell 脚本"
 
@@ -822,6 +821,7 @@ msgstr "按需求自动延展栏位(_E)"
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:287
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:288
+#: ../plugins/thunar-uca/thunar-uca-editor.c:609
 msgid "Unknown"
 msgstr "未知的"
 
@@ -988,7 +988,7 @@ msgstr "向前"
 msgid "Go to the next visited folder"
 msgstr "到下一个浏览的文件夹"
 
-#: ../thunar/thunar-icon-factory.c:676
+#: ../thunar/thunar-icon-factory.c:675
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr "无法由 \"%s\" (%s) 载入备用图标。请检查您是否正确安装！"
@@ -1836,7 +1836,6 @@ msgid "Audio Files"
 msgstr "声音文件(_A)"
 
 #: ../thunar/thunar-renamer-dialog.c:1105
-#: ../plugins/thunar-uca/thunar-uca-editor.c:659
 msgid "Image Files"
 msgstr "图像文件"
 
@@ -2968,33 +2967,33 @@ msgstr "保存动作到磁盘失败。"
 #.
 #. Basic
 #.
-#: ../plugins/thunar-uca/thunar-uca-editor.c:136
+#: ../plugins/thunar-uca/thunar-uca-editor.c:135
 msgid "Basic"
 msgstr "基础的"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:145
+#: ../plugins/thunar-uca/thunar-uca-editor.c:144
 msgid "_Name:"
 msgstr "名称(_N):"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:150
+#: ../plugins/thunar-uca/thunar-uca-editor.c:149
 msgid "The name of the action that will be displayed in the context menu."
 msgstr "动作名称将在上下文菜单中显示。"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:163
+#: ../plugins/thunar-uca/thunar-uca-editor.c:162
 msgid "_Description:"
 msgstr "描述(_D):"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:168
+#: ../plugins/thunar-uca/thunar-uca-editor.c:167
 msgid ""
 "The description of the action that will be displayed as tooltip in the "
 "statusbar when selecting the item from the context menu."
 msgstr "动作描述将在状态栏显示。"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:181
+#: ../plugins/thunar-uca/thunar-uca-editor.c:180
 msgid "_Command:"
 msgstr "命令(_C):"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:190
+#: ../plugins/thunar-uca/thunar-uca-editor.c:189
 msgid ""
 "The command (including the necessary parameters) to perform the action. See "
 "the command parameter legend below for a list of supported parameter "
@@ -3006,67 +3005,67 @@ msgstr ""
 "此动作的命令(包含必要的参数)。在下面查看支持的变量用于代替调用命令。使用大写"
 "字母(例如 %F, %D, %N)动作将用于多个选择的项目，除此之外将仅作用于所选项。"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:201
+#: ../plugins/thunar-uca/thunar-uca-editor.c:200
 msgid "Browse the file system to select an application to use for this action."
 msgstr "浏览文件系统为此动作选择应用程序。"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:217
+#: ../plugins/thunar-uca/thunar-uca-editor.c:216
 msgid "_Icon:"
 msgstr "图标(_I):"
 
 #. setup a label to tell that no icon was selected
-#: ../plugins/thunar-uca/thunar-uca-editor.c:225
-#: ../plugins/thunar-uca/thunar-uca-editor.c:767
+#: ../plugins/thunar-uca/thunar-uca-editor.c:224
+#: ../plugins/thunar-uca/thunar-uca-editor.c:709
 msgid "No icon"
 msgstr "没有图标"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:226
+#: ../plugins/thunar-uca/thunar-uca-editor.c:225
 msgid ""
 "Click this button to select an icon file that will be displayed in the "
 "context menu in addition to the action name chosen above."
 msgstr "点击此按钮为动作选择图标。"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:257
+#: ../plugins/thunar-uca/thunar-uca-editor.c:256
 msgid ""
 "The following command parameters will be\n"
 "substituted when launching the action:"
 msgstr "调用动作时下面的参数将被替换："
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:295
+#: ../plugins/thunar-uca/thunar-uca-editor.c:294
 msgid "the path to the first selected file"
 msgstr "第一个被选取文件的路径"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:307
+#: ../plugins/thunar-uca/thunar-uca-editor.c:306
 msgid "the paths to all selected files"
 msgstr "所有被选取文件的路径"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:319
+#: ../plugins/thunar-uca/thunar-uca-editor.c:318
 #, c-format
 msgid "directory containing the file that is passed in %f"
 msgstr "包含文件的目录之前在 %f"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:331
+#: ../plugins/thunar-uca/thunar-uca-editor.c:330
 #, c-format
 msgid "directories containing the files that are passed in %F"
 msgstr "包含文件的目录之前在 %f"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:343
+#: ../plugins/thunar-uca/thunar-uca-editor.c:342
 msgid "the first selected filename (without path)"
 msgstr "第一个被选取的文件名"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:355
+#: ../plugins/thunar-uca/thunar-uca-editor.c:354
 msgid "the selected filenames (without paths)"
 msgstr "选择的文件名(没有路径)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:369
+#: ../plugins/thunar-uca/thunar-uca-editor.c:368
 msgid "Appearance Conditions"
 msgstr "界面风格"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:377
+#: ../plugins/thunar-uca/thunar-uca-editor.c:376
 msgid "_File Pattern:"
 msgstr "文件类型(_F):"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:382
+#: ../plugins/thunar-uca/thunar-uca-editor.c:381
 msgid ""
 "Enter a list of patterns that will be used to determine whether this action "
 "should be displayed for a selected file. If you specify more than one "
@@ -3076,35 +3075,35 @@ msgstr ""
 "输入模式列表用于决定此动作是否应被用于显示选择的文件。如果多于一个模式，用分"
 "号分隔(例如 *.txt;*.doc)。"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:401
+#: ../plugins/thunar-uca/thunar-uca-editor.c:400
 msgid "Appears if selection contains:"
 msgstr "如果选择显示："
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:414
+#: ../plugins/thunar-uca/thunar-uca-editor.c:413
 msgid "_Directories"
 msgstr "目录(_D)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:418
+#: ../plugins/thunar-uca/thunar-uca-editor.c:417
 msgid "_Audio Files"
 msgstr "声音文件(_A)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:422
+#: ../plugins/thunar-uca/thunar-uca-editor.c:421
 msgid "_Image Files"
 msgstr "图像文件(_I);"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:426
+#: ../plugins/thunar-uca/thunar-uca-editor.c:425
 msgid "_Text Files"
 msgstr "文本文件(_T)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:431
+#: ../plugins/thunar-uca/thunar-uca-editor.c:430
 msgid "_Video Files"
 msgstr "视频文件(_V)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:435
+#: ../plugins/thunar-uca/thunar-uca-editor.c:434
 msgid "_Other Files"
 msgstr "其他文件(_O)"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:452
+#: ../plugins/thunar-uca/thunar-uca-editor.c:451
 msgid ""
 "This page lists the conditions under which the\n"
 "action will appear in the file managers context\n"
@@ -3122,8 +3121,10 @@ msgstr ""
 "至少列表中类型之一符合文件与文件夹。附加的，您可以\n"
 "指定特有文件的动作。"
 
-#: ../plugins/thunar-uca/thunar-uca-editor.c:644
-msgid "Select an Icon"
+#. allocate the chooser dialog
+#: ../plugins/thunar-uca/thunar-uca-editor.c:612
+#, fuzzy, c-format
+msgid "Select an Icon for \"%s\""
 msgstr "选择一个图标"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:780

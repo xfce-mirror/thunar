@@ -360,6 +360,33 @@ thumbnailers_load_gnome (GHashTable *thumbnailers)
 
 
 static void
+thumbnailers_load_font (GHashTable *thumbnailers)
+{
+  static const gchar *MIME_TYPES[] =
+  {
+    "application/x-font-otf",
+    "application/x-font-pcf",
+    "application/x-font-ttf",
+    "application/x-font-type1",
+  };
+
+  guint n;
+
+  /* check if the thunar-vfs-font-thumbnailer-1 is installed */
+  if (g_file_test (LIBEXECDIR G_DIR_SEPARATOR_S "thunar-vfs-font-thumbnailer-1", G_FILE_TEST_IS_EXECUTABLE))
+    {
+      /* process all mime types supported by the thumbnailer */
+      for (n = 0; n < G_N_ELEMENTS (MIME_TYPES); ++n)
+        {
+          /* set our thumbnailer for all those mime types */
+          g_hash_table_insert (thumbnailers, (gchar *) MIME_TYPES[n], LIBEXECDIR G_DIR_SEPARATOR_S "thunar-vfs-font-thumbnailer-1 -i %i -o %o -s %s");
+        }
+    }
+}
+
+
+
+static void
 thumbnailers_load_pixbuf (GHashTable *thumbnailers)
 {
   GSList *formats;
@@ -466,6 +493,9 @@ main (int argc, char **argv)
 
   /* load the available GNOME thumbnailers */
   thumbnailers_load_gnome (thumbnailers);
+
+  /* load the available font thumbnailers */
+  thumbnailers_load_font (thumbnailers);
 
   /* load the available gdk-pixbuf thumbnailers */
   thumbnailers_load_pixbuf (thumbnailers);

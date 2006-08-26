@@ -1514,7 +1514,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                     goto error;
 
                   dirname = g_path_get_dirname (path);
-                  quoted = g_shell_quote (path);
+                  quoted = g_shell_quote (dirname);
                   g_string_append (command_line, quoted);
                   g_free (dirname);
                   g_free (quoted);
@@ -1536,7 +1536,7 @@ thunar_uca_model_parse_argv (ThunarUcaModel *uca_model,
                     goto error;
 
                   dirname = g_path_get_dirname (path);
-                  quoted = g_shell_quote (path);
+                  quoted = g_shell_quote (dirname);
                   g_string_append (command_line, quoted);
                   g_free (dirname);
                   g_free (quoted);

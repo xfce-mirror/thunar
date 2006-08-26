@@ -1,3 +1,24 @@
+2006-08-26	Benedikt Meurer <benny@xfce.org>
+
+	* plugins/thunar-uca/thunar-uca-model.c(thunar_uca_model_parse_argv):
+	  Substitute %d properly. Bug #2214.
+	* thunar/thunar-gdk-pixbuf-extensions.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-icon-factory.c, thunar/thunar-icon-renderer.c: Use
+	  exo_gdk_pixbuf_frame() instead of thunar_gdk_pixbuf_frame() and drop
+	  the GdkPixbuf extensions.
+	* thunar-vfs/thunar-vfs-pixbuf-thumbnailer.c, thunar/Makefile.am: Use
+	  exo_gdk_pixbuf_new_from_file_at_max_size() for the pixbuf thumbnai-
+	  ler.
+	* configure.in.in, README, thunar-vfs/thunar-vfs-font-thumbnailer.c,
+	  thunar-vfs/thunar-vfs-update-thumbnailers-cache.c,
+	  thunar-vfs/Makefile.am: Import the font thumbnailer, which uses
+	  freetype 2.x (if available) to generate a thumbnail of a font file.
+	* plugins/thunar-uca/thunar-uca-editor.c: Use ExoIconChooserDialog to
+	  select an icon for a custom action.
+	* po/POTFILES.in: Add new files here.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-08-24	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-renamer-model.c, thunar/thunar-shortcuts-model.c: Fix
