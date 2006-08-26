@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-08-26 17:25+0200\n"
-"PO-Revision-Date: 2006-08-02 23:21+0200\n"
+"PO-Revision-Date: 2006-08-27 02:16+0200\n"
 "Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
 "MIME-Version: 1.0\n"
@@ -66,9 +66,9 @@ msgid "Failed to change permissions of \"%s\""
 msgstr "Η αλλαγή των δικαιωμάτων του \"%s\" απέτυχε."
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:347
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file owner of \"%s\""
-msgstr "Η αλλαγή του ιδιοκτήτη του \"%s\" απέτυχε."
+msgstr "Η αλλαγή του ιδιοκτήτη του \"%s\" απέτυχε"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:348
 #, c-format
@@ -223,9 +223,9 @@ msgid "Failed to move \"%s\" to \"%s\""
 msgstr "Η μετακίνηση του \"%s\" σε \"%s\" απέτυχε"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:601
-#, fuzzy, c-format
+#, c-format
 msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-msgstr "Η διαδρομή \"%s\" δεν αντιστοιχεί σε κατάλογο"
+msgstr "Η διαδρομή \"%s\" δεν αντιστοιχεί σε έγκυρη διαδρομή στα απορίμματα"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:778
 msgid "Trash"
@@ -240,11 +240,11 @@ msgstr "Δεν είναι δυνατή η μετακίνηση ή αντιγρα
 
 #: ../thunar-vfs/thunar-vfs-job.c:831
 msgid "Do you want to overwrite it?"
-msgstr ""
+msgstr "Θέλετε να το αντικαταστήσετε;"
 
 #: ../thunar-vfs/thunar-vfs-job.c:896
 msgid "Do you want to skip it?"
-msgstr ""
+msgstr "Θέλετε να το προσπεράσετε;"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -311,13 +311,12 @@ msgstr "Το URI είναι υπερβολικά μεγάλο για να χωρ
 
 #: ../thunar-vfs/thunar-vfs-private.c:225
 msgid "Operation not supported"
-msgstr ""
+msgstr "Η λειτουργία δεν υποστηρίζεται"
 
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:327
-#, fuzzy
 msgid "Invalidly escaped characters"
-msgstr "Το URI '%s'  περιέχει χαρακτήρες μή έγκυρα escaped "
+msgstr "Μη έγκυρα προσπερασμένοι χαρακτήρες"
 
 #: ../thunar-vfs/thunar-vfs-thumb.c:222 ../thunar/thunar-enum-types.c:97
 msgid "Size"
@@ -848,9 +847,8 @@ msgid "Compact view"
 msgstr "Λίστα"
 
 #: ../thunar/thunar-create-dialog.c:166
-#, fuzzy
 msgid "C_reate"
-msgstr "Δημιουργία"
+msgstr "_Δημιουργία"
 
 #: ../thunar/thunar-create-dialog.c:181 ../thunar/thunar-standard-view.c:2207
 msgid "Enter the new name:"
@@ -905,9 +903,8 @@ msgid "_No"
 msgstr "_Όχι"
 
 #: ../thunar/thunar-dialogs.c:338
-#, fuzzy
 msgid "N_o to all"
-msgstr "Ναι σε ό_λα"
+msgstr "Ό_χι σε όλα"
 
 #: ../thunar/thunar-dialogs.c:343
 msgid "_Cancel"
@@ -2179,9 +2176,8 @@ msgid "Rename \"%s\""
 msgstr "Μετονομασία \"%s\""
 
 #: ../thunar/thunar-standard-view.c:2186
-#, fuzzy
 msgid "_Rename"
-msgstr "Μετονομασία"
+msgstr "_Μετονομασία"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2535
@@ -3239,9 +3235,9 @@ msgstr ""
 
 #. allocate the chooser dialog
 #: ../plugins/thunar-uca/thunar-uca-editor.c:612
-#, fuzzy, c-format
+#, c-format
 msgid "Select an Icon for \"%s\""
-msgstr "Επιλογή εικονιδίου"
+msgstr "Επιλέξτε ένα εικονίδιο για το \"%s\""
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
