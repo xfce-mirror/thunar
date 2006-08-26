@@ -1,5 +1,11 @@
 2006-08-26	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-standard-view.c(action_entries): Do not register an
+	  additional accelerator for "Select all Files", instead rely on the
+	  key bindings registered by ExoIconView/GtkTreeView. Bug #2036.
+
+2006-08-26	Benedikt Meurer <benny@xfce.org>
+
 	* plugins/thunar-uca/thunar-uca-model.c(thunar_uca_model_parse_argv):
 	  Substitute %d properly. Bug #2214.
 	* thunar/thunar-gdk-pixbuf-extensions.{c,h}, thunar/Makefile.am,
