@@ -1,3 +1,53 @@
+2006-08-28	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-window.c(action_entries), thunar/thunar-stock.{c,h}:
+	  Use "gnome-fs-home" instead of "gtk-home" as icon for Home for
+	  consistency.
+	* thunar/thunar-window.c(action_entries): Fix a mnemonic clash.
+	* thunar/thunar-window.c(thunar_window_current_directory_changed):
+	  Use "<folder> - File Manager" for the title to make it easier to
+	  indentify file manager windows in the taskbar.
+	* thunar/thunar-create-dialog.c, thunar/thunar-permissions-chooser.c,
+	  thunar/thunar-standard-view.c: No need to include thunar-stock.h
+	  here anymore.
+	* thunar/thunar-history.c(thunar_history_init): Consider "back" as
+	  an important action wrt to the appearance in the toolbar.
+	* thunar/thunar-window-ui.xml, thunar/thunar-window.c: Decouple the
+	  location bar from the toolbar by separating them into "Location Bar"
+	  and "Main Toolbar". Bug #1349.
+	* thunar/thunar-preferences.c, docs/README.thunarrc: Add new options
+	  LastLocationBarVisible and LastToolbarVisible, which control the
+	  visibility of the "Location Bar" and "Main Toolbar". Add new option
+	  LastNavigationBarEntry, which controls whether the navigation bar
+	  will display the path entry widget by default.
+	* thunar/thunar-gtk-extensions.{c,h}: Add new helper function
+	  thunar_gtk_action_set_tooltip(), which changes the tooltip of
+	  a GtkAction.
+	* thunar/thunar-navigation-bar.{c,h}, thunar/thunar-path-button.{c,h},
+	  thunar/thunar-navigation-bar-ui.xml, thunar/thunar-path-bar.{c,h},
+	  thunar/thunar-location-button.{c,h}, thunar/thunar-location-bar.{c,h},
+	  thunar/thunar-location-buttons-ui.xml, docs/README.gtkrc,
+	  thunar/thunar-location-buttons.{c,h}, thunar/Makefile.am,
+	  thunar/thunar-location-entry.{c,h}, thunar/thunar-marshal.list,
+	  thunar/thunar-shortcuts-pane.c, thunar/thunar-shortcuts-view.c,
+	  thunar/thunar-tree-pane.c, thunar/thunar-tree-view.c,
+	  thunar/thunar-window-ui.xml, thunar/thunar-window.c: Synchronize
+	  the latest user interface changes in GtkFileChooser. This way the
+	  location bar will be used for both the path bar and the path entry
+	  widgets, and a simple toggle button controls whether the path entry
+	  is visible. This way (nearly) the full width of the window is avail-
+	  able for the path bar. Bug #2060.
+	* thunar/thunar-gtk-extensions.{c,h}: Drop now obsolete helper function
+	  thunar_gtk_action_group_create_tool_item() as it's no longer used.
+	* thunar/thunar-location-dialog.c(thunar_location_dialog_init): Reduce
+	  translation overhead and don't use a mnemonic here. It was pretty
+	  useless anyway.
+	* thunar/thunar-preferences.c, docs/README.thunarrc: Remove now
+	  obsolete option LastLocationBar.
+	* po/POTFILES.in: Synchronize file list.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2006-08-26	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-standard-view.c(action_entries): Do not register an

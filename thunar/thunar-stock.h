@@ -22,14 +22,10 @@
 
 G_BEGIN_DECLS;
 
-/* stock icons for the ThunarLauncher */
-#define THUNAR_STOCK_DESKTOP "thunar-desktop"
-
-/* stock icons for the ThunarShortcutsPane */
-#define THUNAR_STOCK_SHORTCUTS "thunar-shortcuts"
-
-/* stock icons for the ThunarPermissionsChooser */
-#define THUNAR_STOCK_TEMPLATES "thunar-templates"
+#define THUNAR_STOCK_DESKTOP    "thunar-desktop"    /* see ThunarLauncher */
+#define THUNAR_STOCK_HOME       "thunar-home"       /* see ThunarWindow */
+#define THUNAR_STOCK_SHORTCUTS  "thunar-shortcuts"  /* see ThunarShortcutsPane */
+#define THUNAR_STOCK_TEMPLATES  "thunar-templates"  /* see ThunarWindow */
 
 void thunar_stock_init (void) G_GNUC_INTERNAL;
 

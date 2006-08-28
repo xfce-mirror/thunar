@@ -1,0 +1,26 @@
+<ui>
+
+  <!--
+    $Id$
+
+    Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+
+    Thunar navigation bar user interface description file. Do NOT
+    simply edit this file if you don't know how the whole system
+    works, because it's too easy to break something.
+  -->
+
+  <accelerator action="navbar-down-folder" />
+
+  <popup action="navbar-context-menu">
+    <menuitem action="navbar-open" />
+    <menuitem action="navbar-open-in-new-window" />
+    <separator />
+    <menuitem action="navbar-create-folder" />
+    <menuitem action="navbar-empty-trash" />
+    <separator />
+    <menuitem action="navbar-paste-into-folder" />
+    <separator />
+    <menuitem action="navbar-properties" />
+  </popup>
+</ui>

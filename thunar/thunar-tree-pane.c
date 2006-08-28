@@ -195,8 +195,8 @@ thunar_tree_pane_init (ThunarTreePane *tree_pane)
   /* configure the GtkScrolledWindow */
   gtk_scrolled_window_set_hadjustment (GTK_SCROLLED_WINDOW (tree_pane), NULL);
   gtk_scrolled_window_set_vadjustment (GTK_SCROLLED_WINDOW (tree_pane), NULL);
-  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (tree_pane), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
   gtk_scrolled_window_set_shadow_type (GTK_SCROLLED_WINDOW (tree_pane), GTK_SHADOW_IN);
+  gtk_scrolled_window_set_policy (GTK_SCROLLED_WINDOW (tree_pane), GTK_POLICY_AUTOMATIC, GTK_POLICY_AUTOMATIC);
 
   /* allocate the tree view */
   tree_pane->view = thunar_tree_view_new ();

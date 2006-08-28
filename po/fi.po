@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-26 17:25+0200\n"
+"POT-Creation-Date: 2006-08-28 19:46+0200\n"
 "PO-Revision-Date: 2006-08-17 11:42+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -540,11 +540,9 @@ msgstr ""
 "Poistetaanko kaikki tiedostot\n"
 "ja hakemistot roskakorista?"
 
-#. add the "Empty Trash" action
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
-#: ../thunar/thunar-application.c:1269
-#: ../thunar/thunar-location-buttons.c:1265
+#: ../thunar/thunar-application.c:1269 ../thunar/thunar-navigation-bar.c:148
 #: ../thunar/thunar-shortcuts-view.c:855 ../thunar/thunar-tree-view.c:1076
 #: ../plugins/thunar-tpa/main.c:49
 msgid "_Empty Trash"
@@ -828,7 +826,7 @@ msgstr "_Laajenna sarakkeet automaattisesti tarvittaessa"
 #. tell the user that we're unable to determine the file info
 #: ../thunar/thunar-column-model.c:890 ../thunar/thunar-list-model.c:727
 #: ../thunar/thunar-list-model.c:756
-#: ../thunar/thunar-permissions-chooser.c:273 ../thunar/thunar-util.c:131
+#: ../thunar/thunar-permissions-chooser.c:272 ../thunar/thunar-util.c:131
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:287
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:288
@@ -844,19 +842,34 @@ msgstr "Kompakti hakemistonäkymä"
 msgid "Compact view"
 msgstr "Kompakti näkymä"
 
-#: ../thunar/thunar-create-dialog.c:166
+#: ../thunar/thunar-create-dialog.c:165
 msgid "C_reate"
 msgstr "_Luo"
 
-#: ../thunar/thunar-create-dialog.c:181 ../thunar/thunar-standard-view.c:2207
+#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2206
 msgid "Enter the new name:"
 msgstr "Syötä uusi nimi:"
 
 #. display an error message
-#: ../thunar/thunar-create-dialog.c:529
+#: ../thunar/thunar-create-dialog.c:528
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Tiedostonimeä \"%s\" ei voi muuttaa käytössä olevaan merkistöön"
+
+#: ../thunar/thunar-dbus-service.c:392
+#, fuzzy, c-format
+msgid "Invalid filename \"%s\""
+msgstr "Tiedostonimi ei kelpaa"
+
+#. LaunchFiles() invoked without a valid working directory
+#: ../thunar/thunar-dbus-service.c:721
+msgid "The working directory must be an absolute path"
+msgstr ""
+
+#. LaunchFiles() invoked with an empty filename list
+#: ../thunar/thunar-dbus-service.c:729
+msgid "Atleast one filename must be specified"
+msgstr ""
 
 #: ../thunar/thunar-details-view.c:131
 msgid "Configure _Columns..."
@@ -1013,13 +1026,13 @@ msgstr "Kuvakenäkymä"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:137 ../thunar/thunar-launcher.c:783
-#: ../thunar/thunar-location-buttons.c:1220
-#: ../thunar/thunar-shortcuts-view.c:796 ../thunar/thunar-tree-view.c:1016
+#: ../thunar/thunar-navigation-bar.c:145 ../thunar/thunar-shortcuts-view.c:796
+#: ../thunar/thunar-tree-view.c:1016
 msgid "_Open"
 msgstr "_Avaa"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:138 ../thunar/thunar-location-buttons.c:1233
+#: ../thunar/thunar-launcher.c:138 ../thunar/thunar-navigation-bar.c:146
 #: ../thunar/thunar-shortcuts-view.c:807 ../thunar/thunar-tree-view.c:1028
 msgid "Open in New Window"
 msgstr "Avaa uudessa ikkunassa"
@@ -1224,44 +1237,81 @@ msgid_plural "%d items selected"
 msgstr[0] "%d kohde valittu"
 msgstr[1] "%d kohdetta valittu"
 
-#: ../thunar/thunar-location-buttons.c:262
-msgid "Spacing"
-msgstr "Välit"
+#: ../thunar/thunar-location-dialog.c:89
+msgid "Open Location"
+msgstr "Avaa sijainti"
 
-#: ../thunar/thunar-location-buttons.c:263
-msgid "The amount of space between the path buttons"
-msgstr "Polkupainikkeiden välinen tyhjä tila"
+#. use the "Location:" label, as this is really the current location
+#. determine the "Location:" pixel size
+#: ../thunar/thunar-location-dialog.c:103
+#: ../thunar/thunar-navigation-bar.c:306 ../thunar/thunar-navigation-bar.c:787
+#: ../thunar/thunar-navigation-bar.c:899
+#, fuzzy
+msgid "Location:"
+msgstr "_Sijainti:"
 
-#. add the "Open" action
-#: ../thunar/thunar-location-buttons.c:1219
+#. append the "Create Folder" menu action
+#: ../thunar/thunar-navigation-bar.c:147 ../thunar/thunar-standard-view.c:315
+#: ../thunar/thunar-tree-view.c:1092
+msgid "Create _Folder..."
+msgstr "Luo _hakemisto..."
+
+#: ../thunar/thunar-navigation-bar.c:148
+msgid "Delete all files and folders in the Trash"
+msgstr "Poista kaikki tiedostot ja hakemistot roskakorista"
+
+#: ../thunar/thunar-navigation-bar.c:149 ../thunar/thunar-standard-view.c:321
+msgid "Paste Into Folder"
+msgstr "Liitä hakemistoon"
+
+#: ../thunar/thunar-navigation-bar.c:150 ../thunar/thunar-renamer-dialog.c:179
+#: ../thunar/thunar-standard-view.c:316
+msgid "_Properties..."
+msgstr "_Ominaisuudet..."
+
+#. update the tooltip of the location mode button
+#: ../thunar/thunar-navigation-bar.c:290 ../thunar/thunar-navigation-bar.c:948
+msgid "Switch to path entry mode"
+msgstr ""
+
+#. ask the user to enter a name for the new folder
+#: ../thunar/thunar-navigation-bar.c:561 ../thunar/thunar-standard-view.c:1784
+#: ../thunar/thunar-tree-view.c:1448
+msgid "New Folder"
+msgstr "Uusi hakemisto"
+
+#: ../thunar/thunar-navigation-bar.c:561 ../thunar/thunar-standard-view.c:1784
+#: ../thunar/thunar-tree-view.c:1448
+msgid "Create New Folder"
+msgstr "Luo uusi hakemisto"
+
+#: ../thunar/thunar-navigation-bar.c:744 ../thunar/thunar-window.c:1181
+#, c-format
+msgid "Failed to launch \"%s\""
+msgstr "Kohteen \"%s\" suorittaminen epäonnistui"
+
+#. the user is trying to change the location, use the "Go To:" label
+#. determine the "Go To:" pixel size
+#: ../thunar/thunar-navigation-bar.c:792 ../thunar/thunar-navigation-bar.c:903
+msgid "Go To:"
+msgstr ""
+
+#: ../thunar/thunar-navigation-bar.c:831
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "Avaa \"%s\" tässä ikkunassa"
 
-#. add the "Open in New Window" action
-#: ../thunar/thunar-location-buttons.c:1232
+#: ../thunar/thunar-navigation-bar.c:837
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "Avaa \"%s\" uudessa ikkunassa"
 
-#. add the "Create Folder" action
-#: ../thunar/thunar-location-buttons.c:1250
+#: ../thunar/thunar-navigation-bar.c:842
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "Luo uusi hakemisto kohteeseen \"%s\""
 
-#. append the "Create Folder" menu action
-#: ../thunar/thunar-location-buttons.c:1251
-#: ../thunar/thunar-standard-view.c:316 ../thunar/thunar-tree-view.c:1092
-msgid "Create _Folder..."
-msgstr "Luo _hakemisto..."
-
-#: ../thunar/thunar-location-buttons.c:1265
-msgid "Delete all files and folders in the Trash"
-msgstr "Poista kaikki tiedostot ja hakemistot roskakorista"
-
-#. add the "Paste Into Folder" action
-#: ../thunar/thunar-location-buttons.c:1280
+#: ../thunar/thunar-navigation-bar.c:854
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
@@ -1269,44 +1319,24 @@ msgstr ""
 "Siirrä tai kopioi leikkaa- tai kopioi-komennolla valittuja tiedostoja "
 "kohteeseen \"%s\""
 
-#: ../thunar/thunar-location-buttons.c:1281
-#: ../thunar/thunar-standard-view.c:322
-msgid "Paste Into Folder"
-msgstr "Liitä hakemistoon"
-
-#. add the "Properties" action
-#: ../thunar/thunar-location-buttons.c:1296
+#: ../thunar/thunar-navigation-bar.c:860
 #, c-format
 msgid "View the properties of the folder \"%s\""
 msgstr "Näytä hakemiston \"%s\" ominaisuudet"
 
-#: ../thunar/thunar-location-buttons.c:1297
-msgid "_Properties"
-msgstr "_Ominaisuudet"
+#. update the tooltip of the location mode button
+#: ../thunar/thunar-navigation-bar.c:939
+msgid "Switch to path bar mode"
+msgstr ""
 
-#. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1366
-#: ../thunar/thunar-standard-view.c:1785 ../thunar/thunar-tree-view.c:1448
-msgid "New Folder"
-msgstr "Uusi hakemisto"
+#: ../thunar/thunar-path-bar.c:213
+msgid "Spacing"
+msgstr "Välit"
 
-#: ../thunar/thunar-location-buttons.c:1366
-#: ../thunar/thunar-standard-view.c:1785 ../thunar/thunar-tree-view.c:1448
-msgid "Create New Folder"
-msgstr "Luo uusi hakemisto"
-
-#: ../thunar/thunar-location-dialog.c:89
-msgid "Open Location"
-msgstr "Avaa sijainti"
-
-#: ../thunar/thunar-location-dialog.c:103
-msgid "_Location:"
-msgstr "_Sijainti:"
-
-#: ../thunar/thunar-location-entry.c:423 ../thunar/thunar-window.c:1210
-#, c-format
-msgid "Failed to launch \"%s\""
-msgstr "Kohteen \"%s\" suorittaminen epäonnistui"
+#: ../thunar/thunar-path-bar.c:214
+#, fuzzy
+msgid "The amount of space between the path buttons"
+msgstr "Polkupainikkeiden välinen tyhjä tila"
 
 #: ../thunar/thunar-path-entry.c:259
 msgid "Icon size"
@@ -1317,51 +1347,51 @@ msgid "The icon size for the path entry"
 msgstr "Polkukentän kuvakkeen koko"
 
 #. 0000
-#: ../thunar/thunar-permissions-chooser.c:246
+#: ../thunar/thunar-permissions-chooser.c:245
 msgid "None"
 msgstr "Ei mitään"
 
 #. 0002
-#: ../thunar/thunar-permissions-chooser.c:248
+#: ../thunar/thunar-permissions-chooser.c:247
 msgid "Write only"
 msgstr "Vain kirjoitus"
 
 #. 0004
-#: ../thunar/thunar-permissions-chooser.c:250
+#: ../thunar/thunar-permissions-chooser.c:249
 msgid "Read only"
 msgstr "Vain luku"
 
 #. 0006
-#: ../thunar/thunar-permissions-chooser.c:252
+#: ../thunar/thunar-permissions-chooser.c:251
 msgid "Read & Write"
 msgstr "Luku ja kirjoitus"
 
-#: ../thunar/thunar-permissions-chooser.c:263
+#: ../thunar/thunar-permissions-chooser.c:262
 msgid "Owner:"
 msgstr "Omistaja:"
 
-#: ../thunar/thunar-permissions-chooser.c:287
-#: ../thunar/thunar-permissions-chooser.c:340
+#: ../thunar/thunar-permissions-chooser.c:286
+#: ../thunar/thunar-permissions-chooser.c:339
 msgid "Access:"
 msgstr "Käyttöoikeus:"
 
-#: ../thunar/thunar-permissions-chooser.c:316
+#: ../thunar/thunar-permissions-chooser.c:315
 msgid "Group:"
 msgstr "Ryhmä:"
 
-#: ../thunar/thunar-permissions-chooser.c:369
+#: ../thunar/thunar-permissions-chooser.c:368
 msgid "Others:"
 msgstr "Muut:"
 
-#: ../thunar/thunar-permissions-chooser.c:398
+#: ../thunar/thunar-permissions-chooser.c:397
 msgid "Program:"
 msgstr "Sovellus:"
 
-#: ../thunar/thunar-permissions-chooser.c:404
+#: ../thunar/thunar-permissions-chooser.c:403
 msgid "Allow this file to _run as a program"
 msgstr "Salli tiedoston _suorittaminen sovelluksena"
 
-#: ../thunar/thunar-permissions-chooser.c:430
+#: ../thunar/thunar-permissions-chooser.c:429
 msgid ""
 "Allowing untrusted programs to run\n"
 "presents a security risk to your system."
@@ -1369,7 +1399,7 @@ msgstr ""
 "Muiden kuin luotettavien sovellusten suorituksen\n"
 "salliminen vaarantaa järjestelmäsi turvallisuuden."
 
-#: ../thunar/thunar-permissions-chooser.c:445
+#: ../thunar/thunar-permissions-chooser.c:444
 msgid ""
 "The folder permissions are inconsistent, you\n"
 "may not be able to work with files in this folder."
@@ -1377,32 +1407,32 @@ msgstr ""
 "Hakemiston käyttöoikeudet eivät ole yhtäläiset,\n"
 "et voi ehkä käyttää hakemistossa olevia tiedostoja."
 
-#: ../thunar/thunar-permissions-chooser.c:458
+#: ../thunar/thunar-permissions-chooser.c:457
 msgid "Correct folder permissions..."
 msgstr "Korjaa hakemiston käyttöoikeudet..."
 
-#: ../thunar/thunar-permissions-chooser.c:459
+#: ../thunar/thunar-permissions-chooser.c:458
 msgid "Click here to automatically fix the folder permissions."
 msgstr "Napsauta tästä korjataksesi hakemiston käyttöoikeudet automaattisesti."
 
-#: ../thunar/thunar-permissions-chooser.c:470
+#: ../thunar/thunar-permissions-chooser.c:469
 msgid "Please wait..."
 msgstr "Odota..."
 
-#: ../thunar/thunar-permissions-chooser.c:475
+#: ../thunar/thunar-permissions-chooser.c:474
 msgid "Stop applying permissions recursively."
 msgstr "Keskeytä oikeuksien muuttaminen alikansioista."
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:590
+#: ../thunar/thunar-permissions-chooser.c:589
 msgid "Question"
 msgstr "Kysymys"
 
-#: ../thunar/thunar-permissions-chooser.c:614
+#: ../thunar/thunar-permissions-chooser.c:613
 msgid "Apply recursively?"
 msgstr "Asetetaanko alihakemistoille?"
 
-#: ../thunar/thunar-permissions-chooser.c:620
+#: ../thunar/thunar-permissions-chooser.c:619
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
@@ -1410,11 +1440,11 @@ msgstr ""
 "Asetetaanko muutokset myös kaikille valitun\n"
 "hakemiston alihakemistoille ja tiedostoille?"
 
-#: ../thunar/thunar-permissions-chooser.c:625
+#: ../thunar/thunar-permissions-chooser.c:624
 msgid "Do _not ask me again"
 msgstr "_Muista valinta"
 
-#: ../thunar/thunar-permissions-chooser.c:626
+#: ../thunar/thunar-permissions-chooser.c:625
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
@@ -1424,29 +1454,29 @@ msgstr ""
 "enää. Voit muuttaa valintaasi jälkeenpäin asetusdialogin kautta."
 
 #. display an error to the user
-#: ../thunar/thunar-permissions-chooser.c:706
+#: ../thunar/thunar-permissions-chooser.c:705
 msgid "Failed to change group"
 msgstr "Ryhmän vaihtaminen epäonnistui"
 
 #. display an error to the user
-#: ../thunar/thunar-permissions-chooser.c:759
-#: ../thunar/thunar-permissions-chooser.c:1098
+#: ../thunar/thunar-permissions-chooser.c:758
+#: ../thunar/thunar-permissions-chooser.c:1097
 msgid "Failed to apply new permissions"
 msgstr "Oikeuksien asettaminen epäonnistui"
 
-#: ../thunar/thunar-permissions-chooser.c:941
+#: ../thunar/thunar-permissions-chooser.c:940
 msgid "Unknown file owner"
 msgstr "Tuntematon tiedoston omistaja"
 
-#: ../thunar/thunar-permissions-chooser.c:1072
+#: ../thunar/thunar-permissions-chooser.c:1071
 msgid "Correct folder permissions automatically?"
 msgstr "Korjataanko hakemiston käyttöoikeudet automaattisesti?"
 
-#: ../thunar/thunar-permissions-chooser.c:1074
+#: ../thunar/thunar-permissions-chooser.c:1073
 msgid "Correct folder permissions"
 msgstr "Korjaa hakemiston käyttöoikeudet"
 
-#: ../thunar/thunar-permissions-chooser.c:1076
+#: ../thunar/thunar-permissions-chooser.c:1075
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -1783,20 +1813,20 @@ msgstr "%s - Ominaisuudet"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:906
-#: ../thunar/thunar-standard-view.c:2249
+#: ../thunar/thunar-standard-view.c:2248
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Tiedoston \"%s\" nimeäminen epäonnistui"
 
-#: ../thunar/thunar-renamer-dialog.c:172 ../thunar/thunar-window.c:253
+#: ../thunar/thunar-renamer-dialog.c:172 ../thunar/thunar-window.c:251
 msgid "_File"
 msgstr "_Tiedosto"
 
-#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:255
+#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:253
 msgid "_Send To"
 msgstr "_Lähetä"
 
-#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:314
+#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:313
 msgid "File Context Menu"
 msgstr "Tiedoston kontekstivalikko"
 
@@ -1816,7 +1846,7 @@ msgstr "Tyhjennä"
 msgid "Clear the file list below"
 msgstr "Tyhjennä alla oleva tiedostolista"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:274
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:271
 msgid "_About"
 msgstr "_Tietoja"
 
@@ -1824,11 +1854,7 @@ msgstr "_Tietoja"
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Näytä tietoja Thunarin joukkonimeäjästä"
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:317
-msgid "_Properties..."
-msgstr "_Ominaisuudet..."
-
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:317
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:316
 msgid "View the properties of the selected file"
 msgstr "Näytä valitun tiedoston ominaisuudet"
 
@@ -1960,6 +1986,10 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "Lisää valittu hakemisto kirjanmerkkipaneeliin"
 msgstr[1] "Lisää valitut hakemistot kirjanmerkkipaneeliin"
 
+#: ../thunar/thunar-shortcuts-view.c:266 ../thunar/thunar-window.c:277
+msgid "_Shortcuts"
+msgstr "_Kirjanmerkit"
+
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:821 ../thunar/thunar-tree-view.c:1042
 msgid "_Mount Volume"
@@ -1985,24 +2015,24 @@ msgstr "_Poista kirjanmerkki"
 msgid "Re_name Shortcut"
 msgstr "_Nimeä kirjanmerkki uudelleen"
 
-#: ../thunar/thunar-shortcuts-view.c:1156
+#: ../thunar/thunar-shortcuts-view.c:1147
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Polku \"%s\" ei osoita hakemistoon"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1175
+#: ../thunar/thunar-shortcuts-view.c:1166
 msgid "Failed to add new shortcut"
 msgstr "Kirjanmerkin lisääminen epäonnistui"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1293 ../thunar/thunar-tree-view.c:1556
+#: ../thunar/thunar-shortcuts-view.c:1284 ../thunar/thunar-tree-view.c:1556
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Kohteen \"%s\" poistaminen asemasta epäonnistui"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1339 ../thunar/thunar-tree-view.c:950
+#: ../thunar/thunar-shortcuts-view.c:1330 ../thunar/thunar-tree-view.c:950
 #: ../thunar/thunar-tree-view.c:1607
 #, c-format
 msgid "Failed to mount \"%s\""
@@ -2010,7 +2040,7 @@ msgstr "Kohteen \"%s\" liittäminen epäonnistui"
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1383 ../thunar/thunar-tree-view.c:1747
+#: ../thunar/thunar-shortcuts-view.c:1374 ../thunar/thunar-tree-view.c:1747
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Kohteen \"%s\" irrottaminen epäonnistui"
@@ -2041,38 +2071,38 @@ msgid_plural "%u items, totalling %s"
 msgstr[0] "%u kohde, yhteensä %s"
 msgstr[1] "%u kohdetta, yhteensä %s"
 
-#: ../thunar/thunar-standard-view.c:315
+#: ../thunar/thunar-standard-view.c:314
 msgid "Folder Context Menu"
 msgstr "Hakemiston kontekstivalikko"
 
-#: ../thunar/thunar-standard-view.c:316
+#: ../thunar/thunar-standard-view.c:315
 msgid "Create an empty folder within the current folder"
 msgstr "Luo tyhjä hakemisto nykyiseen sijaintiin"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:318 ../thunar/thunar-tree-view.c:1113
+#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-tree-view.c:1113
 msgid "Cu_t"
 msgstr "L_eikkaa"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:319 ../thunar/thunar-tree-view.c:1125
+#: ../thunar/thunar-standard-view.c:318 ../thunar/thunar-tree-view.c:1125
 msgid "_Copy"
 msgstr "_Kopioi"
 
-#: ../thunar/thunar-standard-view.c:320
+#: ../thunar/thunar-standard-view.c:319
 msgid "_Paste"
 msgstr "_Liitä"
 
-#: ../thunar/thunar-standard-view.c:320
+#: ../thunar/thunar-standard-view.c:319
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr "Siirrä tai kopioi leikkaa- tai kopioi-komennolla valittuja tiedostoja"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:321 ../thunar/thunar-tree-view.c:1160
+#: ../thunar/thunar-standard-view.c:320 ../thunar/thunar-tree-view.c:1160
 msgid "_Delete"
 msgstr "_Poista"
 
-#: ../thunar/thunar-standard-view.c:322
+#: ../thunar/thunar-standard-view.c:321
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -2080,139 +2110,139 @@ msgstr ""
 "Siirrä tai kopioi leikkaa- tai kopioi-komennolla valittuja tiedostoja "
 "valittuun hakemistoon"
 
-#: ../thunar/thunar-standard-view.c:323
+#: ../thunar/thunar-standard-view.c:322
 msgid "Select _all Files"
 msgstr "Valitse k_aikki tiedostot"
 
-#: ../thunar/thunar-standard-view.c:323
+#: ../thunar/thunar-standard-view.c:322
 msgid "Select all files in this window"
 msgstr "Valitse kaikki ikkunassa näkyvät tiedostot"
 
-#: ../thunar/thunar-standard-view.c:324
+#: ../thunar/thunar-standard-view.c:323
 msgid "Select _by Pattern..."
 msgstr "Valitse _hakukaavan avulla..."
 
-#: ../thunar/thunar-standard-view.c:324
+#: ../thunar/thunar-standard-view.c:323
 msgid "Select all files that match a certain pattern"
 msgstr "Valitse kaikki tiedostot, jotka sopivat tiettyyn hakukaavaan"
 
-#: ../thunar/thunar-standard-view.c:325
+#: ../thunar/thunar-standard-view.c:324
 msgid "Du_plicate"
 msgstr "Luo k_opio"
 
-#: ../thunar/thunar-standard-view.c:326 ../thunar/thunar-standard-view.c:3371
+#: ../thunar/thunar-standard-view.c:325 ../thunar/thunar-standard-view.c:3370
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "_Luo linkki"
 msgstr[1] "_Luo linkit"
 
-#: ../thunar/thunar-standard-view.c:327
+#: ../thunar/thunar-standard-view.c:326
 msgid "_Rename..."
 msgstr "_Nimeä uudelleen..."
 
-#: ../thunar/thunar-standard-view.c:328
+#: ../thunar/thunar-standard-view.c:327
 msgid "_Restore"
 msgstr "_Palauta"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:588
+#: ../thunar/thunar-standard-view.c:587
 msgid "Create _Document"
 msgstr "Luo asiaki_rja"
 
-#: ../thunar/thunar-standard-view.c:1263
+#: ../thunar/thunar-standard-view.c:1262
 msgid "Loading folder contents..."
 msgstr "Ladataan hakemiston sisältöä..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1734
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File"
 msgstr "Luo tyhjä tiedosto"
 
-#: ../thunar/thunar-standard-view.c:1734
+#: ../thunar/thunar-standard-view.c:1733
 msgid "New Empty File..."
 msgstr "Uusi tyhjä tiedosto..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1834
+#: ../thunar/thunar-standard-view.c:1833
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Luo asiakirja mallin \"%s\" pohjalta"
 
-#: ../thunar/thunar-standard-view.c:2029
+#: ../thunar/thunar-standard-view.c:2028
 msgid "Select by Pattern"
 msgstr "Valitse hakukaavan avulla"
 
-#: ../thunar/thunar-standard-view.c:2035
+#: ../thunar/thunar-standard-view.c:2034
 msgid "_Select"
 msgstr "_Valitse"
 
-#: ../thunar/thunar-standard-view.c:2044
+#: ../thunar/thunar-standard-view.c:2043
 msgid "_Pattern:"
 msgstr "_Hakukaava:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2178
+#: ../thunar/thunar-standard-view.c:2177
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Nimeä \"%s\" uudelleen"
 
-#: ../thunar/thunar-standard-view.c:2186
+#: ../thunar/thunar-standard-view.c:2185
 msgid "_Rename"
 msgstr "_Nimeä uudelleen"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
-#: ../thunar/thunar-standard-view.c:2535
+#: ../thunar/thunar-standard-view.c:2534
 msgid "Invalid filename provided by XDS drag site"
 msgstr "XDS-raahauslähteen tarjoama tiedostonimi ei kelpaa"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2712
+#: ../thunar/thunar-standard-view.c:2711
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Linkin luominen URL:iin \"%s\" epäonnistui"
 
-#: ../thunar/thunar-standard-view.c:2975
+#: ../thunar/thunar-standard-view.c:2974
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Hakemiston \"%s\" avaaminen epäonnistui"
 
-#: ../thunar/thunar-standard-view.c:3331
+#: ../thunar/thunar-standard-view.c:3330
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Merkitse valittu tiedosto siirrettäväksi liitä-komennolla"
 msgstr[1] "Merkitse valitut tiedostot siirrettäväksi liitä-komennolla"
 
-#: ../thunar/thunar-standard-view.c:3339
+#: ../thunar/thunar-standard-view.c:3338
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Merkitse valittu tiedosto kopioitavaksi liitä-komennolla"
 msgstr[1] "Merkitse valitut tiedostot kopioitavaksi liitä-komennolla"
 
-#: ../thunar/thunar-standard-view.c:3350
+#: ../thunar/thunar-standard-view.c:3349
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Poista valittu tiedosto"
 msgstr[1] "Poista valitut tiedostot"
 
-#: ../thunar/thunar-standard-view.c:3364
+#: ../thunar/thunar-standard-view.c:3363
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Luo kopio valitusta tiedostosta"
 msgstr[1] "Luo kopiot valituista tiedostoista"
 
-#: ../thunar/thunar-standard-view.c:3373
+#: ../thunar/thunar-standard-view.c:3372
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Luo symbolinen linkki valittuun tiedostoon"
 msgstr[1] "Luo symboliset linkit valittuihin tiedostoihin"
 
-#: ../thunar/thunar-standard-view.c:3381
+#: ../thunar/thunar-standard-view.c:3380
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Nimeä valittu tiedosto uudelleen"
 msgstr[1] "Nimeä valitut tiedostot uudelleen"
 
-#: ../thunar/thunar-standard-view.c:3389
+#: ../thunar/thunar-standard-view.c:3388
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Palauta valittu tiedosto"
@@ -2231,6 +2261,10 @@ msgstr "T_yhjä tiedosto"
 #: ../thunar/thunar-tree-model.c:596
 msgid "Loading..."
 msgstr "Ladataan..."
+
+#: ../thunar/thunar-tree-view.c:394 ../thunar/thunar-window.c:278
+msgid "_Tree"
+msgstr "_Hakemistopuu"
 
 #. append the "Paste Into Folder" menu action
 #: ../thunar/thunar-tree-view.c:1142
@@ -2252,243 +2286,225 @@ msgstr "Tänään"
 msgid "Yesterday"
 msgstr "Eilen"
 
-#: ../thunar/thunar-window.c:254
+#: ../thunar/thunar-window.c:252
 msgid "Open New _Window"
 msgstr "Avaa _uusi ikkuna"
 
-#: ../thunar/thunar-window.c:254
+#: ../thunar/thunar-window.c:252
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Avaa uusi Thunar-ikkuna nykyisessä sijainnissa"
 
-#: ../thunar/thunar-window.c:256
+#: ../thunar/thunar-window.c:254
 msgid "Close _All Windows"
 msgstr "Sulje _kaikki ikkunat"
 
-#: ../thunar/thunar-window.c:256
+#: ../thunar/thunar-window.c:254
 msgid "Close all Thunar windows"
 msgstr "Sulje kaikki Thunar-ikkunat"
 
-#: ../thunar/thunar-window.c:257
+#: ../thunar/thunar-window.c:255
 msgid "_Close"
 msgstr "_Sulje"
 
-#: ../thunar/thunar-window.c:257
+#: ../thunar/thunar-window.c:255
 msgid "Close this window"
 msgstr "Sulje tämä ikkuna"
 
-#: ../thunar/thunar-window.c:258
+#: ../thunar/thunar-window.c:256
 msgid "_Edit"
 msgstr "_Muokkaa"
 
-#: ../thunar/thunar-window.c:259
+#: ../thunar/thunar-window.c:257
 msgid "Pr_eferences..."
 msgstr "A_setukset..."
 
-#: ../thunar/thunar-window.c:259
+#: ../thunar/thunar-window.c:257
 msgid "Edit Thunars Preferences"
 msgstr "Muokkaa Thunarin asetuksia"
 
-#: ../thunar/thunar-window.c:260
+#: ../thunar/thunar-window.c:258
 msgid "_View"
 msgstr "_Näytä"
 
-#: ../thunar/thunar-window.c:261
+#: ../thunar/thunar-window.c:259
 msgid "_Reload"
 msgstr "_Lataa uudelleen"
 
-#: ../thunar/thunar-window.c:261
+#: ../thunar/thunar-window.c:259
 msgid "Reload the current folder"
 msgstr "Lataa nykyinen hakemisto uudelleen"
 
-#: ../thunar/thunar-window.c:262
-msgid "_Location Selector"
-msgstr "_Sijainnin valitsin"
-
-#: ../thunar/thunar-window.c:263
+#: ../thunar/thunar-window.c:260
 msgid "_Side Pane"
 msgstr "Si_vupaneeli"
 
-#: ../thunar/thunar-window.c:264
-msgid "Zoom _In"
+#: ../thunar/thunar-window.c:261
+#, fuzzy
+msgid "Zoom I_n"
 msgstr "L_ähennä"
 
-#: ../thunar/thunar-window.c:264
+#: ../thunar/thunar-window.c:261
 msgid "Show the contents in more detail"
 msgstr "Näytä sisältö tarkemmin"
 
-#: ../thunar/thunar-window.c:265
+#: ../thunar/thunar-window.c:262
 msgid "Zoom _Out"
 msgstr "L_oitonna"
 
-#: ../thunar/thunar-window.c:265
+#: ../thunar/thunar-window.c:262
 msgid "Show the contents in less detail"
 msgstr "Näytä sisältö vähemmän tarkkaan"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:263
 msgid "Normal Si_ze"
 msgstr "_Normaalikoko"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:263
 msgid "Show the contents at the normal size"
 msgstr "Näytä sisältö normaalikoossa"
 
-#: ../thunar/thunar-window.c:267
+#: ../thunar/thunar-window.c:264
 msgid "_Go"
 msgstr "_Siirry"
 
-#: ../thunar/thunar-window.c:268
+#: ../thunar/thunar-window.c:265
 msgid "Open _Parent"
 msgstr "Avaa _ylähakemisto"
 
-#: ../thunar/thunar-window.c:268
+#: ../thunar/thunar-window.c:265
 msgid "Open the parent folder"
 msgstr "Avaa nykyisen sijainnin ylähakemisto"
 
-#: ../thunar/thunar-window.c:269
+#: ../thunar/thunar-window.c:266
 msgid "_Home"
 msgstr "_Koti"
 
-#: ../thunar/thunar-window.c:269
+#: ../thunar/thunar-window.c:266
 msgid "Go to the home folder"
 msgstr "Siirry kotihakemistoon"
 
-#: ../thunar/thunar-window.c:270
+#: ../thunar/thunar-window.c:267
 msgid "T_emplates"
 msgstr "Asiakirja_mallit"
 
-#: ../thunar/thunar-window.c:270
+#: ../thunar/thunar-window.c:267
 msgid "Go to the templates folder"
 msgstr "Siirry asiakirjamallihakemistoon"
 
-#: ../thunar/thunar-window.c:271
-msgid "Open _Location..."
+#: ../thunar/thunar-window.c:268
+#, fuzzy
+msgid "_Location..."
 msgstr "Avaa _sijainti..."
 
-#: ../thunar/thunar-window.c:271
+#: ../thunar/thunar-window.c:268
 msgid "Specify a location to open"
 msgstr "Valitse avattava sijainti"
 
-#: ../thunar/thunar-window.c:272
+#: ../thunar/thunar-window.c:269
 msgid "_Help"
 msgstr "_Ohje"
 
-#: ../thunar/thunar-window.c:273
+#: ../thunar/thunar-window.c:270
 msgid "_Contents"
 msgstr "_Sisältö"
 
-#: ../thunar/thunar-window.c:273
+#: ../thunar/thunar-window.c:270
 msgid "Display Thunar user manual"
 msgstr "Näytä Thunarin käyttöohje"
 
-#: ../thunar/thunar-window.c:274
+#: ../thunar/thunar-window.c:271
 msgid "Display information about Thunar"
 msgstr "Näytä tietoja Thunarista"
 
-#: ../thunar/thunar-window.c:279
+#: ../thunar/thunar-window.c:276
 msgid "Show _Hidden Files"
 msgstr "Näytä _piilotiedostot"
 
-#: ../thunar/thunar-window.c:279
+#: ../thunar/thunar-window.c:276
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Näyttää tai piilottaa piilotiedostot nykyisessä ikkunassa"
 
-#: ../thunar/thunar-window.c:280
-msgid "_Shortcuts"
-msgstr "_Kirjanmerkit"
-
-#: ../thunar/thunar-window.c:280
+#: ../thunar/thunar-window.c:277
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Näyttää tai piilottaa kirjanmerkkipaneelin"
 
-#: ../thunar/thunar-window.c:281
-msgid "_Tree"
-msgstr "_Hakemistopuu"
-
-#: ../thunar/thunar-window.c:281
+#: ../thunar/thunar-window.c:278
 msgid "Toggles the visibility of the tree pane"
 msgstr "Näyttää tai piilottaa hakemistopuupaneelin"
 
-#: ../thunar/thunar-window.c:282
+#: ../thunar/thunar-window.c:279
+msgid "_Main Toolbar"
+msgstr ""
+
+#: ../thunar/thunar-window.c:279
+#, fuzzy
+msgid "Change the visibility of this window's main toolbar"
+msgstr "Näyttää tai piilottaa tämän ikkunan tilapalkin"
+
+#: ../thunar/thunar-window.c:280
+#, fuzzy
+msgid "_Location Bar"
+msgstr "_Sijainti:"
+
+#: ../thunar/thunar-window.c:280
+#, fuzzy
+msgid "Change the visibility of this window's location bar"
+msgstr "Näyttää tai piilottaa tämän ikkunan tilapalkin"
+
+#: ../thunar/thunar-window.c:281
 msgid "St_atusbar"
 msgstr "Til_apalkki"
 
-#: ../thunar/thunar-window.c:282
+#: ../thunar/thunar-window.c:281
 msgid "Change the visibility of this window's statusbar"
 msgstr "Näyttää tai piilottaa tämän ikkunan tilapalkin"
 
 #.
-#. * add the location selector options
-#.
-#: ../thunar/thunar-window.c:583
-msgid "_Pathbar Style"
-msgstr "P_olkupalkki"
-
-#: ../thunar/thunar-window.c:584
-msgid "Modern approach with buttons that correspond to folders"
-msgstr "Uudenaikainen esitystapa, jossa painikkeet vastaavat hakemistoja"
-
-#: ../thunar/thunar-window.c:590
-msgid "_Toolbar Style"
-msgstr "_Työkalupalkki"
-
-#: ../thunar/thunar-window.c:591
-msgid "Traditional approach with location bar and navigation buttons"
-msgstr "Perinteinen esitystapa navigointipainikkeineen ja sijaintikenttineen"
-
-#: ../thunar/thunar-window.c:597
-msgid "_Hidden"
-msgstr "_Piilota"
-
-#: ../thunar/thunar-window.c:597
-msgid "Don't display any location selector"
-msgstr "Älä näytä sijainnin valitsinta"
-
-#.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:606
+#: ../thunar/thunar-window.c:582
 msgid "View as _Icons"
 msgstr "Näytä _kuvakkeet"
 
-#: ../thunar/thunar-window.c:606
+#: ../thunar/thunar-window.c:582
 msgid "Display folder content in an icon view"
 msgstr "Näytä hakemiston sisältö kuvakenäkymässä"
 
-#: ../thunar/thunar-window.c:613
+#: ../thunar/thunar-window.c:589
 msgid "View as _Detailed List"
 msgstr "Näytä _tiedot"
 
-#: ../thunar/thunar-window.c:613
+#: ../thunar/thunar-window.c:589
 msgid "Display folder content in a detailed list view"
 msgstr "Näytä hakemiston sisältö yksityiskohtaisessa listanäkymässä"
 
-#: ../thunar/thunar-window.c:620
+#: ../thunar/thunar-window.c:596
 msgid "View as _Compact List"
 msgstr "Näytä ko_mpakti lista"
 
-#: ../thunar/thunar-window.c:620
+#: ../thunar/thunar-window.c:596
 msgid "Display folder content in a compact list view"
 msgstr "Näytä hakemiston sisältö kompaktissa listanäkymässä"
 
-#: ../thunar/thunar-window.c:1640
+#: ../thunar/thunar-window.c:1583
 msgid "Failed to open parent folder"
 msgstr "Ylähakemiston avaaminen epäonnistui"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1666
+#: ../thunar/thunar-window.c:1609
 msgid "Failed to open home directory"
 msgstr "Kotihakemiston avaaminen epäonnistui"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:1728
+#: ../thunar/thunar-window.c:1671
 msgid "About Templates"
 msgstr "Tietoja asiakirjamalleista"
 
-#: ../thunar/thunar-window.c:1749
+#: ../thunar/thunar-window.c:1692
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Kaikki tämän kansion tiedostot näkyvät \"Luo asiakirja\" -valikossa."
 
-#: ../thunar/thunar-window.c:1756
+#: ../thunar/thunar-window.c:1699
 msgid ""
 "If you frequently create certain kinds of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2504,21 +2520,26 @@ msgstr ""
 "Tämän jälkeen voit valita kohteen \"Luo asiakirja\" -valikosta, jolloin "
 "asiakirjasta luodaan kopio näkyvillä olevaan hakemistoon."
 
-#: ../thunar/thunar-window.c:1768
+#: ../thunar/thunar-window.c:1711
 msgid "Do _not display this message again"
 msgstr "_Muista valinta"
 
-#: ../thunar/thunar-window.c:1781
+#: ../thunar/thunar-window.c:1724
 msgid "Failed to open templates folder"
 msgstr "Asiakirjamallihakemiston avaaminen epäonnistui"
 
-#: ../thunar/thunar-window.c:1817
+#: ../thunar/thunar-window.c:1760
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr ""
 "Thunar on nopea ja helppokäyttöinen\n"
 "tiedostonhallintaohjelma Xfce-ympäristöön."
+
+#. set window title and icon
+#: ../thunar/thunar-window.c:1793 ../Thunar.desktop.in.in.h:2
+msgid "File Manager"
+msgstr "Tiedostonhallinta"
 
 #: ../thunarx/thunarx-property-page.c:137
 msgid "Label"
@@ -3252,10 +3273,6 @@ msgstr "Avaa pääte tässä hakemistossa"
 msgid "Browse the filesystem with the file manager"
 msgstr "Selaa tiedostojärjestelmää tiedostonhallinnassa"
 
-#: ../Thunar.desktop.in.in.h:2
-msgid "File Manager"
-msgstr "Tiedostonhallinta"
-
 #: ../Thunar.desktop.in.in.h:3
 msgid "Thunar File Manager"
 msgstr "Thunar-tiedostonhallinta"
@@ -3271,3 +3288,28 @@ msgstr "Avaa hakemisto Thunarissa"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Avaa valitut hakemistot Thunarissa"
+
+#~ msgid "_Properties"
+#~ msgstr "_Ominaisuudet"
+
+#~ msgid "_Location Selector"
+#~ msgstr "_Sijainnin valitsin"
+
+#~ msgid "_Pathbar Style"
+#~ msgstr "P_olkupalkki"
+
+#~ msgid "Modern approach with buttons that correspond to folders"
+#~ msgstr "Uudenaikainen esitystapa, jossa painikkeet vastaavat hakemistoja"
+
+#~ msgid "_Toolbar Style"
+#~ msgstr "_Työkalupalkki"
+
+#~ msgid "Traditional approach with location bar and navigation buttons"
+#~ msgstr ""
+#~ "Perinteinen esitystapa navigointipainikkeineen ja sijaintikenttineen"
+
+#~ msgid "_Hidden"
+#~ msgstr "_Piilota"
+
+#~ msgid "Don't display any location selector"
+#~ msgstr "Älä näytä sijainnin valitsinta"

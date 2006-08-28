@@ -93,23 +93,21 @@ Thunar_SOURCES =							\
 	thunar-launcher-ui.h						\
 	thunar-list-model.c						\
 	thunar-list-model.h						\
-	thunar-location-bar.c						\
-	thunar-location-bar.h						\
-	thunar-location-button.c					\
-	thunar-location-button.h					\
-	thunar-location-buttons.c					\
-	thunar-location-buttons.h					\
-	thunar-location-buttons-ui.h					\
 	thunar-location-dialog.c					\
 	thunar-location-dialog.h					\
-	thunar-location-entry.c						\
-	thunar-location-entry.h						\
 	thunar-metafile.c						\
 	thunar-metafile.h						\
+	thunar-navigation-bar.c						\
+	thunar-navigation-bar.h						\
+	thunar-navigation-bar-ui.h					\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
 	thunar-pango-extensions.c					\
 	thunar-pango-extensions.h					\
+	thunar-path-bar.c						\
+	thunar-path-bar.h						\
+	thunar-path-button.c						\
+	thunar-path-button.h						\
 	thunar-path-entry.c						\
 	thunar-path-entry.h						\
 	thunar-permissions-chooser.c					\
@@ -243,7 +241,7 @@ DISTCLEANFILES =							\
 	thunar-abstract-icon-view-ui.h					\
 	thunar-details-view-ui.h					\
 	thunar-launcher-ui.h						\
-	thunar-location-buttons-ui.h					\
+	thunar-navigation-bar-ui.h					\
 	thunar-shortcuts-pane-ui.h					\
 	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
@@ -256,7 +254,7 @@ BUILT_SOURCES =								\
 	thunar-abstract-icon-view-ui.h					\
 	thunar-details-view-ui.h					\
 	thunar-launcher-ui.h						\
-	thunar-location-buttons-ui.h					\
+	thunar-navigation-bar-ui.h					\
 	thunar-shortcuts-pane-ui.h					\
 	thunar-renamer-dialog-ui.h					\
 	thunar-standard-view-ui.h					\
@@ -284,8 +282,8 @@ thunar-details-view-ui.h: Makefile $(srcdir)/thunar-details-view-ui.xml
 thunar-launcher-ui.h: Makefile $(srcdir)/thunar-launcher-ui.xml
 	exo-csource --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
 
-thunar-location-buttons-ui.h: Makefile $(srcdir)/thunar-location-buttons-ui.xml
-	exo-csource --static --name=thunar_location_buttons_ui $(srcdir)/thunar-location-buttons-ui.xml > thunar-location-buttons-ui.h
+thunar-navigation-bar-ui.h: Makefile $(srcdir)/thunar-navigation-bar-ui.xml
+	exo-csource --static --name=thunar_navigation_bar_ui $(srcdir)/thunar-navigation-bar-ui.xml > thunar-navigation-bar-ui.h
 
 thunar-shortcuts-pane-ui.h: Makefile $(srcdir)/thunar-shortcuts-pane-ui.xml
 	exo-csource --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h
@@ -322,8 +320,8 @@ EXTRA_DIST =								\
 	thunar-dbus-service-infos.xml					\
 	thunar-details-view-ui.xml					\
 	thunar-launcher-ui.xml						\
-	thunar-location-buttons-ui.xml					\
 	thunar-marshal.list						\
+	thunar-navigation-bar-ui.xml					\
 	thunar-renamer-dialog-ui.xml					\
 	thunar-standard-view-ui.xml					\
 	thunar-thumbnail-frame.png					\

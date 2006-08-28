@@ -58,13 +58,15 @@ enum
   PROP_LAST_DETAILS_VIEW_VISIBLE_COLUMNS,
   PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
   PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
-  PROP_LAST_LOCATION_BAR,
+  PROP_LAST_LOCATION_BAR_VISIBLE,
+  PROP_LAST_NAVIGATION_BAR_ENTRY,
   PROP_LAST_SEPARATOR_POSITION,
   PROP_LAST_SHOW_HIDDEN,
   PROP_LAST_SIDE_PANE,
   PROP_LAST_SORT_COLUMN,
   PROP_LAST_SORT_ORDER,
   PROP_LAST_STATUSBAR_VISIBLE,
+  PROP_LAST_TOOLBAR_VISIBLE,
   PROP_LAST_VIEW,
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
@@ -297,19 +299,31 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                       EXO_PARAM_READWRITE));
 
   /**
-   * ThunarPreferences:last-location-bar:
+   * ThunarPreferences:last-location-bar-visible:
    *
-   * The name of the widget class, which should be used for the
-   * location bar in #ThunarWindow<!---->s or "void" to hide the
-   * location bar.
+   * Whether to display a location bar in new windows by default.
    **/
   g_object_class_install_property (gobject_class,
-                                   PROP_LAST_LOCATION_BAR,
-                                   g_param_spec_string ("last-location-bar",
-                                                        "last-location-bar",
-                                                        "last-location-bar",
-                                                        "ThunarLocationButtons",
-                                                        EXO_PARAM_READWRITE));
+                                   PROP_LAST_LOCATION_BAR_VISIBLE,
+                                   g_param_spec_boolean ("last-location-bar-visible",
+                                                         "last-location-bar-visible",
+                                                         "last-location-bar-visible",
+                                                         TRUE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-navigation-bar-entry:
+   *
+   * Whether to use the path entry widget instead of the path bar
+   * in new windows by default.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_NAVIGATION_BAR_ENTRY,
+                                   g_param_spec_boolean ("last-navigation-bar-entry",
+                                                         "last-navigation-bar-entry",
+                                                         "last-navigation-bar-entry",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:last-separator-position:
@@ -391,6 +405,19 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          "last-statusbar-visible",
                                                          "last-statusbar-visible",
                                                          TRUE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:last-toolbar-visible:
+   *
+   * Whether to display the main toolbar in new windows by default.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_LAST_TOOLBAR_VISIBLE,
+                                   g_param_spec_boolean ("last-toolbar-visible",
+                                                         "last-toolbar-visible",
+                                                         "last-toolbar-visible",
+                                                         FALSE,
                                                          EXO_PARAM_READWRITE));
 
   /**

@@ -27,7 +27,6 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-stock.h>
 
 
 

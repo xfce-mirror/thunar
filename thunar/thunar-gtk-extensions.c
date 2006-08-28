@@ -30,46 +30,35 @@
 
 
 
-static void
-parent_set (GtkWidget *toolitem,
-            GtkWidget *old_parent,
-            GtkAction *action)
-{
-  /* the tooltips cannot be set before the toolitem has a parent */
-  g_object_notify (G_OBJECT (action), "tooltip");
-}
-
-
-
 /**
- * thunar_gtk_action_group_create_tool_item:
- * @action_group : a #GtkActionGroup.
- * @action_name  : the name of a #GtkAction in @action_group.
+ * thunar_gtk_action_set_tooltip:
+ * @action : a #GtkAction.
+ * @format : the format string for the tooltip.
+ * @...    : the parameters for @format.
  *
- * Convenience function to create a #GtkToolItem for the #GtkAction
- * named @action_name in @action_group.
- *
- * Return value: the #GtkToolItem for @action_name in @action_group.
+ * Convenience function to set a tooltip for a #GtkAction.
  **/
-GtkToolItem*
-thunar_gtk_action_group_create_tool_item (GtkActionGroup *action_group,
-                                          const gchar    *action_name)
+void
+thunar_gtk_action_set_tooltip (GtkAction   *action,
+                               const gchar *format,
+                               ...)
 {
-  GtkAction *action;
-  GtkWidget *widget;
+  va_list var_args;
+  gchar  *tooltip;
 
-  _thunar_return_val_if_fail (GTK_IS_ACTION_GROUP (action_group), NULL);
-  _thunar_return_val_if_fail (action_name != NULL, NULL);
+  _thunar_return_if_fail (g_utf8_validate (format, -1, NULL));
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
 
-  action = gtk_action_group_get_action (action_group, action_name);
-  if (G_UNLIKELY (action == NULL))
-    return NULL;
+  /* determine the tooltip */
+  va_start (var_args, format);
+  tooltip = g_strdup_vprintf (format, var_args);
+  va_end (var_args);
 
-  /* create the toolitem and take care of the tooltip work-around */
-  widget = gtk_action_create_tool_item (action);
-  g_signal_connect_object (G_OBJECT (widget), "parent-set", G_CALLBACK (parent_set), G_OBJECT (action), G_CONNECT_AFTER);
+  /* setup the tooltip for the action */
+  g_object_set (G_OBJECT (action), "tooltip", tooltip, NULL);
 
-  return GTK_TOOL_ITEM (widget);
+  /* release the tooltip */
+  g_free (tooltip);
 }
 
 

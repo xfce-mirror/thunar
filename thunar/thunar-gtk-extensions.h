@@ -24,8 +24,10 @@
 
 G_BEGIN_DECLS;
 
-GtkToolItem *thunar_gtk_action_group_create_tool_item     (GtkActionGroup *action_group,
-                                                           const gchar    *action_name) G_GNUC_INTERNAL G_GNUC_MALLOC;
+void         thunar_gtk_action_set_tooltip                (GtkAction      *action,
+                                                           const gchar    *format,
+                                                           ...) G_GNUC_INTERNAL G_GNUC_PRINTF (2, 3);
+
 void         thunar_gtk_action_group_set_action_sensitive (GtkActionGroup *action_group,
                                                            const gchar    *action_name,
                                                            gboolean        sensitive) G_GNUC_INTERNAL;

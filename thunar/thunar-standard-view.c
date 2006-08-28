@@ -43,7 +43,6 @@
 #include <thunar/thunar-renamer-dialog.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
-#include <thunar/thunar-stock.h>
 #include <thunar/thunar-templates-action.h>
 #include <thunar/thunar-text-renderer.h>
 

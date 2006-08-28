@@ -34,10 +34,9 @@
 #include <thunar/thunar-history.h>
 #include <thunar/thunar-icon-view.h>
 #include <thunar/thunar-launcher.h>
-#include <thunar/thunar-location-buttons.h>
 #include <thunar/thunar-location-dialog.h>
-#include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-marshal.h>
+#include <thunar/thunar-navigation-bar.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
@@ -112,14 +111,15 @@ static void     thunar_window_action_preferences          (GtkAction            
                                                            ThunarWindow           *window);
 static void     thunar_window_action_reload               (GtkAction              *action,
                                                            ThunarWindow           *window);
-static void     thunar_window_action_location_bar_changed (GtkRadioAction         *action,
-                                                           GtkRadioAction         *current,
-                                                           ThunarWindow           *window);
 static void     thunar_window_action_shortcuts_changed    (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_tree_changed         (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
+static void     thunar_window_action_location_bar_changed (GtkToggleAction        *action,
+                                                           ThunarWindow           *window);
 static void     thunar_window_action_statusbar_changed    (GtkToggleAction        *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_toolbar_changed      (GtkToggleAction        *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_zoom_in              (GtkAction              *action,
                                                            ThunarWindow           *window);
@@ -212,16 +212,14 @@ struct _ThunarWindow
 
   GtkWidget              *table;
   GtkWidget              *throbber;
+  GtkWidget              *toolbar;
+  GtkWidget              *location_bar;
+  GtkWidget              *navigation_bar;
   GtkWidget              *paned;
   GtkWidget              *sidepane;
   GtkWidget              *view_container;
   GtkWidget              *view;
   GtkWidget              *statusbar;
-
-  /* support for two different styles of location bars (standalone/toolbar'ed) */
-  GtkWidget              *location_standalone_box;
-  GtkWidget              *location_toolbar_box;
-  GtkWidget              *location_bar;
 
   ThunarHistory          *history;
   ThunarLauncher         *launcher;
@@ -259,16 +257,15 @@ static const GtkActionEntry action_entries[] =
   { "preferences", GTK_STOCK_PREFERENCES, N_ ("Pr_eferences..."), NULL, N_ ("Edit Thunars Preferences"), G_CALLBACK (thunar_window_action_preferences), },
   { "view-menu", NULL, N_ ("_View"), NULL, },
   { "reload", GTK_STOCK_REFRESH, N_ ("_Reload"), "<control>R", N_ ("Reload the current folder"), G_CALLBACK (thunar_window_action_reload), },
-  { "view-location-selector-menu", NULL, N_ ("_Location Selector"), NULL, },
   { "view-side-pane-menu", NULL, N_ ("_Side Pane"), NULL, },
-  { "zoom-in", GTK_STOCK_ZOOM_IN, N_ ("Zoom _In"), "<control>plus", N_ ("Show the contents in more detail"), G_CALLBACK (thunar_window_action_zoom_in), },
+  { "zoom-in", GTK_STOCK_ZOOM_IN, N_ ("Zoom I_n"), "<control>plus", N_ ("Show the contents in more detail"), G_CALLBACK (thunar_window_action_zoom_in), },
   { "zoom-out", GTK_STOCK_ZOOM_OUT, N_ ("Zoom _Out"), "<control>minus", N_ ("Show the contents in less detail"), G_CALLBACK (thunar_window_action_zoom_out), },
   { "zoom-reset", GTK_STOCK_ZOOM_100, N_ ("Normal Si_ze"), "<control>0", N_ ("Show the contents at the normal size"), G_CALLBACK (thunar_window_action_zoom_reset), },
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
-  { "open-home", GTK_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
+  { "open-home", THUNAR_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
   { "open-templates", THUNAR_STOCK_TEMPLATES, N_ ("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (thunar_window_action_open_templates), },
-  { "open-location", NULL, N_ ("Open _Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_open_location), },
+  { "open-location", NULL, N_ ("_Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_open_location), },
   { "help-menu", NULL, N_ ("_Help"), NULL, },
   { "contents", GTK_STOCK_HELP, N_ ("_Contents"), "F1", N_ ("Display Thunar user manual"), G_CALLBACK (thunar_window_action_contents), },
   { "about", GTK_STOCK_ABOUT, N_ ("_About"), NULL, N_ ("Display information about Thunar"), G_CALLBACK (thunar_window_action_about), },
@@ -279,6 +276,8 @@ static const GtkToggleActionEntry toggle_action_entries[] =
   { "show-hidden", NULL, N_ ("Show _Hidden Files"), "<control>H", N_ ("Toggles the display of hidden files in the current window"), G_CALLBACK (thunar_window_action_show_hidden), FALSE, },
   { "view-side-pane-shortcuts", NULL, N_ ("_Shortcuts"), "<control>B", N_ ("Toggles the visibility of the shortcuts pane"), G_CALLBACK (thunar_window_action_shortcuts_changed), FALSE, },
   { "view-side-pane-tree", NULL, N_ ("_Tree"), "<control>T", N_ ("Toggles the visibility of the tree pane"), G_CALLBACK (thunar_window_action_tree_changed), FALSE, },
+  { "view-toolbar", NULL, N_ ("_Main Toolbar"), NULL, N_ ("Change the visibility of this window's main toolbar"), G_CALLBACK (thunar_window_action_toolbar_changed), FALSE, },
+  { "view-location-bar", NULL, N_ ("_Location Bar"), NULL, N_ ("Change the visibility of this window's location bar"), G_CALLBACK (thunar_window_action_location_bar_changed), FALSE, },
   { "view-statusbar", NULL, N_ ("St_atusbar"), NULL, N_ ("Change the visibility of this window's statusbar"), G_CALLBACK (thunar_window_action_statusbar_changed), FALSE, },
 };
 
@@ -520,12 +519,12 @@ thunar_window_init (ThunarWindow *window)
 {
   GtkRadioAction *radio_action;
   GtkAccelGroup  *accel_group;
-  GtkAction      *action;
   GtkWidget      *menubar;
   GtkWidget      *vbox;
   GtkWidget      *item;
+  GtkAction      *action;
   gboolean        show_hidden;
-  gboolean        statusbar_visible;
+  gboolean        visible;
   GSList         *group;
   gchar          *type_name;
   GType           type;
@@ -578,29 +577,6 @@ thunar_window_init (ThunarWindow *window)
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->history), "current-directory");
 
   /*
-   * add the location selector options
-   */
-  radio_action = gtk_radio_action_new ("view-location-selector-pathbar", _("_Pathbar Style"),
-                                       _("Modern approach with buttons that correspond to folders"), NULL, THUNAR_TYPE_LOCATION_BUTTONS);
-  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
-  gtk_radio_action_set_group (radio_action, NULL);
-  group = gtk_radio_action_get_group (radio_action);
-  g_object_unref (G_OBJECT (radio_action));
-
-  radio_action = gtk_radio_action_new ("view-location-selector-toolbar", _("_Toolbar Style"),
-                                       _("Traditional approach with location bar and navigation buttons"), NULL, THUNAR_TYPE_LOCATION_ENTRY);
-  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
-  gtk_radio_action_set_group (radio_action, group);
-  group = gtk_radio_action_get_group (radio_action);
-  g_object_unref (G_OBJECT (radio_action));
-
-  radio_action = gtk_radio_action_new ("view-location-selector-hidden", _("_Hidden"), _("Don't display any location selector"), NULL, G_TYPE_NONE);
-  gtk_action_group_add_action (window->action_group, GTK_ACTION (radio_action));
-  gtk_radio_action_set_group (radio_action, group);
-  group = gtk_radio_action_get_group (radio_action);
-  g_object_unref (G_OBJECT (radio_action));
-
-  /*
    * add view options
    */
   radio_action = gtk_radio_action_new ("view-as-icons", _("View as _Icons"), _("Display folder content in an icon view"),
@@ -644,7 +620,7 @@ thunar_window_init (ThunarWindow *window)
   g_object_get (G_OBJECT (window->preferences), "last-window-width", &width, "last-window-height", &height, NULL);
   gtk_window_set_default_size (GTK_WINDOW (window), width, height);
 
-  window->table = gtk_table_new (4, 1, FALSE);
+  window->table = gtk_table_new (5, 1, FALSE);
   gtk_container_add (GTK_CONTAINER (window), window->table);
   gtk_widget_show (window->table);
 
@@ -664,12 +640,9 @@ thunar_window_init (ThunarWindow *window)
   gtk_container_add (GTK_CONTAINER (item), window->throbber);
   gtk_widget_show (window->throbber);
 
-  window->location_toolbar_box = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
-  gtk_table_attach (GTK_TABLE (window->table), window->location_toolbar_box, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-  gtk_widget_show (window->location_toolbar_box);
-
-  window->paned = g_object_new (GTK_TYPE_HPANED, "border-width", 6, NULL);
-  gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  window->paned = gtk_hpaned_new ();
+  gtk_container_set_border_width (GTK_CONTAINER (window->paned), 6);
+  gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 3, 4, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (window->paned);
 
   /* determine the last separator position and apply it to the paned view */
@@ -683,24 +656,9 @@ thunar_window_init (ThunarWindow *window)
   gtk_paned_pack2 (GTK_PANED (window->paned), vbox, TRUE, FALSE);
   gtk_widget_show (vbox);
 
-  window->location_standalone_box = gtk_alignment_new (0.0f, 0.5f, 1.0f, 1.0f);
-  gtk_box_pack_start (GTK_BOX (vbox), window->location_standalone_box, FALSE, FALSE, 0);
-  gtk_widget_show (window->location_standalone_box);
-
   window->view_container = gtk_alignment_new (0.5f, 0.5f, 1.0f, 1.0f);
   gtk_box_pack_start (GTK_BOX (vbox), window->view_container, TRUE, TRUE, 0);
   gtk_widget_show (window->view_container);
-
-  /* determine the selected location bar */
-  g_object_get (G_OBJECT (window->preferences), "last-location-bar", &type_name, NULL);
-  type = g_type_from_name (type_name);
-  g_free (type_name);
-
-  /* activate the selected location bar */
-  action = gtk_action_group_get_action (window->action_group, "view-location-selector-pathbar");
-  exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), g_type_is_a (type, THUNAR_TYPE_LOCATION_BAR) ? type : G_TYPE_NONE);
-  g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_location_bar_changed), window);
-  thunar_window_action_location_bar_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 
   /* determine the selected side pane (FIXME: Should probably be last-shortcuts-visible and last-tree-visible preferences) */
   g_object_get (G_OBJECT (window->preferences), "last-side-pane", &type_name, NULL);
@@ -723,10 +681,20 @@ thunar_window_init (ThunarWindow *window)
   type = g_type_from_name (type_name);
   g_free (type_name);
 
+  /* check if we should display the main toolbar by default */
+  g_object_get (G_OBJECT (window->preferences), "last-toolbar-visible", &visible, NULL);
+  action = gtk_action_group_get_action (window->action_group, "view-toolbar");
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
+
+  /* check if we should display the location bar by default */
+  g_object_get (G_OBJECT (window->preferences), "last-location-bar-visible", &visible, NULL);
+  action = gtk_action_group_get_action (window->action_group, "view-location-bar");
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
+
   /* check if we should display the statusbar by default */
-  g_object_get (G_OBJECT (window->preferences), "last-statusbar-visible", &statusbar_visible, NULL);
+  g_object_get (G_OBJECT (window->preferences), "last-statusbar-visible", &visible, NULL);
   action = gtk_action_group_get_action (window->action_group, "view-statusbar");
-  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), statusbar_visible);
+  gtk_toggle_action_set_active (GTK_TOGGLE_ACTION (action), visible);
 
   /* determine the last selected view if we don't have a valid default */
   if (!g_type_is_a (type, THUNAR_TYPE_VIEW))
@@ -1167,10 +1135,13 @@ thunar_window_start_open_location (ThunarWindow *window,
   GtkWidget  *dialog;
   GError     *error = NULL;
 
-  /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
-   * in the window does not support text entry by the user.
-   */
-  if (window->location_bar == NULL || !thunar_location_bar_accept_focus (THUNAR_LOCATION_BAR (window->location_bar), initial_text))
+  /* check if we have a navigation bar, otherwise bring up the "Open Location"-dialog */
+  if (G_LIKELY (window->navigation_bar != NULL))
+    {
+      /* just focus the location entry widget on the navigation bar with the given initial_text */
+      thunar_navigation_bar_open_location (THUNAR_NAVIGATION_BAR (window->navigation_bar), initial_text);
+    }
+  else
     {
       /* allocate the "Open Location" dialog */
       dialog = thunar_location_dialog_new ();
@@ -1305,116 +1276,6 @@ thunar_window_action_reload (GtkAction    *action,
 
 
 static void
-thunar_window_action_location_bar_changed (GtkRadioAction *action,
-                                           GtkRadioAction *current,
-                                           ThunarWindow   *window)
-{
-  GtkToolItem *toolitem;
-  GtkWidget   *toolbar;
-  GType        type;
-
-  /* drop the previous location bar (if any) */
-  if (G_UNLIKELY (window->location_bar != NULL))
-    {
-      gtk_widget_destroy (window->location_bar);
-      window->location_bar = NULL;
-    }
-
-  /* hide the location bar containers */
-  gtk_widget_hide (window->location_standalone_box);
-  gtk_widget_hide (window->location_toolbar_box);
-
-  /* determine the new type of location bar */
-  type = gtk_radio_action_get_current_value (action);
-
-  /* activate the new location bar */
-  if (G_LIKELY (type != G_TYPE_NONE))
-    {
-      /* initialize the new location bar widget */
-      window->location_bar = g_object_new (type, "ui-manager", window->ui_manager, NULL);
-      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->location_bar), "current-directory");
-      g_signal_connect_swapped (G_OBJECT (window->location_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
-
-      /* connect the location bar widget to the view (if any) */
-      if (G_LIKELY (window->view != NULL))
-        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->location_bar), "selected-files");
-
-      /* check if the location bar should be placed into a toolbar */
-      if (!thunar_location_bar_is_standalone (THUNAR_LOCATION_BAR (window->location_bar)))
-        {
-          /* be sure to drop any previous toolbar */
-          toolbar = gtk_bin_get_child (GTK_BIN (window->location_toolbar_box));
-          if (G_LIKELY (toolbar != NULL))
-            gtk_widget_destroy (toolbar);
-
-          /* allocate the new toolbar */
-          toolbar = gtk_toolbar_new ();
-          gtk_container_add (GTK_CONTAINER (window->location_toolbar_box), toolbar);
-          gtk_widget_show (toolbar);
-
-          /* add the "back" action */
-          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "back");
-          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
-          gtk_widget_show (GTK_WIDGET (toolitem));
-
-          /* add the "forward" action */
-          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "forward");
-          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
-          gtk_widget_show (GTK_WIDGET (toolitem));
-
-          /* add the "open-parent" action */
-          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "open-parent");
-          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
-          gtk_widget_show (GTK_WIDGET (toolitem));
-
-          /* add the "reload" action */
-          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "reload");
-          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
-          gtk_widget_show (GTK_WIDGET (toolitem));
-
-          /* add a separator */
-          toolitem = gtk_separator_tool_item_new ();
-          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
-          gtk_widget_show (GTK_WIDGET (toolitem));
-
-          /* add the "open-home" action */
-          toolitem = thunar_gtk_action_group_create_tool_item (window->action_group, "open-home");
-          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
-          gtk_widget_show (GTK_WIDGET (toolitem));
-
-          /* add a separator */
-          toolitem = gtk_separator_tool_item_new ();
-          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
-          gtk_widget_show (GTK_WIDGET (toolitem));
-
-          /* add the toolitem with the location bar */
-          toolitem = gtk_tool_item_new ();
-          gtk_tool_item_set_expand (toolitem, TRUE);
-          gtk_container_add (GTK_CONTAINER (toolitem), window->location_bar);
-          gtk_toolbar_insert (GTK_TOOLBAR (toolbar), toolitem, -1);
-          gtk_widget_show (GTK_WIDGET (toolitem));
-
-          /* make the location toolbar container visible */
-          gtk_widget_show (window->location_toolbar_box);
-        }
-      else
-        {
-          /* it's a standalone location bar, just place it in the standalone container */
-          gtk_container_add (GTK_CONTAINER (window->location_standalone_box), window->location_bar);
-          gtk_widget_show (window->location_standalone_box);
-        }
-
-      /* display the new location bar widget */
-      gtk_widget_show (window->location_bar);
-    }
-
-  /* remember the setting */
-  g_object_set (G_OBJECT (window->preferences), "last-location-bar", g_type_name (type), NULL);
-}
-
-
-
-static void
 thunar_window_action_shortcuts_changed (GtkToggleAction *action,
                                         ThunarWindow    *window)
 {
@@ -1467,6 +1328,55 @@ thunar_window_action_tree_changed (GtkToggleAction *action,
 
 
 static void
+thunar_window_action_location_bar_changed (GtkToggleAction *action,
+                                           ThunarWindow    *window)
+{
+  GtkToolItem *toolitem;
+  gboolean     active;
+
+  _thunar_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the new state of the action */
+  active = gtk_toggle_action_get_active (action);
+
+  /* check if we should drop the location bar */
+  if (!active && window->location_bar != NULL)
+    {
+      /* just get rid of the location (and thereby navigation) bar */
+      gtk_widget_destroy (window->location_bar);
+      window->navigation_bar = NULL;
+      window->location_bar = NULL;
+    }
+  else if (active && window->location_bar == NULL)
+    {
+      /* setup the location toolbar */
+      window->location_bar = gtk_toolbar_new ();
+      gtk_table_attach (GTK_TABLE (window->table), window->location_bar, 0, 1, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_widget_show (window->location_bar);
+
+      /* add the navigation bar toolitem */
+      toolitem = gtk_tool_item_new ();
+      gtk_tool_item_set_expand (toolitem, TRUE);
+      gtk_container_set_border_width (GTK_CONTAINER (toolitem), 4);
+      gtk_toolbar_insert (GTK_TOOLBAR (window->location_bar), toolitem, -1);
+      gtk_widget_show (GTK_WIDGET (toolitem));
+
+      /* add the navigation bar */
+      window->navigation_bar = g_object_new (THUNAR_TYPE_NAVIGATION_BAR, "ui-manager", window->ui_manager, NULL);
+      exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->navigation_bar), "current-directory");
+      g_signal_connect_swapped (G_OBJECT (window->navigation_bar), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
+      gtk_container_add (GTK_CONTAINER (toolitem), window->navigation_bar);
+      gtk_widget_show (window->navigation_bar);
+    }
+
+  /* remember the setting */
+  g_object_set (G_OBJECT (window->preferences), "last-location-bar-visible", active, NULL);
+}
+
+
+
+static void
 thunar_window_action_statusbar_changed (GtkToggleAction *action,
                                         ThunarWindow    *window)
 {
@@ -1489,7 +1399,7 @@ thunar_window_action_statusbar_changed (GtkToggleAction *action,
     {
       /* setup a new statusbar */
       window->statusbar = thunar_statusbar_new ();
-      gtk_table_attach (GTK_TABLE (window->table), window->statusbar, 0, 1, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_table_attach (GTK_TABLE (window->table), window->statusbar, 0, 1, 4, 5, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
       gtk_widget_show (window->statusbar);
 
       /* connect to the view (if any) */
@@ -1499,6 +1409,39 @@ thunar_window_action_statusbar_changed (GtkToggleAction *action,
 
   /* remember the setting */
   g_object_set (G_OBJECT (window->preferences), "last-statusbar-visible", active, NULL);
+}
+
+
+
+static void
+thunar_window_action_toolbar_changed (GtkToggleAction *action,
+                                      ThunarWindow    *window)
+{
+  gboolean active;
+
+  _thunar_return_if_fail (GTK_IS_TOGGLE_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the new state of the action */
+  active = gtk_toggle_action_get_active (action);
+
+  /* check if we should drop the toolbar */
+  if (!active && window->toolbar != NULL)
+    {
+      /* just remove the toolbar from the table */
+      gtk_container_remove (GTK_CONTAINER (window->table), window->toolbar);
+      window->toolbar = NULL;
+    }
+  else if (active && window->toolbar == NULL)
+    {
+      /* add the toolbar to the window */
+      window->toolbar = gtk_ui_manager_get_widget (window->ui_manager, "/main-toolbar");
+      gtk_table_attach (GTK_TABLE (window->table), window->toolbar, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_widget_show (window->toolbar);
+    }
+
+  /* remember the setting */
+  g_object_set (G_OBJECT (window->preferences), "last-toolbar-visible", active, NULL);
 }
 
 
@@ -1590,9 +1533,9 @@ thunar_window_action_view_changed (GtkRadioAction *action,
       gtk_widget_grab_focus (window->view);
       gtk_widget_show (window->view);
 
-      /* connect to the location bar (if any) */
-      if (G_LIKELY (window->location_bar != NULL))
-        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->location_bar), "selected-files");
+      /* connect to the navigation bar (if any) */
+      if (G_LIKELY (window->navigation_bar != NULL))
+        exo_binding_new (G_OBJECT (window->view), "selected-files", G_OBJECT (window->navigation_bar), "selected-files");
 
       /* connect to the sidepane (if any) */
       if (G_LIKELY (window->sidepane != NULL))
@@ -1840,16 +1783,19 @@ thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
   GdkPixbuf *icon;
+  gchar     *title;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
   _thunar_return_if_fail (window->current_directory == current_directory);
 
   /* set window title and icon */
+  title = g_strdup_printf ("%s - %s", thunar_file_get_display_name (current_directory), _("File Manager"));
   icon = thunar_icon_factory_load_file_icon (window->icon_factory, current_directory, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
-  gtk_window_set_title (GTK_WINDOW (window), thunar_file_get_display_name (current_directory));
+  gtk_window_set_title (GTK_WINDOW (window), title);
   gtk_window_set_icon (GTK_WINDOW (window), icon);
   g_object_unref (G_OBJECT (icon));
+  g_free (title);
 }
 
 
