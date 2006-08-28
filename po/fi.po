@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-28 22:07+0200\n"
-"PO-Revision-Date: 2006-08-17 11:42+0300\n"
+"POT-Creation-Date: 2006-08-29 00:54+0300\n"
+"PO-Revision-Date: 2006-08-29 01:04+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -412,7 +412,7 @@ msgstr "Ilmoita vioista osoitteeseen <%s>"
 
 #: ../thunar/thunar-abstract-icon-view.c:117
 msgid "Arran_ge Items"
-msgstr "Järj_estä"
+msgstr "Jä_rjestä"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
 msgid "Sort By _Name"
@@ -857,19 +857,19 @@ msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Tiedostonimeä \"%s\" ei voi muuttaa käytössä olevaan merkistöön"
 
 #: ../thunar/thunar-dbus-service.c:392
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid filename \"%s\""
-msgstr "Tiedostonimi ei kelpaa"
+msgstr "Tiedostonimi \"%s\" ei kelpaa"
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
 msgid "The working directory must be an absolute path"
-msgstr ""
+msgstr "Työhakemiston täytyy olla absoluuttinen polku"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
 msgid "Atleast one filename must be specified"
-msgstr ""
+msgstr "Määritä vähintään yksi tiedostonimi"
 
 #: ../thunar/thunar-details-view.c:131
 msgid "Configure _Columns..."
@@ -1246,9 +1246,8 @@ msgstr "Avaa sijainti"
 #: ../thunar/thunar-location-dialog.c:103
 #: ../thunar/thunar-navigation-bar.c:306 ../thunar/thunar-navigation-bar.c:787
 #: ../thunar/thunar-navigation-bar.c:899
-#, fuzzy
 msgid "Location:"
-msgstr "_Sijainti:"
+msgstr "Sijainti:"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-navigation-bar.c:147 ../thunar/thunar-standard-view.c:315
@@ -1272,7 +1271,7 @@ msgstr "_Ominaisuudet..."
 #. update the tooltip of the location mode button
 #: ../thunar/thunar-navigation-bar.c:290 ../thunar/thunar-navigation-bar.c:948
 msgid "Switch to path entry mode"
-msgstr ""
+msgstr "Vaihda polkusyötetilaan"
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-navigation-bar.c:561 ../thunar/thunar-standard-view.c:1784
@@ -1294,7 +1293,7 @@ msgstr "Kohteen \"%s\" suorittaminen epäonnistui"
 #. determine the "Go To:" pixel size
 #: ../thunar/thunar-navigation-bar.c:792 ../thunar/thunar-navigation-bar.c:903
 msgid "Go To:"
-msgstr ""
+msgstr "Siirry:"
 
 #: ../thunar/thunar-navigation-bar.c:831
 #, c-format
@@ -1327,16 +1326,15 @@ msgstr "Näytä hakemiston \"%s\" ominaisuudet"
 #. update the tooltip of the location mode button
 #: ../thunar/thunar-navigation-bar.c:939
 msgid "Switch to path bar mode"
-msgstr ""
+msgstr "Vaihda polkupalkkitilaan"
 
 #: ../thunar/thunar-path-bar.c:213
 msgid "Spacing"
 msgstr "Välit"
 
 #: ../thunar/thunar-path-bar.c:214
-#, fuzzy
 msgid "The amount of space between the path buttons"
-msgstr "Polkupainikkeiden välinen tyhjä tila"
+msgstr "Tyhjän tilan määrä polkupainikkeiden välissä"
 
 #: ../thunar/thunar-path-entry.c:259
 msgid "Icon size"
@@ -2133,8 +2131,8 @@ msgstr "Luo k_opio"
 #: ../thunar/thunar-standard-view.c:325 ../thunar/thunar-standard-view.c:3370
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
-msgstr[0] "_Luo linkki"
-msgstr[1] "_Luo linkit"
+msgstr[0] "L_uo linkki"
+msgstr[1] "L_uo linkit"
 
 #: ../thunar/thunar-standard-view.c:326
 msgid "_Rename..."
@@ -2339,7 +2337,6 @@ msgid "_Side Pane"
 msgstr "Si_vupaneeli"
 
 #: ../thunar/thunar-window.c:265
-#, fuzzy
 msgid "Zoom I_n"
 msgstr "L_ähennä"
 
@@ -2392,9 +2389,8 @@ msgid "Go to the templates folder"
 msgstr "Siirry asiakirjamallihakemistoon"
 
 #: ../thunar/thunar-window.c:272
-#, fuzzy
 msgid "_Location..."
-msgstr "Avaa _sijainti..."
+msgstr "_Sijainti..."
 
 #: ../thunar/thunar-window.c:272
 msgid "Specify a location to open"
@@ -2434,22 +2430,19 @@ msgstr "Näyttää tai piilottaa hakemistopuupaneelin"
 
 #: ../thunar/thunar-window.c:283
 msgid "_Main Toolbar"
-msgstr ""
+msgstr "Pää_työkalupalkki"
 
 #: ../thunar/thunar-window.c:283
-#, fuzzy
 msgid "Change the visibility of this window's main toolbar"
-msgstr "Näyttää tai piilottaa tämän ikkunan tilapalkin"
+msgstr "Näytä tai piilota tämän ikkunan työkalupalkki"
 
 #: ../thunar/thunar-window.c:284
-#, fuzzy
 msgid "_Location Bar"
-msgstr "_Sijainti:"
+msgstr "_Sijaintipalkki"
 
 #: ../thunar/thunar-window.c:284
-#, fuzzy
 msgid "Change the visibility of this window's location bar"
-msgstr "Näyttää tai piilottaa tämän ikkunan tilapalkin"
+msgstr "Näytä tai piilota tämän ikkunan sijaintipalkki"
 
 #: ../thunar/thunar-window.c:285
 msgid "St_atusbar"
@@ -2457,7 +2450,7 @@ msgstr "Til_apalkki"
 
 #: ../thunar/thunar-window.c:285
 msgid "Change the visibility of this window's statusbar"
-msgstr "Näyttää tai piilottaa tämän ikkunan tilapalkin"
+msgstr "Näytä tai piilota tämän ikkunan tilapalkki"
 
 #.
 #. * add view options
@@ -2472,7 +2465,7 @@ msgstr "Näytä hakemiston sisältö kuvakenäkymässä"
 
 #: ../thunar/thunar-window.c:596
 msgid "View as _Detailed List"
-msgstr "Näytä _tiedot"
+msgstr "Näytä ti_edot"
 
 #: ../thunar/thunar-window.c:596
 msgid "Display folder content in a detailed list view"
@@ -2490,6 +2483,7 @@ msgstr "Näytä hakemiston sisältö kompaktissa listanäkymässä"
 #: ../thunar/thunar-window.c:665
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
+"Varoitus: Käytät pääkäyttäjätiliä, voit vahingoittaa järjestelmääsi."
 
 #: ../thunar/thunar-window.c:1615
 msgid "Failed to open parent folder"
@@ -3224,9 +3218,9 @@ msgstr ""
 
 #. allocate the chooser dialog
 #: ../plugins/thunar-uca/thunar-uca-editor.c:612
-#, fuzzy, c-format
+#, c-format
 msgid "Select an Icon for \"%s\""
-msgstr "Valitse kuvake"
+msgstr "Valitse kuvake kohteelle \"%s\""
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
@@ -3293,28 +3287,3 @@ msgstr "Avaa hakemisto Thunarissa"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Avaa valitut hakemistot Thunarissa"
-
-#~ msgid "_Properties"
-#~ msgstr "_Ominaisuudet"
-
-#~ msgid "_Location Selector"
-#~ msgstr "_Sijainnin valitsin"
-
-#~ msgid "_Pathbar Style"
-#~ msgstr "P_olkupalkki"
-
-#~ msgid "Modern approach with buttons that correspond to folders"
-#~ msgstr "Uudenaikainen esitystapa, jossa painikkeet vastaavat hakemistoja"
-
-#~ msgid "_Toolbar Style"
-#~ msgstr "_Työkalupalkki"
-
-#~ msgid "Traditional approach with location bar and navigation buttons"
-#~ msgstr ""
-#~ "Perinteinen esitystapa navigointipainikkeineen ja sijaintikenttineen"
-
-#~ msgid "_Hidden"
-#~ msgstr "_Piilota"
-
-#~ msgid "Don't display any location selector"
-#~ msgstr "Älä näytä sijainnin valitsinta"
