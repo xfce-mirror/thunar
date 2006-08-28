@@ -21,6 +21,10 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_UNISTD_H
+#include <unistd.h>
+#endif
+
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-application.h>
@@ -519,7 +523,10 @@ thunar_window_init (ThunarWindow *window)
 {
   GtkRadioAction *radio_action;
   GtkAccelGroup  *accel_group;
+  GtkWidget      *separator;
   GtkWidget      *menubar;
+  GtkWidget      *label;
+  GtkWidget      *ebox;
   GtkWidget      *vbox;
   GtkWidget      *item;
   GtkAction      *action;
@@ -620,7 +627,7 @@ thunar_window_init (ThunarWindow *window)
   g_object_get (G_OBJECT (window->preferences), "last-window-width", &width, "last-window-height", &height, NULL);
   gtk_window_set_default_size (GTK_WINDOW (window), width, height);
 
-  window->table = gtk_table_new (5, 1, FALSE);
+  window->table = gtk_table_new (7, 1, FALSE);
   gtk_container_add (GTK_CONTAINER (window), window->table);
   gtk_widget_show (window->table);
 
@@ -640,9 +647,34 @@ thunar_window_init (ThunarWindow *window)
   gtk_container_add (GTK_CONTAINER (item), window->throbber);
   gtk_widget_show (window->throbber);
 
+  /* check if we need to add the root warning */
+  if (G_UNLIKELY (geteuid () == 0))
+    {
+      /* install default settings for the root warning text box */
+      gtk_rc_parse_string ("style\"thunar-window-root-style\"{bg[NORMAL]=\"#b4254b\"\nfg[NORMAL]=\"#fefefe\"}\n"
+                           "widget\"ThunarWindow.*.root-warning\"style\"thunar-window-root-style\"\n"
+                           "widget\"ThunarWindow.*.root-warning.GtkLabel\"style\"thunar-window-root-style\"\n");
+
+      /* add the box for the root warning */
+      ebox = gtk_event_box_new ();
+      gtk_widget_set_name (ebox, "root-warning");
+      gtk_table_attach (GTK_TABLE (window->table), ebox, 0, 1, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_widget_show (ebox);
+
+      /* add the label with the root warning */
+      label = gtk_label_new (_("Warning, you are using the root account, you may harm your system."));
+      gtk_misc_set_padding (GTK_MISC (label), 6, 3);
+      gtk_container_add (GTK_CONTAINER (ebox), label);
+      gtk_widget_show (label);
+
+      separator = gtk_hseparator_new ();
+      gtk_table_attach (GTK_TABLE (window->table), separator, 0, 1, 4, 5, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_widget_show (separator);
+    }
+
   window->paned = gtk_hpaned_new ();
   gtk_container_set_border_width (GTK_CONTAINER (window->paned), 6);
-  gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 3, 4, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  gtk_table_attach (GTK_TABLE (window->table), window->paned, 0, 1, 5, 6, GTK_EXPAND | GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (window->paned);
 
   /* determine the last separator position and apply it to the paned view */
@@ -1399,7 +1431,7 @@ thunar_window_action_statusbar_changed (GtkToggleAction *action,
     {
       /* setup a new statusbar */
       window->statusbar = thunar_statusbar_new ();
-      gtk_table_attach (GTK_TABLE (window->table), window->statusbar, 0, 1, 4, 5, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+      gtk_table_attach (GTK_TABLE (window->table), window->statusbar, 0, 1, 6, 7, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
       gtk_widget_show (window->statusbar);
 
       /* connect to the view (if any) */
