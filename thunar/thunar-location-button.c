@@ -465,7 +465,7 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
     }
 
   /* the image is only visible for certain special paths */
-  if (thunar_file_is_home (file) || thunar_file_is_root (file))
+  if (thunar_file_is_home (file) || thunar_file_is_desktop (file) || thunar_file_is_root (file))
     {
       /* determine the icon size for menus (to be compatible with GtkPathBar) */
       settings = gtk_settings_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (location_button)));

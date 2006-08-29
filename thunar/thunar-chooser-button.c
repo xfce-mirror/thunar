@@ -421,7 +421,6 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
   GtkIconTheme             *icon_theme;
   const gchar              *icon_name;
   GdkPixbuf                *icon;
-  GMainLoop                *loop;
   GtkWidget                *image;
   GtkWidget                *item;
   GtkWidget                *menu;
@@ -463,8 +462,6 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
 
   /* allocate a new popup menu */
   menu = gtk_menu_new ();
-  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
-  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (button));
 
   /* determine the icon size for menus */
   gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_size, &icon_size);
@@ -492,6 +489,9 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
         g_object_unref (icon);
     }
 
+  /* cleanup */
+  g_object_unref (G_OBJECT (icon_factory));
+
   /* append a separator */
   item = gtk_separator_menu_item_new ();
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
@@ -506,24 +506,12 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
-  /* allocate a new loop and connect it to the menu */
-  loop = g_main_loop_new (NULL, FALSE);
-  g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-
   /* make sure the menu has atleast the same width as the chooser */
   if (menu->allocation.width < button->allocation.width)
     gtk_widget_set_size_request (menu, button->allocation.width, -1);
 
-  /* run the menu */
-  gtk_grab_add (menu);
-  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, menu_position, button, 0, gtk_get_current_event_time ());
-  g_main_loop_run (loop);
-  gtk_grab_remove (menu);
-  g_main_loop_unref (loop);
-
-  /* cleanup */
-  g_object_unref (G_OBJECT (icon_factory));
-  g_object_unref (G_OBJECT (menu));
+  /* run the menu on the button's screen (takes over the floating reference of menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu), button, menu_position, button, 0, gtk_get_current_event_time ());
 
   /* yeppa, that's a requirement */
   gtk_button_released (GTK_BUTTON (button));

@@ -28,6 +28,7 @@
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
@@ -991,7 +992,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   GtkWidget       *image;
   GtkWidget       *menu;
   GtkWidget       *item;
-  GMainLoop       *loop;
 
   /* verify that we're connected to the clipboard manager */
   if (G_UNLIKELY (view->clipboard == NULL))
@@ -1003,14 +1003,8 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
                       THUNAR_TREE_MODEL_COLUMN_VOLUME, &volume,
                       -1);
 
-  /* prepare the internal loop */
-  loop = g_main_loop_new (NULL, FALSE);
-
   /* prepare the popup menu */
   menu = gtk_menu_new ();
-  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (view)));
-  g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
   /* append the "Open" menu action */
   item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
@@ -1191,20 +1185,15 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
   gtk_widget_show (image);
 
-  /* run the internal main loop */
-  gtk_grab_add (menu);
-  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, (event != NULL) ? event->button : 0,
-                  (event != NULL) ? event->time : gtk_get_current_event_time ());
-  g_main_loop_run (loop);
-  gtk_grab_remove (menu);
+  /* run the menu on the view's screen (taking over the floating reference on the menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL, (event != NULL) ? event->button : 0,
+                       (event != NULL) ? event->time : gtk_get_current_event_time ());
 
   /* cleanup */
   if (G_UNLIKELY (volume != NULL))
     g_object_unref (G_OBJECT (volume));
   if (G_LIKELY (file != NULL))
     g_object_unref (G_OBJECT (file));
-  g_object_unref (G_OBJECT (menu));
-  g_main_loop_unref (loop);
 }
 
 

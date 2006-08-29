@@ -248,7 +248,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 {
   ThunarVfsVolume *volume;
   ThunarShortcut  *shortcut;
-  ThunarVfsPath   *system_path_list[3] = { thunar_vfs_path_get_for_home (), thunar_vfs_path_get_for_trash (), thunar_vfs_path_get_for_root () };
+  ThunarVfsPath   *system_path_list[4];
   ThunarVfsPath   *fhome;
   ThunarVfsPath   *fpath;
   GtkTreePath     *path;
@@ -263,6 +263,12 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   model->volume_manager = thunar_vfs_volume_manager_get_default ();
   g_signal_connect (G_OBJECT (model->volume_manager), "volumes-added", G_CALLBACK (thunar_shortcuts_model_volumes_added), model);
   g_signal_connect (G_OBJECT (model->volume_manager), "volumes-removed", G_CALLBACK (thunar_shortcuts_model_volumes_removed), model);
+
+  /* determine the system-defined paths */
+  system_path_list[0] = thunar_vfs_path_get_for_home ();
+  system_path_list[1] = thunar_vfs_path_get_for_trash ();
+  system_path_list[2] = thunar_vfs_path_relative (system_path_list[0], "Desktop");
+  system_path_list[3] = thunar_vfs_path_get_for_root ();
 
   /* will be used to append the shortcuts to the list */
   path = gtk_tree_path_new_from_indices (0, -1);

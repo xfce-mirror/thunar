@@ -577,7 +577,6 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
   GtkWidget                *image;
   GtkWidget                *item;
   GtkWidget                *menu;
-  GMainLoop                *loop;
 
   _thunar_return_val_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog), FALSE);
 
@@ -591,14 +590,8 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
   if (G_UNLIKELY (mime_application == NULL))
     return FALSE;
 
-  /* prepare the internal loop */
-  loop = g_main_loop_new (NULL, FALSE);
-
   /* prepare the popup menu */
   menu = gtk_menu_new ();
-  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (dialog)));
-  g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
   /* append the "Remove Launcher" item */
   item = gtk_image_menu_item_new_with_mnemonic (_("_Remove Launcher"));
@@ -611,16 +604,11 @@ thunar_chooser_dialog_context_menu (ThunarChooserDialog *dialog,
   gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
   gtk_widget_show (image);
 
-  /* run the internal loop */
-  gtk_grab_add (menu);
-  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, button, time);
-  g_main_loop_run (loop);
-  gtk_grab_remove (menu);
+  /* run the menu on the dialog's screen (takes over the floating of menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (dialog), NULL, NULL, button, time);
 
   /* clean up */
   g_object_unref (G_OBJECT (mime_application));
-  g_object_unref (G_OBJECT (menu));
-  g_main_loop_unref (loop);
 
   return TRUE;
 }

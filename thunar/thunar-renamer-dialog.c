@@ -852,11 +852,9 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
 {
   GtkActionGroup *renamer_actions = NULL;
   ThunarxRenamer *renamer;
-  GMainLoop      *loop;
   GtkWidget      *menu;
   GList          *actions = NULL;
   GList          *lp;
-  guint           id;
   gint            renamer_merge_id = 0;
 
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
@@ -904,26 +902,9 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
       g_list_free (actions);
     }
 
-  /* determine the menu and take a reference */
+  /* run the menu on the dialog's screen */
   menu = gtk_ui_manager_get_widget (renamer_dialog->ui_manager, "/file-context-menu");
-  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
-
-  /* setup the main loop and connect it to the menu */
-  loop = g_main_loop_new (NULL, FALSE);
-  id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-
-  /* make sure the menu is on the proper screen */
-  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (renamer_dialog)));
-
-  /* run our custom main loop */
-  gtk_grab_add (menu);
-  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, button, time);
-  g_main_loop_run (loop);
-  g_main_loop_unref (loop);
-  gtk_grab_remove (menu);
-
-  /* unlink the deactivate callback */
-  g_signal_handler_disconnect (G_OBJECT (menu), id);
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (renamer_dialog), NULL, NULL, button, time);
 
   /* remove the previously merge items from the UI manager */
   if (G_UNLIKELY (renamer_merge_id != 0))
@@ -941,9 +922,6 @@ thunar_renamer_dialog_context_menu (ThunarRenamerDialog *renamer_dialog,
 
   /* release the additional reference on the dialog */
   g_object_unref (G_OBJECT (renamer_dialog));
-
-  /* decrease the reference count on the menu */
-  g_object_unref (G_OBJECT (menu));
 }
 
 

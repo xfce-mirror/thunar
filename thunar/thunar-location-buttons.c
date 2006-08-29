@@ -1224,9 +1224,7 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
   const gchar            *display_name;
   ThunarFile             *file;
   GtkAction              *action;
-  GMainLoop              *loop;
   GtkWidget              *menu;
-  guint                   signal_id;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
   _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
@@ -1281,25 +1279,13 @@ thunar_location_buttons_context_menu (ThunarLocationButton  *button,
           thunar_gtk_action_set_tooltip (action, _("View the properties of the folder \"%s\""), display_name);
           g_object_set_data_full (G_OBJECT (action), I_("thunar-file"), g_object_ref (G_OBJECT (file)), (GDestroyNotify) g_object_unref);
 
-          /* determine the menu widget */
+          /* run the menu on the screen on the buttons' screen */
           menu = gtk_ui_manager_get_widget (buttons->ui_manager, "/location-buttons-context-menu");
-          gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (buttons)));
-          exo_gtk_object_ref_sink (GTK_OBJECT (menu));
-
-          /* run an internal main loop */
-          gtk_grab_add (menu);
-          loop = g_main_loop_new (NULL, FALSE);
-          signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-          gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, event->button, event->time);
-          g_main_loop_run (loop);
-          g_signal_handler_disconnect (G_OBJECT (menu), signal_id);
-          g_main_loop_unref (loop);
-          gtk_grab_remove (menu);
+          thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (buttons), NULL, NULL, event->button, event->time);
 
           /* cleanup */
           g_object_unref (G_OBJECT (buttons));
           g_object_unref (G_OBJECT (clipboard));
-          g_object_unref (G_OBJECT (menu));
         }
     }
 }

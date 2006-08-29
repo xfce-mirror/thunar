@@ -1,5 +1,19 @@
 2006-08-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-file.{c,h}, thunar/thunar-location-button.c,
+	  thunar/thunar-shortcuts-model.c: Add desktop shortcut to the
+	  shortcuts pane, and use a special icon for the desktop folder.
+	  Bug #2235.
+	* thunar/thunar-chooser-button.c, thunar/thunar-chooser-dialog.c,
+	  thunar/thunar-gtk-extensions.{c,h}, thunar/thunar-location-buttons.c,
+	  thunar/thunar-renamer-dialog.c, thunar/thunar-shortcuts-view.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-tree-view.c: Add helper
+	  method thunar_gtk_menu_run(), which takes care of running a GtkMenu
+	  in a separate main loop, placing the menu on the appropriate screen
+	  first.
+
+2006-08-29	Benedikt Meurer <benny@xfce.org>
+
 	* docs/README.gtkrc, docs/README.thunarrc, thunar/: Revert location bar
 	  related changes to the previous user interface, because the new user
 	  interface wastes too much space, and makes the file manager look busy.

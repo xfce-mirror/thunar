@@ -443,6 +443,18 @@ G_STMT_START{                                             \
 #define thunar_file_is_home(file) (thunar_vfs_path_is_home (THUNAR_FILE ((file))->info->path))
 
 /**
+ * thunar_file_is_desktop:
+ * @file : a #ThunarFile.
+ *
+ * Checks whether @file refers to the users desktop directory.
+ *
+ * Return value: %TRUE if @file is the users desktop directory.
+ **/
+#define thunar_file_is_desktop(file) (!thunar_vfs_path_is_root (thunar_file_get_path (file))                              \
+                                   && thunar_vfs_path_is_home (thunar_vfs_path_get_parent (thunar_file_get_path (file)))  \
+                                   && exo_str_is_equal (thunar_file_get_display_name (file), "Desktop"))
+
+/**
  * thunar_file_is_regular:
  * @file : a #ThunarFile.
  *

@@ -36,6 +36,7 @@
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-renderer.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-private.h>
@@ -3136,55 +3137,26 @@ thunar_standard_view_context_menu (ThunarStandardView *standard_view,
                                    guint               button,
                                    guint32             time)
 {
-  GMainLoop  *loop;
-  GtkWidget  *menu;
-  GList      *selected_items;
-  guint       id;
+  GtkWidget *menu;
+  GList     *selected_items;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* determine the selected items */
-  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
-
   /* merge the custom menu actions for the selected items */
+  selected_items = (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->get_selected_items) (standard_view);
   thunar_standard_view_merge_custom_actions (standard_view, selected_items);
-
-  /* check if we need to popup the file or the folder context menu */
-  menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
-
-  /* release the selected items */
   g_list_foreach (selected_items, (GFunc) gtk_tree_path_free, NULL);
   g_list_free (selected_items);
-
-  /* take a reference on the context menu */
-  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
   /* grab an additional reference on the view */
   g_object_ref (G_OBJECT (standard_view));
 
-  loop = g_main_loop_new (NULL, FALSE);
-
-  /* connect the deactivate handler */
-  id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-
-  /* make sure the menu is on the proper screen */
-  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (standard_view)));
-
-  /* run our custom main loop */
-  gtk_grab_add (menu);
-  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, button, time);
-  g_main_loop_run (loop);
-  g_main_loop_unref (loop);
-  gtk_grab_remove (menu);
-
-  /* unlink the deactivate callback */
-  g_signal_handler_disconnect (G_OBJECT (menu), id);
+  /* run the menu on the view's screen (figuring out whether to use the file or the folder context menu) */
+  menu = gtk_ui_manager_get_widget (standard_view->ui_manager, (selected_items != NULL) ? "/file-context-menu" : "/folder-context-menu");
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (standard_view), NULL, NULL, button, time);
 
   /* release the additional reference on the view */
   g_object_unref (G_OBJECT (standard_view));
-
-  /* decrease the reference count on the menu */
-  g_object_unref (G_OBJECT (menu));
 }
 
 

@@ -1482,7 +1482,6 @@ GList*
 thunar_file_get_emblem_names (ThunarFile *file)
 {
   const ThunarVfsInfo *info = file->info;
-  const ThunarVfsPath *parent;
   const gchar         *emblem_string;
   gchar              **emblem_names;
   GList               *emblems = NULL;
@@ -1508,13 +1507,6 @@ thunar_file_get_emblem_names (ThunarFile *file)
     {
       for (; *emblem_names != NULL; ++emblem_names)
         emblems = g_list_append (emblems, *emblem_names);
-    }
-
-  if (G_UNLIKELY (strcmp (info->display_name, "Desktop") == 0))
-    {
-      parent = thunar_vfs_path_get_parent (info->path);
-      if (G_LIKELY (parent != NULL) && thunar_vfs_path_is_home (parent))
-        emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_DESKTOP);
     }
 
   if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
@@ -1623,6 +1615,13 @@ thunar_file_get_icon_name (const ThunarFile   *file,
     {
       return "gnome-fs-home";
     }
+
+  /* special icon for the desktop node */
+  if (G_UNLIKELY (thunar_file_is_desktop (file))
+      && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-desktop"))
+   {
+     return "gnome-fs-desktop";
+   }
 
   /* try to be smart when determining icons for executable files
    * in that we use the name of the file as icon name (which will

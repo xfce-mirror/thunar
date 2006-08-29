@@ -25,6 +25,8 @@
 #include <stdarg.h>
 #endif
 
+#include <exo/exo.h>
+
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 
@@ -129,6 +131,63 @@ thunar_gtk_icon_factory_insert_icon (GtkIconFactory *icon_factory,
   gtk_icon_factory_add (icon_factory, stock_id, icon_set);
   gtk_icon_source_free (icon_source);
   gtk_icon_set_unref (icon_set);
+}
+
+
+
+/**
+ * thunar_gtk_menu_run:
+ * @menu          : a #GtkMenu.
+ * @parent        : either a #GtkWidget or a #GdkScreen which determines the screen
+ *                  on which to run the @menu. May also be %NULL, which means that
+ *                  the screen of @menu will not be altered.
+ * @func          : a user supplied function used to position the menu, or %NULL.
+ * @data          : user supplied data to be passed to @func.
+ * @button        : the mouse button which was pressed to initiate the event.
+ * @activate_time : the time at which the activation event occurred.
+ *
+ * A simple wrapper around gtk_menu_popup(), which runs the @menu in a separate
+ * main loop and returns only after the @menu was deactivated.
+ *
+ * This method automatically takes over the floating reference of @menu if any and
+ * releases it on return. That means if you created the menu via gtk_menu_new() you'll
+ * not need to take care of destroying the menu later.
+ **/
+void
+thunar_gtk_menu_run (GtkMenu            *menu,
+                     gpointer            parent,
+                     GtkMenuPositionFunc func,
+                     gpointer            data,
+                     guint               button,
+                     guint32             activate_time)
+{
+  GMainLoop *loop;
+  guint      signal_id;
+
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (GTK_IS_MENU (menu));
+
+  /* take over the floating reference on the menu */
+  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
+
+  /* place the menu on the same screen as the parent */
+  if (G_UNLIKELY (parent != NULL && GDK_IS_SCREEN (parent)))
+    gtk_menu_set_screen (menu, GDK_SCREEN (parent));
+  else if (G_LIKELY (parent != NULL && GTK_IS_WIDGET (parent)))
+    gtk_menu_set_screen (menu, gtk_widget_get_screen (GTK_WIDGET (parent)));
+
+  /* run an internal main loop */
+  gtk_grab_add (GTK_WIDGET (menu));
+  loop = g_main_loop_new (NULL, FALSE);
+  signal_id = g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
+  gtk_menu_popup (menu, NULL, NULL, func, data, button, activate_time);
+  g_main_loop_run (loop);
+  g_signal_handler_disconnect (G_OBJECT (menu), signal_id);
+  g_main_loop_unref (loop);
+  gtk_grab_remove (GTK_WIDGET (menu));
+
+  /* release the menu reference */
+  g_object_unref (G_OBJECT (menu));
 }
 
 

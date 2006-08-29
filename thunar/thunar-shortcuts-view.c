@@ -27,6 +27,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
@@ -768,7 +769,6 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   GtkWidget       *image;
   GtkWidget       *menu;
   GtkWidget       *item;
-  GMainLoop       *loop;
   gboolean         mutable;
 
   /* determine the tree path for the given iter */
@@ -783,14 +783,8 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
                       THUNAR_SHORTCUTS_MODEL_COLUMN_MUTABLE, &mutable, 
                       -1);
 
-  /* prepare the internal loop */
-  loop = g_main_loop_new (NULL, FALSE);
-
   /* prepare the popup menu */
   menu = gtk_menu_new ();
-  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (GTK_WIDGET (view)));
-  g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
   /* append the "Open" menu action */
   item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
@@ -889,21 +883,16 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
-  /* run the internal loop */
-  gtk_grab_add (menu);
-  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, (event != NULL) ? event->button : 0,
-                  (event != NULL) ? event->time : gtk_get_current_event_time ());
-  g_main_loop_run (loop);
-  gtk_grab_remove (menu);
+  /* run the menu on the view's screen (taking over the floating reference on menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu), GTK_WIDGET (view), NULL, NULL, (event != NULL) ? event->button : 0,
+                       (event != NULL) ? event->time : gtk_get_current_event_time ());
 
   /* clean up */
   if (G_LIKELY (file != NULL))
     g_object_unref (G_OBJECT (file));
   if (G_UNLIKELY (volume != NULL))
     g_object_unref (G_OBJECT (volume));
-  g_object_unref (G_OBJECT (menu));
   gtk_tree_path_free (path);
-  g_main_loop_unref (loop);
 }
 
 
