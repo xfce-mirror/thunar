@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-08-29 16:46+0200\n"
-"PO-Revision-Date: 2006-08-20 01:07+0800\n"
+"PO-Revision-Date: 2006-08-29 23:25+0800\n"
 "Last-Translator: Cosmo Chene <cosmolax@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
@@ -844,19 +844,19 @@ msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "無法將檔名 \"%s\" 轉成本地編碼"
 
 #: ../thunar/thunar-dbus-service.c:392
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid filename \"%s\""
-msgstr "無效的檔名"
+msgstr "無效的檔名 \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
 msgid "The working directory must be an absolute path"
-msgstr ""
+msgstr "工作目錄必需是絕對路徑"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
 msgid "Atleast one filename must be specified"
-msgstr ""
+msgstr "最少要指定一個檔案名稱"
 
 #: ../thunar/thunar-details-view.c:131
 msgid "Configure _Columns..."
@@ -1149,7 +1149,7 @@ msgstr "連結失效"
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
-msgstr[0] "%d 個項目，可用空間 %s"
+msgstr[0] "%d 個項目 (%s)，可用空間 %s"
 
 #. just the standard text
 #: ../thunar/thunar-list-model.c:2212
@@ -1277,7 +1277,7 @@ msgstr "開啟位址"
 
 #: ../thunar/thunar-location-dialog.c:103
 msgid "_Location:"
-msgstr "位址(_L)"
+msgstr "位址(_L)："
 
 #: ../thunar/thunar-location-entry.c:401 ../thunar/thunar-window.c:1295
 #, c-format
@@ -1870,7 +1870,6 @@ msgstr[0] "移除檔案"
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] "將所選的檔案從重新命名檔案清單中排除"
-msgstr[1] "將所選的檔案從重新命名檔案清單中排除"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1702
@@ -2254,9 +2253,8 @@ msgid "_Side Pane"
 msgstr "側邊欄(_S)"
 
 #: ../thunar/thunar-window.c:272
-#, fuzzy
 msgid "Zoom I_n"
-msgstr "放大檢視(_I)"
+msgstr "放大檢視(_N)"
 
 #: ../thunar/thunar-window.c:272
 msgid "Show the contents in more detail"
@@ -2307,13 +2305,12 @@ msgid "Go to the templates folder"
 msgstr "前往模板資料夾"
 
 #: ../thunar/thunar-window.c:279
-#, fuzzy
 msgid "_Open Location..."
-msgstr "開啟位置(_L)..."
+msgstr "開啟位址(_O)..."
 
 #: ../thunar/thunar-window.c:279
 msgid "Specify a location to open"
-msgstr "指定要開啟的位置"
+msgstr "指定要開啟的位址"
 
 #: ../thunar/thunar-window.c:280
 msgid "_Help"
@@ -2409,7 +2406,7 @@ msgstr "以簡潔清單檢視方式顯示資料夾內容"
 #. add the label with the root warning
 #: ../thunar/thunar-window.c:671
 msgid "Warning, you are using the root account, you may harm your system."
-msgstr ""
+msgstr "警告：您正使用 root 帳號，您可能會損害您的系統。"
 
 #: ../thunar/thunar-window.c:1675
 msgid "Failed to open parent folder"
@@ -3133,9 +3130,9 @@ msgstr ""
 
 #. allocate the chooser dialog
 #: ../plugins/thunar-uca/thunar-uca-editor.c:612
-#, fuzzy, c-format
+#, c-format
 msgid "Select an Icon for \"%s\""
-msgstr "選擇圖示"
+msgstr "選擇圖示給 \"%s\""
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format
@@ -3200,6 +3197,27 @@ msgstr "以 Thunar 開啟資料夾"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "在·Thunar中開啟指定的資料夾"
+
+#~ msgid "Go To:"
+#~ msgstr "前往："
+
+#~ msgid "Switch to path bar mode"
+#~ msgstr "切換到路徑列模式"
+
+#~ msgid "_Location..."
+#~ msgstr "開啟位址(_L)..."
+
+#~ msgid "_Main Toolbar"
+#~ msgstr "主要工作列(_M)"
+
+#~ msgid "Change the visibility of this window's main toolbar"
+#~ msgstr "設定是否顯示目前視窗的主要工作列"
+
+#~ msgid "_Location Bar"
+#~ msgstr "位址列(_L)"
+
+#~ msgid "Change the visibility of this window's location bar"
+#~ msgstr "設定是否顯示目前視窗的位址列"
 
 #~ msgid "_Properties"
 #~ msgstr "內容(_P)"
