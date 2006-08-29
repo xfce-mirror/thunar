@@ -1,5 +1,14 @@
 2006-08-29	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-column-editor.c, thunar/thunar-preferences-dialog.c,
+	  thunar/thunar-gtk-extensions.{c,h}, thunar/thunar-location-dialog.c,
+	  thunar/thunar-permissions-chooser.c, thunar/thunar-create-dialog.c:
+	  Add helper function thunar_gtk_label_set_a11y_relation(), which sets
+	  up the ATK_RELATION_LABEL_FOR for a label and a widget, so we don't
+	  need to repeat the same code over and over again.
+
+2006-08-29	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-file.{c,h}, thunar/thunar-location-button.c,
 	  thunar/thunar-shortcuts-model.c: Add desktop shortcut to the
 	  shortcuts pane, and use a special icon for the desktop folder.

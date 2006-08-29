@@ -196,21 +196,18 @@ thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 static void
 thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 {
-  AtkRelationSet *relations;
-  GtkAdjustment  *adjustment;
-  AtkRelation    *relation;
-  AtkObject      *object;
-  GtkWidget      *notebook;
-  GtkWidget      *button;
-  GtkWidget      *align;
-  GtkWidget      *combo;
-  GtkWidget      *frame;
-  GtkWidget      *label;
-  GtkWidget      *range;
-  GtkWidget      *table;
-  GtkWidget      *hbox;
-  GtkWidget      *ibox;
-  GtkWidget      *vbox;
+  GtkAdjustment *adjustment;
+  GtkWidget     *notebook;
+  GtkWidget     *button;
+  GtkWidget     *align;
+  GtkWidget     *combo;
+  GtkWidget     *frame;
+  GtkWidget     *label;
+  GtkWidget     *range;
+  GtkWidget     *table;
+  GtkWidget     *hbox;
+  GtkWidget     *ibox;
+  GtkWidget     *vbox;
 
   /* grab a reference on the preferences */
   dialog->preferences = thunar_preferences_get ();
@@ -273,15 +270,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "default-view", G_OBJECT (combo), "active",
                                transform_view_string_to_index, transform_view_index_to_string, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
-
-  /* set Atk label relation for the combo */
-  object = gtk_widget_get_accessible (combo);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   button = gtk_check_button_new_with_mnemonic (_("Sort _folders before files"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-folders-first", G_OBJECT (button), "active");
@@ -363,15 +354,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "shortcuts-icon-size", G_OBJECT (combo), "active",
                                transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
-
-  /* set Atk label relation for the combo */
-  object = gtk_widget_get_accessible (combo);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   button = gtk_check_button_new_with_mnemonic (_("Show Icon _Emblems"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "shortcuts-icon-emblems", G_OBJECT (button), "active");
@@ -414,15 +399,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "tree-icon-size", G_OBJECT (combo), "active",
                                transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
-
-  /* set Atk label relation for the combo */
-  object = gtk_widget_get_accessible (combo);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   button = gtk_check_button_new_with_mnemonic (_("Show Icon E_mblems"));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "tree-icon-emblems", G_OBJECT (button), "active");
@@ -495,19 +474,13 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                           "useful when single clicks activate items, and you want only to select the item "
                                           "without activating it."));
   gtk_box_pack_start (GTK_BOX (ibox), range, FALSE, FALSE, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), range);
   gtk_label_set_mnemonic_widget (GTK_LABEL (label), range);
   gtk_widget_show (range);
 
   /* connect the range's adjustment to the preferences */
   adjustment = gtk_range_get_adjustment (GTK_RANGE (range));
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-single-click-timeout", G_OBJECT (adjustment), "value");
-
-  /* set Atk label relation for the range */
-  object = gtk_widget_get_accessible (range);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   hbox = gtk_hbox_new (TRUE, 6);
   gtk_box_pack_start (GTK_BOX (ibox), hbox, FALSE, FALSE, 0);
@@ -579,14 +552,8 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 #endif
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-recursive-permissions", G_OBJECT (combo), "active");
   gtk_table_attach (GTK_TABLE (table), combo, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
   gtk_widget_show (combo);
-
-  /* set Atk label relation for the combo */
-  object = gtk_widget_get_accessible (combo);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 }
 
 

@@ -21,6 +21,7 @@
 #include <config.h>
 #endif
 
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-location-dialog.h>
 #include <thunar/thunar-path-entry.h>
 #include <thunar/thunar-private.h>
@@ -74,13 +75,10 @@ transform_object_to_boolean (const GValue *src_value,
 static void
 thunar_location_dialog_init (ThunarLocationDialog *location_dialog)
 {
-  AtkRelationSet *relations;
-  AtkRelation    *relation;
-  AtkObject      *object;
-  GtkWidget      *cancel_button;
-  GtkWidget      *open_button;
-  GtkWidget      *hbox;
-  GtkWidget      *label;
+  GtkWidget *cancel_button;
+  GtkWidget *open_button;
+  GtkWidget *hbox;
+  GtkWidget *label;
 
   gtk_box_set_spacing (GTK_BOX (GTK_DIALOG (location_dialog)->vbox), 2);
   gtk_container_set_border_width (GTK_CONTAINER (location_dialog), 5);
@@ -107,14 +105,9 @@ thunar_location_dialog_init (ThunarLocationDialog *location_dialog)
   location_dialog->entry = thunar_path_entry_new ();
   gtk_entry_set_activates_default (GTK_ENTRY (location_dialog->entry), TRUE);
   gtk_box_pack_start (GTK_BOX (hbox), location_dialog->entry, TRUE, TRUE, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), location_dialog->entry);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), location_dialog->entry);
   gtk_widget_show (location_dialog->entry);
-
-  /* set Atk label relation for the entry */
-  object = gtk_widget_get_accessible (location_dialog->entry);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   /* the "Open" button is only sensitive if a valid file is entered */
   exo_binding_new_full (G_OBJECT (location_dialog->entry), "current-file",

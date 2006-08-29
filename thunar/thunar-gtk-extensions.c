@@ -136,6 +136,35 @@ thunar_gtk_icon_factory_insert_icon (GtkIconFactory *icon_factory,
 
 
 /**
+ * thunar_gtk_label_set_a11y_relation:
+ * @label  : a #GtkLabel.
+ * @widget : a #GtkWidget.
+ *
+ * Sets the %ATK_RELATION_LABEL_FOR relation on @label for @widget, which means
+ * accessiblity tools will identify @label as descriptive item for the specified
+ * @widget.
+ **/
+void
+thunar_gtk_label_set_a11y_relation (GtkLabel  *label,
+                                    GtkWidget *widget)
+{
+  AtkRelationSet *relations;
+  AtkRelation    *relation;
+  AtkObject      *object;
+
+  _thunar_return_if_fail (GTK_IS_WIDGET (widget));
+  _thunar_return_if_fail (GTK_IS_LABEL (label));
+
+  object = gtk_widget_get_accessible (widget);
+  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (GTK_WIDGET (label)));
+  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
+  atk_relation_set_add (relations, relation);
+  g_object_unref (G_OBJECT (relation));
+}
+
+
+
+/**
  * thunar_gtk_menu_run:
  * @menu          : a #GtkMenu.
  * @parent        : either a #GtkWidget or a #GdkScreen which determines the screen

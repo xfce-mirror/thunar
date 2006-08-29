@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-column-editor.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
@@ -122,10 +123,7 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   GtkTreeViewColumn *column;
   GtkTreeSelection  *selection;
   GtkCellRenderer   *renderer;
-  AtkRelationSet    *relations;
-  AtkRelation       *relation;
   GtkTreeIter        iter;
-  AtkObject         *object;
   GtkWidget         *separator;
   GtkWidget         *button;
   GtkWidget         *frame;
@@ -287,14 +285,8 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
   button = gtk_check_button_new_with_mnemonic (_("Automatically _expand columns as needed"));
   exo_mutual_binding_new_with_negation (G_OBJECT (column_editor->preferences), "last-details-view-fixed-columns", G_OBJECT (button), "active");
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 1, 2, GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), button);
   gtk_widget_show (button);
-
-  /* set Atk label relation for the button */
-  object = gtk_widget_get_accessible (button);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   /* setup the tree selection */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (column_editor->tree_view));

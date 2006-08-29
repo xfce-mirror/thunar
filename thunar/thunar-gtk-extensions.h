@@ -36,6 +36,9 @@ void         thunar_gtk_icon_factory_insert_icon          (GtkIconFactory     *i
                                                            const gchar        *stock_id,
                                                            const gchar        *icon_name) G_GNUC_INTERNAL;
 
+void         thunar_gtk_label_set_a11y_relation           (GtkLabel           *label,
+                                                           GtkWidget          *widget) G_GNUC_INTERNAL;
+
 void         thunar_gtk_menu_run                          (GtkMenu            *menu,
                                                            gpointer            parent,
                                                            GtkMenuPositionFunc func,

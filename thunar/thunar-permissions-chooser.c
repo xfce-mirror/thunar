@@ -224,11 +224,8 @@ static void
 thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
 {
   GtkCellRenderer *renderer_text;
-  AtkRelationSet  *relations;
   GtkListStore    *store;
-  AtkRelation     *relation;
   GtkTreeIter      iter;
-  AtkObject       *object;
   GtkWidget       *separator;
   GtkWidget       *button;
   GtkWidget       *label;
@@ -272,14 +269,8 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   chooser->user_label = gtk_label_new (_("Unknown"));
   gtk_misc_set_alignment (GTK_MISC (chooser->user_label), 0.0f, 0.5f);
   gtk_box_pack_start (GTK_BOX (hbox), chooser->user_label, TRUE, TRUE, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->user_label);
   gtk_widget_show (chooser->user_label);
-
-  /* set Atk label relation for the user_label */
-  object = gtk_widget_get_accessible (chooser->user_label);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   row += 1;
 
@@ -295,14 +286,8 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[2]), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->access_combos[2]), "changed", G_CALLBACK (thunar_permissions_chooser_access_changed), chooser);
   gtk_table_attach (GTK_TABLE (chooser->table), chooser->access_combos[2], 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->access_combos[2]);
   gtk_widget_show (chooser->access_combos[2]);
-
-  /* set Atk label relation for the combo */
-  object = gtk_widget_get_accessible (chooser->access_combos[2]);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   row += 1;
 
@@ -325,14 +310,8 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->group_combo), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->group_combo), "changed", G_CALLBACK (thunar_permissions_chooser_group_changed), chooser);
   gtk_table_attach (GTK_TABLE (chooser->table), chooser->group_combo, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->group_combo);
   gtk_widget_show (chooser->group_combo);
-
-  /* set Atk label relation for the combo */
-  object = gtk_widget_get_accessible (chooser->group_combo);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   row += 1;
 
@@ -348,14 +327,8 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[1]), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->access_combos[1]), "changed", G_CALLBACK (thunar_permissions_chooser_access_changed), chooser);
   gtk_table_attach (GTK_TABLE (chooser->table), chooser->access_combos[1], 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->access_combos[1]);
   gtk_widget_show (chooser->access_combos[1]);
-
-  /* set Atk label relation for the combo */
-  object = gtk_widget_get_accessible (chooser->access_combos[1]);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   row += 1;
 
@@ -377,14 +350,8 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->access_combos[0]), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->access_combos[0]), "changed", G_CALLBACK (thunar_permissions_chooser_access_changed), chooser);
   gtk_table_attach (GTK_TABLE (chooser->table), chooser->access_combos[0], 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->access_combos[0]);
   gtk_widget_show (chooser->access_combos[0]);
-
-  /* set Atk label relation for the combo */
-  object = gtk_widget_get_accessible (chooser->access_combos[0]);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   row += 1;
 
@@ -405,14 +372,8 @@ thunar_permissions_chooser_init (ThunarPermissionsChooser *chooser)
   exo_binding_new (G_OBJECT (chooser), "mutable", G_OBJECT (chooser->program_button), "sensitive");
   g_signal_connect_swapped (G_OBJECT (chooser->program_button), "toggled", G_CALLBACK (thunar_permissions_chooser_program_toggled), chooser);
   gtk_table_attach (GTK_TABLE (chooser->table), chooser->program_button, 1, 2, row, row + 1, GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), chooser->program_button);
   gtk_widget_show (chooser->program_button);
-
-  /* set Atk label relation for the button */
-  object = gtk_widget_get_accessible (chooser->program_button);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 
   row += 1;
 

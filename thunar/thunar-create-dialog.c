@@ -25,6 +25,7 @@
 #include <thunar/thunar-create-dialog.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
 
@@ -153,11 +154,8 @@ thunar_create_dialog_class_init (ThunarCreateDialogClass *klass)
 static void
 thunar_create_dialog_init (ThunarCreateDialog *dialog)
 {
-  AtkRelationSet *relations;
-  AtkRelation    *relation;
-  AtkObject      *object;
-  GtkWidget      *label;
-  GtkWidget      *table;
+  GtkWidget *label;
+  GtkWidget *table;
 
   /* configure the dialog itself */
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
@@ -184,14 +182,8 @@ thunar_create_dialog_init (ThunarCreateDialog *dialog)
   dialog->entry = g_object_new (GTK_TYPE_ENTRY, "activates-default", TRUE, NULL);
   g_signal_connect (G_OBJECT (dialog->entry), "changed", G_CALLBACK (thunar_create_dialog_text_changed), dialog);
   gtk_table_attach (GTK_TABLE (table), dialog->entry, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), dialog->entry);
   gtk_widget_show (dialog->entry);
-
-  /* set Atk label relation for the entry */
-  object = gtk_widget_get_accessible (dialog->entry);
-  relations = atk_object_ref_relation_set (gtk_widget_get_accessible (label));
-  relation = atk_relation_new (&object, 1, ATK_RELATION_LABEL_FOR);
-  atk_relation_set_add (relations, relation);
-  g_object_unref (G_OBJECT (relation));
 }
 
 
