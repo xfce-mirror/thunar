@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-28 22:07+0200\n"
+"POT-Creation-Date: 2006-08-29 16:46+0200\n"
 "PO-Revision-Date: 2006-08-20 01:07+0800\n"
 "Last-Translator: Cosmo Chene <cosmolax@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -540,7 +540,7 @@ msgstr "將垃圾桶中所有檔案和資料夾清除？"
 
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
-#: ../thunar/thunar-application.c:1269 ../thunar/thunar-navigation-bar.c:148
+#: ../thunar/thunar-application.c:1269 ../thunar/thunar-location-buttons.c:169
 #: ../thunar/thunar-shortcuts-view.c:855 ../thunar/thunar-tree-view.c:1076
 #: ../plugins/thunar-tpa/main.c:49
 msgid "_Empty Trash"
@@ -1011,13 +1011,13 @@ msgstr "圖示檢視"
 
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:137 ../thunar/thunar-launcher.c:783
-#: ../thunar/thunar-navigation-bar.c:145 ../thunar/thunar-shortcuts-view.c:796
-#: ../thunar/thunar-tree-view.c:1016
+#: ../thunar/thunar-location-buttons.c:166
+#: ../thunar/thunar-shortcuts-view.c:796 ../thunar/thunar-tree-view.c:1016
 msgid "_Open"
 msgstr "開啟(_O)"
 
 #. append the "Open in New Window" menu action
-#: ../thunar/thunar-launcher.c:138 ../thunar/thunar-navigation-bar.c:146
+#: ../thunar/thunar-launcher.c:138 ../thunar/thunar-location-buttons.c:167
 #: ../thunar/thunar-shortcuts-view.c:807 ../thunar/thunar-tree-view.c:1028
 msgid "Open in New Window"
 msgstr "在新視窗中開啟"
@@ -1206,104 +1206,83 @@ msgid "%d item selected"
 msgid_plural "%d items selected"
 msgstr[0] "已選取 %d 個項目"
 
-#: ../thunar/thunar-location-dialog.c:89
-msgid "Open Location"
-msgstr "開啟位址"
-
-#. use the "Location:" label, as this is really the current location
-#. determine the "Location:" pixel size
-#: ../thunar/thunar-location-dialog.c:103
-#: ../thunar/thunar-navigation-bar.c:306 ../thunar/thunar-navigation-bar.c:787
-#: ../thunar/thunar-navigation-bar.c:899
-#, fuzzy
-msgid "Location:"
-msgstr "位址(_L)"
-
 #. append the "Create Folder" menu action
-#: ../thunar/thunar-navigation-bar.c:147 ../thunar/thunar-standard-view.c:315
-#: ../thunar/thunar-tree-view.c:1092
+#: ../thunar/thunar-location-buttons.c:168
+#: ../thunar/thunar-standard-view.c:315 ../thunar/thunar-tree-view.c:1092
 msgid "Create _Folder..."
 msgstr "建立資料夾(_F)..."
 
-#: ../thunar/thunar-navigation-bar.c:148
+#: ../thunar/thunar-location-buttons.c:169
 msgid "Delete all files and folders in the Trash"
 msgstr "將垃圾桶中所以檔案及資料夾刪除？"
 
-#: ../thunar/thunar-navigation-bar.c:149 ../thunar/thunar-standard-view.c:321
+#: ../thunar/thunar-location-buttons.c:170
+#: ../thunar/thunar-standard-view.c:321
 msgid "Paste Into Folder"
 msgstr "貼到資料夾中"
 
-#: ../thunar/thunar-navigation-bar.c:150 ../thunar/thunar-renamer-dialog.c:179
-#: ../thunar/thunar-standard-view.c:316
+#: ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:316
 msgid "_Properties..."
 msgstr "內容(_P)..."
 
-#. update the tooltip of the location mode button
-#: ../thunar/thunar-navigation-bar.c:290 ../thunar/thunar-navigation-bar.c:948
-msgid "Switch to path entry mode"
-msgstr ""
+#: ../thunar/thunar-location-buttons.c:272
+msgid "Spacing"
+msgstr "間隔"
 
-#. ask the user to enter a name for the new folder
-#: ../thunar/thunar-navigation-bar.c:561 ../thunar/thunar-standard-view.c:1784
-#: ../thunar/thunar-tree-view.c:1448
-msgid "New Folder"
-msgstr "新資料夾"
+#: ../thunar/thunar-location-buttons.c:273
+msgid "The amount of space between the path buttons"
+msgstr "路徑按鈕之間間隔的大小"
 
-#: ../thunar/thunar-navigation-bar.c:561 ../thunar/thunar-standard-view.c:1784
-#: ../thunar/thunar-tree-view.c:1448
-msgid "Create New Folder"
-msgstr "建立新資料夾"
-
-#: ../thunar/thunar-navigation-bar.c:744 ../thunar/thunar-window.c:1213
-#, c-format
-msgid "Failed to launch \"%s\""
-msgstr "無法啟動 \"%s\""
-
-#. the user is trying to change the location, use the "Go To:" label
-#. determine the "Go To:" pixel size
-#: ../thunar/thunar-navigation-bar.c:792 ../thunar/thunar-navigation-bar.c:903
-msgid "Go To:"
-msgstr ""
-
-#: ../thunar/thunar-navigation-bar.c:831
+#: ../thunar/thunar-location-buttons.c:1252
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "在本視窗中開啟 \"%s\""
 
-#: ../thunar/thunar-navigation-bar.c:837
+#: ../thunar/thunar-location-buttons.c:1258
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "在新視窗中開啟 \"%s\""
 
-#: ../thunar/thunar-navigation-bar.c:842
+#: ../thunar/thunar-location-buttons.c:1263
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "在此 \"%s\" 建立新的資料夾"
 
-#: ../thunar/thunar-navigation-bar.c:854
+#: ../thunar/thunar-location-buttons.c:1275
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr "將之前複製或剪下的檔案在此複製或移動到·\"%s\""
 
-#: ../thunar/thunar-navigation-bar.c:860
+#: ../thunar/thunar-location-buttons.c:1281
 #, c-format
 msgid "View the properties of the folder \"%s\""
 msgstr "檢視資料夾 \"%s\" 內容資訊"
 
-#. update the tooltip of the location mode button
-#: ../thunar/thunar-navigation-bar.c:939
-msgid "Switch to path bar mode"
-msgstr ""
+#. ask the user to enter a name for the new folder
+#: ../thunar/thunar-location-buttons.c:1333
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1448
+msgid "New Folder"
+msgstr "新資料夾"
 
-#: ../thunar/thunar-path-bar.c:213
-msgid "Spacing"
-msgstr "間隔"
+#: ../thunar/thunar-location-buttons.c:1333
+#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1448
+msgid "Create New Folder"
+msgstr "建立新資料夾"
 
-#: ../thunar/thunar-path-bar.c:214
-#, fuzzy
-msgid "The amount of space between the path buttons"
-msgstr "路徑按鈕之間間隔的大小"
+#: ../thunar/thunar-location-dialog.c:89
+msgid "Open Location"
+msgstr "開啟位址"
+
+#: ../thunar/thunar-location-dialog.c:103
+msgid "_Location:"
+msgstr "位址(_L)"
+
+#: ../thunar/thunar-location-entry.c:401 ../thunar/thunar-window.c:1295
+#, c-format
+msgid "Failed to launch \"%s\""
+msgstr "無法啟動 \"%s\""
 
 #: ../thunar/thunar-path-entry.c:259
 msgid "Icon size"
@@ -1774,11 +1753,11 @@ msgstr "%s - 內容資訊"
 msgid "Failed to rename \"%s\""
 msgstr "無法重新命名 \"%s\""
 
-#: ../thunar/thunar-renamer-dialog.c:172 ../thunar/thunar-window.c:255
+#: ../thunar/thunar-renamer-dialog.c:172 ../thunar/thunar-window.c:261
 msgid "_File"
 msgstr "檔案(_F)"
 
-#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:257
+#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:263
 msgid "_Send To"
 msgstr "寄到(_S)"
 
@@ -1802,7 +1781,7 @@ msgstr "清除"
 msgid "Clear the file list below"
 msgstr "清除底下列出的檔案"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:275
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:282
 msgid "_About"
 msgstr "關於(_A)"
 
@@ -1937,10 +1916,6 @@ msgid "Add the selected folder to the shortcuts side pane"
 msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "將選取的資料夾加入邊欄的捷徑區中"
 
-#: ../thunar/thunar-shortcuts-view.c:266 ../thunar/thunar-window.c:281
-msgid "_Shortcuts"
-msgstr "捷徑(_S)"
-
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:821 ../thunar/thunar-tree-view.c:1042
 msgid "_Mount Volume"
@@ -1966,24 +1941,24 @@ msgstr "移除捷徑(_R)"
 msgid "Re_name Shortcut"
 msgstr "重新命名捷徑(_N)"
 
-#: ../thunar/thunar-shortcuts-view.c:1147
+#: ../thunar/thunar-shortcuts-view.c:1156
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "此路徑設定·\"%s\"·並未指向正確的目錄"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1166
+#: ../thunar/thunar-shortcuts-view.c:1175
 msgid "Failed to add new shortcut"
 msgstr "無法建立新捷徑"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1284 ../thunar/thunar-tree-view.c:1556
+#: ../thunar/thunar-shortcuts-view.c:1293 ../thunar/thunar-tree-view.c:1556
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "無法退出·\"%s\""
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1330 ../thunar/thunar-tree-view.c:950
+#: ../thunar/thunar-shortcuts-view.c:1339 ../thunar/thunar-tree-view.c:950
 #: ../thunar/thunar-tree-view.c:1607
 #, c-format
 msgid "Failed to mount \"%s\""
@@ -1991,7 +1966,7 @@ msgstr "無法掛載·\"%s\""
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1374 ../thunar/thunar-tree-view.c:1747
+#: ../thunar/thunar-shortcuts-view.c:1383 ../thunar/thunar-tree-view.c:1747
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "無法卸載·\"%s\""
@@ -2202,10 +2177,6 @@ msgstr "空白文件(_E)"
 msgid "Loading..."
 msgstr "載入中..."
 
-#: ../thunar/thunar-tree-view.c:394 ../thunar/thunar-window.c:282
-msgid "_Tree"
-msgstr "樹狀圖(_T)"
-
 #. append the "Paste Into Folder" menu action
 #: ../thunar/thunar-tree-view.c:1142
 msgid "_Paste Into Folder"
@@ -2226,230 +2197,239 @@ msgstr "今天"
 msgid "Yesterday"
 msgstr "昨天"
 
-#: ../thunar/thunar-window.c:256
+#: ../thunar/thunar-window.c:262
 msgid "Open New _Window"
 msgstr "開啟新視窗(_W)"
 
-#: ../thunar/thunar-window.c:256
+#: ../thunar/thunar-window.c:262
 msgid "Open a new Thunar window for the displayed location"
 msgstr "在目前的位置開啟新的 Thunar 視窗"
 
-#: ../thunar/thunar-window.c:258
+#: ../thunar/thunar-window.c:264
 msgid "Close _All Windows"
 msgstr "關閉全部視窗(_A)"
 
-#: ../thunar/thunar-window.c:258
+#: ../thunar/thunar-window.c:264
 msgid "Close all Thunar windows"
 msgstr "關閉全部 Thunar·視窗"
 
-#: ../thunar/thunar-window.c:259
+#: ../thunar/thunar-window.c:265
 msgid "_Close"
 msgstr "關閉(_C)"
 
-#: ../thunar/thunar-window.c:259
+#: ../thunar/thunar-window.c:265
 msgid "Close this window"
 msgstr "關閉此視窗"
 
-#: ../thunar/thunar-window.c:260
+#: ../thunar/thunar-window.c:266
 msgid "_Edit"
 msgstr "編輯(_E)"
 
-#: ../thunar/thunar-window.c:261
+#: ../thunar/thunar-window.c:267
 msgid "Pr_eferences..."
 msgstr "功能設定(_E)..."
 
-#: ../thunar/thunar-window.c:261
+#: ../thunar/thunar-window.c:267
 msgid "Edit Thunars Preferences"
 msgstr "編輯 Thunars·設定選項"
 
-#: ../thunar/thunar-window.c:262
+#: ../thunar/thunar-window.c:268
 msgid "_View"
 msgstr "檢視(_V)"
 
-#: ../thunar/thunar-window.c:263
+#: ../thunar/thunar-window.c:269
 msgid "_Reload"
 msgstr "更新(_R)"
 
-#: ../thunar/thunar-window.c:263
+#: ../thunar/thunar-window.c:269
 msgid "Reload the current folder"
 msgstr "重新整理目前的資料夾"
 
-#: ../thunar/thunar-window.c:264
+#: ../thunar/thunar-window.c:270
+msgid "_Location Selector"
+msgstr "位置表示(_L)"
+
+#: ../thunar/thunar-window.c:271
 msgid "_Side Pane"
 msgstr "側邊欄(_S)"
 
-#: ../thunar/thunar-window.c:265
+#: ../thunar/thunar-window.c:272
 #, fuzzy
 msgid "Zoom I_n"
 msgstr "放大檢視(_I)"
 
-#: ../thunar/thunar-window.c:265
+#: ../thunar/thunar-window.c:272
 msgid "Show the contents in more detail"
 msgstr "顯示更詳細的資訊內容"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:273
 msgid "Zoom _Out"
 msgstr "縮小檢視(_O)"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:273
 msgid "Show the contents in less detail"
 msgstr "顯示較少的資訊內容"
 
-#: ../thunar/thunar-window.c:267
+#: ../thunar/thunar-window.c:274
 msgid "Normal Si_ze"
 msgstr "正常大小(_Z)"
 
-#: ../thunar/thunar-window.c:267
+#: ../thunar/thunar-window.c:274
 msgid "Show the contents at the normal size"
 msgstr "以正常大小顯示資料夾內容"
 
-#: ../thunar/thunar-window.c:268
+#: ../thunar/thunar-window.c:275
 msgid "_Go"
 msgstr "前往(_G)"
 
-#: ../thunar/thunar-window.c:269
+#: ../thunar/thunar-window.c:276
 msgid "Open _Parent"
 msgstr "上層目錄(_P)"
 
-#: ../thunar/thunar-window.c:269
+#: ../thunar/thunar-window.c:276
 msgid "Open the parent folder"
 msgstr "開啟上層目錄"
 
-#: ../thunar/thunar-window.c:270
+#: ../thunar/thunar-window.c:277
 msgid "_Home"
 msgstr "(家目錄_H)"
 
-#: ../thunar/thunar-window.c:270
+#: ../thunar/thunar-window.c:277
 msgid "Go to the home folder"
 msgstr "前往家目錄"
 
-#: ../thunar/thunar-window.c:271
+#: ../thunar/thunar-window.c:278
 msgid "T_emplates"
 msgstr "模板(_E)"
 
-#: ../thunar/thunar-window.c:271
+#: ../thunar/thunar-window.c:278
 msgid "Go to the templates folder"
 msgstr "前往模板資料夾"
 
-#: ../thunar/thunar-window.c:272
+#: ../thunar/thunar-window.c:279
 #, fuzzy
-msgid "_Location..."
+msgid "_Open Location..."
 msgstr "開啟位置(_L)..."
 
-#: ../thunar/thunar-window.c:272
+#: ../thunar/thunar-window.c:279
 msgid "Specify a location to open"
 msgstr "指定要開啟的位置"
 
-#: ../thunar/thunar-window.c:273
+#: ../thunar/thunar-window.c:280
 msgid "_Help"
 msgstr "幫助(_H)"
 
-#: ../thunar/thunar-window.c:274
+#: ../thunar/thunar-window.c:281
 msgid "_Contents"
 msgstr "使用內容(_C)"
 
-#: ../thunar/thunar-window.c:274
+#: ../thunar/thunar-window.c:281
 msgid "Display Thunar user manual"
 msgstr "觀看 Thunar 使用手冊"
 
-#: ../thunar/thunar-window.c:275
+#: ../thunar/thunar-window.c:282
 msgid "Display information about Thunar"
 msgstr "顯示·Thunar 的相關資訊"
 
-#: ../thunar/thunar-window.c:280
+#: ../thunar/thunar-window.c:287
 msgid "Show _Hidden Files"
 msgstr "顯示隱藏檔(_H)"
 
-#: ../thunar/thunar-window.c:280
+#: ../thunar/thunar-window.c:287
 msgid "Toggles the display of hidden files in the current window"
 msgstr "在目前資料夾中切換顯示隱藏檔的設定"
 
-#: ../thunar/thunar-window.c:281
+#: ../thunar/thunar-window.c:288
+msgid "_Pathbar Style"
+msgstr "路徑欄框風格(_P)"
+
+#: ../thunar/thunar-window.c:288
+msgid "Modern approach with buttons that correspond to folders"
+msgstr "以現代風格顯示與資料夾有階層關係的框格按鈕"
+
+#: ../thunar/thunar-window.c:289
+msgid "_Toolbar Style"
+msgstr "工具列風格(_T)"
+
+#: ../thunar/thunar-window.c:289
+msgid "Traditional approach with location bar and navigation buttons"
+msgstr "傳統風格的路徑列和瀏覽用的工具按鈕"
+
+#: ../thunar/thunar-window.c:290
+msgid "_Shortcuts"
+msgstr "捷徑(_S)"
+
+#: ../thunar/thunar-window.c:290
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "設定是否要顯示側邊欄的捷徑區"
 
-#: ../thunar/thunar-window.c:282
+#: ../thunar/thunar-window.c:291
+msgid "_Tree"
+msgstr "樹狀圖(_T)"
+
+#: ../thunar/thunar-window.c:291
 msgid "Toggles the visibility of the tree pane"
 msgstr "切換是否以樹狀圖方式檢視側邊欄"
 
-#: ../thunar/thunar-window.c:283
-msgid "_Main Toolbar"
-msgstr ""
-
-#: ../thunar/thunar-window.c:283
-#, fuzzy
-msgid "Change the visibility of this window's main toolbar"
-msgstr "設定是否顯示目前視窗的狀態列"
-
-#: ../thunar/thunar-window.c:284
-#, fuzzy
-msgid "_Location Bar"
-msgstr "位址(_L)"
-
-#: ../thunar/thunar-window.c:284
-#, fuzzy
-msgid "Change the visibility of this window's location bar"
-msgstr "設定是否顯示目前視窗的狀態列"
-
-#: ../thunar/thunar-window.c:285
+#: ../thunar/thunar-window.c:292
 msgid "St_atusbar"
 msgstr "狀態列(_A)"
 
-#: ../thunar/thunar-window.c:285
+#: ../thunar/thunar-window.c:292
 msgid "Change the visibility of this window's statusbar"
 msgstr "設定是否顯示目前視窗的狀態列"
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:589
+#: ../thunar/thunar-window.c:595
 msgid "View as _Icons"
 msgstr "以圖示檢視(_I)"
 
-#: ../thunar/thunar-window.c:589
+#: ../thunar/thunar-window.c:595
 msgid "Display folder content in an icon view"
 msgstr "以圖示檢視要顯示的資料夾"
 
-#: ../thunar/thunar-window.c:596
+#: ../thunar/thunar-window.c:602
 msgid "View as _Detailed List"
 msgstr "以詳細清單方式檢視(_D)"
 
-#: ../thunar/thunar-window.c:596
+#: ../thunar/thunar-window.c:602
 msgid "Display folder content in a detailed list view"
 msgstr "以詳細清單方式檢視資料夾"
 
-#: ../thunar/thunar-window.c:603
+#: ../thunar/thunar-window.c:609
 msgid "View as _Compact List"
 msgstr "以簡潔清單方式檢視(_C)"
 
-#: ../thunar/thunar-window.c:603
+#: ../thunar/thunar-window.c:609
 msgid "Display folder content in a compact list view"
 msgstr "以簡潔清單檢視方式顯示資料夾內容"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:665
+#: ../thunar/thunar-window.c:671
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
 
-#: ../thunar/thunar-window.c:1615
+#: ../thunar/thunar-window.c:1675
 msgid "Failed to open parent folder"
 msgstr "無法開啟上層目錄"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1641
+#: ../thunar/thunar-window.c:1701
 msgid "Failed to open home directory"
 msgstr "無法開啟家目錄"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:1703
+#: ../thunar/thunar-window.c:1763
 msgid "About Templates"
 msgstr "關於模板"
 
-#: ../thunar/thunar-window.c:1724
+#: ../thunar/thunar-window.c:1784
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "位於此資料夾的文件都會出現在 \"建立新文件\"·的右鍵選單中。"
 
-#: ../thunar/thunar-window.c:1731
+#: ../thunar/thunar-window.c:1791
 msgid ""
 "If you frequently create certain kinds of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2464,15 +2444,15 @@ msgstr ""
 "接下來您只要利用·\"建立新文件\"·的右鍵選單就可以·在目前檢視的資料夾中輕鬆建立"
 "好一份新的文件了。"
 
-#: ../thunar/thunar-window.c:1743
+#: ../thunar/thunar-window.c:1803
 msgid "Do _not display this message again"
 msgstr "不要再次顯示這個訊息(_N)"
 
-#: ../thunar/thunar-window.c:1756
+#: ../thunar/thunar-window.c:1816
 msgid "Failed to open templates folder"
 msgstr "無法開啟模板資料夾"
 
-#: ../thunar/thunar-window.c:1792
+#: ../thunar/thunar-window.c:1852
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2481,7 +2461,7 @@ msgstr ""
 "是附屬於·Xfce·桌面環境計畫的工具程式。"
 
 #. set window title and icon
-#: ../thunar/thunar-window.c:1825 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:1885 ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "檔案總管"
 
@@ -3223,21 +3203,6 @@ msgstr "在·Thunar中開啟指定的資料夾"
 
 #~ msgid "_Properties"
 #~ msgstr "內容(_P)"
-
-#~ msgid "_Location Selector"
-#~ msgstr "位置表示(_L)"
-
-#~ msgid "_Pathbar Style"
-#~ msgstr "路徑欄框風格(_P)"
-
-#~ msgid "Modern approach with buttons that correspond to folders"
-#~ msgstr "以現代風格顯示與資料夾有階層關係的框格按鈕"
-
-#~ msgid "_Toolbar Style"
-#~ msgstr "工具列風格(_T)"
-
-#~ msgid "Traditional approach with location bar and navigation buttons"
-#~ msgstr "傳統風格的路徑列和瀏覽用的工具按鈕"
 
 #~ msgid "_Hidden"
 #~ msgstr "隱藏(_H)"

@@ -42,12 +42,14 @@
     <menu action="view-menu">
       <menuitem action="reload" />
       <separator />
+      <menu action="view-location-selector-menu">
+        <menuitem action="view-location-selector-pathbar" />
+        <menuitem action="view-location-selector-toolbar" />
+      </menu>
       <menu action="view-side-pane-menu">
         <menuitem action="view-side-pane-shortcuts" />
         <menuitem action="view-side-pane-tree" />
       </menu>
-      <menuitem action="view-toolbar" />
-      <menuitem action="view-location-bar" />
       <menuitem action="view-statusbar" />
       <separator />
       <menuitem action="show-hidden" />
@@ -96,7 +98,7 @@
     <placeholder name="placeholder-file-actions" />
   </popup>
 
-  <toolbar name="main-toolbar">
+  <toolbar name="location-toolbar">
     <toolitem action="back" />
     <toolitem action="forward" />
     <toolitem action="open-parent" />

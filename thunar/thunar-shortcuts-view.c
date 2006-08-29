@@ -250,6 +250,7 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
 
   /* configure the tree view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
 
   /* grab a reference on the preferences; be sure to redraw the view
    * whenever the "shortcuts-icon-emblems" preference changes.
@@ -263,7 +264,6 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
                          "resizable", FALSE,
                          "sizing", GTK_TREE_VIEW_COLUMN_AUTOSIZE,
                          "spacing", 2,
-                         "title", _("_Shortcuts"),
                          NULL);
   gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
 
@@ -990,21 +990,26 @@ thunar_shortcuts_view_compute_drop_actions (ThunarShortcutsView     *view,
                                             GdkDragAction           *action_return,
                                             GtkTreeViewDropPosition *position_return)
 {
-  GtkTreeViewDropPosition position;
-  GdkDragAction           actions = 0;
-  GtkTreeModel           *model;
-  GtkTreePath            *path;
-  GtkTreeIter             iter;
-  ThunarFile             *file;
+  GtkTreeViewColumn *column;
+  GdkDragAction      actions = 0;
+  GdkRectangle       cell_area;
+  GtkTreeModel      *model;
+  GtkTreePath       *path;
+  GtkTreeIter        iter;
+  ThunarFile        *file;
+  gint               cell_y;
 
   /* determine the shortcuts model */
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
 
-  /* determine the drag dest path for x/y */
-  if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (view), x, y, &path, &position))
+  /* determine the path for x/y */
+  if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (view), x, y, &path, &column, NULL, &cell_y))
     {
-      /* check if the drop is on the row and the path is within the model */
-      if ((position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE || position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER)
+      /* determine the background area of the column */
+      gtk_tree_view_get_background_area (GTK_TREE_VIEW (view), path, column, &cell_area);
+
+      /* check if 1/6th inside the cell and the path is within the model */
+      if ((cell_y > (cell_area.height / 6) && cell_y < (cell_area.height - cell_area.height / 6))
           && gtk_tree_model_get_iter (model, &iter, path))
         {
           /* determine the file for the iterator */
@@ -1079,10 +1084,11 @@ thunar_shortcuts_view_compute_drop_position (ThunarShortcutsView *view,
                                              gint                 x,
                                              gint                 y)
 {
-  GtkTreeViewDropPosition position;
-  GtkTreeModel           *model;
-  GtkTreePath            *path;
-  gint                    n_rows;
+  GtkTreeViewColumn *column;
+  GtkTreeModel      *model;
+  GdkRectangle       area;
+  GtkTreePath       *path;
+  gint               n_rows;
 
   _thunar_return_val_if_fail (gtk_tree_view_get_model (GTK_TREE_VIEW (view)) != NULL, NULL);
   _thunar_return_val_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view), NULL);
@@ -1091,22 +1097,25 @@ thunar_shortcuts_view_compute_drop_position (ThunarShortcutsView *view,
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
   n_rows = gtk_tree_model_iter_n_children (model, NULL);
 
-  /* determine the drag dest path for x/y */
-  if (!gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (view), x, y, &path, &position))
+  if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (view), x, y,
+                                     &path, &column, &x, &y))
     {
-      /* we'll append to the shortcuts list */
-      path = gtk_tree_path_new_from_indices (n_rows, -1);
-    }
-  else
-    {
-      /* advance the path if drop AFTER */
-      if (position == GTK_TREE_VIEW_DROP_AFTER || position == GTK_TREE_VIEW_DROP_INTO_OR_AFTER)
+      /* determine the exact path of the row the user is trying to drop 
+       * (taking into account the relative y position)
+       */
+      gtk_tree_view_get_background_area (GTK_TREE_VIEW (view), path, column, &area);
+      if (y >= area.height / 2)
         gtk_tree_path_next (path);
 
       /* find a suitable drop path (we cannot drop into the default shortcuts list) */
       for (; gtk_tree_path_get_indices (path)[0] < n_rows; gtk_tree_path_next (path))
         if (thunar_shortcuts_model_drop_possible (THUNAR_SHORTCUTS_MODEL (model), path))
           return path;
+    }
+  else
+    {
+      /* we'll append to the shortcuts list */
+      path = gtk_tree_path_new_from_indices (n_rows, -1);
     }
 
   return path;

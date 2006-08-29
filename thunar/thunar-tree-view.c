@@ -384,6 +384,7 @@ thunar_tree_view_init (ThunarTreeView *view)
 
   /* configure the tree view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
+  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
 
   /* allocate a single column for our renderers */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN,
@@ -391,7 +392,6 @@ thunar_tree_view_init (ThunarTreeView *view)
                          "resizable", FALSE,
                          "sizing", GTK_TREE_VIEW_COLUMN_AUTOSIZE,
                          "spacing", 2,
-                         "title", _("_Tree"),
                          NULL);
   gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
 
@@ -1229,7 +1229,7 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
     g_source_remove (view->expand_timer_id);
 
   /* determine the path for x/y */
-  if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (view), x, y, &path, NULL))
+  if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (view), x, y, &path, NULL, NULL, NULL))
     {
       /* determine the tree model filter */
       filter = gtk_tree_view_get_model (GTK_TREE_VIEW (view));

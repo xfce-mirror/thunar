@@ -100,7 +100,7 @@ thunar_location_dialog_init (ThunarLocationDialog *location_dialog)
   gtk_box_pack_start (GTK_BOX (GTK_DIALOG (location_dialog)->vbox), hbox, FALSE, FALSE, 0);
   gtk_widget_show (hbox);
 
-  label = gtk_label_new_with_mnemonic (_("Location:"));
+  label = gtk_label_new_with_mnemonic (_("_Location:"));
   gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, FALSE, 0);
   gtk_widget_show (label);
 

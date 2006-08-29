@@ -86,15 +86,10 @@ The Thunar Configuration File (thunarrc)
 
      The last selected zoom level for the icon view.
 
-   * LastLocationBarVisible (FALSE/TRUE)
+   * LastLocationBar (ThunarLocationButtons/ThunarLocationEntry/void)
 
-     Determines whether to display a location bar in new windows by
-     default.
-
-   * LastNavigationBarEntry (FALSE/TRUE)
-
-     Determines whether to use the path entry widget in the
-     navigation bar by default, instead of the path bar.
+     The name of the widget class which should be used for the location bar
+     in Thunar windows or "void" to hide the location bar completely.
 
    * LastSeparatorPosition (0...)
 
@@ -131,11 +126,6 @@ The Thunar Configuration File (thunarrc)
 
      Determines whether to display a statusbar in new windows by
      default.
-
-   * LastToolbarVisible (FALSE/TRUE)
-
-     Determines whether to display the main toolbar in new windows
-     by default.
 
    * LastView (ThunarDetailsView/ThunarIconView)
 
