@@ -110,6 +110,8 @@ static void     thunar_window_start_open_location         (ThunarWindow         
                                                            const gchar            *initial_text);
 static void     thunar_window_action_open_new_window      (GtkAction              *action,
                                                            ThunarWindow           *window);
+static void     thunar_window_action_empty_trash          (GtkAction              *action,
+                                                           ThunarWindow           *window);
 static void     thunar_window_action_close_all_windows    (GtkAction              *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_close                (GtkAction              *action,
@@ -261,6 +263,7 @@ static const GtkActionEntry action_entries[] =
   { "file-menu", NULL, N_ ("_File"), NULL, },
   { "open-new-window", NULL, N_ ("Open New _Window"), "<control>N", N_ ("Open a new Thunar window for the displayed location"), G_CALLBACK (thunar_window_action_open_new_window), },
   { "sendto-menu", NULL, N_ ("_Send To"), NULL, },
+  { "empty-trash", NULL, N_ ("_Empty Trash"), NULL, N_ ("Delete all files and folders in the Trash"), G_CALLBACK (thunar_window_action_empty_trash), },
   { "close-all-windows", NULL, N_ ("Close _All Windows"), "<control><shift>W", N_ ("Close all Thunar windows"), G_CALLBACK (thunar_window_action_close_all_windows), },
   { "close", GTK_STOCK_CLOSE, N_ ("_Close"), "<control>W", N_ ("Close this window"), G_CALLBACK (thunar_window_action_close), },
   { "edit-menu", NULL, N_ ("_Edit"), NULL, },
@@ -1333,6 +1336,20 @@ thunar_window_action_open_new_window (GtkAction    *action,
 
 
 static void
+thunar_window_action_empty_trash (GtkAction    *action,
+                                  ThunarWindow *window)
+{
+  ThunarApplication *application;
+
+  /* launch the operation */
+  application = thunar_application_get ();
+  thunar_application_empty_trash (application, GTK_WIDGET (window));
+  g_object_unref (G_OBJECT (application));
+}
+
+
+
+static void
 thunar_window_action_close_all_windows (GtkAction    *action,
                                         ThunarWindow *window)
 {
@@ -1874,12 +1891,18 @@ static void
 thunar_window_current_directory_changed (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
+  GtkAction *action;
   GdkPixbuf *icon;
   gchar     *title;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
   _thunar_return_if_fail (window->current_directory == current_directory);
+
+  /* update the "Empty Trash" action */
+  action = gtk_action_group_get_action (window->action_group, "empty-trash");
+  gtk_action_set_sensitive (action, (thunar_file_get_size (current_directory) > 0));
+  gtk_action_set_visible (action, (thunar_file_is_root (current_directory) && thunar_file_is_trashed (current_directory)));
 
   /* set window title and icon */
   title = g_strdup_printf ("%s - %s", thunar_file_get_display_name (current_directory), _("File Manager"));
