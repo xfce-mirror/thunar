@@ -101,7 +101,7 @@ gboolean
 _thunar_vfs_io_local_get_free_space (const ThunarVfsPath *path,
                                      ThunarVfsFileSize   *free_space_return)
 {
-#if defined(HAVE_STATFS) && !defined(HAVE_STATVFS1) && !defined(__sgi__) && !defined(__sun__)
+#if defined(HAVE_STATFS) && !defined(HAVE_STATVFS1) && !defined(__sgi__) && !defined(__sun__) && !defined(__sun)
   struct statfs  statfsb;
 #elif defined(HAVE_STATVFS) || defined(HAVE_STATVFS1)
   struct statvfs statfsb;
@@ -116,7 +116,7 @@ _thunar_vfs_io_local_get_free_space (const ThunarVfsPath *path,
     return FALSE;
 
   /* determine the amount of free space for the mount point */
-#if defined(HAVE_STATFS) && !defined(HAVE_STATVFS1) && !defined(__sgi__) && !defined(__sun__)
+#if defined(HAVE_STATFS) && !defined(HAVE_STATVFS1) && !defined(__sgi__) && !defined(__sun__) && !defined(__sun)
   succeed = (statfs (absolute_path, &statfsb) == 0);   /* the good old BSD way */
 #elif defined(HAVE_STATVFS1)
   succeed = (statvfs1 (absolute_path, &statfsb, ST_WAIT) == 0); /* the new NetBSD way */

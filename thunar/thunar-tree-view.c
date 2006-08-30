@@ -863,7 +863,7 @@ thunar_tree_view_drag_leave (GtkWidget      *widget,
     }
 
   /* call the parent's handler */
-  return (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->drag_leave) (widget, context, time);
+  (*GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->drag_leave) (widget, context, time);
 }
 
 

@@ -706,7 +706,7 @@ thunar_shortcuts_view_drag_leave (GtkWidget      *widget,
     }
 
   /* call the parent's handler */
-  return (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->drag_leave) (widget, context, time);
+  (*GTK_WIDGET_CLASS (thunar_shortcuts_view_parent_class)->drag_leave) (widget, context, time);
 }
 
 
