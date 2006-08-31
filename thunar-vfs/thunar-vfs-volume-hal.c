@@ -198,43 +198,52 @@ thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
                              GError         **error)
 {
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
-  gboolean            result;
+  ThunarVfsPath      *path;
+  gboolean            result = TRUE;
   gchar              *program;
   gchar              *quoted;
 
-  /* check if gnome-eject is present */
-  program = g_find_program_in_path ("gnome-eject");
-  if (G_LIKELY (program != NULL))
+  /* check if the volume is currently mounted */
+  path = thunar_vfs_volume_hal_find_mount_point (volume_hal, "/proc/mounts");
+  if (G_LIKELY (path != NULL))
     {
-      /* gnome-eject doesn't seem to unmount properly first */
+      /* try to unmount the volume first */
       result = thunar_vfs_volume_hal_unmount (volume, window, error);
-      if (G_LIKELY (result))
+      thunar_vfs_path_unref (path);
+    }
+
+  /* check the unmount was successfull */
+  if (G_LIKELY (result))
+    {
+      /* check if gnome-eject is present */
+      program = g_find_program_in_path ("gnome-eject");
+      if (G_LIKELY (program != NULL))
         {
           /* try to use gnome-eject then */
           quoted = g_shell_quote (volume_hal->udi);
           result = thunar_vfs_exec_sync ("%s -t -h %s", error, program, quoted);
           g_free (quoted);
+
+          /* cleanup */
+          g_free (program);
+        }
+      else
+        {
+          /* use eject */
+          quoted = g_path_get_basename (volume_hal->device_file);
+          result = thunar_vfs_exec_sync ("eject %s", error, quoted);
+          g_free (quoted);
         }
 
-      /* cleanup */
-      g_free (program);
-    }
-  else
-    {
-      /* use eject */
-      quoted = g_path_get_basename (volume_hal->device_file);
-      result = thunar_vfs_exec_sync ("eject %s", error, quoted);
-      g_free (quoted);
-    }
+      /* check if we were successfull */
+      if (G_LIKELY (result))
+        {
+          /* reset the status */
+          volume_hal->status &= ~(THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT);
 
-  /* check if we were successfull */
-  if (G_LIKELY (result))
-    {
-      /* reset the status */
-      volume_hal->status &= ~(THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT);
-
-      /* emit "changed" on the volume */
-      thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
+          /* emit "changed" on the volume */
+          thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
+        }
     }
 
   return result;
