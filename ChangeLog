@@ -1,5 +1,11 @@
 2006-09-01	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-list-model.c: GMemChunk in GLib 2.10 and above is not
+	  only inefficient, but also continously leaks memory. Therefore we
+	  don't use GMemChunk anymore, but use GSList directly.
+
+2006-09-01	Benedikt Meurer <benny@xfce.org>
+
 	* docs/Thunar.xml, docs/Makefile.am: Add manual page for Thunar.
 	  Bug #1650.
 
