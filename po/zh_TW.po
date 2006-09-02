@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.3.2beta2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-08-29 16:46+0200\n"
-"PO-Revision-Date: 2006-08-29 23:25+0800\n"
+"PO-Revision-Date: 2006-09-02 22:41+0800\n"
 "Last-Translator: Cosmo Chene <cosmolax@gmail.com>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
 "MIME-Version: 1.0\n"
@@ -689,7 +689,7 @@ msgid ""
 msgstr ""
 "將會移除右鍵選單中快速啟動的選項， 不過並不會移除選項所關聯的程式。\n"
 "\n"
-"您可以選擇只移除透過在檔案總管中利用 \"以其他程式開啟\" 的選項所建立的檔案開"
+"您可以選擇只移除透過檔案管理程式中 \"以其他程式開啟\" 的選項所建立的檔案開"
 "啟方式。"
 
 #: ../thunar/thunar-chooser-dialog.c:813
@@ -1396,7 +1396,7 @@ msgid ""
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
 msgstr ""
-"若您選擇此項，您的設定將被記住並不再顯示提示訊息。·之後您可以在設定選項對話框"
+"若您選擇此項，您的設定將被記住並不再顯示提示訊息。·之後您可以在偏好設定對話框"
 "中變更別的設定方式。"
 
 #. display an error to the user
@@ -1433,7 +1433,7 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:222
 msgid "File Manager Preferences"
-msgstr "檔案總管設定選項"
+msgstr "檔案管理程式偏好設定"
 
 #.
 #. Views
@@ -2120,7 +2120,7 @@ msgstr "由 XDS 拖曳所提供的檔名無效"
 #: ../thunar/thunar-standard-view.c:2711
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
-msgstr "無法為URL \"%s\" 建立連結"
+msgstr "無法為 URL \"%s\" 建立連結"
 
 #: ../thunar/thunar-standard-view.c:2974
 #, c-format
@@ -2184,7 +2184,7 @@ msgstr "貼到資料夾中(_P)"
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:1183
 msgid "P_roperties..."
-msgstr "設定選項(_P)..."
+msgstr "屬性(_R)..."
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:108
@@ -2210,7 +2210,7 @@ msgstr "關閉全部視窗(_A)"
 
 #: ../thunar/thunar-window.c:264
 msgid "Close all Thunar windows"
-msgstr "關閉全部 Thunar·視窗"
+msgstr "關閉所有 Thunar 視窗"
 
 #: ../thunar/thunar-window.c:265
 msgid "_Close"
@@ -2230,7 +2230,7 @@ msgstr "功能設定(_E)..."
 
 #: ../thunar/thunar-window.c:267
 msgid "Edit Thunars Preferences"
-msgstr "編輯 Thunars·設定選項"
+msgstr "編輯 Thunars 偏好設定"
 
 #: ../thunar/thunar-window.c:268
 msgid "_View"
@@ -2290,7 +2290,7 @@ msgstr "開啟上層目錄"
 
 #: ../thunar/thunar-window.c:277
 msgid "_Home"
-msgstr "(家目錄_H)"
+msgstr "家目錄(_H)"
 
 #: ../thunar/thunar-window.c:277
 msgid "Go to the home folder"
@@ -2314,11 +2314,11 @@ msgstr "指定要開啟的位址"
 
 #: ../thunar/thunar-window.c:280
 msgid "_Help"
-msgstr "幫助(_H)"
+msgstr "說明(_H)"
 
 #: ../thunar/thunar-window.c:281
 msgid "_Contents"
-msgstr "使用內容(_C)"
+msgstr "內容(_C)"
 
 #: ../thunar/thunar-window.c:281
 msgid "Display Thunar user manual"
@@ -2326,7 +2326,7 @@ msgstr "觀看 Thunar 使用手冊"
 
 #: ../thunar/thunar-window.c:282
 msgid "Display information about Thunar"
-msgstr "顯示·Thunar 的相關資訊"
+msgstr "顯示 Thunar 相關資訊"
 
 #: ../thunar/thunar-window.c:287
 msgid "Show _Hidden Files"
@@ -2460,7 +2460,7 @@ msgstr ""
 #. set window title and icon
 #: ../thunar/thunar-window.c:1885 ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
-msgstr "檔案總管"
+msgstr "檔案管理程式"
 
 #: ../thunarx/thunarx-property-page.c:137
 msgid "Label"
@@ -2518,11 +2518,11 @@ msgstr "要執行的程式，有時會加以啟動參數"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:203
 msgid "URL:"
-msgstr "網址:"
+msgstr "URL:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:210
 msgid "The URL to access."
-msgstr "要存取的網址"
+msgstr "要存取的 URL。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:225
 msgid "Comment:"
@@ -2550,8 +2550,8 @@ msgid ""
 "from the file manager or the menu. Not every application supports startup "
 "notification."
 msgstr ""
-"選取此選項則當從檔案總管或選單執行命令時將獲得啟動提示， 請注意並不是所有程式"
-"皆支援啟動提示功能。 "
+"選取此選項後，於檔案管理程式或選單執行命令時將獲得啟動提示，請注意並不是所有程式"
+"皆支援啟動提示功能。"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:266
 msgid "Run in _terminal"
@@ -2923,7 +2923,7 @@ msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
 msgstr ""
-"您可以設定自訂的動作以便在檔案總管的右鍵選單中對\n"
+"您可以設定自訂的動作以便在檔案管理程式的右鍵選單中對\n"
 "特定類別的檔案以自己的方式來作處理。"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:187
@@ -3117,7 +3117,7 @@ msgid ""
 "action should only appear for certain kinds of\n"
 "files."
 msgstr ""
-"本頁面列出了在檔案總管裡會出現在\n"
+"本頁面列出了在檔案管理程式裡會出現在\n"
 "滑鼠右鍵選單中所能採用的可選動作。\n"
 "您可在此指定處理檔案的關鍵字眼，\n"
 "其中要處理的關鍵字應以半型分號 \";\" 作出區隔\n"
@@ -3158,12 +3158,12 @@ msgstr "未設定好指令"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:188
 msgid "Configure c_ustom actions..."
-msgstr "設定自定動作 (C_)"
+msgstr "設定自訂動作 (_C)"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:189
 msgid ""
 "Setup custom actions that will appear in the file managers context menus"
-msgstr "自定會出現在檔案總管右鍵選單的動作"
+msgstr "自訂會出現在檔案管理程式右鍵選單的動作"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:406
 #, c-format
@@ -3172,7 +3172,7 @@ msgstr "無法啟動指定動作·\"%s\"."
 
 #: ../plugins/thunar-uca/uca.xml.in.h:1
 msgid "Example for a custom action"
-msgstr "自定動作範例"
+msgstr "自訂動作範例"
 
 #: ../plugins/thunar-uca/uca.xml.in.h:2
 msgid "Open Terminal Here"
@@ -3180,11 +3180,11 @@ msgstr "在此開啟終端機"
 
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
-msgstr "使用檔案總管瀏覽管理檔案系統"
+msgstr "使用檔案管理程式瀏覽檔案系統"
 
 #: ../Thunar.desktop.in.in.h:3
 msgid "Thunar File Manager"
-msgstr "Thunar 檔案總管"
+msgstr "Thunar 檔案管理程式"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:1
 msgid "Open Folder"
