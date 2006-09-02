@@ -1,3 +1,62 @@
+0.4.0rc1
+========
+- An implementation of the XDG Trash Specification was imported and is now
+  used by both Thunar and xfdesktop to display and manage trashed files.
+  The implementation is currently limited to the home trash, but that will
+  be extended to support foreign trash cans soon.
+- Add a trash panel applet for the Xfce panel, that displays the current
+  state of the trash, allows to open and empty the trash, and supports
+  drops of files to the trash.
+- Add "No to all" response to the transfer progress dialog, which allows to
+  skip all further overwrite dialogs (Bug #1666).
+- Add ISO Speed Ratings to the Image page of the properties dialog.
+- Add rubberband selection support to the detailed list view when build with
+  GTK+ 2.9.0 and above (Bug #1996).
+- Add menus to the "Back" and "Forward" buttons in the toolbar (Bug #1782).
+- Update the path bar with the latest changes to GtkFileChooser (Bug #2060).
+- The dependency of the thunar-vfs library on GConf is gone. Instead the
+  available thumbnailers are now determined by an external tool and added to
+  a cache file, which will be mapped by all processes using the thunar-vfs
+  library (Bug #2131).
+- Add a new thumbnailer for TrueType fonts using the FreeType 2.x library.
+- Add a warning text to the window when running as super user (Bug #2218).
+- Add desktop shortcut to the shortcuts pane and use a special icon for the
+  desktop folder (Bug #2235).
+- Use the new icon chooser dialog, available with exo 0.3.1.10rc1, to pick
+  icons for custom actions.
+- Fix invalid display of the file's group in the properties dialog (Bug #1838).
+- Fix the location entry completion crashing with certain GTK+ versions (Bug
+  #1891).
+- Fix list model related crashes with GTK+ 2.10 (Gnome Bug #349128).
+- Use CRLF for text/uri-list as specified by RFC 2483 (Bug #2166).
+- Fix invalid substitution of %d in custom commands (Bug #2214).
+- Fix not working Ctrl+A in the location entry (Bug #2036).
+- Fix the progress bar text being truncated (Bug #2003).
+- Fix missing mkdtemp on Solaris (Bug #2070).
+- Fix compilation with compilers other than gcc (Bug #1852).
+- Fix compilation on NetBSD 2.99 and above.
+- Fix compilation on OpenBSD.
+- Add manual page for Thunar (Bug #1650).
+- Unmount volumes prior to ejecting them (Bug #2236).
+- Do not use different icons to represent the home folder.
+- Use "<folder> - File Manager" for the title of Thunar windows to make it
+  easier to identify file manager windows in the taskbar.
+- The thunar-vfs reference manual was updated to reflect the latest changes.
+- Case sensitive sorting is now disabled by default (Bug #2064).
+- Use a localized human readable format for the file dates (Bug #2057).
+- Use the new GSlice allocator where possible to reduce memory overhead.
+- Avoid the usage of GMemChunk, because in GLib 2.10 and above that is not
+  only inefficient, but also continously leaks memory.
+- Updated translations: Pau Rul-lan Ferragut (ca), Michal Várady (cs),
+                        Benedikt Meurer and Fabian Nowak (de), Stavros
+			Giannouris (el), Sylvain Vedrenne (eo), Piarres
+			Beobide (eu), Jari Rahkonen (fi), Maximilian
+			Schleiss (fr), Szervác Attila (hu), Roberto
+			Pariset (it), Piotr Maliński and Szymon Kałasz (pl),
+			Hydonsingore Cia (zh_TW)
+- New translations: Iván Seoane Pardo (gl), Dimitri Gogelia (ka)
+
+
 0.3.2beta2
 ==========
 - The default operation when dropping files into a folder is now to move the
