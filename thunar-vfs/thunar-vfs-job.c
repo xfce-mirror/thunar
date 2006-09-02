@@ -277,7 +277,7 @@ thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
    * the handler is allowed to take over ownership of the
    * @info_list, i.e. it can reuse the @infos list and just replace
    * the data elements with it's own objects based on the
-   * #ThunarVfsInfo<!--->s contained within the @info_list (and
+   * #ThunarVfsInfo<!---->s contained within the @info_list (and
    * of course properly unreffing the previously contained infos).
    * If a handler takes over ownership of @info_list it must return
    * %TRUE here, and no further handlers will be run. Else, if

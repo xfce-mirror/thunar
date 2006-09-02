@@ -30,8 +30,9 @@ thunar_vfs_info_new_for_path
 thunar_vfs_info_ref
 thunar_vfs_info_unref
 thunar_vfs_info_copy
-thunar_vfs_info_get_free_space
 thunar_vfs_info_get_custom_icon
+thunar_vfs_info_get_free_space
+thunar_vfs_info_get_metadata
 thunar_vfs_info_read_link
 thunar_vfs_info_execute
 thunar_vfs_info_rename
@@ -55,36 +56,13 @@ thunar_vfs_shutdown
 
 
 <SECTION>
-<FILE>thunar-vfs-interactive-job</FILE>
-<TITLE>ThunarVfsInteractiveJob</TITLE>
-ThunarVfsInteractiveJobResponse
-ThunarVfsInteractiveJob
-<SUBSECTION Standard>
-ThunarVfsInteractiveJobClass
-THUNAR_VFS_TYPE_VFS_INTERACTIVE_JOB_RESPONSE
-THUNAR_VFS_TYPE_INTERACTIVE_JOB
-THUNAR_VFS_INTERACTIVE_JOB
-THUNAR_VFS_IS_INTERACTIVE_JOB
-THUNAR_VFS_IS_INTERACTIVE_JOB_CLASS
-THUNAR_VFS_INTERACTIVE_JOB_CLASS
-THUNAR_VFS_INTERACTIVE_JOB_GET_CLASS
-<SUBSECTION Private>
-thunar_vfs_interactive_job_response_get_type
-thunar_vfs_interactive_job_get_type
-</SECTION>
-
-
-
-<SECTION>
 <FILE>thunar-vfs-job</FILE>
 <TITLE>ThunarVfsJob</TITLE>
+ThunarVfsJobResponse
 ThunarVfsJob
 thunar_vfs_job_launch
 thunar_vfs_job_cancel
 thunar_vfs_job_cancelled
-thunar_vfs_job_emit_valist
-thunar_vfs_job_emit
-thunar_vfs_job_error
 <SUBSECTION Standard>
 ThunarVfsJobClass
 THUNAR_VFS_TYPE_JOB
@@ -96,6 +74,30 @@ THUNAR_VFS_JOB_GET_CLASS
 <SUBSECTION Private>
 ThunarVfsJobPrivate
 thunar_vfs_job_get_type
+</SECTION>
+
+
+
+<SECTION>
+<FILE>thunar-vfs-jobs</FILE>
+<TITLE>Jobs</TITLE>
+thunar_vfs_listdir
+thunar_vfs_create_file
+thunar_vfs_create_files
+thunar_vfs_copy_file
+thunar_vfs_copy_files
+thunar_vfs_link_file
+thunar_vfs_link_files
+thunar_vfs_move_file
+thunar_vfs_move_files
+thunar_vfs_unlink_file
+thunar_vfs_unlink_files
+thunar_vfs_make_directory
+thunar_vfs_make_directories
+thunar_vfs_change_mode
+thunar_vfs_change_group
+thunar_vfs_change_owner
+thunar_vfs_deep_count
 </SECTION>
 
 
@@ -176,6 +178,7 @@ thunar_vfs_mime_database_get_type
 <SECTION>
 <FILE>thunar-vfs-mime-handler</FILE>
 <TITLE>ThunarVfsMimeHandler</TITLE>
+ThunarVfsMimeHandlerFlags
 ThunarVfsMimeHandler
 thunar_vfs_mime_handler_get_command
 thunar_vfs_mime_handler_get_flags
@@ -273,6 +276,7 @@ thunar_vfs_change_group
 <SECTION>
 <FILE>thunar-vfs-types</FILE>
 <TITLE>Basic Types</TITLE>
+ThunarVfsDeepCountFlags
 ThunarVfsFileType
 ThunarVfsFileMode
 ThunarVfsFileFlags
@@ -296,6 +300,7 @@ thunar_vfs_file_flags_get_type
 <SECTION>
 <FILE>thunar-vfs-path</FILE>
 <TITLE>ThunarVfsPath</TITLE>
+ThunarVfsPathScheme
 ThunarVfsPath
 THUNAR_VFS_TYPE_PATH
 THUNAR_VFS_TYPE_PATH_LIST
@@ -312,6 +317,7 @@ thunar_vfs_path_is_root
 thunar_vfs_path_relative
 thunar_vfs_path_get_name
 thunar_vfs_path_get_parent
+thunar_vfs_path_get_scheme
 thunar_vfs_path_dup_string
 thunar_vfs_path_to_string
 thunar_vfs_path_dup_uri

@@ -568,7 +568,7 @@ thunar_vfs_make_directory (ThunarVfsPath *path,
 
 /**
  * thunar_vfs_make_directories:
- * @path_list : a list of #ThunarVfsPath<!--->s that contain the paths
+ * @path_list : a list of #ThunarVfsPath<!---->s that contain the paths
  *              to the directories which should be created.
  * @error     : return location for errors or %NULL.
  *

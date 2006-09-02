@@ -4,8 +4,8 @@
 <!ENTITY thunar-vfs-group SYSTEM "xml/thunar-vfs-group.xml">
 <!ENTITY thunar-vfs-info SYSTEM "xml/thunar-vfs-info.xml">
 <!ENTITY thunar-vfs-init-shutdown SYSTEM "xml/thunar-vfs-init-shutdown.xml">
-<!ENTITY thunar-vfs-interactive-job SYSTEM "xml/thunar-vfs-interactive-job.xml">
 <!ENTITY thunar-vfs-job SYSTEM "xml/thunar-vfs-job.xml">
+<!ENTITY thunar-vfs-jobs SYSTEM "xml/thunar-vfs-jobs.xml">
 <!ENTITY thunar-vfs-mime-action SYSTEM "xml/thunar-vfs-mime-action.xml">
 <!ENTITY thunar-vfs-mime-application SYSTEM "xml/thunar-vfs-mime-application.xml">
 <!ENTITY thunar-vfs-mime-database SYSTEM "xml/thunar-vfs-mime-database.xml">
@@ -22,7 +22,7 @@
 <!ENTITY thunar-vfs-volume-manager SYSTEM "xml/thunar-vfs-volume-manager.xml">
 
 <!ENTITY version SYSTEM "version.xml">
-<!ENTITY date "September 2005">
+<!ENTITY date "September 2006">
 ]>
 
 <book id="index">
@@ -33,6 +33,7 @@
 
     <copyright>
       <year>2005</year>
+      <year>2006</year>
       <holder>Benedikt Meurer</holder>
     </copyright>
 
@@ -72,6 +73,19 @@
     &thunar-vfs-path;
     &thunar-vfs-info;
     &thunar-vfs-util;
+  </part>
+
+  <part id="jobs">
+    <title>Jobs</title>
+    <para>
+      This section describes the available jobs that are used to perform file system
+      operations in an asychronous fashion. Jobs are represented by the <link
+      linkend="ThunarVfsJob">ThunarVfsJob</link> class, which provides several
+      signals used to monitor the activity of the job and handle interaction with
+      the user as required.
+    </para>
+    &thunar-vfs-job;
+    &thunar-vfs-jobs;
   </part>
 
   <part id="filesystem-monitoring">
