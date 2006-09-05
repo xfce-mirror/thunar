@@ -169,12 +169,14 @@ thunar_session_client_connect (ThunarSessionClient *session_client,
   SmPropValue  value_discard[3];
   SmPropValue  value_restart[4];
   SmPropValue  value_userid[1];
-  SmProp      *properties[5];
+  SmPropValue  value_priority[1];
+  SmProp      *properties[6];
   SmProp       prop_clone;
   SmProp       prop_discard;
   SmProp       prop_program;
   SmProp       prop_restart;
   SmProp       prop_userid;
+  SmProp       prop_priority;
   gchar        error_string[1];
   gchar       *spec;
   gchar       *id = NULL;
@@ -273,12 +275,21 @@ thunar_session_client_connect (ThunarSessionClient *session_client,
   value_userid[0].value = (gchar *) g_get_user_name ();
   value_userid[0].length = strlen (value_userid[0].value);
 
+  /* _GSM_Priority */
+  prop_priority.name = "_GSM_Priority";
+  prop_priority.type = SmCARD8;
+  prop_priority.num_vals = G_N_ELEMENTS (value_priority);
+  prop_priority.vals = &value_priority[0];
+  value_priority[0].value = "\30";
+  value_priority[0].length = 1;
+
   /* setup the properties list */
   properties[0] = &prop_clone;
   properties[1] = &prop_discard;
   properties[2] = &prop_program;
   properties[3] = &prop_restart;
   properties[4] = &prop_userid;
+  properties[5] = &prop_priority;
 
   /* send the properties to the session manager */
   SmcSetProperties (session_client->connection, G_N_ELEMENTS (properties), properties);
