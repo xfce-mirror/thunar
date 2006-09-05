@@ -43,32 +43,34 @@
 /* special mime type to gnome icon mapping */
 static const struct
 {
-  const gchar *const type;
-  const gchar *const icon;
-} GNOME_ICONNAMES[] =
+  const gchar subtype[12];
+  const gchar icon[19];
+} GNOME_INODE_ICONNAMES[] =
 {
-  { "inode/blockdevice", "gnome-fs-blockdev" },
-  { "inode/chardevice", "gnome-fs-chardev" },
-  { "inode/directory", "gnome-fs-directory" },
-  { "inode/fifo", "gnome-fs-fifo" },
-  { "inode/socket", "gnome-fs-socket" },
+  { "blockdevice", "gnome-fs-blockdev"  },
+  { "chardevice",  "gnome-fs-chardev"   },
+  { "directory",   "gnome-fs-directory" },
+  { "fifo",        "gnome-fs-fifo"      },
+  { "socket",      "gnome-fs-socket"    },
 };
 
-/* static constant media-only gnome icon names
- * (shared by all mime types that don't have
- * a more specific icon).
- */
-static const gchar * const GNOME_MEDIAICONS[] =
-{
-  "gnome-mime-application",
-  "gnome-mime-audio",
-  "gnome-mime-image",
-  "gnome-mime-text",
-  "gnome-mime-video",
-};
+/* first fallback gnome icon name */
+static const gchar GNOME_FS_REGULAR[] = "gnome-fs-regular";
 
-/* fallback gnome icon name */
+/* second fallback gnome icon name */
 static const gchar GNOME_MIME_APPLICATION_OCTET_STREAM[] = "gnome-mime-application-octet-stream";
+
+/* generic standard icon names (Icon Naming Spec 0.8) */
+static const gchar XDG_GENERIC_ICONNAMES[][18] =
+{
+  "audio-x-generic",
+  "font-x-generic",
+  "image-x-generic",
+  "package-x-generic",
+  "text-x-generic",
+  "video-x-generic",
+};
+
 
 
 
@@ -76,16 +78,16 @@ static const gchar GNOME_MIME_APPLICATION_OCTET_STREAM[] = "gnome-mime-applicati
  * need to be freed using g_free().
  */
 static inline gboolean
-thunar_vfs_mime_info_is_static_icon_name (const ThunarVfsMimeInfo *info)
+icon_name_is_static (const gchar *icon_name)
 {
   guint n;
-  for (n = 0; n < G_N_ELEMENTS (GNOME_ICONNAMES); ++n)
-    if (info->icon_name == GNOME_ICONNAMES[n].icon)
+  for (n = 0; n < G_N_ELEMENTS (GNOME_INODE_ICONNAMES); ++n)
+    if (icon_name == GNOME_INODE_ICONNAMES[n].icon)
       return TRUE;
-  for (n = 0; n < G_N_ELEMENTS (GNOME_MEDIAICONS); ++n)
-    if (info->icon_name == GNOME_MEDIAICONS[n])
+  for (n = 0; n < G_N_ELEMENTS (XDG_GENERIC_ICONNAMES); ++n)
+    if (icon_name == XDG_GENERIC_ICONNAMES[n])
       return TRUE;
-  return (info->icon_name == GNOME_MIME_APPLICATION_OCTET_STREAM);
+  return (icon_name == GNOME_FS_REGULAR || icon_name == GNOME_MIME_APPLICATION_OCTET_STREAM);
 }
 
 
@@ -174,7 +176,7 @@ thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
         }
 
       /* free the icon name if it isn't one of the statics */
-      if (G_LIKELY (!thunar_vfs_mime_info_is_static_icon_name (info)))
+      if (G_LIKELY (!icon_name_is_static (info->icon_name)))
         {
 #ifdef G_ENABLE_DEBUG
           if (G_LIKELY (info->icon_name != NULL))
@@ -369,8 +371,9 @@ thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
   const gchar *subtype;
   const gchar *name;
   const gchar *p;
+  gchar       *icon_name;
   gchar       *media;
-  gsize        n;
+  guint        n;
 
   g_return_val_if_fail (info != NULL, NULL);
   g_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
@@ -386,46 +389,80 @@ thunar_vfs_mime_info_lookup_icon_name (ThunarVfsMimeInfo *info,
       media[p - name] = '\0';
       subtype = G_LIKELY (*p == '/') ? p + 1 : p;
 
-      /* start out with the full name */
-      info->icon_name = g_strdup_printf ("gnome-mime-%s-%s", media, subtype);
-      if (!gtk_icon_theme_has_icon (icon_theme, info->icon_name))
+      /* inode mime types are special */
+      if (G_UNLIKELY (media[0] == 'i' && media[1] == 'n' && media[2] == 'o' && media[3] == 'd' && media[4] == 'e' && media[5] == '\0'))
         {
-          /* only the media portion */
-          info->icon_name[11 + ((subtype - 1) - name)] = '\0';
-          if (!gtk_icon_theme_has_icon (icon_theme, info->icon_name))
-            {
-              /* if we get here, we'll use a static icon name */
-              g_free (info->icon_name);
+          /* use the GNOME icon names for now, they'll be mapped for some time */
+          for (n = 0; n < G_N_ELEMENTS (GNOME_INODE_ICONNAMES); ++n)
+            if (strcmp (subtype, GNOME_INODE_ICONNAMES[n].subtype) == 0)
+              if (gtk_icon_theme_has_icon (icon_theme, GNOME_INODE_ICONNAMES[n].icon))
+                {
+                  info->icon_name = (gchar *) GNOME_INODE_ICONNAMES[n].icon;
+                  break;
+                }
 
-              /* GNOME uses non-standard names for special MIME types */
-              for (n = 0; n < G_N_ELEMENTS (GNOME_ICONNAMES); ++n)
-                if (strcmp (name, GNOME_ICONNAMES[n].type) == 0)
-                  if (gtk_icon_theme_has_icon (icon_theme, GNOME_ICONNAMES[n].icon))
+          /* fallback is always application/octet-stream */
+          if (n == G_N_ELEMENTS (GNOME_INODE_ICONNAMES))
+            info->icon_name = (gchar *) GNOME_MIME_APPLICATION_OCTET_STREAM;
+        }
+      else
+        {
+          /* try icon names from the icon naming spec first */
+          icon_name = g_strconcat (media, "-", subtype, NULL);
+          if (!gtk_icon_theme_has_icon (icon_theme, icon_name))
+            {
+              /* release the failed icon_name */
+              g_free (icon_name);
+
+              /* retry with "<media>-x-generic" */
+              icon_name = g_strconcat (media, "-x-generic", NULL);
+              if (!gtk_icon_theme_has_icon (icon_theme, icon_name))
+                {
+                  /* release the failed icon_name */
+                  g_free (icon_name);
+
+                  /* fallback to "gnome-mime-<media>-<subtype>" icon naming scheme */
+                  icon_name = g_strconcat ("gnome-mime-", media, "-", subtype, NULL);
+                  if (!gtk_icon_theme_has_icon (icon_theme, icon_name))
                     {
-                      info->icon_name = (gchar *) GNOME_ICONNAMES[n].icon;
-                      break;
-                    }
+                      /* fallback to the generic "gnome-mime-<media>" */
+                      icon_name[11 + ((subtype - 1) - name)] = '\0';
+                      if (!gtk_icon_theme_has_icon (icon_theme, icon_name))
+                        {
+                          /* release the failed icon_name */
+                          g_free (icon_name);
 
-              /* fallback is always application/octet-stream */
-              if (n == G_N_ELEMENTS (GNOME_ICONNAMES))
-                info->icon_name = (gchar *) GNOME_MIME_APPLICATION_OCTET_STREAM;
+                          /* fallback to "gnome-fs-regular" if available, otherwise application/octet-stream */
+                          if (gtk_icon_theme_has_icon (icon_theme, GNOME_FS_REGULAR))
+                            icon_name = (gchar *) GNOME_FS_REGULAR;
+                          else
+                            icon_name = (gchar *) GNOME_MIME_APPLICATION_OCTET_STREAM;
+                        }
+                    }
+                }
+              else
+                {
+                  /* "<media>-x-generic" matched, check if we can use a static icon_name */
+                  for (n = 0; n < G_N_ELEMENTS (XDG_GENERIC_ICONNAMES); ++n)
+                    if (strcmp (icon_name, XDG_GENERIC_ICONNAMES[n]) == 0)
+                      {
+                        /* release our duplicate */
+                        g_free (icon_name);
+
+                        /* use the static icon name instead */
+                        icon_name = (gchar *) XDG_GENERIC_ICONNAMES[n];
+                        break;
+                      }
+                }
             }
-          else
-            {
-              /* check if we can use one of the static media icon names */
-              for (n = 0; n < G_N_ELEMENTS (GNOME_MEDIAICONS); ++n)
-                if (strcmp (info->icon_name, GNOME_MEDIAICONS[n]) == 0)
-                  {
-                    g_free (info->icon_name);
-                    info->icon_name = (gchar *) GNOME_MEDIAICONS[n];
-                    break;
-                  }
-            }
+
+          /* use the determined icon_name */
+          info->icon_name = icon_name;
         }
 
       /* verify the icon name */
-      g_assert (info->icon_name != NULL);
-      g_assert (info->icon_name[0] != '\0');
+      _thunar_vfs_assert (info->icon_name != NULL);
+      _thunar_vfs_assert (info->icon_name[0] != '\0');
     }
 
   return info->icon_name;
@@ -461,7 +498,7 @@ thunar_vfs_mime_info_list_free (GList *info_list)
 void
 _thunar_vfs_mime_info_invalidate_icon_name (ThunarVfsMimeInfo *info)
 {
-  if (!thunar_vfs_mime_info_is_static_icon_name (info))
+  if (!icon_name_is_static (info->icon_name))
     {
 #ifdef G_ENABLE_DEBUG
       if (G_LIKELY (info->icon_name != NULL))

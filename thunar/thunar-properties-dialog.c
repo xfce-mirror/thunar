@@ -127,7 +127,6 @@ struct _ThunarPropertiesDialog
 
 
 static GObjectClass *thunar_properties_dialog_parent_class;
-static guint         properties_dialog_signals[LAST_SIGNAL];
 
 
 
@@ -202,14 +201,13 @@ thunar_properties_dialog_class_init (ThunarPropertiesDialogClass *klass)
    * file properties. This is an internal signal used to bind
    * the action to keys.
    **/
-  properties_dialog_signals[RELOAD] =
-    g_signal_new (I_("reload"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (ThunarPropertiesDialogClass, reload),
-                  g_signal_accumulator_true_handled, NULL,
-                  _thunar_marshal_BOOLEAN__VOID,
-                  G_TYPE_BOOLEAN, 0);
+  g_signal_new (I_("reload"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarPropertiesDialogClass, reload),
+                g_signal_accumulator_true_handled, NULL,
+                _thunar_marshal_BOOLEAN__VOID,
+                G_TYPE_BOOLEAN, 0);
 
   /* setup the key bindings for the properties dialog */
   binding_set = gtk_binding_set_by_class (klass);
@@ -299,6 +297,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
 
   dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->kind_label), TRUE);
+  gtk_label_set_ellipsize (GTK_LABEL (dialog->kind_label), PANGO_ELLIPSIZE_END);
   exo_binding_new (G_OBJECT (dialog->kind_label), "visible", G_OBJECT (label), "visible");
   gtk_table_attach (GTK_TABLE (table), dialog->kind_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (dialog->kind_label);

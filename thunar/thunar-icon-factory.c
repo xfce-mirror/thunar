@@ -45,7 +45,7 @@
 #define THUNAR_ICON_FACTORY_SWEEP_TIMEOUT (30 * 1000)
 
 /* the maximum length of the recently used list */
-#define MAX_RECENTLY (128u)
+#define MAX_RECENTLY (32u)
 
 
 
@@ -237,6 +237,14 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
 
   /* allocate the hash table for the icon cache */
   factory->icon_cache = g_hash_table_new_full (thunar_icon_key_hash, thunar_icon_key_equal, g_free, g_object_unref);
+
+  /* allocate the thumbnail factory */
+  factory->thumbnail_factory = thunar_vfs_thumb_factory_new ((THUNAR_THUMBNAIL_SIZE > 128)
+                                                            ? THUNAR_VFS_THUMB_SIZE_LARGE
+                                                            : THUNAR_VFS_THUMB_SIZE_NORMAL);
+
+  /* setup the thumbnail generator */
+  factory->thumbnail_generator = thunar_thumbnail_generator_new (factory->thumbnail_factory);
 }
 
 
@@ -276,12 +284,10 @@ thunar_icon_factory_finalize (GObject *object)
   g_hash_table_destroy (factory->icon_cache);
 
   /* disconnect from the thumbnail factory */
-  if (G_LIKELY (factory->thumbnail_factory != NULL))
-    g_object_unref (G_OBJECT (factory->thumbnail_factory));
+  g_object_unref (G_OBJECT (factory->thumbnail_factory));
 
   /* disconnect from the thumbnail generator */
-  if (G_LIKELY (factory->thumbnail_generator != NULL))
-    g_object_unref (G_OBJECT (factory->thumbnail_generator));
+  g_object_unref (G_OBJECT (factory->thumbnail_generator));
 
   /* remove the "changed" emission hook from the GtkIconTheme class */
   g_signal_remove_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME), factory->changed_hook_id);
@@ -528,8 +534,14 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
 {
   ThunarIconKey  lookup_key;
   ThunarIconKey *key;
+  ThunarVfsPath *path;
+  ThunarVfsInfo *info;
+  const gchar   *filename;
   GtkIconInfo   *icon_info;
   GdkPixbuf     *pixbuf = NULL;
+  GdkPixbuf     *scaled;
+  GError        *err = NULL;
+  gchar         *thumbnail;
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   _thunar_return_val_if_fail (name != NULL && *name != '\0', NULL);
@@ -545,6 +557,7 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
       /* check if we have to load a file instead of a themed icon */
       if (G_UNLIKELY (g_path_is_absolute (name)))
         {
+          /* load the file directly */
           pixbuf = thunar_icon_factory_load_from_file (factory, name, size);
         }
       else
@@ -553,8 +566,68 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
           icon_info = gtk_icon_theme_lookup_icon (factory->icon_theme, name, size, 0);
           if (G_LIKELY (icon_info != NULL))
             {
-              /* try to load the icon returned from the icon theme */
-              pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
+              /* check if we have an SVG icon here */
+              filename = gtk_icon_info_get_filename (icon_info);
+              if (filename != NULL && g_str_has_suffix (filename, ".svg"))
+                {
+                  /* We try to load SVG icons via the thumbnail database, because otherwise it's quite
+                   * slow to load the SVG icon each time, and also requires somewhat more memory than
+                   * simply loading and scaling PNG icons from the thumbnail database.
+                   *
+                   * Therefore first determine the path for the SVG icon.
+                   */
+                  path = thunar_vfs_path_new (filename, NULL);
+                  if (G_LIKELY (path != NULL))
+                    {
+                      /* determine the info for the SVG icon, required for the thumbnail lookup */
+                      info = thunar_vfs_info_new_for_path (path, NULL);
+                      if (G_LIKELY (info != NULL))
+                        {
+                          /* check if we have a valid thumbnail for the SVG icon */
+                          thumbnail = thunar_vfs_thumb_factory_lookup_thumbnail (factory->thumbnail_factory, info);
+                          if (thumbnail == NULL)
+                            {
+                              /* try to generate a thumbnail for the SVG icon */
+                              pixbuf = thunar_vfs_thumb_factory_generate_thumbnail (factory->thumbnail_factory, info);
+                              if (G_LIKELY (pixbuf != NULL))
+                                {
+                                  /* try to store the generated thumbnail in the database */
+                                  if (!thunar_vfs_thumb_factory_store_thumbnail (factory->thumbnail_factory, pixbuf, info, &err))
+                                    {
+                                      /* not critical, but atleast let the user know whats going on */
+                                      g_warning ("Failed to store thumbnail for \"%s\": %s", filename, err->message);
+                                      g_error_free (err);
+                                    }
+
+                                  /* scale down the generated thumbnail */
+                                  scaled = exo_gdk_pixbuf_scale_down (pixbuf, TRUE, size, size);
+                                  g_object_unref (G_OBJECT (pixbuf));
+                                  pixbuf = scaled;
+                                }
+                            }
+                          else
+                            {
+                              /* load icon from the thumbnail */
+                              pixbuf = exo_gdk_pixbuf_new_from_file_at_max_size (thumbnail, size, size, TRUE, NULL);
+
+                              /* cleanup */
+                              g_free (thumbnail);
+                            }
+
+                          /* cleanup */
+                          thunar_vfs_info_unref (info);
+                        }
+
+                      /* cleanup */
+                      thunar_vfs_path_unref (path);
+                    }
+                }
+
+              /* fallback to loading via the GtkIconTheme methods */
+              if (G_LIKELY (pixbuf == NULL))
+                pixbuf = gtk_icon_info_load_icon (icon_info, NULL);
+
+              /* cleanup */
               gtk_icon_info_free (icon_info);
             }
         }
@@ -878,18 +951,6 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
 again:
           /* determine the ThunarVfsInfo for the file */
           info = thunar_file_get_info (file);
-
-          /* allocate the thumbnail factory and thumbnail generator on-demand */
-          if (G_UNLIKELY (factory->thumbnail_factory == NULL))
-            {
-              /* allocate the thumbnail factory */
-              factory->thumbnail_factory = thunar_vfs_thumb_factory_new ((THUNAR_THUMBNAIL_SIZE > 128)
-                                                                        ? THUNAR_VFS_THUMB_SIZE_LARGE
-                                                                        : THUNAR_VFS_THUMB_SIZE_NORMAL);
-
-              /* allocate the thumbnail generator */
-              factory->thumbnail_generator = thunar_thumbnail_generator_new (factory->thumbnail_factory);
-            }
 
           /* try to load an existing thumbnail for the file */
           thumb_path = thunar_vfs_thumb_factory_lookup_thumbnail (factory->thumbnail_factory, info);
