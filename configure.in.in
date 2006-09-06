@@ -311,7 +311,7 @@ else
   AC_MSG_RESULT([$enable_debug])
 
   dnl Disable debugging (release build)
-  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -NDEBUG"
+  PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DNDEBUG"
 
   dnl Disable object cast checks
   PLATFORM_CPPFLAGS="$PLATFORM_CPPFLAGS -DG_DISABLE_CAST_CHECKS"
