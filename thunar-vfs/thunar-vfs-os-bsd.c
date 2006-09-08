@@ -237,10 +237,8 @@ error0:
   if (G_UNLIKELY ((dlen % DIRBLKSIZ) != 0))
     dlen = ((dlen + DIRBLKSIZ - 1) / DIRBLKSIZ) * DIRBLKSIZ;
 
-  /* allocate the directory buffer, which is
-   * also used to store the statfs(2) results.
-   */
-  dbuf = alloca (dlen);
+  /* allocate the directory buffer */
+  dbuf = g_new (gchar, dlen);
 
   /* read the directory content */
   for (loc = size = 0;;)
@@ -309,6 +307,9 @@ error0:
             *directories_return = g_list_prepend (*directories_return, path_list->data);
         }
     }
+
+  /* release the directory buffer */
+  g_free (dbuf);
 
 done:
   close (fd);
