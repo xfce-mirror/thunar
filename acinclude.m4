@@ -196,17 +196,25 @@ AC_HELP_STRING([--with-volume-manager=@<:@auto/freebsd/hal/none@:>@], [The volum
   elif test x"$with_volume_manager" = x"none"; then
     ac_bm_thunar_vfs_volume_impl=none
   else
-    dnl # Check target platform (auto-detection)
-    case "$target_os" in
-    freebsd*)
-      dnl # FreeBSD is fully supported
-      ac_bm_thunar_vfs_volume_impl=freebsd
-      ;;
-    *)
-      dnl # Otherwise, check if we have HAL
-      XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.5.0], [ac_bm_thunar_vfs_volume_impl=hal], [ac_bm_thunar_vfs_volume_impl=none])
-      ;;
-    esac
+    dnl # Check if HAL is available
+    XDT_CHECK_PACKAGE([HAL], [hal-storage], [0.5.0],
+    [
+      dnl # HAL is available, use it
+      ac_bm_thunar_vfs_volume_impl=hal
+    ],
+    [
+      dnl # Check operating system type
+      case "$target_os" in
+      freebsd*)
+        dnl # FreeBSD is fully supported
+        ac_bm_thunar_vfs_volume_impl=freebsd
+        ;;
+      *)
+        dnl # Otherwise no volume support
+        ac_bm_thunar_vfs_volume_impl=none
+        ;;
+      esac
+    ])
   fi
 
   dnl # We need HAL >= 0.5.x and D-BUS >= 0.23 for the HAL volume manager

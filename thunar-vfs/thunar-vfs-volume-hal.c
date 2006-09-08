@@ -22,8 +22,21 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+#ifdef HAVE_SYS_UCRED_H
+#include <sys/ucred.h>
+#endif
+#ifdef HAVE_SYS_MOUNT_H
+#include <sys/mount.h>
+#endif
+
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
+#endif
+#ifdef HAVE_FSTAB_H
+#include <fstab.h>
 #endif
 #ifdef HAVE_MNTENT_H
 #include <mntent.h>
@@ -46,27 +59,27 @@
 
 
 
-static void                  thunar_vfs_volume_hal_class_init       (ThunarVfsVolumeHalClass *klass);
-static void                  thunar_vfs_volume_hal_finalize         (GObject                 *object);
-static ThunarVfsVolumeKind   thunar_vfs_volume_hal_get_kind         (ThunarVfsVolume         *volume);
-static const gchar          *thunar_vfs_volume_hal_get_name         (ThunarVfsVolume         *volume);
-static ThunarVfsVolumeStatus thunar_vfs_volume_hal_get_status       (ThunarVfsVolume         *volume);
-static ThunarVfsPath        *thunar_vfs_volume_hal_get_mount_point  (ThunarVfsVolume         *volume);
-static gboolean              thunar_vfs_volume_hal_eject            (ThunarVfsVolume         *volume,
-                                                                     GtkWidget               *window,
-                                                                     GError                 **error);
-static gboolean              thunar_vfs_volume_hal_mount            (ThunarVfsVolume         *volume,
-                                                                     GtkWidget               *window,
-                                                                     GError                 **error);
-static gboolean              thunar_vfs_volume_hal_unmount          (ThunarVfsVolume         *volume,
-                                                                     GtkWidget               *window,
-                                                                     GError                 **error);
-static ThunarVfsPath        *thunar_vfs_volume_hal_find_mount_point (ThunarVfsVolumeHal      *volume_hal,
-                                                                     const gchar             *file);
-static void                  thunar_vfs_volume_hal_update           (ThunarVfsVolumeHal      *volume_hal,
-                                                                     LibHalContext           *context,
-                                                                     LibHalVolume            *hv,
-                                                                     LibHalDrive             *hd);
+static void                  thunar_vfs_volume_hal_class_init               (ThunarVfsVolumeHalClass  *klass);
+static void                  thunar_vfs_volume_hal_finalize                 (GObject                  *object);
+static ThunarVfsVolumeKind   thunar_vfs_volume_hal_get_kind                 (ThunarVfsVolume          *volume);
+static const gchar          *thunar_vfs_volume_hal_get_name                 (ThunarVfsVolume          *volume);
+static ThunarVfsVolumeStatus thunar_vfs_volume_hal_get_status               (ThunarVfsVolume          *volume);
+static ThunarVfsPath        *thunar_vfs_volume_hal_get_mount_point          (ThunarVfsVolume          *volume);
+static gboolean              thunar_vfs_volume_hal_eject                    (ThunarVfsVolume          *volume,
+                                                                             GtkWidget                *window,
+                                                                             GError                  **error);
+static gboolean              thunar_vfs_volume_hal_mount                    (ThunarVfsVolume          *volume,
+                                                                             GtkWidget                *window,
+                                                                             GError                  **error);
+static gboolean              thunar_vfs_volume_hal_unmount                  (ThunarVfsVolume          *volume,
+                                                                             GtkWidget                *window,
+                                                                             GError                  **error);
+static ThunarVfsPath        *thunar_vfs_volume_hal_find_active_mount_point  (const ThunarVfsVolumeHal *volume_hal);
+static ThunarVfsPath        *thunar_vfs_volume_hal_find_fstab_mount_point   (const ThunarVfsVolumeHal *volume_hal);
+static void                  thunar_vfs_volume_hal_update                   (ThunarVfsVolumeHal       *volume_hal,
+                                                                             LibHalContext            *context,
+                                                                             LibHalVolume             *hv,
+                                                                             LibHalDrive              *hd);
 
 
 
@@ -204,7 +217,7 @@ thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
   gchar              *quoted;
 
   /* check if the volume is currently mounted */
-  path = thunar_vfs_volume_hal_find_mount_point (volume_hal, "/proc/mounts");
+  path = thunar_vfs_volume_hal_find_active_mount_point (volume_hal);
   if (G_LIKELY (path != NULL))
     {
       /* try to unmount the volume first */
@@ -307,7 +320,7 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
   if (G_LIKELY (result))
     {
       /* try to figure out where the device was mounted */
-      path = thunar_vfs_volume_hal_find_mount_point (volume_hal, "/proc/mounts");
+      path = thunar_vfs_volume_hal_find_active_mount_point (volume_hal);
       if (G_LIKELY (path != NULL))
         {
           /* we must have been mounted successfully */
@@ -395,15 +408,16 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
 
 
 static ThunarVfsPath*
-thunar_vfs_volume_hal_find_mount_point (ThunarVfsVolumeHal *volume_hal,
-                                        const gchar        *file)
+thunar_vfs_volume_hal_find_active_mount_point (const ThunarVfsVolumeHal *volume_hal)
 {
   ThunarVfsPath *mount_point = NULL;
+
+#if defined(HAVE_SETMNTENT) /* Linux */
   struct mntent *mntent;
   FILE          *fp;
 
-  /* try to open that file as mnt entry list */
-  fp = setmntent (file, "r");
+  /* try to open the /proc/mounts file */
+  fp = setmntent ("/proc/mounts", "r");
   if (G_LIKELY (fp != NULL))
     {
       /* process all mnt entries */
@@ -419,12 +433,98 @@ thunar_vfs_volume_hal_find_mount_point (ThunarVfsVolumeHal *volume_hal,
             {
               /* and there's our mount point */
               mount_point = thunar_vfs_path_new (mntent->mnt_dir, NULL);
+              break;
             }
         }
 
       /* close the file handle */
       endmntent (fp);
     }
+#elif defined(HAVE_GETFSSTAT) /* FreeBSD */
+  struct statfs *mntbuf = NULL;
+  glong          bufsize = 0;
+  gint           mntsize;
+  gint           n;
+
+  /* determine the number of active mount points */
+  mntsize = getfsstat (NULL, 0, MNT_NOWAIT);
+  if (G_LIKELY (mntsize > 0))
+    {
+      /* allocate a new buffer */
+      bufsize = (mntsize + 4) * sizeof (*mntbuf);
+      mntbuf = (struct statfs *) g_malloc (bufsize);
+
+      /* determine the mount point for the device file */
+      mntsize = getfsstat (mntbuf, bufsize, MNT_NOWAIT);
+      for (n = 0; n < mntsize; ++n)
+        {
+          /* check if this is the entry we are looking for */
+          if (exo_str_is_equal (mntbuf[n].f_mntfromname, volume_hal->device_file))
+            {
+              /* and there's our mount point */
+              mount_point = thunar_vfs_path_new (mntbuf[n].f_mntonname, NULL);
+              break;
+            }
+        }
+
+      /* release the buffer */
+      g_free (mntbuf);
+    }
+#else
+#error "Add support for your operating system here."
+#endif
+
+  return mount_point;
+}
+
+
+
+static ThunarVfsPath*
+thunar_vfs_volume_hal_find_fstab_mount_point (const ThunarVfsVolumeHal *volume_hal)
+{
+  ThunarVfsPath *mount_point = NULL;
+
+#if defined(HAVE_SETMNTENT) /* Linux */
+  struct mntent *mntent;
+  FILE          *fp;
+
+  /* try to open the /etc/fstab file */
+  fp = setmntent ("/proc/fstab", "r");
+  if (G_LIKELY (fp != NULL))
+    {
+      /* process all mnt entries */
+      while (mount_point == NULL)
+        {
+          /* read the next entry */
+          mntent = getmntent (fp);
+          if (mntent == NULL)
+            break;
+
+          /* check if this is the entry we are looking for */
+          if (exo_str_is_equal (mntent->mnt_fsname, volume_hal->device_file))
+            {
+              /* and there's our mount point */
+              mount_point = thunar_vfs_path_new (mntent->mnt_dir, NULL);
+              break;
+            }
+        }
+
+      /* close the file handle */
+      endmntent (fp);
+    }
+#elif defined(HAVE_GETFSSPEC) /* FreeBSD */
+  struct fstab *fs;
+
+  /* check if we have an fstab entry for the device file */
+  fs = getfsspec (volume_hal->device_file);
+  if (G_LIKELY (fs != NULL))
+    {
+      /* and there's out mount point */
+      mount_point = thunar_vfs_path_new (fs->fs_file, NULL);
+    }
+#else
+#error "Add support for your operating system here."
+#endif
 
   return mount_point;
 }
@@ -568,8 +668,8 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
     }
   else
     {
-      /* we don't trust HAL, so let's see what /proc/mounts says about the volume */
-      volume_hal->mount_point = thunar_vfs_volume_hal_find_mount_point (volume_hal, "/proc/mounts");
+      /* we don't trust HAL, so let's see what the kernel says about the volume */
+      volume_hal->mount_point = thunar_vfs_volume_hal_find_active_mount_point (volume_hal);
 
       /* we must have been mounted successfully if we have a mount point */
       if (G_LIKELY (volume_hal->mount_point != NULL))
@@ -589,7 +689,7 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
         }
 
       /* lets see, maybe /etc/fstab knows where to mount */
-      volume_hal->mount_point = thunar_vfs_volume_hal_find_mount_point (volume_hal, "/etc/fstab");
+      volume_hal->mount_point = thunar_vfs_volume_hal_find_fstab_mount_point (volume_hal);
 
       /* if we still don't have a mount point, ask HAL */
       if (G_UNLIKELY (volume_hal->mount_point == NULL))
