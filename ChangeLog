@@ -1,5 +1,13 @@
 2006-09-09	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in, thunar-vfs/thunar-vfs-io-local-xfer.c: Keep the
+	  modification time when copying files. Bug #2244.
+	* thunar-vfs/thunar-vfs-io-local-xfer.c
+	  (_thunar_vfs_io_local_xfer_next_path): Further reduce the number
+	  of relocations.
+
+2006-09-09	Benedikt Meurer <benny@xfce.org>
+
 	* configure.in.in: Add missing check for setmntent().
 
 2006-09-08	Benedikt Meurer <benny@xfce.org>

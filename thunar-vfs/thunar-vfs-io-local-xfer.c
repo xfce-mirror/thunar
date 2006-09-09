@@ -43,6 +43,9 @@
 #ifdef HAVE_SYS_STATVFS_H
 #include <sys/statvfs.h>
 #endif
+#ifdef HAVE_SYS_TIME_H
+#include <sys/time.h>
+#endif
 #ifdef HAVE_SYS_VFS_H
 #include <sys/vfs.h>
 #endif
@@ -144,14 +147,17 @@ tvilx_copy_regular (const gchar                   *source_absolute_path,
                     gpointer                       callback_data,
                     GError                       **error)
 {
-  mode_t mode;
-  gchar *display_name;
-  gchar *buffer;
-  gsize  bufsize;
-  gsize  completed;
-  gint   source_fd;
-  gint   target_fd;
-  gint   n, m, l;
+#ifdef HAVE_FUTIMES
+  struct timeval times[2];
+#endif
+  mode_t         mode;
+  gchar         *display_name;
+  gchar         *buffer;
+  gsize          bufsize;
+  gsize          completed;
+  gint           source_fd;
+  gint           target_fd;
+  gint           n, m, l;
 
   /* try to open the source file for reading */
   source_fd = g_open (source_absolute_path, O_RDONLY, 0000);
@@ -308,6 +314,18 @@ end2: /* release the transfer buffer */
       g_free (buffer);
     }
 
+  /* set the access/modification time of the target to that of
+   * the source: http://bugzilla.xfce.org/show_bug.cgi?id=2244
+   */
+#ifdef HAVE_FUTIMES
+  /* set access and modifications using the source_statb */
+  times[0].tv_sec = source_statb->st_atime; times[0].tv_usec = 0;
+  times[1].tv_sec = source_statb->st_mtime; times[1].tv_usec = 0;
+
+  /* apply the new times to the file (ignoring errors here) */
+  futimes (target_fd, times);
+#endif
+
   /* close the file descriptors */
   close (target_fd);
 end1:
@@ -340,7 +358,7 @@ _thunar_vfs_io_local_xfer_next_path (const ThunarVfsPath     *source_path,
                                      ThunarVfsIOLocalXferMode mode,
                                      GError                 **error)
 {
-  static const gchar * const NAMES[3][2] =
+  static const gchar const NAMES[3][2][19] =
   {
     {
       N_ ("copy of %s"),
