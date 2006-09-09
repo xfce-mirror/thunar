@@ -214,6 +214,58 @@ thunar_vfs_info_get_free_space (const ThunarVfsInfo *info,
 
 
 /**
+ * thunar_vfs_info_set_custom_icon:
+ * @info        : a #ThunarVfsInfo.
+ * @custom_icon : the new custom icon for the @info.
+ * @error       : return location for errors or %NULL.
+ *
+ * Sets the custom icon for the file referred to by @info to the specified
+ * @custom_icon, which can be either an absolute path to an image file or
+ * the name of a themed icon.
+ *
+ * The @info must refer to a valid .desktop file, that is, its mime type
+ * must be application/x-desktop.
+ *
+ * Return value: %TRUE if the custom icon of @info was updated successfully,
+ *               %FALSE otherwise.
+ **/
+gboolean
+thunar_vfs_info_set_custom_icon (ThunarVfsInfo *info,
+                                 const gchar   *custom_icon,
+                                 GError       **error)
+{
+  gboolean succeed = FALSE;
+  gchar   *absolute_path;
+
+  g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  g_return_val_if_fail (custom_icon != NULL, FALSE);
+  g_return_val_if_fail (info != NULL, FALSE);
+
+  /* determine the absolute path in the file:-URI scheme */
+  absolute_path = _thunar_vfs_path_translate_dup_string (info->path, THUNAR_VFS_PATH_SCHEME_FILE, error);
+  if (G_LIKELY (absolute_path != NULL))
+    {
+      /* update the icon to the new custom_icon */
+      succeed = _thunar_vfs_desktop_file_set_value (absolute_path, "Icon", custom_icon, error);
+      if (G_LIKELY (succeed))
+        {
+          /* release the previous custom_icon */
+          g_free (info->custom_icon);
+
+          /* use the new custom_icon for the info */
+          info->custom_icon = g_strdup (custom_icon);
+        }
+
+      /* cleanup */
+      g_free (absolute_path);
+    }
+
+  return succeed;
+}
+
+
+
+/**
  * thunar_vfs_info_get_metadata:
  * @info     : a #ThunarVfsInfo.
  * @metadata : the #ThunarVfsInfoMetadata you are interested in.

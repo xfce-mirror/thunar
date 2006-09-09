@@ -831,17 +831,11 @@ _thunar_vfs_io_local_rename (ThunarVfsInfo *info,
                              const gchar   *name,
                              GError       **error)
 {
-  const gchar * const *locale;
-  ThunarVfsMimeInfo   *mime_info;
-  GKeyFile            *key_file;
-  gsize                data_length;
-  gchar               *data;
-  gchar               *key;
-  gchar                src_path[PATH_MAX + 1];
-  gchar               *dir_name;
-  gchar               *dst_name;
-  gchar               *dst_path;
-  FILE                *fp;
+  ThunarVfsMimeInfo *mime_info;
+  gchar              src_path[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar             *dir_name;
+  gchar             *dst_name;
+  gchar             *dst_path;
 
   _thunar_vfs_return_val_if_fail (*name != '\0' && strchr (name, G_DIR_SEPARATOR) == NULL, FALSE);
   _thunar_vfs_return_val_if_fail (_thunar_vfs_path_is_local (info->path), FALSE);
@@ -855,65 +849,9 @@ _thunar_vfs_io_local_rename (ThunarVfsInfo *info,
   /* check if we have a .desktop (and NOT a .directory) file here */
   if (G_UNLIKELY (info->mime_info == _thunar_vfs_mime_application_x_desktop && strcmp (thunar_vfs_path_get_name (info->path), ".directory") != 0))
     {
-      /* try to open the .desktop file */
-      key_file = g_key_file_new ();
-      if (!g_key_file_load_from_file (key_file, src_path, G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, error))
-        {
-error0:
-          g_key_file_free (key_file);
-          return FALSE;
-        }
-
-      /* check if the file is valid */
-      if (G_UNLIKELY (!g_key_file_has_group (key_file, "Desktop Entry")))
-        {
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid desktop file"));
-          goto error0;
-        }
-
-      /* save the new name (localized if required) */
-      for (locale = g_get_language_names (); *locale != NULL; ++locale)
-        {
-          key = g_strdup_printf ("Name[%s]", *locale);
-          if (g_key_file_has_key (key_file, "Desktop Entry", key, NULL))
-            {
-              g_key_file_set_string (key_file, "Desktop Entry", key, name);
-              g_free (key);
-              break;
-            }
-          g_free (key);
-        }
-
-      /* fallback to unlocalized name */
-      if (G_UNLIKELY (*locale == NULL))
-        g_key_file_set_string (key_file, "Desktop Entry", "Name", name);
-
-      /* serialize the key file to a buffer */
-      data = g_key_file_to_data (key_file, &data_length, error);
-      g_key_file_free (key_file);
-      if (G_UNLIKELY (data == NULL))
+      /* try to update the name in the .desktop file */
+      if (!_thunar_vfs_desktop_file_set_value (src_path, "Name", name, error))
         return FALSE;
-
-      /* try to open the file for writing */
-      fp = fopen (src_path, "w");
-      if (G_UNLIKELY (fp == NULL))
-        {
-          _thunar_vfs_set_g_error_from_errno3 (error);
-error1:
-          g_free (data);
-          return FALSE;
-        }
-      
-      /* write the data back to the file */
-      if (fwrite (data, data_length, 1, fp) != 1)
-        {
-          _thunar_vfs_set_g_error_from_errno3 (error);
-          fclose (fp);
-          goto error1;
-        }
-
-      /* close the file */
-      fclose (fp);
 
       /* release the previous display name */
       if (G_LIKELY (info->display_name != thunar_vfs_path_get_name (info->path)))
@@ -921,9 +859,6 @@ error1:
 
       /* apply the new display name */
       info->display_name = g_strdup (name);
-
-      /* clean up */
-      g_free (data);
     }
   else
     {

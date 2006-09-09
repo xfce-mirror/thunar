@@ -122,6 +122,9 @@ void                         thunar_vfs_info_unref            (ThunarVfsInfo    
 ThunarVfsInfo               *thunar_vfs_info_copy             (const ThunarVfsInfo  *info) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_INLINE_FUNC const gchar   *thunar_vfs_info_get_custom_icon  (const ThunarVfsInfo  *info) G_GNUC_WARN_UNUSED_RESULT;
+gboolean                     thunar_vfs_info_set_custom_icon  (ThunarVfsInfo        *info,
+                                                               const gchar          *custom_icon,
+                                                               GError              **error) G_GNUC_WARN_UNUSED_RESULT;
 
 gboolean                     thunar_vfs_info_get_free_space   (const ThunarVfsInfo  *info,
                                                                ThunarVfsFileSize    *free_space_return) G_GNUC_WARN_UNUSED_RESULT;

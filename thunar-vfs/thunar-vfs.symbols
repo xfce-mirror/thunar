@@ -72,7 +72,7 @@ thunar_vfs_check_version G_GNUC_WARN_UNUSED_RESULT
 /* ThunarVfsInfo methods */
 #if IN_HEADER(__THUNAR_VFS_INFO_H__)
 #if IN_SOURCE(__THUNAR_VFS_INFO_C__)
-thunar_vfs_info_get_type
+thunar_vfs_info_get_type G_GNUC_CONST
 thunar_vfs_info_new_for_path G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 #ifdef INCLUDE_INTERNAL_SYMBOLS
 thunar_vfs_info_ref
@@ -80,8 +80,9 @@ thunar_vfs_info_ref
 thunar_vfs_info_unref
 thunar_vfs_info_copy G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 #ifdef INCLUDE_INTERNAL_SYMBOLS
-thunar_vfs_info_get_custom_icon
+thunar_vfs_info_get_custom_icon G_GNUC_WARN_UNUSED_RESULT
 #endif
+thunar_vfs_info_set_custom_icon G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_info_get_free_space
 thunar_vfs_info_get_metadata G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT
 #ifdef INCLUDE_INTERNAL_SYMBOLS
@@ -291,7 +292,7 @@ thunar_vfs_user_get_id
 thunar_vfs_user_get_name
 thunar_vfs_user_get_real_name
 thunar_vfs_user_is_me
-thunar_vfs_user_manager_get_type
+thunar_vfs_user_manager_get_type G_GNUC_CONST
 thunar_vfs_user_manager_get_default G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_user_manager_get_group_by_id G_GNUC_WARN_UNUSED_RESULT
 thunar_vfs_user_manager_get_user_by_id G_GNUC_WARN_UNUSED_RESULT

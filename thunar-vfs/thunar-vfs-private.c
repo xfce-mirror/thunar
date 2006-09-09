@@ -31,8 +31,16 @@
 #ifdef HAVE_STDARG_H
 #include <stdarg.h>
 #endif
+#include <stdio.h>
 #ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+
+/* Use g_fopen() on win32 */
+#if defined(G_OS_WIN32)
+#include <glib/gstdio.h>
+#else
+#define g_fopen(filename, mode) (fopen ((filename), (mode)))
 #endif
 
 #include <thunar-vfs/thunar-vfs-monitor.h>
@@ -327,6 +335,101 @@ error:
   g_set_error (error, G_CONVERT_ERROR, G_CONVERT_ERROR_BAD_URI, _("Invalidly escaped characters"));
   g_free (unescaped_string);
   return NULL;
+}
+
+
+
+/**
+ * _thunar_vfs_desktop_file_set_value:
+ * @filename : the absolute path to a .desktop file.
+ * @key      : the key in the @filename to update.
+ * @value    : the new value for the @key.
+ * @error    : return location for errors or %NULL.
+ *
+ * Sets the @key in @filename to @value. If @key appears localized in @filename,
+ * it will be set in the current locale if present, falling back to the unlocalized
+ * setting.
+ *
+ * Return value: %TRUE if the @key in the @filename was successfully updated to
+ *               @value, %FALSE otherwise.
+ **/
+gboolean
+_thunar_vfs_desktop_file_set_value (const gchar *filename,
+                                    const gchar *key,
+                                    const gchar *value,
+                                    GError     **error)
+{
+  const gchar * const *locale;
+  GKeyFile            *key_file;
+  gsize                data_length;
+  gchar               *data;
+  gchar               *key_localized;
+  FILE                *fp;
+
+  _thunar_vfs_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_vfs_return_val_if_fail (g_utf8_validate (key, -1, NULL), FALSE);
+  _thunar_vfs_return_val_if_fail (g_path_is_absolute (filename), FALSE);
+
+  /* try to open the .desktop file */
+  key_file = g_key_file_new ();
+  if (!g_key_file_load_from_file (key_file, filename, G_KEY_FILE_KEEP_COMMENTS | G_KEY_FILE_KEEP_TRANSLATIONS, error))
+    {
+err0: g_key_file_free (key_file);
+      return FALSE;
+    }
+
+  /* check if the file is valid */
+  if (G_UNLIKELY (!g_key_file_has_group (key_file, "Desktop Entry")))
+    {
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid desktop file"));
+      goto err0;
+    }
+
+  /* save the new value (localized if required) */
+  for (locale = g_get_language_names (); *locale != NULL; ++locale)
+    {
+      key_localized = g_strdup_printf ("%s[%s]", key, *locale);
+      if (g_key_file_has_key (key_file, "Desktop Entry", key_localized, NULL))
+        {
+          g_key_file_set_string (key_file, "Desktop Entry", key_localized, value);
+          g_free (key_localized);
+          break;
+        }
+      g_free (key_localized);
+    }
+
+  /* fallback to unlocalized value */
+  if (G_UNLIKELY (*locale == NULL))
+    g_key_file_set_string (key_file, "Desktop Entry", key, value);
+
+  /* serialize the key_file to a buffer */
+  data = g_key_file_to_data (key_file, &data_length, error);
+  g_key_file_free (key_file);
+  if (G_UNLIKELY (data == NULL))
+    return FALSE;
+
+  /* try to open the file for writing */
+  fp = g_fopen (filename, "w");
+  if (G_UNLIKELY (fp == NULL))
+    {
+      _thunar_vfs_set_g_error_from_errno3 (error);
+err1: g_free (data);
+      return FALSE;
+    }
+
+  /* write the data back to the file */
+  if (fwrite (data, data_length, 1, fp) != 1)
+    {
+      _thunar_vfs_set_g_error_from_errno3 (error);
+      fclose (fp);
+      goto err1;
+    }
+
+  /* cleanup */
+  g_free (data);
+  fclose (fp);
+
+  return TRUE;
 }
 
 

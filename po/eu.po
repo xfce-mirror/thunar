@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.4.0rc1\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2006-08-29 16:46+0200\n"
+"POT-Creation-Date: 2006-09-10 01:36+0200\n"
 "PO-Revision-Date: 2006-08-28 23:43+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: librezale <librezale@librezale.org>\n"
@@ -29,28 +29,28 @@ msgid "Unknown error"
 msgstr "Errore ezezaguna"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:338
+#: ../thunar-vfs/thunar-vfs-info.c:390
 msgid "No Exec field specified"
 msgstr "Ez da Exec eremua zehaztu"
 
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
-#: ../thunar-vfs/thunar-vfs-info.c:357
+#: ../thunar-vfs/thunar-vfs-info.c:409
 msgid "No URL field specified"
 msgstr "Ez da URL eremua zehaztu"
 
-#: ../thunar-vfs/thunar-vfs-info.c:362 ../thunar-vfs/thunar-vfs-io-local.c:870
+#: ../thunar-vfs/thunar-vfs-info.c:414 ../thunar-vfs/thunar-vfs-private.c:384
 msgid "Invalid desktop file"
 msgstr "Idazmahai fitxategi baliogabea"
 
-#: ../thunar-vfs/thunar-vfs-info.c:370
+#: ../thunar-vfs/thunar-vfs-info.c:422
 msgid "Failed to parse file"
 msgstr "Huts fitxategia analizatzerakoan"
 
-#: ../thunar-vfs/thunar-vfs-info.c:451
+#: ../thunar-vfs/thunar-vfs-info.c:503
 msgid "Invalid file name"
 msgstr "Fitxategi izen baliogabea"
 
-#: ../thunar-vfs/thunar-vfs-info.c:458
+#: ../thunar-vfs/thunar-vfs-info.c:510
 msgid "Only local files may be renamed"
 msgstr "Fitxategi lokalak bakarrik berrizenda daitezke"
 
@@ -60,7 +60,7 @@ msgid "Preparing..."
 msgstr "Prestatzen..."
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:226
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:520
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:538
 #, c-format
 msgid "Failed to change permissions of \"%s\""
 msgstr "Huts \"%s\"-ren baimenak aldatzerakoan"
@@ -76,7 +76,7 @@ msgid "Failed to change file group of \"%s\""
 msgstr "Huts \"%s\"-ren taldea aldatzerakoan"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:432
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:185
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:191
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "\"%s\" fitxategia badago dagoeneko"
@@ -86,78 +86,78 @@ msgstr "\"%s\" fitxategia badago dagoeneko"
 msgid "Failed to create empty file \"%s\""
 msgstr "Huts  \"%s\" fitxategi hutsa sortzerakoan"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:160
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:166
 #, c-format
 msgid "Failed to open \"%s\" for reading"
 msgstr "Huts \"%s\" irakurketarako irekitzerakoan"
 
 #. use the generic error message
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:191
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:197
 #: ../thunar-vfs/thunar-vfs-io-trash.c:459
 #, c-format
 msgid "Failed to open \"%s\" for writing"
 msgstr "Huts \"%s\" idazketarako irekitzerakoan"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:218
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:281
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:224
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:287
 #, c-format
 msgid "Failed to write data to \"%s\""
 msgstr "Huts \"%s\"-ra datuak idazterakoan"
 
 #. display an error to the user
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:234
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:297
-#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:787
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:240
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:303
+#: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:775
 #, c-format
 msgid "Failed to remove \"%s\""
 msgstr "Huts \"%s\" ezabatzerakoan"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:264
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:270
 #, c-format
 msgid "Failed to read data from \"%s\""
 msgstr "Huts \"%s\"-tik datuak irakurtzerakoan"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:346
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:364
 #, c-format
 msgid "copy of %s"
 msgstr "%s-ren kopia"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:347
-#: ../thunar/thunar-list-model.c:777 ../thunar/thunar-properties-dialog.c:762
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:365
+#: ../thunar/thunar-list-model.c:753 ../thunar/thunar-properties-dialog.c:839
 #, c-format
 msgid "link to %s"
 msgstr "%s-ra lotura"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:350
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:368
 #, c-format
 msgid "another copy of %s"
 msgstr "%s-ren beste kopia bat"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:351
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:369
 #, c-format
 msgid "another link to %s"
 msgstr "%s-ra beste lotura bat "
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:354
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:372
 #, c-format
 msgid "third copy of %s"
 msgstr "%s-ren hirugarren kopia"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:355
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:373
 #, c-format
 msgid "third link to %s"
 msgstr "%s-ra hirugarren lotura"
 
 #. if we had no match on the NAMES, try the "%uth copy of %s" pattern
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:394
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:410
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:412
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:428
 #, c-format
 msgid "%uth copy of %s"
 msgid_plural "%uth copy of %s"
 msgstr[0] "%uth %s-ren kopia"
 msgstr[1] "%uth %s-ren kopiak"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:412
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:430
 #, c-format
 msgid "%uth link to %s"
 msgid_plural "%uth link to %s"
@@ -166,36 +166,36 @@ msgstr[1] "%uth %s-ren loturak"
 
 #. unable to stat source file, impossible to copy then
 #. the file does not exist, don't try to create a symlink then
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:472
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:589
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:490
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:607
 #: ../thunar-vfs/thunar-vfs-io-ops.c:144
 #, c-format
 msgid "Failed to determine file info for \"%s\""
 msgstr "Huts \"%s\"-ren fitxategi argibideak zehazterakoan"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:488
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:506
 #: ../thunar-vfs/thunar-vfs-io-ops.c:416
 #, c-format
 msgid "Failed to create directory \"%s\""
 msgstr "Huts \"%s\" direktorioa sortzerakoan"
 
 #. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:497
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:515
 #, c-format
 msgid "Failed to create named fifo \"%s\""
 msgstr "Huts  \"%s\" fifo bat sortzerakoan"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:515
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:595
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:533
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:613
 #, c-format
 msgid "Failed to create symbolic link \"%s\""
 msgstr "Huts \"%s\" lotura sinbolikoa sortzerakoan"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:528
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:546
 msgid "Special files cannot be copied"
 msgstr "Fitxategia bereziak ezin dira kopiatu"
 
-#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:608
+#: ../thunar-vfs/thunar-vfs-io-local-xfer.c:626
 msgid "Symbolic links are not supported"
 msgstr "Lotura sinbolikoak ez dira onartzen"
 
@@ -291,7 +291,7 @@ msgstr "Izena"
 msgid "The name of the mime handler"
 msgstr "Mime kudeatzailearen izena"
 
-#: ../thunar-vfs/thunar-vfs-mime-info.c:229
+#: ../thunar-vfs/thunar-vfs-mime-info.c:231
 #, c-format
 msgid "%s document"
 msgstr "%s dokumentua"
@@ -309,12 +309,12 @@ msgstr "Bidea luzeegia buferrean sartzeko"
 msgid "URI too long to fit into buffer"
 msgstr "URI-a luzeegia buferrean sartzeko"
 
-#: ../thunar-vfs/thunar-vfs-private.c:225
+#: ../thunar-vfs/thunar-vfs-private.c:233
 msgid "Operation not supported"
 msgstr "Ekintza ez da onartzen"
 
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
-#: ../thunar-vfs/thunar-vfs-private.c:327
+#: ../thunar-vfs/thunar-vfs-private.c:335
 msgid "Invalidly escaped characters"
 msgstr "Irteera karkatere baliogabea"
 
@@ -341,12 +341,12 @@ msgid "Unknown user \"%s\""
 msgstr "\"%s\" erabiltzaile ezezaguna"
 
 #. something went wrong, for sure
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:317
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:339
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Huts %s-ren muntatze puntua zehazterakoan"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:804
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:913
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "Huts HAL deabruarekin konektatzerakoan: %s"
@@ -544,8 +544,8 @@ msgstr "Zakarrontziko fitxategi eta direktorio guztiak ezabatu?"
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
 #: ../thunar/thunar-application.c:1269 ../thunar/thunar-location-buttons.c:169
-#: ../thunar/thunar-shortcuts-view.c:855 ../thunar/thunar-tree-view.c:1076
-#: ../plugins/thunar-tpa/main.c:49
+#: ../thunar/thunar-shortcuts-view.c:849 ../thunar/thunar-tree-view.c:1070
+#: ../thunar/thunar-window.c:266 ../plugins/thunar-tpa/main.c:49
 msgid "_Empty Trash"
 msgstr "Zakarrontzia _Hustu"
 
@@ -658,17 +658,17 @@ msgid "Failed to execute \"%s\""
 msgstr "Huts \"%s\" abiarazterakoan"
 
 #. append the "Remove Launcher" item
-#: ../thunar/thunar-chooser-dialog.c:604
+#: ../thunar/thunar-chooser-dialog.c:597
 msgid "_Remove Launcher"
 msgstr "Abiarazlea _kendu"
 
 #. update the header label
-#: ../thunar/thunar-chooser-dialog.c:705
+#: ../thunar/thunar-chooser-dialog.c:693
 #, c-format
 msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "<i>%s</i> eta \"%s\" motako fitxategiak honekin ireki:"
 
-#: ../thunar/thunar-chooser-dialog.c:713
+#: ../thunar/thunar-chooser-dialog.c:701
 #, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
@@ -676,7 +676,7 @@ msgstr ""
 " \"%s\" motako fitxategiak irekitzeko aplikazioa hautatzeko fitxategi "
 "sistema arakatu."
 
-#: ../thunar/thunar-chooser-dialog.c:719
+#: ../thunar/thunar-chooser-dialog.c:707
 #, c-format
 msgid ""
 "Change the default application for files of type \"%s\" to the selected "
@@ -685,12 +685,12 @@ msgstr ""
 "\"%s\" motako fitxategientzako lehenetsiriko aplikazioa hautatutakoarengatik "
 "aldatu."
 
-#: ../thunar/thunar-chooser-dialog.c:766
+#: ../thunar/thunar-chooser-dialog.c:754
 #, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "Ziur al zaude \"%s\" betirako ezabatu nahi duzula?"
 
-#: ../thunar/thunar-chooser-dialog.c:772
+#: ../thunar/thunar-chooser-dialog.c:760
 msgid ""
 "This will remove the application launcher that appears in the file context "
 "menu, but will not uninstall the application itself.\n"
@@ -704,38 +704,38 @@ msgstr ""
 "Fitxategi Kudeatzailearen \"Honekin Ireki\" elkarrizketaz sorturiko "
 "pertsonalizatutako  aplikazio abiarazleak ezaba ditzakezu."
 
-#: ../thunar/thunar-chooser-dialog.c:813
+#: ../thunar/thunar-chooser-dialog.c:801
 #: ../plugins/thunar-uca/thunar-uca-editor.c:490
 msgid "Select an Application"
 msgstr "Aplikazio bat hautatu"
 
-#: ../thunar/thunar-chooser-dialog.c:823
-#: ../thunar/thunar-renamer-dialog.c:1095
+#: ../thunar/thunar-chooser-dialog.c:811
+#: ../thunar/thunar-renamer-dialog.c:1073
 #: ../plugins/thunar-uca/thunar-uca-editor.c:500
 msgid "All Files"
 msgstr "Fitxategi Guztiak"
 
-#: ../thunar/thunar-chooser-dialog.c:828
+#: ../thunar/thunar-chooser-dialog.c:816
 #: ../plugins/thunar-uca/thunar-uca-editor.c:505
 msgid "Executable Files"
 msgstr "Fitxategi Exekutagarriak"
 
-#: ../thunar/thunar-chooser-dialog.c:843
+#: ../thunar/thunar-chooser-dialog.c:831
 #: ../plugins/thunar-uca/thunar-uca-editor.c:520
 msgid "Perl Scripts"
 msgstr "Perl Skript-ak"
 
-#: ../thunar/thunar-chooser-dialog.c:849
+#: ../thunar/thunar-chooser-dialog.c:837
 #: ../plugins/thunar-uca/thunar-uca-editor.c:526
 msgid "Python Scripts"
 msgstr "Python Skript-ak"
 
-#: ../thunar/thunar-chooser-dialog.c:855
+#: ../thunar/thunar-chooser-dialog.c:843
 #: ../plugins/thunar-uca/thunar-uca-editor.c:532
 msgid "Ruby Scripts"
 msgstr "Ruby Skript-ak"
 
-#: ../thunar/thunar-chooser-dialog.c:861
+#: ../thunar/thunar-chooser-dialog.c:849
 #: ../plugins/thunar-uca/thunar-uca-editor.c:538
 msgid "Shell Scripts"
 msgstr "Shell Skript-ak"
@@ -759,16 +759,16 @@ msgstr "Beste Aplikazioak"
 msgid "There is nothing on the clipboard to paste"
 msgstr "Ez dago itsasteko ezer arbelean "
 
-#: ../thunar/thunar-column-editor.c:154
+#: ../thunar/thunar-column-editor.c:152
 msgid "Configure Columns in the Detailed List View"
 msgstr "Zehazturiko Zerrenda Ikuspegiaren Zutabeak Konfiguratu"
 
-#: ../thunar/thunar-column-editor.c:165
+#: ../thunar/thunar-column-editor.c:163
 msgid "Visible Columns"
 msgstr "Zutabe Ikusgarriak"
 
 #. create the top label for the column editor dialog
-#: ../thunar/thunar-column-editor.c:178
+#: ../thunar/thunar-column-editor.c:176
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
@@ -777,36 +777,36 @@ msgstr ""
 "den ordena hautatu."
 
 #. create the "Move Up" button
-#: ../thunar/thunar-column-editor.c:219
+#: ../thunar/thunar-column-editor.c:217
 msgid "Move _Up"
 msgstr "_Gora Mugitu"
 
 #. create the "Move Down" button
-#: ../thunar/thunar-column-editor.c:229
+#: ../thunar/thunar-column-editor.c:227
 msgid "Move Dow_n"
 msgstr "_Behera Mugitu"
 
 #. create the "Show" button
-#: ../thunar/thunar-column-editor.c:239
+#: ../thunar/thunar-column-editor.c:237
 msgid "_Show"
 msgstr "_Ikusi"
 
 #. create the "Hide" button
-#: ../thunar/thunar-column-editor.c:245
+#: ../thunar/thunar-column-editor.c:243
 msgid "Hi_de"
 msgstr "_Ezkutatu"
 
 #. create the "Use Default" button
-#: ../thunar/thunar-column-editor.c:256
+#: ../thunar/thunar-column-editor.c:254
 msgid "Use De_fault"
 msgstr "Lehene_tsia erabili"
 
-#: ../thunar/thunar-column-editor.c:265
+#: ../thunar/thunar-column-editor.c:263
 msgid "Column Sizing"
 msgstr "Zutabe Tamainak"
 
 #. create the label that explains the column sizing option
-#: ../thunar/thunar-column-editor.c:278
+#: ../thunar/thunar-column-editor.c:276
 msgid ""
 "By default columns will be automatically expanded if\n"
 "needed to ensure the text is fully visible. If you dis-\n"
@@ -820,16 +820,16 @@ msgstr ""
 "dira."
 
 #. create the "Automatically expand columns as needed" button
-#: ../thunar/thunar-column-editor.c:287
+#: ../thunar/thunar-column-editor.c:285
 msgid "Automatically _expand columns as needed"
 msgstr "Automatikoki _zabaldu zutabeak behar denean"
 
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:890 ../thunar/thunar-list-model.c:727
-#: ../thunar/thunar-list-model.c:756
-#: ../thunar/thunar-permissions-chooser.c:272 ../thunar/thunar-util.c:131
+#: ../thunar/thunar-column-model.c:890 ../thunar/thunar-list-model.c:704
+#: ../thunar/thunar-list-model.c:733
+#: ../thunar/thunar-permissions-chooser.c:269 ../thunar/thunar-util.c:131
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:287
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:288
@@ -845,16 +845,16 @@ msgstr "Direktorio zerrendatze konpaktoa"
 msgid "Compact view"
 msgstr "Ikuspegi konpaktoa"
 
-#: ../thunar/thunar-create-dialog.c:165
+#: ../thunar/thunar-create-dialog.c:163
 msgid "C_reate"
 msgstr "So_rtu"
 
-#: ../thunar/thunar-create-dialog.c:180 ../thunar/thunar-standard-view.c:2206
+#: ../thunar/thunar-create-dialog.c:178 ../thunar/thunar-standard-view.c:2207
 msgid "Enter the new name:"
 msgstr "Izen berria idatzi:"
 
 #. display an error message
-#: ../thunar/thunar-create-dialog.c:528
+#: ../thunar/thunar-create-dialog.c:520
 #, c-format
 msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Ezin da \"%s\" fitxategi izena kodeketa lokalera bihurtu"
@@ -896,7 +896,7 @@ msgstr "itzulpen kredituak"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:229 ../thunar/thunar-renamer-dialog.c:981
+#: ../thunar/thunar-dialogs.c:229 ../thunar/thunar-renamer-dialog.c:959
 msgid "Failed to open the documentation browser"
 msgstr "Huts dokumentazio nabigatzailea irekitzerakoan"
 
@@ -974,7 +974,7 @@ msgstr "Jabea"
 #.
 #. Permissions chooser
 #.
-#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:491
+#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:498
 msgid "Permissions"
 msgstr "Baimenak"
 
@@ -1012,7 +1012,7 @@ msgstr "Aurrera"
 msgid "Go to the next visited folder"
 msgstr "Hurrengo karpetara joan"
 
-#: ../thunar/thunar-icon-factory.c:675
+#: ../thunar/thunar-icon-factory.c:748
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
@@ -1030,13 +1030,13 @@ msgstr "Ikono Ikuspegia"
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:137 ../thunar/thunar-launcher.c:783
 #: ../thunar/thunar-location-buttons.c:166
-#: ../thunar/thunar-shortcuts-view.c:796 ../thunar/thunar-tree-view.c:1016
+#: ../thunar/thunar-shortcuts-view.c:790 ../thunar/thunar-tree-view.c:1010
 msgid "_Open"
 msgstr "_Ireki"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:138 ../thunar/thunar-location-buttons.c:167
-#: ../thunar/thunar-shortcuts-view.c:807 ../thunar/thunar-tree-view.c:1028
+#: ../thunar/thunar-shortcuts-view.c:801 ../thunar/thunar-tree-view.c:1022
 msgid "Open in New Window"
 msgstr "Leiho Berri batetan Ireki"
 
@@ -1170,12 +1170,12 @@ msgid_plural "Send the selected files to \"%s\""
 msgstr[0] "Hautaturiko fitxategia \"%s\"-ra bidali"
 msgstr[1] "Hautaturiko fitxategiak \"%s\"-ra bidali"
 
-#: ../thunar/thunar-list-model.c:775 ../thunar/thunar-properties-dialog.c:760
+#: ../thunar/thunar-list-model.c:751 ../thunar/thunar-properties-dialog.c:837
 msgid "broken link"
 msgstr "Apurturiko lotura"
 
 #. generate a text which includes the size of all items in the folder
-#: ../thunar/thunar-list-model.c:2203
+#: ../thunar/thunar-list-model.c:2157
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
@@ -1183,31 +1183,31 @@ msgstr[0] "Elementu %d (%s), Leku librea: %s"
 msgstr[1] "%d elementu (%s), Leku librea: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2212
+#: ../thunar/thunar-list-model.c:2166
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
 msgstr[0] "Elementu %d, Leku librea: %s"
 msgstr[1] "%d elementu, Leku librea: %s"
 
-#: ../thunar/thunar-list-model.c:2220
+#: ../thunar/thunar-list-model.c:2174
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
 msgstr[0] "Elementu %d"
 msgstr[1] "%d elementu"
 
-#: ../thunar/thunar-list-model.c:2236
+#: ../thunar/thunar-list-model.c:2190
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "\"%s\" apurturiko lotura"
 
-#: ../thunar/thunar-list-model.c:2240
+#: ../thunar/thunar-list-model.c:2194
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) %s-ra lotzen du"
 
-#: ../thunar/thunar-list-model.c:2245
+#: ../thunar/thunar-list-model.c:2199
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
@@ -1216,24 +1216,24 @@ msgstr "\"%s\" (%s) %s"
 #. * where the trashed file/folder was located before it was moved to the trash), otherwise the
 #. * properties dialog width will be messed up.
 #.
-#: ../thunar/thunar-list-model.c:2256 ../thunar/thunar-properties-dialog.c:340
+#: ../thunar/thunar-list-model.c:2210 ../thunar/thunar-properties-dialog.c:347
 msgid "Original Path:"
 msgstr "Jatorrizko Bidea:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2268
+#: ../thunar/thunar-list-model.c:2222
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:151
 msgid "Image Size:"
 msgstr "Irudi Tamaina:"
 
-#: ../thunar/thunar-list-model.c:2287
+#: ../thunar/thunar-list-model.c:2241
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
 msgstr[0] "Elementu %d aukeraturik (%s)"
 msgstr[1] "%d elementu aukeraturik (%s)"
 
-#: ../thunar/thunar-list-model.c:2292
+#: ../thunar/thunar-list-model.c:2246
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1242,21 +1242,21 @@ msgstr[1] "%d Elementu aukeraturik"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:168
-#: ../thunar/thunar-standard-view.c:315 ../thunar/thunar-tree-view.c:1092
+#: ../thunar/thunar-standard-view.c:316 ../thunar/thunar-tree-view.c:1086
 msgid "Create _Folder..."
 msgstr "_Karpeta Sortu..."
 
-#: ../thunar/thunar-location-buttons.c:169
+#: ../thunar/thunar-location-buttons.c:169 ../thunar/thunar-window.c:266
 msgid "Delete all files and folders in the Trash"
 msgstr "Zakarrontziko fitxategi eta karpeta guztiak ezabatu"
 
 #: ../thunar/thunar-location-buttons.c:170
-#: ../thunar/thunar-standard-view.c:321
+#: ../thunar/thunar-standard-view.c:322
 msgid "Paste Into Folder"
 msgstr "Karpetan Itsatsi"
 
 #: ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:316
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:317
 msgid "_Properties..."
 msgstr "_Propietateak..."
 
@@ -1268,22 +1268,22 @@ msgstr "Tartea"
 msgid "The amount of space between the path buttons"
 msgstr "Bide botoiak arteko tartea"
 
-#: ../thunar/thunar-location-buttons.c:1252
+#: ../thunar/thunar-location-buttons.c:1250
 #, c-format
 msgid "Open \"%s\" in this window"
 msgstr "\"%s\" leiho honetan ireki"
 
-#: ../thunar/thunar-location-buttons.c:1258
+#: ../thunar/thunar-location-buttons.c:1256
 #, c-format
 msgid "Open \"%s\" in a new window"
 msgstr "\"%s\" leiho berri batetan ireki"
 
-#: ../thunar/thunar-location-buttons.c:1263
+#: ../thunar/thunar-location-buttons.c:1261
 #, c-format
 msgid "Create a new folder in \"%s\""
 msgstr "Karpeta berri bat sortu \"%s\"-en"
 
-#: ../thunar/thunar-location-buttons.c:1275
+#: ../thunar/thunar-location-buttons.c:1273
 #, c-format
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into \"%s\""
@@ -1291,31 +1291,31 @@ msgstr ""
 "Moztu edo Kopiatu komandoaz aurretik hautaturiko fitxategiak  \"%s\" barnera "
 "mugitu edo kopiatu"
 
-#: ../thunar/thunar-location-buttons.c:1281
+#: ../thunar/thunar-location-buttons.c:1279
 #, c-format
 msgid "View the properties of the folder \"%s\""
 msgstr "\"%s\" karpetaren propietateak bistarazi"
 
 #. ask the user to enter a name for the new folder
-#: ../thunar/thunar-location-buttons.c:1333
-#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1448
+#: ../thunar/thunar-location-buttons.c:1319
+#: ../thunar/thunar-standard-view.c:1785 ../thunar/thunar-tree-view.c:1437
 msgid "New Folder"
 msgstr "Karpeta Berria"
 
-#: ../thunar/thunar-location-buttons.c:1333
-#: ../thunar/thunar-standard-view.c:1784 ../thunar/thunar-tree-view.c:1448
+#: ../thunar/thunar-location-buttons.c:1319
+#: ../thunar/thunar-standard-view.c:1785 ../thunar/thunar-tree-view.c:1437
 msgid "Create New Folder"
 msgstr "Karpeta Berria Sortu"
 
-#: ../thunar/thunar-location-dialog.c:89
+#: ../thunar/thunar-location-dialog.c:87
 msgid "Open Location"
 msgstr "Kokalekua Ireki"
 
-#: ../thunar/thunar-location-dialog.c:103
+#: ../thunar/thunar-location-dialog.c:101
 msgid "_Location:"
 msgstr "_Kokalekua:"
 
-#: ../thunar/thunar-location-entry.c:401 ../thunar/thunar-window.c:1295
+#: ../thunar/thunar-location-entry.c:401 ../thunar/thunar-window.c:1298
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Huts \"%s\" abiaraztean"
@@ -1329,51 +1329,51 @@ msgid "The icon size for the path entry"
 msgstr "Bide sarrerako ikono tamaina"
 
 #. 0000
-#: ../thunar/thunar-permissions-chooser.c:245
+#: ../thunar/thunar-permissions-chooser.c:242
 msgid "None"
 msgstr "Bat ere ez"
 
 #. 0002
-#: ../thunar/thunar-permissions-chooser.c:247
+#: ../thunar/thunar-permissions-chooser.c:244
 msgid "Write only"
 msgstr "Idazketa bakarrik"
 
 #. 0004
-#: ../thunar/thunar-permissions-chooser.c:249
+#: ../thunar/thunar-permissions-chooser.c:246
 msgid "Read only"
 msgstr "Irakurketa bakarrik"
 
 #. 0006
-#: ../thunar/thunar-permissions-chooser.c:251
+#: ../thunar/thunar-permissions-chooser.c:248
 msgid "Read & Write"
 msgstr "Irakurri eta Idatzi"
 
-#: ../thunar/thunar-permissions-chooser.c:262
+#: ../thunar/thunar-permissions-chooser.c:259
 msgid "Owner:"
 msgstr "Jabea:"
 
-#: ../thunar/thunar-permissions-chooser.c:286
-#: ../thunar/thunar-permissions-chooser.c:339
+#: ../thunar/thunar-permissions-chooser.c:277
+#: ../thunar/thunar-permissions-chooser.c:318
 msgid "Access:"
 msgstr "Sarrera:"
 
-#: ../thunar/thunar-permissions-chooser.c:315
+#: ../thunar/thunar-permissions-chooser.c:300
 msgid "Group:"
 msgstr "Taldea:"
 
-#: ../thunar/thunar-permissions-chooser.c:368
+#: ../thunar/thunar-permissions-chooser.c:341
 msgid "Others:"
 msgstr "Besteak:"
 
-#: ../thunar/thunar-permissions-chooser.c:397
+#: ../thunar/thunar-permissions-chooser.c:364
 msgid "Program:"
 msgstr "Programa:"
 
-#: ../thunar/thunar-permissions-chooser.c:403
+#: ../thunar/thunar-permissions-chooser.c:370
 msgid "Allow this file to _run as a program"
 msgstr "Onartu fitxategi hau p_rograma bat bezala abiaraztea"
 
-#: ../thunar/thunar-permissions-chooser.c:429
+#: ../thunar/thunar-permissions-chooser.c:390
 msgid ""
 "Allowing untrusted programs to run\n"
 "presents a security risk to your system."
@@ -1381,7 +1381,7 @@ msgstr ""
 "Egiaztatu gabeko programak abiaraztea onartzea\n"
 "zure sistemarentzat segurtasun arrisku bat da."
 
-#: ../thunar/thunar-permissions-chooser.c:444
+#: ../thunar/thunar-permissions-chooser.c:405
 msgid ""
 "The folder permissions are inconsistent, you\n"
 "may not be able to work with files in this folder."
@@ -1389,32 +1389,32 @@ msgstr ""
 "Karpeta baimenak okerrak dira, ez zara karpeta\n"
 "honetako fitxategiekin lan egiteko gai izango."
 
-#: ../thunar/thunar-permissions-chooser.c:457
+#: ../thunar/thunar-permissions-chooser.c:418
 msgid "Correct folder permissions..."
 msgstr "Karpeta baimenak konpondu..."
 
-#: ../thunar/thunar-permissions-chooser.c:458
+#: ../thunar/thunar-permissions-chooser.c:419
 msgid "Click here to automatically fix the folder permissions."
 msgstr "Hemen klikatu karpeta baimenak automatikoki konpontzeko."
 
-#: ../thunar/thunar-permissions-chooser.c:469
+#: ../thunar/thunar-permissions-chooser.c:430
 msgid "Please wait..."
 msgstr "Itxoin mesedez..."
 
-#: ../thunar/thunar-permissions-chooser.c:474
+#: ../thunar/thunar-permissions-chooser.c:435
 msgid "Stop applying permissions recursively."
 msgstr "Gelditu baimenak errekurtsiboki ezartzea"
 
 #. allocate the question dialog
-#: ../thunar/thunar-permissions-chooser.c:589
+#: ../thunar/thunar-permissions-chooser.c:550
 msgid "Question"
 msgstr "Galdera"
 
-#: ../thunar/thunar-permissions-chooser.c:613
+#: ../thunar/thunar-permissions-chooser.c:574
 msgid "Apply recursively?"
 msgstr "Errekurtsiboki ezarri?"
 
-#: ../thunar/thunar-permissions-chooser.c:619
+#: ../thunar/thunar-permissions-chooser.c:580
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
@@ -1423,11 +1423,11 @@ msgstr ""
 "fitxategi guztietan aldaketa errekurtsiboki ezarri\n"
 "nahi al duzu?"
 
-#: ../thunar/thunar-permissions-chooser.c:624
+#: ../thunar/thunar-permissions-chooser.c:585
 msgid "Do _not ask me again"
 msgstr "Ez galdetu _niri berriz"
 
-#: ../thunar/thunar-permissions-chooser.c:625
+#: ../thunar/thunar-permissions-chooser.c:586
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
@@ -1437,29 +1437,29 @@ msgstr ""
 "galdetuko. Aukera hau aldatzeko hobespen atalean egin dezakezu."
 
 #. display an error to the user
-#: ../thunar/thunar-permissions-chooser.c:705
+#: ../thunar/thunar-permissions-chooser.c:666
 msgid "Failed to change group"
 msgstr "Huts taldea aldatzerakoan"
 
 #. display an error to the user
-#: ../thunar/thunar-permissions-chooser.c:758
-#: ../thunar/thunar-permissions-chooser.c:1097
+#: ../thunar/thunar-permissions-chooser.c:719
+#: ../thunar/thunar-permissions-chooser.c:1058
 msgid "Failed to apply new permissions"
 msgstr "Huts baimen berriak ezartzerakoan"
 
-#: ../thunar/thunar-permissions-chooser.c:940
+#: ../thunar/thunar-permissions-chooser.c:901
 msgid "Unknown file owner"
 msgstr "Fitxategi jabe ezezaguna"
 
-#: ../thunar/thunar-permissions-chooser.c:1071
+#: ../thunar/thunar-permissions-chooser.c:1032
 msgid "Correct folder permissions automatically?"
 msgstr "Karpeta baimenak automatikoki konpondu?"
 
-#: ../thunar/thunar-permissions-chooser.c:1073
+#: ../thunar/thunar-permissions-chooser.c:1034
 msgid "Correct folder permissions"
 msgstr "Karpeta baimenak konpondu"
 
-#: ../thunar/thunar-permissions-chooser.c:1075
+#: ../thunar/thunar-permissions-chooser.c:1036
 msgid ""
 "The folder permissions will be reset to a consistent state. Only users "
 "allowed to read the contents of this folder will be allowed to enter the "
@@ -1469,57 +1469,57 @@ msgstr ""
 "edukiak irakurtzeko baimena duten erabiltzaileak bakarrik sartu ahal izango "
 "dira karpeta honetan hemendik aurrera."
 
-#: ../thunar/thunar-preferences-dialog.c:222
+#: ../thunar/thunar-preferences-dialog.c:219
 msgid "File Manager Preferences"
 msgstr "Fitxategi Kudeatzaile Hobespenak"
 
 #.
 #. Views
 #.
-#: ../thunar/thunar-preferences-dialog.c:239
+#: ../thunar/thunar-preferences-dialog.c:236
 msgid "Views"
 msgstr "Ikuspegiak"
 
-#: ../thunar/thunar-preferences-dialog.c:249
+#: ../thunar/thunar-preferences-dialog.c:246
 msgid "Default View"
 msgstr "Lehenetsiriko Ikuspegia"
 
-#: ../thunar/thunar-preferences-dialog.c:261
+#: ../thunar/thunar-preferences-dialog.c:258
 msgid "View _new folders using:"
 msgstr "Karpeta _berriak hau erabiliaz ikusi:"
 
-#: ../thunar/thunar-preferences-dialog.c:266
-#: ../thunar/thunar-preferences-dialog.c:303
+#: ../thunar/thunar-preferences-dialog.c:263
+#: ../thunar/thunar-preferences-dialog.c:294
 msgid "Icon View"
 msgstr "Ikono Ikuspegia"
 
-#: ../thunar/thunar-preferences-dialog.c:267
+#: ../thunar/thunar-preferences-dialog.c:264
 msgid "Detailed List View"
 msgstr "Zehazturiko Zerrenda Ikuspegia"
 
-#: ../thunar/thunar-preferences-dialog.c:268
+#: ../thunar/thunar-preferences-dialog.c:265
 msgid "Compact List View"
 msgstr "Zehazturiko zerrenda ikuspegia"
 
-#: ../thunar/thunar-preferences-dialog.c:269
+#: ../thunar/thunar-preferences-dialog.c:266
 msgid "Last Active View"
 msgstr "Azken Erabilitako Ikuspegia"
 
-#: ../thunar/thunar-preferences-dialog.c:286
+#: ../thunar/thunar-preferences-dialog.c:277
 msgid "Sort _folders before files"
 msgstr "Sailkatu _karpetak fitxategien aurretik"
 
-#: ../thunar/thunar-preferences-dialog.c:288
+#: ../thunar/thunar-preferences-dialog.c:279
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "Aukera hau hautatu karpetak fitxategiak baino lehen zerrendatzeko karpeta "
 "bat ordenatzean."
 
-#: ../thunar/thunar-preferences-dialog.c:292
+#: ../thunar/thunar-preferences-dialog.c:283
 msgid "_Show thumbnails"
 msgstr "Argazkitxoak bi_starazi"
 
-#: ../thunar/thunar-preferences-dialog.c:294
+#: ../thunar/thunar-preferences-dialog.c:285
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
@@ -1527,11 +1527,11 @@ msgstr ""
 "Aukera hau hautatu karpeta batetako aurreikusi daitezken fitxategiak "
 "automatikoki sorturiko argazkitxo ikonoez bistaratzeko."
 
-#: ../thunar/thunar-preferences-dialog.c:315
+#: ../thunar/thunar-preferences-dialog.c:306
 msgid "_Text beside icons"
 msgstr "_Testua ikono alboan"
 
-#: ../thunar/thunar-preferences-dialog.c:317
+#: ../thunar/thunar-preferences-dialog.c:308
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1542,58 +1542,58 @@ msgstr ""
 #.
 #. Side Pane
 #.
-#: ../thunar/thunar-preferences-dialog.c:326
+#: ../thunar/thunar-preferences-dialog.c:317
 msgid "Side Pane"
 msgstr "Alboko panela"
 
-#: ../thunar/thunar-preferences-dialog.c:336
+#: ../thunar/thunar-preferences-dialog.c:327
 msgid "Shortcuts Pane"
 msgstr "Lotura Panela"
 
-#: ../thunar/thunar-preferences-dialog.c:348
+#: ../thunar/thunar-preferences-dialog.c:339
 msgid "_Icon Size:"
 msgstr "_Ikono tamaina:"
 
-#: ../thunar/thunar-preferences-dialog.c:353
-#: ../thunar/thunar-preferences-dialog.c:404
+#: ../thunar/thunar-preferences-dialog.c:344
+#: ../thunar/thunar-preferences-dialog.c:389
 msgid "Very Small"
 msgstr "Oso Txikia"
 
-#: ../thunar/thunar-preferences-dialog.c:354
-#: ../thunar/thunar-preferences-dialog.c:405
+#: ../thunar/thunar-preferences-dialog.c:345
+#: ../thunar/thunar-preferences-dialog.c:390
 msgid "Smaller"
 msgstr "Txikiena"
 
-#: ../thunar/thunar-preferences-dialog.c:355
-#: ../thunar/thunar-preferences-dialog.c:406
+#: ../thunar/thunar-preferences-dialog.c:346
+#: ../thunar/thunar-preferences-dialog.c:391
 msgid "Small"
 msgstr "Txikia"
 
-#: ../thunar/thunar-preferences-dialog.c:356
-#: ../thunar/thunar-preferences-dialog.c:407
+#: ../thunar/thunar-preferences-dialog.c:347
+#: ../thunar/thunar-preferences-dialog.c:392
 msgid "Normal"
 msgstr "Normala"
 
-#: ../thunar/thunar-preferences-dialog.c:357
-#: ../thunar/thunar-preferences-dialog.c:408
+#: ../thunar/thunar-preferences-dialog.c:348
+#: ../thunar/thunar-preferences-dialog.c:393
 msgid "Large"
 msgstr "Handia"
 
-#: ../thunar/thunar-preferences-dialog.c:358
-#: ../thunar/thunar-preferences-dialog.c:409
+#: ../thunar/thunar-preferences-dialog.c:349
+#: ../thunar/thunar-preferences-dialog.c:394
 msgid "Larger"
 msgstr "Handiena"
 
-#: ../thunar/thunar-preferences-dialog.c:359
-#: ../thunar/thunar-preferences-dialog.c:410
+#: ../thunar/thunar-preferences-dialog.c:350
+#: ../thunar/thunar-preferences-dialog.c:395
 msgid "Very Large"
 msgstr "Oso handia"
 
-#: ../thunar/thunar-preferences-dialog.c:376
+#: ../thunar/thunar-preferences-dialog.c:361
 msgid "Show Icon _Emblems"
 msgstr "Ikono _Ikurrak Bistarazi"
 
-#: ../thunar/thunar-preferences-dialog.c:378
+#: ../thunar/thunar-preferences-dialog.c:363
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
@@ -1602,19 +1602,19 @@ msgstr ""
 "guztientzat lastre-marka panelean enblema ikonoak bistaratzeko hautatu "
 "aukera hau."
 
-#: ../thunar/thunar-preferences-dialog.c:387
+#: ../thunar/thunar-preferences-dialog.c:372
 msgid "Tree Pane"
 msgstr "Zuhaitz panela"
 
-#: ../thunar/thunar-preferences-dialog.c:399
+#: ../thunar/thunar-preferences-dialog.c:384
 msgid "Icon _Size:"
 msgstr "Ikono _Tamaina:"
 
-#: ../thunar/thunar-preferences-dialog.c:427
+#: ../thunar/thunar-preferences-dialog.c:406
 msgid "Show Icon E_mblems"
 msgstr "Ikono _Ikurrak Bistarazi"
 
-#: ../thunar/thunar-preferences-dialog.c:429
+#: ../thunar/thunar-preferences-dialog.c:408
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
@@ -1625,19 +1625,19 @@ msgstr ""
 #.
 #. Behavior
 #.
-#: ../thunar/thunar-preferences-dialog.c:438
+#: ../thunar/thunar-preferences-dialog.c:417
 msgid "Behavior"
 msgstr "Portaera"
 
-#: ../thunar/thunar-preferences-dialog.c:448
+#: ../thunar/thunar-preferences-dialog.c:427
 msgid "Navigation"
 msgstr "Nabigatzea"
 
-#: ../thunar/thunar-preferences-dialog.c:460
+#: ../thunar/thunar-preferences-dialog.c:439
 msgid "_Single click to activate items"
 msgstr "Klik _bakana elementuak aktibatzeko"
 
-#: ../thunar/thunar-preferences-dialog.c:480
+#: ../thunar/thunar-preferences-dialog.c:459
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
@@ -1645,7 +1645,7 @@ msgstr ""
 "Ezarri sagu markatzailea zenbat denboraz egon behar den\n"
 "elementu baten gainean berau hautatzeko:"
 
-#: ../thunar/thunar-preferences-dialog.c:492
+#: ../thunar/thunar-preferences-dialog.c:471
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1659,34 +1659,34 @@ msgstr ""
 "mugituaz. Portaera hau oso erabilgarria da klik bakanak gaiturik daudenean "
 "eta elementua abiarazi gabe hautatu bakarrik nahi duzunean."
 
-#: ../thunar/thunar-preferences-dialog.c:516
+#: ../thunar/thunar-preferences-dialog.c:489
 msgid "Disabled"
 msgstr "Ezgaitua"
 
-#: ../thunar/thunar-preferences-dialog.c:522
+#: ../thunar/thunar-preferences-dialog.c:495
 msgid "Medium"
 msgstr "Ertaina"
 
-#: ../thunar/thunar-preferences-dialog.c:528
+#: ../thunar/thunar-preferences-dialog.c:501
 msgid "Long"
 msgstr "Luzea"
 
-#: ../thunar/thunar-preferences-dialog.c:534
+#: ../thunar/thunar-preferences-dialog.c:507
 msgid "_Double click to activate items"
 msgstr "Klik _Bikoitza elementuak aktibatzeko"
 
 #.
 #. Advanced
 #.
-#: ../thunar/thunar-preferences-dialog.c:544
+#: ../thunar/thunar-preferences-dialog.c:517
 msgid "Advanced"
 msgstr "Aurreratua"
 
-#: ../thunar/thunar-preferences-dialog.c:554
+#: ../thunar/thunar-preferences-dialog.c:527
 msgid "Folder Permissions"
 msgstr "Karpeta Baimenak"
 
-#: ../thunar/thunar-preferences-dialog.c:566
+#: ../thunar/thunar-preferences-dialog.c:539
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
@@ -1696,15 +1696,15 @@ msgstr ""
 "karpetaren edukiari ere ezarri diezazkiokezu. Lehenetsiko\n"
 "portaera behean aukeratu:"
 
-#: ../thunar/thunar-preferences-dialog.c:574
+#: ../thunar/thunar-preferences-dialog.c:547
 msgid "Ask everytime"
 msgstr "Beti galdetu"
 
-#: ../thunar/thunar-preferences-dialog.c:575
+#: ../thunar/thunar-preferences-dialog.c:548
 msgid "Apply to Folder Only"
 msgstr "Karpetari bakarrik ezarri"
 
-#: ../thunar/thunar-preferences-dialog.c:576
+#: ../thunar/thunar-preferences-dialog.c:549
 msgid "Apply to Folder and Contents"
 msgstr "Karpeta eta bere edukiei ezarri"
 
@@ -1729,88 +1729,102 @@ msgid_plural "(%lu seconds remaining)"
 msgstr[0] "(segundu %lu falta da)"
 msgstr[1] "(%lu segundu falta dira)"
 
-#: ../thunar/thunar-properties-dialog.c:249
+#: ../thunar/thunar-properties-dialog.c:250
 msgid "General"
 msgstr "Orokorra"
 
-#: ../thunar/thunar-properties-dialog.c:268
+#: ../thunar/thunar-properties-dialog.c:274
 msgid "Name:"
 msgstr "Izena:"
 
 #.
 #. Second box (kind, open with, link target)
 #.
-#: ../thunar/thunar-properties-dialog.c:293
+#: ../thunar/thunar-properties-dialog.c:299
 msgid "Kind:"
 msgstr "Mota:"
 
-#: ../thunar/thunar-properties-dialog.c:308
+#: ../thunar/thunar-properties-dialog.c:315
 msgid "Open With:"
 msgstr "Honekin Ireki:"
 
-#: ../thunar/thunar-properties-dialog.c:322
+#: ../thunar/thunar-properties-dialog.c:329
 msgid "Link Target:"
 msgstr "Lotura Helburua:"
 
 #.
 #. Third box (deleted, modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:365
+#: ../thunar/thunar-properties-dialog.c:372
 msgid "Deleted:"
 msgstr "Ezabaturik:"
 
-#: ../thunar/thunar-properties-dialog.c:379
+#: ../thunar/thunar-properties-dialog.c:386
 msgid "Modified:"
 msgstr "Aldaketa:"
 
-#: ../thunar/thunar-properties-dialog.c:393
+#: ../thunar/thunar-properties-dialog.c:400
 msgid "Accessed:"
 msgstr "Erabilia:"
 
 #.
 #. Fourth box (size, volume, free space)
 #.
-#: ../thunar/thunar-properties-dialog.c:418
+#: ../thunar/thunar-properties-dialog.c:425
 msgid "Size:"
 msgstr "Tamaina:"
 
-#: ../thunar/thunar-properties-dialog.c:431
+#: ../thunar/thunar-properties-dialog.c:438
 msgid "Volume:"
 msgstr "Bolumena:"
 
-#: ../thunar/thunar-properties-dialog.c:455
+#: ../thunar/thunar-properties-dialog.c:462
 msgid "Free Space:"
 msgstr "Leku Librea:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:480
+#: ../thunar/thunar-properties-dialog.c:487
 msgid "Emblems"
 msgstr "Ikurrak"
 
+#. allocate the icon chooser
+#. allocate the chooser dialog
+#: ../thunar/thunar-properties-dialog.c:677
+#: ../plugins/thunar-uca/thunar-uca-editor.c:612
+#, c-format
+msgid "Select an Icon for \"%s\""
+msgstr "\"%s\"-rentzat Ikono bat autatu"
+
+#. tell the user that we failed to change the icon of the .desktop file
+#: ../thunar/thunar-properties-dialog.c:702
+#, fuzzy, c-format
+msgid "Failed to change icon of \"%s\""
+msgstr "Huts \"%s\"-ren jabea aldatzerakoan"
+
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:723
+#: ../thunar/thunar-properties-dialog.c:785
 #, c-format
 msgid "%s - Properties"
 msgstr "%s - Propietateak"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:906
-#: ../thunar/thunar-standard-view.c:2248
+#: ../thunar/thunar-properties-dialog.c:983
+#: ../thunar/thunar-standard-view.c:2249
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Huts \"%s\" berrizendatzerakoan"
 
-#: ../thunar/thunar-renamer-dialog.c:172 ../thunar/thunar-window.c:261
+#: ../thunar/thunar-renamer-dialog.c:172 ../thunar/thunar-window.c:263
 msgid "_File"
 msgstr "_Fitxategia"
 
-#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:263
+#: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:265
 msgid "_Send To"
 msgstr "_Bidali"
 
-#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:313
+#: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:314
 msgid "File Context Menu"
 msgstr "Fitxategi Kontestu Menua"
 
@@ -1830,7 +1844,7 @@ msgstr "Garbitu"
 msgid "Clear the file list below"
 msgstr "Beheko fitxategi zerrenda garbitu"
 
-#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:282
+#: ../thunar/thunar-renamer-dialog.c:178 ../thunar/thunar-window.c:285
 msgid "_About"
 msgstr "_Honi buruz"
 
@@ -1838,12 +1852,12 @@ msgstr "_Honi buruz"
 msgid "Display information about Thunar Bulk Rename"
 msgstr "Thunar Bulk rename-ri buruzko argibideak bistarazi"
 
-#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:316
+#: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:317
 msgid "View the properties of the selected file"
 msgstr "Hautatutako fitxategiaren propietateak bistarazi"
 
 #: ../thunar/thunar-renamer-dialog.c:360
-#: ../thunar/thunar-renamer-dialog.c:1702
+#: ../thunar/thunar-renamer-dialog.c:1680
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
 msgid "Rename Multiple Files"
 msgstr "Fitxategia anitz berrizendatu"
@@ -1884,29 +1898,29 @@ msgstr ""
 "instalatu baduzu ziurtatu \"Sinple Builtin Renamers\" plugin-a gaitu duzula."
 
 #. allocate the file chooser
-#: ../thunar/thunar-renamer-dialog.c:1084
+#: ../thunar/thunar-renamer-dialog.c:1062
 msgid "Select files to rename"
 msgstr "Hautatu berrizendatzeko fitxategiak"
 
-#: ../thunar/thunar-renamer-dialog.c:1100
+#: ../thunar/thunar-renamer-dialog.c:1078
 msgid "Audio Files"
 msgstr "Audio Fitxategiak"
 
-#: ../thunar/thunar-renamer-dialog.c:1105
+#: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Image Files"
 msgstr "Irudi Fitxategiak"
 
-#: ../thunar/thunar-renamer-dialog.c:1110
+#: ../thunar/thunar-renamer-dialog.c:1088
 msgid "Video Files"
 msgstr "Bideo Fitxategiak"
 
 #. just popup the about dialog
-#: ../thunar/thunar-renamer-dialog.c:1240
+#: ../thunar/thunar-renamer-dialog.c:1218
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
 msgstr "Berrizendatu..."
 
-#: ../thunar/thunar-renamer-dialog.c:1241
+#: ../thunar/thunar-renamer-dialog.c:1219
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
@@ -1914,13 +1928,13 @@ msgstr ""
 "\"Thunar Bulk Rename\" fitxategi anitz batera berrizendatzeko\n"
 "lanabes boteretsu eta hedagarri bat da."
 
-#: ../thunar/thunar-renamer-dialog.c:1549
+#: ../thunar/thunar-renamer-dialog.c:1527
 msgid "Remove File"
 msgid_plural "Remove Files"
 msgstr[0] "Fitxategia Ezabatu"
 msgstr[1] "Fitxategiak Ezabatu"
 
-#: ../thunar/thunar-renamer-dialog.c:1551
+#: ../thunar/thunar-renamer-dialog.c:1529
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
 msgstr[0] ""
@@ -1929,7 +1943,7 @@ msgstr[1] ""
 "Ezabatu hautaturiko fitxategiak berrizendatzeko fitxategi zerrendatik"
 
 #. change title to reflect the standalone status
-#: ../thunar/thunar-renamer-dialog.c:1702
+#: ../thunar/thunar-renamer-dialog.c:1680
 msgid "Bulk Rename - Rename Multiple Files"
 msgstr "Bulk Rename - Fitxategi Anitz Berrizendatu"
 
@@ -1977,56 +1991,56 @@ msgstr[0] "Hautatutako karpeta alboko paneleko loturetara gehitu"
 msgstr[1] "Hautatutako karpetak alboko paneleko loturetara gehitu"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:821 ../thunar/thunar-tree-view.c:1042
+#: ../thunar/thunar-shortcuts-view.c:815 ../thunar/thunar-tree-view.c:1036
 msgid "_Mount Volume"
 msgstr "Bolumena _Muntatu"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:831 ../thunar/thunar-tree-view.c:1052
+#: ../thunar/thunar-shortcuts-view.c:825 ../thunar/thunar-tree-view.c:1046
 msgid "E_ject Volume"
 msgstr "Bolumena A_tera"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:840 ../thunar/thunar-tree-view.c:1061
+#: ../thunar/thunar-shortcuts-view.c:834 ../thunar/thunar-tree-view.c:1055
 msgid "_Unmount Volume"
 msgstr "Bolumena _Desmuntatu"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:868
+#: ../thunar/thunar-shortcuts-view.c:862
 msgid "_Remove Shortcut"
 msgstr "Lotu_ra Ezabatu"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:883
+#: ../thunar/thunar-shortcuts-view.c:877
 msgid "Re_name Shortcut"
 msgstr "Lotura Berrize_ndatu"
 
-#: ../thunar/thunar-shortcuts-view.c:1156
+#: ../thunar/thunar-shortcuts-view.c:1145
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "\"%s\" Bidea ez da direktorio batena"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1175
+#: ../thunar/thunar-shortcuts-view.c:1164
 msgid "Failed to add new shortcut"
 msgstr "Huts lotura berria gehitzerakoan"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1293 ../thunar/thunar-tree-view.c:1556
+#: ../thunar/thunar-shortcuts-view.c:1282 ../thunar/thunar-tree-view.c:1545
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Huts \"%s\" ateratzerakoan"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1339 ../thunar/thunar-tree-view.c:950
-#: ../thunar/thunar-tree-view.c:1607
+#: ../thunar/thunar-shortcuts-view.c:1328 ../thunar/thunar-tree-view.c:951
+#: ../thunar/thunar-tree-view.c:1596
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Huts \"%s\" muntatzerakoan"
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1383 ../thunar/thunar-tree-view.c:1747
+#: ../thunar/thunar-shortcuts-view.c:1372 ../thunar/thunar-tree-view.c:1736
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Huts \"%s\" desmuntatzerakoan"
@@ -2057,40 +2071,40 @@ msgid_plural "%u items, totalling %s"
 msgstr[0] "elementu %u, %s guztira"
 msgstr[1] "%u elementu, %s guztira"
 
-#: ../thunar/thunar-standard-view.c:314
+#: ../thunar/thunar-standard-view.c:315
 msgid "Folder Context Menu"
 msgstr "Karpeta Kontestu Menua"
 
-#: ../thunar/thunar-standard-view.c:315
+#: ../thunar/thunar-standard-view.c:316
 msgid "Create an empty folder within the current folder"
 msgstr "Karpeta huts bat sortu uneko karpetaren barnean"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:317 ../thunar/thunar-tree-view.c:1113
+#: ../thunar/thunar-standard-view.c:318 ../thunar/thunar-tree-view.c:1107
 msgid "Cu_t"
 msgstr "E_baki"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:318 ../thunar/thunar-tree-view.c:1125
+#: ../thunar/thunar-standard-view.c:319 ../thunar/thunar-tree-view.c:1119
 msgid "_Copy"
 msgstr "_Kopiatu"
 
-#: ../thunar/thunar-standard-view.c:319
+#: ../thunar/thunar-standard-view.c:320
 msgid "_Paste"
 msgstr "It_sasi"
 
-#: ../thunar/thunar-standard-view.c:319
+#: ../thunar/thunar-standard-view.c:320
 msgid "Move or copy files previously selected by a Cut or Copy command"
 msgstr ""
 "Moztu edo Kopiatu komandoaz aurretik hautaturiko fitxategiak mugitu edo "
 "kopiatu"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:320 ../thunar/thunar-tree-view.c:1160
+#: ../thunar/thunar-standard-view.c:321 ../thunar/thunar-tree-view.c:1154
 msgid "_Delete"
 msgstr "_Ezabatu"
 
-#: ../thunar/thunar-standard-view.c:321
+#: ../thunar/thunar-standard-view.c:322
 msgid ""
 "Move or copy files previously selected by a Cut or Copy command into the "
 "selected folder"
@@ -2098,140 +2112,140 @@ msgstr ""
 "Moztu edo Kopiatu komandoaz aurretik hautaturiko fitxategiak hautaturiko "
 "karpetara mugitu edo kopiatu"
 
-#: ../thunar/thunar-standard-view.c:322
+#: ../thunar/thunar-standard-view.c:323
 msgid "Select _all Files"
 msgstr "Fitxategi guzti_ak Hautatu"
 
-#: ../thunar/thunar-standard-view.c:322
+#: ../thunar/thunar-standard-view.c:323
 msgid "Select all files in this window"
 msgstr "Leiho honetako fitxategi guztiak hautatu"
 
-#: ../thunar/thunar-standard-view.c:323
+#: ../thunar/thunar-standard-view.c:324
 msgid "Select _by Pattern..."
 msgstr "Patroi _batez Hautatu..."
 
-#: ../thunar/thunar-standard-view.c:323
+#: ../thunar/thunar-standard-view.c:324
 msgid "Select all files that match a certain pattern"
 msgstr "Patroi zehatz bat betetzen duten fitxategiak hautatu"
 
-#: ../thunar/thunar-standard-view.c:324
+#: ../thunar/thunar-standard-view.c:325
 msgid "Du_plicate"
 msgstr "Bi_koiztu"
 
-#: ../thunar/thunar-standard-view.c:325 ../thunar/thunar-standard-view.c:3370
+#: ../thunar/thunar-standard-view.c:326 ../thunar/thunar-standard-view.c:3342
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Lotura E_gin"
 msgstr[1] "Loturak E_gin"
 
-#: ../thunar/thunar-standard-view.c:326
+#: ../thunar/thunar-standard-view.c:327
 msgid "_Rename..."
 msgstr "Be_rrizendatu..."
 
-#: ../thunar/thunar-standard-view.c:327
+#: ../thunar/thunar-standard-view.c:328
 msgid "_Restore"
 msgstr "Be_rreskuratu"
 
 #. add the "Create Document" sub menu action
-#: ../thunar/thunar-standard-view.c:587
+#: ../thunar/thunar-standard-view.c:588
 msgid "Create _Document"
 msgstr "_Dokumentua Sortu"
 
-#: ../thunar/thunar-standard-view.c:1262
+#: ../thunar/thunar-standard-view.c:1263
 msgid "Loading folder contents..."
 msgstr "Karpeta edukiak kargatzen..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1733
+#: ../thunar/thunar-standard-view.c:1734
 msgid "New Empty File"
 msgstr "Fitxategi Huts Berria"
 
-#: ../thunar/thunar-standard-view.c:1733
+#: ../thunar/thunar-standard-view.c:1734
 msgid "New Empty File..."
 msgstr "Fitxategi Huts Berria..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1833
+#: ../thunar/thunar-standard-view.c:1834
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "\"%s\" txantiloietik Dokumentua Sortu"
 
-#: ../thunar/thunar-standard-view.c:2028
+#: ../thunar/thunar-standard-view.c:2029
 msgid "Select by Pattern"
 msgstr "Patroiaz Hautatu"
 
-#: ../thunar/thunar-standard-view.c:2034
+#: ../thunar/thunar-standard-view.c:2035
 msgid "_Select"
 msgstr "_Hautatu"
 
-#: ../thunar/thunar-standard-view.c:2043
+#: ../thunar/thunar-standard-view.c:2044
 msgid "_Pattern:"
 msgstr "_Patroia:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2177
+#: ../thunar/thunar-standard-view.c:2178
 #, c-format
 msgid "Rename \"%s\""
 msgstr "\"%s\" Berrizendatu"
 
-#: ../thunar/thunar-standard-view.c:2185
+#: ../thunar/thunar-standard-view.c:2186
 msgid "_Rename"
 msgstr "Be_rrizendatu"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
-#: ../thunar/thunar-standard-view.c:2534
+#: ../thunar/thunar-standard-view.c:2535
 msgid "Invalid filename provided by XDS drag site"
 msgstr "XDS arrastatze guneak hornituriko fitxategi izen baliogabea"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2711
+#: ../thunar/thunar-standard-view.c:2712
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Huts  \"%s\" URL-rako lotura bat sortzerakoan"
 
-#: ../thunar/thunar-standard-view.c:2974
+#: ../thunar/thunar-standard-view.c:2975
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Huts \"%s\" direktorioa irekitzerakoan"
 
-#: ../thunar/thunar-standard-view.c:3330
+#: ../thunar/thunar-standard-view.c:3302
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Hautatutako fitxategia itsatsi komandoaz mugitzeko prestatu"
 msgstr[1] "Hautatutako fitxategiak itsatsi komandoaz mugitzeko prestatu"
 
-#: ../thunar/thunar-standard-view.c:3338
+#: ../thunar/thunar-standard-view.c:3310
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Hautatutako fitxategia itsatsi komando bitartez kopiatzeko prestatu"
 msgstr[1] ""
 "Hautatutako fitxategiak itsatsi komando bitartez kopiatzeko prestatu"
 
-#: ../thunar/thunar-standard-view.c:3349
+#: ../thunar/thunar-standard-view.c:3321
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Hautaturiko fitxategia ezabatu"
 msgstr[1] "Hautaturiko fitxategiak ezabatu"
 
-#: ../thunar/thunar-standard-view.c:3363
+#: ../thunar/thunar-standard-view.c:3335
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Hautaturiko fitxategia bikoiztu"
 msgstr[1] "Hautaturiko fitxategiak bikoiztu"
 
-#: ../thunar/thunar-standard-view.c:3372
+#: ../thunar/thunar-standard-view.c:3344
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Hautatutako fitxategiarentzat lotura sinboliko bat sortu"
 msgstr[1] "Hautatutako fitxategi bakoitzarentzat lotura sinboliko bat sortu"
 
-#: ../thunar/thunar-standard-view.c:3380
+#: ../thunar/thunar-standard-view.c:3352
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Hautatutako fitxategia berrizendatu"
 msgstr[1] "Hautatutako fitxategiak berrizendatu"
 
-#: ../thunar/thunar-standard-view.c:3388
+#: ../thunar/thunar-standard-view.c:3360
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Hautatutako fitxategia berreskuratu"
@@ -2252,12 +2266,12 @@ msgid "Loading..."
 msgstr "Kargatzen..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1142
+#: ../thunar/thunar-tree-view.c:1136
 msgid "_Paste Into Folder"
 msgstr "Karpetan _Itsatsi"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1183
+#: ../thunar/thunar-tree-view.c:1177
 msgid "P_roperties..."
 msgstr "P_ropietateak"
 
@@ -2271,239 +2285,239 @@ msgstr "Gaur"
 msgid "Yesterday"
 msgstr "Atzo"
 
-#: ../thunar/thunar-window.c:262
+#: ../thunar/thunar-window.c:264
 msgid "Open New _Window"
 msgstr "_Leiho Berria Ireki"
 
-#: ../thunar/thunar-window.c:262
+#: ../thunar/thunar-window.c:264
 msgid "Open a new Thunar window for the displayed location"
 msgstr "Thunar leiho berri bat ireki bistarazitako kokapenarekin"
 
-#: ../thunar/thunar-window.c:264
+#: ../thunar/thunar-window.c:267
 msgid "Close _All Windows"
 msgstr "Leiho _Guztiak Itxi"
 
-#: ../thunar/thunar-window.c:264
+#: ../thunar/thunar-window.c:267
 msgid "Close all Thunar windows"
 msgstr "Thunar leiho guztiak itxi"
 
-#: ../thunar/thunar-window.c:265
+#: ../thunar/thunar-window.c:268
 msgid "_Close"
 msgstr "_Itxi"
 
-#: ../thunar/thunar-window.c:265
+#: ../thunar/thunar-window.c:268
 msgid "Close this window"
 msgstr "Leiho hau itxi"
 
-#: ../thunar/thunar-window.c:266
+#: ../thunar/thunar-window.c:269
 msgid "_Edit"
 msgstr "_Editatu"
 
-#: ../thunar/thunar-window.c:267
+#: ../thunar/thunar-window.c:270
 msgid "Pr_eferences..."
 msgstr "Hob_espenak..."
 
-#: ../thunar/thunar-window.c:267
+#: ../thunar/thunar-window.c:270
 msgid "Edit Thunars Preferences"
 msgstr "Thunar hobespenak editatu"
 
-#: ../thunar/thunar-window.c:268
+#: ../thunar/thunar-window.c:271
 msgid "_View"
 msgstr "I_kusi"
 
-#: ../thunar/thunar-window.c:269
+#: ../thunar/thunar-window.c:272
 msgid "_Reload"
 msgstr "Bi_rkargatu"
 
-#: ../thunar/thunar-window.c:269
+#: ../thunar/thunar-window.c:272
 msgid "Reload the current folder"
 msgstr "Karpeta birkargatu"
 
-#: ../thunar/thunar-window.c:270
+#: ../thunar/thunar-window.c:273
 msgid "_Location Selector"
 msgstr "_Kokapen Hautatzailea"
 
-#: ../thunar/thunar-window.c:271
+#: ../thunar/thunar-window.c:274
 msgid "_Side Pane"
 msgstr "_Alboko panela"
 
-#: ../thunar/thunar-window.c:272
+#: ../thunar/thunar-window.c:275
 msgid "Zoom I_n"
 msgstr "Zoom-a ha_nditu"
 
-#: ../thunar/thunar-window.c:272
+#: ../thunar/thunar-window.c:275
 msgid "Show the contents in more detail"
 msgstr "Edukiak zehaztasun handiagoarekin bistarazi"
 
-#: ../thunar/thunar-window.c:273
+#: ../thunar/thunar-window.c:276
 msgid "Zoom _Out"
 msgstr "Z_oom-a txikiagotu"
 
-#: ../thunar/thunar-window.c:273
+#: ../thunar/thunar-window.c:276
 msgid "Show the contents in less detail"
 msgstr "Edukiak zehaztasun txikiagoekin bistarazi"
 
-#: ../thunar/thunar-window.c:274
+#: ../thunar/thunar-window.c:277
 msgid "Normal Si_ze"
 msgstr "Ta_maina Normala"
 
-#: ../thunar/thunar-window.c:274
+#: ../thunar/thunar-window.c:277
 msgid "Show the contents at the normal size"
 msgstr "Edukiak tamaina normalean bistarazi"
 
-#: ../thunar/thunar-window.c:275
+#: ../thunar/thunar-window.c:278
 msgid "_Go"
 msgstr "_Joan"
 
-#: ../thunar/thunar-window.c:276
+#: ../thunar/thunar-window.c:279
 msgid "Open _Parent"
 msgstr "_Gurasoa Ireki"
 
-#: ../thunar/thunar-window.c:276
+#: ../thunar/thunar-window.c:279
 msgid "Open the parent folder"
 msgstr "Karpeta gurasoa ireki"
 
-#: ../thunar/thunar-window.c:277
+#: ../thunar/thunar-window.c:280
 msgid "_Home"
 msgstr "_Etxea"
 
-#: ../thunar/thunar-window.c:277
+#: ../thunar/thunar-window.c:280
 msgid "Go to the home folder"
 msgstr "Etxe karpetara joan"
 
-#: ../thunar/thunar-window.c:278
+#: ../thunar/thunar-window.c:281
 msgid "T_emplates"
 msgstr "T_xantiloiak"
 
-#: ../thunar/thunar-window.c:278
+#: ../thunar/thunar-window.c:281
 msgid "Go to the templates folder"
 msgstr "Txantiloi karpetara joan"
 
-#: ../thunar/thunar-window.c:279
+#: ../thunar/thunar-window.c:282
 msgid "_Open Location..."
 msgstr "Kokalekua _Ireki"
 
-#: ../thunar/thunar-window.c:279
+#: ../thunar/thunar-window.c:282
 msgid "Specify a location to open"
 msgstr "Irekitzeko kokapen bat ezarri"
 
-#: ../thunar/thunar-window.c:280
+#: ../thunar/thunar-window.c:283
 msgid "_Help"
 msgstr "_Laguntza"
 
-#: ../thunar/thunar-window.c:281
+#: ../thunar/thunar-window.c:284
 msgid "_Contents"
 msgstr "_Edukiak"
 
-#: ../thunar/thunar-window.c:281
+#: ../thunar/thunar-window.c:284
 msgid "Display Thunar user manual"
 msgstr "Thunar erabiltzaile manuala bistarazi"
 
-#: ../thunar/thunar-window.c:282
+#: ../thunar/thunar-window.c:285
 msgid "Display information about Thunar"
 msgstr "Thunar-eri buruz argibideak bistarazi"
 
-#: ../thunar/thunar-window.c:287
+#: ../thunar/thunar-window.c:290
 msgid "Show _Hidden Files"
 msgstr "E_zkutatutako Fitxategiak Bistarazi"
 
-#: ../thunar/thunar-window.c:287
+#: ../thunar/thunar-window.c:290
 msgid "Toggles the display of hidden files in the current window"
 msgstr "Leiho honetako ezkutatutako fitxategien bistaratze egoera aldatu "
 
-#: ../thunar/thunar-window.c:288
+#: ../thunar/thunar-window.c:291
 msgid "_Pathbar Style"
 msgstr "_Bide-barra Estiloa"
 
-#: ../thunar/thunar-window.c:288
+#: ../thunar/thunar-window.c:291
 msgid "Modern approach with buttons that correspond to folders"
 msgstr "Karpetei dagozkion botoiekin ikuspegi modernoa"
 
-#: ../thunar/thunar-window.c:289
+#: ../thunar/thunar-window.c:292
 msgid "_Toolbar Style"
 msgstr "_Tresna-barra Estiloa"
 
-#: ../thunar/thunar-window.c:289
+#: ../thunar/thunar-window.c:292
 msgid "Traditional approach with location bar and navigation buttons"
 msgstr "Kokaleku barra eta nabigazio botoiekin ikuspegi tradizionala"
 
-#: ../thunar/thunar-window.c:290
+#: ../thunar/thunar-window.c:293
 msgid "_Shortcuts"
 msgstr "_Loturak"
 
-#: ../thunar/thunar-window.c:290
+#: ../thunar/thunar-window.c:293
 msgid "Toggles the visibility of the shortcuts pane"
 msgstr "Lotura panelaren bistaratze egoera aldatu"
 
-#: ../thunar/thunar-window.c:291
+#: ../thunar/thunar-window.c:294
 msgid "_Tree"
 msgstr "Zuhai_tza"
 
-#: ../thunar/thunar-window.c:291
+#: ../thunar/thunar-window.c:294
 msgid "Toggles the visibility of the tree pane"
 msgstr "Zuhaitz panelaren bistaratze egoera aldatu"
 
-#: ../thunar/thunar-window.c:292
+#: ../thunar/thunar-window.c:295
 msgid "St_atusbar"
 msgstr "Egoer_a-barra"
 
-#: ../thunar/thunar-window.c:292
+#: ../thunar/thunar-window.c:295
 msgid "Change the visibility of this window's statusbar"
 msgstr "Leiho honen egoera tresnabarraren bistaratze egoera aldatu"
 
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:595
+#: ../thunar/thunar-window.c:598
 msgid "View as _Icons"
 msgstr "_Ikonoak bezala bistarazi"
 
-#: ../thunar/thunar-window.c:595
+#: ../thunar/thunar-window.c:598
 msgid "Display folder content in an icon view"
 msgstr "Karpeta edukia ikono ikuspegi batetan bistarazi"
 
-#: ../thunar/thunar-window.c:602
+#: ../thunar/thunar-window.c:605
 msgid "View as _Detailed List"
 msgstr "_Zehazturiko zerrenda bezala bistarazi"
 
-#: ../thunar/thunar-window.c:602
+#: ../thunar/thunar-window.c:605
 msgid "Display folder content in a detailed list view"
 msgstr "Karpeta edukia zehazturiko zerrenda ikuspegian bistarazi"
 
-#: ../thunar/thunar-window.c:609
+#: ../thunar/thunar-window.c:612
 msgid "View as _Compact List"
 msgstr "Zerrenda _Konpaktoa bezala bistarazi"
 
-#: ../thunar/thunar-window.c:609
+#: ../thunar/thunar-window.c:612
 msgid "Display folder content in a compact list view"
 msgstr "Karpeta edukia ikuspegi konpaktuan bistarazi"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:671
+#: ../thunar/thunar-window.c:674
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
 "Kontuz, root kontua erabiltzen ari zara eta zure sistema hondatu dezakezu."
 
-#: ../thunar/thunar-window.c:1675
+#: ../thunar/thunar-window.c:1692
 msgid "Failed to open parent folder"
 msgstr "Huts guraso karpeta irekitzerakoan"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1701
+#: ../thunar/thunar-window.c:1718
 msgid "Failed to open home directory"
 msgstr "Huts etxe karpeta irekitzerakoan"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:1763
+#: ../thunar/thunar-window.c:1780
 msgid "About Templates"
 msgstr "Txantiloiei buruz"
 
-#: ../thunar/thunar-window.c:1784
+#: ../thunar/thunar-window.c:1801
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Karpeta honetako fitxategi guztiak \"Dokumentua Sortu\" menuan agertuko dira."
 
-#: ../thunar/thunar-window.c:1791
+#: ../thunar/thunar-window.c:1808
 msgid ""
 "If you frequently create certain kinds of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2519,15 +2533,15 @@ msgstr ""
 "\"Dokumentua Sortu\" menuko sarrera hori aukeratzean ikusten ari zaren "
 "karpetan dokumentu horren kopia bat sortuko du."
 
-#: ../thunar/thunar-window.c:1803
+#: ../thunar/thunar-window.c:1820
 msgid "Do _not display this message again"
 msgstr "E_z bistarazi mezu hau berriz"
 
-#: ../thunar/thunar-window.c:1816
+#: ../thunar/thunar-window.c:1833
 msgid "Failed to open templates folder"
 msgstr "Huts txantiloi karpeta irekitzerakoan"
 
-#: ../thunar/thunar-window.c:1852
+#: ../thunar/thunar-window.c:1869
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -2536,7 +2550,7 @@ msgstr ""
 "kudeatzaile azkar eta erabilerraz bat da."
 
 #. set window title and icon
-#: ../thunar/thunar-window.c:1885 ../Thunar.desktop.in.in.h:2
+#: ../thunar/thunar-window.c:1908 ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "Fitxategi Kudeatzailea"
 
@@ -3216,12 +3230,6 @@ msgstr ""
 " bat bete behar da karpeta edo fitxategi izenean. Honez\n"
 " gain ekintza fitxategi mota batzuetan bakarrik agertzea\n"
 " zehaztu dezakezu."
-
-#. allocate the chooser dialog
-#: ../plugins/thunar-uca/thunar-uca-editor.c:612
-#, c-format
-msgid "Select an Icon for \"%s\""
-msgstr "\"%s\"-rentzat Ikono bat autatu"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:780
 #, c-format

@@ -164,6 +164,10 @@ GList            *thunar_file_get_emblem_names     (ThunarFile              *fil
 void              thunar_file_set_emblem_names     (ThunarFile              *file,
                                                     GList                   *emblem_names);
 
+gboolean          thunar_file_set_custom_icon      (ThunarFile              *file,
+                                                    const gchar             *custom_icon,
+                                                    GError                 **error) G_GNUC_WARN_UNUSED_RESULT;
+
 const gchar      *thunar_file_get_icon_name        (const ThunarFile        *file,
                                                     ThunarFileIconState     icon_state,
                                                     GtkIconTheme           *icon_theme);
@@ -483,6 +487,17 @@ G_STMT_START{                                             \
  * Return value: %TRUE if @file is a symbolic link.
  **/
 #define thunar_file_is_symlink(file) ((THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
+
+/**
+ * thunar_file_is_desktop_file:
+ * @file : a #ThunarFile.
+ *
+ * Returns %TRUE if @file is a .desktop file, but not a .directory file.
+ *
+ * Return value: %TRUE if @file is a .desktop file.
+ **/
+#define thunar_file_is_desktop_file(file) (exo_str_is_equal (thunar_vfs_mime_info_get_name (thunar_file_get_mime_info ((file))), "application/x-desktop") \
+                                        && !exo_str_is_equal (thunar_vfs_path_get_name (thunar_file_get_path ((file))), ".directory"))
 
 /**
  * thunar_file_get_display_name:

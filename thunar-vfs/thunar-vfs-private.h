@@ -115,6 +115,12 @@ gchar    *_thunar_vfs_unescape_rfc2396_string   (const gchar *escaped_string,
                                                  gboolean     ascii_must_not_be_escaped,
                                                  GError     **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
+/* .desktop file handling */
+gboolean  _thunar_vfs_desktop_file_set_value    (const gchar *filename,
+                                                 const gchar *key,
+                                                 const gchar *value,
+                                                 GError     **error) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_VFS_PRIVATE_H__ */

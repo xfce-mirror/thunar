@@ -81,6 +81,8 @@ static void     thunar_properties_dialog_activate             (GtkWidget        
 static gboolean thunar_properties_dialog_focus_out_event      (GtkWidget                   *entry,
                                                                GdkEventFocus               *event,
                                                                ThunarPropertiesDialog      *dialog);
+static void     thunar_properties_dialog_icon_button_clicked  (GtkWidget                   *button,
+                                                               ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update               (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update_providers     (ThunarPropertiesDialog      *dialog);
 static gboolean thunar_properties_dialog_rename_idle          (gpointer                     user_data);
@@ -107,6 +109,7 @@ struct _ThunarPropertiesDialog
   ThunarFile             *file;
 
   GtkWidget              *notebook;
+  GtkWidget              *icon_button;
   GtkWidget              *icon_image;
   GtkWidget              *name_entry;
   GtkWidget              *kind_label;
@@ -259,6 +262,11 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), box, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (box);
 
+  dialog->icon_button = gtk_button_new ();
+  g_signal_connect (G_OBJECT (dialog->icon_button), "clicked", G_CALLBACK (thunar_properties_dialog_icon_button_clicked), dialog);
+  gtk_box_pack_start (GTK_BOX (box), dialog->icon_button, FALSE, TRUE, 0);
+  gtk_widget_show (dialog->icon_button);
+
   dialog->icon_image = gtk_image_new ();
   gtk_box_pack_start (GTK_BOX (box), dialog->icon_image, FALSE, TRUE, 0);
   gtk_widget_show (dialog->icon_image);
@@ -266,7 +274,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   label = gtk_label_new (_("Name:"));
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
   gtk_misc_set_alignment (GTK_MISC (label), 1.0f, 0.5f);
-  gtk_box_pack_start (GTK_BOX (box), label, TRUE, TRUE, 0);
+  gtk_box_pack_end (GTK_BOX (box), label, TRUE, TRUE, 0);
   gtk_widget_show (label);
 
   dialog->name_entry = g_object_new (GTK_TYPE_ENTRY, "editable", FALSE, NULL);
@@ -649,6 +657,61 @@ thunar_properties_dialog_focus_out_event (GtkWidget              *entry,
 
 
 static void
+thunar_properties_dialog_icon_button_clicked (GtkWidget              *button,
+                                              ThunarPropertiesDialog *dialog)
+{
+  const gchar *custom_icon;
+  GtkWidget   *chooser;
+  GError      *err = NULL;
+  gchar       *title;
+  gchar       *icon;
+
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+  _thunar_return_if_fail (GTK_IS_BUTTON (button));
+
+  /* make sure we still have a file */
+  if (G_UNLIKELY (dialog->file == NULL))
+    return;
+
+  /* allocate the icon chooser */
+  title = g_strdup_printf (_("Select an Icon for \"%s\""), thunar_file_get_display_name (dialog->file));
+  chooser = exo_icon_chooser_dialog_new (title, GTK_WINDOW (dialog),
+                                         GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                         GTK_STOCK_OK, GTK_RESPONSE_ACCEPT,
+                                         NULL);
+  gtk_dialog_set_alternative_button_order (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT, GTK_RESPONSE_CANCEL, -1);
+  gtk_dialog_set_default_response (GTK_DIALOG (chooser), GTK_RESPONSE_ACCEPT);
+  g_free (title);
+
+  /* use the custom_icon of the file as default */
+  custom_icon = thunar_file_get_custom_icon (dialog->file);
+  if (G_LIKELY (custom_icon != NULL && *custom_icon != '\0'))
+    exo_icon_chooser_dialog_set_icon (EXO_ICON_CHOOSER_DIALOG (chooser), custom_icon);
+
+  /* run the icon chooser dialog and make sure the dialog still has a file */
+  if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT && dialog->file != NULL)
+    {
+      /* determine the selected icon and use it for the file */
+      icon = exo_icon_chooser_dialog_get_icon (EXO_ICON_CHOOSER_DIALOG (chooser));
+      if (!thunar_file_set_custom_icon (dialog->file, icon, &err))
+        {
+          /* hide the icon chooser dialog first */
+          gtk_widget_hide (chooser);
+
+          /* tell the user that we failed to change the icon of the .desktop file */
+          thunar_dialogs_show_error (GTK_WIDGET (dialog), err, _("Failed to change icon of \"%s\""), thunar_file_get_display_name (dialog->file));
+          g_error_free (err);
+        }
+      g_free (icon);
+    }
+
+  /* destroy the chooser */
+  gtk_widget_destroy (chooser);
+}
+
+
+
+static void
 thunar_properties_dialog_update_providers (ThunarPropertiesDialog *dialog)
 {
   GtkWidget *label_widget;
@@ -729,6 +792,21 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   gtk_window_set_icon (GTK_WINDOW (dialog), icon);
   if (G_LIKELY (icon != NULL))
     g_object_unref (G_OBJECT (icon));
+
+  /* check if the icon may be changed (only for writable .desktop files) */
+  g_object_ref (G_OBJECT (dialog->icon_image));
+  gtk_container_remove (GTK_CONTAINER (gtk_widget_get_parent (dialog->icon_image)), dialog->icon_image);
+  if (thunar_file_is_writable (dialog->file) && thunar_file_is_desktop_file (dialog->file))
+    {
+      gtk_container_add (GTK_CONTAINER (dialog->icon_button), dialog->icon_image);
+      gtk_widget_show (dialog->icon_button);
+    }
+  else
+    {
+      gtk_box_pack_start (GTK_BOX (gtk_widget_get_parent (dialog->icon_button)), dialog->icon_image, FALSE, TRUE, 0);
+      gtk_widget_hide (dialog->icon_button);
+    }
+  g_object_unref (G_OBJECT (dialog->icon_image));
 
   /* update the name (if it differs) */
   gtk_entry_set_editable (GTK_ENTRY (dialog->name_entry), thunar_file_is_renameable (dialog->file));

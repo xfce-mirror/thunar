@@ -1589,6 +1589,36 @@ thunar_file_set_emblem_names (ThunarFile *file,
 
 
 /**
+ * thunar_file_set_custom_icon:
+ * @file        : a #ThunarFile instance.
+ * @custom_icon : the new custom icon for the @file.
+ * @error       : return location for errors or %NULL.
+ *
+ * Wrapper for _thunar_vfs_info_set_custom_icon().
+ *
+ * Return value: %TRUE if the icon of @file was changed, %FALSE otherwise.
+ **/
+gboolean
+thunar_file_set_custom_icon (ThunarFile  *file,
+                             const gchar *custom_icon,
+                             GError     **error)
+{
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (custom_icon != NULL, FALSE);
+
+  /* try to set the new custom_icon for the file */
+  if (!thunar_vfs_info_set_custom_icon (file->info, custom_icon, error))
+    return FALSE;
+
+  /* tell everybody that we have changed */
+  thunar_file_changed (file);
+  return TRUE;
+}
+
+
+
+/**
  * thunar_file_get_icon_name:
  * @file       : a #ThunarFile instance.
  * @icon_state : the state of the @file<!---->s icon we are interested in.
