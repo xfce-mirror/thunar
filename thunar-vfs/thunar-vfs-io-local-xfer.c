@@ -358,7 +358,7 @@ _thunar_vfs_io_local_xfer_next_path (const ThunarVfsPath     *source_path,
                                      ThunarVfsIOLocalXferMode mode,
                                      GError                 **error)
 {
-  static const gchar const NAMES[3][2][19] =
+  static const gchar NAMES[3][2][19] =
   {
     {
       N_ ("copy of %s"),
