@@ -87,7 +87,7 @@ static gboolean                thunar_renamer_model_iter_children       (GtkTree
                                                                          GtkTreeIter             *parent);
 static gboolean                thunar_renamer_model_iter_has_child      (GtkTreeModel            *tree_model,
                                                                          GtkTreeIter             *iter);
-static gboolean                thunar_renamer_model_iter_n_children     (GtkTreeModel            *tree_model,
+static gint                    thunar_renamer_model_iter_n_children     (GtkTreeModel            *tree_model,
                                                                          GtkTreeIter             *iter);
 static gboolean                thunar_renamer_model_iter_nth_child      (GtkTreeModel            *tree_model,
                                                                          GtkTreeIter             *iter,
@@ -566,7 +566,7 @@ thunar_renamer_model_iter_has_child (GtkTreeModel *tree_model,
 
 
 
-static gboolean
+static gint
 thunar_renamer_model_iter_n_children (GtkTreeModel *tree_model,
                                       GtkTreeIter  *iter)
 {
