@@ -99,7 +99,7 @@ thunar_dbus_client_bulk_rename (const gchar *working_directory,
   g_free (display_name);
 
   /* send the message and release our references on connection and message */
-  result = dbus_connection_send_with_reply_and_block (connection, message, 2000, &derror);
+  result = dbus_connection_send_with_reply_and_block (connection, message, -1, &derror);
   dbus_message_unref (message);
 
   /* check if no reply was received */
@@ -194,7 +194,7 @@ thunar_dbus_client_launch_files (const gchar *working_directory,
   g_free (display_name);
 
   /* send the message and release our references on connection and message */
-  result = dbus_connection_send_with_reply_and_block (connection, message, 2000, &derror);
+  result = dbus_connection_send_with_reply_and_block (connection, message, -1, &derror);
   dbus_message_unref (message);
 
   /* check if no reply was received */
@@ -259,7 +259,7 @@ thunar_dbus_client_terminate (GError **error)
   dbus_message_set_auto_start (message, FALSE);
 
   /* send the message and release our references on connection and message */
-  result = dbus_connection_send_with_reply_and_block (connection, message, 2000, &derror);
+  result = dbus_connection_send_with_reply_and_block (connection, message, -1, &derror);
   dbus_message_unref (message);
 
   /* check if no reply was received */
