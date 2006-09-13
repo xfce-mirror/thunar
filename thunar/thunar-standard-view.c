@@ -187,9 +187,8 @@ static void                 thunar_standard_view_action_rename              (Gtk
 static void                 thunar_standard_view_action_restore             (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
 static GClosure            *thunar_standard_view_new_files_closure          (ThunarStandardView       *standard_view);
-static void                 thunar_standard_view_new_files                  (ThunarVfsJob             *job,
-                                                                             GList                    *path_list,
-                                                                             ThunarStandardView       *standard_view);
+static void                 thunar_standard_view_new_files                  (ThunarStandardView       *standard_view,
+                                                                             GList                    *path_list);
 static gboolean             thunar_standard_view_button_release_event       (GtkWidget                *view,
                                                                              GdkEventButton           *event,
                                                                              ThunarStandardView       *standard_view);
@@ -298,6 +297,14 @@ struct _ThunarStandardViewPrivate
    * new files are created by a ThunarVfsJob associated with this view
    */
   GClosure               *new_files_closure;
+
+  /* the "new-files" path list that was remember in the closure callback
+   * if the view is currently being loaded and as such the folder may
+   * not have all "new-files" at hand. This list is used when the
+   * folder tells that it's ready loading and the view will try again
+   * to select exactly this files.
+   */
+  GList                  *new_files_path_list;
 
   /* scroll-to-file support */
   ThunarFile             *scroll_to_file;
@@ -758,6 +765,9 @@ thunar_standard_view_finalize (GObject *object)
       standard_view->priv->new_files_closure = NULL;
     }
 
+  /* drop any remaining "new-files" paths */
+  thunar_vfs_path_list_free (standard_view->priv->new_files_path_list);
+
   /* release our reference on the preferences */
   g_object_unref (G_OBJECT (standard_view->preferences));
 
@@ -1205,6 +1215,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
                                   gboolean            loading)
 {
   ThunarFile *file;
+  GList      *new_files_path_list;
 
   loading = !!loading;
 
@@ -1231,6 +1242,20 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
 
       /* cleanup */
       g_object_unref (G_OBJECT (file));
+    }
+
+  /* check if we have a path list from new_files pending */
+  if (G_UNLIKELY (!loading && standard_view->priv->new_files_path_list != NULL))
+    {
+      /* remember and reset the new_files_path_list */
+      new_files_path_list = standard_view->priv->new_files_path_list;
+      standard_view->priv->new_files_path_list = NULL;
+
+      /* and try again */
+      thunar_standard_view_new_files (standard_view, new_files_path_list);
+
+      /* cleanup */
+      thunar_vfs_path_list_free (new_files_path_list);
     }
 
   /* notify listeners */
@@ -2309,7 +2334,7 @@ thunar_standard_view_new_files_closure (ThunarStandardView *standard_view)
     }
 
   /* allocate a new "new-files" closure */
-  standard_view->priv->new_files_closure = g_cclosure_new (G_CALLBACK (thunar_standard_view_new_files), standard_view, NULL);
+  standard_view->priv->new_files_closure = g_cclosure_new_swap (G_CALLBACK (thunar_standard_view_new_files), standard_view, NULL);
   g_closure_ref (standard_view->priv->new_files_closure);
   g_closure_sink (standard_view->priv->new_files_closure);
 
@@ -2320,40 +2345,50 @@ thunar_standard_view_new_files_closure (ThunarStandardView *standard_view)
 
 
 static void
-thunar_standard_view_new_files (ThunarVfsJob       *job,
-                                GList              *path_list,
-                                ThunarStandardView *standard_view)
+thunar_standard_view_new_files (ThunarStandardView *standard_view,
+                                GList              *path_list)
 {
   ThunarFile*file;
   GList     *file_list = NULL;
   GList     *lp;
 
-  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* verify that we have a non-empty path_list */
-  if (G_UNLIKELY (path_list == NULL))
-    return;
-
-  /* determine the files for the paths */
-  for (lp = path_list; lp != NULL; lp = lp->next)
+  /* release the previous "new-files" paths (if any) */
+  if (G_UNLIKELY (standard_view->priv->new_files_path_list != NULL))
     {
-      file = thunar_file_cache_lookup (lp->data);
-      if (G_LIKELY (file != NULL))
-        file_list = g_list_prepend (file_list, file);
+      thunar_vfs_path_list_free (standard_view->priv->new_files_path_list);
+      standard_view->priv->new_files_path_list = NULL;
     }
 
-  /* check if we have any new files here */
-  if (G_LIKELY (file_list != NULL))
+  /* check if the folder is currently being loaded */
+  if (G_UNLIKELY (standard_view->loading))
     {
-      /* select the files */
-      thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), file_list);
+      /* schedule the "new-files" paths for later processing */
+      standard_view->priv->new_files_path_list = thunar_vfs_path_list_copy (path_list);
+    }
+  else if (G_LIKELY (path_list != NULL))
+    {
+      /* determine the files for the paths */
+      for (lp = path_list; lp != NULL; lp = lp->next)
+        {
+          file = thunar_file_cache_lookup (lp->data);
+          if (G_LIKELY (file != NULL))
+            file_list = g_list_prepend (file_list, file);
+        }
 
-      /* release the file list */
-      g_list_free (file_list);
+      /* check if we have any new files here */
+      if (G_LIKELY (file_list != NULL))
+        {
+          /* select the files */
+          thunar_component_set_selected_files (THUNAR_COMPONENT (standard_view), file_list);
 
-      /* grab the focus to the view widget */
-      gtk_widget_grab_focus (GTK_BIN (standard_view)->child);
+          /* release the file list */
+          g_list_free (file_list);
+
+          /* grab the focus to the view widget */
+          gtk_widget_grab_focus (GTK_BIN (standard_view)->child);
+        }
     }
 }
 

@@ -39,8 +39,11 @@
 
 
 
-/* minimum timer interval (in ms) */
-#define THUNAR_VFS_MONITOR_TIMER_INTERVAL (200)
+/* minimum timer interval for feeded events (in ms) */
+#define THUNAR_VFS_MONITOR_TIMER_INTERVAL_FEED (10)
+
+/* minimum timer interval for FAM events (in ms) */
+#define THUNAR_VFS_MONITOR_TIMER_INTERVAL_FAM (200)
 
 /* tagging for notifications, so we can make sure that
  * (slow) FAM events don't override properly feeded events.
@@ -171,7 +174,6 @@ static void
 thunar_vfs_monitor_init (ThunarVfsMonitor *monitor)
 {
   /* initialize the monitor */
-  monitor->notifications_timer_id = -1;
   monitor->cond = g_cond_new ();
   monitor->lock = g_mutex_new ();
 
@@ -212,7 +214,7 @@ thunar_vfs_monitor_finalize (GObject *object)
 #endif
 
   /* drop the notifications timer source */
-  if (G_UNLIKELY (monitor->notifications_timer_id >= 0))
+  if (G_UNLIKELY (monitor->notifications_timer_id != 0))
     g_source_remove (monitor->notifications_timer_id);
 
   /* drop all pending notifications */
@@ -249,22 +251,17 @@ thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
                                        const gchar          *filename)
 {
   ThunarVfsMonitorNotification *notification;
+  ThunarVfsMonitorNotification *position;
+  guint                         timeout;
   gint                          length;
 
-  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  g_return_if_fail (reqnum > 0 && reqnum <= monitor->current_reqnum);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  _thunar_vfs_return_if_fail (reqnum > 0 && reqnum <= monitor->current_reqnum);
 
   /* check if we already have a matching notification */
   for (notification = monitor->notifications; notification != NULL; notification = notification->next)
-    if (notification->reqnum == reqnum && exo_str_is_equal (filename, notification->filename))
-      {
-        if (tag >= notification->tag)
-          {
-            notification->tag = tag;
-            notification->event = event;
-          }
-        return;
-      }
+    if (notification->reqnum == reqnum && exo_str_is_equal (filename, notification->filename) && notification->tag == tag && notification->event == event)
+      return;
 
   /* allocate a new notification */
   if (G_LIKELY (filename != NULL))
@@ -280,16 +277,40 @@ thunar_vfs_monitor_queue_notification (ThunarVfsMonitor     *monitor,
       notification->filename = NULL;
     }
 
-  /* prepend the notification to the queue */
+  /* prepare the notification */
   notification->reqnum = reqnum;
   notification->tag = tag;
-  notification->next = monitor->notifications;
   notification->event = event;
-  monitor->notifications = notification;
+
+  /* and append it to the list */
+  if (monitor->notifications == NULL)
+    {
+      /* we have a new head */
+      monitor->notifications = notification;
+      notification->next = NULL;
+    }
+  else
+    {
+      /* lookup the position where to insert the notification, making sure that FAM events will be sorted after feeded ones... */
+      for (position = monitor->notifications; position->next != NULL && position->tag >= tag; position = position->next)
+        ;
+
+      /* ...and insert the notification */
+      notification->next = position->next;
+      position->next = notification;
+    }
 
   /* schedule the notification timer if not already active */
-  if (G_UNLIKELY (monitor->notifications_timer_id < 0))
-    monitor->notifications_timer_id = g_timeout_add (THUNAR_VFS_MONITOR_TIMER_INTERVAL, thunar_vfs_monitor_notifications_timer, monitor);
+  if (G_UNLIKELY (monitor->notifications_timer_id == 0))
+    {
+      /* use a shorter timeout for feeded events */
+      timeout = (tag == THUNAR_VFS_MONITOR_TAG_FEED)
+              ? THUNAR_VFS_MONITOR_TIMER_INTERVAL_FEED
+              : THUNAR_VFS_MONITOR_TIMER_INTERVAL_FAM;
+
+      /* schedule the timer source with the timeout */
+      monitor->notifications_timer_id = g_timeout_add (timeout, thunar_vfs_monitor_notifications_timer, monitor);
+    }
 }
 
 
@@ -312,7 +333,7 @@ thunar_vfs_monitor_notifications_timer (gpointer user_data)
   g_mutex_lock (monitor->lock);
 
   /* reset the timer id */
-  monitor->notifications_timer_id = -1;
+  monitor->notifications_timer_id = 0;
 
   /* process all pending notifications */
   while (monitor->notifications != NULL)
@@ -374,8 +395,8 @@ thunar_vfs_monitor_notifications_timer (gpointer user_data)
 static void
 thunar_vfs_monitor_fam_cancel (ThunarVfsMonitor *monitor)
 {
-  g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  g_return_if_fail (monitor->fc_watch_id >= 0);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  _thunar_vfs_return_if_fail (monitor->fc_watch_id >= 0);
 
   /* close the FAM connection */
   FAMClose (&monitor->fc);
@@ -704,7 +725,7 @@ thunar_vfs_monitor_wait (ThunarVfsMonitor *monitor)
   g_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
 
   g_mutex_lock (monitor->lock);
-  while (g_atomic_int_get (&monitor->notifications_timer_id) >= 0)
+  while (g_atomic_int_get (&monitor->notifications_timer_id) != 0)
     g_cond_timed_wait (monitor->cond, monitor->lock, (GTimeVal *) &tv);
   g_mutex_unlock (monitor->lock);
 }

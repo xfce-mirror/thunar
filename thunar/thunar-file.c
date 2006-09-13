@@ -299,9 +299,6 @@ thunar_file_dispose (GObject *object)
       file->flags &= ~THUNAR_FILE_IN_DESTRUCTION;
     }
 
-  /* drop the entry from the cache */
-  g_hash_table_remove (file_cache, file->info->path);
-
   (*G_OBJECT_CLASS (thunar_file_parent_class)->dispose) (object);
 }
 
@@ -320,6 +317,9 @@ thunar_file_finalize (GObject *object)
                "watch count of %d", THUNAR_FILE_GET_WATCH_COUNT (file));
     }
 #endif
+
+  /* drop the entry from the cache */
+  g_hash_table_remove (file_cache, file->info->path);
 
   /* drop a reference on the metadata if we own one */
   if ((file->flags & THUNAR_FILE_OWNS_METAFILE_REFERENCE) != 0)
