@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -158,6 +158,71 @@ thunarx_menu_provider_get_folder_actions (ThunarxMenuProvider *provider,
     {
       /* query the actions from the implementation */
       actions = (*THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_folder_actions) (provider, window, folder);
+
+      /* take a reference on the provider for each action */
+      thunarx_object_list_take_reference (actions, provider);
+    }
+  else
+    {
+      actions = NULL;
+    }
+
+  return actions;
+}
+
+
+
+/**
+ * thunarx_menu_provider_get_dnd_actions:
+ * @provider : a #ThunarxMenuProvider.
+ * @window   : the #GtkWindow within which the actions will be used.
+ * @folder   : the folder into which the @files are being dropped
+ * @files    : the list of #ThunarxFileInfo<!---->s for the files that are 
+ *             being dropped to @folder in @window.
+ *
+ * Returns the list of #GtkAction<!---->s that @provider has to offer for
+ * dropping the @files into the @folder. For example, the thunar-archive-plugin
+ * provides <guilabel>Extract Here</guilabel> actions when dropping archive
+ * files into a folder that is writable by the user.
+ *
+ * As a special note, this method automatically takes a reference on the
+ * @provider for every #GtkAction object returned from the real implementation
+ * of this method in @provider. This is to make sure that the extension stays
+ * in memory for atleast the time that the actions are used. If the extension
+ * wants to stay in memory for a longer time, it'll need to take care of this
+ * itself (e.g. by taking an additional reference on the @provider itself,
+ * that's released at a later time).
+ *
+ * The caller is responsible to free the returned list of actions using
+ * something like this when no longer needed:
+ * <informalexample><programlisting>
+ * g_list_foreach (list, (GFunc) g_object_unref, NULL);
+ * g_list_free (list);
+ * </programlisting></informalexample>
+ *
+ * Return value: the list of #GtkAction<!---->s that @provider has to offer
+ *               for dropping @files to @folder.
+ *
+ * Since: 0.4.1
+ **/
+GList*
+thunarx_menu_provider_get_dnd_actions (ThunarxMenuProvider *provider,
+                                       GtkWidget           *window,
+                                       ThunarxFileInfo     *folder,
+                                       GList               *files)
+{
+  GList *actions;
+
+  g_return_val_if_fail (THUNARX_IS_MENU_PROVIDER (provider), NULL);
+  g_return_val_if_fail (GTK_IS_WINDOW (window), NULL);
+  g_return_val_if_fail (THUNARX_IS_FILE_INFO (folder), NULL);
+  g_return_val_if_fail (thunarx_file_info_is_directory (folder), NULL);
+  g_return_val_if_fail (files != NULL, NULL);
+
+  if (THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_dnd_actions != NULL)
+    {
+      /* query the actions from the implementation */
+      actions = (*THUNARX_MENU_PROVIDER_GET_IFACE (provider)->get_dnd_actions) (provider, window, folder, files);
 
       /* take a reference on the provider for each action */
       thunarx_object_list_take_reference (actions, provider);

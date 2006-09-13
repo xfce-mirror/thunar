@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -53,22 +53,31 @@ struct _ThunarxMenuProviderIface
                                  GtkWidget           *window,
                                  ThunarxFileInfo     *folder);
 
+  GList *(*get_dnd_actions)     (ThunarxMenuProvider *provider,
+                                 GtkWidget           *window,
+                                 ThunarxFileInfo     *folder,
+                                 GList               *files);
+
   /*< private >*/
   void (*reserved1) (void);
   void (*reserved2) (void);
   void (*reserved3) (void);
-  void (*reserved4) (void);
 };
 
 GType  thunarx_menu_provider_get_type           (void) G_GNUC_CONST;
 
 GList *thunarx_menu_provider_get_file_actions   (ThunarxMenuProvider *provider,
                                                  GtkWidget           *window,
-                                                 GList               *files);
+                                                 GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 GList *thunarx_menu_provider_get_folder_actions (ThunarxMenuProvider *provider,
                                                  GtkWidget           *window,
-                                                 ThunarxFileInfo     *folder);
+                                                 ThunarxFileInfo     *folder) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+
+GList *thunarx_menu_provider_get_dnd_actions    (ThunarxMenuProvider *provider,
+                                                 GtkWidget           *window,
+                                                 ThunarxFileInfo     *folder,
+                                                 GList               *files) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

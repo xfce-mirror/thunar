@@ -21,27 +21,32 @@
 #include <config.h>
 #endif
 
+#include <thunarx/thunarx.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-private.h>
 
 
 
 static void
-action_selected (GtkWidget     *item,
-                 GdkDragAction *action)
+dnd_action_selected (GtkWidget     *item,
+                     GdkDragAction *dnd_action_return)
 {
-  *action = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (item), I_("action")));
+  *dnd_action_return = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (item), "dnd-action"));
 }
 
 
 
 /**
  * thunar_dnd_ask:
- * @widget  : the widget on which the drop was performed.
- * @time    : the time of the drop event.
- * @actions : the list of actions supported for the drop.
+ * @widget    : the widget on which the drop was performed.
+ * @folder    : the #ThunarFile to which the @path_list is being dropped.
+ * @path_list : the #ThunarVfsPath<!---->s of the files being dropped to @file.
+ * @time      : the time of the drop event.
+ * @actions   : the list of actions supported for the drop.
  *
  * Pops up a menu that asks the user to choose one of the
  * @actions or to cancel the drop. If the user chooses a
@@ -56,45 +61,51 @@ action_selected (GtkWidget     *item,
  **/
 GdkDragAction
 thunar_dnd_ask (GtkWidget    *widget,
+                ThunarFile   *folder,
+                GList        *path_list,
                 guint         time,
-                GdkDragAction actions)
+                GdkDragAction dnd_actions)
 {
-  static const GdkDragAction action_items[] = { GDK_ACTION_COPY, GDK_ACTION_MOVE, GDK_ACTION_LINK };
-  static const gchar        *action_names[] = { N_ ("_Copy here"), N_ ("_Move here"), N_ ("_Link here") };
-  static const gchar        *action_icons[] = { "stock_folder-copy", "stock_folder-move", NULL };
+  static const GdkDragAction dnd_action_items[] = { GDK_ACTION_COPY, GDK_ACTION_MOVE, GDK_ACTION_LINK };
+  static const gchar        *dnd_action_names[] = { N_ ("_Copy here"), N_ ("_Move here"), N_ ("_Link here") };
+  static const gchar        *dnd_action_icons[] = { "stock_folder-copy", "stock_folder-move", NULL };
 
-  GdkDragAction action = 0;
-  GtkWidget    *image;
-  GtkWidget    *menu;
-  GtkWidget    *item;
-  GMainLoop    *loop;
-  guint         n;
+  ThunarxProviderFactory *factory;
+  GdkDragAction           dnd_action = 0;
+  ThunarFile             *file;
+  GtkWidget              *window;
+  GtkWidget              *image;
+  GtkWidget              *menu;
+  GtkWidget              *item;
+  GList                  *file_list = NULL;
+  GList                  *providers = NULL;
+  GList                  *actions = NULL;
+  GList                  *lp;
+  guint                   n;
 
+  _thunar_return_val_if_fail (thunar_file_is_directory (folder), 0);
   _thunar_return_val_if_fail (GTK_IS_WIDGET (widget), 0);
 
-  /* prepare the internal loop */
-  loop = g_main_loop_new (NULL, FALSE);
+  /* connect to the provider factory */
+  factory = thunarx_provider_factory_get_default ();
 
   /* prepare the popup menu */
   menu = gtk_menu_new ();
-  gtk_menu_set_screen (GTK_MENU (menu), gtk_widget_get_screen (widget));
-  g_signal_connect_swapped (G_OBJECT (menu), "deactivate", G_CALLBACK (g_main_loop_quit), loop);
-  exo_gtk_object_ref_sink (GTK_OBJECT (menu));
 
   /* append the various items */
-  for (n = 0; n < G_N_ELEMENTS (action_items); ++n)
-    if (G_LIKELY ((actions & action_items[n]) != 0))
+  for (n = 0; n < G_N_ELEMENTS (dnd_action_items); ++n)
+    if (G_LIKELY ((dnd_actions & dnd_action_items[n]) != 0))
       {
-        item = gtk_image_menu_item_new_with_mnemonic (_(action_names[n]));
-        g_object_set_data (G_OBJECT (item), I_("action"), GUINT_TO_POINTER (action_items[n]));
-        g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (action_selected), &action);
+        item = gtk_image_menu_item_new_with_mnemonic (_(dnd_action_names[n]));
+        g_object_set_data (G_OBJECT (item), I_("dnd-action"), GUINT_TO_POINTER (dnd_action_items[n]));
+        g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (dnd_action_selected), &dnd_action);
         gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
         gtk_widget_show (item);
 
         /* add image to the menu item */
-        if (G_LIKELY (action_icons[n] != NULL))
+        if (G_LIKELY (dnd_action_icons[n] != NULL))
           {
-            image = gtk_image_new_from_icon_name (action_icons[n], GTK_ICON_SIZE_MENU);
+            image = gtk_image_new_from_icon_name (dnd_action_icons[n], GTK_ICON_SIZE_MENU);
             gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
             gtk_widget_show (image);
           }
@@ -105,22 +116,71 @@ thunar_dnd_ask (GtkWidget    *widget,
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
+  /* determine the toplevel window the widget belongs to */
+  window = gtk_widget_get_toplevel (widget);
+  if (G_LIKELY (window != NULL && GTK_WIDGET_TOPLEVEL (window)))
+    {
+      /* check if we can resolve all paths */
+      for (lp = path_list; lp != NULL; lp = lp->next)
+        {
+          /* try to resolve this path */
+          file = thunar_file_cache_lookup (lp->data);
+          if (G_LIKELY (file != NULL))
+            file_list = g_list_prepend (file_list, file);
+          else
+            break;
+        }
+
+      /* check if we resolved all paths (and have atleast one file) */
+      if (G_LIKELY (file_list != NULL && lp == NULL))
+        {
+          /* load the menu providers from the provider factory */
+          providers = thunarx_provider_factory_list_providers (factory, THUNARX_TYPE_MENU_PROVIDER);
+
+          /* load the dnd actions offered by the menu providers */
+          for (lp = providers; lp != NULL; lp = lp->next)
+            {
+              /* merge the actions from this provider */
+              actions = g_list_concat (actions, thunarx_menu_provider_get_dnd_actions (lp->data, window, THUNARX_FILE_INFO (folder), file_list));
+              g_object_unref (G_OBJECT (lp->data));
+            }
+          g_list_free (providers);
+
+          /* check if we have atleast one action */
+          if (G_UNLIKELY (actions != NULL))
+            {
+              /* add menu items for all actions */
+              for (lp = actions; lp != NULL; lp = lp->next)
+                {
+                  /* add a menu item for the action */
+                  item = gtk_action_create_menu_item (lp->data);
+                  gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+                  g_object_unref (G_OBJECT (lp->data));
+                  gtk_widget_show (item);
+                }
+              g_list_free (actions);
+
+              /* append another separator */
+              item = gtk_separator_menu_item_new ();
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_show (item);
+            }
+        }
+    }
+
   /* append the cancel item */
   item = gtk_image_menu_item_new_from_stock (GTK_STOCK_CANCEL, NULL);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
-  /* run the internal loop */
-  gtk_grab_add (menu);
-  gtk_menu_popup (GTK_MENU (menu), NULL, NULL, NULL, NULL, 3, time);
-  g_main_loop_run (loop);
-  gtk_grab_remove (menu);
+  /* run the menu on the widget's screen (takes over the floating reference of menu) */
+  thunar_gtk_menu_run (GTK_MENU (menu), widget, NULL, NULL, 3, time);
 
-  /* clean up */
-  g_object_unref (G_OBJECT (menu));
-  g_main_loop_unref (loop);
+  /* cleanup */
+  g_object_unref (G_OBJECT (factory));
+  g_list_free (file_list);
 
-  return action;
+  return dnd_action;
 }
 
 

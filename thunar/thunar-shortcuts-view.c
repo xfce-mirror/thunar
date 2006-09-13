@@ -487,29 +487,29 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
                 }
               else if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
                 {
-                  /* ask the user what to do with the drop data */
-                  if (G_UNLIKELY (action == GDK_ACTION_ASK))
-                    action = thunar_dnd_ask (widget, time, actions);
+                  /* get the shortcuts model */
+                  model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
 
-                  /* perform the requested action */
-                  if (G_LIKELY (action != 0))
+                  /* determine the iterator for the path */
+                  if (gtk_tree_model_get_iter (model, &iter, path))
                     {
-                      /* get the shortcuts model */
-                      model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-
-                      /* determine the iterator for the path */
-                      if (gtk_tree_model_get_iter (model, &iter, path))
+                      /* determine the file for the iter */
+                      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file, -1);
+                      if (G_LIKELY (file != NULL))
                         {
-                          /* determine the file for the iter */
-                          gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file, -1);
-                          if (G_LIKELY (file != NULL))
+                          /* ask the user what to do with the drop data */
+                          if (G_UNLIKELY (action == GDK_ACTION_ASK))
+                            action = thunar_dnd_ask (widget, file, view->drop_path_list, time, actions);
+
+                          /* perform the requested action */
+                          if (G_LIKELY (action != 0))
                             {
                               /* really perform the drop :-) */
                               succeed = thunar_dnd_perform (widget, file, view->drop_path_list, action, NULL);
-
-                              /* release the file */
-                              g_object_unref (G_OBJECT (file));
                             }
+
+                          /* release the file */
+                          g_object_unref (G_OBJECT (file));
                         }
                     }
                 }

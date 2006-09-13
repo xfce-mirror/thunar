@@ -2770,7 +2770,9 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
           if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
             {
               /* ask the user what to do with the drop data */
-              action = (context->action == GDK_ACTION_ASK) ? thunar_dnd_ask (GTK_WIDGET (standard_view), time, actions) : context->action;
+              action = (context->action == GDK_ACTION_ASK)
+                     ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_path_list, time, actions)
+                     : context->action;
 
               /* perform the requested action */
               if (G_LIKELY (action != 0))
