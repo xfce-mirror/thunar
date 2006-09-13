@@ -14,10 +14,6 @@ SUBDIRS =								\
 	examples							\
 	plugins
 
-AUTOMAKE_OPTIONS =							\
-	1.8								\
-	dist-bzip2
-
 distclean-local:
 	rm -rf *.spec *.cache *~
 

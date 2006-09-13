@@ -1,5 +1,12 @@
 2006-09-13	Benedikt Meurer <benny@xfce.org>
 
+	* configure.in.in, Makefile.am: Place automake options into
+	  configure.in.in instead of Makefile.am and add the tar-ustar
+	  option to fix building distributions on system where tar defaults
+	  to the deprecated V7 format. Bug #2304.
+
+2006-09-13	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-dbus-client.c: Use default dbus connection timeout.
 	  Bug #2243.
 
