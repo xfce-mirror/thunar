@@ -382,7 +382,7 @@ _thunar_vfs_io_local_get_info (ThunarVfsPath *path,
 
               /* check if we have a valid name info */
               name = xfce_rc_read_entry (rc, "Name", NULL);
-              if (G_LIKELY (name != NULL && *name != '\0' && g_utf8_validate (name, -1, NULL)))
+              if (G_LIKELY (name != NULL && *name != '\0' && g_utf8_validate (name, -1, NULL) && strchr (name, G_DIR_SEPARATOR) == NULL))
                 {
                   /* check if we declared the file as executable */
                   if ((info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE) != 0)
