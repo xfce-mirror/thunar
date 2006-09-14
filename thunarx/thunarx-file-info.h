@@ -25,7 +25,7 @@
 #ifndef __THUNARX_FILE_INFO_H__
 #define __THUNARX_FILE_INFO_H__
 
-#include <glib-object.h>
+#include <thunarx/thunarx-config.h>
 
 G_BEGIN_DECLS;
 

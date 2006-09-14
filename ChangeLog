@@ -1,5 +1,10 @@
 2006-09-14	Benedikt Meurer <benny@xfce.org>
 
+	* thunarx/thunarx-config.h.in, thunarx/thunarx-file-info.h: Fix build
+	  with GLib 2.6.x. Bug #2317.
+
+2006-09-14	Benedikt Meurer <benny@xfce.org>
+
 	* thunarx/thunarx-menu-provider.{c,h}, thunarx/thunarx.symbols: Add a
 	  new method get_dnd_actions() to the ThunarxMenuProvider, which allows
 	  menu providers to install additional actions into the Drag'n'Drop

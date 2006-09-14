@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,7 +25,7 @@
 #ifndef __THUNARX_CONFIG_H__
 #define __THUNARX_CONFIG_H__
 
-#include <glib.h>
+#include <glib-object.h>
 
 G_BEGIN_DECLS;
 
@@ -48,6 +48,15 @@ extern const guint thunarx_micro_version;
 const gchar *thunarx_check_version (guint required_major,
                                     guint required_minor,
                                     guint required_micro);
+
+/* verify that G_GNUC_WARN_UNUSED_RESULT is defined */
+#if !defined(G_GNUC_WARN_UNUSED_RESULT)
+#if __GNUC__ > 3 || (__GNUC__ == 3 && __GNUC_MINOR__ >= 4)
+#define G_GNUC_WARN_UNUSED_RESULT __attribute__((warn_unused_result))
+#else
+#define G_GNUC_WARN_UNUSED_RESULT
+#endif /* __GNUC__ */
+#endif /* !defined(G_GNUC_WARN_UNUSED_RESULT) */
 
 G_END_DECLS;
 
