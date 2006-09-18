@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.4.0rc1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-09-10 01:36+0200\n"
-"PO-Revision-Date: 2006-08-24 08:54+0200\n"
+"PO-Revision-Date: 2006-09-18 21:04+0200\n"
 "Last-Translator: Pau Ruŀlan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan\n"
 "MIME-Version: 1.0\n"
@@ -858,19 +858,19 @@ msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "No s'ha pogut convertit el nom «%s» a la codificació local"
 
 #: ../thunar/thunar-dbus-service.c:392
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid filename \"%s\""
-msgstr "El nom del fitxer no és vàlid"
+msgstr "El nom del fitxer «%s» no és vàlid"
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
 msgid "The working directory must be an absolute path"
-msgstr ""
+msgstr "El directori de treball ha de ser un camí absolut"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
 msgid "Atleast one filename must be specified"
-msgstr ""
+msgstr "S’ha d’introduir com a mínim un nom de fitxer"
 
 #: ../thunar/thunar-details-view.c:131
 msgid "Configure _Columns..."
@@ -1791,15 +1791,15 @@ msgstr "Distintius"
 #. allocate the chooser dialog
 #: ../thunar/thunar-properties-dialog.c:677
 #: ../plugins/thunar-uca/thunar-uca-editor.c:612
-#, fuzzy, c-format
+#, c-format
 msgid "Select an Icon for \"%s\""
-msgstr "Seleccioneu una icona"
+msgstr "Seleccioneu una icona per «%s»"
 
 #. tell the user that we failed to change the icon of the .desktop file
 #: ../thunar/thunar-properties-dialog.c:702
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change icon of \"%s\""
-msgstr "No s'ha pogut canviar el propietari del fitxer «%s»"
+msgstr "No s'ha pogut canviar l’icona de «%s»"
 
 #. update the properties dialog title
 #: ../thunar/thunar-properties-dialog.c:785
@@ -2335,9 +2335,8 @@ msgid "_Side Pane"
 msgstr "Barres lateral_s"
 
 #: ../thunar/thunar-window.c:275
-#, fuzzy
 msgid "Zoom I_n"
-msgstr "Amplia el _zoom"
+msgstr "Apropa el _zoom"
 
 #: ../thunar/thunar-window.c:275
 msgid "Show the contents in more detail"
@@ -2388,9 +2387,8 @@ msgid "Go to the templates folder"
 msgstr "Vés a la carpeta de les plantilles"
 
 #: ../thunar/thunar-window.c:282
-#, fuzzy
 msgid "_Open Location..."
-msgstr "Obre una _ubicació…"
+msgstr "_Obre una ubicació…"
 
 #: ../thunar/thunar-window.c:282
 msgid "Specify a location to open"
@@ -2491,7 +2489,7 @@ msgstr "Visualitza el contingut de la carpeta amb una llista compacta"
 #. add the label with the root warning
 #: ../thunar/thunar-window.c:674
 msgid "Warning, you are using the root account, you may harm your system."
-msgstr ""
+msgstr "Alerta, esteu usant la compta de superusuari i podeu fer malbé el vostre sistema"
 
 #: ../thunar/thunar-window.c:1692
 msgid "Failed to open parent folder"
@@ -3296,12 +3294,3 @@ msgstr "Obri el directori amb Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Obre les carpetes especificades dins Thunar"
-
-#~ msgid "_Properties"
-#~ msgstr "_Propietats"
-
-#~ msgid "_Hidden"
-#~ msgstr "Amagad_a"
-
-#~ msgid "Don't display any location selector"
-#~ msgstr "No mostris cap selector d'ubicació"
