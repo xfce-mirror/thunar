@@ -21,8 +21,8 @@
 #include <config.h>
 #endif
 
-#include <dbus/dbus.h>
 #include <dbus/dbus-glib-lowlevel.h>
+#include <dbus/dbus.h>
 
 #include <thunar/thunar-dbus-client.h>
 #include <thunar/thunar-private.h>

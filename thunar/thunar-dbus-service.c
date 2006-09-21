@@ -28,8 +28,8 @@
 #include <string.h>
 #endif
 
-#include <dbus/dbus-glib-bindings.h>
 #include <dbus/dbus-glib-lowlevel.h>
+#include <dbus/dbus-glib.h>
 #include <dbus/dbus.h>
 
 #include <glib/gstdio.h>
