@@ -35,6 +35,7 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-emblem-chooser.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
@@ -112,6 +113,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *icon_button;
   GtkWidget              *icon_image;
   GtkWidget              *name_entry;
+  GtkWidget              *kind_ebox;
   GtkWidget              *kind_label;
   GtkWidget              *openwith_chooser;
   GtkWidget              *link_label;
@@ -303,11 +305,15 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_table_attach (GTK_TABLE (table), label, 0, 1, row, row + 1, GTK_FILL, GTK_FILL, 0, 3);
   gtk_widget_show (label);
 
+  dialog->kind_ebox = gtk_event_box_new ();
+  exo_binding_new (G_OBJECT (dialog->kind_ebox), "visible", G_OBJECT (label), "visible");
+  gtk_table_attach (GTK_TABLE (table), dialog->kind_ebox, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_widget_show (dialog->kind_ebox);
+
   dialog->kind_label = g_object_new (GTK_TYPE_LABEL, "xalign", 0.0f, NULL);
   gtk_label_set_selectable (GTK_LABEL (dialog->kind_label), TRUE);
   gtk_label_set_ellipsize (GTK_LABEL (dialog->kind_label), PANGO_ELLIPSIZE_END);
-  exo_binding_new (G_OBJECT (dialog->kind_label), "visible", G_OBJECT (label), "visible");
-  gtk_table_attach (GTK_TABLE (table), dialog->kind_label, 1, 2, row, row + 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 3);
+  gtk_container_add (GTK_CONTAINER (dialog->kind_ebox), dialog->kind_label);
   gtk_widget_show (dialog->kind_label);
 
   ++row;
@@ -839,6 +845,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     str = g_strdup_printf (_("link to %s"), thunar_vfs_mime_info_get_comment (info));
   else
     str = g_strdup (thunar_vfs_mime_info_get_comment (info));
+  thunar_gtk_widget_set_tooltip (dialog->kind_ebox, thunar_vfs_mime_info_get_name (info));
   gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
   g_free (str);
 
