@@ -1007,13 +1007,20 @@ thunar_standard_view_set_selected_files (ThunarComponent *component,
   paths = thunar_list_model_get_paths_for_files (standard_view->model, selected_files);
   if (G_LIKELY (paths != NULL))
     {
-      /* select the given tree paths */
+      /* determine the first path */
       for (first_path = paths->data, lp = paths; lp != NULL; lp = lp->next)
         {
           /* check if this path is located before the current first_path */
           if (gtk_tree_path_compare (lp->data, first_path) < 0)
             first_path = lp->data;
+        }
 
+      /* place the cursor on the first selected path (must be first for GtkTreeView) */
+      (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->set_cursor) (standard_view, first_path, FALSE);
+
+      /* select the given tree paths paths */
+      for (first_path = paths->data, lp = paths; lp != NULL; lp = lp->next)
+        {
           /* select the path */
           (*THUNAR_STANDARD_VIEW_GET_CLASS (standard_view)->select_path) (standard_view, lp->data);
         }
