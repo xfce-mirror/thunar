@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.4.0rc1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-09-10 01:36+0200\n"
-"PO-Revision-Date: 2006-04-25 20:35+0600\n"
+"PO-Revision-Date: 2006-10-02 22:51+0200\n"
 "Last-Translator: Andrey Fedoseev <andrey.fedoseev@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -50,9 +50,8 @@ msgid "Invalid file name"
 msgstr "Недопустимое имя файла"
 
 #: ../thunar-vfs/thunar-vfs-info.c:510
-#, fuzzy
 msgid "Only local files may be renamed"
-msgstr "Выберите файлы для переименования"
+msgstr "Только локальные файлы могут быть переименованы"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:81
@@ -61,19 +60,19 @@ msgstr "Подготовка..."
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:226
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:538
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change permissions of \"%s\""
-msgstr "Не удалось изменить права для \"%s\": %s"
+msgstr "Не удалось изменить права для \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:347
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file owner of \"%s\""
-msgstr "Не удалось изменить владельца файла \"%s\": %s"
+msgstr "Не удалось изменить владельца для \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:348
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file group of \"%s\""
-msgstr "Не удалось изменить группу для \"%s\": %s"
+msgstr "Не удалось изменить группу для \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:432
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:191
@@ -82,9 +81,9 @@ msgid "The file \"%s\" already exists"
 msgstr "Файл \"%s\" уже существует"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:450
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\""
-msgstr "Не удалось создать именованый канал (named fifo) \"%s\""
+msgstr "Не удалось создать пустой файл \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:166
 #, c-format
@@ -185,7 +184,7 @@ msgstr "Не удалось создать папку \"%s\""
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:515
 #, c-format
 msgid "Failed to create named fifo \"%s\""
-msgstr "Не удалось создать именованый канал (named fifo) \"%s\""
+msgstr "Не удалось создать именованный канал (named fifo) \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:533
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:613
@@ -195,7 +194,7 @@ msgstr "Не удалось создать символическую ссылк
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:546
 msgid "Special files cannot be copied"
-msgstr ""
+msgstr "Специальные файлы не могут быть скопированы"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:626
 msgid "Symbolic links are not supported"
@@ -208,53 +207,45 @@ msgstr "Файловая система"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:223
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to copy \"%s\" to \"%s\""
-msgstr "Не удалось переименовать \"%s\" в \"%s\"."
+msgstr "Не удалось скопировать \"%s\" в \"%s\""
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:290
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to link \"%s\" to \"%s\""
-msgstr "Не удалось переименовать \"%s\" в \"%s\"."
+msgstr "Не удалось создать ссылку на \"%s\" в \"%s\""
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:367
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to move \"%s\" to \"%s\""
-msgstr "Не удалось переименовать \"%s\" в \"%s\"."
+msgstr "Не удалось переместить \"%s\" в \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:601
-#, fuzzy, c-format
+#, c-format
 msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-msgstr "Путь \"%s\" не указывает на папку"
+msgstr "URI \"%s\" не ссылается на допустимый ресурс для корзины"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:778
 msgid "Trash"
-msgstr ""
+msgstr "Корзина"
 
 #. we don't support copying files within the trash
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:972
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
-msgstr ""
+msgstr "Внутри корзины нельзя перемещать или копировать файлы"
 
 #: ../thunar-vfs/thunar-vfs-job.c:831
-#, fuzzy
 msgid "Do you want to overwrite it?"
-msgstr ""
-"%s.\n"
-"\n"
-"Перезаписать?"
+msgstr "Перезаписать?"
 
 #: ../thunar-vfs/thunar-vfs-job.c:896
-#, fuzzy
 msgid "Do you want to skip it?"
-msgstr ""
-"%s.\n"
-"\n"
-"Пропустить?"
+msgstr "Пропустить?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -310,7 +301,7 @@ msgstr "%s документ"
 #: ../thunar-vfs/thunar-vfs-path.c:362
 #, c-format
 msgid "The URI \"%s\" is invalid"
-msgstr ""
+msgstr "URI \"%s\" неверен"
 
 #: ../thunar-vfs/thunar-vfs-path.c:835
 msgid "Path too long to fit into buffer"
@@ -321,9 +312,8 @@ msgid "URI too long to fit into buffer"
 msgstr "Слишком длинный URI, чтобы поместить его в буфер"
 
 #: ../thunar-vfs/thunar-vfs-private.c:233
-#, fuzzy
 msgid "Operation not supported"
-msgstr "Именованые каналы (named fifo) не поддерживаются"
+msgstr "Операция не поддерживается"
 
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:335
@@ -502,9 +492,8 @@ msgid "Creating symbolic links..."
 msgstr "Создание символических ссылок..."
 
 #: ../thunar/thunar-application.c:1014
-#, fuzzy
 msgid "Moving files into the trash..."
-msgstr "Перемещение файлов..."
+msgstr "Перемещение файлов в корзину..."
 
 #: ../thunar/thunar-application.c:1019
 msgid "Moving files..."
@@ -555,41 +544,41 @@ msgstr "Создание папок..."
 
 #: ../thunar/thunar-application.c:1264
 msgid "Remove all files and folders from the Trash?"
-msgstr ""
+msgstr "Удалить все файлы и папки из корзины?"
 
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
 #: ../thunar/thunar-application.c:1269 ../thunar/thunar-location-buttons.c:169
 #: ../thunar/thunar-shortcuts-view.c:849 ../thunar/thunar-tree-view.c:1070
 #: ../thunar/thunar-window.c:266 ../plugins/thunar-tpa/main.c:49
-#, fuzzy
 msgid "_Empty Trash"
-msgstr "Пустой _файл"
+msgstr "_Очистить корзину"
 
 #: ../thunar/thunar-application.c:1273
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
+"Если вы очистите корзину, всё её содержимое будет навсегда утеряно.Обратите "
+"внимание, что вы можете удалять объекты по отдельности."
 
 #: ../thunar/thunar-application.c:1290
 msgid "Emptying the Trash..."
-msgstr ""
+msgstr "Очистка корзины..."
 
 #: ../thunar/thunar-application.c:1344
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the original path for \"%s\""
-msgstr "Не удалось определить точку монтирования для %s"
+msgstr "Не удалось определить изначальное расположение для %s"
 
 #: ../thunar/thunar-application.c:1372
-#, fuzzy, c-format
+#, c-format
 msgid "Create the folder \"%s\"?"
-msgstr "Создать новую папку в \"%s\""
+msgstr "Создать папку \"%s\"?"
 
 #: ../thunar/thunar-application.c:1376
-#, fuzzy
 msgid "C_reate Folder"
-msgstr "Создать _папку..."
+msgstr "Создать _папку"
 
 #: ../thunar/thunar-application.c:1382
 #, c-format
@@ -597,17 +586,18 @@ msgid ""
 "The folder \"%s\" does not exist anymore, but it is required to restore the "
 "file \"%s\" from the trash. Do you want to create the folder again?"
 msgstr ""
+"Папка \"%s\" больше не существует, он она необходима, чтобы восстановить "
+"файл \"%s\" из корзины. Вы хотите создать это папку?"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1419
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore \"%s\""
-msgstr "Не удалось удалить \"%s\""
+msgstr "Не удалось восстановить \"%s\""
 
 #: ../thunar/thunar-application.c:1426
-#, fuzzy
 msgid "Restoring files..."
-msgstr "Удаление файлов..."
+msgstr "Восстановление файлов..."
 
 #. tell the user that it didn't work
 #. display an error to the user
@@ -658,7 +648,7 @@ msgstr "_Обзор..."
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:312
 msgid "Use as _default for this kind of file"
-msgstr "Использовать эту программу для запуска этого типа файлов"
+msgstr "Использовать эту _программу для запуска этого типа файлов"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:481
@@ -674,9 +664,8 @@ msgstr "Не удалось запустить \"%s\""
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:597
-#, fuzzy
 msgid "_Remove Launcher"
-msgstr "Запуск"
+msgstr "_Удалить значок запуска"
 
 #. update the header label
 #: ../thunar/thunar-chooser-dialog.c:693
@@ -700,11 +689,9 @@ msgid ""
 msgstr "Изменить приложение по умолчанию для файлов типа \"%s\"."
 
 #: ../thunar/thunar-chooser-dialog.c:754
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
-msgstr ""
-"Вы уверены, что хотите\n"
-"навсегда удалить \"%s\"?"
+msgstr "Вы уверены, что хотите удалить \"%s\"?"
 
 #: ../thunar/thunar-chooser-dialog.c:760
 msgid ""
@@ -856,9 +843,8 @@ msgid "Compact view"
 msgstr "Компактный список"
 
 #: ../thunar/thunar-create-dialog.c:163
-#, fuzzy
 msgid "C_reate"
-msgstr "Создать"
+msgstr "_Создать"
 
 #: ../thunar/thunar-create-dialog.c:178 ../thunar/thunar-standard-view.c:2207
 msgid "Enter the new name:"
@@ -871,23 +857,23 @@ msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Не удается преобразовать имя \"%s\" файла в локальную кодировку"
 
 #: ../thunar/thunar-dbus-service.c:392
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid filename \"%s\""
-msgstr "Недопустимое имя файла"
+msgstr "Недопустимое имя файла \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
 msgid "The working directory must be an absolute path"
-msgstr ""
+msgstr "Рабочий каталог должен быть указан в виде абсолютного пути"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
 msgid "Atleast one filename must be specified"
-msgstr ""
+msgstr "По крайней мере одно имя файла должно быть указано"
 
 #: ../thunar/thunar-details-view.c:131
 msgid "Configure _Columns..."
-msgstr "Настроить столбцы..."
+msgstr "Наст_роить столбцы..."
 
 #: ../thunar/thunar-details-view.c:131
 msgid "Configure the columns in the detailed list view"
@@ -926,9 +912,8 @@ msgid "_No"
 msgstr "_Нет"
 
 #: ../thunar/thunar-dialogs.c:338
-#, fuzzy
 msgid "N_o to all"
-msgstr "Да для _всех"
+msgstr "Н_ет для всех"
 
 #: ../thunar/thunar-dialogs.c:343
 msgid "_Cancel"
@@ -1053,9 +1038,8 @@ msgid "Open in New Window"
 msgstr "Открыть в новом окне"
 
 #: ../thunar/thunar-launcher.c:138
-#, fuzzy
 msgid "Open the selected directory in a new window"
-msgstr "Открыть выбранную папку в %d новом окне"
+msgstr "Открыть выбранную папку в новом окне"
 
 #: ../thunar/thunar-launcher.c:139 ../thunar/thunar-launcher.c:141
 msgid "Open With Other _Application..."
@@ -1159,7 +1143,7 @@ msgstr "_Другое приложение..."
 
 #: ../thunar/thunar-launcher.c:874
 msgid "_Open With Default Applications"
-msgstr "Открыть в приложении по умолчанию"
+msgstr "_Открыть в приложении по умолчанию"
 
 #: ../thunar/thunar-launcher.c:875
 msgid "Open the selected file with the default application"
@@ -1176,24 +1160,24 @@ msgstr "Открыть с помощью \"%s\""
 #: ../thunar/thunar-launcher.c:1214
 msgid "Desktop (Create Link)"
 msgid_plural "Desktop (Create Links)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Рабочий стол (Создать ссылку)"
+msgstr[1] "Рабочий стол (Создать ссылки)"
+msgstr[2] "Рабочий стол (Создать ссылки)"
 
 #: ../thunar/thunar-launcher.c:1215
-#, fuzzy
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
-msgstr[0] "Создать символическую ссылку для выбранного файла"
-msgstr[1] "Создать символическую ссылку для каждого выбранного файла"
-msgstr[2] "Создать символическую ссылку для каждого выбранного файла"
+msgstr[0] "Создать на рабочем столе ссылку для выбранного файла"
+msgstr[1] "Создать на рабочем столе ссылки для выбранных файлов"
+msgstr[2] "Создать на рабочем столе ссылки для выбранных файлов"
 
 #: ../thunar/thunar-launcher.c:1248
-#, fuzzy, c-format
+#, c-format
 msgid "Send the selected file to \"%s\""
 msgid_plural "Send the selected files to \"%s\""
-msgstr[0] "Открыть выбранные файлы"
-msgstr[1] "Открыть выбранные файлы"
-msgstr[2] "Открыть выбранные файлы"
+msgstr[0] "Отправить выбранный файл в \"%s\""
+msgstr[1] "Отправить выбранные файлы в \"%s\""
+msgstr[2] "Отправить выбранные файлы в \"%s\""
 
 #: ../thunar/thunar-list-model.c:751 ../thunar/thunar-properties-dialog.c:837
 msgid "broken link"
@@ -1247,7 +1231,7 @@ msgstr "\"%s\" (%s) %s"
 #.
 #: ../thunar/thunar-list-model.c:2210 ../thunar/thunar-properties-dialog.c:347
 msgid "Original Path:"
-msgstr ""
+msgstr "Исходный путь:"
 
 #. append the image dimensions to the statusbar text
 #: ../thunar/thunar-list-model.c:2222
@@ -1279,7 +1263,7 @@ msgstr "Создать _папку..."
 
 #: ../thunar/thunar-location-buttons.c:169 ../thunar/thunar-window.c:266
 msgid "Delete all files and folders in the Trash"
-msgstr ""
+msgstr "Удалить все файлы и папки из корзины"
 
 #: ../thunar/thunar-location-buttons.c:170
 #: ../thunar/thunar-standard-view.c:322
@@ -1402,7 +1386,7 @@ msgstr "Программа:"
 
 #: ../thunar/thunar-permissions-chooser.c:370
 msgid "Allow this file to _run as a program"
-msgstr "Разрешить запуск этого файла в качестве программы"
+msgstr "Разрешить _запуск этого файла в качестве программы"
 
 #: ../thunar/thunar-permissions-chooser.c:390
 msgid ""
@@ -1446,7 +1430,6 @@ msgid "Apply recursively?"
 msgstr "Применить рекурсивно?"
 
 #: ../thunar/thunar-permissions-chooser.c:580
-#, fuzzy
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
@@ -1620,15 +1603,15 @@ msgstr "Очень большие"
 
 #: ../thunar/thunar-preferences-dialog.c:361
 msgid "Show Icon _Emblems"
-msgstr "Отображать _эмблемы на значках"
+msgstr "Показывать _эмблемы значков"
 
 #: ../thunar/thunar-preferences-dialog.c:363
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
 msgstr ""
-"Включите этот параметр, чтобы отображать эмблемы на значках в панели "
-"закладок."
+"Включите этот параметр, чтобы в панели закладок показывались эмблемы на "
+"значках."
 
 #: ../thunar/thunar-preferences-dialog.c:372
 msgid "Tree Pane"
@@ -1640,7 +1623,7 @@ msgstr "Размер _значков:"
 
 #: ../thunar/thunar-preferences-dialog.c:406
 msgid "Show Icon E_mblems"
-msgstr "Отображать э_мблемы на значках"
+msgstr "Показывать э_мблемы значков"
 
 #: ../thunar/thunar-preferences-dialog.c:408
 msgid ""
@@ -1659,7 +1642,7 @@ msgstr "Поведение"
 
 #: ../thunar/thunar-preferences-dialog.c:427
 msgid "Navigation"
-msgstr ""
+msgstr "Навигация"
 
 #: ../thunar/thunar-preferences-dialog.c:439
 msgid "_Single click to activate items"
@@ -1670,7 +1653,7 @@ msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr ""
-"Укажите задержку перед тем, как объект будет выбран\n"
+"Укажите _задержку перед тем, как объект будет выбран\n"
 "при удержании над ним указателя мыши:"
 
 #: ../thunar/thunar-preferences-dialog.c:471
@@ -1685,7 +1668,7 @@ msgstr ""
 "указателя мыши над объектом он будет выбран по истечении указанного "
 "интервала. Такой режим может быть полезным, когда одиночный щелчок "
 "активирует объекты, а вам нужно выбрать объект без его активации. Вы можете "
-"отключить этот режим поместив ползунок в крайнюю левую позицию."
+"отключить этот режим, поместив ползунок в крайнюю левую позицию."
 
 #: ../thunar/thunar-preferences-dialog.c:489
 msgid "Disabled"
@@ -1787,9 +1770,8 @@ msgstr "Цель ссылки:"
 #. Third box (deleted, modified, accessed)
 #.
 #: ../thunar/thunar-properties-dialog.c:372
-#, fuzzy
 msgid "Deleted:"
-msgstr "_Удалить"
+msgstr "Удалён:"
 
 #: ../thunar/thunar-properties-dialog.c:386
 msgid "Modified:"
@@ -1825,15 +1807,15 @@ msgstr "Эмблемы"
 #. allocate the chooser dialog
 #: ../thunar/thunar-properties-dialog.c:677
 #: ../plugins/thunar-uca/thunar-uca-editor.c:612
-#, fuzzy, c-format
+#, c-format
 msgid "Select an Icon for \"%s\""
-msgstr "Выбор значка"
+msgstr "Выберите значок для \"%s\""
 
 #. tell the user that we failed to change the icon of the .desktop file
 #: ../thunar/thunar-properties-dialog.c:702
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change icon of \"%s\""
-msgstr "Не удалось изменить права \"%s\""
+msgstr "Не удалось изменить значок для \"%s\""
 
 #. update the properties dialog title
 #: ../thunar/thunar-properties-dialog.c:785
@@ -1854,7 +1836,7 @@ msgstr "_Файл"
 
 #: ../thunar/thunar-renamer-dialog.c:173 ../thunar/thunar-window.c:265
 msgid "_Send To"
-msgstr ""
+msgstr "О_тправить в"
 
 #: ../thunar/thunar-renamer-dialog.c:174 ../thunar/thunar-standard-view.c:314
 msgid "File Context Menu"
@@ -1935,7 +1917,7 @@ msgstr "Выберите файлы для переименования"
 
 #: ../thunar/thunar-renamer-dialog.c:1078
 msgid "Audio Files"
-msgstr "Аудиофайлы"
+msgstr "Аудио-файлы"
 
 #: ../thunar/thunar-renamer-dialog.c:1083
 msgid "Image Files"
@@ -1943,7 +1925,7 @@ msgstr "Изображения"
 
 #: ../thunar/thunar-renamer-dialog.c:1088
 msgid "Video Files"
-msgstr "Видеофайлы"
+msgstr "Видео-файлы"
 
 #. just popup the about dialog
 #: ../thunar/thunar-renamer-dialog.c:1218
@@ -2009,12 +1991,11 @@ msgstr ""
 "Вы хотите пропустить этот файл и продолжить переименование остальных файлов?"
 
 #: ../thunar/thunar-shortcuts-pane.c:413
-#, fuzzy
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] "_Переименовать закладку"
-msgstr[1] "_Переименовать закладку"
-msgstr[2] "_Переименовать закладку"
+msgstr[0] "Боковая панель (создать закладку)"
+msgstr[1] "Боковая панель (создать закладки)"
+msgstr[2] "Боковая панель (создать закладки)"
 
 #: ../thunar/thunar-shortcuts-pane.c:415
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2178,7 +2159,7 @@ msgstr "_Переименовать..."
 
 #: ../thunar/thunar-standard-view.c:328
 msgid "_Restore"
-msgstr ""
+msgstr "_Восстановить"
 
 #. add the "Create Document" sub menu action
 #: ../thunar/thunar-standard-view.c:588
@@ -2223,9 +2204,8 @@ msgid "Rename \"%s\""
 msgstr "Переименовать \"%s\""
 
 #: ../thunar/thunar-standard-view.c:2186
-#, fuzzy
 msgid "_Rename"
-msgstr "Переименовать"
+msgstr "_Переименовать"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2535
@@ -2234,9 +2214,9 @@ msgstr ""
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:2712
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create a link for the URL \"%s\""
-msgstr "Не удалось создать именованый канал (named fifo) \"%s\""
+msgstr "Не удалось создать ссылку на адрес \"%s\""
 
 #: ../thunar/thunar-standard-view.c:2975
 #, c-format
@@ -2258,12 +2238,11 @@ msgstr[1] "Подготовить выбранные файлы для копи�
 msgstr[2] "Подготовить выбранные файлы для копирования командой Вставить"
 
 #: ../thunar/thunar-standard-view.c:3321
-#, fuzzy
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
-msgstr[0] "Создать копию выбранного файла"
-msgstr[1] "Создать копию каждого выбранного файла"
-msgstr[2] "Создать копию каждого выбранного файла"
+msgstr[0] "Удалить выбранный файл"
+msgstr[1] "Удалить выбранные файлы"
+msgstr[2] "Удалить выбранные файлы"
 
 #: ../thunar/thunar-standard-view.c:3335
 msgid "Duplicate the selected file"
@@ -2280,20 +2259,18 @@ msgstr[1] "Создать символическую ссылку для каж�
 msgstr[2] "Создать символическую ссылку для каждого выбранного файла"
 
 #: ../thunar/thunar-standard-view.c:3352
-#, fuzzy
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Переименовать выбранный файл"
-msgstr[1] "Переименовать выбранный файл"
-msgstr[2] "Переименовать выбранный файл"
+msgstr[1] "Переименовать выбранные файлы"
+msgstr[2] "Переименовать выбранные файлы"
 
 #: ../thunar/thunar-standard-view.c:3360
-#, fuzzy
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
-msgstr[0] "Переименовать выбранный файл"
-msgstr[1] "Переименовать выбранный файл"
-msgstr[2] "Переименовать выбранный файл"
+msgstr[0] "Восстановить выбранный файл"
+msgstr[1] "Восстановить выбранные файлы"
+msgstr[2] "Восстановить выбранные файлы"
 
 #. tell the user that no templates were found
 #: ../thunar/thunar-templates-action.c:376
@@ -2322,12 +2299,12 @@ msgstr "_Свойства..."
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:108
 msgid "Today"
-msgstr ""
+msgstr "Сегодня"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:113
 msgid "Yesterday"
-msgstr ""
+msgstr "Вчера"
 
 #: ../thunar/thunar-window.c:264
 msgid "Open New _Window"
@@ -2386,7 +2363,6 @@ msgid "_Side Pane"
 msgstr "_Боковая панель"
 
 #: ../thunar/thunar-window.c:275
-#, fuzzy
 msgid "Zoom I_n"
 msgstr "У_величить"
 
@@ -2439,9 +2415,8 @@ msgid "Go to the templates folder"
 msgstr "Перейти в каталог шаблонов"
 
 #: ../thunar/thunar-window.c:282
-#, fuzzy
 msgid "_Open Location..."
-msgstr "Открыть _адрес..."
+msgstr "_Открыть адрес..."
 
 #: ../thunar/thunar-window.c:282
 msgid "Specify a location to open"
@@ -2478,7 +2453,7 @@ msgstr "Ряд _кнопок"
 #: ../thunar/thunar-window.c:291
 msgid "Modern approach with buttons that correspond to folders"
 msgstr ""
-"Современный способ отображения с кнопками, которые соответствуют папкам"
+"Современный способ отображения: с кнопками, которые соответствуют папкам"
 
 #: ../thunar/thunar-window.c:292
 msgid "_Toolbar Style"
@@ -2606,7 +2581,7 @@ msgstr "Метка"
 
 #: ../thunarx/thunarx-property-page.c:138
 msgid "Text of the page's label"
-msgstr ""
+msgstr "Текст метки страницы"
 
 #: ../thunarx/thunarx-property-page.c:150
 msgid "Label widget"
@@ -2618,7 +2593,7 @@ msgstr ""
 
 #: ../thunarx/thunarx-provider-plugin.c:79
 msgid "Resident"
-msgstr ""
+msgstr "Резидент"
 
 #: ../thunarx/thunarx-provider-plugin.c:80
 msgid "Don't unload the plugin from memory"
@@ -2680,7 +2655,7 @@ msgstr "Параметры:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
 msgid "Use _startup notification"
-msgstr "Использовать уведомление о запуске"
+msgstr "Использовать _уведомление о запуске"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:259
 msgid ""
@@ -2780,23 +2755,23 @@ msgstr[2] "%dx%d точек"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:119
 msgid "Con_vert to:"
-msgstr "Преобразовать к:"
+msgstr "_Преобразовать к:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-case-renamer.c:264
 msgid "Uppercase / Lowercase"
-msgstr "Нижний / верхний регистр"
+msgstr "Заглавные/Строчные"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:84
 msgid "lowercase"
-msgstr "нижний регистр"
+msgstr "строчные"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:85
 msgid "UPPERCASE"
-msgstr "ВЕРХНИЙ РЕГИСТР"
+msgstr "ЗАГЛАВНЫЕ"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:86
 msgid "Camelcase"
-msgstr "Смешанный регистр"
+msgstr "Заглавные Первые Буквы"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:92
 msgid "Insert"
@@ -2880,12 +2855,10 @@ msgid "Numbering"
 msgstr "Нумерация"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:177
-#, fuzzy
 msgid "Remove _From Position:"
 msgstr "_Удалить начиная с:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-remove-renamer.c:212
-#, fuzzy
 msgid "_To Position:"
 msgstr "_До:"
 
@@ -2914,7 +2887,7 @@ msgid ""
 "Check the documentation for details about the regular expression syntax."
 msgstr ""
 "Если включено, текст шаблона будет рассматриваться как регулярное выражение "
-"и будет произведен поиск соответствий с использованием регулярных выражений, "
+"и будет произведён поиск соответствий с использованием регулярных выражений, "
 "совместимых с Perl (PCRE). Для подробного ознакомления с синтаксисом "
 "регулярных выражений обратитесь к документации."
 
@@ -2931,7 +2904,7 @@ msgstr ""
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
 msgid "C_ase Sensitive Search"
-msgstr "П_оиск с учетом регистра"
+msgstr "П_оиск с учётом регистра"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:260
 msgid ""
@@ -2954,16 +2927,16 @@ msgstr "Поиск и замена"
 #: ../plugins/thunar-sendto-email/main.c:176
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
-msgstr ""
+msgstr "Отправить \"%s\" как сжатый архив?"
 
 #: ../plugins/thunar-sendto-email/main.c:178
 #: ../plugins/thunar-sendto-email/main.c:197
 msgid "Send _directly"
-msgstr ""
+msgstr "Отправить _напрямую"
 
 #: ../plugins/thunar-sendto-email/main.c:179
 msgid "Send com_pressed"
-msgstr ""
+msgstr "Отправить с_жатым"
 
 #: ../plugins/thunar-sendto-email/main.c:181
 msgid ""
@@ -2976,12 +2949,13 @@ msgstr ""
 #, c-format
 msgid "Send %d file as compressed archive?"
 msgid_plural "Send %d files as compressed archive?"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Отправить %d файл в виде архива?"
+msgstr[1] "Отправить %d файла в виде архива?"
+msgstr[2] "Отправить %d файлов в виде архива?"
 
 #: ../plugins/thunar-sendto-email/main.c:198
 msgid "Send as _archive"
-msgstr ""
+msgstr "Отправить как _архив"
 
 #: ../plugins/thunar-sendto-email/main.c:200
 msgid ""
@@ -2990,49 +2964,50 @@ msgid ""
 "compressed into a single archive file and attach the archive. It is highly "
 "recommended to send multiple large files as archive."
 msgstr ""
+"При отправке нескольких файлов по почте вы можете отправить их, прикрепив "
+"каждый файл к письму, либо упаковать их в один архив, который будет "
+"прикреплён к письму. Настоятельно рекомендуется отправлять больше файлы в "
+"виде архива."
 
 #. allocate the progress dialog
 #. setup the label
 #: ../plugins/thunar-sendto-email/main.c:249
 #: ../plugins/thunar-sendto-email/main.c:274
-#, fuzzy
 msgid "Compressing files..."
-msgstr "Копирование файлов..."
+msgstr "Сжатие файлов..."
 
 #. tell the user that the command failed
 #: ../plugins/thunar-sendto-email/main.c:299
 #, c-format
 msgid "ZIP command terminated with error %d"
-msgstr ""
+msgstr "Команда ZIP завершилась с ошибкой %d"
 
 #: ../plugins/thunar-sendto-email/main.c:385
-#, fuzzy
 msgid "Failed to create temporary directory"
-msgstr "Не удалось создать папку \"%s\""
+msgstr "Не удалось создать временную папку"
 
 #: ../plugins/thunar-sendto-email/main.c:436
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "Не удалось создать символическую ссылку \"%s\""
+msgstr "Не удалось создать символическую ссылку для \"%s\""
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "Не удалось открыть %d файл"
-msgstr[1] "Не удалось открыть %d файла"
-msgstr[2] "Не удалось открыть %d файлов"
+msgstr[0] "Не удалось сжать %d файл"
+msgstr[1] "Не удалось сжать %d файла"
+msgstr[2] "Не удалось сжать %d файлов"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:600
-#, fuzzy
 msgid "Failed to compose new email"
-msgstr "Не удалось открыть %d файл"
+msgstr "Не удалось создать письмо"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
-msgstr ""
+msgstr "Электронная почта"
 
 #. tell the user that we failed to connect to the trash
 #. display an error message to the user
@@ -3040,26 +3015,25 @@ msgstr ""
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:317
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:346
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:380
-#, fuzzy
 msgid "Failed to connect to the Trash"
-msgstr "Не удалось соединиться с демоном HAL: %s"
+msgstr "Не удалось подключиться к корзине"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is full"
-msgstr ""
+msgstr "Корзина не пуста"
 
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
 msgid "Trash is empty"
-msgstr ""
+msgstr "Корзина пуста"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:1
 msgid "Display the trash can"
-msgstr ""
+msgstr "Отображает корзину на панели"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
 msgid "Trash Applet"
-msgstr ""
+msgstr "Корзина"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
@@ -3200,7 +3174,7 @@ msgstr "папка, содержащая файл, который передан
 #: ../plugins/thunar-uca/thunar-uca-editor.c:330
 #, c-format
 msgid "directories containing the files that are passed in %F"
-msgstr "папки, содержащая файлы, которые переданы через %F"
+msgstr "папки, содержащие файлы, которые переданы через %F"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:342
 msgid "the first selected filename (without path)"
@@ -3239,7 +3213,7 @@ msgstr "_Папки"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:417
 msgid "_Audio Files"
-msgstr "_Аудиофайлы"
+msgstr "_Аудио-файлы"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:421
 msgid "_Image Files"
@@ -3251,7 +3225,7 @@ msgstr "_Текстовые файлы"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:430
 msgid "_Video Files"
-msgstr "_Видеофайлы"
+msgstr "_Видео-файлы"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:434
 msgid "_Other Files"
@@ -3347,72 +3321,3 @@ msgstr "Открыть папку с помощью Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Открыть выбранные папки в новых окнах"
-
-#~ msgid "_Properties"
-#~ msgstr "_Свойства"
-
-#~ msgid "_Hidden"
-#~ msgstr "_Скрыть"
-
-#~ msgid "Don't display any location selector"
-#~ msgstr "Не отображать панель адреса"
-
-#~ msgid "Delete the selected file permanently"
-#~ msgid_plural "Delete the selected files permanently"
-#~ msgstr[0] "Навсегда удалить выбранный файл"
-#~ msgstr[1] "Навсегда удалить выбранные файлы"
-#~ msgstr[2] "Навсегда удалить выбранные файлы"
-
-#, fuzzy
-#~ msgid "Failed to change permisions of \"%s\""
-#~ msgstr "Не удалось изменить права для \"%s\": %s"
-
-#~ msgid "Failed to determine file info of \"%s\": %s"
-#~ msgstr "Не удалось получить информацию о файле \"%s\": %s"
-
-#~ msgid ""
-#~ "The file \"%s\" already exists. Do you want to replace it with an empty "
-#~ "file?"
-#~ msgstr "Файл \"%s\" уже существует. Заменить его пустым файлом?"
-
-#~ msgid ""
-#~ "Failed to remove \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "Невозможно удалить \"%s\".\n"
-#~ "\n"
-#~ "Пропустить?"
-
-#~ msgid ""
-#~ "Failed to create empty file \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "Невозможно создать пустой файл \"%s\".\n"
-#~ "\n"
-#~ "Пропустить?"
-
-#~ msgid "Failed to stat file \"%s\": %s"
-#~ msgstr "Не удалось выполнить команду stat для файла \"%s\": %s"
-
-#~ msgid "Failed to create directory \"%s\": %s"
-#~ msgstr "Не удалось создать папку \"%s\": %s"
-
-#~ msgid "Deleting directories..."
-#~ msgstr "Удаление папок..."
-
-#~ msgid "Failed to remove directory \"%s\": %s"
-#~ msgstr "Не удалось удалить папку \"%s\": %s"
-
-#~ msgid "Cannot transfer the root directory"
-#~ msgstr "Переместить корневой каталог невозможно"
-
-#~ msgid "Operation canceled"
-#~ msgstr "Операция отменена"
-
-#~ msgid "Failed to read link target from \"%s\""
-#~ msgstr "Не удалось прочитать данные из \"%s\""
-
-#~ msgid "Failed to copy special file \"%s\""
-#~ msgstr "Не удалось cкопировать специальный файл \"%s\""
