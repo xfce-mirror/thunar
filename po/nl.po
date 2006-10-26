@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Thunar 0.4.0rc1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2006-09-10 01:36+0200\n"
-"PO-Revision-Date: 2006-03-25 18:02+0100\n"
-"Last-Translator: Vincent Tunru <imnotb@gmail.com>\n"
+"PO-Revision-Date: 2006-10-27 00:51+0100\n"
+"Last-Translator: Stephan Arts <psybsd@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -18,37 +18,32 @@ msgstr ""
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
-#, fuzzy
 msgid "Failed to read folder contents"
-msgstr "Inhoud van de map aan het laden..."
+msgstr "Het lezen van de map is mislukt"
 
 #: ../thunar-vfs/thunar-vfs-exec.c:512
-#, fuzzy
 msgid "Unknown error"
-msgstr "Onbekende eigenaar"
+msgstr "Onbekende fout"
 
 # Unknown word "Exec"
 # Obekend woord: "Exec"
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:390
-#, fuzzy
 msgid "No Exec field specified"
-msgstr "Geen <Exec> veld geselecteerd"
+msgstr "Geen Exec veld gespecificeerd"
 
 # Unknown word "Exec"
 # Obekend woord: "Exec"
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:409
-#, fuzzy
 msgid "No URL field specified"
-msgstr "Geen <Exec> veld geselecteerd"
+msgstr "Geen URL veld gespecificeerd"
 
 #: ../thunar-vfs/thunar-vfs-info.c:414 ../thunar-vfs/thunar-vfs-private.c:384
 msgid "Invalid desktop file"
 msgstr "Ongeldig bureublad-bestand"
 
 #: ../thunar-vfs/thunar-vfs-info.c:422
-#, fuzzy
 msgid "Failed to parse file"
 msgstr "Verwerken van bestand niet mogelijk"
 
@@ -57,9 +52,8 @@ msgid "Invalid file name"
 msgstr "Ongeldige bestandsnaam"
 
 #: ../thunar-vfs/thunar-vfs-info.c:510
-#, fuzzy
 msgid "Only local files may be renamed"
-msgstr "Fout bij het wijzigen van de naam van `%s'"
+msgstr "Alleen lokale bestanden mogen worden verwijderd"
 
 #. tell the user that we're preparing to unlink the files
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:81
@@ -68,63 +62,61 @@ msgstr "Aan het voorbereiden..."
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:226
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:538
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change permissions of \"%s\""
-msgstr "Het veranderen van de toestemmingen van `%s' is mislukt: %s"
+msgstr "Het veranderen van de rechten van \"%s\" is mislukt"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:347
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file owner of \"%s\""
-msgstr "Het veranderen van de eigenaar van `%s' is mislukt: %s"
+msgstr "Het veranderen van de eigenaar van \"%s\" is mislukt"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:348
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to change file group of \"%s\""
-msgstr "Het veranderen van de bestandsgroep van `%s' is mislukt: %s"
+msgstr "Het veranderen van de bestandsgroep van \"%s\" is mislukt"
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:432
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:191
 #, c-format
 msgid "The file \"%s\" already exists"
-msgstr ""
+msgstr "Het bestand \"%s\" bestaat al"
 
-# Unknown word "fifo"
-# Onbekend woord: "fifo"
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:450
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create empty file \"%s\""
-msgstr "Fout bij het maken van genoemde <fifo> `%s'"
+msgstr "Fout bij het maken van leeg bestand \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:166
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open \"%s\" for reading"
-msgstr "Fout bij het openen van `%s' om te lezen"
+msgstr "Het openen van \"%s\" om te lezen is mislukt"
 
 #. use the generic error message
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:197
 #: ../thunar-vfs/thunar-vfs-io-trash.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open \"%s\" for writing"
-msgstr "Fout bij het openen van `%s' om te schrijven"
+msgstr "Het openen van \"%s\" om te schrijven is mislukt"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:224
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:287
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to write data to \"%s\""
-msgstr "Fout bij het schrijven naar `%s'"
+msgstr "Het schrijven naar \"%s\" is mislukt"
 
 #. display an error to the user
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:240
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:303
 #: ../thunar-vfs/thunar-vfs-io-ops.c:496 ../thunar/thunar-chooser-dialog.c:775
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to remove \"%s\""
-msgstr "Het verwijderen van `%s' is mislukt: %s"
+msgstr "Het verwijderen van \"%s\" is mislukt"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:270
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to read data from \"%s\""
-msgstr "Fout bij het lezen van `%s'"
+msgstr "Het lezen van \"%s\" is mislukt"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:364
 #, c-format
@@ -178,38 +170,37 @@ msgstr[1] "%ude snelkoppeling naar %s"
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:490
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:607
 #: ../thunar-vfs/thunar-vfs-io-ops.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine file info for \"%s\""
-msgstr "Fout bij het ophalen van bestandsinfo van `%s'"
+msgstr "Fout bij het ophalen van bestandsinfo voor \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:506
 #: ../thunar-vfs/thunar-vfs-io-ops.c:416
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create directory \"%s\""
-msgstr "Fout bij het maken van map `%s'"
+msgstr "Het maken van map \"%s\" is mislukt"
 
 # Unknown word "fifo"
 # Onbekend woord: "fifo"
 #. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:515
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create named fifo \"%s\""
-msgstr "Fout bij het maken van genoemde <fifo> `%s'"
+msgstr "Fout bij het maken van genoemde pipe \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:533
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:613
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create symbolic link \"%s\""
-msgstr "Fout bij het maken van symbolische snelkoppeling `%s'"
+msgstr "Fout bij het maken van symbolische link \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:546
 msgid "Special files cannot be copied"
 msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:626
-#, fuzzy
 msgid "Symbolic links are not supported"
-msgstr "In daemon modus draaien"
+msgstr "Symbolische links worden niet ondersteund"
 
 #. ...and a special display name
 #: ../thunar-vfs/thunar-vfs-io-local.c:306
@@ -218,53 +209,45 @@ msgstr "Bestandssysteem"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:223
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to copy \"%s\" to \"%s\""
-msgstr "Fout bij het wijzigen van de naam van `%s'"
+msgstr "Het kopiëren van \"%s\" naar \"%s\" is mislukt"
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:290
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to link \"%s\" to \"%s\""
-msgstr "Fout bij het wijzigen van de naam van `%s'"
+msgstr ""
 
 #. generate a useful error message
 #: ../thunar-vfs/thunar-vfs-io-ops.c:367
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to move \"%s\" to \"%s\""
-msgstr "Fout bij het wijzigen van de naam van `%s'"
+msgstr "Het verplaatsen van \"%s\" naar \"%s\" is mislukt"
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:601
-#, fuzzy, c-format
+#, c-format
 msgid "The URI \"%s\" does not refer to a valid resource in the trash"
-msgstr "Het pad '%s' verwijst niet naar een map"
+msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-io-trash.c:778
 msgid "Trash"
-msgstr ""
+msgstr "Prullenbak"
 
 #. we don't support copying files within the trash
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:972
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1086
 msgid "Cannot move or copy files within the trash"
-msgstr ""
+msgstr "Kan geen bestanden kopiëren of verplaatsen binnen de prullenbak"
 
 #: ../thunar-vfs/thunar-vfs-job.c:831
-#, fuzzy
 msgid "Do you want to overwrite it?"
-msgstr ""
-"%s.\n"
-"\n"
-"Wilt u dit bestand overschrijven?"
+msgstr "Wilt u dit bestand overschrijven?"
 
 #: ../thunar-vfs/thunar-vfs-job.c:896
-#, fuzzy
 msgid "Do you want to skip it?"
-msgstr ""
-"%s.\n"
-"\n"
-"Wilt u dit bestand overslaan?"
+msgstr "Wilt u dit bestand overslaan?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -273,14 +256,13 @@ msgstr "Fout bij het laden van de applicatie van bestand %s"
 
 #. tell the user that we failed to delete the application launcher
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1741
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to remove \"%s\": %s"
-msgstr "Het verwijderen van `%s' is mislukt: %s"
+msgstr "Het verwijderen van \"%s\" is mislukt: %s"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:132
-#, fuzzy
 msgid "Command"
-msgstr "_Commando:"
+msgstr "Commando"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:133
 #, fuzzy
@@ -288,6 +270,7 @@ msgid "The command to run the mime handler"
 msgstr "Commando om mime <handler> uit te voeren"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:145
+#, fuzzy
 msgid "Flags"
 msgstr "Vaandels"
 
@@ -297,9 +280,8 @@ msgid "The flags for the mime handler"
 msgstr "Vaandels van mime <handler>"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:161
-#, fuzzy
 msgid "Icon"
-msgstr "_Icoon:"
+msgstr "Pictogram"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:162
 #, fuzzy
@@ -310,7 +292,7 @@ msgstr "Icoon van mime <handler>"
 #: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:427
 #: ../thunarx/thunarx-renamer.c:177
 msgid "Name"
-msgstr "Naam:"
+msgstr "Naam"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:175
 #, fuzzy
@@ -336,9 +318,8 @@ msgid "URI too long to fit into buffer"
 msgstr "URI te lang voor buffer"
 
 #: ../thunar-vfs/thunar-vfs-private.c:233
-#, fuzzy
 msgid "Operation not supported"
-msgstr "In daemon modus draaien"
+msgstr "Operatie wordt niet ondersteund"
 
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:335
@@ -363,35 +344,32 @@ msgid "Invalid path"
 msgstr "Ongeldig pad"
 
 #: ../thunar-vfs/thunar-vfs-util.c:287
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown user \"%s\""
-msgstr "Onbekende gebruiker '%s'"
+msgstr "Onbekende gebruiker \"%s\""
 
 #. something went wrong, for sure
 #: ../thunar-vfs/thunar-vfs-volume-hal.c:339
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the mount point for %s"
-msgstr "Fout bij het ophalen van bestandsinfo van `%s'"
+msgstr ""
 
 #: ../thunar-vfs/thunar-vfs-volume-hal.c:913
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to connect to the HAL daemon: %s"
-msgstr "Fout bij het veranderen van de modus van `%s'"
+msgstr ""
 
 #: ../thunar/main.c:54
-#, fuzzy
 msgid "Open the bulk rename dialog"
-msgstr "Geselecteerde items openen"
+msgstr "Open het massaal hernoemen dialoog"
 
 #: ../thunar/main.c:56
-#, fuzzy
 msgid "Run in daemon mode"
 msgstr "In daemon modus draaien"
 
 #: ../thunar/main.c:58
-#, fuzzy
 msgid "Run in daemon mode (not supported)"
-msgstr "In daemon modus draaien"
+msgstr "In daemon modus draaien (niet ondersteund)"
 
 #: ../thunar/main.c:62
 msgid "Quit a running Thunar instance"
@@ -403,7 +381,7 @@ msgstr "Sluit een ander Thunar venster (niet ondersteund)"
 
 #: ../thunar/main.c:66
 msgid "Print version information and exit"
-msgstr ""
+msgstr "Print versie informatie en sluiten"
 
 #. setup application name
 #: ../thunar/main.c:88
@@ -416,27 +394,27 @@ msgid "[FILES...]"
 msgstr "[BESTANDEN...]"
 
 #: ../thunar/main.c:105
-#, fuzzy, c-format
+#, c-format
 msgid "Thunar: Failed to open display: %s\n"
-msgstr "Fout bij het wijzigen van de naam van `%s'"
+msgstr ""
 
 #. yep, there's an error, so print it
 #: ../thunar/main.c:110
-#, fuzzy, c-format
+#, c-format
 msgid "Thunar: %s\n"
-msgstr "Thunar"
+msgstr "Thunar: %s\n"
 
 #: ../thunar/main.c:120
 msgid "Copyright (c) 2004-2006"
-msgstr ""
+msgstr "Copyright (c) 2004-2006"
 
 #: ../thunar/main.c:121
 msgid "The Thunar development team. All rights reserved."
-msgstr ""
+msgstr "Het Thunar ontwikkel team. Alle rechten voorbehouden."
 
 #: ../thunar/main.c:122
 msgid "Written by Benedikt Meurer <benny@xfce.org>."
-msgstr ""
+msgstr "Geschreven door Benedikt Meurer <benny@xfce.org>."
 
 #: ../thunar/main.c:123
 #, c-format
@@ -452,36 +430,32 @@ msgid "Sort By _Name"
 msgstr "Sorteren Op _Naam"
 
 #: ../thunar/thunar-abstract-icon-view.c:122
-#, fuzzy
 msgid "Keep items sorted by their name"
-msgstr "Houd de items gesorteerd op naam in rijen"
+msgstr "Houd de items gesorteerd op naam"
 
 #: ../thunar/thunar-abstract-icon-view.c:123
 msgid "Sort By _Size"
 msgstr "Sorteren Op _Grootte"
 
 #: ../thunar/thunar-abstract-icon-view.c:123
-#, fuzzy
 msgid "Keep items sorted by their size"
-msgstr "Houd de items gesorteerd op grootte in rijen"
+msgstr "Houd de items gesorteerd op grootte"
 
 #: ../thunar/thunar-abstract-icon-view.c:124
 msgid "Sort By _Type"
 msgstr "Sorteren Op _Type"
 
 #: ../thunar/thunar-abstract-icon-view.c:124
-#, fuzzy
 msgid "Keep items sorted by their type"
-msgstr "Houd de items gesorteerd op type in rijen"
+msgstr "Houd de items gesorteerd op type"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
 msgid "Sort By Modification _Date"
 msgstr "Sorteren Op Berwerkings_datum"
 
 #: ../thunar/thunar-abstract-icon-view.c:125
-#, fuzzy
 msgid "Keep items sorted by their modification date"
-msgstr "Houd de items gesorteerd op bewerkingsdatum in rijen"
+msgstr "Houd de items gesorteerd op bewerkingsdatum"
 
 #: ../thunar/thunar-abstract-icon-view.c:130
 msgid "_Ascending"
@@ -506,14 +480,14 @@ msgstr "Fout bij het uitvoeren van de operatie"
 
 #. tell the user that we were unable to launch the file specified on the cmdline
 #: ../thunar/thunar-application.c:858
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open \"%s\""
-msgstr "Fout bij het wijzigen van de naam van `%s'"
+msgstr "Fout bij het openen van \"%s\""
 
 #: ../thunar/thunar-application.c:870
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open \"%s\": %s"
-msgstr "Fout bij het wijzigen van de naam van `%s'"
+msgstr "Fout bij het openen van \"%s\": %s"
 
 #: ../thunar/thunar-application.c:907 ../thunar/thunar-application.c:940
 msgid "Copying files..."
@@ -524,9 +498,8 @@ msgid "Creating symbolic links..."
 msgstr "Symbolische snelkoppelingen aan het maken..."
 
 #: ../thunar/thunar-application.c:1014
-#, fuzzy
 msgid "Moving files into the trash..."
-msgstr "Bestanden aan het verplaatsen..."
+msgstr "Bestanden aan het verplaatsen naar de prullenbak..."
 
 #: ../thunar/thunar-application.c:1019
 msgid "Moving files..."
@@ -554,7 +527,7 @@ msgstr[0] ""
 "het geselecteerde bestand voorgoed wilt verwijderen?"
 msgstr[1] ""
 "Weet u zeker dat u\n"
-"de geselecteerde bestanden voorgoed wilt verwijderen?"
+"de %u geselecteerde bestanden voorgoed wilt verwijderen?"
 
 #: ../thunar/thunar-application.c:1124
 msgid "If you delete a file, it is permanently lost."
@@ -574,16 +547,15 @@ msgstr "Mappen aan het maken..."
 
 #: ../thunar/thunar-application.c:1264
 msgid "Remove all files and folders from the Trash?"
-msgstr ""
+msgstr "Alle bestanden en mappen uit de Prullenbak verwijderen?"
 
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
 #: ../thunar/thunar-application.c:1269 ../thunar/thunar-location-buttons.c:169
 #: ../thunar/thunar-shortcuts-view.c:849 ../thunar/thunar-tree-view.c:1070
 #: ../thunar/thunar-window.c:266 ../plugins/thunar-tpa/main.c:49
-#, fuzzy
 msgid "_Empty Trash"
-msgstr "_Leeg Bestand"
+msgstr "Prullenbak L_egen"
 
 #: ../thunar/thunar-application.c:1273
 msgid ""
@@ -593,22 +565,21 @@ msgstr ""
 
 #: ../thunar/thunar-application.c:1290
 msgid "Emptying the Trash..."
-msgstr ""
+msgstr "Prullenbak aan het legen..."
 
 #: ../thunar/thunar-application.c:1344
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to determine the original path for \"%s\""
-msgstr "Fout bij het ophalen van bestandsinfo van `%s'"
+msgstr ""
 
 #: ../thunar/thunar-application.c:1372
-#, fuzzy, c-format
+#, c-format
 msgid "Create the folder \"%s\"?"
-msgstr "Maak _Map..."
+msgstr "Map \"%s\" maken?"
 
 #: ../thunar/thunar-application.c:1376
-#, fuzzy
 msgid "C_reate Folder"
-msgstr "Maak _Map..."
+msgstr "Maak _Map"
 
 #: ../thunar/thunar-application.c:1382
 #, c-format
@@ -619,14 +590,13 @@ msgstr ""
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1419
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to restore \"%s\""
-msgstr "Het verwijderen van `%s' is mislukt: %s"
+msgstr "Het herstellen van \"%s\" is mislukt"
 
 #: ../thunar/thunar-application.c:1426
-#, fuzzy
 msgid "Restoring files..."
-msgstr "Bestanden aan het verwijderen..."
+msgstr "Bestanden aan het herstellen..."
 
 #. tell the user that it didn't work
 #. display an error to the user
@@ -671,9 +641,8 @@ msgstr ""
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:306
-#, fuzzy
 msgid "_Browse..."
-msgstr "_Bladeren"
+msgstr "_Bladeren..."
 
 #. create the "Use as default for this kind of file" button
 #: ../thunar/thunar-chooser-dialog.c:312
@@ -722,11 +691,9 @@ msgstr ""
 "te openen."
 
 #: ../thunar/thunar-chooser-dialog.c:754
-#, fuzzy, c-format
+#, c-format
 msgid "Are you sure that you want to remove \"%s\"?"
-msgstr ""
-"Weet u zeker dat u\n"
-"\"%s\" voorgoed wilt verwijderen?"
+msgstr "Weet u zeker dat u \"%s\" wilt verwijderen?"
 
 #: ../thunar/thunar-chooser-dialog.c:760
 msgid ""
@@ -802,11 +769,10 @@ msgstr "Zichtbare kolommen"
 
 #. create the top label for the column editor dialog
 #: ../thunar/thunar-column-editor.c:176
-#, fuzzy
 msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
-msgstr "Mapinhoud weergeven als gedetailleerde lijst"
+msgstr ""
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:217
@@ -825,9 +791,8 @@ msgstr "_Weergeven"
 
 #. create the "Hide" button
 #: ../thunar/thunar-column-editor.c:243
-#, fuzzy
 msgid "Hi_de"
-msgstr "_Verborgen"
+msgstr "_Verbergen"
 
 #. create the "Use Default" button
 #: ../thunar/thunar-column-editor.c:254
@@ -870,9 +835,8 @@ msgid "Unknown"
 msgstr "Onbekend"
 
 #: ../thunar/thunar-compact-view.c:136
-#, fuzzy
 msgid "Compact directory listing"
-msgstr "Mapweergave gebaseerd op iconen"
+msgstr ""
 
 #: ../thunar/thunar-compact-view.c:137
 msgid "Compact view"
@@ -894,9 +858,9 @@ msgid "Cannot convert filename \"%s\" to the local encoding"
 msgstr "Can bestandsnaam `%s' niet naar locale codering converteren"
 
 #: ../thunar/thunar-dbus-service.c:392
-#, fuzzy, c-format
+#, c-format
 msgid "Invalid filename \"%s\""
-msgstr "Ongeldige bestandsnaam"
+msgstr "Ongeldige bestandsnaam \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
@@ -909,9 +873,8 @@ msgid "Atleast one filename must be specified"
 msgstr ""
 
 #: ../thunar/thunar-details-view.c:131
-#, fuzzy
 msgid "Configure _Columns..."
-msgstr "_Alternatieve acties instellen"
+msgstr "Kolommen _configureren..."
 
 #: ../thunar/thunar-details-view.c:131
 #, fuzzy
@@ -928,7 +891,7 @@ msgstr "Gedetailleerde weergavemodus"
 
 #: ../thunar/thunar-dialogs.c:102
 msgid "translator-credits"
-msgstr "Vincent Tunru <imnotb@gmail.com>"
+msgstr "Vincent Tunru <imnotb@gmail.com>\nStephan Arts <psybsd@gmail.com>"
 
 #. display an error message to the user
 #. tell the user that we failed
@@ -2407,7 +2370,7 @@ msgstr "Dit venster sluiten"
 
 #: ../thunar/thunar-window.c:269
 msgid "_Edit"
-msgstr "_Aanpassen"
+msgstr "Be_werken"
 
 #: ../thunar/thunar-window.c:270
 msgid "Pr_eferences..."
@@ -3426,85 +3389,3 @@ msgstr "Nieuwe Map"
 #, fuzzy
 msgid "Open the specified folders in Thunar"
 msgstr "De geselecteerde mappen in nieuwe Thunar-vensters openen"
-
-#, fuzzy
-#~ msgid "_Properties"
-#~ msgstr "_Eigenschappen"
-
-#~ msgid "_Hidden"
-#~ msgstr "_Verborgen"
-
-#~ msgid "Don't display any location selector"
-#~ msgstr "Geen locatieselecteerder weergeven"
-
-#, fuzzy
-#~ msgid "Delete the selected file permanently"
-#~ msgid_plural "Delete the selected files permanently"
-#~ msgstr[0] "De geselecteerde bestanden verwijderen"
-#~ msgstr[1] "De geselecteerde bestanden verwijderen"
-
-#, fuzzy
-#~ msgid "Failed to change permisions of \"%s\""
-#~ msgstr "Het veranderen van de toestemmingen van `%s' is mislukt: %s"
-
-#, fuzzy
-#~ msgid "Failed to determine file info of \"%s\": %s"
-#~ msgstr "Het definieren van bestandsinfo `%s' is mislukt: %s"
-
-#, fuzzy
-#~ msgid ""
-#~ "The file \"%s\" already exists. Do you want to replace it with an empty "
-#~ "file?"
-#~ msgstr ""
-#~ "Het bestand `%s' bestaat al. Wilt u dit vervangen door een leeg bestand?"
-
-#, fuzzy
-#~ msgid ""
-#~ "Failed to remove \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "Fout bij het verwijderen van %s.\n"
-#~ "\n"
-#~ "Wilt u het overslaan?"
-
-#, fuzzy
-#~ msgid ""
-#~ "Failed to create empty file \"%s\".\n"
-#~ "\n"
-#~ "Do you want to skip it?"
-#~ msgstr ""
-#~ "Fout bij het maken van leeg bestand %s.\n"
-#~ "\n"
-#~ "Wilt u deze stap overslaan?"
-
-# Unknown word "stat"
-# Obekend woord: "stat"
-#, fuzzy
-#~ msgid "Failed to stat file \"%s\": %s"
-#~ msgstr "Het <stat> van bestand `%s' is mislukt: %s"
-
-#, fuzzy
-#~ msgid "Failed to create directory \"%s\": %s"
-#~ msgstr "Fout bij het maken van map `%s'"
-
-#~ msgid "Deleting directories..."
-#~ msgstr "Mappen aan het verwijderen..."
-
-#, fuzzy
-#~ msgid "Failed to remove directory \"%s\": %s"
-#~ msgstr "Fout bij het verwijderen van de map `%s' : %s"
-
-#~ msgid "Cannot transfer the root directory"
-#~ msgstr "Kan de hoofdmap niet verplaatsen"
-
-#~ msgid "Operation canceled"
-#~ msgstr "Actie geannulleerd"
-
-#, fuzzy
-#~ msgid "Failed to read link target from \"%s\""
-#~ msgstr "Fout bij het lezen van snelkopplingsdoel `%s'"
-
-#, fuzzy
-#~ msgid "Failed to copy special file \"%s\""
-#~ msgstr "Fout bij het kopiëren van speciaal bestand `%s'"
