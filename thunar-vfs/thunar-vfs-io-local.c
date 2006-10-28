@@ -128,7 +128,7 @@ _thunar_vfs_io_local_get_free_space (const ThunarVfsPath *path,
 
   /* return the free space */
   if (G_LIKELY (succeed && free_space_return != NULL))
-    *free_space_return = (statfsb.f_bavail * statfsb.f_bsize);
+    *free_space_return = ((ThunarVfsFileSize) statfsb.f_bavail * (ThunarVfsFileSize) statfsb.f_bsize);
 
   return succeed;
 }
