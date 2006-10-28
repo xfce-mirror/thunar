@@ -163,9 +163,9 @@ thunar_vfs_mime_cache_class_init (ThunarVfsMimeCacheClass *klass)
 static void
 thunar_vfs_mime_cache_finalize (GObject *object)
 {
+#ifdef HAVE_MMAP
   ThunarVfsMimeCache *cache = THUNAR_VFS_MIME_CACHE (object);
 
-#ifdef HAVE_MMAP
   if (G_LIKELY (cache->buffer != NULL))
     munmap (cache->buffer, cache->bufsize);
 #endif

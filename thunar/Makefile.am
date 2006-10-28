@@ -224,10 +224,12 @@ Thunar_LDADD +=								\
 	$(DBUS_LIBS)
 endif
 
+if !PLATFORM_WIN32
 # install symlink to 'thunar'
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
 	( cd $(DESTDIR)$(bindir) ; ln -sf Thunar thunar )
+endif
 
 clean-local:
 	rm -f *.core core core.*
