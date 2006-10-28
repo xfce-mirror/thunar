@@ -65,8 +65,7 @@ gboolean              _thunar_vfs_job_ask_skip        (ThunarVfsJob        *job,
 void                  _thunar_vfs_job_error           (ThunarVfsJob        *job,
                                                        GError              *error) G_GNUC_INTERNAL;
 void                  _thunar_vfs_job_info_message    (ThunarVfsJob        *job,
-                                                       const gchar         *format,
-                                                       ...) G_GNUC_INTERNAL G_GNUC_PRINTF (2, 3);
+                                                       const gchar         *format) G_GNUC_INTERNAL;
 gboolean              _thunar_vfs_job_infos_ready     (ThunarVfsJob        *job,
                                                        GList               *info_list) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
 void                  _thunar_vfs_job_new_files       (ThunarVfsJob        *job,

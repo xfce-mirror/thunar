@@ -942,28 +942,19 @@ _thunar_vfs_job_error (ThunarVfsJob *job,
 
 /**
  * _thunar_vfs_job_info_message:
- * @job    : a #ThunarVfsJob.
- * @format : a printf(3)-style format string.
- * @...    : the format arguments.
+ * @job     : a #ThunarVfsJob.
+ * @message : the info message.
  *
- * Emits the ::info-message signal on @job with the formatted
- * info message.
+ * Emits the ::info-message signal on @job with the info @message.
  **/
 void
 _thunar_vfs_job_info_message (ThunarVfsJob *job,
-                              const gchar  *format,
-                              ...)
+                              const gchar  *message)
 {
-  va_list var_args;
-  gchar  *message;
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_vfs_return_if_fail (g_utf8_validate (message, -1, NULL));
 
-  _thunar_vfs_return_if_fail (g_utf8_validate (format, -1, NULL));
-
-  va_start (var_args, format);
-  message = g_strdup_vprintf (format, var_args);
   _thunar_vfs_job_notify (job, job_signals[INFO_MESSAGE], 0, message);
-  va_end (var_args);
-  g_free (message);
 }
 
 
