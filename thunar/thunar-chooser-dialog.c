@@ -265,10 +265,10 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
 
   /* append the tree view column */
   column = g_object_new (GTK_TYPE_TREE_VIEW_COLUMN, "expand", TRUE, NULL);
-  renderer = gtk_cell_renderer_pixbuf_new ();
+  renderer = g_object_new (EXO_TYPE_CELL_RENDERER_ICON, "follow-state", FALSE, "size", 24, NULL);
   gtk_tree_view_column_pack_start (column, renderer, FALSE);
   gtk_tree_view_column_set_attributes (column, renderer,
-                                       "pixbuf", THUNAR_CHOOSER_MODEL_COLUMN_ICON,
+                                       "icon", THUNAR_CHOOSER_MODEL_COLUMN_ICON,
                                        NULL);
   renderer = gtk_cell_renderer_text_new ();
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
@@ -281,6 +281,14 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
                                        NULL);
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_CHOOSER_MODEL_COLUMN_NAME);
   gtk_tree_view_append_column (GTK_TREE_VIEW (dialog->tree_view), column);
+
+#if GTK_CHECK_VERSION(2,9,0)
+  /* don't show the expanders with GTK+ 2.9 and above */
+  g_object_set (G_OBJECT (dialog->tree_view),
+                "level-indentation", 24,
+                "show-expanders", FALSE,
+                NULL);
+#endif
 
   /* create the "Custom command" expand */
   dialog->custom_expander = gtk_expander_new_with_mnemonic (_("Use a _custom command:"));
@@ -979,6 +987,16 @@ thunar_chooser_dialog_notify_loading (ThunarChooserModel  *model,
       gtk_tree_view_expand_to_path (GTK_TREE_VIEW (dialog->tree_view), path);
       gtk_tree_path_free (path);
     }
+
+#if GTK_CHECK_VERSION(2,9,0)
+  /* expand the second tree view row (the other applications) */
+  if (G_LIKELY (gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter)))
+    {
+      path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+      gtk_tree_view_expand_to_path (GTK_TREE_VIEW (dialog->tree_view), path);
+      gtk_tree_path_free (path);
+    }
+#endif
 
   /* reset the cursor */
   if (G_LIKELY (GTK_WIDGET_REALIZED (dialog)))

@@ -171,7 +171,7 @@ thunar_chooser_model_init (ThunarChooserModel *model)
   GType column_types[THUNAR_CHOOSER_MODEL_N_COLUMNS] =
   {
     G_TYPE_STRING,
-    GDK_TYPE_PIXBUF,
+    G_TYPE_STRING,
     THUNAR_VFS_TYPE_MIME_APPLICATION,
     PANGO_TYPE_STYLE,
     G_TYPE_BOOLEAN,
@@ -280,32 +280,26 @@ thunar_chooser_model_append (ThunarChooserModel *model,
                              const gchar        *icon_name,
                              GList              *applications)
 {
-  ThunarIconFactory *icon_factory;
-  GtkIconTheme      *icon_theme;
-  GtkTreeIter        parent_iter;
-  GtkTreeIter        child_iter;
-  GdkPixbuf         *icon;
-  GList             *lp;
+  GtkIconTheme *icon_theme;
+  GtkTreeIter   parent_iter;
+  GtkTreeIter   child_iter;
+  GList        *lp;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_MODEL (model));
   _thunar_return_if_fail (title != NULL);
   _thunar_return_if_fail (icon_name != NULL);
 
-  /* query the default icon theme/factory */
+  /* query the default icon theme */
   icon_theme = gtk_icon_theme_get_default ();
-  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
 
   /* insert the section title */
-  icon = gtk_icon_theme_load_icon (icon_theme, icon_name, 24, 0, NULL);
   gtk_tree_store_append (GTK_TREE_STORE (model), &parent_iter, NULL);
   gtk_tree_store_set (GTK_TREE_STORE (model), &parent_iter,
                       THUNAR_CHOOSER_MODEL_COLUMN_NAME, title,
-                      THUNAR_CHOOSER_MODEL_COLUMN_ICON, icon,
+                      THUNAR_CHOOSER_MODEL_COLUMN_ICON, icon_name,
                       THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT, PANGO_WEIGHT_SEMIBOLD,
                       THUNAR_CHOOSER_MODEL_COLUMN_WEIGHT_SET, TRUE,
                       -1);
-  if (G_LIKELY (icon != NULL))
-    g_object_unref (G_OBJECT (icon));
 
   /* check if we have any program items */
   if (G_LIKELY (applications != NULL))
@@ -313,23 +307,13 @@ thunar_chooser_model_append (ThunarChooserModel *model,
       /* insert the program items */
       for (lp = applications; lp != NULL; lp = lp->next)
         {
-          /* determine the icon name for the application */
-          icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
-
-          /* try to load the themed icon for the program */
-          icon = thunar_icon_factory_load_icon (icon_factory, icon_name, 24, NULL, FALSE);
-
           /* append the tree row with the program data */
           gtk_tree_store_append (GTK_TREE_STORE (model), &child_iter, &parent_iter);
           gtk_tree_store_set (GTK_TREE_STORE (model), &child_iter,
                               THUNAR_CHOOSER_MODEL_COLUMN_NAME, thunar_vfs_mime_handler_get_name (lp->data),
-                              THUNAR_CHOOSER_MODEL_COLUMN_ICON, icon,
+                              THUNAR_CHOOSER_MODEL_COLUMN_ICON, thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme),
                               THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION, lp->data,
                               -1);
-
-          /* release the icon (if any) */
-          if (G_LIKELY (icon != NULL))
-            g_object_unref (G_OBJECT (icon));
         }
     }
   else
@@ -342,9 +326,6 @@ thunar_chooser_model_append (ThunarChooserModel *model,
                           THUNAR_CHOOSER_MODEL_COLUMN_STYLE_SET, TRUE,
                           -1);
     }
-
-  /* cleanup */
-  g_object_unref (G_OBJECT (icon_factory));
 }
 
 
@@ -381,7 +362,7 @@ thunar_chooser_model_import (ThunarChooserModel *model,
     }
 
   /* append the "Recommended Applications:" category */
-  thunar_chooser_model_append (model, _("Recommended Applications"), "gnome-settings-default-applications", recommended);
+  thunar_chooser_model_append (model, _("Recommended Applications"), "preferences-desktop-default-applications", recommended);
 
   /* append the "Other Applications:" category */
   thunar_chooser_model_append (model, _("Other Applications"), "gnome-applications", other);

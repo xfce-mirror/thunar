@@ -1,5 +1,15 @@
 2006-10-28	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-chooser-model.c(thunar_chooser_model_import):
+	  Use preferences-desktop-default-applications for the "Recommended
+	  Applications" group.
+	* thunar/thunar-chooser-dialog.c, thunar/thunar-chooser-model.{c,h}:
+	  Use the ExoCellRendererIcon to render the icons instead of preloading
+	  the icons in the model. Don't display the expanders with GTK+ 2.9
+	  and above.
+
+2006-10-28	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-job-private.h, thunar-vfs/thunar-vfs-job.c:
 	  Handle file names with printf(3)-style format arguments properly
 	  when emitting the "info-message" signal from a job. Bug #2468.

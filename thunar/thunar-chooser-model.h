@@ -37,7 +37,7 @@ typedef struct _ThunarChooserModel      ThunarChooserModel;
 /**
  * ThunarChooserModelColumn:
  * @THUNAR_CHOOSER_MODEL_COLUMN_NAME        : the name of the application.
- * @THUNAR_CHOOSER_MODEL_COLUMN_ICON        : the icon of the application.
+ * @THUNAR_CHOOSER_MODEL_COLUMN_ICON        : the name or absolute path of the application's icon.
  * @THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION : the #ThunarVfsMimeApplication object.
  * @THUNAR_CHOOSER_MODEL_COLUMN_STYLE       : custom font style.
  * @THUNAR_CHOOSER_MODEL_COLUMN_STYLE_SET   : whether to actually use the custom font style.
