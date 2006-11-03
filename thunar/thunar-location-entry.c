@@ -25,10 +25,13 @@
 
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-entry.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-path-entry.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-shortcuts-model.h>
 
 
 
@@ -72,6 +75,10 @@ static gboolean    thunar_location_entry_accept_focus          (ThunarLocationBa
 static void        thunar_location_entry_activate              (GtkWidget                *path_entry,
                                                                 ThunarLocationEntry      *location_entry);
 static gboolean    thunar_location_entry_reset                 (ThunarLocationEntry      *location_entry);
+static void        thunar_location_entry_button_clicked        (GtkWidget                *button,
+                                                                ThunarLocationEntry      *location_entry);
+static void        thunar_location_entry_item_activated        (GtkWidget                *item,
+                                                                ThunarLocationEntry      *location_entry);
 
 
 
@@ -94,7 +101,6 @@ struct _ThunarLocationEntry
 
 
 static GObjectClass *thunar_location_entry_parent_class;
-static guint         location_entry_signals[LAST_SIGNAL];
 
 
 
@@ -182,14 +188,13 @@ thunar_location_entry_class_init (ThunarLocationEntryClass *klass)
    * reset the @location_entry contents to the current directory.
    * This is an internal signal used to bind the action to keys.
    **/
-  location_entry_signals[RESET] =
-    g_signal_new (I_("reset"),
-                  G_TYPE_FROM_CLASS (klass),
-                  G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
-                  G_STRUCT_OFFSET (ThunarLocationEntryClass, reset),
-                  g_signal_accumulator_true_handled, NULL,
-                  _thunar_marshal_BOOLEAN__VOID,
-                  G_TYPE_BOOLEAN, 0);
+  g_signal_new (I_("reset"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST | G_SIGNAL_ACTION,
+                G_STRUCT_OFFSET (ThunarLocationEntryClass, reset),
+                g_signal_accumulator_true_handled, NULL,
+                _thunar_marshal_BOOLEAN__VOID,
+                G_TYPE_BOOLEAN, 0);
 
   /* setup the key bindings for the location entry */
   binding_set = gtk_binding_set_by_class (klass);
@@ -230,7 +235,10 @@ thunar_location_entry_location_bar_init (ThunarLocationBarIface *iface)
 static void
 thunar_location_entry_init (ThunarLocationEntry *location_entry)
 {
-  gtk_box_set_spacing (GTK_BOX (location_entry), 2);
+  GtkWidget *button;
+  GtkWidget *arrow;
+
+  gtk_box_set_spacing (GTK_BOX (location_entry), 0);
   gtk_container_set_border_width (GTK_CONTAINER (location_entry), 4);
 
   location_entry->path_entry = thunar_path_entry_new ();
@@ -238,6 +246,16 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   g_signal_connect_after (G_OBJECT (location_entry->path_entry), "activate", G_CALLBACK (thunar_location_entry_activate), location_entry);
   gtk_box_pack_start (GTK_BOX (location_entry), location_entry->path_entry, TRUE, TRUE, 0);
   gtk_widget_show (location_entry->path_entry);
+
+  button = gtk_toggle_button_new ();
+  g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_location_entry_button_clicked), location_entry);
+  g_signal_connect (G_OBJECT (button), "pressed", G_CALLBACK (thunar_location_entry_button_clicked), location_entry);
+  gtk_box_pack_start (GTK_BOX (location_entry), button, FALSE, FALSE, 0);
+  gtk_widget_show (button);
+
+  arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
+  gtk_container_add (GTK_CONTAINER (button), arrow);
+  gtk_widget_show (arrow);
 }
 
 
@@ -421,6 +439,233 @@ thunar_location_entry_reset (ThunarLocationEntry *location_entry)
   gtk_editable_select_region (GTK_EDITABLE (location_entry->path_entry), 0, -1);
 
   return TRUE;
+}
+
+
+
+static void
+menu_position (GtkMenu  *menu,
+               gint     *x,
+               gint     *y,
+               gboolean *push_in,
+               gpointer  entry)
+{
+  GtkRequisition entry_request;
+  GtkRequisition menu_request;
+  GdkRectangle   geometry;
+  GdkScreen     *screen;
+  GtkWidget     *toplevel = gtk_widget_get_toplevel (entry);
+  gint           monitor;
+  gint           x0;
+  gint           y0;
+
+  gtk_widget_translate_coordinates (GTK_WIDGET (entry), toplevel, 0, 0, &x0, &y0);
+
+  gtk_widget_size_request (GTK_WIDGET (entry), &entry_request);
+  gtk_widget_size_request (GTK_WIDGET (menu), &menu_request);
+
+  gdk_window_get_position (GTK_WIDGET (entry)->window, x, y);
+
+  *x += x0 + gtk_container_get_border_width (GTK_CONTAINER (entry));
+  *y += y0 + (entry_request.height - gtk_container_get_border_width (GTK_CONTAINER (entry)));
+
+  /* verify the the menu is on-screen */
+  screen = gtk_widget_get_screen (GTK_WIDGET (entry));
+  if (G_LIKELY (screen != NULL))
+    {
+      monitor = gdk_screen_get_monitor_at_point (screen, *x, *y);
+      gdk_screen_get_monitor_geometry (screen, monitor, &geometry);
+      if (*y + menu_request.height > geometry.y + geometry.height)
+        *y -= menu_request.height - entry_request.height;
+    }
+
+  *push_in = TRUE;
+}
+
+
+
+static void
+thunar_location_entry_button_clicked (GtkWidget           *button,
+                                      ThunarLocationEntry *location_entry)
+{
+  ThunarShortcutsModel *model;
+  ThunarIconFactory    *icon_factory;
+  ThunarVfsVolume      *volume;
+  GtkIconTheme         *icon_theme;
+  const gchar          *icon_name;
+  GtkTreeIter           iter;
+  ThunarFile           *file;
+  GtkWidget            *image;
+  GtkWidget            *item;
+  GtkWidget            *menu;
+  GdkPixbuf            *icon;
+  gint                  icon_size;
+  gint                  width;
+
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
+  _thunar_return_if_fail (GTK_IS_TOGGLE_BUTTON (button));
+
+  /* allocate a new menu */
+  menu = gtk_menu_new ();
+
+  /* determine the icon theme and factory */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (button));
+  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+
+  /* determine the icon size for menus */
+  gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_size, &icon_size);
+
+  /* load the menu items from the shortcuts model */
+  model = thunar_shortcuts_model_get_default ();
+  if (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model), &iter))
+    {
+      do
+        {
+          /* determine the file and volume for the item */
+          gtk_tree_model_get (GTK_TREE_MODEL (model), &iter,
+                              THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file,
+                              THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume,
+                              -1);
+
+          /* check if we have a separator here */
+          if (G_UNLIKELY (file == NULL && volume == NULL))
+            {
+              /* generate a separator the menu */
+              item = gtk_separator_menu_item_new ();
+            }
+          else if (G_UNLIKELY (volume != NULL))
+            {
+              /* generate an image menu item for the volume */
+              item = gtk_image_menu_item_new_with_label (thunar_vfs_volume_get_name (volume));
+
+              /* load the icon for the volume */
+              icon_name = thunar_vfs_volume_lookup_icon_name (volume, icon_theme);
+              icon = thunar_icon_factory_load_icon (icon_factory, icon_name, icon_size, NULL, FALSE);
+              if (G_LIKELY (icon != NULL))
+                {
+                  /* generate an image for the menu item */
+                  image = gtk_image_new_from_pixbuf (icon);
+                  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+                  g_object_unref (G_OBJECT (icon));
+                  gtk_widget_show (image);
+                }
+            }
+          else
+            {
+              /* generate an image menu item for the file */
+              item = gtk_image_menu_item_new_with_label (thunar_file_get_display_name (file));
+
+              /* load the icon for the file and generate the image for the menu item */
+              icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_size);
+              image = gtk_image_new_from_pixbuf (icon);
+              gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+              g_object_unref (G_OBJECT (icon));
+              gtk_widget_show (image);
+            }
+
+          /* connect the file and volume to the item */
+          g_object_set_data_full (G_OBJECT (item), I_("thunar-vfs-volume"), volume, g_object_unref);
+          g_object_set_data_full (G_OBJECT (item), I_("thunar-file"), file, g_object_unref);
+
+          /* append the new item to the menu */
+          g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_location_entry_item_activated), location_entry);
+          gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+          gtk_widget_show (item);
+        }
+      while (gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter));
+    }
+
+  /* make sure the menu has atleast the same width as the location entry */
+  width = GTK_WIDGET (location_entry)->allocation.width - 2 * gtk_container_get_border_width (GTK_CONTAINER (location_entry));
+  if (G_LIKELY (menu->allocation.width < width))
+    gtk_widget_set_size_request (menu, width, -1);
+
+  /* select the first visible or selectable item in the menu */
+  gtk_menu_shell_select_first (GTK_MENU_SHELL (menu), TRUE);
+
+  /* enable the button, making sure that we do not recurse on the "clicked" signal by temporarily blocking the handler */
+  g_signal_handlers_block_by_func (G_OBJECT (button), G_CALLBACK (thunar_location_entry_button_clicked), location_entry);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), TRUE);
+  g_signal_handlers_unblock_by_func (G_OBJECT (button), G_CALLBACK (thunar_location_entry_button_clicked), location_entry);
+
+  /* run the menu, taking ownership over the menu object */
+  thunar_gtk_menu_run (GTK_MENU (menu), button, menu_position, location_entry, 1, gtk_get_current_event_time ());
+
+  /* disable the button, making sure that we do not recurse on the "clicked" signal by temporarily blocking the handler */
+  g_signal_handlers_block_by_func (G_OBJECT (button), G_CALLBACK (thunar_location_entry_button_clicked), location_entry);
+  gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (button), FALSE);
+  g_signal_handlers_unblock_by_func (G_OBJECT (button), G_CALLBACK (thunar_location_entry_button_clicked), location_entry);
+
+  /* clean up */
+  g_object_unref (G_OBJECT (icon_factory));
+  g_object_unref (G_OBJECT (model));
+}
+
+
+
+static void
+thunar_location_entry_item_activated (GtkWidget           *item,
+                                      ThunarLocationEntry *location_entry)
+{
+  ThunarVfsVolume *volume;
+  ThunarFile      *file;
+  GtkWidget       *window;
+  GError          *error = NULL;
+
+  _thunar_return_if_fail (GTK_IS_MENU_ITEM (item));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
+
+  /* determine the toplevel window */
+  window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
+
+  /* check if the item corresponds to a volume */
+  volume = g_object_get_data (G_OBJECT (item), "thunar-vfs-volume");
+  if (G_UNLIKELY (volume != NULL))
+    {
+      /* check if the volume isn't already mounted */
+      if (G_LIKELY (!thunar_vfs_volume_is_mounted (volume)))
+        {
+          /* try to mount the volume */
+          if (!thunar_vfs_volume_mount (volume, window, &error))
+            {
+              /* display an error dialog to inform the user */
+              thunar_dialogs_show_error (window, error, _("Failed to mount \"%s\""), thunar_vfs_volume_get_name (volume));
+              g_error_free (error);
+              return;
+            }
+        }
+
+      /* try to determine the mount point of the volume */
+      file = thunar_file_get_for_path (thunar_vfs_volume_get_mount_point (volume), &error);
+      if (G_UNLIKELY (file == NULL))
+        {
+          /* display an error dialog to inform the user */
+          thunar_dialogs_show_error (window, error, _("Failed to determine the mount point for %s"), thunar_vfs_volume_get_name (volume));
+          g_error_free (error);
+          return;
+        }
+    }
+  else
+    {
+      /* determine the file from the item */
+      file = g_object_get_data (G_OBJECT (item), "thunar-file");
+      if (G_LIKELY (file != NULL))
+        g_object_ref (G_OBJECT (file));
+    }
+
+  /* check if we have a file object now */
+  if (G_LIKELY (file != NULL))
+    {
+      /* make sure that this is actually a directory */
+      if (thunar_file_is_directory (file))
+        {
+          /* open the new directory */
+          thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), file);
+        }
+
+      /* cleanup */
+      g_object_unref (G_OBJECT (file));
+    }
 }
 
 
