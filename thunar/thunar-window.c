@@ -2302,6 +2302,10 @@ thunar_window_set_current_directory (ThunarWindow *window,
     
       /* update window icon and title */
       thunar_window_current_directory_changed (current_directory, window);
+
+      /* grab the focus to the main view */
+      if (G_LIKELY (window->view != NULL))
+        gtk_widget_grab_focus (window->view);
     }
 
   /* enable the 'Open new window' action if we have a valid directory */
