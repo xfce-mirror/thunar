@@ -1,5 +1,10 @@
 2006-11-03	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-icon-renderer.c(thunar_icon_renderer_render): Make sure
+	  emblems don't get too large with SVG icon themes. Bug #2466.
+
+2006-11-03	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-trash-action.{c,h}, thunar/Makefile.am,
 	  thunar/thunar-stock.{c,h}, thunar/thunar-window-ui.xml,
 	  thunar/thunar-window.c: Add a "Trash" entry to the "Go" menu.

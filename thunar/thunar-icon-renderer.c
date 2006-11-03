@@ -504,10 +504,10 @@ thunar_icon_renderer_render (GtkCellRenderer     *renderer,
               emblem_area.height = gdk_pixbuf_get_height (emblem);
 
               /* shrink insane emblems */
-              if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > (2 * icon_renderer->size) / 3))
+              if (G_UNLIKELY (MAX (emblem_area.width, emblem_area.height) > MIN ((2 * icon_renderer->size) / 3, 36)))
                 {
                   /* scale down the emblem */
-                  temp = exo_gdk_pixbuf_scale_ratio (emblem, (2 * icon_renderer->size) / 3);
+                  temp = exo_gdk_pixbuf_scale_ratio (emblem, MIN ((2 * icon_renderer->size) / 3, 36));
                   g_object_unref (G_OBJECT (emblem));
                   emblem = temp;
 
