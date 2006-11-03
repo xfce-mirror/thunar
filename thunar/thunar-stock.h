@@ -22,10 +22,12 @@
 
 G_BEGIN_DECLS;
 
-#define THUNAR_STOCK_DESKTOP    "thunar-desktop"    /* see ThunarLauncher */
-#define THUNAR_STOCK_HOME       "thunar-home"       /* see ThunarWindow */
-#define THUNAR_STOCK_SHORTCUTS  "thunar-shortcuts"  /* see ThunarShortcutsPane */
-#define THUNAR_STOCK_TEMPLATES  "thunar-templates"  /* see ThunarWindow */
+#define THUNAR_STOCK_DESKTOP      "thunar-desktop"      /* see ThunarLauncher */
+#define THUNAR_STOCK_HOME         "thunar-home"         /* see ThunarWindow */
+#define THUNAR_STOCK_SHORTCUTS    "thunar-shortcuts"    /* see ThunarShortcutsPane */
+#define THUNAR_STOCK_TEMPLATES    "thunar-templates"    /* see ThunarWindow */
+#define THUNAR_STOCK_TRASH_EMPTY  "thunar-trash-empty"  /* see ThunarTrashAction */
+#define THUNAR_STOCK_TRASH_FULL   "thunar-trash-full"   /* see ThunarTrashAction */
 
 void thunar_stock_init (void) G_GNUC_INTERNAL;
 

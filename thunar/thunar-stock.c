@@ -45,10 +45,12 @@ typedef struct
 /* keep in sync with thunar-stock.h */
 static const ThunarStockIcon thunar_stock_icons[] =
 {
-  { THUNAR_STOCK_DESKTOP,   "gnome-fs-desktop",       },
-  { THUNAR_STOCK_HOME,      "gnome-fs-home",          },
-  { THUNAR_STOCK_SHORTCUTS, "stock_thunar-shortcuts", },
-  { THUNAR_STOCK_TEMPLATES, "stock_thunar-templates", },
+  { THUNAR_STOCK_DESKTOP,     "gnome-fs-desktop",       },
+  { THUNAR_STOCK_HOME,        "gnome-fs-home",          },
+  { THUNAR_STOCK_SHORTCUTS,   "stock_thunar-shortcuts", },
+  { THUNAR_STOCK_TEMPLATES,   "stock_thunar-templates", },
+  { THUNAR_STOCK_TRASH_EMPTY, "gnome-fs-trash-empty",   },
+  { THUNAR_STOCK_TRASH_FULL,  "gnome-fs-trash-full",    },
 };
 
 

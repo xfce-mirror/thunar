@@ -49,6 +49,7 @@
 #include <thunar/thunar-statusbar.h>
 #include <thunar/thunar-stock.h>
 #include <thunar/thunar-throbber.h>
+#include <thunar/thunar-trash-action.h>
 #include <thunar/thunar-tree-pane.h>
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-window-ui.h>
@@ -146,6 +147,8 @@ static void     thunar_window_action_go_up                (GtkAction            
 static void     thunar_window_action_open_home            (GtkAction              *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_open_templates       (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_trash           (GtkAction              *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_open_location        (GtkAction              *action,
                                                            ThunarWindow           *window);
@@ -591,6 +594,12 @@ thunar_window_init (ThunarWindow *window)
   window->history = g_object_new (THUNAR_TYPE_HISTORY, "action-group", window->action_group, NULL);
   g_signal_connect_swapped (G_OBJECT (window->history), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->history), "current-directory");
+
+  /* setup the "open-trash" action */
+  action = thunar_trash_action_new ();
+  g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_window_action_open_trash), window);
+  gtk_action_group_add_action (window->action_group, action);
+  g_object_unref (G_OBJECT (action));
 
   /*
    * add view options
@@ -1715,7 +1724,7 @@ thunar_window_action_open_home (GtkAction    *action,
   if (G_UNLIKELY (home_file == NULL))
     {
       /* display an error to the user */
-      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open home directory"));
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open the home folder"));
       g_error_free (error);
     }
   else
@@ -1830,12 +1839,47 @@ thunar_window_action_open_templates (GtkAction    *action,
   /* display an error dialog if something went wrong */
   if (G_UNLIKELY (error != NULL))
     {
-      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open templates folder"));
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open the templates folder"));
       g_error_free (error);
     }
 
   /* release our reference on the ~/Templates path */
   thunar_vfs_path_unref (templates_path);
+}
+
+
+
+static void
+thunar_window_action_open_trash (GtkAction    *action,
+                                 ThunarWindow *window)
+{
+  ThunarVfsPath *trash_bin_path;
+  ThunarFile    *trash_bin;
+  GError        *error = NULL;
+
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  /* determine the path to the trash bin */
+  trash_bin_path = thunar_vfs_path_get_for_trash ();
+
+  /* determine the file for the trash bin */
+  trash_bin = thunar_file_get_for_path (trash_bin_path, &error);
+  if (G_UNLIKELY (trash_bin == NULL))
+    {
+      /* display an error to the user */
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to display the contents of the trash can"));
+      g_error_free (error);
+    }
+  else
+    {
+      /* open the trash folder */
+      thunar_window_set_current_directory (window, trash_bin);
+      g_object_unref (G_OBJECT (trash_bin));
+    }
+
+  /* release our reference on the trash bin path */
+  thunar_vfs_path_unref (trash_bin_path);
 }
 
 
