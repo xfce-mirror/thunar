@@ -182,7 +182,11 @@ Thunar_SOURCES =							\
 	thunar-view.h							\
 	thunar-window.c							\
 	thunar-window.h							\
-	thunar-window-ui.h
+	thunar-window-ui.h						\
+	xfce-heading.c							\
+	xfce-heading.h							\
+	xfce-titled-dialog.c						\
+	xfce-titled-dialog.h
 
 Thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\

@@ -23,7 +23,6 @@
 
 #include <gdk/gdkkeysyms.h>
 
-#include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-enum-types.h>
@@ -32,6 +31,7 @@
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
+#include <thunar/xfce-titled-dialog.h>
 
 
 
@@ -45,13 +45,13 @@ static void thunar_preferences_dialog_response   (GtkDialog                    *
 
 struct _ThunarPreferencesDialogClass
 {
-  ThunarAbstractDialogClass __parent__;
+  XfceTitledDialogClass __parent__;
 };
 
 struct _ThunarPreferencesDialog
 {
-  ThunarAbstractDialog __parent__;
-  ThunarPreferences   *preferences;
+  XfceTitledDialog   __parent__;
+  ThunarPreferences *preferences;
 };
 
 
@@ -81,7 +81,7 @@ thunar_preferences_dialog_get_type (void)
         NULL,
       };
 
-      type = g_type_register_static (THUNAR_TYPE_ABSTRACT_DIALOG, I_("ThunarPreferencesDialog"), &info, 0);
+      type = g_type_register_static (XFCE_TYPE_TITLED_DIALOG, I_("ThunarPreferencesDialog"), &info, 0);
     }
 
   return type;
@@ -215,6 +215,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   /* configure the dialog properties */
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
   gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
+  gtk_window_set_icon_name (GTK_WINDOW (dialog), "xfce-filemanager");
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Manager Preferences"));
 
