@@ -1367,27 +1367,35 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
   /* determine the node for the folder */
   node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
 
-  /* process all files */
-  for (lp = files; lp != NULL; lp = lp->next)
+  /* check if the node has any visible children */
+  if (G_LIKELY (node->children != NULL))
     {
-      /* find the child node for the file */
-      for (child_node = g_node_first_child (node); child_node != NULL; child_node = g_node_next_sibling (child_node))
-        if (child_node->data != NULL && THUNAR_TREE_MODEL_ITEM (child_node->data)->file == lp->data)
-          break;
+      /* process all files */
+      for (lp = files; lp != NULL; lp = lp->next)
+        {
+          /* find the child node for the file */
+          for (child_node = g_node_first_child (node); child_node != NULL; child_node = g_node_next_sibling (child_node))
+            if (child_node->data != NULL && THUNAR_TREE_MODEL_ITEM (child_node->data)->file == lp->data)
+              break;
 
-      /* drop the child node (and all descendant nodes) from the model */
-      if (G_LIKELY (child_node != NULL))
-        g_node_traverse (child_node, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
+          /* drop the child node (and all descendant nodes) from the model */
+          if (G_LIKELY (child_node != NULL))
+            g_node_traverse (child_node, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
+        }
+
+      /* check if all children of the node where dropped */
+      if (G_UNLIKELY (node->children == NULL))
+        {
+          /* determine the iterator for the folder node */
+          iter.stamp = model->stamp;
+          iter.user_data = node;
+
+          /* emit "row-has-child-toggled" for the folder node */
+          path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
+          gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model), path, &iter);
+          gtk_tree_path_free (path);
+        }
     }
-
-  /* determine the iterator for the folder node */
-  iter.stamp = model->stamp;
-  iter.user_data = node;
-
-  /* emit "row-has-child-toggled" for the folder node */
-  path = gtk_tree_model_get_path (GTK_TREE_MODEL (model), &iter);
-  gtk_tree_model_row_has_child_toggled (GTK_TREE_MODEL (model), path, &iter);
-  gtk_tree_path_free (path);
 }
 
 

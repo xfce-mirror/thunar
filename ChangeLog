@@ -1,5 +1,12 @@
 2006-11-04	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-tree-model.c(thunar_tree_model_item_files_removed):
+	  The "row-has-child-toggled" signal must not be emitted if the
+	  children of the row did not change, otherwise newer GtkTreeView's
+	  will loose sync with the model and probably crash. Bug #2372.
+
+2006-11-04	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-location-entry.c: Merge drop-down menu making shortcuts
 	  accessible even if the classic file manager look'n'feel is being
 	  used. Bug #2024.
