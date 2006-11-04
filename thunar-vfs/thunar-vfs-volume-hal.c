@@ -537,19 +537,15 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
                               LibHalVolume       *hv,
                               LibHalDrive        *hd)
 {
-  LibHalStoragePolicy *policy;
-  const gchar         *desired_mount_point;
-  const gchar         *volume_label;
-  gchar               *mount_root;
-  gchar               *basename;
-  gchar               *filename;
+  const gchar *volume_label;
+  gchar       *desired_mount_point;
+  gchar       *mount_root;
+  gchar       *basename;
+  gchar       *filename;
 
   _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_HAL (volume_hal));
   _thunar_vfs_return_if_fail (hv != NULL);
   _thunar_vfs_return_if_fail (hd != NULL);
-
-  /* just allocate a policy (doesn't seem to be very useful) */
-  policy = libhal_storage_policy_new ();
 
   /* reset the volume status */
   volume_hal->status = 0;
@@ -679,8 +675,8 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
   /* check if we have to figure out the mount point ourself */
   if (G_UNLIKELY (volume_hal->mount_point == NULL))
     {
-      /* ask HAL for the default mount root (fallback to /media) */
-      mount_root = libhal_drive_policy_default_get_mount_root (context);
+      /* ask HAL for the default mount root (falling back to /media otherwise) */
+      mount_root = libhal_device_get_property_string (context, "/org/freedesktop/Hal/devices/computer", "storage.policy.default.mount_root", NULL);
       if (G_UNLIKELY (mount_root == NULL || !g_path_is_absolute (mount_root)))
         {
           /* fallback to /media (seems to be sane) */
@@ -695,13 +691,14 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
       if (G_UNLIKELY (volume_hal->mount_point == NULL))
         {
           /* determine the desired mount point and prepend the mount root */
-          desired_mount_point = libhal_volume_policy_get_desired_mount_point (hd, hv, policy);
+          desired_mount_point = libhal_device_get_property_string (context, volume_hal->udi, "volume.policy.desired_mount_point", NULL);
           if (G_LIKELY (desired_mount_point != NULL && *desired_mount_point != '\0'))
             {
               filename = g_build_filename (mount_root, desired_mount_point, NULL);
               volume_hal->mount_point = thunar_vfs_path_new (filename, NULL);
               g_free (filename);
             }
+          libhal_free_string (desired_mount_point);
         }
 
       /* ok, last fallback, just use <mount-root>/<device> */
@@ -724,9 +721,6 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
 
   /* emit the "changed" signal */
   thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
-
-  /* and release the policy again */
-  libhal_storage_policy_free (policy);
 }
 
 
