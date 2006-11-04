@@ -11,16 +11,11 @@ INCLUDES =								\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)
 
-TESTS_ENVIRONMENT =							\
-	PATH_FSTAB=$(srcdir)/data/test-thunar-vfs-volume-bsd.fstab
-
 TESTS =									\
-	test-thunar-vfs-path						\
-	test-thunar-vfs-volume-bsd
+	test-thunar-vfs-path
 
 check_PROGRAMS =							\
-	test-thunar-vfs-path						\
-	test-thunar-vfs-volume-bsd
+	test-thunar-vfs-path
 
 test_thunar_vfs_path_SOURCES =						\
 	test-thunar-vfs-path.c
@@ -29,16 +24,6 @@ test_thunar_vfs_path_DEPENDENCIES =					\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
 
 test_thunar_vfs_path_LDADD =						\
-	$(GTHREAD_LIBS)							\
-	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
-
-test_thunar_vfs_volume_bsd_SOURCES =					\
-	test-thunar-vfs-volume-bsd.c
-
-test_thunar_vfs_volume_bsd_DEPENDENCIES =				\
-	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
-
-test_thunar_vfs_volume_bsd_LDADD =					\
 	$(GTHREAD_LIBS)							\
 	$(top_builddir)/thunar-vfs/libthunar-vfs-$(THUNAR_VERSION_API).la
 

@@ -1,3 +1,62 @@
+0.5.0rc1
+========
+- Add a "Trash" menu entry to the "Go" menu (#2486).
+- Add a drop-down menu to the toolbar-style location bar to enable quick
+  access to the shortcuts even if the classic file manager look'n'feel is
+  being used (#2024).
+- Add support for HAL on FreeBSD. Make HAL the preferred volume manager on
+  FreeBSD.
+- Adjust the preferences dialog to match the look of the other Xfce preferences
+  dialogs (#2379).
+- Allow to change the icon of .desktop files (#2150).
+- Allow Thunar extensions to add menu items to the Drag'n'Drop context menu.
+  This is for example used by the thunar-archive-plugin to add an "Extract
+  Here" action, which extracts a dragged archive file at the drop location.
+- Display the real mime type as tooltip for the "Kind" label in the properties
+  dialog (#2369).
+- Keep the modification time when copying files (#2244).
+- Make sure emblems don't get too large with SVG icon themes (#2466).
+- Make sure Thunar is restarted prior to xfdesktop, so the trash support in
+  xfdesktop works as expected even if D-Bus autoactivation is not setup
+  properly.
+- Place automake options into configure.in.in instead of Makefile.am and add
+  the tar-ustar option to fix building distributions on system where tar
+  defaults to the deprecated V7 format (#2304).
+- Place cursor on the first selected file after a new file or folder was
+  created (#2368).
+- Place focus on the main view after changing the current directory (#2367).
+- Properly clean up the path bar when a folder that is currently displayed
+  on the path bar is deleted.
+- Properly validate the Name of .desktop files (#2227).
+- Update the icon mime icon lookup to try icon names from Icon Naming Spec
+  first, and fallback to legacy GNOME icon names.
+- Use default dbus connection timeout (#2243).
+- Use exo-open for the default "Open Terminal Here" action (#2256).
+- Use the thumbnail database to load SVG icons from the icon theme, because
+  loading SVG is quite slow and takes a lot more memory than loading and
+  scaling PNG icons from the thumbnail database.
+- Fix usage of deprecated HAL policy functions (#2475).
+- Fix crash with newer GtkTreeView's if the "row-has-child-toggled" signal is
+  emitted even if the child state of a node did not change (#2372).
+- Fix several race conditions that were introduced over time and prevented the
+  "new-files" job handling from working properly with Gamin and automatic
+  folder reload (#2199).
+- Fix invalid calculation of free space on OpenBSD/amd64 (#2383).
+- Fix crash due to invalid handling of file names with printf(3)-style format
+  arguments (#2468).
+- Fix crash on systems with small per-thread stacks (#2269).
+- Fix installation on Win32 platforms (#2432).
+- Fix build with GLib 2.6.x (#2317).
+- Fix build with latest dbus-glib (#2263).
+- Updated translations: Pau Rul-lan Ferragut (ca), Michal Várady (cs), Benedikt
+			Meurer (de), Stavros Giannouris (el), Jarbas Araujo,
+			Antono Vasiljev and Sylvain Vedrenne (eo), Piarres
+			Beobide (eu), Jari Rhkonen (fi), Maximilian Schleiss
+			(fr), Piotr Maliński (pl), Adriano Winter Bess (pt_BR),
+			Andrey Fedoseev (ru), Hydonsingore Cia (zh_TW)
+- New translations: Sonam Pelden (dz)
+
+
 0.4.0rc1
 ========
 - An implementation of the XDG Trash Specification was imported and is now
