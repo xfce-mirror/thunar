@@ -112,6 +112,8 @@ static void           thunar_location_buttons_clicked                   (ThunarL
 static void           thunar_location_buttons_context_menu              (ThunarLocationButton       *button,
                                                                          GdkEventButton             *event,
                                                                          ThunarLocationButtons      *buttons);
+static void           thunar_location_buttons_gone                      (ThunarLocationButton       *button,
+                                                                         ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_create_folder      (GtkAction                  *action,
                                                                          ThunarLocationButtons      *buttons);
 static void           thunar_location_buttons_action_down_folder        (GtkAction                  *action,
@@ -921,6 +923,7 @@ thunar_location_buttons_make_button (ThunarLocationButtons *buttons,
 
   /* connect signal handlers */
   g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_location_buttons_clicked), buttons);
+  g_signal_connect (G_OBJECT (button), "gone", G_CALLBACK (thunar_location_buttons_gone), buttons);
   g_signal_connect (G_OBJECT (button), "context-menu", G_CALLBACK (thunar_location_buttons_context_menu), buttons);
 
   return button;
@@ -1211,6 +1214,24 @@ thunar_location_buttons_clicked (ThunarLocationButton  *button,
 
   /* notify the surrounding module that we want to change to a different directory.  */
   thunar_navigator_change_directory (THUNAR_NAVIGATOR (buttons), buttons->current_directory);
+}
+
+
+
+static void
+thunar_location_buttons_gone (ThunarLocationButton  *button,
+                              ThunarLocationButtons *buttons)
+{
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTON (button));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_BUTTONS (buttons));
+  _thunar_return_if_fail (g_list_find (buttons->list, button) != NULL);
+
+  /* drop all buttons up to the button that emitted the "gone" signal */
+  while (buttons->list->data != button)
+    gtk_widget_destroy (buttons->list->data);
+
+  /* drop the button itself */
+  gtk_widget_destroy (GTK_WIDGET (button));
 }
 
 

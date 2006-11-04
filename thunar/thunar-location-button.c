@@ -50,6 +50,7 @@ enum
 {
   CLICKED,
   CONTEXT_MENU,
+  GONE,
   LAST_SIGNAL,
 };
 
@@ -263,6 +264,21 @@ thunar_location_button_class_init (ThunarLocationButtonClass *klass)
                   0, NULL, NULL,
                   g_cclosure_marshal_VOID__BOXED,
                   G_TYPE_NONE, 1, GDK_TYPE_EVENT);
+
+  /**
+   * ThunarLocationButton::gone:
+   * @location_button : a #ThunarLocationButton.
+   *
+   * Emitted by @location_button when the file associated with
+   * the button is deleted.
+   **/
+  location_button_signals[GONE] =
+    g_signal_new (I_("gone"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_RUN_LAST,
+                  0, NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
 }
 
 
@@ -509,8 +525,8 @@ thunar_location_button_file_destroy (ThunarLocationButton *location_button,
   _thunar_return_if_fail (location_button->file == file);
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  /* the file is gone, no need to keep the button around anymore */
-  gtk_widget_destroy (GTK_WIDGET (location_button));
+  /* the file is gone, emit the "gone" signal */
+  g_signal_emit (G_OBJECT (location_button), location_button_signals[GONE], 0);
 }
 
 

@@ -1,5 +1,11 @@
 2006-11-04	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-location-button.c, thunar/thunar-location-buttons.c:
+	  Properly clean up the path bar when a folder on the path bar is
+	  deleted.
+
+2006-11-04	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-tree-model.c(thunar_tree_model_item_files_removed):
 	  The "row-has-child-toggled" signal must not be emitted if the
 	  children of the row did not change, otherwise newer GtkTreeView's
