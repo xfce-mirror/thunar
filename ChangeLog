@@ -1,3 +1,11 @@
+2006-11-06	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-path-entry.c(thunar_path_entry_changed): Changing the
+	  model currently in used by a GtkEntryCompletion is very slow with
+	  recent GTK+ versions. Therefore we disconnect the model first when
+	  changing the folder and reconnect it to the entry completion after-
+	  wards. Bug #1681.
+
 2006-11-05	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-shortcuts-view.c(thunar_shortcuts_view_drag_leave):

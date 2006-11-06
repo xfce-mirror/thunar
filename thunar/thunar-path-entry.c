@@ -794,6 +794,7 @@ thunar_path_entry_changed (GtkEditable *editable)
   ThunarVfsPath      *folder_path = NULL;
   ThunarVfsPath      *file_path = NULL;
   ThunarFolder       *folder;
+  GtkTreeModel       *model;
   const gchar        *text;
   ThunarFile         *current_folder;
   ThunarFile         *current_file;
@@ -848,7 +849,19 @@ thunar_path_entry_changed (GtkEditable *editable)
 
       /* try to open the current-folder file as folder */
       folder = (current_folder != NULL) ? thunar_folder_get_for_file (current_folder) : NULL;
-      thunar_list_model_set_folder (THUNAR_LIST_MODEL (gtk_entry_completion_get_model (completion)), folder);
+
+      /* set the new folder for the completion model, but disconnect the model from the
+       * completion first, because GtkEntryCompletion has become very slow recently when
+       * updating the model being used (http://bugzilla.xfce.org/show_bug.cgi?id=1681).
+       */
+      model = gtk_entry_completion_get_model (completion);
+      g_object_ref (G_OBJECT (model));
+      gtk_entry_completion_set_model (completion, NULL);
+      thunar_list_model_set_folder (THUNAR_LIST_MODEL (model), folder);
+      gtk_entry_completion_set_model (completion, model);
+      g_object_unref (G_OBJECT (model));
+
+      /* cleanup */
       if (G_LIKELY (folder != NULL))
         g_object_unref (G_OBJECT (folder));
     }
