@@ -50,21 +50,6 @@ AC_ISC_POSIX()
 AC_MINIX()
 
 dnl ********************************
-dnl *** Check for Win32 variants ***
-dnl ********************************
-AC_MSG_CHECKING([if building for some Win32 platform])
-case "$host" in
-*-*-mingw*|*-*-cygwin*)
-  ac_bm_platform_win32=yes
-  ;;
-*)
-  ac_bm_platform_win32=no
-  ;;
-esac
-AC_MSG_RESULT([$ac_bm_platform_win32])
-AM_CONDITIONAL([PLATFORM_WIN32], [test x"$ac_bm_platform_win32" = x"yes"])
-
-dnl ********************************
 dnl *** Check for basic programs ***
 dnl ********************************
 AC_PROG_CC()
