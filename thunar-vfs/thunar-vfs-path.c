@@ -1058,14 +1058,18 @@ thunar_vfs_path_list_to_string (GList *path_list)
     {
       for (;;)
         {
-          /* increase the buffer automatically if required (already including the line break) */
-          n = thunar_vfs_path_to_uri (lp->data, buffer + bufpos, bufsize - (bufpos + 2), NULL);
-          if (G_UNLIKELY (n < 0))
+          /* determine the size required to store the URI and the line break */
+          n = thunar_vfs_path_escape_uri_length (lp->data) + 2;
+          if (n > (bufsize - bufpos))
             {
+              /* automatically increase the buffer */
               bufsize += 512;
               buffer = g_realloc (buffer, bufsize + 1);
               continue;
             }
+
+          /* append the URI to the buffer */
+          n = thunar_vfs_path_escape_uri (lp->data, buffer + bufpos);
 
           /* shift the buffer position */
           bufpos += (n - 1);
@@ -1073,6 +1077,9 @@ thunar_vfs_path_list_to_string (GList *path_list)
           /* append a line break */
           buffer[bufpos++] = '\r';
           buffer[bufpos++] = '\n';
+
+          /* sanity checks */
+          _thunar_vfs_assert (bufpos <= bufsize);
           break;
         }
     }
