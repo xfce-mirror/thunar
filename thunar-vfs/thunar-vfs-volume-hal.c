@@ -307,12 +307,25 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
         }
       else
         {
-          /* fallback to plain mount */
-          mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
-          quoted = g_shell_quote (mount_point);
-          result = thunar_vfs_exec_sync ("mount %s", error, quoted);
-          g_free (mount_point);
-          g_free (quoted);
+          /* check if hal-mount (from ivman) is present */
+          program = g_find_program_in_path ("halmount");
+          if (G_LIKELY (program != NULL))
+            {
+              /* try to use halmount then */
+              quoted = g_shell_quote (volume_hal->device_file);
+              result = thunar_vfs_exec_sync ("%s %s", error, program, quoted);
+              g_free (program);
+              g_free (quoted);
+            }
+          else
+            {
+              /* fallback to plain mount */
+              mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
+              quoted = g_shell_quote (mount_point);
+              result = thunar_vfs_exec_sync ("mount %s", error, quoted);
+              g_free (mount_point);
+              g_free (quoted);
+            }
         }
     }
 
@@ -383,12 +396,25 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
         }
       else
         {
-          /* fallback to plain umount */
-          mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
-          quoted = g_shell_quote (mount_point);
-          result = thunar_vfs_exec_sync ("umount %s", error, quoted);
-          g_free (mount_point);
-          g_free (quoted);
+          /* check if halmount is present */
+          program = g_find_program_in_path ("halmount");
+          if (G_LIKELY (program != NULL))
+            {
+              /* try to use halmount then */
+              quoted = g_shell_quote (volume_hal->device_file);
+              result = thunar_vfs_exec_sync ("%s -u %s", error, program, quoted);
+              g_free (program);
+              g_free (quoted);
+            }
+          else
+            {
+              /* fallback to plain umount */
+              mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
+              quoted = g_shell_quote (mount_point);
+              result = thunar_vfs_exec_sync ("umount %s", error, quoted);
+              g_free (mount_point);
+              g_free (quoted);
+            }
         }
     }
 
