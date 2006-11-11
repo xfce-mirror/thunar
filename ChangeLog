@@ -1,5 +1,11 @@
 2006-11-11	Benedikt Meurer <benny@xfce.org>
 
+	* plugins/thunar-tpa/Makefile.am: Starting with version 0.72
+	  dbus-binding-tool now requires the --prefix command line option
+	  even though it isn't used for anything. Bug #2528.
+
+2006-11-11	Benedikt Meurer <benny@xfce.org>
+
 	* docs/README.volumes, thunar-vfs/thunar-vfs-volume-hal.c: Apply patch
 	  from Bernhard Walle <bernhard.walle@gmx.de> to add support for
 	  halmount to ThunarVfsVolumeHAL. Bug #2556.
