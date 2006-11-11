@@ -425,18 +425,29 @@ thunar_launcher_set_selected_files (ThunarComponent *component,
                                     GList           *selected_files)
 {
   ThunarLauncher *launcher = THUNAR_LAUNCHER (component);
+  GList          *np;
+  GList          *op;
 
-  /* disconnect from the previously selected files */
-  thunar_file_list_free (launcher->selected_files);
+  /* compare the old and the new list of selected files */
+  for (np = selected_files, op = launcher->selected_files; np != NULL && op != NULL; np = np->next, op = op->next)
+    if (G_UNLIKELY (np->data != op->data))
+      break;
 
-  /* connect to the new selected files list */
-  launcher->selected_files = thunar_file_list_copy (selected_files);
+  /* check if the list of selected files really changed */
+  if (G_UNLIKELY (np != NULL || op != NULL))
+    {
+      /* disconnect from the previously selected files */
+      thunar_file_list_free (launcher->selected_files);
 
-  /* update the launcher actions */
-  thunar_launcher_update (launcher);
+      /* connect to the new selected files list */
+      launcher->selected_files = thunar_file_list_copy (selected_files);
 
-  /* notify listeners */
-  g_object_notify (G_OBJECT (launcher), "selected-files");
+      /* update the launcher actions */
+      thunar_launcher_update (launcher);
+
+      /* notify listeners */
+      g_object_notify (G_OBJECT (launcher), "selected-files");
+    }
 }
 
 

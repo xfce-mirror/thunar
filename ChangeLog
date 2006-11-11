@@ -1,5 +1,12 @@
 2006-11-11	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-launcher.c(thunar_launcher_set_selected_files): Do
+	  not force an update of the launcher actions if the list of selected
+	  files did not change to avoid flicker in menus for files being
+	  downloaded, etc.
+
+2006-11-11	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-launcher.c(thunar_launcher_sendto_idle): Do not
 	  display the "Desktop (Create Link)" sendto-action for trashed
 	  files, because symbolic links cannot be created for files in
