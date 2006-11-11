@@ -1192,6 +1192,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
   const gchar    *icon_name;
   const gchar    *label;
   GtkAction      *action;
+  gboolean        linkable = TRUE;
   GList          *handlers;
   GList          *lp;
   gchar          *name;
@@ -1205,8 +1206,15 @@ thunar_launcher_sendto_idle (gpointer user_data)
 
   GDK_THREADS_ENTER ();
 
-  /* determine the number of selected files */
-  n_selected_files = g_list_length (launcher->selected_files);
+  /* determine the number of selected files and check whether atleast one of these
+   * files is located in the trash (to en-/disable the "sendto-desktop" action).
+   */
+  for (lp = launcher->selected_files, n_selected_files = 0; lp != NULL; lp = lp->next, ++n_selected_files)
+    {
+      /* check if this file is in trash */
+      if (G_UNLIKELY (linkable))
+        linkable = !thunar_file_is_trashed (lp->data);
+    }
 
   /* update the "Desktop (Create Link)" sendto action */
   action = gtk_action_group_get_action (launcher->action_group, "sendto-desktop");
@@ -1215,7 +1223,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
                 "tooltip", ngettext ("Create a link to the selected file on the desktop",
                                      "Create links to the selected files on the desktop",
                                      n_selected_files),
-                "visible", (n_selected_files > 0),
+                "visible", (linkable && n_selected_files > 0),
                 NULL);
 
   /* re-add the content to "Send To" if we have any files */

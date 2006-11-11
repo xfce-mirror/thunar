@@ -1,5 +1,12 @@
 2006-11-11	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-launcher.c(thunar_launcher_sendto_idle): Do not
+	  display the "Desktop (Create Link)" sendto-action for trashed
+	  files, because symbolic links cannot be created for files in
+	  the trash. Bug #2539.
+
+2006-11-11	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-icon-view.c: Set word-wrap-width depending on the
 	  current zoom-level. Bug #2505.
 
