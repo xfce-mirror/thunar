@@ -22,6 +22,7 @@
 #endif
 
 #include <thunar/thunar-icon-view.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -41,6 +42,7 @@ static void         thunar_icon_view_set_property           (GObject            
                                                              const GValue        *value,
                                                              GParamSpec          *pspec);
 static AtkObject   *thunar_icon_view_get_accessible         (GtkWidget           *widget);
+static void         thunar_icon_view_zoom_level_changed     (ThunarStandardView  *standard_view);
 
 
 
@@ -136,8 +138,6 @@ thunar_icon_view_init (ThunarIconView *icon_view)
   /* setup the name renderer */
   g_object_set (G_OBJECT (THUNAR_STANDARD_VIEW (icon_view)->name_renderer),
                 "wrap-mode", PANGO_WRAP_WORD_CHAR,
-                "wrap-width", 128,
-                "yalign", 0.0f,
                 NULL);
 
   /* synchronize the "text-beside-icons" property with the global preference */
@@ -160,12 +160,19 @@ thunar_icon_view_set_property (GObject      *object,
       if (G_UNLIKELY (g_value_get_boolean (value)))
         {
           exo_icon_view_set_orientation (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), GTK_ORIENTATION_HORIZONTAL);
-          g_object_set (G_OBJECT (standard_view->name_renderer), "yalign", 0.5f, NULL);
+          g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", 128, "yalign", 0.5f, NULL);
+
+          /* disconnect the "zoom-level" signal handler, since we're using a fixed wrap-width here */
+          g_signal_handlers_disconnect_by_func (object, thunar_icon_view_zoom_level_changed, NULL);
         }
       else
         {
           exo_icon_view_set_orientation (EXO_ICON_VIEW (GTK_BIN (standard_view)->child), GTK_ORIENTATION_VERTICAL);
           g_object_set (G_OBJECT (standard_view->name_renderer), "yalign", 0.0f, NULL);
+
+          /* connect the "zoom-level" signal handler as the wrap-width is now synced with the "zoom-level" */
+          g_signal_connect (object, "notify::zoom-level", G_CALLBACK (thunar_icon_view_zoom_level_changed), NULL);
+          thunar_icon_view_zoom_level_changed (standard_view);
         }
       break;
 
@@ -195,6 +202,44 @@ thunar_icon_view_get_accessible (GtkWidget *widget)
 
   return object;
 }
+
+
+
+static void
+thunar_icon_view_zoom_level_changed (ThunarStandardView *standard_view)
+{
+  gint wrap_width;
+
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  /* determine the "wrap-width" depending on the "zoom-level" */
+  switch (thunar_view_get_zoom_level (THUNAR_VIEW (standard_view)))
+    {
+    case THUNAR_ZOOM_LEVEL_SMALLEST:
+      wrap_width = 48;
+      break;
+
+    case THUNAR_ZOOM_LEVEL_SMALLER:
+      wrap_width = 64;
+      break;
+
+    case THUNAR_ZOOM_LEVEL_SMALL:
+      wrap_width = 72;
+      break;
+
+    case THUNAR_ZOOM_LEVEL_NORMAL:
+      wrap_width = 112;
+      break;
+
+    default:
+      wrap_width = 128;
+      break;
+    }
+
+  /* set the new "wrap-width" for the text renderer */
+  g_object_set (G_OBJECT (standard_view->name_renderer), "wrap-width", wrap_width, NULL);
+}
+
 
 
 
