@@ -284,9 +284,12 @@ thunar_launcher_dispose (GObject *object)
 
   /* reset our properties */
   thunar_navigator_set_current_directory (THUNAR_NAVIGATOR (launcher), NULL);
-  thunar_component_set_selected_files (THUNAR_COMPONENT (launcher), NULL);
   thunar_component_set_ui_manager (THUNAR_COMPONENT (launcher), NULL);
   thunar_launcher_set_widget (THUNAR_LAUNCHER (launcher), NULL);
+
+  /* disconnect from the currently selected files */
+  thunar_file_list_free (launcher->selected_files);
+  launcher->selected_files = NULL;
 
   (*G_OBJECT_CLASS (thunar_launcher_parent_class)->dispose) (object);
 }

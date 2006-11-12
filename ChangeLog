@@ -1,3 +1,9 @@
+2006-11-12	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-launcher.c(thunar_launcher_dispose): Fix a possible
+	  crash if thunar_launcher_update() is called while disposing the
+	  launcher.
+
 2006-11-11	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-launcher.c(thunar_launcher_set_selected_files): Do
