@@ -574,7 +574,7 @@ msgstr "Prullenbak leegmaken..."
 #: ../thunar/thunar-application.c:1344
 #, c-format
 msgid "Failed to determine the original path for \"%s\""
-msgstr ""
+msgstr "Het vaststellen van de originele map voor \"%s\" is mislukt"
 
 #: ../thunar/thunar-application.c:1372
 #, c-format
@@ -605,9 +605,9 @@ msgstr "Bestanden aan het herstellen..."
 #. tell the user that it didn't work
 #. display an error to the user
 #: ../thunar/thunar-chooser-button.c:275 ../thunar/thunar-chooser-dialog.c:514
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to set default application for \"%s\""
-msgstr "Fout bij het instellen van een standaard programma voor `%s'"
+msgstr "Het instellen van een standaard programma voor \"%s\" is mislukt"
 
 #: ../thunar/thunar-chooser-button.c:360
 msgid "No application selected"
@@ -655,19 +655,18 @@ msgstr "_Standaard voor dit type bestand gebruiken"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:489
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to add new application \"%s\""
-msgstr "Fout bij het toevoegen van het nieuwe programma `%s'"
+msgstr "Het toevoegen van het nieuwe programma \"%s\" is mislukt"
 
 #. display an error to the user
 #: ../thunar/thunar-chooser-dialog.c:534
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to execute \"%s\""
-msgstr "Fout bij het uitvoeren van `%s'"
+msgstr "Het uitvoeren van \"%s\" is mislukt"
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:605
-#, fuzzy
 msgid "_Remove Launcher"
 msgstr "Snelkoppeling _Verwijderen"
 
@@ -840,16 +839,15 @@ msgstr "Onbekend"
 
 #: ../thunar/thunar-compact-view.c:136
 msgid "Compact directory listing"
-msgstr ""
+msgstr "Compacte mappen weergave"
 
 #: ../thunar/thunar-compact-view.c:137
 msgid "Compact view"
-msgstr ""
+msgstr "Compacte weergave"
 
 #: ../thunar/thunar-create-dialog.c:163
-#, fuzzy
 msgid "C_reate"
-msgstr "Nieuwe Actie"
+msgstr "Mak_en"
 
 #: ../thunar/thunar-create-dialog.c:178 ../thunar/thunar-standard-view.c:2239
 msgid "Enter the new name:"
@@ -869,7 +867,7 @@ msgstr "Ongeldige bestandsnaam \"%s\""
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
 msgid "The working directory must be an absolute path"
-msgstr ""
+msgstr "De werk-map moet een absoluut pad zijn"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
@@ -902,9 +900,8 @@ msgstr ""
 #. display an error message to the user
 #. tell the user that we failed
 #: ../thunar/thunar-dialogs.c:229 ../thunar/thunar-renamer-dialog.c:959
-#, fuzzy
 msgid "Failed to open the documentation browser"
-msgstr "Fout bij het openen van de sjablonen map"
+msgstr "Fout bij het openen van de documentatie browser"
 
 #: ../thunar/thunar-dialogs.c:326
 msgid "_Yes"
@@ -936,7 +933,7 @@ msgstr "Hier _verplaatsen"
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Link here"
-msgstr "Hierheen een koppeling maken"
+msgstr "H_ierheen een koppeling maken"
 
 #. display an error to the user
 #. display an error message to the user
@@ -947,7 +944,7 @@ msgstr "Fout bij het uitvoeren van `%s'"
 
 #: ../thunar/thunar-enum-types.c:44
 msgid "Name only"
-msgstr ""
+msgstr "Alleen naam"
 
 #: ../thunar/thunar-enum-types.c:45
 msgid "Suffix only"
@@ -959,11 +956,11 @@ msgstr "Naam en uiteinde"
 
 #: ../thunar/thunar-enum-types.c:90
 msgid "Date Accessed"
-msgstr ""
+msgstr "Laatst geopend"
 
 #: ../thunar/thunar-enum-types.c:91
 msgid "Date Modified"
-msgstr ""
+msgstr "Laatst veranderd"
 
 #: ../thunar/thunar-enum-types.c:92
 msgid "Group"
@@ -1053,7 +1050,7 @@ msgstr "De geselecteerde mappen in nieuwe Thunar-vensters openen"
 
 #: ../thunar/thunar-launcher.c:139 ../thunar/thunar-launcher.c:141
 msgid "Open With Other _Application..."
-msgstr "Open met ander Programma..."
+msgstr "Open met _ander Programma..."
 
 #: ../thunar/thunar-launcher.c:139 ../thunar/thunar-launcher.c:141
 #: ../thunar/thunar-launcher.c:866
@@ -1487,11 +1484,11 @@ msgstr "Bestandsbeheerder Voorkeuren"
 #.
 #: ../thunar/thunar-preferences-dialog.c:236
 msgid "Views"
-msgstr "Weergavemodi"
+msgstr "Weergave"
 
 #: ../thunar/thunar-preferences-dialog.c:246
 msgid "Default View"
-msgstr "Standaard weergavemodus"
+msgstr "Standaard weergave"
 
 #: ../thunar/thunar-preferences-dialog.c:258
 msgid "View _new folders using:"
@@ -1500,16 +1497,16 @@ msgstr "_Nieuwe bestanden bekijken met:"
 #: ../thunar/thunar-preferences-dialog.c:263
 #: ../thunar/thunar-preferences-dialog.c:294
 msgid "Icon View"
-msgstr "Icoon-weergavemodus"
+msgstr "Icoon-weergave"
 
 #: ../thunar/thunar-preferences-dialog.c:264
 msgid "Detailed List View"
-msgstr "Gedetailleerde Lijst-weergavemodus"
+msgstr "Gedetailleerde Lijst-weergave"
 
 #: ../thunar/thunar-preferences-dialog.c:265
 #, fuzzy
 msgid "Compact List View"
-msgstr "Weergeven als gedetailleerde lijst"
+msgstr "Compacte Lijst-weergave"
 
 #: ../thunar/thunar-preferences-dialog.c:266
 msgid "Last Active View"
@@ -1857,9 +1854,8 @@ msgid "_About"
 msgstr "_Over..."
 
 #: ../thunar/thunar-renamer-dialog.c:178
-#, fuzzy
 msgid "Display information about Thunar Bulk Rename"
-msgstr "Geef informatie over Thunar weer"
+msgstr "Geef informatie over 'Thunar Massaal Hernoemen' weer"
 
 #: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:324
 msgid "View the properties of the selected file"
@@ -1868,9 +1864,8 @@ msgstr "Bekijk de eigenschappen van het geselecteerde bestand"
 #: ../thunar/thunar-renamer-dialog.c:360
 #: ../thunar/thunar-renamer-dialog.c:1680
 #: ../Thunar-bulk-rename.desktop.in.in.h:2
-#, fuzzy
 msgid "Rename Multiple Files"
-msgstr "Naam van geselecteerd bestand wijzigen"
+msgstr "Meerdere bestanden hernoemen"
 
 #. add the "Rename Files" button
 #: ../thunar/thunar-renamer-dialog.c:368
@@ -2153,7 +2148,7 @@ msgstr[1] "Ma_ak Koppelingen"
 
 #: ../thunar/thunar-standard-view.c:334
 msgid "_Rename..."
-msgstr "Hernoemen..."
+msgstr "He_rnoemen..."
 
 #: ../thunar/thunar-standard-view.c:335
 msgid "_Restore"
@@ -2356,7 +2351,7 @@ msgstr "Voorkeuren van Thunar aanpassen"
 
 #: ../thunar/thunar-window.c:274
 msgid "_View"
-msgstr "_Weergavemodus"
+msgstr "_Beeld"
 
 #: ../thunar/thunar-window.c:275
 msgid "_Reload"
@@ -2375,7 +2370,6 @@ msgid "_Side Pane"
 msgstr "_Zijpaneel"
 
 #: ../thunar/thunar-window.c:278
-#, fuzzy
 msgid "Zoom I_n"
 msgstr "_Inzoomen"
 
@@ -2524,7 +2518,7 @@ msgstr "Mapinhoud weergeven als gedetailleerde lijst"
 
 #: ../thunar/thunar-window.c:621
 msgid "View as _Compact List"
-msgstr "Weergeven als _Gedetailleerde lijst"
+msgstr "Weergeven als _Compacte lijst"
 
 #: ../thunar/thunar-window.c:621
 msgid "Display folder content in a compact list view"
@@ -3346,6 +3340,3 @@ msgstr "Map openen met Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "De geselecteerde mappen in Thunar openen"
-
-#~ msgid "Failed to open home directory"
-#~ msgstr "Fout bij het openen van de persoonlijke map"
