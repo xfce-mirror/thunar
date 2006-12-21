@@ -54,6 +54,9 @@ thunar_vfs_init (void)
       if (!g_thread_supported ())
         g_thread_init (NULL);
 
+      /* ensure any strings get translated properly */
+      xfce_textdomain (GETTEXT_PACKAGE, PACKAGE_LOCALE_DIR, "UTF-8");
+
       /* initialize the path module */
       _thunar_vfs_path_init ();
 

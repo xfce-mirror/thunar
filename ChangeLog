@@ -1,5 +1,11 @@
 2006-12-21	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs.c: Apply Brian's
+	  patch to properly initialize the gettext textdomain for thunar-vfs.
+	  Bug #2543.
+
+2006-12-21	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-location-entry.c(thunar_location_entry_init):
 	  Make sure the down button in the location bar doesn't get too
 	  large. Bug #2582.

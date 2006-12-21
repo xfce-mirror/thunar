@@ -6,6 +6,7 @@ INCLUDES =								\
 	-DEXO_DISABLE_DEPRECATED					\
 	-DG_LOG_DOMAIN=\"thunar-vfs\"					\
 	-DLIBEXECDIR=\"$(libexecdir)\"					\
+	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	-DSN_API_NOT_YET_FROZEN						\
 	-DTHUNAR_VFS_COMPILATION					\
 	-DTHUNAR_VFS_VERSION_API=\"$(THUNAR_VERSION_API)\"		\
