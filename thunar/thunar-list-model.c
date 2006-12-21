@@ -2212,7 +2212,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
           g_free (text);
           text = s;
         }
-      else if (thunar_file_is_local (file))
+      else if (thunar_file_is_local (file) && thunar_file_is_regular (file))
         {
           /* check if we can determine the dimension of this file (only for image files) */
           absolute_path = thunar_vfs_path_dup_string (thunar_file_get_path (file));
