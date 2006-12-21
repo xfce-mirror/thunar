@@ -1,5 +1,11 @@
 2006-12-21	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-location-entry.c(thunar_location_entry_init):
+	  Make sure the down button in the location bar doesn't get too
+	  large. Bug #2582.
+
+2006-12-21	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-list-model.c(thunar_list_model_get_statusbar_text):
 	  Don't try to open non-regular files to gather detailed statistics
 	  to avoid hanging Thunar forever while trying to read from a named

@@ -235,8 +235,9 @@ thunar_location_entry_location_bar_init (ThunarLocationBarIface *iface)
 static void
 thunar_location_entry_init (ThunarLocationEntry *location_entry)
 {
-  GtkWidget *button;
-  GtkWidget *arrow;
+  GtkSizeGroup *size_group;
+  GtkWidget    *button;
+  GtkWidget    *arrow;
 
   gtk_box_set_spacing (GTK_BOX (location_entry), 0);
   gtk_container_set_border_width (GTK_CONTAINER (location_entry), 4);
@@ -256,6 +257,12 @@ thunar_location_entry_init (ThunarLocationEntry *location_entry)
   arrow = gtk_arrow_new (GTK_ARROW_DOWN, GTK_SHADOW_NONE);
   gtk_container_add (GTK_CONTAINER (button), arrow);
   gtk_widget_show (arrow);
+
+  /* make sure the entry and the button request the same height */
+  size_group = gtk_size_group_new (GTK_SIZE_GROUP_VERTICAL);
+  gtk_size_group_add_widget (size_group, location_entry->path_entry);
+  gtk_size_group_add_widget (size_group, button);
+  g_object_unref (G_OBJECT (size_group));
 }
 
 
