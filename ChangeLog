@@ -1,3 +1,9 @@
+2006-12-28	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/: Several improvements to the GtkTreeModel implementations
+	  that should further speed up loading really large folders. For the
+	  icon view, the real bottleneck is still Pango.
+
 2006-12-21	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs.c: Apply Brian's

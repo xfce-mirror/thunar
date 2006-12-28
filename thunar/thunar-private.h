@@ -77,6 +77,20 @@ G_BEGIN_DECLS;
 #define g_value_get_object(v)   (((const GValue *) (v))->data[0].v_pointer)
 #endif
 
+/* support macros for the GtkTreeModel implementations */
+#ifndef NDEBUG
+#define GTK_TREE_ITER_INIT(iter, iter_stamp, iter_user_data)  \
+G_STMT_START{                                                 \
+  (iter).stamp = iter_stamp;                                  \
+  (iter).user_data = iter_user_data;                          \
+}G_STMT_END
+#else
+#define GTK_TREE_ITER_INIT(iter, iter_stamp, iter_user_data)  \
+G_STMT_START{                                                 \
+  (iter).user_data = iter_user_data;                          \
+}G_STMT_END
+#endif
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_PRIVATE_H__ */
