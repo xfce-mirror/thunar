@@ -628,48 +628,13 @@ ThunarVfsPath*
 thunar_vfs_path_relative (ThunarVfsPath *parent,
                           const gchar   *name)
 {
-  ThunarVfsPath *path;
-  const gchar   *s;
-  gchar         *t;
-  gint           n;
-
   g_return_val_if_fail (parent != NULL, NULL);
   g_return_val_if_fail (name != NULL, NULL);
   g_return_val_if_fail (*name != '\0', NULL);
   g_return_val_if_fail (strchr (name, '/') == NULL, NULL);
 
-  /* check if parent is one of the home path components */
-  for (n = n_home_components - 2; n >= 0; --n)
-    if (G_UNLIKELY (home_components[n] == parent))
-      {
-        /* check if the name equals the home path child component */
-        if (strcmp (name, thunar_vfs_path_get_name (home_components[n + 1])) == 0)
-          return thunar_vfs_path_ref (home_components[n + 1]);
-        break;
-      }
-
-  /* determine the length of the name in bytes */
-  for (s = name + 1; *s != '\0'; ++s)
-    ;
-  n = (((s - name) + sizeof (guint)) / sizeof (guint)) * sizeof (guint)
-    + sizeof (ThunarVfsPath);
-
-  /* allocate memory for the new path component */
-  path = _thunar_vfs_slice_alloc (n);
-  path->ref_count = 1 | thunar_vfs_path_get_scheme (parent);
-  path->parent = thunar_vfs_path_ref (parent);
-
-  /* insert the path into the debug list */
-  THUNAR_VFS_PATH_DEBUG_INSERT (path);
-
-  /* zero out the last word to have the name zero-terminated */
-  *(((guint *) (((gchar *) path) + n)) - 1) = 0;
-
-  /* copy the path component name */
-  for (s = name, t = (gchar *) thunar_vfs_path_get_name (path); *s != '\0'; )
-    *t++ = *s++;
-
-  return path;
+  /* let _thunar_vfs_path_child() do it's work */
+  return _thunar_vfs_path_child (parent, name);
 }
 
 
@@ -1312,6 +1277,73 @@ _thunar_vfs_path_new_relative (ThunarVfsPath *parent,
 
   /* return a reference to the path */
   return thunar_vfs_path_ref (path);
+}
+
+
+
+/**
+ * _thunar_vfs_path_child:
+ * @parent : a #ThunarVfsPath.
+ * @name   : a valid filename in the local file system encoding.
+ *
+ * Internal implementation of thunar_vfs_path_relative(), that performs
+ * no external sanity checking of it's parameters.
+ *
+ * Returns a #ThunarVfsPath for the file @name relative to
+ * @parent. @name must be a valid filename in the local file
+ * system encoding and it may not contain any slashes.
+ *
+ * The caller is responsible to free the returned object
+ * using thunar_vfs_path_unref() when no longer needed.
+ *
+ * Return value: the child path to @name relative to @parent.
+ **/
+ThunarVfsPath*
+_thunar_vfs_path_child (ThunarVfsPath *parent,
+                        const gchar   *name)
+{
+  ThunarVfsPath *path;
+  const gchar   *s;
+  gchar         *t;
+  gint           n;
+
+  _thunar_vfs_return_val_if_fail (parent != NULL, NULL);
+  _thunar_vfs_return_val_if_fail (name != NULL, NULL);
+  _thunar_vfs_return_val_if_fail (*name != '\0', NULL);
+  _thunar_vfs_return_val_if_fail (strchr (name, '/') == NULL, NULL);
+
+  /* check if parent is one of the home path components */
+  for (n = n_home_components - 2; n >= 0; --n)
+    if (G_UNLIKELY (home_components[n] == parent))
+      {
+        /* check if the name equals the home path child component */
+        if (strcmp (name, thunar_vfs_path_get_name (home_components[n + 1])) == 0)
+          return thunar_vfs_path_ref (home_components[n + 1]);
+        break;
+      }
+
+  /* determine the length of the name in bytes */
+  for (s = name + 1; *s != '\0'; ++s)
+    ;
+  n = (((s - name) + sizeof (guint)) / sizeof (guint)) * sizeof (guint)
+    + sizeof (ThunarVfsPath);
+
+  /* allocate memory for the new path component */
+  path = _thunar_vfs_slice_alloc (n);
+  path->ref_count = 1 | thunar_vfs_path_get_scheme (parent);
+  path->parent = thunar_vfs_path_ref (parent);
+
+  /* insert the path into the debug list */
+  THUNAR_VFS_PATH_DEBUG_INSERT (path);
+
+  /* zero out the last word to have the name zero-terminated */
+  *(((guint *) (((gchar *) path) + n)) - 1) = 0;
+
+  /* copy the path component name */
+  for (s = name, t = (gchar *) thunar_vfs_path_get_name (path); *s != '\0'; )
+    *t++ = *s++;
+
+  return path;
 }
 
 

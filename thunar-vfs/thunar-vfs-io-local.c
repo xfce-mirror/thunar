@@ -82,6 +82,97 @@
 
 
 
+static void thunar_vfs_io_local_listdir_internal (volatile GList **list,
+                                                  gboolean        *failure);
+
+
+
+/* we change the current working directory when listing
+ * directory contents to avoid going through the expensive
+ * inode lookup (in the kernel) all the time, but since
+ * the current working directory is a per-process rather
+ * than a per-thread setting, we need to protect the
+ * appropriate piece of code with a mutex, so only one
+ * thread at a time will change the working directory.
+ */
+G_LOCK_DEFINE_STATIC(_thunar_vfs_io_local_chdir);
+
+
+
+static void
+thunar_vfs_io_local_listdir_internal (volatile GList **list,
+                                      gboolean        *failure)
+{
+  ThunarVfsInfo *info;
+  GList         *lp;
+  GList         *ln;
+#if defined(__GNUC__) && (defined(__i386__) || defined(__amd64__) || defined(__x86_64__))
+  GList         *lr;
+#endif
+
+  /* continue processing until the list is done */
+  while (TRUE)
+    {
+      /* determine the next item from the list */
+      lp = (GList *) *list;
+      if (G_UNLIKELY (lp == NULL))
+        return;
+
+      /* determine the next item in the list */
+      ln = lp->next;
+
+      /* try to adjust the list head pointer to the next item; since we may not be
+       * the only one to try that, checking if we actually succeed is required, and
+       * if not, we'll try again...
+       *
+       * IA32 and AMD64 are quite common architectures, so we try to avoid the
+       * function call overhead for the atomic operation here.
+       */
+#if defined(__GNUC__) && defined(__i386__)
+      __asm__ __volatile__ ("lock; cmpxchgl %2, %1"
+                          : "=a" (lr), "=m" (*list)
+                          : "r" (ln), "m" (*list), "0" (lp));
+
+      if (G_UNLIKELY (lr != lp))
+        continue;
+#elif defined(__GNUC__) && (defined(__amd64__) || defined(__x86_64__))
+      __asm__ __volatile__ ("lock; cmpxchgq %q2, %1"
+			                    : "=a" (lr), "=m" (*list)
+			                    : "r" (ln), "m" (*list), "0" (lp));
+
+      if (G_UNLIKELY (lr != lp))
+        continue;
+#else
+      if (!g_atomic_pointer_compare_and_exchange ((volatile gpointer *) list, lp, ln))
+        continue;
+#endif
+
+      /* try to determine the file info */
+      info = _thunar_vfs_io_local_get_info (lp->data, thunar_vfs_path_get_name (lp->data), NULL);
+
+      /* replace the path with the info on the list */
+      if (G_LIKELY (info != NULL))
+        {
+          /* just decrease the ref_count on path (info holds a reference now) */
+          _thunar_vfs_path_unref_nofree (lp->data);
+
+          /* and link the info instead */
+          lp->data = info;
+        }
+      else
+        {
+          /* no info, may need to free the path... */
+          thunar_vfs_path_unref (lp->data);
+          lp->data = NULL;
+
+          /* ...and indicate that we had a failure */
+          *failure = TRUE;
+        }
+    }
+}
+
+
+
 /**
  * _thunar_vfs_io_local_get_free_space:
  * @path              : a #ThunarVfsPath for a file:-URI.
@@ -137,24 +228,24 @@ _thunar_vfs_io_local_get_free_space (const ThunarVfsPath *path,
 
 /**
  * _thunar_vfs_io_local_get_info:
- * @path          : the #ThunarVfsPath to use for the return info.
- * @absolute_path : the absolute, local path to the file.
- * @error         : return location for errors or %NULL.
+ * @path     : the #ThunarVfsPath to use for the return info.
+ * @filename : the absolute, local path to the file or it's relative name (for _thunar_vfs_io_local_listdir()).
+ * @error    : return location for errors or %NULL.
  *
- * @absolute_path does not need to be the string representation of the
- * @path. For example, @path could be a trash path, while @absolute_path
+ * @filename does not need to be the string representation of the
+ * @path. For example, @path could be a trash path, while @filename
  * represents the file refered to by @path, but as a local file system
  * path.
  *
  * The caller is responsible to free the returned object using
  * thunar_vfs_info_unref() when no longer needed.
  *
- * Return value: the #ThunarVfsInfo for the file at the @absolute_path
+ * Return value: the #ThunarVfsInfo for the file with the @filename
  *               or %NULL in case of an error.
  **/
 ThunarVfsInfo*
 _thunar_vfs_io_local_get_info (ThunarVfsPath *path,
-                               const gchar   *absolute_path,
+                               const gchar   *filename,
                                GError       **error)
 {
   ThunarVfsMimeInfo *fake_mime_info;
@@ -169,12 +260,11 @@ _thunar_vfs_io_local_get_info (ThunarVfsPath *path,
   GList             *lp;
   gchar             *p;
 
-  _thunar_vfs_return_val_if_fail (g_path_is_absolute (absolute_path), NULL);
   _thunar_vfs_return_val_if_fail (error == NULL || *error == NULL, NULL);
   _thunar_vfs_return_val_if_fail (path != NULL, NULL);
 
   /* try to stat the file */
-  if (G_UNLIKELY (g_lstat (absolute_path, &lsb) < 0))
+  if (G_UNLIKELY (g_lstat (filename, &lsb) < 0))
     {
       _thunar_vfs_set_g_error_from_errno3 (error);
       return NULL;
@@ -235,7 +325,7 @@ _thunar_vfs_io_local_get_info (ThunarVfsPath *path,
       info->flags |= THUNAR_VFS_FILE_FLAGS_SYMLINK;
 
       /* check if it's a broken link */
-      if (g_stat (absolute_path, &sb) == 0)
+      if (g_stat (filename, &sb) == 0)
         {
           info->type = (sb.st_mode & S_IFMT) >> 12;
           info->mode = sb.st_mode & 07777;
@@ -262,11 +352,11 @@ _thunar_vfs_io_local_get_info (ThunarVfsPath *path,
     }
 
   /* check if we can read the file */
-  if ((info->mode & 00444) != 0 && g_access (absolute_path, R_OK) == 0)
+  if ((info->mode & 00444) != 0 && g_access (filename, R_OK) == 0)
     info->flags |= THUNAR_VFS_FILE_FLAGS_READABLE;
 
   /* check if we can write to the file */
-  if ((info->mode & 00222) != 0 && g_access (absolute_path, W_OK) == 0)
+  if ((info->mode & 00222) != 0 && g_access (filename, W_OK) == 0)
     info->flags |= THUNAR_VFS_FILE_FLAGS_WRITABLE;
 
   /* determine the file's mime type */
@@ -297,7 +387,7 @@ _thunar_vfs_io_local_get_info (ThunarVfsPath *path,
       info->mime_info = thunar_vfs_mime_info_ref (_thunar_vfs_mime_inode_directory);
 
       /* check if we have the root folder here */
-      if (G_UNLIKELY (absolute_path[0] == G_DIR_SEPARATOR && absolute_path[1] == '\0'))
+      if (G_UNLIKELY (filename[0] == G_DIR_SEPARATOR && filename[1] == '\0'))
         {
           /* root folder gets a special custom icon... */
           info->custom_icon = g_strdup ("gnome-dev-harddisk");
@@ -317,30 +407,43 @@ _thunar_vfs_io_local_get_info (ThunarVfsPath *path,
 
     case THUNAR_VFS_FILE_TYPE_REGULAR:
       /* determine the MIME-type for the regular file */
-      info->mime_info = thunar_vfs_mime_database_get_info_for_file (_thunar_vfs_mime_database, absolute_path, info->display_name);
+      info->mime_info = thunar_vfs_mime_database_get_info_for_file (_thunar_vfs_mime_database, filename, info->display_name);
 
       /* check if the file is executable (for security reasons
        * we only allow execution of well known file types).
        */
-      if ((info->mode & 0444) != 0 && g_access (absolute_path, X_OK) == 0)
+      if ((info->mode & 0444) != 0 && g_access (filename, X_OK) == 0)
         {
-          mime_infos = thunar_vfs_mime_database_get_infos_for_info (_thunar_vfs_mime_database, info->mime_info);
-          for (lp = mime_infos; lp != NULL; lp = lp->next)
+          /* most executable files are either of type application/x-executable or application/x-shellscript, hence
+           * we try to avoid the rather expensive get_infos_for_info() call here, checking for these types directly.
+           */
+          if (info->mime_info == _thunar_vfs_mime_application_x_executable || info->mime_info == _thunar_vfs_mime_application_x_shellscript)
             {
-              if (lp->data == _thunar_vfs_mime_application_x_executable || lp->data == _thunar_vfs_mime_application_x_shellscript)
-                {
-                  info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
-                  break;
-                }
+              /* we can "safely" execute this file */
+              info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
             }
-          thunar_vfs_mime_info_list_free (mime_infos);
+          else
+            {
+              /* check the associated mime types */
+              mime_infos = thunar_vfs_mime_database_get_infos_for_info (_thunar_vfs_mime_database, info->mime_info);
+              for (lp = mime_infos; lp != NULL; lp = lp->next)
+                {
+                  if (lp->data == _thunar_vfs_mime_application_x_executable || lp->data == _thunar_vfs_mime_application_x_shellscript)
+                    {
+                      /* we can "safely" execute this file */
+                      info->flags |= THUNAR_VFS_FILE_FLAGS_EXECUTABLE;
+                      break;
+                    }
+                }
+              thunar_vfs_mime_info_list_free (mime_infos);
+            }
         }
 
       /* check if we have a .desktop (and NOT a .directory) file here */
       if (G_UNLIKELY (info->mime_info == _thunar_vfs_mime_application_x_desktop && strcmp (thunar_vfs_path_get_name (path), ".directory") != 0))
         {
           /* try to query the hints from the .desktop file */
-          rc = xfce_rc_simple_open (absolute_path, TRUE);
+          rc = xfce_rc_simple_open (filename, TRUE);
           if (G_LIKELY (rc != NULL))
             {
               /* we're only interested in the desktop data */
@@ -517,12 +620,13 @@ GList*
 _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
                               GError       **error)
 {
-  ThunarVfsInfo *info;
-  gchar          absolute_path[THUNAR_VFS_PATH_MAXSTRLEN + 128];
-  GList         *list;
-  GList         *sp;
-  GList         *tp;
-  gint           n;
+  GThreadPool *pool;
+  gboolean     failure = FALSE;
+  gchar        absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
+  GList       *list;
+  GList       *lp;
+  GList       *ln;
+  gint         n;
 
   _thunar_vfs_return_val_if_fail (_thunar_vfs_path_is_local (path), NULL);
   _thunar_vfs_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -537,43 +641,70 @@ _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
   if (G_UNLIKELY (list == NULL))
     return NULL;
 
-  /* append a dir separator to the absolute path */
-  absolute_path[n - 1] = G_DIR_SEPARATOR;
+  /* acquire the chdir lock */
+  G_LOCK (_thunar_vfs_io_local_chdir);
 
-  /* associate file infos with the paths in the folder */
-  for (sp = tp = list; sp != NULL; sp = sp->next)
+  /* change to the desired directory */
+  if (chdir (absolute_path) < 0)
     {
-      /* generate the absolute path to the file, relative to the folder path */
-      g_strlcpy (absolute_path + n, thunar_vfs_path_get_name (sp->data), sizeof (absolute_path) - n);
+      /* generate an error */
+      _thunar_vfs_set_g_error_from_errno3 (error);
 
-      /* try to determine the file info */
-      info = _thunar_vfs_io_local_get_info (sp->data, absolute_path, NULL);
+      /* release the paths */
+      thunar_vfs_path_list_free (list);
+      list = NULL;
+    }
+  else
+    {
+      /* place the concurrent list pointer on the first item */
+      lp = list;
 
-      /* replace the path with the info on the list */
-      if (G_LIKELY (info != NULL))
-        {
-          /* just decrease the ref_count on path (info holds a reference now) */
-          _thunar_vfs_path_unref_nofree (sp->data);
+      /* allocate a thread pool with max. 3 additional threads */
+      pool = g_thread_pool_new ((GFunc) thunar_vfs_io_local_listdir_internal, &failure, 3, FALSE, NULL);
 
-          /* add the info to the list */
-          tp->data = info;
-          tp = tp->next;
-        }
-      else
-        {
-          /* no info, may need to free the path */
-          thunar_vfs_path_unref (sp->data);
-        }
+      /* schedule the 3 threads */
+      g_thread_pool_push (pool, &lp, NULL);
+      g_thread_pool_push (pool, &lp, NULL);
+      g_thread_pool_push (pool, &lp, NULL);
+
+      /* also use this thread to process items */
+      thunar_vfs_io_local_listdir_internal ((volatile GList **) &lp, &failure);
+
+      /* join the additional threads */
+      g_thread_pool_free (pool, FALSE, TRUE);
+
+      /* change back to the root folder (so we don't
+       * prevent the folder from being deleted on
+       * certain well-known file systems)
+       */
+      chdir ("/");
     }
 
-  /* release the not-filled list items (only non-NULL in case of an info error) */
-  if (G_UNLIKELY (tp != NULL))
+  /* release the chdir lock */
+  G_UNLOCK (_thunar_vfs_io_local_chdir);
+
+  /* check if we had a failure */
+  if (G_UNLIKELY (failure))
     {
-      if (G_LIKELY (tp->prev != NULL))
-        tp->prev->next = NULL;
-      else
-        list = NULL;
-      g_list_free (tp);
+      /* need to remove nullified list items */
+      for (lp = list; lp != NULL; lp = ln)
+        {
+          /* remember the next item */
+          ln = lp->next;
+
+          /* check if we need to drop this one */
+          if (G_UNLIKELY (lp->data == NULL))
+            {
+              /* unlink the node from the list */
+              if (ln != NULL)
+                ln->prev = lp->prev;
+              if (lp->prev != NULL)
+                lp->prev->next = ln;
+              else
+                list = ln;
+              g_list_free1 (lp);
+            }
+        }
     }
 
   return list;

@@ -1,3 +1,26 @@
+2006-12-29	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-io-local-xfer.c,
+	  thunar-vfs/thunar-vfs-mime-database.c,
+	  thunar-vfs/thunar-vfs-monitor.c, thunar-vfs/thunar-vfs-os-bsd.c,
+	  thunar-vfs/thunar-vfs-os-generic.c, thunar-vfs/thunar-vfs-path.c,
+	  thunar-vfs/thunar-vfs-path-private.h,
+	  thunar-vfs/thunar-vfs-transfer-job.c: Add _thunar_vfs_path_child()
+	  as internal implementation of thunar_vfs_path_relative(), that does
+	  not perform the expensive sanity checking for release builds.
+	* thunar-vfs/thunar-vfs.c(_thunar_vfs_init): Do not maintain more than
+	  four unused threads, and stop unused threads after ten seconds of
+	  idle time (requires GLib 2.10).
+	* thunar-vfs/thunar-vfs-io-local.{c,h}: List folders parallel again,
+	  with up to four threads collecting file infos at the same time.
+	  Additionally, in order to avoid the costly inode lookups when
+	  listing folder contents, we change to the requested folder and
+	  use relative file names (requires locking, since the current
+	  working directory is per-process rather than per-thread). Last,
+	  the executable sanity checking was optimized for the common case
+	  of a binary or shellscript, which should further improve the
+	  loading performance of large folders with binaries.
+
 2006-12-28	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/: Several improvements to the GtkTreeModel implementations

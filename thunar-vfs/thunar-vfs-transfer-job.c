@@ -352,7 +352,7 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
     {
       /* guess the target_path for this file item (if not provided) */
       if (G_LIKELY (target_path == NULL))
-        target_path = thunar_vfs_path_relative (target_parent_path, thunar_vfs_path_get_name (transfer_node->source_path));
+        target_path = _thunar_vfs_path_child (target_parent_path, thunar_vfs_path_get_name (transfer_node->source_path));
       else
         target_path = thunar_vfs_path_ref (target_path);
 

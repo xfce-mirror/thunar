@@ -357,7 +357,7 @@ thunar_vfs_monitor_notifications_timer (gpointer user_data)
           if (G_UNLIKELY (notification->filename == NULL))
             path = thunar_vfs_path_ref (handle->path);
           else if (G_UNLIKELY (*notification->filename != '/'))
-            path = thunar_vfs_path_relative (handle->path, notification->filename);
+            path = _thunar_vfs_path_child (handle->path, notification->filename);
           else
             path = thunar_vfs_path_new (notification->filename, NULL);
 

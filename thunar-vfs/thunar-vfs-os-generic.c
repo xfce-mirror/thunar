@@ -193,7 +193,7 @@ _thunar_vfs_os_scandir (ThunarVfsPath *path,
         continue;
 
       /* add the child path to the path list */
-      path_list = g_list_prepend (path_list, thunar_vfs_path_relative (path, dp->d_name));
+      path_list = g_list_prepend (path_list, _thunar_vfs_path_child (path, dp->d_name));
 
       /* check if we want to collect children for recursive scanning */
       if (G_UNLIKELY (directories_return != NULL))

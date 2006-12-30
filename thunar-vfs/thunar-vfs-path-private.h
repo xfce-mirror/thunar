@@ -46,6 +46,8 @@ void _thunar_vfs_path_shutdown (void) G_GNUC_INTERNAL;
 /* internal support methods */
 ThunarVfsPath *_thunar_vfs_path_new_relative          (ThunarVfsPath        *parent,
                                                        const gchar          *relative_path) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarVfsPath *_thunar_vfs_path_child                 (ThunarVfsPath        *parent,
+                                                       const gchar          *name) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
 gchar         *_thunar_vfs_path_dup_display_name      (const ThunarVfsPath  *path) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsPath *_thunar_vfs_path_translate             (ThunarVfsPath        *src_path,
                                                        ThunarVfsPathScheme   dst_scheme,

@@ -33,7 +33,7 @@ G_BEGIN_DECLS;
 gboolean       _thunar_vfs_io_local_get_free_space  (const ThunarVfsPath           *path,
                                                      ThunarVfsFileSize             *free_space_return) G_GNUC_INTERNAL G_GNUC_WARN_UNUSED_RESULT;
 ThunarVfsInfo *_thunar_vfs_io_local_get_info        (ThunarVfsPath                 *path,
-                                                     const gchar                   *absolute_path,
+                                                     const gchar                   *filename,
                                                      GError                       **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar         *_thunar_vfs_io_local_get_metadata    (ThunarVfsPath                 *path,
                                                      ThunarVfsInfoMetadata          metadata,

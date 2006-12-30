@@ -436,7 +436,7 @@ _thunar_vfs_io_local_xfer_next_path (const ThunarVfsPath     *source_path,
   target_name = g_filename_from_utf8 (target_display_name, -1, NULL, NULL, error);
 
   /* generate the target path */
-  target_path = (target_name != NULL) ? thunar_vfs_path_relative (target_directory_path, target_name) : NULL;
+  target_path = (target_name != NULL) ? _thunar_vfs_path_child (target_directory_path, target_name) : NULL;
   g_free (target_display_name);
   g_free (target_name);
   return target_path;

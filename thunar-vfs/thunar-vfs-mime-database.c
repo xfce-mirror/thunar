@@ -656,11 +656,11 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
     {
       /* determine the base path */
       path = thunar_vfs_path_new (basedirs[n], NULL);
-      base_path = thunar_vfs_path_relative (path, "applications");
+      base_path = _thunar_vfs_path_child (path, "applications");
       _thunar_vfs_path_unref_nofree (path);
 
       /* setup the defaults.list */
-      path = thunar_vfs_path_relative (base_path, "defaults.list");
+      path = _thunar_vfs_path_child (base_path, "defaults.list");
       store->defaults_list = g_hash_table_new_full (thunar_vfs_mime_info_hash,
                                                     thunar_vfs_mime_info_equal,
                                                     (GDestroyNotify) thunar_vfs_mime_info_unref,
@@ -670,7 +670,7 @@ thunar_vfs_mime_database_initialize_stores (ThunarVfsMimeDatabase *database)
       _thunar_vfs_path_unref_nofree (path);
 
       /* setup the mimeinfo.cache */
-      path = thunar_vfs_path_relative (base_path, "mimeinfo.cache");
+      path = _thunar_vfs_path_child (base_path, "mimeinfo.cache");
       store->mimeinfo_cache = g_hash_table_new_full (thunar_vfs_mime_info_hash,
                                                      thunar_vfs_mime_info_equal,
                                                      (GDestroyNotify) thunar_vfs_mime_info_unref,
