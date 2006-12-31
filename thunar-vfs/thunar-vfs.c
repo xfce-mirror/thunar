@@ -78,6 +78,14 @@ thunar_vfs_init (void)
 
       /* initialize the jobs framework */
       _thunar_vfs_job_init ();
+
+      /* do not maintain more than 4 unused threads */
+      g_thread_pool_set_max_unused_threads (4);
+
+#if GLIB_CHECK_VERSION(2,10,0)
+      /* stop unused threads after 10 seconds of idle time */
+      g_thread_pool_set_max_idle_time (10 * 1000);
+#endif
     }
 }
 

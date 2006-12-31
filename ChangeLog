@@ -1,3 +1,9 @@
+2006-12-31	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs.c(_thunar_vfs_init): Do not maintain more than
+	  four unused threads, and stop unused threads after ten seconds of
+	  idle time (requires GLib 2.10).
+
 2006-12-29	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-io-local-xfer.c,
@@ -8,9 +14,6 @@
 	  thunar-vfs/thunar-vfs-transfer-job.c: Add _thunar_vfs_path_child()
 	  as internal implementation of thunar_vfs_path_relative(), that does
 	  not perform the expensive sanity checking for release builds.
-	* thunar-vfs/thunar-vfs.c(_thunar_vfs_init): Do not maintain more than
-	  four unused threads, and stop unused threads after ten seconds of
-	  idle time (requires GLib 2.10).
 	* thunar-vfs/thunar-vfs-io-local.{c,h}: List folders parallel again,
 	  with up to four threads collecting file infos at the same time.
 	  Additionally, in order to avoid the costly inode lookups when
