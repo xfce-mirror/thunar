@@ -69,10 +69,11 @@
 #include <gconf/gconf-client.h>
 #endif
 
-/* use g_open(), g_rename() and g_unlink() on win32 */
+/* use g_access(), g_open(), g_rename() and g_unlink() on win32 */
 #if defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
+#define g_access(filename, mode) (access ((filename), (mode)))
 #define g_open(filename, flags, mode) (open ((filename), (flags), (mode)))
 #define g_rename(oldfilename, newfilename) (rename ((oldfilename), (newfilename)))
 #define g_unlink(filename) (unlink ((filename)))
@@ -360,33 +361,6 @@ thumbnailers_load_gnome (GHashTable *thumbnailers)
 
 
 static void
-thumbnailers_load_font (GHashTable *thumbnailers)
-{
-  static const gchar *MIME_TYPES[] =
-  {
-    "application/x-font-otf",
-    "application/x-font-pcf",
-    "application/x-font-ttf",
-    "application/x-font-type1",
-  };
-
-  guint n;
-
-  /* check if the thunar-vfs-font-thumbnailer-1 is installed */
-  if (g_file_test (LIBEXECDIR G_DIR_SEPARATOR_S "thunar-vfs-font-thumbnailer-1", G_FILE_TEST_IS_EXECUTABLE))
-    {
-      /* process all mime types supported by the thumbnailer */
-      for (n = 0; n < G_N_ELEMENTS (MIME_TYPES); ++n)
-        {
-          /* set our thumbnailer for all those mime types */
-          g_hash_table_insert (thumbnailers, (gchar *) MIME_TYPES[n], LIBEXECDIR G_DIR_SEPARATOR_S "thunar-vfs-font-thumbnailer-1 -i %i -o %o -s %s");
-        }
-    }
-}
-
-
-
-static void
 thumbnailers_load_pixbuf (GHashTable *thumbnailers)
 {
   GSList *formats;
@@ -404,6 +378,71 @@ thumbnailers_load_pixbuf (GHashTable *thumbnailers)
         {
           /* set our thumbnailer for all those mime types */
           g_hash_table_insert (thumbnailers, mime_types[n], LIBEXECDIR G_DIR_SEPARATOR_S "thunar-vfs-pixbuf-thumbnailer-1 %s %i %o");
+        }
+    }
+}
+
+
+
+static void
+thumbnailers_load_custom (GHashTable *thumbnailers)
+{
+  const gchar *exec;
+  const gchar *type;
+  XfceRc      *rc;
+  gchar      **mime_types;
+  gchar      **specs;
+  gchar       *path;
+  guint        n, m;
+
+  /* load available custom thumbnailers from $XDG_DATA_DIRS/thumbnailers/ */
+  specs = xfce_resource_match (XFCE_RESOURCE_DATA, "thumbnailers/*.desktop", TRUE);
+  for (n = 0; specs[n] != NULL; ++n)
+    {
+      /* try to load the .desktop file */
+      rc = xfce_rc_config_open (XFCE_RESOURCE_DATA, specs[n], TRUE);
+      if (G_UNLIKELY (rc == NULL))
+        continue;
+
+      /* we only care for the [Desktop Entry] group */
+      xfce_rc_set_group (rc, "Desktop Entry");
+
+      /* verify that we have an X-Thumbnailer here */
+      type = xfce_rc_read_entry_untranslated (rc, "Type", NULL);
+      if (G_UNLIKELY (type == NULL || strcmp (type, "X-Thumbnailer") != 0))
+        continue;
+
+      /* check if the thumbnailer specifies a TryExec field */
+      exec = xfce_rc_read_entry_untranslated (rc, "TryExec", NULL);
+      if (G_UNLIKELY (exec != NULL))
+        {
+          /* check if the binary exists and is executable */
+          path = g_path_is_absolute (exec) ? (gchar *) exec : g_find_program_in_path (exec);
+          if (G_UNLIKELY (path == NULL || g_access (path, X_OK) < 0))
+            continue;
+        }
+
+      /* verify that the thumbnailer specifies an X-Thumbnailer-Exec field */
+      exec = xfce_rc_read_entry_untranslated (rc, "X-Thumbnailer-Exec", NULL);
+      if (G_UNLIKELY (exec == NULL))
+        continue;
+
+      /* determine the mime types for this thumbnailer */
+      mime_types = xfce_rc_read_list_entry (rc, "MimeType", ";");
+      if (G_UNLIKELY (mime_types == NULL))
+        continue;
+      
+      /* process all specified mime types */
+      for (m = 0; mime_types[m] != NULL; ++m)
+        {
+          /* check if we have a valid mime type here */
+          if (strlen (mime_types[m]) > 0 && strstr (mime_types[m], "/") != NULL)
+            {
+              /* set our thumbnailer for all those mime types (don't need to 
+               * duplicate the exec string, because we leave the RC file open).
+               */
+              g_hash_table_insert (thumbnailers, mime_types[m], (gchar *) exec);
+            }
         }
     }
 }
@@ -494,11 +533,11 @@ main (int argc, char **argv)
   /* load the available GNOME thumbnailers */
   thumbnailers_load_gnome (thumbnailers);
 
-  /* load the available font thumbnailers */
-  thumbnailers_load_font (thumbnailers);
-
   /* load the available gdk-pixbuf thumbnailers */
   thumbnailers_load_pixbuf (thumbnailers);
+
+  /* load the available custom thumbnailers */
+  thumbnailers_load_custom (thumbnailers);
 
   /* serialize the loaded thumbnailers */
   serialized = thumbnailers_serialize (thumbnailers, &serialized_size);

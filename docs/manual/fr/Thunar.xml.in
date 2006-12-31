@@ -56,28 +56,274 @@
   </sect1>
 
 
+  <sect1 id="customizing-thunar">
+    <title>Customizing Thunar</title>
+
+    <sect2 id="thumbnailers">
+      <title>Thumbnailers</title>
+
+      <para>
+        Thunar uses small utilities to create thumbnails of certain file types and displays the thumbnails as preview of the
+        file content. These small tools are called thumbnailers. Thunar ships with thumbnailers for image and font files, and
+        makes use of the installed thumbnailers from GNOME automatically if it was installed with support for <literal>gconf</literal>.
+        Users may however dynamically extend this basic functionality with thumbnailers for additional file types.
+      </para>
+
+      <para>
+        If you plan to write a custom thumbnailers, you need to start with a program that accepts atleast two command line parameters,
+        the input file, which is of the file type you plan to support and the output file, which is a PNG file that complies with the
+        format specified by the <ulink type="http" url="http://jens.triq.net/thumbnail-spec/creation.html#AEN139">Thumbnail Management
+        Standard</ulink>. Additionally your program may also accept the desired size of the thumbnail, which is optional but highly
+        recommended. If you write the output file at an arbitrary image size, Thunar will afterwards scale it to the desired size,
+        which might produce a less optimal result than generating the thumbnail with the requested dimensions.
+      </para>
+
+      <para>
+        Once your utility to generate the thumbnails is done, you will need to register your thumbnailer, so Thunar is able to locate
+        and use it. Therefore all you need to do is to install a description file for the thumbnailer (a <filename>.desktop</filename> file)
+        in one of the <filename role="directory">$XDG_DATA_DIRS/thumbnailers/</filename> paths. For example, if you want to register the
+        thumbnailer for your user account only, you can install the file into the folder <filename role="directory">~/.local/share/thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers has the following format.
+      </para>
+
+      <sect3 id="thumbnailer-desktop-file-format">
+        <title>Thumbnailer Description File Format</title>
+
+        <para>
+          Thumbnailer description files utilize the <ulink type="http" url="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop
+          Entry Format</ulink> with a special <literal>Type</literal> of <literal>X-Thumbnailer</literal> and special field
+          <literal>X-Thumbnailer-Exec</literal> with new field codes. Basically, a thumbnailer description file has the following format.
+        </para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=Your Thumbnailer
+MimeType=your-supported/mime-type;
+X-Thumbnailer-Exec=your-thumbnailer %i %o %s</programlisting>
+
+        <para>
+          The <literal>Version</literal> and <literal>Encoding</literal> are mandated by the Desktop Entry Specification, just use the values shown
+          in the example above. The <literal>Type</literal> field must have the special value <literal>X-Thumbnailer</literal>, otherwise your
+          thumbnailer will not be recognized. The <literal>Name</literal> value describes your thumbnailer.
+        </para>
+
+        <para>
+          The <literal>X-Thumbnailer-Exec</literal> field contains the command to run your thumbnailer, and supports certain field codes that will
+          be substituted when the thumbnailer is run. Recognized field codes are as follows:
+        </para>
+
+        <variablelist>
+          <varlistentry>
+            <term><varname>%i</varname></term>
+            <listitem>
+              The local path to the input file for which to create a thumbnail. May be either a path relative to the directory from which the
+              thumbnailer was invoked or an absolute path.
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%o</varname></term>
+            <listitem>
+              The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according
+              to the thumbnail standard (see above). Note that the path may not end with <literal>.png</literal>, which matters if you invoke certain
+              third party tools.
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%s</varname></term>
+            <listitem>
+              The desired size of the generated thumbnail in pixels. This parameter is optional.
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%u</varname></term>
+            <listitem>
+              Similar to <literal>%i</literal>, but substituted with the URI of the file, rather than the path. This was added for compatibility with
+              GNOME.
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%%</varname></term>
+            <listitem>
+              Will be substituted with a single <literal>%</literal>.
+            </listitem>
+          </varlistentry>
+        </variablelist>
+
+        <para>
+          You need to include atleast <literal>%o</literal> and <literal>%i</literal> or <literal>%u</literal>, otherwise your thumbnailer will
+          be useless.
+        </para>
+
+        <para>
+          The <literal>MimeType</literal> lists the MIME types - separated by semicolon - for which your thumbnailer is able to create previews.
+        </para>
+      </sect3>
+
+      <sect3 id="eps-thumbnailer-example">
+        <title>Example EPS Thumbnailer</title>
+
+        <para>
+          This example demonstrates how to write and install a new thumbnailer for <filename>.eps</filename> files, which uses the
+          <command>convert</command> utility that ships as part of ImageMagick. First, we start with a simple script that invokes
+          <command>convert</command> to generate a thumbnail at the requested size.
+        </para>
+
+        <programlisting>
+#!/bin/sh
+#
+# eps-thumbnailer - Example thumbnailer script for EPS files.
+#
+# Usage: esp-thumbnailer eps-file png-file size
+#
+
+# command line parameters
+ifile=$1
+ofile=$2
+size=$3
+
+# invoke convert (ImageMagick)
+exec convert "eps:$ifile" -scale "$sizex$size" "png:$ofile"</programlisting>
+
+        <para>
+          Save this script above to a file <filename>eps-thumbnailer</filename>, make sure the file is executable and install it
+          to <filename role="directory">/usr/local/bin</filename>.
+        </para>
+
+        <screen>
+$ chmod +x eps-thumbnailer
+$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer</screen>
+
+        <para>
+          Next we need to create the thumbnail description file <filename>eps-thumbnailer.desktop</filename>, which looks like this:
+        </para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=EPS Thumbnailer
+TryExec=convert
+MimeType=image/x-eps;
+X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s</programlisting>
+
+        <para>
+          This file must be installed to <filename role="directory">/usr/local/share/thumbnailers</filename> (create the folder if
+          it does not exists).
+        </para>
+
+        <screen>
+$ sudo install -d /usr/local/share/thumbnailers
+$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop</screen>
+
+        <para>
+          The <filename>eps-thumbnailer.desktop</filename> file uses the special key <literal>TryExec</literal>, which, if specified,
+          names a command that must be present on the system for the thumbnailer to be useful. In this case, our script is useless if
+          the <command>convert</command> utility is not present.
+        </para>
+
+        <para>
+          The last step is to regenerate the thumbnailer cache, so Thunar will pick up our thumbnailer. The thumbnailer cache is located
+          at <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (unless overridden by your or your system administrator, the
+          <varname>$XDG_CACHE_HOME</varname> points to the folder <filename role="directory">~/.cache/</filename>). The thumbnailers
+          cache is regenerated periodically by Thunar, but you can force to regenerate it by invoking the
+          <filename>thunar-vfs-update-thumbnailers-cache-1</filename> utility, that ships as part of Thunar. This utility is usually installed
+          in the <filename role="directory">libexec</filename> subfolder of your installation prefix (<filename role="directory">sbin</filename>
+          on Debian/Ubuntu). So for example, if Thunar is installed in <filename role="directory">/usr</filename>, invoke the utility as
+          follows:
+        </para>
+
+        <screen>$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1</screen>
+
+        <para>
+          But make sure you run the program from your user account, not the superuser account, since the thumbnailers cache is stored in
+          your home folder, rather than a system wide location.
+        </para>
+
+        <para>
+          Now, if Thunar is compiled with support for file alteration monitoring (using the FAM or Gamin services), it will automatically
+          pick up the new thumbnailers cache within a few seconds and afterwards be able to generate thumbnails using your custom
+          thumbnailers. Otherwise you might need to completely restart Thunar to apply the changes, using
+        </para>
+
+        <screen>$ Thunar -q</screen>
+
+        <para>
+          to terminate any running instance, and afterwards restart it from your launcher.
+        </para>
+      </sect3>
+
+      <sect3 id="cleaning-up-thumbnails">
+        <title>Cleaning up Thumbnails</title>
+
+        <para>
+          The generated thumbnails are stored in the folder <filename role="directory">~/.thumbnails/</filename> complying with the <ulink type="http" url="http://jens.triq.net/thumbnail-spec/index.html">Thumbnail Management Standard</ulink>. While testing a new
+          thumbnailer, it might help to clean up the thumbnail cache using
+        </para>
+
+        <screen>$ rm -rf ~/.thumbnails/</screen>
+
+        <para>
+          which will also give you some free space in your home folder. Since all the information stored within this folder was automatically
+          generated from files in your file system, you will not loose any sensitive data.
+        </para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
   <sect1 id="advanced-topics">
     <title>Sujets avancés</title>
 
     <sect2 id="the-unix-file-system">
       <title>Le système de fichiers UNIX</title>
 
-      <para>While the Thunar file manager does a good job at abstracting the details of the underlying file system, so the user does not need to care about them, it is sometimes useful to understand the basic concepts to get the whole picture. This section tries to give a brief introduction to the concepts of the UNIX file system, which is used today by all incarnations of UNIX, including Linux.</para>
+      <para>
+        While the Thunar file manager does a good job at abstracting the details of the underlying file system, so the user
+        does not need to care about them, it is sometimes useful to understand the basic concepts to get the whole picture.
+        This section tries to give a brief introduction to the concepts of the UNIX file system, which is used today by all
+        incarnations of UNIX, including Linux.
+      </para>
 
       <sect3 id="folders-and-paths">
         <title>Dossiers et chemins</title>
 
         <para>Dans un système de fichier UNIX tous les dossiers sont arrangés dans une structure en forme d'arbre simple inversé descendant et héritant d'un dossier unique de plus haut niveau, appelé le <emphasis>répertoire racine</emphasis> (le terme <emphasis>répertoire</emphasis> est souvent utilisé à la place de <emphasis>dossier</emphasis>) et affiché comme <guilabel>Système de fichier</guilabel> dans Thunar. Ce qui signifie que vous pouvez aller de n'importe quel dossier vers n'importe quel autre en en remontant dans l'arbre jusqu'à un point commun, puis vous descendez à travers les sous-dossiers appropriés jusqu'à atteindre votre but.</para>
 
-        <para>The position of any file or folder in the tree can be described by its <emphasis>path</emphasis>. The path is the list of folders you would have to descend through to get to the target folder or file, starting from the top level folder. For example <filename role="directory">/home/luke</filename> is the subfolder <filename role="directory">luke</filename> of the subfolder <filename role="directory">home</filename> of the top level folder, and <filename>/home/luke/myfile.txt</filename> is the file <filename>myfile.txt</filename> in that subfolder. The leading <filename role="directory">/</filename> in these paths represents the top level folder.</para>
+        <para>
+          The position of any file or folder in the tree can be described by its <emphasis>path</emphasis>. The path is the
+          list of folders you would have to descend through to get to the target folder or file, starting from the top level
+          folder. For example <filename role="directory">/home/luke</filename> is the subfolder <filename role="directory">luke</filename> of the subfolder <filename role="directory">home</filename> of the top level folder,
+          and <filename>/home/luke/myfile.txt</filename> is the file <filename>myfile.txt</filename> in that subfolder. The
+          leading <filename role="directory">/</filename> in these paths represents the top level folder.
+        </para>
 
-        <para>Every user has their own folder to hold their personal files and settings. This folder is called the <emphasis>home directory</emphasis> and is displayed in Thunar as special icon with the users login name. The folder is similar to the <guilabel>My Files</guilabel> folder known from Windows. The <emphasis>home directories</emphasis> of the various users in a system are usually located below the <filename role="directory">/home</filename> folder. For example <filename role="directory">/home/luke</filename> would be the home directory of the user with the login name <filename role="directory">luke</filename>, while <filename role="directory">/home/jane</filename> would be the home directory for the user with the login name <filename role="directory">jane</filename>.</para>
+        <para>
+          Every user has their own folder to hold their personal files and settings. This folder is called the <emphasis>home
+          directory</emphasis> and is displayed in Thunar as special icon with the users login name. The folder is similar to
+          the <guilabel>My Files</guilabel> folder known from Windows. The <emphasis>home directories</emphasis> of the various
+          users in a system are usually located below the <filename role="directory">/home</filename> folder. For example
+          <filename role="directory">/home/luke</filename> would be the home directory of the user with the login name
+          <filename role="directory">luke</filename>, while <filename role="directory">/home/jane</filename> would be
+          the home directory for the user with the login name <filename role="directory">jane</filename>.
+        </para>
       </sect3>
 
       <sect3 id="file-types">
         <title>Types de fichier</title>
 
-        <para>You may have already heard that everything is a file in UNIX. This is true for most objects present in UNIX systems today. In fact even devices are represented as a special files. While this may not make sense at first sight, it is one of the strengths of UNIX and its derivates, and has helped it to maintain a simple core over the years where other operating systems had to introduce new concepts for every new technology.</para>
+        <para>
+          You may have already heard that everything is a file in UNIX. This is true for most objects present in UNIX systems
+          today. In fact even devices are represented as a special files. While this may not make sense at first sight, it is
+          one of the strengths of UNIX and its derivates, and has helped it to maintain a simple core over the years where other
+          operating systems had to introduce new concepts for every new technology.
+        </para>
 
         <para>Voici les quatre types les plus importants de fichiers dans le système de fichiers UNIX.</para>
 
@@ -112,14 +358,31 @@
   <sect1 id="faq">
     <title>Foire aux Questions</title>
 
-    <para>The intent of this section is to collect the quite numerous frequently asked questions that relate to working with Thunar. If you know of a question that is missing from this page, please <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">file a request</ulink>.</para>
+    <para>
+      The intent of this section is to collect the quite numerous frequently asked
+      questions that relate to working with Thunar. If you know of a question that
+      is missing from this page, please <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">file
+      a request</ulink>.
+    </para>
 
     <sect3 id="faq-executables">
       <title>Pourquoi Thunar n'exécutent pas les fichiers indiqués comme exécutable ?</title>
 
-      <para>For security reasons Thunar only executes files of type <literal>application/x-desktop</literal>, <literal>application/x-executable</literal> and <literal>application/x-shellscript</literal>. For desktop files the execution feature will only be enabled if the desktop file is of type <literal>Application</literal> and a valid <literal>Exec</literal> line is given or of type <literal>Link</literal> and a valid <literal>URL</literal> is given. For the other types the feature is available if the file is marked executable for the current user.</para>
+      <para>
+        For security reasons Thunar only executes files of type <literal>application/x-desktop</literal>,
+        <literal>application/x-executable</literal> and <literal>application/x-shellscript</literal>. For
+        desktop files the execution feature will only be enabled if the desktop file is of type
+        <literal>Application</literal> and a valid <literal>Exec</literal> line is given or of type
+        <literal>Link</literal> and a valid <literal>URL</literal> is given. For the other types the feature
+        is available if the file is marked executable for the current user.
+      </para>
 
-      <para>Also note that for <literal>application/x-executable</literal> and <literal>application/x-shellscript</literal>, the types of the file don't really need to match these types exactly, but it is suffice if the detected type has a parent that matches one of the two types listed above, or if the MIME-type is an alias for one of the above.</para>
+      <para>
+        Also note that for <literal>application/x-executable</literal> and <literal>application/x-shellscript</literal>,
+        the types of the file don't really need to match these types exactly, but it is suffice if the detected
+        type has a parent that matches one of the two types listed above, or if the MIME-type is an alias for
+        one of the above.
+      </para>
     </sect3>
 
     <sect3 id="faq-metadata">
@@ -135,9 +398,16 @@
     </sect3>
 
     <sect3 id="faq-mouse-gestures">
-      <title>How to use mouse gestures in Thunar?</title>
+      <title>Comment utiliser les gestes de la souris dans thunar ?</title>
 
-      <para>Thunar currently features basic support for so called <emphasis>mouse gestures</emphasis> in its icon view. You can use these <emphasis>mouse gestures</emphasis> by holding down the middle mouse button (usually the mouse wheel) while the mouse pointer is on the background area of the icon view component (any area that is not covered by an icon or a text). Now you can move the cursor into four directions to perform certain actions, which are described below.</para>
+      <para>
+        Thunar currently features basic support for so called <emphasis>mouse gestures</emphasis>
+        in its icon view. You can use these <emphasis>mouse gestures</emphasis> by holding down
+        the middle mouse button (usually the mouse wheel) while the mouse pointer is on the
+        background area of the icon view component (any area that is not covered by
+        an icon or a text). Now you can move the cursor into four directions to
+        perform certain actions, which are described below.
+      </para>
 
       <simplelist>
         <member><guilabel>Gauche</guilabel> - ouvrir le dossier précédemment visité</member>
@@ -150,9 +420,16 @@
     <sect3 id="faq-assign-keyboard-shortcuts">
       <title>Comment puis-je assigner différents raccourcis clavier ?</title>
 
-      <para>If you want to rebind a shortcut, Thunar supports the standard GTK+ way of changing shortcuts: simply hover over the menu option with the mouse pointer and press the keyboard shortcut you want to rebind it to.</para>
+      <para>
+        If you want to rebind a shortcut, Thunar supports the standard GTK+ way
+        of changing shortcuts: simply hover over the menu option with the mouse
+        pointer and press the keyboard shortcut you want to rebind it to.
+      </para>
 
-      <para>To delete a keyboard assignment, press the <keycap>Backspace</keycap> key while you are on the menu entry.</para>
+      <para>
+        To delete a keyboard assignment, press the <keycap>Backspace</keycap> key
+        while you are on the menu entry.
+      </para>
 
       <para>Si le raccourci ne change pas, alors vous avez besoin d'activer la fonctionnalité dans GTK+. Vous pouvez le faire de 3 manières :</para>
 
@@ -176,7 +453,14 @@
 
       <para>Les raccourcis clavier personnalisés sont stockés dans le format 'accel map' standard de GTK+ dans le fichier  <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename>. Les lignes commençant avec <literal>;</literal> sont des commentaires. Voyez la documentation de GTK+ pour les détails à propos de ce format de fichier.</para>
 
-      <para>If you are a packager or a system administrator and want to provide a system wide default for the keyboard shortcuts, that is different from the default shortcuts in Thunar, you can create a file <filename>Thunar/accels.scm</filename> in one of the <envar>$XDG_CONFIG_DIRS</envar>. For example, if <filename role="directory">/etc/xdg</filename> is part of <envar>$XDG_CONFIG_DIRS</envar> (the default for most Linux distributions), you can install system wide defaults to <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar will then load shortcuts from this file on first startup.</para>
+      <para>
+        If you are a packager or a system administrator and want to provide a system wide default
+        for the keyboard shortcuts, that is different from the default shortcuts in Thunar, you
+        can create a file <filename>Thunar/accels.scm</filename> in one of the <envar>$XDG_CONFIG_DIRS</envar>.
+        For example, if <filename role="directory">/etc/xdg</filename> is part of <envar>$XDG_CONFIG_DIRS</envar>
+        (the default for most Linux distributions), you can install system wide defaults to
+        <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar will then load shortcuts from this file on first startup.
+      </para>
     </sect3>
   </sect1>
 

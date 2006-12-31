@@ -228,6 +228,13 @@ thunar_vfs_font_thumbnailer_1_LDFLAGS =					\
 	$(PLATFORM_LDFLAGS)
 endif
 
+desktopdir = $(datadir)/thumbnailers
+desktop_in_files = 							\
+	thunar-vfs-font-thumbnailer-1.desktop.in
+%.desktop: %.desktop.in
+	sed -e "s,\@libexecdir\@,$(libexecdir),g" < $< > $@
+desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunar-vfs-1.pc
 
@@ -243,7 +250,8 @@ EXTRA_DIST =								\
 	thunar-vfs-volume-hal.c						\
 	thunar-vfs-volume-hal.h						\
 	thunar-vfs-volume-none.c					\
-	thunar-vfs-volume-none.h
+	thunar-vfs-volume-none.h					\
+	$(desktop_in_files)
 
 if THUNAR_VFS_VOLUME_IMPL_FREEBSD
 libthunar_vfs_volume_impl_sources =					\
@@ -288,7 +296,8 @@ CLEANFILES =								\
 	xgen-tvetc							\
 	xgen-tveth							\
 	xgen-tvmc							\
-	xgen-tvmh
+	xgen-tvmh							\
+	$(desktop_DATA)
 
 DISTCLEANFILES =							\
 	stamp-thunar-vfs-enum-types.h					\
