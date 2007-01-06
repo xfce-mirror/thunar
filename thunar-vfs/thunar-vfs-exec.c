@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -504,6 +504,10 @@ thunar_vfs_exec_sync (const gchar *command_fmt,
         {
           /* drop additional whitespace from the stderr output */
           g_strstrip (standard_error);
+
+          /* strip all trailing dots from the stderr output */
+          while (*standard_error != '\0' && standard_error[strlen (standard_error) - 1] == '.')
+            standard_error[strlen (standard_error) - 1] = '\0';
 
           /* generate an error from the stderr output */
           if (G_LIKELY (*standard_error != '\0'))

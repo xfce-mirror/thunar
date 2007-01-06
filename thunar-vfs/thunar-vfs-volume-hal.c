@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -93,7 +93,6 @@ struct _ThunarVfsVolumeHal
   ThunarVfsVolume       __parent__;
 
   gchar                *udi;
-  gchar                *drive_udi;
 
   gchar                *device_file;
   gchar                *device_label;
@@ -159,7 +158,6 @@ thunar_vfs_volume_hal_finalize (GObject *object)
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (object);
 
   g_free (volume_hal->udi);
-  g_free (volume_hal->drive_udi);
 
   g_free (volume_hal->device_file);
   g_free (volume_hal->device_label);
@@ -211,12 +209,11 @@ thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
                              GError         **error)
 {
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
-  ThunarVfsPath      *path;
   gboolean            result = TRUE;
-  gchar              *program;
   gchar              *quoted;
 
-  /* check if the volume is currently mounted */
+  /* check if the volume is currently mounted (FIXME: Why? Just confusing!) */
+#if 0 
   path = thunar_vfs_volume_hal_find_active_mount_point (volume_hal);
   if (G_LIKELY (path != NULL))
     {
@@ -224,39 +221,21 @@ thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
       result = thunar_vfs_volume_hal_unmount (volume, window, error);
       thunar_vfs_path_unref (path);
     }
+#endif
 
-  /* check the unmount was successfull */
+  /* use exo-eject to eject the device */
+  quoted = g_shell_quote (volume_hal->udi);
+  result = thunar_vfs_exec_sync ("exo-eject -n -h %s", error, quoted);
+  g_free (quoted);
+
+  /* check if we were successfull */
   if (G_LIKELY (result))
     {
-      /* check if gnome-eject is present */
-      program = g_find_program_in_path ("gnome-eject");
-      if (G_LIKELY (program != NULL))
-        {
-          /* try to use gnome-eject then */
-          quoted = g_shell_quote (volume_hal->udi);
-          result = thunar_vfs_exec_sync ("%s -t -h %s", error, program, quoted);
-          g_free (quoted);
+      /* reset the status */
+      volume_hal->status &= ~(THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT);
 
-          /* cleanup */
-          g_free (program);
-        }
-      else
-        {
-          /* use eject */
-          quoted = g_path_get_basename (volume_hal->device_file);
-          result = thunar_vfs_exec_sync ("eject %s", error, quoted);
-          g_free (quoted);
-        }
-
-      /* check if we were successfull */
-      if (G_LIKELY (result))
-        {
-          /* reset the status */
-          volume_hal->status &= ~(THUNAR_VFS_VOLUME_STATUS_MOUNTED | THUNAR_VFS_VOLUME_STATUS_PRESENT);
-
-          /* emit "changed" on the volume */
-          thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
-        }
+      /* emit "changed" on the volume */
+      thunar_vfs_volume_changed (THUNAR_VFS_VOLUME (volume_hal));
     }
 
   return result;
@@ -272,62 +251,12 @@ thunar_vfs_volume_hal_mount (ThunarVfsVolume *volume,
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
   ThunarVfsPath      *path;
   gboolean            result;
-  gchar              *mount_point;
-  gchar              *program;
   gchar              *quoted;
 
-  /* check if pmount-hal is present */
-  program = g_find_program_in_path ("pmount-hal");
-  if (G_LIKELY (program != NULL))
-    {
-      /* try to use pmount-hal then */
-      quoted = g_shell_quote (volume_hal->udi);
-      thunar_vfs_exec_sync ("%s %s", NULL, program, quoted);
-      g_free (program);
-      g_free (quoted);
-
-      /* pmount-hal returns error if already mounted, so
-       * we set result to TRUE, which means it will always
-       * be looked up in /proc/mounts below.
-       * See http://bugzilla.xfce.org/show_bug.cgi?id=1833.
-       */
-      result = TRUE;
-    }
-  else
-    {
-      /* check if gnome-mount is present */
-      program = g_find_program_in_path ("gnome-mount");
-      if (G_LIKELY (program != NULL))
-        {
-          /* try to use gnome-mount then */
-          quoted = g_shell_quote (volume_hal->udi);
-          result = thunar_vfs_exec_sync ("%s -t -h %s", error, program, quoted);
-          g_free (program);
-          g_free (quoted);
-        }
-      else
-        {
-          /* check if hal-mount (from ivman) is present */
-          program = g_find_program_in_path ("halmount");
-          if (G_LIKELY (program != NULL))
-            {
-              /* try to use halmount then */
-              quoted = g_shell_quote (volume_hal->device_file);
-              result = thunar_vfs_exec_sync ("%s %s", error, program, quoted);
-              g_free (program);
-              g_free (quoted);
-            }
-          else
-            {
-              /* fallback to plain mount */
-              mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
-              quoted = g_shell_quote (mount_point);
-              result = thunar_vfs_exec_sync ("mount %s", error, quoted);
-              g_free (mount_point);
-              g_free (quoted);
-            }
-        }
-    }
+  /* use exo-mount to mount the device */
+  quoted = g_shell_quote (volume_hal->udi);
+  result = thunar_vfs_exec_sync ("exo-mount -n -h %s", error, quoted);
+  g_free (quoted);
 
   /* check if we were successfull */
   if (G_LIKELY (result))
@@ -366,57 +295,12 @@ thunar_vfs_volume_hal_unmount (ThunarVfsVolume *volume,
 {
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
   gboolean            result;
-  gchar              *mount_point;
-  gchar              *program;
   gchar              *quoted;
 
-  /* check if pumount is present */
-  program = g_find_program_in_path ("pumount");
-  if (G_LIKELY (program != NULL))
-    {
-      /* try to use pumount then */
-      mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
-      quoted = g_shell_quote (mount_point);
-      result = thunar_vfs_exec_sync ("%s %s", error, program, quoted);
-      g_free (mount_point);
-      g_free (program);
-      g_free (quoted);
-    }
-  else
-    {
-      /* check if gnome-umount is present */
-      program = g_find_program_in_path ("gnome-umount");
-      if (G_LIKELY (program != NULL))
-        {
-          /* try to use gnome-umount then */
-          quoted = g_shell_quote (volume_hal->udi);
-          result = thunar_vfs_exec_sync ("%s -t -h %s", error, program, quoted);
-          g_free (program);
-          g_free (quoted);
-        }
-      else
-        {
-          /* check if halmount is present */
-          program = g_find_program_in_path ("halmount");
-          if (G_LIKELY (program != NULL))
-            {
-              /* try to use halmount then */
-              quoted = g_shell_quote (volume_hal->device_file);
-              result = thunar_vfs_exec_sync ("%s -u %s", error, program, quoted);
-              g_free (program);
-              g_free (quoted);
-            }
-          else
-            {
-              /* fallback to plain umount */
-              mount_point = thunar_vfs_path_dup_string (volume_hal->mount_point);
-              quoted = g_shell_quote (mount_point);
-              result = thunar_vfs_exec_sync ("umount %s", error, quoted);
-              g_free (mount_point);
-              g_free (quoted);
-            }
-        }
-    }
+  /* unmount using exo-unmount */
+  quoted = g_shell_quote (volume_hal->udi);
+  result = thunar_vfs_exec_sync ("exo-unmount -n -h %s", error, quoted);
+  g_free (quoted);
 
   /* check if we were successfull */
   if (G_LIKELY (result))
@@ -515,7 +399,7 @@ thunar_vfs_volume_hal_find_fstab_mount_point (const ThunarVfsVolumeHal *volume_h
   FILE          *fp;
 
   /* try to open the /etc/fstab file */
-  fp = setmntent ("/proc/fstab", "r");
+  fp = setmntent ("/etc/fstab", "r");
   if (G_LIKELY (fp != NULL))
     {
       /* process all mnt entries */
@@ -570,7 +454,6 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
   gchar       *filename;
 
   _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_HAL (volume_hal));
-  _thunar_vfs_return_if_fail (hv != NULL);
   _thunar_vfs_return_if_fail (hd != NULL);
 
   /* reset the volume status */
@@ -578,11 +461,11 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
 
   /* determine the new device file */
   g_free (volume_hal->device_file);
-  volume_hal->device_file = g_strdup (libhal_volume_get_device_file (hv));
+  volume_hal->device_file = g_strdup ((hv != NULL) ? libhal_volume_get_device_file (hv) : libhal_drive_get_device_file (hd));
 
   /* determine the new label */
   g_free (volume_hal->device_label);
-  volume_label = libhal_volume_get_label (hv);
+  volume_label = (hv != NULL) ? libhal_volume_get_label (hv) : libhal_drive_get_model (hd);
   if (G_LIKELY (volume_label != NULL && *volume_label != '\0'))
     {
       /* just use the label provided by HAL */
@@ -675,11 +558,11 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
     }
 
   /* non-disc drives are always present, otherwise it must be a data disc to be usable */
-  if (!libhal_volume_is_disc (hv) || libhal_volume_disc_has_data (hv))
+  if (hv == NULL || !libhal_volume_is_disc (hv) || libhal_volume_disc_has_data (hv))
     volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_PRESENT;
 
   /* check if the volume is currently mounted */
-  if (libhal_volume_is_mounted (hv))
+  if (hv != NULL && libhal_volume_is_mounted (hv))
     {
       /* try to determine the new mount point */
       volume_hal->mount_point = thunar_vfs_path_new (libhal_volume_get_mount_point (hv), NULL);
@@ -887,22 +770,31 @@ thunar_vfs_volume_manager_hal_init (ThunarVfsVolumeManagerHal *manager_hal)
           if (G_UNLIKELY (hd == NULL))
             continue;
 
-          /* determine all volumes for the given drive */
-          udis = libhal_drive_find_all_volumes (manager_hal->context, hd, &n_udis);
-          if (G_LIKELY (udis != NULL))
+          /* check if we have a floppy disk here */
+          if (libhal_drive_get_type (hd) == LIBHAL_DRIVE_TYPE_FLOPPY)
             {
-              /* add volumes for all given UDIs */
-              for (n = 0; n < n_udis; ++n)
+              /* add the drive based on the UDI */
+              thunar_vfs_volume_manager_hal_device_added (manager_hal->context, drive_udis[m]);
+            }
+          else
+            {
+              /* determine all volumes for the given drive */
+              udis = libhal_drive_find_all_volumes (manager_hal->context, hd, &n_udis);
+              if (G_LIKELY (udis != NULL))
                 {
-                  /* add the volume based on the UDI */
-                  thunar_vfs_volume_manager_hal_device_added (manager_hal->context, udis[n]);
-                  
-                  /* release the UDI (HAL bug #5279) */
-                  free (udis[n]);
-                }
+                  /* add volumes for all given UDIs */
+                  for (n = 0; n < n_udis; ++n)
+                    {
+                      /* add the volume based on the UDI */
+                      thunar_vfs_volume_manager_hal_device_added (manager_hal->context, udis[n]);
+                      
+                      /* release the UDI (HAL bug #5279) */
+                      free (udis[n]);
+                    }
 
-              /* release the UDIs array (HAL bug #5279) */
-              free (udis);
+                  /* release the UDIs array (HAL bug #5279) */
+                  free (udis);
+                }
             }
 
           /* release the hal drive */
@@ -997,36 +889,49 @@ thunar_vfs_volume_manager_hal_update_volume_by_udi (ThunarVfsVolumeManagerHal *m
   hv = libhal_volume_from_udi (manager_hal->context, udi);
   if (G_UNLIKELY (hv == NULL))
     {
-      /* the device is no longer a volume, so drop it */
-      thunar_vfs_volume_manager_hal_device_removed (manager_hal->context, udi);
-      return;
-    }
+      /* check if we have a drive here */
+      hd = libhal_drive_from_udi (manager_hal->context, udi);
+      if (G_UNLIKELY (hd == NULL))
+        {
+          /* the device is no longer a drive or volume, so drop it */
+          thunar_vfs_volume_manager_hal_device_removed (manager_hal->context, udi);
+          return;
+        }
 
-  /* determine the UDI of the drive to which this volume belongs */
-  drive_udi = libhal_volume_get_storage_device_udi (hv);
-  if (G_LIKELY (drive_udi != NULL))
-    {
-      /* determine the drive for the volume */
-      hd = libhal_drive_from_udi (manager_hal->context, drive_udi);
-    }
-
-  /* check if we have the drive for the volume */
-  if (G_LIKELY (hd != NULL))
-    {
-      /* update the volume with the new HAL drive/volume */
-      thunar_vfs_volume_hal_update (volume_hal, manager_hal->context, hv, hd);
+      /* update the drive with the new HAL drive/volume */
+      thunar_vfs_volume_hal_update (volume_hal, manager_hal->context, NULL, hd);
 
       /* release the drive */
       libhal_drive_free (hd);
     }
   else
     {
-      /* unable to determine the drive, volume gone? */
-      thunar_vfs_volume_manager_hal_device_removed (manager_hal->context, udi);
-    }
+      /* determine the UDI of the drive to which this volume belongs */
+      drive_udi = libhal_volume_get_storage_device_udi (hv);
+      if (G_LIKELY (drive_udi != NULL))
+        {
+          /* determine the drive for the volume */
+          hd = libhal_drive_from_udi (manager_hal->context, drive_udi);
+        }
 
-  /* release the volume */
-  libhal_volume_free (hv);
+      /* check if we have the drive for the volume */
+      if (G_LIKELY (hd != NULL))
+        {
+          /* update the volume with the new HAL drive/volume */
+          thunar_vfs_volume_hal_update (volume_hal, manager_hal->context, hv, hd);
+
+          /* release the drive */
+          libhal_drive_free (hd);
+        }
+      else
+        {
+          /* unable to determine the drive, volume gone? */
+          thunar_vfs_volume_manager_hal_device_removed (manager_hal->context, udi);
+        }
+
+      /* release the volume */
+      libhal_volume_free (hv);
+    }
 }
 
 
@@ -1046,23 +951,62 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
 
   /* check if we have a volume here */
   hv = libhal_volume_from_udi (context, udi);
-  if (G_UNLIKELY (hv == NULL))
-    return;
-
-  /* we don't care for anything other than mountable filesystems */
-  if (G_UNLIKELY (libhal_volume_get_fsusage (hv) != LIBHAL_VOLUME_USAGE_MOUNTABLE_FILESYSTEM))
+  if (G_LIKELY (hv != NULL))
     {
+      /* we don't care for anything other than mountable filesystems */
+      if (G_UNLIKELY (libhal_volume_get_fsusage (hv) != LIBHAL_VOLUME_USAGE_MOUNTABLE_FILESYSTEM))
+        {
+          libhal_volume_free (hv);
+          return;
+        }
+
+      /* determine the UDI of the drive to which this volume belongs */
+      drive_udi = libhal_volume_get_storage_device_udi (hv);
+      if (G_LIKELY (drive_udi != NULL))
+        {
+          /* determine the drive for the volume */
+          hd = libhal_drive_from_udi (context, drive_udi);
+          if (G_LIKELY (hd != NULL))
+            {
+              /* check if we already have a volume object for the UDI */
+              volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);
+              if (G_LIKELY (volume_hal == NULL))
+                {
+                  /* otherwise, we allocate a new volume object */
+                  volume_hal = g_object_new (THUNAR_VFS_TYPE_VOLUME_HAL, NULL);
+                  volume_hal->udi = g_strdup (udi);
+                }
+
+              /* update the volume object with the new data from the HAL volume/drive */
+              thunar_vfs_volume_hal_update (volume_hal, context, hv, hd);
+
+              /* add the volume object to our list if we allocated a new one */
+              if (g_list_find (THUNAR_VFS_VOLUME_MANAGER (manager_hal)->volumes, volume_hal) == NULL)
+                {
+                  /* add the volume to the volume manager */
+                  thunar_vfs_volume_manager_add (THUNAR_VFS_VOLUME_MANAGER (manager_hal), THUNAR_VFS_VOLUME (volume_hal));
+
+                  /* release the reference on the volume */
+                  g_object_unref (G_OBJECT (volume_hal));
+                }
+
+              /* release the HAL drive */
+              libhal_drive_free (hd);
+            }
+        }
+
+      /* release the HAL volume */
       libhal_volume_free (hv);
-      return;
     }
-
-  /* determine the UDI of the drive to which this volume belongs */
-  drive_udi = libhal_volume_get_storage_device_udi (hv);
-  if (G_LIKELY (drive_udi != NULL))
+  else
     {
-      /* determine the drive for the volume */
-      hd = libhal_drive_from_udi (context, drive_udi);
-      if (G_LIKELY (hd != NULL))
+      /* but maybe we have a floppy disk drive here */
+      hd = libhal_drive_from_udi (context, udi);
+      if (G_UNLIKELY (hd == NULL))
+        return;
+
+      /* check if we have a floppy disk drive */
+      if (G_LIKELY (libhal_drive_get_type (hd) == LIBHAL_DRIVE_TYPE_FLOPPY))
         {
           /* check if we already have a volume object for the UDI */
           volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);
@@ -1071,11 +1015,10 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
               /* otherwise, we allocate a new volume object */
               volume_hal = g_object_new (THUNAR_VFS_TYPE_VOLUME_HAL, NULL);
               volume_hal->udi = g_strdup (udi);
-              volume_hal->drive_udi = g_strdup (drive_udi);
             }
 
           /* update the volume object with the new data from the HAL volume/drive */
-          thunar_vfs_volume_hal_update (volume_hal, context, hv, hd);
+          thunar_vfs_volume_hal_update (volume_hal, context, NULL, hd);
 
           /* add the volume object to our list if we allocated a new one */
           if (g_list_find (THUNAR_VFS_VOLUME_MANAGER (manager_hal)->volumes, volume_hal) == NULL)
@@ -1086,14 +1029,11 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
               /* release the reference on the volume */
               g_object_unref (G_OBJECT (volume_hal));
             }
-
-          /* release the HAL drive */
-          libhal_drive_free (hd);
         }
-    }
 
-  /* release the HAL volume */
-  libhal_volume_free (hv);
+      /* release the HAL drive */
+      libhal_drive_free (hd);
+    }
 }
 
 

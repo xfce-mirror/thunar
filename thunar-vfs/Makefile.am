@@ -238,6 +238,15 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = thunar-vfs-1.pc
 
+CLEANFILES =								\
+	actual-abi							\
+	expected-abi							\
+	xgen-tvetc							\
+	xgen-tveth							\
+	xgen-tvmc							\
+	xgen-tvmh							\
+	$(desktop_DATA)
+
 EXTRA_DIST =								\
 	abicheck.sh							\
 	make-thunar-vfs-alias.pl					\
@@ -279,7 +288,6 @@ libthunar_vfs_volume_impl_sources =					\
 	thunar-vfs-volume-none.h
 endif
 
-
 ##
 ## Rules to auto-generate built sources
 ##
@@ -290,18 +298,10 @@ endif
 ## files as part of the dist tarball.
 ##
 if MAINTAINER_MODE
-CLEANFILES =								\
-	actual-abi							\
-	expected-abi							\
-	xgen-tvetc							\
-	xgen-tveth							\
-	xgen-tvmc							\
-	xgen-tvmh							\
-	$(desktop_DATA)
-
 DISTCLEANFILES =							\
 	stamp-thunar-vfs-enum-types.h					\
 	stamp-thunar-vfs-marshal.h					\
+	thunar-vfs-font-thumbnailer-1.desktop				\
 	$(libthunar_vfs_built_sources)
 
 BUILT_SOURCES =								\

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -212,7 +212,7 @@ thunar_vfs_volume_freebsd_eject (ThunarVfsVolume *volume,
 
   /* execute the eject command */
   quoted = g_shell_quote (volume_freebsd->device_path);
-  result = thunar_vfs_exec_sync ("eject %s", error, quoted);
+  result = thunar_vfs_exec_sync ("exo-eject -n -d %s", error, quoted);
   g_free (quoted);
 
   /* update volume state if successfull */
@@ -231,16 +231,11 @@ thunar_vfs_volume_freebsd_mount (ThunarVfsVolume *volume,
 {
   ThunarVfsVolumeFreeBSD *volume_freebsd = THUNAR_VFS_VOLUME_FREEBSD (volume);
   gboolean                result;
-  gchar                   mount_point[THUNAR_VFS_PATH_MAXSTRLEN];
   gchar                  *quoted;
 
-  /* determine the absolute path to the mount point */
-  if (thunar_vfs_path_to_string (volume_freebsd->mount_point, mount_point, sizeof (mount_point), error) < 0)
-    return FALSE;
-
   /* execute the mount command */
-  quoted = g_shell_quote (mount_point);
-  result = thunar_vfs_exec_sync ("mount %s", error, quoted);
+  quoted = g_shell_quote (volume_freebsd->device_path);
+  result = thunar_vfs_exec_sync ("exo-mount -n -d %s", error, quoted);
   g_free (quoted);
 
   /* update volume state if successfull */
@@ -259,16 +254,11 @@ thunar_vfs_volume_freebsd_unmount (ThunarVfsVolume *volume,
 {
   ThunarVfsVolumeFreeBSD *volume_freebsd = THUNAR_VFS_VOLUME_FREEBSD (volume);
   gboolean                result;
-  gchar                   mount_point[THUNAR_VFS_PATH_MAXSTRLEN];
   gchar                  *quoted;
 
-  /* determine the absolute path to the mount point */
-  if (thunar_vfs_path_to_string (volume_freebsd->mount_point, mount_point, sizeof (mount_point), error) < 0)
-    return FALSE;
-
   /* execute the umount command */
-  quoted = g_shell_quote (mount_point);
-  result = thunar_vfs_exec_sync ("umount %s", error, quoted);
+  quoted = g_shell_quote (volume_freebsd->device_path);
+  result = thunar_vfs_exec_sync ("exo-unmount -n -d %s", error, quoted);
   g_free (quoted);
 
   /* update volume state if successfull */

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.5.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-03 12:54+0100\n"
+"POT-Creation-Date: 2007-01-06 18:50+0100\n"
 "PO-Revision-Date: 2007-01-05 11:16+0100\n"
 "Last-Translator: Fabian Nowak <timystery@arcor.de>\n"
 "Language-Team: German <de@li.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "Konnte Ordnerinhalt nicht lesen"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:512
+#: ../thunar-vfs/thunar-vfs-exec.c:516
 msgid "Unknown error"
 msgstr "Unbekannter Fehler"
 
@@ -341,13 +341,13 @@ msgstr "Unbekannter Benutzer »%s«"
 
 #. something went wrong, for sure
 #. display an error dialog to inform the user
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:352
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:281
 #: ../thunar/thunar-location-entry.c:650
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Der Einhängepunkt für %s konnte nicht bestimmt werden"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:933
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:825
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "Konnte keine Verbindung zum HAL Dienst aufbauen: %s"
@@ -1338,7 +1338,7 @@ msgstr "Konnte »%s« nicht ausführen"
 #: ../thunar/thunar-tree-view.c:1598
 #, c-format
 msgid "Failed to mount \"%s\""
-msgstr "Das Medium »%s« konnte nicht eingebunden werden"
+msgstr "Der Datenträger »%s« konnte nicht eingebunden werden"
 
 #: ../thunar/thunar-path-entry.c:259
 msgid "Icon size"
@@ -1800,7 +1800,7 @@ msgstr "Größe:"
 
 #: ../thunar/thunar-properties-dialog.c:446
 msgid "Volume:"
-msgstr "Gerät:"
+msgstr "Datenträger:"
 
 #: ../thunar/thunar-properties-dialog.c:470
 msgid "Free Space:"
@@ -2021,17 +2021,17 @@ msgstr[1] "Neue Lesezeichen für die ausgewählten Ordner erstellen"
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:820 ../thunar/thunar-tree-view.c:1038
 msgid "_Mount Volume"
-msgstr "Gerät _einbinden"
+msgstr "Datenträger _Einbinden"
 
 #. append the "Eject Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:830 ../thunar/thunar-tree-view.c:1048
 msgid "E_ject Volume"
-msgstr "Medium _auswerfen"
+msgstr "Datenträger _Auswerfen"
 
 #. append the "Unmount Volume" menu item
 #: ../thunar/thunar-shortcuts-view.c:839 ../thunar/thunar-tree-view.c:1057
 msgid "_Unmount Volume"
-msgstr "Gerät _aushängen"
+msgstr "Datenträger _Auslösen"
 
 #. append the remove menu item
 #: ../thunar/thunar-shortcuts-view.c:867
@@ -2057,14 +2057,14 @@ msgstr "Neues Lesezeichen konnte nicht hinzugefügt werden"
 #: ../thunar/thunar-shortcuts-view.c:1287 ../thunar/thunar-tree-view.c:1547
 #, c-format
 msgid "Failed to eject \"%s\""
-msgstr "Das Medium in »%s« konnte nicht ausgeworfen werden"
+msgstr "Der Datenträger »%s« konnte nicht ausgeworfen werden"
 
 #. display an error dialog to inform the user
 #. display an error dialog
 #: ../thunar/thunar-shortcuts-view.c:1377 ../thunar/thunar-tree-view.c:1738
 #, c-format
 msgid "Failed to unmount \"%s\""
-msgstr "Das Medium »%s« konnte nicht ausgelöst werden"
+msgstr "Der Datenträger »%s« konnte nicht ausgelöst werden"
 
 #: ../thunar/thunar-size-label.c:177
 msgid "Click here to stop calculating the total size of the folder."
@@ -3348,6 +3348,10 @@ msgstr "Ordner in Thunar öffnen"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Angegebene Ordner mit Thunar öffnen"
+
+#, fuzzy
+#~ msgid "Failed to open display"
+#~ msgstr "%d Datei konnte nicht geöffnet werden"
 
 #~ msgid "Failed to open home directory"
 #~ msgstr "Der persönliche Ordner konnte nicht geöffnet werden"

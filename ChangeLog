@@ -1,3 +1,17 @@
+2007-01-06	Benedikt Meurer <benny@xfce.org>
+
+	* README, configure.in.in: Requires libexo 0.3.1.13svn.
+	* thunar-vfs/thunar-vfs-exec.c(thunar_vfs_exec_sync): Strip trailing
+	  dots from the error message.
+	* thunar-vfs/thunar-vfs-volume-freebsd.c, docs/README.volumes,
+	  thunar-vfs/thunar-vfs-volume-hal.c: Use exo-mount to mount, eject
+	  and unmount volumes instead of relying on external utilities that
+	  don't always behave properly. Bug #2715.
+	* thunar-vfs/thunar-vfs-volume-hal.c: Add ability to mount floppy
+	  drives using exo-mount. Bug #2075.
+	* thunar-vfs/Makefile.am: Fix distcheck.
+	* po/de.po: Some german translation love.
+
 2007-01-03	Benedikt Meurer <benny@xfce.org>
 
 	* configure.in.in, docs/manual/, thunar/main.c, thunar/thunar-dialogs.c:
