@@ -274,10 +274,12 @@ libthunar_vfs_volume_impl_sources =					\
 	thunar-vfs-volume-hal.h
 
 libthunar_vfs_1_la_CFLAGS +=						\
+	$(EXO_HAL_CFLAGS)						\
 	$(HAL_CFLAGS)							\
 	$(HAL_DBUS_CFLAGS)
 
 libthunar_vfs_1_la_LIBADD +=						\
+	$(EXO_HAL_LIBS)							\
 	$(HAL_LIBS)							\
 	$(HAL_DBUS_LIBS)
 endif

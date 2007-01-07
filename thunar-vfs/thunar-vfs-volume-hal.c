@@ -48,8 +48,9 @@
 
 #include <dbus/dbus-glib-lowlevel.h>
 
-#include <libhal.h>
 #include <libhal-storage.h>
+
+#include <exo-hal/exo-hal.h>
 
 #include <thunar-vfs/thunar-vfs-exec.h>
 #include <thunar-vfs/thunar-vfs-private.h>
@@ -65,6 +66,8 @@ static ThunarVfsVolumeKind   thunar_vfs_volume_hal_get_kind                 (Thu
 static const gchar          *thunar_vfs_volume_hal_get_name                 (ThunarVfsVolume          *volume);
 static ThunarVfsVolumeStatus thunar_vfs_volume_hal_get_status               (ThunarVfsVolume          *volume);
 static ThunarVfsPath        *thunar_vfs_volume_hal_get_mount_point          (ThunarVfsVolume          *volume);
+static const gchar          *thunar_vfs_volume_hal_lookup_icon_name         (ThunarVfsVolume          *volume,
+                                                                             GtkIconTheme             *icon_theme);
 static gboolean              thunar_vfs_volume_hal_eject                    (ThunarVfsVolume          *volume,
                                                                              GtkWidget                *window,
                                                                              GError                  **error);
@@ -96,6 +99,10 @@ struct _ThunarVfsVolumeHal
 
   gchar                *device_file;
   gchar                *device_label;
+
+  /* list of possible icons */
+  GList                *icon_list;
+
   ThunarVfsPath        *mount_point;
   ThunarVfsVolumeKind   kind;
   ThunarVfsVolumeStatus status;
@@ -145,6 +152,7 @@ thunar_vfs_volume_hal_class_init (ThunarVfsVolumeHalClass *klass)
   thunarvfs_volume_class->get_name = thunar_vfs_volume_hal_get_name;
   thunarvfs_volume_class->get_status = thunar_vfs_volume_hal_get_status;
   thunarvfs_volume_class->get_mount_point = thunar_vfs_volume_hal_get_mount_point;
+  thunarvfs_volume_class->lookup_icon_name = thunar_vfs_volume_hal_lookup_icon_name;
   thunarvfs_volume_class->eject = thunar_vfs_volume_hal_eject;
   thunarvfs_volume_class->mount = thunar_vfs_volume_hal_mount;
   thunarvfs_volume_class->unmount = thunar_vfs_volume_hal_unmount;
@@ -161,6 +169,9 @@ thunar_vfs_volume_hal_finalize (GObject *object)
 
   g_free (volume_hal->device_file);
   g_free (volume_hal->device_label);
+
+  g_list_foreach (volume_hal->icon_list, (GFunc) g_free, NULL);
+  g_list_free (volume_hal->icon_list);
 
   /* release the mount point (if any) */
   if (G_LIKELY (volume_hal->mount_point != NULL))
@@ -203,6 +214,23 @@ thunar_vfs_volume_hal_get_mount_point (ThunarVfsVolume *volume)
 
 
 
+static const gchar*
+thunar_vfs_volume_hal_lookup_icon_name (ThunarVfsVolume *volume,
+                                        GtkIconTheme    *icon_theme)
+{
+  GList *lp;
+
+  /* check if we have atleast one usable icon in our icon_list */
+  for (lp = THUNAR_VFS_VOLUME_HAL (volume)->icon_list; lp != NULL; lp = lp->next)
+    if (gtk_icon_theme_has_icon (icon_theme, lp->data))
+      return lp->data;
+
+  /* fallback in thunar_vfs_volume_lookup_icon() */
+  return NULL;
+}
+
+
+
 static gboolean
 thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
                              GtkWidget       *window,
@@ -211,17 +239,6 @@ thunar_vfs_volume_hal_eject (ThunarVfsVolume *volume,
   ThunarVfsVolumeHal *volume_hal = THUNAR_VFS_VOLUME_HAL (volume);
   gboolean            result = TRUE;
   gchar              *quoted;
-
-  /* check if the volume is currently mounted (FIXME: Why? Just confusing!) */
-#if 0 
-  path = thunar_vfs_volume_hal_find_active_mount_point (volume_hal);
-  if (G_LIKELY (path != NULL))
-    {
-      /* try to unmount the volume first */
-      result = thunar_vfs_volume_hal_unmount (volume, window, error);
-      thunar_vfs_path_unref (path);
-    }
-#endif
 
   /* use exo-eject to eject the device */
   quoted = g_shell_quote (volume_hal->udi);
@@ -447,11 +464,10 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
                               LibHalVolume       *hv,
                               LibHalDrive        *hd)
 {
-  const gchar *volume_label;
-  gchar       *desired_mount_point;
-  gchar       *mount_root;
-  gchar       *basename;
-  gchar       *filename;
+  gchar *desired_mount_point;
+  gchar *mount_root;
+  gchar *basename;
+  gchar *filename;
 
   _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_HAL (volume_hal));
   _thunar_vfs_return_if_fail (hd != NULL);
@@ -463,19 +479,23 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
   g_free (volume_hal->device_file);
   volume_hal->device_file = g_strdup ((hv != NULL) ? libhal_volume_get_device_file (hv) : libhal_drive_get_device_file (hd));
 
-  /* determine the new label */
+  /* compute a usable display name for the volume/drive */
   g_free (volume_hal->device_label);
-  volume_label = (hv != NULL) ? libhal_volume_get_label (hv) : libhal_drive_get_model (hd);
-  if (G_LIKELY (volume_label != NULL && *volume_label != '\0'))
-    {
-      /* just use the label provided by HAL */
-      volume_hal->device_label = g_strdup (volume_label);
-    }
-  else
+  volume_hal->device_label = (hv == NULL)
+    ? exo_hal_drive_compute_display_name (context, hd)
+    : exo_hal_volume_compute_display_name (context, hv, hd);
+  if (G_UNLIKELY (volume_hal->device_label == NULL))
     {
       /* use the basename of the device file as label */
       volume_hal->device_label = g_path_get_basename (volume_hal->device_file);
     }
+
+  /* compute a usable list of icon names for the volume/drive */
+  g_list_foreach (volume_hal->icon_list, (GFunc) g_free, NULL);
+  g_list_free (volume_hal->icon_list);
+  volume_hal->icon_list = (hv == NULL)
+    ? exo_hal_drive_compute_icon_list (context, hd)
+    : exo_hal_volume_compute_icon_list (context, hv, hd);
 
   /* release the previous mount point (if any) */
   if (G_LIKELY (volume_hal->mount_point != NULL))
@@ -488,49 +508,58 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
   switch (libhal_drive_get_type (hd))
     {
     case LIBHAL_DRIVE_TYPE_CDROM:
-      /* check which kind of CD-ROM/DVD we have */
-      switch (libhal_volume_get_disc_type (hv))
+      /* check if we have a pure audio CD without any data track */
+      if (libhal_volume_disc_has_audio (hv) && !libhal_volume_disc_has_data (hv))
         {
-        case LIBHAL_VOLUME_DISC_TYPE_CDROM:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_CDROM;
-          break;
+          /* special treatment for pure audio CDs */
+          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_AUDIO_CD;
+        }
+      else
+        {
+          /* check which kind of CD-ROM/DVD we have */
+          switch (libhal_volume_get_disc_type (hv))
+            {
+            case LIBHAL_VOLUME_DISC_TYPE_CDROM:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_CDROM;
+              break;
 
-        case LIBHAL_VOLUME_DISC_TYPE_CDR:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_CDR;
-          break;
+            case LIBHAL_VOLUME_DISC_TYPE_CDR:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_CDR;
+              break;
 
-        case LIBHAL_VOLUME_DISC_TYPE_CDRW:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_CDRW;
-          break;
+            case LIBHAL_VOLUME_DISC_TYPE_CDRW:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_CDRW;
+              break;
 
-        case LIBHAL_VOLUME_DISC_TYPE_DVDROM:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDROM;
-          break;
+            case LIBHAL_VOLUME_DISC_TYPE_DVDROM:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDROM;
+              break;
 
-        case LIBHAL_VOLUME_DISC_TYPE_DVDRAM:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDRAM;
-          break;
+            case LIBHAL_VOLUME_DISC_TYPE_DVDRAM:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDRAM;
+              break;
 
-        case LIBHAL_VOLUME_DISC_TYPE_DVDR:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDR;
-          break;
+            case LIBHAL_VOLUME_DISC_TYPE_DVDR:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDR;
+              break;
 
-        case LIBHAL_VOLUME_DISC_TYPE_DVDRW:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDRW;
-          break;
+            case LIBHAL_VOLUME_DISC_TYPE_DVDRW:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDRW;
+              break;
 
-        case LIBHAL_VOLUME_DISC_TYPE_DVDPLUSR:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDPLUSR;
-          break;
+            case LIBHAL_VOLUME_DISC_TYPE_DVDPLUSR:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDPLUSR;
+              break;
 
-        case LIBHAL_VOLUME_DISC_TYPE_DVDPLUSRW:
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDPLUSRW;
-          break;
+            case LIBHAL_VOLUME_DISC_TYPE_DVDPLUSRW:
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_DVDPLUSRW;
+              break;
 
-        default:
-          /* unsupported disc type */
-          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_UNKNOWN;
-          break;
+            default:
+              /* unsupported disc type */
+              volume_hal->kind = THUNAR_VFS_VOLUME_KIND_UNKNOWN;
+              break;
+            }
         }
       break;
 
@@ -557,9 +586,10 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
       break;
     }
 
-  /* non-disc drives are always present, otherwise it must be a data disc to be usable */
-  if (hv == NULL || !libhal_volume_is_disc (hv) || libhal_volume_disc_has_data (hv))
-    volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_PRESENT;
+  /* either we have a volume, which means we have media, or
+   * a drive, which means non-pollable then, so it's present
+   */
+  volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_PRESENT;
 
   /* check if the volume is currently mounted */
   if (hv != NULL && libhal_volume_is_mounted (hv))
@@ -710,6 +740,13 @@ thunar_vfs_volume_manager_hal_class_init (ThunarVfsVolumeManagerHalClass *klass)
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_volume_manager_hal_finalize;
+
+  /* initialize exo-hal support */
+  if (!exo_hal_init ())
+    {
+      /* atleast warn the user here, so he/she can rebuild libexo with HAL support or ask the admin */
+      g_warning ("exo was built without HAL support. Volume management may not work as expected.");
+    }
 }
 
 
@@ -953,13 +990,6 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
   hv = libhal_volume_from_udi (context, udi);
   if (G_LIKELY (hv != NULL))
     {
-      /* we don't care for anything other than mountable filesystems */
-      if (G_UNLIKELY (libhal_volume_get_fsusage (hv) != LIBHAL_VOLUME_USAGE_MOUNTABLE_FILESYSTEM))
-        {
-          libhal_volume_free (hv);
-          return;
-        }
-
       /* determine the UDI of the drive to which this volume belongs */
       drive_udi = libhal_volume_get_storage_device_udi (hv);
       if (G_LIKELY (drive_udi != NULL))

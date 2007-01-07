@@ -1,3 +1,12 @@
+2007-01-07	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/Makefile.am, thunar-vfs/thunar-vfs-volume-hal.c,
+	  acinclude.m4: Use exo-hal to determine icons and display names
+	  for the volumes.
+	* thunar-vfs/thunar-vfs-volume-hal.c,
+	  thunar-vfs/thunar-vfs-volume.{c,h}: Do not discard blank discs and
+	  pure audio discs. Bug #2599.
+
 2007-01-06	Benedikt Meurer <benny@xfce.org>
 
 	* README, configure.in.in: Requires libexo 0.3.1.13svn.

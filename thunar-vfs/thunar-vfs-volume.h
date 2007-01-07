@@ -53,6 +53,7 @@ typedef struct _ThunarVfsVolume      ThunarVfsVolume;
  * @THUNAR_VFS_VOLUME_KIND_HARDDISK     : Hard disk drives.
  * @THUNAR_VFS_VOLUME_KIND_USBSTICK     : USB sticks.
  * @THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER : Portable audio players (i.e. iPod).
+ * @THUNAR_VFS_VOLUME_KIND_AUDIO_CD     : Audio CDs.
  *
  * Describes the type of a VFS volume.
  **/
@@ -72,6 +73,7 @@ typedef enum
   THUNAR_VFS_VOLUME_KIND_HARDDISK,
   THUNAR_VFS_VOLUME_KIND_USBSTICK,
   THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER,
+  THUNAR_VFS_VOLUME_KIND_AUDIO_CD,
 } ThunarVfsVolumeKind;
 
 /**

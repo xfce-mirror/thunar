@@ -237,7 +237,8 @@ thunar_vfs_volume_is_disc (ThunarVfsVolume *volume)
 
   kind = thunar_vfs_volume_get_kind (volume);
 
-  return (kind >= THUNAR_VFS_VOLUME_KIND_CDROM && kind <= THUNAR_VFS_VOLUME_KIND_DVDPLUSRW);
+  return (kind >= THUNAR_VFS_VOLUME_KIND_CDROM && kind <= THUNAR_VFS_VOLUME_KIND_DVDPLUSRW)
+      || (kind == THUNAR_VFS_VOLUME_KIND_AUDIO_CD);
 }
 
 
@@ -333,6 +334,7 @@ thunar_vfs_volume_is_removable (ThunarVfsVolume *volume)
     case THUNAR_VFS_VOLUME_KIND_FLOPPY:
     case THUNAR_VFS_VOLUME_KIND_USBSTICK:
     case THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER:
+    case THUNAR_VFS_VOLUME_KIND_AUDIO_CD:
       return TRUE;
 
     default:
@@ -444,6 +446,11 @@ dvdr:
       if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-ipod"))
         return "gnome-dev-ipod";
       break;
+
+    case THUNAR_VFS_VOLUME_KIND_AUDIO_CD:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-cdrom-audio"))
+        return "gnome-dev-cdrom-audio";
+      goto cdrom;
 
     default:
       break;
