@@ -1,5 +1,11 @@
 2007-01-08	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-shortcuts-view.c(thunar_shortcuts_view_init): Ellipsize
+	  long shortcut names, but make sure "File System" still fits into the
+	  side pane.
+
+2007-01-08	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-volume-hal.c,
 	  thunar-vfs/thunar-vfs-volume.{c,h}: Add support for memory cards and
 	  generic removable disk drives. Bug #2652.

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -22,6 +22,13 @@
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
+#endif
+
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
 #endif
 
 #include <thunar/thunar-application.h>
@@ -288,8 +295,12 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-size", G_OBJECT (view->icon_renderer), "size");
   exo_binding_new (G_OBJECT (view->preferences), "shortcuts-icon-emblems", G_OBJECT (view->icon_renderer), "emblems");
 
-  /* allocate the text renderer */
-  renderer = gtk_cell_renderer_text_new ();
+  /* allocate the text renderer (ellipsizing as required, but "File System" must fit) */
+  renderer = g_object_new (GTK_TYPE_CELL_RENDERER_TEXT,
+                           "ellipsize-set", TRUE,
+                           "ellipsize", PANGO_ELLIPSIZE_END,
+                           "width-chars", strlen (_("File System")),
+                           NULL);
   g_signal_connect (G_OBJECT (renderer), "edited", G_CALLBACK (thunar_shortcuts_view_renamed), view);
   gtk_tree_view_column_pack_start (column, renderer, TRUE);
   gtk_tree_view_column_set_attributes (column, renderer,
