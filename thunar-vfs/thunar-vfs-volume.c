@@ -335,6 +335,8 @@ thunar_vfs_volume_is_removable (ThunarVfsVolume *volume)
     case THUNAR_VFS_VOLUME_KIND_USBSTICK:
     case THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER:
     case THUNAR_VFS_VOLUME_KIND_AUDIO_CD:
+    case THUNAR_VFS_VOLUME_KIND_MEMORY_CARD:
+    case THUNAR_VFS_VOLUME_KIND_REMOVABLE_DISK:
       return TRUE;
 
     default:
@@ -451,6 +453,12 @@ dvdr:
       if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-cdrom-audio"))
         return "gnome-dev-cdrom-audio";
       goto cdrom;
+      
+    case THUNAR_VFS_VOLUME_KIND_MEMORY_CARD:
+    case THUNAR_VFS_VOLUME_KIND_REMOVABLE_DISK:
+      if (gtk_icon_theme_has_icon (icon_theme, "gnome-dev-removable"))
+        return "gnome-dev-removable";
+      break;
 
     default:
       break;

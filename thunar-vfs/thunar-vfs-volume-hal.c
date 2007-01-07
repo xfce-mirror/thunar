@@ -571,12 +571,22 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
       volume_hal->kind = THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER;
       break;
 
+    case LIBHAL_DRIVE_TYPE_SMART_MEDIA:
+    case LIBHAL_DRIVE_TYPE_SD_MMC:
+      volume_hal->kind = THUNAR_VFS_VOLUME_KIND_MEMORY_CARD;
+      break;
+
     default:
       /* check if the drive is connected to the USB bus */
       if (libhal_drive_get_bus (hd) == LIBHAL_DRIVE_BUS_USB)
         {
           /* we consider the drive to be an USB stick */
           volume_hal->kind = THUNAR_VFS_VOLUME_KIND_USBSTICK;
+        }
+      else if (libhal_drive_uses_removable_media (hd))
+        {
+          /* fallback to generic removable disk */
+          volume_hal->kind = THUNAR_VFS_VOLUME_KIND_REMOVABLE_DISK;
         }
       else
         {

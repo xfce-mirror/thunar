@@ -39,21 +39,23 @@ typedef struct _ThunarVfsVolume      ThunarVfsVolume;
 
 /**
  * ThunarVfsVolumeKind:
- * @THUNAR_VFS_VOLUME_KIND_UNKNOWN      : Unknown volume.
- * @THUNAR_VFS_VOLUME_KIND_CDROM        : CD-ROMs.
- * @THUNAR_VFS_VOLUME_KIND_CDR          : CD-Rs.
- * @THUNAR_VFS_VOLUME_KIND_CDRW         : CD-RWs.
- * @THUNAR_VFS_VOLUME_KIND_DVDROM       : DVD-ROMs.
- * @THUNAR_VFS_VOLUME_KIND_DVDRAM       : DVD-RAMs.
- * @THUNAR_VFS_VOLUME_KIND_DVDR         : DVD-Rs.
- * @THUNAR_VFS_VOLUME_KIND_DVDRW        : DVD-RWs.
- * @THUNAR_VFS_VOLUME_KIND_DVDPLUSR     : DVD+Rs.
- * @THUNAR_VFS_VOLUME_KIND_DVDPLUSRW    : DVD+RWs.
- * @THUNAR_VFS_VOLUME_KIND_FLOPPY       : Floppy drives.
- * @THUNAR_VFS_VOLUME_KIND_HARDDISK     : Hard disk drives.
- * @THUNAR_VFS_VOLUME_KIND_USBSTICK     : USB sticks.
- * @THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER : Portable audio players (i.e. iPod).
- * @THUNAR_VFS_VOLUME_KIND_AUDIO_CD     : Audio CDs.
+ * @THUNAR_VFS_VOLUME_KIND_UNKNOWN        : Unknown volume.
+ * @THUNAR_VFS_VOLUME_KIND_CDROM          : CD-ROMs.
+ * @THUNAR_VFS_VOLUME_KIND_CDR            : CD-Rs.
+ * @THUNAR_VFS_VOLUME_KIND_CDRW           : CD-RWs.
+ * @THUNAR_VFS_VOLUME_KIND_DVDROM         : DVD-ROMs.
+ * @THUNAR_VFS_VOLUME_KIND_DVDRAM         : DVD-RAMs.
+ * @THUNAR_VFS_VOLUME_KIND_DVDR           : DVD-Rs.
+ * @THUNAR_VFS_VOLUME_KIND_DVDRW          : DVD-RWs.
+ * @THUNAR_VFS_VOLUME_KIND_DVDPLUSR       : DVD+Rs.
+ * @THUNAR_VFS_VOLUME_KIND_DVDPLUSRW      : DVD+RWs.
+ * @THUNAR_VFS_VOLUME_KIND_FLOPPY         : Floppy drives.
+ * @THUNAR_VFS_VOLUME_KIND_HARDDISK       : Hard disk drives.
+ * @THUNAR_VFS_VOLUME_KIND_USBSTICK       : USB sticks.
+ * @THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER   : Portable audio players (i.e. iPod).
+ * @THUNAR_VFS_VOLUME_KIND_AUDIO_CD       : Audio CDs.
+ * @THUNAR_VFS_VOLUME_KIND_MEMORY_CARD    : Memory cards.
+ * @THUNAR_VFS_VOLUME_KIND_REMOVABLE_DISK : Other removable disks.
  *
  * Describes the type of a VFS volume.
  **/
@@ -74,6 +76,8 @@ typedef enum
   THUNAR_VFS_VOLUME_KIND_USBSTICK,
   THUNAR_VFS_VOLUME_KIND_AUDIO_PLAYER,
   THUNAR_VFS_VOLUME_KIND_AUDIO_CD,
+  THUNAR_VFS_VOLUME_KIND_MEMORY_CARD,
+  THUNAR_VFS_VOLUME_KIND_REMOVABLE_DISK,
 } ThunarVfsVolumeKind;
 
 /**
