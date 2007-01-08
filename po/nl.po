@@ -12,7 +12,7 @@ msgstr ""
 "Last-Translator: Stephan Arts <psybsd@gmail.com>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
@@ -1017,7 +1017,7 @@ msgstr "Ga naar de volgende map"
 #, fuzzy, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
-"Het laden van het terugval-icoon van `%s' (%s) is mislukt. Kijk uw "
+"Het laden van het terugval-icoon van \"%s\" (%s) is mislukt. Kijk uw "
 "installatie na!"
 
 #: ../thunar/thunar-icon-view.c:198
@@ -1165,7 +1165,9 @@ msgstr[1] "Bureaublas (Maak koppelingen)"
 msgid "Create a link to the selected file on the desktop"
 msgid_plural "Create links to the selected files on the desktop"
 msgstr[0] ""
+"Maak een snelkoppeling op het bureaublad naar het geselecteerde bestand"
 msgstr[1] ""
+"Maak snelkoppelingen op het bureaublad naar de geselecteerde bestanden"
 
 #: ../thunar/thunar-launcher.c:1270
 #, c-format
@@ -1256,9 +1258,8 @@ msgstr "Verwijder alle bestanden en mappen uit de Prullenbak"
 
 #: ../thunar/thunar-location-buttons.c:172
 #: ../thunar/thunar-standard-view.c:329
-#, fuzzy
 msgid "Paste Into Folder"
-msgstr "Bestanden in Map Plakken"
+msgstr "Bestanden in deze map plakken"
 
 #: ../thunar/thunar-location-buttons.c:173
 #: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:324
@@ -1319,17 +1320,17 @@ msgid "_Location:"
 msgstr "_Locatie:"
 
 #: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1307
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to launch \"%s\""
-msgstr "Het openen van \"%s\" is mislukt"
+msgstr "Het uitvoeren van \"%s\" is mislukt"
 
 #. display an error dialog to inform the user
 #: ../thunar/thunar-location-entry.c:639
 #: ../thunar/thunar-shortcuts-view.c:1333 ../thunar/thunar-tree-view.c:953
 #: ../thunar/thunar-tree-view.c:1598
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to mount \"%s\""
-msgstr "Fout bij het wijzigen van de naam van `%s'"
+msgstr "Het aankoppelen van \"%s\" is mislukt"
 
 #: ../thunar/thunar-path-entry.c:259
 msgid "Icon size"
@@ -1385,13 +1386,12 @@ msgid "Allow this file to _run as a program"
 msgstr "Dit bestand toestaan om  _uit te voeren als een programma"
 
 #: ../thunar/thunar-permissions-chooser.c:390
-#, fuzzy
 msgid ""
 "Allowing untrusted programs to run\n"
 "presents a security risk to your system."
 msgstr ""
 "Toestaan van niet-vertrouwde programma's om te draaien \n"
-"is een beveilgingsrisico voor uw systeem."
+"is een beveiligingsrisico voor uw systeem."
 
 #: ../thunar/thunar-permissions-chooser.c:405
 msgid ""
@@ -1427,7 +1427,6 @@ msgid "Apply recursively?"
 msgstr "Recursief toepassen?"
 
 #: ../thunar/thunar-permissions-chooser.c:580
-#, fuzzy
 msgid ""
 "Do you want to apply your changes recursively to\n"
 "all files and subfolders below the selected folder?"
@@ -1510,7 +1509,6 @@ msgid "Detailed List View"
 msgstr "Gedetailleerde Lijst-weergave"
 
 #: ../thunar/thunar-preferences-dialog.c:266
-#, fuzzy
 msgid "Compact List View"
 msgstr "Compacte Lijst-weergave"
 
@@ -1670,11 +1668,12 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:490
 msgid "Disabled"
-msgstr ""
+msgstr "Uitgeschakeld"
 
 #: ../thunar/thunar-preferences-dialog.c:496
+#, fuzzy
 msgid "Medium"
-msgstr ""
+msgstr "Medium"
 
 #: ../thunar/thunar-preferences-dialog.c:502
 msgid "Long"
@@ -1694,7 +1693,7 @@ msgstr "Geavanceerd"
 #: ../thunar/thunar-preferences-dialog.c:528
 #, fuzzy
 msgid "Folder Permissions"
-msgstr "Rechten"
+msgstr "Map-rechten"
 
 #: ../thunar/thunar-preferences-dialog.c:540
 msgid ""
@@ -2009,7 +2008,7 @@ msgstr[1] ""
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:820 ../thunar/thunar-tree-view.c:1038
 msgid "_Mount Volume"
-msgstr "Schijf _aansluiten"
+msgstr "Schijf _aankoppelen"
 
 #. append the "Eject Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:830 ../thunar/thunar-tree-view.c:1048
@@ -2066,9 +2065,8 @@ msgstr "Berekening geannuleerd"
 
 #. tell the user that we started calculation
 #: ../thunar/thunar-size-label.c:405
-#, fuzzy
 msgid "Calculating..."
-msgstr "Bestanden aan het ophalen..."
+msgstr "Berekenen..."
 
 #: ../thunar/thunar-size-label.c:415
 #, c-format
@@ -2238,32 +2236,28 @@ msgstr[0] "Elk geselecteerde bestand verdubbelen"
 msgstr[1] "Elk geselecteerde bestand verdubbelen"
 
 #: ../thunar/thunar-standard-view.c:3379
-#, fuzzy
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
-msgstr[0] "Elk geselecteerde bestand verdubbelen"
-msgstr[1] "Elk geselecteerde bestand verdubbelen"
+msgstr[0] "Het geselecteerde bestand dupliceren"
+msgstr[1] "Alle geselecteerde bestanden dupliceren"
 
 #: ../thunar/thunar-standard-view.c:3388
-#, fuzzy
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
-msgstr[0] "Maak een symbolische snelkoppeling voor elk geselecteerd bestand"
-msgstr[1] "Maak een symbolische snelkoppeling voor elk geselecteerd bestand"
+msgstr[0] "Maak een symbolische snelkoppeling voor het geselecteerde bestand"
+msgstr[1] "Maak een symbolische snelkoppeling voor alle geselecteerde bestanden"
 
 #: ../thunar/thunar-standard-view.c:3396
-#, fuzzy
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
-msgstr[0] "Naam van geselecteerd bestand wijzigen"
-msgstr[1] "Naam van geselecteerd bestand wijzigen"
+msgstr[0] "Naam van het geselecteerde bestand wijzigen"
+msgstr[1] "Naam van alle geselecteerde bestanden wijzigen"
 
 #: ../thunar/thunar-standard-view.c:3404
-#, fuzzy
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
-msgstr[0] "Naam van geselecteerd bestand wijzigen"
-msgstr[1] "Naam van geselecteerd bestand wijzigen"
+msgstr[0] "Naam van het geselecteerde bestand wijzigen"
+msgstr[1] "Naam van alle geselecteerde bestanden wijzigen"
 
 #. tell the user that no templates were found
 #: ../thunar/thunar-templates-action.c:376
@@ -2276,41 +2270,36 @@ msgid "_Empty File"
 msgstr "_Leeg Bestand"
 
 #: ../thunar/thunar-trash-action.c:174
-#, fuzzy
 msgid "T_rash"
-msgstr "Prullenbak"
+msgstr "P_rullenbak"
 
 #: ../thunar/thunar-trash-action.c:175
-#, fuzzy
 msgid "Display the contents of the trash can"
-msgstr "Het verbinden met de prullenbak is mislukt"
+msgstr "De inhoud van de prullenbak weergeven"
 
 #: ../thunar/thunar-tree-model.c:604
-#, fuzzy
 msgid "Loading..."
-msgstr "Aan het voorbereiden..."
+msgstr "Laden..."
 
 #. append the "Paste Into Folder" menu action
 #: ../thunar/thunar-tree-view.c:1138
-#, fuzzy
 msgid "_Paste Into Folder"
-msgstr "Bestanden in Map Plakken"
+msgstr "Bestanden in deze map _plakken"
 
 #. append the "Properties" menu action
 #: ../thunar/thunar-tree-view.c:1179
-#, fuzzy
 msgid "P_roperties..."
-msgstr "_Eigenschappen"
+msgstr "_Eigenschappen..."
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:108
 msgid "Today"
-msgstr ""
+msgstr "Vandaag"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:113
 msgid "Yesterday"
-msgstr ""
+msgstr "Gisteren"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
@@ -2342,7 +2331,7 @@ msgstr "Be_werken"
 
 #: ../thunar/thunar-window.c:273
 msgid "Pr_eferences..."
-msgstr "Vo_orkeuren"
+msgstr "Vo_orkeuren..."
 
 #: ../thunar/thunar-window.c:273
 msgid "Edit Thunars Preferences"
@@ -2421,7 +2410,6 @@ msgid "Go to the templates folder"
 msgstr "Ga naar de sjablonen map"
 
 #: ../thunar/thunar-window.c:285
-#, fuzzy
 msgid "_Open Location..."
 msgstr "_Locatie Openen..."
 
@@ -2527,6 +2515,7 @@ msgstr "Mapinhoud weergeven als gedetailleerde lijst"
 #: ../thunar/thunar-window.c:683
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
+"Waarschuwing, u gebruikt de root account, u kunt uw systeem beschadigen."
 
 #: ../thunar/thunar-window.c:1701
 msgid "Failed to open parent folder"
@@ -2534,14 +2523,13 @@ msgstr "Fout bij het openen van de bovenliggende map"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:1727
-#, fuzzy
 msgid "Failed to open the home folder"
-msgstr "Fout bij het openen van de sjablonen map"
+msgstr "Fout bij het openen van de persoonlijke map"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:1789
 msgid "About Templates"
-msgstr "Over Sjablonen..."
+msgstr "Over Sjablonen"
 
 #: ../thunar/thunar-window.c:1810
 msgid "All files in this folder will appear in the \"Create Document\" menu."
@@ -2577,9 +2565,8 @@ msgstr "Fout bij het openen van de sjablonen map"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:1871
-#, fuzzy
 msgid "Failed to display the contents of the trash can"
-msgstr "Het verbinden met de prullenbak is mislukt"
+msgstr "Het weergeven van de inhoud van de prullenbak is mislukt"
 
 # Desktop Environment in Dutch?
 #: ../thunar/thunar-window.c:1913
@@ -2637,9 +2624,8 @@ msgid "The URL to the documentation of the renamer"
 msgstr "Fout bij het openen van de sjablonen map"
 
 #: ../thunarx/thunarx-renamer.c:178
-#, fuzzy
 msgid "The user visible name of the renamer"
-msgstr "Naam van mime <handler>"
+msgstr ""
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:158
 msgid "Description:"
@@ -2683,7 +2669,7 @@ msgstr "Opties:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:258
 msgid "Use _startup notification"
-msgstr ""
+msgstr "Gebruik op_start notificatie"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:259
 msgid ""
@@ -2702,7 +2688,7 @@ msgstr ""
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:342
 msgid "Launcher"
-msgstr ""
+msgstr "Programma Starter"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:344
 msgid "Link"
@@ -3339,6 +3325,3 @@ msgstr "Map openen met Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "De geselecteerde mappen in Thunar openen"
-
-#~ msgid "Copyright (c) 2004-2006"
-#~ msgstr "Copyright (c) 2004-2006"
