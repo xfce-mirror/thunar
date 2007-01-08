@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -623,6 +623,7 @@ _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
   GThreadPool *pool;
   gboolean     failure = FALSE;
   gchar        absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar       *current_dir;
   GList       *list;
   GList       *lp;
   GList       *ln;
@@ -643,6 +644,9 @@ _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
 
   /* acquire the chdir lock */
   G_LOCK (_thunar_vfs_io_local_chdir);
+
+  /* remember the current working directory */
+  current_dir = g_get_current_dir ();
 
   /* change to the desired directory */
   if (chdir (absolute_path) < 0)
@@ -673,11 +677,8 @@ _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
       /* join the additional threads */
       g_thread_pool_free (pool, FALSE, TRUE);
 
-      /* change back to the root folder (so we don't
-       * prevent the folder from being deleted on
-       * certain well-known file systems)
-       */
-      chdir ("/");
+      /* change back to the previous working directory */
+      chdir (current_dir);
     }
 
   /* release the chdir lock */
@@ -706,6 +707,9 @@ _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
             }
         }
     }
+
+  /* cleanup */
+  g_free (current_dir);
 
   return list;
 }
