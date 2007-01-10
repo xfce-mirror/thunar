@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.5.0rc2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-03 12:54+0100\n"
+"POT-Creation-Date: 2007-01-10 22:29+0100\n"
 "PO-Revision-Date: 2006-04-18 16:37+0300\n"
 "Last-Translator: Peeter Vois <Peeter.Vois@proekspert.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "Kataloogi sisu lugemine läks nässu"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:512
+#: ../thunar-vfs/thunar-vfs-exec.c:516
 msgid "Unknown error"
 msgstr "Tundamtu viga"
 
@@ -200,6 +200,7 @@ msgstr "Käivita deemoni viisil (pole toetatud)"
 
 #. ...and a special display name
 #: ../thunar-vfs/thunar-vfs-io-local.c:396
+#: ../thunar/thunar-shortcuts-view.c:302
 msgid "File System"
 msgstr "Failisüsteem"
 
@@ -350,13 +351,13 @@ msgstr "Kasutaja \"%s\" on tundmatu"
 
 #. something went wrong, for sure
 #. display an error dialog to inform the user
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:352
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:278
 #: ../thunar/thunar-location-entry.c:650
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "%s-le haake koha määramine läks nässu"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:933
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:822
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "HAL deemoni %s külge ühendumine läks nässu"
@@ -472,39 +473,39 @@ msgid "Sort items in descending order"
 msgstr "Sorteeri asjad kahanevas järjekorras"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:361 ../thunar/thunar-application.c:405
+#: ../thunar/thunar-application.c:405 ../thunar/thunar-application.c:449
 msgid "Failed to launch operation"
 msgstr "Operatsiooni käivitamine läks nässu"
 
 #. tell the user that we were unable to launch the file specified on the cmdline
-#: ../thunar/thunar-application.c:858
+#: ../thunar/thunar-application.c:1062
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "\"%s\"-i avamine läks nässu"
 
-#: ../thunar/thunar-application.c:870
+#: ../thunar/thunar-application.c:1074
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "\"%s\"-i avamine läks nässu: %s"
 
-#: ../thunar/thunar-application.c:907 ../thunar/thunar-application.c:940
+#: ../thunar/thunar-application.c:1111 ../thunar/thunar-application.c:1144
 msgid "Copying files..."
 msgstr "Kopeerin faile..."
 
-#: ../thunar/thunar-application.c:974
+#: ../thunar/thunar-application.c:1178
 msgid "Creating symbolic links..."
 msgstr "Loon sümbolviiteid..."
 
-#: ../thunar/thunar-application.c:1014
+#: ../thunar/thunar-application.c:1218
 #, fuzzy
 msgid "Moving files into the trash..."
 msgstr "Liigutan faile..."
 
-#: ../thunar/thunar-application.c:1019
+#: ../thunar/thunar-application.c:1223
 msgid "Moving files..."
 msgstr "Liigutan faile..."
 
-#: ../thunar/thunar-application.c:1099
+#: ../thunar/thunar-application.c:1303
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -513,7 +514,7 @@ msgstr ""
 "Olete te kindel, et te soovite\n"
 "igaveseks hävitada \"%s\"-i ?"
 
-#: ../thunar/thunar-application.c:1104
+#: ../thunar/thunar-application.c:1308
 #, fuzzy, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -528,61 +529,61 @@ msgstr[1] ""
 "Olete te kindel, et te soovite\n"
 "igaveseks hävitada \"%s\"-i ?"
 
-#: ../thunar/thunar-application.c:1124
+#: ../thunar/thunar-application.c:1328
 msgid "If you delete a file, it is permanently lost."
 msgstr "Kui te hävitate faili, siis see kaob jäädavalt."
 
-#: ../thunar/thunar-application.c:1134
+#: ../thunar/thunar-application.c:1338
 msgid "Deleting files..."
 msgstr "Kustutan faile..."
 
-#: ../thunar/thunar-application.c:1186
+#: ../thunar/thunar-application.c:1390
 msgid "Creating files..."
 msgstr "Tekitan faile..."
 
-#: ../thunar/thunar-application.c:1226
+#: ../thunar/thunar-application.c:1430
 msgid "Creating directories..."
 msgstr "Tekitan katalooge..."
 
-#: ../thunar/thunar-application.c:1264
+#: ../thunar/thunar-application.c:1468
 msgid "Remove all files and folders from the Trash?"
 msgstr ""
 
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
-#: ../thunar/thunar-application.c:1269 ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:854 ../thunar/thunar-tree-view.c:1072
+#: ../thunar/thunar-application.c:1473 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-shortcuts-view.c:865 ../thunar/thunar-tree-view.c:1072
 #: ../thunar/thunar-window.c:269 ../plugins/thunar-tpa/main.c:49
 #, fuzzy
 msgid "_Empty Trash"
 msgstr "_Tühi fail"
 
-#: ../thunar/thunar-application.c:1273
+#: ../thunar/thunar-application.c:1477
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
 
-#: ../thunar/thunar-application.c:1290
+#: ../thunar/thunar-application.c:1494
 msgid "Emptying the Trash..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:1344
+#: ../thunar/thunar-application.c:1548
 #, fuzzy, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "%s-le haake koha määramine läks nässu"
 
-#: ../thunar/thunar-application.c:1372
+#: ../thunar/thunar-application.c:1576
 #, fuzzy, c-format
 msgid "Create the folder \"%s\"?"
 msgstr "Tekita \"%s\"-s uus kataloog"
 
-#: ../thunar/thunar-application.c:1376
+#: ../thunar/thunar-application.c:1580
 #, fuzzy
 msgid "C_reate Folder"
 msgstr "Tekita _Kaust..."
 
-#: ../thunar/thunar-application.c:1382
+#: ../thunar/thunar-application.c:1586
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore, but it is required to restore the "
@@ -590,12 +591,12 @@ msgid ""
 msgstr ""
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1419
+#: ../thunar/thunar-application.c:1623
 #, fuzzy, c-format
 msgid "Failed to restore \"%s\""
 msgstr "\"%s\"-i eemaldamine läks nässu"
 
-#: ../thunar/thunar-application.c:1426
+#: ../thunar/thunar-application.c:1630
 #, fuzzy
 msgid "Restoring files..."
 msgstr "Kustutan faile..."
@@ -1030,13 +1031,13 @@ msgstr "Ikooni vaade"
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:137 ../thunar/thunar-launcher.c:797
 #: ../thunar/thunar-location-buttons.c:168
-#: ../thunar/thunar-shortcuts-view.c:795 ../thunar/thunar-tree-view.c:1012
+#: ../thunar/thunar-shortcuts-view.c:806 ../thunar/thunar-tree-view.c:1012
 msgid "_Open"
 msgstr "_Ava"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:138 ../thunar/thunar-location-buttons.c:169
-#: ../thunar/thunar-shortcuts-view.c:806 ../thunar/thunar-tree-view.c:1024
+#: ../thunar/thunar-shortcuts-view.c:817 ../thunar/thunar-tree-view.c:1024
 msgid "Open in New Window"
 msgstr "Ava uues aknas"
 
@@ -1324,7 +1325,7 @@ msgstr "\"%s\" käivitamine läks nässu"
 
 #. display an error dialog to inform the user
 #: ../thunar/thunar-location-entry.c:639
-#: ../thunar/thunar-shortcuts-view.c:1333 ../thunar/thunar-tree-view.c:953
+#: ../thunar/thunar-shortcuts-view.c:1344 ../thunar/thunar-tree-view.c:953
 #: ../thunar/thunar-tree-view.c:1598
 #, c-format
 msgid "Failed to mount \"%s\""
@@ -1479,55 +1480,55 @@ msgstr ""
 "lubatakse lugeda selle kataloogi sisu, lubatakse edaspidi siseneda selles "
 "kataloogi."
 
-#: ../thunar/thunar-preferences-dialog.c:220
+#: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
 msgstr "Faili halduri seadistused"
 
 #.
 #. Views
 #.
-#: ../thunar/thunar-preferences-dialog.c:237
+#: ../thunar/thunar-preferences-dialog.c:242
 msgid "Views"
 msgstr "Vaated"
 
-#: ../thunar/thunar-preferences-dialog.c:247
+#: ../thunar/thunar-preferences-dialog.c:252
 msgid "Default View"
 msgstr "Esialgne vaade"
 
-#: ../thunar/thunar-preferences-dialog.c:259
+#: ../thunar/thunar-preferences-dialog.c:264
 msgid "View _new folders using:"
 msgstr "Vaata _uusi katalooge kasutades:"
 
-#: ../thunar/thunar-preferences-dialog.c:264
-#: ../thunar/thunar-preferences-dialog.c:295
+#: ../thunar/thunar-preferences-dialog.c:269
+#: ../thunar/thunar-preferences-dialog.c:300
 msgid "Icon View"
 msgstr "Ikooni vaade"
 
-#: ../thunar/thunar-preferences-dialog.c:265
+#: ../thunar/thunar-preferences-dialog.c:270
 msgid "Detailed List View"
 msgstr "Detailse nimistu vaade"
 
-#: ../thunar/thunar-preferences-dialog.c:266
+#: ../thunar/thunar-preferences-dialog.c:271
 msgid "Compact List View"
 msgstr "Tihe nimistu vaade"
 
-#: ../thunar/thunar-preferences-dialog.c:267
+#: ../thunar/thunar-preferences-dialog.c:272
 msgid "Last Active View"
 msgstr "Viimane aktiivne vaade"
 
-#: ../thunar/thunar-preferences-dialog.c:278
+#: ../thunar/thunar-preferences-dialog.c:283
 msgid "Sort _folders before files"
 msgstr "Sorteeri katalooge enne _faile"
 
-#: ../thunar/thunar-preferences-dialog.c:280
+#: ../thunar/thunar-preferences-dialog.c:285
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr "Vali see et näidata katalooge enne faile kui te kataloogi sorteerite."
 
-#: ../thunar/thunar-preferences-dialog.c:284
+#: ../thunar/thunar-preferences-dialog.c:289
 msgid "_Show thumbnails"
 msgstr "_Näita pisipilte"
 
-#: ../thunar/thunar-preferences-dialog.c:286
+#: ../thunar/thunar-preferences-dialog.c:291
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
@@ -1535,11 +1536,11 @@ msgstr ""
 "Vali see et näidata eelvaadatavaid faile kataloogis kui automaatselt "
 "valmistatud pisipilt-ikoone."
 
-#: ../thunar/thunar-preferences-dialog.c:307
+#: ../thunar/thunar-preferences-dialog.c:312
 msgid "_Text beside icons"
 msgstr "_Text on ikoonide all"
 
-#: ../thunar/thunar-preferences-dialog.c:309
+#: ../thunar/thunar-preferences-dialog.c:314
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1549,58 +1550,58 @@ msgstr ""
 #.
 #. Side Pane
 #.
-#: ../thunar/thunar-preferences-dialog.c:318
+#: ../thunar/thunar-preferences-dialog.c:323
 msgid "Side Pane"
 msgstr "Küljepaneel"
 
-#: ../thunar/thunar-preferences-dialog.c:328
+#: ../thunar/thunar-preferences-dialog.c:333
 msgid "Shortcuts Pane"
 msgstr "Lühiteede paneel"
 
-#: ../thunar/thunar-preferences-dialog.c:340
+#: ../thunar/thunar-preferences-dialog.c:345
 msgid "_Icon Size:"
 msgstr "_Ikooni suurus:"
 
-#: ../thunar/thunar-preferences-dialog.c:345
-#: ../thunar/thunar-preferences-dialog.c:390
+#: ../thunar/thunar-preferences-dialog.c:350
+#: ../thunar/thunar-preferences-dialog.c:395
 msgid "Very Small"
 msgstr "Väga väike"
 
-#: ../thunar/thunar-preferences-dialog.c:346
-#: ../thunar/thunar-preferences-dialog.c:391
+#: ../thunar/thunar-preferences-dialog.c:351
+#: ../thunar/thunar-preferences-dialog.c:396
 msgid "Smaller"
 msgstr "Väiksem"
 
-#: ../thunar/thunar-preferences-dialog.c:347
-#: ../thunar/thunar-preferences-dialog.c:392
+#: ../thunar/thunar-preferences-dialog.c:352
+#: ../thunar/thunar-preferences-dialog.c:397
 msgid "Small"
 msgstr "Väike"
 
-#: ../thunar/thunar-preferences-dialog.c:348
-#: ../thunar/thunar-preferences-dialog.c:393
+#: ../thunar/thunar-preferences-dialog.c:353
+#: ../thunar/thunar-preferences-dialog.c:398
 msgid "Normal"
 msgstr "Normaalne"
 
-#: ../thunar/thunar-preferences-dialog.c:349
-#: ../thunar/thunar-preferences-dialog.c:394
+#: ../thunar/thunar-preferences-dialog.c:354
+#: ../thunar/thunar-preferences-dialog.c:399
 msgid "Large"
 msgstr "Suur"
 
-#: ../thunar/thunar-preferences-dialog.c:350
-#: ../thunar/thunar-preferences-dialog.c:395
+#: ../thunar/thunar-preferences-dialog.c:355
+#: ../thunar/thunar-preferences-dialog.c:400
 msgid "Larger"
 msgstr "Suurem"
 
-#: ../thunar/thunar-preferences-dialog.c:351
-#: ../thunar/thunar-preferences-dialog.c:396
+#: ../thunar/thunar-preferences-dialog.c:356
+#: ../thunar/thunar-preferences-dialog.c:401
 msgid "Very Large"
 msgstr "Väga suur"
 
-#: ../thunar/thunar-preferences-dialog.c:362
+#: ../thunar/thunar-preferences-dialog.c:367
 msgid "Show Icon _Emblems"
 msgstr "Näita ikooni _embleeme"
 
-#: ../thunar/thunar-preferences-dialog.c:364
+#: ../thunar/thunar-preferences-dialog.c:369
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
@@ -1608,19 +1609,19 @@ msgstr ""
 "Vali see, et näidata kõigi failide embleeme lühiteede nimistus, mille "
 "jaokson embleemid defineeritud faili seadistuste dialoogis."
 
-#: ../thunar/thunar-preferences-dialog.c:373
+#: ../thunar/thunar-preferences-dialog.c:378
 msgid "Tree Pane"
 msgstr "Puu paneel"
 
-#: ../thunar/thunar-preferences-dialog.c:385
+#: ../thunar/thunar-preferences-dialog.c:390
 msgid "Icon _Size:"
 msgstr "Ikooni _suurus"
 
-#: ../thunar/thunar-preferences-dialog.c:407
+#: ../thunar/thunar-preferences-dialog.c:412
 msgid "Show Icon E_mblems"
 msgstr "Näita ikooni e_mbleeme"
 
-#: ../thunar/thunar-preferences-dialog.c:409
+#: ../thunar/thunar-preferences-dialog.c:414
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
@@ -1631,19 +1632,19 @@ msgstr ""
 #.
 #. Behavior
 #.
-#: ../thunar/thunar-preferences-dialog.c:418
+#: ../thunar/thunar-preferences-dialog.c:423
 msgid "Behavior"
 msgstr "Käitumine"
 
-#: ../thunar/thunar-preferences-dialog.c:428
+#: ../thunar/thunar-preferences-dialog.c:433
 msgid "Navigation"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:440
+#: ../thunar/thunar-preferences-dialog.c:445
 msgid "_Single click to activate items"
 msgstr "Ü_ks toks aktiveerib asja"
 
-#: ../thunar/thunar-preferences-dialog.c:460
+#: ../thunar/thunar-preferences-dialog.c:465
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
@@ -1651,7 +1652,7 @@ msgstr ""
 "Määra _viivitus enne asja valimist\n"
 "kui hiir on peatatud asja peale:"
 
-#: ../thunar/thunar-preferences-dialog.c:472
+#: ../thunar/thunar-preferences-dialog.c:477
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1665,34 +1666,34 @@ msgstr ""
 "võib olla kasulik, kui üksik toks aktiveerib asju ja te tahate ainult valida "
 "asja ilma et seda aktiveerida."
 
-#: ../thunar/thunar-preferences-dialog.c:490
+#: ../thunar/thunar-preferences-dialog.c:495
 msgid "Disabled"
 msgstr "Keelatud"
 
-#: ../thunar/thunar-preferences-dialog.c:496
+#: ../thunar/thunar-preferences-dialog.c:501
 msgid "Medium"
 msgstr "Keskmine"
 
-#: ../thunar/thunar-preferences-dialog.c:502
+#: ../thunar/thunar-preferences-dialog.c:507
 msgid "Long"
 msgstr "Pikk"
 
-#: ../thunar/thunar-preferences-dialog.c:508
+#: ../thunar/thunar-preferences-dialog.c:513
 msgid "_Double click to activate items"
 msgstr "_Topelt toks et aktiveerida asi"
 
 #.
 #. Advanced
 #.
-#: ../thunar/thunar-preferences-dialog.c:518
+#: ../thunar/thunar-preferences-dialog.c:523
 msgid "Advanced"
 msgstr "Edendatud"
 
-#: ../thunar/thunar-preferences-dialog.c:528
+#: ../thunar/thunar-preferences-dialog.c:533
 msgid "Folder Permissions"
 msgstr "Kausta õigused"
 
-#: ../thunar/thunar-preferences-dialog.c:540
+#: ../thunar/thunar-preferences-dialog.c:545
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
@@ -1702,17 +1703,51 @@ msgstr ""
 "muudatusi ka kataloogi sisule. Valige allpool esialgne\n"
 "käitumisviis:"
 
-#: ../thunar/thunar-preferences-dialog.c:548
+#: ../thunar/thunar-preferences-dialog.c:553
 msgid "Ask everytime"
 msgstr "Küsi iga kord"
 
-#: ../thunar/thunar-preferences-dialog.c:549
+#: ../thunar/thunar-preferences-dialog.c:554
 msgid "Apply to Folder Only"
 msgstr "Rakenda ainult kataloogile"
 
-#: ../thunar/thunar-preferences-dialog.c:550
+#: ../thunar/thunar-preferences-dialog.c:555
 msgid "Apply to Folder and Contents"
 msgstr "Rakenda kataloogile ja sisule"
+
+#: ../thunar/thunar-preferences-dialog.c:568
+#, fuzzy
+msgid "Volume Management"
+msgstr "Fali haldur"
+
+#: ../thunar/thunar-preferences-dialog.c:596
+msgid ""
+"Install the \"thunar-volman\" package to use\n"
+"the volume management support in Thunar."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:597
+msgid ""
+"Build thunar-vfs with HAL support to use\n"
+"the volume management support in Thunar."
+msgstr ""
+
+#. add check button to enable/disable auto mounting
+#: ../thunar/thunar-preferences-dialog.c:608
+msgid "Enable _Volume Management"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:617
+msgid ""
+"<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
+"and media (i.e. how cameras should be handled)."
+msgstr ""
+
+#. tell the user that we failed to come up with the thunar-volman configuration dialog
+#: ../thunar/thunar-preferences-dialog.c:676
+#, fuzzy
+msgid "Failed to display the volume management settings"
+msgstr "HAL deemoni %s külge ühendumine läks nässu"
 
 #: ../thunar/thunar-progress-dialog.c:375
 #, c-format
@@ -1995,49 +2030,49 @@ msgstr[0] "Lisa valitud kaust lühiteede kõrvalpaanile"
 msgstr[1] "Lisa valitud kaustad lühiteede kõrvalpaanile"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:820 ../thunar/thunar-tree-view.c:1038
+#: ../thunar/thunar-shortcuts-view.c:831 ../thunar/thunar-tree-view.c:1038
 msgid "_Mount Volume"
 msgstr "_Haagi seade"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:830 ../thunar/thunar-tree-view.c:1048
+#: ../thunar/thunar-shortcuts-view.c:841 ../thunar/thunar-tree-view.c:1048
 msgid "E_ject Volume"
 msgstr "_Väljasta seade"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:839 ../thunar/thunar-tree-view.c:1057
+#: ../thunar/thunar-shortcuts-view.c:850 ../thunar/thunar-tree-view.c:1057
 msgid "_Unmount Volume"
 msgstr "Haagi _lahti seade"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:867
+#: ../thunar/thunar-shortcuts-view.c:878
 msgid "_Remove Shortcut"
 msgstr "_Eemalda lühitee"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:882
+#: ../thunar/thunar-shortcuts-view.c:893
 msgid "Re_name Shortcut"
 msgstr "_Nimeta lühitee ümber"
 
-#: ../thunar/thunar-shortcuts-view.c:1150
+#: ../thunar/thunar-shortcuts-view.c:1161
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Teekond \"%s\" ei viita kataloogile"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1169
+#: ../thunar/thunar-shortcuts-view.c:1180
 msgid "Failed to add new shortcut"
 msgstr "Uue lühitee lisamine läks nässu"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1287 ../thunar/thunar-tree-view.c:1547
+#: ../thunar/thunar-shortcuts-view.c:1298 ../thunar/thunar-tree-view.c:1547
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "\"%s\" väljastamine läks nässu"
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1377 ../thunar/thunar-tree-view.c:1738
+#: ../thunar/thunar-shortcuts-view.c:1388 ../thunar/thunar-tree-view.c:1738
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "\"%s\"-i lahtihaakimine läks nässu"

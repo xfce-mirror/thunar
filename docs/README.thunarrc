@@ -142,6 +142,17 @@ The Thunar Configuration File (thunarrc)
      The last known width of a Thunar window, which will be used as
      default width for newly created windows.
 
+   * MiscVolumeManagement (FALSE/TRUE)
+
+     This option requires both HAL and the thunar-volman package
+     to be installed. If enabled and Thunar runs as daemon (see the
+     --daemon command line option), Thunar will watch for new devices
+     being added and perform appropriate volume management, which
+     means that if you plug in a new device, that is handled by the
+     volume manager, it will try to automatically spawn the appropriate
+     application or mount the device if it contains a mountable
+     volume (i.e. an USB stick).
+
    * MiscCaseSensitive (FALSE/TRUE)
 
      Determines whether the sorting should be done in a case-sensitive

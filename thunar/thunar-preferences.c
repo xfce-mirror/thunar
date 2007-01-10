@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -68,6 +68,7 @@ enum
   PROP_LAST_VIEW,
   PROP_LAST_WINDOW_HEIGHT,
   PROP_LAST_WINDOW_WIDTH,
+  PROP_MISC_VOLUME_MANAGEMENT,
   PROP_MISC_CASE_SENSITIVE,
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
@@ -436,6 +437,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                      EXO_PARAM_READWRITE));
 
   /**
+   * ThunarPreferences:misc-volume-management:
+   *
+   * Whether to enable volume management capabilities (requires HAL and the
+   * thunar-volman package).
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_VOLUME_MANAGEMENT,
+                                   g_param_spec_boolean ("misc-volume-management",
+                                                         "misc-volume-management",
+                                                         "misc-volume-management",
+                                                         FALSE,
+                                                         EXO_PARAM_READWRITE));
+
+  /**
    * ThunarPreferences:misc-case-sensitive:
    *
    * Whether to use case-sensitive sort.
@@ -641,10 +656,6 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 static void
 thunar_preferences_init (ThunarPreferences *preferences)
 {
-  /* setup the preferences object */
-  preferences->load_idle_id = -1;
-  preferences->store_idle_id = -1;
-
   /* grab a reference on the VFS monitor */
   preferences->monitor = thunar_vfs_monitor_get_default ();
 
@@ -664,14 +675,14 @@ thunar_preferences_finalize (GObject *object)
   guint              n;
 
   /* flush preferences */
-  if (G_UNLIKELY (preferences->store_idle_id >= 0))
+  if (G_UNLIKELY (preferences->store_idle_id != 0))
     {
       thunar_preferences_store_idle (preferences);
       g_source_remove (preferences->store_idle_id);
     }
 
   /* stop any pending load idle source */
-  if (G_UNLIKELY (preferences->load_idle_id >= 0))
+  if (G_UNLIKELY (preferences->load_idle_id != 0))
     g_source_remove (preferences->load_idle_id);
 
   /* stop the file monitor */
@@ -800,7 +811,7 @@ thunar_preferences_monitor (ThunarVfsMonitor       *monitor,
 static void
 thunar_preferences_queue_load (ThunarPreferences *preferences)
 {
-  if (preferences->load_idle_id < 0 && preferences->store_idle_id < 0)
+  if (preferences->load_idle_id == 0 && preferences->store_idle_id == 0)
     {
       preferences->load_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_preferences_load_idle,
                                                    preferences, thunar_preferences_load_idle_destroy);
@@ -812,7 +823,7 @@ thunar_preferences_queue_load (ThunarPreferences *preferences)
 static void
 thunar_preferences_queue_store (ThunarPreferences *preferences)
 {
-  if (preferences->store_idle_id < 0 && !preferences->loading_in_progress)
+  if (preferences->store_idle_id == 0 && !preferences->loading_in_progress)
     {
       preferences->store_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_preferences_store_idle,
                                                     preferences, thunar_preferences_store_idle_destroy);
@@ -929,7 +940,7 @@ thunar_preferences_load_idle (gpointer user_data)
 static void
 thunar_preferences_load_idle_destroy (gpointer user_data)
 {
-  THUNAR_PREFERENCES (user_data)->load_idle_id = -1;
+  THUNAR_PREFERENCES (user_data)->load_idle_id = 0;
 }
 
 
@@ -1007,7 +1018,7 @@ thunar_preferences_store_idle (gpointer user_data)
 static void
 thunar_preferences_store_idle_destroy (gpointer user_data)
 {
-  THUNAR_PREFERENCES (user_data)->store_idle_id = -1;
+  THUNAR_PREFERENCES (user_data)->store_idle_id = 0;
 }
 
 

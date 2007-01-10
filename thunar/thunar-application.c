@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2005      Jeff Franks <jcfranks@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
@@ -37,6 +37,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
@@ -95,6 +96,18 @@ static GtkWidget *thunar_application_open_window_with_role  (ThunarApplication  
                                                              GdkScreen              *screen);
 static void       thunar_application_window_destroyed       (GtkWidget              *window,
                                                              ThunarApplication      *application);
+static void       thunar_application_volman_device_added    (ThunarVfsVolumeManager *volume_manager,
+                                                             const gchar            *udi,
+                                                             ThunarApplication      *application);
+static void       thunar_application_volman_device_removed  (ThunarVfsVolumeManager *volume_manager,
+                                                             const gchar            *udi,
+                                                             ThunarApplication      *application);
+static gboolean   thunar_application_volman_idle            (gpointer                user_data);
+static void       thunar_application_volman_idle_destroy    (gpointer                user_data);
+static void       thunar_application_volman_watch           (GPid                    pid,
+                                                             gint                    status,
+                                                             gpointer                user_data);
+static void       thunar_application_volman_watch_destroy   (gpointer                user_data);
 static gboolean   thunar_application_show_dialogs           (gpointer                user_data);
 static void       thunar_application_show_dialogs_destroy   (gpointer                user_data);
 
@@ -107,14 +120,20 @@ struct _ThunarApplicationClass
 
 struct _ThunarApplication
 {
-  GObject __parent__;
+  GObject                __parent__;
 
-  ThunarPreferences *preferences;
-  GList             *windows;
+  ThunarPreferences     *preferences;
+  GList                 *windows;
 
-  gboolean           daemon;
+  gboolean               daemon;
 
-  gint               show_dialogs_timer_id;
+  guint                  show_dialogs_timer_id;
+
+  /* the volume manager support */
+  ThunarVfsVolumeManager *volman;
+  GSList                 *volman_udis;
+  guint                   volman_idle_id;
+  guint                   volman_watch_id;
 };
 
 
@@ -191,7 +210,6 @@ thunar_application_init (ThunarApplication *application)
 
   /* initialize the application */
   application->preferences = thunar_preferences_get ();
-  application->show_dialogs_timer_id = -1;
 
   /* check if we have a saved accel map */
   path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm");
@@ -200,6 +218,17 @@ thunar_application_init (ThunarApplication *application)
       /* load the accel map */
       gtk_accel_map_load (path);
       g_free (path);
+    }
+
+  /* connect to the volume manager */
+  application->volman = thunar_vfs_volume_manager_get_default ();
+
+  /* check if the volume manager supports HAL */
+  if (g_signal_lookup ("device-added", G_OBJECT_TYPE (application->volman)) != 0)
+    {
+      /* connect the volume manager support callbacks (used to spawn thunar-volman appropriately) */
+      g_signal_connect (G_OBJECT (application->volman), "device-added", G_CALLBACK (thunar_application_volman_device_added), application);
+      g_signal_connect (G_OBJECT (application->volman), "device-removed", G_CALLBACK (thunar_application_volman_device_removed), application);
     }
 }
 
@@ -221,8 +250,23 @@ thunar_application_finalize (GObject *object)
       g_free (path);
     }
 
+  /* cancel any pending volman watch source */
+  if (G_UNLIKELY (application->volman_watch_id != 0))
+    g_source_remove (application->volman_watch_id);
+  
+  /* cancel any pending volman idle source */
+  if (G_UNLIKELY (application->volman_idle_id != 0))
+    g_source_remove (application->volman_idle_id);
+
+  /* drop all pending volume manager UDIs */
+  g_slist_foreach (application->volman_udis, (GFunc) g_free, NULL);
+  g_slist_free (application->volman_udis);
+
+  /* disconnect from the volume manager */
+  g_object_unref (G_OBJECT (application->volman));
+
   /* drop any running "show dialogs" timer */
-  if (G_UNLIKELY (application->show_dialogs_timer_id >= 0))
+  if (G_UNLIKELY (application->show_dialogs_timer_id != 0))
     g_source_remove (application->show_dialogs_timer_id);
 
   /* drop the open windows */
@@ -233,7 +277,7 @@ thunar_application_finalize (GObject *object)
     }
   g_list_free (application->windows);
 
-  /* release our reference on the preferences */
+  /* disconnect from the preferences */
   g_object_unref (G_OBJECT (application->preferences));
   
   (*G_OBJECT_CLASS (thunar_application_parent_class)->finalize) (object);
@@ -434,7 +478,7 @@ thunar_application_launch (ThunarApplication *application,
       /* Set up a timer to show the dialog, to make sure we don't
        * just popup and destroy a dialog for a very short job.
        */
-      if (G_LIKELY (application->show_dialogs_timer_id < 0))
+      if (G_LIKELY (application->show_dialogs_timer_id == 0))
         {
           application->show_dialogs_timer_id = g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
                                                                    application, thunar_application_show_dialogs_destroy);
@@ -497,6 +541,166 @@ thunar_application_window_destroyed (GtkWidget         *window,
 
 
 
+static void
+thunar_application_volman_device_added (ThunarVfsVolumeManager *volume_manager,
+                                        const gchar            *udi,
+                                        ThunarApplication      *application)
+{
+  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  _thunar_return_if_fail (application->volman == volume_manager);
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  /* schedule the UDI for processing (last come, first served) */
+  application->volman_udis = g_slist_prepend (application->volman_udis, g_strdup (udi));
+
+  /* check if there's currently no active or scheduled handler */
+  if (G_LIKELY (application->volman_idle_id == 0 && application->volman_watch_id == 0))
+    {
+      /* schedule a new handler using the idle source, which invokes the handler */
+      application->volman_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_application_volman_idle,
+                                                     application, thunar_application_volman_idle_destroy);
+    }
+}
+
+
+
+static void
+thunar_application_volman_device_removed (ThunarVfsVolumeManager *volume_manager,
+                                          const gchar            *udi,
+                                          ThunarApplication      *application)
+{
+  GSList *lp;
+
+  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  _thunar_return_if_fail (application->volman == volume_manager);
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  /* check if this is one of the pending UDIs */
+  for (lp = application->volman_udis; lp != NULL; lp = lp->next)
+    if (G_UNLIKELY (strcmp (lp->data, udi) == 0))
+      {
+        /* release the UDI */
+        g_free (lp->data);
+
+        /* drop the UDI from the list of pending device UDIs */
+        application->volman_udis = g_slist_delete_link (application->volman_udis, lp);
+        break;
+      }
+}
+
+
+
+static gboolean
+thunar_application_volman_idle (gpointer user_data)
+{
+  ThunarApplication *application = THUNAR_APPLICATION (user_data);
+  GdkScreen         *screen;
+  gboolean           misc_volume_management;
+  GError            *err = NULL;
+  gchar            **argv;
+  GPid               pid;
+
+  GDK_THREADS_ENTER ();
+
+  /* check if volume management is enabled (otherwise, we don't spawn anything, but clear the list here) */
+  g_object_get (G_OBJECT (application->preferences), "misc-volume-management", &misc_volume_management, NULL);
+  if (G_LIKELY (misc_volume_management))
+    {
+      /* check if we don't already have a handler, and we have a pending UDI */
+      if (application->volman_watch_id == 0 && application->volman_udis != NULL)
+        {
+          /* generate the argument list for the volman */
+          argv = g_new (gchar *, 4);
+          argv[0] = g_strdup ("thunar-volman");
+          argv[1] = g_strdup ("--device-added");
+          argv[2] = application->volman_udis->data;
+          argv[3] = NULL;
+
+          /* remove the first list item from the pending list */
+          application->volman_udis = g_slist_delete_link (application->volman_udis, application->volman_udis);
+
+          /* locate the currently active screen (the one with the pointer) */
+          screen = thunar_gdk_screen_get_active ();
+
+          /* try to spawn the volman on the active screen */
+          if (gdk_spawn_on_screen (screen, NULL, argv, NULL, G_SPAWN_DO_NOT_REAP_CHILD | G_SPAWN_SEARCH_PATH, NULL, NULL, &pid, &err))
+            {
+              /* add a child watch for the volman handler */
+              application->volman_watch_id = g_child_watch_add_full (G_PRIORITY_LOW, pid, thunar_application_volman_watch,
+                                                                     application, thunar_application_volman_watch_destroy);
+            }
+          else
+            {
+              /* failed to spawn, tell the user, giving a hint to install the thunar-volman package */
+              g_warning ("Failed to launch the volume manager (%s), make sure you have the \"thunar-volman\" package installed.", err->message);
+              g_error_free (err);
+            }
+
+          /* cleanup */
+          g_strfreev (argv);
+        }
+
+    }
+  else
+    {
+      /* drop all pending HAL device UDIs */
+      g_slist_foreach (application->volman_udis, (GFunc) g_free, NULL);
+      g_slist_free (application->volman_udis);
+      application->volman_udis = NULL;
+    }
+
+  GDK_THREADS_LEAVE ();
+
+  /* keep the idle source alive as long as no handler is
+   * active and we have pending UDIs that must be handled
+   */
+  return (application->volman_watch_id == 0
+       && application->volman_udis != NULL);
+}
+
+
+
+static void
+thunar_application_volman_idle_destroy (gpointer user_data)
+{
+  THUNAR_APPLICATION (user_data)->volman_idle_id = 0;
+}
+
+
+
+static void
+thunar_application_volman_watch (GPid     pid,
+                                 gint     status,
+                                 gpointer user_data)
+{
+  ThunarApplication *application = THUNAR_APPLICATION (user_data);
+
+  GDK_THREADS_ENTER ();
+
+  /* check if the idle source isn't active, but we have pending UDIs */
+  if (application->volman_idle_id == 0 && application->volman_udis != NULL)
+    {
+      /* schedule a new handler using the idle source, which invokes the handler */
+      application->volman_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_application_volman_idle,
+                                                     application, thunar_application_volman_idle_destroy);
+    }
+
+  /* be sure to close the pid handle */
+  g_spawn_close_pid (pid);
+
+  GDK_THREADS_LEAVE ();
+}
+
+
+
+static void
+thunar_application_volman_watch_destroy (gpointer user_data)
+{
+  THUNAR_APPLICATION (user_data)->volman_watch_id = 0;
+}
+
+
+
 static gboolean
 thunar_application_show_dialogs (gpointer user_data)
 {
@@ -520,7 +724,7 @@ thunar_application_show_dialogs (gpointer user_data)
 static void
 thunar_application_show_dialogs_destroy (gpointer user_data)
 {
-  THUNAR_APPLICATION (user_data)->show_dialogs_timer_id = -1;
+  THUNAR_APPLICATION (user_data)->show_dialogs_timer_id = 0;
 }
 
 

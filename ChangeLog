@@ -1,3 +1,33 @@
+2007-01-10	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-gdk-extensions.{c,h}: Add new helper function 
+	  thunar_gdk_screen_get_active(), which returns the currently
+	  active screen, i.e. the screen which currently contains the
+	  mouse pointer.
+	* thunar-vfs/thunar-vfs-volume-hal.c: Use the new ExoMountPoint
+	  module to query active and configured mount points.
+	* thunar-vfs/thunar-vfs-volume-hal.c: Add new signals "device-added"
+	  and "device-removed", which correspond to the HAL signals of the
+	  same name, and are emitted by the volume manager whenever a new
+	  device is added or an existing device is removed. This is an
+	  internal support mechanism for the volume manager integration of
+	  Thunar and should not be used by other applications.
+	* thunar/thunar-application.c: Add hooks for the thunar-volman,
+	  which, if installed and enabled, will be spawned whenever a new
+	  device is reported by HAL. This enables lightweight volume management
+	  avoiding an additional daemon, as Thunar already listens for HAL
+	  events anyway. Note that Thunar doesn't provide any functionality
+	  by itself here. It just acts a proxy between HAL and thunar-volman.
+	* docs/README.thunarrc, thunar/thunar-preferences.c: Add preference
+	  MiscVolumeManagement, which controls whether volume manager should
+	  be enabled.
+	* docs/references/thunar-vfs/: Add missing enums to the manual.
+	* thunar/thunar-preferences-dialog.c, thunar/sexy-url-label.{c,h},
+	  thunar/Makefile.am: Extend the preferences dialog with options
+	  to control the volume manager.
+	* po/Thunar.pot, po/*.po: Merge new strings.
+	* po/de.po: Update german translations.
+
 2007-01-08	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-io-local.c(_thunar_vfs_io_local_listdir):

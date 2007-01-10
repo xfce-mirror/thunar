@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.5.0rc2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-03 12:54+0100\n"
+"POT-Creation-Date: 2007-01-10 22:29+0100\n"
 "PO-Revision-Date: 2006-06-13 04:11+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "フォルダの内容を読み込むのに失敗しました。"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:512
+#: ../thunar-vfs/thunar-vfs-exec.c:516
 msgid "Unknown error"
 msgstr "原因不明のエラーが発生しました。"
 
@@ -206,6 +206,7 @@ msgstr "シンボリックリンクがサポートされていません。"
 
 #. ...and a special display name
 #: ../thunar-vfs/thunar-vfs-io-local.c:396
+#: ../thunar/thunar-shortcuts-view.c:302
 msgid "File System"
 msgstr "ファイルシステム"
 
@@ -364,13 +365,13 @@ msgstr "ユーザー「%s」は不明です。"
 
 #. something went wrong, for sure
 #. display an error dialog to inform the user
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:352
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:278
 #: ../thunar/thunar-location-entry.c:650
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "「%s」のマウント位置を確定できません。"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:933
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:822
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "HAL デーモンとの接続に失敗しました: %s"
@@ -486,39 +487,39 @@ msgid "Sort items in descending order"
 msgstr "アイテムを降順 (おえういあ Z-a の順) で並べ替えます。"
 
 #. display an error message to the user
-#: ../thunar/thunar-application.c:361 ../thunar/thunar-application.c:405
+#: ../thunar/thunar-application.c:405 ../thunar/thunar-application.c:449
 msgid "Failed to launch operation"
 msgstr "操作の実行に失敗しました。"
 
 #. tell the user that we were unable to launch the file specified on the cmdline
-#: ../thunar/thunar-application.c:858
+#: ../thunar/thunar-application.c:1062
 #, c-format
 msgid "Failed to open \"%s\""
 msgstr "「%s」を開くのに失敗しました。"
 
-#: ../thunar/thunar-application.c:870
+#: ../thunar/thunar-application.c:1074
 #, c-format
 msgid "Failed to open \"%s\": %s"
 msgstr "「%s」を開くのに失敗しました: %s"
 
-#: ../thunar/thunar-application.c:907 ../thunar/thunar-application.c:940
+#: ../thunar/thunar-application.c:1111 ../thunar/thunar-application.c:1144
 msgid "Copying files..."
 msgstr "ファイルをコピーしています..."
 
-#: ../thunar/thunar-application.c:974
+#: ../thunar/thunar-application.c:1178
 msgid "Creating symbolic links..."
 msgstr "リンクを作成しています..."
 
-#: ../thunar/thunar-application.c:1014
+#: ../thunar/thunar-application.c:1218
 #, fuzzy
 msgid "Moving files into the trash..."
 msgstr "ファイルを移動しています..."
 
-#: ../thunar/thunar-application.c:1019
+#: ../thunar/thunar-application.c:1223
 msgid "Moving files..."
 msgstr "ファイルを移動しています..."
 
-#: ../thunar/thunar-application.c:1099
+#: ../thunar/thunar-application.c:1303
 #, c-format
 msgid ""
 "Are you sure that you want to\n"
@@ -527,7 +528,7 @@ msgstr ""
 "「%s」は永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-application.c:1104
+#: ../thunar/thunar-application.c:1308
 #, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
@@ -539,61 +540,61 @@ msgstr[0] ""
 "選択したファイルは永久に削除されます\n"
 "それでもよろしいですか？"
 
-#: ../thunar/thunar-application.c:1124
+#: ../thunar/thunar-application.c:1328
 msgid "If you delete a file, it is permanently lost."
 msgstr "削除されたファイルは永久に失われます。"
 
-#: ../thunar/thunar-application.c:1134
+#: ../thunar/thunar-application.c:1338
 msgid "Deleting files..."
 msgstr "ファイルを削除しています..."
 
-#: ../thunar/thunar-application.c:1186
+#: ../thunar/thunar-application.c:1390
 msgid "Creating files..."
 msgstr "ファイルを作成しています..."
 
-#: ../thunar/thunar-application.c:1226
+#: ../thunar/thunar-application.c:1430
 msgid "Creating directories..."
 msgstr "フォルダを作成しています..."
 
-#: ../thunar/thunar-application.c:1264
+#: ../thunar/thunar-application.c:1468
 msgid "Remove all files and folders from the Trash?"
 msgstr ""
 
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
-#: ../thunar/thunar-application.c:1269 ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:854 ../thunar/thunar-tree-view.c:1072
+#: ../thunar/thunar-application.c:1473 ../thunar/thunar-location-buttons.c:171
+#: ../thunar/thunar-shortcuts-view.c:865 ../thunar/thunar-tree-view.c:1072
 #: ../thunar/thunar-window.c:269 ../plugins/thunar-tpa/main.c:49
 #, fuzzy
 msgid "_Empty Trash"
 msgstr "空のファイル(_E)"
 
-#: ../thunar/thunar-application.c:1273
+#: ../thunar/thunar-application.c:1477
 msgid ""
 "If you choose to empty the Trash, all items in it will be permanently lost. "
 "Please note that you can also delete them separately."
 msgstr ""
 
-#: ../thunar/thunar-application.c:1290
+#: ../thunar/thunar-application.c:1494
 msgid "Emptying the Trash..."
 msgstr ""
 
-#: ../thunar/thunar-application.c:1344
+#: ../thunar/thunar-application.c:1548
 #, fuzzy, c-format
 msgid "Failed to determine the original path for \"%s\""
 msgstr "「%s」のマウント位置を確定できません。"
 
-#: ../thunar/thunar-application.c:1372
+#: ../thunar/thunar-application.c:1576
 #, fuzzy, c-format
 msgid "Create the folder \"%s\"?"
 msgstr "「%s」に新規フォルダを作成"
 
-#: ../thunar/thunar-application.c:1376
+#: ../thunar/thunar-application.c:1580
 #, fuzzy
 msgid "C_reate Folder"
 msgstr "フォルダを作成(_F)..."
 
-#: ../thunar/thunar-application.c:1382
+#: ../thunar/thunar-application.c:1586
 #, c-format
 msgid ""
 "The folder \"%s\" does not exist anymore, but it is required to restore the "
@@ -601,12 +602,12 @@ msgid ""
 msgstr ""
 
 #. display an error dialog
-#: ../thunar/thunar-application.c:1419
+#: ../thunar/thunar-application.c:1623
 #, fuzzy, c-format
 msgid "Failed to restore \"%s\""
 msgstr "「%s」の削除に失敗しました。"
 
-#: ../thunar/thunar-application.c:1426
+#: ../thunar/thunar-application.c:1630
 #, fuzzy
 msgid "Restoring files..."
 msgstr "ファイルを削除しています..."
@@ -1046,13 +1047,13 @@ msgstr "アイコン表示"
 #. append the "Open" menu action
 #: ../thunar/thunar-launcher.c:137 ../thunar/thunar-launcher.c:797
 #: ../thunar/thunar-location-buttons.c:168
-#: ../thunar/thunar-shortcuts-view.c:795 ../thunar/thunar-tree-view.c:1012
+#: ../thunar/thunar-shortcuts-view.c:806 ../thunar/thunar-tree-view.c:1012
 msgid "_Open"
 msgstr "開く(_O)"
 
 #. append the "Open in New Window" menu action
 #: ../thunar/thunar-launcher.c:138 ../thunar/thunar-location-buttons.c:169
-#: ../thunar/thunar-shortcuts-view.c:806 ../thunar/thunar-tree-view.c:1024
+#: ../thunar/thunar-shortcuts-view.c:817 ../thunar/thunar-tree-view.c:1024
 msgid "Open in New Window"
 msgstr "新規ウィンドウで開く"
 
@@ -1323,7 +1324,7 @@ msgstr "「%s」の実行に失敗しました。"
 
 #. display an error dialog to inform the user
 #: ../thunar/thunar-location-entry.c:639
-#: ../thunar/thunar-shortcuts-view.c:1333 ../thunar/thunar-tree-view.c:953
+#: ../thunar/thunar-shortcuts-view.c:1344 ../thunar/thunar-tree-view.c:953
 #: ../thunar/thunar-tree-view.c:1598
 #, c-format
 msgid "Failed to mount \"%s\""
@@ -1478,57 +1479,57 @@ msgstr ""
 "このフォルダのアクセス権が一貫するようににリセットします。ユーザーのみがこの"
 "フォルダの内容を見られます、また、後でこのフォルダに入る事ができます。"
 
-#: ../thunar/thunar-preferences-dialog.c:220
+#: ../thunar/thunar-preferences-dialog.c:225
 msgid "File Manager Preferences"
 msgstr "ファイルマネージャーの環境設定"
 
 #.
 #. Views
 #.
-#: ../thunar/thunar-preferences-dialog.c:237
+#: ../thunar/thunar-preferences-dialog.c:242
 msgid "Views"
 msgstr "表示"
 
-#: ../thunar/thunar-preferences-dialog.c:247
+#: ../thunar/thunar-preferences-dialog.c:252
 msgid "Default View"
 msgstr "標準の表示"
 
-#: ../thunar/thunar-preferences-dialog.c:259
+#: ../thunar/thunar-preferences-dialog.c:264
 msgid "View _new folders using:"
 msgstr "新規フォルダの表示方法(_N):"
 
-#: ../thunar/thunar-preferences-dialog.c:264
-#: ../thunar/thunar-preferences-dialog.c:295
+#: ../thunar/thunar-preferences-dialog.c:269
+#: ../thunar/thunar-preferences-dialog.c:300
 msgid "Icon View"
 msgstr "アイコン表示"
 
-#: ../thunar/thunar-preferences-dialog.c:265
+#: ../thunar/thunar-preferences-dialog.c:270
 msgid "Detailed List View"
 msgstr "詳細リスト表示"
 
-#: ../thunar/thunar-preferences-dialog.c:266
+#: ../thunar/thunar-preferences-dialog.c:271
 msgid "Compact List View"
 msgstr "リスト表示"
 
-#: ../thunar/thunar-preferences-dialog.c:267
+#: ../thunar/thunar-preferences-dialog.c:272
 msgid "Last Active View"
 msgstr "最後に使用した表示方法"
 
-#: ../thunar/thunar-preferences-dialog.c:278
+#: ../thunar/thunar-preferences-dialog.c:283
 msgid "Sort _folders before files"
 msgstr "フォルダをファイルの前にする(_F)"
 
-#: ../thunar/thunar-preferences-dialog.c:280
+#: ../thunar/thunar-preferences-dialog.c:285
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "フォルダを並べ替える時にフォルダをファイルの前に並べるなら、このオプションを"
 "選択してください。"
 
-#: ../thunar/thunar-preferences-dialog.c:284
+#: ../thunar/thunar-preferences-dialog.c:289
 msgid "_Show thumbnails"
 msgstr "サムネイルを表示する(_S)"
 
-#: ../thunar/thunar-preferences-dialog.c:286
+#: ../thunar/thunar-preferences-dialog.c:291
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
@@ -1536,11 +1537,11 @@ msgstr ""
 "フォルダ内のプレビュー可能なファイルを表示するにはこのオプションを有効にして"
 "ください。これらは自動的に作成されるサムネイルアイコンとして表示されます。"
 
-#: ../thunar/thunar-preferences-dialog.c:307
+#: ../thunar/thunar-preferences-dialog.c:312
 msgid "_Text beside icons"
 msgstr "文字をアイコンの隣に置く(_T)"
 
-#: ../thunar/thunar-preferences-dialog.c:309
+#: ../thunar/thunar-preferences-dialog.c:314
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1551,65 +1552,65 @@ msgstr ""
 #.
 #. Side Pane
 #.
-#: ../thunar/thunar-preferences-dialog.c:318
+#: ../thunar/thunar-preferences-dialog.c:323
 msgid "Side Pane"
 msgstr "サイドペイン"
 
-#: ../thunar/thunar-preferences-dialog.c:328
+#: ../thunar/thunar-preferences-dialog.c:333
 msgid "Shortcuts Pane"
 msgstr "ショートカットペイン"
 
-#: ../thunar/thunar-preferences-dialog.c:340
+#: ../thunar/thunar-preferences-dialog.c:345
 msgid "_Icon Size:"
 msgstr "アイコンのサイズ(_I):"
 
 # NOTE: 25%
-#: ../thunar/thunar-preferences-dialog.c:345
-#: ../thunar/thunar-preferences-dialog.c:390
+#: ../thunar/thunar-preferences-dialog.c:350
+#: ../thunar/thunar-preferences-dialog.c:395
 msgid "Very Small"
 msgstr "とても小さい"
 
 # NOTE: 50%
-#: ../thunar/thunar-preferences-dialog.c:346
-#: ../thunar/thunar-preferences-dialog.c:391
+#: ../thunar/thunar-preferences-dialog.c:351
+#: ../thunar/thunar-preferences-dialog.c:396
 msgid "Smaller"
 msgstr "小さい"
 
 # NOTE: 75%
-#: ../thunar/thunar-preferences-dialog.c:347
-#: ../thunar/thunar-preferences-dialog.c:392
+#: ../thunar/thunar-preferences-dialog.c:352
+#: ../thunar/thunar-preferences-dialog.c:397
 msgid "Small"
 msgstr "少し小さい"
 
 # NOTE: 100%
-#: ../thunar/thunar-preferences-dialog.c:348
-#: ../thunar/thunar-preferences-dialog.c:393
+#: ../thunar/thunar-preferences-dialog.c:353
+#: ../thunar/thunar-preferences-dialog.c:398
 msgid "Normal"
 msgstr "普通"
 
 # NOTE: 125%
-#: ../thunar/thunar-preferences-dialog.c:349
-#: ../thunar/thunar-preferences-dialog.c:394
+#: ../thunar/thunar-preferences-dialog.c:354
+#: ../thunar/thunar-preferences-dialog.c:399
 msgid "Large"
 msgstr "少し大きい"
 
 # NOTE: 150%
-#: ../thunar/thunar-preferences-dialog.c:350
-#: ../thunar/thunar-preferences-dialog.c:395
+#: ../thunar/thunar-preferences-dialog.c:355
+#: ../thunar/thunar-preferences-dialog.c:400
 msgid "Larger"
 msgstr "大きい"
 
 # NOTE: 200%
-#: ../thunar/thunar-preferences-dialog.c:351
-#: ../thunar/thunar-preferences-dialog.c:396
+#: ../thunar/thunar-preferences-dialog.c:356
+#: ../thunar/thunar-preferences-dialog.c:401
 msgid "Very Large"
 msgstr "とても大きい"
 
-#: ../thunar/thunar-preferences-dialog.c:362
+#: ../thunar/thunar-preferences-dialog.c:367
 msgid "Show Icon _Emblems"
 msgstr "アイコンのシンボルを表示(_E)"
 
-#: ../thunar/thunar-preferences-dialog.c:364
+#: ../thunar/thunar-preferences-dialog.c:369
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
@@ -1617,19 +1618,19 @@ msgstr ""
 "ショートカットペインにある全てのフォルダにシンボルアイコンを表示します。これ"
 "らのシンボルはフォルダのプロパティのダイアログで定義されています。"
 
-#: ../thunar/thunar-preferences-dialog.c:373
+#: ../thunar/thunar-preferences-dialog.c:378
 msgid "Tree Pane"
 msgstr "ツリーペイン"
 
-#: ../thunar/thunar-preferences-dialog.c:385
+#: ../thunar/thunar-preferences-dialog.c:390
 msgid "Icon _Size:"
 msgstr "アイコンのサイズ(_S):"
 
-#: ../thunar/thunar-preferences-dialog.c:407
+#: ../thunar/thunar-preferences-dialog.c:412
 msgid "Show Icon E_mblems"
 msgstr "シンボルを表示(_M)"
 
-#: ../thunar/thunar-preferences-dialog.c:409
+#: ../thunar/thunar-preferences-dialog.c:414
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
@@ -1640,19 +1641,19 @@ msgstr ""
 #.
 #. Behavior
 #.
-#: ../thunar/thunar-preferences-dialog.c:418
+#: ../thunar/thunar-preferences-dialog.c:423
 msgid "Behavior"
 msgstr "振る舞い"
 
-#: ../thunar/thunar-preferences-dialog.c:428
+#: ../thunar/thunar-preferences-dialog.c:433
 msgid "Navigation"
 msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:440
+#: ../thunar/thunar-preferences-dialog.c:445
 msgid "_Single click to activate items"
 msgstr "シングルクリックでアイテムを有効にする(_S)"
 
-#: ../thunar/thunar-preferences-dialog.c:460
+#: ../thunar/thunar-preferences-dialog.c:465
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
@@ -1660,7 +1661,7 @@ msgstr ""
 "マウスがアイテム上にある時\n"
 "選択状態になるまでの時間(_E):"
 
-#: ../thunar/thunar-preferences-dialog.c:472
+#: ../thunar/thunar-preferences-dialog.c:477
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1674,36 +1675,36 @@ msgstr ""
 "できますので、アイテムを有効にせずただ選択したいのでしたら、そうしてくださ"
 "い。"
 
-#: ../thunar/thunar-preferences-dialog.c:490
+#: ../thunar/thunar-preferences-dialog.c:495
 msgid "Disabled"
 msgstr "無効"
 
 # XXX: how long does it take in millisecond?
-#: ../thunar/thunar-preferences-dialog.c:496
+#: ../thunar/thunar-preferences-dialog.c:501
 msgid "Medium"
 msgstr "中間"
 
 # XXX: how long does it take in millisecond?
-#: ../thunar/thunar-preferences-dialog.c:502
+#: ../thunar/thunar-preferences-dialog.c:507
 msgid "Long"
 msgstr "長い"
 
-#: ../thunar/thunar-preferences-dialog.c:508
+#: ../thunar/thunar-preferences-dialog.c:513
 msgid "_Double click to activate items"
 msgstr "ダブルクリックでアイテムを有効にする(_D)"
 
 #.
 #. Advanced
 #.
-#: ../thunar/thunar-preferences-dialog.c:518
+#: ../thunar/thunar-preferences-dialog.c:523
 msgid "Advanced"
 msgstr "詳細..."
 
-#: ../thunar/thunar-preferences-dialog.c:528
+#: ../thunar/thunar-preferences-dialog.c:533
 msgid "Folder Permissions"
 msgstr "フォルダのアクセス権"
 
-#: ../thunar/thunar-preferences-dialog.c:540
+#: ../thunar/thunar-preferences-dialog.c:545
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
@@ -1713,17 +1714,51 @@ msgstr ""
 "ファイルにもこの変更を適用することができます。\n"
 "以下から、標準で行うことを選択してください:"
 
-#: ../thunar/thunar-preferences-dialog.c:548
+#: ../thunar/thunar-preferences-dialog.c:553
 msgid "Ask everytime"
 msgstr "毎回質問する"
 
-#: ../thunar/thunar-preferences-dialog.c:549
+#: ../thunar/thunar-preferences-dialog.c:554
 msgid "Apply to Folder Only"
 msgstr "フォルダのみに適用する"
 
-#: ../thunar/thunar-preferences-dialog.c:550
+#: ../thunar/thunar-preferences-dialog.c:555
 msgid "Apply to Folder and Contents"
 msgstr "フォルダ内のファイルにも適用する"
+
+#: ../thunar/thunar-preferences-dialog.c:568
+#, fuzzy
+msgid "Volume Management"
+msgstr "ファイルマネージャー"
+
+#: ../thunar/thunar-preferences-dialog.c:596
+msgid ""
+"Install the \"thunar-volman\" package to use\n"
+"the volume management support in Thunar."
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:597
+msgid ""
+"Build thunar-vfs with HAL support to use\n"
+"the volume management support in Thunar."
+msgstr ""
+
+#. add check button to enable/disable auto mounting
+#: ../thunar/thunar-preferences-dialog.c:608
+msgid "Enable _Volume Management"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:617
+msgid ""
+"<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
+"and media (i.e. how cameras should be handled)."
+msgstr ""
+
+#. tell the user that we failed to come up with the thunar-volman configuration dialog
+#: ../thunar/thunar-preferences-dialog.c:676
+#, fuzzy
+msgid "Failed to display the volume management settings"
+msgstr "HAL デーモンとの接続に失敗しました: %s"
 
 #: ../thunar/thunar-progress-dialog.c:375
 #, c-format
@@ -1998,49 +2033,49 @@ msgid_plural "Add the selected folders to the shortcuts side pane"
 msgstr[0] "選択したフォルダを左のショートカットペインに追加します。"
 
 #. append the "Mount Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:820 ../thunar/thunar-tree-view.c:1038
+#: ../thunar/thunar-shortcuts-view.c:831 ../thunar/thunar-tree-view.c:1038
 msgid "_Mount Volume"
 msgstr "マウント(_M)"
 
 #. append the "Eject Volume" menu action
-#: ../thunar/thunar-shortcuts-view.c:830 ../thunar/thunar-tree-view.c:1048
+#: ../thunar/thunar-shortcuts-view.c:841 ../thunar/thunar-tree-view.c:1048
 msgid "E_ject Volume"
 msgstr "取り出し(_J)"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:839 ../thunar/thunar-tree-view.c:1057
+#: ../thunar/thunar-shortcuts-view.c:850 ../thunar/thunar-tree-view.c:1057
 msgid "_Unmount Volume"
 msgstr "マウント解除(_U)"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:867
+#: ../thunar/thunar-shortcuts-view.c:878
 msgid "_Remove Shortcut"
 msgstr "ショートカットを削除(_R)"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:882
+#: ../thunar/thunar-shortcuts-view.c:893
 msgid "Re_name Shortcut"
 msgstr "ショートカットの名前変更(_N)"
 
-#: ../thunar/thunar-shortcuts-view.c:1150
+#: ../thunar/thunar-shortcuts-view.c:1161
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "パス「%s」はフォルダを参照していません。"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1169
+#: ../thunar/thunar-shortcuts-view.c:1180
 msgid "Failed to add new shortcut"
 msgstr "ショートカットの追加に失敗しました。"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1287 ../thunar/thunar-tree-view.c:1547
+#: ../thunar/thunar-shortcuts-view.c:1298 ../thunar/thunar-tree-view.c:1547
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "「%s」の取り出しに失敗しました。"
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1377 ../thunar/thunar-tree-view.c:1738
+#: ../thunar/thunar-shortcuts-view.c:1388 ../thunar/thunar-tree-view.c:1738
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "「%s」のマウント解除に失敗しました。"

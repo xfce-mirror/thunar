@@ -22,26 +22,6 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_SYS_PARAM_H
-#include <sys/param.h>
-#endif
-#ifdef HAVE_SYS_UCRED_H
-#include <sys/ucred.h>
-#endif
-#ifdef HAVE_SYS_MOUNT_H
-#include <sys/mount.h>
-#endif
-
-#ifdef HAVE_ERRNO_H
-#include <errno.h>
-#endif
-#ifdef HAVE_FSTAB_H
-#include <fstab.h>
-#endif
-#ifdef HAVE_MNTENT_H
-#include <mntent.h>
-#endif
-#include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
 #endif
@@ -338,68 +318,24 @@ static ThunarVfsPath*
 thunar_vfs_volume_hal_find_active_mount_point (const ThunarVfsVolumeHal *volume_hal)
 {
   ThunarVfsPath *mount_point = NULL;
+  GSList        *mount_points;
 
-#if defined(HAVE_SETMNTENT) /* Linux */
-  struct mntent *mntent;
-  FILE          *fp;
+  /* check if we have a matching active mount point (using the ExoMountPoint module) */
+  mount_points = exo_mount_point_list_matched (EXO_MOUNT_POINT_MATCH_ACTIVE
+                                             | EXO_MOUNT_POINT_MATCH_DEVICE,
+                                             volume_hal->device_file, NULL,
+                                             NULL, NULL);
 
-  /* try to open the /proc/mounts file */
-  fp = setmntent ("/proc/mounts", "r");
-  if (G_LIKELY (fp != NULL))
+  /* the function may return several mount points... */
+  if (G_LIKELY (mount_points != NULL))
     {
-      /* process all mnt entries */
-      while (mount_point == NULL)
-        {
-          /* read the next entry */
-          mntent = getmntent (fp);
-          if (mntent == NULL)
-            break;
+      /* ...but we care only for the first of them (to be exact, for the folder of the first one) */
+      mount_point = thunar_vfs_path_new (((const ExoMountPoint *) mount_points->data)->folder, NULL);
 
-          /* check if this is the entry we are looking for */
-          if (exo_str_is_equal (mntent->mnt_fsname, volume_hal->device_file))
-            {
-              /* and there's our mount point */
-              mount_point = thunar_vfs_path_new (mntent->mnt_dir, NULL);
-              break;
-            }
-        }
-
-      /* close the file handle */
-      endmntent (fp);
+      /* clean up the mount points */
+      g_slist_foreach (mount_points, (GFunc) exo_mount_point_free, NULL);
+      g_slist_free (mount_points);
     }
-#elif defined(HAVE_GETFSSTAT) /* FreeBSD */
-  struct statfs *mntbuf = NULL;
-  glong          bufsize = 0;
-  gint           mntsize;
-  gint           n;
-
-  /* determine the number of active mount points */
-  mntsize = getfsstat (NULL, 0, MNT_NOWAIT);
-  if (G_LIKELY (mntsize > 0))
-    {
-      /* allocate a new buffer */
-      bufsize = (mntsize + 4) * sizeof (*mntbuf);
-      mntbuf = (struct statfs *) g_malloc (bufsize);
-
-      /* determine the mount point for the device file */
-      mntsize = getfsstat (mntbuf, bufsize, MNT_NOWAIT);
-      for (n = 0; n < mntsize; ++n)
-        {
-          /* check if this is the entry we are looking for */
-          if (exo_str_is_equal (mntbuf[n].f_mntfromname, volume_hal->device_file))
-            {
-              /* and there's our mount point */
-              mount_point = thunar_vfs_path_new (mntbuf[n].f_mntonname, NULL);
-              break;
-            }
-        }
-
-      /* release the buffer */
-      g_free (mntbuf);
-    }
-#else
-#error "Add support for your operating system here."
-#endif
 
   return mount_point;
 }
@@ -410,48 +346,24 @@ static ThunarVfsPath*
 thunar_vfs_volume_hal_find_fstab_mount_point (const ThunarVfsVolumeHal *volume_hal)
 {
   ThunarVfsPath *mount_point = NULL;
+  GSList        *mount_points;
 
-#if defined(HAVE_SETMNTENT) /* Linux */
-  struct mntent *mntent;
-  FILE          *fp;
+  /* check if we have a matching configured mount point (using the ExoMountPoint module) */
+  mount_points = exo_mount_point_list_matched (EXO_MOUNT_POINT_MATCH_CONFIGURED
+                                             | EXO_MOUNT_POINT_MATCH_DEVICE,
+                                             volume_hal->device_file, NULL,
+                                             NULL, NULL);
 
-  /* try to open the /etc/fstab file */
-  fp = setmntent ("/etc/fstab", "r");
-  if (G_LIKELY (fp != NULL))
+  /* the function may return several mount points... */
+  if (G_LIKELY (mount_points != NULL))
     {
-      /* process all mnt entries */
-      while (mount_point == NULL)
-        {
-          /* read the next entry */
-          mntent = getmntent (fp);
-          if (mntent == NULL)
-            break;
+      /* ...but we care only for the first of them (to be exact, for the folder of the first one) */
+      mount_point = thunar_vfs_path_new (((const ExoMountPoint *) mount_points->data)->folder, NULL);
 
-          /* check if this is the entry we are looking for */
-          if (exo_str_is_equal (mntent->mnt_fsname, volume_hal->device_file))
-            {
-              /* and there's our mount point */
-              mount_point = thunar_vfs_path_new (mntent->mnt_dir, NULL);
-              break;
-            }
-        }
-
-      /* close the file handle */
-      endmntent (fp);
+      /* clean up the mount points */
+      g_slist_foreach (mount_points, (GFunc) exo_mount_point_free, NULL);
+      g_slist_free (mount_points);
     }
-#elif defined(HAVE_GETFSSPEC) /* FreeBSD */
-  struct fstab *fs;
-
-  /* check if we have an fstab entry for the device file */
-  fs = getfsspec (volume_hal->device_file);
-  if (G_LIKELY (fs != NULL))
-    {
-      /* and there's out mount point */
-      mount_point = thunar_vfs_path_new (fs->fs_file, NULL);
-    }
-#else
-#error "Add support for your operating system here."
-#endif
 
   return mount_point;
 }
@@ -751,6 +663,44 @@ thunar_vfs_volume_manager_hal_class_init (ThunarVfsVolumeManagerHalClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_vfs_volume_manager_hal_finalize;
 
+  /**
+   * ThunarVfsVolumeManagerHal::device-added:
+   * @manager_hal : a #ThunarVfsVolumeManagerHal instance.
+   * @udi         : the HAL device UDI of the newly added device.
+   *
+   * This is a special signal of the HAL volume manager backend,
+   * which is emitted whenever a new device is added. This signal
+   * is used by Thunar to support thunar-volman. Since it's special
+   * to the HAL backend, no other application must use this signal,
+   * especially no application must assume that the signal is
+   * available on any given #ThunarVfsVolumeManager.
+   **/
+  g_signal_new (I_("device-added"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                0, NULL, NULL,
+                g_cclosure_marshal_VOID__STRING,
+                G_TYPE_NONE, 1, G_TYPE_STRING);
+
+  /**
+   * ThunarVfsVolumeManagerHal::device-removed:
+   * @manager_hal : a #ThunarVfsVolumeManagerHal instance.
+   * @udi         : the HAL device UDI of the removed device.
+   *
+   * This is a special signal of the HAL volume manager backend,
+   * which is emitted whenever one of the current devices disappear.
+   * This signal is used by Thunar to support thunar-volman. Since
+   * it's special to the HAL backend, no other application must use
+   * this signal, especially no application must assume that the
+   * signal is available on any given #ThunarVfsVolumeManager.
+   **/
+  g_signal_new (I_("device-removed"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                0, NULL, NULL,
+                g_cclosure_marshal_VOID__STRING,
+                G_TYPE_NONE, 1, G_TYPE_STRING);
+
   /* initialize exo-hal support */
   if (!exo_hal_init ())
     {
@@ -996,6 +946,9 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
   _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
   _thunar_vfs_return_if_fail (manager_hal->context == context);
 
+  /* emit the "device-added" signal (to support thunar-volman) */
+  g_signal_emit_by_name (G_OBJECT (manager_hal), "device-added", udi);
+
   /* check if we have a volume here */
   hv = libhal_volume_from_udi (context, udi);
   if (G_LIKELY (hv != NULL))
@@ -1087,6 +1040,9 @@ thunar_vfs_volume_manager_hal_device_removed (LibHalContext *context,
 
   _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
   _thunar_vfs_return_if_fail (manager_hal->context == context);
+
+  /* emit the "device-removed" signal (to support thunar-volman) */
+  g_signal_emit_by_name (G_OBJECT (manager_hal), "device-added", udi);
 
   /* check if we already have a volume object for the UDI */
   volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);

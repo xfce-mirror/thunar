@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2003-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2003-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -24,8 +24,10 @@
 
 G_BEGIN_DECLS;
 
-GdkScreen *thunar_gdk_screen_open (const gchar *display_name,
-                                   GError     **error) G_GNUC_INTERNAL;
+GdkScreen *thunar_gdk_screen_open       (const gchar *display_name,
+                                         GError     **error) G_GNUC_INTERNAL;
+
+GdkScreen *thunar_gdk_screen_get_active (void) G_GNUC_INTERNAL;
 
 G_END_DECLS;
 
