@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.5.1svn\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-01-10 22:29+0100\n"
-"PO-Revision-Date: 2007-01-10 22:16+0100\n"
+"POT-Creation-Date: 2007-01-11 13:18+0100\n"
+"PO-Revision-Date: 2007-01-11 13:16+0100\n"
 "Last-Translator: Benedikt Meurer <benny@xfce.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -1339,7 +1339,7 @@ msgstr "Konnte »%s« nicht ausführen"
 #: ../thunar/thunar-tree-view.c:1598
 #, c-format
 msgid "Failed to mount \"%s\""
-msgstr "Der Datenträger »%s« konnte nicht eingebunden werden"
+msgstr "Der Datenträger »%s« konnte nicht eingehangen werden"
 
 #: ../thunar/thunar-path-entry.c:259
 msgid "Icon size"
@@ -1759,7 +1759,8 @@ msgstr ""
 msgid "Enable _Volume Management"
 msgstr "Datenträger_verwaltung aktivieren"
 
-#: ../thunar/thunar-preferences-dialog.c:617
+#. TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it
+#: ../thunar/thunar-preferences-dialog.c:618
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
@@ -1768,9 +1769,10 @@ msgstr ""
 "-medien konfigurieren (z.B. Digitalkameras)."
 
 #. tell the user that we failed to come up with the thunar-volman configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:676
+#: ../thunar/thunar-preferences-dialog.c:677
 msgid "Failed to display the volume management settings"
-msgstr "Die Einstellungen der Datenträgerverwaltung konnten nicht geöffnet werden"
+msgstr ""
+"Die Einstellungen der Datenträgerverwaltung konnten nicht geöffnet werden"
 
 #: ../thunar/thunar-progress-dialog.c:375
 #, c-format
@@ -2061,17 +2063,17 @@ msgstr[1] "Neue Lesezeichen für die ausgewählten Ordner erstellen"
 #. append the "Mount Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:831 ../thunar/thunar-tree-view.c:1038
 msgid "_Mount Volume"
-msgstr "Datenträger _Einbinden"
+msgstr "Datenträger _einhängen"
 
 #. append the "Eject Volume" menu action
 #: ../thunar/thunar-shortcuts-view.c:841 ../thunar/thunar-tree-view.c:1048
 msgid "E_ject Volume"
-msgstr "Datenträger _Auswerfen"
+msgstr "Datenträger _auswerfen"
 
 #. append the "Unmount Volume" menu item
 #: ../thunar/thunar-shortcuts-view.c:850 ../thunar/thunar-tree-view.c:1057
 msgid "_Unmount Volume"
-msgstr "Datenträger _Auslösen"
+msgstr "Datenträger _aushängen"
 
 #. append the remove menu item
 #: ../thunar/thunar-shortcuts-view.c:878
@@ -2104,7 +2106,7 @@ msgstr "Der Datenträger »%s« konnte nicht ausgeworfen werden"
 #: ../thunar/thunar-shortcuts-view.c:1388 ../thunar/thunar-tree-view.c:1738
 #, c-format
 msgid "Failed to unmount \"%s\""
-msgstr "Der Datenträger »%s« konnte nicht ausgelöst werden"
+msgstr "Der Datenträger »%s« konnte nicht ausgehangen werden"
 
 #: ../thunar/thunar-size-label.c:177
 msgid "Click here to stop calculating the total size of the folder."
