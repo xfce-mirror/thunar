@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -531,6 +531,56 @@ thunar_window_class_init (ThunarWindowClass *klass)
 
 
 
+static inline gint
+view_type2index (GType type)
+{
+  /* this necessary for platforms where sizeof(GType) != sizeof(gint),
+   * see http://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
+   */
+  if (sizeof (GType) == sizeof (gint))
+    {
+      /* no need to map anything */
+      return (gint) type;
+    }
+  else
+    {
+      /* map from types to unique indices */
+      if (G_LIKELY (type == THUNAR_TYPE_COMPACT_VIEW))
+        return 0;
+      else if (type == THUNAR_TYPE_DETAILS_VIEW)
+        return 1;
+      else
+        return 2;
+    }
+}
+
+
+
+static inline GType
+view_index2type (gint index)
+{
+  /* this necessary for platforms where sizeof(GType) != sizeof(gint),
+   * see http://bugzilla.xfce.org/show_bug.cgi?id=2726 for details.
+   */
+  if (sizeof (GType) == sizeof (gint))
+    {
+      /* no need to map anything */
+      return (GType) index;
+    }
+  else
+    {
+      /* map from indices to unique types */
+      switch (index)
+        {
+        case 0:  return THUNAR_TYPE_COMPACT_VIEW;
+        case 1:  return THUNAR_TYPE_DETAILS_VIEW;
+        default: return THUNAR_TYPE_ICON_VIEW;
+        }
+    }
+}
+
+
+
 static void
 thunar_window_init (ThunarWindow *window)
 {
@@ -605,21 +655,21 @@ thunar_window_init (ThunarWindow *window)
    * add view options
    */
   radio_action = gtk_radio_action_new ("view-as-icons", _("View as _Icons"), _("Display folder content in an icon view"),
-                                       NULL, THUNAR_TYPE_ICON_VIEW);
+                                       NULL, view_type2index (THUNAR_TYPE_ICON_VIEW));
   gtk_action_group_add_action_with_accel (window->action_group, GTK_ACTION (radio_action), "<control>1");
   gtk_radio_action_set_group (radio_action, NULL);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
   radio_action = gtk_radio_action_new ("view-as-detailed-list", _("View as _Detailed List"), _("Display folder content in a detailed list view"),
-                                       NULL, THUNAR_TYPE_DETAILS_VIEW);
+                                       NULL, view_type2index (THUNAR_TYPE_DETAILS_VIEW));
   gtk_action_group_add_action_with_accel (window->action_group, GTK_ACTION (radio_action), "<control>2");
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
   g_object_unref (G_OBJECT (radio_action));
 
   radio_action = gtk_radio_action_new ("view-as-compact-list", _("View as _Compact List"), _("Display folder content in a compact list view"),
-                                       NULL, THUNAR_TYPE_COMPACT_VIEW);
+                                       NULL, view_type2index (THUNAR_TYPE_COMPACT_VIEW));
   gtk_action_group_add_action_with_accel (window->action_group, GTK_ACTION (radio_action), "<control>3");
   gtk_radio_action_set_group (radio_action, group);
   group = gtk_radio_action_get_group (radio_action);
@@ -758,7 +808,7 @@ thunar_window_init (ThunarWindow *window)
 
   /* activate the selected view */
   action = gtk_action_group_get_action (window->action_group, "view-as-icons");
-  exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), g_type_is_a (type, THUNAR_TYPE_VIEW) ? type : THUNAR_TYPE_ICON_VIEW);
+  exo_gtk_radio_action_set_current_value (GTK_RADIO_ACTION (action), view_type2index (g_type_is_a (type, THUNAR_TYPE_VIEW) ? type : THUNAR_TYPE_ICON_VIEW));
   g_signal_connect (G_OBJECT (action), "changed", G_CALLBACK (thunar_window_action_view_changed), window);
   thunar_window_action_view_changed (GTK_RADIO_ACTION (action), GTK_RADIO_ACTION (action), window);
 
@@ -1632,7 +1682,7 @@ thunar_window_action_view_changed (GtkRadioAction *action,
     }
 
   /* determine the new type of view */
-  type = gtk_radio_action_get_current_value (action);
+  type = view_index2type (gtk_radio_action_get_current_value (action));
 
   /* allocate a new view of the requested type */
   if (G_LIKELY (type != G_TYPE_NONE))

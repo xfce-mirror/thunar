@@ -1,3 +1,8 @@
+2007-01-12	Benedikt Meurer <benny@xfce.org>
+
+	* thunar/thunar-window.c: Finally fix crash on platforms where
+	  sizeof(GType) != sizeof(gint). Bug #2726.
+
 2007-01-10	Benedikt Meurer <benny@xfce.org>
 
 	* thunar/thunar-gdk-extensions.{c,h}: Add new helper function 
