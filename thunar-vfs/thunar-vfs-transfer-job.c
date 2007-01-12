@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -54,7 +54,8 @@ static void                   thunar_vfs_transfer_job_node_copy     (ThunarVfsTr
                                                                      ThunarVfsTransferNode     *transfer_node,
                                                                      ThunarVfsPath             *target_path,
                                                                      ThunarVfsPath             *target_parent_path,
-                                                                     GList                    **target_path_list_return);
+                                                                     GList                    **target_path_list_return,
+                                                                     GError                   **error);
 static void                   thunar_vfs_transfer_node_free         (ThunarVfsTransferNode     *transfer_node);
 static gboolean               thunar_vfs_transfer_node_collect      (ThunarVfsTransferNode     *transfer_node,
                                                                      ThunarVfsFileSize         *total_size_return,
@@ -215,7 +216,7 @@ thunar_vfs_transfer_job_execute (ThunarVfsJob *job)
             break;
 
           /* copy the file for this node */
-          thunar_vfs_transfer_job_node_copy (transfer_job, sp->data, tp->data, NULL, &new_files_list);
+          thunar_vfs_transfer_job_node_copy (transfer_job, sp->data, tp->data, NULL, &new_files_list, &err);
         }
     }
 
@@ -331,7 +332,8 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
                                    ThunarVfsTransferNode *transfer_node,
                                    ThunarVfsPath         *target_path,
                                    ThunarVfsPath         *target_parent_path,
-                                   GList                **target_path_list_return)
+                                   GList                **target_path_list_return,
+                                   GError               **error)
 {
   ThunarVfsPath *target_path_return;
   gchar         *display_name;
@@ -340,6 +342,7 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
   _thunar_vfs_return_if_fail ((target_path == NULL && target_parent_path != NULL) || (target_path != NULL && target_parent_path == NULL));
   _thunar_vfs_return_if_fail (target_path == NULL || transfer_node->next == NULL);
   _thunar_vfs_return_if_fail (THUNAR_VFS_IS_TRANSFER_JOB (transfer_job));
+  _thunar_vfs_return_if_fail (error == NULL || *error == NULL);
   _thunar_vfs_return_if_fail (transfer_node != NULL);
 
   /* The caller can either provide a target_path or a target_parent_path, but not both. The toplevel
@@ -371,11 +374,20 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
               if (transfer_node->children != NULL)
                 {
                   /* copy all children for this node */
-                  thunar_vfs_transfer_job_node_copy (transfer_job, transfer_node->children, NULL, target_path_return, NULL);
+                  thunar_vfs_transfer_job_node_copy (transfer_job, transfer_node->children, NULL, target_path_return, NULL, &err);
 
                   /* free the resources allocated to the children */
                   thunar_vfs_transfer_node_free (transfer_node->children);
                   transfer_node->children = NULL;
+                }
+
+              /* check if the child copy failed */
+              if (G_UNLIKELY (err != NULL))
+                {
+                  /* outa here, freeing the target paths */
+                  thunar_vfs_path_unref (target_path_return);
+                  thunar_vfs_path_unref (target_path);
+                  break;
                 }
 
               /* add the real target path to the return list */
@@ -408,6 +420,13 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
       /* release the guessed target_path */
       thunar_vfs_path_unref (target_path);
       target_path = NULL;
+    }
+
+  /* check if we failed */
+  if (G_UNLIKELY (err != NULL))
+    {
+      /* propagate the error */
+      g_propagate_error (error, err);
     }
 }
 

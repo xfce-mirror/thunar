@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -154,7 +154,6 @@ tvilx_copy_regular (const gchar                   *source_absolute_path,
   gchar         *display_name;
   gchar         *buffer;
   gsize          bufsize;
-  gsize          completed;
   gint           source_fd;
   gint           target_fd;
   gint           n, m, l;
@@ -258,7 +257,7 @@ tvilx_copy_regular (const gchar                   *source_absolute_path,
       buffer = g_new (gchar, bufsize);
 
       /* copy the data from the source file to the target file */
-      for (completed = 0; completed < source_statb->st_size; )
+      for (;;)
         {
           /* read a chunk from the source file */
           n = read (source_fd, buffer, bufsize);

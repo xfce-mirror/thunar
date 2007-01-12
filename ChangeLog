@@ -1,5 +1,13 @@
 2007-01-12	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-io-local-xfer.c(tvilx_copy_regular): Drop
+	  unused variable.
+	* thunar-vfs/thunar-vfs-transfer-job.c: Properly report errors if
+	  copying a file fails for some reason. Also fix a memory leak that
+	  wasn't detected previously.
+
+2007-01-12	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-window.c: Finally fix crash on platforms where
 	  sizeof(GType) != sizeof(gint). Bug #2726.
 
