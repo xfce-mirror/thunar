@@ -32,6 +32,7 @@ G_BEGIN_DECLS;
 
 void           _thunar_vfs_io_trash_scan            (void) G_GNUC_INTERNAL;
 gboolean       _thunar_vfs_io_trash_rescan          (void) G_GNUC_INTERNAL;
+void           _thunar_vfs_io_trash_rescan_mounts   (void) G_GNUC_INTERNAL;
 
 gchar         *_thunar_vfs_io_trash_get_top_dir     (guint                          trash_id,
                                                      GError                       **error) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;

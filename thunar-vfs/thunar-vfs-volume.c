@@ -23,6 +23,7 @@
 #endif
 
 #include <thunar-vfs/thunar-vfs-enum-types.h>
+#include <thunar-vfs/thunar-vfs-io-trash.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-volume-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
@@ -673,6 +674,11 @@ thunar_vfs_volume_changed (ThunarVfsVolume *volume)
 {
   g_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
   g_signal_emit (G_OBJECT (volume), volume_signals[CHANGED], 0);
+
+  /* rescan the mount points for the trash subsystem,
+   * as we may have a volume with a new trash dir now.
+   */
+  _thunar_vfs_io_trash_rescan_mounts ();
 }
 
 

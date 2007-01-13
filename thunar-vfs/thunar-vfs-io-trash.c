@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -22,6 +22,12 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_PARAM_H
+#include <sys/param.h>
+#endif
+#ifdef HAVE_SYS_MOUNT_H
+#include <sys/mount.h>
+#endif
 #ifdef HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
@@ -45,6 +51,9 @@
 #ifdef HAVE_STRING_H
 #include <string.h>
 #endif
+#ifdef HAVE_SYSLOG_H
+#include <syslog.h>
+#endif
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
@@ -60,10 +69,11 @@
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
-/* Use g_open(), g_remove(), g_lstat(), and g_unlink() on win32 */
+/* Use g_mkdir(), g_open(), g_remove(), g_lstat(), and g_unlink() on win32 */
 #if defined(G_OS_WIN32)
 #include <glib/gstdio.h>
 #else
+#define g_mkdir(path, mode) (mkdir ((path), (mode)))
 #define g_open(path, flags, mode) (open ((path), (flags), (mode)))
 #define g_remove(path) (remove ((path)))
 #define g_lstat(path, statb) (lstat ((path), (statb)))
@@ -72,10 +82,15 @@
 
 
 
-static inline gchar *tvit_resolve_original_path (guint        trash_id,
-                                                 const gchar *original_path_escaped,
-                                                 const gchar *relative_path,
-                                                 GError     **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+static inline gboolean tvit_initialize_trash_dir      (const gchar *trash_dir) G_GNUC_WARN_UNUSED_RESULT;
+static void            tvit_rescan_mount_points       (void);
+static inline gchar   *tvit_resolve_original_path     (guint        trash_id,
+                                                       const gchar *original_path_escaped,
+                                                       const gchar *relative_path,
+                                                       GError     **error) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+static guint           tvit_resolve_trash_dir_to_id   (const gchar *trash_dir) G_GNUC_WARN_UNUSED_RESULT;
+static gchar          *tvit_trash_dir_for_mount_point (const gchar *top_dir,
+                                                       gboolean     create) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 
 
@@ -92,11 +107,285 @@ typedef struct
 static ThunarVfsIOTrash *_thunar_vfs_io_trashes;
 static guint             _thunar_vfs_io_n_trashes;
 
-/* TRUE if trashes were scanned already */
-static gint             _thunar_vfs_io_trash_timer_id = -1;
+/* the trash rescan timer id */
+static guint            _thunar_vfs_io_trash_timer_id;
+
+/* the device of the home folder */
+static dev_t            _thunar_vfs_io_trash_homedev;
 
 /* the trash subsystem lock */
 G_LOCK_DEFINE_STATIC (_thunar_vfs_io_trash);
+
+
+
+static inline gboolean
+tvit_initialize_trash_dir (const gchar *trash_dir)
+{
+  const gchar *name;
+  struct stat  statb;
+  gboolean     result = FALSE;
+  gchar       *files_dir;
+  gchar       *info_dir;
+  gchar       *basename;
+  gchar       *dirname;
+  GDir        *dp;
+
+  /* try to create the directory with the appropriate permissions */
+  if (G_LIKELY (g_mkdir (trash_dir, 0700) == 0))
+    {
+      /* check if the trash dir is usable */
+      if (G_LIKELY (g_lstat (trash_dir, &statb) == 0))
+        {
+          /* the trash_dir must be owned by user now, with rwx for user only */
+          if (G_LIKELY (statb.st_uid == getuid () && (statb.st_mode & 0777) == 0700))
+            {
+              /* we want to be smart, and we need to be smarter
+               * than file systems like msdosfs, which translate
+               * for example ".Trash-200" to "trash-20", which
+               * we don't want to support, so be sure the
+               * directory now contains an entry with our name.
+               */
+              dirname = g_path_get_dirname (trash_dir);
+              dp = g_dir_open (dirname, 0, NULL);
+              if (G_LIKELY (dp != NULL))
+                {
+                  /* determine the basename to look for */
+                  basename = g_path_get_basename (trash_dir);
+                  do
+                    {
+                      /* compare the next entry */
+                      name = g_dir_read_name (dp);
+                      if (G_LIKELY (name != NULL))
+                        result = (strcmp (name, basename) == 0);
+                    }
+                  while (name != NULL && !result);
+                  g_free (basename);
+                }
+              g_free (dirname);
+
+              /* check if the entry was present */
+              if (G_LIKELY (result))
+                {
+                  /* create the infos and files directories */
+                  info_dir = g_build_filename (trash_dir, "info", NULL);
+                  files_dir = g_build_filename (trash_dir, "files", NULL);
+                  result = (g_mkdir (info_dir, 0700) == 0 && g_mkdir (files_dir, 0700) == 0);
+                  g_free (files_dir);
+                  g_free (info_dir);
+                }
+            }
+
+          if (G_UNLIKELY (!result))
+            {
+              /* Not good, e.g. USB key. Delete the trash directory again.
+               * I'm paranoid, it would be better to find a solution that allows
+               * to trash directly onto the USB key, but I don't see how that would
+               * pass the security checks. It would also make the USB key appears as
+               * empty when it's in fact full...
+               *
+               * Thanks to the KDE guys for this tip!
+               */
+              rmdir (trash_dir);
+            }
+        }
+    }
+
+  return result;
+}
+
+
+
+static void
+tvit_rescan_mount_points (void)
+{
+  ExoMountPoint *mount_point;
+  GSList        *mount_points;
+  GSList        *lp;
+  gchar         *trash_dir;
+  guint          trash_id;
+
+  /* determine the currently active mount points */
+  mount_points = exo_mount_point_list_active (NULL);
+  for (lp = mount_points; lp != NULL; lp = lp->next)
+    {
+      /* skip pseudo file systems as we won't find trash directories
+       * there, and of course skip read-only file systems, as we
+       * cannot trash to them anyway...
+       */
+      mount_point = (ExoMountPoint *) lp->data;
+      if (strncmp (mount_point->device, "/dev/", 5) == 0
+          && (mount_point->flags & EXO_MOUNT_POINT_READ_ONLY) == 0)
+        {
+          /* lookup the trash directory for this mount point */
+          trash_dir = tvit_trash_dir_for_mount_point (mount_point->folder, FALSE);
+          if (G_UNLIKELY (trash_dir != NULL))
+            {
+              /* check if the trash dir was already registered */
+              trash_id = tvit_resolve_trash_dir_to_id (trash_dir);
+              if (G_UNLIKELY (trash_id == 0))
+                {
+                  /* allocate space for the new trash directory */
+                  trash_id = _thunar_vfs_io_n_trashes++;
+                  _thunar_vfs_io_trashes = g_renew (ThunarVfsIOTrash,
+                                                    _thunar_vfs_io_trashes,
+                                                    _thunar_vfs_io_n_trashes);
+
+                  /* register the new trash directory */
+                  _thunar_vfs_io_trashes[trash_id].top_dir = g_strdup (mount_point->folder);
+                  _thunar_vfs_io_trashes[trash_id].trash_dir = trash_dir;
+                  _thunar_vfs_io_trashes[trash_id].mtime = (time_t) -1;
+                }
+              else
+                {
+                  /* cleanup */
+                  g_free (trash_dir);
+                }
+            }
+        }
+      exo_mount_point_free (mount_point);
+    }
+  g_slist_free (mount_points);
+}
+
+
+
+static inline gchar*
+tvit_resolve_original_path (guint        trash_id,
+                            const gchar *original_path_escaped,
+                            const gchar *relative_path,
+                            GError     **error)
+{
+  gchar *original_path_unescaped;
+  gchar *absolute_path = NULL;
+  gchar *top_dir;
+
+  /* unescape the path according to RFC 2396 */
+  original_path_unescaped = _thunar_vfs_unescape_rfc2396_string (original_path_escaped, -1, "/", FALSE, error);
+  if (G_UNLIKELY (original_path_unescaped == NULL))
+    return NULL;
+
+  /* check if we have a relative path here */
+  if (!g_path_is_absolute (original_path_unescaped))
+    {
+      /* determine the toplevel directory for the trash-id */
+      top_dir = _thunar_vfs_io_trash_get_top_dir (trash_id, error);
+      if (G_LIKELY (top_dir != NULL))
+        absolute_path = g_build_filename (top_dir, original_path_unescaped, relative_path, NULL);
+      g_free (original_path_unescaped);
+      g_free (top_dir);
+    }
+  else
+    {
+      /* generate the absolute with the relative part */
+      absolute_path = g_build_filename (original_path_unescaped, relative_path, NULL);
+      g_free (original_path_unescaped);
+    }
+
+  return absolute_path;
+}
+
+
+
+static guint
+tvit_resolve_trash_dir_to_id (const gchar *trash_dir)
+{
+  guint id;
+
+  for (id = 1; id < _thunar_vfs_io_n_trashes; ++id)
+    if (strcmp (_thunar_vfs_io_trashes[id].trash_dir, trash_dir) == 0)
+      return id;
+
+  /* fallback to home trash! */
+  return 0;
+}
+
+
+
+static gchar*
+tvit_trash_dir_for_mount_point (const gchar *top_dir,
+                                gboolean     create)
+{
+  struct stat statb;
+  gchar      *trash_dir;
+  gchar      *dir;
+  uid_t       uid;
+
+  /* determine our UID */
+  uid = getuid ();
+
+  /* try with $top_dir/.Trash directory first (created by the administrator) */
+  dir = g_build_filename (top_dir, ".Trash", NULL);
+  if (g_lstat (dir, &statb) == 0)
+    {
+      /* must be a directory owned by root with sticky bit and wx for 'others' */
+      if (statb.st_uid == 0 && S_ISDIR (statb.st_mode) && (statb.st_mode & (S_ISVTX | S_IWOTH | S_IXOTH)) == (S_ISVTX | S_IWOTH | S_IXOTH))
+        {
+          /* check if $top_dir/.Trash/$uid exists */
+          trash_dir = g_strdup_printf ("%s" G_DIR_SEPARATOR_S "%u", dir, (guint) uid);
+          if (g_lstat (trash_dir, &statb) == 0)
+            {
+              /* must be a directory owned by user with rwx only for user */
+              if (statb.st_uid == uid && S_ISDIR (statb.st_mode) && (statb.st_mode & 0777) == 0700)
+                {
+use_trash_dir:    /* release the root dir */
+                  g_free (dir);
+
+                  /* jap, that's our trash directory then */
+                  return trash_dir;
+                }
+              else
+                {
+#ifdef HAVE_SYSLOG
+                  /* the specification says the system administrator SHOULD be informed, and so we do */
+                  syslog (LOG_PID | LOG_USER | LOG_WARNING, "Trash directory %s exists, but didn't pass the security checks, can't use it", trash_dir);
+#endif
+                }
+            }
+          else if (create && errno == ENOENT && tvit_initialize_trash_dir (trash_dir))
+            {
+              /* jap, successfully created */
+              goto use_trash_dir;
+            }
+          g_free (trash_dir);
+        }
+      else
+        {
+#ifdef HAVE_SYSLOG
+          /* the specification says the system administrator SHOULD be informed, and so we do */
+          syslog (LOG_PID | LOG_USER | LOG_WARNING, "Root trash directory %s exists, but didn't pass the security checks, can't use it", dir);
+#endif
+        }
+    }
+  g_free (dir);
+
+  /* try with $top_dir/.Trash-$uid instead */
+  trash_dir = g_strdup_printf ("%s" G_DIR_SEPARATOR_S ".Trash-%u", top_dir, (guint) uid);
+  if (g_lstat (trash_dir, &statb) == 0)
+    {
+      /* must be a directory owned by user with rwx only for user */
+      if (statb.st_uid == uid && S_ISDIR (statb.st_mode) && (statb.st_mode & 0777) == 0700)
+        {
+          /* jap, found it */
+          return trash_dir;
+        }
+      else
+        {
+#ifdef HAVE_SYSLOG
+          /* the specification says the system administrator SHOULD be informed, and so we do */
+          syslog (LOG_PID | LOG_USER | LOG_WARNING, "Trash directory %s exists, but didn't pass the security checks, can't use it", trash_dir);
+#endif
+        }
+    }
+  else if (create && errno == ENOENT && tvit_initialize_trash_dir (trash_dir))
+    {
+      /* jap, found it */
+      return trash_dir;
+    }
+  g_free (trash_dir);
+
+  /* no usable trash dir */
+  return NULL;
+}
 
 
 
@@ -110,7 +399,7 @@ void
 _thunar_vfs_io_trash_scan (void)
 {
   /* scan the trash if not already done */
-  if (G_UNLIKELY (_thunar_vfs_io_trash_timer_id < 0))
+  if (G_UNLIKELY (_thunar_vfs_io_trash_timer_id == 0))
     _thunar_vfs_io_trash_rescan ();
 }
 
@@ -138,8 +427,11 @@ _thunar_vfs_io_trash_rescan (void)
   G_LOCK (_thunar_vfs_io_trash);
 
   /* check if we already scheduled the trash scan timer */
-  if (G_UNLIKELY (_thunar_vfs_io_trash_timer_id < 0))
+  if (G_UNLIKELY (_thunar_vfs_io_trash_timer_id == 0))
     {
+      /* initially scan the active mount points */
+      tvit_rescan_mount_points ();
+
       /* schedule a timer to regularly scan the trash directories */
       _thunar_vfs_io_trash_timer_id = g_timeout_add (5 * 1000, (GSourceFunc) _thunar_vfs_io_trash_rescan, NULL);
     }
@@ -173,6 +465,23 @@ _thunar_vfs_io_trash_rescan (void)
 
   /* keep the timer alive */
   return TRUE;
+}
+
+
+
+/**
+ * _thunar_vfs_io_trash_rescan_mounts:
+ *
+ * Rescans all currently mounted devices to see if a new trash directory
+ * is available on one of the active mount points. This method is called
+ * by the #ThunarVfsVolume<!---->s whenever a change is noticed.
+ **/
+void
+_thunar_vfs_io_trash_rescan_mounts (void)
+{
+  G_LOCK (_thunar_vfs_io_trash);
+  tvit_rescan_mount_points ();
+  G_UNLOCK (_thunar_vfs_io_trash);
 }
 
 
@@ -268,43 +577,6 @@ _thunar_vfs_io_trash_get_trash_dir (guint    trash_id,
   G_UNLOCK (_thunar_vfs_io_trash);
 
   return trash_dir;
-}
-
-
-
-static inline gchar*
-tvit_resolve_original_path (guint        trash_id,
-                            const gchar *original_path_escaped,
-                            const gchar *relative_path,
-                            GError     **error)
-{
-  gchar *original_path_unescaped;
-  gchar *absolute_path = NULL;
-  gchar *top_dir;
-
-  /* unescape the path according to RFC 2396 */
-  original_path_unescaped = _thunar_vfs_unescape_rfc2396_string (original_path_escaped, -1, "/", FALSE, error);
-  if (G_UNLIKELY (original_path_unescaped == NULL))
-    return NULL;
-
-  /* check if we have a relative path here */
-  if (!g_path_is_absolute (original_path_unescaped))
-    {
-      /* determine the toplevel directory for the trash-id */
-      top_dir = _thunar_vfs_io_trash_get_top_dir (trash_id, error);
-      if (G_LIKELY (top_dir != NULL))
-        absolute_path = g_build_filename (top_dir, original_path_unescaped, relative_path, NULL);
-      g_free (original_path_unescaped);
-      g_free (top_dir);
-    }
-  else
-    {
-      /* generate the absolute with the relative part */
-      absolute_path = g_build_filename (original_path_unescaped, relative_path, NULL);
-      g_free (original_path_unescaped);
-    }
-
-  return absolute_path;
 }
 
 
@@ -413,30 +685,103 @@ _thunar_vfs_io_trash_new_trash_info (const ThunarVfsPath *original_path,
 {
   const gchar *original_name = thunar_vfs_path_get_name (original_path);
   struct stat  statb;
+  gchar        absolute_path[THUNAR_VFS_PATH_MAXSTRLEN];
   gchar        deletion_date[128];
-  gchar        info_file[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar       *mount_point = NULL;
+  gchar       *trash_dir = NULL;
   gchar       *original_uri;
   gchar       *info_dir;
   gchar       *content;
+  guint        trash_id = 0;
+  guint        n;
   gint         fd;
-  gint         n;
 
   _thunar_vfs_return_val_if_fail (_thunar_vfs_path_is_local (original_path), FALSE);
   _thunar_vfs_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   _thunar_vfs_return_val_if_fail (trash_id_return != NULL, FALSE);
   _thunar_vfs_return_val_if_fail (file_id_return != NULL, FALSE);
 
-  /* we are currently limited to the home trash */
+  /* determine the absolute path of the original file */
+  if (thunar_vfs_path_to_string (original_path, absolute_path, sizeof (absolute_path), error) < 0)
+    return FALSE;
+
+  /* acquire the trash lock */
   G_LOCK (_thunar_vfs_io_trash);
-  info_dir = g_build_filename (_thunar_vfs_io_trashes[0].trash_dir, "info", NULL);
+
+  /* check if this is file should be trashed to the home trash (also done if stat fails) */
+  if (g_lstat (absolute_path, &statb) == 0 && statb.st_dev != _thunar_vfs_io_trash_homedev)
+    {
+      /* determine the mount point for the original file which is
+       * about to be deleted, and from the mount point we try to
+       * resolve the ID of the responsible trash directory.
+       */
+#if defined(HAVE_STATFS) && defined(HAVE_STRUCT_STATFS_F_MNTONNAME)
+      /* this is rather easy on BSDs (surprise)... */
+      struct statfs statfsb;
+      if (statfs (absolute_path, &statfsb) == 0)
+        mount_point = g_strdup (statfsb.f_mntonname);
+#else
+      /* ...and really messy otherwise (surprise!) */
+      GSList *mount_points, *lp;
+      dev_t   dev = statb.st_dev;
+
+      /* check if any of the mount points matches (really should) */
+      mount_points = exo_mount_point_list_active (NULL);
+      for (lp = mount_points; lp != NULL; lp = lp->next)
+        {
+          /* stat this mount point, and check if it's the device we're searching */
+          if (stat (((ExoMountPoint *) lp->data)->folder, &statb) == 0 && (statb.st_dev == dev))
+            {
+              /* got it, remember the folder of the mount point */
+              mount_point = g_strdup (((ExoMountPoint *) lp->data)->folder);
+              break;
+            }
+        }
+      g_slist_foreach (mount_points, (GFunc) exo_mount_point_free, NULL);
+      g_slist_free (mount_points);
+#endif
+
+      /* check if we have a mount point */
+      if (G_LIKELY (mount_point != NULL))
+        {
+          /* determine the trash directory for the mount point,
+           * creating the directory if it does not already exists
+           */
+          trash_dir = tvit_trash_dir_for_mount_point (mount_point, TRUE);
+          if (G_LIKELY (trash_dir != NULL))
+            trash_id = tvit_resolve_trash_dir_to_id (trash_dir);
+        }
+
+      /* check if rescanning might help */
+      if (trash_dir != NULL && trash_id == 0)
+        {
+          /* maybe we need to rescan the mount points */
+          tvit_rescan_mount_points ();
+
+          /* try to lookup the trash-id again */
+          trash_id = tvit_resolve_trash_dir_to_id (trash_dir);
+        }
+
+      /* cleanup */
+      g_free (mount_point);
+      g_free (trash_dir);
+    }
+
+  /* validate the trash-id to ensure we won't crash */
+  _thunar_vfs_assert (trash_id < _thunar_vfs_io_n_trashes);
+
+  /* determine the info sub directory for this trash */
+  info_dir = g_build_filename (_thunar_vfs_io_trashes[trash_id].trash_dir, "info", NULL);
+
+  /* release the trash lock */
   G_UNLOCK (_thunar_vfs_io_trash);
 
   /* generate a unique file-id */
-  g_snprintf (info_file, sizeof (info_file), "%s" G_DIR_SEPARATOR_S "%s.trashinfo", info_dir, original_name);
+  g_snprintf (absolute_path, sizeof (absolute_path), "%s" G_DIR_SEPARATOR_S "%s.trashinfo", info_dir, original_name);
   for (n = 1;; ++n)
     {
       /* exclusively create the .trashinfo file */
-      fd = g_open (info_file, O_CREAT | O_EXCL | O_WRONLY, 0600);
+      fd = g_open (absolute_path, O_CREAT | O_EXCL | O_WRONLY, 0600);
       if (G_LIKELY (fd >= 0))
         break;
 
@@ -455,7 +800,7 @@ _thunar_vfs_io_trash_new_trash_info (const ThunarVfsPath *original_path,
       if (G_UNLIKELY (errno != EEXIST))
         {
 err0:     /* spit out a useful error message */
-          content = g_filename_display_name (info_file);
+          content = g_filename_display_name (absolute_path);
           g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_IO, _("Failed to open \"%s\" for writing"), content);
           g_free (content);
 err1:
@@ -464,14 +809,14 @@ err1:
         }
 
       /* generate a new unique .trashinfo file name and try again */
-      g_snprintf (info_file, sizeof (info_file), "%s" G_DIR_SEPARATOR_S "%s$%d.trashinfo", info_dir, original_name, n);
+      g_snprintf (absolute_path, sizeof (absolute_path), "%s" G_DIR_SEPARATOR_S "%s$%u.trashinfo", info_dir, original_name, n);
     }
 
   /* stat the file to get the deletion date from the filesystem (NFS, ...) */
   if (fstat (fd, &statb) < 0)
     {
 err2: /* should not happen */
-      g_unlink (info_file);
+      g_unlink (absolute_path);
       close (fd);
       goto err0;
     }
@@ -493,11 +838,11 @@ err2: /* should not happen */
     }
 
   /* strip off the .trashinfo from the info_file */
-  info_file[strlen (info_file) - (sizeof (".trashinfo") - 1)] = '\0';
+  absolute_path[strlen (absolute_path) - (sizeof (".trashinfo") - 1)] = '\0';
 
   /* return the file-id and trash-id */
-  *file_id_return = g_path_get_basename (info_file);
-  *trash_id_return = 0;
+  *file_id_return = g_path_get_basename (absolute_path);
+  *trash_id_return = trash_id;
 
   /* cleanup */
   g_free (content);
@@ -1287,6 +1632,11 @@ _thunar_vfs_io_trash_scandir (ThunarVfsPath *path,
     }
   else
     {
+      /* unconditionally scan for trash directories to notice new
+       * (hot-plugged) trash directories on removable drives and media.
+       */
+      _thunar_vfs_io_trash_rescan_mounts ();
+
       /* unconditionally rescan the trash directories */
       _thunar_vfs_io_trash_rescan ();
 
@@ -1344,10 +1694,20 @@ _thunar_vfs_io_trash_scandir (ThunarVfsPath *path,
 void
 _thunar_vfs_io_trash_init (void)
 {
+  const gchar *home_dir;
+  struct stat  statb;
+
+  /* determine the home folder path */
+  home_dir = g_get_home_dir ();
+
+  /* determine the device of the home folder */
+  if (stat (home_dir, &statb) == 0)
+    _thunar_vfs_io_trash_homedev = statb.st_dev;
+
   /* setup the home trash */
   _thunar_vfs_io_n_trashes = 1;
   _thunar_vfs_io_trashes = g_new (ThunarVfsIOTrash, 1);
-  _thunar_vfs_io_trashes->top_dir = g_strdup (g_get_home_dir ());
+  _thunar_vfs_io_trashes->top_dir = g_strdup (home_dir);
   _thunar_vfs_io_trashes->trash_dir = g_build_filename (g_get_user_data_dir (), "Trash", NULL);
   _thunar_vfs_io_trashes->mtime = 0;
   _thunar_vfs_io_trashes->empty = TRUE;
@@ -1364,11 +1724,11 @@ void
 _thunar_vfs_io_trash_shutdown (void)
 {
   /* check if we have a pending trash rescan timer */
-  if (G_LIKELY (_thunar_vfs_io_trash_timer_id >= 0))
+  if (G_LIKELY (_thunar_vfs_io_trash_timer_id != 0))
     {
       /* kill the pending trash rescan timer */
       g_source_remove (_thunar_vfs_io_trash_timer_id);
-      _thunar_vfs_io_trash_timer_id = -1;
+      _thunar_vfs_io_trash_timer_id = 0;
     }
 
   /* free the active trashes */

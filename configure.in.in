@@ -104,8 +104,8 @@ dnl **********************************
 AC_CHECK_HEADERS([ctype.h dirent.h errno.h fcntl.h fnmatch.h fstab.h grp.h \
                   limits.h locale.h math.h memory.h mntent.h paths.h pwd.h \
                   regex.h sched.h setjmp.h signal.h stdarg.h stdlib.h \
-                  string.h sys/xattr.h sys/extattr.h sys/cdio.h sys/mman.h \
-                  sys/mount.h sys/param.h sys/resource.h sys/stat.h \
+                  string.h syslog.h sys/xattr.h sys/extattr.h sys/cdio.h \
+                  sys/mman.h sys/mount.h sys/param.h sys/resource.h sys/stat.h \
                   sys/statfs.h sys/statvfs.h sys/time.h sys/ucred.h sys/uio.h \
                   sys/vfs.h sys/wait.h time.h wchar.h wctype.h])
 
@@ -113,11 +113,11 @@ dnl ************************************
 dnl *** Check for standard functions ***
 dnl ************************************
 AC_FUNC_MMAP()
-AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr futimes getdents getfsspec getfsstat \
-                lchmod localeconv localtime_r mbrtowc mkdtemp mkfifo \
+AC_CHECK_FUNCS([attropen extattr_get_fd fgetxattr futimes getdents getfsspec \
+                getfsstat lchmod localeconv localtime_r mbrtowc mkdtemp mkfifo \
                 posix_madvise pread pwrite readdir_r sched_yield setgroupent \
                 setmntent setpassent setpriority statfs statvfs statvfs1 \
-                strcoll strlcpy strptime symlink])
+                strcoll strlcpy strptime symlink syslog])
 
 dnl ******************************************
 dnl *** Linux/glibc specified work-arounds ***
@@ -134,6 +134,15 @@ AC_TRY_LINK([#include <features.h>],
 ],
 [
   AC_MSG_RESULT([no])
+])
+
+dnl **************************************************************
+dnl *** Check for f_mntonname in statfs (trash implementation) ***
+dnl **************************************************************
+AC_CHECK_MEMBERS([struct statfs.f_mntonname],,,
+[
+#include <sys/param.h>
+#include <sys/mount.h>
 ])
 
 dnl ******************************
