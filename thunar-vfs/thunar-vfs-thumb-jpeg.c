@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -38,12 +38,18 @@
 #ifdef HAVE_FCNTL_H
 #include <fcntl.h>
 #endif
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #ifdef HAVE_SETJMP_H
 #include <setjmp.h>
 #endif
 #include <stdio.h>
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
 #endif
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -169,56 +175,23 @@ tvtj_convert_cmyk_to_rgb (j_decompress_ptr cinfo,
       p[3] = 255;
     }
 }
-#endif
 
 
-                        
-/**
- * thunar_vfs_thumb_jpeg_load:
- * @path
- * @size
- *
- * Return value:
- **/
-GdkPixbuf*
-thunar_vfs_thumb_jpeg_load (const gchar *path,
-                            gint         size)
+
+static GdkPixbuf*
+tvtj_jpeg_load (const JOCTET *content,
+                gsize         length,
+                gint          size)
 {
-#if defined(HAVE_LIBJPEG) && defined(HAVE_MMAP)
   struct jpeg_decompress_struct cinfo;
   struct jpeg_source_mgr        source;
   TvtjErrorHandler              handler;
-  struct stat                   statb;
-  JOCTET                       *content;
   guchar                       *lines[1];
   guchar                       *buffer = NULL;
   guchar                       *pixels = NULL;
   guchar                       *p;
   gint                          out_num_components;
-  gint                          fd;
   gint                          n;
-
-  /* try to open the file at the given path */
-  fd = open (path, O_RDONLY);
-  if (G_UNLIKELY (fd < 0))
-    return NULL;
-
-  /* determine the status of the file */
-  if (G_UNLIKELY (fstat (fd, &statb) < 0 || statb.st_size == 0))
-    {
-      close (fd);
-      return NULL;
-    }
-
-  /* try to mmap the file */
-  content = mmap (NULL, statb.st_size, PROT_READ, MAP_SHARED, fd, 0);
-
-  /* we can safely close the file now */
-  close (fd);
-
-  /* verify that the mmap was successful */
-  if (G_UNLIKELY (content == (JOCTET *) MAP_FAILED))
-    return NULL;
 
   /* setup JPEG error handling */
   cinfo.err = jpeg_std_error (&handler.mgr);
@@ -228,7 +201,7 @@ thunar_vfs_thumb_jpeg_load (const gchar *path,
     goto error;
 
   /* setup the source */
-  source.bytes_in_buffer = statb.st_size;
+  source.bytes_in_buffer = length;
   source.next_input_byte = content;
   source.init_source = (gpointer) exo_noop;
   source.fill_input_buffer = tvtj_fill_input_buffer;
@@ -311,9 +284,6 @@ thunar_vfs_thumb_jpeg_load (const gchar *path,
   jpeg_finish_decompress (&cinfo);
   jpeg_destroy_decompress (&cinfo);
 
-  /* unmap the file content */
-  munmap (content, statb.st_size);
-
   /* generate a pixbuf for the pixel data */
   return gdk_pixbuf_new_from_data (pixels, GDK_COLORSPACE_RGB,
                                    (cinfo.out_color_components == 4), 8,
@@ -323,9 +293,351 @@ thunar_vfs_thumb_jpeg_load (const gchar *path,
 
 error:
   jpeg_destroy_decompress (&cinfo);
-  munmap (content, statb.st_size);
   g_free (buffer);
   g_free (pixels);
+  return NULL;
+}
+
+
+
+typedef struct
+{
+  const guchar *data_ptr;
+  guint         data_len;
+
+  guint         thumb_compression;
+  union
+  {
+    struct /* thumbnail JPEG */
+    {
+      guint     thumb_jpeg_length;
+      guint     thumb_jpeg_offset;
+    };
+    struct /* thumbnail TIFF */
+    {
+      guint     thumb_tiff_length;
+      guint     thumb_tiff_offset;
+      guint     thumb_tiff_interp;
+      guint     thumb_tiff_height;
+      guint     thumb_tiff_width;
+    };
+  };
+
+  gboolean      big_endian;
+} TvtjExif;
+
+
+
+static guint
+tvtj_exif_get_ushort (const TvtjExif *exif,
+                      const gchar    *data)
+{
+  if (G_UNLIKELY (exif->big_endian))
+    return GUINT16_FROM_BE (*((const guint16 *) data));
+  else
+    return GUINT16_FROM_LE (*((const guint16 *) data));
+}
+
+
+
+static guint
+tvtj_exif_get_ulong (const TvtjExif *exif,
+                     const gchar    *data)
+{
+  if (G_UNLIKELY (exif->big_endian))
+    return GUINT32_FROM_BE (*((const guint32 *) data));
+  else
+    return GUINT32_FROM_LE (*((const guint32 *) data));
+}
+
+
+
+static void
+tvtj_exif_parse_ifd (TvtjExif     *exif,
+                     const guchar *ifd_ptr,
+                     guint         ifd_len)
+{
+  const guchar *subifd_ptr;
+  guint         subifd_off;
+  guint         value;
+  guint         tag;
+  guint         n;
+
+  /* make sure we have a valid IFD here */
+  if (G_UNLIKELY (ifd_len < 2))
+    return;
+
+  /* determine the number of entries */
+  n = tvtj_exif_get_ushort (exif, ifd_ptr);
+
+  /* advance to the IFD content */
+  ifd_ptr += 2;
+  ifd_len -= 2;
+
+  /* validate the number of entries */
+  if (G_UNLIKELY (n * 12 > ifd_len))
+    n = ifd_len / 12;
+
+  /* process all IFD entries */
+  for (; n > 0; ifd_ptr += 12, --n)
+    {
+      /* determine the tag of this entry */
+      tag = tvtj_exif_get_ushort (exif, ifd_ptr);
+      if (tag == 0x8769 || tag == 0xa005)
+        {
+          /* check if we have a valid sub IFD offset here */
+          subifd_off = tvtj_exif_get_ulong (exif, ifd_ptr + 8);
+          subifd_ptr = exif->data_ptr + subifd_off;
+          if (G_LIKELY (subifd_off < exif->data_len))
+            {
+              /* process the sub IFD recursively */
+              tvtj_exif_parse_ifd (exif, subifd_ptr, exif->data_len - subifd_off);
+            }
+        }
+      else if (tag == 0x0103)
+        {
+          /* verify that we have an ushort here (format 3) */
+          if (tvtj_exif_get_ushort (exif, ifd_ptr + 2) == 3)
+            {
+              /* determine the thumbnail compression */
+              exif->thumb_compression = tvtj_exif_get_ushort (exif, ifd_ptr + 8);
+            }
+        }
+      else if (tag == 0x0100 || tag == 0x0101 || tag == 0x0106 || tag == 0x0111 || tag == 0x0117)
+        {
+          /* this can be either ushort or ulong */
+          if (tvtj_exif_get_ushort (exif, ifd_ptr + 2) == 3)
+            value = tvtj_exif_get_ushort (exif, ifd_ptr + 8);
+          else if (tvtj_exif_get_ushort (exif, ifd_ptr + 2) == 4)
+            value = tvtj_exif_get_ulong (exif, ifd_ptr + 8);
+          else
+            value = 0;
+
+          /* and remember it appropriately */
+          if (tag == 0x0100)
+            exif->thumb_tiff_width = value;
+          else if (tag == 0x0100)
+            exif->thumb_tiff_height = value;
+          else if (tag == 0x0106)
+            exif->thumb_tiff_interp = value;
+          else if (tag == 0x0111)
+            exif->thumb_tiff_offset = value;
+          else
+            exif->thumb_tiff_length = value;
+        }
+      else if (tag == 0x0201 || tag == 0x0202)
+        {
+          /* verify that we have an ulong here (format 4) */
+          if (tvtj_exif_get_ushort (exif, ifd_ptr + 2) == 4)
+            {
+              /* determine the value (thumbnail JPEG offset or length) */
+              value = tvtj_exif_get_ulong (exif, ifd_ptr + 8);
+
+              /* and remember it appropriately */
+              if (G_LIKELY (tag == 0x201))
+                exif->thumb_jpeg_offset = value;
+              else
+                exif->thumb_jpeg_length = value;
+            }
+        }
+    }
+
+  /* check for link to next IFD */
+  subifd_off = tvtj_exif_get_ulong (exif, ifd_ptr);
+  if (subifd_off != 0 && subifd_off < exif->data_len)
+    {
+      /* parse next IFD recursively as well */
+      tvtj_exif_parse_ifd (exif, exif->data_ptr + subifd_off, exif->data_len - subifd_off);
+    }
+}
+
+
+
+static GdkPixbuf*
+tvtj_exif_extract_thumbnail (const guchar  *data,
+                             guint          length,
+                             gint           size)
+{
+  TvtjExif exif;
+  guint    offset;
+
+  /* make sure we have enough data */
+  if (G_UNLIKELY (length < 6 + 8))
+    return NULL;
+
+  /* validate Exif header */
+  if (memcmp (data, "Exif\0\0", 6) != 0)
+    return NULL;
+
+  /* advance to TIFF header */
+  data += 6;
+  length -= 6;
+
+  /* setup Exif data struct */
+  memset (&exif, 0, sizeof (exif));
+  exif.data_ptr = data;
+  exif.data_len = length;
+
+  /* determine byte order */
+  if (memcmp (data, "II", 2) == 0)
+    exif.big_endian = FALSE;
+  else if (memcmp (data, "MM", 2) == 0)
+    exif.big_endian = TRUE;
+  else
+    return NULL;
+
+  /* validate the TIFF header */
+  if (tvtj_exif_get_ushort (&exif, data + 2) != 0x2a)
+    return NULL;
+
+  /* determine the first IFD offset */
+  offset = tvtj_exif_get_ulong (&exif, data + 4);
+
+  /* validate the offset */
+  if (G_LIKELY (offset < length))
+    {
+      /* parse the first IFD (recursively parses the remaining...) */
+      tvtj_exif_parse_ifd (&exif, data + offset, length - offset);
+
+      /* check thumbnail compression type */
+      if (G_LIKELY (exif.thumb_compression == 6)) /* JPEG */
+        {
+          /* check if we have a valid thumbnail JPEG */
+          if (exif.thumb_jpeg_offset > 0 && exif.thumb_jpeg_length > 0
+              && exif.thumb_jpeg_offset + exif.thumb_jpeg_length <= length)
+            {
+              /* try to load the embedded thumbnail JPEG */
+              return tvtj_jpeg_load (data + exif.thumb_jpeg_offset, exif.thumb_jpeg_length, size);
+            }
+        }
+      else if (exif.thumb_compression == 1) /* Uncompressed */
+        {
+          /* check if we have a valid thumbnail (current only RGB interpretations) */
+          if (G_LIKELY (exif.thumb_tiff_interp == 2)
+              && exif.thumb_tiff_offset > 0 && exif.thumb_tiff_length > 0
+              && exif.thumb_tiff_offset + exif.thumb_tiff_length <= length
+              && exif.thumb_tiff_height * exif.thumb_tiff_width == exif.thumb_tiff_length)
+            {
+              /* plain RGB data, just what we need for a GdkPixbuf */
+              return gdk_pixbuf_new_from_data (g_memdup (data + exif.thumb_tiff_offset, exif.thumb_tiff_length),
+                                               GDK_COLORSPACE_RGB, FALSE, 8, exif.thumb_tiff_width,
+                                               exif.thumb_tiff_height, exif.thumb_tiff_width,
+                                               (GdkPixbufDestroyNotify) g_free, NULL);
+            }
+        }
+    }
+
+  return NULL;
+}
+
+
+
+static GdkPixbuf*
+tvtj_jpeg_load_thumbnail (const JOCTET *content,
+                          gsize         length,
+                          gint          size)
+{
+  guint marker_len;
+  guint marker;
+  gsize n;
+
+  /* valid JPEG headers begin with SOI (Start Of Image) */
+  if (G_LIKELY (length >= 2 && content[0] == 0xff && content[1] == 0xd8))
+    {
+      /* search for an EXIF marker */
+      for (length -= 2, n = 2; n < length; )
+        {
+          /* check for valid marker start */
+          if (G_UNLIKELY (content[n++] != 0xff))
+            break;
+
+          /* determine the next marker */
+          marker = content[n];
+
+          /* skip additional padding */
+          if (G_UNLIKELY (marker == 0xff))
+            continue;
+
+          /* stop at SOS marker */
+          if (marker == 0xda)
+            break;
+
+          /* advance */
+          ++n;
+
+          /* check if valid */
+          if (G_UNLIKELY (n + 2 >= length))
+            break;
+
+          /* determine the marker length */
+          marker_len = (content[n] << 8) | content[n + 1];
+
+          /* check if we have an exif marker here */
+          if (marker == 0xe1 && n + marker_len <= length)
+            {
+              /* try to extract the Exif thumbnail */
+              return tvtj_exif_extract_thumbnail (content + n + 2, marker_len - 2, size);
+            }
+
+          /* try next one then */
+          n += marker_len;
+        }
+    }
+
+  return NULL;
+}
+#endif
+
+
+
+/**
+ * thunar_vfs_thumb_jpeg_load:
+ * @path
+ * @size
+ *
+ * Return value:
+ **/
+GdkPixbuf*
+thunar_vfs_thumb_jpeg_load (const gchar *path,
+                            gint         size)
+{
+#if defined(HAVE_LIBJPEG) && defined(HAVE_MMAP)
+  struct stat statb;
+  GdkPixbuf  *pixbuf = NULL;
+  JOCTET     *content;
+  gint        fd;
+
+  /* try to open the file at the given path */
+  fd = open (path, O_RDONLY);
+  if (G_LIKELY (fd >= 0))
+    {
+      /* determine the status of the file */
+      if (G_LIKELY (fstat (fd, &statb) == 0 && statb.st_size > 0))
+        {
+          /* try to mmap the file */
+          content = mmap (NULL, statb.st_size, PROT_READ, MAP_SHARED, fd, 0);
+
+          /* verify that the mmap was successful */
+          if (G_LIKELY (content != (JOCTET *) MAP_FAILED))
+            {
+              /* try to load an embedded thumbnail first */
+              pixbuf = tvtj_jpeg_load_thumbnail (content, statb.st_size, size);
+              if (G_LIKELY (pixbuf == NULL))
+                {
+                  /* fall back to loading and scaling the image itself */
+                  pixbuf = tvtj_jpeg_load (content, statb.st_size, size);
+                }
+            }
+
+          /* unmap the file content */
+          munmap (content, statb.st_size);
+        }
+
+      /* close the file */
+      close (fd);
+    }
+
+  return pixbuf;
 #endif
 
   return NULL;

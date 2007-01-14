@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2004-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -914,7 +914,20 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory *factory,
 
   /* try the fast JPEG thumbnailer */
   if (G_LIKELY (name_len == 10 && memcmp (name, "image/jpeg", 10) == 0))
-    pixbuf = thunar_vfs_thumb_jpeg_load (path, size);
+    {
+      /* try loading the JPEG using our builtin thumbnailer */
+      pixbuf = thunar_vfs_thumb_jpeg_load (path, size);
+      if (G_LIKELY (pixbuf != NULL)
+          && gdk_pixbuf_get_width (pixbuf) <= 160
+          && gdk_pixbuf_get_height (pixbuf) <= 120)
+        {
+          /* since most embedded thumbnails are at size 160x120,
+           * we avoid scaling down the thumbnail again here and
+           * simply accept that even for "normal" thumbnails
+           */
+          goto done;
+        }
+    }
 
   /* otherwise check if we have a thumbnailer script in the cache */
   if (pixbuf == NULL && thunar_vfs_thumb_factory_cache_lookup (factory, name, name_len, &script))
@@ -953,6 +966,7 @@ thunar_vfs_thumb_factory_generate_thumbnail (ThunarVfsThumbFactory *factory,
       pixbuf = scaled;
     }
 
+done:
   /* cleanup */
   g_free (path);
 
