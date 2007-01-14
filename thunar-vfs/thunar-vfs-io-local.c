@@ -703,7 +703,7 @@ _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
                 lp->prev->next = ln;
               else
                 list = ln;
-              g_list_free1 (lp);
+              g_list_free_1 (lp);
             }
         }
     }
