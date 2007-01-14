@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -41,6 +41,7 @@ gboolean thunar_vfs_exec_on_screen (GdkScreen      *screen,
                                     gchar         **envp,
                                     GSpawnFlags     flags,
                                     gboolean        startup_notify,
+                                    const gchar    *icon_name,
                                     GError        **error) G_GNUC_INTERNAL;
 
 gboolean thunar_vfs_exec_sync      (const gchar    *command_line,

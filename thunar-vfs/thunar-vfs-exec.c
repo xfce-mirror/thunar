@@ -41,6 +41,7 @@
 
 #include <thunar-vfs/thunar-vfs-exec.h>
 #include <thunar-vfs/thunar-vfs-path-private.h>
+#include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-alias.h>
 
 #ifdef GDK_WINDOWING_X11
@@ -273,34 +274,81 @@ done:
 /* the max. timeout for an application to startup */
 #define TVSN_STARTUP_TIMEOUT (30 * 1000)
 
+typedef struct
+{
+  SnLauncherContext *sn_launcher;
+  guint              timeout_id;
+  guint              watch_id;
+  GPid               pid;
+} TvsnStartupData;
+
 static gboolean
 tvsn_startup_timeout (gpointer data)
 {
-  SnLauncherContext *sn_launcher = data;
-  GTimeVal           now;
-  gdouble            elapsed;
-  glong              tv_sec;
-  glong              tv_usec;
+  TvsnStartupData *startup_data = data;
+  GTimeVal         now;
+  gdouble          elapsed;
+  glong            tv_sec;
+  glong            tv_usec;
 
   GDK_THREADS_ENTER ();
 
   /* determine the amount of elapsed time */
   g_get_current_time (&now);
-  sn_launcher_context_get_last_active_time (sn_launcher, &tv_sec, &tv_usec);
+  sn_launcher_context_get_last_active_time (startup_data->sn_launcher, &tv_sec, &tv_usec);
   elapsed = (((gdouble) now.tv_sec - tv_sec) * G_USEC_PER_SEC + (now.tv_usec - tv_usec)) / 1000.0;
 
   /* check if the timeout was reached */
   if (elapsed >= TVSN_STARTUP_TIMEOUT)
     {
       /* abort the startup notification */
-      sn_launcher_context_complete (sn_launcher);
-      sn_launcher_context_unref (sn_launcher);
+      sn_launcher_context_complete (startup_data->sn_launcher);
+      sn_launcher_context_unref (startup_data->sn_launcher);
+      startup_data->sn_launcher = NULL;
     }
 
   GDK_THREADS_LEAVE ();
 
   /* keep the startup timeout if not elapsed */
   return (elapsed < TVSN_STARTUP_TIMEOUT);
+}
+
+static void
+tvsn_startup_timeout_destroy (gpointer data)
+{
+  TvsnStartupData *startup_data = data;
+
+  _thunar_vfs_return_if_fail (startup_data->sn_launcher == NULL);
+
+  /* cancel the watch (if any) */
+  if (startup_data->watch_id != 0)
+    g_source_remove (startup_data->watch_id);
+
+  /* close the PID */
+  g_spawn_close_pid (startup_data->pid);
+
+  /* release the startup data */
+  _thunar_vfs_slice_free (TvsnStartupData, startup_data);
+}
+
+static void
+tvsn_startup_watch (GPid     pid,
+                    gint     status,
+                    gpointer data)
+{
+  TvsnStartupData *startup_data = data;
+
+  _thunar_vfs_return_if_fail (startup_data->sn_launcher != NULL);
+  _thunar_vfs_return_if_fail (startup_data->watch_id != 0);
+  _thunar_vfs_return_if_fail (startup_data->pid == pid);
+
+  /* abort the startup notification (application exited) */
+  sn_launcher_context_complete (startup_data->sn_launcher);
+  sn_launcher_context_unref (startup_data->sn_launcher);
+  startup_data->sn_launcher = NULL;
+
+  /* cancel the startup notification timeout */
+  g_source_remove (startup_data->timeout_id);
 }
 
 static gint
@@ -365,6 +413,7 @@ tvsn_get_active_workspace_number (GdkScreen *screen)
  * @envp              : child's environment vector or %NULL to inherit parent's.
  * @flags             : flags from #GSpawnFlags.
  * @startup_notify    : whether to use startup notification.
+ * @icon_name         : application icon or %NULL.
  * @error             : return location for errors or %NULL.
  *
  * Like gdk_spawn_on_screen(), but also supports startup notification
@@ -379,17 +428,20 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
                            gchar      **envp,
                            GSpawnFlags  flags,
                            gboolean     startup_notify,
+                           const gchar *icon_name,
                            GError     **error)
 {
 #ifdef HAVE_LIBSTARTUP_NOTIFICATION
   SnLauncherContext *sn_launcher = NULL;
-  extern char      **environ;
+  TvsnStartupData   *startup_data;
+  extern gchar     **environ;
   SnDisplay         *sn_display = NULL;
   gint               sn_workspace;
   gint               n, m;
 #endif
   gboolean           succeed;
   gchar            **sn_envp = envp;
+  GPid               pid;
 
 #ifdef HAVE_LIBSTARTUP_NOTIFICATION
   /* initialize the sn launcher context */
@@ -409,6 +461,7 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
               sn_workspace = tvsn_get_active_workspace_number (screen);
               sn_launcher_context_set_binary_name (sn_launcher, argv[0]);
               sn_launcher_context_set_workspace (sn_launcher, sn_workspace);
+              sn_launcher_context_set_icon_name (sn_launcher, (icon_name != NULL) ? icon_name : "applications-other");
               sn_launcher_context_initiate (sn_launcher, g_get_prgname (), argv[0], CurrentTime);
 
               /* setup the child environment */
@@ -422,13 +475,16 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
                   sn_envp[m++] = g_strdup (envp[n]);
               sn_envp[m++] = g_strconcat ("DESKTOP_STARTUP_ID=", sn_launcher_context_get_startup_id (sn_launcher), NULL);
               sn_envp[m] = NULL;
+
+              /* we want to watch the child process */
+              flags |= G_SPAWN_DO_NOT_REAP_CHILD;
             }
         }
     }
 #endif
 
   /* try to spawn the new process */
-  succeed = gdk_spawn_on_screen (screen, working_directory, argv, sn_envp, flags, NULL, NULL, NULL, error);
+  succeed = gdk_spawn_on_screen (screen, working_directory, argv, sn_envp, flags, NULL, NULL, &pid, error);
 
 #ifdef HAVE_LIBSTARTUP_NOTIFICATION
   /* handle the sn launcher context */
@@ -443,7 +499,12 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
       else
         {
           /* schedule a startup notification timeout */
-          g_timeout_add (TVSN_STARTUP_TIMEOUT, tvsn_startup_timeout, sn_launcher);
+          startup_data = _thunar_vfs_slice_new (TvsnStartupData);
+          startup_data->sn_launcher = sn_launcher;
+          startup_data->timeout_id = g_timeout_add_full (G_PRIORITY_LOW, TVSN_STARTUP_TIMEOUT, tvsn_startup_timeout,
+                                                         startup_data, tvsn_startup_timeout_destroy);
+          startup_data->watch_id = g_child_watch_add_full (G_PRIORITY_LOW, pid, tvsn_startup_watch, startup_data, NULL);
+          startup_data->pid = pid;
         }
     }
 

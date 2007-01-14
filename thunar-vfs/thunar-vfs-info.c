@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -332,7 +332,7 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
                          GError             **error)
 {
   ThunarVfsPath *parent;
-  const gchar   *icon;
+  const gchar   *icon = NULL;
   const gchar   *name;
   const gchar   *type;
   const gchar   *url;
@@ -453,7 +453,7 @@ thunar_vfs_info_execute (const ThunarVfsInfo *info,
         }
 
       /* execute the command */
-      result = thunar_vfs_exec_on_screen (screen, directory, argv, NULL, G_SPAWN_SEARCH_PATH, startup_notify, error);
+      result = thunar_vfs_exec_on_screen (screen, directory, argv, NULL, G_SPAWN_SEARCH_PATH, startup_notify, icon, error);
 
       /* release the working directory */
       g_free (directory);

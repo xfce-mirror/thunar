@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -286,7 +286,8 @@ thunar_vfs_mime_handler_execute (const ThunarVfsMimeHandler *mime_handler,
 
   /* try to spawn the application */
   result = thunar_vfs_exec_on_screen (screen, working_directory, argv, envp, G_SPAWN_SEARCH_PATH,
-                                      mime_handler->flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY, error);
+                                      mime_handler->flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_STARTUP_NOTIFY,
+                                      mime_handler->icon, error);
 
   /* cleanup */
   g_free (working_directory);
