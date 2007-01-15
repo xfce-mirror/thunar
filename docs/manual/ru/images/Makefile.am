@@ -1,7 +1,9 @@
 # $Id$
 
 imagesdir = $(datadir)/doc/Thunar/html/ru/images
-images_DATA =
+images_DATA =								\
+	removable-drives-and-media.png					\
+	removable-media-unmount.png
 
 EXTRA_DIST = 								\
 	$(images_DATA)

@@ -6,13 +6,29 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.5.0rc2\n"
-"POT-Creation-Date: 2007-01-03 12:53+0100\n"
+"POT-Creation-Date: 2007-01-15 20:52+0100\n"
 "PO-Revision-Date: 2006-04-16 16:53+0100\n"
 "Last-Translator: José M <josem88@gmail.com>\n"
 "Language-Team: Spanish <es@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: ../docs/manual/C/Thunar.xml.in:125 (None)
+msgid ""
+"@@image: 'images/removable-media-unmount.png'; "
+"md5=6af08c4870af8048d9569cf551431de0"
+msgstr ""
+
+#. When image changes, this message will be marked fuzzy or untranslated for you.
+#. It doesn't matter what you translate it to: it's not used at all.
+#: ../docs/manual/C/Thunar.xml.in:181 (None)
+msgid ""
+"@@image: 'images/removable-drives-and-media.png'; "
+"md5=4a8e2728206b61ff04ed9a66549c2be4"
+msgstr ""
 
 #: ../docs/manual/C/Thunar.xml.in:12 (title)
 msgid "Thunar File Manager"
@@ -135,14 +151,390 @@ msgid "Access Removable Media."
 msgstr "Acceder a medios extraíbles."
 
 #: ../docs/manual/C/Thunar.xml.in:78 (title)
+#, fuzzy
+msgid "Using Removable Media"
+msgstr "Acceder a medios extraíbles."
+
+#: ../docs/manual/C/Thunar.xml.in:81 (title)
+#, fuzzy
+msgid "Accessing Removable Media"
+msgstr "Acceder a medios extraíbles."
+
+#: ../docs/manual/C/Thunar.xml.in:83 (para)
+msgid ""
+"Thunar supports removable media if it was built with support for <ulink type="
+"\"http\" url=\"http://freedesktop.org/wiki/Software_2fhal\">HAL</ulink>, or "
+"if you are using <ulink type=\"http\" url=\"http://www.freebsd.org/"
+"\">FreeBSD</ulink>. Note however that on FreeBSD 6.0 or newer, it is "
+"suggested to use HAL rather than the native support provided by Thunar."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:90 (title)
+msgid "To Mount Media"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:92 (para)
+msgid ""
+"To <emphasis>mount</emphasis> media is to make the file system of the media "
+"available for access. When you mount media, the file system of the media is "
+"attached as a subdirectory to your file system."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:97 (para)
+msgid ""
+"To access media, insert the media in the appropriate device, or connect the "
+"new device to your computer (i.e. connect an USB stick to one of your USB "
+"ports). An object that represents the media is added to the side pane of the "
+"file manager. If <application>xfdesktop</application> is running and "
+"configured to display <guilabel>File/launcher icons</guilabel> this object "
+"will also be added to your desktop."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:104 (para)
+msgid ""
+"To actually mount the media, click on the object that represents the media. "
+"For example, to mount a floppy diskette, click on the <guilabel>Floppy Disk</"
+"guilabel> object in the side pane. The file manager will now add the file "
+"system of the media to your file system hierarchy and display the contents "
+"of the floppy diskette in the main area."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:112 (title)
+msgid "To Eject Media"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:114 (para)
+msgid ""
+"If the drive for the media is a motorized drive (i.e. a CD-ROM drive), right-"
+"click on the media object in the side pane or on the desktop and choose "
+"<guilabel>Eject Volume</guilabel>. The media is ejected from the drive after "
+"a few seconds. If the drive for the media is not motorized (i.e. a floppy "
+"drive or an USB stick), right-click on the media object and choose "
+"<guilabel>Unmount Volume</guilabel>. After a short period of time, a "
+"notification will appear to inform you that it is now safe to remove the "
+"media or disconnect the drive from the computer."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:129 (phrase)
+msgid "Unmount notification"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:134 (para)
+msgid ""
+"However this notification will only be displayed if support for "
+"<application>libnotify</application> is enabled, and you have installed a "
+"notification daemon. A notification daemon for Xfce is available from the "
+"<ulink type=\"http\" url=\"http://goodies.xfce.org/projects/applications/"
+"notification-daemon-xfce\">Xfce Goodies Project</ulink>. If notification "
+"support is not available, wait until the context menu disappears before you "
+"remove the media or disconnect the drive."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:142 (para)
+msgid ""
+"Be aware that you cannot eject or unmount media that is still in use by one "
+"or more applications. Therefore if the file manager refuses to eject media, "
+"make sure you close all applications that were accessing the media, and be "
+"sure to also check command line applications running in "
+"<application>Terminal</application> windows."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:148 (para)
+msgid ""
+"Make sure to unmount removable media before ejecting. Do not eject a "
+"diskette from the floppy drive before your unmount the diskette. Do not "
+"remove an USB stick before you unmount the flash drive. If you do not "
+"unmount the media first you might lose data or cause your system to crash."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:157 (title)
+msgid "Management of Removable Drives and Media"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:159 (para)
+msgid ""
+"Thunar is also able to automatically manage removable drives and media if "
+"the <ulink type=\"http\" url=\"http://thunar.xfce.org/projects/thunar-volman/"
+"\">thunar-volman</ulink> package is installed on your system. Note however "
+"that this feature requires HAL support."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:165 (para)
+msgid ""
+"Now, if HAL support is available and <application>thunar-volman</"
+"application> is installed on your system, you can choose to enable the "
+"<guilabel>Volume Management</guilabel> feature of Thunar. Therefore, open "
+"the file manager preferences, go to the <guilabel>Advanced</guilabel> page "
+"and check the <guilabel>Enable Volume Management</guilabel> button."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:172 (para)
+msgid ""
+"The next step is to customize the management of removable drives and media "
+"to your needs. Click on the <guilabel>Configure</guilabel> link in the "
+"<guilabel>Volume Management</guilabel> section, right below the button. The "
+"<guilabel>Removable Drives and Media</guilabel> configuration dialog will be "
+"displayed."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:185 (phrase)
+#, fuzzy
+msgid "Removable Drives and Media"
+msgstr "Acceder a medios extraíbles."
+
+#: ../docs/manual/C/Thunar.xml.in:190 (para)
+msgid ""
+"If you have used the <application>gnome-volume-manager</application> "
+"previously, you should feel right at home, because it was designed to look "
+"and behave similar to <application>gnome-volume-manager</application>. The "
+"preferences are divided by device categories to make it easy to locate the "
+"option for you specific device."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:197 (para)
+msgid ""
+"The <guilabel>Storage</guilabel> page contains the most important options. "
+"As the name suggests these options apply only to storage devices like "
+"external harddisk drives, USB sticks and CD-ROMs. The <guilabel>Removable "
+"Storage</guilabel> options are described in detail below."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:205 (guilabel)
+msgid "Mount removable drives when hot-plugged"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:207 (para)
+msgid ""
+"Enable this option to automatically mount file systems on removable drives "
+"(i.e. external harddisk drives or USB sticks) when such drives are plugged "
+"into the computer."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:211 (para)
+msgid ""
+"This option must be enabled for certain other features to work with "
+"removable drives. For example, if you disable this option, certain kinds of "
+"portable music players cannot be detected any more and so, even if you "
+"enabled the <guilabel>Play music files when connected</guilabel> option on "
+"the <guilabel>Multimedia</guilabel> page, the specified command will not be "
+"run when you hot-plug your portable music player."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:222 (guilabel)
+msgid "Mount removable media when inserted"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:224 (para)
+msgid ""
+"Enable this option to automatically mount file systems on removable media (i."
+"e. CD-ROMs or DVDs) when you insert the media into the drive."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:228 (para)
+msgid ""
+"This option must be enabled for certain other features to work with "
+"removable media. For example, if you disable this option, it is impossible "
+"to detect whether the removable media has auto-run capabilities, and so the "
+"<guilabel>Auto-run programs on new drives and media</guilabel> option has no "
+"effect for removable media."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:238 (guilabel)
+msgid "Browse removable media when inserted"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:240 (para)
+msgid ""
+"Enable this option to automatically display the content of newly inserted "
+"media in the file manager. Note however, that the contents will only be "
+"displayed if no other action was possible or you choose to ignore the other "
+"possible actions. For example, if you insert a CD-ROM with auto-run "
+"capabilities and the <guilabel>Auto-run programs on new drives and media</"
+"guilabel> option is enabled, you will be prompted whether you want to allow "
+"or ignore the auto-run. If you choose to ignore the auto-run the contents "
+"will be displayed in the file manager."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:252 (guilabel)
+msgid "Auto-run programs on new drives and media"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:254 (para)
+msgid ""
+"Enable this option to make use of auto-run capabilities of certain removable "
+"drives and media. See the <ulink type=\"http\" url=\"http://standards."
+"freedesktop.org/autostart-spec/autostart-spec-0.5.html\">Desktop Application "
+"Autostart Specification</ulink> for details about the auto-run mechanism. To "
+"enhance security, you will always be prompted to confirm the auto-run."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:260 (para)
+msgid ""
+"If the Windows emulator <ulink type=\"http\" url=\"http://www.winehq.org/"
+"\">WINE</ulink> is installed on your system, the auto-run mechanism will "
+"also try to run <filename>autorun.exe</filename> files using WINE."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:268 (guilabel)
+msgid "Auto-open files on new drives and media"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:270 (para)
+msgid ""
+"Enable this option to make of auto-open capabilities of certain removable "
+"drives and media. See the <ulink type=\"http\" url=\"http://standards."
+"freedesktop.org/autostart-spec/autostart-spec-0.5.html\">Desktop Application "
+"Autostart Specification</ulink> for details about the auto-open mechanism. "
+"To enhance security, you will always be prompted to confirm the auto-open."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:280 (para)
+msgid ""
+"The remaining options allow you to specify a command to run when a certain "
+"kind of media is inserted into a drive or a certain kind of external device "
+"is connected. The command can use three special variables, that will be "
+"substituted when the command is run:"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:288 (literal)
+msgid "%d"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:290 (para)
+msgid ""
+"Each appearance of <literal>%d</literal> in the command will be substituted "
+"with the device file path of the newly added device. For example, if you "
+"have plugged in an USB stick, the device file path will be <filename>/dev/"
+"da0s1</filename> or <filename>/dev/sda1</filename>."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:295 (para)
+msgid ""
+"If no device file is associated with the device or the device file could not "
+"be found for some reason, the variable <literal>%d</literal> will be "
+"substituted with the empty string."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:303 (literal)
+msgid "%h"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:305 (para)
+msgid ""
+"Each appearance of <literal>%h</literal> in the command will be substituted "
+"with the HAL UDI of the newly added device."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:313 (literal)
+msgid "%m"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:315 (para)
+msgid ""
+"Each appearance of <literal>%m</literal> in the command will be substituted "
+"with the mount point where the newly added device was mounted. If the device "
+"cannot be mounted (for example printers or keyboards) or if the automatic "
+"mounting was disabled, <literal>%m</literal> will be substituted with the "
+"empty string."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:326 (title)
+msgid "Troubleshooting the Volume Manager"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:328 (para)
+msgid ""
+"Useful tips to trouble shoot the volume manager in case it does not work as "
+"expected."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:334 (application)
+#: ../docs/manual/C/Thunar.xml.in:336
+msgid "Thunar"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:337 (guilabel)
+msgid "Run program"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:338 (keycap)
+msgid "Alt"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:338 (keycap)
+msgid "F2"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:339 (guilabel)
+msgid "Run Program..."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:339 (literal)
+msgid "Thunar --daemon"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:340 (guibutton)
+msgid "Run"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:333 (listitem)
+msgid ""
+"Make sure <placeholder-1/> is running as daemon. The volume manager depends "
+"on this, as it is not a daemon by itself. By default, Xfce automatically "
+"spawns <placeholder-2/> as daemon on startup. If it got killed for some "
+"reason, open the <placeholder-3/> (using the keyboard shortcut "
+"<keycombo><placeholder-4/><placeholder-5/></keycombo> or right-click on the "
+"desktop and choose <placeholder-6/> from the desktop menu), enter "
+"<placeholder-7/> and click <placeholder-8/>."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:344 (application)
+msgid "thunar-volman"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:344 (application)
+#: ../docs/manual/C/Thunar.xml.in:348
+msgid "Terminal"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:346 (application)
+msgid "lshal"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:346 (application)
+msgid "hal-device"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:347 (literal)
+msgid "thunar-volman --device-added &lt;udi-of-your-device&gt;"
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:343 (listitem)
+msgid ""
+"Try running <placeholder-1/> from a <placeholder-2/> window after hot-"
+"plugging the drive or inserting the media. First, you need to figure out the "
+"HAL UDI of the new device using <placeholder-3/> or <placeholder-4/>. Once "
+"you know the UDI, run <placeholder-5/> in a <placeholder-6/> window and "
+"watch the output for errors or warnings."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:352 (para)
+msgid ""
+"If it still refuses to work, ask on the <ulink type=\"http\" url=\"http://"
+"forum.xfce.org/\">Xfce Forum</ulink> or the <ulink type=\"http\" url="
+"\"http://foo-projects.org/mailman/listinfo/thunar-dev\">thunar-dev mailing "
+"list</ulink> for help."
+msgstr ""
+
+#: ../docs/manual/C/Thunar.xml.in:363 (title)
 msgid "Customizing Thunar"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:81 (title)
+#: ../docs/manual/C/Thunar.xml.in:366 (title)
 msgid "Thumbnailers"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:83 (para)
+#: ../docs/manual/C/Thunar.xml.in:368 (para)
 msgid ""
 "Thunar uses small utilities to create thumbnails of certain file types and "
 "displays the thumbnails as preview of the file content. These small tools "
@@ -153,7 +545,7 @@ msgid ""
 "additional file types."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:90 (para)
+#: ../docs/manual/C/Thunar.xml.in:375 (para)
 msgid ""
 "If you plan to write a custom thumbnailers, you need to start with a program "
 "that accepts atleast two command line parameters, the input file, which is "
@@ -167,7 +559,7 @@ msgid ""
 "generating the thumbnail with the requested dimensions."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:99 (para)
+#: ../docs/manual/C/Thunar.xml.in:384 (para)
 msgid ""
 "Once your utility to generate the thumbnails is done, you will need to "
 "register your thumbnailer, so Thunar is able to locate and use it. Therefore "
@@ -180,11 +572,11 @@ msgid ""
 "has the following format."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:108 (title)
+#: ../docs/manual/C/Thunar.xml.in:393 (title)
 msgid "Thumbnailer Description File Format"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:110 (para)
+#: ../docs/manual/C/Thunar.xml.in:395 (para)
 msgid ""
 "Thumbnailer description files utilize the <ulink type=\"http\" url=\"http://"
 "standards.freedesktop.org/desktop-entry-spec/latest/\">Desktop Entry Format</"
@@ -194,7 +586,7 @@ msgid ""
 "format."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:116 (programlisting)
+#: ../docs/manual/C/Thunar.xml.in:401 (programlisting)
 #, no-wrap
 msgid ""
 "\n"
@@ -207,7 +599,7 @@ msgid ""
 "X-Thumbnailer-Exec=your-thumbnailer %i %o %s"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:125 (para)
+#: ../docs/manual/C/Thunar.xml.in:410 (para)
 msgid ""
 "The <literal>Version</literal> and <literal>Encoding</literal> are mandated "
 "by the Desktop Entry Specification, just use the values shown in the example "
@@ -216,34 +608,34 @@ msgid ""
 "recognized. The <literal>Name</literal> value describes your thumbnailer."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:131 (para)
+#: ../docs/manual/C/Thunar.xml.in:416 (para)
 msgid ""
 "The <literal>X-Thumbnailer-Exec</literal> field contains the command to run "
 "your thumbnailer, and supports certain field codes that will be substituted "
 "when the thumbnailer is run. Recognized field codes are as follows:"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:138 (varname)
-#: ../docs/manual/C/Thunar.xml.in:164 (literal)
+#: ../docs/manual/C/Thunar.xml.in:423 (varname)
+#: ../docs/manual/C/Thunar.xml.in:449 (literal)
 msgid "%i"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:139 (listitem)
+#: ../docs/manual/C/Thunar.xml.in:424 (listitem)
 msgid ""
 "The local path to the input file for which to create a thumbnail. May be "
 "either a path relative to the directory from which the thumbnailer was "
 "invoked or an absolute path."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:146 (varname)
+#: ../docs/manual/C/Thunar.xml.in:431 (varname)
 msgid "%o"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:149 (literal)
+#: ../docs/manual/C/Thunar.xml.in:434 (literal)
 msgid ".png"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:147 (listitem)
+#: ../docs/manual/C/Thunar.xml.in:432 (listitem)
 msgid ""
 "The local path to the output file where to store the generated thumbnail. "
 "The output file must be written as valid PNG file according to the thumbnail "
@@ -251,55 +643,55 @@ msgid ""
 "which matters if you invoke certain third party tools."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:155 (varname)
+#: ../docs/manual/C/Thunar.xml.in:440 (varname)
 msgid "%s"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:156 (listitem)
+#: ../docs/manual/C/Thunar.xml.in:441 (listitem)
 msgid ""
 "The desired size of the generated thumbnail in pixels. This parameter is "
 "optional."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:162 (varname)
+#: ../docs/manual/C/Thunar.xml.in:447 (varname)
 msgid "%u"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:163 (listitem)
+#: ../docs/manual/C/Thunar.xml.in:448 (listitem)
 msgid ""
 "Similar to <placeholder-1/>, but substituted with the URI of the file, "
 "rather than the path. This was added for compatibility with GNOME."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:170 (varname)
+#: ../docs/manual/C/Thunar.xml.in:455 (varname)
 msgid "%%"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:172 (literal)
+#: ../docs/manual/C/Thunar.xml.in:457 (literal)
 msgid "%"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:171 (listitem)
+#: ../docs/manual/C/Thunar.xml.in:456 (listitem)
 msgid "Will be substituted with a single <placeholder-1/>."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:177 (para)
+#: ../docs/manual/C/Thunar.xml.in:462 (para)
 msgid ""
 "You need to include atleast <literal>%o</literal> and <literal>%i</literal> "
 "or <literal>%u</literal>, otherwise your thumbnailer will be useless."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:182 (para)
+#: ../docs/manual/C/Thunar.xml.in:467 (para)
 msgid ""
 "The <literal>MimeType</literal> lists the MIME types - separated by "
 "semicolon - for which your thumbnailer is able to create previews."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:188 (title)
+#: ../docs/manual/C/Thunar.xml.in:473 (title)
 msgid "Example EPS Thumbnailer"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:190 (para)
+#: ../docs/manual/C/Thunar.xml.in:475 (para)
 msgid ""
 "This example demonstrates how to write and install a new thumbnailer for "
 "<filename>.eps</filename> files, which uses the <command>convert</command> "
@@ -308,7 +700,7 @@ msgid ""
 "the requested size."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:196 (programlisting)
+#: ../docs/manual/C/Thunar.xml.in:481 (programlisting)
 #, no-wrap
 msgid ""
 "\n"
@@ -328,14 +720,14 @@ msgid ""
 "exec convert \"eps:$ifile\" -scale \"$sizex$size\" \"png:$ofile\""
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:212 (para)
+#: ../docs/manual/C/Thunar.xml.in:497 (para)
 msgid ""
 "Save this script above to a file <filename>eps-thumbnailer</filename>, make "
 "sure the file is executable and install it to <filename role=\"directory\">/"
 "usr/local/bin</filename>."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:217 (screen)
+#: ../docs/manual/C/Thunar.xml.in:502 (screen)
 #, no-wrap
 msgid ""
 "\n"
@@ -343,13 +735,13 @@ msgid ""
 "$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:221 (para)
+#: ../docs/manual/C/Thunar.xml.in:506 (para)
 msgid ""
 "Next we need to create the thumbnail description file <filename>eps-"
 "thumbnailer.desktop</filename>, which looks like this:"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:225 (programlisting)
+#: ../docs/manual/C/Thunar.xml.in:510 (programlisting)
 #, no-wrap
 msgid ""
 "\n"
@@ -363,13 +755,13 @@ msgid ""
 "X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:235 (para)
+#: ../docs/manual/C/Thunar.xml.in:520 (para)
 msgid ""
 "This file must be installed to <filename role=\"directory\">/usr/local/share/"
 "thumbnailers</filename> (create the folder if it does not exists)."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:240 (screen)
+#: ../docs/manual/C/Thunar.xml.in:525 (screen)
 #, no-wrap
 msgid ""
 "\n"
@@ -377,7 +769,7 @@ msgid ""
 "$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:244 (para)
+#: ../docs/manual/C/Thunar.xml.in:529 (para)
 msgid ""
 "The <filename>eps-thumbnailer.desktop</filename> file uses the special key "
 "<literal>TryExec</literal>, which, if specified, names a command that must "
@@ -385,7 +777,7 @@ msgid ""
 "script is useless if the <command>convert</command> utility is not present."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:250 (para)
+#: ../docs/manual/C/Thunar.xml.in:535 (para)
 msgid ""
 "The last step is to regenerate the thumbnailer cache, so Thunar will pick up "
 "our thumbnailer. The thumbnailer cache is located at <filename>"
@@ -401,19 +793,19 @@ msgid ""
 "<filename role=\"directory\">/usr</filename>, invoke the utility as follows:"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:261 (screen)
+#: ../docs/manual/C/Thunar.xml.in:546 (screen)
 #, no-wrap
 msgid "$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:263 (para)
+#: ../docs/manual/C/Thunar.xml.in:548 (para)
 msgid ""
 "But make sure you run the program from your user account, not the superuser "
 "account, since the thumbnailers cache is stored in your home folder, rather "
 "than a system wide location."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:268 (para)
+#: ../docs/manual/C/Thunar.xml.in:553 (para)
 msgid ""
 "Now, if Thunar is compiled with support for file alteration monitoring "
 "(using the FAM or Gamin services), it will automatically pick up the new "
@@ -422,22 +814,22 @@ msgid ""
 "completely restart Thunar to apply the changes, using"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:274 (screen)
+#: ../docs/manual/C/Thunar.xml.in:559 (screen)
 #, no-wrap
 msgid "$ Thunar -q"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:276 (para)
+#: ../docs/manual/C/Thunar.xml.in:561 (para)
 msgid ""
 "to terminate any running instance, and afterwards restart it from your "
 "launcher."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:282 (title)
+#: ../docs/manual/C/Thunar.xml.in:567 (title)
 msgid "Cleaning up Thumbnails"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:284 (para)
+#: ../docs/manual/C/Thunar.xml.in:569 (para)
 msgid ""
 "The generated thumbnails are stored in the folder <filename role=\"directory"
 "\">~/.thumbnails/</filename> complying with the <ulink type=\"http\" url="
@@ -446,27 +838,27 @@ msgid ""
 "the thumbnail cache using"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:290 (screen)
+#: ../docs/manual/C/Thunar.xml.in:575 (screen)
 #, no-wrap
 msgid "$ rm -rf ~/.thumbnails/"
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:292 (para)
+#: ../docs/manual/C/Thunar.xml.in:577 (para)
 msgid ""
 "which will also give you some free space in your home folder. Since all the "
 "information stored within this folder was automatically generated from files "
 "in your file system, you will not loose any sensitive data."
 msgstr ""
 
-#: ../docs/manual/C/Thunar.xml.in:302 (title)
+#: ../docs/manual/C/Thunar.xml.in:587 (title)
 msgid "Advanced Topics"
 msgstr "Acciones avanzadas."
 
-#: ../docs/manual/C/Thunar.xml.in:305 (title)
+#: ../docs/manual/C/Thunar.xml.in:590 (title)
 msgid "The UNIX File System"
 msgstr "El Sistema de Archivos UNIX"
 
-#: ../docs/manual/C/Thunar.xml.in:307 (para)
+#: ../docs/manual/C/Thunar.xml.in:592 (para)
 msgid ""
 "While the Thunar file manager does a good job at abstracting the details of "
 "the underlying file system, so the user does not need to care about them, it "
@@ -482,11 +874,11 @@ msgstr ""
 "una introducción a los conceptos del sistema de archivos UNIX, el cual es "
 "usado hoy en día por todas las encarnaciones de UNIX, incluyendo Linux."
 
-#: ../docs/manual/C/Thunar.xml.in:315 (title)
+#: ../docs/manual/C/Thunar.xml.in:600 (title)
 msgid "Folders and Paths"
 msgstr "Directorios y rutas"
 
-#: ../docs/manual/C/Thunar.xml.in:317 (para)
+#: ../docs/manual/C/Thunar.xml.in:602 (para)
 msgid ""
 "In a UNIX file system all folders are arranged in a simple inverted tree "
 "structure descending and branching down from a single top level folder, "
@@ -507,7 +899,7 @@ msgstr ""
 "encontrar un punto comúm, y después bajar por el árbol a través de los "
 "apropiados subdirectorios hasta alcanzar su objetivo."
 
-#: ../docs/manual/C/Thunar.xml.in:326 (para)
+#: ../docs/manual/C/Thunar.xml.in:611 (para)
 msgid ""
 "The position of any file or folder in the tree can be described by its "
 "<emphasis>path</emphasis>. The path is the list of folders you would have to "
@@ -531,7 +923,7 @@ msgstr ""
 "subcarpeta. The leading <filename role=\"directory\">/</filename> en estas "
 "rutas representa la carpeta raíz."
 
-#: ../docs/manual/C/Thunar.xml.in:335 (para)
+#: ../docs/manual/C/Thunar.xml.in:620 (para)
 msgid ""
 "Every user has their own folder to hold their personal files and settings. "
 "This folder is called the <emphasis>home directory</emphasis> and is "
@@ -558,11 +950,11 @@ msgstr ""
 "personal del usuarion con nombre de conexión <filename role=\"directory"
 "\">jane</filename>."
 
-#: ../docs/manual/C/Thunar.xml.in:347 (title)
+#: ../docs/manual/C/Thunar.xml.in:632 (title)
 msgid "File Types"
 msgstr "Tipos de archivo"
 
-#: ../docs/manual/C/Thunar.xml.in:349 (para)
+#: ../docs/manual/C/Thunar.xml.in:634 (para)
 msgid ""
 "You may have already heard that everything is a file in UNIX. This is true "
 "for most objects present in UNIX systems today. In fact even devices are "
@@ -579,18 +971,18 @@ msgstr ""
 "un simple motor a lo largo de los años donde otros sistemas operativos han "
 "tenido que introducir nuevos conceptos para cada nueva tecnología."
 
-#: ../docs/manual/C/Thunar.xml.in:356 (para)
+#: ../docs/manual/C/Thunar.xml.in:641 (para)
 msgid ""
 "These are the four most important types of files in the UNIX file system."
 msgstr ""
 "Estas son los cuatro tipos de archivos más importantes en un sistema de "
 "archivos UNIX."
 
-#: ../docs/manual/C/Thunar.xml.in:361 (title)
+#: ../docs/manual/C/Thunar.xml.in:646 (title)
 msgid "Ordinary Files"
 msgstr "Arvhicos corrientes"
 
-#: ../docs/manual/C/Thunar.xml.in:363 (para)
+#: ../docs/manual/C/Thunar.xml.in:648 (para)
 msgid ""
 "An ordinary file may contain text, a program or other data. This includes "
 "image files, audio files, office documents and video files. The term "
@@ -601,12 +993,12 @@ msgstr ""
 "vídeo. El término <emphasis>archivo</emphasis> es a menudo usado para "
 "referirse a un archivo ordinario."
 
-#: ../docs/manual/C/Thunar.xml.in:370 (title)
+#: ../docs/manual/C/Thunar.xml.in:655 (title)
 #, fuzzy
 msgid "Folder Files"
 msgstr "Directorios"
 
-#: ../docs/manual/C/Thunar.xml.in:372 (para)
+#: ../docs/manual/C/Thunar.xml.in:657 (para)
 msgid ""
 "Folders are also files in the UNIX file system. To be exact a folder is a "
 "special file, which contains a mapping of file names to file references for "
@@ -616,12 +1008,12 @@ msgstr ""
 "exactos, una carpeta es un archivo especial, que contiene un mapa con el "
 "nombre y una referencia de cada archivo contenido dentro de esta carpeta."
 
-#: ../docs/manual/C/Thunar.xml.in:379 (title)
+#: ../docs/manual/C/Thunar.xml.in:664 (title)
 #, fuzzy
 msgid "Symbolic Link Files"
 msgstr "Enlaces simbólicos"
 
-#: ../docs/manual/C/Thunar.xml.in:381 (para)
+#: ../docs/manual/C/Thunar.xml.in:666 (para)
 msgid ""
 "A Symbolic link (often called a <emphasis>symlink</emphasis>) is a special "
 "file that contains a path to another file in the file system. Symbolic link "
@@ -633,11 +1025,11 @@ msgstr ""
 "archivos. Por lo tanto, los enlaces simbólicos no contienen información "
 "útil, sólo apuntan a otro archivo."
 
-#: ../docs/manual/C/Thunar.xml.in:389 (title)
+#: ../docs/manual/C/Thunar.xml.in:674 (title)
 msgid "Device Files"
 msgstr "Archivos de Dispositivos"
 
-#: ../docs/manual/C/Thunar.xml.in:391 (para)
+#: ../docs/manual/C/Thunar.xml.in:676 (para)
 msgid ""
 "As mentioned earlier (most) devices are also accessed through the file "
 "system. These special device files are usually located in the <filename role="
@@ -651,11 +1043,11 @@ msgstr ""
 "especial <filename>/dev/hda</filename> representa el primer disco IDE disk "
 "en Linux."
 
-#: ../docs/manual/C/Thunar.xml.in:403 (title)
+#: ../docs/manual/C/Thunar.xml.in:688 (title)
 msgid "Frequently Asked Questions"
 msgstr "Preguntas frecuentes"
 
-#: ../docs/manual/C/Thunar.xml.in:405 (para)
+#: ../docs/manual/C/Thunar.xml.in:690 (para)
 msgid ""
 "The intent of this section is to collect the quite numerous frequently asked "
 "questions that relate to working with Thunar. If you know of a question that "
@@ -669,11 +1061,11 @@ msgstr ""
 "enter_bug.cgi?product=Thunar&amp;format=guided\">archive una petición</"
 "ulink>."
 
-#: ../docs/manual/C/Thunar.xml.in:414 (title)
+#: ../docs/manual/C/Thunar.xml.in:699 (title)
 msgid "Why doesn't Thunar execute files marked as executable?"
 msgstr "¿Por qué Thunar no ejecuta los archivos marcado como ejecutables?"
 
-#: ../docs/manual/C/Thunar.xml.in:416 (para)
+#: ../docs/manual/C/Thunar.xml.in:701 (para)
 msgid ""
 "For security reasons Thunar only executes files of type <literal>application/"
 "x-desktop</literal>, <literal>application/x-executable</literal> and "
@@ -693,7 +1085,7 @@ msgstr ""
 "válida es dada. Para otros tipos esta característica está disponible si el "
 "archivo está marcado como ejecutable para el usuario actual."
 
-#: ../docs/manual/C/Thunar.xml.in:425 (para)
+#: ../docs/manual/C/Thunar.xml.in:710 (para)
 msgid ""
 "Also note that for <literal>application/x-executable</literal> and "
 "<literal>application/x-shellscript</literal>, the types of the file don't "
@@ -707,11 +1099,11 @@ msgstr ""
 "suficiente si el tipo detectado tiene un padre coincide con uno de los dos "
 "tipos listados arriba, o si su MIME-type es un alias de uno de los de arriba"
 
-#: ../docs/manual/C/Thunar.xml.in:434 (title)
+#: ../docs/manual/C/Thunar.xml.in:719 (title)
 msgid "Where does Thunar store the metadata associated with files?"
 msgstr "¿Dónde almacena Thunar los metadatos asociados con los archivos?"
 
-#: ../docs/manual/C/Thunar.xml.in:436 (para)
+#: ../docs/manual/C/Thunar.xml.in:721 (para)
 msgid ""
 "Thunar associates various settings with files/folders, which we call "
 "metadata. This metadata for all files is stored in tdb database file, which "
@@ -728,11 +1120,11 @@ msgstr ""
 "distribución de Thunar (localizada en <filename role=\"directory\">tdb/</"
 "filename>)."
 
-#: ../docs/manual/C/Thunar.xml.in:447 (title)
+#: ../docs/manual/C/Thunar.xml.in:732 (title)
 msgid "Where does Thunar store its preferences?"
 msgstr "¿Dónde almacena Thunar ls preferencias?"
 
-#: ../docs/manual/C/Thunar.xml.in:449 (para)
+#: ../docs/manual/C/Thunar.xml.in:734 (para)
 msgid ""
 "Thunar stores the user configurable preferences (and hidden settings) in an "
 "<filename>.ini</filename> file, which is located at <filename>"
@@ -746,11 +1138,11 @@ msgstr ""
 "examinado usando un editor de texto. Vea <filename>docs/README.thunarrc</"
 "filename> para una descripción de varias preferencias."
 
-#: ../docs/manual/C/Thunar.xml.in:459 (title)
+#: ../docs/manual/C/Thunar.xml.in:744 (title)
 msgid "How to use mouse gestures in Thunar?"
 msgstr "¿Cómo usar los gestos de ratón en Thunar?"
 
-#: ../docs/manual/C/Thunar.xml.in:461 (para)
+#: ../docs/manual/C/Thunar.xml.in:746 (para)
 msgid ""
 "Thunar currently features basic support for so called <emphasis>mouse "
 "gestures</emphasis> in its icon view. You can use these <emphasis>mouse "
@@ -768,43 +1160,43 @@ msgstr ""
 "mover el cursor en cuatro direcciones para realizar algunas acciones "
 "descritas abajo."
 
-#: ../docs/manual/C/Thunar.xml.in:471 (guilabel)
+#: ../docs/manual/C/Thunar.xml.in:756 (guilabel)
 msgid "Left"
 msgstr "Izquierda"
 
-#: ../docs/manual/C/Thunar.xml.in:471 (member)
+#: ../docs/manual/C/Thunar.xml.in:756 (member)
 msgid "<placeholder-1/> - opens the previous visited folder"
 msgstr "<placeholder-1/> - abre la carpeta visitada anteriormente"
 
-#: ../docs/manual/C/Thunar.xml.in:472 (guilabel)
+#: ../docs/manual/C/Thunar.xml.in:757 (guilabel)
 msgid "Up"
 msgstr "Arriba"
 
-#: ../docs/manual/C/Thunar.xml.in:472 (member)
+#: ../docs/manual/C/Thunar.xml.in:757 (member)
 msgid "<placeholder-1/> - opens the parent folder"
 msgstr "<placeholder-1/> - abre la carpeta padre"
 
-#: ../docs/manual/C/Thunar.xml.in:473 (guilabel)
+#: ../docs/manual/C/Thunar.xml.in:758 (guilabel)
 msgid "Right"
 msgstr "Derecha"
 
-#: ../docs/manual/C/Thunar.xml.in:473 (member)
+#: ../docs/manual/C/Thunar.xml.in:758 (member)
 msgid "<placeholder-1/> - opens the next visited folder"
 msgstr "<placeholder-1/> - abre la siguiente carpeta visitada"
 
-#: ../docs/manual/C/Thunar.xml.in:474 (guilabel)
+#: ../docs/manual/C/Thunar.xml.in:759 (guilabel)
 msgid "Down"
 msgstr "Abajo"
 
-#: ../docs/manual/C/Thunar.xml.in:474 (member)
+#: ../docs/manual/C/Thunar.xml.in:759 (member)
 msgid "<placeholder-1/> - reloads the current folder"
 msgstr "<placeholder-1/> - recarga la carpeta actual"
 
-#: ../docs/manual/C/Thunar.xml.in:479 (title)
+#: ../docs/manual/C/Thunar.xml.in:764 (title)
 msgid "How do I assign different keyboard shortcuts?"
 msgstr "¿Cómo asgino diferentes combinaciones de teclas"
 
-#: ../docs/manual/C/Thunar.xml.in:481 (para)
+#: ../docs/manual/C/Thunar.xml.in:766 (para)
 msgid ""
 "If you want to rebind a shortcut, Thunar supports the standard GTK+ way of "
 "changing shortcuts: simply hover over the menu option with the mouse pointer "
@@ -815,7 +1207,7 @@ msgstr ""
 "del menú con el putero del ratón y pulse la combinación de teclas que usted "
 "quiera asignarle a esa opción del menú."
 
-#: ../docs/manual/C/Thunar.xml.in:487 (para)
+#: ../docs/manual/C/Thunar.xml.in:772 (para)
 msgid ""
 "To delete a keyboard assignment, press the <keycap>Backspace</keycap> key "
 "while you are on the menu entry."
@@ -823,7 +1215,7 @@ msgstr ""
 "Para borrar una combinación asignada, pulse la tecla <keycap>Backspace</"
 "keycap> mientras que está en la entrada del menú."
 
-#: ../docs/manual/C/Thunar.xml.in:492 (para)
+#: ../docs/manual/C/Thunar.xml.in:777 (para)
 msgid ""
 "If the shortcut doesn't change, then you need to enable the feature in GTK+. "
 "This can be achieved in 3 ways:"
@@ -831,7 +1223,7 @@ msgstr ""
 "Si la combinación de teclas no cambia, entonces debe habilitar la "
 "característica en GTK+. Puede hacerlo de tres formas:"
 
-#: ../docs/manual/C/Thunar.xml.in:499 (para)
+#: ../docs/manual/C/Thunar.xml.in:784 (para)
 msgid ""
 "If you are running Xfce 4.3 or above then you can enable <guilabel>Editable "
 "menu accelerators</guilabel> in the <guilabel>User Interface Preferences</"
@@ -841,7 +1233,7 @@ msgstr ""
 "accelerators</guilabel> en el diálogo <guilabel>Configuración de la interfaz "
 "de usuario</guilabel>"
 
-#: ../docs/manual/C/Thunar.xml.in:507 (para)
+#: ../docs/manual/C/Thunar.xml.in:792 (para)
 msgid ""
 "If you are running GNOME then you can enable <guilabel>Editable menu "
 "accelerators</guilabel> in the <guilabel>Menu and Toolbars</guilabel> "
@@ -851,7 +1243,7 @@ msgstr ""
 "guilabel> el el diálogo <guilabel>Menu and Toolbars</guilabel> del centro de "
 "control."
 
-#: ../docs/manual/C/Thunar.xml.in:515 (para)
+#: ../docs/manual/C/Thunar.xml.in:800 (para)
 msgid ""
 "Otherwise put the following in your <filename>~/.gtkrc-2.0</filename> file "
 "(create the file if it doesn't exist):<screen>gtk-can-change-accels=1</"
@@ -861,11 +1253,11 @@ msgstr ""
 "filename> (cree el archivo si no existe): <screen>gtk-can-change-accels=1</"
 "screen>."
 
-#: ../docs/manual/C/Thunar.xml.in:524 (title)
+#: ../docs/manual/C/Thunar.xml.in:809 (title)
 msgid "Where does Thunar store the keyboard shortcuts?"
 msgstr "¿Dónde almacena thinar las combinaciones teclas"
 
-#: ../docs/manual/C/Thunar.xml.in:526 (para)
+#: ../docs/manual/C/Thunar.xml.in:811 (para)
 msgid ""
 "The custom keyboard shortcuts are stored in the standard GTK+ accel map "
 "format in a file located at <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</"
@@ -878,7 +1270,7 @@ msgstr ""
 "empiezan con <literal>;</literal> son comentarios. Vea la documentación de "
 "GTK+ para detalles acerca de este formato."
 
-#: ../docs/manual/C/Thunar.xml.in:533 (para)
+#: ../docs/manual/C/Thunar.xml.in:818 (para)
 msgid ""
 "If you are a packager or a system administrator and want to provide a system "
 "wide default for the keyboard shortcuts, that is different from the default "
@@ -900,11 +1292,11 @@ msgstr ""
 "filename>. Thunar cargará estas combinaciones de este archivo en su primera "
 "ejecución."
 
-#: ../docs/manual/C/Thunar.xml.in:546 (title)
+#: ../docs/manual/C/Thunar.xml.in:831 (title)
 msgid "Support"
 msgstr "Soporte"
 
-#: ../docs/manual/C/Thunar.xml.in:548 (para)
+#: ../docs/manual/C/Thunar.xml.in:833 (para)
 msgid ""
 "To report a bug or to make a suggestion regarding this application or this "
 "manual, use the bug tracking system at <ulink url=\"http://bugzilla.xfce.org/"
@@ -919,7 +1311,7 @@ msgstr ""
 "que se arreglen tales fallos, así que un comunicado útil de un fallo tiene "
 "dos características:"
 
-#: ../docs/manual/C/Thunar.xml.in:556 (para)
+#: ../docs/manual/C/Thunar.xml.in:841 (para)
 msgid ""
 "<emphasis role=\"bold\">Reproducible.</emphasis> If the developer cannot see "
 "the bug himself to prove that it exists, he will most probably not be able "
@@ -929,7 +1321,7 @@ msgstr ""
 "puede ver el fallo por sí mismo para comprobar que existe, lo más probable "
 "es que no pueda arreglarlo. Cualquier detalle que de puede ser de ayuda."
 
-#: ../docs/manual/C/Thunar.xml.in:563 (para)
+#: ../docs/manual/C/Thunar.xml.in:848 (para)
 msgid ""
 "<emphasis role=\"bold\">Specific.</emphasis> The quicker the developer can "
 "isolate the problem to a specific area, the more likely he will expediently "
@@ -939,7 +1331,7 @@ msgstr ""
 "asociar el problema a un área, más probable es que lo arregle "
 "convenientemente."
 
-#: ../docs/manual/C/Thunar.xml.in:570 (para)
+#: ../docs/manual/C/Thunar.xml.in:855 (para)
 #, fuzzy
 msgid ""
 "In case you want to request a new feature, please make clear why you "
@@ -961,7 +1353,7 @@ msgstr ""
 "especialmente la sección <emphasis>Coding Style</emphasis> - antes de que "
 "empiece a modificar el código."
 
-#: ../docs/manual/C/Thunar.xml.in:580 (para)
+#: ../docs/manual/C/Thunar.xml.in:865 (para)
 msgid ""
 "Else, if you have questions about the use or installation of this software, "
 "please ask on the <ulink type=\"http\" url=\"http://foo-projects.org/mailman/"
@@ -975,11 +1367,11 @@ msgstr ""
 "su cliente IRC a <emphasis role=\"bold\">irc.freenode.net</emphasis>, únase "
 "al canal <emphasis role=\"bold\">#thunar</emphasis> y pida ayuda."
 
-#: ../docs/manual/C/Thunar.xml.in:589 (title)
+#: ../docs/manual/C/Thunar.xml.in:874 (title)
 msgid "About @PACKAGE_NAME@"
 msgstr "Acerca de @PACKAGE_NAME@"
 
-#: ../docs/manual/C/Thunar.xml.in:591 (para)
+#: ../docs/manual/C/Thunar.xml.in:876 (para)
 msgid ""
 "@PACKAGE_NAME@ was written by Benedikt Meurer (<email>benny@xfce.org</"
 "email>). Visit the <ulink url=\"http://thunar.xfce.org/\" type=\"http"
@@ -989,7 +1381,7 @@ msgstr ""
 "email>). Visite el <ulink url=\"http://thunar.xfce.org/\" type=\"http"
 "\">sitio web de thunar</ulink> para más información."
 
-#: ../docs/manual/C/Thunar.xml.in:596 (para)
+#: ../docs/manual/C/Thunar.xml.in:881 (para)
 msgid ""
 "This documentation was written by Benedikt Meurer (<email>benny@xfce.org</"
 "email>). The latest version of this document is always available from the "
@@ -1000,7 +1392,7 @@ msgstr ""
 "el <ulink type=\"http\" url=\"http://thunar.xfce.org/\">sitio web de Thunar</"
 "ulink>."
 
-#: ../docs/manual/C/Thunar.xml.in:602 (para)
+#: ../docs/manual/C/Thunar.xml.in:887 (para)
 #, fuzzy
 msgid ""
 "This software is distributed under the terms of the GNU General Public "
@@ -1011,7 +1403,7 @@ msgstr ""
 "License (Licencia Pública General de GNU) según lo publicado por la Free "
 "Software Foundation; en la versión 2 de la licencia o cualquiera posterior."
 
-#: ../docs/manual/C/Thunar.xml.in:608 (para)
+#: ../docs/manual/C/Thunar.xml.in:893 (para)
 #, fuzzy
 msgid ""
 "You should have received a copy of the GNU General Public License along with "

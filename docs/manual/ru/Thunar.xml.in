@@ -57,6 +57,289 @@
   </sect1>
 
 
+  <sect1 id="using-removable-media">
+    <title>Using Removable Media</title>
+
+    <sect2 id="accessing-removable-media">
+      <title>Accessing Removable Media</title>
+
+      <para>
+        Thunar supports removable media if it was built with support for <ulink type="http" url="http://freedesktop.org/wiki/Software_2fhal">HAL</ulink>,
+        or if you are using <ulink type="http" url="http://www.freebsd.org/">FreeBSD</ulink>. Note however that on FreeBSD 6.0 or newer, it is
+        suggested to use HAL rather than the native support provided by Thunar.
+      </para>
+
+      <sect3 id="to-mount-media">
+        <title>To Mount Media</title>
+
+        <para>
+          To <emphasis>mount</emphasis> media is to make the file system of the media available for access. When you mount media, the
+          file system of the media is attached as a subdirectory to your file system.
+        </para>
+
+        <para>
+          To access media, insert the media in the appropriate device, or connect the new device to your computer (i.e. connect an USB
+          stick to one of your USB ports). An object that represents the media is added to the side pane of the file manager. If
+          <application>xfdesktop</application> is running and configured to display <guilabel>File/launcher icons</guilabel> this
+          object will also be added to your desktop.
+        </para>
+
+        <para>
+          To actually mount the media, click on the object that represents the media. For example, to mount a floppy diskette,
+          click on the <guilabel>Floppy Disk</guilabel> object in the side pane. The file manager will now add the file system
+          of the media to your file system hierarchy and display the contents of the floppy diskette in the main area.
+        </para>
+      </sect3>
+
+      <sect3 id="to-eject-media">
+        <title>To Eject Media</title>
+
+        <para>
+          If the drive for the media is a motorized drive (i.e. a CD-ROM drive), right-click on the media object in the side pane
+          or on the desktop and choose <guilabel>Eject Volume</guilabel>. The media is ejected from the drive after a few seconds.
+          If the drive for the media is not motorized (i.e. a floppy drive or an USB stick), right-click on the media object and
+          choose <guilabel>Unmount Volume</guilabel>. After a short period of time, a notification will appear to inform you
+          that it is now safe to remove the media or disconnect the drive from the computer.
+        </para>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/removable-media-unmount.png" format="PNG"/>
+            </imageobject>
+
+            <textobject>
+              <phrase>Unmount notification</phrase>
+            </textobject>
+          </mediaobject>
+        </screenshot>
+
+        <para>
+          However this notification will only be displayed if support for <application>libnotify</application> is enabled,
+          and you have installed a notification daemon. A notification daemon for Xfce is available from the <ulink type="http" url="http://goodies.xfce.org/projects/applications/notification-daemon-xfce">Xfce Goodies Project</ulink>.
+          If notification support is not available, wait until the context menu disappears before you remove the media or disconnect
+          the drive.
+        </para>
+
+        <para>
+          Be aware that you cannot eject or unmount media that is still in use by one or more applications. Therefore if the file
+          manager refuses to eject media, make sure you close all applications that were accessing the media, and be sure to also
+          check command line applications running in <application>Terminal</application> windows.
+        </para>
+
+        <para>
+          Make sure to unmount removable media before ejecting. Do not eject a diskette from the floppy drive before your unmount
+          the diskette. Do not remove an USB stick before you unmount the flash drive. If you do not unmount the media first you
+          might lose data or cause your system to crash.
+        </para>
+      </sect3>
+    </sect2>
+
+    <sect2 id="management-of-removable-drives-and-media">
+      <title>Management of Removable Drives and Media</title>
+
+      <para>
+        Thunar is also able to automatically manage removable drives and media if the <ulink type="http" url="http://thunar.xfce.org/projects/thunar-volman/">thunar-volman</ulink> package is installed on your system.
+        Note however that this feature requires HAL support.
+      </para>
+
+      <para>
+        Now, if HAL support is available and <application>thunar-volman</application> is installed on your system, you
+        can choose to enable the <guilabel>Volume Management</guilabel> feature of Thunar. Therefore, open the file
+        manager preferences, go to the <guilabel>Advanced</guilabel> page and check the <guilabel>Enable Volume
+        Management</guilabel> button.
+      </para>
+
+      <para>
+        The next step is to customize the management of removable drives and media to your needs. Click on the
+        <guilabel>Configure</guilabel> link in the <guilabel>Volume Management</guilabel> section, right below
+        the button. The <guilabel>Removable Drives and Media</guilabel> configuration dialog will be displayed.
+      </para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/removable-drives-and-media.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Removable Drives and Media</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>
+        If you have used the <application>gnome-volume-manager</application> previously, you should feel right at
+        home, because it was designed to look and behave similar to <application>gnome-volume-manager</application>.
+        The preferences are divided by device categories to make it easy to locate the option for you specific
+        device.
+      </para>
+
+      <para>
+        The <guilabel>Storage</guilabel> page contains the most important options. As the name suggests these
+        options apply only to storage devices like external harddisk drives, USB sticks and CD-ROMs. The
+        <guilabel>Removable Storage</guilabel> options are described in detail below.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Mount removable drives when hot-plugged</guilabel></term>
+          <listitem>
+            <para>
+              Enable this option to automatically mount file systems on removable drives (i.e. external harddisk drives
+              or USB sticks) when such drives are plugged into the computer.
+            </para>
+            <para>
+              This option must be enabled for certain other features to work with removable drives. For example,
+              if you disable this option, certain kinds of portable music players cannot be detected any more and
+              so, even if you enabled the <guilabel>Play music files when connected</guilabel> option on the
+              <guilabel>Multimedia</guilabel> page, the specified command will not be run when you hot-plug your
+              portable music player.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Mount removable media when inserted</guilabel></term>
+          <listitem>
+            <para>
+              Enable this option to automatically mount file systems on removable media (i.e. CD-ROMs or DVDs)
+              when you insert the media into the drive.
+            </para>
+            <para>
+              This option must be enabled for certain other features to work with removable media. For example,
+              if you disable this option, it is impossible to detect whether the removable media has auto-run
+              capabilities, and so the <guilabel>Auto-run programs on new drives and media</guilabel> option
+              has no effect for removable media.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Browse removable media when inserted</guilabel></term>
+          <listitem>
+            <para>
+              Enable this option to automatically display the content of newly inserted media in the file manager.
+              Note however, that the contents will only be displayed if no other action was possible or you
+              choose to ignore the other possible actions. For example, if you insert a CD-ROM with auto-run
+              capabilities and the <guilabel>Auto-run programs on new drives and media</guilabel> option is
+              enabled, you will be prompted whether you want to allow or ignore the auto-run. If you choose
+              to ignore the auto-run the contents will be displayed in the file manager.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Auto-run programs on new drives and media</guilabel></term>
+          <listitem>
+            <para>
+              Enable this option to make use of auto-run capabilities of certain removable drives and media. See
+              the <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop
+              Application Autostart Specification</ulink> for details about the auto-run mechanism. To enhance security,
+              you will always be prompted to confirm the auto-run.
+            </para>
+            <para>
+              If the Windows emulator <ulink type="http" url="http://www.winehq.org/">WINE</ulink> is installed on your
+              system, the auto-run mechanism will also try to run <filename>autorun.exe</filename> files using WINE.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Auto-open files on new drives and media</guilabel></term>
+          <listitem>
+            <para>
+              Enable this option to make of auto-open capabilities of certain removable drives and media. See
+              the <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop
+              Application Autostart Specification</ulink> for details about the auto-open mechanism. To enhance security,
+              you will always be prompted to confirm the auto-open.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>
+        The remaining options allow you to specify a command to run when a certain kind of media is inserted into a drive
+        or a certain kind of external device is connected. The command can use three special variables, that will be
+        substituted when the command is run:
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term><literal>%d</literal></term>
+          <listitem>
+            <para>
+              Each appearance of <literal>%d</literal> in the command will be substituted with the device file path of
+              the newly added device. For example, if you have plugged in an USB stick, the device file path will be
+              <filename>/dev/da0s1</filename> or <filename>/dev/sda1</filename>.
+            </para>
+            <para>
+              If no device file is associated with the device or the device file could not be found for some reason,
+              the variable <literal>%d</literal> will be substituted with the empty string.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>%h</literal></term>
+          <listitem>
+            <para>
+              Each appearance of <literal>%h</literal> in the command will be substituted with the HAL UDI of the newly
+              added device.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>%m</literal></term>
+          <listitem>
+            <para>
+              Each appearance of <literal>%m</literal> in the command will be substituted with the mount point where
+              the newly added device was mounted. If the device cannot be mounted (for example printers or keyboards)
+              or if the automatic mounting was disabled, <literal>%m</literal> will be substituted with the empty
+              string.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <sect3 id="troubleshooting-the-volume-manager">
+        <title>Troubleshooting the Volume Manager</title>
+
+        <para>
+          Useful tips to trouble shoot the volume manager in case it does not work as expected.
+        </para>
+
+        <orderedlist>
+          <listitem>
+            Make sure <application>Thunar</application> is running as daemon. The volume manager depends
+            on this, as it is not a daemon by itself. By default, Xfce
+            automatically spawns <application>Thunar</application> as daemon on startup. If it got killed
+            for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut
+            <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop
+            and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar
+            --daemon</literal> and click <guibutton>Run</guibutton>.
+          </listitem>
+
+          <listitem>
+            Try running <application>thunar-volman</application> from a <application>Terminal</application>
+            window after hot-plugging the drive or inserting the media. First, you need to figure out the
+            HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>.
+            Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in
+            a <application>Terminal</application> window and watch the output for errors or warnings.
+          </listitem>
+        </orderedlist>
+
+        <para>
+          If it still refuses to work, ask on the <ulink type="http" url="http://forum.xfce.org/">Xfce Forum</ulink> or
+          the <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev mailing list</ulink>
+          for help.
+        </para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
   <sect1 id="customizing-thunar">
     <title>Customizing Thunar</title>
 
