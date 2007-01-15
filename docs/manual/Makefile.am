@@ -3,6 +3,7 @@
 SUBDIRS =								\
 	C								\
 	es								\
+	eu								\
 	fr								\
 	ja								\
 	ru								\

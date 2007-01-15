@@ -1,0 +1,441 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY date "January 2007">
+<!ENTITY version "@PACKAGE_VERSION@">
+<!ENTITY application "@PACKAGE_NAME@">
+]>
+<article id="index" lang="eu">
+
+  <!-- Header -->
+  <articleinfo>
+    <title>Thunar Fitxategi Kudeatzailea</title>
+
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2004</year>
+      <year>2005</year>
+      <year>2006</year>
+      <year>2007</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright>
+
+    <legalnotice id="legalnotice">
+      <para>Baimena ematen da dokumentu gau Free Software Foundation-en argitaratutako GNU Dokumentazio Libre Lizentziaren 1.1 bertsioak edo berriagoek ezarritako terminoetan kopiatu, zabaldu eta/edo eraldatzeko.Lizentzi testu osoa eskuragarri dago <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink> webgunean.</para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>Sistema garapena</orgdiv>
+          <jobtitle>Software garatzailea</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+    <releaseinfo>Manual honek @PACKAGE_NAME@ -ren @PACKAGE_VERSION@ bertsioa azaltzen du.</releaseinfo>
+  </articleinfo>
+
+  <sect1 id="intro">
+    <title>@PACKAGE_NAME@ -ra sarrera</title>
+
+    <para>Thunar Xfce Idazmahai Ingurunearen fitxategi kudeatzaile berria da. Thunar behe mailatik azkarra eta erabilerraza izateko diseinatua izan da. Bere erabiltzaile interfazea garbia eta intuitiboa da, eta ez du lehenespen bezala nahasi dezaketen edo erabilera urriko aukerarik. Thunar azkarra da eta erantzun bizkorra du bai abiaraztean bai karpetak kargatzeko denboran.</para>
+
+    <para>Thunar fitxategi kudeatzaileak zure fitxategi eta aplikazioetara sarrera integratu bat ematen du. Fitxategi kudeatzailea hurrengoa egiteko erabil dezakezu:</para>
+
+    <itemizedlist>
+      <listitem>Karpeta eta dokumentuak sortu.</listitem>
+      <listitem>Zure fitxategi eta karpetak bistarazi.</listitem>
+      <listitem>Zure fitxategi eta karpetak kudeatu.</listitem>
+      <listitem>Ekintza pertsonalizatuak abiarazi eta kudeatu.</listitem>
+      <listitem>Sarrera Gailu Aldagarria.</listitem>
+    </itemizedlist>
+  </sect1>
+
+
+  <sect1 id="customizing-thunar">
+    <title>Customizing Thunar</title>
+
+    <sect2 id="thumbnailers">
+      <title>Thumbnailers</title>
+
+      <para>
+        Thunar uses small utilities to create thumbnails of certain file types and displays the thumbnails as preview of the
+        file content. These small tools are called thumbnailers. Thunar ships with thumbnailers for image and font files, and
+        makes use of the installed thumbnailers from GNOME automatically if it was installed with support for <literal>gconf</literal>.
+        Users may however dynamically extend this basic functionality with thumbnailers for additional file types.
+      </para>
+
+      <para>
+        If you plan to write a custom thumbnailers, you need to start with a program that accepts atleast two command line parameters,
+        the input file, which is of the file type you plan to support and the output file, which is a PNG file that complies with the
+        format specified by the <ulink type="http" url="http://jens.triq.net/thumbnail-spec/creation.html#AEN139">Thumbnail Management
+        Standard</ulink>. Additionally your program may also accept the desired size of the thumbnail, which is optional but highly
+        recommended. If you write the output file at an arbitrary image size, Thunar will afterwards scale it to the desired size,
+        which might produce a less optimal result than generating the thumbnail with the requested dimensions.
+      </para>
+
+      <para>
+        Once your utility to generate the thumbnails is done, you will need to register your thumbnailer, so Thunar is able to locate
+        and use it. Therefore all you need to do is to install a description file for the thumbnailer (a <filename>.desktop</filename> file)
+        in one of the <filename role="directory">$XDG_DATA_DIRS/thumbnailers/</filename> paths. For example, if you want to register the
+        thumbnailer for your user account only, you can install the file into the folder <filename role="directory">~/.local/share/thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers has the following format.
+      </para>
+
+      <sect3 id="thumbnailer-desktop-file-format">
+        <title>Thumbnailer Description File Format</title>
+
+        <para>
+          Thumbnailer description files utilize the <ulink type="http" url="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop
+          Entry Format</ulink> with a special <literal>Type</literal> of <literal>X-Thumbnailer</literal> and special field
+          <literal>X-Thumbnailer-Exec</literal> with new field codes. Basically, a thumbnailer description file has the following format.
+        </para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=Your Thumbnailer
+MimeType=your-supported/mime-type;
+X-Thumbnailer-Exec=your-thumbnailer %i %o %s</programlisting>
+
+        <para>
+          The <literal>Version</literal> and <literal>Encoding</literal> are mandated by the Desktop Entry Specification, just use the values shown
+          in the example above. The <literal>Type</literal> field must have the special value <literal>X-Thumbnailer</literal>, otherwise your
+          thumbnailer will not be recognized. The <literal>Name</literal> value describes your thumbnailer.
+        </para>
+
+        <para>
+          The <literal>X-Thumbnailer-Exec</literal> field contains the command to run your thumbnailer, and supports certain field codes that will
+          be substituted when the thumbnailer is run. Recognized field codes are as follows:
+        </para>
+
+        <variablelist>
+          <varlistentry>
+            <term><varname>%i</varname></term>
+            <listitem>
+              The local path to the input file for which to create a thumbnail. May be either a path relative to the directory from which the
+              thumbnailer was invoked or an absolute path.
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%o</varname></term>
+            <listitem>
+              The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according
+              to the thumbnail standard (see above). Note that the path may not end with <literal>.png</literal>, which matters if you invoke certain
+              third party tools.
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%s</varname></term>
+            <listitem>
+              The desired size of the generated thumbnail in pixels. This parameter is optional.
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%u</varname></term>
+            <listitem>
+              Similar to <literal>%i</literal>, but substituted with the URI of the file, rather than the path. This was added for compatibility with
+              GNOME.
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%%</varname></term>
+            <listitem>
+              Will be substituted with a single <literal>%</literal>.
+            </listitem>
+          </varlistentry>
+        </variablelist>
+
+        <para>
+          You need to include atleast <literal>%o</literal> and <literal>%i</literal> or <literal>%u</literal>, otherwise your thumbnailer will
+          be useless.
+        </para>
+
+        <para>
+          The <literal>MimeType</literal> lists the MIME types - separated by semicolon - for which your thumbnailer is able to create previews.
+        </para>
+      </sect3>
+
+      <sect3 id="eps-thumbnailer-example">
+        <title>Example EPS Thumbnailer</title>
+
+        <para>
+          This example demonstrates how to write and install a new thumbnailer for <filename>.eps</filename> files, which uses the
+          <command>convert</command> utility that ships as part of ImageMagick. First, we start with a simple script that invokes
+          <command>convert</command> to generate a thumbnail at the requested size.
+        </para>
+
+        <programlisting>
+#!/bin/sh
+#
+# eps-thumbnailer - Example thumbnailer script for EPS files.
+#
+# Usage: esp-thumbnailer eps-file png-file size
+#
+
+# command line parameters
+ifile=$1
+ofile=$2
+size=$3
+
+# invoke convert (ImageMagick)
+exec convert "eps:$ifile" -scale "$sizex$size" "png:$ofile"</programlisting>
+
+        <para>
+          Save this script above to a file <filename>eps-thumbnailer</filename>, make sure the file is executable and install it
+          to <filename role="directory">/usr/local/bin</filename>.
+        </para>
+
+        <screen>
+$ chmod +x eps-thumbnailer
+$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer</screen>
+
+        <para>
+          Next we need to create the thumbnail description file <filename>eps-thumbnailer.desktop</filename>, which looks like this:
+        </para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=EPS Thumbnailer
+TryExec=convert
+MimeType=image/x-eps;
+X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s</programlisting>
+
+        <para>
+          This file must be installed to <filename role="directory">/usr/local/share/thumbnailers</filename> (create the folder if
+          it does not exists).
+        </para>
+
+        <screen>
+$ sudo install -d /usr/local/share/thumbnailers
+$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop</screen>
+
+        <para>
+          The <filename>eps-thumbnailer.desktop</filename> file uses the special key <literal>TryExec</literal>, which, if specified,
+          names a command that must be present on the system for the thumbnailer to be useful. In this case, our script is useless if
+          the <command>convert</command> utility is not present.
+        </para>
+
+        <para>
+          The last step is to regenerate the thumbnailer cache, so Thunar will pick up our thumbnailer. The thumbnailer cache is located
+          at <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (unless overridden by your or your system administrator, the
+          <varname>$XDG_CACHE_HOME</varname> points to the folder <filename role="directory">~/.cache/</filename>). The thumbnailers
+          cache is regenerated periodically by Thunar, but you can force to regenerate it by invoking the
+          <filename>thunar-vfs-update-thumbnailers-cache-1</filename> utility, that ships as part of Thunar. This utility is usually installed
+          in the <filename role="directory">libexec</filename> subfolder of your installation prefix (<filename role="directory">sbin</filename>
+          on Debian/Ubuntu). So for example, if Thunar is installed in <filename role="directory">/usr</filename>, invoke the utility as
+          follows:
+        </para>
+
+        <screen>$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1</screen>
+
+        <para>
+          But make sure you run the program from your user account, not the superuser account, since the thumbnailers cache is stored in
+          your home folder, rather than a system wide location.
+        </para>
+
+        <para>
+          Now, if Thunar is compiled with support for file alteration monitoring (using the FAM or Gamin services), it will automatically
+          pick up the new thumbnailers cache within a few seconds and afterwards be able to generate thumbnails using your custom
+          thumbnailers. Otherwise you might need to completely restart Thunar to apply the changes, using
+        </para>
+
+        <screen>$ Thunar -q</screen>
+
+        <para>
+          to terminate any running instance, and afterwards restart it from your launcher.
+        </para>
+      </sect3>
+
+      <sect3 id="cleaning-up-thumbnails">
+        <title>Cleaning up Thumbnails</title>
+
+        <para>
+          The generated thumbnails are stored in the folder <filename role="directory">~/.thumbnails/</filename> complying with the <ulink type="http" url="http://jens.triq.net/thumbnail-spec/index.html">Thumbnail Management Standard</ulink>. While testing a new
+          thumbnailer, it might help to clean up the thumbnail cache using
+        </para>
+
+        <screen>$ rm -rf ~/.thumbnails/</screen>
+
+        <para>
+          which will also give you some free space in your home folder. Since all the information stored within this folder was automatically
+          generated from files in your file system, you will not loose any sensitive data.
+        </para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="advanced-topics">
+    <title>Gomendio Aurreratuak</title>
+
+    <sect2 id="the-unix-file-system">
+      <title>UNIX Fitxategi Sistema</title>
+
+      <para>Naiz Thunar fitxategi kudeatzaileak lan on bat egiten duenez fitxategi sistemaren xehetasunak abstraitzen, horrela erabiltzailea ez da hauetaz arduratu behar, batzuetan erabilgarri da oinarrizko kontzeptu ulertzea. Atal honek UNIX fitxategi sistemaren kontzeptuetara sarrera labur bat da, hau gaur egungo UNIX antzeko guztiek erabiltzen dutena LINUX barne.</para>
+
+      <sect3 id="folders-and-paths">
+        <title>Karpetak eta Bideak</title>
+
+        <para>UNIX fitxategi sistema batetan karpeta guztiak <emphasis>erro direktorioa</emphasis> hasten den alderantzizko zuhaitz estruktura batetan kokatzen dira (sarritan <emphasis>directorio</emphasis> terminoa <emphasis>karpeta</emphasis>-ren ordez erabiltzen da) eta thunar-en <guilabel>Fitxategi Sistema</guilabel> bezala bistaratzen dira. Honek karpeta batetik bestera mugitzeko batzen dituen puntu arte zuhaitzean gora igoaz eta gero helburu duzun karpetara sartuaz lor dezakezula.</para>
+
+        <para>Zuhaitzean edozein karpeta edo fitxategiren kokalekua bere <emphasis>bidearen</emphasis> bidez azaldu daiteke. Bidea fitxategi edo karpeta horretara ailatzeko erro direktoriotik jaitsi behar diren karpeten  izenek sortzen dute. Adibidez <filename role="directory">/home/luke</filename> <filename role="directory">home</filename> lehen mailako karpetaren <filename role="directory">luke</filename>azpidirektorioa da, eta <filename>/home/luke/myfile.txt</filename> karpeta honetako filename&gt;myfile.txt</para>
+
+        <para>Erabiltzaile bakoitzak bere karpeta pertsonala du bere fitxategi eta ezarpen pertsonalak mantentzeko. Karpeta honi <emphasis>etxe direktorioa</emphasis> eta Thunar-en erabiltzaile izena et ikono berezi batez bistaratzen da. Karpeta hau Windows-eko <guilabel>Nire Dokumentuak</guilabel> karpetaren antzerakoa da.Erabiltzaile ezberdinen <emphasis>etxe direktorioak</emphasis> <filename role="directory">/home</filename> karpetaren barnean kokatzen dira. Adibidez <filename role="directory">/home/luke</filename> karpeta <filename role="directory">luke</filename> erabiltzailearen etxe direktorioa izan beharko litzateke eta <filename role="directory">/home/jane</filename> karpeta <filename role="directory">jane</filename> erabiltzailearen etxe direktorioa izan beharko litzateke.</para>
+      </sect3>
+
+      <sect3 id="file-types">
+        <title>Fitxategi Motak</title>
+
+        <para>Ziurrenik dagoeneko entzuna duzu UNIX sistemetan dena fitxategi bat dela. Hau UNIX sistematan dauden elementu gehienentzat egoa da. Praktikan gailuak ere fitxategi berezien bidez errepresentatzen dira. Nahiz honek hasiera batetan zentzurik ez duela iruditu UNIX eta aldagaien puntu indartsuenetako bat da eta beste sistema eragileek teknologia berri bakoitzagatik kontzeptu berriak sartu behar dituzten bitartean honek urteen zehar muin sinple bat mantentzen lagundu du.</para>
+
+        <para>Hauek dira UNIX fitxategi sistemako 4 fitxategi mota garrantzitsuenak.</para>
+
+        <sect4 id="file-types-ordinary-files">
+          <title>Fitxategiak Arruntak</title>
+
+          <para>Fitxategi arrunt batek testua, programa bat edo beste datu batzuek izan ditzake, irudi fitxategiak, audio fitxategiak, ofizina dokumentuak eta bideo fitxategiak barne.<emphasis>Fitxategia</emphasis> terminoa fitxategi arruntez aritzeko erabiltzen da.</para>
+        </sect4>
+
+        <sect4 id="file-types-folder-files">
+          <title>Karpeta Fitxategiak</title>
+
+          <para>Karpetak ere fitxategiak dira UNIX sistemetan. Zehazki karpetak fitxategi bereziak dira zeinek karpeta horretako edozein fitxategiren fitxategi erreferentzien fitxategi izenen mapatze bat duen.</para>
+        </sect4>
+
+        <sect4 id="file-types-symbolic-link-files">
+          <title>Lotura Sinboliko Fitxategiak</title>
+
+          <para>Lotura sinbolikoa (baita <emphasis>symlink</emphasis> deiturikoak) fitxategi sistemako beste fitxategi batera bidea duen fitxategi berezi bat da. Lotura sinboliko fitxategiek beraz ez dute bere buruaren informazio erabilgarririk baina beste fitxategi batzuei egiten diote erreferentzia.</para>
+        </sect4>
+
+        <sect4 id="file-types-device-files">
+          <title>Gailu Fitxategiak</title>
+
+          <para>Lehen esan dugunez gailuak (gehienak) ere fitxategi sistemaren bidez eskuratzen dira. Fitxategi berezi hauek normalean <filename role="directory">/dev</filename> karpetan gordetzen dira. Adibidez <filename>/dev/hda</filename> fitxategi bereziak Linux-en lehenengo IDE diskoa adierazten du.</para>
+        </sect4>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="faq">
+    <title>Sarri Egindako Galderak</title>
+
+    <para>Atal honen helburua Thunar erabiltzaileen arten gehien egiten diren galderen bilduma egitea da. Hemen egon beharko zen eta ez dagoen galdera baten bat ezagutuaz gero , mesedez <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">eskaera bat</ulink> bete.</para>
+
+    <sect3 id="faq-executables">
+      <title>Zergaitik Thunar-ek ez ditu abiarazgarri diren fitxategiak abiarazten?</title>
+
+      <para>Segurtasun arrazoiak medio Thunar-ek bakarrik <literal>application/x-desktop</literal>, <literal>application/x-executable</literal> eta <literal>application/x-shellscript</literal> motatako fitxategiak abiarazten ditu. Idazmahai fitxategien kasuan abiarazteko gaitasuna bakarrik <literal>Application</literal> motakoa eta baliozko <literal>Exec</literal> lerro bat duena edo <literal>Lotura</literal>motakoa eta baliozko <literal>URL</literal> bat ematean egongo da aktibaturik. Beste fitxategi motentzat gaitasun hau erabiltzaileak fitxategia abiarazgarri egin badu bakarrik aktibatuko da.</para>
+
+      <para>Kontutan izan ere <literal>application/x-executable</literal> eta <literal>application/x-shellscript</literal>  motentzat, fitxategi mota ez dela zehazki mota hauetako izan behar, baina aski da atzemandako motak goian zerrendaturiko bi motako baten azpi mota  bat bada, edo MIME-mota bi horien ezizen bat bada.</para>
+    </sect3>
+
+    <sect3 id="faq-metadata">
+      <title>Non gordetzen ditu Thunar-ek fitxategiekin loturiko metadatak?</title>
+
+      <para>Thunar-ek fitxategi/karpetekin zenbait ezarpen batzen ditu, honi metadata deitzen diogu. Fitxategi guztien metadata hau metafile izeneko tbd datubase batetan gordetzen dira. Datubase hau <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename>-en gordetzen da eta Thunar banaketaren zati den (<filename role="directory">tdb/</filename> azpidirektorioan kokatzen da)<command>tdbtool</command> erabiliaz ikusi daiteke.</para>
+    </sect3>
+
+    <sect3 id="faq-thunarrc">
+      <title>Non gordetzen ditu Thunar-ek bere hobespenak?</title>
+
+      <para>Thunar-ek erabiltzaileak konfiguratu ditzaken ezarpenak (eta ezkutatze ezarpenak) <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename> karpetako <filename>.ini</filename> fitxategi batetan gordetzen ditu eta testu editore bat erabiliaz ikusi daitezke. Irakurri <filename>docs/README.thunarrc</filename> hobespen ezberdinen ikuspegi bat eskuratzeko.</para>
+    </sect3>
+
+    <sect3 id="faq-mouse-gestures">
+      <title>Nola erabili sagu keinuak Thunar-en?</title>
+
+      <para>Thunar-en oinarrizko ezaugarriek <emphasis>sagu keinuak</emphasis> deitzen ditugunak onartzen ditu ikono ikuspegian. <emphasis>Sagu keinu</emphasis> hauek erabiltzeko saguaren markadorean ikono ikuspegiaren atzealdean (testu edo ikono bat ez dagoen edozein eremu) saguaren erdiko botoia (arruntean errubera) sakatua mantendu. Orain sagua mugitu dezakezu lau norabideetan behean zehazten diren zenbait ekintza egiteko.</para>
+
+      <simplelist>
+        <member><guilabel>Ezker</guilabel> aurretik ikusitako karpeta irekitzen du</member>
+        <member><guilabel>Gora</guilabel> -guraso karpeta irekitzen du</member>
+        <member><guilabel>Eskuinera</guilabel> - hurrengo ikusitako karpeta ireki</member>
+        <member><guilabel>Behera</guilabel> - uneko karpeta freskatu</member>
+      </simplelist>
+    </sect3>
+
+    <sect3 id="faq-assign-keyboard-shortcuts">
+      <title>Nola ezarri ditzaket lastertekla ezberdinak?</title>
+
+      <para>Lastertekla bat berrezarri nahiaz gero, Thunar-ek lasterteklak aldatzeko GTK+ modu estandarra onartzen du: sinpleki menu aukeraren gainean ipini sagu markatzailea eta sakatu berrezarri nahi duzun lastertekla.</para>
+
+      <para>Teklatu ezarpen bat ezabatu nahiaz gero, sakatu <keycap>atzera-tekla</keycap> menu sarreran zaudenean.</para>
+
+      <para>Lastertekla ez balitz aldatuko, ezaugarri hau gaitu beharko duzu GTK+ -en. Hau hiru modu ezberdinetan egin daiteke:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Xfce 4.3 edo berriago bat erabiltzen ari bazara <guilabel>Erabiltzaile Interfaze Hobespenetan</guilabel> <guilabel>Menu azeleradore editagarriak</guilabel> gaitu behar dituzu.</para>
+        </listitem>
+
+        <listitem>
+          <para>Baldin eta GNOME erabiltzen baduzu <guilabel> Menu eta tersnabarra</guilabel> kontrol gune elkarrizketan <guilabel>Menu azeleradore editagarriak</guilabel> gaitu ditzakezu.</para>
+        </listitem>
+
+        <listitem>
+          <para>Bestela ipini hurrengo hau zure <filename>~/.gtkrc-2.0</filename> fitxategian (sortu ez balego):<screen>gtk-can-change-accels=1</screen></para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3 id="faq-store-keyboard-shortcuts">
+      <title>Non gordetzen ditu Thunar-ek teklatu laster-markak?</title>
+
+      <para>Laster tekla pertsonalizatuak GTK+ azelearadore mapa formatu estandarrean <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename> fitxategian gordetzen dira. <literal>;</literal>-ez hasten diren lerroak iruzkinak dira. Ikusi GTK+ dokumentazioa fitxategi formatuari buruzko xehetasunentzat.</para>
+
+      <para>Pakete sortzailea edo sistema kudeatzailea izan eta Thunar-en lehenetsiriko laster teklak ez diren beste batzuk erabili nahi izanez gero, <filename>Thunar/accels.scm</filename> fitxategia sortu dezakezu <envar>$XDG_CONFIG_DIRS</envar>-etako batetan. Adibidez, <filename role="directory">/etc/xdg</filename> direktorioa <envar>$XDG_CONFIG_DIRS</envar> zati bat da (lehenetsia banaketa gehienetan, sistema guztirako laster teklak <filename>/etc/xdg/Thunar/accels.scm</filename> fitxategian ezarri ditzakezu. Thunar-ek abiaraztean laster teklak fitxategi horretatik irakurriko ditu.</para>
+    </sect3>
+  </sect1>
+
+
+  <sect1 id="support">
+    <title>Lagundu</title>
+
+    <para>Aplikazio hau edo manual honi buruzko arazo baten berri eman edo gomendio bat egiteko <ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink>  arazo kudeaketa sistema erabili. Gogoratu arazo erreporte on bat konponbidea duena dela, beraz arazo erreporte on batek bi kualitate ditu:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">Errepikagarria.</emphasis> Garatzaileak ezin badu arazoa benetan dagoela ikusteko berau bere sisteman errepikatu, ziurrenik ez da arazo hori konpontzeko gai izango. Eman dezakezun edozein xehetasun erabilgarria izan daiteke.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">Zehatza.</emphasis> Garatzaileak arazoa eremu jakin batetan kokatzea errazteko, horrela ziurrenik konpontzeko gai izango da.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Ezaugarri berri bat eskatu nahi izanez gero, mesedez argi utzi zergatik zure ustez aplikaziora gehitu behar den. Gehitzeko eskatzean argumentu onak erabiliaz gero errazagoa izango da aurrerantzean ezaugarri hori gehitzea. Errazagoa izango da ere eskatutako ezaugarria gehitzen duen adabakia bidaltzen baduzu, baina ziurtatu zaitez <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> dokumentua irakurri duzula bereiziki <emphasis>Kodeketa Estiloa</emphasis> atala - kodea hobetzen hasi aurretik.</para>
+
+    <para>Bestela, software hau instalatzeko edo erabiltzeko zalantzak izanez gero mesedez galde itzazu <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-devposta zerrendan</ulink> edo joan IRC bezeroan bitarteaz <emphasis role="bold">irc.freenode.net</emphasis> sareko <emphasis role="bold">#thunar</emphasis> gelara eta laguntza eskatu.</para>
+  </sect1>
+
+  <sect1 id="copyright">
+    <title>@PACKAGE_NAME@ -ri buruz</title>
+
+    <para>@PACKAGE_NAME@ Benedikt Meurer-ek (<email>benny@xfce.org</email>) idatzia izan da. <ulink url="http://thunar.xfce.org/" type="http">Thunar webgunea</ulink> begiratu argibide gehiagorako.</para>
+
+    <para>Dokumentazio hau  Benedikt Meurer-ek (<email>benny@xfce.org</email>) idatzia da. Dokumentu honen azken bertsioa beti<ulink type="http" url="http://thunar.xfce.org/">Thunar webgunean</ulink> dago eskuragarri.</para>
+
+    <para>Software hau Free Software Foundation-ek kaleratutako GNU Lizentzia Publiko Orokorraren baldintzetan zabaltzen da bai Lizentziaren 2 bertsioan, edo (zure aukeran) berriago den edozeinetan.</para>
+
+    <para>Programa honekin batera GNU Lizentzia Publiko Orokorraren kopia bat jasoko zenuen; hala ez bada, idatzi hona: Free SoftwareFoundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
+  </sect1>
+
+</article>
+<!--
+	vim:set ts=2 sw=2 et ai:
+-->
