@@ -330,7 +330,7 @@ typedef struct
 
 static guint
 tvtj_exif_get_ushort (const TvtjExif *exif,
-                      const gchar    *data)
+                      gconstpointer   data)
 {
   if (G_UNLIKELY (exif->big_endian))
     return GUINT16_FROM_BE (*((const guint16 *) data));
@@ -342,7 +342,7 @@ tvtj_exif_get_ushort (const TvtjExif *exif,
 
 static guint
 tvtj_exif_get_ulong (const TvtjExif *exif,
-                     const gchar    *data)
+                     gconstpointer   data)
 {
   if (G_UNLIKELY (exif->big_endian))
     return GUINT32_FROM_BE (*((const guint32 *) data));
