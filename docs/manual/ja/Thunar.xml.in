@@ -57,6 +57,328 @@
   </sect1>
 
 
+  <sect1 id="the-file-manager-window">
+    <title>The File Manager Window</title>
+
+    <para>
+      By default the file manager window consists of a shortcut pane on the left side, the main area on the right
+      and a pathbar above the main area.
+    </para>
+
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/file-manager-window.png" format="PNG"/>
+        </imageobject>
+
+        <textobject>
+          <phrase>File Manager Window</phrase>
+        </textobject>
+      </mediaobject>
+    </screenshot>
+
+    <para>
+      The <guilabel>Shortcut Pane</guilabel> provides shortcuts to different folders on your system. The first
+      shortcut will lead to your <emphasis>Home Folder</emphasis>, the folder you store all your personal data,
+      and will therefore have the name of the current user. The second shortcut will take you to the trash bin,
+      which stores deleted files that can be recovered later. The third shortcut takes you to the <emphasis>Desktop
+      Folder</emphasis>, which contains the files and folders that are displayed on the desktop. The fourth
+      shortcut will take you to the root of your file system - you may want to explore it a bit, even though
+      it may be confusing to you if you are new to Linux/Unix. Just click on the different folders and see what is
+      inside.
+    </para>
+
+    <para>
+      Below the <emphasis>File System</emphasis> shortcut, the removable drives and media will be displayed. In
+      the screenshot above, you can see a <guilabel>Floppy Drive</guilabel> shortcut. Click on these shortcuts
+      to access the data stored on the removable drives and media. See <xref linkend="using-removable-media"/>
+      for further details.
+    </para>
+
+    <para>
+      The remaining shortcuts are user defined. Add your own shortcuts by simply dragging folders to the
+      <guilabel>Shortcuts Pane</guilabel>. This will allow you to access important folders instantly. To
+      remove a previously added shortcut, right-click on the shortcut and choose <guimenuitem>Remove Shortcut</guimenuitem>.
+      To rename a previously added shortcut, right-click on the shortcut and choose <guimenuitem>Rename Shortcut</guimenuitem>.
+      Note that these actions affect only the shortcut, not the folder referenced by the shortcuts.
+    </para>
+
+    <para>
+      The <emphasis>main area</emphasis> will always display the contents of the current folder. Double click on
+      folders to enter them, and right-click on files or folders to get a context-menu offering some choices of
+      what to do with it. Select multiple files by dragging a rectangle over them with the mouse. Alternatively,
+      select one file, hold down the <keycap>Shift</keycap> key, and increase or decrease the selection using
+      the arrow keys.
+    </para>
+
+    <para>
+      The <emphasis>pathbar</emphasis> will always show the path you took to get to the folder you are currently
+      at. You can click on any pathbar button to change to the folder it represents. Right-click on a pathbar
+      button to bring up a context-menu with some options.
+    </para>
+
+
+    <sect2 id="customizing-the-appearance">
+      <title>Customizing the Appearance</title>
+
+      <para>
+        There are many ways to customize the appearance of the file manager windows. In case you do not like the
+        way the icons are displayed, choose <menuchoice><guimenu>View</guimenu><guimenuitem>View as Detailed List</guimenuitem></menuchoice>
+        from the main menu to have the contents of the current folder displayed as a list.
+      </para>
+
+      <para>
+        You can have the file manager windows display a location bar instead of the pathbar by choosing
+        <menuchoice><guimenu>View</guimenu><guimenuitem>Location Selector</guimenuitem><guimenuitem>Toolbar Style</guimenuitem></menuchoice>
+        from the main menu.
+      </para>
+
+      <para>
+        In case you prefer a treeview in the left pane, choose
+        <menuchoice><guimenu>View</guimenu><guimenuitem>Side Pane</guimenuitem><guimenuitem>Tree</guimenuitem></menuchoice>
+        from the main menu.
+      </para>
+
+      <sect3 id="visible-columns-in-the-detailed-list-view">
+        <title>Visible Columns in the Detailed List View</title>
+
+        <para>
+          If you prefer to display the contents of the folder as a list, using the <guilabel>Detailed List View</guilabel>, you can
+          customize the columns displayed in the list view. To customize the visible columns, choose
+          <menuchoice><guimenu>View</guimenu><guimenuitem>Configure Columns...</guimenuitem></menuchoice> from the main menu.
+        </para>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/visible-columns.png" format="PNG"/>
+            </imageobject>
+
+            <textobject>
+              <phrase>Visible Columns</phrase>
+            </textobject>
+          </mediaobject>
+        </screenshot>
+
+        <variablelist>
+          <varlistentry>
+            <term><guilabel>Visible Columns</guilabel></term>
+            <listitem>
+              <para>
+                Select the columns you want to be displayed from the list of available columns. Click <guibutton>Move Up</guibutton>
+                or <guibutton>Move Down</guibutton> to change the order of the columns. Click <guibutton>Use Default</guibutton> to
+                revert your changes.
+              </para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><guilabel>Column Sizing</guilabel></term>
+            <listitem>
+              <para>
+                Select the option <guibutton>Automatically expand columns as needed</guibutton> if you want the list view columns
+                to expand automatically if the needed to ensure the text is fully visible.
+              </para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="working-with-files-and-folders">
+    <title>Working with Files and Folders</title>
+
+
+    <sect2 id="opening-files">
+      <title>Opening Files</title>
+
+      <para>
+        When you open a file, the file manager performs the default action for that file type. For example, opening a text file
+        will display it in the default text editor, while opening an image file will display the image in the default image
+        viewer.
+      </para>
+
+      <para>
+        The file manager checks the extension of a file to determine the type of a file. If the file has no known extension, the
+        file manager examines the contents of the file.
+      </para>
+
+      <sect3 id="executing-the-default-action">
+        <title>Executing the Default Action</title>
+
+        <para>
+          To execute the default for a file, double-click on the file. For example, the default action for audio files is to
+          play the it with the default music playing application. In this case, you can double-click on the file to open the
+          file in the music player.
+        </para>
+
+        <para>
+          You can set <application>Thunar</application> preferences so that you click once on a file to execute the default
+          action. For information, see <xref linkend="preferences-behavior"/>.
+        </para>
+      </sect3>
+
+      <sect3 id="executing-non-default-actions">
+        <title>Executing Non-Default Actions</title>
+
+        <para>
+          To execute actions other than the default action for a file, select the file that you want to perform an action on.
+          Choose the desired action from the <emphasis>Open With</emphasis> choices available in <guimenu>File</guimenu> menu
+          or an <guimenu>Open With</guimenu> submenu.
+        </para>
+      </sect3>
+
+      <sect3 id="adding-actions">
+        <title>Adding Actions</title>
+
+        <para>
+          To add actions associated with a file type, perform the following steps:
+        </para>
+
+        <orderedlist>
+          <listitem>
+            <para>
+              In the main area, select a file of the type to which you want to add an action.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Choose <menuchoice><guimenu>File</guimenu><guimenuitem>Open With Other Application...</guimenuitem></menuchoice>
+              from the main menu.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Either choose an application in the <guilabel>Open With</guilabel> dialog or select <guibutton>Use a custom command</guibutton>
+              and browse to the program with which you wish to open this type.
+            </para>
+          </listitem>
+        </orderedlist>
+
+        <para>
+          The action you have chosen is now added to the list of actions for that particular file type. If you enabled the
+          <guibutton>Use as default for this kind of file</guibutton> option or there was no prior action associated with the
+          type, the newly added action is the default.
+        </para>
+
+        <para>
+          You may also add actions using the <guibutton>Open With</guibutton> button under
+          <menuchoice><guimenu>File</guimenu><guimenuitem>Properties...</guimenuitem></menuchoice>.
+        </para>
+      </sect3>
+
+      <sect3 id="modifiying-actions">
+        <title>Modifying Actions</title>
+
+        <para>
+          To modify the actions associated with a file or file type, perform the following steps:
+        </para>
+
+        <orderedlist>
+          <listitem>
+            <para>
+              In the main area, select a file of the type for which you want to modify the action.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Choose <menuchoice><guimenu>File</guimenu><guimenuitem>Properties...</guimenuitem></menuchoice> from the main menu.
+            </para>
+          </listitem>
+          <listitem>
+            <para>
+              Select the new default action using the <guilabel>Open With</guilabel> button or add a new action by choosing
+              <guimenuitem>Open With Other Application...</guimenuitem> from the drop down menu.
+            </para>
+          </listitem>
+        </orderedlist>
+
+        <para>
+          To remove a previously added action for a file type, bring up the <guilabel>Open With</guilabel> dialog as described
+          above, right-click the action you want to remove and choose <guimenuitem>Remove Launcher</guimenuitem>.
+        </para>
+      </sect3>
+    </sect2>
+
+
+    <sect2 id="file-properties">
+      <title>File Properties</title>
+
+      <para>
+        The file properties window shows more information about any file or folder in the file manager. With this window, you can also
+        do the following:
+      </para>
+
+      <itemizedlist>
+        <listitem>
+          <para>
+            Change the icon for special files, such as application launchers and URL links.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Add or remove emblems for a file or folder.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Change the UNIX file permissions for a file or folder.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Choose which application is used to open a file and other files of the same type.
+          </para>
+        </listitem>
+      </itemizedlist>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/file-properties.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>File Properties</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>
+        To open the file properties window, perform the following steps:
+      </para>
+
+      <orderedlist>
+        <listitem>
+          <para>
+            Select the file or folder whose properties you want to examine or change. You cannot
+            select multiple items at once and display the properties that are in common to all
+            items currently.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Do one of the following:
+            <itemizedlist>
+              <listitem>
+                <para>Choose <menuchoice><guimenu>File</guimenu><guimenuitem>Properties...</guimenuitem></menuchoice> from the main menu.</para>
+              </listitem>
+              <listitem>
+                <para>Right-click the selected item and choose <guimenuitem>Properties...</guimenuitem> from the context menu.</para>
+              </listitem>
+              <listitem>
+                <para>Press <keycombo><keycap>Alt</keycap><keycap>Return</keycap></keycombo>.</para>
+              </listitem>
+            </itemizedlist>
+          </para>
+        </listitem>
+      </orderedlist>
+    </sect2>
+  </sect1>
+
+
   <sect1 id="using-removable-media">
     <title>Using Removable Media</title>
 
@@ -86,7 +408,7 @@
 
         <para>
           To actually mount the media, click on the object that represents the media. For example, to mount a floppy diskette,
-          click on the <guilabel>Floppy Disk</guilabel> object in the side pane. The file manager will now add the file system
+          click on the <guilabel>Floppy Drive</guilabel> object in the side pane. The file manager will now add the file system
           of the media to your file system hierarchy and display the contents of the floppy diskette in the main area.
         </para>
       </sect3>
@@ -312,21 +634,25 @@
 
         <orderedlist>
           <listitem>
-            Make sure <application>Thunar</application> is running as daemon. The volume manager depends
-            on this, as it is not a daemon by itself. By default, Xfce
-            automatically spawns <application>Thunar</application> as daemon on startup. If it got killed
-            for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut
-            <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop
-            and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar
-            --daemon</literal> and click <guibutton>Run</guibutton>.
+            <para>
+              Make sure <application>Thunar</application> is running as daemon. The volume manager depends
+              on this, as it is not a daemon by itself. By default, Xfce
+              automatically spawns <application>Thunar</application> as daemon on startup. If it got killed
+              for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut
+              <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop
+              and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar
+              --daemon</literal> and click <guibutton>Run</guibutton>.
+            </para>
           </listitem>
 
           <listitem>
-            Try running <application>thunar-volman</application> from a <application>Terminal</application>
-            window after hot-plugging the drive or inserting the media. First, you need to figure out the
-            HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>.
-            Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in
-            a <application>Terminal</application> window and watch the output for errors or warnings.
+            <para>
+              Try running <application>thunar-volman</application> from a <application>Terminal</application>
+              window after hot-plugging the drive or inserting the media. First, you need to figure out the
+              HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>.
+              Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in
+              a <application>Terminal</application> window and watch the output for errors or warnings.
+            </para>
           </listitem>
         </orderedlist>
 
@@ -340,8 +666,347 @@
   </sect1>
 
 
+  <sect1 id="preferences">
+    <title>File Management Preferences</title>
+
+    <para>
+      Use the <guilabel>File Manager Preferences</guilabel> dialog to set your <application>Thunar</application> file manager
+      preferences. To open the preferences dialog, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences...</guimenuitem></menuchoice>
+      from the menu bar, or click on the <guibutton>File Manager</guibutton> button in the Xfce Settings Manager.
+    </para>
+
+    <para>
+      The <guilabel>File Manager Preferences</guilabel> dialog is divided into four pages with different options, each described in
+      a separate section below. Basically you can set preferences in the following categories:
+    </para>
+
+    <itemizedlist>
+      <listitem><para>The default settings for the views.</para></listitem>
+      <listitem><para>The default settings for the side pane.</para></listitem>
+      <listitem><para>The behavior of the file manager windows.</para></listitem>
+      <listitem><para>Advanced features of the file manager.</para></listitem>
+    </itemizedlist>
+
+    <para>
+      Thunar also supports a bunch of so-called <emphasis>Hidden Options</emphasis>, which control several advanced features of the
+      file manager, but are not included in the preferences in order to keep the preferences dialog simple. The <ulink type="http" url="http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc"><filename>README.thunarrc</filename></ulink> file that
+      is included with the Thunar distribution describes all available options in detail.
+    </para>
+
+
+    <sect2 id="preferences-views">
+      <title>Views Preferences</title>
+
+      <para>
+        You can specify a default view, select sort options and display options. You can
+        also specify whether thumbnails should be displayed for file types that support
+        this.
+      </para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-views.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Views Preferences</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>View new folder using</guilabel></term>
+          <listitem>
+            <para>
+              Select the default view for folders. When you open a new window, the is displayed
+              in the view that you select. This can be either the icon view, the compact list view
+              or the detailed list view. You can also select <guilabel>Last Active View</guilabel>
+              here to use the view you used for the last active window.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Sort folders before files</guilabel></term>
+          <listitem>
+            <para>
+              Select this option to list folders before files when you sort a folder.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Show thumbnails</guilabel></term>
+          <listitem>
+            <para>
+              Select this option to show thumbnails of image files and other supported files. The
+              file manager stores the thumbnail files for each folder in the hidden <filename role="directory">.thumbnails</filename> directory in the user's Home Folder.
+            </para>
+            <para>
+              See <xref linkend="thumbnailers"/> if you want to extend the basic
+              thumbnail functionality provided by <application>Thunar</application> with support
+              for additional file types.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Text beside icons</guilabel></term>
+          <listitem>
+            <para>
+              Select this options to place the icon captions for items in the icon view beside the
+              icon rather than under the icon.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-side-pane">
+      <title>Side Pane Preferences</title>
+
+      <para>
+        You can select display options for the shortcuts pane and the tree pane.
+      </para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-side-pane.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Side Pane Preferences</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>
+        The side pane can either display a list of shortcuts for folders in your file system, which
+        is the default, or a tree view of your file system. This page allows you to select the size
+        of the icons for the shortcuts and the tree pane. You can also specify whether emblems should
+        be displayed.
+      </para>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Icon Size</guilabel></term>
+          <listitem>
+            <para>
+              The size of the icons displayed in the side, ranging from <guilabel>Very Small</guilabel> (around
+              16x16 pixels) to <guilabel>Very Large</guilabel> (around 128x128 pixels).
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Show Icon Emblems</guilabel></term>
+          <listitem>
+            <para>
+              Select this option to display emblems for folders in the side pane. You can assign emblems to
+              folders in the <guilabel>Properties</guilabel> dialog. Select a folder in the main area and
+              choose <menuchoice><guimenu>File</guimenu><guimenuitem>Properties...</guimenuitem></menuchoice>
+              from the main menu, or right-click the folder and select <menuchoice><guimenuitem>Properties...</guimenuitem></menuchoice>
+              from the context menu.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-behavior">
+      <title>Behavior Preferences</title>
+
+      <para>
+        You can select the preferred behavior to interact with the file manager.
+      </para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-behavior.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Behavior Preferences</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Single click to active items</guilabel></term>
+          <listitem>
+            <para>
+              Select this option to perform the default action for an item when you
+              click on the item. When this option is selected, and you point to an
+              item, the title of the item is underlined and the item will be
+              selected automatically after a short delay.
+            </para>
+            <para>
+              This delay can be configured below the option. You can also disable the
+              automatic selection of items by moving the selector to the left-most
+              position.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Double click to activate items</guilabel></term>
+          <listitem>
+            <para>
+              Select this option to perform the default action for an item when you
+              double click on the item, and select the item with a single click.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-advanced">
+      <title>Advanced Preferences</title>
+
+      <para>
+        You can control advanced features of the file manager.
+      </para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-advanced.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Advanced Preferences</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Folder Permissions</guilabel></term>
+          <listitem>
+            <para>
+              Choose the action that should be performed when you change the permissions of a folder in
+              the <guilabel>Properties</guilabel> dialog. You can choose to let <application>Thunar</application>
+              ask everytime when you change folder permissions, tell it to default to applying the new permissions
+              to the folder only or to apply them recursively to the folder contents as well.
+            </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Volume Management</guilabel></term>
+          <listitem>
+            <para>
+              If <application>Thunar</application> was installed with support for HAL and the <application>thunar-volman</application>
+              package is also installed, you can enable the integrated volume manager. See <xref linkend="management-of-removable-drives-and-media"/>
+              for details about this feature.
+            </para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+  </sect1>
+
+
   <sect1 id="customizing-thunar">
     <title>Customizing Thunar</title>
+
+    <para>
+      This chapter describes how to customize certain parts of the file manager to your own needs.
+    </para>
+
+
+    <sect2 id="sendto">
+      <title>The "Send To" Menu</title>
+
+      <para>
+        Thunar includes a <guilabel>Send To</guilabel> menu, which provides possible targets where files and folders can
+        be sent to. To access the <guilabel>Send To</guilabel> menu, choose
+        <menuchoice><guimenu>File</guimenu><guimenuitem>Send To</guimenuitem></menuchoice> from the main menu, or right-click
+        on a file or folder and choose <menuchoice><guimenuitem>Send To</guimenuitem></menuchoice>.
+      </para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/sendto-menu.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>"Send To" Menu</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>
+        By default, the <guilabel>Send To</guilabel> menu includes an entry named <guilabel>Desktop (Create Link)</guilabel> for all
+        files and folders, which simply creates a link on the desktop for each selected file. In addition, if the <guilabel>Shortcuts
+        Pane</guilabel> is active, the menu also includes an entry called <guilabel>Side Pane (Create Shortcut)</guilabel> for folders,
+        which allows users to add new shortcuts to the side pane. Following these entries, <application>Thunar</application> lists
+        the removable drives currently plugged into the computer. In the screenshot above, the <guilabel>Floppy Drive</guilabel>
+        represents a possible target where files can be sent to. Note that the device is mounted automatically once selected from
+        the <guilabel>Send To</guilabel> menu, so you do not need to manually mount it.
+      </para>
+
+      <para>
+        In addition <application>Thunar</application> also ships the <application>thunar-sendto-email</application> plugin, which adds
+        the entry <guilabel>Mail Recipient</guilabel> to the menu, that opens the mail composer with the selected files attach to the
+        new email. If the selection contains atleast one folder, the selected items are added to a ZIP archive before attaching them
+        to the email. Otherwise, if the selection contains multiple files, or a single file, which is larger than 200Kib, the user will
+        be prompted whether to pack the files into a ZIP archive, and send the ZIP archive.
+      </para>
+
+      <para>
+        Like most other features of <application>Thunar</application>, the <guilabel>Send to</guilabel> menu can be easily extended
+        by users and application developers with new targets, using standard <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink>. These files must be
+        installed into one of the <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> folders (see the <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> for details about the
+        <literal>$XDG_DATA_DIRS</literal> variable).
+      </para>
+
+      <para>
+        The <literal>MimeType</literal> of the target <filename>.desktop</filename> specifies the types of files for which this action
+        should be available in the <guilabel>Send To</guilabel> menu. For example, say you want to add entry for a <ulink type="http" url="http://flickr.com/">Flickr</ulink> uploader tool, then this entry should only show up if the selection contains JPEG
+        files (other file formats are not supported by Flickr) and so you should add a line <literal>MimeType=image/jpeg;</literal>.
+        If you do not specify any <literal>MimeType</literal> your entry will show up for all file types.
+      </para>
+
+      <para>
+        A complete example using the <application>postr</application> application is shown below:
+      </para>
+
+<programlisting>
+# postr.desktop - Integrate postr into
+#                 the "Send To" menu.
+[Desktop Entry]
+Type=Application
+Version=1.0
+Encoding=UTF-8
+TryExec=postr
+Exec=postr %F
+Icon=postr
+Name=Flickr
+MimeType=image/jpeg;</programlisting>
+
+      <para>
+        If you install this file to <filename role="directory">~/.local/share/Thunar/sendto/</filename> (create the folder if
+        it does not exist yet), the <guilabel>Send To</guilabel> menu for JPEG files will show the new entry <guilabel>Flickr</guilabel>,
+        which can be used to upload JPEG images to Flickr.
+      </para>
+
+      <para>
+        The <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/sendto_menu">Thunar Project Wiki</ulink> contains
+        additional examples of useful targets for the <guilabel>Send To</guilabel> menu. Feel free to extend the Wiki page with
+        new examples.
+      </para>
+    </sect2>
+
 
     <sect2 id="thumbnailers">
       <title>Thumbnailers</title>
@@ -565,6 +1230,53 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
   <sect1 id="advanced-topics">
     <title>高度な話題</title>
 
+
+    <sect2 id="to-bulk-rename-files">
+      <title>To Bulk Rename Files</title>
+
+      <para>
+        To <emphasis>bulk rename</emphasis> files means to rename multiple files at once using some criterion, that applies to atleast
+        one of the files. <application>Thunar</application> includes a bulk renamer, which can be run separately using the command
+        <command>Thunar -B</command> or from within <application>Thunar</application> by selecting two or more files in the main area
+        and pressing <keycombo><keycap>F2</keycap></keycombo> or choosing
+        <menuchoice><guimenu>Edit</guimenu><guimenuitem>Rename...</guimenuitem></menuchoice> from the main menu.
+      </para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/bulk-rename.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Bulk Rename Files</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>
+        The <emphasis>Bulk Renamers</emphasis> can be applied to the name of the files, the suffix of the files or both to the
+        name and the suffix of the files. <application>Thunar</application> currently supports the following <emphasis>Bulk
+        Renamers</emphasis>:
+      </para>
+
+      <itemizedlist>
+        <listitem><para>Remove characters.</para></listitem>
+        <listitem><para>Numbering files.</para></listitem>
+        <listitem><para>Insert or overwrite characters.</para></listitem>
+        <listitem><para>Search and replace characters.</para></listitem>
+        <listitem><para>Convert to uppercase, lowercase or camlcase.</para></listitem>
+      </itemizedlist>
+
+      <para>
+        Additional <emphasis>Bulk Renamers</emphasis> may be installed as plugins for <application>Thunar</application>. Check
+        the <ulink type="http" url="http://thunar.xfce.org/plugins.html">Thunar Plugins</ulink> website for currently available
+        extensions. The <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/bulk_renamer">Thunar Project Wiki</ulink>
+        contains further details about this feature. Feel free to add more information to the Wiki.
+      </para>
+    </sect2>
+
+
     <sect2 id="the-unix-file-system">
       <title>UNIX ファイルシステム</title>
 
@@ -720,5 +1432,5 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
 
 </article>
 <!--
-	vim:set ts=2 sw=2 et ai:
+	vim:set ts=2 sw=2 et ai encoding=UTF-8:
 -->

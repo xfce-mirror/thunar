@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -23,6 +23,7 @@
 
 #include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-column-editor.h>
+#include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences.h>
@@ -33,6 +34,8 @@
 static void thunar_column_editor_class_init         (ThunarColumnEditorClass  *klass);
 static void thunar_column_editor_init               (ThunarColumnEditor       *column_editor);
 static void thunar_column_editor_finalize           (GObject                  *object);
+static void thunar_column_editor_help_clicked       (GtkWidget                *button,
+                                                     ThunarColumnEditor       *column_editor);
 static void thunar_column_editor_move_down          (GtkWidget                *button,
                                                      ThunarColumnEditor       *column_editor);
 static void thunar_column_editor_move_up            (GtkWidget                *button,
@@ -144,12 +147,18 @@ thunar_column_editor_init (ThunarColumnEditor *column_editor)
                          column_editor, NULL, G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
   /* setup the dialog */
-  gtk_dialog_add_button (GTK_DIALOG (column_editor), GTK_STOCK_HELP, GTK_RESPONSE_HELP);
   gtk_dialog_add_button (GTK_DIALOG (column_editor), GTK_STOCK_CLOSE, GTK_RESPONSE_CLOSE);
   gtk_dialog_set_default_response (GTK_DIALOG (column_editor), GTK_RESPONSE_CLOSE);
   gtk_dialog_set_has_separator (GTK_DIALOG (column_editor), FALSE);
   gtk_window_set_resizable (GTK_WINDOW (column_editor), FALSE);
   gtk_window_set_title (GTK_WINDOW (column_editor), _("Configure Columns in the Detailed List View"));
+
+  /* add the "Help" button */
+  button = gtk_button_new_from_stock (GTK_STOCK_HELP);
+  g_signal_connect (G_OBJECT (button), "clicked", G_CALLBACK (thunar_column_editor_help_clicked), column_editor);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (column_editor)->action_area), button, FALSE, FALSE, 0);
+  gtk_button_box_set_child_secondary (GTK_BUTTON_BOX (GTK_DIALOG (column_editor)->action_area), button, TRUE);
+  gtk_widget_show (button);
 
   vbox = gtk_vbox_new (FALSE, 6);
   gtk_container_set_border_width (GTK_CONTAINER (vbox), 6);
@@ -315,6 +324,19 @@ thunar_column_editor_finalize (GObject *object)
   g_object_unref (G_OBJECT (column_editor->preferences));
 
   (*G_OBJECT_CLASS (thunar_column_editor_parent_class)->finalize) (object);
+}
+
+
+
+static void
+thunar_column_editor_help_clicked (GtkWidget          *button,
+                                   ThunarColumnEditor *column_editor)
+{
+  _thunar_return_if_fail (THUNAR_IS_COLUMN_EDITOR (column_editor));
+  _thunar_return_if_fail (GTK_IS_BUTTON (button));
+
+  /* open the user manual */
+  thunar_dialogs_show_help (column_editor, "the-file-manager-window", "visible-columns-in-the-detailed-list-view");
 }
 
 

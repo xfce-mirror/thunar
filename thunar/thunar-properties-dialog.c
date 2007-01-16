@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -605,6 +605,10 @@ thunar_properties_dialog_response (GtkDialog *dialog,
   if (response == GTK_RESPONSE_CLOSE)
     {
       gtk_widget_destroy (GTK_WIDGET (dialog));
+    }
+  else if (response == GTK_RESPONSE_HELP)
+    {
+      thunar_dialogs_show_help (dialog, "working-with-files-and-folders", "file-properties");
     }
   else if (GTK_DIALOG_CLASS (thunar_properties_dialog_parent_class)->response != NULL)
     {

@@ -647,10 +647,12 @@ thunar_preferences_dialog_response (GtkDialog *dialog,
 {
   if (G_UNLIKELY (response == GTK_RESPONSE_HELP))
     {
-      // FIXME: Bring up the documentation browser
+      /* open the preferences section of the user manual */
+      thunar_dialogs_show_help (GTK_WIDGET (dialog), "preferences", NULL);
     }
   else
     {
+      /* close the preferences dialog */
       gtk_widget_destroy (GTK_WIDGET (dialog));
     }
 }
