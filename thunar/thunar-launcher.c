@@ -94,6 +94,8 @@ static void          thunar_launcher_action_open_in_new_window  (GtkAction      
                                                                  ThunarLauncher           *launcher);
 static void          thunar_launcher_action_sendto_desktop      (GtkAction                *action,
                                                                  ThunarLauncher           *launcher);
+static void          thunar_launcher_action_sendto_volume       (GtkAction                *action,
+                                                                 ThunarLauncher           *launcher);
 static void          thunar_launcher_widget_destroyed           (ThunarLauncher           *launcher,
                                                                  GtkWidget                *widget);
 static gboolean      thunar_launcher_sendto_idle                (gpointer                  user_data);
@@ -110,24 +112,25 @@ struct _ThunarLauncher
 {
   GObject __parent__;
 
-  ThunarFile        *current_directory;
-  GList             *selected_files;
+  ThunarFile             *current_directory;
+  GList                  *selected_files;
 
-  GtkIconFactory    *icon_factory;
-  GtkActionGroup    *action_group;
-  GtkUIManager      *ui_manager;
-  guint              ui_merge_id;
-  guint              ui_addons_merge_id;
+  GtkIconFactory         *icon_factory;
+  GtkActionGroup         *action_group;
+  GtkUIManager           *ui_manager;
+  guint                   ui_merge_id;
+  guint                   ui_addons_merge_id;
 
-  GtkAction         *action_open;
-  GtkAction         *action_open_with_other;
-  GtkAction         *action_open_in_new_window;
-  GtkAction         *action_open_with_other_in_menu;
+  GtkAction              *action_open;
+  GtkAction              *action_open_with_other;
+  GtkAction              *action_open_in_new_window;
+  GtkAction              *action_open_with_other_in_menu;
 
-  GtkWidget         *widget;
+  GtkWidget              *widget;
 
-  ThunarSendtoModel *sendto_model;
-  gint               sendto_idle_id;
+  ThunarVfsVolumeManager *sendto_volman;
+  ThunarSendtoModel      *sendto_model;
+  gint                    sendto_idle_id;
 };
 
 
@@ -272,7 +275,11 @@ thunar_launcher_init (ThunarLauncher *launcher)
 
   /* setup the "Send To" support */
   launcher->sendto_model = thunar_sendto_model_get_default ();
-  launcher->sendto_idle_id = -1;
+
+  /* the "Send To" menu also displays removable devices from the volume manager */
+  launcher->sendto_volman = thunar_vfs_volume_manager_get_default ();
+  g_signal_connect_swapped (G_OBJECT (launcher->sendto_volman), "volumes-added", G_CALLBACK (thunar_launcher_update), launcher);
+  g_signal_connect_swapped (G_OBJECT (launcher->sendto_volman), "volumes-removed", G_CALLBACK (thunar_launcher_update), launcher);
 }
 
 
@@ -302,7 +309,7 @@ thunar_launcher_finalize (GObject *object)
   ThunarLauncher *launcher = THUNAR_LAUNCHER (object);
 
   /* be sure to cancel the sendto idle source */
-  if (G_UNLIKELY (launcher->sendto_idle_id >= 0))
+  if (G_UNLIKELY (launcher->sendto_idle_id != 0))
     g_source_remove (launcher->sendto_idle_id);
 
   /* drop our custom icon factory for the application/action icons */
@@ -311,6 +318,10 @@ thunar_launcher_finalize (GObject *object)
 
   /* release the reference on the action group */
   g_object_unref (G_OBJECT (launcher->action_group));
+
+  /* disconnect from the volume manager used for the "Send To" menu */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (launcher->sendto_volman), thunar_launcher_update, launcher);
+  g_object_unref (G_OBJECT (launcher->sendto_volman));
 
   /* release the reference on the sendto model */
   g_object_unref (G_OBJECT (launcher->sendto_model));
@@ -477,7 +488,7 @@ thunar_launcher_set_ui_manager (ThunarComponent *component,
       gtk_ui_manager_remove_action_group (launcher->ui_manager, launcher->action_group);
 
       /* unmerge our addons ui controls from the previous UI manager */
-      if (G_LIKELY (launcher->ui_addons_merge_id > 0))
+      if (G_LIKELY (launcher->ui_addons_merge_id != 0))
         {
           gtk_ui_manager_remove_ui (launcher->ui_manager, launcher->ui_addons_merge_id);
           launcher->ui_addons_merge_id = 0;
@@ -735,7 +746,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
     return;
 
   /* drop the previous addons ui controls from the UI manager */
-  if (G_LIKELY (launcher->ui_addons_merge_id > 0))
+  if (G_LIKELY (launcher->ui_addons_merge_id != 0))
     {
       gtk_ui_manager_remove_ui (launcher->ui_manager, launcher->ui_addons_merge_id);
       gtk_ui_manager_ensure_update (launcher->ui_manager);
@@ -1019,7 +1030,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
     }
 
   /* schedule an update of the "Send To" menu */
-  if (G_LIKELY (launcher->sendto_idle_id < 0))
+  if (G_LIKELY (launcher->sendto_idle_id == 0))
     {
       launcher->sendto_idle_id = g_idle_add_full (G_PRIORITY_LOW, thunar_launcher_sendto_idle,
                                                   launcher, thunar_launcher_sendto_idle_destroy);
@@ -1185,6 +1196,50 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
 
 
 static void
+thunar_launcher_action_sendto_volume (GtkAction      *action,
+                                      ThunarLauncher *launcher)
+{
+  ThunarApplication *application;
+  ThunarVfsVolume   *volume;
+  GError            *err = NULL;
+  GList             *paths;
+
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+
+  /* determine the source paths */
+  paths = thunar_file_list_to_path_list (launcher->selected_files);
+  if (G_UNLIKELY (paths == NULL))
+    return;
+
+  /* determine the volume to which to send */
+  volume = g_object_get_qdata (G_OBJECT (action), thunar_launcher_handler_quark);
+  if (G_UNLIKELY (volume == NULL))
+    return;
+
+  /* make sure to mount the volume first, if it's not already mounted */
+  if (!thunar_vfs_volume_is_mounted (volume) &&
+      !thunar_vfs_volume_mount (volume, launcher->widget, &err))
+    {
+      /* tell the user that we were unable to mount the volume, which is required to send files to it */
+      thunar_dialogs_show_error (launcher->widget, err, _("Failed to mount \"%s\""), thunar_vfs_volume_get_name (volume));
+      g_error_free (err);
+    }
+  else
+    {
+      /* copy the files onto the specified volume */
+      application = thunar_application_get ();
+      thunar_application_copy_into (application, launcher->widget, paths, thunar_vfs_volume_get_mount_point (volume), NULL);
+      g_object_unref (G_OBJECT (application));
+    }
+
+  /* cleanup */
+  thunar_vfs_path_list_free (paths);
+}
+
+
+
+static void
 thunar_launcher_widget_destroyed (ThunarLauncher *launcher,
                                   GtkWidget      *widget)
 {
@@ -1208,11 +1263,12 @@ thunar_launcher_sendto_idle (gpointer user_data)
   GtkAction      *action;
   gboolean        linkable = TRUE;
   GList          *handlers;
+  GList          *volumes;
   GList          *lp;
   gchar          *name;
   gchar          *tooltip;
   gint            n_selected_files;
-  gint            n;
+  gint            n = 0;
 
   /* verify that we have an UI manager */
   if (launcher->ui_manager == NULL)
@@ -1250,19 +1306,61 @@ thunar_launcher_sendto_idle (gpointer user_data)
           gtk_action_group_remove_action (launcher->action_group, lp->data);
       g_list_free (handlers);
 
+      /* determine a the default icon theme for handler icon lookups */
+      icon_theme = gtk_icon_theme_get_default ();
+
+      /* allocate a new merge id from the UI manager (if not already done) */
+      if (G_UNLIKELY (launcher->ui_addons_merge_id == 0))
+        launcher->ui_addons_merge_id = gtk_ui_manager_new_merge_id (launcher->ui_manager);
+
+      /* determine the currently active volumes */
+      volumes = thunar_vfs_volume_manager_get_volumes (launcher->sendto_volman);
+      if (G_LIKELY (volumes != NULL))
+        {
+          /* add removable (and writable) drives and media */
+          for (lp = volumes; lp != NULL; lp = lp->next, ++n)
+            {
+              /* skip non-removable or disc media (CD-ROMs aren't writable by Thunar) */
+              if (!thunar_vfs_volume_is_removable (lp->data) || thunar_vfs_volume_is_disc (lp->data))
+                continue;
+
+              /* generate a unique name and tooltip for the volume */
+              label = thunar_vfs_volume_get_name (lp->data);
+              name = g_strdup_printf ("thunar-launcher-sendto%d-%p", n, launcher);
+              tooltip = g_strdup_printf (ngettext ("Send the selected file to \"%s\"",
+                                                   "Send the selected files to \"%s\"",
+                                                   n_selected_files), label);
+
+              /* check if we have an icon for this volume */
+              icon_name = thunar_vfs_volume_lookup_icon_name (lp->data, icon_theme);
+              if (G_LIKELY (icon_name != NULL))
+                thunar_gtk_icon_factory_insert_icon (launcher->icon_factory, name, icon_name);
+
+              /* allocate a new action for the volume */
+              action = gtk_action_new (name, label, tooltip, (icon_name != NULL) ? name : NULL);
+              g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, g_object_ref (G_OBJECT (lp->data)), g_object_unref);
+              g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_sendto_volume), launcher);
+              gtk_action_group_add_action (launcher->action_group, action);
+              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                     "/main-menu/file-menu/sendto-menu/placeholder-sendto-actions",
+                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                     "/file-context-menu/sendto-menu/placeholder-sendto-actions",
+                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+              g_object_unref (G_OBJECT (action));
+
+              /* cleanup */
+              g_free (tooltip);
+              g_free (name);
+            }
+        }
+
       /* determine the sendto handlers for the selected files */
       handlers = thunar_sendto_model_get_matching (launcher->sendto_model, launcher->selected_files);
       if (G_LIKELY (handlers != NULL))
         {
-          /* determine a the default icon theme for handler icon lookups */
-          icon_theme = gtk_icon_theme_get_default ();
-
-          /* allocate a new merge id from the UI manager (if not already done) */
-          if (G_UNLIKELY (launcher->ui_addons_merge_id == 0))
-            launcher->ui_addons_merge_id = gtk_ui_manager_new_merge_id (launcher->ui_manager);
-
           /* add all handlers to the user interface */
-          for (lp = handlers, n = 0; lp != NULL; lp = lp->next, ++n)
+          for (lp = handlers; lp != NULL; lp = lp->next, ++n)
             {
               /* generate a unique name and tooltip for the handler */
               label = thunar_vfs_mime_handler_get_name (lp->data);
@@ -1309,7 +1407,7 @@ thunar_launcher_sendto_idle (gpointer user_data)
 static void
 thunar_launcher_sendto_idle_destroy (gpointer user_data)
 {
-  THUNAR_LAUNCHER (user_data)->sendto_idle_id = -1;
+  THUNAR_LAUNCHER (user_data)->sendto_idle_id = 0;
 }
 
 
