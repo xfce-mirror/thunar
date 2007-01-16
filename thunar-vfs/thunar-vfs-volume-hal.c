@@ -22,8 +22,14 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
 #endif
 
 #include <dbus/dbus-glib-lowlevel.h>
@@ -33,6 +39,7 @@
 #include <exo-hal/exo-hal.h>
 
 #include <thunar-vfs/thunar-vfs-exec.h>
+#include <thunar-vfs/thunar-vfs-marshal.h>
 #include <thunar-vfs/thunar-vfs-private.h>
 #include <thunar-vfs/thunar-vfs-volume-hal.h>
 #include <thunar-vfs/thunar-vfs-volume-private.h>
@@ -609,6 +616,10 @@ static void                thunar_vfs_volume_manager_hal_device_property_modifie
                                                                                    const gchar                    *key,
                                                                                    dbus_bool_t                     is_removed,
                                                                                    dbus_bool_t                     is_added);
+static void                thunar_vfs_volume_manager_hal_device_condition         (LibHalContext                  *context,
+                                                                                   const gchar                    *udi,
+                                                                                   const gchar                    *name,
+                                                                                   const gchar                    *details);
 
 
 
@@ -701,6 +712,27 @@ thunar_vfs_volume_manager_hal_class_init (ThunarVfsVolumeManagerHalClass *klass)
                 g_cclosure_marshal_VOID__STRING,
                 G_TYPE_NONE, 1, G_TYPE_STRING);
 
+  /**
+   * ThunarVfsVolumeManagerHal::device-eject:
+   * @manager_hal : a #ThunarVfsVolumeManagerlHal instance.
+   * @udi         : the UDI of the device.
+   *
+   * Emitted by @manager_hal to let Thunar know that the "Eject"
+   * button was pressed on the device with the @udi.
+   *
+   * This signal is used by Thunar to support volume management.
+   * Since it's special to the HAL backend, no other application
+   * must use this signal, especially no application must assume
+   * that the signal is available on any given #ThunarVfsVolumeManager.
+   **/
+  g_signal_new (I_("device-eject"),
+                G_TYPE_FROM_CLASS (klass),
+                G_SIGNAL_RUN_LAST,
+                0, NULL, NULL,
+                g_cclosure_marshal_VOID__STRING,
+                G_TYPE_NONE, 1,
+                G_TYPE_STRING);
+
   /* initialize exo-hal support */
   if (!exo_hal_init ())
     {
@@ -747,6 +779,7 @@ thunar_vfs_volume_manager_hal_init (ThunarVfsVolumeManagerHal *manager_hal)
   libhal_ctx_set_device_new_capability (manager_hal->context, thunar_vfs_volume_manager_hal_device_new_capability);
   libhal_ctx_set_device_lost_capability (manager_hal->context, thunar_vfs_volume_manager_hal_device_lost_capability);
   libhal_ctx_set_device_property_modified (manager_hal->context, thunar_vfs_volume_manager_hal_device_property_modified);
+  libhal_ctx_set_device_condition (manager_hal->context, thunar_vfs_volume_manager_hal_device_condition);
 
   /* try to initialize the HAL context */
   if (!libhal_ctx_init (manager_hal->context, &error))
@@ -1101,6 +1134,76 @@ thunar_vfs_volume_manager_hal_device_property_modified (LibHalContext *context,
 
   /* update the volume for the device (if any) */
   thunar_vfs_volume_manager_hal_update_volume_by_udi (manager_hal, udi);
+}
+
+
+
+static void
+thunar_vfs_volume_manager_hal_device_condition (LibHalContext *context,
+                                                const gchar   *udi,
+                                                const gchar   *name,
+                                                const gchar   *details)
+{
+  ThunarVfsVolumeManagerHal *manager_hal = libhal_ctx_get_user_data (context);
+  ThunarVfsVolumeHal        *volume_hal;
+  DBusError                  derror;
+  GList                     *volumes = NULL;
+  GList                     *lp;
+  gchar                    **volume_udis;
+  gint                       n_volume_udis;
+  gint                       n;
+
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
+  _thunar_vfs_return_if_fail (manager_hal->context == context);
+
+  /* check if the device should be ejected */
+  if (G_LIKELY (strcmp (name, "EjectPressed") == 0))
+    {
+      /* check if we have a volume for the device */
+      volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);
+      if (G_LIKELY (volume_hal == NULL))
+        {
+          /* initialize D-Bus error */
+          dbus_error_init (&derror);
+
+          /* the UDI most probably identifies the drive of the volume */
+          volume_udis = libhal_manager_find_device_string_match (context, "info.parent", udi, &n_volume_udis, &derror);
+          if (G_LIKELY (volume_udis != NULL))
+            {
+              /* determine the volumes for the UDIs */
+              for (n = 0; n < n_volume_udis; ++n)
+                {
+                  /* check if we have a mounted volume for this UDI */
+                  volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, volume_udis[n]);
+                  if (thunar_vfs_volume_is_mounted (THUNAR_VFS_VOLUME (volume_hal)))
+                    volumes = g_list_prepend (volumes, g_object_ref (G_OBJECT (volume_hal)));
+                }
+              libhal_free_string_array (volume_udis);
+            }
+
+          /* free D-Bus error */
+          dbus_error_free (&derror);
+        }
+      else if (thunar_vfs_volume_is_mounted (THUNAR_VFS_VOLUME (volume_hal)))
+        {
+          volumes = g_list_prepend (volumes, g_object_ref (G_OBJECT (volume_hal)));
+        }
+
+      /* check there are any mounted volumes on the device */
+      if (G_LIKELY (volumes != NULL))
+        {
+          /* tell everybody, that we're about to unmount those volumes */
+          for (lp = volumes; lp != NULL; lp = lp->next)
+            {
+              thunar_vfs_volume_pre_unmount (lp->data);
+              g_object_unref (G_OBJECT (lp->data));
+            }
+          g_list_free (volumes);
+
+          /* emit the "device-eject" signal and let Thunar eject the device */
+          g_signal_emit_by_name (G_OBJECT (manager_hal), "device-eject", udi);
+        }
+    }
 }
 
 

@@ -102,6 +102,9 @@ static void       thunar_application_volman_device_added    (ThunarVfsVolumeMana
 static void       thunar_application_volman_device_removed  (ThunarVfsVolumeManager *volume_manager,
                                                              const gchar            *udi,
                                                              ThunarApplication      *application);
+static void       thunar_application_volman_device_eject    (ThunarVfsVolumeManager *volume_manager,
+                                                             const gchar            *udi,
+                                                             ThunarApplication      *application);
 static gboolean   thunar_application_volman_idle            (gpointer                user_data);
 static void       thunar_application_volman_idle_destroy    (gpointer                user_data);
 static void       thunar_application_volman_watch           (GPid                    pid,
@@ -229,6 +232,7 @@ thunar_application_init (ThunarApplication *application)
       /* connect the volume manager support callbacks (used to spawn thunar-volman appropriately) */
       g_signal_connect (G_OBJECT (application->volman), "device-added", G_CALLBACK (thunar_application_volman_device_added), application);
       g_signal_connect (G_OBJECT (application->volman), "device-removed", G_CALLBACK (thunar_application_volman_device_removed), application);
+      g_signal_connect (G_OBJECT (application->volman), "device-eject", G_CALLBACK (thunar_application_volman_device_eject), application);
     }
 }
 
@@ -586,6 +590,44 @@ thunar_application_volman_device_removed (ThunarVfsVolumeManager *volume_manager
         application->volman_udis = g_slist_delete_link (application->volman_udis, lp);
         break;
       }
+}
+
+
+
+static void
+thunar_application_volman_device_eject (ThunarVfsVolumeManager *volume_manager,
+                                        const gchar            *udi,
+                                        ThunarApplication      *application)
+{
+  GdkScreen *screen;
+  GError    *err = NULL;
+  gchar     *argv[4];
+
+  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  _thunar_return_if_fail (application->volman == volume_manager);
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+
+  /* generate the argument list for exo-eject */
+  argv[0] = (gchar *) "exo-eject";
+  argv[1] = (gchar *) "-h";
+  argv[2] = (gchar *) udi;
+  argv[3] = NULL;
+
+  /* locate the currently active screen (the one with the pointer) */
+  screen = thunar_gdk_screen_get_active ();
+
+  /* try to spawn the volman on the active screen */
+  if (!gdk_spawn_on_screen (screen, NULL, argv, NULL, G_SPAWN_SEARCH_PATH, NULL, NULL, NULL, &err))
+    {
+      /* failed to launch exo-eject, inform the user about this */
+      thunar_dialogs_show_error (screen, err, _("Failed to execute \"%s\""), "exo-eject");
+      g_error_free (err);
+    }
+  else
+    {
+      /* we most probably removed the device */
+      thunar_application_volman_device_removed (volume_manager, udi, application);
+    }
 }
 
 

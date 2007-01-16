@@ -504,7 +504,7 @@ thunar_vfs_volume_eject (ThunarVfsVolume *volume,
   g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
 
   /* we're about to unmount (and eject) the volume */
-  g_signal_emit (G_OBJECT (volume), volume_signals[PRE_UNMOUNT], 0);
+  thunar_vfs_volume_pre_unmount (volume);
 
   /* setup a watch cursor on the window */
   if (window != NULL && GTK_WIDGET_REALIZED (window))
@@ -631,7 +631,7 @@ thunar_vfs_volume_unmount (ThunarVfsVolume *volume,
   g_return_val_if_fail (window == NULL || GTK_IS_WINDOW (window), FALSE);
 
   /* we're about to unmount the volume */
-  g_signal_emit (G_OBJECT (volume), volume_signals[PRE_UNMOUNT], 0);
+  thunar_vfs_volume_pre_unmount (volume);
 
   /* setup a watch cursor on the window */
   if (window != NULL && GTK_WIDGET_REALIZED (window))
@@ -672,7 +672,9 @@ thunar_vfs_volume_unmount (ThunarVfsVolume *volume,
 void
 thunar_vfs_volume_changed (ThunarVfsVolume *volume)
 {
-  g_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+
+  /* emit the "changed" signal */
   g_signal_emit (G_OBJECT (volume), volume_signals[CHANGED], 0);
 
   /* rescan the mount points for the trash subsystem,
@@ -681,6 +683,22 @@ thunar_vfs_volume_changed (ThunarVfsVolume *volume)
   _thunar_vfs_io_trash_rescan_mounts ();
 }
 
+
+
+/**
+ * thunar_vfs_volume_pre_unmount:
+ * @volume :a #ThunarVfsVolume instance.
+ *
+ * Emits the "pre-unmount" signal on the @volume. This function
+ * should only be used by implementations of the #ThunarVfsVolume
+ * interface.
+ **/
+void
+thunar_vfs_volume_pre_unmount (ThunarVfsVolume *volume)
+{
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  g_signal_emit (G_OBJECT (volume), volume_signals[PRE_UNMOUNT], 0);
+}
 
 
 

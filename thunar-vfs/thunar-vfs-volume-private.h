@@ -63,7 +63,8 @@ struct _ThunarVfsVolume
   GObject __parent__;
 };
 
-void thunar_vfs_volume_changed (ThunarVfsVolume *volume) G_GNUC_INTERNAL;
+void thunar_vfs_volume_changed     (ThunarVfsVolume *volume) G_GNUC_INTERNAL;
+void thunar_vfs_volume_pre_unmount (ThunarVfsVolume *volume) G_GNUC_INTERNAL;
 
 
 struct _ThunarVfsVolumeManagerClass
