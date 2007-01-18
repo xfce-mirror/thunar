@@ -502,7 +502,8 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
           /* we consider the drive to be an USB stick */
           volume_hal->kind = THUNAR_VFS_VOLUME_KIND_USBSTICK;
         }
-      else if (libhal_drive_uses_removable_media (hd))
+      else if (libhal_drive_uses_removable_media (hd)
+            || libhal_drive_is_hotpluggable (hd))
         {
           /* fallback to generic removable disk */
           volume_hal->kind = THUNAR_VFS_VOLUME_KIND_REMOVABLE_DISK;
