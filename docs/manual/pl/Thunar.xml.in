@@ -4,11 +4,11 @@
 <!ENTITY version "@PACKAGE_VERSION@">
 <!ENTITY application "@PACKAGE_NAME@">
 ]>
-<article id="index" lang="ja">
+<article id="index" lang="pl">
 
   <!-- Header -->
   <articleinfo>
-    <title>Thunar ファイルマネージャー</title>
+    <title>Menedżer Plików Thunar</title>
 
     <pubdate>&date;</pubdate>
 
@@ -18,10 +18,16 @@
       <year>2006</year>
       <year>2007</year>
       <holder>Benedikt Meurer</holder>
-    </copyright><copyright><year>2006.</year><holder>Daichi Kawahata (daichi@xfce.org)</holder></copyright>
+    </copyright><copyright><year>2007</year><holder>Szymon Kałasz (szymon_maestro@gazeta.pl)</holder></copyright>
 
     <legalnotice id="legalnotice">
-      <para>フリーソフトウェア財団が公表する GNU フリー文書利用許諾契約書の第1.1版、あるいはそれ以降のいずれかの版の条件下において、この文書の複製、配布および/または変更が許可されます。変更出来ない箇所、表紙文および裏表紙文があってはいけません。この利用許諾契約書の全文は<ulink type="http" url="http://www.gnu.org/">フリーソフトウェア財団</ulink>から取得する事ができます。</para>
+      <para>
+        Permission is granted to copy, distribute and/or modify this document
+        under the terms of the GNU Free Documentation License, Version 1.1 or
+        any later version published by the Free Software Foundation; with no
+        Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
+        Texts. The complete license text is available from the <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.
+      </para>
     </legalnotice>
 
     <authorgroup>
@@ -31,39 +37,36 @@
         <affiliation>
           <address><email>benny@xfce.org</email></address>
           <orgname>os-cillation</orgname>
-          <orgdiv>システム開発</orgdiv>
-          <jobtitle>ソフトウェア開発者</jobtitle>
+          <orgdiv>System development</orgdiv>
+          <jobtitle>Software developer</jobtitle>
         </affiliation>
       </author>
     </authorgroup>
 
-    <releaseinfo>この説明書は @PACKAGE_NAME@ のバージョン @PACKAGE_VERSION@ について書かれています。</releaseinfo>
+    <releaseinfo>Ten podręcznik opisuje @PACKAGE_NAME@ w wersji @PACKAGE_VERSION@.</releaseinfo>
   </articleinfo>
 
   <sect1 id="intro">
-    <title>@PACKAGE_NAME@ の紹介</title>
+    <title>Wprowadzenie do @PACKAGE_NAME@</title>
 
-    <para>Thunar は Xfce デスクトップ環境のために、素早く手軽に使えるようゼロから設計されている今風のファイルマネージャーです。ユーザーインターフェイスは簡潔かつ直観的です。紛らわしい、無駄なオプションは標準では一切組み込まれていません。起動時間も短く、フォルダの読み込みに対する感度も上々です。</para>
+    <para>Thunar jest nowoczesnym menedżerem plików dla Środowiska Graficznego Xfce. Od samego początku w jego projekt została wpisana szybkość i łatwość użycia. Jego interfejs użytkownika jest przejrzysty i intuicyjny. W początkowych ustawieniach nie zawiera żadnych bezużytecznych i dezorientujących opcji. Thunar jest szybki i responsywny, a start programu i przechodzenie do nowych folderów zajmują bardzo mało czasu.</para>
 
-    <para>その結果としてではありますが、ファイルマネージャー Thunar はあなたのファイルやアプリケーションのための統合された一つのアクセス拠点を提供します。このファイルマネージャーを使って以下を行えます:</para>
+    <para>Dzięki temu Thunar umożliwia zintegrowany punkt dostępowy do twoich plików i aplikacji. Możesz używać menedżera plików do:</para>
 
     <itemizedlist>
-      <listitem>フォルダおよび文書の作成。</listitem>
-      <listitem>ファイルおよびフォルダの表示。</listitem>
-      <listitem>ファイルおよびフォルダの管理。</listitem>
-      <listitem>個別に設定したアクションの実行および管理。</listitem>
-      <listitem>持ち運び可能なメディアへのアクセス。</listitem>
+      <listitem>Tworzenia folderów i dokumentów.</listitem>
+      <listitem>Wyświetlania twoich plików i folderów.</listitem>
+      <listitem>Zarządzania plikami i folderami.</listitem>
+      <listitem>Uruchamiania i zarządzania akcjami.</listitem>
+      <listitem>Korzystania z nośników wymiennych.</listitem>
     </itemizedlist>
   </sect1>
 
 
   <sect1 id="the-file-manager-window">
-    <title>The File Manager Window</title>
+    <title>Okno Menedżera Plików</title>
 
-    <para>
-      By default the file manager window consists of a shortcut pane on the left side, the main area on the right
-      and a pathbar above the main area.
-    </para>
+    <para>Domyślnie okno menedżera plików składa się z panelu bocznego po lewej, obszaru głównego po prawej i paska ścieżki powyżej głównego obszaru.</para>
 
     <screenshot>
       <mediaobject>
@@ -72,81 +75,35 @@
         </imageobject>
 
         <textobject>
-          <phrase>File Manager Window</phrase>
+          <phrase>Okno Menedżera Plików</phrase>
         </textobject>
       </mediaobject>
     </screenshot>
 
-    <para>
-      The <guilabel>Shortcut Pane</guilabel> provides shortcuts to different folders on your system. The first
-      shortcut will lead to your <emphasis>Home Folder</emphasis>, the folder you store all your personal data,
-      and will therefore have the name of the current user. The second shortcut will take you to the trash bin,
-      which stores deleted files that can be recovered later. The third shortcut takes you to the <emphasis>Desktop
-      Folder</emphasis>, which contains the files and folders that are displayed on the desktop. The fourth
-      shortcut will take you to the root of your file system - you may want to explore it a bit, even though
-      it may be confusing to you if you are new to Linux/Unix. Just click on the different folders and see what is
-      inside.
-    </para>
+    <para><guilabel>Panel boczny</guilabel> dostarcza skrótów do różnych folderów w twoim systemie. Pierwszy skrót prowadzi do twojego <emphasis>katalogu domowego</emphasis>, folderu, gdzie przechowujesz twoje prywatne dane. Będzie on miał nazwę bieżącego użytkownika. Drugi skrót poprowadzi Cię do śmietnika. Tam są przechowywane usunięte pliki, w celu ich późniejszego przywrócenia. Trzeci z kolei skrót prowadzi do <emphasis>folderu pulpitu, kt</emphasis></para>
 
-    <para>
-      Below the <emphasis>File System</emphasis> shortcut, the removable drives and media will be displayed. In
-      the screenshot above, you can see a <guilabel>Floppy Drive</guilabel> shortcut. Click on these shortcuts
-      to access the data stored on the removable drives and media. See <xref linkend="using-removable-media"/>
-      for further details.
-    </para>
+    <para>Poniżej skrótu "<emphasis>System plików</emphasis>", będą wyświetlane wymienne napędy i nośniki. W zrzucie ekranu powyżej możesz zobaczyć skrót do <guilabel>Napędu dyskietek</guilabel>. Klikając na te skróty uzyskasz dostęp do danych przechowywanych na wymiennych nośnikach i napędach. Zobacz <xref linkend="using-removable-media"/>, jeśli chcesz znać więcej szczegółów.</para>
 
-    <para>
-      The remaining shortcuts are user defined. Add your own shortcuts by simply dragging folders to the
-      <guilabel>Shortcuts Pane</guilabel>. This will allow you to access important folders instantly. To
-      remove a previously added shortcut, right-click on the shortcut and choose <guimenuitem>Remove Shortcut</guimenuitem>.
-      To rename a previously added shortcut, right-click on the shortcut and choose <guimenuitem>Rename Shortcut</guimenuitem>.
-      Note that these actions affect only the shortcut, not the folder referenced by the shortcuts.
-    </para>
+    <para>Pozostałe skróty są definiowane przez użytkownika. Możesz dodawać swoje własne skróty po prostu przeciągając foldery do <guilabel>panelu bocznego</guilabel>. Pozwoli Ci to na natychmiastowy dostęp do ważnych folderów. Aby usunąć poprzednio dodany skrót, kliknij prawym przyciskiem myszy na skrócie i wybierz <guimenuitem>Usuń skrót</guimenuitem>. Zauważ, że ta czynność będzie miała wpływ tylko na skrót, a nie na folder wskazywany przez niego.</para>
 
-    <para>
-      The <emphasis>main area</emphasis> will always display the contents of the current folder. Double click on
-      folders to enter them, and right-click on files or folders to get a context-menu offering some choices of
-      what to do with it. Select multiple files by dragging a rectangle over them with the mouse. Alternatively,
-      select one file, hold down the <keycap>Shift</keycap> key, and increase or decrease the selection using
-      the arrow keys.
-    </para>
+    <para><emphasis>Obszar główny</emphasis> będzie zawsze wyświetlał zawartość bieżącego folderu. Podwójnym kliknięciem możesz wchodzić do folderów, natomiast klikając prawym przyciskiem myszy uzyskasz dostęp do menu kontekstowego, umożliwiającego zarządzanie folderem. Możesz zaznaczyć wiele plików przeciągając nad nimi prostokąt utworzony z zaznaczenia myszą. Alternatywnie możesz zaznaczyć jeden plik, wcisnąć klawisz <keycap>Shift</keycap> i zwiększać lub zmniejszać zaznaczenie, używając strzałek na klawiaturze.</para>
 
-    <para>
-      The <emphasis>pathbar</emphasis> will always show the path you took to get to the folder you are currently
-      at. You can click on any pathbar button to change to the folder it represents. Right-click on a pathbar
-      button to bring up a context-menu with some options.
-    </para>
+    <para><emphasis>Pasek ścieżki</emphasis> będzie zawsze pokazywał drogę, jaką przebyłeś do bieżącego folderu. Możesz kliknąć na którymkolwiek przycisku ścieżki aby przenieść się do odpowiadającego folderu. Kliknij na nim prawym przyciskiem myszy, aby przywołać menu kontekstowe zawierające pewne opcje.</para>
 
 
     <sect2 id="customizing-the-appearance">
-      <title>Customizing the Appearance</title>
+      <title>Dostosowywanie wyglądu</title>
 
-      <para>
-        There are many ways to customize the appearance of the file manager windows. In case you do not like the
-        way the icons are displayed, choose <menuchoice><guimenu>View</guimenu><guimenuitem>View as Detailed List</guimenuitem></menuchoice>
-        from the main menu to have the contents of the current folder displayed as a list.
-      </para>
+      <para>Jest wiele sposobów na dostosowanie wyglądu okien menedżera plików. Jeśli nie odpowiada ci sposób wyświetlania ikon, wybierz <menuchoice><guimenu>Widok</guimenu><guimenuitem>Widok szczegółowy</guimenuitem></menuchoice> z głównego menu, aby wyświetlać zawartość katalogów w formie listy.</para>
 
-      <para>
-        You can have the file manager windows display a location bar instead of the pathbar by choosing
-        <menuchoice><guimenu>View</guimenu><guimenuitem>Location Selector</guimenuitem><guimenuitem>Toolbar Style</guimenuitem></menuchoice>
-        from the main menu.
-      </para>
+      <para>Możesz nakazać menedżerowi plików używania paska położenia zamiast paska ścieżki, wybierając <menuchoice><guimenu>Widok</guimenu><guimenuitem>Wskaźnik położenia</guimenuitem><guimenuitem>Styl tradycyjny</guimenuitem></menuchoice> z głównego menu.</para>
 
-      <para>
-        In case you prefer a treeview in the left pane, choose
-        <menuchoice><guimenu>View</guimenu><guimenuitem>Side Pane</guimenuitem><guimenuitem>Tree</guimenuitem></menuchoice>
-        from the main menu.
-      </para>
+      <para>Jeśli wolisz widok drzewa w lewym panelu, wybierz <menuchoice><guimenu>Widok</guimenu><guimenuitem>Panel boczny</guimenuitem><guimenuitem>Drzewo</guimenuitem></menuchoice> z głównego menu.</para>
 
       <sect3 id="visible-columns-in-the-detailed-list-view">
-        <title>Visible Columns in the Detailed List View</title>
+        <title>Kolumny widoczne w widoku szczegółowej listy</title>
 
-        <para>
-          If you prefer to display the contents of the folder as a list, using the <guilabel>Detailed List View</guilabel>, you can
-          customize the columns displayed in the list view. To customize the visible columns, choose
-          <menuchoice><guimenu>View</guimenu><guimenuitem>Configure Columns...</guimenuitem></menuchoice> from the main menu.
-        </para>
+        <para>Jeśli wolisz wyświetlać zawartość folderów jako listę używając <guilabel>Widoku szczegółowego</guilabel>, możesz dostosować kolumny wyświetlane w widoku listy. Aby dostosować widoczne kolumny, wybierz <menuchoice><guimenu>Widok</guimenu><guimenuitem>Konfiguruj kolumny...</guimenuitem></menuchoice> z głównego menu (po wybraniu widoku listy).</para>
 
         <screenshot>
           <mediaobject>
@@ -155,30 +112,23 @@
             </imageobject>
 
             <textobject>
-              <phrase>Visible Columns</phrase>
+              <phrase>Widoczne kolumny</phrase>
             </textobject>
           </mediaobject>
         </screenshot>
 
         <variablelist>
           <varlistentry>
-            <term><guilabel>Visible Columns</guilabel></term>
+            <term><guilabel>Widoczne kolumny</guilabel></term>
             <listitem>
-              <para>
-                Select the columns you want to be displayed from the list of available columns. Click <guibutton>Move Up</guibutton>
-                or <guibutton>Move Down</guibutton> to change the order of the columns. Click <guibutton>Use Default</guibutton> to
-                revert your changes.
-              </para>
+              <para>Wybierz kolumny, które chcesz aby były wyświetlane z listy dostępnych kolumn. Kliknij <guibutton>W górę</guibutton> lub <guibutton>W dół</guibutton> aby zmienić kolejność kolumn. Kliknij <guibutton>Użyj domyślnych</guibutton> aby cofnąć twoje zmiany.</para>
             </listitem>
           </varlistentry>
 
           <varlistentry>
-            <term><guilabel>Column Sizing</guilabel></term>
+            <term><guilabel>Rozmiar kolumny</guilabel></term>
             <listitem>
-              <para>
-                Select the option <guibutton>Automatically expand columns as needed</guibutton> if you want the list view columns
-                to expand automatically if the needed to ensure the text is fully visible.
-              </para>
+              <para>Wybierz opcję <guibutton>Skaluj kolumny</guibutton> jeśli chcesz, aby kolumny listy były rozszerzane automatycznie tak, aby cały tekst był widoczny.</para>
             </listitem>
           </varlistentry>
         </variablelist>
@@ -188,149 +138,91 @@
 
 
   <sect1 id="working-with-files-and-folders">
-    <title>Working with Files and Folders</title>
+    <title>Praca z plikami i folderami</title>
 
 
     <sect2 id="opening-files">
-      <title>Opening Files</title>
+      <title>Otwieranie plików</title>
 
-      <para>
-        When you open a file, the file manager performs the default action for that file type. For example, opening a text file
-        will display it in the default text editor, while opening an image file will display the image in the default image
-        viewer.
-      </para>
+      <para>Kiedy otwierasz plik, menedżer plików wykonuje domyślną akcję dla tego typu pliku. Na przykład otworzenie pliku tekstowego spowoduje jego wyświetlenie w domyślnym edytorze tekstu, podczas gdy otworzenie pliku obrazu wyświetli go w domyślnej przeglądarce obrazów.</para>
 
-      <para>
-        The file manager checks the extension of a file to determine the type of a file. If the file has no known extension, the
-        file manager examines the contents of the file.
-      </para>
+      <para>Menedżer plików sprawdza rozszerzenie pliku, aby określić jego typ. Jeśli plik nie posiada rozszerzenia, sprawdzana jest jego zawartość.</para>
 
       <sect3 id="executing-the-default-action">
-        <title>Executing the Default Action</title>
+        <title>Wykonywanie domyślnej akcji</title>
 
-        <para>
-          To execute the default for a file, double-click on the file. For example, the default action for audio files is to
-          play the it with the default music playing application. In this case, you can double-click on the file to open the
-          file in the music player.
-        </para>
+        <para>Aby wykonać domyślną akcję na pliku, kliknij go podwójnie. Na przykład domyślną akcją dla plików dźwiękowych jest ich odtworzenie w domyślnym odtwarzaczu muzyki. W takim przypadku, możesz kliknąć dwukrotnie na pliku, aby go otworzyć w odtwarzaczu muzyki.</para>
 
-        <para>
-          You can set <application>Thunar</application> preferences so that you click once on a file to execute the default
-          action. For information, see <xref linkend="preferences-behavior"/>.
-        </para>
+        <para>Możesz ustawić preferencje <application>Thunara</application> tak, aby pojedyncze kliknięcie wyzwalało domyślną akcję. Dla dalszych informacji, zobacz <xref linkend="preferences-behavior"/>.</para>
       </sect3>
 
       <sect3 id="executing-non-default-actions">
-        <title>Executing Non-Default Actions</title>
+        <title>Wykonywanie innych akcji</title>
 
-        <para>
-          To execute actions other than the default action for a file, select the file that you want to perform an action on.
-          Choose the desired action from the <emphasis>Open With</emphasis> choices available in <guimenu>File</guimenu> menu
-          or an <guimenu>Open With</guimenu> submenu.
-        </para>
+        <para>Aby wykonywać akcje inne niż domyślne dla danego pliku, zaznacz plik, który chcesz obsłużyć. Następnie wybierz pożądaną akcję z podmenu <emphasis>Otwórz za pomocą</emphasis> dostępnego w menu <guimenu>Plik</guimenu> lub w menu kontekstowym.</para>
       </sect3>
 
       <sect3 id="adding-actions">
-        <title>Adding Actions</title>
+        <title>Dodawanie akcji</title>
 
-        <para>
-          To add actions associated with a file type, perform the following steps:
-        </para>
+        <para>Aby dodać akcje powiązane z typem pliku, wykonaj poniższe kroki:</para>
 
         <orderedlist>
           <listitem>
-            <para>
-              In the main area, select a file of the type to which you want to add an action.
-            </para>
+            <para>W obszarze głównym zaznacz plik typu, którego akcje chcesz edytować.</para>
           </listitem>
           <listitem>
-            <para>
-              Choose <menuchoice><guimenu>File</guimenu><guimenuitem>Open With Other Application...</guimenuitem></menuchoice>
-              from the main menu.
-            </para>
+            <para>Wybierz <menuchoice><guimenu>Plik</guimenu><guimenuitem>Otwórz za pomocą innej aplikacji...</guimenuitem></menuchoice> z głównego menu.</para>
           </listitem>
           <listitem>
-            <para>
-              Either choose an application in the <guilabel>Open With</guilabel> dialog or select <guibutton>Use a custom command</guibutton>
-              and browse to the program with which you wish to open this type.
-            </para>
+            <para>Wybierz aplikację albo w oknie <guilabel>Otwórz za pomocą</guilabel> albo wybierz <guibutton>Użyj polecenia użytkownika</guibutton> i przejdź do programu którego chcesz używać do otwierania plików tego typu.</para>
           </listitem>
         </orderedlist>
 
-        <para>
-          The action you have chosen is now added to the list of actions for that particular file type. If you enabled the
-          <guibutton>Use as default for this kind of file</guibutton> option or there was no prior action associated with the
-          type, the newly added action is the default.
-        </para>
+        <para>Akcja którą wybrałeś, jest teraz dodana do listy akcji dla tego typu pliku. Jeśli zaznaczyłeś opcję <guibutton>Ustaw jako domyślne dla tego typu plików</guibutton> lub nie było poprzednio żadnej akcji powiązanej z tym typem, nowo dodana akcja stanie się domyślną.</para>
 
-        <para>
-          You may also add actions using the <guibutton>Open With</guibutton> button under
-          <menuchoice><guimenu>File</guimenu><guimenuitem>Properties...</guimenuitem></menuchoice>.
-        </para>
+        <para>Możesz także dodawać akcje używając przycisku <guibutton>Otwórz za pomocą</guibutton> w menu <menuchoice><guimenu>Plik</guimenu><guimenuitem>Właściwości...</guimenuitem></menuchoice>.</para>
       </sect3>
 
       <sect3 id="modifiying-actions">
-        <title>Modifying Actions</title>
+        <title>Modyfikowanie akcji</title>
 
-        <para>
-          To modify the actions associated with a file or file type, perform the following steps:
-        </para>
+        <para>Aby zmodyfikować akcje powiązane z plikiem lub z typem plików, wykonaj poniższe kroki:</para>
 
         <orderedlist>
           <listitem>
-            <para>
-              In the main area, select a file of the type for which you want to modify the action.
-            </para>
+            <para>W obszarze głównym, wybierz plik typu, którego akcje chcesz modyfikować.</para>
           </listitem>
           <listitem>
-            <para>
-              Choose <menuchoice><guimenu>File</guimenu><guimenuitem>Properties...</guimenuitem></menuchoice> from the main menu.
-            </para>
+            <para>Wybierz <menuchoice><guimenu>Plik</guimenu><guimenuitem>Właściwości...</guimenuitem></menuchoice> z głównego menu.</para>
           </listitem>
           <listitem>
-            <para>
-              Select the new default action using the <guilabel>Open With</guilabel> button or add a new action by choosing
-              <guimenuitem>Open With Other Application...</guimenuitem> from the drop down menu.
-            </para>
+            <para>Wybierz nową domyślną akcję używając przycisku <guilabel>Otwórz za pomocą</guilabel> albo dodaj nową akcję wybierając <guimenuitem>Inna aplikacja...</guimenuitem> z rozwijanego menu.</para>
           </listitem>
         </orderedlist>
 
-        <para>
-          To remove a previously added action for a file type, bring up the <guilabel>Open With</guilabel> dialog as described
-          above, right-click the action you want to remove and choose <guimenuitem>Remove Launcher</guimenuitem>.
-        </para>
+        <para>Aby usunąć poprzednio dodaną akcję dla typu pliku, przywołaj okno <guilabel>Otwórz za pomocą</guilabel> jak opisano powyżej, kliknij prawym przyciskiem myszy akcję którą chcesz usunąć i wybierz <guimenuitem>Usuń wyzwalacz</guimenuitem>.</para>
       </sect3>
     </sect2>
 
 
     <sect2 id="file-properties">
-      <title>File Properties</title>
+      <title>Właściwości pliku</title>
 
-      <para>
-        The file properties window shows more information about any file or folder in the file manager. With this window, you can also
-        do the following:
-      </para>
+      <para>Okno właściwości pliku pokazuje więcej informacji o każdym pliku i katalogu w menedżerze plików. W tym oknie możesz także:</para>
 
       <itemizedlist>
         <listitem>
-          <para>
-            Change the icon for special files, such as application launchers and URL links.
-          </para>
+          <para>Zmienić ikonę dla plików specjalnych, takich jak wyzwalacze aplikacji i łącza URL.</para>
         </listitem>
         <listitem>
-          <para>
-            Add or remove emblems for a file or folder.
-          </para>
+          <para>Dodać i usuwać emblematy dla plików i folderów.</para>
         </listitem>
         <listitem>
-          <para>
-            Change the UNIX file permissions for a file or folder.
-          </para>
+          <para>Zmienić uprawnienia systemu UNIX dla pliku lub folderu.</para>
         </listitem>
         <listitem>
-          <para>
-            Choose which application is used to open a file and other files of the same type.
-          </para>
+          <para>Wybrać apliację używaną do otwierania tego pliku i innych plików tego typu.</para>
         </listitem>
       </itemizedlist>
 
@@ -341,38 +233,29 @@
           </imageobject>
 
           <textobject>
-            <phrase>File Properties</phrase>
+            <phrase>Właściwości pliku</phrase>
           </textobject>
         </mediaobject>
       </screenshot>
 
-      <para>
-        To open the file properties window, perform the following steps:
-      </para>
+      <para>Aby otworzyć okno właściwości pliku, wykonaj poniższe czynności:</para>
 
       <orderedlist>
         <listitem>
-          <para>
-            Select the file or folder whose properties you want to examine or change. You cannot
-            select multiple items at once and display the properties that are in common to all
-            items currently.
-          </para>
+          <para>Zaznacz plik lub folder, którego właściwości chcesz sprawdzić lub zmienić. Obecnie nie możesz zaznaczyć wielu elementów jednocześnie i wyświetlić właściwości, które są wspólne.</para>
         </listitem>
         <listitem>
-          <para>
-            Do one of the following:
-            <itemizedlist>
+          <para>Zrób jedno z poniższych: <itemizedlist>
               <listitem>
-                <para>Choose <menuchoice><guimenu>File</guimenu><guimenuitem>Properties...</guimenuitem></menuchoice> from the main menu.</para>
+                <para>Wybierz <menuchoice><guimenu>Plik</guimenu><guimenuitem>Właściwości...</guimenuitem></menuchoice> z głównego menu.</para>
               </listitem>
               <listitem>
-                <para>Right-click the selected item and choose <guimenuitem>Properties...</guimenuitem> from the context menu.</para>
+                <para>Kliknij prawym przyciskiem myszy zaznaczony element i wybierz <guimenuitem>Właściwości...</guimenuitem> z menu kontekstowego.</para>
               </listitem>
               <listitem>
-                <para>Press <keycombo><keycap>Alt</keycap><keycap>Return</keycap></keycombo>.</para>
+                <para>Wciśnij <keycombo><keycap>Alt</keycap><keycap>Enter</keycap></keycombo>.</para>
               </listitem>
-            </itemizedlist>
-          </para>
+            </itemizedlist></para>
         </listitem>
       </orderedlist>
     </sect2>
@@ -380,49 +263,27 @@
 
 
   <sect1 id="using-removable-media">
-    <title>Using Removable Media</title>
+    <title>Używanie nośników wymiennych</title>
 
     <sect2 id="accessing-removable-media">
-      <title>Accessing Removable Media</title>
+      <title>Dostęp do nośników wymiennych</title>
 
-      <para>
-        Thunar supports removable media if it was built with support for <ulink type="http" url="http://freedesktop.org/wiki/Software_2fhal">HAL</ulink>,
-        or if you are using <ulink type="http" url="http://www.freebsd.org/">FreeBSD</ulink>. Note however that on FreeBSD 6.0 or newer, it is
-        suggested to use HAL rather than the native support provided by Thunar.
-      </para>
+      <para>Thunar wspiera nośniki wymienne, jeśli został zbudowany z obsługą <ulink type="http" url="http://freedesktop.org/wiki/Software_2fhal">HAL</ulink> lub jeśli używasz <ulink type="http" url="http://www.freebsd.org/">FreeBSD</ulink>. Jednakże na FreeBSD 6.0 i nowszych lepiej jest jużywać HAL niż natywnego wsparcie oferowanego przez Thunara.</para>
 
       <sect3 id="to-mount-media">
-        <title>To Mount Media</title>
+        <title>Montowanie nośników</title>
 
-        <para>
-          To <emphasis>mount</emphasis> media is to make the file system of the media available for access. When you mount media, the
-          file system of the media is attached as a subdirectory to your file system.
-        </para>
+        <para><emphasis>Zamontować</emphasis> to znaczy uczynić system plików na nośniku dostępnym. Kiedy montujesz nośnik, system plików który się na nim znajduje jest podłączany jako podkatalog do twojego systemu plików.</para>
 
-        <para>
-          To access media, insert the media in the appropriate device, or connect the new device to your computer (i.e. connect an USB
-          stick to one of your USB ports). An object that represents the media is added to the side pane of the file manager. If
-          <application>xfdesktop</application> is running and configured to display <guilabel>File/launcher icons</guilabel> this
-          object will also be added to your desktop.
-        </para>
+        <para>Aby uzyskać dostęp do nośnika, umieść nośnik w odpowiednim urządzeniu lub podłącz urządzenie do twojego komputera (tj. podłącz PenDrive do jednego z twoich portów USB). Element reprezentujący nośnik zostanie dodany do bocznego panelu menedżera plików. Jeśli <application>xfdesktop</application> jest uruchomiony i skonfigurowany tak, aby wyświetlać <guilabel>ikony plików i wyzwalaczy</guilabel>, to ten obiekt także zostanie dodany do twojego pulpitu.</para>
 
-        <para>
-          To actually mount the media, click on the object that represents the media. For example, to mount a floppy diskette,
-          click on the <guilabel>Floppy Drive</guilabel> object in the side pane. The file manager will now add the file system
-          of the media to your file system hierarchy and display the contents of the floppy diskette in the main area.
-        </para>
+        <para>Aby zamontować nośnik, kliknij na reprezentujący go obiekt. Na przykład aby zamontować dyskietkę, kliknij na obiekt <guilabel>Stacja Dyskietek</guilabel> znajdujący się w panelu bocznym. Menedżer plików doda system plików na nośniku do hierarchii twojego systemu plików i wyświetli zawartość dyskietki w obszarze głównym.</para>
       </sect3>
 
       <sect3 id="to-eject-media">
-        <title>To Eject Media</title>
+        <title>Wysuwanie nośników</title>
 
-        <para>
-          If the drive for the media is a motorized drive (i.e. a CD-ROM drive), right-click on the media object in the side pane
-          or on the desktop and choose <guilabel>Eject Volume</guilabel>. The media is ejected from the drive after a few seconds.
-          If the drive for the media is not motorized (i.e. a floppy drive or an USB stick), right-click on the media object and
-          choose <guilabel>Unmount Volume</guilabel>. After a short period of time, a notification will appear to inform you
-          that it is now safe to remove the media or disconnect the drive from the computer.
-        </para>
+        <para>Jeśli stacja (napęd) nośnika jest motoryczny (np. napęd CD-ROM), kliknij prawym przyciskiem myszy na obiekcie nośnika w bocznym panelu lub na pulpicie i wybierz <guilabel>Wysuń</guilabel>. Nośnik zostanie wysunięty z napędu po kilku sekundach. Jeśli napęd nośnika nie jest motoryczny (np. stacja dyskietek lub PenDrive), kliknij prawym przyciskiem myszy na obiekcie nośnika i wybierz <guilabel>Odmontuj</guilabel>. Po chwili pojawi się powiadomienie o możliwości bzepiecznego odłączenia napędu (lub wyciągnięcia nośnika).</para>
 
         <screenshot>
           <mediaobject>
@@ -431,52 +292,27 @@
             </imageobject>
 
             <textobject>
-              <phrase>Unmount notification</phrase>
+              <phrase>Powiadomienie o odmontowaniu</phrase>
             </textobject>
           </mediaobject>
         </screenshot>
 
-        <para>
-          However this notification will only be displayed if support for <application>libnotify</application> is enabled,
-          and you have installed a notification daemon. A notification daemon for Xfce is available from the <ulink type="http" url="http://goodies.xfce.org/projects/applications/notification-daemon-xfce">Xfce Goodies Project</ulink>.
-          If notification support is not available, wait until the context menu disappears before you remove the media or disconnect
-          the drive.
-        </para>
+        <para>To powiadomienie pojawi się tylko wtedy, jeśli została włączona obsługa <application>libnotify</application> i został zainstalowany demon powiadomień. Demon powiadomień dla Xfce jest dostępny z <ulink type="http" url="http://goodies.xfce.org/projects/applications/notification-daemon-xfce">Projektu Xfce Goodies</ulink>. Jeśli nie ma obsługi powiadomień, poczekaj aż menu kontekstowe zniknie, zanim odłączysz napęd lub wyciągniesz nośnik.</para>
 
-        <para>
-          Be aware that you cannot eject or unmount media that is still in use by one or more applications. Therefore if the file
-          manager refuses to eject media, make sure you close all applications that were accessing the media, and be sure to also
-          check command line applications running in <application>Terminal</application> windows.
-        </para>
+        <para>Pamiętaj, że nie możesz wysunąć lub odmontować nośnika jeśli jest on ciągle używany przez jedną lub więcej aplikacji. Jeśli menedżer plików odmówi odmontowania nośnika, upewnij się, że zamknąłeś wszystkie aplikacje, które mogły go używać. Sprawdź także programy linii poleceń uruchamiane w oknach <application>Terminala</application>.</para>
 
-        <para>
-          Make sure to unmount removable media before ejecting. Do not eject a diskette from the floppy drive before your unmount
-          the diskette. Do not remove an USB stick before you unmount the flash drive. If you do not unmount the media first you
-          might lose data or cause your system to crash.
-        </para>
+        <para>Upewnij się aby odmontować wymienne nośniki przed ich fizycznym usunięciem z systemu. Nie wyciągaj dyskietki ze stacji dyskietek zanim jej nie odmontujesz. Nie wyciągaj pamięci USB (np. PenDrive'ów) przed ich odmontowaniem. Jeśli najpierw nie odmontujesz nośnika możesz stracić dane lub uszkodzić system.</para>
       </sect3>
     </sect2>
 
     <sect2 id="management-of-removable-drives-and-media">
-      <title>Management of Removable Drives and Media</title>
+      <title>Zarządzanie wymiennymi nośnikami i napędami</title>
 
-      <para>
-        Thunar is also able to automatically manage removable drives and media if the <ulink type="http" url="http://www.foo-projects.org/~benny/projects/thunar-volman/index.html">thunar-volman</ulink> package is installed on
-        your system.  Note however that this feature requires HAL support.
-      </para>
+      <para>Thunar może automatycznie zarządzać wymiennymi napędami i nośnikami jeśli pakiet <ulink type="http" url="http://www.foo-projects.org/~benny/projects/thunar-volman/index.html">thunar-volman</ulink> został zainstalowany w systemie. Trzeba przy tym zauważyć, że ta opcja wymaga wsparcia dla HAL.</para>
 
-      <para>
-        Now, if HAL support is available and <application>thunar-volman</application> is installed on your system, you
-        can choose to enable the <guilabel>Volume Management</guilabel> feature of Thunar. Therefore, open the file
-        manager preferences, go to the <guilabel>Advanced</guilabel> page and check the <guilabel>Enable Volume
-        Management</guilabel> button.
-      </para>
+      <para>Gdy wsparcie HAL jest już dostępne, a <application>thunar-volman</application> zainstalowany, możesz uaktywnić opcję <guilabel>Menedżera Woluminów</guilabel>  w Thunarze. Aby to zrobić otwórz okno preferencji menedżera plików, przejdź do karty <guilabel>Zaawansowane</guilabel> i zaznacz pole <guilabel>Włącz Menedżera Woluminów</guilabel></para>
 
-      <para>
-        The next step is to customize the management of removable drives and media to your needs. Click on the
-        <guilabel>Configure</guilabel> link in the <guilabel>Volume Management</guilabel> section, right below
-        the button. The <guilabel>Removable Drives and Media</guilabel> configuration dialog will be displayed.
-      </para>
+      <para>Kolejnym krokiem jest dostosowanie sposobu zarządzania napędami i nośnikami do twoich potrzeb. Kliknij łącze <guilabel>Konfiguruj</guilabel> w sekcji <guilabel>Menedżer Woluminów</guilabel>. Zostanie wyświetlone okno dialogowe <guilabel>Wymienne napędy i nośniki</guilabel>.</para>
 
       <screenshot>
         <mediaobject>
@@ -485,223 +321,123 @@
           </imageobject>
 
           <textobject>
-            <phrase>Removable Drives and Media</phrase>
+            <phrase>Wymienne napędy i nośniki</phrase>
           </textobject>
         </mediaobject>
       </screenshot>
 
-      <para>
-        If you have used the <application>gnome-volume-manager</application> previously, you should feel right at
-        home, because it was designed to look and behave similar to <application>gnome-volume-manager</application>.
-        The preferences are divided by device categories to make it easy to locate the option for you specific
-        device.
-      </para>
+      <para>Jeśli poprzednio używałeś <application>gnome-volume-manager</application>, pownieneś poczuć się jak w domu, ponieważ Menedżer Woluminów został zaprojektowany z myślą o podobieństwie w wyglądzie i zachowaniu do <application>gnome-volume-manager</application>. Preferencje zostały podzielone na kategorie, aby ułatwić odnalezienie odpowiedniej opcji do konkretnego urządzenia.</para>
 
-      <para>
-        The <guilabel>Storage</guilabel> page contains the most important options. As the name suggests these
-        options apply only to storage devices like external harddisk drives, USB sticks and CD-ROMs. The
-        <guilabel>Removable Storage</guilabel> options are described in detail below.
-      </para>
+      <para>Karta <guilabel>Pamięć</guilabel> zawiera najważniejsze opcje. Jak sugeruje nazwa, opcje te odnoszą się tylko do pamięci przenośnych, jak zewnętrzne dyski twarde, PenDrive'y czy płyty CD-ROM. Opcje sekcji <guilabel>Pamięć wymienna</guilabel> zostały szczegółowo opisane poniżej.</para>
 
       <variablelist>
         <varlistentry>
-          <term><guilabel>Mount removable drives when hot-plugged</guilabel></term>
+          <term><guilabel>Montuj napędy wymienne przy podłączaniu</guilabel></term>
           <listitem>
-            <para>
-              Enable this option to automatically mount file systems on removable drives (i.e. external harddisk drives
-              or USB sticks) when such drives are plugged into the computer.
-            </para>
-            <para>
-              This option must be enabled for certain other features to work with removable drives. For example,
-              if you disable this option, certain kinds of portable music players cannot be detected any more and
-              so, even if you enabled the <guilabel>Play music files when connected</guilabel> option on the
-              <guilabel>Multimedia</guilabel> page, the specified command will not be run when you hot-plug your
-              portable music player.
-            </para>
+            <para>Uaktywnij tą opcję, aby automatycznie zamontować systemy plików na napędach wymiennych (np. zewnętrznych dyskach twardych lub PenDrive'ach) kiedy tylko zostaną podłączone do komputera.</para>
+            <para>Ta opcja musi być włączona aby działały inne funkcje operujące na nośnikach wymiennych. Przykładowo, jeśli wyłączysz tą opcję, pewne rodzaje przenośnych odtwarzaczy muzyki nie będą mogły być rozpoznane. Nawet gdy włączysz opcję <guilabel>Odtwarzaj muzykę przy podłączaniu</guilabel> na karcie <guilabel>Multimedia</guilabel>, określone polecenie nie zostanie uruchomione gdy podłączysz twój przenośny odtwarzacz muzyki.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Mount removable media when inserted</guilabel></term>
+          <term><guilabel>Montuj wymienne nośniki przy wkładaniu</guilabel></term>
           <listitem>
-            <para>
-              Enable this option to automatically mount file systems on removable media (i.e. CD-ROMs or DVDs)
-              when you insert the media into the drive.
-            </para>
-            <para>
-              This option must be enabled for certain other features to work with removable media. For example,
-              if you disable this option, it is impossible to detect whether the removable media has auto-run
-              capabilities, and so the <guilabel>Auto-run programs on new drives and media</guilabel> option
-              has no effect for removable media.
-            </para>
+            <para>Uaktywnij tą opcję, aby automatycznie montować systemy plików na wymiennych nośnikach (np. płytach CD-ROM lub DVD) kiedy włożysz je do napędu.</para>
+            <para>Ta opcja musi być włączona aby działały inne funkcje operujące na nośnikach wymiennych. Przykładowo, jeśli wyłączysz tą opcję, nie będzie możliwe sprawdzenie, czy nośnik posiada możliwość autouruchamiania. Tym samym opcja <guilabel>Automatycznie uruchamiaj programy na nowych napędach i nośnikach</guilabel> nie będzie działać.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Browse removable media when inserted</guilabel></term>
+          <term><guilabel>Przeglądaj wymienne nośniki przy wkładaniu</guilabel></term>
           <listitem>
-            <para>
-              Enable this option to automatically display the content of newly inserted media in the file manager.
-              Note however, that the contents will only be displayed if no other action was possible or you
-              choose to ignore the other possible actions. For example, if you insert a CD-ROM with auto-run
-              capabilities and the <guilabel>Auto-run programs on new drives and media</guilabel> option is
-              enabled, you will be prompted whether you want to allow or ignore the auto-run. If you choose
-              to ignore the auto-run the contents will be displayed in the file manager.
-            </para>
+            <para>Uaktywnij tą opcję aby automatycznie wyświetlać zawartość nowo podłączonych nośników w menedżerze plików. Zauważ jednakże, że stanie się tak tylko wtedy, gdy nie było możliwe wykonanie żadnej innej akcji lub wybrałeś ignorowanie innych możliwych akcji. Przykładowo jeśli umieścisz płytę CD-ROM z autostartem, a opcja <guilabel>Automatycznie otwieraj programy na nowych napędach i nośnikach</guilabel>, zostaniesz zapytany, czy umożliwić autostart. Jeśli odmówisz, zawartość nośnika zostanie wyświetlona w menedżerze plików.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Auto-run programs on new drives and media</guilabel></term>
+          <term><guilabel>Automatycznie otwieraj programy na nowych napędach i nośnikach</guilabel></term>
           <listitem>
-            <para>
-              Enable this option to make use of auto-run capabilities of certain removable drives and media. See
-              the <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop
-              Application Autostart Specification</ulink> for details about the auto-run mechanism. To enhance security,
-              you will always be prompted to confirm the auto-run.
-            </para>
-            <para>
-              If the Windows emulator <ulink type="http" url="http://www.winehq.org/">WINE</ulink> is installed on your
-              system, the auto-run mechanism will also try to run <filename>autorun.exe</filename> files using WINE.
-            </para>
+            <para>Uaktywnij tą opcję aby skorzystać z opcji autostartu niektórych wymiennych nośników i napędów. Zobacz <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop Application Autostart Specification</ulink>, aby dowiedzieć się szczegółów na temat mechanizmu autostartu. Aby zapewnić bezpieczeństwo, zostaniesz za każdym razem poproszony o potwierdzenie autostartu.</para>
+            <para>Jeśli emulator Windowsa, <ulink type="http" url="http://www.winehq.org/">WINE</ulink>, został zainstalowany w twoim systemie, mechanizm autouruchamiania będzie próbował także uruchomiać pliki  <filename>autorun.exe</filename> używając WINE.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Auto-open files on new drives and media</guilabel></term>
+          <term><guilabel>Automatycznie otwieraj pliki na nowych napędach i nośnikach</guilabel></term>
           <listitem>
-            <para>
-              Enable this option to make of auto-open capabilities of certain removable drives and media. See
-              the <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop
-              Application Autostart Specification</ulink> for details about the auto-open mechanism. To enhance security,
-              you will always be prompted to confirm the auto-open.
-            </para>
+            <para>Uaktywnij tą opcję, aby skorzystać z możliwości automatycznego otwierania pewnych napędów i nośników. Zobacz <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop Application Autostart Specification</ulink>, aby dowiedzieć się szczegółów na temat mechanizmu autootwierania. W trosce o bezpieczeństwo zostaniesz za każdym razem poproszony o potwierdzenie automatycznego otwierania.</para>
           </listitem>
         </varlistentry>
       </variablelist>
 
-      <para>
-        The remaining options allow you to specify a command to run when a certain kind of media is inserted into a drive
-        or a certain kind of external device is connected. The command can use three special variables, that will be
-        substituted when the command is run:
-      </para>
+      <para>Pozostałe opcje pozwolą ci na określenie poleceń do uruchomienia przy podłączaniu pewnych zewnętrznych urządzeń czy wymiennych nośników. Polecenia mogą używać trzech specjalnych zmiennych, które zostaną zastąpione podczas uruchamiania polecenia:</para>
 
       <variablelist>
         <varlistentry>
           <term><literal>%d</literal></term>
           <listitem>
-            <para>
-              Each appearance of <literal>%d</literal> in the command will be substituted with the device file path of
-              the newly added device. For example, if you have plugged in an USB stick, the device file path will be
-              <filename>/dev/da0s1</filename> or <filename>/dev/sda1</filename>.
-            </para>
-            <para>
-              If no device file is associated with the device or the device file could not be found for some reason,
-              the variable <literal>%d</literal> will be substituted with the empty string.
-            </para>
+            <para>Każde wystąpienie <literal>%d</literal> w poleceniu zostanie zastąpione ścieżką do nowo dodanego urządzenia. Przykładowo, jeśli podłączyłeś PenDrive, ścieżka do urządzenia będzie <filename>/dev/da0s1</filename> lub </para>
+            <para>Jeśli żaden plik urządzenia nie jest powiązany z urządzeniem lub z pewnych względów plik urządzenia nie może zostać odnalezniony, zmienna <literal>%d</literal> zostanie zastąpiona pustym napisem.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
           <term><literal>%h</literal></term>
           <listitem>
-            <para>
-              Each appearance of <literal>%h</literal> in the command will be substituted with the HAL UDI of the newly
-              added device.
-            </para>
+            <para>Każde wystąpienie <literal>%h</literal> w poleceniu zostanie zastąpione UDI nowo dodanego urządzenia w systemie HAL.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
           <term><literal>%m</literal></term>
           <listitem>
-            <para>
-              Each appearance of <literal>%m</literal> in the command will be substituted with the mount point where
-              the newly added device was mounted. If the device cannot be mounted (for example printers or keyboards)
-              or if the automatic mounting was disabled, <literal>%m</literal> will be substituted with the empty
-              string.
-            </para>
+            <para>Każde wystąpienie <literal>%m</literal> w poleceniu zostanie zastąpione punktem montowania nowo dodanego urządzenia. Jeśli urządzenie nie może być zamontowane (np. drukarki lub klawiatury) lub jeśli automatyczne montowanie zostało wyłączone, <literal>%m</literal> zostanie zastąpione napisem pustym.</para>
           </listitem>
         </varlistentry>
       </variablelist>
 
       <sect3 id="troubleshooting-the-volume-manager">
-        <title>Troubleshooting the Volume Manager</title>
+        <title>Rozwiązywanie problemów z Menedżerem Woluminów</title>
 
-        <para>
-          Useful tips to trouble shoot the volume manager in case it does not work as expected.
-        </para>
+        <para>Porady użyteczne przy rozwiązywaniu problemów z menedżerem woluminów jeśli nie działa on tak, jak oczekiwano.</para>
 
         <orderedlist>
           <listitem>
-            <para>
-              Make sure <application>Thunar</application> is running as daemon. The volume manager depends
-              on this, as it is not a daemon by itself. By default, Xfce
-              automatically spawns <application>Thunar</application> as daemon on startup. If it got killed
-              for some reason, open the <guilabel>Run program</guilabel> (using the keyboard shortcut
-              <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> or right-click on the desktop
-              and choose <guilabel>Run Program...</guilabel> from the desktop menu), enter <literal>Thunar
-              --daemon</literal> and click <guibutton>Run</guibutton>.
-            </para>
+            <para>Upewnij się, że <application>Thunar</application> jest uruchomiony jako demon. Menedżer woluminów wymaga tego, jako że sam w sobie nie jest demonem. Domyślnie Xfce automatycznie uruchamia <application>Thunara</application> jako demon przy starcie. Jeśli z jakiegoś powodu jego proces został zakończony, otwórz <guilabel>Uruchom program</guilabel> (używając skrótu <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> lub klikając prawym przyciskiem myszy na pulpit i wybierając <guilabel>Uruchom Program...</guilabel> z menu), wprowadź <literal>Thunar --daemon</literal> i kliknij <guibutton>Uruchom</guibutton>.</para>
           </listitem>
 
           <listitem>
-            <para>
-              Try running <application>thunar-volman</application> from a <application>Terminal</application>
-              window after hot-plugging the drive or inserting the media. First, you need to figure out the
-              HAL UDI of the new device using <application>lshal</application> or <application>hal-device</application>.
-              Once you know the UDI, run <literal>thunar-volman --device-added &lt;udi-of-your-device&gt;</literal> in
-              a <application>Terminal</application> window and watch the output for errors or warnings.
-            </para>
+            <para>Spróbuj uruchomić <application>thunar-volman</application> z okna <application>Terminala</application> po podłączeniu napędu lub włożeniu nośnika. Najpierw musisz poznać HALowe UDI nowego urządzenia używając <application>lshal</application> lub <application>hal-device</application>. Jeśli już znasz UDI, uruchom <literal>thunar-volman --device-added &lt;udi-twojego-urządzenia&gt;</literal> w oknie <application>Terminala</application> i obserwuj komunikaty wyjściowe szukając błędów i ostrzeżeń.</para>
           </listitem>
         </orderedlist>
 
-        <para>
-          If it still refuses to work, ask on the <ulink type="http" url="http://forum.xfce.org/">Xfce Forum</ulink> or
-          the <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev mailing list</ulink>
-          for help.
-        </para>
+        <para>Jeśli mimo to coś nie działa, poproś o pomoc na <ulink type="http" url="http://forum.xfce.org/">Forum Xfce</ulink> lub <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">liście mailingowej thunar-dev</ulink></para>
       </sect3>
     </sect2>
   </sect1>
 
 
   <sect1 id="preferences">
-    <title>File Management Preferences</title>
+    <title>Ustawienia menedżera plików</title>
 
-    <para>
-      Use the <guilabel>File Manager Preferences</guilabel> dialog to set your <application>Thunar</application> file manager
-      preferences. To open the preferences dialog, choose <menuchoice><guimenu>Edit</guimenu><guimenuitem>Preferences...</guimenuitem></menuchoice>
-      from the menu bar, or click on the <guibutton>File Manager</guibutton> button in the Xfce Settings Manager.
-    </para>
+    <para>Użyj okna dialogowego <guilabel>Ustawienia menedżera plików</guilabel> aby ustawić preferncje menedżera plików <application>Thunar</application>. Aby otworzyć okno preferencji, wybierz <menuchoice><guimenu>Edycja</guimenu><guimenuitem>Preferencje...</guimenuitem></menuchoice> z głównego menu lub kliknij <guibutton>Menedżer plików</guibutton> w Menedżerze Ustawień Xfce.</para>
 
-    <para>
-      The <guilabel>File Manager Preferences</guilabel> dialog is divided into four pages with different options, each described in
-      a separate section below. Basically you can set preferences in the following categories:
-    </para>
+    <para>Okno <guilabel>Ustawienia menedżera plików</guilabel> jest podzielone na cztery karty z różnymi opcjami, każdą z nich opisano w oddzielnej sekcji poniżej. Najprościej rzecz ujmując, możesz ustawić preferencje w poniższych kategoriach:</para>
 
     <itemizedlist>
-      <listitem><para>The default settings for the views.</para></listitem>
-      <listitem><para>The default settings for the side pane.</para></listitem>
-      <listitem><para>The behavior of the file manager windows.</para></listitem>
-      <listitem><para>Advanced features of the file manager.</para></listitem>
+      <listitem><para>Domyślne ustawienia widoku.</para></listitem>
+      <listitem><para>Domyślne ustawienia panelu bocznego.</para></listitem>
+      <listitem><para>Zachowanie okien menedżera plików.</para></listitem>
+      <listitem><para>Zaawansowane możliwości menedżera plików.</para></listitem>
     </itemizedlist>
 
-    <para>
-      Thunar also supports a bunch of so-called <emphasis>Hidden Options</emphasis>, which control several advanced features of the
-      file manager, but are not included in the preferences in order to keep the preferences dialog simple. The <ulink type="http" url="http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc"><filename>README.thunarrc</filename></ulink> file that
-      is included with the Thunar distribution describes all available options in detail.
-    </para>
+    <para>Thunar wspiera także zestaw tzw. <emphasis>Ukrytych Opcji</emphasis>, kontrolujących pewne zaawansowane aspekty menedzera plików, ale nie zawartych w oknie preferencji, aby utrzymać je maksymalnie prostym. Plik <ulink type="http" url="http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc"><filename>README.thunarrc</filename></ulink> dołączony do dystrybucji Thunara opisuje dostępne opcje szczegółowo.</para>
 
 
     <sect2 id="preferences-views">
-      <title>Views Preferences</title>
+      <title>Ustawienia widoku</title>
 
-      <para>
-        You can specify a default view, select sort options and display options. You can
-        also specify whether thumbnails should be displayed for file types that support
-        this.
-      </para>
+      <para>Możesz określić domyślny widok, zaznaczyć opcje sortowania i wyświetlania. Możesz takżę określić, czy miniaturki powinny być wyświetlane dla obsługiwanych plików.</para>
 
       <screenshot>
         <mediaobject>
@@ -710,55 +446,38 @@
           </imageobject>
 
           <textobject>
-            <phrase>Views Preferences</phrase>
+            <phrase>Ustawienia widoku</phrase>
           </textobject>
         </mediaobject>
       </screenshot>
 
       <variablelist>
         <varlistentry>
-          <term><guilabel>View new folder using</guilabel></term>
+          <term><guilabel>Pokazuj nowe foldery używając</guilabel></term>
           <listitem>
-            <para>
-              Select the default view for folders. When you open a new window, the is displayed
-              in the view that you select. This can be either the icon view, the compact list view
-              or the detailed list view. You can also select <guilabel>Last Active View</guilabel>
-              here to use the view you used for the last active window.
-            </para>
+            <para>Wybierz domyślny widok folderów. Kiedy otworzysz nowe okno, zostanie ono wyświetlone w widoku, jaki wybierzesz. Może być to widok ikon, listy kompaktowej lub listy szczegółowej. Możesz także wybrać <guilabel>Ostatnio aktywne</guilabel>, aby uzywać widoku takiego samego jak w ostatnim aktywnym oknie.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Sort folders before files</guilabel></term>
+          <term><guilabel>Sortuj foldery przed plikami</guilabel></term>
           <listitem>
-            <para>
-              Select this option to list folders before files when you sort a folder.
-            </para>
+            <para>Wybierz tę opcję, aby listować foldery przed plikami podczas ssortowania zawartości katalogu.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Show thumbnails</guilabel></term>
+          <term><guilabel>Pokaż miniatury</guilabel></term>
           <listitem>
-            <para>
-              Select this option to show thumbnails of image files and other supported files. The
-              file manager stores the thumbnail files for each folder in the hidden <filename role="directory">.thumbnails</filename> directory in the user's Home Folder.
-            </para>
-            <para>
-              See <xref linkend="thumbnailers"/> if you want to extend the basic
-              thumbnail functionality provided by <application>Thunar</application> with support
-              for additional file types.
-            </para>
+            <para>Wybierz tę opcję, aby pokazywać miniatury obrazów i inych wspieranych formatów plików. Menedżer plików przechowuje pliki miniatur dla każdego folderu w ukrytym katalogu <filename role="directory">.thumbnails</filename> w twoim katalogu domowym.</para>
+            <para>Jeśli chcesz rozszerzyć podstawową funkcjonalność generowania miniatur oferowaną przez <application>Thunara</application> o dodatkowe formaty plików, zobacz <xref linkend="thumbnailers"/>.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Text beside icons</guilabel></term>
+          <term><guilabel>Tekst obok ikon</guilabel></term>
           <listitem>
-            <para>
-              Select this options to place the icon captions for items in the icon view beside the
-              icon rather than under the icon.
-            </para>
+            <para>Zaznacz tą pocję, aby umieścić podpisy ikonami (w widoku ikon) obok ikon, a nie pod nimi.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -766,11 +485,9 @@
 
 
     <sect2 id="preferences-side-pane">
-      <title>Side Pane Preferences</title>
+      <title>Ustawienia panelu bocznego</title>
 
-      <para>
-        You can select display options for the shortcuts pane and the tree pane.
-      </para>
+      <para>Możesz wybrać opcje wyświetlania dla panelu skrótów i panelu drzewa.</para>
 
       <screenshot>
         <mediaobject>
@@ -779,21 +496,16 @@
           </imageobject>
 
           <textobject>
-            <phrase>Side Pane Preferences</phrase>
+            <phrase>Ustawienia panelu bocznego</phrase>
           </textobject>
         </mediaobject>
       </screenshot>
 
-      <para>
-        The side pane can either display a list of shortcuts for folders in your file system, which
-        is the default, or a tree view of your file system. This page allows you to select the size
-        of the icons for the shortcuts and the tree pane. You can also specify whether emblems should
-        be displayed.
-      </para>
+      <para>Panel boczny może wyświetlać albo listę skrótów do folderów  w twoim systemie plików (domyślne), albo drzewo twojego systemu plików. Ta karta umożliwia ci wybranie rozmiaru ikon dla skrótów i panelu drzewa. Możesz także okreslić, czy emblematy powinny być wyświetlane.</para>
 
       <variablelist>
         <varlistentry>
-          <term><guilabel>Icon Size</guilabel></term>
+          <term><guilabel>Rozmiar ikon</guilabel></term>
           <listitem>
             <para>
               The size of the icons displayed in the side, ranging from <guilabel>Very Small</guilabel> (around
@@ -803,15 +515,9 @@
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Show Icon Emblems</guilabel></term>
+          <term><guilabel>Pokazuj emblematy ikon</guilabel></term>
           <listitem>
-            <para>
-              Select this option to display emblems for folders in the side pane. You can assign emblems to
-              folders in the <guilabel>Properties</guilabel> dialog. Select a folder in the main area and
-              choose <menuchoice><guimenu>File</guimenu><guimenuitem>Properties...</guimenuitem></menuchoice>
-              from the main menu, or right-click the folder and select <menuchoice><guimenuitem>Properties...</guimenuitem></menuchoice>
-              from the context menu.
-            </para>
+            <para>Zaznacz tą opcję aby wyświetlić emblematy dla folderów w panelu bocznym. Możesz przypisać emblematy do folderów w oknie dialogowym <guilabel>Właściwości</guilabel>. Zaznacz folder w obszarze głównym i wybierz <menuchoice><guimenu>Plik</guimenu><guimenuitem>Właściwości...</guimenuitem></menuchoice> z głównego menu lub kliknij prawym przyciskiem myszy i wybierz <menuchoice><guimenuitem>Właściwości...</guimenuitem></menuchoice> z menu konktekstowego.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -819,11 +525,9 @@
 
 
     <sect2 id="preferences-behavior">
-      <title>Behavior Preferences</title>
+      <title>Ustawienia zachowania</title>
 
-      <para>
-        You can select the preferred behavior to interact with the file manager.
-      </para>
+      <para>Możesz wybrać preferowany sposób komunikacji z menedżerem plików</para>
 
       <screenshot>
         <mediaobject>
@@ -832,36 +536,24 @@
           </imageobject>
 
           <textobject>
-            <phrase>Behavior Preferences</phrase>
+            <phrase>Ustawienia zachowania</phrase>
           </textobject>
         </mediaobject>
       </screenshot>
 
       <variablelist>
         <varlistentry>
-          <term><guilabel>Single click to active items</guilabel></term>
+          <term><guilabel>Pojedyncze kliknięcie aktywuje</guilabel></term>
           <listitem>
-            <para>
-              Select this option to perform the default action for an item when you
-              click on the item. When this option is selected, and you point to an
-              item, the title of the item is underlined and the item will be
-              selected automatically after a short delay.
-            </para>
-            <para>
-              This delay can be configured below the option. You can also disable the
-              automatic selection of items by moving the selector to the left-most
-              position.
-            </para>
+            <para>Wybierz tą opcjęa by wykonać domyślną akcję dla elementu przy pojedynczym kliknięciu. Kiedy ta opcja jest zaznaczona i wskażesz na element, jego tytuł zostanie podkreślony a element zostanie automatycznie zaznaczony po krótkim opóźnieniu czasowym.</para>
+            <para>To opóźnienie może zostać skonfigurowane poniżej tej opcji. Możesz także wyłączyć automatyczne zaznaczanie elementów, przesuwając suwak do maskymalnie do lewej.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Double click to activate items</guilabel></term>
+          <term><guilabel>Podwójne kliknięcie aktywuje</guilabel></term>
           <listitem>
-            <para>
-              Select this option to perform the default action for an item when you
-              double click on the item, and select the item with a single click.
-            </para>
+            <para>Zaznacz tą opcję, aby wykonać domyślną akcję dla elementu kiedy klikniesz na niego podwójnie. W tym przypadku pojedyncze kliknięcie spowoduje zaznaczenie elementu.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -869,11 +561,9 @@
 
 
     <sect2 id="preferences-advanced">
-      <title>Advanced Preferences</title>
+      <title>Ustawienia zaawansowane</title>
 
-      <para>
-        You can control advanced features of the file manager.
-      </para>
+      <para>Możesz kontrolować zaawansowane opcje menedżera plików.</para>
 
       <screenshot>
         <mediaobject>
@@ -882,32 +572,23 @@
           </imageobject>
 
           <textobject>
-            <phrase>Advanced Preferences</phrase>
+            <phrase>Ustawienia zaawansowane</phrase>
           </textobject>
         </mediaobject>
       </screenshot>
 
       <variablelist>
         <varlistentry>
-          <term><guilabel>Folder Permissions</guilabel></term>
+          <term><guilabel>Prawa dostępu katalogów</guilabel></term>
           <listitem>
-            <para>
-              Choose the action that should be performed when you change the permissions of a folder in
-              the <guilabel>Properties</guilabel> dialog. You can choose to let <application>Thunar</application>
-              ask everytime when you change folder permissions, tell it to default to applying the new permissions
-              to the folder only or to apply them recursively to the folder contents as well.
-            </para>
+            <para>Wybierz sposób zmieniania uprawnień w oknie dialogowym <guilabel>Właściwości</guilabel>. Możesz nakazać <application>Thunarowi</application>: pytać za każdym razem gdy zmieniasz uprawnienia katalogów, stosować nowe prawa dostępu tylko do bieżącego katalogu lub stosować nowe prawa dostępu rekurencyjnie do wszystkich podkatalogów.</para>
           </listitem>
         </varlistentry>
 
         <varlistentry>
-          <term><guilabel>Volume Management</guilabel></term>
+          <term><guilabel>Menedżer Woluminów</guilabel></term>
           <listitem>
-            <para>
-              If <application>Thunar</application> was installed with support for HAL and the <application>thunar-volman</application>
-              package is also installed, you can enable the integrated volume manager. See <xref linkend="management-of-removable-drives-and-media"/>
-              for details about this feature.
-            </para>
+            <para>Jeśli <application>Thunar</application> został zainstalowany z obsługą HAL, a <application>thunar-volman</application> jest zainstalowany, możesz uaktywnić zintegrowanego menedżera woluminów. Aby dowiedzieć się szczegółów na ten temat, zobacz <xref linkend="management-of-removable-drives-and-media"/>.</para>
           </listitem>
         </varlistentry>
       </variablelist>
@@ -916,22 +597,15 @@
 
 
   <sect1 id="customizing-thunar">
-    <title>Customizing Thunar</title>
+    <title>Dostosowywanie Thunara</title>
 
-    <para>
-      This chapter describes how to customize certain parts of the file manager to your own needs.
-    </para>
+    <para>Ten rozdział opisuje, jak dostosować pewne części menedżera plików do twoich własnych potrzeb.</para>
 
 
     <sect2 id="sendto">
-      <title>The "Send To" Menu</title>
+      <title>Menu "Wyślij do"</title>
 
-      <para>
-        Thunar includes a <guilabel>Send To</guilabel> menu, which provides possible targets where files and folders can
-        be sent to. To access the <guilabel>Send To</guilabel> menu, choose
-        <menuchoice><guimenu>File</guimenu><guimenuitem>Send To</guimenuitem></menuchoice> from the main menu, or right-click
-        on a file or folder and choose <menuchoice><guimenuitem>Send To</guimenuitem></menuchoice>.
-      </para>
+      <para>Thunar zawiera menu <guilabel>Wyślij do</guilabel>, które dostarcza pewne miejsca docelowe, gdzie pliki i foldery mogą zostać wysłane. Aby uzyskać dostęp do menu <guilabel>Wyślij do</guilabel>, wybierz <menuchoice><guimenu>Plik</guimenu><guimenuitem>Wyślij do</guimenuitem></menuchoice> z głównego menu lub kliknij prawym przyciskiem myszy na pliku lub folderze, po czym wybierz <menuchoice><guimenuitem>Wyślij do</guimenuitem></menuchoice>.</para>
 
       <screenshot>
         <mediaobject>
@@ -940,50 +614,24 @@
           </imageobject>
 
           <textobject>
-            <phrase>"Send To" Menu</phrase>
+            <phrase>Menu "Wyślij do"</phrase>
           </textobject>
         </mediaobject>
       </screenshot>
 
-      <para>
-        By default, the <guilabel>Send To</guilabel> menu includes an entry named <guilabel>Desktop (Create Link)</guilabel> for all
-        files and folders, which simply creates a link on the desktop for each selected file. In addition, if the <guilabel>Shortcuts
-        Pane</guilabel> is active, the menu also includes an entry called <guilabel>Side Pane (Create Shortcut)</guilabel> for folders,
-        which allows users to add new shortcuts to the side pane. Following these entries, <application>Thunar</application> lists
-        the removable drives currently plugged into the computer. In the screenshot above, the <guilabel>Floppy Drive</guilabel>
-        represents a possible target where files can be sent to. Note that the device is mounted automatically once selected from
-        the <guilabel>Send To</guilabel> menu, so you do not need to manually mount it.
-      </para>
+      <para>Domyślnie menu <guilabel>Wyślij do</guilabel> zawiera wpis nazwany <guilabel>Pulpit (utwórz łącze)</guilabel> dla wszystkich plików i folderów. Tworzy on łącze na pulpicie do każdego zaznaczonego pliku. Dodatkowo, jeśli <guilabel>Panel skrótów</guilabel> jest aktywny, menu zawiera także pozycję <guilabel>Panel boczny (utwórz skrót)</guilabel> dla katalogów, który umożliwia użytkownikom dodawanie nowych skrótów do panelu bocznego. Poniżej tych dwóch pozycji, <application>Thunar</application> wyświetla listę napędów wymiennych aktualnie podłączonych do komputera. W zrzucie ekranu powyżej, <guilabel>Stacja dyskietek</guilabel> reprezentuje możliwy punkt docelowy, dokąd mogą zostać wysłane pliki. Zauważ, że urządzenia są montowane automatycznie przy wybieraniu ich z menu <guilabel>Wyślij do</guilabel>, tak więc nie musisz montować ich ręcznie.</para>
 
-      <para>
-        In addition <application>Thunar</application> also ships the <application>thunar-sendto-email</application> plugin, which adds
-        the entry <guilabel>Mail Recipient</guilabel> to the menu, that opens the mail composer with the selected files attach to the
-        new email. If the selection contains atleast one folder, the selected items are added to a ZIP archive before attaching them
-        to the email. Otherwise, if the selection contains multiple files, or a single file, which is larger than 200Kib, the user will
-        be prompted whether to pack the files into a ZIP archive, and send the ZIP archive.
-      </para>
+      <para>Poza tym <application>Thunar</application> oferuje wtyczkę <application>thunar-sendto-email</application>, która dodaje pozycję <guilabel>Odbiorca poczty elektronicznej</guilabel> do menu, która otwiera program pocztowy z zaznaczonymi plikami dołączonymi do nowo utworzonego e-maila. Jeśli zaznaczenie zawiera co najmniej jeden folder, zaznaczone elementy są dodawane do archiwum ZIP przed załączaniem do e-maila. W przeciwnym wypadku, jeśli zaznaczenie zawiera wiele plików kub jeden, który jest większy niż 200Kib użytkownik zostanie zapytany, czy pakować pliki do archiwum ZIP i wysłać jako archiwum.</para>
 
-      <para>
-        Like most other features of <application>Thunar</application>, the <guilabel>Send to</guilabel> menu can be easily extended
-        by users and application developers with new targets, using standard <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink>. These files must be
-        installed into one of the <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> folders (see the <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> for details about the
-        <literal>$XDG_DATA_DIRS</literal> variable).
-      </para>
+      <para>Jak większość innych opcji <application>Thunara</application>, menu <guilabel>Wyślij do</guilabel> może być łatwo rozszerzane przez użytkowników i programistów o nowe miejsca docelowe, używając standardowych <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">plików elementów pulpitu</ulink>. Pliki te muszą btć zainstalowane do jednego z folderów <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> (zobacz <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> - szczegóły na temat zmiennej <literal>$XDG_DATA_DIRS</literal>).</para>
 
-      <para>
-        The <literal>MimeType</literal> of the target <filename>.desktop</filename> specifies the types of files for which this action
-        should be available in the <guilabel>Send To</guilabel> menu. For example, say you want to add entry for a <ulink type="http" url="http://flickr.com/">Flickr</ulink> uploader tool, then this entry should only show up if the selection contains JPEG
-        files (other file formats are not supported by Flickr) and so you should add a line <literal>MimeType=image/jpeg;</literal>.
-        If you do not specify any <literal>MimeType</literal> your entry will show up for all file types.
-      </para>
+      <para><literal>MimeType</literal> w pliku <filename>.desktop</filename> określa typy plików, dla których ta akcja powinna być dostępna w menu <guilabel>Wyślij do</guilabel>. Przykładowo: powiedzmy, że chcesz dodać pozycję dla narzędzia uploadu <ulink type="http" url="http://flickr.com/">Flickr</ulink>. W takim przypadku ten wpis powinien pojawić się tylko, jeśli zaznaczenie zawiera pliki JPEG (inne formaty nie są wspierane przez Flickr). Wobec tego powinieneś dodać linię <literal>MimeType=image/jpeg;</literal>. Jeśli nie określisz żadnego <literal>MimeType</literal> twój wpis będzie pojawiał się dla plików wszystkich typów.</para>
 
-      <para>
-        A complete example using the <application>postr</application> application is shown below:
-      </para>
+      <para>Kompletny przykład używania aplikacji <application>postr</application> pokazano poniżej:</para>
 
 <programlisting>
-# postr.desktop - Integrate postr into
-#                 the "Send To" menu.
+# postr.desktop - Zintegruj postr
+#                 w menu "Wyślij do".
 [Desktop Entry]
 Type=Application
 Version=1.0
@@ -994,54 +642,25 @@ Icon=postr
 Name=Flickr
 MimeType=image/jpeg;</programlisting>
 
-      <para>
-        If you install this file to <filename role="directory">~/.local/share/Thunar/sendto/</filename> (create the folder if
-        it does not exist yet), the <guilabel>Send To</guilabel> menu for JPEG files will show the new entry <guilabel>Flickr</guilabel>,
-        which can be used to upload JPEG images to Flickr.
-      </para>
+      <para>Jeśli umieścisz ten plik w <filename role="directory">~/.local/share/Thunar/sendto/</filename> (jeśli ten katalog nie istnieje - utwórz go), menu <guilabel>Wyślij do</guilabel> będzie zawierać nowy wpis <guilabel>Flickr</guilabel>, który będzie mógł być używany do wgrywania obrazów JPEG do Flickr.</para>
 
-      <para>
-        The <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/sendto_menu">Thunar Project Wiki</ulink> contains
-        additional examples of useful targets for the <guilabel>Send To</guilabel> menu. Feel free to extend the Wiki page with
-        new examples.
-      </para>
+      <para><ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/sendto_menu">Wiki Projektu Thunar</ulink> zawiera dodatkowe przykłady użytecznych celów dla menu <guilabel>Wyślij do</guilabel>. Ty także możesz uzupełniać strony Wiki o nowe przykłady.</para>
     </sect2>
 
 
     <sect2 id="thumbnailers">
-      <title>Thumbnailers</title>
+      <title>Generatory miniatur</title>
 
-      <para>
-        Thunar uses small utilities to create thumbnails of certain file types and displays the thumbnails as preview of the
-        file content. These small tools are called thumbnailers. Thunar ships with thumbnailers for image and font files, and
-        makes use of the installed thumbnailers from GNOME automatically if it was installed with support for <literal>gconf</literal>.
-        Users may however dynamically extend this basic functionality with thumbnailers for additional file types.
-      </para>
+      <para>Thunar używa małych narzędzi do generowania miniatur plików pewnych typów i wyświetla miniatury jako podgląd zawartości pliku. Thunar jest dostarczany z generatorami miniatur dla obrazów i plików czcionek i automatycznie używa zainstalowanych generatorów GNOME, jeśli tylko został zainsatlowany z obsługą <literal>gconf</literal>. Użytkownicy mogą jednak dynamicznie rozszerzać tą podstawową funkcjonalność generatorami miniatur dla plików innych formatów.</para>
 
-      <para>
-        If you plan to write a custom thumbnailers, you need to start with a program that accepts atleast two command line parameters,
-        the input file, which is of the file type you plan to support and the output file, which is a PNG file that complies with the
-        format specified by the <ulink type="http" url="http://jens.triq.net/thumbnail-spec/creation.html#AEN139">Thumbnail Management
-        Standard</ulink>. Additionally your program may also accept the desired size of the thumbnail, which is optional but highly
-        recommended. If you write the output file at an arbitrary image size, Thunar will afterwards scale it to the desired size,
-        which might produce a less optimal result than generating the thumbnail with the requested dimensions.
-      </para>
+      <para>Jeśli planujesz napisać własny generator miniatru, musisz zacząć od programu przyjmującego co najmniej dwa parametry linii poleceń, pliku wejściowego (odpowiedniego typu) i pliku wyjściowego  (w formacie PNG, zgodnie z <ulink type="http" url="http://jens.triq.net/thumbnail-spec/creation.html#AEN139">Standardem Zarządzania Miniaturami</ulink>). Poza tym twój program może także akceptować pożądaną wielkość miniatury (opcjonalne, ale bardzo zalecane). Jeśli twój program wygeneruje miniaturę niestandardowego rozmiaru, Thunar przeskaluje ją zgodnie ze swoimi potrzebami, co może pogorszyć jakość miniatury w stosunku do możliwego efektu przy jej poprawnym generowaniu przez generator miniatur.</para>
 
-      <para>
-        Once your utility to generate the thumbnails is done, you will need to register your thumbnailer, so Thunar is able to locate
-        and use it. Therefore all you need to do is to install a description file for the thumbnailer (a <filename>.desktop</filename> file)
-        in one of the <filename role="directory">$XDG_DATA_DIRS/thumbnailers/</filename> paths. For example, if you want to register the
-        thumbnailer for your user account only, you can install the file into the folder <filename role="directory">~/.local/share/thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers has the following format.
-      </para>
+      <para>Kiedy twoje narzędzie do generowania minatur będzie gotowe, będziesz musiał je zarejestrować, aby Thunar mógł je zlokalizować i używać. Wszystko co musisz zrobić, to zainstalować plik opisu generatora (plik <filename>.desktop</filename>) w jednej z ścieżek <filename role="directory">$XDG_DATA_DIRS/thumbnailers/</filename>. Przykładowo, jeśli chcesz zarejestrować generator miniatur tylko dla twojego konta użytkownika w systemie, możesz zainstalować plik do folderu <filename role="directory">~/.local/share/thumbnailers/</filename>. Plik <filename>.desktop</filename> generatora miniatur ma poniższy format.</para>
 
       <sect3 id="thumbnailer-desktop-file-format">
-        <title>Thumbnailer Description File Format</title>
+        <title>Format pliku opisu generatorów miniatur</title>
 
-        <para>
-          Thumbnailer description files utilize the <ulink type="http" url="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop
-          Entry Format</ulink> with a special <literal>Type</literal> of <literal>X-Thumbnailer</literal> and special field
-          <literal>X-Thumbnailer-Exec</literal> with new field codes. Basically, a thumbnailer description file has the following format.
-        </para>
+        <para>Pliki opisu generatorół miniatur używają <ulink type="http" url="http://standards.freedesktop.org/desktop-entry-spec/latest/">formatu plików pulpitu</ulink> z polem <literal>Type</literal> jako <literal>X-Thumbnailer</literal> i polem <literal>X-Thumbnailer-Exec</literal> z nowym kodem pola. Podstawowy plik opisu ma poniższy format.</para>
 
         <programlisting>
 [Desktop Entry]
@@ -1052,105 +671,70 @@ Name=Your Thumbnailer
 MimeType=your-supported/mime-type;
 X-Thumbnailer-Exec=your-thumbnailer %i %o %s</programlisting>
 
-        <para>
-          The <literal>Version</literal> and <literal>Encoding</literal> are mandated by the Desktop Entry Specification, just use the values shown
-          in the example above. The <literal>Type</literal> field must have the special value <literal>X-Thumbnailer</literal>, otherwise your
-          thumbnailer will not be recognized. The <literal>Name</literal> value describes your thumbnailer.
-        </para>
+        <para>Pola <literal>Version</literal> i <literal>Encoding</literal> są narzucone przez "Desktop Entry Specification", po prostu użyj wartości podanych w przykładzie powyżej. Pole <literal>Type</literal> musi posiadać specjalną wartość <literal>X-Thumbnailer</literal>. W przeciwnym wypadku twój generator nie będzie rozpoznawany. Wartość <literal>Name</literal> opisuje twój generator miniatur.</para>
 
-        <para>
-          The <literal>X-Thumbnailer-Exec</literal> field contains the command to run your thumbnailer, and supports certain field codes that will
-          be substituted when the thumbnailer is run. Recognized field codes are as follows:
-        </para>
+        <para>Pole <literal>X-Thumbnailer-Exec</literal> zawiera polecenie uruchamiające twój generator i obsługuje pewne kody pól, pod które będą podstawiane różne wartości podczas uruchamiania generatora. Poniższe kody są rozpoznawane:</para>
 
         <variablelist>
           <varlistentry>
             <term><varname>%i</varname></term>
-            <listitem>
-              The local path to the input file for which to create a thumbnail. May be either a path relative to the directory from which the
-              thumbnailer was invoked or an absolute path.
-            </listitem>
+            <listitem>Ścieżka do pliku, którego miniaturę należy utworzyć. Może być ścieżką relatywną względem katalogu z którego generator został wywołany lub ścieżką bezwzględną.</listitem>
           </varlistentry>
 
           <varlistentry>
             <term><varname>%o</varname></term>
-            <listitem>
-              The local path to the output file where to store the generated thumbnail. The output file must be written as valid PNG file according
-              to the thumbnail standard (see above). Note that the path may not end with <literal>.png</literal>, which matters if you invoke certain
-              third party tools.
-            </listitem>
+            <listitem>Ścieżka do pliku wyjściowego, dokąd należy wygenerować miniaturę. Plik wyjściowy musi być zgodny ze standardem PNG (patrz wyżej). Zauważ, że ścieżka nie musi kończyć się na <literal>.png</literal>, co ma znaczenie jeśli wywołujesz inne narzędzia.</listitem>
           </varlistentry>
 
           <varlistentry>
             <term><varname>%s</varname></term>
-            <listitem>
-              The desired size of the generated thumbnail in pixels. This parameter is optional.
-            </listitem>
+            <listitem>Pożądany rozmiar generowanej miniatury w pikselach. Parametr opcjonalny.</listitem>
           </varlistentry>
 
           <varlistentry>
             <term><varname>%u</varname></term>
-            <listitem>
-              Similar to <literal>%i</literal>, but substituted with the URI of the file, rather than the path. This was added for compatibility with
-              GNOME.
-            </listitem>
+            <listitem>Podobne do <literal>%i</literal>, ale podstawiony przez URI pliku, nie ścieżkę. Dodane dla kompatybilności z GNOME.</listitem>
           </varlistentry>
 
           <varlistentry>
             <term><varname>%%</varname></term>
-            <listitem>
-              Will be substituted with a single <literal>%</literal>.
-            </listitem>
+            <listitem>Zastąpione przez pojedyncze <literal>%</literal>.</listitem>
           </varlistentry>
         </variablelist>
 
-        <para>
-          You need to include atleast <literal>%o</literal> and <literal>%i</literal> or <literal>%u</literal>, otherwise your thumbnailer will
-          be useless.
-        </para>
+        <para>Musisz wziąć pod uwagę co najmniej <literal>%o</literal> i <literal>%i</literal> lub <literal>%u</literal>. W przeciwnym wypadku twój generator będzie bezużyteczny.</para>
 
-        <para>
-          The <literal>MimeType</literal> lists the MIME types - separated by semicolon - for which your thumbnailer is able to create previews.
-        </para>
+        <para><literal>MimeType</literal> zawiera listę typów MIME (oddzielonych przecinkiem) dla których twój generator potrafi generować miniatury.</para>
       </sect3>
 
       <sect3 id="eps-thumbnailer-example">
-        <title>Example EPS Thumbnailer</title>
+        <title>Przykładowy generator EPS</title>
 
-        <para>
-          This example demonstrates how to write and install a new thumbnailer for <filename>.eps</filename> files, which uses the
-          <command>convert</command> utility that ships as part of ImageMagick. First, we start with a simple script that invokes
-          <command>convert</command> to generate a thumbnail at the requested size.
-        </para>
+        <para>Ten przykład ilustruje jak napisać i zainstalować nowy generator miniatur dla plików <filename>.eps</filename>, używając narzędzia <command>convert</command> dostarczanego jako część pakietu ImageMagick. Najpierw zaczniemy od prostego skryptu wywołującego <command>convert</command>, aby wygenerować miniaturę pożądanego rozmiaru.</para>
 
         <programlisting>
 #!/bin/sh
 #
-# eps-thumbnailer - Example thumbnailer script for EPS files.
+# eps-thumbnailer - przykładowy generator miniatur plików EPS.
 #
-# Usage: esp-thumbnailer eps-file png-file size
+# Użycie: esp-thumbnailer eps-file png-file size
 #
 
-# command line parameters
+# parametry linii poleceń
 ifile=$1
 ofile=$2
 size=$3
 
-# invoke convert (ImageMagick)
+# wywołaj convert (ImageMagick)
 exec convert "eps:$ifile" -scale "$sizex$size" "png:$ofile"</programlisting>
 
-        <para>
-          Save this script above to a file <filename>eps-thumbnailer</filename>, make sure the file is executable and install it
-          to <filename role="directory">/usr/local/bin</filename>.
-        </para>
+        <para>Zapisz powyższy skrypt do pliku <filename>eps-thumbnailer</filename>, upewnij się, że plik jest wykonywalny i zainstaluj go do <filename role="directory">/usr/local/bin</filename>.</para>
 
         <screen>
 $ chmod +x eps-thumbnailer
 $ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer</screen>
 
-        <para>
-          Next we need to create the thumbnail description file <filename>eps-thumbnailer.desktop</filename>, which looks like this:
-        </para>
+        <para>Teraz musimy utworzyć plik opisu generatora miniatur <filename>eps-thumbnailer.desktop</filename>. Będzie on wyglądał następująco:</para>
 
         <programlisting>
 [Desktop Entry]
@@ -1162,85 +746,48 @@ TryExec=convert
 MimeType=image/x-eps;
 X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s</programlisting>
 
-        <para>
-          This file must be installed to <filename role="directory">/usr/local/share/thumbnailers</filename> (create the folder if
-          it does not exists).
-        </para>
+        <para>Plik ten powinien zostać zainstalowany do <filename role="directory">/usr/local/share/thumbnailers</filename> (utwórz ten katalog, jeśli nie istnieje).</para>
 
         <screen>
 $ sudo install -d /usr/local/share/thumbnailers
 $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop</screen>
 
-        <para>
-          The <filename>eps-thumbnailer.desktop</filename> file uses the special key <literal>TryExec</literal>, which, if specified,
-          names a command that must be present on the system for the thumbnailer to be useful. In this case, our script is useless if
-          the <command>convert</command> utility is not present.
-        </para>
+        <para>Plik <filename>eps-thumbnailer.desktop</filename> używa specjalnego klucza <literal>TryExec</literal>, który jeśli zostanie określony, nazywa polecenie, które musi być dostępne w systemie, aby generator mógł działać. W tym przypadku nasz skrypt jest bezużyteczny jeśli narzędzie <command>convert</command> nie jest obecne w systemie.</para>
 
-        <para>
-          The last step is to regenerate the thumbnailer cache, so Thunar will pick up our thumbnailer. The thumbnailer cache is located
-          at <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (unless overridden by your or your system administrator, the
-          <varname>$XDG_CACHE_HOME</varname> points to the folder <filename role="directory">~/.cache/</filename>). The thumbnailers
-          cache is regenerated periodically by Thunar, but you can force to regenerate it by invoking the
-          <filename>thunar-vfs-update-thumbnailers-cache-1</filename> utility, that ships as part of Thunar. This utility is usually installed
-          in the <filename role="directory">libexec</filename> subfolder of your installation prefix (<filename role="directory">sbin</filename>
-          on Debian/Ubuntu). So for example, if Thunar is installed in <filename role="directory">/usr</filename>, invoke the utility as
-          follows:
-        </para>
+        <para>Ostatnim krokiem jest regeneracja cache'u generatorów, aby Thunar mógł używać naszego generatora. Cache generatorów znajduje się w <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (<varname>$XDG_CACHE_HOME</varname> wskazuje na <filename role="directory">~/.cache/</filename> chyba, że zostało to zmienione przez administratora Twojego systemu). Cache generatorów miniatur jest odbudowywany co jakiś czas przez Thunara, ale możesz zrobić to samodzielnie, używając narzędzia <filename>thunar-vfs-update-thumbnailers-cache-1</filename>, które jest dostarczane jako część Thunara. Narzędzie to jest zazwyczaj zainstalowane w podkatalogu <filename role="directory">libexec</filename> głównego katalogu instalacji Thunara (<filename role="directory">sbin</filename> w Debianie i Ubuntu). Przykładowo jeśli Thunar jest zainstalowany w <filename role="directory">/usr</filename>m wywołaj to narzędzie tak jak poniżej:</para>
 
         <screen>$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1</screen>
 
-        <para>
-          But make sure you run the program from your user account, not the superuser account, since the thumbnailers cache is stored in
-          your home folder, rather than a system wide location.
-        </para>
+        <para>Ale upewnij się, że uruchamiasz ten program z konta twojego użytkownika, nie administratora, gdyż cache generatorów jest przechowywany w twoim katalogu domowym, a nie w ogólnosystemowym położeniu.</para>
 
-        <para>
-          Now, if Thunar is compiled with support for file alteration monitoring (using the FAM or Gamin services), it will automatically
-          pick up the new thumbnailers cache within a few seconds and afterwards be able to generate thumbnails using your custom
-          thumbnailers. Otherwise you might need to completely restart Thunar to apply the changes, using
-        </para>
+        <para>Teraz, jeśli Thunar został skompilowany z obsługą narzędzi monitorowania zmian w plikach (usługa FAM lub Gamin), automatycznie użyje nowego cache'u generatorów i w ciągu paru sekund będzie możliwe generowanie miniatur za pomocą twojego generatora. W przeciwnym wypadku będziesz musiał zrestartować Thunara, aby zmiany odniosły skutek. Użyj:</para>
 
         <screen>$ Thunar -q</screen>
 
-        <para>
-          to terminate any running instance, and afterwards restart it from your launcher.
-        </para>
+        <para>aby zakończyć wszystkie uruchomione instancje Thunara, po czym uruchom go ponownie za pomocą aktywatora.</para>
       </sect3>
 
       <sect3 id="cleaning-up-thumbnails">
-        <title>Cleaning up Thumbnails</title>
+        <title>Usuwanie miniatur</title>
 
-        <para>
-          The generated thumbnails are stored in the folder <filename role="directory">~/.thumbnails/</filename> complying with the <ulink type="http" url="http://jens.triq.net/thumbnail-spec/index.html">Thumbnail Management Standard</ulink>. While testing a new
-          thumbnailer, it might help to clean up the thumbnail cache using
-        </para>
+        <para>Wygenerowane miniatury są przechowywane w karalogu <filename role="directory">~/.thumbnails/</filename> zgodnie ze <ulink type="http" url="http://jens.triq.net/thumbnail-spec/index.html">Standardem Zarządzania Miniaturami</ulink>. Podczas testowania nowego generatora miniatur, pomocne może być wyczyszczynie cache'u miniatur używając:</para>
 
         <screen>$ rm -rf ~/.thumbnails/</screen>
 
-        <para>
-          which will also give you some free space in your home folder. Since all the information stored within this folder was automatically
-          generated from files in your file system, you will not loose any sensitive data.
-        </para>
+        <para>Zwolni to także trochę miejsca w twoim katalogu domowym. Ponieważ wszelkie informacje przechowywane w tym katalogu zostały automatycznie wygenerowane z plików znajdujących się na twoim systemie plików, nie utracisz żadnych poważnych danych.</para>
       </sect3>
     </sect2>
   </sect1>
 
 
   <sect1 id="advanced-topics">
-    <title>高度な話題</title>
+    <title>Zaawansowane zagadnienia</title>
 
 
     <sect2 id="to-bulk-rename-files">
-      <title>To Bulk Rename Files</title>
+      <title>Zmiana nazw wielu plików</title>
 
-      <para>
-        To <emphasis>bulk rename</emphasis> files means to rename multiple files at once using some criterion, that applies to atleast
-        one of the files. <application>Thunar</application> includes a bulk renamer, which can be run separately using the command
-        <command>Thunar -B</command> or from within <application>Thunar</application> by selecting two or more files in the main area
-        and pressing <keycombo><keycap>F2</keycap></keycombo> or choosing
-        <menuchoice><guimenu>Edit</guimenu><guimenuitem>Rename...</guimenuitem></menuchoice> from the main menu.
-      </para>
+      <para>Mowa tu o zmianie nazw wielu plików według określonych kryteriów, do których pasuje co najmniej jeden z przetwarzanych plików. <application>Thunar</application> zawiera stosowne narzędzie, które może być uruchamiane oddzielnie poleceniem <command>Thunar -B</command> lub z wewnątrz <application>Thunara</application> przez zaznaczenie wielu plików i wcisnięcie klawisza <keycombo><keycap>F2</keycap></keycombo> lub z menu <menuchoice><guimenu>Edycja</guimenu><guimenuitem>Zmień nazwę...</guimenuitem></menuchoice>.</para>
 
       <screenshot>
         <mediaobject>
@@ -1249,78 +796,69 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
           </imageobject>
 
           <textobject>
-            <phrase>Bulk Rename Files</phrase>
+            <phrase>Zmiana nazwy wielu plików</phrase>
           </textobject>
         </mediaobject>
       </screenshot>
 
-      <para>
-        The <emphasis>Bulk Renamers</emphasis> can be applied to the name of the files, the suffix of the files or both to the
-        name and the suffix of the files. <application>Thunar</application> currently supports the following <emphasis>Bulk
-        Renamers</emphasis>:
-      </para>
+      <para>Zmiana nazwy może dotyczyć nazw plików, ich przyrostków (rozszerzeń), lub obu. Obecnie <application>Thunar</application> wspiera poniższe metody zmiany nazwy:</para>
 
       <itemizedlist>
-        <listitem><para>Remove characters.</para></listitem>
-        <listitem><para>Numbering files.</para></listitem>
-        <listitem><para>Insert or overwrite characters.</para></listitem>
-        <listitem><para>Search and replace characters.</para></listitem>
-        <listitem><para>Convert to uppercase, lowercase or camlcase.</para></listitem>
+        <listitem><para>Usuwanie znaków.</para></listitem>
+        <listitem><para>Numerowanie plików.</para></listitem>
+        <listitem><para>Wstawianie lub usuwanie znaków.</para></listitem>
+        <listitem><para>Znajdowanie i zamienianie znaków.</para></listitem>
+        <listitem><para>Zmiana sposobu stosowania wielkich i małych liter.</para></listitem>
       </itemizedlist>
 
-      <para>
-        Additional <emphasis>Bulk Renamers</emphasis> may be installed as plugins for <application>Thunar</application>. Check
-        the <ulink type="http" url="http://thunar.xfce.org/plugins.html">Thunar Plugins</ulink> website for currently available
-        extensions. The <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/bulk_renamer">Thunar Project Wiki</ulink>
-        contains further details about this feature. Feel free to add more information to the Wiki.
-      </para>
+      <para>Dodatkowe sposoby zmiany nazw plików mogą być dołączane w formie wtyczek dla <application>Thunara</application>. Na stronie <ulink type="http" url="http://thunar.xfce.org/plugins.html">Wtyczek Thunara</ulink> znajdziesz wszystkie dostępne rozszerzenia. <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/bulk_renamer">WIki Projektu Thunar</ulink> zawiera więcej szczegółów na ten temat. Ty także możesz dodać do Wiki pewne informacje, jeśli tylko chcesz.</para>
     </sect2>
 
 
     <sect2 id="the-unix-file-system">
-      <title>UNIX ファイルシステム</title>
+      <title>System plików Uniksa</title>
 
-      <para>ファイルマネージャー Thunar は、基本的なファイルシステムの抽象的な些事を何の問題も無くこなしますので、利用者はこれらを気にする必要はありません。とは言いながら、全体像を掴むために基本概念を理解しておくと後々役立つ場合があります。この章では、UNIX ファイルシステムの概念を手短に紹介します。これは、今日における Linux を含むあらゆる UNIX の派生 OS で用いられています。</para>
+      <para>Mimo, że Thunar skutecznie tworzy warstwę abstrakcji nad szczegółami dotyczącymi systemu plików tak że użytkownik nie musi się o to martwić, czasem przydatne bywa zrozumienie podstawowych założeń, aby mieć pełny obraz tego, co się dzieje na dysku. Ta sekcja ma na celu krótkie wprowadzenie do koncepcji systemu plików Uniksa, który jest dziś używany przez wszystkie jego odmiany, włączając w to Linuksa.</para>
 
       <sect3 id="folders-and-paths">
-        <title>フォルダとパス</title>
+        <title>Katalogi i ścieżki</title>
 
-        <para>UNIX ファイルシステムでは、全てのファルダは一つの最上位フォルダから下へ向かって枝分かれしながら配置されていきます、逆さになった樹木の構造を想像してみて下さい。この最上位にあるフォルダは<emphasis>ルートディレクトリ</emphasis> (<emphasis>ディレクトリ</emphasis>という用語は<emphasis>フォルダ</emphasis>の代わりによく使われます) と呼ばれ、Thunar では<guilabel>ファイルシステム</guilabel>として表示されます。つまり、ある地点に到達するまでフォルダからフォルダへとこの木構造を登って行きます、その後に目標とする場所に着くまでサブフォルダを下って行くのです。</para>
+        <para>W uniksowym systemie plików wszystkie foldery są zaaranżowane w prostą strukturę odwróconego drzewa. Główny korzeń znajduje się na górze, a podkatalogi stanowią jego gałęzie i liście zmierzające ku dołowi. Ten korzeń, będący nadrzędnym folderem zwany jest często <emphasis>katalogiem głównym</emphasis> (termin <emphasis>folder</emphasis> jest często zamiennie używany ze słowem <emphasis>katalog</emphasis>) i jest dostępny w Thunarze jako <guilabel>System plików</guilabel>. Oznacza to, że z dowolnego katalogu można przedostać się do każdego innego najpierw idąc w górę aż do osiągnięcia wspólnego punktu, a następnie schodząc odpowiednią ścieżką w dół aż do celu.</para>
 
-        <para>この木構造でのファイルやフォルダの位置はその<emphasis>パス</emphasis>で記すことができます。このパスというのは、目標とするフォルダやファイルにたどり着くために通過していかなければいけないフォルダのリストで、最上部のフォルダから始まります。例えば、<filename role="directory">/home/luke</filename> は最上部フォルダのサブフォルダ <filename role="directory">home</filename> のサブフォルダ <filename role="directory">luke</filename> になります。<filename>/home/luke/myfile.txt</filename> はそのサブフォルダにある <filename>myfile.txt</filename> というファイルです。これらのパスの先頭にある <filename role="directory">/</filename> は最上部フォルダを表します。</para>
+        <para>Pozycja każdego pliku lub folderu w drzewie może być opisana przez jego <emphasis>ścieżkę</emphasis>. Ścieżka jest listą folderów, przez które musisz przejść, aby dostać się do pożądanego katalogu lub pliku (zaczynając od katalogu głównego). Przykładowo <filename role="directory">/home/luke</filename> jest podkatalogiem <filename role="directory">luke</filename> podkatalogu <filename role="directory">home</filename> katalogu głównego, a <filename>/home/luke/myfile.txt</filename> jest plikiem <filename>myfile.txt</filename> w tym podkatalogu. Znak <filename role="directory">/</filename> na początku ścieżek oznacza katalog główny.</para>
 
-        <para>すべての利用者が個人用のファイルや設定を保管するための個別のフォルダを持ちます。このフォルダは<emphasis>ホームディレクトリ</emphasis>と呼ばれ、Thunar では利用者のログイン名と共に特別なアイコンで表示されます。Windows で知られる<guilabel>ﾏｲﾌｧｲﾙ</guilabel>と似ています。それぞれの利用者の<emphasis>ホームディレクトリ</emphasis>は通常 <filename role="directory">/home</filename> の下にあります。例として上げると、ログイン名 <filename role="directory">luke</filename> のホームディレクトリは <filename role="directory">/home/luke</filename> になり、<filename role="directory">/home/jane</filename> はログイン名が <filename role="directory">jane</filename> のホームディレクトリになります。</para>
+        <para>Każdy użytkownik posiada swój własny folder to przechowywania osobistych plików i ustawień. Ten folder nazywany jest <emphasis>katalogiem głównym</emphasis> i jest wyświetlany w Thunarze jako specjalna ikona z nazwą użytkownika. Ten folder jest podobny do folderu <guilabel>Moje dokumenty</guilabel> znanego z Windows. <emphasis>Katalogi domowe</emphasis> różnych użytkowników są zazwyczaj położone w katalogu <filename role="directory">/home</filename>. Przykładowo <filename role="directory">/home/luke</filename> byłby katalogiem domowym uzytkownika o loginie <filename role="directory">luke</filename>, podczas gdy <filename role="directory">/home/jane</filename> byłby katalogiem domowym użytkownika o loginie <filename role="directory">jane</filename>.</para>
       </sect3>
 
       <sect3 id="file-types">
-        <title>ファイルの種類</title>
+        <title>Typy plików</title>
 
-        <para>もう御存知かもしれませんが、UNIX ではあらゆるものがファイルとして取り扱われます。UNIX システムを構成するほぼ全ての物体がそういう風に取り扱われると考えて差し支えありません。事実、各種装置や周辺機器も特殊ファイルとして表されます。一見意味の無いように思われるかもしれませんが、これは UNIX やその派生 OS の強味の一つです。UNIX はシンプルなコアを何年にもわたって保守するだけでよいのに対して、他のオペレーティングシステムは新しいテクノロジーが紹介される度に、新しい概念を導入しなければなりませんでした。</para>
+        <para>Być może słyszałeś już, że w Uniksie wszystko jest plikiem. Jest to prawda dla większości elementów spotykanych w dzisiejszych systemach uniksowych. W rzeczywistości nawet urządzenia są reprezentowane jako specjalne pliki. Być może na pierwzsy rzut oka nie ma to sensu, jednak jest to jedna z najpoważniejszych zalet Uniksa i jego pochodnych i przyczyniło się to do utrzymywania prostego rdzenia przez lata, podczas gdy inne systemy operacyjne musiały wprowadzać nowe koncepcje dla każdej nowej technologii.</para>
 
-        <para>UNIX ファイルシステムにおけるファイルの種類には、四つの重要なものがあります。</para>
+        <para>Są cztery podstawowe i najważniejsze typy plików w uniksowym systemie plików.</para>
 
         <sect4 id="file-types-ordinary-files">
-          <title>普通のファイル</title>
+          <title>Zwykłe pliki</title>
 
-          <para>普通のファイルは文字データを含んでいたり、プログラムまたは他のデータであったりします。ここには画像ファイル、オーディオファイル、オフィス文書および動画ファイルも入ります。<emphasis>ファイル</emphasis>という用語がこれら普通のファイルを指すのによく使用されます。</para>
+          <para>Zwykły plik może zawierać tekst, program lub inne dane, włączając w to pliki obrazów, dźwięki, dokumenty biurowe i pliki wideo. Termin <emphasis>plik</emphasis> jest często używany w odniesieniu do zwykłego pliku.</para>
         </sect4>
 
         <sect4 id="file-types-folder-files">
-          <title>フォルダファイル</title>
+          <title>Pliki folderów</title>
 
-          <para>UNIX ファイルシステムではフォルダもファイルです。正確に言えばフォルダは特殊ファイルになります、このフォルダ内にある全てのファイルを参照するためのファイル名のマップが含まれています。</para>
+          <para>W uniksowym systemie plików foldery także są plikami. Aby być dokładnym, foldery są specjalnymi plikami, które zawierają odwzorowania nazw plików na pliki, dla każdego pliku zawartego wewnątrz folderu.</para>
         </sect4>
 
         <sect4 id="file-types-symbolic-link-files">
-          <title>シンボリックリンク・ファイル</title>
+          <title>Pliki dowiązań (łącz) symbolicznych</title>
 
-          <para>シンボリックリンク (よく<emphasis>リンク</emphasis>と呼ばれます) はファイルシステムで、他のファイルへのパスを含む特殊ファイルです。従ってシンボリックファイル自身は特に意味のある情報を持ちません、単に他のファイルを参照するだけです。</para>
+          <para>Dowiązanie symboliczne (często zwane <emphasis>symlinkiem</emphasis>) jest specjalnym plikiem zawierającym ścieżkę do innego pliku w systemie plików. Dowiązania symboliczne nie zawierają żadnych użytecznych informacji same w sobie, ale odnoszą sie do innych plików.</para>
         </sect4>
 
         <sect4 id="file-types-device-files">
-          <title>デバイスファイル</title>
+          <title>Pliki urządzeń</title>
 
-          <para>始めの方で述べたように (殆んどの) デバイスもファイルシステム経由でアクセスされます。これら特殊デバイスファイルは通常 <filename role="directory">/dev</filename> フォルダにあります。例えば、特殊ファイル <filename>/dev/hda</filename> は Linux 上での一番目の IDE ディスクを表します。</para>
+          <para>Jak wspomniano wcześniej, większość urządzeń jest dostępnych przez system plików. Te specjalne pliki urządzeń są zazwyczaj położone w katalogu <filename role="directory">/dev</filename>. Przykładowo, plik specjalny <filename>/dev/hda</filename> reprezentuje w Linuksie pierwszy dysk IDE.</para>
         </sect4>
       </sect3>
     </sect2>
@@ -1328,106 +866,106 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
 
 
   <sect1 id="faq">
-    <title>よく聞かれる質問</title>
+    <title>Najczęściej zadawane pytania (FAQ)</title>
 
-    <para>この章では @PACKAGE_NAME@ を使用するにあたって、かなりの頻度で尋ねられる質問に回答します。このページにない質問があるのでしたら、<ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">要望</ulink>を出して下さるようお願いします。</para>
+    <para>Celem tej sekcji jest zebranie przeróżnych pytań i wątpliwości dotyczących Thunara w jedno miejsce. Jeśli uważasz, że brakuje tu jakiegoś istotnego zagadnienia, proszę - <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">zgłoś to</ulink>.</para>
 
     <sect3 id="faq-executables">
-      <title>実行可能になっているファイルを実行しないのは何故ですか？</title>
+      <title>Dlaczego Thunar nie wykonuje plików oznaczonych jako wykonywalne?</title>
 
-      <para>セキュリティ上の理由から、Thunar は種類が <literal>application/x-desktop</literal>, <literal>application/x-executable</literal> および <literal>application/x-shellscript</literal> のファイルのみを実行します。デスクトップファイルに対しては、種類が <literal>Application</literal> かつ適正な <literal>Exec</literal> 行が指定されているか、あるいは種類が <literal>Link</literal> かつ適正な <literal>URL</literal> が指定されている場合に限って実行機能が有効になります。その他に対しては、当該ファイルが現在の利用者にとって実行可能なようにマークされている場合に利用できます。</para>
+      <para>Ze względów bezpieczeństwa Thunar uruchamia tylko pliki typu <literal>application/x-desktop</literal>, <literal>application/x-executable</literal> i <literal>application/x-shellscript</literal>. Dla plików pulpitu możliwość uruchamiania zostanie włączona tylko wtedy, jeśli jest on typu <literal>Application</literal> i podano prawidłową linię <literal>Exec</literal> lub jeśli jest typu <literal>Link</literal> i podano prawidłowy <literal>URL</literal>. Dla innych typów opcja ta jest dostępna, jeśli plik jest oznaczony jako wykonywalny dla bieżącego użytkownika.</para>
 
-      <para><literal>application/x-executable</literal> および <literal>application/x-shellscript</literal> に関しては次のことを覚えておいて下さい、この種類のファイルは実際にはこの種類に正確に一致する必要がありません、しかし、チェックされた種類に上記二つの種類に該当する親があるなら、あるいは MIME タイプが上にあるものの内の一つへの別名ならば、それで事足ります。</para>
+      <para>Zauważ także, że dla typów <literal>application/x-executable</literal> i <literal>application/x-shellscript</literal>, typy plików nie muszą dokładnie pokrywać się z tymi typami, ale wystarczy jeśli wykryty typ ma typ nadrzędny pasujący do jednego z powyższych typów lub gdy MIME-type jest aliasem dla jednego z powyższych.</para>
     </sect3>
 
     <sect3 id="faq-metadata">
-      <title>ファイルに関連付けられているメタデータは何処に保存されていますか？</title>
+      <title>Gdzie Thunar przechowuje metadane związane z plikami?</title>
 
-      <para>Thunar はファイルやフォルダに様々な設定事項を関連付けます。これらはメタデータと呼ばれ、全ファイルのメタデータは (メタファイルと呼ばれる) tdb データベース・ファイルに保管されます。このデータベース・ファイルは <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> に保存されていて、<command>tdbtool</command> を使うことで変更できます。このツールは配布される Thunar パッケージの一部として、サブディレクトリ <filename role="directory">tdb/</filename> にあります。</para>
+      <para>Thunar powiązuje różne ustawienia z plikami/folderami, które nazywamy metadanymi. Owe metadane dla wszystkich plików przechowywane są w pliku bazy danych tdb, zwanym metaplikiem. Plik bazy danych znajduje się w <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename>, a jego przeglądu dokonuje się za pomocą narzędzia <command>tdbtool</command>, które jest częścią dystrybucji Thunara (położonego w podkatalogu <filename role="directory">tdb/</filename>).</para>
     </sect3>
 
     <sect3 id="faq-thunarrc">
-      <title>Thunar の環境設定が保存されているのは何処ですか？</title>
+      <title>Gdzie Thunar przechowuje swoje ustawienia?</title>
 
-      <para>Thunar は <filename>.ini</filename> ファイルに利用者が変更可能な環境設定 (および隠し設定) を保管します。このファイルは <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename> にあり、テキストエディターを使って色々な設定を実験してみることができます。各環境設定の概要は <filename>docs/README.thunarrc</filename> にあります。</para>
+      <para>Thunar przechowuje preferencje użytkownika (i ustawienia ukryte) w pliku <filename>.ini</filename>, znajdującym się w <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename>. Można go obejrzeć używając edytora tekstowego. W pliku <filename>docs/README.thunarrc</filename> znajdziesz przegląd róznych opcji.</para>
     </sect3>
 
     <sect3 id="faq-mouse-gestures">
-      <title>Thunar でマウスジェスチャーを使うには？</title>
+      <title>Czy i jak można używać gestów myszy w Thunarze?</title>
 
-      <para>現在のところ、Thunar はアイコン表示で、いわゆる<emphasis>マウスジェスチャー</emphasis>と呼ばれるものを最低限サポートする機能が備わっています。マウスポインターがアイコン表示コンポーネントの背景となる場所 (アイコンや文字が無い所ならどこでも該当します) にある間は、マウスの中央ボタン (通常はマウスホイール) を押しっ放しにすることで、これら<emphasis>マウスジェスチャー</emphasis>の機能を使うことができます。これである決まった動作を実行するために、カーソルを四方に移動することができます。以下でこれらの動作を説明します。</para>
+      <para>Obecnie Thunar zapewnia podstawowe wsparcie dla tzw. <emphasis>gestów myszy</emphasis> w widoku ikon. Możesz ich używać wciskając środkowy przycisk myszy (przeważnie rolkę) gdy wskaźnik myszy znajduje się na polu tła (polu, które nie jest przykryte przez ikonę lub tekst). Następnie przesuń kursor w czterech kierunkach, aby wykonać pewne czynności opisane poniżej:</para>
 
       <simplelist>
-        <member><guilabel>左</guilabel> - 前のフォルダを開きます</member>
-        <member><guilabel>上</guilabel> - 上位のフォルダを開きます</member>
-        <member><guilabel>右</guilabel> - 次のフォルダを開きます</member>
-        <member><guilabel>下</guilabel> - 現在のフォルダをリロードします</member>
+        <member><guilabel>W lewo</guilabel> - przechodzi do uprzednio odwiedzonego foldderu</member>
+        <member><guilabel>W górę</guilabel> - przchodzi do katalogu nadrzędnego</member>
+        <member><guilabel>W prawo</guilabel> - przechodzi do kolejnego (w/g listy historii odwiedzeń) odwiedzonego katalogu</member>
+        <member><guilabel>W dół</guilabel> - odświeża bieżący katalog</member>
       </simplelist>
     </sect3>
 
     <sect3 id="faq-assign-keyboard-shortcuts">
-      <title>どのようにすれば異なるキーボードショートカットを割り当てられますか？</title>
+      <title>Jak przypisać własne skróty klawiszowe?</title>
 
-      <para>Thunar は GTK+ 標準のショートカット変更のやり方をサポートしていますので、ショートカットを割り当て直したいのでしたら、マウスを該当するメニューの上まで持っていって、そこで割り当てたいキーボードショートカットを押して下さい。</para>
+      <para>Thunar obsługuje standardową metodą zmieniania skrótów zgodną z GTK+: najedź wskaźnikiem myszy na opcję w menu, do której chcesz przypisać skrót i wciśnij pożądaną kombinację klawiszy.</para>
 
-      <para>割り当てられているキーボードを削除するには、該当するメニュー項目上で<keycap>バックスペース</keycap>を押して下さい。</para>
+      <para>Aby usunąć skrót, wciśnij <keycap>Backspace</keycap>, kiedy jesteś na odpowiednim wpisie w menu.</para>
 
-      <para>ショートカットが変更されないのであれば、GTK+ でこの機能を有効にする必要があります。これには三つのやり方があります:</para>
+      <para>Jeśli skrót się nie zmieni, prawdopodobnie będziesz musiał włączyć tą opcję w GTK+. Możesz to zrobić na trzy sposoby:</para>
 
       <itemizedlist>
         <listitem>
-          <para>Xfce 4.3 かそれより新しいものを使っているのでしたら、<guilabel>インターフェイスの設定</guilabel>ダイアログで<guilabel>メニューのショートカットを変更可能にする</guilabel>を有効にして下さい。</para>
+          <para>Jeśli używasz Xfce 4.3 lub nowszego, możesz uaktywnić opcję <guilabel>Modyfikowalne akceleratory menu</guilabel> w oknie dialogowym <guilabel>Preferencje Interfejsu Użytkownika</guilabel>.</para>
         </listitem>
 
         <listitem>
-          <para>GNOME を使用しているのでしたら、コントロール・センターの<guilabel>メニューとツールバー</guilabel>ダイアログで<guilabel>メニューのアクセラレータを編集可能にする</guilabel>を有効にして下さい。</para>
+          <para>Jeśli używasz GNOME możesz włączyć <guilabel>Modyfikowalne akceleratory menu</guilabel> w oknie dialogowym <guilabel>Paski menu i narzędziowe</guilabel>.</para>
         </listitem>
 
         <listitem>
-          <para>それ以外であれば、ファイル <filename>~/.gtkrc-2.0</filename> (もし無ければ作成して下さい) に <screen>gtk-can-change-accels=1</screen> という一行を記述します。</para>
+          <para>W przeciwnym wypadku umieść poniższą linię w pliku <filename>~/.gtkrc-2.0</filename> (utwórz go, jeśli nie istnieje):<screen>gtk-can-change-accels=1</screen></para>
         </listitem>
       </itemizedlist>
     </sect3>
 
     <sect3 id="faq-store-keyboard-shortcuts">
-      <title>ショートカットは何処に保存されるのですか？</title>
+      <title>Gdzie Thunar przechowuje skróty klawiszowe?</title>
 
-      <para>個人で変更したキーボードショートカットは GTK+ 標準のアクセラレーター・マップ形式で保存され、<filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename> に置かれます。<literal>;</literal> で始まる行はコメントです。このファイル形式についての詳細は GTK+ の文書を御覧下さい。</para>
+      <para>Niestandardowe skróty klawiszowe są przechowywane w typowym dla GTK+ formacie, w pliku <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename>. Linie zaczynające się od <literal>;</literal> są komentarzami. Obejrzyj dokumentację GTK+, aby dowiedzieć się więcej szczegółów formacie tego pliku.</para>
 
-      <para>あなたがパッケージ作成者かシステム管理者で、Thunar の標準ショートカットとは異なる、システム全体の標準キーボード・ショートカットを設定したいのでしたら、<envar>$XDG_CONFIG_DIRS</envar> のどれか一つに <filename>Thunar/accels.scm</filename> を作ることができます。例えば、<filename role="directory">/etc/xdg</filename> (大抵の Linux ディストリビューションの標準) が <envar>$XDG_CONFIG_DIRS</envar> の一つになっているとすると、<filename>/etc/xdg/Thunar/accels.scm</filename> にシステム全体に適用される標準を設定することができます。こうすることで、Thunar は初回起動時にこのファイルからショートカットを読み込むことになります。</para>
+      <para>Jeśli tworzysz pakiety albo administrujesz systemem i chcesz przygotować globalną konfigurację skrótów, inną od tej domyślnej w Thunarze, możesz utworzyć plik <filename>Thunar/accels.scm</filename> w jednym z <envar>$XDG_CONFIG_DIRS</envar>. Przykładowo jeśli <filename role="directory">/etc/xdg</filename> jest częścią <envar>$XDG_CONFIG_DIRS</envar> (domyślnie w większości dystrybucji Linuksa), możesz zainstalować ustawienia globalne do <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar zastosuje się do tych skrótów przy pierwszym uruchomieniu programu.</para>
     </sect3>
   </sect1>
 
 
   <sect1 id="support">
-    <title>サポート</title>
+    <title>Wsparcie</title>
 
-    <para>このアプリケーションあるいは説明書に関するバグを報告したり何か提案をするなら、<ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink> にあるバグ追跡システムを御利用下さい。意味のあるバグ報告こそがバグを修正するのだという事を忘れないで下さい、ではどういったものが該当するかというと、二つの特質があります:</para>
+    <para>Aby zgłosić błąd albo propozycję dotyczącą tej aplikacji lub tego podręcznika, użyj systemu śledzenia błędów dostępnego na <ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink>. Pamiętaj, że uzyteczne raporty to te, po których błąd zostaje naprawiony, tak więc raport powinien posiadać dwie cechy:</para>
 
     <itemizedlist>
       <listitem>
-        <para><emphasis role="bold">再現可能であること。</emphasis>開発者自身がバグの存在を確認することができない場合は、それを修正するのはほぼ不可能に近くなります。どんな細かいことでも役立ちますので、詳細を余さず伝えて下さい。</para>
+        <para><emphasis role="bold">Powtarzalność.</emphasis> Jeśli programista nie może zobaczyć błędu na własne oczy, prawdopodobnie nie będzie mógł go naprawić. Każdy szczegół, o którym poinformujesz, może pomóc.</para>
       </listitem>
       <listitem>
-        <para><emphasis role="bold">具体的であること。</emphasis>開発者が問題を特定の箇所により早く絞れる程、その修正措置を取りやすくなります。</para>
+        <para><emphasis role="bold">Szczegółowość.</emphasis> Im szybciej programista zawęzi obszar poszukiwań przyczyny problemu do jak najwęższego obszaru, tym szybciej błąd zostanie przez niego naprawiony.</para>
       </listitem>
     </itemizedlist>
 
-    <para>新機能の追加を要望する場合、何故それがアプリケーションにとって有意義だと考えるのか明らかにして下さるようお願いします。その機能について納得のいく議論を行えるのでしたら、追加される可能性は高くなります。要求する機能を実装したパッチを提供して下さるなら更に高くなりますが、事前にファイル <ulink url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> を忘れずに読んで下さい。特に <emphasis>Coding Style</emphasis> と題されている箇所に目を通すようにして下さい。</para>
+    <para>Jeśli chcesz zgłosić potrzebę nowej funkcjonalności, proszę uzasadnij, dlaczego uważasz, że jest ona warta dodania do aplikacji. Nowa funkcjonalność zostanie dodana, jeśli dostarczysz dobrych argumentów, które będą za nią przemawiały. Jeśli dołączysz implementujący ją patch, prawdopodobieństwo jej włączenia jeszcze się zwiększy. Pamiętaj jednak, aby przeczytać plik <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> - szczególnie sekcję zatytułowaną <emphasis>Coding Style</emphasis> - zanim zaczniesz hackować źródło.</para>
 
-    <para>それ以外、利用方法やこのソフトウェアのインストールに関する質問があるのでしたら、<ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev メーリングリスト</ulink>で質問するか、IRC クライアントで <emphasis role="bold">irc.freenode.net</emphasis> のチャンネル <emphasis role="bold">#thunar</emphasis> に参加して手助けを求めてみて下さい。</para>
+    <para>Jeśli natomiast masz pytania dotyczące używania lub instalacji tego oprogramowania, proszę zapytaj na <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">liście mailingowej thunar-dev</ulink> lub nakieruj swojego klienta IRC na <emphasis role="bold">irc.freenode.net</emphasis>, dołącz do kanału <emphasis role="bold">#thunar</emphasis> i poproś o pomoc.</para>
   </sect1>
 
   <sect1 id="copyright">
-    <title>@PACKAGE_NAME@ について</title>
+    <title>O @PACKAGE_NAME@</title>
 
-    <para>@PACKAGE_NAME@ は Benedikt Meurer (<email>benny@xfce.org</email>) が製作しました。より詳しい情報を得るには <ulink url="http://thunar.xfce.org/" type="http">Thunar のウェブサイト</ulink>を訪れて下さい。</para>
+    <para>@PACKAGE_NAME@ został napisany przez Benedikta Meurera (<email>benny@xfce.org</email>). Odwiedź <ulink url="http://thunar.xfce.org/" type="http">witrynę Thunara</ulink> aby dowiedzieć się więcej.</para>
 
-    <para>Benedikt Meurer (<email>benny@xfce.org</email>) がこの文書を製作しました。最新版は <ulink type="http" url="http://thunar.xfce.org/">Thunar のウェブサイト</ulink>にあります。</para>
+    <para>Niniejsza dokumentacja została napisana przez Benedikta Meurera (<email>benny@xfce.org</email>). Najnowsza wersja tego dokumentu jest zawsze dostępna na ulink type="http" url="http://thunar.xfce.org/"&gt;witrynie Thunara</para>
 
-    <para>このソフトウェアはフリーソフトウェア財団が公表する GNU 一般公衆利用許諾契約書の条件下に配布されています。第2版あるいは、あなたが選ぶそれ以降の版のいずれかが適用されます。</para>
+    <para>Niniejszy program jest rozprowadzany na warunkach Powszechnej Licencji Publicznej GNU, wydanej przez Fundację Wolnego Oprogramowania - według wersji 2-giej tej Licencji lub którejś z późniejszych wersji.</para>
 
-    <para>このプログラムには、GNU 一般公衆利用許諾契約書のコピーが附属するはずですが、もし無いのであればフリーソフトウェア財団に連絡して下さい。59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
+    <para>Z pewnością wraz z niniejszym programem otrzymałeś też egzemplarz Powszechnej Licencji Publicznej GNU (GNU General Public License); jeśli nie - napisz do Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
   </sect1>
 
 </article>
