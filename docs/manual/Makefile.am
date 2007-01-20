@@ -6,6 +6,7 @@ SUBDIRS =								\
 	eu								\
 	fr								\
 	ja								\
+	pl								\
 	ru								\
 	zh_TW
 
