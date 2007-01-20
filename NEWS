@@ -1,3 +1,65 @@
+0.8.0
+=====
+- Add documentation for the bulk renamer (Bug #1594).
+- Improve the user manual (Bug #1365).
+- Connect the various "Help" buttons (Bug #1230).
+- Automatically add removable devices as targets to the "Send To" menu
+  (Bug #2683).
+- Allow to use "Eject" button on CD-ROM drives to unmount and eject the media
+  (Bug #2759).
+- Use Exif embedded thumbnails if available, which reduces the amount of data
+  that must be retrieved from a camera to around 50k instead of the whole JPEG
+  image, which can be up to several mega bytes.
+- Treat hotplugged drives as removable drives, so they will be displayed in
+  the side pane.
+- Improve startup notification support.
+- Add support for trashes other than the home trash (Bug #2132).
+- Fix crash on platforms where sizeof(GType) != sizeof(gint) (Bug #2726).
+- Add support for thunar-volman, which gets invoked by Thunar whenever a
+  new device is added to the HAL device tree.
+- Add support for memory cards and generic removable disk drives (Bug #2652).
+- Handle blank discs and pure audio discs as well (Bug #2599).
+- Use exo-mount to mount, eject and unmount volumes of relying on external
+  utilities, like pmount or gnome-mount, that do not always behave properly
+  (Bug #2715).
+- Add ability to mount floppy drives using exo-mount (Bug #2075).
+- Make sure GThread gets initialized first to avoid possible crashes in
+  the GSlice allocator later.
+- Add ability to load custom thumbnailers from .desktop files.
+- Stop unused threads after ten seconds of idle time to return some more
+  free memory to the kernel.
+- Improve performance when loading really large folders using a parallel
+  lock-free algorithm.
+- Ellipsize long shortcut names, but make sure "File System" still fits into
+  the side pane.
+- Properly initialize the translation domain for thunar-vfs (Bug #2543).
+- Do not gather detailed statistics from non-regular files to avoid blocking
+  Thunar forever reading from a named pipe (Bug #2655).
+- Add keyboard shortcuts to switch between the different views (Bug #2600).
+- Do not display "Desktop (Create Link)" action in "Send To" menu for
+  trashed files, because symlinks cannot be created for files in the
+  trash (Bug #2539).
+- Fix crash when transfering a lot of files via drag'n'drop or clipboard
+  (Bug #2356).
+- Fix modal about dialog blocking other windows (Bug #2545).
+- Fix build with dbus-binding-tool 0.72 and above (Bug #2528).
+- Fix installation on case insensitive file systems (Bug #2521).
+- Set word-wrap width depending on current zoom-level (Bug #2505).
+- Improve the performance of the automatic path completion (Bug #1681).
+- Properly redraw the shortcuts pane after after drag'n'drop (Bug #2498).
+- Updated translations: Pau Rul-lan Ferragut (ca), Michal Várady (cs),
+                        Benedikt Meurer and Fabian Nowak (de), Stavros
+			Giannouris (el), Piarres Beobide (eu), Jari Rahkonen
+			(fi), Maximilian Schleiss, Mike Massonnet and Niki
+			Kovacs (fr), Szervác Attila (hu), Roberto Pariset
+			(it), Piotr Maliński and Szymon Kałasz (pl), Andrey
+			Fedoseev (ru), Alexander Toresson (sv), Kang
+			Kang (zh_CN).
+- New translations: Alexander Nyakhaychyk (be), ByungHyun Choi (ko), Jovan
+                    Naumovski and Viktor Stojanovski (mk), Stephan Arts and
+		    Vincent Tunru (nl), Amanpreet Singh Alam (pa).
+
+
 0.5.0rc1
 ========
 - Add a "Trash" menu entry to the "Go" menu (#2486).

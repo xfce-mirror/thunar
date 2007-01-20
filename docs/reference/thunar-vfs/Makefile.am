@@ -50,7 +50,6 @@ content_files = 							\
 INCLUDES =	 							\
 	-I$(top_srcdir) 						\
 	-I$(top_builddir) 						\
-	-DEXO_API_SUBJECT_TO_CHANGE					\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)
 

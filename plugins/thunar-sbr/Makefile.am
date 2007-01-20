@@ -5,7 +5,6 @@ INCLUDES =								\
 	-I$(top_builddir)/plugins					\
 	-I$(top_srcdir)							\
 	-I$(top_srcdir)/plugins						\
-	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DG_LOG_DOMAIN=\"thunar-sbr\"					\
 	$(PLATFORM_CPPFLAGS)
 

@@ -7,7 +7,6 @@ INCLUDES =								\
 	-I$(top_srcdir)/plugins						\
 	-DBINDIR=\"$(bindir)\"						\
 	-DDATADIR=\"$(datadir)\"					\
-	-DEXO_API_SUBJECT_TO_CHANGE					\
 	-DG_LOG_DOMAIN=\"thunar-uca\"					\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	$(PLATFORM_CPPFLAGS)
