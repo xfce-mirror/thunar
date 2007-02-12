@@ -30,11 +30,15 @@
 G_BEGIN_DECLS;
 
 /* Support macros for compilers that don't support proper inlining */
+#if !defined(G_CAN_INLINE) && !defined(__THUNAR_VFS_PATH_C__) && !defined(__THUNAR_VFS_INFO_C__)
+
 #define thunar_vfs_path_ref(path)         (exo_atomic_inc (&(THUNAR_VFS_PATH ((path))->ref_count)), path)
 #define thunar_vfs_path_is_root(path)     (THUNAR_VFS_PATH ((path))->parent == NULL)
 #define thunar_vfs_path_get_name(path)    (((const gchar *) path) + sizeof (ThunarVfsPath))
 #define thunar_vfs_path_get_parent(path)  (THUNAR_VFS_PATH ((path))->parent)
 #define thunar_vfs_path_get_scheme(path)  (THUNAR_VFS_PATH ((path))->ref_count & THUNAR_VFS_PATH_SCHEME_MASK)
+
+#endif /* !defined(G_CAN_INLINE) && !defined(__THUNAR_VFS_PATH_C__) && !defined(__THUNAR_VFS_INFO_C__) */
 
 /* global shared variables */
 extern ThunarVfsPath *_thunar_vfs_path_trash_root G_GNUC_INTERNAL;
