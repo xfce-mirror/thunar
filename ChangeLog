@@ -1,5 +1,10 @@
 2007-02-12	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-thumb-jpeg.c: Fix unaligned memory access in
+	  exif code. Bug #2880.
+
+2007-02-12	Benedikt Meurer <benny@xfce.org>
+
 	* thunar-vfs/thunar-vfs-path-private.h: Fix compilation with the
 	  Sun Studio 11 compiler based on patch from William Bonnet
 	  <william@wbonnet.net>. Bug #2899.

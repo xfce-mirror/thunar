@@ -330,24 +330,24 @@ typedef struct
 
 static guint
 tvtj_exif_get_ushort (const TvtjExif *exif,
-                      gconstpointer   data)
+                      const guchar   *data)
 {
   if (G_UNLIKELY (exif->big_endian))
-    return GUINT16_FROM_BE (*((const guint16 *) data));
+    return ((data[0] << 8) | data[1]);
   else
-    return GUINT16_FROM_LE (*((const guint16 *) data));
+    return ((data[1] << 8) | data[0]);
 }
 
 
 
 static guint
 tvtj_exif_get_ulong (const TvtjExif *exif,
-                     gconstpointer   data)
+                     const guchar   *data)
 {
   if (G_UNLIKELY (exif->big_endian))
-    return GUINT32_FROM_BE (*((const guint32 *) data));
+    return ((data[0] << 24) | (data[1] << 16) | (data[2] << 8) | data[3]);
   else
-    return GUINT32_FROM_LE (*((const guint32 *) data));
+    return ((data[3] << 24) | (data[2] << 16) | (data[1] << 8) | data[0]);
 }
 
 
