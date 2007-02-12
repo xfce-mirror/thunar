@@ -310,18 +310,18 @@ typedef struct
   {
     struct /* thumbnail JPEG */
     {
-      guint     thumb_jpeg_length;
-      guint     thumb_jpeg_offset;
-    };
+      guint     length;
+      guint     offset;
+    } thumb_jpeg;
     struct /* thumbnail TIFF */
     {
-      guint     thumb_tiff_length;
-      guint     thumb_tiff_offset;
-      guint     thumb_tiff_interp;
-      guint     thumb_tiff_height;
-      guint     thumb_tiff_width;
-    };
-  };
+      guint     length;
+      guint     offset;
+      guint     interp;
+      guint     height;
+      guint     width;
+    } thumb_tiff;
+  } thumb;
 
   gboolean      big_endian;
 } TvtjExif;
@@ -415,15 +415,15 @@ tvtj_exif_parse_ifd (TvtjExif     *exif,
 
           /* and remember it appropriately */
           if (tag == 0x0100)
-            exif->thumb_tiff_width = value;
+            exif->thumb.thumb_tiff.width = value;
           else if (tag == 0x0100)
-            exif->thumb_tiff_height = value;
+            exif->thumb.thumb_tiff.height = value;
           else if (tag == 0x0106)
-            exif->thumb_tiff_interp = value;
+            exif->thumb.thumb_tiff.interp = value;
           else if (tag == 0x0111)
-            exif->thumb_tiff_offset = value;
+            exif->thumb.thumb_tiff.offset = value;
           else
-            exif->thumb_tiff_length = value;
+            exif->thumb.thumb_tiff.length = value;
         }
       else if (tag == 0x0201 || tag == 0x0202)
         {
@@ -435,9 +435,9 @@ tvtj_exif_parse_ifd (TvtjExif     *exif,
 
               /* and remember it appropriately */
               if (G_LIKELY (tag == 0x201))
-                exif->thumb_jpeg_offset = value;
+                exif->thumb.thumb_jpeg.offset = value;
               else
-                exif->thumb_jpeg_length = value;
+                exif->thumb.thumb_jpeg.length = value;
             }
         }
     }
@@ -503,25 +503,25 @@ tvtj_exif_extract_thumbnail (const guchar  *data,
       if (G_LIKELY (exif.thumb_compression == 6)) /* JPEG */
         {
           /* check if we have a valid thumbnail JPEG */
-          if (exif.thumb_jpeg_offset > 0 && exif.thumb_jpeg_length > 0
-              && exif.thumb_jpeg_offset + exif.thumb_jpeg_length <= length)
+          if (exif.thumb.thumb_jpeg.offset > 0 && exif.thumb.thumb_jpeg.length > 0
+              && exif.thumb.thumb_jpeg.offset + exif.thumb.thumb_jpeg.length <= length)
             {
               /* try to load the embedded thumbnail JPEG */
-              return tvtj_jpeg_load (data + exif.thumb_jpeg_offset, exif.thumb_jpeg_length, size);
+              return tvtj_jpeg_load (data + exif.thumb.thumb_jpeg.offset, exif.thumb.thumb_jpeg.length, size);
             }
         }
       else if (exif.thumb_compression == 1) /* Uncompressed */
         {
           /* check if we have a valid thumbnail (current only RGB interpretations) */
-          if (G_LIKELY (exif.thumb_tiff_interp == 2)
-              && exif.thumb_tiff_offset > 0 && exif.thumb_tiff_length > 0
-              && exif.thumb_tiff_offset + exif.thumb_tiff_length <= length
-              && exif.thumb_tiff_height * exif.thumb_tiff_width == exif.thumb_tiff_length)
+          if (G_LIKELY (exif.thumb.thumb_tiff.interp == 2)
+              && exif.thumb.thumb_tiff.offset > 0 && exif.thumb.thumb_tiff.length > 0
+              && exif.thumb.thumb_tiff.offset + exif.thumb.thumb_tiff.length <= length
+              && exif.thumb.thumb_tiff.height * exif.thumb.thumb_tiff.width == exif.thumb.thumb_tiff.length)
             {
               /* plain RGB data, just what we need for a GdkPixbuf */
-              return gdk_pixbuf_new_from_data (g_memdup (data + exif.thumb_tiff_offset, exif.thumb_tiff_length),
-                                               GDK_COLORSPACE_RGB, FALSE, 8, exif.thumb_tiff_width,
-                                               exif.thumb_tiff_height, exif.thumb_tiff_width,
+              return gdk_pixbuf_new_from_data (g_memdup (data + exif.thumb.thumb_tiff.offset, exif.thumb.thumb_tiff.length),
+                                               GDK_COLORSPACE_RGB, FALSE, 8, exif.thumb.thumb_tiff.width,
+                                               exif.thumb.thumb_tiff.height, exif.thumb.thumb_tiff.width,
                                                (GdkPixbufDestroyNotify) g_free, NULL);
             }
         }
@@ -615,7 +615,7 @@ thunar_vfs_thumb_jpeg_load (const gchar *path,
       if (G_LIKELY (fstat (fd, &statb) == 0 && statb.st_size > 0))
         {
           /* try to mmap the file */
-          content = mmap (NULL, statb.st_size, PROT_READ, MAP_SHARED, fd, 0);
+          content = (JOCTET *) mmap (NULL, statb.st_size, PROT_READ, MAP_SHARED, fd, 0);
 
           /* verify that the mmap was successful */
           if (G_LIKELY (content != (JOCTET *) MAP_FAILED))
@@ -630,7 +630,7 @@ thunar_vfs_thumb_jpeg_load (const gchar *path,
             }
 
           /* unmap the file content */
-          munmap (content, statb.st_size);
+          munmap ((void *) content, statb.st_size);
         }
 
       /* close the file */
@@ -638,9 +638,9 @@ thunar_vfs_thumb_jpeg_load (const gchar *path,
     }
 
   return pixbuf;
-#endif
-
+#else
   return NULL;
+#endif
 }
 
 
