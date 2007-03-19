@@ -109,6 +109,8 @@ struct _ThunarIconFactory
   ThunarThumbnailGenerator *thumbnail_generator;
   ThunarVfsThumbFactory    *thumbnail_factory;
 
+  ThunarPreferences        *preferences;
+
   GdkPixbuf                *recently[MAX_RECENTLY];  /* ring buffer */
   guint                     recently_pos;            /* insert position */
 
@@ -298,6 +300,9 @@ thunar_icon_factory_finalize (GObject *object)
       g_object_set_qdata (G_OBJECT (factory->icon_theme), thunar_icon_factory_quark, NULL);
       g_object_unref (G_OBJECT (factory->icon_theme));
     }
+
+  /* disconnect from the preferences */
+  g_object_unref (G_OBJECT (factory->preferences));
 
   (*G_OBJECT_CLASS (thunar_icon_factory_parent_class)->finalize) (object);
 }
@@ -595,7 +600,8 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
                                   if (!thunar_vfs_thumb_factory_store_thumbnail (factory->thumbnail_factory, pixbuf, info, &err))
                                     {
                                       /* not critical, but atleast let the user know whats going on */
-                                      g_warning ("Failed to store thumbnail for \"%s\": %s", filename, err->message);
+                                      g_warning ("Failed to store thumbnail for \"%s\" (%s), disabling thumbnailing", filename, err->message);
+                                      g_object_set (G_OBJECT (factory->preferences), "misc-show-thumbnails", FALSE, NULL);
                                       g_error_free (err);
                                     }
 
@@ -801,7 +807,6 @@ thunar_icon_factory_get_default (void)
 ThunarIconFactory*
 thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
 {
-  ThunarPreferences *preferences;
   ThunarIconFactory *factory;
 
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
@@ -820,9 +825,8 @@ thunar_icon_factory_get_for_icon_theme (GtkIconTheme *icon_theme)
       g_object_set_qdata (G_OBJECT (factory->icon_theme), thunar_icon_factory_quark, factory);
 
       /* connect the "show-thumbnails" property to the global preference */
-      preferences = thunar_preferences_get ();
-      g_object_set_data_full (G_OBJECT (factory), I_("thunar-preferences"), preferences, g_object_unref);
-      exo_binding_new (G_OBJECT (preferences), "misc-show-thumbnails", G_OBJECT (factory), "show-thumbnails");
+      factory->preferences = thunar_preferences_get ();
+      exo_mutual_binding_new (G_OBJECT (factory->preferences), "misc-show-thumbnails", G_OBJECT (factory), "show-thumbnails");
     }
   else
     {
