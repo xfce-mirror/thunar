@@ -1,21 +1,22 @@
 # $Id$
 
-SUBDIRS =								\
+SUBDIRS =							\
 	C								\
 	es								\
 	eu								\
 	fr								\
 	ja								\
+	nl								\
 	pl								\
 	ru								\
 	zh_TW
 
 cssdir = $(datadir)/doc/Thunar/html
-css_DATA =								\
+css_DATA =							\
 	thunar.css
 
-EXTRA_DIST = 								\
-	$(css_DATA)							\
+EXTRA_DIST = 						\
+	$(css_DATA)						\
 	thunar.xsl
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
