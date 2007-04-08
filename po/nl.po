@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-01-11 13:18+0100\n"
 "PO-Revision-Date: 2006-10-27 00:51+0100\n"
-"Last-Translator: Stephan Arts <psybsd@gmail.com>\n"
+"Last-Translator: Stephan Arts <stephan@xfce.org>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -590,6 +590,8 @@ msgid ""
 "The folder \"%s\" does not exist anymore, but it is required to restore the "
 "file \"%s\" from the trash. Do you want to create the folder again?"
 msgstr ""
+"De map \"%s\" bestaat niet meer, maar het is nodig voor het herstellen van "
+"het bestand \"%s\" uit de prullenbak. Wil je deze map aanmaken?"
 
 #. display an error dialog
 #: ../thunar/thunar-application.c:1623
@@ -676,12 +678,10 @@ msgid "Open <i>%s</i> and other files of type \"%s\" with:"
 msgstr "Open <i>%s</i> en andere bestanden van het type \"%s\" met:"
 
 #: ../thunar/thunar-chooser-dialog.c:709
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Browse the file system to select an application to open files of type \"%s\"."
 msgstr ""
-"Blader door het bestandssysteem om een programma te selecteren om te "
-"gebruiken voor deze actie."
 
 #: ../thunar/thunar-chooser-dialog.c:715
 #, c-format
@@ -775,6 +775,8 @@ msgid ""
 "Choose the order of information to appear in the\n"
 "detailed list view."
 msgstr ""
+"Kies de volgorde waarin de informatie wordt\n"
+"weergegeven in de gedetailleerde lijst weergave."
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:217
@@ -871,7 +873,7 @@ msgstr "De werk-map moet een absoluut pad zijn"
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
 msgid "Atleast one filename must be specified"
-msgstr ""
+msgstr "Tenminste een bestandsnaam moet worden opgegeven"
 
 #: ../thunar/thunar-details-view.c:131
 msgid "Configure _Columns..."
@@ -894,7 +896,7 @@ msgstr "Gedetailleerde weergavemodus"
 msgid "translator-credits"
 msgstr ""
 "Vincent Tunru <imnotb@gmail.com>\n"
-"Stephan Arts <psybsd@gmail.com>"
+"Stephan Arts <stephan@xfce.org>"
 
 #. display an error message to the user
 #. tell the user that we failed
@@ -1043,9 +1045,8 @@ msgid "Open in New Window"
 msgstr "Openen in Nieuw Venster"
 
 #: ../thunar/thunar-launcher.c:138
-#, fuzzy
 msgid "Open the selected directory in a new window"
-msgstr "De geselecteerde mappen in nieuwe Thunar-vensters openen"
+msgstr "De geselecteerde map in een nieuw venster openen"
 
 #: ../thunar/thunar-launcher.c:139 ../thunar/thunar-launcher.c:141
 msgid "Open With Other _Application..."
@@ -1719,15 +1720,16 @@ msgid "Apply to Folder and Contents"
 msgstr "Toepassen op map en inhoud"
 
 #: ../thunar/thunar-preferences-dialog.c:568
-#, fuzzy
 msgid "Volume Management"
-msgstr "Bestandsbeheerder"
+msgstr "Media Beheer"
 
 #: ../thunar/thunar-preferences-dialog.c:596
 msgid ""
 "Install the \"thunar-volman\" package to use\n"
 "the volume management support in Thunar."
 msgstr ""
+"Installeer het \"thunar-volman\" pakker om\n"
+"gebruik te maken van het Thunar media beheer."
 
 #: ../thunar/thunar-preferences-dialog.c:597
 msgid ""
@@ -1738,7 +1740,7 @@ msgstr ""
 #. add check button to enable/disable auto mounting
 #: ../thunar/thunar-preferences-dialog.c:608
 msgid "Enable _Volume Management"
-msgstr ""
+msgstr "_Media beheer inschakelen"
 
 #. TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it
 #: ../thunar/thunar-preferences-dialog.c:618
@@ -1749,9 +1751,8 @@ msgstr ""
 
 #. tell the user that we failed to come up with the thunar-volman configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:677
-#, fuzzy
 msgid "Failed to display the volume management settings"
-msgstr "Het weergeven van de inhoud van de prullenbak is mislukt"
+msgstr "Het weergeven van de media beheer instellingen is mislukt"
 
 #: ../thunar/thunar-progress-dialog.c:375
 #, c-format
@@ -1924,9 +1925,8 @@ msgid "New Name"
 msgstr "Nieuwe naam"
 
 #: ../thunar/thunar-renamer-dialog.c:508
-#, fuzzy
 msgid "Click here to view the documentation for the selected rename operation."
-msgstr "Klik hier om de rechten van de map automatisch te verbeteren."
+msgstr ""
 
 #. TRANSLATORS: You can test this string by temporarily removing thunar-sbr.* from $libdir/thunarx-1/,
 #. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
@@ -2596,9 +2596,8 @@ msgid "Do _not display this message again"
 msgstr "_Niet weer vragen"
 
 #: ../thunar/thunar-window.c:1842
-#, fuzzy
 msgid "Failed to open the templates folder"
-msgstr "Fout bij het openen van de sjablonen map"
+msgstr "Fout bij het openen van de map met sjablonen"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:1871
@@ -2636,18 +2635,14 @@ msgstr "Etiket"
 # No sufficient translation of widget found
 # Geen geschikte vertaling van widget gevonden
 #: ../thunarx/thunarx-property-page.c:151
-#, fuzzy
 msgid "A widget to display in place of the usual page label"
 msgstr ""
-"Een interface-element om weer te geven in plaats van het gebruikelijke "
-"pagina etiket"
 
 #: ../thunarx/thunarx-provider-plugin.c:79
 msgid "Resident"
 msgstr "Inwoner"
 
 #: ../thunarx/thunarx-provider-plugin.c:80
-#, fuzzy
 msgid "Don't unload the plugin from memory"
 msgstr "De plugin niet uit het geheugen verwijderen"
 
@@ -2656,9 +2651,8 @@ msgid "Help URL"
 msgstr "Help URL"
 
 #: ../thunarx/thunarx-renamer.c:163
-#, fuzzy
 msgid "The URL to the documentation of the renamer"
-msgstr "Fout bij het openen van de sjablonen map"
+msgstr ""
 
 #: ../thunarx/thunarx-renamer.c:178
 msgid "The user visible name of the renamer"
@@ -2738,19 +2732,19 @@ msgstr "Het opslaan van \"%s\" is mislukt"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:49
 msgid "Date Taken:"
-msgstr ""
+msgstr "Gemaakt op:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:50
 msgid "Camera Brand:"
-msgstr ""
+msgstr "Camera Merk"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:51
 msgid "Camera Model:"
-msgstr ""
+msgstr "Camera Model:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:52
 msgid "Exposure Time:"
-msgstr ""
+msgstr "Belichtings tijd:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:53
 msgid "Exposure Program:"
@@ -2774,7 +2768,7 @@ msgstr ""
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:58
 msgid "Shutter Speed:"
-msgstr ""
+msgstr "Sluiter snelheid:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:59
 msgid "ISO Speed Ratings:"
@@ -2973,16 +2967,16 @@ msgstr "Zoeken & Vervangen"
 #: ../plugins/thunar-sendto-email/main.c:176
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
-msgstr ""
+msgstr "\"%s\" verzenden als gecomprimeerd archief?"
 
 #: ../plugins/thunar-sendto-email/main.c:178
 #: ../plugins/thunar-sendto-email/main.c:197
 msgid "Send _directly"
-msgstr ""
+msgstr "Direct _versturen"
 
 #: ../plugins/thunar-sendto-email/main.c:179
 msgid "Send com_pressed"
-msgstr ""
+msgstr "Ge_comprimeerd versturen"
 
 #: ../plugins/thunar-sendto-email/main.c:181
 msgid ""
@@ -3000,7 +2994,7 @@ msgstr[1] ""
 
 #: ../plugins/thunar-sendto-email/main.c:198
 msgid "Send as _archive"
-msgstr ""
+msgstr "Versturen als _archief"
 
 #: ../plugins/thunar-sendto-email/main.c:200
 msgid ""
