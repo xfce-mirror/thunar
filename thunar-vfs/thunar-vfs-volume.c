@@ -296,9 +296,7 @@ gboolean
 thunar_vfs_volume_is_ejectable (ThunarVfsVolume *volume)
 {
   g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
-
-  /* we can only eject removable media, that are present (surprise, surprise) */
-  return (thunar_vfs_volume_is_present (volume) && thunar_vfs_volume_is_removable (volume));
+  return (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->is_ejectable) (volume);
 }
 
 

@@ -37,6 +37,7 @@ struct _ThunarVfsVolumeClass
   const gchar          *(*get_name)         (ThunarVfsVolume   *volume);
   ThunarVfsVolumeStatus (*get_status)       (ThunarVfsVolume   *volume);
   ThunarVfsPath        *(*get_mount_point)  (ThunarVfsVolume   *volume);
+  gboolean              (*is_ejectable)     (ThunarVfsVolume   *volume);
   const gchar          *(*lookup_icon_name) (ThunarVfsVolume   *volume,
                                              GtkIconTheme      *icon_theme);
 

@@ -1,5 +1,14 @@
 2007-04-27	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-volume-freebsd.c,
+	  thunar-vfs/thunar-vfs-volume-hal.c,
+	  thunar-vfs/thunar-vfs-volume-private.h,
+	  thunar-vfs/thunar-vfs-volume.c: Use the requires_eject HAL
+	  property to determine whether a given volume is ejectable.
+	  Bug #3119.
+
+2007-04-27	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/thunar-util.c(thunar_util_humanize_file_time): Use larger
 	  date buffer. Bug #3127.
 

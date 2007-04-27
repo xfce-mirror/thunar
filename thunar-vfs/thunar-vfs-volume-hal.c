@@ -53,6 +53,7 @@ static ThunarVfsVolumeKind   thunar_vfs_volume_hal_get_kind                 (Thu
 static const gchar          *thunar_vfs_volume_hal_get_name                 (ThunarVfsVolume          *volume);
 static ThunarVfsVolumeStatus thunar_vfs_volume_hal_get_status               (ThunarVfsVolume          *volume);
 static ThunarVfsPath        *thunar_vfs_volume_hal_get_mount_point          (ThunarVfsVolume          *volume);
+static gboolean              thunar_vfs_volume_hal_is_ejectable             (ThunarVfsVolume          *volume);
 static const gchar          *thunar_vfs_volume_hal_lookup_icon_name         (ThunarVfsVolume          *volume,
                                                                              GtkIconTheme             *icon_theme);
 static gboolean              thunar_vfs_volume_hal_eject                    (ThunarVfsVolume          *volume,
@@ -90,6 +91,7 @@ struct _ThunarVfsVolumeHal
   /* list of possible icons */
   GList                *icon_list;
 
+  gboolean              requires_eject;
   ThunarVfsPath        *mount_point;
   ThunarVfsVolumeKind   kind;
   ThunarVfsVolumeStatus status;
@@ -139,6 +141,7 @@ thunar_vfs_volume_hal_class_init (ThunarVfsVolumeHalClass *klass)
   thunarvfs_volume_class->get_name = thunar_vfs_volume_hal_get_name;
   thunarvfs_volume_class->get_status = thunar_vfs_volume_hal_get_status;
   thunarvfs_volume_class->get_mount_point = thunar_vfs_volume_hal_get_mount_point;
+  thunarvfs_volume_class->is_ejectable = thunar_vfs_volume_hal_is_ejectable;
   thunarvfs_volume_class->lookup_icon_name = thunar_vfs_volume_hal_lookup_icon_name;
   thunarvfs_volume_class->eject = thunar_vfs_volume_hal_eject;
   thunarvfs_volume_class->mount = thunar_vfs_volume_hal_mount;
@@ -197,6 +200,19 @@ static ThunarVfsPath*
 thunar_vfs_volume_hal_get_mount_point (ThunarVfsVolume *volume)
 {
   return THUNAR_VFS_VOLUME_HAL (volume)->mount_point;
+}
+
+
+
+static gboolean
+thunar_vfs_volume_hal_is_ejectable (ThunarVfsVolume *volume)
+{
+  /* check if HAL drive requires eject */
+  if (THUNAR_VFS_VOLUME_HAL (volume)->requires_eject)
+    return TRUE;
+
+  /* otherwise we can only eject removable media, that are present (surprise, surprise) */
+  return (thunar_vfs_volume_is_present (volume) && thunar_vfs_volume_is_removable (volume));
 }
 
 
@@ -520,6 +536,9 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
    * a drive, which means non-pollable then, so it's present
    */
   volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_PRESENT;
+
+  /* check if the drive requires eject */
+  volume_hal->requires_eject = libhal_drive_requires_eject (hd);
 
   /* check if the volume is currently mounted */
   if (hv != NULL && libhal_volume_is_mounted (hv))

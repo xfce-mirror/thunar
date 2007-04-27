@@ -59,6 +59,7 @@ static ThunarVfsVolumeKind      thunar_vfs_volume_freebsd_get_kind         (Thun
 static const gchar             *thunar_vfs_volume_freebsd_get_name         (ThunarVfsVolume             *volume);
 static ThunarVfsVolumeStatus    thunar_vfs_volume_freebsd_get_status       (ThunarVfsVolume             *volume);
 static ThunarVfsPath           *thunar_vfs_volume_freebsd_get_mount_point  (ThunarVfsVolume             *volume);
+static gboolean                 thunar_vfs_volume_freebsd_is_ejectable     (ThunarVfsVolume             *volume);
 static gboolean                 thunar_vfs_volume_freebsd_eject            (ThunarVfsVolume             *volume,
                                                                             GtkWidget                   *window,
                                                                             GError                     **error);
@@ -142,6 +143,7 @@ thunar_vfs_volume_freebsd_class_init (ThunarVfsVolumeFreeBSDClass *klass)
   thunarvfs_volume_class->get_name = thunar_vfs_volume_freebsd_get_name;
   thunarvfs_volume_class->get_status = thunar_vfs_volume_freebsd_get_status;
   thunarvfs_volume_class->get_mount_point = thunar_vfs_volume_freebsd_get_mount_point;
+  thunarvfs_volume_class->is_ejectable = thunar_vfs_volume_freebsd_is_ejectable;
   thunarvfs_volume_class->eject = thunar_vfs_volume_freebsd_eject;
   thunarvfs_volume_class->mount = thunar_vfs_volume_freebsd_mount;
   thunarvfs_volume_class->unmount = thunar_vfs_volume_freebsd_unmount;
@@ -197,6 +199,15 @@ static ThunarVfsPath*
 thunar_vfs_volume_freebsd_get_mount_point (ThunarVfsVolume *volume)
 {
   return THUNAR_VFS_VOLUME_FREEBSD (volume)->mount_point;
+}
+
+
+
+static gboolean
+thunar_vfs_volume_freebsd_is_ejectable (ThunarVfsVolume *volume)
+{
+  /* we can only eject removable media, that are present (surprise, surprise) */
+  return (thunar_vfs_volume_is_present (volume) && thunar_vfs_volume_is_removable (volume));
 }
 
 
