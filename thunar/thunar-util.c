@@ -120,8 +120,8 @@ thunar_util_humanize_file_time (ThunarVfsFileTime file_time)
             date_format = "%x"; /* Any other date */
 
           /* format the date string accordingly */
-          date_string = g_new (gchar, 16);
-          if (g_date_strftime (date_string, 16, date_format, &dfile) != 0)
+          date_string = g_new (gchar, 32);
+          if (g_date_strftime (date_string, 32, date_format, &dfile) != 0)
             return date_string;
           g_free (date_string);
         }
