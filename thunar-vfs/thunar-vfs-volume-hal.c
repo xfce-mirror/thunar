@@ -1095,7 +1095,7 @@ thunar_vfs_volume_manager_hal_device_removed (LibHalContext *context,
   _thunar_vfs_return_if_fail (manager_hal->context == context);
 
   /* emit the "device-removed" signal (to support thunar-volman) */
-  g_signal_emit_by_name (G_OBJECT (manager_hal), "device-added", udi);
+  g_signal_emit_by_name (G_OBJECT (manager_hal), "device-removed", udi);
 
   /* check if we already have a volume object for the UDI */
   volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);
