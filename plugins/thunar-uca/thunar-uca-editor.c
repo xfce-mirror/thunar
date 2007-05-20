@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -483,7 +483,9 @@ thunar_uca_editor_command_clicked (ThunarUcaEditor *uca_editor)
   GtkFileFilter *filter;
   GtkWidget     *chooser;
   gchar         *filename;
+  gchar        **argv = NULL;
   gchar         *s;
+  gint           argc;
 
   g_return_if_fail (THUNAR_UCA_IS_EDITOR (uca_editor));
 
@@ -581,7 +583,20 @@ thunar_uca_editor_command_clicked (ThunarUcaEditor *uca_editor)
   /* run the chooser dialog */
   if (gtk_dialog_run (GTK_DIALOG (chooser)) == GTK_RESPONSE_ACCEPT)
     {
+      /* determine the path to the selected file */
       filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (chooser));
+
+      /* check if we need to quote the filename */
+      if (!g_shell_parse_argv (filename, &argc, &argv, NULL) || argc > 1)
+        {
+          /* shell is unable to interpret properly without quoting */
+          s = g_shell_quote (filename);
+          g_free (filename);
+          filename = s;
+        }
+      g_strfreev (argv);
+
+      /* append %f to filename, user may change that afterwards */
       s = g_strconcat (filename, " %f", NULL);
       gtk_entry_set_text (GTK_ENTRY (uca_editor->command_entry), s);
       g_free (filename);
