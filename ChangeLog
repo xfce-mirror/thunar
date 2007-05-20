@@ -1,5 +1,11 @@
 2007-05-20	Benedikt Meurer <benny@xfce.org>
 
+	* thunar/thunar-preferences.c(thunar_preferences_set_property):
+	  Properly initialize value to its default prior to comparing
+	  with a (probably) new value.
+
+2007-05-20	Benedikt Meurer <benny@xfce.org>
+
 	* plugins/thunar-uca/thunar-uca-editor.c: Properly quote files
 	  selected via the file chooser if necessary. Bug #3105.
 

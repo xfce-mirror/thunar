@@ -731,7 +731,10 @@ thunar_preferences_set_property (GObject      *object,
 
   dst = preferences->values + prop_id;
   if (G_UNLIKELY (!G_IS_VALUE (dst)))
-    g_value_init (dst, pspec->value_type);
+    {
+      g_value_init (dst, pspec->value_type);
+      g_param_value_set_default (pspec, dst);
+    }
 
   if (g_param_values_cmp (pspec, value, dst) != 0)
     {
