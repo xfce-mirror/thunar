@@ -283,28 +283,28 @@ thunar-thumbnail-frame.c: $(srcdir)/thunar-thumbnail-frame.png Makefile
 	(echo "#include <thunar/thunar-thumbnail-frame.h>" && gdk-pixbuf-csource --extern --raw --stream --name=thunar_thumbnail_frame $(srcdir)/thunar-thumbnail-frame.png) > thunar-thumbnail-frame.c
 
 thunar-abstract-icon-view-ui.h: Makefile $(srcdir)/thunar-abstract-icon-view-ui.xml
-	exo-csource --static --name=thunar_abstract_icon_view_ui $(srcdir)/thunar-abstract-icon-view-ui.xml > thunar-abstract-icon-view-ui.h
+	exo-csource --strip-comments --strip-content --static --name=thunar_abstract_icon_view_ui $(srcdir)/thunar-abstract-icon-view-ui.xml > thunar-abstract-icon-view-ui.h
 
 thunar-details-view-ui.h: Makefile $(srcdir)/thunar-details-view-ui.xml
-	exo-csource --static --name=thunar_details_view_ui $(srcdir)/thunar-details-view-ui.xml > thunar-details-view-ui.h
+	exo-csource --strip-comments --strip-content --static --name=thunar_details_view_ui $(srcdir)/thunar-details-view-ui.xml > thunar-details-view-ui.h
 
 thunar-launcher-ui.h: Makefile $(srcdir)/thunar-launcher-ui.xml
-	exo-csource --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
+	exo-csource --strip-comments --strip-content --static --name=thunar_launcher_ui $(srcdir)/thunar-launcher-ui.xml > thunar-launcher-ui.h
 
 thunar-location-buttons-ui.h: Makefile $(srcdir)/thunar-location-buttons-ui.xml
-	exo-csource --static --name=thunar_location_buttons_ui $(srcdir)/thunar-location-buttons-ui.xml > thunar-location-buttons-ui.h
+	exo-csource --strip-comments --strip-content --static --name=thunar_location_buttons_ui $(srcdir)/thunar-location-buttons-ui.xml > thunar-location-buttons-ui.h
 
 thunar-shortcuts-pane-ui.h: Makefile $(srcdir)/thunar-shortcuts-pane-ui.xml
-	exo-csource --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h
+	exo-csource --strip-comments --strip-content --static --name=thunar_shortcuts_pane_ui $(srcdir)/thunar-shortcuts-pane-ui.xml > thunar-shortcuts-pane-ui.h
 
 thunar-renamer-dialog-ui.h: Makefile $(srcdir)/thunar-renamer-dialog-ui.xml
-	exo-csource --static --name=thunar_renamer_dialog_ui $(srcdir)/thunar-renamer-dialog-ui.xml > thunar-renamer-dialog-ui.h
+	exo-csource --strip-comments --strip-content --static --name=thunar_renamer_dialog_ui $(srcdir)/thunar-renamer-dialog-ui.xml > thunar-renamer-dialog-ui.h
 
 thunar-standard-view-ui.h: Makefile $(srcdir)/thunar-standard-view-ui.xml
-	exo-csource --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h
+	exo-csource --strip-comments --strip-content --static --name=thunar_standard_view_ui $(srcdir)/thunar-standard-view-ui.xml > thunar-standard-view-ui.h
 
 thunar-window-ui.h: Makefile $(srcdir)/thunar-window-ui.xml
-	exo-csource --static --name=thunar_window_ui $(srcdir)/thunar-window-ui.xml > thunar-window-ui.h
+	exo-csource --strip-comments --strip-content --static --name=thunar_window_ui $(srcdir)/thunar-window-ui.xml > thunar-window-ui.h
 
 thunar-marshal.h: stamp-thunar-marshal.h
 	@true
