@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -82,15 +82,17 @@ typedef enum
 
 /**
  * ThunarVfsVolumeStatus:
- * @THUNAR_VFS_VOLUME_STATUS_PRESENT : Whether or not a medium is present.
- * @THUNAR_VFS_VOLUME_STATUS_MOUNTED : Whether or not the media is currently mounted.
+ * @THUNAR_VFS_VOLUME_STATUS_PRESENT   : Whether or not a medium is present.
+ * @THUNAR_VFS_VOLUME_STATUS_MOUNTED   : Whether or not the media is currently mounted.
+ * @THUNAR_VFS_VOLUME_STATUS_MOUNTABLE : Whether or not the media can be mounted.
  *
  * Describes the current status of a VFS volume.
  **/
 typedef enum /*< flags >*/
 {
-  THUNAR_VFS_VOLUME_STATUS_MOUNTED = 1 << 0,
-  THUNAR_VFS_VOLUME_STATUS_PRESENT = 1 << 1,
+  THUNAR_VFS_VOLUME_STATUS_MOUNTED   = 1 << 0,
+  THUNAR_VFS_VOLUME_STATUS_PRESENT   = 1 << 1,
+  THUNAR_VFS_VOLUME_STATUS_MOUNTABLE = 1 << 2,
 } ThunarVfsVolumeStatus;
 
 GType                 thunar_vfs_volume_get_type          (void) G_GNUC_CONST;
@@ -101,6 +103,7 @@ ThunarVfsVolumeStatus thunar_vfs_volume_get_status        (ThunarVfsVolume   *vo
 ThunarVfsPath        *thunar_vfs_volume_get_mount_point   (ThunarVfsVolume   *volume);
 
 gboolean              thunar_vfs_volume_is_disc           (ThunarVfsVolume   *volume);
+gboolean              thunar_vfs_volume_is_mountable      (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_mounted        (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_present        (ThunarVfsVolume   *volume);
 gboolean              thunar_vfs_volume_is_ejectable      (ThunarVfsVolume   *volume);

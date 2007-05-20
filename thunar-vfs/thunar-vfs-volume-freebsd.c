@@ -317,12 +317,20 @@ thunar_vfs_volume_freebsd_update (gpointer user_data)
                       g_strchomp (label);
                       if (G_LIKELY (*label != '\0'))
                         volume_freebsd->label = g_strdup (label);
+
+                      /* if we got this far, the CD should be mountable */
+                      status |= THUNAR_VFS_VOLUME_STATUS_MOUNTABLE;
                     }
                 }
             }
 
           close (fd);
         }
+    }
+  else
+    {
+      /* FIXME: not sure how to determine mountability */
+      status |= THUNAR_VFS_VOLUME_STATUS_MOUNTABLE;
     }
 
   /* determine the absolute path to the mount point */

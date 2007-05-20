@@ -536,6 +536,10 @@ thunar_vfs_volume_hal_update (ThunarVfsVolumeHal *volume_hal,
    * a drive, which means non-pollable then, so it's present
    */
   volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_PRESENT;
+  
+  /* figure out if the volume is mountable */
+  if(hv != NULL && libhal_volume_get_fsusage (hv) == LIBHAL_VOLUME_USAGE_MOUNTABLE_FILESYSTEM)
+    volume_hal->status |= THUNAR_VFS_VOLUME_STATUS_MOUNTABLE;
 
   /* check if the drive requires eject */
   volume_hal->requires_eject = libhal_drive_requires_eject (hd);
@@ -999,11 +1003,19 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
   _thunar_vfs_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER_HAL (manager_hal));
   _thunar_vfs_return_if_fail (manager_hal->context == context);
 
+  /* check if we have a volume here */
+  hv = libhal_volume_from_udi (context, udi);
+
+  /* HAL might want us to ignore this volume for some reason */
+  if (G_UNLIKELY (hv != NULL && libhal_volume_should_ignore (hv)))
+    {
+      libhal_volume_free (hv);
+      return;
+    }
+
   /* emit the "device-added" signal (to support thunar-volman) */
   g_signal_emit_by_name (G_OBJECT (manager_hal), "device-added", udi);
 
-  /* check if we have a volume here */
-  hv = libhal_volume_from_udi (context, udi);
   if (G_LIKELY (hv != NULL))
     {
       /* determine the UDI of the drive to which this volume belongs */

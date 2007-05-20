@@ -1,5 +1,15 @@
 2007-05-20	Benedikt Meurer <benny@xfce.org>
 
+	* thunar-vfs/thunar-vfs-volume-freebsd.c,
+	  thunar-vfs/thunar-vfs-volume-hal.c,
+	  thunar-vfs/thunar-vfs-volume.{c,h}, thunar-vfs/thunar-vfs.symbols:
+	  Apply patch from Brian Tarricone <bjt23@cornell.edu> to fix
+	  invalid invocation of thunar-volman for devices that should be
+	  ignored, and add a MOUNTABLE flag for volumes. Bug #2789.
+	* configure.in.in: Bump library interface version.
+
+2007-05-20	Benedikt Meurer <benny@xfce.org>
+
 	* thunar/Makefile.am: Strip unused characters from the user
 	  interface description files. Bug #3094.
 

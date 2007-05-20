@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -240,6 +240,24 @@ thunar_vfs_volume_is_disc (ThunarVfsVolume *volume)
 
   return (kind >= THUNAR_VFS_VOLUME_KIND_CDROM && kind <= THUNAR_VFS_VOLUME_KIND_DVDPLUSRW)
       || (kind == THUNAR_VFS_VOLUME_KIND_AUDIO_CD);
+}
+
+
+
+/**
+ * thunar_vfs_volume_is_mountable:
+ * @volume : a #ThunarVfsVolume instance.
+ *
+ * Determines whether @volume has a valid filesystem and
+ * if it can be mounted.
+ *
+ * Return value: %TRUE if @volume is mountable, else %FALSE.
+ **/
+gboolean
+thunar_vfs_volume_is_mountable (ThunarVfsVolume *volume)
+{
+  g_return_val_if_fail (THUNAR_VFS_IS_VOLUME (volume), FALSE);
+  return (*THUNAR_VFS_VOLUME_GET_CLASS (volume)->get_status) (volume) & THUNAR_VFS_VOLUME_STATUS_MOUNTABLE;
 }
 
 
