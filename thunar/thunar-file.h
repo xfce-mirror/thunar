@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,6 +20,7 @@
 #ifndef __THUNAR_FILE_H__
 #define __THUNAR_FILE_H__
 
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-metafile.h>
 #include <thunarx/thunarx.h>
 
@@ -144,7 +145,8 @@ ThunarVfsFileTime thunar_file_get_date             (const ThunarFile       *file
                                                     ThunarFileDateType      date_type);
 
 gchar            *thunar_file_get_date_string      (const ThunarFile       *file,
-                                                    ThunarFileDateType      date_type) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+                                                    ThunarFileDateType      date_type,
+                                                    ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_mode_string      (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_size_string      (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
@@ -154,7 +156,8 @@ ThunarVfsVolume  *thunar_file_get_volume           (const ThunarFile       *file
 ThunarVfsGroup   *thunar_file_get_group            (const ThunarFile       *file);
 ThunarVfsUser    *thunar_file_get_user             (const ThunarFile       *file);
 
-gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,
+                                                    ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_original_path    (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 gboolean          thunar_file_is_chmodable         (const ThunarFile       *file);

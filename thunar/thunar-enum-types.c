@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -71,6 +71,30 @@ thunar_color_style_get_type (void)
       };
 
       type = g_enum_register_static (I_("ThunarColorStyle"), values);
+    }
+
+  return type;
+}
+
+
+
+GType
+thunar_date_style_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      static const GEnumValue values[] =
+      {
+        { THUNAR_DATE_STYLE_SIMPLE, "THUNAR_DATE_STYLE_SIMPLE", "simple", },
+        { THUNAR_DATE_STYLE_SHORT,  "THUNAR_DATE_STYLE_SHORT",  "short",  },
+        { THUNAR_DATE_STYLE_LONG,   "THUNAR_DATE_STYLE_LONG",   "long",   },
+        { THUNAR_DATE_STYLE_ISO,    "THUNAR_DATE_STYLE_ISO",    "iso",   },
+        { 0,                        NULL,                       NULL,     },
+      };
+
+      type = g_enum_register_static (I_("ThunarDateStyle"), values);
     }
 
   return type;

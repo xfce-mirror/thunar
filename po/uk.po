@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-03-15 07:18+0200\n"
+"POT-Creation-Date: 2007-05-22 18:30+0200\n"
 "PO-Revision-Date: 2007-03-13 17:57+0200\n"
 "Last-Translator: Dmitry Nikitin <luckas_fb@mail.ru>\n"
 "Language-Team: Ukrainian <xfce-i18n@xfce.org>\n"
@@ -123,7 +123,7 @@ msgid "copy of %s"
 msgstr "копія %s"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:364
-#: ../thunar/thunar-list-model.c:762 ../thunar/thunar-properties-dialog.c:851
+#: ../thunar/thunar-list-model.c:786 ../thunar/thunar-properties-dialog.c:861
 #, c-format
 msgid "link to %s"
 msgstr "посилання на %s"
@@ -285,7 +285,7 @@ msgid "The icon of the mime handler"
 msgstr "Значок обробника MIME"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:174
-#: ../thunar/thunar-enum-types.c:94 ../thunar/thunar-renamer-dialog.c:427
+#: ../thunar/thunar-enum-types.c:118 ../thunar/thunar-renamer-dialog.c:427
 #: ../thunarx/thunarx-renamer.c:177
 msgid "Name"
 msgstr "Назва"
@@ -321,7 +321,7 @@ msgstr "Дія не підтримується"
 msgid "Invalidly escaped characters"
 msgstr "Неправильна послідовність символів"
 
-#: ../thunar-vfs/thunar-vfs-thumb.c:222 ../thunar/thunar-enum-types.c:97
+#: ../thunar-vfs/thunar-vfs-thumb.c:222 ../thunar/thunar-enum-types.c:121
 msgid "Size"
 msgstr "Розмір"
 
@@ -345,13 +345,13 @@ msgstr "Невідомий користувач \"%s\""
 
 #. something went wrong, for sure
 #. display an error dialog to inform the user
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:285
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:301
 #: ../thunar/thunar-location-entry.c:650
 #, c-format
 msgid "Failed to determine the mount point for %s"
 msgstr "Не вдається визначити точку монтування для %s"
 
-#: ../thunar-vfs/thunar-vfs-volume-hal.c:856
+#: ../thunar-vfs/thunar-vfs-volume-hal.c:879
 #, c-format
 msgid "Failed to connect to the HAL daemon: %s"
 msgstr "Не вдається з'єднатися зі службою HAL: %s"
@@ -701,46 +701,46 @@ msgid ""
 "You can only remove application launchers that were created using the custom "
 "command box in the \"Open With\" dialog of the file manager."
 msgstr ""
-"Буде видалено програму запуску що з'являється у контекстному меню файлу, "
-"але не буде видалено саму програму.\n"
+"Буде видалено програму запуску що з'являється у контекстному меню файлу, але "
+"не буде видалено саму програму.\n"
 "\n"
 "Ви можете видалити програму запуску що була створена використовуючи "
 "звичайний командний блок в \"Відкрити за допомогою\" діалогу файлового "
 "менеджера."
 
 #: ../thunar/thunar-chooser-dialog.c:809
-#: ../plugins/thunar-uca/thunar-uca-editor.c:490
+#: ../plugins/thunar-uca/thunar-uca-editor.c:492
 msgid "Select an Application"
 msgstr "Виберіть програму"
 
 #: ../thunar/thunar-chooser-dialog.c:819
 #: ../thunar/thunar-renamer-dialog.c:1073
-#: ../plugins/thunar-uca/thunar-uca-editor.c:500
+#: ../plugins/thunar-uca/thunar-uca-editor.c:502
 msgid "All Files"
 msgstr "Всі файли"
 
 #: ../thunar/thunar-chooser-dialog.c:824
-#: ../plugins/thunar-uca/thunar-uca-editor.c:505
+#: ../plugins/thunar-uca/thunar-uca-editor.c:507
 msgid "Executable Files"
 msgstr "Виконувані файли"
 
 #: ../thunar/thunar-chooser-dialog.c:839
-#: ../plugins/thunar-uca/thunar-uca-editor.c:520
+#: ../plugins/thunar-uca/thunar-uca-editor.c:522
 msgid "Perl Scripts"
 msgstr "Сценарії Perl"
 
 #: ../thunar/thunar-chooser-dialog.c:845
-#: ../plugins/thunar-uca/thunar-uca-editor.c:526
+#: ../plugins/thunar-uca/thunar-uca-editor.c:528
 msgid "Python Scripts"
 msgstr "Сценарії Python"
 
 #: ../thunar/thunar-chooser-dialog.c:851
-#: ../plugins/thunar-uca/thunar-uca-editor.c:532
+#: ../plugins/thunar-uca/thunar-uca-editor.c:534
 msgid "Ruby Scripts"
 msgstr "Сценарії Ruby"
 
 #: ../thunar/thunar-chooser-dialog.c:857
-#: ../plugins/thunar-uca/thunar-uca-editor.c:538
+#: ../plugins/thunar-uca/thunar-uca-editor.c:540
 msgid "Shell Scripts"
 msgstr "Сценарії оболонки"
 
@@ -830,13 +830,13 @@ msgstr "Автоматично збільш_увати ширину стовпч
 #. the file_time is invalid
 #. reset page title
 #. tell the user that we're unable to determine the file info
-#: ../thunar/thunar-column-model.c:896 ../thunar/thunar-list-model.c:713
-#: ../thunar/thunar-list-model.c:742
-#: ../thunar/thunar-permissions-chooser.c:269 ../thunar/thunar-util.c:131
+#: ../thunar/thunar-column-model.c:896 ../thunar/thunar-list-model.c:737
+#: ../thunar/thunar-list-model.c:766
+#: ../thunar/thunar-permissions-chooser.c:269 ../thunar/thunar-util.c:170
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:469
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:287
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:288
-#: ../plugins/thunar-uca/thunar-uca-editor.c:609
+#: ../plugins/thunar-uca/thunar-uca-editor.c:624
 msgid "Unknown"
 msgstr "Невідомо"
 
@@ -852,7 +852,7 @@ msgstr "Компактний вигляд"
 msgid "C_reate"
 msgstr "С_творити"
 
-#: ../thunar/thunar-create-dialog.c:178 ../thunar/thunar-standard-view.c:2239
+#: ../thunar/thunar-create-dialog.c:178 ../thunar/thunar-standard-view.c:2240
 msgid "Enter the new name:"
 msgstr "Введіть нову назву:"
 
@@ -895,7 +895,8 @@ msgstr "Детальний перегляд"
 
 #: ../thunar/thunar-dialogs.c:101
 msgid "translator-credits"
-msgstr "Максим Дзюманенко\n"
+msgstr ""
+"Максим Дзюманенко\n"
 "Дмитро Нікітін"
 
 #. display an error message to the user
@@ -955,42 +956,42 @@ msgstr "Лише суфікс"
 msgid "Name and Suffix"
 msgstr "Назва та суфікс"
 
-#: ../thunar/thunar-enum-types.c:90
+#: ../thunar/thunar-enum-types.c:114
 msgid "Date Accessed"
 msgstr "Дата доступу"
 
-#: ../thunar/thunar-enum-types.c:91
+#: ../thunar/thunar-enum-types.c:115
 msgid "Date Modified"
 msgstr "Дата зміни"
 
-#: ../thunar/thunar-enum-types.c:92
+#: ../thunar/thunar-enum-types.c:116
 msgid "Group"
 msgstr "Група"
 
-#: ../thunar/thunar-enum-types.c:93
+#: ../thunar/thunar-enum-types.c:117
 msgid "MIME Type"
 msgstr "Тип MIME"
 
-#: ../thunar/thunar-enum-types.c:95
+#: ../thunar/thunar-enum-types.c:119
 msgid "Owner"
 msgstr "Власник"
 
 #.
 #. Permissions chooser
 #.
-#: ../thunar/thunar-enum-types.c:96 ../thunar/thunar-properties-dialog.c:506
+#: ../thunar/thunar-enum-types.c:120 ../thunar/thunar-properties-dialog.c:513
 msgid "Permissions"
 msgstr "Права"
 
-#: ../thunar/thunar-enum-types.c:98
+#: ../thunar/thunar-enum-types.c:122
 msgid "Type"
 msgstr "Тип"
 
-#: ../thunar/thunar-enum-types.c:99
+#: ../thunar/thunar-enum-types.c:123
 msgid "File"
 msgstr "Файл"
 
-#: ../thunar/thunar-enum-types.c:100
+#: ../thunar/thunar-enum-types.c:124
 msgid "File Name"
 msgstr "Назва файлу"
 
@@ -1016,7 +1017,7 @@ msgstr "Вперед"
 msgid "Go to the next visited folder"
 msgstr "Перейти до наступної відвіданої теки"
 
-#: ../thunar/thunar-icon-factory.c:748
+#: ../thunar/thunar-icon-factory.c:754
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
@@ -1196,12 +1197,12 @@ msgstr[0] "Відправити виділені файли на \"%s\""
 msgstr[1] "Відкрити виділені файли"
 msgstr[2] "Відкрити виділені файли"
 
-#: ../thunar/thunar-list-model.c:760 ../thunar/thunar-properties-dialog.c:849
+#: ../thunar/thunar-list-model.c:784 ../thunar/thunar-properties-dialog.c:859
 msgid "broken link"
 msgstr "пошкоджене посилання"
 
 #. generate a text which includes the size of all items in the folder
-#: ../thunar/thunar-list-model.c:2173
+#: ../thunar/thunar-list-model.c:2244
 #, c-format
 msgid "%d item (%s), Free space: %s"
 msgid_plural "%d items (%s), Free space: %s"
@@ -1210,7 +1211,7 @@ msgstr[1] "%d об'єкти (%s), вільного простору: %s"
 msgstr[2] "%d об'єктів (%s), вільного простору: %s"
 
 #. just the standard text
-#: ../thunar/thunar-list-model.c:2182
+#: ../thunar/thunar-list-model.c:2253
 #, c-format
 msgid "%d item, Free space: %s"
 msgid_plural "%d items, Free space: %s"
@@ -1218,7 +1219,7 @@ msgstr[0] "%d об'єкт, вільного простору: %s"
 msgstr[1] "%d об'єкти, вільного простору: %s"
 msgstr[2] "%d об'єктів, вільного простору: %s"
 
-#: ../thunar/thunar-list-model.c:2190
+#: ../thunar/thunar-list-model.c:2261
 #, c-format
 msgid "%d item"
 msgid_plural "%d items"
@@ -1226,17 +1227,17 @@ msgstr[0] "%d елемент"
 msgstr[1] "%d елементи"
 msgstr[2] "%d елементів"
 
-#: ../thunar/thunar-list-model.c:2206
+#: ../thunar/thunar-list-model.c:2277
 #, c-format
 msgid "\"%s\" broken link"
 msgstr "\"%s\" пошкоджене посилання"
 
-#: ../thunar/thunar-list-model.c:2210
+#: ../thunar/thunar-list-model.c:2281
 #, c-format
 msgid "\"%s\" (%s) link to %s"
 msgstr "\"%s\" (%s) посилається на %s"
 
-#: ../thunar/thunar-list-model.c:2215
+#: ../thunar/thunar-list-model.c:2286
 #, c-format
 msgid "\"%s\" (%s) %s"
 msgstr "\"%s\" (%s) %s"
@@ -1245,17 +1246,17 @@ msgstr "\"%s\" (%s) %s"
 #. * where the trashed file/folder was located before it was moved to the trash), otherwise the
 #. * properties dialog width will be messed up.
 #.
-#: ../thunar/thunar-list-model.c:2226 ../thunar/thunar-properties-dialog.c:355
+#: ../thunar/thunar-list-model.c:2297 ../thunar/thunar-properties-dialog.c:362
 msgid "Original Path:"
 msgstr "Точний шлях:"
 
 #. append the image dimensions to the statusbar text
-#: ../thunar/thunar-list-model.c:2238
+#: ../thunar/thunar-list-model.c:2309
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:151
 msgid "Image Size:"
 msgstr "Розмір зображення:"
 
-#: ../thunar/thunar-list-model.c:2257
+#: ../thunar/thunar-list-model.c:2328
 #, c-format
 msgid "%d item selected (%s)"
 msgid_plural "%d items selected (%s)"
@@ -1263,7 +1264,7 @@ msgstr[0] "виділено %d об'єкт (%s)"
 msgstr[1] "виділено %d об'єкти (%s)"
 msgstr[2] "виділено %d об'єктів (%s)"
 
-#: ../thunar/thunar-list-model.c:2262
+#: ../thunar/thunar-list-model.c:2333
 #, c-format
 msgid "%d item selected"
 msgid_plural "%d items selected"
@@ -1329,12 +1330,12 @@ msgstr "Переглянути властивості теки \"%s\""
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1340
-#: ../thunar/thunar-standard-view.c:1817 ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1439
 msgid "New Folder"
 msgstr "Нова тека"
 
 #: ../thunar/thunar-location-buttons.c:1340
-#: ../thunar/thunar-standard-view.c:1817 ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1439
 msgid "Create New Folder"
 msgstr "Створити нову теку"
 
@@ -1498,56 +1499,56 @@ msgstr ""
 "Права для теки будуть виправлені автоматично. Лише користувачі, яким "
 "дозволено читання змісту теки, зможуть увійти потім до теки."
 
-#: ../thunar/thunar-preferences-dialog.c:225
+#: ../thunar/thunar-preferences-dialog.c:228
 msgid "File Manager Preferences"
 msgstr "Параметри менеджера файлів"
 
 #.
-#. Views
+#. Display
 #.
-#: ../thunar/thunar-preferences-dialog.c:242
-msgid "Views"
-msgstr "Режим перегляду"
+#: ../thunar/thunar-preferences-dialog.c:245
+msgid "Display"
+msgstr ""
 
-#: ../thunar/thunar-preferences-dialog.c:252
+#: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
 msgstr "Типовий режим перегляду"
 
-#: ../thunar/thunar-preferences-dialog.c:264
+#: ../thunar/thunar-preferences-dialog.c:267
 msgid "View _new folders using:"
 msgstr "Відображати _нові теки використовуючи:"
 
-#: ../thunar/thunar-preferences-dialog.c:269
-#: ../thunar/thunar-preferences-dialog.c:300
+#: ../thunar/thunar-preferences-dialog.c:272
+#: ../thunar/thunar-preferences-dialog.c:303
 msgid "Icon View"
 msgstr "Перегляд значками"
 
-#: ../thunar/thunar-preferences-dialog.c:270
+#: ../thunar/thunar-preferences-dialog.c:273
 msgid "Detailed List View"
 msgstr "Детальний режим перегляду списком"
 
-#: ../thunar/thunar-preferences-dialog.c:271
+#: ../thunar/thunar-preferences-dialog.c:274
 msgid "Compact List View"
 msgstr "Компактний режим перегляду списком"
 
-#: ../thunar/thunar-preferences-dialog.c:272
+#: ../thunar/thunar-preferences-dialog.c:275
 msgid "Last Active View"
 msgstr "Останній активний режим перегляду"
 
-#: ../thunar/thunar-preferences-dialog.c:283
+#: ../thunar/thunar-preferences-dialog.c:286
 msgid "Sort _folders before files"
 msgstr "Відображати _теки перед файлами"
 
-#: ../thunar/thunar-preferences-dialog.c:285
+#: ../thunar/thunar-preferences-dialog.c:288
 msgid "Select this option to list folders before files when you sort a folder."
 msgstr ""
 "Використовуйте цей параметр, щоб увімкнути відображення тек перед файлами."
 
-#: ../thunar/thunar-preferences-dialog.c:289
+#: ../thunar/thunar-preferences-dialog.c:292
 msgid "_Show thumbnails"
 msgstr "_Показувати мініатюри"
 
-#: ../thunar/thunar-preferences-dialog.c:291
+#: ../thunar/thunar-preferences-dialog.c:294
 msgid ""
 "Select this option to display previewable files within a folder as "
 "automatically generated thumbnail icons."
@@ -1555,11 +1556,11 @@ msgstr ""
 "Виберіть цей параметр для вмикання показу мініатюр для файлів, для яких це "
 "можливо."
 
-#: ../thunar/thunar-preferences-dialog.c:312
+#: ../thunar/thunar-preferences-dialog.c:315
 msgid "_Text beside icons"
 msgstr "_Текст поруч зі значками"
 
-#: ../thunar/thunar-preferences-dialog.c:314
+#: ../thunar/thunar-preferences-dialog.c:317
 msgid ""
 "Select this option to place the icon captions for items beside the icon "
 "rather than below the icon."
@@ -1567,61 +1568,70 @@ msgstr ""
 "Відмітьте цей параметр, щоб підписи до значків відображались поруч з ними. "
 "Якщо увімкнено, підписи будуть відображатись під значками."
 
+#: ../thunar/thunar-preferences-dialog.c:326
+msgid "Date"
+msgstr ""
+
+#: ../thunar/thunar-preferences-dialog.c:338
+#, fuzzy
+msgid "_Format:"
+msgstr "Ф_ормат тексту:"
+
 #.
 #. Side Pane
 #.
-#: ../thunar/thunar-preferences-dialog.c:323
+#: ../thunar/thunar-preferences-dialog.c:362
 msgid "Side Pane"
 msgstr "Бічна панель"
 
-#: ../thunar/thunar-preferences-dialog.c:333
+#: ../thunar/thunar-preferences-dialog.c:372
 msgid "Shortcuts Pane"
 msgstr "Панель закладок"
 
-#: ../thunar/thunar-preferences-dialog.c:345
+#: ../thunar/thunar-preferences-dialog.c:384
 msgid "_Icon Size:"
 msgstr "_Розмір значків:"
 
-#: ../thunar/thunar-preferences-dialog.c:350
-#: ../thunar/thunar-preferences-dialog.c:395
+#: ../thunar/thunar-preferences-dialog.c:389
+#: ../thunar/thunar-preferences-dialog.c:434
 msgid "Very Small"
 msgstr "Дуже малий"
 
-#: ../thunar/thunar-preferences-dialog.c:351
-#: ../thunar/thunar-preferences-dialog.c:396
+#: ../thunar/thunar-preferences-dialog.c:390
+#: ../thunar/thunar-preferences-dialog.c:435
 msgid "Smaller"
 msgstr "Менший"
 
-#: ../thunar/thunar-preferences-dialog.c:352
-#: ../thunar/thunar-preferences-dialog.c:397
+#: ../thunar/thunar-preferences-dialog.c:391
+#: ../thunar/thunar-preferences-dialog.c:436
 msgid "Small"
 msgstr "Маленький"
 
-#: ../thunar/thunar-preferences-dialog.c:353
-#: ../thunar/thunar-preferences-dialog.c:398
+#: ../thunar/thunar-preferences-dialog.c:392
+#: ../thunar/thunar-preferences-dialog.c:437
 msgid "Normal"
 msgstr "Звичайний"
 
-#: ../thunar/thunar-preferences-dialog.c:354
-#: ../thunar/thunar-preferences-dialog.c:399
+#: ../thunar/thunar-preferences-dialog.c:393
+#: ../thunar/thunar-preferences-dialog.c:438
 msgid "Large"
 msgstr "Великий"
 
-#: ../thunar/thunar-preferences-dialog.c:355
-#: ../thunar/thunar-preferences-dialog.c:400
+#: ../thunar/thunar-preferences-dialog.c:394
+#: ../thunar/thunar-preferences-dialog.c:439
 msgid "Larger"
 msgstr "Більший"
 
-#: ../thunar/thunar-preferences-dialog.c:356
-#: ../thunar/thunar-preferences-dialog.c:401
+#: ../thunar/thunar-preferences-dialog.c:395
+#: ../thunar/thunar-preferences-dialog.c:440
 msgid "Very Large"
 msgstr "Дуже великий"
 
-#: ../thunar/thunar-preferences-dialog.c:367
+#: ../thunar/thunar-preferences-dialog.c:406
 msgid "Show Icon _Emblems"
 msgstr "Відображати _емблеми на значках"
 
-#: ../thunar/thunar-preferences-dialog.c:369
+#: ../thunar/thunar-preferences-dialog.c:408
 msgid ""
 "Select this option to display icon emblems in the shortcuts pane for all "
 "folders for which emblems have been defined in the folders properties dialog."
@@ -1629,19 +1639,19 @@ msgstr ""
 "Відмітьте цей параметр, щоб відображувати емблеми на значках у панелі для "
 "всіх тек з їх емблемами, які були визначені у діалозі властивості теки."
 
-#: ../thunar/thunar-preferences-dialog.c:378
+#: ../thunar/thunar-preferences-dialog.c:417
 msgid "Tree Pane"
 msgstr "Дерево"
 
-#: ../thunar/thunar-preferences-dialog.c:390
+#: ../thunar/thunar-preferences-dialog.c:429
 msgid "Icon _Size:"
 msgstr "Розмір _значків:"
 
-#: ../thunar/thunar-preferences-dialog.c:412
+#: ../thunar/thunar-preferences-dialog.c:451
 msgid "Show Icon E_mblems"
 msgstr "Відображати е_мблеми на значках"
 
-#: ../thunar/thunar-preferences-dialog.c:414
+#: ../thunar/thunar-preferences-dialog.c:453
 msgid ""
 "Select this option to display icon emblems in the tree pane for all folders "
 "for which emblems have been defined in the folders properties dialog."
@@ -1652,19 +1662,19 @@ msgstr ""
 #.
 #. Behavior
 #.
-#: ../thunar/thunar-preferences-dialog.c:423
+#: ../thunar/thunar-preferences-dialog.c:462
 msgid "Behavior"
 msgstr "Поведінка"
 
-#: ../thunar/thunar-preferences-dialog.c:433
+#: ../thunar/thunar-preferences-dialog.c:472
 msgid "Navigation"
 msgstr "Навігація"
 
-#: ../thunar/thunar-preferences-dialog.c:445
+#: ../thunar/thunar-preferences-dialog.c:484
 msgid "_Single click to activate items"
 msgstr "Активація елементів _одинарним клацанням"
 
-#: ../thunar/thunar-preferences-dialog.c:465
+#: ../thunar/thunar-preferences-dialog.c:504
 msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
@@ -1672,7 +1682,7 @@ msgstr ""
 "Вкажіть _затримку перш ніж об'єкт отримає виділення\n"
 "коли над ним буде вказівник миші:"
 
-#: ../thunar/thunar-preferences-dialog.c:477
+#: ../thunar/thunar-preferences-dialog.c:516
 msgid ""
 "When single-click activation is enabled, pausing the mouse pointer over an "
 "item will automatically select that item after the chosen delay. You can "
@@ -1686,34 +1696,34 @@ msgstr ""
 "об'єкти, а вам потрібно вибрати об'єкт без його активації. Ви можете "
 "вимкнути цей режим розмістивши повзунок у крайню ліву позицію."
 
-#: ../thunar/thunar-preferences-dialog.c:495
+#: ../thunar/thunar-preferences-dialog.c:534
 msgid "Disabled"
 msgstr "Вимкнено"
 
-#: ../thunar/thunar-preferences-dialog.c:501
+#: ../thunar/thunar-preferences-dialog.c:540
 msgid "Medium"
 msgstr "Середня"
 
-#: ../thunar/thunar-preferences-dialog.c:507
+#: ../thunar/thunar-preferences-dialog.c:546
 msgid "Long"
 msgstr "Велика"
 
-#: ../thunar/thunar-preferences-dialog.c:513
+#: ../thunar/thunar-preferences-dialog.c:552
 msgid "_Double click to activate items"
 msgstr "Активація елементів _подвійним клацанням"
 
 #.
 #. Advanced
 #.
-#: ../thunar/thunar-preferences-dialog.c:523
+#: ../thunar/thunar-preferences-dialog.c:562
 msgid "Advanced"
 msgstr "Додатково"
 
-#: ../thunar/thunar-preferences-dialog.c:533
+#: ../thunar/thunar-preferences-dialog.c:572
 msgid "Folder Permissions"
 msgstr "Права на теки"
 
-#: ../thunar/thunar-preferences-dialog.c:545
+#: ../thunar/thunar-preferences-dialog.c:584
 msgid ""
 "When changing the permissions of a folder, you\n"
 "can also apply the changes to the contents of the\n"
@@ -1723,23 +1733,23 @@ msgstr ""
 "застосувати зміни до її вмісту. Виберіть\n"
 "нижче типову поведінку:"
 
-#: ../thunar/thunar-preferences-dialog.c:553
+#: ../thunar/thunar-preferences-dialog.c:592
 msgid "Ask everytime"
 msgstr "Запитувати щоразу"
 
-#: ../thunar/thunar-preferences-dialog.c:554
+#: ../thunar/thunar-preferences-dialog.c:593
 msgid "Apply to Folder Only"
 msgstr "Застосовувати лише до самої теки"
 
-#: ../thunar/thunar-preferences-dialog.c:555
+#: ../thunar/thunar-preferences-dialog.c:594
 msgid "Apply to Folder and Contents"
 msgstr "Застосувати до теки та її змісту"
 
-#: ../thunar/thunar-preferences-dialog.c:568
+#: ../thunar/thunar-preferences-dialog.c:607
 msgid "Volume Management"
 msgstr "Менеджер розділів диску"
 
-#: ../thunar/thunar-preferences-dialog.c:596
+#: ../thunar/thunar-preferences-dialog.c:635
 msgid ""
 "Install the \"thunar-volman\" package to use\n"
 "the volume management support in Thunar."
@@ -1747,7 +1757,7 @@ msgstr ""
 "Встановіть пакет \"thunar-volman\" для \n"
 "підтримки керування розділами диску в Thunar."
 
-#: ../thunar/thunar-preferences-dialog.c:597
+#: ../thunar/thunar-preferences-dialog.c:636
 msgid ""
 "Build thunar-vfs with HAL support to use\n"
 "the volume management support in Thunar."
@@ -1756,12 +1766,12 @@ msgstr ""
 "використовується для підтримки керування розділами диску в Thunar."
 
 #. add check button to enable/disable auto mounting
-#: ../thunar/thunar-preferences-dialog.c:608
+#: ../thunar/thunar-preferences-dialog.c:647
 msgid "Enable _Volume Management"
 msgstr "Дозволити _керування розділами"
 
 #. TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it
-#: ../thunar/thunar-preferences-dialog.c:618
+#: ../thunar/thunar-preferences-dialog.c:657
 msgid ""
 "<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
 "and media (i.e. how cameras should be handled)."
@@ -1770,7 +1780,7 @@ msgstr ""
 "і носіями (такими як камери і інші)."
 
 #. tell the user that we failed to come up with the thunar-volman configuration dialog
-#: ../thunar/thunar-preferences-dialog.c:679
+#: ../thunar/thunar-preferences-dialog.c:718
 msgid "Failed to display the volume management settings"
 msgstr "Не вдалося відобразити властивості керування розділами"
 
@@ -1798,89 +1808,89 @@ msgstr[0] "(залишилась %lu секунда)"
 msgstr[1] "(залишилось %lu секунди)"
 msgstr[2] "(залишилось %lu секунд)"
 
-#: ../thunar/thunar-properties-dialog.c:252
+#: ../thunar/thunar-properties-dialog.c:259
 msgid "General"
 msgstr "Основне"
 
-#: ../thunar/thunar-properties-dialog.c:276
+#: ../thunar/thunar-properties-dialog.c:283
 msgid "Name:"
 msgstr "Назва:"
 
 #.
 #. Second box (kind, open with, link target)
 #.
-#: ../thunar/thunar-properties-dialog.c:301
+#: ../thunar/thunar-properties-dialog.c:308
 msgid "Kind:"
 msgstr "Тип:"
 
-#: ../thunar/thunar-properties-dialog.c:323
+#: ../thunar/thunar-properties-dialog.c:330
 msgid "Open With:"
 msgstr "Відкрити за допомогою:"
 
-#: ../thunar/thunar-properties-dialog.c:337
+#: ../thunar/thunar-properties-dialog.c:344
 msgid "Link Target:"
 msgstr "Ціль посилання:"
 
 #.
 #. Third box (deleted, modified, accessed)
 #.
-#: ../thunar/thunar-properties-dialog.c:380
+#: ../thunar/thunar-properties-dialog.c:387
 msgid "Deleted:"
 msgstr "Видалено:"
 
-#: ../thunar/thunar-properties-dialog.c:394
+#: ../thunar/thunar-properties-dialog.c:401
 msgid "Modified:"
 msgstr "Змінено:"
 
-#: ../thunar/thunar-properties-dialog.c:408
+#: ../thunar/thunar-properties-dialog.c:415
 msgid "Accessed:"
 msgstr "Час доступу:"
 
 #.
 #. Fourth box (size, volume, free space)
 #.
-#: ../thunar/thunar-properties-dialog.c:433
+#: ../thunar/thunar-properties-dialog.c:440
 msgid "Size:"
 msgstr "Розмір:"
 
-#: ../thunar/thunar-properties-dialog.c:446
+#: ../thunar/thunar-properties-dialog.c:453
 msgid "Volume:"
 msgstr "Том:"
 
-#: ../thunar/thunar-properties-dialog.c:470
+#: ../thunar/thunar-properties-dialog.c:477
 msgid "Free Space:"
 msgstr "Вільного місця:"
 
 #.
 #. Emblem chooser
 #.
-#: ../thunar/thunar-properties-dialog.c:495
+#: ../thunar/thunar-properties-dialog.c:502
 msgid "Emblems"
 msgstr "Емблеми"
 
 #. allocate the icon chooser
 #. allocate the chooser dialog
-#: ../thunar/thunar-properties-dialog.c:689
-#: ../plugins/thunar-uca/thunar-uca-editor.c:612
+#: ../thunar/thunar-properties-dialog.c:695
+#: ../plugins/thunar-uca/thunar-uca-editor.c:627
 #, c-format
 msgid "Select an Icon for \"%s\""
 msgstr "Виберіть значок для \"%s\""
 
 #. tell the user that we failed to change the icon of the .desktop file
-#: ../thunar/thunar-properties-dialog.c:714
+#: ../thunar/thunar-properties-dialog.c:720
 #, c-format
 msgid "Failed to change icon of \"%s\""
 msgstr "Не вдається змінити значок для \"%s\""
 
 #. update the properties dialog title
-#: ../thunar/thunar-properties-dialog.c:797
+#: ../thunar/thunar-properties-dialog.c:807
 #, c-format
 msgid "%s - Properties"
 msgstr "Властивості %s"
 
 #. display an error message
-#: ../thunar/thunar-properties-dialog.c:996
-#: ../thunar/thunar-standard-view.c:2281
+#: ../thunar/thunar-properties-dialog.c:1006
+#: ../thunar/thunar-standard-view.c:2282
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Не вдається перейменувати \"%s\""
@@ -2195,7 +2205,7 @@ msgstr "Виділити усі файли, що відповідають зад
 msgid "Du_plicate"
 msgstr "Створити к_опію файлу"
 
-#: ../thunar/thunar-standard-view.c:333 ../thunar/thunar-standard-view.c:3386
+#: ../thunar/thunar-standard-view.c:333 ../thunar/thunar-standard-view.c:3387
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Створити _посилання"
@@ -2215,106 +2225,107 @@ msgstr "Від_новити"
 msgid "Create _Document"
 msgstr "Створити _документ"
 
-#: ../thunar/thunar-standard-view.c:1295
+#: ../thunar/thunar-standard-view.c:1296
 msgid "Loading folder contents..."
 msgstr "Завантаження змісту теки..."
 
 #. ask the user to enter a name for the new empty file
-#: ../thunar/thunar-standard-view.c:1766
+#: ../thunar/thunar-standard-view.c:1767
 msgid "New Empty File"
 msgstr "Новий порожній файл"
 
-#: ../thunar/thunar-standard-view.c:1766
+#: ../thunar/thunar-standard-view.c:1767
 msgid "New Empty File..."
 msgstr "Новий порожній файл..."
 
 #. generate a title for the create dialog
-#: ../thunar/thunar-standard-view.c:1866
+#: ../thunar/thunar-standard-view.c:1867
 #, c-format
 msgid "Create Document from template \"%s\""
 msgstr "Створити документ з шаблону \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2061
+#: ../thunar/thunar-standard-view.c:2062
 msgid "Select by Pattern"
 msgstr "Виділення за шаблоном"
 
-#: ../thunar/thunar-standard-view.c:2067
+#: ../thunar/thunar-standard-view.c:2068
 msgid "_Select"
 msgstr "Виді_лити"
 
-#: ../thunar/thunar-standard-view.c:2076
+#: ../thunar/thunar-standard-view.c:2077
 msgid "_Pattern:"
 msgstr "_Шаблон:"
 
 #. create a new dialog window
-#: ../thunar/thunar-standard-view.c:2210
+#: ../thunar/thunar-standard-view.c:2211
 #, c-format
 msgid "Rename \"%s\""
 msgstr "Перейменувати \"%s\""
 
-#: ../thunar/thunar-standard-view.c:2218
+#: ../thunar/thunar-standard-view.c:2219
 msgid "_Rename"
 msgstr "Перей_менувати"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
-#: ../thunar/thunar-standard-view.c:2577
+#: ../thunar/thunar-standard-view.c:2578
 msgid "Invalid filename provided by XDS drag site"
-msgstr "При переміщенні у місце за допомогою XDS надана неправильна назва файлу"
+msgstr ""
+"При переміщенні у місце за допомогою XDS надана неправильна назва файлу"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2754
+#: ../thunar/thunar-standard-view.c:2755
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Не вдається створити посилання для URL \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3019
+#: ../thunar/thunar-standard-view.c:3020
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Не вдається відкрити теку \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3346
+#: ../thunar/thunar-standard-view.c:3347
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Підготувати виділений файл до переміщення командою Вставити"
 msgstr[1] "Підготувати виділені файли до переміщення командою Вставити"
 msgstr[2] "Підготувати виділені файли до переміщення командою \"Вставити\""
 
-#: ../thunar/thunar-standard-view.c:3354
+#: ../thunar/thunar-standard-view.c:3355
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Підготувати виділений файл до копіювання командою Вставити"
 msgstr[1] "Підготувати виділені файли до копіювання командою Вставити"
 msgstr[2] "Підготувати виділені файли до копіювання командою \"Вставити\""
 
-#: ../thunar/thunar-standard-view.c:3365
+#: ../thunar/thunar-standard-view.c:3366
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Видалити вибраний файл"
 msgstr[1] "Видалити вибрані файли"
 msgstr[2] "Створити копію кожного виділеного файлу"
 
-#: ../thunar/thunar-standard-view.c:3379
+#: ../thunar/thunar-standard-view.c:3380
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Створити копію виділеного файлу"
 msgstr[1] "Створити копію кожного виділеного файлу"
 msgstr[2] "Створити копію кожного виділеного файлу"
 
-#: ../thunar/thunar-standard-view.c:3388
+#: ../thunar/thunar-standard-view.c:3389
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Створити символьне посилання для виділеного файлу"
 msgstr[1] "Створити символьне посилання для кожного виділеного файлу"
 msgstr[2] "Створити символьне посилання для кожного виділеного файлу"
 
-#: ../thunar/thunar-standard-view.c:3396
+#: ../thunar/thunar-standard-view.c:3397
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Перейменувати вибраний файл"
 msgstr[1] "Перейменувати вибрані файли"
 msgstr[2] "Перейменувати вибраний файл"
 
-#: ../thunar/thunar-standard-view.c:3404
+#: ../thunar/thunar-standard-view.c:3405
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Відновити вибраний файл"
@@ -2354,14 +2365,38 @@ msgid "P_roperties..."
 msgstr "В_ластивості..."
 
 #. TRANSLATORS: file was modified less than one day ago
-#: ../thunar/thunar-util.c:108
+#: ../thunar/thunar-util.c:119
 msgid "Today"
 msgstr "Сьогодні"
 
+#. TRANSLATORS: file was modified less than one day ago
+#: ../thunar/thunar-util.c:124
+#, fuzzy, c-format
+msgid "Today at %X"
+msgstr "Сьогодні"
+
 #. TRANSLATORS: file was modified less than two days ago
-#: ../thunar/thunar-util.c:113
+#: ../thunar/thunar-util.c:132
 msgid "Yesterday"
 msgstr "Вчора"
+
+#. TRANSLATORS: file was modified less than two days ago
+#: ../thunar/thunar-util.c:137
+#, fuzzy, c-format
+msgid "Yesterday at %X"
+msgstr "Вчора"
+
+#. Days from last week
+#: ../thunar/thunar-util.c:145
+#, c-format
+msgid "%A at %X"
+msgstr ""
+
+#. Any other date
+#: ../thunar/thunar-util.c:150
+#, c-format
+msgid "%x at %X"
+msgstr ""
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
@@ -2709,8 +2744,8 @@ msgid ""
 "Tooltip for the entry, for example \"View sites on the Internet\" in case of "
 "Firefox. Should not be redundant with the name or the description."
 msgstr ""
-"Контекстна підказка до елементу, наприклад \"Перегляд сайтів в Інтернет\" для "
-"Firefox. Не варто дублювати тут назву чи опис."
+"Контекстна підказка до елементу, наприклад \"Перегляд сайтів в Інтернет\" "
+"для Firefox. Не варто дублювати тут назву чи опис."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
 msgid "Options:"
@@ -3008,8 +3043,8 @@ msgid ""
 "highly recommended to compress large files before sending them."
 msgstr ""
 "При відсиланні файлу електронною поштою, Ви можете також вибрати послати "
-"файл у початковому вигляді, або стиснути файл перед прикріпленням його до листа. "
-"Рекомендується стискати великі файли перед їх надсиланням."
+"файл у початковому вигляді, або стиснути файл перед прикріпленням його до "
+"листа. Рекомендується стискати великі файли перед їх надсиланням."
 
 #: ../plugins/thunar-sendto-email/main.c:192
 #, c-format
@@ -3203,7 +3238,7 @@ msgstr "_Значок:"
 
 #. setup a label to tell that no icon was selected
 #: ../plugins/thunar-uca/thunar-uca-editor.c:224
-#: ../plugins/thunar-uca/thunar-uca-editor.c:709
+#: ../plugins/thunar-uca/thunar-uca-editor.c:724
 msgid "No icon"
 msgstr "Без значка"
 
@@ -3387,3 +3422,6 @@ msgstr "Вибрати теку використовуючи Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Відкрити вибрані теки використовуючи Thunar"
+
+#~ msgid "Views"
+#~ msgstr "Режим перегляду"

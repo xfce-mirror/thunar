@@ -70,6 +70,7 @@ enum
   PROP_LAST_WINDOW_WIDTH,
   PROP_MISC_VOLUME_MANAGEMENT,
   PROP_MISC_CASE_SENSITIVE,
+  PROP_MISC_DATE_STYLE,
   PROP_MISC_FOLDERS_FIRST,
   PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
   PROP_MISC_RECURSIVE_PERMISSIONS,
@@ -447,7 +448,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                    g_param_spec_boolean ("misc-volume-management",
                                                          "misc-volume-management",
                                                          "misc-volume-management",
-                                                         FALSE,
+                                                         TRUE,
                                                          EXO_PARAM_READWRITE));
 
   /**
@@ -462,6 +463,20 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
                                                          "misc-case-sensitive",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarPreferences:misc-date-style:
+   *
+   * The style used to display dates in the user interface.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_MISC_DATE_STYLE,
+                                   g_param_spec_enum ("misc-date-style",
+                                                      "misc-date-style",
+                                                      "misc-date-style",
+                                                      THUNAR_TYPE_DATE_STYLE,
+                                                      THUNAR_DATE_STYLE_SIMPLE,
+                                                      EXO_PARAM_READWRITE));
 
   /**
    * ThunarPreferences:misc-folders-first:

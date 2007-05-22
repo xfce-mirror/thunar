@@ -32,6 +32,7 @@
 #include <thunar/thunar-preferences-dialog.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-util.h>
 #include <thunar/xfce-titled-dialog.h>
 
 
@@ -199,6 +200,7 @@ static void
 thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 {
   ThunarVfsVolumeManager *volume_manager;
+  ThunarDateStyle         date_style;
   GtkAdjustment          *adjustment;
   GtkWidget              *notebook;
   GtkWidget              *button;
@@ -213,6 +215,7 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   GtkWidget              *ibox;
   GtkWidget              *vbox;
   gchar                  *path;
+  gchar                  *date;
 
   /* grab a reference on the preferences */
   dialog->preferences = thunar_preferences_get ();
@@ -237,9 +240,9 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
 
   /*
-     Views
+     Display
    */
-  label = gtk_label_new (_("Views"));
+  label = gtk_label_new (_("Display"));
   vbox = g_object_new (GTK_TYPE_VBOX, "border-width", 12, "spacing", 12, NULL);
   gtk_notebook_append_page (GTK_NOTEBOOK (notebook), vbox, label);
   gtk_widget_show (label);
@@ -315,6 +318,42 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
                                            "beside the icon rather than below the icon."));
   gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   gtk_widget_show (button);
+
+  frame = g_object_new (GTK_TYPE_FRAME, "border-width", 0, "shadow-type", GTK_SHADOW_NONE, NULL);
+  gtk_box_pack_start (GTK_BOX (vbox), frame, FALSE, TRUE, 0);
+  gtk_widget_show (frame);
+
+  label = gtk_label_new (_("Date"));
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_bold ());
+  gtk_frame_set_label_widget (GTK_FRAME (frame), label);
+  gtk_widget_show (label);
+
+  table = gtk_table_new (1, 2, FALSE);
+  gtk_table_set_row_spacings (GTK_TABLE (table), 6);
+  gtk_table_set_col_spacings (GTK_TABLE (table), 12);
+  gtk_container_set_border_width (GTK_CONTAINER (table), 12);
+  gtk_container_add (GTK_CONTAINER (frame), table);
+  gtk_widget_show (table);
+
+  label = gtk_label_new_with_mnemonic (_("_Format:"));
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  combo = gtk_combo_box_new_text ();
+  for (date_style = THUNAR_DATE_STYLE_SIMPLE; date_style <= THUNAR_DATE_STYLE_ISO; ++date_style)
+    {
+      date = thunar_util_humanize_file_time (time (NULL), date_style);
+      gtk_combo_box_append_text (GTK_COMBO_BOX (combo), date);
+      g_free (date);
+    }
+#if !GTK_CHECK_VERSION(2,9,0)
+  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
+#endif
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-style", G_OBJECT (combo), "active");
+  gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
+  gtk_label_set_mnemonic_widget (GTK_LABEL (label), combo);
+  gtk_widget_show (combo);
 
 
   /*

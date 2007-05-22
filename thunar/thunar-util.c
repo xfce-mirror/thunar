@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -71,59 +71,98 @@ thunar_util_looks_like_an_uri (const gchar *string)
 
 /**
  * thunar_util_humanize_file_time:
- * @file_time : a #ThunarVfsFileTime.
+ * @file_time   : a #ThunarVfsFileTime.
+ * @date_format : the #ThunarDateFormat used to humanize the @file_time.
  *
  * Returns a human readable date representation of the specified
  * @file_time. The caller is responsible to free the returned
  * string using g_free() when no longer needed.
  *
- * Return value: a human readable date representation of @file_time.
+ * Return value: a human readable date representation of @file_time
+ *               according to the @date_format.
  **/
 gchar*
-thunar_util_humanize_file_time (ThunarVfsFileTime file_time)
+thunar_util_humanize_file_time (ThunarVfsFileTime file_time,
+                                ThunarDateStyle   date_style)
 {
   const gchar *date_format;
-  gchar       *date_string;
+  struct tm   *tfile;
   GDate        dfile;
   GDate        dnow;
   gint         diff;
 
-  /* check if the file_time is invalid */
+  /* check if the file_time is valid */
   if (G_LIKELY (file_time != 0))
     {
-      /* setup the GDate's */
+      /* determine the local file time */
+      tfile = localtime (&file_time);
+
+      /* check which style to use to format the time */
+      if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT)
+        {
+          /* setup the dates for the time values */
 #if GLIB_CHECK_VERSION(2,10,0)
-      g_date_set_time_t (&dfile, file_time);
-      g_date_set_time_t (&dnow, time (NULL));
+          g_date_set_time_t (&dfile, file_time);
+          g_date_set_time_t (&dnow, time (NULL));
 #else
-      g_date_set_time (&dfile, (GTime) file_time);
-      g_date_set_time (&dnow, (GTime) time (NULL));
+          g_date_set_time (&dfile, (GTime) file_time);
+          g_date_set_time (&dnow, (GTime) time (NULL));
 #endif
 
-      /* determine the difference in days */
-      diff = g_date_get_julian (&dnow) - g_date_get_julian (&dfile);
-      if (diff == 0)
-        {
-          /* TRANSLATORS: file was modified less than one day ago */
-          return g_strdup (_("Today"));
-        }
-      else if (diff == 1)
-        {
-          /* TRANSLATORS: file was modified less than two days ago */
-          return g_strdup (_("Yesterday"));
-        }
-      else
-        {
-          if (diff > 1 && diff < 7)
-            date_format = "%A"; /* Days from last week */
+          /* determine the difference in days */
+          diff = g_date_get_julian (&dnow) - g_date_get_julian (&dfile);
+          if (diff == 0)
+            {
+              if (date_style == THUNAR_DATE_STYLE_SIMPLE)
+                {
+                  /* TRANSLATORS: file was modified less than one day ago */
+                  return g_strdup (_("Today"));
+                }
+              else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
+                {
+                  /* TRANSLATORS: file was modified less than one day ago */
+                  return exo_strdup_strftime (_("Today at %X"), tfile);
+                }
+            }
+          else if (diff == 1)
+            {
+              if (date_style == THUNAR_DATE_STYLE_SIMPLE)
+                {
+                  /* TRANSLATORS: file was modified less than two days ago */
+                  return g_strdup (_("Yesterday"));
+                }
+              else /* if (date_style == THUNAR_DATE_STYLE_SHORT) */
+                {
+                  /* TRANSLATORS: file was modified less than two days ago */
+                  return exo_strdup_strftime (_("Yesterday at %X"), tfile);
+                }
+            }
           else
-            date_format = "%x"; /* Any other date */
+            {
+              if (diff > 1 && diff < 7)
+                {
+                  /* Days from last week */
+                  date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%A" : _("%A at %X");
+                }
+              else
+                {
+                  /* Any other date */
+                  date_format = (date_style == THUNAR_DATE_STYLE_SIMPLE) ? "%x" : _("%x at %X");
+                }
 
-          /* format the date string accordingly */
-          date_string = g_new (gchar, 32);
-          if (g_date_strftime (date_string, 32, date_format, &dfile) != 0)
-            return date_string;
-          g_free (date_string);
+              /* format the date string accordingly */
+              return exo_strdup_strftime (date_format, tfile);
+            }
+        }
+      else if (date_style == THUNAR_DATE_STYLE_LONG)
+        {
+          /* use long, date(1)-like format string */
+          return exo_strdup_strftime ("%c", tfile);
+        }
+      else /* if (date_style == THUNAR_DATE_STYLE_ISO) */
+        {
+          /* use ISO date formatting */
+          return exo_strdup_strftime ("%Y-%m-%d %H:%M:%S", tfile);
         }
     }
 

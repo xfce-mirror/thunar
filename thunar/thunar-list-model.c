@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2004-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -45,6 +45,7 @@ enum
 {
   PROP_0,
   PROP_CASE_SENSITIVE,
+  PROP_DATE_STYLE,
   PROP_FOLDER,
   PROP_FOLDERS_FIRST,
   PROP_NUM_FILES,
@@ -210,11 +211,12 @@ struct _ThunarListModel
   guint          stamp;
 #endif
 
-  gint           nrows;
-  GSList        *rows;
-  GSList        *hidden;
-  ThunarFolder  *folder;
-  gboolean       show_hidden;
+  gint            nrows;
+  GSList         *rows;
+  GSList         *hidden;
+  ThunarFolder   *folder;
+  gboolean        show_hidden;
+  ThunarDateStyle date_style;
 
   /* Use the shared ThunarFileMonitor instance, so we
    * do not need to connect "changed" handler to every
@@ -330,6 +332,20 @@ thunar_list_model_class_init (ThunarListModelClass *klass)
                                                          "case-sensitive",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
+
+  /**
+   * ThunarListModel:date-style:
+   *
+   * The style used to format dates.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_DATE_STYLE,
+                                   g_param_spec_enum ("date-style",
+                                                      "date-style",
+                                                      "date-style",
+                                                      THUNAR_TYPE_DATE_STYLE,
+                                                      THUNAR_DATE_STYLE_SIMPLE,
+                                                      EXO_PARAM_READWRITE));
 
   /**
    * ThunarListModel:folder:
@@ -504,6 +520,10 @@ thunar_list_model_get_property (GObject    *object,
       g_value_set_boolean (value, thunar_list_model_get_case_sensitive (store));
       break;
 
+    case PROP_DATE_STYLE:
+      g_value_set_enum (value, thunar_list_model_get_date_style (store));
+      break;
+
     case PROP_FOLDER:
       g_value_set_object (value, thunar_list_model_get_folder (store));
       break;
@@ -540,6 +560,10 @@ thunar_list_model_set_property (GObject      *object,
     {
     case PROP_CASE_SENSITIVE:
       thunar_list_model_set_case_sensitive (store, g_value_get_boolean (value));
+      break;
+
+    case PROP_DATE_STYLE:
+      thunar_list_model_set_date_style (store, g_value_get_enum (value));
       break;
 
     case PROP_FOLDER:
@@ -690,13 +714,13 @@ thunar_list_model_get_value (GtkTreeModel *model,
     {
     case THUNAR_COLUMN_DATE_ACCESSED:
       g_value_init (value, G_TYPE_STRING);
-      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED);
+      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_ACCESSED, THUNAR_LIST_MODEL (model)->date_style);
       g_value_take_string (value, str);
       break;
 
     case THUNAR_COLUMN_DATE_MODIFIED:
       g_value_init (value, G_TYPE_STRING);
-      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED);
+      str = thunar_file_get_date_string (file, THUNAR_FILE_DATE_MODIFIED, THUNAR_LIST_MODEL (model)->date_style);
       g_value_take_string (value, str);
       break;
 
@@ -1661,6 +1685,53 @@ thunar_list_model_set_case_sensitive (ThunarListModel *store,
       
       /* notify listeners */
       g_object_notify (G_OBJECT (store), "case-sensitive");
+    }
+}
+
+
+
+/**
+ * thunar_list_model_get_date_style:
+ * @store : a valid #ThunarListModel object.
+ *
+ * Return value: the #ThunarDateStyle used to format dates in
+ *               the given @store.
+ **/
+ThunarDateStyle
+thunar_list_model_get_date_style (ThunarListModel *store)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), THUNAR_DATE_STYLE_SIMPLE);
+  return store->date_style;
+}
+
+
+
+/**
+ * thunar_list_model_set_date_style:
+ * @store      : a valid #ThunarListModel object.
+ * @date_style : the #ThunarDateStyle that should be used to format
+ *               dates in the @store.
+ *
+ * Chances the style used to format dates in @store to the specified
+ * @date_style.
+ **/
+void
+thunar_list_model_set_date_style (ThunarListModel *store,
+                                  ThunarDateStyle  date_style)
+{
+  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
+
+  /* check if we have a new setting */
+  if (store->date_style != date_style)
+    {
+      /* apply the new setting */
+      store->date_style = date_style;
+
+      /* notify listeners */
+      g_object_notify (G_OBJECT (store), "date-style");
+
+      /* emit a "changed" signal for each row, so the display is reloaded with the new date style */
+      gtk_tree_model_foreach (GTK_TREE_MODEL (store), (GtkTreeModelForeachFunc) gtk_tree_model_row_changed, NULL);
     }
 }
 

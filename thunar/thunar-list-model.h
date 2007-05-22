@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2004-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2004-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +20,6 @@
 #ifndef __THUNAR_LIST_MODEL_H__
 #define __THUNAR_LIST_MODEL_H__
 
-#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-folder.h>
 
 G_BEGIN_DECLS;
@@ -43,6 +42,10 @@ ThunarListModel *thunar_list_model_new_with_folder        (ThunarFolder     *fol
 gboolean         thunar_list_model_get_case_sensitive     (ThunarListModel  *store);
 void             thunar_list_model_set_case_sensitive     (ThunarListModel  *store,
                                                            gboolean          case_sensitive);
+
+ThunarDateStyle  thunar_list_model_get_date_style         (ThunarListModel  *store);
+void             thunar_list_model_set_date_style         (ThunarListModel  *store,
+                                                           ThunarDateStyle   date_style);
 
 ThunarFolder    *thunar_list_model_get_folder             (ThunarListModel  *store);
 void             thunar_list_model_set_folder             (ThunarListModel  *store,

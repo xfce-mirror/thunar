@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -62,6 +62,28 @@ typedef enum
 } ThunarColorStyle;
 
 GType thunar_color_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
+#define THUNAR_TYPE_DATE_STYLE (thunar_date_style_get_type ())
+
+/**
+ * ThunarDateStyle:
+ * @THUNAR_DATE_STYLE_SIMPLE : display only the date.
+ * @THUNAR_DATE_STYLE_SHORT  : display date and time in a short manner.
+ * @THUNAR_DATE_STYLE_LONG   : display date and time in a long manner.
+ * @THUNAR_DATE_STYLE_ISO    : display date and time in ISO standard form.
+ *
+ * The style used to display dates (i.e. modification dates) to the user.
+ **/
+typedef enum
+{
+  THUNAR_DATE_STYLE_SIMPLE,
+  THUNAR_DATE_STYLE_SHORT,
+  THUNAR_DATE_STYLE_LONG,
+  THUNAR_DATE_STYLE_ISO,
+} ThunarDateStyle;
+
+GType thunar_date_style_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
 #define THUNAR_TYPE_COLUMN (thunar_column_get_type ())

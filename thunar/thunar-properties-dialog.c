@@ -40,6 +40,7 @@
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-chooser.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-size-label.h>
@@ -106,6 +107,8 @@ struct _ThunarPropertiesDialog
   ThunarxProviderFactory *provider_factory;
   GList                  *provider_pages;
 
+  ThunarPreferences      *preferences;
+
   ThunarVfsVolumeManager *volume_manager;
   ThunarFile             *file;
 
@@ -126,7 +129,7 @@ struct _ThunarPropertiesDialog
   GtkWidget              *volume_label;
   GtkWidget              *permissions_chooser;
 
-  gint                    rename_idle_id;
+  guint                   rename_idle_id;
 };
 
 
@@ -232,9 +235,13 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   GtkWidget *spacer;
   gint       row = 0;
 
+  /* acquire a reference on the preferences and monitor the "misc-date-style" setting */
+  dialog->preferences = thunar_preferences_get ();
+  g_signal_connect_swapped (G_OBJECT (dialog->preferences), "notify::misc-date-style",
+                            G_CALLBACK (thunar_properties_dialog_reload), dialog);
+
   dialog->provider_factory = thunarx_provider_factory_get_default ();
   dialog->volume_manager = thunar_vfs_volume_manager_get_default ();
-  dialog->rename_idle_id = -1;
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_HELP, GTK_RESPONSE_HELP,
@@ -535,6 +542,10 @@ thunar_properties_dialog_finalize (GObject *object)
 {
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (object);
 
+  /* disconnect from the preferences */
+  g_signal_handlers_disconnect_by_func (G_OBJECT (dialog->preferences), thunar_properties_dialog_reload, dialog);
+  g_object_unref (G_OBJECT (dialog->preferences));
+
   /* release the provider property pages */
   g_list_foreach (dialog->provider_pages, (GFunc) g_object_unref, NULL);
   g_list_free (dialog->provider_pages);
@@ -546,7 +557,7 @@ thunar_properties_dialog_finalize (GObject *object)
   g_object_unref (G_OBJECT (dialog->volume_manager));
 
   /* be sure to cancel any pending rename idle source */
-  if (G_UNLIKELY (dialog->rename_idle_id >= 0))
+  if (G_UNLIKELY (dialog->rename_idle_id != 0))
     g_source_remove (dialog->rename_idle_id);
 
   (*G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->finalize) (object);
@@ -643,7 +654,7 @@ static void
 thunar_properties_dialog_activate (GtkWidget              *entry,
                                    ThunarPropertiesDialog *dialog)
 {
-  if (G_LIKELY (dialog->rename_idle_id < 0))
+  if (G_LIKELY (dialog->rename_idle_id == 0))
     {
       dialog->rename_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_properties_dialog_rename_idle,
                                                 dialog, thunar_properties_dialog_rename_idle_destroy);
@@ -657,12 +668,7 @@ thunar_properties_dialog_focus_out_event (GtkWidget              *entry,
                                           GdkEventFocus          *event,
                                           ThunarPropertiesDialog *dialog)
 {
-  if (G_LIKELY (dialog->rename_idle_id < 0))
-    {
-      dialog->rename_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_properties_dialog_rename_idle,
-                                                dialog, thunar_properties_dialog_rename_idle_destroy);
-    }
-
+  thunar_properties_dialog_activate (entry, dialog);
   return FALSE;
 }
 
@@ -777,6 +783,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   ThunarIconFactory *icon_factory;
   ThunarVfsFileSize  size;
   ThunarVfsMimeInfo *info;
+  ThunarDateStyle    date_style;
   ThunarVfsVolume   *volume;
   GtkIconTheme      *icon_theme;
   const gchar       *icon_name;
@@ -792,6 +799,9 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (dialog)));
   icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+
+  /* determine the style used to format dates */
+  g_object_get (G_OBJECT (dialog->preferences), "misc-date-style", &date_style, NULL);
 
   /* update the properties dialog title */
   str = g_strdup_printf (_("%s - Properties"), thunar_file_get_display_name (dialog->file));
@@ -891,7 +901,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the deleted time */
-  str = thunar_file_get_deletion_date (dialog->file);
+  str = thunar_file_get_deletion_date (dialog->file, date_style);
   if (G_LIKELY (str != NULL))
     {
       gtk_label_set_text (GTK_LABEL (dialog->deleted_label), str);
@@ -904,7 +914,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the modified time */
-  str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED);
+  str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED, date_style);
   if (G_LIKELY (str != NULL))
     {
       gtk_label_set_text (GTK_LABEL (dialog->modified_label), str);
@@ -917,7 +927,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the accessed time */
-  str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_ACCESSED);
+  str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_ACCESSED, date_style);
   if (G_LIKELY (str != NULL))
     {
       gtk_label_set_text (GTK_LABEL (dialog->accessed_label), str);
@@ -1011,7 +1021,7 @@ thunar_properties_dialog_rename_idle (gpointer user_data)
 static void
 thunar_properties_dialog_rename_idle_destroy (gpointer user_data)
 {
-  THUNAR_PROPERTIES_DIALOG (user_data)->rename_idle_id = -1;
+  THUNAR_PROPERTIES_DIALOG (user_data)->rename_idle_id = 0;
 }
 
 

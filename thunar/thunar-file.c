@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1162,8 +1162,9 @@ thunar_file_get_date (const ThunarFile  *file,
 
 /**
  * thunar_file_get_date_string:
- * @file      : a #ThunarFile instance.
- * @date_type : the kind of date you are interested to know about @file.
+ * @file       : a #ThunarFile instance.
+ * @date_type  : the kind of date you are interested to know about @file.
+ * @date_style : the style used to format the date.
  *
  * Tries to determine the @date_type of @file, and if @file supports the
  * given @date_type, it'll be formatted as string and returned. The
@@ -1174,9 +1175,10 @@ thunar_file_get_date (const ThunarFile  *file,
  **/
 gchar*
 thunar_file_get_date_string (const ThunarFile  *file,
-                             ThunarFileDateType date_type)
+                             ThunarFileDateType date_type,
+                             ThunarDateStyle    date_style)
 {
-  return thunar_util_humanize_file_time (thunar_file_get_date (file, date_type));
+  return thunar_util_humanize_file_time (thunar_file_get_date (file, date_type), date_style);
 }
 
 
@@ -1340,7 +1342,8 @@ thunar_file_get_user (const ThunarFile *file)
 
 /**
  * thunar_file_get_deletion_date:
- * @file : a #ThunarFile instance.
+ * @file       : a #ThunarFile instance.
+ * @date_style : the style used to format the date.
  *
  * Returns the deletion date of the @file if the @file
  * is located in the trash. Otherwise %NULL will be
@@ -1353,7 +1356,8 @@ thunar_file_get_user (const ThunarFile *file)
  *               in the trash, %NULL otherwise.
  **/
 gchar*
-thunar_file_get_deletion_date (const ThunarFile *file)
+thunar_file_get_deletion_date (const ThunarFile *file,
+                               ThunarDateStyle   date_style)
 {
   time_t time;
   gchar *date;
@@ -1372,7 +1376,7 @@ thunar_file_get_deletion_date (const ThunarFile *file)
   g_free (date);
 
   /* humanize the time value */
-  return thunar_util_humanize_file_time (time);
+  return thunar_util_humanize_file_time (time, date_style);
 }
 
 
