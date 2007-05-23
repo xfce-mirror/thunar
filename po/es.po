@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-22 18:30+0200\n"
+"POT-Creation-Date: 2007-05-23 23:24+0200\n"
 "PO-Revision-Date: 2006-05-04 14:12+0000\n"
 "Last-Translator: Daniel Fuertes Pérez (DaniFP) <danifp25@yahoo.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -59,29 +59,29 @@ msgstr "Selecccione archivos a renombrar"
 msgid "Preparing..."
 msgstr "Preparando..."
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:226
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:228
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:537
 #, fuzzy, c-format
 msgid "Failed to change permissions of \"%s\""
 msgstr "No se pudieron cambiar los permisos de \"%s\": %s"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:347
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:355
 #, fuzzy, c-format
 msgid "Failed to change file owner of \"%s\""
 msgstr "No se pudo cambiar el propietario del archivo \"%s\": %s"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:348
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:356
 #, fuzzy, c-format
 msgid "Failed to change file group of \"%s\""
 msgstr "No se pudo cambiar el grupo del archivo \"%s\": %s"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:432
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:444
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:190
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "El archivo \"%s\" ya existe"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:450
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:462
 #, fuzzy, c-format
 msgid "Failed to create empty file \"%s\""
 msgstr "No se pudo crear la tuberia (fifo) con nombre \"%s\""
@@ -239,7 +239,16 @@ msgstr ""
 msgid "Cannot move or copy files within the trash"
 msgstr ""
 
-#: ../thunar-vfs/thunar-vfs-job.c:831
+#. no "ask-replace" handler, fallback to "ask"
+#: ../thunar-vfs/thunar-vfs-job.c:401
+#, fuzzy, c-format
+msgid ""
+"The file \"%s\" already exists. Would you like to replace it?\n"
+"\n"
+"If you replace an existing file, its contents will be overwritten."
+msgstr "El archivo \"%s\" existe. ¿Desea reemplazarlo por un archivo vacío?"
+
+#: ../thunar-vfs/thunar-vfs-job.c:897
 #, fuzzy
 msgid "Do you want to overwrite it?"
 msgstr ""
@@ -247,7 +256,7 @@ msgstr ""
 "\n"
 "¿Desea sobreescribirlo?"
 
-#: ../thunar-vfs/thunar-vfs-job.c:896
+#: ../thunar-vfs/thunar-vfs-job.c:1042
 #, fuzzy
 msgid "Do you want to skip it?"
 msgstr ""
@@ -896,36 +905,85 @@ msgstr "Listado detallado del directorio"
 msgid "Details view"
 msgstr "Vista detallada"
 
-#: ../thunar/thunar-dialogs.c:101
+#: ../thunar/thunar-dialogs.c:104
 msgid "translator-credits"
 msgstr "Daniel Fuertes Pérez <danifp25@yahoo.es>"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:228 ../thunar/thunar-renamer-dialog.c:959
+#: ../thunar/thunar-dialogs.c:231 ../thunar/thunar-renamer-dialog.c:959
 msgid "Failed to open the documentation browser"
 msgstr "No se pudo abrir el visor de documentación"
 
-#: ../thunar/thunar-dialogs.c:325
+#: ../thunar/thunar-dialogs.c:328
 msgid "_Yes"
 msgstr "_Sí"
 
-#: ../thunar/thunar-dialogs.c:329
+#: ../thunar/thunar-dialogs.c:332
 msgid "Yes to _all"
 msgstr "Si _a todo"
 
-#: ../thunar/thunar-dialogs.c:333
+#: ../thunar/thunar-dialogs.c:336
 msgid "_No"
 msgstr "_No"
 
-#: ../thunar/thunar-dialogs.c:337
+#: ../thunar/thunar-dialogs.c:340
 #, fuzzy
 msgid "N_o to all"
 msgstr "Si _a todo"
 
-#: ../thunar/thunar-dialogs.c:342
+#: ../thunar/thunar-dialogs.c:344
+msgid "_Retry"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
 msgstr "_Cancelar"
+
+#. setup the confirmation dialog
+#: ../thunar/thunar-dialogs.c:429
+msgid "Confirm to replace files"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:435
+msgid "_Skip"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:436
+#, fuzzy
+msgid "Replace _All"
+msgstr "Reempla_zar Con:"
+
+#: ../thunar/thunar-dialogs.c:437
+#, fuzzy
+msgid "_Replace"
+msgstr "Renombrar"
+
+#: ../thunar/thunar-dialogs.c:467
+#, c-format
+msgid "This folder already contains a file \"%s\"."
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:475
+msgid "ReplaceDialogPart1|Do you want to replace the existing file"
+msgstr ""
+
+#.
+#. Fourth box (size, volume, free space)
+#.
+#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-properties-dialog.c:440
+msgid "Size:"
+msgstr "Tamaño:"
+
+#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-properties-dialog.c:401
+msgid "Modified:"
+msgstr "Modificado:"
+
+#: ../thunar/thunar-dialogs.c:500
+msgid "ReplaceDialogPart2|with the following file?"
+msgstr ""
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1766,21 +1824,21 @@ msgstr ""
 msgid "Failed to display the volume management settings"
 msgstr "No se pudo conectar con el demonio HAL: %s"
 
-#: ../thunar/thunar-progress-dialog.c:375
+#: ../thunar/thunar-progress-dialog.c:398
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] "(falta %lu hour)"
 msgstr[1] "(faltan %lu hours)"
 
-#: ../thunar/thunar-progress-dialog.c:380
+#: ../thunar/thunar-progress-dialog.c:403
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] "(falta %lu minuto)"
 msgstr[1] "(faltan %lu minutos)"
 
-#: ../thunar/thunar-progress-dialog.c:385
+#: ../thunar/thunar-progress-dialog.c:408
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"
@@ -1818,20 +1876,9 @@ msgstr "Destino del Enlace:"
 msgid "Deleted:"
 msgstr "_Eliminar"
 
-#: ../thunar/thunar-properties-dialog.c:401
-msgid "Modified:"
-msgstr "Modificado:"
-
 #: ../thunar/thunar-properties-dialog.c:415
 msgid "Accessed:"
 msgstr "Accedido:"
-
-#.
-#. Fourth box (size, volume, free space)
-#.
-#: ../thunar/thunar-properties-dialog.c:440
-msgid "Size:"
-msgstr "Tamaño:"
 
 #: ../thunar/thunar-properties-dialog.c:453
 msgid "Volume:"
@@ -3439,11 +3486,6 @@ msgstr "Abrir el directorio especificado en Thunar"
 
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "No se pudo determinar la información del archivo \"%s\": %s"
-
-#~ msgid ""
-#~ "The file \"%s\" already exists. Do you want to replace it with an empty "
-#~ "file?"
-#~ msgstr "El archivo \"%s\" existe. ¿Desea reemplazarlo por un archivo vacío?"
 
 #~ msgid ""
 #~ "Failed to remove \"%s\".\n"

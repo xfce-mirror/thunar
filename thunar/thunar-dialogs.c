@@ -32,6 +32,9 @@
 #endif
 
 #include <thunar/thunar-dialogs.h>
+#include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-pango-extensions.h>
+#include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
 
@@ -309,10 +312,10 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
     gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (message), "%s", secondary->str);
 
   /* add the buttons based on the possible choices */
-  for (n = 4; n >= 0; --n)
+  for (n = 5; n >= 0; --n)
     {
-      /* "Cancel" should be the last button, but "No to all" was added last */
-      m = (n == 4) ? 3 : (n == 3) ? 4 : n;
+      /* "Cancel" should be the last button, but "Retry" was added last */
+      m = (n == 5) ? 3 : (n == 3) ? 5 : n;
 
       /* check if the response is set */
       response = choices & (1 << m);
@@ -335,6 +338,10 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
 
         case THUNAR_VFS_JOB_RESPONSE_NO_ALL:
           mnemonic = _("N_o to all");
+          break;
+
+        case THUNAR_VFS_JOB_RESPONSE_RETRY:
+          mnemonic = _("_Retry");
           break;
 
         case THUNAR_VFS_JOB_RESPONSE_CANCEL:
@@ -366,6 +373,167 @@ thunar_dialogs_show_job_ask (GtkWindow           *parent,
   /* cleanup */
   g_string_free (secondary, TRUE);
   g_string_free (primary, TRUE);
+
+  return response;
+}
+
+
+
+/**
+ * thunar_dialogs_show_job_ask_replace:
+ * @parent   : the parent #GtkWindow or %NULL.
+ * @src_info : the #ThunarVfsInfo of the source file.
+ * @dst_info : the #ThunarVfsInfo of the destination file that
+ *             may be replaced with the source file.
+ *
+ * Asks the user whether to replace the destination file with the
+ * source file identified by @src_info.
+ *
+ * Return value: the selected #ThunarVfsJobResponse.
+ **/
+ThunarVfsJobResponse
+thunar_dialogs_show_job_ask_replace (GtkWindow     *parent,
+                                     ThunarVfsInfo *src_info,
+                                     ThunarVfsInfo *dst_info)
+{
+  ThunarIconFactory *icon_factory;
+  ThunarPreferences *preferences;
+  ThunarDateStyle    date_style;
+  GtkIconTheme      *icon_theme;
+  ThunarFile        *src_file;
+  ThunarFile        *dst_file;
+  GtkWidget         *dialog;
+  GtkWidget         *table;
+  GtkWidget         *image;
+  GtkWidget         *label;
+  GdkPixbuf         *icon;
+  gchar             *date_string;
+  gchar             *size_string;
+  gchar             *text;
+  gint               response;
+
+  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (src_info != NULL, THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (dst_info != NULL, THUNAR_VFS_JOB_RESPONSE_CANCEL);
+
+  /* determine the style used to format dates */
+  preferences = thunar_preferences_get ();
+  g_object_get (G_OBJECT (preferences), "misc-date-style", &date_style, NULL);
+  g_object_unref (G_OBJECT (preferences));
+
+  /* determine the files for the infos */
+  src_file = thunar_file_get_for_info (src_info);
+  dst_file = thunar_file_get_for_info (dst_info);
+
+  /* setup the confirmation dialog */
+  dialog = gtk_dialog_new_with_buttons (_("Confirm to replace files"),
+                                        parent,
+                                        GTK_DIALOG_MODAL
+                                        | GTK_DIALOG_NO_SEPARATOR
+                                        | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                        _("_Skip"), THUNAR_VFS_JOB_RESPONSE_NO,
+                                        _("Replace _All"), THUNAR_VFS_JOB_RESPONSE_YES_ALL,
+                                        _("_Replace"), THUNAR_VFS_JOB_RESPONSE_YES,
+                                        NULL);
+  gtk_dialog_set_alternative_button_order (GTK_DIALOG (dialog),
+                                           THUNAR_VFS_JOB_RESPONSE_YES,
+                                           THUNAR_VFS_JOB_RESPONSE_YES_ALL,
+                                           THUNAR_VFS_JOB_RESPONSE_NO,
+                                           GTK_RESPONSE_CANCEL,
+                                           -1);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), THUNAR_VFS_JOB_RESPONSE_YES);
+
+  /* determine the icon factory to use */
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (dialog));
+  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+
+  table = g_object_new (GTK_TYPE_TABLE,
+                        "border-width", 10,
+                        "n-columns", 3,
+                        "n-rows", 5,
+                        "row-spacing", 6,
+                        "column-spacing", 5,
+                        NULL);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), table, TRUE, TRUE, 0);
+  gtk_widget_show (table);
+
+  image = gtk_image_new_from_icon_name ("stock_folder-copy", GTK_ICON_SIZE_BUTTON);
+  gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
+  gtk_misc_set_padding (GTK_MISC (image), 6, 6);
+  gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1, GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
+  gtk_widget_show (image);
+
+  text = g_strdup_printf (_("This folder already contains a file \"%s\"."), thunar_file_get_display_name (dst_file));
+  label = gtk_label_new (text);
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
+  gtk_table_attach (GTK_TABLE (table), label, 1, 3, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+  g_free (text);
+
+  text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing file"));
+  label = gtk_label_new (text);
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 1, 3, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+  g_free (text);
+
+  icon = thunar_icon_factory_load_file_icon (icon_factory, dst_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
+  image = gtk_image_new_from_pixbuf (icon);
+  gtk_misc_set_padding (GTK_MISC (image), 6, 6);
+  gtk_table_attach (GTK_TABLE (table), image, 1, 2, 2, 3, GTK_FILL, GTK_FILL, 0, 0);
+  g_object_unref (G_OBJECT (icon));
+  gtk_widget_show (image);
+
+  size_string = thunar_file_get_size_string (dst_file);
+  date_string = thunar_file_get_date_string (dst_file, THUNAR_FILE_DATE_MODIFIED, date_style);
+  text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
+  label = gtk_label_new (text);
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 2, 3, 2, 3, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+  g_free (size_string);
+  g_free (date_string);
+  g_free (text);
+
+  text = g_strdup_printf (Q_("ReplaceDialogPart2|with the following file?"));
+  label = gtk_label_new (text);
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 1, 3, 3, 4, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+  g_free (text);
+
+  icon = thunar_icon_factory_load_file_icon (icon_factory, src_file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
+  image = gtk_image_new_from_pixbuf (icon);
+  gtk_misc_set_padding (GTK_MISC (image), 6, 6);
+  gtk_table_attach (GTK_TABLE (table), image, 1, 2, 4, 5, GTK_FILL, GTK_FILL, 0, 0);
+  g_object_unref (G_OBJECT (icon));
+  gtk_widget_show (image);
+
+  size_string = thunar_file_get_size_string (src_file);
+  date_string = thunar_file_get_date_string (src_file, THUNAR_FILE_DATE_MODIFIED, date_style);
+  text = g_strdup_printf ("%s %s\n%s %s", _("Size:"), size_string, _("Modified:"), date_string);
+  label = gtk_label_new (text);
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 2, 3, 4, 5, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+  g_free (size_string);
+  g_free (date_string);
+  g_free (text);
+
+  /* run the dialog */
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  gtk_widget_destroy (dialog);
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (icon_factory));
+  g_object_unref (G_OBJECT (dst_file));
+  g_object_unref (G_OBJECT (src_file));
+
+  /* translate GTK responses */
+  if (G_UNLIKELY (response < 0))
+    response = THUNAR_VFS_JOB_RESPONSE_CANCEL;
 
   return response;
 }

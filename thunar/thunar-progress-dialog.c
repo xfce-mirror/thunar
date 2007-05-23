@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -53,6 +53,10 @@ static void                 thunar_progress_dialog_response     (GtkDialog      
 static ThunarVfsJobResponse thunar_progress_dialog_ask          (ThunarProgressDialog       *dialog,
                                                                  const gchar                *message,
                                                                  ThunarVfsJobResponse        choices,
+                                                                 ThunarVfsJob               *job);
+static ThunarVfsJobResponse thunar_progress_dialog_ask_replace  (ThunarProgressDialog       *dialog,
+                                                                 ThunarVfsInfo              *src_info,
+                                                                 ThunarVfsInfo              *dst_info,
                                                                  ThunarVfsJob               *job);
 static void                 thunar_progress_dialog_error        (ThunarProgressDialog       *dialog,
                                                                  GError                     *error,
@@ -279,6 +283,25 @@ thunar_progress_dialog_ask (ThunarProgressDialog *dialog,
 
   /* display the question dialog */
   return thunar_dialogs_show_job_ask (GTK_WINDOW (dialog), message, choices);
+}
+
+
+
+static ThunarVfsJobResponse
+thunar_progress_dialog_ask_replace (ThunarProgressDialog *dialog,
+                                    ThunarVfsInfo        *src_info,
+                                    ThunarVfsInfo        *dst_info,
+                                    ThunarVfsJob         *job)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (THUNAR_VFS_IS_JOB (job), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (dialog->job == job, THUNAR_VFS_JOB_RESPONSE_CANCEL);
+
+  /* be sure to display the progress dialog prior to opening the question dialog */
+  gtk_widget_show_now (GTK_WIDGET (dialog));
+
+  /* display the question dialog */
+  return thunar_dialogs_show_job_ask_replace (GTK_WINDOW (dialog), src_info, dst_info);
 }
 
 
@@ -510,6 +533,7 @@ thunar_progress_dialog_set_job (ThunarProgressDialog *dialog,
       g_object_ref (G_OBJECT (job));
 
       g_signal_connect_swapped (job, "ask", G_CALLBACK (thunar_progress_dialog_ask), dialog);
+      g_signal_connect_swapped (job, "ask-replace", G_CALLBACK (thunar_progress_dialog_ask_replace), dialog);
       g_signal_connect_swapped (job, "error", G_CALLBACK (thunar_progress_dialog_error), dialog);
       g_signal_connect_swapped (job, "finished", G_CALLBACK (thunar_progress_dialog_finished), dialog);
       g_signal_connect_swapped (job, "info-message", G_CALLBACK (thunar_progress_dialog_info_message), dialog);

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-22 18:30+0200\n"
+"POT-Creation-Date: 2007-05-23 23:24+0200\n"
 "PO-Revision-Date: 2006-10-02 22:51+0200\n"
 "Last-Translator: Andrey Fedoseev <andrey.fedoseev@gmail.com>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -58,29 +58,29 @@ msgstr "Только локальные файлы могут быть пере�
 msgid "Preparing..."
 msgstr "Подготовка..."
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:226
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:228
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:537
 #, c-format
 msgid "Failed to change permissions of \"%s\""
 msgstr "Не удалось изменить права для \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:347
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:355
 #, c-format
 msgid "Failed to change file owner of \"%s\""
 msgstr "Не удалось изменить владельца для \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:348
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:356
 #, c-format
 msgid "Failed to change file group of \"%s\""
 msgstr "Не удалось изменить группу для \"%s\""
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:432
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:444
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:190
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "Файл \"%s\" уже существует"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:450
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:462
 #, c-format
 msgid "Failed to create empty file \"%s\""
 msgstr "Не удалось создать пустой файл \"%s\""
@@ -240,11 +240,20 @@ msgstr "Корзина"
 msgid "Cannot move or copy files within the trash"
 msgstr "Внутри корзины нельзя перемещать или копировать файлы"
 
-#: ../thunar-vfs/thunar-vfs-job.c:831
+#. no "ask-replace" handler, fallback to "ask"
+#: ../thunar-vfs/thunar-vfs-job.c:401
+#, c-format
+msgid ""
+"The file \"%s\" already exists. Would you like to replace it?\n"
+"\n"
+"If you replace an existing file, its contents will be overwritten."
+msgstr ""
+
+#: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
 msgstr "Перезаписать?"
 
-#: ../thunar-vfs/thunar-vfs-job.c:896
+#: ../thunar-vfs/thunar-vfs-job.c:1042
 msgid "Do you want to skip it?"
 msgstr "Пропустить?"
 
@@ -892,7 +901,7 @@ msgstr "Подробный список"
 msgid "Details view"
 msgstr "Просмотр в виде списка"
 
-#: ../thunar/thunar-dialogs.c:101
+#: ../thunar/thunar-dialogs.c:104
 msgid "translator-credits"
 msgstr ""
 "Андрей Федосеев <andrey.fedoseev@gmail.com>\n"
@@ -900,29 +909,79 @@ msgstr ""
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:228 ../thunar/thunar-renamer-dialog.c:959
+#: ../thunar/thunar-dialogs.c:231 ../thunar/thunar-renamer-dialog.c:959
 msgid "Failed to open the documentation browser"
 msgstr "Не удалось открыть программу для просмотра документации"
 
-#: ../thunar/thunar-dialogs.c:325
+#: ../thunar/thunar-dialogs.c:328
 msgid "_Yes"
 msgstr "_Да"
 
-#: ../thunar/thunar-dialogs.c:329
+#: ../thunar/thunar-dialogs.c:332
 msgid "Yes to _all"
 msgstr "Да для _всех"
 
-#: ../thunar/thunar-dialogs.c:333
+#: ../thunar/thunar-dialogs.c:336
 msgid "_No"
 msgstr "_Нет"
 
-#: ../thunar/thunar-dialogs.c:337
+#: ../thunar/thunar-dialogs.c:340
 msgid "N_o to all"
 msgstr "Н_ет для всех"
 
-#: ../thunar/thunar-dialogs.c:342
+#: ../thunar/thunar-dialogs.c:344
+#, fuzzy
+msgid "_Retry"
+msgstr "_Восстановить"
+
+#: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
 msgstr "_Отменить"
+
+#. setup the confirmation dialog
+#: ../thunar/thunar-dialogs.c:429
+msgid "Confirm to replace files"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:435
+msgid "_Skip"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:436
+#, fuzzy
+msgid "Replace _All"
+msgstr "_Заменить на:"
+
+#: ../thunar/thunar-dialogs.c:437
+#, fuzzy
+msgid "_Replace"
+msgstr "_Переименовать"
+
+#: ../thunar/thunar-dialogs.c:467
+#, c-format
+msgid "This folder already contains a file \"%s\"."
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:475
+msgid "ReplaceDialogPart1|Do you want to replace the existing file"
+msgstr ""
+
+#.
+#. Fourth box (size, volume, free space)
+#.
+#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-properties-dialog.c:440
+msgid "Size:"
+msgstr "Размер:"
+
+#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-properties-dialog.c:401
+msgid "Modified:"
+msgstr "Изменён:"
+
+#: ../thunar/thunar-dialogs.c:500
+msgid "ReplaceDialogPart2|with the following file?"
+msgstr ""
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1777,7 +1836,7 @@ msgstr ""
 msgid "Failed to display the volume management settings"
 msgstr "Не удалось отобразить содержимое корзины"
 
-#: ../thunar/thunar-progress-dialog.c:375
+#: ../thunar/thunar-progress-dialog.c:398
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
@@ -1785,7 +1844,7 @@ msgstr[0] "(остаётся %lu час)"
 msgstr[1] "(остаётся %lu часа)"
 msgstr[2] "(остаётся %lu часов)"
 
-#: ../thunar/thunar-progress-dialog.c:380
+#: ../thunar/thunar-progress-dialog.c:403
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
@@ -1793,7 +1852,7 @@ msgstr[0] "(остаётся %lu минута)"
 msgstr[1] "(остаётся %lu минуты)"
 msgstr[2] "(остаётся %lu минут)"
 
-#: ../thunar/thunar-progress-dialog.c:385
+#: ../thunar/thunar-progress-dialog.c:408
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"
@@ -1831,20 +1890,9 @@ msgstr "Цель ссылки:"
 msgid "Deleted:"
 msgstr "Удалён:"
 
-#: ../thunar/thunar-properties-dialog.c:401
-msgid "Modified:"
-msgstr "Изменён:"
-
 #: ../thunar/thunar-properties-dialog.c:415
 msgid "Accessed:"
 msgstr "Доступ:"
-
-#.
-#. Fourth box (size, volume, free space)
-#.
-#: ../thunar/thunar-properties-dialog.c:440
-msgid "Size:"
-msgstr "Размер:"
 
 #: ../thunar/thunar-properties-dialog.c:453
 msgid "Volume:"

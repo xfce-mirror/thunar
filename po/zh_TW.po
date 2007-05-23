@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.8.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-22 18:30+0200\n"
+"POT-Creation-Date: 2007-05-23 23:24+0200\n"
 "PO-Revision-Date: 2006-10-01 13:34+0800\n"
 "Last-Translator: Hydonsingore Cia <hydonsingore@educities.edu.tw>\n"
 "Language-Team: Chinese (traditional) <zh-l10n@linux.org.tw>\n"
@@ -57,29 +57,29 @@ msgstr "只能重新命名本地檔案"
 msgid "Preparing..."
 msgstr "準備中..."
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:226
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:228
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:537
 #, c-format
 msgid "Failed to change permissions of \"%s\""
 msgstr "無法更改 \"%s\" 的權限設定"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:347
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:355
 #, c-format
 msgid "Failed to change file owner of \"%s\""
 msgstr "無法更改檔案 \"%s\" 的擁有者"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:348
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:356
 #, c-format
 msgid "Failed to change file group of \"%s\""
 msgstr "無法更改檔案  \"%s\" 的群組"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:432
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:444
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:190
 #, c-format
 msgid "The file \"%s\" already exists"
 msgstr "檔案 \"%s\" 已存在"
 
-#: ../thunar-vfs/thunar-vfs-io-jobs.c:450
+#: ../thunar-vfs/thunar-vfs-io-jobs.c:462
 #, c-format
 msgid "Failed to create empty file \"%s\""
 msgstr "無法建立空檔案 \"%s\""
@@ -235,11 +235,20 @@ msgstr "垃圾桶"
 msgid "Cannot move or copy files within the trash"
 msgstr "在垃圾桶中無法移動或複製檔案"
 
-#: ../thunar-vfs/thunar-vfs-job.c:831
+#. no "ask-replace" handler, fallback to "ask"
+#: ../thunar-vfs/thunar-vfs-job.c:401
+#, fuzzy, c-format
+msgid ""
+"The file \"%s\" already exists. Would you like to replace it?\n"
+"\n"
+"If you replace an existing file, its contents will be overwritten."
+msgstr "檔案 \"%s\" 已經存在。您想要用一個空檔案取而代之嗎？"
+
+#: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
 msgstr "您想要覆蓋它嗎?"
 
-#: ../thunar-vfs/thunar-vfs-job.c:896
+#: ../thunar-vfs/thunar-vfs-job.c:1042
 msgid "Do you want to skip it?"
 msgstr "您想要略過嗎?"
 
@@ -874,35 +883,85 @@ msgstr "詳細目錄列表"
 msgid "Details view"
 msgstr "詳細檢視"
 
-#: ../thunar/thunar-dialogs.c:101
+#: ../thunar/thunar-dialogs.c:104
 msgid "translator-credits"
 msgstr "Cosmo Chene <cosmolax@gmail.com>"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:228 ../thunar/thunar-renamer-dialog.c:959
+#: ../thunar/thunar-dialogs.c:231 ../thunar/thunar-renamer-dialog.c:959
 msgid "Failed to open the documentation browser"
 msgstr "無法開啟文件瀏覽器"
 
-#: ../thunar/thunar-dialogs.c:325
+#: ../thunar/thunar-dialogs.c:328
 msgid "_Yes"
 msgstr "是(_Y)"
 
-#: ../thunar/thunar-dialogs.c:329
+#: ../thunar/thunar-dialogs.c:332
 msgid "Yes to _all"
 msgstr "全部皆是(_A)"
 
-#: ../thunar/thunar-dialogs.c:333
+#: ../thunar/thunar-dialogs.c:336
 msgid "_No"
 msgstr "否(_N)"
 
-#: ../thunar/thunar-dialogs.c:337
+#: ../thunar/thunar-dialogs.c:340
 msgid "N_o to all"
 msgstr "全部皆否(_O)"
 
-#: ../thunar/thunar-dialogs.c:342
+#: ../thunar/thunar-dialogs.c:344
+#, fuzzy
+msgid "_Retry"
+msgstr "恢復(_R)"
+
+#: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
 msgstr "取消(_C)"
+
+#. setup the confirmation dialog
+#: ../thunar/thunar-dialogs.c:429
+msgid "Confirm to replace files"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:435
+msgid "_Skip"
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:436
+#, fuzzy
+msgid "Replace _All"
+msgstr "取代目標(_W):"
+
+#: ../thunar/thunar-dialogs.c:437
+#, fuzzy
+msgid "_Replace"
+msgstr "重新命名(_R)"
+
+#: ../thunar/thunar-dialogs.c:467
+#, c-format
+msgid "This folder already contains a file \"%s\"."
+msgstr ""
+
+#: ../thunar/thunar-dialogs.c:475
+msgid "ReplaceDialogPart1|Do you want to replace the existing file"
+msgstr ""
+
+#.
+#. Fourth box (size, volume, free space)
+#.
+#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-properties-dialog.c:440
+msgid "Size:"
+msgstr "大小:"
+
+#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-properties-dialog.c:401
+msgid "Modified:"
+msgstr "變更:"
+
+#: ../thunar/thunar-dialogs.c:500
+msgid "ReplaceDialogPart2|with the following file?"
+msgstr ""
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1715,19 +1774,19 @@ msgstr ""
 msgid "Failed to display the volume management settings"
 msgstr "無法連結至垃圾桶"
 
-#: ../thunar/thunar-progress-dialog.c:375
+#: ../thunar/thunar-progress-dialog.c:398
 #, c-format
 msgid "(%lu hour remaining)"
 msgid_plural "(%lu hours remaining)"
 msgstr[0] "(剩餘%lu 小時)"
 
-#: ../thunar/thunar-progress-dialog.c:380
+#: ../thunar/thunar-progress-dialog.c:403
 #, c-format
 msgid "(%lu minute remaining)"
 msgid_plural "(%lu minutes remaining)"
 msgstr[0] "(剩下%lu·分鐘)"
 
-#: ../thunar/thunar-progress-dialog.c:385
+#: ../thunar/thunar-progress-dialog.c:408
 #, c-format
 msgid "(%lu second remaining)"
 msgid_plural "(%lu seconds remaining)"
@@ -1763,20 +1822,9 @@ msgstr "連結目標:"
 msgid "Deleted:"
 msgstr "刪除:"
 
-#: ../thunar/thunar-properties-dialog.c:401
-msgid "Modified:"
-msgstr "變更:"
-
 #: ../thunar/thunar-properties-dialog.c:415
 msgid "Accessed:"
 msgstr "存取:"
-
-#.
-#. Fourth box (size, volume, free space)
-#.
-#: ../thunar/thunar-properties-dialog.c:440
-msgid "Size:"
-msgstr "大小:"
 
 #: ../thunar/thunar-properties-dialog.c:453
 msgid "Volume:"
@@ -3346,11 +3394,6 @@ msgstr "在·Thunar中開啟指定的資料夾"
 
 #~ msgid "Failed to determine file info of \"%s\": %s"
 #~ msgstr "無法決定 \"%s\" 的檔案資訊：%s"
-
-#~ msgid ""
-#~ "The file \"%s\" already exists. Do you want to replace it with an empty "
-#~ "file?"
-#~ msgstr "檔案 \"%s\" 已經存在。您想要用一個空檔案取而代之嗎？"
 
 #~ msgid ""
 #~ "Failed to remove \"%s\".\n"

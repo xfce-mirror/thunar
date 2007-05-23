@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -59,7 +59,10 @@ ThunarVfsJobResponse  _thunar_vfs_job_ask_valist      (ThunarVfsJob        *job,
 ThunarVfsJobResponse  _thunar_vfs_job_ask_overwrite   (ThunarVfsJob        *job,
                                                        const gchar         *format,
                                                        ...) G_GNUC_INTERNAL G_GNUC_PRINTF (2, 3);
-gboolean              _thunar_vfs_job_ask_skip        (ThunarVfsJob        *job,
+ThunarVfsJobResponse  _thunar_vfs_job_ask_replace     (ThunarVfsJob        *job,
+                                                       ThunarVfsPath       *src_path,
+                                                       ThunarVfsPath       *dst_path) G_GNUC_INTERNAL;
+ThunarVfsJobResponse  _thunar_vfs_job_ask_skip        (ThunarVfsJob        *job,
                                                        const gchar         *format,
                                                        ...) G_GNUC_INTERNAL G_GNUC_PRINTF (2, 3);
 void                  _thunar_vfs_job_error           (ThunarVfsJob        *job,

@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -148,6 +148,7 @@ _thunar_vfs_io_jobs_chmod (ThunarVfsJob *job,
   ThunarVfsFileMode mode;
   struct stat       statb;
   gboolean          recursive = g_value_get_boolean (&param_values[5]);
+  gboolean          retry;
   GError           *err = NULL;
   GList            *path_list = g_value_get_boxed (&param_values[0]);
   GList            *lp;
@@ -186,6 +187,7 @@ _thunar_vfs_io_jobs_chmod (ThunarVfsJob *job,
   /* change the permissions of all paths */
   for (lp = path_list; lp != NULL && !thunar_vfs_job_cancelled (job); lp = lp->next)
     {
+retry_chmod:
       /* reset the saved errno */
       sverrno = 0;
 
@@ -227,10 +229,14 @@ sverror:
           g_free (display_name);
 
           /* ask the user whether to skip this one */
-          _thunar_vfs_job_ask_skip (job, "%s", err->message);
+          retry = (_thunar_vfs_job_ask_skip (job, "%s", err->message) == THUNAR_VFS_JOB_RESPONSE_RETRY);
 
           /* reset the error */
           g_clear_error (&err);
+
+          /* check whether to retry */
+          if (G_UNLIKELY (retry))
+            goto retry_chmod;
         }
     }
 
@@ -268,6 +274,7 @@ _thunar_vfs_io_jobs_chown (ThunarVfsJob *job,
 {
   struct stat statb;
   gboolean    recursive = g_value_get_boolean (&param_values[3]);
+  gboolean    retry;
   GError     *err = NULL;
   GList      *path_list = g_value_get_boxed (&param_values[0]);
   GList      *lp;
@@ -309,6 +316,7 @@ _thunar_vfs_io_jobs_chown (ThunarVfsJob *job,
   /* change the ownership of all paths */
   for (lp = path_list; lp != NULL && !thunar_vfs_job_cancelled (job); lp = lp->next)
     {
+retry_chown:
       /* reset the saved errno */
       sverrno = 0;
 
@@ -349,11 +357,15 @@ sverror:
                                                display_name);
           g_free (display_name);
 
-          /* ask the user whether to skip this one */
-          _thunar_vfs_job_ask_skip (job, "%s", err->message);
+          /* ask the user whether to skip/retry this one */
+          retry = (_thunar_vfs_job_ask_skip (job, "%s", err->message) == THUNAR_VFS_JOB_RESPONSE_RETRY);
 
           /* reset the error */
           g_clear_error (&err);
+
+          /* check whether to retry */
+          if (G_UNLIKELY (retry))
+            goto retry_chown;
         }
     }
 
@@ -387,7 +399,7 @@ _thunar_vfs_io_jobs_create (ThunarVfsJob *job,
                             guint         n_param_values,
                             GError      **error)
 {
-  ThunarVfsJobResponse overwrite;
+  ThunarVfsJobResponse response;
   GError              *err = NULL;
   gchar               *absolute_path;
   gchar               *display_name;
@@ -429,11 +441,11 @@ again:
             {
               /* ask the user whether to override this path */
               display_name = _thunar_vfs_path_dup_display_name (lp->data);
-              overwrite = _thunar_vfs_job_ask_overwrite (job, _("The file \"%s\" already exists"), display_name);
+              response = _thunar_vfs_job_ask_overwrite (job, _("The file \"%s\" already exists"), display_name);
               g_free (display_name);
 
               /* check if we should overwrite */
-              if (G_UNLIKELY (overwrite == THUNAR_VFS_JOB_RESPONSE_YES))
+              if (G_UNLIKELY (response == THUNAR_VFS_JOB_RESPONSE_YES))
                 {
                   /* try to remove the file (fail if not possible) */
                   if (_thunar_vfs_io_ops_remove (lp->data, THUNAR_VFS_IO_OPS_IGNORE_ENOENT, &err))
@@ -445,12 +457,16 @@ again:
             }
           else
             {
-              /* ask the user whether to skip this path (cancels the job if not) */
+              /* ask the user whether to skip/retry this path (cancels the job if not) */
               display_name = _thunar_vfs_path_dup_display_name (lp->data);
               message = g_strdup_printf (_("Failed to create empty file \"%s\""), display_name);
-              _thunar_vfs_job_ask_skip (job, "%s: %s", message, g_strerror (errno));
+              response = _thunar_vfs_job_ask_skip (job, "%s: %s", message, g_strerror (errno));
               g_free (display_name);
               g_free (message);
+
+              /* check whether to retry the create operation */
+              if (response == THUNAR_VFS_JOB_RESPONSE_RETRY)
+                goto again;
             }
         }
       else
@@ -722,9 +738,10 @@ _thunar_vfs_io_jobs_unlink (ThunarVfsJob *job,
                             guint         n_param_values,
                             GError      **error)
 {
-  GError *err = NULL;
-  GList  *path_list;
-  GList  *lp;
+  gboolean retry;
+  GError  *err = NULL;
+  GList   *path_list;
+  GList   *lp;
 
   _thunar_vfs_return_val_if_fail (G_VALUE_HOLDS (&param_values[0], THUNAR_VFS_TYPE_PATH_LIST), FALSE);
   _thunar_vfs_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -752,14 +769,18 @@ _thunar_vfs_io_jobs_unlink (ThunarVfsJob *job,
       /* skip the root folders, which cannot be deleted anyway */
       if (G_LIKELY (!thunar_vfs_path_is_root (lp->data)))
         {
-          /* remove the file for the current path */
+again:    /* remove the file for the current path */
           if (!_thunar_vfs_io_ops_remove (lp->data, THUNAR_VFS_IO_OPS_IGNORE_ENOENT, &err))
             {
               /* ask the user whether to skip the file */
-              _thunar_vfs_job_ask_skip (job, "%s", err->message);
+              retry = (_thunar_vfs_job_ask_skip (job, "%s", err->message) == THUNAR_VFS_JOB_RESPONSE_RETRY);
 
               /* clear the error */
               g_clear_error (&err);
+
+              /* check whether to retry */
+              if (G_UNLIKELY (retry))
+                goto again;
             }
         }
     }

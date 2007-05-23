@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -25,7 +25,7 @@
 #ifndef __THUNAR_VFS_JOB_H__
 #define __THUNAR_VFS_JOB_H__
 
-#include <glib-object.h>
+#include <thunar-vfs/thunar-vfs-info.h>
 
 G_BEGIN_DECLS;
 
@@ -47,6 +47,7 @@ typedef struct _ThunarVfsJob        ThunarVfsJob;
  * @THUNAR_VFS_JOB_RESPONSE_NO      :
  * @THUNAR_VFS_JOB_RESPONSE_NO_ALL  :
  * @THUNAR_VFS_JOB_RESPONSE_CANCEL  :
+ * @THUNAR_VFS_JOB_RESPONSE_RETRY   :
  *
  * Possible responses for the ThunarVfsJob::ask signal.
  **/
@@ -57,6 +58,7 @@ typedef enum /*< flags >*/
   THUNAR_VFS_JOB_RESPONSE_NO      = 1 << 2,
   THUNAR_VFS_JOB_RESPONSE_CANCEL  = 1 << 3,
   THUNAR_VFS_JOB_RESPONSE_NO_ALL  = 1 << 4,
+  THUNAR_VFS_JOB_RESPONSE_RETRY   = 1 << 5,
 } ThunarVfsJobResponse;
 
 struct _ThunarVfsJobClass
@@ -67,18 +69,20 @@ struct _ThunarVfsJobClass
   /*< public >*/
 
   /* virtual methods */
-  void                 (*execute)  (ThunarVfsJob        *job);
+  void                 (*execute)     (ThunarVfsJob        *job);
 
   /* signals */
-  void                 (*finished) (ThunarVfsJob        *job);
-  ThunarVfsJobResponse (*ask)      (ThunarVfsJob        *job,
-                                    const gchar         *message,
-                                    ThunarVfsJobResponse choices);
+  void                 (*finished)    (ThunarVfsJob        *job);
+  ThunarVfsJobResponse (*ask)         (ThunarVfsJob        *job,
+                                       const gchar         *message,
+                                       ThunarVfsJobResponse choices);
+  ThunarVfsJobResponse (*ask_replace) (ThunarVfsJob        *job,
+                                       ThunarVfsInfo       *src_info,
+                                       ThunarVfsInfo       *dst_info);
 
   /*< private >*/
   void (*reserved1) (void);
   void (*reserved2) (void);
-  void (*reserved3) (void);
 };
 
 struct _ThunarVfsJob

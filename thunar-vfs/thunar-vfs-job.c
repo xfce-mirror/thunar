@@ -1,6 +1,6 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -55,6 +55,7 @@
 enum
 {
   ASK,
+  ASK_REPLACE,
   ERROR,
   FINISHED,
   INFO_MESSAGE,
@@ -77,6 +78,9 @@ static void                 thunar_vfs_job_init             (ThunarVfsJob       
 static ThunarVfsJobResponse thunar_vfs_job_real_ask         (ThunarVfsJob         *job,
                                                              const gchar          *message,
                                                              ThunarVfsJobResponse  choices);
+static ThunarVfsJobResponse thunar_vfs_job_real_ask_replace (ThunarVfsJob         *job,
+                                                             ThunarVfsInfo        *src_info,
+                                                             ThunarVfsInfo        *dst_info);
 static void                 thunar_vfs_job_execute          (gpointer              data,
                                                              gpointer              user_data);
 static gboolean             thunar_vfs_job_source_prepare   (GSource              *source,
@@ -190,9 +194,10 @@ thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
   thunar_vfs_job_parent_class = g_type_class_peek_parent (klass);
 
   klass->ask = thunar_vfs_job_real_ask;
+  klass->ask_replace = thunar_vfs_job_real_ask_replace;
 
   /**
-   * ThunarVfsInteractiveJob::ask:
+   * ThunarVfsJob::ask:
    * @job     : a #ThunarVfsJob.
    * @message : question to display to the user.
    * @choices : a combination of #ThunarVfsInteractiveJobResponse<!---->s.
@@ -211,6 +216,31 @@ thunar_vfs_job_class_init (ThunarVfsJobClass *klass)
                   THUNAR_VFS_TYPE_VFS_JOB_RESPONSE,
                   2, G_TYPE_STRING,
                   THUNAR_VFS_TYPE_VFS_JOB_RESPONSE);
+
+  /**
+   * ThunarVfsJob::ask-replace:
+   * @job      : a #ThunarVfsJob.
+   * @src_info : the #ThunarVfsInfo of the source file.
+   * @dst_info : the #ThunarVfsInfo of the destination file, that
+   *             may be replaced with the source file.
+   *
+   * Emitted to ask the user whether the destination file should
+   * be replaced by the source file.
+   *
+   * Return value: the selected choice.
+   *
+   * Since: 0.8.1
+   **/
+  job_signals[ASK_REPLACE] =
+    g_signal_new (I_("ask-replace"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS | G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarVfsJobClass, ask_replace),
+                  _thunar_vfs_job_ask_accumulator, NULL,
+                  _thunar_vfs_marshal_FLAGS__BOXED_BOXED,
+                  THUNAR_VFS_TYPE_VFS_JOB_RESPONSE,
+                  2, THUNAR_VFS_TYPE_INFO,
+                  THUNAR_VFS_TYPE_INFO);
 
   /**
    * ThunarVfsJob::error:
@@ -353,6 +383,42 @@ thunar_vfs_job_real_ask (ThunarVfsJob        *job,
 
 
 
+static ThunarVfsJobResponse
+thunar_vfs_job_real_ask_replace (ThunarVfsJob  *job,
+                                 ThunarVfsInfo *src_info,
+                                 ThunarVfsInfo *dst_info)
+{
+  ThunarVfsJobResponse response;
+  gchar               *display_name;
+  gchar               *s;
+
+  /* determine a displayable variant of the dst */
+  s = _thunar_vfs_path_is_local (dst_info->path) ? thunar_vfs_path_dup_string (dst_info->path) : thunar_vfs_path_dup_uri (dst_info->path);
+  display_name = g_filename_display_name (s);
+  g_free (s);
+
+  /* no "ask-replace" handler, fallback to "ask" */
+  s = g_strdup_printf (_("The file \"%s\" already exists. Would you like to replace it?\n\n"
+                         "If you replace an existing file, its contents will be overwritten."),
+                       display_name);
+  g_signal_emit (G_OBJECT (job),
+                 job_signals[ASK], 0, s,
+                 THUNAR_VFS_JOB_RESPONSE_YES
+                 | THUNAR_VFS_JOB_RESPONSE_YES_ALL
+                 | THUNAR_VFS_JOB_RESPONSE_NO
+                 | THUNAR_VFS_JOB_RESPONSE_NO_ALL
+                 | THUNAR_VFS_JOB_RESPONSE_CANCEL,
+                 &response);
+
+  /* cleanup */
+  g_free (display_name);
+  g_free (s);
+
+  return response;
+}
+
+
+
 static void
 thunar_vfs_job_execute (gpointer data,
                         gpointer user_data)
@@ -360,8 +426,8 @@ thunar_vfs_job_execute (gpointer data,
   ThunarVfsJobEmitAsync *emit_async;
   ThunarVfsJob          *job = THUNAR_VFS_JOB (data);
 
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
-  g_return_if_fail (job->priv->running);
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_vfs_return_if_fail (job->priv->running);
 
   /* perform the real work */
   (*THUNAR_VFS_JOB_GET_CLASS (job)->execute) (job);
@@ -489,7 +555,7 @@ thunar_vfs_job_source_finalize (GSource *source)
 {
   ThunarVfsJob *job = THUNAR_VFS_JOB_SOURCE (source)->job;
 
-  g_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_vfs_return_if_fail (THUNAR_VFS_IS_JOB (job));
 
   /* decrement the number of running jobs */
   jobs_running -= 1;
@@ -859,6 +925,86 @@ _thunar_vfs_job_ask_overwrite (ThunarVfsJob *job,
 
 
 /**
+ * _thunar_vfs_job_ask_replace:
+ * @job : a #ThunarVfsJob.
+ * @src_path : the #ThunarVfsPath to the source file.
+ * @dst_path : the #ThunarVfsPath to the destination file.
+ *
+ * Return value:
+ **/
+ThunarVfsJobResponse
+_thunar_vfs_job_ask_replace (ThunarVfsJob  *job,
+                             ThunarVfsPath *src_path,
+                             ThunarVfsPath *dst_path)
+{
+  ThunarVfsJobResponse response;
+  ThunarVfsInfo       *dst_info;
+  ThunarVfsInfo       *src_info;
+
+  _thunar_vfs_return_val_if_fail (THUNAR_VFS_IS_JOB (job), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_vfs_return_val_if_fail (dst_path != NULL, THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_vfs_return_val_if_fail (src_path != NULL, THUNAR_VFS_JOB_RESPONSE_CANCEL);
+
+  /* check if the user already cancelled the job */
+  if (G_UNLIKELY (job->cancelled))
+    return THUNAR_VFS_JOB_RESPONSE_CANCEL;
+
+  /* check if the user said "Overwrite All" earlier */
+  if (G_UNLIKELY (job->priv->ask_overwrite_all))
+    return THUNAR_VFS_JOB_RESPONSE_YES;
+  
+  /* check if the user said "Overwrite None" earlier */
+  if (G_UNLIKELY (job->priv->ask_overwrite_none))
+    return THUNAR_VFS_JOB_RESPONSE_NO;
+
+  /* determine the info of the source file (skip if disappeared) */
+  src_info = thunar_vfs_info_new_for_path (src_path, NULL);
+  if (G_UNLIKELY (src_info == NULL))
+    return THUNAR_VFS_JOB_RESPONSE_NO;
+
+  /* determine the info of the target file (retry if disappeared) */
+  dst_info = thunar_vfs_info_new_for_path (dst_path, NULL);
+  if (G_UNLIKELY (dst_info == NULL))
+    {
+      thunar_vfs_info_unref (src_info);
+      return THUNAR_VFS_JOB_RESPONSE_RETRY;
+    }
+
+  /* ask the user whether to replace the dst file with the src file */
+  _thunar_vfs_job_emit (job, job_signals[ASK_REPLACE], 0, src_info, dst_info, &response);
+
+  /* translate the response */
+  switch (response)
+    {
+    case THUNAR_VFS_JOB_RESPONSE_YES_ALL:
+      job->priv->ask_overwrite_all = TRUE;
+      response = THUNAR_VFS_JOB_RESPONSE_YES;
+      break;
+
+    case THUNAR_VFS_JOB_RESPONSE_NO_ALL:
+      job->priv->ask_overwrite_none = TRUE;
+      response = THUNAR_VFS_JOB_RESPONSE_NO;
+      break;
+
+    case THUNAR_VFS_JOB_RESPONSE_CANCEL:
+      /* cancel the job as per users request */
+      thunar_vfs_job_cancel (job);
+      break;
+
+    default:
+      break;
+    }
+
+  /* cleanup */
+  thunar_vfs_info_unref (src_info);
+  thunar_vfs_info_unref (dst_info);
+
+  return response;
+}
+
+
+
+/**
  * _thunar_vfs_job_ask_skip:
  * @job    : a #ThunarVfsJob.
  * @format : a printf(3)-style format string.
@@ -867,12 +1013,12 @@ _thunar_vfs_job_ask_overwrite (ThunarVfsJob *job,
  * Asks the user whether to skip a certain file as described by
  * @format.
  *
- * The return value may be %TRUE to perform the skip, or %FALSE,
- * which means to cancel the @job.
- *
- * Return value: %TRUE to skip or %FALSE to cancel the @job.
+ * Return value: %THUNAR_VFS_JOB_RESPONSE_CANCEL to cancel the
+ *               @job, %THUNAR_VFS_JOB_RESPONSE_YES to skip
+ *               the file or %THUNAR_VFS_JOB_RESPONSE_RETRY
+ *               to retry the operation.
  **/
-gboolean
+ThunarVfsJobResponse
 _thunar_vfs_job_ask_skip (ThunarVfsJob *job,
                           const gchar  *format,
                           ...)
@@ -880,15 +1026,15 @@ _thunar_vfs_job_ask_skip (ThunarVfsJob *job,
   ThunarVfsJobResponse response;
   va_list              var_args;
 
-  _thunar_vfs_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
+  _thunar_vfs_return_val_if_fail (THUNAR_VFS_IS_JOB (job), THUNAR_VFS_JOB_RESPONSE_CANCEL);
 
   /* check if the user already cancelled the job */
   if (G_UNLIKELY (job->cancelled))
-    return FALSE;
+    return THUNAR_VFS_JOB_RESPONSE_CANCEL;
 
   /* check if the user said "Skip All" earlier */
   if (G_UNLIKELY (job->priv->ask_skip_all))
-    return TRUE;
+    return THUNAR_VFS_JOB_RESPONSE_YES;
 
   /* ask the user using the provided format string */
   va_start (var_args, format);
@@ -896,7 +1042,8 @@ _thunar_vfs_job_ask_skip (ThunarVfsJob *job,
                                          _("Do you want to skip it?"),
                                          THUNAR_VFS_JOB_RESPONSE_YES
                                          | THUNAR_VFS_JOB_RESPONSE_YES_ALL
-                                         | THUNAR_VFS_JOB_RESPONSE_CANCEL);
+                                         | THUNAR_VFS_JOB_RESPONSE_CANCEL
+                                         | THUNAR_VFS_JOB_RESPONSE_RETRY);
   va_end (var_args);
 
   /* evaluate the response */
@@ -904,18 +1051,20 @@ _thunar_vfs_job_ask_skip (ThunarVfsJob *job,
     {
     case THUNAR_VFS_JOB_RESPONSE_YES_ALL:
       job->priv->ask_skip_all = TRUE;
-      /* FALL-THROUGH */
+      response = THUNAR_VFS_JOB_RESPONSE_YES;
+      break;
 
     case THUNAR_VFS_JOB_RESPONSE_YES:
-      return TRUE;
-
     case THUNAR_VFS_JOB_RESPONSE_CANCEL:
-      return FALSE;
+    case THUNAR_VFS_JOB_RESPONSE_RETRY:
+      break;
 
     default:
       _thunar_vfs_assert_not_reached ();
       return FALSE;
     }
+
+  return response;
 }
 
 

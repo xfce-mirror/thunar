@@ -290,11 +290,15 @@ thunar_vfs_transfer_job_copy_file (ThunarVfsTransferJob *transfer_job,
       /* check if we can recover from this error */
       if (err->domain == G_FILE_ERROR && err->code == G_FILE_ERROR_EXIST)
         {
-          /* ask the user whether to overwrite */
-          response = _thunar_vfs_job_ask_overwrite (THUNAR_VFS_JOB (transfer_job), "%s", err->message);
-
           /* reset the error */
           g_clear_error (&err);
+
+          /* ask the user whether to replace the target file */
+          response = _thunar_vfs_job_ask_replace (THUNAR_VFS_JOB (transfer_job), source_path, target_path);
+
+          /* check if we should retry the copy operation */
+          if (response == THUNAR_VFS_JOB_RESPONSE_RETRY)
+            continue;
 
           /* try to remove the target file if we should overwrite */
           if (response == THUNAR_VFS_JOB_RESPONSE_YES && !_thunar_vfs_io_ops_remove (target_path, THUNAR_VFS_IO_OPS_IGNORE_ENOENT, &err))
@@ -338,6 +342,7 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
   ThunarVfsPath *target_path_return;
   gchar         *display_name;
   GError        *err = NULL;
+  gboolean       retry;
 
   _thunar_vfs_return_if_fail ((target_path == NULL && target_parent_path != NULL) || (target_path != NULL && target_parent_path == NULL));
   _thunar_vfs_return_if_fail (target_path == NULL || transfer_node->next == NULL);
@@ -364,6 +369,7 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
       _thunar_vfs_job_info_message (THUNAR_VFS_JOB (transfer_job), display_name);
       g_free (display_name);
 
+retry_copy:
       /* copy the item specified by this node (not recursive!) */
       if (thunar_vfs_transfer_job_copy_file (transfer_job, transfer_node->source_path, target_path, &target_path_return, &err))
         {
@@ -396,25 +402,42 @@ thunar_vfs_transfer_job_node_copy (ThunarVfsTransferJob  *transfer_job,
               else
                 thunar_vfs_path_unref (target_path_return);
 
+retry_remove:
               /* try to remove the source directory if we should move instead of just copy */
               if (transfer_job->move && !_thunar_vfs_io_ops_remove (transfer_node->source_path, THUNAR_VFS_IO_OPS_IGNORE_ENOENT, &err))
                 {
                   /* we can ignore ENOTEMPTY (which is mapped to G_FILE_ERROR_FAILED) */
                   if (err->domain == G_FILE_ERROR && err->code == G_FILE_ERROR_FAILED)
-                    g_clear_error (&err);
+                    {
+                      /* no error then... */
+                      g_clear_error (&err);
+                    }
+                  else
+                    {
+                      /* ask the user whether to skip/retry the removal */
+                      retry = (_thunar_vfs_job_ask_skip (THUNAR_VFS_JOB (transfer_job), "%s", err->message) == THUNAR_VFS_JOB_RESPONSE_RETRY);
+
+                      /* reset the error */
+                      g_clear_error (&err);
+
+                      /* check whether to retry */
+                      if (G_UNLIKELY (retry))
+                        goto retry_remove;
+                    }
                 }
             }
         }
-
-      /* check if we failed (ENOSPC cannot be skipped) */
-      if (err != NULL && (err->domain != G_FILE_ERROR || err->code != G_FILE_ERROR_NOSPC))
+      else if (err != NULL && (err->domain != G_FILE_ERROR || err->code != G_FILE_ERROR_NOSPC)) /* ENOSPC cannot be skipped! */
         {
           /* ask the user whether to skip this node and all subnodes (-> cancellation) */
-          if (!thunar_vfs_job_cancelled (THUNAR_VFS_JOB (transfer_job)))
-            _thunar_vfs_job_ask_skip (THUNAR_VFS_JOB (transfer_job), "%s", err->message);
+          retry = (_thunar_vfs_job_ask_skip (THUNAR_VFS_JOB (transfer_job), "%s", err->message) == THUNAR_VFS_JOB_RESPONSE_RETRY);
 
           /* reset the error */
           g_clear_error (&err);
+
+          /* check whether to retry */
+          if (G_UNLIKELY (retry))
+            goto retry_copy;
         }
 
       /* release the guessed target_path */
