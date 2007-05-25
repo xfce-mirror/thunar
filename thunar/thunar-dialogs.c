@@ -100,7 +100,11 @@ thunar_dialogs_show_about (GtkWindow   *parent,
                          "documenters", documenters,
                          "license", XFCE_LICENSE_GPL,
                          "logo", logo,
+#if GTK_CHECK_VERSION(2,11,0)
+                         "program-name", title,
+#else
                          "name", title,
+#endif
                          "translator-credits", _("translator-credits"),
                          "version", PACKAGE_VERSION,
                          "website", "http://thunar.xfce.org/",
