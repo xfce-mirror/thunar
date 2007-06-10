@@ -244,6 +244,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
+"Filen \"%s\" eksisterer allerede. Ønsker du å erstatte den?\n"
+"\n"
+"Hvis du erstatter en eksisterende fil, vil innholder bli overskrevet."
 
 #: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
@@ -918,9 +921,8 @@ msgid "N_o to all"
 msgstr "Nei til _alle"
 
 #: ../thunar/thunar-dialogs.c:344
-#, fuzzy
 msgid "_Retry"
-msgstr "Gjen_opprett"
+msgstr "_Forsøk pånytt"
 
 #: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
@@ -929,30 +931,28 @@ msgstr "_Avbryt"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:429
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "Bekreft erstatte filer"
 
 #: ../thunar/thunar-dialogs.c:435
 msgid "_Skip"
-msgstr ""
+msgstr "H_opp over"
 
 #: ../thunar/thunar-dialogs.c:436
-#, fuzzy
 msgid "Replace _All"
-msgstr "_Erstatt med:"
+msgstr "Erstatt _alle:"
 
 #: ../thunar/thunar-dialogs.c:437
-#, fuzzy
 msgid "_Replace"
-msgstr "_Gi nytt navn"
+msgstr "_Erstatt"
 
 #: ../thunar/thunar-dialogs.c:467
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "Denne mappen inneholder allerede filen \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:475
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr ""
+msgstr "Ønsker du å erstatte den eksisterende filen"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -969,7 +969,7 @@ msgstr "Modifisert:"
 
 #: ../thunar/thunar-dialogs.c:500
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr ""
+msgstr "med den følgende filen?"
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1536,7 +1536,7 @@ msgstr "Filebehandler Innstillinger"
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
-msgstr ""
+msgstr "Visning"
 
 #: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
@@ -1597,12 +1597,11 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
-msgstr ""
+msgstr "Dato"
 
 #: ../thunar/thunar-preferences-dialog.c:338
-#, fuzzy
 msgid "_Format:"
-msgstr "Tekst _format:"
+msgstr "_Format:"
 
 #.
 #. Side Pane
@@ -2366,9 +2365,8 @@ msgstr "Idag"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
 msgid "Today at %X"
-msgstr "Idag"
+msgstr "Idag %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2377,21 +2375,20 @@ msgstr "Igår"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
 msgid "Yesterday at %X"
-msgstr "Igår"
+msgstr "Igår %X"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:145
 #, c-format
 msgid "%A at %X"
-msgstr ""
+msgstr "%A %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:150
 #, c-format
 msgid "%x at %X"
-msgstr ""
+msgstr "%x %X"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
@@ -2680,7 +2677,7 @@ msgstr "Navngi element"
 
 #: ../thunarx/thunarx-property-page.c:151
 msgid "A widget to display in place of the usual page label"
-msgstr ""
+msgstr "Et element som vises istedet for vanlig sideetikett"
 
 #: ../thunarx/thunarx-provider-plugin.c:79
 msgid "Resident"
@@ -2860,7 +2857,7 @@ msgstr "STORE BOKSTAVER"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:86
 msgid "Camelcase"
-msgstr ""
+msgstr "To store bokstaver"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:92
 msgid "Insert"
