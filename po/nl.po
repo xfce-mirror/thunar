@@ -1,16 +1,16 @@
-# Dutch translation for Thunar.
-# Copyright (C) 2004-2006 Benedikt Meurer.
-# This file is distributed under the same license as the Thunar package.
-# Vincent Tunru <imnotb@gmail.com>, 2006.
+# Dutch translation of the thunar package.
+# Copyright (C) 2004-2007 Benedikt Meurer.
+# This file is distributed under the same license as the thunar package.
+# Vincent Tunru <imnotb@gmail.com>, 2006-2007.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar 0.8.0\n"
+"Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-04-10 08:00+0000\n"
-"PO-Revision-Date: 2007-06-13 20:34+0100\n"
-"Last-Translator: Vincent Tunru <imnotb@gmail.com>\n"
-"Language-Team: Dutch <vertaling@vrijschrift.org>\n"
+"PO-Revision-Date: 2007-06-16 15:47+0100\n"
+"Last-Translator: Stephan Arts <stephan@xfce.org>\n"
+"Language-Team: Dutch <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -29,22 +29,19 @@ msgstr "Onbekende fout"
 # Unknown word "Exec"
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:390
-#, fuzzy
 msgid "No Exec field specified"
-msgstr "Geen uitvoerveld gegeven"
+msgstr "Geen Exec uitvoerveld gegeven"
 
 # Unknown word "Exec"
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:409
-#, fuzzy
 msgid "No URL field specified"
 msgstr "Geen URL gegeven"
 
 #: ../thunar-vfs/thunar-vfs-info.c:414
 #: ../thunar-vfs/thunar-vfs-private.c:384
-#, fuzzy
 msgid "Invalid desktop file"
-msgstr "Ongeldig \".desktop\"-bestand"
+msgstr "Ongeldig desktop bestand"
 
 #: ../thunar-vfs/thunar-vfs-info.c:422
 msgid "Failed to parse file"
@@ -188,7 +185,7 @@ msgstr "Kon map \"%s\" niet maken"
 # Unknown word "fifo"
 #. TRANSLATORS: FIFO is an acronym for First In, First Out. You can replace the word with `pipe'.
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:514
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to create named fifo \"%s\""
 msgstr "Kon genoemde pipe \"%s\" niet maken"
 
@@ -282,7 +279,6 @@ msgid "Command"
 msgstr "Commando"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:133
-#, fuzzy
 msgid "The command to run the mime handler"
 msgstr "Commando om de mime handler uit te voeren"
 
@@ -291,9 +287,8 @@ msgid "Flags"
 msgstr "Markeringen"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:146
-#, fuzzy
 msgid "The flags for the mime handler"
-msgstr "Markeringen van mime <handler>"
+msgstr "Markeringen van mime handler"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:161
 msgid "Icon"
@@ -677,7 +672,6 @@ msgstr "Kon het nieuwe programma \"%s\" niet toevoegen"
 
 #. append the "Remove Launcher" item
 #: ../thunar/thunar-chooser-dialog.c:605
-#, fuzzy
 msgid "_Remove Launcher"
 msgstr "Starter _verwijderen"
 
@@ -703,7 +697,6 @@ msgid "Are you sure that you want to remove \"%s\"?"
 msgstr "Weet u zeker dat u \"%s\" wilt verwijderen?"
 
 #: ../thunar/thunar-chooser-dialog.c:768
-#, fuzzy
 msgid ""
 "This will remove the application launcher that appears in the file context menu, but will not uninstall the application itself.\n"
 "\n"
@@ -905,7 +898,7 @@ msgstr "Gedetailleerde weergave"
 msgid "translator-credits"
 msgstr ""
 "Vincent Tunru <imnotb@gmail.com>\n"
-"Stephan Arts <psybsd@gmail.com>"
+"Stephan Arts <stephan@xfce.org>"
 
 #. display an error message to the user
 #. tell the user that we failed
@@ -931,9 +924,8 @@ msgid "N_o to all"
 msgstr "N_ee op alles"
 
 #: ../thunar/thunar-dialogs.c:344
-#, fuzzy
 msgid "_Retry"
-msgstr "He_rstellen"
+msgstr "Op_nieuw"
 
 #: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
@@ -949,14 +941,12 @@ msgid "_Skip"
 msgstr "Over_slaan"
 
 #: ../thunar/thunar-dialogs.c:436
-#, fuzzy
 msgid "Replace _All"
-msgstr "Vervangen _met:"
+msgstr "_Alles vervangen"
 
 #: ../thunar/thunar-dialogs.c:437
-#, fuzzy
 msgid "_Replace"
-msgstr "_Naam wijzigen"
+msgstr "_Vervangen"
 
 #: ../thunar/thunar-dialogs.c:467
 #, c-format
@@ -964,7 +954,6 @@ msgid "This folder already contains a file \"%s\"."
 msgstr "Het bestand \"%s\" bestaat al in deze map."
 
 #: ../thunar/thunar-dialogs.c:475
-#, fuzzy
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "ReplaceDialogPart1|Wilt u het bestaande bestand vervangen"
 
@@ -984,7 +973,6 @@ msgid "Modified:"
 msgstr "Laatst bewerkt op:"
 
 #: ../thunar/thunar-dialogs.c:500
-#, fuzzy
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "ReplaceDialogPart2|door het volgende bestand?"
 
@@ -1115,7 +1103,7 @@ msgstr "Openen in nieuw venster"
 #: ../thunar/thunar-launcher.c:141
 #, fuzzy
 msgid "Open the selected directory in a new window"
-msgstr "De geselecteerde mappen in nieuwe Thunar-vensters openen"
+msgstr "De geselecteerde map in een nieuw venster openen"
 
 #: ../thunar/thunar-launcher.c:142
 #: ../thunar/thunar-launcher.c:144
@@ -1611,9 +1599,8 @@ msgid "Select this option to place the icon captions for items beside the icon r
 msgstr "Selecteer deze optie om tekst naast de pictogrammen weer te geven in plaats van eronder."
 
 #: ../thunar/thunar-preferences-dialog.c:326
-#, fuzzy
 msgid "Date"
-msgstr "_Plakken"
+msgstr "Datum"
 
 #: ../thunar/thunar-preferences-dialog.c:338
 #, fuzzy
@@ -1714,7 +1701,7 @@ msgid ""
 "Specify the d_elay before an item gets selected\n"
 "when the mouse pointer is paused over it:"
 msgstr ""
-"Specificieer de wachttijd alvorens een bestand geselecteerd wordt\n"
+"Specificieer de w_achttijd alvorens een bestand geselecteerd wordt\n"
 "als de cursor er naar wijst:"
 
 #: ../thunar/thunar-preferences-dialog.c:516
@@ -1773,7 +1760,7 @@ msgstr "Op map en inhoud toepassen"
 #: ../thunar/thunar-preferences-dialog.c:607
 #, fuzzy
 msgid "Volume Management"
-msgstr "Volume beheer"
+msgstr "Schijfbeheer"
 
 #: ../thunar/thunar-preferences-dialog.c:635
 msgid ""
@@ -1946,7 +1933,7 @@ msgstr "_Over"
 #: ../thunar/thunar-renamer-dialog.c:178
 #, fuzzy
 msgid "Display information about Thunar Bulk Rename"
-msgstr "Geef informatie weer over de namen-wijziger"
+msgstr "Toon informatie over de namen-wijziger"
 
 #: ../thunar/thunar-renamer-dialog.c:179
 #: ../thunar/thunar-standard-view.c:324
@@ -1980,14 +1967,13 @@ msgstr "Bekijk de documentatie voor deze manier van namen wijzigen."
 #. *              and opening the multi rename dialog by selecting multiple files and pressing F2.
 #.
 #: ../thunar/thunar-renamer-dialog.c:616
-#, fuzzy
 msgid ""
 "No renamer modules were found on your system. Please check your\n"
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
 "Er waren geen naam-wijzigen-modules gevonden. Kijk alstublieft uw\n"
-"installatie na of contacteer uw systeembeheerder. Als u Thunar\n"
+"installatie na of neem contact op met uw systeembeheerder. Als u Thunar\n"
 "zelf compileert, zorg dan dat u de \"Simple Builtin Renamers\" plugin toestaat."
 
 #. allocate the file chooser
@@ -2101,9 +2087,9 @@ msgid "Re_name Shortcut"
 msgstr "_Naam wijzigen van snelkoppeling"
 
 #: ../thunar/thunar-shortcuts-view.c:1161
-#, fuzzy, c-format
+#, c-format
 msgid "The path \"%s\" does not refer to a directory"
-msgstr "Het pad '%s' verwijst niet naar een map"
+msgstr "Het pad \"%s\" verwijst niet naar een map"
 
 #. display an error message to the user
 #: ../thunar/thunar-shortcuts-view.c:1180
@@ -2191,7 +2177,7 @@ msgstr "Verplaats of kopiëer bestanden naar de geselecteerde map"
 
 #: ../thunar/thunar-standard-view.c:330
 msgid "Select _all Files"
-msgstr "_Alle bestanden selecteren"
+msgstr "A_lle bestanden selecteren"
 
 #: ../thunar/thunar-standard-view.c:330
 msgid "Select all files in this window"
@@ -2272,9 +2258,8 @@ msgstr "_Naam wijzigen"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2578
-#, fuzzy
 msgid "Invalid filename provided by XDS drag site"
-msgstr "Ongeldige bestandsnaam verkregen door XDS drag site"
+msgstr "Ongeldige bestandsnaam verkregen van XDS sleep-bron"
 
 # Unknown word "fifo"
 #. display an error dialog to the user
@@ -2369,9 +2354,9 @@ msgstr "Vandaag"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "Today at %X"
-msgstr "Vandaag"
+msgstr "Vandaag om %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2380,23 +2365,23 @@ msgstr "Gisteren"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "Yesterday at %X"
-msgstr "Gisteren"
+msgstr "Gisteren om %X"
 
 # Why "at"? What is a possible context?
 #. Days from last week
 #: ../thunar/thunar-util.c:145
-#, fuzzy, c-format
+#, c-format
 msgid "%A at %X"
-msgstr "%A op %X"
+msgstr "%A om %X"
 
 # Why "at"? What is a possible context?
 #. Any other date
 #: ../thunar/thunar-util.c:150
-#, fuzzy, c-format
+#, c-format
 msgid "%x at %X"
-msgstr "%x op %X"
+msgstr "%x om %X"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
@@ -2424,7 +2409,7 @@ msgstr "Dit venster sluiten"
 
 #: ../thunar/thunar-window.c:272
 msgid "_Edit"
-msgstr "B_ewerken"
+msgstr "Be_werken"
 
 #: ../thunar/thunar-window.c:273
 msgid "Pr_eferences..."
@@ -2436,7 +2421,7 @@ msgstr "Instellingen van Thunar aanpassen"
 
 #: ../thunar/thunar-window.c:274
 msgid "_View"
-msgstr "_Beeld"
+msgstr "B_eeld"
 
 #: ../thunar/thunar-window.c:275
 msgid "_Reload"
@@ -2448,7 +2433,7 @@ msgstr "Huidige map herladen"
 
 #: ../thunar/thunar-window.c:276
 msgid "_Location Selector"
-msgstr "_Locatie selecteren"
+msgstr "L_ocatie selecteren"
 
 #: ../thunar/thunar-window.c:277
 msgid "_Side Pane"
@@ -2652,20 +2637,19 @@ msgid "Failed to display the contents of the trash can"
 msgstr "Kon de inhoud van de prullenbak niet weergeven"
 
 #: ../thunar/thunar-window.c:1963
-#, fuzzy
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
 msgstr ""
 "Thunar is een snelle en gemakkelijke bestandsbeheerder\n"
-"voor Xfce."
+"voor de Xfce Bureaublad Omgeving."
 
 #. set window title and icon
 #: ../thunar/thunar-window.c:2002
 #: ../Thunar.desktop.in.in.h:2
 #, fuzzy
 msgid "File Manager"
-msgstr "Bestandsbeheerder"
+msgstr "Bestandsbeheer"
 
 #: ../thunarx/thunarx-property-page.c:137
 msgid "Label"
@@ -2707,7 +2691,7 @@ msgstr "De URL van de documentatie voor het wijzigen van namen"
 #: ../thunarx/thunarx-renamer.c:178
 #, fuzzy
 msgid "The user visible name of the renamer"
-msgstr "Naam wijzigen"
+msgstr "De zichtbare naam van de hernoemer"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:158
 msgid "Description:"
@@ -2762,7 +2746,6 @@ msgid "Select this option to run the command in a terminal window."
 msgstr "Selecteer deze optie om het commando in een terminalvenster uit te voeren."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:342
-#, fuzzy
 msgid "Launcher"
 msgstr "Starter"
 
@@ -2794,7 +2777,7 @@ msgstr "Belichtingstijd:"
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:53
 #, fuzzy
 msgid "Exposure Program:"
-msgstr "Programma:"
+msgstr "Belichtings programma:"
 
 #: ../plugins/thunar-apr/thunar-apr-image-page.c:54
 msgid "Aperture Value:"
@@ -3143,7 +3126,6 @@ msgstr "Kon acties niet opslaan."
 #. Basic
 #.
 #: ../plugins/thunar-uca/thunar-uca-editor.c:135
-#, fuzzy
 msgid "Basic"
 msgstr "Basis"
 
@@ -3297,7 +3279,7 @@ msgid "End element handler called while in root context"
 msgstr "Eind element behandelaar die aangeroepen wordt in beheerders-context"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:886
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown closing element <%s>"
 msgstr "Onbekend sluitend element <%s>"
 
