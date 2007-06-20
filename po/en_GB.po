@@ -8,13 +8,13 @@ msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-23 23:24+0200\n"
-"PO-Revision-Date: 2007-03-26 18:54+1000\n"
+"PO-Revision-Date: 2007-06-18 13:12+1000\n"
 "Last-Translator: Jeff Bailes <thepizzaking@gmail.com>\n"
 "Language-Team: British English <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);"
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
@@ -244,6 +244,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
+"The file \"%s\" already exists. Would you like to replace it?\n"
+"\n"
+"If you replace an existing file, its contents will be overwritten."
 
 #: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
@@ -519,19 +522,17 @@ msgstr ""
 "permanently delete \"%s\"?"
 
 #: ../thunar/thunar-application.c:1350
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Are you sure that you want to permanently\n"
 "delete the selected file?"
-msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
-msgstr[0] ""
-"Are you sure that you want to\n"
-"permanently delete \"%s\"?"
-msgstr[1] ""
-"Are you sure that you want to\n"
-"permanently delete \"%s\"?"
+msgstr ""
+"Are you sure that you want to permanently\n"
+"delete the selected file?"
+"Are you sure that you want to permanently\n"
+"delete the %u selected files?"
 
 #: ../thunar/thunar-application.c:1370
 msgid "If you delete a file, it is permanently lost."
@@ -920,9 +921,8 @@ msgid "N_o to all"
 msgstr "N_o to all"
 
 #: ../thunar/thunar-dialogs.c:344
-#, fuzzy
 msgid "_Retry"
-msgstr "_Restore"
+msgstr "_Retry"
 
 #: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
@@ -931,30 +931,28 @@ msgstr "_Cancel"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:429
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "Confirm to replace files"
 
 #: ../thunar/thunar-dialogs.c:435
 msgid "_Skip"
-msgstr ""
+msgstr "_Skip"
 
 #: ../thunar/thunar-dialogs.c:436
-#, fuzzy
 msgid "Replace _All"
-msgstr "Replace _With:"
+msgstr "Replace _All"
 
 #: ../thunar/thunar-dialogs.c:437
-#, fuzzy
 msgid "_Replace"
-msgstr "_Rename"
+msgstr "_Replace"
 
 #: ../thunar/thunar-dialogs.c:467
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "This folder already contains a file \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:475
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr ""
+msgstr "Do you want to replace the existing file"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -971,7 +969,7 @@ msgstr "Modified:"
 
 #: ../thunar/thunar-dialogs.c:500
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr ""
+msgstr "with the following file?"
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1538,7 +1536,7 @@ msgstr "File Manager Preferences"
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
-msgstr ""
+msgstr "Display"
 
 #: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
@@ -1600,12 +1598,11 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
-msgstr ""
+msgstr "Date"
 
 #: ../thunar/thunar-preferences-dialog.c:338
-#, fuzzy
 msgid "_Format:"
-msgstr "Text _Format:"
+msgstr "_Format:"
 
 #.
 #. Side Pane
@@ -2371,9 +2368,9 @@ msgstr "Today"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "Today at %X"
-msgstr "Today"
+msgstr "Today at %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2382,21 +2379,21 @@ msgstr "Yesterday"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "Yesterday at %X"
-msgstr "Yesterday"
+msgstr "Yesterday at %X"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:145
 #, c-format
 msgid "%A at %X"
-msgstr ""
+msgstr "%A at %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:150
 #, c-format
 msgid "%x at %X"
-msgstr ""
+msgstr "%x at %X"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
