@@ -46,11 +46,11 @@
 
 /* Masks to handle the 4-byte aligned path names */
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
-#define THUNAR_VFS_PATH_MASK (0xffu << ((sizeof (gsize) - 1) * 8))
+#define THUNAR_VFS_PATH_MASK (((gsize) 0xffu) << ((sizeof (gsize) - 1) * 8))
 #define THUNAR_VFS_PATH_ROOT (0x2fu)
 #elif G_BYTE_ORDER == G_BIG_ENDIAN
 #define THUNAR_VFS_PATH_MASK (0xffu)
-#define THUNAR_VFS_PATH_ROOT (0x2fu << ((sizeof (gsize) - 1) * 8))
+#define THUNAR_VFS_PATH_ROOT (((gsize) 0x2fu) << ((sizeof (gsize) - 1) * 8))
 #else
 #error "Unsupported endianess"
 #endif
