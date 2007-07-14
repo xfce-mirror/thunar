@@ -1,21 +1,23 @@
-# Japanese translation of the thunar package.
+# $Id$
+#
+# Japanese translations for Thunar package.
 # Copyright (C) 2004-2007 Benedikt Meurer.
-# This file is distributed under the same license as the thunar package.
+# This file is distributed under the same license as the Thunar package.
 # Daichi Kawahata <daichi@xfce.org>, 2005-2007.
 #
 # 対訳一覧:
 #
-# bulk            一括
+# bulk            バルク
 # context menu    右クリックメニュー
 # directory       フォルダ
 # emblem          シンボル
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Thunar 0.8.1svn-r25750\n"
+"Project-Id-Version: Thunar 0.8.1\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-23 23:24+0200\n"
-"PO-Revision-Date: 2007-04-07 17:49+0900\n"
+"PO-Revision-Date: 2007-07-14 11:25+0900\n"
 "Last-Translator: Daichi Kawahata <daichi@xfce.org>\n"
 "Language-Team: Japanese <xfce-users-jp@ml.fdiary.net>\n"
 "MIME-Version: 1.0\n"
@@ -191,7 +193,7 @@ msgstr "名前つきパイプ「%s」を作成できませんでした。"
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:612
 #, c-format
 msgid "Failed to create symbolic link \"%s\""
-msgstr "リンク「%s」の作成に失敗しました。"
+msgstr "リンク「%s」の作成に失敗しました"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:545
 msgid "Special files cannot be copied"
@@ -250,6 +252,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
+"ファイル「%s」は既に存在しています。これを置き換えてもよろしいですか？\n"
+"\n"
+"既に存在するファイルを置き換えると、その内容は上書きされます。"
 
 #: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
@@ -376,7 +381,7 @@ msgstr "HAL デーモンとの接続に失敗しました: %s"
 
 #: ../thunar/main.c:54
 msgid "Open the bulk rename dialog"
-msgstr "一括リネームダイアログを開く"
+msgstr "バルクリネームダイアログを開く"
 
 #: ../thunar/main.c:56
 msgid "Run in daemon mode"
@@ -487,7 +492,7 @@ msgstr "アイテムを降順 (おえういあ Z-a の順) で並べ替えます
 #. display an error message to the user
 #: ../thunar/thunar-application.c:409 ../thunar/thunar-application.c:453
 msgid "Failed to launch operation"
-msgstr "操作の実行に失敗しました。"
+msgstr "操作の実行に失敗しました"
 
 #. failed to launch exo-eject, inform the user about this
 #. display an error to the user
@@ -932,9 +937,8 @@ msgid "N_o to all"
 msgstr "全てにいいえ(_O)"
 
 #: ../thunar/thunar-dialogs.c:344
-#, fuzzy
 msgid "_Retry"
-msgstr "復元(_R)"
+msgstr "リトライ(_R)"
 
 #: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
@@ -943,26 +947,24 @@ msgstr "キャンセル(_C)"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:429
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "置換するファイルを確認してください"
 
 #: ../thunar/thunar-dialogs.c:435
 msgid "_Skip"
-msgstr ""
+msgstr "スキップ(_S)"
 
 #: ../thunar/thunar-dialogs.c:436
-#, fuzzy
 msgid "Replace _All"
-msgstr "次で置換(_W):"
+msgstr "全て置換(_A)"
 
 #: ../thunar/thunar-dialogs.c:437
-#, fuzzy
 msgid "_Replace"
-msgstr "名前変更(_R)"
+msgstr "置換(_R)"
 
 #: ../thunar/thunar-dialogs.c:467
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "このフォルダには既にファイル「%s」が存在しています。"
 
 #: ../thunar/thunar-dialogs.c:475
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
@@ -1081,8 +1083,8 @@ msgstr "次のフォルダに移動します。"
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
-"「%s」(%s) から代用アイコンを読み込むのに失敗しました。きちんとインストールさ"
-"れているか確認してください！"
+"「%s」(%s) から代用アイコンを読み込むのに失敗しました。正しくインストールされ"
+"ているか確認してください！"
 
 #: ../thunar/thunar-icon-view.c:198
 msgid "Icon based directory listing"
@@ -1214,7 +1216,7 @@ msgstr "%sで開く"
 #: ../thunar/thunar-tree-view.c:1598
 #, c-format
 msgid "Failed to mount \"%s\""
-msgstr "「%s」のマウントに失敗しました。"
+msgstr "「%s」のマウントに失敗しました"
 
 # FIXME:
 #: ../thunar/thunar-launcher.c:1292
@@ -1378,7 +1380,7 @@ msgstr "フォルダの位置(_L):"
 #: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1357
 #, c-format
 msgid "Failed to launch \"%s\""
-msgstr "「%s」の実行に失敗しました。"
+msgstr "「%s」の実行に失敗しました"
 
 # NOTE: GObject property
 #: ../thunar/thunar-path-entry.c:259
@@ -1500,13 +1502,13 @@ msgstr ""
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:666
 msgid "Failed to change group"
-msgstr "「%s」のグループを変更するのに失敗しました。"
+msgstr "「%s」のグループを変更に失敗しました"
 
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:719
 #: ../thunar/thunar-permissions-chooser.c:1058
 msgid "Failed to apply new permissions"
-msgstr "新しいアクセス権を有効にするのに失敗しました。"
+msgstr "新しいアクセス権の適用に失敗しました"
 
 #: ../thunar/thunar-permissions-chooser.c:901
 msgid "Unknown file owner"
@@ -1538,7 +1540,7 @@ msgstr "ファイルマネージャーの環境設定"
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
-msgstr ""
+msgstr "表示"
 
 #: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
@@ -1601,12 +1603,11 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
-msgstr ""
+msgstr "日付"
 
 #: ../thunar/thunar-preferences-dialog.c:338
-#, fuzzy
 msgid "_Format:"
-msgstr "テキストの形式(_F):"
+msgstr "形式(_F):"
 
 #.
 #. Side Pane
@@ -1787,28 +1788,28 @@ msgstr "フォルダ内のファイルにも適用する"
 
 #: ../thunar/thunar-preferences-dialog.c:607
 msgid "Volume Management"
-msgstr "ボリュームの取り扱い"
+msgstr "ボリューム管理"
 
 #: ../thunar/thunar-preferences-dialog.c:635
 msgid ""
 "Install the \"thunar-volman\" package to use\n"
 "the volume management support in Thunar."
 msgstr ""
-"Thuanr でボリュームを取り扱えるようにするには\n"
-"thunar-volman」パッケージをインストールしてください。"
+"Thuanr でボリューム管理サポートを利用するには\n"
+"「thunar-volman」パッケージをインストールしてください。"
 
 #: ../thunar/thunar-preferences-dialog.c:636
 msgid ""
 "Build thunar-vfs with HAL support to use\n"
 "the volume management support in Thunar."
 msgstr ""
-"Thuanr でボリュームを取り扱えるようにするには\n"
+"Thuanr でボリューム管理サポートを利用するには\n"
 "「thunar-vfs」をHALサポートでビルドしてください。"
 
 #. add check button to enable/disable auto mounting
 #: ../thunar/thunar-preferences-dialog.c:647
 msgid "Enable _Volume Management"
-msgstr "ボリュームを取り扱う(_V)"
+msgstr "ボリューム管理を有効にする(_V)"
 
 #. TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it
 #: ../thunar/thunar-preferences-dialog.c:657
@@ -1822,7 +1823,7 @@ msgstr ""
 #. tell the user that we failed to come up with the thunar-volman configuration dialog
 #: ../thunar/thunar-preferences-dialog.c:718
 msgid "Failed to display the volume management settings"
-msgstr "ボリュームの取り扱い設定を表示できませんでした。"
+msgstr "ボリューム管理設定を表示できませんでした"
 
 #: ../thunar/thunar-progress-dialog.c:398
 #, c-format
@@ -1917,7 +1918,7 @@ msgstr "%s - プロパティ"
 #: ../thunar/thunar-standard-view.c:2282
 #, c-format
 msgid "Failed to rename \"%s\""
-msgstr "「%s」の名前変更に失敗しました。"
+msgstr "「%s」の名前変更に失敗しました"
 
 #: ../thunar/thunar-renamer-dialog.c:172 ../thunar/thunar-window.c:266
 msgid "_File"
@@ -1953,7 +1954,7 @@ msgstr "このプログラムについて(_A)"
 
 #: ../thunar/thunar-renamer-dialog.c:178
 msgid "Display information about Thunar Bulk Rename"
-msgstr "Thunar 一括リネームについての情報を表示します。"
+msgstr "Thunar バルクリネームについての情報を表示します。"
 
 #: ../thunar/thunar-renamer-dialog.c:179 ../thunar/thunar-standard-view.c:324
 msgid "View the properties of the selected file"
@@ -2021,14 +2022,14 @@ msgstr "動画ファイル"
 #: ../thunar/thunar-renamer-dialog.c:1218
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
-msgstr "一括リネーム"
+msgstr "バルクリネーム"
 
 #: ../thunar/thunar-renamer-dialog.c:1219
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
 msgstr ""
-"Thunar 一括リネームは一度に複数のファイル名を\n"
+"Thunar バルクリネームは一度に複数のファイル名を\n"
 "変更する強力で拡張性のあるツールです。"
 
 #: ../thunar/thunar-renamer-dialog.c:1527
@@ -2044,12 +2045,12 @@ msgstr[0] "名前変更するファイルのリストから選択したファイ
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1680
 msgid "Bulk Rename - Rename Multiple Files"
-msgstr "一括リネーム - ファイルをまとめてリネームします"
+msgstr "バルクリネーム - ファイルをまとめてリネームします"
 
 #: ../thunar/thunar-renamer-progress.c:214
 #, c-format
 msgid "Failed to rename \"%s\" to \"%s\"."
-msgstr "「%s」の名前を「%s」に変更するのに失敗しました。"
+msgstr "「%s」の名前を「%s」に変更するのに失敗しました"
 
 #: ../thunar/thunar-renamer-progress.c:221
 msgid ""
@@ -2118,20 +2119,20 @@ msgstr "パス「%s」はフォルダを参照していません。"
 #. display an error message to the user
 #: ../thunar/thunar-shortcuts-view.c:1180
 msgid "Failed to add new shortcut"
-msgstr "ショートカットの追加に失敗しました。"
+msgstr "ショートカットの追加に失敗しました"
 
 #. display an error dialog to inform the user
 #: ../thunar/thunar-shortcuts-view.c:1298 ../thunar/thunar-tree-view.c:1547
 #, c-format
 msgid "Failed to eject \"%s\""
-msgstr "「%s」の取り出しに失敗しました。"
+msgstr "「%s」の取り出しに失敗しました"
 
 #. display an error dialog to inform the user
 #. display an error dialog
 #: ../thunar/thunar-shortcuts-view.c:1388 ../thunar/thunar-tree-view.c:1738
 #, c-format
 msgid "Failed to unmount \"%s\""
-msgstr "「%s」のマウント解除に失敗しました。"
+msgstr "「%s」のマウント解除に失敗しました"
 
 #: ../thunar/thunar-size-label.c:177
 msgid "Click here to stop calculating the total size of the folder."
@@ -2288,12 +2289,12 @@ msgstr "XDSで不正なファイル名をドラッグしています。"
 #: ../thunar/thunar-standard-view.c:2755
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
-msgstr "URL「%s」のリンクの作成に失敗しました。"
+msgstr "URL「%s」のリンクの作成に失敗しました"
 
 #: ../thunar/thunar-standard-view.c:3020
 #, c-format
 msgid "Failed to open directory \"%s\""
-msgstr "フォルダ「%s」を開くのに失敗しました。"
+msgstr "フォルダ「%s」を開くのに失敗しました"
 
 #: ../thunar/thunar-standard-view.c:3347
 msgid "Prepare the selected file to be moved with a Paste command"
@@ -2370,9 +2371,9 @@ msgstr "今日"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "Today at %X"
-msgstr "今日"
+msgstr "%X 時点で今日"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2381,9 +2382,9 @@ msgstr "昨日"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "Yesterday at %X"
-msgstr "昨日"
+msgstr "%X 時点で昨日"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:145
@@ -2613,7 +2614,7 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:1751
 msgid "Failed to open parent folder"
-msgstr "上位のフォルダを開くのに失敗しました。"
+msgstr "上位のフォルダを開くのに失敗しました"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:1777
@@ -3094,19 +3095,19 @@ msgstr "一時作業フォルダを作成できませんでした。"
 #: ../plugins/thunar-sendto-email/main.c:436
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "「%s」へのシンボリックリンク作成に失敗しました。"
+msgstr "「%s」へのシンボリックリンク作成に失敗しました"
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:459
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "%d個のファイルを圧縮するのに失敗しました。"
+msgstr[0] "%d個のファイルを圧縮するのに失敗しました"
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:600
 msgid "Failed to compose new email"
-msgstr "新規メールの作成に失敗しました。"
+msgstr "新規メールの編集に失敗しました"
 
 # FIXME:
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
@@ -3120,7 +3121,7 @@ msgstr "添付ファイル"
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:346
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:380
 msgid "Failed to connect to the Trash"
-msgstr "ゴミ箱への接続に失敗しました。"
+msgstr "ゴミ箱への接続に失敗しました"
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
@@ -3377,7 +3378,7 @@ msgstr "不明な閉じ要素 <%s> があります"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1318
 msgid "Failed to determine save location for uca.xml"
-msgstr "ファイル「uca.xml」を保存する場所を確定するのに失敗しました。"
+msgstr "ファイル「uca.xml」の保存場所を見つけられませんでした"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:1433
 msgid "Command not configured"
@@ -3424,6 +3425,3 @@ msgstr "Thunarでフォルダを開く"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "指定したフォルダを Thunar で開きます"
-
-#~ msgid "Views"
-#~ msgstr "表示"
