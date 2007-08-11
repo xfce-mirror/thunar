@@ -356,9 +356,10 @@ static void
 tvtj_exif_parse_ifd (TvtjExif     *exif,
                      const guchar *ifd_ptr,
                      guint         ifd_len,
-                     guint         recursion_depth)
+                     GSList       *ifd_previous_list)
 {
   const guchar *subifd_ptr;
+  GSList        ifd_list;
   guint         subifd_off;
   guint         value;
   guint         tag;
@@ -368,9 +369,11 @@ tvtj_exif_parse_ifd (TvtjExif     *exif,
   if (G_UNLIKELY (ifd_len < 2))
     return;
 
-  /* make sure we don't recurse forever with broken files */
-  if (recursion_depth++ > 150)
+  /* make sure we don't recurse into IFDs that are already being processed */
+  if (g_slist_find (ifd_previous_list, ifd_ptr) != NULL)
     return;
+  ifd_list.next = ifd_previous_list;
+  ifd_list.data = (gpointer) ifd_ptr;
 
   /* determine the number of entries */
   n = tvtj_exif_get_ushort (exif, ifd_ptr);
@@ -396,7 +399,7 @@ tvtj_exif_parse_ifd (TvtjExif     *exif,
           if (G_LIKELY (subifd_off < exif->data_len))
             {
               /* process the sub IFD recursively */
-              tvtj_exif_parse_ifd (exif, subifd_ptr, exif->data_len - subifd_off, recursion_depth);
+              tvtj_exif_parse_ifd (exif, subifd_ptr, exif->data_len - subifd_off, &ifd_list);
             }
         }
       else if (tag == 0x0103)
@@ -452,7 +455,7 @@ tvtj_exif_parse_ifd (TvtjExif     *exif,
   if (subifd_off != 0 && subifd_off < exif->data_len)
     {
       /* parse next IFD recursively as well */
-      tvtj_exif_parse_ifd (exif, exif->data_ptr + subifd_off, exif->data_len - subifd_off, recursion_depth);
+      tvtj_exif_parse_ifd (exif, exif->data_ptr + subifd_off, exif->data_len - subifd_off, &ifd_list);
     }
 }
 
@@ -502,7 +505,7 @@ tvtj_exif_extract_thumbnail (const guchar  *data,
   if (G_LIKELY (offset < length))
     {
       /* parse the first IFD (recursively parses the remaining...) */
-      tvtj_exif_parse_ifd (&exif, data + offset, length - offset, 0);
+      tvtj_exif_parse_ifd (&exif, data + offset, length - offset, NULL);
 
       /* check thumbnail compression type */
       if (G_LIKELY (exif.thumb_compression == 6)) /* JPEG */
