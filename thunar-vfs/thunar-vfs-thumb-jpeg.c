@@ -355,7 +355,8 @@ tvtj_exif_get_ulong (const TvtjExif *exif,
 static void
 tvtj_exif_parse_ifd (TvtjExif     *exif,
                      const guchar *ifd_ptr,
-                     guint         ifd_len)
+                     guint         ifd_len,
+                     guint         recursion_depth)
 {
   const guchar *subifd_ptr;
   guint         subifd_off;
@@ -365,6 +366,10 @@ tvtj_exif_parse_ifd (TvtjExif     *exif,
 
   /* make sure we have a valid IFD here */
   if (G_UNLIKELY (ifd_len < 2))
+    return;
+
+  /* make sure we don't recurse forever with broken files */
+  if (recursion_depth++ > 150)
     return;
 
   /* determine the number of entries */
@@ -391,7 +396,7 @@ tvtj_exif_parse_ifd (TvtjExif     *exif,
           if (G_LIKELY (subifd_off < exif->data_len))
             {
               /* process the sub IFD recursively */
-              tvtj_exif_parse_ifd (exif, subifd_ptr, exif->data_len - subifd_off);
+              tvtj_exif_parse_ifd (exif, subifd_ptr, exif->data_len - subifd_off, recursion_depth);
             }
         }
       else if (tag == 0x0103)
@@ -447,7 +452,7 @@ tvtj_exif_parse_ifd (TvtjExif     *exif,
   if (subifd_off != 0 && subifd_off < exif->data_len)
     {
       /* parse next IFD recursively as well */
-      tvtj_exif_parse_ifd (exif, exif->data_ptr + subifd_off, exif->data_len - subifd_off);
+      tvtj_exif_parse_ifd (exif, exif->data_ptr + subifd_off, exif->data_len - subifd_off, recursion_depth);
     }
 }
 
@@ -497,7 +502,7 @@ tvtj_exif_extract_thumbnail (const guchar  *data,
   if (G_LIKELY (offset < length))
     {
       /* parse the first IFD (recursively parses the remaining...) */
-      tvtj_exif_parse_ifd (&exif, data + offset, length - offset);
+      tvtj_exif_parse_ifd (&exif, data + offset, length - offset, 0);
 
       /* check thumbnail compression type */
       if (G_LIKELY (exif.thumb_compression == 6)) /* JPEG */

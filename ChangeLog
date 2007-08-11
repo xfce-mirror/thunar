@@ -1,3 +1,8 @@
+2007-08-11	Benedikt Meurer <benny@xfce.org>
+
+	* thunar-vfs/thunar-vfs-thumb-jpeg.c: Prevent infinite recursion
+	  on JPEG files with broken exif directories. Bug #3452.
+
 2007-06-24	Benedikt Meurer <benny@xfce.org>
 
 	* thunar-vfs/thunar-vfs-path.c: Fix crash on amd64 because of
