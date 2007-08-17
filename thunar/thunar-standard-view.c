@@ -2250,19 +2250,23 @@ thunar_standard_view_action_rename (GtkAction          *action,
       /* setup the old filename */
       gtk_entry_set_text (GTK_ENTRY (entry), filename);
 
-      /* check if the filename contains a dot */
-      text = g_utf8_strrchr (filename, -1, '.');
-      if (G_LIKELY (text != NULL))
+      /* check if we don't have a directory here */
+      if (!thunar_file_is_directory (file))
         {
-          /* grab focus to the entry first, else the selection will be altered later */
-          gtk_widget_grab_focus (entry);
+          /* check if the filename contains a dot */
+          text = g_utf8_strrchr (filename, -1, '.');
+          if (G_LIKELY (text != NULL))
+            {
+              /* grab focus to the entry first, else the selection will be altered later */
+              gtk_widget_grab_focus (entry);
 
-          /* determine the UTF-8 char offset */
-          offset = g_utf8_pointer_to_offset (filename, text);
+              /* determine the UTF-8 char offset */
+              offset = g_utf8_pointer_to_offset (filename, text);
 
-          /* select the text prior to the dot */
-          if (G_LIKELY (offset > 0))
-            gtk_entry_select_region (GTK_ENTRY (entry), 0, offset);
+              /* select the text prior to the dot */
+              if (G_LIKELY (offset > 0))
+                gtk_entry_select_region (GTK_ENTRY (entry), 0, offset);
+            }
         }
 
       /* run the dialog */
