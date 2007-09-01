@@ -1,11 +1,10 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN"
-    "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
-  <!ENTITY date "January 2007"> 
-  <!ENTITY version "@PACKAGE_VERSION@">
-  <!ENTITY application "@PACKAGE_NAME@"> 
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY date "January 2007">
+<!ENTITY version "@PACKAGE_VERSION@">
+<!ENTITY application "@PACKAGE_NAME@">
 ]>
-<article id="index" lang="en">
+<article id="index" lang="nl">
 
   <!-- Header -->
   <articleinfo>
@@ -27,8 +26,7 @@
         under the terms of the GNU Free Documentation License, Version 1.1 or
         any later version published by the Free Software Foundation; with no
         Invariant Sections, with no Front-Cover Texts, and with no Back-Cover
-        Texts. The complete license text is available from the <ulink
-        type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.
+        Texts. The complete license text is available from the <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.
       </para>
     </legalnotice>
 
@@ -46,12 +44,12 @@
     </authorgroup>
 
     <releaseinfo>
-      This manual describes version &version; of &application;.
+      This manual describes version @PACKAGE_VERSION@ of @PACKAGE_NAME@.
     </releaseinfo>
   </articleinfo>
 
   <sect1 id="intro">
-    <title>Introduction to &application;</title>
+    <title>Introduction to @PACKAGE_NAME@</title>
 
     <para>
       Thunar is a new modern file manager for the Xfce Desktop Environment. Thunar has been designed from the ground up to
@@ -108,7 +106,7 @@
     <para>
       Below the <emphasis>File System</emphasis> shortcut, the removable drives and media will be displayed. In
       the screenshot above, you can see a <guilabel>Floppy Drive</guilabel> shortcut. Click on these shortcuts
-      to access the data stored on the removable drives and media. See <xref linkend="using-removable-media" />
+      to access the data stored on the removable drives and media. See <xref linkend="using-removable-media"/>
       for further details.
     </para>
 
@@ -233,7 +231,7 @@
 
         <para>
           You can set <application>Thunar</application> preferences so that you click once on a file to execute the default
-          action. For information, see <xref linkend="preferences-behavior" />.
+          action. For information, see <xref linkend="preferences-behavior"/>.
         </para>
       </sect3>
 
@@ -455,8 +453,7 @@
 
         <para>
           However this notification will only be displayed if support for <application>libnotify</application> is enabled,
-          and you have installed a notification daemon. A notification daemon for Xfce is available from the <ulink type="http"
-          url="http://goodies.xfce.org/projects/applications/notification-daemon-xfce">Xfce Goodies Project</ulink>.
+          and you have installed a notification daemon. A notification daemon for Xfce is available from the <ulink type="http" url="http://goodies.xfce.org/projects/applications/notification-daemon-xfce">Xfce Goodies Project</ulink>.
           If notification support is not available, wait until the context menu disappears before you remove the media or disconnect
           the drive.
         </para>
@@ -479,8 +476,7 @@
       <title>Management of Removable Drives and Media</title>
 
       <para>
-        Thunar is also able to automatically manage removable drives and media if the <ulink type="http"
-        url="http://www.foo-projects.org/~benny/projects/thunar-volman/index.html">thunar-volman</ulink> package is installed on
+        Thunar is also able to automatically manage removable drives and media if the <ulink type="http" url="http://www.foo-projects.org/~benny/projects/thunar-volman/index.html">thunar-volman</ulink> package is installed on
         your system.  Note however that this feature requires HAL support.
       </para>
 
@@ -708,8 +704,7 @@
 
     <para>
       Thunar also supports a bunch of so-called <emphasis>Hidden Options</emphasis>, which control several advanced features of the
-      file manager, but are not included in the preferences in order to keep the preferences dialog simple. The <ulink type="http"
-      url="http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc"><filename>README.thunarrc</filename></ulink> file that
+      file manager, but are not included in the preferences in order to keep the preferences dialog simple. The <ulink type="http" url="http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc"><filename>README.thunarrc</filename></ulink> file that
       is included with the Thunar distribution describes all available options in detail.
     </para>
 
@@ -762,11 +757,10 @@
           <listitem>
             <para>
               Select this option to show thumbnails of image files and other supported files. The
-              file manager stores the thumbnail files for each folder in the hidden <filename
-              role="directory">.thumbnails</filename> directory in the user's Home Folder.
+              file manager stores the thumbnail files for each folder in the hidden <filename role="directory">.thumbnails</filename> directory in the user's Home Folder.
             </para>
             <para>
-              See <xref linkend="thumbnailers" /> if you want to extend the basic
+              See <xref linkend="thumbnailers"/> if you want to extend the basic
               thumbnail functionality provided by <application>Thunar</application> with support
               for additional file types.
             </para>
@@ -926,7 +920,7 @@
           <listitem>
             <para>
               If <application>Thunar</application> was installed with support for HAL and the <application>thunar-volman</application>
-              package is also installed, you can enable the integrated volume manager. See <xref linkend="management-of-removable-drives-and-media" />
+              package is also installed, you can enable the integrated volume manager. See <xref linkend="management-of-removable-drives-and-media"/>
               for details about this feature.
             </para>
           </listitem>
@@ -986,17 +980,14 @@
 
       <para>
         Like most other features of <application>Thunar</application>, the <guilabel>Send to</guilabel> menu can be easily extended
-        by users and application developers with new targets, using standard <ulink type="http"
-        url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink>. These files must be
-        installed into one of the <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> folders (see the <ulink type="http"
-        url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> for details about the
+        by users and application developers with new targets, using standard <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink>. These files must be
+        installed into one of the <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> folders (see the <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> for details about the
         <literal>$XDG_DATA_DIRS</literal> variable).
       </para>
 
       <para>
         The <literal>MimeType</literal> of the target <filename>.desktop</filename> specifies the types of files for which this action
-        should be available in the <guilabel>Send To</guilabel> menu. For example, say you want to add entry for a <ulink type="http"
-        url="http://flickr.com/">Flickr</ulink> uploader tool, then this entry should only show up if the selection contains JPEG
+        should be available in the <guilabel>Send To</guilabel> menu. For example, say you want to add entry for a <ulink type="http" url="http://flickr.com/">Flickr</ulink> uploader tool, then this entry should only show up if the selection contains JPEG
         files (other file formats are not supported by Flickr) and so you should add a line <literal>MimeType=image/jpeg;</literal>.
         If you do not specify any <literal>MimeType</literal> your entry will show up for all file types.
       </para>
@@ -1055,8 +1046,7 @@ MimeType=image/jpeg;</programlisting>
         Once your utility to generate the thumbnails is done, you will need to register your thumbnailer, so Thunar is able to locate
         and use it. Therefore all you need to do is to install a description file for the thumbnailer (a <filename>.desktop</filename> file)
         in one of the <filename role="directory">$XDG_DATA_DIRS/thumbnailers/</filename> paths. For example, if you want to register the
-        thumbnailer for your user account only, you can install the file into the folder <filename
-        role="directory">~/.local/share/thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers has the following format.
+        thumbnailer for your user account only, you can install the file into the folder <filename role="directory">~/.local/share/thumbnailers/</filename>. The <filename>.desktop</filename> for thumbnailers has the following format.
       </para>
 
       <sect3 id="thumbnailer-desktop-file-format">
@@ -1237,8 +1227,7 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
         <title>Cleaning up Thumbnails</title>
 
         <para>
-          The generated thumbnails are stored in the folder <filename role="directory">~/.thumbnails/</filename> complying with the <ulink
-          type="http" url="http://jens.triq.net/thumbnail-spec/index.html">Thumbnail Management Standard</ulink>. While testing a new
+          The generated thumbnails are stored in the folder <filename role="directory">~/.thumbnails/</filename> complying with the <ulink type="http" url="http://jens.triq.net/thumbnail-spec/index.html">Thumbnail Management Standard</ulink>. While testing a new
           thumbnailer, it might help to clean up the thumbnail cache using
         </para>
 
@@ -1328,8 +1317,7 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
         <para>
           The position of any file or folder in the tree can be described by its <emphasis>path</emphasis>. The path is the
           list of folders you would have to descend through to get to the target folder or file, starting from the top level
-          folder. For example <filename role="directory">/home/luke</filename> is the subfolder <filename
-          role="directory">luke</filename> of the subfolder <filename role="directory">home</filename> of the top level folder,
+          folder. For example <filename role="directory">/home/luke</filename> is the subfolder <filename role="directory">luke</filename> of the subfolder <filename role="directory">home</filename> of the top level folder,
           and <filename>/home/luke/myfile.txt</filename> is the file <filename>myfile.txt</filename> in that subfolder. The
           leading <filename role="directory">/</filename> in these paths represents the top level folder.
         </para>
@@ -1407,8 +1395,7 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
     <para>
       The intent of this section is to collect the quite numerous frequently asked
       questions that relate to working with Thunar. If you know of a question that
-      is missing from this page, please <ulink type="http"
-      url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">file
+      is missing from this page, please <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">file
       a request</ulink>.
     </para>
 
@@ -1548,8 +1535,7 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
     <title>Support</title>
 
     <para>
-      To report a bug or to make a suggestion regarding this application or this manual, use the bug tracking system at <ulink
-      url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink>.
+      To report a bug or to make a suggestion regarding this application or this manual, use the bug tracking system at <ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink>.
       Remember that useful bug reports are ones that get bugs fixed, so a useful bug report has two qualities:
     </para>
 
@@ -1588,17 +1574,16 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
   </sect1>
 
   <sect1 id="copyright">
-    <title>About &application;</title>
+    <title>About @PACKAGE_NAME@</title>
 
     <para>
-      &application; was written by Benedikt Meurer (<email>benny@xfce.org</email>). Visit the
+      @PACKAGE_NAME@ was written by Benedikt Meurer (<email>benny@xfce.org</email>). Visit the
       <ulink url="http://thunar.xfce.org/" type="http">Thunar website</ulink> for more information.
     </para>
 
     <para>
       This documentation was written by Benedikt Meurer (<email>benny@xfce.org</email>). The latest
-      version of this document is always available from the <ulink type="http"
-      url="http://thunar.xfce.org/">Thunar website</ulink>.
+      version of this document is always available from the <ulink type="http" url="http://thunar.xfce.org/">Thunar website</ulink>.
     </para>
 
     <para>
