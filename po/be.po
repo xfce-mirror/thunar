@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-23 23:24+0200\n"
-"PO-Revision-Date: 2007-03-31 02:00+0300\n"
+"PO-Revision-Date: 2007-09-10 11:50+0300\n"
 "Last-Translator: Alexander Nyakhaychyk <nyakhaychyk@gmail.com>\n"
 "Language-Team: Belarusian <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
@@ -241,12 +241,15 @@ msgstr "Немагчыма перамясьціць або скапіяваць 
 
 #. no "ask-replace" handler, fallback to "ask"
 #: ../thunar-vfs/thunar-vfs-job.c:401
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "The file \"%s\" already exists. Would you like to replace it?\n"
 "\n"
 "If you replace an existing file, its contents will be overwritten."
-msgstr "Файл \"%s\" ужо існуе. Ці жадаеце замяніць яго пустым файлам?"
+msgstr ""
+"Файл \"%s\" ужо існуе. Ці жадаеце замяніць яго?\n"
+"\n"
+"Калі вы заменіце файл, увесь яго зьмест будзе згублены."
 
 #: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
@@ -927,9 +930,8 @@ msgid "N_o to all"
 msgstr "Н_е, для ўсіх"
 
 #: ../thunar/thunar-dialogs.c:344
-#, fuzzy
 msgid "_Retry"
-msgstr "Адна_віць"
+msgstr "Паў_тарыць"
 
 #: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
@@ -938,30 +940,28 @@ msgstr "_Скасаваць"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:429
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "Пацьвердзіце замену файлаў"
 
 #: ../thunar/thunar-dialogs.c:435
 msgid "_Skip"
-msgstr ""
+msgstr "Аб_мінуць"
 
 #: ../thunar/thunar-dialogs.c:436
-#, fuzzy
 msgid "Replace _All"
-msgstr "Замяніць _на:"
+msgstr "Замяніць _усе"
 
 #: ../thunar/thunar-dialogs.c:437
-#, fuzzy
 msgid "_Replace"
-msgstr "Перай_менаваць"
+msgstr "За_мяніць"
 
 #: ../thunar/thunar-dialogs.c:467
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "Гэтая тэчка ўжо ўтрымлівае файл \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:475
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr ""
+msgstr "Ці жадаеце замяніць існуючы файл"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -978,7 +978,7 @@ msgstr "Зьменены:"
 
 #: ../thunar/thunar-dialogs.c:500
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr ""
+msgstr "гэтым файлам?"
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1563,7 +1563,7 @@ msgstr "Перавагі Кіраўніка файлаў"
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
-msgstr ""
+msgstr "Дысплэй"
 
 #: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
@@ -1622,12 +1622,11 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
-msgstr ""
+msgstr "Дата"
 
 #: ../thunar/thunar-preferences-dialog.c:338
-#, fuzzy
 msgid "_Format:"
-msgstr "_Фармат тэксту:"
+msgstr "_Фармат:"
 
 #.
 #. Side Pane
@@ -2418,9 +2417,9 @@ msgstr "Сёньня"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "Today at %X"
-msgstr "Сёньня"
+msgstr "Сёньня ў %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2429,21 +2428,21 @@ msgstr "Учора"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "Yesterday at %X"
-msgstr "Учора"
+msgstr "Учора ў %X"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:145
 #, c-format
 msgid "%A at %X"
-msgstr ""
+msgstr "%A на %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:150
 #, c-format
 msgid "%x at %X"
-msgstr ""
+msgstr "%x на %X"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
