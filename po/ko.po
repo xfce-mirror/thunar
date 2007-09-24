@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-23 23:24+0200\n"
-"PO-Revision-Date: 2007-02-20 09:43+0900\n"
+"PO-Revision-Date: 2007-09-24 03:26+0900\n"
 "Last-Translator:  ByungHyun Choi <byunghyun.choi@gmail.com>\n"
 "Language-Team: xfce4-users-kr-i18n <xfce4-users-kr-i18n@lists.sourceforge."
 "net>\n"
@@ -245,6 +245,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
+"\"%s\"가(이) 이미 존재하는 데, 바꿀까요?\n"
+"\n"
+"화일을 바꾸면, 그 내용도 바뀝니다."
 
 #: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
@@ -640,7 +643,7 @@ msgid ""
 "Use a custom command for an application that is not available from the above "
 "application list."
 msgstr ""
-"응용프로그램 목록에 없는 프로그램에 대해서는 수정된 명령어를 사용하십시요."
+"응용프로그램 목록에 없는 프로그램에 대해서는 수정된 명령어를 사용하십시오."
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:314
@@ -910,9 +913,8 @@ msgid "N_o to all"
 msgstr "모두 아니오(_o)"
 
 #: ../thunar/thunar-dialogs.c:344
-#, fuzzy
 msgid "_Retry"
-msgstr "되돌리기(_R)"
+msgstr "다시 시도(_R)"
 
 #: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
@@ -921,30 +923,28 @@ msgstr "취소(_C)"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:429
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "화일 바꾸기 확인"
 
 #: ../thunar/thunar-dialogs.c:435
 msgid "_Skip"
-msgstr ""
+msgstr "건너뜀(_S)"
 
 #: ../thunar/thunar-dialogs.c:436
-#, fuzzy
 msgid "Replace _All"
-msgstr "~로 대체(_W):"
+msgstr "모두 대체(_A):"
 
 #: ../thunar/thunar-dialogs.c:437
-#, fuzzy
 msgid "_Replace"
-msgstr "이름변경(_R)"
+msgstr "변경(_R)"
 
 #: ../thunar/thunar-dialogs.c:467
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "화일 \"%s\"이(가) 이 디렉토리에 이미 존재합니다."
 
 #: ../thunar/thunar-dialogs.c:475
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr ""
+msgstr "ReplaceDialogPart1|기존 화일"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -961,7 +961,7 @@ msgstr "수정됨:"
 
 #: ../thunar/thunar-dialogs.c:500
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr ""
+msgstr "ReplaceDialogPart2|다음 화일로 바꾸시렵니까?"
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1527,7 +1527,7 @@ msgstr "화일 관리자 속성"
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
-msgstr ""
+msgstr "표시"
 
 #: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
@@ -1586,12 +1586,11 @@ msgstr "아이콘 설명을 아이콘 아래가 아닌 옆에 표시하려면 �
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
-msgstr ""
+msgstr "날짜"
 
 #: ../thunar/thunar-preferences-dialog.c:338
-#, fuzzy
 msgid "_Format:"
-msgstr "문자 형식(_F):"
+msgstr "형식(_F):"
 
 #.
 #. Side Pane
@@ -1993,7 +1992,7 @@ msgstr "동영상 화일"
 #: ../thunar/thunar-renamer-dialog.c:1218
 #: ../Thunar-bulk-rename.desktop.in.in.h:1
 msgid "Bulk Rename"
-msgstr "Bulk Rename"
+msgstr "일괄 이름변경"
 
 #: ../thunar/thunar-renamer-dialog.c:1219
 msgid ""
@@ -2349,9 +2348,8 @@ msgstr "오늘"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
 msgid "Today at %X"
-msgstr "오늘"
+msgstr "오늘(%X)"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2360,21 +2358,20 @@ msgstr "어제"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
 msgid "Yesterday at %X"
-msgstr "어제"
+msgstr "어제(%X)"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:145
 #, c-format
 msgid "%A at %X"
-msgstr ""
+msgstr "%A(%X)"
 
 #. Any other date
 #: ../thunar/thunar-util.c:150
 #, c-format
 msgid "%x at %X"
-msgstr ""
+msgstr "%x(%X)"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
