@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-23 23:24+0200\n"
-"PO-Revision-Date: 2007-04-05 13:55+0200\n"
+"PO-Revision-Date: 2007-09-30 10:33+0200\n"
 "Last-Translator: Pau Ruŀlan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
@@ -246,6 +246,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
+"El fitxer «%s» ja existeix. Voleu reempleçar-lo?\n"
+"\n"
+"Si reemplaçau un fitxer existent es sobrescriuran els seus continguts."
 
 #: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
@@ -924,9 +927,8 @@ msgid "N_o to all"
 msgstr "N_o a tot"
 
 #: ../thunar/thunar-dialogs.c:344
-#, fuzzy
 msgid "_Retry"
-msgstr "_Restaurar"
+msgstr "_Reintenta"
 
 #: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
@@ -935,30 +937,28 @@ msgstr "_Canceŀla"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:429
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "Confirmeu que voleu reempleçar els fitxers"
 
 #: ../thunar/thunar-dialogs.c:435
 msgid "_Skip"
-msgstr ""
+msgstr "_Salta"
 
 #: ../thunar/thunar-dialogs.c:436
-#, fuzzy
 msgid "Replace _All"
-msgstr "_Reemplaça amb:"
+msgstr "Reempl_aça tots"
 
 #: ../thunar/thunar-dialogs.c:437
-#, fuzzy
 msgid "_Replace"
-msgstr "_Canvia el nom"
+msgstr "Substitue_ix"
 
 #: ../thunar/thunar-dialogs.c:467
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "Aquest directori ja conté un fitxer «%s»."
 
 #: ../thunar/thunar-dialogs.c:475
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr ""
+msgstr "Voleu reemplaçar el fitxer existent"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -975,7 +975,7 @@ msgstr "Modificat:"
 
 #: ../thunar/thunar-dialogs.c:500
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr ""
+msgstr "amb aquest fitxer?"
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1494,14 +1494,11 @@ msgid "Do _not ask me again"
 msgstr "_No m’ho tornis a demanar"
 
 #: ../thunar/thunar-permissions-chooser.c:586
-#, fuzzy
 msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
-msgstr ""
-"Si ho seleccioneu aquesta opció serà recordada i no se us tornarà a demanar. "
-"Igualment podeu usar el diàleg de preferènceis per modificar-la."
+msgstr "Si ho seleccioneu aquesta opció serà recordada i no se us tornarà a demanar. Igualment podeu usar el diàleg de preferències per canviar-la."
 
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:666
@@ -1545,7 +1542,7 @@ msgstr "Preferències del gestor de fitxers"
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
-msgstr ""
+msgstr "Visualitza"
 
 #: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
@@ -1607,12 +1604,11 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: ../thunar/thunar-preferences-dialog.c:338
-#, fuzzy
 msgid "_Format:"
-msgstr "_Format del text:"
+msgstr "_Format:"
 
 #.
 #. Side Pane
@@ -2382,9 +2378,9 @@ msgstr "Avui"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "Today at %X"
-msgstr "Avui"
+msgstr "Avui a les %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2393,21 +2389,21 @@ msgstr "Ahir"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "Yesterday at %X"
-msgstr "Ahir"
+msgstr "Ahir a les %X"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:145
 #, c-format
 msgid "%A at %X"
-msgstr ""
+msgstr "%A a les %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:150
 #, c-format
 msgid "%x at %X"
-msgstr ""
+msgstr "%x a les %X"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
@@ -2587,7 +2583,6 @@ msgid "St_atusbar"
 msgstr "Barra d’_estat"
 
 #: ../thunar/thunar-window.c:298
-#, fuzzy
 msgid "Change the visibility of this window's statusbar"
 msgstr "Canvia la visibilitat de la barra d’estat d’aquesta finestra"
 
@@ -3433,6 +3428,3 @@ msgstr "Obri el directori amb Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Obre les carpetes especificades dins Thunar"
-
-#~ msgid "Views"
-#~ msgstr "Vistes"
