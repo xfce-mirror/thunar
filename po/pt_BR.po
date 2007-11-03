@@ -5,15 +5,16 @@
 # Rodrigo Coacci <rcoacci@gmail.com>, 2006.
 # Adriano Winter Bess <awbess@gmail.com>, 2006
 # William Koch <wkromani@gmail.com>, 2007
+# Fábio Nogueira <deb-user-ba@ubuntu.com>, 2007
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-05-23 23:24+0200\n"
-"PO-Revision-Date: 2007-06-02 02:30-0300\n"
-"Last-Translator: William Koch <wkromani@gmail.com>\n"
-"Language-Team: Brazilian Portuguese <xfce-i18n@xfce.org>\n"
+"PO-Revision-Date: 2007-10-17 02:30-0300\n"
+"Last-Translator: Fábio Nogueira <deb-user-ba@ubuntu.com>\n"
+"Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -64,17 +65,17 @@ msgstr "Preparando..."
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:537
 #, c-format
 msgid "Failed to change permissions of \"%s\""
-msgstr "Falha ao trocar permissões de \"%s\""
+msgstr "Falha ao trocar as permissões de \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:355
 #, c-format
 msgid "Failed to change file owner of \"%s\""
-msgstr "Falha ao trocar dono de \"%s\""
+msgstr "Falha ao trocar o proprietário do arquivo de \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:356
 #, c-format
 msgid "Failed to change file group of \"%s\""
-msgstr "Falha ao trocar grupo de \"%s\""
+msgstr "Falha ao trocar grupo de arquivo de \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-jobs.c:444
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:190
@@ -260,7 +261,7 @@ msgstr "Você quer sobrescrevê-lo?"
 
 #: ../thunar-vfs/thunar-vfs-job.c:1042
 msgid "Do you want to skip it?"
-msgstr "Você quer pulá-lo?"
+msgstr "Você quer ignorá-lo?"
 
 #: ../thunar-vfs/thunar-vfs-mime-database.c:1675
 #, c-format
@@ -282,13 +283,12 @@ msgid "The command to run the mime handler"
 msgstr "O comando para executar o manipulador mime"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:145
-#, fuzzy
 msgid "Flags"
-msgstr "Opções"
+msgstr "Sinalizadores"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:146
 msgid "The flags for the mime handler"
-msgstr "As opções para o manipulador mime"
+msgstr "Os sinalizadores para o manipulador mime"
 
 #: ../thunar-vfs/thunar-vfs-mime-handler.c:161
 msgid "Icon"
@@ -386,11 +386,11 @@ msgstr "Executar em modo servidor (não suportado)"
 
 #: ../thunar/main.c:62
 msgid "Quit a running Thunar instance"
-msgstr "Termina uma instância do Thunar em execução"
+msgstr "Termina uma ocorrência do Thunar em execução"
 
 #: ../thunar/main.c:64
 msgid "Quit a running Thunar instance (not supported)"
-msgstr "Termina uma instância do Thunar em execução (não suportado)"
+msgstr "Termina uma ocorrência do Thunar em execução (não suportado)"
 
 #: ../thunar/main.c:66
 msgid "Print version information and exit"
@@ -486,7 +486,7 @@ msgstr "Ordenar itens em ordem descendente"
 #: ../thunar/thunar-application.c:409
 #: ../thunar/thunar-application.c:453
 msgid "Failed to launch operation"
-msgstr "Falha ao lançar operação"
+msgstr "Falha ao iniciar operação"
 
 #. failed to launch exo-eject, inform the user about this
 #. display an error to the user
@@ -531,7 +531,7 @@ msgid ""
 "permanently delete \"%s\"?"
 msgstr ""
 "Você tem certeza que deseja\n"
-"remover permanentemente \"%s\"?"
+"excluir permanentemente \"%s\"?"
 
 #: ../thunar/thunar-application.c:1350
 #, c-format
@@ -542,19 +542,19 @@ msgid_plural ""
 "Are you sure that you want to permanently\n"
 "delete the %u selected files?"
 msgstr[0] ""
-"Você tem certeza que quer remover\n"
+"Você tem certeza que quer excluir\n"
 "permanentemente o arquivo selecionado?"
 msgstr[1] ""
-"Você tem certeza que quer remover\n"
+"Você tem certeza que quer excluir\n"
 "permanentemente os %u arquivos selecionados?"
 
 #: ../thunar/thunar-application.c:1370
 msgid "If you delete a file, it is permanently lost."
-msgstr "Se você deletar um arquivo, ele é permanentemente perdido."
+msgstr "Se você excluir um arquivo, ele é permanentemente perdido."
 
 #: ../thunar/thunar-application.c:1380
 msgid "Deleting files..."
-msgstr "Removendo arquivos..."
+msgstr "Excluindo arquivos..."
 
 #: ../thunar/thunar-application.c:1432
 msgid "Creating files..."
@@ -595,7 +595,7 @@ msgstr "Falha ao determinar o caminho original para \"%s\""
 #: ../thunar/thunar-application.c:1618
 #, c-format
 msgid "Create the folder \"%s\"?"
-msgstr "Criar a pasta \"%s\""
+msgstr "Criar a pasta \"%s\"?"
 
 #: ../thunar/thunar-application.c:1622
 msgid "C_reate Folder"
@@ -646,7 +646,7 @@ msgstr "Abrir Com"
 #. create the "Custom command" expand
 #: ../thunar/thunar-chooser-dialog.c:294
 msgid "Use a _custom command:"
-msgstr "Use um _comando personalizado:"
+msgstr "Usar um _comando personalizado:"
 
 #: ../thunar/thunar-chooser-dialog.c:295
 msgid "Use a custom command for an application that is not available from the above application list."
@@ -922,7 +922,7 @@ msgstr "Nã_o para todos"
 
 #: ../thunar/thunar-dialogs.c:344
 msgid "_Retry"
-msgstr "_Retentar"
+msgstr "_Repetir"
 
 #: ../thunar/thunar-dialogs.c:349
 msgid "_Cancel"
@@ -934,7 +934,6 @@ msgid "Confirm to replace files"
 msgstr "Confirme a substituição dos arquivos"
 
 #: ../thunar/thunar-dialogs.c:435
-#, fuzzy
 msgid "_Skip"
 msgstr "_Pular"
 
@@ -1024,7 +1023,7 @@ msgstr "Tipo MIME"
 
 #: ../thunar/thunar-enum-types.c:119
 msgid "Owner"
-msgstr "Dono"
+msgstr "Proprietário"
 
 #.
 #. Permissions chooser
@@ -1057,7 +1056,7 @@ msgstr "Voltar"
 
 #: ../thunar/thunar-history.c:193
 msgid "Go to the previous visited folder"
-msgstr "Vai para a pasta visitada anteriormente"
+msgstr "Ir para a pasta visitada anteriormente"
 
 #. create the "forward" action
 #: ../thunar/thunar-history.c:199
@@ -1066,7 +1065,7 @@ msgstr "Avançar"
 
 #: ../thunar/thunar-history.c:199
 msgid "Go to the next visited folder"
-msgstr "Vai para a próxima pasta visitada"
+msgstr "Ir para a próxima pasta visitada"
 
 #: ../thunar/thunar-icon-factory.c:754
 #, c-format
@@ -1096,11 +1095,11 @@ msgstr "_Abrir"
 #: ../thunar/thunar-shortcuts-view.c:817
 #: ../thunar/thunar-tree-view.c:1024
 msgid "Open in New Window"
-msgstr "Abrir em Nova Janela"
+msgstr "Abrir numa Nova Janela"
 
 #: ../thunar/thunar-launcher.c:141
 msgid "Open the selected directory in a new window"
-msgstr "Abrir o diretório selecionado em uma nova janela"
+msgstr "Abrir o diretório selecionado numa nova janela"
 
 #: ../thunar/thunar-launcher.c:142
 #: ../thunar/thunar-launcher.c:144
@@ -1116,7 +1115,7 @@ msgstr "Escolha outra aplicação com a qual abrir o arquivo selecionado"
 #: ../thunar/thunar-launcher.c:646
 #, c-format
 msgid "Failed to open file \"%s\""
-msgstr "Falha ao abrir arquivo \"%s\""
+msgstr "Falha ao abrir o arquivo \"%s\""
 
 #. we can just tell that n files failed to open
 #: ../thunar/thunar-launcher.c:652
@@ -1428,7 +1427,7 @@ msgstr "Leitura & Escrita"
 
 #: ../thunar/thunar-permissions-chooser.c:259
 msgid "Owner:"
-msgstr "Dono"
+msgstr "Proprietário:"
 
 #: ../thunar/thunar-permissions-chooser.c:277
 #: ../thunar/thunar-permissions-chooser.c:318
@@ -1521,7 +1520,7 @@ msgstr "Falha ao aplicar as novas permissões"
 
 #: ../thunar/thunar-permissions-chooser.c:901
 msgid "Unknown file owner"
-msgstr "Dono de arquivo desconhecido"
+msgstr "Proprietário de arquivo desconhecido"
 
 #: ../thunar/thunar-permissions-chooser.c:1032
 msgid "Correct folder permissions automatically?"
@@ -1543,7 +1542,6 @@ msgstr "Preferências de Gerenciador de Arquivo"
 #. Display
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
-#, fuzzy
 msgid "Display"
 msgstr "Exibir"
 
@@ -1835,7 +1833,7 @@ msgstr "Abrir Com:"
 
 #: ../thunar/thunar-properties-dialog.c:344
 msgid "Link Target:"
-msgstr "Destino da ligação:"
+msgstr "Destino da Ligação:"
 
 #.
 #. Third box (deleted, modified, accessed)
@@ -1888,7 +1886,7 @@ msgstr "%s - Propriedades"
 #: ../thunar/thunar-standard-view.c:2282
 #, c-format
 msgid "Failed to rename \"%s\""
-msgstr "Falha em renomear \"%s\""
+msgstr "Falha ao renomear \"%s\""
 
 #: ../thunar/thunar-renamer-dialog.c:172
 #: ../thunar/thunar-window.c:266
@@ -1907,7 +1905,7 @@ msgstr "Menu de Contexto de Arquivo"
 
 #: ../thunar/thunar-renamer-dialog.c:175
 msgid "_Add Files..."
-msgstr "_Adicionar arquivos..."
+msgstr "_Adicionar Arquivos..."
 
 #: ../thunar/thunar-renamer-dialog.c:175
 msgid "Include additional files in the list of files to be renamed"
@@ -2154,7 +2152,7 @@ msgstr "Recor_tar"
 #: ../thunar/thunar-tree-view.c:1121
 msgid "_Copy"
 msgstr "_Copiar"
-
+ 
 #: ../thunar/thunar-standard-view.c:327
 msgid "_Paste"
 msgstr "C_olar"
@@ -2175,7 +2173,7 @@ msgstr "Mover ou copiar arquivos previamente selecionados por um comando de Reco
 
 #: ../thunar/thunar-standard-view.c:330
 msgid "Select _all Files"
-msgstr "Selecionar todos os _arquivos"
+msgstr "Selecion_ar todos os Arquivos"
 
 #: ../thunar/thunar-standard-view.c:330
 msgid "Select all files in this window"
@@ -2220,11 +2218,11 @@ msgstr "Carregando conteúdo da pasta..."
 #. ask the user to enter a name for the new empty file
 #: ../thunar/thunar-standard-view.c:1767
 msgid "New Empty File"
-msgstr "Novo arquivo vazio"
+msgstr "Novo Arquivo Vazio"
 
 #: ../thunar/thunar-standard-view.c:1767
 msgid "New Empty File..."
-msgstr "Novo arquivo vazio..."
+msgstr "Novo Arquivo Vazio..."
 
 #. generate a title for the create dialog
 #: ../thunar/thunar-standard-view.c:1867
@@ -2257,7 +2255,7 @@ msgstr "_Renomear"
 #. tell the user that the file name provided by the X Direct Save source is invalid
 #: ../thunar/thunar-standard-view.c:2578
 msgid "Invalid filename provided by XDS drag site"
-msgstr "Nome de arquivo inválido provido pelo sítio XDS."
+msgstr "Nome de arquivo inválido fornecido pelo site XDS."
 
 #. display an error dialog to the user
 #: ../thunar/thunar-standard-view.c:2755
@@ -2285,8 +2283,8 @@ msgstr[1] "Preparar os arquivos selecionados para serem copiados com um comando 
 #: ../thunar/thunar-standard-view.c:3366
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
-msgstr[0] "Apagar o arquivo selecionado"
-msgstr[1] "Apagar os arquivos selecionados"
+msgstr[0] "Excluir o arquivo selecionado"
+msgstr[1] "Excluir os arquivos selecionados"
 
 #: ../thunar/thunar-standard-view.c:3380
 msgid "Duplicate the selected file"
@@ -2315,7 +2313,7 @@ msgstr[1] "Restaurar os arquivos selecionados"
 #. tell the user that no templates were found
 #: ../thunar/thunar-templates-action.c:376
 msgid "No Templates installed"
-msgstr "Nenhum modelo foi instalado"
+msgstr "Nenhum Modelo foi instalado"
 
 #. add the "Empty File" item
 #: ../thunar/thunar-templates-action.c:388
@@ -2440,7 +2438,7 @@ msgstr "Aume_ntar Zoom"
 
 #: ../thunar/thunar-window.c:278
 msgid "Show the contents in more detail"
-msgstr "Exibe o contúdo em maiores detalhes"
+msgstr "Exibe o conteúdo em maiores detalhes"
 
 #: ../thunar/thunar-window.c:279
 msgid "Zoom _Out"
@@ -2464,19 +2462,19 @@ msgstr "_Ir"
 
 #: ../thunar/thunar-window.c:282
 msgid "Open _Parent"
-msgstr "Abrir _Pai"
+msgstr "Abrir _Origem"
 
 #: ../thunar/thunar-window.c:282
 msgid "Open the parent folder"
-msgstr "Abrir a pasta pai"
+msgstr "Abrir a pasta de origem"
 
 #: ../thunar/thunar-window.c:283
 msgid "_Home"
-msgstr "_Pasta Inicial"
+msgstr "_Home"
 
 #: ../thunar/thunar-window.c:283
 msgid "Go to the home folder"
-msgstr "Vai para a pasta inicial"
+msgstr "Vai para a pasta home"
 
 #: ../thunar/thunar-window.c:284
 msgid "T_emplates"
@@ -2512,7 +2510,7 @@ msgstr "Mostrar informação sobre o Thunar"
 
 #: ../thunar/thunar-window.c:293
 msgid "Show _Hidden Files"
-msgstr "_Mostrar Arquivos Invisíveis"
+msgstr "_Mostrar Arquivos Ocultos"
 
 #: ../thunar/thunar-window.c:293
 msgid "Toggles the display of hidden files in the current window"
@@ -2544,7 +2542,7 @@ msgstr "Alterna a visibilidade do painel de atalhos"
 
 #: ../thunar/thunar-window.c:297
 msgid "_Tree"
-msgstr "_Árvore"
+msgstr "Árvo_re"
 
 #: ../thunar/thunar-window.c:297
 msgid "Toggles the visibility of the tree pane"
@@ -2563,7 +2561,7 @@ msgstr "Muda a visibilidade da barra de status da janela"
 #.
 #: ../thunar/thunar-window.c:657
 msgid "View as _Icons"
-msgstr "Visualizar como _Ícones"
+msgstr "Visual_izar como Ícones"
 
 #: ../thunar/thunar-window.c:657
 msgid "Display folder content in an icon view"
@@ -2592,12 +2590,12 @@ msgstr "Aviso, você está usando o usuário root, você pode danificar o seu si
 
 #: ../thunar/thunar-window.c:1751
 msgid "Failed to open parent folder"
-msgstr "Falha ao abrir a pasta pai"
+msgstr "Falha ao abrir a pasta de origem"
 
 #. display an error to the user
 #: ../thunar/thunar-window.c:1777
 msgid "Failed to open the home folder"
-msgstr "Falha ao abrir a pasta inicial"
+msgstr "Falha ao abrir a pasta home"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:1839
@@ -2620,7 +2618,7 @@ msgstr ""
 
 #: ../thunar/thunar-window.c:1879
 msgid "Do _not display this message again"
-msgstr "_Não mostrar essa mensagem novamente"
+msgstr "_Não mostrar esta mensagem novamente"
 
 #: ../thunar/thunar-window.c:1892
 msgid "Failed to open the templates folder"
@@ -2711,7 +2709,7 @@ msgstr "Comentário:"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:232
 msgid "Tooltip for the entry, for example \"View sites on the Internet\" in case of Firefox. Should not be redundant with the name or the description."
-msgstr "Dica para a entrada, por exemplo \"Ver sítios na Internet\" no caso do Firefox. Não deve ser redundante com o nome ou a descrição."
+msgstr "Dica para a entrada, por exemplo \"Ver sites na Internet\" no caso do Firefox. Não deve ser excessivo com o nome ou descrição."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:252
 msgid "Options:"
@@ -2739,7 +2737,7 @@ msgstr "Lançador"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:344
 msgid "Link"
-msgstr "Ponteiro"
+msgstr "Link"
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:555
 #, c-format
@@ -2994,11 +2992,11 @@ msgstr[1] "Enviar %d arquivos compactados?"
 
 #: ../plugins/thunar-sendto-email/main.c:198
 msgid "Send as _archive"
-msgstr "Enviar como fich_ário"
+msgstr "Enviar como p_acote"
 
 #: ../plugins/thunar-sendto-email/main.c:200
 msgid "When sending multiple files via email, you can either choose to send the files directly, attaching multiple files to an email, or send all files compressed into a single archive file and attach the archive. It is highly recommended to send multiple large files as archive."
-msgstr "Ao enviar vários arquivos por e-mail, você pode escolher entre enviá-los diretamente, anexando vários arquivos ao e-mail, ou então enviar todos os arquivos compactados em um único fichário e anexar este fichário. É altamente recomendado enviar múltiplos arquivos grandes como um fichário."
+msgstr "Ao enviar vários arquivos por e-mail, você pode escolher entre enviá-los diretamente, anexando vários arquivos ao e-mail, ou então enviar todos os arquivos compactados em um único pacote e anexar este pacote. É altamente recomendado enviar múltiplos arquivos grandes como um pacote."
 
 #. allocate the progress dialog
 #. setup the label
@@ -3033,7 +3031,7 @@ msgstr[1] "Falha ao compactar %d arquivos."
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:600
 msgid "Failed to compose new email"
-msgstr "Incapaz de abrir %d arquivo."
+msgstr "Falha ao criar novo e-mail"
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
@@ -3063,7 +3061,7 @@ msgstr "Mostrar a lixeira"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
 msgid "Trash Applet"
-msgstr "Applet da Lixeira"
+msgstr "Miniaplicativo da Lixeira"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
@@ -3074,7 +3072,7 @@ msgid ""
 "You can configure custom actions that will appear in the\n"
 "file managers context menus for certain kinds of files."
 msgstr ""
-"Você pode configurar ações personalizadas que irão aparecer\n"
+"Você pode configurar as ações personalizadas que irão aparecer\n"
 "nos menus de contexto do gerenciador de arquivos para\n"
 "determinados tipos de arquivos."
 
@@ -3084,11 +3082,11 @@ msgstr "Adicionar uma nova ação personalizada."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:197
 msgid "Edit the currently selected action."
-msgstr "Editar a ação selecionada"
+msgstr "Editar a ação selecionada."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:207
 msgid "Delete the currently selected action."
-msgstr "Deletar a ação selecionado"
+msgstr "Deletar a ação selecionado."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:217
 msgid "Move the currently selected action up by one row."
@@ -3215,7 +3213,7 @@ msgstr "_Diretórios"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:417
 msgid "_Audio Files"
-msgstr "_Arquivos de Audio"
+msgstr "_Arquivos de Áudio"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:421
 msgid "_Image Files"
@@ -3227,7 +3225,7 @@ msgstr "Arquivos _Texto"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:430
 msgid "_Video Files"
-msgstr "Arquivos de _Video"
+msgstr "Arquivos de _Vídeo"
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:434
 msgid "_Other Files"
@@ -3302,7 +3300,7 @@ msgstr "Abrir Terminal Aqui"
 
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
-msgstr "Navegar o sistema de arquivos com o gerenciar de arquivos"
+msgstr "Navegar o sistema de arquivos com o gerenciador de arquivos"
 
 #: ../Thunar.desktop.in.in.h:3
 msgid "Thunar File Manager"
