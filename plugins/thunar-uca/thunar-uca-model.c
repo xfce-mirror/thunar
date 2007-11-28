@@ -973,8 +973,22 @@ types_from_mime_type (const gchar *mime_type)
     return THUNAR_UCA_TYPE_TEXT_FILES;
   else if (strncmp (mime_type, "video/", 6) == 0)
     return THUNAR_UCA_TYPE_VIDEO_FILES;
-  else
-    return 0;
+  else if (strncmp (mime_type, "application/", 12) == 0)
+    {
+      /* quite cumbersome, certain mime types do not
+       * belong here, but despite that fact, they are...
+       */
+      mime_type += 12;
+      if (strcmp (mime_type, "javascript") == 0
+          || strcmp (mime_type, "x-awk") == 0
+          || strcmp (mime_type, "x-csh") == 0
+          || strcmp (mime_type, "xhtml+xml") == 0
+          || strcmp (mime_type, "xml") == 0)
+        return THUNAR_UCA_TYPE_TEXT_FILES;
+      else if (strcmp (mime_type, "ogg") == 0)
+        return THUNAR_UCA_TYPE_AUDIO_FILES;
+    }
+  return 0;
 }
 
 
