@@ -434,14 +434,29 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
 #ifdef HAVE_LIBSTARTUP_NOTIFICATION
   SnLauncherContext *sn_launcher = NULL;
   TvsnStartupData   *startup_data;
-  extern gchar     **environ;
   SnDisplay         *sn_display = NULL;
   gint               sn_workspace;
-  gint               n, m;
 #endif
+  extern gchar     **environ;
   gboolean           succeed;
-  gchar            **sn_envp = envp;
+  gchar             *display_name;
+  gchar            **cenvp = envp;
+  gint               n_cenvp, n;
   GPid               pid;
+
+  /* setup the child environment (stripping $DESKTOP_STARTUP_ID and $DISPLAY) */
+  if (G_LIKELY (envp == NULL))
+    envp = (gchar **) environ;
+  for (n = 0; envp[n] != NULL; ++n) ;
+  cenvp = g_new0 (gchar *, n + 3);
+  for (n_cenvp = n = 0; envp[n] != NULL; ++n)
+    if (strncmp (envp[n], "DESKTOP_STARTUP_ID", 18) != 0 && strncmp (envp[n], "DISPLAY", 7) != 0)
+      cenvp[n_cenvp++] = g_strdup (envp[n]);
+
+  /* add the real display name for the screen */
+  display_name = gdk_screen_make_display_name (screen);
+  cenvp[n_cenvp++] = g_strconcat ("DISPLAY=", display_name, NULL);
+  g_free (display_name);
 
 #ifdef HAVE_LIBSTARTUP_NOTIFICATION
   /* initialize the sn launcher context */
@@ -464,17 +479,8 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
               sn_launcher_context_set_icon_name (sn_launcher, (icon_name != NULL) ? icon_name : "applications-other");
               sn_launcher_context_initiate (sn_launcher, g_get_prgname (), argv[0], CurrentTime);
 
-              /* setup the child environment */
-              if (G_LIKELY (envp == NULL))
-                envp = (gchar **) environ;
-              for (n = 0; envp[n] != NULL; ++n)
-                ;
-              sn_envp = g_new (gchar *, n + 2);
-              for (n = m = 0; envp[n] != NULL; ++n)
-                if (strncmp (envp[n], "DESKTOP_STARTUP_ID", 18) != 0)
-                  sn_envp[m++] = g_strdup (envp[n]);
-              sn_envp[m++] = g_strconcat ("DESKTOP_STARTUP_ID=", sn_launcher_context_get_startup_id (sn_launcher), NULL);
-              sn_envp[m] = NULL;
+              /* add the real startup id to the child environment */
+              cenvp[n_cenvp++] = g_strconcat ("DESKTOP_STARTUP_ID=", sn_launcher_context_get_startup_id (sn_launcher), NULL);
 
               /* we want to watch the child process */
               flags |= G_SPAWN_DO_NOT_REAP_CHILD;
@@ -484,7 +490,7 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
 #endif
 
   /* try to spawn the new process */
-  succeed = gdk_spawn_on_screen (screen, working_directory, argv, sn_envp, flags, NULL, NULL, &pid, error);
+  succeed = g_spawn_async (working_directory, argv, cenvp, flags, NULL, NULL, &pid, error);
 
 #ifdef HAVE_LIBSTARTUP_NOTIFICATION
   /* handle the sn launcher context */
@@ -513,9 +519,8 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
     sn_display_unref (sn_display);
 #endif
 
-  /* release the environment */
-  if (G_UNLIKELY (sn_envp != envp))
-    g_strfreev (sn_envp);
+  /* release the child environment */
+  g_strfreev (cenvp);
 
   return succeed;
 }
