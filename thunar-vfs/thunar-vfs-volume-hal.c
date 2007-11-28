@@ -1007,7 +1007,9 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
   hv = libhal_volume_from_udi (context, udi);
 
   /* HAL might want us to ignore this volume for some reason */
-  if (G_UNLIKELY (hv != NULL && libhal_volume_should_ignore (hv)))
+  if (G_UNLIKELY (hv != NULL
+        && (libhal_volume_should_ignore (hv)
+          || libhal_volume_get_fsusage (hv) != LIBHAL_VOLUME_USAGE_MOUNTABLE_FILESYSTEM)))
     {
       libhal_volume_free (hv);
       return;
