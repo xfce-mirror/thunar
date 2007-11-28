@@ -128,6 +128,30 @@ typedef enum
 GType thunar_sbr_text_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
 
 
+#define THUNAR_SBR_TYPE_DATE_MODE (thunar_sbr_date_mode_get_type ())
+
+/**
+ * ThunarSbrDateMode:
+ * @THUNAR_SBR_DATE_MODE_NOW   : Current Time
+ * @THUNAR_SBR_DATE_MODE_ATIME : Access Time
+ * @THUNAR_SBR_DATE_MODE_MTIME : Modification Time
+ * @THUNAR_SBR_DATE_MODE_TAKEN : Picture Taken Time
+ *
+ * The date mode for the #ThunarSbrDateRenamer.
+ **/
+typedef enum
+{
+  THUNAR_SBR_DATE_MODE_NOW,
+  THUNAR_SBR_DATE_MODE_ATIME,
+  THUNAR_SBR_DATE_MODE_MTIME,
+#ifdef HAVE_EXIF
+  THUNAR_SBR_DATE_MODE_TAKEN,
+#endif
+} ThunarSbrDateMode;
+
+GType thunar_sbr_date_mode_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
+
 void thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin) G_GNUC_INTERNAL;
 
 G_END_DECLS;

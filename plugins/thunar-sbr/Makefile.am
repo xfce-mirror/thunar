@@ -15,6 +15,8 @@ extensions_LTLIBRARIES =						\
 thunar_sbr_la_SOURCES =							\
 	thunar-sbr-case-renamer.c					\
 	thunar-sbr-case-renamer.h					\
+	thunar-sbr-date-renamer.c					\
+	thunar-sbr-date-renamer.h					\
 	thunar-sbr-enum-types.c						\
 	thunar-sbr-enum-types.h						\
 	thunar-sbr-insert-renamer.c					\
@@ -30,6 +32,7 @@ thunar_sbr_la_SOURCES =							\
 	thunar-sbr-replace-renamer.h
 
 thunar_sbr_la_CFLAGS =							\
+	$(EXIF_CFLAGS)							\
 	$(EXO_CFLAGS)							\
 	$(PCRE_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
@@ -41,7 +44,8 @@ thunar_sbr_la_LDFLAGS =							\
 	$(PLATFORM_LDFLAGS)
 
 thunar_sbr_la_LIBADD =							\
-	$(PCRE_LIBS)
+	$(PCRE_LIBS)							\
+	$(EXIF_LIBS)
 
 EXTRA_DIST =								\
 	README

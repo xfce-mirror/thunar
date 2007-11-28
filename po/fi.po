@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-09-05 17:54+0300\n"
+"POT-Creation-Date: 2007-11-28 19:01+0100\n"
 "PO-Revision-Date: 2007-09-05 18:12+0300\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <xfce-i18n@xfce.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "Hakemiston sisällön lukeminen epäonnistui"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:577
+#: ../thunar-vfs/thunar-vfs-exec.c:582
 msgid "Unknown error"
 msgstr "Tuntematon virhe"
 
@@ -1008,10 +1008,12 @@ msgid "Name and Suffix"
 msgstr "Nimi ja pääte"
 
 #: ../thunar/thunar-enum-types.c:114
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:135
 msgid "Date Accessed"
 msgstr "Käytetty"
 
 #: ../thunar/thunar-enum-types.c:115
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:136
 msgid "Date Modified"
 msgstr "Muokattu"
 
@@ -1607,6 +1609,7 @@ msgid "Date"
 msgstr "PVM"
 
 #: ../thunar/thunar-preferences-dialog.c:338
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
 msgid "_Format:"
 msgstr "_Muoto:"
 
@@ -2859,78 +2862,106 @@ msgstr "Muuta _muotoon:"
 msgid "Uppercase / Lowercase"
 msgstr "Pienaakkoset / Suuraakkoset"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:84
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
+#, fuzzy
+msgid "Insert _time:"
+msgstr "Lisää"
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
+msgid ""
+"The format describes the date and time parts to insert into the file name. "
+"For example, %Y will be substituted with the year, %m with the month and %d "
+"with the day. See the documentation of the date utility for additional "
+"information."
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
+#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
+msgid "_At position:"
+msgstr "_Sijainti:"
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
+#, fuzzy
+msgid "Insert Date / Time"
+msgstr "Lisää / Korvaa"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
 msgstr "pienaakkoset"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:85
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:94
 msgid "UPPERCASE"
 msgstr "SUURAAKKOSET"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:86
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:95
 msgid "Camelcase"
 msgstr "SanatIsolla"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:92
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:101
 msgid "Insert"
 msgstr "Lisää"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "Overwrite"
 msgstr "Korvaa"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:99
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:108
 msgid "1, 2, 3, ..."
 msgstr "1, 2, 3, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:100
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:109
 msgid "01, 02, 03, ..."
 msgstr "01, 02, 03, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:101
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:110
 msgid "001, 002, 003, ..."
 msgstr "001, 002, 003, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:111
 msgid "0001, 0002, 0003, ..."
 msgstr "0001, 0002, 0003, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:103
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:112
 msgid "a, b, c, d, ..."
 msgstr "a, b, c, d, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:109
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:118
 msgid "From the front (left)"
 msgstr "Alusta alkaen (vasemmalta)"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:110
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:119
 msgid "From the back (right)"
 msgstr "Lopusta alkaen (oikealta)"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:116
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:125
 msgid "Old Name - Text - Number"
 msgstr "Vanha nimi - Teksti - Numero"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:117
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:126
 msgid "Number - Text - Old Name"
 msgstr "Numero - Teksti - Vanha nimi"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:118
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:127
 msgid "Text - Number"
 msgstr "Teksti - Numero"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:119
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:128
 msgid "Number - Text"
 msgstr "Numero - Teksti"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
+msgid "Current"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
+#, fuzzy
+msgid "Date Picture Taken"
+msgstr "Kuvattu:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
 msgid "_Text:"
 msgstr "_Teksti:"
-
-#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
-msgid "_At position:"
-msgstr "_Sijainti:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:387
 msgid "Insert / Overwrite"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-23 23:24+0200\n"
+"POT-Creation-Date: 2007-11-28 19:01+0100\n"
 "PO-Revision-Date: 2007-09-30 10:33+0200\n"
 "Last-Translator: Pau Ruŀlan Ferragut <paurullan@bulma.net>\n"
 "Language-Team: Catalan <xfce-i18n@xfce.org>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "No s’ha pogut llegir el contigut de la carpeta"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:577
+#: ../thunar-vfs/thunar-vfs-exec.c:582
 msgid "Unknown error"
 msgstr "Error desconegut"
 
@@ -900,80 +900,80 @@ msgstr "Llistat detallat de directoris"
 msgid "Details view"
 msgstr "Mostra detalls"
 
-#: ../thunar/thunar-dialogs.c:104
+#: ../thunar/thunar-dialogs.c:108
 msgid "translator-credits"
 msgstr "Crèdits de traductors"
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:231 ../thunar/thunar-renamer-dialog.c:959
+#: ../thunar/thunar-dialogs.c:235 ../thunar/thunar-renamer-dialog.c:959
 msgid "Failed to open the documentation browser"
 msgstr "No s’ha pogut obrir el visor de documentació"
 
-#: ../thunar/thunar-dialogs.c:328
+#: ../thunar/thunar-dialogs.c:332
 msgid "_Yes"
 msgstr "_Sí"
 
-#: ../thunar/thunar-dialogs.c:332
+#: ../thunar/thunar-dialogs.c:336
 msgid "Yes to _all"
 msgstr "Si _a tot"
 
-#: ../thunar/thunar-dialogs.c:336
+#: ../thunar/thunar-dialogs.c:340
 msgid "_No"
 msgstr "_No"
 
-#: ../thunar/thunar-dialogs.c:340
+#: ../thunar/thunar-dialogs.c:344
 msgid "N_o to all"
 msgstr "N_o a tot"
 
-#: ../thunar/thunar-dialogs.c:344
+#: ../thunar/thunar-dialogs.c:348
 msgid "_Retry"
 msgstr "_Reintenta"
 
-#: ../thunar/thunar-dialogs.c:349
+#: ../thunar/thunar-dialogs.c:353
 msgid "_Cancel"
 msgstr "_Canceŀla"
 
 #. setup the confirmation dialog
-#: ../thunar/thunar-dialogs.c:429
+#: ../thunar/thunar-dialogs.c:433
 msgid "Confirm to replace files"
 msgstr "Confirmeu que voleu reempleçar els fitxers"
 
-#: ../thunar/thunar-dialogs.c:435
+#: ../thunar/thunar-dialogs.c:439
 msgid "_Skip"
 msgstr "_Salta"
 
-#: ../thunar/thunar-dialogs.c:436
+#: ../thunar/thunar-dialogs.c:440
 msgid "Replace _All"
 msgstr "Reempl_aça tots"
 
-#: ../thunar/thunar-dialogs.c:437
+#: ../thunar/thunar-dialogs.c:441
 msgid "_Replace"
 msgstr "Substitue_ix"
 
-#: ../thunar/thunar-dialogs.c:467
+#: ../thunar/thunar-dialogs.c:471
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr "Aquest directori ja conté un fitxer «%s»."
 
-#: ../thunar/thunar-dialogs.c:475
+#: ../thunar/thunar-dialogs.c:479
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr "Voleu reemplaçar el fitxer existent"
 
 #.
 #. Fourth box (size, volume, free space)
 #.
-#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-dialogs.c:495 ../thunar/thunar-dialogs.c:520
 #: ../thunar/thunar-properties-dialog.c:440
 msgid "Size:"
 msgstr "Mida:"
 
-#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-dialogs.c:495 ../thunar/thunar-dialogs.c:520
 #: ../thunar/thunar-properties-dialog.c:401
 msgid "Modified:"
 msgstr "Modificat:"
 
-#: ../thunar/thunar-dialogs.c:500
+#: ../thunar/thunar-dialogs.c:504
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr "amb aquest fitxer?"
 
@@ -1009,10 +1009,12 @@ msgid "Name and Suffix"
 msgstr "Nom i sufixe"
 
 #: ../thunar/thunar-enum-types.c:114
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:135
 msgid "Date Accessed"
 msgstr "Data d’accés"
 
 #: ../thunar/thunar-enum-types.c:115
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:136
 msgid "Date Modified"
 msgstr "Data de modificació"
 
@@ -1498,7 +1500,9 @@ msgid ""
 "If you select this option your choice will be remembered and you won't be "
 "asked again. You can use the preferences dialog to alter your choice "
 "afterwards."
-msgstr "Si ho seleccioneu aquesta opció serà recordada i no se us tornarà a demanar. Igualment podeu usar el diàleg de preferències per canviar-la."
+msgstr ""
+"Si ho seleccioneu aquesta opció serà recordada i no se us tornarà a demanar. "
+"Igualment podeu usar el diàleg de preferències per canviar-la."
 
 #. display an error to the user
 #: ../thunar/thunar-permissions-chooser.c:666
@@ -1607,6 +1611,7 @@ msgid "Date"
 msgstr "Data"
 
 #: ../thunar/thunar-preferences-dialog.c:338
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
 msgid "_Format:"
 msgstr "_Format:"
 
@@ -1911,7 +1916,7 @@ msgstr "%s - Propietats"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:1006
-#: ../thunar/thunar-standard-view.c:2282
+#: ../thunar/thunar-standard-view.c:2286
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "No s’ha pogut canviar el nom «%s»"
@@ -2219,7 +2224,7 @@ msgstr "Selecciona tots els fitxers que coincideixen amb un patró"
 msgid "Du_plicate"
 msgstr "Du_plica"
 
-#: ../thunar/thunar-standard-view.c:333 ../thunar/thunar-standard-view.c:3387
+#: ../thunar/thunar-standard-view.c:333 ../thunar/thunar-standard-view.c:3391
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Crea un _enllaç"
@@ -2280,60 +2285,60 @@ msgid "_Rename"
 msgstr "_Canvia el nom"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
-#: ../thunar/thunar-standard-view.c:2578
+#: ../thunar/thunar-standard-view.c:2582
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Nom de fitxer obtingut del lloc d’arrossegament XDS no és vàlid"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2755
+#: ../thunar/thunar-standard-view.c:2759
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "No s’ha pogut crear l’enllaç per l’URL «%s»"
 
-#: ../thunar/thunar-standard-view.c:3020
+#: ../thunar/thunar-standard-view.c:3024
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "No s’ha pogut obrir el directori «%s»"
 
-#: ../thunar/thunar-standard-view.c:3347
+#: ../thunar/thunar-standard-view.c:3351
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] "Prepara el fitxer seleccionat i serà mogut amb l’ordre d’Enganxar"
 msgstr[1] ""
 "Prepara els fitxers seleccionats i seran moguts amb l’ordre d’Enganxar"
 
-#: ../thunar/thunar-standard-view.c:3355
+#: ../thunar/thunar-standard-view.c:3359
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Prepara el fitxer seleccionat i serà copiat amb l’ordre d’Enganxar"
 msgstr[1] ""
 "Prepara els fitxers seleccionats i seran copiats amb l’ordre d’Enganxar"
 
-#: ../thunar/thunar-standard-view.c:3366
+#: ../thunar/thunar-standard-view.c:3370
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Suprimeix el fitxer seleccionat"
 msgstr[1] "Suprimeix els fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3380
+#: ../thunar/thunar-standard-view.c:3384
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Duplica el fitxer seleccionat"
 msgstr[1] "Duplica els fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3389
+#: ../thunar/thunar-standard-view.c:3393
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Crea un enllaç simbòlic del fitxer seleccionat"
 msgstr[1] "Crea un enllaç simbòlic dels fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3397
+#: ../thunar/thunar-standard-view.c:3401
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Canvia el nom al fitxer seleccionat"
 msgstr[1] "Canvia el nom als fitxers seleccionats"
 
-#: ../thunar/thunar-standard-view.c:3405
+#: ../thunar/thunar-standard-view.c:3409
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Restaura el fitxer seleccionat"
@@ -2866,78 +2871,106 @@ msgstr "Con_vertir a:"
 msgid "Uppercase / Lowercase"
 msgstr "Majúscula / minúscula"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:84
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
+#, fuzzy
+msgid "Insert _time:"
+msgstr "Insert"
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
+msgid ""
+"The format describes the date and time parts to insert into the file name. "
+"For example, %Y will be substituted with the year, %m with the month and %d "
+"with the day. See the documentation of the date utility for additional "
+"information."
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
+#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
+msgid "_At position:"
+msgstr "_A la posició:"
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
+#, fuzzy
+msgid "Insert Date / Time"
+msgstr "Insereix / Sobreescriu"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
 msgstr "minúscules"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:85
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:94
 msgid "UPPERCASE"
 msgstr "MAJÚSCULES"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:86
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:95
 msgid "Camelcase"
 msgstr "MajúsculesDeCamell"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:92
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:101
 msgid "Insert"
 msgstr "Insert"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "Overwrite"
 msgstr "Sobreescriu"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:99
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:108
 msgid "1, 2, 3, ..."
 msgstr "1, 2, 3…"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:100
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:109
 msgid "01, 02, 03, ..."
 msgstr "01, 02, 03…"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:101
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:110
 msgid "001, 002, 003, ..."
 msgstr "001, 002, 003…"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:111
 msgid "0001, 0002, 0003, ..."
 msgstr "0001, 0002, 0003…"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:103
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:112
 msgid "a, b, c, d, ..."
 msgstr "a, b, c, d…"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:109
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:118
 msgid "From the front (left)"
 msgstr "Des del davant (esquerra)"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:110
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:119
 msgid "From the back (right)"
 msgstr "Des del darrera (dreta)"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:116
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:125
 msgid "Old Name - Text - Number"
 msgstr "Número -  Text - Nom antic"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:117
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:126
 msgid "Number - Text - Old Name"
 msgstr "Número - Texte - Nom antic"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:118
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:127
 msgid "Text - Number"
 msgstr "Text - Número"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:119
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:128
 msgid "Number - Text"
 msgstr "Número -  Text"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
+msgid "Current"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
+#, fuzzy
+msgid "Date Picture Taken"
+msgstr "Data presa:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
 msgid "_Text:"
 msgstr "_Text:"
-
-#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
-msgid "_At position:"
-msgstr "_A la posició:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:387
 msgid "Insert / Overwrite"

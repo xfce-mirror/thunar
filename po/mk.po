@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.8.1svn-r25750\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-05-23 23:24+0200\n"
+"POT-Creation-Date: 2007-11-28 19:01+0100\n"
 "PO-Revision-Date: 2006-12-24 20:21+0100\n"
 "Last-Translator: Jovan Naumovski <jovan@lugola.net>\n"
 "Language-Team: Macedonian <ossm-members@hedona.on.net.mk>\n"
@@ -23,7 +23,7 @@ msgstr ""
 msgid "Failed to read folder contents"
 msgstr "Не можам да ги прочитам содржините од папката"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:577
+#: ../thunar-vfs/thunar-vfs-exec.c:582
 msgid "Unknown error"
 msgstr "Непозната грешка"
 
@@ -905,7 +905,7 @@ msgstr "Детален преглед во листа на директориу�
 msgid "Details view"
 msgstr "Преглед на детаљи"
 
-#: ../thunar/thunar-dialogs.c:104
+#: ../thunar/thunar-dialogs.c:108
 msgid "translator-credits"
 msgstr ""
 "Viktor Stojanovski <viktor@lugola.net> 2006\n"
@@ -913,77 +913,77 @@ msgstr ""
 
 #. display an error message to the user
 #. tell the user that we failed
-#: ../thunar/thunar-dialogs.c:231 ../thunar/thunar-renamer-dialog.c:959
+#: ../thunar/thunar-dialogs.c:235 ../thunar/thunar-renamer-dialog.c:959
 msgid "Failed to open the documentation browser"
 msgstr "Не успеав да ја отворам документацијата за прелистувачот"
 
-#: ../thunar/thunar-dialogs.c:328
+#: ../thunar/thunar-dialogs.c:332
 msgid "_Yes"
 msgstr "_Да"
 
-#: ../thunar/thunar-dialogs.c:332
+#: ../thunar/thunar-dialogs.c:336
 msgid "Yes to _all"
 msgstr "Да за _сите"
 
-#: ../thunar/thunar-dialogs.c:336
+#: ../thunar/thunar-dialogs.c:340
 msgid "_No"
 msgstr "_Не"
 
-#: ../thunar/thunar-dialogs.c:340
+#: ../thunar/thunar-dialogs.c:344
 msgid "N_o to all"
 msgstr "Н_е за сите"
 
-#: ../thunar/thunar-dialogs.c:344
+#: ../thunar/thunar-dialogs.c:348
 #, fuzzy
 msgid "_Retry"
 msgstr "_Врати"
 
-#: ../thunar/thunar-dialogs.c:349
+#: ../thunar/thunar-dialogs.c:353
 msgid "_Cancel"
 msgstr "_Откажи"
 
 #. setup the confirmation dialog
-#: ../thunar/thunar-dialogs.c:429
+#: ../thunar/thunar-dialogs.c:433
 msgid "Confirm to replace files"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:435
+#: ../thunar/thunar-dialogs.c:439
 msgid "_Skip"
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:436
+#: ../thunar/thunar-dialogs.c:440
 #, fuzzy
 msgid "Replace _All"
 msgstr "Замени _со:"
 
-#: ../thunar/thunar-dialogs.c:437
+#: ../thunar/thunar-dialogs.c:441
 #, fuzzy
 msgid "_Replace"
 msgstr "_Преименувај"
 
-#: ../thunar/thunar-dialogs.c:467
+#: ../thunar/thunar-dialogs.c:471
 #, c-format
 msgid "This folder already contains a file \"%s\"."
 msgstr ""
 
-#: ../thunar/thunar-dialogs.c:475
+#: ../thunar/thunar-dialogs.c:479
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
 msgstr ""
 
 #.
 #. Fourth box (size, volume, free space)
 #.
-#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-dialogs.c:495 ../thunar/thunar-dialogs.c:520
 #: ../thunar/thunar-properties-dialog.c:440
 msgid "Size:"
 msgstr "Големина:"
 
-#: ../thunar/thunar-dialogs.c:491 ../thunar/thunar-dialogs.c:516
+#: ../thunar/thunar-dialogs.c:495 ../thunar/thunar-dialogs.c:520
 #: ../thunar/thunar-properties-dialog.c:401
 msgid "Modified:"
 msgstr "Променето:"
 
-#: ../thunar/thunar-dialogs.c:500
+#: ../thunar/thunar-dialogs.c:504
 msgid "ReplaceDialogPart2|with the following file?"
 msgstr ""
 
@@ -1019,10 +1019,12 @@ msgid "Name and Suffix"
 msgstr "Име и суфикс"
 
 #: ../thunar/thunar-enum-types.c:114
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:135
 msgid "Date Accessed"
 msgstr "Датум на пристапување"
 
 #: ../thunar/thunar-enum-types.c:115
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:136
 msgid "Date Modified"
 msgstr "Датум на промена"
 
@@ -1635,6 +1637,7 @@ msgid "Date"
 msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:338
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
 #, fuzzy
 msgid "_Format:"
 msgstr "_Формат на текст:"
@@ -1940,7 +1943,7 @@ msgstr "%s - Својства"
 
 #. display an error message
 #: ../thunar/thunar-properties-dialog.c:1006
-#: ../thunar/thunar-standard-view.c:2282
+#: ../thunar/thunar-standard-view.c:2286
 #, c-format
 msgid "Failed to rename \"%s\""
 msgstr "Не успеав да преименувам \"%s\""
@@ -2269,7 +2272,7 @@ msgstr "Избери ги сите датотеки кои се совпаѓаа
 msgid "Du_plicate"
 msgstr "Ду_плирај"
 
-#: ../thunar/thunar-standard-view.c:333 ../thunar/thunar-standard-view.c:3387
+#: ../thunar/thunar-standard-view.c:333 ../thunar/thunar-standard-view.c:3391
 msgid "Ma_ke Link"
 msgid_plural "Ma_ke Links"
 msgstr[0] "Нап_рави врска"
@@ -2331,22 +2334,22 @@ msgid "_Rename"
 msgstr "_Преименувај"
 
 #. tell the user that the file name provided by the X Direct Save source is invalid
-#: ../thunar/thunar-standard-view.c:2578
+#: ../thunar/thunar-standard-view.c:2582
 msgid "Invalid filename provided by XDS drag site"
 msgstr "Невалидно име на датотека обезбедено од XDS страницата со влечење"
 
 #. display an error dialog to the user
-#: ../thunar/thunar-standard-view.c:2755
+#: ../thunar/thunar-standard-view.c:2759
 #, c-format
 msgid "Failed to create a link for the URL \"%s\""
 msgstr "Не можам да креирам врска за URL-та \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3020
+#: ../thunar/thunar-standard-view.c:3024
 #, c-format
 msgid "Failed to open directory \"%s\""
 msgstr "Не можам да го отворам директориумот \"%s\""
 
-#: ../thunar/thunar-standard-view.c:3347
+#: ../thunar/thunar-standard-view.c:3351
 msgid "Prepare the selected file to be moved with a Paste command"
 msgid_plural "Prepare the selected files to be moved with a Paste command"
 msgstr[0] ""
@@ -2356,7 +2359,7 @@ msgstr[1] ""
 msgstr[2] ""
 "Подготви ја избраните датотеки да бидат преместени од командата „Вметни“"
 
-#: ../thunar/thunar-standard-view.c:3355
+#: ../thunar/thunar-standard-view.c:3359
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] ""
@@ -2366,35 +2369,35 @@ msgstr[1] ""
 msgstr[2] ""
 "Подготви ја избраните датотеки да бидат копирани од командата „Вметни“"
 
-#: ../thunar/thunar-standard-view.c:3366
+#: ../thunar/thunar-standard-view.c:3370
 msgid "Delete the selected file"
 msgid_plural "Delete the selected files"
 msgstr[0] "Избриши ја избраната датотека"
 msgstr[1] "Избриши ги избраните датотеки"
 msgstr[2] "Избриши ги избраните датотеки"
 
-#: ../thunar/thunar-standard-view.c:3380
+#: ../thunar/thunar-standard-view.c:3384
 msgid "Duplicate the selected file"
 msgid_plural "Duplicate each selected file"
 msgstr[0] "Дуплирај ја избраната датотека"
 msgstr[1] "Дуплирај ги избраните датотеки"
 msgstr[2] "Дуплирај ги избраните датотеки"
 
-#: ../thunar/thunar-standard-view.c:3389
+#: ../thunar/thunar-standard-view.c:3393
 msgid "Create a symbolic link for the selected file"
 msgid_plural "Create a symbolic link for each selected file"
 msgstr[0] "Креирај симболична врска за избраната датотека"
 msgstr[1] "Креирај симболични врски за избраните датотеки"
 msgstr[2] "Креирај симболични врски за избраните датотеки"
 
-#: ../thunar/thunar-standard-view.c:3397
+#: ../thunar/thunar-standard-view.c:3401
 msgid "Rename the selected file"
 msgid_plural "Rename the selected files"
 msgstr[0] "Преименувај ја избраната датотека"
 msgstr[1] "Преименувај ги избраните датотеки"
 msgstr[2] "Преименувај ги избраните датотеки"
 
-#: ../thunar/thunar-standard-view.c:3405
+#: ../thunar/thunar-standard-view.c:3409
 msgid "Restore the selected file"
 msgid_plural "Restore the selected files"
 msgstr[0] "Врати ја избраната датотека"
@@ -2932,78 +2935,106 @@ msgstr "Кон_вертирај во:"
 msgid "Uppercase / Lowercase"
 msgstr "Со мали букви/ големи букви"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:84
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
+#, fuzzy
+msgid "Insert _time:"
+msgstr "Вметни"
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
+msgid ""
+"The format describes the date and time parts to insert into the file name. "
+"For example, %Y will be substituted with the year, %m with the month and %d "
+"with the day. See the documentation of the date utility for additional "
+"information."
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
+#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
+msgid "_At position:"
+msgstr "_На позиција:"
+
+#: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
+#, fuzzy
+msgid "Insert Date / Time"
+msgstr "Вметни / Запиши над"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
 msgstr "мали букви"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:85
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:94
 msgid "UPPERCASE"
 msgstr "ГОЛЕМИ БУКВИ"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:86
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:95
 msgid "Camelcase"
 msgstr "Мали-големи букви"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:92
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:101
 msgid "Insert"
 msgstr "Вметни"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
 msgid "Overwrite"
 msgstr "Запиши над"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:99
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:108
 msgid "1, 2, 3, ..."
 msgstr "1, 2, 3, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:100
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:109
 msgid "01, 02, 03, ..."
 msgstr "01, 02, 03, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:101
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:110
 msgid "001, 002, 003, ..."
 msgstr "001, 002, 003, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:102
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:111
 msgid "0001, 0002, 0003, ..."
 msgstr "0001, 0002, 0003, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:103
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:112
 msgid "a, b, c, d, ..."
 msgstr "a, b, c, d, ..."
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:109
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:118
 msgid "From the front (left)"
 msgstr "Од напред (лево)"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:110
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:119
 msgid "From the back (right)"
 msgstr "Од назад (десно)"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:116
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:125
 msgid "Old Name - Text - Number"
 msgstr "Старо име - текст - број"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:117
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:126
 msgid "Number - Text - Old Name"
 msgstr "Број - текст - старо име"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:118
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:127
 msgid "Text - Number"
 msgstr "Текст - број"
 
-#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:119
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:128
 msgid "Number - Text"
 msgstr "Број - текст"
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
+msgid "Current"
+msgstr ""
+
+#: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
+#, fuzzy
+msgid "Date Picture Taken"
+msgstr "Дата на сликање:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
 msgid "_Text:"
 msgstr "_Текст:"
-
-#: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
-msgid "_At position:"
-msgstr "_На позиција:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:387
 msgid "Insert / Overwrite"

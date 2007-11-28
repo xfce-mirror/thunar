@@ -33,6 +33,7 @@ static GType insert_mode_type;
 static GType number_mode_type;
 static GType offset_mode_type;
 static GType text_mode_type;
+static GType date_mode_type;
 
 
 
@@ -72,6 +73,14 @@ GType
 thunar_sbr_text_mode_get_type (void)
 {
   return text_mode_type;
+}
+
+
+
+GType
+thunar_sbr_date_mode_get_type (void)
+{
+  return date_mode_type;
 }
 
 
@@ -120,11 +129,23 @@ thunar_sbr_register_enum_types (ThunarxProviderPlugin *plugin)
     { 0,                        NULL,                       NULL,                            },
   };
 
+  static const GEnumValue date_mode_values[] =
+  {
+    { THUNAR_SBR_DATE_MODE_NOW,    "THUNAR_SBR_DATE_MODE_NOW",   N_ ("Current"),            },
+    { THUNAR_SBR_DATE_MODE_ATIME,  "THUNAR_SBR_DATE_MODE_ATIME", N_ ("Date Accessed"),      },
+    { THUNAR_SBR_DATE_MODE_MTIME,  "THUNAR_SBR_DATE_MODE_MTIME", N_ ("Date Modified"),      },
+#ifdef HAVE_EXIF
+    { THUNAR_SBR_DATE_MODE_TAKEN,  "THUNAR_SBR_DATE_MODE_TAKEN", N_ ("Date Picture Taken"), },
+#endif
+    { 0,                           NULL,                         NULL,                      },
+  };
+
   case_renamer_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrCaseRenamerMode", case_renamer_mode_values);
   insert_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrInsertMode", insert_mode_values);
   number_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrNumberMode", number_mode_values);
   offset_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrOffsetMode", offset_mode_values);
   text_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrTextMode", text_mode_values);
+  date_mode_type = thunarx_provider_plugin_register_enum (plugin, "ThunarSbrDateMode", date_mode_values);
 }
 
 

@@ -28,6 +28,7 @@
 #include <thunar-sbr/thunar-sbr-provider.h>
 #include <thunar-sbr/thunar-sbr-remove-renamer.h>
 #include <thunar-sbr/thunar-sbr-replace-renamer.h>
+#include <thunar-sbr/thunar-sbr-date-renamer.h>
 
 
 
@@ -62,6 +63,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
   thunar_sbr_provider_register_type (plugin);
   thunar_sbr_remove_renamer_register_type (plugin);
   thunar_sbr_replace_renamer_register_type (plugin);
+  thunar_sbr_date_renamer_register_type (plugin);
 
   /* setup the plugin provider type list */
   type_list[0] = THUNAR_SBR_TYPE_PROVIDER;
