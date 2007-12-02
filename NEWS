@@ -1,3 +1,38 @@
+0.9.0
+=====
+- Do not display volumes without mountable file systems (Bug #3555).
+- Properly recognize OGG files as audio files for custom actions (Bug #3604).
+- Add new date renamer (Bug #3656).
+- Pass the correct $DISPLAY value to processes spawned by Thunar and
+  xfdesktop in multi screen environments (Bug #3667).
+- Preselect the whole filename when renaming folders (Bug #3057).
+- Prevent infinite recursion on JPEG files with broken EXIF data (Bug #3452).
+- Fix crash on amd64 (Bug #3303).
+- Add support to retry job based operations.
+- Display more details in the override dialog (Bug #3268).
+- Add support for different date/time formats (Bug #3265).
+- Fix crash on sparc64 (Bug #2815).
+- Properly binaries selected for custom actions (Bug #3105).
+- Fix invalid invocation of thunar-volman for volumes that should be
+  ignored (Bug #2789).
+- Reduce binary size by stripping XML comments and whitespace (Bug #3094).
+- Use the correct HAL property to determine whether a given volume or
+  device requires eject (Bug #3119).
+- Automatically disable thumbnailing if storing a thumbnail fails because
+  of a fatal error (Bug #3020).
+- Fix crash because of unaligned memory access (Bug #2880).
+- Fix compilation with the Sun Studio 11 compiler (Bug #2899, #2900).
+- Updated translations: Alexander Nyakhaychyk (be), Pau Rul-lan Ferragut (ca),
+                        Benedikt Meurer (de), Piarres Beobide (eu), Jari
+                        Rahkonen (fi) Daichi Kawahata (ja), ByungHyun Choi (ko),
+                        Stephan Arts, Peter Maassen and Vincent Tunru (nl),
+                        Szymon Kałasz (pl), Fábio Nogueira (pt_BR), Mişu
+                        Moldovan (ro), Eren Turkay (tr), Dmitry Nikitin (uk)
+- New translations: Mohamed Magdy (ar), Jeff Bailes (en_GB), Rihards Prieditis
+                    (lv), Terje Uriansrud (nb_NO), Amanpreet SIngh Alam (pa),
+                    Nuno Miguel (pt_PT), Besnik Bleta (sq), ﻢﺤﻣﺩ ﻊﻠﻳ ﺎﻠﻤﻜﻳ (ur)
+
+
 0.8.0
 =====
 - Add documentation for the bulk renamer (Bug #1594).

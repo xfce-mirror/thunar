@@ -60,4 +60,7 @@ include $(top_srcdir)/gtk-doc.make
 EXTRA_DIST +=								\
 	version.xml.in
 
+# required for gtk-doc
+dist-hook: all
+
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
