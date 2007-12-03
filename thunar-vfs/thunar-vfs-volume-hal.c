@@ -1007,9 +1007,7 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
   hv = libhal_volume_from_udi (context, udi);
 
   /* HAL might want us to ignore this volume for some reason */
-  if (G_UNLIKELY (hv != NULL
-        && (libhal_volume_should_ignore (hv)
-          || libhal_volume_get_fsusage (hv) != LIBHAL_VOLUME_USAGE_MOUNTABLE_FILESYSTEM)))
+  if (G_UNLIKELY (hv != NULL && libhal_volume_should_ignore (hv)))
     {
       libhal_volume_free (hv);
       return;
@@ -1020,38 +1018,42 @@ thunar_vfs_volume_manager_hal_device_added (LibHalContext *context,
 
   if (G_LIKELY (hv != NULL))
     {
-      /* determine the UDI of the drive to which this volume belongs */
-      drive_udi = libhal_volume_get_storage_device_udi (hv);
-      if (G_LIKELY (drive_udi != NULL))
+      /* check if we have a mountable file system here */
+      if (libhal_volume_get_fsusage (hv) == LIBHAL_VOLUME_USAGE_MOUNTABLE_FILESYSTEM)
         {
-          /* determine the drive for the volume */
-          hd = libhal_drive_from_udi (context, drive_udi);
-          if (G_LIKELY (hd != NULL))
+          /* determine the UDI of the drive to which this volume belongs */
+          drive_udi = libhal_volume_get_storage_device_udi (hv);
+          if (G_LIKELY (drive_udi != NULL))
             {
-              /* check if we already have a volume object for the UDI */
-              volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);
-              if (G_LIKELY (volume_hal == NULL))
+              /* determine the drive for the volume */
+              hd = libhal_drive_from_udi (context, drive_udi);
+              if (G_LIKELY (hd != NULL))
                 {
-                  /* otherwise, we allocate a new volume object */
-                  volume_hal = g_object_new (THUNAR_VFS_TYPE_VOLUME_HAL, NULL);
-                  volume_hal->udi = g_strdup (udi);
+                  /* check if we already have a volume object for the UDI */
+                  volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, udi);
+                  if (G_LIKELY (volume_hal == NULL))
+                    {
+                      /* otherwise, we allocate a new volume object */
+                      volume_hal = g_object_new (THUNAR_VFS_TYPE_VOLUME_HAL, NULL);
+                      volume_hal->udi = g_strdup (udi);
+                    }
+
+                  /* update the volume object with the new data from the HAL volume/drive */
+                  thunar_vfs_volume_hal_update (volume_hal, context, hv, hd);
+
+                  /* add the volume object to our list if we allocated a new one */
+                  if (g_list_find (THUNAR_VFS_VOLUME_MANAGER (manager_hal)->volumes, volume_hal) == NULL)
+                    {
+                      /* add the volume to the volume manager */
+                      thunar_vfs_volume_manager_add (THUNAR_VFS_VOLUME_MANAGER (manager_hal), THUNAR_VFS_VOLUME (volume_hal));
+
+                      /* release the reference on the volume */
+                      g_object_unref (G_OBJECT (volume_hal));
+                    }
+
+                  /* release the HAL drive */
+                  libhal_drive_free (hd);
                 }
-
-              /* update the volume object with the new data from the HAL volume/drive */
-              thunar_vfs_volume_hal_update (volume_hal, context, hv, hd);
-
-              /* add the volume object to our list if we allocated a new one */
-              if (g_list_find (THUNAR_VFS_VOLUME_MANAGER (manager_hal)->volumes, volume_hal) == NULL)
-                {
-                  /* add the volume to the volume manager */
-                  thunar_vfs_volume_manager_add (THUNAR_VFS_VOLUME_MANAGER (manager_hal), THUNAR_VFS_VOLUME (volume_hal));
-
-                  /* release the reference on the volume */
-                  g_object_unref (G_OBJECT (volume_hal));
-                }
-
-              /* release the HAL drive */
-              libhal_drive_free (hd);
             }
         }
 
