@@ -324,8 +324,10 @@ tvsn_startup_timeout_destroy (gpointer data)
   if (startup_data->watch_id != 0)
     g_source_remove (startup_data->watch_id);
 
-  /* close the PID */
-  g_spawn_close_pid (startup_data->pid);
+  /* make sure we don't leave zombies (see bug #2983 for details) */
+  g_child_watch_add_full (G_PRIORITY_LOW, startup_data->pid,
+                          (GChildWatchFunc) g_spawn_close_pid,
+                          NULL, NULL);
 
   /* release the startup data */
   _thunar_vfs_slice_free (TvsnStartupData, startup_data);
@@ -512,6 +514,12 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
           startup_data->watch_id = g_child_watch_add_full (G_PRIORITY_LOW, pid, tvsn_startup_watch, startup_data, NULL);
           startup_data->pid = pid;
         }
+    }
+  else if (G_LIKELY (succeed))
+    {
+      /* make sure we don't leave zombies (see bug #2983 for details) */
+      g_child_watch_add_full (G_PRIORITY_LOW, pid, (GChildWatchFunc) g_spawn_close_pid, NULL, NULL);
+
     }
 
   /* release the sn display */
