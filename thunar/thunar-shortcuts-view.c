@@ -834,13 +834,12 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
 
-      /* check if the volume is a disc */
-      if (thunar_vfs_volume_is_disc (volume))
+      /* check if the volume is ejectable */
+      if (thunar_vfs_volume_is_ejectable (volume))
         {
           /* append the "Eject Volume" menu action */
           item = gtk_image_menu_item_new_with_mnemonic (_("E_ject Volume"));
           g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_eject), view);
-          gtk_widget_set_sensitive (item, thunar_vfs_volume_is_ejectable (volume));
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_show (item);
         }
