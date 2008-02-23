@@ -1,7 +1,7 @@
 # Greek translation of the thunar package.
-# Copyright (C) 2004-2007 Benedikt Meurer.
+# Copyright (C) 2004-2008 Benedikt Meurer.
 # This file is distributed under the same license as the thunar package.
-# Stavros Giannouris <stavrosg@hellug.gr>, 2005-2007.
+# Stavros Giannouris <stavrosg@hellug.gr>, 2005-2008.
 # Stathis Kamperis <ekamperi@auth.gr>, 2006
 #
 msgid ""
@@ -9,8 +9,8 @@ msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-11-28 19:01+0100\n"
-"PO-Revision-Date: 2007-01-19 10:21+0200\n"
-"Last-Translator: Stavros Giannouris <stavrosg2002@freemail.gr>\n"
+"PO-Revision-Date: 2008-02-23 19:35+0200\n"
+"Last-Translator: Stavros Giannouris <stavrosg@hellug.gr>\n"
 "Language-Team: Greek <nls@tux.hellug.gr>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
@@ -246,6 +246,9 @@ msgid ""
 "\n"
 "If you replace an existing file, its contents will be overwritten."
 msgstr ""
+"Το αρχείο \"%s\" υπάρχει ήδη. Θέλετε να το αντικαταστήσετε;\n"
+"\n"
+"Αν αντικαταστήσετε ένα υπάρχον αρχείο, θα αντικαταστήσετε τα περιεχόμενά του."
 
 #: ../thunar-vfs/thunar-vfs-job.c:897
 msgid "Do you want to overwrite it?"
@@ -928,9 +931,8 @@ msgid "N_o to all"
 msgstr "Ό_χι σε όλα"
 
 #: ../thunar/thunar-dialogs.c:348
-#, fuzzy
 msgid "_Retry"
-msgstr "_Επαναφορά"
+msgstr "Πρ_οσπάθεια ξανά"
 
 #: ../thunar/thunar-dialogs.c:353
 msgid "_Cancel"
@@ -939,30 +941,28 @@ msgstr "_Ακύρωση"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:433
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "Επιβεβαιώστε οτι θέλετε να αντικαταστήσετε τα αρχεία"
 
 #: ../thunar/thunar-dialogs.c:439
 msgid "_Skip"
-msgstr ""
+msgstr "Προ_σπέραση"
 
 #: ../thunar/thunar-dialogs.c:440
-#, fuzzy
 msgid "Replace _All"
-msgstr "Αντικατάσταση _με: "
+msgstr "Αντικατάσταση όλ_ων "
 
 #: ../thunar/thunar-dialogs.c:441
-#, fuzzy
 msgid "_Replace"
-msgstr "_Μετονομασία"
+msgstr "Α_ντικατάσταση"
 
 #: ../thunar/thunar-dialogs.c:471
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "Αυτός ο φάκελος περιέχει ήδη ένα αρχείο \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:479
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr ""
+msgstr "Θέλετε να αντικαταστήσετε το υπάρχον αρχείο"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -979,7 +979,7 @@ msgstr "Τροποποιήθηκε:"
 
 #: ../thunar/thunar-dialogs.c:504
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr ""
+msgstr "με το ακόλουθο αρχείο;"
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1554,7 +1554,7 @@ msgstr "Προτιμήσεις διαχειριστή αρχείων"
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
-msgstr ""
+msgstr "Εμφάνιση"
 
 #: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
@@ -1617,13 +1617,12 @@ msgstr ""
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
-msgstr ""
+msgstr "Ημερομηνία"
 
 #: ../thunar/thunar-preferences-dialog.c:338
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
-#, fuzzy
 msgid "_Format:"
-msgstr "Μορφή _κειμένου:"
+msgstr "Μορ_φή:"
 
 #.
 #. Side Pane
@@ -2403,9 +2402,9 @@ msgstr "Σήμερα"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "Today at %X"
-msgstr "Σήμερα"
+msgstr "Σήμερα στις %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2414,21 +2413,21 @@ msgstr "Χτές"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "Yesterday at %X"
-msgstr "Χτές"
+msgstr "Χτές στις %X"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:145
 #, c-format
 msgid "%A at %X"
-msgstr ""
+msgstr "%A στις %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:150
 #, c-format
 msgid "%x at %X"
-msgstr ""
+msgstr "%x στις %X"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
@@ -2897,9 +2896,8 @@ msgid "Uppercase / Lowercase"
 msgstr "Κεφαλαία / Πεζά"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
-#, fuzzy
 msgid "Insert _time:"
-msgstr "Εισαγωγή"
+msgstr "Εισάγε_τε ώρα"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
 msgid ""
@@ -2908,6 +2906,10 @@ msgid ""
 "with the day. See the documentation of the date utility for additional "
 "information."
 msgstr ""
+"Αυτή η μορφή εξηγεί τα τμήματα της ημερομηνίας και της ώρας που μπορούν να "
+"εισαχθούν στο όνομα του αρχείου. Για παράδειγμα, το %Y αντικαθίσταται με το "
+"έτος, %m με το μήνα και %d με την ημέρα. Δείτε την τεκμηρίωση της εντολής "
+"date για περισσότερες πληροφορίες."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
@@ -2915,9 +2917,8 @@ msgid "_At position:"
 msgstr "_Στη θέση:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
-#, fuzzy
 msgid "Insert Date / Time"
-msgstr "Εισαγωγή / Αντικατάσταση"
+msgstr "Εισάγετε ημερομηνία / ώρα"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
@@ -2985,12 +2986,11 @@ msgstr "Αριθμός - Κείμενο"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
 msgid "Current"
-msgstr ""
+msgstr "Τρέχον"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
-#, fuzzy
 msgid "Date Picture Taken"
-msgstr "Ημερομηνία λήψης:"
+msgstr "Ημερομηνία λήψης"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
