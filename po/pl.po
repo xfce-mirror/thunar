@@ -1,7 +1,7 @@
 # Polish translation of the thunar package.
 # Copyright (C) 2004-2007 Benedikt Meurer.
 # This file is distributed under the same license as the thunar package.
-# Piotr Maliński <admin@rk.edu.pl>, 2006.
+# Piotr Maliński <riklaunim@gmail.com>, 2006.
 # Tomasz Michał Łukaszewski <T.Lukaszewski@aster.pl>, 2006.
 # Szymon Kałasz <szymon_maestro@gazeta.pl>, 2007.
 #
@@ -11,7 +11,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2007-11-28 19:01+0100\n"
 "PO-Revision-Date: 2007-01-20 23:10+0200\n"
-"Last-Translator: Szymon Kałasz <szymon_maestro@gazeta.pl>\n"
+"Last-Translator: Piotr Maliński <riklaunim@gmail.com>\n"
 "Language-Team: Polish <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -918,9 +918,8 @@ msgid "N_o to all"
 msgstr "N_ie dla wszystkich"
 
 #: ../thunar/thunar-dialogs.c:348
-#, fuzzy
 msgid "_Retry"
-msgstr "_Przywróć"
+msgstr "_Powtórz"
 
 #: ../thunar/thunar-dialogs.c:353
 msgid "_Cancel"
@@ -929,30 +928,28 @@ msgstr "_Anuluj"
 #. setup the confirmation dialog
 #: ../thunar/thunar-dialogs.c:433
 msgid "Confirm to replace files"
-msgstr ""
+msgstr "Potwierdź zastąpienie plików"
 
 #: ../thunar/thunar-dialogs.c:439
 msgid "_Skip"
-msgstr ""
+msgstr "_Pomiń"
 
 #: ../thunar/thunar-dialogs.c:440
-#, fuzzy
 msgid "Replace _All"
-msgstr "_Zamień na:"
+msgstr "Zamień _Wszystko"
 
 #: ../thunar/thunar-dialogs.c:441
-#, fuzzy
 msgid "_Replace"
-msgstr "_Zmień nazwę"
+msgstr "_Zmień"
 
 #: ../thunar/thunar-dialogs.c:471
 #, c-format
 msgid "This folder already contains a file \"%s\"."
-msgstr ""
+msgstr "Ten folder już zawiera plik \"%s\"."
 
 #: ../thunar/thunar-dialogs.c:479
 msgid "ReplaceDialogPart1|Do you want to replace the existing file"
-msgstr ""
+msgstr "Chcesz zastąpić istniejący plik"
 
 #.
 #. Fourth box (size, volume, free space)
@@ -969,7 +966,7 @@ msgstr "Ostatnio zmodyfikowany:"
 
 #: ../thunar/thunar-dialogs.c:504
 msgid "ReplaceDialogPart2|with the following file?"
-msgstr ""
+msgstr "następującym plikiem?"
 
 #: ../thunar/thunar-dnd.c:70
 msgid "_Copy here"
@@ -1554,7 +1551,7 @@ msgstr "Ustawienia menedżera plików"
 #.
 #: ../thunar/thunar-preferences-dialog.c:245
 msgid "Display"
-msgstr ""
+msgstr "Wyświetlanie"
 
 #: ../thunar/thunar-preferences-dialog.c:255
 msgid "Default View"
@@ -1613,13 +1610,12 @@ msgstr "Wybierz tą opcję by tekst był wyświetlany wycentrowany, obok ikon."
 
 #: ../thunar/thunar-preferences-dialog.c:326
 msgid "Date"
-msgstr ""
+msgstr "Data"
 
 #: ../thunar/thunar-preferences-dialog.c:338
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:223
-#, fuzzy
 msgid "_Format:"
-msgstr "_Format tekstu:"
+msgstr "_Format:"
 
 #.
 #. Side Pane
@@ -2401,9 +2397,9 @@ msgstr "Dzisiaj"
 
 #. TRANSLATORS: file was modified less than one day ago
 #: ../thunar/thunar-util.c:124
-#, fuzzy, c-format
+#, c-format
 msgid "Today at %X"
-msgstr "Dzisiaj"
+msgstr "Dzisiaj o %X"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:132
@@ -2412,21 +2408,21 @@ msgstr "Wczoraj"
 
 #. TRANSLATORS: file was modified less than two days ago
 #: ../thunar/thunar-util.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "Yesterday at %X"
-msgstr "Wczoraj"
+msgstr "Wczoraj o %X"
 
 #. Days from last week
 #: ../thunar/thunar-util.c:145
 #, c-format
 msgid "%A at %X"
-msgstr ""
+msgstr "%A o %X"
 
 #. Any other date
 #: ../thunar/thunar-util.c:150
 #, c-format
 msgid "%x at %X"
-msgstr ""
+msgstr "%x o %X"
 
 #: ../thunar/thunar-window.c:267
 msgid "Open New _Window"
@@ -2886,9 +2882,8 @@ msgid "Uppercase / Lowercase"
 msgstr "Wielkie / małe litery"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
-#, fuzzy
 msgid "Insert _time:"
-msgstr "Wstaw"
+msgstr "Wstaw _czas:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
 msgid ""
@@ -2897,6 +2892,9 @@ msgid ""
 "with the day. See the documentation of the date utility for additional "
 "information."
 msgstr ""
+"Format określa datę i czas wstawiane do nazw plików."
+"Przykładowo, %Y zostanie zastąpione rokiem, %m miesiącem, a %d"
+"dniem. Szczegóły zawiera dokumentacja date."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
@@ -2904,9 +2902,8 @@ msgid "_At position:"
 msgstr "_Na pozycji:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
-#, fuzzy
 msgid "Insert Date / Time"
-msgstr "Wstaw / nadpisz"
+msgstr "Wstaw Datę / Czas"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
@@ -2974,12 +2971,11 @@ msgstr "Liczba - tekst"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
 msgid "Current"
-msgstr ""
+msgstr "Obecna"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
-#, fuzzy
 msgid "Date Picture Taken"
-msgstr "Data zrobienia zdjęcia"
+msgstr "Data Zrobienia Zdjęcia"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260

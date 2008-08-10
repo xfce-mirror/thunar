@@ -1046,7 +1046,7 @@ msgstr "뒤로"
 
 #: ../thunar/thunar-history.c:193
 msgid "Go to the previous visited folder"
-msgstr "이전 방문했던 폴더로 가기"
+msgstr "이전 폴더로 가기"
 
 #. create the "forward" action
 #: ../thunar/thunar-history.c:199
@@ -1055,13 +1055,13 @@ msgstr "앞으로"
 
 #: ../thunar/thunar-history.c:199
 msgid "Go to the next visited folder"
-msgstr "다음 방문했던 폴더로 가기"
+msgstr "다음 폴더로 가기"
 
 #: ../thunar/thunar-icon-factory.c:754
 #, c-format
 msgid "Failed to load fallback icon from \"%s\" (%s). Check your installation!"
 msgstr ""
-"\"%s\" (%s)로부터 대체 아이콘을 로드하지 못 했습니다. 설치를 확인하세요."
+"\"%s\" (%s)로부터 대체 아이콘을 로드하지 못 했습니다. 설치했는 지 확인하십시오."
 
 #: ../thunar/thunar-icon-view.c:198
 msgid "Icon based directory listing"
@@ -2836,9 +2836,8 @@ msgid "Uppercase / Lowercase"
 msgstr "대문자/소문자"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:202
-#, fuzzy
 msgid "Insert _time:"
-msgstr "삽입"
+msgstr "시간 추가(_t)"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:231
 msgid ""
@@ -2847,16 +2846,18 @@ msgid ""
 "with the day. See the documentation of the date utility for additional "
 "information."
 msgstr ""
+"화일 이름에 추가하기위한 날짜와 시간을 표현하기 위한 형식입니다. "
+"예을 들자면, %Y는 연도를, %m은 월을 의미하며 %d는 날짜로 대체됩니다. "
+"보다 자세한 것은 날짜관련 프로그램의 설명서를 보시기 바랍니다."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
 msgid "_At position:"
-msgstr "_At position:"
+msgstr "위치지정(_A):"
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:593
-#, fuzzy
 msgid "Insert Date / Time"
-msgstr "삽입 / 덮어쓰기"
+msgstr "날짜/시간 추가"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:93
 msgid "lowercase"
@@ -2924,12 +2925,11 @@ msgstr "Number - Text"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:134
 msgid "Current"
-msgstr ""
+msgstr "현재"
 
 #: ../plugins/thunar-sbr/thunar-sbr-enum-types.c:138
-#, fuzzy
 msgid "Date Picture Taken"
-msgstr "찍은 날짜:"
+msgstr "촬영일"
 
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:181
 #: ../plugins/thunar-sbr/thunar-sbr-number-renamer.c:260
@@ -3025,7 +3025,7 @@ msgstr "검색 & 대체"
 #: ../plugins/thunar-sendto-email/main.c:176
 #, c-format
 msgid "Send \"%s\" as compressed archive?"
-msgstr "\"%s\"을(를) 압축된 형태로 보냅니까?"
+msgstr "\"%s\"을(를) 압축된 형태로 보내시렵니까?"
 
 #: ../plugins/thunar-sendto-email/main.c:178
 #: ../plugins/thunar-sendto-email/main.c:197
@@ -3082,25 +3082,25 @@ msgstr "%d 에러로 ZIP명령이 종료되었습니다."
 
 #: ../plugins/thunar-sendto-email/main.c:385
 msgid "Failed to create temporary directory"
-msgstr "임시 디렉토리 생성에 실패했습니다."
+msgstr "임시 디렉토리 생성하지 못 했습니다."
 
 #: ../plugins/thunar-sendto-email/main.c:436
 #, c-format
 msgid "Failed to create symbolic link for \"%s\""
-msgstr "\"%s\"에 대한 심볼릭 링크 생성에 실패했습니다."
+msgstr "\"%s\"에 대한 심볼릭 링크를 만들지 못 했습니다."
 
 #. tell the user that we failed to compress the file(s)
 #: ../plugins/thunar-sendto-email/main.c:459
 #, c-format
 msgid "Failed to compress %d file"
 msgid_plural "Failed to compress %d files"
-msgstr[0] "%d 화일을 압축하는데 실패했습니다."
-msgstr[1] "%d 화일들을 압축하는데 실패했습니다."
+msgstr[0] "%d 화일을 압축하지 못 했습니다."
+msgstr[1] "%d 화일들을 압축하지 못 했습니다."
 
 #. tell the user that we failed
 #: ../plugins/thunar-sendto-email/main.c:600
 msgid "Failed to compose new email"
-msgstr "새로운 이메일 구성에 실패했습니다."
+msgstr "새로운 이메일 작성하지 못 했습니다."
 
 #: ../plugins/thunar-sendto-email/thunar-sendto-email.desktop.in.in.h:1
 msgid "Mail Recipient"
@@ -3113,7 +3113,7 @@ msgstr "메일 접수자"
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:346
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:380
 msgid "Failed to connect to the Trash"
-msgstr "쓰레기통 연결에 실패했습니다."
+msgstr "쓰레기통에 연결하지 못 했습니다."
 
 #. tell the user whether the trash is full or empty
 #: ../plugins/thunar-tpa/thunar-tpa-icon.c:287
@@ -3146,7 +3146,7 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:187
 msgid "Add a new custom action."
-msgstr "새로운 사용자 정의명령을 추가합니다."
+msgstr "사용자 정의명령을 새롭게 추가합니다."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:197
 msgid "Edit the currently selected action."
@@ -3158,11 +3158,11 @@ msgstr "현재 선택된 명령을 삭제합니다."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:217
 msgid "Move the currently selected action up by one row."
-msgstr "현재 선택된 명령을 한열씩 위로 이동시킵니다."
+msgstr "현재 선택된 명령을 한줄씩 위로 이동시킵니다."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:227
 msgid "Move the currently selected action down by one row."
-msgstr "현재 선택된 명령을 한열씩 아래로 이동시킵니다."
+msgstr "현재 선택된 명령을 한줄씩 아래로 이동시킵니다."
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:363
 msgid "Edit Action"
