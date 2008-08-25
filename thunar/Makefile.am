@@ -13,6 +13,9 @@ INCLUDES =								\
 	-DTHUNAR_VERSION_API=\"$(THUNAR_VERSION_API)\"			\
 	$(PLATFORM_CPPFLAGS)
 
+bin_SCRIPTS =								\
+	thunar-settings
+
 bin_PROGRAMS =								\
 	Thunar
 
@@ -231,6 +234,11 @@ Thunar_LDADD +=								\
 	$(DBUS_LIBS)
 endif
 
+desktopdir = $(datadir)/applications
+desktop_in_files = thunar-settings.desktop.in
+desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
+@INTLTOOL_DESKTOP_RULE@
+
 # install symlink to 'thunar'
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
@@ -334,6 +342,7 @@ EXTRA_DIST =								\
 	thunar-renamer-dialog-ui.xml					\
 	thunar-standard-view-ui.xml					\
 	thunar-thumbnail-frame.png					\
-	thunar-window-ui.xml
+	thunar-window-ui.xml					\
+	$(desktop_in_files)
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:

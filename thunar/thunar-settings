@@ -1,0 +1,6 @@
+#!/bin/sh
+
+test "x$DISPLAY" != "x" || DISPLAY=:0
+
+dbus-send --session --dest=org.xfce.FileManager /org/xfce/FileManager \
+    org.xfce.FileManager.DisplayPreferencesDialog "string:$DISPLAY"
