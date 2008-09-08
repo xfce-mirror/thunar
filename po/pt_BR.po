@@ -6,14 +6,15 @@
 # Adriano Winter Bess <awbess@gmail.com>, 2006.
 # William Koch <wkromani@gmail.com>, 2007.
 # Fábio Nogueira <deb-user-ba@ubuntu.com>, 2007.
+# Og Maciel <ogmaciel@gnome.org>, 2008.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-28 19:01+0100\n"
-"PO-Revision-Date: 2007-11-29 02:30-0300\n"
-"Last-Translator: Fábio Nogueira <deb-user-ba@ubuntu.com>\n"
+"POT-Creation-Date: 2008-09-07 20:44-0400\n"
+"PO-Revision-Date: 2008-09-07 20:51-0400\n"
+"Last-Translator: Og Maciel <ogmaciel@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -22,36 +23,44 @@ msgstr ""
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
+#, c-format
 msgid "Failed to read folder contents"
 msgstr "Falha ao ler o conteúdo da pasta"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:582
+#: ../thunar-vfs/thunar-vfs-exec.c:590
+#, c-format
 msgid "Unknown error"
 msgstr "Erro desconhecido"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:390
+#, c-format
 msgid "No Exec field specified"
 msgstr "Nenhum campo Exec especificado"
 
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:409
+#, c-format
 msgid "No URL field specified"
 msgstr "Nenhum campo URL especificado"
 
 #: ../thunar-vfs/thunar-vfs-info.c:414 ../thunar-vfs/thunar-vfs-private.c:384
+#, c-format
 msgid "Invalid desktop file"
 msgstr "Arquivo de área de trabalho inválido"
 
 #: ../thunar-vfs/thunar-vfs-info.c:422
+#, c-format
 msgid "Failed to parse file"
 msgstr "Falha ao interpretar o arquivo"
 
 #: ../thunar-vfs/thunar-vfs-info.c:503
+#, c-format
 msgid "Invalid file name"
 msgstr "Nome de arquivo inválido"
 
 #: ../thunar-vfs/thunar-vfs-info.c:510
+#, c-format
 msgid "Only local files may be renamed"
 msgstr "Apenas arquivos locais podem ser renomeados"
 
@@ -193,10 +202,12 @@ msgid "Failed to create symbolic link \"%s\""
 msgstr "Falha ao criar ligação simbólica \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:545
+#, c-format
 msgid "Special files cannot be copied"
 msgstr "Arquivos especiais não podem ser copiados"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:625
+#, c-format
 msgid "Symbolic links are not supported"
 msgstr "Ligações simbólicas não são suportadas"
 
@@ -237,6 +248,7 @@ msgstr "Lixeira"
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1317
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1431
+#, c-format
 msgid "Cannot move or copy files within the trash"
 msgstr "Não é possível mover ou copiar arquivos dentro da lixeira"
 
@@ -316,19 +328,23 @@ msgid "The URI \"%s\" is invalid"
 msgstr "O URI \"%s\" é inválido"
 
 #: ../thunar-vfs/thunar-vfs-path.c:800
+#, c-format
 msgid "Path too long to fit into buffer"
 msgstr "Caminho longo demais para caber no buffer"
 
 #: ../thunar-vfs/thunar-vfs-path.c:903
+#, c-format
 msgid "URI too long to fit into buffer"
 msgstr "URI longo demais para caber no buffer"
 
 #: ../thunar-vfs/thunar-vfs-private.c:233
+#, c-format
 msgid "Operation not supported"
 msgstr "Operação não suportada"
 
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:335
+#, c-format
 msgid "Invalidly escaped characters"
 msgstr "Caracteres de escape inválidos"
 
@@ -346,6 +362,7 @@ msgid "Collecting files..."
 msgstr "Coletando arquivos..."
 
 #: ../thunar-vfs/thunar-vfs-util.c:251
+#, c-format
 msgid "Invalid path"
 msgstr "Caminho inválido"
 
@@ -563,7 +580,7 @@ msgstr "Remover todos os arquivos e pastas da Lixeira?"
 #. append the "Empty Trash" menu action
 #. add the "Empty Trash" menu item
 #: ../thunar/thunar-application.c:1515 ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:865 ../thunar/thunar-tree-view.c:1072
+#: ../thunar/thunar-shortcuts-view.c:864 ../thunar/thunar-tree-view.c:1071
 #: ../thunar/thunar-window.c:269 ../plugins/thunar-tpa/main.c:49
 msgid "_Empty Trash"
 msgstr "_Esvaziar a Lixeira"
@@ -882,11 +899,13 @@ msgstr "Nome de arquivo \"%s\" inválido"
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
+#, c-format
 msgid "The working directory must be an absolute path"
 msgstr "O diretório de trabalho deve ser um caminho absoluto"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
+#, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Ao menos um nome de arquivo deve ser especificado"
 
@@ -1056,6 +1075,7 @@ msgid "File Name"
 msgstr "Nome do Arquivo"
 
 #: ../thunar/thunar-file.c:796
+#, c-format
 msgid "The root folder has no parent"
 msgstr "A pasta raiz não tem pai"
 
@@ -1218,8 +1238,8 @@ msgstr "Abrir Com \"%s\""
 #. tell the user that we were unable to mount the volume, which is required to send files to it
 #. display an error dialog to inform the user
 #: ../thunar/thunar-launcher.c:1225 ../thunar/thunar-location-entry.c:639
-#: ../thunar/thunar-shortcuts-view.c:1344 ../thunar/thunar-tree-view.c:953
-#: ../thunar/thunar-tree-view.c:1598
+#: ../thunar/thunar-shortcuts-view.c:1343 ../thunar/thunar-tree-view.c:953
+#: ../thunar/thunar-tree-view.c:1597
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Falha ao montar \"%s\""
@@ -1315,7 +1335,7 @@ msgstr[1] "%d itens selecionados"
 
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
-#: ../thunar/thunar-standard-view.c:323 ../thunar/thunar-tree-view.c:1088
+#: ../thunar/thunar-standard-view.c:323 ../thunar/thunar-tree-view.c:1087
 msgid "Create _Folder..."
 msgstr "Criar _Pasta..."
 
@@ -1371,12 +1391,12 @@ msgstr "Visualizar as propriedades da pasta \"%s\""
 
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1340
-#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1438
 msgid "New Folder"
 msgstr "Nova Pasta"
 
 #: ../thunar/thunar-location-buttons.c:1340
-#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-standard-view.c:1818 ../thunar/thunar-tree-view.c:1438
 msgid "Create New Folder"
 msgstr "Criar Nova Pasta"
 
@@ -2091,11 +2111,29 @@ msgid ""
 msgstr ""
 "Você deseja pular este arquivo e continuar renomeando os arquivos restantes?"
 
+#: ../thunar/thunar-settings.desktop.in.h:1
+msgid "Configure the Thunar file manager"
+msgstr "Configurar o gerenciador de arquivos Thunar"
+
+#. set window title and icon
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2002
+#: ../Thunar.desktop.in.in.h:2
+msgid "File Manager"
+msgstr "Gerenciador de arquivos"
+
+#: ../thunar/thunar-settings.desktop.in.h:3
+msgid "File Manager Settings"
+msgstr "Configurações do gerenciador de arquivos"
+
+#: ../thunar/thunar-settings.desktop.in.h:4
+msgid "Thunar Settings"
+msgstr "Configurações do Thunar"
+
 #: ../thunar/thunar-shortcuts-pane.c:413
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
-msgstr[0] "Painel Lateral (Criar Atalho)"
-msgstr[1] "Painel Lateral (Criar Atalhos)"
+msgstr[0] "Painel lateral (criar atalho)"
+msgstr[1] "Painel lateral (criar atalhos)"
 
 #: ../thunar/thunar-shortcuts-pane.c:415
 msgid "Add the selected folder to the shortcuts side pane"
@@ -2114,39 +2152,39 @@ msgid "E_ject Volume"
 msgstr "E_jetar Volume"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:850 ../thunar/thunar-tree-view.c:1057
+#: ../thunar/thunar-shortcuts-view.c:849 ../thunar/thunar-tree-view.c:1056
 msgid "_Unmount Volume"
 msgstr "_Desmontar Volume"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:878
+#: ../thunar/thunar-shortcuts-view.c:877
 msgid "_Remove Shortcut"
 msgstr "_Remover Favorito"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:893
+#: ../thunar/thunar-shortcuts-view.c:892
 msgid "Re_name Shortcut"
 msgstr "Re_nomear Favorito"
 
-#: ../thunar/thunar-shortcuts-view.c:1161
+#: ../thunar/thunar-shortcuts-view.c:1160
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "O caminho \"%s\" não se refere a um diretório"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1180
+#: ../thunar/thunar-shortcuts-view.c:1179
 msgid "Failed to add new shortcut"
 msgstr "Falha em adicionar novo favorito"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1298 ../thunar/thunar-tree-view.c:1547
+#: ../thunar/thunar-shortcuts-view.c:1297 ../thunar/thunar-tree-view.c:1546
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Falha ao ejetar \"%s\""
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1388 ../thunar/thunar-tree-view.c:1738
+#: ../thunar/thunar-shortcuts-view.c:1387 ../thunar/thunar-tree-view.c:1737
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Falha em desmontar \"%s\""
@@ -2186,12 +2224,12 @@ msgid "Create an empty folder within the current folder"
 msgstr "Criar uma pasta vazia dentro da pasta atual"
 
 #. append the "Cut" menu action
-#: ../thunar/thunar-standard-view.c:325 ../thunar/thunar-tree-view.c:1109
+#: ../thunar/thunar-standard-view.c:325 ../thunar/thunar-tree-view.c:1108
 msgid "Cu_t"
 msgstr "Recor_tar"
 
 #. append the "Copy" menu action
-#: ../thunar/thunar-standard-view.c:326 ../thunar/thunar-tree-view.c:1121
+#: ../thunar/thunar-standard-view.c:326 ../thunar/thunar-tree-view.c:1120
 msgid "_Copy"
 msgstr "_Copiar"
 
@@ -2206,7 +2244,7 @@ msgstr ""
 "ou Copiar"
 
 #. append the "Delete" menu action
-#: ../thunar/thunar-standard-view.c:328 ../thunar/thunar-tree-view.c:1156
+#: ../thunar/thunar-standard-view.c:328 ../thunar/thunar-tree-view.c:1155
 msgid "_Delete"
 msgstr "_Remover"
 
@@ -2383,12 +2421,12 @@ msgid "Loading..."
 msgstr "Carregando..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1138
+#: ../thunar/thunar-tree-view.c:1137
 msgid "_Paste Into Folder"
 msgstr "Colar dentro da _Pasta"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1179
+#: ../thunar/thunar-tree-view.c:1178
 msgid "P_roperties..."
 msgstr "P_ropriedades..."
 
@@ -2695,11 +2733,6 @@ msgstr ""
 "Thunar é um gerenciador de arquivos fácil de usar e rápido\n"
 "para o Ambiente de Área de Trabalho Xfce."
 
-#. set window title and icon
-#: ../thunar/thunar-window.c:2002 ../Thunar.desktop.in.in.h:2
-msgid "File Manager"
-msgstr "Gerenciador de Arquivos"
-
 #: ../thunarx/thunarx-property-page.c:137
 msgid "Label"
 msgstr "Rótulo"
@@ -2897,9 +2930,10 @@ msgid ""
 "For example, %Y will be substituted with the year, %m with the month and %d "
 "with the day. See the documentation of the date utility for additional "
 "information."
-msgstr "O formato descreve partes da data e a hora para inserir no nome do "
-"arquivo. Por exemplo, %Y será substituído pelo ano, %m pelo mês e %d pelo "
-"dia. Veja a documentação do utilitário de data para maiores informações."
+msgstr ""
+"O formato descreve partes da data e a hora para inserir no nome do arquivo. "
+"Por exemplo, %Y será substituído pelo ano, %m pelo mês e %d pelo dia. Veja a "
+"documentação do utilitário de data para maiores informações."
 
 #: ../plugins/thunar-sbr/thunar-sbr-date-renamer.c:250
 #: ../plugins/thunar-sbr/thunar-sbr-insert-renamer.c:199
@@ -3416,6 +3450,7 @@ msgid "Unknown element <%s>"
 msgstr "Elemento desconhecido <%s>"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:798
+#, c-format
 msgid "End element handler called while in root context"
 msgstr "Manipulador de elemento final chamado enquanto em contexto raíz"
 
@@ -3424,11 +3459,13 @@ msgstr "Manipulador de elemento final chamado enquanto em contexto raíz"
 msgid "Unknown closing element <%s>"
 msgstr "Elemento de fechamento desconhecido <%s>"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1318
+#: ../plugins/thunar-uca/thunar-uca-model.c:1332
+#, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "Falha em determinar local para salvar uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1433
+#: ../plugins/thunar-uca/thunar-uca-model.c:1447
+#, c-format
 msgid "Command not configured"
 msgstr "Comando não configurado"
 
