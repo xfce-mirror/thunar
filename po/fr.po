@@ -11,48 +11,56 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2007-11-28 19:01+0100\n"
-"PO-Revision-Date: 2008-02-18 02:30+0100\n"
-"Last-Translator: Mike Massonnet <mmassonnet@gmail.com>\n"
+"POT-Creation-Date: 2008-08-25 06:04-0700\n"
+"PO-Revision-Date: 2008-10-07 22:15+0100\n"
+"Last-Translator: Maximilian Schleiss <maximilian@xfce.org>\n"
 "Language-Team: French <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
+#, c-format
 msgid "Failed to read folder contents"
 msgstr "Échec à la lecture du contenu du dossier"
 
-#: ../thunar-vfs/thunar-vfs-exec.c:582
+#: ../thunar-vfs/thunar-vfs-exec.c:590
+#, c-format
 msgid "Unknown error"
 msgstr "Erreur inconnue"
 
 #. TRANSLATORS: `Exec' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:390
+#, c-format
 msgid "No Exec field specified"
 msgstr "Aucun champ Exec spécifié"
 
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:409
+#, c-format
 msgid "No URL field specified"
 msgstr "Aucune URL spécifiée"
 
 #: ../thunar-vfs/thunar-vfs-info.c:414
 #: ../thunar-vfs/thunar-vfs-private.c:384
+#, c-format
 msgid "Invalid desktop file"
 msgstr "Fichier de bureau non valide"
 
 #: ../thunar-vfs/thunar-vfs-info.c:422
+#, c-format
 msgid "Failed to parse file"
 msgstr "Échec à l'analyse du fichier"
 
 #: ../thunar-vfs/thunar-vfs-info.c:503
+#, c-format
 msgid "Invalid file name"
 msgstr "Nom de fichier non valide"
 
 #: ../thunar-vfs/thunar-vfs-info.c:510
+#, c-format
 msgid "Only local files may be renamed"
 msgstr "Seuls les fichiers locaux peuvent être renommés"
 
@@ -196,10 +204,12 @@ msgid "Failed to create symbolic link \"%s\""
 msgstr "Échec à la création du lien symbolique \"%s\""
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:545
+#, c-format
 msgid "Special files cannot be copied"
 msgstr "Les fichiers spéciaux ne peuvent êtres copiés"
 
 #: ../thunar-vfs/thunar-vfs-io-local-xfer.c:625
+#, c-format
 msgid "Symbolic links are not supported"
 msgstr "Les liens symboliques ne sont pas supportés"
 
@@ -240,6 +250,7 @@ msgstr "Corbeille"
 #. we don't support moving files within the trash
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1317
 #: ../thunar-vfs/thunar-vfs-io-trash.c:1431
+#, c-format
 msgid "Cannot move or copy files within the trash"
 msgstr "Copier ou déplacer des fichiers dans la corbeille n'est pas autorisé"
 
@@ -320,19 +331,23 @@ msgid "The URI \"%s\" is invalid"
 msgstr "L'URI \"%s\" est non valide"
 
 #: ../thunar-vfs/thunar-vfs-path.c:800
+#, c-format
 msgid "Path too long to fit into buffer"
 msgstr "Chemin trop long pour être stocké dans le cache"
 
 #: ../thunar-vfs/thunar-vfs-path.c:903
+#, c-format
 msgid "URI too long to fit into buffer"
 msgstr "URI trop longue pour être stockée dans le cache"
 
 #: ../thunar-vfs/thunar-vfs-private.c:233
+#, c-format
 msgid "Operation not supported"
 msgstr "Opération non supportée"
 
 #. TRANSLATORS: This error indicates that an URI contains an invalid escaped character (RFC 2396)
 #: ../thunar-vfs/thunar-vfs-private.c:335
+#, c-format
 msgid "Invalidly escaped characters"
 msgstr "Caractères d'échappement non valides"
 
@@ -351,6 +366,7 @@ msgid "Collecting files..."
 msgstr "Récupération des fichiers..."
 
 #: ../thunar-vfs/thunar-vfs-util.c:251
+#, c-format
 msgid "Invalid path"
 msgstr "Chemin non valide"
 
@@ -572,8 +588,8 @@ msgstr "Supprimer tous les fichiers et dossiers dans la corbeille?"
 #. add the "Empty Trash" menu item
 #: ../thunar/thunar-application.c:1515
 #: ../thunar/thunar-location-buttons.c:171
-#: ../thunar/thunar-shortcuts-view.c:865
-#: ../thunar/thunar-tree-view.c:1072
+#: ../thunar/thunar-shortcuts-view.c:864
+#: ../thunar/thunar-tree-view.c:1071
 #: ../thunar/thunar-window.c:269
 #: ../plugins/thunar-tpa/main.c:49
 msgid "_Empty Trash"
@@ -866,11 +882,13 @@ msgstr "Nom de fichier invalide \"%s\""
 
 #. LaunchFiles() invoked without a valid working directory
 #: ../thunar/thunar-dbus-service.c:721
+#, c-format
 msgid "The working directory must be an absolute path"
 msgstr "Le répertoire de travail doit être un chemin absolu"
 
 #. LaunchFiles() invoked with an empty filename list
 #: ../thunar/thunar-dbus-service.c:729
+#, c-format
 msgid "Atleast one filename must be specified"
 msgstr "Au moins un fichier doit être spécifié"
 
@@ -1048,6 +1066,7 @@ msgid "File Name"
 msgstr "Nom de fichier"
 
 #: ../thunar/thunar-file.c:796
+#, c-format
 msgid "The root folder has no parent"
 msgstr "Le dossier racine n'a pas de parent"
 
@@ -1217,9 +1236,9 @@ msgstr "Ouvrir avec \"%s\""
 #. display an error dialog to inform the user
 #: ../thunar/thunar-launcher.c:1225
 #: ../thunar/thunar-location-entry.c:639
-#: ../thunar/thunar-shortcuts-view.c:1344
+#: ../thunar/thunar-shortcuts-view.c:1343
 #: ../thunar/thunar-tree-view.c:953
-#: ../thunar/thunar-tree-view.c:1598
+#: ../thunar/thunar-tree-view.c:1597
 #, c-format
 msgid "Failed to mount \"%s\""
 msgstr "Échec au montage de \"%s\""
@@ -1319,7 +1338,7 @@ msgstr[1] "%d éléments sélectionnés"
 #. append the "Create Folder" menu action
 #: ../thunar/thunar-location-buttons.c:170
 #: ../thunar/thunar-standard-view.c:323
-#: ../thunar/thunar-tree-view.c:1088
+#: ../thunar/thunar-tree-view.c:1087
 msgid "Create _Folder..."
 msgstr "Création d'un _dossier..."
 
@@ -1375,13 +1394,13 @@ msgstr "Affiche les propriétés du dossier \"%s\""
 #. ask the user to enter a name for the new folder
 #: ../thunar/thunar-location-buttons.c:1340
 #: ../thunar/thunar-standard-view.c:1818
-#: ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-tree-view.c:1438
 msgid "New Folder"
 msgstr "Nouveau dossier"
 
 #: ../thunar/thunar-location-buttons.c:1340
 #: ../thunar/thunar-standard-view.c:1818
-#: ../thunar/thunar-tree-view.c:1439
+#: ../thunar/thunar-tree-view.c:1438
 msgid "Create New Folder"
 msgstr "Créer un nouveau dossier"
 
@@ -2046,6 +2065,25 @@ msgstr "_Ignorer ce fichier"
 msgid "Do you want to skip this file and continue to rename the remaining files?"
 msgstr "Voulez-vous ignorer ce fichier et continuer à renommer les fichiers restant ?"
 
+#: ../thunar/thunar-settings.desktop.in.h:1
+msgid "Configure the Thunar file manager"
+msgstr "Configurer le gestionnaire de fichiers Thunar"
+
+#. set window title and icon
+#: ../thunar/thunar-settings.desktop.in.h:2
+#: ../thunar/thunar-window.c:2002
+#: ../Thunar.desktop.in.in.h:2
+msgid "File Manager"
+msgstr "Gestionnaire de fichiers"
+
+#: ../thunar/thunar-settings.desktop.in.h:3
+msgid "File Manager Settings"
+msgstr "Paramètres du gestionnaire de fichiers"
+
+#: ../thunar/thunar-settings.desktop.in.h:4
+msgid "Thunar Settings"
+msgstr "Paramètres Thunar"
+
 #: ../thunar/thunar-shortcuts-pane.c:413
 msgid "Side Pane (Create Shortcut)"
 msgid_plural "Side Pane (Create Shortcuts)"
@@ -2071,42 +2109,42 @@ msgid "E_ject Volume"
 msgstr "É_jecter le périphérique"
 
 #. append the "Unmount Volume" menu item
-#: ../thunar/thunar-shortcuts-view.c:850
-#: ../thunar/thunar-tree-view.c:1057
+#: ../thunar/thunar-shortcuts-view.c:849
+#: ../thunar/thunar-tree-view.c:1056
 msgid "_Unmount Volume"
 msgstr "_Démonter le périphérique"
 
 #. append the remove menu item
-#: ../thunar/thunar-shortcuts-view.c:878
+#: ../thunar/thunar-shortcuts-view.c:877
 msgid "_Remove Shortcut"
 msgstr "_Supprimer le raccourci"
 
 #. append the rename menu item
-#: ../thunar/thunar-shortcuts-view.c:893
+#: ../thunar/thunar-shortcuts-view.c:892
 msgid "Re_name Shortcut"
 msgstr "_Renommer le raccourci"
 
-#: ../thunar/thunar-shortcuts-view.c:1161
+#: ../thunar/thunar-shortcuts-view.c:1160
 #, c-format
 msgid "The path \"%s\" does not refer to a directory"
 msgstr "Le chemin \"%s\" ne fait pas référence à un répertoire"
 
 #. display an error message to the user
-#: ../thunar/thunar-shortcuts-view.c:1180
+#: ../thunar/thunar-shortcuts-view.c:1179
 msgid "Failed to add new shortcut"
 msgstr "Échec à l'ajout d'un nouveau raccourci"
 
 #. display an error dialog to inform the user
-#: ../thunar/thunar-shortcuts-view.c:1298
-#: ../thunar/thunar-tree-view.c:1547
+#: ../thunar/thunar-shortcuts-view.c:1297
+#: ../thunar/thunar-tree-view.c:1546
 #, c-format
 msgid "Failed to eject \"%s\""
 msgstr "Échec à l'éjection de \"%s\""
 
 #. display an error dialog to inform the user
 #. display an error dialog
-#: ../thunar/thunar-shortcuts-view.c:1388
-#: ../thunar/thunar-tree-view.c:1738
+#: ../thunar/thunar-shortcuts-view.c:1387
+#: ../thunar/thunar-tree-view.c:1737
 #, c-format
 msgid "Failed to unmount \"%s\""
 msgstr "Échec au démontage de \"%s\""
@@ -2147,13 +2185,13 @@ msgstr "Crée un dossier vide dans le dossier courant"
 
 #. append the "Cut" menu action
 #: ../thunar/thunar-standard-view.c:325
-#: ../thunar/thunar-tree-view.c:1109
+#: ../thunar/thunar-tree-view.c:1108
 msgid "Cu_t"
 msgstr "Co_uper"
 
 #. append the "Copy" menu action
 #: ../thunar/thunar-standard-view.c:326
-#: ../thunar/thunar-tree-view.c:1121
+#: ../thunar/thunar-tree-view.c:1120
 msgid "_Copy"
 msgstr "_Copier"
 
@@ -2167,7 +2205,7 @@ msgstr "Déplacer ou copier les fichiers précédemment coupés ou copiés"
 
 #. append the "Delete" menu action
 #: ../thunar/thunar-standard-view.c:328
-#: ../thunar/thunar-tree-view.c:1156
+#: ../thunar/thunar-tree-view.c:1155
 msgid "_Delete"
 msgstr "_Effacer"
 
@@ -2337,12 +2375,12 @@ msgid "Loading..."
 msgstr "Chargement..."
 
 #. append the "Paste Into Folder" menu action
-#: ../thunar/thunar-tree-view.c:1138
+#: ../thunar/thunar-tree-view.c:1137
 msgid "_Paste Into Folder"
 msgstr "C_oller dans le dossier"
 
 #. append the "Properties" menu action
-#: ../thunar/thunar-tree-view.c:1179
+#: ../thunar/thunar-tree-view.c:1178
 msgid "P_roperties..."
 msgstr "P_ropriétés..."
 
@@ -2640,12 +2678,6 @@ msgid ""
 msgstr ""
 "Thunar est un gestionnaire de fichiers rapide et facile\n"
 "d'utilisation pour l'Environnement de Bureau Xfce."
-
-#. set window title and icon
-#: ../thunar/thunar-window.c:2002
-#: ../Thunar.desktop.in.in.h:2
-msgid "File Manager"
-msgstr "Gestionnaire de fichiers"
 
 #: ../thunarx/thunarx-property-page.c:137
 msgid "Label"
@@ -3286,6 +3318,7 @@ msgid "Unknown element <%s>"
 msgstr "Élément <%s> inconnu"
 
 #: ../plugins/thunar-uca/thunar-uca-model.c:798
+#, c-format
 msgid "End element handler called while in root context"
 msgstr "Gestionnaire d'élément de fin appelé durant le contexte source"
 
@@ -3294,11 +3327,13 @@ msgstr "Gestionnaire d'élément de fin appelé durant le contexte source"
 msgid "Unknown closing element <%s>"
 msgstr "Élément de fermeture <%s> inconnu"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1318
+#: ../plugins/thunar-uca/thunar-uca-model.c:1332
+#, c-format
 msgid "Failed to determine save location for uca.xml"
 msgstr "Échec pour déterminer l'endroit d'enregistrement de uca.xml"
 
-#: ../plugins/thunar-uca/thunar-uca-model.c:1433
+#: ../plugins/thunar-uca/thunar-uca-model.c:1447
+#, c-format
 msgid "Command not configured"
 msgstr "Commande non configurée"
 
