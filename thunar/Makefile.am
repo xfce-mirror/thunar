@@ -247,12 +247,15 @@ install-data-local:
 clean-local:
 	rm -f *.core core core.*
 
+DISTCLEANFILES =								\
+	thunar-settings.desktop
+
 if MAINTAINER_MODE
 CLEANFILES =								\
 	xgen-tmc							\
 	xgen-tmh
 
-DISTCLEANFILES =							\
+DISTCLEANFILES +=							\
 	$(thunar_built_sources)						\
 	stamp-thunar-marshal.h						\
 	thunar-abstract-icon-view-ui.h					\
@@ -332,17 +335,18 @@ thunar-marshal.c: thunar-marshal.list Makefile
 	&& rm -f xgen-tmc
 endif
 
-EXTRA_DIST =								\
-	thunar-abstract-icon-view-ui.xml				\
-	thunar-dbus-service-infos.xml					\
+EXTRA_DIST =									\
+	thunar-abstract-icon-view-ui.xml			\
+	thunar-dbus-service-infos.xml				\
 	thunar-details-view-ui.xml					\
 	thunar-launcher-ui.xml						\
-	thunar-location-buttons-ui.xml					\
-	thunar-marshal.list						\
-	thunar-renamer-dialog-ui.xml					\
+	thunar-location-buttons-ui.xml				\
+	thunar-marshal.list							\
+	thunar-renamer-dialog-ui.xml				\
 	thunar-standard-view-ui.xml					\
 	thunar-thumbnail-frame.png					\
-	thunar-window-ui.xml					\
+	thunar-window-ui.xml						\
+	thunar-settings								\
 	$(desktop_in_files)
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
