@@ -90,6 +90,20 @@ AM_CONDITIONAL([THUNAR_PLUGIN_UCA], [test x"$ac_bm_thunar_plugin_uca" = x"yes"])
 AC_MSG_RESULT([$ac_bm_thunar_plugin_uca])
 ])
 
+dnl # BM_THUNAR_PLUGIN_WALLPAPER()
+dnl #
+dnl # Check whether the "Wallpaper" plugin
+dnl # should be built and installed.
+dnl #
+AC_DEFUN([BM_THUNAR_PLUGIN_WALLPAPER],
+[
+AC_ARG_ENABLE([wallpaper-plugin], AC_HELP_STRING([--disable-wallpaper-plugin], [Don't build the thunar-wallpaper plugin, see plugins/thunar-wallpaper/README]),
+  [ac_bm_thunar_plugin_wallpaper=$enableval], [ac_bm_thunar_plugin_wallpaper=yes])
+AC_MSG_CHECKING([whether to build the thunar-wallpaper plugin])
+AM_CONDITIONAL([THUNAR_PLUGIN_WALLPAPER], [test x"$ac_bm_thunar_plugin_wallpaper" = x"yes"])
+AC_MSG_RESULT([$ac_bm_thunar_plugin_wallpaper])
+XDT_CHECK_OPTIONAL_PACKAGE([XFCONF], [libxfconf-0], [4.5.91], [xfconf], [Xfconf support])
+])
 
 
 dnl # BM_THUNAR_VFS_MONITOR_IMPL()

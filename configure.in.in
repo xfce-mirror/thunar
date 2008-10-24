@@ -406,6 +406,7 @@ BM_THUNAR_PLUGIN_APR()
 BM_THUNAR_PLUGIN_SBR()
 BM_THUNAR_PLUGIN_TPA()
 BM_THUNAR_PLUGIN_UCA()
+BM_THUNAR_PLUGIN_WALLPAPER()
 
 AC_OUTPUT([
 Makefile
@@ -460,6 +461,7 @@ plugins/thunar-sbr/Makefile
 plugins/thunar-sendto-email/Makefile
 plugins/thunar-tpa/Makefile
 plugins/thunar-uca/Makefile
+plugins/thunar-wallpaper/Makefile
 po/Makefile.in
 po-doc/Makefile
 tdb/Makefile
@@ -507,4 +509,5 @@ echo "* Advanced Properties:       $ac_bm_thunar_plugin_apr"
 echo "* Simple Builting Renamers:  $ac_bm_thunar_plugin_sbr"
 echo "* Trash Panel Applet:        $ac_bm_thunar_plugin_tpa"
 echo "* User Customizable Actions: $ac_bm_thunar_plugin_uca"
+echo "* Wallpaper support: $ac_bm_thunar_plugin_wallpaper"
 echo
