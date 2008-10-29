@@ -1,3 +1,9 @@
+2008-10-28	Brian Tarricone <kelnos@xfce.org>
+
+	* thunar-vfs/thunar-vfs-mime-database.c: Fix usage of
+	  fgetxattr() on MacOS X.  Patch from Anders Bj√∂rklund
+	  <afb@users.sourceforge.net> (bug 4433).
+
 2008-10-25  Stephan Arts <stephan@xfce.org>
 
 	* plugins/thunar-wallpaper:
@@ -67,13 +73,13 @@
 	  Make sure to pass the correct $DISPLAY value to processes
 	  spawned by Thunar and xfdesktop. Bug #3667.
 
-2007-08-24	Jean-FranÁois Wauthy <pollux@xfce.org>
+2007-08-24	Jean-Fran√ßois Wauthy <pollux@xfce.org>
 
 	* docs/manual/fr/Thunar.xml.in: minor corrections in French
 	translation of the manual (patch by Adrien Grellier
 	<adrien.grellier@laposte.net>)
 
-2007-08-23	Jean-FranÁois Wauthy <pollux@xfce.org>
+2007-08-23	Jean-Fran√ßois Wauthy <pollux@xfce.org>
 
 	* docs/manual/pl/images/file-manager-window.png,
 	docs/manual/pl/images/preferences-views.png,
@@ -251,7 +257,7 @@
 
 	* po-doc/*.po: Regenerate the translations.
 	* docs/manual/pl/Thunar.xml.in, po-doc/pl.po: Updated the polish
-	  translations of the user manual by Szymon Kaøasz
+	  translations of the user manual by Szymon Ka≈Çasz
 	  <szymon_maestro@gazeta.pl>.
 
 2007-01-20	Benedikt Meurer <benny@xfce.org>
@@ -1676,7 +1682,7 @@
 2006-04-17	Benedikt Meurer <benny@xfce.org>
 
 	* docs/manual/es/Thunar.xml.in, po-doc/es.po: Update spanish
-	  translations by JosÈ M <josem88@gmail.com>.
+	  translations by Jos√© M <josem88@gmail.com>.
 
 2006-04-16	Benedikt Meurer <benny@xfce.org>
 
@@ -2806,7 +2812,7 @@
 	  keyboard shortcuts and people can customize these shortcuts using
 	  the standard GtkBindingSet mechanism. Bug #1380.
 	* po/Thunar.pot, po/*.po: Update translations.
-	* po/de.po: "Ger‰t auswerfen" is probably not the best translation
+	* po/de.po: "Ger√§t auswerfen" is probably not the best translation
 	  for "Eject Volume". ;-)
 	* po/de.po: Even more love for the german translation.
 
@@ -4750,7 +4756,7 @@
 2005-10-03	Benedikt Meurer <benny@xfce.org>
 
 	* THANKS, configure.in.in, po/es.po: Add spanish translations, thanks
-	  to Pablo Hern·ndez-M. Saiz <homeless3d@gmail.com>.
+	  to Pablo Hern√°ndez-M. Saiz <homeless3d@gmail.com>.
 
 2005-10-02	Benedikt Meurer <benny@xfce.org>
 

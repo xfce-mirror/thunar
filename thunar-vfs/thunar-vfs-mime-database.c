@@ -1122,11 +1122,20 @@ thunar_vfs_mime_database_get_info_for_file (ThunarVfsMimeDatabase *database,
             }
 #elif defined(HAVE_FGETXATTR)
           /* check for valid mime type stored in the extattr (Linux) */
+#if defined(__APPLE__) && defined(__MACH__)
+          nbytes = fgetxattr (fd, "user.mime_type", NULL, 0, 0, 0);
+#else
           nbytes = fgetxattr (fd, "user.mime_type", NULL, 0);
+#endif
           if (G_UNLIKELY (nbytes >= 3))
             {
               buffer = g_newa (gchar, nbytes + 1);
+#if defined(__APPLE__) && defined(__MACH__)
+              nbytes = fgetxattr (fd, "user.mime_type", buffer, nbytes, 0, 0);
+#else
               nbytes = fgetxattr (fd, "user.mime_type", buffer, nbytes);
+#endif
+
               if (G_LIKELY (nbytes >= 3))
                 {
                   buffer[nbytes] = '\0';
