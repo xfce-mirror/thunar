@@ -242,7 +242,7 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 # install symlink to 'thunar'
 install-data-local:
 	$(mkinstalldirs) $(DESTDIR)$(bindir)
-	-( cd $(DESTDIR)$(bindir) ; ln -sf Thunar thunar )
+	-( cd $(DESTDIR)$(bindir) ; test -x thunar || ln -sf Thunar thunar )
 
 clean-local:
 	rm -f *.core core core.*

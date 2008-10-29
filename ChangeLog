@@ -1,5 +1,10 @@
 2008-10-28	Brian Tarricone <kelnos@xfce.org>
 
+	* thunar/Makefile.am: Don't symlink thunar -> Thunar on case-
+	  insensitive filesystems (bug 4430).
+
+2008-10-28	Brian Tarricone <kelnos@xfce.org>
+
 	* thunar-vfs/thunar-vfs-mime-database.c: Fix usage of
 	  fgetxattr() on MacOS X.  Patch from Anders Björklund
 	  <afb@users.sourceforge.net> (bug 4433).
