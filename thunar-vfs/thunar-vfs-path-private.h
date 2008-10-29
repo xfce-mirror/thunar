@@ -72,7 +72,7 @@ gchar         *_thunar_vfs_path_translate_dup_string  (ThunarVfsPath        *src
  **/
 #define _thunar_vfs_path_unref_nofree(path)                 \
 G_STMT_START{                                               \
-  exo_atomic_dec (&(THUNAR_VFS_PATH ((path))->ref_count));  \
+  (void)exo_atomic_dec (&(THUNAR_VFS_PATH ((path))->ref_count));  \
 }G_STMT_END
 
 /**

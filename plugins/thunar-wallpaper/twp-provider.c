@@ -46,11 +46,13 @@ static void   twp_provider_finalize             (GObject                  *objec
 static GList *twp_provider_get_file_actions     (ThunarxMenuProvider      *menu_provider,
                                                  GtkWidget                *window,
                                                  GList                    *files);
+#if 0
 static GList *twp_provider_get_folder_actions   (ThunarxMenuProvider      *menu_provider,
                                                  GtkWidget                *window,
                                                  ThunarxFileInfo          *folder);
+#endif
 
-static
+static void
 twp_action_set_wallpaper (GtkAction *action, gpointer user_data);
 
 
@@ -117,8 +119,6 @@ twp_provider_init (TwpProvider *twp_provider)
 static void
 twp_provider_finalize (GObject *object)
 {
-    TwpProvider *twp_provider = TWP_PROVIDER (object);
-    GSource     *source;
     xfconf_shutdown();
 
    (*G_OBJECT_CLASS (twp_provider_parent_class)->finalize) (object);
@@ -133,7 +133,6 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 	ThunarVfsInfo      *info;
 	GtkWidget          *action;
 	GList              *actions = NULL;
-    gint                n_files = 0;
     gchar               selection_name[100];
 
     GdkScreen *gdk_screen = gdk_screen_get_default();
@@ -141,7 +140,6 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
     g_snprintf(selection_name, 100, XFDESKTOP_SELECTION_FMT, xscreen);
 
-    Window root_window = GDK_ROOT_WINDOW();
     Atom xfce_selection_atom = XInternAtom (gdk_display, selection_name, False);
     if(!(XGetSelectionOwner(GDK_DISPLAY(), xfce_selection_atom)))
     {
@@ -182,14 +180,16 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 }
 
 
+#if 0
 static GList*
 twp_Provider_get_pages (ThunarxPropertyPageProvider *page_provider, GList *files)
 {
   GList *pages = NULL;
   return pages;
 }
+#endif
 
-static
+static void
 twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
 {
     ThunarxFileInfo *file_info = user_data;
