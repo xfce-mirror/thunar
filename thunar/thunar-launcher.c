@@ -1169,6 +1169,7 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
   ThunarVfsPath     *desktop_path;
   ThunarVfsPath     *home_path;
   GList             *paths;
+  gchar             *str_desktop_path = NULL;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
@@ -1180,8 +1181,20 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
 
   /* determine the path to the ~/Desktop folder */
   home_path = thunar_vfs_path_get_for_home ();
-  desktop_path = thunar_vfs_path_relative (home_path, "Desktop");
+#if GLIB_CHECK_VERSION(2,14,0)
+  str_desktop_path = g_strdup (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
+#else /* GLIB_CHECK_VERSION(2,14,0) */
+  str_desktop_path = g_build_filename (G_DIR_SEPARATOR_S, xfce_get_homedir (),
+      "Desktop", NULL);
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
+
+  desktop_path = thunar_vfs_path_new (str_desktop_path, NULL);
+
+  if (G_UNLIKELY (desktop_path == NULL))
+      desktop_path = thunar_vfs_path_relative (home_path, "Desktop");
+
   thunar_vfs_path_unref (home_path);
+  g_free (str_desktop_path);
 
   /* launch the link job */
   application = thunar_application_get ();

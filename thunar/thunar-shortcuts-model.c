@@ -33,10 +33,18 @@
 #include <thunar/thunar-shortcuts-model.h>
 #include <thunar/thunar-private.h>
 
+#include <glib.h>
 
 
 #define THUNAR_SHORTCUT(obj) ((ThunarShortcut *) (obj))
 
+
+/* I don't particularly like this here, but it's shared across a few
+ * files. */
+const gchar *_thunar_user_directory_names[9] = {
+  "Desktop", "Documents", "Download", "Music", "Pictures", "Public",
+  "Templates", "Videos", NULL,
+};
 
 
 typedef struct _ThunarShortcut ThunarShortcut;
@@ -263,6 +271,8 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   GList           *volumes;
   GList           *lp;
   guint            n;
+  gchar           *desktop_path = NULL;
+  gint             desktop_index;
 
 #ifndef NDEBUG
   model->stamp = g_random_int ();
@@ -276,7 +286,21 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   /* determine the system-defined paths */
   system_path_list[0] = thunar_vfs_path_get_for_home ();
   system_path_list[1] = thunar_vfs_path_get_for_trash ();
-  system_path_list[2] = thunar_vfs_path_relative (system_path_list[0], "Desktop");
+
+#if GLIB_CHECK_VERSION(2,14,0)
+  desktop_path = g_strdup (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
+#else /* GLIB_CHECK_VERSION(2,14,0) */
+  desktop_path = g_build_filename (G_DIR_SEPARATOR_S, xfce_get_homedir (),
+          "Desktop", NULL);
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
+  system_path_list[2] = thunar_vfs_path_new (desktop_path, NULL);
+  if (G_UNLIKELY (system_path_list[2] == NULL))
+    system_path_list[2] = thunar_vfs_path_relative (system_path_list[0],
+            "Desktop");
+  desktop_index = 2;
+
+  g_free (desktop_path);
+
   system_path_list[3] = thunar_vfs_path_get_for_root ();
 
   /* will be used to append the shortcuts to the list */
@@ -285,6 +309,15 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   /* append the system defined items ('Home', 'Trash', 'File System') */
   for (n = 0; n < G_N_ELEMENTS (system_path_list); ++n)
     {
+      /* we exclude the desktop if it points to home */
+      if (n == desktop_index
+          && exo_str_is_equal (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP),
+                                                       xfce_get_homedir ()))
+        {
+          thunar_vfs_path_unref (system_path_list[n]);
+          continue;
+        }
+
       /* determine the file for the path */
       file = thunar_file_get_for_path (system_path_list[n], NULL);
       if (G_LIKELY (file != NULL))
@@ -293,6 +326,31 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
           shortcut = _thunar_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_SYSTEM_DEFINED;
           shortcut->file = file;
+
+#if GLIB_CHECK_VERSION(2,14,0)
+          if (n == desktop_index)
+            {
+              gchar *old_locale = NULL;
+              gchar *locale = NULL;
+
+              bindtextdomain (XDG_USER_DIRS_PACKAGE, PACKAGE_LOCALE_DIR);
+#ifdef HAVE_BIND_TEXTDOMAIN_CODESET
+              bind_textdomain_codeset (XDG_USER_DIRS_PACKAGE, "UTF-8");
+#endif /* HAVE_BIND_TEXTDOMAIN_CODESET */
+
+              /* save the old locale */
+              old_locale = setlocale (LC_MESSAGES, NULL);
+
+              /* set the new locale */
+              locale = _thunar_get_xdg_user_dirs_locale ();
+              setlocale (LC_MESSAGES, locale);
+              g_free (locale);
+
+              shortcut->name = g_strdup (dgettext (XDG_USER_DIRS_PACKAGE, "Desktop"));
+
+              setlocale (LC_MESSAGES, old_locale);
+            }
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
 
           /* append the shortcut to the list */
           thunar_shortcuts_model_add_shortcut (model, shortcut, path);
@@ -742,7 +800,34 @@ thunar_shortcuts_model_remove_shortcut (ThunarShortcutsModel *model,
     }
 }
 
+/* Reads the current xdg user dirs locale from ~/.config/xdg-user-dirs.locale
+ * Notice that the result shall be freed by using g_free (). */
+gchar *
+_thunar_get_xdg_user_dirs_locale (void)
+{
+  gchar *file    = NULL;
+  gchar *content = NULL;
+  gchar *locale  = NULL;
 
+  /* get the file pathname */
+  file = g_build_filename (g_get_user_config_dir (), LOCALE_FILE_NAME, NULL);
+
+  /* grab the contents and get ride of the surrounding spaces */
+  if (g_file_get_contents (file, &content, NULL, NULL))
+    locale = g_strdup (g_strstrip (content));
+
+  g_free (content);
+  g_free (file);
+
+  /* if we got nothing, let's set the default locale as C */
+  if (exo_str_is_equal (locale, ""))
+    {
+      g_free (locale);
+      locale = g_strdup ("C");
+    }
+
+  return locale;
+}
 
 static void
 thunar_shortcuts_model_load (ThunarShortcutsModel *model)
@@ -755,6 +840,8 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
   gchar            line[2048];
   gchar           *name;
   FILE            *fp;
+  gint             i;
+  gchar           *user_special_dir = NULL;
 
   /* determine the path to the GTK+ bookmarks file */
   bookmarks_path = xfce_get_homefile (".gtk-bookmarks", NULL);
@@ -815,6 +902,86 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
       gtk_tree_path_free (path);
       fclose (fp);
     }
+#if GLIB_CHECK_VERSION(2,14,0)
+  else
+    {
+      /* ~/.gtk-bookmarks wasn't there or it was unreadable.
+       * here we recreate it with some useful xdg user special dirs */
+      const char *old_locale = NULL;
+      gchar *locale          = NULL;
+
+      bindtextdomain (XDG_USER_DIRS_PACKAGE, PACKAGE_LOCALE_DIR);
+#ifdef HAVE_BIND_TEXTDOMAIN_CODESET
+      bind_textdomain_codeset (XDG_USER_DIRS_PACKAGE, "UTF-8");
+#endif /* HAVE_BIND_TEXTDOMAIN_CODESET */
+
+      /* save the old locale */
+      old_locale = setlocale (LC_MESSAGES, NULL);
+
+      /* set the new locale */
+      locale = _thunar_get_xdg_user_dirs_locale ();
+      setlocale (LC_MESSAGES, locale);
+      g_free (locale);
+
+      path = gtk_tree_path_new_from_indices (g_list_length (model->shortcuts), -1);
+      for (i = G_USER_DIRECTORY_DESKTOP;
+           i < G_USER_N_DIRECTORIES && _thunar_user_directory_names[i] != NULL;
+           i++)
+        {
+          /* let's ignore some directories we don't want in the side pane*/
+          if (i == G_USER_DIRECTORY_DESKTOP
+              || i == G_USER_DIRECTORY_PUBLIC_SHARE
+              || i == G_USER_DIRECTORY_TEMPLATES)
+            {
+              continue;
+            }
+
+          user_special_dir = (gchar *) g_get_user_special_dir (i);
+
+          if (G_UNLIKELY (user_special_dir == NULL)
+              || exo_str_is_equal (user_special_dir, xfce_get_homedir ()))
+            {
+               continue;
+            }
+
+          /* parse the URI */
+          file_path = thunar_vfs_path_new (user_special_dir, NULL);
+          if (G_UNLIKELY (file_path == NULL))
+            continue;
+
+          /* try to open the file corresponding to the uri */
+          file = thunar_file_get_for_path (file_path, NULL);
+          thunar_vfs_path_unref (file_path);
+          if (G_UNLIKELY (file == NULL))
+            continue;
+
+          /* make sure the file refers to a directory */
+          if (G_UNLIKELY (!thunar_file_is_directory (file)))
+            {
+              g_object_unref (G_OBJECT (file));
+              continue;
+            }
+
+          /* create the shortcut entry */
+          shortcut = _thunar_slice_new0 (ThunarShortcut);
+          shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
+          shortcut->file = file;
+          shortcut->name = g_strdup (dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]));
+
+          /* append the shortcut to the list */
+          thunar_shortcuts_model_add_shortcut (model, shortcut, path);
+          gtk_tree_path_next (path);
+        }
+
+      /* restore the old locale */
+      setlocale (LC_MESSAGES, old_locale);
+
+      gtk_tree_path_free (path);
+
+      /* we try to save the obtained new model */
+      thunar_shortcuts_model_save (model);
+    }
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
 
   /* clean up */
   g_free (bookmarks_path);

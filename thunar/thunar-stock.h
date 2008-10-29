@@ -28,6 +28,13 @@ G_BEGIN_DECLS;
 #define THUNAR_STOCK_TEMPLATES    "thunar-templates"    /* see ThunarWindow */
 #define THUNAR_STOCK_TRASH_EMPTY  "thunar-trash-empty"  /* see ThunarTrashAction */
 #define THUNAR_STOCK_TRASH_FULL   "thunar-trash-full"   /* see ThunarTrashAction */
+#define THUNAR_STOCK_DIRECTORY    "gnome-fs-directory"
+#define THUNAR_STOCK_DOWNLOADS    "thunar-downloads"
+#define THUNAR_STOCK_DOCUMENTS    "thunar-documents"
+#define THUNAR_STOCK_MUSIC        "thunar-music"
+#define THUNAR_STOCK_PICTURES     "thunar-pictures"
+#define THUNAR_STOCK_VIDEOS       "thunar-videos"
+#define THUNAR_STOCK_PUBLIC       "thunar-public"
 
 void thunar_stock_init (void) G_GNUC_INTERNAL;
 

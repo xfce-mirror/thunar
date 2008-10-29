@@ -1,3 +1,26 @@
+2008-10-29	Brian Tarricone <kelnos@xfce.org>
+
+	* *: Patch mostly from Andrea Santilli <yawara@quipo.it> (bug 4365).
+	* thunar/{thunar-file.c,thunar-file.h}: Replace
+	  thunar_file_is_desktop() macro with a function that
+	  recognizes the xdg user Desktop folder. The old macro is still
+	  available for glib < 2.14.0
+	* thunar/thunar-private.h: Add macros to better support
+	  GUserDirectory and an array containing the xdg user dir defaults.
+	* thunar/thunar-{launcher.c,shortcuts-model.c,templates-action.c}:
+	  Address to the right Desktop and Templates directories.  Don't
+	  list templates in submenus if the templates dir points to $HOME.
+	* thunar/thunar-shortcuts-model.c: Creation and translation of
+	  links to some xdg user dirs in the sidebar in case of unexisting
+	  ~/.gtk-bookmarks. Entries pointing to $HOME are disabled.
+	* thunar/{thunar-shortcuts-model.c,thunar-private.h}: Add
+	  _thunar_get_xdg_user_dirs_locale() to translate the xdg user dir
+	  names (package xdg-user-dirs needed for that).
+	* thunar/thunar-stock.h: Add icon name for normal directories.
+	* thunar/{thunar-window.c,thunar-window-ui.xml}: Add new menu
+	  entries, hide the ones related to unused directories and
+	  translate their labels. Entries pointing to $HOME are disabled.
+
 2008-10-28	Brian Tarricone <kelnos@xfce.org>
 
 	* thunar/Makefile.am: Don't symlink thunar -> Thunar on case-

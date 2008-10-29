@@ -54,6 +54,7 @@
 #include <thunar/thunar-window.h>
 #include <thunar/thunar-window-ui.h>
 
+#include <glib.h>
 
 
 /* Property identifiers */
@@ -146,7 +147,21 @@ static void     thunar_window_action_go_up                (GtkAction            
                                                            ThunarWindow           *window);
 static void     thunar_window_action_open_home            (GtkAction              *action,
                                                            ThunarWindow           *window);
+static void     thunar_window_action_open_desktop         (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_documents       (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_downloads       (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_music           (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_pictures        (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_public          (GtkAction              *action,
+                                                           ThunarWindow           *window);
 static void     thunar_window_action_open_templates       (GtkAction              *action,
+                                                           ThunarWindow           *window);
+static void     thunar_window_action_open_videos          (GtkAction              *action,
                                                            ThunarWindow           *window);
 static void     thunar_window_action_open_trash           (GtkAction              *action,
                                                            ThunarWindow           *window);
@@ -261,7 +276,7 @@ struct _ThunarWindow
 
 
 
-static const GtkActionEntry action_entries[] =
+static GtkActionEntry action_entries[] =
 {
   { "file-menu", NULL, N_ ("_File"), NULL, },
   { "open-new-window", NULL, N_ ("Open New _Window"), "<control>N", N_ ("Open a new Thunar window for the displayed location"), G_CALLBACK (thunar_window_action_open_new_window), },
@@ -281,7 +296,14 @@ static const GtkActionEntry action_entries[] =
   { "go-menu", NULL, N_ ("_Go"), NULL, },
   { "open-parent", GTK_STOCK_GO_UP, N_ ("Open _Parent"), "<alt>Up", N_ ("Open the parent folder"), G_CALLBACK (thunar_window_action_go_up), },
   { "open-home", THUNAR_STOCK_HOME, N_ ("_Home"), "<alt>Home", N_ ("Go to the home folder"), G_CALLBACK (thunar_window_action_open_home), },
-  { "open-templates", THUNAR_STOCK_TEMPLATES, N_ ("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (thunar_window_action_open_templates), },
+  { "open-desktop", THUNAR_STOCK_DESKTOP, "Desktop", NULL, N_ ("Go to the desktop folder"), G_CALLBACK (thunar_window_action_open_desktop), },
+  { "open-documents", THUNAR_STOCK_DOCUMENTS, "Documents", NULL, N_ ("Go to the documents folder"), G_CALLBACK (thunar_window_action_open_documents), },
+  { "open-downloads", THUNAR_STOCK_DOWNLOADS, "Download", NULL, N_ ("Go to the downloads folder"), G_CALLBACK (thunar_window_action_open_downloads), },
+  { "open-music", THUNAR_STOCK_MUSIC, "Music", NULL, N_ ("Go to the music folder"), G_CALLBACK (thunar_window_action_open_music), },
+  { "open-pictures", THUNAR_STOCK_PICTURES, "Pictures", NULL, N_ ("Go to the pictures folder"), G_CALLBACK (thunar_window_action_open_pictures), },
+  { "open-videos", THUNAR_STOCK_VIDEOS, "Videos", NULL, N_ ("Go to the videos folder"), G_CALLBACK (thunar_window_action_open_videos), },
+  { "open-public", THUNAR_STOCK_PUBLIC, "Public", NULL, N_ ("Go to the public folder"), G_CALLBACK (thunar_window_action_open_public), },
+  { "open-templates", THUNAR_STOCK_TEMPLATES, N_("T_emplates"), NULL, N_ ("Go to the templates folder"), G_CALLBACK (thunar_window_action_open_templates), },
   { "open-location", NULL, N_ ("_Open Location..."), "<control>L", N_ ("Specify a location to open"), G_CALLBACK (thunar_window_action_open_location), },
   { "help-menu", NULL, N_ ("_Help"), NULL, },
   { "contents", GTK_STOCK_HELP, N_ ("_Contents"), "F1", N_ ("Display Thunar user manual"), G_CALLBACK (thunar_window_action_contents), },
@@ -579,6 +601,105 @@ view_index2type (gint index)
     }
 }
 
+/* this function hides all the user directory menu entries in case of
+ * glib <= 2.12. Otherwise it hide the menu entries only for the directories
+ * that point to $HOME or to NULL. Then, it translates the labels. */
+static void
+thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
+{
+  gint i;
+
+#if !GLIB_CHECK_VERSION(2, 14, 0)
+
+  for (i = 0; i < THUNAR_USER_N_DIRECTORIES; i++)
+    gtk_action_set_visible (GTK_ACTION (action), FALSE);
+
+#else  /* GLIB_CHECK_VERSION(2, 14, 0) */
+
+  gchar *old_locale     = NULL;
+  gchar *locale         = NULL;
+  gchar *translation    = NULL;
+  /* gchar *dir_name       = NULL;  */  // see below
+  const gchar *home_dir = NULL;
+  static const gchar *callback_names[] = {
+    "open-desktop", "open-documents", "open-downloads", "open-music",
+    "open-pictures", "open-public", "open-templates", "open-videos"
+  };
+
+  bindtextdomain (XDG_USER_DIRS_PACKAGE, PACKAGE_LOCALE_DIR);
+#ifdef HAVE_BIND_TEXTDOMAIN_CODESET
+  bind_textdomain_codeset (XDG_USER_DIRS_PACKAGE, "UTF-8");
+#endif /* HAVE_BIND_TEXTDOMAIN_CODESET */
+
+  /* save the old locale */
+  old_locale = setlocale (LC_MESSAGES, NULL);
+
+  /* set the new locale */
+  locale = _thunar_get_xdg_user_dirs_locale ();
+  setlocale (LC_MESSAGES, locale);
+  g_free (locale);
+
+  home_dir = xfce_get_homedir ();
+
+  for (i = 0; i < THUNAR_USER_N_DIRECTORIES; i++)
+    {
+      gboolean visible  = FALSE;
+      GtkAction *action = gtk_action_group_get_action (window->action_group,
+                                                       callback_names[i]);
+      gchar *path       = g_strdup (g_get_user_special_dir (i));
+
+      /* special case: got NULL for the templates dir. Force it to ~/Templates */
+      if (G_UNLIKELY (path == NULL && i == THUNAR_USER_DIRECTORY_TEMPLATES))
+        path = g_build_path (home_dir, _thunar_user_directory_names[i], NULL);
+
+      /* xdg user dirs pointing to $HOME must be considered disabled */
+      if (G_LIKELY((path != NULL) && (!exo_str_is_equal (path, home_dir)))) {
+        ThunarVfsPath *vfs_path = thunar_vfs_path_new (path, NULL);
+
+        if (G_LIKELY(vfs_path != NULL))
+          {
+            visible = TRUE;
+            thunar_vfs_path_unref (vfs_path);
+          }
+      }
+
+      gtk_action_set_visible (GTK_ACTION (action), visible);
+
+      /* if an entry is invisible don't waste time translating it */
+      if (G_UNLIKELY (visible == FALSE)) {
+        g_free (path);
+        continue;
+      }
+
+      /* menu entry label translation */
+      translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]);
+      g_object_set (action, "label", translation, NULL);
+
+#if 0
+      /* I'm not sure I like the idea of displaying the raw directory
+       * name to the user, but I'll leave the code here in case someone
+       * wants to enable it later. */
+      dir_name = g_path_get_basename (path);
+
+      if (!g_utf8_collate (translation, dir_name))
+        g_object_set (action, "label", translation, NULL);
+      else
+        {
+          gchar *label = g_strdup_printf (C_("CategoryName (FolderName)", "%s (%s)"), translation);
+          g_object_set (action, "label", label, NULL);
+          g_free (label);
+        }
+
+      g_free (dir_name);
+#endif
+
+      g_free (path);
+    }
+
+  setlocale (LC_MESSAGES, old_locale);
+
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
+}
 
 
 static void
@@ -644,6 +765,9 @@ thunar_window_init (ThunarWindow *window)
   window->history = g_object_new (THUNAR_TYPE_HISTORY, "action-group", window->action_group, NULL);
   g_signal_connect_swapped (G_OBJECT (window->history), "change-directory", G_CALLBACK (thunar_window_set_current_directory), window);
   exo_binding_new (G_OBJECT (window), "current-directory", G_OBJECT (window->history), "current-directory");
+
+  /* rename the user dir menu entries and hide the unexisting ones */
+  thunar_window_setup_user_dir_menu_entries (window);
 
   /* setup the "open-trash" action */
   action = thunar_trash_action_new ();
@@ -1788,15 +1912,148 @@ thunar_window_action_open_home (GtkAction    *action,
   thunar_vfs_path_unref (home_path);
 }
 
+gboolean
+thunar_window_open_user_folder (GtkAction           *action,
+                                ThunarWindow        *window,
+                                ThunarUserDirectory  thunar_user_dir,
+                                const gchar         *default_name)
+{
+  ThunarFile *user_file = NULL;
+  GError     *error     = NULL;
+  gchar      *user_dir  = NULL;
+  gboolean    result    = FALSE;
 
+#if GLIB_CHECK_VERSION(2, 14, 0)
+  user_dir = g_strdup (g_get_user_special_dir (thunar_user_dir));
+#endif
+
+  if (G_UNLIKELY (user_dir == NULL))
+    {
+      user_dir = g_build_filename (G_DIR_SEPARATOR_S, xfce_get_homedir (),
+                                   default_name, NULL);
+    }
+
+  user_file = thunar_file_get_for_uri (user_dir, &error);
+  if (G_UNLIKELY (user_file == NULL && error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_EXIST))
+    {
+      g_error_free (error);
+      error = NULL;
+
+      /* try to create the folder */
+      if (G_LIKELY (xfce_mkdirhier (user_dir, 0755, &error)))
+        user_file = thunar_file_get_for_uri (user_dir, &error);
+    }
+
+  if (G_LIKELY (user_file != NULL))
+    {
+      /* open the folder */
+      thunar_window_set_current_directory (window, user_file);
+      g_object_unref (G_OBJECT (user_file));
+      result = TRUE;
+    }
+  else
+    {
+      gchar *error_msg = g_strdup_printf (_("Failed to open folder \"%s\""), default_name);
+
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, error_msg);
+      g_free (error_msg);
+      if (error)
+        g_error_free (error);
+    }
+
+  g_free (user_dir);
+
+  return result;
+}
+
+static void
+thunar_window_action_open_desktop (GtkAction     *action,
+                                   ThunarWindow  *window)
+{
+#if GLIB_CHECK_VERSION(2, 14, 0)
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  thunar_window_open_user_folder (action, window,
+                                  THUNAR_USER_DIRECTORY_DESKTOP,
+                                  "Desktop");
+#endif
+}
+
+static void
+thunar_window_action_open_documents (GtkAction     *action,
+                                     ThunarWindow  *window)
+{
+#if GLIB_CHECK_VERSION(2, 14, 0)
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  thunar_window_open_user_folder (action, window,
+                                  THUNAR_USER_DIRECTORY_DOCUMENTS,
+                                  "Documents");
+#endif
+}
+
+static void
+thunar_window_action_open_downloads (GtkAction     *action,
+                                     ThunarWindow  *window)
+{
+#if GLIB_CHECK_VERSION(2, 14, 0)
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  thunar_window_open_user_folder (action, window,
+                                  THUNAR_USER_DIRECTORY_DOWNLOAD,
+                                  "Downloads");
+#endif
+}
+
+static void
+thunar_window_action_open_music (GtkAction     *action,
+                                 ThunarWindow  *window)
+{
+#if GLIB_CHECK_VERSION(2, 14, 0)
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  thunar_window_open_user_folder (action, window,
+                                  THUNAR_USER_DIRECTORY_MUSIC,
+                                  "Music");
+#endif
+}
+
+static void
+thunar_window_action_open_pictures (GtkAction     *action,
+                                    ThunarWindow  *window)
+{
+#if GLIB_CHECK_VERSION(2, 14, 0)
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  thunar_window_open_user_folder (action, window,
+                                  THUNAR_USER_DIRECTORY_PICTURES,
+                                  "Pictures");
+#endif
+}
+
+static void
+thunar_window_action_open_public (GtkAction     *action,
+                                  ThunarWindow  *window)
+{
+#if GLIB_CHECK_VERSION(2, 14, 0)
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  thunar_window_open_user_folder (action, window,
+                                  THUNAR_USER_DIRECTORY_PUBLIC_SHARE,
+                                  "Public");
+#endif
+}
 
 static void
 thunar_window_action_open_templates (GtkAction    *action,
                                      ThunarWindow *window)
 {
-  ThunarVfsPath *home_path;
-  ThunarVfsPath *templates_path;
-  ThunarFile    *templates_file = NULL;
   GtkWidget     *dialog;
   GtkWidget     *button;
   GtkWidget     *label;
@@ -1804,99 +2061,88 @@ thunar_window_action_open_templates (GtkAction    *action,
   GtkWidget     *hbox;
   GtkWidget     *vbox;
   gboolean       show_about_templates;
-  GError        *error = NULL;
-  gchar         *absolute_path;
+  gboolean       success;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* determine the path to the ~/Templates folder */
-  home_path = thunar_vfs_path_get_for_home ();
-  templates_path = thunar_vfs_path_relative (home_path, "Templates");
-  thunar_vfs_path_unref (home_path);
+  success = thunar_window_open_user_folder (action,window,
+                                            THUNAR_USER_DIRECTORY_TEMPLATES,
+                                            "Templates");
 
-  /* make sure that the ~/Templates folder exists */
-  absolute_path = thunar_vfs_path_dup_string (templates_path);
-  xfce_mkdirhier (absolute_path, 0755, &error);
-  g_free (absolute_path);
+  /* check whether we should display the "About Templates" dialog */
+  g_object_get (G_OBJECT (window->preferences),
+                "misc-show-about-templates", &show_about_templates,
+                NULL);
 
-  /* determine the file for the ~/Templates path */
-  if (G_LIKELY (error == NULL))
-    templates_file = thunar_file_get_for_path (templates_path, &error);
-
-  /* open the ~/Templates folder */
-  if (G_LIKELY (templates_file != NULL))
+  if (G_UNLIKELY(show_about_templates && success))
     {
-      /* go to the ~/Templates folder */
-      thunar_window_set_current_directory (window, templates_file);
-      g_object_unref (G_OBJECT (templates_file));
+      /* display the "About Templates" dialog */
+      dialog = gtk_dialog_new_with_buttons (_("About Templates"), GTK_WINDOW (window),
+                                            GTK_DIALOG_DESTROY_WITH_PARENT
+                                            | GTK_DIALOG_NO_SEPARATOR,
+                                            GTK_STOCK_OK, GTK_RESPONSE_OK,
+                                            NULL);
 
-      /* check whether we should display the "About Templates" dialog */
-      g_object_get (G_OBJECT (window->preferences), "misc-show-about-templates", &show_about_templates, NULL);
-      if (G_UNLIKELY (show_about_templates))
-        {
-          /* display the "About Templates" dialog */
-          dialog = gtk_dialog_new_with_buttons (_("About Templates"), GTK_WINDOW (window),
-                                                GTK_DIALOG_DESTROY_WITH_PARENT
-                                                | GTK_DIALOG_NO_SEPARATOR,
-                                                GTK_STOCK_OK, GTK_RESPONSE_OK,
-                                                NULL);
-          gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
 
-          hbox = gtk_hbox_new (FALSE, 6);
-          gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
-          gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, TRUE, TRUE, 0);
-          gtk_widget_show (hbox);
+      hbox = gtk_hbox_new (FALSE, 6);
+      gtk_container_set_border_width (GTK_CONTAINER (hbox), 8);
+      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), hbox, TRUE, TRUE, 0);
+      gtk_widget_show (hbox);
 
-          image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
-          gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
-          gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
-          gtk_widget_show (image);
+      image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DIALOG);
+      gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.0f);
+      gtk_box_pack_start (GTK_BOX (hbox), image, FALSE, FALSE, 0);
+      gtk_widget_show (image);
 
-          vbox = gtk_vbox_new (FALSE, 18);
-          gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
-          gtk_widget_show (vbox);
+      vbox = gtk_vbox_new (FALSE, 18);
+      gtk_box_pack_start (GTK_BOX (hbox), vbox, TRUE, TRUE, 0);
+      gtk_widget_show (vbox);
 
-          label = gtk_label_new (_("All files in this folder will appear in the \"Create Document\" menu."));
-          gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
-          gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big_bold ());
-          gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-          gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
-          gtk_widget_show (label);
+      label = gtk_label_new (_("All files in this folder will appear in the \"Create Document\" menu."));
+      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+      gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big_bold ());
+      gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+      gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
+      gtk_widget_show (label);
 
-          label = gtk_label_new (_("If you frequently create certain kinds of documents, "
-                                   "make a copy of one and put it in this folder. Thunar "
-                                   "will add an entry for this document in the \"Create "
-                                   "Document\" menu.\n\n"
-                                   "You can then select the entry from the \"Create "
-                                   "Document\" menu and a copy of the document will "
-                                   "be created in the directory you are viewing."));
-          gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
-          gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-          gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
-          gtk_widget_show (label);
+      label = gtk_label_new (_("If you frequently create certain kinds "
+                             " of documents, make a copy of one and put it in this "
+                             "folder. Thunar will add an entry for this document in the"
+                             " \"Create Document\" menu.\n\n"
+                             "You can then select the entry from the \"Create Document\" "
+                             "menu and a copy of the document will be created in the "
+                             "directory you are viewing."));
+      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+      gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
+      gtk_box_pack_start (GTK_BOX (vbox), label, TRUE, TRUE, 0);
+      gtk_widget_show (label);
 
-          button = gtk_check_button_new_with_mnemonic (_("Do _not display this message again"));
-          exo_mutual_binding_new_with_negation (G_OBJECT (window->preferences), "misc-show-about-templates", G_OBJECT (button), "active");
-          gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
-          gtk_widget_show (button);
+      button = gtk_check_button_new_with_mnemonic (_("Do _not display this message again"));
+      exo_mutual_binding_new_with_negation (G_OBJECT (window->preferences), "misc-show-about-templates", G_OBJECT (button), "active");
+      gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
+      gtk_widget_show (button);
 
-          gtk_dialog_run (GTK_DIALOG (dialog));
-          gtk_widget_destroy (dialog);
-        }
+      gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
     }
-
-  /* display an error dialog if something went wrong */
-  if (G_UNLIKELY (error != NULL))
-    {
-      thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to open the templates folder"));
-      g_error_free (error);
-    }
-
-  /* release our reference on the ~/Templates path */
-  thunar_vfs_path_unref (templates_path);
 }
 
+
+static void
+thunar_window_action_open_videos (GtkAction     *action,
+                                  ThunarWindow  *window)
+{
+#if GLIB_CHECK_VERSION(2, 14, 0)
+  _thunar_return_if_fail (GTK_IS_ACTION (action));
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+
+  thunar_window_open_user_folder (action, window,
+                                  THUNAR_USER_DIRECTORY_VIDEOS,
+                                  "Videos");
+#endif
+}
 
 
 static void

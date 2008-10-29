@@ -1621,6 +1621,33 @@ thunar_file_set_custom_icon (ThunarFile  *file,
 }
 
 
+/**
+ * thunar_file_is_desktop:
+ * @file : a #ThunarFile.
+ *
+ * Checks whether @file refers to the users desktop directory.
+ *
+ * Return value: %TRUE if @file is the users desktop directory.
+ **/
+gboolean
+thunar_file_is_desktop (const ThunarFile *file)
+{
+#if GLIB_CHECK_VERSION(2,14,0)
+  gchar file_path[THUNAR_VFS_PATH_MAXSTRLEN];
+
+  file_path[0] = '\0';
+  thunar_vfs_path_to_string (thunar_file_get_path (file), file_path,
+                             sizeof (file_path), NULL);
+
+  /* g_get_user_special_dir () always returns something for the desktop */
+  return exo_str_is_equal (file_path, g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
+#else /* GLIB_CHECK_VERSION(2,14,0) */
+return (!thunar_vfs_path_is_root (thunar_file_get_path (file))
+        && thunar_vfs_path_is_home (thunar_vfs_path_get_parent (thunar_file_get_path (file)))
+        && exo_str_is_equal (thunar_file_get_display_name (file), "Desktop"));
+#endif /* GLIB_CHECK_VERSION(2,14,0) */
+}
+
 
 /**
  * thunar_file_get_icon_name:

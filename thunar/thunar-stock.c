@@ -51,6 +51,12 @@ static const ThunarStockIcon thunar_stock_icons[] =
   { THUNAR_STOCK_TEMPLATES,   "stock_thunar-templates", },
   { THUNAR_STOCK_TRASH_EMPTY, "gnome-fs-trash-empty",   },
   { THUNAR_STOCK_TRASH_FULL,  "gnome-fs-trash-full",    },
+  { THUNAR_STOCK_DOWNLOADS,   "emblem-downloads",       },
+  { THUNAR_STOCK_DOCUMENTS,   "emblem-documents",       },
+  { THUNAR_STOCK_MUSIC,       "audio-x-generic",        },
+  { THUNAR_STOCK_PICTURES,    "emblem-photos",          },
+  { THUNAR_STOCK_VIDEOS,      "video-x-generic",        },
+  { THUNAR_STOCK_PUBLIC,      "emblem-shared",          },
 };
 
 
