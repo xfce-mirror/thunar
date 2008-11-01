@@ -57,7 +57,7 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
   /* register the types provided by this plugin */
   twp_provider_register_type (plugin);
 
-  g_module_make_resident (plugin);
+  thunarx_provider_plugin_set_resident (plugin, TRUE);
   xfconf_init(NULL);
 
   /* setup the plugin provider type list */
