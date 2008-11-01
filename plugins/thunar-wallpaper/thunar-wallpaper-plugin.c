@@ -50,12 +50,15 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
 
-#ifdef G_ENABLE_DEBUG
+//#ifdef G_ENABLE_DEBUG
   g_message ("Initializing thunar-wallpaper-plugin extension");
-#endif
+//#endif
 
   /* register the types provided by this plugin */
   twp_provider_register_type (plugin);
+
+  g_module_make_resident (plugin);
+  xfconf_init(NULL);
 
   /* setup the plugin provider type list */
   type_list[0] = TWP_TYPE_PROVIDER;
@@ -69,6 +72,7 @@ thunar_extension_shutdown (void)
 #ifdef G_ENABLE_DEBUG
   g_message ("Shutting down thunar-wallpaper-plugin extension");
 #endif
+  xfconf_shutdown();
 }
 
 

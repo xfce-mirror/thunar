@@ -38,6 +38,14 @@
 
 #define XFDESKTOP_SELECTION_FMT "XFDESKTOP_SELECTION_%d"
 
+
+typedef enum {
+    DESKTOP_TYPE_NONE,
+    DESKTOP_TYPE_XFCE
+} DesktopType;
+
+static DesktopType desktop_type;
+
 static void   twp_provider_class_init           (TwpProviderClass         *klass);
 static void   twp_provider_menu_provider_init   (ThunarxMenuProviderIface *iface);
 static void   twp_provider_property_page_provider_init (ThunarxPropertyPageProviderIface *iface);
@@ -54,7 +62,6 @@ static GList *twp_provider_get_folder_actions   (ThunarxMenuProvider      *menu_
 
 static void
 twp_action_set_wallpaper (GtkAction *action, gpointer user_data);
-
 
 
 struct _TwpProviderClass
@@ -110,7 +117,6 @@ twp_provider_property_page_provider_init (ThunarxPropertyPageProviderIface *ifac
 static void
 twp_provider_init (TwpProvider *twp_provider)
 {
-    xfconf_init(NULL);
 	//twp_gpg_backend_init();
 }
 
@@ -119,7 +125,6 @@ twp_provider_init (TwpProvider *twp_provider)
 static void
 twp_provider_finalize (GObject *object)
 {
-    xfconf_shutdown();
 
    (*G_OBJECT_CLASS (twp_provider_parent_class)->finalize) (object);
 }
@@ -129,6 +134,7 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
                                GtkWidget           *window,
                                GList               *files)
 {
+    Atom xfce_selection_atom;
 	ThunarVfsPathScheme scheme;
 	ThunarVfsInfo      *info;
 	GtkWidget          *action;
@@ -138,28 +144,22 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
     GdkScreen *gdk_screen = gdk_screen_get_default();
     gint xscreen = gdk_screen_get_number(gdk_screen);
 
-    g_snprintf(selection_name, 100, XFDESKTOP_SELECTION_FMT, xscreen);
-
-    Atom xfce_selection_atom = XInternAtom (gdk_display, selection_name, False);
-    if(!(XGetSelectionOwner(GDK_DISPLAY(), xfce_selection_atom)))
-    {
-        return NULL;
-    }
+    desktop_type = DESKTOP_TYPE_NONE;
 
     /* we can only set a single wallpaper */
-	if (files->next == NULL)
-	{
-		/* check if the file is a local file */
-		info = thunarx_file_info_get_vfs_info (files->data);
-		scheme = thunar_vfs_path_get_scheme (info->path);
-		thunar_vfs_info_unref (info);
+    if (files->next == NULL)
+    {
+        /* check if the file is a local file */
+        info = thunarx_file_info_get_vfs_info (files->data);
+        scheme = thunar_vfs_path_get_scheme (info->path);
+        thunar_vfs_info_unref (info);
 
-		/* unable to handle non-local files */
-		if (G_UNLIKELY (scheme != THUNAR_VFS_PATH_SCHEME_FILE))
-			return NULL;
+        /* unable to handle non-local files */
+        if (G_UNLIKELY (scheme != THUNAR_VFS_PATH_SCHEME_FILE))
+            return NULL;
 
-		if (!thunarx_file_info_is_directory (files->data))
-		{
+        if (!thunarx_file_info_is_directory (files->data))
+        {
             if (thunarx_file_info_has_mime_type (files->data, "image/jpeg")
               ||thunarx_file_info_has_mime_type (files->data, "image/png")
               ||thunarx_file_info_has_mime_type (files->data, "image/svg+xml")
@@ -173,8 +173,21 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
                 actions = g_list_append (actions, action);
             }
-		}
-	}
+        }
+    }
+
+    g_snprintf(selection_name, 100, XFDESKTOP_SELECTION_FMT, xscreen);
+    xfce_selection_atom = XInternAtom (gdk_display, selection_name, False);
+
+    if((XGetSelectionOwner(GDK_DISPLAY(), xfce_selection_atom)))
+    {
+        desktop_type = DESKTOP_TYPE_XFCE;
+    }
+
+    if (desktop_type == DESKTOP_TYPE_NONE)
+    {
+        gtk_widget_set_sensitive (action, FALSE);
+    }
 
   return actions;
 }
@@ -205,13 +218,19 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
     gchar *file_uri;
     gchar *file_name;
     gchar *hostname = NULL;
+    XfconfChannel *xfdesktop_channel;
 
-    XfconfChannel *xfdesktop_channel = xfconf_channel_new("xfce4-desktop");
-
-    file_uri = thunarx_file_info_get_uri (file_info);
-    file_name = g_filename_from_uri (file_uri, &hostname, NULL);
-    if (hostname == NULL)
+    if (desktop_type != DESKTOP_TYPE_NONE)
     {
+        file_uri = thunarx_file_info_get_uri (file_info);
+        file_name = g_filename_from_uri (file_uri, &hostname, NULL);
+        if (hostname != NULL)
+        {
+            g_free (hostname);
+            g_free(file_uri);
+            g_free(file_name);
+            return;
+        }
         if (n_screens > 1)
         {
             screen = gdk_display_get_default_screen (display);
@@ -220,33 +239,41 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
         {
             screen = gdk_display_get_screen (display, 0);
         }
-
         n_monitors = gdk_screen_get_n_monitors (screen);
 
         if (n_monitors > 1)
         {
 
         }
-        
-        image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
-        image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
-        image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
-
-
-        if(xfconf_channel_set_string(xfdesktop_channel, image_path_prop, file_name) == TRUE)
-        {
-            xfconf_channel_set_bool(xfdesktop_channel, image_show_prop, TRUE);
-            xfconf_channel_set_int(xfdesktop_channel, image_style_prop, 4);
-        }
-
-        g_free(image_path_prop);
-        g_free(image_show_prop);
-        g_free(image_style_prop);
+        g_free(file_uri);
+        g_free(file_name);
 
     }
-    g_free(file_uri);
-    g_free(file_name);
-    g_object_unref(xfdesktop_channel);
 
-    
+    switch (desktop_type)
+    {
+        case DESKTOP_TYPE_XFCE:
+            xfdesktop_channel = xfconf_channel_new("xfce4-desktop");
+            image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
+            image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
+            image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
+
+            if(xfconf_channel_set_string(xfdesktop_channel, image_path_prop, file_name) == TRUE)
+            {
+                xfconf_channel_set_bool(xfdesktop_channel, image_show_prop, TRUE);
+                xfconf_channel_set_int(xfdesktop_channel, image_style_prop, 4);
+            }
+
+            g_free(image_path_prop);
+            g_free(image_show_prop);
+            g_free(image_style_prop);
+            g_object_unref(xfdesktop_channel);
+            break;
+
+        default:
+            return;
+            break;
+    }
+
+
 }
