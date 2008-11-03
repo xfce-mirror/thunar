@@ -102,7 +102,15 @@ AC_ARG_ENABLE([wallpaper-plugin], AC_HELP_STRING([--disable-wallpaper-plugin], [
 AC_MSG_CHECKING([whether to build the thunar-wallpaper plugin])
 AM_CONDITIONAL([THUNAR_PLUGIN_WALLPAPER], [test x"$ac_bm_thunar_plugin_wallpaper" = x"yes"])
 AC_MSG_RESULT([$ac_bm_thunar_plugin_wallpaper])
-XDT_CHECK_OPTIONAL_PACKAGE([XFCONF], [libxfconf-0], [4.5.91], [xfconf], [Xfconf support])
+if test x"$ac_bm_thunar_plugin_wallpaper" = x"yes"; then
+	AC_CHECK_PROG([xfconf_query_found], [xfconf-query], [yes], [no])
+	if test x"$xfconf_query_found" = x"no"; then
+		echo "***"
+		echo "*** xfconf-query was not found on your system."
+		echo "*** The wallpaper won't work without it installed."
+		echo "***"
+	fi
+fi
 ])
 
 

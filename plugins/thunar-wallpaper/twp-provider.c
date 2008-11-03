@@ -1,5 +1,6 @@
-/*-
+/*
  * Copyright (c) 2008 Stephan Arts <stephan@xfce.org>
+ * Copyright (c) 2008 Mike Massonnet <mmassonnet@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -13,55 +14,49 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301  USA
  */
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
 #endif
 
-#ifdef HAVE_UNISTD_H
-#include <unistd.h>
-#endif
-
-#ifdef HAVE_STRING_H
-#include <string.h>
-#endif
-
-#include <xfconf/xfconf.h>
 #include <thunar-vfs/thunar-vfs.h>
 #include <gdk/gdkx.h>
 #include <X11/Xlib.h>
 
 #include "twp-provider.h"
 
+
 #define XFDESKTOP_SELECTION_FMT "XFDESKTOP_SELECTION_%d"
+#define NAUTILUS_SELECTION_FMT  "NAUTILUS_DESKTOP_WINDOW_ID"
+
+static gboolean _has_xfconf_query = FALSE;
+static gboolean _has_gconftool = FALSE;
 
 
 typedef enum {
     DESKTOP_TYPE_NONE,
-    DESKTOP_TYPE_XFCE
+    DESKTOP_TYPE_XFCE,
+    DESKTOP_TYPE_NAUTILUS
 } DesktopType;
 
 static DesktopType desktop_type;
 
+static void   twp_menu_provider_init            (ThunarxMenuProviderIface *iface);
 static void   twp_provider_class_init           (TwpProviderClass         *klass);
-static void   twp_provider_menu_provider_init   (ThunarxMenuProviderIface *iface);
-static void   twp_provider_property_page_provider_init (ThunarxPropertyPageProviderIface *iface);
 static void   twp_provider_init                 (TwpProvider              *twp_provider);
 static void   twp_provider_finalize             (GObject                  *object);
 static GList *twp_provider_get_file_actions     (ThunarxMenuProvider      *menu_provider,
                                                  GtkWidget                *window,
                                                  GList                    *files);
-#if 0
-static GList *twp_provider_get_folder_actions   (ThunarxMenuProvider      *menu_provider,
-                                                 GtkWidget                *window,
-                                                 ThunarxFileInfo          *folder);
-#endif
 
-static void
-twp_action_set_wallpaper (GtkAction *action, gpointer user_data);
+static void   twp_action_set_wallpaper          (GtkAction                *action,
+                                                 gpointer                  user_data);
+
+static gboolean check_cli_tools ();
+
 
 
 struct _TwpProviderClass
@@ -83,9 +78,14 @@ THUNARX_DEFINE_TYPE_WITH_CODE (TwpProvider,
                                twp_provider,
                                G_TYPE_OBJECT,
                                THUNARX_IMPLEMENT_INTERFACE (THUNARX_TYPE_MENU_PROVIDER,
-                                                            twp_provider_menu_provider_init)
-                               THUNARX_IMPLEMENT_INTERFACE (THUNARX_TYPE_PROPERTY_PAGE_PROVIDER,
-                                                            twp_provider_property_page_provider_init));
+                                                            twp_menu_provider_init));
+
+static void
+twp_menu_provider_init (ThunarxMenuProviderIface *iface)
+{
+  iface->get_file_actions = twp_provider_get_file_actions;
+}
+
 
 
 static void
@@ -97,37 +97,19 @@ twp_provider_class_init (TwpProviderClass *klass)
   gobject_class->finalize = twp_provider_finalize;
 }
 
-
-
-static void
-twp_provider_menu_provider_init (ThunarxMenuProviderIface *iface)
-{
-  iface->get_file_actions = twp_provider_get_file_actions;
-}
-
-
-
-static void
-twp_provider_property_page_provider_init (ThunarxPropertyPageProviderIface *iface)
-{
-}
-
-
-
 static void
 twp_provider_init (TwpProvider *twp_provider)
 {
-	//twp_gpg_backend_init();
+    check_cli_tools();
 }
-
-
 
 static void
 twp_provider_finalize (GObject *object)
 {
-
-   (*G_OBJECT_CLASS (twp_provider_parent_class)->finalize) (object);
+  G_OBJECT_CLASS (twp_provider_parent_class)->finalize (object);
 }
+
+
 
 static GList*
 twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
@@ -135,9 +117,11 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
                                GList               *files)
 {
     Atom xfce_selection_atom;
+    Atom nautilus_selection_atom;
+
 	ThunarVfsPathScheme scheme;
 	ThunarVfsInfo      *info;
-	GtkWidget          *action;
+	GtkWidget          *action = NULL;
 	GList              *actions = NULL;
     gchar               selection_name[100];
 
@@ -167,7 +151,8 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
             {
                 action = g_object_new (GTK_TYPE_ACTION,
                             "name", "Twp::setwallpaper",
-                            "label", _("Set as Wallpaper"),
+                            "icon-name", "background",
+                            "label", _("Set as wallpaper"),
                             NULL);
                 g_signal_connect (action, "activate", G_CALLBACK (twp_action_set_wallpaper), files->data);
 
@@ -181,26 +166,28 @@ twp_provider_get_file_actions (ThunarxMenuProvider *menu_provider,
 
     if((XGetSelectionOwner(GDK_DISPLAY(), xfce_selection_atom)))
     {
-        desktop_type = DESKTOP_TYPE_XFCE;
+        if (_has_xfconf_query)
+            desktop_type = DESKTOP_TYPE_XFCE;
+    }
+    else
+    {
+        /* FIXME: This is wrong, nautilus WINDOW_ID is not a selection */
+        g_snprintf(selection_name, 100, NAUTILUS_SELECTION_FMT);
+        nautilus_selection_atom = XInternAtom (gdk_display, selection_name, False);
+        if((XGetSelectionOwner(GDK_DISPLAY(), nautilus_selection_atom)))
+        {
+            if (_has_gconftool)
+                desktop_type = DESKTOP_TYPE_NAUTILUS;
+        }
     }
 
-    if (desktop_type == DESKTOP_TYPE_NONE)
+    if ((desktop_type == DESKTOP_TYPE_NONE) && (action != NULL))
     {
-        gtk_widget_set_sensitive (action, FALSE);
+        //gtk_widget_set_sensitive (action, FALSE);
     }
 
   return actions;
 }
-
-
-#if 0
-static GList*
-twp_Provider_get_pages (ThunarxPropertyPageProvider *page_provider, GList *files)
-{
-  GList *pages = NULL;
-  return pages;
-}
-#endif
 
 static void
 twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
@@ -216,9 +203,9 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
     gchar *image_show_prop;
     gchar *image_style_prop;
     gchar *file_uri;
-    gchar *file_name;
+    gchar *file_name = NULL;
     gchar *hostname = NULL;
-    XfconfChannel *xfdesktop_channel;
+    gchar *command;
 
     if (desktop_type != DESKTOP_TYPE_NONE)
     {
@@ -227,8 +214,8 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
         if (hostname != NULL)
         {
             g_free (hostname);
-            g_free(file_uri);
-            g_free(file_name);
+            g_free (file_uri);
+            g_free (file_name);
             return;
         }
         if (n_screens > 1)
@@ -246,28 +233,48 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
 
         }
         g_free(file_uri);
-        g_free(file_name);
-
     }
 
     switch (desktop_type)
     {
         case DESKTOP_TYPE_XFCE:
-            xfdesktop_channel = xfconf_channel_new("xfce4-desktop");
+            g_debug ("set on xfce");
             image_path_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-path", screen_nr, monitor_nr);
             image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
             image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
 
-            if(xfconf_channel_set_string(xfdesktop_channel, image_path_prop, file_name) == TRUE)
-            {
-                xfconf_channel_set_bool(xfdesktop_channel, image_show_prop, TRUE);
-                xfconf_channel_set_int(xfdesktop_channel, image_style_prop, 4);
-            }
+            command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t string -s %s", image_path_prop, file_name);
+            g_spawn_command_line_async (command, NULL);
+            g_free (command);
+
+            command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t bool -s true", image_show_prop);
+            g_spawn_command_line_async (command, NULL);
+            g_free (command);
+
+            command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t int -s 4", image_style_prop);
+            g_spawn_command_line_async (command, NULL);
+            g_free (command);
 
             g_free(image_path_prop);
             g_free(image_show_prop);
             g_free(image_style_prop);
-            g_object_unref(xfdesktop_channel);
+            break;
+        case DESKTOP_TYPE_NAUTILUS:
+            g_debug ("set on gnome");
+            image_path_prop = g_strdup_printf("/desktop/gnome/background/picture_filename");
+            image_show_prop = g_strdup_printf("/desktop/gnome/background/draw_background");
+
+            command = g_strdup_printf ("gconftool %s --set %s--type string", image_path_prop, file_name);
+            g_spawn_command_line_async (command, NULL);
+            g_free (command);
+
+
+            command = g_strdup_printf ("gconftool %s --set true --type boolean", image_show_prop);
+            g_spawn_command_line_async (command, NULL);
+            g_free (command);
+
+            g_free(image_path_prop);
+            g_free(image_show_prop);
             break;
 
         default:
@@ -275,5 +282,28 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
             break;
     }
 
+    g_free(file_name);
+}
 
+
+static gboolean
+check_cli_tools ()
+{
+  gchar *program;
+
+  program = g_find_program_in_path ("xfconf-query");
+  if (G_LIKELY (program != NULL))
+  {
+    _has_xfconf_query = TRUE;
+    g_free (program);
+  }
+
+  program = g_find_program_in_path ("gconftool");
+  if (G_LIKELY (program != NULL))
+  {
+    _has_gconftool = TRUE;
+    g_free (program);
+  }
+
+  return TRUE;
 }

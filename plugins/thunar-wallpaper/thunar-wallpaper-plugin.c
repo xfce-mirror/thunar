@@ -1,5 +1,6 @@
-/*-
+/*
  * Copyright (c) 2008 Stephan Arts <stephan@xfce.org>
+ * Copyright (c) 2008 Mike Massonnet <mmassonnet@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -13,8 +14,8 @@
  *
  * You should have received a copy of the GNU Library General Public
  * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301  USA
  */
 
 #ifdef HAVE_CONFIG_H
@@ -50,15 +51,8 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
   bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 #endif
 
-//#ifdef G_ENABLE_DEBUG
-  g_message ("Initializing thunar-wallpaper-plugin extension");
-//#endif
-
   /* register the types provided by this plugin */
   twp_provider_register_type (plugin);
-
-  thunarx_provider_plugin_set_resident (plugin, TRUE);
-  xfconf_init(NULL);
 
   /* setup the plugin provider type list */
   type_list[0] = TWP_TYPE_PROVIDER;
@@ -69,10 +63,6 @@ thunar_extension_initialize (ThunarxProviderPlugin *plugin)
 G_MODULE_EXPORT void
 thunar_extension_shutdown (void)
 {
-#ifdef G_ENABLE_DEBUG
-  g_message ("Shutting down thunar-wallpaper-plugin extension");
-#endif
-  xfconf_shutdown();
 }
 
 
@@ -84,7 +74,4 @@ thunar_extension_list_types (const GType **types,
   *types = type_list;
   *n_types = G_N_ELEMENTS (type_list);
 }
-
-
-
 

@@ -19,7 +19,6 @@ thunar_wallpaper_plugin_la_SOURCES =		\
 thunar_wallpaper_plugin_la_CFLAGS =			\
 	$(PLATFORM_CFLAGS)						\
 	$(THUNARX_CFLAGS)						\
-	$(XFCONF_CFLAGS)						\
 	$(EXO_CFLAGS)							\
 	$(THUNAR_VFS_CFLAGS)
 
@@ -29,5 +28,4 @@ thunar_wallpaper_plugin_la_LDFLAGS =		\
 	-module									\
 	$(PLATFORM_LDFLAGS)						\
 	$(THUNARX_LDFLAGS)						\
-	$(XFCONF_LIBS)							\
 	$(THUNAR_VFS_LDFLAGS)
