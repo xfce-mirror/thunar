@@ -675,24 +675,6 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
       translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]);
       g_object_set (action, "label", translation, NULL);
 
-#if 0
-      /* I'm not sure I like the idea of displaying the raw directory
-       * name to the user, but I'll leave the code here in case someone
-       * wants to enable it later. */
-      dir_name = g_path_get_basename (path);
-
-      if (!g_utf8_collate (translation, dir_name))
-        g_object_set (action, "label", translation, NULL);
-      else
-        {
-          gchar *label = g_strdup_printf (C_("CategoryName (FolderName)", "%s (%s)"), translation);
-          g_object_set (action, "label", label, NULL);
-          g_free (label);
-        }
-
-      g_free (dir_name);
-#endif
-
       g_free (path);
     }
 
