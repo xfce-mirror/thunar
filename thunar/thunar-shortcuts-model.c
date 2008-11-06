@@ -309,6 +309,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   /* append the system defined items ('Home', 'Trash', 'File System') */
   for (n = 0; n < G_N_ELEMENTS (system_path_list); ++n)
     {
+#if GLIB_CHECK_VERSION(2, 14, 0)
       /* we exclude the desktop if it points to home */
       if (n == desktop_index
           && exo_str_is_equal (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP),
@@ -317,6 +318,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
           thunar_vfs_path_unref (system_path_list[n]);
           continue;
         }
+#endif
 
       /* determine the file for the path */
       file = thunar_file_get_for_path (system_path_list[n], NULL);
@@ -800,6 +802,7 @@ thunar_shortcuts_model_remove_shortcut (ThunarShortcutsModel *model,
     }
 }
 
+#if GLIB_CHECK_VERSION(2, 14, 0)
 /* Reads the current xdg user dirs locale from ~/.config/xdg-user-dirs.locale
  * Notice that the result shall be freed by using g_free (). */
 gchar *
@@ -828,6 +831,7 @@ _thunar_get_xdg_user_dirs_locale (void)
 
   return locale;
 }
+#endif
 
 static void
 thunar_shortcuts_model_load (ThunarShortcutsModel *model)

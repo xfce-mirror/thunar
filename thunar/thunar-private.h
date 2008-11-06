@@ -107,7 +107,9 @@ typedef GUserDirectory ThunarUserDirectory;
 #define THUNAR_USER_DIRECTORY_VIDEOS       G_USER_DIRECTORY_VIDEOS
 #define THUNAR_USER_N_DIRECTORIES          (8)
 
+#if GLIB_CHECK_VERSION(2, 14, 0)
 gchar *_thunar_get_xdg_user_dirs_locale (void);
+#endif
 extern const gchar *_thunar_user_directory_names[THUNAR_USER_N_DIRECTORIES+1];
 
 #else /* GLIB_CHECK_VERSION(2,14,0) */

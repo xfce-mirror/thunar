@@ -608,11 +608,19 @@ static void
 thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
 {
   gint i;
+  static const gchar *callback_names[] = {
+    "open-desktop", "open-documents", "open-downloads", "open-music",
+    "open-pictures", "open-public", "open-templates", "open-videos"
+  };
 
 #if !GLIB_CHECK_VERSION(2, 14, 0)
 
-  for (i = 0; i < THUNAR_USER_N_DIRECTORIES; i++)
-    gtk_action_set_visible (GTK_ACTION (action), FALSE);
+  for (i = 0; i < G_N_ELEMENTS(callback_names); i++)
+    {
+      GtkAction *action = gtk_action_group_get_action (window->action_group,
+                                                       callback_names[i]);
+      gtk_action_set_visible (GTK_ACTION (action), FALSE);
+    }
 
 #else  /* GLIB_CHECK_VERSION(2, 14, 0) */
 
@@ -621,10 +629,6 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
   gchar *translation    = NULL;
   /* gchar *dir_name       = NULL;  */  // see below
   const gchar *home_dir = NULL;
-  static const gchar *callback_names[] = {
-    "open-desktop", "open-documents", "open-downloads", "open-music",
-    "open-pictures", "open-public", "open-templates", "open-videos"
-  };
 
   bindtextdomain (XDG_USER_DIRS_PACKAGE, PACKAGE_LOCALE_DIR);
 #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
