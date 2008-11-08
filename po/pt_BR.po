@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 02:05-0700\n"
-"PO-Revision-Date: 2008-09-07 20:51-0400\n"
+"POT-Creation-Date: 2008-11-05 21:15+0000\n"
+"PO-Revision-Date: 2008-11-08 10:56-0500\n"
 "Last-Translator: Og Maciel <ogmaciel@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar2.conectiva.com.br>\n"
 "MIME-Version: 1.0\n"
@@ -927,7 +927,13 @@ msgstr "Visualização de detalhes"
 
 #: ../thunar/thunar-dialogs.c:108
 msgid "translator-credits"
-msgstr "Créditos de tradutores"
+msgstr ""
+"Joao Pedrosa <joaopedrosa@gmail.com>\n"
+"Rodrigo Coacci <rcoacci@gmail.com>\n"
+"Adriano Winter Bess <awbess@gmail.com>\n"
+"William Koch <wkromani@gmail.com>\n"
+"Fábio Nogueira <deb-user-ba@ubuntu.com>\n"
+"Og Maciel <ogmaciel@gnome.org>"
 
 #. display an error message to the user
 #. tell the user that we failed
@@ -1408,7 +1414,7 @@ msgstr "Abrir Endereço"
 msgid "_Location:"
 msgstr "_Endereço:"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1463
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Falha ao executar \"%s\""
@@ -2116,22 +2122,14 @@ msgid "Configure the Thunar file manager"
 msgstr "Configurar o gerenciador de arquivos Thunar"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2230
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "Gerenciador de arquivos"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-msgid "File Manager Settings"
-msgstr "Configurações do gerenciador de arquivos"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-msgid "Thunar Settings"
-msgstr "Configurações do Thunar"
-
 #: ../thunar/thunar-shortcuts-model.c:349
 msgid "Desktop"
-msgstr ""
+msgstr "Área de trabalho"
 
 #: ../thunar/thunar-shortcuts-pane.c:413
 msgid "Side Pane (Create Shortcut)"
@@ -2569,39 +2567,32 @@ msgid "Go to the home folder"
 msgstr "Vai para a pasta home"
 
 #: ../thunar/thunar-window.c:299
-#, fuzzy
 msgid "Go to the desktop folder"
-msgstr "Vai para a pasta home"
+msgstr "Ir para a pasta da área de trabalho"
 
 #: ../thunar/thunar-window.c:300
-#, fuzzy
 msgid "Go to the documents folder"
-msgstr "Vai para a pasta home"
+msgstr "Ir para a pasta documentos"
 
 #: ../thunar/thunar-window.c:301
-#, fuzzy
 msgid "Go to the downloads folder"
-msgstr "Abrir a pasta de modelos"
+msgstr "Ir para a pasta de downloads"
 
 #: ../thunar/thunar-window.c:302
-#, fuzzy
 msgid "Go to the music folder"
-msgstr "Vai para a pasta home"
+msgstr "Ir para a pasta de músicas"
 
 #: ../thunar/thunar-window.c:303
-#, fuzzy
 msgid "Go to the pictures folder"
-msgstr "Abrir a pasta de modelos"
+msgstr "Ir para a pasta de imagens"
 
 #: ../thunar/thunar-window.c:304
-#, fuzzy
 msgid "Go to the videos folder"
-msgstr "Vai para a pasta home"
+msgstr "Ir para a pasta de vídeos"
 
 #: ../thunar/thunar-window.c:305
-#, fuzzy
 msgid "Go to the public folder"
-msgstr "Abrir a pasta de modelos"
+msgstr "Ir para a pasta pública"
 
 #: ../thunar/thunar-window.c:306
 msgid "T_emplates"
@@ -2683,70 +2674,64 @@ msgstr "Barra de st_atus"
 msgid "Change the visibility of this window's statusbar"
 msgstr "Muda a visibilidade da barra de status da janela"
 
-#: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
-msgid "%s (%s)"
-msgstr "\"%s\" (%s) %s"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:763
 msgid "View as _Icons"
 msgstr "Visual_izar como Ícones"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:763
 msgid "Display folder content in an icon view"
 msgstr "Mostrar conteúdo de pasta em uma visualização de ícone"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:770
 msgid "View as _Detailed List"
 msgstr "Visualizar como Lista _Detalhada"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:770
 msgid "Display folder content in a detailed list view"
 msgstr "Mostrar conteúdo de pasta em uma visualização de lista detalhada"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:777
 msgid "View as _Compact List"
 msgstr "Visualizar como Lista _Compacta"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:777
 msgid "Display folder content in a compact list view"
 msgstr "Mostrar conteúdo de pasta em uma visualização de lista compacta"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:839
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
 "Aviso, você está usando o usuário root, você pode danificar o seu sistema."
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1857
 msgid "Failed to open parent folder"
 msgstr "Falha ao abrir a pasta de origem"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1883
 msgid "Failed to open the home folder"
 msgstr "Falha ao abrir a pasta home"
 
-#: ../thunar/thunar-window.c:1956
-#, fuzzy, c-format
+#: ../thunar/thunar-window.c:1938
+#, c-format
 msgid "Failed to open folder \"%s\""
-msgstr "Falha ao abrir o arquivo \"%s\""
+msgstr "Falhou ao abrir a pasta \"%s\""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2063
 msgid "About Templates"
 msgstr "Sobre os Modelos"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2085
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Todos os arquivos nesta pasta vão aparecer no menu \"Criar Documento\"."
 
-#: ../thunar/thunar-window.c:2110
-#, fuzzy
+#: ../thunar/thunar-window.c:2092
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2762,16 +2747,16 @@ msgstr ""
 "Você pode então selecionar a entrada do menu \"Criar Documento\" e uma cópia "
 "do documento será criada no diretório que você está vendo."
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2104
 msgid "Do _not display this message again"
 msgstr "_Não mostrar esta mensagem novamente"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2149
 msgid "Failed to display the contents of the trash can"
 msgstr "Falha ao mostrar o conteúdo da lixeira"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2191
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3558,6 +3543,15 @@ msgstr "Abrir Pasta com o Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Abrir as pastas especificadas no Thunar"
+
+#~ msgid "File Manager Settings"
+#~ msgstr "Configurações do gerenciador de arquivos"
+
+#~ msgid "Thunar Settings"
+#~ msgstr "Configurações do Thunar"
+
+#~ msgid "%s (%s)"
+#~ msgstr "%s (%s)"
 
 #~ msgid "Failed to open the templates folder"
 #~ msgstr "Falha ao abrir a pasta de modelos"
