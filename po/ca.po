@@ -1,7 +1,7 @@
 # Catalan translation of the thunar package.
 # Copyright (C) 2004-2007 Benedikt Meurer.
 # This file is distributed under the same license as the thunar package.
-# Pau Ruŀlan Ferragut <paurullan@bulma.net> 2005-2007.
+# Pau Ruŀlan Ferragut <paurullan@bulma.net> 2005-2008.
 # Carles Muñoz Gorriz <carlesmu@internautas.org>, 2006, 2008.
 #
 msgid ""
@@ -9,20 +9,20 @@ msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-10-29 02:05-0700\n"
-"PO-Revision-Date: 2008-03-15 17:58+0100\n"
+"PO-Revision-Date: 2008-11-03 20:15+0100\n"
 "Last-Translator: Carles Muñoz Gorriz <carlesmu@internautas.org>\n"
 "Language-Team: Catalan <xfce-i18n@xfce.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: KBabel 1.11.2\n"
 
 #. base directory not readable
 #: ../thunar-vfs/thunar-vfs-deep-count-job.c:233
 #, c-format
 msgid "Failed to read folder contents"
-msgstr "No s’ha pogut llegir el contigut de la carpeta"
+msgstr "No s’ha pogut llegir el contingut de la carpeta"
 
 #: ../thunar-vfs/thunar-vfs-exec.c:590
 #, c-format
@@ -524,7 +524,7 @@ msgstr "S’estan creant els enllaços simbòlics…"
 
 #: ../thunar/thunar-application.c:1260
 msgid "Moving files into the trash..."
-msgstr "S’estan movent els fitxers…"
+msgstr "S’estan movent els fitxers a la paperera…"
 
 #: ../thunar/thunar-application.c:1265
 msgid "Moving files..."
@@ -918,9 +918,12 @@ msgstr "Llistat detallat de directoris"
 msgid "Details view"
 msgstr "Mostra detalls"
 
+# Llista de traductors
 #: ../thunar/thunar-dialogs.c:108
 msgid "translator-credits"
-msgstr "Crèdits de traductors"
+msgstr ""
+"Pau Ruŀlan Ferragut <paurullan@bulma.net>\n"
+"Carles Muñoz Gorriz <carlesmu@internautas.org>"
 
 #. display an error message to the user
 #. tell the user that we failed
@@ -2097,9 +2100,8 @@ msgid ""
 msgstr "Voleu ometre aquest fitxer i continuar canviant el nom als que queden?"
 
 #: ../thunar/thunar-settings.desktop.in.h:1
-#, fuzzy
 msgid "Configure the Thunar file manager"
-msgstr "Gestor de fitxers Thunar"
+msgstr "Configura el gestor de fitxers Thunar"
 
 #. set window title and icon
 #: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
@@ -2108,18 +2110,16 @@ msgid "File Manager"
 msgstr "Gestor de fitxers"
 
 #: ../thunar/thunar-settings.desktop.in.h:3
-#, fuzzy
 msgid "File Manager Settings"
-msgstr "Gestor de fitxers"
+msgstr "Paràmetres del gestor de fitxers"
 
 #: ../thunar/thunar-settings.desktop.in.h:4
-#, fuzzy
 msgid "Thunar Settings"
-msgstr "Thunar: %s\n"
+msgstr "Paràmetres de Thunar"
 
 #: ../thunar/thunar-shortcuts-model.c:349
 msgid "Desktop"
-msgstr ""
+msgstr "Escriptori"
 
 #: ../thunar/thunar-shortcuts-pane.c:413
 msgid "Side Pane (Create Shortcut)"
@@ -2555,39 +2555,32 @@ msgid "Go to the home folder"
 msgstr "Vés a la carpeta personal"
 
 #: ../thunar/thunar-window.c:299
-#, fuzzy
 msgid "Go to the desktop folder"
-msgstr "Vés a la carpeta personal"
+msgstr "Vés a l'escriptori"
 
 #: ../thunar/thunar-window.c:300
-#, fuzzy
 msgid "Go to the documents folder"
-msgstr "Vés a la carpeta personal"
+msgstr "Vés als documents"
 
 #: ../thunar/thunar-window.c:301
-#, fuzzy
 msgid "Go to the downloads folder"
-msgstr "Vés a la carpeta de les plantilles"
+msgstr "Vés a la carpeta de descàrregues"
 
 #: ../thunar/thunar-window.c:302
-#, fuzzy
 msgid "Go to the music folder"
-msgstr "Vés a la carpeta personal"
+msgstr "Vés a la carpeta de música"
 
 #: ../thunar/thunar-window.c:303
-#, fuzzy
 msgid "Go to the pictures folder"
-msgstr "Vés a la carpeta de les plantilles"
+msgstr "Vés a la carpeta d'imatges"
 
 #: ../thunar/thunar-window.c:304
-#, fuzzy
 msgid "Go to the videos folder"
-msgstr "Vés a la carpeta personal"
+msgstr "Vés a la carpeta de vídeos"
 
 #: ../thunar/thunar-window.c:305
-#, fuzzy
 msgid "Go to the public folder"
-msgstr "Vés a la carpeta de les plantilles"
+msgstr "Vés a la carpeta pública"
 
 #: ../thunar/thunar-window.c:306
 msgid "T_emplates"
@@ -2671,9 +2664,9 @@ msgid "Change the visibility of this window's statusbar"
 msgstr "Canvia la visibilitat de la barra d’estat d’aquesta finestra"
 
 #: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%s)"
-msgstr "«%s» (%s) %s"
+msgstr "«%s» (%s)"
 
 #.
 #. * add view options
@@ -2719,9 +2712,9 @@ msgid "Failed to open the home folder"
 msgstr "No s’ha pogut obrir el directori d’inici"
 
 #: ../thunar/thunar-window.c:1956
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to open folder \"%s\""
-msgstr "No s’ha pogut obrir el fitxer «%s»"
+msgstr "No s’ha pogut obrir la carpeta «%s»"
 
 #. display the "About Templates" dialog
 #: ../thunar/thunar-window.c:2081
@@ -2733,7 +2726,6 @@ msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Tots els fitxers d’aquesta carpeta sortiran al menú «Crea document»."
 
 #: ../thunar/thunar-window.c:2110
-#, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2743,7 +2735,7 @@ msgid ""
 "of the document will be created in the directory you are viewing."
 msgstr ""
 "Si amb certa freqüència creeu certs tipus de documents, feu una còpia i "
-"poseu-la dins d’aquest directori. Thunar crearà una entrada d’aquest "
+"poseu-la dins d’aquest directori. Thunar afegirà una entrada d’aquest "
 "document al menú «Crea document».\n"
 "\n"
 "Podreu seleccionar l’entrada dins el menú «Crea document» i llavors es crearà "
@@ -3546,6 +3538,3 @@ msgstr "Obri el directori amb Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Obre les carpetes especificades dins Thunar"
-
-#~ msgid "Failed to open the templates folder"
-#~ msgstr "No s’ha pogut obrir el directori de plantilles"
