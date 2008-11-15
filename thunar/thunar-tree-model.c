@@ -178,6 +178,12 @@ struct _ThunarTreeModel
   gboolean                sort_case_sensitive;
 
   GNode                  *root;
+  
+  /* when this setting is enabled, we do not ref nodes. this is
+   * used to avoid a race condition when gtk traverses the tree
+   * and reads the iter data. See bug #2502.
+   */
+  gboolean                lock_ref_node;
 };
 
 struct _ThunarTreeModelItem
@@ -307,6 +313,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
 
   /* initialize the model data */
   model->sort_case_sensitive = TRUE;
+  model->lock_ref_node = FALSE;
 
   /* connect to the file monitor */
   model->file_monitor = thunar_file_monitor_get_default ();
@@ -759,6 +766,10 @@ thunar_tree_model_ref_node (GtkTreeModel *tree_model,
 
   _thunar_return_if_fail (iter->user_data != NULL);
   _thunar_return_if_fail (iter->stamp == model->stamp);
+
+  /* leave when locked */
+  if (model->lock_ref_node)
+    return;
 
   /* determine the node for the iterator */
   node = G_NODE (iter->user_data);
@@ -1699,3 +1710,13 @@ thunar_tree_model_set_case_sensitive (ThunarTreeModel *model,
     }
 }
 
+
+
+void
+thunar_tree_model_set_lock_ref_node (ThunarTreeModel *model,
+                                     gboolean         lock_ref_node)
+{
+  _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+  
+  model->lock_ref_node = !!lock_ref_node;
+}

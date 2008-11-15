@@ -61,6 +61,9 @@ gboolean         thunar_tree_model_get_case_sensitive (ThunarTreeModel *model);
 void             thunar_tree_model_set_case_sensitive (ThunarTreeModel *model,
                                                        gboolean         case_sensitive);
 
+void             thunar_tree_model_set_lock_ref_node  (ThunarTreeModel *model,
+                                                       gboolean         lock_ref_node);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_MODEL_H__ */

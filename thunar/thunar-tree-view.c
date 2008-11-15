@@ -2133,9 +2133,15 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
       /* apply the new setting */
       view->show_hidden = show_hidden;
 
+      /* lock loading nodes in the tree, see bug #2505 */
+      thunar_tree_model_set_lock_ref_node (THUNAR_TREE_MODEL (view->model), TRUE);
+
       /* update the filter */
       filter = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
       gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (filter));
+
+      /* release the lock */
+      thunar_tree_model_set_lock_ref_node (THUNAR_TREE_MODEL (view->model), FALSE);
 
       /* notify listeners */
       g_object_notify (G_OBJECT (view), "show-hidden");
