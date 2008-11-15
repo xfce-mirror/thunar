@@ -75,7 +75,7 @@ thunar_vfs_mime_sniffer_looks_like_text (const gchar *data,
        * UTF8 character, or if we really have an invalid UTF8 string.
        */
       remaining = length - (end - data);
-      if (g_utf8_get_char_validated (end, remaining) == -2)
+      if (g_utf8_get_char_validated (end, remaining) == (gunichar)-2)
         return TRUE;
 
 #ifdef HAVE_MBRTOWC

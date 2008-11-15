@@ -523,7 +523,7 @@ thunar_column_editor_use_defaults (GtkWidget          *button,
   GtkTreeSelection *selection;
   GParamSpec       *pspec;
   GValue            value = { 0, };
-  gint              n;
+  guint             n;
 
   /* reset the given properties to its default values */
   for (n = 0; n < G_N_ELEMENTS (PROPERTY_NAMES); ++n)

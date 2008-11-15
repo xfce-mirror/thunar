@@ -61,7 +61,7 @@ transform_string_to_enum (const GValue *src,
 {
   GEnumClass *klass;
   gint        value = 0;
-  gint        n;
+  guint       n;
 
   /* determine the enum value matching the src... */
   klass = g_type_class_ref (G_VALUE_TYPE (dst));

@@ -109,7 +109,7 @@ thunar_apr_image_page_init (ThunarAprImagePage *image_page)
   GtkWidget      *label;
   GtkWidget      *table;
 #ifdef HAVE_EXIF
-  gint            n;
+  guint           n;
 #endif
 
   gtk_container_set_border_width (GTK_CONTAINER (image_page), 12);
@@ -220,7 +220,7 @@ thunar_apr_image_page_file_changed (ThunarAprAbstractPage *abstract_page,
   ExifEntry          *exif_entry;
   ExifData           *exif_data;
   gchar               exif_buffer[1024];
-  gint                n;
+  guint               n;
 #endif
 
   /* determine the URI for the file */

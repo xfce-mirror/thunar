@@ -663,7 +663,7 @@ thunar_path_entry_button_release_event (GtkWidget      *widget,
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
 
-  if (event->window == path_entry->icon_area && event->button == path_entry->drag_button)
+  if (event->window == path_entry->icon_area && event->button == (guint) path_entry->drag_button)
     {
       /* reset the drag button state */
       path_entry->drag_button = 0;

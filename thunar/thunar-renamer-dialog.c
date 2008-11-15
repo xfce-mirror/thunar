@@ -335,7 +335,7 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   GList                  *renamers = NULL;
   GList                  *lp;
   gint                    active = 0;
-  gint                    n;
+  guint                   n;
 
   /* allocate a new bulk rename model */
   renamer_dialog->model = thunar_renamer_model_new ();

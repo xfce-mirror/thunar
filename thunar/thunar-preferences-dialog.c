@@ -98,7 +98,7 @@ transform_icon_size_to_index (const GValue *src_value,
                               gpointer      user_data)
 {
   GEnumClass *klass;
-  gint        n;
+  guint       n;
 
   klass = g_type_class_ref (THUNAR_TYPE_ICON_SIZE);
   for (n = 0; n < klass->n_values; ++n)

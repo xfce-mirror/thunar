@@ -830,7 +830,7 @@ err2: /* should not happen */
   g_free (original_uri);
 
   /* try to save the content (all at once) */
-  if (write (fd, content, strlen (content)) != strlen (content))
+  if (write (fd, content, strlen (content)) != (ssize_t) strlen (content))
     {
       /* no space left, etc. */
       g_free (content);

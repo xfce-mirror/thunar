@@ -100,7 +100,7 @@ static int print_rec(TDB_CONTEXT *tdb, TDB_DATA key, TDB_DATA dbuf, void *state)
 
 static char *get_token(int startover)
 {
-        static char tmp[1024];
+  static char tmp[1024];
   static char *cont = NULL;
   char *insert, *start;
   char *k = strtok(NULL, " ");
@@ -419,7 +419,7 @@ static void next_record(TDB_CONTEXT *tdb, TDB_DATA *pkey)
 
 int main(int argc, char *argv[])
 {
-    int bIterate = 0;
+    int bIterate = 0, ignore;
     char *line;
     char *tok;
   TDB_DATA iterate_kbuf;
@@ -436,7 +436,7 @@ int main(int argc, char *argv[])
         /* Shell command */
         
         if (line[0] == '!') {
-            system(line + 1);
+            ignore = system(line + 1);
             continue;
         }
         

@@ -628,6 +628,7 @@ _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
   GList       *lp;
   GList       *ln;
   gint         n;
+  gint         ignore;
 
   _thunar_vfs_return_val_if_fail (_thunar_vfs_path_is_local (path), NULL);
   _thunar_vfs_return_val_if_fail (error == NULL || *error == NULL, NULL);
@@ -678,7 +679,7 @@ _thunar_vfs_io_local_listdir (ThunarVfsPath *path,
       g_thread_pool_free (pool, FALSE, TRUE);
 
       /* change back to the previous working directory */
-      chdir (current_dir);
+      ignore = chdir (current_dir);
     }
 
   /* release the chdir lock */

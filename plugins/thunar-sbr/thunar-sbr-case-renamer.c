@@ -110,7 +110,7 @@ thunar_sbr_case_renamer_init (ThunarSbrCaseRenamer *case_renamer)
   GtkWidget      *combo;
   GtkWidget      *label;
   GtkWidget      *hbox;
-  gint            n;
+  guint           n;
 
   hbox = gtk_hbox_new (FALSE, 12);
   gtk_box_pack_start (GTK_BOX (case_renamer), hbox, FALSE, FALSE, 0);

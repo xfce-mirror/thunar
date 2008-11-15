@@ -156,10 +156,10 @@ struct _ThunarVfsMimeLegacyMatchlet
 {
   gint    indent;
   gint    offset;
-  guint   value_length;
+  gint    value_length;
   guchar *value;
   guchar *mask;
-  guint   range_length;
+  glong   range_length;
   guint   word_size;
 };
 
@@ -286,7 +286,7 @@ tvml_matchlet_compare_to_data (ThunarVfsMimeLegacyMatchlet *matchlet,
     {
       valid_matchlet = TRUE;
 
-      if (i + matchlet->value_length > length)
+      if (i + matchlet->value_length > (gint) length)
         return FALSE;
 
       if (matchlet->mask)
@@ -800,7 +800,7 @@ thunar_vfs_mime_legacy_parse_magic (ThunarVfsMimeLegacy *legacy,
                         + THUNAR_VFS_MIME_LEGACY_MATCHLET (lp->data)->offset;
                     
                       /* check if new max */
-                      if (n > legacy->max_buffer_extents)
+                      if (n > (gint) legacy->max_buffer_extents)
                         legacy->max_buffer_extents = n;
                     }
 

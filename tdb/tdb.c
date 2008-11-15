@@ -577,7 +577,7 @@ static int tdb_dump_chain(TDB_CONTEXT *tdb, int i)
 
 void tdb_dump_all(TDB_CONTEXT *tdb)
 {
-	int i;
+	unsigned int i;
 	for (i=0;i<tdb->header.hash_size;i++) {
 		tdb_dump_chain(tdb, i);
 	}

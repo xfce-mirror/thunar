@@ -136,7 +136,7 @@ tse_ask_compress (GList *infos)
   gint              response = TSE_RESPONSE_PLAIN;
   gint              n_archives = 0;
   gint              n_infos = 0;
-  gint              n;
+  guint             n;
 
   /* check the file infos */
   for (lp = infos; lp != NULL; lp = lp->next, ++n_infos)

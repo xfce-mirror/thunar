@@ -1014,7 +1014,7 @@ thunar_vfs_path_list_to_string (GList *path_list)
   gsize  bufsize = 512;
   gsize  bufpos = 0;
   GList *lp;
-  gint   n;
+  guint  n;
 
   /* allocate initial buffer */
   buffer = g_malloc (bufsize + 1);

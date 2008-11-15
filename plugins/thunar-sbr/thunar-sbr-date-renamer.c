@@ -185,7 +185,7 @@ thunar_sbr_date_renamer_init (ThunarSbrDateRenamer *date_renamer)
   GtkWidget      *spinner;
   GtkWidget      *entry;
   GtkAdjustment  *adjustment;
-  gint            n;
+  guint           n;
 
   /* allocate tooltips for the renamer */
   date_renamer->tooltips = gtk_tooltips_new ();

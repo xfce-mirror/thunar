@@ -679,7 +679,7 @@ thunar_tree_view_button_release_event (GtkWidget      *widget,
   ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
 
   /* check if we have an event matching the pressed button state */
-  if (G_LIKELY (view->pressed_button == event->button))
+  if (G_LIKELY (view->pressed_button == (gint) event->button))
     {
       /* check if we should simply open or open in new window */
       if (G_LIKELY (event->button == 1))

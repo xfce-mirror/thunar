@@ -177,7 +177,7 @@ thunar_sbr_number_renamer_init (ThunarSbrNumberRenamer *number_renamer)
   GtkWidget      *entry;
   GtkWidget      *label;
   GtkWidget      *hbox;
-  gint            n;
+  guint           n;
 
   hbox = gtk_hbox_new (FALSE, 12);
   gtk_box_pack_start (GTK_BOX (number_renamer), hbox, FALSE, FALSE, 0);

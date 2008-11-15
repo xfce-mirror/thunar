@@ -161,7 +161,7 @@ thunar_sbr_insert_renamer_init (ThunarSbrInsertRenamer *insert_renamer)
   GtkWidget      *label;
   GtkWidget      *table;
   GtkWidget      *hbox;
-  gint            n;
+  guint           n;
 
   table = gtk_table_new (2, 3, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);

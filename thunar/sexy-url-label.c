@@ -358,7 +358,7 @@ update_wrap_width(SexyUrlLabel *url_label, size_t wrap_width)
 										"gtk-label-wrap-width");
 
 	if (wrap_width_data != NULL &&
-		wrap_width_data->width != wrap_width * PANGO_SCALE)
+		(size_t) wrap_width_data->width != wrap_width * PANGO_SCALE)
 	{
 		wrap_width_data->width = wrap_width * PANGO_SCALE;
 		priv->wrap_width = wrap_width;

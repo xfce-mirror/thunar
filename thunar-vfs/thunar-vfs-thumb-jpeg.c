@@ -115,7 +115,7 @@ tvtj_skip_input_data (j_decompress_ptr cinfo,
 
   if (G_LIKELY (num_bytes > 0))
     {
-      num_bytes = MIN (num_bytes, source->bytes_in_buffer);
+      num_bytes = MIN (num_bytes, (glong) source->bytes_in_buffer);
 
       source->next_input_byte += num_bytes;
       source->bytes_in_buffer -= num_bytes;
@@ -191,7 +191,7 @@ tvtj_jpeg_load (const JOCTET *content,
   guchar                       *pixels = NULL;
   guchar                       *p;
   gint                          out_num_components;
-  gint                          n;
+  guint                         n;
 
   /* setup JPEG error handling */
   cinfo.err = jpeg_std_error (&handler.mgr);

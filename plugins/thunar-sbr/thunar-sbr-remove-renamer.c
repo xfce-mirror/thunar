@@ -166,7 +166,7 @@ thunar_sbr_remove_renamer_init (ThunarSbrRemoveRenamer *remove_renamer)
   GtkWidget      *combo;
   GtkWidget      *label;
   GtkWidget      *table;
-  gint            n;
+  guint           n;
 
   table = gtk_table_new (2, 3, FALSE);
   gtk_table_set_row_spacings (GTK_TABLE (table), 6);

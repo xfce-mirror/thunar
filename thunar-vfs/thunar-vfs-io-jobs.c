@@ -328,8 +328,8 @@ retry_chown:
       if (g_stat (absolute_path, &statb) == 0)
         {
           /* determine the new uid/gid */
-          nuid = (uid < 0) ? statb.st_uid : uid;
-          ngid = (gid < 0) ? statb.st_gid : gid;
+          nuid = (uid < 0) ? (gint) statb.st_uid : uid;
+          ngid = (gid < 0) ? (gint) statb.st_gid : gid;
 
           /* try to apply the new ownership */
           if (chown (absolute_path, nuid, ngid) < 0)
