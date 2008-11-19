@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 02:05-0700\n"
+"POT-Creation-Date: 2008-11-19 18:02+0100\n"
 "PO-Revision-Date: 2007-09-24 03:26+0900\n"
 "Last-Translator:  ByungHyun Choi <byunghyun.choi@gmail.com>\n"
 "Language-Team: xfce4-users-kr-i18n <xfce4-users-kr-i18n@lists.sourceforge."
@@ -1388,7 +1388,7 @@ msgstr "위치 열기"
 msgid "_Location:"
 msgstr "위치(_L):"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1467
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "\"%s\"을(를) 실행하는데 실패했습니다."
@@ -2076,22 +2076,12 @@ msgid "Configure the Thunar file manager"
 msgstr "Thunar 화일 관리자"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2234
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "화일 관리자"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-#, fuzzy
-msgid "File Manager Settings"
-msgstr "화일 관리자"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-#, fuzzy
-msgid "Thunar Settings"
-msgstr "Thunar: %s\n"
-
-#: ../thunar/thunar-shortcuts-model.c:349
+#: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
 msgstr ""
 
@@ -2358,12 +2348,12 @@ msgstr[0] "선택된 화일을 복구합니다."
 msgstr[1] "선택된 화일들을 복구합니다."
 
 #. tell the user that no templates were found
-#: ../thunar/thunar-templates-action.c:395
+#: ../thunar/thunar-templates-action.c:397
 msgid "No Templates installed"
 msgstr "인스톨된 템플릿이 없습니다."
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:407
+#: ../thunar/thunar-templates-action.c:409
 msgid "_Empty File"
 msgstr "빈 화일(_E)"
 
@@ -2375,7 +2365,7 @@ msgstr "쓰레기통(_r)"
 msgid "Display the contents of the trash can"
 msgstr "쓰레기통의 내용을 보여줍니다."
 
-#: ../thunar/thunar-tree-model.c:604
+#: ../thunar/thunar-tree-model.c:611
 msgid "Loading..."
 msgstr "로딩..."
 
@@ -2638,67 +2628,62 @@ msgstr "상태바(_a)"
 msgid "Change the visibility of this window's statusbar"
 msgstr "현재창의 상태표시줄의 표시를 결정합니다."
 
-#: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
-msgid "%s (%s)"
-msgstr "\"%s\" (%s) %s"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "View as _Icons"
 msgstr "아이콘으로 보기(_I)"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "Display folder content in an icon view"
 msgstr "아이콘 보기로 폴더의 내용을 보여줍니다."
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "View as _Detailed List"
 msgstr "자세히 보기(_D)"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "Display folder content in a detailed list view"
 msgstr "자세히 보기로 폴더의 내용을 보여줍니다."
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "View as _Compact List"
 msgstr "간단히 보기(_C)"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "Display folder content in a compact list view"
 msgstr "간단히 보기로 폴더의 내용을 보여줍니다."
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "경고, root 계정을 사용하고 있으며, 시스템에 위해할 수 있습니다."
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
 msgstr "상위 폴더를 여는데 실패했습니다."
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1887
 msgid "Failed to open the home folder"
 msgstr "홈 디렉토리를 열지 못 했습니다."
 
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1942
 #, fuzzy, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "\"%s\"을(를) 여는데 실패했습니다."
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2067
 msgid "About Templates"
 msgstr "템플릿에 대하여"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "이 폴더내의 모든 문서는 \"새 문서 생성\" 메뉴에 나타납니다."
 
-#: ../thunar/thunar-window.c:2110
+#: ../thunar/thunar-window.c:2096
 #, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
@@ -2714,16 +2699,16 @@ msgstr ""
 "\"새 문서 생성\" 메뉴에서 항목을 선택하면 해당문서의 복사본이 현재 보고있는 "
 "디렉토리내에 생성될것입니다."
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2108
 msgid "Do _not display this message again"
 msgstr "이 메세지를 다시 보여주지 않음( _n)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2153
 msgid "Failed to display the contents of the trash can"
 msgstr "쓰레기통 내용을 표시하지 못 했습니다."
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2195
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3467,6 +3452,10 @@ msgstr "사용자 정의명령 에제"
 msgid "Open Terminal Here"
 msgstr "이 위치에서 터미널 열기"
 
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr ""
+
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
 msgstr "화일 관리자로 화일시스템을 탐색합니다."
@@ -3486,6 +3475,18 @@ msgstr "Thunar로 폴더 열기"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Thunar에서 지정된 폴더 열기"
+
+#, fuzzy
+#~ msgid "File Manager Settings"
+#~ msgstr "화일 관리자"
+
+#, fuzzy
+#~ msgid "Thunar Settings"
+#~ msgstr "Thunar: %s\n"
+
+#, fuzzy
+#~ msgid "%s (%s)"
+#~ msgstr "\"%s\" (%s) %s"
 
 #~ msgid "Failed to open the templates folder"
 #~ msgstr "템플릿 디렉토리를 열지 못 했습니다."

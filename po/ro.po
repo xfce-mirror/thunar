@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 02:05-0700\n"
+"POT-Creation-Date: 2008-11-19 18:02+0100\n"
 "PO-Revision-Date: 2007-11-16 23:31+0200\n"
 "Last-Translator: Mişu Moldovan <dumol@gnome.ro>\n"
 "Language-Team: Romanian <xfce-i18n@xfce.org>\n"
@@ -1426,7 +1426,7 @@ msgstr "Deschide locaţia"
 msgid "_Location:"
 msgstr "_Locaţie:"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1467
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Nu s-a putut lansa „%s”"
@@ -2133,22 +2133,12 @@ msgid "Configure the Thunar file manager"
 msgstr "Administratorul de fişiere Thunar"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2234
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "Administrator de fişiere"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-#, fuzzy
-msgid "File Manager Settings"
-msgstr "Administrator de fişiere"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-#, fuzzy
-msgid "Thunar Settings"
-msgstr "Thunar: %s\n"
-
-#: ../thunar/thunar-shortcuts-model.c:349
+#: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
 msgstr ""
 
@@ -2434,12 +2424,12 @@ msgstr[1] "Restaurează fişierele selectate"
 msgstr[2] "Restaurează fişierele selectate"
 
 #. tell the user that no templates were found
-#: ../thunar/thunar-templates-action.c:395
+#: ../thunar/thunar-templates-action.c:397
 msgid "No Templates installed"
 msgstr "Nu există şabloane instalate"
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:407
+#: ../thunar/thunar-templates-action.c:409
 msgid "_Empty File"
 msgstr "Fişi_er gol"
 
@@ -2451,7 +2441,7 @@ msgstr "C_oş de gunoi"
 msgid "Display the contents of the trash can"
 msgstr "Arată conţinutul coşului de gunoi"
 
-#: ../thunar/thunar-tree-model.c:604
+#: ../thunar/thunar-tree-model.c:611
 msgid "Loading..."
 msgstr "Se încarcă..."
 
@@ -2714,68 +2704,63 @@ msgstr "_Bară de stare"
 msgid "Change the visibility of this window's statusbar"
 msgstr "Arată sau ascunde bara de stare a ferestrei"
 
-#: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
-msgid "%s (%s)"
-msgstr "„%s” (%s) %s"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "View as _Icons"
 msgstr "Arată ca _iconiţe"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "Display folder content in an icon view"
 msgstr "Arată conţinutul dosarului ca iconiţe"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "View as _Detailed List"
 msgstr "Arată ca listă _detaliată"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "Display folder content in a detailed list view"
 msgstr "Arată conţinutul dosarului ca o listă detaliată"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "View as _Compact List"
 msgstr "Arată ca listă co_mpactă"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "Display folder content in a compact list view"
 msgstr "Arată conţinutul dosarului ca o listă compactă"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Atenţie, folosiţi contul de administrator „root”, nu e recomandat..."
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
 msgstr "Nu s-a putut deschide dosarul părinte"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1887
 msgid "Failed to open the home folder"
 msgstr "Nu s-a putut deschide dosarul „Acasă”"
 
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1942
 #, fuzzy, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "Nu s-a putut deschide fişierul „%s”"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2067
 msgid "About Templates"
 msgstr "Despre şabloane"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Toate fişierele din acest dosar vor apărea în meniul „Creează un document”."
 
-#: ../thunar/thunar-window.c:2110
+#: ../thunar/thunar-window.c:2096
 #, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
@@ -2792,16 +2777,16 @@ msgstr ""
 "Apoi, prin selectarea noii intrări din meniul „Creează un document”, veţi "
 "copia un exemplar al acestui document în dosarul curent."
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2108
 msgid "Do _not display this message again"
 msgstr "_Nu arăta din nou acest mesaj"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2153
 msgid "Failed to display the contents of the trash can"
 msgstr "Nu s-a putut afişa conţinutul coşului de gunoi"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2195
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3566,6 +3551,10 @@ msgstr "Exemplu de acţiune personalizată"
 msgid "Open Terminal Here"
 msgstr "Deschide aici un terminal"
 
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr ""
+
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
 msgstr "Navigare în sistemul de fişiere cu administratorul de fişiere"
@@ -3585,6 +3574,18 @@ msgstr "Deschide dosarul cu Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Deschide dosarele specificate cu Thunar"
+
+#, fuzzy
+#~ msgid "File Manager Settings"
+#~ msgstr "Administrator de fişiere"
+
+#, fuzzy
+#~ msgid "Thunar Settings"
+#~ msgstr "Thunar: %s\n"
+
+#, fuzzy
+#~ msgid "%s (%s)"
+#~ msgstr "„%s” (%s) %s"
 
 #~ msgid "Failed to open the templates folder"
 #~ msgstr "Nu s-a putut deschide dosarul şabloanelor"

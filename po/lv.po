@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: lv\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 02:05-0700\n"
+"POT-Creation-Date: 2008-11-19 18:02+0100\n"
 "PO-Revision-Date: 2008-04-06 19:01+0300\n"
 "Last-Translator: Rihards Prieditis <RPrieditis@gmail.com>\n"
 "Language-Team: Latvian <RPrieditis@gmail.com>\n"
@@ -1421,7 +1421,7 @@ msgstr "Atvērt vietu"
 msgid "_Location:"
 msgstr "_Vieta"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1467
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Neizdevās palaist \"%s\""
@@ -2125,22 +2125,12 @@ msgid "Configure the Thunar file manager"
 msgstr "Thunar failu pārvaldnieks"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2234
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "Failu pārvaldnieks"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-#, fuzzy
-msgid "File Manager Settings"
-msgstr "Failu pārvaldnieks"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-#, fuzzy
-msgid "Thunar Settings"
-msgstr "Thunar: %s\n"
-
-#: ../thunar/thunar-shortcuts-model.c:349
+#: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
 msgstr ""
 
@@ -2420,12 +2410,12 @@ msgstr[1] "Atjaunot failus"
 msgstr[2] "Atjaunot failus"
 
 #. tell the user that no templates were found
-#: ../thunar/thunar-templates-action.c:395
+#: ../thunar/thunar-templates-action.c:397
 msgid "No Templates installed"
 msgstr "Nav instalēta neviena sagatave"
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:407
+#: ../thunar/thunar-templates-action.c:409
 msgid "_Empty File"
 msgstr "_Tukšs fails"
 
@@ -2437,7 +2427,7 @@ msgstr "Mi_skaste"
 msgid "Display the contents of the trash can"
 msgstr "Attēlot miskastes saturu"
 
-#: ../thunar/thunar-tree-model.c:604
+#: ../thunar/thunar-tree-model.c:611
 msgid "Loading..."
 msgstr "Ielāde..."
 
@@ -2700,69 +2690,64 @@ msgstr "St_atusajosla"
 msgid "Change the visibility of this window's statusbar"
 msgstr "Mainīt loga statusajoslas redzamību"
 
-#: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
-msgid "%s (%s)"
-msgstr "\"%s\" (%s) %s"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "View as _Icons"
 msgstr "Skatīt, kā _ikonas"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "Display folder content in an icon view"
 msgstr "Attēlot mapes saturu ikonu skatā"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "View as _Detailed List"
 msgstr "Skatīt, kā _detalizētu sarakstu"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "Display folder content in a detailed list view"
 msgstr "Attēlot mapes saturu detalizētā saraksta skatā"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "View as _Compact List"
 msgstr "Skatīt, kā _kompaktu sarakstu"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "Display folder content in a compact list view"
 msgstr "Attēlot mapes saturu kompaktā saraksta skatā"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
 "Uzmanību, jūs izmantojat root lietotāja kontu, Jūs varat kaitēt savai "
 "sistēmai."
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
 msgstr "Neizdevās atvērt vecāka mapi"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1887
 msgid "Failed to open the home folder"
 msgstr "Neizdevās atvērt mājas mapi"
 
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1942
 #, fuzzy, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "Neizdevās atvērt failu \"%s\""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2067
 msgid "About Templates"
 msgstr "Par sagatavēm"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Visi faili šai mapē parādīsies izvēlnē \"Izveidot dokumentu\"."
 
-#: ../thunar/thunar-window.c:2110
+#: ../thunar/thunar-window.c:2096
 #, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
@@ -2779,16 +2764,16 @@ msgstr ""
 "Pēc tam varat izvēlēties, šo ierakstu no \"Izveidot dokumentu\" izvēlnes un "
 "tiks izveidota šī dokumenta kopija pašreizējā direktorijā."
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2108
 msgid "Do _not display this message again"
 msgstr "Vairs _nerādīt šo ziņu"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2153
 msgid "Failed to display the contents of the trash can"
 msgstr "Neizdevās parādīt miskastes saturu"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2195
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3554,6 +3539,10 @@ msgstr "Paraugs pielāgotai darbībai"
 msgid "Open Terminal Here"
 msgstr "Atvērt šeit termināli"
 
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr ""
+
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
 msgstr "Pārlūko failsistēmu ar failu pārvaldnieku"
@@ -3573,6 +3562,18 @@ msgstr "Atvērt mapi ar Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Atvērt norādītās mapes ar Thunar"
+
+#, fuzzy
+#~ msgid "File Manager Settings"
+#~ msgstr "Failu pārvaldnieks"
+
+#, fuzzy
+#~ msgid "Thunar Settings"
+#~ msgstr "Thunar: %s\n"
+
+#, fuzzy
+#~ msgid "%s (%s)"
+#~ msgstr "\"%s\" (%s) %s"
 
 #~ msgid "Failed to open the templates folder"
 #~ msgstr "Neizdevās atvērt sagatavju mapi"

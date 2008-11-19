@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 02:05-0700\n"
+"POT-Creation-Date: 2008-11-19 18:02+0100\n"
 "PO-Revision-Date: 2006-09-20 22:42+0200\n"
 "Last-Translator: Antono Vasiljev <antono.vasiljev@gmail.com>\n"
 "Language-Team: Esperanto <debian-l10n-esperanto@lists.debian.org>\n"
@@ -1403,7 +1403,7 @@ msgstr "Malfermu Lokon"
 msgid "_Location:"
 msgstr "_Lokvojo:"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1467
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Ne elblas lanĉi \"%s\""
@@ -2095,22 +2095,12 @@ msgid "Configure the Thunar file manager"
 msgstr "Thunar dosier-administrilo"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2234
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "Dosier-administrilo"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-#, fuzzy
-msgid "File Manager Settings"
-msgstr "Dosier-administrilo"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-#, fuzzy
-msgid "Thunar Settings"
-msgstr "Thunar: %s\n"
-
-#: ../thunar/thunar-shortcuts-model.c:349
+#: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
 msgstr ""
 
@@ -2382,12 +2372,12 @@ msgstr[0] "Malforviŝu la elektitan dosieron"
 msgstr[1] "Malforviŝu la elektitajn dosierojn"
 
 #. tell the user that no templates were found
-#: ../thunar/thunar-templates-action.c:395
+#: ../thunar/thunar-templates-action.c:397
 msgid "No Templates installed"
 msgstr "Mankas instalistaj ŝablonoj"
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:407
+#: ../thunar/thunar-templates-action.c:409
 msgid "_Empty File"
 msgstr "_Malplena dosiero"
 
@@ -2401,7 +2391,7 @@ msgstr "Rubujo"
 msgid "Display the contents of the trash can"
 msgstr "Ne sukcesis konektiĝi kun la Rubujo"
 
-#: ../thunar/thunar-tree-model.c:604
+#: ../thunar/thunar-tree-model.c:611
 msgid "Loading..."
 msgstr "Ŝargante..."
 
@@ -2664,70 +2654,65 @@ msgstr "St_at-indikilo"
 msgid "Change the visibility of this window's statusbar"
 msgstr "Ŝanĝu videblecon de inform-areo"
 
-#: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
-msgid "%s (%s)"
-msgstr "\"%s\" (%s) %s"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "View as _Icons"
 msgstr "Montru kiel _Piktogramojn"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "Display folder content in an icon view"
 msgstr "Montru enhavon de dosierujo kiel piktogramaro"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "View as _Detailed List"
 msgstr "Vidu kiel _Detalan Liston"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "Display folder content in a detailed list view"
 msgstr "Montru enhavon de dosierujo kiel detalan liston"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "View as _Compact List"
 msgstr "Vidu kiel _Kompaktan Liston"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "Display folder content in a compact list view"
 msgstr "Montru enhavon de dosierujo kiel kompaktan liston"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Atenton, vi uzas root-an konton, vi eblos difektigi vian sistemon"
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
 msgstr "Ne eblas malfermi gepatran dosierujon"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1887
 #, fuzzy
 msgid "Failed to open the home folder"
 msgstr "Ne eblas malfermi la ŝablonan dosierujon"
 
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1942
 #, fuzzy, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "Ne eblas malfermi la dosieron \"%s\""
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2067
 msgid "About Templates"
 msgstr "Pri ŝablonoj"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "Ĉiuj dosieroj el tiu ĉi dosierujo aperos en menuo titolita \"Kreu dokumenton"
 "\"."
 
-#: ../thunar/thunar-window.c:2110
+#: ../thunar/thunar-window.c:2096
 #, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
@@ -2744,17 +2729,17 @@ msgstr ""
 "Poste vi povos elekti unu el punktoj de la menuo kaj kopio de elektita "
 "dokumento aperos en kuranta dosierujo. "
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2108
 msgid "Do _not display this message again"
 msgstr "Ne plu mo_ntru ĉi tiun mesaĝon"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2153
 #, fuzzy
 msgid "Failed to display the contents of the trash can"
 msgstr "Ne sukcesis konektiĝi kun la Rubujo"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2195
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3512,6 +3497,10 @@ msgstr "Ekzemplo de kutima ago"
 msgid "Open Terminal Here"
 msgstr "Malfermu terminalon ĉi tie"
 
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr ""
+
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
 msgstr "Rigardu dosier-sistemon per dosier-administrilo"
@@ -3531,6 +3520,18 @@ msgstr "Malfermu dosierujon per Thunar"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Malfermu definitajn dosierujojn per Thunar"
+
+#, fuzzy
+#~ msgid "File Manager Settings"
+#~ msgstr "Dosier-administrilo"
+
+#, fuzzy
+#~ msgid "Thunar Settings"
+#~ msgstr "Thunar: %s\n"
+
+#, fuzzy
+#~ msgid "%s (%s)"
+#~ msgstr "\"%s\" (%s) %s"
 
 #, fuzzy
 #~ msgid "Failed to open the templates folder"

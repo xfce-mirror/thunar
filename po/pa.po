@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 02:05-0700\n"
+"POT-Creation-Date: 2008-11-19 18:02+0100\n"
 "PO-Revision-Date: 2007-04-04 08:48+0530\n"
 "Last-Translator: A S Alam <aalam@users.sf.net>\n"
 "Language-Team: Punjabi <xfce-i18n@xfce.org>\n"
@@ -1385,7 +1385,7 @@ msgstr "ਟਿਕਾਣਾ ਖੋਲ੍ਹੋ"
 msgid "_Location:"
 msgstr "ਟਿਕਾਣਾ(_L):"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1467
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "\"%s\" ਲਾਂਚ ਕਰਨ ਲਈ ਫੇਲ੍ਹ"
@@ -2047,22 +2047,12 @@ msgid "Configure the Thunar file manager"
 msgstr "ਥੰਨਰ ਫਾਇਲ ਮੈਨੇਜਰ"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2234
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "ਫਾਇਲ ਮੈਨੇਜਰ"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-#, fuzzy
-msgid "File Manager Settings"
-msgstr "ਫਾਇਲ ਮੈਨੇਜਰ"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-#, fuzzy
-msgid "Thunar Settings"
-msgstr "ਥੰਨਰ: %s\n"
-
-#: ../thunar/thunar-shortcuts-model.c:349
+#: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
 msgstr ""
 
@@ -2328,12 +2318,12 @@ msgstr[0] "ਚੁਣੀ ਫਾਇਲ ਮੁੜ-ਸਟੋਰ ਕਰੋ"
 msgstr[1] "ਚੁਣੀਆਂ ਫਾਇਲਾਂ ਮੁੜ-ਸਟੋਰ ਕਰੋ"
 
 #. tell the user that no templates were found
-#: ../thunar/thunar-templates-action.c:395
+#: ../thunar/thunar-templates-action.c:397
 msgid "No Templates installed"
 msgstr "ਕੋਈ ਟੈਂਪਲੇਟ ਇੰਸਟਾਲ ਨਹੀਂ ਹੈ"
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:407
+#: ../thunar/thunar-templates-action.c:409
 msgid "_Empty File"
 msgstr "ਖਾਲੀ ਫਾਇਲ(_E)"
 
@@ -2345,7 +2335,7 @@ msgstr "ਰੱਦੀ(_r)"
 msgid "Display the contents of the trash can"
 msgstr "ਰੱਦੀ ਕੈਨ ਦੇ ਭਾਗ ਵੇਖਾਓ"
 
-#: ../thunar/thunar-tree-model.c:604
+#: ../thunar/thunar-tree-model.c:611
 msgid "Loading..."
 msgstr "ਲੋਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ..."
 
@@ -2608,67 +2598,62 @@ msgstr "ਹਾਲਤ-ਪੱਟੀ(_A)"
 msgid "Change the visibility of this window's statusbar"
 msgstr ""
 
-#: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
-msgid "%s (%s)"
-msgstr "\"%s\" (%s) %s"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "View as _Icons"
 msgstr "ਆਈਕਾਨ ਵਾਂਗ ਵੇਖੋ(_I)"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "Display folder content in an icon view"
 msgstr ""
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "View as _Detailed List"
 msgstr "ਡੀਟੇਲ ਲਿਸਟ ਵਾਂਗ ਵੇਖੋ(_D)"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "Display folder content in a detailed list view"
 msgstr ""
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "View as _Compact List"
 msgstr "ਕੰਪੈਕਟ ਲਿਸਟ ਵਾਂਗ ਵੇਖੋ(_C)"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "Display folder content in a compact list view"
 msgstr "ਫੋਲਡਰ ਭਾਗ ਇੱਕ ਕੰਪੈਕਟ ਲਿਸਟ ਵਿਊ 'ਚ ਵੇਖਾਓ"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "ਚੇਤਾਵਨੀ, ਤੁਸੀਂ root ਖਾਤਾ ਵਰਤ ਰਹੇ ਹੋ, ਤੁਸੀਂ ਆਪਣਾ ਸਿਸਟਮ ਖਰਾਬ ਕਰ ਸਕਦੇ ਹੋ।"
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
 msgstr "ਮੁੱਢਲਾ ਫੋਲਡਰ ਖੋਲ੍ਹਣ ਲਈ ਫੇਲ੍ਹ"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1887
 msgid "Failed to open the home folder"
 msgstr "ਹੋਮ ਫੋਲਡਰ ਖੋਲ੍ਹਣ ਲਈ ਫੇਲ੍ਹ"
 
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1942
 #, fuzzy, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "ਫਾਇਲ \"%s\" ਖੋਲ੍ਹਣ ਲਈ ਫੇਲ੍ਹ"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2067
 msgid "About Templates"
 msgstr "ਟੈਪਲੇਟ ਬਾਰੇ"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2110
+#: ../thunar/thunar-window.c:2096
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2678,16 +2663,16 @@ msgid ""
 "of the document will be created in the directory you are viewing."
 msgstr ""
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2108
 msgid "Do _not display this message again"
 msgstr "ਇਹ ਸੁਨੇਹਾ ਮੁੜ ਨਾ ਵੇਖਾਓ(_n)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2153
 msgid "Failed to display the contents of the trash can"
 msgstr "ਰੱਦੀ ਕੈਨ ਦੇ ਭਾਗ ਵੇਖਾਣਉ ਲਈ ਫੇਲ੍ਹ ਹੈ"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2195
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3401,6 +3386,10 @@ msgstr "ਇੱਕ ਕਸਟਮ ਐਕਸ਼ਨ ਲਈ ਉਦਾਹਰਨ"
 msgid "Open Terminal Here"
 msgstr "ਇੱਥੇ ਟਰਮੀਨਲ ਖੋਲ੍ਹੋ"
 
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr ""
+
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
 msgstr "ਫਾਇਲ ਮੈਨੇਜਰ ਨਾਲ ਫਾਇਲ ਸਿਸਟਮ ਨਾਲ ਬਰਾਊਜ਼ ਕਰੋ"
@@ -3420,6 +3409,18 @@ msgstr "ਥੰਨਰ ਨਾਲ ਫੋਲਡਰ ਖੋਲ੍ਹੋ"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "ਦਿੱਤੇ ਫੋਲਡਰ ਥੰਨਰ 'ਚ ਖੋਲ੍ਹੋ"
+
+#, fuzzy
+#~ msgid "File Manager Settings"
+#~ msgstr "ਫਾਇਲ ਮੈਨੇਜਰ"
+
+#, fuzzy
+#~ msgid "Thunar Settings"
+#~ msgstr "ਥੰਨਰ: %s\n"
+
+#, fuzzy
+#~ msgid "%s (%s)"
+#~ msgstr "\"%s\" (%s) %s"
 
 #~ msgid "Failed to open the templates folder"
 #~ msgstr "ਟੈਪਲੇਟ ਫੋਲਡਰ ਖ੍ਹੋਲਣ ਲਈ ਫੇਲ੍ਹ"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 02:05-0700\n"
+"POT-Creation-Date: 2008-11-19 18:02+0100\n"
 "PO-Revision-Date: 2006-10-24 16:21+0530\n"
 "Last-Translator: sonam pelden <sonaa_peldn@yahoo.com>\n"
 "Language-Team: Dzongkha <pgeyleg@dit.gov.bt>\n"
@@ -1402,7 +1402,7 @@ msgstr "གནས་ཁོངས་ཁ་ཕྱེ།"
 msgid "_Location:"
 msgstr "གནས་ཁོངས:(_L)"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1467
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "\"%s\"གསར་བཙུགས་འབད་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
@@ -2100,22 +2100,12 @@ msgid "Configure the Thunar file manager"
 msgstr "ཐུ་ནར་ཡིག་སྣོད་འཛིན་སྐྱོང་པ།"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2234
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "ཡིག་སྣོད་འཛིན་སྐྱོང་པ།"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-#, fuzzy
-msgid "File Manager Settings"
-msgstr "ཡིག་སྣོད་འཛིན་སྐྱོང་པ།"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-#, fuzzy
-msgid "Thunar Settings"
-msgstr "ཐུ་ནར:   %s\n"
-
-#: ../thunar/thunar-shortcuts-model.c:349
+#: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
 msgstr ""
 
@@ -2393,12 +2383,12 @@ msgstr[0] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་
 msgstr[1] "སེལ་འཐུ་འབད་དེ་ཡོད་པའི་ཡིག་སྣོད་ཚུ་སོར་ཆུད་འབད།"
 
 #. tell the user that no templates were found
-#: ../thunar/thunar-templates-action.c:395
+#: ../thunar/thunar-templates-action.c:397
 msgid "No Templates installed"
 msgstr "ཊེམ་པེ་ལེཊིསི་གཞི་བཙུགས་མ་འབད་བས།"
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:407
+#: ../thunar/thunar-templates-action.c:409
 msgid "_Empty File"
 msgstr "ཡིག་སྣོད་སྟོངམ།(_E)"
 
@@ -2412,7 +2402,7 @@ msgstr "ཕྱགས་ཧོད།"
 msgid "Display the contents of the trash can"
 msgstr "ཕྱགས་ཧོད་ཧོད་འདི་བཀྲམ་སྟོན་འབད།"
 
-#: ../thunar/thunar-tree-model.c:604
+#: ../thunar/thunar-tree-model.c:611
 msgid "Loading..."
 msgstr "མངོན་གསལ་འབད་དོ..."
 
@@ -2675,71 +2665,66 @@ msgstr "གནས་ཚད་ཕྲ་རིང་།(_a)"
 msgid "Change the visibility of this window's statusbar"
 msgstr "སྒོ་སྒྲིག་འདི་གི་གནས་ཚད་ཕྲ་རིང་གི་མཐོང་སྣང་འདི་བསྒྱུར་བཅོས་འབད།"
 
-#: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
-msgid "%s (%s)"
-msgstr "\"%s\" (%s) %s"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "View as _Icons"
 msgstr "ངོས་དཔར་འབད་སྟོན།(_I)"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "Display folder content in an icon view"
 msgstr "ངོས་དཔར་མཐོང་སྣང་ནང་ལུ་  སྣོད་འཛིན་ནང་དོན་བཀྲམ་སྟོན་འབད།"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "View as _Detailed List"
 msgstr "རྒྱས་བཤད་ཐོ་ཡིག་འབད་སྟོན།(_D)"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "Display folder content in a detailed list view"
 msgstr "སྣོད་འཛིན་ནང་དོན་འདི་  རྒྱས་བཤད་ཐོ་ཡིག་མཐོང་སྣང་ཅིག་ནང་ བཀྲམ་སྟོན་འབད།"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "View as _Compact List"
 msgstr "སྲབ་ཆུང་ཐོ་ཡིག་འབད་སྟོན།"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "Display folder content in a compact list view"
 msgstr "སྲབ་ཆུང་ཐོ་ཡིག་མཐོང་སྣང་ཅིག་ནང་  སྣོད་འཛིན་ནང་དོན་བཀྲམ་སྟོན་འབད།"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr ""
 "ཉེན་བརྡ་  ཁྱོད་ཀྱིས་རྩིས་ཐོའི་རྩ་བ་འདི་ལག་ལེན་འཐབ་དོ་ཡོདཔ་ལས་  ཁྱོད་ཀྱིས་ཁྱོད་རའི་རིམ་ལུགས་འདི་མེདཔ་"
 "གཏང་འོང་།"
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
 msgstr "རྩ་ལག་སྣོད་འཛིན་ཁ་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1887
 #, fuzzy
 msgid "Failed to open the home folder"
 msgstr "ཊེམ་པེལེཊིསི་སྣོད་འཛིན་ཁ་ཕྱེ་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1942
 #, fuzzy, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "ཡིག་སྣོད་ \"%s\" ཁ་ཕྱེ་ནི་འདི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2067
 msgid "About Templates"
 msgstr "ཊེམ་པེལེཊིསི་སྐོར།"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr ""
 "སྣོད་འཛིན་འདི་ནང་ཡོད་པའི་ཡིག་སྣོད་ཚུ་ཆ་ཚང་  \"Create Document\" དཀར་ཆག་ནང་འབྱུངམ་ཨིན།"
 
-#: ../thunar/thunar-window.c:2110
+#: ../thunar/thunar-window.c:2096
 #, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
@@ -2756,17 +2741,17 @@ msgstr ""
 "དེ་ལས་ཐོ་བཀོད་འདི་  ཁྱོད་ཀྱིས་ \"Create Document\"དཀར་ཆག་ལས་སེལ་འཐུ་འབད་ནི་དང་  ཡིག་ཆའི་"
 "འདྲ་བཤུས་ཅིག་  ཁྱོད་ཀྱིས་བལྟ་བའི་སྣོད་ཐོ་ནང་ལུ་གསར་བསྐྲུན་འབད་འོང་།"
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2108
 msgid "Do _not display this message again"
 msgstr "འཕྲིན་དོན་དེ་ལོག་འདི་རང་བཀྲམ་སྟོན་མ་འབད།( _n)"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2153
 #, fuzzy
 msgid "Failed to display the contents of the trash can"
 msgstr "ཕྱགས་ཧོད་ལུ་མཐུད་བྱེད་འབད་ནི་ལུ་འཐུས་ཤོར་འབྱུང་ནུག"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2195
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3528,6 +3513,10 @@ msgstr "སྲོལ་སྒྲིག་བྱ་བ་ཅིག་གི་ད
 msgid "Open Terminal Here"
 msgstr "ནཱ་ལུ་ཊལ་མི་ནལ་ཁ་ཕྱེ།"
 
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr ""
+
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
 msgstr "ཡིག་སྣོད་འཛིན་སྐྱོང་པ་དང་བཅས་ཡིག་སྣོད་རིམ་ལུགས་འདི་བརྡ་འཚོལ་འབད།"
@@ -3547,6 +3536,18 @@ msgstr "སྣོད་འཛིན་འདི་ཐུ་ནར་དང་བ
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "གསལ་བཀོད་འབད་དེ་ཡོད་པའི་སྣོད་འཛིན་ཚུ་  ཐུ་ནར་ནང་ཁ་ཕྱེ།"
+
+#, fuzzy
+#~ msgid "File Manager Settings"
+#~ msgstr "ཡིག་སྣོད་འཛིན་སྐྱོང་པ།"
+
+#, fuzzy
+#~ msgid "Thunar Settings"
+#~ msgstr "ཐུ་ནར:   %s\n"
+
+#, fuzzy
+#~ msgid "%s (%s)"
+#~ msgstr "\"%s\" (%s) %s"
 
 #, fuzzy
 #~ msgid "Failed to open the templates folder"

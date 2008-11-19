@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-30 11:02+0200\n"
+"POT-Creation-Date: 2008-11-19 18:02+0100\n"
 "PO-Revision-Date: 2008-10-30 11:43+0200\n"
 "Last-Translator: Jari Rahkonen <jari.rahkonen@pp1.inet.fi>\n"
 "Language-Team: Finnish <xfce-i18n@xfce.org>\n"
@@ -1401,7 +1401,7 @@ msgstr "Avaa sijainti"
 msgid "_Location:"
 msgstr "_Sijainti:"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1467
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "Kohteen \"%s\" suorittaminen epäonnistui"
@@ -2098,20 +2098,12 @@ msgid "Configure the Thunar file manager"
 msgstr "Thunar-tiedostonhallinnan asetukset"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2234
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "Tiedostonhallinta"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-msgid "File Manager Settings"
-msgstr "Tiedostonhallinnan asetukset"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-msgid "Thunar Settings"
-msgstr "Thunarin asetukset"
-
-#: ../thunar/thunar-shortcuts-model.c:349
+#: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
 msgstr "Työpöytä"
 
@@ -2379,12 +2371,12 @@ msgstr[0] "Palauta valittu tiedosto"
 msgstr[1] "Palauta valitut tiedostot"
 
 #. tell the user that no templates were found
-#: ../thunar/thunar-templates-action.c:395
+#: ../thunar/thunar-templates-action.c:397
 msgid "No Templates installed"
 msgstr "Ei asiakirjamalleja asennettuna"
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:407
+#: ../thunar/thunar-templates-action.c:409
 msgid "_Empty File"
 msgstr "T_yhjä tiedosto"
 
@@ -2396,7 +2388,7 @@ msgstr "_Roskakori"
 msgid "Display the contents of the trash can"
 msgstr "Näytä roskakorin sisältö"
 
-#: ../thunar/thunar-tree-model.c:604
+#: ../thunar/thunar-tree-model.c:611
 msgid "Loading..."
 msgstr "Ladataan..."
 
@@ -2652,67 +2644,62 @@ msgstr "Til_apalkki"
 msgid "Change the visibility of this window's statusbar"
 msgstr "Näytä tai piilota tämän ikkunan tilapalkki"
 
-#: ../thunar/thunar-window.c:688
-#, c-format
-msgid "%s (%s)"
-msgstr "%s (%s)"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "View as _Icons"
 msgstr "Näytä _kuvakkeet"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "Display folder content in an icon view"
 msgstr "Näytä kansion sisältö kuvakenäkymässä"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "View as _Detailed List"
 msgstr "Näytä ti_edot"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "Display folder content in a detailed list view"
 msgstr "Näytä kansion sisältö yksityiskohtaisessa listanäkymässä"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "View as _Compact List"
 msgstr "Näytä ko_mpakti lista"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "Display folder content in a compact list view"
 msgstr "Näytä kansion sisältö kompaktissa listanäkymässä"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Varoitus: Käytät pääkäyttäjätiliä, voit vahingoittaa järjestelmääsi."
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
 msgstr "Yläkansion avaaminen epäonnistui"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1887
 msgid "Failed to open the home folder"
 msgstr "Kotikansion avaaminen epäonnistui"
 
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1942
 #, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "Kansion \"%s\" avaaminen epäonnistui"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2067
 msgid "About Templates"
 msgstr "Tietoja asiakirjamalleista"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Kaikki tämän kansion tiedostot näkyvät \"Luo asiakirja\" -valikossa."
 
-#: ../thunar/thunar-window.c:2110
+#: ../thunar/thunar-window.c:2096
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
 "put it in this folder. Thunar will add an entry for this document in the "
@@ -2724,19 +2711,19 @@ msgstr ""
 "Jos luot usein tietyntyyppisiä asiakirjoja, kopioi yksi niistä tähän "
 "kansioon. Thunar lisää asiakirjan \"Luo asiakirja\" -valikkoon.\n"
 "\n"
-"Valitessasi tämän kohteen \"Luo asiakirja\" -valikosta asiakirjasta "
-"luodaan kopio näkyvillä olevaan kansioon."
+"Valitessasi tämän kohteen \"Luo asiakirja\" -valikosta asiakirjasta luodaan "
+"kopio näkyvillä olevaan kansioon."
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2108
 msgid "Do _not display this message again"
 msgstr "_Muista valinta"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2153
 msgid "Failed to display the contents of the trash can"
 msgstr "Roskakorin sisällön näyttäminen epäonnistui"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2195
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3497,6 +3484,10 @@ msgstr "Esimerkki mukautetusta toiminnosta"
 msgid "Open Terminal Here"
 msgstr "Avaa pääte tässä kansiossa"
 
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr ""
+
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
 msgstr "Selaa tiedostojärjestelmää tiedostonhallinnassa"
@@ -3516,3 +3507,12 @@ msgstr "Avaa kansio Thunarissa"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Avaa valitut kansiot Thunarissa"
+
+#~ msgid "File Manager Settings"
+#~ msgstr "Tiedostonhallinnan asetukset"
+
+#~ msgid "Thunar Settings"
+#~ msgstr "Thunarin asetukset"
+
+#~ msgid "%s (%s)"
+#~ msgstr "%s (%s)"

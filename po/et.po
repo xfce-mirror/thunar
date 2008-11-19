@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Thunar 0.9.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2008-10-29 02:05-0700\n"
+"POT-Creation-Date: 2008-11-19 18:02+0100\n"
 "PO-Revision-Date: 2008-10-19 03:01-0700\n"
 "Last-Translator: Kristjan Siimson <epost@ksiimson.se>\n"
 "Language-Team: Estonian <xfce-18n@xfce.org>\n"
@@ -1400,7 +1400,7 @@ msgstr "Avada asukoht"
 msgid "_Location:"
 msgstr "_Asukoht:"
 
-#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1481
+#: ../thunar/thunar-location-entry.c:426 ../thunar/thunar-window.c:1467
 #, c-format
 msgid "Failed to launch \"%s\""
 msgstr "„%s” käivitamine ebaõnnestus"
@@ -2097,20 +2097,12 @@ msgid "Configure the Thunar file manager"
 msgstr "Seadistada Thunar-failihaldurit"
 
 #. set window title and icon
-#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2248
+#: ../thunar/thunar-settings.desktop.in.h:2 ../thunar/thunar-window.c:2234
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "Failihaldur"
 
-#: ../thunar/thunar-settings.desktop.in.h:3
-msgid "File Manager Settings"
-msgstr "Failihalduri seadistused"
-
-#: ../thunar/thunar-settings.desktop.in.h:4
-msgid "Thunar Settings"
-msgstr "Thunari seadistused"
-
-#: ../thunar/thunar-shortcuts-model.c:349
+#: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
 msgstr ""
 
@@ -2380,12 +2372,12 @@ msgstr[0] "Taastada märgistatud fail"
 msgstr[1] "Taastada märgistatud failid"
 
 #. tell the user that no templates were found
-#: ../thunar/thunar-templates-action.c:395
+#: ../thunar/thunar-templates-action.c:397
 msgid "No Templates installed"
 msgstr "Mallid pole paigaldatud"
 
 #. add the "Empty File" item
-#: ../thunar/thunar-templates-action.c:407
+#: ../thunar/thunar-templates-action.c:409
 msgid "_Empty File"
 msgstr "_Tühi fail"
 
@@ -2397,7 +2389,7 @@ msgstr "Pabe_rikorv"
 msgid "Display the contents of the trash can"
 msgstr "Näidata paberikorvi sisu"
 
-#: ../thunar/thunar-tree-model.c:604
+#: ../thunar/thunar-tree-model.c:611
 msgid "Loading..."
 msgstr "Laadimine..."
 
@@ -2660,67 +2652,62 @@ msgstr "Olekurib_a"
 msgid "Change the visibility of this window's statusbar"
 msgstr "Muuta selle akna olekuriba nähtavust"
 
-#: ../thunar/thunar-window.c:688
-#, fuzzy, c-format
-msgid "%s (%s)"
-msgstr "„%s” (%s) %s"
-
 #.
 #. * add view options
 #.
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "View as _Icons"
 msgstr "Nä_idata ikoonidena"
 
-#: ../thunar/thunar-window.c:781
+#: ../thunar/thunar-window.c:767
 msgid "Display folder content in an icon view"
 msgstr "Näidata kausta sisu ikoonivaates"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "View as _Detailed List"
 msgstr "Näi_data üksikasjaliku loendina"
 
-#: ../thunar/thunar-window.c:788
+#: ../thunar/thunar-window.c:774
 msgid "Display folder content in a detailed list view"
 msgstr "Näidata kausta sisu üksikasjalikus loendivaates"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "View as _Compact List"
 msgstr "_Näidata tihendatud loendina"
 
-#: ../thunar/thunar-window.c:795
+#: ../thunar/thunar-window.c:781
 msgid "Display folder content in a compact list view"
 msgstr "Näidata kausta sisu tihendatud loendivaates"
 
 #. add the label with the root warning
-#: ../thunar/thunar-window.c:857
+#: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
 msgstr "Hoiatus, olete juurkasutaja õigustes ja võite oma süsteemi kahjustada."
 
-#: ../thunar/thunar-window.c:1875
+#: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
 msgstr "Ülemise kausta avamine ebaõnnestus"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:1901
+#: ../thunar/thunar-window.c:1887
 msgid "Failed to open the home folder"
 msgstr "Kodukataloogi avamine ebaõnnestus"
 
-#: ../thunar/thunar-window.c:1956
+#: ../thunar/thunar-window.c:1942
 #, fuzzy, c-format
 msgid "Failed to open folder \"%s\""
 msgstr "Faili „%s” avamine ebaõnnestus"
 
 #. display the "About Templates" dialog
-#: ../thunar/thunar-window.c:2081
+#: ../thunar/thunar-window.c:2067
 msgid "About Templates"
 msgstr "Mallidest"
 
-#: ../thunar/thunar-window.c:2103
+#: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
 msgstr "Selles kaustas olevad failid ilmuvad „Luua dokument” menüüsse."
 
-#: ../thunar/thunar-window.c:2110
+#: ../thunar/thunar-window.c:2096
 #, fuzzy
 msgid ""
 "If you frequently create certain kinds  of documents, make a copy of one and "
@@ -2737,16 +2724,16 @@ msgstr ""
 "Seejärel saab „Luua dokument” menüüst kirjet märgistada ja dokumendist "
 "tehakse käesolevasse kataloogi koopia."
 
-#: ../thunar/thunar-window.c:2122
+#: ../thunar/thunar-window.c:2108
 msgid "Do _not display this message again"
 msgstr "Seda sõ_numit mitte uuesti näidata"
 
 #. display an error to the user
-#: ../thunar/thunar-window.c:2167
+#: ../thunar/thunar-window.c:2153
 msgid "Failed to display the contents of the trash can"
 msgstr "Paberikorvi sisu näitamine ebaõnnestus"
 
-#: ../thunar/thunar-window.c:2209
+#: ../thunar/thunar-window.c:2195
 msgid ""
 "Thunar is a fast and easy to use file manager\n"
 "for the Xfce Desktop Environment."
@@ -3506,6 +3493,10 @@ msgstr "Kohandatud tegevuse näidis"
 msgid "Open Terminal Here"
 msgstr "Avada terminal siin"
 
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr ""
+
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
 msgstr "Lehitseda failisüsteemi kasutades failihaldurit"
@@ -3525,6 +3516,16 @@ msgstr "Avada kaust Thunariga"
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
 msgstr "Avada täpsustatud kaustad Thunaris"
+
+#~ msgid "File Manager Settings"
+#~ msgstr "Failihalduri seadistused"
+
+#~ msgid "Thunar Settings"
+#~ msgstr "Thunari seadistused"
+
+#, fuzzy
+#~ msgid "%s (%s)"
+#~ msgstr "„%s” (%s) %s"
 
 #~ msgid "Failed to open the templates folder"
 #~ msgstr "Mallide kausta avamine ebaõnnestus"
