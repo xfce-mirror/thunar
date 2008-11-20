@@ -1,3 +1,14 @@
+2008-11-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.c (thunar_application_process_filenames):
+	  Always show an error dialog if one of the files passed via the
+	  command line cannot be opened. Required for exo-open to give proper
+	  visual feedback because spawning Thunar asynchronously will always
+	  make exo-open think that the file(s) were opened successfully.
+	  Ideally Thunar would display an error dialog with a tree view
+	  listing all the files that could not be opened (I'll file a bug for
+	  this).
+
 2008-11-15	Jannis Pohlmann <jannis@xfce.org>
 
 	* plugins/, tdb/, thunar-vfs/, thunar/: Fix several compiler warnings.

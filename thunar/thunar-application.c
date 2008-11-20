@@ -1113,6 +1113,9 @@ thunar_application_process_filenames (ThunarApplication *application,
   return TRUE;
 
 failure:
+  /* tell the user that we were unable to launch the file specified on the cmdline */
+  thunar_dialogs_show_error (screen, derror, _("Failed to open \"%s\""), filenames[n]);
+
   g_set_error (error, derror->domain, derror->code, _("Failed to open \"%s\": %s"), filenames[n], derror->message);
   thunar_file_list_free (file_list);
   g_error_free (derror);
