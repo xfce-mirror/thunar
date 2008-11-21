@@ -9,13 +9,13 @@ msgstr ""
 "Project-Id-Version: eu\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2008-11-19 18:02+0100\n"
-"PO-Revision-Date: 2008-11-09 15:44+0200\n"
+"PO-Revision-Date: 2008-11-21 11:02+0200\n"
 "Last-Translator: Piarres Beobide <pi@beobide.net>\n"
 "Language-Team: Euskara <debian-l10n-basque@lists.debian.org>\n"
+"Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Pootle 1.2.0\n"
 
@@ -641,8 +641,7 @@ msgstr "Ez da aplikaziorik hautatu"
 
 #: ../thunar/thunar-chooser-button.c:366
 #, c-format
-msgid ""
-"The selected application is used to open this and other files of type \"%s\"."
+msgid "The selected application is used to open this and other files of type \"%s\"."
 msgstr ""
 "Hautaturiko aplikazioa fitxategi hau eta \"%s\" motakoak irekitzeko "
 "erabiltzen da."
@@ -698,8 +697,7 @@ msgstr "<i>%s</i> eta \"%s\" motako fitxategiak honekin ireki:"
 
 #: ../thunar/thunar-chooser-dialog.c:709
 #, c-format
-msgid ""
-"Browse the file system to select an application to open files of type \"%s\"."
+msgid "Browse the file system to select an application to open files of type \"%s\"."
 msgstr ""
 "Fitxategi sistema arakatu \"%s\" motako fitxategiak irekitzeko aplikazioa "
 "hautatzeko."
@@ -1374,8 +1372,7 @@ msgstr "Karpeta berri bat sortu \"%s\"-en"
 
 #: ../thunar/thunar-location-buttons.c:1294
 #, c-format
-msgid ""
-"Move or copy files previously selected by a Cut or Copy command into \"%s\""
+msgid "Move or copy files previously selected by a Cut or Copy command into \"%s\""
 msgstr ""
 "Moztu edo Kopiatu komandoaz aurretik hautaturiko fitxategiak  \"%s\" barnera "
 "mugitu edo kopiatu"
@@ -1994,8 +1991,7 @@ msgid "_Rename Files"
 msgstr "Fitxategiak be_rrizendatu"
 
 #: ../thunar/thunar-renamer-dialog.c:371
-msgid ""
-"Click here to actually rename the files listed above to their new names."
+msgid "Click here to actually rename the files listed above to their new names."
 msgstr ""
 "Hemen klik egin behean zerrendaturiko fitxategiak izen berrietara orain "
 "berrizendatzeko."
@@ -2063,10 +2059,8 @@ msgstr[1] "Fitxategiak ezabatu"
 #: ../thunar/thunar-renamer-dialog.c:1529
 msgid "Remove the selected file from the list of files to be renamed"
 msgid_plural "Remove the selected files from the list of files to be renamed"
-msgstr[0] ""
-"Ezabatu hautaturiko fitxategia berrizendatzeko fitxategi zerrendatik"
-msgstr[1] ""
-"Ezabatu hautaturiko fitxategiak berrizendatzeko fitxategi zerrendatik"
+msgstr[0] "Ezabatu hautaturiko fitxategia berrizendatzeko fitxategi zerrendatik"
+msgstr[1] "Ezabatu hautaturiko fitxategiak berrizendatzeko fitxategi zerrendatik"
 
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1680
@@ -2098,8 +2092,7 @@ msgid "_Skip This File"
 msgstr "Fitxategi hau albo batera ut_zi"
 
 #: ../thunar/thunar-renamer-progress.c:233
-msgid ""
-"Do you want to skip this file and continue to rename the remaining files?"
+msgid "Do you want to skip this file and continue to rename the remaining files?"
 msgstr ""
 "Fitxategi hau albo batera utzi eta besteak berrizendatzen jarraitu nahi al "
 "duzu?"
@@ -2113,6 +2106,14 @@ msgstr "Konfiguratu Thunar fitxategi kudeatzailea"
 #: ../Thunar.desktop.in.in.h:2
 msgid "File Manager"
 msgstr "Fitxategi kudeatzailea"
+
+#: ../thunar/thunar-settings.desktop.in.h:3
+msgid "File Manager Settings"
+msgstr "Fitxategi kudeatzailea ezarpenak"
+
+#: ../thunar/thunar-settings.desktop.in.h:4
+msgid "Thunar Settings"
+msgstr "Thunar ezarpenak"
 
 #: ../thunar/thunar-shortcuts-model.c:351
 msgid "Desktop"
@@ -2351,8 +2352,7 @@ msgstr[1] "Hautatutako fitxategiak itsatsi komandoaz mugitzeko prestatu"
 msgid "Prepare the selected file to be copied with a Paste command"
 msgid_plural "Prepare the selected files to be copied with a Paste command"
 msgstr[0] "Hautatutako fitxategia itsatsi komando bitartez kopiatzeko prestatu"
-msgstr[1] ""
-"Hautatutako fitxategiak itsatsi komando bitartez kopiatzeko prestatu"
+msgstr[1] "Hautatutako fitxategiak itsatsi komando bitartez kopiatzeko prestatu"
 
 #: ../thunar/thunar-standard-view.c:3370
 msgid "Delete the selected file"
@@ -2658,6 +2658,12 @@ msgstr "Egoer_a-barra"
 msgid "Change the visibility of this window's statusbar"
 msgstr "Leiho honen egoera tresnabarraren bistaratze egoera aldatu"
 
+#: ../thunar/thunar-window.c:688
+#, c-format
+msgctxt "CategoryName (FolderName)"
+msgid "%s (%s)"
+msgstr "%s (%s)"
+
 #.
 #. * add view options
 #.
@@ -2688,8 +2694,7 @@ msgstr "Karpeta edukia ikuspegi konpaktuan bistarazi"
 #. add the label with the root warning
 #: ../thunar/thunar-window.c:843
 msgid "Warning, you are using the root account, you may harm your system."
-msgstr ""
-"Kontuz, root kontua erabiltzen ari zara eta zure sistema hondatu dezakezu."
+msgstr "Kontuz, root kontua erabiltzen ari zara eta zure sistema hondatu dezakezu."
 
 #: ../thunar/thunar-window.c:1861
 msgid "Failed to open parent folder"
@@ -2712,8 +2717,7 @@ msgstr "Txantiloiei buruz"
 
 #: ../thunar/thunar-window.c:2089
 msgid "All files in this folder will appear in the \"Create Document\" menu."
-msgstr ""
-"Karpeta honetako fitxategi guztiak \"Sortu dokumentua\" menuan agertuko dira."
+msgstr "Karpeta honetako fitxategi guztiak \"Sortu dokumentua\" menuan agertuko dira."
 
 #: ../thunar/thunar-window.c:2096
 msgid ""
@@ -2792,8 +2796,7 @@ msgstr "Azalpena:"
 msgid ""
 "The generic name of the entry, for example \"Web Browser\" in case of "
 "Firefox."
-msgstr ""
-"Sarreraren izen arrunta, adibidez \"Web Nabigatzailea\" Firefox-en kasuan."
+msgstr "Sarreraren izen arrunta, adibidez \"Web Nabigatzailea\" Firefox-en kasuan."
 
 #: ../plugins/thunar-apr/thunar-apr-desktop-page.c:181
 msgid "Command:"
@@ -3097,8 +3100,7 @@ msgid "Replace _With:"
 msgstr "Honengatik A_ldatu:"
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:246
-msgid ""
-"Enter the text that should be used as replacement for the pattern above."
+msgid "Enter the text that should be used as replacement for the pattern above."
 msgstr "Aurreko patroia aldatzeko erabiliko den testua idatzi."
 
 #: ../plugins/thunar-sbr/thunar-sbr-replace-renamer.c:258
@@ -3328,8 +3330,7 @@ msgstr ""
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:200
 msgid "Browse the file system to select an application to use for this action."
-msgstr ""
-"Ekintza honetan erabiltzeko aplikazioa hautatzeko fitxategi sistema arakatu."
+msgstr "Ekintza honetan erabiltzeko aplikazioa hautatzeko fitxategi sistema arakatu."
 
 #: ../plugins/thunar-uca/thunar-uca-editor.c:216
 msgid "_Icon:"
@@ -3483,8 +3484,7 @@ msgid "Configure c_ustom actions..."
 msgstr "E_kintza pertsonalizatuak konfiguratu..."
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:189
-msgid ""
-"Setup custom actions that will appear in the file managers context menus"
+msgid "Setup custom actions that will appear in the file managers context menus"
 msgstr "Kontestu menuetan agertuko diren ekintza pertsonalizatuak konfiguratu"
 
 #: ../plugins/thunar-uca/thunar-uca-provider.c:406
@@ -3499,10 +3499,6 @@ msgstr "Ekintza pertsonalizatu adibidea"
 #: ../plugins/thunar-uca/uca.xml.in.h:2
 msgid "Open Terminal Here"
 msgstr "Ireki Terminala Hemen"
-
-#: ../plugins/thunar-wallpaper/twp-provider.c:155
-msgid "Set as wallpaper"
-msgstr ""
 
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
@@ -3524,12 +3520,6 @@ msgstr "Karpeta Ireki Thunar-ekin"
 msgid "Open the specified folders in Thunar"
 msgstr "Hautatutako direktorioak thunar-en ireki"
 
-#~ msgid "File Manager Settings"
-#~ msgstr "Fitxategi kudeatzailea ezarpenak"
-
-#~ msgid "Thunar Settings"
-#~ msgstr "Thunar ezarpenak"
-
-#~ msgctxt "CategoryName (FolderName)"
-#~ msgid "%s (%s)"
-#~ msgstr "%s (%s)"
+#: ../plugins/thunar-wallpaper/twp-provider.c:155
+msgid "Set as wallpaper"
+msgstr "Ezarri horma-paper gisa"
