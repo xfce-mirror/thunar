@@ -63,7 +63,7 @@ static GOptionEntry option_entries[] =
 #else
   { "quit", 'q', 0, G_OPTION_ARG_NONE, &opt_quit, N_ ("Quit a running Thunar instance (not supported)"), NULL, },
 #endif
-  { "version", 'v', 0, G_OPTION_ARG_NONE, &opt_version, N_ ("Print version information and exit"), NULL, },
+  { "version", 'V', 0, G_OPTION_ARG_NONE, &opt_version, N_ ("Print version information and exit"), NULL, },
   { NULL, },
 };
 

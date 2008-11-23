@@ -1207,7 +1207,7 @@ thunar_vfs_volume_manager_hal_device_condition (LibHalContext *context,
                 {
                   /* check if we have a mounted volume for this UDI */
                   volume_hal = thunar_vfs_volume_manager_hal_get_volume_by_udi (manager_hal, volume_udis[n]);
-                  if (thunar_vfs_volume_is_mounted (THUNAR_VFS_VOLUME (volume_hal)))
+                  if (volume_hal != NULL && thunar_vfs_volume_is_mounted (THUNAR_VFS_VOLUME (volume_hal)))
                     volumes = g_list_prepend (volumes, g_object_ref (G_OBJECT (volume_hal)));
                 }
               libhal_free_string_array (volume_udis);
