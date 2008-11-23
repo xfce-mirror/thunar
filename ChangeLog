@@ -1,5 +1,11 @@
 2008-11-23	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar-vfs/thunar-vfs-volume-hal.c
+	  (thunar_vfs_volume_hal_is_ejectable): Return TRUE if and only if
+	  requires_eject is TRUE. This should fix bug #3978.
+
+2008-11-23	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-shortcuts-model.c, thunar/thunar-window.c: Add ifdefs
 	  around includes to fix make distcheck. Spotted by Nick.
 

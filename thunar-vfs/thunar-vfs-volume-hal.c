@@ -208,11 +208,7 @@ static gboolean
 thunar_vfs_volume_hal_is_ejectable (ThunarVfsVolume *volume)
 {
   /* check if HAL drive requires eject */
-  if (THUNAR_VFS_VOLUME_HAL (volume)->requires_eject)
-    return TRUE;
-
-  /* otherwise we can only eject removable media, that are present (surprise, surprise) */
-  return (thunar_vfs_volume_is_present (volume) && thunar_vfs_volume_is_removable (volume));
+  return THUNAR_VFS_VOLUME_HAL (volume)->requires_eject;
 }
 
 
