@@ -252,6 +252,11 @@ tvilx_copy_regular (const gchar                   *source_absolute_path,
   else
 #endif /* !HAVE_MMAP */
     {
+#ifdef HAVE_POSIX_FADVISE
+      /* tell the system that the data will be read sequentially */
+      posix_fadvise (source_fd, 0, 0, POSIX_FADV_SEQUENTIAL);
+#endif
+
       /* allocate the transfer buffer */
       bufsize = 8 * source_statb->st_blksize;
       buffer = g_new (gchar, bufsize);
