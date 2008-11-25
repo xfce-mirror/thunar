@@ -294,7 +294,7 @@ thunar_vfs_expand_filename (const gchar *filename,
     }
 
   /* generate the filename */
-  return g_build_filename (replacement, slash + 1, NULL);
+  return g_build_filename (replacement, slash, NULL);
 }
 
 

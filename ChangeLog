@@ -1,5 +1,10 @@
 2008-11-25	Nick Schermer <nick@xfce.org>
 
+	* thunar-vfs/thunar-vfs-util.c: Fix completion when ~/ is used.
+	  Patch by Peter de Ridder. Bug #2973.
+
+2008-11-25	Nick Schermer <nick@xfce.org>
+
 	* thunar/thunar-preferences.c: Store the option name used for
 	  the thunarrc file in the nickname of the GParamSpec so we
 	  don't have to generate it during load/save.
