@@ -1,5 +1,13 @@
 2008-11-25	Nick Schermer <nick@xfce.org>
 
+	* thunar/thunar-preferences.c: Store the option name used for
+	  the thunarrc file in the nickname of the GParamSpec so we
+	  don't have to generate it during load/save.
+	  When debugging is enabled property_name_to_option_name() is
+	  still used to check for typos between the name and nickname.
+
+2008-11-25	Nick Schermer <nick@xfce.org>
+
 	* thunar/thunar-file.c: Remove the display-name property from
 	  ThunarFile. It's not used and some say g_property_notify() is
 	  not the fastest glib function, so we probably don't want to

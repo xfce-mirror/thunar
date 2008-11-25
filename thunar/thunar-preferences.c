@@ -195,7 +195,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_DEFAULT_VIEW,
                                    g_param_spec_string ("default-view",
-                                                        "default-view",
+                                                        "DefaultView",
                                                         "default-view",
                                                         "void",
                                                         EXO_PARAM_READWRITE));
@@ -208,7 +208,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_COMPACT_VIEW_ZOOM_LEVEL,
                                    g_param_spec_enum ("last-compact-view-zoom-level",
-                                                      "last-compact-view-zoom-level",
+                                                      "LastCompactViewZoomLevel",
                                                       "last-compact-view-zoom-level",
                                                       THUNAR_TYPE_ZOOM_LEVEL,
                                                       THUNAR_ZOOM_LEVEL_SMALLEST,
@@ -224,7 +224,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_DETAILS_VIEW_COLUMN_ORDER,
                                    g_param_spec_string ("last-details-view-column-order",
-                                                        "last-details-view-column-order",
+                                                        "LastDetailsViewColumnOrder",
                                                         "last-details-view-column-order",
                                                         "THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE,THUNAR_COLUMN_DATE_MODIFIED",
                                                         EXO_PARAM_READWRITE));
@@ -238,7 +238,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_DETAILS_VIEW_COLUMN_WIDTHS,
                                    g_param_spec_string ("last-details-view-column-widths",
-                                                        "last-details-view-column-widths",
+                                                        "LastDetailsViewColumnWidths",
                                                         "last-details-view-column-widths",
                                                         "",
                                                         EXO_PARAM_READWRITE));
@@ -252,7 +252,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_DETAILS_VIEW_FIXED_COLUMNS,
                                    g_param_spec_boolean ("last-details-view-fixed-columns",
-                                                         "last-details-view-fixed-columns",
+                                                         "LastDetailsViewFixedColumns",
                                                          "last-details-view-fixed-columns",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
@@ -265,7 +265,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_DETAILS_VIEW_VISIBLE_COLUMNS,
                                    g_param_spec_string ("last-details-view-visible-columns",
-                                                        "last-details-view-visible-columns",
+                                                        "LastDetailsViewVisibleColumns",
                                                         "last-details-view-visible-columns",
                                                         "THUNAR_COLUMN_DATE_MODIFIED,THUNAR_COLUMN_NAME,THUNAR_COLUMN_SIZE,THUNAR_COLUMN_TYPE",
                                                         EXO_PARAM_READWRITE));
@@ -278,7 +278,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_DETAILS_VIEW_ZOOM_LEVEL,
                                    g_param_spec_enum ("last-details-view-zoom-level",
-                                                      "last-details-view-zoom-level",
+                                                      "LastDetailsViewZoomLevel",
                                                       "last-details-view-zoom-level",
                                                       THUNAR_TYPE_ZOOM_LEVEL,
                                                       THUNAR_ZOOM_LEVEL_SMALLER,
@@ -292,7 +292,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_ICON_VIEW_ZOOM_LEVEL,
                                    g_param_spec_enum ("last-icon-view-zoom-level",
-                                                      "last-icon-view-zoom-level",
+                                                      "LastIconViewZoomLevel",
                                                       "last-icon-view-zoom-level",
                                                       THUNAR_TYPE_ZOOM_LEVEL,
                                                       THUNAR_ZOOM_LEVEL_NORMAL,
@@ -308,7 +308,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_LOCATION_BAR,
                                    g_param_spec_string ("last-location-bar",
-                                                        "last-location-bar",
+                                                        "LastLocationBar",
                                                         "last-location-bar",
                                                         "ThunarLocationButtons",
                                                         EXO_PARAM_READWRITE));
@@ -322,7 +322,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_SEPARATOR_POSITION,
                                    g_param_spec_int ("last-separator-position",
-                                                     "last-separator-position",
+                                                     "LastSeparatorPosition",
                                                      "last-separator-position",
                                                      0, G_MAXINT, 170,
                                                      EXO_PARAM_READWRITE));
@@ -335,7 +335,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_SHOW_HIDDEN,
                                    g_param_spec_boolean ("last-show-hidden",
-                                                         "last-show-hidden",
+                                                         "LastShowHidden",
                                                          "last-show-hidden",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
@@ -350,7 +350,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_SIDE_PANE,
                                    g_param_spec_string ("last-side-pane",
-                                                        "last-side-pane",
+                                                        "LastSidePane",
                                                         "last-side-pane",
                                                         "ThunarShortcutsPane",
                                                         EXO_PARAM_READWRITE));
@@ -363,7 +363,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_SORT_COLUMN,
                                    g_param_spec_enum ("last-sort-column",
-                                                      "last-sort-column",
+                                                      "LastSortColumn",
                                                       "last-sort-column",
                                                       THUNAR_TYPE_COLUMN,
                                                       THUNAR_COLUMN_NAME,
@@ -377,7 +377,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_SORT_ORDER,
                                    g_param_spec_enum ("last-sort-order",
-                                                      "last-sort-order",
+                                                      "LastSortOrder",
                                                       "last-sort-order",
                                                       GTK_TYPE_SORT_TYPE,
                                                       GTK_SORT_ASCENDING,
@@ -390,7 +390,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_STATUSBAR_VISIBLE,
                                    g_param_spec_boolean ("last-statusbar-visible",
-                                                         "last-statusbar-visible",
+                                                         "LastStatusbarVisible",
                                                          "last-statusbar-visible",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
@@ -404,7 +404,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_VIEW,
                                    g_param_spec_string ("last-view",
-                                                        "last-view",
+                                                        "LastView",
                                                         "last-view",
                                                         "ThunarIconView",
                                                         EXO_PARAM_READWRITE));
@@ -418,7 +418,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_WINDOW_HEIGHT,
                                    g_param_spec_int ("last-window-height",
-                                                     "last-window-height",
+                                                     "LastWindowHeight",
                                                      "last-window-height",
                                                      1, G_MAXINT, 480,
                                                      EXO_PARAM_READWRITE));
@@ -432,7 +432,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_LAST_WINDOW_WIDTH,
                                    g_param_spec_int ("last-window-width",
-                                                     "last-window-width",
+                                                     "LastWindowWidth",
                                                      "last-window-width",
                                                      1, G_MAXINT, 640,
                                                      EXO_PARAM_READWRITE));
@@ -446,7 +446,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_VOLUME_MANAGEMENT,
                                    g_param_spec_boolean ("misc-volume-management",
-                                                         "misc-volume-management",
+                                                         "MiscVolumeManagement",
                                                          "misc-volume-management",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
@@ -459,7 +459,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_CASE_SENSITIVE,
                                    g_param_spec_boolean ("misc-case-sensitive",
-                                                         "misc-case-sensitive",
+                                                         "MiscCaseSensitive",
                                                          "misc-case-sensitive",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
@@ -472,7 +472,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_DATE_STYLE,
                                    g_param_spec_enum ("misc-date-style",
-                                                      "misc-date-style",
+                                                      "MiscDateStyle",
                                                       "misc-date-style",
                                                       THUNAR_TYPE_DATE_STYLE,
                                                       THUNAR_DATE_STYLE_SIMPLE,
@@ -486,7 +486,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_FOLDERS_FIRST,
                                    g_param_spec_boolean ("misc-folders-first",
-                                                         "misc-folders-first",
+                                                         "MiscFoldersFirst",
                                                          "misc-folders-first",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
@@ -500,7 +500,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_HORIZONTAL_WHEEL_NAVIGATES,
                                    g_param_spec_boolean ("misc-horizontal-wheel-navigates",
-                                                         "misc-horizontal-wheel-navigates",
+                                                         "MiscHorizontalWheelNavigates",
                                                          "misc-horizontal-wheel-navigates",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
@@ -514,7 +514,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_RECURSIVE_PERMISSIONS,
                                    g_param_spec_enum ("misc-recursive-permissions",
-                                                      "misc-recursive-permissions",
+                                                      "MiscRecursivePermissions",
                                                       "misc-recursive-permissions",
                                                       THUNAR_TYPE_RECURSIVE_PERMISSIONS,
                                                       THUNAR_RECURSIVE_PERMISSIONS_ASK,
@@ -532,7 +532,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_REMEMBER_GEOMETRY,
                                    g_param_spec_boolean ("misc-remember-geometry",
-                                                         "misc-remember-geometry",
+                                                         "MiscRememberGeometry",
                                                          "misc-remember-geometry",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
@@ -546,7 +546,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_SHOW_ABOUT_TEMPLATES,
                                    g_param_spec_boolean ("misc-show-about-templates",
-                                                         "misc-show-about-templates",
+                                                         "MiscShowAboutTemplates",
                                                          "misc-show-about-templates",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
@@ -559,7 +559,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_SHOW_THUMBNAILS,
                                    g_param_spec_boolean ("misc-show-thumbnails",
-                                                         "misc-show-thumbnails",
+                                                         "MiscShowThumbnails",
                                                          "misc-show-thumbnails",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
@@ -572,7 +572,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_SINGLE_CLICK,
                                    g_param_spec_boolean ("misc-single-click",
-                                                         "misc-single-click",
+                                                         "MiscSingleClick",
                                                          "misc-single-click",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
@@ -588,7 +588,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_SINGLE_CLICK_TIMEOUT,
                                    g_param_spec_uint ("misc-single-click-timeout",
-                                                      "misc-single-click-timeout",
+                                                      "MiscSingleClickTimeout",
                                                       "misc-single-click-timeout",
                                                       0u, G_MAXUINT, 500u,
                                                       EXO_PARAM_READWRITE));
@@ -602,7 +602,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_MISC_TEXT_BESIDE_ICONS,
                                    g_param_spec_boolean ("misc-text-beside-icons",
-                                                         "misc-text-beside-icons",
+                                                         "MiscTextBesideIcons",
                                                          "misc-text-beside-icons",
                                                          FALSE,
                                                          EXO_PARAM_READWRITE));
@@ -616,7 +616,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_SHORTCUTS_ICON_EMBLEMS,
                                    g_param_spec_boolean ("shortcuts-icon-emblems",
-                                                         "shortcuts-icon-emblems",
+                                                         "ShortcutsIconEmblems",
                                                          "shortcuts-icon-emblems",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
@@ -630,7 +630,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_SHORTCUTS_ICON_SIZE,
                                    g_param_spec_enum ("shortcuts-icon-size",
-                                                      "shortcuts-icon-size",
+                                                      "ShortcutsIconSize",
                                                       "shortcuts-icon-size",
                                                       THUNAR_TYPE_ICON_SIZE,
                                                       THUNAR_ICON_SIZE_SMALLER,
@@ -645,7 +645,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_TREE_ICON_EMBLEMS,
                                    g_param_spec_boolean ("tree-icon-emblems",
-                                                         "tree-icon-emblems",
+                                                         "TreeIconEmblems",
                                                          "tree-icon-emblems",
                                                          TRUE,
                                                          EXO_PARAM_READWRITE));
@@ -659,7 +659,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
   g_object_class_install_property (gobject_class,
                                    PROP_TREE_ICON_SIZE,
                                    g_param_spec_enum ("tree-icon-size",
-                                                      "tree-icon-size",
+                                                      "TreeIconSize",
                                                       "tree-icon-size",
                                                       THUNAR_TYPE_ICON_SIZE,
                                                       THUNAR_ICON_SIZE_SMALLEST,
@@ -850,6 +850,7 @@ thunar_preferences_queue_store (ThunarPreferences *preferences)
 
 
 
+#ifndef NDEBUG
 static gchar*
 property_name_to_option_name (const gchar *property_name)
 {
@@ -879,6 +880,7 @@ property_name_to_option_name (const gchar *property_name)
 
   return option;
 }
+#endif
 
 
 
@@ -892,7 +894,9 @@ thunar_preferences_load_idle (gpointer user_data)
   XfceRc            *rc;
   GValue             dst = { 0, };
   GValue             src = { 0, };
+#ifndef NDEBUG
   gchar             *option;
+#endif
   guint              nspecs;
   guint              n;
 
@@ -914,9 +918,15 @@ thunar_preferences_load_idle (gpointer user_data)
     {
       spec = specs[n];
 
+#ifndef NDEBUG
+      /* when debugging is enabled, check if the generated option name
+       * is equal to the nickname, to prevent typos */
       option = property_name_to_option_name (spec->name);
-      string = xfce_rc_read_entry (rc, option, NULL);
+      g_assert (exo_str_is_equal (option, g_param_spec_get_nick (spec)));
       g_free (option);
+#endif
+
+      string = xfce_rc_read_entry (rc, g_param_spec_get_nick (spec), NULL);
 
       if (G_UNLIKELY (string == NULL))
         continue;
@@ -973,7 +983,9 @@ thunar_preferences_store_idle (gpointer user_data)
   XfceRc            *rc;
   GValue             dst = { 0, };
   GValue             src = { 0, };
+#ifndef NDEBUG
   gchar             *option;
+#endif
   guint              nspecs;
   guint              n;
 
@@ -1008,17 +1020,21 @@ thunar_preferences_store_idle (gpointer user_data)
           g_value_unset (&src);
         }
 
-      /* determine the option name for the spec */
+#ifndef NDEBUG
+      /* when debugging is enabled, check if the generated option name
+       * is equal to the nickname, to prevent typos */
       option = property_name_to_option_name (spec->name);
+      g_assert (exo_str_is_equal (option, g_param_spec_get_nick (spec)));
+      g_free (option);
+#endif
 
       /* store the setting */
       string = g_value_get_string (&dst);
       if (G_LIKELY (string != NULL))
-        xfce_rc_write_entry (rc, option, string);
+        xfce_rc_write_entry (rc, g_param_spec_get_nick (spec), string);
 
       /* cleanup */
       g_value_unset (&dst);
-      g_free (option);
     }
 
   /* cleanup */
