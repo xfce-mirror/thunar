@@ -284,7 +284,7 @@ thunar_tpa_icon_state (ThunarTpaIcon *icon,
                        gboolean       full)
 {
   /* tell the user whether the trash is full or empty */
-  gtk_tooltips_set_tip (icon->tooltips, icon->button, full ? _("Trash is full") : _("Trash is empty"), NULL);
+  gtk_tooltips_set_tip (icon->tooltips, icon->button, full ? _("Trash contains files") : _("Trash is empty"), NULL);
 
   /* setup the appropriate icon */
   gtk_image_set_from_icon_name (GTK_IMAGE (icon->image), full ? "gnome-fs-trash-full" : "gnome-fs-trash-empty", GTK_ICON_SIZE_BUTTON);
