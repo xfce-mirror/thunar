@@ -1,3 +1,13 @@
+2008-11-25	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-standard-view.c: Restore the selection after deleting
+	  a file/folder. This is done by connecting to the "row-deleted"
+	  signal of the model twice. The first handler saves the tree path to
+	  be selected after the removal in the selection_before_delete member.
+	  The second handler (which is called after the signal is emitted)
+	  selects this path. Selection is not modified if there are two or
+	  more files selected.
+
 2008-11-24	Nick Schermer <nick@xfce.org>
 
 	* configure.in.in, thunar-vfs/thunar-vfs-io-local-xfer.c: Use
