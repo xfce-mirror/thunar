@@ -69,14 +69,6 @@
 
 
 
-/* Property identifiers */
-enum
-{
-  PROP_0,
-  PROP_DISPLAY_NAME,
-  PROP_SPECIAL_NAME,
-};
-
 /* Signal identifiers */
 enum
 {
@@ -90,10 +82,6 @@ static void               thunar_file_class_init               (ThunarFileClass 
 static void               thunar_file_info_init                (ThunarxFileInfoIface   *iface);
 static void               thunar_file_dispose                  (GObject                *object);
 static void               thunar_file_finalize                 (GObject                *object);
-static void               thunar_file_get_property             (GObject                *object,
-                                                                guint                   prop_id,
-                                                                GValue                 *value,
-                                                                GParamSpec             *pspec);
 static gchar             *thunar_file_info_get_name            (ThunarxFileInfo        *file_info);
 static gchar             *thunar_file_info_get_uri             (ThunarxFileInfo        *file_info);
 static gchar             *thunar_file_info_get_parent_uri      (ThunarxFileInfo        *file_info);
@@ -233,21 +221,6 @@ thunar_file_class_init (ThunarFileClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_file_dispose;
   gobject_class->finalize = thunar_file_finalize;
-  gobject_class->get_property = thunar_file_get_property;
-
-  /**
-   * ThunarFile::display-name:
-   *
-   * The file's display name, see thunar_file_get_display_name()
-   * for details.
-   **/
-  g_object_class_install_property (gobject_class,
-                                   PROP_DISPLAY_NAME,
-                                   g_param_spec_string ("display-name",
-                                                        "display-name",
-                                                        "display-name",
-                                                        NULL,
-                                                        EXO_PARAM_READABLE));
 
   /**
    * ThunarFile::destroy:
@@ -264,7 +237,6 @@ thunar_file_class_init (ThunarFileClass *klass)
                   NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
-
 }
 
 
@@ -329,28 +301,6 @@ thunar_file_finalize (GObject *object)
   thunar_vfs_info_unref (file->info);
 
   (*G_OBJECT_CLASS (thunar_file_parent_class)->finalize) (object);
-}
-
-
-
-static void
-thunar_file_get_property (GObject    *object,
-                          guint       prop_id,
-                          GValue     *value,
-                          GParamSpec *pspec)
-{
-  ThunarFile *file = THUNAR_FILE (object);
-
-  switch (prop_id)
-    {
-    case PROP_DISPLAY_NAME:
-      g_value_set_static_string (value, thunar_file_get_display_name (file));
-      break;
-
-    default:
-      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-      break;
-    }
 }
 
 
@@ -471,9 +421,6 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
    * invokation will recheck the thumbnail.
    */
   thunar_file_set_thumb_state (THUNAR_FILE (file_info), THUNAR_FILE_THUMB_STATE_UNKNOWN);
-
-  /* notify about changes of the display-name property */
-  g_object_notify (G_OBJECT (file_info), "display-name");
 
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (THUNAR_FILE (file_info));

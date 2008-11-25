@@ -1,3 +1,10 @@
+2008-11-25	Nick Schermer <nick@xfce.org>
+
+	* thunar/thunar-file.c: Remove the display-name property from
+	  ThunarFile. It's not used and some say g_property_notify() is
+	  not the fastest glib function, so we probably don't want to
+	  call it every file change.
+
 2008-11-25	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-standard-view.c: Restore the selection after deleting
