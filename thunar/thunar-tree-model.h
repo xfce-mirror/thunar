@@ -27,6 +27,10 @@ G_BEGIN_DECLS;
 typedef struct _ThunarTreeModelClass ThunarTreeModelClass;
 typedef struct _ThunarTreeModel      ThunarTreeModel;
 
+typedef gboolean (* ThunarTreeModelVisibleFunc) (ThunarTreeModel *model,
+                                                 ThunarFile      *file,
+                                                 gpointer         data);
+
 #define THUNAR_TYPE_TREE_MODEL            (thunar_tree_model_get_type ())
 #define THUNAR_TREE_MODEL(obj)            (G_TYPE_CHECK_INSTANCE_CAST ((obj), THUNAR_TYPE_TREE_MODEL, ThunarTreeModel))
 #define THUNAR_TREE_MODEL_CLASS(klass)    (G_TYPE_CHECK_CLASS_CAST ((klass), THUNAR_TYPE_TREE_MODEL, ThunarTreeModelClass))
@@ -57,12 +61,14 @@ GType            thunar_tree_model_get_type           (void) G_GNUC_CONST;
 
 ThunarTreeModel *thunar_tree_model_get_default        (void);
 
-gboolean         thunar_tree_model_get_case_sensitive (ThunarTreeModel *model);
-void             thunar_tree_model_set_case_sensitive (ThunarTreeModel *model,
-                                                       gboolean         case_sensitive);
+gboolean         thunar_tree_model_get_case_sensitive (ThunarTreeModel            *model);
+void             thunar_tree_model_set_case_sensitive (ThunarTreeModel            *model,
+                                                       gboolean                    case_sensitive);
 
-void             thunar_tree_model_set_lock_ref_node  (ThunarTreeModel *model,
-                                                       gboolean         lock_ref_node);
+void             thunar_tree_model_set_visible_func   (ThunarTreeModel            *model,
+                                                       ThunarTreeModelVisibleFunc  func,
+                                                       gpointer                    data);
+void             thunar_tree_model_refilter           (ThunarTreeModel            *model);
 
 G_END_DECLS;
 

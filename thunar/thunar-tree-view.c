@@ -118,7 +118,7 @@ static gboolean         thunar_tree_view_test_expand_row            (GtkTreeView
 static gboolean         thunar_tree_view_delete_selected_files      (ThunarTreeView       *view);
 static void             thunar_tree_view_context_menu               (ThunarTreeView       *view,
                                                                      GdkEventButton       *event,
-                                                                     GtkTreeModel         *filter,
+                                                                     GtkTreeModel         *model,
                                                                      GtkTreeIter          *iter);
 static GdkDragAction    thunar_tree_view_get_dest_actions           (ThunarTreeView       *view,
                                                                      GdkDragContext       *context,
@@ -148,8 +148,8 @@ static GClosure        *thunar_tree_view_new_files_closure          (ThunarTreeV
 static void             thunar_tree_view_new_files                  (ThunarVfsJob         *job,
                                                                      GList                *path_list,
                                                                      ThunarTreeView       *view);
-static gboolean         thunar_tree_view_filter_visible_func        (GtkTreeModel         *filter,
-                                                                     GtkTreeIter          *iter,
+static gboolean         thunar_tree_view_visible_func               (ThunarTreeModel      *model,
+                                                                     ThunarFile           *file,
                                                                      gpointer              user_data);
 static gboolean         thunar_tree_view_selection_func             (GtkTreeSelection     *selection,
                                                                      GtkTreeModel         *model,
@@ -361,7 +361,6 @@ thunar_tree_view_init (ThunarTreeView *view)
   GtkTreeViewColumn *column;
   GtkTreeSelection  *selection;
   GtkCellRenderer   *renderer;
-  GtkTreeModel      *filter;
 
   /* initialize the view internals */
   view->cursor_idle_id = -1;
@@ -376,12 +375,8 @@ thunar_tree_view_init (ThunarTreeView *view)
 
   /* connect to the default tree model */
   view->model = thunar_tree_model_get_default ();
-
-  /* setup the filter for the tree view */
-  filter = gtk_tree_model_filter_new (GTK_TREE_MODEL (view->model), NULL);
-  gtk_tree_model_filter_set_visible_func (GTK_TREE_MODEL_FILTER (filter), thunar_tree_view_filter_visible_func, view, NULL);
-  gtk_tree_view_set_model (GTK_TREE_VIEW (view), filter);
-  g_object_unref (G_OBJECT (filter));
+  thunar_tree_model_set_visible_func (view->model, thunar_tree_view_visible_func, view);
+  gtk_tree_view_set_model (GTK_TREE_VIEW (view), GTK_TREE_MODEL (view->model));
 
   /* configure the tree view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
@@ -543,7 +538,7 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
                                         ThunarFile      *current_directory)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (navigator);
-  GtkTreeModel   *filter;
+  ThunarFile     *file, *file_parent;
 
   /* check if we already use that directory */
   if (G_UNLIKELY (view->current_directory == current_directory))
@@ -562,11 +557,30 @@ thunar_tree_view_set_current_directory (ThunarNavigator *navigator,
       /* take a reference on the directory */
       g_object_ref (G_OBJECT (current_directory));
 
-      /* update the filter if the new current directory is hidden */
-      if (!view->show_hidden && thunar_file_is_hidden (current_directory))
+      /* update the filter if the new current directory, or one of it's parents, is hidden */
+      if (!view->show_hidden)
         {
-          filter = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-          gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (filter));
+          /* look if the file or one of it's parents is hidden */
+          for (file = g_object_ref (G_OBJECT (current_directory)); file != NULL; file = file_parent)
+            {
+              /* check if this file is hidden */
+              if (thunar_file_is_hidden (file))
+                {
+                  /* update the filter */
+                  thunar_tree_model_refilter (view->model);
+
+                  /* release the file */
+                  g_object_unref (G_OBJECT (file));
+
+                  break;
+                }
+
+              /* get the file parent */
+              file_parent = thunar_file_get_parent (file, NULL);
+
+              /* release the file */
+              g_object_unref (G_OBJECT (file));
+            }
         }
 
       /* schedule an idle source to set the cursor to the current directory */
@@ -624,7 +638,6 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
                                      GdkEventButton *event)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (widget);
-  GtkTreeModel   *filter;
   GtkTreePath    *path;
   GtkTreeIter     iter;
   gboolean        result;
@@ -646,11 +659,10 @@ thunar_tree_view_button_press_event (GtkWidget      *widget,
       if (G_UNLIKELY (event->button == 3 && event->type == GDK_BUTTON_PRESS))
         {
           /* determine the iterator for the path */
-          filter = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-          if (gtk_tree_model_get_iter (filter, &iter, path))
+          if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
             {
               /* popup the context menu */
-              thunar_tree_view_context_menu (view, event, filter, &iter);
+              thunar_tree_view_context_menu (view, event, GTK_TREE_MODEL (view->model), &iter);
 
               /* we effectively handled the event */
               result = TRUE;
@@ -875,15 +887,15 @@ thunar_tree_view_popup_menu (GtkWidget *widget)
 {
   GtkTreeSelection *selection;
   ThunarTreeView   *view = THUNAR_TREE_VIEW (widget);
-  GtkTreeModel     *filter;
+  GtkTreeModel     *model;
   GtkTreeIter       iter;
 
   /* determine the selected row */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-  if (gtk_tree_selection_get_selected (selection, &filter, &iter))
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
       /* popup the context menu */
-      thunar_tree_view_context_menu (view, NULL, filter, &iter);
+      thunar_tree_view_context_menu (view, NULL, model, &iter);
       return TRUE;
     }
   else if (GTK_WIDGET_CLASS (thunar_tree_view_parent_class)->popup_menu != NULL)
@@ -927,14 +939,12 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
 {
   ThunarVfsVolume *volume;
   ThunarTreeView  *view = THUNAR_TREE_VIEW (tree_view);
-  GtkTreeModel    *filter;
   GtkWidget       *window;
   gboolean         expandable = TRUE;
   GError          *error = NULL;
 
   /* determine the volume for the iterator */
-  filter = gtk_tree_view_get_model (tree_view);
-  gtk_tree_model_get (filter, iter, THUNAR_TREE_MODEL_COLUMN_VOLUME, &volume, -1);
+  gtk_tree_model_get (GTK_TREE_MODEL (view->model), iter, THUNAR_TREE_MODEL_COLUMN_VOLUME, &volume, -1);
 
   /* check if we have a volume */
   if (G_UNLIKELY (volume != NULL))
@@ -985,7 +995,7 @@ thunar_tree_view_delete_selected_files (ThunarTreeView *view)
 static void
 thunar_tree_view_context_menu (ThunarTreeView *view,
                                GdkEventButton *event,
-                               GtkTreeModel   *filter,
+                               GtkTreeModel   *model,
                                GtkTreeIter    *iter)
 {
   ThunarVfsVolume *volume;
@@ -1000,7 +1010,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
     return;
 
   /* determine the file and volume for the given iter */
-  gtk_tree_model_get (filter, iter,
+  gtk_tree_model_get (model, iter,
                       THUNAR_TREE_MODEL_COLUMN_FILE, &file,
                       THUNAR_TREE_MODEL_COLUMN_VOLUME, &volume,
                       -1);
@@ -1209,7 +1219,6 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
 {
   GdkDragAction actions = 0;
   GdkDragAction action = 0;
-  GtkTreeModel *filter;
   GtkTreePath  *path = NULL;
   GtkTreeIter   iter;
   ThunarFile   *file = NULL;
@@ -1221,14 +1230,11 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
   /* determine the path for x/y */
   if (gtk_tree_view_get_path_at_pos (GTK_TREE_VIEW (view), x, y, &path, NULL, NULL, NULL))
     {
-      /* determine the tree model filter */
-      filter = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-
       /* determine the iter for the given path */
-      if (gtk_tree_model_get_iter (filter, &iter, path))
+      if (gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
         {
           /* determine the file for the given path */
-          gtk_tree_model_get (filter, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
+          gtk_tree_model_get (GTK_TREE_MODEL (view->model), &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
           if (G_LIKELY (file != NULL))
             {
               /* check if the file accepts the drop */
@@ -1288,7 +1294,7 @@ thunar_tree_view_find_closest_ancestor (ThunarTreeView *view,
                                         GtkTreePath   **ancestor_return,
                                         gboolean       *exact_return)
 {
-  GtkTreeModel *filter;
+  GtkTreeModel *model = GTK_TREE_MODEL (view->model);
   GtkTreePath  *child_path;
   GtkTreeIter   child_iter;
   GtkTreeIter   iter;
@@ -1296,15 +1302,14 @@ thunar_tree_view_find_closest_ancestor (ThunarTreeView *view,
   gboolean      found = FALSE;
 
   /* determine the iter for the current path */
-  filter = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-  if (!gtk_tree_model_get_iter (filter, &iter, path))
+  if (!gtk_tree_model_get_iter (GTK_TREE_MODEL (view->model), &iter, path))
     return FALSE;
 
   /* process all items at this level */
   do
     {
       /* check if the file for iter is an ancestor of the current directory */
-      gtk_tree_model_get (filter, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
+      gtk_tree_model_get (model, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
       if (G_UNLIKELY (file == NULL))
         continue;
 
@@ -1312,16 +1317,16 @@ thunar_tree_view_find_closest_ancestor (ThunarTreeView *view,
       if (G_UNLIKELY (file == view->current_directory))
         {
           /* we found the very best ancestor iter! */
-          *ancestor_return = gtk_tree_model_get_path (filter, &iter);
+          *ancestor_return = gtk_tree_model_get_path (model, &iter);
           *exact_return = TRUE;
           found = TRUE;
         }
       else if (thunar_file_is_ancestor (view->current_directory, file))
         {
           /* check if we can find an even better ancestor below this node */
-          if (gtk_tree_model_iter_children (filter, &child_iter, &iter))
+          if (gtk_tree_model_iter_children (model, &child_iter, &iter))
             {
-              child_path = gtk_tree_model_get_path (filter, &child_iter);
+              child_path = gtk_tree_model_get_path (model, &child_iter);
               found = thunar_tree_view_find_closest_ancestor (view, child_path, ancestor_return, exact_return);
               gtk_tree_path_free (child_path);
             }
@@ -1330,7 +1335,7 @@ thunar_tree_view_find_closest_ancestor (ThunarTreeView *view,
           if (G_UNLIKELY (!found))
             {
               /* we found an ancestor, not an exact match */
-              *ancestor_return = gtk_tree_model_get_path (filter, &iter);
+              *ancestor_return = gtk_tree_model_get_path (model, &iter);
               *exact_return = FALSE;
               found = TRUE;
             }
@@ -1339,7 +1344,7 @@ thunar_tree_view_find_closest_ancestor (ThunarTreeView *view,
       /* release the file reference */
       g_object_unref (G_OBJECT (file));
     }
-  while (!found && gtk_tree_model_iter_next (filter, &iter));
+  while (!found && gtk_tree_model_iter_next (model, &iter));
 
   return found;
 }
@@ -1350,14 +1355,14 @@ static ThunarFile*
 thunar_tree_view_get_selected_file (ThunarTreeView *view)
 {
   GtkTreeSelection *selection;
-  GtkTreeModel     *filter;
+  GtkTreeModel     *model;
   GtkTreeIter       iter;
   ThunarFile       *file = NULL;
 
   /* determine file for the selected row */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-  if (gtk_tree_selection_get_selected (selection, &filter, &iter))
-    gtk_tree_model_get (filter, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    gtk_tree_model_get (model, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
 
   return file;
 }
@@ -1369,13 +1374,13 @@ thunar_tree_view_get_selected_volume (ThunarTreeView *view)
 {
   GtkTreeSelection *selection;
   ThunarVfsVolume  *volume = NULL;
-  GtkTreeModel     *filter;
+  GtkTreeModel     *model;
   GtkTreeIter       iter;
 
   /* determine file for the selected row */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-  if (gtk_tree_selection_get_selected (selection, &filter, &iter))
-    gtk_tree_model_get (filter, &iter, THUNAR_TREE_MODEL_COLUMN_VOLUME, &volume, -1);
+  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+    gtk_tree_model_get (model, &iter, THUNAR_TREE_MODEL_COLUMN_VOLUME, &volume, -1);
 
   return volume;
 }
@@ -1538,7 +1543,7 @@ thunar_tree_view_action_eject (ThunarTreeView *view)
     {
       /* determine the toplevel window */
       window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-      
+
       /* try to eject the volume */
       if (!thunar_vfs_volume_eject (volume, window, &error))
         {
@@ -1789,28 +1794,22 @@ thunar_tree_view_new_files (ThunarVfsJob   *job,
 
 
 static gboolean
-thunar_tree_view_filter_visible_func (GtkTreeModel *filter,
-                                      GtkTreeIter  *iter,
-                                      gpointer      user_data)
+thunar_tree_view_visible_func (ThunarTreeModel *model,
+                               ThunarFile      *file,
+                               gpointer         user_data)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (user_data);
-  ThunarFile     *file;
   gboolean        visible = TRUE;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_MODEL (model), FALSE);
 
   /* if show_hidden is TRUE, nothing is filtered */
   if (G_LIKELY (!view->show_hidden))
     {
-      /* check if we should display this row */
-      gtk_tree_model_get (filter, iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
-      if (G_LIKELY (file != NULL))
-        {
-          /* we display all non-hidden file and hidden files that are ancestors of the current directory */
-          visible = !thunar_file_is_hidden (file) || (view->current_directory == file)
-                 || (view->current_directory != NULL && thunar_file_is_ancestor (view->current_directory, file));
-
-          /* release the reference on the file */
-          g_object_unref (G_OBJECT (file));
-        }
+      /* we display all non-hidden file and hidden files that are ancestors of the current directory */
+      visible = !thunar_file_is_hidden (file) || (view->current_directory == file)
+                || (view->current_directory != NULL && thunar_file_is_ancestor (view->current_directory, file));
     }
 
   return visible;
@@ -1820,7 +1819,7 @@ thunar_tree_view_filter_visible_func (GtkTreeModel *filter,
 
 static gboolean
 thunar_tree_view_selection_func (GtkTreeSelection *selection,
-                                 GtkTreeModel     *filter,
+                                 GtkTreeModel     *model,
                                  GtkTreePath      *path,
                                  gboolean          path_currently_selected,
                                  gpointer          user_data)
@@ -1835,10 +1834,10 @@ thunar_tree_view_selection_func (GtkTreeSelection *selection,
     return TRUE;
 
   /* determine the iterator for the path */
-  if (gtk_tree_model_get_iter (filter, &iter, path))
+  if (gtk_tree_model_get_iter (model, &iter, path))
     {
       /* determine the file for the iterator */
-      gtk_tree_model_get (filter, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
+      gtk_tree_model_get (model, &iter, THUNAR_TREE_MODEL_COLUMN_FILE, &file, -1);
       if (G_LIKELY (file != NULL))
         {
           /* rows with files can be selected */
@@ -1850,7 +1849,7 @@ thunar_tree_view_selection_func (GtkTreeSelection *selection,
       else
         {
           /* but maybe the row has a volume */
-          gtk_tree_model_get (filter, &iter, THUNAR_TREE_MODEL_COLUMN_VOLUME, &volume, -1);
+          gtk_tree_model_get (model, &iter, THUNAR_TREE_MODEL_COLUMN_VOLUME, &volume, -1);
           if (G_LIKELY (volume != NULL))
             {
               /* rows with volumes can also be selected */
@@ -2120,9 +2119,8 @@ void
 thunar_tree_view_set_show_hidden (ThunarTreeView *view,
                                   gboolean        show_hidden)
 {
-  GtkTreeModel *filter;
-
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (view->model));
 
   /* normalize the value */
   show_hidden = !!show_hidden;
@@ -2133,19 +2131,10 @@ thunar_tree_view_set_show_hidden (ThunarTreeView *view,
       /* apply the new setting */
       view->show_hidden = show_hidden;
 
-      /* lock loading nodes in the tree, see bug #2505 */
-      thunar_tree_model_set_lock_ref_node (THUNAR_TREE_MODEL (view->model), TRUE);
-
-      /* update the filter */
-      filter = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
-      gtk_tree_model_filter_refilter (GTK_TREE_MODEL_FILTER (filter));
-
-      /* release the lock */
-      thunar_tree_model_set_lock_ref_node (THUNAR_TREE_MODEL (view->model), FALSE);
+      /* update the model */
+      thunar_tree_model_refilter (view->model);
 
       /* notify listeners */
       g_object_notify (G_OBJECT (view), "show-hidden");
     }
 }
-
-

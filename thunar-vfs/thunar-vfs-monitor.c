@@ -68,6 +68,7 @@ static void     thunar_vfs_monitor_queue_notification   (ThunarVfsMonitor      *
 static gboolean thunar_vfs_monitor_notifications_timer  (gpointer               user_data);
 #ifdef HAVE_LIBFAM
 static void     thunar_vfs_monitor_fam_cancel           (ThunarVfsMonitor      *monitor);
+static gboolean thunar_vfs_monitor_fam_process_events   (ThunarVfsMonitor      *monitor);
 static gboolean thunar_vfs_monitor_fam_watch            (GIOChannel            *channel,
                                                          GIOCondition           condition,
                                                          gpointer               user_data);
@@ -409,31 +410,25 @@ thunar_vfs_monitor_fam_cancel (ThunarVfsMonitor *monitor)
 
 
 static gboolean
-thunar_vfs_monitor_fam_watch (GIOChannel  *channel,
-                              GIOCondition condition,
-                              gpointer     user_data)
+thunar_vfs_monitor_fam_process_events (ThunarVfsMonitor *monitor)
 {
   ThunarVfsMonitorEvent event;
-  ThunarVfsMonitor     *monitor = THUNAR_VFS_MONITOR (user_data);
   FAMEvent              fe;
 
-  /* check for an error on the FAM connection */
-  if (G_UNLIKELY ((condition & (G_IO_ERR | G_IO_HUP | G_IO_NVAL)) != 0))
-    {
-error:
-      /* terminate the FAM connection */
-      thunar_vfs_monitor_fam_cancel (monitor);
-
-      /* thats it, no more FAM */
-      return FALSE;
-    }
+  _thunar_vfs_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), FALSE);
 
   /* process all pending FAM events */
   while (FAMPending (&monitor->fc))
     {
       /* query the next pending event */
       if (G_UNLIKELY (FAMNextEvent (&monitor->fc, &fe) < 0))
-        goto error;
+        {
+          /* terminate the FAM connection */
+          thunar_vfs_monitor_fam_cancel (monitor);
+
+          /* thats it, no more FAM */
+          return FALSE;
+        }
 
       /* translate the event code */
       switch (fe.code)
@@ -456,12 +451,41 @@ error:
         }
 
       /* schedule a notification for the monitor */
-      g_mutex_lock (monitor->lock);
       thunar_vfs_monitor_queue_notification (monitor, fe.fr.reqnum, THUNAR_VFS_MONITOR_TAG_FAM, event, fe.filename);
-      g_mutex_unlock (monitor->lock);
     }
 
   return TRUE;
+}
+
+
+
+static gboolean
+thunar_vfs_monitor_fam_watch (GIOChannel  *channel,
+                              GIOCondition condition,
+                              gpointer     user_data)
+{
+  ThunarVfsMonitor *monitor = THUNAR_VFS_MONITOR (user_data);
+  gboolean          result = FALSE;
+  
+  /* acquire the monitor lock */
+  g_mutex_lock (monitor->lock);
+
+  /* check for an error on the FAM connection */
+  if (G_UNLIKELY ((condition & (G_IO_ERR | G_IO_HUP | G_IO_NVAL)) != 0))
+    {
+      /* terminate the FAM connection */
+      thunar_vfs_monitor_fam_cancel (monitor);
+    }
+  else
+    {
+      /* process all pending FAM events */
+      result = thunar_vfs_monitor_fam_process_events (monitor);
+    }
+
+  /* release the monitor lock */
+  g_mutex_unlock (monitor->lock);
+
+  return result;
 }
 #endif
 
@@ -634,8 +658,14 @@ thunar_vfs_monitor_remove (ThunarVfsMonitor       *monitor,
   /* drop the FAM request from the daemon */
   if (G_LIKELY (monitor->fc_watch_id >= 0 && _thunar_vfs_path_is_local (handle->path)))
     {
-      if (FAMCancelMonitor (&monitor->fc, &handle->fr) < 0)
-        thunar_vfs_monitor_fam_cancel (monitor);
+      /* make sure there are no pending events before removing the request.
+       * if we don't do this, fam will lock up when a lot of requests are
+       * removed in a short time (collapse a treeview node for example) */
+      if (thunar_vfs_monitor_fam_process_events (monitor))
+        {
+          if (FAMCancelMonitor (&monitor->fc, &handle->fr) < 0)
+            thunar_vfs_monitor_fam_cancel (monitor);
+        }
     }
 #endif
 

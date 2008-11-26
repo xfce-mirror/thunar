@@ -1,3 +1,13 @@
+2008-11-26	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar-vfs/thunar-vfs-monitor.c, thunar/thunar-tree-model.{c,h},
+	  thunar/thunar-tree-view.c: Apply tree view pane improvements written
+	  by Nick. It implements a GtkTreeModelFilter inside the tree model
+	  and improves CPU performance when expanding folders in the tree
+	  view. It also stops monitoring tree view folders when they are
+	  closed. It improves thread safety in ThunarVfsMonitor and a few
+	  other things. Should fix bug #4051.
+
 2008-11-25	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-standard-view.c: Make the location selector pop up
