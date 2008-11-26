@@ -1,3 +1,10 @@
+2008-11-26	Nick Schermer <nick@xfce.org>
+
+	* thunar/thunar-application.c: Create a new window group for
+	  windows added with thunar_application_take_window() that don't have
+	  a transient window. This will make different windows work
+	  independant when a modal dialog is created.
+
 2008-11-26	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar-vfs/thunar-vfs-monitor.c, thunar/thunar-tree-model.{c,h},

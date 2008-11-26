@@ -891,14 +891,28 @@ thunar_application_has_windows (ThunarApplication *application)
  * Lets @application take over control of the specified @window.
  * @application will not exit until the last controlled #GtkWindow
  * is closed by the user.
+ * 
+ * If the @window has no transient window, it will also create a
+ * new #GtkWindowGroup for this window. This will make different
+ * windows work independant (think gtk_dialog_run).
  **/
 void
 thunar_application_take_window (ThunarApplication *application,
                                 GtkWindow         *window)
 {
+  GtkWindowGroup *group;
+
   _thunar_return_if_fail (GTK_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (g_list_find (application->windows, window) == NULL);
+
+  /* only windows without a parent get a new window group */
+  if (gtk_window_get_transient_for (window) == NULL)
+    {
+      group = gtk_window_group_new ();
+      gtk_window_group_add_window (group, window);
+      g_object_weak_ref (G_OBJECT (window), (GWeakNotify) g_object_unref, group);
+    }
 
   /* connect to the "destroy" signal */
   g_signal_connect (G_OBJECT (window), "destroy", G_CALLBACK (thunar_application_window_destroyed), application);
