@@ -1758,8 +1758,9 @@ thunar_tree_model_node_traverse_visible (GNode    *node,
   ThunarFile          *file;
 
   _thunar_return_val_if_fail (model->visible_func != NULL, FALSE);
+  _thunar_return_val_if_fail (item == NULL || item->file == NULL || THUNAR_IS_FILE (item->file), FALSE);
 
-  if (G_LIKELY (item))
+  if (G_LIKELY (item != NULL && item->file != NULL))
     {
       /* check if this file should be visibily in the treeview */
       if (!model->visible_func (model, item->file, model->visible_data))
@@ -1795,6 +1796,8 @@ thunar_tree_model_node_traverse_visible (GNode    *node,
             {
               lnext = lp->next;
               file = THUNAR_FILE (lp->data);
+
+              _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
               if (model->visible_func (model, file, model->visible_data))
                 {
