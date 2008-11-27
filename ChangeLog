@@ -1,3 +1,13 @@
+2008-11-27	Nick Schermer <nick@xfce.org>
+
+	* thunar/thunar-preferences-dialog.c: Instead of using a transient
+	  window, we do a fake-center-on-parent. So it looks like the
+	  window belongs to the parent, but it is a standalone window. This
+	  should fix the last part of bug #3586.
+	* thunar/thunar-window.c: Register the properties dialog with
+	  thunar_application_take_window() so it will get a new
+	  GtkWindowGroup.
+
 2008-11-27	Jannis Pohlmann <jannis@xfce.org>
 
 	* configure.in.in, thunar-vfs/thunar-vfs-monitor.c: Add HAVE_LINUX

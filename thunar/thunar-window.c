@@ -1553,14 +1553,20 @@ static void
 thunar_window_action_preferences (GtkAction    *action,
                                   ThunarWindow *window)
 {
-  GtkWidget *dialog;
+  GtkWidget         *dialog;
+  ThunarApplication *application;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
-  /* allocate and display a preferences dialog */
+  /* allocate and display a preferences dialog */;
   dialog = thunar_preferences_dialog_new (GTK_WINDOW (window));
-  gtk_widget_show (dialog);
+  gtk_widget_show (dialog);  
+
+  /* ...and let the application take care of it */
+  application = thunar_application_get ();
+  thunar_application_take_window (application, GTK_WINDOW (dialog));
+  g_object_unref (G_OBJECT (application));
 }
 
 

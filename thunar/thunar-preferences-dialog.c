@@ -222,7 +222,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 
   /* configure the dialog properties */
   gtk_dialog_set_has_separator (GTK_DIALOG (dialog), FALSE);
-  gtk_window_set_destroy_with_parent (GTK_WINDOW (dialog), TRUE);
   gtk_window_set_icon_name (GTK_WINDOW (dialog), "xfce-filemanager");
   gtk_window_set_resizable (GTK_WINDOW (dialog), FALSE);
   gtk_window_set_title (GTK_WINDOW (dialog), _("File Manager Preferences"));
@@ -733,11 +732,42 @@ thunar_preferences_dialog_configure (ThunarPreferencesDialog *dialog)
 GtkWidget*
 thunar_preferences_dialog_new (GtkWindow *parent)
 {
-  GtkWidget *dialog;
+  GtkWidget    *dialog;
+  gint          root_x, root_y;
+  gint          window_width, window_height;
+  gint          dialog_width, dialog_height;
+  gint          monitor;
+  GdkRectangle  geometry;
+  GdkScreen    *screen;
 
   dialog = g_object_new (THUNAR_TYPE_PREFERENCES_DIALOG, NULL);
+
+  /* fake gtk_window_set_transient_for() for centering the window on
+   * the parent window. See bug #3586. */
   if (G_LIKELY (parent != NULL))
-    gtk_window_set_transient_for (GTK_WINDOW (dialog), parent);
+    {
+      screen = gtk_window_get_screen (parent);
+      gtk_window_set_screen (GTK_WINDOW (dialog), screen);
+      gtk_widget_realize (dialog);
+
+      /* get the size and position on the windows */
+      gtk_window_get_position (parent, &root_x, &root_y);
+      gtk_window_get_size (parent, &window_width, &window_height);
+      gtk_window_get_size (GTK_WINDOW (dialog), &dialog_width, &dialog_height);
+
+      /* get the monitor geometry of the monitor with the parent window */
+      monitor = gdk_screen_get_monitor_at_point (screen, root_x, root_y);
+      gdk_screen_get_monitor_geometry (screen, monitor, &geometry);
+
+      /* center the dialog on the window and clamp on the monitor */
+      root_x += (window_width - dialog_width) / 2;
+      root_x = CLAMP (root_x, geometry.x, geometry.x + geometry.width - dialog_width);
+      root_y += (window_height - dialog_height) / 2;
+      root_y = CLAMP (root_y, geometry.y, geometry.y + geometry.height - dialog_height);
+
+      /* move the dialog */
+      gtk_window_move (GTK_WINDOW (dialog), root_x, root_y);
+    }
 
   return dialog;
 }
