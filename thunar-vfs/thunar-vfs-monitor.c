@@ -73,6 +73,8 @@ static gboolean thunar_vfs_monitor_fam_watch            (GIOChannel            *
                                                          GIOCondition           condition,
                                                          gpointer               user_data);
 #endif
+static gboolean thunar_vfs_monitor_is_excluded_path     (ThunarVfsMonitor      *monitor,
+                                                         ThunarVfsPath         *path);
 
 
 
@@ -102,6 +104,9 @@ struct _ThunarVfsMonitor
   FAMConnection                 fc;
   gint                          fc_watch_id;
 #endif
+
+  /* Excluded paths */
+  GList                        *excluded_paths;
 };
 
 struct _ThunarVfsMonitorHandle
@@ -133,6 +138,15 @@ struct _ThunarVfsMonitorNotification
 
 
 static GObjectClass *thunar_vfs_monitor_parent_class;
+
+static const gchar *excluded_paths[] = 
+{
+#ifdef HAVE_LINUX
+  "/proc/*",
+  "/dev/*",
+#endif
+  NULL
+};
 
 
 
@@ -174,9 +188,16 @@ thunar_vfs_monitor_class_init (ThunarVfsMonitorClass *klass)
 static void
 thunar_vfs_monitor_init (ThunarVfsMonitor *monitor)
 {
+  gint i;
+
   /* initialize the monitor */
   monitor->cond = g_cond_new ();
   monitor->lock = g_mutex_new ();
+
+  /* Generate pattern specs for excluded paths */
+  monitor->excluded_paths = NULL;
+  for (i = 0; excluded_paths[i] != NULL; ++i)
+    monitor->excluded_paths = g_list_append (monitor->excluded_paths, g_pattern_spec_new (excluded_paths[i]));
 
 #ifdef HAVE_LIBFAM
   if (FAMOpen2 (&monitor->fc, PACKAGE_NAME) == 0)
@@ -213,6 +234,9 @@ thunar_vfs_monitor_finalize (GObject *object)
   if (monitor->fc_watch_id >= 0)
     thunar_vfs_monitor_fam_cancel (monitor);
 #endif
+
+  /* drop excluded path patterns */
+  g_list_foreach (monitor->excluded_paths, (GFunc) g_pattern_spec_free, NULL);
 
   /* drop the notifications timer source */
   if (G_UNLIKELY (monitor->notifications_timer_id != 0))
@@ -492,6 +516,53 @@ thunar_vfs_monitor_fam_watch (GIOChannel  *channel,
 
 
 /**
+ * thunar_vfs_monitor_is_excluded_path:
+ * @monitor : a #ThunarVfsMonitor.
+ * @path    : a #ThunarVfsPath
+ *
+ * Checks whether the path is among the paths to be excluded from 
+ * monitoring.
+ *
+ * Return value: %TRUE if @path should be excluded from monitoring, 
+ *               %FALSE otherwise.
+ **/
+static gboolean
+thunar_vfs_monitor_is_excluded_path (ThunarVfsMonitor *monitor,
+                                     ThunarVfsPath    *path)
+{
+  GList   *iter;
+  gboolean excluded = FALSE;
+  gchar   *path_string;
+  gint     length;
+
+  _thunar_vfs_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), TRUE);
+  _thunar_vfs_return_val_if_fail (path != NULL, TRUE);
+
+  /* Turn path into a string */
+  path_string = thunar_vfs_path_dup_string (path);
+
+  if (G_LIKELY (path_string != NULL))
+    {
+      length = strlen (path_string);
+
+      /* Match path against all exclude patterns. Return TRUE if it matches at 
+       * least one of these patterns */
+      for (iter = g_list_first (monitor->excluded_paths); iter != NULL; iter = g_list_next (iter))
+        if (g_pattern_match (iter->data, length, path_string, NULL))
+          {
+            excluded = TRUE;
+            break;
+          }
+
+      g_free (path_string);
+    }
+
+  return excluded;
+}
+
+
+
+/**
  * thunar_vfs_monitor_get_default:
  *
  * Returns the shared #ThunarVfsMonitor instance. The caller
@@ -539,6 +610,9 @@ thunar_vfs_monitor_add_directory (ThunarVfsMonitor        *monitor,
   g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), NULL);
   g_return_val_if_fail (callback != NULL, NULL);
   g_return_val_if_fail (path != NULL, NULL);
+
+  if (G_UNLIKELY (_thunar_vfs_path_is_local (path) && thunar_vfs_monitor_is_excluded_path (monitor, path)))
+    return NULL;
 
   /* acquire the monitor lock */
   g_mutex_lock (monitor->lock);
@@ -603,6 +677,9 @@ thunar_vfs_monitor_add_file (ThunarVfsMonitor        *monitor,
   g_return_val_if_fail (THUNAR_VFS_IS_MONITOR (monitor), NULL);
   g_return_val_if_fail (callback != NULL, NULL);
   g_return_val_if_fail (path != NULL, NULL);
+
+  if (G_UNLIKELY (_thunar_vfs_path_is_local (path) && thunar_vfs_monitor_is_excluded_path (monitor, path)))
+    return NULL;
 
   /* acquire the monitor lock */
   g_mutex_lock (monitor->lock);

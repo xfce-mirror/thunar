@@ -1,3 +1,10 @@
+2008-11-27	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in, thunar-vfs/thunar-vfs-monitor.c: Add HAVE_LINUX
+	  define to config.h and implement support for excluding certain base
+	  paths (such as /dev and /proc) from being being monitored. Gamin
+	  does the same but only for dnotify and inotify, not for polling.
+
 2008-11-26	Nick Schermer <nick@xfce.org>
 
 	* thunar/thunar-application.c: Create a new window group for

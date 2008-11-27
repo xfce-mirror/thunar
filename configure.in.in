@@ -49,6 +49,10 @@ AC_AIX()
 AC_ISC_POSIX()
 AC_MINIX()
 
+if test "x$target_os" = "xlinux-gnu"; then
+  AC_DEFINE([HAVE_LINUX], [], [Whether we are building on Linux or not])
+fi
+
 dnl ********************************
 dnl *** Check for basic programs ***
 dnl ********************************
