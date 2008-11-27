@@ -443,6 +443,9 @@ thunar_uca_chooser_delete_clicked (ThunarUcaChooser *uca_chooser)
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
+  gchar            *name;
+  GtkWidget        *dialog;
+  gint              response;
 
   g_return_if_fail (THUNAR_UCA_IS_CHOOSER (uca_chooser));
 
@@ -450,11 +453,30 @@ thunar_uca_chooser_delete_clicked (ThunarUcaChooser *uca_chooser)
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (uca_chooser->treeview));
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-      /* remove the row from the model */
-      thunar_uca_model_remove (THUNAR_UCA_MODEL (model), &iter);
+      /* create the question dialog */
+      gtk_tree_model_get (model, &iter, THUNAR_UCA_MODEL_COLUMN_NAME, &name, -1);
+      dialog = gtk_message_dialog_new (GTK_WINDOW (uca_chooser),
+                                       GTK_DIALOG_DESTROY_WITH_PARENT
+                                       | GTK_DIALOG_MODAL,
+                                       GTK_MESSAGE_QUESTION,
+                                       GTK_BUTTONS_NONE,
+                                       _("Are you sure that you want to delete\naction \"%s\"?"), name);
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a custom action, it is permanently lost."));
+      gtk_dialog_add_buttons (GTK_DIALOG (dialog), GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                              GTK_STOCK_DELETE, GTK_RESPONSE_YES, NULL);
+      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
+      g_free (name);
+      response = gtk_dialog_run (GTK_DIALOG (dialog));
+      gtk_widget_destroy (dialog);
 
-      /* sync the model to persistent storage */
-      thunar_uca_chooser_save (uca_chooser, THUNAR_UCA_MODEL (model));
+      if (response == GTK_RESPONSE_YES)
+        {
+          /* remove the row from the model */
+          thunar_uca_model_remove (THUNAR_UCA_MODEL (model), &iter);
+
+          /* sync the model to persistent storage */
+          thunar_uca_chooser_save (uca_chooser, THUNAR_UCA_MODEL (model));
+        }
     }
 }
 

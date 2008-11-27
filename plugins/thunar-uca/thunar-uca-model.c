@@ -399,7 +399,7 @@ thunar_uca_model_get_value (GtkTreeModel *tree_model,
   switch (column)
     {
     case THUNAR_UCA_MODEL_COLUMN_NAME:
-      g_value_set_static_string (value, item->name);
+      g_value_set_static_string (value, item->name ? item->name : "");
       break;
 
     case THUNAR_UCA_MODEL_COLUMN_DESCRIPTION:

@@ -1,5 +1,14 @@
 2008-11-27	Nick Schermer <nick@xfce.org>
 
+	* plugins/thunar-uca/thunar-uca-chooser.c: Open a question dialog
+	  before removing a custom action. Bug #3838.
+	* plugins/thunar-uca/thunar-uca-model.c: Return an empty string
+	  when the name is not set instead of null, so the action always
+	  has a valid name and gtk does not send a critical warning.
+	* po/*: Merge new strings.
+
+2008-11-27	Nick Schermer <nick@xfce.org>
+
 	* thunar/thunar-preferences-dialog.c: Instead of using a transient
 	  window, we do a fake-center-on-parent. So it looks like the
 	  window belongs to the parent, but it is a standalone window. This
