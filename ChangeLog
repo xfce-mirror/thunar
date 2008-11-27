@@ -1,5 +1,11 @@
 2008-11-27	Nick Schermer <nick@xfce.org>
 
+	* thunar-vfs/thunar-vfs-mime-info.c: Fix crash when unreffing the
+	  mime info. This happens here sometimes when unknown files were
+	  found in /proc.
+
+2008-11-27	Nick Schermer <nick@xfce.org>
+
 	* thunar-vfs/thunar-vfs-monitor.c: Implement a simpler version of
 	  the /proc and /dev ignore test.
 	* thunar-vfs/thunar-vfs-monitor.c: Use a GSList for the handles

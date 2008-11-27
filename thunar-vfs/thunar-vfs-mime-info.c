@@ -164,6 +164,9 @@ thunar_vfs_mime_info_new (const gchar *name,
 void
 thunar_vfs_mime_info_unref (ThunarVfsMimeInfo *info)
 {
+  if (G_UNLIKELY (info == NULL))
+    return;
+
   if (exo_atomic_dec (&info->ref_count))
     {
       /* free the comment */
