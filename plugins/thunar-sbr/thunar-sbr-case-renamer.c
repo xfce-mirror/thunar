@@ -204,7 +204,7 @@ tscr_utf8_strcamel (const gchar *text)
         {
           upper = TRUE;
         }
-      else if (upper)
+      else if (upper && g_unichar_isalpha (c))
         {
           c = g_unichar_toupper (c);
           upper = FALSE;
