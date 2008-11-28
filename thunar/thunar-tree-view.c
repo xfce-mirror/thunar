@@ -981,20 +981,7 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
 static gboolean
 thunar_tree_view_delete_selected_files (ThunarTreeView *view)
 {
-  GtkAccelKey key;
-
   _thunar_return_val_if_fail (THUNAR_IS_TREE_VIEW (view), FALSE);
-
-  /* check if the user defined a custom accelerator. if he or she has,
-   * we don't response to the predefined key bindings (bug #4173).
-   *
-   * this one is a bit ugly because the menu is not sensitive when a folder
-   * is selected in the tree-model, but this is better then deleting a folder
-   * when the user does not expect it... 
-   */
-  if (gtk_accel_map_lookup_entry ("<Actions>/ThunarStandardView/delete", &key)
-      && key.accel_key != 0 && key.accel_mods != 0)
-    return FALSE;
 
   /* ask the user whether to delete the folder... */
   thunar_tree_view_action_delete (view);
