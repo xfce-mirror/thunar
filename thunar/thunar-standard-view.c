@@ -1495,10 +1495,27 @@ thunar_standard_view_scroll_to_file (ThunarView *view,
 static gboolean
 thunar_standard_view_delete_selected_files (ThunarStandardView *standard_view)
 {
+  GtkAction       *action = GTK_ACTION (standard_view->priv->action_delete);
+  const gchar     *accel_path;
+  GtkAccelKey      key;
+  GdkModifierType  state;
+  gboolean         permanently;
+
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
+  /* if this looks like a permanently delete */
+  permanently = (gtk_get_current_event_state (&state) && (state & GDK_SHIFT_MASK) != 0);
+
+  /* check if the user defined a custom accelerator and is not holding the
+   * shift button. if he or she has, we don't response to the predefined key 
+   * bindings (bug #4173) */
+  accel_path = gtk_action_get_accel_path (action);
+  if (accel_path != NULL && gtk_accel_map_lookup_entry (accel_path, &key)
+      && key.accel_key != 0 && key.accel_mods != 0 && permanently == FALSE)
+    return FALSE;
+
   /* just emit the "activate" signal on the "delete" action */
-  gtk_action_activate (standard_view->priv->action_delete);
+  gtk_action_activate (action);
 
   /* ...and we're done */
   return TRUE;

@@ -1,5 +1,17 @@
 2008-11-29	Nick Schermer <nick@xfce.org>
 
+	* thunar/thunar-standard-view.c, thunar/thunar-tree-view.c:
+	  Don't respond to the predefined keybindings when the user
+	  has set a custom accelerator for delete. The difference with 
+	  the previous patch is that Shift + Delete still counts as a valid 
+	  action, so when you set Ctrl + Delete as custom accelerator, 
+	  we don't respond to Delete, but Shift + Delete still works,
+	  since you probably don't press that accidentally... The only 
+	  exception is Shift + Delete as custom accelerator for delete: 
+	  this will always result in a permanent delete.
+
+2008-11-29	Nick Schermer <nick@xfce.org>
+
 	* thunar/thunar-tree-model.c, thunar/thunar-tree-model.h,
 	  thunar/thunar-tree-view.c: Instead of unloading folders
 	  when their ref count is zero, we schedule a tree cleanup when
