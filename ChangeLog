@@ -1,5 +1,13 @@
 2008-11-29	Nick Schermer <nick@xfce.org>
 
+	* thunar/thunar-shortcuts-view.c: Implement menu providers in
+	  the shortcuts menu. Bug #2740.
+	* thunar/thunar-shortcuts-icon-renderer.c: Make unmounted volumes
+	  50% translucent in the bookmarks and treeview, to give some
+	  visualization whether the device is mounted or not.
+
+2008-11-29	Nick Schermer <nick@xfce.org>
+
 	* thunar/thunar-standard-view.c, thunar/thunar-tree-view.c:
 	  Don't respond to the predefined keybindings when the user
 	  has set a custom accelerator for delete. The difference with 

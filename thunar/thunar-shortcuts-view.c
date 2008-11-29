@@ -139,6 +139,8 @@ struct _ThunarShortcutsView
   GtkTreeView        __parent__;
   ThunarPreferences *preferences;
   GtkCellRenderer   *icon_renderer;
+  
+  ThunarxProviderFactory *provider_factory;
 
   /* the currently pressed mouse button, set in the
    * button-press-event handler if the associated
@@ -259,6 +261,9 @@ thunar_shortcuts_view_init (ThunarShortcutsView *view)
   /* configure the tree view */
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (view), FALSE);
   gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (view), FALSE);
+  
+  /* grab a reference on the provider factory */
+  view->provider_factory = thunarx_provider_factory_get_default ();
 
   /* grab a reference on the preferences; be sure to redraw the view
    * whenever the "shortcuts-icon-emblems" preference changes.
@@ -330,6 +335,9 @@ thunar_shortcuts_view_finalize (GObject *object)
 
   /* release drop path list (if drag_leave wasn't called) */
   thunar_vfs_path_list_free (view->drop_path_list);
+
+  /* release the provider factory */
+  g_object_unref (G_OBJECT (view->provider_factory));
 
   /* disconnect the queue resize signal handler */
 #if GTK_CHECK_VERSION(2,8,0)
@@ -786,6 +794,9 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
   GtkWidget       *menu;
   GtkWidget       *item;
   gboolean         mutable;
+  GtkWidget       *window;
+  GList           *providers, *lp;
+  GList           *actions = NULL, *tmp;
 
   /* determine the tree path for the given iter */
   path = gtk_tree_model_get_path (model, iter);
@@ -871,6 +882,50 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
       item = gtk_separator_menu_item_new ();
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
+    }
+
+  /* create provider menu items if there is a non-trashed file */
+  if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file)))
+    {
+      /* load the menu providers from the provider factory */
+      providers = thunarx_provider_factory_list_providers (view->provider_factory, THUNARX_TYPE_MENU_PROVIDER);
+      if (G_LIKELY (providers != NULL))
+        {
+          /* determine the toplevel window we belong to */
+          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+
+          /* load the actions offered by the menu providers */
+          for (lp = providers; lp != NULL; lp = lp->next)
+            {
+              tmp = thunarx_menu_provider_get_folder_actions (lp->data, window, THUNARX_FILE_INFO (file));
+              actions = g_list_concat (actions, tmp);
+              g_object_unref (G_OBJECT (lp->data));
+            }
+          g_list_free (providers);
+
+          /* add the actions to the menu */
+          for (lp = actions; lp != NULL; lp = lp->next)
+            {
+              item = gtk_action_create_menu_item (GTK_ACTION (lp->data));
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_show (item);
+
+              /* release the reference on the action */
+              g_object_unref (G_OBJECT (lp->data));
+            }
+
+          /* add a separator to the end of the menu */
+          if (G_LIKELY (lp != actions))
+            {
+              /* append a menu separator */
+              item = gtk_separator_menu_item_new ();
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_show (item);
+            }
+
+          /* cleanup */
+          g_list_free (actions);
+        }
     }
 
   /* append the remove menu item */
