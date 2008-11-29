@@ -109,9 +109,8 @@ static gint                 thunar_tree_model_cmp_array               (gconstpoi
                                                                        gpointer                user_data);
 static void                 thunar_tree_model_sort                    (ThunarTreeModel        *model,
                                                                        GNode                  *node);
-static void                 thunar_tree_model_unload                  (ThunarTreeModel        *model);
-static gboolean             thunar_tree_model_unload_idle             (gpointer                user_data);
-static void                 thunar_tree_model_unload_idle_destroy     (gpointer                user_data);
+static gboolean             thunar_tree_model_cleanup_idle            (gpointer                user_data);
+static void                 thunar_tree_model_cleanup_idle_destroy    (gpointer                user_data);
 static void                 thunar_tree_model_file_changed            (ThunarFileMonitor      *file_monitor,
                                                                        ThunarFile             *file,
                                                                        ThunarTreeModel        *model);
@@ -148,7 +147,7 @@ static void                 thunar_tree_model_node_insert_dummy       (GNode    
                                                                        ThunarTreeModel        *model);
 static void                 thunar_tree_model_node_drop_dummy         (GNode                  *node,
                                                                        ThunarTreeModel        *model);
-static gboolean             thunar_tree_model_node_traverse_unload    (GNode                  *node,
+static gboolean             thunar_tree_model_node_traverse_cleanup   (GNode                  *node,
                                                                        gpointer                user_data);
 static gboolean             thunar_tree_model_node_traverse_changed   (GNode                  *node,
                                                                        gpointer                user_data);
@@ -193,7 +192,7 @@ struct _ThunarTreeModel
 
   GNode                      *root;
 
-  guint                       unload_idle_id;
+  guint                       cleanup_idle_id;
 };
 
 struct _ThunarTreeModelItem
@@ -253,7 +252,7 @@ thunar_tree_model_get_type (void)
       type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarTreeModel"), &info, 0);
       g_type_add_interface_static (type, GTK_TYPE_TREE_MODEL, &tree_model_info);
     }
-  
+
   return type;
 }
 
@@ -329,6 +328,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
   model->sort_case_sensitive = TRUE;
   model->visible_func = (ThunarTreeModelVisibleFunc) exo_noop_true;
   model->visible_data = NULL;
+  model->cleanup_idle_id = 0;
 
   /* connect to the file monitor */
   model->file_monitor = thunar_file_monitor_get_default ();
@@ -381,9 +381,9 @@ thunar_tree_model_finalize (GObject *object)
   ThunarTreeModel *model = THUNAR_TREE_MODEL (object);
   GList           *lp;
 
-  /* remove unload idle */
-  if (model->unload_idle_id != 0)
-    g_source_remove (model->unload_idle_id);
+  /* remove the cleanup idle */
+  if (model->cleanup_idle_id != 0)
+    g_source_remove (model->cleanup_idle_id);
 
   /* disconnect from the file monitor */
   g_signal_handlers_disconnect_by_func (G_OBJECT (model->file_monitor), thunar_tree_model_file_changed, model);
@@ -800,8 +800,8 @@ thunar_tree_model_ref_node (GtkTreeModel *tree_model,
     }
   else
     {
-      /* schedule a reload of the folder if it is unloaded earlier */
-      if (item->ref_count == 0)
+      /* schedule a reload of the folder if it is cleaned earlier */
+      if (G_UNLIKELY (item->ref_count == 0))
         thunar_tree_model_item_load_folder (item);
 
       /* increment the reference count */
@@ -827,17 +827,14 @@ thunar_tree_model_unref_node (GtkTreeModel *tree_model,
   if (G_UNLIKELY (node == model->root))
     return;
 
-  /* check if this a non-dummy item */
+  /* check if this a non-dummy item, if so, decrement the reference count */
   item = node->data;
   if (G_LIKELY (item != NULL))
-    {
-      /* decrement the reference count */
-      item->ref_count -= 1;
+    item->ref_count -= 1;
 
-      /* schedule an unload of the tree if an item is released by the treeview */
-      if (G_UNLIKELY (item->ref_count == 0))
-        thunar_tree_model_unload (model);
-    }
+  /* NOTE: we don't cleanup nodes when the item ref count is zero,
+   * because GtkTreeView also does a lot of reffing when scrolling the
+   * tree, which results in all sorts for glitches */
 }
 
 
@@ -920,24 +917,8 @@ thunar_tree_model_sort (ThunarTreeModel *model,
 
 
 
-static void
-thunar_tree_model_unload (ThunarTreeModel *model)
-{
-  /* schedule an idle unload, if not already done */
-  if (model->unload_idle_id == 0)
-    {
-      /* the unload idle has a delay of 500 ms to make sure all the nodes
-       * are unreffed by the treeview. this allows the traverse unref work
-       * more efficiently */
-      model->unload_idle_id = g_timeout_add_full (G_PRIORITY_LOW, 500, thunar_tree_model_unload_idle,
-                                                  model, thunar_tree_model_unload_idle_destroy);
-    }
-}
-
-
-
 static gboolean
-thunar_tree_model_unload_idle (gpointer user_data)
+thunar_tree_model_cleanup_idle (gpointer user_data)
 {
   ThunarTreeModel *model = THUNAR_TREE_MODEL (user_data);
 
@@ -945,7 +926,7 @@ thunar_tree_model_unload_idle (gpointer user_data)
 
   /* walk through the tree and release all the nodes with a ref count of 0 */
   g_node_traverse (model->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1,
-                   thunar_tree_model_node_traverse_unload, model);
+                   thunar_tree_model_node_traverse_cleanup, model);
 
   GDK_THREADS_LEAVE ();
 
@@ -955,9 +936,9 @@ thunar_tree_model_unload_idle (gpointer user_data)
 
 
 static void
-thunar_tree_model_unload_idle_destroy (gpointer user_data)
+thunar_tree_model_cleanup_idle_destroy (gpointer user_data)
 {
-  THUNAR_TREE_MODEL (user_data)->unload_idle_id = 0;
+  THUNAR_TREE_MODEL (user_data)->cleanup_idle_id = 0;
 }
 
 
@@ -1065,6 +1046,9 @@ thunar_tree_model_volume_changed (ThunarVfsVolume *volume,
             {
               /* try to determine the file for the mount point */
               item->file = thunar_file_get_for_path (thunar_vfs_volume_get_mount_point (volume), NULL);
+
+              /* because the volume node is already reffed, we need to load the folder manually here */
+              thunar_tree_model_item_load_folder (item);
             }
           else if (!thunar_vfs_volume_is_mounted (volume) && item->file != NULL)
             {
@@ -1298,8 +1282,10 @@ thunar_tree_model_item_reset (ThunarTreeModelItem *item)
 static void
 thunar_tree_model_item_load_folder (ThunarTreeModelItem *item)
 {
+  _thunar_return_if_fail (item->file != NULL || item->volume != NULL);
+
   /* schedule the "load" idle source (if not already done) */
-  if (G_LIKELY (item->folder == NULL && item->load_idle_id == 0))
+  if (G_LIKELY (item->load_idle_id == 0 && item->folder == NULL))
     {
       item->load_idle_id = g_idle_add_full (G_PRIORITY_HIGH, thunar_tree_model_item_load_idle,
                                             item, thunar_tree_model_item_load_idle_destroy);
@@ -1346,6 +1332,7 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
       /* lookup the node for the item (on-demand) */
       if (G_UNLIKELY (node == NULL))
         node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+      _thunar_return_if_fail (node != NULL);
 
       /* allocate a new item for the file */
       child_item = thunar_tree_model_item_new_with_file (model, file);
@@ -1408,6 +1395,7 @@ thunar_tree_model_item_files_removed (ThunarTreeModelItem *item,
 
   /* determine the node for the folder */
   node = g_node_find (model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+  _thunar_return_if_fail (node != NULL);
 
   /* check if the node has any visible children */
   if (G_LIKELY (node->children != NULL))
@@ -1468,12 +1456,14 @@ thunar_tree_model_item_notify_loading (ThunarTreeModelItem *item,
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (item->folder == folder);
+  _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (item->model));
 
   /* be sure to drop the dummy child node once the folder is loaded */
   if (G_LIKELY (!thunar_folder_get_loading (folder)))
     {
       /* lookup the node for the item... */
       node = g_node_find (item->model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
+      _thunar_return_if_fail (node != NULL);
 
       /* ...and drop the dummy for the node */
       if (G_NODE_HAS_DUMMY (node))
@@ -1490,7 +1480,7 @@ thunar_tree_model_item_load_idle (gpointer user_data)
   GList               *files;
 
   _thunar_return_val_if_fail (item->folder == NULL, FALSE);
-  
+
 #ifndef NDEBUG
       /* find the node in the tree */
       GNode *node = g_node_find (item->model->root, G_POST_ORDER, G_TRAVERSE_ALL, item);
@@ -1581,7 +1571,7 @@ thunar_tree_model_node_drop_dummy (GNode           *node,
   GtkTreeIter  iter;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
-  _thunar_return_if_fail (G_NODE_HAS_DUMMY (node));
+  _thunar_return_if_fail (G_NODE_HAS_DUMMY (node) && g_node_n_children (node) == 1);
 
   /* determine the iterator for the dummy */
   GTK_TREE_ITER_INIT (iter, model->stamp, node->children);
@@ -1613,8 +1603,8 @@ thunar_tree_model_node_drop_dummy (GNode           *node,
 
 
 static gboolean
-thunar_tree_model_node_traverse_unload (GNode *node,
-                                        gpointer user_data)
+thunar_tree_model_node_traverse_cleanup (GNode    *node,
+                                         gpointer  user_data)
 {
   ThunarTreeModelItem *item = node->data;
   ThunarTreeModel     *model = THUNAR_TREE_MODEL (user_data);
@@ -1692,6 +1682,8 @@ thunar_tree_model_node_traverse_remove (GNode   *node,
   ThunarTreeModel *model = THUNAR_TREE_MODEL (user_data);
   GtkTreeIter      iter;
   GtkTreePath     *path;
+
+  _thunar_return_val_if_fail (node->children == NULL, FALSE);
 
   /* determine the iterator for the node */
   GTK_TREE_ITER_INIT (iter, model->stamp, node);
@@ -1967,3 +1959,26 @@ thunar_tree_model_refilter (ThunarTreeModel *model)
   g_node_traverse (model->root, G_POST_ORDER, G_TRAVERSE_ALL, -1,
                    thunar_tree_model_node_traverse_visible, model);
 }
+
+
+
+/**
+ * thunar_tree_model_cleanup:
+ * @model : a #ThunarTreeModel.
+ *
+ * Walks all the folders in the #ThunarTreeModel and release them when
+ * they are unused by the treeview.
+ **/
+void
+thunar_tree_model_cleanup (ThunarTreeModel *model)
+{
+  _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+
+  /* schedule an idle cleanup, if not already done */
+  if (model->cleanup_idle_id == 0)
+    {
+      model->cleanup_idle_id = g_timeout_add_full (G_PRIORITY_LOW, 500, thunar_tree_model_cleanup_idle,
+                                                   model, thunar_tree_model_cleanup_idle_destroy);
+    }
+}
+

@@ -70,6 +70,8 @@ void             thunar_tree_model_set_visible_func   (ThunarTreeModel          
                                                        gpointer                    data);
 void             thunar_tree_model_refilter           (ThunarTreeModel            *model);
 
+void             thunar_tree_model_cleanup            (ThunarTreeModel            *model);
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_TREE_MODEL_H__ */

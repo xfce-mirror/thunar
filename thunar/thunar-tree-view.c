@@ -115,6 +115,9 @@ static void             thunar_tree_view_row_activated              (GtkTreeView
 static gboolean         thunar_tree_view_test_expand_row            (GtkTreeView          *tree_view,
                                                                      GtkTreeIter          *iter,
                                                                      GtkTreePath          *path);
+static void             thunar_tree_view_row_collapsed              (GtkTreeView          *tree_view,
+                                                                     GtkTreeIter          *iter,
+                                                                     GtkTreePath          *path);
 static gboolean         thunar_tree_view_delete_selected_files      (ThunarTreeView       *view);
 static void             thunar_tree_view_context_menu               (ThunarTreeView       *view,
                                                                      GdkEventButton       *event,
@@ -299,6 +302,7 @@ thunar_tree_view_class_init (ThunarTreeViewClass *klass)
   gtktree_view_class = GTK_TREE_VIEW_CLASS (klass);
   gtktree_view_class->row_activated = thunar_tree_view_row_activated;
   gtktree_view_class->test_expand_row = thunar_tree_view_test_expand_row;
+  gtktree_view_class->row_collapsed = thunar_tree_view_row_collapsed;
 
   klass->delete_selected_files = thunar_tree_view_delete_selected_files;
 
@@ -974,6 +978,17 @@ thunar_tree_view_test_expand_row (GtkTreeView *tree_view,
     g_source_remove (view->cursor_idle_id);
 
   return !expandable;
+}
+
+
+
+static void
+thunar_tree_view_row_collapsed (GtkTreeView *tree_view,
+                                GtkTreeIter *iter,
+                                GtkTreePath *path)
+{
+  /* schedule a cleanup of the tree model */
+  thunar_tree_model_cleanup (THUNAR_TREE_VIEW (tree_view)->model);
 }
 
 

@@ -1,3 +1,13 @@
+2008-11-29	Nick Schermer <nick@xfce.org>
+
+	* thunar/thunar-tree-model.c, thunar/thunar-tree-model.h,
+	  thunar/thunar-tree-view.c: Instead of unloading folders
+	  when their ref count is zero, we schedule a tree cleanup when
+	  a row is collapsed. The reason is simple: the reffing the
+	  treeview does is weird which results in glitches when scrolling
+	  a large tree.
+	  Also added some extra debug code.
+
 2008-11-28	Nick Schermer <nick@xfce.org>
 
 	* Revert pervious commit, not a good way to fix this.
