@@ -40,6 +40,17 @@
 
 
 
+/**
+ * thunar_dialogs_show_rename_file:
+ * @parent : the parent #GtkWindow.
+ * @file   : the #ThunarFile we're going to rename.
+ *
+ * Displays the Thunar rename dialog for a single file rename.
+ *
+ * Return value: returns %TRUE if the file has been successfully renamed.
+ *               Note that it also returns %FALSE if no rename was required
+ *               and thus there is no need for visible updates.
+ **/
 gboolean
 thunar_dialogs_show_rename_file (GtkWindow *parent,
                                  ThunarFile *file)
