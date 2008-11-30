@@ -21,8 +21,12 @@
 #define __THUNAR_DIALOGS_H__
 
 #include <thunar-vfs/thunar-vfs.h>
+#include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;
+
+gboolean              thunar_dialogs_show_rename_file     (GtkWindow            *parent,
+                                                           ThunarFile           *file) G_GNUC_INTERNAL;
 
 void                  thunar_dialogs_show_about           (GtkWindow            *parent,
                                                            const gchar          *title,

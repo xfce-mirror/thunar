@@ -2211,22 +2211,8 @@ static void
 thunar_standard_view_action_rename (GtkAction          *action,
                                     ThunarStandardView *standard_view)
 {
-  ThunarIconFactory *icon_factory;
-  GtkIconTheme      *icon_theme;
-  const gchar       *filename;
-  const gchar       *text;
-  ThunarFile        *file;
-  GtkWidget         *window;
-  GtkWidget         *dialog;
-  GtkWidget         *entry;
-  GtkWidget         *label;
-  GtkWidget         *image;
-  GtkWidget         *table;
-  GdkPixbuf         *icon;
-  GError            *error = NULL;
-  glong              offset;
-  gchar             *title;
-  gint               response;
+  ThunarFile *file;
+  GtkWidget  *window;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -2234,107 +2220,23 @@ thunar_standard_view_action_rename (GtkAction          *action,
   /* start renaming if we have exactly one selected file */
   if (G_LIKELY (standard_view->selected_files != NULL && standard_view->selected_files->next == NULL))
     {
-      /* determine the file in question */
-      file = g_object_ref (G_OBJECT (standard_view->selected_files->data));
-      filename = thunar_file_get_display_name (file);
-
-      /* create a new dialog window */
-      title = g_strdup_printf (_("Rename \"%s\""), filename);
+      /* get the window */
       window = gtk_widget_get_toplevel (GTK_WIDGET (standard_view));
-      dialog = gtk_dialog_new_with_buttons (title,
-                                            GTK_WINDOW (window),
-                                            GTK_DIALOG_MODAL
-                                            | GTK_DIALOG_NO_SEPARATOR
-                                            | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                            GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                            _("_Rename"), GTK_RESPONSE_OK,
-                                            NULL);
-      gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
-      gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
-      g_free (title);
 
-      table = g_object_new (GTK_TYPE_TABLE, "border-width", 6, "column-spacing", 6, "row-spacing", 3, NULL);
-      gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), table, TRUE, TRUE, 0);
-      gtk_widget_show (table);
+      /* get the file */
+      file = THUNAR_FILE (standard_view->selected_files->data);
 
-      icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (dialog));
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-      icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
-      g_object_unref (G_OBJECT (icon_factory));
-
-      image = gtk_image_new_from_pixbuf (icon);
-      gtk_misc_set_padding (GTK_MISC (image), 6, 6);
-      gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 2, GTK_FILL, GTK_FILL, 0, 0);
-      g_object_unref (G_OBJECT (icon));
-      gtk_widget_show (image);
-
-      label = gtk_label_new (_("Enter the new name:"));
-      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
-      gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-      gtk_widget_show (label);
-
-      entry = gtk_entry_new ();
-      gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
-      gtk_table_attach (GTK_TABLE (table), entry, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-      gtk_widget_show (entry);
-
-      /* setup the old filename */
-      gtk_entry_set_text (GTK_ENTRY (entry), filename);
-
-      /* check if we don't have a directory here */
-      if (!thunar_file_is_directory (file))
+      /* run the rename dialog */
+      if (thunar_dialogs_show_rename_file (GTK_WINDOW (window), file))
         {
-          /* check if the filename contains a dot */
-          text = g_utf8_strrchr (filename, -1, '.');
-          if (G_LIKELY (text != NULL))
-            {
-              /* grab focus to the entry first, else the selection will be altered later */
-              gtk_widget_grab_focus (entry);
+          /* make sure the file is still visible */
+          thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, TRUE, FALSE, 0.0f, 0.0f);
 
-              /* determine the UTF-8 char offset */
-              offset = g_utf8_pointer_to_offset (filename, text);
-
-              /* select the text prior to the dot */
-              if (G_LIKELY (offset > 0))
-                gtk_entry_select_region (GTK_ENTRY (entry), 0, offset);
-            }
+          /* update the selection, so we get updated actions, statusbar,
+           * etc. with the new file name and probably new mime type.
+           */
+          thunar_standard_view_selection_changed (standard_view);
         }
-
-      /* run the dialog */
-      response = gtk_dialog_run (GTK_DIALOG (dialog));
-      if (G_LIKELY (response == GTK_RESPONSE_OK))
-        {
-          /* determine the new filename */
-          text = gtk_entry_get_text (GTK_ENTRY (entry));
-
-          /* check if we have a new name here */
-          if (G_LIKELY (!exo_str_is_equal (filename, text)))
-            {
-              /* try to rename the file */
-              if (!thunar_file_rename (file, text, &error))
-                {
-                  /* display an error message */
-                  thunar_dialogs_show_error (GTK_WIDGET (standard_view), error, _("Failed to rename \"%s\""), filename);
-
-                  /* release the error */
-                  g_error_free (error);
-                }
-              else
-                {
-                  /* make sure the file is still visible */
-                  thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, TRUE, FALSE, 0.0f, 0.0f);
-
-                  /* update the selection, so we get updated actions, statusbar,
-                   * etc. with the new file name and probably new mime type.
-                   */
-                  thunar_standard_view_selection_changed (standard_view);
-                }
-            }
-        }
-
-      /* cleanup */
-      g_object_unref (G_OBJECT (file));
-      gtk_widget_destroy (dialog);
     }
   else if (g_list_length (standard_view->selected_files) > 1)
     {

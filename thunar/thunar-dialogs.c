@@ -40,6 +40,135 @@
 
 
 
+gboolean
+thunar_dialogs_show_rename_file (GtkWindow *parent,
+                                 ThunarFile *file)
+{
+  ThunarIconFactory *icon_factory;
+  GtkIconTheme      *icon_theme;
+  const gchar       *filename;
+  const gchar       *text;
+  GtkWidget         *dialog;
+  GtkWidget         *entry;
+  GtkWidget         *label;
+  GtkWidget         *image;
+  GtkWidget         *table;
+  GdkPixbuf         *icon;
+  GError            *error = NULL;
+  glong              offset;
+  gchar             *title;
+  gint               response;
+  gboolean           succeed = FALSE;
+
+  _thunar_return_val_if_fail (GTK_IS_WINDOW (parent), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  /* take an extra reference on the file */
+  g_object_ref (G_OBJECT (file));
+
+  /* get the filename of the file */
+  filename = thunar_file_get_display_name (file);
+
+  /* create a new dialog window */
+  title = g_strdup_printf (_("Rename \"%s\""), filename);
+  dialog = gtk_dialog_new_with_buttons (title,
+                                        GTK_WINDOW (parent),
+                                        GTK_DIALOG_MODAL
+                                        | GTK_DIALOG_NO_SEPARATOR
+                                        | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                        GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+                                        _("_Rename"), GTK_RESPONSE_OK,
+                                        NULL);
+  gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_OK);
+  gtk_window_set_default_size (GTK_WINDOW (dialog), 300, -1);
+  g_free (title);
+
+  table = g_object_new (GTK_TYPE_TABLE, "border-width", 6, "column-spacing", 6, "row-spacing", 3, NULL);
+  gtk_box_pack_start (GTK_BOX (GTK_DIALOG (dialog)->vbox), table, TRUE, TRUE, 0);
+  gtk_widget_show (table);
+
+  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (dialog));
+  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
+  icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
+  g_object_unref (G_OBJECT (icon_factory));
+
+  image = gtk_image_new_from_pixbuf (icon);
+  gtk_misc_set_padding (GTK_MISC (image), 6, 6);
+  gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 2, GTK_FILL, GTK_FILL, 0, 0);
+  g_object_unref (G_OBJECT (icon));
+  gtk_widget_show (image);
+
+  label = gtk_label_new (_("Enter the new name:"));
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
+
+  entry = gtk_entry_new ();
+  gtk_entry_set_activates_default (GTK_ENTRY (entry), TRUE);
+  gtk_table_attach (GTK_TABLE (table), entry, 1, 2, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (entry);
+
+  /* setup the old filename */
+  gtk_entry_set_text (GTK_ENTRY (entry), filename);
+
+  /* check if we don't have a directory here */
+  if (!thunar_file_is_directory (file))
+    {
+      /* check if the filename contains a dot */
+      text = g_utf8_strrchr (filename, -1, '.');
+      if (G_LIKELY (text != NULL))
+        {
+          /* grab focus to the entry first, else the selection will be altered later */
+          gtk_widget_grab_focus (entry);
+
+          /* determine the UTF-8 char offset */
+          offset = g_utf8_pointer_to_offset (filename, text);
+
+          /* select the text prior to the dot */
+          if (G_LIKELY (offset > 0))
+            gtk_entry_select_region (GTK_ENTRY (entry), 0, offset);
+        }
+    }
+
+  /* run the dialog */
+  response = gtk_dialog_run (GTK_DIALOG (dialog));
+  if (G_LIKELY (response == GTK_RESPONSE_OK))
+    {
+      /* hide the dialog */
+      gtk_widget_hide (dialog);
+      
+      /* determine the new filename */
+      text = gtk_entry_get_text (GTK_ENTRY (entry));
+
+      /* check if we have a new name here */
+      if (G_LIKELY (!exo_str_is_equal (filename, text)))
+        {
+          /* try to rename the file */
+          if (!thunar_file_rename (file, text, &error))
+            {
+              /* display an error message */
+              thunar_dialogs_show_error (GTK_WIDGET (parent), error, _("Failed to rename \"%s\""), filename);
+
+              /* release the error */
+              g_error_free (error);
+            }
+          else
+            {
+              /* we've succeeded */
+              succeed = TRUE;
+            }
+        }
+    }
+
+  /* cleanup */
+  g_object_unref (G_OBJECT (file));
+  gtk_widget_destroy (dialog);
+
+  return succeed;
+}
+
+
+
 /**
  * thunar_dialogs_show_about:
  * @parent : the parent #GtkWindow or %NULL.

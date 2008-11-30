@@ -139,6 +139,7 @@ static void             thunar_tree_view_action_copy                (ThunarTreeV
 static void             thunar_tree_view_action_create_folder       (ThunarTreeView       *view);
 static void             thunar_tree_view_action_cut                 (ThunarTreeView       *view);
 static void             thunar_tree_view_action_delete              (ThunarTreeView       *view);
+static void             thunar_tree_view_action_rename              (ThunarTreeView       *view);
 static void             thunar_tree_view_action_eject               (ThunarTreeView       *view);
 static void             thunar_tree_view_action_empty_trash         (ThunarTreeView       *view);
 static gboolean         thunar_tree_view_action_mount               (ThunarTreeView       *view);
@@ -1196,7 +1197,7 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
       gtk_widget_show (image);
 
-      /* "Delete" doesn't make much sense for volumes */
+      /* "Delete" and "Rename" don't make much sense for volumes */
       if (G_LIKELY (volume == NULL))
         {
           /* determine the parent file (required to determine "Delete" sensitivity) */
@@ -1217,6 +1218,22 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
           /* cleanup */
           if (G_LIKELY (parent_file != NULL))
             g_object_unref (G_OBJECT (parent_file));
+
+          /* don't show the "Rename" action in the trash */
+          if (G_LIKELY (!thunar_file_is_trashed (file)))
+            {
+              /* append a separator item */
+              item = gtk_separator_menu_item_new ();
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_show (item);
+
+              /* append the "Rename" menu action */
+              item = gtk_image_menu_item_new_with_mnemonic (_("_Rename..."));
+              g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_tree_view_action_rename), view);
+              gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
+              gtk_widget_set_sensitive (item, thunar_file_is_writable (file));
+              gtk_widget_show (item);
+            }
         }
 
       /* append a separator item */
@@ -1611,6 +1628,31 @@ thunar_tree_view_action_delete (ThunarTreeView *view)
       thunar_application_unlink_files (application, GTK_WIDGET (view), &file_list);
       g_object_unref (G_OBJECT (application));
 
+      /* release the file */
+      g_object_unref (G_OBJECT (file));
+    }
+}
+
+
+
+static void
+thunar_tree_view_action_rename (ThunarTreeView *view)
+{
+  ThunarFile *file;
+  GtkWidget  *window;
+
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+  
+  /* determine the selected file */
+  file = thunar_tree_view_get_selected_file (view);
+  if (G_LIKELY (file != NULL))
+    {  
+      /* get the toplevel window */
+      window = gtk_widget_get_toplevel (GTK_WIDGET (view));
+      
+      /* run the rename dialog */
+      thunar_dialogs_show_rename_file (GTK_WINDOW (window), file);
+      
       /* release the file */
       g_object_unref (G_OBJECT (file));
     }
