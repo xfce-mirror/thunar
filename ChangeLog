@@ -1,3 +1,11 @@
+2008-11-30	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-history.c (thunar_history_set_current_directory): If
+	  the new directory is the first one in the forward list, we just go
+	  one step forward instead of clearing the whole forward history.
+	  Don't try to be intelligent anymore if the new directory is the 
+	  first one in the backward history.
+
 2008-11-30	Nick Schermer <nick@xfce.org>
 
 	* thunar/thunar-tree-model.c: Fix a possible crash discovered by

@@ -312,20 +312,11 @@ thunar_history_set_current_directory (ThunarNavigator *navigator,
   if (G_UNLIKELY (current_directory == history->current_directory))
     return;
 
-  /* we try to be smart and check if the new current directory
-   * is the first element on either "back" or "forward" and if
-   * so, perform the appropriate operation.
-   */
-  if (history->back_list != NULL && history->back_list->data == current_directory)
-    {
-      /* go back one step */
-      thunar_history_go_back (history, 1);
-    }
-  else if (history->forward_list != NULL && history->forward_list->data == current_directory)
-    {
-      /* go forward one step */
-      thunar_history_go_forward (history, 1);
-    }
+  /* if the new directory is the first one in the forward history, we
+   * just move forward one step instead of clearing the whole forward
+   * history */
+  if (history->forward_list != NULL && history->forward_list->data == current_directory)
+    thunar_history_go_forward (history, 1);
   else
     {
       /* clear the "forward" list */
