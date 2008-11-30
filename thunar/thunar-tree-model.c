@@ -844,6 +844,8 @@ thunar_tree_model_cmp_array (gconstpointer a,
                              gconstpointer b,
                              gpointer      user_data)
 {
+  _thunar_return_val_if_fail (THUNAR_IS_TREE_MODEL (user_data), 0);
+
   /* just sort by name (case-sensitive) */
   return thunar_file_compare_by_name (THUNAR_TREE_MODEL_ITEM (((const SortTuple *) a)->node->data)->file,
                                       THUNAR_TREE_MODEL_ITEM (((const SortTuple *) b)->node->data)->file,
@@ -863,6 +865,8 @@ thunar_tree_model_sort (ThunarTreeModel *model,
   guint        n_children;
   gint        *new_order;
   guint        n;
+  
+  _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
   /* determine the number of children of the node */
   n_children = g_node_n_children (node);
@@ -878,6 +882,9 @@ thunar_tree_model_sort (ThunarTreeModel *model,
   /* generate the sort array of tuples */
   for (child_node = g_node_first_child (node), n = 0; n < n_children; child_node = g_node_next_sibling (child_node), ++n)
     {
+      _thunar_return_if_fail (child_node != NULL);
+      _thunar_return_if_fail (child_node->data != NULL);
+
       sort_array[n].node = child_node;
       sort_array[n].offset = n;
     }
@@ -1338,7 +1345,7 @@ thunar_tree_model_item_files_added (ThunarTreeModelItem *item,
       child_item = thunar_tree_model_item_new_with_file (model, file);
 
       /* check if the node has only the dummy child */
-      if (G_NODE_HAS_DUMMY (node))
+      if (G_UNLIKELY (G_NODE_HAS_DUMMY (node)))
         {
           /* replace the dummy node with the new node */
           child_node = g_node_first_child (node);
@@ -1780,7 +1787,7 @@ thunar_tree_model_node_traverse_visible (GNode    *node,
           thunar_tree_model_item_free (item);
           g_node_destroy (node);
         }
-      else
+      else if (!G_NODE_HAS_DUMMY (node))
         {
           /* this node should be visible. check if the node has invisible
            * files that should be visible too */
@@ -1956,7 +1963,7 @@ thunar_tree_model_refilter (ThunarTreeModel *model)
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
   /* traverse all nodes to update their visibility */
-  g_node_traverse (model->root, G_POST_ORDER, G_TRAVERSE_ALL, -1,
+  g_node_traverse (model->root, G_PRE_ORDER, G_TRAVERSE_ALL, -1,
                    thunar_tree_model_node_traverse_visible, model);
 }
 
