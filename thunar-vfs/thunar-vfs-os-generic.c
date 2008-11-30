@@ -51,7 +51,7 @@
 #define g_access(path, mode) (access ((path), (mode)))
 #endif
 
-/* %&§$!# IRIX and Solaris */
+/* !@#$%^&* IRIX and Solaris */
 #if defined(__sgi__) && !defined(dirfd)
 #define dirfd(dp) (((DIR *) (dp))->__dd_fd)
 #elif (defined(__sun__) || defined(__sun)) && !defined(dirfd)
