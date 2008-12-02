@@ -635,7 +635,7 @@ thunar_location_button_drag_drop (GtkWidget            *button,
 
   /* determine the DnD target and see if we can handle it */
   target = gtk_drag_dest_find_target (button, context, NULL);
-  if (G_UNLIKELY (target != gdk_atom_intern ("text/uri-list", FALSE)))
+  if (G_UNLIKELY (target != gdk_atom_intern_static_string ("text/uri-list")))
     return FALSE;
 
   /* set state so drag-data-received knows that
@@ -807,7 +807,7 @@ thunar_location_button_drag_motion (GtkWidget            *button,
     {
       /* check if we can handle that drag data (can only drop text/uri-list) */
       target = gtk_drag_dest_find_target (button, context, NULL);
-      if (G_LIKELY (target == gdk_atom_intern ("text/uri-list", FALSE)))
+      if (G_LIKELY (target == gdk_atom_intern_static_string ("text/uri-list")))
         {
           /* request the drop data from the source */
           gtk_drag_get_data (button, context, target, time);

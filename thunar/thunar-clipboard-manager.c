@@ -203,7 +203,7 @@ thunar_clipboard_manager_class_init (ThunarClipboardManagerClass *klass)
 static void
 thunar_clipboard_manager_init (ThunarClipboardManager *manager)
 {
-  manager->x_special_gnome_copied_files = gdk_atom_intern ("x-special/gnome-copied-files", FALSE);
+  manager->x_special_gnome_copied_files = gdk_atom_intern_static_string ("x-special/gnome-copied-files");
 }
 
 
@@ -286,7 +286,7 @@ thunar_clipboard_manager_owner_changed (GtkClipboard           *clipboard,
   g_object_ref (G_OBJECT (manager));
 
   /* request the list of supported targets from the new owner */
-  gtk_clipboard_request_contents (clipboard, gdk_atom_intern ("TARGETS", FALSE),
+  gtk_clipboard_request_contents (clipboard, gdk_atom_intern_static_string ("TARGETS"),
                                   thunar_clipboard_manager_targets_received, manager);
 }
 

@@ -2478,15 +2478,15 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
       /* we cannot handle the drag data */
       return FALSE;
     }
-  else if (G_UNLIKELY (target == gdk_atom_intern ("XdndDirectSave0", FALSE)))
+  else if (G_UNLIKELY (target == gdk_atom_intern_static_string ("XdndDirectSave0")))
     {
       /* determine the file for the drop position */
       file = thunar_standard_view_get_drop_file (standard_view, x, y, NULL);
       if (G_LIKELY (file != NULL))
         {
           /* determine the file name from the DnD source window */
-          if (gdk_property_get (context->source_window, gdk_atom_intern ("XdndDirectSave0", FALSE),
-                                gdk_atom_intern ("text/plain", FALSE), 0, 1024, FALSE, NULL, NULL,
+          if (gdk_property_get (context->source_window, gdk_atom_intern_static_string ("XdndDirectSave0"),
+                                gdk_atom_intern_static_string ("text/plain"), 0, 1024, FALSE, NULL, NULL,
                                 &prop_len, &prop_text) && prop_text != NULL)
             {
               /* zero-terminate the string */
@@ -2504,8 +2504,8 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
 
                   /* setup the property */
                   gdk_property_change (GDK_DRAWABLE (context->source_window),
-                                       gdk_atom_intern ("XdndDirectSave0", FALSE),
-                                       gdk_atom_intern ("text/plain", FALSE), 8,
+                                       gdk_atom_intern_static_string ("XdndDirectSave0"),
+                                       gdk_atom_intern_static_string ("text/plain"), 8,
                                        GDK_PROP_MODE_REPLACE, (const guchar *) uri,
                                        strlen (uri));
 
@@ -2618,8 +2618,8 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
             {
               /* indicate that we don't provide "F" fallback */
               gdk_property_change (GDK_DRAWABLE (context->source_window),
-                                   gdk_atom_intern ("XdndDirectSave0", FALSE),
-                                   gdk_atom_intern ("text/plain", FALSE), 8,
+                                   gdk_atom_intern_static_string ("XdndDirectSave0"),
+                                   gdk_atom_intern_static_string ("text/plain"), 8,
                                    GDK_PROP_MODE_REPLACE, (const guchar *) "", 0);
             }
           else if (G_LIKELY (selection_data->format == 8 && selection_data->length == 1 && selection_data->data[0] == 'S'))
@@ -2798,7 +2798,7 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
     {
       /* check if we can handle that drag data (yet?) */
       target = gtk_drag_dest_find_target (view, context, NULL);
-      if ((target == gdk_atom_intern ("XdndDirectSave0", FALSE)) || (target == gdk_atom_intern ("_NETSCAPE_URL", FALSE)))
+      if ((target == gdk_atom_intern_static_string ("XdndDirectSave0")) || (target == gdk_atom_intern_static_string ("_NETSCAPE_URL")))
         {
           /* determine the file for the given coordinates */
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);

@@ -1389,7 +1389,7 @@ thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
 
   /* determine the drop target */
   target = gtk_drag_dest_find_target (tree_view, context, NULL);
-  if (G_UNLIKELY (target != gdk_atom_intern ("text/uri-list", FALSE)))
+  if (G_UNLIKELY (target != gdk_atom_intern_static_string ("text/uri-list")))
     {
       /* unhighlight the widget if highlighted */
       if (renamer_dialog->drag_highlighted)

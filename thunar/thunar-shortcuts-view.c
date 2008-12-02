@@ -571,7 +571,7 @@ thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
 
   /* determine the drop target */
   target = gtk_drag_dest_find_target (widget, context, NULL);
-  if (G_LIKELY (target == gdk_atom_intern ("text/uri-list", FALSE)))
+  if (G_LIKELY (target == gdk_atom_intern_static_string ("text/uri-list")))
     {
       /* set state so the drag-data-received handler
        * knows that this is really a drop this time.
@@ -581,7 +581,7 @@ thunar_shortcuts_view_drag_drop (GtkWidget      *widget,
       /* request the drag data from the source. */
       gtk_drag_get_data (widget, context, target, time);
     }
-  else if (target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
+  else if (target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
     {
       /* compute the drop position */
       dst_path = thunar_shortcuts_view_compute_drop_position (view, x, y);
@@ -640,7 +640,7 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
 
   /* determine the drag target */
   target = gtk_drag_dest_find_target (widget, context, NULL);
-  if (target == gdk_atom_intern ("text/uri-list", FALSE))
+  if (target == gdk_atom_intern_static_string ("text/uri-list"))
     {
       /* request the drop data on-demand (if we don't have it already) */
       if (G_UNLIKELY (!view->drop_data_ready))
@@ -657,7 +657,7 @@ thunar_shortcuts_view_drag_motion (GtkWidget      *widget,
           thunar_shortcuts_view_compute_drop_actions (view, context, x, y, &path, &action, &position);
         }
     }
-  else if (target == gdk_atom_intern ("GTK_TREE_MODEL_ROW", FALSE))
+  else if (target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
     {
       /* check the action that should be performed */
       if (context->suggested_action == GDK_ACTION_LINK || (context->actions & GDK_ACTION_LINK) != 0)

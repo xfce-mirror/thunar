@@ -794,7 +794,7 @@ thunar_tree_view_drag_drop (GtkWidget      *widget,
 
   /* determine the drop target */
   target = gtk_drag_dest_find_target (widget, context, NULL);
-  if (G_LIKELY (target == gdk_atom_intern ("text/uri-list", FALSE)))
+  if (G_LIKELY (target == gdk_atom_intern_static_string ("text/uri-list")))
     {
       /* set state so the drag-data-received handler
        * knows that this is really a drop this time.
@@ -827,7 +827,7 @@ thunar_tree_view_drag_motion (GtkWidget      *widget,
 
   /* determine the drop target */
   target = gtk_drag_dest_find_target (widget, context, NULL);
-  if (G_UNLIKELY (target != gdk_atom_intern ("text/uri-list", FALSE)))
+  if (G_UNLIKELY (target != gdk_atom_intern_static_string ("text/uri-list")))
     {
       /* reset the "drop-file" of the icon renderer */
       g_object_set (G_OBJECT (view->icon_renderer), "drop-file", NULL, NULL);
