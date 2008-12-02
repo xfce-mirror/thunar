@@ -1045,7 +1045,6 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
   GtkWidget       *window;
   GList           *providers, *lp;
   GList           *actions = NULL, *tmp;
-  GList            files;
 
   /* verify that we're connected to the clipboard manager */
   if (G_UNLIKELY (view->clipboard == NULL))
@@ -1251,15 +1250,10 @@ thunar_tree_view_context_menu (ThunarTreeView *view,
               /* determine the toplevel window we belong to */
               window = gtk_widget_get_toplevel (GTK_WIDGET (view));
               
-              /* create a fake file list */
-              files.data = file;
-              files.next = NULL;
-              files.prev = NULL;
-
               /* load the actions offered by the menu providers */
               for (lp = providers; lp != NULL; lp = lp->next)
                 {
-                  tmp = thunarx_menu_provider_get_file_actions (lp->data, window, &files);
+                  tmp = thunarx_menu_provider_get_folder_actions (lp->data, window, THUNARX_FILE_INFO (file));
                   actions = g_list_concat (actions, tmp);
                   g_object_unref (G_OBJECT (lp->data));
                 }
