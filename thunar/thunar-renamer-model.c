@@ -49,6 +49,13 @@ enum
   PROP_RENAMER,
 };
 
+typedef struct
+{
+  gint   offset;
+  gint   position;
+  GList *item;
+} SortTuple;
+
 
 
 typedef struct _ThunarRenamerModelItem ThunarRenamerModelItem;
@@ -114,6 +121,9 @@ static gboolean                thunar_renamer_model_update_idle         (gpointe
 static void                    thunar_renamer_model_update_idle_destroy (gpointer                 user_data);
 static ThunarRenamerModelItem *thunar_renamer_model_item_new            (ThunarFile              *file) G_GNUC_MALLOC;
 static void                    thunar_renamer_model_item_free           (ThunarRenamerModelItem  *item);
+static gint                    thunar_renamer_model_cmp_array           (gconstpointer            pointer_a,
+                                                                         gconstpointer            pointer_b,
+                                                                         gpointer                 user_data);
 
 
 
@@ -1014,6 +1024,24 @@ thunar_renamer_model_item_free (ThunarRenamerModelItem *item)
 
 
 
+static gint
+thunar_renamer_model_cmp_array (gconstpointer pointer_a,
+                                gconstpointer pointer_b,
+                                gpointer      user_data)
+{
+  const SortTuple *a = pointer_a;
+  const SortTuple *b = pointer_b;
+  
+  if (G_UNLIKELY (a->position == b->position))
+    /* return the sort order for the 'moved' items in the list */
+    return a->offset - b->offset;
+  else
+    /* return the sort order for all other items in the lis */
+    return a->position - b->position;
+}
+
+
+
 /**
  * thunar_renamer_model_new:
  *
@@ -1249,15 +1277,17 @@ thunar_renamer_model_set_renamer (ThunarRenamerModel *renamer_model,
 
 
 /**
- * thunar_renamer_model_append:
+ * thunar_renamer_model_insert:
  * @renamer_model : a #ThunarRenamerModel.
- * @file              : the #ThunarFile to add to @renamer_model.
+ * @file          : the #ThunarFile to add to @renamer_model.
+ * @position      : the position in the model. 0 is prepend, -1 is append.
  *
- * Adds the @file to the @renamer_model.
+ * Inserts the @file to the @renamer_model at @position.
  **/
 void
-thunar_renamer_model_append (ThunarRenamerModel *renamer_model,
-                             ThunarFile         *file)
+thunar_renamer_model_insert (ThunarRenamerModel *renamer_model,
+                             ThunarFile         *file,
+                             gint                position)
 {
   ThunarRenamerModelItem *item;
   GtkTreePath            *path;
@@ -1276,10 +1306,10 @@ thunar_renamer_model_append (ThunarRenamerModel *renamer_model,
   item = thunar_renamer_model_item_new (file);
 
   /* append the item to the model */
-  renamer_model->items = g_list_append (renamer_model->items, item);
+  renamer_model->items = g_list_insert (renamer_model->items, item, position);
 
   /* determine the iterator for the new item */
-  GTK_TREE_ITER_INIT (iter, renamer_model->stamp, g_list_last (renamer_model->items));
+  GTK_TREE_ITER_INIT (iter, renamer_model->stamp, g_list_find (renamer_model->items, item));
 
   /* emit the "row-inserted" signal */
   path = gtk_tree_model_get_path (GTK_TREE_MODEL (renamer_model), &iter);
@@ -1288,6 +1318,102 @@ thunar_renamer_model_append (ThunarRenamerModel *renamer_model,
 
   /* invalidate the newly added item */
   thunar_renamer_model_invalidate_item (renamer_model, item);
+}
+
+
+
+/**
+ * thunar_renamer_model_reorder:
+ * @renamer_model : a #ThunarRenamerModel.
+ * @tree_paths    : the list of #GtkTreePath that need to be moved to
+ *                  @position.
+ * @position      : the new position for the list of paths.
+ * 
+ * Reorder the treepaths in the model to their new postion in the list
+ * and sends an update to the treeview to reorder the list.
+ **/
+void
+thunar_renamer_model_reorder (ThunarRenamerModel *renamer_model,
+                              GList              *tree_paths,
+                              gint                position)
+{
+  GList       *lp, *lprev;
+  gint         n_items;
+  gint        *new_order;
+  GtkTreePath *path;
+  gint         k, n, m;
+  SortTuple   *sort_array;
+
+  /* leave when there is nothing to sort */
+  n_items = g_list_length (renamer_model->items);
+  if (G_UNLIKELY (n_items <= 1))
+    return;
+
+  /* correct the sort position to match the list items */
+  if (position == -1 || position > n_items)
+    position = n_items;
+
+  /* be sure to not overuse the stack */
+  if (G_LIKELY (n_items < 500))
+    sort_array = g_newa (SortTuple, n_items);
+  else
+    sort_array = g_new (SortTuple, n_items);
+
+  /* generate the sort array of tuples */
+  for (lp = renamer_model->items, m = 0, n = 0; lp != NULL; lp = lp->next, ++n, ++m)
+    {
+      /* leave a hole in the sort position for the drop items */
+      if (G_UNLIKELY (m == position))
+        m++;
+
+      sort_array[n].offset = n;
+      sort_array[n].item = lp;
+      sort_array[n].position = m;
+    }
+
+  /* set the requested sort position for the dragged paths */
+  for (lp = tree_paths; lp != NULL; lp = lp->next)
+    {
+      k = CLAMP (gtk_tree_path_get_indices (lp->data)[0], 0, n_items - 1);
+      sort_array[k].position = position;
+    }
+
+  /* sort the array using QuickSort */
+  g_qsort_with_data (sort_array, n_items, sizeof (SortTuple), thunar_renamer_model_cmp_array, NULL);
+
+  /* update our internals and generate the new order */
+  new_order = g_newa (gint, n_items);
+  for (n = 0, lprev = NULL; n < n_items; ++n)
+    {
+      /* set the new order in the sort list */
+      new_order[n] = sort_array[n].offset;
+
+      /* reinsert the item in the list */
+      lp = sort_array[n].item;
+      lp->next = NULL;
+      lp->prev = lprev;
+
+      /* hookup the item in the list */
+      if (G_LIKELY (lprev != NULL))
+        lprev->next = lp;
+      else
+        renamer_model->items = lp;
+
+      /* advance the offset */
+      lprev = lp;
+    }
+
+  /* tell the view about the new item order */
+  path = gtk_tree_path_new ();
+  gtk_tree_model_rows_reordered (GTK_TREE_MODEL (renamer_model), path, NULL, new_order);
+  gtk_tree_path_free (path);
+
+  /* invalidate all items */
+  thunar_renamer_model_invalidate_all (renamer_model);
+  
+  /* cleanup if we used the heap */
+  if (G_UNLIKELY (n_items >= 500))
+    g_free (sort_array);
 }
 
 

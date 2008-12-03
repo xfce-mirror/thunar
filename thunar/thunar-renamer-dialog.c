@@ -56,6 +56,7 @@ enum
 /* Identifiers for DnD target types */
 enum
 {
+  TARGET_GTK_TREE_MODEL_ROW,
   TARGET_TEXT_URI_LIST,
 };
 
@@ -108,6 +109,12 @@ static void     thunar_renamer_dialog_drag_leave          (GtkWidget            
                                                            guint                     time,
                                                            ThunarRenamerDialog      *renamer_dialog);
 static gboolean thunar_renamer_dialog_drag_motion         (GtkWidget                *tree_view,
+                                                           GdkDragContext           *context,
+                                                           gint                      x,
+                                                           gint                      y,
+                                                           guint                     time,
+                                                           ThunarRenamerDialog      *renamer_dialog);
+static gboolean thunar_renamer_dialog_drag_drop           (GtkWidget                *tree_view,
                                                            GdkDragContext           *context,
                                                            gint                      x,
                                                            gint                      y,
@@ -182,7 +189,13 @@ static const GtkActionEntry action_entries[] =
 /* Target types for dropping to the tree view */
 static const GtkTargetEntry drop_targets[] =
 {
-  { "text/uri-list", 0, TARGET_TEXT_URI_LIST, },
+  { "GTK_TREE_MODEL_ROW", GTK_TARGET_SAME_WIDGET, TARGET_GTK_TREE_MODEL_ROW },
+  { "text/uri-list", 0, TARGET_TEXT_URI_LIST }
+};
+
+/* Target types for dragging files in the tree view */
+static const GtkTargetEntry drag_targets[] = {
+  { "GTK_TREE_MODEL_ROW", GTK_TARGET_SAME_WIDGET, TARGET_GTK_TREE_MODEL_ROW }
 };
 
 
@@ -409,10 +422,12 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
   gtk_widget_show (swin);
 
   /* create the tree view */
-  renamer_dialog->tree_view = gtk_tree_view_new_with_model (GTK_TREE_MODEL (renamer_dialog->model));
+  renamer_dialog->tree_view = exo_tree_view_new ();
+  gtk_tree_view_set_model (GTK_TREE_VIEW (renamer_dialog->tree_view), GTK_TREE_MODEL (renamer_dialog->model));
   gtk_tree_view_set_search_column (GTK_TREE_VIEW (renamer_dialog->tree_view), THUNAR_RENAMER_MODEL_COLUMN_OLDNAME);
   gtk_tree_view_set_fixed_height_mode (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
+  gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
   gtk_tree_view_set_rules_hint (GTK_TREE_VIEW (renamer_dialog->tree_view), TRUE);
   g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "button-press-event", G_CALLBACK (thunar_renamer_dialog_button_press_event), renamer_dialog);
   g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "popup-menu", G_CALLBACK (thunar_renamer_dialog_popup_menu), renamer_dialog);
@@ -581,12 +596,14 @@ thunar_renamer_dialog_init (ThunarRenamerDialog *renamer_dialog)
 
       /* close the config handle */
       xfce_rc_close (rc);
-  
+
       /* setup drop support for the tree view */
-      gtk_drag_dest_set (renamer_dialog->tree_view, GTK_DEST_DEFAULT_DROP, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_COPY);
+      gtk_drag_dest_set (renamer_dialog->tree_view, 0, drop_targets, G_N_ELEMENTS (drop_targets), GDK_ACTION_COPY | GDK_ACTION_MOVE);
+      gtk_drag_source_set (renamer_dialog->tree_view, GDK_BUTTON1_MASK, drag_targets, G_N_ELEMENTS (drag_targets), GDK_ACTION_MOVE);
       g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "drag-data-received", G_CALLBACK (thunar_renamer_dialog_drag_data_received), renamer_dialog);
       g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "drag-leave", G_CALLBACK (thunar_renamer_dialog_drag_leave), renamer_dialog);
       g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "drag-motion", G_CALLBACK (thunar_renamer_dialog_drag_motion), renamer_dialog);
+      g_signal_connect (G_OBJECT (renamer_dialog->tree_view), "drag-drop", G_CALLBACK (thunar_renamer_dialog_drag_drop), renamer_dialog);
 
       /* setup the tree selection */
       selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (renamer_dialog->tree_view));
@@ -1311,9 +1328,13 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
                                           guint                time,
                                           ThunarRenamerDialog *renamer_dialog)
 {
-  ThunarFile *file;
-  GList      *path_list;
-  GList      *lp;
+  ThunarFile              *file;
+  GList                   *path_list;
+  GList                   *lp;
+  GtkTreeModel            *model;
+  GtkTreePath             *path;
+  GtkTreeViewDropPosition  drop_pos;
+  gint                     position = -1;
 
   _thunar_return_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog));
   _thunar_return_if_fail (GTK_IS_TREE_VIEW (tree_view));
@@ -1321,6 +1342,25 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
   /* we only accept text/uri-list drops with format 8 and atleast one byte of data */
   if (info == TARGET_TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
     {
+      /* determine the renamer model */
+      model = gtk_tree_view_get_model (GTK_TREE_VIEW (tree_view));
+
+      /* get the drop position, if no path is foud we append the files */
+      if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (tree_view), x, y, &path, &drop_pos))
+        {
+          /* get the position of the path */
+          position = gtk_tree_path_get_indices (path)[0];
+          gtk_tree_path_free (path);
+
+          /* advance the offset if we drop after the item */
+          if (drop_pos == GTK_TREE_VIEW_DROP_AFTER || drop_pos == GTK_TREE_VIEW_DROP_INTO_OR_AFTER)
+            position++;
+
+          /* append if we've reached the end of the model */
+          if (position >= gtk_tree_model_iter_n_children (model, NULL))
+            position = -1;
+        }
+
       /* determine the path list from the selection_data */
       path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
 
@@ -1331,8 +1371,12 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
           file = thunar_file_get_for_path (lp->data, NULL);
           if (G_LIKELY (file != NULL))
             {
-              /* append the file to the model */
-              thunar_renamer_model_append (renamer_dialog->model, file);
+              /* insert the file in the model */
+              thunar_renamer_model_insert (renamer_dialog->model, file, position);
+
+              /* advance the offset if we do not append, so the drop order is consistent */
+              if (position != -1)
+                position++;
 
               /* release the file */
               g_object_unref (G_OBJECT (file));
@@ -1341,6 +1385,9 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
           /* release the path */
           thunar_vfs_path_unref (lp->data);
         }
+
+      /* finish the drag */
+      gtk_drag_finish (context, (path_list != NULL), FALSE, time);
 
       /* release the list */
       g_list_free (path_list);
@@ -1382,16 +1429,30 @@ thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
                                    guint                time,
                                    ThunarRenamerDialog *renamer_dialog)
 {
-  GdkAtom target;
+  GdkAtom                  target;
+  GtkTreeViewDropPosition  position;
+  GtkTreePath             *path;
+  GdkDragAction            action;
+  GtkTreeModel            *model;
+  gint                     n_rows;
 
   _thunar_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
   _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
 
   /* determine the drop target */
   target = gtk_drag_dest_find_target (tree_view, context, NULL);
-  if (G_UNLIKELY (target != gdk_atom_intern_static_string ("text/uri-list")))
+  if (target == gdk_atom_intern_static_string ("text/uri-list"))
     {
-      /* unhighlight the widget if highlighted */
+      /* set the drag action for uris */
+      action = GDK_ACTION_COPY;
+    }
+  else if (target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
+    {
+      /* set the drag action for tree rows */
+      action = GDK_ACTION_MOVE;
+    }
+  else
+    {
       if (renamer_dialog->drag_highlighted)
         {
           /* we use the tree view parent (the scrolled window),
@@ -1404,22 +1465,110 @@ thunar_renamer_dialog_drag_motion (GtkWidget           *tree_view,
       /* we cannot handle the drop */
       return FALSE;
     }
+      
+  /* compute the drop position */
+  if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (tree_view), x, y, &path, &position))
+    {
+      /* we can only drop before or after an item */
+      if (position == GTK_TREE_VIEW_DROP_BEFORE || position == GTK_TREE_VIEW_DROP_INTO_OR_BEFORE)
+        position = GTK_TREE_VIEW_DROP_BEFORE;
+      else
+        position = GTK_TREE_VIEW_DROP_AFTER;
+    }
   else
     {
-      /* highlight the widget */
-      if (!renamer_dialog->drag_highlighted)
+      /* append the item if there are rows in the model */
+      model = gtk_tree_view_get_model (GTK_TREE_VIEW (tree_view));
+      n_rows = gtk_tree_model_iter_n_children (model, NULL);
+
+      if (G_LIKELY (n_rows > 0))
         {
-          /* we use the tree view parent (the scrolled window),
-           * as the drag_highlight doesn't work for tree views.
-           */
-          gtk_drag_highlight (tree_view->parent);
-          renamer_dialog->drag_highlighted = TRUE;
+          /* get the last tree path in the model */
+          path = gtk_tree_path_new_from_indices (n_rows - 1, -1);
+          position = GTK_TREE_VIEW_DROP_AFTER;
+        }
+    }
+
+  if (G_LIKELY (path != NULL))
+    {
+      /* highlight the appropriate row */
+      gtk_tree_view_set_drag_dest_row (GTK_TREE_VIEW (tree_view), path, position);
+      gtk_tree_path_free (path);
+    }
+  else if (!renamer_dialog->drag_highlighted)
+    {
+      /* highlight the parent */
+      gtk_drag_highlight (tree_view->parent);
+      renamer_dialog->drag_highlighted = TRUE;
+    }
+
+  /* we can handle the drop */
+  gdk_drag_status (context, action, time);
+  return TRUE;
+}
+
+
+
+static gboolean
+thunar_renamer_dialog_drag_drop (GtkWidget           *tree_view,
+                                 GdkDragContext      *context,
+                                 gint                 x,
+                                 gint                 y,
+                                 guint                time,
+                                 ThunarRenamerDialog *renamer_dialog)
+{
+  GdkAtom                  target;
+  GtkTreeSelection        *selection;
+  GtkTreePath             *dst_path;
+  GtkTreeModel            *model;
+  GtkTreeViewDropPosition  drop_pos;
+  gint                     position = -1;
+  GList                   *rows;
+  
+  _thunar_return_val_if_fail (THUNAR_IS_RENAMER_DIALOG (renamer_dialog), FALSE);
+  _thunar_return_val_if_fail (GTK_IS_TREE_VIEW (tree_view), FALSE);
+  
+  /* determine the drop target */
+  target = gtk_drag_dest_find_target (tree_view, context, NULL);
+  if (G_LIKELY (target == gdk_atom_intern_static_string ("text/uri-list")))
+    {
+      /* request the data, we call gtk_drag_finish() later */
+      gtk_drag_get_data (tree_view, context, target, time);
+    }
+  else if (target == gdk_atom_intern_static_string ("GTK_TREE_MODEL_ROW"))
+    {
+      selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (tree_view));
+      rows = gtk_tree_selection_get_selected_rows (selection, &model);
+      if (G_LIKELY (rows != NULL))
+        {
+          /* get the drop position, if no path is found we append the file */
+          if (gtk_tree_view_get_dest_row_at_pos (GTK_TREE_VIEW (tree_view), x, y, &dst_path, &drop_pos))
+            {
+              /* get the position of the path */
+              position = gtk_tree_path_get_indices (dst_path)[0];
+              gtk_tree_path_free (dst_path);
+
+              /* advance the offset if we drop after the item */
+              if (drop_pos == GTK_TREE_VIEW_DROP_AFTER || drop_pos == GTK_TREE_VIEW_DROP_INTO_OR_AFTER)
+                position++;
+            }
+
+          /* perform the move */
+          thunar_renamer_model_reorder (renamer_dialog->model, rows, position);
+          g_list_foreach (rows, (GFunc) gtk_tree_path_free, NULL);
+          g_list_free (rows);
         }
 
-      /* we can handle the drop */
-      gdk_drag_status (context, GDK_ACTION_COPY, time);
-      return TRUE;
+      /* finish the dnd operation */
+      gtk_drag_finish (context, TRUE, FALSE, time);
     }
+  else
+    {
+      /* we cannot handle the drop */
+      return FALSE;
+    }
+
+  return TRUE;
 }
                                   
 

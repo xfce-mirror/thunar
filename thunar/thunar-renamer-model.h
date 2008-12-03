@@ -71,11 +71,25 @@ ThunarxRenamer      *thunar_renamer_model_get_renamer    (ThunarRenamerModel *re
 void                 thunar_renamer_model_set_renamer    (ThunarRenamerModel *renamer_model,
                                                           ThunarxRenamer     *renamer);
 
-void                 thunar_renamer_model_append         (ThunarRenamerModel *renamer_model,
-                                                          ThunarFile         *file);
+void                 thunar_renamer_model_insert         (ThunarRenamerModel *renamer_model,
+                                                          ThunarFile         *file,
+                                                          gint                position);
+void                 thunar_renamer_model_reorder        (ThunarRenamerModel *renamer_model,
+                                                          GList              *tree_paths,
+                                                          gint                position);
 void                 thunar_renamer_model_clear          (ThunarRenamerModel *renamer_model);
 void                 thunar_renamer_model_remove         (ThunarRenamerModel *renamer_model,
                                                           GtkTreePath        *path);
+
+
+/**
+ * thunar_renamer_model_append:
+ * @model : a #ThunarRenamerModel.
+ * @file  : a #ThunarFile instance.
+ *
+ * Appends the @file to the @renamer_model.
+ **/
+#define thunar_renamer_model_append(model,file) thunar_renamer_model_insert (model, file, -1)
 
 G_END_DECLS;
 
