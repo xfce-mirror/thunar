@@ -1338,7 +1338,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
   fd = g_mkstemp (tmp_path);
   if (G_UNLIKELY (fd < 0))
     {
-      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
       goto done;
     }
 
@@ -1389,7 +1389,7 @@ thunar_uca_model_save (ThunarUcaModel *uca_model,
   /* rename the file (atomic) */
   if (g_rename (tmp_path, path) < 0)
     {
-      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
       g_unlink (tmp_path);
     }
   else

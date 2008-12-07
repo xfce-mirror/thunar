@@ -167,7 +167,7 @@ _thunar_vfs_set_g_error_from_errno (GError **error,
                                     gint     serrno)
 {
   /* allocate a GError for the specified errno value */
-  g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (serrno), g_strerror (serrno));
+  g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (serrno), "%s", g_strerror (serrno));
 }
 
 

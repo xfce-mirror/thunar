@@ -365,7 +365,7 @@ thunar_application_collect_and_launch (ThunarApplication *application,
       if (G_UNLIKELY (thunar_vfs_path_is_root (lp->data)))
         {
           /* tell the user that we cannot perform the requested operation */
-          g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL, g_strerror (EINVAL));
+          g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL, "%s", g_strerror (EINVAL));
         }
       else
         {

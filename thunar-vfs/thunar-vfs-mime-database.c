@@ -1575,7 +1575,7 @@ thunar_vfs_mime_database_set_default_application (ThunarVfsMimeDatabase    *data
           if (G_UNLIKELY (g_rename (path, absolute_path) < 0))
             {
               /* tell the caller that we failed */
-              g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+              g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
               succeed = FALSE;
 
               /* be sure to remove the temporary file */
@@ -1584,7 +1584,7 @@ thunar_vfs_mime_database_set_default_application (ThunarVfsMimeDatabase    *data
         }
       else
         {
-          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
           succeed = FALSE;
         }
       g_free (path);
@@ -1652,7 +1652,7 @@ thunar_vfs_mime_database_add_application (ThunarVfsMimeDatabase *database,
   fp = fopen (file, "w");
   if (G_UNLIKELY (fp == NULL))
     {
-      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
     }
   else
     {
@@ -1727,7 +1727,7 @@ thunar_vfs_mime_database_remove_application (ThunarVfsMimeDatabase    *database,
   /* verify that the application is usercreated */
   if (!thunar_vfs_mime_application_is_usercreated (application))
     {
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, g_strerror (EINVAL));
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, "%s", g_strerror (EINVAL));
       return FALSE;
     }
 
@@ -1738,7 +1738,7 @@ thunar_vfs_mime_database_remove_application (ThunarVfsMimeDatabase    *database,
   directory = xfce_resource_save_location (XFCE_RESOURCE_DATA, "applications/", TRUE);
   if (G_UNLIKELY (directory == NULL))
     {
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR, g_strerror (ENOTDIR));
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR, "%s", g_strerror (ENOTDIR));
       return FALSE;
     }
 

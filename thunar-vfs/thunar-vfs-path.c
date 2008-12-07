@@ -1417,7 +1417,7 @@ _thunar_vfs_path_translate (ThunarVfsPath      *src_path,
   else
     {
       /* cannot perform the translation */
-      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, g_strerror (EINVAL));
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, "%s", g_strerror (EINVAL));
     }
 
   return dst_path;

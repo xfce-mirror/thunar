@@ -1034,7 +1034,7 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
   tmp_fd = g_mkstemp (tmp_path);
   if (G_UNLIKELY (tmp_fd < 0))
     {
-      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+      g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
       g_free (md5);
       g_free (uri);
       return FALSE;
@@ -1071,7 +1071,7 @@ thunar_vfs_thumb_factory_store_thumbnail (ThunarVfsThumbFactory *factory,
       dst_path = g_strconcat (base_path, md5, ".png", NULL);
       if (G_UNLIKELY (g_rename (tmp_path, dst_path) < 0))
         {
-          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), g_strerror (errno));
+          g_set_error (error, G_FILE_ERROR, g_file_error_from_errno (errno), "%s", g_strerror (errno));
           succeed = FALSE;
         }
       g_free (dst_path);

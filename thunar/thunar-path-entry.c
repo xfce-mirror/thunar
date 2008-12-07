@@ -1293,7 +1293,7 @@ thunar_path_entry_parse (ThunarPathEntry *path_entry,
         }
       else
         {
-          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, g_strerror (EINVAL));
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, "%s", g_strerror (EINVAL));
         }
     }
 

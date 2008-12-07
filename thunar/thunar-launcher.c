@@ -653,7 +653,7 @@ thunar_launcher_open_paths (ThunarVfsMimeHandler *mime_handler,
         }
 
       /* display an error dialog to the user */
-      thunar_dialogs_show_error (launcher->widget, error, message);
+      thunar_dialogs_show_error (launcher->widget, error, "%s", message);
       g_error_free (error);
       g_free (message);
     }

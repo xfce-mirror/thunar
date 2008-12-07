@@ -1950,7 +1950,7 @@ thunar_window_open_user_folder (GtkAction           *action,
     {
       gchar *error_msg = g_strdup_printf (_("Failed to open folder \"%s\""), default_name);
 
-      thunar_dialogs_show_error (GTK_WIDGET (window), error, error_msg);
+      thunar_dialogs_show_error (GTK_WIDGET (window), error, "%s", error_msg);
       g_free (error_msg);
       if (error)
         g_error_free (error);

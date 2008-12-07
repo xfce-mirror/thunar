@@ -861,7 +861,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     str = g_strdup_printf (_("link to %s"), thunar_vfs_mime_info_get_comment (info));
   else
     str = g_strdup (thunar_vfs_mime_info_get_comment (info));
-  thunar_gtk_widget_set_tooltip (dialog->kind_ebox, thunar_vfs_mime_info_get_name (info));
+  thunar_gtk_widget_set_tooltip (dialog->kind_ebox, "%s", thunar_vfs_mime_info_get_name (info));
   gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
   g_free (str);
 
