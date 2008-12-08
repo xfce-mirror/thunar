@@ -201,6 +201,9 @@ static gboolean             thunar_standard_view_key_press_event            (Gtk
 static gboolean             thunar_standard_view_scroll_event               (GtkWidget                *view,
                                                                              GdkEventScroll           *event,
                                                                              ThunarStandardView       *standard_view);
+static gboolean             thunar_standard_view_button_press_event         (GtkWidget                *view,
+                                                                             GdkEventButton           *event,
+                                                                             ThunarStandardView       *standard_view);
 static gboolean             thunar_standard_view_drag_drop                  (GtkWidget                *view,
                                                                              GdkDragContext           *context,
                                                                              gint                      x,
@@ -688,8 +691,9 @@ thunar_standard_view_constructor (GType                  type,
   /* stay informed about changes to the sort column/order */
   g_signal_connect (G_OBJECT (standard_view->model), "sort-column-changed", G_CALLBACK (thunar_standard_view_sort_column_changed), standard_view);
 
-  /* setup support to navigate using a horizontal mouse wheel */
+  /* setup support to navigate using a horizontal mouse wheel and the back and forward buttons */
   g_signal_connect (G_OBJECT (view), "scroll-event", G_CALLBACK (thunar_standard_view_scroll_event), object);
+  g_signal_connect (G_OBJECT (view), "button-press-event", G_CALLBACK (thunar_standard_view_button_press_event), object);
 
   /* need to catch certain keys for the internal view widget */
   g_signal_connect (G_OBJECT (view), "key-press-event", G_CALLBACK (thunar_standard_view_key_press_event), object);
@@ -2394,26 +2398,23 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
                                    GdkEventScroll     *event,
                                    ThunarStandardView *standard_view)
 {
-  GtkAction *action = NULL;
-  gboolean   misc_horizontal_wheel_navigates;
+  GdkEventButton fake_event;
+  gboolean       misc_horizontal_wheel_navigates;
 
   _thunar_return_val_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view), FALSE);
 
-  /* check if we should use the horizontal mouse wheel for navigation */
-  g_object_get (G_OBJECT (standard_view->preferences), "misc-horizontal-wheel-navigates", &misc_horizontal_wheel_navigates, NULL);
-  if (G_UNLIKELY (misc_horizontal_wheel_navigates))
+  if (G_UNLIKELY (event->direction == GDK_SCROLL_LEFT || event->direction == GDK_SCROLL_RIGHT))
     {
-      /* determine the appropriate action ("back" for scroll left, "forward" for scroll right) */
-      if (G_UNLIKELY (event->type == GDK_SCROLL && event->direction == GDK_SCROLL_LEFT))
-        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/back");
-      else if (G_UNLIKELY (event->type == GDK_SCROLL && event->direction == GDK_SCROLL_RIGHT))
-        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/forward");
-
-      /* perform the action (if any) */
-      if (G_UNLIKELY (action != NULL))
+      /* check if we should use the horizontal mouse wheel for navigation */
+      g_object_get (G_OBJECT (standard_view->preferences), "misc-horizontal-wheel-navigates", &misc_horizontal_wheel_navigates, NULL);
+      if (G_UNLIKELY (misc_horizontal_wheel_navigates))
         {
-          gtk_action_activate (action);
-          return TRUE;
+          /* create a fake event (8 == back, 9 forward) */
+          fake_event.type = GDK_BUTTON_PRESS;
+          fake_event.button = event->direction == GDK_SCROLL_LEFT ? 8 : 9;
+
+          /* trigger a fake button press event */
+          return thunar_standard_view_button_press_event (view, &fake_event, standard_view);
         }
     }
 
@@ -2425,6 +2426,35 @@ thunar_standard_view_scroll_event (GtkWidget          *view,
           ? MIN (standard_view->priv->zoom_level + 1, THUNAR_ZOOM_N_LEVELS - 1)
           : MAX (standard_view->priv->zoom_level, 1) - 1);
       return TRUE;
+    }
+
+  /* next please... */
+  return FALSE;
+}
+
+
+
+static gboolean
+thunar_standard_view_button_press_event (GtkWidget          *view,
+                                         GdkEventButton     *event,
+                                         ThunarStandardView *standard_view)
+{
+  GtkAction *action = NULL;
+
+  if (G_LIKELY (event->type == GDK_BUTTON_PRESS))
+    {
+      /* determine the appropriate action ("back" for button 8, "forward" for button 9) */
+      if (G_UNLIKELY (event->button == 8))
+        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/back");
+      else if (G_UNLIKELY (event->button == 9))
+        action = gtk_ui_manager_get_action (standard_view->ui_manager, "/main-menu/go-menu/forward");
+
+      /* perform the action (if any) */
+      if (G_UNLIKELY (action != NULL))
+        {
+          gtk_action_activate (action);
+          return TRUE;
+        }
     }
 
   /* next please... */
