@@ -1,3 +1,40 @@
+0.9.9x
+======
+- Fix crash in the tree side pane when hidden files are toggled (bug #2502).
+- Always show an error dialog if one of the files passed via the command 
+  line cannot be opened.
+- Only show eject option for devices when requires_eject is TRUE (bug #3978).
+- Fix crash when cd drive is ejected (bug #4257).
+- Use posix_fadvise() for copying large files.
+- Use -V for version information.
+- Restore the selection after deleting a file (bug #3884).
+- Fix completion in the path bar when ~/ is used (bug #2973).
+- Change the tooltip of the trash plugin from "Trash is full" to
+  "Trash contains files" (bug #3266).
+- Popup the location selector when the dead tilde is pressed. This allows
+  people with dead keys to use the location selector.
+- Unload folders in the tree side pane when they are collapsed (bug #4051).
+- Don't monitor /proc and /dev on Linux systems.
+- Implement window groups so modal dialogs don't block other Thunar 
+  windows (bug #3586).
+- Open a question dialog before removing a custom action (bug #3838).
+- Make the first alpha numeric character upper-case in the case renamer
+  (bug #3559).
+- Update links to the Glib reference manual in the docs (bug #4555).
+- Only respond to the predefined key bindings for deleting files when
+  the user has not set a custom accelerator (bug #4173).
+- Implement menu providers in the side pane popup menus (bug #2740).
+- Unmounted volumes are 50% translucent so give some visual feedback.
+- Add rename option to the tree side pane popup menu.
+- Don't go back in the history anymore if the new directory is the first 
+  one in the backward history (bug #4660).
+- Implement reorder, positioned drag and drop and rubberbanding in the
+  renamer dialog (bug #3325).
+- Go back and forward using the 8th and 9th button on the mouse (bug #4687).
+- Various compilers warnings were fixed, some performace improvements 
+  and less memory allocations.
+
+
 0.9.92
 ======
 - Fix build on MacOS X (bug 4433).
