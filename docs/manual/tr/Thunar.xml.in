@@ -1,0 +1,971 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY date "November 2007">
+<!ENTITY version "0.9.92">
+<!ENTITY application "Thunar">
+]>
+<article id="index" lang="tr">
+
+  <!-- Header -->
+  <articleinfo>
+    <title>Thunar Dosya Yöneticisi</title>
+
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2004</year>
+      <year>2005</year>
+      <year>2006</year>
+      <year>2007</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright><copyright><year>2008</year><holder>Samed Beyribey (ras0ir@eventualis.org)</holder></copyright>
+
+    <legalnotice id="legalnotice">
+      <para>Bu dokümanın dağıtımı, kopyalanması ve/veya düzenlenmesi GNU Özgür Belgeleme Lisansı 1.1 sürümü ve daha sonraki sürümleri de dahil olmak üzere, ancak değişmesi imkansız biçimde olmamak kaydı ile serbesttir.  Lisansın tamamına <ulink type="http" url="http://www.gnu.org/">Özgür Yazılım Vakfı</ulink> sitesinden ulaşabilirsiniz.</para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>Sistem geliştirme</orgdiv>
+          <jobtitle>Yazılım geliştiricisi</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+    <releaseinfo>
+      This manual describes version 0.9.92 of Thunar.
+    </releaseinfo>
+  </articleinfo>
+
+  <sect1 id="intro">
+    <title>Introduction to Thunar</title>
+
+    <para>Thunar, Xfce Masaüstü Ortamı için geliştirilmiş yeni ve modern bir dosya yöneticisidir. Hızlı ve kolay bir kullanım sunmak için tasarlanmıştır. Arabirimi sade ve kolay öğrenilebilecek niteliktedir ve kesinlikle kafa karıştırıcı ve gereksiz seçenekleri öntanımlı olarak sunmamaktadır. Thunar dosya yöneticisinin açılışı ve dosya listeleme işlemi gayet hızlıdır.   </para>
+
+    <para>Thunar dosya yöneticisi, entegre bir erişim suretiyle dosyalarınıza ve programlarınıza ulaşmanızı sağlar. Dosya yöneticisini şu işlemler için kullanabilirsiniz:</para>
+
+    <itemizedlist>
+      <listitem>Dizin ve doküman oluşturma.</listitem>
+      <listitem>Dosyaları ve dizinleri gösterimi.</listitem>
+      <listitem>Dosya ve dizin yönetimi.</listitem>
+      <listitem>Özel işlemlerin çalıştırılması ve yönetimi.</listitem>
+      <listitem>Ayrılabilir ortam erişimi.</listitem>
+    </itemizedlist>
+  </sect1>
+
+
+  <sect1 id="the-file-manager-window">
+    <title>Dosya Yöneticisi Penceresi</title>
+
+    <para>Dosya yöneticisi öntanımlı olarak sol bölümde bir kısayol kısmı ve sağ kısımda bulunan esas alan ve onun üstündeki yol bilgisini gösteren adres satırından ibarettir.</para>
+
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/file-manager-window.png" format="PNG"/>
+        </imageobject>
+
+        <textobject>
+          <phrase>Dosya Yöneticisi Penceresi</phrase>
+        </textobject>
+      </mediaobject>
+    </screenshot>
+
+    <para><guilabel>Kısayol Bölümü</guilabel> sisteminizdeki çeşitli dizinlere kısayol atamanızı sağlar. Listedeki ilk kısayol, kullanıcınızın bütün kişisel dosyalarının bulunduğu <emphasis>Ev dizininize</emphasis> ulaşmanızı sağlar. İkinci kısayol ise, silinen dosyaların yer aldığı ve isterseniz silinen dosyaları geri alabileceğiniz çöp kutusuna erişimi sağlar. Üçüncü kısayol ise, masaüstünde bulunan dosya, dizinler ve kısayolları barındıran <emphasis>Masaüstü</emphasis> klasörüne ulaşmanız içindir. Dördüncü kısayol ise, kök dizinine ulaşmanızı sağlar - eğer yeni bir Linux veya Unix kullanıcısı iseniz, kök dizini keşfetmek heyecanlı olabilir. Değişik dizinlere tıklayın ve içerisinde ne olduğunu görün. </para>
+
+    <para><emphasis>Dosya Sistemi</emphasis> kısayolu altında, kaldırılabilir sürücüler ve ortam bulunmaktadır. Yukarıdaki ekran görüntüsünde, <guilabel>Disket sürücüsü</guilabel> kısayolunu görebilirsiniz. Bu kısayollara tıklayarak kaldırılabilir sürücüler ve ortamlardaki verilere ulaşabilirsiniz. Daha detaylı bilgi için <xref linkend="using-removable-media"/> sayfasını inceleyebilirsiniz.</para>
+
+    <para>Diğer kısayollar ise kullanıcı tanımlı kısayollardır. Kendi kısayolunuzu belirlemek için yapmanız gereken kısayolunu oluşturmak istediğiniz dizini <guilabel>kısayol kısmına</guilabel> sürüklemektir. Böylece önemli klasörlerinize hemen ulaşabilirsiniz. Daha önce oluşturduğunuz bir kısayolu silmek için ise, kısayola sağ tıklayıp <guimenuitem>Kısa Yolu Kaldır</guimenuitem> seçeneğine tıklamanız yeterlidir. Kısayolunuzun ismini değiştirmek için, kısayola sağ tıklayıp, <guimenuitem>Kısa Yolu Yeniden Adlandır</guimenuitem> seçeneğine tıklamalısınız. Bu işlem sadece kısayol ile ilgilidir, kısayolunu oluşturduğunuz dizin üzerinde herhangi bir işlem gerçekleştirmemektedir. </para>
+
+    <para><emphasis>Ana bölüm</emphasis> her zaman mevcut klasördeki içeriği gösterir. Dizinlere girmek için çift tıklamanız gerekmektedir ve dosya ve dizinler üzerinde işlem yapabilmek için sağ tıklamanız gerekmektedir. Sağ tıkladığınız zaman açılan menüde dosya veya dizine dair işlemleri görebilirsiniz. Birden çok dosyayı seçmek için, farenin sol tuşuna basılı tutarak toplu seçim yapabilirsiniz. Ayrıca alternatif bir yöntem olarak tek bir dosyayı seçerek, <keycap>Shift</keycap> tuşuna basılı tutarak yön tuşları ile birden fazla seçim yapmanız da mümkündür.</para>
+
+    <para><emphasis>Adres satırı</emphasis> bulunduğunuz dizine giderken geçmiş olduğunuz dosya yolunu belirtir ve gösterir. Adres satırı kısmında gitmek istediğiniz klasöre tıklayabilirsiniz. Adres satırı düğmelerinden birine sağ tıklayarak o dizine has işlemleri ve varsa seçenekleri düzenleyebilirsiniz.</para>
+
+
+    <sect2 id="customizing-the-appearance">
+      <title>Görünümü Özelleştirme</title>
+
+      <para>Dosya yöneticisi pencerelerinde görünümü özelleştirmenin birçok yolu vardır. Eğer simge görünümünü beğenmezseniz, <menuchoice><guimenu>Görünüm</guimenu><guimenuitem>Detaylı Liste Şeklinde Göster</guimenuitem></menuchoice> seçeneğini kullanarak o an içinde bulunduğunuz dizindeki içeriği listelenmiş biçimde görebilirsiniz. </para>
+
+      <para>Adres satırı görünümü yerine, araç çubuğu kullanmak istiyorsanız <menuchoice><guimenu>Görünüm</guimenu><guimenuitem>Yer Seçici</guimenuitem><guimenuitem>Araç Çubuğu Tarzı</guimenuitem></menuchoice> seçeneğini kullanabilirsiniz.</para>
+
+      <para>Sol kısımda görünümü ağaç görünümüne çevirmek istiyorsanız, <menuchoice><guimenu>Görünüm</guimenu><guimenuitem>Yan Pencere Gözü</guimenuitem><guimenuitem>Ağaç</guimenuitem></menuchoice> seçeneğini kullanabilirsiniz.</para>
+
+      <sect3 id="visible-columns-in-the-detailed-list-view">
+        <title>Detaylı Listede Gösterilecek Sütunlar</title>
+
+        <para><guilabel>Detaylı Liste Şeklinde Göster</guilabel> seçeneğini kullanarak dizin içeriğini liste şeklinde görüntülüyorsanız, liste görünümünde gösterilecek sütunları özelleştirmek isteyebilirsiniz. Görüntülenecek sütunları görmek ve seçmek için,  menüdeki <menuchoice><guimenu>Görünüm</guimenu><guimenuitem>Sütunları Yapılandır...</guimenuitem></menuchoice> seçeneğini kullanabilirsiniz.</para>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/visible-columns.png" format="PNG"/>
+            </imageobject>
+
+            <textobject>
+              <phrase>Görünür Sütunlar</phrase>
+            </textobject>
+          </mediaobject>
+        </screenshot>
+
+        <variablelist>
+          <varlistentry>
+            <term><guilabel>Görünür Sütunlar</guilabel></term>
+            <listitem>
+              <para>Gösterilmesini istediğiniz sütunları listeden seçebilirsiniz. <guibutton>Yukarı Taşı</guibutton> veya <guibutton>Aşağı Taşı</guibutton> seçeneklerini kullanarak sütunların gösterim sırasını değiştirebilirsiniz. Yapmış olduğunuz değişiklikleri geri almak için <guibutton>Öntanımlı Kullan</guibutton> seçeneğini kullanabilirsiniz.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><guilabel>Sütun Boyutlandırma</guilabel></term>
+            <listitem>
+              <para><guibutton>Gerekli olduğunda sütunları otomatik olarak genişlet</guibutton> seçeneği ile sütunlar istenilen bilginin uzunluğu doğrultusunda o bilginin uzunluğuna göre genişletilecektir.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="working-with-files-and-folders">
+    <title>Dizin ve Dosya İşlemleri</title>
+
+
+    <sect2 id="opening-files">
+      <title>Dosyaların Açılması</title>
+
+      <para>Bir dosya açtığınız zaman, dosya yöneticisi o dosya tipine uygun işlemi gerçekleştirecektir. Örneğin, bir metin dosyasını açmak istediğinizde, o metin dosyası metin editörünüzde açılacağı gibi, bir resim dosyası da resimleri gösteren uygulama içerisinde açılacaktır.</para>
+
+      <para>Dosya yöneticisi dosyanın uzantısına bakarak dosya tipinin ne olduğuna karar verir. Eğer dosya bilinen bir uzantıya sahip değilse, dosya yöneticisi dosyanın içeriğini gözden geçirecektir.</para>
+
+      <sect3 id="executing-the-default-action">
+        <title>Varsayılan İşlemi Çalıştırmak</title>
+
+        <para>Bir dosya için varsayılan işlemi çalıştırmak için, dosyaya çift tıklamalısınız. Örneğin, ses dosyalarına çift tıkladığınız zaman öntanımlı o ses dosyası çokluortam programı tarafından  çalıştırılacaktır.</para>
+
+        <para><application>Thunar</application> dosya yöneticisini tek tıklama ile dosyaların çalıştırılmasını sağlamak için ayarlamanız mümkündür. Bu konuda ayrıntılı bilgi için <xref linkend="preferences-behavior"/> sayfasını inceleyiniz.</para>
+      </sect3>
+
+      <sect3 id="executing-non-default-actions">
+        <title>Öntanımlı Olmayan İşlemleri Çalıştırmak</title>
+
+        <para>Bir dosya için öntanımlı gerçekleştirilen işlem yerine, istediğiniz dosyayı  <guimenu>Dosya</guimenu> menüsünden <emphasis>Birlikte Aç</emphasis> seçeneklerinden birini kullanarak veya sağ tıkladığınızda gösterilecek olan <guimenu>Birlikte Aç</guimenu> alt menüsü ile çalıştırabilirsiniz.</para>
+      </sect3>
+
+      <sect3 id="adding-actions">
+        <title>İşlem Ekleme</title>
+
+        <para>Bir dosya uzantısına işlem atamak için, şu işlemleri yapmalısınız:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>Ana bölümde, işlem eklemek istediğiniz dosyayı seçin.</para>
+          </listitem>
+          <listitem>
+            <para>Menüden <menuchoice><guimenu>Dosya</guimenu><guimenuitem>Diğer Uygulama ile Aç ...</guimenuitem></menuchoice> seçeneğine tıklayın.</para>
+          </listitem>
+          <listitem>
+            <para><guilabel>Birlikte Aç</guilabel> menüsünde işlem için istediğiniz uygulamayı seçebileceğiniz gibi <guibutton>Özel bir komut kullan</guibutton> seçeneği yardımıyla o dosya işlemi için çalıştırılacak uygulamayı belirtebilirsiniz.</para>
+          </listitem>
+        </orderedlist>
+
+        <para>Böylece dosya için seçtiğiniz uygulama işlemler listesine eklenmiş oldu. Eğer <guibutton>bu tür dosyalar için öntanımlı olarak kullan</guibutton> seçeneğini işaretlemişseniz veya dosya için ilişkilendirilmiş başka bir işlem yok ise, yeni eklediğiniz işlem öntanımlı olacaktır.</para>
+
+        <para>Ayrıca <menuchoice><guimenu>Dosya</guimenu><guimenuitem>Özellikler...</guimenuitem></menuchoice> menüsünde bulunan <guibutton>Birlikte Aç</guibutton> seçeneği ile de dosyanın başka bir uygulama ile açılmasını sağlayabilirsiniz.</para>
+      </sect3>
+
+      <sect3 id="modifiying-actions">
+        <title>İşlemleri Değiştirme</title>
+
+        <para>Bir dosya veya dosya tipi için tanımlanan işlemleri değiştirmek için, şu işlemleri gerçekleştirmelisiniz:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>Ana bölümde, tipini değiştirmek istediğiniz dosyayı seçiniz.</para>
+          </listitem>
+          <listitem>
+            <para>Öncelikle <menuchoice><guimenu>Dosya</guimenu><guimenuitem>Özellikler...</guimenuitem></menuchoice> menüsünü açmalısınız.</para>
+          </listitem>
+          <listitem>
+            <para>Yeni işlemi  açılır menüde<guilabel>Birlikte Aç</guilabel> seçeneği ile belirleyebileceğiniz gibi <guimenuitem>Başka Uygulama...</guimenuitem> seçeneği ile de belirleyebilirsiniz. </para>
+          </listitem>
+        </orderedlist>
+
+        <para>Daha önce atadığınız bir işlemi kaldırmak için, yukarıda anlatıldığı gibi <guilabel>Birlikte Aç</guilabel> menüsünü açıp, kaldırmak istediğiniz işleme sağ tıklayıp, <guimenuitem>Uygulama Başlatıcısını Kaldır</guimenuitem> seçeneğini kullanabilirsiniz.</para>
+      </sect3>
+    </sect2>
+
+
+    <sect2 id="file-properties">
+      <title>Dosya Özellikleri</title>
+
+      <para>Dosya özellikleri penceresi dosya ya da dizin hakkında dosya yöneticisinde gösterilenden daha fazla bilgi edinmenizi sağlar. Bu pencere ile, şu işlemleri gerçekleştirebilirsiniz.</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Özel dosyaların, mesela uygulama çalıştırıcılar ve URL linklerinin simgelerini değiştirebilirsiniz.</para>
+        </listitem>
+        <listitem>
+          <para>Dosya veya dizine amblem atayabilir veya varsa amblemini kaldırabilirsiniz.</para>
+        </listitem>
+        <listitem>
+          <para>Dosya ya da dizinin UNIX dosya izinlerini değiştirebilirsiniz.</para>
+        </listitem>
+        <listitem>
+          <para>Dosyanın hangi uygulama ile çalıştırılacağını belirleyebilirsiniz.</para>
+        </listitem>
+      </itemizedlist>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/file-properties.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Dosya Özellikleri</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Dosya özellikleri penceresini açmak için, şu işlemleri yapmalısınız:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Araştırmak ya da değiştirmek istediğiniz dosya veya dizini seçmelisiniz. Birden fazla seçim yapıp dosya özelliklerini açmanız mümkün değildir.</para>
+        </listitem>
+        <listitem>
+          <para>Şunu gerçekleştirmelisiniz: <itemizedlist>
+              <listitem>
+                <para>Öncelikle <menuchoice><guimenu>Dosya</guimenu><guimenuitem>Özellikler...</guimenuitem></menuchoice> menüsünü açmalısınız.</para>
+              </listitem>
+              <listitem>
+                <para>Seçtiğiniz öğeye sağ tıklayıp <guimenuitem>Özellikler...</guimenuitem> seçeneğine tıklamalısınız.</para>
+              </listitem>
+              <listitem>
+                <para>Ayrıca bu işlemi <keycombo><keycap>Alt</keycap><keycap>Enter</keycap></keycombo> tuşları ile de gerçekleştirebilirsiniz.</para>
+              </listitem>
+            </itemizedlist></para>
+        </listitem>
+      </orderedlist>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="using-removable-media">
+    <title>Kaldırılabilir Ortam Kullanımı</title>
+
+    <sect2 id="accessing-removable-media">
+      <title>Kaldırılabilir Ortama Erişim</title>
+
+      <para>Thunar eğer <ulink type="http" url="http://freedesktop.org/wiki/Software_2fhal">HAL</ulink> desteği ile derlenmişse veya <ulink type="http" url="http://www.freebsd.org/">FreeBSD</ulink> kullanıyorsanız kaldırılabilir ortamı desteklemektedir. Buna rağmen FreeBSD 6.0 veya daha yeni sürümünü kullanıyorsanız, HAL kullanmanız tavsiye edilmektedir.</para>
+
+      <sect3 id="to-mount-media">
+        <title>Ortam Bağlama İşlemi</title>
+
+        <para>Ortam <emphasis>bağlamak</emphasis> dosya sistemini ortama erişime uygun kılmak içindir. Ortam bağladığınız zaman, bağladığınız ortam dosya sisteminizin alt dizini olarak sisteminize eklenecektir.</para>
+
+        <para>Ortama erişmek için, ortamı uygun cihaza yerleştirmelisiniz ya da bağlamalısınız (mesela USB stick). Sol bölümde ortamın yer aldığını göreceksiniz. Eğer <application>xfdesktop</application> çalışıyorsa ve <guilabel>Dosya/çalıştırıcı simgelerini</guilabel> çalıştırmak için ayarlanmışsa bu ortam öğesi masaüstünüzde de yer alacaktır.</para>
+
+        <para>Ortamı bağlamak için, ortama ilişkin nesneye tıklamalısınız. Mesela, bir disketi bağlamak için, <guilabel>Disket Sürücü</guilabel> nesnesine tıklamalısınız. Dosya yöneticisi ortamın dosya sistemini, dosya sisteminizin hiyerarşisine ekleyecektir ve ana bölümde diskette bulunan içeriği gösterecektir.</para>
+      </sect3>
+
+      <sect3 id="to-eject-media">
+        <title>Ortamı Çıkarmak</title>
+
+        <para>Eğer ortam sürücüsü motorlu ise (mesela CD-ROM), sol kısımda sağ tıklayıp,  <guilabel>Çıkar</guilabel> seçeneği ile ayırabilirsiniz. Eğer sürücü motorlu değil ise (mesela disket veya USB stick ise), sağ tıklayıp <guilabel>Ayır</guilabel> seçeneği ile ayırabilirsiniz. Bu seçeneği seçtikten sonra güvenle kaldırabileceğinize dair bir uyarı alacaksınız.</para>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/removable-media-unmount.png" format="PNG"/>
+            </imageobject>
+
+            <textobject>
+              <phrase>Ayırma uyarısı</phrase>
+            </textobject>
+          </mediaobject>
+        </screenshot>
+
+        <para>Buna karşın bu bilgilendirme sadece <application>libnotify</application> desteği var ise ve notification daemon kurulu ise gösterilecektir. Xfce için bir notification daemon'a <ulink type="http" url="http://goodies.xfce.org/projects/applications/notification-daemon-xfce">Xfce Goodies Project</ulink> sayfasından ulaşabilirsiniz. Eğer bilgilendirme desteği yok ise, açılır menü kaybolana kadar bekleyin ve ortamı bilgisayarınızdan çıkarın.</para>
+
+        <para>Eğer bir uygulama ortamdaki bir dosyaya erişim halinde ise ortamı ayıramayacağınızın bilincinde olmalısınız. Ayrıca dosya yöneticisi ortamı çıkarmak istemiyorsa, ortama erişen bütün uygulamaları kapattığınızdan emin olmalısınız. Ayrıca <application>Terminal</application> uygulamasını kullanarak da ortama erişmediğinizden emin olmalısınız.</para>
+
+        <para>Ortamı çıkarmadan önce ayırdığınızdan emin olmalısınız. Disketi ayırmadan disket sürücünüzden çıkarmamalısınız. Aynı durum USB stick için de söz konusudur. Eğer ortamı güvenli bir şekilde ayırmadan çıkarırsanız veri kaybına uğrayabileceğiniz gibi sisteminizde hasara da yol açabilirsiniz.</para>
+      </sect3>
+    </sect2>
+
+    <sect2 id="management-of-removable-drives-and-media">
+      <title>Ayırılabilir Sürücü ve Ortam Yönetimi</title>
+
+      <para>Thunar <ulink type="http" url="http://www.foo-projects.org/~benny/projects/thunar-volman/index.html">thunar-volman</ulink> kullanarak da otomatik olarak ayrılabilir sürücü ve ortam yönetimini sağlamaktadır. Ancak bu özellik HAL desteği gerektirmektedir.</para>
+
+      <para>Eğer HAL desteği mevcut ise ve <application>thunar-volman</application> sisteminizde kurulu ise, Thunar'ın <guilabel>Bölüm Yönetimi</guilabel> özelliğinden faydalanabilirsiniz. Öte yandan, dosya yöneticisi özelliklerini açıp, <guilabel>Gelişmiş</guilabel> sayfasına gidip, <guilabel>Birim Yönetimini Etkinleştir</guilabel> seçeneğini kontrol edebilirsiniz.</para>
+
+      <para>Sonraki aşama ise, ayrılabilir sürücü ve ortamın yönetimini isteklerinize göre özelleştirmek olacaktır. <guilabel>Bölüm Yönetimi</guilabel> bölümünde <guilabel>Yapılandır dKald yap</guilabel></para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/removable-drives-and-media.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Ayrılabilir Sürücü ve Ortam</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Eğer daha önce <application>gnome-volume-manager</application> kullanmış iseniz, aynı kullanım rahatlığını <application>gnome-volume-manager</application> benzeri arabirim ile de yaşabilirsiniz. Seçenekler kolay erişim sağlanması bakımından ayrı aygıt kategorilerine ayrılmıştır.</para>
+
+      <para><guilabel>Storage</guilabel> sayfası en önemli seçenekleri barındırır. Bu seçenek isminden belli olduğu gibi sadece depolama aygıtlarına erişim için kullanılır. <guilabel>Removable Storage</guilabel> seçenekleri aşağıda açıklanacaktır.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Ayrılabilir sürücüleri takıldığı zaman bağla</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği ayrılabilir sürücüleri (harici diskler veya USB stick) otomatik olarak bağlamak istiyorsanız seçmelisiniz.</para>
+            <para>Bu seçenek ayrılabilir sürücü kullanmak istiyorsanız muhakkak seçili olmalıdır. Mesela, bu özelliği kaldırırsanız, taşınabilir müzikçalarlar otomatik olarak tanınmayacaktır. <guilabel>Multimedia</guilabel> sekmesinde <guilabel>Play music files when connected</guilabel> seçeneği işaretli ise tanımlanan komut çalışmayacaktır.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Ayrılabilir sürücü yerleştirildiğinde bağla</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği optik sürücülerin (CDROM veya DVD) otomatik olarak bağlanmasını istiyorsanız seçiniz.</para>
+            <para>Bu seçenek optik sürücü yönetimi için gereklidir. Mesela, bu özelliği devredışı bırakırsanız, optik sürücüye ilişkin otomatik çalıştırma özelliği kullanılmaz olacaktır ve <guilabel>Auto-run programs on new drives and media</guilabel> özelliği iş görmeyecektir.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Ayrılabilir ortam yerleştirildiğinde dosyaları görüntüle</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği ortamı bilgisayarınıza yerleştirdiğinizde otomatik olarak ortamın barındırdığı dosyaları görüntülemek için kullanabilirsiniz. Eğer başka bir işlem atanmamışsa veya atanmış bir işlemi göz ardı ederseniz sadece içerik gösterilecektir. Mesela bir otomatik çalıştırılabilir betik içeren bir CD-ROM yerleştirdiğinizde  <guilabel>Auto-run programs on new drives and media</guilabel> seçeneği işaretli ise, önce bunu çalıştırmak isteyip istemediğiniz sorulacaktır. Eğer göz ardı et seçeneğini kullanırsanız, CD-ROM içeriği görüntülenecektir.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Yeni sürücülerde ve ortamdaki uygulamaları otomatik çalıştırma</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği ayrılabilir sürücü ve ortamlarda otomatik çalıştırma desteği için kullanabilirsiniz. Otomatik çalıştırma mekanizmasının nasıl işlediğini gösteren belge için <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop Application Autostart Specification</ulink> adresini ziyaret etmelisiniz. Güvenlik açısından sizden daima otomatik çalıştırma öncesi onay istenecektir.</para>
+            <para>Eğer sisteminizde <ulink type="http" url="http://www.winehq.org/">WINE</ulink> kurulu ise, otomatik çalıştırma mekanizması <filename>autorun.exe</filename> dosyasını WINE kullanarak çalıştırmayı deneyecektir. </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Yeni sürücülerde ve ortamdaki dosyaları otomatik açma</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği ayrılabilir sürücü ve ortamları otomatik açmak için kullanabilirsiniz. Bu mekanizma hakkında daha detaylı bilgiye <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop Application Autostart Specification</ulink> sayfasından ulaşabilirsiniz. Güvenlik açısından, otomatik açma öncesi sizden onayınız istenecektir.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Kalan seçenekler bilgisayarınıza bir sürücü bağladığınızda ya da bir ortam taktığınızda çalıştırılacak komutları belirlemenizi sağlar. Çalıştıracağınız komut için üç özel değişken belirleyebilirsiniz. Bunlar:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><literal>%d</literal></term>
+          <listitem>
+            <para>Çalıştırılacak komut içerisinde <literal>%d</literal> yer alıyorsa, bu değer aygıtın dosya yolu ile değiştirilecektir. Mesela, bilgisayarınıza USB stick bağladığınızda yol <filename>/dev/da0s1</filename> veya <filename>/dev/sda1</filename>. </para>
+            <para>Eğer aygıt dosyası ile ilintili bir aygıt yoksa veya aygıt dosyası herhangi bir sebepten dolayı bulunamıyorsa, <literal>%d</literal> değeri boş bir dizge ile değiştirilecektir.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>%h</literal></term>
+          <listitem>
+            <para>Çalıştırılacak komut içerisinde <literal>%h</literal> değişkeni yer alıyorsa bu değer HAL UDI ile yer değiştirecektir.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>%m</literal></term>
+          <listitem>
+            <para>Çalıştırılacak komut içerisinde <literal>%m</literal> değişkeni yer alıyorsa bu değer bağlama noktası ile değiştirilecektir. Eğer aygıt bağlanabilen bir aygıt değilse (mesela klavye veya yazıcı ise) veya otomatik bağlama devredışı ise, <literal>%m</literal> değeri boş dizge ile değiştirilecektir.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <sect3 id="troubleshooting-the-volume-manager">
+        <title>Bölüm Yöneticisi İçin Sorun Giderme İpuçları</title>
+
+        <para>Bölüm yöneticisi hakkında sorun giderme konusunda faydalı ipuçları sunmaktadır.</para>
+
+        <orderedlist>
+          <listitem>
+            <para><application>Thunar</application> uygulamasının sistem servisi olarak çalıştığından emin olun. Bölüm yöneticisi servis olmadığından buna ihtiyaç duymaktadır. Xfce, öntanımlı olarak <application>Thunar</application> uygulamasını açılışta sistem servisi olarak çalıştırır. Eğer sistem servisi herhangi bir sebepten dolayı kapatılmış ise, menüdeki <guilabel>Çalıştır</guilabel> seçeneğini (klavye kısayolu <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> veya masaüstüne sağ tıklayıp <guilabel>Çalıştır</guilabel> seçeneği) kullanarak <literal>Thunar --daemon</literal> yazıp <guibutton>Çalıştır</guibutton> seçeneğine tıklamalısınız.</para>
+          </listitem>
+
+          <listitem>
+            <para>Aygıtı taktıktan sonra ya da ortamı yerleştirdikten sonra <application>thunar-volman</application>  uygulamasını <application>Terminal</application> uygulamasını kullanarak konsoldan çalıştırmayı deneyebilirsiniz. Öncelikle, <application>lshal</application> veya <application>hal-device</application> kullanarak aygıtın HAL UDI değerini öğrenmelisiniz. UDI değerini öğrendikten sonra, <application>Terminal</application> uygulaması içerisinde <literal>thunar-volman --device-added &lt;aygıtın-udi-değeri&gt;</literal> komutunu vermelisiniz ve çıktıyı takip ederek hatayı anlamaya çalışmalısınız.</para>
+          </listitem>
+        </orderedlist>
+
+        <para>Eğer hala çalışmıyorsa, <ulink type="http" url="http://forum.xfce.org/">Xfce Forumu</ulink> veya <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">Thunar geliştirici listesini</ulink> kullanarak yardım isteyebilirsiniz.</para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="preferences">
+    <title>Dosya Yönetimi Seçenekleri</title>
+
+    <para><guilabel>Dosya Yöneticisi Tercihleri</guilabel> menüsünü <application>Thunar</application> dosya yöneticisini ayarlamak için kullanabilirsiniz. Tercihler penceresini açmak için menüden <menuchoice><guimenu>Düzenle</guimenu><guimenuitem>Tercihler...</guimenuitem></menuchoice> seçeneğine tıklamalısınız ya da Xfce4 Ayarları menüsündeki <guibutton>Dosya Yöneticisi</guibutton> öğesini kullanmalısınız.</para>
+
+    <para><guilabel>Dosya Yöneticisi Tercihleri</guilabel> dört bölüme ayrılmıştır ve her bölüm değişik seçenekler barındırmaktadır ve her biri aşağıdaki bölümde açıklanacaktır. Tercihleri şu kategoriler altında düzenleyebilirsiniz:</para>
+
+    <itemizedlist>
+      <listitem><para>Öntanımlı görünüm ayarları.</para></listitem>
+      <listitem><para>Yan pencere bölümü ayarları.</para></listitem>
+      <listitem><para>Dosya yöneticisi pencerelerinin davranışı.</para></listitem>
+      <listitem><para>Dosya yöneticisi gelişmiş özellikleri.</para></listitem>
+    </itemizedlist>
+
+    <para>Thunar ayrıca birçok <emphasis>gizli seçenek</emphasis> barındırır ancak menü pencerelerini basit tutmak amacıyla bunları Tercihler penceresinde göstermemektedir. <ulink type="http" url="http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc"><filename>README.thunarrc</filename></ulink> dosyasını okuyarak bu gizli seçenekler hakkında bilgi sahibi olabilirsiniz.</para>
+
+
+    <sect2 id="preferences-views">
+      <title>Görüntü Seçenekleri</title>
+
+      <para>Öntanımlı görünüm belirleyebilir, sıralama seçeneklerini ve görünüm seçeneklerini düzenleyebilirsiniz. Ayrıca dosya türlerinin önizlemesinin gösterilip gösterilmeyeceğini belirleyebilirsiniz.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-views.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Görüntü Seçenekleri</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Yeni dizinleri şununla listele</guilabel></term>
+          <listitem>
+            <para>Dizinler için öntanımlı görünümü belirlemenizi sağlar. Yeni bir pencere açtığınızda belirlediğiniz görünüm kullanılacaktır. Bu simge görünümü, detaylı liste veya sıralı liste biçiminde olabilir. Ayrıca <guilabel>Önceki Aktif Görünüm</guilabel> seçeneği ile en son kullandığınız görünüm kullanılabilir.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Dizinleri dosyalardan önce listele</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği eğer dizinlerin dosyalardan önce gösterilmesini istiyorsanız kullanabilirsiniz.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Küçük resimleri göster</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği resim dosyalarının küçük resimlerini göstermek için kullanabilirsiniz. Dosya yöneticisi her bir dizin için küçük resim dosyalarını kullanıcının ev dizinindeki <filename role="directory">.thumbnails</filename> dizininde barındırmaktadır.</para>
+            <para>Eğer temel küçük resim fonksiyonlarını daha çok dosya desteği ile birlikte geliştirmek istiyorsanız, <xref linkend="thumbnailers"/> bağlantısını incelemeniz gerekmektedir.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Simgelerin yanında yazı</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği dosya ve dizin isimlerini dosya simgelerinin altında göstermek yerine yanında göstermek için kullanabilirsiniz.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-side-pane">
+      <title>Yan Pencere Gözü Tercihleri</title>
+
+      <para>Bu kısımda yan pencere gözü ve ağaç görünümü tercihlerini ayarlayabilirsiniz.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-side-pane.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Yan Pencere Gözü Tercihleri</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Yan pencere gözü öntanımlı olarak sistem dizinlerinize kısayolları barındırır veya ayarlarsanız ağaç görünümünü kullanır. Bu bölümde kısayolların ve ağaç görünümün simge boyutunu ayarlayabilirsiniz. Ayrıca amblemlerin gösterilip gösterilmeyeceğini belirleyebilirsiniz.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Simge Boyutu</guilabel></term>
+          <listitem>
+            <para>Yan gözde gösterilecek simge boyutunu <guilabel>Çok Küçük</guilabel> (16x16 piksel boyutlarında) değeri ile  <guilabel>Çok Büyük</guilabel> (128x128 piksel boyutlarında) değeri arasında ayarlayabilirsiniz.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Simge Amblemlerini Göster</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği yan pencere gözünde amblemleri göstermek için kullanabilirsiniz. Dizinlere amblem belirlemek için <guilabel>Özellikler</guilabel> menüsünü kullanabilirsiniz. Bu işlemi gerçekleştirebilmek için, amblem atamak istediğiniz dizini seçip menüden <menuchoice><guimenu>Dosya</guimenu><guimenuitem>Özellikler...</guimenuitem></menuchoice> öğesine tıklayabilir veya dizine sağ tıklayıp açılan menüden <menuchoice><guimenuitem>Özellikler...</guimenuitem></menuchoice> öğesine tıklayabilirsiniz.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-behavior">
+      <title>Davranış Tercihleri</title>
+
+      <para>Bu seçenek yardımı ile dosya yöneticisinin dosya ve dizinler ile etkileşimini düzenleyebilirsiniz.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-behavior.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Davranış Tercihleri</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Öğeleri aktif etmek için tek tıklama</guilabel></term>
+          <listitem>
+            <para>Bu seçeneği eğer tek tıklama ile dosyaların işlemlerini gerçekleştirmek istiyorsanız kullanabilirsiniz. Bu seçeneği seçtiğiniz takdirde, o dosyanın üzerine geldiğinizde öğenin isminin altı çizilecektir ve kısa bir süre  gecikmeden sonra otomatik olarak seçilecektir.</para>
+            <para>Gecikme süresini aşağıdan belirleyebilirsiniz.  Ayrıca aktif değil seçeneğinin üzerine getirerek otomatik seçimi kapatabilirsiniz.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Öğeleri aktif etmek için çift tıklama</guilabel></term>
+          <listitem>
+            <para>Bu seçenek yardımı ile bir dosya için tanımlanan işlemi çift tıklama ile gerçekleştirebilirsiniz. Ayrıca öğeyi tek tıklama ile seçebilirsiniz.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-advanced">
+      <title>Gelişmiş Seçenekler</title>
+
+      <para>Dosya yöneticisinin gelişmiş özelliklerini kullanabilirsiniz.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-advanced.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Gelişmiş Seçenekler</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Dizin İzinleri</guilabel></term>
+          <listitem>
+            <para>Bir dizinin izinlerini değiştirmek için <guilabel>Özellikler</guilabel> menüsünü kullanabilirsiniz. <application>Thunar</application> dosya yöneticisini dizin izinlerini değiştirirken her zaman sizden onay istemesini, sadece o dizinde değiştirmesini veya o dizinin alt dizinlerinin izinlerini de değiştirmesi için ayarlayabilirsiniz.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Birim Yönetimi</guilabel></term>
+          <listitem>
+            <para><application>Thunar</application> eğer HAL desteği ile kurulmuşsa ve <application>thunar-volman</application> paketi de kurulu ise, entegre bölüm yöneticisini de kullanabilirsiniz. Konu hakkında detaylı bilgiye ulaşmak için <xref linkend="management-of-removable-drives-and-media"/> sayfasını inceleyebilirsiniz.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="customizing-thunar">
+    <title>Thunar'ı Özelleştirme</title>
+
+    <para>Bu bölümde dosya yöneticisini kendi istekleriniz doğrultusunda nasıl özelleştireceğiniz anlatılmaktadır.</para>
+
+
+    <sect2 id="sendto">
+      <title>"Gönder" Menüsü</title>
+
+      <para>Thunar dosya ve dizinleri belirli noktalara taşımak için <guilabel>Gönder</guilabel> menüsünü barındırmaktadır. <guilabel>Gönder</guilabel> menüsüne erişmek için <menuchoice><guimenu>Dosya</guimenu><guimenuitem>Gönder</guimenuitem></menuchoice> seçeneğini kullanabileceğiniz gibi, göndermek istediğiniz dizin veya dosyaya sağ tıklayarak <menuchoice><guimenuitem>Gönder</guimenuitem></menuchoice> seçeneğini kullanmanızı sağlamaktadır.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/sendto-menu.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>"Gönder" Menüsü</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Öntanımlı olarak <guilabel>Gönder</guilabel> menüsü <guilabel>Masaüstü (Bağlantı Oluştur)</guilabel> seçeneği ile belirtilen dosya veya dizin için masaüstünde kısayol oluşturmaktadır. Ayrıca, eğer <guilabel>Kısayol bölümü</guilabel> etkin ise, o dizin için kısayol bölümünde kısayol oluşturmak için <guilabel>Yan pencere gözü (Kısa yol yarat)</guilabel> seçeneğini sunmaktadır. Öte yandan, ayrılabilir ortamlara da dosya gönderme işlemi bu menü yardımıyla yapılabilir. Thunar otomatik olarak ayrılabilir ortamı da gönderilebilir hedefler arasına almaktadır. </para>
+
+      <para><application>Thunar</application> ayrıca <application>E-posta eklentisi</application> ile menüye eklenen <application>E-posta alan</application> seçeneği ile e-posta programında alıcısı tanımlanmış olmakla birlikte dosyayı eklenmiş olarak tanımlayan bir özellik sunmaktadır. Eğer seçim en az bir dizin içeriyorsa bunu ZIP arşivine koyup o şekilde hazırlamaktadır. Eğer birden çok dosya gönderilecekse ve bunların toplam boyutu 200Kib üzerinde ise, kullanıcıya dosyaların ZIP arşivine koyması için onay istemekte ve bu dosyaları ZIP arşivine koyup göndermektedir.</para>
+
+      <para><application>Thunar</application> uygulamasının diğer özellikleri gibi <guilabel>Gönder</guilabel> menüsü <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink> standardına uygun olmak kaydıyla genişletilebilir. Bu dosyalar <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> klasörüne kopyalanmalıdır. (<literal>$XDG_DATA_DIRS</literal> değişkeni hakkında bilgi almak için <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> sayfasını inceleyebilirsiniz)</para>
+
+      <para><literal>MimeType</literal> ile hedef <filename>.desktop</filename> dosyası tanımlanmaktadır ve bu tanımlama sonucunda gerçekleştirilecek işlem <guilabel>Gönder</guilabel> menüsünde yer alacaktır. Mesela, <ulink type="http" url="http://flickr.com/">Flickr</ulink> sitesine JPEG biçimindeki resimleri yüklemek için,  <literal>MimeType=image/jpeg;</literal> değeri kullanılmalıdır. Eğer <literal>MimeType</literal> belirlemezseniz yapmak istediğiniz işlem bütün dosyalar için geçerli olacaktır. </para>
+
+      <para>Örnek bir <application>postr</application> uygulaması aşağıdaki örnekte gösterilmektedir.</para>
+
+<programlisting>
+# postr.desktop - Integrate postr into
+#                 the "Send To" menu.
+[Desktop Entry]
+Type=Application
+Version=1.0
+Encoding=UTF-8
+TryExec=postr
+Exec=postr %F
+Icon=postr
+Name=Flickr
+MimeType=image/jpeg;</programlisting>
+
+      <para>Bu dosyayı <filename role="directory">~/.local/share/Thunar/sendto/</filename> altına kopyalarsanız (dizin yok ise oluşturmalısınız), JPEG dosyaları için <guilabel>Gönder</guilabel> menüsünde <guilabel>Flickr</guilabel> seçeneğini görebilirsiniz.</para>
+
+      <para><ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/sendto_menu">Thunar Project Wikisi</ulink>  <guilabel>Gönder</guilabel> menüsü için birçok örnek barındırmaktadır. Kendi oluşturduğunuz örnekleri de bu wiki sayfasında paylaşabilirsiniz.</para>
+    </sect2>
+
+
+    <sect2 id="thumbnailers">
+      <title>Önizleme Oluşturucular</title>
+
+      <para>Thunar küçük uygulamalar yardımıyla belirli dosyalar için önizlemeler oluşturmakta ve dosya içeriğinin önizlemesini göstermektedir. Bu küçük araçlar önizleme oluşturucusu olarak isimlendirilmektedir. Thunar öntanımlı olarak resimler ve yazıtipleri için  önizleme desteği sunmaktadır. Ayrıca <literal>gconf</literal> desteği ile kurulmuşsa GNOME için kullanılan önizleme oluşturucular da kullanılabilir. Kullanıcılar bu önizleme oluşturucuların fonksiyonunu genişletmek isteyebilir.</para>
+
+      <para>Önizleme oluşturucu yazmak istiyorsanız, bir girdi ve <ulink type="http" url="http://jens.triq.net/thumbnail-spec/creation.html#AEN139">Thumbnail Management Standard</ulink> adresinde belirtilen standartlara uygun bir PNG çıktı dosyası veren bir uygulama çalıştırmalısınız. Ayrıca programınız önizleme boyutunu ayarlamanızı da sağlamalıdır. Büyük bir önizleme dosyası dosya listeleme işlemini yavaşlatabilir.</para>
+
+      <para>Önizleme dosyaları oluşturma işlemi bittikten sonra, önizleme oluşturu dosyanızı kayıt etmelisiniz böylece Thunar onu bulup kullanabilecektir. Yapmanız gereken tek şey, önizleme oluşturucusu için bir açıklama dosyasını  (yani <filename>.desktop</filename> dosyası) <filename role="directory">$XDG_DATA_DIRS/thumbnailers/</filename> altına koymaktır. </para>
+
+      <sect3 id="thumbnailer-desktop-file-format">
+        <title>Önizleme Oluşturucu Dosya Biçimi</title>
+
+        <para>Önizleme oluşturucu açıklaması <ulink type="http" url="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Format</ulink> standardını kullanmaktadır. </para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=Your Thumbnailer
+MimeType=your-supported/mime-type;
+X-Thumbnailer-Exec=your-thumbnailer %i %o %s</programlisting>
+
+        <para><literal>Version</literal> ve <literal>Encoding</literal> Desktop Entry Specification standartları tarafından himaye edilmektedir. Yukarıdaki örnekteki değerleri kullanmanız yeterlidir. <literal>Type</literal> kısmı mutlaka <literal>X-Thumbnailer</literal> değerini içermelidir, aksi takdirde önizleme oluşturucunuz tanınmayacaktır. <literal>Name</literal> değeri önizleme oluşturucunuzu tanımlamaktadır.</para>
+
+        <para><literal>X-Thumbnailer-Exec</literal> kısmı çalıştırılacak önizleme oluşturucusunu tanımlamak için kullanılmaktadır. Tanınan alan kodları şunlardır:</para>
+
+        <variablelist>
+          <varlistentry>
+            <term><varname>%i</varname></term>
+            <listitem>Önizleme oluşturacak girdi dosyasının yolu. Önizleme oluşturucusunun çalıştırılacağı bir dizine bağlı olabileceği gibi mutlak yol da kullanılabilir.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%o</varname></term>
+            <listitem>Oluşturulacak önizlemelerin saklanacağı çıktı dosyasının yolu. Çıktı dosyası, önizleme standartlarına göre geçerli bir PNG dosyası olarak yazılmalıdır. Çıktı yolu üçüncü parti yazılımları çalıştırırken sorunla karşılaşmamak için <literal>.png</literal> ile bitmemelidir.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%s</varname></term>
+            <listitem>Oluşturulacak önizleme dosyasının piksel boyutu. Bu parametre isteğe bağlıdır.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%u</varname></term>
+            <listitem><literal>%i</literal> ile benzerdir fakat dosyanın URI değeri ile değiştirilmektedir. Bu özellik GNOME ile uyum sağlamak için eklenmiştir.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%%</varname></term>
+            <listitem>Tek <literal>%</literal> ile değiştirilecektir.</listitem>
+          </varlistentry>
+        </variablelist>
+
+        <para><literal>%o</literal>, <literal>%i</literal> ve <literal>%u</literal> değişkenlerini barındırmalıdır, aksi takdirde önizleme oluşturucusu bir işe yaramayacaktır.</para>
+
+        <para>Önizleme için <literal>MimeType</literal> - noktalı virgül ile ayrılan - MIME türlerini listelemektedir.</para>
+      </sect3>
+
+      <sect3 id="eps-thumbnailer-example">
+        <title>Örnek EPS Önizleyicisi</title>
+
+        <para>Bu örnek <filename>.eps</filename> dosyaları için önizleme dosyasının nasıl oluşturulacağını göstermektedir. İşlem için ImageMagick paketi ile birlikte gelen <command>convert</command> komutu kullanılmaktadır. Öncelikle <command>convert</command> ile istenilen boyutta bir önizleme oluşturulacaktır.</para>
+
+        <programlisting>
+#!/bin/sh
+#
+# eps-thumbnailer - Example thumbnailer script for EPS files.
+#
+# Usage: esp-thumbnailer eps-file png-file size
+#
+
+# command line parameters
+ifile=$1
+ofile=$2
+size=$3
+
+# invoke convert (ImageMagick)
+exec convert "eps:$ifile" -scale "$sizex$size" "png:$ofile"</programlisting>
+
+        <para>Bu betiği <filename>eps-thumbnailer</filename> ismi ile kaydedip, çalıştırılabilir yaptıktan sonra <filename role="directory">/usr/local/bin</filename> altına kopyalamalısınız.</para>
+
+        <screen>
+$ chmod +x eps-thumbnailer
+$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer</screen>
+
+        <para>Daha sonra,  <filename>eps-thumbnailer.desktop</filename> isminde bir açıklama dosyası oluşturup şu şekilde görünmesini sağlamalısınız:</para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=EPS Thumbnailer
+TryExec=convert
+MimeType=image/x-eps;
+X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s</programlisting>
+
+        <para>Bu dosya <filename role="directory">/usr/local/share/thumbnailers</filename> altına kopyalanmalıdır (eğer bu dizin yoksa oluşturmalısınız)</para>
+
+        <screen>
+$ sudo install -d /usr/local/share/thumbnailers
+$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop</screen>
+
+        <para><filename>eps-thumbnailer.desktop</filename> dosyası özel anahtar olan ve yararlı bir önizleme oluşturmanızı sağlayacak <literal>TryExec</literal> özelliğini kullanmaktadır. Eğer <command>convert</command> belirtilmezse betik bir işe yaramayacaktır.</para>
+
+        <para>Son aşama ise, önizleme önbelleğini tekrar oluşturmak içindir, böylece Thunar önizlemeyi alacaktır. Önizleme önbelleği <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> altında bulunmaktadır. Önizleme önbelleği Thunar tarafından otomatik olarak tekrar oluşturulmaktadır ancak isterseniz  <filename>thunar-vfs-update-thumbnailers-cache-1</filename> aracı ile tekrar oluşturulmasını sağlayabilirsiniz. Bu araç <filename role="directory">libexec</filename> içerisinde yer alır.  Eğer Thunar <filename role="directory">/usr</filename> altında kurulu ise, bu şu şekilde çalıştırabilirsiniz:</para>
+
+        <screen>$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1</screen>
+
+        <para>Bu komutu mutlaka kendi kullanıcınızdan çalıştırmalısınız, eğer root olarak çalıştırırsanız, önizleme dosyaları sistem geneline yayılacaktır.</para>
+
+        <para>Eğer Thunar FAM veya Gamin servislerinden herhangi birisinin desteği ile derlenmişse otomatik olarak önizlemeleri gösterecektir. Göstermez ise Thunar'ı tekrar başlatmak için şu komutu verebilirsiniz:</para>
+
+        <screen>$ Thunar -q</screen>
+
+        <para>komutunu vererek çalışan uygulamayı kapatıp, tekrar çalıştırabilirsiniz.</para>
+      </sect3>
+
+      <sect3 id="cleaning-up-thumbnails">
+        <title>Önizlemeyi Temizleme</title>
+
+        <para><ulink type="http" url="http://jens.triq.net/thumbnail-spec/index.html">Thumbnail Management Standard</ulink> ilkelerine uyarak oluşturulan önizlemeler <filename role="directory">~/.thumbnails/</filename> dizininde barındırılmaktadır. Oluşturulan önizlemeleri test etmek için, önizleme belleğini temizlemek için şu komutu verebilirsiniz:</para>
+
+        <screen>$ rm -rf ~/.thumbnails/</screen>
+
+        <para>böylece ev dizininizde yer açmış olursunuz. Bütün bilgiler sisteminizde bulunan dosyalar tarafından oluşturulduğu için herhangi bir veri kaybı yaşamazsınız.</para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="advanced-topics">
+    <title>Gelişmiş Başlıklar</title>
+
+
+    <sect2 id="to-bulk-rename-files">
+      <title>Toplu Yeniden Adlandırma İşlemi</title>
+
+      <para><emphasis>Çoklu dosyaları yeniden adlandırma</emphasis> işlemi birden fazla dizin ve dosyayı yeniden adlandırmak için kullanılmaktadır. Thunar çoklu yeniden adlandırma desteği sunmaktadır. <command>Thunar -B</command> komutu ile yapılabileceği gibi, programın içinden de yapılabilir. Programın içinden yapmak için birden fazla dosyayı seçip <keycombo><keycap>F2</keycap></keycombo> tuşuna basabilirsiniz veya menüden <menuchoice><guimenu>Düzenle</guimenu><guimenuitem>Yeniden Adlandır...</guimenuitem></menuchoice> öğesini seçebilirsiniz.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/bulk-rename.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Çoklu dosyaları yeniden adlandırma</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para><emphasis>Çoklu dosyaları yeniden adlandırma</emphasis> işlemi dosya isimleri veya uzantılarını değiştirmeye ya da her ikisini de değiştirmenizi sağlar. <application>Thunar</application> şu özellikleri sunmaktadır:</para>
+
+      <itemizedlist>
+        <listitem><para>Karakter silme.</para></listitem>
+        <listitem><para>Numaralandırma.</para></listitem>
+        <listitem><para>Tarih ve Saat Ekleme</para></listitem>
+        <listitem><para>Yükleme ve Üstüne Yazma</para></listitem>
+        <listitem><para>Arama ve Değiştirme</para></listitem>
+        <listitem><para>Büyük ve küçük harfe dönüştürme</para></listitem>
+      </itemizedlist>
+
+      <para>İlave <emphasis>Çoklu dosyaları yeniden adlandırma</emphasis> betikleri eklenti olarak kurulabilir. <ulink type="http" url="http://thunar.xfce.org/plugins.html">Thunar eklentileri</ulink> sayfasını kontrol edebilirsiniz. <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/bulk_renamer">Thunar Project Wikisi</ulink> bu konuda daha açıklayıcı bilgileri barındırmaktadır. </para>
+    </sect2>
+
+
+    <sect2 id="the-unix-file-system">
+      <title>UNIX Dosya Sistemi</title>
+
+      <para>Thunar dosya yöneticisi sadece işini yaparak kullanıcıya ekstra bir işlem yaptırmamaktadır. Ancak yine de kullanıcının dosya sistemi hakkında bilgi sahibi olması beklenmektedir. Bu bölüm UNIX ve Linux da dahil olmak üzere türevlerinin dosya sistemi sistemi hakkında bilgi vermeye yöneliktir.</para>
+
+      <sect3 id="folders-and-paths">
+        <title>Dizinler ve Yollar</title>
+
+        <para>UNIX dosya sisteminde bütün dizinler basit bir üst dizine bağlıdır. Bu dizin <emphasis>kök dizin</emphasis> olarak adlandırılmaktadır ve Thunar üzerinde <guilabel>Dosya Sistemi</guilabel> olarak görüntülenmektedir. Dosya sistemi üzerinde gitmek istediğiniz dizine buradan ulaşabilirsiniz.</para>
+
+        <para>Herhangi bir dosya veya dizin <emphasis>yoluna</emphasis> göre tanımlanabilir. Yol, hedef dizin ya da dosyaya ulaşmak için üzerinden geçtiğiniz kısıma verilen isimdir. Örneğin, <filename role="directory">/home/luke</filename> dizini <filename role="directory">home</filename> dizininin alt dizinidir. <filename>/home/luke/myfile.txt</filename> dosyasına erişim için, kök dizinden home dizininine oradan da luke dizinine geçilmektedir. Bu da dosya yolunu ifade etmektedir.</para>
+
+        <para>Her kullanıcı kişisel dosyaları ve ayarları için kendi dizinine sahiptir. Bu dizin <emphasis>ev dizini</emphasis> olarak adlandırılmaktadır. Thunar her kullanıcı için özel bir simge ile bu ev dizinini göstermektedir. Ev dizini Windows işletim sistemindeki <guilabel>Belgelerim</guilabel> dizini ile benzerlik taşımaktadır. Ev dizinleri <filename role="directory">/home</filename> dizini altında yer alır ve her kullanıcının ismine göre <filename role="directory">/home/kullanıcıismi</filename> şeklinde dizin oluşturulur. </para>
+      </sect3>
+
+      <sect3 id="file-types">
+        <title>Dosya Türleri</title>
+
+        <para>UNIX ve benzeri sistemlerde herşeyin bir dosya olduğunu duymuş olabilirsiniz. Bu birçok güncel  UNIX sistemi için doğrudur. Aygıtlar bile özel dosyalar biçimindedir. İlk bakışta ilgi çekici bir özellik gibi görünmese de bu UNIX ve benzeri işletim sistemlerinin güçlü bir özelliğidir. Diğer işletim sistemleri yeni teknolojiler için yeni konseptler gerektirse bile UNIX ve benzeri işletim sistemlerinin böyle bir konsept yenilemesine ihtiyacı bulunmamaktadır.</para>
+
+        <para>UNIX dosya sisteminde dört önemli dosya türü bulunmaktadır:</para>
+
+        <sect4 id="file-types-ordinary-files">
+          <title>Sıradan Dosyalar</title>
+
+          <para>Sıradan dosyalar, metin dosyası, program veya başka türlü veri olabilir. Başka türlü veri, resim dosyaları, çoklu ortam dosyaları, ofis dokümanları olabilir. <emphasis>dosya</emphasis> sıradan dosyaları nitelemek için kullanılır.</para>
+        </sect4>
+
+        <sect4 id="file-types-folder-files">
+          <title>Dizin Dosyaları</title>
+
+          <para>UNIX dosya sisteminde dizinler de birer dosyadır. Dizin başka dosyaları da içinde barındırabilen bir tür dosyadır.</para>
+        </sect4>
+
+        <sect4 id="file-types-symbolic-link-files">
+          <title>Sembolik Bağ Dosyaları</title>
+
+          <para>Sembolik bağ dosyaları (genellikle <emphasis>symlink</emphasis> olarak isimlendirilir) başka bir dosya yoluna işaret eden özel dosyalardır. Sembolik bağ dosyaları önemli bilgi içermez ve sadece diğer dosyalara işaret ederler.</para>
+        </sect4>
+
+        <sect4 id="file-types-device-files">
+          <title>Aygıt Dosyaları</title>
+
+          <para>Daha önce de belirtildiği gibi aygıtlar da dosya olarak erişime açıktır. Bu özel aygıt dosyaları <filename role="directory">/dev</filename> dizini altında bulunur. Örnek verecek olursak, <filename>/dev/hda</filename> Linux üzerinde birincil IDE disk anlamına gelmektedir.</para>
+        </sect4>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="faq">
+    <title>Sıkça Sorulan Sorular</title>
+
+    <para>Bu kısımda Thunar hakkında sıkça sorulan soruları ve cevaplarını bulacaksınız. Eğer bu sayfada yer almasını istediğiniz bir soru var ise, <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">talep etmeniz</ulink> yeterlidir.</para>
+
+    <sect3 id="faq-executables">
+      <title>Thunar neden çalıştırılabilir olarak işaretlenmiş dosyaları çalıştırmıyor?</title>
+
+      <para>Güvenlik nedeniyle Thunar sadece <literal>application/x-desktop</literal>, <literal>application/x-executable</literal> ve <literal>application/x-shellscript</literal> dosya türlerini çalıştırmaktadır. Desktop dosyalarının çalıştırılması için dosya da geçerli <literal>Application</literal>, <literal>Exec</literal> ve <literal>URL</literal> değerleri yer almalıdır. Diğer dosya türleri için kullanıcı dosyayı çalıştırılabilir olarak işaretlemelidir.</para>
+
+      <para>Ayrıca <literal>application/x-executable</literal> ve <literal>application/x-shellscript</literal> değerleri için, dosyanın bu türlere uymasına gerek yoktur, tanımlanmış bir tür bunlara uyuyorsa veya bu değerler  için MIME türü belirtilmiş ise, bu yeterlidir.</para>
+    </sect3>
+
+    <sect3 id="faq-metadata">
+      <title>Thunar dosyalara ilişkin üstveriyi nerede tutuyor?</title>
+
+      <para>Thunar, üstveri adı verilen, dosya ve dizinler için belirlenen ayarları, bir tdb veritabanı dosyasında barındırmaktadır ve bu veritabanı dosyasına üstdosya adı verilmektedir. Bu dosya <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> altında bulunmaktadır ve <command>tdbtool</command> aracı ile incelenebilir.</para>
+    </sect3>
+
+    <sect3 id="faq-thunarrc">
+      <title>Thunar ayarlarını nerede saklamaktadır?</title>
+
+      <para>Thunar kullanıcı tarafından yapılandırılabilen ayar dosyalarını bir <filename>.ini</filename> dosyası olarak <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename> altında saklamaktadır ve herhangi bir metin editörü ile incelenmeye müsait bir şekilde sunmaktadır.</para>
+    </sect3>
+
+    <sect3 id="faq-mouse-gestures">
+      <title>Thunar dosya yöneticisinde fare hareketleri nasıl kullanılır?</title>
+
+      <para>Thunar şimdilik temel <emphasis>fare hareketlerini</emphasis> simge görünümünde sunmaktadır. Bu <emphasis>fare hareketlerini</emphasis> farenizin orta tuşuna (genelde tekerlek) basılı tutarak dört farklı yöne hareket ettirerek kullanabilirsiniz. Her yönün farklı bir işlemi vardır. Bunlar:</para>
+
+      <simplelist>
+        <member><guilabel>Sol</guilabel> - bir önceki dizini açar</member>
+        <member><guilabel>Yukarı</guilabel> - ana dizini açar</member>
+        <member><guilabel>Sağ</guilabel> - bir sonraki dizini açar</member>
+        <member><guilabel>Aşağı</guilabel> - mevcut dizini tekrar yükler</member>
+      </simplelist>
+    </sect3>
+
+    <sect3 id="faq-assign-keyboard-shortcuts">
+      <title>Farklı klavye kısayollarını nasıl atayabilirim?</title>
+
+      <para>Thunar bir kısayolu değiştirmek için GTK+ yöntemini kullanır. Fare işaretçisi ile menü seçeneğinin üstüne gelip istediğiniz klavye kısayoluna basmanız yeterlidir.</para>
+
+      <para>Klavye kısayolunu silmek için menü öğesinin üzerinde iken <keycap>Backspace</keycap> tuşuna basmanız yeterlidir.</para>
+
+      <para>Eğer kısayol değişmez ise, bu özelliği GTK+ içinde ayarlamanız gerekir. Bu 3 yolla mümkündür:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Eğer Xfce 4.3 ve üstü bir sürümünü kullanıyorsanız, <guilabel>Kullanıcı Arayüz Ayarlarında</guilabel> bulunan <guilabel>Düzenlenebilir menü hızlandırıcıları</guilabel> seçeneğini işaretleyebilirsiniz.</para>
+        </listitem>
+
+        <listitem>
+          <para>GNOME kullanıyorsanız, kontrol panelindeki <guilabel>Menü ve Araçlar</guilabel> bölümünde <guilabel>Düzenlenebilir Menü Hızlandırıcı</guilabel> özelliğini etkinleştirebilirsiniz.</para>
+        </listitem>
+
+        <listitem>
+          <para>Ya da  <filename>~/.gtkrc-2.0</filename> dosyanıza (eğer dosya yok ise oluşturmalısınız) şu satırı ekleyebilirsiniz:<screen>gtk-can-change-accels=1</screen></para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3 id="faq-store-keyboard-shortcuts">
+      <title>Thunar klavye kısayollarını nerede saklamaktadır?</title>
+
+      <para>Özel klavye kısayolları standart GTK+ map biçiminde <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename> dosyasında saklanmaktadır. <literal>;</literal> ile başlayan satırlar yorum satırlarıdır. Bu dosya biçimi hakkında detaylı bilgi için GTK+ belgelerini inceleyebilirsiniz.</para>
+
+      <para>Eğer bir paketçi veya sistem yöneticisi iseniz ve sistem genelinde klavye kısayolları atamak istiyorsanız, bu işlem Thunardaki öntanımlı kısayollardan farklıdır. <envar>$XDG_CONFIG_DIRS</envar> dizinlerinden herhangi birinde <filename>Thunar/accels.scm</filename> dosyasını oluşturabilirsiniz. Mesela, <filename role="directory">/etc/xdg</filename> dizini eğer <envar>$XDG_CONFIG_DIRS</envar> olarak tanımlanmışsa (çoğu Linux dağıtımı için varsayılandır), sistem genelinde öntanımlıları <filename>/etc/xdg/Thunar/accels.scm</filename> içinde belirleyebilirsiniz. Thunar ilk açılışta bu dosyadaki kısayolları yükleyecektir.</para>
+    </sect3>
+  </sect1>
+
+
+  <sect1 id="support">
+    <title>Destek</title>
+
+    <para>Hata kaydı girmek veya bir iyileştirme önerisinde bulunmak için <ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink> adresindeki hata takip sistemini kullanabilirsiniz. Yararlı bir hata kaydının iki unsuru vardır:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">Tekrarlanabilir olması.</emphasis> Eğer geliştirici böyle bir hatanın olduğunu kanıtlayamazsa, bu hatayı kapatamaz.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">Spesifik olması.</emphasis> İyi bir hata kaydı bütün detayların verildiği bir hata kaydıdır. Böylece geliştirici hatayı çözmede daha az zaman harcayacaktır ve kolayca hatayı çözebilecektir.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Eğer bir iyileştirme önerisinde bulunursanız, bunun nasıl bir yenilik getireceğini ve niçin yer alması gerektiğini açıklamanız gerekmektedir. Böylece eklenme şansı yüksek olacaktır. Ayrıca eğer geliştirici iseniz, iyileştirmelerinizi yama olarak gönderebilirsiniz. Ancak <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> belgesini, özellikle <emphasis>Coding Style</emphasis> ile ilgili kısmı okumalısınız. </para>
+
+    <para>Eğer başka sorularınız varsa bunları <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev tartışma listesinde</ulink> veya <emphasis role="bold">irc.freenode.net</emphasis> üzerinde bulunan <emphasis role="bold">#thunar</emphasis> kanalında sorabilirsiniz.</para>
+  </sect1>
+
+  <sect1 id="copyright">
+    <title>About Thunar</title>
+
+    <para>
+      Thunar was written by Benedikt Meurer (<email>benny@xfce.org</email>). Visit the
+      <ulink url="http://thunar.xfce.org/" type="http">Thunar website</ulink> for more information.
+    </para>
+
+    <para>Bu dokümanın özgün sürümü Benedikt Meurer (<email>benny@xfce.org</email>) tarafından yazılmıştır. Bu dokümanın güncel sürümüne <ulink type="http" url="http://thunar.xfce.org/">Thunar websitesi</ulink> üzerinden ulaşabilirsiniz.</para>
+
+    <para>Bu yazılım Özgür Yazılım Vakfı tarafından yayınlanan GNU Genel Kamu Lisansı altında dağıtılmaktadır.</para>
+
+    <para>Bu yazılımla birlikte GNU Genel Kamu Lisansının bir kopyasını almış olmalısınız, eğer almadıysanız, Özgür Yazılım Vakfına yazabilirsiniz; Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
+  </sect1>
+
+</article>
+<!--
+	vim:set ts=2 sw=2 et ai encoding=UTF-8:
+-->
