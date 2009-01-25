@@ -495,7 +495,7 @@ main (int argc, char **argv)
   GError        *error = NULL;
   GList         *infos = NULL;
   gchar        **attachments = NULL;
-  gchar         *zipfile;
+  gchar         *zipfile = NULL;
   GList         *lp;
   gint           response;
   gint           n;
