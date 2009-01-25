@@ -1144,6 +1144,11 @@ thunar_path_entry_match_func (GtkEntryCompletion *completion,
   /* determine the model from the completion */
   model = gtk_entry_completion_get_model (completion);
 
+  /* leave if the model is null, we do this in thunar_path_entry_changed() to speed
+   * things up, but that causes http://bugzilla.xfce.org/show_bug.cgi?id=4847. */
+  if (G_UNLIKELY (model == NULL))
+    return FALSE;
+
   /* determine the current text (UTF-8 normalized) */
   text_normalized = g_utf8_normalize (gtk_entry_get_text (GTK_ENTRY (user_data)), -1, G_NORMALIZE_ALL);
 
