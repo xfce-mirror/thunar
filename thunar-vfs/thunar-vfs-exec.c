@@ -479,7 +479,7 @@ thunar_vfs_exec_on_screen (GdkScreen   *screen,
               sn_launcher_context_set_binary_name (sn_launcher, argv[0]);
               sn_launcher_context_set_workspace (sn_launcher, sn_workspace);
               sn_launcher_context_set_icon_name (sn_launcher, (icon_name != NULL) ? icon_name : "applications-other");
-              sn_launcher_context_initiate (sn_launcher, g_get_prgname (), argv[0], CurrentTime);
+              sn_launcher_context_initiate (sn_launcher, g_get_prgname (), argv[0], gtk_get_current_event_time ());
 
               /* add the real startup id to the child environment */
               cenvp[n_cenvp++] = g_strconcat ("DESKTOP_STARTUP_ID=", sn_launcher_context_get_startup_id (sn_launcher), NULL);
