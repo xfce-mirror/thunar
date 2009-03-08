@@ -11,7 +11,7 @@ msgstr ""
 "Project-Id-Version: Thunar 0.9.92\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-01-11 00:20+0100\n"
-"PO-Revision-Date: 2009-02-24 20:19+0100\n"
+"PO-Revision-Date: 2009-03-07 20:49+0100\n"
 "Last-Translator: Piotr Sokół <piotr.sokol@10g.pl>\n"
 "Language-Team: Polish\n"
 "MIME-Version: 1.0\n"
@@ -34,13 +34,13 @@ msgstr "Nieznany błąd"
 #: ../thunar-vfs/thunar-vfs-info.c:390
 #, c-format
 msgid "No Exec field specified"
-msgstr "Nie wybrano pola Exec"
+msgstr "Nie określono pola Exec"
 
 #. TRANSLATORS: `URL' is a field name in a .desktop file. You should leave it as-is.
 #: ../thunar-vfs/thunar-vfs-info.c:409
 #, c-format
 msgid "No URL field specified"
-msgstr "Nie wybrano pola URL"
+msgstr "Nie określono pola URL"
 
 #: ../thunar-vfs/thunar-vfs-info.c:414
 #: ../thunar-vfs/thunar-vfs-private.c:384
@@ -658,11 +658,11 @@ msgstr "Otwórz za pomocą..."
 #. create the "Custom command" expand
 #: ../thunar/thunar-chooser-dialog.c:294
 msgid "Use a _custom command:"
-msgstr "Pole_cenie użytkownika:"
+msgstr "_Własne polecenie:"
 
 #: ../thunar/thunar-chooser-dialog.c:295
 msgid "Use a custom command for an application that is not available from the above application list."
-msgstr "Używa własnego polecenia programu niedostępnego z powyższej listy"
+msgstr "Używa własnego polecenia niedostępnego z powyższej listy"
 
 #. create the "Custom command" button
 #: ../thunar/thunar-chooser-dialog.c:314
@@ -758,7 +758,7 @@ msgstr "brak"
 #. append the "Recommended Applications:" category
 #: ../thunar/thunar-chooser-model.c:365
 msgid "Recommended Applications"
-msgstr "Polecane programy"
+msgstr "Sugerowane programy"
 
 #. append the "Other Applications:" category
 #: ../thunar/thunar-chooser-model.c:368
@@ -785,7 +785,7 @@ msgid ""
 "detailed list view."
 msgstr ""
 "Proszę określić kolejność informacji wyświetlanych\n"
-"w widoku szczegółowej listy."
+"w widoku szczegółowej listy:"
 
 #. create the "Move Up" button
 #: ../thunar/thunar-column-editor.c:226
@@ -810,7 +810,7 @@ msgstr "U_kryj"
 #. create the "Use Default" button
 #: ../thunar/thunar-column-editor.c:263
 msgid "Use De_fault"
-msgstr "_Użyj domyślnych"
+msgstr "Przywróć _domyślne"
 
 #: ../thunar/thunar-column-editor.c:272
 msgid "Column Sizing"
@@ -855,7 +855,7 @@ msgstr "Listowanie kompaktowe"
 
 #: ../thunar/thunar-compact-view.c:137
 msgid "Compact view"
-msgstr "Zwarta lista"
+msgstr "Lista zwarta"
 
 #: ../thunar/thunar-create-dialog.c:163
 msgid "C_reate"
@@ -903,7 +903,7 @@ msgstr "Wyświetla szczegóły elementów w katalogu"
 
 #: ../thunar/thunar-details-view.c:421
 msgid "Details view"
-msgstr "Szczegółowa lista"
+msgstr "Lista szczegółowa"
 
 #. create a new dialog window
 #: ../thunar/thunar-dialogs.c:84
@@ -1434,7 +1434,7 @@ msgstr "Nowy katalog"
 #: ../thunar/thunar-standard-view.c:1853
 #: ../thunar/thunar-tree-view.c:1544
 msgid "Create New Folder"
-msgstr "Tworzenie katalogu"
+msgstr "Nowy katalog"
 
 #: ../thunar/thunar-location-dialog.c:87
 msgid "Open Location"
@@ -1573,7 +1573,7 @@ msgstr "Nie udało się zmienić uprawnień"
 
 #: ../thunar/thunar-permissions-chooser.c:901
 msgid "Unknown file owner"
-msgstr "Nieznany właściciel"
+msgstr "Nieznany właściciel pliku"
 
 #: ../thunar/thunar-permissions-chooser.c:1032
 msgid "Correct folder permissions automatically?"
@@ -1613,11 +1613,11 @@ msgstr "Ikony"
 
 #: ../thunar/thunar-preferences-dialog.c:272
 msgid "Detailed List View"
-msgstr "Szczegółowa lista"
+msgstr "Lista szczegółowa"
 
 #: ../thunar/thunar-preferences-dialog.c:273
 msgid "Compact List View"
-msgstr "Zwarta lista"
+msgstr "Lista zwarta"
 
 #: ../thunar/thunar-preferences-dialog.c:274
 msgid "Last Active View"
@@ -1645,7 +1645,7 @@ msgstr "_Tekst obok ikon"
 
 #: ../thunar/thunar-preferences-dialog.c:316
 msgid "Select this option to place the icon captions for items beside the icon rather than below the icon."
-msgstr "Wyświetla tekst obok ikon"
+msgstr "Wyświetla tekst obok ikon plików"
 
 #: ../thunar/thunar-preferences-dialog.c:325
 msgid "Date"
@@ -1743,7 +1743,7 @@ msgstr "Nawigacja"
 
 #: ../thunar/thunar-preferences-dialog.c:483
 msgid "_Single click to activate items"
-msgstr "Zaznaczanie _pojedynczym kliknięciem"
+msgstr "Zaznaczanie _jednokrotnym kliknięciem"
 
 #: ../thunar/thunar-preferences-dialog.c:503
 msgid ""
@@ -1772,7 +1772,7 @@ msgstr "Długie"
 
 #: ../thunar/thunar-preferences-dialog.c:551
 msgid "_Double click to activate items"
-msgstr "Zaznaczanie po_dwójnym kliknięciem"
+msgstr "Zaznaczanie _dwukrotnym kliknięciem"
 
 #.
 #. Advanced
@@ -2015,9 +2015,9 @@ msgid ""
 "installation or contact your system administrator. If you install Thunar\n"
 "from source, be sure to enable the \"Simple Builtin Renamers\" plugin."
 msgstr ""
-"Nie znaleziono modułów do zmian nazw plików. Proszę sprawdzić\n"
-"instalację lub skontaktować się z administratorem systemu. Jeśli\n"
-"zainstalowano program ze źródeł, należy upewnić się, że włączono\n"
+"Nie znaleziono modułów zmian nazw. Proszę sprawdzić instalację\n"
+"programu lub skontaktować się z administratorem systemu. Jeżeli\n"
+"program zainstalowano ze źródeł, należy upewnić się, że włączono\n"
 "obsługę wtyczki „Simple Builtin Renamers”."
 
 #. allocate the file chooser
@@ -2047,9 +2047,7 @@ msgstr "Bulk Rename"
 msgid ""
 "Thunar Bulk Rename is a powerful and extensible\n"
 "tool to rename multiple files at once."
-msgstr ""
-"Thunar Bulk Rename jest potężnym i elastycznym\n"
-"narzędziem do masowej zmiany nazw plików."
+msgstr "Narzędzie wielokrotnej zmiany nazw."
 
 #: ../thunar/thunar-renamer-dialog.c:1676
 msgid "Remove File"
@@ -2068,7 +2066,7 @@ msgstr[2] "Usuwa zaznaczone pliki z listy plików przeznaczonych do zmiany nazwy
 #. change title to reflect the standalone status
 #: ../thunar/thunar-renamer-dialog.c:1829
 msgid "Bulk Rename - Rename Multiple Files"
-msgstr "Zmiana nazw wielu plików ‒ Bulk Rename"
+msgstr "Wielokrotna zmiana nazw ‒ Bulk Rename"
 
 #: ../thunar/thunar-renamer-progress.c:214
 #, c-format
@@ -2494,7 +2492,7 @@ msgstr "Ponownie odczytuje zawartość katalogu"
 
 #: ../thunar/thunar-window.c:294
 msgid "_Location Selector"
-msgstr "Wskaźnik _położenia"
+msgstr "Pasek _położenia"
 
 #: ../thunar/thunar-window.c:295
 msgid "_Side Pane"
@@ -2614,19 +2612,19 @@ msgstr "Wyświetla ukryte pliki"
 
 #: ../thunar/thunar-window.c:319
 msgid "_Pathbar Style"
-msgstr "_Nowoczesny"
+msgstr "Przyciski _katalogów"
 
 #: ../thunar/thunar-window.c:319
 msgid "Modern approach with buttons that correspond to folders"
-msgstr "Wyświetla nowoczesny pasek położenia z przyciskami odpowiadającymi katalogom"
+msgstr "Wyświetla pasek położenia z przyciskami odpowiadającymi katalogom"
 
 #: ../thunar/thunar-window.c:320
 msgid "_Toolbar Style"
-msgstr "_Tradycyjny"
+msgstr "Przyciski _nawigacyjne"
 
 #: ../thunar/thunar-window.c:320
 msgid "Traditional approach with location bar and navigation buttons"
-msgstr "Wyświetla tradycyjny pasek położenia z przyciskami nawigacyjnymi"
+msgstr "Wyświetla pasek położenia z przyciskami nawigacyjnymi"
 
 #: ../thunar/thunar-window.c:321
 msgid "_Shortcuts"
@@ -2665,7 +2663,7 @@ msgstr "Wyświetla zawartość katalogu w formie listy ikon"
 
 #: ../thunar/thunar-window.c:777
 msgid "View as _Detailed List"
-msgstr "Sz_czegółowa lista"
+msgstr "Lista _szczegółowa"
 
 #: ../thunar/thunar-window.c:777
 msgid "Display folder content in a detailed list view"
@@ -2673,7 +2671,7 @@ msgstr "Wyświetla zawartość katalogu w formie szczegółowej listy"
 
 #: ../thunar/thunar-window.c:784
 msgid "View as _Compact List"
-msgstr "_Zwarta lista"
+msgstr "Lista _zwarta"
 
 #: ../thunar/thunar-window.c:784
 msgid "Display folder content in a compact list view"
@@ -3167,7 +3165,7 @@ msgstr "Kosz jest pusty"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:1
 msgid "Display the trash can"
-msgstr "Pokaż ikonę kosza"
+msgstr "Wyświetla zawartość kosza"
 
 #: ../plugins/thunar-tpa/thunar-tpa.desktop.in.in.h:2
 msgid "Trash Applet"
@@ -3175,7 +3173,7 @@ msgstr "Aplet kosza"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:125
 msgid "Custom Actions"
-msgstr "Akcje programu"
+msgstr "Akcje"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:141
 msgid ""
@@ -3211,7 +3209,7 @@ msgstr "Edycja akcji"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:363
 msgid "Create Action"
-msgstr "Tworzenie akcji"
+msgstr "Nowa akcja"
 
 #: ../plugins/thunar-uca/thunar-uca-chooser.c:412
 msgid "Failed to save actions to disk."
@@ -3425,7 +3423,7 @@ msgstr "Ustaw jako tapetę"
 
 #: ../Thunar.desktop.in.in.h:1
 msgid "Browse the filesystem with the file manager"
-msgstr "Przeglądaj system plików"
+msgstr "Przegląda system plików za pomocą menedżera plików"
 
 #: ../Thunar.desktop.in.in.h:3
 msgid "Thunar File Manager"
@@ -3437,11 +3435,11 @@ msgstr "Otwórz katalog"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:2
 msgid "Open Folder with Thunar"
-msgstr "Otwórz katalog za pomocą Thunara"
+msgstr "Otwórz katalog za pomocą Thunar"
 
 #: ../Thunar-folder-handler.desktop.in.in.h:3
 msgid "Open the specified folders in Thunar"
-msgstr "Otwórz wybrane katalogi w Thunarze"
+msgstr "Otwiera wybrane katalogi za pomocą menedżera plików Thunar"
 
 #, fuzzy
 #~ msgid "File Manager Settings"
