@@ -433,7 +433,7 @@ _thunar_vfs_io_jobs_create (ThunarVfsJob *job,
 
 again:
       /* try to create the file at the given path */
-      fd = g_open (absolute_path, O_CREAT | O_EXCL | O_WRONLY, 0644);
+      fd = g_open (absolute_path, O_CREAT | O_EXCL | O_WRONLY, DEFFILEMODE);
       if (G_UNLIKELY (fd < 0))
         {
           /* check if the file already exists */
@@ -708,7 +708,7 @@ _thunar_vfs_io_jobs_mkdir (ThunarVfsJob *job,
       _thunar_vfs_job_process_path (job, lp);
 
       /* try to create the target directory */
-      if (!_thunar_vfs_io_ops_mkdir (lp->data, 0755, THUNAR_VFS_IO_OPS_NONE, error))
+      if (!_thunar_vfs_io_ops_mkdir (lp->data, 0777 & ~umask(0), THUNAR_VFS_IO_OPS_NONE, error))
         return FALSE;
     }
 
