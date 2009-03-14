@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY date "November 2007">
+<!ENTITY version "@PACKAGE_VERSION@">
+<!ENTITY application "@PACKAGE_NAME@">
+]>
+<article id="index" lang="it">
+
+  <!-- Header -->
+  <articleinfo>
+    <title>Gestore di file Thunar </title>
+
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2004</year>
+      <year>2005</year>
+      <year>2006</year>
+      <year>2007</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright>
+
+    <legalnotice id="legalnotice">
+      <para>È garantito il permesso di copiare, distribuire e/o modificare questo documento nel rispetto dei termini della GNU Free Documentation License versione 1.1 o qualsiasi versione successiva pubblicata dalla Free Software Foundation; senza sezioni invarianti, senza testo di copertina all'inizio e alla fine. Il testo completo dela licenza è disponibile sul sito della <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.</para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>Sviluppatore di sistemi</orgdiv>
+          <jobtitle>Sviluppatore di software</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+    <releaseinfo>Questo manuale descrive la versione @PACKAGE_VERSION@ di @PACKAGE_NAME@.</releaseinfo>
+  </articleinfo>
+
+  <sect1 id="intro">
+    <title>Introduzione a @PACKAGE_NAME@</title>
+
+    <para>Thunar è un moderno gestore di file per l'ambiente Xfce. Thunar è stato progettato fin dall'inizio per essere veloce e di facile utilizzo. La sua interfaccia utente è semplice e intuitiva, e non presenta di default nessuna opzione inutile o che può creare confusione. Thunar è veloce e reagisce con prontezza dato che presenta un breve tempo di avvio e di caricamento delle cartelle.</para>
+
+    <para>Il gestore di file Thunar fornisce quindi un punto di accesso integrato ai propri file e applicazioni. Thunar può essere utilizzato per:</para>
+
+    <itemizedlist>
+      <listitem>Creare cartelle e documenti;</listitem>
+      <listitem>visualizzare i propri file e cartelle;</listitem>
+      <listitem>gestire i propri file e cartelle;</listitem>
+      <listitem>eseguire e gestire le azioni personalizzate;</listitem>
+      <listitem>accedere ai supporti rimovibili.</listitem>
+    </itemizedlist>
+  </sect1>
+
+
+  <sect1 id="the-file-manager-window">
+    <title>La finestra del gestore di file</title>
+
+    <para>Di norma, la finestra del gestore di file consiste di un riquadro delle scorciatoie, dell'area principale sulla destra e, al di sopra di essa, di una barra degli indirizzi.</para>
+
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/file-manager-window.png" format="PNG"/>
+        </imageobject>
+
+        <textobject>
+          <phrase>Finestra del gestore di file</phrase>
+        </textobject>
+      </mediaobject>
+    </screenshot>
+
+    <para>Il <guilabel>pannello laterale delle scorciatoie</guilabel> riporta le scorciatoie alle diverse cartelle presenti nel proprio sistema. La prima scorciatoia riporta la <emphasis>cartella casa</emphasis>, la cartella in cui vengono salvati i propri dati personali, e quindi prende il nome dell'utente corrente. La seconda scorciatoia conduce al cestino, dove vengono immagazzinati i file cancellati che possono ancora essere recuperati. La terza scorciatoia è la <emphasis>cartella scrivania</emphasis>, che contiene i file e le cartelle visualizzate sulla scrivania. La quarta scorciatoia conduce alla radice del proprio file system: si può voler esplorarla all'inizio, ma può confondere se si è alle prime armi con i sistemi Linux/Unix. Selezionare le diverse cartelle per vedere cosa contengono.</para>
+
+    <para>Al di sotto della scorciatoia del <emphasis>File System</emphasis>, sono visualizzati i supporti e i dispositivi rimovibili. Nell'immagine sopra, è visualizzato una scorciatoia per il <guilabel>Floppy Drive</guilabel>. Premendo su di essa si avrà accesso ai dati salvati sul dispositivo rimovibile. Consultare la sezione <xref linkend="using-removable-media"/> per maggiori dettagli.</para>
+
+    <para>Le altre scorciatoie sono definite dall'utente. Per aggiungere una scorciatoia è sufficiente trascinare la cartella nel <guilabel>pannello laterale delle scorciatoie</guilabel>. In questo modo sarà possibile accedere alle cartelle importanti istantaneamente. Per rimuovere una scorciatoia, cliccare con il tasto destro del mouse su di essa e selezionare l'opzione <guimenuitem>Rimuovi scorciatoia</guimenuitem>. Invece, per rinominarla, cliccare con il tasto destro del mouse su di essa e selezionare l'opzione <guimenuitem>Rinomina scorciatoia</guimenuitem>. Queste operazioni influenzano esclusivamente la scorciatoia e non la cartella a cui essa si riferisce.</para>
+
+    <para>Nell'<emphasis>area principale</emphasis> verrà sempre visualizzato il contenuto della cartella selezionata. Con un doppio clic si apre una cartella mentre con un clic del tasto destro su file o cartelle si apre un menu contestuale che permette di eseguire alcune operazioni. È possibile selezionare più file creando una seleziona rettangolare che li contiene. In alternativa è possibile selezionare un file e poi, tenendo premuto il tasto <keycap>Shift</keycap>, aumentare o diminuire la selezione utilizzando i tasti freccia.</para>
+
+    <para>La <emphasis>barra degli indirizzi</emphasis> visualizza il percorso intrapreso per raggiungere la cartella in cui ci si trova attualmente. Premendo su un pulsante qualsiasi della barra degli indirizzi, è possibile spostarsi nella relativa cartella. Con un clic del tasto destro del mouse su un pulsante della barra degli indirizzi, verrà visualizzato un menu contestuale con alcune opzioni.</para>
+
+
+    <sect2 id="customizing-the-appearance">
+      <title>Personalizzare l'aspetto</title>
+
+      <para>Esistono diversi modi per personalizzare l'aspetto delle finestre del gestore di file. Nel caso non si fosse soddisfatti del modo in cui vengono visualizzate le icone, selezionare <menuchoice><guimenu>Visualizza</guimenu><guimenuitem>Visualizza come lista dettagliata</guimenuitem></menuchoice> dal menu principale perché il contenuto della cartella corrente venga visualizzato sotto forma di elenco.</para>
+
+      <para>È possibile impostare il gestore di file per visualizzare la barra dei percorsi in luogo di quella degli indirizzi, selezionando <menuchoice><guimenu>Visualizzazione</guimenu><guimenuitem>Selettore di percorsi</guimenuitem><guimenuitem>In stile barra degli strumenti</guimenuitem></menuchoice> dal menu principale.</para>
+
+      <para>Nel caso si preferisca una visualizzazione ad albero per il pannello di sinistra, selezionare <menuchoice><guimenu>Visualizzazione</guimenu><guimenuitem>Pannello laterale</guimenuitem><guimenuitem>Albero</guimenuitem></menuchoice> dal menu principale.</para>
+
+      <sect3 id="visible-columns-in-the-detailed-list-view">
+        <title>Colonne visibili nella visualizzazione a lista dettagliata</title>
+
+        <para>Nel caso si preferisca visualizzare il contenuto delle cartella sotto forma di lista, utilizzando la <guilabel>Visualizzazione a lista dettagliata</guilabel>, è possibile personalizzare le colonne da visualizzare. Per modificarle, selezionare <menuchoice><guimenu>Visualizzazione</guimenu><guimenuitem>Configura colonne...</guimenuitem></menuchoice> dal menu principale.</para>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/visible-columns.png" format="PNG"/>
+            </imageobject>
+
+            <textobject>
+              <phrase>Colonne visualizzate</phrase>
+            </textobject>
+          </mediaobject>
+        </screenshot>
+
+        <variablelist>
+          <varlistentry>
+            <term><guilabel>Colonne visualizzate</guilabel></term>
+            <listitem>
+              <para>Selezionare le colonne che si desidera vengano visualizzate dalla lista di quelle disponibili. Premere <guibutton>Sposta su</guibutton> o <guibutton>Sposta giù</guibutton>per cambiare l'ordine delle colonne. Premere <guibutton>Predefinito</guibutton>per tornare alle impostazioni di default.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><guilabel>Dimensionamento delle colonne</guilabel></term>
+            <listitem>
+              <para>Selezionare l'opzione <guibutton>Espandi automaticamente le colonne quando necessario</guibutton> se si desidera che le colonne della visualizzazione a lista si espandano automaticamente per fare in modo che il testo sia completamente visibile.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="working-with-files-and-folders">
+    <title>Lavorare con file e cartelle</title>
+
+
+    <sect2 id="opening-files">
+      <title>Aprire i file</title>
+
+      <para>Quando si apre un file, il gestore di file esegue l'azione predefinita per quel tipo di file. Per esempio, se si apre un file di testo, questo verrà visualizzato utilizzando l'editor di testo predefinito mentre, aprendo un file di immagine, verrà avviato il visualizzatore di immagini predefinito.</para>
+
+      <para>Il gestore di file controlla l'estensione di un file per determinarne il tipo. Se il file non presenta un'estensione conosciuta, il gestore di file ne esamina il contenuto.</para>
+
+      <sect3 id="executing-the-default-action">
+        <title>Eseguire le operazioni predefinite</title>
+
+        <para>Per eseguire l'azione predefinita su un certo file, è sufficiente cliccare due volte su di esso. Per esempio, l'azione predefinita per i file audio prevede di eseguirli con l'applicazione predefinita per la musica. In questo caso, si può cliccare due volte sul file per aprirlo nel programma per la musica.</para>
+
+        <para>È possibile impostare le preferenze di <application>Thunar</application> in modo che basti un unico clic sul file per eseguire l'azione predefinita a esso associata. Per maggiori informazioni consultare la sezione <xref linkend="preferences-behavior"/>.</para>
+      </sect3>
+
+      <sect3 id="executing-non-default-actions">
+        <title>Eseguire le operazioni non predefinite</title>
+
+        <para>Per eseguire un'azione diversa da quella predefinita per un file, selezionare il file per cui si desidera cambiare l'azione. Scegliere l'azione desiderata dalle opzioni <emphasis>Apri con</emphasis> disponibili nel menu <guimenu>File</guimenu> o nel sotto menu <guimenu>Apri con</guimenu>.</para>
+      </sect3>
+
+      <sect3 id="adding-actions">
+        <title>Aggiungere delle azioni</title>
+
+        <para>Per aggiungere delle azioni associate a un determinato tipo di file, si seguano i passi successivi:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>nell'area principale, selezionare un file del tipo a cui si vuole associare un'azione;</para>
+          </listitem>
+          <listitem>
+            <para>selezionare <menuchoice><guimenu>File</guimenu><guimenuitem>Apri con altra applicazione...</guimenuitem></menuchoice> dal menu principale;</para>
+          </listitem>
+          <listitem>
+            <para>scegliere un'applicazione nella finestra <guilabel>Apri con</guilabel> o selezionare <guibutton>Usa un comando personalizzato</guibutton> e navigare fino a selezionare il programma che si desidera utilizzare per aprire questo tipo di file.</para>
+          </listitem>
+        </orderedlist>
+
+        <para>L'azione scelta è stata ora aggiunta alla lista di azioni per quel particolare tipo di file. Se è stata abilitata l'opzione <guibutton>Usa come predefinita per questo tipo di file</guibutton> o non era stata associata un'altra azione in precedenza, la nuova azione è quella predefinita.</para>
+
+        <para>È anche possibile aggiungere delle azioni utilizzando il pulsante <guibutton>Apri con</guibutton> raggiungibile da <menuchoice><guimenu>File</guimenu><guimenuitem>Proprietà...</guimenuitem></menuchoice>.</para>
+      </sect3>
+
+      <sect3 id="modifiying-actions">
+        <title>Modificare le azioni</title>
+
+        <para>Per modificare le azioni associate a un file o a un certo tipo di file, seguire questa procedura:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>nell'area principale selezionare un file del tipo per cui si vuole modificare l'azione;</para>
+          </listitem>
+          <listitem>
+            <para>selezionare <menuchoice><guimenu>File</guimenu><guimenuitem>Proprietà...</guimenuitem></menuchoice> dal menu principale;</para>
+          </listitem>
+          <listitem>
+            <para>selezionare la nuova azione predefinita utilizzando il pulsante <guilabel>Apri con</guilabel> oppure aggiungere una nuova azione selezionando <guimenuitem>Apri con altra applicazione...</guimenuitem> dal menu a discesa.</para>
+          </listitem>
+        </orderedlist>
+
+        <para>Per rimuovere un'azione definita in precedenza per un certo tipo di file, aprire il dialogo <guilabel>Apri con</guilabel> come descritto in precedenza, premere con il tasto destro del mouse sull'azione che si desidera rimuovere e selezionare <guimenuitem>Rimuovi avviatore</guimenuitem>.</para>
+      </sect3>
+    </sect2>
+
+
+    <sect2 id="file-properties">
+      <title>Proprietà del file</title>
+
+      <para>La finestra delle proprietà del file mostra ulteriori informazioni su qualsiasi file o cartella nel gestore di file. In questa finestra è anche possibile eseguire le seguenti operazioni:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>cambiare l'icona di file speciali, quali i lanciatori di applicazioni e i collegamenti URL;</para>
+        </listitem>
+        <listitem>
+          <para>aggiungere o rimuovere gli emblemi di un file o di una cartella;</para>
+        </listitem>
+        <listitem>
+          <para>cambiare i permessi UNIX a un file o a una cartella;</para>
+        </listitem>
+        <listitem>
+          <para>scegliere l'applicazione da utilizzare per aprire un file e tutti gli altri file dello stesso tipo.</para>
+        </listitem>
+      </itemizedlist>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/file-properties.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Proprietà del file</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Per aprire la finestra delle proprietà del file, seguire questa procedura:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>selezionare il file o la cartella di cui si vogliono esaminare o modificare le proprietà. Non è possibile selezionare più di un elemento alla volta e visualizzare le proprietà che hanno in comune;</para>
+        </listitem>
+        <listitem>
+          <para>Eseguire una delle seguenti operazioni: <itemizedlist>
+              <listitem>
+                <para>selezionare <menuchoice><guimenu>File</guimenu><guimenuitem>Proprietà...</guimenuitem></menuchoice> dal menu principale;</para>
+              </listitem>
+              <listitem>
+                <para>Fare clic con il tasto destro del mouse sull'elemento selezionato e scegliere <guimenuitem>Proprietà...</guimenuitem> dal menu contestuale;</para>
+              </listitem>
+              <listitem>
+                <para>premere la combinazione di tasti <keycombo><keycap>Alt</keycap><keycap>Invio</keycap></keycombo>.</para>
+              </listitem>
+            </itemizedlist></para>
+        </listitem>
+      </orderedlist>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="using-removable-media">
+    <title>Utilizzare i supporti rimovibili</title>
+
+    <sect2 id="accessing-removable-media">
+      <title>Accedere ai supporti rimovibili</title>
+
+      <para>Thunar supporta i dispositivi rimovibili se è stato compilato con il supporto per <ulink type="http" url="http://freedesktop.org/wiki/Software_2fhal">HAL</ulink>, o se si sta utilizzando <ulink type="http" url="http://www.freebsd.org/">FreeBSD</ulink>. Comunque, nelle versioni di FreeBSD 6.0 o successive, si suggerisce di utilizzare HAL in luogo del supporto nativo fornito da Thunar.</para>
+
+      <sect3 id="to-mount-media">
+        <title>Montare i supporti</title>
+
+        <para><emphasis>Montare</emphasis> i supporti significa renderne accessibile il file system. Quando si monta un supporto, il relativo file system è collegato come sotto directory del proprio file system.</para>
+
+        <para>Per avere accesso a un supporto, inserirlo nell'apposito dispositivo o collegarlo fisicamente al proprio computer (per esempio collegando un dispositivo USB a una delle porte USB presenti sul proprio computer). Nel pannello laterale del gestore di file verrà aggiunto un oggetto che rappresenta il dispositivo collegato. Se è in esecuzione <application>xfdesktop</application> ed è correttamente configurato per visualizzare le <guilabel>icone dei file e dei lanciatori</guilabel>, l'oggetto verrà anche aggiunto al proprio desktop.</para>
+
+        <para>Per montare effettivamente il dispositivo, fare clic sull'oggetto che lo rappresenta. Per esempio, per montare un dischetto floppy, fare clic sull'oggetto <guilabel>Floppy Drive</guilabel> nel pannello laterale. Il gestore di file aggiungerà così il file system del dispositivo alla struttura del proprio file system e ne visualizzerà il contenuto nell'area principale.</para>
+      </sect3>
+
+      <sect3 id="to-eject-media">
+        <title>Espellere i supporti</title>
+
+        <para>Se il dispositivo per il supporto è motorizzato (per esempio un'unità CD-ROM), fare clic con il tasto destro del mouse sull'oggetto corrispondente nel pannello laterale o sulla scrivania e scegliere <guilabel>Espelli volume</guilabel>. Il supporto verrà espulso dal dispositivo dopo pochi secondi. Se invece il dispositivo non è motorizzato (per esempio un dischetto floppy o una chiavetta USB), fare clic con il tasto destro del mouse sull'oggetto corrispondente e selezionare <guilabel>Smonta volume</guilabel>. Dopo qualche istante verrà visualizzato un messaggio per avvisare che è possibile rimuovere il dispositivo dal computer in sicurezza.</para>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/removable-media-unmount.png" format="PNG"/>
+            </imageobject>
+
+            <textobject>
+              <phrase>Messaggio di smontaggio</phrase>
+            </textobject>
+          </mediaobject>
+        </screenshot>
+
+        <para>Il messaggio verrà visualizzato solamente se è abilitato il supporto per <application>libnotify</application>, e se è stato installato il demone di notifica. Un demone di notifica per l'ambiente Xfce è disponibile dal sito del <ulink type="http" url="http://goodies.xfce.org/projects/applications/notification-daemon-xfce">Xfce Goodies Project</ulink>. Se il supporto alla notificazione non è disponibile, occorre attendere la scomparsa del menu contestuale prima di rimuovere il supporto o scollegare l'unità.</para>
+
+        <para>Si ricorda che non è possibile espellere o smontare un supporto o un dispositivo che è ancora in uso da una o più applicazioni. Quindi, se il gestore di file si rifiuta di espellere un dispositivo, sarà necessario controllare di aver chiuso tutte le applicazioni che avevano accesso al dispositivo stesso e verificare anche le applicazioni da linea di comando eseguite nella finestra del <application>Terminale</application>.</para>
+
+        <para>Assicurarsi di aver smontato il supporto rimovibile prima di espellerlo. Non espellere un disco floppy dal drive prima di averlo smontato. Non rimuovere una chiavetta USB prima di aver smontato il dispositivo. Se non si smonta prima il dispositivo, si potrebbero perdere dei dati o mandare in blocco il sistema.</para>
+      </sect3>
+    </sect2>
+
+    <sect2 id="management-of-removable-drives-and-media">
+      <title>Gestione dei supporti rimovibili</title>
+
+      <para>Thunar è inoltre in grado di gestire automaticamente i supporti e i dispositivi rimovibili se il pacchetto <ulink type="http" url="http://www.foo-projects.org/~benny/projects/thunar-volman/index.html">thunar-volman</ulink> è installato nel sistema. Si noti comunque che questa caratteristica richiede il supporto di HAL.</para>
+
+      <para>Se il supporto ad HAL è disponibile e <application>thunar-volman</application> è installato nel proprio sistema, è possibile scegliere di abilitare la funzione di <guilabel>gestione dei volumi</guilabel> fornita da Thunar. Quindi, aprire le preferenze del gestore di file, dirigersi alla pagina <guilabel>Avanzate</guilabel> e abilitare l'opzione <guilabel>Abilita la gestione dei volumi</guilabel>.</para>
+
+      <para>Il passo successivo consiste nel personalizzare, a seconda dei propri bisogni, la gestione dei supporti e dei dispositivi rimovibili. Premere il collegamento <guilabel>Configura</guilabel> nella sezione <guilabel>Gestione dei volumi</guilabel>, subito sotto al pulsante; verrà visualizzata la finestra di configurazione dei <guilabel>dispositivi e dei supporti rimovibili</guilabel>.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/removable-drives-and-media.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Dispositivi e supporti rimovibili</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Se si ha confidenza con il <application>gnome-volume-manager</application>, ci si dovrebbe trovare a proprio agio, in quanto è stato progettato per assomigliare nell'aspetto e nel comportamento al <application>gnome-volume-manager</application>. Le preferenze sono suddivise per ogni categoria di dispositivo in modo da agevolare la ricerca dell'opzione relativa a uno specifico dispositivo.</para>
+
+      <para>La pagina sui <guilabel>dispositivi di immagazzinamento</guilabel> contiene le opzioni più importanti. Come suggerisce il nome, queste opzioni si applicano solamente ai dispositivi di immagazzinamento quali hard disk esterni, chiavette USB e CD-ROM. Le opzioni relative ai <guilabel>dispositivi di immagazzinamento</guilabel> sono descritte in dettaglio nel seguito</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Monta i supporti rimovibili quando collegati</guilabel></term>
+          <listitem>
+            <para>Abilitare questa opzione per eseguire il montaggio automatico dei file system presenti sui dispositivi rimovibili (per esempio un hard disk esterno o una chiavetta USB) nel momento in cui vengono collegati al computer.</para>
+            <para>Questa opzione deve essere abilitata per permettere il funzionamento di alcune caratteristiche relative ai dispositivi rimovibili. Per esempio, disabilitando questa opzione, certi tipi di lettori musicali portatili non sono più riconosciuti, e quindi, anche se è abilitata l'opzione <guilabel>Esegui i file musicali quando connessi</guilabel> nella pagina <guilabel>Multimedia</guilabel>, il comando non sarà eseguito automaticamente al momento dell'inserimento del lettore musicale nella relativa porta.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Monta i supporti rimovibili quando inseriti</guilabel></term>
+          <listitem>
+            <para>Abilitare questa opzione per eseguire il montaggio automatico dei file system dei supporti rimovibili (per esempio CD-ROM o DVD) al momento dell'inserimento del supporto nell'unità.</para>
+            <para>Questa opzione deve essere abilitata per permettere il funzionamento di alcune caratteristiche relative ai supporti rimovibili. Per esempio, disabilitando questa opzione, risulta impossibile riconoscere se il supporto è in grado di avviarsi autonomamente (autorun) e quindi l'opzione <guilabel>Avvia automaticamente i nuovi dispositivi e i supporti</guilabel> non ha effetto sui supporti rimovibili.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Sfoglia i supporti rimovibili quando inseriti</guilabel></term>
+          <listitem>
+            <para>Abilitare questa opzione per visualizzare automaticamente nel gestore di file il contenuto dei supporti appena inseriti. Il contenuto, verrà visualizzato solamente se non è possibile alcun altra azione o se è stato scelto di ignorare le altre possibili azioni. Per esempio, se si inserisce un CD-ROM in grado di avviarsi automaticamente ed è abilitata l'opzione <guilabel>Avvia automaticamente i nuovi dispositivi e i supporti</guilabel>, verrà richiesto se avviare o ignorare l'avvio automatico. Se si sceglie di ignorare l'esecuzione automatica, il contenuto del supporto verrà visualizzato nel gestore di file.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Esegui automaticamente i programmi per i nuovi dispositivi o supporti</guilabel></term>
+          <listitem>
+            <para>Abilitare questa opzione per avvalersi delle capacità di auto avviamento di alcuni supporti e dispositivi rimovibili. Consultare le <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">specifiche di auto avviamento delle applicazioni desktop</ulink> per maggiori dettagli sul meccanismo di esecuzione automatica. Per aumentare la sicurezza, verrà sempre richiesta la conferma dell'avvio automatico.</para>
+            <para>Se l'emulatore di sistemi Windows <ulink type="http" url="http://www.winehq.org/">WINE</ulink> è installato sul proprio sistema, il meccanismo di avvio automatico tenterà di eseguire il file <filename>autorun.exe</filename> utilizzando WINE.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Apertura automatica dei file all'inserimento di un supporto</guilabel></term>
+          <listitem>
+            <para>Abilitare questa opzione per avvalersi della capacità di apertura automatica di alcuni dispositivi e supporti rimovibili. Consultare le <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">specifiche di avvio automatico per le applicazioni desktop</ulink> per maggiori dettagli sul meccanismo di apertura automatica. Per aumentare la sicurezza, verrà sempre richiesta la conferma dell'apertura automatica.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>Le restanti opzioni permettono di specificare un comando da eseguire all'inserimento in una unità di un certo tipo di supporto o alla connessione di un dispositivo esterno. Il comando può utilizzare tre variabili speciali che verranno sostituite all'esecuzione del comando stesso:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><literal>%d</literal></term>
+          <listitem>
+            <para>Ogni volta che la stringa <literal>%d</literal> compare nel comando, verrà sostituita con il percorso del file del dispositivo appena inserito. Per esempio, se si è connessa una chiavetta USB, il percorso del file del dispositivo sarà <filename>/dev/da0s1</filename> o <filename>/dev/sda1</filename>.</para>
+            <para>Se al dispositivo non è associato alcun file del dispositivo o se quest'ultimo non è rintracciabile, la variabile <literal>%d</literal> verrà sostituita con una stringa vuota.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>%h</literal></term>
+          <listitem>
+            <para>Ogni volta che la stringa <literal>%h</literal> compare nel comando, verrà sostituita con il codice UDI di HAL del nuovo dispositivo.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>%m</literal></term>
+          <listitem>
+            <para>Ogni volta che la stringa <literal>%m</literal> compare nel comando, verrà sostituita con il punto di montaggio del nuovo dispositivo aggiunto. Se il dispositivo non può essere montato (per esempio una stampante o una tastiera) o se il montaggio automatico è disabilitato, <literal>%m</literal> verrà sostituita con una stringa vuota.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <sect3 id="troubleshooting-the-volume-manager">
+        <title>Soluzione dei problemi relativi al gestore di volumi</title>
+
+        <para>Suggerimenti utili per risolvere i problemi relativi al gestore di volumi in caso non dovesse funzionare secondo le attese.</para>
+
+        <orderedlist>
+          <listitem>
+            <para>Assicurarsi che <application>Thunar</application> sia in esecuzione come demone. Il gestore di volumi dipende da questo, dato che non è un demone. Di norma, Xfce esegue <application>Thunar</application> come demone all'avvio. Se per qualche ragione venisse terminato, aprire la finestra di <guilabel>Esegui programma (utilizzando la scorciatoia da tastiera <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> o facendo clic sulla scrivania con il tasto destro e scegliendo <guilabel>Esegui programma...</guilabel> dal menu della scrivania), digitare <guilabel>Esegui programma...</guilabel> e fare clic su <guibutton>Esegui</guibutton>.</guilabel></para>
+          </listitem>
+
+          <listitem>
+            <para>Provare a eseguire <application>thunar-volman</application> da una finestra del <application>terminale</application>dopo avere collegato l'unità o inserito il supporto. Prima di tutto è necessario identificare l'UDI di HAL del dispositivo utilizzando <application>lshal</application> o <application>hal-device</application>. Una volta noto l'UDI, eseguire <literal>thunar-volman --device-added &lt;udi-del-proprio-dispositivo&gt;</literal> in una finestra del <application>terminale</application> e controllare l'eventuale comparsa di messaggi di avviso o di errore.</para>
+          </listitem>
+        </orderedlist>
+
+        <para>Se non dovesse ancora funzionare, richiedere aiuto sulla <ulink type="http" url="http://forum.xfce.org/">Xfce Forum</ulink> or the <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev mailing list</ulink>.</para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="preferences">
+    <title>Preferenze di gestione dei file</title>
+
+    <para>Utilizzare la finestra delle <guilabel>Preferenze del gestore di file</guilabel> per impostare le preferenze del gestore di file <guilabel>Thunar</guilabel>. Per aprire questa finestra, selezionare <menuchoice><guimenu>Modifica</guimenu><guimenuitem>Preferenze...</guimenuitem></menuchoice> dalla barra del menu, oppure fare clic sul pulsante <guibutton>Gestore di file</guibutton> nel gestore della configurazione di Xfce.</para>
+
+    <para>La finestra delle <guilabel>Preferenze del gestore di file</guilabel> è divisa in quattro pagine con diverse opzioni, ognuna delle quali è descritta in una sezione apposita riportata nel seguito. Fondamentalmente è possibile impostare le preferenze relative alle seguenti categorie:</para>
+
+    <itemizedlist>
+      <listitem><para>le impostazioni predefinite per la visualizzazione;</para></listitem>
+      <listitem><para>le impostazioni predefinite per il pannello laterale;</para></listitem>
+      <listitem><para>il comportamento delle finestre del gestore di file;</para></listitem>
+      <listitem><para>funzioni avanzate del gestore di file.</para></listitem>
+    </itemizedlist>
+
+    <para>Thunar supporta inoltre una serie di cosiddette <emphasis>opzioni nascoste</emphasis>, che controllano diverse funzioni avanzate del gestore di file, ma che non sono incluse nelle preferenze al fine di mantenere la finestra delle preferenze il più semplice possibile. Il file <ulink type="http" url="http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc"><filename>README.thunarrc</filename></ulink>, incluso nella distribuzione di Thunar, descrive in dettaglio tutte le opzioni disponibili.</para>
+
+
+    <sect2 id="preferences-views">
+      <title>Preferenze di visualizzazione</title>
+
+      <para>È possibile specificare una visualizzazione predefinita, selezionare le impostazioni di ordinamento e di visualizzazione. È anche possibile impostare se per un certo tipo di file supportato devono essere visualizzate le miniature.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-views.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Preferenze di visualizzazione</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Visualizza nuove cartelle usando</guilabel></term>
+          <listitem>
+            <para>Selezionare la visualizzazione predefinita per le cartelle. All'apertura di una nuova finestra, questa verrà visualizzata con lo stile selezionato. Può trattarsi di visualizzazione a icone, a lista compatta o dettagliata. È inoltre possibile selezionare l'opzione <guilabel>Ultima visualizzazione attiva</guilabel> per utilizzare lo stile di visualizzazione adottato nell'ultima finestra attiva.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Mostra le cartelle prima dei file</guilabel></term>
+          <listitem>
+            <para>Selezionare questa opzione per visualizzare le cartelle prima dei file quando si ordina una cartella.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Mostra miniature</guilabel></term>
+          <listitem>
+            <para>Selezionare questa opzione per mostrare le miniature dei file di immagine e di altri file supportati. Il gestore di file salva i file delle miniature per ogni directory nella cartella nascosta <filename role="directory">.thumbnails</filename> nella directory «home» dell'utente.</para>
+            <para>Consultare <xref linkend="thumbnailers"/> se si desidera estendere le funzionalità di base del thumbaniler di <application>Thunar</application> aggiungendo il supporto ad altri formati di file.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Testo accanto alle icone</guilabel></term>
+          <listitem>
+            <para>Selezionare questa opzione per inserire l'intestazione dell'icona a fianco, anziché sotto, dell'icona stessa nella visualizzazione a icone</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-side-pane">
+      <title>Preferenze del pannello laterale</title>
+
+      <para>È possibile impostare le opzioni di visualizzazione per il pannello delle scorciatoie e per il pannello della visualizzazione ad albero.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-side-pane.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Preferenze del pannello laterale</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Il pannello laterale può visualizzare sia una lista di scorciatoie per le cartelle presenti nel proprio file system (modalità predefinita), sia una struttura ad albero delle stesse cartelle. Questa pagina permette di selezionare la dimensione delle icone visualizzate nel pannello delle scorciatoie o della struttura ad albero. È inoltre possibile indicare quali emblemi debbano essere visualizzati.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Dimensione dell'icona</guilabel></term>
+          <listitem>
+            <para>La dimensione delle icone visualizzate nel pannello laterale, le scelte possibili variano da <guilabel>Molto piccola</guilabel> (circa 16x16 pixel) a <guilabel>Molto grande</guilabel> (circa 128x128 pixel).</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Visualizza gli emblemi delle icone</guilabel></term>
+          <listitem>
+            <para>Selezionare questa opzione per visualizzare gli emblemi delle cartelle nel pannello laterale. È possibile assegnare gli emblemi alle directory dalla finestra delle <guilabel>Proprietà</guilabel>. Selezionare una cartella nell'area principale e scegliere <menuchoice><guimenu>File</guimenu><guimenuitem>Proprietà...</guimenuitem></menuchoice> dal menu principale, oppure fare clic con il tasto destro del mouse sulla directory e selezionare <menuchoice><guimenuitem>Proprietà...</guimenuitem></menuchoice> dal menu contestuale.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-behavior">
+      <title>Preferenze di comportamento</title>
+
+      <para>È possibile selezionare il comportamento preferito per interagire con il gestore di file.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-behavior.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Preferenze di comportamento</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Clic singolo per attivare gli elementi</guilabel></term>
+          <listitem>
+            <para>Selezionare questa opzione per eseguire l'azione predefinita per un elemento quando si clicca su di esso. Quando questa opzione è selezionata, e si posiziona il puntatore su un elemento, il titolo di questo è sottolineato e verrà selezionato automaticamente dopo un breve intervallo.</para>
+            <para>Questo intervallo di tempo può essere configurato sotto all'opzione. È anche possibile disattivare la selezione automatica degli elementi muovendo il puntatore all'estrema sinistra.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Doppio clic per attivare gli elementi</guilabel></term>
+          <listitem>
+            <para>Selezionare questa opzione per eseguire l'azione predefinita su un elemento quando si esegue su di esso un oppio clic del mouse, e per selezionarlo con un singolo clic.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-advanced">
+      <title>Preferenze avanzate</title>
+
+      <para>È possibile impostare le caratteristiche avanzate del gestore di file.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-advanced.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Preferenze avanzate</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Permessi della cartella</guilabel></term>
+          <listitem>
+            <para>Selezionare l'azione che deve essere eseguita nel momento in cui vengono cambiati i permessi a una cartella nella finestra delle <guilabel>Proprietà</guilabel>. È possibile scegliere di lasciare che <application>Thunar</application> visualizzi una notifica ogni volta che si cambiano i permessi di una cartella, di applicare di default i permessi solo alla cartella o di di applicarli ricorsivamente alla cartella e al suo contenuto.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Gestione dei volumi</guilabel></term>
+          <listitem>
+            <para>Se <application>Thunar</application> è stato installato con il supporto per HAL ed è anche installato il pacchetto <application>thunar-volman</application>, è possibile abilitare il gestore di volumi integrato. Consultare <xref linkend="management-of-removable-drives-and-media"/> per maggiori dettagli su questa caratteristica.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="customizing-thunar">
+    <title>Personalizzare Thunar</title>
+
+    <para>Questo capitolo illustra come sia possibile personalizzare alcune parti del gestore di file a seconda delle proprie necessità.</para>
+
+
+    <sect2 id="sendto">
+      <title>Il menu «Invia a»</title>
+
+      <para>Thunar include un menu <guilabel>Invia a</guilabel> che fornisce delle possibili destinazioni in cui i file e le cartelle possono essere inviati. Per accedere al menu <guilabel>Invia a</guilabel>, selezionare <menuchoice><guimenu>File</guimenu><guimenuitem>Invia a</guimenuitem></menuchoice> dal menu principale, o fare clic con il tasto del mouse sul file o sulla cartella e selezionare <menuchoice><guimenuitem>Invia a</guimenuitem></menuchoice>.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/sendto-menu.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Menu «Invia a»</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Di norma, il menu <guilabel>Invia a</guilabel> include una voce denominata <guilabel>Scrivania (crea collegamento)</guilabel> per tutti i file e le cartelle, che crea semplicemente un collegamento sulla scrivania per ogni file selezionato. In più, se il <guilabel>pannello delle scorciatoie</guilabel> è attivo, il menu presenta anche una ulteriore voce per le cartelle denominata <guilabel>Pannello laterale (crea scorciatoia)</guilabel>, che permette all'utente di inserire una nuova scorciatoia al pannello laterale. Dopo queste voci, <application>Thunar</application> elenca le periferiche rimovibili attualmente collegate al computer. Nell'immagine in alto, il <guilabel>Floppy Drive</guilabel> rappresenta una possibile destinazione a cui possono essere inviati i file. Si noti che il dispositivo è montato automaticamente una volta che è selezionato dal menu <guilabel>Invia a</guilabel>, quindi non è necessario montarlo manualmente.</para>
+
+      <para>In aggiunta, <guilabel>Thunar</guilabel> è distribuito con il plugin <guilabel>Invia a</guilabel>, che aggiunge la voce <guilabel>email</guilabel> al menu, il quale apre una nuova mail con allegato il file selezionato. Se la selezione contiene almeno una cartella, gli elementi selezionati vengono aggiunti a un archivio in formato ZIP prima di essere allegati alla email. Altrimenti, se la selezione contiene più file, o uno singolo, con una dimensione superiore a 200Kib, verrà richiesto all'utente se intende comprimere i file in un archivio ZIP, e inviare quest'ultimo.</para>
+
+      <para>Come molte altre caratteristiche di <application>Thunar</application>, il menu <guilabel>Invia a</guilabel> può essere facilmente esteso, inserendo nuove destinazioni, dagli utenti e dagli sviluppatori di applicazioni avvalendosi dello standard <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink>. Questi file devono essere installati in una delle cartelle <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> (consultare le <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> per maggiori dettagli sulla variabile <literal>$XDG_DATA_DIRS</literal>).</para>
+
+      <para>Il <literal>MimeType</literal> della destinazione <filename>.desktop</filename> specifica il tipo di file per i quali questa azione è disponibile nel menu <guilabel>Send To</guilabel>. Per esempio, si supponga di voler aggiungere una voce per uno strumento di caricamento di un'immagine su <ulink type="http" url="http://flickr.com/">Flickr</ulink> e che questa voce debba essere visualizzata solamente se la selezione contiene dei file in formato JPEG (gli altri formati non sono supportati da Flickr) e quindi si dovrebbe aggiungere una riga <literal>MimeType=image/jpeg;</literal>. Se non si specifica alcun <literal>MimeType</literal> la voce verrà visualizzata per qualsiasi tipo di file.</para>
+
+      <para>Qui sotto è mostrato un esempio completo utilizzando l'applicazione <guibutton>postr</guibutton>:</para>
+
+<programlisting>
+# postr.desktop - Integrazione di postr nel
+#                 menu "Invia a".
+[Desktop Entry]
+Type=Application
+Version=1.0
+Encoding=UTF-8
+TryExec=postr
+Exec=postr %F
+Icon=postr
+Name=Flickr
+MimeType=image/jpeg;</programlisting>
+
+      <para>Se si installa questo in <filename role="directory">~/.local/share/Thunar/sendto/</filename> (la cartella va creata se non esiste), il menu <guilabel>Invia a</guilabel> per i file JPEG visualizzerà la nuova voce <guilabel>Flickr</guilabel>, che può essere utilizzata per inviare le proprie immagini JPEG al sito Flickr.</para>
+
+      <para>La <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/sendto_menu">Wiki del progetto Thunar</ulink> contiene ulteriori esempi di destinazioni utili per il menu <guilabel>Invia a</guilabel>. Chiunque può aggiungere alla Wiki dei nuovi esempi.</para>
+    </sect2>
+
+
+    <sect2 id="thumbnailers">
+      <title>Creatori di miniature</title>
+
+      <para>Thunar si avvale di piccoli programmi per creare le miniature di alcuni tipi di file che saranno poi utilizzate per visualizzare l'anteprima del contenuto del file stesso. Questi piccoli strumenti vengono chiamati "thumbnailer". Thunar è distribuito con dei visualizzatori di miniature per le immagini e per i file degli stili di testo, e si avvale automaticamente dei thumbnailer installati per GNOME se è stato installato con il supporto per <literal>gconf</literal>. L'utente può comunque estendere dinamicamente le funzionalità di base con dei visualizzatori di miniature per dei tipi di file aggiuntivi.</para>
+
+      <para>Se si intende programmare un thumbnailer, sarà necessario iniziare con un programma che accetta almeno due parametri da linea di comando: il file di ingresso, che è il tipo di file che si desidera supportare, e il file di output, che è un file PNG in linea con le specifiche del formato dettate dallo <ulink type="http" url="http://jens.triq.net/thumbnail-spec/creation.html#AEN139">standard di gestione delle miniature</ulink>. In aggiunta il programma dovrebbe anche accettare la dimensione desiderata della miniatura, caratteristica opzionale ma caldamente consigliata. Se si scrive il file di output con una dimensione arbitraria dell'immagine, Thunar la scalerà successivamente alla dimensione desiderata, il che può produrre risultati peggiori rispetto alla generazione diretta della miniatura alla dimensione desiderata.</para>
+
+      <para>Una volta terminata la realizzazione del generatore di miniature, è necessario registrarlo in modo che Thunar possa localizzarlo e utilizzarlo. Tutto ciò che è necessario fare è installare un file di descrizione per il thumbnailer (un file <filename>.desktop</filename>) in uno dei percorsi <filename role="directory">$XDG_DATA_DIRS/thumbnailers/</filename>. Per esempio, se si desidera registrare un thumbnailer solo per il proprio account utente, è possibile installare il file nella cartella <filename role="directory">~/.local/share/thumbnailers/</filename>. Il file <filename>.desktop</filename> per i creatori di miniature ha il seguente formato.</para>
+
+      <sect3 id="thumbnailer-desktop-file-format">
+        <title>Formato del file di descrizione del creatore di miniature</title>
+
+        <para>I file di descrizione dei thumbnailer utilizzano il <ulink type="http" url="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Format</ulink> con uno speciale <literal>Tipo</literal> di <literal>X-Thumbnailer</literal> e un particolare campo <literal>X-Thumbnailer-Exec</literal> con nuovi codici di campo. Fondamentalmente, un file di descrizione per un thumbnailer ha il seguente formato.</para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=Il proprio thumbnailer
+MimeType=i-propri-/mime-type-supportati;
+X-Thumbnailer-Exec=il-proprio-thumbnailer %i %o %s</programlisting>
+
+        <para>I campi <literal>Version</literal> e <literal>Encoding</literal> sono imposti dalle Desktop Entry Specification; utilizzare i valori mostrati nell'esempio precedente. Il campo <literal>Type</literal> deve contenere il valore speciale <literal>X-Thumbnailer</literal>, altrimenti il thumbnailer non verrà riconosciuto. Il valore <literal>Name</literal> descrive il proprio thumbnailer.</para>
+
+        <para>Il campo <literal>X-Thumbnailer-Exec</literal> contiene il comando per eseguire il proprio thumbnailer e supporta certi codici di campo che verranno sostituiti all'esecuzione del creatore di miniature. I codici di campo riconosciuti sono i seguenti:</para>
+
+        <variablelist>
+          <varlistentry>
+            <term><varname>%i</varname></term>
+            <listitem>Il percorso locale al file di cui creare una miniatura. Può essere un percorso relativo alla directory da cui il creatore di miniature è stato invocato o un percorso assoluto.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%o</varname></term>
+            <listitem>Il percorso locale al file in cui archiviare le miniature generate. Il file deve essere scritto in formato PNG valido in accordo allo standard sulle miniature (vedere più sopra). Il percorso non deve terminare con <literal>.png</literal>, che assume importanza se si invocano alcuni strumenti esterni.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%s</varname></term>
+            <listitem>La dimensione desiderata in pixel delle anteprime. Questo parametro è facoltativo.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%u</varname></term>
+            <listitem>Simile a <literal>%i</literal>, ma sostituito con l'URI del file, in luogo del percorso. Questa opzione è stata aggiunta per aumentare la compatibilità con l'ambiente GNOME.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%%</varname></term>
+            <listitem>Verrà sostituito con un singolo <literal>%</literal>.</listitem>
+          </varlistentry>
+        </variablelist>
+
+        <para>È necessario includere almeno <literal>%o</literal> e <literal>%i</literal> oppure <literal>%u</literal>, altrimenti il proprio creatore di miniature risulterà inutilizzabile.</para>
+
+        <para>Il <literal>MimeType</literal> elenca i tipi MIME, separati da punti e virgola, per i quali il proprio creatore di miniature è in grado di generare delle anteprime.</para>
+      </sect3>
+
+      <sect3 id="eps-thumbnailer-example">
+        <title>Esempio di creatore di miniature per file EPS</title>
+
+        <para>Questo esempio mostra come scrivere e installare  un nuovo creatore di miniature, per i file in formato <filename>.eps</filename>, che utilizza il comando <command>convert</command> fornito da pacchetto ImageMagick. Si ìinizierà con un semplice script che invoca il comando <command>convert</command> per generare una miniatura della dimensione richiesta..</para>
+
+        <programlisting>
+#!/bin/sh
+#
+# eps-thumbnailer - Esempio di script per la creazione di miniature di file in formato EPS.
+#
+# Utilizzo: esp-thumbnailer eps-file png-dimensione file
+#
+
+# parametri della linea di comando
+ifile=$1
+ofile=$2
+size=$3
+
+# utilizzo del comando convert (ImageMagick)
+exec convert "eps:$ifile" -scale "$sizex$size" "png:$ofile"</programlisting>
+
+        <para>Salvare questo script in un file <filename>eps-thumbnailer</filename>, assicurarsi che sia eseguibile e installarlo in <filename role="directory">/usr/local/bin</filename>.</para>
+
+        <screen>
+$ chmod +x eps-thumbnailer
+$ sudo install eps-thumbnailer /usr/local/bin/eps-thumbnailer</screen>
+
+        <para>In seguito, è necessario creare il file di descrizione del thumbnailer <filename>eps-thumbnailer.desktop</filename> con questo contenuto:</para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=EPS Thumbnailer
+TryExec=convert
+MimeType=image/x-eps;
+X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s</programlisting>
+
+        <para>Questo file devo essere installato in <filename role="directory">/usr/local/share/thumbnailers</filename> (creare la cartella se non esiste).</para>
+
+        <screen>
+$ sudo install -d /usr/local/share/thumbnailers
+$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop</screen>
+
+        <para>Il file <filename>eps-thumbnailer.desktop</filename> utilizza la chiave speciale <literal>TryExec</literal> che, se specificata, richiama un comando che deve essere presente nel sistema per permettere l'utilizzo del creatore di miniature. Nell'esempio proposto, lo script è inutilizzabile se l'utilità <command>convert</command> non è presente.</para>
+
+        <para>L'ultimo passo consiste nella rigenerazione dela cache del creatore di miniature, in modo che Thunar possa utilizzarlo. La cache del creatore di miniature si trova in <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (a meno che non sia stata impostata diversamente dall'utente o dall'amministratore del sistema, la variabile <varname>$XDG_CACHE_HOME</varname> punta la cartella <filename role="directory">~/.cache/</filename>). La cache del creatore di miniature è rigenerata periodicamente da Thunar, ma è possibbile forzare questa operazione invocando l'utilità <filename>thunar-vfs-update-thumbnailers-cache-1</filename> fornita con Thunar. Questa è generalmente installata nella sotto cartella <filename role="directory">libexec</filename> del proprio prefisso d'installazione  (<filename role="directory">sbin</filename> nei sistemi Debian/Ubuntu). Quindi, per esempio, se Thunar è installato in <filename role="directory">/usr</filename>, invocare l'utilità nel modo seguente:</para>
+
+        <screen>$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1</screen>
+
+        <para>Assicurarsi però di eseguire il programma dal proprio account utente, non da quello del super utente, dato che la cache del thumbnailer risiede nella propria cartella «casa», invece che in una posizione accessibile da tutto il sistema.</para>
+
+        <para>A questo punto, se Thunar è compilato con il supporto per la monitorizzazione dell'alterazione dei file (utilizzando i servizi FAM o Gamin), riconoscerà automaticamente la cache del nuovo creatore di miniature e sarà in grado di generare le miniature utilizzando il creatore personalizzato. Diversamente, sarà necessario riavviare completamente Thunar per rendere effettivi i cambiamenti, utilizzando:</para>
+
+        <screen>$ Thunar -q</screen>
+
+        <para>per terminare ogni istanza in esecuzione, e in seguito riavviarlo tramite il proprio avviatore.</para>
+      </sect3>
+
+      <sect3 id="cleaning-up-thumbnails">
+        <title>Eliminare delle miniature</title>
+
+        <para>Le miniature create vengono salvate nella cartella <filename role="directory">~/.thumbnails/</filename> nel rispetto dello <ulink type="http" url="http://jens.triq.net/thumbnail-spec/index.html">standard di gestione delle miniature</ulink>. Se si intende provare un nuovo thumbnailer, può essere utile cancellare tutte le miniature utilizzando il comando</para>
+
+        <screen>$ rm -rf ~/.thumbnails/</screen>
+
+        <para>che permette inoltre di liberare un po' di spazio nella propria cartella casa. Dato che tutte le informazioni salvate all'interno di questa cartella sono state automaticamente generate da dei file presenti nel proprio file system, non si corre il rischio di perdere dei dati sensibili.</para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="advanced-topics">
+    <title>Argomenti avanzati</title>
+
+
+    <sect2 id="to-bulk-rename-files">
+      <title>Bulk Rename dei file</title>
+
+      <para>Con il termine inglese <emphasis>bulk rename</emphasis>, si intende l'operazione di rinominazione simultanea di più file utilizzando uno stesso criterio che si applica ad almeno uno dei file. <application>Thunar</application> include la funzionalità di bulk rename; questa può essere eseguita separatamente utilizzando il comando <command>Thunar -B</command> oppure direttamente da <application>Thunar</application> selezionando due o più file nell'area principale e premendo la combinazione di tasti <keycombo><keycap>F2</keycap></keycombo> oppure selezionando <menuchoice><guimenu>Modifica</guimenu><guimenuitem>Rinomina...</guimenuitem></menuchoice> dal menu principale.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/bulk-rename.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Bulk Rename dei file</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Il <emphasis>Bulk Renamers</emphasis> può avvenire sui nomi dei file, sul suffisso dei file o su entrambi. La funzione di <emphasis>Bulk Rename</emphasis> attualmente presente in <application>Thunar</application> permette di:</para>
+
+      <itemizedlist>
+        <listitem><para>rimuovere dei caratteri;</para></listitem>
+        <listitem><para>numerare i file;</para></listitem>
+        <listitem><para>inserire data e ora;</para></listitem>
+        <listitem><para>inserire o sovrascrivere dei caratteri;</para></listitem>
+        <listitem><para>cercare e sostituire dei caratteri;</para></listitem>
+        <listitem><para>convertire maiuscole in minuscole a cammello.</para></listitem>
+      </itemizedlist>
+
+      <para>Ulteriori programmi di <emphasis>Bulk Rename</emphasis> possono essere installati sotto forma di plugin per <application>Thunar</application>. Visitare il sito web dei <ulink type="http" url="http://thunar.xfce.org/plugins.html">plugin di Thunar</ulink> per una lista delle estensioni disponibili. La <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/bulk_renamer">Wiki del progetto Thunar</ulink> contiene ulteriori informazioni sull'argomento; ognuno è libero di aggiungere nuove informazioni alla Wiki.</para>
+    </sect2>
+
+
+    <sect2 id="the-unix-file-system">
+      <title>Il file system UNIX</title>
+
+      <para>Anche se il gestore di file Thunar esegue un ottimo lavoro nell'astrarre i dettagli del file system di base (in modo che l'utente non debba occuparsene), può comunque essere utile capire i concetti di base per avere il quadro completo della situazione. Questa sezione si prefigge di fornire una breve introduzione ai concetti del file system UNIX, che a tutt'oggi è utilizzato da tutte le incarnazioni di UNIX, incluso Linux.</para>
+
+      <sect3 id="folders-and-paths">
+        <title>Cartelle e percorsi</title>
+
+        <para>In un file system di tipo UNIX tutte le cartelle sono disposte con un semplice schema ad albero rovesciato discendente le cui ramificazioni si sviluppano a partire da un'unica cartella di livello principale denominata <emphasis>directory radice</emphasis> (il termine <emphasis>directory</emphasis> viene spesso utilizzato in luogo di <emphasis>cartella</emphasis>) e visualizzata come <guilabel>File System</guilabel> in Thunar. Ciò significa che</para>
+
+        <para>La posizione di un qualsiasi file o cartella nella struttura può essere descritta dal suo <emphasis>percorso</emphasis>. Il percorso rappresenta l'elenco di cartelle che è necessario attraversare per giungere alla destinazione (il file o la cartella) partendo dalla cartella di livello principale. Per esempio <filename role="directory">/casa/luca</filename> è la sotto cartella <filename role="directory">luca</filename> della sotto cartella <filename role="directory">casa</filename> della cartella di livello principale, e <filename>/home/luca/miofile.txt</filename> è il file <filename>miofile.txt</filename> in quella sotto cartella. Il simbolo iniziale <filename role="directory">/</filename> nei percorsi rappresenta la cartella di livello principale.</para>
+
+        <para>Ad ogni utente è associata una cartella in cui vengono archiviati i file e le impostazioni personali. Questa cartella è denominata <emphasis>directory casa</emphasis> ed è visualizzata in Thunar come un'icona speciale con il nome di login dell'utente. La cartella è simile a quella <guilabel>My Files</guilabel> presente nei sistemi Windows. Le <emphasis>directory casa</emphasis> dei vari utenti di un sistema, sono generalmente posizionate nella cartella <filename role="directory">/home</filename>. Per esempio <filename role="directory">/home/luca</filename> sarà la directory «casa» dell'utente con nome di login <filename role="directory">luca</filename>, mentre <filename role="directory">/home/giovanna</filename> sarà la directory «casa» per l'utente con il nome di login <filename role="directory">giovanna</filename>.</para>
+      </sect3>
+
+      <sect3 id="file-types">
+        <title>Tipi di file</title>
+
+        <para>Sarà già capitato di sentir dire che tutto è un file in UNIX. Questo è vero per la maggior parte degli oggetti presenti nei sistemi UNIX odierni; infatti, anche i dispositivi sono rappresentati come file speciali. Anche se questo può sembrare insensato, rappresenta uno dei punti di forza di UNIX e dei suoi derivati, e ha permesso di mantenere negli anni un semplice nocciolo centrale mentre altri sistemi operativi hanno dovuto introdurre dei nuovi concetti per ogni nuova tecnologia.</para>
+
+        <para>Questi sono i quattro tipi di file più importanti per i sistemi UNIX</para>
+
+        <sect4 id="file-types-ordinary-files">
+          <title>File ordinari</title>
+
+          <para>Un file ordinario può contenere del testo, un programma o altri dati. Appartengono a questa categoria le immagini, i file audio, i documenti e i video. Il termine <emphasis>file</emphasis> è spesso utilizzato per riferirsi a un file ordinario.</para>
+        </sect4>
+
+        <sect4 id="file-types-folder-files">
+          <title>Cartelle</title>
+
+          <para>Le cartelle sono considerate come file nei sistemi UNIX. Per essere esatti una cartella è un particolare tipo di file che contiene una lista dei nomi dei file con i riferimenti ai file contenuti nella cartella stessa.</para>
+        </sect4>
+
+        <sect4 id="file-types-symbolic-link-files">
+          <title>Collegamenti simbolici</title>
+
+          <para>Un collegamento simbolico (spesso chiamato <emphasis>symlink</emphasis>) è un particolare tipo di file che contiene un percorso a un altro file. I file dei collegamenti simbolici non contengono di per sé nessuna informazione utile, ma costituisco esclusivamente un riferimento ad altri file.</para>
+        </sect4>
+
+        <sect4 id="file-types-device-files">
+          <title>Dispositivi e supporti</title>
+
+          <para>Come già detto in precedenza, la maggior parte dei dispositivi (o supporti) sono considerati dal sistema come file. Spesso vengono posizionati nella cartella <filename role="directory">/dev</filename>. Per esempio, il file <filename>/dev/hda</filename> rappresenta il primo disco IDE su Linux.</para>
+        </sect4>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="faq">
+    <title>Domande poste frequentemente (FAQ)</title>
+
+    <para>L'intento di questa sezione è di raccogliere le numerose domande poste frequentemente in relazione all'utilizzo di Thunar. Se una domanda mancasse da queste pagine, si prega di farlo presente con <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">una richiesta</ulink>.</para>
+
+    <sect3 id="faq-executables">
+      <title>Perché Thunar non esegue i file con l'attributo eseguibile?</title>
+
+      <para>Per ragioni di sicurezza Thunar esegue solamente i file del tipo <literal>applicazione/x-desktop</literal>, <literal>applicazione/x-eseguibile</literal> e <literal>applicazione/x-shellscript</literal>. Per i file della scrivania la caratteristica di eseguibile verrà abilitata solamente se il file è di tipo <literal>applicazione</literal> ed è fornita una linea valida <literal>Exec</literal> o di tipo <literal>Link</literal> ed è fornito un <literal>URL</literal> valido. Per gli altri tipi la caratteristica è disponibile se il file ha l'attributo di eseguibile per l'utente corrente.</para>
+
+      <para>Si noti anche che per <literal>application/x-executable</literal> e <literal>application/x-shellscript</literal>, i tipi di file non devono corrispondere esattamente a questi tipi, ma è sufficiente se il tipo identificato ha un padre che corrisponde a uno dei due tipi elencati precedentemente, o se il tipo MIME è un alias per uno di essi.</para>
+    </sect3>
+
+    <sect3 id="faq-metadata">
+      <title>Dove vengono salvati da Thunar i metadati associati ai file?</title>
+
+      <para>Thunar associa diverse impostazioni ai file e alle cartelle, che vengono chiamate metadati. Questi metadati sono salvati per tutti i file nel file di database tdb, chiamato anche metafile. Il file di database è salvato in <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> e può essere esaminato utilizzando <command>tdbtool</command>, che è parte della distribuzione di Thunar (posizionato nella sotto cartella <filename role="directory">tdb/</filename>.</para>
+    </sect3>
+
+    <sect3 id="faq-thunarrc">
+      <title>Dove vengono salvate le preferenze di Thunar?</title>
+
+      <para>Thunar salva le preferenze configurabili dall'utente (e le impostazioni nascoste) in un file di estensione <filename>.ini</filename>, posizionato in <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename>, che può essere esaminato utilizzando un editor di testo. Consultare il file <filename>docs/README.thunarrc</filename> per una panoramica delle varie preferenze.</para>
+    </sect3>
+
+    <sect3 id="faq-mouse-gestures">
+      <title>Come utilizzare le "mouse gesture" in Thunar?</title>
+
+      <para>Attualmente Thunar fornisce un supporto di base per le cosiddette <emphasis>mouse gesture</emphasis> nella visualizzazione a icone. È possibile utilizzare le <emphasis>mouse gesture</emphasis> tenendo premuto il tasto centrale del mouse (generalmente la rotella del mouse) mentre il puntatore è nell'area di sfondo del componente nella vista a icone (qualsiasi area non occupata da testo o icona). A questo punto è possibile spostare il cursore nelle quattro direzioni per eseguire determinate azioni descritte nel seguito.</para>
+
+      <simplelist>
+        <member><guilabel>Sinistra</guilabel> - apre la cartella visitata precedentemente</member>
+        <member><guilabel>Su</guilabel> - apre la cartella genitore</member>
+        <member><guilabel>Destra</guilabel> - apre la cartella visitata successivamente</member>
+        <member><guilabel>Giù</guilabel> - aggiorna la cartella corrente</member>
+      </simplelist>
+    </sect3>
+
+    <sect3 id="faq-assign-keyboard-shortcuts">
+      <title>Come si possono assegnare scorciatoie da tastiera diverse?</title>
+
+      <para>Se si desidera riassegnare una scorciatoia, Thunar fornisce il supporto allo standard GTK+:</para>
+
+      <para>Per eliminare l'assegnazione di una scorciatoia, premere il tasto <keycap>Backspace</keycap> mentre si è posizionati sulla voce del menu.</para>
+
+      <para>Se la scorciatoia non cambia, è necessario abilitare la funzione in GTK+. Questo può essere fatto in tre modi:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Se si utilizza Xfce 4.3 o successivi, è possibile abilitare l'opzione <guilabel>acceleratori dei menu modificabili</guilabel> nella finestra delle <guilabel>Preferenze dell'interfaccia utente</guilabel>.</para>
+        </listitem>
+
+        <listitem>
+          <para>Se si utilizza GNOME, è possibile abilitare l'opzione <guilabel>acceleratori dei menu modificabili</guilabel> nella sezione <guilabel>Menu e barre strumenti</guilabel> della finestra del centro di controllo.</para>
+        </listitem>
+
+        <listitem>
+          <para>Altrimenti, inserire la riga seguente nel file <filename>~/.gtkrc-2.0</filename>: <screen>gtk-can-change-accels=1</screen></para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3 id="faq-store-keyboard-shortcuts">
+      <title>Dove vengono immagazzinate le scorciatoie da tastiera di Thunar?</title>
+
+      <para>La mappa delle scorciatoie da tastiera personalizzate sono salvate con il formato standard GTK+ accel map in un file posizionato in <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename>. Le linee che iniziano con <literal>;</literal> sono commenti, Consultare la documentazione di GTK+ per maggiori informazioni sul formato del file.</para>
+
+      <para>Se si è un pacchettizzatore o un amministratore di sistema e si intende fornire un'impostazione predefinita, per l'intero sistema, delle scorciatoie da tastiera, diversa da quella predefinita di Thunar, si può creare un file <filename>Thunar/accels.scm</filename> in una delle <envar>$XDG_CONFIG_DIRS</envar>. Per esempio, se <filename role="directory">/etc/xdg</filename> è parte di <envar>$XDG_CONFIG_DIRS</envar> (come è il caso per la maggior parte delle distribuzioni Linux), è possibile installare le impostazioni predefinite per tutto il sistema in <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar caricherà le scorciatoie da questo file al primo avvio.</para>
+    </sect3>
+  </sect1>
+
+
+  <sect1 id="support">
+    <title>Supporto</title>
+
+    <para>Per segnalare un bug o per avanzare una proposta relativa a questo programma o al manuale, utilizzare il sistema di tracciamento dei bug all'indirizzo ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided"&gt;http://bugzilla.xfce.org/</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">Riproducibilità</emphasis> - se lo sviluppatore non è in grado di vedere personalmente il problema, molto probabilmente non sarà in grado di correggerlo. Ogni dettaglio che si è grado di fornire può essere utile.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">Specificità</emphasis> - più rapidamente lo sviluppatore è in grado di isolare il problema in un'area specifica, maggiore sarà la possibilità di correggerlo.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>Se si desidera richiedere una nuova caratteristica, occorre specificare il motico per cui si ritiene necessaria. È più probabile che una nuova caratteristica venga implementata se si forniscono delle argomentazioni convincenti. Ancora meglio è se si fornisce una patch che implementa una determinata caratteristica, ma ci si assicuri di aver letto il file <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> (in particolar modo la sezione titolata <emphasis>Coding Style</emphasis>) prima di iniziare a modificare il codice sorgente.</para>
+
+    <para>Altrimenti, se si hanno delle domande relative all'utilizzo o all'installazione di questo programma, chiedere aiuto nella <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev mailing list</ulink> o sull'indirizzo IRC <emphasis role="bold">irc.freenode.net</emphasis> al canale <emphasis role="bold">#thunar</emphasis>.</para>
+  </sect1>
+
+  <sect1 id="copyright">
+    <title>Informazioni su @PACKAGE_NAME@</title>
+
+    <para>@PACKAGE_NAME@ è stato programmato da Benedikt Meurer (<email>benny@xfce.org</email>). Visitare il <ulink url="http://thunar.xfce.org/" type="http">sito ufficiale di Thunar</ulink>per maggiori informazioni.</para>
+
+    <para>Questa documentazione è stat scritta da Benedikt Meurer (<email>benny@xfce.org</email>). L'ultima versione di questo documento è disponibile sul <ulink type="http" url="http://thunar.xfce.org/">sito ufficiale di Thunar</ulink>.</para>
+
+    <para>Questo programma è distribuito nel rispetto dei termini della licenza GNU GPL (General Public License) come pubblicata dalla Free Software Foundation, sia questa la versione 2 o (a propria scelta) una qualsiasi versione successiva</para>
+
+    <para>Con il programma dovrebbe essere stata anche fornita una copia della GNU General Public License; se così non fosse, scrivere alla: Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
+  </sect1>
+
+</article>
+<!--
+	vim:set ts=2 sw=2 et ai encoding=UTF-8:
+-->

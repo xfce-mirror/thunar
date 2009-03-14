@@ -1,0 +1,966 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
+<!ENTITY date "November 2007">
+<!ENTITY version "@PACKAGE_VERSION@">
+<!ENTITY application "@PACKAGE_NAME@">
+]>
+<article id="index" lang="da">
+
+  <!-- Header -->
+  <articleinfo>
+    <title>Thunar filhåndtering</title>
+
+    <pubdate>&date;</pubdate>
+
+    <copyright>
+      <year>2004</year>
+      <year>2005</year>
+      <year>2006</year>
+      <year>2007</year>
+      <holder>Benedikt Meurer</holder>
+    </copyright>
+
+    <legalnotice id="legalnotice">
+      <para>Der gives hermed lov til kopiere, distribuere og/eller ændre dette dokument under betingelserne af GNU Free Documentation License, Version 1.1 eller enhver senere version udgivet af Free Software Foundation, med ingen ufravigelige dele; ingen forsidetekst, og ingen bagsidetekst. Hele licensteksten er til rådighed på <ulink type="http" url="http://www.gnu.org/">Free Software Foundation</ulink>.</para>
+    </legalnotice>
+
+    <authorgroup>
+      <author>
+        <firstname>Benedikt</firstname>
+        <surname>Meurer</surname>
+        <affiliation>
+          <address><email>benny@xfce.org</email></address>
+          <orgname>os-cillation</orgname>
+          <orgdiv>Systemudvikling</orgdiv>
+          <jobtitle>Softwareudvikler</jobtitle>
+        </affiliation>
+      </author>
+    </authorgroup>
+
+    <releaseinfo>Denne manual beskriver version @PACKAGE_VERSION@ af @PACKAGE_NAME@.</releaseinfo>
+  </articleinfo>
+
+  <sect1 id="intro">
+    <title>Introduktion til @PACKAGE_NAME@</title>
+
+    <para>Thunar er en ny moderne filhåndtering til skrivebordsmiljøet Xfce. Thunar er designet fra bunden af til at være hurtig og nem at bruge. Dens brugerflade er stilrent og intuitivt, og inkluderer ikke nogen forvirrende eller ubrugelige indstillinger som standard. Thunar er hurtig og responsiv, med en hurtig opstartstid og indlæsningstid af mapper.</para>
+
+    <para>Thunar filhåndtering sørger derved for et integreret tilgangspunkt til dine filer og programmer. Du kan bruge filhåndteringen til følgende:</para>
+
+    <itemizedlist>
+      <listitem>Oprette mapper og dokumenter.</listitem>
+      <listitem>Vise dine filer og mapper.</listitem>
+      <listitem>Håndtere dine filer og mapper.</listitem>
+      <listitem>Køre og håndtere brugertilpassede handlinger.</listitem>
+      <listitem>Tilgå flytbare medier.</listitem>
+    </itemizedlist>
+  </sect1>
+
+
+  <sect1 id="the-file-manager-window">
+    <title>Filhåndteringsvinduet</title>
+
+    <para>Som standard består filhånderingsvinduet af et genvejspanel på den venstre side, hovedområdet på den højre og en stilinje over hovedområdet.</para>
+
+    <screenshot>
+      <mediaobject>
+        <imageobject>
+          <imagedata fileref="images/file-manager-window.png" format="PNG"/>
+        </imageobject>
+
+        <textobject>
+          <phrase>Filhåndteringsvindue</phrase>
+        </textobject>
+      </mediaobject>
+    </screenshot>
+
+    <para><guilabel>Genvejspanelet</guilabel> tilbyder genveje til forskellige mapper på dit system. Den første genvej vil føre dig til din <emphasis>Hjemmemappe</emphasis>, mappen hvor du opbevarer alle dine personlige data, og vil derfor have det samme navn som den nuværende bruger. Den anden genvej vil tage dig til papirkurven, som opbevarer alle slettede filer, der så kan genskabes senere. Den tredje genvej tager dig til din <emphasis>Skrivebordsmappe</emphasis> som indeholder de filer og mapper, der er vist på dit skrivebord. Den fjerde genvej vil tage dig til roden af dit filsystem - her vil du måske gå lidt på opdagelse, selvom det kan være lidt forvirrende, hvis du er ny til Linux/Unix. Klik bare rundt i de forskellige mapper og se, hvad der er inden i dem.</para>
+
+    <para>Under <emphasis>Filsystemgenvejen, vil de flytbare drev og medier vfloppydrev. Klik p for flere detaljer.</emphasis></para>
+
+    <para>De resterende genveje er brugertilpassede. Tilføj dine egne genveje ved simpelthen at trække mapper hen til <guilabel>genvejspanelet</guilabel>. Dette vil gøre dig i stand til at tilgå dine vigtige mapper øjeblikkeligt. For at fjerne en tilføjet genvej, højreklikker du på genvejen og vælger <guimenuitem>Fjern genvej</guimenuitem>. For at omdøbe en tidligere tilføjet genvej, højreklikker du på genvejen og vælger <guimenuitem>Omdøb genvej</guimenuitem>.  Bemærk at disse handlinger kun påvirker genvejen og ikke mappen som genvejen henviser til.</para>
+
+    <para><emphasis>Hovedområdet</emphasis> vil altid vise indholdet af den nuværende mappe. Dobbeltklik på mapper for at tilgå dem, og højreklik på filer eller mapper for at se en kontekstmenu, der tilbyder forskellige muligheder for anvendelse. Vælg flere filer ved at trække en rektangel over dem med musen. Alternativt kan du vælge en fil, hold <keycap>Skift</keycap> knappen nede og forøg eller formindsk det markerede ved at bruge piletasterne.</para>
+
+    <para><emphasis>Stilinjen</emphasis> vil altid vise den sti du tog for at komme hen til den mappe du er i. Du kan klikke på enhver stilinjeknap for at skifte til den mappe den repræsenterer. Højreklik på en stilinje for at få en kontekstmenu frem med nogle valgmuligheder.</para>
+
+
+    <sect2 id="customizing-the-appearance">
+      <title>Tilpasning af udseendet</title>
+
+      <para>Der er flere måder at tilpasse udseendet af filhåndteringsvinduet på. Hvis du ikke kan lide den måde ikonerne er vist på, så vælg <menuchoice><guimenu>Vis</guimenu><guimenuitem>Vis som liste</guimenuitem></menuchoice> fra hovedmenuen for at få indholdet af den nuværende mappe vist som en detaljeret liste.</para>
+
+      <para>Du kan få filhåndteringsvinduet til at vise en stedlinje istedet for en stilinje ved at vælge <menuchoice><guimenu>Vis</guimenu><guimenuitem>Stedvælger</guimenuitem>Værktøjslinjestil</menuchoice></para>
+
+      <para>Hvis du foretrækker trævisning i det venstre panel, så vælg <menuchoice><guimenu>Vis</guimenu><guimenuitem>Sidepanel</guimenuitem><guimenuitem>Træstruktur</guimenuitem></menuchoice> fra hovedmenuen.</para>
+
+      <sect3 id="visible-columns-in-the-detailed-list-view">
+        <title>Synlige kolonner i detaljeret listevisning</title>
+
+        <para>Hvis du foretrækker at vise indholdet af en mappe som en liste ved brug af <guilabel>Detaljeret listevisning</guilabel>, kan du tilpasse de synlige kolonner i detaljeret listevisning. Vælg <menuchoice><guimenu>VisKonfigur fra hovedmenuen, for at tilpasse de synlige kolonner.</guimenu></menuchoice></para>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/visible-columns.png" format="PNG"/>
+            </imageobject>
+
+            <textobject>
+              <phrase>Synlige kolonner</phrase>
+            </textobject>
+          </mediaobject>
+        </screenshot>
+
+        <variablelist>
+          <varlistentry>
+            <term><guilabel>Synlige kolonner</guilabel></term>
+            <listitem>
+              <para>Vælg de kolonner du vil have vist, ud fra listen af kolonner der er til rådighed. Klik på <guibutton>Flyt op</guibutton> eller <guibutton>Flyt ned</guibutton> for at ændre rækkefølgen af kolonnerne. Klik på <guibutton>Brug standard</guibutton> for at vende tilbage til de oprindelige indstillinger.</para>
+            </listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><guilabel>Kolonnesjustering</guilabel></term>
+            <listitem>
+              <para>Vælg punktet <guibutton>Udvid kolonner automatisk efter behov</guibutton>, hvis du vil have kolonnerne i listevisning til at udvide automatisk efter behov. Så er du sikker på at teksten er helt synlig.</para>
+            </listitem>
+          </varlistentry>
+        </variablelist>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="working-with-files-and-folders">
+    <title>Arbejde med filer og mapper</title>
+
+
+    <sect2 id="opening-files">
+      <title>Åbner filer</title>
+
+      <para>Når du åbner en fil, vil filhåndteringen udføre standardhandlingen for den filtype. F.eks. ved åbning af en tekstfil vil den vise den i det tekstbehandlingsprogram der er sat som standard, mens åbning af en billedfil vil vise den i den billedfremviser der er sat som standard.</para>
+
+      <para>Filhåndteringen undersøger filendelsen på en fil for at fastslå hvilken type fil det er. Hvis filen ingen endelse har, vil filhåndteringen undersøge indholdet af filen.</para>
+
+      <sect3 id="executing-the-default-action">
+        <title>Udfører standardhandlingen</title>
+
+        <para>For at udføre standardhandlingen for en fil, så dobbeltklik på den. F.eks. er standardhandlingen for lydfiler, at afspille dem i den musikafspiller der er sat som standard. I dette tilfælde kan du dobbeltklikke på filen for at åbne den i musikafspilleren.</para>
+
+        <para>Du kan indstille <application>Thunar</application> således at du kan nøjes med at klikke en enkelt gang på en fil for at udføre standardhandlingen, se <xref linkend="preferences-behavior"/>.</para>
+      </sect3>
+
+      <sect3 id="executing-non-default-actions">
+        <title>Udfører ikke-standardhandlinger</title>
+
+        <para>For at udføre handlinger, udover standardhandlingen for en fil, så vælg den fil du vil udføre en handling med. Vælg den ønskede handling fra<emphasis>Åbn med</emphasis> valgmulighederne i <guimenu>Fil</guimenu> menuen eller med <guimenu>Åbn med</guimenu> undermenuen.</para>
+      </sect3>
+
+      <sect3 id="adding-actions">
+        <title>Tilføjer handlinger</title>
+
+        <para>Gør følgende for at tilføje handlinger til en bestemt filtype:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>Vælg en fil i hovedområdet af den filtype du vil tilføje en handling til.</para>
+          </listitem>
+          <listitem>
+            <para>Vælg <menuchoice><guimenu>Fil</guimenu><guimenuitem>Åbn med andet program...</guimenuitem></menuchoice> fra hovedområdet.</para>
+          </listitem>
+          <listitem>
+            <para>Enten vælg et program i <guilabel>Åbn med</guilabel>-dialogvinduet eller vælg <guibutton>Brug tilpasset kommando</guibutton> og vælg stien til det program, du ønsker at åbne denne filtype med.</para>
+          </listitem>
+        </orderedlist>
+
+        <para>Den handling du har valgt er nu tilføjet til listen over tidligere tilknyttede handlinger for lige den filtype. Hvis du har aktiveret <guibutton>Brug som standard for denne type filer</guibutton>  eller der ikke er nogen tidligere handlinger med denne filtype, er den nylig tilføjede handling nu standard.</para>
+
+        <para>Du kan også tilføje handlinger ved brug af <guibutton>Åbn med</guibutton> knappen under <menuchoice><guimenu>Fil</guimenu><guimenuitem>Egenskaber...</guimenuitem></menuchoice>.</para>
+      </sect3>
+
+      <sect3 id="modifiying-actions">
+        <title>Ændrer handlinger</title>
+
+        <para>Gør følgende for at ændre de tilknyttede handlinger til en fil eller filtype:</para>
+
+        <orderedlist>
+          <listitem>
+            <para>Vælg en fil i hovedområdet af den filtype du vil ændre en handling for.</para>
+          </listitem>
+          <listitem>
+            <para>Vælg <menuchoice><guimenu>Fil</guimenu><guimenuitem>Egenskaber...</guimenuitem></menuchoice> fra hovedmenuen.</para>
+          </listitem>
+          <listitem>
+            <para>Vælg den nye standardhandling ved brug af <guilabel>Åbn med</guilabel>-knappen eller tilføj en ny handling ved at vælge <guimenuitem>Åbn med andet program...</guimenuitem> fra rullegardinmenuen.</para>
+          </listitem>
+        </orderedlist>
+
+        <para>For at fjerne en tidligere tilføjet handling for en filtype, skal du åbne <guilabel>Åbn med</guilabel>-dialogen som beskrevet ovenfor, højreklik på den handling du vil fjerne og vælg <guimenuitem>Fjern starter</guimenuitem>.</para>
+      </sect3>
+    </sect2>
+
+
+    <sect2 id="file-properties">
+      <title>Filegenskaber</title>
+
+      <para>Filegenskabsvinduet viser mere information om enhver fil eller mappe i filhåndteringen. Med dette vindue, kan du også gøre følgende:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Ændre ikonet for særlige filer, som f.eks. programstartere og URL-henvisninger.</para>
+        </listitem>
+        <listitem>
+          <para>Tilføje eller fjerne emblemer for en fil eller mappe.</para>
+        </listitem>
+        <listitem>
+          <para>Ændre UNIX-filtilladelser for en fil eller mappe.</para>
+        </listitem>
+        <listitem>
+          <para>Vælge hvilket program der skal bruges til at åbne en fil og andre filer af den samme type.</para>
+        </listitem>
+      </itemizedlist>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/file-properties.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Filegenskaber</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>For at åbne filegenskabsvinduet, skal du udføre følgende trin:</para>
+
+      <orderedlist>
+        <listitem>
+          <para>Vælg en fil eller mappe, hvis egenskaber du vil undersøge eller ændre. Du kan ikke vælge flere elementer ad gangen og få vist de egenskaber, de har tilsammen i øjeblikket.</para>
+        </listitem>
+        <listitem>
+          <para>Udfør en af følgende handlinger: <itemizedlist>
+              <listitem>
+                <para>Vælg <menuchoice><guimenu>Fil</guimenu><guimenuitem>Egenskaber...</guimenuitem></menuchoice> fra hovedmenuen.</para>
+              </listitem>
+              <listitem>
+                <para>Højreklik på det markerede element og vælg <guimenuitem>Egenskaber...</guimenuitem> fra genvejsmenuen.</para>
+              </listitem>
+              <listitem>
+                <para>Tryk på <keycombo><keycap>Alt</keycap><keycap>Retur</keycap>.
+              
+            </keycombo></para></listitem></itemizedlist></para>
+        </listitem>
+      </orderedlist>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="using-removable-media">
+    <title>Tilgang af flytbart medie</title>
+
+    <sect2 id="accessing-removable-media">
+      <title>Tilgår flytbart medie</title>
+
+      <para>Thunar undersøtter flytbare medier, hvis den er bygget med understøttelse af <ulink type="http" url="http://freedesktop.org/wiki/Software_2fhal">HAL</ulink>, eller hvis du bruger <ulink type="http" url="http://www.freebsd.org/">FreeBSD</ulink>. Bemærk dog at på FreeBSD 6.0 eller nyere, er det anbefalet at bruge HAL istedet for den standardunderstøttelse som Thunar tilbyder.</para>
+
+      <sect3 id="to-mount-media">
+        <title>Montering af medie</title>
+
+        <para><emphasis>Montering</emphasis> af medie, er at gøre filsystemet på mediet tilgængeligt. Når du monterer medie, vil filsystemet på mediet, blive tilføjet som et underkatalog på dit filsystem.</para>
+
+        <para>For at tilgå medie, indsæt da mediet i den korrekte enhed, eller forbind den nye enhed til din computer (forbind f.eks. en USB-stang til en af dine USB-porte). Et objekt der repræsenterer mediet, er tilføjet i sidepanelet af filhåndteringen. Hvis <application>xfdesktop</application> kører og er indstillet til at vise <guilabel>Fil/starter ikoner</guilabel>, vil dette objekt også blive tilføjet på dit skrivebord.</para>
+
+        <para>Klik på på det objekt der repræsenterer mediet, for rent faktisk at montere det. F.eks. for at montere en floppydiskette skal du klikke på <guilabel>floppy-drev</guilabel>objektet i sidepanel. Filhåndteringen vil så tilføje mediets filsystem til dit filsystems hierarki og vise indeholdet af floppydisketten i hovedområdet.</para>
+      </sect3>
+
+      <sect3 id="to-eject-media">
+        <title>Skubbe medie ud</title>
+
+        <para>Hvis mediets drev er et motoriseret drev (f.eks. et cd-romdrev), så højreklik på medieobjektet i sidepanelet eller på skrivebordet og vælg <guilabel>Skub arkiv ud</guilabel>. Mediet er skubbet ud af drevet efter nogle få sekunder. Hvis mediets drev ikke er motoriseret (f.eks. et floppydrev eller en USB-stang), så højreklik på medieobjektet og vælg <guilabel>Afmontér arkiv</guilabel>. Efter et kort stykke tid, vil en påmindelse fremkomme, der informerer dig om at det nu er sikkert at fjerne mediet, eller at afkoble drevet fra computeren.</para>
+
+        <screenshot>
+          <mediaobject>
+            <imageobject>
+              <imagedata fileref="images/removable-media-unmount.png" format="PNG"/>
+            </imageobject>
+
+            <textobject>
+              <phrase>Påmindelse om afmontering</phrase>
+            </textobject>
+          </mediaobject>
+        </screenshot>
+
+        <para>Denne påmindelse vil dog kun kunne blive vist hvis understøttelsen af <application>libnotify</application> er aktiveret, og du har installeret en påmindelsestjeneste. En påmindelsestjeneste til Xfce er tilrådighed fra <ulink type="http" url="http://goodies.xfce.org/projects/applications/notification-daemon-xfce">Xfce Goodies Projektet</ulink>. Hvis understøttelse af påmindelser ikke er tilrådighed, så vent indtil kontekstmenuen forsvinder, før du fjerner mediet eller afkobler drevet.</para>
+
+        <para>Vær opmærksom på at du ikke kan afmontere eller skubbe medier ud, der stadig er i brug af et eller flere programmer. Derfor, hvis filhåndteringen nægter at skubbe medie ud, skal du være sikker på at du lukker alle de programmer der har tilgået mediet. Vær også sikker på at kommandolinjeprogramer der kører i <application>Terminal</application> vinduer, er lukket.</para>
+
+        <para>Vær sikker på at du afmonterer flytbare medier før du skubber dem ud. Skub ikke en diskette ud fra floppydrevet før du har afmonteret disketten. Fjern ikke en USB-stang før du har afmonteret flashdrevet. Hvis du ikke afmonterer mediet først, vil du måske miste nogle data, eller få dit system til at bryde ned.</para>
+      </sect3>
+    </sect2>
+
+    <sect2 id="management-of-removable-drives-and-media">
+      <title>Håndtering af flytbare drev og medier</title>
+
+      <para>Thunar er også istand til automatisk at håndtere flytbare drev og medier, hvis <ulink type="http" url="http://www.foo-projects.org/~benny/projects/thunar-volman/index.html">thunar-volman</ulink> pakken er installeret på dit system. Bemærk dog at denne funktion kræver HAL-understøttelse.</para>
+
+      <para>Hvis nu HAL-understøttelse er tilrådighed og <application>thunar-volman</application> er installeret på  dit system, kan du vælge at aktivere <guilabel>Arkivhåndtering</guilabel> funktionen i Thunar. Dette gøres ved at åbne filhåndteringsegenskaber, gå til <guilabel>Avanceret</guilabel>-siden og markér <guilabel>Aktivér arkivhåndterings</guilabel>-knappen.</para>
+
+      <para>Det næste skridt er at tilpasse håndteringen af flytbare drev og medier til dine behov. Klik på <guilabel>Indstil</guilabel>-henvisningen i sektionen <guilabel>Arkivhåndtering</guilabel> , lige under knappen. <guilabel>Flytbare drev og medier</guilabel> indstillingsdialogen vil nu blive vist.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/removable-drives-and-media.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Flytbare drev og medier</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Hvis du før har brugt <application>gnome-volume-manager</application>, vil du føle dig helt hjemme, da den var designet til at se ud som og opføre sig som <application>gnome-volume-manager</application>. Egenskaberne er delt op i enhedskategorier, for at gøre det nemt at finde indstillingen til din specifikke enhed.</para>
+
+      <para>Siden til <guilabel>Opbevaring</guilabel> indeholder de mest vigtige valgmuligheder. Som navnet antyder, gælder disse indstillinger kun for opbevaringsenheder såsom eksterne harddiskdrev, USB-stang og cd-rom'er.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Montér flytbare medier der bliver tilsluttet</guilabel></term>
+          <listitem>
+            <para>Anvend denne valgmulighed for, automatisk at montere filsystemer på flybare drev (f.eks. eksterne harddiskdrev eller USB-stænger), når sådanne bliver tilsluttet computeren.</para>
+            <para>Denne indstilling skal slås til for at bestemte andre funktioner virker med flytbare drev. Hvis du f.eks. slår denne indstilling fra, vil bestemte bærbare musikafspillere ikke længere blive fundet, selvom du har slået <guilabel>Spil musikfiler ved tilslutning</guilabel> indstillingen til på <guilabel>Multimedie</guilabel> -siden, vil den specifikke kommando ikke blive kørt når du tilslutter din bærbare musikafspiller.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Montér flytbare medie der tilsluttes</guilabel></term>
+          <listitem>
+            <para>brug denne indstilling for, automatisk at montere filsystemer på flytbare medier (f.eks. cd-rom'er eller dvd'er),når du indsætter mediet i drevet.</para>
+            <para>Denne indstilling skal slås til for at bestemte andre funktioner virker med flytbare drev. Hvis du f.eks. slår denne valgmulighed fra, vil det blive umuligt at finde ud af om det flytbare medie har auto-kør egenskaber, og derfor vil </para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Gennemse flytbare medier der bliver tilsluttet</guilabel></term>
+          <listitem>
+            <para>Brug denne indstilling for, automatisk at vise indholdet af det nyligt indsatte medie i filhåndteringen. Bemærk dog, at indholdet vil kun blive vist hvis ingen anden handling var mulig eller du valgte at ignorere de andre mulige handlinger. Hvis du f.eks. indsætter en cd-rom med auto-kør egenskaber og <guilabel>auto-kørprogrammer på nye drev og medier</guilabel> indstillingen er slået til, vil du blive spurgt om du vil tillade, eller ignorere auto-kør-funktionen. Hvis du vælger at ignorere auto-kør-funktionen, vil indholdet blive vist i filhåndteringen.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Auto-kør programmer på nye drev og medier</guilabel></term>
+          <listitem>
+            <para>Brug denne funktion for at gøre bruge af auto-kør muligheden på bestemte flytbare drev og medier. Se <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop Application Autostart Specification</ulink> for deltajer om auto-kør mekanismen. For at forbedre sikkerheden, vil du altid blive spurgt om at bekræfte auto-kør funktionen.</para>
+            <para>Hvis Windows emulatoren <ulink type="http" url="http://www.winehq.org/">WINE</ulink> er installeret på dit system, vil auto-kør-mekanismen også forsøge at køre <filname>autorun.exe filer ved brug af WINE.</filname></para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Auto-åbning af filer på nye drev og medier</guilabel></term>
+          <listitem>
+            <para>Brug denne funktion for at gøre bruge af auto-åbn-muligheden på bestemte flytbare drev og medier. Se <ulink type="http" url="http://standards.freedesktop.org/autostart-spec/autostart-spec-0.5.html">Desktop Application Autostart Specification</ulink> for deltajer om auto-åbn mekanismen. For at forbedre sikkerheden, vil du altid blive spurgt om at bekræfte auto-åbn-funktionen.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <para>De tilbageværende indstillinger vil tillade dig af specificere en kommando, der skal køres når en bestemt type medie er indsat i drevet, eller når en bestemt type ekstern enhed er tilsluttet. Kommandoen kan bruge tre særlige variabler, der vil blive erstattet når kommandoen er udført:</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><literal>%d</literal></term>
+          <listitem>
+            <para>Hver forekomst af <literal>%d</literal> i kommandoen til blive erstattet af enhedens filsti på nylige tilføjede enheder. F.eks. hvis du har forbundet en USB-stang, vil enhedens filsti være <filename>/dev/sda1 eller /dev/sda1.</filename></para>
+            <para>Hvis ingen enhedsfil er tilknyttet enheden eller enhedsfilen, af en eller anden grund ikke kan findes, vil variablen <literal>%d</literal> blive erstattet med den tomme streng.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>%h</literal></term>
+          <listitem>
+            <para>Hver forekomst af <literal>%h</literal> i kommandoen vil blive erstattet med HAL-UDI'en på den nyligt tilføjetde enhed.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><literal>%m</literal></term>
+          <listitem>
+            <para>Hver forekomst af <literal>%m</literal> i kommandoen vil blive erstattet af det monteringspunkt, hvor den nyligt tilføjede enhed blev monteret. Hvis enheden ikke kan monteres (f.eks. printere eller tastaturer) eller hvis automatisk montering er slået fra, vil <literal>%m</literal> blive erstattet med den tomme streng.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+
+      <sect3 id="troubleshooting-the-volume-manager">
+        <title>Fejlfinding til arkivhåndteringen</title>
+
+        <para>Nyttige råd til fejlfinding til arkivhåndteringen, i det tilfælde at den ikke virker som forventet.</para>
+
+        <orderedlist>
+          <listitem>
+            <para>Vær sikker på at <application>Thunar</application> kører som en tjeneste. Arkivhåndteringen afhænger af dette, da den ikke er en tjeneste i sig selv. Som standard, vil Xfce automatisk starte <application>Thunar</application> op som en tjeneste under opstart. Hvis den blev dræbt af en eller anden grund, så åbn <guilabel>Kør program</guilabel> (ved brug af tastaturgenvejen <keycombo><keycap>Alt</keycap><keycap>F2</keycap></keycombo> eller højreklik på skrivebordet og vælg <guilabel>Kør program...</guilabel> fra skrivebordsmenuen), indtast <literal>Thunar --daemon</literal> og klik på <guibutton>Kør</guibutton>.</para>
+          </listitem>
+
+          <listitem>
+            <para>Prøv at køre <application>thunar-volman</application> fra et <application>Terminal</application>-vindue efter at have tilsluttet drevet eller indsat mediet. Først skal du finde ud af hvad den nye enheds HAL-UDI er, ved at bruge <application>lshal</application> eller <application>hal-device</application>. Når du først kender enhedens UDI, skal du køre <litereal>thunar-volman --device-added&lt;din-enheds-udi&gt; i et Terminal-vindue og efterse uddataen for fejl eller advarsler.</litereal></para>
+          </listitem>
+        </orderedlist>
+
+        <para>Hvis det stadigvæk ikke vil virke, så spørg på ulink type="http" url="http://forum.xfce.org/"&gt;Xfce Forum</para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="preferences">
+    <title>Indstillinger til filhåndtering</title>
+
+    <para>Brug dialogen, <guilabel>Indstilling af filhåndtering</guilabel> for at indstille dine <application>Thunar</application>-filhåndteringsindstillinger. For at åbne indstillingsdialogen, skal du vælge <menuchoice><guimenu>Redigér</guimenu><guimenuitem>Indstillinger...</guimenuitem></menuchoice> fra menulinjen, eller klik på <guibutton>Filhåndterings</guibutton>knappen i indstillingshåndteringen til Xfce.</para>
+
+    <para><guilabel>Filhåndteringsindstillingerne</guilabel> er delt i fire sider med forskellige indstillinger, der er beskrevet i hvert sit afsnit nedenunder. Grundlæggende kan du indstille i følgende kategorier:</para>
+
+    <itemizedlist>
+      <listitem><para>Standardindstillingen til visninger.</para></listitem>
+      <listitem><para>Standardindstillinger til sidepanelet.</para></listitem>
+      <listitem><para>Filhåndteringenvinduets opførsel.</para></listitem>
+      <listitem><para>Filhåndteringens avancerede egenskaber.</para></listitem>
+    </itemizedlist>
+
+    <para>Thunar understøtter også en stak af de såkaldte <emphasis>skjulte indstillinger</emphasis>, som styrer flere af de avancerede egenskaber i filhåndteringen, men er ikke inkluderet indstillingerne for at holde indstillingsdialogen som simpel som mulig. Filen <ulink type="http" url="http://svn.xfce.org/svn/xfce/thunar/trunk/docs/README.thunarrc"><filename>README.thunarrc</filename></ulink> der er leveret sammen med Thunar, beskriver alle indstillinger i detaljer.</para>
+
+
+    <sect2 id="preferences-views">
+      <title>Indstillinger til visning</title>
+
+      <para>Du kan angive en standardvisning samt vælge sorterings- og visningsindstillinger. Du kan også indstille om miniaturevisning skal anvendes for filtyper der understøtter dette.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-views.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Indstillinger til visning</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Vis ny mappe ved at bruge</guilabel></term>
+          <listitem>
+            <para>Vælg standardvisningen for mapper. Når du åbner et nyt vindue, vil kompakt listevisning blive vist i den visning som du vælger. Dette kan enten være ikonvisning, listevisning, eller detaljeret listevisning. Du kan også vælge <guilabel>Sidste aktive visning</guilabel> her for at vælge den visning der er anvendt på det sidste aktive vindue.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Sortér mapper før filer</guilabel></term>
+          <listitem>
+            <para>Vælg denne indstilling for at vise mapper før filer, når du sorterer en mappe.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Vis miniaturer</guilabel></term>
+          <listitem>
+            <para>Vælg denne indstilling for at vise miniaturer af billedfiler og andre filer der er understøttet. Filhåndteringen gemmer miniaturebilleder for hver mappe i den skjulte <filename role="directory">.thumbnails</filename> mappe i brugerens hjemmemappe.</para>
+            <para>Se <xref linkend="thumbnailers"/> hvis du vil udvide den grundlæggende miniature funktionalitet, stillet til rådighed af <application>Thunar</application> med understøttelse for yderligere filtyper.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Tekst ved siden af ikoner</guilabel></term>
+          <listitem>
+            <para>Vælg denne indstilling, for at placere ikonteksten for elementer i ikonvisning, ved siden af ikonet istedet for under det.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-side-pane">
+      <title>Indstillinger til sidepanelet</title>
+
+      <para>Du kan vælge visningsmulighder til genvejs- og træstrukturpanelet.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-side-pane.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Indstillinger til sidepanelet</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Sidepanelet kan enten vise en liste af genveje til mapper i dit filsystem, som er standardindstillingen, eller som en trævisning af dit filsystem. Denne side tillader dig at vælge størrelsen på ikoner til genvejs- og træpanelet. Du kan også angive hvilke emblemer der skal vises.</para>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Ikonstørrelse</guilabel></term>
+          <listitem>
+            <para>Størrelsen på ikonerne vist i siden, går fra <guilabel>Meget små</guilabel> (omkring 16x16 pixels) til <guilabel>Meget store</guilabel> (omkring 128x128 pixels).</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Vis ikonemblemer</guilabel></term>
+          <listitem>
+            <para>Vælg denne indstilling for at vise symboler for mapper i sidepanelet. Du kan tildele emblemer til mapper i <guilabel>Egenskaber</guilabel>-dialogvinduet. Vælg en mappe i hovedområdet og vælg <menuchoice><guimenu>Fil</guimenu><guimenuitem>Egenskaber...</guimenuitem></menuchoice> fra hovedmenuen, eller højreklik på mappen og vælg <menuchoice><guimenuitem>Egenskaber...</guimenuitem></menuchoice> fra kontekstmenuen.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-behavior">
+      <title>Opførselsindstillinger</title>
+
+      <para>Du kan vælge den foretrukne opførsel til at påvirke filhåndteringen.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-behavior.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Opførselsindstillinger</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Enkeltklik for at aktivere elementer</guilabel></term>
+          <listitem>
+            <para>Vælge denne for at udføre standardhandlingen for et element når du klikker på det. Når denne indstilling er valgt, og du peger på et element, vil titlen på elementet blive understreget og automatisk blive valgt, efter en kort forsinkelse.</para>
+            <para>Forsinkelsen kan angives under indstillingen. Den automatiske markering af elementer kan du også slå fra ved at rykke markøren til den yderste venstre position.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Dobbeltklik for at aktivere elementer</guilabel></term>
+          <listitem>
+            <para>Vælg denne indstilling for at udføre standardhandlingen for et element når du dobbeltklikker på det, og markér elementer med et enkelt klik.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+
+
+    <sect2 id="preferences-advanced">
+      <title>Avanceret indstillinger</title>
+
+      <para>Du kan styre filhåndteringens avancerede funktioner.</para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/preferences-advanced.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Avanceret indstillinger</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <variablelist>
+        <varlistentry>
+          <term><guilabel>Mappetilladelser</guilabel></term>
+          <listitem>
+            <para>Vælg den handling der skal udføres når du ændrer på en mappes tilladelser i <guilabel>Egenskaber</guilabel>-dialogen. Du kan vælge at lade <application>Thunar</application> spørge hver gang du ændrer mappetilladelser, få den til at bruge standarden for de nye tilladelser kun på mappen eller til også at bruge den rekursivt på mappens indhold.</para>
+          </listitem>
+        </varlistentry>
+
+        <varlistentry>
+          <term><guilabel>Arkivhåndtering</guilabel></term>
+          <listitem>
+            <para>Hvis <application>Thunar</application> blev installeret med understøtttelse af HAL og <application>thunar-volman</application>-pakken også er installeret, kan du slå den integrerede arkivhåndtering til. Se <xref linkend="management-of-removable-drives-and-media"/> for detaljer om denne funktkion.</para>
+          </listitem>
+        </varlistentry>
+      </variablelist>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="customizing-thunar">
+    <title>Tilpasning af Thunar</title>
+
+    <para>Dette kapitel beskriver hvordan du ændrer bestemte dele af filhåndteringen for tilpasse den til dit behov.</para>
+
+
+    <sect2 id="sendto">
+      <title>"Send til"-menuen</title>
+
+      <para>Thunar inkluderer en <guilabel>Send til</guilabel>-menu, der tilbyder mulige destinationer som filer og mapper kan sendes til. For at tilgå <guilabel>Send til</guilabel>-menuen, skal du vælge <menuchoice>FilSend til</menuchoice></para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/sendto-menu.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>"Send til"-menu</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para>Som standard indeholder <guilabel>Send til</guilabel>-menuen, et punkt der hedder <guilabel>Skrivebord (opret henvisning)</guilabel> til alle filer og mapper, som simpelthen opretter en henvisning til den valgte fil på skrivebordet. Derudover hvis <guilabel>Genvejspanelet</guilabel> er aktivt, vil menuen også inkludere et punkt der hedder <guilabel>Sidepanel (opret henvisning)</guilabel> til mapper, der tillader brugere at tilføje nye genveje til sidepanelet.  Efter disse punkter vil <application>Thunar</application> vise flytbare drev der for øjeblikket, er tilsluttet computeren. I det ovenstående skærmbillede repræsenterer <guilabel/> en mulig destination for hvor filerne kan sendes til. BemSend til-menuen, s</para>
+
+      <para>Derudover bliver <application>Thunar</application> også leveret med <application>thunar-sendto-email</application>-udvidelsesmodulet, der tilføjer punktet <guilabel>E-postmodtager</guilabel> til menuen, som så åbner e-postprogrammet med den valgte fil vedhæftet meddelelsen. Hvis markeringen indeholder mindst en mappe, vil de valgte elementer blive pakket ned i en ZIP-fil før de er vedhæftet meddelelsen. Modsat, hvis markeringen indeholder flere filer, eller en enkelt fil som er større end 200Kib, vil brugeren blive spurgt om filerne skal pakkes ned i og sendes som en ZIP-fil.</para>
+
+      <para>Ligesom de fleste funktioner i <application>Thunar</application>, kan <guilabel>Send til</guilabel>-menuen nemt udvides af brugere og programudviklere med nye destinationer, ved at bruge <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink>. Disse filer skal installeres i en af <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> mapperne (see the <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> for detaljer om <literal>$XDG_DATA_DIRS</literal> variable).</para>
+
+      <para>Destinationens <literal>Mime-type&gt; <filename>.desktop</filename> angiver hvilke type filer der skal være til rådighed i <guilabel>Send til</guilabel>-menuen. F.eks. hvis du vil tilføje et punkt for et <ulink type="http" url="http://flickr.com/">Flickr</ulink> overførselsværktøj, så vil dette punkt kun vises hvis markeringen indeholder JPEG-filer (andre filformater er ikke understøttet af Flickr) og du ville så skulle tilføje en linie som <literal>MimeType=image/jpeg;</literal>. Hvis du ikke angiver nogen <literal>MimeType</literal> vil punktet blive vist for alle filtyper.</literal></para>
+
+      <para>Et komplet eksempel ved brug af <application>postr</application>-progammet, er vist forneden:</para>
+
+<programlisting>
+# postr.desktop - Integrér postr i
+#                  "Send til"-menuen.
+[Desktop Entry]
+Type=Application
+Version=1.0
+Encoding=UTF-8
+TryExec=postr
+Exec=postr %F
+Icon=postr
+Name=Flickr
+MimeType=image/jpeg;</programlisting>
+
+      <para>Hvis du installerer denne fil i <filename role="directory">~/.local/share/Thunar/sendto/</filename> (opret mappen hvis den endnu ikke findes) <guilabel>Send til</guilabel>-menuen for JPEG-filer vil vise det nye punkt, <guilabel>Flickr</guilabel>, som kan bruges til at overføre JPEG-billeder til Flickr.</para>
+
+      <para><ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/sendto_menu">Thunar projektets Wiki</ulink> indeholder forskellige eksempler på brugbare destinationer til <guilabel>Send til</guilabel>-menuen. Du er velkommen til at udvide Wikisiden med nye eksempler.</para>
+    </sect2>
+
+
+    <sect2 id="thumbnailers">
+      <title>Miniaturegenererer</title>
+
+      <para>Thunar bruger små værktøjer til at oprette miniaturer af bestemte filtyper og viser miniaturerne som forhåndsvisning af filindholdet. Disse små værktøjer bliver kaldt miniaturegenererer. Thunar bliver leveret med miniaturegenererer for billed- og skrifttypefiler, og gør automatisk brug af de installerede miniaturegenererer fra GNOME, hvis den er installeret med understøttelse af <literal>gconf</literal>. Brugere kan løbende udvide denne grundlæggende funktionalitet med miniaturegenererer til andre filtyper.</para>
+
+      <para>Hvis du planlægger at skrive en brugerdefineret miniaturegenerer, skal du starte med et program der accepterer mindst to kommandolinjeparametre, inddatafilen, som er af den filtype du vil understøtte og uddatafilen, som er en PNG-fil der oversættes med det format angivet af <ulink type="http" url="http://jens.triq.net/thumbnail-spec/creation.html#AEN139">Standard for miniaturehåndtering</ulink>. Derudover må dit program også acceptere den ønskede størrelse på miniaturen, som er valgfri men højt anbefalet. Hvis du skriver uddatafilen til en vilkårlig billedstørrelse, vil Thunar derefter skalere det til den ønskede størrelse, hvilket muligvis gør at der bliver produceret et mindre optimalt resultat end hvis miniaturen var oprettet med de anmodede mål.</para>
+
+      <para>Når først dit værktøj til at generere miniaturer er færdigt, skal du registrere din miniaturegenererer, så Thunar kan finde og bruge det. Derfor, alt du skal gøre er at installere en beskrivelsesfil til miniaturegenereren (en <filename>.desktop</filename> fil) i en de <filename role="directory">$XDG_DATA_DIRS/thumbnailers/</filename> stier. F.eks. hvis du kun vil registrere miniaturegenereren til din brugerkonto, kan du installere filen i denne mappe <filename role="directory">~/.local/share/thumbnailers/</filename>.  <filename>.desktop</filename> for miniaturegenererer har det følgende format.</para>
+
+      <sect3 id="thumbnailer-desktop-file-format">
+        <title>Filformatbeskrivelse til miniaturegenererer</title>
+
+        <para>Miniaturegenerererbeskrivelsesfiler bruger <ulink type="http" url="http://standards.freedesktop.org/desktop-entry-spec/latest/">Desktop Entry Formatet</ulink> med en særlig <literal>type</literal> af <literal>X-miniaturegenererer</literal> og et særligt felt,<literal>X-Thumbnailer-Exec</literal> med nye feltkoder. Grundlæggende har en miniaturegenerererbeskrivelsesfil, det følgende format.</para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=Din-miniaturegenererer
+MimeType=din-understøttede/MIME-type;
+X-Thumbnailer-Exec=din-miniaturegenererer %i %o %s</programlisting>
+
+        <para><literal>Versionen</literal> og <literal>indkodning</literal> er foreskrevet af Desktop Entry specifikationen, brug blot de værdier der er vist i det ovenstående eksempel. <literal>Type</literal>feltet skal have den bestemte værdi <literal>X-Thumbnailer</literal>, ellers vil din miniature ikke blive genkendt. <literal>Navne</literal>værdien beskriver din miniature.</para>
+
+        <para><literal>X-Thumbnailer-Exec</literal> feltet indeholder kommandoen til at køre din miniature, og understøtter særlige feltkoder der bliver erstattet når miniaturen køres. De genkendte feltkoder er følgende:</para>
+
+        <variablelist>
+          <varlistentry>
+            <term><varname>%i</varname></term>
+            <listitem>Den lokale sti til inddatafilen til oprettelsen af miniaturevisning, kan entet være en sti relativ til mappen hvor miniaturegenereren blev kørt, eller en fuld sti.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%o</varname></term>
+            <listitem>Den lokale sti til uddatafilen, hvor den oprettede miniature skal gemmes. Uddatafilen skal gemmes som en gyldig PNG-fil i overensstemmelse med miniaturestandarden. (se overnstående). Bemærk at stien ikke må ende med <literal>.png</literal>, som har en betydning hvis du kører særlige tredjepartsprogrammer.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%s</varname></term>
+            <listitem>Den ønskede størrelse på den generede miniature i pixels. Den parameter er valgfri.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%u</varname></term>
+            <listitem>Ligesom <literal>%i</literal>, men erstattet med URI'en af filen, fremfor stien. Dette blev tilføjet for at gøre det mere kompatibelt med GNOME.</listitem>
+          </varlistentry>
+
+          <varlistentry>
+            <term><varname>%%</varname></term>
+            <listitem>Vil blive erstattet med en enkelt <literal>%</literal>.</listitem>
+          </varlistentry>
+        </variablelist>
+
+        <para>Du skal inkludere mindst <literal>%o</literal> og <literal>%i</literal> eller <literal>%u</literal>, ellers vil din miniaturegenererer være ubrugelig.</para>
+
+        <para><literal>MIME-typen</literal> viser MIME-typerne - adskilt af et semikolon - for hvilke din miniaturegenererer er i stand til at vise forhåndsvisninger.</para>
+      </sect3>
+
+      <sect3 id="eps-thumbnailer-example">
+        <title>EPS miniaturegenererer-eksempel</title>
+
+        <para>Dette eksempel demonsterer hvordan man skriver og installerer en ny miniaturegenererer til <filename>.eps</filename>-filer, som bruger <command>convert</command>-værktøjet der bliver leveret som en del af ImageMagick. Vi begynder først med et simpelt skript der kører <command>convert</command> for at generere en miniature i den ønskede størrelse.</para>
+
+        <programlisting>
+#!/bin/sh
+#
+# eps-thumbnailer - Eksempel på miniaturegenerererskript for EPS-filer.
+#
+# Anvendelse: esp-thumbnailer eps-file png-file size
+#
+
+# command line parameters
+ifile=$1
+ofile=$2
+size=$3
+
+# kør convert (ImageMagick)
+exec convert "eps:$ifile" -scale "$sizex$size" "png:$ofile"</programlisting>
+
+        <para>Gem det ovenstående skript til filen <filename>eps-thumbnailer</filename>, vær sikker på at den kan køres, og installér den i <filename role="directory">/usr/local/bin</filename>.</para>
+
+        <screen>
+$ chmod +x eps-thumbnailer
+$ sudo install eps-thumbnailer /usr/local/bin/eps-thum</screen>
+
+        <para>Derefter skal vi oprette miniaturegenerererbeskrivelsesfilen <filename>eps-thumbnailer.desktop</filename>, der ser således ud:</para>
+
+        <programlisting>
+[Desktop Entry]
+Version=1.0
+Encoding=UTF-8
+Type=X-Thumbnailer
+Name=EPS Thumbnailer
+TryExec=convert
+MimeType=image/x-eps;
+X-Thumbnailer-Exec=/usr/local/bin/eps-thumbnailer %i %o %s</programlisting>
+
+        <para>Denne fil skal installeres i <filename role="directory">/usr/local/share/thumbnailers</filename> (opret mappen hvis den ikke eksisterer).</para>
+
+        <screen>
+$ sudo install -d /usr/local/share/thumbnailers
+$ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbnailer.desktop</screen>
+
+        <para><filename>eps-thumbnailer.desktop</filename>-filen bruger den særlige knap <literal>TryExec</literal>, som, hvis angivet, navngiver en kommando der skal være tilstede på systemet for at miniaturegenereren er brugbar. I dette tilfælde er vores skript ubrugeligt hvis <command>convert-programmet ikke er til stede.</command></para>
+
+        <para>Det sidste skridt er at regenere mellemlageret til miniaturegenereren så Thunar kan bruge din miniaturegenererer. Mellemlageret til miniaturegenererer er lokaliseret i <filename>$XDG_CACHE_HOME/Thunar/thumbnailers.cache</filename> (med mindre den er overskrevet af dig eller systemadministratoren, vil <varname>$XDG_CACHE_HOME</varname> pege på mappen <filename role="directory">~/.cache/</filename>). Mellemlageret til miniaturegenereren er periodisk regenereret af Thunar, men du kan tvinge den til at regenerere det ved at køre <filename>thunar-vfs-update-thumbnailers-cache-1</filename>-værktøjet, der bliver leveret som en del af Thunar. Dette værktøj er som regel installeret i <filename role="directory">libexec</filename> i din installationssti (<filename role="directory">sbin</filename> på Debian/Ubuntu). Så f.eks. hvis Thunar er installeret i <filename role="directory">/usr</filename>, skal du køre værktøjet således:</para>
+
+        <screen>$ /usr/libexec/thunar-vfs-update-thumbnailers-cache-1</screen>
+
+        <para>Men vær sikker på at du kører programmet fra din brugerkonto, og ikke superbrugerkontoen, da mellemlageret til miniaturegenereren er gemt i din hjemmemappe, fremfor på selve systemet.</para>
+
+        <para>Hvis Thunar nu er oversat med understøttelse for filændringsovervågning (ved at bruge FAM- eller Gamin tjenester, vil den automatisk bruge det nye miniaturemellemlager inden for få sekunder, og er derefter istand til at oprette miniaturevisninger ved at bruge dine egne miniaturegenererer. Ellers kan du være nødt til at genstarte Thunar ved at bruge</para>
+
+        <screen>$ Thunar -q</screen>
+
+        <para>for at lukke alle kørende udgaver, for derefter at starte den op igen fra din programstarter.</para>
+      </sect3>
+
+      <sect3 id="cleaning-up-thumbnails">
+        <title>Oprydning af miniaturevisninger</title>
+
+        <para>De oprettede miniaturevisninger er gemt i mappen, <filename role="directory">~/.thumbnails/</filename> i overenstemmelse med <ulink type="http" url="http://jens.triq.net/thumbnail-spec/index.html">Miniaturevisningsstandarden</ulink>. Det kan være hjælpsomt at rydde op i mellemlageret for miniaturevisninger hvis du tester en ny miniaturevisning, ved at bruge</para>
+
+        <screen>$ rm -rf ~/.thumbnails/</screen>
+
+        <para>hvilket også vil give dig noget ledigt plads i din hjemmemappe. Da alle informationer i denne mappe, automatisk blev genereret fra filerne i dit system, vil du ikke miste følsomme data.</para>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="advanced-topics">
+    <title>Avancerede emner</title>
+
+
+    <sect2 id="to-bulk-rename-files">
+      <title>At masseomdøbe filer</title>
+
+      <para>At <emphasis>masseomdøbe</emphasis> filer, betyder at omdøbe flere filer på samme tid ved at bruge et eller andet kriterie, der gælder for mindst af en af filerne. <application>Thunar</application> indeholder en masseomdøber, som kan køres separat ved at bruge <command>Thunar -B</command> eller indefra <application>Thunar</application> ved at vælge to eller flere filer i hovedområdet og trykke på <keycombo><keycap>F2</keycap></keycombo> eller ved at vælge <menuchoice><guimenu>Redigér</guimenu>Omdøb...</menuchoice></para>
+
+      <screenshot>
+        <mediaobject>
+          <imageobject>
+            <imagedata fileref="images/bulk-rename.png" format="PNG"/>
+          </imageobject>
+
+          <textobject>
+            <phrase>Masseomdøb filer</phrase>
+          </textobject>
+        </mediaobject>
+      </screenshot>
+
+      <para><emphasis>Masseomdøberne</emphasis> kan bruges til ændre navnet på filerne, endelsen på filerne, eller både på navnet og filendelsen på filerne.</para>
+
+      <itemizedlist>
+        <listitem><para>Fjern tegn.</para></listitem>
+        <listitem><para>Numerere filer.</para></listitem>
+        <listitem><para>Indsæt dato eller tidspunkt.</para></listitem>
+        <listitem><para>Indsæt eller overskriv tegn.</para></listitem>
+        <listitem><para>Søg og erstat tegn.</para></listitem>
+        <listitem><para>Konvertér til store bogstaver, små bogstaver eller camelcase.</para></listitem>
+      </itemizedlist>
+
+      <para>Yderligere <emphasis>masseomdøbere</emphasis> kan være installeret som udvidelsesmoduler til <application>Thunar</application>. Se hjemmesiden for<ulink type="http" url="http://thunar.xfce.org/plugins.html">Thunar udvidelsesmoduler</ulink>  for at se mulige udvidelser. The <ulink type="http" url="http://thunar.xfce.org/pwiki/documentation/bulk_renamer">Thunar Projektets Wiki</ulink> indeholder flere detaljer om denne funktion. Du er velkommen til at tilføje yderligere information til wikien.</para>
+    </sect2>
+
+
+    <sect2 id="the-unix-file-system">
+      <title>UNIX filsystemet</title>
+
+      <para>Selvom Thunar filhåndtering gør det godt ved at skjule detaljerne om det underliggende filsystem, så brugeren ikke skal bekymre sig om dem, er det nogen gange en god idé at forstå de grundlæggende begreber for at se hele billedet. Dette kapitel vil forsøge at give dig en kort introduktion til begreberne på UNIX filsystemet , som idag bliver brugt i alle udgaver af UNIX, inklusiv Linux.</para>
+
+      <sect3 id="folders-and-paths">
+        <title>Mapper og stier</title>
+
+        <para>I et UNIX filsystem er alle mappe arrangeret i en simpel inverteret faldende træstruktur, der udvider sig fra en hovedmappe, som hedder <emphasis>rod-kataloget</emphasis> (udtrykket <emphasis>katalog</emphasis> er ofte brugt istedet for <emphasis>mappe</emphasis>) og vist som <guilabel>Filsystem</guilabel> i Thunar. Dette betyder at du kan komme fra en mappe til en anden, ved at gå op i træet indtil du når et fælles punkt, og så ned i træet igen igennem de rette undermapper indtil du når din destination.</para>
+
+        <para>Placeringen af enhver fil eller mappe i træet kan beskrives af dens <emphasis>sti</emphasis>. Stien er de mapper, du oppefra, skal gå igennem for at nå til målets mappe eller fil. F.eks. er <filename role="directory">/home/luke</filename> undermappen af  <filename role="directory">luke</filename> af undermappen <filename role="directory">home</filename> af hovedmappen, og <filename>/home/luke/myfile.txt</filename> er filnavnet i <filename>myfile.txt</filename> i den undermappe. Det første <filename role="directory">/</filename> i disse stier repræsenterer hovedmappen.</para>
+
+        <para>Hver bruger har sin egen mappe til at opbevare personlige filer og indstillinger. Mappen hedder <emphasis>hjemmekataloget</emphasis> og er vist i Thunar som et særligt ikon med brugerens logindnavn. Mappen er ligesom <guilabel>Dokumenter</guilabel> fra Windows. De forskellige brugereres <emphasis>Hjemmekataloger</emphasis> i systemet er som regel lokaliseret under <filename role="directory">/home</filename>-mappen. F.eks. ville <filename role="directory">/home/luke</filename> være hjemmekataloget for brugeren af brugeren med logindnavnet <filename role="directory">luke</filename>, mens <filename role="directory">/home/jane</filename> ville være hjemmekataloget for brugeren med logindnavnet <filename role="directory">jane</filename>.</para>
+      </sect3>
+
+      <sect3 id="file-types">
+        <title>Filtyper</title>
+
+        <para>Du har måske allerde hørt at alting er en fil i UNIX. Dette er sandt for de fleste elementer i UNIX systemer idag. Faktisk er selv enheder repræsenteret som særlige filer. Selvom det måske ikke giver mening til at begynde med, er det en af fordelene i UNIX og dets efterfølgere og har hjulpet med at opretholde en enkel kerne gennem årene, mens andre styresystemer er nødt til at indføre nye begreber for hver ny teknologi.</para>
+
+        <para>Dette er de fire vigtigste filtyper i UNIX-filsystemet.</para>
+
+        <sect4 id="file-types-ordinary-files">
+          <title>Almindelige filer</title>
+
+          <para>En almindelig fil kan indeholde tekst, et program eller anden data. Dette inkluderer billedfiler, lydfiler, kontordokumenter og videofiler. Begrebet <emphasis>fil</emphasis> er ofte brugt som henvisning til en almindelig fil.</para>
+        </sect4>
+
+        <sect4 id="file-types-folder-files">
+          <title>Mappefiler</title>
+
+          <para>Mapper er også filer i UNIX filsystemet. For at være nøjagtig er mapper en særlig fil, der indeholder en kortlægning af filnavne til filreferencer for hver enkelt fil der er inden i denne mappe.</para>
+        </sect4>
+
+        <sect4 id="file-types-symbolic-link-files">
+          <title>Symbolske henvisningsfiler</title>
+
+          <para>En symbolsk henvisning (ofte kaldt en <emphasis>symlink</emphasis> er en særlig fil der indeholder en sti til en anden fil i filsystemet. Symbolske henvisningsfiler indeholder derfor ikke nogen brugbar information i sig selv, men henviser bare til andre filer.</para>
+        </sect4>
+
+        <sect4 id="file-types-device-files">
+          <title>Enhedsfiler</title>
+
+          <para>Som nævnt tidligere tilgås enheder (de fleste) også gennem filsystemet. Disse særlige enhedsfiler er som regel lokaliseret i <filename role="directory">/dev</filename> mappen. F.eks. repræsenterer den specielle fil <filename>/dev/hda</filename> den første IDE-disk på Linux.</para>
+        </sect4>
+      </sect3>
+    </sect2>
+  </sect1>
+
+
+  <sect1 id="faq">
+    <title>Ofte Stillede Spørgsmål</title>
+
+    <para>Meningen med dette kapitel er at samle de ret ofte stillede spørgsmål i forbindelse med arbejdet i Thunar. Hvis du kender til et spørgsmål der mangler fra denne side så <ulink type="http" url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">indsend venligst en anmodning</ulink>.</para>
+
+    <sect3 id="faq-executables">
+      <title>Hvorfor kører Thunar ikke filer der er markeret som kørbare?</title>
+
+      <para>Af sikkerhedsårsager vil Thunar kun køre filer af typen <literal>application/x-desktop</literal>, <literal>application/x-executable</literal> og <literal>application/x-shellscript</literal>. For skrivebordsfiler gælder det at kørselsfunktionen kun virker hvis filen er af typen <literal>Application</literal> og en gyldig <literal>Exec</literal> linje er indtastet eller af typen <literal>Link</literal> og en gyldig <literal>URL</literal> er angivet. For andre typer, er funktionen til rådighed hvis filen er markeret som kørbar, for den gældende bruger.</para>
+
+      <para>Bemærk også at for <literal>application/x-executable</literal> og <literal>application/x-shellscript</literal> gælder det at filernes typer ikke behøver at passe nøjagtigt med disse typer, men det er nok hvis typen har en oprindelse der passer med en af de to ovenstående. Eller hvis MIME-typen er et alias for en at de ovenstående.</para>
+    </sect3>
+
+    <sect3 id="faq-metadata">
+      <title>Hvor gemmer Thunar filernes metadata?</title>
+
+      <para>Thunar tilknytter forskellige indstillinger med filer/mapper, som vi kalder metadata. Alle filers metadata er gemt i en tdb-databasefil, der også er kendt som metafilen. Databasefilen er gemt i <filename>$XDG_CACHE_HOME/Thunar/metafile.tdb</filename> og kan ses ved at bruge <command>tdbtool</command>, som er en del af Thunar (lokaliseret i <filename role="directory">tdb/</filename> underkataloget).</para>
+    </sect3>
+
+    <sect3 id="faq-thunarrc">
+      <title>Hvor bliver indstillingerne til Thunar gemt?</title>
+
+      <para>Thunar gemmer brugerjusterede indstillinger (samt skjulte indstillinger) i en <filename>.ini</filename>-fil, som er lokaliseret i <filename>$XDG_CONFIG_HOME/Thunar/thunarrc</filename> og kan ses ved brug af et tekstbehandlingsprogram. Se <filename>docs/README.thunarrc</filename> for en oversigt over diverse indstillinger.</para>
+    </sect3>
+
+    <sect3 id="faq-mouse-gestures">
+      <title>Hvordan skal man bruge musebevægelser i Thunar?</title>
+
+      <para>Thunar understøtter for øjeblikket grundlæggende understøttelse af såkaldte <emphasis>musebevægelser</emphasis> i ikonvisning. Du kan bruge disse <emphasis>musebevægelser</emphasis> ved at holde den midterste knap (som regel musehjulet) nede, mens musemarkøren er i baggrundsområdet af det element der er vist i ikonvisning (ethvert område der ikke er dækket af et ikon eller tekst). Nu kan du bevæge markøren i fire retninger for at udføre bestemte handlinger, som er beskrevet herunder.</para>
+
+      <simplelist>
+        <member><guilabel>Venstre</guilabel> - åbner den sidste anvendte mappe</member>
+        <member><guilabel>Op</guilabel> - åbner den forrige mappe</member>
+        <member><guilabel>Højre</guilabel> - åbner den næste anvendte mapppe</member>
+        <member><guilabel>Ned</guilabel> - opdaterer den nuværende mappe</member>
+      </simplelist>
+    </sect3>
+
+    <sect3 id="faq-assign-keyboard-shortcuts">
+      <title>Hvordan tildeler jeg forskellige tastaturgenveje?</title>
+
+      <para>Hvis du vil gentildele en genvej,  understøtter Thunar standard-GTK+ måden at ændre genveje på: simpelthen svæv over menupunktet med musemarkøren og tryk på den tastaturgenvej du vil gentildele den til.</para>
+
+      <para>For at slette en tastaturtildeling, tryk da på <keycap>Backspace</keycap>-knappen men du er på menupunktet.</para>
+
+      <para>Hvis genvejen ikke ændrer sig, skal du slå den funktion til i GTK+. Dette kan gøres på 3 måder:</para>
+
+      <itemizedlist>
+        <listitem>
+          <para>Hvis du kører Xfce 4.3 eller derover kan du slå <guilabel>Redigérbare menuacceleratorer</guilabel> til i <guilabel>Brugerfladeindstillinger</guilabel>-dialogen.</para>
+        </listitem>
+
+        <listitem>
+          <para>Hvis du kører GNOME kan du slå <guilabel>Redigérbare menuacceleratorer</guilabel> til i <guilabel>Menu og værktøjslinjer</guilabel> kontrolcenterdialogen.</para>
+        </listitem>
+
+        <listitem>
+          <para>Ellers, indsæt følgende i din <filename>~/.gtkrc-2.0</filename> fil (opret filen, hvis den ikke eksisterer):<screen>gtk-can-change-accels=1</screen></para>
+        </listitem>
+      </itemizedlist>
+    </sect3>
+
+    <sect3 id="faq-store-keyboard-shortcuts">
+      <title>Hvor gemmer Thunar dens tastaturgenveje?</title>
+
+      <para>De tilpassede tastaturgenveje er gemt i standard-GTK+ accel map formatet i en fil, lokaliseret, i <filename>$XDG_CONFIG_HOME/Thunar/accels.scm</filename>.  Linjer der starter med <literal>;</literal> er kommentarer. Se dokumentationen til  GTK+ for detaljer om filformatet.</para>
+
+      <para>Hvis du er en pakker eller en systemadministrator og du vil anvende en standard for tastaturgenveje på hele systemet, der er anerledes end de standardgenje der er i Thunar, kan du oprette en fil <filename>Thunar/accels.scm</filename> i en af <envar>$XDG_CONFIG_DIRS</envar>. F.eks. hvis <filename role="directory">/etc/xdg</filename> er en del af <envar>$XDG_CONFIG_DIRS</envar> (standarden på de fleste Linux distributioner), kan du installere en standard der gælder for hele systemet til <filename>/etc/xdg/Thunar/accels.scm</filename>. Thunar vil så indlæse genveje fra denne fil ved den første opstart.</para>
+    </sect3>
+  </sect1>
+
+
+  <sect1 id="support">
+    <title>Brugerhjælp</title>
+
+    <para>For at indrapportere en fejl eller lave et forslag vedr. dette program eller denne manual, skal du bruge fejlrapporteringssytemet på <ulink url="http://bugzilla.xfce.org/enter_bug.cgi?product=Thunar&amp;format=guided">http://bugzilla.xfce.org/</ulink>.  Husk på at brugbare fejlrapporter er dem der får rettet fejl, en brugbar rapport har derfor to egenskaber:</para>
+
+    <itemizedlist>
+      <listitem>
+        <para><emphasis role="bold">Genskabbare.</emphasis> Hvis udvikleren ikke selv kan se fejlen, og derfor bevise at den eksisterer, vil han overhovedet ikke være istand til at rette den. Hver eneste detalje du kan tilbyde hjælper.</para>
+      </listitem>
+      <listitem>
+        <para><emphasis role="bold">Specific.</emphasis> Jo hurtigere udvikleren kan isolere problemet til et bestemt område, jo større sandsynlighed er der for at han specifikt vil ordne det.</para>
+      </listitem>
+    </itemizedlist>
+
+    <para>I det tilfælde at du ønsker at anmode om en ny funktion, så gør det venligst klart hvorfor du anser det som en forbedring af programmet. Det er mere sandsynligt at en ny funktion bliver tilføjet hvis du tilbyder nogle gode argumenter for den nye funktion. Chancerne for at den bliver tilføjet er endnu større hvis du medsender en programrettelse med den anmodede funktion, integreret i programmet. Vær dog sikker på at du får læst filen <ulink type="http" url="http://svn.xfce.org/svn/xfce/terminal/trunk/HACKING">HACKING</ulink> - før du begynder at omskrive kildekoden.</para>
+
+    <para>Derudover hvis du har spørgsmål om brugen eller installation af dette programmel, så spørg venligst på <ulink type="http" url="http://foo-projects.org/mailman/listinfo/thunar-dev">thunar-dev postliste</ulink> eller indstil din IRC client til <emphasis role="bold">irc.freenode.net</emphasis>, tilslut dig kanalen <emphasis role="bold">#thunar</emphasis> og spørg efter hjælp.</para>
+  </sect1>
+
+  <sect1 id="copyright">
+    <title>Om @PACKAGE_NAME@</title>
+
+    <para>@PACKAGE_NAME@ er skrevet af Benedikt Meurer (<email>benny@xfce.org</email>). Se <ulink url="http://thunar.xfce.org/" type="http">Thunar hjemmesiden</ulink> for mere information.</para>
+
+    <para>Denne dokumentation er skrevet af Benedikt Meurer(<email>benny@xfce.org</email>). Den seneste udgave af dette dokument er altid tilrådighed på <ulink type="http" url="http://thunar.xfce.org/">Thunar's hjemmesiden</ulink>.</para>
+
+    <para>Dette programmel er udgivet under de samme betingelser som GNU General Public License, udgivet af Free Software Foundation; enten version 2, eller (op til dig) enhver senere udgave af licensen.</para>
+
+    <para>Du burde have modtaget en kopi af GNU General Public License sammen med dette program; hvis ikke så skriv til Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.</para>
+  </sect1>
+
+</article>
+<!--
+	vim:set ts=2 sw=2 et ai encoding=UTF-8:
+-->

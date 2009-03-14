@@ -1,8 +1,10 @@
 SUBDIRS =							\
 	C								\
+	da								\
 	es								\
 	eu								\
 	fr								\
+	it								\
 	ja								\
 	nl								\
 	pl								\
@@ -14,6 +16,6 @@ cssdir = $(datadir)/doc/Thunar/html
 css_DATA =							\
 	thunar.css
 
-EXTRA_DIST = 							\
+EXTRA_DIST = 						\
 	$(css_DATA)						\
 	thunar.xsl
