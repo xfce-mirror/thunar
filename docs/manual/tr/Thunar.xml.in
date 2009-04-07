@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.1.2//EN" "http://www.oasis-open.org/docbook/xml/4.1.2/docbookx.dtd" [
 <!ENTITY date "November 2007">
-<!ENTITY version "0.9.92">
-<!ENTITY application "Thunar">
+<!ENTITY version "@PACKAGE_VERSION@">
+<!ENTITY application "@PACKAGE_NAME@">
 ]>
 <article id="index" lang="tr">
 
@@ -37,13 +37,11 @@
       </author>
     </authorgroup>
 
-    <releaseinfo>
-      This manual describes version 0.9.92 of Thunar.
-    </releaseinfo>
+    <releaseinfo>Bu kılavuz @PACKAGE_NAME@ programının @PACKAGE_VERSION@ sürümüne yöneliktir.</releaseinfo>
   </articleinfo>
 
   <sect1 id="intro">
-    <title>Introduction to Thunar</title>
+    <title>@PACKAGE_NAME@ programı hakkında</title>
 
     <para>Thunar, Xfce Masaüstü Ortamı için geliştirilmiş yeni ve modern bir dosya yöneticisidir. Hızlı ve kolay bir kullanım sunmak için tasarlanmıştır. Arabirimi sade ve kolay öğrenilebilecek niteliktedir ve kesinlikle kafa karıştırıcı ve gereksiz seçenekleri öntanımlı olarak sunmamaktadır. Thunar dosya yöneticisinin açılışı ve dosya listeleme işlemi gayet hızlıdır.   </para>
 
@@ -76,15 +74,15 @@
       </mediaobject>
     </screenshot>
 
-    <para><guilabel>Kısayol Bölümü</guilabel> sisteminizdeki çeşitli dizinlere kısayol atamanızı sağlar. Listedeki ilk kısayol, kullanıcınızın bütün kişisel dosyalarının bulunduğu <emphasis>Ev dizininize</emphasis> ulaşmanızı sağlar. İkinci kısayol ise, silinen dosyaların yer aldığı ve isterseniz silinen dosyaları geri alabileceğiniz çöp kutusuna erişimi sağlar. Üçüncü kısayol ise, masaüstünde bulunan dosya, dizinler ve kısayolları barındıran <emphasis>Masaüstü</emphasis> klasörüne ulaşmanız içindir. Dördüncü kısayol ise, kök dizinine ulaşmanızı sağlar - eğer yeni bir Linux veya Unix kullanıcısı iseniz, kök dizini keşfetmek heyecanlı olabilir. Değişik dizinlere tıklayın ve içerisinde ne olduğunu görün. </para>
+    <para><guilabel>Kısayol Bölümü</guilabel> sisteminizdeki çeşitli dizinlere kısayol atamanızı sağlar. Listedeki ilk kısayol, kullanıcınızın bütün kişisel dosyalarının bulunduğu <emphasis>Ev dizininize</emphasis> ulaşmanızı sağlar. İkinci kısayol ise, silinen dosyaların yer aldığı ve isterseniz silinen dosyaları geri alabileceğiniz çöp kutusuna erişimi sağlar. Üçüncü kısayol ise, masaüstünde bulunan dosya, dizinler ve kısayolları barındıran <emphasis>Masaüstü</emphasis> dizinine ulaşmanız içindir. Dördüncü kısayol ise, kök dizinine ulaşmanızı sağlar - eğer yeni bir Linux veya Unix kullanıcısı iseniz, kök dizini keşfetmek heyecanlı olabilir. Değişik dizinlere tıklayın ve içerisinde ne olduğunu görün. </para>
 
     <para><emphasis>Dosya Sistemi</emphasis> kısayolu altında, kaldırılabilir sürücüler ve ortam bulunmaktadır. Yukarıdaki ekran görüntüsünde, <guilabel>Disket sürücüsü</guilabel> kısayolunu görebilirsiniz. Bu kısayollara tıklayarak kaldırılabilir sürücüler ve ortamlardaki verilere ulaşabilirsiniz. Daha detaylı bilgi için <xref linkend="using-removable-media"/> sayfasını inceleyebilirsiniz.</para>
 
-    <para>Diğer kısayollar ise kullanıcı tanımlı kısayollardır. Kendi kısayolunuzu belirlemek için yapmanız gereken kısayolunu oluşturmak istediğiniz dizini <guilabel>kısayol kısmına</guilabel> sürüklemektir. Böylece önemli klasörlerinize hemen ulaşabilirsiniz. Daha önce oluşturduğunuz bir kısayolu silmek için ise, kısayola sağ tıklayıp <guimenuitem>Kısa Yolu Kaldır</guimenuitem> seçeneğine tıklamanız yeterlidir. Kısayolunuzun ismini değiştirmek için, kısayola sağ tıklayıp, <guimenuitem>Kısa Yolu Yeniden Adlandır</guimenuitem> seçeneğine tıklamalısınız. Bu işlem sadece kısayol ile ilgilidir, kısayolunu oluşturduğunuz dizin üzerinde herhangi bir işlem gerçekleştirmemektedir. </para>
+    <para>Diğer kısayollar ise kullanıcı tanımlı kısayollardır. Kendi kısayolunuzu belirlemek için yapmanız gereken kısayolunu oluşturmak istediğiniz dizini <guilabel>kısayol kısmına</guilabel> sürüklemektir. Böylece önemli dizinlerinize hemen ulaşabilirsiniz. Daha önce oluşturduğunuz bir kısayolu silmek için ise, kısayola sağ tıklayıp <guimenuitem>Kısa Yolu Kaldır</guimenuitem> seçeneğine tıklamanız yeterlidir. Kısayolunuzun ismini değiştirmek için, kısayola sağ tıklayıp, <guimenuitem>Kısa Yolu Yeniden Adlandır</guimenuitem> seçeneğine tıklamalısınız. Bu işlem sadece kısayol ile ilgilidir, kısayolunu oluşturduğunuz dizin üzerinde herhangi bir işlem gerçekleştirmemektedir. </para>
 
-    <para><emphasis>Ana bölüm</emphasis> her zaman mevcut klasördeki içeriği gösterir. Dizinlere girmek için çift tıklamanız gerekmektedir ve dosya ve dizinler üzerinde işlem yapabilmek için sağ tıklamanız gerekmektedir. Sağ tıkladığınız zaman açılan menüde dosya veya dizine dair işlemleri görebilirsiniz. Birden çok dosyayı seçmek için, farenin sol tuşuna basılı tutarak toplu seçim yapabilirsiniz. Ayrıca alternatif bir yöntem olarak tek bir dosyayı seçerek, <keycap>Shift</keycap> tuşuna basılı tutarak yön tuşları ile birden fazla seçim yapmanız da mümkündür.</para>
+    <para><emphasis>Ana bölüm</emphasis> her zaman mevcut dizindeki içeriği gösterir. Dizinlere girmek için çift tıklamanız gerekmektedir ve dosya ve dizinler üzerinde işlem yapabilmek için sağ tıklamanız gerekmektedir. Sağ tıkladığınız zaman açılan menüde dosya veya dizine dair işlemleri görebilirsiniz. Birden çok dosyayı seçmek için, farenin sol tuşuna basılı tutarak toplu seçim yapabilirsiniz. Ayrıca alternatif bir yöntem olarak tek bir dosyayı seçerek, <keycap>Shift</keycap> tuşuna basılı tutarak yön tuşları ile birden fazla seçim yapmanız da mümkündür.</para>
 
-    <para><emphasis>Adres satırı</emphasis> bulunduğunuz dizine giderken geçmiş olduğunuz dosya yolunu belirtir ve gösterir. Adres satırı kısmında gitmek istediğiniz klasöre tıklayabilirsiniz. Adres satırı düğmelerinden birine sağ tıklayarak o dizine has işlemleri ve varsa seçenekleri düzenleyebilirsiniz.</para>
+    <para><emphasis>Adres satırı</emphasis> bulunduğunuz dizine giderken geçmiş olduğunuz dosya yolunu belirtir ve gösterir. Adres satırı kısmında gitmek istediğiniz dizine tıklayabilirsiniz. Adres satırı düğmelerinden birine sağ tıklayarak o dizine has işlemleri ve varsa seçenekleri düzenleyebilirsiniz.</para>
 
 
     <sect2 id="customizing-the-appearance">
@@ -616,7 +614,7 @@
 
       <para><application>Thunar</application> ayrıca <application>E-posta eklentisi</application> ile menüye eklenen <application>E-posta alan</application> seçeneği ile e-posta programında alıcısı tanımlanmış olmakla birlikte dosyayı eklenmiş olarak tanımlayan bir özellik sunmaktadır. Eğer seçim en az bir dizin içeriyorsa bunu ZIP arşivine koyup o şekilde hazırlamaktadır. Eğer birden çok dosya gönderilecekse ve bunların toplam boyutu 200Kib üzerinde ise, kullanıcıya dosyaların ZIP arşivine koyması için onay istemekte ve bu dosyaları ZIP arşivine koyup göndermektedir.</para>
 
-      <para><application>Thunar</application> uygulamasının diğer özellikleri gibi <guilabel>Gönder</guilabel> menüsü <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink> standardına uygun olmak kaydıyla genişletilebilir. Bu dosyalar <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> klasörüne kopyalanmalıdır. (<literal>$XDG_DATA_DIRS</literal> değişkeni hakkında bilgi almak için <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> sayfasını inceleyebilirsiniz)</para>
+      <para><application>Thunar</application> uygulamasının diğer özellikleri gibi <guilabel>Gönder</guilabel> menüsü <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fdesktop_2dentry_2dspec">desktop entry files</ulink> standardına uygun olmak kaydıyla genişletilebilir. Bu dosyalar <filename role="directory">$XDG_DATA_DIRS/Thunar/sendto/</filename> dizinine kopyalanmalıdır. (<literal>$XDG_DATA_DIRS</literal> değişkeni hakkında bilgi almak için <ulink type="http" url="http://freedesktop.org/wiki/Standards_2fbasedir_2dspec">XDG Base Directory Specification</ulink> sayfasını inceleyebilirsiniz)</para>
 
       <para><literal>MimeType</literal> ile hedef <filename>.desktop</filename> dosyası tanımlanmaktadır ve bu tanımlama sonucunda gerçekleştirilecek işlem <guilabel>Gönder</guilabel> menüsünde yer alacaktır. Mesela, <ulink type="http" url="http://flickr.com/">Flickr</ulink> sitesine JPEG biçimindeki resimleri yüklemek için,  <literal>MimeType=image/jpeg;</literal> değeri kullanılmalıdır. Eğer <literal>MimeType</literal> belirlemezseniz yapmak istediğiniz işlem bütün dosyalar için geçerli olacaktır. </para>
 
@@ -951,12 +949,9 @@ $ sudo install eps-thumbnailer.desktop /usr/local/share/thumbnailers/eps-thumbna
   </sect1>
 
   <sect1 id="copyright">
-    <title>About Thunar</title>
+    <title>@PACKAGE_NAME@ hakkında</title>
 
-    <para>
-      Thunar was written by Benedikt Meurer (<email>benny@xfce.org</email>). Visit the
-      <ulink url="http://thunar.xfce.org/" type="http">Thunar website</ulink> for more information.
-    </para>
+    <para>@PACKAGE_NAME@ Benedikt Meurer (<email>benny@xfce.org</email>) tarafından geliştirilmektedir. Daha fazla bilgi için <ulink url="http://thunar.xfce.org/" type="http">Thunar websitesini</ulink> ziyaret edebilirsiniz.</para>
 
     <para>Bu dokümanın özgün sürümü Benedikt Meurer (<email>benny@xfce.org</email>) tarafından yazılmıştır. Bu dokümanın güncel sürümüne <ulink type="http" url="http://thunar.xfce.org/">Thunar websitesi</ulink> üzerinden ulaşabilirsiniz.</para>
 
