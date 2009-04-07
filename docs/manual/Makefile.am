@@ -4,6 +4,7 @@ SUBDIRS =							\
 	es								\
 	eu								\
 	fr								\
+	gl								\
 	it								\
 	ja								\
 	nl								\
