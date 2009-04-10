@@ -58,12 +58,14 @@ gboolean
 g_file_is_root (GFile *file)
 {
   GFile   *parent;
-  gboolean is_root = FALSE;
+  gboolean is_root = TRUE;
 
   parent = g_file_get_parent (file);
-  if (G_UNLIKELY (parent == NULL))
-    is_root = TRUE;
-  g_object_unref (parent);
+  if (G_UNLIKELY (parent != NULL))
+    {
+      is_root = FALSE;
+      g_object_unref (parent);
+    }
 
   return is_root;
 }

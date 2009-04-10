@@ -1,5 +1,12 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Re-implement thunar_file_get_parent(), 
+	  thunar_file_launch(), thunar_file_is_root() and
+	  thunar_file_has_parent() based on GFile/GFileInfo/GAppInfo.
+	* thunar/thunar-gio-extensions.c: Fix problem in g_file_is_root().
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Replace all occurances of
 	  ThunarVfsFileMode with ThunarFileMode, which is the same, just moved
 	  from ThunarVFS into thunar-file.h. Re-implement

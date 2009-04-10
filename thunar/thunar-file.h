@@ -22,6 +22,7 @@
 #define __THUNAR_FILE_H__
 
 #include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-metafile.h>
 #include <thunar/thunar-user.h>
 #include <thunarx/thunarx.h>
@@ -240,6 +241,16 @@ GList            *thunar_file_list_to_path_list      (GList *file_list);
 gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 
 /**
+ * thunar_file_is_root:
+ * @file : a #ThunarFile.
+ *
+ * Checks whether @file refers to the root directory.
+ *
+ * Return value: %TRUE if @file is the root directory.
+ **/
+#define thunar_file_is_root(file) (g_file_is_root (THUNAR_FILE ((file))->gfile))
+
+/**
  * thunar_file_has_parent:
  * @file : a #ThunarFile instance.
  *
@@ -248,7 +259,7 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  *
  * Return value: whether @file has a parent.
  **/
-#define thunar_file_has_parent(file) (!thunar_vfs_path_is_root (THUNAR_FILE ((file))->info->path))
+#define thunar_file_has_parent(file) (!thunar_file_is_root (THUNAR_FILE ((file))))
 
 /**
  * thunar_file_get_info:
@@ -406,7 +417,7 @@ G_STMT_START{                                             \
  * Return value: %TRUE if @file is in the trash, or
  *               the trash folder itself.
  **/
-#define thunar_file_is_trashed(file) (g_file_is_trashed (THUNAR_FILE (file)->gfile))
+#define thunar_file_is_trashed(file) (g_file_is_trashed (THUNAR_FILE ((file))->gfile))
 
 /**
  * thunar_file_is_ancestor:
@@ -494,16 +505,6 @@ G_STMT_START{                                             \
  * Return value: %TRUE if @file is a regular file.
  **/
 #define thunar_file_is_regular(file) (THUNAR_FILE ((file))->info->type == THUNAR_VFS_FILE_TYPE_REGULAR)
-
-/**
- * thunar_file_is_root:
- * @file : a #ThunarFile.
- *
- * Checks whether @file refers to the root directory.
- *
- * Return value: %TRUE if @file is the root directory.
- **/
-#define thunar_file_is_root(file) (thunar_vfs_path_is_root (THUNAR_FILE ((file))->info->path))
 
 /**
  * thunar_file_is_symlink:

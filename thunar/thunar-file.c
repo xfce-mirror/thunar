@@ -795,16 +795,30 @@ ThunarFile*
 thunar_file_get_parent (const ThunarFile *file,
                         GError          **error)
 {
+  ThunarFile *parent = NULL;
+  GFile      *parent_file;
+  gchar      *uri;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
-  if (!thunar_file_has_parent (file))
+  /* TODO Rewrite based on thunar_file_get() */
+
+  parent_file = g_file_get_parent (file->gfile);
+
+  if (parent_file == NULL)
     {
       g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_NOENT, _("The root folder has no parent"));
       return NULL;
     }
 
-  return thunar_file_get_for_path (thunar_vfs_path_get_parent (file->info->path), error);
+  uri = g_file_get_uri (parent_file);
+  parent = thunar_file_get_for_uri (uri, error);
+  g_free (uri);
+
+  g_object_unref (parent_file);
+
+  return parent;
 }
 
 
@@ -862,12 +876,12 @@ thunar_file_launch (ThunarFile *file,
                     gpointer    parent,
                     GError    **error)
 {
-  ThunarVfsMimeApplication *handler;
-  ThunarVfsMimeDatabase    *database;
-  ThunarApplication        *application;
-  GdkScreen                *screen;
-  gboolean                  succeed;
-  GList                     path_list;
+  GdkAppLaunchContext *context;
+  ThunarApplication   *application;
+  GdkScreen           *screen;
+  GAppInfo            *app_info;
+  gboolean             succeed;
+  GList                path_list;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -881,10 +895,6 @@ thunar_file_launch (ThunarFile *file,
   else
     screen = GDK_SCREEN (parent);
 
-  /* check if we should execute the file */
-  if (thunar_file_is_executable (file))
-    return thunar_file_execute (file, screen, NULL, error);
-
   /* check if we have a folder here */
   if (thunar_file_is_directory (file))
     {
@@ -894,27 +904,38 @@ thunar_file_launch (ThunarFile *file,
       return TRUE;
     }
 
-  /* determine the default handler for the file */
-  database = thunar_vfs_mime_database_get_default ();
-  handler = thunar_vfs_mime_database_get_default_application (database, thunar_file_get_mime_info (file));
-  g_object_unref (G_OBJECT (database));
+  /* check if we should execute the file */
+  if (thunar_file_is_executable (file))
+    return thunar_file_execute (file, screen, NULL, error);
 
-  /* if we don't have any default handler, just popup the application chooser */
-  if (G_UNLIKELY (handler == NULL))
+  /* determine the default application to open the file */
+  /* TODO We should probably add a cancellable argument to thunar_file_launch() */
+  app_info = g_file_query_default_handler (file->gfile, NULL, error);
+
+  /* display the application chooser if no application is defined for this file
+   * type yet */
+  if (G_UNLIKELY (app_info == NULL))
     {
       thunar_show_chooser_dialog (parent, file, TRUE);
       return TRUE;
     }
 
   /* fake a path list */
-  path_list.data = thunar_file_get_path (file);
+  path_list.data = file->gfile;
   path_list.next = path_list.prev = NULL;
 
+  /* create a launch context */
+  context = gdk_app_launch_context_new ();
+  gdk_app_launch_context_set_screen (context, screen);
+
   /* otherwise try to execute the application */
-  succeed = thunar_vfs_mime_handler_exec (THUNAR_VFS_MIME_HANDLER (handler), screen, &path_list, error);
+  succeed = g_app_info_launch (app_info, &path_list, G_APP_LAUNCH_CONTEXT (context), error);
+
+  /* destroy the launch context */
+  g_object_unref (context);
 
   /* release the handler reference */
-  g_object_unref (G_OBJECT (handler));
+  g_object_unref (G_OBJECT (app_info));
 
   return succeed;
 }
