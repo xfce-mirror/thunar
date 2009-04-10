@@ -30,6 +30,7 @@
 
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-folder.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>

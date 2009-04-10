@@ -36,6 +36,7 @@
 #include <thunar/thunar-details-view.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-shortcuts-pane.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-history.h>

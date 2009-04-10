@@ -1,5 +1,25 @@
 2009-04-10	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Use GFile in thunar_file_atexit_foreach().
+	  When finalizing, creating or loading a ThunarFile, check whether the
+	  GFileInfo is NULL before unref'ing it. Use the GFile member instead
+	  of the ThunarVfsPath in thunar_file_rename(). Tweak
+	  thunar_file_accepts_drop() so that it converts the ThunarVfsPath
+	  elements of the path list into GFile objects for everything. This
+	  will make the transition away from ThunarVfsPath easier later.
+	  Rewrite thunar_file_is_trashed() so that it uses
+	  g_file_is_trashed().
+	* thunar/thunar-gio-extensions.{c,h}: Add new function
+	  g_file_is_trashed() which checks whether a GFile resides in the
+	  trash.
+	* thunar/thunar-launcher.c, thunar/thunar-location-buttons.c,
+	  thunar/thunar-properties-dialog.c, thunar/thunar-shortcuts-view.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-tree-model.c,
+	  thunar/thunar-tree-view.c, thunar/thunar-window.c: Include
+	  thunar-gio-extensions.h to compile with thunar_file_is_trashed().
+	
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-dnd.c, thunar/thunar-standard-view.c, 
 	  thunar/thunar-tree-view.c, thunar/thunar-window.c: Use 
 	  thunar_file_cache_lookup_path() instead of 

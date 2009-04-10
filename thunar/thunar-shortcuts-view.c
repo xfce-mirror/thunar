@@ -34,6 +34,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>

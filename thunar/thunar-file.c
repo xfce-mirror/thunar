@@ -50,6 +50,7 @@
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-file.h>
 #include <thunar/thunar-file-monitor.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
@@ -180,11 +181,11 @@ thunar_file_atexit_foreach (gpointer key,
                             gpointer value,
                             gpointer user_data)
 {
-  gchar *s;
+  gchar *uri;
 
-  s = thunar_vfs_path_dup_string (key);
-  g_print ("--> %s (%u)\n", s, G_OBJECT (value)->ref_count);
-  g_free (s);
+  uri = g_file_get_uri (key);
+  g_print ("--> %s (%u)\n", uri, G_OBJECT (value)->ref_count);
+  g_free (uri);
 }
 
 static void
@@ -312,7 +313,8 @@ thunar_file_finalize (GObject *object)
     g_object_unref (G_OBJECT (metafile));
 
   /* release GIO data */
-  g_object_unref (file->ginfo);
+  if (file->ginfo != NULL)
+    g_object_unref (file->ginfo);
   g_object_unref (file->gfile);
 
   /* release the file info */
@@ -630,13 +632,15 @@ thunar_file_get_for_info (ThunarVfsInfo *info)
         {
           thunar_vfs_info_unref (file->info);
 
-          g_object_unref (file->gfile);
-          g_object_unref (file->ginfo);
-
           file->info = thunar_vfs_info_ref (info);
+
+          g_object_unref (file->gfile);
+          if (file->ginfo != NULL)
+            g_object_unref (file->ginfo);
 
           file->gfile = g_object_ref (gfile);
           file->ginfo = NULL;
+
           thunar_file_load (file, NULL, NULL);
 
           thunar_file_changed (file);
@@ -786,7 +790,10 @@ thunar_file_load (ThunarFile   *file,
   _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
 
   if (file->ginfo != NULL)
-    g_object_unref (file->ginfo);
+    {
+      g_object_unref (file->ginfo);
+      file->ginfo = NULL;
+    }
 
   file->ginfo = g_file_query_info (file->gfile,
                                    THUNAR_FILE_G_FILE_INFO_NAMESPACE ","
@@ -966,16 +973,16 @@ thunar_file_rename (ThunarFile  *file,
                     const gchar *name,
                     GError     **error)
 {
-  ThunarVfsPath *previous_path;
-  gboolean       succeed;
-  gint           watch_count;;
+  GFile   *previous_file;
+  gboolean succeed;
+  gint     watch_count;;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  /* remember the previous path */
-  previous_path = thunar_vfs_path_ref (file->info->path);
+  /* remember the previous file */
+  previous_file = g_object_ref (file->gfile);
   
   /* try to rename the file */
   succeed = thunar_vfs_info_rename (file->info, name, error);
@@ -999,10 +1006,10 @@ thunar_file_rename (ThunarFile  *file,
         }
 
       /* drop the previous entry from the cache */
-      g_hash_table_remove (file_cache, previous_path);
+      g_hash_table_remove (file_cache, previous_file);
 
       /* insert the new entry */
-      g_hash_table_insert (file_cache, thunar_vfs_path_ref (file->info->path), file);
+      g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
 
       /* tell the associated folder that the file was renamed */
       thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
@@ -1011,8 +1018,8 @@ thunar_file_rename (ThunarFile  *file,
       thunar_file_changed (file);
     }
 
-  /* drop the reference on the previous path */
-  thunar_vfs_path_unref (previous_path);
+  /* drop the reference on the previous file */
+  g_object_unref (previous_file);
 
   return succeed;
 }
@@ -1043,13 +1050,14 @@ thunar_file_accepts_drop (ThunarFile     *file,
                           GdkDragContext *context,
                           GdkDragAction  *suggested_action_return)
 {
-  ThunarVfsPath *parent_path;
-  ThunarVfsPath *path;
-  GdkDragAction  suggested_action;
-  GdkDragAction  actions;
-  ThunarFile    *ofile;
-  GList         *lp;
-  guint          n;
+  GdkDragAction suggested_action;
+  GdkDragAction actions;
+  ThunarFile   *ofile;
+  GFile        *parent_file;
+  GFile        *gfile;
+  GList        *lp;
+  gchar        *uri;
+  guint         n;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
   _thunar_return_val_if_fail (GDK_IS_DRAG_CONTEXT (context), 0);
@@ -1067,11 +1075,8 @@ thunar_file_accepts_drop (ThunarFile     *file,
       /* determine the possible actions */
       actions = context->actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK | GDK_ACTION_ASK);
 
-      /* determine the path of the file */
-      path = thunar_file_get_path (file);
-
       /* cannot create symbolic links in the trash or copy to the trash */
-      if (thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_TRASH)
+      if (thunar_file_is_trashed (file))
         actions &= ~(GDK_ACTION_COPY | GDK_ACTION_LINK);
 
       /* check up to 100 of the paths (just in case somebody tries to
@@ -1079,23 +1084,35 @@ thunar_file_accepts_drop (ThunarFile     *file,
        */
       for (lp = path_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
         {
+          uri = thunar_vfs_path_dup_uri (lp->data);
+          gfile = g_file_new_for_uri (uri);
+          g_free (uri);
+
           /* we cannot drop a file on itself */
-          if (G_UNLIKELY (thunar_vfs_path_equal (path, lp->data)))
-            return 0;
+          if (G_UNLIKELY (g_file_equal (file->gfile, gfile)))
+            {
+              g_object_unref (gfile);
+              return 0;
+            }
 
           /* check whether source and destination are the same */
-          parent_path = thunar_vfs_path_get_parent (lp->data);
-          if (G_LIKELY (parent_path != NULL))
+          parent_file = g_file_get_parent (gfile);
+          if (G_LIKELY (parent_file != NULL))
             {
-              if (thunar_vfs_path_equal (path, parent_path))
-                return 0;
+              if (g_file_equal (file->gfile, parent_file))
+                {
+                  g_object_unref (parent_file);
+                  return 0;
+                }
+              else
+                g_object_unref (parent_file);
             }
 
           /* check if both source and target is in the trash */
-          if (G_UNLIKELY (thunar_vfs_path_get_scheme (lp->data) == THUNAR_VFS_PATH_SCHEME_TRASH
-                       && thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_TRASH))
+          if (G_UNLIKELY (g_file_is_trashed (gfile) && thunar_file_is_trashed (file)))
             {
               /* copy/move/link within the trash not possible */
+              g_object_unref (gfile);
               return 0;
             }
         }
@@ -1111,22 +1128,35 @@ thunar_file_accepts_drop (ThunarFile     *file,
           /* check for up to 100 files, for the reason state above */
           for (lp = path_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
             {
+              uri = thunar_vfs_path_dup_uri (lp->data);
+              gfile = g_file_new_for_uri (uri);
+              g_free (uri);
+
               /* dropping from the trash always suggests move */
-              if (G_UNLIKELY (thunar_vfs_path_get_scheme (lp->data) == THUNAR_VFS_PATH_SCHEME_TRASH))
-                break;
+              if (G_UNLIKELY (g_file_is_trashed (gfile)))
+                {
+                  g_object_unref (gfile);
+                  break;
+                }
 
               /* determine the cached version of the source file */
-              ofile = thunar_file_cache_lookup_path (lp->data);
+              ofile = thunar_file_cache_lookup (gfile);
 
               /* we have only move if we know the source and both the source and the target
                * are on the same disk, and the source file is owned by the current user.
                */
-              if (ofile == NULL || (ofile->info->device != file->info->device) || (ofile->info->uid != effective_user_id))
+              if (ofile == NULL 
+                  || (ofile->info->device != file->info->device) 
+                  || (ofile->info->uid != effective_user_id))
                 {
+                  g_object_unref (gfile);
+
                   /* default to copy and get outa here */
                   suggested_action = GDK_ACTION_COPY;
                   break;
                 }
+
+              g_object_unref (gfile);
             }
         }
     }

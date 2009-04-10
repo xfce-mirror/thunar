@@ -374,13 +374,13 @@ G_STMT_START{                                             \
  * thunar_file_is_trashed:
  * @file : a #ThunarFile instance.
  *
- * Returns %TRUE if @file is a local file with the
- * %THUNAR_VFS_PATH_SCHEME_TRASH scheme.
+ * Returns %TRUE if @file is a local file that resides in 
+ * the trash bin.
  *
  * Return value: %TRUE if @file is in the trash, or
  *               the trash folder itself.
  **/
-#define thunar_file_is_trashed(file) (thunar_vfs_path_get_scheme (thunar_file_get_path ((file))) == THUNAR_VFS_PATH_SCHEME_TRASH)
+#define thunar_file_is_trashed(file) (g_file_is_trashed (THUNAR_FILE (file)->gfile))
 
 /**
  * thunar_file_is_ancestor:

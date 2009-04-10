@@ -26,6 +26,7 @@
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-gio-extensions.h>
+#include <thunar/thunar-private.h>
 
 
 
@@ -65,6 +66,15 @@ g_file_is_root (GFile *file)
   g_object_unref (parent);
 
   return is_root;
+}
+
+
+
+gboolean 
+g_file_is_trashed (GFile *file)
+{
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+  return g_file_has_uri_scheme (file, "trash");
 }
 
 

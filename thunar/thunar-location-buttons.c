@@ -27,6 +27,7 @@
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-create-dialog.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-location-button.h>
