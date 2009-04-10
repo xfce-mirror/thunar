@@ -86,10 +86,9 @@ g_file_is_root (GFile *file)
 GList *
 g_file_list_new_from_string (const gchar *string)
 {
-  GFile       *file;
-  GList       *list = NULL;
-  gchar      **uris;
-  gsize        n;
+  GList  *list = NULL;
+  gchar **uris;
+  gsize   n;
 
   uris = g_uri_list_extract_uris (string);
 
