@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public

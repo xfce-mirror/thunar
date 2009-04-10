@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -38,6 +39,30 @@ typedef struct _ThunarFile      ThunarFile;
 #define THUNAR_IS_FILE(obj)         (G_TYPE_CHECK_INSTANCE_TYPE ((obj), THUNAR_TYPE_FILE))
 #define THUNAR_IS_FILE_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_FILE))
 #define THUNAR_FILE_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_FILE, ThunarFileClass))
+
+/**
+ * ThunarFileMode:
+ *
+ * Special flags and permissions of a filesystem entity.
+ **/
+typedef enum /*< flags >*/
+{
+  THUNAR_FILE_MODE_SUID       = 04000,
+  THUNAR_FILE_MODE_SGID       = 02000,
+  THUNAR_FILE_MODE_STICKY     = 01000,
+  THUNAR_FILE_MODE_USR_ALL    = 00700,
+  THUNAR_FILE_MODE_USR_READ   = 00400,
+  THUNAR_FILE_MODE_USR_WRITE  = 00200,
+  THUNAR_FILE_MODE_USR_EXEC   = 00100,
+  THUNAR_FILE_MODE_GRP_ALL    = 00070,
+  THUNAR_FILE_MODE_GRP_READ   = 00040,
+  THUNAR_FILE_MODE_GRP_WRITE  = 00020,
+  THUNAR_FILE_MODE_GRP_EXEC   = 00010,
+  THUNAR_FILE_MODE_OTH_ALL    = 00007,
+  THUNAR_FILE_MODE_OTH_READ   = 00004,
+  THUNAR_FILE_MODE_OTH_WRITE  = 00002,
+  THUNAR_FILE_MODE_OTH_EXEC   = 00001,
+} ThunarFileMode;
 
 /**
  * ThunarFileDateType:

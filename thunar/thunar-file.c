@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -109,9 +110,9 @@ static gboolean           thunar_file_info_is_directory        (ThunarxFileInfo 
 static ThunarVfsInfo     *thunar_file_info_get_vfs_info        (ThunarxFileInfo        *file_info);
 static void               thunar_file_info_changed             (ThunarxFileInfo        *file_info);
 static gboolean           thunar_file_denies_access_permission (const ThunarFile       *file,
-                                                                ThunarVfsFileMode       usr_permissions,
-                                                                ThunarVfsFileMode       grp_permissions,
-                                                                ThunarVfsFileMode       oth_permissions);
+                                                                ThunarFileMode          usr_permissions,
+                                                                ThunarFileMode          grp_permissions,
+                                                                ThunarFileMode          oth_permissions);
 static ThunarMetafile    *thunar_file_get_metafile             (ThunarFile             *file);
 static void               thunar_file_monitor                  (ThunarVfsMonitor       *monitor,
                                                                 ThunarVfsMonitorHandle *handle,
@@ -329,7 +330,7 @@ thunar_file_finalize (GObject *object)
 static gchar*
 thunar_file_info_get_name (ThunarxFileInfo *file_info)
 {
-  return g_strdup (thunar_vfs_path_get_name (THUNAR_FILE (file_info)->info->path));
+  return g_file_get_basename (THUNAR_FILE (file_info)->gfile);
 }
 
 
@@ -337,7 +338,7 @@ thunar_file_info_get_name (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 {
-  return thunar_vfs_path_dup_uri (THUNAR_FILE (file_info)->info->path);
+  return g_file_get_uri (THUNAR_FILE (file_info)->gfile);
 }
 
 
@@ -345,30 +346,15 @@ thunar_file_info_get_uri (ThunarxFileInfo *file_info)
 static gchar*
 thunar_file_info_get_parent_uri (ThunarxFileInfo *file_info)
 {
-  ThunarVfsPath *parent;
+  GFile *parent;
+  gchar *uri = NULL;
 
-  parent = thunar_vfs_path_get_parent (THUNAR_FILE (file_info)->info->path);
+  parent = g_file_get_parent (THUNAR_FILE (file_info)->gfile);
   if (G_LIKELY (parent != NULL))
-    return thunar_vfs_path_dup_uri (parent);
-
-  return NULL;
-}
-
-
-
-static gchar*
-thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
-{
-  gchar *colon;
-  gchar *uri;
-
-  /* determine the URI for the file... */
-  uri = thunar_file_info_get_uri (file_info);
-
-  /* ...and strip off everything after the colon */
-  colon = strchr (uri, ':');
-  if (G_LIKELY (colon != NULL))
-    *colon = '\0';
+    {
+      uri = g_file_get_uri (parent);
+      g_object_unref (parent);
+    }
 
   return uri;
 }
@@ -376,17 +362,18 @@ thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
 
 
 static gchar*
+thunar_file_info_get_uri_scheme (ThunarxFileInfo *file_info)
+{
+  return g_file_get_uri_scheme (THUNAR_FILE (file_info)->gfile);
+}
+
+
+
+static gchar*
 thunar_file_info_get_mime_type (ThunarxFileInfo *file_info)
 {
-  ThunarVfsMimeInfo *mime_info;
-  gchar             *mime_type = NULL;
-
-  /* determine the mime info for the file */
-  mime_info = thunar_file_get_mime_info (THUNAR_FILE (file_info));
-  if (G_LIKELY (mime_info != NULL))
-    mime_type = g_strdup (thunar_vfs_mime_info_get_name (mime_info));
-
-  return mime_type;
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (THUNAR_FILE (file_info)->ginfo), NULL);
+  return g_strdup (g_file_info_get_content_type (THUNAR_FILE (file_info)->ginfo));
 }
 
 
@@ -395,26 +382,8 @@ static gboolean
 thunar_file_info_has_mime_type (ThunarxFileInfo *file_info,
                                 const gchar     *mime_type)
 {
-  ThunarVfsMimeDatabase *mime_database;
-  ThunarVfsMimeInfo     *mime_info;
-  gboolean               valid = FALSE;
-  GList                 *mime_infos;
-  GList                 *lp;
-
-  /* determine the mime info for the file */
-  mime_info = thunar_file_get_mime_info (THUNAR_FILE (file_info));
-  if (G_UNLIKELY (mime_info == NULL))
-    return FALSE;
-
-  /* check the related mime types for the file's mime info */
-  mime_database = thunar_vfs_mime_database_get_default ();
-  mime_infos = thunar_vfs_mime_database_get_infos_for_info (mime_database, mime_info);
-  for (lp = mime_infos; lp != NULL && !valid; lp = lp->next)
-    valid = (strcmp (thunar_vfs_mime_info_get_name (lp->data), mime_type) == 0);
-  g_object_unref (G_OBJECT (mime_database));
-  thunar_vfs_mime_info_list_free (mime_infos);
-
-  return valid;
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (THUNAR_FILE (file_info)->ginfo), FALSE);
+  return g_content_type_is_a (mime_type, g_file_info_get_content_type (THUNAR_FILE (file_info)->ginfo));
 }
 
 
@@ -451,16 +420,16 @@ thunar_file_info_changed (ThunarxFileInfo *file_info)
 
 static gboolean
 thunar_file_denies_access_permission (const ThunarFile *file,
-                                      ThunarVfsFileMode usr_permissions,
-                                      ThunarVfsFileMode grp_permissions,
-                                      ThunarVfsFileMode oth_permissions)
+                                      ThunarFileMode    usr_permissions,
+                                      ThunarFileMode    grp_permissions,
+                                      ThunarFileMode    oth_permissions)
 {
-  ThunarVfsFileMode mode;
+  ThunarFileMode mode;
   ThunarGroup   *group;
   ThunarUser    *user;
-  gboolean          result;
-  GList            *groups;
-  GList            *lp;
+  gboolean       result;
+  GList         *groups;
+  GList         *lp;
 
   /* query the file mode */
   mode = thunar_file_get_mode (file);
@@ -1257,7 +1226,7 @@ gchar*
 thunar_file_get_mode_string (const ThunarFile *file)
 {
   ThunarVfsFileType kind;
-  ThunarVfsFileMode mode;
+  ThunarFileMode    mode;
   gchar            *text;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
@@ -1283,22 +1252,22 @@ thunar_file_get_mode_string (const ThunarFile *file)
     }
 
   /* permission flags */
-  text[1] = (mode & THUNAR_VFS_FILE_MODE_USR_READ)  ? 'r' : '-';
-  text[2] = (mode & THUNAR_VFS_FILE_MODE_USR_WRITE) ? 'w' : '-';
-  text[3] = (mode & THUNAR_VFS_FILE_MODE_USR_EXEC)  ? 'x' : '-';
-  text[4] = (mode & THUNAR_VFS_FILE_MODE_GRP_READ)  ? 'r' : '-';
-  text[5] = (mode & THUNAR_VFS_FILE_MODE_GRP_WRITE) ? 'w' : '-';
-  text[6] = (mode & THUNAR_VFS_FILE_MODE_GRP_EXEC)  ? 'x' : '-';
-  text[7] = (mode & THUNAR_VFS_FILE_MODE_OTH_READ)  ? 'r' : '-';
-  text[8] = (mode & THUNAR_VFS_FILE_MODE_OTH_WRITE) ? 'w' : '-';
-  text[9] = (mode & THUNAR_VFS_FILE_MODE_OTH_EXEC)  ? 'x' : '-';
+  text[1] = (mode & THUNAR_FILE_MODE_USR_READ)  ? 'r' : '-';
+  text[2] = (mode & THUNAR_FILE_MODE_USR_WRITE) ? 'w' : '-';
+  text[3] = (mode & THUNAR_FILE_MODE_USR_EXEC)  ? 'x' : '-';
+  text[4] = (mode & THUNAR_FILE_MODE_GRP_READ)  ? 'r' : '-';
+  text[5] = (mode & THUNAR_FILE_MODE_GRP_WRITE) ? 'w' : '-';
+  text[6] = (mode & THUNAR_FILE_MODE_GRP_EXEC)  ? 'x' : '-';
+  text[7] = (mode & THUNAR_FILE_MODE_OTH_READ)  ? 'r' : '-';
+  text[8] = (mode & THUNAR_FILE_MODE_OTH_WRITE) ? 'w' : '-';
+  text[9] = (mode & THUNAR_FILE_MODE_OTH_EXEC)  ? 'x' : '-';
 
   /* special flags */
-  if (G_UNLIKELY (mode & THUNAR_VFS_FILE_MODE_SUID))
+  if (G_UNLIKELY (mode & THUNAR_FILE_MODE_SUID))
     text[3] = 's';
-  if (G_UNLIKELY (mode & THUNAR_VFS_FILE_MODE_SGID))
+  if (G_UNLIKELY (mode & THUNAR_FILE_MODE_SGID))
     text[6] = 's';
-  if (G_UNLIKELY (mode & THUNAR_VFS_FILE_MODE_STICKY))
+  if (G_UNLIKELY (mode & THUNAR_FILE_MODE_STICKY))
     text[9] = 't';
 
   text[10] = '\0';
@@ -1582,9 +1551,9 @@ thunar_file_get_emblem_names (ThunarFile *file)
    */
   if (!thunar_file_is_readable (file)
       || (thunar_file_is_directory (file)
-        && thunar_file_denies_access_permission (file, THUNAR_VFS_FILE_MODE_USR_EXEC,
-                                                       THUNAR_VFS_FILE_MODE_GRP_EXEC,
-                                                       THUNAR_VFS_FILE_MODE_OTH_EXEC)))
+        && thunar_file_denies_access_permission (file, THUNAR_FILE_MODE_USR_EXEC,
+                                                       THUNAR_FILE_MODE_GRP_EXEC,
+                                                       THUNAR_FILE_MODE_OTH_EXEC)))
     {
       emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
     }

@@ -1,3 +1,13 @@
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Replace all occurances of
+	  ThunarVfsFileMode with ThunarFileMode, which is the same, just moved
+	  from ThunarVFS into thunar-file.h. Re-implement
+	  thunar_file_info_get_name(), thunar_file_info_get_uri(),
+	  thunar_file_info_get_parent(), thunar_file_info_get_uri_scheme(),
+	  thunar_file_info_get_mime_type() and
+	  thunar_file_info_has_mime_type() based on GFile/GFileInfo.
+
 2009-04-10	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/Makefile.am, thunar/thunar-file.{c,h},
