@@ -44,6 +44,8 @@
 #include <unistd.h>
 #endif
 
+#include <gio/gio.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-dialog.h>
 #include <thunar/thunar-file.h>
@@ -51,6 +53,18 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-util.h>
+
+
+
+/* File attribute namespaces being used */
+#define THUNAR_FILE_G_FILE_INFO_NAMESPACE \
+  "standard::*," \
+  "unix::*," \
+  "access::*," \
+  "time::*"
+
+#define THUNAR_FILE_G_FILE_INFO_FILESYSTEM_NAMESPACE \
+  "filesystem::*"
 
 
 
@@ -291,11 +305,15 @@ thunar_file_finalize (GObject *object)
 #endif
 
   /* drop the entry from the cache */
-  g_hash_table_remove (file_cache, file->info->path);
+  g_hash_table_remove (file_cache, file->gfile);
 
   /* drop a reference on the metadata if we own one */
   if ((file->flags & THUNAR_FILE_OWNS_METAFILE_REFERENCE) != 0)
     g_object_unref (G_OBJECT (metafile));
+
+  /* release GIO data */
+  g_object_unref (file->ginfo);
+  g_object_unref (file->gfile);
 
   /* release the file info */
   thunar_vfs_info_unref (file->info);
@@ -591,11 +609,17 @@ ThunarFile*
 thunar_file_get_for_info (ThunarVfsInfo *info)
 {
   ThunarFile *file;
+  GFile      *gfile;
+  gchar      *uri;
 
   _thunar_return_val_if_fail (info != NULL, NULL);
 
+  uri = thunar_vfs_path_dup_uri (info->path);
+  gfile = g_file_new_for_uri (uri);
+  g_free (uri);
+
   /* check if we already have a cached version of that file */
-  file = thunar_file_cache_lookup (info->path);
+  file = thunar_file_cache_lookup (gfile);
   if (G_UNLIKELY (file != NULL))
     {
       /* take a reference for the caller */
@@ -605,7 +629,16 @@ thunar_file_get_for_info (ThunarVfsInfo *info)
       if (!thunar_vfs_info_matches (file->info, info))
         {
           thunar_vfs_info_unref (file->info);
+
+          g_object_unref (file->gfile);
+          g_object_unref (file->ginfo);
+
           file->info = thunar_vfs_info_ref (info);
+
+          file->gfile = g_object_ref (gfile);
+          file->ginfo = NULL;
+          thunar_file_load (file, NULL, NULL);
+
           thunar_file_changed (file);
         }
     }
@@ -615,9 +648,15 @@ thunar_file_get_for_info (ThunarVfsInfo *info)
       file = g_object_new (THUNAR_TYPE_FILE, NULL);
       file->info = thunar_vfs_info_ref (info);
 
+      file->gfile = g_object_ref (gfile);
+      file->ginfo = NULL;
+      thunar_file_load (file, NULL, NULL);
+
       /* insert the file into the cache */
-      g_hash_table_insert (file_cache, thunar_vfs_path_ref (info->path), file);
+      g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
     }
+
+  g_object_unref (gfile);
 
   return file;
 }
@@ -646,11 +685,19 @@ thunar_file_get_for_path (ThunarVfsPath *path,
 {
   ThunarVfsInfo *info;
   ThunarFile    *file;
+  GFile         *gfile;
+  gchar         *uri;
 
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
+  uri = thunar_vfs_path_dup_uri (path);
+  gfile = g_file_new_for_uri (uri);
+  g_free (uri);
+
   /* see if we have the corresponding file cached already */
-  file = thunar_file_cache_lookup (path);
+  file = thunar_file_cache_lookup (gfile);
+  g_object_unref (gfile);
+
   if (file == NULL)
     {
       /* determine the file info */
@@ -714,6 +761,42 @@ thunar_file_get_for_uri (const gchar *uri,
 }
 
 
+
+/**
+ * thunar_file_load:
+ * @file        : a #ThunarFile.
+ * @cancellable : a #GCancellable.
+ * @error       : return location for errors or %NULL.
+ *
+ * Loads all information about the file. As this is a possibly
+ * blocking call, it can be cancelled using @cancellable. 
+ *
+ * If loading the file fails or the operation is cancelled,
+ * @error will be set.
+ *
+ * Return value: %TRUE on success, %FALSE on error or interruption.
+ **/
+gboolean
+thunar_file_load (ThunarFile   *file,
+                  GCancellable *cancellable,
+                  GError      **error)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
+
+  if (file->ginfo != NULL)
+    g_object_unref (file->ginfo);
+
+  file->ginfo = g_file_query_info (file->gfile,
+                                   THUNAR_FILE_G_FILE_INFO_NAMESPACE ","
+                                   THUNAR_FILE_G_FILE_INFO_FILESYSTEM_NAMESPACE,
+                                   G_FILE_QUERY_INFO_NONE,
+                                   cancellable,
+                                   error);
+
+  return (file->ginfo != NULL);
+}
 
 /**
  * thunar_file_get_parent:
@@ -1033,7 +1116,7 @@ thunar_file_accepts_drop (ThunarFile     *file,
                 break;
 
               /* determine the cached version of the source file */
-              ofile = thunar_file_cache_lookup (lp->data);
+              ofile = thunar_file_cache_lookup_path (lp->data);
 
               /* we have only move if we know the source and both the source and the target
                * are on the same disk, and the source file is owned by the current user.
@@ -2054,6 +2137,41 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
 
 /**
  * thunar_file_cache_lookup:
+ * @file : a #GFile.
+ *
+ * Looks up the #ThunarFile for @file in the internal file
+ * cache and returns the file present for @file in the
+ * cache or %NULL if no #ThunarFile is cached for @file.
+ *
+ * Note that no reference is taken for the caller.
+ *
+ * This method should not be used but in very rare cases.
+ * Consider using thunar_file_get() instead.
+ *
+ * Return value: the #ThunarFile for @file in the internal
+ *               cache, or %NULL.
+ **/
+ThunarFile *
+thunar_file_cache_lookup (const GFile *file)
+{
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  /* allocate the ThunarFile cache on-demand */
+  if (G_UNLIKELY (file_cache == NULL))
+    {
+      file_cache = g_hash_table_new_full (g_file_hash, 
+                                          (GEqualFunc) g_file_equal, 
+                                          (GDestroyNotify) g_object_unref, 
+                                          NULL);
+    }
+
+  return g_hash_table_lookup (file_cache, file);
+}
+
+
+
+/**
+ * thunar_file_cache_lookup_path:
  * @path : a #ThunarVfsPath.
  *
  * Looks up the #ThunarFile for @path in the internal file
@@ -2063,19 +2181,36 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
  * Note that no reference is taken for the caller.
  *
  * This method should not be used but in very rare cases.
- * Consider using thunar_file_get_for_path() instead.
+ * Consider using thunar_file_get() instead.
  *
  * Return value: the #ThunarFile for @path in the internal
  *               cache, or %NULL.
  **/
-ThunarFile*
-thunar_file_cache_lookup (const ThunarVfsPath *path)
+ThunarFile *
+thunar_file_cache_lookup_path (const ThunarVfsPath *path)
 {
+  ThunarFile *file;
+  GFile      *gfile;
+  gchar      *uri;
+
+  _thunar_return_val_if_fail (path != NULL, NULL);
+
+  uri = thunar_vfs_path_dup_uri (path);
+  gfile = g_file_new_for_uri (uri);
+  g_free (uri);
+
   /* allocate the ThunarFile cache on-demand */
   if (G_UNLIKELY (file_cache == NULL))
-    file_cache = g_hash_table_new_full (thunar_vfs_path_hash, thunar_vfs_path_equal, (GDestroyNotify) thunar_vfs_path_unref, NULL);
+    {
+      file_cache = g_hash_table_new_full (g_file_hash, 
+                                          (GEqualFunc) g_file_equal, 
+                                          (GDestroyNotify) g_object_unref, 
+                                          NULL);
+    }
 
-  return g_hash_table_lookup (file_cache, path);
+  file = g_hash_table_lookup (file_cache, gfile);
+  g_object_unref (gfile);
+  return file;
 }
 
 

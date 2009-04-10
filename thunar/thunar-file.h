@@ -109,7 +109,9 @@ struct _ThunarFile
 
   /*< private >*/
   ThunarVfsInfo *info;
-  guint flags;
+  GFileInfo     *ginfo;
+  GFile         *gfile;
+  guint          flags;
 };
 
 GType             thunar_file_get_type             (void) G_GNUC_CONST;
@@ -118,6 +120,10 @@ ThunarFile       *thunar_file_get_for_info         (ThunarVfsInfo          *info
 ThunarFile       *thunar_file_get_for_path         (ThunarVfsPath          *path,
                                                     GError                **error);
 ThunarFile       *thunar_file_get_for_uri          (const gchar            *uri,
+                                                    GError                **error);
+
+gboolean          thunar_file_load                 (ThunarFile             *file,
+                                                    GCancellable           *cancellable,
                                                     GError                **error);
 
 ThunarFile       *thunar_file_get_parent           (const ThunarFile       *file,
@@ -198,7 +204,8 @@ gint              thunar_file_compare_by_name      (const ThunarFile       *file
                                                     gboolean                case_sensitive);
 
 
-ThunarFile       *thunar_file_cache_lookup         (const ThunarVfsPath    *path);
+ThunarFile       *thunar_file_cache_lookup         (const GFile            *file);
+ThunarFile       *thunar_file_cache_lookup_path    (const ThunarVfsPath    *path);
 
 
 GList            *thunar_file_list_get_applications  (GList *file_list);

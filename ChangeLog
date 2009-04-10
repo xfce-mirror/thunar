@@ -1,5 +1,19 @@
 2009-04-10	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-dnd.c, thunar/thunar-standard-view.c, 
+	  thunar/thunar-tree-view.c, thunar/thunar-window.c: Use 
+	  thunar_file_cache_lookup_path() instead of 
+	  thunar_file_cache_lookup().
+	* thunar/thunar-file.{c,h}: Add new function thunar_file_load() for
+	  loading the GFileInfo of a ThunarFile synchronously. Use it in
+	  thunar_file_get_for_info() to load GIO data for a ThunarFile in
+	  addition to ThunarVFS information. Use GFile for the keys of the
+	  file cache and change the function signature of
+	  thunar_file_cache_lookup(). Add thunar_file_cache_lookup_path() for
+	  a smoother transition.
+
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-gio-extensions.c: Remove unused variable in
 	  g_file_list_new_from_string().
 

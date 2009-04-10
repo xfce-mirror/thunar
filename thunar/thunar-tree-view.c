@@ -1909,7 +1909,7 @@ thunar_tree_view_new_files (ThunarVfsJob   *job,
     return;
 
   /* determine the file for the first path */
-  file = thunar_file_cache_lookup (path_list->data);
+  file = thunar_file_cache_lookup_path (path_list->data);
   if (G_LIKELY (file != NULL && thunar_file_is_directory (file)))
     {
       /* change to the newly created folder */

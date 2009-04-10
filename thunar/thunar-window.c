@@ -2424,7 +2424,7 @@ thunar_window_volume_pre_unmount (ThunarVfsVolumeManager *volume_manager,
     return;
 
   /* check if a ThunarFile is known for the mount point */
-  file = thunar_file_cache_lookup (path);
+  file = thunar_file_cache_lookup_path (path);
   if (G_UNLIKELY (file == NULL))
     return;
 

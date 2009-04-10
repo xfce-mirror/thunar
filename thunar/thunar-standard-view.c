@@ -2321,7 +2321,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
       /* determine the files for the paths */
       for (lp = path_list; lp != NULL; lp = lp->next)
         {
-          file = thunar_file_cache_lookup (lp->data);
+          file = thunar_file_cache_lookup_path (lp->data);
           if (G_LIKELY (file != NULL))
             file_list = g_list_prepend (file_list, file);
         }

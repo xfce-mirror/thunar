@@ -124,7 +124,7 @@ thunar_dnd_ask (GtkWidget    *widget,
       for (lp = path_list; lp != NULL; lp = lp->next)
         {
           /* try to resolve this path */
-          file = thunar_file_cache_lookup (lp->data);
+          file = thunar_file_cache_lookup_path (lp->data);
           if (G_LIKELY (file != NULL))
             file_list = g_list_prepend (file_list, file);
           else
