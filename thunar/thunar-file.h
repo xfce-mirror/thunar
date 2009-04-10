@@ -22,6 +22,7 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-metafile.h>
+#include <thunar/thunar-user.h>
 #include <thunarx/thunarx.h>
 
 #include <glib.h>
@@ -161,8 +162,8 @@ gchar            *thunar_file_get_size_string      (const ThunarFile       *file
 ThunarVfsVolume  *thunar_file_get_volume           (const ThunarFile       *file,
                                                     ThunarVfsVolumeManager *volume_manager);
 
-ThunarVfsGroup   *thunar_file_get_group            (const ThunarFile       *file);
-ThunarVfsUser    *thunar_file_get_user             (const ThunarFile       *file);
+ThunarGroup      *thunar_file_get_group            (const ThunarFile       *file);
+ThunarUser       *thunar_file_get_user             (const ThunarFile       *file);
 
 gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,
                                                     ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;

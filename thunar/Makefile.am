@@ -182,6 +182,8 @@ Thunar_SOURCES =							\
 	thunar-tree-pane.h						\
 	thunar-tree-view.c						\
 	thunar-tree-view.h						\
+	thunar-user.c							\
+	thunar-user.h							\
 	thunar-util.c							\
 	thunar-util.h							\
 	thunar-view.c							\

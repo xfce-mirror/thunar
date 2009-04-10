@@ -53,6 +53,7 @@
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-user.h>
 #include <thunar/thunar-util.h>
 
 
@@ -122,17 +123,17 @@ static void               thunar_file_watch_free               (gpointer        
 
 
 
-static ThunarVfsUserManager *user_manager;
-static ThunarVfsMonitor     *monitor;
-static ThunarVfsUserId       effective_user_id;
-static ThunarMetafile       *metafile;
-static GObjectClass         *thunar_file_parent_class;
-static GHashTable           *file_cache;
-static GQuark                thunar_file_thumb_path_quark;
-static GQuark                thunar_file_watch_count_quark;
-static GQuark                thunar_file_watch_handle_quark;
-static GQuark                thunar_file_emblem_names_quark;
-static guint                 file_signals[LAST_SIGNAL];
+static ThunarUserManager *user_manager;
+static ThunarVfsMonitor  *monitor;
+static guint32            effective_user_id;
+static ThunarMetafile    *metafile;
+static GObjectClass      *thunar_file_parent_class;
+static GHashTable        *file_cache;
+static GQuark             thunar_file_thumb_path_quark;
+static GQuark             thunar_file_watch_count_quark;
+static GQuark             thunar_file_watch_handle_quark;
+static GQuark             thunar_file_emblem_names_quark;
+static guint              file_signals[LAST_SIGNAL];
 
 
 
@@ -228,7 +229,7 @@ thunar_file_class_init (ThunarFileClass *klass)
   thunar_file_parent_class = g_type_class_peek_parent (klass);
 
   /* grab a reference on the user manager */
-  user_manager = thunar_vfs_user_manager_get_default ();
+  user_manager = thunar_user_manager_get_default ();
 
   /* determine the effective user id of the process */
   effective_user_id = geteuid ();
@@ -455,8 +456,8 @@ thunar_file_denies_access_permission (const ThunarFile *file,
                                       ThunarVfsFileMode oth_permissions)
 {
   ThunarVfsFileMode mode;
-  ThunarVfsGroup   *group;
-  ThunarVfsUser    *user;
+  ThunarGroup   *group;
+  ThunarUser    *user;
   gboolean          result;
   GList            *groups;
   GList            *lp;
@@ -476,7 +477,7 @@ thunar_file_denies_access_permission (const ThunarFile *file,
   if (G_UNLIKELY (effective_user_id == 0))
     return FALSE;
 
-  if (thunar_vfs_user_is_me (user))
+  if (thunar_user_is_me (user))
     {
       /* we're the owner, so the usr permissions must be granted */
       result = ((mode & usr_permissions) == 0);
@@ -493,13 +494,13 @@ thunar_file_denies_access_permission (const ThunarFile *file,
           g_object_unref (G_OBJECT (user));
 
           /* determine the effective user */
-          user = thunar_vfs_user_manager_get_user_by_id (user_manager, effective_user_id);
+          user = thunar_user_manager_get_user_by_id (user_manager, effective_user_id);
           if (G_LIKELY (user != NULL))
             {
               /* check the group permissions */
-              groups = thunar_vfs_user_get_groups (user);
+              groups = thunar_user_get_groups (user);
               for (lp = groups; lp != NULL; lp = lp->next)
-                if (THUNAR_VFS_GROUP (lp->data) == group)
+                if (THUNAR_GROUP (lp->data) == group)
                   {
                     g_object_unref (G_OBJECT (user));
                     g_object_unref (G_OBJECT (group));
@@ -1360,20 +1361,20 @@ thunar_file_get_volume (const ThunarFile       *file,
  * thunar_file_get_group:
  * @file : a #ThunarFile instance.
  *
- * Determines the #ThunarVfsGroup for @file. If there's no
+ * Determines the #ThunarGroup for @file. If there's no
  * group associated with @file or if the system is unable to
  * determine the group, %NULL will be returned.
  *
  * The caller is responsible for freeing the returned object
  * using g_object_unref().
  *
- * Return value: the #ThunarVfsGroup for @file or %NULL.
+ * Return value: the #ThunarGroup for @file or %NULL.
  **/
-ThunarVfsGroup*
+ThunarGroup*
 thunar_file_get_group (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return thunar_vfs_user_manager_get_group_by_id (user_manager, file->info->gid);
+  return thunar_user_manager_get_group_by_id (user_manager, file->info->gid);
 }
 
 
@@ -1382,20 +1383,20 @@ thunar_file_get_group (const ThunarFile *file)
  * thunar_file_get_user:
  * @file : a #ThunarFile instance.
  *
- * Determines the #ThunarVfsUser for @file. If there's no
+ * Determines the #ThunarUser for @file. If there's no
  * user associated with @file or if the system is unable
  * to determine the user, %NULL will be returned.
  *
  * The caller is responsible for freeing the returned object
  * using g_object_unref().
  *
- * Return value: the #ThunarVfsUser for @file or %NULL.
+ * Return value: the #ThunarUser for @file or %NULL.
  **/
-ThunarVfsUser*
+ThunarUser*
 thunar_file_get_user (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return thunar_vfs_user_manager_get_user_by_id (user_manager, file->info->uid);
+  return thunar_user_manager_get_user_by_id (user_manager, file->info->uid);
 }
 
 

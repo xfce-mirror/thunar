@@ -39,6 +39,7 @@
 #include <thunar/thunar-permissions-chooser.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-user.h>
 
 
 
@@ -80,7 +81,7 @@ static void                 thunar_permissions_chooser_set_property     (GObject
                                                                          GParamSpec                     *pspec);
 static gint                 thunar_permissions_chooser_ask_recursive    (ThunarPermissionsChooser       *chooser);
 static void                 thunar_permissions_chooser_change_group     (ThunarPermissionsChooser       *chooser,
-                                                                         ThunarVfsGroupId                gid);
+                                                                         guint32                         gid);
 static void                 thunar_permissions_chooser_change_mode      (ThunarPermissionsChooser       *chooser,
                                                                          ThunarVfsFileMode               dir_mask,
                                                                          ThunarVfsFileMode               dir_mode,
@@ -628,7 +629,7 @@ thunar_permissions_chooser_ask_recursive (ThunarPermissionsChooser *chooser)
 
 static void
 thunar_permissions_chooser_change_group (ThunarPermissionsChooser *chooser,
-                                         ThunarVfsGroupId          gid)
+                                         guint32                   gid)
 {
   ThunarVfsJob *job;
   gboolean      recursive = FALSE;
@@ -771,9 +772,9 @@ group_compare (gconstpointer group_a,
                gconstpointer group_b,
                gpointer      group_primary)
 {
-  ThunarVfsGroupId group_primary_id = thunar_vfs_group_get_id (THUNAR_VFS_GROUP (group_primary));
-  ThunarVfsGroupId group_a_id = thunar_vfs_group_get_id (THUNAR_VFS_GROUP (group_a));
-  ThunarVfsGroupId group_b_id = thunar_vfs_group_get_id (THUNAR_VFS_GROUP (group_b));
+  guint32 group_primary_id = thunar_group_get_id (THUNAR_GROUP (group_primary));
+  guint32 group_a_id = thunar_group_get_id (THUNAR_GROUP (group_a));
+  guint32 group_b_id = thunar_group_get_id (THUNAR_GROUP (group_b));
 
   /* check if the groups are equal */
   if (group_a_id == group_b_id)
@@ -792,7 +793,8 @@ group_compare (gconstpointer group_a,
     return -1;
 
   /* otherwise just sort by name */
-  return g_ascii_strcasecmp (thunar_vfs_group_get_name (THUNAR_VFS_GROUP (group_a)), thunar_vfs_group_get_name (THUNAR_VFS_GROUP (group_b)));
+  return g_ascii_strcasecmp (thunar_group_get_name (THUNAR_GROUP (group_a)), 
+                             thunar_group_get_name (THUNAR_GROUP (group_b)));
 }
 
 
@@ -801,18 +803,18 @@ static void
 thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
                                          ThunarFile               *file)
 {
-  ThunarVfsUserManager *user_manager;
-  ThunarVfsFileMode     mode;
-  ThunarVfsGroup       *group;
-  ThunarVfsUser        *user;
-  GtkListStore         *store;
-  GtkTreeIter           iter;
-  const gchar          *user_name;
-  const gchar          *real_name;
-  GList                *groups;
-  GList                *lp;
-  gchar                 buffer[1024];
-  guint                 n;
+  ThunarUserManager *user_manager;
+  ThunarVfsFileMode  mode;
+  ThunarGroup       *group;
+  ThunarUser        *user;
+  GtkListStore      *store;
+  GtkTreeIter        iter;
+  const gchar       *user_name;
+  const gchar       *real_name;
+  GList             *groups;
+  GList             *lp;
+  gchar              buffer[1024];
+  guint              n;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
@@ -835,14 +837,14 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
           if (G_UNLIKELY (geteuid () == 0))
             {
               /* determine all groups in the system */
-              user_manager = thunar_vfs_user_manager_get_default ();
-              groups = thunar_vfs_user_manager_get_all_groups (user_manager);
+              user_manager = thunar_user_manager_get_default ();
+              groups = thunar_user_manager_get_all_groups (user_manager);
               g_object_unref (G_OBJECT (user_manager));
             }
           else
             {
               /* determine the groups for the user and take a copy */
-              groups = g_list_copy (thunar_vfs_user_get_groups (user));
+              groups = g_list_copy (thunar_user_get_groups (user));
               g_list_foreach (groups, (GFunc) g_object_ref, NULL);
             }
 
@@ -857,12 +859,13 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
           for (lp = groups, n = 0; lp != NULL; lp = lp->next)
             {
               /* append a separator after the primary group and after the user-groups (not system groups) */
-              if (thunar_vfs_group_get_id (groups->data) == thunar_vfs_group_get_id (group) && lp != groups && n == 0)
+              if (thunar_group_get_id (groups->data) == thunar_group_get_id (group) 
+                  && lp != groups && n == 0)
                 {
                   gtk_list_store_append (store, &iter);
                   n += 1;
                 }
-              else if (lp != groups && thunar_vfs_group_get_id (lp->data) < 100 && n == 1)
+              else if (lp != groups && thunar_group_get_id (lp->data) < 100 && n == 1)
                 {
                   gtk_list_store_append (store, &iter);
                   n += 1;
@@ -871,8 +874,8 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
               /* append a new item for the group */
               gtk_list_store_append (store, &iter);
               gtk_list_store_set (store, &iter,
-                                  THUNAR_PERMISSIONS_STORE_COLUMN_NAME, thunar_vfs_group_get_name (lp->data),
-                                  THUNAR_PERMISSIONS_STORE_COLUMN_GID, thunar_vfs_group_get_id (lp->data),
+                                  THUNAR_PERMISSIONS_STORE_COLUMN_NAME, thunar_group_get_name (lp->data),
+                                  THUNAR_PERMISSIONS_STORE_COLUMN_GID, thunar_group_get_id (lp->data),
                                   -1);
 
               /* set the active iter for the combo box if this group is the primary group */
@@ -887,8 +890,8 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
         }
 
       /* determine sane display name for the owner */
-      user_name = thunar_vfs_user_get_name (user);
-      real_name = thunar_vfs_user_get_real_name (user);
+      user_name = thunar_user_get_name (user);
+      real_name = thunar_user_get_real_name (user);
       if (G_LIKELY (real_name != NULL))
         g_snprintf (buffer, sizeof (buffer), "%s (%s)", real_name, user_name);
       else
@@ -948,9 +951,9 @@ static void
 thunar_permissions_chooser_group_changed (ThunarPermissionsChooser *chooser,
                                           GtkWidget                *combo)
 {
-  ThunarVfsGroupId gid;
-  GtkTreeModel    *model;
-  GtkTreeIter      iter;
+  GtkTreeModel *model;
+  GtkTreeIter   iter;
+  guint32       gid;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
   _thunar_return_if_fail (chooser->group_combo == combo);

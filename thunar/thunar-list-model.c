@@ -32,6 +32,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-private.h>
+#include <thunar/thunar-user.h>
 
 
 
@@ -698,8 +699,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
                              GValue       *value)
 {
   ThunarVfsMimeInfo *mime_info;
-  ThunarVfsGroup    *group;
-  ThunarVfsUser     *user;
+  ThunarGroup       *group;
+  ThunarUser        *user;
   const gchar       *name;
   const gchar       *real_name;
   ThunarFile        *file;
@@ -729,7 +730,7 @@ thunar_list_model_get_value (GtkTreeModel *model,
       group = thunar_file_get_group (file);
       if (G_LIKELY (group != NULL))
         {
-          g_value_set_string (value, thunar_vfs_group_get_name (group));
+          g_value_set_string (value, thunar_group_get_name (group));
           g_object_unref (G_OBJECT (group));
         }
       else
@@ -755,8 +756,8 @@ thunar_list_model_get_value (GtkTreeModel *model,
       if (G_LIKELY (user != NULL))
         {
           /* determine sane display name for the owner */
-          name = thunar_vfs_user_get_name (user);
-          real_name = thunar_vfs_user_get_real_name (user);
+          name = thunar_user_get_name (user);
+          real_name = thunar_user_get_real_name (user);
           str = G_LIKELY (real_name != NULL) ? g_strdup_printf ("%s (%s)", real_name, name) : g_strdup (name);
           g_value_take_string (value, str);
           g_object_unref (G_OBJECT (user));

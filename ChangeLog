@@ -1,5 +1,14 @@
 2009-04-10	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/Makefile.am, thunar/thunar-file.{c,h},
+	  thunar/thunar-list-model.c, thunar/thunar-permissions-chooser.c, 
+	  thunar/thunar-user.{c,h}: Move ThunarVfsUserManager, ThunarVfsUser
+	  and ThunarVfsGroup into Thunar, renaming them to ThunarUserManager,
+	  ThunarUser and ThunarGroup. Update the Thunar code to reflect this
+	  change.
+
+2009-04-10	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Use GFile in thunar_file_atexit_foreach().
 	  When finalizing, creating or loading a ThunarFile, check whether the
 	  GFileInfo is NULL before unref'ing it. Use the GFile member instead
