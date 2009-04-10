@@ -52,6 +52,8 @@ libthunarx_1_la_SOURCES =						\
 	thunarx-renamer-provider.c
 
 libthunarx_1_la_CFLAGS =						\
+	$(GLIB_CFLAGS)							\
+	$(GIO_CFLAGS)							\
 	$(GTK_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
@@ -62,6 +64,8 @@ libthunarx_1_la_LDFLAGS =						\
 	$(PLATFORM_LDFLAGS)
 
 libthunarx_1_la_LIBADD =						\
+	$(GLIB_LIBS)							\
+	$(GIO_LIBS)							\
 	$(GTK_LIBS)
 
 pkgconfigdir = $(libdir)/pkgconfig

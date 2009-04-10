@@ -195,6 +195,7 @@ Thunar_SOURCES =							\
 Thunar_CFLAGS =								\
 	$(EXO_CFLAGS)							\
 	$(GTHREAD_CFLAGS)						\
+	$(GIO_CFLAGS)							\
 	$(LIBSM_CFLAGS)							\
 	$(PLATFORM_CFLAGS)
 
@@ -209,6 +210,7 @@ Thunar_LDADD =								\
 	$(top_builddir)/thunarx/libthunarx-$(THUNAR_VERSION_API).la	\
 	$(EXO_LIBS)							\
 	$(GTHREAD_LIBS)							\
+	$(GIO_LIBS)							\
 	$(LIBSM_LIBS)
 
 Thunar_DEPENDENCIES =							\
@@ -247,7 +249,7 @@ install-data-local:
 clean-local:
 	rm -f *.core core core.*
 
-DISTCLEANFILES =								\
+DISTCLEANFILES =							\
 	thunar-settings.desktop
 
 if MAINTAINER_MODE
@@ -335,18 +337,18 @@ thunar-marshal.c: thunar-marshal.list Makefile
 	&& rm -f xgen-tmc
 endif
 
-EXTRA_DIST =									\
-	thunar-abstract-icon-view-ui.xml			\
-	thunar-dbus-service-infos.xml				\
+EXTRA_DIST =								\
+	thunar-abstract-icon-view-ui.xml				\
+	thunar-dbus-service-infos.xml					\
 	thunar-details-view-ui.xml					\
 	thunar-launcher-ui.xml						\
-	thunar-location-buttons-ui.xml				\
-	thunar-marshal.list							\
-	thunar-renamer-dialog-ui.xml				\
+	thunar-location-buttons-ui.xml					\
+	thunar-marshal.list						\
+	thunar-renamer-dialog-ui.xml					\
 	thunar-standard-view-ui.xml					\
 	thunar-thumbnail-frame.png					\
 	thunar-window-ui.xml						\
-	thunar-settings								\
+	thunar-settings							\
 	$(desktop_in_files)
 
 # vi:set ts=8 sw=8 noet ai nocindent syntax=automake:
