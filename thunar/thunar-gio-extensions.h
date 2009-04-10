@@ -36,6 +36,8 @@ gchar   *g_file_list_to_string       (GList       *list);
 GList   *g_file_list_copy            (GList       *list);
 void     g_file_list_free            (GList       *list);
 
+gchar   *g_file_size_humanize        (guint64      size);
+
 G_END_DECLS
 
 #endif /* !__THUNAR_GLIB_EXTENSIONS_H__ */

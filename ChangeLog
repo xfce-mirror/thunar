@@ -1,5 +1,17 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Re-implement thunar_file_get_size_string()
+	  based on GFileInfo and the new function g_file_size_humanize().
+	  Re-implement thunar_file_get_deletion_date(),
+	  thunar_file_get_original_path() as well. They currently fail because
+	  there are no GFileInfos for objects in the Thunar trash at the
+	  moment. Also rewrite thunar_file_is_desktop() and make sure to
+	  reload the GFileInfo in thunar_file_reload().
+	* thunar/thunar-gio-extensions.{c,h}: Add new method
+	  g_file_size_humanize() to create nice file size labels.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Re-implement thunar_file_get_parent(), 
 	  thunar_file_launch(), thunar_file_is_root() and
 	  thunar_file_has_parent() based on GFile/GFileInfo/GAppInfo.

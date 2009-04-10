@@ -1309,16 +1309,11 @@ thunar_file_get_mode_string (const ThunarFile *file)
  * Return value: the size of @file in a human readable
  *               format.
  **/
-gchar*
+gchar *
 thunar_file_get_size_string (const ThunarFile *file)
 {
-  ThunarVfsFileSize size;
-
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  size = thunar_file_get_size (file);
-
-  return thunar_vfs_humanize_size (size, NULL, 0);
+  return g_file_size_humanize (thunar_file_get_size (file));
 }
 
 
@@ -1410,21 +1405,18 @@ gchar*
 thunar_file_get_deletion_date (const ThunarFile *file,
                                ThunarDateStyle   date_style)
 {
-  time_t time;
-  gchar *date;
+  const gchar *date;
+  time_t       time;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), NULL);
 
-  /* query the DeletionDate from the trash backend */
-  date = thunar_vfs_info_get_metadata (file->info, THUNAR_VFS_INFO_METADATA_TRASH_DELETION_DATE, NULL);
+  date = g_file_info_get_attribute_string (file->ginfo, "trash::deletion-date");
   if (G_UNLIKELY (date == NULL))
     return NULL;
 
   /* try to parse the DeletionDate (RFC 3339 string) */
   time = thunar_util_time_from_rfc3339 (date);
-
-  /* release the DeletionDate */
-  g_free (date);
 
   /* humanize the time value */
   return thunar_util_humanize_file_time (time, date_style);
@@ -1450,9 +1442,8 @@ gchar*
 thunar_file_get_original_path (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-
-  /* query the OriginalPath from the trash backend */
-  return thunar_vfs_info_get_metadata (file->info, THUNAR_VFS_INFO_METADATA_TRASH_ORIGINAL_PATH, NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), NULL);
+  return g_strdup (g_file_info_get_attribute_string (file->ginfo, "trash::orig-file"));
 }
 
 
@@ -1683,20 +1674,14 @@ thunar_file_set_custom_icon (ThunarFile  *file,
 gboolean
 thunar_file_is_desktop (const ThunarFile *file)
 {
-#if GLIB_CHECK_VERSION(2,14,0)
-  gchar file_path[THUNAR_VFS_PATH_MAXSTRLEN];
+  gboolean is_desktop = FALSE;
+  gchar *path;
 
-  file_path[0] = '\0';
-  thunar_vfs_path_to_string (thunar_file_get_path (file), file_path,
-                             sizeof (file_path), NULL);
+  path = g_file_get_path (file->gfile);
+  is_desktop = g_str_equal (path, g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
+  g_free (path);
 
-  /* g_get_user_special_dir () always returns something for the desktop */
-  return exo_str_is_equal (file_path, g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
-#else /* GLIB_CHECK_VERSION(2,14,0) */
-return (!thunar_vfs_path_is_root (thunar_file_get_path (file))
-        && thunar_vfs_path_is_home (thunar_vfs_path_get_parent (thunar_file_get_path (file)))
-        && exo_str_is_equal (thunar_file_get_display_name (file), "Desktop"));
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
+  return is_desktop;
 }
 
 
@@ -1932,6 +1917,11 @@ thunar_file_reload (ThunarFile *file)
       /* apply the new info... */
       thunar_vfs_info_unref (file->info);
       file->info = info;
+
+      if (file->ginfo != NULL)
+        g_object_unref (file->ginfo);
+
+      thunar_file_load (file, NULL, NULL);
 
       /* ... and tell others */
       thunar_file_changed (file);
