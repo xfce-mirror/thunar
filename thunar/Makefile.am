@@ -76,6 +76,8 @@ Thunar_SOURCES =							\
 	thunar-folder.h							\
 	thunar-gdk-extensions.c						\
 	thunar-gdk-extensions.h						\
+	thunar-gio-extensions.c						\
+	thunar-gio-extensions.h						\
 	thunar-gobject-extensions.c					\
 	thunar-gobject-extensions.h					\
 	thunar-gtk-extensions.c						\
