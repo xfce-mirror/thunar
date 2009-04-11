@@ -193,6 +193,12 @@ ThunarVfsVolume  *thunar_file_get_volume           (const ThunarFile       *file
 ThunarGroup      *thunar_file_get_group            (const ThunarFile       *file);
 ThunarUser       *thunar_file_get_user             (const ThunarFile       *file);
 
+const gchar      *thunar_file_get_content_type     (const ThunarFile       *file);
+const gchar      *thunar_file_get_symlink_target   (const ThunarFile       *file);
+const gchar      *thunar_file_get_basename         (const ThunarFile       *file);
+gboolean          thunar_file_is_symlink           (const ThunarFile       *file);
+guint64           thunar_file_get_size             (const ThunarFile       *file);
+
 gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,
                                                     ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_original_path    (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
@@ -355,17 +361,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  * Return value: the permission bits of @file.
  **/
 #define thunar_file_get_mode(file) (THUNAR_FILE ((file))->info->mode)
-
-/**
- * thunar_file_get_size:
- * @file : a #ThunarFile instance.
- *
- * Tries to determine the size of @file in bytes and
- * returns the size.
- *
- * Return value: the size of @file in bytes.
- **/
-#define thunar_file_get_size(file) (THUNAR_FILE ((file))->info->size)
 
 /**
  * thunar_file_get_free_space:
@@ -534,16 +529,6 @@ G_STMT_START{                                             \
  * Return value: %TRUE if @file is a regular file.
  **/
 #define thunar_file_is_regular(file) (THUNAR_FILE ((file))->info->type == THUNAR_VFS_FILE_TYPE_REGULAR)
-
-/**
- * thunar_file_is_symlink:
- * @file : a #ThunarFile.
- *
- * Returns %TRUE if @file is a symbolic link.
- *
- * Return value: %TRUE if @file is a symbolic link.
- **/
-#define thunar_file_is_symlink(file) ((THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
 
 /**
  * thunar_file_is_desktop_file:

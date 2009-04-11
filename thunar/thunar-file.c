@@ -1453,6 +1453,98 @@ thunar_file_get_user (const ThunarFile *file)
 
 
 /**
+ * thunar_file_get_content_type:
+ * @file : a #ThunarFile.
+ *
+ * Returns the content type of @file.
+ *
+ * Return value: content type of @file.
+ **/
+const gchar *
+thunar_file_get_content_type (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), NULL);
+  return g_file_info_get_content_type (file->ginfo);
+}
+
+
+
+/**
+ * thunar_file_get_symlink_target:
+ * @file : a #ThunarFile.
+ *
+ * Returns the path of the symlink target or %NULL if the @file
+ * is not a symlink.
+ *
+ * Return value: path of the symlink target or %NULL.
+ **/
+const gchar *
+thunar_file_get_symlink_target (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), NULL);
+  return g_file_info_get_symlink_target (file->ginfo);
+}
+
+
+
+/**
+ * thunar_file_get_basename:
+ * @file : a #ThunarFile.
+ *
+ * Returns the basename of the @file in UTF-8 encoding.
+ *
+ * Return value: UTF-8 encoded basename of the @file.
+ **/
+const gchar *
+thunar_file_get_basename (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), NULL);
+  return g_file_info_get_name (file->ginfo);
+}
+
+
+
+/**
+ * thunar_file_is_symlink:
+ * @file : a #ThunarFile.
+ *
+ * Returns %TRUE if @file is a symbolic link.
+ *
+ * Return value: %TRUE if @file is a symbolic link.
+ **/
+gboolean 
+thunar_file_is_symlink (const ThunarFile *file) 
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+  return g_file_info_get_is_symlink (file->ginfo);
+}
+
+
+
+/**
+ * thunar_file_get_size:
+ * @file : a #ThunarFile instance.
+ *
+ * Tries to determine the size of @file in bytes and
+ * returns the size.
+ *
+ * Return value: the size of @file in bytes.
+ **/
+guint64
+thunar_file_get_size (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), 0);
+  return g_file_info_get_size (file->ginfo);
+}
+
+
+
+/**
  * thunar_file_get_deletion_date:
  * @file       : a #ThunarFile instance.
  * @date_style : the style used to format the date.

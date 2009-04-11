@@ -1,5 +1,17 @@
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Add new or re-implement the functions or
+	  macros thunar_file_get_content_type(), 
+	  thunar_file_get_symlink_target(), thunar_file_get_basename(), 
+	  thunar_file_is_symlink(), thunar_file_get_size() based on GIO.
+	* thunar/thunar-list-model.c: Re-implement
+	  thunar_list_model_get_value() based on the new/changed functions.
+	  Same goes for sort_by_file_name(), sort_by_mime_type(),
+	  sort_by_type() and thunar_list_model_get_statusbar_text() which are
+	  almost ThunarVFS-free now.
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-path-entry.c: Re-implement
 	  thunar_path_entry_drag_data_get(), thunar_path_entry_changed() and
 	  thunar_path_entry_set_current_file() with GFile. file:// URI
