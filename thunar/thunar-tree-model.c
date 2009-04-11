@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>.
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>.
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -314,8 +315,12 @@ static void
 thunar_tree_model_init (ThunarTreeModel *model)
 {
   ThunarTreeModelItem *item;
-  ThunarVfsPath       *system_path_list[3] = { thunar_vfs_path_get_for_home (), thunar_vfs_path_get_for_trash (), thunar_vfs_path_get_for_root () };
   ThunarFile          *file;
+  GFile               *system_path_list[3] = { 
+    g_file_new_for_home (), 
+    g_file_new_for_trash (), 
+    g_file_new_for_root () 
+  };
   GList               *volumes;
   GNode               *node;
   guint                n;
@@ -348,7 +353,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
   for (n = 0; n < G_N_ELEMENTS (system_path_list); ++n)
     {
       /* determine the file for the path */
-      file = thunar_file_get_for_path (system_path_list[n], NULL);
+      file = thunar_file_get (system_path_list[n], NULL);
       if (G_LIKELY (file != NULL))
         {
           /* watch the trash bin for changes */
@@ -365,7 +370,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
         }
 
       /* release the system defined path */
-      thunar_vfs_path_unref (system_path_list[n]);
+      g_object_unref (system_path_list[n]);
     }
 
   /* setup the initial volumes */

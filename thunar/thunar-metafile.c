@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -221,7 +222,7 @@ thunar_metafile_get_default (void)
 /**
  * thunar_metafile_fetch:
  * @metafile      : a #ThunarMetafile.
- * @path          : a #ThunarVfsPath.
+ * @file          : a #Gfile.
  * @key           : a #ThunarMetafileKey.
  * @default_value : the default value for @key,
  *                  which may be %NULL.
@@ -246,7 +247,7 @@ thunar_metafile_get_default (void)
  **/
 const gchar*
 thunar_metafile_fetch (ThunarMetafile   *metafile,
-                       ThunarVfsPath    *path,
+                       GFile            *file,
                        ThunarMetafileKey key,
                        const gchar      *default_value)
 {
@@ -254,20 +255,20 @@ thunar_metafile_fetch (ThunarMetafile   *metafile,
   const guchar *dp;
   TDB_DATA      key_data;
   gssize        key_size;
-  gchar         key_path[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar        *key_path = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_METAFILE (metafile), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (key < THUNAR_METAFILE_N_KEYS, NULL);
-  _thunar_return_val_if_fail (path != NULL, NULL);
 
   /* check if the database handle is available */
   if (G_UNLIKELY (metafile->context == NULL))
     goto use_default_value;
 
   /* determine the string representation of the path (using the URI for non-local paths) */
-  key_size = (thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_FILE)
-           ? thunar_vfs_path_to_string (path, key_path, sizeof (key_path), NULL)
-           : thunar_vfs_path_to_uri (path, key_path, sizeof (key_path), NULL);
+  key_path = g_file_get_uri (file);
+  key_size = strlen (key_path);
+
   if (G_UNLIKELY (key_size <= 0))
     goto use_default_value;
 
@@ -291,7 +292,10 @@ thunar_metafile_fetch (ThunarMetafile   *metafile,
     {
       /* check if we have a match */
       if (*dp == (guint) key)
-        return (const gchar *) (dp + 1);
+        {
+          g_free (key_path);
+          return (const gchar *) (dp + 1);
+        }
 
       /* lookup the next entry */
       do
@@ -306,6 +310,7 @@ thunar_metafile_fetch (ThunarMetafile   *metafile,
 
   /* use the default value */
 use_default_value:
+  g_free (key_path);
   return default_value;
 }
 
@@ -314,7 +319,7 @@ use_default_value:
 /**
  * thunar_metafile_store:
  * @metafile      : a #ThunarMetafile.
- * @path          : a #ThunarVfsPath.
+ * @file          : a #GFile.
  * @key           : a #ThunarMetafileKey.
  * @value         : the new value for @key on @path.
  * @default_value : the default value for @key on @path.
@@ -332,7 +337,7 @@ use_default_value:
  **/
 void
 thunar_metafile_store (ThunarMetafile   *metafile,
-                       ThunarVfsPath    *path,
+                       GFile            *file,
                        ThunarMetafileKey key,
                        const gchar      *value,
                        const gchar      *default_value)
@@ -343,22 +348,22 @@ thunar_metafile_store (ThunarMetafile   *metafile,
   gssize   key_size;
   gchar   *buffer;
   gchar   *bp;
-  gchar    key_path[THUNAR_VFS_PATH_MAXSTRLEN];
+  gchar   *key_path;
 
   _thunar_return_if_fail (THUNAR_IS_METAFILE (metafile));
+  _thunar_return_if_fail (G_IS_FILE (file));
   _thunar_return_if_fail (key < THUNAR_METAFILE_N_KEYS);
-  _thunar_return_if_fail (default_value != NULL);
   _thunar_return_if_fail (value != NULL);
-  _thunar_return_if_fail (path != NULL);
+  _thunar_return_if_fail (default_value != NULL);
 
   /* check if the database handle is available */
   if (G_UNLIKELY (metafile->context == NULL))
     return;
 
-  /* determine the string representation of the path (using the URI for non-local paths) */
-  key_size = (thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_FILE)
-           ? thunar_vfs_path_to_string (path, key_path, sizeof (key_path), NULL)
-           : thunar_vfs_path_to_uri (path, key_path, sizeof (key_path), NULL);
+  /* determine the string representation of the file */
+  key_path = g_file_get_uri (file);
+  key_size = strlen (key_path);
+
   if (G_UNLIKELY (key_size <= 0))
     return;
 
@@ -439,6 +444,9 @@ thunar_metafile_store (ThunarMetafile   *metafile,
       /* execute the store operation */
       tdb_store (metafile->context, key_data, value_data, TDB_REPLACE);
     }
+
+  /* free the file URI */
+  g_free (key_path);
 
   /* free the buffer space */
   g_free (buffer);

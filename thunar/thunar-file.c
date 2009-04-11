@@ -1859,7 +1859,7 @@ thunar_file_get_metadata (ThunarFile       *file,
   _thunar_return_val_if_fail (key < THUNAR_METAFILE_N_KEYS, NULL);
 
   return thunar_metafile_fetch (thunar_file_get_metafile (file),
-                                file->info->path, key,
+                                file->gfile, key,
                                 default_value);
 }
 
@@ -1887,7 +1887,7 @@ thunar_file_set_metadata (ThunarFile       *file,
   _thunar_return_if_fail (value != NULL);
 
   thunar_metafile_store (thunar_file_get_metafile (file),
-                         file->info->path, key, value,
+                         file->gfile, key, value,
                          default_value);
 }
 
