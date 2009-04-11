@@ -595,7 +595,7 @@ thunar_file_get (GFile   *gfile,
     }
   else
     {
-      uri = g_file_get_uri (file->gfile);
+      uri = g_file_get_uri (gfile);
       path = thunar_vfs_path_new (uri, error);
       g_free (uri);
 

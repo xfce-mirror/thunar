@@ -1,5 +1,11 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Fix segfault in thunar_file_get().
+	* thunar/thunar-window.c: Re-implement
+	  thunar_window_open_user_folder() based on GFile.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add new function thunar_file_get(GFile*).
 	  Internally this still uses thunar_file_load() and can thus block the
 	  UI. For the sake of a smoother transition, asynchronous loading will

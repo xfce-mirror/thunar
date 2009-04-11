@@ -1899,29 +1899,33 @@ thunar_window_open_user_folder (GtkAction           *action,
                                 const gchar         *default_name)
 {
   ThunarFile *user_file = NULL;
-  GError     *error     = NULL;
-  gchar      *user_dir  = NULL;
-  gboolean    result    = FALSE;
+  gboolean    result = FALSE;
+  GError     *error = NULL;
+  GFile      *home_dir;
+  GFile      *user_dir;
+  gchar      *path = NULL;
 
-#if GLIB_CHECK_VERSION(2, 14, 0)
-  user_dir = g_strdup (g_get_user_special_dir (thunar_user_dir));
-#endif
+  path = g_strdup (g_get_user_special_dir (thunar_user_dir));
 
-  if (G_UNLIKELY (user_dir == NULL))
+  if (G_UNLIKELY (path == NULL))
     {
-      user_dir = g_build_filename (G_DIR_SEPARATOR_S, xfce_get_homedir (),
-                                   default_name, NULL);
+      home_dir = g_file_new_for_home ();
+      user_dir = g_file_resolve_relative_path (home_dir, default_name);
+      path = g_file_get_path (user_dir);
+      g_object_unref (home_dir);
     }
+  else
+    user_dir = g_file_new_for_path (path);
 
-  user_file = thunar_file_get_for_uri (user_dir, &error);
-  if (G_UNLIKELY (user_file == NULL && error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_EXIST))
+  user_file = thunar_file_get (user_dir, &error);
+  if (G_UNLIKELY (user_file == NULL && error->domain == G_FILE_ERROR && error->code == G_FILE_ERROR_NOENT))
     {
       g_error_free (error);
       error = NULL;
 
       /* try to create the folder */
-      if (G_LIKELY (xfce_mkdirhier (user_dir, 0755, &error)))
-        user_file = thunar_file_get_for_uri (user_dir, &error);
+      if (G_LIKELY (xfce_mkdirhier (path, 0755, &error)))
+        user_file = thunar_file_get (user_dir, &error);
     }
 
   if (G_LIKELY (user_file != NULL))
@@ -1941,7 +1945,8 @@ thunar_window_open_user_folder (GtkAction           *action,
         g_error_free (error);
     }
 
-  g_free (user_dir);
+  g_object_unref (user_dir);
+  g_free (path);
 
   return result;
 }
