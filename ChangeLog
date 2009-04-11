@@ -1,5 +1,11 @@
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-clipboard-manager.c: Use a GFile list and
+	  thunar_file_list_to_g_file_list() instead of the ThunarVFS
+	  equivalents in thunar_clipboard_manager_get_callback().
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add new or re-implement the functions or
 	  macros thunar_file_get_content_type(), 
 	  thunar_file_get_symlink_target(), thunar_file_get_basename(), 

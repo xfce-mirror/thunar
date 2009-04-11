@@ -421,7 +421,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
                                        gpointer          user_data)
 {
   ThunarClipboardManager *manager = THUNAR_CLIPBOARD_MANAGER (user_data);
-  GList                  *path_list = NULL;
+  GList                  *file_list = NULL;
   gchar                  *string_list;
   gchar                  *data;
 
@@ -430,10 +430,10 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
   _thunar_return_if_fail (manager->clipboard == clipboard);
 
   /* determine the path list from the file list */
-  path_list = thunar_file_list_to_path_list (manager->files);
+  file_list = thunar_file_list_to_g_file_list (manager->files);
 
   /* determine the string representation of the path list */
-  string_list = thunar_vfs_path_list_to_string (path_list);
+  string_list = g_file_list_to_string (file_list);
 
   switch (target_info)
     {
@@ -452,7 +452,7 @@ thunar_clipboard_manager_get_callback (GtkClipboard     *clipboard,
     }
 
   /* cleanup */
-  thunar_vfs_path_list_free (path_list);
+  g_file_list_free (file_list);
   g_free (string_list);
 }
 
