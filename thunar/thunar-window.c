@@ -2134,19 +2134,19 @@ static void
 thunar_window_action_open_trash (GtkAction    *action,
                                  ThunarWindow *window)
 {
-  ThunarVfsPath *trash_bin_path;
-  ThunarFile    *trash_bin;
-  GError        *error = NULL;
+  GFile      *trash_bin;
+  ThunarFile *trash_bin_file;
+  GError     *error = NULL;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the trash bin */
-  trash_bin_path = thunar_vfs_path_get_for_trash ();
+  trash_bin = g_file_new_for_trash ();
 
   /* determine the file for the trash bin */
-  trash_bin = thunar_file_get_for_path (trash_bin_path, &error);
-  if (G_UNLIKELY (trash_bin == NULL))
+  trash_bin_file = thunar_file_get (trash_bin, &error);
+  if (G_UNLIKELY (trash_bin_file == NULL))
     {
       /* display an error to the user */
       thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to display the contents of the trash can"));
@@ -2155,12 +2155,12 @@ thunar_window_action_open_trash (GtkAction    *action,
   else
     {
       /* open the trash folder */
-      thunar_window_set_current_directory (window, trash_bin);
+      thunar_window_set_current_directory (window, trash_bin_file);
       g_object_unref (G_OBJECT (trash_bin));
     }
 
   /* release our reference on the trash bin path */
-  thunar_vfs_path_unref (trash_bin_path);
+  g_object_unref (trash_bin);
 }
 
 

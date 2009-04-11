@@ -1,6 +1,14 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
-	* thunar/thunar-file.c: Fix segfault in thunar_file_get().
+	* thunar/thunar-file.c: Add assertion to thunar_file_load() to see for
+	  which files it fails rather than to see that in some random function
+	  later.
+	* thunar/thunar-window.c: Re-implement thunar_window_open_trash()
+	  based on GFile.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.c: Fix segfault in thunar_file_get(). 
 	* thunar/thunar-window.c: Re-implement
 	  thunar_window_open_user_folder() based on GFile.
 

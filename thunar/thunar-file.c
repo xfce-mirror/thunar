@@ -835,6 +835,9 @@ thunar_file_load (ThunarFile   *file,
                                    cancellable,
                                    error);
 
+  /* FIXME This is just temporary */
+  g_assert (file->ginfo != NULL);
+
   return (file->ginfo != NULL);
 }
 
