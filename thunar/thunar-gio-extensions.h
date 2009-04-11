@@ -33,6 +33,8 @@ gboolean g_file_is_trashed           (GFile       *file);
 
 GList   *g_file_list_new_from_string (const gchar *string);
 gchar   *g_file_list_to_string       (GList       *list);
+GList   *g_file_list_append          (GList       *list,
+                                      GFile       *file);
 GList   *g_file_list_copy            (GList       *list);
 void     g_file_list_free            (GList       *list);
 

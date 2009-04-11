@@ -152,6 +152,15 @@ g_file_list_to_string (GList *list)
 
 
 
+GList *
+g_file_list_append (GList *list,
+                    GFile *file)
+{
+  return g_list_append (list, g_object_ref (file));
+}
+
+
+
 /**
  * g_file_list_copy:
  * @list : a list of #GFile<!---->s.

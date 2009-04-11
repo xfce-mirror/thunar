@@ -1,5 +1,22 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Add new macro
+	  thunar_file_get_default_handler() for querying the default GAppInfo
+	  to handle a ThunarFile. Use it in thunar_file_launch(). Fix pointer
+	  corruption issue thunar_file_reload(). Re-implement
+	  thunar_file_list_get_applications() based on GFileInfo/GAppInfo. Add
+	  new method thunar_file_list_to_g_file_list() as the GFile equivalent
+	  to thunar_file_list_to_path_list(). Add new macro 
+	  thunar_file_get_file() to get the GFile for a ThunarFile.
+	* thunar/thunar-gio-extensions.{c,h}: Add new function
+	  g_file_list_append() to append a GFile to a GFile list.
+	* thunar/thunar-launcher.c: Replace most occurances of
+	  ThunarVfsMimeHandler with GAppInfo based on the changes made to
+	  ThunarFile. This currently breaks ThunarSendtoModel which will be
+	  worked on next. 
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Re-implement thunar_file_get_size_string()
 	  based on GFileInfo and the new function g_file_size_humanize().
 	  Re-implement thunar_file_get_deletion_date(),

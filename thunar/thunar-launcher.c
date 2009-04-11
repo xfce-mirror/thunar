@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -81,8 +82,8 @@ static void          thunar_launcher_execute_files              (ThunarLauncher 
                                                                  GList                    *files);
 static void          thunar_launcher_open_files                 (ThunarLauncher           *launcher,
                                                                  GList                    *files);
-static void          thunar_launcher_open_paths                 (ThunarVfsMimeHandler     *mime_handler,
-                                                                 GList                    *path_list,
+static void          thunar_launcher_open_paths                 (GAppInfo                 *app_info,
+                                                                 GList                    *file_list,
                                                                  ThunarLauncher           *launcher);
 static void          thunar_launcher_open_windows               (ThunarLauncher           *launcher,
                                                                  GList                    *directories);
@@ -562,44 +563,38 @@ static void
 thunar_launcher_open_files (ThunarLauncher *launcher,
                             GList          *files)
 {
-  ThunarVfsMimeApplication *application;
-  ThunarVfsMimeDatabase    *database;
-  ThunarVfsMimeInfo        *info;
-  GHashTable               *applications;
-  GList                    *path_list;
-  GList                    *lp;
+  GAppInfo   *app_info;
+  GHashTable *applications;
+  GList      *file_list;
+  GList      *lp;
 
   /* allocate a hash table to associate applications to URIs */
-  applications = g_hash_table_new_full (thunar_vfs_mime_application_hash,
-                                        thunar_vfs_mime_application_equal,
+  applications = g_hash_table_new_full (g_direct_hash,
+                                        (GEqualFunc) g_app_info_equal,
                                         (GDestroyNotify) g_object_unref,
-                                        (GDestroyNotify) thunar_vfs_path_list_free);
-
-  /* take a reference on the mime database */
-  database = thunar_vfs_mime_database_get_default ();
+                                        (GDestroyNotify) g_file_list_free);
 
   for (lp = files; lp != NULL; lp = lp->next)
     {
       /* determine the default application for the MIME type */
-      info = thunar_file_get_mime_info (lp->data);
-      application = thunar_vfs_mime_database_get_default_application (database, info);
+      app_info = thunar_file_get_default_handler (lp->data);
 
       /* check if we have an application here */
-      if (G_LIKELY (application != NULL))
+      if (G_LIKELY (app_info != NULL))
         {
           /* check if we have that application already */
-          path_list = g_hash_table_lookup (applications, application);
-          if (G_LIKELY (path_list != NULL))
+          file_list = g_hash_table_lookup (applications, app_info);
+          if (G_LIKELY (file_list != NULL))
             {
               /* take a copy of the list as the old one will be dropped by the insert */
-              path_list = thunar_vfs_path_list_copy (path_list);
+              file_list = g_file_list_copy (file_list);
             }
 
           /* append our new URI to the list */
-          path_list = thunar_vfs_path_list_append (path_list, thunar_file_get_path (lp->data));
+          file_list = g_file_list_append (file_list, thunar_file_get_file (lp->data));
 
           /* (re)insert the URI list for the application */
-          g_hash_table_insert (applications, application, path_list);
+          g_hash_table_insert (applications, app_info, file_list);
         }
       else
         {
@@ -610,10 +605,7 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
     }
 
   /* run all collected applications */
-  g_hash_table_foreach (applications, (GHFunc) thunar_launcher_open_paths, launcher);
-
-  /* release the reference on the mime database */
-  g_object_unref (G_OBJECT (database));
+  g_hash_table_foreach (applications, (GHFunc) thunar_launcher_open_files, launcher);
 
   /* drop the applications hash table */
   g_hash_table_destroy (applications);
@@ -622,28 +614,33 @@ thunar_launcher_open_files (ThunarLauncher *launcher,
 
 
 static void
-thunar_launcher_open_paths (ThunarVfsMimeHandler *mime_handler,
-                            GList                *path_list,
-                            ThunarLauncher       *launcher)
+thunar_launcher_open_paths (GAppInfo       *app_info,
+                            GList          *path_list,
+                            ThunarLauncher *launcher)
 {
-  GdkScreen *screen;
-  GError    *error = NULL;
-  gchar     *message;
-  gchar     *name;
-  guint      n;
+  GdkAppLaunchContext *context;
+  GdkScreen           *screen;
+  GError              *error = NULL;
+  gchar               *message;
+  gchar               *name;
+  guint                n;
 
   /* determine the screen on which to launch the application */
   screen = (launcher->widget != NULL) ? gtk_widget_get_screen (launcher->widget) : NULL;
 
+  /* create launch context */
+  context = gdk_app_launch_context_new ();
+  gdk_app_launch_context_set_screen (context, screen);
+
   /* try to execute the application with the given URIs */
-  if (!thunar_vfs_mime_handler_exec (mime_handler, screen, path_list, &error))
+  if (!g_app_info_launch (app_info, path_list, G_APP_LAUNCH_CONTEXT (context), &error))
     {
       /* figure out the appropriate error message */
       n = g_list_length (path_list);
       if (G_LIKELY (n == 1))
         {
           /* we can give a precise error message here */
-          name = g_filename_display_name (thunar_vfs_path_get_name (path_list->data));
+          name = g_filename_display_name (g_file_get_basename (path_list->data));
           message = g_strdup_printf (_("Failed to open file \"%s\""), name);
           g_free (name);
         }
@@ -658,6 +655,9 @@ thunar_launcher_open_paths (ThunarVfsMimeHandler *mime_handler,
       g_error_free (error);
       g_free (message);
     }
+
+  /* destroy the launch context */
+  g_object_unref (context);
 }
 
 
@@ -725,9 +725,10 @@ static void
 thunar_launcher_update (ThunarLauncher *launcher)
 {
   GtkIconTheme *icon_theme;
-  const gchar  *icon_name;
   const gchar  *context_menu_path;
   const gchar  *file_menu_path;
+  GtkWidget    *menu_item;
+  GtkWidget    *image;
   GtkAction    *action;
   gboolean      default_is_open_with_other = FALSE;
   GList        *applications;
@@ -736,6 +737,7 @@ thunar_launcher_update (ThunarLauncher *launcher)
   gchar        *tooltip;
   gchar        *label;
   gchar        *name;
+  gchar        *ui_path;
   gint          n_directories = 0;
   gint          n_executables = 0;
   gint          n_regulars = 0;
@@ -864,10 +866,10 @@ thunar_launcher_update (ThunarLauncher *launcher)
       else if (G_LIKELY (applications != NULL))
         {
           /* turn the "Open" action into "Open With DEFAULT" */
-          label = g_strdup_printf (_("_Open With \"%s\""), thunar_vfs_mime_application_get_name (applications->data));
+          label = g_strdup_printf (_("_Open With \"%s\""), g_app_info_get_name (applications->data));
           tooltip = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
                                                "Use \"%s\" to open the selected files",
-                                               n_selected_files), thunar_vfs_mime_application_get_name (applications->data));
+                                               n_selected_files), g_app_info_get_name (applications->data));
           g_object_set (G_OBJECT (launcher->action_open),
                         "label", label,
                         "tooltip", tooltip,
@@ -878,8 +880,8 @@ thunar_launcher_update (ThunarLauncher *launcher)
           /* remember the default application for the "Open" action */
           g_object_set_qdata_full (G_OBJECT (launcher->action_open), thunar_launcher_handler_quark, applications->data, g_object_unref);
 
-          /* add the desktop actions for this application */
-          actions = g_list_concat (actions, thunar_vfs_mime_application_get_actions (applications->data));
+          /* FIXME Add the desktop actions for this application. 
+           * Unfortunately this is not supported by GIO directly */
 
           /* drop the default application from the list */
           applications = g_list_remove (applications, applications->data);
@@ -948,23 +950,18 @@ thunar_launcher_update (ThunarLauncher *launcher)
           /* process all applications and determine the desktop actions */
           for (lp = applications, n = 0; lp != NULL; lp = lp->next, ++n)
             {
-              /* determine the desktop actions for this application */
-              actions = g_list_concat (actions, thunar_vfs_mime_application_get_actions (lp->data));
+              /* FIXME Determine the desktop actions for this application. 
+               * Unfortunately this is not supported by GIO directly. */
 
               /* generate a unique label, unique id and tooltip for the application's action */
               name = g_strdup_printf ("thunar-launcher-addon-application%d-%p", n, launcher);
-              label = g_strdup_printf (_("Open With \"%s\""), thunar_vfs_mime_application_get_name (lp->data));
+              label = g_strdup_printf (_("Open With \"%s\""), g_app_info_get_name (lp->data));
               tooltip = g_strdup_printf (ngettext ("Use \"%s\" to open the selected file",
                                                    "Use \"%s\" to open the selected files",
-                                                   n_selected_files), thunar_vfs_mime_application_get_name (lp->data));
-
-              /* check if we have an icon for this application */
-              icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
-              if (G_LIKELY (icon_name != NULL))
-                thunar_gtk_icon_factory_insert_icon (launcher->icon_factory, name, icon_name);
+                                                   n_selected_files), g_app_info_get_name (lp->data));
 
               /* allocate a new action for the application */
-              action = gtk_action_new (name, label, tooltip, (icon_name != NULL) ? name : NULL);
+              action = gtk_action_new (name, label, tooltip, NULL);
               gtk_action_group_add_action (launcher->action_group, action);
               g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
               g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
@@ -976,6 +973,23 @@ thunar_launcher_update (ThunarLauncher *launcher)
                                      GTK_UI_MANAGER_MENUITEM, FALSE);
               g_object_unref (G_OBJECT (action));
 
+              /* FIXME There's no API for creating GtkActions using GIcon in GTK+ 2.14. A "gicon" property
+               * has been added to GtkAction in GTK+ 2.16 though. For now, this hack will have to do: */
+
+              ui_path = g_strconcat (file_menu_path, "/", name, NULL);
+              menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
+              image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
+              gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
+              g_free (ui_path);
+              	
+              ui_path = g_strconcat (context_menu_path, "/", name, NULL);
+              menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
+              image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
+              gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
+              g_free (ui_path);
+
+              /* FIXME End of the hack */
+
               /* cleanup */
               g_free (tooltip);
               g_free (label);
@@ -986,48 +1000,8 @@ thunar_launcher_update (ThunarLauncher *launcher)
           g_list_free (applications);
         }
 
-      /* check if we have any desktop actions */
-      if (G_UNLIKELY (actions != NULL))
-        {
-          /* add separator before the desktop actions */
-          gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                 "/main-menu/file-menu/placeholder-launcher/placeholder-actions",
-                                 "separator", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
-          gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                 "/file-context-menu/placeholder-launcher/placeholder-actions",
-                                 "separator", NULL, GTK_UI_MANAGER_SEPARATOR, FALSE);
-
-          /* process all actions and add them to the UI manager */
-          for (lp = actions, n = 0; lp != NULL; lp = lp->next, ++n)
-            {
-              /* generate a unique name for the mime action */
-              name = g_strdup_printf ("thunar-launcher-addon-action%d-%p", n, launcher);
-
-              /* check if we have an icon for this action */
-              icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
-              if (G_LIKELY (icon_name != NULL))
-                thunar_gtk_icon_factory_insert_icon (launcher->icon_factory, name, icon_name);
-
-              /* allocate a new ui action for the mime action */
-              action = gtk_action_new (name, thunar_vfs_mime_handler_get_name (lp->data), NULL, (icon_name != NULL) ? name : NULL);
-              gtk_action_group_add_action (launcher->action_group, action);
-              g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
-              g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
-              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     "/main-menu/file-menu/placeholder-launcher/placeholder-actions",
-                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
-              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     "/file-context-menu/placeholder-launcher/placeholder-actions",
-                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
-              g_object_unref (G_OBJECT (action));
-
-              /* cleanup */
-              g_free (name);
-            }
-
-          /* cleanup */
-          g_list_free (actions);
-        }
+      /* FIXME Add desktop actions here. Unfortunately they are not supported by 
+       * GIO, so we'll have to roll our own thing here */
     }
 
   /* schedule an update of the "Send To" menu */
@@ -1044,13 +1018,13 @@ static void
 thunar_launcher_action_open (GtkAction      *action,
                              ThunarLauncher *launcher)
 {
-  ThunarVfsMimeHandler *mime_handler;
-  GdkScreen            *screen;
-  gboolean              executable = TRUE;
-  GList                *selected_paths;
-  GList                *directories = NULL;
-  GList                *files = NULL;
-  GList                *lp;
+  GAppInfo  *app_info;
+  GdkScreen *screen;
+  gboolean   executable = TRUE;
+  GList     *selected_paths;
+  GList     *directories = NULL;
+  GList     *files = NULL;
+  GList     *lp;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
@@ -1059,13 +1033,13 @@ thunar_launcher_action_open (GtkAction      *action,
   screen = (launcher->widget != NULL) ? gtk_widget_get_screen (launcher->widget) : NULL;
 
   /* check if we have a mime handler associated with the action */
-  mime_handler = g_object_get_qdata (G_OBJECT (action), thunar_launcher_handler_quark);
-  if (G_LIKELY (mime_handler != NULL))
+  app_info = g_object_get_qdata (G_OBJECT (action), thunar_launcher_handler_quark);
+  if (G_LIKELY (app_info != NULL))
     {
       /* try to open the selected files using the given application */
-      selected_paths = thunar_file_list_to_path_list (launcher->selected_files);
-      thunar_launcher_open_paths (mime_handler, selected_paths, launcher);
-      thunar_vfs_path_list_free (selected_paths);
+      selected_paths = thunar_file_list_to_g_file_list (launcher->selected_files);
+      thunar_launcher_open_paths (app_info, selected_paths, launcher);
+      g_file_list_free (selected_paths);
     }
   else if (g_list_length (launcher->selected_files) == 1 && thunar_file_is_directory (launcher->selected_files->data))
     {
@@ -1168,9 +1142,7 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
 {
   ThunarApplication *application;
   ThunarVfsPath     *desktop_path;
-  ThunarVfsPath     *home_path;
   GList             *paths;
-  gchar             *str_desktop_path = NULL;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
@@ -1181,21 +1153,7 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
     return;
 
   /* determine the path to the ~/Desktop folder */
-  home_path = thunar_vfs_path_get_for_home ();
-#if GLIB_CHECK_VERSION(2,14,0)
-  str_desktop_path = g_strdup (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
-#else /* GLIB_CHECK_VERSION(2,14,0) */
-  str_desktop_path = g_build_filename (G_DIR_SEPARATOR_S, xfce_get_homedir (),
-      "Desktop", NULL);
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
-
-  desktop_path = thunar_vfs_path_new (str_desktop_path, NULL);
-
-  if (G_UNLIKELY (desktop_path == NULL))
-      desktop_path = thunar_vfs_path_relative (home_path, "Desktop");
-
-  thunar_vfs_path_unref (home_path);
-  g_free (str_desktop_path);
+  desktop_path = thunar_vfs_path_new (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP), NULL);
 
   /* launch the link job */
   application = thunar_application_get ();

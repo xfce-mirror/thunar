@@ -236,6 +236,7 @@ ThunarFile       *thunar_file_cache_lookup_path    (const ThunarVfsPath    *path
 
 
 GList            *thunar_file_list_get_applications  (GList *file_list);
+GList            *thunar_file_list_to_g_file_list    (GList *file_list);
 GList            *thunar_file_list_to_path_list      (GList *file_list);
 
 gboolean         thunar_file_is_desktop              (const ThunarFile *file);
@@ -290,6 +291,32 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  * Return value: the path to the @file.
  **/
 #define thunar_file_get_path(file) (THUNAR_FILE ((file))->info->path)
+
+/**
+ * thunar_file_get_file:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the #GFile that refers to the location of @file.
+ *
+ * The returned #GFile is owned by @file and must not be released
+ * with g_object_unref().
+ * 
+ * Return value: the #GFile corresponding to @file.
+ **/
+#define thunar_file_get_file(file) (THUNAR_FILE ((file))->gfile)
+
+/**
+ * thunar_file_get_default_handler:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the default #GAppInfo for @file or %NULL if there is none.
+ * 
+ * The caller is responsible to free the returned #GAppInfo using
+ * g_object_unref().
+ *
+ * Return value: Default #GAppInfo for @file or %NULL if there is none.
+ **/
+#define thunar_file_get_default_handler(file) (g_file_query_default_handler (THUNAR_FILE ((file))->gfile, NULL, NULL))
 
 /**
  * thunar_file_get_mime_info:

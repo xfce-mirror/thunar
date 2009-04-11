@@ -910,7 +910,7 @@ thunar_file_launch (ThunarFile *file,
 
   /* determine the default application to open the file */
   /* TODO We should probably add a cancellable argument to thunar_file_launch() */
-  app_info = g_file_query_default_handler (file->gfile, NULL, error);
+  app_info = thunar_file_get_default_handler (file);
 
   /* display the application chooser if no application is defined for this file
    * type yet */
@@ -1919,7 +1919,10 @@ thunar_file_reload (ThunarFile *file)
       file->info = info;
 
       if (file->ginfo != NULL)
-        g_object_unref (file->ginfo);
+        {
+          g_object_unref (file->ginfo);
+          file->ginfo = NULL;
+        }
 
       thunar_file_load (file, NULL, NULL);
 
@@ -2230,42 +2233,44 @@ thunar_file_cache_lookup_path (const ThunarVfsPath *path)
  * thunar_file_list_get_applications:
  * @file_list : a #GList of #ThunarFile<!---->s.
  *
- * Returns the #GList of #ThunarVfsMimeApplication<!---->s
- * that can be used to open all #ThunarFile<!---->s in the
- * given @file_list.
+ * Returns the #GList of #GAppInfo<!---->s that can be used to open 
+ * all #ThunarFile<!---->s in the given @file_list.
  *
- * The caller is responsible to free the returned list using
- * something like:
+ * The caller is responsible to free the returned list using something like:
  * <informalexample><programlisting>
- * g_list_foreach (list, (GFunc) thunar_vfs_mime_application_unref, NULL);
+ * g_list_foreach (list, (GFunc) g_object_unref, NULL);
  * g_list_free (list);
  * </programlisting></informalexample>
  *
- * Return value: the list of #ThunarVfsMimeApplication<!---->s that
- *               can be used to open all items in the @file_list.
+ * Return value: the list of #GAppInfo<!---->s that can be used to open all 
+ *               items in the @file_list.
  **/
 GList*
 thunar_file_list_get_applications (GList *file_list)
 {
-  ThunarVfsMimeDatabase *database;
-  GList                 *applications = NULL;
-  GList                 *list;
-  GList                 *next;
-  GList                 *ap;
-  GList                 *lp;
-
-  /* grab a reference on the mime database */
-  database = thunar_vfs_mime_database_get_default ();
+  GList       *applications = NULL;
+  GList       *list;
+  GList       *next;
+  GList       *ap;
+  GList       *lp;
+  const gchar *previous_type;
+  const gchar *current_type;
 
   /* determine the set of applications that can open all files */
   for (lp = file_list; lp != NULL; lp = lp->next)
     {
+      current_type = g_file_info_get_content_type (THUNAR_FILE (lp->data)->ginfo);
+
       /* no need to check anything if this file has the same mime type as the previous file */
-      if (lp->prev != NULL && thunar_file_get_mime_info (lp->prev->data) == thunar_file_get_mime_info (lp->data))
-        continue;
+      if (lp->prev != NULL)
+        {
+          previous_type = g_file_info_get_content_type (THUNAR_FILE (lp->prev->data)->ginfo);
+          if (G_LIKELY (g_content_type_equals (previous_type, current_type)))
+            continue;
+        }
 
       /* determine the list of applications that can open this file */
-      list = thunar_vfs_mime_database_get_applications (database, thunar_file_get_mime_info (lp->data));
+      list = g_app_info_get_all_for_type (current_type);
       if (G_UNLIKELY (applications == NULL))
         {
           /* first file, so just use the applications list */
@@ -2300,10 +2305,33 @@ thunar_file_list_get_applications (GList *file_list)
         break;
     }
 
-  /* release the mime database */
-  g_object_unref (G_OBJECT (database));
-
   return applications;
+}
+
+
+
+/**
+ * thunar_file_list_to_g_file_list:
+ * @file_list : a #GList of #ThunarFile<!---->s.
+ *
+ * Transforms the @file_list to a #GList of #GFile<!---->s for
+ * the #ThunarFile<!---->s contained within @file_list.
+ *
+ * The caller is responsible to free the returned list using
+ * g_file_list_free() when no longer needed.
+ *
+ * Return value: the list of #GFile<!---->s for @file_list.
+ **/
+GList*
+thunar_file_list_to_g_file_list (GList *file_list)
+{
+  GList *list = NULL;
+  GList *lp;
+
+  for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev)
+    list = g_list_prepend (list, g_object_ref (THUNAR_FILE (lp->data)->gfile));
+
+  return list;
 }
 
 
