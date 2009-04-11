@@ -1233,12 +1233,15 @@ thunar_launcher_sendto_idle (gpointer user_data)
   const gchar    *icon_name;
   const gchar    *label;
   GtkAction      *action;
+  GtkWidget      *image;
+  GtkWidget      *menu_item;
   gboolean        linkable = TRUE;
   GList          *handlers;
   GList          *volumes;
   GList          *lp;
   gchar          *name;
   gchar          *tooltip;
+  gchar          *ui_path;
   gint            n_selected_files;
   gint            n = 0;
 
@@ -1335,19 +1338,14 @@ thunar_launcher_sendto_idle (gpointer user_data)
           for (lp = handlers; lp != NULL; lp = lp->next, ++n)
             {
               /* generate a unique name and tooltip for the handler */
-              label = thunar_vfs_mime_handler_get_name (lp->data);
+              label = g_app_info_get_name (lp->data);
               name = g_strdup_printf ("thunar-launcher-sendto%d-%p", n, launcher);
               tooltip = g_strdup_printf (ngettext ("Send the selected file to \"%s\"",
                                                    "Send the selected files to \"%s\"",
                                                    n_selected_files), label);
 
-              /* check if we have an icon for this handler */
-              icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
-              if (G_LIKELY (icon_name != NULL))
-                thunar_gtk_icon_factory_insert_icon (launcher->icon_factory, name, icon_name);
-
               /* allocate a new action for the handler */
-              action = gtk_action_new (name, label, tooltip, (icon_name != NULL) ? name : NULL);
+              action = gtk_action_new (name, label, tooltip, NULL);
               g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
               g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_open), launcher);
               gtk_action_group_add_action (launcher->action_group, action);
@@ -1358,6 +1356,25 @@ thunar_launcher_sendto_idle (gpointer user_data)
                                      "/file-context-menu/sendto-menu/placeholder-sendto-actions",
                                      name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
               g_object_unref (G_OBJECT (action));
+
+              /* FIXME There's no API for creating GtkActions using GIcon in GTK+ 2.14. A "gicon" property
+               * has been added to GtkAction in GTK+ 2.16 though. For now, this hack will have to do: */
+
+              ui_path = g_strconcat ("/main-menu/file-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
+              g_debug ("name = %s, ui_path = %s", name, ui_path);
+              menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
+              image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
+              gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
+              g_free (ui_path);
+              	
+              ui_path = g_strconcat ("/file-context-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
+              g_debug ("name = %s, ui_path = %s", name, ui_path);
+              menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
+              image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
+              gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
+              g_free (ui_path);
+
+              /* FIXME End of the hack */
 
               /* cleanup */
               g_free (tooltip);

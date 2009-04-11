@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -26,6 +27,10 @@
 #endif
 #ifdef HAVE_STRING_H
 #include <string.h>
+#endif
+
+#ifdef HAVE_GIO_UNIX
+#include <gio/gdesktopappinfo.h>
 #endif
 
 #include <thunar/thunar-private.h>
@@ -134,11 +139,12 @@ thunar_sendto_model_finalize (GObject *object)
 
 
 static gint
-tvma_compare (gconstpointer a,
-              gconstpointer b)
+g_app_info_compare (gpointer a,
+                    gpointer b)
 {
-  return strcmp (thunar_vfs_mime_application_get_desktop_id (b),
-                 thunar_vfs_mime_application_get_desktop_id (a));
+  g_debug ("a = %s, b = %s", g_app_info_get_name (a), g_app_info_get_name (b));
+  return g_utf8_collate (g_app_info_get_name (b),
+                         g_app_info_get_name (a));
 }
 
 
@@ -146,11 +152,10 @@ tvma_compare (gconstpointer a,
 static void
 thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
 {
-  ThunarVfsMimeApplication *handler;
-  const gchar              *id;
-  gchar                   **specs;
-  gchar                    *path;
-  guint                     n;
+  GDesktopAppInfo *app_info = NULL;
+  gchar          **specs;
+  gchar           *path;
+  guint            n;
 
   /* lookup all sendto .desktop files */
   specs = xfce_resource_match (XFCE_RESOURCE_DATA, "Thunar/sendto/*.desktop", TRUE);
@@ -160,15 +165,18 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
       path = xfce_resource_lookup (XFCE_RESOURCE_DATA, specs[n]);
       if (G_LIKELY (path != NULL))
         {
-          /* we use the filename as desktop-id */
-          id = specs[n] + (sizeof ("Thunar/sendto/") - 1);
-
+#ifdef HAVE_GIO_UNIX
           /* try to load the .desktop file */
-          handler = thunar_vfs_mime_application_new_from_file (path, id);
-          if (G_LIKELY (handler != NULL))
+          app_info = g_desktop_app_info_new_from_filename (path);
+#else
+          /* FIXME try to create the app info ourselves in a platform independent way */
+#endif
+          if (G_LIKELY (app_info != NULL))
             {
               /* add to our handler list, sorted by their desktop-ids (reverse order) */
-              sendto_model->handlers = g_list_insert_sorted (sendto_model->handlers, handler, tvma_compare);
+              sendto_model->handlers = g_list_insert_sorted (sendto_model->handlers, 
+                                                             G_APP_INFO (app_info),
+                                                             (GCompareFunc) g_app_info_compare);
             }
         }
 
@@ -239,8 +247,8 @@ thunar_sendto_model_get_default (void)
  * @sendto_model : a #ThunarSendtoModel.
  * @files        : a #GList of #ThunarFile<!---->s.
  * 
- * Returns the list of #ThunarVfsMimeHandler<!---->s for the "Send To"
- * targets that support the specified @files.
+ * Returns the list of #GAppInfo<!---->s for the "Send To" targets that 
+ * support the specified @files.
  *
  * The returned list is owned by the caller and must be freed when no
  * longer needed, using:
@@ -249,23 +257,21 @@ thunar_sendto_model_get_default (void)
  * g_list_free (list);
  * </programlisting></informalexample>
  *
- * Return value: a #GList of supported #ThunarVfsMimeHandler<!---->s as
+ * Return value: a #GList of supported #GAppInfo<!---->s as
  *               "Send To" targets for the specified @files.
  **/
 GList*
 thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
                                   GList             *files)
 {
-  ThunarVfsMimeHandlerFlags flags;
-  ThunarVfsMonitorHandle   *handle;
-  const gchar * const      *mime_types;
-  ThunarVfsPath            *path;
-  gchar                   **datadirs;
-  gchar                    *dir;
-  GList                    *handlers = NULL;
-  GList                    *hp;
-  GList                    *fp;
-  guint                     n;
+  ThunarVfsMonitorHandle *handle;
+  ThunarVfsPath          *path;
+  gchar                 **datadirs;
+  gchar                  *dir;
+  GList                  *handlers = NULL;
+  GList                  *hp;
+  GList                  *fp;
+  guint                   n;
 
   _thunar_return_val_if_fail (THUNAR_IS_SENDTO_MODEL (sendto_model), NULL);
 
@@ -304,13 +310,10 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
   /* test all handlers */
   for (hp = sendto_model->handlers; hp != NULL; hp = hp->next)
     {
-      /* ignore the handler if it doesn't support multiple files, but we have more than one file */
-      flags = thunar_vfs_mime_handler_get_flags (THUNAR_VFS_MIME_HANDLER (hp->data));
-      if ((flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_MULTI) == 0 && files->next != NULL)
-        continue;
+      /* FIXME Ignore GAppInfos which don't support multiple file arguments */
 
       /* ignore the handler if it doesn't support URIs, but we don't have a local file */
-      if ((flags & THUNAR_VFS_MIME_HANDLER_SUPPORTS_URIS) == 0)
+      if (!g_app_info_supports_uris (hp->data))
         {
           /* check if we have any non-local files */
           for (fp = files; fp != NULL; fp = fp->next)
@@ -322,30 +325,7 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
             continue;
         }
 
-      /* check if we need to test mime types for this handler */
-      mime_types = thunar_vfs_mime_application_get_mime_types (hp->data);
-      if (G_LIKELY (mime_types != NULL && *mime_types != NULL))
-        {
-          /* each file must match atleast one of the specified mime types */
-          for (fp = files; fp != NULL; fp = fp->next)
-            {
-              /* each file must be supported by one of the mime types */
-              for (n = 0; mime_types[n] != NULL; ++n)
-                if (thunarx_file_info_has_mime_type (fp->data, mime_types[n]))
-                  break;
-
-              /* check if all mime types failed */
-              if (mime_types[n] == NULL)
-                break;
-            }
-
-          /* check if atleast one file failed */
-          if (G_UNLIKELY (fp != NULL))
-            {
-              /* skip this handler */
-              continue;
-            }
-        }
+      /* FIXME Check if the GAppInfo supports all files */
 
       /* the handler is supported */
       handlers = g_list_prepend (handlers, g_object_ref (G_OBJECT (hp->data)));

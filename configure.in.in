@@ -182,6 +182,14 @@ dnl ********************************************
 XDT_CHECK_LIBSM()
 
 dnl **********************************
+dnl *** Optional GIO UNIX features ***
+dnl **********************************
+XDT_CHECK_OPTIONAL_PACKAGE([GIO_UNIX], [gio-unix-2.0],
+                           [2.16.0], [gio-unix], [GIO UNIX features])
+
+dnl *******************************************************
+dnl *** Optional support for gconf (GNOME thumbnailers) ***
+dnl **********************************
 dnl *** Optional support for D-BUS ***
 dnl **********************************
 XDT_CHECK_OPTIONAL_PACKAGE([DBUS], [dbus-glib-1],
@@ -506,6 +514,11 @@ if test x"$DBUS_FOUND" = x"yes"; then
 echo "* D-BUS support:             yes"
 else
 echo "* D-BUS support:             no"
+fi
+if test x"$GIO_UNIX_FOUND" = x"yes"; then
+echo "* GIO UNIX features:         yes"
+else
+echo "* GIO UNIX features:         no"
 fi
 echo "* File System Monitor:       $ac_bm_thunar_vfs_monitor_impl"
 if test x"$GCONF_FOUND" = x"yes"; then

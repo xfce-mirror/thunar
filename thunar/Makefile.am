@@ -240,6 +240,14 @@ Thunar_LDADD +=								\
 	$(DBUS_LIBS)
 endif
 
+if HAVE_GIO_UNIX
+Thunar_CFLAGS +=							\
+	$(GIO_UNIX_CFLAGS)
+
+Thunar_LDADD +=								\
+	$(GIO_UNIX_LIBS)
+endif
+
 desktopdir = $(datadir)/applications
 desktop_in_files = thunar-settings.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)

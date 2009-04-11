@@ -1,5 +1,18 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
+	* configure.in.in, thunar/Makefile.am: Add optional dependency on 
+	  gio-unix-2.0.
+	* thunar/thunar-launcher.c, thunar/thunar-sendto-model.c: Load sendto
+	  handlers using GDesktopAppInfo (only supported on UNIX for whatever
+	  reason). Update ThunarLauncher to use GAppInfo for handlers
+	  retrieved from ThunarSendtoModel. Unfortunately, GIO doesn't support
+	  checking whether a GAppInfo supports more than one file argument.
+	  There's also no way to find out what MIME types a GAppInfo supports
+	  which forces us to drop a few nice sanity checks in
+	  thunar_sendto_model_get_matching().
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add new macro
 	  thunar_file_get_default_handler() for querying the default GAppInfo
 	  to handle a ThunarFile. Use it in thunar_file_launch(). Fix pointer
