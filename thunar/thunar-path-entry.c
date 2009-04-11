@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -749,15 +750,15 @@ thunar_path_entry_drag_data_get (GtkWidget        *widget,
                                  guint             time)
 {
   ThunarPathEntry *path_entry = THUNAR_PATH_ENTRY (widget);
-  GList            path_list;
+  GList            file_list;
   gchar           *uri_string;
 
   /* verify that we actually display a path */
   if (G_LIKELY (path_entry->current_file != NULL))
     {
       /* transform the path for the current file into an uri string list */
-      path_list.data = thunar_file_get_path (path_entry->current_file); path_list.next = path_list.prev = NULL;
-      uri_string = thunar_vfs_path_list_to_string (&path_list);
+      file_list.data = thunar_file_get_file (path_entry->current_file); file_list.next = file_list.prev = NULL;
+      uri_string = g_file_list_to_string (&file_list);
 
       /* setup the uri list for the drag selection */
       gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
@@ -791,13 +792,13 @@ thunar_path_entry_changed (GtkEditable *editable)
 {
   GtkEntryCompletion *completion;
   ThunarPathEntry    *path_entry = THUNAR_PATH_ENTRY (editable);
-  ThunarVfsPath      *folder_path = NULL;
-  ThunarVfsPath      *file_path = NULL;
   ThunarFolder       *folder;
   GtkTreeModel       *model;
   const gchar        *text;
   ThunarFile         *current_folder;
   ThunarFile         *current_file;
+  GFile              *folder_path = NULL;
+  GFile              *file_path = NULL;
   gchar              *folder_part = NULL;
   gchar              *file_part = NULL;
 
@@ -810,20 +811,18 @@ thunar_path_entry_changed (GtkEditable *editable)
   if (G_UNLIKELY (thunar_util_looks_like_an_uri (text)))
     {
       /* try to parse the URI text */
-      file_path = thunar_vfs_path_new (text, NULL);
+      file_path = g_file_new_for_uri (text);
     }
   else if (thunar_path_entry_parse (path_entry, &folder_part, &file_part, NULL))
     {
       /* determine the folder path */
-      folder_path = thunar_vfs_path_new (folder_part, NULL);
-      if (G_LIKELY (folder_path != NULL))
-        {
-          /* determine the relative file path */
-          if (G_LIKELY (*file_part != '\0'))
-            file_path = thunar_vfs_path_relative (folder_path, file_part);
-          else
-            file_path = thunar_vfs_path_ref (folder_path);
-        }
+      folder_path = g_file_new_for_path (folder_part);
+
+      /* determine the relative file path */
+      if (G_LIKELY (*file_part != '\0'))
+        file_path = g_file_resolve_relative_path (folder_path, file_part);
+      else
+        file_path = g_object_ref (folder_path);
 
       /* cleanup the part strings */
       g_free (folder_part);
@@ -831,8 +830,8 @@ thunar_path_entry_changed (GtkEditable *editable)
     }
 
   /* determine new current file/folder from the paths */
-  current_folder = (folder_path != NULL) ? thunar_file_get_for_path (folder_path, NULL) : NULL;
-  current_file = (file_path != NULL) ? thunar_file_get_for_path (file_path, NULL) : NULL;
+  current_folder = (folder_path != NULL) ? thunar_file_get (folder_path, NULL) : NULL;
+  current_file = (file_path != NULL) ? thunar_file_get (file_path, NULL) : NULL;
 
   /* determine the entry completion */
   completion = gtk_entry_get_completion (GTK_ENTRY (path_entry));
@@ -889,9 +888,9 @@ thunar_path_entry_changed (GtkEditable *editable)
   if (G_LIKELY (current_file != NULL))
     g_object_unref (G_OBJECT (current_file));
   if (G_LIKELY (folder_path != NULL))
-    thunar_vfs_path_unref (folder_path);
+    g_object_unref (folder_path);
   if (G_LIKELY (file_path != NULL))
-    thunar_vfs_path_unref (file_path);
+    g_object_unref (file_path);
 }
 
 
@@ -1399,32 +1398,24 @@ void
 thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
                                     ThunarFile      *current_file)
 {
-  ThunarVfsPath *path;
-  gchar         *text;
+  GFile *file;
+  gchar *text;
 
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
   _thunar_return_if_fail (current_file == NULL || THUNAR_IS_FILE (current_file));
 
-  path = (current_file != NULL) ? thunar_file_get_path (current_file) : NULL;
-  if (G_UNLIKELY (path == NULL))
+  file = (current_file != NULL) ? thunar_file_get_file (current_file) : NULL;
+  if (G_UNLIKELY (file == NULL))
     {
       /* invalid file */
       text = g_strdup ("");
     }
-  else if (thunar_vfs_path_get_scheme (path) == THUNAR_VFS_PATH_SCHEME_FILE)
-    {
-      /* try absolute path, fallback to URI if not valid UTF-8 */
-      text = thunar_vfs_path_dup_string (path);
-      if (!g_utf8_validate (text, -1, NULL))
-        {
-          g_free (text);
-          goto uri;
-        }
-    }
   else
     {
-uri:  /* display the URI for the path */
-      text = thunar_vfs_path_dup_uri (path);
+      /* try absolute path, fallback to URI if not a local file */
+      text = g_file_get_path (file);
+      if (text == NULL)
+        text = g_file_get_uri (file);
     }
 
   /* setup the entry text */

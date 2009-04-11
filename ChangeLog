@@ -1,3 +1,10 @@
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-path-entry.c: Re-implement
+	  thunar_path_entry_drag_data_get(), thunar_path_entry_changed() and
+	  thunar_path_entry_set_current_file() with GFile. file:// URI
+	  completion doesn't work yet.
+
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-file.c, thunar/thunar-metafile.{c,h}: Migrate
