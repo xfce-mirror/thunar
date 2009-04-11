@@ -564,6 +564,68 @@ thunar_file_watch_free (gpointer data)
 
 
 /**
+ * thunar_file_get:
+ * @file  : a #GFile.
+ * @error : return location for errors.
+ *
+ * Looks up the #ThunarFile referred to by @file.
+ *
+ * The caller is responsible to call g_object_unref()
+ * when done with the returned object.
+ *
+ * Return value: the #ThunarFile for @file or %NULL on errors.
+ **/
+ThunarFile*
+thunar_file_get (GFile   *gfile,
+                 GError **error)
+{
+  ThunarVfsInfo *info;
+  ThunarVfsPath *path;
+  ThunarFile    *file;
+  gchar         *uri;
+
+  _thunar_return_val_if_fail (G_IS_FILE (gfile), NULL);
+
+  /* check if we already have a cached version of that file */
+  file = thunar_file_cache_lookup (gfile);
+  if (G_UNLIKELY (file != NULL))
+    {
+      /* take a reference for the caller */
+      g_object_ref (G_OBJECT (file));
+    }
+  else
+    {
+      uri = g_file_get_uri (file->gfile);
+      path = thunar_vfs_path_new (uri, error);
+      g_free (uri);
+
+      if (G_UNLIKELY (path == NULL))
+        return NULL;
+
+      info = thunar_vfs_info_new_for_path (path, error);
+      thunar_vfs_path_unref (path);
+
+      if (G_UNLIKELY (info == NULL))
+        return NULL;
+
+      /* allocate a new object */
+      file = g_object_new (THUNAR_TYPE_FILE, NULL);
+      file->gfile = g_object_ref (gfile);
+      file->ginfo = NULL;
+      file->info = info;
+
+      thunar_file_load (file, NULL, error);
+
+      /* insert the file into the cache */
+      g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+    }
+
+  return file;
+}
+
+
+
+/**
  * thunar_file_get_for_info:
  * @info : a #ThunarVfsInfo.
  *
@@ -624,6 +686,7 @@ thunar_file_get_for_info (ThunarVfsInfo *info)
 
       file->gfile = g_object_ref (gfile);
       file->ginfo = NULL;
+
       thunar_file_load (file, NULL, NULL);
 
       /* insert the file into the cache */

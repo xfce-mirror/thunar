@@ -1,5 +1,14 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Add new function thunar_file_get(GFile*).
+	  Internally this still uses thunar_file_load() and can thus block the
+	  UI. For the sake of a smoother transition, asynchronous loading will
+	  be implemented at a later stage.
+	* thunar/thunar-window.c: Re-implement thunar_window_open_home() based
+	  on thunar_file_get(). 
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.c: Tweak thunar_file_is_desktop() a little bit.
 	* thunar/thunar-window.c: Re-implement
 	  thunar_window_setup_user_dir_menu_entries() based on GFile. Remove

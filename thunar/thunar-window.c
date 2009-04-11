@@ -1863,7 +1863,7 @@ static void
 thunar_window_action_open_home (GtkAction    *action,
                                 ThunarWindow *window)
 {
-  ThunarVfsPath *home_path;
+  GFile         *home;
   ThunarFile    *home_file;
   GError        *error = NULL;
 
@@ -1871,10 +1871,10 @@ thunar_window_action_open_home (GtkAction    *action,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the home directory */
-  home_path = thunar_vfs_path_get_for_home ();
+  home = g_file_new_for_home ();
 
   /* determine the file for the home directory */
-  home_file = thunar_file_get_for_path (home_path, &error);
+  home_file = thunar_file_get (home, &error);
   if (G_UNLIKELY (home_file == NULL))
     {
       /* display an error to the user */
@@ -1889,7 +1889,7 @@ thunar_window_action_open_home (GtkAction    *action,
     }
 
   /* release our reference on the home path */
-  thunar_vfs_path_unref (home_path);
+  g_object_unref (home);
 }
 
 gboolean
