@@ -1361,14 +1361,12 @@ thunar_launcher_sendto_idle (gpointer user_data)
                * has been added to GtkAction in GTK+ 2.16 though. For now, this hack will have to do: */
 
               ui_path = g_strconcat ("/main-menu/file-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
-              g_debug ("name = %s, ui_path = %s", name, ui_path);
               menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
               image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
               gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
               g_free (ui_path);
               	
               ui_path = g_strconcat ("/file-context-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
-              g_debug ("name = %s, ui_path = %s", name, ui_path);
               menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
               image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
               gtk_image_set_from_gicon (GTK_IMAGE (image), g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);

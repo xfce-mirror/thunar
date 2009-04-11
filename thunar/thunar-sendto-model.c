@@ -142,7 +142,6 @@ static gint
 g_app_info_compare (gpointer a,
                     gpointer b)
 {
-  g_debug ("a = %s, b = %s", g_app_info_get_name (a), g_app_info_get_name (b));
   return g_utf8_collate (g_app_info_get_name (b),
                          g_app_info_get_name (a));
 }

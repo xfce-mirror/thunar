@@ -925,7 +925,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   ThunarVfsInfo       *info;
   ThunarVfsPath       *path;
   ThunarIconKey        key;
-  const gchar         *icon_name;
+  gchar               *icon_name;
   GdkPixbuf           *icon;
   gchar               *thumb_path;
 
@@ -939,6 +939,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
     {
       /* try to load the icon */
       icon = thunar_icon_factory_lookup_icon (factory, icon_name, icon_size, FALSE);
+      g_free (icon_name);
       if (G_LIKELY (icon != NULL))
         return icon;
     }
@@ -1042,11 +1043,11 @@ again:
         }
     }
 
-  /* lookup the icon name for the icon in the given state */
+  /* lookup the icon name for the icon in the given state and load the icon */
   icon_name = thunar_file_get_icon_name (file, icon_state, factory->icon_theme);
-
-  /* load the icon of the given name */
-  return thunar_icon_factory_load_icon (factory, icon_name, icon_size, NULL, TRUE);
+  icon = thunar_icon_factory_load_icon (factory, icon_name, icon_size, NULL, TRUE);
+  g_free (icon_name);
+  return icon;
 }
 
 

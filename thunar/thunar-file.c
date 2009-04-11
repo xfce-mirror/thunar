@@ -1692,55 +1692,72 @@ thunar_file_is_desktop (const ThunarFile *file)
  * @icon_theme : the #GtkIconTheme on which to lookup up the icon name.
  *
  * Returns the name of the icon that can be used to present @file, based
- * on the given @icon_state and @icon_theme.
+ * on the given @icon_state and @icon_theme. The returned string has to
+ * be freed using g_free().
  *
  * Return value: the icon name for @file in @icon_theme.
  **/
-const gchar*
+gchar*
 thunar_file_get_icon_name (const ThunarFile   *file,
                            ThunarFileIconState icon_state,
                            GtkIconTheme       *icon_theme)
 {
-  const gchar *icon_name;
+  GIcon  *icon;
+  gchar **themed_icon_names;
+  gchar  *icon_name = NULL;
+  gint    i;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
-  /* special icon for the home node */
-  if (G_UNLIKELY (thunar_file_is_home (file))
-      && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-home"))
+  icon = g_file_info_get_icon (file->ginfo);
+
+  if (icon != NULL && G_IS_THEMED_ICON (icon))
     {
-      return "gnome-fs-home";
+      g_object_get (icon, "names", &themed_icon_names, NULL);
+
+      for (i = 0; icon_name == NULL && themed_icon_names[i] != NULL; ++i)
+        {
+          if (gtk_icon_theme_has_icon (icon_theme, themed_icon_names[i]))
+            icon_name = g_strdup (themed_icon_names[i]);
+        }
+
+      g_strfreev (themed_icon_names);
     }
-
-  /* special icon for the desktop node */
-  if (G_UNLIKELY (thunar_file_is_desktop (file))
-      && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-desktop"))
-   {
-     return "gnome-fs-desktop";
-   }
-
-  /* try to be smart when determining icons for executable files
-   * in that we use the name of the file as icon name (which will
-   * work for quite a lot of binaries, e.g. 'Terminal', 'mousepad',
-   * 'Thunar', 'xfmedia', etc.).
-   */
-  if (G_UNLIKELY (thunar_file_is_executable (file)))
+  
+  if (icon_name == NULL)
     {
-      icon_name = thunar_vfs_path_get_name (file->info->path);
-      if (G_UNLIKELY (gtk_icon_theme_has_icon (icon_theme, icon_name)))
-        return icon_name;
+      /* try to be smart when determining icons for executable files
+       * in that we use the name of the file as icon name (which will
+       * work for quite a lot of binaries, e.g. 'Terminal', 'mousepad',
+       * 'Thunar', 'xfmedia', etc.).
+       */
+      if (G_UNLIKELY (thunar_file_is_executable (file)))
+        {
+          icon_name = g_file_get_basename (file->gfile);
+          if (G_LIKELY (!gtk_icon_theme_has_icon (icon_theme, icon_name)))
+            {
+              g_free (icon_name);
+              icon_name = NULL;
+            }
+        }
     }
-
-  /* default is the mime type icon */
-  icon_name = thunar_vfs_mime_info_lookup_icon_name (file->info->mime_info, icon_theme);
 
   /* check if we have an accept icon for the icon we found */
-  if ((icon_state == THUNAR_FILE_ICON_STATE_DROP || icon_state == THUNAR_FILE_ICON_STATE_OPEN)
-      && strcmp (icon_name, "gnome-fs-directory") == 0
-      && gtk_icon_theme_has_icon (icon_theme, "gnome-fs-directory-accept"))
+  if (icon_name != NULL && 
+      (g_str_equal (icon_name, "inode-directory") 
+       || g_str_equal (icon_name, "folder")))
     {
-      return "gnome-fs-directory-accept";
+      if (icon_state == THUNAR_FILE_ICON_STATE_DROP)
+        {
+          g_free (icon_name);
+          icon_name = g_strdup ("folder-drag-accept");
+        }
+      else if (icon_state == THUNAR_FILE_ICON_STATE_OPEN)
+        {
+          g_free (icon_name);
+          icon_name = g_strdup ("folder-open");
+        }
     }
 
   return icon_name;

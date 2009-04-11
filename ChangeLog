@@ -1,5 +1,18 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Change thunar_file_get_custom_icon() to
+	  return a newly allocated string instead of a const one. Re-implement
+	  thunar_file_get_icon_name() based on GFileInfo and GThemedIcon. It
+	  now returns a string that has to be freed.
+	* thunar/thunar-icon-factory.c, thunar/thunar-location-button.c,
+	  thunar/thunar-properties-dialog.c: Avoid leaks by freeing the
+	  strings returned by thunar_file_get_custom_icon() and
+	  thunar_file_get_icon_name().
+	* thunar/thunar-launcher.c, thunar/thunar-sendto-model.c: Remove debug
+	  statements.
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
 	* configure.in.in, thunar/Makefile.am: Add optional dependency on 
 	  gio-unix-2.0.
 	* thunar/thunar-launcher.c, thunar/thunar-sendto-model.c: Load sendto

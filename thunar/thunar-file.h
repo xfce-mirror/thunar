@@ -206,7 +206,7 @@ gboolean          thunar_file_set_custom_icon      (ThunarFile              *fil
                                                     const gchar             *custom_icon,
                                                     GError                 **error) G_GNUC_WARN_UNUSED_RESULT;
 
-const gchar      *thunar_file_get_icon_name        (const ThunarFile        *file,
+gchar            *thunar_file_get_icon_name        (const ThunarFile        *file,
                                                     ThunarFileIconState     icon_state,
                                                     GtkIconTheme           *icon_theme);
 
@@ -405,7 +405,7 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  * Return value: the custom icon for @file
  *               or %NULL.
  **/
-#define thunar_file_get_custom_icon(file) (thunar_vfs_info_get_custom_icon (THUNAR_FILE ((file))->info))
+#define thunar_file_get_custom_icon(file) (g_strdup (thunar_vfs_info_get_custom_icon (THUNAR_FILE ((file))->info)))
 
 
 

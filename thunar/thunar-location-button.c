@@ -452,9 +452,7 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
   GtkSettings       *settings;
-#if GTK_CHECK_VERSION(2,8,0)
-  const gchar       *icon_name;
-#endif
+  gchar             *icon_name;
   GdkPixbuf         *icon;
   gint               height;
   gint               width;
@@ -506,13 +504,12 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
       gtk_widget_hide (location_button->image);
     }
 
-#if GTK_CHECK_VERSION(2,8,0)
   /* setup the DnD icon for the button */
   icon_name = thunar_file_get_custom_icon (file);
   if (G_LIKELY (icon_name == NULL))
     icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
   gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, icon_name);
-#endif
+  g_free (icon_name);
 }
 
 
