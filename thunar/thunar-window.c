@@ -611,28 +611,25 @@ view_index2type (gint index)
 static void
 thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
 {
-  gint i;
   static const gchar *callback_names[] = {
-    "open-desktop", "open-documents", "open-downloads", "open-music",
-    "open-pictures", "open-public", "open-templates", "open-videos"
+    "open-desktop", 
+    "open-documents", 
+    "open-downloads", 
+    "open-music",
+    "open-pictures", 
+    "open-public", 
+    "open-templates", 
+    "open-videos", 
+    NULL
   };
-
-#if !GLIB_CHECK_VERSION(2, 14, 0)
-
-  for (i = 0; i < G_N_ELEMENTS(callback_names); i++)
-    {
-      GtkAction *action = gtk_action_group_get_action (window->action_group,
-                                                       callback_names[i]);
-      gtk_action_set_visible (GTK_ACTION (action), FALSE);
-    }
-
-#else  /* GLIB_CHECK_VERSION(2, 14, 0) */
-
-  gchar *old_locale     = NULL;
-  gchar *locale         = NULL;
-  gchar *translation    = NULL;
-  /* gchar *dir_name       = NULL;  */  // see below
-  const gchar *home_dir = NULL;
+  GtkAction          *action;
+  GFile              *home_dir;
+  GFile              *dir;
+  gchar              *locale;
+  gchar              *old_locale;
+  const gchar        *path;
+  gchar              *translation;
+  gint                i;
 
   bindtextdomain (XDG_USER_DIRS_PACKAGE, PACKAGE_LOCALE_DIR);
 #ifdef HAVE_BIND_TEXTDOMAIN_CODESET
@@ -647,48 +644,35 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
   setlocale (LC_MESSAGES, locale);
   g_free (locale);
 
-  home_dir = xfce_get_homedir ();
+  home_dir = g_file_new_for_home ();
 
-  for (i = 0; i < THUNAR_USER_N_DIRECTORIES; i++)
+  for (i = 0; i < G_USER_N_DIRECTORIES; i++)
     {
-      gboolean visible  = FALSE;
-      GtkAction *action = gtk_action_group_get_action (window->action_group,
-                                                       callback_names[i]);
-      gchar *path       = g_strdup (g_get_user_special_dir (i));
+      action = gtk_action_group_get_action (window->action_group, callback_names[i]);
+      path = g_get_user_special_dir (i);
 
       /* special case: got NULL for the templates dir. Force it to ~/Templates */
-      if (G_UNLIKELY (path == NULL && i == THUNAR_USER_DIRECTORY_TEMPLATES))
-        path = g_build_path (home_dir, _thunar_user_directory_names[i], NULL);
+      if (G_UNLIKELY (path == NULL && i == G_USER_DIRECTORY_TEMPLATES))
+        dir = g_file_resolve_relative_path (home_dir, _thunar_user_directory_names[i]);
+      else
+        dir = g_file_new_for_path (path);
 
       /* xdg user dirs pointing to $HOME must be considered disabled */
-      if (G_LIKELY((path != NULL) && (!exo_str_is_equal (path, home_dir)))) {
-        ThunarVfsPath *vfs_path = thunar_vfs_path_new (path, NULL);
+      if (G_LIKELY (!g_file_equal (dir, home_dir)))
+        {
+          /* menu entry label translation */
+          translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]);
+          g_object_set (action, "label", translation, NULL);
+        }
+      else
+        gtk_action_set_visible (GTK_ACTION (action), FALSE);
 
-        if (G_LIKELY(vfs_path != NULL))
-          {
-            visible = TRUE;
-            thunar_vfs_path_unref (vfs_path);
-          }
-      }
-
-      gtk_action_set_visible (GTK_ACTION (action), visible);
-
-      /* if an entry is invisible don't waste time translating it */
-      if (G_UNLIKELY (visible == FALSE)) {
-        g_free (path);
-        continue;
-      }
-
-      /* menu entry label translation */
-      translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]);
-      g_object_set (action, "label", translation, NULL);
-
-      g_free (path);
+      g_object_unref (dir);
     }
 
-  setlocale (LC_MESSAGES, old_locale);
+  g_object_unref (home_dir);
 
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
+  setlocale (LC_MESSAGES, old_locale);
 }
 
 

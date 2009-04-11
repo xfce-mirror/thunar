@@ -1674,12 +1674,12 @@ thunar_file_set_custom_icon (ThunarFile  *file,
 gboolean
 thunar_file_is_desktop (const ThunarFile *file)
 {
+  GFile   *desktop;
   gboolean is_desktop = FALSE;
-  gchar *path;
 
-  path = g_file_get_path (file->gfile);
-  is_desktop = g_str_equal (path, g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
-  g_free (path);
+  desktop = g_file_new_for_path (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
+  is_desktop = g_file_equal (file->gfile, desktop);
+  g_object_unref (desktop);
 
   return is_desktop;
 }

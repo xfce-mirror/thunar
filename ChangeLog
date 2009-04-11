@@ -1,5 +1,12 @@
 2009-04-11	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Tweak thunar_file_is_desktop() a little bit.
+	* thunar/thunar-window.c: Re-implement
+	  thunar_window_setup_user_dir_menu_entries() based on GFile. Remove
+	  the special code for GLib < 2.14. 
+
+2009-04-11	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Change thunar_file_get_custom_icon() to
 	  return a newly allocated string instead of a const one. Re-implement
 	  thunar_file_get_icon_name() based on GFileInfo and GThemedIcon. It
