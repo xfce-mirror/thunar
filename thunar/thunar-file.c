@@ -1673,6 +1673,184 @@ thunar_file_is_directory (const ThunarFile *file)
 
 
 /**
+ * thunar_file_is_local:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns %TRUE if @file is a local file with the
+ * file:// URI scheme.
+ *
+ * Return value: %TRUE if @file is local.
+ **/
+gboolean
+thunar_file_is_local (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return g_file_has_uri_scheme (file->gfile, "file");
+}
+
+
+
+/**
+ * thunar_file_is_ancestor:
+ * @file     : a #ThunarFile instance.
+ * @ancestor : another #ThunarFile instance.
+ *
+ * Determines whether @file is somewhere inside @ancestor,
+ * possibly with intermediate folders.
+ *
+ * Return value: %TRUE if @ancestor contains @file as a
+ *               child, grandchild, great grandchild, etc.
+ **/
+gboolean
+thunar_file_is_ancestor (const ThunarFile *file, 
+                         const ThunarFile *ancestor)
+{
+  gboolean is_ancestor = FALSE;
+  GFile   *current = NULL;
+  GFile   *tmp;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (ancestor), FALSE);
+
+  for (current = g_object_ref (file->gfile);
+       is_ancestor == FALSE && current != NULL;
+       tmp = g_file_get_parent (current), g_object_unref (current), current = tmp)
+    {
+      if (G_UNLIKELY (g_file_equal (current, ancestor->gfile)))
+        is_ancestor = TRUE;
+    }
+
+  if (current != NULL)
+    g_object_unref (current);
+
+  return is_ancestor;
+}
+
+
+
+/**
+ * thunar_file_is_executable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to execute the @file (or enter the directory refered to by
+ * @file).
+ *
+ * Return value: %TRUE if @file can be executed.
+ **/
+gboolean
+thunar_file_is_executable (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+  return g_file_info_get_attribute_boolean (file->ginfo, 
+                                            G_FILE_ATTRIBUTE_ACCESS_CAN_EXECUTE);
+}
+
+
+
+/**
+ * thunar_file_is_readable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to read the @file.
+ *
+ * Return value: %TRUE if @file can be read.
+ **/
+gboolean
+thunar_file_is_readable (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+  return g_file_info_get_attribute_boolean (file->ginfo, 
+                                            G_FILE_ATTRIBUTE_ACCESS_CAN_READ);
+}
+
+
+
+/**
+ * thunar_file_is_writable:
+ * @file : a #ThunarFile instance.
+ *
+ * Determines whether the owner of the current process is allowed
+ * to write the @file.
+ *
+ * Return value: %TRUE if @file can be read.
+ **/
+gboolean
+thunar_file_is_writable (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+  return g_file_info_get_attribute_boolean (file->ginfo, 
+                                            G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE);
+}
+
+
+
+/**
+ * thunar_file_is_hidden:
+ * @file : a #ThunarFile instance.
+ *
+ * Checks whether @file can be considered a hidden file.
+ *
+ * Return value: %TRUE if @file is a hidden file, else %FALSE.
+ **/
+gboolean
+thunar_file_is_hidden (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+  return g_file_info_get_attribute_boolean (file->ginfo, 
+                                            G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN);
+}
+
+
+
+/**
+ * thunar_file_is_home:
+ * @file : a #ThunarFile.
+ *
+ * Checks whether @file refers to the users home directory.
+ *
+ * Return value: %TRUE if @file is the users home directory.
+ **/
+gboolean
+thunar_file_is_home (const ThunarFile *file)
+{
+  gboolean is_home = FALSE;
+  GFile   *home;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  home = g_file_new_for_home ();
+  is_home = g_file_equal (file->gfile, home);
+  g_object_unref (home);
+
+  return is_home;
+}
+
+
+
+/**
+ * thunar_file_is_regular:
+ * @file : a #ThunarFile.
+ *
+ * Checks whether @file refers to a regular file.
+ *
+ * Return value: %TRUE if @file is a regular file.
+ **/
+gboolean
+thunar_file_is_regular (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return thunar_file_get_kind (file) == G_FILE_TYPE_REGULAR;
+}
+
+
+
+/**
  * thunar_file_get_deletion_date:
  * @file       : a #ThunarFile instance.
  * @date_style : the style used to format the date.

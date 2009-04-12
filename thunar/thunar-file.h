@@ -205,6 +205,15 @@ ThunarFileMode    thunar_file_get_mode             (const ThunarFile       *file
 gboolean          thunar_file_get_free_space       (const ThunarFile       *file, 
                                                     guint64                *free_space_return);
 gboolean          thunar_file_is_directory         (const ThunarFile       *file);
+gboolean          thunar_file_is_local             (const ThunarFile       *file);
+gboolean          thunar_file_is_ancestor          (const ThunarFile       *file, 
+                                                    const ThunarFile       *ancestor);
+gboolean          thunar_file_is_executable        (const ThunarFile       *file);
+gboolean          thunar_file_is_readable          (const ThunarFile       *file);
+gboolean          thunar_file_is_writable          (const ThunarFile       *file);
+gboolean          thunar_file_is_hidden            (const ThunarFile       *file);
+gboolean          thunar_file_is_home              (const ThunarFile       *file);
+gboolean          thunar_file_is_regular           (const ThunarFile       *file);
 
 gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,
                                                     ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
@@ -345,7 +354,7 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  *
  * Return value: the URI for @file.
  **/
-#define thunar_file_dup_uri(file) (thunar_vfs_path_dup_uri (thunar_file_get_path ((file))))
+#define thunar_file_dup_uri(file) (g_file_get_uri (THUNAR_FILE ((file))->gfile))
 
 
 /**
@@ -377,19 +386,6 @@ G_STMT_START{                                             \
   thunarx_file_info_changed (THUNARX_FILE_INFO ((file))); \
 }G_STMT_END
 
-
-
-/**
- * thunar_file_is_local:
- * @file : a #ThunarFile instance.
- *
- * Returns %TRUE if @file is a local file with the
- * %THUNAR_VFS_PATH_SCHEME_FILE scheme.
- *
- * Return value: %TRUE if @file is local.
- **/
-#define thunar_file_is_local(file) (thunar_vfs_path_get_scheme (thunar_file_get_path ((file))) == THUNAR_VFS_PATH_SCHEME_FILE)
-
 /**
  * thunar_file_is_trashed:
  * @file : a #ThunarFile instance.
@@ -401,83 +397,6 @@ G_STMT_START{                                             \
  *               the trash folder itself.
  **/
 #define thunar_file_is_trashed(file) (g_file_is_trashed (THUNAR_FILE ((file))->gfile))
-
-/**
- * thunar_file_is_ancestor:
- * @file     : a #ThunarFile instance.
- * @ancestor : another #ThunarFile instance.
- *
- * Determines whether @file is somewhere inside @ancestor,
- * possibly with intermediate folders.
- *
- * Return value: %TRUE if @ancestor contains @file as a
- *               child, grandchild, great grandchild, etc.
- **/
-#define thunar_file_is_ancestor(file, ancestor) (thunar_vfs_path_is_ancestor (thunar_file_get_path ((file)), thunar_file_get_path ((ancestor))))
-
-/**
- * thunar_file_is_executable:
- * @file : a #ThunarFile instance.
- *
- * Determines whether the owner of the current process is allowed
- * to execute the @file (or enter the directory refered to by
- * @file).
- *
- * Return value: %TRUE if @file can be executed.
- **/
-#define thunar_file_is_executable(file) (THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_EXECUTABLE)
-
-/**
- * thunar_file_is_readable:
- * @file : a #ThunarFile instance.
- *
- * Determines whether the owner of the current process is allowed
- * to read the @file.
- *
- * Return value: %TRUE if @file can be read.
- **/
-#define thunar_file_is_readable(file) (THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_READABLE)
-
-/**
- * thunar_file_is_writable:
- * @file : a #ThunarFile instance.
- *
- * Determines whether the owner of the current process is allowed
- * to write the @file.
- *
- * Return value: %TRUE if @file can be read.
- **/
-#define thunar_file_is_writable(file) (THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_WRITABLE)
-
-/**
- * thunar_file_is_hidden:
- * @file : a #ThunarFile instance.
- *
- * Checks whether @file can be considered a hidden file.
- *
- * Return value: %TRUE if @file is a hidden file, else %FALSE.
- **/
-#define thunar_file_is_hidden(file) ((THUNAR_FILE ((file))->info->flags & THUNAR_VFS_FILE_FLAGS_HIDDEN) != 0)
-
-/**
- * thunar_file_is_home:
- * @file : a #ThunarFile.
- *
- * Checks whether @file refers to the users home directory.
- *
- * Return value: %TRUE if @file is the users home directory.
- **/
-#define thunar_file_is_home(file) (thunar_vfs_path_is_home (THUNAR_FILE ((file))->info->path))
-
-/**
- * thunar_file_is_regular:
- * @file : a #ThunarFile.
- *
- * Checks whether @file refers to a regular file.
- *
- * Return value: %TRUE if @file is a regular file.
- **/
-#define thunar_file_is_regular(file) (THUNAR_FILE ((file))->info->type == THUNAR_VFS_FILE_TYPE_REGULAR)
 
 /**
  * thunar_file_is_desktop_file:

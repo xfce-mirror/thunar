@@ -1,5 +1,14 @@
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Re-implement thunar_file_is_local(),
+	  thunar_file_is_ancestor(), thunar_file_is_executable(),
+	  thunar_file_is_readable(), thunar_file_is_writable(),
+	  thunar_file_is_hidden(), thunar_file_is_home(), 
+	  thunar_file_is_regular() and thunar_file_dup_uri() based on GIO.
+
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add GFileInfo filesystem info member to
 	  ThunarFile. Initialize it in thunar_file_load(), otherwise make sure
 	  it's set to NULL. Make thunar_file_get_default_handler(),
