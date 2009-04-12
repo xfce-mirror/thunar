@@ -1,5 +1,10 @@
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-chooser-button.c: Migrate ThunarChooserButton from
+	  ThunarVFS to GIO, using GAppInfo instead if ThunarVfsMime* classes.
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Use GFileMonitor instead of 
 	  ThunarVfsMonitor for monitoring a ThunarFile. Rewrite 
 	  thunar_file_monitor(), remove thunar_file_watch_handle_quark and 

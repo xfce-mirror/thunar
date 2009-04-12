@@ -76,8 +76,6 @@ struct _ThunarChooserButton
   GtkWidget             *button;
 
   ThunarFile            *file;
-
-  ThunarVfsMimeDatabase *database;
 };
 
 
@@ -150,9 +148,6 @@ thunar_chooser_button_init (ThunarChooserButton *chooser_button)
   GtkWidget *arrow;
   GtkWidget *hbox;
 
-  /* grab a reference on the mime database */
-  chooser_button->database = thunar_vfs_mime_database_get_default ();
-
   gtk_widget_push_composite_child ();
 
   chooser_button->button = gtk_button_new ();
@@ -192,9 +187,6 @@ thunar_chooser_button_finalize (GObject *object)
 
   /* reset the "file" property */
   thunar_chooser_button_set_file (chooser_button, NULL);
-
-  /* disconnect from the mime database */
-  g_object_unref (G_OBJECT (chooser_button->database));
 
   (*G_OBJECT_CLASS (thunar_chooser_button_parent_class)->finalize) (object);
 }
@@ -249,9 +241,9 @@ static void
 thunar_chooser_button_activate (ThunarChooserButton *chooser_button,
                                 GtkWidget           *item)
 {
-  ThunarVfsMimeApplication *application;
-  ThunarVfsMimeInfo        *info;
-  GError                   *error = NULL;
+  const gchar *content_type;
+  GAppInfo    *app_info;
+  GError      *error = NULL;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
   _thunar_return_if_fail (GTK_IS_MENU_ITEM (item));
@@ -261,15 +253,15 @@ thunar_chooser_button_activate (ThunarChooserButton *chooser_button,
     return;
 
   /* determine the application that was set for the item */
-  application = g_object_get_data (G_OBJECT (item), "thunar-vfs-mime-application");
-  if (G_UNLIKELY (application == NULL))
+  app_info = g_object_get_data (G_OBJECT (item), "app-info");
+  if (G_UNLIKELY (app_info == NULL))
     return;
 
   /* determine the mime info for the file */
-  info = thunar_file_get_mime_info (chooser_button->file);
+  content_type = thunar_file_get_content_type (chooser_button->file);
 
   /* try to set application as default for these kind of file */
-  if (!thunar_vfs_mime_database_set_default_application (chooser_button->database, info, application, &error))
+  if (!g_app_info_set_as_default_for_type (app_info, content_type, &error))
     {
       /* tell the user that it didn't work */
       thunar_dialogs_show_error (GTK_WIDGET (chooser_button), error, _("Failed to set default application for \"%s\""),
@@ -313,45 +305,32 @@ static void
 thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
                                     ThunarFile          *file)
 {
-  ThunarVfsMimeApplication *application;
-  ThunarVfsMimeInfo        *info;
-  ThunarIconFactory        *icon_factory;
-  GtkIconTheme             *icon_theme;
-  const gchar              *icon_name;
-  GdkPixbuf                *icon = NULL;
-  gint                      icon_size;
+  const gchar *content_type;
+  GAppInfo    *app_info;
+  gchar       *description;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
   _thunar_return_if_fail (chooser_button->file == file);
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  /* determine the mime info for the file */
-  info = thunar_file_get_mime_info (file);
+  /* determine the content type of the file */
+  content_type = thunar_file_get_content_type (file);
 
-  /* determine the default application for that mime info */
-  application = thunar_vfs_mime_database_get_default_application (chooser_button->database, info);
-  if (G_LIKELY (application != NULL))
+  /* determine the default application for that content type */
+  app_info = g_app_info_get_default_for_type (content_type, FALSE);
+  if (G_LIKELY (app_info != NULL))
     {
-      /* determine the icon size for menus */
-      gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_size, &icon_size);
-
       /* setup the image for the application */
-      icon_factory = thunar_icon_factory_get_default ();
-      icon_theme = thunar_icon_factory_get_icon_theme (icon_factory);
-      icon_name = thunar_vfs_mime_handler_lookup_icon_name (THUNAR_VFS_MIME_HANDLER (application), icon_theme);
-      if (G_LIKELY (icon_name != NULL))
-        icon = thunar_icon_factory_load_icon (icon_factory, icon_name, icon_size, NULL, FALSE);
-      gtk_image_set_from_pixbuf (GTK_IMAGE (chooser_button->image), icon);
-      g_object_unref (G_OBJECT (icon_factory));
-      if (G_LIKELY (icon != NULL))
-        g_object_unref (G_OBJECT (icon));
+      gtk_image_set_from_gicon (GTK_IMAGE (chooser_button->image), 
+                                g_app_info_get_icon (app_info),
+                                GTK_ICON_SIZE_MENU);
 
       /* setup the label for the application */
       gtk_label_set_attributes (GTK_LABEL (chooser_button->label), NULL);
-      gtk_label_set_text (GTK_LABEL (chooser_button->label), thunar_vfs_mime_handler_get_name (THUNAR_VFS_MIME_HANDLER (application)));
+      gtk_label_set_text (GTK_LABEL (chooser_button->label), g_app_info_get_name (app_info));
 
       /* cleanup */
-      g_object_unref (G_OBJECT (application));
+      g_object_unref (G_OBJECT (app_info));
     }
   else
     {
@@ -362,10 +341,12 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
     }
 
   /* setup a useful tooltip for the button */
+  description = g_content_type_get_description (content_type);
   thunar_gtk_widget_set_tooltip (chooser_button->button,
                                  _("The selected application is used to open "
                                    "this and other files of type \"%s\"."),
-                                 thunar_vfs_mime_info_get_comment (info));
+                                 description);
+  g_free (description);
 }
 
 
@@ -415,18 +396,13 @@ static void
 thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
                                GtkWidget           *button)
 {
-  ThunarVfsMimeApplication *default_application;
-  ThunarVfsMimeInfo        *info;
-  ThunarIconFactory        *icon_factory;
-  GtkIconTheme             *icon_theme;
-  const gchar              *icon_name;
-  GdkPixbuf                *icon;
-  GtkWidget                *image;
-  GtkWidget                *item;
-  GtkWidget                *menu;
-  GList                    *applications;
-  GList                    *lp;
-  gint                      icon_size;
+  const gchar *content_type;
+  GtkWidget   *image;
+  GtkWidget   *item;
+  GtkWidget   *menu;
+  GAppInfo    *default_app_info;
+  GList       *app_infos;
+  GList       *lp;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_BUTTON (chooser_button));
   _thunar_return_if_fail (chooser_button->button == button);
@@ -436,12 +412,12 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
   if (G_UNLIKELY (chooser_button->file == NULL))
     return;
 
-  /* determine the mime info for the file */
-  info = thunar_file_get_mime_info (chooser_button->file);
+  /* determine the content type for the file */
+  content_type = thunar_file_get_content_type (chooser_button->file);
 
   /* determine the default application */
-  default_application = thunar_vfs_mime_database_get_default_application (chooser_button->database, info);
-  if (G_UNLIKELY (default_application == NULL))
+  default_app_info = g_app_info_get_default_for_type (content_type, FALSE);
+  if (G_UNLIKELY (default_app_info == NULL))
     {
       /* no default application, just popup the application chooser */
       thunar_chooser_button_activate_other (chooser_button);
@@ -449,48 +425,25 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
     }
 
   /* determine all applications that claim to be able to handle the file */
-  applications = thunar_vfs_mime_database_get_applications (chooser_button->database, info);
-
-  /* make sure the default application comes first */
-  lp = g_list_find (applications, default_application);
-  if (G_LIKELY (lp != NULL))
-    {
-      applications = g_list_delete_link (applications, lp);
-      g_object_unref (G_OBJECT (default_application));
-    }
-  applications = g_list_prepend (applications, default_application);
+  app_infos = g_app_info_get_all_for_type (content_type);
 
   /* allocate a new popup menu */
   menu = gtk_menu_new ();
 
-  /* determine the icon size for menus */
-  gtk_icon_size_lookup (GTK_ICON_SIZE_MENU, &icon_size, &icon_size);
-
-  /* determine the icon factory for our screen */
-  icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (button));
-  icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-
   /* add the other possible applications */
-  for (lp = applications; lp != NULL; lp = lp->next)
+  for (lp = app_infos; lp != NULL; lp = lp->next)
     {
-      item = gtk_image_menu_item_new_with_label (thunar_vfs_mime_handler_get_name (lp->data));
-      g_object_set_data_full (G_OBJECT (item), I_("thunar-vfs-mime-application"), lp->data, g_object_unref);
+      item = gtk_image_menu_item_new_with_label (g_app_info_get_name (lp->data));
+      g_object_set_data_full (G_OBJECT (item), I_("app-info"), lp->data, g_object_unref);
       g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_chooser_button_activate), chooser_button);
       gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
       gtk_widget_show (item);
 
       /* setup the icon for the application */
-      icon_name = thunar_vfs_mime_handler_lookup_icon_name (lp->data, icon_theme);
-      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, icon_size, NULL, FALSE);
-      image = gtk_image_new_from_pixbuf (icon);
+      image = gtk_image_new_from_gicon (g_app_info_get_icon (lp->data), GTK_ICON_SIZE_MENU);
       gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
       gtk_widget_show (image);
-      if (G_LIKELY (icon != NULL))
-        g_object_unref (icon);
     }
-
-  /* cleanup */
-  g_object_unref (G_OBJECT (icon_factory));
 
   /* append a separator */
   item = gtk_separator_menu_item_new ();
@@ -498,7 +451,7 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
   gtk_widget_show (item);
 
   /* release the applications list */
-  g_list_free (applications);
+  g_list_free (app_infos);
 
   /* add the "Other Application..." choice */
   item = gtk_image_menu_item_new_with_mnemonic (_("_Other Application..."));
