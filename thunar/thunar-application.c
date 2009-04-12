@@ -1580,6 +1580,7 @@ thunar_application_restore_files (ThunarApplication *application,
                                   GClosure          *new_files_closure)
 {
   ThunarVfsPath *target_path;
+  const gchar   *original_path;
   GtkWidget     *dialog;
   GtkWindow     *window;
   GdkScreen     *screen;
@@ -1587,7 +1588,6 @@ thunar_application_restore_files (ThunarApplication *application,
   GList         *source_path_list = NULL;
   GList         *target_path_list = NULL;
   GList         *lp;
-  gchar         *original_path;
   gchar         *original_dir;
   gchar         *display_name;
   gint           response = GTK_RESPONSE_YES;
@@ -1614,7 +1614,6 @@ thunar_application_restore_files (ThunarApplication *application,
       if (G_UNLIKELY (target_path == NULL))
         {
           /* invalid OriginalPath, cannot continue */
-          g_free (original_path);
           break;
         }
 
@@ -1671,7 +1670,6 @@ thunar_application_restore_files (ThunarApplication *application,
         }
 
       /* cleanup */
-      g_free (original_path);
       g_free (original_dir);
     }
 

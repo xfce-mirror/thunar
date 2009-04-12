@@ -214,10 +214,13 @@ gboolean          thunar_file_is_writable          (const ThunarFile       *file
 gboolean          thunar_file_is_hidden            (const ThunarFile       *file);
 gboolean          thunar_file_is_home              (const ThunarFile       *file);
 gboolean          thunar_file_is_regular           (const ThunarFile       *file);
+gboolean          thunar_file_is_trashed           (const ThunarFile       *file);
+gboolean          thunar_file_is_desktop_file      (const ThunarFile       *file);
+const gchar      *thunar_file_get_display_name     (const ThunarFile       *file);
 
 gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,
                                                     ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-gchar            *thunar_file_get_original_path    (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+const gchar      *thunar_file_get_original_path    (const ThunarFile       *file);
 
 gboolean          thunar_file_is_chmodable         (const ThunarFile       *file);
 gboolean          thunar_file_is_renameable        (const ThunarFile       *file);
@@ -356,7 +359,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  **/
 #define thunar_file_dup_uri(file) (g_file_get_uri (THUNAR_FILE ((file))->gfile))
 
-
 /**
  * thunar_file_get_custom_icon:
  * @file : a #ThunarFile instance.
@@ -372,8 +374,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  **/
 #define thunar_file_get_custom_icon(file) (g_strdup (thunar_vfs_info_get_custom_icon (THUNAR_FILE ((file))->info)))
 
-
-
 /**
  * thunar_file_changed:
  * @file : a #ThunarFile instance.
@@ -385,54 +385,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 G_STMT_START{                                             \
   thunarx_file_info_changed (THUNARX_FILE_INFO ((file))); \
 }G_STMT_END
-
-/**
- * thunar_file_is_trashed:
- * @file : a #ThunarFile instance.
- *
- * Returns %TRUE if @file is a local file that resides in 
- * the trash bin.
- *
- * Return value: %TRUE if @file is in the trash, or
- *               the trash folder itself.
- **/
-#define thunar_file_is_trashed(file) (g_file_is_trashed (THUNAR_FILE ((file))->gfile))
-
-/**
- * thunar_file_is_desktop_file:
- * @file : a #ThunarFile.
- *
- * Returns %TRUE if @file is a .desktop file, but not a .directory file.
- *
- * Return value: %TRUE if @file is a .desktop file.
- **/
-#define thunar_file_is_desktop_file(file) (exo_str_is_equal (thunar_vfs_mime_info_get_name (thunar_file_get_mime_info ((file))), "application/x-desktop") \
-                                        && !exo_str_is_equal (thunar_vfs_path_get_name (thunar_file_get_path ((file))), ".directory"))
-
-/**
- * thunar_file_get_display_name:
- * @file : a #ThunarFile instance.
- *
- * Returns the @file name in the UTF-8 encoding, which is
- * suitable for displaying the file name in the GUI.
- *
- * Return value: the @file name suitable for display.
- **/
-#define thunar_file_get_display_name(file) (THUNAR_FILE ((file))->info->display_name)
-
-/**
- * thunar_file_read_link:
- * @file  : a #ThunarFile instance.
- * @error : return location for errors or %NULL.
- *
- * Simple wrapper to thunar_vfs_info_read_link().
- *
- * Return value: the link target of @file or %NULL
- *               if an error occurred.
- **/
-#define thunar_file_read_link(file, error) (thunar_vfs_info_read_link (THUNAR_FILE ((file))->info, (error)))
-
-
 
 /**
  * thunar_file_get_thumb_state:
@@ -459,8 +411,6 @@ G_STMT_START{                                                             \
   ThunarFile *f = THUNAR_FILE ((file));                                   \
   f->flags = (f->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (thumb_state);  \
 }G_STMT_END
-
-
 
 /**
  * thunar_file_list_copy:

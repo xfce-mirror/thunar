@@ -789,12 +789,14 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   GtkIconTheme      *icon_theme;
   const gchar       *icon_name;
   const gchar       *name;
+  const gchar       *path;
   GdkPixbuf         *icon;
   guint64            size;
   glong              offset;
   gchar             *display_name;
   gchar             *size_string;
   gchar             *str;
+  gchar             *date;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (THUNAR_IS_FILE (dialog->file));
@@ -873,14 +875,13 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
                 NULL);
 
   /* update the link target */
-  str = thunar_file_is_symlink (dialog->file) ? thunar_file_read_link (dialog->file, NULL) : NULL;
-  if (G_UNLIKELY (str != NULL))
+  path = thunar_file_is_symlink (dialog->file) ? thunar_file_get_symlink_target (dialog->file) : NULL;
+  if (G_UNLIKELY (path != NULL))
     {
-      display_name = g_filename_display_name (str);
+      display_name = g_filename_display_name (path);
       gtk_label_set_text (GTK_LABEL (dialog->link_label), display_name);
       gtk_widget_show (dialog->link_label);
       g_free (display_name);
-      g_free (str);
     }
   else
     {
@@ -888,14 +889,13 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the original path */
-  str = thunar_file_get_original_path (dialog->file);
-  if (G_UNLIKELY (str != NULL))
+  path = thunar_file_get_original_path (dialog->file);
+  if (G_UNLIKELY (path != NULL))
     {
-      display_name = g_filename_display_name (str);
+      display_name = g_filename_display_name (path);
       gtk_label_set_text (GTK_LABEL (dialog->origin_label), display_name);
       gtk_widget_show (dialog->origin_label);
       g_free (display_name);
-      g_free (str);
     }
   else
     {
@@ -903,12 +903,12 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the deleted time */
-  str = thunar_file_get_deletion_date (dialog->file, date_style);
-  if (G_LIKELY (str != NULL))
+  date = thunar_file_get_deletion_date (dialog->file, date_style);
+  if (G_LIKELY (date != NULL))
     {
-      gtk_label_set_text (GTK_LABEL (dialog->deleted_label), str);
+      gtk_label_set_text (GTK_LABEL (dialog->deleted_label), date);
       gtk_widget_show (dialog->deleted_label);
-      g_free (str);
+      g_free (date);
     }
   else
     {
@@ -916,12 +916,12 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the modified time */
-  str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED, date_style);
-  if (G_LIKELY (str != NULL))
+  date = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_MODIFIED, date_style);
+  if (G_LIKELY (date != NULL))
     {
-      gtk_label_set_text (GTK_LABEL (dialog->modified_label), str);
+      gtk_label_set_text (GTK_LABEL (dialog->modified_label), date);
       gtk_widget_show (dialog->modified_label);
-      g_free (str);
+      g_free (date);
     }
   else
     {
@@ -929,12 +929,12 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the accessed time */
-  str = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_ACCESSED, date_style);
-  if (G_LIKELY (str != NULL))
+  date = thunar_file_get_date_string (dialog->file, THUNAR_FILE_DATE_ACCESSED, date_style);
+  if (G_LIKELY (date != NULL))
     {
-      gtk_label_set_text (GTK_LABEL (dialog->accessed_label), str);
+      gtk_label_set_text (GTK_LABEL (dialog->accessed_label), date);
       gtk_widget_show (dialog->accessed_label);
-      g_free (str);
+      g_free (date);
     }
   else
     {

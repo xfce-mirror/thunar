@@ -1,11 +1,21 @@
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-application.c, thunar/thunar-file.{c,h},
+	  thunar/thunar-list-model.c, thunar/thunar-properties-dialog.c:
+	  Make thunar_file_get_original_path() and
+	  thunar_file_get_symlink_target() to return const strings. Update
+	  ThunarApplication, ThunarListModel and ThunarPropertiesDialog to
+	  reflect these changes. Implement thunar_file_is_trashed(),
+	  thunar_file_is_desktop_file() and thunar_file_get_display_name()
+	  based on GIO. Remove thunar_file_read_link().
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Re-implement thunar_file_is_local(),
 	  thunar_file_is_ancestor(), thunar_file_is_executable(),
 	  thunar_file_is_readable(), thunar_file_is_writable(),
 	  thunar_file_is_hidden(), thunar_file_is_home(), 
 	  thunar_file_is_regular() and thunar_file_dup_uri() based on GIO.
-
 
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 

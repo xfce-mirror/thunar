@@ -2201,6 +2201,7 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
   ThunarVfsFileSize  size_summary;
+  const gchar       *original_path;
   GtkTreeIter        iter;
   ThunarFile        *file;
   guint64            size;
@@ -2291,11 +2292,11 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
       g_free (size_string);
 
       /* append the original path (if any) */
-      absolute_path = thunar_file_get_original_path (file);
-      if (G_UNLIKELY (absolute_path != NULL))
+      original_path = thunar_file_get_original_path (file);
+      if (G_UNLIKELY (original_path != NULL))
         {
           /* append the original path to the statusbar text */
-          display_name = g_filename_display_name (absolute_path);
+          display_name = g_filename_display_name (original_path);
           s = g_strdup_printf ("%s, %s %s", text, _("Original Path:"), display_name);
           g_free (display_name);
           g_free (text);
@@ -2313,8 +2314,8 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
               g_free (text);
               text = s;
             }
+          g_free (absolute_path);
         }
-      g_free (absolute_path);
     }
   else
     {

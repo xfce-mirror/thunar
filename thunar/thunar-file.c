@@ -1802,8 +1802,7 @@ thunar_file_is_hidden (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
-  return g_file_info_get_attribute_boolean (file->ginfo, 
-                                            G_FILE_ATTRIBUTE_STANDARD_IS_HIDDEN);
+  return g_file_info_get_is_hidden (file->ginfo);
 }
 
 
@@ -1846,6 +1845,64 @@ thunar_file_is_regular (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   return thunar_file_get_kind (file) == G_FILE_TYPE_REGULAR;
+}
+
+
+
+/**
+ * thunar_file_is_trashed:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns %TRUE if @file is a local file that resides in 
+ * the trash bin.
+ *
+ * Return value: %TRUE if @file is in the trash, or
+ *               the trash folder itself.
+ **/
+gboolean
+thunar_file_is_trashed (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return g_file_is_trashed (file->gfile);
+}
+
+
+
+/**
+ * thunar_file_is_desktop_file:
+ * @file : a #ThunarFile.
+ *
+ * Returns %TRUE if @file is a .desktop file, but not a .directory file.
+ *
+ * Return value: %TRUE if @file is a .desktop file.
+ **/
+gboolean
+thunar_file_is_desktop_file (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+
+  return g_content_type_equals (g_file_info_get_content_type (file->ginfo), "application/x-desktop")
+         && !g_str_has_suffix (thunar_file_get_basename (file), ".directory");
+}
+
+
+
+/**
+ * thunar_file_get_display_name:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the @file name in the UTF-8 encoding, which is
+ * suitable for displaying the file name in the GUI.
+ *
+ * Return value: the @file name suitable for display.
+ **/
+const gchar *
+thunar_file_get_display_name (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+  return g_file_info_get_display_name (file->ginfo);
 }
 
 
@@ -1896,18 +1953,15 @@ thunar_file_get_deletion_date (const ThunarFile *file,
  * is located in the trash. Otherwise %NULL will be
  * returned.
  *
- * The caller is responsible to free the returned string
- * using g_free() when no longer needed.
- *
  * Return value: the original path of @file if @file is
  *               in the trash, %NULL otherwise.
  **/
-gchar*
+const gchar *
 thunar_file_get_original_path (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), NULL);
-  return g_strdup (g_file_info_get_attribute_string (file->ginfo, "trash::orig-file"));
+  return g_file_info_get_attribute_string (file->ginfo, "trash::orig-file");
 }
 
 
