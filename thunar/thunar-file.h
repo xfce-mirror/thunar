@@ -137,6 +137,7 @@ struct _ThunarFile
   /*< private >*/
   ThunarVfsInfo *info;
   GFileInfo     *ginfo;
+  GFileInfo     *filesystem_info;
   GFile         *gfile;
   guint          flags;
 };
@@ -198,6 +199,12 @@ const gchar      *thunar_file_get_symlink_target   (const ThunarFile       *file
 const gchar      *thunar_file_get_basename         (const ThunarFile       *file);
 gboolean          thunar_file_is_symlink           (const ThunarFile       *file);
 guint64           thunar_file_get_size             (const ThunarFile       *file);
+GAppInfo         *thunar_file_get_default_handler  (const ThunarFile       *file);
+GFileType         thunar_file_get_kind             (const ThunarFile       *file);
+ThunarFileMode    thunar_file_get_mode             (const ThunarFile       *file);
+gboolean          thunar_file_get_free_space       (const ThunarFile       *file, 
+                                                    guint64                *free_space_return);
+gboolean          thunar_file_is_directory         (const ThunarFile       *file);
 
 gchar            *thunar_file_get_deletion_date    (const ThunarFile       *file,
                                                     ThunarDateStyle         date_style) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
@@ -314,19 +321,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 #define thunar_file_get_file(file) (THUNAR_FILE ((file))->gfile)
 
 /**
- * thunar_file_get_default_handler:
- * @file : a #ThunarFile instance.
- *
- * Returns the default #GAppInfo for @file or %NULL if there is none.
- * 
- * The caller is responsible to free the returned #GAppInfo using
- * g_object_unref().
- *
- * Return value: Default #GAppInfo for @file or %NULL if there is none.
- **/
-#define thunar_file_get_default_handler(file) (g_file_query_default_handler (THUNAR_FILE ((file))->gfile, NULL, NULL))
-
-/**
  * thunar_file_get_mime_info:
  * @file : a #ThunarFile instance.
  *
@@ -341,41 +335,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  * Return value: the MIME type.
  **/
 #define thunar_file_get_mime_info(file) (THUNAR_FILE ((file))->info->mime_info)
-
-/**
- * thunar_file_get_kind:
- * @file : a #ThunarFile instance.
- *
- * Returns the kind of @file.
- *
- * Return value: the kind of @file.
- **/
-#define thunar_file_get_kind(file) (THUNAR_FILE ((file))->info->type)
-
-/**
- * thunar_file_get_mode:
- * @file : a #ThunarFile instance.
- *
- * Returns the permission bits of @file.
- *
- * Return value: the permission bits of @file.
- **/
-#define thunar_file_get_mode(file) (THUNAR_FILE ((file))->info->mode)
-
-/**
- * thunar_file_get_free_space:
- * @file              : a #ThunarFile instance.
- * @free_space_return : return location for the amount of
- *                      free space or %NULL.
- *
- * Determines the amount of free space of the volume on
- * which @file resides. Returns %TRUE if the amount of
- * free space was determined successfully and placed into
- * @free_space_return, else %FALSE will be returned.
- *
- * Return value: %TRUE if successfull, else %FALSE.
- **/
-#define thunar_file_get_free_space(file, free_space_return) (thunar_vfs_info_get_free_space (THUNAR_FILE ((file))->info, (free_space_return)))
 
 /**
  * thunar_file_dup_uri:
@@ -455,16 +414,6 @@ G_STMT_START{                                             \
  *               child, grandchild, great grandchild, etc.
  **/
 #define thunar_file_is_ancestor(file, ancestor) (thunar_vfs_path_is_ancestor (thunar_file_get_path ((file)), thunar_file_get_path ((ancestor))))
-
-/**
- * thunar_file_is_directory:
- * @file : a #ThunarFile instance.
- *
- * Checks whether @file refers to a directory.
- *
- * Return value: %TRUE if @file is a directory.
- **/
-#define thunar_file_is_directory(file) (THUNAR_FILE ((file))->info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
 
 /**
  * thunar_file_is_executable:

@@ -783,7 +783,6 @@ static void
 thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 {
   ThunarIconFactory *icon_factory;
-  ThunarVfsFileSize  size;
   ThunarVfsMimeInfo *info;
   ThunarDateStyle    date_style;
   ThunarVfsVolume   *volume;
@@ -791,6 +790,7 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   const gchar       *icon_name;
   const gchar       *name;
   GdkPixbuf         *icon;
+  guint64            size;
   glong              offset;
   gchar             *display_name;
   gchar             *size_string;
@@ -942,9 +942,10 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the free space (only for folders) */
-  if (thunar_file_is_directory (dialog->file) && thunar_file_get_free_space (dialog->file, &size))
+  if (thunar_file_is_directory (dialog->file) 
+      && thunar_file_get_free_space (dialog->file, &size))
     {
-      size_string = thunar_vfs_humanize_size (size, NULL, 0);
+      size_string = g_file_size_humanize (size);
       gtk_label_set_text (GTK_LABEL (dialog->freespace_label), size_string);
       gtk_widget_show (dialog->freespace_label);
       g_free (size_string);

@@ -1,5 +1,17 @@
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Add GFileInfo filesystem info member to
+	  ThunarFile. Initialize it in thunar_file_load(), otherwise make sure
+	  it's set to NULL. Make thunar_file_get_default_handler(),
+	  thunar_file_get_kind(), thunar_file_get_mode(),
+	  thunar_file_get_free_space(), thunar_file_is_directory() real
+	  functions and make them use GFile/GFileInfo. 
+	* thunar/thunar-list-model.c, thunar/thunar-properties-dialog.c: Use
+	  guint64 instead of ThunarVfsFileSize. Use g_file_size_humanize()
+	  instead of thunar_vfs_humanize_size().
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-clipboard-manager.c: Use a GFile list and
 	  thunar_file_list_to_g_file_list() instead of the ThunarVFS
 	  equivalents in thunar_clipboard_manager_get_callback().

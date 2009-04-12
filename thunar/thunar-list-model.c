@@ -2201,9 +2201,9 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
   ThunarVfsFileSize  size_summary;
-  ThunarVfsFileSize  size;
   GtkTreeIter        iter;
   ThunarFile        *file;
+  guint64            size;
   GSList            *row;
   GList             *lp;
   gchar             *absolute_path;

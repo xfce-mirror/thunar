@@ -314,9 +314,15 @@ thunar_file_finalize (GObject *object)
   if ((file->flags & THUNAR_FILE_OWNS_METAFILE_REFERENCE) != 0)
     g_object_unref (G_OBJECT (metafile));
 
-  /* release GIO data */
+  /* release file info */
   if (file->ginfo != NULL)
     g_object_unref (file->ginfo);
+
+  /* release filesystem info */
+  if (file->filesystem_info != NULL)
+    g_object_unref (file->filesystem_info);
+
+  /* release file */
   g_object_unref (file->gfile);
 
   /* release the file info */
@@ -612,6 +618,7 @@ thunar_file_get (GFile   *gfile,
       file = g_object_new (THUNAR_TYPE_FILE, NULL);
       file->gfile = g_object_ref (gfile);
       file->ginfo = NULL;
+      file->filesystem_info = NULL;
       file->info = info;
 
       thunar_file_load (file, NULL, error);
@@ -667,11 +674,16 @@ thunar_file_get_for_info (ThunarVfsInfo *info)
           file->info = thunar_vfs_info_ref (info);
 
           g_object_unref (file->gfile);
+
           if (file->ginfo != NULL)
             g_object_unref (file->ginfo);
 
+          if (file->filesystem_info != NULL)
+            g_object_unref (file->filesystem_info);
+
           file->gfile = g_object_ref (gfile);
           file->ginfo = NULL;
+          file->filesystem_info = NULL;
 
           thunar_file_load (file, NULL, NULL);
 
@@ -686,6 +698,7 @@ thunar_file_get_for_info (ThunarVfsInfo *info)
 
       file->gfile = g_object_ref (gfile);
       file->ginfo = NULL;
+      file->filesystem_info = NULL;
 
       thunar_file_load (file, NULL, NULL);
 
@@ -828,12 +841,22 @@ thunar_file_load (ThunarFile   *file,
       file->ginfo = NULL;
     }
 
+  if (file->filesystem_info != NULL)
+    {
+      g_object_unref (file->filesystem_info);
+      file->filesystem_info = NULL;
+    }
+
   file->ginfo = g_file_query_info (file->gfile,
-                                   THUNAR_FILE_G_FILE_INFO_NAMESPACE ","
-                                   THUNAR_FILE_G_FILE_INFO_FILESYSTEM_NAMESPACE,
+                                   THUNAR_FILE_G_FILE_INFO_NAMESPACE,
                                    G_FILE_QUERY_INFO_NONE,
                                    cancellable,
                                    error);
+
+  file->filesystem_info = g_file_query_filesystem_info (file->gfile,
+                                                        THUNAR_FILE_G_FILE_INFO_FILESYSTEM_NAMESPACE,
+                                                        cancellable,
+                                                        NULL);
 
   /* FIXME This is just temporary */
   g_assert (file->ginfo != NULL);
@@ -1545,6 +1568,111 @@ thunar_file_get_size (const ThunarFile *file)
 
 
 /**
+ * thunar_file_get_default_handler:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the default #GAppInfo for @file or %NULL if there is none.
+ * 
+ * The caller is responsible to free the returned #GAppInfo using
+ * g_object_unref().
+ *
+ * Return value: Default #GAppInfo for @file or %NULL if there is none.
+ **/
+GAppInfo *
+thunar_file_get_default_handler (const ThunarFile *file) 
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return g_file_query_default_handler (THUNAR_FILE ((file))->gfile, NULL, NULL);
+}
+
+
+
+/**
+ * thunar_file_get_kind:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the kind of @file.
+ *
+ * Return value: the kind of @file.
+ **/
+GFileType
+thunar_file_get_kind (const ThunarFile *file) 
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), G_FILE_TYPE_UNKNOWN);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), G_FILE_TYPE_UNKNOWN);
+  return g_file_info_get_file_type (file->ginfo);
+}
+
+
+
+/**
+ * thunar_file_get_mode:
+ * @file : a #ThunarFile instance.
+ *
+ * Returns the permission bits of @file.
+ *
+ * Return value: the permission bits of @file.
+ **/
+ThunarFileMode
+thunar_file_get_mode (const ThunarFile *file) 
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), 0);
+  return g_file_info_get_attribute_uint32 (file->ginfo, G_FILE_ATTRIBUTE_UNIX_MODE);
+}
+
+
+
+/**
+ * thunar_file_get_free_space:
+ * @file              : a #ThunarFile instance.
+ * @free_space_return : return location for the amount of
+ *                      free space or %NULL.
+ *
+ * Determines the amount of free space of the volume on
+ * which @file resides. Returns %TRUE if the amount of
+ * free space was determined successfully and placed into
+ * @free_space_return, else %FALSE will be returned.
+ *
+ * Return value: %TRUE if successfull, else %FALSE.
+ **/
+gboolean
+thunar_file_get_free_space (const ThunarFile *file, 
+                            guint64          *free_space_return) 
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  if (file->filesystem_info == NULL)
+    return FALSE;
+
+  *free_space_return = g_file_info_get_attribute_uint64 (file->filesystem_info,
+                                                         G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+  
+  return g_file_info_has_attribute (file->filesystem_info,
+                                    G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+}
+
+
+
+/**
+ * thunar_file_is_directory:
+ * @file : a #ThunarFile instance.
+ *
+ * Checks whether @file refers to a directory.
+ *
+ * Return value: %TRUE if @file is a directory.
+ **/
+gboolean
+thunar_file_is_directory (const ThunarFile *file) 
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+  return thunar_file_get_kind (file) == G_FILE_TYPE_DIRECTORY;
+}
+
+
+
+/**
  * thunar_file_get_deletion_date:
  * @file       : a #ThunarFile instance.
  * @date_style : the style used to format the date.
@@ -2097,6 +2225,12 @@ thunar_file_reload (ThunarFile *file)
         {
           g_object_unref (file->ginfo);
           file->ginfo = NULL;
+        }
+
+      if (file->filesystem_info != NULL)
+        {
+          g_object_unref (file->filesystem_info);
+          file->filesystem_info = NULL;
         }
 
       thunar_file_load (file, NULL, NULL);
