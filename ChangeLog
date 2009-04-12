@@ -1,5 +1,10 @@
 2009-04-13	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-properties-dialog.c: Remove ThunarVfsMimeInfo and use
+	  a content type string in thunar_properties_dialog_update().
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-create-dialog.{c,h}: Replace the ThunarVfsMimeInfo 
 	  member/property of ThunarCreateDialog with a content type string
 	  member/property. Rename thunar_create_dialog_{get,set}_mime_info()

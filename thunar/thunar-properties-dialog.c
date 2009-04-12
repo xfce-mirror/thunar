@@ -783,10 +783,10 @@ static void
 thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 {
   ThunarIconFactory *icon_factory;
-  ThunarVfsMimeInfo *info;
   ThunarDateStyle    date_style;
   ThunarVfsVolume   *volume;
   GtkIconTheme      *icon_theme;
+  const gchar       *content_type;
   const gchar       *icon_name;
   const gchar       *name;
   const gchar       *path;
@@ -857,15 +857,15 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
         }
     }
 
-  /* update the mime type */
-  info = thunar_file_get_mime_info (dialog->file);
-  if (G_UNLIKELY (strcmp (thunar_vfs_mime_info_get_name (info), "inode/symlink") == 0))
+  /* update the content type */
+  content_type = thunar_file_get_content_type (dialog->file);
+  if (G_UNLIKELY (g_content_type_equals (content_type, "inode/symlink")))
     str = g_strdup (_("broken link"));
   else if (G_UNLIKELY (thunar_file_is_symlink (dialog->file)))
-    str = g_strdup_printf (_("link to %s"), thunar_vfs_mime_info_get_comment (info));
+    str = g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (dialog->file));
   else
-    str = g_strdup (thunar_vfs_mime_info_get_comment (info));
-  thunar_gtk_widget_set_tooltip (dialog->kind_ebox, "%s", thunar_vfs_mime_info_get_name (info));
+    str = g_content_type_get_description (content_type);
+  thunar_gtk_widget_set_tooltip (dialog->kind_ebox, "%s", str);
   gtk_label_set_text (GTK_LABEL (dialog->kind_label), str);
   g_free (str);
 
