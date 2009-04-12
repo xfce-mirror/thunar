@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -1785,22 +1786,19 @@ static void
 thunar_standard_view_action_create_empty_file (GtkAction          *action,
                                                ThunarStandardView *standard_view)
 {
-  ThunarVfsMimeDatabase *mime_database;
-  ThunarVfsMimeInfo     *mime_info;
-  ThunarApplication     *application;
-  ThunarFile            *current_directory;
-  GList                  path_list;
-  gchar                 *name;
+  ThunarApplication *application;
+  ThunarFile        *current_directory;
+  GList              path_list;
+  gchar             *name;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* lookup "text/plain" mime info */
-  mime_database = thunar_vfs_mime_database_get_default ();
-  mime_info = thunar_vfs_mime_database_get_info (mime_database, "text/plain");
-
   /* ask the user to enter a name for the new empty file */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), mime_info, _("New Empty File"), _("New Empty File..."));
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), 
+                                    "text/plain", 
+                                    _("New Empty File"), 
+                                    _("New Empty File..."));
   if (G_LIKELY (name != NULL))
     {
       /* determine the ThunarFile for the current directory */
@@ -1824,10 +1822,6 @@ thunar_standard_view_action_create_empty_file (GtkAction          *action,
       /* release the file name in the local encoding */
       g_free (name);
     }
-
-  /* cleanup */
-  g_object_unref (G_OBJECT (mime_database));
-  thunar_vfs_mime_info_unref (mime_info);
 }
 
 
@@ -1836,22 +1830,19 @@ static void
 thunar_standard_view_action_create_folder (GtkAction          *action,
                                            ThunarStandardView *standard_view)
 {
-  ThunarVfsMimeDatabase *mime_database;
-  ThunarVfsMimeInfo     *mime_info;
-  ThunarApplication     *application;
-  ThunarFile            *current_directory;
-  GList                  path_list;
-  gchar                 *name;
+  ThunarApplication *application;
+  ThunarFile        *current_directory;
+  GList              path_list;
+  gchar             *name;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
-  /* lookup "inode/directory" mime info */
-  mime_database = thunar_vfs_mime_database_get_default ();
-  mime_info = thunar_vfs_mime_database_get_info (mime_database, "inode/directory");
-
   /* ask the user to enter a name for the new folder */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), mime_info, _("New Folder"), _("Create New Folder"));
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), 
+                                    "inode/directory", 
+                                    _("New Folder"), 
+                                    _("Create New Folder"));
   if (G_LIKELY (name != NULL))
     {
       /* determine the ThunarFile for the current directory */
@@ -1875,10 +1866,6 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
       /* release the file name */
       g_free (name);
     }
-
-  /* cleanup */
-  g_object_unref (G_OBJECT (mime_database));
-  thunar_vfs_mime_info_unref (mime_info);
 }
 
 
@@ -1889,6 +1876,7 @@ thunar_standard_view_action_create_template (GtkAction           *action,
                                              ThunarStandardView  *standard_view)
 {
   ThunarApplication *application;
+  const gchar       *content_type;
   ThunarFile        *current_directory;
   GList              source_path_list;
   GList              target_path_list;
@@ -1902,8 +1890,13 @@ thunar_standard_view_action_create_template (GtkAction           *action,
   /* generate a title for the create dialog */
   title = g_strdup_printf (_("Create Document from template \"%s\""), info->display_name);
 
+  content_type = thunar_vfs_mime_info_get_name (info->mime_info);
+
   /* ask the user to enter a name for the new document */
-  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), info->mime_info, info->display_name, title);
+  name = thunar_show_create_dialog (GTK_WIDGET (standard_view), 
+                                    content_type, 
+                                    info->display_name, 
+                                    title);
   if (G_LIKELY (name != NULL))
     {
       /* determine the ThunarFile for the current directory */
