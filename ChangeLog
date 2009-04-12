@@ -1,5 +1,10 @@
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-chooser-button.c: Don't leak GAppInfos in
+	  thunar_chooser_button_pressed().
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-chooser-button.c: Migrate ThunarChooserButton from
 	  ThunarVFS to GIO, using GAppInfo instead if ThunarVfsMime* classes.
 

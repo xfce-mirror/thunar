@@ -330,7 +330,7 @@ thunar_chooser_button_file_changed (ThunarChooserButton *chooser_button,
       gtk_label_set_text (GTK_LABEL (chooser_button->label), g_app_info_get_name (app_info));
 
       /* cleanup */
-      g_object_unref (G_OBJECT (app_info));
+      g_object_unref (app_info);
     }
   else
     {
@@ -421,6 +421,7 @@ thunar_chooser_button_pressed (ThunarChooserButton *chooser_button,
     {
       /* no default application, just popup the application chooser */
       thunar_chooser_button_activate_other (chooser_button);
+      g_object_unref (default_app_info);
       return;
     }
 
