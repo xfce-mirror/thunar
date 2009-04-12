@@ -138,6 +138,7 @@ struct _ThunarFile
   ThunarVfsInfo *info;
   GFileInfo     *ginfo;
   GFileInfo     *filesystem_info;
+  GFileMonitor  *monitor;
   GFile         *gfile;
   guint          flags;
 };

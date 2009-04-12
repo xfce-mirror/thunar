@@ -137,11 +137,7 @@ g_file_list_to_string (GList *list)
   for (lp = list; lp != NULL; lp = lp->next)
     {
       uri = g_file_get_uri (lp->data);
-      /* TODO Would UTF-8 in URIs be ok? */
-      string = g_string_append_uri_escaped (string, 
-                                            uri, 
-                                            G_URI_RESERVED_CHARS_ALLOWED_IN_PATH, 
-                                            FALSE);
+      string = g_string_append (string, uri);
       g_free (uri);
 
       string = g_string_append (string, "\r\n");

@@ -1,5 +1,16 @@
 2009-04-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Use GFileMonitor instead of 
+	  ThunarVfsMonitor for monitoring a ThunarFile. Rewrite 
+	  thunar_file_monitor(), remove thunar_file_watch_handle_quark and 
+	  thunar_file_watch_free(). Add GFileMonitor member to ThunarFile.
+	  Make thunar_file_info_get_name() use thunar_file_get_basename().
+	* thunar/thunar-gio-extensions.c: Don't escape URIs when appending
+	  them to the string in g_file_list_to_string(). This seems to break
+	  copy&paste.
+
+2009-04-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-application.c, thunar/thunar-file.{c,h},
 	  thunar/thunar-list-model.c, thunar/thunar-properties-dialog.c:
 	  Make thunar_file_get_original_path() and

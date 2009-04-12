@@ -114,25 +114,21 @@ static gboolean           thunar_file_denies_access_permission (const ThunarFile
                                                                 ThunarFileMode          grp_permissions,
                                                                 ThunarFileMode          oth_permissions);
 static ThunarMetafile    *thunar_file_get_metafile             (ThunarFile             *file);
-static void               thunar_file_monitor                  (ThunarVfsMonitor       *monitor,
-                                                                ThunarVfsMonitorHandle *handle,
-                                                                ThunarVfsMonitorEvent   event,
-                                                                ThunarVfsPath          *handle_path,
-                                                                ThunarVfsPath          *event_path,
+static void               thunar_file_monitor                  (GFileMonitor           *monitor,
+                                                                GFile                  *path,
+                                                                GFile                  *other_path,
+                                                                GFileMonitorEvent       event_type,
                                                                 gpointer                user_data);
-static void               thunar_file_watch_free               (gpointer                data);
 
 
 
 static ThunarUserManager *user_manager;
-static ThunarVfsMonitor  *monitor;
 static guint32            effective_user_id;
 static ThunarMetafile    *metafile;
 static GObjectClass      *thunar_file_parent_class;
 static GHashTable        *file_cache;
 static GQuark             thunar_file_thumb_path_quark;
 static GQuark             thunar_file_watch_count_quark;
-static GQuark             thunar_file_watch_handle_quark;
 static GQuark             thunar_file_emblem_names_quark;
 static guint              file_signals[LAST_SIGNAL];
 
@@ -223,7 +219,6 @@ thunar_file_class_init (ThunarFileClass *klass)
   /* pre-allocate the required quarks */
   thunar_file_thumb_path_quark = g_quark_from_static_string ("thunar-file-thumb-path");
   thunar_file_watch_count_quark = g_quark_from_static_string ("thunar-file-watch-count");
-  thunar_file_watch_handle_quark = g_quark_from_static_string ("thunar-file-watch-handle");
   thunar_file_emblem_names_quark = g_quark_from_static_string ("thunar-file-emblem-names");
 
   /* determine the parent class */
@@ -333,10 +328,10 @@ thunar_file_finalize (GObject *object)
 
 
 
-static gchar*
+static gchar *
 thunar_file_info_get_name (ThunarxFileInfo *file_info)
 {
-  return g_file_get_basename (THUNAR_FILE (file_info)->gfile);
+  return g_strdup (thunar_file_get_basename (THUNAR_FILE (file_info)));
 }
 
 
@@ -525,46 +520,54 @@ thunar_file_get_metafile (ThunarFile *file)
 
 
 static void
-thunar_file_monitor (ThunarVfsMonitor       *monitor,
-                     ThunarVfsMonitorHandle *handle,
-                     ThunarVfsMonitorEvent   event,
-                     ThunarVfsPath          *handle_path,
-                     ThunarVfsPath          *event_path,
-                     gpointer                user_data)
+thunar_file_monitor_update (GFile             *path,
+                            GFileMonitorEvent  event_type)
 {
-  ThunarFile *file = THUNAR_FILE (user_data);
+  ThunarFile *file;
 
-  _thunar_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
-  _thunar_return_if_fail (THUNAR_IS_FILE (file));
-  _thunar_return_if_fail (thunar_vfs_path_equal (file->info->path, event_path));
+  _thunar_return_if_fail (G_IS_FILE (path));
 
-  /* just to be sure... */
-  if (G_UNLIKELY (!thunar_vfs_path_equal (handle_path, event_path)))
-    return;
-
-  switch (event)
+  file = thunar_file_cache_lookup (path);
+  if (G_LIKELY (file != NULL))
     {
-    case THUNAR_VFS_MONITOR_EVENT_CHANGED:
-    case THUNAR_VFS_MONITOR_EVENT_CREATED:
-      thunar_file_reload (file);
-      break;
-
-    case THUNAR_VFS_MONITOR_EVENT_DELETED:
-      thunar_file_destroy (file);
-      break;
+      switch (event_type)
+        {
+        case G_FILE_MONITOR_EVENT_CREATED:
+        case G_FILE_MONITOR_EVENT_CHANGED:
+        case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
+          thunar_file_reload (file);
+          break;
+        case G_FILE_MONITOR_EVENT_DELETED:
+          thunar_file_destroy (file);
+          break;
+        default:
+          break;
+        }
     }
 }
 
 
 
 static void
-thunar_file_watch_free (gpointer data)
+thunar_file_monitor (GFileMonitor     *monitor,
+                     GFile            *path,
+                     GFile            *other_path,
+                     GFileMonitorEvent event_type,
+                     gpointer          user_data)
 {
-  /* remove the watch from the VFS monitor */
-  thunar_vfs_monitor_remove (monitor, data);
+  ThunarFile *file = THUNAR_FILE (user_data);
 
-  /* release our reference on the VFS monitor */
-  g_object_unref (G_OBJECT (monitor));
+  _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (G_UNLIKELY (!G_IS_FILE (path) || !g_file_equal (path, file->gfile)))
+    return;
+
+  if (G_LIKELY (G_IS_FILE (path)))
+    thunar_file_monitor_update (path, event_type);
+
+  if (G_UNLIKELY (G_IS_FILE (other_path)))
+    thunar_file_monitor_update (other_path, event_type);
 }
 
 
@@ -2364,8 +2367,7 @@ thunar_file_set_metadata (ThunarFile       *file,
 void
 thunar_file_watch (ThunarFile *file)
 {
-  ThunarVfsMonitorHandle *handle;
-  gint                    watch_count;
+  gint watch_count;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_FILE_GET_WATCH_COUNT (file) >= 0);
@@ -2374,20 +2376,16 @@ thunar_file_watch (ThunarFile *file)
 
   if (++watch_count == 1)
     {
-      /* take a reference on the VFS monitor for this instance */
-      if (G_LIKELY (monitor == NULL))
+      /* create a file or directory monitor */
+      file->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_NONE, NULL, NULL);
+      if (G_LIKELY (file->monitor != NULL))
         {
-          monitor = thunar_vfs_monitor_get_default ();
-          g_object_add_weak_pointer (G_OBJECT (monitor), (gpointer) &monitor);
-        }
-      else
-        {
-          g_object_ref (G_OBJECT (monitor));
-        }
+          /* make sure the pointer is set to NULL once the monitor is destroyed */
+          g_object_add_weak_pointer (G_OBJECT (file->monitor), (gpointer) &(file->monitor));
 
-      /* add us to the file monitor */
-      handle = thunar_vfs_monitor_add_file (monitor, file->info->path, thunar_file_monitor, file);
-      g_object_set_qdata_full (G_OBJECT (file), thunar_file_watch_handle_quark, handle, thunar_file_watch_free);
+          /* watch monitor for file changes */
+          g_signal_connect (file->monitor, "changed", G_CALLBACK (thunar_file_monitor), file);
+        }
     }
 
   THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
@@ -2414,8 +2412,14 @@ thunar_file_unwatch (ThunarFile *file)
 
   if (--watch_count == 0)
     {
-      /* just unset the watch handle */
-      g_object_set_qdata (G_OBJECT (file), thunar_file_watch_handle_quark, NULL);
+      if (G_LIKELY (file->monitor != NULL))
+        {
+          /* cancel monitoring */
+          g_file_monitor_cancel (file->monitor);
+
+          /* destroy the monitor */
+          g_object_unref (file->monitor);
+        }
     }
 
   THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
@@ -2466,6 +2470,12 @@ thunar_file_reload (ThunarFile *file)
         }
 
       thunar_file_load (file, NULL, NULL);
+
+      if (file->ginfo == NULL)
+        {
+          thunar_file_destroy (file);
+          return;
+        }
 
       /* ... and tell others */
       thunar_file_changed (file);
