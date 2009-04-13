@@ -84,9 +84,7 @@ static gboolean thunar_chooser_dialog_button_press_event  (GtkWidget            
 static void     thunar_chooser_dialog_notify_expanded     (GtkExpander              *expander,
                                                            GParamSpec               *pspec,
                                                            ThunarChooserDialog      *dialog);
-static void     thunar_chooser_dialog_notify_loading      (ThunarChooserModel       *model,
-                                                           GParamSpec               *pspec,
-                                                           ThunarChooserDialog      *dialog);
+static void     thunar_chooser_dialog_expand              (ThunarChooserDialog      *dialog);
 static gboolean thunar_chooser_dialog_popup_menu          (GtkWidget                *tree_view,
                                                            ThunarChooserDialog      *dialog);
 static void     thunar_chooser_dialog_row_activated       (GtkTreeView              *treeview,
@@ -283,13 +281,11 @@ thunar_chooser_dialog_init (ThunarChooserDialog *dialog)
   gtk_tree_view_column_set_sort_column_id (column, THUNAR_CHOOSER_MODEL_COLUMN_NAME);
   gtk_tree_view_append_column (GTK_TREE_VIEW (dialog->tree_view), column);
 
-#if GTK_CHECK_VERSION(2,9,0)
-  /* don't show the expanders with GTK+ 2.9 and above */
+  /* don't show the expanders */
   g_object_set (G_OBJECT (dialog->tree_view),
                 "level-indentation", 24,
                 "show-expanders", FALSE,
                 NULL);
-#endif
 
   /* create the "Custom command" expand */
   dialog->custom_expander = gtk_expander_new_with_mnemonic (_("Use a _custom command:"));
@@ -959,15 +955,15 @@ thunar_chooser_dialog_notify_expanded (GtkExpander         *expander,
 
 
 static void
-thunar_chooser_dialog_notify_loading (ThunarChooserModel  *model,
-                                      GParamSpec          *pspec,
-                                      ThunarChooserDialog *dialog)
+thunar_chooser_dialog_expand (ThunarChooserDialog *dialog)
 {
-  GtkTreePath *path;
-  GtkTreeIter  iter;
+  GtkTreeModel *model;
+  GtkTreePath  *path;
+  GtkTreeIter   iter;
 
-  _thunar_return_if_fail (THUNAR_IS_CHOOSER_MODEL (model));
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog));
+
+  model = gtk_tree_view_get_model (GTK_TREE_VIEW (dialog->tree_view));
 
   /* expand the first tree view row (the recommended applications) */
   if (G_LIKELY (gtk_tree_model_get_iter_first (GTK_TREE_MODEL (model), &iter)))
@@ -977,7 +973,6 @@ thunar_chooser_dialog_notify_loading (ThunarChooserModel  *model,
       gtk_tree_path_free (path);
     }
 
-#if GTK_CHECK_VERSION(2,9,0)
   /* expand the second tree view row (the other applications) */
   if (G_LIKELY (gtk_tree_model_iter_next (GTK_TREE_MODEL (model), &iter)))
     {
@@ -985,7 +980,6 @@ thunar_chooser_dialog_notify_loading (ThunarChooserModel  *model,
       gtk_tree_view_expand_to_path (GTK_TREE_VIEW (dialog->tree_view), path);
       gtk_tree_path_free (path);
     }
-#endif
 
   /* reset the cursor */
   if (G_LIKELY (GTK_WIDGET_REALIZED (dialog)))
@@ -1169,7 +1163,7 @@ thunar_chooser_dialog_set_file (ThunarChooserDialog *dialog,
       /* allocate the new chooser model */
       model = thunar_chooser_model_new (thunar_file_get_content_type (file));
       gtk_tree_view_set_model (GTK_TREE_VIEW (dialog->tree_view), GTK_TREE_MODEL (model));
-      g_signal_connect (G_OBJECT (model), "notify::loading", G_CALLBACK (thunar_chooser_dialog_notify_loading), dialog);
+      thunar_chooser_dialog_expand (dialog);
       g_object_unref (G_OBJECT (model));
     }
 
