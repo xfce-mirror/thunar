@@ -226,8 +226,6 @@ struct _ThunarListModel
    */
   ThunarFileMonitor      *file_monitor;
 
-  ThunarVfsVolumeManager *volume_manager;
-
   /* ids for the "row-inserted" and "row-deleted" signals
    * of GtkTreeModel to speed up folder changing.
    */
@@ -469,8 +467,6 @@ thunar_list_model_init (ThunarListModel *store)
   store->stamp                = g_random_int ();
 #endif
 
-  store->volume_manager       = thunar_vfs_volume_manager_get_default ();
-
   store->row_inserted_id      = g_signal_lookup ("row-inserted", GTK_TYPE_TREE_MODEL);
   store->row_deleted_id       = g_signal_lookup ("row-deleted", GTK_TYPE_TREE_MODEL);
 
@@ -495,9 +491,6 @@ thunar_list_model_finalize (GObject *object)
 
   /* unlink from the folder (if any) */
   thunar_list_model_set_folder (store, NULL);
-
-  /* disconnect from the volume manager */
-  g_object_unref (G_OBJECT (store->volume_manager));
 
   /* disconnect from the file monitor */
   g_signal_handlers_disconnect_by_func (G_OBJECT (store->file_monitor), thunar_list_model_file_changed, store);
@@ -1417,8 +1410,8 @@ sort_by_date_accessed (const ThunarFile *a,
                        const ThunarFile *b,
                        gboolean          case_sensitive)
 {
-  ThunarVfsFileTime date_a;
-  ThunarVfsFileTime date_b;
+  guint64 date_a;
+  guint64 date_b;
 
   date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_ACCESSED);
   date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_ACCESSED);
@@ -1438,8 +1431,8 @@ sort_by_date_modified (const ThunarFile *a,
                        const ThunarFile *b,
                        gboolean          case_sensitive)
 {
-  ThunarVfsFileTime date_a;
-  ThunarVfsFileTime date_b;
+  guint64 date_a;
+  guint64 date_b;
 
   date_a = thunar_file_get_date (a, THUNAR_FILE_DATE_MODIFIED);
   date_b = thunar_file_get_date (b, THUNAR_FILE_DATE_MODIFIED);
@@ -1537,8 +1530,8 @@ sort_by_permissions (const ThunarFile *a,
                      const ThunarFile *b,
                      gboolean          case_sensitive)
 {
-  ThunarVfsFileMode mode_a;
-  ThunarVfsFileMode mode_b;
+  ThunarFileMode mode_a;
+  ThunarFileMode mode_b;
 
   mode_a = thunar_file_get_mode (a);
   mode_b = thunar_file_get_mode (b);
@@ -1558,8 +1551,8 @@ sort_by_size (const ThunarFile *a,
               const ThunarFile *b,
               gboolean          case_sensitive)
 {
-  ThunarVfsFileSize size_a;
-  ThunarVfsFileSize size_b;
+  guint64 size_a;
+  guint64 size_b;
 
   size_a = thunar_file_get_size (a);
   size_b = thunar_file_get_size (b);
@@ -2200,22 +2193,22 @@ gchar*
 thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
-  ThunarVfsFileSize  size_summary;
-  const gchar       *original_path;
-  GtkTreeIter        iter;
-  ThunarFile        *file;
-  guint64            size;
-  GSList            *row;
-  GList             *lp;
-  gchar             *absolute_path;
-  gchar             *fspace_string;
-  gchar             *display_name;
-  gchar             *size_string;
-  gchar             *text;
-  gchar             *s;
-  gint               height;
-  gint               width;
-  gint               n;
+  const gchar *original_path;
+  GtkTreeIter  iter;
+  ThunarFile  *file;
+  guint64      size;
+  guint64      size_summary;
+  GSList      *row;
+  GList       *lp;
+  gchar       *absolute_path;
+  gchar       *fspace_string;
+  gchar       *display_name;
+  gchar       *size_string;
+  gchar       *text;
+  gchar       *s;
+  gint         height;
+  gint         width;
+  gint         n;
 
   _thunar_return_val_if_fail (THUNAR_IS_LIST_MODEL (store), NULL);
 
