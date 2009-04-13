@@ -921,12 +921,12 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                                     gint                icon_size)
 {
   ThunarFileThumbState thumb_state;
-  ThunarVfsFileTime    time;
   ThunarVfsInfo       *info;
   ThunarVfsPath       *path;
   ThunarIconKey        key;
-  gchar               *icon_name;
   GdkPixbuf           *icon;
+  guint64              time;
+  gchar               *icon_name;
   gchar               *thumb_path;
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);

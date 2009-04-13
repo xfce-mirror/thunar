@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -21,8 +22,15 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_SYS_TYPES_H
+#include <sys/types.h>
+#endif
+
 #ifdef HAVE_MEMORY_H
 #include <memory.h>
+#endif
+#ifdef HAVE_PWD_H
+#include <pwd.h>
 #endif
 #ifdef HAVE_STDLIB_H
 #include <stdlib.h>
@@ -65,6 +73,85 @@ thunar_util_looks_like_an_uri (const gchar *string)
     }
 
   return FALSE;
+}
+
+
+
+/**
+ * thunar_util_expand_filename:
+ * @filename : a local filename.
+ * @error    : return location for errors or %NULL.
+ *
+ * Takes a user-typed @filename and expands a tilde at the
+ * beginning of the @filename.
+ *
+ * The caller is responsible to free the returned string using
+ * g_free() when no longer needed.
+ *
+ * Return value: the expanded @filename or %NULL on error.
+ **/
+gchar *
+thunar_util_expand_filename (const gchar  *filename,
+                             GError      **error)
+{
+  struct passwd *passwd;
+  const gchar   *replacement;
+  const gchar   *remainder;
+  const gchar   *slash;
+  gchar         *username;
+
+  g_return_val_if_fail (filename != NULL, NULL);
+
+  /* check if we have a valid (non-empty!) filename */
+  if (G_UNLIKELY (*filename == '\0'))
+    {
+      g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Invalid path"));
+      return NULL;
+    }
+
+  /* check if we start with a '~' */
+  if (G_LIKELY (*filename != '~'))
+    return g_strdup (filename);
+
+  /* examine the remainder of the filename */
+  remainder = filename + 1;
+
+  /* if we have only the slash, then we want the home dir */
+  if (G_UNLIKELY (*remainder == '\0'))
+    return g_strdup (xfce_get_homedir ());
+
+  /* lookup the slash */
+  for (slash = remainder; *slash != '\0' && *slash != G_DIR_SEPARATOR; ++slash)
+    ;
+
+  /* check if a username was given after the '~' */
+  if (G_LIKELY (slash == remainder))
+    {
+      /* replace the tilde with the home dir */
+      replacement = xfce_get_homedir ();
+    }
+  else
+    {
+      /* lookup the pwd entry for the username */
+      username = g_strndup (remainder, slash - remainder);
+      passwd = getpwnam (username);
+      g_free (username);
+
+      /* check if we have a valid entry */
+      if (G_UNLIKELY (passwd == NULL))
+        {
+          username = g_strndup (remainder, slash - remainder);
+          g_set_error (error, G_FILE_ERROR, G_FILE_ERROR_INVAL, _("Unknown user \"%s\""), username);
+          g_free (username);
+          return NULL;
+        }
+
+      /* use the homedir of the specified user */
+      replacement = passwd->pw_dir;
+    }
+
+  /* generate the filename */
+  return g_build_filename (replacement, slash, NULL);
 }
 
 

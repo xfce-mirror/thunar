@@ -1,5 +1,14 @@
 2009-04-13	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-icon-factory.c: Replace ThunarVfsFileTime with
+	  guint64.
+	* thunar/thunar-path-entry.c, thunar/thunar-util.{c,h}: Replace
+	  thunar_vfs_expand_filename() with thunar_util_expand_filename().
+	* thunar/thunar-renamer-model.c: Use GFile instead of ThunarVfsPath in
+	  trm_same_directory(). 
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-permissions-chooser.c: Rename all occurances of
 	  ThunarVfsFileMode to ThunarFileMode.
 

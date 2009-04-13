@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -753,15 +754,15 @@ static gboolean
 trm_same_directory (ThunarFile *a,
                     ThunarFile *b)
 {
-  ThunarVfsPath *parent_a;
-  ThunarVfsPath *parent_b;
+  GFile *parent_a;
+  GFile *parent_b;
 
   /* determine the parent paths for both files */
-  parent_a = thunar_vfs_path_get_parent (thunar_file_get_path (a));
-  parent_b = thunar_vfs_path_get_parent (thunar_file_get_path (b));
+  parent_a = g_file_get_parent (thunar_file_get_file (a));
+  parent_b = g_file_get_parent (thunar_file_get_file (b));
 
   /* check if both files have the same parent */
-  return (parent_a != NULL && parent_b != NULL && thunar_vfs_path_equal (parent_a, parent_b));
+  return (parent_a != NULL && parent_b != NULL && g_file_equal (parent_a, parent_b));
 }
 
 

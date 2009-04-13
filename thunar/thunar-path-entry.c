@@ -1257,7 +1257,7 @@ thunar_path_entry_parse (ThunarPathEntry *path_entry,
   _thunar_return_val_if_fail (file_part != NULL, FALSE);
 
   /* expand the filename */
-  filename = thunar_vfs_expand_filename (gtk_entry_get_text (GTK_ENTRY (path_entry)), error);
+  filename = thunar_util_expand_filename (gtk_entry_get_text (GTK_ENTRY (path_entry)), error);
   if (G_UNLIKELY (filename == NULL))
     return FALSE;
 
