@@ -1,5 +1,17 @@
 2009-04-13	Jannis Pohlmann <jannis@xfce.org>
 
+	* configure.in.in: Bump exo dependency for the "gicon" property of
+	  ExoCellRendererIcon.
+	* thunar/main.c: Set the desktop environment for GDesktopAppInfo if
+	  gio-unix is available. 
+	* thunar/thunar-chooser-dialog.c, thunar-chooser-model.{c,h}: Replace 
+	  all ThunarVfsMime* references with code based on GAppInfo. Use the
+	  new "gicon" property of ExoCellRendererIcon. Only regression is that
+	  there is no way to check whether a GAppInfo was created by the user
+	  in GIO.
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-properties-dialog.c: Remove ThunarVfsMimeInfo and use
 	  a content type string in thunar_properties_dialog_update().
 

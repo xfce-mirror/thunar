@@ -29,6 +29,9 @@
 #endif
 
 #include <glib/gstdio.h>
+#ifdef HAVE_GIO_UNIX
+#include <gio/gdesktopappinfo.h>
+#endif
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dbus-client.h>
@@ -128,6 +131,11 @@ main (int argc, char **argv)
       g_print ("\n");
       return EXIT_SUCCESS;
     }
+
+#ifdef HAVE_GIO_UNIX
+  /* set desktop environment for app infos */
+  g_desktop_app_info_set_desktop_env ("XFCE");
+#endif
 
   /* register additional transformation functions */
   thunar_g_initialize_transformations ();

@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>.
+ * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -20,7 +21,7 @@
 #ifndef __THUNAR_CHOOSER_MODEL_H__
 #define __THUNAR_CHOOSER_MODEL_H__
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS;
 
@@ -38,7 +39,7 @@ typedef struct _ThunarChooserModel      ThunarChooserModel;
  * ThunarChooserModelColumn:
  * @THUNAR_CHOOSER_MODEL_COLUMN_NAME        : the name of the application.
  * @THUNAR_CHOOSER_MODEL_COLUMN_ICON        : the name or absolute path of the application's icon.
- * @THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION : the #ThunarVfsMimeApplication object.
+ * @THUNAR_CHOOSER_MODEL_COLUMN_APPLICATION : the #GAppInfo object.
  * @THUNAR_CHOOSER_MODEL_COLUMN_STYLE       : custom font style.
  * @THUNAR_CHOOSER_MODEL_COLUMN_STYLE_SET   : whether to actually use the custom font style.
  * @THUNAR_CHOOSER_MODEL_N_COLUMNS          : the number of columns in #ThunarChooserModel.
@@ -57,17 +58,13 @@ typedef enum
   THUNAR_CHOOSER_MODEL_N_COLUMNS,
 } ThunarChooserModelColumn;
 
-GType               thunar_chooser_model_get_type       (void) G_GNUC_CONST;
+GType               thunar_chooser_model_get_type         (void) G_GNUC_CONST;
 
-ThunarChooserModel *thunar_chooser_model_new            (ThunarVfsMimeInfo  *mime_info) G_GNUC_MALLOC;
-
-gboolean            thunar_chooser_model_get_loading    (ThunarChooserModel *model);
-
-ThunarVfsMimeInfo  *thunar_chooser_model_get_mime_info  (ThunarChooserModel *model);
-
-gboolean            thunar_chooser_model_remove         (ThunarChooserModel *model,
-                                                         GtkTreeIter        *iter,
-                                                         GError            **error);
+ThunarChooserModel *thunar_chooser_model_new              (const gchar        *content_type) G_GNUC_MALLOC;
+const gchar        *thunar_chooser_model_get_content_type (ThunarChooserModel *model);
+gboolean            thunar_chooser_model_remove           (ThunarChooserModel *model,
+                                                           GtkTreeIter        *iter,
+                                                           GError            **error);
 
 G_END_DECLS;
 
