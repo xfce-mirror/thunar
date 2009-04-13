@@ -84,10 +84,10 @@ static gint                 thunar_permissions_chooser_ask_recursive    (ThunarP
 static void                 thunar_permissions_chooser_change_group     (ThunarPermissionsChooser       *chooser,
                                                                          guint32                         gid);
 static void                 thunar_permissions_chooser_change_mode      (ThunarPermissionsChooser       *chooser,
-                                                                         ThunarVfsFileMode               dir_mask,
-                                                                         ThunarVfsFileMode               dir_mode,
-                                                                         ThunarVfsFileMode               file_mask,
-                                                                         ThunarVfsFileMode               file_mode);
+                                                                         ThunarFileMode                  dir_mask,
+                                                                         ThunarFileMode                  dir_mode,
+                                                                         ThunarFileMode                  file_mask,
+                                                                         ThunarFileMode                  file_mode);
 static void                 thunar_permissions_chooser_access_changed   (ThunarPermissionsChooser       *chooser,
                                                                          GtkWidget                      *combo);
 static void                 thunar_permissions_chooser_file_changed     (ThunarPermissionsChooser       *chooser,
@@ -680,10 +680,10 @@ thunar_permissions_chooser_change_group (ThunarPermissionsChooser *chooser,
 
 static void
 thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
-                                        ThunarVfsFileMode         dir_mask,
-                                        ThunarVfsFileMode         dir_mode,
-                                        ThunarVfsFileMode         file_mask,
-                                        ThunarVfsFileMode         file_mode)
+                                        ThunarFileMode            dir_mask,
+                                        ThunarFileMode            dir_mode,
+                                        ThunarFileMode            file_mask,
+                                        ThunarFileMode            file_mode)
 {
   ThunarVfsJob *job;
   gboolean      recursive = FALSE;
@@ -735,11 +735,11 @@ static void
 thunar_permissions_chooser_access_changed (ThunarPermissionsChooser *chooser,
                                            GtkWidget                *combo)
 {
-  ThunarVfsFileMode file_mask;
-  ThunarVfsFileMode file_mode;
-  ThunarVfsFileMode dir_mask;
-  ThunarVfsFileMode dir_mode;
-  guint             n;
+  ThunarFileMode file_mask;
+  ThunarFileMode file_mode;
+  ThunarFileMode dir_mask;
+  ThunarFileMode dir_mode;
+  guint          n;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
   _thunar_return_if_fail (GTK_IS_COMBO_BOX (combo));
@@ -805,7 +805,7 @@ thunar_permissions_chooser_file_changed (ThunarPermissionsChooser *chooser,
                                          ThunarFile               *file)
 {
   ThunarUserManager *user_manager;
-  ThunarVfsFileMode  mode;
+  ThunarFileMode     mode;
   ThunarGroup       *group;
   ThunarUser        *user;
   GtkListStore      *store;
@@ -984,7 +984,7 @@ static void
 thunar_permissions_chooser_program_toggled (ThunarPermissionsChooser *chooser,
                                             GtkWidget                *button)
 {
-  ThunarVfsFileMode mode;
+  ThunarFileMode mode;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
   _thunar_return_if_fail (chooser->program_button == button);
@@ -1007,12 +1007,12 @@ static void
 thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
                                             GtkWidget                *button)
 {
-  ThunarVfsFileMode mode;
-  ThunarVfsJob     *job;
-  GtkWidget        *dialog;
-  GtkWidget        *window;
-  GError           *error = NULL;
-  gint              response;
+  ThunarFileMode mode;
+  ThunarVfsJob  *job;
+  GtkWidget     *dialog;
+  GtkWidget     *window;
+  GError        *error = NULL;
+  gint           response;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
   _thunar_return_if_fail (chooser->fixperm_button == button);
@@ -1050,9 +1050,9 @@ thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
       mode = thunar_file_get_mode (chooser->file);
 
       /* determine the new mode (making sure the owner can read/enter the folder) */
-      mode = (THUNAR_VFS_FILE_MODE_USR_READ | THUNAR_VFS_FILE_MODE_USR_EXEC)
-           | (((mode & THUNAR_VFS_FILE_MODE_GRP_READ) != 0) ? THUNAR_VFS_FILE_MODE_GRP_EXEC : 0)
-           | (((mode & THUNAR_VFS_FILE_MODE_OTH_READ) != 0) ? THUNAR_VFS_FILE_MODE_OTH_EXEC : 0);
+      mode = (THUNAR_FILE_MODE_USR_READ | THUNAR_FILE_MODE_USR_EXEC)
+           | (((mode & THUNAR_FILE_MODE_GRP_READ) != 0) ? THUNAR_FILE_MODE_GRP_EXEC : 0)
+           | (((mode & THUNAR_FILE_MODE_OTH_READ) != 0) ? THUNAR_FILE_MODE_OTH_EXEC : 0);
 
       /* try to allocate the new job */
       job = thunar_vfs_change_mode (thunar_file_get_path (chooser->file), 0511, mode, 0000, 0000, FALSE, &error);
