@@ -1,5 +1,10 @@
 2009-04-13	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-sendto-model.c: Monitor sendto/ directories with
+	  GFileMonitor instead of ThunarVfsMonitor.
+
+2009-04-13	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-icon-factory.c: Replace ThunarVfsFileTime with
 	  guint64.
 	* thunar/thunar-path-entry.c, thunar/thunar-util.{c,h}: Replace

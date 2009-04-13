@@ -38,15 +38,15 @@
 
 
 
-static void thunar_sendto_model_class_init  (ThunarSendtoModelClass *klass);
-static void thunar_sendto_model_finalize    (GObject                *object);
-static void thunar_sendto_model_load        (ThunarSendtoModel      *sendto_model);
-static void thunar_sendto_model_event       (ThunarVfsMonitor       *monitor,
-                                             ThunarVfsMonitorHandle *handle,
-                                             ThunarVfsMonitorEvent   event,
-                                             ThunarVfsPath          *handle_path,
-                                             ThunarVfsPath          *event_path,
-                                             gpointer                user_data);
+static void thunar_sendto_model_class_init (ThunarSendtoModelClass *klass);
+static void thunar_sendto_model_init       (ThunarSendtoModel      *sendto_model);
+static void thunar_sendto_model_finalize   (GObject                *object);
+static void thunar_sendto_model_load       (ThunarSendtoModel      *sendto_model);
+static void thunar_sendto_model_event      (GFileMonitor           *monitor,
+                                            GFile                  *file,
+                                            GFile                  *other_file,
+                                            GFileMonitorEvent       event_type,
+                                            gpointer                user_data);
 
 
 
@@ -57,11 +57,10 @@ struct _ThunarSendtoModelClass
 
 struct _ThunarSendtoModel
 {
-  GObject           __parent__;
-  ThunarVfsMonitor *monitor;
-  GList            *handles;
-  GList            *handlers;
-  guint             loaded : 1;
+  GObject __parent__;
+  GList  *monitors;
+  GList  *handlers;
+  guint   loaded : 1;
 };
 
 
@@ -77,21 +76,13 @@ thunar_sendto_model_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarSendtoModelClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_sendto_model_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarSendtoModel),
-        0,
-        NULL,
-        NULL,
-      };
-
-      type = g_type_register_static (G_TYPE_OBJECT, I_("ThunarSendtoModel"), &info, 0);
+      type = g_type_register_static_simple (G_TYPE_OBJECT,
+                                            I_("ThunarSendtoModel"),
+                                            sizeof (ThunarSendtoModelClass),
+                                            (GClassInitFunc) thunar_sendto_model_class_init,
+                                            sizeof (ThunarSendtoModel),
+                                            (GInstanceInitFunc) thunar_sendto_model_init,
+                                            0);
     }
 
   return type;
@@ -114,6 +105,14 @@ thunar_sendto_model_class_init (ThunarSendtoModelClass *klass)
 
 
 static void
+thunar_sendto_model_init (ThunarSendtoModel *sendto_model)
+{
+  sendto_model->monitors = NULL;
+}
+
+
+
+static void
 thunar_sendto_model_finalize (GObject *object)
 {
   ThunarSendtoModel *sendto_model = THUNAR_SENDTO_MODEL (object);
@@ -123,15 +122,13 @@ thunar_sendto_model_finalize (GObject *object)
   g_list_foreach (sendto_model->handlers, (GFunc) g_object_unref, NULL);
   g_list_free (sendto_model->handlers);
 
-  /* disconnect from the monitor (if connected) */
-  if (G_LIKELY (sendto_model->monitor != NULL))
+  /* disconnect all monitors */
+  for (lp = sendto_model->monitors; lp != NULL; lp = lp->next)
     {
-      /* disconnect all handles and release monitor reference */
-      for (lp = sendto_model->handles; lp != NULL; lp = lp->next)
-        thunar_vfs_monitor_remove (sendto_model->monitor, lp->data);
-      g_object_unref (G_OBJECT (sendto_model->monitor));
-      g_list_free (sendto_model->handles);
+      g_file_monitor_cancel (lp->data);
+      g_object_unref (lp->data);
     }
+  g_list_free (sendto_model->monitors);
 
   (*G_OBJECT_CLASS (thunar_sendto_model_parent_class)->finalize) (object);
 }
@@ -189,12 +186,11 @@ thunar_sendto_model_load (ThunarSendtoModel *sendto_model)
 
 
 static void
-thunar_sendto_model_event (ThunarVfsMonitor       *monitor,
-                           ThunarVfsMonitorHandle *handle,
-                           ThunarVfsMonitorEvent   event,
-                           ThunarVfsPath          *handle_path,
-                           ThunarVfsPath          *event_path,
-                           gpointer                user_data)
+thunar_sendto_model_event (GFileMonitor     *monitor,
+                           GFile            *file,
+                           GFile            *other_file,
+                           GFileMonitorEvent event_type,
+                           gpointer          user_data)
 {
   ThunarSendtoModel *sendto_model = THUNAR_SENDTO_MODEL (user_data);
 
@@ -263,14 +259,14 @@ GList*
 thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
                                   GList             *files)
 {
-  ThunarVfsMonitorHandle *handle;
-  ThunarVfsPath          *path;
-  gchar                 **datadirs;
-  gchar                  *dir;
-  GList                  *handlers = NULL;
-  GList                  *hp;
-  GList                  *fp;
-  guint                   n;
+  GFileMonitor *monitor;
+  GFile        *file;
+  gchar       **datadirs;
+  gchar        *dir;
+  GList        *handlers = NULL;
+  GList        *hp;
+  GList        *fp;
+  guint         n;
 
   _thunar_return_val_if_fail (THUNAR_IS_SENDTO_MODEL (sendto_model), NULL);
 
@@ -279,31 +275,25 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
     return NULL;
 
   /* connect to the monitor on-demand */
-  if (G_UNLIKELY (sendto_model->monitor == NULL))
+  if (G_UNLIKELY (sendto_model->monitors == NULL))
     {
-      /* connect to the monitor */
-      sendto_model->monitor = thunar_vfs_monitor_get_default ();
-
       /* watch all possible sendto directories */
       datadirs = xfce_resource_dirs (XFCE_RESOURCE_DATA);
       for (n = 0; datadirs[n] != NULL; ++n)
         {
           /* determine the path to the sendto directory */
           dir = g_build_filename (datadirs[n], "Thunar", "sendto", NULL);
-          path = thunar_vfs_path_new (dir, NULL);
-          if (G_LIKELY (path != NULL))
-            {
-              /* watch the directory for changes */
-              handle = thunar_vfs_monitor_add_file (sendto_model->monitor, path, thunar_sendto_model_event, sendto_model);
-              sendto_model->handles = g_list_prepend (sendto_model->handles, handle);
-              thunar_vfs_path_unref (path);
-            }
+          file = g_file_new_for_path (dir);
+
+          /* watch the directory for changes */
+          monitor = g_file_monitor_directory (file, G_FILE_MONITOR_NONE, NULL, NULL);
+          g_signal_connect (monitor, "changed", G_CALLBACK (thunar_sendto_model_event), sendto_model);
+          sendto_model->monitors = g_list_prepend (sendto_model->monitors, monitor);
+
+          g_object_unref (file);
           g_free (dir);
         }
       g_strfreev (datadirs);
-
-      /* load the model */
-      thunar_sendto_model_load (sendto_model);
     }
 
   /* test all handlers */
