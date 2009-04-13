@@ -1329,7 +1329,7 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
                                           ThunarRenamerDialog *renamer_dialog)
 {
   ThunarFile              *file;
-  GList                   *path_list;
+  GList                   *file_list;
   GList                   *lp;
   GtkTreeModel            *model;
   GtkTreePath             *path;
@@ -1361,14 +1361,14 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
             position = -1;
         }
 
-      /* determine the path list from the selection_data */
-      path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
+      /* determine the file list from the selection_data */
+      file_list = g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* add all paths to the model */
-      for (lp = path_list; lp != NULL; lp = lp->next)
+      for (lp = file_list; lp != NULL; lp = lp->next)
         {
           /* determine the file for the path */
-          file = thunar_file_get_for_path (lp->data, NULL);
+          file = thunar_file_get (lp->data, NULL);
           if (G_LIKELY (file != NULL))
             {
               /* insert the file in the model */
@@ -1379,18 +1379,18 @@ thunar_renamer_dialog_drag_data_received (GtkWidget           *tree_view,
                 position++;
 
               /* release the file */
-              g_object_unref (G_OBJECT (file));
+              g_object_unref (file);
             }
 
-          /* release the path */
-          thunar_vfs_path_unref (lp->data);
+          /* release the GFile */
+          g_object_unref (lp->data);
         }
 
       /* finish the drag */
-      gtk_drag_finish (context, (path_list != NULL), FALSE, time);
+      gtk_drag_finish (context, (file_list != NULL), FALSE, time);
 
       /* release the list */
-      g_list_free (path_list);
+      g_list_free (file_list);
     }
 
   /* stop the emission of the "drag-data-received" signal */
