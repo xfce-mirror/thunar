@@ -1,3 +1,9 @@
+2009-04-14	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-preferences.c: Monitor thunarrc with GFileMonitor
+	  instead of ThunarVfsMonitor. All ThunarVFS references removed from
+	  the class.
+
 2009-04-13	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-sendto-model.c: Monitor sendto/ directories with

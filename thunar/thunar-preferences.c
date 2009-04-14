@@ -37,8 +37,6 @@
 #include <string.h>
 #endif
 
-#include <thunar-vfs/thunar-vfs.h>
-
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-preferences.h>
@@ -102,11 +100,10 @@ static void     thunar_preferences_set_property       (GObject                *o
                                                        GParamSpec             *pspec);
 static void     thunar_preferences_resume_monitor     (ThunarPreferences      *preferences);
 static void     thunar_preferences_suspend_monitor    (ThunarPreferences      *preferences);
-static void     thunar_preferences_monitor            (ThunarVfsMonitor       *monitor,
-                                                       ThunarVfsMonitorHandle *handle,
-                                                       ThunarVfsMonitorEvent   event,
-                                                       ThunarVfsPath          *handle_path,
-                                                       ThunarVfsPath          *event_path,
+static void     thunar_preferences_monitor            (GFileMonitor           *monitor,
+                                                       GFile                  *file,
+                                                       GFile                  *other_file,
+                                                       GFileMonitorEvent       event_type,
                                                        gpointer                user_data);
 static void     thunar_preferences_queue_load         (ThunarPreferences      *preferences);
 static void     thunar_preferences_queue_store        (ThunarPreferences      *preferences);
@@ -126,15 +123,14 @@ struct _ThunarPreferences
 {
   GObject __parent__;
 
-  ThunarVfsMonitorHandle *handle;
-  ThunarVfsMonitor       *monitor;
+  GFileMonitor *monitor;
 
-  GValue                  values[N_PROPERTIES];
+  GValue        values[N_PROPERTIES];
 
-  gboolean                loading_in_progress;
+  gboolean      loading_in_progress;
 
-  gint                    load_idle_id;
-  gint                    store_idle_id;
+  gint          load_idle_id;
+  gint          store_idle_id;
 };
 
 
@@ -671,8 +667,7 @@ thunar_preferences_class_init (ThunarPreferencesClass *klass)
 static void
 thunar_preferences_init (ThunarPreferences *preferences)
 {
-  /* grab a reference on the VFS monitor */
-  preferences->monitor = thunar_vfs_monitor_get_default ();
+  preferences->monitor = NULL;
 
   /* load the settings */
   thunar_preferences_load_idle (preferences);
@@ -763,24 +758,21 @@ thunar_preferences_set_property (GObject      *object,
 static void
 thunar_preferences_resume_monitor (ThunarPreferences *preferences)
 {
-  ThunarVfsPath *path;
-  gchar         *filename;
+  GFile *file;
+  gchar *filename;
 
   /* verify that the monitor is suspended */
-  if (G_LIKELY (preferences->handle == NULL))
+  if (G_LIKELY (preferences->monitor == NULL))
     {
       /* determine the save location for thunarrc to monitor */
       filename = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/thunarrc", TRUE);
       if (G_LIKELY (filename != NULL))
         {
-          /* determine the VFS path for the filename */
-          path = thunar_vfs_path_new (filename, NULL);
-          if (G_LIKELY (path != NULL))
-            {
-              /* add the monitor handle for the file */
-              preferences->handle = thunar_vfs_monitor_add_file (preferences->monitor, path, thunar_preferences_monitor, preferences);
-              thunar_vfs_path_unref (path);
-            }
+          /* monitor this file */
+          file = g_file_new_for_path (filename);
+          preferences->monitor = g_file_monitor_file (file, G_FILE_MONITOR_NONE, NULL, NULL);
+          g_signal_connect (preferences->monitor, "changed", G_CALLBACK (thunar_preferences_monitor), preferences);
+          g_object_unref (file);
 
           /* release the filename */
           g_free (filename);
@@ -794,22 +786,21 @@ static void
 thunar_preferences_suspend_monitor (ThunarPreferences *preferences)
 {
   /* verify that the monitor is active */
-  if (G_LIKELY (preferences->handle != NULL))
+  if (G_LIKELY (preferences->monitor != NULL 
+                && !g_file_monitor_is_cancelled (preferences->monitor)))
     {
       /* disconnect the handle from the monitor */
-      thunar_vfs_monitor_remove (preferences->monitor, preferences->handle);
-      preferences->handle = NULL;
+      g_file_monitor_cancel (preferences->monitor);
     }
 }
 
 
 
 static void
-thunar_preferences_monitor (ThunarVfsMonitor       *monitor,
-                            ThunarVfsMonitorHandle *handle,
-                            ThunarVfsMonitorEvent   event,
-                            ThunarVfsPath          *handle_path,
-                            ThunarVfsPath          *event_path,
+thunar_preferences_monitor (GFileMonitor           *monitor,
+                            GFile                  *file,
+                            GFile                  *other_file,
+                            GFileMonitorEvent       event_type,
                             gpointer                user_data)
 {
   ThunarPreferences *preferences = THUNAR_PREFERENCES (user_data);
@@ -820,8 +811,11 @@ thunar_preferences_monitor (ThunarVfsMonitor       *monitor,
   _thunar_return_if_fail (preferences->handle == handle);
 
   /* schedule a reload whenever the file is created/changed */
-  if (event == THUNAR_VFS_MONITOR_EVENT_CHANGED || event == THUNAR_VFS_MONITOR_EVENT_CREATED)
-    thunar_preferences_queue_load (preferences);
+  if (event_type == G_FILE_MONITOR_EVENT_CHANGED 
+      || event_type == G_FILE_MONITOR_EVENT_CREATED)
+    {
+      thunar_preferences_queue_load (preferences);
+    }
 }
 
 
