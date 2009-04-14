@@ -2489,12 +2489,12 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
                                 guint               time,
                                 ThunarStandardView *standard_view)
 {
-  ThunarVfsPath *path;
-  ThunarFile    *file = NULL;
-  GdkAtom        target;
-  guchar        *prop_text;
-  gint           prop_len;
-  gchar         *uri = NULL;
+  ThunarFile *file = NULL;
+  GdkAtom     target;
+  guchar     *prop_text;
+  GFile      *path;
+  gchar      *uri = NULL;
+  gint        prop_len;
 
   target = gtk_drag_dest_find_target (view, context, NULL);
   if (G_UNLIKELY (target == GDK_NONE))
@@ -2521,10 +2521,11 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
               if (G_LIKELY (*prop_text != '\0' && strchr ((const gchar *) prop_text, G_DIR_SEPARATOR) == NULL))
                 {
                   /* allocate the relative path for the target */
-                  path = thunar_vfs_path_relative (thunar_file_get_path (file), (const gchar *) prop_text);
+                  path = g_file_resolve_relative_path (thunar_file_get_file (file), 
+                                                       (const gchar *)prop_text);
 
                   /* determine the new URI */
-                  uri = thunar_vfs_path_dup_uri (path);
+                  uri = g_file_get_uri (path);
 
                   /* setup the property */
                   gdk_property_change (GDK_DRAWABLE (context->source_window),
@@ -2534,7 +2535,7 @@ thunar_standard_view_drag_drop (GtkWidget          *view,
                                        strlen (uri));
 
                   /* cleanup */
-                  thunar_vfs_path_unref (path);
+                  g_object_unref (path);
                   g_free (uri);
                 }
               else
@@ -2683,7 +2684,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
                   if (G_LIKELY (file != NULL))
                     {
                       /* determine the absolute path to the target directory */
-                      working_directory = thunar_vfs_path_dup_string (thunar_file_get_path (file));
+                      working_directory = g_file_get_uri (thunar_file_get_file (file));
 
                       /* prepare the basic part of the command */
                       argv[n++] = "exo-desktop-item-edit";
@@ -2828,8 +2829,13 @@ thunar_standard_view_drag_motion (GtkWidget          *view,
           file = thunar_standard_view_get_drop_file (standard_view, x, y, &path);
 
           /* check if we can save here */
-          if (G_LIKELY (file != NULL && thunar_file_is_local (file) && thunar_file_is_directory (file) && thunar_file_is_writable (file)))
-            action = context->suggested_action;
+          if (G_LIKELY (file != NULL 
+                        && thunar_file_is_local (file) 
+                        && thunar_file_is_directory (file) 
+                        && thunar_file_is_writable (file)))
+            {
+              action = context->suggested_action;
+            }
 
           /* reset path if we cannot drop */
           if (G_UNLIKELY (action == 0 && path != NULL))

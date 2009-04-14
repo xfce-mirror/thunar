@@ -1,5 +1,10 @@
 2009-04-15	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-standard-view.c: Use GFile instead of ThunarVfsPath in
+	  thunar_standard_view_drag_drop(). 
+
+2009-04-15	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-preferences.c, thunar/thunar-sendto-model.c,
 	  thunar/thunar-shortcuts-model.c: Check whether the created file
 	  monitor is != NULL before connecting to its "changed" signal.
