@@ -772,7 +772,8 @@ thunar_preferences_resume_monitor (ThunarPreferences *preferences)
           /* monitor this file */
           file = g_file_new_for_path (filename);
           preferences->monitor = g_file_monitor_file (file, G_FILE_MONITOR_NONE, NULL, NULL);
-          g_signal_connect (preferences->monitor, "changed", G_CALLBACK (thunar_preferences_monitor), preferences);
+          if (G_LIKELY (preferences->monitor != NULL))
+            g_signal_connect (preferences->monitor, "changed", G_CALLBACK (thunar_preferences_monitor), preferences);
           g_object_unref (file);
 
           /* release the filename */

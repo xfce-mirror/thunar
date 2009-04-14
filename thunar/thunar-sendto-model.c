@@ -287,8 +287,11 @@ thunar_sendto_model_get_matching (ThunarSendtoModel *sendto_model,
 
           /* watch the directory for changes */
           monitor = g_file_monitor_directory (file, G_FILE_MONITOR_NONE, NULL, NULL);
-          g_signal_connect (monitor, "changed", G_CALLBACK (thunar_sendto_model_event), sendto_model);
-          sendto_model->monitors = g_list_prepend (sendto_model->monitors, monitor);
+          if (G_LIKELY (monitor != NULL))
+            {
+              g_signal_connect (monitor, "changed", G_CALLBACK (thunar_sendto_model_event), sendto_model);
+              sendto_model->monitors = g_list_prepend (sendto_model->monitors, monitor);
+            }
 
           g_object_unref (file);
           g_free (dir);

@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -393,7 +394,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 
   /* register with the alteration monitor for the bookmarks file */
   model->monitor = g_file_monitor_file (bookmarks, G_FILE_MONITOR_NONE, NULL, NULL);
-  if (model->monitor != NULL)
+  if (G_LIKELY (model->monitor != NULL))
     g_signal_connect (model->monitor, "changed", G_CALLBACK (thunar_shortcuts_model_monitor), model);
 
   /* read the Gtk+ bookmarks file */

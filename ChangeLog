@@ -1,5 +1,11 @@
 2009-04-15	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-preferences.c, thunar/thunar-sendto-model.c,
+	  thunar/thunar-shortcuts-model.c: Check whether the created file
+	  monitor is != NULL before connecting to its "changed" signal.
+
+2009-04-15	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-gio-extensions.c: Add new functions
 	  g_file_new_for_desktop() and g_file_is_desktop().
 	* thunar/thunar-shortcuts-model.c: Monitor ~/.gtk-bookmarks using
