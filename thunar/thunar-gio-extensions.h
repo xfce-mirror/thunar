@@ -27,9 +27,11 @@ G_BEGIN_DECLS
 GFile   *g_file_new_for_home         (void);
 GFile   *g_file_new_for_root         (void);
 GFile   *g_file_new_for_trash        (void);
+GFile   *g_file_new_for_desktop      (void);
 
 gboolean g_file_is_root              (GFile       *file);
 gboolean g_file_is_trashed           (GFile       *file);
+gboolean g_file_is_desktop           (GFile       *file);
 
 GList   *g_file_list_new_from_string (const gchar *string);
 gchar   *g_file_list_to_string       (GList       *list);

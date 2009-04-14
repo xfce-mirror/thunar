@@ -1,3 +1,11 @@
+2009-04-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-gio-extensions.c: Add new functions
+	  g_file_new_for_desktop() and g_file_is_desktop().
+	* thunar/thunar-shortcuts-model.c: Monitor ~/.gtk-bookmarks using
+	  GFileMOnitor instead of ThunarVfsMonitor. Replace all ThunarVfsPath
+	  references with equivalent code based on GFile.
+
 2009-04-14	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-preferences.c: Monitor thunarrc with GFileMonitor

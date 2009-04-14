@@ -112,11 +112,10 @@ static void               thunar_shortcuts_model_remove_shortcut    (ThunarShort
                                                                      ThunarShortcut            *shortcut);
 static void               thunar_shortcuts_model_load               (ThunarShortcutsModel      *model);
 static void               thunar_shortcuts_model_save               (ThunarShortcutsModel      *model);
-static void               thunar_shortcuts_model_monitor            (ThunarVfsMonitor          *monitor,
-                                                                     ThunarVfsMonitorHandle    *handle,
-                                                                     ThunarVfsMonitorEvent      event,
-                                                                     ThunarVfsPath             *handle_path,
-                                                                     ThunarVfsPath             *event_path,
+static void               thunar_shortcuts_model_monitor            (GFileMonitor              *monitor,
+                                                                     GFile                     *file,
+                                                                     GFile                     *other_file,
+                                                                     GFileMonitorEvent          event_type,
                                                                      gpointer                   user_data);
 static void               thunar_shortcuts_model_file_changed       (ThunarFile                *file,
                                                                      ThunarShortcutsModel      *model);
@@ -156,8 +155,7 @@ struct _ThunarShortcutsModel
   GList                  *hidden_volumes;
   ThunarVfsVolumeManager *volume_manager;
 
-  ThunarVfsMonitor       *monitor;
-  ThunarVfsMonitorHandle *handle;
+  GFileMonitor           *monitor;
 };
 
 struct _ThunarShortcut
@@ -268,16 +266,17 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 {
   ThunarVfsVolume *volume;
   ThunarShortcut  *shortcut;
-  ThunarVfsPath   *system_path_list[4];
-  ThunarVfsPath   *fhome;
-  ThunarVfsPath   *fpath;
   GtkTreePath     *path;
   ThunarFile      *file;
+  GFile           *bookmarks;
+  GFile           *desktop;
+  GFile           *home;
+  GList           *system_paths = NULL;
   GList           *volumes;
   GList           *lp;
   guint            n;
   gchar           *desktop_path = NULL;
-  guint            desktop_index;
+  guint            index = 0;
 
 #ifndef NDEBUG
   model->stamp = g_random_int ();
@@ -288,45 +287,29 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   g_signal_connect (G_OBJECT (model->volume_manager), "volumes-added", G_CALLBACK (thunar_shortcuts_model_volumes_added), model);
   g_signal_connect (G_OBJECT (model->volume_manager), "volumes-removed", G_CALLBACK (thunar_shortcuts_model_volumes_removed), model);
 
+  home = g_file_new_for_home ();
+
   /* determine the system-defined paths */
-  system_path_list[0] = thunar_vfs_path_get_for_home ();
-  system_path_list[1] = thunar_vfs_path_get_for_trash ();
+  system_paths = g_list_append (system_paths, g_object_ref (home));
+  system_paths = g_list_append (system_paths, g_file_new_for_trash ());
 
-#if GLIB_CHECK_VERSION(2,14,0)
-  desktop_path = g_strdup (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
-#else /* GLIB_CHECK_VERSION(2,14,0) */
-  desktop_path = g_build_filename (G_DIR_SEPARATOR_S, xfce_get_homedir (),
-          "Desktop", NULL);
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
-  system_path_list[2] = thunar_vfs_path_new (desktop_path, NULL);
-  if (G_UNLIKELY (system_path_list[2] == NULL))
-    system_path_list[2] = thunar_vfs_path_relative (system_path_list[0],
-            "Desktop");
-  desktop_index = 2;
+  desktop = g_file_new_for_desktop ();
 
-  g_free (desktop_path);
+  if (!g_file_equal (desktop, home))
+    system_paths = g_list_append (system_paths, desktop);
+  else
+    g_object_unref (desktop);
 
-  system_path_list[3] = thunar_vfs_path_get_for_root ();
+  system_paths = g_list_append (system_paths, g_file_new_for_root ());
 
   /* will be used to append the shortcuts to the list */
   path = gtk_tree_path_new_from_indices (0, -1);
 
   /* append the system defined items ('Home', 'Trash', 'File System') */
-  for (n = 0; n < G_N_ELEMENTS (system_path_list); ++n)
+  for (lp = system_paths; lp != NULL; lp = lp->next)
     {
-#if GLIB_CHECK_VERSION(2, 14, 0)
-      /* we exclude the desktop if it points to home */
-      if (n == desktop_index
-          && exo_str_is_equal (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP),
-                                                       xfce_get_homedir ()))
-        {
-          thunar_vfs_path_unref (system_path_list[n]);
-          continue;
-        }
-#endif
-
       /* determine the file for the path */
-      file = thunar_file_get_for_path (system_path_list[n], NULL);
+      file = thunar_file_get (lp->data, NULL);
       if (G_LIKELY (file != NULL))
         {
           /* create the shortcut */
@@ -334,8 +317,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
           shortcut->type = THUNAR_SHORTCUT_SYSTEM_DEFINED;
           shortcut->file = file;
 
-#if GLIB_CHECK_VERSION(2,14,0)
-          if (n == desktop_index)
+          if (g_file_is_desktop (lp->data))
             {
               gchar *old_locale = NULL;
               gchar *locale = NULL;
@@ -357,7 +339,6 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
 
               setlocale (LC_MESSAGES, old_locale);
             }
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
 
           /* append the shortcut to the list */
           thunar_shortcuts_model_add_shortcut (model, shortcut, path);
@@ -365,8 +346,10 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
         }
 
       /* release the system defined path */
-      thunar_vfs_path_unref (system_path_list[n]);
+      g_object_unref (lp->data);
     }
+
+  g_list_free (system_paths);
 
   /* prepend the removable media volumes */
   volumes = thunar_vfs_volume_manager_get_volumes (model->volume_manager);
@@ -399,28 +382,26 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
         }
     }
 
-  /* prepend the row separator (only supported with Gtk+ 2.6) */
-#if GTK_CHECK_VERSION(2,6,0)
+  /* prepend the row separator */
   shortcut = _thunar_slice_new0 (ThunarShortcut);
   shortcut->type = THUNAR_SHORTCUT_SEPARATOR;
   thunar_shortcuts_model_add_shortcut (model, shortcut, path);
   gtk_tree_path_next (path);
-#endif
 
   /* determine the URI to the Gtk+ bookmarks file */
-  fhome = thunar_vfs_path_get_for_home ();
-  fpath = thunar_vfs_path_relative (fhome, ".gtk-bookmarks");
-  thunar_vfs_path_unref (fhome);
+  bookmarks = g_file_resolve_relative_path (home, ".gtk-bookmarks");
 
   /* register with the alteration monitor for the bookmarks file */
-  model->monitor = thunar_vfs_monitor_get_default ();
-  model->handle = thunar_vfs_monitor_add_file (model->monitor, fpath, thunar_shortcuts_model_monitor, G_OBJECT (model));
+  model->monitor = g_file_monitor_file (bookmarks, G_FILE_MONITOR_NONE, NULL, NULL);
+  if (model->monitor != NULL)
+    g_signal_connect (model->monitor, "changed", G_CALLBACK (thunar_shortcuts_model_monitor), model);
 
   /* read the Gtk+ bookmarks file */
   thunar_shortcuts_model_load (model);
 
   /* cleanup */
-  thunar_vfs_path_unref (fpath);
+  g_object_unref (bookmarks);
+  g_object_unref (home);
   gtk_tree_path_free (path);
 }
 
@@ -447,8 +428,11 @@ thunar_shortcuts_model_finalize (GObject *object)
   g_list_free (model->hidden_volumes);
 
   /* detach from the VFS monitor */
-  thunar_vfs_monitor_remove (model->monitor, model->handle);
-  g_object_unref (G_OBJECT (model->monitor));
+  if (model->monitor != NULL)
+    {
+      g_file_monitor_cancel (model->monitor);
+      g_object_unref (G_OBJECT (model->monitor));
+    }
 
   /* unlink from the volume manager */
   g_signal_handlers_disconnect_matched (G_OBJECT (model->volume_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
@@ -807,7 +791,6 @@ thunar_shortcuts_model_remove_shortcut (ThunarShortcutsModel *model,
     }
 }
 
-#if GLIB_CHECK_VERSION(2, 14, 0)
 /* Reads the current xdg user dirs locale from ~/.config/xdg-user-dirs.locale
  * Notice that the result shall be freed by using g_free (). */
 gchar *
@@ -836,21 +819,23 @@ _thunar_get_xdg_user_dirs_locale (void)
 
   return locale;
 }
-#endif
 
 static void
 thunar_shortcuts_model_load (ThunarShortcutsModel *model)
 {
   ThunarShortcut *shortcut;
-  ThunarVfsPath   *file_path;
   GtkTreePath     *path;
+  const gchar     *user_special_dir = NULL;
   ThunarFile      *file;
+  GFile           *file_path;
+  GFile           *home;
   gchar           *bookmarks_path;
   gchar            line[2048];
   gchar           *name;
   FILE            *fp;
   gint             i;
-  gchar           *user_special_dir = NULL;
+
+  home = g_file_new_for_home ();
 
   /* determine the path to the GTK+ bookmarks file */
   bookmarks_path = xfce_get_homefile (".gtk-bookmarks", NULL);
@@ -879,13 +864,12 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
             ;
 
           /* parse the URI */
-          file_path = thunar_vfs_path_new (line, NULL);
-          if (G_UNLIKELY (file_path == NULL))
-            continue;
+          file_path = g_file_new_for_uri (line);
 
           /* try to open the file corresponding to the uri */
-          file = thunar_file_get_for_path (file_path, NULL);
-          thunar_vfs_path_unref (file_path);
+          file = thunar_file_get (file_path, NULL);
+          g_object_unref (file_path);
+
           if (G_UNLIKELY (file == NULL))
             continue;
 
@@ -911,7 +895,6 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
       gtk_tree_path_free (path);
       fclose (fp);
     }
-#if GLIB_CHECK_VERSION(2,14,0)
   else
     {
       /* ~/.gtk-bookmarks wasn't there or it was unreadable.
@@ -935,9 +918,9 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
       path = gtk_tree_path_new_from_indices (g_list_length (model->shortcuts), -1);
       for (i = G_USER_DIRECTORY_DESKTOP;
            i < G_USER_N_DIRECTORIES && _thunar_user_directory_names[i] != NULL;
-           i++)
+           ++i)
         {
-          /* let's ignore some directories we don't want in the side pane*/
+          /* let's ignore some directories we don't want in the side pane */
           if (i == G_USER_DIRECTORY_DESKTOP
               || i == G_USER_DIRECTORY_PUBLIC_SHARE
               || i == G_USER_DIRECTORY_TEMPLATES)
@@ -945,29 +928,29 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
               continue;
             }
 
-          user_special_dir = (gchar *) g_get_user_special_dir (i);
+          user_special_dir = g_get_user_special_dir (i);
 
-          if (G_UNLIKELY (user_special_dir == NULL)
-              || exo_str_is_equal (user_special_dir, xfce_get_homedir ()))
-            {
-               continue;
-            }
-
-          /* parse the URI */
-          file_path = thunar_vfs_path_new (user_special_dir, NULL);
-          if (G_UNLIKELY (file_path == NULL))
+          if (G_UNLIKELY (user_special_dir == NULL))
             continue;
 
+          file_path = g_file_new_for_path (user_special_dir);
+          if (G_UNLIKELY (g_file_equal (file_path, home)))
+            {
+              g_object_unref (file_path);
+              continue;
+            }
+
           /* try to open the file corresponding to the uri */
-          file = thunar_file_get_for_path (file_path, NULL);
-          thunar_vfs_path_unref (file_path);
+          file = thunar_file_get (file_path, NULL);
+          g_object_unref (file_path);
+
           if (G_UNLIKELY (file == NULL))
             continue;
 
           /* make sure the file refers to a directory */
           if (G_UNLIKELY (!thunar_file_is_directory (file)))
             {
-              g_object_unref (G_OBJECT (file));
+              g_object_unref (file);
               continue;
             }
 
@@ -975,7 +958,8 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
           shortcut = _thunar_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
           shortcut->file = file;
-          shortcut->name = g_strdup (dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]));
+          shortcut->name = g_strdup (dgettext (XDG_USER_DIRS_PACKAGE, 
+                                               (gchar *) _thunar_user_directory_names[i]));
 
           /* append the shortcut to the list */
           thunar_shortcuts_model_add_shortcut (model, shortcut, path);
@@ -990,31 +974,29 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
       /* we try to save the obtained new model */
       thunar_shortcuts_model_save (model);
     }
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
 
   /* clean up */
+  g_object_unref (home);
   g_free (bookmarks_path);
 }
 
 
 
 static void
-thunar_shortcuts_model_monitor (ThunarVfsMonitor       *monitor,
-                                ThunarVfsMonitorHandle *handle,
-                                ThunarVfsMonitorEvent   event,
-                                ThunarVfsPath          *handle_path,
-                                ThunarVfsPath          *event_path,
-                                gpointer                user_data)
+thunar_shortcuts_model_monitor (GFileMonitor     *monitor,
+                                GFile            *file,
+                                GFile            *other_file,
+                                GFileMonitorEvent event_type,
+                                gpointer          user_data)
 {
   ThunarShortcutsModel *model = THUNAR_SHORTCUTS_MODEL (user_data);
   ThunarShortcut       *shortcut;
-  GtkTreePath           *path;
-  GList                 *lp;
-  gint                   index;
+  GtkTreePath          *path;
+  GList                *lp;
+  gint                  index;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
   _thunar_return_if_fail (model->monitor == monitor);
-  _thunar_return_if_fail (model->handle == handle);
 
   /* drop all existing user-defined shortcuts from the model */
   for (index = 0, lp = model->shortcuts; lp != NULL; )
@@ -1055,12 +1037,12 @@ static void
 thunar_shortcuts_model_save (ThunarShortcutsModel *model)
 {
   ThunarShortcut *shortcut;
-  gchar           *bookmarks_path;
-  gchar           *tmp_path;
-  gchar           *uri;
-  GList           *lp;
-  FILE            *fp;
-  gint             fd;
+  gchar          *bookmarks_path;
+  gchar          *tmp_path;
+  gchar          *uri;
+  GList          *lp;
+  FILE           *fp;
+  gint            fd;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
 
@@ -1082,7 +1064,7 @@ thunar_shortcuts_model_save (ThunarShortcutsModel *model)
       shortcut = THUNAR_SHORTCUT (lp->data);
       if (shortcut->type == THUNAR_SHORTCUT_USER_DEFINED)
         {
-          uri = thunar_vfs_path_dup_uri (thunar_file_get_path (shortcut->file));
+          uri = g_file_get_uri (thunar_file_get_file (shortcut->file));
           if (G_LIKELY (shortcut->name != NULL))
             fprintf (fp, "%s %s\n", uri, shortcut->name);
           else
@@ -1115,10 +1097,10 @@ thunar_shortcuts_model_file_changed (ThunarFile           *file,
                                      ThunarShortcutsModel *model)
 {
   ThunarShortcut *shortcut;
-  GtkTreePath     *path;
-  GtkTreeIter      iter;
-  GList           *lp;
-  gint             index;
+  GtkTreePath    *path;
+  GtkTreeIter     iter;
+  GList          *lp;
+  gint            index;
 
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));

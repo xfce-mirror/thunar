@@ -54,6 +54,14 @@ g_file_new_for_trash (void)
 
 
 
+GFile *
+g_file_new_for_desktop (void)
+{
+  return g_file_new_for_path (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP));
+}
+
+
+
 gboolean
 g_file_is_root (GFile *file)
 {
@@ -77,6 +85,23 @@ g_file_is_trashed (GFile *file)
 {
   _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
   return g_file_has_uri_scheme (file, "trash");
+}
+
+
+
+gboolean
+g_file_is_desktop (GFile *file)
+{
+  GFile   *desktop;
+  gboolean is_desktop;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+
+  desktop = g_file_new_for_desktop ();
+  is_desktop = g_file_equal (desktop, file);
+  g_object_unref (desktop);
+
+  return is_desktop;
 }
 
 
