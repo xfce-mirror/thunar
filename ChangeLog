@@ -1,3 +1,10 @@
+2009-04-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-clipboard-manager.c: Remove GTK+ 2.6 check.
+	* thunar/thunar-dbus-service.c: Replace ThunarVfsPath with GFile in
+	  thunar_dbus_service_connect_trash_bin() and
+	  thunar_dbus_service_display_folder_and_select().
+
 2009-04-15	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-standard-view.c: Use GFile instead of ThunarVfsPath in
