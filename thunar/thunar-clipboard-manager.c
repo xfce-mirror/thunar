@@ -345,13 +345,9 @@ thunar_clipboard_manager_contents_received (GtkClipboard     *clipboard,
       if (G_UNLIKELY (!path_copy))
         gtk_clipboard_clear (manager->clipboard);
 
-      /* check the contents of the clipboard again
-       * if either the Xserver or our GTK+ version
-       * doesn't support the XFixes extension.
-       */
-#if GTK_CHECK_VERSION(2,6,0)
+      /* check the contents of the clipboard again if either the Xserver or 
+       * our GTK+ version doesn't support the XFixes extension */
       if (!gdk_display_supports_selection_notification (gtk_clipboard_get_display (manager->clipboard)))
-#endif
         {
           thunar_clipboard_manager_owner_changed (manager->clipboard, NULL, manager);
         }

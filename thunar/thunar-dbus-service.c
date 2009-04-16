@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -252,14 +253,14 @@ static gboolean
 thunar_dbus_service_connect_trash_bin (ThunarDBusService *dbus_service,
                                        GError           **error)
 {
-  ThunarVfsPath *trash_bin_path;
+  GFile *trash_bin_path;
 
   /* check if we're not already connected to the trash bin */
   if (G_UNLIKELY (dbus_service->trash_bin == NULL))
     {
       /* try to connect to the trash bin */
-      trash_bin_path = thunar_vfs_path_get_for_trash ();
-      dbus_service->trash_bin = thunar_file_get_for_path (trash_bin_path, error);
+      trash_bin_path = g_file_new_for_trash ();
+      dbus_service->trash_bin = thunar_file_get (trash_bin_path, error);
       if (G_LIKELY (dbus_service->trash_bin != NULL))
         {
           /* watch the trash bin for changes */
@@ -270,7 +271,7 @@ thunar_dbus_service_connect_trash_bin (ThunarDBusService *dbus_service,
                                     G_CALLBACK (thunar_dbus_service_trash_bin_changed),
                                     dbus_service);
         }
-      thunar_vfs_path_unref (trash_bin_path);
+      g_object_unref (trash_bin_path);
     }
 
   return (dbus_service->trash_bin != NULL);
@@ -380,11 +381,11 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusService *dbus_service,
                                                GError           **error)
 {
   ThunarApplication *application;
-  ThunarVfsPath     *path;
   ThunarFile        *file;
   ThunarFile        *folder;
   GdkScreen         *screen;
   GtkWidget         *window;
+  GFile             *path;
 
   /* verify that filename is valid */
   if (G_UNLIKELY (filename == NULL || *filename == '\0' || strchr (filename, '/') != NULL))
@@ -400,30 +401,30 @@ thunar_dbus_service_display_folder_and_select (ThunarDBusService *dbus_service,
   /* popup a new window for the folder */
   application = thunar_application_get ();
   window = thunar_application_open_window (application, folder, screen);
-  g_object_unref (G_OBJECT (application));
+  g_object_unref (application);
 
   /* determine the path for the filename relative to the folder */
-  path = thunar_vfs_path_relative (thunar_file_get_path (folder), filename);
+  path = g_file_resolve_relative_path (thunar_file_get_file (folder), filename);
   if (G_LIKELY (path != NULL))
     {
       /* try to determine the file for the path */
-      file = thunar_file_get_for_path (path, NULL);
+      file = thunar_file_get (path, NULL);
       if (G_LIKELY (file != NULL))
         {
           /* tell the window to scroll to the given file and select it */
           thunar_window_scroll_to_file (THUNAR_WINDOW (window), file, TRUE, TRUE, 0.5f, 0.5f);
 
           /* release the file reference */
-          g_object_unref (G_OBJECT (file));
+          g_object_unref (file);
         }
 
       /* release the path */
-      thunar_vfs_path_unref (path);
+      g_object_unref (path);
     }
 
   /* cleanup */
-  g_object_unref (G_OBJECT (screen));
-  g_object_unref (G_OBJECT (folder));
+  g_object_unref (screen);
+  g_object_unref (folder);
 
   return TRUE;
 }
