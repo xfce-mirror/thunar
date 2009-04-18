@@ -2,6 +2,15 @@
 
 	* configure.in.in, docs/manual/gl/images/: Fix broken build due
 	  to incomplete integration of the Galician manual translations.
+
+2009-04-07  Mike Massonnet <mmassonnet@xfce.org>
+
+	* plugins/thunar-wallpaper/twp-provider.c(twp_action_set_wallpaper):
+	  Escape spaces in filename (bug #5056) and set style auto (bug #5057)
+	* plugins/thunar-wallpaper/twp-provider.c(twp_action_set_wallpaper),
+	  plugins/thunar-wallpaper/twp-provider.c(check_cli_tools):
+	  Don't pretend gconftool exists (if it exists it is just a symlink),
+	  instead look for gconftool-2
 	
 2009-03-12  Jannis Pohlmann <jannis@xfce.org>
 

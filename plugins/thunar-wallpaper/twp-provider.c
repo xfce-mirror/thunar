@@ -1,6 +1,6 @@
 /*
  * Copyright (c) 2008 Stephan Arts <stephan@xfce.org>
- * Copyright (c) 2008 Mike Massonnet <mmassonnet@xfce.org>
+ * Copyright (c) 2008-2009 Mike Massonnet <mmassonnet@xfce.org>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Library General Public
@@ -243,7 +243,7 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
             image_show_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-show", screen_nr, monitor_nr);
             image_style_prop = g_strdup_printf("/backdrop/screen%d/monitor%d/image-style", screen_nr, monitor_nr);
 
-            command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t string -s %s", image_path_prop, file_name);
+            command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t string -s \"%s\"", image_path_prop, file_name);
             g_spawn_command_line_async (command, NULL);
             g_free (command);
 
@@ -251,7 +251,7 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
             g_spawn_command_line_async (command, NULL);
             g_free (command);
 
-            command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t int -s 4", image_style_prop);
+            command = g_strdup_printf ("xfconf-query -c xfce4-desktop -p %s --create -t int -s 0", image_style_prop);
             g_spawn_command_line_async (command, NULL);
             g_free (command);
 
@@ -264,12 +264,12 @@ twp_action_set_wallpaper (GtkAction *action, gpointer user_data)
             image_path_prop = g_strdup_printf("/desktop/gnome/background/picture_filename");
             image_show_prop = g_strdup_printf("/desktop/gnome/background/draw_background");
 
-            command = g_strdup_printf ("gconftool %s --set %s--type string", image_path_prop, file_name);
+            command = g_strdup_printf ("gconftool-2 %s --set %s--type string", image_path_prop, file_name);
             g_spawn_command_line_async (command, NULL);
             g_free (command);
 
 
-            command = g_strdup_printf ("gconftool %s --set true --type boolean", image_show_prop);
+            command = g_strdup_printf ("gconftool-2 %s --set true --type boolean", image_show_prop);
             g_spawn_command_line_async (command, NULL);
             g_free (command);
 
@@ -298,7 +298,7 @@ check_cli_tools ()
     g_free (program);
   }
 
-  program = g_find_program_in_path ("gconftool");
+  program = g_find_program_in_path ("gconftool-2");
   if (G_LIKELY (program != NULL))
   {
     _has_gconftool = TRUE;
