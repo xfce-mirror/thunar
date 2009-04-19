@@ -4,6 +4,19 @@
 	  of thunar_vfs_path_list_to_string() in
 	  thunar_location_button_drag_data_get().
 
+2009-04-18  Stephan Arts <stephan@xfce.org>
+
+	* == Released 1.0.1 ==
+	* configure.in.in: Bump version number 
+	* NEWS: Update NEWS for the release
+	* plugins/thunar-wallpaper/twp-provider.c(twp_action_set_wallpaper):
+	  Escape spaces in filename (bug #5056) and set style auto (bug #5057) -
+	  Patch by Mike Massonnet
+	* plugins/thunar-wallpaper/twp-provider.c(twp_action_set_wallpaper),
+	  plugins/thunar-wallpaper/twp-provider.c(check_cli_tools):
+	  Don't pretend gconftool exists (if it exists it is just a symlink),
+	  instead look for gconftool-2 - Patch by Mike Massonnet
+
 2009-04-17	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-clipboard-manager.c: Remove GTK+ 2.6 check.
