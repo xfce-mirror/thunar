@@ -667,8 +667,8 @@ thunar_location_button_drag_data_get (GtkWidget            *button,
   if (G_LIKELY (location_button->file != NULL))
     {
       /* transform the path into an uri list string */
-      path_list.data = thunar_file_get_path (location_button->file); path_list.next = path_list.prev = NULL;
-      uri_string = thunar_vfs_path_list_to_string (&path_list);
+      path_list.data = thunar_file_get_file (location_button->file); path_list.next = path_list.prev = NULL;
+      uri_string = g_file_list_to_string (&path_list);
 
       /* set the uri list for the drag selection */
       gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
