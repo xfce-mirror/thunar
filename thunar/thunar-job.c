@@ -64,6 +64,9 @@ static void     thunar_job_class_init          (ThunarJobClass     *klass);
 static void     thunar_job_init                (ThunarJob          *job);
 static void     thunar_job_finalize            (GObject            *object);
 
+static void     _thunar_job_error              (ThunarJob          *job,
+                                                GError             *error);
+static void     _thunar_job_finished           (ThunarJob          *job);
 static gboolean _thunar_job_finish             (ThunarJob          *job,
                                                 GSimpleAsyncResult *result,
                                                 GError            **error);
@@ -217,11 +220,11 @@ _thunar_job_async_ready (GObject      *object,
   if (!_thunar_job_finish (job, G_SIMPLE_ASYNC_RESULT (result), &error))
     {
       g_assert (error != NULL);
-      thunar_job_error (job, error);
+      _thunar_job_error (job, error);
       g_error_free (error);
     }
 
-  thunar_job_finished (job);
+  _thunar_job_finished (job);
 }
 
 
@@ -368,6 +371,8 @@ _thunar_job_emit_valist_in_mainloop (gpointer user_data)
                         data->signal_id, 
                         data->signal_detail, 
                         data->var_args);
+
+  return FALSE;
 }
 
 
@@ -414,9 +419,9 @@ thunar_job_emit (ThunarJob *job,
 
 
 
-void
-thunar_job_error (ThunarJob *job,
-                  GError    *error)
+static void
+_thunar_job_error (ThunarJob *job,
+                   GError    *error)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (error != NULL);
@@ -427,10 +432,9 @@ thunar_job_error (ThunarJob *job,
 
 
 
-void
-thunar_job_finished (ThunarJob *job)
+static void
+_thunar_job_finished (ThunarJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
-
   g_signal_emit (job, job_signals[FINISHED], 0);
 }

@@ -808,9 +808,8 @@ thunar_preferences_monitor (GFileMonitor           *monitor,
   ThunarPreferences *preferences = THUNAR_PREFERENCES (user_data);
 
   _thunar_return_if_fail (THUNAR_IS_PREFERENCES (preferences));
-  _thunar_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
   _thunar_return_if_fail (preferences->monitor == monitor);
-  _thunar_return_if_fail (preferences->handle == handle);
 
   /* schedule a reload whenever the file is created/changed */
   if (event_type == G_FILE_MONITOR_EVENT_CHANGED 

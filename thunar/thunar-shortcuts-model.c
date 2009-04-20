@@ -275,9 +275,6 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
   GList           *system_paths = NULL;
   GList           *volumes;
   GList           *lp;
-  guint            n;
-  gchar           *desktop_path = NULL;
-  guint            index = 0;
 
 #ifndef NDEBUG
   model->stamp = g_random_int ();

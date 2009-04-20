@@ -656,13 +656,10 @@ thunar_chooser_dialog_update_accept (ThunarChooserDialog *dialog)
 static void
 thunar_chooser_dialog_update_header (ThunarChooserDialog *dialog)
 {
-  ThunarIconFactory *icon_factory;
-  GtkIconTheme      *icon_theme;
-  const gchar       *content_type;
-  const gchar       *icon_name;
-  GIcon             *icon;
-  gchar             *description;
-  gchar             *text;
+  const gchar *content_type;
+  GIcon       *icon;
+  gchar       *description;
+  gchar       *text;
 
   _thunar_return_if_fail (THUNAR_IS_CHOOSER_DIALOG (dialog));
   _thunar_return_if_fail (GTK_WIDGET_REALIZED (dialog));
