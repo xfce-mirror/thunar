@@ -655,11 +655,13 @@ thunar_window_setup_user_dir_menu_entries (ThunarWindow *window)
       /* special case: got NULL for the templates dir. Force it to ~/Templates */
       if (G_UNLIKELY (path == NULL && i == G_USER_DIRECTORY_TEMPLATES))
         dir = g_file_resolve_relative_path (home_dir, _thunar_user_directory_names[i]);
-      else
+      else if (path != NULL)
         dir = g_file_new_for_path (path);
+      else
+        continue;
 
       /* xdg user dirs pointing to $HOME must be considered disabled */
-      if (G_LIKELY (!g_file_equal (dir, home_dir)))
+      if (G_LIKELY (path != NULL && !g_file_equal (dir, home_dir)))
         {
           /* menu entry label translation */
           translation = dgettext (XDG_USER_DIRS_PACKAGE, (gchar *) _thunar_user_directory_names[i]);

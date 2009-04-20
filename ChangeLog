@@ -1,5 +1,11 @@
 2009-04-20	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-window.c: Fix runtime error due to an NULL path being
+	  passed to g_file_new_for_path() in
+	  thunar_window_setup_user_dir_menu_entries().
+
+2009-04-20	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-chooser-dialog.c, thunar/thunar-deep-count-job.c,
 	  thunar/thunar-job.c, thunar/thunar-preferences.c,
 	  thunar/thunar-shortcuts-model.c, thunar/thunar-size-label.c: Fix
