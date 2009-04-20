@@ -94,6 +94,8 @@ Thunar_SOURCES =							\
 	thunar-icon-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
+	thunar-job.c							\
+	thunar-job.h							\
 	thunar-launcher.c						\
 	thunar-launcher.h						\
 	thunar-launcher-ui.h						\

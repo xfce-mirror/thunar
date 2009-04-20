@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2006-2007 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -271,4 +272,27 @@ thunar_icon_size_from_zoom_level (const GValue *src_value,
 
 
 
+GType
+thunar_vfs_job_response_get_type (void)
+{
+	static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+	    static const GFlagsValue values[] = 
+      {
+	      { THUNAR_JOB_RESPONSE_YES,     "THUNAR_JOB_RESPONSE_YES",     "yes"     },
+	      { THUNAR_JOB_RESPONSE_YES_ALL, "THUNAR_JOB_RESPONSE_YES_ALL", "yes-all" },
+	      { THUNAR_JOB_RESPONSE_NO,      "THUNAR_JOB_RESPONSE_NO",      "no"      },
+	      { THUNAR_JOB_RESPONSE_CANCEL,  "THUNAR_JOB_RESPONSE_CANCEL",  "cancel"  },
+	      { THUNAR_JOB_RESPONSE_NO_ALL,  "THUNAR_JOB_RESPONSE_NO_ALL",  "no-all"  },
+	      { THUNAR_JOB_RESPONSE_RETRY,   "THUNAR_JOB_RESPONSE_RETRY",   "retry"   },
+	      { 0,                           NULL,                          NULL      }
+	    };
+
+	    type = g_flags_register_static (I_("ThunarJobResponse"), values);
+    }
+
+	return type;
+}
 

@@ -1,3 +1,14 @@
+2009-04-20	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-enum-types.{c,h},
+	  thunar/thunar-job.{c,h}, thunar/thunar-marshal.list: Add abstract 
+	  class ThunarJob which is going to be an equivalent to ThunarVfsJob. 
+	  The main difference is that ThunarJob uses GIOScheduler to handle 
+	  the asynchronous execution of the job instead of managing worker 
+	  threads on its own. It's not finished yet though. Add 
+	  ThunarJobResponse enum type and new marshal functions for job
+	  signals.
+
 2009-04-19	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-location-button.c: Use g_file_list_to_string() instead

@@ -1,0 +1,416 @@
+/* $Id$ */
+/*-
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Library General Public
+ * License as published by the Free Software Foundation; either
+ * version 2 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Library General Public License for more details.
+ *
+ * You should have received a copy of the GNU Library General Public
+ * License along with this library; if not, write to the
+ * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+ * Boston, MA 02111-1307, USA.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#ifdef HAVE_MEMORY_H
+#include <memory.h>
+#endif
+#ifdef HAVE_STRING_H
+#include <string.h>
+#endif
+
+#include <thunar/thunar-enum-types.h>
+#include <thunar/thunar-job.h>
+#include <thunar/thunar-marshal.h>
+#include <thunar/thunar-private.h>
+
+
+
+#define THUNAR_JOB_GET_PRIVATE(obj) (G_TYPE_INSTANCE_GET_PRIVATE ((obj), THUNAR_TYPE_JOB, ThunarJobPrivate))
+
+
+
+/* Signal identifiers */
+enum
+{
+  ASK,
+  ASK_REPLACE,
+  ERROR,
+  FINISHED,
+  INFO_MESSAGE,
+  INFOS_READY,
+  NEW_FILES,
+  PERCENT,
+  LAST_SIGNAL,
+};
+
+
+
+typedef struct _ThunarJobSyncSignalData  ThunarJobSyncSignalData;
+
+
+
+static void     thunar_job_class_init          (ThunarJobClass     *klass);
+static void     thunar_job_init                (ThunarJob          *job);
+static void     thunar_job_finalize            (GObject            *object);
+
+static gboolean _thunar_job_finish             (ThunarJob          *job,
+                                                GSimpleAsyncResult *result,
+                                                GError            **error);
+static void     _thunar_job_async_ready        (GObject            *object,
+                                                GAsyncResult       *result);
+static gboolean _thunar_job_scheduler_job_func (GIOSchedulerJob    *scheduler_job,
+                                                GCancellable       *cancellable,
+                                                gpointer            user_data);
+
+
+
+struct _ThunarJobPrivate
+{
+  GIOSchedulerJob *scheduler_job;
+  GCancellable    *cancellable;
+  guint            running : 1;
+};
+
+struct _ThunarJobSyncSignalData
+{
+  gpointer instance;
+  GQuark   signal_detail;
+  guint    signal_id;
+  va_list  var_args;
+};
+
+
+
+static GObjectClass *thunar_job_parent_class;
+static guint         job_signals[LAST_SIGNAL];
+
+
+
+GType
+thunar_job_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = g_type_register_static_simple (G_TYPE_OBJECT,
+                                            "ThunarJob",
+                                            sizeof (ThunarJobClass),
+                                            (GClassInitFunc) thunar_job_class_init,
+                                            sizeof (ThunarJob),
+                                            (GInstanceInitFunc) thunar_job_init,
+                                            G_TYPE_FLAG_ABSTRACT);
+    }
+
+  return type;
+}
+
+
+
+static void
+thunar_job_class_init (ThunarJobClass *klass)
+{
+  GObjectClass *gobject_class;
+
+  /* add our private data for this class */
+  g_type_class_add_private (klass, sizeof (ThunarJobPrivate));
+
+  /* determine the parent class */
+  thunar_job_parent_class = g_type_class_peek_parent (klass);
+
+  gobject_class = G_OBJECT_CLASS (klass);
+  gobject_class->finalize = thunar_job_finalize;
+
+  klass->execute = NULL;
+
+  /**
+   * ThunarJob::error:
+   * @job   : a #ThunarJob.
+   * @error : a #GError describing the cause.
+   *
+   * Emitted whenever an error occurs while executing the @job.
+   **/
+  job_signals[ERROR] =
+    g_signal_new (I_("error"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarJob::finished:
+   * @job : a #ThunarJob.
+   *
+   * This signal will be automatically emitted once the
+   * @job finishes its execution, no matter whether @job
+   * completed successfully or was cancelled by the
+   * user.
+   **/
+  job_signals[FINISHED] =
+    g_signal_new (I_("finished"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__VOID,
+                  G_TYPE_NONE, 0);
+}
+
+
+
+static void
+thunar_job_init (ThunarJob *job)
+{
+  job->priv = THUNAR_JOB_GET_PRIVATE (job);
+  job->priv->cancellable = g_cancellable_new ();
+  job->priv->running = FALSE;
+  job->priv->scheduler_job = NULL;
+}
+
+
+
+static void
+thunar_job_finalize (GObject *object)
+{
+  ThunarJob *job = THUNAR_JOB (object);
+
+  g_object_unref (job->priv->cancellable);
+
+  (*G_OBJECT_CLASS (thunar_job_parent_class)->finalize) (object);
+}
+
+
+
+static gboolean
+_thunar_job_finish (ThunarJob          *job,
+                    GSimpleAsyncResult *result,
+                    GError            **error)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (G_IS_SIMPLE_ASYNC_RESULT (result), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  return !g_simple_async_result_propagate_error (result, error);
+}
+
+
+
+static void
+_thunar_job_async_ready (GObject      *object,
+                         GAsyncResult *result)
+{
+  ThunarJob *job = THUNAR_JOB (object);
+  GError    *error = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (G_IS_SIMPLE_ASYNC_RESULT (result));
+
+  if (!_thunar_job_finish (job, G_SIMPLE_ASYNC_RESULT (result), &error))
+    {
+      g_assert (error != NULL);
+      thunar_job_error (job, error);
+      g_error_free (error);
+    }
+
+  thunar_job_finished (job);
+}
+
+
+
+static gboolean
+_thunar_job_scheduler_job_func (GIOSchedulerJob *scheduler_job,
+                                GCancellable    *cancellable,
+                                gpointer         user_data)
+{
+  GSimpleAsyncResult *result = user_data;
+  ThunarJob          *job;
+  GError             *error = NULL;
+  gboolean            success;
+
+  job = g_simple_async_result_get_op_res_gpointer (result);
+  job->priv->scheduler_job = scheduler_job;
+
+  success = (*THUNAR_JOB_GET_CLASS (job)->execute) (job, &error);
+
+  /* TODO why was this necessary again? */
+  g_io_scheduler_job_send_to_mainloop (scheduler_job, 
+                                       (GSourceFunc) gtk_false, 
+                                       NULL, 
+                                       NULL);
+
+  if (!success)
+    {
+      g_simple_async_result_set_from_error (result, error);
+      g_error_free (error);
+    }
+
+  g_simple_async_result_complete_in_idle (result);
+
+  return FALSE;
+}
+
+
+
+/**
+ * thunar_job_launch:
+ * @job : a #ThunarJob.
+ *
+ * This functions schedules @job to be run as soon
+ * as possible, in a separate thread.
+ *
+ * Return value: a pointer to @job.
+ **/
+ThunarJob*
+thunar_job_launch (ThunarJob *job)
+{
+  GSimpleAsyncResult *result;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
+  _thunar_return_val_if_fail (!job->priv->running, NULL);
+  _thunar_return_val_if_fail (THUNAR_JOB_GET_CLASS (job)->execute != NULL, NULL);
+
+  /* mark the job as running */
+  job->priv->running = TRUE;
+
+  result = g_simple_async_result_new (G_OBJECT (job),
+                                      (GAsyncReadyCallback) _thunar_job_async_ready,
+                                      NULL,
+                                      thunar_job_launch);
+
+  g_simple_async_result_set_op_res_gpointer (result,
+                                             g_object_ref (job),
+                                             (GDestroyNotify) g_object_unref);
+
+  g_io_scheduler_push_job (_thunar_job_scheduler_job_func,
+                           result,
+                           (GDestroyNotify) g_object_unref,
+                           G_PRIORITY_HIGH,
+                           job->priv->cancellable);
+
+  return job;
+}
+
+
+
+/**
+ * thunar_job_cancel:
+ * @job : a #ThunarJob.
+ *
+ * Attempts to cancel the operation currently
+ * performed by @job. Even after the cancellation
+ * of @job, it may still emit signals, so you
+ * must take care of disconnecting all handlers
+ * appropriately if you cannot handle signals
+ * after cancellation.
+ **/
+void
+thunar_job_cancel (ThunarJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  g_cancellable_cancel (job->priv->cancellable);
+}
+
+
+
+/**
+ * thunar_job_cancelled:
+ * @job : a #ThunarJob.
+ *
+ * Checks whether @job was previously cancelled
+ * by a call to thunar_job_cancel().
+ *
+ * Return value: %TRUE if @job is cancelled.
+ **/
+gboolean
+thunar_job_cancelled (const ThunarJob *job)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  return g_cancellable_is_cancelled (job->priv->cancellable);
+}
+
+
+
+static gboolean
+_thunar_job_emit_valist_in_mainloop (gpointer user_data)
+{
+  ThunarJobSyncSignalData *data = user_data;
+
+  g_signal_emit_valist (data->instance, 
+                        data->signal_id, 
+                        data->signal_detail, 
+                        data->var_args);
+}
+
+
+
+void
+thunar_job_emit_valist (ThunarJob *job,
+                        guint      signal_id,
+                        GQuark     signal_detail,
+                        va_list    var_args)
+{
+  ThunarJobSyncSignalData data;
+
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (job->priv->scheduler_job != NULL);
+
+  data.instance = job;
+  data.signal_id = signal_id;
+  data.signal_detail = signal_detail;
+  
+  /* copy the variable argument list */
+  G_VA_COPY (data.var_args, var_args);
+
+  /* emit the signal in the main loop */
+  g_io_scheduler_job_send_to_mainloop (job->priv->scheduler_job,
+                                       _thunar_job_emit_valist_in_mainloop,
+                                       &data,
+                                       NULL);
+}
+
+
+
+void
+thunar_job_emit (ThunarJob *job,
+                 guint      signal_id,
+                 GQuark     signal_detail,
+                 ...)
+{
+  va_list var_args;
+
+  va_start (var_args, signal_detail);
+  thunar_job_emit_valist (job, signal_id, signal_detail, var_args);
+  va_end (var_args);
+}
+
+
+
+void
+thunar_job_error (ThunarJob *job,
+                  GError    *error)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (error != NULL);
+  _thunar_return_if_fail (g_utf8_validate (error->message, -1, NULL));
+
+  thunar_job_emit (job, job_signals[ERROR], 0, error);
+}
+
+
+
+void
+thunar_job_finished (ThunarJob *job)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+
+  thunar_job_emit (job, job_signals[FINISHED], 0);
+}
