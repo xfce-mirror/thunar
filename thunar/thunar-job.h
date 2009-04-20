@@ -59,14 +59,19 @@ struct _ThunarJob
   ThunarJobPrivate *priv;
 };
 
-GType      thunar_job_get_type     (void) G_GNUC_CONST;
-ThunarJob *thunar_job_launch       (ThunarJob       *job);
-void       thunar_job_cancel       (ThunarJob       *job);
-gboolean   thunar_job_is_cancelled (const ThunarJob *job);
+GType         thunar_job_get_type               (void) G_GNUC_CONST;
+ThunarJob    *thunar_job_launch                 (ThunarJob       *job);
+void          thunar_job_cancel                 (ThunarJob       *job);
+gboolean      thunar_job_is_cancelled           (const ThunarJob *job);
 
-void       thunar_job_error        (ThunarJob       *job,
-                                    GError          *error);
-void       thunar_job_finished     (ThunarJob       *job);
+GCancellable *thunar_job_get_cancellable        (const ThunarJob *job);
+gboolean      thunar_job_set_error_if_cancelled (ThunarJob       *job,
+                                                 GError         **error);
+
+void          thunar_job_emit                   (ThunarJob       *job,
+                                                 guint            signal_id,
+                                                 GQuark           signal_detail,
+                                                 ...);
 
 G_END_DECLS
 

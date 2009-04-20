@@ -322,7 +322,7 @@ thunar_job_cancel (ThunarJob *job)
 
 
 /**
- * thunar_job_cancelled:
+ * thunar_job_is_cancelled:
  * @job : a #ThunarJob.
  *
  * Checks whether @job was previously cancelled
@@ -331,10 +331,30 @@ thunar_job_cancel (ThunarJob *job)
  * Return value: %TRUE if @job is cancelled.
  **/
 gboolean
-thunar_job_cancelled (const ThunarJob *job)
+thunar_job_is_cancelled (const ThunarJob *job)
 {
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   return g_cancellable_is_cancelled (job->priv->cancellable);
+}
+
+
+
+GCancellable *
+thunar_job_get_cancellable (const ThunarJob *job)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
+  return job->priv->cancellable;
+}
+
+
+
+gboolean
+thunar_job_set_error_if_cancelled (ThunarJob  *job,
+                                   GError    **error)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  return g_cancellable_set_error_if_cancelled (job->priv->cancellable, error);
 }
 
 
@@ -402,7 +422,7 @@ thunar_job_error (ThunarJob *job,
   _thunar_return_if_fail (error != NULL);
   _thunar_return_if_fail (g_utf8_validate (error->message, -1, NULL));
 
-  thunar_job_emit (job, job_signals[ERROR], 0, error);
+  g_signal_emit (job, job_signals[ERROR], 0, error);
 }
 
 
@@ -412,5 +432,5 @@ thunar_job_finished (ThunarJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
 
-  thunar_job_emit (job, job_signals[FINISHED], 0);
+  g_signal_emit (job, job_signals[FINISHED], 0);
 }

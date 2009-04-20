@@ -259,6 +259,8 @@ typedef enum /*< flags >*/
   THUNAR_JOB_RESPONSE_RETRY   = 1 << 5,
 } ThunarJobResponse;
 
+GType thunar_job_response_get_type (void) G_GNUC_CONST G_GNUC_INTERNAL;
+
 G_END_DECLS;
 
 #endif /* !__THUNAR_ENUM_TYPES_H__ */

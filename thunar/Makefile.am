@@ -57,6 +57,8 @@ Thunar_SOURCES =							\
 	thunar-create-dialog.h						\
 	thunar-debug.h							\
 	thunar-debug.c							\
+	thunar-deep-count-job.h						\
+	thunar-deep-count-job.c						\
 	thunar-details-view-ui.h					\
 	thunar-details-view.c						\
 	thunar-details-view.h						\
