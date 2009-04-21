@@ -42,6 +42,16 @@ void     g_file_list_free            (GList       *list);
 
 gchar   *g_file_size_humanize        (guint64      size);
 
+/**
+ * G_TYPE_FILE_LIST:
+ *
+ * Returns the type ID for #GList<!---->s of #GFile<!---->s which is a 
+ * boxed type.
+ **/
+#define G_TYPE_FILE_LIST (g_file_list_get_type ())
+
+GType g_file_list_get_type (void);
+
 G_END_DECLS
 
 #endif /* !__THUNAR_GLIB_EXTENSIONS_H__ */

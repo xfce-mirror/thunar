@@ -274,8 +274,7 @@ thunar_deep_count_job_process (ThunarJob *job,
                     break;
 
                   /* generate a GFile for the child */
-                  child = g_file_resolve_relative_path (file, 
-                                                        g_file_info_get_name (child_info));
+                  child = g_file_resolve_relative_path (file, g_file_info_get_name (child_info));
 
                   /* recurse unless the job was cancelled before */
                   if (!thunar_job_is_cancelled (job))
@@ -319,6 +318,7 @@ thunar_deep_count_job_execute (ThunarJob *job,
                                GError   **error)
 {
   gboolean success;
+  GError  *err = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -330,21 +330,29 @@ thunar_deep_count_job_execute (ThunarJob *job,
   /* count files, directories and compute size of the job file */
   success = thunar_deep_count_job_process (job, 
                                            THUNAR_DEEP_COUNT_JOB (job)->file, 
-                                           error);
+                                           &err);
 
-  /* avoid overwriting the error if the job was cancelled */
-  if (*error != NULL && thunar_job_is_cancelled (job))
+  if (!success)
     {
-      g_error_free (*error);
-      *error = NULL;
-    }
+      g_assert (err != NULL || thunar_job_is_cancelled (job));
 
-  /* set error if the job was cancelled. otherwise just propagate 
-   * the results of the processing function */
-  if (thunar_job_set_error_if_cancelled (job, error))
-    return FALSE;
+      /* set error if the job was cancelled. otherwise just propagate 
+       * the results of the processing function */
+      if (thunar_job_set_error_if_cancelled (job, error))
+        {
+          if (err != NULL)
+            g_error_free (err);
+        }
+      else
+        {
+          if (err != NULL)
+            g_propagate_error (error, err);
+        }
+      
+      return FALSE;
+    }
   else
-    return success;
+    return TRUE;
 }
 
 

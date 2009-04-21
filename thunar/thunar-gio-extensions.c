@@ -198,10 +198,10 @@ g_file_list_copy (GList *list)
   GList *copy = NULL;
   GList *lp;
 
-  for (list = NULL, lp = g_list_last (list); lp != NULL; lp = lp->prev)
+  for (lp = g_list_last (list); lp != NULL; lp = lp->prev)
     copy = g_list_prepend (copy, g_object_ref (lp->data));
 
-  return list;
+  return copy;
 }
 
 
@@ -239,4 +239,21 @@ g_file_size_humanize (guint64 size)
     buffer = g_strdup_printf ("%lu B", (gulong) size);
 
   return buffer;
+}
+
+
+
+GType
+g_file_list_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = g_boxed_type_register_static ("GFileList",
+                                           (GBoxedCopyFunc) g_file_list_copy,
+                                           (GBoxedFreeFunc) g_file_list_free);
+    }
+
+  return type;
 }

@@ -1,3 +1,12 @@
+2009-04-21	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-deep-count-job.c: Improve the error handling code in
+	  thunar_deep_count_job_execute(). 
+	* thunar/thunar-gio-extensions.{c,h}: Add G_TYPE_FILE_LIST macro and
+	  g_file_list_get_type() for a boxed GFile list type. Fix
+	  g_file_list_copy() to actually return the list copy and not the
+	  original. Don't set the original to NULL before iterating over it.
+
 2009-04-20	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-window.c: Fix runtime error due to an NULL path being
