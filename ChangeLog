@@ -1,5 +1,22 @@
 2009-04-21	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/Makefile.am, thunar/thunar-io-jobs.{c,h},
+	  thunar/thunar-simple.job.{c,h}: Add ThunarSimpleJob class which is
+	  equivalent to ThunarVfsSimpleJob. Add the first simple job by
+	  implementing thunar_io_job_create_files() as an equivalent to
+	  thunar_vfs_create_files(). The "new-files" signal is not implemented
+	  yet because it would break the new_files_closure.
+	* thunar/thunar-application.c: Add JobLauncher function pointer type
+	  as an equivalent to Launcher. Add thunar_application_launch_job() as
+	  an equivalent to thunar_application_launch() based on ThunarJob
+	  instead of ThunarVfsJob. Modify creat_stub() according to this. Use
+	  thunar_application_launch_job() in thunar_application_creat().
+	* thunar/thunar-job.{c,h}: Implement thunar_job_ask_skip().
+	* thunar/thunar-standard-view.c: Pass a GFile list instaed of a
+	  ThunarVfsPath list to thunar_application_creat().
+
+2009-04-21	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-enum-types.c: Remove vfs_ from
 	  thunar_vfs_job_response_get_type().
 	* thunar/thunar-gio-extensions.c: Include exo.h for the I_() macro.

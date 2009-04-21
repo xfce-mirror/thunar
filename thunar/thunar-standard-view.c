@@ -1806,17 +1806,17 @@ thunar_standard_view_action_create_empty_file (GtkAction          *action,
       if (G_LIKELY (current_directory != NULL))
         {
           /* fake the path list */
-          path_list.data = thunar_vfs_path_relative (thunar_file_get_path (current_directory), name);
+          path_list.data = g_file_resolve_relative_path (thunar_file_get_file (current_directory), name);
           path_list.next = path_list.prev = NULL;
 
           /* launch the operation */
           application = thunar_application_get ();
           thunar_application_creat (application, GTK_WIDGET (standard_view), &path_list,
                                     thunar_standard_view_new_files_closure (standard_view));
-          g_object_unref (G_OBJECT (application));
+          g_object_unref (application);
 
           /* release the path */
-          thunar_vfs_path_unref (path_list.data);
+          g_object_unref (path_list.data);
         }
 
       /* release the file name in the local encoding */

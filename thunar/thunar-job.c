@@ -81,6 +81,7 @@ static gboolean _thunar_job_scheduler_job_func (GIOSchedulerJob    *scheduler_jo
 struct _ThunarJobPrivate
 {
   ThunarJobResponse earlier_ask_overwrite_response;
+  ThunarJobResponse earlier_ask_skip_response;
   GIOSchedulerJob  *scheduler_job;
   GCancellable     *cancellable;
   GList            *total_files;
@@ -248,6 +249,8 @@ thunar_job_init (ThunarJob *job)
 {
   job->priv = THUNAR_JOB_GET_PRIVATE (job);
   job->priv->cancellable = g_cancellable_new ();
+  job->priv->earlier_ask_overwrite_response = 0;
+  job->priv->earlier_ask_skip_response = 0;
   job->priv->running = FALSE;
   job->priv->scheduler_job = NULL;
 }
@@ -582,6 +585,59 @@ thunar_job_ask_overwrite (ThunarJob   *job,
 
 
 
+ThunarJobResponse 
+thunar_job_ask_skip (ThunarJob   *job,
+                     const gchar *format,
+                     ...)
+{
+  ThunarJobResponse response;
+  va_list           var_args;
+  
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (format != NULL, THUNAR_JOB_RESPONSE_CANCEL);
+
+  /* check if the user already cancelled the job */
+  if (G_UNLIKELY (thunar_job_is_cancelled (job)))
+    return THUNAR_JOB_RESPONSE_CANCEL;
+
+  /* check if the user said "Skip All" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_skip_response == THUNAR_JOB_RESPONSE_YES_ALL))
+    return THUNAR_JOB_RESPONSE_YES;
+
+  /* ask the user what he wants to do */
+  va_start (var_args, format);
+  response = _thunar_job_ask_valist (job, format, var_args,
+                                     _("Do you want to skip it?"),
+                                     THUNAR_JOB_RESPONSE_YES 
+                                     | THUNAR_JOB_RESPONSE_YES_ALL
+                                     | THUNAR_JOB_RESPONSE_CANCEL
+                                     | THUNAR_JOB_RESPONSE_RETRY);
+  va_end (var_args);
+
+  /* remember the response */
+  job->priv->earlier_ask_skip_response = response;
+
+  /* translate the response */
+  switch (response)
+    {
+    case THUNAR_JOB_RESPONSE_YES_ALL:
+      response = THUNAR_JOB_RESPONSE_YES;
+      break;
+
+    case THUNAR_JOB_RESPONSE_YES:
+    case THUNAR_JOB_RESPONSE_CANCEL:
+    case THUNAR_JOB_RESPONSE_RETRY:
+      break;
+
+    default:
+      _thunar_assert_not_reached ();
+    }
+
+  return response;
+}
+
+
+
 void
 thunar_job_info_message (ThunarJob   *job,
                          const gchar *message)
@@ -612,7 +668,6 @@ _thunar_job_error (ThunarJob *job,
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (error != NULL);
-  _thunar_return_if_fail (g_utf8_validate (error->message, -1, NULL));
 
   g_signal_emit (job, job_signals[ERROR], 0, error);
 }

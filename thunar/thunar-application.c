@@ -2,6 +2,7 @@
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2005      Jeff Franks <jcfranks@xfce.org>
+ * Copyright (c) 2009      Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -39,6 +40,7 @@
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-gdk-extensions.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-progress-dialog.h>
@@ -51,6 +53,10 @@
 typedef ThunarVfsJob *(*Launcher) (GList   *source_path_list,
                                    GList   *target_path_list,
                                    GError **error);
+
+/* Prototype for the Thunar job launchers */
+typedef ThunarJob *(*JobLauncher) (GList  *source_path_list,
+                                   GList  *target_path_list);
 
 
 
@@ -87,6 +93,14 @@ static void       thunar_application_launch                 (ThunarApplication  
                                                              const gchar            *icon_name,
                                                              const gchar            *title,
                                                              Launcher                launcher,
+                                                             GList                  *source_path_list,
+                                                             GList                  *target_path_list,
+                                                             GClosure               *new_files_closure);
+static void       thunar_application_launch_job             (ThunarApplication      *application,
+                                                             gpointer                parent,
+                                                             const gchar            *icon_name,
+                                                             const gchar            *title,
+                                                             JobLauncher             launcher,
                                                              GList                  *source_path_list,
                                                              GList                  *target_path_list,
                                                              GClosure               *new_files_closure);
@@ -491,6 +505,67 @@ thunar_application_launch (ThunarApplication *application,
       /* drop our reference on the job */
       g_object_unref (G_OBJECT (job));
     }
+}
+
+
+
+static void
+thunar_application_launch_job (ThunarApplication *application,
+                               gpointer           parent,
+                               const gchar       *icon_name,
+                               const gchar       *title,
+                               JobLauncher        launcher,
+                               GList             *source_path_list,
+                               GList             *target_path_list,
+                               GClosure          *new_files_closure)
+{
+  ThunarJob *job;
+  GtkWindow *window;
+  GtkWidget *dialog;
+  GdkScreen *screen;
+
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+
+  /* parse the parent pointer */
+  screen = thunar_util_parse_parent (parent, &window);
+
+  /* try to allocate a new job for the operation */
+  job = (*launcher) (source_path_list, target_path_list);
+    
+  /* TODO connect the "new-files" closure (if any)
+  if (G_LIKELY (new_files_closure != NULL))
+    g_signal_connect_closure (G_OBJECT (job), "new-files", new_files_closure, FALSE);
+  */
+
+  /* allocate a progress dialog for the job */
+  dialog = g_object_new (THUNAR_TYPE_PROGRESS_DIALOG,
+                         "icon-name", icon_name,
+                         "title", title,
+                         "job", job,
+                         "screen", screen,
+                         NULL);
+
+  /* connect to the parent (if any) */
+  if (G_LIKELY (window != NULL))
+    gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
+
+  /* be sure to destroy the dialog when the job is done */
+  g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), dialog);
+
+  /* hook up the dialog window */
+  thunar_application_take_window (application, GTK_WINDOW (dialog));
+
+  /* Set up a timer to show the dialog, to make sure we don't
+   * just popup and destroy a dialog for a very short job.
+   */
+  if (G_LIKELY (application->show_dialogs_timer_id == 0))
+    {
+      application->show_dialogs_timer_id = g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
+                                                               application, thunar_application_show_dialogs_destroy);
+    }
+
+  /* drop our reference on the job */
+  g_object_unref (job);
 }
 
 
@@ -1412,12 +1487,11 @@ thunar_application_unlink_files (ThunarApplication *application,
 
 
 
-static ThunarVfsJob*
-creat_stub (GList   *source_path_list,
-            GList   *target_path_list,
-            GError **error)
+static ThunarJob*
+creat_stub (GList *source_path_list,
+            GList *target_path_list)
 {
-  return thunar_vfs_create_files (source_path_list, error);
+  return thunar_io_job_create_files (source_path_list);
 }
 
 
@@ -1443,11 +1517,11 @@ thunar_application_creat (ThunarApplication *application,
 {
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
-
+  
   /* launch the operation */
-  thunar_application_launch (application, parent, "stock_new",
-                             _("Creating files..."), creat_stub,
-                             path_list, path_list, new_files_closure);
+  thunar_application_launch_job (application, parent, "stock_new",
+                                 _("Creating files..."), creat_stub,
+                                 path_list, path_list, new_files_closure);
 }
 
 

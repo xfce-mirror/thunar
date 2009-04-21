@@ -85,6 +85,9 @@ void              thunar_job_emit                   (ThunarJob       *job,
 ThunarJobResponse thunar_job_ask_overwrite          (ThunarJob       *job,
                                                      const gchar     *format,
                                                      ...);
+ThunarJobResponse thunar_job_ask_skip               (ThunarJob       *job,
+                                                     const gchar     *format,
+                                                     ...);
 void              thunar_job_info_message           (ThunarJob       *job,
                                                      const gchar     *message);
 void              thunar_job_percent                (ThunarJob       *job,

@@ -96,6 +96,8 @@ Thunar_SOURCES =							\
 	thunar-icon-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
+	thunar-io-jobs.c						\
+	thunar-io-jobs.h						\
 	thunar-job.c							\
 	thunar-job.h							\
 	thunar-launcher.c						\
@@ -157,6 +159,8 @@ Thunar_SOURCES =							\
 	thunar-shortcuts-view.h						\
 	thunar-side-pane.c						\
 	thunar-side-pane.h						\
+	thunar-simple-job.c						\
+	thunar-simple-job.h						\
 	thunar-size-label.c						\
 	thunar-size-label.h						\
 	thunar-standard-view.c						\
