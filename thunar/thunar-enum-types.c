@@ -273,7 +273,7 @@ thunar_icon_size_from_zoom_level (const GValue *src_value,
 
 
 GType
-thunar_vfs_job_response_get_type (void)
+thunar_job_response_get_type (void)
 {
 	static GType type = G_TYPE_INVALID;
 
