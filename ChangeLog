@@ -1,5 +1,18 @@
 2009-04-21	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-enum-types.c: Remove vfs_ from
+	  thunar_vfs_job_response_get_type().
+	* thunar/thunar-gio-extensions.c: Include exo.h for the I_() macro.
+	* thunar/thunar-job.{c,h}: Add functions thunar_job_ask_overwrite(),
+	  thunar_job_info_message(), thunar_job_percent(),
+	  thunar_job_set_total_files() and thunar_job_processing_file(). Add
+	  signals "ask", "info-message" and "percent". 
+	* thunar/thunar-progress-dialog.{c,h}: Make ThunarProgressDialog work
+	  with both, ThunarVfsJob and ThunarJob by using a G_TYPE_OBJECT
+	  property and gpointer parameters.
+
+2009-04-21	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-deep-count-job.c: Improve the error handling code in
 	  thunar_deep_count_job_execute(). 
 	* thunar/thunar-gio-extensions.{c,h}: Add G_TYPE_FILE_LIST macro and

@@ -23,6 +23,7 @@
 
 #include <gio/gio.h>
 
+#include <exo/exo.h>
 #include <libxfce4util/libxfce4util.h>
 
 #include <thunar/thunar-gio-extensions.h>
@@ -250,7 +251,7 @@ g_file_list_get_type (void)
 
   if (G_UNLIKELY (type == G_TYPE_INVALID))
     {
-      type = g_boxed_type_register_static ("GFileList",
+      type = g_boxed_type_register_static (I_("GFileList"),
                                            (GBoxedCopyFunc) g_file_list_copy,
                                            (GBoxedFreeFunc) g_file_list_free);
     }

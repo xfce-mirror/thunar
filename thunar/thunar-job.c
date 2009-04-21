@@ -80,9 +80,11 @@ static gboolean _thunar_job_scheduler_job_func (GIOSchedulerJob    *scheduler_jo
 
 struct _ThunarJobPrivate
 {
-  GIOSchedulerJob *scheduler_job;
-  GCancellable    *cancellable;
-  guint            running : 1;
+  ThunarJobResponse earlier_ask_overwrite_response;
+  GIOSchedulerJob  *scheduler_job;
+  GCancellable     *cancellable;
+  GList            *total_files;
+  guint             running : 1;
 };
 
 struct _ThunarJobSyncSignalData
@@ -121,6 +123,18 @@ thunar_job_get_type (void)
 
 
 
+static gboolean
+_thunar_job_ask_accumulator (GSignalInvocationHint *ihint,
+                             GValue                *return_accu,
+                             const GValue          *handler_return,
+                             gpointer               data)
+{
+  g_value_copy (handler_return, return_accu);
+  return FALSE;
+}
+
+
+
 static void
 thunar_job_class_init (ThunarJobClass *klass)
 {
@@ -136,6 +150,27 @@ thunar_job_class_init (ThunarJobClass *klass)
   gobject_class->finalize = thunar_job_finalize;
 
   klass->execute = NULL;
+
+  /**
+   * ThunarJob::ask:
+   * @job     : a #ThunarJob.
+   * @message : question to display to the user.
+   * @choices : a combination of #ThunarJobResponse<!---->s.
+   *
+   * The @message is garantied to contain valid UTF-8.
+   *
+   * Return value: the selected choice.
+   **/
+  job_signals[ASK] =
+    g_signal_new (I_("ask"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS | G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarJobClass, ask),
+                  _thunar_job_ask_accumulator, NULL,
+                  _thunar_marshal_FLAGS__STRING_FLAGS,
+                  THUNAR_TYPE_JOB_RESPONSE,
+                  2, G_TYPE_STRING,
+                  THUNAR_TYPE_JOB_RESPONSE);
 
   /**
    * ThunarJob::error:
@@ -166,6 +201,44 @@ thunar_job_class_init (ThunarJobClass *klass)
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__VOID,
                   G_TYPE_NONE, 0);
+
+  /**
+   * ThunarJob::info-message:
+   * @job     : a #ThunarJob.
+   * @message : information to be displayed about @job.
+   *
+   * This signal is emitted to display information about the
+   * @job. Examples of messages are "Preparing..." or
+   * "Cleaning up...".
+   *
+   * The @message is garantied to contain valid UTF-8, so
+   * it can be displayed by #GtkWidget<!---->s out of the
+   * box.
+   **/
+  job_signals[INFO_MESSAGE] =
+    g_signal_new (I_("info-message"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__STRING,
+                  G_TYPE_NONE, 1, G_TYPE_STRING);
+
+  /**
+   * ThunarJob::percent:
+   * @job     : a #ThunarJob.
+   * @percent : the percentage of completeness.
+   *
+   * This signal is emitted to present the state
+   * of the overall progress.
+   *
+   * The @percent value is garantied to be in the
+   * range 0.0 to 100.0.
+   **/
+  job_signals[PERCENT] =
+    g_signal_new (I_("percent"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__DOUBLE,
+                  G_TYPE_NONE, 1, G_TYPE_DOUBLE);
 }
 
 
@@ -245,10 +318,8 @@ _thunar_job_scheduler_job_func (GIOSchedulerJob *scheduler_job,
   success = (*THUNAR_JOB_GET_CLASS (job)->execute) (job, &error);
 
   /* TODO why was this necessary again? */
-  g_io_scheduler_job_send_to_mainloop (scheduler_job, 
-                                       (GSourceFunc) gtk_false, 
-                                       NULL, 
-                                       NULL);
+  g_io_scheduler_job_send_to_mainloop (scheduler_job, (GSourceFunc) gtk_false, 
+                                       NULL, NULL);
 
   if (!success)
     {
@@ -356,7 +427,6 @@ thunar_job_set_error_if_cancelled (ThunarJob  *job,
                                    GError    **error)
 {
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
-  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
   return g_cancellable_set_error_if_cancelled (job->priv->cancellable, error);
 }
 
@@ -412,9 +482,126 @@ thunar_job_emit (ThunarJob *job,
 {
   va_list var_args;
 
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+
   va_start (var_args, signal_detail);
   thunar_job_emit_valist (job, signal_id, signal_detail, var_args);
   va_end (var_args);
+}
+
+
+
+static ThunarJobResponse
+_thunar_job_ask_valist (ThunarJob        *job,
+                        const gchar      *format,
+                        va_list           var_args,
+                        const gchar      *question,
+                        ThunarJobResponse choices)
+{
+  ThunarJobResponse response;
+  gchar            *text;
+  gchar            *message;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (g_utf8_validate (format, -1, NULL), THUNAR_JOB_RESPONSE_CANCEL);
+  
+  /* generate the dialog message */
+  text = g_strdup_vprintf (format, var_args);
+  message = (question != NULL) 
+            ? g_strconcat (text, ".\n\n", question, NULL) 
+            : g_strconcat (text, ".", NULL);
+  g_free (text);  
+
+  /* send the question and wait for the answer */
+  thunar_job_emit (job, job_signals[ASK], 0, message, choices, &response);
+  g_free (message);
+
+  /* cancel the job as per users request */
+  if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_CANCEL))
+    thunar_job_cancel (job);
+
+  return response;
+}
+
+
+
+ThunarJobResponse
+thunar_job_ask_overwrite (ThunarJob   *job,
+                          const gchar *format,
+                          ...)
+{
+  ThunarJobResponse response;
+  va_list           var_args;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (format != NULL, THUNAR_JOB_RESPONSE_CANCEL);
+
+  /* check if the user already cancelled the job */
+  if (G_UNLIKELY (thunar_job_is_cancelled (job)))
+    return THUNAR_JOB_RESPONSE_CANCEL;
+
+  /* check if the user said "Overwrite All" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_YES_ALL))
+    return THUNAR_JOB_RESPONSE_YES;
+
+  /* check if the user said "Overwrite None" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_NO_ALL))
+    return THUNAR_JOB_RESPONSE_NO;
+
+  /* ask the user what he wants to do */
+  va_start (var_args, format);
+  response = _thunar_job_ask_valist (job, format, var_args,
+                                     _("Do you want to overwrite it?"),
+                                     THUNAR_JOB_RESPONSE_YES 
+                                     | THUNAR_JOB_RESPONSE_YES_ALL
+                                     | THUNAR_JOB_RESPONSE_NO
+                                     | THUNAR_JOB_RESPONSE_NO_ALL
+                                     | THUNAR_JOB_RESPONSE_CANCEL);
+  va_end (var_args);
+
+  /* remember response for later */
+  job->priv->earlier_ask_overwrite_response = response;
+
+  /* translate response */
+  switch (response)
+    {
+    case THUNAR_JOB_RESPONSE_YES_ALL:
+      response = THUNAR_JOB_RESPONSE_YES;
+      break;
+
+    case THUNAR_JOB_RESPONSE_NO_ALL:
+      response = THUNAR_JOB_RESPONSE_NO;
+      break;
+
+    default:
+      break;
+    }
+
+  return response;
+}
+
+
+
+void
+thunar_job_info_message (ThunarJob   *job,
+                         const gchar *message)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (message != NULL);
+
+  thunar_job_emit (job, job_signals[INFO_MESSAGE], 0, message);
+}
+
+
+
+void
+thunar_job_percent (ThunarJob *job,
+                    gdouble    percent)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+
+  percent = MIN (0.0, MAX (100.0, percent));
+  thunar_job_emit (job, job_signals[PERCENT], 0, percent);
 }
 
 
@@ -437,4 +624,58 @@ _thunar_job_finished (ThunarJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   g_signal_emit (job, job_signals[FINISHED], 0);
+}
+
+
+
+void
+thunar_job_set_total_files (ThunarJob *job,
+                            GList     *total_files)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (job->priv->total_files == NULL);
+  _thunar_return_if_fail (total_files != NULL);
+
+  job->priv->total_files = total_files;
+}
+
+
+
+void
+thunar_job_processing_file (ThunarJob *job,
+                            GList     *current_file)
+{
+  GList *lp;
+  gchar *basename;
+  gchar *display_name;
+  guint  n_processed;
+  guint  n_total;
+
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+  _thunar_return_if_fail (current_file != NULL);
+
+  basename = g_file_get_basename (current_file->data);
+  display_name = g_filename_display_name (basename);
+  g_free (basename);
+
+  thunar_job_info_message (job, display_name);
+  g_free (display_name);
+
+  /* verify that we have total files set */
+  if (G_LIKELY (job->priv->total_files != NULL))
+    {
+      /* determine the number of files processed so far */
+      for (lp = job->priv->total_files, n_processed = 0;
+           lp != current_file;
+           lp = lp->next);
+
+      /* emit only if n_processed is a multiple of 8 */
+      if ((n_processed % 8) == 0)
+        {
+          /* determine the total_number of files */
+          n_total = g_list_length (job->priv->total_files);
+
+          thunar_job_percent (job, (n_processed * 100.0) / n_total);
+        }
+    }
 }

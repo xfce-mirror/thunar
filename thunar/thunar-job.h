@@ -48,8 +48,13 @@ struct _ThunarJobClass
   /*< public >*/
 
   /* virtual methods */
-  gboolean (*execute) (ThunarJob *job,
-                       GError   **error);
+  gboolean          (*execute) (ThunarJob        *job,
+                                GError          **error);
+
+  /* signals */
+  ThunarJobResponse (*ask)     (ThunarJob        *job,
+                                const gchar      *message,
+                                ThunarJobResponse choices);
 };
 
 struct _ThunarJob
@@ -59,19 +64,31 @@ struct _ThunarJob
   ThunarJobPrivate *priv;
 };
 
-GType         thunar_job_get_type               (void) G_GNUC_CONST;
-ThunarJob    *thunar_job_launch                 (ThunarJob       *job);
-void          thunar_job_cancel                 (ThunarJob       *job);
-gboolean      thunar_job_is_cancelled           (const ThunarJob *job);
+GType             thunar_job_get_type               (void) G_GNUC_CONST;
+ThunarJob        *thunar_job_launch                 (ThunarJob       *job);
+void              thunar_job_cancel                 (ThunarJob       *job);
+gboolean          thunar_job_is_cancelled           (const ThunarJob *job);
 
-GCancellable *thunar_job_get_cancellable        (const ThunarJob *job);
-gboolean      thunar_job_set_error_if_cancelled (ThunarJob       *job,
-                                                 GError         **error);
+GCancellable     *thunar_job_get_cancellable        (const ThunarJob *job);
+gboolean          thunar_job_set_error_if_cancelled (ThunarJob       *job,
+                                                     GError         **error);
 
-void          thunar_job_emit                   (ThunarJob       *job,
-                                                 guint            signal_id,
-                                                 GQuark           signal_detail,
-                                                 ...);
+void              thunar_job_set_total_files        (ThunarJob       *job,
+                                                     GList           *total_files);
+void              thunar_job_processing_file        (ThunarJob       *job,
+                                                     GList           *current_file);
+
+void              thunar_job_emit                   (ThunarJob       *job,
+                                                     guint            signal_id,
+                                                     GQuark           signal_detail,
+                                                     ...);
+ThunarJobResponse thunar_job_ask_overwrite          (ThunarJob       *job,
+                                                     const gchar     *format,
+                                                     ...);
+void              thunar_job_info_message           (ThunarJob       *job,
+                                                     const gchar     *message);
+void              thunar_job_percent                (ThunarJob       *job,
+                                                     gdouble          percent);
 
 G_END_DECLS
 
