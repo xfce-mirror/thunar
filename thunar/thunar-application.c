@@ -1491,7 +1491,7 @@ static ThunarJob*
 creat_stub (GList *source_path_list,
             GList *target_path_list)
 {
-  return thunar_io_job_create_files (source_path_list);
+  return thunar_io_jobs_create_files (source_path_list);
 }
 
 
@@ -1526,12 +1526,11 @@ thunar_application_creat (ThunarApplication *application,
 
 
 
-static ThunarVfsJob*
-mkdir_stub (GList   *source_path_list,
-            GList   *target_path_list,
-            GError **error)
+static ThunarJob*
+mkdir_stub (GList *source_path_list,
+            GList *target_path_list)
 {
-  return thunar_vfs_make_directories (source_path_list, error);
+  return thunar_io_jobs_make_directories (source_path_list);
 }
 
 
@@ -1559,9 +1558,9 @@ thunar_application_mkdir (ThunarApplication *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* launch the operation */
-  thunar_application_launch (application, parent, "stock_folder",
-                             _("Creating directories..."), mkdir_stub,
-                             path_list, path_list, new_files_closure);
+  thunar_application_launch_job (application, parent, "stock_folder",
+                                 _("Creating directories..."), mkdir_stub,
+                                 path_list, path_list, new_files_closure);
 }
 
 

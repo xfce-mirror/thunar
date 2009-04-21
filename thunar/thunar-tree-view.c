@@ -1544,7 +1544,7 @@ thunar_tree_view_action_create_folder (ThunarTreeView *view)
   if (G_LIKELY (name != NULL))
     {
       /* fake the path list */
-      path_list.data = thunar_vfs_path_relative (thunar_file_get_path (directory), name);
+      path_list.data = g_file_resolve_relative_path (thunar_file_get_file (directory), name);
       path_list.next = path_list.prev = NULL;
 
       /* launch the operation */
@@ -1553,7 +1553,7 @@ thunar_tree_view_action_create_folder (ThunarTreeView *view)
       g_object_unref (G_OBJECT (application));
 
       /* release the path */
-      thunar_vfs_path_unref (path_list.data);
+      g_object_unref (path_list.data);
 
       /* release the file name */
       g_free (name);

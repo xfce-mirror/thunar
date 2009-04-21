@@ -1,5 +1,16 @@
 2009-04-21	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-application.c, thunar/thunar-io-jobs.{c,h},
+	  thunar/thunar-location-buttons.c, thunar/thunar-standard-view.c,
+	  thunar/thunar-tree-view.c: Add new simple job
+	  thunar_io_jobs_make_directories(). Rename all I/O job functions from
+	  thunar_io_job_*() to thunar_io_jobs*(). Use the make directories job
+	  in thunar_application_mkdir() and modify mkdir_stub() according to
+	  this. Pass a GFile list to thunar_application_mkdir() in 
+	  ThunarLocationButtons, ThunarStandardView and ThunarTreeView.
+
+2009-04-21	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/Makefile.am, thunar/thunar-io-jobs.{c,h},
 	  thunar/thunar-simple.job.{c,h}: Add ThunarSimpleJob class which is
 	  equivalent to ThunarVfsSimpleJob. Add the first simple job by

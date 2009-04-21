@@ -1850,7 +1850,7 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
       if (G_LIKELY (current_directory != NULL))
         {
           /* fake the path list */
-          path_list.data = thunar_vfs_path_relative (thunar_file_get_path (current_directory), name);
+          path_list.data = g_file_resolve_relative_path (thunar_file_get_file (current_directory), name);
           path_list.next = path_list.prev = NULL;
 
           /* launch the operation */
@@ -1860,7 +1860,7 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
           g_object_unref (G_OBJECT (application));
 
           /* release the path */
-          thunar_vfs_path_unref (path_list.data);
+          g_object_unref (path_list.data);
         }
 
       /* release the file name */
