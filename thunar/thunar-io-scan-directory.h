@@ -18,17 +18,20 @@
  * Boston, MA 02110-1301, USA.
  */
 
-#ifndef __THUNAR_IO_JOBS_H__
-#define __THUNAR_IO_JOBS_H__
+#ifndef __THUNAR_IO_SCAN_DIRECTORY_H__
+#define __THUNAR_IO_SCAN_DIRECTORY_H__
 
 #include <thunar/thunar-job.h>
+#include <thunar/thunar-private.h>
 
 G_BEGIN_DECLS
 
-ThunarJob *thunar_io_jobs_create_files     (GList *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_make_directories (GList *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
-ThunarJob *thunar_io_jobs_unlink_files     (GList *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GList *thunar_io_scan_directory (ThunarJob          *job,
+                                 GFile              *file,
+                                 GFileQueryInfoFlags flags,
+                                 gboolean            recursively,
+                                 GError            **error);
 
 G_END_DECLS
 
-#endif /* !__THUNAR_IO_JOBS_H__ */
+#endif /* !__THUNAR_IO_SCAN_DIRECTORY_H__ */

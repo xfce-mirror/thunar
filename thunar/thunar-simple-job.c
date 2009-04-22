@@ -140,8 +140,7 @@ thunar_simple_job_execute (ThunarJob *job,
        * the results of the processing function */
       if (thunar_job_set_error_if_cancelled (job, error))
         {
-          if (err != NULL)
-            g_error_free (err);
+          g_clear_error (&err);
         }
       else
         {

@@ -1,3 +1,19 @@
+2009-04-22	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-io-scan-directory.{c,h}: Port
+	  _thunar_vfs_info_scan_directory() to GIO and rename it to
+	  thunar_io_scan_directory(). 
+	* thunar/thunar-application.c, thunar/thunar-io-jobs.{c,h}: Implement
+	  thunar_io_jobs_unlink_files() as an equivalent to
+	  thunar_vfs_jobs_unlink_files(). Use it in unlink_stub() and modify
+	  thunar_application_unlink_files() and
+	  hunar_application_empty_trash() to use
+	  thunar_application_job_launch() and GFile lists.
+	* thunar/thunar-gio-extensions.{c,h}: Add g_file_list_prepend().
+	* thunar/thunar-job.c: Don't treat cancellation as an error for now.
+	* thunar/thunar-simple-job.c: Use g_clear_error() instead of
+	  g_error_free() in thunar_simple_job_execute().
+	
 2009-04-21	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-application.c, thunar/thunar-io-jobs.{c,h},

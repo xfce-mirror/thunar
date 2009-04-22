@@ -183,6 +183,15 @@ g_file_list_append (GList *list,
 
 
 
+GList *
+g_file_list_prepend (GList *list,
+                     GFile *file)
+{
+  return g_list_prepend (list, g_object_ref (file));
+}
+
+
+
 /**
  * g_file_list_copy:
  * @list : a list of #GFile<!---->s.

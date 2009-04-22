@@ -1,0 +1,119 @@
+/* vi:set et ai sw=2 sts=2 ts=2: */
+/*-
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
+ */
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
+
+#include <gio/gio.h>
+
+#include <thunar/thunar-job.h>
+#include <thunar/thunar-private.h>
+
+
+
+GList *
+thunar_io_scan_directory (ThunarJob          *job,
+                          GFile              *file,
+                          GFileQueryInfoFlags flags,
+                          gboolean            recursively,
+                          GError            **error)
+{
+  GFileEnumerator *enumerator;
+  GFileInfo       *info;
+  GFileType        type;
+  GError          *err = NULL;
+  GFile           *child_file;
+  GList           *child_files = NULL;
+  GList           *files = NULL;
+  
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* abort if the job was cancelled */
+  if (thunar_job_set_error_if_cancelled (job, error))
+    return NULL;
+
+  /* query the file type */
+  type = g_file_query_file_type (file, flags, thunar_job_get_cancellable (job));
+
+  /* ignore non-directory nodes */
+  if (type != G_FILE_TYPE_DIRECTORY)
+    return NULL;
+
+  /* abort if the job was cancelled */
+  if (thunar_job_set_error_if_cancelled (job, error))
+    return NULL;
+
+  /* try to read from the direectory */
+  enumerator = g_file_enumerate_children (file,
+                                          G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+                                          G_FILE_ATTRIBUTE_STANDARD_NAME,
+                                          flags, thunar_job_get_cancellable (job),
+                                          &err);
+
+  /* abort if there was an error or the job was cancelled */
+  if (err != NULL)
+    {
+      g_propagate_error (error, err);
+      return NULL;
+    }
+        
+  /* query info of the first child */
+  info = g_file_enumerator_next_file (enumerator, thunar_job_get_cancellable (job), &err);
+
+  /* iterate over children one by one as long as there's no error */
+  while (info != NULL && err == NULL && !thunar_job_is_cancelled (job))
+    {
+      /* create GFile for the child and prepend it to the file list */
+      child_file = g_file_get_child (file, g_file_info_get_name (info));
+      files = g_file_list_prepend (files, child_file);
+
+      /* if the child is a directory and we need to recurse ... just do so */
+      if (recursively && g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+        {
+          child_files = thunar_io_scan_directory (job, child_file, flags, recursively, &err);
+
+          /* prepend children to the file list to make sure they're 
+           * processed first (required for unlinking) */
+          files = g_list_concat (child_files, files);
+        }
+      
+      g_object_unref (child_file);
+      g_object_unref (info);
+
+      info = g_file_enumerator_next_file (enumerator, thunar_job_get_cancellable (job), &err);
+    }
+
+  if (err != NULL || thunar_job_is_cancelled (job))
+    {
+      if (thunar_job_set_error_if_cancelled (job, error))
+        g_error_free (err);
+      else
+        g_propagate_error (error, err);
+
+      g_object_unref (enumerator);
+      g_file_list_free (files);
+      return NULL;
+    }
+  
+  return files;
+}

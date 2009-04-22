@@ -296,7 +296,11 @@ _thunar_job_async_ready (GObject      *object,
   if (!_thunar_job_finish (job, G_SIMPLE_ASYNC_RESULT (result), &error))
     {
       g_assert (error != NULL);
-      _thunar_job_error (job, error);
+
+      /* don't treat cancellation as an error for now */
+      if (error->code != G_IO_ERROR_CANCELLED)
+        _thunar_job_error (job, error);
+
       g_error_free (error);
     }
 

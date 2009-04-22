@@ -1365,12 +1365,11 @@ thunar_application_move_into (ThunarApplication *application,
 
 
 
-static ThunarVfsJob*
-unlink_stub (GList   *source_path_list,
-             GList   *target_path_list,
-             GError **error)
+static ThunarJob*
+unlink_stub (GList *source_path_list,
+             GList *target_path_list)
 {
-  return thunar_vfs_unlink_files (source_path_list, error);
+  return thunar_io_jobs_unlink_files (source_path_list);
 }
 
 
@@ -1414,11 +1413,7 @@ thunar_application_unlink_files (ThunarApplication *application,
   for (lp = g_list_last (file_list); lp != NULL; lp = lp->prev, ++n_path_list)
     {
       /* prepend the path to the path list */
-      path_list = thunar_vfs_path_list_prepend (path_list, thunar_file_get_path (lp->data));
-
-      /* check if the file is not a local file */
-      if (!thunar_file_is_local (lp->data))
-        permanently = TRUE;
+      path_list = g_file_list_prepend (path_list, thunar_file_get_file (lp->data));
     }
 
   /* nothing to do if we don't have any paths */
@@ -1447,8 +1442,7 @@ thunar_application_unlink_files (ThunarApplication *application,
 
       /* ask the user to confirm the delete operation */
       dialog = gtk_message_dialog_new (window,
-                                       GTK_DIALOG_MODAL
-                                       | GTK_DIALOG_DESTROY_WITH_PARENT,
+                                       GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
                                        GTK_MESSAGE_QUESTION,
                                        GTK_BUTTONS_NONE,
                                        "%s", message);
@@ -1459,7 +1453,8 @@ thunar_application_unlink_files (ThunarApplication *application,
                               GTK_STOCK_DELETE, GTK_RESPONSE_YES,
                               NULL);
       gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
-      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("If you delete a file, it is permanently lost."));
+      gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), 
+                                                _("If you delete a file, it is permanently lost."));
       response = gtk_dialog_run (GTK_DIALOG (dialog));
       gtk_widget_destroy (dialog);
       g_free (message);
@@ -1468,9 +1463,9 @@ thunar_application_unlink_files (ThunarApplication *application,
       if (G_LIKELY (response == GTK_RESPONSE_YES))
         {
           /* launch the "Delete" operation */
-          thunar_application_launch (application, parent, "stock_delete",
-                                      _("Deleting files..."), unlink_stub,
-                                      path_list, path_list, NULL);
+          thunar_application_launch_job (application, parent, "stock_delete",
+                                         _("Deleting files..."), unlink_stub,
+                                         path_list, path_list, NULL);
         }
     }
   else
@@ -1482,7 +1477,7 @@ thunar_application_unlink_files (ThunarApplication *application,
     }
 
   /* release the path list */
-  thunar_vfs_path_list_free (path_list);
+  g_file_list_free (path_list);
 }
 
 
@@ -1617,17 +1612,17 @@ thunar_application_empty_trash (ThunarApplication *application,
       /* fake a path list with only the trash root (the root
        * folder itself will never be unlinked, so this is safe)
        */
-      path_list.data = thunar_vfs_path_get_for_trash ();
+      path_list.data = g_file_new_for_trash ();
       path_list.next = NULL;
       path_list.prev = NULL;
 
       /* launch the operation */
-      thunar_application_launch (application, parent, "gnome-fs-trash-empty",
-                                  _("Emptying the Trash..."),
-                                  unlink_stub, &path_list, NULL, NULL);
+      thunar_application_launch_job (application, parent, "gnome-fs-trash-empty",
+                                     _("Emptying the Trash..."),
+                                     unlink_stub, &path_list, NULL, NULL);
 
       /* cleanup */
-      thunar_vfs_path_unref (path_list.data);
+      g_object_unref (path_list.data);
     }
 }
 
