@@ -749,7 +749,7 @@ thunar_permissions_chooser_access_changed (ThunarPermissionsChooser *chooser,
     return;
 
   /* determine the new mode from the combo box */
-  for (n = 0; n < G_N_ELEMENTS (chooser->access_combos) && chooser->access_combos[n] != combo ; ++n);
+  for (n = 0; chooser->access_combos[n] != combo && n < G_N_ELEMENTS (chooser->access_combos); ++n);
   dir_mode = file_mode = (gtk_combo_box_get_active (GTK_COMBO_BOX (combo)) << 1) << (n * 3);
   dir_mask = file_mask = 0006 << (n * 3);
 

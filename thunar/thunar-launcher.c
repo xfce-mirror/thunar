@@ -1141,28 +1141,28 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
                                        ThunarLauncher *launcher)
 {
   ThunarApplication *application;
-  GFile             *desktop_file;
-  GList             *files;
+  ThunarVfsPath     *desktop_path;
+  GList             *paths;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
-  /* determine the source files */
-  files = thunar_file_list_to_g_file_list (launcher->selected_files);
-  if (G_UNLIKELY (files == NULL))
+  /* determine the source paths */
+  paths = thunar_file_list_to_path_list (launcher->selected_files);
+  if (G_UNLIKELY (paths == NULL))
     return;
 
-  /* determine the file to the ~/Desktop folder */
-  desktop_file = g_file_new_for_desktop ();
+  /* determine the path to the ~/Desktop folder */
+  desktop_path = thunar_vfs_path_new (g_get_user_special_dir (G_USER_DIRECTORY_DESKTOP), NULL);
 
   /* launch the link job */
   application = thunar_application_get ();
-  thunar_application_link_into (application, launcher->widget, files, desktop_file, NULL);
+  thunar_application_link_into (application, launcher->widget, paths, desktop_path, NULL);
   g_object_unref (G_OBJECT (application));
 
   /* cleanup */
-  g_object_unref (desktop_file);
-  g_file_list_free (files);
+  thunar_vfs_path_unref (desktop_path);
+  thunar_vfs_path_list_free (paths);
 }
 
 

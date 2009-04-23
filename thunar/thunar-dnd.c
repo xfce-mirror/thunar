@@ -189,15 +189,15 @@ thunar_dnd_ask (GtkWidget    *widget,
 /**
  * thunar_dnd_perform:
  * @widget            : the #GtkWidget on which the drop was done.
- * @file              : the #ThunarFile on which the @file_list was dropped.
- * @file_list         : the list of #GFile<!---->s that was dropped.
+ * @file              : the #ThunarFile on which the @path_list was dropped.
+ * @path_list         : the list of #GFile<!---->s that was dropped.
  * @action            : the #GdkDragAction that was performed.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
  *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
  *
- * Performs the drop of @file_list on @file in @widget, as given in
+ * Performs the drop of @path_list on @file in @widget, as given in
  * @action and returns %TRUE if the drop was started successfully
  * (or even completed successfully), else %FALSE.
  *
@@ -207,7 +207,7 @@ thunar_dnd_ask (GtkWidget    *widget,
 gboolean
 thunar_dnd_perform (GtkWidget    *widget,
                     ThunarFile   *file,
-                    GList        *file_list,
+                    GList        *path_list,
                     GdkDragAction action,
                     GClosure     *new_files_closure)
 {
@@ -229,15 +229,17 @@ thunar_dnd_perform (GtkWidget    *widget,
       switch (action)
         {
         case GDK_ACTION_COPY:
-          thunar_application_copy_into (application, widget, file_list, thunar_file_get_file (file), new_files_closure);
+          thunar_application_copy_into (application, widget, path_list, thunar_file_get_file (file), new_files_closure);
           break;
 
         case GDK_ACTION_MOVE:
-          thunar_application_move_into (application, widget, file_list, thunar_file_get_file (file), new_files_closure);
+          thunar_application_move_into (application, widget, path_list, thunar_file_get_file (file), new_files_closure);
           break;
 
         case GDK_ACTION_LINK:
-          thunar_application_link_into (application, widget, file_list, thunar_file_get_file (file), new_files_closure);
+          /* TODO Enable this again:
+          thunar_application_link_into (application, widget, path_list, thunar_file_get_path (file), new_files_closure);
+          */
           break;
 
         default:
@@ -246,7 +248,7 @@ thunar_dnd_perform (GtkWidget    *widget,
     }
   else if (thunar_file_is_executable (file))
     {
-      succeed = thunar_file_execute (file, gtk_widget_get_screen (widget), file_list, &error);
+      succeed = thunar_file_execute (file, gtk_widget_get_screen (widget), path_list, &error);
       if (G_UNLIKELY (!succeed))
         {
           /* display an error to the user */

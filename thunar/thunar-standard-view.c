@@ -1904,13 +1904,12 @@ thunar_standard_view_action_create_template (GtkAction           *action,
       if (G_LIKELY (current_directory != NULL))
         {
           /* fake the source path list */
-          /* TODO Use a GFile here */
           source_path_list.data = info->path;
           source_path_list.next = NULL;
           source_path_list.prev = NULL;
 
           /* fake the target path list */
-          target_path_list.data = g_file_get_child (thunar_file_get_file (current_directory), name);
+          target_path_list.data = thunar_vfs_path_relative (thunar_file_get_path (current_directory), name);
           target_path_list.next = NULL;
           target_path_list.prev = NULL;
 
@@ -1921,7 +1920,7 @@ thunar_standard_view_action_create_template (GtkAction           *action,
           g_object_unref (G_OBJECT (application));
 
           /* release the target path */
-          g_object_unref (target_path_list.data);
+          thunar_vfs_path_unref (target_path_list.data);
         }
 
       /* release the file name */
@@ -2176,7 +2175,7 @@ thunar_standard_view_action_make_link (GtkAction          *action,
   ThunarApplication *application;
   ThunarFile        *current_directory;
   GClosure          *new_files_closure;
-  GList             *selected_files;
+  GList             *selected_paths;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -2186,20 +2185,20 @@ thunar_standard_view_action_make_link (GtkAction          *action,
   if (G_LIKELY (current_directory != NULL))
     {
       /* determine the selected paths for the view */
-      selected_files = thunar_file_list_to_g_file_list (standard_view->selected_files);
-      if (G_LIKELY (selected_files != NULL))
+      selected_paths = thunar_file_list_to_path_list (standard_view->selected_files);
+      if (G_LIKELY (selected_paths != NULL))
         {
           /* link the selected files into the current directory, which effectively
            * creates new unique links for the files.
            */
           application = thunar_application_get ();
           new_files_closure = thunar_standard_view_new_files_closure (standard_view);
-          thunar_application_link_into (application, GTK_WIDGET (standard_view), selected_files,
-                                        thunar_file_get_file (current_directory), new_files_closure);
+          thunar_application_link_into (application, GTK_WIDGET (standard_view), selected_paths,
+                                        thunar_file_get_path (current_directory), new_files_closure);
           g_object_unref (G_OBJECT (application));
 
           /* clean up */
-          g_file_list_free (selected_files);
+          thunar_vfs_path_list_free (selected_paths);
         }
     }
 }

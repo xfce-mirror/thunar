@@ -1,35 +1,5 @@
 2009-04-23	Jannis Pohlmann <jannis@xfce.org>
 
-	* thunar/Makefile.am, thunar/thunar-io-jobs-util.{c,h}: Add new files
-	  for I/O job utility functions. Right now there's only one new
-	  function called thunar_io_jobs_util_next_duplicate_file() which
-	  generates alternative "copy of X", "another copy of X", 
-	  "third copy of X" and "nth copy of X" #GFiles for an input #GFile.
-	  It also works for symbolic links.
-	* thunar/thunar-application.{c,h}, thunar/thunar-dnd.c, 
-	  thunar/thunar-io-jobs.{c,h}, thunar/thunar-launcher.c,
-	  thunar-standard-view.c: Add new
-	  job thunar_io_jobs_link_files() and use it in
-	  thunar_application_link_into(). Disable
-	  thunar_application_restore_files() for now so that we can replace
-	  thunar_application_collect_and_launch() and
-	  thunar_application_launch() with the implementations based on GIO.
-	  Enable creating links in thunar-dnd.c again. Update ThunarLauncher
-	  and ThunarStandardView to reflect the API changes in
-	  ThunarApplication.
-	* thunar/thunar-dialogs.c: In thunar_dialogs_show_job_ask_replace(), 
-	  use different labels for target symlinks than for normal files to 
-	  make clear that we're only replacing the symlinks, not the files 
-	  they point to.
-	* thunar/thunar-permissions-chooser.c: Make sure the array index
-	  is never out of bounds when iterating over the combos.
-	* thunar/thunar-transfer-job.{c,h}: Improve the copy/move algorithm so
-	  that it resembles the old behaviour, creates "copy of X" files when
-	  copying/linking files into the same directory, handles directory
-	  merges properly and is more readable.
-
-2009-04-23	Jannis Pohlmann <jannis@xfce.org>
-
 	* thunar/Makefile.am, thunar/thunar-transfer-job.{c,h}: Implement
 	  ThunarTransferJob as an equivalent to ThunarVfsTransferJob. The code
 	  is very similar except that the error handling is a bit different

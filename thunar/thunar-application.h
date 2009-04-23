@@ -82,8 +82,8 @@ void               thunar_application_copy_into         (ThunarApplication *appl
 
 void               thunar_application_link_into         (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *source_path_list,
-                                                         ThunarVfsPath     *target_path,
+                                                         GList             *source_file_list,
+                                                         GFile             *target_file,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_move_into         (ThunarApplication *application,
@@ -98,12 +98,12 @@ void               thunar_application_unlink_files      (ThunarApplication *appl
 
 void               thunar_application_creat             (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *path_list,
+                                                         GList             *file_list,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_mkdir             (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *path_list,
+                                                         GList             *file_list,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_empty_trash       (ThunarApplication *application,

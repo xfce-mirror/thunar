@@ -1,7 +1,6 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2007 Benedikt Meurer <benny@xfce.org>
- * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -603,16 +602,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1, GTK_FILL, GTK_EXPAND | GTK_FILL, 0, 0);
   gtk_widget_show (image);
 
-  if (thunar_file_is_symlink (dst_file))
-    {
-      text = g_strdup_printf (_("This folder already contains a symbolic link \"%s\"."), 
-                              thunar_file_get_display_name (dst_file));
-    }
-  else
-    {
-      text = g_strdup_printf (_("This folder already contains a file \"%s\"."), 
-                              thunar_file_get_display_name (dst_file));
-    }
+  text = g_strdup_printf (_("This folder already contains a file \"%s\"."), thunar_file_get_display_name (dst_file));
   label = gtk_label_new (text);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   gtk_label_set_attributes (GTK_LABEL (label), thunar_pango_attr_list_big ());
@@ -620,11 +610,7 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
   gtk_widget_show (label);
   g_free (text);
 
-  if (thunar_file_is_symlink (dst_file))
-    text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the link"));
-  else
-    text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing file"));
-
+  text = g_strdup_printf (Q_("ReplaceDialogPart1|Do you want to replace the existing file"));
   label = gtk_label_new (text);
   gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
   gtk_table_attach (GTK_TABLE (table), label, 1, 3, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
