@@ -203,9 +203,8 @@ again:
   if (G_UNLIKELY (thunar_job_is_cancelled (job)))
     return FALSE;
 
-  /* TODO emit the "new-files" signal with the given file list 
+  /* emit the "new-files" signal with the given file list */
   thunar_job_new_files (job, file_list);
-  */
 
   return TRUE;
 }
@@ -338,10 +337,9 @@ again:
   if (G_UNLIKELY (thunar_job_is_cancelled (job)))
     return FALSE;
 
-  /* TODO emit the "new-files" signal with the given file list 
+  /* emit the "new-files" signal with the given file list */
   thunar_job_new_files (job, file_list);
-  */
-
+  
   return TRUE;
 }
 
@@ -595,9 +593,7 @@ again:
     }
   else
     {
-      /* TODO 
       thunar_job_new_files (job, new_files_list);
-      */
       g_file_list_free (new_files_list);
       return TRUE;
     }

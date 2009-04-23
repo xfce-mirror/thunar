@@ -420,10 +420,9 @@ thunar_application_launch (ThunarApplication *application,
   /* try to allocate a new job for the operation */
   job = (*launcher) (source_file_list, target_file_list);
     
-  /* TODO connect the "new-files" closure (if any)
+  /* connect the "new-files" closure (if any) */
   if (G_LIKELY (new_files_closure != NULL))
-    g_signal_connect_closure (G_OBJECT (job), "new-files", new_files_closure, FALSE);
-  */
+    g_signal_connect_closure (job, "new-files", new_files_closure, FALSE);
 
   /* allocate a progress dialog for the job */
   dialog = g_object_new (THUNAR_TYPE_PROGRESS_DIALOG,

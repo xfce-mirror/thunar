@@ -97,6 +97,8 @@ ThunarJobResponse thunar_job_ask_skip               (ThunarJob       *job,
                                                      ...);
 void              thunar_job_info_message           (ThunarJob       *job,
                                                      const gchar     *message);
+void              thunar_job_new_files              (ThunarJob       *job,
+                                                     const GList     *file_list);
 void              thunar_job_percent                (ThunarJob       *job,
                                                      gdouble          percent);
 

@@ -787,7 +787,7 @@ thunar_standard_view_finalize (GObject *object)
     }
 
   /* drop any remaining "new-files" paths */
-  thunar_vfs_path_list_free (standard_view->priv->new_files_path_list);
+  g_file_list_free (standard_view->priv->new_files_path_list);
 
   /* release our reference on the preferences */
   g_object_unref (G_OBJECT (standard_view->preferences));
@@ -1283,7 +1283,7 @@ thunar_standard_view_set_loading (ThunarStandardView *standard_view,
       thunar_standard_view_new_files (standard_view, new_files_path_list);
 
       /* cleanup */
-      thunar_vfs_path_list_free (new_files_path_list);
+      g_file_list_free (new_files_path_list);
     }
 
   /* notify listeners */
@@ -2307,7 +2307,7 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   /* release the previous "new-files" paths (if any) */
   if (G_UNLIKELY (standard_view->priv->new_files_path_list != NULL))
     {
-      thunar_vfs_path_list_free (standard_view->priv->new_files_path_list);
+      g_file_list_free (standard_view->priv->new_files_path_list);
       standard_view->priv->new_files_path_list = NULL;
     }
 
@@ -2315,14 +2315,14 @@ thunar_standard_view_new_files (ThunarStandardView *standard_view,
   if (G_UNLIKELY (standard_view->loading))
     {
       /* schedule the "new-files" paths for later processing */
-      standard_view->priv->new_files_path_list = thunar_vfs_path_list_copy (path_list);
+      standard_view->priv->new_files_path_list = g_file_list_copy (path_list);
     }
   else if (G_LIKELY (path_list != NULL))
     {
       /* determine the files for the paths */
       for (lp = path_list; lp != NULL; lp = lp->next)
         {
-          file = thunar_file_cache_lookup_path (lp->data);
+          file = thunar_file_cache_lookup (lp->data);
           if (G_LIKELY (file != NULL))
             file_list = g_list_prepend (file_list, file);
         }

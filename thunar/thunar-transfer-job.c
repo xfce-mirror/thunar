@@ -732,10 +732,8 @@ thunar_transfer_job_execute (ThunarJob *job,
     }
   else
     {
-      /* TODO 
       thunar_job_new_files (job, new_files_list);
       g_file_list_free (new_files_list);
-      */
       return TRUE;
     }
 }

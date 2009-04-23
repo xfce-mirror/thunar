@@ -249,6 +249,23 @@ thunar_job_class_init (ThunarJobClass *klass)
                   G_TYPE_NONE, 1, G_TYPE_STRING);
 
   /**
+   * ThunarJob::new-files:
+   * @job       : a #ThunarJob.
+   * @file_list : a list of #GFile<!---->s that were created by @job.
+   *
+   * This signal is emitted by the @job right before the @job is terminated
+   * and informs the application about the list of created files in @file_list.
+   * @file_list contains only the toplevel file items, that were specified by
+   * the application on creation of the @job.
+   **/
+  job_signals[NEW_FILES] =
+    g_signal_new (I_("new-files"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
+                  g_cclosure_marshal_VOID__POINTER,
+                  G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
    * ThunarJob::percent:
    * @job     : a #ThunarJob.
    * @percent : the percentage of completeness.
@@ -766,6 +783,22 @@ thunar_job_info_message (ThunarJob   *job,
   _thunar_return_if_fail (message != NULL);
 
   thunar_job_emit (job, job_signals[INFO_MESSAGE], 0, message);
+}
+
+
+
+void
+thunar_job_new_files (ThunarJob   *job,
+                      const GList *file_list)
+{
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
+
+  /* check if we have any files */
+  if (G_LIKELY (file_list != NULL))
+    {
+      /* emit the "new-files" signal */
+      thunar_job_emit (job, job_signals[NEW_FILES], 0, file_list);
+    }
 }
 
 

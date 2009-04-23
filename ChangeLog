@@ -1,5 +1,14 @@
 2009-04-23	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-application.c, thunar/thunar-job.{c,h},
+	  thunar/thunar-io-jobs.c, thunar/thunar-transfer-job.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-tree-view.c: Implement 
+	  and connect to the "new-files" signal again. Update
+	  ThunarStandardView and ThunarTreeView to use a GFile list for the
+	  new_files_closure.
+
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-application.{c,h}, thunar/thunar-dbus-service.c, 
 	  thunar/thunar-io-jobs.{c,h},: Add new job
 	  thunar_io_jobs_trash_files() and a new function
