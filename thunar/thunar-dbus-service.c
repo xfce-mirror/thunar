@@ -589,11 +589,11 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
                                    GError           **error)
 {
   ThunarApplication *application;
-  ThunarVfsPath     *target_path;
-  ThunarVfsPath     *path;
+  GFile             *file;
+  GFile             *target_file;
   GdkScreen         *screen;
   GError            *err = NULL;
-  GList             *path_list = NULL;
+  GList             *file_list = NULL;
   gchar             *filename;
   guint              n;
 
@@ -609,9 +609,10 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
           if (G_LIKELY (err == NULL))
             {
               /* determine the path for the filename */
-              path = thunar_vfs_path_new (filename, &err);
-              if (G_LIKELY (path != NULL))
-                path_list = g_list_append (path_list, path);
+              /* TODO Not sure this will work as expected */
+              file = g_file_new_for_commandline_arg (filename);
+              file_list = g_file_list_append (file_list, file);
+              g_object_unref (file);
             }
 
           /* cleanup */
@@ -623,15 +624,16 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          target_path = thunar_vfs_path_get_for_trash ();
-          thunar_application_move_into (application, screen, path_list, target_path, NULL);
-          g_object_unref (G_OBJECT (application));
-          thunar_vfs_path_unref (target_path);
+          /* TODO use thunar_application_trash() instead of thunar_application_move_into() here */
+          target_file = g_file_new_for_trash ();
+          thunar_application_move_into (application, screen, file_list, target_file, NULL);
+          g_object_unref (target_file);
+          g_object_unref (application);
         }
 
       /* cleanup */
-      thunar_vfs_path_list_free (path_list);
-      g_object_unref (G_OBJECT (screen));
+      g_file_list_free (file_list);
+      g_object_unref (screen);
     }
 
   /* check if we failed */

@@ -52,9 +52,12 @@ struct _ThunarJobClass
                                 GError          **error);
 
   /* signals */
-  ThunarJobResponse (*ask)     (ThunarJob        *job,
-                                const gchar      *message,
-                                ThunarJobResponse choices);
+  ThunarJobResponse (*ask)         (ThunarJob        *job,
+                                    const gchar      *message,
+                                    ThunarJobResponse choices);
+  ThunarJobResponse (*ask_replace) (ThunarJob        *job,
+                                    ThunarFile       *source_file,
+                                    ThunarFile       *target_file);
 };
 
 struct _ThunarJob
@@ -85,6 +88,10 @@ void              thunar_job_emit                   (ThunarJob       *job,
 ThunarJobResponse thunar_job_ask_overwrite          (ThunarJob       *job,
                                                      const gchar     *format,
                                                      ...);
+ThunarJobResponse thunar_job_ask_replace            (ThunarJob       *job,
+                                                     GFile           *source_path,
+                                                     GFile           *target_path,
+                                                     GError         **error);
 ThunarJobResponse thunar_job_ask_skip               (ThunarJob       *job,
                                                      const gchar     *format,
                                                      ...);

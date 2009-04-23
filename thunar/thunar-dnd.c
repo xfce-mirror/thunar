@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -44,7 +45,7 @@ dnd_action_selected (GtkWidget     *item,
  * thunar_dnd_ask:
  * @widget    : the widget on which the drop was performed.
  * @folder    : the #ThunarFile to which the @path_list is being dropped.
- * @path_list : the #ThunarVfsPath<!---->s of the files being dropped to @file.
+ * @path_list : the #GFile<!---->s of the files being dropped to @file.
  * @time      : the time of the drop event.
  * @actions   : the list of actions supported for the drop.
  *
@@ -124,7 +125,7 @@ thunar_dnd_ask (GtkWidget    *widget,
       for (lp = path_list; lp != NULL; lp = lp->next)
         {
           /* try to resolve this path */
-          file = thunar_file_cache_lookup_path (lp->data);
+          file = thunar_file_cache_lookup (lp->data);
           if (G_LIKELY (file != NULL))
             file_list = g_list_prepend (file_list, file);
           else
@@ -189,11 +190,11 @@ thunar_dnd_ask (GtkWidget    *widget,
  * thunar_dnd_perform:
  * @widget            : the #GtkWidget on which the drop was done.
  * @file              : the #ThunarFile on which the @path_list was dropped.
- * @path_list         : the list of #ThunarVfsPath<!---->s that was dropped.
+ * @path_list         : the list of #GFile<!---->s that was dropped.
  * @action            : the #GdkDragAction that was performed.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
- *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
  *
  * Performs the drop of @path_list on @file in @widget, as given in
@@ -228,15 +229,17 @@ thunar_dnd_perform (GtkWidget    *widget,
       switch (action)
         {
         case GDK_ACTION_COPY:
-          thunar_application_copy_into (application, widget, path_list, thunar_file_get_path (file), new_files_closure);
+          thunar_application_copy_into (application, widget, path_list, thunar_file_get_file (file), new_files_closure);
           break;
 
         case GDK_ACTION_MOVE:
-          thunar_application_move_into (application, widget, path_list, thunar_file_get_path (file), new_files_closure);
+          thunar_application_move_into (application, widget, path_list, thunar_file_get_file (file), new_files_closure);
           break;
 
         case GDK_ACTION_LINK:
+          /* TODO Enable this again:
           thunar_application_link_into (application, widget, path_list, thunar_file_get_path (file), new_files_closure);
+          */
           break;
 
         default:

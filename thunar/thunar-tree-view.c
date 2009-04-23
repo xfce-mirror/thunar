@@ -196,7 +196,7 @@ struct _ThunarTreeView
   /* drop site support */
   guint                   drop_data_ready : 1; /* whether the drop data was received already */
   guint                   drop_occurred : 1;
-  GList                  *drop_path_list;      /* the list of URIs that are contained in the drop data */
+  GList                  *drop_file_list;      /* the list of URIs that are contained in the drop data */
 
   /* the "new-files" closure, which is used to
    * open newly created directories once done.
@@ -449,7 +449,7 @@ thunar_tree_view_finalize (GObject *object)
   ThunarTreeView *view = THUNAR_TREE_VIEW (object);
 
   /* release drop path list (if drag_leave wasn't called) */
-  thunar_vfs_path_list_free (view->drop_path_list);
+  g_file_list_free (view->drop_file_list);
 
   /* release the provider factory */
   g_object_unref (G_OBJECT (view->provider_factory));
@@ -744,7 +744,7 @@ thunar_tree_view_drag_data_received (GtkWidget        *widget,
     {
       /* extract the URI list from the selection data (if valid) */
       if (info == TARGET_TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
-        view->drop_path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
+        view->drop_file_list = g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* reset the state */
       view->drop_data_ready = TRUE;
@@ -762,12 +762,12 @@ thunar_tree_view_drag_data_received (GtkWidget        *widget,
         {
           /* ask the user what to do with the drop data */
           action = (context->action == GDK_ACTION_ASK)
-                 ? thunar_dnd_ask (GTK_WIDGET (view), file, view->drop_path_list, time, actions)
+                 ? thunar_dnd_ask (GTK_WIDGET (view), file, view->drop_file_list, time, actions)
                  : context->action;
 
           /* perform the requested action */
           if (G_LIKELY (action != 0))
-            succeed = thunar_dnd_perform (GTK_WIDGET (view), file, view->drop_path_list, action, NULL);
+            succeed = thunar_dnd_perform (GTK_WIDGET (view), file, view->drop_file_list, action, NULL);
         }
 
       /* release the file reference */
@@ -886,9 +886,9 @@ thunar_tree_view_drag_leave (GtkWidget      *widget,
   /* reset the "drop data ready" status and free the URI list */
   if (G_LIKELY (view->drop_data_ready))
     {
-      thunar_vfs_path_list_free (view->drop_path_list);
+      g_file_list_free (view->drop_file_list);
       view->drop_data_ready = FALSE;
-      view->drop_path_list = NULL;
+      view->drop_file_list = NULL;
     }
 
   /* call the parent's handler */
@@ -1341,7 +1341,7 @@ thunar_tree_view_get_dest_actions (ThunarTreeView *view,
           if (G_LIKELY (file != NULL))
             {
               /* check if the file accepts the drop */
-              actions = thunar_file_accepts_drop (file, view->drop_path_list, context, &action);
+              actions = thunar_file_accepts_drop (file, view->drop_file_list, context, &action);
               if (G_UNLIKELY (actions == 0))
                 {
                   /* reset file */
@@ -1801,7 +1801,7 @@ thunar_tree_view_action_paste_into_folder (ThunarTreeView *view)
   if (G_LIKELY (file != NULL))
     {
       /* paste the files from the clipboard to the selected folder */
-      thunar_clipboard_manager_paste_files (view->clipboard, thunar_file_get_path (file), GTK_WIDGET (view), NULL);
+      thunar_clipboard_manager_paste_files (view->clipboard, thunar_file_get_file (file), GTK_WIDGET (view), NULL);
 
       /* release the file reference */
       g_object_unref (G_OBJECT (file));

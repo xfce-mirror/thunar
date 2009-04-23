@@ -152,7 +152,7 @@ struct _ThunarShortcutsView
   /* drop site support */
   guint  drop_data_ready : 1; /* whether the drop data was received already */
   guint  drop_occurred : 1;
-  GList *drop_path_list;      /* the list of URIs that are contained in the drop data */
+  GList *drop_file_list;      /* the list of URIs that are contained in the drop data */
 
 #if GTK_CHECK_VERSION(2,8,0)
   /* id of the signal used to queue a resize on the
@@ -335,7 +335,7 @@ thunar_shortcuts_view_finalize (GObject *object)
   ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (object);
 
   /* release drop path list (if drag_leave wasn't called) */
-  thunar_vfs_path_list_free (view->drop_path_list);
+  g_file_list_free (view->drop_file_list);
 
   /* release the provider factory */
   g_object_unref (G_OBJECT (view->provider_factory));
@@ -474,7 +474,7 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
     {
       /* extract the URI list from the selection data (if valid) */
       if (info == TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
-        view->drop_path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
+        view->drop_file_list = g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* reset the state */
       view->drop_data_ready = TRUE;
@@ -503,7 +503,7 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
                     gtk_tree_path_next (path);
 
                   /* just add the required shortcuts then */
-                  thunar_shortcuts_view_drop_uri_list (view, view->drop_path_list, path);
+                  thunar_shortcuts_view_drop_uri_list (view, view->drop_file_list, path);
                 }
               else if (G_LIKELY ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE | GDK_ACTION_LINK)) != 0))
                 {
@@ -519,13 +519,13 @@ thunar_shortcuts_view_drag_data_received (GtkWidget        *widget,
                         {
                           /* ask the user what to do with the drop data */
                           if (G_UNLIKELY (action == GDK_ACTION_ASK))
-                            action = thunar_dnd_ask (widget, file, view->drop_path_list, time, actions);
+                            action = thunar_dnd_ask (widget, file, view->drop_file_list, time, actions);
 
                           /* perform the requested action */
                           if (G_LIKELY (action != 0))
                             {
                               /* really perform the drop :-) */
-                              succeed = thunar_dnd_perform (widget, file, view->drop_path_list, action, NULL);
+                              succeed = thunar_dnd_perform (widget, file, view->drop_file_list, action, NULL);
                             }
 
                           /* release the file */
@@ -720,9 +720,9 @@ thunar_shortcuts_view_drag_leave (GtkWidget      *widget,
   /* reset the "drop data ready" status and free the URI list */
   if (G_LIKELY (view->drop_data_ready))
     {
-      thunar_vfs_path_list_free (view->drop_path_list);
+      g_file_list_free (view->drop_file_list);
       view->drop_data_ready = FALSE;
-      view->drop_path_list = NULL;
+      view->drop_file_list = NULL;
     }
 
   /* schedule a repaint to make sure the special drop icon for the target row
@@ -1077,7 +1077,7 @@ thunar_shortcuts_view_compute_drop_actions (ThunarShortcutsView     *view,
           if (G_LIKELY (file != NULL))
             {
               /* check if the file accepts the drop */
-              actions = thunar_file_accepts_drop (file, view->drop_path_list, context, action_return);
+              actions = thunar_file_accepts_drop (file, view->drop_file_list, context, action_return);
               if (G_LIKELY (actions != 0))
                 {
                   /* we can drop into this location */
@@ -1192,8 +1192,6 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
   GtkTreePath  *path;
   ThunarFile   *file;
   GError       *error = NULL;
-  gchar        *display_string;
-  gchar        *uri_string;
   GList        *lp;
 
   /* take a copy of the destination path */
@@ -1203,26 +1201,22 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
   model = gtk_tree_view_get_model (GTK_TREE_VIEW (view));
   for (lp = path_list; lp != NULL; lp = lp->next)
     {
-      file = thunar_file_get_for_path (lp->data, &error);
+      file = thunar_file_get (lp->data, &error);
       if (G_UNLIKELY (file == NULL))
         break;
 
       /* make sure, that only directories gets added to the shortcuts list */
       if (G_UNLIKELY (!thunar_file_is_directory (file)))
         {
-          uri_string = thunar_vfs_path_dup_string (lp->data);
-          display_string = g_filename_display_name (uri_string);
           g_set_error (&error, G_FILE_ERROR, G_FILE_ERROR_NOTDIR,
                        _("The path \"%s\" does not refer to a directory"),
-                       display_string);
-          g_object_unref (G_OBJECT (file));
-          g_free (display_string);
-          g_free (uri_string);
+                       thunar_file_get_display_name (file));
+          g_object_unref (file);
           break;
         }
 
       thunar_shortcuts_model_add (THUNAR_SHORTCUTS_MODEL (model), path, file);
-      g_object_unref (G_OBJECT (file));
+      g_object_unref (file);
       gtk_tree_path_next (path);
     }
 

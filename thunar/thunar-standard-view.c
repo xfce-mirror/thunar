@@ -302,7 +302,7 @@ struct _ThunarStandardViewPrivate
   guint                   drop_data_ready : 1; /* whether the drop data was received already */
   guint                   drop_highlight : 1;
   guint                   drop_occurred : 1;   /* whether the data was dropped */
-  GList                  *drop_path_list;      /* the list of URIs that are contained in the drop data */
+  GList                  *drop_file_list;      /* the list of URIs that are contained in the drop data */
 
   /* the "new-files" closure, which is used to select files whenever 
    * new files are created by a ThunarVfsJob associated with this view
@@ -767,7 +767,7 @@ thunar_standard_view_finalize (GObject *object)
   thunar_vfs_path_list_free (standard_view->priv->drag_path_list);
 
   /* release the drop path list (just in case the drag-leave wasn't fired before) */
-  thunar_vfs_path_list_free (standard_view->priv->drop_path_list);
+  g_file_list_free (standard_view->priv->drop_file_list);
 
   /* release the reference on the name renderer */
   g_object_unref (G_OBJECT (standard_view->name_renderer));
@@ -1549,7 +1549,7 @@ thunar_standard_view_get_dest_actions (ThunarStandardView *standard_view,
   if (G_LIKELY (file != NULL))
     {
       /* determine the possible drop actions for the file (and the suggested action if any) */
-      actions = thunar_file_accepts_drop (file, standard_view->priv->drop_path_list, context, &action);
+      actions = thunar_file_accepts_drop (file, standard_view->priv->drop_file_list, context, &action);
       if (G_LIKELY (actions != 0))
         {
           /* tell the caller about the file (if it's interested) */
@@ -2014,7 +2014,7 @@ thunar_standard_view_action_paste (GtkAction          *action,
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   if (G_LIKELY (current_directory != NULL))
     {
-      thunar_clipboard_manager_paste_files (standard_view->clipboard, thunar_file_get_path (current_directory),
+      thunar_clipboard_manager_paste_files (standard_view->clipboard, thunar_file_get_file (current_directory),
                                             GTK_WIDGET (standard_view), thunar_standard_view_new_files_closure (standard_view));
     }
 }
@@ -2050,7 +2050,7 @@ thunar_standard_view_action_paste_into_folder (GtkAction          *action,
   /* determine the first selected file and verify that it's a folder */
   file = g_list_nth_data (standard_view->selected_files, 0);
   if (G_LIKELY (file != NULL && thunar_file_is_directory (file)))
-    thunar_clipboard_manager_paste_files (standard_view->clipboard, thunar_file_get_path (file), GTK_WIDGET (standard_view), NULL);
+    thunar_clipboard_manager_paste_files (standard_view->clipboard, thunar_file_get_file (file), GTK_WIDGET (standard_view), NULL);
 }
 
 
@@ -2138,7 +2138,7 @@ thunar_standard_view_action_duplicate (GtkAction          *action,
   ThunarApplication *application;
   ThunarFile        *current_directory;
   GClosure          *new_files_closure;
-  GList             *selected_paths;
+  GList             *selected_files;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -2147,21 +2147,21 @@ thunar_standard_view_action_duplicate (GtkAction          *action,
   current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
   if (G_LIKELY (current_directory != NULL))
     {
-      /* determine the selected paths for the view */
-      selected_paths = thunar_file_list_to_path_list (standard_view->selected_files);
-      if (G_LIKELY (selected_paths != NULL))
+      /* determine the selected files for the view */
+      selected_files = thunar_file_list_to_g_file_list (standard_view->selected_files);
+      if (G_LIKELY (selected_files != NULL))
         {
           /* copy the selected files into the current directory, which effectively
            * creates duplicates of the files.
            */
           application = thunar_application_get ();
           new_files_closure = thunar_standard_view_new_files_closure (standard_view);
-          thunar_application_copy_into (application, GTK_WIDGET (standard_view), selected_paths,
-                                        thunar_file_get_path (current_directory), new_files_closure);
+          thunar_application_copy_into (application, GTK_WIDGET (standard_view), selected_files,
+                                        thunar_file_get_file (current_directory), new_files_closure);
           g_object_unref (G_OBJECT (application));
 
           /* clean up */
-          thunar_vfs_path_list_free (selected_paths);
+          g_file_list_free (selected_files);
         }
     }
 }
@@ -2623,7 +2623,7 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
     {
       /* extract the URI list from the selection data (if valid) */
       if (info == TARGET_TEXT_URI_LIST && selection_data->format == 8 && selection_data->length > 0)
-        standard_view->priv->drop_path_list = thunar_vfs_path_list_from_string ((gchar *) selection_data->data, NULL);
+        standard_view->priv->drop_file_list = g_file_list_new_from_string ((gchar *) selection_data->data);
 
       /* reset the state */
       standard_view->priv->drop_data_ready = TRUE;
@@ -2745,13 +2745,13 @@ thunar_standard_view_drag_data_received (GtkWidget          *view,
             {
               /* ask the user what to do with the drop data */
               action = (context->action == GDK_ACTION_ASK)
-                     ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_path_list, time, actions)
+                     ? thunar_dnd_ask (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list, time, actions)
                      : context->action;
 
               /* perform the requested action */
               if (G_LIKELY (action != 0))
                 {
-                  succeed = thunar_dnd_perform (GTK_WIDGET (standard_view), file, standard_view->priv->drop_path_list,
+                  succeed = thunar_dnd_perform (GTK_WIDGET (standard_view), file, standard_view->priv->drop_file_list,
                                                 action, thunar_standard_view_new_files_closure (standard_view));
                 }
             }
@@ -2794,8 +2794,8 @@ thunar_standard_view_drag_leave (GtkWidget          *widget,
   /* reset the "drop data ready" status and free the URI list */
   if (G_LIKELY (standard_view->priv->drop_data_ready))
     {
-      thunar_vfs_path_list_free (standard_view->priv->drop_path_list);
-      standard_view->priv->drop_path_list = NULL;
+      g_file_list_free (standard_view->priv->drop_file_list);
+      standard_view->priv->drop_file_list = NULL;
       standard_view->priv->drop_data_ready = FALSE;
     }
 

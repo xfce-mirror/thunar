@@ -25,33 +25,33 @@
 
 G_BEGIN_DECLS;
 
-gboolean              thunar_dialogs_show_rename_file     (GtkWindow            *parent,
-                                                           ThunarFile           *file) G_GNUC_INTERNAL;
+gboolean           thunar_dialogs_show_rename_file     (GtkWindow            *parent,
+                                                        ThunarFile           *file) G_GNUC_INTERNAL;
 
-void                  thunar_dialogs_show_about           (GtkWindow            *parent,
-                                                           const gchar          *title,
-                                                           const gchar          *format,
-                                                           ...) G_GNUC_INTERNAL G_GNUC_PRINTF (3, 4);
+void               thunar_dialogs_show_about           (GtkWindow            *parent,
+                                                        const gchar          *title,
+                                                        const gchar          *format,
+                                                        ...) G_GNUC_INTERNAL G_GNUC_PRINTF (3, 4);
 
-void                  thunar_dialogs_show_error           (gpointer              parent,
-                                                           const GError         *error,
-                                                           const gchar          *format,
-                                                           ...) G_GNUC_INTERNAL G_GNUC_PRINTF (3, 4);
+void               thunar_dialogs_show_error           (gpointer              parent,
+                                                        const GError         *error,
+                                                        const gchar          *format,
+                                                        ...) G_GNUC_INTERNAL G_GNUC_PRINTF (3, 4);
 
-void                  thunar_dialogs_show_help            (gpointer              parent,
-                                                           const gchar          *page,
-                                                           const gchar          *offset) G_GNUC_INTERNAL;
+void               thunar_dialogs_show_help            (gpointer              parent,
+                                                        const gchar          *page,
+                                                        const gchar          *offset) G_GNUC_INTERNAL;
 
-ThunarVfsJobResponse  thunar_dialogs_show_job_ask         (GtkWindow            *parent,
-                                                           const gchar          *question,
-                                                           ThunarVfsJobResponse  choices) G_GNUC_INTERNAL;
+ThunarJobResponse  thunar_dialogs_show_job_ask         (GtkWindow            *parent,
+                                                        const gchar          *question,
+                                                        ThunarJobResponse     choices) G_GNUC_INTERNAL;
 
-ThunarVfsJobResponse  thunar_dialogs_show_job_ask_replace (GtkWindow            *parent,
-                                                           ThunarVfsInfo        *src_info,
-                                                           ThunarVfsInfo        *dst_info) G_GNUC_INTERNAL;
+ThunarJobResponse  thunar_dialogs_show_job_ask_replace (GtkWindow            *parent,
+                                                        ThunarFile           *src_file,
+                                                        ThunarFile           *dst_file) G_GNUC_INTERNAL;
 
-void                  thunar_dialogs_show_job_error       (GtkWindow            *parent,
-                                                           GError               *error) G_GNUC_INTERNAL;
+void               thunar_dialogs_show_job_error       (GtkWindow            *parent,
+                                                        GError               *error) G_GNUC_INTERNAL;
 
 G_END_DECLS;
 

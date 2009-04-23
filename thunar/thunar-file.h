@@ -225,6 +225,7 @@ const gchar      *thunar_file_get_original_path    (const ThunarFile       *file
 
 gboolean          thunar_file_is_chmodable         (const ThunarFile       *file);
 gboolean          thunar_file_is_renameable        (const ThunarFile       *file);
+gboolean          thunar_file_can_be_trashed       (const ThunarFile       *file);
 
 GList            *thunar_file_get_emblem_names     (ThunarFile              *file);
 void              thunar_file_set_emblem_names     (ThunarFile              *file,

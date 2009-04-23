@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -30,6 +31,7 @@
 
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dnd.h>
+#include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-location-button.h>
 #include <thunar/thunar-pango-extensions.h>
@@ -140,7 +142,7 @@ struct _ThunarLocationButton
   gint                enter_timeout_id;
 
   /* drop support for the button */
-  GList              *drop_path_list;
+  GList              *drop_file_list;
   guint               drop_data_ready : 1;
   guint               drop_occurred : 1;
 
@@ -340,7 +342,7 @@ thunar_location_button_finalize (GObject *object)
   ThunarLocationButton *location_button = THUNAR_LOCATION_BUTTON (object);
 
   /* release the drop path list (just in case the drag-leave wasn't fired before) */
-  thunar_vfs_path_list_free (location_button->drop_path_list);
+  g_file_list_free (location_button->drop_file_list);
 
   /* be sure to cancel any pending enter timeout */
   if (G_UNLIKELY (location_button->enter_timeout_id != 0))
@@ -434,7 +436,7 @@ thunar_location_button_get_dest_actions (ThunarLocationButton *location_button,
   if (G_LIKELY (location_button->file != NULL))
     {
       /* determine the possible drop actions for the file (and the suggested action if any) */
-      actions = thunar_file_accepts_drop (location_button->file, location_button->drop_path_list, context, &action);
+      actions = thunar_file_accepts_drop (location_button->file, location_button->drop_file_list, context, &action);
     }
 
   /* tell Gdk whether we can drop here */
@@ -699,7 +701,7 @@ thunar_location_button_drag_data_received (GtkWidget            *button,
     {
       /* extract the URI list from the selection data (if valid) */
       if (selection_data->format == 8 && selection_data->length > 0)
-        location_button->drop_path_list = thunar_vfs_path_list_from_string ((const gchar *) selection_data->data, NULL);
+        location_button->drop_file_list = g_file_list_new_from_string ((const gchar *) selection_data->data);
 
       /* reset the state */
       location_button->drop_data_ready = TRUE;
@@ -717,12 +719,12 @@ thunar_location_button_drag_data_received (GtkWidget            *button,
         {
           /* as the user what to do with the drop data */
           action = (context->action == GDK_ACTION_ASK)
-                 ? thunar_dnd_ask (button, location_button->file, location_button->drop_path_list, time, actions)
+                 ? thunar_dnd_ask (button, location_button->file, location_button->drop_file_list, time, actions)
                  : context->action;
 
           /* perform the requested action */
           if (G_LIKELY (action != 0))
-            succeed = thunar_dnd_perform (button, location_button->file, location_button->drop_path_list, action, NULL);
+            succeed = thunar_dnd_perform (button, location_button->file, location_button->drop_file_list, action, NULL);
         }
 
       /* tell the peer that we handled the drop */
@@ -758,9 +760,9 @@ thunar_location_button_drag_leave (GtkWidget            *button,
   /* reset the "drop data ready" status and free the path list */
   if (G_LIKELY (location_button->drop_data_ready))
     {
-      thunar_vfs_path_list_free (location_button->drop_path_list);
+      g_file_list_free (location_button->drop_file_list);
       location_button->drop_data_ready = FALSE;
-      location_button->drop_path_list = NULL;
+      location_button->drop_file_list = NULL;
     }
 
   /* be sure to cancel any running enter timeout */

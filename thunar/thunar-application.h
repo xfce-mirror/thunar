@@ -2,6 +2,7 @@
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2005      Jeff Franks <jcfranks@xfce.org>
+ * Copyright (c) 2009      Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -69,14 +70,14 @@ gboolean           thunar_application_process_filenames (ThunarApplication *appl
 
 void               thunar_application_copy_to           (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *source_path_list,
-                                                         GList             *target_path_list,
+                                                         GList             *source_file_list,
+                                                         GList             *target_file_list,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_copy_into         (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *source_path_list,
-                                                         ThunarVfsPath     *target_path,
+                                                         GList             *source_file_list,
+                                                         GFile             *target_file,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_link_into         (ThunarApplication *application,
@@ -87,8 +88,8 @@ void               thunar_application_link_into         (ThunarApplication *appl
 
 void               thunar_application_move_into         (ThunarApplication *application,
                                                          gpointer           parent,
-                                                         GList             *source_path_list,
-                                                         ThunarVfsPath     *target_path,
+                                                         GList             *source_file_list,
+                                                         GFile             *target_file,
                                                          GClosure          *new_files_closure);
 
 void               thunar_application_unlink_files      (ThunarApplication *application,

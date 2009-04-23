@@ -60,21 +60,23 @@ typedef struct _ThunarJobSyncSignalData  ThunarJobSyncSignalData;
 
 
 
-static void     thunar_job_class_init          (ThunarJobClass     *klass);
-static void     thunar_job_init                (ThunarJob          *job);
-static void     thunar_job_finalize            (GObject            *object);
-
-static void     _thunar_job_error              (ThunarJob          *job,
-                                                GError             *error);
-static void     _thunar_job_finished           (ThunarJob          *job);
-static gboolean _thunar_job_finish             (ThunarJob          *job,
-                                                GSimpleAsyncResult *result,
-                                                GError            **error);
-static void     _thunar_job_async_ready        (GObject            *object,
-                                                GAsyncResult       *result);
-static gboolean _thunar_job_scheduler_job_func (GIOSchedulerJob    *scheduler_job,
-                                                GCancellable       *cancellable,
-                                                gpointer            user_data);
+static void              thunar_job_class_init          (ThunarJobClass     *klass);
+static void              thunar_job_init                (ThunarJob          *job);
+static void              thunar_job_finalize            (GObject            *object);
+static ThunarJobResponse thunar_job_real_ask_replace    (ThunarJob          *job,
+                                                         ThunarFile         *source_file,
+                                                         ThunarFile         *target_file);
+static void              _thunar_job_error              (ThunarJob          *job,
+                                                         GError             *error);
+static void              _thunar_job_finished           (ThunarJob          *job);
+static gboolean          _thunar_job_finish             (ThunarJob          *job,
+                                                         GSimpleAsyncResult *result,
+                                                         GError            **error);
+static void              _thunar_job_async_ready        (GObject            *object,
+                                                         GAsyncResult       *result);
+static gboolean          _thunar_job_scheduler_job_func (GIOSchedulerJob    *scheduler_job,
+                                                         GCancellable       *cancellable,
+                                                         gpointer            user_data);
 
 
 
@@ -151,6 +153,7 @@ thunar_job_class_init (ThunarJobClass *klass)
   gobject_class->finalize = thunar_job_finalize;
 
   klass->execute = NULL;
+  klass->ask_replace = thunar_job_real_ask_replace;
 
   /**
    * ThunarJob::ask:
@@ -172,6 +175,28 @@ thunar_job_class_init (ThunarJobClass *klass)
                   THUNAR_TYPE_JOB_RESPONSE,
                   2, G_TYPE_STRING,
                   THUNAR_TYPE_JOB_RESPONSE);
+
+  /**
+   * ThunarJob::ask-replace:
+   * @job      : a #ThunarJob.
+   * @src_file : the #ThunarFile of the source file.
+   * @dst_file : the #ThunarFile of the destination file, that
+   *             may be replaced with the source file.
+   *
+   * Emitted to ask the user whether the destination file should
+   * be replaced by the source file.
+   *
+   * Return value: the selected choice.
+   **/
+  job_signals[ASK_REPLACE] =
+    g_signal_new (I_("ask-replace"),
+                  G_TYPE_FROM_CLASS (klass),
+                  G_SIGNAL_NO_HOOKS | G_SIGNAL_RUN_LAST,
+                  G_STRUCT_OFFSET (ThunarJobClass, ask_replace),
+                  _thunar_job_ask_accumulator, NULL,
+                  _thunar_marshal_FLAGS__OBJECT_OBJECT,
+                  THUNAR_TYPE_JOB_RESPONSE, 
+                  2, THUNAR_TYPE_FILE, THUNAR_TYPE_FILE);
 
   /**
    * ThunarJob::error:
@@ -265,6 +290,38 @@ thunar_job_finalize (GObject *object)
   g_object_unref (job->priv->cancellable);
 
   (*G_OBJECT_CLASS (thunar_job_parent_class)->finalize) (object);
+}
+
+
+
+static ThunarJobResponse 
+thunar_job_real_ask_replace (ThunarJob  *job,
+                             ThunarFile *source_file,
+                             ThunarFile *target_file)
+{
+  ThunarJobResponse response;
+  gchar            *message;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (source_file), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (target_file), THUNAR_JOB_RESPONSE_CANCEL);
+
+  message = g_strdup_printf (_("The file \"%s\" already exists. Would you like to replace it?\n\n"
+                               "If you replace an existing file, its contents will be overwritten."),
+                             thunar_file_get_display_name (source_file));
+
+  g_signal_emit (job, job_signals[ASK], 0, message,
+                 THUNAR_JOB_RESPONSE_YES
+                 | THUNAR_JOB_RESPONSE_YES_ALL
+                 | THUNAR_JOB_RESPONSE_NO
+                 | THUNAR_JOB_RESPONSE_NO_ALL
+                 | THUNAR_JOB_RESPONSE_CANCEL,
+                 &response);
+
+  /* clean up */
+  g_free (message);
+
+  return response;
 }
 
 
@@ -590,6 +647,65 @@ thunar_job_ask_overwrite (ThunarJob   *job,
 
 
 ThunarJobResponse 
+thunar_job_ask_replace (ThunarJob *job,
+                        GFile     *source_path,
+                        GFile     *target_path,
+                        GError   **error)
+{
+  ThunarJobResponse response;
+  ThunarFile       *source_file;
+  ThunarFile       *target_file;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (G_IS_FILE (source_path), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (G_IS_FILE (target_path), THUNAR_JOB_RESPONSE_CANCEL);
+
+  if (G_UNLIKELY (thunar_job_set_error_if_cancelled (job, error)))
+    return THUNAR_JOB_RESPONSE_CANCEL;
+
+  /* check if the user said "Overwrite All" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_YES_ALL))
+    return THUNAR_JOB_RESPONSE_YES;
+
+  /* check if the user said "Overwrite None" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_overwrite_response == THUNAR_JOB_RESPONSE_NO_ALL))
+    return THUNAR_JOB_RESPONSE_NO;
+
+  source_file = thunar_file_get (source_path, error);
+
+  if (G_UNLIKELY (source_file == NULL))
+    return THUNAR_JOB_RESPONSE_NO;
+
+  target_file = thunar_file_get (target_path, error);
+
+  if (G_UNLIKELY (target_file == NULL))
+    {
+      g_object_unref (source_file);
+      return THUNAR_JOB_RESPONSE_NO;
+    }
+
+  thunar_job_emit (job, job_signals[ASK_REPLACE], 0, source_file, target_file, &response);
+
+  g_object_unref (source_file);
+  g_object_unref (target_file);
+
+  /* remember the response for later */
+  job->priv->earlier_ask_overwrite_response = response;
+
+  /* translate the response */
+  if (response == THUNAR_JOB_RESPONSE_YES_ALL)
+    response = THUNAR_JOB_RESPONSE_YES;
+  else if (response == THUNAR_JOB_RESPONSE_NO_ALL)
+    response = THUNAR_JOB_RESPONSE_NO;
+  else if (response == THUNAR_JOB_RESPONSE_CANCEL)
+    thunar_job_cancel (job);
+
+  return response;
+}
+
+
+
+ThunarJobResponse 
 thunar_job_ask_skip (ThunarJob   *job,
                      const gchar *format,
                      ...)
@@ -660,7 +776,7 @@ thunar_job_percent (ThunarJob *job,
 {
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
 
-  percent = MIN (0.0, MAX (100.0, percent));
+  percent = MAX (0.0, MIN (100.0, percent));
   thunar_job_emit (job, job_signals[PERCENT], 0, percent);
 }
 

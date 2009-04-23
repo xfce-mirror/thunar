@@ -1173,15 +1173,18 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
 {
   ThunarApplication *application;
   ThunarVfsVolume   *volume;
+  ThunarVfsPath     *path;
   GError            *err = NULL;
-  GList             *paths;
+  GFile             *target_file;
+  GList             *files;
+  gchar             *uri;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
 
   /* determine the source paths */
-  paths = thunar_file_list_to_path_list (launcher->selected_files);
-  if (G_UNLIKELY (paths == NULL))
+  files = thunar_file_list_to_g_file_list (launcher->selected_files);
+  if (G_UNLIKELY (files == NULL))
     return;
 
   /* determine the volume to which to send */
@@ -1199,14 +1202,22 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
     }
   else
     {
+      /* Determine the GFile for the mount point */
+      path = thunar_vfs_volume_get_mount_point (volume);
+      uri = thunar_vfs_path_dup_uri (path);
+      target_file = g_file_new_for_uri (uri);
+      g_free (uri);
+
       /* copy the files onto the specified volume */
       application = thunar_application_get ();
-      thunar_application_copy_into (application, launcher->widget, paths, thunar_vfs_volume_get_mount_point (volume), NULL);
+      thunar_application_copy_into (application, launcher->widget, files, target_file, NULL);
       g_object_unref (G_OBJECT (application));
+
+      g_object_unref (target_file);
     }
 
   /* cleanup */
-  thunar_vfs_path_list_free (paths);
+  g_file_list_free (files);
 }
 
 

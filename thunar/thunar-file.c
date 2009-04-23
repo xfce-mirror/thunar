@@ -1112,7 +1112,7 @@ thunar_file_rename (ThunarFile  *file,
 /**
  * thunar_file_accepts_drop:
  * @file                    : a #ThunarFile instance.
- * @path_list               : the list of #ThunarVfsPath<!---->s that will be droppped.
+ * @file_list               : the list of #GFile<!---->s that will be droppped.
  * @context                 : the current #GdkDragContext, which is used for the drop.
  * @suggested_action_return : return location for the suggested #GdkDragAction or %NULL.
  *
@@ -1129,7 +1129,7 @@ thunar_file_rename (ThunarFile  *file,
  **/
 GdkDragAction
 thunar_file_accepts_drop (ThunarFile     *file,
-                          GList          *path_list,
+                          GList          *file_list,
                           GdkDragContext *context,
                           GdkDragAction  *suggested_action_return)
 {
@@ -1137,16 +1137,14 @@ thunar_file_accepts_drop (ThunarFile     *file,
   GdkDragAction actions;
   ThunarFile   *ofile;
   GFile        *parent_file;
-  GFile        *gfile;
   GList        *lp;
-  gchar        *uri;
   guint         n;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), 0);
   _thunar_return_val_if_fail (GDK_IS_DRAG_CONTEXT (context), 0);
 
   /* we can never drop an empty list */
-  if (G_UNLIKELY (path_list == NULL))
+  if (G_UNLIKELY (file_list == NULL))
     return 0;
 
   /* default to whatever GTK+ thinks for the suggested action */
@@ -1165,21 +1163,14 @@ thunar_file_accepts_drop (ThunarFile     *file,
       /* check up to 100 of the paths (just in case somebody tries to
        * drag around his music collection with 5000 files).
        */
-      for (lp = path_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
+      for (lp = file_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
         {
-          uri = thunar_vfs_path_dup_uri (lp->data);
-          gfile = g_file_new_for_uri (uri);
-          g_free (uri);
-
           /* we cannot drop a file on itself */
-          if (G_UNLIKELY (g_file_equal (file->gfile, gfile)))
-            {
-              g_object_unref (gfile);
-              return 0;
-            }
+          if (G_UNLIKELY (g_file_equal (file->gfile, lp->data)))
+            return 0;
 
           /* check whether source and destination are the same */
-          parent_file = g_file_get_parent (gfile);
+          parent_file = g_file_get_parent (lp->data);
           if (G_LIKELY (parent_file != NULL))
             {
               if (g_file_equal (file->gfile, parent_file))
@@ -1191,39 +1182,29 @@ thunar_file_accepts_drop (ThunarFile     *file,
                 g_object_unref (parent_file);
             }
 
-          /* check if both source and target is in the trash */
-          if (G_UNLIKELY (g_file_is_trashed (gfile) && thunar_file_is_trashed (file)))
-            {
-              /* copy/move/link within the trash not possible */
-              g_object_unref (gfile);
-              return 0;
-            }
+          /* copy/move/link within the trash not possible */
+          if (G_UNLIKELY (g_file_is_trashed (lp->data) && thunar_file_is_trashed (file)))
+            return 0;
         }
 
       /* if the source offers both copy and move and the GTK+ suggested action is copy, try to be smart telling whether
        * we should copy or move by default by checking whether the source and target are on the same disk.
        */
-      if ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE)) != 0 && (suggested_action == GDK_ACTION_COPY))
+      if ((actions & (GDK_ACTION_COPY | GDK_ACTION_MOVE)) != 0 
+          && (suggested_action == GDK_ACTION_COPY))
         {
           /* default to move as suggested action */
           suggested_action = GDK_ACTION_MOVE;
 
           /* check for up to 100 files, for the reason state above */
-          for (lp = path_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
+          for (lp = file_list, n = 0; lp != NULL && n < 100; lp = lp->next, ++n)
             {
-              uri = thunar_vfs_path_dup_uri (lp->data);
-              gfile = g_file_new_for_uri (uri);
-              g_free (uri);
-
               /* dropping from the trash always suggests move */
-              if (G_UNLIKELY (g_file_is_trashed (gfile)))
-                {
-                  g_object_unref (gfile);
-                  break;
-                }
+              if (G_UNLIKELY (g_file_is_trashed (lp->data)))
+                break;
 
               /* determine the cached version of the source file */
-              ofile = thunar_file_cache_lookup (gfile);
+              ofile = thunar_file_cache_lookup (lp->data);
 
               /* we have only move if we know the source and both the source and the target
                * are on the same disk, and the source file is owned by the current user.
@@ -1232,14 +1213,10 @@ thunar_file_accepts_drop (ThunarFile     *file,
                   || (ofile->info->device != file->info->device) 
                   || (ofile->info->uid != effective_user_id))
                 {
-                  g_object_unref (gfile);
-
                   /* default to copy and get outa here */
                   suggested_action = GDK_ACTION_COPY;
                   break;
                 }
-
-              g_object_unref (gfile);
             }
         }
     }
@@ -2025,6 +2002,17 @@ thunar_file_is_renameable (const ThunarFile *file)
     }
 
   return renameable;
+}
+
+
+
+gboolean
+thunar_file_can_be_trashed (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
+  return g_file_info_get_attribute_boolean (file->ginfo, 
+                                            G_FILE_ATTRIBUTE_ACCESS_CAN_TRASH);
 }
 
 

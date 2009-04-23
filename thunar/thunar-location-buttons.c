@@ -1460,7 +1460,7 @@ thunar_location_buttons_action_paste_into_folder (GtkAction             *action,
     {
       /* paste files from the clipboard to the folder represented by this button */
       clipboard = thunar_clipboard_manager_get_for_display (gtk_widget_get_display (GTK_WIDGET (buttons)));
-      thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_path (directory), GTK_WIDGET (buttons), NULL);
+      thunar_clipboard_manager_paste_files (clipboard, thunar_file_get_file (directory), GTK_WIDGET (buttons), NULL);
       g_object_unref (G_OBJECT (clipboard));
     }
 }

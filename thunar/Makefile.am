@@ -184,6 +184,8 @@ Thunar_SOURCES =							\
 	thunar-thumbnail-frame.h					\
 	thunar-thumbnail-generator.c					\
 	thunar-thumbnail-generator.h					\
+	thunar-transfer-job.c						\
+	thunar-transfer-job.h						\
 	thunar-trash-action.c						\
 	thunar-trash-action.h						\
 	thunar-tree-model.c						\

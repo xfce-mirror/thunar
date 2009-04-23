@@ -1,3 +1,36 @@
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-transfer-job.{c,h}: Implement
+	  ThunarTransferJob as an equivalent to ThunarVfsTransferJob. The code
+	  is very similar except that the error handling is a bit different
+	  and all basic operations (non-recursive copy/move) is done based on
+	  GFile and GFileInfo. Copying a file into the same directory
+	  currently does not work the way it did before (new file 'copy of
+	  "%s"' was created). This will be fixed soon.
+	* thunar/thunar-application.{c,h}: Add new function
+	  thunar_application_collect_and_launch_job() as an alternative to
+	  thunar_application_collect_and_launch() but based on GFile and
+	  JobLauncher. Implement thunar_application_move_into(),
+	  thunar_application_copy_into() and thunar_application_copy_to()
+	  based on ThunarTransferJob and GFile instead of ThunarVfsTransferJob.
+	* thunar/thunar-clipboard-manager.{c,h}, thunar/thunar-dialogs.{c,h}, 
+	  thunar/thunar-dnd.c, thunar/thunar-dbus-service.c, 
+	  thunar/thunar-launcher.c, thunar/thunar-location-button.c, 
+	  thunar/thunar-location-buttons.c, thunar/thunar-progress-dialog.c, 
+	  thunar/thunar-shortcuts-view.c, thunar/thunar-standard-view.c, 
+	  thunar/thunar-tree-view.c: Update to new API of 
+	  ThunarClipboardManager, ThunarApplication and ThunarJob. Replace 
+	  *a lot* of ThunarVFS references with code based on GIO.
+	* thunar/thunar-file.{c,h}: Re-implement thunar_file_accepts_drop() 
+	  based on a GFile input list. Add new function
+	  thunar_file_can_be_trashed().
+	* thunar/thunar-io-jobs.{c,h}: Add new jobs
+	  thunar_io_jobs_move_files() and thunar_io_jobs_copy_files().
+	* thunar/thunar-job.{c,h}: Add "ask-replace" signal and public
+	  function thunar_job_ask_replace(), mainly for ThunarTransferJob.
+	* thunar/thunar-marshal.list: Add new marshal function
+	  _thunar_marshal_FLAGS__OBJECT_OBJECT().
+	
 2009-04-22	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/Makefile.am, thunar/thunar-io-scan-directory.{c,h}: Port
