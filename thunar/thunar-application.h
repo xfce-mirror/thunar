@@ -96,6 +96,10 @@ void               thunar_application_unlink_files      (ThunarApplication *appl
                                                          gpointer           parent,
                                                          GList             *file_list);
 
+void               thunar_application_trash             (ThunarApplication *application,
+                                                         gpointer           parent,
+                                                         GList             *file_list);
+
 void               thunar_application_creat             (ThunarApplication *application,
                                                          gpointer           parent,
                                                          GList             *file_list,

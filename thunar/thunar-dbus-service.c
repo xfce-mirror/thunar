@@ -590,7 +590,6 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
 {
   ThunarApplication *application;
   GFile             *file;
-  GFile             *target_file;
   GdkScreen         *screen;
   GError            *err = NULL;
   GList             *file_list = NULL;
@@ -624,10 +623,7 @@ thunar_dbus_service_move_to_trash (ThunarDBusService *dbus_service,
         {
           /* tell the application to move the specified files to the trash */
           application = thunar_application_get ();
-          /* TODO use thunar_application_trash() instead of thunar_application_move_into() here */
-          target_file = g_file_new_for_trash ();
-          thunar_application_move_into (application, screen, file_list, target_file, NULL);
-          g_object_unref (target_file);
+          thunar_application_trash (application, screen, file_list);
           g_object_unref (application);
         }
 

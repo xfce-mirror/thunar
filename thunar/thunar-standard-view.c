@@ -292,7 +292,7 @@ struct _ThunarStandardViewPrivate
   gint                    custom_merge_id;
 
   /* right-click drag/popup support */
-  GList                  *drag_path_list;
+  GList                  *drag_file_list;
   gint                    drag_scroll_timer_id;
   gint                    drag_timer_id;
   gint                    drag_x;
@@ -764,7 +764,7 @@ thunar_standard_view_finalize (GObject *object)
   g_object_unref (G_OBJECT (standard_view->priv->provider_factory));
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
-  thunar_vfs_path_list_free (standard_view->priv->drag_path_list);
+  g_file_list_free (standard_view->priv->drag_file_list);
 
   /* release the drop path list (just in case the drag-leave wasn't fired before) */
   g_file_list_free (standard_view->priv->drop_file_list);
@@ -1878,10 +1878,12 @@ thunar_standard_view_action_create_template (GtkAction           *action,
   ThunarApplication *application;
   const gchar       *content_type;
   ThunarFile        *current_directory;
+  GFile             *file;
   GList              source_path_list;
   GList              target_path_list;
-  gchar             *title;
   gchar             *name;
+  gchar             *title;
+  gchar             *uri;
 
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (GTK_IS_ACTION (action));
@@ -1903,9 +1905,12 @@ thunar_standard_view_action_create_template (GtkAction           *action,
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
       if (G_LIKELY (current_directory != NULL))
         {
+          uri = thunar_vfs_path_dup_uri (info->path);
+          file = g_file_new_for_uri (uri);
+          g_free (uri);
+
           /* fake the source path list */
-          /* TODO Use a GFile here */
-          source_path_list.data = info->path;
+          source_path_list.data = file;
           source_path_list.next = NULL;
           source_path_list.prev = NULL;
 
@@ -1922,6 +1927,7 @@ thunar_standard_view_action_create_template (GtkAction           *action,
 
           /* release the target path */
           g_object_unref (target_path_list.data);
+          g_object_unref (source_path_list.data);
         }
 
       /* release the file name */
@@ -2902,14 +2908,14 @@ thunar_standard_view_drag_begin (GtkWidget          *view,
   gint        size;
 
   /* release the drag path list (just in case the drag-end wasn't fired before) */
-  thunar_vfs_path_list_free (standard_view->priv->drag_path_list);
+  g_file_list_free (standard_view->priv->drag_file_list);
 
   /* query the list of selected URIs */
-  standard_view->priv->drag_path_list = thunar_file_list_to_path_list (standard_view->selected_files);
-  if (G_LIKELY (standard_view->priv->drag_path_list != NULL))
+  standard_view->priv->drag_file_list = thunar_file_list_to_g_file_list (standard_view->selected_files);
+  if (G_LIKELY (standard_view->priv->drag_file_list != NULL))
     {
       /* determine the first selected file */
-      file = thunar_file_get_for_path (standard_view->priv->drag_path_list->data, NULL);
+      file = thunar_file_get (standard_view->priv->drag_file_list->data, NULL);
       if (G_LIKELY (file != NULL))
         {
           /* generate an icon based on that file */
@@ -2937,7 +2943,7 @@ thunar_standard_view_drag_data_get (GtkWidget          *view,
   gchar *uri_string;
 
   /* set the URI list for the drag selection */
-  uri_string = thunar_vfs_path_list_to_string (standard_view->priv->drag_path_list);
+  uri_string = g_file_list_to_string (standard_view->priv->drag_file_list);
   gtk_selection_data_set (selection_data, selection_data->target, 8, (guchar *) uri_string, strlen (uri_string));
   g_free (uri_string);
 }
@@ -2965,8 +2971,8 @@ thunar_standard_view_drag_end (GtkWidget          *view,
     g_source_remove (standard_view->priv->drag_scroll_timer_id);
 
   /* release the list of dragged URIs */
-  thunar_vfs_path_list_free (standard_view->priv->drag_path_list);
-  standard_view->priv->drag_path_list = NULL;
+  g_file_list_free (standard_view->priv->drag_file_list);
+  standard_view->priv->drag_file_list = NULL;
 }
 
 

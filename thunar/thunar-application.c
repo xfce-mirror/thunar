@@ -1226,31 +1226,23 @@ thunar_application_move_into (ThunarApplication *application,
                               GFile             *target_file,
                               GClosure          *new_files_closure)
 {
-  const gchar *icon;
-  const gchar *text;
-
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   _thunar_return_if_fail (target_file != NULL);
-
-  /* determine the appropriate message text and the icon based on the target_path */
-  /* TODO we can remove this once we have thunar_application_trash() */
-  if (g_file_is_trashed (target_file)) 
+  
+  /* launch the appropriate operation depending on the target file */
+  if (g_file_is_trashed (target_file))
     {
-      icon = "gnome-fs-trash-full";
-      text = _("Moving files into the trash...");
+      thunar_application_trash (application, parent, source_file_list);
     }
   else
     {
-      icon = "stock_folder-move";
-      text = _("Moving files...");
+      thunar_application_collect_and_launch (application, parent, 
+                                             "stock_folder-move", _("Moving files..."), 
+                                             thunar_io_jobs_move_files, 
+                                             source_file_list, target_file, 
+                                             new_files_closure);
     }
-
-  /* launch the operation */
-  thunar_application_collect_and_launch (application, parent, icon, text,
-                                         thunar_io_jobs_move_files, 
-                                         source_file_list, target_file, 
-                                         new_files_closure);
 }
 
 
@@ -1286,7 +1278,6 @@ thunar_application_unlink_files (ThunarApplication *application,
   GtkWindow      *window;
   GdkScreen      *screen;
   gboolean        permanently;
-  GFile          *path;
   GList          *path_list = NULL;
   GList          *lp;
   gchar          *message;
@@ -1361,14 +1352,36 @@ thunar_application_unlink_files (ThunarApplication *application,
   else
     {
       /* launch the "Move to Trash" operation */
-      /* TODO Use thunar_application_trash() here */
-      path = g_file_new_for_trash ();
-      thunar_application_move_into (application, parent, path_list, path, NULL);
-      g_object_unref (path);
+      thunar_application_trash (application, parent, path_list);
     }
 
   /* release the path list */
   g_file_list_free (path_list);
+}
+
+
+
+static ThunarJob *
+trash_stub (GList *source_file_list,
+            GList *target_file_list)
+{
+  return thunar_io_jobs_trash_files (source_file_list);
+}
+
+
+
+void
+thunar_application_trash (ThunarApplication *application,
+                          gpointer           parent,
+                          GList             *file_list)
+{
+  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (file_list != NULL);
+
+  thunar_application_launch (application, parent, "gnome-fs-trash-full", 
+                             _("Moving files into the trash..."), trash_stub,
+                             file_list, NULL, NULL);
 }
 
 

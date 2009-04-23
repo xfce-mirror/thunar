@@ -1,5 +1,15 @@
 2009-04-23	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-application.{c,h}, thunar/thunar-dbus-service.c, 
+	  thunar/thunar-io-jobs.{c,h},: Add new job
+	  thunar_io_jobs_trash_files() and a new function
+	  thunar_application_trash() which are used in
+	  thunar_dbus_service_move_to_trash(), thunar_application_move_into()
+	  and thunar_application_unlink() to move files into the trash.
+	* thunar/thunar-standard-view.c: Use GFiles for the drag file list.
+
+2009-04-23	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-application.h: Fix thunar_appliation_link_into() 
 	  declaration and rename a few parameters.
 

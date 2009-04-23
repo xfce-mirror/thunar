@@ -617,3 +617,52 @@ thunar_io_jobs_link_files (GList *source_file_list,
                                    G_TYPE_FILE_LIST, source_file_list,
                                    G_TYPE_FILE_LIST, target_file_list);
 }
+
+
+
+static gboolean
+_thunar_io_jobs_trash (ThunarJob   *job,
+                       GValueArray *param_values,
+                       GError     **error)
+{
+  GError *err = NULL;
+  GList  *file_list;
+  GList  *lp;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (param_values != NULL, FALSE);
+  _thunar_return_val_if_fail (param_values->n_values == 1, FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  file_list = g_value_get_boxed (g_value_array_get_nth (param_values, 0));
+
+  if (thunar_job_set_error_if_cancelled (job, error))
+    return FALSE;
+
+  for (lp = file_list; err == NULL && lp != NULL; lp = lp->next)
+    {
+      _thunar_assert (G_IS_FILE (lp->data));
+      g_file_trash (lp->data, thunar_job_get_cancellable (job), &err);
+    }
+
+  if (err != NULL)
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+  else
+    {
+      return TRUE;
+    }
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_trash_files (GList *file_list)
+{
+  _thunar_return_val_if_fail (file_list != NULL, NULL);
+
+  return thunar_simple_job_launch (_thunar_io_jobs_trash, 1,
+                                   G_TYPE_FILE_LIST, file_list);
+}
