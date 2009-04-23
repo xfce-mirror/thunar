@@ -98,6 +98,8 @@ Thunar_SOURCES =							\
 	thunar-icon-view.h						\
 	thunar-io-jobs.c						\
 	thunar-io-jobs.h						\
+	thunar-io-jobs-util.c						\
+	thunar-io-jobs-util.h						\
 	thunar-io-scan-directory.c					\
 	thunar-io-scan-directory.h					\
 	thunar-job.c							\

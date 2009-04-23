@@ -499,3 +499,121 @@ thunar_io_jobs_copy_files (GList *source_file_list,
                                                      target_file_list,
                                                      THUNAR_TRANSFER_JOB_COPY));
 }
+
+
+
+static gboolean
+_thunar_io_jobs_link (ThunarJob   *job,
+                      GValueArray *param_values,
+                      GError     **error)
+{
+  ThunarJobResponse response;
+  GError           *err = NULL;
+  GList            *new_files_list = NULL;
+  GList            *source_file_list;
+  GList            *sp;
+  GList            *target_file_list;
+  GList            *tp;
+  gchar            *basename;
+  gchar            *display_name;
+  gchar            *source_path;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (param_values != NULL, FALSE);
+  _thunar_return_val_if_fail (param_values->n_values == 2, FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  source_file_list = g_value_get_boxed (g_value_array_get_nth (param_values, 0));
+  target_file_list = g_value_get_boxed (g_value_array_get_nth (param_values, 1));
+
+  /* we know the total list of paths to process */
+  thunar_job_set_total_files (job, source_file_list);
+
+  /* process all files */
+  for (sp = source_file_list, tp = target_file_list;
+       err == NULL && sp != NULL && tp != NULL;
+       sp = sp->next, tp = tp->next)
+    {
+      _thunar_assert (G_IS_FILE (sp->data));
+      _thunar_assert (G_IS_FILE (tp->data));
+
+      /* update progress information */
+      thunar_job_processing_file (job, sp);
+
+again:
+      source_path = g_file_get_path (sp->data);
+
+      if (G_LIKELY (source_path != NULL))
+        {
+          /* try to create the symlink */
+          g_file_make_symbolic_link (tp->data, source_path, 
+                                     thunar_job_get_cancellable (job),
+                                     &err);
+
+          g_free (source_path);
+
+          if (err == NULL)
+            new_files_list = g_file_list_prepend (new_files_list, sp->data);
+          else
+            {
+              /* check if we have an error from which we can recover */
+              if (err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
+                {
+                  /* ask the user whether he wants to overwrite the existing file */
+                  response = thunar_job_ask_overwrite (job, "%s", err->message);
+
+                  /* release the error */
+                  g_clear_error (&err);
+
+                  /* try to delete the file */
+                  if (G_LIKELY (response == THUNAR_JOB_RESPONSE_YES))
+                    {
+                      /* try to remove the target file (fail if not possible) */
+                      if (g_file_delete (tp->data, thunar_job_get_cancellable (job), &err))
+                        goto again;
+                    }
+                }
+            }
+        }
+      else
+        {
+          basename = g_file_get_basename (sp->data);
+          display_name = g_filename_display_name (basename);
+          g_set_error (&err, G_IO_ERROR, G_IO_ERROR_NOT_SUPPORTED,
+                       _("Could not create symbolic link to \"%s\" "
+                         "because it is not a local file"), display_name);
+          g_free (display_name);
+          g_free (basename);
+        }
+    }
+
+  if (err != NULL)
+    {
+      g_file_list_free (new_files_list);
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+  else
+    {
+      /* TODO 
+      thunar_job_new_files (job, new_files_list);
+      */
+      g_file_list_free (new_files_list);
+      return TRUE;
+    }
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_link_files (GList *source_file_list,
+                           GList *target_file_list)
+{
+  _thunar_return_val_if_fail (source_file_list != NULL, NULL);
+  _thunar_return_val_if_fail (target_file_list != NULL, NULL);
+  _thunar_return_val_if_fail (g_list_length (source_file_list) == g_list_length (target_file_list), NULL);
+
+  return thunar_simple_job_launch (_thunar_io_jobs_link, 2,
+                                   G_TYPE_FILE_LIST, source_file_list,
+                                   G_TYPE_FILE_LIST, target_file_list);
+}
