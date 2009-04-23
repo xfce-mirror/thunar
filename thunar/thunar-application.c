@@ -49,14 +49,9 @@
 
 
 
-/* Prototype for the Thunar-VFS job launchers */
-typedef ThunarVfsJob *(*Launcher) (GList   *source_path_list,
-                                   GList   *target_path_list,
-                                   GError **error);
-
 /* Prototype for the Thunar job launchers */
-typedef ThunarJob *(*JobLauncher) (GList  *source_path_list,
-                                   GList  *target_path_list);
+typedef ThunarJob *(*Launcher) (GList  *source_path_list,
+                                GList  *target_path_list);
 
 
 
@@ -85,30 +80,14 @@ static void       thunar_application_collect_and_launch     (ThunarApplication  
                                                              const gchar            *icon_name,
                                                              const gchar            *title,
                                                              Launcher                launcher,
-                                                             GList                  *source_path_list,
-                                                             ThunarVfsPath          *target_path,
+                                                             GList                  *source_file_list,
+                                                             GFile                  *target_file,
                                                              GClosure               *new_files_closure);
 static void       thunar_application_launch                 (ThunarApplication      *application,
                                                              gpointer                parent,
                                                              const gchar            *icon_name,
                                                              const gchar            *title,
                                                              Launcher                launcher,
-                                                             GList                  *source_path_list,
-                                                             GList                  *target_path_list,
-                                                             GClosure               *new_files_closure);
-static void       thunar_application_collect_and_launch_job (ThunarApplication      *application,
-                                                             gpointer                parent,
-                                                             const gchar            *icon_name,
-                                                             const gchar            *title,
-                                                             JobLauncher             launcher,
-                                                             GList                  *source_file_list,
-                                                             GFile                  *target_file,
-                                                             GClosure               *new_files_closure);
-static void       thunar_application_launch_job             (ThunarApplication      *application,
-                                                             gpointer                parent,
-                                                             const gchar            *icon_name,
-                                                             const gchar            *title,
-                                                             JobLauncher             launcher,
                                                              GList                  *source_path_list,
                                                              GList                  *target_path_list,
                                                              GClosure               *new_files_closure);
@@ -361,171 +340,9 @@ thunar_application_collect_and_launch (ThunarApplication *application,
                                        const gchar       *icon_name,
                                        const gchar       *title,
                                        Launcher           launcher,
-                                       GList             *source_path_list,
-                                       ThunarVfsPath     *target_path,
+                                       GList             *source_file_list,
+                                       GFile             *target_file,
                                        GClosure          *new_files_closure)
-{
-  ThunarVfsInfo *info;
-  ThunarVfsPath *path;
-  GError        *err = NULL;
-  GList         *target_path_list = NULL;
-  GList         *lp;
-  gchar         *original_path;
-  gchar         *original_name;
-
-  /* check if we have anything to operate on */
-  if (G_UNLIKELY (source_path_list == NULL))
-    return;
-
-  /* generate the target path list */
-  for (lp = g_list_last (source_path_list); err == NULL && lp != NULL; lp = lp->prev)
-    {
-      /* reset the path */
-      path = NULL;
-
-      /* verify that we're not trying to collect a root node */
-      if (G_UNLIKELY (thunar_vfs_path_is_root (lp->data)))
-        {
-          /* tell the user that we cannot perform the requested operation */
-          g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL, "%s", g_strerror (EINVAL));
-        }
-      else
-        {
-          /* check if we're copying from a location in the trash */
-          if (G_UNLIKELY (thunar_vfs_path_get_scheme (lp->data) == THUNAR_VFS_PATH_SCHEME_TRASH))
-            {
-              /* determine the info for the trashed resource */
-              info = thunar_vfs_info_new_for_path (lp->data, NULL);
-              if (G_LIKELY (info != NULL))
-                {
-                  /* try to use the basename of the original path */
-                  original_path = thunar_vfs_info_get_metadata (info, THUNAR_VFS_INFO_METADATA_TRASH_ORIGINAL_PATH, NULL);
-                  if (G_LIKELY (original_path != NULL))
-                    {
-                      /* g_path_get_basename() may return '.' or '/' */
-                      original_name = g_path_get_basename (original_path);
-                      if (strcmp (original_name, ".") != 0 && strchr (original_name, G_DIR_SEPARATOR) == NULL)
-                        path = thunar_vfs_path_relative (target_path, original_name);
-                      g_free (original_name);
-                      g_free (original_path);
-                    }
-
-                  /* release the info */
-                  thunar_vfs_info_unref (info);
-                }
-            }
-
-          /* fallback to the path's basename */
-          if (G_LIKELY (path == NULL))
-            path = thunar_vfs_path_relative (target_path, thunar_vfs_path_get_name (lp->data));
-
-          /* add to the target path list */
-          target_path_list = g_list_prepend (target_path_list, path);
-        }
-    }
-
-  /* check if we failed */
-  if (G_UNLIKELY (err != NULL))
-    {
-      /* display an error message to the user */
-      thunar_dialogs_show_error (parent, err, _("Failed to launch operation"));
-
-      /* release the error */
-      g_error_free (err);
-    }
-  else
-    {
-      /* launch the operation */
-      thunar_application_launch (application, parent, icon_name, title, launcher,
-                                 source_path_list, target_path_list, new_files_closure);
-    }
-
-  /* release the target path list */
-  thunar_vfs_path_list_free (target_path_list);
-}
-
-
-
-static void
-thunar_application_launch (ThunarApplication *application,
-                           gpointer           parent,
-                           const gchar       *icon_name,
-                           const gchar       *title,
-                           Launcher           launcher,
-                           GList             *source_path_list,
-                           GList             *target_path_list,
-                           GClosure          *new_files_closure)
-{
-  ThunarVfsJob *job;
-  GtkWindow    *window;
-  GtkWidget    *dialog;
-  GdkScreen    *screen;
-  GError       *error = NULL;
-
-  _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
-
-  /* parse the parent pointer */
-  screen = thunar_util_parse_parent (parent, &window);
-
-  /* try to allocate a new job for the operation */
-  job = (*launcher) (source_path_list, target_path_list, &error);
-  if (G_UNLIKELY (job == NULL))
-    {
-      /* display an error message to the user */
-      thunar_dialogs_show_error (parent, error, _("Failed to launch operation"));
-
-      /* release the error */
-      g_error_free (error);
-    }
-  else
-    {
-      /* connect the "new-files" closure (if any) */
-      if (G_LIKELY (new_files_closure != NULL))
-        g_signal_connect_closure (G_OBJECT (job), "new-files", new_files_closure, FALSE);
-
-      /* allocate a progress dialog for the job */
-      dialog = g_object_new (THUNAR_TYPE_PROGRESS_DIALOG,
-                             "icon-name", icon_name,
-                             "title", title,
-                             "job", job,
-                             "screen", screen,
-                             NULL);
-
-      /* connect to the parent (if any) */
-      if (G_LIKELY (window != NULL))
-        gtk_window_set_transient_for (GTK_WINDOW (dialog), window);
-
-      /* be sure to destroy the dialog when the job is done */
-      g_signal_connect_after (G_OBJECT (dialog), "response", G_CALLBACK (gtk_widget_destroy), dialog);
-
-      /* hook up the dialog window */
-      thunar_application_take_window (application, GTK_WINDOW (dialog));
-
-      /* Set up a timer to show the dialog, to make sure we don't
-       * just popup and destroy a dialog for a very short job.
-       */
-      if (G_LIKELY (application->show_dialogs_timer_id == 0))
-        {
-          application->show_dialogs_timer_id = g_timeout_add_full (G_PRIORITY_DEFAULT, 750, thunar_application_show_dialogs,
-                                                                   application, thunar_application_show_dialogs_destroy);
-        }
-
-      /* drop our reference on the job */
-      g_object_unref (G_OBJECT (job));
-    }
-}
-
-
-
-static void
-thunar_application_collect_and_launch_job (ThunarApplication *application,
-                                           gpointer           parent,
-                                           const gchar       *icon_name,
-                                           const gchar       *title,
-                                           JobLauncher        launcher,
-                                           GList             *source_file_list,
-                                           GFile             *target_file,
-                                           GClosure          *new_files_closure)
 {
   GFile  *file;
   GError *err = NULL;
@@ -570,8 +387,8 @@ thunar_application_collect_and_launch_job (ThunarApplication *application,
   else
     {
       /* launch the operation */
-      thunar_application_launch_job (application, parent, icon_name, title, launcher,
-                                     source_file_list, target_file_list, new_files_closure);
+      thunar_application_launch (application, parent, icon_name, title, launcher,
+                                 source_file_list, target_file_list, new_files_closure);
     }
 
   /* release the target path list */
@@ -581,14 +398,14 @@ thunar_application_collect_and_launch_job (ThunarApplication *application,
 
 
 static void
-thunar_application_launch_job (ThunarApplication *application,
-                               gpointer           parent,
-                               const gchar       *icon_name,
-                               const gchar       *title,
-                               JobLauncher        launcher,
-                               GList             *source_file_list,
-                               GList             *target_file_list,
-                               GClosure          *new_files_closure)
+thunar_application_launch (ThunarApplication *application,
+                           gpointer           parent,
+                           const gchar       *icon_name,
+                           const gchar       *title,
+                           Launcher           launcher,
+                           GList             *source_file_list,
+                           GList             *target_file_list,
+                           GClosure          *new_files_closure)
 {
   ThunarJob *job;
   GtkWindow *window;
@@ -1312,9 +1129,9 @@ thunar_application_copy_to (ThunarApplication *application,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* launch the operation */
-  thunar_application_launch_job (application, parent, "stock_folder-copy",
-                                 _("Copying files..."), thunar_io_jobs_copy_files,
-                                 source_file_list, target_file_list, new_files_closure);
+  thunar_application_launch (application, parent, "stock_folder-copy",
+                             _("Copying files..."), thunar_io_jobs_copy_files,
+                             source_file_list, target_file_list, new_files_closure);
 }
 
 
@@ -1345,9 +1162,9 @@ thunar_application_copy_into (ThunarApplication *application,
   _thunar_return_if_fail (G_IS_FILE (target_file));
 
   /* collect the target files and launch the job */
-  thunar_application_collect_and_launch_job (application, parent, "stock_folder-copy",
-                                             _("Copying files..."), thunar_io_jobs_copy_files,
-                                             source_file_list, target_file, new_files_closure);
+  thunar_application_collect_and_launch (application, parent, "stock_folder-copy",
+                                         _("Copying files..."), thunar_io_jobs_copy_files,
+                                         source_file_list, target_file, new_files_closure);
 }
 
 
@@ -1356,33 +1173,33 @@ thunar_application_copy_into (ThunarApplication *application,
  * thunar_application_link_into:
  * @application       : a #ThunarApplication.
  * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
- * @source_path_list  : the list of #ThunarVfsPath<!---->s that should be symlinked.
- * @target_path       : the target directory.
+ * @source_file_list  : the list of #GFile<!---->s that should be symlinked.
+ * @target_file       : the target directory.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
- *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
  *
- * Symlinks all files referenced by the @source_path_list to the directory
- * referenced by @target_path. This method takes care of all user
+ * Symlinks all files referenced by the @source_file_list to the directory
+ * referenced by @target_file. This method takes care of all user
  * interaction.
  **/
 void
 thunar_application_link_into (ThunarApplication *application,
                               gpointer           parent,
-                              GList             *source_path_list,
-                              ThunarVfsPath     *target_path,
+                              GList             *source_file_list,
+                              GFile     *target_file,
                               GClosure          *new_files_closure)
 {
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
-  _thunar_return_if_fail (target_path != NULL);
+  _thunar_return_if_fail (G_IS_FILE (target_file));
 
-  /* collect the target paths and launch the job */
+  /* collect the target files and launch the job */
   thunar_application_collect_and_launch (application, parent, "stock_link",
                                          _("Creating symbolic links..."),
-                                         thunar_vfs_link_files, source_path_list,
-                                         target_path, new_files_closure);
+                                         thunar_io_jobs_link_files, source_file_list,
+                                         target_file, new_files_closure);
 }
 
 
@@ -1430,10 +1247,10 @@ thunar_application_move_into (ThunarApplication *application,
     }
 
   /* launch the operation */
-  thunar_application_collect_and_launch_job (application, parent, icon, text,
-                                             thunar_io_jobs_move_files, 
-                                             source_file_list, target_file, 
-                                             new_files_closure);
+  thunar_application_collect_and_launch (application, parent, icon, text,
+                                         thunar_io_jobs_move_files, 
+                                         source_file_list, target_file, 
+                                         new_files_closure);
 }
 
 
@@ -1536,9 +1353,9 @@ thunar_application_unlink_files (ThunarApplication *application,
       if (G_LIKELY (response == GTK_RESPONSE_YES))
         {
           /* launch the "Delete" operation */
-          thunar_application_launch_job (application, parent, "stock_delete",
-                                         _("Deleting files..."), unlink_stub,
-                                         path_list, path_list, NULL);
+          thunar_application_launch (application, parent, "stock_delete",
+                                     _("Deleting files..."), unlink_stub,
+                                     path_list, path_list, NULL);
         }
     }
   else
@@ -1569,28 +1386,28 @@ creat_stub (GList *source_path_list,
  * thunar_application_creat:
  * @application       : a #ThunarApplication.
  * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
- * @path_list         : the list of files to create.
+ * @file_list         : the list of files to create.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
- *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
  *
- * Creates empty files for all #ThunarVfsPath<!---->s listed in @path_list. This
+ * Creates empty files for all #GFile<!---->s listed in @file_list. This
  * method takes care of all user interaction.
  **/
 void
 thunar_application_creat (ThunarApplication *application,
                           gpointer           parent,
-                          GList             *path_list,
+                          GList             *file_list,
                           GClosure          *new_files_closure)
 {
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
   
   /* launch the operation */
-  thunar_application_launch_job (application, parent, "stock_new",
-                                 _("Creating files..."), creat_stub,
-                                 path_list, path_list, new_files_closure);
+  thunar_application_launch (application, parent, "stock_new",
+                             _("Creating files..."), creat_stub,
+                             file_list, file_list, new_files_closure);
 }
 
 
@@ -1608,28 +1425,28 @@ mkdir_stub (GList *source_path_list,
  * thunar_application_mkdir:
  * @application       : a #ThunarApplication.
  * @parent            : a #GdkScreen, a #GtkWidget or %NULL.
- * @path_list         : the list of directories to create.
+ * @file_list         : the list of directories to create.
  * @new_files_closure : a #GClosure to connect to the job's "new-files" signal,
  *                      which will be emitted when the job finishes with the
- *                      list of #ThunarVfsPath<!---->s created by the job, or
+ *                      list of #GFile<!---->s created by the job, or
  *                      %NULL if you're not interested in the signal.
  *
- * Creates all directories referenced by the @path_list. This method takes care of all user
+ * Creates all directories referenced by the @file_list. This method takes care of all user
  * interaction.
  **/
 void
 thunar_application_mkdir (ThunarApplication *application,
                           gpointer           parent,
-                          GList             *path_list,
+                          GList             *file_list,
                           GClosure          *new_files_closure)
 {
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* launch the operation */
-  thunar_application_launch_job (application, parent, "stock_folder",
-                                 _("Creating directories..."), mkdir_stub,
-                                 path_list, path_list, new_files_closure);
+  thunar_application_launch (application, parent, "stock_folder",
+                             _("Creating directories..."), mkdir_stub,
+                             file_list, file_list, new_files_closure);
 }
 
 
@@ -1651,7 +1468,7 @@ thunar_application_empty_trash (ThunarApplication *application,
   GtkWidget *dialog;
   GtkWindow *window;
   GdkScreen *screen;
-  GList      path_list;
+  GList      file_list;
   gint       response;
 
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
@@ -1686,17 +1503,17 @@ thunar_application_empty_trash (ThunarApplication *application,
       /* fake a path list with only the trash root (the root
        * folder itself will never be unlinked, so this is safe)
        */
-      path_list.data = g_file_new_for_trash ();
-      path_list.next = NULL;
-      path_list.prev = NULL;
+      file_list.data = g_file_new_for_trash ();
+      file_list.next = NULL;
+      file_list.prev = NULL;
 
       /* launch the operation */
-      thunar_application_launch_job (application, parent, "gnome-fs-trash-empty",
-                                     _("Emptying the Trash..."),
-                                     unlink_stub, &path_list, NULL, NULL);
+      thunar_application_launch (application, parent, "gnome-fs-trash-empty",
+                                 _("Emptying the Trash..."),
+                                 unlink_stub, &file_list, NULL, NULL);
 
       /* cleanup */
-      g_object_unref (path_list.data);
+      g_object_unref (file_list.data);
     }
 }
 
@@ -1721,6 +1538,7 @@ thunar_application_restore_files (ThunarApplication *application,
                                   GList             *trash_file_list,
                                   GClosure          *new_files_closure)
 {
+#if 0
   ThunarVfsPath *target_path;
   const gchar   *original_path;
   GtkWidget     *dialog;
@@ -1833,6 +1651,7 @@ thunar_application_restore_files (ThunarApplication *application,
   /* cleanup */
   thunar_vfs_path_list_free (target_path_list);
   thunar_vfs_path_list_free (source_path_list);
+#endif
 }
 
 

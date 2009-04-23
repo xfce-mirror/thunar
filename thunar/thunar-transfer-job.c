@@ -26,6 +26,7 @@
 #include <gio/gio.h>
 
 #include <thunar/thunar-io-scan-directory.h>
+#include <thunar/thunar-io-jobs-util.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-transfer-job.h>
@@ -59,6 +60,8 @@ struct _ThunarTransferJob
   GList                *target_file_list;
 
   guint64               total_size;
+  guint64               total_progress;
+  guint64               file_progress;
 };
 
 struct _ThunarTransferNode
@@ -120,6 +123,8 @@ thunar_transfer_job_init (ThunarTransferJob *job)
   job->source_node_list = NULL;
   job->target_file_list = NULL;
   job->total_size = 0;
+  job->total_progress = 0;
+  job->file_progress = 0;
 }
 
 
@@ -148,8 +153,17 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
   
-  if (G_LIKELY (total_num_bytes > 0))
-    thunar_job_percent (THUNAR_JOB (job), (current_num_bytes * 100.0) / total_num_bytes);
+  if (G_LIKELY (job->total_size > 0))
+    {
+      /* update total progress */
+      job->total_progress += (current_num_bytes - job->file_progress);
+
+      /* update file progress */
+      job->file_progress = current_num_bytes;
+
+      /* notify callers about the progress we made */
+      thunar_job_percent (THUNAR_JOB (job), (job->total_progress * 100.0) / job->total_size);
+    }
 }
 
 
@@ -226,38 +240,206 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
 
 
 static gboolean
+ttj_copy_file (ThunarTransferJob *job,
+               GFile             *source_file,
+               GFile             *target_file,
+               GFileCopyFlags     copy_flags,
+               gboolean           merge_directories,
+               GError           **error)
+{
+  GFileType source_type;
+  GFileType target_type;
+  gboolean  target_exists;
+  GError   *err = NULL;
+
+  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE (source_file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE (target_file), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* reset the file progress */
+  job->file_progress = 0;
+
+  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+    return FALSE;
+
+  source_type = g_file_query_file_type (source_file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                        thunar_job_get_cancellable (THUNAR_JOB (job)));
+
+  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+    return FALSE;
+
+  target_type = g_file_query_file_type (target_file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                        thunar_job_get_cancellable (THUNAR_JOB (job)));
+
+  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+    return FALSE;
+
+  /* check if the target is a symlink and we are in overwrite mode */
+  if (target_type == G_FILE_TYPE_SYMBOLIC_LINK && (copy_flags & G_FILE_COPY_OVERWRITE) != 0)
+    {
+      /* try to delete the symlink */
+      if (!g_file_delete (target_file, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
+        {
+          g_propagate_error (error, err);
+          return FALSE;
+        }
+    }
+
+  /* try to copy the file */
+  g_file_copy (source_file, target_file, copy_flags,
+               thunar_job_get_cancellable (THUNAR_JOB (job)),
+               thunar_transfer_job_progress, THUNAR_JOB (job), &err);
+
+  /* check if there were errors */
+  if (G_UNLIKELY (err != NULL && err->domain == G_IO_ERROR))
+    {
+      if (err->code == G_IO_ERROR_WOULD_MERGE 
+          || (err->code == G_IO_ERROR_EXISTS 
+              && source_type == G_FILE_TYPE_DIRECTORY
+              && target_type == G_FILE_TYPE_DIRECTORY))
+        {
+          /* we tried to overwrite a directory with a directory. this normally results 
+           * in a merge. ignore the error we actually *want* to merge */
+          if (merge_directories)
+            g_clear_error (&err);
+        }
+      else if (err->code == G_IO_ERROR_WOULD_RECURSE)
+        {
+          g_clear_error (&err);
+
+          /* we tried to copy a directory and either 
+           *
+           * - the target did not exist which means we simple have to 
+           *   create the target directory
+           *
+           * or
+           *
+           * - the target is not a directory and we tried to overwrite it in 
+           *   which case we have to delete it first and then create the target
+           *   directory
+           */
+
+          /* check if the target file exists */
+          target_exists = g_file_query_exists (target_file,
+                                               thunar_job_get_cancellable (THUNAR_JOB (job)));
+
+          /* abort on cancellation, continue otherwise */
+          if (!thunar_job_set_error_if_cancelled (THUNAR_JOB (job), &err))
+            {
+              if (target_exists)
+                {
+                  /* the target still exists and thus is not a directory. try to remove it */
+                  g_file_delete (target_file, 
+                                 thunar_job_get_cancellable (THUNAR_JOB ((job))), 
+                                 &err);
+                }
+
+              /* abort on error or cancellation, continue otherwise */
+              if (err == NULL)
+                {
+                  /* now try to create the directory */
+                  g_file_make_directory (target_file, 
+                                         thunar_job_get_cancellable (THUNAR_JOB (job)), 
+                                         &err);
+                }
+            }
+        }
+    }
+
+  if (G_UNLIKELY (err != NULL))
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+  else
+    {
+      return TRUE;
+    }
+}
+
+
+
+/**
+ * thunar_transfer_job_copy_file:
+ * @job                : a #ThunarTransferJob.
+ * @source_file        : the source #GFile to copy.
+ * @target_file        : the destination #GFile to copy to.
+ * @error              : return location for errors or %NULL.
+ *
+ * Tries to copy @source_file to @target_file. The real destination is the
+ * return value and may differ from @target_file (e.g. if you try to copy
+ * the file "/foo/bar" into the same directory you'll end up with something
+ * like "/foo/copy of bar" instead of "/foo/bar". 
+ *
+ * The return value is guaranteed to be %NULL on errors and @error will
+ * always be set in those cases. If the file is skipped, the return value
+ * will be @source_file.
+ *
+ * Return value: the destination #GFile to which @source_file was copied 
+ *               or linked. The caller is reposible to release it with 
+ *               g_object_unref() if no longer needed. It points to 
+ *               @source_file if the file was skipped and will be %NULL 
+ *               on error or cancellation.
+ **/
+static GFile *
 thunar_transfer_job_copy_file (ThunarTransferJob *job,
                                GFile             *source_file,
                                GFile             *target_file,
-                               GFile            **target_file_return,
                                GError           **error)
 {
   ThunarJobResponse response;
   GFileCopyFlags    copy_flags = G_FILE_COPY_NOFOLLOW_SYMLINKS;
   GError           *err = NULL;
+  gint              n;
 
-  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
-  _thunar_return_val_if_fail (G_IS_FILE (source_file), FALSE);
-  _thunar_return_val_if_fail (G_IS_FILE (target_file), FALSE);
-  _thunar_return_val_if_fail (target_file_return != NULL && *target_file_return == NULL, FALSE);
-  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE (source_file), NULL);
+  _thunar_return_val_if_fail (G_IS_FILE (target_file), NULL);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
+  /* abort on cancellation */
   if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
-    return FALSE;
+    return NULL;
 
   /* various attempts to copy the file */
   while (err == NULL)
     {
-      /* try to copy the file from source_file to the target_file */
-      /* TODO generate duplicate names like 'copy of \"%s\"' if source and target file
-       * are equal */
-      if (g_file_copy (source_file, target_file, copy_flags, 
-                       thunar_job_get_cancellable (THUNAR_JOB (job)),
-                       thunar_transfer_job_progress, THUNAR_JOB (job), &err))
+      if (G_LIKELY (!g_file_equal (source_file, target_file)))
         {
-          /* return the real target file */
-          *target_file_return = target_file;
-          return TRUE;
+          /* try to copy the file from source_file to the target_file */
+          if (ttj_copy_file (job, source_file, target_file, copy_flags, TRUE, &err))
+            {
+              /* return the real target file */
+              return g_object_ref (target_file);
+            }
+        }
+      else
+        {
+          for (n = 1; err == NULL; ++n)
+            {
+              GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job), 
+                                                                               source_file, 
+                                                                               TRUE, n, &err);
+
+              if (err == NULL)
+                {
+                  /* try to copy the file from source file to the duplicate file */
+                  if (ttj_copy_file (job, source_file, duplicate_file, copy_flags, TRUE, &err))
+                    {
+                      /* return the real target file */
+                      return duplicate_file;
+                    }
+                  
+                  g_object_unref (duplicate_file);
+                }
+
+              if (err != NULL && err->domain == G_IO_ERROR && err->code == G_IO_ERROR_EXISTS)
+                {
+                  /* this duplicate already exists => clear the error to try the next alternative */
+                  g_clear_error (&err);
+                }
+            }
         }
 
       /* check if we can recover from this error */
@@ -267,7 +449,8 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
           g_clear_error (&err);
 
           /* ask the user whether to replace the target file */
-          response = thunar_job_ask_replace (THUNAR_JOB (job), source_file, target_file, &err);
+          response = thunar_job_ask_replace (THUNAR_JOB (job), source_file, 
+                                             target_file, &err);
 
           if (err != NULL)
             break;
@@ -276,26 +459,24 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
           if (response == THUNAR_JOB_RESPONSE_RETRY)
             continue;
 
-          /* add overwrite flag and try again if we should overwrite */
+          /* add overwrite flag and retry if we should overwrite */
           if (response == THUNAR_JOB_RESPONSE_YES)
             {
               copy_flags |= G_FILE_COPY_OVERWRITE;
               continue;
             }
 
-          /* check if the file should not be overwritten */
+          /* tell the caller we skipped the file if the user 
+           * doesn't want to retry/overwrite */
           if (response == THUNAR_JOB_RESPONSE_NO)
-            {
-              /* tell the caller that we skipped this one */
-              *target_file_return = NULL;
-              return TRUE;
-            }
+            return g_object_ref (source_file);
         }
     }
 
-  g_propagate_error (error, err);
+  _thunar_assert (err != NULL);
 
-  return FALSE;
+  g_propagate_error (error, err);
+  return NULL;
 }
 
 
@@ -311,7 +492,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
   ThunarJobResponse response;
   GFileInfo        *info;
   GError           *err = NULL;
-  GFile            *target_file_return = NULL;
+  GFile            *real_target_file = NULL;
   gchar            *basename;
 
   _thunar_return_if_fail (THUNAR_IS_TRANSFER_JOB (job));
@@ -355,19 +536,18 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
       thunar_job_info_message (THUNAR_JOB (job), g_file_info_get_display_name (info));
 
 retry_copy:
-      target_file_return = NULL;
-
       /* copy the item specified by this node (not recursively) */
-      if (thunar_transfer_job_copy_file (job, node->source_file, target_file, &target_file_return, &err))
+      real_target_file = thunar_transfer_job_copy_file (job, node->source_file, target_file, &err);
+      if (G_LIKELY (real_target_file != NULL))
         {
-          /* target file return == NULL means to skip the file */
-          if (G_LIKELY (target_file_return != NULL))
+          /* node->source_file == real_target_file means to skip the file */
+          if (G_LIKELY (node->source_file != real_target_file))
             {
               /* check if we have children to copy */
               if (node->children != NULL)
                 {
                   /* copy all children of this node */
-                  thunar_transfer_job_copy_node (job, node->children, NULL, target_file_return, NULL, &err);
+                  thunar_transfer_job_copy_node (job, node->children, NULL, real_target_file, NULL, &err);
 
                   /* free resources allocted for the children */
                   thunar_transfer_node_free (node->children);
@@ -378,16 +558,14 @@ retry_copy:
               if (G_UNLIKELY (err != NULL))
                 {
                   /* outa here, freeing the target paths */
-                  g_object_unref (target_file_return);
+                  g_object_unref (real_target_file);
                   g_object_unref (target_file);
                   break;
                 }
 
               /* add the real target file to the return list */
               if (G_LIKELY (target_file_list_return != NULL))
-                *target_file_list_return = g_list_prepend (*target_file_list_return, target_file_return);
-              else
-                g_object_unref (target_file_return);
+                *target_file_list_return = g_file_list_prepend (*target_file_list_return, real_target_file);
 
 retry_remove:
               /* try to remove the source directory if we are on copy+remove fallback for move */
@@ -405,6 +583,8 @@ retry_remove:
                     goto retry_remove;
                 }
             }
+
+          g_object_unref (real_target_file);
         }
       else if (err != NULL)
         { 
@@ -434,8 +614,6 @@ retry_remove:
   /* propagate error if we failed or the job was cancelled */
   if (G_UNLIKELY (err != NULL))
     g_propagate_error (error, err);
-
-  return;
 }
 
 
@@ -493,8 +671,7 @@ thunar_transfer_job_execute (ThunarJob *job,
                            G_FILE_COPY_NOFOLLOW_SYMLINKS 
                            | G_FILE_COPY_NO_FALLBACK_FOR_MOVE,
                            thunar_job_get_cancellable (job),
-                           thunar_transfer_job_progress,
-                           job, &err))
+                           NULL, NULL, &err))
             {
               /* add the target file to the new files list */
               new_files_list = g_file_list_prepend (new_files_list, tp->data);
@@ -524,6 +701,11 @@ thunar_transfer_job_execute (ThunarJob *job,
                   break;
                 }
             }
+        }
+      else if (transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
+        {
+          if (!thunar_transfer_job_collect_node (transfer_job, node, &err))
+            break;
         }
 
       g_object_unref (info);
