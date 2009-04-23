@@ -85,6 +85,9 @@ void              thunar_job_emit                   (ThunarJob       *job,
                                                      guint            signal_id,
                                                      GQuark           signal_detail,
                                                      ...);
+ThunarJobResponse thunar_job_ask_create             (ThunarJob       *job,
+                                                     const gchar     *format,
+                                                     ...);
 ThunarJobResponse thunar_job_ask_overwrite          (ThunarJob       *job,
                                                      const gchar     *format,
                                                      ...);

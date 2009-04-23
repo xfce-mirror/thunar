@@ -35,6 +35,8 @@ ThunarJob *thunar_io_jobs_copy_files       (GList *source_file_list,
 ThunarJob *thunar_io_jobs_link_files       (GList *source_file_list,
                                             GList *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *thunar_io_jobs_trash_files      (GList *file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *thunar_io_jobs_restore_files    (GList *source_file_list,
+                                            GList *target_file_list) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS
 

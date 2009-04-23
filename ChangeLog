@@ -1,3 +1,14 @@
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application, thunar/thunar-io-jobs.{c,h},
+	  thunar/thunar-job.{c,h}, thunar/thunar-transfer-job.c: Re-implement
+	  thunar_application_restore_files() based on a new job called
+	  thunar_io_jobs_restore_files(). Modify ThunarTransferJob so that it
+	  checks whether the parent directory of the original path exists and
+	  otherwise tries to create it (with user interaction). Add new
+	  function thunar_job_ask_create() to ThunarJob. ThunarApplication is
+	  now almost ThunarVFS free.
+
 2009-04-23	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-dialogs.c: Use more fine-grained labels for files,

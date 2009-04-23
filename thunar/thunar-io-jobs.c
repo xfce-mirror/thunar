@@ -662,3 +662,18 @@ thunar_io_jobs_trash_files (GList *file_list)
   return thunar_simple_job_launch (_thunar_io_jobs_trash, 1,
                                    G_TYPE_FILE_LIST, file_list);
 }
+
+
+
+ThunarJob *
+thunar_io_jobs_restore_files (GList *source_file_list,
+                              GList *target_file_list)
+{
+  _thunar_return_val_if_fail (source_file_list != NULL, NULL);
+  _thunar_return_val_if_fail (target_file_list != NULL, NULL);
+  _thunar_return_val_if_fail (g_list_length (source_file_list) == g_list_length (target_file_list), NULL);
+
+  return thunar_job_launch (thunar_transfer_job_new (source_file_list, 
+                                                     target_file_list, 
+                                                     THUNAR_TRANSFER_JOB_MOVE));
+}

@@ -622,15 +622,20 @@ thunar_transfer_job_execute (ThunarJob *job,
                              GError   **error)
 {
   ThunarTransferNode *node;
+  ThunarJobResponse   response;
   ThunarTransferJob  *transfer_job = THUNAR_TRANSFER_JOB (job);
   GFileInfo          *info;
+  gboolean            parent_exists;
   GError             *err = NULL;
   GList              *new_files_list = NULL;
   GList              *snext;
   GList              *sp;
   GList              *tnext;
   GList              *tp;
+  GFile              *target_parent;
+  gchar              *basename;
   gchar              *message;
+  gchar              *parent_display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -660,6 +665,76 @@ thunar_transfer_job_execute (ThunarJob *job,
       if (G_UNLIKELY (info == NULL))
         break;
 
+      /* check if we are moving a file out of the trash */
+      if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE && g_file_is_trashed (node->source_file))
+        {
+          /* update progress information */
+          message = g_strdup_printf (_("Trying to restore \"%s\""), 
+                                     g_file_info_get_display_name (info));
+          thunar_job_info_message (job, message);
+          g_free (message);
+
+          /* determine the parent file */
+          target_parent = g_file_get_parent (tp->data);
+
+          /* check if the parent exists */
+          parent_exists = g_file_query_exists (target_parent, thunar_job_get_cancellable (job));
+
+          /* abort on cancellation */
+          if (thunar_job_set_error_if_cancelled (job, &err))
+            {
+              g_object_unref (target_parent);
+              break;
+            }
+
+          if (G_LIKELY (!parent_exists))
+            {
+              /* determine the display name of the parent */
+              basename = g_file_get_basename (target_parent);
+              parent_display_name = g_filename_display_name (basename);
+              g_free (basename);
+
+              /* ask the user whether he wants to create the parent folder because its gone */
+              response = thunar_job_ask_create (job, 
+                                                _("The folder \"%s\" does not exist anymore but is "
+                                                  "required to restore the file \"%s\" from the "
+                                                  "trash"),
+                                                parent_display_name, 
+                                                g_file_info_get_display_name (info));
+
+              /* abort if cancelled */
+              if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_CANCEL))
+                {
+                  g_object_unref (target_parent);
+                  g_free (parent_display_name);
+                  break;
+                }
+
+              /* try to create the parent directory */
+              if (!g_file_make_directory_with_parents (target_parent, 
+                                                       thunar_job_get_cancellable (job),
+                                                       &err))
+                {
+                  if (!thunar_job_is_cancelled (job))
+                    {
+                      g_clear_error (&err);
+
+                      /* overwrite the internal GIO error with something more user-friendly */
+                      g_set_error (&err, G_IO_ERROR, G_IO_ERROR_FAILED,
+                                   _("Failed to restore the folder \"%s\""), 
+                                   parent_display_name);
+                    }
+
+                  g_object_unref (target_parent);
+                  g_free (parent_display_name);
+                  break;
+                }
+
+              /* clean up */
+              g_free (parent_display_name);
+            }
+        }
+      
       if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
         {
           message = g_strdup_printf (_("Trying to move \"%s\""),

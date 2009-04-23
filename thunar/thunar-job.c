@@ -63,6 +63,9 @@ typedef struct _ThunarJobSyncSignalData  ThunarJobSyncSignalData;
 static void              thunar_job_class_init          (ThunarJobClass     *klass);
 static void              thunar_job_init                (ThunarJob          *job);
 static void              thunar_job_finalize            (GObject            *object);
+static ThunarJobResponse thunar_job_real_ask            (ThunarJob          *job,
+                                                         const gchar        *message,
+                                                         ThunarJobResponse   choices);
 static ThunarJobResponse thunar_job_real_ask_replace    (ThunarJob          *job,
                                                          ThunarFile         *source_file,
                                                          ThunarFile         *target_file);
@@ -82,6 +85,7 @@ static gboolean          _thunar_job_scheduler_job_func (GIOSchedulerJob    *sch
 
 struct _ThunarJobPrivate
 {
+  ThunarJobResponse earlier_ask_create_response;
   ThunarJobResponse earlier_ask_overwrite_response;
   ThunarJobResponse earlier_ask_skip_response;
   GIOSchedulerJob  *scheduler_job;
@@ -153,6 +157,7 @@ thunar_job_class_init (ThunarJobClass *klass)
   gobject_class->finalize = thunar_job_finalize;
 
   klass->execute = NULL;
+  klass->ask = thunar_job_real_ask;
   klass->ask_replace = thunar_job_real_ask_replace;
 
   /**
@@ -291,6 +296,7 @@ thunar_job_init (ThunarJob *job)
 {
   job->priv = THUNAR_JOB_GET_PRIVATE (job);
   job->priv->cancellable = g_cancellable_new ();
+  job->priv->earlier_ask_create_response = 0;
   job->priv->earlier_ask_overwrite_response = 0;
   job->priv->earlier_ask_skip_response = 0;
   job->priv->running = FALSE;
@@ -307,6 +313,20 @@ thunar_job_finalize (GObject *object)
   g_object_unref (job->priv->cancellable);
 
   (*G_OBJECT_CLASS (thunar_job_parent_class)->finalize) (object);
+}
+
+
+
+static ThunarJobResponse 
+thunar_job_real_ask (ThunarJob        *job,
+                     const gchar      *message,
+                     ThunarJobResponse choices)
+{
+  ThunarJobResponse response;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+  g_signal_emit (job, job_signals[ASK], 0, message, choices, &response);
+  return response;
 }
 
 
@@ -657,6 +677,49 @@ thunar_job_ask_overwrite (ThunarJob   *job,
     default:
       break;
     }
+
+  return response;
+}
+
+
+
+ThunarJobResponse
+thunar_job_ask_create (ThunarJob   *job,
+                       const gchar *format,
+                       ...)
+{
+  ThunarJobResponse response;
+  va_list           var_args;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
+
+  if (G_UNLIKELY (thunar_job_is_cancelled (job)))
+    return THUNAR_JOB_RESPONSE_CANCEL;
+
+  /* check if the user said "Create All" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_create_response == THUNAR_JOB_RESPONSE_YES_ALL))
+    return THUNAR_JOB_RESPONSE_YES;
+
+  /* check if the user said "Create None" earlier */
+  if (G_UNLIKELY (job->priv->earlier_ask_create_response == THUNAR_JOB_RESPONSE_NO_ALL))
+    return THUNAR_JOB_RESPONSE_NO;
+
+  va_start (var_args, format);
+  response = _thunar_job_ask_valist (job, format, var_args,
+                                     _("Do you want to create it?"),
+                                     THUNAR_JOB_RESPONSE_YES 
+                                     | THUNAR_JOB_RESPONSE_CANCEL);
+  va_end (var_args);
+
+  job->priv->earlier_ask_create_response = response;
+
+  /* translate the response */
+  if (response == THUNAR_JOB_RESPONSE_YES_ALL)
+    response = THUNAR_JOB_RESPONSE_YES;
+  else if (response == THUNAR_JOB_RESPONSE_NO_ALL)
+    response = THUNAR_JOB_RESPONSE_NO;
+  else if (response == THUNAR_JOB_RESPONSE_CANCEL)
+    thunar_job_cancel (job);
 
   return response;
 }

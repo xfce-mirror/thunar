@@ -1550,29 +1550,20 @@ thunar_application_restore_files (ThunarApplication *application,
                                   GList             *trash_file_list,
                                   GClosure          *new_files_closure)
 {
-#if 0
-  ThunarVfsPath *target_path;
-  const gchar   *original_path;
-  GtkWidget     *dialog;
-  GtkWindow     *window;
-  GdkScreen     *screen;
-  GError        *err = NULL;
-  GList         *source_path_list = NULL;
-  GList         *target_path_list = NULL;
-  GList         *lp;
-  gchar         *original_dir;
-  gchar         *display_name;
-  gint           response = GTK_RESPONSE_YES;
+  const gchar *original_uri;
+  GError      *err = NULL;
+  GFile       *target_path;
+  GList       *source_path_list = NULL;
+  GList       *target_path_list = NULL;
+  GList       *lp;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
-  /* determine the target paths for all files */
-  for (lp = trash_file_list; err == NULL && lp != NULL && response == GTK_RESPONSE_YES; lp = lp->next)
+  for (lp = trash_file_list; lp != NULL; lp = lp->next)
     {
-      /* determine the original path for the file */
-      original_path = thunar_file_get_original_path (lp->data);
-      if (G_UNLIKELY (original_path == NULL))
+      original_uri = thunar_file_get_original_path (lp->data);
+      if (G_UNLIKELY (original_uri == NULL))
         {
           /* no OriginalPath, impossible to continue */
           g_set_error (&err, G_FILE_ERROR, G_FILE_ERROR_INVAL,
@@ -1581,89 +1572,33 @@ thunar_application_restore_files (ThunarApplication *application,
           break;
         }
 
-      /* determine the target path for the OriginalPath */
-      target_path = thunar_vfs_path_new (original_path, &err);
-      if (G_UNLIKELY (target_path == NULL))
-        {
-          /* invalid OriginalPath, cannot continue */
-          break;
-        }
+      /* TODO we need to distinguish between URIs and paths here */
+      target_path = g_file_new_for_commandline_arg (original_uri);
 
-      /* determine the directory of the original path */
-      original_dir = g_path_get_dirname (original_path);
-      if (!g_file_test (original_dir, G_FILE_TEST_IS_DIR))
-        {
-          /* parse the parent pointer */
-          screen = thunar_util_parse_parent (parent, &window);
+      source_path_list = g_file_list_append (source_path_list, thunar_file_get_file (lp->data));
+      target_path_list = g_file_list_append (target_path_list, target_path);
 
-          /* ask the user whether to recreate the original dir */
-          display_name = g_filename_display_name (original_dir);
-          dialog = gtk_message_dialog_new (window,
-                                           GTK_DIALOG_MODAL
-                                           | GTK_DIALOG_DESTROY_WITH_PARENT,
-                                           GTK_MESSAGE_QUESTION,
-                                           GTK_BUTTONS_NONE,
-                                           _("Create the folder \"%s\"?"),
-                                           display_name);
-          gtk_dialog_add_buttons (GTK_DIALOG (dialog),
-                                  GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-                                  _("C_reate Folder"), GTK_RESPONSE_YES,
-                                  NULL);
-          if (G_UNLIKELY (window == NULL && screen != NULL))
-            gtk_window_set_screen (GTK_WINDOW (dialog), screen);
-          gtk_dialog_set_default_response (GTK_DIALOG (dialog), GTK_RESPONSE_YES);
-          gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-                                                    _("The folder \"%s\" does not exist anymore, but it is required to restore "
-                                                      "the file \"%s\" from the trash. Do you want to create the folder again?"),
-                                                    display_name, thunar_file_get_display_name (lp->data));
-          response = gtk_dialog_run (GTK_DIALOG (dialog));
-          gtk_widget_destroy (dialog);
-          g_free (display_name);
-
-          /* check if the user wants to recreate the folder */
-          if (G_LIKELY (response == GTK_RESPONSE_YES))
-            {
-              /* try to recreate the folder */
-              xfce_mkdirhier (original_dir, 0755, &err);
-            }
-        }
-
-      /* check if we succeed and aren't cancelled */
-      if (G_LIKELY (err == NULL && response == GTK_RESPONSE_YES))
-        {
-          /* add the source/target pair to our lists */
-          source_path_list = thunar_vfs_path_list_append (source_path_list, thunar_file_get_path (lp->data));
-          target_path_list = g_list_append (target_path_list, target_path);
-        }
-      else
-        {
-          /* release the target path */
-          thunar_vfs_path_unref (target_path);
-        }
-
-      /* cleanup */
-      g_free (original_dir);
+      g_object_unref (target_path);
     }
 
-  /* check if an error occurred or the user cancelled */
   if (G_UNLIKELY (err != NULL))
     {
       /* display an error dialog */
-      thunar_dialogs_show_error (parent, err, _("Failed to restore \"%s\""), thunar_file_get_display_name (lp->data));
+      thunar_dialogs_show_error (parent, err, _("Could not restore \"%s\""), 
+                                 thunar_file_get_display_name (lp->data));
       g_error_free (err);
     }
-  else if (G_LIKELY (response == GTK_RESPONSE_YES))
+  else
     {
       /* launch the operation */
       thunar_application_launch (application, parent, "stock_folder-move",
-                                 _("Restoring files..."), thunar_vfs_move_files,
+                                 _("Restoring files..."), thunar_io_jobs_restore_files,
                                  source_path_list, target_path_list, new_files_closure);
     }
 
-  /* cleanup */
-  thunar_vfs_path_list_free (target_path_list);
-  thunar_vfs_path_list_free (source_path_list);
-#endif
+  /* free path lists */
+  g_file_list_free (source_path_list);
+  g_file_list_free (target_path_list);
 }
 
 
