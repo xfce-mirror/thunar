@@ -1,5 +1,16 @@
 2009-04-24	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-enum-types.{c,h}, thunar/thunar-file.h: Move
+	  ThunarFileMode into the enum types file. Add THUNAR_TYPE_FILE_MODE
+	  macro and thunar_file_mode_get_type() function which registers a
+	  flags type for file modes.
+	* thunar/thunar-io-jobs.{c,h}: Add new jobs
+	  thunar_io_jobs_change_group() and thunar_io_jobs_change_mode().
+	* thunar/thunar-permissions-chooser.c: Migrate the permissions chooser
+	  to the new jobs.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-application, thunar/thunar-io-jobs.{c,h},
 	  thunar/thunar-job.{c,h}, thunar/thunar-transfer-job.c: Re-implement
 	  thunar_application_restore_files() based on a new job called

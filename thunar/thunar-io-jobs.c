@@ -24,6 +24,7 @@
 
 #include <gio/gio.h>
 
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-io-scan-directory.h>
 #include <thunar/thunar-job.h>
@@ -677,3 +678,305 @@ thunar_io_jobs_restore_files (GList *source_file_list,
                                                      target_file_list, 
                                                      THUNAR_TRANSFER_JOB_MOVE));
 }
+
+
+
+static gboolean
+_thunar_io_jobs_chown (ThunarJob   *job,
+                       GValueArray *param_values,
+                       GError     **error)
+{
+  ThunarJobResponse response;
+  const gchar      *message;
+  GFileInfo        *info;
+  gboolean          recursive;
+  GError           *err = NULL;
+  GList            *file_list;
+  GList            *lp;
+  gint              uid;
+  gint              gid;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (param_values != NULL, FALSE);
+  _thunar_return_val_if_fail (param_values->n_values == 4, FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  file_list = g_value_get_boxed (g_value_array_get_nth (param_values, 0));
+  uid = g_value_get_int (g_value_array_get_nth (param_values, 1));
+  gid = g_value_get_int (g_value_array_get_nth (param_values, 2));
+  recursive = g_value_get_boolean (g_value_array_get_nth (param_values, 3));
+
+  _thunar_assert ((uid >= 0 || gid >= 0) && !(uid >= 0 && gid >= 0));
+
+  /* collect the files for the chown operation */
+  if (recursive)
+    file_list = _tij_collect_nofollow (job, file_list, &err);
+  else
+    file_list = g_file_list_copy (file_list);
+
+  if (G_UNLIKELY (err != NULL))
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+
+  /* we know the total list of files to process */
+  thunar_job_set_total_files (job, file_list);
+
+  /* change the ownership of all files */
+  for (lp = file_list; lp != NULL && err == NULL; lp = lp->next)
+    {
+      /* update progress information */
+      thunar_job_processing_file (job, lp);
+
+      /* try to query information about the file */
+      info = g_file_query_info (lp->data, 
+                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
+                                G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                thunar_job_get_cancellable (job),
+                                &err);
+
+      if (G_UNLIKELY (err != NULL))
+        break;
+
+retry_chown:
+      if (uid >= 0)
+        {
+          /* try to change the owner UID */
+          g_file_set_attribute_uint32 (lp->data,
+                                       G_FILE_ATTRIBUTE_UNIX_UID, uid,
+                                       G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                       thunar_job_get_cancellable (job),
+                                       &err);
+        }
+      else if (gid >= 0)
+        {
+          /* try to change the owner GID */
+          g_file_set_attribute_uint32 (lp->data,
+                                       G_FILE_ATTRIBUTE_UNIX_GID, gid,
+                                       G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                       thunar_job_get_cancellable (job),
+                                       &err);
+        }
+
+      /* check if there was a recoverable error */
+      if (G_UNLIKELY (err != NULL && !thunar_job_is_cancelled (job)))
+        {
+          /* generate a useful error message */
+          message = G_LIKELY (uid >= 0) ? _("Failed to change the owner of \"%s\": %s") 
+                                        : _("Failed to change the group of \"%s\": %s");
+
+          /* ask the user whether to skip/retry this file */
+          response = thunar_job_ask_skip (job, message, 
+                                          g_file_info_get_display_name (info),
+                                          err->message);
+
+          /* clear the error */
+          g_clear_error (&err);
+
+          /* check whether to retry */
+          if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
+            goto retry_chown;
+        }
+
+      /* release file information */
+      g_object_unref (info);
+    }
+
+  /* release the file list */
+  g_file_list_free (file_list);
+
+  if (G_UNLIKELY (err != NULL))
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+  else
+    {
+      return TRUE;
+    }
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_change_group (GFile    *file,
+                             guint32   gid,
+                             gboolean  recursive)
+{
+  GList file_list;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  file_list.data = g_object_ref (file);
+  file_list.next = NULL; 
+  file_list.prev = NULL;
+  
+  return thunar_simple_job_launch (_thunar_io_jobs_chown, 4,
+                                   G_TYPE_FILE_LIST, &file_list,
+                                   G_TYPE_INT, -1,
+                                   G_TYPE_INT, (gint) gid,
+                                   G_TYPE_BOOLEAN, recursive);
+
+  g_object_unref (file_list.data);
+}
+
+
+
+static gboolean
+_thunar_io_jobs_chmod (ThunarJob   *job,
+                       GValueArray *param_values,
+                       GError     **error)
+{
+  ThunarJobResponse response;
+  GFileInfo        *info;
+  gboolean          recursive;
+  GError           *err = NULL;
+  GList            *file_list;
+  GList            *lp;
+  ThunarFileMode    dir_mask;
+  ThunarFileMode    dir_mode;
+  ThunarFileMode    file_mask;
+  ThunarFileMode    file_mode;
+  ThunarFileMode    mask;
+  ThunarFileMode    mode;
+  ThunarFileMode    old_mode;
+  ThunarFileMode    new_mode;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (param_values != NULL, FALSE);
+  _thunar_return_val_if_fail (param_values->n_values == 6, FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  file_list = g_value_get_boxed (g_value_array_get_nth (param_values, 0));
+  dir_mask = g_value_get_flags (g_value_array_get_nth (param_values, 1));
+  dir_mode = g_value_get_flags (g_value_array_get_nth (param_values, 2));
+  file_mask = g_value_get_flags (g_value_array_get_nth (param_values, 3));
+  file_mode = g_value_get_flags (g_value_array_get_nth (param_values, 4));
+  recursive = g_value_get_boolean (g_value_array_get_nth (param_values, 5));
+
+  /* collect the files for the chown operation */
+  if (recursive)
+    file_list = _tij_collect_nofollow (job, file_list, &err);
+  else
+    file_list = g_file_list_copy (file_list);
+
+  if (G_UNLIKELY (err != NULL))
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+
+  /* we know the total list of files to process */
+  thunar_job_set_total_files (job, file_list);
+
+  /* change the ownership of all files */
+  for (lp = file_list; lp != NULL && err == NULL; lp = lp->next)
+    {
+      /* update progress information */
+      thunar_job_processing_file (job, lp);
+
+      /* try to query information about the file */
+      info = g_file_query_info (lp->data, 
+                                G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME ","
+                                G_FILE_ATTRIBUTE_STANDARD_TYPE ","
+                                G_FILE_ATTRIBUTE_UNIX_MODE,
+                                G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                thunar_job_get_cancellable (job),
+                                &err);
+
+      if (G_UNLIKELY (err != NULL))
+        break;
+
+retry_chown:
+      /* different actions depending on the type of the file */
+      if (g_file_info_get_file_type (info) == G_FILE_TYPE_DIRECTORY)
+        {
+          mask = dir_mask;
+          mode = dir_mode;
+        }
+      else
+        {
+          mask = file_mask;
+          mode = file_mode;
+        }
+
+      /* determine the current mode */
+      old_mode = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_MODE);
+
+      /* generate the new mode, taking the old mode (which contains file type 
+       * information) into account */
+      new_mode = ((old_mode & ~mask) | mode) & 07777;
+
+      /* try to change the file mode */
+      g_file_set_attribute_uint32 (lp->data,
+                                   G_FILE_ATTRIBUTE_UNIX_MODE, new_mode,
+                                   G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
+                                   thunar_job_get_cancellable (job),
+                                   &err);
+
+      /* check if there was a recoverable error */
+      if (G_UNLIKELY (err != NULL && !thunar_job_is_cancelled (job)))
+        {
+          /* ask the user whether to skip/retry this file */
+          response = thunar_job_ask_skip (job, 
+                                          _("Failed to change the permissions of \"%s\": %s"), 
+                                          g_file_info_get_display_name (info),
+                                          err->message);
+
+          /* clear the error */
+          g_clear_error (&err);
+
+          /* check whether to retry */
+          if (G_UNLIKELY (response == THUNAR_JOB_RESPONSE_RETRY))
+            goto retry_chown;
+        }
+
+      /* release file information */
+      g_object_unref (info);
+    }
+
+  /* release the file list */
+  g_file_list_free (file_list);
+
+  if (G_UNLIKELY (err != NULL))
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+  else
+    {
+      return TRUE;
+    }
+  return TRUE;
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_change_mode (GFile         *file,
+                            ThunarFileMode dir_mask,
+                            ThunarFileMode dir_mode,
+                            ThunarFileMode file_mask,
+                            ThunarFileMode file_mode,
+                            gboolean       recursive)
+{
+  GList file_list;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  file_list.data = g_object_ref (file);
+  file_list.next = NULL; 
+  file_list.prev = NULL;
+  
+  return thunar_simple_job_launch (_thunar_io_jobs_chmod, 6,
+                                   G_TYPE_FILE_LIST, &file_list,
+                                   THUNAR_TYPE_FILE_MODE, dir_mask,
+                                   THUNAR_TYPE_FILE_MODE, dir_mode,
+                                   THUNAR_TYPE_FILE_MODE, file_mask,
+                                   THUNAR_TYPE_FILE_MODE, file_mode,
+                                   G_TYPE_BOOLEAN, recursive);
+
+  g_object_unref (file_list.data);
+}
+

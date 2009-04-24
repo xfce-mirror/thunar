@@ -296,3 +296,36 @@ thunar_job_response_get_type (void)
 	return type;
 }
 
+
+
+GType
+thunar_file_mode_get_type (void)
+{
+	static GType type = G_TYPE_INVALID;
+
+	if (type == G_TYPE_INVALID) 
+    {
+	    static const GFlagsValue values[] = 
+      {
+	      { THUNAR_FILE_MODE_SUID,      "THUNAR_FILE_MODE_SUID",      "suid"      },
+	      { THUNAR_FILE_MODE_SGID,      "THUNAR_FILE_MODE_SGID",      "sgid"      },
+	      { THUNAR_FILE_MODE_STICKY,    "THUNAR_FILE_MODE_STICKY",    "sticky"    },
+	      { THUNAR_FILE_MODE_USR_ALL,   "THUNAR_FILE_MODE_USR_ALL",   "usr-all"   },
+	      { THUNAR_FILE_MODE_USR_READ,  "THUNAR_FILE_MODE_USR_READ",  "usr-read"  },
+	      { THUNAR_FILE_MODE_USR_WRITE, "THUNAR_FILE_MODE_USR_WRITE", "usr-write" },
+	      { THUNAR_FILE_MODE_USR_EXEC,  "THUNAR_FILE_MODE_USR_EXEC",  "usr-exec"  },
+	      { THUNAR_FILE_MODE_GRP_ALL,   "THUNAR_FILE_MODE_GRP_ALL",   "grp-all"   },
+	      { THUNAR_FILE_MODE_GRP_READ,  "THUNAR_FILE_MODE_GRP_READ",  "grp-read"  },
+	      { THUNAR_FILE_MODE_GRP_WRITE, "THUNAR_FILE_MODE_GRP_WRITE", "grp-write" },
+	      { THUNAR_FILE_MODE_GRP_EXEC,  "THUNAR_FILE_MODE_GRP_EXEC",  "grp-exec"  },
+	      { THUNAR_FILE_MODE_OTH_ALL,   "THUNAR_FILE_MODE_OTH_ALL",   "oth-all"   },
+	      { THUNAR_FILE_MODE_OTH_READ,  "THUNAR_FILE_MODE_OTH_READ",  "oth-read"  },
+	      { THUNAR_FILE_MODE_OTH_WRITE, "THUNAR_FILE_MODE_OTH_WRITE", "oth-write" },
+	      { THUNAR_FILE_MODE_OTH_EXEC,  "THUNAR_FILE_MODE_OTH_EXEC",  "oth-exec"  },
+	      { 0,                          NULL,                         NULL        }
+	    };
+	    
+      type = g_flags_register_static ("ThunarFileMode", values);
+    }
+	return type;
+}
