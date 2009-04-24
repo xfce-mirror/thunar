@@ -32,6 +32,7 @@
 enum
 {
   PROP_0,
+  PROP_CORRESPONDING_FILE,
   PROP_LOADING,
 };
 
@@ -53,6 +54,10 @@ static void     thunar_folder_get_property                (GObject              
                                                            guint                   prop_id,
                                                            GValue                 *value,
                                                            GParamSpec             *pspec);
+static void     thunar_folder_set_property                (GObject                *object,
+                                                           guint                   prop_uid,
+                                                           const GValue           *value,
+                                                           GParamSpec             *pspec);
 static void     thunar_folder_error                       (ThunarVfsJob           *job,
                                                            GError                 *error,
                                                            ThunarFolder           *folder);
@@ -67,11 +72,10 @@ static void     thunar_folder_file_changed                (ThunarFileMonitor    
 static void     thunar_folder_file_destroyed              (ThunarFileMonitor      *file_monitor,
                                                            ThunarFile             *file,
                                                            ThunarFolder           *folder);
-static void     thunar_folder_monitor                     (ThunarVfsMonitor       *monitor,
-                                                           ThunarVfsMonitorHandle *handle,
-                                                           ThunarVfsMonitorEvent   event,
-                                                           ThunarVfsPath          *handle_path,
-                                                           ThunarVfsPath          *event_path,
+static void     thunar_folder_monitor                     (GFileMonitor           *monitor,
+                                                           GFile                  *file,
+                                                           GFile                  *other_file,
+                                                           GFileMonitorEvent       event_type,
                                                            gpointer                user_data);
 
 
@@ -101,8 +105,7 @@ struct _ThunarFolder
 
   ThunarFileMonitor      *file_monitor;
 
-  ThunarVfsMonitor       *monitor;
-  ThunarVfsMonitorHandle *handle;
+  GFileMonitor           *monitor;
 };
 
 
@@ -153,6 +156,22 @@ thunar_folder_class_init (ThunarFolderClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_folder_finalize;
   gobject_class->get_property = thunar_folder_get_property;
+  gobject_class->set_property = thunar_folder_set_property;
+
+  /**
+   * ThunarFolder::corresponding-file:
+   *
+   * The #ThunarFile referring to the #ThunarFolder.
+   **/
+  g_object_class_install_property (gobject_class,
+                                   PROP_CORRESPONDING_FILE,
+                                   g_param_spec_object ("corresponding-file",
+                                                        "corresponding-file",
+                                                        "corresponding-file",
+                                                        THUNAR_TYPE_FILE,
+                                                        G_PARAM_READABLE 
+                                                        | G_PARAM_WRITABLE
+                                                        | G_PARAM_CONSTRUCT_ONLY));
 
   /**
    * ThunarFolder::loading:
@@ -228,8 +247,7 @@ thunar_folder_init (ThunarFolder *folder)
   g_signal_connect (G_OBJECT (folder->file_monitor), "file-changed", G_CALLBACK (thunar_folder_file_changed), folder);
   g_signal_connect (G_OBJECT (folder->file_monitor), "file-destroyed", G_CALLBACK (thunar_folder_file_destroyed), folder);
 
-  /* connect to the file alteration monitor */
-  folder->monitor = thunar_vfs_monitor_get_default ();
+  folder->monitor = NULL;
 }
 
 
@@ -244,9 +262,11 @@ thunar_folder_finalize (GObject *object)
   g_object_unref (G_OBJECT (folder->file_monitor));
 
   /* disconnect from the file alteration monitor */
-  if (G_LIKELY (folder->handle != NULL))
-    thunar_vfs_monitor_remove (folder->monitor, folder->handle);
-  g_object_unref (G_OBJECT (folder->monitor));
+  if (G_LIKELY (folder->monitor != NULL))
+    {
+      g_file_monitor_cancel (folder->monitor);
+      g_object_unref (G_OBJECT (folder->monitor));
+    }
 
   /* cancel the pending job (if any) */
   if (G_UNLIKELY (folder->job != NULL))
@@ -285,8 +305,38 @@ thunar_folder_get_property (GObject    *object,
 
   switch (prop_id)
     {
+    case PROP_CORRESPONDING_FILE:
+      g_value_set_object (value, folder->corresponding_file);
+      break;
+
     case PROP_LOADING:
       g_value_set_boolean (value, thunar_folder_get_loading (folder));
+      break;
+
+    default:
+      G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+      break;
+    }
+}
+
+
+
+static void
+thunar_folder_set_property (GObject      *object,
+                            guint         prop_id,
+                            const GValue *value,
+                            GParamSpec   *pspec)
+{
+  ThunarFolder *folder = THUNAR_FOLDER (object);
+
+  switch (prop_id)
+    {
+    case PROP_CORRESPONDING_FILE:
+      folder->corresponding_file = g_value_dup_object (value);
+      break;
+
+    case PROP_LOADING:
+      _thunar_assert_not_reached ();
       break;
 
     default:
@@ -322,7 +372,7 @@ thunar_folder_infos_ready (ThunarVfsJob *job,
 
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
   _thunar_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
-  _thunar_return_val_if_fail (folder->handle == NULL, FALSE);
+  _thunar_return_val_if_fail (folder->monitor == NULL, FALSE);
   _thunar_return_val_if_fail (folder->job == job, FALSE);
 
   /* turn the info list into a file list */
@@ -358,7 +408,7 @@ thunar_folder_finished (ThunarVfsJob *job,
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
-  _thunar_return_if_fail (folder->handle == NULL);
+  _thunar_return_if_fail (folder->monitor == NULL);
   _thunar_return_if_fail (folder->job == job);
 
   /* check if we need to merge new files with existing files */
@@ -436,8 +486,10 @@ thunar_folder_finished (ThunarVfsJob *job,
   folder->job = NULL;
 
   /* add us to the file alteration monitor */
-  folder->handle = thunar_vfs_monitor_add_directory (folder->monitor, thunar_file_get_path (folder->corresponding_file),
-                                                     thunar_folder_monitor, folder);
+  folder->monitor = g_file_monitor_directory (thunar_file_get_file (folder->corresponding_file), 
+                                              G_FILE_MONITOR_NONE, NULL, NULL);
+  if (G_LIKELY (folder->monitor != NULL))
+    g_signal_connect (folder->monitor, "changed", G_CALLBACK (thunar_folder_monitor), folder);
 
   /* tell the consumers that we have loaded the directory */
   g_object_notify (G_OBJECT (folder), "loading");
@@ -504,37 +556,35 @@ thunar_folder_file_destroyed (ThunarFileMonitor *file_monitor,
 
 
 static void
-thunar_folder_monitor (ThunarVfsMonitor       *monitor,
-                       ThunarVfsMonitorHandle *handle,
-                       ThunarVfsMonitorEvent   event,
-                       ThunarVfsPath          *handle_path,
-                       ThunarVfsPath          *event_path,
-                       gpointer                user_data)
+thunar_folder_monitor (GFileMonitor     *monitor,
+                       GFile            *event_file,
+                       GFile            *other_file,
+                       GFileMonitorEvent event_type,
+                       gpointer          user_data)
 {
   ThunarFolder *folder = THUNAR_FOLDER (user_data);
   ThunarFile   *file;
   GList        *lp;
   GList         list;
 
-  _thunar_return_if_fail (THUNAR_VFS_IS_MONITOR (monitor));
+  _thunar_return_if_fail (G_IS_FILE_MONITOR (monitor));
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (folder->monitor == monitor);
-  _thunar_return_if_fail (folder->handle == handle);
   _thunar_return_if_fail (folder->job == NULL);
 
   /* check on which file the event occurred */
-  if (!thunar_vfs_path_equal (event_path, thunar_file_get_path (folder->corresponding_file)))
+  if (!g_file_equal (event_file, thunar_file_get_file (folder->corresponding_file)))
     {
       /* check if we already ship the file */
       for (lp = folder->files; lp != NULL; lp = lp->next)
-        if (thunar_vfs_path_equal (event_path, thunar_file_get_path (lp->data)))
+        if (g_file_equal (event_file, thunar_file_get_file (lp->data)))
           break;
 
       /* if we don't have it, add it if the event is not an "deleted" event */
-      if (G_UNLIKELY (lp == NULL && event != THUNAR_VFS_MONITOR_EVENT_DELETED))
+      if (G_UNLIKELY (lp == NULL && event_type != G_FILE_MONITOR_EVENT_DELETED))
         {
           /* allocate a file for the path */
-          file = thunar_file_get_for_path (event_path, NULL);
+          file = thunar_file_get (event_file, NULL);
           if (G_UNLIKELY (file == NULL))
             return;
 
@@ -548,7 +598,7 @@ thunar_folder_monitor (ThunarVfsMonitor       *monitor,
       else if (lp != NULL)
         {
           /* update/destroy the file */
-          if (event == THUNAR_VFS_MONITOR_EVENT_DELETED)
+          if (event_type == G_FILE_MONITOR_EVENT_DELETED)
             thunar_file_destroy (lp->data);
           else
             thunar_file_reload (lp->data);
@@ -557,7 +607,7 @@ thunar_folder_monitor (ThunarVfsMonitor       *monitor,
   else
     {
       /* update/destroy the corresponding file */
-      if (event == THUNAR_VFS_MONITOR_EVENT_DELETED)
+      if (event_type == G_FILE_MONITOR_EVENT_DELETED)
         thunar_file_destroy (folder->corresponding_file);
       else
         thunar_file_reload (folder->corresponding_file);
@@ -601,9 +651,7 @@ thunar_folder_get_for_file (ThunarFile *file)
   else
     {
       /* allocate the new instance */
-      folder = g_object_new (THUNAR_TYPE_FOLDER, NULL);
-      folder->corresponding_file = file;
-      g_object_ref (G_OBJECT (file));
+      folder = g_object_new (THUNAR_TYPE_FOLDER, "corresponding-file", file, NULL);
 
       /* drop the floating reference */
       exo_gtk_object_ref_sink (GTK_OBJECT (folder));
@@ -699,10 +747,11 @@ thunar_folder_reload (ThunarFolder *folder)
     }
 
   /* disconnect from the file alteration monitor */
-  if (G_UNLIKELY (folder->handle != NULL))
+  if (G_UNLIKELY (folder->monitor != NULL))
     {
-      thunar_vfs_monitor_remove (folder->monitor, folder->handle);
-      folder->handle = NULL;
+      g_file_monitor_cancel (folder->monitor);
+      g_object_unref (folder->monitor);
+      folder->monitor = NULL;
     }
 
   /* reset the new_files list */

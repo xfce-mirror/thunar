@@ -1,5 +1,11 @@
 2009-04-24	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-folder.c: Add "corresponding-file" property for the
+	  ThunarFile member of ThunarFolder. Monitor folders using
+	  GFileMonitor instead of ThunarVfsMonitor.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-enum-types.{c,h}, thunar/thunar-file.h: Move
 	  ThunarFileMode into the enum types file. Add THUNAR_TYPE_FILE_MODE
 	  macro and thunar_file_mode_get_type() function which registers a
