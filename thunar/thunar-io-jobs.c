@@ -1024,8 +1024,12 @@ _thunar_io_jobs_ls (ThunarJob   *job,
   g_file_list_free (path_list);
 
   /* abort on errors or cancellation */
-  thunar_job_set_error_if_cancelled (job, &err);
   if (G_UNLIKELY (err != NULL))
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+  else if (G_UNLIKELY (thunar_job_set_error_if_cancelled (job, &err)))
     {
       g_propagate_error (error, err);
       return FALSE;

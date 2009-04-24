@@ -151,7 +151,7 @@ static void             thunar_tree_view_action_paste_into_folder   (ThunarTreeV
 static void             thunar_tree_view_action_properties          (ThunarTreeView       *view);
 static void             thunar_tree_view_action_unmount             (ThunarTreeView       *view);
 static GClosure        *thunar_tree_view_new_files_closure          (ThunarTreeView       *view);
-static void             thunar_tree_view_new_files                  (ThunarVfsJob         *job,
+static void             thunar_tree_view_new_files                  (ThunarJob            *job,
                                                                      GList                *path_list,
                                                                      ThunarTreeView       *view);
 static gboolean         thunar_tree_view_visible_func               (ThunarTreeModel      *model,
@@ -1895,7 +1895,7 @@ thunar_tree_view_new_files_closure (ThunarTreeView *view)
 
 
 static void
-thunar_tree_view_new_files (ThunarVfsJob   *job,
+thunar_tree_view_new_files (ThunarJob      *job,
                             GList          *path_list,
                             ThunarTreeView *view)
 {

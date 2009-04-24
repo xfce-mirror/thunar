@@ -389,10 +389,10 @@ thunar_dialogs_show_help (gpointer     parent,
  * @question : the question text.
  * @choices  : possible responses.
  *
- * Utility function to display a question dialog for the ThunarVfsJob::ask
+ * Utility function to display a question dialog for the ThunarJob::ask
  * signal.
  *
- * Return value: the #ThunarVfsJobResponse.
+ * Return value: the #ThunarJobResponse.
  **/
 ThunarJobResponse
 thunar_dialogs_show_job_ask (GtkWindow        *parent,
@@ -534,7 +534,7 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
  * Asks the user whether to replace the destination file with the
  * source file identified by @src_file.
  *
- * Return value: the selected #ThunarVfsJobResponse.
+ * Return value: the selected #ThunarJobResponse.
  **/
 ThunarJobResponse
 thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
@@ -707,10 +707,10 @@ thunar_dialogs_show_job_ask_replace (GtkWindow  *parent,
 /**
  * thunar_dialogs_show_job_error:
  * @parent : the parent #GtkWindow or %NULL.
- * @error  : the #GError provided by the #ThunarVfsJob.
+ * @error  : the #GError provided by the #ThunarJob.
  *
  * Utility function to display a message dialog for the
- * ThunarVfsJob::error signal.
+ * ThunarJob::error signal.
  **/
 void
 thunar_dialogs_show_job_error (GtkWindow *parent,

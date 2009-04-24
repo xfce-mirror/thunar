@@ -1,5 +1,14 @@
 2009-04-24	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-dialogs.c, thunar/thunar-progress-dialog.{c,h},
+	  thunar/thunar-standard-view.c thunar/thunar-tree-view.c: Remove
+	  all references to ThunarVfsJob/ThunarVfsJobResponse from comments and
+	  source code.
+	* thunar/thunar-io-jobs.c: Fix overwriting of a GError when cancelling
+	  the list_directory job.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.c: Implement thunar_file_get_group(),
 	  thunar_file_get_user() and thunar_file_get_emblem_names() based on
 	  GFile/GFileInfo.

@@ -305,7 +305,7 @@ struct _ThunarStandardViewPrivate
   GList                  *drop_file_list;      /* the list of URIs that are contained in the drop data */
 
   /* the "new-files" closure, which is used to select files whenever 
-   * new files are created by a ThunarVfsJob associated with this view
+   * new files are created by a ThunarJob associated with this view
    */
   GClosure               *new_files_closure;
 
