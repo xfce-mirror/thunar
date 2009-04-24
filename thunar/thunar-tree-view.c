@@ -31,6 +31,7 @@
 #include <thunar/thunar-dnd.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
+#include <thunar/thunar-job.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
