@@ -123,10 +123,10 @@ static void               thunar_file_monitor                  (GFileMonitor    
 
 
 static ThunarUserManager *user_manager;
-static guint32            effective_user_id;
 static ThunarMetafile    *metafile;
 static GObjectClass      *thunar_file_parent_class;
-static GHashTable        *file_cache;
+static GHashTable        *file_cache; /* TODO Make the cache thread safe! */
+static guint32            effective_user_id;
 static GQuark             thunar_file_thumb_path_quark;
 static GQuark             thunar_file_watch_count_quark;
 static GQuark             thunar_file_emblem_names_quark;
@@ -1427,8 +1427,15 @@ thunar_file_get_volume (const ThunarFile       *file,
 ThunarGroup*
 thunar_file_get_group (const ThunarFile *file)
 {
+  guint32 gid;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return thunar_user_manager_get_group_by_id (user_manager, file->info->gid);
+
+  /* TODO what are we going to do on non-UNIX systems? */
+  gid = g_file_info_get_attribute_uint32 (file->ginfo,
+                                          G_FILE_ATTRIBUTE_UNIX_GID);
+
+  return thunar_user_manager_get_group_by_id (user_manager, gid);
 }
 
 
@@ -1449,8 +1456,14 @@ thunar_file_get_group (const ThunarFile *file)
 ThunarUser*
 thunar_file_get_user (const ThunarFile *file)
 {
+  guint32 uid;
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  return thunar_user_manager_get_user_by_id (user_manager, file->info->uid);
+
+  /* TODO what are we going to do on non-UNIX systems? */
+  uid = g_file_info_get_attribute_uint32 (file->ginfo,
+                                          G_FILE_ATTRIBUTE_UNIX_UID);
+
+  return thunar_user_manager_get_user_by_id (user_manager, uid);
 }
 
 
@@ -2036,10 +2049,10 @@ thunar_file_can_be_trashed (const ThunarFile *file)
 GList*
 thunar_file_get_emblem_names (ThunarFile *file)
 {
-  const ThunarVfsInfo *info = file->info;
-  const gchar         *emblem_string;
-  gchar              **emblem_names;
-  GList               *emblems = NULL;
+  const gchar *emblem_string;
+  guint32      uid;
+  gchar      **emblem_names;
+  GList       *emblems = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
 
@@ -2064,8 +2077,12 @@ thunar_file_get_emblem_names (ThunarFile *file)
         emblems = g_list_append (emblems, *emblem_names);
     }
 
-  if ((info->flags & THUNAR_VFS_FILE_FLAGS_SYMLINK) != 0)
+  if (g_file_info_get_is_symlink (file->ginfo))
     emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_SYMBOLIC_LINK);
+
+  /* determine the user ID of the file owner */
+  /* TODO what are we going to do here on non-UNIX systems? */
+  uid = g_file_info_get_attribute_uint32 (file->ginfo, G_FILE_ATTRIBUTE_UNIX_UID);
 
   /* we add "cant-read" if either (a) the file is not readable or (b) a directory, that lacks the
    * x-bit, see http://bugzilla.xfce.org/show_bug.cgi?id=1408 for the details about this change.
@@ -2078,7 +2095,7 @@ thunar_file_get_emblem_names (ThunarFile *file)
     {
       emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
     }
-  else if (G_UNLIKELY (file->info->uid == effective_user_id && !thunar_file_is_writable (file)))
+  else if (G_UNLIKELY (uid == effective_user_id && !thunar_file_is_writable (file)))
     {
       /* we own the file, but we cannot write to it, that's why we mark it as "cant-write", so
        * users won't be surprised when opening the file in a text editor, but are unable to save.
@@ -2564,8 +2581,8 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
 #endif
 
   /* we compare only the display names (UTF-8!) */
-  ap = file_a->info->display_name;
-  bp = file_b->info->display_name;
+  ap = thunar_file_get_display_name (file_a);
+  bp = thunar_file_get_display_name (file_b);
 
   /* check if we should ignore case */
   if (G_LIKELY (case_sensitive))
@@ -2635,7 +2652,8 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
       /* a second case is '20 file' and '2file', where comparison by number
        * makes sense, if the previous char for both strings is a digit.
        */
-      if (ap > file_a->info->display_name && bp > file_b->info->display_name
+      if (ap > thunar_file_get_display_name (file_a) 
+          && bp > thunar_file_get_display_name (file_b)
           && g_ascii_isdigit (*(ap - 1)) && g_ascii_isdigit (*(bp - 1)))
         {
           return compare_by_name_using_number (ap - 1, bp - 1);

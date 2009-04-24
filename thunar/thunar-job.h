@@ -98,6 +98,8 @@ ThunarJobResponse thunar_job_ask_replace            (ThunarJob       *job,
 ThunarJobResponse thunar_job_ask_skip               (ThunarJob       *job,
                                                      const gchar     *format,
                                                      ...);
+gboolean          thunar_job_files_ready            (ThunarJob       *job,
+                                                     GList           *file_list);
 void              thunar_job_info_message           (ThunarJob       *job,
                                                      const gchar     *message);
 void              thunar_job_new_files              (ThunarJob       *job,

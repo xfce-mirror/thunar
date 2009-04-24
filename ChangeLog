@@ -1,5 +1,20 @@
 2009-04-24	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Implement thunar_file_get_group(),
+	  thunar_file_get_user() and thunar_file_get_emblem_names() based on
+	  GFile/GFileInfo.
+	* thunar/thunar-folder.c, thunar/thunar-io-jobs.{c,h},
+	  thunar/thunar-job.{c,h}: Add new "files-ready" signal to ThunarJob
+	  which is emitted when a list of ThunarFiles is ready. Also add a new
+	  function called thunar_job_files_ready() which emits the signal.
+	  Implement a new job thunar_io_jobs_list_directory() as an equivalent
+	  to thunar_vfs_listdir(), using the new "files-ready" signal. Update
+	  ThunarJob to use "files-ready" instead of "infos-ready". For the
+	  first time in a while you can open the trash again without crashing
+	  Thunar.
+
+2009-04-24	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-folder.c: Add "corresponding-file" property for the
 	  ThunarFile member of ThunarFolder. Monitor folders using
 	  GFileMonitor instead of ThunarVfsMonitor.

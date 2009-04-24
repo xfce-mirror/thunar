@@ -48,7 +48,7 @@ enum
   ERROR,
   FINISHED,
   INFO_MESSAGE,
-  INFOS_READY,
+  FILES_READY,
   NEW_FILES,
   PERCENT,
   LAST_SIGNAL,
@@ -216,6 +216,41 @@ thunar_job_class_init (ThunarJobClass *klass)
                   G_SIGNAL_NO_HOOKS, 0, NULL, NULL,
                   g_cclosure_marshal_VOID__POINTER,
                   G_TYPE_NONE, 1, G_TYPE_POINTER);
+
+  /**
+   * ThunarJob::files-ready:
+   * @job       : a #ThunarJob.
+   * @file_list : a list of #ThunarFile<!---->s.
+   *
+   * This signal is used by #ThunarJob<!---->s returned by
+   * the thunar_io_jobs_list_directory() function whenever 
+   * there's a bunch of #ThunarFile<!---->s ready. This signal 
+   * is garantied to be never emitted with an @file_list 
+   * parameter of %NULL.
+   *
+   * To allow some further optimizations on the handler-side,
+   * the handler is allowed to take over ownership of the
+   * @file_list, i.e. it can reuse the @infos list and just replace
+   * the data elements with it's own objects based on the
+   * #ThunarFile<!---->s contained within the @file_list (and
+   * of course properly unreffing the previously contained infos).
+   * If a handler takes over ownership of @file_list it must return
+   * %TRUE here, and no further handlers will be run. Else, if
+   * the handler doesn't want to take over ownership of @infos,
+   * it must return %FALSE, and other handlers will be run. Use
+   * this feature with care, and only if you can be sure that
+   * you are the only handler connected to this signal for a
+   * given job!
+   *
+   * Return value: %TRUE if the handler took over ownership of
+   *               @file_list, else %FALSE.
+   **/
+  job_signals[FILES_READY] =
+    g_signal_new (I_("files-ready"),
+                  G_TYPE_FROM_CLASS (klass), G_SIGNAL_NO_HOOKS,
+                  0, g_signal_accumulator_true_handled, NULL,
+                  _thunar_marshal_BOOLEAN__POINTER,
+                  G_TYPE_BOOLEAN, 1, G_TYPE_POINTER);
 
   /**
    * ThunarJob::finished:
@@ -834,6 +869,19 @@ thunar_job_ask_skip (ThunarJob   *job,
     }
 
   return response;
+}
+
+
+
+gboolean
+thunar_job_files_ready (ThunarJob *job,
+                        GList     *file_list)
+{
+  gboolean handled = FALSE;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  thunar_job_emit (job, job_signals[FILES_READY], 0, file_list, &handled);
+  return handled;
 }
 
 

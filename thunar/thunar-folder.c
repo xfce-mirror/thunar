@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -24,6 +25,8 @@
 #include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-folder.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 
 
@@ -58,13 +61,13 @@ static void     thunar_folder_set_property                (GObject              
                                                            guint                   prop_uid,
                                                            const GValue           *value,
                                                            GParamSpec             *pspec);
-static void     thunar_folder_error                       (ThunarVfsJob           *job,
+static void     thunar_folder_error                       (ThunarJob              *job,
                                                            GError                 *error,
                                                            ThunarFolder           *folder);
-static gboolean thunar_folder_infos_ready                 (ThunarVfsJob           *job,
-                                                           GList                  *infos,
+static gboolean thunar_folder_files_ready                 (ThunarJob              *job,
+                                                           GList                  *files,
                                                            ThunarFolder           *folder);
-static void     thunar_folder_finished                    (ThunarVfsJob           *job,
+static void     thunar_folder_finished                    (ThunarJob              *job,
                                                            ThunarFolder           *folder);
 static void     thunar_folder_file_changed                (ThunarFileMonitor      *file_monitor,
                                                            ThunarFile             *file,
@@ -97,15 +100,15 @@ struct _ThunarFolder
 {
   GtkObject __parent__;
 
-  ThunarVfsJob           *job;
+  ThunarJob         *job;
 
-  ThunarFile             *corresponding_file;
-  GList                  *new_files;
-  GList                  *files;
+  ThunarFile        *corresponding_file;
+  GList             *new_files;
+  GList             *files;
 
-  ThunarFileMonitor      *file_monitor;
+  ThunarFileMonitor *file_monitor;
 
-  GFileMonitor           *monitor;
+  GFileMonitor      *monitor;
 };
 
 
@@ -272,7 +275,7 @@ thunar_folder_finalize (GObject *object)
   if (G_UNLIKELY (folder->job != NULL))
     {
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-      thunar_vfs_job_cancel (folder->job);
+      thunar_job_cancel (folder->job);
       g_object_unref (G_OBJECT (folder->job));
     }
 
@@ -348,12 +351,12 @@ thunar_folder_set_property (GObject      *object,
 
 
 static void
-thunar_folder_error (ThunarVfsJob *job,
+thunar_folder_error (ThunarJob    *job,
                      GError       *error,
                      ThunarFolder *folder)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (folder->job == job);
 
   /* tell the consumer about the problem */
@@ -363,42 +366,26 @@ thunar_folder_error (ThunarVfsJob *job,
 
 
 static gboolean
-thunar_folder_infos_ready (ThunarVfsJob *job,
-                           GList        *infos,
+thunar_folder_files_ready (ThunarJob    *job,
+                           GList        *files,
                            ThunarFolder *folder)
 {
-  ThunarFile *file;
-  GList      *lp;
-
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
-  _thunar_return_val_if_fail (THUNAR_VFS_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (folder->monitor == NULL, FALSE);
   _thunar_return_val_if_fail (folder->job == job, FALSE);
 
-  /* turn the info list into a file list */
-  for (lp = infos; lp != NULL; lp = lp->next)
-    {
-      /* get the file corresponding to the info... */
-      file = thunar_file_get_for_info (lp->data);
-
-      /* ...release the info at the list position... */
-      thunar_vfs_info_unref (lp->data);
-
-      /* ...and replace it with the file */
-      lp->data = file;
-    }
-
   /* merge the list with the existing list of new files */
-  folder->new_files = g_list_concat (folder->new_files, infos);
+  folder->new_files = g_list_concat (folder->new_files, files);
 
-  /* TRUE to indicate that we took over ownership of the infos list */
+  /* indicate that we took over ownership of the file list */
   return TRUE;
 }
 
 
 
 static void
-thunar_folder_finished (ThunarVfsJob *job,
+thunar_folder_finished (ThunarJob    *job,
                         ThunarFolder *folder)
 {
   ThunarFile *file;
@@ -406,7 +393,7 @@ thunar_folder_finished (ThunarVfsJob *job,
   GList      *lp;
 
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
-  _thunar_return_if_fail (THUNAR_VFS_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
   _thunar_return_if_fail (folder->monitor == NULL);
   _thunar_return_if_fail (folder->job == job);
@@ -742,7 +729,7 @@ thunar_folder_reload (ThunarFolder *folder)
     {
       /* disconnect from the job */
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-      thunar_vfs_job_cancel (THUNAR_VFS_JOB (folder->job));
+      thunar_job_cancel (THUNAR_JOB (folder->job));
       g_object_unref (G_OBJECT (folder->job));
     }
 
@@ -759,10 +746,10 @@ thunar_folder_reload (ThunarFolder *folder)
   folder->new_files = NULL;
 
   /* start a new job */
-  folder->job = thunar_vfs_listdir (thunar_file_get_path (folder->corresponding_file), NULL);
+  folder->job = thunar_io_jobs_list_directory (thunar_file_get_file (folder->corresponding_file));
   g_signal_connect (folder->job, "error", G_CALLBACK (thunar_folder_error), folder);
   g_signal_connect (folder->job, "finished", G_CALLBACK (thunar_folder_finished), folder);
-  g_signal_connect (folder->job, "infos-ready", G_CALLBACK (thunar_folder_infos_ready), folder);
+  g_signal_connect (folder->job, "files-ready", G_CALLBACK (thunar_folder_files_ready), folder);
 
   /* tell all consumers that we're loading */
   g_object_notify (G_OBJECT (folder), "loading");

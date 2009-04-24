@@ -980,3 +980,86 @@ thunar_io_jobs_change_mode (GFile         *file,
   g_object_unref (file_list.data);
 }
 
+
+
+static gboolean
+_thunar_io_jobs_ls (ThunarJob   *job,
+                    GValueArray *param_values,
+                    GError     **error)
+{
+  ThunarFile *file;
+  GError     *err = NULL;
+  GFile      *directory;
+  GList      *file_list = NULL;
+  GList      *lp;
+  GList      *path_list;
+
+  _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
+  _thunar_return_val_if_fail (param_values != NULL, FALSE);
+  _thunar_return_val_if_fail (param_values->n_values == 1, FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* determine the directory to list */
+  directory = g_value_get_object (g_value_array_get_nth (param_values, 0));
+
+  /* make sure the object is valid */
+  _thunar_assert (G_IS_FILE (directory));
+
+  /* collect directory contents (non-recursively) */
+  path_list = thunar_io_scan_directory (job, directory, 
+                                        G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, 
+                                        FALSE, &err);
+
+  /* turn the GFile list into a ThunarFile list */
+  for (lp = g_list_last (path_list); 
+       err == NULL && !thunar_job_is_cancelled (job) && lp != NULL; 
+       lp = lp->prev)
+    {
+      file = thunar_file_get (lp->data, &err);
+      if (G_LIKELY (file != NULL))
+        file_list = g_list_prepend (file_list, file);
+    }
+
+  /* free the GFile list */
+  g_file_list_free (path_list);
+
+  /* abort on errors or cancellation */
+  thunar_job_set_error_if_cancelled (job, &err);
+  if (G_UNLIKELY (err != NULL))
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+
+  /* check if we have any files to report */
+  if (G_LIKELY (file_list != NULL))
+    {
+      /* emit the "files-ready" signal */
+      if (!thunar_job_files_ready (job, file_list))
+        {
+          /* none of the handlers took over the file list, so it's up to us
+           * to destroy it */
+          g_list_foreach (file_list, (GFunc) g_object_unref, NULL);
+          g_list_free (file_list);
+        }
+    }
+  
+  /* check if there were any errors */
+  if (err != NULL)
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+
+  return TRUE;
+}
+
+
+
+ThunarJob *
+thunar_io_jobs_list_directory (GFile *directory)
+{
+  _thunar_return_val_if_fail (G_IS_FILE (directory), NULL);
+  
+  return thunar_simple_job_launch (_thunar_io_jobs_ls, 1, G_TYPE_FILE, directory);
+}
