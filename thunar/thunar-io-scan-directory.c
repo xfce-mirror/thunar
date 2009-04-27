@@ -1,4 +1,4 @@
-/* vi:set et ai sw=2 sts=2 ts=2: */
+//* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
@@ -103,10 +103,12 @@ thunar_io_scan_directory (ThunarJob          *job,
       info = g_file_enumerator_next_file (enumerator, thunar_job_get_cancellable (job), &err);
     }
 
-  if (err != NULL || thunar_job_is_cancelled (job))
+  if (err != NULL)
     {
       if (thunar_job_set_error_if_cancelled (job, error))
-        g_error_free (err);
+        {
+          g_clear_error (&err);
+        }
       else
         g_propagate_error (error, err);
 

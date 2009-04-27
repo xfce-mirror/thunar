@@ -1,3 +1,19 @@
+2009-04-27	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.c: Use GVolumeMonitor instead of
+	  ThunarVfsVolumeManager. Connect to the "drive-connected", 
+	  "drive-disconnected" and "drive-eject-button" signals and determine
+	  the device UDIs using g_drive_get_identifier(). Rename
+	  thunar_application_volman_device_added(),
+	  thunar_application_volman_device_removed(),
+	  thunar_application_volman_device_eject() to
+	  thunar_application_drive_connected(),
+	  thunar_application_drive_disconnected() and
+	  thunar_application_drive_eject(). ThunarApplication is now
+	  ThunarVFS-free!
+	* thunar/thunar-io-scan-directory.c: Avoid segfault when cancelling the
+	  job and trying to free the error.
+
 2009-04-24	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-tree-view.c: Add missing include statement for
