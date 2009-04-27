@@ -1,5 +1,10 @@
 2009-04-27	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-preferences-dialog.c: Always assume we have volume
+	  management. Remove the ThunarVfsVolumeManager reference here.
+
+2009-04-27	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-application.c: Use GVolumeMonitor instead of
 	  ThunarVfsVolumeManager. Connect to the "drive-connected", 
 	  "drive-disconnected" and "drive-eject-button" signals and determine

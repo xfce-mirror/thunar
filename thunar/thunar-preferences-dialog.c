@@ -199,23 +199,21 @@ thunar_preferences_dialog_class_init (ThunarPreferencesDialogClass *klass)
 static void
 thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
 {
-  ThunarVfsVolumeManager *volume_manager;
-  ThunarDateStyle         date_style;
-  GtkAdjustment          *adjustment;
-  GtkWidget              *notebook;
-  GtkWidget              *button;
-  GtkWidget              *align;
-  GtkWidget              *combo;
-  GtkWidget              *frame;
-  GtkWidget              *image;
-  GtkWidget              *label;
-  GtkWidget              *range;
-  GtkWidget              *table;
-  GtkWidget              *hbox;
-  GtkWidget              *ibox;
-  GtkWidget              *vbox;
-  gchar                  *path;
-  gchar                  *date;
+  ThunarDateStyle date_style;
+  GtkAdjustment  *adjustment;
+  GtkWidget      *notebook;
+  GtkWidget      *button;
+  GtkWidget      *align;
+  GtkWidget      *combo;
+  GtkWidget      *frame;
+  GtkWidget      *label;
+  GtkWidget      *range;
+  GtkWidget      *table;
+  GtkWidget      *hbox;
+  GtkWidget      *ibox;
+  GtkWidget      *vbox;
+  gchar          *path;
+  gchar          *date;
 
   /* grab a reference on the preferences */
   dialog->preferences = thunar_preferences_get ();
@@ -615,52 +613,26 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_container_add (GTK_CONTAINER (frame), table);
   gtk_widget_show (table);
 
-  /* determine the active volume manager */
-  volume_manager = thunar_vfs_volume_manager_get_default ();
-
   /* check if "thunar-volman" is found */
   path = g_find_program_in_path ("thunar-volman");
 
-  /* check if we lack volume management support and should warn the user */
-  if (g_signal_lookup ("device-added", G_OBJECT_TYPE (volume_manager)) == 0 || path == NULL)
-    {
-      /* add a warning telling the user that volume management is not available */
-      image = gtk_image_new_from_stock (GTK_STOCK_DIALOG_INFO, GTK_ICON_SIZE_DND);
-      gtk_misc_set_alignment (GTK_MISC (image), 0.5f, 0.5f);
-      gtk_table_attach (GTK_TABLE (table), image, 0, 1, 0, 1, GTK_FILL, GTK_FILL, 0, 0);
-      gtk_widget_show (image);
+  /* add check button to enable/disable auto mounting */
+  button = gtk_check_button_new_with_mnemonic (_("Enable _Volume Management"));
+  exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-volume-management", G_OBJECT (button), "active");
+  gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (button);
 
-      label = gtk_label_new ((path == NULL)
-          ? _("Install the \"thunar-volman\" package to use\nthe volume management support in Thunar.")
-          : _("Build thunar-vfs with HAL support to use\nthe volume management support in Thunar."));
-      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
-      gtk_table_attach (GTK_TABLE (table), label, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-      gtk_widget_show (label);
-
-      /* make sure to disable "misc-volume-management" then */
-      g_object_set (G_OBJECT (dialog->preferences), "misc-volume-management", FALSE, NULL);
-    }
-  else
-    {
-      /* add check button to enable/disable auto mounting */
-      button = gtk_check_button_new_with_mnemonic (_("Enable _Volume Management"));
-      exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-volume-management", G_OBJECT (button), "active");
-      gtk_table_attach (GTK_TABLE (table), button, 0, 1, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-      gtk_widget_show (button);
-
-      label = sexy_url_label_new ();
-      gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
-      exo_binding_new (G_OBJECT (button), "active", G_OBJECT (label), "sensitive");
-      g_signal_connect_swapped (G_OBJECT (label), "url-activated", G_CALLBACK (thunar_preferences_dialog_configure), dialog);
-      /* TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it */
-      sexy_url_label_set_markup (SEXY_URL_LABEL (label), _("<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
-                                                           "and media (i.e. how cameras should be handled)."));
-      gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
-      gtk_widget_show (label);
-    }
+  label = sexy_url_label_new ();
+  gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.5f);
+  exo_binding_new (G_OBJECT (button), "active", G_OBJECT (label), "sensitive");
+  g_signal_connect_swapped (G_OBJECT (label), "url-activated", G_CALLBACK (thunar_preferences_dialog_configure), dialog);
+  /* TRANSLATORS: Make sure you place the <a>...</a>-link on the first line, otherwise the user will be unable to click on it */
+  sexy_url_label_set_markup (SEXY_URL_LABEL (label), _("<a href=\"volman-config:\">Configure</a> the management of removable drives\n"
+                                                       "and media (i.e. how cameras should be handled)."));
+  gtk_table_attach (GTK_TABLE (table), label, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
+  gtk_widget_show (label);
 
   /* cleanup */
-  g_object_unref (G_OBJECT (volume_manager));
   g_free (path);
 }
 
