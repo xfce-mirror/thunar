@@ -1,5 +1,15 @@
 2009-04-28	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-io-jobs.c, thunar/thunar-io-scan-directory.c: Improve
+	  error handling. Use thunar_file_list_free() instead of iterating over
+	  the ThunarFile list manually. Make sure to release the
+	  GFileEnumerator in thunar_io_scan_directory(), otherwise unmounting
+	  volumes fails due to open file descriptors.
+	* thunar/thunar-job.c: Cancel jobs in thunar_job_finalize() before
+	  destroying the GCancellable.
+
+2009-04-28	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Make the ThunarFile cache somewhat 
 	  thread-safe.
 	* thunar/thunar-gio-extensions.{c,h}: Add new functions

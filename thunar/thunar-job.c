@@ -345,6 +345,7 @@ thunar_job_finalize (GObject *object)
 {
   ThunarJob *job = THUNAR_JOB (object);
 
+  thunar_job_cancel (job);
   g_object_unref (job->priv->cancellable);
 
   (*G_OBJECT_CLASS (thunar_job_parent_class)->finalize) (object);

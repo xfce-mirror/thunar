@@ -999,6 +999,9 @@ _thunar_io_jobs_ls (ThunarJob   *job,
   _thunar_return_val_if_fail (param_values->n_values == 1, FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
+  if (thunar_job_set_error_if_cancelled (job, error))
+    return FALSE;
+
   /* determine the directory to list */
   directory = g_value_get_object (g_value_array_get_nth (param_values, 0));
 
@@ -1043,13 +1046,15 @@ _thunar_io_jobs_ls (ThunarJob   *job,
         {
           /* none of the handlers took over the file list, so it's up to us
            * to destroy it */
-          g_list_foreach (file_list, (GFunc) g_object_unref, NULL);
-          g_list_free (file_list);
+          thunar_file_list_free (file_list);
         }
     }
   
-  /* check if there were any errors */
-  if (err != NULL)
+  /* there should be no errors here */
+  _thunar_assert (err == NULL);
+
+  /* propagate cancellation error */
+  if (thunar_job_set_error_if_cancelled (job, &err))
     {
       g_propagate_error (error, err);
       return FALSE;

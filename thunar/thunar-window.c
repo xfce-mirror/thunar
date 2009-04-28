@@ -2552,7 +2552,7 @@ thunar_window_set_current_directory (ThunarWindow *window,
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (current_directory == NULL || THUNAR_IS_FILE (current_directory));
-
+  
   /* check if we already display the requested directory */
   if (G_UNLIKELY (window->current_directory == current_directory))
     return;

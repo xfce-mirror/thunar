@@ -55,12 +55,12 @@ thunar_io_scan_directory (ThunarJob          *job,
   /* query the file type */
   type = g_file_query_file_type (file, flags, thunar_job_get_cancellable (job));
 
-  /* ignore non-directory nodes */
-  if (type != G_FILE_TYPE_DIRECTORY)
-    return NULL;
-
   /* abort if the job was cancelled */
   if (thunar_job_set_error_if_cancelled (job, error))
+    return NULL;
+
+  /* ignore non-directory nodes */
+  if (type != G_FILE_TYPE_DIRECTORY)
     return NULL;
 
   /* try to read from the direectory */
@@ -103,16 +103,18 @@ thunar_io_scan_directory (ThunarJob          *job,
       info = g_file_enumerator_next_file (enumerator, thunar_job_get_cancellable (job), &err);
     }
 
-  if (err != NULL)
-    {
-      if (thunar_job_set_error_if_cancelled (job, error))
-        {
-          g_clear_error (&err);
-        }
-      else
-        g_propagate_error (error, err);
+  /* release the enumerator */
+  g_object_unref (enumerator);
 
-      g_object_unref (enumerator);
+  if (G_UNLIKELY (err != NULL))
+    {
+      g_propagate_error (error, err);
+      g_file_list_free (files);
+      return NULL;
+    }
+  else if (thunar_job_set_error_if_cancelled (job, &err))
+    {
+      g_propagate_error (error, err);
       g_file_list_free (files);
       return NULL;
     }

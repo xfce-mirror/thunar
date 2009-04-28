@@ -261,14 +261,14 @@ thunar_folder_finalize (GObject *object)
   ThunarFolder *folder = THUNAR_FOLDER (object);
 
   /* disconnect from the ThunarFileMonitor instance */
-  g_signal_handlers_disconnect_matched (G_OBJECT (folder->file_monitor), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-  g_object_unref (G_OBJECT (folder->file_monitor));
+  g_signal_handlers_disconnect_matched (folder->file_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
+  g_object_unref (folder->file_monitor);
 
   /* disconnect from the file alteration monitor */
   if (G_LIKELY (folder->monitor != NULL))
     {
       g_file_monitor_cancel (folder->monitor);
-      g_object_unref (G_OBJECT (folder->monitor));
+      g_object_unref (folder->monitor);
     }
 
   /* cancel the pending job (if any) */
@@ -276,7 +276,7 @@ thunar_folder_finalize (GObject *object)
     {
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
       thunar_job_cancel (folder->job);
-      g_object_unref (G_OBJECT (folder->job));
+      g_object_unref (folder->job);
     }
 
   /* disconnect from the corresponding file */
@@ -730,7 +730,7 @@ thunar_folder_reload (ThunarFolder *folder)
       /* disconnect from the job */
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
       thunar_job_cancel (THUNAR_JOB (folder->job));
-      g_object_unref (G_OBJECT (folder->job));
+      g_object_unref (folder->job);
     }
 
   /* disconnect from the file alteration monitor */
