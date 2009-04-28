@@ -122,6 +122,10 @@ static void               thunar_file_monitor                  (GFileMonitor    
 
 
 
+G_LOCK_DEFINE_STATIC (file_cache_mutex);
+
+
+
 static ThunarUserManager *user_manager;
 static ThunarMetafile    *metafile;
 static GObjectClass      *thunar_file_parent_class;
@@ -189,8 +193,13 @@ thunar_file_atexit_foreach (gpointer key,
 static void
 thunar_file_atexit (void)
 {
+  G_LOCK (file_cache_mutex);
+
   if (file_cache == NULL || g_hash_table_size (file_cache) == 0)
-    return;
+    {
+      G_UNLOCK (file_cache_mutex);
+      return;
+    }
 
   g_print ("--- Leaked a total of %u ThunarFile objects:\n",
            g_hash_table_size (file_cache));
@@ -198,6 +207,8 @@ thunar_file_atexit (void)
   g_hash_table_foreach (file_cache, thunar_file_atexit_foreach, NULL);
 
   g_print ("\n");
+
+  G_UNLOCK (file_cache_mutex);
 }
 #endif
 
@@ -303,7 +314,9 @@ thunar_file_finalize (GObject *object)
 #endif
 
   /* drop the entry from the cache */
+  G_LOCK (file_cache_mutex);
   g_hash_table_remove (file_cache, file->gfile);
+  G_UNLOCK (file_cache_mutex);
 
   /* drop a reference on the metadata if we own one */
   if ((file->flags & THUNAR_FILE_OWNS_METAFILE_REFERENCE) != 0)
@@ -537,9 +550,12 @@ thunar_file_monitor_update (GFile             *path,
         case G_FILE_MONITOR_EVENT_ATTRIBUTE_CHANGED:
           thunar_file_reload (file);
           break;
+
+        case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
         case G_FILE_MONITOR_EVENT_DELETED:
           thunar_file_destroy (file);
           break;
+
         default:
           break;
         }
@@ -627,7 +643,9 @@ thunar_file_get (GFile   *gfile,
       thunar_file_load (file, NULL, error);
 
       /* insert the file into the cache */
+      G_LOCK (file_cache_mutex);
       g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+      G_UNLOCK (file_cache_mutex);
     }
 
   return file;
@@ -706,7 +724,9 @@ thunar_file_get_for_info (ThunarVfsInfo *info)
       thunar_file_load (file, NULL, NULL);
 
       /* insert the file into the cache */
+      G_LOCK (file_cache_mutex);
       g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+      G_UNLOCK (file_cache_mutex);
     }
 
   g_object_unref (gfile);
@@ -1088,11 +1108,15 @@ thunar_file_rename (ThunarFile  *file,
           THUNAR_FILE_SET_WATCH_COUNT (file, watch_count);
         }
 
+      G_LOCK (file_cache_mutex);
+
       /* drop the previous entry from the cache */
       g_hash_table_remove (file_cache, previous_file);
 
       /* insert the new entry */
       g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+
+      G_UNLOCK (file_cache_mutex);
 
       /* tell the associated folder that the file was renamed */
       thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
@@ -2382,7 +2406,7 @@ thunar_file_watch (ThunarFile *file)
   if (++watch_count == 1)
     {
       /* create a file or directory monitor */
-      file->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_NONE, NULL, NULL);
+      file->monitor = g_file_monitor (file->gfile, G_FILE_MONITOR_WATCH_MOUNTS, NULL, NULL);
       if (G_LIKELY (file->monitor != NULL))
         {
           /* make sure the pointer is set to NULL once the monitor is destroyed */
@@ -2519,6 +2543,8 @@ thunar_file_destroy (ThunarFile *file)
 
       /* release our reference */
       g_object_unref (G_OBJECT (file));
+
+      g_debug ("thunar_file_destroy: file is object: %d", G_IS_OBJECT (file));
     }
 }
 
@@ -2725,7 +2751,11 @@ thunar_file_compare_by_name (const ThunarFile *file_a,
 ThunarFile *
 thunar_file_cache_lookup (const GFile *file)
 {
+  ThunarFile *cached_file;
+
   _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+
+  G_LOCK (file_cache_mutex);
 
   /* allocate the ThunarFile cache on-demand */
   if (G_UNLIKELY (file_cache == NULL))
@@ -2736,7 +2766,11 @@ thunar_file_cache_lookup (const GFile *file)
                                           NULL);
     }
 
-  return g_hash_table_lookup (file_cache, file);
+  cached_file = g_hash_table_lookup (file_cache, file);
+
+  G_UNLOCK (file_cache_mutex);
+
+  return cached_file;
 }
 
 
@@ -2768,19 +2802,10 @@ thunar_file_cache_lookup_path (const ThunarVfsPath *path)
 
   uri = thunar_vfs_path_dup_uri (path);
   gfile = g_file_new_for_uri (uri);
+  file = thunar_file_cache_lookup (gfile);
+  g_object_unref (gfile);
   g_free (uri);
 
-  /* allocate the ThunarFile cache on-demand */
-  if (G_UNLIKELY (file_cache == NULL))
-    {
-      file_cache = g_hash_table_new_full (g_file_hash, 
-                                          (GEqualFunc) g_file_equal, 
-                                          (GDestroyNotify) g_object_unref, 
-                                          NULL);
-    }
-
-  file = g_hash_table_lookup (file_cache, gfile);
-  g_object_unref (gfile);
   return file;
 }
 

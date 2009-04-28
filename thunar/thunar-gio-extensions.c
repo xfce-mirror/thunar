@@ -107,6 +107,42 @@ g_file_is_desktop (GFile *file)
 
 
 
+gchar *
+g_file_size_humanize (guint64 size)
+{
+  gchar *buffer;
+
+  if (G_UNLIKELY (size > 1024ul * 1024ul * 1024ul))
+    buffer = g_strdup_printf ("%0.1f GB", size / (1024.0 * 1024.0 * 1024.0));
+  else if (size > 1024ul * 1024ul)
+    buffer = g_strdup_printf ("%0.1f MB", size / (1024.0 * 1024.0));
+  else if (size > 1024ul)
+    buffer = g_strdup_printf ("%0.1f kB", size / 1024.0);
+  else
+    buffer = g_strdup_printf ("%lu B", (gulong) size);
+
+  return buffer;
+}
+
+
+
+GType
+g_file_list_get_type (void)
+{
+  static GType type = G_TYPE_INVALID;
+
+  if (G_UNLIKELY (type == G_TYPE_INVALID))
+    {
+      type = g_boxed_type_register_static (I_("GFileList"),
+                                           (GBoxedCopyFunc) g_file_list_copy,
+                                           (GBoxedFreeFunc) g_file_list_free);
+    }
+
+  return type;
+}
+
+
+
 /**
  * g_file_list_new_from_string:
  * @string : a string representation of an URI list.
@@ -234,36 +270,49 @@ g_file_list_free (GList *list)
 
 
 
-gchar *
-g_file_size_humanize (guint64 size)
+gboolean
+g_volume_is_removable (GVolume *volume)
 {
-  gchar *buffer;
+  gboolean can_eject = FALSE;
+  gboolean can_unmount = FALSE;
+  GMount  *mount;
 
-  if (G_UNLIKELY (size > 1024ul * 1024ul * 1024ul))
-    buffer = g_strdup_printf ("%0.1f GB", size / (1024.0 * 1024.0 * 1024.0));
-  else if (size > 1024ul * 1024ul)
-    buffer = g_strdup_printf ("%0.1f MB", size / (1024.0 * 1024.0));
-  else if (size > 1024ul)
-    buffer = g_strdup_printf ("%0.1f kB", size / 1024.0);
-  else
-    buffer = g_strdup_printf ("%lu B", (gulong) size);
+  _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
 
-  return buffer;
+  /* check if the volume can be ejected */
+  can_eject = g_volume_can_eject (volume);
+
+  /* determine the mount for the volume (if it is mounted at all) */
+  mount = g_volume_get_mount (volume);
+  if (mount != NULL)
+    {
+      /* check if the volume can be unmounted */
+      can_unmount = g_mount_can_unmount (mount);
+
+      /* release the mount */
+      g_object_unref (mount);
+    }
+
+  return can_eject || can_unmount;
 }
 
 
 
-GType
-g_file_list_get_type (void)
+gboolean
+g_volume_is_mounted (GVolume *volume)
 {
-  static GType type = G_TYPE_INVALID;
+  gboolean is_mounted = FALSE;
+  GMount  *mount;
 
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
+  _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
+
+  /* determine the mount for this volume (if it is mounted at all) */
+  mount = g_volume_get_mount (volume);
+  if (mount != NULL)
     {
-      type = g_boxed_type_register_static (I_("GFileList"),
-                                           (GBoxedCopyFunc) g_file_list_copy,
-                                           (GBoxedFreeFunc) g_file_list_free);
+      is_mounted = TRUE;
+      g_object_unref (mount);
     }
 
-  return type;
+  return is_mounted;
 }

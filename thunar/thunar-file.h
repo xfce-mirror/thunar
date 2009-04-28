@@ -108,7 +108,7 @@ struct _ThunarFileClass
 
 struct _ThunarFile
 {
-  GObject __parent__;
+  GObject        __parent__;
 
   /*< private >*/
   ThunarVfsInfo *info;
