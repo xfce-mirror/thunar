@@ -1267,6 +1267,12 @@ thunar_shortcuts_view_open_selection (ThunarShortcutsView *view)
 
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+
+  /* avoid dealing with invalid selections (may occur when the mount_finish()
+   * handler is called and the shortcuts view has been hidden already) */
+  if (!GTK_IS_TREE_SELECTION (selection))
+    return;
+
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
       /* determine the file for the shortcut at the given tree iterator */
@@ -1327,6 +1333,12 @@ thunar_shortcuts_view_open_selection_in_new_window (ThunarShortcutsView *view)
 
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+
+  /* avoid dealing with invalid selections (may occur when the mount_finish()
+   * handler is called and the shortcuts view has been hidden already) */
+  if (!GTK_IS_TREE_SELECTION (selection))
+    return;
+
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
       /* determine the volume for the shortcut at the given tree iterator */
@@ -1392,6 +1404,8 @@ thunar_shortcuts_view_eject_finish (GObject      *object,
           g_error_free (error);
         }
     }
+
+  g_object_unref (view);
 }
 
 
@@ -1427,6 +1441,8 @@ thunar_shortcuts_view_unmount_finish (GObject      *object,
           g_error_free (error);
         }
     }
+
+  g_object_unref (view);
 }
 
 
@@ -1437,7 +1453,6 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
-  GtkWidget        *window;
   GVolume          *volume;
   GMount           *mount;
 
@@ -1451,15 +1466,13 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
       gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, -1);
       if (G_UNLIKELY (volume != NULL))
         {
-          /* determine the toplevel window */
-          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-
           /* determine what the appropriate method is: eject or unmount */
           if (g_volume_can_eject (volume))
             {
               /* try to to eject the volume asynchronously */
               g_volume_eject (volume, G_MOUNT_UNMOUNT_NONE, NULL, 
-                              thunar_shortcuts_view_eject_finish, view);
+                              thunar_shortcuts_view_eject_finish, 
+                              g_object_ref (view));
             }
           else
             {
@@ -1469,7 +1482,8 @@ thunar_shortcuts_view_eject (ThunarShortcutsView *view)
                 {
                   /* the volume is mounted, try to unmount the mount */
                   g_mount_unmount (mount, G_MOUNT_UNMOUNT_NONE, NULL,
-                                   thunar_shortcuts_view_unmount_finish, view);
+                                   thunar_shortcuts_view_unmount_finish, 
+                                   g_object_ref (view));
 
                   /* release the mount */
                   g_object_unref (mount);
@@ -1511,8 +1525,11 @@ thunar_shortcuts_view_mount_finish (GObject      *object,
   /* check if there was an error */
   if (!g_volume_mount_finish (volume, result, &error))
     {
-      /* ignore GIO errors already handled */
-      if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
+      /* ignore GIO already handled errors or errors due to pending mount actions */
+      if (error->domain != G_IO_ERROR 
+          || (error->code != G_IO_ERROR_FAILED_HANDLED 
+              && error->code != G_IO_ERROR_ALREADY_MOUNTED
+              && error->code != G_IO_ERROR_PENDING))
         {
           window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
@@ -1529,6 +1546,8 @@ thunar_shortcuts_view_mount_finish (GObject      *object,
     {
       thunar_shortcuts_view_open_selection (view);
     }
+
+  g_object_unref (view);
 }
 
 
@@ -1550,8 +1569,11 @@ thunar_shortcuts_view_mount_new_window_finish (GObject      *object,
   /* check if there was an error */
   if (!g_volume_mount_finish (volume, result, &error))
     {
-      /* ignore GIO errors which were already handled */
-      if (error->domain != G_IO_ERROR || error->code != G_IO_ERROR_FAILED_HANDLED)
+      /* ignore GIO already handled errors or errors due to pending mount actions */
+      if (error->domain != G_IO_ERROR 
+          || (error->code != G_IO_ERROR_FAILED_HANDLED 
+              && error->code != G_IO_ERROR_ALREADY_MOUNTED
+              && error->code != G_IO_ERROR_PENDING))
         {
           window = gtk_widget_get_toplevel (GTK_WIDGET (view));
 
@@ -1568,6 +1590,8 @@ thunar_shortcuts_view_mount_new_window_finish (GObject      *object,
     {
       thunar_shortcuts_view_open_selection_in_new_window (view);
     }
+
+  g_object_unref (view);
 }
 
 
@@ -1613,12 +1637,14 @@ thunar_shortcuts_view_mount (ThunarShortcutsView *view,
               if (open_in_new_window)
                 {
                   g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
-                                  thunar_shortcuts_view_mount_new_window_finish, view);
+                                  thunar_shortcuts_view_mount_new_window_finish, 
+                                  g_object_ref (view));
                 }
               else
                 {
                   g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
-                                  thunar_shortcuts_view_mount_finish, view);
+                                  thunar_shortcuts_view_mount_finish, 
+                                  g_object_ref (view));
                 }
 
               /* release the mount operation */

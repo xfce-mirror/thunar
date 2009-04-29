@@ -1,5 +1,16 @@
 2009-04-29	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-shortcuts-view.c: Avoid segfaults due to an invalid
+	  GtkTreeSelection being used in thunar_shortcuts_view_open_selection()
+	  and thunar_shortcuts_view_open_selection_in_new_window(). This can
+	  happen when the shortcuts view is essentially being destroyed but a
+	  reference to it is still being kept for the mount/unmount/eject
+	  handler. Increase the reference counter before passing the view to
+	  asynchronous mount/unmount/eject functions and release the reference
+	  in the handler.
+
+2009-04-29	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-shortcuts-model.c: In thunar_shortcuts_model_init()
 	  don't increase the reference counter on the volumes, otherwise we'd
 	  leak them here.
