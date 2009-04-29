@@ -1,5 +1,12 @@
 2009-04-29	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-tree-model.c, thunar/thunar-tree-view.c: Rewrite the
+	  volume management code based on GVolumeMonitor/GVolume. This code
+	  still has quite a few problems with trying to mount several times in
+	  a row and mount+open doesn't seem to work.
+
+2009-04-29	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-shortcuts-view.c: Avoid segfaults due to an invalid
 	  GtkTreeSelection being used in thunar_shortcuts_view_open_selection()
 	  and thunar_shortcuts_view_open_selection_in_new_window(). This can

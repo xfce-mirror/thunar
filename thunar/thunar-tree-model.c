@@ -116,21 +116,22 @@ static void                 thunar_tree_model_cleanup_idle_destroy    (gpointer 
 static void                 thunar_tree_model_file_changed            (ThunarFileMonitor      *file_monitor,
                                                                        ThunarFile             *file,
                                                                        ThunarTreeModel        *model);
-static void                 thunar_tree_model_volume_changed          (ThunarVfsVolume        *volume,
+static void                 thunar_tree_model_mount_pre_unmount       (GVolumeMonitor         *volume_monitor,
+                                                                       GMount                 *mount,
                                                                        ThunarTreeModel        *model);
-static void                 thunar_tree_model_volume_pre_unmount      (ThunarVfsVolumeManager *volume_manager,
-                                                                       ThunarVfsVolume        *volume,
+static void                 thunar_tree_model_volume_added            (GVolumeMonitor         *volume_monitor,
+                                                                       GVolume                *volume,
                                                                        ThunarTreeModel        *model);
-static void                 thunar_tree_model_volumes_added           (ThunarVfsVolumeManager *volume_manager,
-                                                                       GList                  *volumes,
+static void                 thunar_tree_model_volume_removed          (GVolumeMonitor         *volume_monitor,
+                                                                       GVolume                *volume,
                                                                        ThunarTreeModel        *model);
-static void                 thunar_tree_model_volumes_removed         (ThunarVfsVolumeManager *volume_manager,
-                                                                       GList                  *volumes,
+static void                 thunar_tree_model_volume_changed          (GVolumeMonitor         *volume_monitor,
+                                                                       GVolume                *volume,
                                                                        ThunarTreeModel        *model);
 static ThunarTreeModelItem *thunar_tree_model_item_new_with_file      (ThunarTreeModel        *model,
                                                                        ThunarFile             *file) G_GNUC_MALLOC;
 static ThunarTreeModelItem *thunar_tree_model_item_new_with_volume    (ThunarTreeModel        *model,
-                                                                       ThunarVfsVolume        *volume) G_GNUC_MALLOC;
+                                                                       GVolume                *volume) G_GNUC_MALLOC;
 static void                 thunar_tree_model_item_free               (ThunarTreeModelItem    *item);
 static void                 thunar_tree_model_item_reset              (ThunarTreeModelItem    *item);
 static void                 thunar_tree_model_item_load_folder        (ThunarTreeModelItem    *item);
@@ -182,7 +183,7 @@ struct _ThunarTreeModel
 #endif
 
   /* removable volumes */
-  ThunarVfsVolumeManager     *volume_manager;
+  GVolumeMonitor             *volume_monitor;
   GList                      *hidden_volumes;
 
   ThunarFileMonitor          *file_monitor;
@@ -203,7 +204,7 @@ struct _ThunarTreeModelItem
   guint            load_idle_id;
   ThunarFile      *file;
   ThunarFolder    *folder;
-  ThunarVfsVolume *volume;
+  GVolume         *volume;
   ThunarTreeModel *model;
 
   /* list of children of this node that are
@@ -322,6 +323,7 @@ thunar_tree_model_init (ThunarTreeModel *model)
     g_file_new_for_root () 
   };
   GList               *volumes;
+  GList               *lp;
   GNode               *node;
   guint                n;
 
@@ -343,11 +345,12 @@ thunar_tree_model_init (ThunarTreeModel *model)
   /* allocate the "virtual root node" */
   model->root = g_node_new (NULL);
 
-  /* connect to the volume manager */
-  model->volume_manager = thunar_vfs_volume_manager_get_default ();
-  g_signal_connect (G_OBJECT (model->volume_manager), "volumes-added", G_CALLBACK (thunar_tree_model_volumes_added), model);
-  g_signal_connect (G_OBJECT (model->volume_manager), "volumes-removed", G_CALLBACK (thunar_tree_model_volumes_removed), model);
-  g_signal_connect (G_OBJECT (model->volume_manager), "volume-pre-unmount", G_CALLBACK (thunar_tree_model_volume_pre_unmount), model);
+  /* connect to the volume monitor */
+  model->volume_monitor = g_volume_monitor_get ();
+  g_signal_connect (model->volume_monitor, "mount-pre-unmount", G_CALLBACK (thunar_tree_model_mount_pre_unmount), model);
+  g_signal_connect (model->volume_monitor, "volume-added", G_CALLBACK (thunar_tree_model_volume_added), model);
+  g_signal_connect (model->volume_monitor, "volume-removed", G_CALLBACK (thunar_tree_model_volume_removed), model);
+  g_signal_connect (model->volume_monitor, "volume-changed", G_CALLBACK (thunar_tree_model_volume_changed), model);
 
   /* append the system defined nodes ('Home', 'Trash', 'File System') */
   for (n = 0; n < G_N_ELEMENTS (system_path_list); ++n)
@@ -374,9 +377,13 @@ thunar_tree_model_init (ThunarTreeModel *model)
     }
 
   /* setup the initial volumes */
-  volumes = thunar_vfs_volume_manager_get_volumes (model->volume_manager);
-  if (G_LIKELY (volumes != NULL))
-    thunar_tree_model_volumes_added (model->volume_manager, volumes, model);
+  volumes = g_volume_monitor_get_volumes (model->volume_monitor);
+  for (lp = volumes; lp != NULL; lp = lp->next)
+    {
+      thunar_tree_model_volume_added (model->volume_monitor, lp->data, model);
+      g_object_unref (lp->data);
+    }
+  g_list_free (volumes);
 }
 
 
@@ -385,31 +392,26 @@ static void
 thunar_tree_model_finalize (GObject *object)
 {
   ThunarTreeModel *model = THUNAR_TREE_MODEL (object);
-  GList           *lp;
 
   /* remove the cleanup idle */
   if (model->cleanup_idle_id != 0)
     g_source_remove (model->cleanup_idle_id);
 
   /* disconnect from the file monitor */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (model->file_monitor), thunar_tree_model_file_changed, model);
-  g_object_unref (G_OBJECT (model->file_monitor));
+  g_signal_handlers_disconnect_by_func (model->file_monitor, thunar_tree_model_file_changed, model);
+  g_object_unref (model->file_monitor);
 
   /* release all hidden volumes */
-  for (lp = model->hidden_volumes; lp != NULL; lp = lp->next)
-    {
-      g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_tree_model_volume_changed, model);
-      g_object_unref (G_OBJECT (lp->data));
-    }
+  g_list_foreach (model->hidden_volumes, (GFunc) g_object_unref, NULL);
   g_list_free (model->hidden_volumes);
 
   /* release all resources allocated to the model */
   g_node_traverse (model->root, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_free, NULL);
   g_node_destroy (model->root);
 
-  /* disconnect from the volume manager */
-  g_signal_handlers_disconnect_matched (G_OBJECT (model->volume_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
-  g_object_unref (G_OBJECT (model->volume_manager));
+  /* disconnect from the volume monitor */
+  g_signal_handlers_disconnect_matched (model->volume_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, model);
+  g_object_unref (model->volume_monitor);
 
   (*G_OBJECT_CLASS (thunar_tree_model_parent_class)->finalize) (object);
 }
@@ -492,7 +494,7 @@ thunar_tree_model_get_column_type (GtkTreeModel *tree_model,
       return PANGO_TYPE_ATTR_LIST;
 
     case THUNAR_TREE_MODEL_COLUMN_VOLUME:
-      return THUNAR_VFS_TYPE_VOLUME;
+      return G_TYPE_VOLUME;
 
     default:
       _thunar_assert_not_reached ();
@@ -629,7 +631,7 @@ thunar_tree_model_get_value (GtkTreeModel *tree_model,
     case THUNAR_TREE_MODEL_COLUMN_NAME:
       g_value_init (value, G_TYPE_STRING);
       if (G_LIKELY (item != NULL && item->volume != NULL))
-        g_value_set_static_string (value, thunar_vfs_volume_get_name (item->volume));
+        g_value_take_string (value, g_volume_get_name (item->volume));
       else if (G_LIKELY (item != NULL && item->file != NULL))
         g_value_set_static_string (value, thunar_file_get_display_name (item->file));
       else
@@ -645,7 +647,7 @@ thunar_tree_model_get_value (GtkTreeModel *tree_model,
       break;
 
     case THUNAR_TREE_MODEL_COLUMN_VOLUME:
-      g_value_init (value, THUNAR_VFS_TYPE_VOLUME);
+      g_value_init (value, G_TYPE_VOLUME);
       g_value_set_object (value, (item != NULL) ? item->volume : NULL);
       break;
 
@@ -974,17 +976,21 @@ thunar_tree_model_file_changed (ThunarFileMonitor *file_monitor,
 
 
 static void
-thunar_tree_model_volume_changed (ThunarVfsVolume *volume,
+thunar_tree_model_volume_changed (GVolumeMonitor  *volume_monitor,
+                                  GVolume         *volume,
                                   ThunarTreeModel *model)
 {
   ThunarTreeModelItem *item = NULL;
   GtkTreePath         *path;
   GtkTreeIter          iter;
+  GMount              *mount;
+  GFile               *mount_point;
   GNode               *node;
-  GList                list;
   GList               *lp;
 
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
+  _thunar_return_if_fail (model->volume_monitor == volume_monitor);
+  _thunar_return_if_fail (G_IS_VOLUME (volume));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
   /* check if the volume is on the hidden list */
@@ -992,7 +998,7 @@ thunar_tree_model_volume_changed (ThunarVfsVolume *volume,
   if (G_LIKELY (lp != NULL))
     {
       /* check if we need to display the volume now */
-      if (thunar_vfs_volume_is_present (volume) && thunar_vfs_volume_is_removable (volume))
+      if (g_volume_is_removable (volume) && g_volume_is_present (volume))
         {
           /* remove the volume from the list of hidden volumes */
           model->hidden_volumes = g_list_delete_link (model->hidden_volumes, lp);
@@ -1016,7 +1022,7 @@ thunar_tree_model_volume_changed (ThunarVfsVolume *volume,
           thunar_tree_model_node_insert_dummy (node, model);
 
           /* drop our reference on the volume */
-          g_object_unref (G_OBJECT (volume));
+          g_object_unref (volume);
         }
     }
   else
@@ -1034,20 +1040,13 @@ thunar_tree_model_volume_changed (ThunarVfsVolume *volume,
       _thunar_assert (item->volume == volume);
 
       /* check if we need to hide the volume now */
-      if (!thunar_vfs_volume_is_present (volume) || !thunar_vfs_volume_is_removable (volume))
+      if (!g_volume_is_removable (volume) || !g_volume_is_present (volume))
         {
           /* need to ref here, because the volumes_removed() handler will drop the reference */
-          g_object_ref (G_OBJECT (volume));
+          g_object_ref (volume);
 
-          /* fake a list with only the volume */
-          list.next = list.prev = NULL;
-          list.data = volume;
-
-          /* use "volumes-removed" handler to hide the volume */
-          thunar_tree_model_volumes_removed (model->volume_manager, &list, model);
-
-          /* need to reconnect to the volume as the item removable drops the handler */
-          g_signal_connect (G_OBJECT (volume), "changed", G_CALLBACK (thunar_tree_model_volume_changed), model);
+          /* use "volume-removed" handler to hide the volume */
+          thunar_tree_model_volume_removed (model->volume_monitor, volume, model);
 
           /* move the volume to the hidden list */
           model->hidden_volumes = g_list_prepend (model->hidden_volumes, volume);
@@ -1055,15 +1054,25 @@ thunar_tree_model_volume_changed (ThunarVfsVolume *volume,
       else
         {
           /* check if the volume is mounted and we don't have a file yet */
-          if (thunar_vfs_volume_is_mounted (volume) && item->file == NULL)
+          if (g_volume_is_mounted (volume) && item->file == NULL)
             {
-              /* try to determine the file for the mount point */
-              item->file = thunar_file_get_for_path (thunar_vfs_volume_get_mount_point (volume), NULL);
+              mount = g_volume_get_mount (volume);
 
-              /* because the volume node is already reffed, we need to load the folder manually here */
-              thunar_tree_model_item_load_folder (item);
+              if (G_LIKELY (mount != NULL))
+                {
+                  mount_point = g_mount_get_root (mount);
+                
+                  /* try to determine the file for the mount point */
+                  item->file = thunar_file_get (mount_point, NULL);
+
+                  /* because the volume node is already reffed, we need to load the folder manually here */
+                  thunar_tree_model_item_load_folder (item);
+
+                  g_object_unref (mount_point);
+                  g_object_unref (mount);
+                }
             }
-          else if (!thunar_vfs_volume_is_mounted (volume) && item->file != NULL)
+          else if (!g_volume_is_mounted (volume) && item->file != NULL)
             {
               /* reset the item for the node */
               thunar_tree_model_item_reset (item);
@@ -1090,20 +1099,30 @@ thunar_tree_model_volume_changed (ThunarVfsVolume *volume,
 
 
 static void
-thunar_tree_model_volume_pre_unmount (ThunarVfsVolumeManager *volume_manager,
-                                      ThunarVfsVolume        *volume,
-                                      ThunarTreeModel        *model)
+thunar_tree_model_mount_pre_unmount (GVolumeMonitor         *volume_monitor,
+                                     GMount                 *mount,
+                                     ThunarTreeModel        *model)
 {
-  GNode *node;
+  GVolume *volume;
+  GNode   *node;
 
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
+  _thunar_return_if_fail (model->volume_monitor == volume_monitor);
+  _thunar_return_if_fail (G_IS_MOUNT (mount));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
+
+  /* determine the mount to which this mount belongs */
+  volume = g_mount_get_volume (mount);
+
+  if (volume == NULL)
+    return;
 
   /* lookup the node for the volume (if visible) */
   for (node = model->root->children; node != NULL; node = node->next)
     if (THUNAR_TREE_MODEL_ITEM (node->data)->volume == volume)
       break;
+
+  g_object_unref (volume);
 
   /* check if we have a node */
   if (G_UNLIKELY (node == NULL))
@@ -1123,74 +1142,58 @@ thunar_tree_model_volume_pre_unmount (ThunarVfsVolumeManager *volume_manager,
 
 
 static void
-thunar_tree_model_volumes_added (ThunarVfsVolumeManager *volume_manager,
-                                 GList                  *volumes,
-                                 ThunarTreeModel        *model)
+thunar_tree_model_volume_added (GVolumeMonitor         *volume_monitor,
+                                GVolume                *volume,
+                                ThunarTreeModel        *model)
 {
-  GList *lp;
-
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
+  _thunar_return_if_fail (model->volume_monitor == volume_monitor);
+  _thunar_return_if_fail (G_IS_VOLUME (volume));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
-  /* process all newly added volumes */
-  for (lp = volumes; lp != NULL; lp = lp->next)
-    {
-      /* take a reference on the volume... */
-      g_object_ref (G_OBJECT (lp->data));
+  /* place the volume on the hidden list */
+  model->hidden_volumes = g_list_prepend (model->hidden_volumes, g_object_ref (volume));
 
-      /* ...place the volume on the hidden list... */
-      model->hidden_volumes = g_list_prepend (model->hidden_volumes, lp->data);
-
-      /* ...connect the "changed" signal handler... */
-      g_signal_connect (G_OBJECT (lp->data), "changed", G_CALLBACK (thunar_tree_model_volume_changed), model);
-
-      /* ...and let the "changed" handler place the volume where appropriate */
-      thunar_tree_model_volume_changed (lp->data, model);
-    }
+  /* and let the "volume-changed" handler place the volume where appropriate */
+  thunar_tree_model_volume_changed (volume_monitor, volume, model);
 }
 
 
 
 static void
-thunar_tree_model_volumes_removed (ThunarVfsVolumeManager *volume_manager,
-                                   GList                  *volumes,
-                                   ThunarTreeModel        *model)
+thunar_tree_model_volume_removed (GVolumeMonitor         *volume_monitor,
+                                  GVolume                *volume,
+                                  ThunarTreeModel        *model)
 {
   GNode *node;
-  GList *hp;
   GList *lp;
 
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
+  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
+  _thunar_return_if_fail (model->volume_monitor == volume_monitor);
+  _thunar_return_if_fail (G_IS_VOLUME (volume));
   _thunar_return_if_fail (THUNAR_IS_TREE_MODEL (model));
 
-  /* process all removed volumes */
-  for (lp = volumes; lp != NULL; lp = lp->next)
+  /* check if the volume is on the hidden list */
+  lp = g_list_find (model->hidden_volumes, volume);
+  if (G_LIKELY (lp != NULL))
     {
-      /* check if the volume is on the hidden list */
-      hp = g_list_find (model->hidden_volumes, lp->data);
-      if (G_LIKELY (hp != NULL))
-        {
-          /* disconnect the "changed" signal handler from the volume */
-          g_signal_handlers_disconnect_by_func (G_OBJECT (lp->data), thunar_tree_model_volume_changed, model);
+      /* remove the volume from the hidden list and drop our reference */
+      model->hidden_volumes = g_list_delete_link (model->hidden_volumes, lp);
+      g_object_unref (volume);
+    }
+  else
+    {
+      /* must be a visible volume then... */
+      for (node = model->root->children; node != NULL; node = node->next)
+        if (THUNAR_TREE_MODEL_ITEM (node->data)->volume == volume)
+          break;
 
-          /* drop the volume from the hidden list and drop our reference */
-          model->hidden_volumes = g_list_delete_link (model->hidden_volumes, hp);
-          g_object_unref (G_OBJECT (lp->data));
-        }
-      else
-        {
-          /* must be a visible volume then... */
-          for (node = model->root->children; node != NULL; node = node->next)
-            if (THUNAR_TREE_MODEL_ITEM (node->data)->volume == lp->data)
-              break;
+      /* something is broken if we don't have an item here */
+      _thunar_assert (node != NULL);
+      _thunar_assert (THUNAR_TREE_MODEL_ITEM (node->data)->volume == volume);
 
-          /* something is broken if we don't have an item here */
-          _thunar_assert (node != NULL);
-          _thunar_assert (THUNAR_TREE_MODEL_ITEM (node->data)->volume == lp->data);
-
-          /* drop the node from the model */
-          g_node_traverse (node, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
-        }
+      /* drop the node from the model */
+      g_node_traverse (node, G_POST_ORDER, G_TRAVERSE_ALL, -1, thunar_tree_model_node_traverse_remove, model);
     }
 }
 
@@ -1213,21 +1216,31 @@ thunar_tree_model_item_new_with_file (ThunarTreeModel *model,
 
 static ThunarTreeModelItem*
 thunar_tree_model_item_new_with_volume (ThunarTreeModel *model,
-                                        ThunarVfsVolume *volume)
+                                        GVolume         *volume)
 {
   ThunarTreeModelItem *item;
-  ThunarVfsPath       *path;
+  GMount              *mount;
+  GFile               *mount_point;
 
   item = _thunar_slice_new0 (ThunarTreeModelItem);
   item->volume = g_object_ref (G_OBJECT (volume));
   item->model = model;
 
   /* check if the volume is mounted */
-  if (thunar_vfs_volume_is_mounted (volume))
+  if (g_volume_is_mounted (volume))
     {
-      /* try to determine the file for the mount point */
-      path = thunar_vfs_volume_get_mount_point (volume);
-      item->file = thunar_file_get_for_path (path, NULL);
+      mount = g_volume_get_mount (volume);
+      
+      if (G_LIKELY (mount != NULL))
+        {
+          mount_point = g_mount_get_root (mount);
+
+          /* try to determine the file for the mount point */
+          item->file = thunar_file_get (mount_point, NULL);
+
+          g_object_unref (mount_point);
+          g_object_unref (mount);
+        }
     }
 
   return item;
@@ -1240,10 +1253,7 @@ thunar_tree_model_item_free (ThunarTreeModelItem *item)
 {
   /* disconnect from the volume */
   if (G_UNLIKELY (item->volume != NULL))
-    {
-      g_signal_handlers_disconnect_by_func (G_OBJECT (item->volume), thunar_tree_model_volume_changed, item->model);
-      g_object_unref (G_OBJECT (item->volume));
-    }
+    g_object_unref (item->volume);
 
   /* reset the remaining resources */
   thunar_tree_model_item_reset (item);
@@ -1490,6 +1500,8 @@ static gboolean
 thunar_tree_model_item_load_idle (gpointer user_data)
 {
   ThunarTreeModelItem *item = user_data;
+  GMount              *mount;
+  GFile               *mount_point;
   GList               *files;
 
   _thunar_return_val_if_fail (item->folder == NULL, FALSE);
@@ -1507,10 +1519,20 @@ thunar_tree_model_item_load_idle (gpointer user_data)
   GDK_THREADS_ENTER ();
 
   /* check if we don't have a file yet and this is a mounted volume */
-  if (item->file == NULL && item->volume != NULL && thunar_vfs_volume_is_mounted (item->volume))
+  if (item->file == NULL && item->volume != NULL && g_volume_is_mounted (item->volume))
     {
-      /* try to determine the file for the mount point */
-      item->file = thunar_file_get_for_path (thunar_vfs_volume_get_mount_point (item->volume), NULL);
+      mount = g_volume_get_mount (item->volume);
+
+      if (G_LIKELY (mount != NULL))
+        {
+          mount_point = g_mount_get_root (mount);
+
+          /* try to determine the file for the mount point */
+          item->file = thunar_file_get (mount_point, NULL);
+
+          g_object_unref (mount_point);
+          g_object_unref (mount);
+        }
     }
 
   /* verify that we have a file */
