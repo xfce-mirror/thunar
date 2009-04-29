@@ -56,6 +56,7 @@ void     g_file_list_free            (GList       *list);
 
 gboolean g_volume_is_removable       (GVolume     *volume);
 gboolean g_volume_is_mounted         (GVolume     *volume);
+gboolean g_volume_is_present         (GVolume     *volume);
 
 G_END_DECLS
 

@@ -197,8 +197,8 @@ static void     thunar_window_menu_item_deselected        (GtkWidget            
 static void     thunar_window_notify_loading              (ThunarView             *view,
                                                            GParamSpec             *pspec,
                                                            ThunarWindow           *window);
-static void     thunar_window_volume_pre_unmount          (ThunarVfsVolumeManager *volume_manager,
-                                                           ThunarVfsVolume        *volume,
+static void     thunar_window_mount_pre_unmount           (GVolumeMonitor         *volume_monitor,
+                                                           GMount                 *mount,
                                                            ThunarWindow           *window);
 static gboolean thunar_window_merge_idle                  (gpointer                user_data);
 static void     thunar_window_merge_idle_destroy          (gpointer                user_data);
@@ -237,8 +237,8 @@ struct _ThunarWindow
   GtkActionGroup         *action_group;
   GtkUIManager           *ui_manager;
 
-  /* to be able to change folder on "volume-pre-unmount" if required */
-  ThunarVfsVolumeManager *volume_manager;
+  /* to be able to change folder on "mount-pre-unmount" if required */
+  GVolumeMonitor         *volume_monitor;
 
   /* closures for the menu_item_selected()/menu_item_deselected() callbacks */
   GClosure               *menu_item_selected_closure;
@@ -708,9 +708,9 @@ thunar_window_init (ThunarWindow *window)
   /* allocate the scroll_to_files mapping */
   window->scroll_to_files = g_hash_table_new_full (g_direct_hash, g_direct_equal, g_object_unref, g_object_unref);
 
-  /* connect to the volume manager */
-  window->volume_manager = thunar_vfs_volume_manager_get_default ();
-  g_signal_connect (G_OBJECT (window->volume_manager), "volume-pre-unmount", G_CALLBACK (thunar_window_volume_pre_unmount), window);
+  /* connect to the volume monitor */
+  window->volume_monitor = g_volume_monitor_get ();
+  g_signal_connect (window->volume_monitor, "mount-pre-unmount", G_CALLBACK (thunar_window_mount_pre_unmount), window);
 
   /* allocate a closure for the menu_item_selected() callback */
   window->menu_item_selected_closure = g_cclosure_new_object (G_CALLBACK (thunar_window_menu_item_selected), G_OBJECT (window));
@@ -956,24 +956,24 @@ thunar_window_finalize (GObject *object)
   g_closure_unref (window->menu_item_deselected_closure);
   g_closure_unref (window->menu_item_selected_closure);
 
-  /* disconnect from the volume manager */
-  g_signal_handlers_disconnect_matched (G_OBJECT (window->volume_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
-  g_object_unref (G_OBJECT (window->volume_manager));
+  /* disconnect from the volume monitor */
+  g_signal_handlers_disconnect_matched (window->volume_monitor, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+  g_object_unref (window->volume_monitor);
 
   /* disconnect from the ui manager */
-  g_signal_handlers_disconnect_matched (G_OBJECT (window->ui_manager), G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
-  g_object_unref (G_OBJECT (window->ui_manager));
+  g_signal_handlers_disconnect_matched (window->ui_manager, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, window);
+  g_object_unref (window->ui_manager);
 
-  g_object_unref (G_OBJECT (window->action_group));
-  g_object_unref (G_OBJECT (window->icon_factory));
-  g_object_unref (G_OBJECT (window->launcher));
-  g_object_unref (G_OBJECT (window->history));
+  g_object_unref (window->action_group);
+  g_object_unref (window->icon_factory);
+  g_object_unref (window->launcher);
+  g_object_unref (window->history);
 
   /* release our reference on the provider factory */
-  g_object_unref (G_OBJECT (window->provider_factory));
+  g_object_unref (window->provider_factory);
 
   /* release the preferences reference */
-  g_object_unref (G_OBJECT (window->preferences));
+  g_object_unref (window->preferences);
 
   /* release the scroll_to_files hash table */
   g_hash_table_destroy (window->scroll_to_files);
@@ -2395,29 +2395,28 @@ thunar_window_notify_loading (ThunarView   *view,
 
 
 static void
-thunar_window_volume_pre_unmount (ThunarVfsVolumeManager *volume_manager,
-                                  ThunarVfsVolume        *volume,
-                                  ThunarWindow           *window)
+thunar_window_mount_pre_unmount (GVolumeMonitor *volume_monitor,
+                                 GMount         *mount,
+                                 ThunarWindow   *window)
 {
-  ThunarVfsPath *path;
-  ThunarFile    *file;
-  GtkAction     *action;
+  ThunarFile *file;
+  GtkAction  *action;
+  GFile      *mount_point;
 
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager));
-  _thunar_return_if_fail (THUNAR_VFS_IS_VOLUME (volume));
+  _thunar_return_if_fail (G_IS_VOLUME_MONITOR (volume_monitor));
+  _thunar_return_if_fail (window->volume_monitor == volume_monitor);
+  _thunar_return_if_fail (G_IS_MOUNT (mount));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* nothing to do if we don't have a current directory */
   if (G_UNLIKELY (window->current_directory == NULL))
     return;
 
-  /* determine the mount point for the volume */
-  path = thunar_vfs_volume_get_mount_point (volume);
-  if (G_UNLIKELY (path == NULL))
-    return;
+  /* try to get the ThunarFile for the mount point from the file cache */
+  mount_point = g_mount_get_root (mount);
+  file = thunar_file_cache_lookup (mount_point);
+  g_object_unref (mount_point);
 
-  /* check if a ThunarFile is known for the mount point */
-  file = thunar_file_cache_lookup_path (path);
   if (G_UNLIKELY (file == NULL))
     return;
 

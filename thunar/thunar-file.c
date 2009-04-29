@@ -2543,8 +2543,6 @@ thunar_file_destroy (ThunarFile *file)
 
       /* release our reference */
       g_object_unref (G_OBJECT (file));
-
-      g_debug ("thunar_file_destroy: file is object: %d", G_IS_OBJECT (file));
     }
 }
 

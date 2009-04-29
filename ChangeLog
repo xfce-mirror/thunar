@@ -1,7 +1,24 @@
+2009-04-29	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-gio-extensions.{c,h}: Add new function
+	  g_volume_is_present() which checks whether the GDrive of a volume
+	  has media or not.
+	* thunar/thunar-shortcuts-icon-renderer.c: Use GVolume instead of 
+	  ThunarVfsVolume and create the icon by loading a GtkIconInfo based
+	  on the volume GIcon in thunar_shortcuts_renderer_render().
+	* thunar/thunar-shortcuts-model.{c,h}: Use GVolumeMonitor and
+	  GVolume/GMount instead of ThunarVfsVolumeManager/ThunarVfsVolume
+	  everywhere. 
+	* thunar/thunar-shortcuts-view.c: Rewrite the mount/eject/unmount code
+	  to use GVolume/GMount. Need to review this again to make sure it
+	  works.
+	* thunar/thunar-window.c: Re-implement the mount-pre-unmount signal
+	  handler by using GVolumeMonitor/GMount.
+
 2009-04-28	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-io-jobs.c, thunar/thunar-io-scan-directory.c: Improve
-	  error handling. Use thunar_file_list_free() instead of iterating over
+	  error handling. Use thunar_file_list_free() instead of iterating over 
 	  the ThunarFile list manually. Make sure to release the
 	  GFileEnumerator in thunar_io_scan_directory(), otherwise unmounting
 	  volumes fails due to open file descriptors.

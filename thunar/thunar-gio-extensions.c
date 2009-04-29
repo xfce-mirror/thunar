@@ -316,3 +316,23 @@ g_volume_is_mounted (GVolume *volume)
 
   return is_mounted;
 }
+
+
+
+gboolean 
+g_volume_is_present (GVolume *volume)
+{
+  gboolean has_media = FALSE;
+  GDrive  *drive;
+
+  _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
+
+  drive = g_volume_get_drive (volume);
+  if (drive != NULL)
+    {
+      has_media = g_drive_has_media (drive);
+      g_object_unref (drive);
+    }
+
+  return has_media;
+}
