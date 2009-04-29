@@ -1,5 +1,11 @@
 2009-04-29	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-shortcuts-model.c: In thunar_shortcuts_model_init()
+	  don't increase the reference counter on the volumes, otherwise we'd
+	  leak them here.
+
+2009-04-29	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-gio-extensions.{c,h}: Add new function
 	  g_volume_is_present() which checks whether the GDrive of a volume
 	  has media or not.

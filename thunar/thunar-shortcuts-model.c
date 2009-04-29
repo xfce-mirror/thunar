@@ -366,7 +366,7 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
            */
           shortcut = _thunar_slice_new0 (ThunarShortcut);
           shortcut->type = THUNAR_SHORTCUT_REMOVABLE_MEDIA;
-          shortcut->volume = g_object_ref (volume);
+          shortcut->volume = volume;
 
           /* link the shortcut to the list */
           thunar_shortcuts_model_add_shortcut (model, shortcut, path);
@@ -376,10 +376,10 @@ thunar_shortcuts_model_init (ThunarShortcutsModel *model)
         {
           /* schedule the volume for later checking, not removable or 
            * there's no medium present */
-          model->hidden_volumes = g_list_prepend (model->hidden_volumes, 
-                                                  g_object_ref (volume));
+          model->hidden_volumes = g_list_prepend (model->hidden_volumes, volume);
         }
     }
+  g_list_free (volumes);
 
   /* prepend the row separator */
   shortcut = _thunar_slice_new0 (ThunarShortcut);
