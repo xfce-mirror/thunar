@@ -250,9 +250,7 @@ thunar_details_view_init (ThunarDetailsView *details_view)
   gtk_tree_view_set_enable_search (GTK_TREE_VIEW (tree_view), TRUE);
 
   /* enable rubberbanding (if supported) */
-#if GTK_CHECK_VERSION(2,9,0)
   gtk_tree_view_set_rubber_banding (GTK_TREE_VIEW (tree_view), TRUE);
-#endif
 
   /* connect to the default column model */
   details_view->column_model = thunar_column_model_get_default ();
@@ -575,11 +573,7 @@ thunar_details_view_get_visible_range (ThunarStandardView *standard_view,
 {
   _thunar_return_val_if_fail (THUNAR_IS_DETAILS_VIEW (standard_view), FALSE);
 
-#if GTK_CHECK_VERSION(2,8,0)
   return gtk_tree_view_get_visible_range (GTK_TREE_VIEW (GTK_BIN (standard_view)->child), start_path, end_path);
-#else
-  return FALSE;
-#endif
 }
 
 
@@ -809,22 +803,8 @@ thunar_details_view_zoom_level_changed (ThunarDetailsView *details_view)
   /* determine the list of tree view columns */
   for (column = 0; column < THUNAR_N_VISIBLE_COLUMNS; ++column)
     {
-#if GTK_CHECK_VERSION(2,8,0)
       /* just queue a resize on this column */
       gtk_tree_view_column_queue_resize (details_view->columns[column]);
-#else
-      /* determine the renderers for this column */
-      GList *renderers = gtk_tree_view_column_get_cell_renderers (details_view->columns[column]);
-      if (G_LIKELY (renderers != NULL))
-        {
-          /* this is really an awfull hack, but it works! It forces GtkTreeView to recalculate
-           * the dimensions of this column, and that's all that matters. We don't use it with
-           * newer Gtk+ versions either, so what the f*ck...
-           */
-          gtk_tree_view_column_set_cell_data_func (details_view->columns[column], renderers->data, NULL, NULL, NULL);
-          g_list_free (renderers);
-        }
-#endif
     }
 }
 

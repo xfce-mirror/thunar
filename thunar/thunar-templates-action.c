@@ -365,9 +365,7 @@ thunar_templates_action_menu_shown (GtkWidget             *menu,
   /* determine the path to the ~/Templates folder */
   home_path = thunar_vfs_path_get_for_home ();
 
-#if GLIB_CHECK_VERSION(2,14,0)
   templates_dir = g_strdup (g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES));
-#endif /* GLIB_CHECK_VERSION(2,14,0) */
   if (G_UNLIKELY (templates_dir == NULL))
     {
       templates_dir = g_build_filename (G_DIR_SEPARATOR_S, xfce_get_homedir (),
@@ -382,13 +380,12 @@ thunar_templates_action_menu_shown (GtkWidget             *menu,
 
   thunar_vfs_path_unref (home_path);
 
-#if GLIB_CHECK_VERSION(2, 14, 0)
-  if (!exo_str_is_equal (g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES), xfce_get_homedir ()))
+  if (!exo_str_is_equal (g_get_user_special_dir (G_USER_DIRECTORY_TEMPLATES), 
+                         xfce_get_homedir ()))
     {
       /* fill the menu with files/folders from the ~/Templates folder */
       thunar_templates_action_fill_menu (templates_action, templates_path, menu);
     }
-#endif
 
   /* check if any items were added to the menu */
   if (G_UNLIKELY (GTK_MENU_SHELL (menu)->children == NULL))

@@ -156,7 +156,7 @@ GdkDragAction     thunar_file_accepts_drop         (ThunarFile             *file
 
 const gchar      *thunar_file_get_display_name     (const ThunarFile       *file);
 
-ThunarVfsFileTime thunar_file_get_date             (const ThunarFile       *file,
+time_t            thunar_file_get_date             (const ThunarFile       *file,
                                                     ThunarFileDateType      date_type);
 
 gchar            *thunar_file_get_date_string      (const ThunarFile       *file,

@@ -286,9 +286,7 @@ thunar_path_entry_init (ThunarPathEntry *path_entry)
 
   /* allocate a new entry completion for the given model */
   completion = gtk_entry_completion_new ();
-#if GTK_CHECK_VERSION(2,8,0)
   gtk_entry_completion_set_popup_single_match (completion, FALSE);
-#endif
   gtk_entry_completion_set_match_func (completion, thunar_path_entry_match_func, path_entry, NULL);
   g_signal_connect (G_OBJECT (completion), "match-selected", G_CALLBACK (thunar_path_entry_match_selected), path_entry);
 

@@ -488,11 +488,7 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
 {
   ThunarTextRenderer *text_renderer = THUNAR_TEXT_RENDERER (renderer);
   GtkStateType        state;
-#if !GTK_CHECK_VERSION(2,8,0)
-  GdkPoint            points[8];
-#else
   cairo_t            *cr;
-#endif
   gint                x0, x1, y0, y1;
   gint                text_width;
   gint                text_height;
@@ -570,7 +566,6 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
       x1 = x0 + text_width;
       y1 = y0 + text_height;
 
-#if GTK_CHECK_VERSION(2,8,0)
       /* Cairo produces nicer results than using a polygon
        * and so we use it directly if possible.
        */
@@ -587,20 +582,6 @@ thunar_text_renderer_render (GtkCellRenderer     *renderer,
       gdk_cairo_set_source_color (cr, &widget->style->base[state]);
       cairo_fill (cr);
       cairo_destroy (cr);
-#else
-      /* calculate a (more or less rounded) polygon */
-      points[0].x = x0 + 2; points[0].y = y0;
-      points[1].x = x1 - 2; points[1].y = y0;
-      points[2].x = x1;     points[2].y = y0 + 2;
-      points[3].x = x1;     points[3].y = y1 - 2;
-      points[4].x = x1 - 2; points[4].y = y1;
-      points[5].x = x0 + 2; points[5].y = y1;
-      points[6].x = x0;     points[6].y = y1 - 2;
-      points[7].x = x0;     points[7].y = y0 + 2;
-
-      /* render the indicator */
-      gdk_draw_polygon (window, widget->style->base_gc[state], TRUE, points, G_N_ELEMENTS (points));
-#endif
     }
 
   /* draw the focus indicator */

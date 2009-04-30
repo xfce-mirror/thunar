@@ -169,7 +169,7 @@ thunar_util_expand_filename (const gchar  *filename,
  *               according to the @date_format.
  **/
 gchar*
-thunar_util_humanize_file_time (guint64         file_time,
+thunar_util_humanize_file_time (time_t          file_time,
                                 ThunarDateStyle date_style)
 {
   const gchar *date_format;
@@ -188,13 +188,8 @@ thunar_util_humanize_file_time (guint64         file_time,
       if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT)
         {
           /* setup the dates for the time values */
-#if GLIB_CHECK_VERSION(2,10,0)
           g_date_set_time_t (&dfile, file_time);
           g_date_set_time_t (&dnow, time (NULL));
-#else
-          g_date_set_time (&dfile, (GTime) file_time);
-          g_date_set_time (&dnow, (GTime) time (NULL));
-#endif
 
           /* determine the difference in days */
           diff = g_date_get_julian (&dnow) - g_date_get_julian (&dfile);

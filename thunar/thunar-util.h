@@ -30,7 +30,7 @@ gboolean   thunar_util_looks_like_an_uri  (const gchar      *string) G_GNUC_INTE
 gchar     *thunar_util_expand_filename    (const gchar    *filename,
                                            GError        **error);
 
-gchar     *thunar_util_humanize_file_time (guint64         file_time,
+gchar     *thunar_util_humanize_file_time (time_t          file_time,
                                            ThunarDateStyle date_style) G_GNUC_INTERNAL G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 GdkScreen *thunar_util_parse_parent       (gpointer        parent,

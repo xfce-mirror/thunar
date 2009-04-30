@@ -1870,7 +1870,6 @@ thunar_window_action_open_home (GtkAction    *action,
   ThunarFile    *home_file;
   GError        *error = NULL;
 
-  _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* determine the path to the home directory */
@@ -1958,84 +1957,72 @@ static void
 thunar_window_action_open_desktop (GtkAction     *action,
                                    ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_DESKTOP,
                                   "Desktop");
-#endif
 }
 
 static void
 thunar_window_action_open_documents (GtkAction     *action,
                                      ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_DOCUMENTS,
                                   "Documents");
-#endif
 }
 
 static void
 thunar_window_action_open_downloads (GtkAction     *action,
                                      ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_DOWNLOAD,
                                   "Downloads");
-#endif
 }
 
 static void
 thunar_window_action_open_music (GtkAction     *action,
                                  ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_MUSIC,
                                   "Music");
-#endif
 }
 
 static void
 thunar_window_action_open_pictures (GtkAction     *action,
                                     ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_PICTURES,
                                   "Pictures");
-#endif
 }
 
 static void
 thunar_window_action_open_public (GtkAction     *action,
                                   ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_PUBLIC_SHARE,
                                   "Public");
-#endif
 }
 
 static void
@@ -2122,14 +2109,12 @@ static void
 thunar_window_action_open_videos (GtkAction     *action,
                                   ThunarWindow  *window)
 {
-#if GLIB_CHECK_VERSION(2, 14, 0)
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   thunar_window_open_user_folder (action, window,
                                   THUNAR_USER_DIRECTORY_VIDEOS,
                                   "Videos");
-#endif
 }
 
 
@@ -2247,41 +2232,50 @@ static void
 thunar_window_current_directory_destroy (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
-  ThunarVfsPath *path;
-  ThunarVfsInfo *info;
-  ThunarFile    *file = NULL;
+  ThunarFile *new_directory = NULL;
+  GMount     *mount;
+  GFile      *path;
+  GFile      *tmp;
 
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (current_directory));
   _thunar_return_if_fail (window->current_directory == current_directory);
 
   /* determine the path of the current directory */
-  path = thunar_file_get_path (current_directory);
+  path = thunar_file_get_file (current_directory);
 
-  /* determine the first still present parent directory */
-  for (path = thunar_vfs_path_get_parent (path); file == NULL && path != NULL; path = thunar_vfs_path_get_parent (path))
+  while (new_directory == NULL && path != NULL)
     {
-      /* try to determine the info for the path */
-      info = thunar_vfs_info_new_for_path (path, NULL);
-      if (G_LIKELY (info != NULL))
-        {
-          /* check if we have a directory here */
-          if (info->type == THUNAR_VFS_FILE_TYPE_DIRECTORY)
-            file = thunar_file_get_for_info (info);
+      /* TODO make this asynchronous if possible */
+      mount = g_file_find_enclosing_mount (path, NULL, NULL);
 
-          /* release the file info */
-          thunar_vfs_info_unref (info);
+      if (mount != NULL)
+        {
+          new_directory = thunar_file_get (path, NULL);
+          g_object_unref (mount);
         }
+
+      tmp = g_file_get_parent (path);
+      g_object_unref (path);
+      path = tmp;
     }
 
+  if (path != NULL)
+    g_object_unref (path);
+
   /* check if we have a new folder */
-  if (G_LIKELY (file != NULL))
+  if (G_LIKELY (new_directory != NULL))
     {
       /* enter the new folder */
-      thunar_window_set_current_directory (window, file);
+      thunar_window_set_current_directory (window, new_directory);
 
       /* release the file reference */
-      g_object_unref (G_OBJECT (file));
+      g_object_unref (new_directory);
+    }
+  else
+    {
+      /* enter the home folder */
+      thunar_window_action_open_home (NULL, window);
     }
 }
 

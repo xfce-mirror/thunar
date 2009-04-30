@@ -642,10 +642,8 @@ thunar_abstract_icon_view_expose_event (ExoIconView            *view,
   GtkAction  *action = NULL;
   GdkPixbuf  *stock_icon = NULL;
   gchar      *stock_id;
-#if GTK_CHECK_VERSION(2,7,1)
   GdkColor    bg;
   cairo_t    *cr;
-#endif
 
   _thunar_return_val_if_fail (EXO_IS_ICON_VIEW (view), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_ABSTRACT_ICON_VIEW (abstract_icon_view), FALSE);
@@ -654,7 +652,6 @@ thunar_abstract_icon_view_expose_event (ExoIconView            *view,
   _thunar_return_val_if_fail (abstract_icon_view->priv->gesture_release_id > 0, FALSE);
 
   /* shade the abstract_icon view content while performing mouse gestures */
-#if GTK_CHECK_VERSION(2,7,1)
   cr = gdk_cairo_create (event->window);
   bg = GTK_WIDGET (view)->style->base[GTK_STATE_NORMAL];
   cairo_set_source_rgba (cr, bg.red / 65535.0, bg.green / 65535.0, bg.blue / 65535.0, 0.7);
@@ -662,7 +659,6 @@ thunar_abstract_icon_view_expose_event (ExoIconView            *view,
   cairo_clip (cr);
   cairo_paint (cr);
   cairo_destroy (cr);
-#endif
 
   /* determine the gesture action */
   action = thunar_abstract_icon_view_gesture_action (abstract_icon_view);

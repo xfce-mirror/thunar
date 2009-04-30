@@ -226,12 +226,10 @@ struct _ThunarTreeView
    */
   gint                    pressed_button;
 
-#if GTK_CHECK_VERSION(2,8,0)
   /* id of the signal used to queue a resize on the
    * column whenever the shortcuts icon size is changed.
    */
   gint                    queue_resize_signal_id;
-#endif
 
   /* set cursor to current directory idle source */
   gint                    cursor_idle_id;
@@ -429,10 +427,8 @@ thunar_tree_view_init (ThunarTreeView *view)
   gtk_tree_view_append_column (GTK_TREE_VIEW (view), column);
 
   /* queue a resize on the column whenever the icon size is changed */
-#if GTK_CHECK_VERSION(2,8,0)
   view->queue_resize_signal_id = g_signal_connect_swapped (G_OBJECT (view->preferences), "notify::tree-icon-size",
                                                            G_CALLBACK (gtk_tree_view_column_queue_resize), column);
-#endif
 
   /* allocate the special icon renderer */
   view->icon_renderer = thunar_shortcuts_icon_renderer_new ();
@@ -480,9 +476,7 @@ thunar_tree_view_finalize (GObject *object)
   g_object_unref (G_OBJECT (view->provider_factory));
 
   /* disconnect the queue resize signal handler */
-#if GTK_CHECK_VERSION(2,8,0)
   g_signal_handler_disconnect (G_OBJECT (view->preferences), view->queue_resize_signal_id);
-#endif
 
   /* be sure to cancel the cursor idle source */
   if (G_UNLIKELY (view->cursor_idle_id >= 0))
@@ -2273,11 +2267,9 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
 {
   ThunarTreeView *view = THUNAR_TREE_VIEW (user_data);
   GtkAdjustment  *vadjustment;
-#if GTK_CHECK_VERSION(2,8,0)
   GtkTreePath    *start_path;
   GtkTreePath    *end_path;
   GtkTreePath    *path;
-#endif
   gfloat          value;
   gint            offset;
   gint            y, h;
@@ -2311,7 +2303,6 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
               /* apply the new value */
               gtk_adjustment_set_value (vadjustment, value);
 
-#if GTK_CHECK_VERSION(2,8,0)
               /* drop any pending expand timer source, as its confusing
                * if a path is expanded while scrolling through the view.
                * reschedule it if the drag dest path is still visible.
@@ -2346,7 +2337,6 @@ thunar_tree_view_drag_scroll_timer (gpointer user_data)
                       gtk_tree_path_free (end_path);
                     }
                 }
-#endif
             }
         }
     }

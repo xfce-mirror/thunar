@@ -270,9 +270,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Detailed List View"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Compact List View"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Last Active View"));
-#if !GTK_CHECK_VERSION(2,9,0)
-  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
-#endif
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "default-view", G_OBJECT (combo), "active",
                                transform_view_string_to_index, transform_view_index_to_string, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -343,9 +340,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
       gtk_combo_box_append_text (GTK_COMBO_BOX (combo), date);
       g_free (date);
     }
-#if !GTK_CHECK_VERSION(2,9,0)
-  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
-#endif
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-date-style", G_OBJECT (combo), "active");
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);
@@ -390,9 +384,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Large"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Larger"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Large"));
-#if !GTK_CHECK_VERSION(2,9,0)
-  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
-#endif
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "shortcuts-icon-size", G_OBJECT (combo), "active",
                                transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -435,9 +426,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Large"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Larger"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Very Large"));
-#if !GTK_CHECK_VERSION(2,9,0)
-  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
-#endif
   exo_mutual_binding_new_full (G_OBJECT (dialog->preferences), "tree-icon-size", G_OBJECT (combo), "active",
                                transform_icon_size_to_index, transform_index_to_icon_size, NULL, NULL);
   gtk_table_attach (GTK_TABLE (table), combo, 1, 2, 0, 1, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
@@ -589,9 +577,6 @@ thunar_preferences_dialog_init (ThunarPreferencesDialog *dialog)
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Ask everytime"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Apply to Folder Only"));
   gtk_combo_box_append_text (GTK_COMBO_BOX (combo), _("Apply to Folder and Contents"));
-#if !GTK_CHECK_VERSION(2,9,0)
-  g_signal_connect (G_OBJECT (combo), "changed", G_CALLBACK (g_object_notify), "active");
-#endif
   exo_mutual_binding_new (G_OBJECT (dialog->preferences), "misc-recursive-permissions", G_OBJECT (combo), "active");
   gtk_table_attach (GTK_TABLE (table), combo, 0, 1, 1, 2, GTK_EXPAND | GTK_FILL, GTK_FILL, 0, 0);
   thunar_gtk_label_set_a11y_relation (GTK_LABEL (label), combo);

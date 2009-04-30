@@ -960,9 +960,7 @@ thunar_standard_view_expose_event (GtkWidget      *widget,
                                    GdkEventExpose *event)
 {
   gboolean result = FALSE;
-#if GTK_CHECK_VERSION(2,7,2)
   cairo_t *cr;
-#endif
   gint     x, y, width, height;
 
   /* let the scrolled window do it's work */
@@ -981,7 +979,6 @@ thunar_standard_view_expose_event (GtkWidget      *widget,
                         NULL, widget, "dnd",
                         x, y, width, height);
 
-#if GTK_CHECK_VERSION(2,7,2)
       /* the cairo version looks better here, so we use it if possible */
       cr = gdk_cairo_create (widget->window);
       cairo_set_source_rgb (cr, 0.0, 0.0, 0.0);
@@ -989,10 +986,6 @@ thunar_standard_view_expose_event (GtkWidget      *widget,
       cairo_rectangle (cr, x + 0.5, y + 0.5, width - 1, height - 1);
       cairo_stroke (cr);
       cairo_destroy (cr);
-#else
-      gdk_draw_rectangle (widget->window, widget->style->black_gc,
-                          FALSE, x, y, width - 1, height - 1);
-#endif
     }
 
   return result;

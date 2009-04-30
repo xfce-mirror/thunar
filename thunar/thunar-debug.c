@@ -30,11 +30,7 @@
 
 #include <thunar/thunar-debug.h>
 
-#if GLIB_CHECK_VERSION(2,8,0)
 #include <glib/gstdio.h>
-#else
-#define g_access(filename, mode) access((filename),(mode))
-#endif
 
 
 

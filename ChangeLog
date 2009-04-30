@@ -1,5 +1,18 @@
 2009-04-30	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/*.c: Remove all occurances of GLIB_CHECK_VERSION() and 
+	  GTK_CHECK_VERSION() because we depend on much more recent GLib/GTK+
+	  versions now anyway.
+	* thunar/thnuar-file.{c,h}, thunar/thunar-util.{c,h}: Actually, time_t
+	  instead of guint64 is the correct type to use (fixes the previous 
+	  commit).
+	* thunar/thunar-window.c: Implement thunar_window_directory_destroy()
+	  around g_file_find_enclosing_mount(). I'm not 100% happy with this
+	  implementation but it'll do for now. Open the home directory if the
+	  new directory cannot be determined.
+
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-util.{c,h}: Replace ThunarVfsFileTime with guint64.
 
 2009-04-30	Jannis Pohlmann <jannis@xfce.org>
