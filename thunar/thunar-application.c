@@ -516,7 +516,7 @@ thunar_application_drive_connected (GVolumeMonitor    *volume_monitor,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* determine the HAL UDI for this drive */
-  udi = g_drive_get_identifier (drive, "hal-udi");
+  udi = g_drive_get_identifier (drive, G_VOLUME_IDENTIFIER_KIND_HAL_UDI);
 
   /* check if we have a UDI */
   if (G_LIKELY (udi != NULL))
@@ -553,7 +553,7 @@ thunar_application_drive_disconnected (GVolumeMonitor    *volume_monitor,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* determine the HAL UDI for this drive */
-  udi = g_drive_get_identifier (drive, "hal-udi");
+  udi = g_drive_get_identifier (drive, G_VOLUME_IDENTIFIER_KIND_HAL_UDI);
 
   /* check if we have a UDI */
   if (G_LIKELY (udi != NULL))
@@ -592,7 +592,7 @@ thunar_application_drive_eject (GVolumeMonitor    *volume_monitor,
   _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
 
   /* determine the HAL UDI for this device */
-  udi = g_drive_get_identifier (drive, "hal-udi");
+  udi = g_drive_get_identifier (drive, G_VOLUME_IDENTIFIER_KIND_HAL_UDI);
 
   /* check if we have a UDI */
   if (G_LIKELY (udi != NULL))

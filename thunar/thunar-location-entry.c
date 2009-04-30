@@ -497,15 +497,16 @@ thunar_location_entry_button_clicked (GtkWidget           *button,
 {
   ThunarShortcutsModel *model;
   ThunarIconFactory    *icon_factory;
-  ThunarVfsVolume      *volume;
   GtkIconTheme         *icon_theme;
-  const gchar          *icon_name;
   GtkTreeIter           iter;
   ThunarFile           *file;
   GtkWidget            *image;
   GtkWidget            *item;
   GtkWidget            *menu;
   GdkPixbuf            *icon;
+  GVolume              *volume;
+  GIcon                *volume_icon;
+  gchar                *volume_name;
   gint                  icon_size;
   gint                  width;
 
@@ -543,19 +544,16 @@ thunar_location_entry_button_clicked (GtkWidget           *button,
           else if (G_UNLIKELY (volume != NULL))
             {
               /* generate an image menu item for the volume */
-              item = gtk_image_menu_item_new_with_label (thunar_vfs_volume_get_name (volume));
+              volume_name = g_volume_get_name (volume);
+              item = gtk_image_menu_item_new_with_label (volume_name);
+              g_free (volume_name);
 
-              /* load the icon for the volume */
-              icon_name = thunar_vfs_volume_lookup_icon_name (volume, icon_theme);
-              icon = thunar_icon_factory_load_icon (icon_factory, icon_name, icon_size, NULL, FALSE);
-              if (G_LIKELY (icon != NULL))
-                {
-                  /* generate an image for the menu item */
-                  image = gtk_image_new_from_pixbuf (icon);
-                  gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-                  g_object_unref (G_OBJECT (icon));
-                  gtk_widget_show (image);
-                }
+              /* generate an image for the menu item */
+              volume_icon = g_volume_get_icon (volume);
+              image = gtk_image_new_from_gicon (volume_icon, GTK_ICON_SIZE_MENU);
+              g_object_unref (volume_icon);
+              gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
+              gtk_widget_show (image);
             }
           else
             {
@@ -566,16 +564,16 @@ thunar_location_entry_button_clicked (GtkWidget           *button,
               icon = thunar_icon_factory_load_file_icon (icon_factory, file, THUNAR_FILE_ICON_STATE_DEFAULT, icon_size);
               image = gtk_image_new_from_pixbuf (icon);
               gtk_image_menu_item_set_image (GTK_IMAGE_MENU_ITEM (item), image);
-              g_object_unref (G_OBJECT (icon));
+              g_object_unref (icon);
               gtk_widget_show (image);
             }
 
           /* connect the file and volume to the item */
-          g_object_set_data_full (G_OBJECT (item), I_("thunar-vfs-volume"), volume, g_object_unref);
+          g_object_set_data_full (G_OBJECT (item), I_("volume"), volume, g_object_unref);
           g_object_set_data_full (G_OBJECT (item), I_("thunar-file"), file, g_object_unref);
 
           /* append the new item to the menu */
-          g_signal_connect (G_OBJECT (item), "activate", G_CALLBACK (thunar_location_entry_item_activated), location_entry);
+          g_signal_connect (item, "activate", G_CALLBACK (thunar_location_entry_item_activated), location_entry);
           gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
           gtk_widget_show (item);
         }
@@ -611,13 +609,76 @@ thunar_location_entry_button_clicked (GtkWidget           *button,
 
 
 static void
+thunar_location_entry_mount_finish (GObject      *object,
+                                    GAsyncResult *result,
+                                    gpointer      user_data)
+{
+  ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (user_data);
+  ThunarFile          *file = NULL;
+  GtkWidget           *window;
+  GVolume             *volume = G_VOLUME (object);
+  GError              *error = NULL;
+  GMount              *mount;
+  GFile               *mount_point;
+  gchar               *volume_name;
+
+  _thunar_return_if_fail (G_IS_VOLUME (object));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (user_data));
+
+  if (!g_volume_mount_finish (volume, result, &error))
+    {
+      /* determine the toplevel window */
+      window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
+
+      volume_name = g_volume_get_name (volume);
+      thunar_dialogs_show_error (window, error, _("Failed to mount \"%s\""), volume_name);
+      g_free (volume_name);
+    }
+  else
+    {
+      mount = g_volume_get_mount (volume);
+      if (mount != NULL)
+        {
+          mount_point = g_mount_get_root (mount);
+          file = thunar_file_get (mount_point, NULL);
+          g_object_unref (mount_point);
+
+          /* check if we have a file object now */
+          if (G_LIKELY (file != NULL))
+            {
+              /* make sure that this is actually a directory */
+              if (thunar_file_is_directory (file))
+                {
+                  /* open the new directory */
+                  thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), 
+                                                     file);
+                }
+
+              /* cleanup */
+              g_object_unref (file);
+            }
+
+          g_object_unref (mount);
+        }
+    }
+
+  g_object_unref (location_entry);
+}
+
+
+
+static void
 thunar_location_entry_item_activated (GtkWidget           *item,
                                       ThunarLocationEntry *location_entry)
 {
-  ThunarVfsVolume *volume;
-  ThunarFile      *file;
+  GMountOperation *mount_operation;
+  ThunarFile      *file = NULL;
   GtkWidget       *window;
+  GVolume         *volume;
   GError          *error = NULL;
+  GMount          *mount;
+  GFile           *mount_point;
+  gchar           *volume_name;
 
   _thunar_return_if_fail (GTK_IS_MENU_ITEM (item));
   _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
@@ -626,30 +687,43 @@ thunar_location_entry_item_activated (GtkWidget           *item,
   window = gtk_widget_get_toplevel (GTK_WIDGET (location_entry));
 
   /* check if the item corresponds to a volume */
-  volume = g_object_get_data (G_OBJECT (item), "thunar-vfs-volume");
+  volume = g_object_get_data (G_OBJECT (item), "volume");
   if (G_UNLIKELY (volume != NULL))
     {
       /* check if the volume isn't already mounted */
-      if (G_LIKELY (!thunar_vfs_volume_is_mounted (volume)))
+      if (G_LIKELY (!g_volume_is_mounted (volume)))
         {
-          /* try to mount the volume */
-          if (!thunar_vfs_volume_mount (volume, window, &error))
-            {
-              /* display an error dialog to inform the user */
-              thunar_dialogs_show_error (window, error, _("Failed to mount \"%s\""), thunar_vfs_volume_get_name (volume));
-              g_error_free (error);
-              return;
-            }
-        }
+          mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
 
-      /* try to determine the mount point of the volume */
-      file = thunar_file_get_for_path (thunar_vfs_volume_get_mount_point (volume), &error);
-      if (G_UNLIKELY (file == NULL))
+          g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
+                          thunar_location_entry_mount_finish, 
+                          g_object_ref (location_entry));
+
+          g_object_unref (mount_operation);
+        }
+      else
         {
-          /* display an error dialog to inform the user */
-          thunar_dialogs_show_error (window, error, _("Failed to determine the mount point for %s"), thunar_vfs_volume_get_name (volume));
-          g_error_free (error);
-          return;
+          mount = g_volume_get_mount (volume);
+          if (mount != NULL)
+            {
+              /* try to determine the mount point of the volume */
+              mount_point = g_mount_get_root (mount);
+              file = thunar_file_get (mount_point, &error);
+              g_object_unref (mount_point);
+              
+              if (G_UNLIKELY (file == NULL))
+                {
+                  /* display an error dialog to inform the user */
+                  volume_name = g_volume_get_name (volume);
+                  thunar_dialogs_show_error (window, error, 
+                                             _("Failed to determine the mount point of \"%s\""), 
+                                             volume_name);
+                  g_free (volume_name);
+                  g_error_free (error);
+                }
+
+              g_object_unref (mount);
+            }
         }
     }
   else

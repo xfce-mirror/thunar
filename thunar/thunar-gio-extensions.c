@@ -274,13 +274,27 @@ gboolean
 g_volume_is_removable (GVolume *volume)
 {
   gboolean can_eject = FALSE;
+  gboolean can_mount = FALSE;
   gboolean can_unmount = FALSE;
+  gboolean is_removable = FALSE;
+  GDrive  *drive;
   GMount  *mount;
 
   _thunar_return_val_if_fail (G_IS_VOLUME (volume), FALSE);
 
   /* check if the volume can be ejected */
   can_eject = g_volume_can_eject (volume);
+
+  /* determine the drive for the volume */
+  drive = g_volume_get_drive (volume);
+  if (drive != NULL)
+    {
+      /*check if the drive media can be removed */
+      is_removable = g_drive_is_media_removable (drive);
+
+      /* release the drive */
+      g_object_unref (drive);
+    }
 
   /* determine the mount for the volume (if it is mounted at all) */
   mount = g_volume_get_mount (volume);
@@ -293,7 +307,10 @@ g_volume_is_removable (GVolume *volume)
       g_object_unref (mount);
     }
 
-  return can_eject || can_unmount;
+  /* determine whether the device can be mounted */
+  can_mount = g_volume_can_mount (volume);
+
+  return can_eject || can_unmount || is_removable || can_mount;
 }
 
 

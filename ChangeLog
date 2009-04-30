@@ -1,3 +1,14 @@
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-application.c: Replace "hal-udi" with
+	  G_VOLUME_IDENTIFIER_KIND_HAL_UDI. 
+	* thunar/thunar-gio-extensions.c: Change g_volume_is_removable() so
+	  that it returns TRUE for almost all volumes. I feel that something is
+	  very wrong in GHalVolumeManager ...
+	* thunar/thunar-location-entry.c: Replace ThunarVfsVolume with
+	  GVolume. Mount+open launcher entry items asynchronously when
+	  activated.
+
 2009-04-29	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-tree-model.c, thunar/thunar-tree-view.c: Rewrite the
