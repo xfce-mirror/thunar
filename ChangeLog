@@ -1,5 +1,9 @@
 2009-04-30	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-util.{c,h}: Replace ThunarVfsFileTime with guint64.
+
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}, thunar/thunar-properties-dialog.c:
 	  Re-implement thunar_file_get_volume() around
 	  g_file_find_enclosing_mount(). Ideally this would be asynchronous

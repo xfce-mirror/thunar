@@ -158,7 +158,7 @@ thunar_util_expand_filename (const gchar  *filename,
 
 /**
  * thunar_util_humanize_file_time:
- * @file_time   : a #ThunarVfsFileTime.
+ * @file_time   : a #guint64 timestamp.
  * @date_format : the #ThunarDateFormat used to humanize the @file_time.
  *
  * Returns a human readable date representation of the specified
@@ -169,8 +169,8 @@ thunar_util_expand_filename (const gchar  *filename,
  *               according to the @date_format.
  **/
 gchar*
-thunar_util_humanize_file_time (ThunarVfsFileTime file_time,
-                                ThunarDateStyle   date_style)
+thunar_util_humanize_file_time (guint64         file_time,
+                                ThunarDateStyle date_style)
 {
   const gchar *date_format;
   struct tm   *tfile;
