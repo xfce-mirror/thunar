@@ -165,8 +165,7 @@ gchar            *thunar_file_get_date_string      (const ThunarFile       *file
 gchar            *thunar_file_get_mode_string      (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 gchar            *thunar_file_get_size_string      (const ThunarFile       *file) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
-ThunarVfsVolume  *thunar_file_get_volume           (const ThunarFile       *file,
-                                                    ThunarVfsVolumeManager *volume_manager);
+GVolume          *thunar_file_get_volume           (const ThunarFile       *file);
 
 ThunarGroup      *thunar_file_get_group            (const ThunarFile       *file);
 ThunarUser       *thunar_file_get_user             (const ThunarFile       *file);

@@ -1,5 +1,14 @@
 2009-04-30	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}, thunar/thunar-properties-dialog.c:
+	  Re-implement thunar_file_get_volume() around
+	  g_file_find_enclosing_mount(). Ideally this would be asynchronous
+	  but for now it'll stay the old way. Remove the
+	  ThunarVfsVolumeManager member from the properties dialog. We only
+	  need thunar_file_get_volume() here now.
+
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-application.c: Replace "hal-udi" with
 	  G_VOLUME_IDENTIFIER_KIND_HAL_UDI. 
 	* thunar/thunar-gio-extensions.c: Change g_volume_is_removable() so

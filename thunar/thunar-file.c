@@ -1414,23 +1414,30 @@ thunar_file_get_size_string (const ThunarFile *file)
 /**
  * thunar_file_get_volume:
  * @file           : a #ThunarFile instance.
- * @volume_manager : the #ThunarVfsVolumeManager to use for the volume lookup.
  *
- * Attempts to determine the #ThunarVfsVolume on which @file is located
- * using the given @volume_manager. If @file cannot determine it's volume,
- * then %NULL will be returned. Else a #ThunarVfsVolume instance is returned,
- * which is owned by @volume_manager and thereby the caller must not free
- * the returned object.
+ * Attempts to determine the #GVolume on which @file is located. If @file cannot 
+ * determine it's volume, then %NULL will be returned. Else a #GVolume instance 
+ * is returned which has to be released by the caller using g_object_unref().
  *
- * Return value: the #ThunarVfsVolume for @file in @volume_manager or %NULL.
+ * Return value: the #GVolume for @file or %NULL.
  **/
-ThunarVfsVolume*
-thunar_file_get_volume (const ThunarFile       *file,
-                        ThunarVfsVolumeManager *volume_manager)
+GVolume*
+thunar_file_get_volume (const ThunarFile *file)
 {
+  GVolume *volume = NULL;
+  GMount  *mount;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (THUNAR_VFS_IS_VOLUME_MANAGER (volume_manager), NULL);
-  return thunar_vfs_volume_manager_get_volume_by_info (volume_manager, file->info);
+
+  /* TODO make this function call asynchronous */
+  mount = g_file_find_enclosing_mount (file->gfile, NULL, NULL);
+  if (mount != NULL)
+    {
+      volume = g_mount_get_volume (mount);
+      g_object_unref (mount);
+    }
+
+  return volume;
 }
 
 

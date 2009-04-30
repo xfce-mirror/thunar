@@ -111,7 +111,6 @@ struct _ThunarPropertiesDialog
 
   ThunarPreferences      *preferences;
 
-  ThunarVfsVolumeManager *volume_manager;
   ThunarFile             *file;
 
   GtkWidget              *notebook;
@@ -243,7 +242,6 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
                             G_CALLBACK (thunar_properties_dialog_reload), dialog);
 
   dialog->provider_factory = thunarx_provider_factory_get_default ();
-  dialog->volume_manager = thunar_vfs_volume_manager_get_default ();
 
   gtk_dialog_add_buttons (GTK_DIALOG (dialog),
                           GTK_STOCK_HELP, GTK_RESPONSE_HELP,
@@ -545,18 +543,15 @@ thunar_properties_dialog_finalize (GObject *object)
   ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (object);
 
   /* disconnect from the preferences */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (dialog->preferences), thunar_properties_dialog_reload, dialog);
-  g_object_unref (G_OBJECT (dialog->preferences));
+  g_signal_handlers_disconnect_by_func (dialog->preferences, thunar_properties_dialog_reload, dialog);
+  g_object_unref (dialog->preferences);
 
   /* release the provider property pages */
   g_list_foreach (dialog->provider_pages, (GFunc) g_object_unref, NULL);
   g_list_free (dialog->provider_pages);
 
   /* drop the reference on the provider factory */
-  g_object_unref (G_OBJECT (dialog->provider_factory));
-
-  /* drop the reference on the volume manager */
-  g_object_unref (G_OBJECT (dialog->volume_manager));
+  g_object_unref (dialog->provider_factory);
 
   /* be sure to cancel any pending rename idle source */
   if (G_UNLIKELY (dialog->rename_idle_id != 0))
@@ -785,19 +780,20 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 {
   ThunarIconFactory *icon_factory;
   ThunarDateStyle    date_style;
-  ThunarVfsVolume   *volume;
   GtkIconTheme      *icon_theme;
   const gchar       *content_type;
-  const gchar       *icon_name;
   const gchar       *name;
   const gchar       *path;
   GdkPixbuf         *icon;
+  GVolume           *volume;
   guint64            size;
+  GIcon             *gicon;
   glong              offset;
+  gchar             *date;
   gchar             *display_name;
   gchar             *size_string;
   gchar             *str;
-  gchar             *date;
+  gchar             *volume_name;
 
   _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
   _thunar_return_if_fail (THUNAR_IS_FILE (dialog->file));
@@ -957,18 +953,18 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
     }
 
   /* update the volume */
-  volume = thunar_file_is_local (dialog->file) ? thunar_file_get_volume (dialog->file, dialog->volume_manager) : NULL;
+  volume = thunar_file_get_volume (dialog->file);
   if (G_LIKELY (volume != NULL))
     {
-      icon_name = thunar_vfs_volume_lookup_icon_name (volume, icon_theme);
-      icon = thunar_icon_factory_load_icon (icon_factory, icon_name, 16, NULL, FALSE);
-      gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->volume_image), icon);
-      if (G_LIKELY (icon != NULL))
-        g_object_unref (G_OBJECT (icon));
+      gicon = g_volume_get_icon (volume);
+      gtk_image_set_from_gicon (GTK_IMAGE (dialog->volume_image), gicon, GTK_ICON_SIZE_MENU);
+      if (G_LIKELY (gicon != NULL))
+        g_object_unref (gicon);
 
-      name = thunar_vfs_volume_get_name (volume);
-      gtk_label_set_text (GTK_LABEL (dialog->volume_label), name);
+      volume_name = g_volume_get_name (volume);
+      gtk_label_set_text (GTK_LABEL (dialog->volume_label), volume_name);
       gtk_widget_show (dialog->volume_label);
+      g_free (volume_name);
     }
   else
     {
