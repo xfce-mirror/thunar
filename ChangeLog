@@ -1,3 +1,21 @@
+2009-05-01	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}, thnuar/thunar-standard-view.c,
+	  thunar/thunar-util.{c,h}: Do it right this time by using guint64 and
+	  GFileInfo instead of the ThunarVfsMimeInfo to determine the
+	  access/changed/modified time. Update
+	  thunar_util_humanize_file_time() to reflect this.
+	* thunar/thunar-standard-view.c: Rewrite tsv_reload_directory() 
+	  based on GFileMonitor.
+	* thunar/thunar-launcher.c: Use GVolumeMonitor/GVolume for the volume
+	  send-to actions. Another class free of ThunarVFS.
+
+2009-04-30	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}, thunar/thunar-util.{c,h}: Do it right this
+	  time by using guint64 and GFileInfo instead of the ThunarVfsMimeInfo
+	  to determine the access/changed/modified time.
+
 2009-04-30	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/*.c: Remove all occurances of GLIB_CHECK_VERSION() and 

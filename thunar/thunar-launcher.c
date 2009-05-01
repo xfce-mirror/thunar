@@ -43,6 +43,10 @@
 
 
 
+typedef struct _ThunarLauncherMountData ThunarLauncherMountData;
+
+
+
 /* Property identifiers */
 enum
 {
@@ -130,9 +134,15 @@ struct _ThunarLauncher
 
   GtkWidget              *widget;
 
-  ThunarVfsVolumeManager *sendto_volman;
+  GVolumeMonitor         *volume_monitor;
   ThunarSendtoModel      *sendto_model;
   gint                    sendto_idle_id;
+};
+
+struct _ThunarLauncherMountData
+{
+  ThunarLauncher *launcher;
+  GList          *files;
 };
 
 
@@ -278,10 +288,10 @@ thunar_launcher_init (ThunarLauncher *launcher)
   /* setup the "Send To" support */
   launcher->sendto_model = thunar_sendto_model_get_default ();
 
-  /* the "Send To" menu also displays removable devices from the volume manager */
-  launcher->sendto_volman = thunar_vfs_volume_manager_get_default ();
-  g_signal_connect_swapped (G_OBJECT (launcher->sendto_volman), "volumes-added", G_CALLBACK (thunar_launcher_update), launcher);
-  g_signal_connect_swapped (G_OBJECT (launcher->sendto_volman), "volumes-removed", G_CALLBACK (thunar_launcher_update), launcher);
+  /* the "Send To" menu also displays removable devices from the volume monitor */
+  launcher->volume_monitor = g_volume_monitor_get ();
+  g_signal_connect_swapped (launcher->volume_monitor, "volume-added", G_CALLBACK (thunar_launcher_update), launcher);
+  g_signal_connect_swapped (launcher->volume_monitor, "volume-removed", G_CALLBACK (thunar_launcher_update), launcher);
 }
 
 
@@ -316,17 +326,17 @@ thunar_launcher_finalize (GObject *object)
 
   /* drop our custom icon factory for the application/action icons */
   gtk_icon_factory_remove_default (launcher->icon_factory);
-  g_object_unref (G_OBJECT (launcher->icon_factory));
+  g_object_unref (launcher->icon_factory);
 
   /* release the reference on the action group */
-  g_object_unref (G_OBJECT (launcher->action_group));
+  g_object_unref (launcher->action_group);
 
-  /* disconnect from the volume manager used for the "Send To" menu */
-  g_signal_handlers_disconnect_by_func (G_OBJECT (launcher->sendto_volman), thunar_launcher_update, launcher);
-  g_object_unref (G_OBJECT (launcher->sendto_volman));
+  /* disconnect from the volume monitor used for the "Send To" menu */
+  g_signal_handlers_disconnect_by_func (launcher->volume_monitor, thunar_launcher_update, launcher);
+  g_object_unref (launcher->volume_monitor);
 
   /* release the reference on the sendto model */
-  g_object_unref (G_OBJECT (launcher->sendto_model));
+  g_object_unref (launcher->sendto_model);
 
   (*G_OBJECT_CLASS (thunar_launcher_parent_class)->finalize) (object);
 }
@@ -724,7 +734,6 @@ thunar_launcher_open_windows (ThunarLauncher *launcher,
 static void
 thunar_launcher_update (ThunarLauncher *launcher)
 {
-  GtkIconTheme *icon_theme;
   const gchar  *context_menu_path;
   const gchar  *file_menu_path;
   GtkWidget    *menu_item;
@@ -940,9 +949,6 @@ thunar_launcher_update (ThunarLauncher *launcher)
           gtk_action_set_visible (launcher->action_open_with_other, !default_is_open_with_other && (n_selected_files == 1));
           gtk_action_set_visible (launcher->action_open_with_other_in_menu, FALSE);
         }
-
-      /* determine a the default icon theme for application/action icon lookups */
-      icon_theme = gtk_icon_theme_get_default ();
 
       /* add actions for all remaining applications */
       if (G_LIKELY (applications != NULL))
@@ -1167,17 +1173,113 @@ thunar_launcher_action_sendto_desktop (GtkAction      *action,
 
 
 
+static ThunarLauncherMountData *
+thunar_launcher_mount_data_new (ThunarLauncher *launcher,
+                                GList          *files)
+{
+  ThunarLauncherMountData *data;
+
+  _thunar_return_val_if_fail (THUNAR_IS_LAUNCHER (launcher), NULL);
+
+  data = _thunar_slice_new0 (ThunarLauncherMountData);
+  data->launcher = g_object_ref (launcher);
+  data->files = g_file_list_copy (files);
+
+  return data;
+}
+
+
+
+static void
+thunar_launcher_mount_data_free (ThunarLauncherMountData *data)
+{
+  _thunar_return_if_fail (data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (data->launcher));
+
+  g_object_unref (data->launcher);
+  g_file_list_free (data->files);
+  _thunar_slice_free (ThunarLauncherMountData, data);
+}
+
+
+
+static void
+thunar_launcher_sendto_volume (ThunarLauncher *launcher,
+                               GVolume        *volume,
+                               GList          *files)
+{
+  ThunarApplication *application;
+  GMount            *mount;
+  GFile             *mount_point;
+
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
+  _thunar_return_if_fail (G_IS_VOLUME (volume));
+
+  if (!g_volume_is_mounted (volume))
+    return;
+  
+  mount = g_volume_get_mount (volume);
+  if (mount != NULL)
+    {
+      mount_point = g_mount_get_root (mount);
+      
+      /* copy the files onto the specified volume */
+      application = thunar_application_get ();
+      thunar_application_copy_into (application, launcher->widget, files, mount_point, NULL);
+      g_object_unref (application);
+
+      g_object_unref (mount_point);
+      g_object_unref (mount);
+    }
+}
+
+
+
+static void
+thunar_launcher_sendto_mount_finish (GObject      *object,
+                                     GAsyncResult *result,
+                                     gpointer      user_data)
+{
+  ThunarLauncherMountData *data = user_data;
+  GVolume                 *volume = G_VOLUME (object);
+  GError                  *error = NULL;
+  gchar                   *volume_name;
+
+  _thunar_return_if_fail (G_IS_VOLUME (object));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (user_data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_LAUNCHER (data->launcher));
+
+  if (!g_volume_mount_finish (volume, result, &error))
+    {
+      /* tell the user that we were unable to mount the volume, which is 
+       * required to send files to it */
+      volume_name = g_volume_get_name (volume);
+      thunar_dialogs_show_error (data->launcher->widget, error, _("Failed to mount \"%s\""), 
+                                 volume_name);
+      g_free (volume_name);
+
+      g_error_free (error);
+    }
+  else
+    {
+      thunar_launcher_sendto_volume (data->launcher, volume, data->files);
+    }
+
+  thunar_launcher_mount_data_free (data);
+}
+
+
+
 static void
 thunar_launcher_action_sendto_volume (GtkAction      *action,
                                       ThunarLauncher *launcher)
 {
-  ThunarApplication *application;
-  ThunarVfsVolume   *volume;
-  ThunarVfsPath     *path;
-  GError            *err = NULL;
-  GFile             *target_file;
-  GList             *files;
-  gchar             *uri;
+  ThunarLauncherMountData *data;
+  GMountOperation         *mount_operation;
+  GtkWidget               *window;
+  GVolume                 *volume;
+  GList                   *files;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_LAUNCHER (launcher));
@@ -1193,27 +1295,24 @@ thunar_launcher_action_sendto_volume (GtkAction      *action,
     return;
 
   /* make sure to mount the volume first, if it's not already mounted */
-  if (!thunar_vfs_volume_is_mounted (volume) &&
-      !thunar_vfs_volume_mount (volume, launcher->widget, &err))
+  if (!g_volume_is_mounted (volume))
     {
-      /* tell the user that we were unable to mount the volume, which is required to send files to it */
-      thunar_dialogs_show_error (launcher->widget, err, _("Failed to mount \"%s\""), thunar_vfs_volume_get_name (volume));
-      g_error_free (err);
+      /* determine the toplevel window */
+      window = gtk_widget_get_toplevel (launcher->widget);
+
+      /* allocate mount data */
+      data = thunar_launcher_mount_data_new (launcher, files);
+
+      /* allocate a GTK+ mount operation */
+      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+
+      /* try to mount the volume and later start sending the files */
+      g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
+                      thunar_launcher_sendto_mount_finish, data);
     }
   else
     {
-      /* Determine the GFile for the mount point */
-      path = thunar_vfs_volume_get_mount_point (volume);
-      uri = thunar_vfs_path_dup_uri (path);
-      target_file = g_file_new_for_uri (uri);
-      g_free (uri);
-
-      /* copy the files onto the specified volume */
-      application = thunar_application_get ();
-      thunar_application_copy_into (application, launcher->widget, files, target_file, NULL);
-      g_object_unref (G_OBJECT (application));
-
-      g_object_unref (target_file);
+      thunar_launcher_sendto_volume (launcher, volume, files);
     }
 
   /* cleanup */
@@ -1240,19 +1339,19 @@ static gboolean
 thunar_launcher_sendto_idle (gpointer user_data)
 {
   ThunarLauncher *launcher = THUNAR_LAUNCHER (user_data);
-  GtkIconTheme   *icon_theme;
-  const gchar    *icon_name;
   const gchar    *label;
   GtkAction      *action;
   GtkWidget      *image;
   GtkWidget      *menu_item;
   gboolean        linkable = TRUE;
+  GIcon          *icon;
   GList          *handlers;
   GList          *volumes;
   GList          *lp;
   gchar          *name;
   gchar          *tooltip;
   gchar          *ui_path;
+  gchar          *volume_name;
   gint            n_selected_files;
   gint            n = 0;
 
@@ -1292,54 +1391,73 @@ thunar_launcher_sendto_idle (gpointer user_data)
           gtk_action_group_remove_action (launcher->action_group, lp->data);
       g_list_free (handlers);
 
-      /* determine a the default icon theme for handler icon lookups */
-      icon_theme = gtk_icon_theme_get_default ();
-
       /* allocate a new merge id from the UI manager (if not already done) */
       if (G_UNLIKELY (launcher->ui_addons_merge_id == 0))
         launcher->ui_addons_merge_id = gtk_ui_manager_new_merge_id (launcher->ui_manager);
 
       /* determine the currently active volumes */
-      volumes = thunar_vfs_volume_manager_get_volumes (launcher->sendto_volman);
-      if (G_LIKELY (volumes != NULL))
+      volumes = g_volume_monitor_get_volumes (launcher->volume_monitor);
+
+      /* add removable (and writable) drives and media */
+      for (lp = volumes; lp != NULL; lp = lp->next, ++n)
         {
-          /* add removable (and writable) drives and media */
-          for (lp = volumes; lp != NULL; lp = lp->next, ++n)
+          /* skip non-removable or disc media (CD-ROMs aren't writable by Thunar) */
+          /* TODO skip non-writable volumes like CD-ROMs here */
+          if (!g_volume_is_removable (lp->data))
             {
-              /* skip non-removable or disc media (CD-ROMs aren't writable by Thunar) */
-              if (!thunar_vfs_volume_is_removable (lp->data) || thunar_vfs_volume_is_disc (lp->data))
-                continue;
-
-              /* generate a unique name and tooltip for the volume */
-              label = thunar_vfs_volume_get_name (lp->data);
-              name = g_strdup_printf ("thunar-launcher-sendto%d-%p", n, launcher);
-              tooltip = g_strdup_printf (ngettext ("Send the selected file to \"%s\"",
-                                                   "Send the selected files to \"%s\"",
-                                                   n_selected_files), label);
-
-              /* check if we have an icon for this volume */
-              icon_name = thunar_vfs_volume_lookup_icon_name (lp->data, icon_theme);
-              if (G_LIKELY (icon_name != NULL))
-                thunar_gtk_icon_factory_insert_icon (launcher->icon_factory, name, icon_name);
-
-              /* allocate a new action for the volume */
-              action = gtk_action_new (name, label, tooltip, (icon_name != NULL) ? name : NULL);
-              g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, g_object_ref (G_OBJECT (lp->data)), g_object_unref);
-              g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_sendto_volume), launcher);
-              gtk_action_group_add_action (launcher->action_group, action);
-              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     "/main-menu/file-menu/sendto-menu/placeholder-sendto-actions",
-                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
-              gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
-                                     "/file-context-menu/sendto-menu/placeholder-sendto-actions",
-                                     name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
-              g_object_unref (G_OBJECT (action));
-
-              /* cleanup */
-              g_free (tooltip);
-              g_free (name);
+              g_object_unref (lp->data);
+              continue;
             }
+
+          /* generate a unique name and tooltip for the volume */
+          volume_name = g_volume_get_name (lp->data);
+          name = g_strdup_printf ("thunar-launcher-sendto%d-%p", n, launcher);
+          tooltip = g_strdup_printf (ngettext ("Send the selected file to \"%s\"",
+                                               "Send the selected files to \"%s\"",
+                                               n_selected_files), volume_name);
+
+          /* allocate a new action for the volume */
+          action = gtk_action_new (name, volume_name, tooltip, NULL);
+          g_object_set_qdata_full (G_OBJECT (action), thunar_launcher_handler_quark, lp->data, g_object_unref);
+          g_signal_connect (G_OBJECT (action), "activate", G_CALLBACK (thunar_launcher_action_sendto_volume), launcher);
+          gtk_action_group_add_action (launcher->action_group, action);
+          gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                 "/main-menu/file-menu/sendto-menu/placeholder-sendto-actions",
+                                 name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+          gtk_ui_manager_add_ui (launcher->ui_manager, launcher->ui_addons_merge_id,
+                                 "/file-context-menu/sendto-menu/placeholder-sendto-actions",
+                                 name, name, GTK_UI_MANAGER_MENUITEM, FALSE);
+          g_object_unref (action);
+
+          /* FIXME There's no API for creating GtkActions using GIcon in GTK+ 2.14. A "gicon" property
+           * has been added to GtkAction in GTK+ 2.16 though. For now, this hack will have to do: */
+
+          ui_path = g_strconcat ("/main-menu/file-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
+          menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
+          image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
+          icon = g_volume_get_icon (lp->data);
+          gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_MENU);
+          g_object_unref (icon);
+          g_free (ui_path);
+          	
+          ui_path = g_strconcat ("/file-context-menu/sendto-menu/placeholder-sendto-actions/", name, NULL);
+          menu_item = gtk_ui_manager_get_widget (launcher->ui_manager, ui_path);
+          image = gtk_image_menu_item_get_image (GTK_IMAGE_MENU_ITEM (menu_item));
+          icon = g_volume_get_icon (lp->data);
+          gtk_image_set_from_gicon (GTK_IMAGE (image), icon, GTK_ICON_SIZE_MENU);
+          g_object_unref (icon);
+          g_free (ui_path);
+
+          /* FIXME End of the hack */
+
+          /* cleanup */
+          g_free (name);
+          g_free (tooltip);
+          g_free (volume_name);
         }
+
+      /* free the volumes list */
+      g_list_free (volumes);
 
       /* determine the sendto handlers for the selected files */
       handlers = thunar_sendto_model_get_matching (launcher->sendto_model, launcher->selected_files);

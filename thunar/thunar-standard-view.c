@@ -2578,19 +2578,21 @@ tsv_reload_directory (GPid     pid,
                       gint     status,
                       gpointer user_data)
 {
-  ThunarVfsMonitor *monitor;
-  ThunarVfsPath    *path;
+  GFileMonitor *monitor;
+  GFile        *file;
 
   /* determine the path for the directory */
-  path = thunar_vfs_path_new (user_data, NULL);
-  if (G_LIKELY (path != NULL))
+  file = g_file_new_for_uri (user_data);
+
+  /* schedule a changed event for the directory */
+  monitor = g_file_monitor (file, G_FILE_MONITOR_NONE, NULL, NULL);
+  if (monitor != NULL)
     {
-      /* schedule a changed event for the directory */
-      monitor = thunar_vfs_monitor_get_default ();
-      thunar_vfs_monitor_feed (monitor, THUNAR_VFS_MONITOR_EVENT_CHANGED, path);
-      g_object_unref (G_OBJECT (monitor));
-      thunar_vfs_path_unref (path);
+      g_file_monitor_emit_event (monitor, file, NULL, G_FILE_MONITOR_EVENT_CHANGED);
+      g_object_unref (monitor);
     }
+
+  g_object_unref (file);
 }
 
 

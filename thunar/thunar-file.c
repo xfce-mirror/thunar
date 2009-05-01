@@ -1285,21 +1285,31 @@ thunar_file_accepts_drop (ThunarFile     *file,
  *
  * Return value: the time for @file of the given @date_type.
  **/
-ThunarVfsFileTime
+guint64
 thunar_file_get_date (const ThunarFile  *file,
                       ThunarFileDateType date_type)
 {
+  const gchar *attribute;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->ginfo), FALSE);
   
   switch (date_type)
     {
-    case THUNAR_FILE_DATE_ACCESSED: return file->info->atime;
-    case THUNAR_FILE_DATE_CHANGED:  return file->info->ctime;
-    case THUNAR_FILE_DATE_MODIFIED: return file->info->mtime;
-    default:                        _thunar_assert_not_reached ();
+    case THUNAR_FILE_DATE_ACCESSED: 
+      attribute = G_FILE_ATTRIBUTE_TIME_ACCESS;
+      break;
+    case THUNAR_FILE_DATE_CHANGED:
+      attribute = G_FILE_ATTRIBUTE_TIME_CHANGED;
+      break;
+    case THUNAR_FILE_DATE_MODIFIED: 
+      attribute = G_FILE_ATTRIBUTE_TIME_MODIFIED;
+      break;
+    default:
+      _thunar_assert_not_reached ();
     }
 
-  return (ThunarVfsFileTime) -1;
+  return g_file_info_get_attribute_uint64 (file->ginfo, attribute);
 }
 
 

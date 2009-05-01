@@ -169,11 +169,12 @@ thunar_util_expand_filename (const gchar  *filename,
  *               according to the @date_format.
  **/
 gchar*
-thunar_util_humanize_file_time (time_t          file_time,
+thunar_util_humanize_file_time (guint64         file_time,
                                 ThunarDateStyle date_style)
 {
   const gchar *date_format;
   struct tm   *tfile;
+  time_t       ftime;
   GDate        dfile;
   GDate        dnow;
   gint         diff;
@@ -181,14 +182,16 @@ thunar_util_humanize_file_time (time_t          file_time,
   /* check if the file_time is valid */
   if (G_LIKELY (file_time != 0))
     {
+      ftime = (time_t) file_time;
+
       /* determine the local file time */
-      tfile = localtime (&file_time);
+      tfile = localtime (&ftime);
 
       /* check which style to use to format the time */
       if (date_style == THUNAR_DATE_STYLE_SIMPLE || date_style == THUNAR_DATE_STYLE_SHORT)
         {
           /* setup the dates for the time values */
-          g_date_set_time_t (&dfile, file_time);
+          g_date_set_time_t (&dfile, (time_t) ftime);
           g_date_set_time_t (&dnow, time (NULL));
 
           /* determine the difference in days */
