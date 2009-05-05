@@ -40,7 +40,7 @@ typedef struct _ThunarTransferNode ThunarTransferNode;
 static void     thunar_transfer_job_class_init   (ThunarTransferJobClass *klass);
 static void     thunar_transfer_job_init         (ThunarTransferJob      *job);
 static void     thunar_transfer_job_finalize     (GObject                *object);
-static gboolean thunar_transfer_job_execute      (ThunarJob              *job,
+static gboolean thunar_transfer_job_execute      (ExoJob                 *job,
                                                   GError                **error);
 static void     thunar_transfer_node_free        (ThunarTransferNode     *node);
 
@@ -101,8 +101,8 @@ thunar_transfer_job_get_type (void)
 static void
 thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
 {
-  ThunarJobClass *thunarjob_class;
-  GObjectClass   *gobject_class;
+  GObjectClass *gobject_class;
+  ExoJobClass  *exojob_class;
 
   /* Determine the parent type class */
   thunar_transfer_job_parent_class = g_type_class_peek_parent (klass);
@@ -110,8 +110,8 @@ thunar_transfer_job_class_init (ThunarTransferJobClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_transfer_job_finalize; 
 
-  thunarjob_class = THUNAR_JOB_CLASS (klass);
-  thunarjob_class->execute = thunar_transfer_job_execute;
+  exojob_class = EXO_JOB_CLASS (klass);
+  exojob_class->execute = thunar_transfer_job_execute;
 }
 
 
@@ -162,7 +162,7 @@ thunar_transfer_job_progress (goffset  current_num_bytes,
       job->file_progress = current_num_bytes;
 
       /* notify callers about the progress we made */
-      thunar_job_percent (THUNAR_JOB (job), (job->total_progress * 100.0) / job->total_size);
+      exo_job_percent (EXO_JOB (job), (job->total_progress * 100.0) / job->total_size);
     }
 }
 
@@ -183,14 +183,14 @@ thunar_transfer_job_collect_node (ThunarTransferJob  *job,
   _thunar_return_val_if_fail (node != NULL && G_IS_FILE (node->source_file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
 
   info = g_file_query_info (node->source_file, 
                             G_FILE_ATTRIBUTE_STANDARD_SIZE ","
                             G_FILE_ATTRIBUTE_STANDARD_TYPE,
                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                            thunar_job_get_cancellable (THUNAR_JOB (job)),
+                            exo_job_get_cancellable (EXO_JOB (job)),
                             &err);
 
   if (G_UNLIKELY (info == NULL))
@@ -260,26 +260,26 @@ ttj_copy_file (ThunarTransferJob *job,
   /* reset the file progress */
   job->file_progress = 0;
 
-  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
 
   source_type = g_file_query_file_type (source_file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                        thunar_job_get_cancellable (THUNAR_JOB (job)));
+                                        exo_job_get_cancellable (EXO_JOB (job)));
 
-  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
 
   target_type = g_file_query_file_type (target_file, G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                        thunar_job_get_cancellable (THUNAR_JOB (job)));
+                                        exo_job_get_cancellable (EXO_JOB (job)));
 
-  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return FALSE;
 
   /* check if the target is a symlink and we are in overwrite mode */
   if (target_type == G_FILE_TYPE_SYMBOLIC_LINK && (copy_flags & G_FILE_COPY_OVERWRITE) != 0)
     {
       /* try to delete the symlink */
-      if (!g_file_delete (target_file, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
+      if (!g_file_delete (target_file, exo_job_get_cancellable (EXO_JOB (job)), &err))
         {
           g_propagate_error (error, err);
           return FALSE;
@@ -288,8 +288,8 @@ ttj_copy_file (ThunarTransferJob *job,
 
   /* try to copy the file */
   g_file_copy (source_file, target_file, copy_flags,
-               thunar_job_get_cancellable (THUNAR_JOB (job)),
-               thunar_transfer_job_progress, THUNAR_JOB (job), &err);
+               exo_job_get_cancellable (EXO_JOB (job)),
+               thunar_transfer_job_progress, job, &err);
 
   /* check if there were errors */
   if (G_UNLIKELY (err != NULL && err->domain == G_IO_ERROR))
@@ -322,16 +322,16 @@ ttj_copy_file (ThunarTransferJob *job,
 
           /* check if the target file exists */
           target_exists = g_file_query_exists (target_file,
-                                               thunar_job_get_cancellable (THUNAR_JOB (job)));
+                                               exo_job_get_cancellable (EXO_JOB (job)));
 
           /* abort on cancellation, continue otherwise */
-          if (!thunar_job_set_error_if_cancelled (THUNAR_JOB (job), &err))
+          if (!exo_job_set_error_if_cancelled (EXO_JOB (job), &err))
             {
               if (target_exists)
                 {
                   /* the target still exists and thus is not a directory. try to remove it */
                   g_file_delete (target_file, 
-                                 thunar_job_get_cancellable (THUNAR_JOB ((job))), 
+                                 exo_job_get_cancellable (EXO_JOB (job)), 
                                  &err);
                 }
 
@@ -340,7 +340,7 @@ ttj_copy_file (ThunarTransferJob *job,
                 {
                   /* now try to create the directory */
                   g_file_make_directory (target_file, 
-                                         thunar_job_get_cancellable (THUNAR_JOB (job)), 
+                                         exo_job_get_cancellable (EXO_JOB (job)), 
                                          &err);
                 }
             }
@@ -399,7 +399,7 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* abort on cancellation */
-  if (thunar_job_set_error_if_cancelled (THUNAR_JOB (job), error))
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return NULL;
 
   /* various attempts to copy the file */
@@ -418,9 +418,10 @@ thunar_transfer_job_copy_file (ThunarTransferJob *job,
         {
           for (n = 1; err == NULL; ++n)
             {
-              GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job), 
+              GFile *duplicate_file = thunar_io_jobs_util_next_duplicate_file (THUNAR_JOB (job),
                                                                                source_file, 
-                                                                               TRUE, n, &err);
+                                                                               TRUE, n, 
+                                                                               &err);
 
               if (err == NULL)
                 {
@@ -522,7 +523,7 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
       info = g_file_query_info (node->source_file,
                                 G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
                                 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                thunar_job_get_cancellable (THUNAR_JOB (job)),
+                                exo_job_get_cancellable (EXO_JOB (job)),
                                 &err);
 
       /* abort on error or cancellation */
@@ -533,11 +534,12 @@ thunar_transfer_job_copy_node (ThunarTransferJob  *job,
         }
 
       /* update progress information */
-      thunar_job_info_message (THUNAR_JOB (job), g_file_info_get_display_name (info));
+      exo_job_info_message (EXO_JOB (job), g_file_info_get_display_name (info));
 
 retry_copy:
       /* copy the item specified by this node (not recursively) */
-      real_target_file = thunar_transfer_job_copy_file (job, node->source_file, target_file, &err);
+      real_target_file = thunar_transfer_job_copy_file (job, node->source_file, 
+                                                        target_file, &err);
       if (G_LIKELY (real_target_file != NULL))
         {
           /* node->source_file == real_target_file means to skip the file */
@@ -570,7 +572,7 @@ retry_copy:
 retry_remove:
               /* try to remove the source directory if we are on copy+remove fallback for move */
               if (job->type == THUNAR_TRANSFER_JOB_MOVE && 
-                  !g_file_delete (node->source_file, thunar_job_get_cancellable (THUNAR_JOB (job)), &err))
+                  !g_file_delete (node->source_file, exo_job_get_cancellable (EXO_JOB (job)), &err))
                 {
                   /* ask the user to retry */
                   response = thunar_job_ask_skip (THUNAR_JOB (job), "%s", err->message);
@@ -618,8 +620,8 @@ retry_remove:
 
 
 static gboolean
-thunar_transfer_job_execute (ThunarJob *job,
-                             GError   **error)
+thunar_transfer_job_execute (ExoJob  *job,
+                             GError **error)
 {
   ThunarTransferNode *node;
   ThunarJobResponse   response;
@@ -634,16 +636,15 @@ thunar_transfer_job_execute (ThunarJob *job,
   GList              *tp;
   GFile              *target_parent;
   gchar              *basename;
-  gchar              *message;
   gchar              *parent_display_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_TRANSFER_JOB (job), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-  if (thunar_job_set_error_if_cancelled (job, error))
+  if (exo_job_set_error_if_cancelled (job, error))
     return FALSE;
 
-  thunar_job_info_message (job, _("Collecting files..."));
+  exo_job_info_message (job, _("Collecting files..."));
 
   for (sp = transfer_job->source_node_list, tp = transfer_job->target_file_list;
        sp != NULL && tp != NULL && err == NULL;
@@ -659,29 +660,28 @@ thunar_transfer_job_execute (ThunarJob *job,
       info = g_file_query_info (node->source_file,
                                 G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME,
                                 G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                                thunar_job_get_cancellable (job),
+                                exo_job_get_cancellable (job),
                                 &err);
 
       if (G_UNLIKELY (info == NULL))
         break;
 
       /* check if we are moving a file out of the trash */
-      if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE && g_file_is_trashed (node->source_file))
+      if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE 
+          && g_file_is_trashed (node->source_file))
         {
           /* update progress information */
-          message = g_strdup_printf (_("Trying to restore \"%s\""), 
-                                     g_file_info_get_display_name (info));
-          thunar_job_info_message (job, message);
-          g_free (message);
+          exo_job_info_message (job, _("Trying to restore \"%s\""),
+                                g_file_info_get_display_name (info));
 
           /* determine the parent file */
           target_parent = g_file_get_parent (tp->data);
 
           /* check if the parent exists */
-          parent_exists = g_file_query_exists (target_parent, thunar_job_get_cancellable (job));
+          parent_exists = g_file_query_exists (target_parent, exo_job_get_cancellable (job));
 
           /* abort on cancellation */
-          if (thunar_job_set_error_if_cancelled (job, &err))
+          if (exo_job_set_error_if_cancelled (job, &err))
             {
               g_object_unref (target_parent);
               break;
@@ -695,7 +695,7 @@ thunar_transfer_job_execute (ThunarJob *job,
               g_free (basename);
 
               /* ask the user whether he wants to create the parent folder because its gone */
-              response = thunar_job_ask_create (job, 
+              response = thunar_job_ask_create (THUNAR_JOB (job),
                                                 _("The folder \"%s\" does not exist anymore but is "
                                                   "required to restore the file \"%s\" from the "
                                                   "trash"),
@@ -712,10 +712,10 @@ thunar_transfer_job_execute (ThunarJob *job,
 
               /* try to create the parent directory */
               if (!g_file_make_directory_with_parents (target_parent, 
-                                                       thunar_job_get_cancellable (job),
+                                                       exo_job_get_cancellable (job),
                                                        &err))
                 {
-                  if (!thunar_job_is_cancelled (job))
+                  if (!exo_job_is_cancelled (job))
                     {
                       g_clear_error (&err);
 
@@ -737,15 +737,14 @@ thunar_transfer_job_execute (ThunarJob *job,
       
       if (transfer_job->type == THUNAR_TRANSFER_JOB_MOVE)
         {
-          message = g_strdup_printf (_("Trying to move \"%s\""),
-                                     g_file_info_get_display_name (info));
-          thunar_job_info_message (job, message);
-          g_free (message);
+          /* update progress information */
+          exo_job_info_message (job, _("Trying to move \"%s\""), 
+                                g_file_info_get_display_name (info));
 
           if (g_file_move (node->source_file, tp->data, 
                            G_FILE_COPY_NOFOLLOW_SYMLINKS 
                            | G_FILE_COPY_NO_FALLBACK_FOR_MOVE,
-                           thunar_job_get_cancellable (job),
+                           exo_job_get_cancellable (job),
                            NULL, NULL, &err))
             {
               /* add the target file to the new files list */
@@ -759,15 +758,14 @@ thunar_transfer_job_execute (ThunarJob *job,
               transfer_job->source_node_list = g_list_delete_link (transfer_job->source_node_list, sp);
               transfer_job->target_file_list = g_list_delete_link (transfer_job->target_file_list, tp);
             }
-          else if (!thunar_job_is_cancelled (job))
+          else if (!exo_job_is_cancelled (job))
             {
               g_clear_error (&err);
 
-              message = g_strdup_printf (_("Could not move \"%s\" directly. "
-                                           "Collecting files for copying..."), 
-                                         g_file_info_get_display_name (info));
-              thunar_job_info_message (job, message);
-              g_free (message);
+              /* update progress information */
+              exo_job_info_message (job, _("Could not move \"%s\" directly. "
+                                           "Collecting files for copying..."),
+                                    g_file_info_get_display_name (info));
 
               if (!thunar_transfer_job_collect_node (transfer_job, node, &err))
                 {
@@ -779,7 +777,7 @@ thunar_transfer_job_execute (ThunarJob *job,
         }
       else if (transfer_job->type == THUNAR_TRANSFER_JOB_COPY)
         {
-          if (!thunar_transfer_job_collect_node (transfer_job, node, &err))
+          if (!thunar_transfer_job_collect_node (THUNAR_TRANSFER_JOB (job), node, &err))
             break;
         }
 
@@ -807,7 +805,7 @@ thunar_transfer_job_execute (ThunarJob *job,
     }
   else
     {
-      thunar_job_new_files (job, new_files_list);
+      thunar_job_new_files (THUNAR_JOB (job), new_files_list);
       g_file_list_free (new_files_list);
       return TRUE;
     }

@@ -32,6 +32,8 @@
 #include <unistd.h>
 #endif
 
+#include <exo/exo.h>
+
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gobject-extensions.h>
@@ -459,7 +461,7 @@ thunar_permissions_chooser_finalize (GObject *object)
   if (G_UNLIKELY (chooser->job != NULL))
     {
       /* cancel the job (if not already done) */
-      thunar_job_cancel (chooser->job);
+      exo_job_cancel (EXO_JOB (chooser->job));
 
       /* disconnect from the job */
       g_signal_handlers_disconnect_matched (chooser->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, chooser);
@@ -675,9 +677,9 @@ thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
                                         ThunarFileMode            file_mask,
                                         ThunarFileMode            file_mode)
 {
-  ThunarJob *job;
-  gboolean   recursive = FALSE;
-  gint       response;
+  ThunarJob*job;
+  gboolean  recursive = FALSE;
+  gint      response;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
   _thunar_return_if_fail (THUNAR_IS_FILE (chooser->file));
@@ -707,7 +709,7 @@ thunar_permissions_chooser_change_mode (ThunarPermissionsChooser *chooser,
                                     dir_mask, dir_mode, file_mask, file_mode, 
                                     recursive);
   thunar_permissions_chooser_job_start (chooser, job, recursive);
-  g_object_unref (G_OBJECT (job));
+  g_object_unref (job);
 }
 
 
@@ -989,9 +991,9 @@ thunar_permissions_chooser_fixperm_clicked (ThunarPermissionsChooser *chooser,
                                             GtkWidget                *button)
 {
   ThunarFileMode mode;
-  ThunarJob     *job;
   GtkWidget     *dialog;
   GtkWidget     *window;
+  ThunarJob     *job;
   gint           response;
 
   _thunar_return_if_fail (THUNAR_IS_PERMISSIONS_CHOOSER (chooser));
@@ -1083,7 +1085,7 @@ thunar_permissions_chooser_job_cancel (ThunarPermissionsChooser *chooser)
     return;
 
   /* cancel the job (if not already done) */
-  thunar_job_cancel (chooser->job);
+  exo_job_cancel (EXO_JOB (chooser->job));
 
   /* disconnect from the job */
   g_signal_handlers_disconnect_matched (chooser->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, chooser);

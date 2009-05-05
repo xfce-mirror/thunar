@@ -50,8 +50,8 @@
 
 
 /* Prototype for the Thunar job launchers */
-typedef ThunarJob *(*Launcher) (GList  *source_path_list,
-                                GList  *target_path_list);
+typedef ThunarJob *(*Launcher) (GList *source_path_list,
+                                GList *target_path_list);
 
 
 
@@ -403,10 +403,10 @@ thunar_application_launch (ThunarApplication *application,
                            GList             *target_file_list,
                            GClosure          *new_files_closure)
 {
-  ThunarJob *job;
   GtkWindow *window;
   GtkWidget *dialog;
   GdkScreen *screen;
+  ThunarJob *job;
 
   _thunar_return_if_fail (parent == NULL || GDK_IS_SCREEN (parent) || GTK_IS_WIDGET (parent));
 
@@ -1277,7 +1277,7 @@ thunar_application_move_into (ThunarApplication *application,
 
 
 
-static ThunarJob*
+static ThunarJob *
 unlink_stub (GList *source_path_list,
              GList *target_path_list)
 {
@@ -1416,7 +1416,7 @@ thunar_application_trash (ThunarApplication *application,
 
 
 
-static ThunarJob*
+static ThunarJob *
 creat_stub (GList *source_path_list,
             GList *target_path_list)
 {
@@ -1455,7 +1455,7 @@ thunar_application_creat (ThunarApplication *application,
 
 
 
-static ThunarJob*
+static ThunarJob *
 mkdir_stub (GList *source_path_list,
             GList *target_path_list)
 {

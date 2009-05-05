@@ -24,6 +24,8 @@
 
 #include <gio/gio.h>
 
+#include <exo/exo.h>
+
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-private.h>
 
@@ -49,14 +51,14 @@ thunar_io_scan_directory (ThunarJob          *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
 
   /* abort if the job was cancelled */
-  if (thunar_job_set_error_if_cancelled (job, error))
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return NULL;
 
   /* query the file type */
-  type = g_file_query_file_type (file, flags, thunar_job_get_cancellable (job));
+  type = g_file_query_file_type (file, flags, exo_job_get_cancellable (EXO_JOB (job)));
 
   /* abort if the job was cancelled */
-  if (thunar_job_set_error_if_cancelled (job, error))
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return NULL;
 
   /* ignore non-directory nodes */
@@ -67,7 +69,7 @@ thunar_io_scan_directory (ThunarJob          *job,
   enumerator = g_file_enumerate_children (file,
                                           G_FILE_ATTRIBUTE_STANDARD_TYPE ","
                                           G_FILE_ATTRIBUTE_STANDARD_NAME,
-                                          flags, thunar_job_get_cancellable (job),
+                                          flags, exo_job_get_cancellable (EXO_JOB (job)),
                                           &err);
 
   /* abort if there was an error or the job was cancelled */
@@ -78,10 +80,12 @@ thunar_io_scan_directory (ThunarJob          *job,
     }
         
   /* query info of the first child */
-  info = g_file_enumerator_next_file (enumerator, thunar_job_get_cancellable (job), &err);
+  info = g_file_enumerator_next_file (enumerator,
+                                      exo_job_get_cancellable (EXO_JOB (job)), 
+                                      &err);
 
   /* iterate over children one by one as long as there's no error */
-  while (info != NULL && err == NULL && !thunar_job_is_cancelled (job))
+  while (info != NULL && err == NULL && !exo_job_is_cancelled (EXO_JOB (job)))
     {
       /* create GFile for the child and prepend it to the file list */
       child_file = g_file_get_child (file, g_file_info_get_name (info));
@@ -100,7 +104,9 @@ thunar_io_scan_directory (ThunarJob          *job,
       g_object_unref (child_file);
       g_object_unref (info);
 
-      info = g_file_enumerator_next_file (enumerator, thunar_job_get_cancellable (job), &err);
+      info = g_file_enumerator_next_file (enumerator, 
+                                          exo_job_get_cancellable (EXO_JOB (job)), 
+                                          &err);
     }
 
   /* release the enumerator */
@@ -112,7 +118,7 @@ thunar_io_scan_directory (ThunarJob          *job,
       g_file_list_free (files);
       return NULL;
     }
-  else if (thunar_job_set_error_if_cancelled (job, &err))
+  else if (exo_job_set_error_if_cancelled (EXO_JOB (job), &err))
     {
       g_propagate_error (error, err);
       g_file_list_free (files);

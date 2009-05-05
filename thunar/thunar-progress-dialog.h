@@ -38,11 +38,11 @@ typedef struct _ThunarProgressDialog      ThunarProgressDialog;
 GType         thunar_progress_dialog_get_type      (void) G_GNUC_CONST;
 
 GtkWidget    *thunar_progress_dialog_new           (void) G_GNUC_MALLOC;
-GtkWidget    *thunar_progress_dialog_new_with_job  (ThunarJob            *job) G_GNUC_MALLOC;
+GtkWidget    *thunar_progress_dialog_new_with_job  (ExoJob               *job) G_GNUC_MALLOC;
 
-ThunarJob    *thunar_progress_dialog_get_job       (ThunarProgressDialog *dialog);
+ExoJob       *thunar_progress_dialog_get_job       (ThunarProgressDialog *dialog);
 void          thunar_progress_dialog_set_job       (ThunarProgressDialog *dialog,
-                                                    ThunarJob            *job);
+                                                    ExoJob               *job);
 
 G_END_DECLS;
 

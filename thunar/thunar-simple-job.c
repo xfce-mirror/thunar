@@ -3,20 +3,20 @@
  * Copyright (c) 2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Library General Public
- * License as published by the Free Software Foundation; either
- * version 2 of the License, or (at your option) any later version.
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
  *
- * This library is distributed in the hope that it will be useful,
+ * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Library General Public License for more details.
+ * General Public License for more details.
  *
- * You should have received a copy of the GNU Library General Public
- * License along with this library; if not, write to the
- * Free Software Foundation, Inc., 59 Temple Place - Suite 330,
- * Boston, MA 02111-1307, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -43,7 +43,7 @@
 
 static void     thunar_simple_job_class_init (ThunarSimpleJobClass *klass);
 static void     thunar_simple_job_finalize   (GObject              *object);
-static gboolean thunar_simple_job_execute    (ThunarJob            *job,
+static gboolean thunar_simple_job_execute    (ExoJob               *job,
                                               GError              **error);
 
 
@@ -90,8 +90,8 @@ thunar_simple_job_get_type (void)
 static void
 thunar_simple_job_class_init (ThunarSimpleJobClass *klass)
 {
-  ThunarJobClass *thunarjob_class;
-  GObjectClass   *gobject_class;
+  GObjectClass *gobject_class;
+  ExoJobClass  *exojob_class;
 
   /* determine the parent type class */
   thunar_simple_job_parent_class = g_type_class_peek_parent (klass);
@@ -99,8 +99,8 @@ thunar_simple_job_class_init (ThunarSimpleJobClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_simple_job_finalize;
 
-  thunarjob_class = THUNAR_JOB_CLASS (klass);
-  thunarjob_class->execute = thunar_simple_job_execute;
+  exojob_class = EXO_JOB_CLASS (klass);
+  exojob_class->execute = thunar_simple_job_execute;
 }
 
 
@@ -119,8 +119,8 @@ thunar_simple_job_finalize (GObject *object)
 
 
 static gboolean
-thunar_simple_job_execute (ThunarJob *job,
-                           GError  **error)
+thunar_simple_job_execute (ExoJob  *job,
+                           GError **error)
 {
   ThunarSimpleJob *simple_job = THUNAR_SIMPLE_JOB (job);
   gboolean         success = TRUE;
@@ -130,15 +130,15 @@ thunar_simple_job_execute (ThunarJob *job,
   _thunar_return_val_if_fail (simple_job->func != NULL, FALSE);
 
   /* try to execute the job using the supplied function */
-  success = (*simple_job->func) (job, simple_job->param_values, &err);
+  success = (*simple_job->func) (THUNAR_JOB (job), simple_job->param_values, &err);
 
   if (!success)
     {
-      g_assert (err != NULL || thunar_job_is_cancelled (job));
+      g_assert (err != NULL || exo_job_is_cancelled (job));
 
       /* set error if the job was cancelled. otherwise just propagate 
        * the results of the processing function */
-      if (thunar_job_set_error_if_cancelled (job, error))
+      if (exo_job_set_error_if_cancelled (job, error))
         {
           g_clear_error (&err);
         }
@@ -180,7 +180,7 @@ thunar_simple_job_execute (ThunarJob *job,
  *
  * Return value: the launched #ThunarJob.
  **/
-ThunarJob*
+ThunarJob *
 thunar_simple_job_launch (ThunarSimpleJobFunc func,
                           guint               n_param_values,
                           ...)
@@ -219,5 +219,5 @@ thunar_simple_job_launch (ThunarSimpleJobFunc func,
   va_end (var_args);
 
   /* launch the job */
-  return thunar_job_launch (THUNAR_JOB (simple_job));
+  return THUNAR_JOB (exo_job_launch (EXO_JOB (simple_job)));
 }

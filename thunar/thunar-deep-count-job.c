@@ -45,7 +45,7 @@ enum
 static void     thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass);
 static void     thunar_deep_count_job_init       (ThunarDeepCountJob      *job);
 static void     thunar_deep_count_job_finalize   (GObject                 *object);
-static gboolean thunar_deep_count_job_execute    (ThunarJob               *job,
+static gboolean thunar_deep_count_job_execute    (ExoJob                  *job,
                                                   GError                 **error);
 
 
@@ -110,8 +110,8 @@ thunar_deep_count_job_get_type (void)
 static void
 thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass)
 {
-  ThunarJobClass *job_class;
-  GObjectClass   *gobject_class;
+  ExoJobClass  *job_class;
+  GObjectClass *gobject_class;
 
   /* Determine the parent type class */
   thunar_deep_count_job_parent_class = g_type_class_peek_parent (klass);
@@ -119,7 +119,7 @@ thunar_deep_count_job_class_init (ThunarDeepCountJobClass *klass)
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->finalize = thunar_deep_count_job_finalize; 
 
-  job_class = THUNAR_JOB_CLASS (klass);
+  job_class = EXO_JOB_CLASS (klass);
   job_class->execute = thunar_deep_count_job_execute;
 
   /**
@@ -180,21 +180,21 @@ thunar_deep_count_job_status_update (ThunarDeepCountJob *job)
 {
   _thunar_return_if_fail (THUNAR_IS_DEEP_COUNT_JOB (job));
 
-  thunar_job_emit (THUNAR_JOB (job), 
-                   deep_count_signals[STATUS_UPDATE],
-                   0,
-                   job->total_size,
-                   job->file_count,
-                   job->directory_count,
-                   job->unreadable_directory_count);
+  exo_job_emit (EXO_JOB (job), 
+                deep_count_signals[STATUS_UPDATE],
+                0,
+                job->total_size,
+                job->file_count,
+                job->directory_count,
+                job->unreadable_directory_count);
 }
 
 
 
 static gboolean
-thunar_deep_count_job_process (ThunarJob *job,
-                               GFile     *file,
-                               GError   **error)
+thunar_deep_count_job_process (ExoJob  *job,
+                               GFile   *file,
+                               GError **error)
 {
   ThunarDeepCountJob *count_job = THUNAR_DEEP_COUNT_JOB (job);
   GFileEnumerator    *enumerator;
@@ -208,7 +208,7 @@ thunar_deep_count_job_process (ThunarJob *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* abort if job was already cancelled */
-  if (thunar_job_is_cancelled (job))
+  if (exo_job_is_cancelled (job))
     return FALSE;
 
   /* query size and type of the current file */
@@ -216,11 +216,11 @@ thunar_deep_count_job_process (ThunarJob *job,
                             G_FILE_ATTRIBUTE_STANDARD_TYPE ","
                             G_FILE_ATTRIBUTE_STANDARD_SIZE,
                             count_job->query_flags,
-                            thunar_job_get_cancellable (job),
+                            exo_job_get_cancellable (job),
                             error);
 
   /* abort on invalid info or cancellation */
-  if (info == NULL || thunar_job_is_cancelled (job))
+  if (info == NULL || exo_job_is_cancelled (job))
     return FALSE;
 
   /* add size of the file to the total size */
@@ -235,10 +235,10 @@ thunar_deep_count_job_process (ThunarJob *job,
                                               G_FILE_ATTRIBUTE_STANDARD_SIZE ","
                                               G_FILE_ATTRIBUTE_STANDARD_NAME,
                                               count_job->query_flags,
-                                              thunar_job_get_cancellable (job),
+                                              exo_job_get_cancellable (job),
                                               error);
 
-      if (!thunar_job_is_cancelled (job))
+      if (!exo_job_is_cancelled (job))
         {
           if (enumerator == NULL)
             {
@@ -262,22 +262,22 @@ thunar_deep_count_job_process (ThunarJob *job,
               /* directory was readable */
               count_job->directory_count += 1;
 
-              while (!thunar_job_is_cancelled (job))
+              while (!exo_job_is_cancelled (job))
                 {
                   /* query next child info */
                   child_info = g_file_enumerator_next_file (enumerator,
-                                                            thunar_job_get_cancellable (job),
+                                                            exo_job_get_cancellable (job),
                                                             error);
 
                   /* abort on invalid child info (iteration ends) or cancellation */
-                  if (child_info == NULL || thunar_job_is_cancelled (job))
+                  if (child_info == NULL || exo_job_is_cancelled (job))
                     break;
 
                   /* generate a GFile for the child */
                   child = g_file_resolve_relative_path (file, g_file_info_get_name (child_info));
 
                   /* recurse unless the job was cancelled before */
-                  if (!thunar_job_is_cancelled (job))
+                  if (!exo_job_is_cancelled (job))
                     thunar_deep_count_job_process (job, child, error);
 
                   /* free resources */
@@ -308,14 +308,14 @@ thunar_deep_count_job_process (ThunarJob *job,
 
   /* we've succeeded if there was no error when loading information
    * about the job file itself and the job was not cancelled */
-  return !thunar_job_is_cancelled (job) && success;
+  return !exo_job_is_cancelled (job) && success;
 }
 
 
 
 static gboolean
-thunar_deep_count_job_execute (ThunarJob *job,
-                               GError   **error)
+thunar_deep_count_job_execute (ExoJob  *job,
+                               GError **error)
 {
   gboolean success;
   GError  *err = NULL;
@@ -324,7 +324,7 @@ thunar_deep_count_job_execute (ThunarJob *job,
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
   /* don't start the job if it was already cancelled */
-  if (thunar_job_set_error_if_cancelled (job, error))
+  if (exo_job_set_error_if_cancelled (job, error))
     return FALSE;
 
   /* count files, directories and compute size of the job file */
@@ -334,11 +334,11 @@ thunar_deep_count_job_execute (ThunarJob *job,
 
   if (!success)
     {
-      g_assert (err != NULL || thunar_job_is_cancelled (job));
+      g_assert (err != NULL || exo_job_is_cancelled (job));
 
       /* set error if the job was cancelled. otherwise just propagate 
        * the results of the processing function */
-      if (thunar_job_set_error_if_cancelled (job, error))
+      if (exo_job_set_error_if_cancelled (job, error))
         {
           if (err != NULL)
             g_error_free (err);
@@ -357,7 +357,7 @@ thunar_deep_count_job_execute (ThunarJob *job,
 
 
 
-ThunarJob *
+ThunarDeepCountJob *
 thunar_deep_count_job_new (GFile              *file,
                            GFileQueryInfoFlags flags)
 {
@@ -369,5 +369,5 @@ thunar_deep_count_job_new (GFile              *file,
   job->file = g_object_ref (file);
   job->query_flags = flags;
 
-  return THUNAR_JOB (job);
+  return job;
 }

@@ -1,3 +1,16 @@
+2009-05-05	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in: Depend on exo-0.3.101svn-r29926 for ExoJob.
+	* thunar/thunar-application.c, thunar/thunar-deep-count-job.{c,h},
+	  thunar/thunar-folder.c, thunar/thunar-io-jobs-util.c,
+	  thunar/thunar-io-jobs.c, thunar/thunar-io-scan-directory.{c,h},
+	  thunar/thunar-job.{c,h}, thunar/thunar-permissions-chooser.c,
+	  thunar/thunar-progress-dialog.{c,h}, thunar/thunar-simple-job.{c,h},
+	  thunar/thunar-size-label.c, thunar/thunar-transfer-job.c: Implement
+	  ThunarJob based on ExoJob. Update a lot of classes to use the
+	  equivalent ExoJob functions instead the ones from ThunarJob which
+	  have been removed.
+
 2009-05-01	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-file.{c,h}, thnuar/thunar-standard-view.c,

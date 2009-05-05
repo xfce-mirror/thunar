@@ -38,10 +38,10 @@ typedef struct _ThunarDeepCountJob        ThunarDeepCountJob;
 #define THUNAR_IS_DEEP_COUNT_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_DEEP_COUNT_JOB)
 #define THUNAR_DEEP_COUNT_JOB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_DEEP_COUNT_JOB, ThunarDeepCountJobClass))
 
-GType      thunar_deep_count_job_get_type (void) G_GNUC_CONST;
+GType               thunar_deep_count_job_get_type (void) G_GNUC_CONST;
 
-ThunarJob *thunar_deep_count_job_new      (GFile              *file,
-                                           GFileQueryInfoFlags flags) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarDeepCountJob *thunar_deep_count_job_new      (GFile              *file,
+                                                    GFileQueryInfoFlags flags) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS;
 

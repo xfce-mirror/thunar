@@ -45,7 +45,7 @@ static const gchar *duplicate_names[4][2] =
 
 /**
  * thunar_io_jobs_util_next_duplicate_file:
- * @job   : a #ThunarTransferJob.
+ * @job   : a #ThunarJob.
  * @file  : the source #GFile.
  * @type  : the operation type (copy or link).
  * @n     : the @n<!---->th copy/link to create the #GFile for.
@@ -90,13 +90,13 @@ thunar_io_jobs_util_next_duplicate_file (ThunarJob *job,
   _thunar_return_val_if_fail (!g_file_is_root (file), NULL);
 
   /* abort on cancellation */
-  if (thunar_job_set_error_if_cancelled (job, error))
+  if (exo_job_set_error_if_cancelled (EXO_JOB (job), error))
     return NULL;
 
   /* query the source file info / display name */
   info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_DISPLAY_NAME, 
                             G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS,
-                            thunar_job_get_cancellable (job), &err);
+                            exo_job_get_cancellable (EXO_JOB (job)), &err);
 
   /* abort on error */
   if (info == NULL)

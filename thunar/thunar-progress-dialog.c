@@ -55,22 +55,22 @@ static void              thunar_progress_dialog_response     (GtkDialog         
 static ThunarJobResponse thunar_progress_dialog_ask          (ThunarProgressDialog       *dialog,
                                                               const gchar                *message,
                                                               ThunarJobResponse           choices,
-                                                              ThunarJob                  *job);
+                                                              ExoJob                     *job);
 static ThunarJobResponse thunar_progress_dialog_ask_replace  (ThunarProgressDialog       *dialog,
                                                               ThunarFile                 *src_file,
                                                               ThunarFile                 *dst_file,
-                                                              ThunarJob                  *job);
+                                                              ExoJob                     *job);
 static void              thunar_progress_dialog_error        (ThunarProgressDialog       *dialog,
                                                               GError                     *error,
-                                                              ThunarJob                  *job);
+                                                              ExoJob                     *job);
 static void              thunar_progress_dialog_finished     (ThunarProgressDialog       *dialog,
-                                                              ThunarJob                  *job);
+                                                              ExoJob                     *job);
 static void              thunar_progress_dialog_info_message (ThunarProgressDialog       *dialog,
                                                               const gchar                *message,
-                                                              ThunarJob                  *job);
+                                                              ExoJob                     *job);
 static void              thunar_progress_dialog_percent      (ThunarProgressDialog       *dialog,
                                                               gdouble                     percent,
-                                                              ThunarJob                  *job);
+                                                              ExoJob                     *job);
 
 
 
@@ -83,7 +83,7 @@ struct _ThunarProgressDialog
 {
   GtkDialog  __parent__;
 
-  ThunarJob *job;
+  ExoJob    *job;
 
   GTimeVal   start_time;
   GTimeVal   last_update_time;
@@ -273,7 +273,7 @@ static ThunarJobResponse
 thunar_progress_dialog_ask (ThunarProgressDialog *dialog,
                             const gchar          *message,
                             ThunarJobResponse     choices,
-                            ThunarJob            *job)
+                            ExoJob               *job)
 {
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (g_utf8_validate (message, -1, NULL), THUNAR_JOB_RESPONSE_CANCEL);
@@ -293,7 +293,7 @@ static ThunarJobResponse
 thunar_progress_dialog_ask_replace (ThunarProgressDialog *dialog,
                                     ThunarFile           *src_file,
                                     ThunarFile           *dst_file,
-                                    ThunarJob            *job)
+                                    ExoJob               *job)
 {
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), THUNAR_JOB_RESPONSE_CANCEL);
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), THUNAR_JOB_RESPONSE_CANCEL);
@@ -313,7 +313,7 @@ thunar_progress_dialog_ask_replace (ThunarProgressDialog *dialog,
 static void
 thunar_progress_dialog_error (ThunarProgressDialog *dialog,
                               GError               *error,
-                              ThunarJob            *job)
+                              ExoJob               *job)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   _thunar_return_if_fail (error != NULL && error->message != NULL);
@@ -331,7 +331,7 @@ thunar_progress_dialog_error (ThunarProgressDialog *dialog,
 
 static void
 thunar_progress_dialog_finished (ThunarProgressDialog *dialog,
-                                 ThunarJob            *job)
+                                 ExoJob               *job)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
@@ -345,7 +345,7 @@ thunar_progress_dialog_finished (ThunarProgressDialog *dialog,
 static void
 thunar_progress_dialog_info_message (ThunarProgressDialog *dialog,
                                      const gchar          *message,
-                                     ThunarJob            *job)
+                                     ExoJob               *job)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   _thunar_return_if_fail (g_utf8_validate (message, -1, NULL));
@@ -370,7 +370,7 @@ time_diff (const GTimeVal *now,
 static void
 thunar_progress_dialog_percent (ThunarProgressDialog *dialog,
                                 gdouble               percent,
-                                ThunarJob            *job)
+                                ExoJob               *job)
 {
   GTimeVal current_time;
   gulong   remaining_time;
@@ -442,7 +442,7 @@ thunar_progress_dialog_response (GtkDialog *dialog,
     case GTK_RESPONSE_CLOSE:
     case GTK_RESPONSE_NO:
       if (G_LIKELY (THUNAR_PROGRESS_DIALOG (dialog)->job != NULL))
-        thunar_job_cancel (THUNAR_PROGRESS_DIALOG (dialog)->job);
+        exo_job_cancel (THUNAR_PROGRESS_DIALOG (dialog)->job);
       break;
     }
 
@@ -469,7 +469,7 @@ thunar_progress_dialog_new (void)
 
 /**
  * thunar_progress_dialog_new_with_job:
- * @job : a #ThunarJob or %NULL.
+ * @job : a #ExoJob    or %NULL.
  *
  * Allocates a new #ThunarProgressDialog and associates it with
  * the @job.
@@ -477,7 +477,7 @@ thunar_progress_dialog_new (void)
  * Return value: the newly allocated #ThunarProgressDialog.
  **/
 GtkWidget*
-thunar_progress_dialog_new_with_job (ThunarJob *job)
+thunar_progress_dialog_new_with_job (ExoJob    *job)
 {
   _thunar_return_val_if_fail (job == NULL || THUNAR_IS_JOB (job), NULL);
   return g_object_new (THUNAR_TYPE_PROGRESS_DIALOG, "job", job, NULL);
@@ -489,12 +489,12 @@ thunar_progress_dialog_new_with_job (ThunarJob *job)
  * thunar_progress_dialog_get_job:
  * @dialog : a #ThunarProgressDialog.
  *
- * Returns the #ThunarJob associated with @dialog
+ * Returns the #ExoJob    associated with @dialog
  * or %NULL if no job is currently associated with @dialog.
  *
  * Return value: the job associated with @dialog or %NULL.
  **/
-ThunarJob *
+ExoJob    *
 thunar_progress_dialog_get_job (ThunarProgressDialog *dialog)
 {
   _thunar_return_val_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog), NULL);
@@ -506,13 +506,13 @@ thunar_progress_dialog_get_job (ThunarProgressDialog *dialog)
 /**
  * thunar_progress_dialog_set_job:
  * @dialog : a #ThunarProgressDialog.
- * @job    : a #ThunarJob or %NULL.
+ * @job    : a #ExoJob    or %NULL.
  *
  * Associates @job with @dialog.
  **/
 void
 thunar_progress_dialog_set_job (ThunarProgressDialog *dialog,
-                                ThunarJob            *job)
+                                ExoJob               *job)
 {
   _thunar_return_if_fail (THUNAR_IS_PROGRESS_DIALOG (dialog));
   _thunar_return_if_fail (job == NULL || THUNAR_IS_JOB (job));

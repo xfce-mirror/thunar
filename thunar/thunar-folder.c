@@ -61,13 +61,13 @@ static void     thunar_folder_set_property                (GObject              
                                                            guint                   prop_uid,
                                                            const GValue           *value,
                                                            GParamSpec             *pspec);
-static void     thunar_folder_error                       (ThunarJob              *job,
+static void     thunar_folder_error                       (ExoJob                 *job,
                                                            GError                 *error,
                                                            ThunarFolder           *folder);
 static gboolean thunar_folder_files_ready                 (ThunarJob              *job,
                                                            GList                  *files,
                                                            ThunarFolder           *folder);
-static void     thunar_folder_finished                    (ThunarJob              *job,
+static void     thunar_folder_finished                    (ExoJob                 *job,
                                                            ThunarFolder           *folder);
 static void     thunar_folder_file_changed                (ThunarFileMonitor      *file_monitor,
                                                            ThunarFile             *file,
@@ -100,7 +100,7 @@ struct _ThunarFolder
 {
   GtkObject __parent__;
 
-  ThunarJob         *job;
+  ThunarJob            *job;
 
   ThunarFile        *corresponding_file;
   GList             *new_files;
@@ -275,7 +275,7 @@ thunar_folder_finalize (GObject *object)
   if (G_UNLIKELY (folder->job != NULL))
     {
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-      thunar_job_cancel (folder->job);
+      exo_job_cancel (EXO_JOB (folder->job));
       g_object_unref (folder->job);
     }
 
@@ -351,13 +351,13 @@ thunar_folder_set_property (GObject      *object,
 
 
 static void
-thunar_folder_error (ThunarJob    *job,
+thunar_folder_error (ExoJob       *job,
                      GError       *error,
                      ThunarFolder *folder)
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
-  _thunar_return_if_fail (folder->job == job);
+  _thunar_return_if_fail (folder->job == THUNAR_JOB (job));
 
   /* tell the consumer about the problem */
   g_signal_emit (G_OBJECT (folder), folder_signals[ERROR], 0, error);
@@ -373,7 +373,7 @@ thunar_folder_files_ready (ThunarJob    *job,
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (folder->monitor == NULL, FALSE);
-  _thunar_return_val_if_fail (folder->job == job, FALSE);
+  _thunar_return_val_if_fail (folder->job == THUNAR_JOB (job), FALSE);
 
   /* merge the list with the existing list of new files */
   folder->new_files = g_list_concat (folder->new_files, files);
@@ -385,7 +385,7 @@ thunar_folder_files_ready (ThunarJob    *job,
 
 
 static void
-thunar_folder_finished (ThunarJob    *job,
+thunar_folder_finished (ExoJob       *job,
                         ThunarFolder *folder)
 {
   ThunarFile *file;
@@ -396,7 +396,7 @@ thunar_folder_finished (ThunarJob    *job,
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
   _thunar_return_if_fail (folder->monitor == NULL);
-  _thunar_return_if_fail (folder->job == job);
+  _thunar_return_if_fail (folder->job == THUNAR_JOB (job));
 
   /* check if we need to merge new files with existing files */
   if (G_UNLIKELY (folder->files != NULL))
@@ -729,7 +729,7 @@ thunar_folder_reload (ThunarFolder *folder)
     {
       /* disconnect from the job */
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-      thunar_job_cancel (THUNAR_JOB (folder->job));
+      exo_job_cancel (EXO_JOB (folder->job));
       g_object_unref (folder->job);
     }
 
