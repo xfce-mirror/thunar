@@ -1,3 +1,20 @@
+2009-05-07	Jannis Pohlmann <jannis@xfce.org>
+
+	* Makefile.am, thunar/thunar-misc-jobs.{c,h}: Add new file for
+	  miscellaneous jobs. Add new job
+	  thunar_misc_jobs_load_template_files() which recursively loads all
+	  template files/directories as ThunarFile objects from 
+	  G_USER_DIRECTORY_TEMPLATES. 
+	* thunar/thunar-gio-extensions.{c,h}: Add new method
+	  g_file_new_for_user_special_dir() which creates a GFile for a
+	  GUserDirectory and falls back to $HOME (so it's ignored later) if
+	  the special dir is not set.
+	* thunar/thunar-create-dialog.h, thunar/thunar-standard-view.c,
+	  thunar/thunar-templates-action.c: Migrate ThunarTemplatesAction away
+	  from ThunarVFS. Use ThunarFile instead of ThunarVfsInfo for the
+	  "create-template" signal. Load the templates menu using
+	  thunar_misc_jobs_load_template_files().
+
 2009-05-05	Jannis Pohlmann <jannis@xfce.org>
 
 	* configure.in.in: Depend on exo-0.3.101svn-r29926 for ExoJob.

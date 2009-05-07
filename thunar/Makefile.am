@@ -122,6 +122,8 @@ Thunar_SOURCES =							\
 	thunar-location-entry.h						\
 	thunar-metafile.c						\
 	thunar-metafile.h						\
+	thunar-misc-jobs.c						\
+	thunar-misc-jobs.h						\
 	thunar-navigator.c						\
 	thunar-navigator.h						\
 	thunar-pango-extensions.c					\

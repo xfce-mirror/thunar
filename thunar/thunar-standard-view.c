@@ -162,7 +162,7 @@ static void                 thunar_standard_view_action_create_empty_file   (Gtk
 static void                 thunar_standard_view_action_create_folder       (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_create_template     (GtkAction                *action,
-                                                                             const ThunarVfsInfo      *info,
+                                                                             const ThunarFile         *file,
                                                                              ThunarStandardView       *standard_view);
 static void                 thunar_standard_view_action_properties          (GtkAction                *action,
                                                                              ThunarStandardView       *standard_view);
@@ -1865,32 +1865,28 @@ thunar_standard_view_action_create_folder (GtkAction          *action,
 
 static void
 thunar_standard_view_action_create_template (GtkAction           *action,
-                                             const ThunarVfsInfo *info,
+                                             const ThunarFile    *file,
                                              ThunarStandardView  *standard_view)
 {
   ThunarApplication *application;
-  const gchar       *content_type;
   ThunarFile        *current_directory;
-  GFile             *file;
   GList              source_path_list;
   GList              target_path_list;
   gchar             *name;
   gchar             *title;
-  gchar             *uri;
 
-  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
   _thunar_return_if_fail (GTK_IS_ACTION (action));
-  _thunar_return_if_fail (info != NULL);
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
 
   /* generate a title for the create dialog */
-  title = g_strdup_printf (_("Create Document from template \"%s\""), info->display_name);
-
-  content_type = thunar_vfs_mime_info_get_name (info->mime_info);
+  title = g_strdup_printf (_("Create Document from template \"%s\""), 
+                           thunar_file_get_display_name (file));
 
   /* ask the user to enter a name for the new document */
   name = thunar_show_create_dialog (GTK_WIDGET (standard_view), 
-                                    content_type, 
-                                    info->display_name, 
+                                    thunar_file_get_content_type (file), 
+                                    thunar_file_get_display_name (file), 
                                     title);
   if (G_LIKELY (name != NULL))
     {
@@ -1898,12 +1894,8 @@ thunar_standard_view_action_create_template (GtkAction           *action,
       current_directory = thunar_navigator_get_current_directory (THUNAR_NAVIGATOR (standard_view));
       if (G_LIKELY (current_directory != NULL))
         {
-          uri = thunar_vfs_path_dup_uri (info->path);
-          file = g_file_new_for_uri (uri);
-          g_free (uri);
-
           /* fake the source path list */
-          source_path_list.data = file;
+          source_path_list.data = thunar_file_get_file (file);
           source_path_list.next = NULL;
           source_path_list.prev = NULL;
 
@@ -1920,7 +1912,6 @@ thunar_standard_view_action_create_template (GtkAction           *action,
 
           /* release the target path */
           g_object_unref (target_path_list.data);
-          g_object_unref (source_path_list.data);
         }
 
       /* release the file name */

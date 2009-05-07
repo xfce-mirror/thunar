@@ -21,7 +21,7 @@
 #ifndef __THUNAR_CREATE_DIALOG_H__
 #define __THUNAR_CREATE_DIALOG_H__
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <gtk/gtk.h>
 
 G_BEGIN_DECLS;
 
