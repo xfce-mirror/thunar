@@ -123,6 +123,95 @@ g_file_is_desktop (GFile *file)
 
 
 
+GKeyFile *
+g_file_query_key_file (GFile              *file,
+                       GCancellable       *cancellable,
+                       GError            **error)
+{
+  GKeyFile *key_file;
+  gchar    *contents = NULL;
+  gsize     length;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), NULL);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, NULL);
+
+  /* try to load the entire file into memory */
+  if (!g_file_load_contents (file, cancellable, &contents, &length, NULL, error))
+    return NULL;
+
+  /* allocate a new key file */
+  key_file = g_key_file_new ();
+
+  /* try to parse the key file from the contents of the file */
+  if (!g_key_file_load_from_data (key_file, contents, length, 
+                                  G_KEY_FILE_KEEP_COMMENTS 
+                                  | G_KEY_FILE_KEEP_TRANSLATIONS,
+                                  error))
+    {
+      g_free (contents);
+      g_key_file_free (key_file);
+      return NULL;
+    }
+  else
+    {
+      g_free (contents);
+      return key_file;
+    }
+}
+
+
+
+gboolean
+g_file_write_key_file (GFile        *file,
+                       GKeyFile     *key_file,
+                       GCancellable *cancellable,
+                       GError      **error)
+{
+  gchar *contents;
+  gsize  length;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (key_file != NULL, FALSE);
+  _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+  /* write the key file into the contents buffer */
+  contents = g_key_file_to_data (key_file, &length, NULL);
+
+  /* try to replace the file contents with the key file data */
+  if (!g_file_replace_contents (file, contents, length, NULL, FALSE, 
+                                G_FILE_CREATE_REPLACE_DESTINATION, NULL,
+                                cancellable, error))
+    {
+      g_free (contents);
+      return FALSE;
+    }
+  else
+    {
+      g_free (contents);
+      return TRUE;
+    }
+}
+
+
+
+gchar *
+g_file_get_location (GFile *file)
+{
+  gchar *location;
+
+  _thunar_return_val_if_fail (G_IS_FILE (file), NULL);
+  
+  location = g_file_get_path (file);
+  if (location == NULL)
+    location = g_file_get_uri (file);
+
+  return location;
+}
+
+
+
 gchar *
 g_file_size_humanize (guint64 size)
 {
@@ -368,4 +457,37 @@ g_volume_is_present (GVolume *volume)
     }
 
   return has_media;
+}
+
+
+
+gboolean
+g_mount_is_same_drive (GMount *mount,
+                       GMount *other)
+{
+  gboolean same_drive = FALSE;
+  GDrive  *mount_drive;
+  GDrive  *other_drive;
+
+  _thunar_return_val_if_fail (mount == NULL || G_IS_MOUNT (mount), FALSE);
+  _thunar_return_val_if_fail (other == NULL || G_IS_MOUNT (other), FALSE);
+
+  if (mount == NULL || other == NULL)
+    return FALSE;
+
+  mount_drive = g_mount_get_drive (mount);
+  other_drive = g_mount_get_drive (other);
+
+  if (mount_drive != NULL && other_drive != NULL)
+    {
+      same_drive = (mount_drive == other_drive);
+    }
+
+  if (mount_drive != NULL)
+    g_object_unref (mount_drive);
+  
+  if (other_drive != NULL)
+    g_object_unref (other_drive);
+
+  return same_drive;
 }

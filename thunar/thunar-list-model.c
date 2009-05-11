@@ -1468,9 +1468,20 @@ sort_by_group (const ThunarFile *a,
                const ThunarFile *b,
                gboolean          case_sensitive)
 {
-  if (a->info->gid < b->info->gid)
+  guint32 gid_a;
+  guint32 gid_b;
+
+  if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
+    return 0;
+
+  gid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
+                                            G_FILE_ATTRIBUTE_UNIX_GID);
+  gid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
+                                            G_FILE_ATTRIBUTE_UNIX_GID);
+
+  if (gid_a < gid_b)
     return -1;
-  else if (a->info->gid > b->info->gid)
+  else if (gid_a > gid_b)
     return 1;
   else
     return sort_by_name (a, b, case_sensitive);
@@ -1515,9 +1526,20 @@ sort_by_owner (const ThunarFile *a,
                const ThunarFile *b,
                gboolean          case_sensitive)
 {
-  if (a->info->uid < b->info->uid)
+  guint32 uid_a;
+  guint32 uid_b;
+
+  if (thunar_file_get_info (a) == NULL || thunar_file_get_info (b) == NULL)
+    return 0;
+
+  uid_a = g_file_info_get_attribute_uint32 (thunar_file_get_info (a),
+                                            G_FILE_ATTRIBUTE_UNIX_UID);
+  uid_b = g_file_info_get_attribute_uint32 (thunar_file_get_info (b),
+                                            G_FILE_ATTRIBUTE_UNIX_UID);
+
+  if (uid_a < uid_b)
     return -1;
-  else if (a->info->uid > b->info->uid)
+  else if (uid_a > uid_b)
     return 1;
   else
     return sort_by_name (a, b, case_sensitive);

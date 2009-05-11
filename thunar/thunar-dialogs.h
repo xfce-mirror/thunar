@@ -20,7 +20,7 @@
 #ifndef __THUNAR_DIALOGS_H__
 #define __THUNAR_DIALOGS_H__
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;

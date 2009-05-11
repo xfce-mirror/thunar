@@ -21,13 +21,16 @@
 #ifndef __THUNAR_FILE_H__
 #define __THUNAR_FILE_H__
 
+#include <glib.h>
+
+#include <thunar-vfs/thunar-vfs.h>
+
+#include <thunarx/thunarx.h>
+
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-gio-extensions.h>
 #include <thunar/thunar-metafile.h>
 #include <thunar/thunar-user.h>
-#include <thunarx/thunarx.h>
-
-#include <glib.h>
 
 G_BEGIN_DECLS;
 
@@ -111,20 +114,20 @@ struct _ThunarFile
   GObject        __parent__;
 
   /*< private >*/
-  ThunarVfsInfo *info;
-  GFileInfo     *ginfo;
-  GFileInfo     *filesystem_info;
   GFileMonitor  *monitor;
+  GFileInfo     *info;
+  GFileInfo     *filesystem_info;
+  GMount        *mount;
   GFile         *gfile;
+  gchar         *custom_icon_name;
+  gchar         *display_name;
+  gchar         *basename;
   guint          flags;
 };
 
 GType             thunar_file_get_type             (void) G_GNUC_CONST;
 
 ThunarFile       *thunar_file_get                  (GFile                  *file,
-                                                    GError                **error);
-ThunarFile       *thunar_file_get_for_info         (ThunarVfsInfo          *info);
-ThunarFile       *thunar_file_get_for_path         (ThunarVfsPath          *path,
                                                     GError                **error);
 ThunarFile       *thunar_file_get_for_uri          (const gchar            *uri,
                                                     GError                **error);
@@ -206,9 +209,10 @@ GList            *thunar_file_get_emblem_names     (ThunarFile              *fil
 void              thunar_file_set_emblem_names     (ThunarFile              *file,
                                                     GList                   *emblem_names);
 
+gchar            *thunar_file_get_custom_icon      (const ThunarFile        *file);
 gboolean          thunar_file_set_custom_icon      (ThunarFile              *file,
                                                     const gchar             *custom_icon,
-                                                    GError                 **error) G_GNUC_WARN_UNUSED_RESULT;
+                                                    GError                 **error);
 
 gchar            *thunar_file_get_icon_name        (const ThunarFile        *file,
                                                     ThunarFileIconState     icon_state,
@@ -234,14 +238,11 @@ gint              thunar_file_compare_by_name      (const ThunarFile       *file
                                                     const ThunarFile       *file_b,
                                                     gboolean                case_sensitive);
 
-
 ThunarFile       *thunar_file_cache_lookup         (const GFile            *file);
-ThunarFile       *thunar_file_cache_lookup_path    (const ThunarVfsPath    *path);
 
 
 GList            *thunar_file_list_get_applications  (GList *file_list);
 GList            *thunar_file_list_to_g_file_list    (GList *file_list);
-GList            *thunar_file_list_to_path_list      (GList *file_list);
 
 gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 
@@ -270,31 +271,16 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  * thunar_file_get_info:
  * @file : a #ThunarFile instance.
  *
- * Returns the #ThunarVfsInfo for @file.
+ * Returns the #GFileInfo for @file.
  *
  * Note, that there's no reference taken for the caller on the
- * returned #ThunarVfsInfo, so if you need the object for a longer
+ * returned #GFileInfo, so if you need the object for a longer
  * perioud, you'll need to take a reference yourself using the
- * thunar_vfs_info_ref() method.
+ * g_object_ref() method.
  *
- * Return value: the #ThunarVfsInfo for @file.
+ * Return value: the #GFileInfo for @file.
  **/
 #define thunar_file_get_info(file) (THUNAR_FILE ((file))->info)
-
-/**
- * thunar_file_get_path:
- * @file  : a #ThunarFile instance.
- *
- * Returns the #ThunarVfsPath, that refers to the location of the @file.
- *
- * Note, that there's no reference taken for the caller on the
- * returned #ThunarVfsPath, so if you need the object for a longer
- * period, you'll need to take a reference yourself using the
- * thunar_vfs_path_ref() function.
- *
- * Return value: the path to the @file.
- **/
-#define thunar_file_get_path(file) (THUNAR_FILE ((file))->info->path)
 
 /**
  * thunar_file_get_file:
@@ -310,22 +296,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
 #define thunar_file_get_file(file) (THUNAR_FILE ((file))->gfile)
 
 /**
- * thunar_file_get_mime_info:
- * @file : a #ThunarFile instance.
- *
- * Returns the MIME type information for the given @file object. This
- * function is garantied to always return a valid #ThunarVfsMimeInfo.
- *
- * Note, that there's no reference taken for the caller on the
- * returned #ThunarVfsMimeInfo, so if you need the object for a
- * longer period, you'll need to take a reference yourself using
- * the thunar_vfs_mime_info_ref() function.
- *
- * Return value: the MIME type.
- **/
-#define thunar_file_get_mime_info(file) (THUNAR_FILE ((file))->info->mime_info)
-
-/**
  * thunar_file_dup_uri:
  * @file : a #ThunarFile instance.
  *
@@ -335,21 +305,6 @@ gboolean         thunar_file_is_desktop              (const ThunarFile *file);
  * Return value: the URI for @file.
  **/
 #define thunar_file_dup_uri(file) (g_file_get_uri (THUNAR_FILE ((file))->gfile))
-
-/**
- * thunar_file_get_custom_icon:
- * @file : a #ThunarFile instance.
- *
- * Queries the custom icon from @file if any,
- * else %NULL is returned. The custom icon
- * can be either a themed icon name or an
- * absolute path to an icon file in the local
- * file system.
- *
- * Return value: the custom icon for @file
- *               or %NULL.
- **/
-#define thunar_file_get_custom_icon(file) (g_strdup (thunar_vfs_info_get_custom_icon (THUNAR_FILE ((file))->info)))
 
 /**
  * thunar_file_changed:

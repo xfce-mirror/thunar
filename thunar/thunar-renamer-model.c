@@ -631,6 +631,7 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
                                    ThunarFileMonitor  *file_monitor)
 {
   ThunarRenamerModelItem *item;
+  ThunarVfsInfo          *info;
   GtkTreePath            *path;
   GtkTreeIter             iter;
   GList                  *lp;
@@ -646,11 +647,12 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
       {
         /* check if the file changed on disk */
         item = THUNAR_RENAMER_MODEL_ITEM (lp->data);
-        if (!thunar_vfs_info_matches (item->info, thunar_file_get_info (file)))
+        info = thunarx_file_info_get_vfs_info (THUNARX_FILE_INFO (file));
+        if (info == NULL || !thunar_vfs_info_matches (item->info, info))
           {
             /* connect to the new info */
             thunar_vfs_info_unref (item->info);
-            item->info = thunar_vfs_info_ref (thunar_file_get_info (file));
+            item->info = info;
 
             /* check if we're frozen */
             if (G_LIKELY (!renamer_model->frozen))
@@ -663,6 +665,8 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
                 break;
               }
           }
+        else
+          thunar_vfs_info_unref (info);
 
         /* determine the iter for the item */
         GTK_TREE_ITER_INIT (iter, renamer_model->stamp, lp);
@@ -1005,7 +1009,7 @@ thunar_renamer_model_item_new (ThunarFile *file)
   ThunarRenamerModelItem *item;
 
   item = _thunar_slice_new0 (ThunarRenamerModelItem);
-  item->info = thunar_vfs_info_ref (thunar_file_get_info (file));
+  item->info = thunarx_file_info_get_vfs_info (THUNARX_FILE_INFO (file));
   item->file = g_object_ref (G_OBJECT (file));
   item->dirty = TRUE;
 

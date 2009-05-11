@@ -20,6 +20,8 @@
 #ifndef __THUNAR_THUMBNAIL_GENERATOR_H__
 #define __THUNAR_THUMBNAIL_GENERATOR_H__
 
+#include <thunar-vfs/thunar-vfs.h>
+
 #include <thunar/thunar-file.h>
 
 G_BEGIN_DECLS;

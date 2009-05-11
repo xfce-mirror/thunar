@@ -508,8 +508,11 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
 
   /* setup the DnD icon for the button */
   icon_name = thunar_file_get_custom_icon (file);
-  if (G_LIKELY (icon_name == NULL))
-    icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, icon_theme);
+  if (icon_name == NULL)
+    {
+      icon_name = thunar_file_get_icon_name (file, location_button->file_icon_state, 
+                                             icon_theme);
+    }
   gtk_drag_source_set_icon_name (GTK_BIN (location_button)->child, icon_name);
   g_free (icon_name);
 }

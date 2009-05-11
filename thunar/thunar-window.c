@@ -2233,7 +2233,6 @@ thunar_window_current_directory_destroy (ThunarFile   *current_directory,
                                          ThunarWindow *window)
 {
   ThunarFile *new_directory = NULL;
-  GMount     *mount;
   GFile      *path;
   GFile      *tmp;
 
@@ -2242,24 +2241,40 @@ thunar_window_current_directory_destroy (ThunarFile   *current_directory,
   _thunar_return_if_fail (window->current_directory == current_directory);
 
   /* determine the path of the current directory */
-  path = thunar_file_get_file (current_directory);
+  path = g_object_ref (thunar_file_get_file (current_directory));
 
-  while (new_directory == NULL && path != NULL)
+  /* try to find a parent directory that still exists */
+  while (new_directory == NULL)
     {
-      /* TODO make this asynchronous if possible */
-      mount = g_file_find_enclosing_mount (path, NULL, NULL);
-
-      if (mount != NULL)
+      /* check whether the current directory exists */
+      if (g_file_query_exists (path, NULL))
         {
+          /* it does, try to load the file */
           new_directory = thunar_file_get (path, NULL);
-          g_object_unref (mount);
-        }
 
-      tmp = g_file_get_parent (path);
-      g_object_unref (path);
-      path = tmp;
+          /* fall back to $HOME if loading the file failed */
+          if (new_directory == NULL)
+            break;
+        }
+      else
+        {
+          /* determine the parent of the directory */
+          tmp = g_file_get_parent (path);
+          
+          /* if there's no parent this means that we've found no parent
+           * that still exists at all. Fall back to $HOME then */
+          if (tmp == NULL)
+            break;
+
+          /* free the old directory */
+          g_object_unref (path);
+
+          /* check the parent next */
+          path = tmp;
+        }
     }
 
+  /* make sure we don't leak */
   if (path != NULL)
     g_object_unref (path);
 

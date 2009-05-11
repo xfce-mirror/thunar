@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -342,7 +343,7 @@ thunar_thumbnail_generator_enqueue (ThunarThumbnailGenerator *generator,
       /* allocate a thumbnail info for the file */
       info = _thunar_slice_new (ThunarThumbnailInfo);
       info->file = g_object_ref (G_OBJECT (file));
-      info->info = thunar_vfs_info_copy (thunar_file_get_info (file));
+      info->info = thunarx_file_info_get_vfs_info (THUNARX_FILE_INFO (file));
 
       /* schedule the request */
       generator->requests = g_list_append (generator->requests, info);

@@ -1,3 +1,52 @@
+2009-05-11	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/Makefile.am, thunar/thunar-exec.{c,h}: Import thunar_exec_*()
+	  functions from ThunarVFS. A part of that can probably be replaced
+	  with calls to libxfce4ui.
+	* thunar/thunar-dialogs.{c,h}: Rename left-out THUNAR_VFS_JOB_RESPONSE*
+	  defines to THUNAR_JOB_RESPONSE*. Remove thunar-vfs.h include.
+	* thunar/thunar-file.{c,h}: Remove the ThunarVfsInfo struct member of
+	  ThunarFile. In all function calls, make sure that we don't crash if
+	  we can't load the GFileInfo for the file. Cache the basename and 
+	  display name of the file in thunar_file_load(). If no GFileInfo is 
+	  available, try to guess them from the GFile. Use the new methods for
+	  querying a GKeyFile for a GFile to determine the custom icon name,
+	  if available. Cache that one, too. Remove thunar_file_get_for_info(),
+	  thunar_file_get_for_path(), rewrite  thunar_file_get_for_uri(),
+	  rewrite thunar_file_get_parent(), thunar_file_execute() (based on
+	  thunar_exec_*() functions), thunar_file_rename() (based on
+	  g_file_set_display_name()), replace/disable ThunarVfsFileType
+	  references in thunar_file_get_mode_string(), return TRUE from
+	  thunar_file_is_executable() for .desktop files, rewrite
+	  thunar_file_is_renamable(), thunar_file_get_custom_icon(),
+	  thunar_file_set_custom_icon(), thunar_file_reload(), remove
+	  thunar_file_cache_lookup_path(), thunar_file_list_to_path_list(),
+	  thunar_file_get_path() and thunar_file_get_mime_info(). Make
+	  thunar_file_get_info() return the GFileInfo. Rewrite 
+	  thunarx_file_info_get_vfs_info() which for now creates a new
+	  ThunarVfsInfo and returns it. Callers now have to release the 
+	  ThunarVfsInfo later. Add GMount member to ThunarFile.
+	* thunar/thunar-folder.c: Make sure to set the job to NULL after
+	  unref'ing it. Otherwise thunar_folder_get_loading() will always
+	  return TRUE and the watch cursor won't disappear.
+	* thunar/thunar-gio-extensions.{c,h}: Add new functions
+	  g_file_query_key_file() and g_file_write_key_file(). Also add
+	  g_file_get_location() which returns a path for local files and an
+	  URI for the rest, and g_mount_is_same_drive() which checks whether
+	  two GMounts belong to the same GDrive. 
+	* thunar/thunar-icon-factory.c, thunar/thunar-renamer-model.c,
+	  thunar/thunar-thumbnail-generator.{c,h}: Migrate to the new 
+	  thunarx_file_info_get_vfs_info() function.
+	* thunar/thunar-list-model.c: Make sure not to crash when trying to
+	  compare two ThunarFile of which at least one has no GFileInfo.
+	* thunar/thunar-metafile.{c,h}: Remove thunar-vfs.h include.
+	* thunar/thunar-progress-dialog.{c,h}: Use ThunarJob instead of ExoJob
+	  whenever it is appropriate. Remove thunar-vfs.h include.
+	* thunar/thunar-window.c: Rewrite
+	  thunar_window_current_directory_destroy() so that it simply searches
+	  for the first parent directory that still exists and falls back to
+	  $HOME otherwise.
+
 2009-05-07	Jannis Pohlmann <jannis@xfce.org>
 
 	* Makefile.am, thunar/thunar-misc-jobs.{c,h}: Add new file for

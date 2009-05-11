@@ -21,7 +21,9 @@
 #ifndef __THUNAR_PROGRESS_DIALOG_H__
 #define __THUNAR_PROGRESS_DIALOG_H__
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <gtk/gtk.h>
+
+#include <thunar/thunar-job.h>
 
 G_BEGIN_DECLS;
 
@@ -38,11 +40,11 @@ typedef struct _ThunarProgressDialog      ThunarProgressDialog;
 GType         thunar_progress_dialog_get_type      (void) G_GNUC_CONST;
 
 GtkWidget    *thunar_progress_dialog_new           (void) G_GNUC_MALLOC;
-GtkWidget    *thunar_progress_dialog_new_with_job  (ExoJob               *job) G_GNUC_MALLOC;
+GtkWidget    *thunar_progress_dialog_new_with_job  (ThunarJob            *job) G_GNUC_MALLOC;
 
-ExoJob       *thunar_progress_dialog_get_job       (ThunarProgressDialog *dialog);
+ThunarJob    *thunar_progress_dialog_get_job       (ThunarProgressDialog *dialog);
 void          thunar_progress_dialog_set_job       (ThunarProgressDialog *dialog,
-                                                    ExoJob               *job);
+                                                    ThunarJob            *job);
 
 G_END_DECLS;
 

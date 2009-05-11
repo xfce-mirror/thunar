@@ -21,7 +21,7 @@
 #ifndef __THUNAR_METAFILE_H__
 #define __THUNAR_METAFILE_H__
 
-#include <thunar-vfs/thunar-vfs.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS;
 

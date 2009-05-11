@@ -33,6 +33,8 @@
 #include <gio/gdesktopappinfo.h>
 #endif
 
+#include <thunar-vfs/thunar-vfs.h>
+
 #include <thunar/thunar-application.h>
 #include <thunar/thunar-dbus-client.h>
 #include <thunar/thunar-dbus-service.h>

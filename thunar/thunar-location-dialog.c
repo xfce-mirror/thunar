@@ -28,7 +28,7 @@
 
 
 
-static void thunar_location_dialog_init (ThunarLocationDialog      *location_dialog);
+static void thunar_location_dialog_init (ThunarLocationDialog *location_dialog);
 
 
 

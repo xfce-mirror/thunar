@@ -11,6 +11,7 @@ INCLUDES =								\
 	-DLIBEXECDIR=\"$(libexecdir)\"					\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"				\
 	-DTHUNAR_VERSION_API=\"$(THUNAR_VERSION_API)\"			\
+	-DSN_API_NOT_YET_FROZEN						\
 	$(PLATFORM_CPPFLAGS)
 
 bin_SCRIPTS =								\
@@ -70,6 +71,8 @@ Thunar_SOURCES =							\
 	thunar-emblem-chooser.h						\
 	thunar-enum-types.c						\
 	thunar-enum-types.h						\
+	thunar-exec.c							\
+	thunar-exec.h							\
 	thunar-file.c							\
 	thunar-file.h							\
 	thunar-file-monitor.c						\
@@ -217,6 +220,7 @@ Thunar_CFLAGS =								\
 	$(GTHREAD_CFLAGS)						\
 	$(GIO_CFLAGS)							\
 	$(LIBSM_CFLAGS)							\
+	$(LIBSTARTUP_NOTIFICATION_CFLAGS)				\
 	$(PLATFORM_CFLAGS)
 
 Thunar_LDFLAGS =							\
@@ -231,6 +235,7 @@ Thunar_LDADD =								\
 	$(EXO_LIBS)							\
 	$(GTHREAD_LIBS)							\
 	$(GIO_LIBS)							\
+	$(LIBSTARTUP_NOTIFICATION_LIBS)					\
 	$(LIBSM_LIBS)
 
 Thunar_DEPENDENCIES =							\

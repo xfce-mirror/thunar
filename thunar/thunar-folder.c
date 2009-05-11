@@ -100,7 +100,7 @@ struct _ThunarFolder
 {
   GtkObject __parent__;
 
-  ThunarJob            *job;
+  ThunarJob         *job;
 
   ThunarFile        *corresponding_file;
   GList             *new_files;
@@ -275,8 +275,8 @@ thunar_folder_finalize (GObject *object)
   if (G_UNLIKELY (folder->job != NULL))
     {
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-      exo_job_cancel (EXO_JOB (folder->job));
       g_object_unref (folder->job);
+      folder->job = NULL;
     }
 
   /* disconnect from the corresponding file */
@@ -357,7 +357,6 @@ thunar_folder_error (ExoJob       *job,
 {
   _thunar_return_if_fail (THUNAR_IS_FOLDER (folder));
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
-  _thunar_return_if_fail (folder->job == THUNAR_JOB (job));
 
   /* tell the consumer about the problem */
   g_signal_emit (G_OBJECT (folder), folder_signals[ERROR], 0, error);
@@ -373,7 +372,6 @@ thunar_folder_files_ready (ThunarJob    *job,
   _thunar_return_val_if_fail (THUNAR_IS_FOLDER (folder), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_JOB (job), FALSE);
   _thunar_return_val_if_fail (folder->monitor == NULL, FALSE);
-  _thunar_return_val_if_fail (folder->job == THUNAR_JOB (job), FALSE);
 
   /* merge the list with the existing list of new files */
   folder->new_files = g_list_concat (folder->new_files, files);
@@ -396,7 +394,6 @@ thunar_folder_finished (ExoJob       *job,
   _thunar_return_if_fail (THUNAR_IS_JOB (job));
   _thunar_return_if_fail (THUNAR_IS_FILE (folder->corresponding_file));
   _thunar_return_if_fail (folder->monitor == NULL);
-  _thunar_return_if_fail (folder->job == THUNAR_JOB (job));
 
   /* check if we need to merge new files with existing files */
   if (G_UNLIKELY (folder->files != NULL))
@@ -469,7 +466,7 @@ thunar_folder_finished (ExoJob       *job,
 
   /* we did it, the folder is loaded */
   g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-  g_object_unref (G_OBJECT (folder->job));
+  g_object_unref (folder->job);
   folder->job = NULL;
 
   /* add us to the file alteration monitor */
@@ -729,8 +726,8 @@ thunar_folder_reload (ThunarFolder *folder)
     {
       /* disconnect from the job */
       g_signal_handlers_disconnect_matched (folder->job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, folder);
-      exo_job_cancel (EXO_JOB (folder->job));
       g_object_unref (folder->job);
+      folder->job = NULL;
     }
 
   /* disconnect from the file alteration monitor */

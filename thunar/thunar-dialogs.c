@@ -404,8 +404,8 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
   gint         response;
   gint         n, m;
 
-  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_VFS_JOB_RESPONSE_CANCEL);
-  _thunar_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_VFS_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (parent == NULL || GTK_IS_WINDOW (parent), THUNAR_JOB_RESPONSE_CANCEL);
+  _thunar_return_val_if_fail (g_utf8_validate (question, -1, NULL), THUNAR_JOB_RESPONSE_CANCEL);
 
   /* try to separate the question into primary and secondary parts */
   separator = strstr (question, ": ");
@@ -465,27 +465,27 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
 
       switch (response)
         {
-        case THUNAR_VFS_JOB_RESPONSE_YES:
+        case THUNAR_JOB_RESPONSE_YES:
           mnemonic = _("_Yes");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_YES_ALL:
+        case THUNAR_JOB_RESPONSE_YES_ALL:
           mnemonic = _("Yes to _all");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_NO:
+        case THUNAR_JOB_RESPONSE_NO:
           mnemonic = _("_No");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_NO_ALL:
+        case THUNAR_JOB_RESPONSE_NO_ALL:
           mnemonic = _("N_o to all");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_RETRY:
+        case THUNAR_JOB_RESPONSE_RETRY:
           mnemonic = _("_Retry");
           break;
 
-        case THUNAR_VFS_JOB_RESPONSE_CANCEL:
+        case THUNAR_JOB_RESPONSE_CANCEL:
           response = GTK_RESPONSE_CANCEL;
           mnemonic = _("_Cancel");
           break;
@@ -509,7 +509,7 @@ thunar_dialogs_show_job_ask (GtkWindow        *parent,
 
   /* transform the result as required */
   if (G_UNLIKELY (response <= 0))
-    response = THUNAR_VFS_JOB_RESPONSE_CANCEL;
+    response = THUNAR_JOB_RESPONSE_CANCEL;
 
   /* cleanup */
   g_string_free (secondary, TRUE);

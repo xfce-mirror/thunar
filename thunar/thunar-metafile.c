@@ -38,6 +38,10 @@
 #include <string.h>
 #endif
 
+#include <gio/gio.h>
+
+#include <exo/exo.h>
+
 #include <tdb/tdb.h>
 
 #include <thunar/thunar-metafile.h>

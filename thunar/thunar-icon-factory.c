@@ -1,6 +1,7 @@
 /* $Id$ */
 /*-
  * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
+ * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
  * This program is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the Free
@@ -924,7 +925,7 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   ThunarVfsInfo       *info;
   ThunarVfsPath       *path;
   ThunarIconKey        key;
-  GdkPixbuf           *icon;
+  GdkPixbuf           *icon = NULL;
   guint64              time;
   gchar               *icon_name;
   gchar               *thumb_path;
@@ -933,9 +934,9 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (icon_size > 0, NULL);
 
-  /* check if there's a custom icon for the file */
+  /* check if we have a custom icon for this file */
   icon_name = thunar_file_get_custom_icon (file);
-  if (G_UNLIKELY (icon_name != NULL))
+  if (icon_name != NULL)
     {
       /* try to load the icon */
       icon = thunar_icon_factory_lookup_icon (factory, icon_name, icon_size, FALSE);
@@ -955,33 +956,38 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
         {
 again:
           /* determine the ThunarVfsInfo for the file */
-          info = thunar_file_get_info (file);
-
-          /* try to load an existing thumbnail for the file */
-          thumb_path = thunar_vfs_thumb_factory_lookup_thumbnail (factory->thumbnail_factory, info);
-
-          /* check if we can generate a thumbnail in case there's none yet */
-          if (G_UNLIKELY (thumb_path == NULL && thunar_vfs_thumb_factory_can_thumbnail (factory->thumbnail_factory, info)))
+          info = thunarx_file_info_get_vfs_info (THUNARX_FILE_INFO (file));
+          if (info != NULL)
             {
-              /* schedule the thumbnail loading for the file */
-              thunar_thumbnail_generator_enqueue (factory->thumbnail_generator, file);
+              /* try to load an existing thumbnail for the file */
+              thumb_path = thunar_vfs_thumb_factory_lookup_thumbnail (factory->thumbnail_factory, info);
 
-              /* set the thumbnail state to "loading" */
-              thumb_state = THUNAR_FILE_THUMB_STATE_LOADING;
-            }
+              /* check if we can generate a thumbnail in case there's none yet */
+              if (G_UNLIKELY (thumb_path == NULL && thunar_vfs_thumb_factory_can_thumbnail (factory->thumbnail_factory, info)))
+                {
+                  /* schedule the thumbnail loading for the file */
+                  thunar_thumbnail_generator_enqueue (factory->thumbnail_generator, file);
 
-          if (G_LIKELY (thumb_path != NULL))
-            {
-              thumb_state = THUNAR_FILE_THUMB_STATE_READY;
-              g_object_set_qdata_full (G_OBJECT (file), thunar_file_thumb_path_quark, thumb_path, g_free);
-            }
-          else if (thumb_state != THUNAR_FILE_THUMB_STATE_LOADING)
-            {
-              thumb_state = THUNAR_FILE_THUMB_STATE_NONE;
-            }
+                  /* set the thumbnail state to "loading" */
+                  thumb_state = THUNAR_FILE_THUMB_STATE_LOADING;
+                }
 
-          /* apply the new state */
-          thunar_file_set_thumb_state (file, thumb_state);
+              if (G_LIKELY (thumb_path != NULL))
+                {
+                  thumb_state = THUNAR_FILE_THUMB_STATE_READY;
+                  g_object_set_qdata_full (G_OBJECT (file), thunar_file_thumb_path_quark, thumb_path, g_free);
+                }
+              else if (thumb_state != THUNAR_FILE_THUMB_STATE_LOADING)
+                {
+                  thumb_state = THUNAR_FILE_THUMB_STATE_NONE;
+                }
+
+              /* apply the new state */
+              thunar_file_set_thumb_state (file, thumb_state);
+
+              /* release the file info */
+              thunar_vfs_info_unref (info);
+            }
         }
 
       /* check if we have a thumbnail path loaded */
@@ -995,40 +1001,45 @@ again:
               if (G_LIKELY (icon != NULL))
                 {
                   /* determine the VFS info for the file */
-                  info = thunar_file_get_info (file);
-
-                  /* determine mtime and path for the thumbnail */
-                  path = g_object_get_qdata (G_OBJECT (icon), thunar_icon_thumb_path_quark);
-                  time = GPOINTER_TO_UINT (g_object_get_qdata (G_OBJECT (icon), thunar_icon_thumb_time_quark));
-
-                  /* check if mtime and path was already associated with the thumbnail */
-                  if (G_UNLIKELY (path == NULL))
+                  info = thunarx_file_info_get_vfs_info (THUNARX_FILE_INFO (file));
+                  if (info != NULL)
                     {
-                      /* just save mtime and path for the thumbnail */
-                      g_object_set_qdata_full (G_OBJECT (icon), thunar_icon_thumb_path_quark,
-                                               thunar_vfs_path_ref (info->path),
-                                               (GDestroyNotify) thunar_vfs_path_unref);
-                      g_object_set_qdata (G_OBJECT (icon), thunar_icon_thumb_time_quark,
-                                          GUINT_TO_POINTER (info->mtime));
-                    }
-                  else if (G_UNLIKELY (time != info->mtime || !thunar_vfs_path_equal (path, info->path)))
-                    {
-                      /* the thumbnail is no longer valid, remove it from our internal cache */
-                      key.name = thumb_path;
-                      key.size = icon_size;
+                      /* determine mtime and path for the thumbnail */
+                      path = g_object_get_qdata (G_OBJECT (icon), thunar_icon_thumb_path_quark);
+                      time = GPOINTER_TO_UINT (g_object_get_qdata (G_OBJECT (icon), thunar_icon_thumb_time_quark));
 
-                      /* try to remove based on the key */
-                      if (g_hash_table_remove (factory->icon_cache, &key))
+                      /* check if mtime and path was already associated with the thumbnail */
+                      if (G_UNLIKELY (path == NULL))
                         {
-                          /* we only restart the operation if we were successfull, else we could recurse infinitely */
-                          thumb_state = THUNAR_FILE_THUMB_STATE_UNKNOWN;
-                          g_object_unref (G_OBJECT (icon));
-                          goto again;
+                          /* just save mtime and path for the thumbnail */
+                          g_object_set_qdata_full (G_OBJECT (icon), thunar_icon_thumb_path_quark,
+                                                   thunar_vfs_path_ref (info->path),
+                                                   (GDestroyNotify) thunar_vfs_path_unref);
+                          g_object_set_qdata (G_OBJECT (icon), thunar_icon_thumb_time_quark,
+                                              GUINT_TO_POINTER (info->mtime));
                         }
-                    }
+                      else if (G_UNLIKELY (time != info->mtime || !thunar_vfs_path_equal (path, info->path)))
+                        {
+                          /* the thumbnail is no longer valid, remove it from our internal cache */
+                          key.name = thumb_path;
+                          key.size = icon_size;
 
-                  /* ok, we have a valid thumbnail */
-                  return icon;
+                          /* try to remove based on the key */
+                          if (g_hash_table_remove (factory->icon_cache, &key))
+                            {
+                              /* we only restart the operation if we were successfull, else we could recurse infinitely */
+                              thumb_state = THUNAR_FILE_THUMB_STATE_UNKNOWN;
+                              g_object_unref (G_OBJECT (icon));
+                              goto again;
+                            }
+                        }
+
+                      /* release the info */
+                      thunar_vfs_info_unref (info);
+
+                      /* ok, we have a valid thumbnail */
+                      return icon;
+                    }
                 }
             }
         }
