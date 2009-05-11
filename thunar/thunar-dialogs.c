@@ -34,6 +34,8 @@
 
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-job.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
@@ -48,11 +50,10 @@
  *
  * Displays the Thunar rename dialog for a single file rename.
  *
- * Return value: returns %TRUE if the file has been successfully renamed.
- *               Note that it also returns %FALSE if no rename was required
- *               and thus there is no need for visible updates.
+ * Return value: The #ThunarJob responsible for renaming the file or
+ *               %NULL if there was no renaming required.
  **/
-gboolean
+ThunarJob *
 thunar_dialogs_show_rename_file (GtkWindow *parent,
                                  ThunarFile *file)
 {
@@ -60,23 +61,19 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
   GtkIconTheme      *icon_theme;
   const gchar       *filename;
   const gchar       *text;
+  ThunarJob         *job = NULL;
   GtkWidget         *dialog;
   GtkWidget         *entry;
   GtkWidget         *label;
   GtkWidget         *image;
   GtkWidget         *table;
   GdkPixbuf         *icon;
-  GError            *error = NULL;
   glong              offset;
   gchar             *title;
   gint               response;
-  gboolean           succeed = FALSE;
 
   _thunar_return_val_if_fail (GTK_IS_WINDOW (parent), FALSE);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-
-  /* take an extra reference on the file */
-  g_object_ref (G_OBJECT (file));
 
   /* get the filename of the file */
   filename = thunar_file_get_display_name (file);
@@ -138,7 +135,7 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
 
           /* select the text prior to the dot */
           if (G_LIKELY (offset > 0))
-            gtk_entry_select_region (GTK_ENTRY (entry), 0, offset);
+            gtk_editable_select_region (GTK_EDITABLE (entry), 0, offset);
         }
     }
 
@@ -156,27 +153,14 @@ thunar_dialogs_show_rename_file (GtkWindow *parent,
       if (G_LIKELY (!exo_str_is_equal (filename, text)))
         {
           /* try to rename the file */
-          if (!thunar_file_rename (file, text, &error))
-            {
-              /* display an error message */
-              thunar_dialogs_show_error (GTK_WIDGET (parent), error, _("Failed to rename \"%s\""), filename);
-
-              /* release the error */
-              g_error_free (error);
-            }
-          else
-            {
-              /* we've succeeded */
-              succeed = TRUE;
-            }
+          job = thunar_io_jobs_rename_file (file, text);
         }
     }
 
   /* cleanup */
-  g_object_unref (G_OBJECT (file));
   gtk_widget_destroy (dialog);
 
-  return succeed;
+  return job;
 }
 
 

@@ -777,7 +777,6 @@ thunar_file_load (ThunarFile   *file,
 
   /* determine the basename */
   file->basename = g_file_get_basename (file->gfile);
-
   _thunar_assert (file->basename != NULL);
 
   /* determine the custom icon name for .desktop files */
@@ -1151,26 +1150,35 @@ thunar_file_launch (ThunarFile *file,
  * Return value: %TRUE on success, else %FALSE.
  **/
 gboolean
-thunar_file_rename (ThunarFile  *file,
-                    const gchar *name,
-                    GError     **error)
+thunar_file_rename (ThunarFile   *file,
+                    const gchar  *name,
+                    GCancellable *cancellable,
+                    gboolean      called_from_job,
+                    GError      **error)
 {
   GFile *previous_file;
   GFile *renamed_file;
   gint   watch_count;
 
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  _thunar_return_val_if_fail (g_utf8_validate (name, -1, NULL), FALSE);
+  _thunar_return_val_if_fail (cancellable == NULL || G_IS_CANCELLABLE (cancellable), FALSE);
+  _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
   /* remember the previous file */
-  previous_file = file->gfile;
+  previous_file = g_object_ref (file->gfile);
   
   /* try to rename the file */
-  /* TODO Make this asynchronous */
-  renamed_file = g_file_set_display_name (file->gfile, name, NULL, error);
+  renamed_file = g_file_set_display_name (file->gfile, name, cancellable, error);
 
   /* check if we succeeded */
   if (renamed_file != NULL)
     {
       /* set the new file */
       file->gfile = renamed_file;
+
+      /* reload file information */
+      thunar_file_load (file, NULL, NULL);
 
       /* need to re-register the monitor handle for the new uri */
       watch_count = THUNAR_FILE_GET_WATCH_COUNT (file);
@@ -1202,16 +1210,21 @@ thunar_file_rename (ThunarFile  *file,
 
       G_UNLOCK (file_cache_mutex);
 
-      /* tell the associated folder that the file was renamed */
-      thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
+      if (!called_from_job)
+        {
+          /* tell the associated folder that the file was renamed */
+          thunarx_file_info_renamed (THUNARX_FILE_INFO (file));
 
-      /* emit the file changed signal */
-      thunar_file_changed (file);
-      
+          /* emit the file changed signal */
+          thunar_file_changed (file);
+        }
+
       return TRUE;
     }
   else
     {
+      g_object_unref (previous_file);
+
       return FALSE;
     }
 }

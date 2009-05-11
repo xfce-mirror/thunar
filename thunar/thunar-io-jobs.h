@@ -48,6 +48,8 @@ ThunarJob *thunar_io_jobs_change_mode      (GFile         *file,
                                             ThunarFileMode file_mode,
                                             gboolean       recursive) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 ThunarJob *thunar_io_jobs_list_directory   (GFile         *directory) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *thunar_io_jobs_rename_file      (ThunarFile    *file,
+                                            const gchar   *display_name) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
 
 G_END_DECLS
 

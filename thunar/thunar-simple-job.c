@@ -221,3 +221,12 @@ thunar_simple_job_launch (ThunarSimpleJobFunc func,
   /* launch the job */
   return THUNAR_JOB (exo_job_launch (EXO_JOB (simple_job)));
 }
+
+
+
+GValueArray *
+thunar_simple_job_get_param_values (ThunarSimpleJob *job)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_SIMPLE_JOB (job), NULL);
+  return job->param_values;
+}

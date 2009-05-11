@@ -150,6 +150,8 @@ gboolean          thunar_file_launch               (ThunarFile             *file
 
 gboolean          thunar_file_rename               (ThunarFile             *file,
                                                     const gchar            *name,
+                                                    GCancellable           *cancellable,
+                                                    gboolean                called_from_job,
                                                     GError                **error);
 
 GdkDragAction     thunar_file_accepts_drop         (ThunarFile             *file,

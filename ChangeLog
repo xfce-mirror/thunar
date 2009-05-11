@@ -1,3 +1,25 @@
+2009-05-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* configure.in.in: Depend on libexo-0.3.101svn-r29948 for
+	  exo_job_send_to_mainloop().
+	* thunar/thunar-dialogs.{c,h}, thunar/thunar-io-jobs.{c,h}, 
+	  thunar/thunar-dialogs.{c,h}, thunar/thunar-properties-dialog.c,
+	  thunar/thunar-standard-view.c, thunar/thunar-tree-view.c: Add new 
+	  simple job thunar_io_jobs_rename_file() which renames a ThunarFile 
+	  asynchronously. Make us of it in thunar_dialogs_show_rename_file()
+	  which now launches and returns the rename job instead of calling
+	  thunar_file_rename() directly. Update ThunarPropertiesDialog, 
+	  ThunarStandardView and ThunarTreeView to handle the error/finished
+	  signals and destroy the job when it's finished. 
+	* thunar/thunar-file.{c,h}: Add a GCancellable parameter and a boolean
+	  parameter called "called_from_job". The latter is used to disable
+	  the thunarx_file_info_renamed() and thunar_file_changed() calls. The
+	  rename job is responsible to call these in the mainloop of the
+	  application after the rename has succeeded. 
+	* thunar/thunar-simple-job.{c,h}: Add new function
+	  thunar_simple_job_get_param_values() which returns the GValueArray
+	  created from the parameters passed to thunar_simple_job_launch().
+
 2009-05-11	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/Makefile.am, thunar/thunar-exec.{c,h}: Import thunar_exec_*()

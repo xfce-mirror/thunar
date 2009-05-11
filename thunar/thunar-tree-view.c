@@ -37,6 +37,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-shortcuts-icon-renderer.h>
+#include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-tree-model.h>
 #include <thunar/thunar-tree-view.h>
 
@@ -1650,10 +1651,47 @@ thunar_tree_view_action_delete (ThunarTreeView *view)
 
 
 static void
+thunar_tree_view_rename_error (ExoJob         *job,
+                               GError         *error,
+                               ThunarTreeView *view)
+{
+  GValueArray *param_values;
+  ThunarFile  *file;
+
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (error != NULL);
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+
+  param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
+  file = g_value_get_object (g_value_array_get_nth (param_values, 0));
+
+  /* display an error message */
+  thunar_dialogs_show_error (GTK_WIDGET (view), error, _("Failed to rename \"%s\""),
+                             thunar_file_get_display_name (file));
+}
+
+
+
+static void
+thunar_tree_view_rename_finished (ExoJob         *job,
+                                  ThunarTreeView *view)
+{
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
+
+  /* destroy the job */
+  g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, view);
+  g_object_unref (job);
+}
+
+
+
+static void
 thunar_tree_view_action_rename (ThunarTreeView *view)
 {
   ThunarFile *file;
   GtkWidget  *window;
+  ThunarJob  *job;
 
   _thunar_return_if_fail (THUNAR_IS_TREE_VIEW (view));
   
@@ -1665,10 +1703,15 @@ thunar_tree_view_action_rename (ThunarTreeView *view)
       window = gtk_widget_get_toplevel (GTK_WIDGET (view));
       
       /* run the rename dialog */
-      thunar_dialogs_show_rename_file (GTK_WINDOW (window), file);
+      job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), file);
+      if (G_LIKELY (job != NULL))
+        {
+          g_signal_connect (job, "error", G_CALLBACK (thunar_tree_view_rename_error), view);
+          g_signal_connect (job, "finished", G_CALLBACK (thunar_tree_view_rename_finished), view);
+        }
       
       /* release the file */
-      g_object_unref (G_OBJECT (file));
+      g_object_unref (file);
     }
 }
 

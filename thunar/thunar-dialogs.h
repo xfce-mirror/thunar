@@ -22,10 +22,11 @@
 
 #include <thunar/thunar-enum-types.h>
 #include <thunar/thunar-file.h>
+#include <thunar/thunar-job.h>
 
 G_BEGIN_DECLS;
 
-gboolean           thunar_dialogs_show_rename_file     (GtkWindow            *parent,
+ThunarJob         *thunar_dialogs_show_rename_file     (GtkWindow            *parent,
                                                         ThunarFile           *file) G_GNUC_INTERNAL;
 
 void               thunar_dialogs_show_about           (GtkWindow            *parent,

@@ -52,11 +52,12 @@ typedef struct _ThunarSimpleJob      ThunarSimpleJob;
 #define THUNAR_IS_SIMPLE_JOB_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_SIMPLE_JOB))
 #define THUNAR_SIMPLE_JOB_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_SIMPLE_JOB, ThunarSimpleJobClass))
 
-GType      thunar_simple_job_get_type  (void) G_GNUC_CONST;
+GType      thunar_simple_job_get_type           (void) G_GNUC_CONST;
 
-ThunarJob *thunar_simple_job_launch    (ThunarSimpleJobFunc func,
-                                        guint               n_param_values,
-                                        ...) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+ThunarJob *thunar_simple_job_launch             (ThunarSimpleJobFunc func,
+                                                 guint               n_param_values,
+                                                 ...) G_GNUC_MALLOC G_GNUC_WARN_UNUSED_RESULT;
+GValueArray *thunar_simple_job_get_param_values (ThunarSimpleJob    *job);
 
 G_END_DECLS
 

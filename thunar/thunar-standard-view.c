@@ -44,6 +44,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-properties-dialog.h>
 #include <thunar/thunar-renamer-dialog.h>
+#include <thunar/thunar-simple-job.h>
 #include <thunar/thunar-standard-view.h>
 #include <thunar/thunar-standard-view-ui.h>
 #include <thunar/thunar-templates-action.h>
@@ -2197,11 +2198,63 @@ thunar_standard_view_action_make_link (GtkAction          *action,
 
 
 static void
+thunar_standard_view_rename_error (ExoJob             *job,
+                                   GError             *error,
+                                   ThunarStandardView *standard_view)
+{
+  GValueArray *param_values;
+  ThunarFile  *file;
+
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (error != NULL);
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
+  file = g_value_get_object (g_value_array_get_nth (param_values, 0));
+
+  /* display an error message */
+  thunar_dialogs_show_error (GTK_WIDGET (standard_view), error, 
+                             _("Failed to rename \"%s\""),
+                             thunar_file_get_display_name (file));
+}
+
+
+
+static void
+thunar_standard_view_rename_finished (ExoJob             *job,
+                                      ThunarStandardView *standard_view)
+{
+  GValueArray *param_values;
+  ThunarFile  *file;
+
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
+
+  param_values = thunar_simple_job_get_param_values (THUNAR_SIMPLE_JOB (job));
+  file = g_value_get_object (g_value_array_get_nth (param_values, 0));
+
+  /* make sure the file is still visible */
+  thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, TRUE, FALSE, 0.0f, 0.0f);
+
+  /* update the selection, so we get updated actions, statusbar,
+   * etc. with the new file name and probably new mime type.
+   */
+  thunar_standard_view_selection_changed (standard_view);
+
+  /* destroy the job */
+  g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, standard_view);
+  g_object_unref (job);
+}
+
+
+
+static void
 thunar_standard_view_action_rename (GtkAction          *action,
                                     ThunarStandardView *standard_view)
 {
   ThunarFile *file;
   GtkWidget  *window;
+  ThunarJob  *job;
 
   _thunar_return_if_fail (GTK_IS_ACTION (action));
   _thunar_return_if_fail (THUNAR_IS_STANDARD_VIEW (standard_view));
@@ -2216,15 +2269,11 @@ thunar_standard_view_action_rename (GtkAction          *action,
       file = THUNAR_FILE (standard_view->selected_files->data);
 
       /* run the rename dialog */
-      if (thunar_dialogs_show_rename_file (GTK_WINDOW (window), file))
+      job = thunar_dialogs_show_rename_file (GTK_WINDOW (window), file);
+      if (G_LIKELY (job != NULL))
         {
-          /* make sure the file is still visible */
-          thunar_view_scroll_to_file (THUNAR_VIEW (standard_view), file, TRUE, FALSE, 0.0f, 0.0f);
-
-          /* update the selection, so we get updated actions, statusbar,
-           * etc. with the new file name and probably new mime type.
-           */
-          thunar_standard_view_selection_changed (standard_view);
+          g_signal_connect (job, "error", G_CALLBACK (thunar_standard_view_rename_error), standard_view);
+          g_signal_connect (job, "finished", G_CALLBACK (thunar_standard_view_rename_finished), standard_view);
         }
     }
   else if (g_list_length (standard_view->selected_files) > 1)

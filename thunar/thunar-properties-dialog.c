@@ -31,6 +31,8 @@
 
 #include <gdk/gdkkeysyms.h>
 
+#include <exo/exo.h>
+
 #include <thunar/thunar-abstract-dialog.h>
 #include <thunar/thunar-chooser-button.h>
 #include <thunar/thunar-dialogs.h>
@@ -39,6 +41,8 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-io-jobs.h>
+#include <thunar/thunar-job.h>
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-pango-extensions.h>
 #include <thunar/thunar-permissions-chooser.h>
@@ -89,8 +93,6 @@ static void     thunar_properties_dialog_icon_button_clicked  (GtkWidget        
                                                                ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update               (ThunarPropertiesDialog      *dialog);
 static void     thunar_properties_dialog_update_providers     (ThunarPropertiesDialog      *dialog);
-static gboolean thunar_properties_dialog_rename_idle          (gpointer                     user_data);
-static void     thunar_properties_dialog_rename_idle_destroy  (gpointer                     user_data);
 
 
 
@@ -130,7 +132,6 @@ struct _ThunarPropertiesDialog
   GtkWidget              *volume_label;
   GtkWidget              *permissions_chooser;
 
-  guint                   rename_idle_id;
 };
 
 
@@ -553,10 +554,6 @@ thunar_properties_dialog_finalize (GObject *object)
   /* drop the reference on the provider factory */
   g_object_unref (dialog->provider_factory);
 
-  /* be sure to cancel any pending rename idle source */
-  if (G_UNLIKELY (dialog->rename_idle_id != 0))
-    g_source_remove (dialog->rename_idle_id);
-
   (*G_OBJECT_CLASS (thunar_properties_dialog_parent_class)->finalize) (object);
 }
 
@@ -648,13 +645,65 @@ thunar_properties_dialog_reload (ThunarPropertiesDialog *dialog)
 
 
 static void
+thunar_properties_dialog_rename_error (ExoJob                 *job,
+                                       GError                 *error,
+                                       ThunarPropertiesDialog *dialog)
+{
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (error != NULL);
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  /* display an error message */
+  thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\""),
+                             thunar_file_get_display_name (dialog->file));
+}
+
+
+
+static void
+thunar_properties_dialog_rename_finished (ExoJob                 *job,
+                                          ThunarPropertiesDialog *dialog)
+{
+  const gchar *new_name;
+
+  _thunar_return_if_fail (EXO_IS_JOB (job));
+  _thunar_return_if_fail (THUNAR_IS_PROPERTIES_DIALOG (dialog));
+
+  /* determine the new display name */
+  new_name = thunar_file_get_display_name (dialog->file);
+
+  /* reset the entry widget to the new name */
+  gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), new_name);
+
+  g_signal_handlers_disconnect_matched (job, G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL, dialog);
+  g_object_unref (job);
+}
+
+
+
+static void
 thunar_properties_dialog_activate (GtkWidget              *entry,
                                    ThunarPropertiesDialog *dialog)
 {
-  if (G_LIKELY (dialog->rename_idle_id == 0))
+  const gchar *old_name;
+  ThunarJob   *job;
+  gchar       *new_name;
+
+  /* check if we still have a valid file and if the user is allowed to rename */
+  if (G_UNLIKELY (dialog->file == NULL || !GTK_WIDGET_SENSITIVE (dialog->name_entry)))
+    return;
+
+  /* determine new and old name */
+  new_name = gtk_editable_get_chars (GTK_EDITABLE (dialog->name_entry), 0, -1);
+  old_name = thunar_file_get_display_name (dialog->file);
+  if (g_utf8_collate (new_name, old_name) != 0)
     {
-      dialog->rename_idle_id = g_idle_add_full (G_PRIORITY_DEFAULT, thunar_properties_dialog_rename_idle,
-                                                dialog, thunar_properties_dialog_rename_idle_destroy);
+      job = thunar_io_jobs_rename_file (dialog->file, new_name);
+      if (job != NULL)
+        {
+          g_signal_connect (job, "error", G_CALLBACK (thunar_properties_dialog_rename_error), dialog);
+          g_signal_connect (job, "finished", G_CALLBACK (thunar_properties_dialog_rename_finished), dialog);
+        }
     }
 }
 
@@ -973,55 +1022,6 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
 
   /* cleanup */
   g_object_unref (G_OBJECT (icon_factory));
-}
-
-
-
-static gboolean
-thunar_properties_dialog_rename_idle (gpointer user_data)
-{
-  ThunarPropertiesDialog *dialog = THUNAR_PROPERTIES_DIALOG (user_data);
-  const gchar            *old_name;
-  GError                 *error = NULL;
-  gchar                  *new_name;
-
-  /* check if we still have a valid file and if the user is allowed to rename */
-  if (G_UNLIKELY (dialog->file == NULL || !GTK_WIDGET_SENSITIVE (dialog->name_entry)))
-    return FALSE;
-
-  GDK_THREADS_ENTER ();
-
-  /* determine new and old name */
-  new_name = gtk_editable_get_chars (GTK_EDITABLE (dialog->name_entry), 0, -1);
-  old_name = thunar_file_get_display_name (dialog->file);
-  if (g_utf8_collate (new_name, old_name) != 0)
-    {
-      /* try to rename the file to the new name */
-      if (!thunar_file_rename (dialog->file, new_name, &error))
-        {
-          /* reset the entry widget to the old name */
-          gtk_entry_set_text (GTK_ENTRY (dialog->name_entry), old_name);
-
-          /* display an error message */
-          thunar_dialogs_show_error (GTK_WIDGET (dialog), error, _("Failed to rename \"%s\""), old_name);
-
-          /* release the error */
-          g_error_free (error);
-        }
-    }
-  g_free (new_name);
-
-  GDK_THREADS_LEAVE ();
-
-  return FALSE;
-}
-
-
-
-static void
-thunar_properties_dialog_rename_idle_destroy (gpointer user_data)
-{
-  THUNAR_PROPERTIES_DIALOG (user_data)->rename_idle_id = 0;
 }
 
 
