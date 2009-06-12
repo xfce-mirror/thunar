@@ -1,21 +1,21 @@
-/* $Id$ */
+/* vi:set et ai sw=2 sts=2 ts=2: */
 /*-
- * Copyright (c) 2005-2006 Benedikt Meurer <benny@xfce.org>
  * Copyright (c) 2009 Jannis Pohlmann <jannis@xfce.org>
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU General Public License as published by the Free
- * Software Foundation; either version 2 of the License, or (at your option)
- * any later version.
+ * This program is free software; you can redistribute it and/or 
+ * modify it under the terms of the GNU General Public License as
+ * published by the Free Software Foundation; either version 2 of 
+ * the License, or (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful, but WITHOUT
- * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
- * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
- * more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with
- * this program; if not, write to the Free Software Foundation, Inc., 59 Temple
- * Place, Suite 330, Boston, MA  02111-1307  USA
+ * You should have received a copy of the GNU General Public 
+ * License along with this program; if not, write to the Free 
+ * Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+ * Boston, MA 02110-1301, USA.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -29,6 +29,7 @@
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-thumbnailer-proxy.h>
+#include <thunar/thunar-thumbnailer-manager-proxy.h>
 
 
 
@@ -44,22 +45,26 @@ enum
 
 
 
-static void thunar_thumbnailer_finalize             (GObject           *object);
-static void thunar_thumbnailer_thumbnailer_error    (DBusGProxy        *proxy,
-                                                     guint              handle,
-                                                     const gchar      **uris,
-                                                     gint               code,
-                                                     const gchar       *message,
-                                                     ThunarThumbnailer *thumbnailer);
-static void thunar_thumbnailer_thumbnailer_finished (DBusGProxy        *proxy,
-                                                     guint              handle,
-                                                     ThunarThumbnailer *thumbnailer);
-static void thunar_thumbnailer_thumbnailer_ready    (DBusGProxy        *proxy,
-                                                     const gchar      **uris,
-                                                     ThunarThumbnailer *thumbnailer);
-static void thunar_thumbnailer_thumbnailer_started  (DBusGProxy        *proxy,
-                                                     guint              handle,
-                                                     ThunarThumbnailer *thumbnailer);
+static void thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
+                                                       DBusGConnection   *connection);
+static void thunar_thumbnailer_init_manager_proxy     (ThunarThumbnailer *thumbnailer,
+                                                       DBusGConnection   *connection);
+static void thunar_thumbnailer_finalize               (GObject           *object);
+static void thunar_thumbnailer_thumbnailer_error      (DBusGProxy        *proxy,
+                                                       guint              handle,
+                                                       const gchar      **uris,
+                                                       gint               code,
+                                                       const gchar       *message,
+                                                       ThunarThumbnailer *thumbnailer);
+static void thunar_thumbnailer_thumbnailer_finished   (DBusGProxy        *proxy,
+                                                       guint              handle,
+                                                       ThunarThumbnailer *thumbnailer);
+static void thunar_thumbnailer_thumbnailer_ready      (DBusGProxy        *proxy,
+                                                       const gchar      **uris,
+                                                       ThunarThumbnailer *thumbnailer);
+static void thunar_thumbnailer_thumbnailer_started    (DBusGProxy        *proxy,
+                                                       guint              handle,
+                                                       ThunarThumbnailer *thumbnailer);
 
 
 
@@ -72,14 +77,19 @@ struct _ThunarThumbnailer
 {
   GObject __parent__;
 
+  DBusGProxy *manager_proxy;
   DBusGProxy *thumbnailer_proxy;
+
   GMutex     *lock;
-  GList      *requests;
+
+  gchar     **supported_types;
 };
 
 
 
+static DBusGProxy *thunar_thumbnailer_manager_proxy;
 static DBusGProxy *thunar_thumbnailer_proxy;
+static DBusGProxy *thunar_manager_proxy;
 static guint       thumbnailer_signals[LAST_SIGNAL];
 
 
@@ -154,72 +164,113 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 
   thumbnailer->lock = g_mutex_new ();
 
+  thumbnailer->supported_types = NULL;
+
   connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
 
+  thunar_thumbnailer_init_thumbnailer_proxy (thumbnailer, connection);
+  thunar_thumbnailer_init_manager_proxy (thumbnailer, connection);
+
   if (connection != NULL)
+    dbus_g_connection_unref (connection);
+}
+
+
+
+static void
+thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
+                                           DBusGConnection   *connection)
+{
+  if (connection == NULL)
     {
-      if (thunar_thumbnailer_proxy == NULL)
-        {
-          thunar_thumbnailer_proxy = 
-            dbus_g_proxy_new_for_name (connection, 
-                                       "org.freedesktop.thumbnails.Thumbnailer",
-                                       "/org/freedesktop/thumbnails/Thumbnailer",
-                                       "org.freedesktop.thumbnails.Thumbnailer");
+      thumbnailer->thumbnailer_proxy = NULL;
+      return;
+    }
 
-          g_object_add_weak_pointer (G_OBJECT (thunar_thumbnailer_proxy),
-                                     (gpointer) &thunar_thumbnailer_proxy);
+  if (thunar_thumbnailer_proxy == NULL)
+    {
+      thunar_thumbnailer_proxy = 
+        dbus_g_proxy_new_for_name (connection, 
+                                   "org.freedesktop.thumbnails.Thumbnailer",
+                                   "/org/freedesktop/thumbnails/Thumbnailer",
+                                   "org.freedesktop.thumbnails.Thumbnailer");
 
-          thumbnailer->thumbnailer_proxy = thunar_thumbnailer_proxy;
+      g_object_add_weak_pointer (G_OBJECT (thunar_thumbnailer_proxy),
+                                 (gpointer) &thunar_thumbnailer_proxy);
 
-          /* TODO this should actually be VOID:UINT,POINTER,INT,STRING */
-          dbus_g_object_register_marshaller (_thunar_marshal_VOID__UINT_POINTER_UINT_STRING,
-                                             G_TYPE_NONE,
-                                             G_TYPE_UINT, 
-                                             G_TYPE_STRV, 
-                                             G_TYPE_UINT, 
-                                             G_TYPE_STRING,
-                                             G_TYPE_INVALID);
+      thumbnailer->thumbnailer_proxy = thunar_thumbnailer_proxy;
 
-          dbus_g_object_register_marshaller ((GClosureMarshal) g_cclosure_marshal_VOID__POINTER,
-                                             G_TYPE_NONE,
-                                             G_TYPE_STRV,
-                                             G_TYPE_INVALID);
+      /* TODO this should actually be VOID:UINT,POINTER,INT,STRING */
+      dbus_g_object_register_marshaller (_thunar_marshal_VOID__UINT_POINTER_UINT_STRING,
+                                         G_TYPE_NONE,
+                                         G_TYPE_UINT, 
+                                         G_TYPE_STRV, 
+                                         G_TYPE_UINT, 
+                                         G_TYPE_STRING,
+                                         G_TYPE_INVALID);
 
-          dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Error", 
-                                   G_TYPE_UINT, G_TYPE_STRV, G_TYPE_UINT, G_TYPE_STRING, 
-                                   G_TYPE_INVALID);
+      dbus_g_object_register_marshaller ((GClosureMarshal) g_cclosure_marshal_VOID__POINTER,
+                                         G_TYPE_NONE,
+                                         G_TYPE_STRV,
+                                         G_TYPE_INVALID);
 
-          dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Finished", 
-                                   G_TYPE_UINT, G_TYPE_INVALID);
+      dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Error", 
+                               G_TYPE_UINT, G_TYPE_STRV, G_TYPE_UINT, G_TYPE_STRING, 
+                               G_TYPE_INVALID);
+      dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Finished", 
+                               G_TYPE_UINT, G_TYPE_INVALID);
+      dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Ready", 
+                               G_TYPE_STRV, G_TYPE_INVALID);
+      dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Started", 
+                               G_TYPE_UINT, G_TYPE_INVALID);
+    }
+  else
+    {
+      thumbnailer->thumbnailer_proxy = g_object_ref (thunar_thumbnailer_proxy);
+    }
 
-          dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Ready", 
-                                   G_TYPE_STRV, G_TYPE_INVALID);
+  dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Error",
+                               G_CALLBACK (thunar_thumbnailer_thumbnailer_error), 
+                               thumbnailer, NULL);
+  dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Finished",
+                               G_CALLBACK (thunar_thumbnailer_thumbnailer_finished), 
+                               thumbnailer, NULL);
+  dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Ready",
+                               G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), 
+                               thumbnailer, NULL);
+  dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Started", 
+                               G_CALLBACK (thunar_thumbnailer_thumbnailer_started), 
+                               thumbnailer, NULL);
+}
 
-          dbus_g_proxy_add_signal (thumbnailer->thumbnailer_proxy, "Started", 
-                                   G_TYPE_UINT, G_TYPE_INVALID);
-        }
-      else
-        {
-          thumbnailer->thumbnailer_proxy = g_object_ref (thunar_thumbnailer_proxy);
-        }
 
-      dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Error",
-                                   G_CALLBACK (thunar_thumbnailer_thumbnailer_error), 
-                                   thumbnailer, NULL);
 
-      dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Finished",
-                                   G_CALLBACK (thunar_thumbnailer_thumbnailer_finished), 
-                                   thumbnailer, NULL);
+static void
+thunar_thumbnailer_init_manager_proxy (ThunarThumbnailer *thumbnailer,
+                                       DBusGConnection   *connection)
+{
+  if (connection == NULL)
+    {
+      thumbnailer->manager_proxy = NULL;
+      return;
+    }
 
-      dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Ready",
-                                   G_CALLBACK (thunar_thumbnailer_thumbnailer_ready), 
-                                   thumbnailer, NULL);
+  if (thunar_manager_proxy == NULL)
+    {
+      thunar_thumbnailer_manager_proxy = 
+        dbus_g_proxy_new_for_name (connection, 
+                                   "org.freedesktop.thumbnails.Manager",
+                                   "/org/freedesktop/thumbnails/Manager",
+                                   "org.freedesktop.thumbnails.Manager");
 
-      dbus_g_proxy_connect_signal (thumbnailer->thumbnailer_proxy, "Started", 
-                                   G_CALLBACK (thunar_thumbnailer_thumbnailer_started), 
-                                   thumbnailer, NULL);
+      g_object_add_weak_pointer (G_OBJECT (thunar_thumbnailer_manager_proxy),
+                                 (gpointer) &thunar_thumbnailer_manager_proxy);
 
-      dbus_g_connection_unref (connection);
+      thumbnailer->manager_proxy = thunar_thumbnailer_manager_proxy;
+    }
+  else
+    {
+      thumbnailer->manager_proxy = g_object_ref (thunar_thumbnailer_manager_proxy);
     }
 }
 
@@ -241,6 +292,8 @@ thunar_thumbnailer_finalize (GObject *object)
                                             NULL, NULL, thumbnailer);
       g_object_unref (thumbnailer->thumbnailer_proxy);
     }
+
+  g_strfreev (thumbnailer->supported_types);
 
   /* release the thumbnailer lock */
   g_mutex_unlock (thumbnailer->lock);
@@ -339,6 +392,7 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
                                guint             *handle)
 {
   const gchar *mime_hints[2] = { NULL, NULL };
+  gboolean     supported = FALSE;
   gboolean     success = FALSE;
   gchar       *uris[2] = { NULL, NULL };
 
@@ -351,14 +405,21 @@ thunar_thumbnailer_queue_file (ThunarThumbnailer *thumbnailer,
 
   if (thumbnailer->thumbnailer_proxy != NULL)
     {
-      uris[0] = thunar_file_dup_uri (file);
-      mime_hints[0] = thunar_file_get_content_type (file);
+      g_mutex_unlock (thumbnailer->lock);
+      supported = thunar_thumbnailer_file_is_supported (thumbnailer, file);
+      g_mutex_lock (thumbnailer->lock);
 
-      success =thunar_thumbnailer_proxy_queue (thumbnailer->thumbnailer_proxy,
-                                               (const gchar **)uris, 
-                                               mime_hints, 0, handle, NULL);
+      if (supported)
+        {
+          uris[0] = thunar_file_dup_uri (file);
+          mime_hints[0] = thunar_file_get_content_type (file);
 
-      g_free (uris[0]);
+          success =thunar_thumbnailer_proxy_queue (thumbnailer->thumbnailer_proxy,
+                                                   (const gchar **)uris, 
+                                                   mime_hints, 0, handle, NULL);
+
+          g_free (uris[0]);
+        }
     }
 
   /* release the thumbnailer lock */
@@ -377,6 +438,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
   const gchar **mime_hints;
   gboolean      success = FALSE;
   GList        *lp;
+  GList        *supported_files = NULL;
   gchar       **uris;
   guint         n;
 
@@ -389,24 +451,37 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
 
   if (thumbnailer->thumbnailer_proxy != NULL)
     {
-      uris = g_new0 (gchar *, g_list_length (files) + 1);
-      mime_hints = g_new0 (const gchar *, g_list_length (files) + 1);
+      g_mutex_unlock (thumbnailer->lock);
 
-      for (lp = g_list_last (files), n = 0; lp != NULL; lp = lp->prev, ++n)
+      for (lp = g_list_last (files); lp != NULL; lp = lp->prev)
+        if (thunar_thumbnailer_file_is_supported (thumbnailer, lp->data))
+          supported_files = g_list_prepend (supported_files, lp->data);
+
+      g_mutex_lock (thumbnailer->lock);
+
+      if (supported_files != NULL)
         {
-          uris[n] = thunar_file_dup_uri (lp->data);
-          mime_hints[n] = thunar_file_get_content_type (lp->data);
+          uris = g_new0 (gchar *, g_list_length (supported_files) + 1);
+          mime_hints = g_new0 (const gchar *, g_list_length (supported_files) + 1);
+
+          for (lp = supported_files, n = 0; lp != NULL; lp = lp->next, ++n)
+            {
+              uris[n] = thunar_file_dup_uri (lp->data);
+              mime_hints[n] = thunar_file_get_content_type (lp->data);
+            }
+
+          uris[n] = NULL;
+          mime_hints[n] = NULL;
+
+          g_list_free (supported_files);
+              
+          success = thunar_thumbnailer_proxy_queue (thumbnailer->thumbnailer_proxy, 
+                                                    (const gchar **)uris, mime_hints, 
+                                                    0, handle, NULL);
+
+          g_strfreev (uris);
+          g_free (mime_hints);
         }
-
-      uris[n] = NULL;
-      mime_hints[n] = NULL;
-          
-      success = thunar_thumbnailer_proxy_queue (thumbnailer->thumbnailer_proxy, 
-                                                (const gchar **)uris, mime_hints, 
-                                                0, handle, NULL);
-
-      g_strfreev (uris);
-      g_free (mime_hints);
     }
 
   /* release the thumbnailer lock */
@@ -431,4 +506,51 @@ thunar_thumbnailer_unqueue (ThunarThumbnailer *thumbnailer,
 
   /* release the thumbnailer lock */
   g_mutex_unlock (thumbnailer->lock);
+}
+
+
+
+gboolean
+thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
+                                      ThunarFile        *file)
+{
+  const gchar *content_type;
+  gboolean     supported = FALSE;
+  guint        n;
+
+  _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+
+  /* acquire the thumbnailer lock */
+  g_mutex_lock (thumbnailer->lock);
+
+  if (thumbnailer->manager_proxy == NULL)
+    {
+      /* release the thumbnailer lock */
+      g_mutex_unlock (thumbnailer->lock);
+      return TRUE;
+    }
+
+  if (thumbnailer->supported_types == NULL)
+    {
+      thunar_thumbnailer_manager_proxy_get_supported (thumbnailer->manager_proxy,
+                                                      &thumbnailer->supported_types, 
+                                                      NULL);
+    }
+
+  if (thumbnailer->supported_types != NULL)
+    {
+      for (n = 0; !supported && thumbnailer->supported_types[n] != NULL; ++n)
+        {
+          content_type = thunar_file_get_content_type (file);
+
+          if (g_content_type_is_a (content_type, thumbnailer->supported_types[n]))
+            supported = TRUE;
+        }
+    }
+
+  /* release the thumbnailer lock */
+  g_mutex_unlock (thumbnailer->lock);
+
+  return supported;
 }

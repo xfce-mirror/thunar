@@ -34,18 +34,20 @@ typedef struct _ThunarThumbnailer      ThunarThumbnailer;
 #define THUNAR_IS_THUMBNAILER_CLASS(klass) (G_TYPE_CHECK_CLASS_TYPE ((klass), THUNAR_TYPE_THUMBNAILER))
 #define THUNAR_THUMBNAILER_GET_CLASS(obj)  (G_TYPE_INSTANCE_GET_CLASS ((obj), THUNAR_TYPE_THUMBNAILER, ThunarThumbnailerClass))
 
-GType              thunar_thumbnailer_get_type    (void) G_GNUC_CONST;
+GType              thunar_thumbnailer_get_type          (void) G_GNUC_CONST;
 
-ThunarThumbnailer *thunar_thumbnailer_new         (void) G_GNUC_MALLOC;
+ThunarThumbnailer *thunar_thumbnailer_new               (void) G_GNUC_MALLOC;
 
-gboolean           thunar_thumbnailer_queue_file  (ThunarThumbnailer *generator,
-                                                   ThunarFile        *file,
-                                                   guint             *handle);
-gboolean           thunar_thumbnailer_queue_files (ThunarThumbnailer *generator,
-                                                   GList             *files,
-                                                   guint             *handle);
-void               thunar_thumbnailer_unqueue     (ThunarThumbnailer *thumbnailer,
-                                                   guint              handle);
+gboolean           thunar_thumbnailer_queue_file        (ThunarThumbnailer *generator,
+                                                         ThunarFile        *file,
+                                                         guint             *handle);
+gboolean           thunar_thumbnailer_queue_files       (ThunarThumbnailer *generator,
+                                                         GList             *files,
+                                                         guint             *handle);
+void               thunar_thumbnailer_unqueue           (ThunarThumbnailer *thumbnailer,
+                                                         guint              handle);
+gboolean           thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
+                                                         ThunarFile        *file);
 
 G_END_DECLS;
 

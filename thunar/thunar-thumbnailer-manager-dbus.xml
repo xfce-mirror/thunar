@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/org/freedesktop/thumbnails/Manager">
+  <interface name="org.freedesktop.thumbnails.Manager">
+    <method name="Register">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+      <arg type="s" name="uri_scheme" direction="in" />
+      <arg type="s" name="mime_type" direction="in" />
+    </method>
+    <method name="GetSupported">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+      <arg type="as" name="mime_types" direction="out" />
+    </method>
+  </interface>
+</node>

@@ -1,5 +1,20 @@
 2009-06-12	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/Makefile.am, thunar/thunar-thumbnailer-manager-dbus.xml: Add
+	  XML D-Bus information for the org.freedesktop.thumbnails.Manager
+	  interface.
+	* thunar/thunar-thumbnailer.{c,h}: Start implementing the client side
+	  of the org.freedesktop.thumbnails.Manager interface. Add new method
+	  thunar_thumbnailer_file_is_supported() which requests the supported
+	  content types from the thumbnailer manager on demand and checks if
+	  the content type of a ThunarFile is a subtype of any of these. Use
+	  this in thunar_thumbnailer_queue_files() and
+	  thunar_thumbnailer_queue_file() to filter out files which
+	  are not supported by the thumbnailer anyway. Make queue requests
+	  fail when there are no supported files in the request.
+
+2009-06-12	Jannis Pohlmann <jannis@xfce.org>
+
 	* Makefile.am, thunar/thunar-image.{c,h},
 	  thunar/thunar-thumbnailer-dbus.xml, thunar/thunar-thumbnailer.{c,h}:
 	  Add two new classes ThunarImage and ThunarThumbnailer. ThunarImage

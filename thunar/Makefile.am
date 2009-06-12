@@ -248,14 +248,16 @@ Thunar_DEPENDENCIES =							\
 if HAVE_DBUS
 thunar_built_sources +=							\
 	thunar-dbus-service-infos.h					\
-	thunar-thumbnailer-proxy.h
+	thunar-thumbnailer-proxy.h					\
+	thunar-thumbnailer-manager-proxy.h
 
 thunar_dbus_sources =							\
 	thunar-dbus-client.c						\
 	thunar-dbus-client.h						\
 	thunar-dbus-service.c						\
 	thunar-dbus-service.h						\
-	thunar-thumbnailer-proxy.h
+	thunar-thumbnailer-proxy.h					\
+	thunar-thumbnailer-manager-proxy.h
 
 Thunar_CFLAGS +=							\
 	-DDBUS_API_SUBJECT_TO_CHANGE					\
@@ -330,6 +332,12 @@ thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
 		$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
 	&& sed -i -e 's/org_freedesktop_thumbnails_Thumbnailer/thunar_thumbnailer_proxy/g' \
 		thunar-thumbnailer-proxy.h
+
+thunar-thumbnailer-manager-proxy.h: $(srcdir)/thunar-thumbnailer-manager-dbus.xml Makefile
+	dbus-binding-tool --mode=glib-client \
+		$(srcdir)/thunar-thumbnailer-manager-dbus.xml > thunar-thumbnailer-manager-proxy.h \
+	&& sed -i -e 's/org_freedesktop_thumbnails_Manager/thunar_thumbnailer_manager_proxy/g' \
+		thunar-thumbnailer-manager-proxy.h
 endif
 
 thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile
