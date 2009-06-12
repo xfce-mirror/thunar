@@ -122,6 +122,7 @@ struct _ThunarFile
   gchar         *custom_icon_name;
   gchar         *display_name;
   gchar         *basename;
+  gchar         *thumbnail_path;
   guint          flags;
 };
 
@@ -216,6 +217,7 @@ gboolean          thunar_file_set_custom_icon      (ThunarFile              *fil
                                                     const gchar             *custom_icon,
                                                     GError                 **error);
 
+GIcon            *thunar_file_get_preview_icon     (const ThunarFile        *file);
 gchar            *thunar_file_get_icon_name        (const ThunarFile        *file,
                                                     ThunarFileIconState     icon_state,
                                                     GtkIconTheme           *icon_theme);
@@ -247,6 +249,7 @@ GList            *thunar_file_list_get_applications  (GList *file_list);
 GList            *thunar_file_list_to_g_file_list    (GList *file_list);
 
 gboolean         thunar_file_is_desktop              (const ThunarFile *file);
+const gchar     *thunar_file_get_thumbnail_path      (const ThunarFile *file);
 
 /**
  * thunar_file_is_root:

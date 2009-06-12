@@ -460,8 +460,11 @@ thunar_folder_finished (ExoJob       *job,
       folder->files = folder->new_files;
       folder->new_files = NULL;
 
-      /* emit a "files-added" signal for the new files */
-      g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, folder->files);
+      if (folder->files != NULL)
+        {
+          /* emit a "files-added" signal for the new files */
+          g_signal_emit (G_OBJECT (folder), folder_signals[FILES_ADDED], 0, folder->files);
+        }
     }
 
   /* we did it, the folder is loaded */

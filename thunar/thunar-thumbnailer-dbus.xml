@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<node name="/org/freedesktop/thumbnails/Thumbnailer">
+  <interface name="org.freedesktop.thumbnails.Thumbnailer">
+    <method name="Queue">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+      <arg type="as" name="uris" direction="in" />
+      <arg type="as" name="mime_hints" direction="in" />
+      <arg type="u" name="handle_to_unqueue" direction="in" />
+      <arg type="u" name="handle" direction="out" />
+    </method>
+
+    <method name="Unqueue">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value="true"/>
+      <arg type="u" name="handle" direction="in" />
+    </method>
+
+    <signal name="Started">
+      <arg type="u" name="handle" />
+    </signal>
+
+    <signal name="Finished">
+      <arg type="u" name="handle" />
+    </signal>
+
+    <signal name="Ready">
+      <arg type="as" name="uris" />
+    </signal>
+
+    <signal name="Error">
+      <arg type="u" name="handle" />
+      <arg type="as" name="failed_uris" />
+      <arg type="i" name="error_code" />
+      <arg type="s" name="message" />
+    </signal>
+  </interface>
+</node>

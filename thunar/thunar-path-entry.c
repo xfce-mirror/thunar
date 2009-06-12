@@ -831,6 +831,9 @@ thunar_path_entry_changed (GtkEditable *editable)
   current_folder = (folder_path != NULL) ? thunar_file_get (folder_path, NULL) : NULL;
   current_file = (file_path != NULL) ? thunar_file_get (file_path, NULL) : NULL;
 
+  /* TODO Fix bug with non-existent folders */
+  _thunar_assert (current_folder == NULL || thunar_file_is_directory (current_folder));
+
   /* determine the entry completion */
   completion = gtk_entry_get_completion (GTK_ENTRY (path_entry));
 

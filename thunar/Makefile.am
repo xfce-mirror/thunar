@@ -99,6 +99,8 @@ Thunar_SOURCES =							\
 	thunar-icon-renderer.h						\
 	thunar-icon-view.c						\
 	thunar-icon-view.h						\
+	thunar-image.c							\
+	thunar-image.h							\
 	thunar-io-jobs.c						\
 	thunar-io-jobs.h						\
 	thunar-io-jobs-util.c						\
@@ -187,10 +189,10 @@ Thunar_SOURCES =							\
 	thunar-throbber.h						\
 	thunar-throbber-fallback.c					\
 	thunar-throbber-fallback.h					\
+	thunar-thumbnailer.c						\
+	thunar-thumbnailer.h						\
 	thunar-thumbnail-frame.c					\
 	thunar-thumbnail-frame.h					\
-	thunar-thumbnail-generator.c					\
-	thunar-thumbnail-generator.h					\
 	thunar-transfer-job.c						\
 	thunar-transfer-job.h						\
 	thunar-trash-action.c						\
@@ -245,13 +247,15 @@ Thunar_DEPENDENCIES =							\
 
 if HAVE_DBUS
 thunar_built_sources +=							\
-	thunar-dbus-service-infos.h
+	thunar-dbus-service-infos.h					\
+	thunar-thumbnailer-proxy.h
 
 thunar_dbus_sources =							\
 	thunar-dbus-client.c						\
 	thunar-dbus-client.h						\
 	thunar-dbus-service.c						\
-	thunar-dbus-service.h
+	thunar-dbus-service.h						\
+	thunar-thumbnailer-proxy.h
 
 Thunar_CFLAGS +=							\
 	-DDBUS_API_SUBJECT_TO_CHANGE					\
@@ -320,6 +324,12 @@ BUILT_SOURCES =								\
 if HAVE_DBUS
 thunar-dbus-service-infos.h: $(srcdir)/thunar-dbus-service-infos.xml Makefile
 	dbus-binding-tool --prefix=thunar_dbus_service --mode=glib-server $(srcdir)/thunar-dbus-service-infos.xml > thunar-dbus-service-infos.h
+
+thunar-thumbnailer-proxy.h: $(srcdir)/thunar-thumbnailer-dbus.xml Makefile
+	dbus-binding-tool --mode=glib-client \
+		$(srcdir)/thunar-thumbnailer-dbus.xml > thunar-thumbnailer-proxy.h \
+	&& sed -i -e 's/org_freedesktop_thumbnails_Thumbnailer/thunar_thumbnailer_proxy/g' \
+		thunar-thumbnailer-proxy.h
 endif
 
 thunar-throbber-fallback.c: $(srcdir)/thunar-throbber-fallback.png Makefile

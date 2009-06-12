@@ -1,3 +1,42 @@
+2009-06-12	Jannis Pohlmann <jannis@xfce.org>
+
+	* Makefile.am, thunar/thunar-image.{c,h},
+	  thunar/thunar-thumbnailer-dbus.xml, thunar/thunar-thumbnailer.{c,h}:
+	  Add two new classes ThunarImage and ThunarThumbnailer. ThunarImage
+	  is a subclass of GtkImage which takes a ThunarFile and
+	  asynchronously loads a thumbnail for the file using the
+	  org.freedesktop.thumbnails.Thumbnailer D-Bus service.
+	  ThunarThumbnailer is essentially a proxy client for this service
+	  which adds a few convenience methods around the DBusGProxy API. It
+	  can be used by other classes to request thumbnails over D-Bus.
+	* thunar/thunar-file.{c,h}: Add a new method
+	  thunar_file_get_thumbnail_path(), which returns the thumbnail path
+	  for a ThunarFile. GFileInfo has something similar but unfortunately
+	  it's only set if the thumbnail exists, which means you have to
+	  reload the GFileInfo whenever a new thumbnail has been generated ...
+	  and unfortunately that requires a thunar_file_reload() which causes
+	  a lot of flicker. Another new method is
+	  thunar_file_get_preview_icon() which returns a preview GIcon that
+	  can act as a thumbnail replacement if there is any.
+	* thunar/thunar-folder.c: Make sure never to emit the "files-added"
+	  signal with an empty list.
+	* thunar/thunar-icon-factory.c: Use thunar_file_get_preview_icon() and
+	  thunar_file_get_thumbnail_path() to load ThunarFile icons. Drop the
+	  reference on ThunarThumbnailGenerator. Thumbnails are now requested
+	  by ThunarListModel and ThunarImage instead of the icon factory.
+	* thunar/thunar-list-model.c: Request thumbnails from
+	  ThunarThumbnailer whenever the "files-added" signal is emitted.
+	  Unqueue all pending requests when the folder changes or the list
+	  model is destroyed. Still missing: thumbnail requests after file 
+	  change events.
+	* thunar/thunar-marshal.list: Add another marshaller:
+	  VOID:UINT,POINTER,UINT,STRING.
+	* thunar/thunar-private.h: Remove ifdefs for GLib <= 2.14.
+	* thunar/thunar-properties-dialog.c: Use ThunarImage for the file
+	  icon instead of a regular GtkImage.
+	* thunar/thunar-thumbnail-generator.{c,h}: Remove the
+	  ThunarThumbnailerGenerator class. We no longer need it.
+
 2009-05-12	Jannis Pohlmann <jannis@xfce.org>
 
 	* configure.in.in: Depend on libexo-0.3.101svn-r29948 for

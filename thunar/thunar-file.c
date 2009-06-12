@@ -67,7 +67,9 @@
   "standard::*," \
   "unix::*," \
   "access::*," \
-  "time::*"
+  "time::*," \
+  "thumbnail::*," \
+  "preview::*"
 
 #define THUNAR_FILE_G_FILE_INFO_FILESYSTEM_NAMESPACE \
   "filesystem::*"
@@ -344,6 +346,9 @@ thunar_file_finalize (GObject *object)
   g_free (file->display_name);
   g_free (file->basename);
 
+  /* free the thumbnail path */
+  g_free (file->thumbnail_path);
+
   /* release file */
   g_object_unref (file->gfile);
 
@@ -453,11 +458,6 @@ thunar_file_info_get_vfs_info (ThunarxFileInfo *file_info)
 static void
 thunar_file_info_changed (ThunarxFileInfo *file_info)
 {
-  /* reset the thumbnail state, so the next thunar_icon_factory_load_file_icon()
-   * invokation will recheck the thumbnail.
-   */
-  thunar_file_set_thumb_state (THUNAR_FILE (file_info), THUNAR_FILE_THUMB_STATE_UNKNOWN);
-
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (THUNAR_FILE (file_info));
 }
@@ -725,6 +725,8 @@ thunar_file_load (ThunarFile   *file,
                   GError      **error)
 {
   GKeyFile *key_file;
+  gchar    *basename;
+  gchar    *md5_hash;
   gchar    *uri;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -758,6 +760,9 @@ thunar_file_load (ThunarFile   *file,
   /* free display name and basename */
   g_free (file->display_name);
   g_free (file->basename);
+
+  /* free thumbnail path */
+  g_free (file->thumbnail_path);
 
   /* query a new file info */
   file->info = g_file_query_info (file->gfile,
@@ -830,6 +835,16 @@ thunar_file_load (ThunarFile   *file,
       file->display_name = g_filename_display_name (uri);
       g_free (uri);
     }
+
+  /* determine thumbnail path */
+  uri = g_file_get_uri (file->gfile);
+  md5_hash = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
+  basename = g_strdup_printf ("%s.png", md5_hash);
+  file->thumbnail_path = g_build_filename (xfce_get_homedir (), ".thumbnails", 
+                                           "normal", basename, NULL);
+  g_free (basename);
+  g_free (md5_hash);
+  g_free (uri);
 
   return (file->info != NULL);
 }
@@ -2423,6 +2438,15 @@ thunar_file_is_desktop (const ThunarFile *file)
 
 
 
+const gchar *
+thunar_file_get_thumbnail_path (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  return file->thumbnail_path;
+}
+
+
+
 /**
  * thunar_file_get_custom_icon:
  * @file : a #ThunarFile instance.
@@ -2438,6 +2462,18 @@ thunar_file_get_custom_icon (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   return g_strdup (file->custom_icon_name);
+}
+
+
+
+GIcon *
+thunar_file_get_preview_icon (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+  _thunar_return_val_if_fail (file->info != NULL, NULL);
+
+  return G_ICON (g_file_info_get_attribute_object (file->info,
+                                                   G_FILE_ATTRIBUTE_PREVIEW_ICON));
 }
 
 

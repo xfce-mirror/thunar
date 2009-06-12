@@ -34,6 +34,7 @@
 #include <exo/exo.h>
 
 #include <thunar/thunar-abstract-dialog.h>
+#include <thunar/thunar-application.h>
 #include <thunar/thunar-chooser-button.h>
 #include <thunar/thunar-dialogs.h>
 #include <thunar/thunar-emblem-chooser.h>
@@ -41,6 +42,7 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-gtk-extensions.h>
 #include <thunar/thunar-icon-factory.h>
+#include <thunar/thunar-image.h>
 #include <thunar/thunar-io-jobs.h>
 #include <thunar/thunar-job.h>
 #include <thunar/thunar-marshal.h>
@@ -131,7 +133,6 @@ struct _ThunarPropertiesDialog
   GtkWidget              *volume_image;
   GtkWidget              *volume_label;
   GtkWidget              *permissions_chooser;
-
 };
 
 
@@ -277,7 +278,7 @@ thunar_properties_dialog_init (ThunarPropertiesDialog *dialog)
   gtk_box_pack_start (GTK_BOX (box), dialog->icon_button, FALSE, TRUE, 0);
   gtk_widget_show (dialog->icon_button);
 
-  dialog->icon_image = gtk_image_new ();
+  dialog->icon_image = thunar_image_new ();
   gtk_box_pack_start (GTK_BOX (box), dialog->icon_image, FALSE, TRUE, 0);
   gtk_widget_show (dialog->icon_image);
 
@@ -833,7 +834,6 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   const gchar       *content_type;
   const gchar       *name;
   const gchar       *path;
-  GdkPixbuf         *icon;
   GVolume           *volume;
   guint64            size;
   GIcon             *gicon;
@@ -858,12 +858,8 @@ thunar_properties_dialog_update (ThunarPropertiesDialog *dialog)
   gtk_window_set_title (GTK_WINDOW (dialog), str);
   g_free (str);
 
-  /* update the icon */
-  icon = thunar_icon_factory_load_file_icon (icon_factory, dialog->file, THUNAR_FILE_ICON_STATE_DEFAULT, 48);
-  gtk_image_set_from_pixbuf (GTK_IMAGE (dialog->icon_image), icon);
-  gtk_window_set_icon (GTK_WINDOW (dialog), icon);
-  if (G_LIKELY (icon != NULL))
-    g_object_unref (G_OBJECT (icon));
+  /* update the preview image */
+  thunar_image_set_file (THUNAR_IMAGE (dialog->icon_image), dialog->file);
 
   /* check if the icon may be changed (only for writable .desktop files) */
   g_object_ref (G_OBJECT (dialog->icon_image));

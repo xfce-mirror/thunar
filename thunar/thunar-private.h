@@ -91,8 +91,6 @@ G_STMT_START{                                                 \
 }G_STMT_END
 #endif
 
-#if GLIB_CHECK_VERSION(2,14,0)
-
 #define XDG_USER_DIRS_PACKAGE "xdg-user-dirs"
 #define LOCALE_FILE_NAME      "user-dirs.locale"
 
@@ -107,26 +105,8 @@ typedef GUserDirectory ThunarUserDirectory;
 #define THUNAR_USER_DIRECTORY_VIDEOS       G_USER_DIRECTORY_VIDEOS
 #define THUNAR_USER_N_DIRECTORIES          (8)
 
-#if GLIB_CHECK_VERSION(2, 14, 0)
 gchar *_thunar_get_xdg_user_dirs_locale (void);
-#endif
 extern const gchar *_thunar_user_directory_names[THUNAR_USER_N_DIRECTORIES+1];
-
-#else /* GLIB_CHECK_VERSION(2,14,0) */
-typedef enum
-{
-  THUNAR_USER_DIRECTORY_DESKTOP = 0,
-  THUNAR_USER_DIRECTORY_DOCUMENTS,
-  THUNAR_USER_DIRECTORY_DOWNLOAD,
-  THUNAR_USER_DIRECTORY_MUSIC,
-  THUNAR_USER_DIRECTORY_PICTURES,
-  THUNAR_USER_DIRECTORY_PUBLIC_SHARE,
-  THUNAR_USER_DIRECTORY_TEMPLATES,
-  THUNAR_USER_DIRECTORY_VIDEOS,
-  THUNAR_USER_N_DIRECTORIES
-} ThunarUserDirectory;
-
-#endif /*GLIB_CHECK_VERSION(2,14,0) */
 
 G_END_DECLS;
 
