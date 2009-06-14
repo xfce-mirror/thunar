@@ -458,6 +458,8 @@ thunar_file_info_get_vfs_info (ThunarxFileInfo *file_info)
 static void
 thunar_file_info_changed (ThunarxFileInfo *file_info)
 {
+  thunar_file_set_thumb_state (THUNAR_FILE (file_info), THUNAR_FILE_THUMB_STATE_UNKNOWN);
+
   /* tell the file monitor that this file changed */
   thunar_file_monitor_file_changed (THUNAR_FILE (file_info));
 }
@@ -836,7 +838,12 @@ thunar_file_load (ThunarFile   *file,
       g_free (uri);
     }
 
+  /* set thumb state to unknown */
+  file->flags = 
+    (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | THUNAR_FILE_THUMB_STATE_UNKNOWN;
+
   /* determine thumbnail path */
+  /* TODO monitor the thumbnail path for changes */
   uri = g_file_get_uri (file->gfile);
   md5_hash = g_compute_checksum_for_string (G_CHECKSUM_MD5, uri, -1);
   basename = g_strdup_printf ("%s.png", md5_hash);
@@ -2443,6 +2450,31 @@ thunar_file_get_thumbnail_path (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   return file->thumbnail_path;
+}
+
+
+
+/**
+ * thunar_file_set_thumb_state:
+ * @file        : a #ThunarFile.
+ * @thumb_state : the new #ThunarFileThumbState.
+ *
+ * Sets the #ThunarFileThumbState for @file to @thumb_state. 
+ * This will cause a "file-changed" signal to be emitted from
+ * #ThunarFileMonitor. 
+ **/ 
+void
+thunar_file_set_thumb_state (ThunarFile          *file, 
+                             ThunarFileThumbState state)
+{
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  /* set the new thumbnail state */
+  file->flags = (file->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (state);
+  
+  /* notify others of this change, so that all components can update
+   * their file information */
+  thunar_file_monitor_file_changed (file);
 }
 
 

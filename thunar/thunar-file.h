@@ -217,6 +217,9 @@ gboolean          thunar_file_set_custom_icon      (ThunarFile              *fil
                                                     const gchar             *custom_icon,
                                                     GError                 **error);
 
+const gchar     *thunar_file_get_thumbnail_path    (const ThunarFile        *file);
+void             thunar_file_set_thumb_state       (ThunarFile              *file, 
+                                                    ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon     (const ThunarFile        *file);
 gchar            *thunar_file_get_icon_name        (const ThunarFile        *file,
                                                     ThunarFileIconState     icon_state,
@@ -249,7 +252,6 @@ GList            *thunar_file_list_get_applications  (GList *file_list);
 GList            *thunar_file_list_to_g_file_list    (GList *file_list);
 
 gboolean         thunar_file_is_desktop              (const ThunarFile *file);
-const gchar     *thunar_file_get_thumbnail_path      (const ThunarFile *file);
 
 /**
  * thunar_file_is_root:
@@ -333,21 +335,6 @@ G_STMT_START{                                             \
  * Return value: the #ThunarFileThumbState for @file.
  **/
 #define thunar_file_get_thumb_state(file) (THUNAR_FILE ((file))->flags & THUNAR_FILE_THUMB_STATE_MASK)
-
-/**
- * thunar_file_set_thumb_state:
- * @file        : a #ThunarFile.
- * @thumb_state : the new #ThunarFileThumbState.
- *
- * Sets the #ThunarFileThumbState for @file
- * to @thumb_state. This method is intended
- * to be used by #ThunarIconFactory only.
- **/ 
-#define thunar_file_set_thumb_state(file, thumb_state)                    \
-G_STMT_START{                                                             \
-  ThunarFile *f = THUNAR_FILE ((file));                                   \
-  f->flags = (f->flags & ~THUNAR_FILE_THUMB_STATE_MASK) | (thumb_state);  \
-}G_STMT_END
 
 /**
  * thunar_file_list_copy:

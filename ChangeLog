@@ -1,3 +1,10 @@
+2009-06-14	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Emit a ThunarFileMonitor "file-changed"
+	  signal whenever the thumbnail state of a ThunarFile is changed. This
+	  helps all components in refreshing their file information and
+	  possibly update the file icon.
+
 2009-06-12	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/Makefile.am, thunar/thunar-thumbnailer-manager-dbus.xml: Add
