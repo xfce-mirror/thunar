@@ -38,6 +38,7 @@
 #include <thunar/thunar-preferences.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnail-frame.h>
+#include <thunar/thunar-thumbnailer.h>
 
 
 
@@ -107,6 +108,7 @@ struct _ThunarIconFactory
   GObject __parent__;
 
   ThunarVfsThumbFactory    *thumbnail_factory;
+  ThunarThumbnailer        *thumbnailer;
 
   ThunarPreferences        *preferences;
 
@@ -243,6 +245,9 @@ thunar_icon_factory_init (ThunarIconFactory *factory)
   factory->thumbnail_factory = thunar_vfs_thumb_factory_new ((THUNAR_THUMBNAIL_SIZE > 128)
                                                             ? THUNAR_VFS_THUMB_SIZE_LARGE
                                                             : THUNAR_VFS_THUMB_SIZE_NORMAL);
+
+  /* create a new thumbnailer */
+  factory->thumbnailer = thunar_thumbnailer_new ();
 }
 
 
@@ -283,6 +288,9 @@ thunar_icon_factory_finalize (GObject *object)
 
   /* disconnect from the thumbnail factory */
   g_object_unref (G_OBJECT (factory->thumbnail_factory));
+
+  /* release the thumbnailer */
+  g_object_unref (G_OBJECT (factory->thumbnailer));
 
   /* remove the "changed" emission hook from the GtkIconTheme class */
   g_signal_remove_emission_hook (g_signal_lookup ("changed", GTK_TYPE_ICON_THEME), factory->changed_hook_id);
@@ -913,23 +921,13 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
                                     ThunarFileIconState icon_state,
                                     gint                icon_size)
 {
-  GInputStream    *stream;
-  GtkIconInfo     *icon_info;
-#if 0
-  TumblerFileInfo *info;
-  const gchar     *content_type;
-#endif
-  const gchar     *thumbnail_path;
-  GdkPixbuf       *icon = NULL;
-  GIcon           *gicon;
-#if 0
-  gchar          **uris;
-  gchar          **types;
-#endif
-  gchar           *icon_name;
-#if 0
-  gchar           *uri;
-#endif
+  ThunarFileThumbState thumb_state;
+  GInputStream        *stream;
+  GtkIconInfo         *icon_info;
+  const gchar         *thumbnail_path;
+  GdkPixbuf           *icon = NULL;
+  GIcon               *gicon;
+  gchar               *icon_name;
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
@@ -949,48 +947,88 @@ thunar_icon_factory_load_file_icon (ThunarIconFactory  *factory,
   /* check if thumbnails are enabled and we can display a thumbnail for the item */
   if (G_LIKELY (factory->show_thumbnails && thunar_file_is_regular (file)))
     {
-      gicon = thunar_file_get_preview_icon (file);
+      /* determine the thumbnail state of the file */
+      thumb_state = thunar_file_get_thumb_state (file);
 
-      if (gicon != NULL)
+      if (thumb_state == THUNAR_FILE_THUMB_STATE_UNKNOWN)
         {
-          if (G_IS_THEMED_ICON (gicon))
-            {
-              icon_info = gtk_icon_theme_lookup_by_gicon (factory->icon_theme, 
-                                                          gicon, icon_size, 
-                                                          GTK_ICON_LOOKUP_USE_BUILTIN);
-
-              if (icon_info != NULL)
-                {
-                  icon = gtk_icon_info_load_icon (icon_info, NULL);
-                  gtk_icon_info_free (icon_info);
-                }
-            }
-          else if (G_IS_LOADABLE_ICON (gicon))
-            {
-              stream = g_loadable_icon_load (G_LOADABLE_ICON (icon), icon_size, NULL,
-                                             NULL, NULL);
-
-              if (stream != NULL)
-                {
-                  icon = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
-                  g_object_unref (stream);
-                }
-            }
-
-          g_object_unref (gicon);
+          /* we don't know the state yet so request a new thumbnail */
+          thunar_thumbnailer_queue_file (factory->thumbnailer, file);
+        }
+      else if (thumb_state == THUNAR_FILE_THUMB_STATE_LOADING)
+        {
+          /* we're in the process of creating a thumbnail so use a loading icon */
+          icon = thunar_icon_factory_lookup_icon (factory, "gnome-fs-loading-icon", 
+                                                  icon_size, FALSE);
 
           if (icon != NULL)
             return icon;
         }
-      else
+      else if (thumb_state == THUNAR_FILE_THUMB_STATE_READY)
         {
-          thumbnail_path = thunar_file_get_thumbnail_path (file);
-          if (thumbnail_path != NULL)
+          /* thumbnail is ready, but try the preview icon first */
+          gicon = thunar_file_get_preview_icon (file);
+
+          /* check if we have a preview icon */
+          if (gicon != NULL)
             {
-              icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, 
-                                                         icon_size);
+              if (G_IS_THEMED_ICON (gicon))
+                {
+                  /* we have a themed preview icon, look it up using the icon theme */
+                  icon_info = 
+                    gtk_icon_theme_lookup_by_gicon (factory->icon_theme, 
+                                                    gicon, icon_size, 
+                                                    GTK_ICON_LOOKUP_USE_BUILTIN);
+
+                  /* check if the lookup succeeded */
+                  if (icon_info != NULL)
+                    {
+                      /* try to load the pixbuf from the icon info */
+                      icon = gtk_icon_info_load_icon (icon_info, NULL);
+                      gtk_icon_info_free (icon_info);
+                    }
+                }
+              else if (G_IS_LOADABLE_ICON (gicon))
+                {
+                  /* we have a loadable icon, try to open it for reading */
+                  stream = g_loadable_icon_load (G_LOADABLE_ICON (icon), icon_size, 
+                                                 NULL, NULL, NULL);
+
+                  /* check if we have a valid input stream */
+                  if (stream != NULL)
+                    {
+                      /* load the pixbuf from the stream */
+                      icon = gdk_pixbuf_new_from_stream (stream, NULL, NULL);
+
+                      /* destroy the stream */
+                      g_object_unref (stream);
+                    }
+                }
+
+              /* release the preview icon */
+              g_object_unref (gicon);
+
+              /* return the icon if we have one */
               if (icon != NULL)
                 return icon;
+            }
+          else
+            {
+              /* we have no preview icon but the thumbnail should be ready. determine
+               * the filename of the thumbnail */
+              thumbnail_path = thunar_file_get_thumbnail_path (file);
+
+              /* check if we have a valid path */
+              if (thumbnail_path != NULL)
+                {
+                  /* try to load the thumbnail */
+                  icon = thunar_icon_factory_load_from_file (factory, thumbnail_path, 
+                                                             icon_size);
+
+                  /* return the thumbnail if it could be loaded */
+                  if (icon != NULL)
+                    return icon;
+                }
             }
         }
     }

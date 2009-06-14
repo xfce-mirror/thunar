@@ -39,15 +39,9 @@ GType              thunar_thumbnailer_get_type          (void) G_GNUC_CONST;
 ThunarThumbnailer *thunar_thumbnailer_new               (void) G_GNUC_MALLOC;
 
 gboolean           thunar_thumbnailer_queue_file        (ThunarThumbnailer *generator,
-                                                         ThunarFile        *file,
-                                                         guint             *handle);
-gboolean           thunar_thumbnailer_queue_files       (ThunarThumbnailer *generator,
-                                                         GList             *files,
-                                                         guint             *handle);
-void               thunar_thumbnailer_unqueue           (ThunarThumbnailer *thumbnailer,
-                                                         guint              handle);
-gboolean           thunar_thumbnailer_file_is_supported (ThunarThumbnailer *thumbnailer,
                                                          ThunarFile        *file);
+gboolean           thunar_thumbnailer_queue_files       (ThunarThumbnailer *generator,
+                                                         GList             *files);
 
 G_END_DECLS;
 

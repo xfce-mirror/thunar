@@ -1,3 +1,30 @@
+2009-06-15	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-icon-factory.c: Rewrite the file icon loading process
+	  once again, this time based on the also rewritten ThunarThumbnailer.
+	  We first assume no thumbnail exists and use the default icon for the
+	  MIME type. At the same time we request a thumbnail. Once the
+	  thumbnailer has started processing the request, we change to a
+	  loading icon. Once thumbnailer has the thumbnail ready, we change
+	  to the thumbnail. If there's an error with the thumbnail, we
+	  fall back to the default icon. 
+	* thunar/thunar-image.c: Simplify this one. It now always requests the
+	  icon from the icon factory and uses ThunarFileMonitor to watch the
+	  file for changes. After each change it requests the icon from the
+	  factory again. It's probably a good idea to use the thumbnailer
+	  directly, so this will change in the future.
+	* thunar/thunar-list-model.c: Don't request thumbnails for the entire
+	  content of new folders. Instead, just let the icon renderers do
+	  their job. In the future, the model should at least unqueue all
+	  requests for the old folder when the folder changes.
+	* thunar/thunar-thumbnailer.{c,h}: Rewrite the class entirely. It does
+	  asynchronous D-Bus calls now and uses idle sources for updating the
+	  thumbnail state of the ThunarFiles for which it requests the
+	  thumbnails. It doesn't emit any signals anymore. In the future,
+	  there should be a method to cancel all requests made by a component
+	  for a certain base URI, so that we can cancel all pending requests 
+	  when leaving a folder.
+
 2009-06-14	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-file.{c,h}: Emit a ThunarFileMonitor "file-changed"

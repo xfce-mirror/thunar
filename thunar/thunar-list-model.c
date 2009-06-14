@@ -34,7 +34,6 @@
 #include <thunar/thunar-gobject-extensions.h>
 #include <thunar/thunar-list-model.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-thumbnailer.h>
 #include <thunar/thunar-user.h>
 
 
@@ -191,21 +190,6 @@ static gint               sort_by_size                            (const ThunarF
 static gint               sort_by_type                            (const ThunarFile       *a,
                                                                    const ThunarFile       *b,
                                                                    gboolean                case_sensitive);
-static void               thunar_list_model_thumbnailer_error     (ThunarThumbnailer      *thumbnailer,
-                                                                   guint                   request,
-                                                                   const gchar           **uris,
-                                                                   gint                    code,
-                                                                   const gchar            *message,
-                                                                   ThunarListModel        *store);
-static void               thunar_list_model_thumbnailer_finished  (ThunarThumbnailer      *thumbnailer,
-                                                                   guint                   request,
-                                                                   ThunarListModel        *store);
-static void               thunar_list_model_thumbnailer_ready     (ThunarThumbnailer      *thumbnailer,
-                                                                   const gchar           **uris,
-                                                                   ThunarListModel        *store);
-static void               thunar_list_model_thumbnailer_started   (ThunarThumbnailer      *thumbnailer,
-                                                                   guint                   request,
-                                                                   ThunarListModel        *store);
 
 
 
@@ -255,10 +239,6 @@ struct _ThunarListModel
   gint         (*sort_func) (const ThunarFile *a,
                              const ThunarFile *b,
                              gboolean          case_sensitive);
-
-  ThunarThumbnailer *thumbnailer;
-  GHashTable        *thumbnailer_files;
-  GList             *thumbnailer_requests;
 };
 
 struct _SortTuple
@@ -502,20 +482,6 @@ thunar_list_model_init (ThunarListModel *store)
   store->file_monitor = thunar_file_monitor_get_default ();
   g_signal_connect (G_OBJECT (store->file_monitor), "file-changed", 
                     G_CALLBACK (thunar_list_model_file_changed), store);
-
-  store->thumbnailer_files = g_hash_table_new_full (g_str_hash, g_str_equal, 
-                                                    g_free, NULL);
-  store->thumbnailer_requests = NULL;
-
-  store->thumbnailer = thunar_thumbnailer_new ();
-  g_signal_connect (store->thumbnailer, "error",
-                    G_CALLBACK (thunar_list_model_thumbnailer_error), store);
-  g_signal_connect (store->thumbnailer, "finished",
-                    G_CALLBACK (thunar_list_model_thumbnailer_finished), store);
-  g_signal_connect (store->thumbnailer, "ready",
-                    G_CALLBACK (thunar_list_model_thumbnailer_ready), store);
-  g_signal_connect (store->thumbnailer, "started",
-                    G_CALLBACK (thunar_list_model_thumbnailer_started), store);
 }
 
 
@@ -524,19 +490,6 @@ static void
 thunar_list_model_finalize (GObject *object)
 {
   ThunarListModel *store = THUNAR_LIST_MODEL (object);
-  GList           *lp;
-
-  /* unqueue all pending thumbnailer requests */
-  for (lp = store->thumbnailer_requests; lp != NULL; lp = lp->next)
-    thunar_thumbnailer_unqueue (store->thumbnailer, GPOINTER_TO_UINT (lp->data));
-
-  /* destroy the URI to thumbnailer request mapping */
-  g_hash_table_unref (store->thumbnailer_files);
-
-  /* release the reference on the thumbnailer */
-  g_signal_handlers_disconnect_matched (store->thumbnailer, G_SIGNAL_MATCH_DATA,
-                                        0, 0, NULL, NULL, store);
-  g_object_unref (store->thumbnailer);
 
   /* unlink from the folder (if any) */
   thunar_list_model_set_folder (store, NULL);
@@ -1339,8 +1292,6 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   ThunarFile  *file;
   GSList      *prev = NULL;
   GSList      *row;
-  GList       *lp;
-  guint        request;
   gint        *indices;
   gint         index = 0;
 
@@ -1352,19 +1303,6 @@ thunar_list_model_files_added (ThunarFolder    *folder,
   path = gtk_tree_path_new_from_indices (0, -1);
   indices = gtk_tree_path_get_indices (path);
       
-  if (thunar_thumbnailer_queue_files (store->thumbnailer, files, &request))
-    {
-      for (lp = files; lp != NULL; lp = lp->next)
-        {
-          g_hash_table_insert (store->thumbnailer_files, 
-                               thunar_file_dup_uri (lp->data),
-                               GUINT_TO_POINTER (request));
-        }
-
-      store->thumbnailer_requests = g_list_prepend (store->thumbnailer_requests,
-                                                    GUINT_TO_POINTER (request));
-    }
-
   /* process all added files */
   for (; files != NULL; files = files->next)
     {
@@ -1680,82 +1618,6 @@ sort_by_type (const ThunarFile *a,
 
 
 
-static void
-thunar_list_model_thumbnailer_error (ThunarThumbnailer *thumbnailer,
-                                     guint              request,
-                                     const gchar      **uris,
-                                     gint               code,
-                                     const gchar       *message,
-                                     ThunarListModel   *store)
-{
-  guint n;
-
-  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
-  _thunar_return_if_fail (uris != NULL);
-  _thunar_return_if_fail (message != NULL);
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
-
-  for (n = 0; uris[n] != NULL; ++n)
-    g_hash_table_remove (store->thumbnailer_files, uris[n]);
-}
-
-
-
-static void
-thunar_list_model_thumbnailer_finished (ThunarThumbnailer *thumbnailer,
-                                        guint              request,
-                                        ThunarListModel   *store)
-{
-  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
-
-  store->thumbnailer_requests = g_list_remove_all (store->thumbnailer_requests,
-                                                   GUINT_TO_POINTER (request));
-}
-
-
-
-static void
-thunar_list_model_thumbnailer_ready (ThunarThumbnailer *thumbnailer,
-                                     const gchar      **uris,
-                                     ThunarListModel   *store)
-{
-  ThunarFile *file;
-  GFile      *gfile;
-  guint       n;
-
-  _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
-  _thunar_return_if_fail (uris != NULL);
-  _thunar_return_if_fail (THUNAR_IS_LIST_MODEL (store));
-
-  for (n = 0; uris[n] != NULL; ++n)
-    {
-      if (g_hash_table_lookup (store->thumbnailer_files, uris[n]) != NULL)
-        {
-          gfile = g_file_new_for_uri (uris[n]);
-          file = thunar_file_cache_lookup (gfile);
-          g_object_unref (gfile);
-
-          if (file != NULL)
-            thunar_file_changed (file);
-
-          g_hash_table_remove (store->thumbnailer_files, uris[n]);
-        }
-    }
-}
-
-
-
-static void
-thunar_list_model_thumbnailer_started (ThunarThumbnailer *thumbnailer,
-                                       guint              request,
-                                       ThunarListModel   *store)
-{
-  /* TODO Set the status of the corresponding ThunarFile's to LOADING */
-}
-
-
-
 /**
  * thunar_list_model_new:
  *
@@ -1928,11 +1790,6 @@ thunar_list_model_set_folder (ThunarListModel *store,
   /* check if we're not already using that folder */
   if (G_UNLIKELY (store->folder == folder))
     return;
-
-  g_hash_table_remove_all (store->thumbnailer_files);
-
-  for (lp = store->thumbnailer_requests; lp != NULL; lp = lp->next)
-    thunar_thumbnailer_unqueue (store->thumbnailer, GPOINTER_TO_UINT (lp->data));
 
   /* unlink from the previously active folder (if any) */
   if (G_LIKELY (store->folder != NULL))

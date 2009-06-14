@@ -26,10 +26,10 @@
 #include <glib-object.h>
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-file-monitor.h>
 #include <thunar/thunar-image.h>
 #include <thunar/thunar-icon-factory.h>
 #include <thunar/thunar-private.h>
-#include <thunar/thunar-thumbnailer.h>
 
 
 
@@ -55,18 +55,8 @@ static void thunar_image_set_property         (GObject           *object,
                                                guint              prop_id,
                                                const GValue      *value,
                                                GParamSpec        *pspec);
-static void thunar_image_file_changed         (ThunarImage       *image);
-static void thunar_image_thumbnailer_error    (ThunarThumbnailer *thumbnailer,
-                                               guint              handle,
-                                               const gchar      **uris,
-                                               gint               code,
-                                               const gchar       *message,
-                                               ThunarImage       *image);
-static void thunar_image_thumbnailer_finished (ThunarThumbnailer *thumbnailer,
-                                               guint              handle,
-                                               ThunarImage       *image);
-static void thunar_image_thumbnailer_started  (ThunarThumbnailer *thumbnailer,
-                                               guint              handle,
+static void thunar_image_file_changed         (ThunarFileMonitor *monitor,
+                                               ThunarFile        *file,
                                                ThunarImage       *image);
 
 
@@ -85,9 +75,8 @@ struct _ThunarImage
 
 struct _ThunarImagePrivate
 {
-  ThunarThumbnailer *thumbnailer;
+  ThunarFileMonitor *monitor;
   ThunarFile        *file;
-  guint              thumbnailer_handle;
 };
 
 
@@ -124,9 +113,9 @@ thunar_image_init (ThunarImage *image)
   image->priv = THUNAR_IMAGE_GET_PRIVATE (image);
   image->priv->file = NULL;
 
-  g_signal_connect (image, "notify::file", G_CALLBACK (thunar_image_file_changed), NULL);
-
-  image->priv->thumbnailer = thunar_thumbnailer_new ();
+  image->priv->monitor = thunar_file_monitor_get_default ();
+  g_signal_connect (image->priv->monitor, "file-changed", 
+                    G_CALLBACK (thunar_image_file_changed), image);
 }
 
 
@@ -136,9 +125,11 @@ thunar_image_finalize (GObject *object)
 {
   ThunarImage *image = THUNAR_IMAGE (object);
 
-  thunar_image_set_file (image, NULL);
+  g_signal_handlers_disconnect_by_func (image->priv->monitor, 
+                                        thunar_image_file_changed, image);
+  g_object_unref (image->priv->monitor);
 
-  g_object_unref (image->priv->thumbnailer);
+  thunar_image_set_file (image, NULL);
 
   (*G_OBJECT_CLASS (thunar_image_parent_class)->finalize) (object);
 }
@@ -188,7 +179,7 @@ thunar_image_set_property (GObject      *object,
 
 
 static void
-thunar_image_file_changed (ThunarImage *image)
+thunar_image_update (ThunarImage *image)
 {
   ThunarIconFactory *icon_factory;
   GtkIconTheme      *icon_theme;
@@ -196,78 +187,8 @@ thunar_image_file_changed (ThunarImage *image)
   GdkScreen         *screen;
 
   _thunar_return_if_fail (THUNAR_IS_IMAGE (image));
-
-  if (image->priv->thumbnailer_handle != 0)
-    {
-      thunar_thumbnailer_unqueue (image->priv->thumbnailer, 
-                                  image->priv->thumbnailer_handle);
-
-      image->priv->thumbnailer_handle = 0;
-
-      g_signal_handlers_disconnect_matched (image->priv->thumbnailer, 
-                                            G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL,
-                                            image);
-    }
-
-  gtk_image_set_from_pixbuf (GTK_IMAGE (image), NULL);
-
-  if (image->priv->file != NULL)
-    {
-      g_signal_connect (image->priv->thumbnailer, "error", 
-                        G_CALLBACK (thunar_image_thumbnailer_error), image);
-      g_signal_connect (image->priv->thumbnailer, "finished", 
-                        G_CALLBACK (thunar_image_thumbnailer_finished), image);
-      g_signal_connect (image->priv->thumbnailer, "started", 
-                        G_CALLBACK (thunar_image_thumbnailer_started), image);
-
-      if (!thunar_thumbnailer_queue_file (image->priv->thumbnailer, image->priv->file, 
-                                          &image->priv->thumbnailer_handle))
-        {
-          g_signal_handlers_disconnect_matched (image->priv->thumbnailer, 
-                                                G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL,
-                                                image);
-        }
           
-      screen = gtk_widget_get_screen (GTK_WIDGET (image));
-      icon_theme = gtk_icon_theme_get_for_screen (screen);
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-
-      icon = thunar_icon_factory_load_file_icon (icon_factory, image->priv->file,
-                                                 THUNAR_FILE_ICON_STATE_DEFAULT, 48);
-
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
-
-      g_object_unref (icon_factory);
-    }
-}
-
-
-
-static void
-thunar_image_thumbnailer_error (ThunarThumbnailer *thumbnailer,
-                                guint              handle,
-                                const gchar      **uris,
-                                gint               code,
-                                const gchar       *message,
-                                ThunarImage       *image)
-{
-  ThunarIconFactory *icon_factory;
-  GtkIconTheme      *icon_theme;
-  GdkPixbuf         *icon;
-  GdkScreen         *screen;
-
-  _thunar_return_if_fail (THUNAR_IS_IMAGE (image));
-
-  if (image->priv->thumbnailer_handle != handle)
-    return;
-  
-  image->priv->thumbnailer_handle = 0;
-
-  if (image->priv->file == NULL)
-    {
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), NULL);
-    }
-  else
+  if (THUNAR_IS_FILE (image->priv->file))
     {
       screen = gtk_widget_get_screen (GTK_WIDGET (image));
       icon_theme = gtk_icon_theme_get_for_screen (screen);
@@ -285,82 +206,16 @@ thunar_image_thumbnailer_error (ThunarThumbnailer *thumbnailer,
 
 
 static void
-thunar_image_thumbnailer_finished (ThunarThumbnailer *thumbnailer,
-                                   guint              handle,
-                                   ThunarImage       *image)
+thunar_image_file_changed (ThunarFileMonitor *monitor,
+                           ThunarFile        *file,
+                           ThunarImage       *image)
 {
-  ThunarIconFactory *icon_factory;
-  GtkIconTheme      *icon_theme;
-  GdkPixbuf         *icon;
-  GdkScreen         *screen;
-
+  _thunar_return_if_fail (THUNAR_IS_FILE_MONITOR (monitor));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_IMAGE (image));
 
-  if (image->priv->thumbnailer_handle != handle)
-    return;
-
-  image->priv->thumbnailer_handle = 0;
-
-  g_signal_handlers_disconnect_matched (image->priv->thumbnailer, 
-                                        G_SIGNAL_MATCH_DATA, 0, 0, NULL, NULL,
-                                        image);
-
-  if (image->priv->file == NULL)
-    {
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), NULL);
-    }
-  else
-    {
-      /* TODO we only need to reload if the thumbnail was regenerated */
-      thunar_file_changed (image->priv->file);
-
-      screen = gtk_widget_get_screen (GTK_WIDGET (image));
-      icon_theme = gtk_icon_theme_get_for_screen (screen);
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-
-      icon = thunar_icon_factory_load_file_icon (icon_factory, image->priv->file,
-                                                 THUNAR_FILE_ICON_STATE_DEFAULT, 48);
-
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
-      
-      g_object_unref (icon_factory);
-    }
-}
-
-
-
-static void
-thunar_image_thumbnailer_started (ThunarThumbnailer *thumbnailer,
-                                  guint              handle,
-                                  ThunarImage       *image)
-{
-  ThunarIconFactory *icon_factory;
-  GtkIconTheme      *icon_theme;
-  GdkPixbuf         *icon;
-  GdkScreen         *screen;
-
-  _thunar_return_if_fail (THUNAR_IS_IMAGE (image));
-
-  if (image->priv->thumbnailer_handle != handle)
-    return;
-
-  if (image->priv->file == NULL)
-    {
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), NULL);
-    }
-  else
-    {
-      screen = gtk_widget_get_screen (GTK_WIDGET (image));
-      icon_theme = gtk_icon_theme_get_for_screen (screen);
-      icon_factory = thunar_icon_factory_get_for_icon_theme (icon_theme);
-
-      icon = thunar_icon_factory_load_icon (icon_factory, "gnome-fs-loading-icon", 48,
-                                            NULL, FALSE);
-
-      gtk_image_set_from_pixbuf (GTK_IMAGE (image), icon);
-      
-      g_object_unref (icon_factory);
-    }
+  if (file == image->priv->file)
+    thunar_image_update (image);
 }
 
 
@@ -391,6 +246,8 @@ thunar_image_set_file (ThunarImage *image,
     image->priv->file = g_object_ref (file);
   else
     image->priv->file = NULL;
+
+  thunar_image_update (image);
 
   g_object_notify (G_OBJECT (image), "file");
 }
