@@ -159,12 +159,11 @@ struct _ThunarRenamerModel
 
 struct _ThunarRenamerModelItem
 {
-  ThunarVfsInfo *info;
-  ThunarFile    *file;
-  gchar         *name;
-  guint          changed : 1;  /* if the file changed */
-  guint          conflict : 1; /* if the item conflicts with another item */
-  guint          dirty : 1;    /* if the item must be updated */
+  ThunarFile *file;
+  gchar      *name;
+  guint       changed : 1;  /* if the file changed */
+  guint       conflict : 1; /* if the item conflicts with another item */
+  guint       dirty : 1;    /* if the item must be updated */
 };
 
 
@@ -631,7 +630,6 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
                                    ThunarFileMonitor  *file_monitor)
 {
   ThunarRenamerModelItem *item;
-  ThunarVfsInfo          *info;
   GtkTreePath            *path;
   GtkTreeIter             iter;
   GList                  *lp;
@@ -647,26 +645,17 @@ thunar_renamer_model_file_changed (ThunarRenamerModel *renamer_model,
       {
         /* check if the file changed on disk */
         item = THUNAR_RENAMER_MODEL_ITEM (lp->data);
-        info = thunarx_file_info_get_vfs_info (THUNARX_FILE_INFO (file));
-        if (info == NULL || !thunar_vfs_info_matches (item->info, info))
+
+        /* check if we're frozen */
+        if (G_LIKELY (!renamer_model->frozen))
           {
-            /* connect to the new info */
-            thunar_vfs_info_unref (item->info);
-            item->info = info;
+            /* the file changed */
+            THUNAR_RENAMER_MODEL_ITEM (lp->data)->changed = TRUE;
 
-            /* check if we're frozen */
-            if (G_LIKELY (!renamer_model->frozen))
-              {
-                /* the file changed */
-                THUNAR_RENAMER_MODEL_ITEM (lp->data)->changed = TRUE;
-
-                /* invalidate the item */
-                thunar_renamer_model_invalidate_item (renamer_model, lp->data);
-                break;
-              }
+            /* invalidate the item */
+            thunar_renamer_model_invalidate_item (renamer_model, lp->data);
+            break;
           }
-        else
-          thunar_vfs_info_unref (info);
 
         /* determine the iter for the item */
         GTK_TREE_ITER_INIT (iter, renamer_model->stamp, lp);
@@ -1009,7 +998,6 @@ thunar_renamer_model_item_new (ThunarFile *file)
   ThunarRenamerModelItem *item;
 
   item = _thunar_slice_new0 (ThunarRenamerModelItem);
-  item->info = thunarx_file_info_get_vfs_info (THUNARX_FILE_INFO (file));
   item->file = g_object_ref (G_OBJECT (file));
   item->dirty = TRUE;
 
@@ -1022,7 +1010,6 @@ static void
 thunar_renamer_model_item_free (ThunarRenamerModelItem *item)
 {
   g_object_unref (G_OBJECT (item->file));
-  thunar_vfs_info_unref (item->info);
   g_free (item->name);
   _thunar_slice_free (ThunarRenamerModelItem, item);
 }
