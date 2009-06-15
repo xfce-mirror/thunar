@@ -1,5 +1,16 @@
 2009-06-15	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-icon-factory.c: Drop the ThunarVfsThumbFactory
+	  reference. Don't cache SVGs. The number of SVGs we need to load that
+	  are not ThunarFiles is relatively small, I don't think we need to
+	  cache them. ThunarThumbnailer takes care of the ThunarFiles that are 
+	  SVGs. Always try to load thumbnails for files, even though their
+	  thumbnail state is not ready. Don't use the loading icon. Together,
+	  this reduces flicker when switching folders. ThunarIconFactory is
+	  now ThunarVFS-free.
+
+2009-06-15	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add new boolean method 
 	  thunar_file_is_thumbnail() which returns TRUE if, and only if
 	  a file resides in $HOME/.thumbnails/.
