@@ -1,5 +1,13 @@
 2009-06-16	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Use S_ISCHR, S_ISSOCK, S_ISFIFO and S_ISBLK to
+	  generate the first character of mode strings for special/unknown
+	  file types because we don't have THUNAR_VFS_FILE_TYPE_SOCKET etc.
+	  anymore. There will be no replacements for THUNAR_VFS_FILE_TYPE_PORT
+	  and THUNAR_VFS_FILE_TYPE_DOOR for now.
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-icon-factory.c: Remove commented code.
 
 2009-06-15	Jannis Pohlmann <jannis@xfce.org>

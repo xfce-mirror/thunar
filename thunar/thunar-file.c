@@ -26,6 +26,10 @@
 #include <sys/types.h>
 #endif
 
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
@@ -1507,25 +1511,26 @@ thunar_file_get_mode_string (const ThunarFile *file)
   text = g_new (gchar, 11);
 
   /* file type */
+  /* TODO earlier versions of Thunar had 'P' for ports and
+   * 'D' for doors. Do we still need those? */
   switch (kind)
     {
-#if 0 /* TODO */
-    case THUNAR_VFS_FILE_TYPE_PORT:       text[0] = 'P'; break;
-    case THUNAR_VFS_FILE_TYPE_DOOR:       text[0] = 'D'; break;
-    case THUNAR_VFS_FILE_TYPE_SOCKET:     text[0] = 's'; break;
-#endif
     case G_FILE_TYPE_SYMBOLIC_LINK:       text[0] = 'l'; break;
     case G_FILE_TYPE_REGULAR:             text[0] = '-'; break;
-#if 0 /* TODO */
-    case THUNAR_VFS_FILE_TYPE_BLOCKDEV:   text[0] = 'b'; break;
-#endif 
     case G_FILE_TYPE_DIRECTORY:           text[0] = 'd'; break;
-#if 0 /* TODO */
-    case THUNAR_VFS_FILE_TYPE_CHARDEV:    text[0] = 'c'; break;
-    case THUNAR_VFS_FILE_TYPE_FIFO:       text[0] = 'f'; break;
-#endif
+    case G_FILE_TYPE_SPECIAL:
     case G_FILE_TYPE_UNKNOWN:
-    default:                              text[0] = ' '; break;
+    default:
+      if (S_ISCHR (mode))
+        text[0] = 'c';
+      else if (S_ISSOCK (mode))
+        text[0] = 's';
+      else if (S_ISFIFO (mode))
+        text[0] = 'f';
+      else if (S_ISBLK (mode))
+        text[0] = 'b';
+      else
+        text[0] = ' ';
     }
 
   /* permission flags */
