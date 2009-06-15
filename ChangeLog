@@ -1,5 +1,11 @@
 2009-06-15	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Add new boolean method 
+	  thunar_file_is_thumbnail() which returns TRUE if, and only if
+	  a file resides in $HOME/.thumbnails/.
+
+2009-06-15	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-icon-factory.c: Rewrite the file icon loading process
 	  once again, this time based on the also rewritten ThunarThumbnailer.
 	  We first assume no thumbnail exists and use the default icon for the

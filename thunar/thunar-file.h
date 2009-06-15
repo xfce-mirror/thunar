@@ -124,6 +124,7 @@ struct _ThunarFile
   gchar         *basename;
   gchar         *thumbnail_path;
   guint          flags;
+  guint          is_thumbnail : 1;
 };
 
 GType             thunar_file_get_type             (void) G_GNUC_CONST;
@@ -218,6 +219,7 @@ gboolean          thunar_file_set_custom_icon      (ThunarFile              *fil
                                                     GError                 **error);
 
 const gchar     *thunar_file_get_thumbnail_path    (const ThunarFile        *file);
+gboolean         thunar_file_is_thumbnail          (const ThunarFile        *file);
 void             thunar_file_set_thumb_state       (ThunarFile              *file, 
                                                     ThunarFileThumbState     state);
 GIcon            *thunar_file_get_preview_icon     (const ThunarFile        *file);

@@ -727,8 +727,10 @@ thunar_file_load (ThunarFile   *file,
                   GError      **error)
 {
   GKeyFile *key_file;
+  GFile    *thumbnail_dir;
   gchar    *basename;
   gchar    *md5_hash;
+  gchar    *thumbnail_dir_path;
   gchar    *uri;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
@@ -786,9 +788,26 @@ thunar_file_load (ThunarFile   *file,
   file->basename = g_file_get_basename (file->gfile);
   _thunar_assert (file->basename != NULL);
 
-  /* determine the custom icon name for .desktop files */
-  if (thunar_file_is_desktop_file (file))
+  /* assume all files are not thumbnails themselves */
+  file->is_thumbnail = FALSE;
+
+  /* create a GFile for the $HOME/.thumbnails/ directory */
+  thumbnail_dir_path = g_build_filename (xfce_get_homedir (), ".thumbnails", NULL);
+  thumbnail_dir = g_file_new_for_path (thumbnail_dir_path);
+
+  /* check if this file is a thumbnail */
+  if (g_file_has_prefix (file->gfile, thumbnail_dir))
     {
+      /* remember that this file is a thumbnail */
+      file->is_thumbnail = TRUE;
+
+      /* use the filename as custom icon name for thumbnails */
+      file->custom_icon_name = g_file_get_path (file->gfile);
+    }
+  else if (thunar_file_is_desktop_file (file))
+    {
+      /* determine the custom icon name for .desktop files */
+
       /* query a key file for the .desktop file */
       key_file = g_file_query_key_file (file->gfile, cancellable, NULL);
       if (key_file != NULL)
@@ -825,6 +844,10 @@ thunar_file_load (ThunarFile   *file,
       /* not a .desktop file, no custom icon */
       file->custom_icon_name = NULL;
     }
+
+  /* free $HOME/.thumbnails/ GFile and path */
+  g_object_unref (thumbnail_dir);
+  g_free (thumbnail_dir_path);
 
   /* determine the display name */
   if (file->info != NULL)
@@ -2450,6 +2473,15 @@ thunar_file_get_thumbnail_path (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   return file->thumbnail_path;
+}
+
+
+
+gboolean
+thunar_file_is_thumbnail (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return file->is_thumbnail;
 }
 
 
