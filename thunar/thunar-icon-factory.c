@@ -531,18 +531,8 @@ thunar_icon_factory_lookup_icon (ThunarIconFactory *factory,
 {
   ThunarIconKey  lookup_key;
   ThunarIconKey *key;
-#if 0
-  ThunarVfsPath *path;
-  ThunarVfsInfo *info;
-  const gchar   *filename;
-#endif
   GtkIconInfo   *icon_info;
   GdkPixbuf     *pixbuf = NULL;
-#if 0
-  GdkPixbuf     *scaled;
-  GError        *err = NULL;
-  gchar         *thumbnail;
-#endif
 
   _thunar_return_val_if_fail (THUNAR_IS_ICON_FACTORY (factory), NULL);
   _thunar_return_val_if_fail (name != NULL && *name != '\0', NULL);
