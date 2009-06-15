@@ -792,6 +792,89 @@ thunar_thumbnailer_started_idle (gpointer user_data)
 
 
 
+static gboolean
+thunar_thumbnailer_file_is_queued (ThunarThumbnailer *thumbnailer,
+                                   ThunarFile        *file)
+{
+  gboolean is_queued = FALSE;
+  GList   *values;
+  GList   *lp;
+  gchar  **uris;
+  gchar   *uri;
+  guint    n;
+
+  /* get a list with all URI arrays of already queued requests */
+  values = g_hash_table_get_values (thumbnailer->request_uris_mapping);
+
+  /* if we have none, the file cannot be queued ... or can it? ;) */
+  if (values == NULL)
+    return FALSE;
+
+  /* determine the URI for this file */
+  uri = thunar_file_dup_uri (file);
+
+  /* iterate over all URI arrays */
+  for (lp = values; !is_queued && lp != NULL; lp = lp->next)
+    {
+      uris = lp->data;
+
+      /* check if the file is included in the URI array of the current request */
+      for (n = 0; !is_queued && uris != NULL && uris[n] != NULL; ++n)
+        if (g_utf8_collate (uri, uris[n]) == 0)
+          is_queued = TRUE;
+    }
+
+  /* free the file URI */
+  g_free (uri);
+
+  /* free the URI array list */
+  g_list_free (values);
+
+  return is_queued;
+}
+
+
+
+static gboolean
+thunar_thumbnailer_file_is_ready (ThunarThumbnailer *thumbnailer,
+                                  ThunarFile        *file)
+{
+  ThunarThumbnailerIdle *idle;
+  gboolean               is_ready = FALSE;
+  GList                 *lp;
+  gchar                 *uri;
+  guint                  n;
+
+  /* determine the URI or this file */
+  uri = thunar_file_dup_uri (file);
+
+  /* iterate over all idle structs */
+  for (lp = thumbnailer->idles; !is_ready && lp != NULL; lp = lp->next)
+    {
+      /* skip invalid idles */
+      if (lp->data != NULL)
+        continue;
+
+      idle = lp->data;
+
+      /* skip non-ready idles and idles without any URIs */
+      if (idle->type != THUNAR_THUMBNAILER_IDLE_READY || idle->data.uris == NULL)
+        continue;
+
+      /* check if the file is included in this ready idle */
+      for (n = 0; !is_ready && idle->data.uris[n] != NULL; ++n)
+        if (g_utf8_collate (uri, idle->data.uris[n]) == 0)
+          is_ready = TRUE;
+    }
+
+  /* free the file URI */
+  g_free (uri);
+
+  return is_ready;
+}
+
+
+
 static void
 thunar_thumbnailer_call_free (ThunarThumbnailerCall *call)
 {
@@ -898,6 +981,18 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
             supported_files = g_list_prepend (supported_files, lp->data);
             n_supported += 1;
           }
+
+      /* remove all files from the supported list for which we have pending requests */
+      for (lp = supported_files; lp != NULL; lp = lp->next)
+        {
+          /* check queued requests and ready idle structs */
+          if (thunar_thumbnailer_file_is_queued (thumbnailer, lp->data) 
+              || thunar_thumbnailer_file_is_ready (thumbnailer, lp->data))
+            {
+              /* remove the link if the file is present in either of the above */
+              supported_files = g_list_delete_link (supported_files, lp);
+            }
+        }
 
       g_mutex_lock (thumbnailer->lock);
 

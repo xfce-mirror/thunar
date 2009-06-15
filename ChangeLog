@@ -1,5 +1,11 @@
 2009-06-15	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-thumbnailer.c: Don't queue files that are part of an 
+	  already queued thumbnailer request or a ready idle struct. This
+	  dramatically reduces the amount of D-Bus messages being sent.
+
+2009-06-15	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-icon-factory.c: Drop the ThunarVfsThumbFactory
 	  reference. Don't cache SVGs. The number of SVGs we need to load that
 	  are not ThunarFiles is relatively small, I don't think we need to
