@@ -1413,10 +1413,21 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
     }
   else
     {
-      /* try absolute path, fallback to URI if not a local file */
-      text = g_file_get_path (file);
-      if (text == NULL)
-        text = g_file_get_uri (file);
+      /* check if the file is native to the platform */
+      if (g_file_is_native (file))
+        {
+          /* it is, try the local path first */
+          text = g_file_get_path (file);
+
+          /* if there is no local path, use the URI (which always works) */
+          if (text == NULL)
+            text = g_file_get_uri (file);
+        }
+      else
+        {
+          /* not a native file, use the URI */
+          text = g_file_get_uri (file);
+        }
     }
 
   /* setup the entry text */

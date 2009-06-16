@@ -1,5 +1,11 @@
 2009-06-16	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-path-entry.c: Display the local path only for native
+	  files. If there is no path, use the URI. Always use the URI for
+	  non-native files.
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-renamer-model.c: Remove the ThunarVfsInfo member of
 	  ThunarRenamerModelItem. Always invalidate and update the item/row
 	  when the ThunarFile changes (unless the model is frozen of course). 
