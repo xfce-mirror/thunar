@@ -1,3 +1,19 @@
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/main.c, thunar/thunar-application.{c,h}: 
+	  thunar_application_process_filenames() now works asynchronously
+	  because it might have to mount the enclosing volumes of one of the
+	  filenames first (which is only possible asynchronously). Add new
+	  method thunar_application_is_processing() which returns whether
+	  ThunarApplication is still busy processing filenames or not. In
+	  main(), always enter the main loop but schedule an idle source to
+	  repeatedly check whether ThunarApplication has finished processing
+	  the command line arguments. Once this is the case, exit if there are
+	  no open Thunar windows. All in all, this gives us about the same 
+	  behaviour main() had before, except that it the application might
+	  exit with a short delay. The result: Calling "thunar <remote URI>"
+	  from the shell works now!
+
 2009-06-16	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-location-entry.c: Split

@@ -64,56 +64,57 @@ enum
 
 
 
-static void       thunar_application_class_init             (ThunarApplicationClass *klass);
-static void       thunar_application_init                   (ThunarApplication      *application);
-static void       thunar_application_finalize               (GObject                *object);
-static void       thunar_application_get_property           (GObject                *object,
-                                                             guint                   prop_id,
-                                                             GValue                 *value,
-                                                             GParamSpec             *pspec);
-static void       thunar_application_set_property           (GObject                *object,
-                                                             guint                   prop_id,
-                                                             const GValue           *value,
-                                                             GParamSpec             *pspec);
-static void       thunar_application_collect_and_launch     (ThunarApplication      *application,
-                                                             gpointer                parent,
-                                                             const gchar            *icon_name,
-                                                             const gchar            *title,
-                                                             Launcher                launcher,
-                                                             GList                  *source_file_list,
-                                                             GFile                  *target_file,
-                                                             GClosure               *new_files_closure);
-static void       thunar_application_launch                 (ThunarApplication      *application,
-                                                             gpointer                parent,
-                                                             const gchar            *icon_name,
-                                                             const gchar            *title,
-                                                             Launcher                launcher,
-                                                             GList                  *source_path_list,
-                                                             GList                  *target_path_list,
-                                                             GClosure               *new_files_closure);
-static GtkWidget *thunar_application_open_window_with_role  (ThunarApplication      *application,
-                                                             const gchar            *role,
-                                                             ThunarFile             *directory,
-                                                             GdkScreen              *screen);
-static void       thunar_application_window_destroyed       (GtkWidget              *window,
-                                                             ThunarApplication      *application);
-static void       thunar_application_drive_connected        (GVolumeMonitor         *volume_monitor,
-                                                             GDrive                 *drive,
-                                                             ThunarApplication      *application);
-static void       thunar_application_drive_disconnected     (GVolumeMonitor         *volume_monitor,
-                                                             GDrive                 *drive,
-                                                             ThunarApplication      *application);
-static void       thunar_application_drive_eject            (GVolumeMonitor         *volume_monitor,
-                                                             GDrive                 *drive,
-                                                             ThunarApplication      *application);
-static gboolean   thunar_application_volman_idle            (gpointer                user_data);
-static void       thunar_application_volman_idle_destroy    (gpointer                user_data);
-static void       thunar_application_volman_watch           (GPid                    pid,
-                                                             gint                    status,
-                                                             gpointer                user_data);
-static void       thunar_application_volman_watch_destroy   (gpointer                user_data);
-static gboolean   thunar_application_show_dialogs           (gpointer                user_data);
-static void       thunar_application_show_dialogs_destroy   (gpointer                user_data);
+static void           thunar_application_class_init             (ThunarApplicationClass *klass);
+static void           thunar_application_init                   (ThunarApplication      *application);
+static void           thunar_application_finalize               (GObject                *object);
+static void           thunar_application_get_property           (GObject                *object,
+                                                                 guint                   prop_id,
+                                                                 GValue                 *value,
+                                                                 GParamSpec             *pspec);
+static void           thunar_application_set_property           (GObject                *object,
+                                                                 guint                   prop_id,
+                                                                 const GValue           *value,
+                                                                 GParamSpec             *pspec);
+static void           thunar_application_collect_and_launch     (ThunarApplication      *application,
+                                                                 gpointer                parent,
+                                                                 const gchar            *icon_name,
+                                                                 const gchar            *title,
+                                                                 Launcher                launcher,
+                                                                 GList                  *source_file_list,
+                                                                 GFile                  *target_file,
+                                                                 GClosure               *new_files_closure);
+static void           thunar_application_launch                 (ThunarApplication      *application,
+                                                                 gpointer                parent,
+                                                                 const gchar            *icon_name,
+                                                                 const gchar            *title,
+                                                                 Launcher                launcher,
+                                                                 GList                  *source_path_list,
+                                                                 GList                  *target_path_list,
+                                                                 GClosure               *new_files_closure);
+static GtkWidget     *thunar_application_open_window_with_role  (ThunarApplication      *application,
+                                                                 const gchar            *role,
+                                                                 ThunarFile             *directory,
+                                                                 GdkScreen              *screen);
+static void           thunar_application_window_destroyed       (GtkWidget              *window,
+                                                                 ThunarApplication      *application);
+static void           thunar_application_drive_connected        (GVolumeMonitor         *volume_monitor,
+                                                                 GDrive                 *drive,
+                                                                 ThunarApplication      *application);
+static void           thunar_application_drive_disconnected     (GVolumeMonitor         *volume_monitor,
+                                                                 GDrive                 *drive,
+                                                                 ThunarApplication      *application);
+static void           thunar_application_drive_eject            (GVolumeMonitor         *volume_monitor,
+                                                                 GDrive                 *drive,
+                                                                 ThunarApplication      *application);
+static gboolean       thunar_application_volman_idle            (gpointer                user_data);
+static void           thunar_application_volman_idle_destroy    (gpointer                user_data);
+static void           thunar_application_volman_watch           (GPid                    pid,
+                                                                 gint                    status,
+                                                                 gpointer                user_data);
+static void           thunar_application_volman_watch_destroy   (gpointer                user_data);
+static gboolean       thunar_application_show_dialogs           (gpointer                user_data);
+static void           thunar_application_show_dialogs_destroy   (gpointer                user_data);
+static void           thunar_application_process_files          (ThunarApplication      *application);
 
 
 
@@ -138,11 +139,14 @@ struct _ThunarApplication
   GSList                *volman_udis;
   guint                  volman_idle_id;
   guint                  volman_watch_id;
+
+  GList                 *files_to_launch;
 };
 
 
 
 static GObjectClass *thunar_application_parent_class;
+static GQuark        thunar_application_screen_quark;
 
 
 
@@ -180,6 +184,10 @@ thunar_application_class_init (ThunarApplicationClass *klass)
 {
   GObjectClass *gobject_class;
  
+  /* pre-allocate the required quarks */
+  thunar_application_screen_quark = 
+    g_quark_from_static_string ("thunar-application-screen");
+
   /* determine the parent type class */
   thunar_application_parent_class = g_type_class_peek_parent (klass);
 
@@ -215,6 +223,8 @@ thunar_application_init (ThunarApplication *application)
   /* initialize the application */
   application->preferences = thunar_preferences_get ();
 
+  application->files_to_launch = NULL;
+
   /* check if we have a saved accel map */
   path = xfce_resource_lookup (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm");
   if (G_LIKELY (path != NULL))
@@ -241,6 +251,9 @@ thunar_application_finalize (GObject *object)
   ThunarApplication *application = THUNAR_APPLICATION (object);
   gchar             *path;
   GList             *lp;
+
+  /* unqueue all files waiting to be processed */
+  thunar_file_list_free (application->files_to_launch);
 
   /* save the current accel map */
   path = xfce_resource_save_location (XFCE_RESOURCE_CONFIG, "Thunar/accels.scm", TRUE);
@@ -1040,6 +1053,107 @@ thunar_application_bulk_rename (ThunarApplication *application,
 
 
 
+static void
+thunar_application_process_files_finish (GObject      *object,
+                                         GAsyncResult *result,
+                                         gpointer      user_data)
+{ 
+  ThunarApplication *application = THUNAR_APPLICATION (user_data);
+  ThunarFile        *file;
+  GdkScreen         *screen;
+  GError            *error = NULL;
+
+  _thunar_return_if_fail (G_IS_FILE (object));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  _thunar_return_if_fail (application->files_to_launch != NULL);
+  _thunar_return_if_fail (THUNAR_IS_FILE (application->files_to_launch->data));
+
+  /* finish mounting the volume */
+  if (!g_file_mount_enclosing_volume_finish (G_FILE (object), result, &error))
+    {
+      /* ignore already mounted and not supported errors */
+      if (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_ALREADY_MOUNTED)
+        g_clear_error (&error);
+      else if (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_NOT_SUPPORTED)
+        g_clear_error (&error);
+    }
+
+  /* get the current file */
+  file = THUNAR_FILE (application->files_to_launch->data);
+
+  /* determine and reset the screen of the file */
+  screen = g_object_get_qdata (G_OBJECT (file), thunar_application_screen_quark);
+  g_object_set_qdata (G_OBJECT (file), thunar_application_screen_quark, NULL);
+
+  /* check if mounting succeeded */
+  if (error == NULL)
+    {
+      /* try to open the file or directory */
+      thunar_file_launch (file, screen, &error);
+    }
+
+  if (error != NULL)
+    {
+      /* tell the user that we were unable to launch the file specified */
+      thunar_dialogs_show_error (screen, error, _("Failed to open \"%s\""), 
+                                 thunar_file_get_display_name (file));
+
+      /* stop processing files */
+      thunar_file_list_free (application->files_to_launch);
+      application->files_to_launch = NULL;
+    }
+  else
+    {
+      /* release the file */
+      g_object_unref (file);
+
+      /* remove the file item from the list */
+      application->files_to_launch = g_list_delete_link (application->files_to_launch, 
+                                                         application->files_to_launch);
+
+      /* continue processing the next file */
+      thunar_application_process_files (application);
+    }
+}
+
+
+
+static void
+thunar_application_process_files (ThunarApplication *application)
+{
+  GMountOperation *mount_operation;
+  ThunarFile      *file;
+  GdkScreen       *screen;
+  GFile           *location;
+
+  _thunar_return_if_fail (THUNAR_IS_APPLICATION (application));
+  
+  /* don't do anything if no files are to be processed */
+  if (application->files_to_launch == NULL)
+    return;
+
+  /* get the next file */
+  file = THUNAR_FILE (application->files_to_launch->data);
+
+  /* create a GTK+ mount operation */
+  mount_operation = gtk_mount_operation_new (NULL);
+  screen = g_object_get_qdata (G_OBJECT (file), thunar_application_screen_quark);
+  gtk_mount_operation_set_screen (GTK_MOUNT_OPERATION (mount_operation), screen);
+
+  /* determine the location of the file */
+  location = thunar_file_get_file (file);
+
+  /* try to mount the enclosing volume asynchronously. Thunar will launch files
+   * that are accessible in the mount callback */
+  g_file_mount_enclosing_volume (location, G_MOUNT_MOUNT_NONE,
+                                 mount_operation, NULL,
+                                 thunar_application_process_files_finish,
+                                 application);
+}
+
+
+
 /**
  * thunar_application_process_filenames:
  * @application       : a #ThunarApplication.
@@ -1096,37 +1210,53 @@ thunar_application_process_filenames (ThunarApplication *application,
 
       /* verify that we have a valid file */
       if (G_LIKELY (file != NULL))
-        file_list = g_list_append (file_list, file);
-      else
-        goto failure;
-    }
-
-  /* ok, let's try to launch the given files then */
-  for (lp = file_list; lp != NULL; lp = lp->next)
-    {
-      /* try to launch this file, display an error dialog if that fails */
-      if (!thunar_file_launch (lp->data, screen, &derror))
         {
-          /* tell the user that we were unable to launch the file specified on the cmdline */
-          thunar_dialogs_show_error (screen, derror, _("Failed to open \"%s\""), thunar_file_get_display_name (lp->data));
+          file_list = g_list_append (file_list, file);
+        }
+      else
+        {
+          /* tell the user that we were unable to launch the file specified */
+          thunar_dialogs_show_error (screen, derror, _("Failed to open \"%s\""), 
+                                     filenames[n]);
+
+          g_set_error (error, derror->domain, derror->code, 
+                       _("Failed to open \"%s\": %s"), filenames[n], derror->message);
           g_error_free (derror);
-          break;
+
+          thunar_file_list_free (file_list);
+
+          return FALSE;
         }
     }
 
-  /* release all files */
-  thunar_file_list_free (file_list);
+  /* loop over all files */
+  for (lp = file_list; lp != NULL; lp = lp->next)
+    {
+      /* remember the screen to launch the file on */
+      g_object_set_qdata (G_OBJECT (lp->data), thunar_application_screen_quark, screen);
+
+      /* append the file to the list of files we need to launch */
+      application->files_to_launch = g_list_append (application->files_to_launch, 
+                                                    lp->data);
+    }
+
+  /* start processing files if we have any to launch */
+  if (application->files_to_launch != NULL)
+    thunar_application_process_files (application);
+
+  /* free the file list */
+  g_list_free (file_list);
 
   return TRUE;
+}
 
-failure:
-  /* tell the user that we were unable to launch the file specified on the cmdline */
-  thunar_dialogs_show_error (screen, derror, _("Failed to open \"%s\""), filenames[n]);
 
-  g_set_error (error, derror->domain, derror->code, _("Failed to open \"%s\": %s"), filenames[n], derror->message);
-  thunar_file_list_free (file_list);
-  g_error_free (derror);
-  return FALSE;
+
+gboolean
+thunar_application_is_processing (ThunarApplication *application)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+  return application->files_to_launch != NULL;
 }
 
 

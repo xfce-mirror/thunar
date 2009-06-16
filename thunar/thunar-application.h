@@ -68,6 +68,8 @@ gboolean           thunar_application_process_filenames (ThunarApplication *appl
                                                          GdkScreen         *screen,
                                                          GError           **error);
 
+gboolean           thunar_application_is_processing     (ThunarApplication *application);
+
 void               thunar_application_copy_to           (ThunarApplication *application,
                                                          gpointer           parent,
                                                          GList             *source_file_list,

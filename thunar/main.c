@@ -39,6 +39,7 @@
 #include <thunar/thunar-dbus-client.h>
 #include <thunar/thunar-dbus-service.h>
 #include <thunar/thunar-gobject-extensions.h>
+#include <thunar/thunar-private.h>
 #include <thunar/thunar-session-client.h>
 #include <thunar/thunar-stock.h>
 
@@ -74,12 +75,43 @@ static GOptionEntry option_entries[] =
 
 
 
+static gboolean
+thunar_delayed_exit_check (gpointer user_data)
+{
+  ThunarApplication *application = user_data;
+
+  _thunar_return_val_if_fail (THUNAR_IS_APPLICATION (application), FALSE);
+
+  /* call this function again later if the application is still processing the
+   * command line arguments */
+  if (thunar_application_is_processing (application))
+    return TRUE;
+
+  /* the application has processed all command line arguments. don't call
+   * this function again if it could load at least one of them */
+  if (thunar_application_has_windows (application))
+    {
+      return FALSE;
+    }
+  else
+    {
+      /* no command line arguments opened in Thunar, exit now */
+      gtk_main_quit ();
+
+      /* don't call this function again */
+      return FALSE;
+    }
+  
+}
+
+
+
 int
 main (int argc, char **argv)
 {
   ThunarSessionClient *session_client;
 #ifdef HAVE_DBUS
-  ThunarDBusService   *dbus_service;
+  ThunarDBusService   *dbus_service = NULL;
 #endif
   ThunarApplication   *application;
   GError              *error = NULL;
@@ -241,22 +273,31 @@ error0:
   /* connect to the session manager */
   session_client = thunar_session_client_new (opt_sm_client_id);
 
-  /* do not enter the main loop, unless we have atleast one window or we are in daemon mode */
-  if (thunar_application_has_windows (application) || thunar_application_get_daemon (application))
+  /* check if the application should run as a daemon */
+  if (thunar_application_get_daemon (application))
     {
-      /* attach the D-BUS service */
 #ifdef HAVE_DBUS
+      /* attach the D-Bus service */
       dbus_service = g_object_new (THUNAR_TYPE_DBUS_SERVICE, NULL);
 #endif
-
-      /* enter the main loop */
-      gtk_main ();
-
-      /* detach the D-BUS service */
-#ifdef HAVE_DBUS
-      g_object_unref (G_OBJECT (dbus_service));
-#endif
     }
+  else
+    {
+      /* processing the command line arguments is done asynchronously. Thus, we
+       * schedule an idle source which repeatedly checks whether we are done
+       * processing. Once we're done, it'll make the application quit if there
+       * are no open windows */
+      g_idle_add_full (G_PRIORITY_LOW, thunar_delayed_exit_check, 
+                       g_object_ref (application), g_object_unref);
+    }
+
+  /* enter the main loop */
+  gtk_main ();
+
+#ifdef HAVE_DBUS
+  if (dbus_service != NULL)
+    g_object_unref (G_OBJECT (dbus_service));
+#endif
 
   /* disconnect from the session manager */
   g_object_unref (G_OBJECT (session_client));
