@@ -1,5 +1,15 @@
 2009-06-16	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-location-entry.c: Split
+	  thunar_location_entry_activate() up into two functions,
+	  thunar_location_entry_activate() an
+	  thunar_location_entry_activate_finished(). Use
+	  g_file_mount_enclosing_volume() to make sure the volume is mounted
+	  before we switch to the new directory or launch the file. Remote
+	  machine browsing, here we come!
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.c: In thunar_file_reload(), always reload the
 	  file first, before checking if it still exists and needs to be
 	  destroyed.

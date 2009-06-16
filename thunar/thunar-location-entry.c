@@ -400,11 +400,93 @@ thunar_location_entry_accept_focus (ThunarLocationBar *location_bar,
 
 
 static void
+thunar_location_entry_activate_finish (GObject      *object,
+                                       GAsyncResult *result,
+                                       gpointer      user_data)
+{
+  ThunarLocationEntry *location_entry = THUNAR_LOCATION_ENTRY (user_data);
+  ThunarFile          *file;
+  GError              *error = NULL;
+
+  _thunar_return_if_fail (G_IS_FILE (object));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
+
+  /* get the file the path entry currently refers to. We expect the file
+   * to be the same as the one the path entry had when we started this
+   * mount operation */
+  file = thunar_path_entry_get_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry));
+
+  /* finish mounting the volume */
+  if (!g_file_mount_enclosing_volume_finish (G_FILE (object), result, &error))
+    {
+      /* ignore already mounted errors */
+      if (error->domain == G_IO_ERROR && error->code == G_IO_ERROR_ALREADY_MOUNTED)
+        g_clear_error (&error);
+    }
+
+  /* check if mounting succeeded */
+  if (error == NULL)
+    {
+      /* check if we have a current file at all */
+      if (file != NULL)
+        {
+          /* if the file is unknown we reload it, assuming that it was unknown due to
+           * its volume not being mounted before */
+          if (thunar_file_get_kind (file) == G_FILE_TYPE_UNKNOWN)
+            thunar_file_reload (file);
+
+          /* check if we have a new directory or a file to launch */
+          if (thunar_file_is_directory (file))
+            {
+              /* open the new directory */
+              thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), file);
+            }
+          else
+            {
+              /* try to launch the selected file */
+              thunar_file_launch (file, location_entry->path_entry, &error);
+
+              /* be sure to reset the current file of the path entry */
+              if (G_LIKELY (location_entry->current_directory != NULL))
+                {
+                  thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (location_entry->path_entry), 
+                                                      location_entry->current_directory);
+                }
+            }
+        }
+    }
+  else
+    {
+      /* check if we have a file at all */
+      if (file != NULL)
+        {
+          /* display an error explaining why we couldn't open/mount the file */
+          thunar_dialogs_show_error (location_entry->path_entry, 
+                                     error, _("Failed to launch \"%s\""), 
+                                     thunar_file_get_display_name (file));
+        }
+
+      /* free the error */
+      g_error_free (error);
+    }
+
+  /* release the reference on the location entry */
+  g_object_unref (location_entry);
+}
+
+
+
+
+
+static void
 thunar_location_entry_activate (GtkWidget           *path_entry,
                                 ThunarLocationEntry *location_entry)
 {
-  ThunarFile *file;
-  GError     *error = NULL;
+  GMountOperation *mount_operation;
+  ThunarFile      *file;
+  GtkWidget       *window;
+  GFile           *location;
 
   _thunar_return_if_fail (THUNAR_IS_LOCATION_ENTRY (location_entry));
   _thunar_return_if_fail (location_entry->path_entry == path_entry);
@@ -413,25 +495,24 @@ thunar_location_entry_activate (GtkWidget           *path_entry,
   file = thunar_path_entry_get_current_file (THUNAR_PATH_ENTRY (path_entry));
   if (G_LIKELY (file != NULL))
     {
-      /* check if we have a new directory or a file to launch */
-      if (thunar_file_is_directory (file))
-        {
-          /* open the new directory */
-          thunar_navigator_change_directory (THUNAR_NAVIGATOR (location_entry), file);
-        }
-      else
-        {
-          /* try to launch the selected file */
-          if (!thunar_file_launch (file, path_entry, &error))
-            {
-              thunar_dialogs_show_error (path_entry, error, _("Failed to launch \"%s\""), thunar_file_get_display_name (file));
-              g_error_free (error);
-            }
+      /* get the GFile of the file */
+      location = thunar_file_get_file (file);
+      
+      /* determine the toplevel window */
+      window = gtk_widget_get_toplevel (path_entry);
 
-          /* be sure to reset the current file of the path entry */
-          if (G_LIKELY (location_entry->current_directory != NULL))
-            thunar_path_entry_set_current_file (THUNAR_PATH_ENTRY (path_entry), location_entry->current_directory);
-        }
+      /* create a GTK+ mount operation */
+      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+
+      /* mount the volume enclosing the file asynchronously. Thunar will switch
+       * to the new directory or launch the activated file in the mount callback */
+      g_file_mount_enclosing_volume (location, G_MOUNT_MOUNT_NONE,
+                                     mount_operation, NULL, 
+                                     thunar_location_entry_activate_finish,
+                                     g_object_ref (location_entry));
+
+      /* we no longer need the mount operation */
+      g_object_unref (mount_operation);
     }
 }
 
