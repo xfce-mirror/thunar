@@ -1,5 +1,11 @@
 2009-06-16	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: In thunar_file_reload(), always reload the
+	  file first, before checking if it still exists and needs to be
+	  destroyed.
+
+2009-06-16	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-path-entry.c: Display the local path only for native
 	  files. If there is no path, use the URI. Always use the URI for
 	  non-native files.

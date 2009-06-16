@@ -2786,25 +2786,18 @@ thunar_file_reload (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  if (!g_file_query_exists (file->gfile, NULL))
+  thunar_file_load (file, NULL, NULL);
+
+  /* destroy the file if we cannot query any file information */
+  if (file->info == NULL)
     {
-      /* the file is no longer present */
       thunar_file_destroy (file);
+      return;
     }
-  else
-    {
-      thunar_file_load (file, NULL, NULL);
 
-      /* destroy the file if we cannot query any file information */
-      if (file->info == NULL)
-        {
-          thunar_file_destroy (file);
-          return;
-        }
-
-      /* ... and tell others */
-      thunar_file_changed (file);
-    }
+  /* ... and tell others */
+  thunar_file_changed (file);
+  
 }
 
 
