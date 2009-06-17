@@ -882,21 +882,22 @@ thunar_shortcuts_model_load (ThunarShortcutsModel *model)
             continue;
 
           /* make sure the file refers to a directory */
-          if (G_UNLIKELY (!thunar_file_is_directory (file)))
+          if (G_UNLIKELY (thunar_file_is_directory (file)))
             {
-              g_object_unref (G_OBJECT (file));
-              continue;
+              /* create the shortcut entry */
+              shortcut = _thunar_slice_new0 (ThunarShortcut);
+              shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
+              shortcut->file = file;
+              shortcut->name = (*name != '\0') ? g_strdup (name) : NULL;
+
+              /* append the shortcut to the list */
+              thunar_shortcuts_model_add_shortcut (model, shortcut, path);
+              gtk_tree_path_next (path);
             }
-
-          /* create the shortcut entry */
-          shortcut = _thunar_slice_new0 (ThunarShortcut);
-          shortcut->type = THUNAR_SHORTCUT_USER_DEFINED;
-          shortcut->file = file;
-          shortcut->name = (*name != '\0') ? g_strdup (name) : NULL;
-
-          /* append the shortcut to the list */
-          thunar_shortcuts_model_add_shortcut (model, shortcut, path);
-          gtk_tree_path_next (path);
+          else
+            {
+              g_object_unref (file);
+            }
         }
 
       /* clean up */
@@ -1113,10 +1114,10 @@ thunar_shortcuts_model_file_changed (ThunarFile           *file,
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_MODEL (model));
  
-  /* check if the file still refers to a directory, else we cannot keep
-   * it on the shortcuts list, and so we'll treat it like the file
-   * was destroyed (and thereby removed)
-   */
+  /* check if the file still refers to a directory or a not mounted URI, 
+   * otherwise we cannot keep it on the shortcuts list, and so we'll treat 
+   * it like the file was destroyed (and thereby removed) */
+
   if (G_UNLIKELY (!thunar_file_is_directory (file)))
     {
       thunar_shortcuts_model_file_destroy (file, model);
