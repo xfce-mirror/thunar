@@ -1,5 +1,10 @@
 2009-06-17	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-shortcuts-view.c: Don't request context menu items
+	  from Thunarx for files which don't exist. Reported by Nick.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.c: Refactor thunar_file_load() and
 	  thunar_file_get() a bit. For now, thunar_file_load() will always
 	  return successful, even if the GFileInfo cannot be loaded. This is

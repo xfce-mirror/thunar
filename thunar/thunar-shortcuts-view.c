@@ -875,7 +875,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
     }
 
   /* create provider menu items if there is a non-trashed file */
-  if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file)))
+  if (G_LIKELY (file != NULL && thunar_file_exists (file) && !thunar_file_is_trashed (file)))
     {
       /* load the menu providers from the provider factory */
       providers = thunarx_provider_factory_list_providers (view->provider_factory, THUNARX_TYPE_MENU_PROVIDER);
