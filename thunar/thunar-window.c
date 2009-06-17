@@ -62,6 +62,11 @@
 #include <glib.h>
 
 
+
+typedef struct _MountData MountData;
+
+
+
 /* Property identifiers */
 enum
 {
@@ -277,6 +282,12 @@ struct _ThunarWindow
    * see the toggle_sidepane() function.
    */
   GType                   toggle_sidepane_type;
+};
+
+struct _MountData
+{
+  ThunarWindow *window;
+  ThunarFile   *file;
 };
 
 
@@ -1408,12 +1419,107 @@ thunar_window_merge_custom_preferences (ThunarWindow *window)
 
 
 static void
+thunar_window_open_or_launch (ThunarWindow *window,
+                              ThunarFile   *file)
+{
+  GError *error = NULL;
+
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
+
+  if (thunar_file_is_mounted (file))
+    {
+      if (thunar_file_is_directory (file))
+        {
+          /* open the new directory */
+          thunar_window_set_current_directory (window, file);
+        }
+      else
+        {
+          /* try to launch the selected file */
+          if (!thunar_file_launch (file, window, &error))
+            {
+              thunar_dialogs_show_error (window, error, _("Failed to launch \"%s\""),
+                                         thunar_file_get_display_name (file));
+              g_error_free (error);
+            }
+        }
+    }
+  else
+    {
+      g_set_error (&error, G_IO_ERROR, G_IO_ERROR_NOT_MOUNTED, _("Mounting failed"));
+      thunar_dialogs_show_error (window, error, _("Failed to open \"%s\""),
+                                 thunar_file_get_display_name (file));
+      g_error_free (error);
+    }
+}
+
+
+
+static void
+thunar_window_open_async_finish (GObject      *object,
+                                 GAsyncResult *result,
+                                 gpointer      user_data)
+{
+  MountData *data = user_data;
+  GError    *error = NULL;
+
+  _thunar_return_if_fail (G_IS_FILE (object));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (data->window));
+  _thunar_return_if_fail (THUNAR_IS_FILE (data->file));
+
+  /* finish mounting the enclosing volume */
+  if (!g_file_mount_enclosing_volume_finish (G_FILE (object), result, &error))
+    {
+      if (error->domain == G_IO_ERROR)
+        {
+          /* ignore already mounted and not supported errors */
+          if (error->code == G_IO_ERROR_ALREADY_MOUNTED 
+              || error->code == G_IO_ERROR_NOT_SUPPORTED)
+            {
+              g_clear_error (&error);
+            }
+        }
+    }
+
+  /* check if mounting succeeded */
+  if (error == NULL)
+    {
+      /* reload the file if it wasn't mounted previously */
+      if (!thunar_file_is_mounted (data->file))
+        thunar_file_reload (data->file);
+
+      /* now try to open the file */
+      thunar_window_open_or_launch (data->window, data->file);
+    }
+  else
+    {
+      /* show the error dialog */
+      thunar_dialogs_show_error (data->window, error, _("Failed to open \"%s\""),
+                                 thunar_file_get_display_name (data->file));
+
+      /* free the error */
+      g_error_free (error);
+    }
+
+  /* free the mount data */
+  g_object_unref (data->file);
+  g_object_unref (data->window);
+  _thunar_slice_free (MountData, data);
+}
+
+
+
+static void
 thunar_window_start_open_location (ThunarWindow *window,
                                    const gchar  *initial_text)
 {
-  ThunarFile *selected_file;
-  GtkWidget  *dialog;
-  GError     *error = NULL;
+  GMountOperation *mount_operation;
+  ThunarFile      *selected_file;
+  MountData       *mount_data;
+  GtkWidget       *dialog;
 
   /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
    * in the window does not support text entry by the user.
@@ -1440,23 +1546,38 @@ thunar_window_start_open_location (ThunarWindow *window,
       /* run the dialog */
       if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
         {
+          /* be sure to hide the location dialog first */
+          gtk_widget_hide (dialog);
+
           /* check if we have a new directory or a file to launch */
           selected_file = thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog));
-          if (thunar_file_is_directory (selected_file))
+          if (selected_file != NULL)
             {
-              /* open the new directory */
-              thunar_window_set_current_directory (window, selected_file);
-            }
-          else
-            {
-              /* be sure to hide the location dialog first */
-              gtk_widget_hide (dialog);
-
-              /* try to launch the selected file */
-              if (!thunar_file_launch (selected_file, GTK_WIDGET (window), &error))
+              /* check if the file is already mounted */
+              if (thunar_file_is_mounted (selected_file))
                 {
-                  thunar_dialogs_show_error (GTK_WIDGET (window), error, _("Failed to launch \"%s\""), thunar_file_get_display_name (selected_file));
-                  g_error_free (error);
+                  /* it is, open it directly */
+                  thunar_window_open_or_launch (window, selected_file);
+                }
+              else
+                {
+                  /* allocate a mount data struct */
+                  mount_data = _thunar_slice_new0 (MountData);
+                  mount_data->window = g_object_ref (window);
+                  mount_data->file = g_object_ref (selected_file);
+
+                  /* allocate a new GTK+ mount operation */
+                  mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+
+                  /* mount the enclosing volume asynchronously and open/launch the file 
+                   * in the callback */
+                  g_file_mount_enclosing_volume (thunar_file_get_file (selected_file),
+                                                 G_MOUNT_MOUNT_NONE, mount_operation, 
+                                                 NULL, thunar_window_open_async_finish, 
+                                                 mount_data);
+
+                  /* release the mount operation */
+                  g_object_unref (mount_operation);
                 }
             }
         }
