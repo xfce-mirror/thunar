@@ -1,5 +1,21 @@
 2009-06-17	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.{c,h}: Add new boolean is_mounted member to
+	  ThunarFile. It is FALSE iff the GFileInfo of the file couldn't be
+	  loaded due to G_IO_ERROR_NO_MOUNTED. Return TRUE from
+	  thunar_file_load() only when the file info could be loaded or the
+	  file is not mounted yet. Use the path instead of the file:// URI for
+	  the display name of local files. Add new method
+	  thunar_file_is_mounted(). Add support for GFileIcons in
+	  thunar_file_get_icon_name() by returning the path to the icon
+	  filename if the file has a GFileIcon. Call thunar_file_reload()
+	  instead of thunar_file_destroy() on G_FILE_MONITOR_EVENT_DELETED and
+	  G_FILE_MONITOR_EVEN_PRE_UNMOUNT. The reload function will then
+	  destroy the file if it doesn't exist anymore. Not mounted files will
+	  not be destroyed though.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-thumbnailer.c: Make all D-Bus related code only
 	  available when D-Bus is installed at compile time. 
 

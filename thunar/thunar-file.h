@@ -125,6 +125,7 @@ struct _ThunarFile
   gchar         *thumbnail_path;
   guint          flags;
   guint          is_thumbnail : 1;
+  guint          is_mounted : 1;
 };
 
 GType             thunar_file_get_type             (void) G_GNUC_CONST;
@@ -187,6 +188,7 @@ GFileType         thunar_file_get_kind             (const ThunarFile       *file
 ThunarFileMode    thunar_file_get_mode             (const ThunarFile       *file);
 gboolean          thunar_file_get_free_space       (const ThunarFile       *file, 
                                                     guint64                *free_space_return);
+gboolean          thunar_file_is_mounted           (const ThunarFile       *file);
 gboolean          thunar_file_exists               (const ThunarFile       *file);
 gboolean          thunar_file_is_directory         (const ThunarFile       *file);
 gboolean          thunar_file_is_local             (const ThunarFile       *file);

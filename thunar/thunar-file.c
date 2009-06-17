@@ -591,7 +591,7 @@ thunar_file_monitor_update (GFile             *path,
 
         case G_FILE_MONITOR_EVENT_PRE_UNMOUNT:
         case G_FILE_MONITOR_EVENT_DELETED:
-          thunar_file_destroy (file);
+          thunar_file_reload (file);
           break;
 
         default:
@@ -742,11 +742,12 @@ thunar_file_load (ThunarFile   *file,
                   GError      **error)
 {
   GKeyFile *key_file;
+  GError   *err = NULL;
   GFile    *thumbnail_dir;
   gchar    *basename;
   gchar    *md5_hash;
   gchar    *thumbnail_dir_path;
-  gchar    *uri;
+  gchar    *uri = NULL;
 
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
   _thunar_return_val_if_fail (error == NULL || *error == NULL, FALSE);
@@ -783,12 +784,24 @@ thunar_file_load (ThunarFile   *file,
   /* free thumbnail path */
   g_free (file->thumbnail_path);
 
+  /* assume the file is mounted by default */
+  file->is_mounted = TRUE;
+
   /* query a new file info */
   file->info = g_file_query_info (file->gfile,
                                   THUNAR_FILE_G_FILE_INFO_NAMESPACE,
                                   G_FILE_QUERY_INFO_NONE,
                                   cancellable,
-                                  NULL);
+                                  &err);
+
+  if (err != NULL)
+    {
+      if (err->domain == G_IO_ERROR && err->code == G_IO_ERROR_NOT_MOUNTED)
+        {
+          file->is_mounted = FALSE;
+          g_clear_error (&err);
+        }
+    }
 
   /* query a new filesystem info */
   file->filesystem_info = g_file_query_filesystem_info (file->gfile,
@@ -871,7 +884,17 @@ thunar_file_load (ThunarFile   *file,
     }
   else
     {
-      uri = g_file_get_uri (file->gfile);
+      if (g_file_is_native (file->gfile))
+        {
+          uri = g_file_get_path (file->gfile);
+          if (uri == NULL)
+            uri = g_file_get_uri (file->gfile);
+        }
+      else
+        {
+          uri = g_file_get_uri (file->gfile);
+        }
+
       file->display_name = g_filename_display_name (uri);
       g_free (uri);
     }
@@ -891,7 +914,15 @@ thunar_file_load (ThunarFile   *file,
   g_free (md5_hash);
   g_free (uri);
 
-  return TRUE;
+  if (err != NULL)
+    {
+      g_propagate_error (error, err);
+      return FALSE;
+    }
+  else
+    {
+      return TRUE;
+    }
 }
 
 /**
@@ -1876,10 +1907,19 @@ thunar_file_get_free_space (const ThunarFile *file,
 
 
 gboolean
+thunar_file_is_mounted (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return file->is_mounted;
+}
+
+
+
+gboolean
 thunar_file_exists (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
-  return (file->info != NULL);
+  return g_file_query_exists (file->gfile, NULL);
 }
 
 
@@ -2584,6 +2624,7 @@ thunar_file_get_icon_name (const ThunarFile   *file,
                            ThunarFileIconState icon_state,
                            GtkIconTheme       *icon_theme)
 {
+  GFile  *icon_file;
   GIcon  *icon;
   gchar **themed_icon_names;
   gchar  *icon_name = NULL;
@@ -2597,17 +2638,26 @@ thunar_file_get_icon_name (const ThunarFile   *file,
 
   icon = g_file_info_get_icon (file->info);
 
-  if (icon != NULL && G_IS_THEMED_ICON (icon))
+  if (icon != NULL)
     {
-      g_object_get (icon, "names", &themed_icon_names, NULL);
-
-      for (i = 0; icon_name == NULL && themed_icon_names[i] != NULL; ++i)
+      if (G_IS_THEMED_ICON (icon))
         {
-          if (gtk_icon_theme_has_icon (icon_theme, themed_icon_names[i]))
-            icon_name = g_strdup (themed_icon_names[i]);
-        }
+          g_object_get (icon, "names", &themed_icon_names, NULL);
 
-      g_strfreev (themed_icon_names);
+          for (i = 0; icon_name == NULL && themed_icon_names[i] != NULL; ++i)
+            {
+              if (gtk_icon_theme_has_icon (icon_theme, themed_icon_names[i]))
+                icon_name = g_strdup (themed_icon_names[i]);
+            }
+
+          g_strfreev (themed_icon_names);
+        }
+      else if (G_IS_FILE_ICON (icon))
+        {
+          icon_file = g_file_icon_get_file (G_FILE_ICON (icon));
+          icon_name = g_file_get_path (icon_file);
+          g_object_unref (icon_file);
+        }
     }
   
   if (icon_name == NULL)
@@ -2806,11 +2856,9 @@ thunar_file_reload (ThunarFile *file)
 {
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  thunar_file_load (file, NULL, NULL);
-
-  /* destroy the file if we cannot query any file information */
-  if (file->info == NULL)
+  if (!thunar_file_load (file, NULL, NULL))
     {
+      /* destroy the file if we cannot query any file information */
       thunar_file_destroy (file);
       return;
     }
