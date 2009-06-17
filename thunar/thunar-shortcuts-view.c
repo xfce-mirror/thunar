@@ -45,6 +45,10 @@
 
 
 
+typedef struct _MountData MountData;
+
+
+
 /* Identifiers for signals */
 enum
 {
@@ -119,15 +123,14 @@ static GtkTreePath   *thunar_shortcuts_view_compute_drop_position        (Thunar
 static void           thunar_shortcuts_view_drop_uri_list                (ThunarShortcutsView      *view,
                                                                           GList                    *path_list,
                                                                           GtkTreePath              *dst_path);
-static void           thunar_shortcuts_view_open                         (ThunarShortcutsView      *view);
-static void           thunar_shortcuts_view_open_selection               (ThunarShortcutsView      *view);
-static void           thunar_shortcuts_view_open_in_new_window           (ThunarShortcutsView      *view);
-static void           thunar_shortcuts_view_open_selection_in_new_window (ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_open_clicked                 (ThunarShortcutsView      *view);
+static void           thunar_shortcuts_view_open                         (ThunarShortcutsView      *view,
+                                                                          gboolean                  new_window,
+                                                                          gboolean                  mount_only);
+static void           thunar_shortcuts_view_open_in_new_window_clicked   (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_empty_trash                  (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_eject                        (ThunarShortcutsView      *view);
 static void           thunar_shortcuts_view_mount_clicked                (ThunarShortcutsView      *view);
-static void           thunar_shortcuts_view_mount                        (ThunarShortcutsView      *view,
-                                                                          gboolean                  open_in_new_window);
 static gboolean       thunar_shortcuts_view_separator_func               (GtkTreeModel             *model,
                                                                           GtkTreeIter              *iter,
                                                                           gpointer                  user_data);
@@ -162,6 +165,15 @@ struct _ThunarShortcutsView
    * column whenever the shortcuts icon size is changed.
    */
   gint queue_resize_signal_id;
+};
+
+struct _MountData
+{
+  ThunarShortcutsView *view;
+  ThunarFile          *file;
+  GVolume             *volume;
+  guint                new_window : 1;
+  guint                mount_only : 1;
 };
 
 
@@ -416,9 +428,9 @@ thunar_shortcuts_view_button_release_event (GtkWidget      *widget,
     {
       /* check if we should simply open or open in new window */
       if (G_LIKELY (event->button == 1))
-        thunar_shortcuts_view_open (view);
+        thunar_shortcuts_view_open (view, FALSE, FALSE);
       else if (G_UNLIKELY (event->button == 2))
-        thunar_shortcuts_view_open_in_new_window (view);
+        thunar_shortcuts_view_open (view, TRUE, FALSE);
     }
 
   /* reset the pressed button state */
@@ -775,7 +787,7 @@ thunar_shortcuts_view_row_activated (GtkTreeView       *tree_view,
     (*GTK_TREE_VIEW_CLASS (thunar_shortcuts_view_parent_class)->row_activated) (tree_view, path, column);
 
   /* open the selected shortcut */
-  thunar_shortcuts_view_open (view);
+  thunar_shortcuts_view_open (view, FALSE, FALSE);
 }
 
 
@@ -814,7 +826,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
 
   /* append the "Open" menu action */
   item = gtk_image_menu_item_new_with_mnemonic (_("_Open"));
-  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open), view);
+  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open_clicked), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
@@ -825,7 +837,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
 
   /* append the "Open in New Window" menu action */
   item = gtk_image_menu_item_new_with_mnemonic (_("Open in New Window"));
-  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open_in_new_window), view);
+  g_signal_connect_swapped (G_OBJECT (item), "activate", G_CALLBACK (thunar_shortcuts_view_open_in_new_window_clicked), view);
   gtk_menu_shell_append (GTK_MENU_SHELL (menu), item);
   gtk_widget_show (item);
 
@@ -875,7 +887,7 @@ thunar_shortcuts_view_context_menu (ThunarShortcutsView *view,
     }
 
   /* create provider menu items if there is a non-trashed file */
-  if (G_LIKELY (file != NULL && thunar_file_exists (file) && !thunar_file_is_trashed (file)))
+  if (G_LIKELY (file != NULL && !thunar_file_is_trashed (file)))
     {
       /* load the menu providers from the provider factory */
       providers = thunarx_provider_factory_list_providers (view->provider_factory, THUNARX_TYPE_MENU_PROVIDER);
@@ -1225,95 +1237,356 @@ thunar_shortcuts_view_drop_uri_list (ThunarShortcutsView *view,
 
 
 static void
-thunar_shortcuts_view_open (ThunarShortcutsView *view)
+thunar_shortcuts_view_open_clicked (ThunarShortcutsView *view)
 {
-  GtkTreeSelection *selection;
-  GtkTreeModel     *model;
-  GtkTreeIter       iter;
-  GVolume          *volume;
-
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
+  thunar_shortcuts_view_open (view, FALSE, FALSE);
+}
 
-  /* determine the selected item */
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-  if (gtk_tree_selection_get_selected (selection, &model, &iter))
+
+
+static void
+thunar_shortcuts_view_mount_data_free (MountData *data)
+{
+  _thunar_return_if_fail (data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (data->view));
+
+  g_object_unref (data->view);
+
+  if (data->file != NULL)
+    g_object_unref (data->file);
+
+  if (data->volume != NULL)
+    g_object_unref (data->volume);
+
+  _thunar_slice_free (MountData, data);
+}
+
+
+
+static void
+thunar_shortcuts_view_open_real (MountData *data)
+{
+  ThunarApplication *application;
+  GError            *error = NULL;
+
+  _thunar_return_if_fail (data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (data->view));
+  _thunar_return_if_fail (THUNAR_IS_FILE (data->file));
+
+  if (thunar_file_is_mounted (data->file))
     {
-      /* determine the file for the shortcut at the given tree iterator */
-      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, -1);
-
-      if (G_LIKELY (volume != NULL))
+      if (data->new_window)
         {
-          thunar_shortcuts_view_mount (view, FALSE);
-          g_object_unref (volume);
+          /* open a new window for the shortcut target folder */
+          application = thunar_application_get ();
+          thunar_application_open_window (application, data->file, 
+                                          gtk_widget_get_screen (GTK_WIDGET (data->view)));
+          g_object_unref (application);
         }
-      else 
+      else
         {
-          thunar_shortcuts_view_open_selection (view);
+          /* invoke the signal to change to that folder */
+          g_signal_emit (data->view, view_signals[SHORTCUT_ACTIVATED], 0, data->file);
         }
+    }
+  else
+    {
+      g_set_error (&error, G_IO_ERROR, G_IO_ERROR_NOT_MOUNTED, _("Mounting failed"));
+      thunar_dialogs_show_error (data->view, error, _("Failed to open \"%s\""),
+                                 thunar_file_get_display_name (data->file));
+      g_error_free (error);
     }
 }
 
 
 
 static void
-thunar_shortcuts_view_open_selection (ThunarShortcutsView *view)
+thunar_shortcuts_view_open_async_finish (GObject      *object,
+                                         GAsyncResult *result,
+                                         gpointer      user_data)
+{
+  MountData *data = user_data;
+  GError    *error = NULL;
+
+  _thunar_return_if_fail (G_IS_FILE (object));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (data->view));
+  _thunar_return_if_fail (THUNAR_IS_FILE (data->file));
+
+  /* finish mounting the volume */
+  if (!g_file_mount_enclosing_volume_finish (G_FILE (object), result, &error))
+    {
+      if (error->domain == G_IO_ERROR)
+        {
+          /* ignore already mounted and not supported errors */
+          if (error->code == G_IO_ERROR_ALREADY_MOUNTED
+              || error->code == G_IO_ERROR_NOT_SUPPORTED)
+            {
+              g_clear_error (&error);
+            }
+        }
+    }
+
+  /* check if mounting succeeded */
+  if (error == NULL)
+    {
+      /* reload the file if it couldn't be loaded before */
+      if (!thunar_file_is_mounted (data->file))
+        thunar_file_reload (data->file);
+
+      /* now try to open the file */
+      thunar_shortcuts_view_open_real (data);
+    }
+  else
+    {
+      /* show the error dialog */
+      thunar_dialogs_show_error (data->view, error, _("Failed to open \"%s\""),
+                                 thunar_file_get_display_name (data->file));
+
+      /* free the error */
+      g_error_free (error);
+    }
+
+  /* free the mount data struct */
+  thunar_shortcuts_view_mount_data_free (data);
+}
+
+
+
+static void
+thunar_shortcuts_view_open_async (MountData *data)
+{
+  GMountOperation *mount_operation;
+  GtkWidget       *window;
+  GFile           *location;
+
+  _thunar_return_if_fail (data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (data->view));
+  _thunar_return_if_fail (THUNAR_IS_FILE (data->file));
+
+  /* check if the file is mounted */
+  if (thunar_file_is_mounted (data->file))
+    {
+      /* it is, open it now */
+      thunar_shortcuts_view_open_real (data);
+
+      /* destroy the mount data */
+      thunar_shortcuts_view_mount_data_free (data);
+    }
+  else
+    {
+      /* it is not, determine its location */
+      location = thunar_file_get_file (data->file);
+
+      /* allocate a GTK+ mount operation */
+      window = gtk_widget_get_toplevel (GTK_WIDGET (data->view));
+      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+
+      /* mount the enclosing volume and open the file in the callback */
+      g_file_mount_enclosing_volume (location, G_MOUNT_MOUNT_NONE,
+                                     mount_operation, NULL, 
+                                     thunar_shortcuts_view_open_async_finish,
+                                     data);
+
+      /* release the mount operation */
+      g_object_unref (mount_operation);
+    }
+}
+
+
+
+static void
+thunar_shortcuts_view_mount_async_finish (GObject      *object,
+                                          GAsyncResult *result,
+                                          gpointer      user_data)
+{
+  MountData  *data = user_data;
+  ThunarFile *file;
+  GError     *error = NULL;
+  GMount     *mount;
+  GFile      *location;
+  gchar      *volume_name;
+
+  _thunar_return_if_fail (G_IS_VOLUME (object));
+  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
+  _thunar_return_if_fail (data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (data->view));
+  _thunar_return_if_fail (G_IS_VOLUME (data->volume));
+
+  /* check if there was an error */
+  if (!g_volume_mount_finish (G_VOLUME (object), result, &error))
+    {
+      if (error->domain == G_IO_ERROR)
+        {
+          /* ignore already handled and pending mount errors */
+          if (error->code == G_IO_ERROR_FAILED_HANDLED 
+              || error->code == G_IO_ERROR_ALREADY_MOUNTED
+              || error->code == G_IO_ERROR_PENDING)
+            {
+              g_clear_error (&error);
+            }
+        }
+    }
+
+  if (error == NULL)
+    {
+      if (data->mount_only)
+        return;
+
+      mount = g_volume_get_mount (data->volume);
+
+      /* mounting succeeded, so if the mount still doesn't exist, that's a bug */
+      _thunar_assert (G_IS_MOUNT (mount));
+
+      location = g_mount_get_root (mount);
+      file = thunar_file_get (location, NULL);
+
+      /* mounting succeeded, so we should be able to load a file for the mount point */
+      _thunar_assert (THUNAR_IS_FILE (file));
+
+      g_object_ref (location);
+      g_object_unref (mount);
+
+      if (!thunar_file_is_mounted (file))
+        thunar_file_reload (file);
+
+      g_object_unref (data->volume);
+      data->volume = NULL;
+      data->file = file;
+
+      thunar_shortcuts_view_open_real (data);
+    }
+
+  if (error != NULL)
+    {
+      /* display an error dialog to inform the user */
+      volume_name = g_volume_get_name (data->volume);
+      thunar_dialogs_show_error (data->view, error, _("Failed to mount \"%s\""), 
+                                 volume_name);
+      g_free (volume_name);
+
+      /* free the error */
+      g_error_free (error);
+    }
+  
+  /* free the mount data struct */
+  thunar_shortcuts_view_mount_data_free (data);
+}
+
+
+
+static void
+thunar_shortcuts_view_mount_async (MountData *data)
+{
+  GMountOperation *mount_operation;
+  ThunarFile      *file;
+  GtkWidget       *window;
+  GMount          *mount;
+  GFile           *location;
+
+  _thunar_return_if_fail (data != NULL);
+  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (data->view));
+  _thunar_return_if_fail (G_IS_VOLUME (data->volume));
+
+  if (g_volume_is_mounted (data->volume))
+    {
+      if (data->mount_only)
+        return;
+
+      mount = g_volume_get_mount (data->volume);
+      
+      _thunar_assert (G_IS_MOUNT (mount));
+
+      location = g_mount_get_root (mount);
+      file = thunar_file_get (location, NULL);
+
+      _thunar_assert (THUNAR_IS_FILE (file));
+
+      g_object_unref (data->volume);
+      data->volume = NULL;
+      data->file = file;
+
+      thunar_shortcuts_view_open_real (data);
+
+      g_object_unref (location);
+      g_object_unref (mount);
+
+      thunar_shortcuts_view_mount_data_free (data);
+    }
+  else
+    {
+      window = gtk_widget_get_toplevel (GTK_WIDGET (data->view));
+      mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
+
+      g_volume_mount (data->volume, G_MOUNT_MOUNT_NONE,
+                      mount_operation, NULL, 
+                      thunar_shortcuts_view_mount_async_finish,
+                      data);
+
+      g_object_unref (mount_operation);
+    }
+}
+
+
+
+static void
+thunar_shortcuts_view_open (ThunarShortcutsView *view,
+                            gboolean             new_window,
+                            gboolean             mount_only)
 {
   GtkTreeSelection *selection;
   GtkTreeModel     *model;
   GtkTreeIter       iter;
   ThunarFile       *file;
-  
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-
-  /* determine the selected item */
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-
-  /* avoid dealing with invalid selections (may occur when the mount_finish()
-   * handler is called and the shortcuts view has been hidden already) */
-  if (!GTK_IS_TREE_SELECTION (selection))
-    return;
-
-  if (gtk_tree_selection_get_selected (selection, &model, &iter))
-    {
-      /* determine the file for the shortcut at the given tree iterator */
-      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file, -1);
-
-      if (G_LIKELY (file != NULL))
-        {
-          /* invoke the signal to change to that folder */
-          g_signal_emit (view, view_signals[SHORTCUT_ACTIVATED], 0, file);
-          g_object_unref (file);
-        }
-    }
-}
-
-
-
-static void
-thunar_shortcuts_view_open_in_new_window (ThunarShortcutsView *view)
-{
-  GtkTreeSelection *selection;
-  GtkTreeModel     *model;
-  GtkTreeIter       iter;
+  MountData        *mount_data;
   GVolume          *volume;
 
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
 
   /* determine the selected item */
   selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
+
+  /* avoid dealing with invalid selections */
+  if (!GTK_IS_TREE_SELECTION (selection))
+    return;
+
   if (gtk_tree_selection_get_selected (selection, &model, &iter))
     {
-      /* determine the volume for the shortcut at the given tree iterator */
-      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, -1);
+      /* determine the file for the shortcut at the given tree iterator */
+      gtk_tree_model_get (model, &iter, 
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file,
+                          THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, 
+                          -1);
 
-      if (volume != NULL)
+      if (G_LIKELY (volume != NULL))
         {
-          thunar_shortcuts_view_mount (view, TRUE);
-          g_object_unref (volume);
+          mount_data = _thunar_slice_new0 (MountData);
+          mount_data->view = g_object_ref (view);
+          mount_data->new_window = new_window;
+          mount_data->mount_only = mount_only;
+          mount_data->volume = volume;
+          mount_data->file = NULL;
+
+          thunar_shortcuts_view_mount_async (mount_data);
+
+          if (file != NULL)
+            g_object_unref (file);
         }
-      else
+      else if (file != NULL) 
         {
-          thunar_shortcuts_view_open_selection_in_new_window (view);
+          mount_data = _thunar_slice_new0 (MountData);
+          mount_data->view = g_object_ref (view);
+          mount_data->new_window = new_window;
+          mount_data->mount_only = mount_only;
+          mount_data->file = file;
+          mount_data->volume = NULL;
+
+          thunar_shortcuts_view_open_async (mount_data);
+
+          if (volume != NULL)
+            g_object_unref (volume);
         }
     }
 }
@@ -1321,39 +1594,10 @@ thunar_shortcuts_view_open_in_new_window (ThunarShortcutsView *view)
 
 
 static void
-thunar_shortcuts_view_open_selection_in_new_window (ThunarShortcutsView *view)
+thunar_shortcuts_view_open_in_new_window_clicked (ThunarShortcutsView *view)
 {
-  ThunarApplication *application;
-  GtkTreeSelection  *selection;
-  GtkTreeModel      *model;
-  GtkTreeIter        iter;
-  ThunarFile        *file;
-
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-
-  /* determine the selected item */
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-
-  /* avoid dealing with invalid selections (may occur when the mount_finish()
-   * handler is called and the shortcuts view has been hidden already) */
-  if (!GTK_IS_TREE_SELECTION (selection))
-    return;
-
-  if (gtk_tree_selection_get_selected (selection, &model, &iter))
-    {
-      /* determine the volume for the shortcut at the given tree iterator */
-      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_FILE, &file, -1);
-
-      if (G_LIKELY (file != NULL))
-        {
-          /* open a new window for the shortcut target folder */
-          application = thunar_application_get ();
-          thunar_application_open_window (application, file, 
-                                          gtk_widget_get_screen (GTK_WIDGET (view)));
-          g_object_unref (application);
-          g_object_unref (file);
-        }
-    }
+  thunar_shortcuts_view_open (view, TRUE, FALSE);
 }
 
 
@@ -1502,159 +1746,7 @@ static void
 thunar_shortcuts_view_mount_clicked (ThunarShortcutsView *view)
 {
   _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-  thunar_shortcuts_view_mount (view, FALSE);
-}
-
-
-
-static void
-thunar_shortcuts_view_mount_finish (GObject      *object,
-                                    GAsyncResult *result,
-                                    gpointer      user_data)
-{
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
-  GtkWidget           *window;
-  GVolume             *volume = G_VOLUME (object);
-  GError              *error = NULL;
-  gchar               *volume_name;
-
-  _thunar_return_if_fail (G_IS_VOLUME (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-
-  /* check if there was an error */
-  if (!g_volume_mount_finish (volume, result, &error))
-    {
-      /* ignore GIO already handled errors or errors due to pending mount actions */
-      if (error->domain != G_IO_ERROR 
-          || (error->code != G_IO_ERROR_FAILED_HANDLED 
-              && error->code != G_IO_ERROR_ALREADY_MOUNTED
-              && error->code != G_IO_ERROR_PENDING))
-        {
-          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-
-          /* display an error dialog to inform the user */
-          volume_name = g_volume_get_name (volume);
-          thunar_dialogs_show_error (window, error, _("Failed to mount \"%s\""), volume_name);
-          g_free (volume_name);
-
-          /* free the error */
-          g_error_free (error);
-        }
-    }
-  else
-    {
-      thunar_shortcuts_view_open_selection (view);
-    }
-
-  g_object_unref (view);
-}
-
-
-static void
-thunar_shortcuts_view_mount_new_window_finish (GObject      *object,
-                                               GAsyncResult *result,
-                                               gpointer      user_data)
-{
-  ThunarShortcutsView *view = THUNAR_SHORTCUTS_VIEW (user_data);
-  GtkWidget           *window;
-  GVolume             *volume = G_VOLUME (object);
-  GError              *error = NULL;
-  gchar               *volume_name;
-
-  _thunar_return_if_fail (G_IS_VOLUME (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-
-  /* check if there was an error */
-  if (!g_volume_mount_finish (volume, result, &error))
-    {
-      /* ignore GIO already handled errors or errors due to pending mount actions */
-      if (error->domain != G_IO_ERROR 
-          || (error->code != G_IO_ERROR_FAILED_HANDLED 
-              && error->code != G_IO_ERROR_ALREADY_MOUNTED
-              && error->code != G_IO_ERROR_PENDING))
-        {
-          window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-
-          /* display an error dialog to inform the user */
-          volume_name = g_volume_get_name (volume);
-          thunar_dialogs_show_error (window, error, _("Failed to mount \"%s\""), volume_name);
-          g_free (volume_name);
-
-          /* free the error */
-          g_error_free (error);
-        }
-    }
-  else
-    {
-      thunar_shortcuts_view_open_selection_in_new_window (view);
-    }
-
-  g_object_unref (view);
-}
-
-
-
-
-static void
-thunar_shortcuts_view_mount (ThunarShortcutsView *view,
-                             gboolean             open_in_new_window)
-{
-  GtkTreeSelection *selection;
-  GMountOperation  *mount_operation;
-  GtkTreeModel     *model;
-  GtkTreeIter       iter;
-  GtkWidget        *window;
-  GVolume          *volume;
-
-  _thunar_return_if_fail (THUNAR_IS_SHORTCUTS_VIEW (view));
-
-  /* determine the selected item */
-  selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (view));
-  if (gtk_tree_selection_get_selected (selection, &model, &iter))
-    {
-      /* determine the volume for the shortcut at the given tree iterator */
-      gtk_tree_model_get (model, &iter, THUNAR_SHORTCUTS_MODEL_COLUMN_VOLUME, &volume, -1);
-      if (G_UNLIKELY (volume != NULL))
-        {
-          if (G_LIKELY (g_volume_is_mounted (volume)))
-            {
-              /* the volume is already mounted, so we can simply open it */
-              if (open_in_new_window)
-                thunar_shortcuts_view_open_selection_in_new_window (view);
-              else
-                thunar_shortcuts_view_open_selection (view);
-            }
-          else
-            {
-              /* allocate a GTK+ mount operation for user interaction required during
-               * the mount process */
-              window = gtk_widget_get_toplevel (GTK_WIDGET (view));
-              mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
-
-              /* try to mount the volume asynchronously */
-              if (open_in_new_window)
-                {
-                  g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
-                                  thunar_shortcuts_view_mount_new_window_finish, 
-                                  g_object_ref (view));
-                }
-              else
-                {
-                  g_volume_mount (volume, G_MOUNT_MOUNT_NONE, mount_operation, NULL,
-                                  thunar_shortcuts_view_mount_finish, 
-                                  g_object_ref (view));
-                }
-
-              /* release the mount operation */
-              g_object_unref (mount_operation);
-            }
-
-          /* cleanup */
-          g_object_unref (volume);
-        }
-    }
+  thunar_shortcuts_view_open (view, FALSE, TRUE);
 }
 
 

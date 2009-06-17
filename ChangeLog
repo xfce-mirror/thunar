@@ -1,5 +1,14 @@
 2009-06-17	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-shortcuts-view.c: Rework mounting and mounting + open.
+	  Also make opening items other than volumes work asynchronously. To
+	  do that, first check if the file to be opened is mounted already. If
+	  that's the case, open it directly. If not, mount the enclosing
+	  volume asynchronously and open the file in the mount callback. This
+	  works for opening in the same or a new window.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-shortcuts-model.c: Minor code reorganization.
 
 2009-06-17	Jannis Pohlmann <jannis@xfce.org>
