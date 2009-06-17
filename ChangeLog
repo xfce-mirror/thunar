@@ -1,5 +1,12 @@
 2009-06-17	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-location-entry.c: Check if files are mounted before
+	  mounting their volumes asynchronously. If they are, just open them
+	  directly. Rework the code a bit, add a new private method
+	  thunar_location_entry_open_or_launch().
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add new boolean is_mounted member to
 	  ThunarFile. It is FALSE iff the GFileInfo of the file couldn't be
 	  loaded due to G_IO_ERROR_NO_MOUNTED. Return TRUE from
