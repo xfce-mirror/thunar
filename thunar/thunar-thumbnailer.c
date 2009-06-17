@@ -22,17 +22,21 @@
 #include <config.h>
 #endif
 
+#ifdef HAVE_DBUS
 #include <dbus/dbus.h>
 #include <dbus/dbus-glib.h>
+
+#include <thunar/thunar-thumbnailer-proxy.h>
+#include <thunar/thunar-thumbnailer-manager-proxy.h>
+#endif
 
 #include <thunar/thunar-marshal.h>
 #include <thunar/thunar-private.h>
 #include <thunar/thunar-thumbnailer.h>
-#include <thunar/thunar-thumbnailer-proxy.h>
-#include <thunar/thunar-thumbnailer-manager-proxy.h>
 
 
 
+#if HAVE_DBUS
 typedef enum
 {
   THUNAR_THUMBNAILER_IDLE_ERROR,
@@ -44,14 +48,16 @@ typedef enum
 
 typedef struct _ThunarThumbnailerCall ThunarThumbnailerCall;
 typedef struct _ThunarThumbnailerIdle ThunarThumbnailerIdle;
+#endif
 
 
 
+static void     thunar_thumbnailer_finalize               (GObject               *object);
+#ifdef HAVE_DBUS
 static void     thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer     *thumbnailer,
                                                            DBusGConnection       *connection);
 static void     thunar_thumbnailer_init_manager_proxy     (ThunarThumbnailer     *thumbnailer,
                                                            DBusGConnection       *connection);
-static void     thunar_thumbnailer_finalize               (GObject               *object);
 static gboolean thunar_thumbnailer_file_is_supported      (ThunarThumbnailer     *thumbnailer,
                                                            ThunarFile            *file);
 static void     thunar_thumbnailer_thumbnailer_finished   (DBusGProxy            *proxy,
@@ -77,6 +83,7 @@ static gboolean thunar_thumbnailer_ready_idle             (gpointer             
 static gboolean thunar_thumbnailer_started_idle           (gpointer               user_data);
 static void     thunar_thumbnailer_call_free              (ThunarThumbnailerCall *call);
 static void     thunar_thumbnailer_idle_free              (gpointer               data);
+#endif
 
 
 
@@ -89,6 +96,7 @@ struct _ThunarThumbnailer
 {
   GObject __parent__;
 
+#ifdef HAVE_DBUS
   /* proxies to communicate with D-Bus services */
   DBusGProxy *manager_proxy;
   DBusGProxy *thumbnailer_proxy;
@@ -115,8 +123,10 @@ struct _ThunarThumbnailer
 
   /* IDs of idle functions */
   GList      *idles;
+#endif
 };
 
+#ifdef HAVE_DBUS
 struct _ThunarThumbnailerCall
 {
   ThunarThumbnailer *thumbnailer;
@@ -135,12 +145,15 @@ struct _ThunarThumbnailerIdle
     gpointer                request;
   }                         data;
 };
+#endif
 
 
 
+#ifdef HAVE_DBUS
 static DBusGProxy *thunar_thumbnailer_manager_proxy;
 static DBusGProxy *thunar_thumbnailer_proxy;
 static DBusGProxy *thunar_manager_proxy;
+#endif
 
 
 
@@ -162,6 +175,7 @@ thunar_thumbnailer_class_init (ThunarThumbnailerClass *klass)
 static void
 thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
 {
+#ifdef HAVE_DBUS
   DBusGConnection *connection;
 
   thumbnailer->lock = g_mutex_new ();
@@ -194,10 +208,91 @@ thunar_thumbnailer_init (ThunarThumbnailer *thumbnailer)
   /* release the D-Bus connection if we have one */
   if (connection != NULL)
     dbus_g_connection_unref (connection);
+#endif
 }
 
 
 
+static void
+thunar_thumbnailer_finalize (GObject *object)
+{
+#ifdef HAVE_DBUS
+  ThunarThumbnailerIdle *idle;
+  ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (object);
+  GList                 *list;
+  GList                 *lp;
+
+  /* acquire the thumbnailer lock */
+  g_mutex_lock (thumbnailer->lock);
+
+  /* abort all pending idle functions */
+  for (lp = thumbnailer->idles; lp != NULL; lp = lp->next)
+    {
+      idle = lp->data;
+      g_source_remove (idle->id);
+    }
+
+  /* free the idle list */
+  g_list_free (thumbnailer->idles);
+
+  if (thumbnailer->manager_proxy != NULL)
+    {
+      /* disconnect from the manager proxy */
+      g_signal_handlers_disconnect_matched (thumbnailer->manager_proxy,
+                                            G_SIGNAL_MATCH_DATA, 0, 0,
+                                            NULL, NULL, thumbnailer);
+  
+      /* release the manager proxy */
+      g_object_unref (thumbnailer->manager_proxy);
+    }
+
+  if (thumbnailer->thumbnailer_proxy != NULL)
+    {
+      /* cancel all pending D-Bus calls */
+      list = g_hash_table_get_values (thumbnailer->request_call_mapping);
+      for (lp = list; lp != NULL; lp = lp->next)
+        dbus_g_proxy_cancel_call (thumbnailer->thumbnailer_proxy, lp->data);
+      g_list_free (list);
+
+      g_hash_table_unref (thumbnailer->request_call_mapping);
+
+#if 0 
+      /* unqueue all pending requests */
+      list = g_hash_table_get_keys (thumbnailer->handle_request_mapping);
+      for (lp = list; lp != NULL; lp = lp->next)
+        thunar_thumbnailer_unqueue_internal (thumbnailer, GPOINTER_TO_UINT (lp->data));
+      g_list_free (list);
+#endif
+
+      g_hash_table_unref (thumbnailer->handle_request_mapping);
+      g_hash_table_unref (thumbnailer->request_handle_mapping);
+      g_hash_table_unref (thumbnailer->request_uris_mapping);
+
+      /* disconnect from the thumbnailer proxy */
+      g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
+                                            G_SIGNAL_MATCH_DATA, 0, 0, 
+                                            NULL, NULL, thumbnailer);
+
+      /* release the thumbnailer proxy */
+      g_object_unref (thumbnailer->thumbnailer_proxy);
+    }
+
+  /* free the cached MIME types array */
+  g_strfreev (thumbnailer->supported_types);
+
+  /* release the thumbnailer lock */
+  g_mutex_unlock (thumbnailer->lock);
+
+  /* release the mutex */
+  g_mutex_free (thumbnailer->lock);
+#endif
+
+  (*G_OBJECT_CLASS (thunar_thumbnailer_parent_class)->finalize) (object);
+}
+
+
+
+#ifdef HAVE_DBUS
 static void
 thunar_thumbnailer_init_thumbnailer_proxy (ThunarThumbnailer *thumbnailer,
                                            DBusGConnection   *connection)
@@ -301,83 +396,6 @@ thunar_thumbnailer_init_manager_proxy (ThunarThumbnailer *thumbnailer,
     {
       thumbnailer->manager_proxy = g_object_ref (thunar_thumbnailer_manager_proxy);
     }
-}
-
-
-
-static void
-thunar_thumbnailer_finalize (GObject *object)
-{
-  ThunarThumbnailerIdle *idle;
-  ThunarThumbnailer     *thumbnailer = THUNAR_THUMBNAILER (object);
-  GList                 *list;
-  GList                 *lp;
-
-  /* acquire the thumbnailer lock */
-  g_mutex_lock (thumbnailer->lock);
-
-  /* abort all pending idle functions */
-  for (lp = thumbnailer->idles; lp != NULL; lp = lp->next)
-    {
-      idle = lp->data;
-      g_source_remove (idle->id);
-    }
-
-  /* free the idle list */
-  g_list_free (thumbnailer->idles);
-
-  if (thumbnailer->manager_proxy != NULL)
-    {
-      /* disconnect from the manager proxy */
-      g_signal_handlers_disconnect_matched (thumbnailer->manager_proxy,
-                                            G_SIGNAL_MATCH_DATA, 0, 0,
-                                            NULL, NULL, thumbnailer);
-  
-      /* release the manager proxy */
-      g_object_unref (thumbnailer->manager_proxy);
-    }
-
-  if (thumbnailer->thumbnailer_proxy != NULL)
-    {
-      /* cancel all pending D-Bus calls */
-      list = g_hash_table_get_values (thumbnailer->request_call_mapping);
-      for (lp = list; lp != NULL; lp = lp->next)
-        dbus_g_proxy_cancel_call (thumbnailer->thumbnailer_proxy, lp->data);
-      g_list_free (list);
-
-      g_hash_table_unref (thumbnailer->request_call_mapping);
-
-#if 0 
-      /* unqueue all pending requests */
-      list = g_hash_table_get_keys (thumbnailer->handle_request_mapping);
-      for (lp = list; lp != NULL; lp = lp->next)
-        thunar_thumbnailer_unqueue_internal (thumbnailer, GPOINTER_TO_UINT (lp->data));
-      g_list_free (list);
-#endif
-
-      g_hash_table_unref (thumbnailer->handle_request_mapping);
-      g_hash_table_unref (thumbnailer->request_handle_mapping);
-      g_hash_table_unref (thumbnailer->request_uris_mapping);
-
-      /* disconnect from the thumbnailer proxy */
-      g_signal_handlers_disconnect_matched (thumbnailer->thumbnailer_proxy,
-                                            G_SIGNAL_MATCH_DATA, 0, 0, 
-                                            NULL, NULL, thumbnailer);
-
-      /* release the thumbnailer proxy */
-      g_object_unref (thumbnailer->thumbnailer_proxy);
-    }
-
-  /* free the cached MIME types array */
-  g_strfreev (thumbnailer->supported_types);
-
-  /* release the thumbnailer lock */
-  g_mutex_unlock (thumbnailer->lock);
-
-  /* release the mutex */
-  g_mutex_free (thumbnailer->lock);
-
-  (*G_OBJECT_CLASS (thunar_thumbnailer_parent_class)->finalize) (object);
 }
 
 
@@ -909,6 +927,7 @@ thunar_thumbnailer_idle_free (gpointer data)
   /* free the struct */
   _thunar_slice_free (ThunarThumbnailerIdle, idle);
 }
+#endif /* HAVE_DBUS */
 
 
 
@@ -955,18 +974,21 @@ gboolean
 thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
                                 GList             *files)
 {
-  const gchar **mime_hints;
   gboolean      success = FALSE;
+#ifdef HAVE_DBUS
+  const gchar **mime_hints;
   gpointer      request;
   GList        *lp;
   GList        *supported_files = NULL;
   gchar       **uris;
   guint         n_supported = 0;
   guint         n;
+#endif
 
   _thunar_return_val_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer), FALSE);
   _thunar_return_val_if_fail (files != NULL, FALSE);
 
+#ifdef HAVE_DBUS
   /* acquire the thumbnailer lock */
   g_mutex_lock (thumbnailer->lock);
 
@@ -1035,6 +1057,7 @@ thunar_thumbnailer_queue_files (ThunarThumbnailer *thumbnailer,
 
   /* release the thumbnailer lock */
   g_mutex_unlock (thumbnailer->lock);
+#endif /* HAVE_DBUS */
 
   return success;
 }
@@ -1045,10 +1068,13 @@ void
 thunar_thumbnailer_unqueue (ThunarThumbnailer *thumbnailer,
                             gpointer           request)
 {
+#ifdef HAVE_DBUS
   gpointer handle;
+#endif
 
   _thunar_return_if_fail (THUNAR_IS_THUMBNAILER (thumbnailer));
 
+#ifdef HAVE_DBUS
   /* acquire the thumbnailer lock */
   g_mutex_lock (thumbnailer->lock);
 
@@ -1066,4 +1092,5 @@ thunar_thumbnailer_unqueue (ThunarThumbnailer *thumbnailer,
 
   /* release the thumbnailer lock */
   g_mutex_unlock (thumbnailer->lock);
+#endif
 }
