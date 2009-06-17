@@ -1,5 +1,14 @@
 2009-06-17	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Refactor thunar_file_load() and
+	  thunar_file_get() a bit. For now, thunar_file_load() will always
+	  return successful, even if the GFileInfo cannot be loaded. This is
+	  because we want ThunarFiles for remote URIs that are not yet
+	  mounted. To compensate for that, there's a new method
+	  thunar_file_exists() which returns TRUE iff the ThunarFile exists.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/main.c, thunar/thunar-application.{c,h}: 
 	  thunar_application_process_filenames() now works asynchronously
 	  because it might have to mount the enclosing volumes of one of the

@@ -187,6 +187,7 @@ GFileType         thunar_file_get_kind             (const ThunarFile       *file
 ThunarFileMode    thunar_file_get_mode             (const ThunarFile       *file);
 gboolean          thunar_file_get_free_space       (const ThunarFile       *file, 
                                                     guint64                *free_space_return);
+gboolean          thunar_file_exists               (const ThunarFile       *file);
 gboolean          thunar_file_is_directory         (const ThunarFile       *file);
 gboolean          thunar_file_is_local             (const ThunarFile       *file);
 gboolean          thunar_file_is_ancestor          (const ThunarFile       *file, 

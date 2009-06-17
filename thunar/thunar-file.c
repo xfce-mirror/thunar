@@ -631,7 +631,9 @@ thunar_file_monitor (GFileMonitor     *monitor,
  * @file  : a #GFile.
  * @error : return location for errors.
  *
- * Looks up the #ThunarFile referred to by @file.
+ * Looks up the #ThunarFile referred to by @file. This function may return a
+ * ThunarFile even though the file doesn't actually exist. This is the case
+ * with remote URIs (like SFTP) for instance, if they are not mounted.
  *
  * The caller is responsible to call g_object_unref()
  * when done with the returned object.
@@ -665,12 +667,21 @@ thunar_file_get (GFile   *gfile,
       file->display_name = NULL;
       file->basename = NULL;
 
-      thunar_file_load (file, NULL, error);
+      if (thunar_file_load (file, NULL, error))
+        {
+          /* insert the file into the cache */
+          G_LOCK (file_cache_mutex);
+          g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
+          G_UNLOCK (file_cache_mutex);
+        }
+      else
+        {
+          /* failed loading, destroy the file */
+          g_object_unref (file);
 
-      /* insert the file into the cache */
-      G_LOCK (file_cache_mutex);
-      g_hash_table_insert (file_cache, g_object_ref (file->gfile), file);
-      G_UNLOCK (file_cache_mutex);
+          /* make sure we return NULL */
+          file = NULL;
+        }
     }
 
   return file;
@@ -774,10 +785,10 @@ thunar_file_load (ThunarFile   *file,
 
   /* query a new file info */
   file->info = g_file_query_info (file->gfile,
-                                   THUNAR_FILE_G_FILE_INFO_NAMESPACE,
-                                   G_FILE_QUERY_INFO_NONE,
-                                   cancellable,
-                                   error);
+                                  THUNAR_FILE_G_FILE_INFO_NAMESPACE,
+                                  G_FILE_QUERY_INFO_NONE,
+                                  cancellable,
+                                  NULL);
 
   /* query a new filesystem info */
   file->filesystem_info = g_file_query_filesystem_info (file->gfile,
@@ -880,7 +891,7 @@ thunar_file_load (ThunarFile   *file,
   g_free (md5_hash);
   g_free (uri);
 
-  return (file->info != NULL);
+  return TRUE;
 }
 
 /**
@@ -1860,6 +1871,15 @@ thunar_file_get_free_space (const ThunarFile *file,
   
   return g_file_info_has_attribute (file->filesystem_info,
                                     G_FILE_ATTRIBUTE_FILESYSTEM_FREE);
+}
+
+
+
+gboolean
+thunar_file_exists (const ThunarFile *file)
+{
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
+  return (file->info != NULL);
 }
 
 
