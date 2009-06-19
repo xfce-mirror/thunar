@@ -38,6 +38,8 @@ Thunar_SOURCES =							\
 	thunar-abstract-icon-view.h					\
 	thunar-application.c						\
 	thunar-application.h						\
+	thunar-browser.c						\
+	thunar-browser.h						\
 	thunar-chooser-button.c						\
 	thunar-chooser-button.h						\
 	thunar-chooser-dialog.c						\
