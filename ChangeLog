@@ -1,5 +1,11 @@
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-path-entry.c: Unescape URIs before displaying them.
+	  This is to make sure we don't see things like "%20" in the location
+	  bar/dialog.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-location-entry.c: Simplify the activate code by
 	  deriving from ThunarBrowser and using the poke functions to mount
 	  volumes or resolve files asynchronously and on demand.

@@ -1401,6 +1401,7 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
 {
   GFile *file;
   gchar *text;
+  gchar *unescaped;
 
   _thunar_return_if_fail (THUNAR_IS_PATH_ENTRY (path_entry));
   _thunar_return_if_fail (current_file == NULL || THUNAR_IS_FILE (current_file));
@@ -1430,9 +1431,12 @@ thunar_path_entry_set_current_file (ThunarPathEntry *path_entry,
         }
     }
 
-  /* setup the entry text */
-  gtk_entry_set_text (GTK_ENTRY (path_entry), text);
+  unescaped = g_uri_unescape_string (text, NULL);
   g_free (text);
+
+  /* setup the entry text */
+  gtk_entry_set_text (GTK_ENTRY (path_entry), unescaped);
+  g_free (unescaped);
 
   gtk_editable_set_position (GTK_EDITABLE (path_entry), -1);
 
