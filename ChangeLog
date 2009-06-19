@@ -1,5 +1,11 @@
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-location-entry.c: Simplify the activate code by
+	  deriving from ThunarBrowser and using the poke functions to mount
+	  volumes or resolve files asynchronously and on demand.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-shortcuts-view.c: Dramatically simplify the way
 	  directories and volumes are mounted and opened by deriving from
 	  ThunarBrowser and calling thunar_browser_poke_file() and
