@@ -1,5 +1,17 @@
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-browser.{c,h}: Add a new interface with two
+	  convenience functions for browsing (possibly not yet mounted or
+	  resolved) volumes and files. thunar_browser_poke_file() can be used
+	  to asynchronously resolve shortcuts, mount mountables or enclosing
+	  volumes. When finished, the ThunarBrowserPokeFileFunc callback is
+	  called with the source and target file. thunar_browser_poke_volume()
+	  mounts volumes on demand and resolves the mount point and passes it
+	  to the ThunarBrowsePokeVolumeFunc callback. Both functions are
+	  possibly asynchronous.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.{c,h}: Add "mountable::*" namespace to the file
 	  info attributes we request from the GFileInfo. In
 	  thunar_file_load(), check for type G_FILE_TYPE_MOUNTABLE and set
