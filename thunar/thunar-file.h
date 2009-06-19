@@ -185,6 +185,7 @@ gboolean          thunar_file_is_symlink           (const ThunarFile       *file
 guint64           thunar_file_get_size             (const ThunarFile       *file);
 GAppInfo         *thunar_file_get_default_handler  (const ThunarFile       *file);
 GFileType         thunar_file_get_kind             (const ThunarFile       *file);
+GFile            *thunar_file_get_target_location  (const ThunarFile       *file);
 ThunarFileMode    thunar_file_get_mode             (const ThunarFile       *file);
 gboolean          thunar_file_get_free_space       (const ThunarFile       *file, 
                                                     guint64                *free_space_return);

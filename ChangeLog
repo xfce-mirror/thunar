@@ -1,3 +1,18 @@
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
+	* thunar/thunar-file.{c,h}: Add "mountable::*" namespace to the file
+	  info attributes we request from the GFileInfo. In
+	  thunar_file_load(), check for type G_FILE_TYPE_MOUNTABLE and set
+	  is_mounted to FALSE if its G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT is
+	  TRUE. Add function thunar_file_get_target_location() which returns
+	  a GFile for the target location of a file of type
+	  G_FILE_TYPE_SHORTCUT or G_FILE_TYPE_MOUNTABLE and otherwise returns
+	  NULL. Don't assume all files have a content type - shortcuts and
+	  mountables don't. Work around this in thunar_file_is_desktop_file()
+	  and thunar_file_list_get_applications(). Check if we have a
+	  GFileInfo before querying the original path in
+	  thunar_file_get_original_path().
+
 2009-06-17	Jannis Pohlmann <jannis@xfce.org>
 
 	* thunar/thunar-file.c: Use special icon names for root folders other

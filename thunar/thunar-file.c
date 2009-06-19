@@ -68,12 +68,13 @@
 
 /* File attribute namespaces being used */
 #define THUNAR_FILE_G_FILE_INFO_NAMESPACE \
-  "standard::*," \
-  "unix::*," \
   "access::*," \
+  "mountable::*," \
+  "preview::*," \
+  "standard::*," \
   "time::*," \
   "thumbnail::*," \
-  "preview::*"
+  "unix::*"
 
 #define THUNAR_FILE_G_FILE_INFO_FILESYSTEM_NAMESPACE \
   "filesystem::*"
@@ -577,7 +578,7 @@ thunar_file_monitor_update (GFile             *path,
   ThunarFile *file;
 
   _thunar_return_if_fail (G_IS_FILE (path));
-
+  
   file = thunar_file_cache_lookup (path);
   if (G_LIKELY (file != NULL))
     {
@@ -791,10 +792,18 @@ thunar_file_load (ThunarFile   *file,
   file->info = g_file_query_info (file->gfile,
                                   THUNAR_FILE_G_FILE_INFO_NAMESPACE,
                                   G_FILE_QUERY_INFO_NONE,
-                                  cancellable,
-                                  &err);
+                                  cancellable, &err);
 
-  if (err != NULL)
+  if (err == NULL)
+    {
+      if (g_file_info_get_file_type (file->info) == G_FILE_TYPE_MOUNTABLE)
+        {
+          file->is_mounted = 
+            !g_file_info_get_attribute_boolean (file->info,
+                                                G_FILE_ATTRIBUTE_MOUNTABLE_CAN_MOUNT);
+        }
+    }
+  else
     {
       if (err->domain == G_IO_ERROR && err->code == G_IO_ERROR_NOT_MOUNTED)
         {
@@ -1854,6 +1863,24 @@ thunar_file_get_kind (const ThunarFile *file)
 
 
 
+GFile *
+thunar_file_get_target_location (const ThunarFile *file)
+{
+  const gchar *uri;
+
+  _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
+
+  if (file->info == NULL)
+    return g_object_ref (file->gfile);
+  
+  uri = g_file_info_get_attribute_string (file->info,
+                                          G_FILE_ATTRIBUTE_STANDARD_TARGET_URI);
+
+  return (uri != NULL) ? g_file_new_for_uri (uri) : NULL;
+}
+
+
+
 /**
  * thunar_file_get_mode:
  * @file : a #ThunarFile instance.
@@ -2169,13 +2196,21 @@ thunar_file_is_trashed (const ThunarFile *file)
 gboolean
 thunar_file_is_desktop_file (const ThunarFile *file)
 {
+  const gchar *content_type;
+  gboolean     is_desktop_file = FALSE;
+
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), FALSE);
 
   if (file->info == NULL)
     return FALSE;
 
-  return g_content_type_equals (g_file_info_get_content_type (file->info), "application/x-desktop")
-         && !g_str_has_suffix (thunar_file_get_basename (file), ".directory");
+  content_type = g_file_info_get_content_type (file->info);
+
+  if (content_type != NULL)
+    is_desktop_file = g_content_type_equals (content_type, "application/x-desktop");
+
+  return is_desktop_file 
+    && !g_str_has_suffix (thunar_file_get_basename (file), ".directory");
 }
 
 
@@ -2251,8 +2286,14 @@ const gchar *
 thunar_file_get_original_path (const ThunarFile *file)
 {
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
-  _thunar_return_val_if_fail (G_IS_FILE_INFO (file->info), NULL);
-  return g_file_info_get_attribute_string (file->info, "trash::orig-file");
+
+  if (file->info == NULL)
+    return NULL;
+
+  if (g_file_info_has_attribute (file->info, "trash::orig-file"))
+    return g_file_info_get_attribute_string (file->info, "trash::orig-file");
+  else
+    return NULL;
 }
 
 
@@ -3173,7 +3214,7 @@ thunar_file_list_get_applications (GList *file_list)
       current_type = thunar_file_get_content_type (lp->data);
 
       /* no need to check anything if this file has the same mime type as the previous file */
-      if (lp->prev != NULL)
+      if (current_type != NULL && lp->prev != NULL)
         {
           previous_type = thunar_file_get_content_type (lp->prev->data);
           if (G_LIKELY (g_content_type_equals (previous_type, current_type)))
@@ -3181,7 +3222,7 @@ thunar_file_list_get_applications (GList *file_list)
         }
 
       /* determine the list of applications that can open this file */
-      list = g_app_info_get_all_for_type (current_type);
+      list = current_type == NULL ? NULL : g_app_info_get_all_for_type (current_type);
       if (G_UNLIKELY (applications == NULL))
         {
           /* first file, so just use the applications list */
