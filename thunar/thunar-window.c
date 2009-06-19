@@ -32,6 +32,7 @@
 #include <gdk/gdkkeysyms.h>
 
 #include <thunar/thunar-application.h>
+#include <thunar/thunar-browser.h>
 #include <thunar/thunar-clipboard-manager.h>
 #include <thunar/thunar-compact-view.h>
 #include <thunar/thunar-details-view.h>
@@ -60,10 +61,6 @@
 #include <thunar/thunar-window-ui.h>
 
 #include <glib.h>
-
-
-
-typedef struct _MountData MountData;
 
 
 
@@ -284,12 +281,6 @@ struct _ThunarWindow
   GType                   toggle_sidepane_type;
 };
 
-struct _MountData
-{
-  ThunarWindow *window;
-  ThunarFile   *file;
-};
-
 
 
 static GtkActionEntry action_entries[] =
@@ -338,37 +329,12 @@ static const GtkToggleActionEntry toggle_action_entries[] =
 
 
 
-static GObjectClass *thunar_window_parent_class;
-static guint         window_signals[LAST_SIGNAL];
+static guint window_signals[LAST_SIGNAL];
 
 
 
-GType
-thunar_window_get_type (void)
-{
-  static GType type = G_TYPE_INVALID;
-
-  if (G_UNLIKELY (type == G_TYPE_INVALID))
-    {
-      static const GTypeInfo info =
-      {
-        sizeof (ThunarWindowClass),
-        NULL,
-        NULL,
-        (GClassInitFunc) thunar_window_class_init,
-        NULL,
-        NULL,
-        sizeof (ThunarWindow),
-        0,
-        (GInstanceInitFunc) thunar_window_init,
-        NULL,
-      };
-
-      type = g_type_register_static (GTK_TYPE_WINDOW, I_("ThunarWindow"), &info, 0);
-    }
-
-  return type;
-}
+G_DEFINE_TYPE_WITH_CODE (ThunarWindow, thunar_window, GTK_TYPE_WINDOW,
+                         G_IMPLEMENT_INTERFACE (THUNAR_TYPE_BROWSER, NULL));
 
 
 
@@ -378,9 +344,6 @@ thunar_window_class_init (ThunarWindowClass *klass)
   GtkWidgetClass *gtkwidget_class;
   GtkBindingSet  *binding_set;
   GObjectClass   *gobject_class;
-
-  /* determine the parent type class */
-  thunar_window_parent_class = g_type_class_peek_parent (klass);
 
   gobject_class = G_OBJECT_CLASS (klass);
   gobject_class->dispose = thunar_window_dispose;
@@ -1427,87 +1390,45 @@ thunar_window_open_or_launch (ThunarWindow *window,
   _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
   _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  if (thunar_file_is_mounted (file))
+  if (thunar_file_is_directory (file))
     {
-      if (thunar_file_is_directory (file))
-        {
-          /* open the new directory */
-          thunar_window_set_current_directory (window, file);
-        }
-      else
-        {
-          /* try to launch the selected file */
-          if (!thunar_file_launch (file, window, &error))
-            {
-              thunar_dialogs_show_error (window, error, _("Failed to launch \"%s\""),
-                                         thunar_file_get_display_name (file));
-              g_error_free (error);
-            }
-        }
+      /* open the new directory */
+      thunar_window_set_current_directory (window, file);
     }
   else
     {
-      g_set_error (&error, G_IO_ERROR, G_IO_ERROR_NOT_MOUNTED, _("Mounting failed"));
-      thunar_dialogs_show_error (window, error, _("Failed to open \"%s\""),
-                                 thunar_file_get_display_name (file));
-      g_error_free (error);
+      /* try to launch the selected file */
+      if (!thunar_file_launch (file, window, &error))
+        {
+          thunar_dialogs_show_error (window, error, _("Failed to launch \"%s\""),
+                                     thunar_file_get_display_name (file));
+          g_error_free (error);
+        }
     }
 }
 
 
 
 static void
-thunar_window_open_async_finish (GObject      *object,
-                                 GAsyncResult *result,
-                                 gpointer      user_data)
+thunar_window_poke_file_finish (ThunarBrowser *browser,
+                                ThunarFile    *file,
+                                ThunarFile    *target_file,
+                                GError        *error,
+                                gpointer       ignored)
 {
-  MountData *data = user_data;
-  GError    *error = NULL;
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (browser));
+  _thunar_return_if_fail (THUNAR_IS_FILE (file));
 
-  _thunar_return_if_fail (G_IS_FILE (object));
-  _thunar_return_if_fail (G_IS_ASYNC_RESULT (result));
-  _thunar_return_if_fail (data != NULL);
-  _thunar_return_if_fail (THUNAR_IS_WINDOW (data->window));
-  _thunar_return_if_fail (THUNAR_IS_FILE (data->file));
-
-  /* finish mounting the enclosing volume */
-  if (!g_file_mount_enclosing_volume_finish (G_FILE (object), result, &error))
-    {
-      if (error->domain == G_IO_ERROR)
-        {
-          /* ignore already mounted and not supported errors */
-          if (error->code == G_IO_ERROR_ALREADY_MOUNTED 
-              || error->code == G_IO_ERROR_NOT_SUPPORTED)
-            {
-              g_clear_error (&error);
-            }
-        }
-    }
-
-  /* check if mounting succeeded */
   if (error == NULL)
     {
-      /* reload the file if it wasn't mounted previously */
-      if (!thunar_file_is_mounted (data->file))
-        thunar_file_reload (data->file);
-
-      /* now try to open the file */
-      thunar_window_open_or_launch (data->window, data->file);
+      thunar_window_open_or_launch (THUNAR_WINDOW (browser), target_file);
     }
   else
     {
-      /* show the error dialog */
-      thunar_dialogs_show_error (data->window, error, _("Failed to open \"%s\""),
-                                 thunar_file_get_display_name (data->file));
-
-      /* free the error */
-      g_error_free (error);
+      thunar_dialogs_show_error (GTK_WIDGET (browser), error, 
+                                 _("Failed to open \"%s\""),
+                                 thunar_file_get_display_name (file));
     }
-
-  /* free the mount data */
-  g_object_unref (data->file);
-  g_object_unref (data->window);
-  _thunar_slice_free (MountData, data);
 }
 
 
@@ -1516,10 +1437,10 @@ static void
 thunar_window_start_open_location (ThunarWindow *window,
                                    const gchar  *initial_text)
 {
-  GMountOperation *mount_operation;
-  ThunarFile      *selected_file;
-  MountData       *mount_data;
-  GtkWidget       *dialog;
+  ThunarFile *selected_file;
+  GtkWidget  *dialog;
+  
+  _thunar_return_if_fail (THUNAR_IS_WINDOW (window));
 
   /* bring up the "Open Location"-dialog if the window has no location bar or the location bar
    * in the window does not support text entry by the user.
@@ -1553,32 +1474,8 @@ thunar_window_start_open_location (ThunarWindow *window,
           selected_file = thunar_location_dialog_get_selected_file (THUNAR_LOCATION_DIALOG (dialog));
           if (selected_file != NULL)
             {
-              /* check if the file is already mounted */
-              if (thunar_file_is_mounted (selected_file))
-                {
-                  /* it is, open it directly */
-                  thunar_window_open_or_launch (window, selected_file);
-                }
-              else
-                {
-                  /* allocate a mount data struct */
-                  mount_data = _thunar_slice_new0 (MountData);
-                  mount_data->window = g_object_ref (window);
-                  mount_data->file = g_object_ref (selected_file);
-
-                  /* allocate a new GTK+ mount operation */
-                  mount_operation = gtk_mount_operation_new (GTK_WINDOW (window));
-
-                  /* mount the enclosing volume asynchronously and open/launch the file 
-                   * in the callback */
-                  g_file_mount_enclosing_volume (thunar_file_get_file (selected_file),
-                                                 G_MOUNT_MOUNT_NONE, mount_operation, 
-                                                 NULL, thunar_window_open_async_finish, 
-                                                 mount_data);
-
-                  /* release the mount operation */
-                  g_object_unref (mount_operation);
-                }
+              thunar_browser_poke_file (THUNAR_BROWSER (window), selected_file, window, 
+                                        thunar_window_poke_file_finish, NULL);
             }
         }
 

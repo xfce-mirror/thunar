@@ -1,5 +1,12 @@
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Nothing really.
+	* thunar/thunar-window.c: Derive from ThunarBrowser and use
+	  thunar_browser_poke_file() to resolve/mount files when the location
+	  dialog is activated.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-list-model.c: Fix thunar_list_model_get_value() and
 	  thunar_list_model_get_statusbar_text() for files without content
 	  type. Use special statusbar texts for mountables and shortcuts.

@@ -2439,9 +2439,9 @@ thunar_file_get_emblem_names (ThunarFile *file)
    */
   if (!thunar_file_is_readable (file)
       || (thunar_file_is_directory (file)
-        && thunar_file_denies_access_permission (file, THUNAR_FILE_MODE_USR_EXEC,
-                                                       THUNAR_FILE_MODE_GRP_EXEC,
-                                                       THUNAR_FILE_MODE_OTH_EXEC)))
+          && thunar_file_denies_access_permission (file, THUNAR_FILE_MODE_USR_EXEC,
+                                                         THUNAR_FILE_MODE_GRP_EXEC,
+                                                         THUNAR_FILE_MODE_OTH_EXEC)))
     {
       emblems = g_list_prepend (emblems, THUNAR_FILE_EMBLEM_NAME_CANT_READ);
     }
