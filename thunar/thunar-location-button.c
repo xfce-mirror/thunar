@@ -467,18 +467,9 @@ thunar_location_button_file_changed (ThunarLocationButton *location_button,
   /* determine the icon theme for the widget */
   icon_theme = gtk_icon_theme_get_for_screen (gtk_widget_get_screen (GTK_WIDGET (location_button)));
 
-  /* the label is hidden for the file system root */
-  if (thunar_file_is_local (file) && thunar_file_is_root (file))
-    {
-      /* hide the label widget */
-      gtk_widget_hide (location_button->label);
-    }
-  else
-    {
-      /* update and show the label widget */
-      gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
-      gtk_widget_show (location_button->label);
-    }
+  /* update and show the label widget */
+  gtk_label_set_text (GTK_LABEL (location_button->label), thunar_file_get_display_name (file));
+  gtk_widget_show (location_button->label);
 
   /* the image is only visible for certain special paths */
   if (thunar_file_is_home (file) || thunar_file_is_desktop (file) || thunar_file_is_root (file))

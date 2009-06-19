@@ -2633,6 +2633,16 @@ thunar_file_get_icon_name (const ThunarFile   *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
+  /* root folders have special icons */
+  if (thunar_file_is_root (file) && !thunar_file_is_trashed (file))
+    {
+      /* use disk icon for / and a remote folder icon for remote roots */
+      if (thunar_file_is_local (file))
+        return g_strdup ("drive-harddisk");
+      else
+        return g_strdup ("folder-remote");
+    }
+
   if (file->info == NULL)
     return NULL;
 
@@ -2679,9 +2689,9 @@ thunar_file_get_icon_name (const ThunarFile   *file,
     }
 
   /* check if we have an accept icon for the icon we found */
-  if (icon_name != NULL && 
-      (g_str_equal (icon_name, "inode-directory") 
-       || g_str_equal (icon_name, "folder")))
+  if (icon_name != NULL 
+      && (g_str_equal (icon_name, "inode-directory") 
+          || g_str_equal (icon_name, "folder")))
     {
       if (icon_state == THUNAR_FILE_ICON_STATE_DROP)
         {

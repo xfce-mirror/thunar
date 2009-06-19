@@ -1,5 +1,13 @@
 2009-06-17	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Use special icon names for root folders other
+	  than trash://: "disk-harddrive" for the local root and
+	  "folder-remote" for root folders on other machines.
+	* thunar/thunar-location-button.c: Show a label even for the local
+	  root, just to be more consistent.
+
+2009-06-17	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-shortcuts-view.c: Rework mounting and mounting + open.
 	  Also make opening items other than volumes work asynchronously. To
 	  do that, first check if the file to be opened is mounted already. If
