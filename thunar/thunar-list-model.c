@@ -695,9 +695,10 @@ thunar_list_model_get_value (GtkTreeModel *model,
                              GValue       *value)
 {
   ThunarGroup *group;
-  ThunarUser  *user;
+  const gchar *content_type;
   const gchar *name;
   const gchar *real_name;
+  ThunarUser  *user;
   ThunarFile  *file;
   gchar       *str;
 
@@ -777,7 +778,11 @@ thunar_list_model_get_value (GtkTreeModel *model,
       if (G_UNLIKELY (thunar_file_is_symlink (file)))
         g_value_take_string (value, g_strdup_printf (_("link to %s"), thunar_file_get_symlink_target (file)));
       else
-        g_value_take_string (value, g_content_type_get_description (thunar_file_get_content_type (file)));
+        {
+          content_type = thunar_file_get_content_type (file);
+          if (content_type != NULL)
+            g_value_take_string (value, g_content_type_get_description (content_type));
+        }
       break;
 
     case THUNAR_COLUMN_FILE:
@@ -2213,6 +2218,7 @@ gchar*
 thunar_list_model_get_statusbar_text (ThunarListModel *store,
                                       GList           *selected_items)
 {
+  const gchar *content_type;
   const gchar *original_path;
   GtkTreeIter  iter;
   ThunarFile  *file;
@@ -2281,10 +2287,14 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
 
       /* get the file for the given iter */
       file = THUNAR_FILE (G_SLIST (iter.user_data)->data);
+      
+      /* determine the content type of the file */
+      content_type = thunar_file_get_content_type (file);
 
       /* calculate the text to be displayed */
       size_string = thunar_file_get_size_string (file);
-      if (G_UNLIKELY (g_str_equal (thunar_file_get_content_type (file), "inode/symlink")))
+
+      if (G_UNLIKELY (content_type != NULL && g_str_equal (content_type, "inode/symlink")))
         {
           text = g_strdup_printf (_("\"%s\" broken link"), thunar_file_get_display_name (file));
         }
@@ -2292,6 +2302,14 @@ thunar_list_model_get_statusbar_text (ThunarListModel *store,
         {
           text = g_strdup_printf (_("\"%s\" (%s) link to %s"), thunar_file_get_display_name (file),
                                   size_string, thunar_file_get_symlink_target (file));
+        }
+      else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_SHORTCUT))
+        {
+          text = g_strdup_printf (_("\"%s\" shortcut"), thunar_file_get_display_name (file));
+        }
+      else if (G_UNLIKELY (thunar_file_get_kind (file) == G_FILE_TYPE_MOUNTABLE))
+        {
+          text = g_strdup_printf (_("\"%s\" mountable"), thunar_file_get_display_name (file));
         }
       else
         {

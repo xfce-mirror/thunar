@@ -1,5 +1,11 @@
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-list-model.c: Fix thunar_list_model_get_value() and
+	  thunar_list_model_get_statusbar_text() for files without content
+	  type. Use special statusbar texts for mountables and shortcuts.
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/thunar-file.c: Assume the file is read- and writable if it
 	  has no G_FILE_ATTRIBUTE_ACCESS_CAN_READ or
 	  G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE attribute. This usually is the 
