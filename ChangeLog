@@ -1,5 +1,15 @@
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>
 
+	* thunar/thunar-file.c: Assume the file is read- and writable if it
+	  has no G_FILE_ATTRIBUTE_ACCESS_CAN_READ or
+	  G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE attribute. This usually is the 
+	  case with shortcuts and mountables. This change removes all those
+	  irritating emblems when browsing computer://, network:// and smb://.
+	  Only show the "drive-harddisk" icon for local root directories (this
+	  should only be the filesystem root, not media or anything).
+
+2009-06-19	Jannis Pohlmann <jannis@xfce.org>
+
 	* thunar/Makefile.am: Add missing entries for thunar-browser.{c,h}.
 
 2009-06-19	Jannis Pohlmann <jannis@xfce.org>

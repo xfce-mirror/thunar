@@ -2074,6 +2074,9 @@ thunar_file_is_readable (const ThunarFile *file)
   if (file->info == NULL)
     return FALSE;
 
+  if (!g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_READ))
+    return TRUE;
+      
   return g_file_info_get_attribute_boolean (file->info, 
                                             G_FILE_ATTRIBUTE_ACCESS_CAN_READ);
 }
@@ -2096,6 +2099,9 @@ thunar_file_is_writable (const ThunarFile *file)
   
   if (file->info == NULL)
     return FALSE;
+
+  if (!g_file_info_has_attribute (file->info, G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE))
+    return TRUE;
 
   return g_file_info_get_attribute_boolean (file->info, 
                                             G_FILE_ATTRIBUTE_ACCESS_CAN_WRITE);
@@ -2674,14 +2680,12 @@ thunar_file_get_icon_name (const ThunarFile   *file,
   _thunar_return_val_if_fail (THUNAR_IS_FILE (file), NULL);
   _thunar_return_val_if_fail (GTK_IS_ICON_THEME (icon_theme), NULL);
 
-  /* root folders have special icons */
-  if (thunar_file_is_root (file) && !thunar_file_is_trashed (file))
+  /* the system root folder has a special icon */
+  if (thunar_file_is_root (file) 
+      && thunar_file_is_local (file)
+      && thunar_file_is_directory (file))
     {
-      /* use disk icon for / and a remote folder icon for remote roots */
-      if (thunar_file_is_local (file))
-        return g_strdup ("drive-harddisk");
-      else
-        return g_strdup ("folder-remote");
+      return g_strdup ("drive-harddisk");
     }
 
   if (file->info == NULL)
@@ -2696,10 +2700,8 @@ thunar_file_get_icon_name (const ThunarFile   *file,
           g_object_get (icon, "names", &themed_icon_names, NULL);
 
           for (i = 0; icon_name == NULL && themed_icon_names[i] != NULL; ++i)
-            {
-              if (gtk_icon_theme_has_icon (icon_theme, themed_icon_names[i]))
-                icon_name = g_strdup (themed_icon_names[i]);
-            }
+            if (gtk_icon_theme_has_icon (icon_theme, themed_icon_names[i]))
+              icon_name = g_strdup (themed_icon_names[i]);
 
           g_strfreev (themed_icon_names);
         }
